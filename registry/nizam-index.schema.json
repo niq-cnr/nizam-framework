@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:nizam-index.schema.json",
+  "title": "Nizam Root Capability Index Schema",
+  "description": "Validates the root NIZAM.json context router (DD-1, product_spec.md Sec 2.3): the single machine-readable entry point an agent queries to locate the minimal set of governance files a task requires, instead of bulk-reading the repository. Declares the shape of the framework identity block, the module map, the capability index, the schema and template path indexes, the consumption guidance an agent must follow, and the self-reference back to the index_schema and to NIZAM.json itself.",
+  "type": "object",
+  "properties": {
+    "framework": {
+      "type": "object",
+      "description": "Identity block for the governance payload this index describes.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The framework's name.",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic version (MAJOR.MINOR.PATCH) of the framework this index describes.",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "description": {
+          "type": "string",
+          "description": "One-paragraph summary of what the framework is and ships.",
+          "minLength": 1
+        }
+      },
+      "required": ["name", "version", "description"],
+      "additionalProperties": true
+    },
+    "modules": {
+      "type": "array",
+      "description": "Every top-level governance module the framework ships, each with its purpose and the key documents an agent would read from it.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Repository-relative directory path of the module.",
+            "minLength": 1
+          },
+          "purpose": {
+            "type": "string",
+            "description": "One-line summary of what the module owns.",
+            "minLength": 1
+          },
+          "key_documents": {
+            "type": "array",
+            "description": "Repository-relative paths of the documents most likely to satisfy a query into this module.",
+            "items": { "type": "string" },
+            "minItems": 1
+          }
+        },
+        "required": ["path", "purpose", "key_documents"],
+        "additionalProperties": true
+      },
+      "minItems": 1
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "Named, individually queryable capabilities the framework provides, each backed by exactly one authoritative document.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique, kebab-case capability identifier.",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "summary": {
+            "type": "string",
+            "description": "One-line summary of the capability.",
+            "minLength": 1
+          },
+          "authoritative_source": {
+            "type": "string",
+            "description": "Repository-relative path to the single document backing this capability.",
+            "minLength": 1
+          }
+        },
+        "required": ["id", "summary", "authoritative_source"],
+        "additionalProperties": true
+      },
+      "minItems": 1
+    },
+    "schemas": {
+      "type": "array",
+      "description": "Repository-relative paths of every JSON Schema document under schema/.",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "templates": {
+      "type": "array",
+      "description": "Repository-relative paths of every file under templates/.",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "consumption_guidance": {
+      "type": "string",
+      "description": "Instructions telling an agent to query this index and read only the specific file a task needs, never to bulk-read a governance directory (DD-1, methodology/04_tool_driven_state.md).",
+      "minLength": 1
+    },
+    "index_schema": {
+      "type": "object",
+      "description": "Self-reference from NIZAM.json to the schema it must validate against (this document).",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Repository-relative path to this schema.",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["path"],
+      "additionalProperties": true
+    },
+    "self_reference": {
+      "type": "object",
+      "description": "Self-reference from NIZAM.json to itself, so the index appears in its own capability map.",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Repository-relative path to NIZAM.json (this file).",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": ["path"],
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "framework",
+    "modules",
+    "capabilities",
+    "schemas",
+    "templates",
+    "consumption_guidance",
+    "index_schema",
+    "self_reference"
+  ],
+  "additionalProperties": true
+}

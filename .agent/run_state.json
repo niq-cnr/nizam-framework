@@ -1,12 +1,12 @@
 {
   "repository": "nizam-framework",
   "current_phase": "001-framework-genesis",
-  "current_feature": "006",
+  "current_feature": "007",
   "status": "contract_negotiation",
-  "updated_at": "2026-07-07T14:10:00Z",
+  "updated_at": "2026-07-07T16:20:00Z",
   "scope_budget": {
     "original_estimate_lines": 3850,
-    "total_lines_changed": 3037,
+    "total_lines_changed": 3553,
     "per_feature": [
       {
         "id": "000",
@@ -42,6 +42,12 @@
         "estimated": 450,
         "actual": 494,
         "flag": null
+      },
+      {
+        "id": "006",
+        "estimated": 400,
+        "actual": 516,
+        "flag": null
       }
     ]
   },
@@ -56,6 +62,10 @@
     },
     "002-contract": {
       "attempts": 2,
+      "limit": 3
+    },
+    "006-contract": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -139,6 +149,16 @@
       "at": "2026-07-07T14:10:00Z",
       "event": "feature_complete",
       "detail": "Feature 005 complete: both gates first-pass, QA 9/9 + adapter-simulation adversarial pass. 494 lines vs 450 est. Cumulative 3037/5005. Advancing to 006 (deps 000-005 all complete)."
+    },
+    {
+      "at": "2026-07-07T15:05:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 006 approved after 1 revision (path-walker false-fail/false-pass defects fixed, independently re-verified by evaluator). Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T16:20:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 006 complete: contract took 1 revision (path-walker), Mode B first-pass, QA 11/11 + router adversarial pass. 516 lines vs 400 est. Cumulative 3553/5005. Advancing to 007 (final feature)."
     }
   ]
 }

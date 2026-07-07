@@ -1,0 +1,3 @@
+status=0; for f in registry/scope_definition_patterns.md registry/README.md; do test -f "$f" || { echo "MISSING $f"; status=1; continue; }; test "$(head -1 "$f")" = "---" || { echo "NOT FRONTMATTER: $f"; status=1; }; for k in id title description version status authoritative_source; do grep -q "^$k:" "$f" || { echo "MISSING $k in $f"; status=1; }; done; done; test "$status" -eq 0 && echo PASS
+PASS
+EXIT:0

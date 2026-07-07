@@ -1,0 +1,68 @@
+{
+  "feature_id": "006",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {
+      "command": "3 registry/ files + root NIZAM.json exist, no stray files",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-01.txt"
+    },
+    {
+      "command": "registry/nizam-index.schema.json valid JSON, declares draft 2020-12 $schema",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-02.txt"
+    },
+    {
+      "command": "NIZAM.json valid JSON",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-03.txt"
+    },
+    {
+      "command": "NIZAM.json validates against registry/nizam-index.schema.json",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-04.txt"
+    },
+    {
+      "command": "every path/authoritative_source/key_documents/schemas/templates entry in NIZAM.json resolves on disk (71 paths checked)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-05.txt"
+    },
+    {
+      "command": "NIZAM.json carries semver version 0.1.0 matching the framework version",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-06.txt"
+    },
+    {
+      "command": "NIZAM.json indexes exactly 6 modules, 7 schemas, 8 templates, 13 capabilities, plus self-reference",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-07.txt"
+    },
+    {
+      "command": "NIZAM.json includes query-not-bulk-read consumption guidance",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-08.txt"
+    },
+    {
+      "command": "scope_definition_patterns.md and README.md have frontmatter with 6 required keys",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-09.txt"
+    },
+    {
+      "command": "no 'nizamiq' branding in registry/ or NIZAM.json (file-count guarded)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-10.txt"
+    },
+    {
+      "command": "registry/ contains exactly the 3 contracted files, no stray extras",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/006-qa-11.txt"
+    }
+  ],
+  "adversarial_check": {
+    "description": "Two-part check beyond the 11 listed commands. (1) Context-router exercise per DD-1 intent: randomly sampled 3 of 13 capabilities (seed=42: nizam-governance-skill-manifest, governance-inheritance-protocol, nizam-documentation-standard), resolved each authoritative_source on disk, and verified semantic consistency -- for the two markdown-backed capabilities, the resolved document's frontmatter 'id' matches the capability id exactly and its 'title' shares meaningful vocabulary with the capability summary; for the JSON-backed capability (tools/skill.json), the resolved 'description' field shares 8 meaningful words with the capability summary (agnostic/capability/manifest/payload/runtime/single/skill/unified). All 3 resolve to the correct, semantically-matching document -- no index entry points at the wrong file. (2) Schema negative test: copied NIZAM.json to the scratchpad, mutated only 'framework.version' to the non-semver string 'not-a-semver', and re-validated the mutated copy against the real registry/nizam-index.schema.json -- rejected, with the validator error specifically attributing rejection to the 'pattern' constraint on the 'framework.version' path (not an incidental unrelated error), confirming the semver pattern is load-bearing. The real repo's NIZAM.json (framework.version=0.1.0) was independently re-confirmed unmutated after the test.",
+    "result": "pass",
+    "evidence": ".agent/evidence/006-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

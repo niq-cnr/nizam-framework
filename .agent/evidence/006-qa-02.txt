@@ -1,0 +1,3 @@
+test -f registry/nizam-index.schema.json && python3 -c "import json; doc = json.load(open('registry/nizam-index.schema.json')); assert doc.get('\$schema','').endswith('2020-12/schema'), f'unexpected \$schema: {doc.get(\"\$schema\")}'; print('PASS')"
+PASS
+EXIT:0
