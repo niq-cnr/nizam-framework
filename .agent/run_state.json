@@ -1,22 +1,32 @@
 {
   "repository": "nizam-framework",
   "current_phase": "001-framework-genesis",
-  "current_feature": "001",
+  "current_feature": "002",
   "status": "contract_negotiation",
-  "updated_at": "2026-07-07T07:50:00Z",
+  "updated_at": "2026-07-07T08:55:00Z",
   "scope_budget": {
     "original_estimate_lines": 3850,
-    "total_lines_changed": 213,
+    "total_lines_changed": 816,
     "per_feature": [
       {
         "id": "000",
         "estimated": 220,
         "actual": 213
+      },
+      {
+        "id": "001",
+        "estimated": 450,
+        "actual": 603,
+        "flag": null
       }
     ]
   },
   "circuit_breaker": {
     "000-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "001-implementation": {
       "attempts": 1,
       "limit": 3
     }
@@ -46,6 +56,21 @@
       "at": "2026-07-07T07:50:00Z",
       "event": "feature_complete",
       "detail": "Feature 000 complete: validator B approved, QA pass (qa/000.json, 6/6 checks + adversarial spot-check). 213 lines vs 220 estimate. Advancing to feature 001."
+    },
+    {
+      "at": "2026-07-07T08:05:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 001 approved first-pass by validator (Mode A) and evaluator. Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T08:20:00Z",
+      "event": "mode_b_rejection",
+      "detail": "Feature 001 Mode B rejected: out-of-scope CHANGELOG edit, NizamIQ string in schema/README.md:57, draft-07 wording mismatch. Generator rework attempt 1 dispatched."
+    },
+    {
+      "at": "2026-07-07T08:55:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 001 complete after 1 Mode-B rework. QA pass 6/6 + adversarial DD-3 negative test. 603 lines vs 450 estimate. Cumulative 816/5005 ceiling. Advancing to 002."
     }
   ]
 }

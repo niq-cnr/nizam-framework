@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:contract.schema.json",
+  "title": "Nizam Per-Feature Contract Schema",
+  "description": "Validates .agent/contracts/NNN.json, the pre-code alignment artifact scoping a single feature's deliverables, non-goals, and verification commands before implementation begins.",
+  "type": "object",
+  "properties": {
+    "contract_id": {
+      "type": "string",
+      "description": "Unique contract identifier, matching the feature it scopes, e.g. '001'."
+    },
+    "feature_id": {
+      "type": "string",
+      "description": "Id of the feature in feature_list.json this contract scopes."
+    },
+    "name": {
+      "type": "string",
+      "description": "Short human-readable name of the contracted feature."
+    },
+    "status": {
+      "type": "string",
+      "description": "Current lifecycle state of the contract.",
+      "enum": ["proposed", "approved", "implemented", "complete", "rejected"]
+    },
+    "spec_ref": {
+      "type": "string",
+      "description": "Path to the product spec document this contract derives from."
+    },
+    "scope": {
+      "type": "object",
+      "description": "The files this contract authorizes the generator to create or modify.",
+      "properties": {
+        "files_create": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": { "type": "string" },
+              "purpose": { "type": "string" }
+            },
+            "required": ["path", "purpose"],
+            "additionalProperties": true
+          }
+        },
+        "files_modify": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": { "type": "string" },
+              "purpose": { "type": "string" }
+            },
+            "required": ["path", "purpose"],
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": ["files_create", "files_modify"],
+      "additionalProperties": true
+    },
+    "non_goals": {
+      "type": "array",
+      "description": "Explicit statements of what this contract does NOT authorize.",
+      "items": { "type": "string" }
+    },
+    "verification": {
+      "type": "array",
+      "description": "The commands the generator and validator/evaluator run to prove the contract's acceptance tests are met.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "acceptance_test": { "type": "string" },
+          "command": { "type": "string" }
+        },
+        "required": ["acceptance_test", "command"],
+        "additionalProperties": true
+      }
+    },
+    "estimated_lines": {
+      "type": "integer",
+      "description": "Estimated lines of change for this feature.",
+      "minimum": 0
+    },
+    "evidence_dir": {
+      "type": "string",
+      "description": "Directory where this contract's verification evidence files are written."
+    },
+    "evidence_convention": {
+      "type": "string",
+      "description": "The naming convention used for this contract's evidence files."
+    },
+    "approvals": {
+      "type": "object",
+      "description": "Optional record of who/what approved this contract and when.",
+      "properties": {
+        "validator_mode_a": { "type": "boolean" },
+        "evaluator_contract_review": { "type": "boolean" },
+        "approved_at": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "contract_id",
+    "feature_id",
+    "name",
+    "status",
+    "spec_ref",
+    "scope",
+    "non_goals",
+    "verification",
+    "estimated_lines",
+    "evidence_dir",
+    "evidence_convention"
+  ],
+  "additionalProperties": true
+}

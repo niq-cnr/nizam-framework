@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:qa_verdict.schema.json",
+  "title": "Nizam QA Verdict Schema",
+  "description": "Validates .agent/qa/NNN.json, the evaluator's pass/fail verdict for a feature, recording each verification command's exit code and an evidence file path per DD-3.",
+  "type": "object",
+  "properties": {
+    "feature_id": {
+      "type": "string",
+      "description": "Id of the feature this verdict evaluates."
+    },
+    "verdict": {
+      "type": "string",
+      "description": "The overall QA outcome for this feature.",
+      "enum": ["pass", "fail"]
+    },
+    "executed_at": {
+      "type": "string",
+      "description": "Date or date-time the QA checks were executed."
+    },
+    "checks": {
+      "type": "array",
+      "description": "One entry per contract verification command that was executed.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "command": { "type": "string" },
+          "exit_code": { "type": "integer" },
+          "evidence": {
+            "type": "string",
+            "description": "Path to the externalised evidence file capturing this check's terminal output."
+          }
+        },
+        "required": ["command", "exit_code", "evidence"],
+        "additionalProperties": true
+      },
+      "minItems": 1
+    },
+    "adversarial_check": {
+      "type": "object",
+      "description": "The evaluator's own additional adversarial spot-check, beyond the contract's listed verification commands.",
+      "properties": {
+        "description": { "type": "string" },
+        "result": { "type": "string" },
+        "evidence": { "type": "string" }
+      },
+      "required": ["description", "result", "evidence"],
+      "additionalProperties": true
+    },
+    "required_fixes": {
+      "type": "array",
+      "description": "Fixes the generator must make before this feature can pass QA. Empty when verdict is 'pass'.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["feature_id", "verdict", "executed_at", "checks", "required_fixes"],
+  "additionalProperties": true
+}
