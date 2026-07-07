@@ -1,0 +1,80 @@
+{
+  "contract_id": "002",
+  "feature_id": "002",
+  "name": "Documentation Standard Module (/standard/)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "standard/NDS.md",
+        "purpose": "Nizam Documentation Standard \u2014 a runtime-agnostic, IQ-free distillation of UDS. Defines: (1) the 6 required frontmatter keys ('id', 'title', 'description', 'version', 'status', 'authoritative_source') with the exact type/format each key must satisfy per schema/frontmatter.schema.json (kebab-case id, semver version, status enum draft/active/deprecated, authoritative_source path-or-'NA'), plus the optional 'change_log' array shape; (2) the status lifecycle and its permitted transitions (draft to active to deprecated, deprecated documents superseded not deleted); (3) versioning-of-docs rules (semantic-version bump triggers per change class, mandatory change_log entry on every version bump); (4) file/heading conventions (module README requirement, one frontmatter block at the very top of every '.md', heading hierarchy starting at H1 matching the document title); (5) machine-readability rules (parse-before-read, no untagged/ambiguous code fences that break structural parsing, JSON/YAML artifacts referenced by a doc must be independently parse-valid)."
+      },
+      {
+        "path": "standard/GIP.md",
+        "purpose": "Governance Inheritance Protocol \u2014 a runtime-agnostic, IQ-free distillation of AGIP. Defines: (1) how a consumer repository inherits the framework by cloning a pinned semantic-version git tag (never a floating branch) and running bootstrap.sh to inject standard/, templates/, and schema/; (2) compliance verification \u2014 the concrete post-injection checks a consumer repo must pass (required governance files present, NIZAM.json parses, frontmatter present on injected docs); (3) drift detection \u2014 how a consumer repo periodically re-verifies its injected governance content against the pinned tag to detect local mutation or staleness, and the recommended remediation (re-bootstrap against a newer pinned tag, do not hand-patch injected files)."
+      },
+      {
+        "path": "standard/AGF.md",
+        "purpose": "Agent Governance Framework \u2014 defines the generalised multi-agent execution model: the four agent roles (planner, generator, validator, evaluator) and their responsibilities; the validator's dual-gate structure (Mode A pre-code contract gate, Mode B post-code implementation gate) and when each fires in the pipeline; the JSON Verdict Parse Rule (orchestrator advances only when a validator/evaluator's final JSON verdict satisfies approved===true AND issues.length===0 AND missing_acceptance_coverage.length===0 AND unsupported_claims.length===0 \u2014 prose alone, e.g. 'mostly approved', is never sufficient); and the Durable State Rule (agents communicate results exclusively via files under '.agent/', never via chat alone)."
+      },
+      {
+        "path": "standard/anti_hallucination.md",
+        "purpose": "Universal anti-hallucination constraints, each stated with its rationale and a concrete agent-actionable rule: AH-1 Read-Before-Write (re-read the exact target lines/content immediately before any edit; halt on mismatch between assumed and actual state \u2014 prevents edits against stale in-context assumptions); AH-2 Detect-Before-Fix (confirm the reported problem still reproduces before writing a fix; skip the fix if already resolved \u2014 prevents redundant or contradictory changes layered onto an already-fixed defect); AH-3 Evidence-Anchored Completion (never mark a step complete without captured terminal output or a file diff as proof, externalised to a path, not pasted inline \u2014 prevents unverifiable completion claims)."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "standard/README.md",
+        "purpose": "Replace the feature-000 stub (which only announces that full content ships in feature 002) with the full standard/ module index: frontmatter intact (6 required keys, version bumped from 0.1.0, status updated if warranted), and a body enumerating all four standard documents (NDS.md, GIP.md, AGF.md, anti_hallucination.md), each with a one-line purpose, plus a short cross-reference note that schema/frontmatter.schema.json is the machine-validation target for the frontmatter rules NDS.md defines in prose."
+      }
+    ]
+  },
+  "non_goals": [
+    "No protocol execution content (planning enforcer, contract-first harness loop, adversarial TDD, circuit breaker, tool-driven state, release train) \u2014 that content belongs to methodology/, feature 003",
+    "No consumer-repo template files (CONTEXT.md, AGENTS.md, DEBT.md, ADR_TEMPLATE.md, work-packet.template.json, phase_template.yaml, manifest.template.json) \u2014 those belong to templates/, feature 004",
+    "No skill payload content (skill.json, SKILL.md, interface.md) \u2014 those belong to tools/, feature 005",
+    "No bootstrap.sh script or CHANGELOG.md v0.1.0 release entry \u2014 those belong to feature 007; GIP.md documents the bootstrap/inheritance model in prose only, it does not implement or reference an inline copy of the script",
+    "No edits to any file outside standard/ and this contract file itself (no schema/ changes, no root NIZAM.json, no other module README stubs)",
+    "No CHANGELOG.md edits of any kind as part of this contract's implementation phase (any changelog entry required by the generator's Docs Sync Gate is tracked separately and is not part of this contract's verified scope)"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "Files exist: test -f standard/NDS.md && test -f standard/GIP.md && test -f standard/AGF.md && test -f standard/anti_hallucination.md && test -f standard/README.md",
+      "command": "test -f standard/NDS.md && test -f standard/GIP.md && test -f standard/AGF.md && test -f standard/anti_hallucination.md && test -f standard/README.md && echo PASS"
+    },
+    {
+      "acceptance_test": "Every .md in standard/ starts with YAML frontmatter (for f in standard/*.md; do test \"$(head -1 \"$f\")\" = '---'; done exits 0)",
+      "command": "count=$(ls standard/*.md 2>/dev/null | wc -l); test \"$count\" -eq 5 || { echo \"unexpected file count $count\"; exit 1; }; status=0; for f in standard/*.md; do test \"$(head -1 \"$f\")\" = '---' || { echo \"NOT FRONTMATTER: $f\"; status=1; }; done; test \"$status\" -eq 0 && echo PASS"
+    },
+    {
+      "acceptance_test": "Every .md frontmatter in standard/ contains all 6 required keys id/title/description/version/status/authoritative_source (verified per file with grep)",
+      "command": "status=0; for f in standard/NDS.md standard/GIP.md standard/AGF.md standard/anti_hallucination.md standard/README.md; do test -f \"$f\" || { echo \"MISSING FILE $f\"; exit 1; }; for k in id title description version status authoritative_source; do grep -q \"^$k:\" \"$f\" || { echo \"MISSING $k in $f\"; status=1; }; done; done; test \"$status\" -eq 0 && echo PASS"
+    },
+    {
+      "acceptance_test": "NDS.md defines the six required frontmatter keys (grep -q 'authoritative_source' standard/NDS.md)",
+      "command": "test -f standard/NDS.md || exit 1; status=0; for k in id title description version status authoritative_source; do grep -qw \"$k\" standard/NDS.md || { echo \"NDS.md does not mention key: $k\"; status=1; }; done; test \"$status\" -eq 0 && echo PASS"
+    },
+    {
+      "acceptance_test": "anti_hallucination.md documents AH-1 through AH-3 (grep -q 'AH-1' && grep -q 'AH-3')",
+      "command": "test -f standard/anti_hallucination.md && grep -q 'AH-1' standard/anti_hallucination.md && grep -q 'AH-2' standard/anti_hallucination.md && grep -q 'AH-3' standard/anti_hallucination.md && echo PASS"
+    },
+    {
+      "acceptance_test": "No NizamIQ branding remains in the module (grep -ri 'nizamiq' standard/ returns nothing)",
+      "command": "test -d standard || exit 1; count=$(find standard -maxdepth 1 -type f | wc -l); test \"$count\" -eq 5 || { echo \"unexpected file count $count, refusing to trust an absence-of-match result\"; exit 1; }; if grep -ril 'nizamiq' standard/ 2>/dev/null; then echo FAIL; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "standard/ contains EXACTLY the 5 contracted files (the four standard/*.md documents plus standard/README.md) and no stray out-of-contract files (generator-added robustness check distinct from tests 1 and 2: test 1 confirms the 5 contracted files exist but does not forbid extras, and test 2 only bounds the '*.md' glob to count 5; this check bounds the entire top-level directory listing, so an accidental stray file \u2014 e.g. a leftover draft or a non-'.md' artifact \u2014 would be caught even though it wouldn't affect either of the other counts).",
+      "command": "actual=\"$(find standard -maxdepth 1 -type f | LC_ALL=C sort | tr '\\n' ' ')\"; expected=\"standard/AGF.md standard/GIP.md standard/NDS.md standard/README.md standard/anti_hallucination.md \"; test \"$actual\" = \"$expected\" && echo PASS || { echo \"MISMATCH: got [$actual] expected [$expected]\"; exit 1; }"
+    }
+  ],
+  "estimated_lines": 720,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/002-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/002-verify-01.txt for the first entry, ..., .agent/evidence/002-verify-07.txt for the seventh). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T09:20:00Z",
+    "revisions": 2
+  }
+}

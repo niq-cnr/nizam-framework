@@ -1,12 +1,12 @@
 {
   "repository": "nizam-framework",
   "current_phase": "001-framework-genesis",
-  "current_feature": "002",
+  "current_feature": "003",
   "status": "contract_negotiation",
-  "updated_at": "2026-07-07T08:55:00Z",
+  "updated_at": "2026-07-07T10:00:00Z",
   "scope_budget": {
     "original_estimate_lines": 3850,
-    "total_lines_changed": 816,
+    "total_lines_changed": 1336,
     "per_feature": [
       {
         "id": "000",
@@ -18,6 +18,12 @@
         "estimated": 450,
         "actual": 603,
         "flag": null
+      },
+      {
+        "id": "002",
+        "estimated": 720,
+        "actual": 520,
+        "flag": null
       }
     ]
   },
@@ -28,6 +34,10 @@
     },
     "001-implementation": {
       "attempts": 1,
+      "limit": 3
+    },
+    "002-contract": {
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -71,6 +81,16 @@
       "at": "2026-07-07T08:55:00Z",
       "event": "feature_complete",
       "detail": "Feature 001 complete after 1 Mode-B rework. QA pass 6/6 + adversarial DD-3 negative test. 603 lines vs 450 estimate. Cumulative 816/5005 ceiling. Advancing to 002."
+    },
+    {
+      "at": "2026-07-07T09:20:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 002 approved after 2 evaluator-driven revisions (duplicate verification entry; locale-dependent sort). Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T10:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 002 complete: Mode B approved first pass (AH-4 ruled legitimate source-backed distillation), QA 7/7 + adversarial pass. 520 lines vs 720 est. Cumulative 1336/5005. Advancing to 003."
     }
   ]
 }

@@ -1,0 +1,4 @@
+COMMAND: actual="$(find standard -maxdepth 1 -type f | LC_ALL=C sort | tr "\n" " ")"; expected="standard/AGF.md standard/GIP.md standard/NDS.md standard/README.md standard/anti_hallucination.md "; test "$actual" = "$expected" && echo PASS || { echo "MISMATCH: got [$actual] expected [$expected]"; exit 1; }
+OUTPUT:
+PASS
+EXIT:0

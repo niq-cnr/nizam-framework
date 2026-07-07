@@ -1,0 +1,4 @@
+COMMAND: count=$(ls standard/*.md 2>/dev/null | wc -l); test "$count" -eq 5 || { echo "unexpected file count $count"; exit 1; }; status=0; for f in standard/*.md; do test "$(head -1 "$f")" = "---" || { echo "NOT FRONTMATTER: $f"; status=1; }; done; test "$status" -eq 0 && echo PASS
+OUTPUT:
+PASS
+EXIT:0
