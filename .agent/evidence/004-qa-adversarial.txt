@@ -1,0 +1,11 @@
+=== phase_template.yaml: fill placeholders, then validate against schema/phase.schema.json ===
+OK: filled phase_template.yaml instance validates. doc={'id': '002-consumer-onboarding', 'title': 'Consumer Onboarding Phase', 'description': 'Onboard a downstream consumer repo onto the Nizam governance framework.', 'status': 'pending', 'steps': [{'id': '002.1', 'description': 'Bootstrap the consumer repo against the pinned governance tag.', 'status': 'PENDING', 'evidence': '.agent/evidence/002-verify-01.txt', 'docs_updated': 'docs/planning/manifest.json', 'changelog_entry': 'Bootstrapped governance framework v0.1.0.'}]}
+
+=== NEGATIVE TEST: inject inline 'output:' into the filled phase doc's step, confirm rejection ===
+NEGATIVE TEST: rejected as expected. validator=additionalProperties message=Additional properties are not allowed ('output' was unexpected)
+
+=== manifest.template.json: fill placeholders, then validate against schema/manifest.schema.json ===
+OK: filled manifest.template.json instance validates. doc={'schema_version': '1.0.0', 'updated_at': '2026-07-07T12:00:00Z', 'current_phase': '002-consumer-onboarding', 'phases': [{'id': '002-consumer-onboarding', 'title': 'Consumer Onboarding Phase', 'feature_list': '.agent/feature_list.json', 'status': 'pending'}]}
+
+SUMMARY: ALL_PASS
+EXIT:0

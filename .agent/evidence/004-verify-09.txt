@@ -1,0 +1,7 @@
+COMMAND:
+actual="$(find templates -maxdepth 1 -type f | LC_ALL=C sort | tr '\n' ' ')"; expected="templates/ADR_TEMPLATE.md templates/AGENTS.md templates/CONTEXT.md templates/DEBT.md templates/README.md templates/manifest.template.json templates/phase_template.yaml templates/work-packet.template.json "; test "$actual" = "$expected" && echo PASS || { echo "MISMATCH: got [$actual] expected [$expected]"; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

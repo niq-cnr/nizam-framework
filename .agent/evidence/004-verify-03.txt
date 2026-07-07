@@ -1,0 +1,7 @@
+COMMAND:
+test -f templates/phase_template.yaml && python3 -c "import yaml, json, jsonschema; doc = yaml.safe_load(open('templates/phase_template.yaml')); schema = json.load(open('schema/phase.schema.json')); jsonschema.validate(instance=doc, schema=schema); assert 'proof' not in json.dumps(doc) and 'raw_output' not in json.dumps(doc) and 'terminal_output' not in json.dumps(doc); print('PASS')"
+
+OUTPUT:
+PASS
+
+EXIT:0
