@@ -1,0 +1,51 @@
+{
+  "repository": "nizam-framework",
+  "current_phase": "001-framework-genesis",
+  "current_feature": "001",
+  "status": "contract_negotiation",
+  "updated_at": "2026-07-07T07:50:00Z",
+  "scope_budget": {
+    "original_estimate_lines": 3850,
+    "total_lines_changed": 213,
+    "per_feature": [
+      {
+        "id": "000",
+        "estimated": 220,
+        "actual": 213
+      }
+    ]
+  },
+  "circuit_breaker": {
+    "000-contract": {
+      "attempts": 1,
+      "limit": 3
+    }
+  },
+  "history": [
+    {
+      "at": "2026-07-07T07:23:00Z",
+      "event": "first_run_initialized",
+      "detail": "Repository created under mandate 'nizam-framework genesis'. Branch phase/001-framework-genesis. Orchestrator entering planning; delegating to @planner."
+    },
+    {
+      "at": "2026-07-07T08:00:00Z",
+      "event": "planning_complete",
+      "detail": "@planner produced product_spec.md (spec v1.0.0), feature_list.json (8 features, DAG validated acyclic, original_estimate_lines=3850), and docs/planning/manifest.json. Ready for contract negotiation on feature 000."
+    },
+    {
+      "at": "2026-07-07T07:35:00Z",
+      "event": "contract_revision",
+      "detail": "Contract 000 rev1: validator A approved; evaluator rejected (false-pass grep, missing README-stub coverage, no evidence convention); generator revised; evaluator re-review in flight."
+    },
+    {
+      "at": "2026-07-07T07:38:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 000 rev1 approved by validator (Mode A) and evaluator. Delegating implementation to @generator."
+    },
+    {
+      "at": "2026-07-07T07:50:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 000 complete: validator B approved, QA pass (qa/000.json, 6/6 checks + adversarial spot-check). 213 lines vs 220 estimate. Advancing to feature 001."
+    }
+  ]
+}

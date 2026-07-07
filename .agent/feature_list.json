@@ -1,0 +1,152 @@
+{
+  "phase": "001-framework-genesis",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 3850,
+  "features": [
+    {
+      "id": "000",
+      "name": "Repository Scaffold & Root AI-Legible Entry Points",
+      "description": "Create the Hybrid Mono-Repo skeleton (standard/, methodology/, registry/, templates/, schema/, tools/ with README stubs) and the root entry points: CONTEXT.md (token-efficient architecture + execution summary), README.md, CHANGELOG.md, and .gitignore. Establishes the foundation all other modules build on.",
+      "status": "complete",
+      "dependencies": [],
+      "acceptance_tests": [
+        "The six module directories exist: test -d standard && test -d methodology && test -d registry && test -d templates && test -d schema && test -d tools",
+        "Root files exist: test -f CONTEXT.md && test -f README.md && test -f CHANGELOG.md && test -f .gitignore",
+        "CONTEXT.md contains an '## Out of Scope' section (grep -q '## Out of Scope' CONTEXT.md)",
+        "CONTEXT.md begins with YAML frontmatter (head -1 CONTEXT.md equals '---')",
+        "No shipped file references a NizamIQ infrastructure endpoint (grep -ri 'nizamiq' CONTEXT.md README.md returns nothing)"
+      ],
+      "estimated_lines": 220
+    },
+    {
+      "id": "001",
+      "name": "Schema Module (/schema/)",
+      "description": "Author the seven canonical JSON Schemas: frontmatter.schema.json, manifest.schema.json, phase.schema.json (evidence externalised by path per DD-3), feature_list.schema.json, contract.schema.json, qa_verdict.schema.json, run_state.schema.json, plus a module README. These are the machine-verifiable contracts the rest of the framework validates against.",
+      "status": "pending",
+      "dependencies": [
+        "000"
+      ],
+      "acceptance_tests": [
+        "All seven schema files exist under schema/ (ls schema/*.schema.json | wc -l equals 7)",
+        "Every schema is valid JSON: for f in schema/*.schema.json; do python3 -c 'import json,sys; json.load(open(sys.argv[1]))' \"$f\"; done exits 0",
+        "phase.schema.json declares an evidence-path property and NOT an inline proof-output string field (grep -q 'evidence' schema/phase.schema.json)",
+        "Each schema declares a $schema draft key (grep -l '\\$schema' schema/*.schema.json | wc -l equals 7)",
+        "schema/README.md begins with YAML frontmatter containing the 6 required keys"
+      ],
+      "estimated_lines": 450
+    },
+    {
+      "id": "002",
+      "name": "Documentation Standard Module (/standard/)",
+      "description": "Distil and generalise UDS, AGIP, AGF, and the anti-hallucination constraints into runtime-agnostic, IQ-free documents: NDS.md (Nizam Documentation Standard), GIP.md (Governance Inheritance Protocol), AGF.md (Agent Governance Framework), anti_hallucination.md, plus a module README. Defines the six required frontmatter keys and the mandatory file structure for consumer repos.",
+      "status": "pending",
+      "dependencies": [
+        "000",
+        "001"
+      ],
+      "acceptance_tests": [
+        "Files exist: test -f standard/NDS.md && test -f standard/GIP.md && test -f standard/AGF.md && test -f standard/anti_hallucination.md && test -f standard/README.md",
+        "Every .md in standard/ starts with YAML frontmatter (for f in standard/*.md; do test \"$(head -1 \"$f\")\" = '---'; done exits 0)",
+        "Every .md frontmatter in standard/ contains all 6 required keys id/title/description/version/status/authoritative_source (verified per file with grep)",
+        "NDS.md defines the six required frontmatter keys (grep -q 'authoritative_source' standard/NDS.md)",
+        "anti_hallucination.md documents AH-1 through AH-3 (grep -q 'AH-1' && grep -q 'AH-3')",
+        "No NizamIQ branding remains in the module (grep -ri 'nizamiq' standard/ returns nothing)"
+      ],
+      "estimated_lines": 720
+    },
+    {
+      "id": "003",
+      "name": "Methodology Module (/methodology/)",
+      "description": "Author the execution methodology: 00_planning.md (DAG method / planning enforcer), 01_execution.md (contract-first harness loop), 02_adversarial_tdd.md, 03_circuit_breaker.md (DD-2 mandatory 3-strike), 04_tool_driven_state.md (DD-1 index-query state + DD-3 evidence externalisation), 05_release_train.md, plus a module README. Each execution loop must embed the circuit breaker.",
+      "status": "pending",
+      "dependencies": [
+        "000",
+        "002"
+      ],
+      "acceptance_tests": [
+        "All six protocol docs plus README exist (ls methodology/*.md | wc -l equals 7)",
+        "03_circuit_breaker.md defines a 3-strike / three-attempt limit (grep -Eq '3-strike|three|Attempt 4' methodology/03_circuit_breaker.md)",
+        "01_execution.md cross-references the circuit breaker (grep -q '03_circuit_breaker' methodology/01_execution.md)",
+        "04_tool_driven_state.md mandates querying the index over bulk-reading (grep -qi 'NIZAM.json' methodology/04_tool_driven_state.md)",
+        "Every .md in methodology/ starts with YAML frontmatter containing the 6 required keys",
+        "No NizamIQ branding remains (grep -ri 'nizamiq' methodology/ returns nothing)"
+      ],
+      "estimated_lines": 900
+    },
+    {
+      "id": "004",
+      "name": "Templates Module (/templates/)",
+      "description": "Ship consumer-repo templates generalised from the source repos: CONTEXT.md, AGENTS.md, DEBT.md, ADR_TEMPLATE.md, work-packet.template.json, phase_template.yaml (evidence-by-path), manifest.template.json, plus a module README. All markdown templates carry compliant frontmatter; JSON/YAML templates are parse-valid.",
+      "status": "pending",
+      "dependencies": [
+        "000",
+        "002"
+      ],
+      "acceptance_tests": [
+        "Template files exist: CONTEXT.md, AGENTS.md, DEBT.md, ADR_TEMPLATE.md, work-packet.template.json, phase_template.yaml, manifest.template.json, README.md all under templates/",
+        "work-packet.template.json and manifest.template.json are valid JSON (python3 -c json.load succeeds on each)",
+        "phase_template.yaml is valid YAML (python3 -c 'import yaml,sys; yaml.safe_load(open(sys.argv[1]))' succeeds) and references an evidence path field, not inline proof output",
+        "Every .md template starts with YAML frontmatter and the CONTEXT.md template includes an '## Out of Scope' section",
+        "No NizamIQ branding remains (grep -ri 'nizamiq' templates/ returns nothing)"
+      ],
+      "estimated_lines": 410
+    },
+    {
+      "id": "005",
+      "name": "Tools Module (/tools/) \u2014 Unified Skill Payload",
+      "description": "Implement DD-4: exactly ONE runtime-agnostic skill payload. Ship skill.json (capability manifest), SKILL.md (the single instructions payload), interface.md (runtime-adapter spec describing how any runtime loads the one payload), plus a module README. No per-runtime forks such as .claude/ or .codex/.",
+      "status": "pending",
+      "dependencies": [
+        "000",
+        "003"
+      ],
+      "acceptance_tests": [
+        "Files exist: test -f tools/skill.json && test -f tools/SKILL.md && test -f tools/interface.md && test -f tools/README.md",
+        "skill.json is valid JSON (python3 -c json.load succeeds)",
+        "Exactly one SKILL.md exists in the whole repo (find . -name SKILL.md -not -path './.git/*' | wc -l equals 1)",
+        "No per-runtime skill fork directories exist (test ! -d tools/.claude && test ! -d tools/.codex)",
+        "Every .md in tools/ starts with YAML frontmatter containing the 6 required keys"
+      ],
+      "estimated_lines": 450
+    },
+    {
+      "id": "006",
+      "name": "Registry Module (/registry/) & Root NIZAM.json Index",
+      "description": "Author registry/nizam-index.schema.json (schema for the root index), registry/scope_definition_patterns.md (generalised in-scope/out-of-scope + dependency-map patterns), a module README, and the root NIZAM.json capability index/context router that indexes every shipped module, protocol, schema, and template. Authored after all content modules exist so the index is accurate (DD-1).",
+      "status": "pending",
+      "dependencies": [
+        "000",
+        "001",
+        "002",
+        "003",
+        "004",
+        "005"
+      ],
+      "acceptance_tests": [
+        "Root NIZAM.json exists and is valid JSON (python3 -c 'import json; json.load(open(\"NIZAM.json\"))' exits 0)",
+        "registry/nizam-index.schema.json exists and is valid JSON, and NIZAM.json validates against it (jsonschema or python jsonschema check exits 0)",
+        "Every module/capability path indexed in NIZAM.json resolves on disk (script iterates indexed paths; all test -e succeed)",
+        "NIZAM.json carries a semantic version field matching the framework version (grep -q 'version' NIZAM.json)",
+        "registry/scope_definition_patterns.md and registry/README.md start with compliant frontmatter; no NizamIQ branding remains (grep -ri 'nizamiq' registry/ NIZAM.json returns nothing)"
+      ],
+      "estimated_lines": 400
+    },
+    {
+      "id": "007",
+      "name": "Versioning & Unified bootstrap.sh",
+      "description": "Deliver the unified bootstrap.sh (evolution of AGIP): one atomic operation that clones a pinned framework tag, injects standard/ + templates/ + schema/ into a consumer repo, and verifies compliance (required files present, NIZAM.json parses). Seed CHANGELOG.md v0.1.0 and document the semantic-versioning/git-tag release model. No NizamIQ infrastructure endpoints.",
+      "status": "pending",
+      "dependencies": [
+        "006"
+      ],
+      "acceptance_tests": [
+        "bootstrap.sh exists and passes a syntax check (bash -n bootstrap.sh exits 0)",
+        "bootstrap.sh uses a pinned GOVERNANCE_TAG variable and not a floating main branch (grep -q 'GOVERNANCE_TAG' bootstrap.sh && ! grep -q 'branch main' bootstrap.sh)",
+        "bootstrap.sh references only the generic nizam-framework repo, with no NizamIQ infrastructure endpoint (! grep -Eiq 'nizamiq|\\.svc|cluster\\.local' bootstrap.sh)",
+        "bootstrap.sh injects standard, templates, and schema (grep -q 'standard' && grep -q 'templates' && grep -q 'schema' bootstrap.sh) and includes a verify step",
+        "CHANGELOG.md contains a v0.1.0 entry describing the framework genesis"
+      ],
+      "estimated_lines": 300
+    }
+  ]
+}

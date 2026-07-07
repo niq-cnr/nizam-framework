@@ -1,0 +1,43 @@
+{
+  "feature_id": "000",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {
+      "command": "test -d standard && test -d methodology && test -d registry && test -d templates && test -d schema && test -d tools && echo PASS",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/000-qa-01.txt"
+    },
+    {
+      "command": "test -f CONTEXT.md && test -f README.md && test -f CHANGELOG.md && test -f .gitignore && echo PASS",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/000-qa-02.txt"
+    },
+    {
+      "command": "grep -q '## Out of Scope' CONTEXT.md && echo PASS",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/000-qa-03.txt"
+    },
+    {
+      "command": "test \"$(head -1 CONTEXT.md)\" = '---' && echo PASS",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/000-qa-04.txt"
+    },
+    {
+      "command": "test -f standard/README.md && test -f methodology/README.md && test -f registry/README.md && test -f templates/README.md && test -f schema/README.md && test -f tools/README.md && echo PASS",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/000-qa-05.txt"
+    },
+    {
+      "command": "test -f CONTEXT.md && test -f README.md && ! grep -riq 'nizamiq' CONTEXT.md README.md && echo PASS",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/000-qa-06.txt"
+    }
+  ],
+  "adversarial_check": {
+    "description": "Beyond the 6 listed commands: (1) verified each of the six module directories contains ONLY README.md (no premature module content from features 001-006); (2) confirmed 10 explicit non-goal files/paths are absent (bootstrap.sh, NIZAM.json, standard/NDS.md, standard/GIP.md, standard/AGF.md, standard/anti_hallucination.md, schema/frontmatter.schema.json, tools/skill.json, tools/SKILL.md, registry/nizam-index.schema.json); (3) ran a repo-wide case-insensitive 'nizamiq' grep across all tracked+untracked files (not just CONTEXT.md/README.md as the contract's narrow check requires) and found zero matches; (4) verified all six module README stubs begin with '---' frontmatter containing all 6 required keys (id/title/description/version/status/authoritative_source); (5) confirmed CHANGELOG.md contains exactly one '## [' section header ('Unreleased') with no premature v0.1.0 entry.",
+    "result": "pass",
+    "evidence": "manual bash session output captured above; no dedicated file written since these were exploratory listing/grep commands, not contract-listed verification commands"
+  },
+  "required_fixes": []
+}
