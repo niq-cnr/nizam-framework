@@ -1,0 +1,22 @@
+{
+  "feature_id": "010",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {"command": "zero stale 'final_verdict.issues/missing/unsupported' prefixed forms remain in the 3 touched files", "exit_code": 0, "evidence": ".agent/evidence/010-qa-01.txt"},
+    {"command": "AGF.md Section 4 gate-rule block matches corrected unprefixed lines verbatim", "exit_code": 0, "evidence": ".agent/evidence/010-qa-02.txt"},
+    {"command": "AGF.md and 01_execution.md gate-rule blocks are byte-identical", "exit_code": 0, "evidence": ".agent/evidence/010-qa-03.txt"},
+    {"command": "SKILL.md Section 7 json example: top-level siblings, final_verdict holds only approved", "exit_code": 0, "evidence": ".agent/evidence/010-qa-04.txt"},
+    {"command": "AGF.md's existing json example matches same sibling shape as SKILL.md's", "exit_code": 0, "evidence": ".agent/evidence/010-qa-05.txt"},
+    {"command": "CHANGELOG Unreleased mentions verdict-shape canonicalization, precedes 0.1.0", "exit_code": 0, "evidence": ".agent/evidence/010-qa-06.txt"},
+    {"command": "regression: 3 touched files retain frontmatter with 6 required keys", "exit_code": 0, "evidence": ".agent/evidence/010-qa-07.txt"},
+    {"command": "regression: zero untagged code-fence openers repo-wide", "exit_code": 0, "evidence": ".agent/evidence/010-qa-08.txt"},
+    {"command": "regression: repo-wide NizamIQ-branding sweep clean", "exit_code": 0, "evidence": ".agent/evidence/010-qa-09.txt"}
+  ],
+  "adversarial_check": {
+    "description": "Parse-and-gate simulation beyond the 9 listed commands: programmatically extracted the json examples from both standard/AGF.md and tools/SKILL.md, confirmed both use the canonical sibling-array shape (final_verdict contains ONLY 'approved'; issues/missing_acceptance_coverage/unsupported_claims are top-level siblings), then ran the documented predicate (approved===true AND all three arrays empty) against each. AGF.md's example (approved=true) correctly passes. SKILL.md's example intentionally documents approved=false as a generic shape template (not asserted to pass) and correctly fails as-is; flipping only its approved value to true and re-running the identical predicate then correctly passes, proving the documented shape and predicate genuinely compose into a working parser rather than only looking consistent in prose. Finally, mutated a copy of the now-passing doc with one non-empty issues[] entry (approved left true) and confirmed the gate correctly rejects it, demonstrating the arrays are load-bearing, not decorative.",
+    "result": "pass",
+    "evidence": ".agent/evidence/010-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

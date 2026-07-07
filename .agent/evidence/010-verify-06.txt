@@ -1,0 +1,7 @@
+COMMAND:
+test -f CHANGELOG.md || { echo "MISSING CHANGELOG.md"; exit 1; }; unreleased_line=$(grep -n "^## \[Unreleased\]" CHANGELOG.md | head -1 | cut -d: -f1); v010_line=$(grep -n "^## \[0.1.0\]" CHANGELOG.md | head -1 | cut -d: -f1); test -n "$unreleased_line" && test -n "$v010_line" && test "$unreleased_line" -lt "$v010_line" || { echo "Unreleased section missing or does not precede 0.1.0"; exit 1; }; block=$(sed -n "${unreleased_line},${v010_line}p" CHANGELOG.md); echo "$block" | grep -Eqi "verdict.shape|final_verdict" && echo PASS || { echo "Unreleased block does not mention the verdict-shape canonicalization"; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

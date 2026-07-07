@@ -1,0 +1,85 @@
+{
+  "contract_id": "010",
+  "feature_id": "010",
+  "name": "Verdict Shape Canonicalization (review follow-up)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "standard/AGF.md",
+        "purpose": "In Section 4 ('The JSON Verdict Parse Rule'), the fenced ```text gate-rule block (currently at approximately lines 73-78) reads: 'final_verdict.approved === true' / 'AND final_verdict.issues.length === 0' / 'AND final_verdict.missing_acceptance_coverage.length === 0' / 'AND final_verdict.unsupported_claims.length === 0'. Drop the 'final_verdict.' prefix from ONLY the three AND lines (issues / missing_acceptance_coverage / unsupported_claims); the 'final_verdict.approved === true' line is unchanged. The existing ```json example immediately below (approximately lines 82-84) -- {\"final_verdict\": {\"approved\": true}, \"issues\": [], \"missing_acceptance_coverage\": [], \"unsupported_claims\": []} -- already matches the corrected sibling-array shape and is NOT touched. This edit supersedes the verbatim-fragment anchor asserted by contract 009's verification[5] (which required the prefixed forms 'final_verdict.issues.length === 0' etc. to survive byte-for-byte); those prefixed fragments are retired by this contract, and the corrected unprefixed fragments become the new verbatim anchor for any future contract. No other body text changes."
+      },
+      {
+        "path": "methodology/01_execution.md",
+        "purpose": "In Section 4 ('The JSON Verdict Parse Rule'), the fenced ```text gate-rule block (currently at approximately lines 96-101) duplicates AGF.md's prefixed predicate exactly. Apply the identical fix: drop the 'final_verdict.' prefix from the three AND lines (issues / missing_acceptance_coverage / unsupported_claims), leaving 'final_verdict.approved === true' unchanged, so that after this edit the block is byte-identical to the corrected standard/AGF.md block -- this string-consistency between the two files is an existing QA cross-consistency anchor (per the 009 history entry establishing 01_execution.md as a 'restated, not redefined' reference to AGF.md Section 4). No other body text changes."
+      },
+      {
+        "path": "tools/SKILL.md",
+        "purpose": "In Section 7 ('Verdict JSON Formats'), the fenced ```json example (currently at approximately lines 157-166) nests 'issues', 'missing_acceptance_coverage', and 'unsupported_claims' as keys inside 'final_verdict' alongside 'approved'. Restructure the example so 'final_verdict' contains ONLY 'approved', and 'issues' / 'missing_acceptance_coverage' / 'unsupported_claims' become top-level sibling keys of 'final_verdict' in the same JSON object -- matching the canonical shape used by standard/AGF.md's example and by every verdict the pipeline actually emits per the orchestrator's JSON Verdict Parse Rule. AH-1: re-read the four bullet lines immediately following the block (describing 'approved', 'issues', 'missing_acceptance_coverage', 'unsupported_claims') after restructuring to confirm the 'approved -- true only when every other field below is satisfied' phrasing still reads correctly against the new top-level key ordering; adjust that bullet's wording only if the restructuring makes it misleading, otherwise leave it as-is. The note at the end of Section 7 stating a QA verdict extends this shape per schema/qa_verdict.schema.json is NOT touched. No other body text changes."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Under the existing '## [Unreleased]' heading (which remains topmost, preceding '## [0.1.0]'), add one concise bullet under the '### Fixed' subsection noting the verdict-shape canonicalization: the JSON verdict shape is now consistent across standard/AGF.md, methodology/01_execution.md, and tools/SKILL.md on the sibling-array form (final_verdict holds only 'approved'; 'issues', 'missing_acceptance_coverage', and 'unsupported_claims' are top-level siblings of final_verdict, matching actual pipeline practice). No other CHANGELOG text changes; no reordering of existing entries."
+      }
+    ]
+  },
+  "non_goals": [
+    "No changes to schema/qa_verdict.schema.json -- it validates .agent/qa/NNN.json, a distinct artifact family from the verdict-shape prose/examples this contract corrects",
+    "No edits to any completed contract, its approvals, or its evidence/qa records (000-009) -- these are immutable audit records",
+    "No edits to .agent/run_state.json -- orchestrator-owned",
+    "No files touched beyond the 4 listed in scope.files_modify",
+    "No change to standard/AGF.md's existing ```json example block -- it already reflects the corrected sibling-array shape and is left byte-identical",
+    "No change to tools/SKILL.md's closing Section 7 note referencing schema/qa_verdict.schema.json's extension of this shape",
+    "No change to the 'final_verdict.approved === true' line in either predicate block -- only the three AND lines lose their prefix",
+    "No change to any other section of AGF.md, 01_execution.md, or SKILL.md beyond the single fenced block (or, for SKILL.md, the fenced block plus its immediately adjacent bullet prose) identified above"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "zero 'final_verdict.issues' / 'final_verdict.missing' / 'final_verdict.unsupported' strings remain in the three touched shipped .md files, count-guarded on file presence",
+      "command": "files=(standard/AGF.md methodology/01_execution.md tools/SKILL.md); fail=0; for f in \"${files[@]}\"; do test -f \"$f\" || { echo \"MISSING $f\"; fail=1; continue; }; hit=$(grep -n 'final_verdict\\.\\(issues\\|missing\\|unsupported\\)' \"$f\" || true); if [ -n \"$hit\" ]; then echo \"STALE PREFIX in $f:\"; echo \"$hit\"; fail=1; fi; done; test \"$fail\" -eq 0 && echo PASS || { echo 'prefixed form(s) found above'; exit 1; }"
+    },
+    {
+      "acceptance_test": "standard/AGF.md's Section 4 gate-rule fenced block contains the four corrected conditions verbatim: 'final_verdict.approved === true' unprefixed-AND lines for issues/missing_acceptance_coverage/unsupported_claims",
+      "command": "test -f standard/AGF.md || { echo 'MISSING standard/AGF.md'; exit 1; }; python3 -c '\nimport re\ntext = open(\"standard/AGF.md\").read()\nm = re.search(r\"## 4\\..*?```text\\n(.*?)\\n```\", text, re.S)\nassert m, \"gate-rule text-fenced block not found under Section 4\"\nblock = m.group(1)\nexpected = [\n    \"final_verdict.approved === true\",\n    \"AND issues.length === 0\",\n    \"AND missing_acceptance_coverage.length === 0\",\n    \"AND unsupported_claims.length === 0\",\n]\nlines = [l.strip() for l in block.strip().splitlines()]\nassert lines == expected, f\"block mismatch: {lines} != {expected}\"\nprint(\"PASS\")\n'"
+    },
+    {
+      "acceptance_test": "standard/AGF.md and methodology/01_execution.md Section 4 gate-rule fenced blocks are byte-identical after the fix (existing QA cross-consistency anchor)",
+      "command": "test -f standard/AGF.md || { echo 'MISSING standard/AGF.md'; exit 1; }; test -f methodology/01_execution.md || { echo 'MISSING methodology/01_execution.md'; exit 1; }; python3 -c '\nimport re\ndef extract(path):\n    text = open(path).read()\n    m = re.search(r\"## 4\\..*?```text\\n(.*?)\\n```\", text, re.S)\n    assert m, f\"gate-rule text-fenced block not found in {path}\"\n    return m.group(1).strip()\na = extract(\"standard/AGF.md\")\nb = extract(\"methodology/01_execution.md\")\nassert a == b, f\"blocks differ:\\nAGF.md:\\n{a}\\n---\\n01_execution.md:\\n{b}\"\nprint(\"PASS\")\n'"
+    },
+    {
+      "acceptance_test": "tools/SKILL.md Section 7's fenced json example parses as valid JSON with 'issues', 'missing_acceptance_coverage', and 'unsupported_claims' as top-level keys (siblings of 'final_verdict'), and 'approved' nested inside 'final_verdict'",
+      "command": "test -f tools/SKILL.md || { echo 'MISSING tools/SKILL.md'; exit 1; }; python3 -c '\nimport re, json\ntext = open(\"tools/SKILL.md\").read()\nm = re.search(r\"## 7\\..*?```json\\n(.*?)\\n```\", text, re.S)\nassert m, \"Section 7 json-fenced example not found\"\ndoc = json.loads(m.group(1))\ntop_level = {\"issues\", \"missing_acceptance_coverage\", \"unsupported_claims\"}\nassert top_level <= set(doc.keys()), f\"missing top-level key(s): {top_level - set(doc.keys())}\"\nassert \"final_verdict\" in doc and isinstance(doc[\"final_verdict\"], dict), \"final_verdict missing or not an object\"\nassert \"approved\" in doc[\"final_verdict\"], \"approved missing from final_verdict\"\nassert not (top_level & set(doc[\"final_verdict\"].keys())), \"arrays still nested inside final_verdict\"\nprint(\"PASS\")\n'"
+    },
+    {
+      "acceptance_test": "standard/AGF.md's existing json example (immediately after the gate-rule block) still parses and matches the same top-level-sibling shape as tools/SKILL.md's example (consistency across both examples)",
+      "command": "test -f standard/AGF.md || { echo 'MISSING standard/AGF.md'; exit 1; }; python3 -c '\nimport re, json\ntext = open(\"standard/AGF.md\").read()\nm = re.search(r\"```text\\n.*?\\n```\\s*\\n.*?```json\\n(.*?)\\n```\", text, re.S)\nassert m, \"json-fenced example following the text-fenced gate-rule block not found\"\ndoc = json.loads(m.group(1))\ntop_level = {\"issues\", \"missing_acceptance_coverage\", \"unsupported_claims\"}\nassert top_level <= set(doc.keys()), f\"missing top-level key(s): {top_level - set(doc.keys())}\"\nassert \"final_verdict\" in doc and isinstance(doc[\"final_verdict\"], dict), \"final_verdict missing or not an object\"\nassert doc[\"final_verdict\"].get(\"approved\") is True, \"final_verdict.approved must be true in this example\"\nassert not (top_level & set(doc[\"final_verdict\"].keys())), \"arrays nested inside final_verdict, shape mismatch vs SKILL.md\"\nprint(\"PASS\")\n'"
+    },
+    {
+      "acceptance_test": "CHANGELOG.md's '## [Unreleased]' section mentions the verdict-shape canonicalization and remains topmost, preceding '## [0.1.0]'",
+      "command": "test -f CHANGELOG.md || { echo 'MISSING CHANGELOG.md'; exit 1; }; unreleased_line=$(grep -n '^## \\[Unreleased\\]' CHANGELOG.md | head -1 | cut -d: -f1); v010_line=$(grep -n '^## \\[0.1.0\\]' CHANGELOG.md | head -1 | cut -d: -f1); test -n \"$unreleased_line\" && test -n \"$v010_line\" && test \"$unreleased_line\" -lt \"$v010_line\" || { echo 'Unreleased section missing or does not precede 0.1.0'; exit 1; }; block=$(sed -n \"${unreleased_line},${v010_line}p\" CHANGELOG.md); echo \"$block\" | grep -Eqi 'verdict.shape|final_verdict' && echo PASS || { echo 'Unreleased block does not mention the verdict-shape canonicalization'; exit 1; }"
+    },
+    {
+      "acceptance_test": "regression: the 3 touched .md files (standard/AGF.md, methodology/01_execution.md, tools/SKILL.md) still start with frontmatter containing all 6 required NDS keys",
+      "command": "files=(standard/AGF.md methodology/01_execution.md tools/SKILL.md); fail=0; for f in \"${files[@]}\"; do test -f \"$f\" || { echo \"MISSING $f\"; fail=1; continue; }; test \"$(head -1 \"$f\")\" = '---' || { echo \"NOT FRONTMATTER: $f\"; fail=1; }; for k in id title description version status authoritative_source; do grep -q \"^$k:\" \"$f\" || { echo \"MISSING $k in $f\"; fail=1; }; done; done; test \"$fail\" -eq 0 && echo PASS || { echo 'frontmatter regression found above'; exit 1; }"
+    },
+    {
+      "acceptance_test": "regression: zero untagged code-fence openers remain repo-wide across shipped .md files (not just the 3 touched files)",
+      "command": "for d in standard methodology registry templates schema tools; do test -d \"$d\" || { echo \"MISSING dir $d\"; exit 1; }; done; fail=0; while IFS= read -r -d '' f; do bad=$(awk -v f=\"$f\" 'BEGIN{intxt=0} /^```/{ if (intxt==0) { tag=$0; sub(/^```/,\"\",tag); if (tag==\"\") print f\":\"NR; intxt=1 } else { intxt=0 } }' \"$f\"); if [ -n \"$bad\" ]; then echo \"$bad\"; fail=1; fi; done < <(find CONTEXT.md README.md standard methodology registry templates schema tools -name '*.md' -print0); test \"$fail\" -eq 0 && echo PASS || { echo 'untagged fence(s) found above'; exit 1; }"
+    },
+    {
+      "acceptance_test": "regression: repo-wide shipped-content NizamIQ-branding sweep remains clean after this contract's edits (guarded so an absent-directory false pass cannot occur)",
+      "command": "for d in standard methodology registry templates schema tools; do test -d \"$d\" || { echo \"MISSING dir $d, refusing to trust an absence-of-match result\"; exit 1; }; done; test -f CONTEXT.md && test -f README.md && test -f CHANGELOG.md && test -f NIZAM.json && test -f bootstrap.sh || { echo 'MISSING one or more root files, refusing to trust an absence-of-match result'; exit 1; }; if grep -ril 'nizamiq' CONTEXT.md README.md CHANGELOG.md NIZAM.json bootstrap.sh standard/ methodology/ registry/ templates/ schema/ tools/ 2>/dev/null; then echo FAIL; exit 1; else echo PASS; fi"
+    }
+  ],
+  "estimated_lines": 20,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/010-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/010-verify-01.txt for the first entry, ..., .agent/evidence/010-verify-09.txt for the ninth). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T23:40:00Z",
+    "revisions": 0
+  }
+}

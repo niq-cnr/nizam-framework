@@ -180,6 +180,23 @@
         "NIZAM.json still validates against its schema with all indexed paths resolving (regression guard)"
       ],
       "estimated_lines": 90
+    },
+    {
+      "id": "010",
+      "name": "Verdict Shape Canonicalization (review follow-up)",
+      "description": "Human-directed remediation of the still-valid PR #1 follow-up finding (review comment 3538444007): the JSON verdict shape drifts across docs. Canonicalize on the sibling-array shape used by every verdict the pipeline actually emits (final_verdict holds approved; issues/missing_acceptance_coverage/unsupported_claims are top-level siblings): fix the prefixed predicates in standard/AGF.md and methodology/01_execution.md, restructure tools/SKILL.md Section 7's nested example, add CHANGELOG Unreleased entry.",
+      "status": "complete",
+      "dependencies": [
+        "009"
+      ],
+      "acceptance_tests": [
+        "zero 'final_verdict.issues'/'final_verdict.missing'/'final_verdict.unsupported' strings remain in shipped .md",
+        "AGF.md predicates and its json example agree: predicates read issues.length/missing_acceptance_coverage.length/unsupported_claims.length without final_verdict prefix",
+        "tools/SKILL.md Section 7 json example parses and has issues/missing_acceptance_coverage/unsupported_claims as TOP-LEVEL keys, approved inside final_verdict",
+        "AGF.md and 01_execution.md predicate blocks remain string-consistent with each other",
+        "CHANGELOG [Unreleased] mentions the verdict-shape canonicalization"
+      ],
+      "estimated_lines": 20
     }
   ]
 }

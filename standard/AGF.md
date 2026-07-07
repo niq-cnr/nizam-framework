@@ -72,9 +72,9 @@ all four of the following hold simultaneously**:
 
 ```text
 final_verdict.approved === true
-AND final_verdict.issues.length === 0
-AND final_verdict.missing_acceptance_coverage.length === 0
-AND final_verdict.unsupported_claims.length === 0
+AND issues.length === 0
+AND missing_acceptance_coverage.length === 0
+AND unsupported_claims.length === 0
 ```
 
 A verdict block satisfying all four conditions above looks like this:

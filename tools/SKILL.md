@@ -157,15 +157,15 @@ this shape:
 ```json
 {
   "final_verdict": {
-    "approved": false,
-    "issues": [],
-    "missing_acceptance_coverage": [],
-    "unsupported_claims": []
-  }
+    "approved": false
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": []
 }
 ```
 
-- `approved` — `true` only when every other field below is satisfied and the
+- `approved` — `true` only when every sibling field below is satisfied and the
   reviewing role has no remaining objection.
 - `issues` — non-empty means rejection, regardless of `approved`'s value.
 - `missing_acceptance_coverage` — any acceptance test not traceable to a

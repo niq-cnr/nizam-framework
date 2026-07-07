@@ -1,0 +1,20 @@
+(script: w02.sh)
+test -f standard/AGF.md || { echo 'MISSING standard/AGF.md'; exit 1; }
+python3 -c '
+import re
+text = open("standard/AGF.md").read()
+m = re.search(r"## 4\..*?```text\n(.*?)\n```", text, re.S)
+assert m, "gate-rule text-fenced block not found under Section 4"
+block = m.group(1)
+expected = [
+    "final_verdict.approved === true",
+    "AND issues.length === 0",
+    "AND missing_acceptance_coverage.length === 0",
+    "AND unsupported_claims.length === 0",
+]
+lines = [l.strip() for l in block.strip().splitlines()]
+assert lines == expected, f"block mismatch: {lines} != {expected}"
+print("PASS")
+'
+PASS
+EXIT:0

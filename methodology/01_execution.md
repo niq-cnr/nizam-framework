@@ -95,9 +95,9 @@ machine-parseable JSON verdict block. Advancement past that gate is permitted
 
 ```text
 final_verdict.approved === true
-AND final_verdict.issues.length === 0
-AND final_verdict.missing_acceptance_coverage.length === 0
-AND final_verdict.unsupported_claims.length === 0
+AND issues.length === 0
+AND missing_acceptance_coverage.length === 0
+AND unsupported_claims.length === 0
 ```
 
 This is restated here, not redefined — `standard/AGF.md` Section 4 is

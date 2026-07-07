@@ -24,6 +24,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   ```json``` language tag per NDS Sec 6.2.
 - `.agent/product_spec.md`: `status` corrected from `DRAFT` to the schema-valid
   lowercase `draft`.
+- Verdict-shape canonicalization: the JSON verdict shape is now consistent
+  across `standard/AGF.md`, `methodology/01_execution.md`, and
+  `tools/SKILL.md` on the sibling-array form (`final_verdict` holds only
+  `approved`; `issues`, `missing_acceptance_coverage`, and
+  `unsupported_claims` are top-level siblings of `final_verdict`, matching
+  actual pipeline practice).
 
 ### Changed
 

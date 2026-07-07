@@ -1,0 +1,7 @@
+COMMAND:
+files=(standard/AGF.md methodology/01_execution.md tools/SKILL.md); fail=0; for f in "${files[@]}"; do test -f "$f" || { echo "MISSING $f"; fail=1; continue; }; hit=$(grep -n 'final_verdict\.\(issues\|missing\|unsupported\)' "$f" || true); if [ -n "$hit" ]; then echo "STALE PREFIX in $f:"; echo "$hit"; fail=1; fi; done; test "$fail" -eq 0 && echo PASS || { echo 'prefixed form(s) found above'; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

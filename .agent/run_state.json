@@ -3,10 +3,10 @@
   "current_phase": "001-framework-genesis",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-07-07T22:30:00Z",
+  "updated_at": "2026-07-08T00:10:00Z",
   "scope_budget": {
     "original_estimate_lines": 3850,
-    "total_lines_changed": 4136,
+    "total_lines_changed": 4156,
     "per_feature": [
       {
         "id": "000",
@@ -66,6 +66,12 @@
         "estimated": 90,
         "actual": 146,
         "flag": null
+      },
+      {
+        "id": "010",
+        "estimated": 20,
+        "actual": 20,
+        "flag": null
       }
     ]
   },
@@ -95,6 +101,10 @@
       "limit": 3
     },
     "009-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "010-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -229,6 +239,21 @@
       "at": "2026-07-07T22:30:00Z",
       "event": "amendment_complete",
       "detail": "Feature 009 complete: both gates first-pass, QA 16/16 + python3-less --verify-only simulation + frontmatter schema re-validation. 15 still-valid review findings fixed across 27 files; 13 findings on immutable audit artifacts skipped with documented reasons. Pushing to PR #1."
+    },
+    {
+      "at": "2026-07-07T23:10:00Z",
+      "event": "amendment_authorized",
+      "detail": "PR #1 follow-up review comment 3538444007 verified valid: verdict-shape drift across AGF.md predicates (nested paths), AGF.md example (sibling arrays), 01_execution.md predicates (nested paths), SKILL.md Sec 7 example (nested arrays). Feature 010 registered; canonical shape = sibling arrays per actual pipeline practice. All 29 prior review threads answered on the PR."
+    },
+    {
+      "at": "2026-07-07T23:40:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 010 (verdict shape canonicalization) approved first-pass by both gates; extraction/assertion mechanisms fixture-tested against live files. Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T00:10:00Z",
+      "event": "amendment_complete",
+      "detail": "Feature 010 complete: both gates first-pass, QA 9/9 + parse-and-gate adversarial simulation. Verdict shape canonicalized (sibling arrays) across AGF.md, 01_execution.md, SKILL.md. All 30 PR #1 review threads answered on GitHub. Pushing."
     }
   ]
 }

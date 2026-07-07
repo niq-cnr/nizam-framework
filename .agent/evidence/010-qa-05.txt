@@ -1,0 +1,17 @@
+(script: w05.sh)
+test -f standard/AGF.md || { echo 'MISSING standard/AGF.md'; exit 1; }
+python3 -c '
+import re, json
+text = open("standard/AGF.md").read()
+m = re.search(r"```text\n.*?\n```\s*\n.*?```json\n(.*?)\n```", text, re.S)
+assert m, "json-fenced example following the text-fenced gate-rule block not found"
+doc = json.loads(m.group(1))
+top_level = {"issues", "missing_acceptance_coverage", "unsupported_claims"}
+assert top_level <= set(doc.keys()), f"missing top-level key(s): {top_level - set(doc.keys())}"
+assert "final_verdict" in doc and isinstance(doc["final_verdict"], dict), "final_verdict missing or not an object"
+assert doc["final_verdict"].get("approved") is True, "final_verdict.approved must be true in this example"
+assert not (top_level & set(doc["final_verdict"].keys())), "arrays nested inside final_verdict, shape mismatch vs SKILL.md"
+print("PASS")
+'
+PASS
+EXIT:0

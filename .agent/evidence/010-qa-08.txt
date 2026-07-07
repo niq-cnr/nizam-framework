@@ -1,0 +1,4 @@
+(script: w08.sh)
+for d in standard methodology registry templates schema tools; do test -d "$d" || { echo "MISSING dir $d"; exit 1; }; done; fail=0; while IFS= read -r -d '' f; do bad=$(awk -v f="$f" 'BEGIN{intxt=0} /^```/{ if (intxt==0) { tag=$0; sub(/^```/,"",tag); if (tag=="") print f":"NR; intxt=1 } else { intxt=0 } }' "$f"); if [ -n "$bad" ]; then echo "$bad"; fail=1; fi; done < <(find CONTEXT.md README.md standard methodology registry templates schema tools -name '*.md' -print0); test "$fail" -eq 0 && echo PASS || { echo 'untagged fence(s) found above'; exit 1; }
+PASS
+EXIT:0
