@@ -1,0 +1,48 @@
+{
+  "feature_id": "003",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {
+      "command": "ls methodology/*.md | wc -l equals 7",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/003-qa-01.txt"
+    },
+    {
+      "command": "03_circuit_breaker.md defines 3-strike/three-attempt limit",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/003-qa-02.txt"
+    },
+    {
+      "command": "01_execution.md cross-references 03_circuit_breaker",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/003-qa-03.txt"
+    },
+    {
+      "command": "04_tool_driven_state.md mandates NIZAM.json index querying",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/003-qa-04.txt"
+    },
+    {
+      "command": "every methodology/*.md has frontmatter with 6 required keys",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/003-qa-05.txt"
+    },
+    {
+      "command": "no 'nizamiq' branding in methodology/ (file-count guarded)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/003-qa-06.txt"
+    },
+    {
+      "command": "methodology/ contains exactly the 7 contracted files, no stray extras",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/003-qa-07.txt"
+    }
+  ],
+  "adversarial_check": {
+    "description": "Three-part check beyond the 7 listed commands, using python3+yaml+jsonschema+re: (a) parsed and validated all 7 methodology/*.md frontmatter blocks against schema/frontmatter.schema.json -- all 7 valid (id kebab-case, version semver, status enum, authoritative_source non-empty). (b) Cross-checked methodology/01_execution.md's JSON Verdict Parse Rule text against standard/AGF.md for string consistency: both documents contain all four gate fragments verbatim ('final_verdict.approved === true', 'final_verdict.issues.length === 0', 'final_verdict.missing_acceptance_coverage.length === 0', 'final_verdict.unsupported_claims.length === 0') -- no drift between the two documents' stated gate rule. (c) Confirmed 03_circuit_breaker.md's attempt-strategy table explicitly labels attempt '4+' as 'FORBIDDEN' in proximity (regex-matched within 80 chars in both directions), not merely co-occurring words elsewhere in the document.",
+    "result": "pass",
+    "evidence": ".agent/evidence/003-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}
