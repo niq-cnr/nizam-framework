@@ -1,0 +1,4 @@
+test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; count=$(grep -c 'github.com/niq-cnr/nizam-framework.git' bootstrap.sh); echo "count=$count"; test "$count" -eq 1 && echo PASS || { echo 'expected exactly 1 occurrence of canonical URL'; exit 1; }
+count=1
+PASS
+EXIT:0

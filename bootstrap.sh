@@ -32,7 +32,7 @@
 set -euo pipefail
 
 readonly SCRIPT_NAME="$(basename -- "${BASH_SOURCE[0]}")"
-readonly DEFAULT_GOVERNANCE_REPO_URL="https://github.com/nizam-framework/nizam-framework.git"
+readonly DEFAULT_GOVERNANCE_REPO_URL="https://github.com/niq-cnr/nizam-framework.git"
 readonly DEFAULT_TARGET_DIR=".nizam"
 
 # The minimum required-file set per standard/GIP.md Section 2.1: the four

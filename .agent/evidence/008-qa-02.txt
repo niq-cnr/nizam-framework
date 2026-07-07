@@ -1,0 +1,4 @@
+test -f bootstrap.sh || { echo 'MISSING bootstrap.sh, refusing to trust an absence-of-match result'; exit 1; }; count=$(grep -c 'github.com/nizam-framework/nizam-framework' bootstrap.sh || true); echo "count=$count"; test "$count" -eq 0 && echo PASS || { echo 'placeholder URL still present'; exit 1; }
+count=0
+PASS
+EXIT:0

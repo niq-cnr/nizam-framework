@@ -1,0 +1,5 @@
+stat=$(git diff HEAD --numstat -- bootstrap.sh); echo "$stat"; ins=$(echo "$stat" | awk '{print $1}'); del=$(echo "$stat" | awk '{print $2}'); lines=$(echo "$stat" | wc -l); test "$lines" -eq 1 && test "$ins" -eq 1 && test "$del" -eq 1 || { echo 'expected exactly 1 insertion and 1 deletion in bootstrap.sh'; exit 1; }; scope=$(git diff HEAD --name-only | grep -v '^\.agent/' | LC_ALL=C sort | tr '\n' ' '); echo "scope=[$scope]"; test "$scope" = "bootstrap.sh " && echo PASS || { echo "unscoped diff touches files beyond bootstrap.sh (excluding .agent/ overhead): [$scope]"; exit 1; }
+1	1	bootstrap.sh
+scope=[bootstrap.sh ]
+PASS
+EXIT:0
