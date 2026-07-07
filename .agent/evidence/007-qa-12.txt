@@ -1,0 +1,10 @@
+test -f docs/planning/manifest.json || { echo 'MISSING docs/planning/manifest.json'; exit 1; }; python3 -c "
+import json
+d = json.load(open('docs/planning/manifest.json'))
+matches = [p for p in d.get('phases', []) if p.get('id') == '001-framework-genesis']
+assert matches, 'phase 001-framework-genesis not found in manifest.json'
+assert matches[0].get('status') == 'complete', f'expected status complete, got {matches[0].get(\"status\")}'
+print('PASS')
+"
+PASS
+EXIT:0

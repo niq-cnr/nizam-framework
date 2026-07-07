@@ -1,0 +1,4 @@
+COMMAND: test -f CHANGELOG.md || { echo 'MISSING CHANGELOG.md'; exit 1; }; grep -q '\[0.1.0\]' CHANGELOG.md || { echo 'no [0.1.0] heading found'; exit 1; }; grep -q '\[Unreleased\]' CHANGELOG.md || { echo 'no [Unreleased] heading found'; exit 1; }; v_line=$(grep -n '\[0.1.0\]' CHANGELOG.md | head -1 | cut -d: -f1); u_line=$(grep -n '\[Unreleased\]' CHANGELOG.md | head -1 | cut -d: -f1); test "$u_line" -lt "$v_line" && echo PASS || { echo "expected [Unreleased] (line $u_line) above [0.1.0] (line $v_line)"; exit 1; }
+--- OUTPUT ---
+PASS
+EXIT:0

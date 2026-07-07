@@ -1,0 +1,4 @@
+COMMAND: test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -q 'provenance.json' bootstrap.sh && grep -q 'GOVERNANCE_REPO_URL' bootstrap.sh && grep -Eiq 'timestamp|date' bootstrap.sh && echo PASS || { echo 'provenance recording incomplete'; exit 1; }
+--- OUTPUT ---
+PASS
+EXIT:0

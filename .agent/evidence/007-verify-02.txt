@@ -1,0 +1,4 @@
+COMMAND: test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -q 'set -euo pipefail' bootstrap.sh && echo PASS || { echo 'strict mode line not found'; exit 1; }
+--- OUTPUT ---
+PASS
+EXIT:0

@@ -1,0 +1,72 @@
+=== [1] Build an isolated scratch source repo (scratchpad only) mirroring the real repo's working tree, excluding .git/.agent ===
+scratch source repo populated with: NIZAM.json
+schema
+standard
+templates
+tools
+
+=== [2] git init + commit + tag the scratch source repo (a throwaway repo, NOT the real repo) ===
+scratch repo tagged: v0.1.0-e2e-test
+
+=== [3] Run the REAL bootstrap.sh (unmodified, from the real repo) against the scratch source repo via file:// URL, installing into a scratch consumer dir ===
+bootstrap.sh: cloning file:///tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/e2e_src_repo at pinned tag v0.1.0-e2e-test (--depth 1)...
+Cloning into '/tmp/nizam-bootstrap-clone.XNUXeE'...
+Note: switching to '907747670800ba6352f3c6f64798bed1be727c87'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: staging governance payload in ./.nizam-stage.BsE8g6...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 26 indexed path(s) resolve under ./.nizam-stage.BsE8g6.
+bootstrap.sh: recording provenance (framework_version=0.1.0, tag=v0.1.0-e2e-test)...
+bootstrap.sh: install complete. Governance payload version 0.1.0 (tag v0.1.0-e2e-test) is now at '.nizam'.
+bootstrap install exit code: 0
+
+=== [4] Confirm the scratch consumer's .nizam/ was populated and passes --verify-only BEFORE tampering ===
+total 12
+drwx------ 6 cnross cnross  160 Jul  7 13:30 .
+drwxrwxr-x 3 cnross cnross   60 Jul  7 13:30 ..
+-rw-rw-r-- 1 cnross cnross 7926 Jul  7 13:30 NIZAM.json
+-rw-rw-r-- 1 cnross cnross  234 Jul  7 13:30 provenance.json
+drwxrwxr-x 2 cnross cnross  200 Jul  7 13:30 schema
+drwxrwxr-x 2 cnross cnross  140 Jul  7 13:30 standard
+drwxrwxr-x 2 cnross cnross  200 Jul  7 13:30 templates
+drwxrwxr-x 2 cnross cnross  120 Jul  7 13:30 tools
+bootstrap.sh: verify-only: checking '.nizam' against pinned tag 'v0.1.0-e2e-test' (no clone, no network)...
+NIZAM.json parses; 26 indexed path(s) resolve under .nizam.
+bootstrap.sh: verify-only: PASS -- '.nizam' is present, well-formed, and matches pinned tag 'v0.1.0-e2e-test'.
+pre-tamper --verify-only exit code: 0
+
+=== [5] TAMPER: delete one injected schema file from the scratch consumer's .nizam/ ===
+deleted .nizam/schema/frontmatter.schema.json ; remaining schema files: README.md
+contract.schema.json
+feature_list.schema.json
+manifest.schema.json
+phase.schema.json
+qa_verdict.schema.json
+run_state.schema.json
+
+=== [6] Confirm --verify-only DETECTS the drift (expected exit code 1) ===
+bootstrap.sh: verify-only: checking '.nizam' against pinned tag 'v0.1.0-e2e-test' (no clone, no network)...
+bootstrap.sh: error: required governance file missing or empty under '.nizam': schema/frontmatter.schema.json
+post-tamper --verify-only exit code: 1
+DRIFT DETECTION: PASS (exit 1 as expected after deleting an injected file)
+
+=== [7] Confirm the REAL repo was untouched by this e2e run ===
+no stray .nizam/ or e2e artifacts in real repo working tree
+confirmed: /home/cnross/workspace02/nizam-framework/.nizam does not exist
+confirmed: no e2e tag in real repo
+EXIT:0

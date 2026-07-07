@@ -1,12 +1,12 @@
 {
   "repository": "nizam-framework",
   "current_phase": "001-framework-genesis",
-  "current_feature": "007",
-  "status": "contract_negotiation",
-  "updated_at": "2026-07-07T16:20:00Z",
+  "current_feature": null,
+  "status": "phase_complete",
+  "updated_at": "2026-07-07T18:30:00Z",
   "scope_budget": {
     "original_estimate_lines": 3850,
-    "total_lines_changed": 3553,
+    "total_lines_changed": 3988,
     "per_feature": [
       {
         "id": "000",
@@ -48,6 +48,12 @@
         "estimated": 400,
         "actual": 516,
         "flag": null
+      },
+      {
+        "id": "007",
+        "estimated": 300,
+        "actual": 435,
+        "flag": null
       }
     ]
   },
@@ -65,6 +71,10 @@
       "limit": 3
     },
     "006-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "007-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -159,6 +169,16 @@
       "at": "2026-07-07T16:20:00Z",
       "event": "feature_complete",
       "detail": "Feature 006 complete: contract took 1 revision (path-walker), Mode B first-pass, QA 11/11 + router adversarial pass. 516 lines vs 400 est. Cumulative 3553/5005. Advancing to 007 (final feature)."
+    },
+    {
+      "at": "2026-07-07T17:15:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 007 approved after 1 revision (Keep-a-Changelog ordering corrected \u2014 orchestrator instruction overruled by evaluator; floating-branch grep precision). Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T18:30:00Z",
+      "event": "phase_complete",
+      "detail": "Feature 007 complete (QA 12/12 + drift-detection e2e). All 8 features complete. Final review sweep clean: zero branding/endpoint strings in shipped files, NIZAM.json schema-valid with all 71 paths resolving, all frontmatter complete, bootstrap.sh functional. Total 3988/5005 lines (80% of estimate ceiling). Phase 001-framework-genesis CLOSED. Awaiting human: PR + v0.1.0 tag."
     }
   ]
 }

@@ -1,0 +1,4 @@
+COMMAND: test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -q 'standard' bootstrap.sh && grep -q 'templates' bootstrap.sh && grep -q 'schema' bootstrap.sh && grep -Eiq 'verify' bootstrap.sh && echo PASS || { echo 'missing an injected module reference or a verify step'; exit 1; }
+--- OUTPUT ---
+PASS
+EXIT:0

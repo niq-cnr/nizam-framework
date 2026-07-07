@@ -1,0 +1,4 @@
+COMMAND: test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -q -- '--verify-only' bootstrap.sh && echo PASS || { echo 'no --verify-only flag found'; exit 1; }
+--- OUTPUT ---
+PASS
+EXIT:0
