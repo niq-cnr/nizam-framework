@@ -4,7 +4,7 @@ title: "Standard Module — Index"
 description: "Index for the standard/ module: the four documentation and governance standards every consumer repository inherits — documentation standard, governance inheritance, agent governance, and anti-hallucination constraints."
 version: 0.2.0
 status: active
-authoritative_source: nizam-framework/standard/README.md
+authoritative_source: standard/README.md
 ---
 
 # standard/

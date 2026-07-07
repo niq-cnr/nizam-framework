@@ -3,7 +3,7 @@ id: nizam-product-spec
 title: "Nizam Framework — Product Specification"
 description: "Architecture and scope specification for Nizam, a generalised AI-legible versioned governance framework distilled from the NizamIQ ecosystem."
 tags: [spec, governance, framework, ai-legible, mono-repo]
-status: DRAFT
+status: draft
 last_audited: "2026-07-07"
 authoritative_source: NA
 version: 1.0.0

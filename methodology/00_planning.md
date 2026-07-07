@@ -4,7 +4,7 @@ title: "Planning Enforcer"
 description: "The mandatory pre-code planning protocol: the spec + feature-DAG artifact pair every phase must produce before implementation begins, the dependency enforcement rule, atomic-step decomposition, and the scope budget protocol."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/methodology/00_planning.md
+authoritative_source: methodology/00_planning.md
 ---
 
 # Planning Enforcer
@@ -89,7 +89,7 @@ Before any feature is handed from planning to implementation (i.e. before a
 Generator is asked to propose a contract for it), the following gate algorithm
 MUST be applied:
 
-```
+```text
 For the next feature with status "pending":
   1. Read its "dependencies" array.
   2. For each dependency id in that array, resolve its current status:
@@ -136,7 +136,12 @@ actual lines changed for that feature against two thresholds, both tracked in
    three completed features, the feature is flagged. A flag does not halt the
    pipeline by itself — it requires an explicit human acknowledgment recorded
    before the next feature begins, so that scope creep is visible rather than
-   silently absorbed.
+   silently absorbed. When fewer than three features have completed, the
+   rolling average is computed over however many completed features actually
+   exist rather than assumed to be three. The very first completed feature has
+   no rolling baseline at all and cannot be flagged by this check — it is only
+   subject to its own `estimated_lines` figure and to the cumulative check
+   below.
 2. **Cumulative check.** If the running total of lines changed across the whole
    phase exceeds **130% of the phase's `original_estimate_lines`**, the pipeline
    MUST HALT, log the overrun to the technical-debt register, and require

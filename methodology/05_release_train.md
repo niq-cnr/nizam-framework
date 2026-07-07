@@ -4,7 +4,7 @@ title: "Release Train Protocol"
 description: "The framework's own release discipline: semantic-version git-tag cuts, what constitutes a breaking vs minor vs patch change, changelog discipline, and the consumer upgrade path via bootstrap re-run against a new pinned tag."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/methodology/05_release_train.md
+authoritative_source: methodology/05_release_train.md
 ---
 
 # Release Train Protocol

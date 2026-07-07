@@ -7,7 +7,40 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-_No unreleased changes._
+### Fixed
+
+- `bootstrap.sh`: `--verify-only` now checks for `python3` up front (via
+  `require_command python3`), so a python3-less machine gets the clear
+  "required command not found" diagnostic instead of a misleading generic
+  failure from `check_nizam_index()`/`check_provenance_tag()`.
+- NDS compliance: `authoritative_source` frontmatter values across all shipped
+  governance `.md` files are now repo-relative (the stale `nizam-framework/`
+  prefix is stripped), matching `NIZAM.json`'s existing repo-relative
+  precedent.
+- NDS compliance: every previously-untagged fenced code block across the
+  shipped docs (`standard/AGF.md`, `standard/NDS.md`,
+  `methodology/00_planning.md`, `methodology/01_execution.md`,
+  `registry/scope_definition_patterns.md`) now carries an honest ```text``` or
+  ```json``` language tag per NDS Sec 6.2.
+- `.agent/product_spec.md`: `status` corrected from `DRAFT` to the schema-valid
+  lowercase `draft`.
+
+### Changed
+
+- `methodology/00_planning.md`: the Scope Budget Protocol's per-feature check
+  now defines the rolling-average bootstrap rule for when fewer than three
+  features have completed.
+- `methodology/03_circuit_breaker.md`: Section 4's breach procedure now
+  requires discarding untracked/generated artifacts (not just a
+  `git reset --hard`) on circuit-breaker trip, and merges the prior two
+  separate BLOCKED-state writes into one atomic write single-sourced from the
+  phase document's step-level status.
+- `standard/AGF.md`: the JSON Verdict Parse Rule now includes a parse-valid
+  example verdict block alongside the existing gate-rule fragment.
+- `templates/ADR_TEMPLATE.md`, `templates/AGENTS.md`, `templates/README.md`,
+  `tools/interface.md`: documentation corrections (PROPOSED default status,
+  single-token session-start placeholder, disambiguated `product_spec.md`
+  path, corrected checklist section citations).
 
 ## [0.1.0] - 2026-07-07
 

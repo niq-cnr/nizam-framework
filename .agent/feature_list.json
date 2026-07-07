@@ -163,6 +163,23 @@
         "timeout 5 bash bootstrap.sh --help exits 0"
       ],
       "estimated_lines": 1
+    },
+    {
+      "id": "009",
+      "name": "PR #1 Review Remediation (post-phase amendment)",
+      "description": "Human-directed remediation of still-valid code-review findings on shipped content: bootstrap.sh --verify-only python3 prerequisite; planning-doc rolling-average bootstrap rule; circuit-breaker cleanup of untracked artifacts + single-sourced BLOCKED state; NDS 6.2 tagged-fence compliance across all shipped docs; repo-relative authoritative_source frontmatter per NDS Sec 2 (all shipped .md); AGF JSON verdict example; ADR status default documentation; AGENTS.md single-token timestamp placeholder; templates/README .agent/product_spec.md reference; interface.md checklist cross-reference repair; product_spec status enum normalization; CHANGELOG Unreleased entry.",
+      "status": "complete",
+      "dependencies": [
+        "008"
+      ],
+      "acceptance_tests": [
+        "bootstrap.sh run_verify_only() calls require_command python3 and bash -n passes",
+        "zero 'authoritative_source: nizam-framework/' matches remain in shipped .md frontmatter",
+        "zero untagged code-fence openers remain across shipped .md files",
+        "AGF.md retains the four verbatim gate fragments and gains a parse-valid tagged JSON verdict example",
+        "NIZAM.json still validates against its schema with all indexed paths resolving (regression guard)"
+      ],
+      "estimated_lines": 90
     }
   ]
 }

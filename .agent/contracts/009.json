@@ -1,0 +1,207 @@
+{
+  "contract_id": "009",
+  "feature_id": "009",
+  "name": "PR #1 Review Remediation (post-phase amendment)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "bootstrap.sh",
+        "purpose": "Inside run_verify_only(), immediately after its 'require_pinned_tag \"${GOVERNANCE_TAG}\"' line, add 'require_command python3'. git is deliberately NOT required there (--verify-only performs no clone). Without this guard, check_nizam_index() and check_provenance_tag() -- both of which shell out to python3 -- fail on a python3-less machine with a misleading generic error instead of the clear 'required command not found' message require_command already produces for run_install(). No other line in bootstrap.sh changes."
+      },
+      {
+        "path": "methodology/00_planning.md",
+        "purpose": "In Section 6 (Scope Budget Protocol), within the numbered 'Per-feature check' item, add 2-4 inline sentences defining the rolling-average bootstrap rule: when fewer than three features have completed, the rolling average is computed over however many completed features actually exist, and the very first completed feature has no rolling baseline at all -- it cannot be flagged by this check, only by its own estimate and by the cumulative check. Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value (Fix 7, NDS Sec 2) so it reads 'methodology/00_planning.md'. No other body text changes."
+      },
+      {
+        "path": "methodology/01_execution.md",
+        "purpose": "Tag the three currently-untagged fenced blocks at approximately lines 26, 56, and 96 (the Loop 1 ASCII flow diagram, the Loop 2 ASCII flow diagram, and the restated JSON Verdict Parse Rule gate expression) as ```text or ```json per NDS Sec 6.2, matching the honest content of each block (the two flow diagrams are prose/ASCII -> ```text; AH-1 applies -- re-read each block before tagging to confirm which is which). Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value so it reads 'methodology/01_execution.md'. No other body text changes."
+      },
+      {
+        "path": "methodology/03_circuit_breaker.md",
+        "purpose": "Two edits to Section 4 ('Attempt 4 Is Forbidden -- The Breach Procedure'): (a) step 1 ('Discard the failed attempt's working changes') is extended to also require removing untracked/generated artifacts the failed attempt created (e.g. a scoped 'git clean -fd' limited to the attempt's own paths, or the equivalent clean-discard action for a non-git artifact) -- 'git reset --hard' alone does not remove untracked files and is insufficient on its own; (b) the current steps 2 ('Set the step's status to BLOCKED...') and 4 ('Update .agent/run_state.json to reflect the blocked state') are merged into ONE step declaring the phase document's step-level status field (per schema/phase.schema.json), where a phase document exists, as the single source of truth for the BLOCKED state, with the feature's .agent/run_state.json entry updated in the SAME atomic write, derived from the phase document's value -- eliminating the prior two-write, two-source risk of the fields disagreeing. The remaining steps (log to DEBT.md; escalate and terminate) are renumbered accordingly so Section 4 reads as 4 sequential steps instead of 5. Section 5 ('Where Breaker State Lives') is re-read and, if its wording assumes the prior 5-step numbering or a separate run_state-only write, updated so it stays coherent with the merged step -- without altering Section 5's substantive attempt-counter mechanics. The exact phrasings '3-strike', 'Attempt 4', and 'FORBIDDEN' (existing QA anchors, feature 003 acceptance test) MUST be preserved verbatim wherever they currently appear. Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value so it reads 'methodology/03_circuit_breaker.md'. No other body text changes."
+      },
+      {
+        "path": "standard/AGF.md",
+        "purpose": "In Section 4 ('The JSON Verdict Parse Rule'), two edits: (a) tag the currently-untagged gate-rule fence (containing the four lines 'final_verdict.approved === true', 'final_verdict.issues.length === 0', 'final_verdict.missing_acceptance_coverage.length === 0', 'final_verdict.unsupported_claims.length === 0') as ```text, preserving those four fragments byte-for-byte -- QA 002 verifies them verbatim, so AH-1 requires re-reading the exact block before touching it; (b) immediately after that fence, add one lead-in sentence and a new ```json-tagged fenced example verdict block that is itself parse-valid JSON matching the documented shape, e.g. {\"final_verdict\": {\"approved\": true}, \"issues\": [], \"missing_acceptance_coverage\": [], \"unsupported_claims\": []}. Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value so it reads 'standard/AGF.md'. No other body text changes."
+      },
+      {
+        "path": "standard/NDS.md",
+        "purpose": "Tag the Section 3 status-lifecycle fence (the three-line 'draft -> active -> deprecated' diagram at approximately line 71-73) as ```text per this document's own Sec 6.2 rule. Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value so it reads 'standard/NDS.md'. No other body text changes."
+      },
+      {
+        "path": "registry/scope_definition_patterns.md",
+        "purpose": "Tag the currently-untagged Section 2 'Ecosystem Registry JSON Shape' fence at approximately line 34 (the illustrative JSON-shaped block using '<...>' placeholder tokens, so it is descriptive/illustrative rather than parse-valid JSON) as ```text per NDS Sec 6.2 -- AH-1 requires confirming it does not parse as valid JSON as-is before choosing the tag; do not retag as ```json without also making the block parse-valid, which is out of scope here. Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value so it reads 'registry/scope_definition_patterns.md'. No other body text changes."
+      },
+      {
+        "path": "templates/ADR_TEMPLATE.md",
+        "purpose": "In the leading HTML comment block, extend the existing 'Status values: PROPOSED | ACCEPTED | SUPERSEDED | DEPRECATED' line to also document that PROPOSED is the intended pre-filled default status for a newly copied ADR. The pre-filled body line '**Status:** PROPOSED' remains unchanged. Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value so it reads 'templates/ADR_TEMPLATE.md'. No other body text changes."
+      },
+      {
+        "path": "templates/AGENTS.md",
+        "purpose": "Replace the two-token 'Session Started:' placeholder '{{YYYY-MM-DD}}T{{HH:MM}}Z' with the single token '{{YYYY-MM-DDTHH:MMZ}}', for consistency with the single '{{YYYY-MM-DD}}'-style format tokens used in templates/DEBT.md. Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value so it reads 'templates/AGENTS.md'. No other body text changes."
+      },
+      {
+        "path": "templates/README.md",
+        "purpose": "Change the ambiguous bare 'product_spec.md' reference in the Frontmatter Convention / body text to the disambiguated '.agent/product_spec.md' path. Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value so it reads 'templates/README.md'. No other body text changes."
+      },
+      {
+        "path": "tools/interface.md",
+        "purpose": "In the Section 5 Adapter Conformance Checklist, repoint the two citations to nonexistent subsections: item 3's '(Section 3.1)' and item 5's '(Section 3.3)' are corrected to cite the real numbered rules they actually describe within Section 3 ('Loading'), which has three numbered items but no lettered/numbered subsections -- item 3's citation becomes 'Section 3, Item 1' (the 'Inject SKILL.md as instructions context' rule) and item 5's citation becomes 'Section 3, Item 3' (the 'One payload, no forked copies' rule). AH-1: re-read Section 3 before editing to confirm the mapping. Item 4's 'tools/SKILL.md Section 1' citation is already correct and is NOT touched. Also strips the 'nizam-framework/' prefix from this file's own authoritative_source frontmatter value so it reads 'tools/interface.md'. No other body text changes."
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'CONTEXT.md', per NDS Sec 2 and NIZAM.json's existing repo-relative precedent. No body text changes."
+      },
+      {
+        "path": "methodology/02_adversarial_tdd.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'methodology/02_adversarial_tdd.md'. No body text changes."
+      },
+      {
+        "path": "methodology/04_tool_driven_state.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'methodology/04_tool_driven_state.md'. No body text changes."
+      },
+      {
+        "path": "methodology/05_release_train.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'methodology/05_release_train.md'. No body text changes."
+      },
+      {
+        "path": "methodology/README.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'methodology/README.md'. No body text changes."
+      },
+      {
+        "path": "registry/README.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'registry/README.md'. No body text changes."
+      },
+      {
+        "path": "schema/README.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'schema/README.md'. No body text changes."
+      },
+      {
+        "path": "standard/anti_hallucination.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'standard/anti_hallucination.md'. No body text changes."
+      },
+      {
+        "path": "standard/GIP.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'standard/GIP.md'. No body text changes."
+      },
+      {
+        "path": "standard/README.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'standard/README.md'. No body text changes."
+      },
+      {
+        "path": "templates/CONTEXT.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'templates/CONTEXT.md'. No body text changes."
+      },
+      {
+        "path": "templates/DEBT.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'templates/DEBT.md'. No body text changes."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'tools/README.md'. No body text changes."
+      },
+      {
+        "path": "tools/SKILL.md",
+        "purpose": "Frontmatter-only: strip the 'nizam-framework/' prefix from authoritative_source so it reads 'tools/SKILL.md'. No body text changes."
+      },
+      {
+        "path": ".agent/product_spec.md",
+        "purpose": "Single-value frontmatter change: 'status: DRAFT' -> 'status: draft', matching schema/frontmatter.schema.json's lowercase status enum ('draft', 'active', 'deprecated'). No other frontmatter key, body text, change_log entry, or version bump in this file."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Under the existing '## [Unreleased]' heading, replace the '_No unreleased changes._' placeholder with concise bullet entries summarizing this remediation: the bootstrap.sh --verify-only python3 prerequisite check; the NDS-compliance fixes (repo-relative authoritative_source across shipped docs, tagged code fences); and the protocol clarifications (00_planning.md rolling-average bootstrap rule, 03_circuit_breaker.md untracked-artifact discard + single-sourced BLOCKED state, AGF.md JSON verdict example, ADR/AGENTS/README/interface.md doc fixes). '## [Unreleased]' remains the topmost section, still preceding '## [0.1.0]'. This CHANGELOG entry is the change record for all frontmatter/body edits in this contract; no individual document in this contract gets its own change_log frontmatter entry or version bump (NDS Sec 4.2's 'or the repository's root CHANGELOG.md' branch is what is being exercised here)."
+      }
+    ]
+  },
+  "non_goals": [
+    "No edits to any completed contract (000-008) or their approvals/evidence records",
+    "No edits to any .agent/evidence/* or .agent/qa/* file -- these are immutable audit records",
+    "No version bumps or per-document change_log frontmatter entries on any individual shipped doc -- the root CHANGELOG.md '## [Unreleased]' entry is the sole change record for this contract, per NDS Sec 4.2's CHANGELOG-based alternative to a change_log entry",
+    "No body-text changes beyond those explicitly listed per file above -- the authoritative_source frontmatter edit is line-scoped to that single key in all 24 shipped-.md entries",
+    "No changes to NIZAM.json",
+    "No edit to docs/planning/DEBT.md, even though it also currently carries an 'authoritative_source: nizam-framework/...' value -- it is an orchestrator/human debt register, not shipped governance content, and is out of the 24-file shipped-.md scope this contract targets",
+    "No edit to any untagged fence inside .agent/product_spec.md (it carries two, at approximately lines 49 and 213) -- .agent/product_spec.md is a durable-state planning artifact, not shipped module content, and is out of scope for the NDS Sec 6.2 fence-tagging fix in this contract; its only authorized edit is the single status value change listed above",
+    "No change to methodology/03_circuit_breaker.md's '3-strike', 'Attempt 4', or 'FORBIDDEN' phrasings -- these are existing QA verification anchors and must survive the Section 4 restructuring verbatim",
+    "No change to tools/interface.md checklist item 4's 'tools/SKILL.md Section 1' citation -- it is already correct and is not part of this fix",
+    "No retagging of registry/scope_definition_patterns.md's Section 2 fence as ```json -- it uses '<...>' placeholder tokens and is not parse-valid JSON as written; only a ```text tag is authorized"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "bootstrap.sh still passes a bash syntax check and its --help mode still exits 0 (regression guard around the run_verify_only edit)",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; bash -n bootstrap.sh || { echo 'bash -n failed'; exit 1; }; output=$(timeout 5 bash bootstrap.sh --help 2>&1); status=$?; echo \"$output\"; test \"$status\" -eq 0 && echo PASS || { echo \"exit status $status\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "run_verify_only() calls require_command python3 (checked by scoping a grep to that function's own body, not the whole file, so a match anywhere else in bootstrap.sh cannot masquerade as a pass)",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; start=$(grep -n '^run_verify_only()' bootstrap.sh | head -1 | cut -d: -f1); end=$(awk -v s=\"$start\" 'NR>s && /^}/{print NR; exit}' bootstrap.sh); test -n \"$start\" && test -n \"$end\" || { echo 'could not locate run_verify_only() function bounds'; exit 1; }; body=$(sed -n \"${start},${end}p\" bootstrap.sh); echo \"$body\" | grep -q 'require_command python3' && echo PASS || { echo 'require_command python3 not found inside run_verify_only() body'; exit 1; }"
+    },
+    {
+      "acceptance_test": "methodology/00_planning.md's Scope Budget Per-feature check item defines the rolling-average bootstrap rule for fewer than three completed features",
+      "command": "test -f methodology/00_planning.md || { echo 'MISSING methodology/00_planning.md'; exit 1; }; grep -Eqi 'fewer than three' methodology/00_planning.md && grep -Eqi 'first (completed )?feature' methodology/00_planning.md && echo PASS || { echo 'rolling-average bootstrap-rule language not found'; exit 1; }"
+    },
+    {
+      "acceptance_test": "methodology/03_circuit_breaker.md Section 4 was restructured to 4 steps (untracked-artifact discard language added to step 1; BLOCKED-state steps merged into one single-sourced step referencing both schema/phase.schema.json and .agent/run_state.json), and the '3-strike'/'Attempt 4'/'FORBIDDEN' anchors survived verbatim",
+      "command": "test -f methodology/03_circuit_breaker.md || { echo 'MISSING methodology/03_circuit_breaker.md'; exit 1; }; python3 -c '\nimport re\ntext = open(\"methodology/03_circuit_breaker.md\").read()\nfor anchor in (\"3-strike\", \"Attempt 4\", \"FORBIDDEN\"):\n    assert anchor in text, f\"missing preserved anchor: {anchor}\"\nm = re.search(r\"## 4\\..*?\\n(.*?)\\n## 5\\.\", text, re.S)\nassert m, \"Section 4 not found\"\nsection = m.group(1)\nsteps = re.findall(r\"^\\d+\\.\", section, re.M)\nassert len(steps) == 4, f\"expected 4 numbered steps in Section 4, found {len(steps)}\"\nassert re.search(r\"git clean\", section, re.I), \"untracked-artifact discard language (git clean or equivalent) missing from step 1\"\nblocked = re.search(r\"\\d+\\..*?BLOCKED.*?(?=\\n\\d+\\.|\\Z)\", section, re.S)\nassert blocked, \"no BLOCKED-status step found in Section 4\"\nblocked_text = blocked.group(0)\nassert \"phase.schema.json\" in blocked_text and \"run_state.json\" in blocked_text, \"BLOCKED step must single-source the phase-document status and run_state.json update in the same step\"\nprint(\"PASS\")\n'"
+    },
+    {
+      "acceptance_test": "standard/AGF.md retains the four verbatim gate fragments and gains a parse-valid ```json fenced example verdict with the four required top-level keys and approved: true",
+      "command": "test -f standard/AGF.md || { echo 'MISSING standard/AGF.md'; exit 1; }; python3 -c '\nimport re, json\ntext = open(\"standard/AGF.md\").read()\nfrags = (\"final_verdict.approved === true\", \"final_verdict.issues.length === 0\", \"final_verdict.missing_acceptance_coverage.length === 0\", \"final_verdict.unsupported_claims.length === 0\")\nmissing = [f for f in frags if f not in text]\nassert not missing, f\"missing verbatim fragment(s): {missing}\"\nm = re.search(r\"```json\\n(.*?)\\n```\", text, re.S)\nassert m, \"no json-tagged fenced example found\"\ndoc = json.loads(m.group(1))\nrequired = {\"final_verdict\", \"issues\", \"missing_acceptance_coverage\", \"unsupported_claims\"}\nassert required <= set(doc.keys()), f\"example missing key(s): {required - set(doc.keys())}\"\nassert doc[\"final_verdict\"].get(\"approved\") is True, \"example final_verdict.approved must be true\"\nprint(\"PASS\")\n'"
+    },
+    {
+      "acceptance_test": "zero untagged code-fence openers remain across the 24 shipped .md files (NDS Sec 6.2), covering the newly tagged fences (AGF.md, NDS.md, 00_planning.md, 01_execution.md x3, scope_definition_patterns.md) plus a regression sweep of every other shipped doc",
+      "command": "files=(CONTEXT.md methodology/00_planning.md methodology/01_execution.md methodology/02_adversarial_tdd.md methodology/03_circuit_breaker.md methodology/04_tool_driven_state.md methodology/05_release_train.md methodology/README.md registry/README.md registry/scope_definition_patterns.md schema/README.md standard/AGF.md standard/anti_hallucination.md standard/GIP.md standard/NDS.md standard/README.md templates/ADR_TEMPLATE.md templates/AGENTS.md templates/CONTEXT.md templates/DEBT.md templates/README.md tools/interface.md tools/README.md tools/SKILL.md); fail=0; for f in \"${files[@]}\"; do test -f \"$f\" || { echo \"MISSING $f\"; fail=1; continue; }; bad=$(awk -v f=\"$f\" 'BEGIN{intxt=0} /^```/{ if (intxt==0) { tag=$0; sub(/^```/,\"\",tag); if (tag==\"\") print f\":\"NR; intxt=1 } else { intxt=0 } }' \"$f\"); if [ -n \"$bad\" ]; then echo \"$bad\"; fail=1; fi; done; test \"$fail\" -eq 0 && echo PASS || { echo 'untagged fence(s) found above'; exit 1; }"
+    },
+    {
+      "acceptance_test": "zero 'authoritative_source: nizam-framework/' matches remain across the 24 shipped .md files, and each file's stripped value equals its own repo-relative path (count-guarded, per-file spot check)",
+      "command": "files=(CONTEXT.md methodology/00_planning.md methodology/01_execution.md methodology/02_adversarial_tdd.md methodology/03_circuit_breaker.md methodology/04_tool_driven_state.md methodology/05_release_train.md methodology/README.md registry/README.md registry/scope_definition_patterns.md schema/README.md standard/AGF.md standard/anti_hallucination.md standard/GIP.md standard/NDS.md standard/README.md templates/ADR_TEMPLATE.md templates/AGENTS.md templates/CONTEXT.md templates/DEBT.md templates/README.md tools/interface.md tools/README.md tools/SKILL.md); fail=0; for f in \"${files[@]}\"; do test -f \"$f\" || { echo \"MISSING $f\"; fail=1; continue; }; stale=$(grep -c 'authoritative_source: nizam-framework/' \"$f\" || true); if [ \"$stale\" -ne 0 ]; then echo \"STALE PREFIX in $f\"; fail=1; fi; actual=$(grep '^authoritative_source:' \"$f\" | head -1 | sed 's/^authoritative_source: *//'); if [ \"$actual\" != \"$f\" ]; then echo \"MISMATCH in $f: authoritative_source='$actual' expected='$f'\"; fail=1; fi; done; test \"$fail\" -eq 0 && echo PASS || { echo 'authoritative_source regression found above'; exit 1; }"
+    },
+    {
+      "acceptance_test": "every one of the 24 shipped .md files still starts with frontmatter containing all 6 required NDS keys (regression guard around the single-key authoritative_source edit)",
+      "command": "files=(CONTEXT.md methodology/00_planning.md methodology/01_execution.md methodology/02_adversarial_tdd.md methodology/03_circuit_breaker.md methodology/04_tool_driven_state.md methodology/05_release_train.md methodology/README.md registry/README.md registry/scope_definition_patterns.md schema/README.md standard/AGF.md standard/anti_hallucination.md standard/GIP.md standard/NDS.md standard/README.md templates/ADR_TEMPLATE.md templates/AGENTS.md templates/CONTEXT.md templates/DEBT.md templates/README.md tools/interface.md tools/README.md tools/SKILL.md); fail=0; for f in \"${files[@]}\"; do test -f \"$f\" || { echo \"MISSING $f\"; fail=1; continue; }; test \"$(head -1 \"$f\")\" = '---' || { echo \"NOT FRONTMATTER: $f\"; fail=1; }; for k in id title description version status authoritative_source; do grep -q \"^$k:\" \"$f\" || { echo \"MISSING $k in $f\"; fail=1; }; done; done; test \"$fail\" -eq 0 && echo PASS || { echo 'frontmatter regression found above'; exit 1; }"
+    },
+    {
+      "acceptance_test": "templates/ADR_TEMPLATE.md's HTML comment documents PROPOSED as the intended pre-filled default, and the pre-filled '**Status:** PROPOSED' body line is unchanged",
+      "command": "test -f templates/ADR_TEMPLATE.md || { echo 'MISSING templates/ADR_TEMPLATE.md'; exit 1; }; grep -Eq 'Status values:.*default' templates/ADR_TEMPLATE.md && grep -q '\\*\\*Status:\\*\\* PROPOSED' templates/ADR_TEMPLATE.md && echo PASS || { echo 'PROPOSED-default documentation or pre-filled Status line missing/changed'; exit 1; }"
+    },
+    {
+      "acceptance_test": "templates/AGENTS.md contains exactly one occurrence of the single-token '{{YYYY-MM-DDTHH:MMZ}}' placeholder and zero occurrences of the old two-token '}}T{{' pattern",
+      "command": "test -f templates/AGENTS.md || { echo 'MISSING templates/AGENTS.md'; exit 1; }; count_new=$(grep -c '{{YYYY-MM-DDTHH:MMZ}}' templates/AGENTS.md || true); count_old=$(grep -c '}}T{{' templates/AGENTS.md || true); test \"$count_new\" -eq 1 && test \"$count_old\" -eq 0 && echo PASS || { echo \"count_new=$count_new count_old=$count_old (expected 1 and 0)\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "templates/README.md references '.agent/product_spec.md' (disambiguated path), not a bare 'product_spec.md'",
+      "command": "test -f templates/README.md || { echo 'MISSING templates/README.md'; exit 1; }; grep -q '.agent/product_spec.md' templates/README.md && echo PASS || { echo '.agent/product_spec.md reference not found'; exit 1; }"
+    },
+    {
+      "acceptance_test": "tools/interface.md no longer cites the nonexistent 'Section 3.1' or 'Section 3.3', and item 4's correct 'tools/SKILL.md Section 1' citation is untouched",
+      "command": "test -f tools/interface.md || { echo 'MISSING tools/interface.md'; exit 1; }; c1=$(grep -c 'Section 3.1' tools/interface.md || true); c2=$(grep -c 'Section 3.3' tools/interface.md || true); test \"$c1\" -eq 0 && test \"$c2\" -eq 0 && grep -q 'tools/SKILL.md Section 1' tools/interface.md && echo PASS || { echo \"c1=$c1 c2=$c2 or SKILL.md Section 1 citation missing\"; exit 1; }"
+    },
+    {
+      "acceptance_test": ".agent/product_spec.md's status equals the lowercase 'draft' (schema/frontmatter.schema.json enum), and the old uppercase 'DRAFT' value is gone",
+      "command": "test -f .agent/product_spec.md || { echo 'MISSING .agent/product_spec.md'; exit 1; }; grep -qx 'status: draft' .agent/product_spec.md && ! grep -qx 'status: DRAFT' .agent/product_spec.md && echo PASS || { echo 'status is not exactly draft, or stale DRAFT value remains'; exit 1; }"
+    },
+    {
+      "acceptance_test": "CHANGELOG.md's '## [Unreleased]' section precedes '## [0.1.0]' and summarizes this remediation",
+      "command": "test -f CHANGELOG.md || { echo 'MISSING CHANGELOG.md'; exit 1; }; unreleased_line=$(grep -n '^## \\[Unreleased\\]' CHANGELOG.md | head -1 | cut -d: -f1); v010_line=$(grep -n '^## \\[0.1.0\\]' CHANGELOG.md | head -1 | cut -d: -f1); test -n \"$unreleased_line\" && test -n \"$v010_line\" && test \"$unreleased_line\" -lt \"$v010_line\" || { echo 'Unreleased section missing or does not precede 0.1.0'; exit 1; }; block=$(sed -n \"${unreleased_line},${v010_line}p\" CHANGELOG.md); echo \"$block\" | grep -qi 'authoritative_source' && echo \"$block\" | grep -Eqi 'verify-only|python3' && echo \"$block\" | grep -qi 'fence' && echo PASS || { echo 'Unreleased block does not summarize the remediation (missing expected keywords)'; exit 1; }"
+    },
+    {
+      "acceptance_test": "NIZAM.json regression: still valid JSON, still validates against registry/nizam-index.schema.json, and every path it indexes (by path/authoritative_source/key_documents/schemas/templates keys) still resolves on disk",
+      "command": "python3 -c \"import json, jsonschema; schema = json.load(open('registry/nizam-index.schema.json')); instance = json.load(open('NIZAM.json')); jsonschema.validate(instance=instance, schema=schema); print('SCHEMA-VALID')\" && python3 -c \"\nimport json, os\ndoc = json.load(open('NIZAM.json'))\npath_keys = ('path', 'authoritative_source')\nlist_path_keys = ('key_documents', 'schemas', 'templates')\npaths = []\ndef walk(node, key=None):\n    if isinstance(node, dict):\n        for k, v in node.items():\n            walk(v, k)\n    elif isinstance(node, list):\n        if key in list_path_keys:\n            for item in node:\n                if isinstance(item, str):\n                    paths.append(item)\n                else:\n                    walk(item, key)\n        else:\n            for item in node:\n                walk(item, key)\n    elif isinstance(node, str):\n        if key in path_keys:\n            paths.append(node)\nwalk(doc)\nassert paths, 'no paths discovered by walker - index appears empty'\nmissing = [p for p in paths if p != 'NA' and not os.path.exists(p)]\nassert not missing, f'missing paths: {missing}'\nprint(f'PASS ({len(paths)} paths checked)')\n\""
+    },
+    {
+      "acceptance_test": "repo-wide shipped-content NizamIQ-branding sweep remains clean after this contract's edits (guarded so an absent-directory false pass cannot occur)",
+      "command": "for d in standard methodology registry templates schema tools; do test -d \"$d\" || { echo \"MISSING dir $d, refusing to trust an absence-of-match result\"; exit 1; }; done; test -f CONTEXT.md && test -f README.md && test -f CHANGELOG.md && test -f NIZAM.json && test -f bootstrap.sh || { echo 'MISSING one or more root files, refusing to trust an absence-of-match result'; exit 1; }; if grep -ril 'nizamiq' CONTEXT.md README.md CHANGELOG.md NIZAM.json bootstrap.sh standard/ methodology/ registry/ templates/ schema/ tools/ 2>/dev/null; then echo FAIL; exit 1; else echo PASS; fi"
+    }
+  ],
+  "estimated_lines": 90,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/009-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/009-verify-01.txt for the first entry, ..., .agent/evidence/009-verify-16.txt for the sixteenth). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T21:40:00Z",
+    "revisions": 0
+  }
+}

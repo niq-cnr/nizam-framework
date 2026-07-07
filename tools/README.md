@@ -4,7 +4,7 @@ title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
 version: 0.2.0
 status: active
-authoritative_source: nizam-framework/tools/README.md
+authoritative_source: tools/README.md
 ---
 
 # tools/

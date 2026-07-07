@@ -3,10 +3,10 @@
   "current_phase": "001-framework-genesis",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-07-07T20:00:00Z",
+  "updated_at": "2026-07-07T22:30:00Z",
   "scope_budget": {
     "original_estimate_lines": 3850,
-    "total_lines_changed": 3990,
+    "total_lines_changed": 4136,
     "per_feature": [
       {
         "id": "000",
@@ -60,6 +60,12 @@
         "estimated": 1,
         "actual": 2,
         "flag": null
+      },
+      {
+        "id": "009",
+        "estimated": 90,
+        "actual": 146,
+        "flag": null
       }
     ]
   },
@@ -87,6 +93,10 @@
     "008-contract": {
       "attempts": 1,
       "limit": 3
+    },
+    "009-contract": {
+      "attempts": 1,
+      "limit": 3
     }
   },
   "history": [
@@ -96,9 +106,9 @@
       "detail": "Repository created under mandate 'nizam-framework genesis'. Branch phase/001-framework-genesis. Orchestrator entering planning; delegating to @planner."
     },
     {
-      "at": "2026-07-07T08:00:00Z",
+      "at": "2026-07-07T07:27:00Z",
       "event": "planning_complete",
-      "detail": "@planner produced product_spec.md (spec v1.0.0), feature_list.json (8 features, DAG validated acyclic, original_estimate_lines=3850), and docs/planning/manifest.json. Ready for contract negotiation on feature 000."
+      "detail": "@planner produced product_spec.md (spec v1.0.0), feature_list.json (8 features, DAG validated acyclic, original_estimate_lines=3850), and docs/planning/manifest.json. Ready for contract negotiation on feature 000. [Timestamp corrected 2026-07-07 from 08:00:00Z (planner self-reported estimate) to 07:27:00Z (actual completion, per planner run duration); original value made history non-monotonic and causally misordered vs the 07:35 contract-revision event.]"
     },
     {
       "at": "2026-07-07T07:35:00Z",
@@ -204,6 +214,21 @@
       "at": "2026-07-07T20:00:00Z",
       "event": "amendment_complete",
       "detail": "Feature 008 complete: contract 1 revision (unscoped diff check), Mode B + QA 5/5 first-pass. Canonical origin wired into bootstrap.sh. Phase 001 closed again; proceeding to push + PR."
+    },
+    {
+      "at": "2026-07-07T21:00:00Z",
+      "event": "review_remediation_authorized",
+      "detail": "PR #1 code-review findings triaged: shipped-content and live-state fixes bundled as feature 009 (review remediation); findings against completed contracts/evidence/qa artifacts skipped as immutable audit records with gaps already mitigated at QA time. history planning_complete timestamp corrected in this same update."
+    },
+    {
+      "at": "2026-07-07T21:40:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 009 (review remediation) approved first-pass by both gates; all 6 scrutinized verification mechanisms fixture-tested. Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T22:30:00Z",
+      "event": "amendment_complete",
+      "detail": "Feature 009 complete: both gates first-pass, QA 16/16 + python3-less --verify-only simulation + frontmatter schema re-validation. 15 still-valid review findings fixed across 27 files; 13 findings on immutable audit artifacts skipped with documented reasons. Pushing to PR #1."
     }
   ]
 }

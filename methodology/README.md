@@ -4,7 +4,7 @@ title: "Methodology Module — Index"
 description: "Index for the methodology/ module: the six protocol documents governing planning, contract-first execution, adversarial TDD, the universal circuit breaker, tool-driven durable state, and the release train."
 version: 0.2.0
 status: active
-authoritative_source: nizam-framework/methodology/README.md
+authoritative_source: methodology/README.md
 ---
 
 # methodology/

@@ -4,7 +4,7 @@ title: "DEBT.md Template"
 description: "Technical-debt register template: the empty debt-register table skeleton a bootstrapped repository copies and populates as debt is logged."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/templates/DEBT.md
+authoritative_source: templates/DEBT.md
 ---
 
 <!--

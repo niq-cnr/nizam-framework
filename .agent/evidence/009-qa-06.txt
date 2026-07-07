@@ -1,0 +1,11 @@
+(script: v06.sh)
+files=(CONTEXT.md methodology/00_planning.md methodology/01_execution.md methodology/02_adversarial_tdd.md methodology/03_circuit_breaker.md methodology/04_tool_driven_state.md methodology/05_release_train.md methodology/README.md registry/README.md registry/scope_definition_patterns.md schema/README.md standard/AGF.md standard/anti_hallucination.md standard/GIP.md standard/NDS.md standard/README.md templates/ADR_TEMPLATE.md templates/AGENTS.md templates/CONTEXT.md templates/DEBT.md templates/README.md tools/interface.md tools/README.md tools/SKILL.md)
+fail=0
+for f in "${files[@]}"; do
+  test -f "$f" || { echo "MISSING $f"; fail=1; continue; }
+  bad=$(awk -v f="$f" 'BEGIN{intxt=0} /^```/{ if (intxt==0) { tag=$0; sub(/^```/,"",tag); if (tag=="") print f":"NR; intxt=1 } else { intxt=0 } }' "$f")
+  if [ -n "$bad" ]; then echo "$bad"; fail=1; fi
+done
+test "$fail" -eq 0 && echo PASS || { echo 'untagged fence(s) found above'; exit 1; }
+PASS
+EXIT:0

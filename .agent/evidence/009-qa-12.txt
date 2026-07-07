@@ -1,0 +1,4 @@
+(script: v12.sh)
+test -f tools/interface.md || { echo 'MISSING tools/interface.md'; exit 1; }; c1=$(grep -c 'Section 3.1' tools/interface.md || true); c2=$(grep -c 'Section 3.3' tools/interface.md || true); test "$c1" -eq 0 && test "$c2" -eq 0 && grep -q 'tools/SKILL.md Section 1' tools/interface.md && echo PASS || { echo "c1=$c1 c2=$c2 or SKILL.md Section 1 citation missing"; exit 1; }
+PASS
+EXIT:0

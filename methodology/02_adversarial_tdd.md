@@ -4,7 +4,7 @@ title: "Adversarial Test Design"
 description: "The evaluator independence model, false-pass and false-fail hunting patterns, and the negative-testing requirement that keeps acceptance test suites load-bearing rather than tautological."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/methodology/02_adversarial_tdd.md
+authoritative_source: methodology/02_adversarial_tdd.md
 ---
 
 # Adversarial Test Design

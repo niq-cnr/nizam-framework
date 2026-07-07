@@ -307,6 +307,7 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
 # target directory. Clones nothing and writes nothing.
 run_verify_only() {
   require_pinned_tag "${GOVERNANCE_TAG}"
+  require_command python3
   [ -d "${TARGET_DIR}" ] || die "--verify-only: target directory '${TARGET_DIR}' does not exist -- nothing to verify. Run bootstrap.sh in default (install) mode first."
   log "verify-only: checking '${TARGET_DIR}' against pinned tag '${GOVERNANCE_TAG}' (no clone, no network)..."
   check_required_files "${TARGET_DIR}"

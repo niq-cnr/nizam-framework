@@ -4,7 +4,7 @@ title: "Nizam Documentation Standard (NDS)"
 description: "The canonical, runtime-agnostic documentation standard for any repository that inherits the Nizam framework: required frontmatter, lifecycle, versioning, and machine-readability rules."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/standard/NDS.md
+authoritative_source: standard/NDS.md
 ---
 
 # Nizam Documentation Standard (NDS)
@@ -68,7 +68,7 @@ authoritative_source: src/services/example/index.ts
 
 The `status` key follows a linear, one-directional lifecycle:
 
-```
+```text
 draft -> active -> deprecated
 ```
 

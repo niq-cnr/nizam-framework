@@ -4,7 +4,7 @@ title: "Tool-Driven State Management (DD-1 + DD-3)"
 description: "The query-not-bulk-read discipline for locating governance files via the root capability index, evidence externalisation to .agent/evidence/, and the durable-state artifact families every run maintains."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/methodology/04_tool_driven_state.md
+authoritative_source: methodology/04_tool_driven_state.md
 ---
 
 # Tool-Driven State Management (DD-1 + DD-3)

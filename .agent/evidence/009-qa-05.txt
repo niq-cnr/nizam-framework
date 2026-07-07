@@ -1,0 +1,18 @@
+(script: v05.sh)
+test -f standard/AGF.md || { echo 'MISSING standard/AGF.md'; exit 1; }
+python3 -c '
+import re, json
+text = open("standard/AGF.md").read()
+frags = ("final_verdict.approved === true", "final_verdict.issues.length === 0", "final_verdict.missing_acceptance_coverage.length === 0", "final_verdict.unsupported_claims.length === 0")
+missing = [f for f in frags if f not in text]
+assert not missing, f"missing verbatim fragment(s): {missing}"
+m = re.search(r"```json\n(.*?)\n```", text, re.S)
+assert m, "no json-tagged fenced example found"
+doc = json.loads(m.group(1))
+required = {"final_verdict", "issues", "missing_acceptance_coverage", "unsupported_claims"}
+assert required <= set(doc.keys()), f"example missing key(s): {required - set(doc.keys())}"
+assert doc["final_verdict"].get("approved") is True, "example final_verdict.approved must be true"
+print("PASS")
+'
+PASS
+EXIT:0

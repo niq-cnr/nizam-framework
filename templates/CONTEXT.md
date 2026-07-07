@@ -4,7 +4,7 @@ title: "CONTEXT.md Template"
 description: "Consumer-repo CONTEXT.md template: the fill-in skeleton a bootstrapped repository copies and completes with its own architecture summary, module map, execution commands, and mandatory scope boundaries."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/templates/CONTEXT.md
+authoritative_source: templates/CONTEXT.md
 ---
 
 <!--

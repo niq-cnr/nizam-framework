@@ -4,7 +4,7 @@ title: "Universal Anti-Hallucination Constraints"
 description: "The mandatory constraints that govern every AI agent action across the framework, preventing hallucinated edits, phantom fixes, and unsubstantiated completion claims."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/standard/anti_hallucination.md
+authoritative_source: standard/anti_hallucination.md
 ---
 
 # Universal Anti-Hallucination Constraints

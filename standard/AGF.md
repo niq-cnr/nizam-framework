@@ -4,7 +4,7 @@ title: "Agent Governance Framework (AGF)"
 description: "The generalised multi-agent execution model: agent roles, the dual validator gate, the JSON verdict parse rule, and the durable-state rule for agent coordination."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/standard/AGF.md
+authoritative_source: standard/AGF.md
 ---
 
 # Agent Governance Framework (AGF)
@@ -70,11 +70,17 @@ a single, machine-parseable JSON verdict block, in addition to any prose report.
 orchestrator (or any automated caller) advances to the next pipeline stage **only when
 all four of the following hold simultaneously**:
 
-```
+```text
 final_verdict.approved === true
 AND final_verdict.issues.length === 0
 AND final_verdict.missing_acceptance_coverage.length === 0
 AND final_verdict.unsupported_claims.length === 0
+```
+
+A verdict block satisfying all four conditions above looks like this:
+
+```json
+{"final_verdict": {"approved": true}, "issues": [], "missing_acceptance_coverage": [], "unsupported_claims": []}
 ```
 
 Rules for applying this gate:

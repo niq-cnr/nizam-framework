@@ -1,0 +1,4 @@
+(script: v13.sh)
+test -f .agent/product_spec.md || { echo 'MISSING .agent/product_spec.md'; exit 1; }; grep -qx 'status: draft' .agent/product_spec.md && ! grep -qx 'status: DRAFT' .agent/product_spec.md && echo PASS || { echo 'status is not exactly draft, or stale DRAFT value remains'; exit 1; }
+PASS
+EXIT:0

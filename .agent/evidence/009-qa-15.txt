@@ -1,0 +1,33 @@
+(script: v15.sh)
+python3 -c "import json, jsonschema; schema = json.load(open('registry/nizam-index.schema.json')); instance = json.load(open('NIZAM.json')); jsonschema.validate(instance=instance, schema=schema); print('SCHEMA-VALID')" && python3 -c "
+import json, os
+doc = json.load(open('NIZAM.json'))
+path_keys = ('path', 'authoritative_source')
+list_path_keys = ('key_documents', 'schemas', 'templates')
+paths = []
+def walk(node, key=None):
+    if isinstance(node, dict):
+        for k, v in node.items():
+            walk(v, k)
+    elif isinstance(node, list):
+        if key in list_path_keys:
+            for item in node:
+                if isinstance(item, str):
+                    paths.append(item)
+                else:
+                    walk(item, key)
+        else:
+            for item in node:
+                walk(item, key)
+    elif isinstance(node, str):
+        if key in path_keys:
+            paths.append(node)
+walk(doc)
+assert paths, 'no paths discovered by walker - index appears empty'
+missing = [p for p in paths if p != 'NA' and not os.path.exists(p)]
+assert not missing, f'missing paths: {missing}'
+print(f'PASS ({len(paths)} paths checked)')
+"
+SCHEMA-VALID
+PASS (71 paths checked)
+EXIT:0

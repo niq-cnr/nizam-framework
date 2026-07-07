@@ -4,7 +4,7 @@ title: "Ecosystem Registry & Scope-Definition Patterns"
 description: "Generalised patterns for a consumer repository that maintains its own ecosystem-level registry of repositories, services, or modules on top of the Nizam framework: the scope-list shape, dependency-map conventions, phase-progress tracking, and drift rules."
 version: 0.1.0
 status: draft
-authoritative_source: nizam-framework/registry/scope_definition_patterns.md
+authoritative_source: registry/scope_definition_patterns.md
 ---
 
 # Ecosystem Registry & Scope-Definition Patterns
@@ -31,7 +31,7 @@ A single JSON document, versioned and timestamped, with a top-level `schema_vers
 (or equivalent) and `last_updated` field, plus a small number of named lists that
 partition every tracked entity by scope status:
 
-```
+```text
 {
   "schema_version": "<semver>",
   "last_updated": "<ISO 8601 timestamp>",

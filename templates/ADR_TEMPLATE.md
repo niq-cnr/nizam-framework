@@ -4,7 +4,7 @@ title: "ADR Template"
 description: "Architecture Decision Record template: the standard Status/Context/Decision/Consequences skeleton a repository copies once per significant architectural decision."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/templates/ADR_TEMPLATE.md
+authoritative_source: templates/ADR_TEMPLATE.md
 ---
 
 <!--
@@ -13,7 +13,7 @@ every {{PLACEHOLDER}} token in the body below with decision-specific values. The
 frontmatter block above describes this template artifact itself; only the body is
 fill-in-the-blanks.
 
-Status values: PROPOSED | ACCEPTED | SUPERSEDED | DEPRECATED
+Status values: PROPOSED | ACCEPTED | SUPERSEDED | DEPRECATED (PROPOSED is the intended pre-filled default status for a newly copied ADR)
 -->
 
 # ADR-{{ADR_NUMBER}}: {{ADR_TITLE}}

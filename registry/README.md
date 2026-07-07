@@ -4,7 +4,7 @@ title: "Registry Module — Index"
 description: "Index for the registry/ module: the JSON Schema the root NIZAM.json context router validates against, plus generalised ecosystem scope-definition and registry patterns for consumer repositories."
 version: 0.2.0
 status: active
-authoritative_source: nizam-framework/registry/README.md
+authoritative_source: registry/README.md
 ---
 
 # registry/

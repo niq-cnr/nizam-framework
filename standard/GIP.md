@@ -4,7 +4,7 @@ title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/standard/GIP.md
+authoritative_source: standard/GIP.md
 ---
 
 # Governance Inheritance Protocol (GIP)

@@ -4,7 +4,7 @@ title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
 version: 0.1.0
 status: draft
-authoritative_source: nizam-framework/CONTEXT.md
+authoritative_source: CONTEXT.md
 ---
 
 # Nizam Framework — CONTEXT

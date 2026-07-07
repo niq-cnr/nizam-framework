@@ -1,0 +1,4 @@
+(script: v03.sh)
+test -f methodology/00_planning.md || { echo 'MISSING methodology/00_planning.md'; exit 1; }; grep -Eqi 'fewer than three' methodology/00_planning.md && grep -Eqi 'first (completed )?feature' methodology/00_planning.md && echo PASS || { echo 'rolling-average bootstrap-rule language not found'; exit 1; }
+PASS
+EXIT:0

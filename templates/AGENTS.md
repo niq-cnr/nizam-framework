@@ -4,7 +4,7 @@ title: "AGENTS.md Template"
 description: "Consumer-repo AGENTS.md template: the session-objective skeleton a bootstrapped repository copies and completes with its active phase, current objective, and delegation-matrix reference."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/templates/AGENTS.md
+authoritative_source: templates/AGENTS.md
 ---
 
 <!--
@@ -22,7 +22,7 @@ fill-in-the-blanks.
 
 **Active Phase:** {{ACTIVE_PHASE_ID}} ({{ACTIVE_PHASE_NAME}})
 
-**Session Started:** {{YYYY-MM-DD}}T{{HH:MM}}Z
+**Session Started:** {{YYYY-MM-DDTHH:MMZ}}
 
 ## Mandatory Scope Check
 

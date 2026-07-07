@@ -4,7 +4,7 @@ title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
 version: 0.2.0
 status: draft
-authoritative_source: nizam-framework/schema/README.md
+authoritative_source: schema/README.md
 ---
 
 # schema/

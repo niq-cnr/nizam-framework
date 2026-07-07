@@ -4,7 +4,7 @@ title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/tools/interface.md
+authoritative_source: tools/interface.md
 ---
 
 # Runtime-Adapter Interface
@@ -130,12 +130,12 @@ MUST be satisfied.
    exact file's content — it does not load a paraphrased, summarized, or
    runtime-authored substitute.
 3. The adapter injects the loaded payload as instructions/skill-tier context,
-   not as ordinary conversational content (Section 3.1).
+   not as ordinary conversational content (Section 3, Item 1).
 4. The adapter loads the payload conditionally, based on the triggers
-   `tools/SKILL.md` Section 1 defines, not unconditionally on every
+   `tools/SKILL.md Section 1` defines, not unconditionally on every
    invocation.
 5. The adapter maintains no forked or rewritten copy of `tools/SKILL.md`
-   anywhere in the runtime's own configuration surface (Section 3.3).
+   anywhere in the runtime's own configuration surface (Section 3, Item 3).
 6. The adapter provides a `read-state` mapping backed by a real file-read
    primitive, capable of reading any repository-relative path, including
    paths under `.agent/`.

@@ -1,0 +1,4 @@
+(script: v09.sh)
+test -f templates/ADR_TEMPLATE.md || { echo 'MISSING templates/ADR_TEMPLATE.md'; exit 1; }; grep -Eq 'Status values:.*default' templates/ADR_TEMPLATE.md && grep -q '\*\*Status:\*\* PROPOSED' templates/ADR_TEMPLATE.md && echo PASS || { echo 'PROPOSED-default documentation or pre-filled Status line missing/changed'; exit 1; }
+PASS
+EXIT:0

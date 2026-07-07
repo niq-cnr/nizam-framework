@@ -4,7 +4,7 @@ title: "Universal Circuit Breaker (DD-2)"
 description: "The single authoritative 3-strike attempt limit embedded by every repeatable execution loop in the framework: the per-attempt strategy table, the forbidden fourth attempt, and the halt/escalation procedure."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/methodology/03_circuit_breaker.md
+authoritative_source: methodology/03_circuit_breaker.md
 ---
 
 # Universal Circuit Breaker (DD-2)
@@ -62,17 +62,24 @@ breaker has tripped. The acting agent MUST, in order:
 1. **Discard the failed attempt's working changes.** Where a git working tree
    is in play, this means `git reset --hard` (or the equivalent clean discard
    for a non-git artifact) — the third attempt's partial or incorrect state is
-   not left in place for a human to sort through later.
-2. **Set the step's status to `BLOCKED`** in the relevant durable-state
-   location (the phase document's step-level `status` field, per
-   `schema/phase.schema.json`, and/or the feature's entry in
-   `.agent/run_state.json`).
+   not left in place for a human to sort through later. This discard MUST
+   also remove any untracked or generated artifacts the failed attempt
+   created (for example a scoped `git clean -fd` limited to the attempt's own
+   paths, or the equivalent clean-discard action for a non-git artifact) —
+   `git reset --hard` alone does not remove untracked files and is
+   insufficient on its own.
+2. **Set the step's status to `BLOCKED`, single-sourced.** The phase
+   document's step-level `status` field, per `schema/phase.schema.json`, is
+   the single source of truth for the `BLOCKED` state wherever a phase
+   document exists for the step. The feature's entry in
+   `.agent/run_state.json` is updated in the SAME atomic write, derived from
+   the phase document's value — eliminating the prior two-write, two-source
+   risk of the two fields disagreeing (Section 5).
 3. **Log the failure** to the technical-debt register (conventionally
    `docs/planning/DEBT.md`), naming at minimum: the phase, the feature, the
    failure type, and a reference to the last attempt's response or evidence
    file.
-4. **Update `.agent/run_state.json`** to reflect the blocked state (Section 5).
-5. **Escalate to a human and terminate.** The agent stops. Autonomous
+4. **Escalate to a human and terminate.** The agent stops. Autonomous
    continuation past a third failed attempt on any single step is never
    permitted, under any framing ("just one more try," "I think I see it now")
    — that framing is precisely what this document exists to override.

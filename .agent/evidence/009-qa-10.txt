@@ -1,0 +1,4 @@
+(script: v10.sh)
+test -f templates/AGENTS.md || { echo 'MISSING templates/AGENTS.md'; exit 1; }; count_new=$(grep -c '{{YYYY-MM-DDTHH:MMZ}}' templates/AGENTS.md || true); count_old=$(grep -c '}}T{{' templates/AGENTS.md || true); test "$count_new" -eq 1 && test "$count_old" -eq 0 && echo PASS || { echo "count_new=$count_new count_old=$count_old (expected 1 and 0)"; exit 1; }
+PASS
+EXIT:0

@@ -4,7 +4,7 @@ title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/tools/SKILL.md
+authoritative_source: tools/SKILL.md
 ---
 
 # Nizam Governance Skill

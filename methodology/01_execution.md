@@ -4,7 +4,7 @@ title: "Contract-First Harness Loop"
 description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, and the JSON Verdict Parse Rule that gates every stage."
 version: 0.1.0
 status: active
-authoritative_source: nizam-framework/methodology/01_execution.md
+authoritative_source: methodology/01_execution.md
 ---
 
 # Contract-First Harness Loop
@@ -23,7 +23,7 @@ the Dual Validator Gate defined in that document's Section 3.
 
 ## 2. Loop 1 — Pre-Code Alignment
 
-```
+```text
 Generator proposes contract (status: "proposed")
         |
         v
@@ -53,7 +53,7 @@ protect it.
 
 ## 3. Loop 2 — Post-Code Repair
 
-```
+```text
 Generator implements the approved contract's scope ONLY
         |
         v
@@ -93,7 +93,7 @@ Evaluator's contract review, and the Evaluator's QA verdict — culminates in a
 machine-parseable JSON verdict block. Advancement past that gate is permitted
 **only** when all four conditions hold simultaneously:
 
-```
+```text
 final_verdict.approved === true
 AND final_verdict.issues.length === 0
 AND final_verdict.missing_acceptance_coverage.length === 0
