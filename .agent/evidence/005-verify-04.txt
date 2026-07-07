@@ -1,0 +1,7 @@
+COMMAND:
+test ! -d tools/.claude && test ! -d tools/.codex && echo PASS || { echo "per-runtime fork directory found under tools/"; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

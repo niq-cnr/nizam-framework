@@ -1,0 +1,84 @@
+{
+  "contract_id": "005",
+  "feature_id": "005",
+  "name": "Tools Module (/tools/) \u2014 Unified Skill Payload",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/skill.json",
+        "purpose": "Machine-readable capability manifest for the single unified skill payload (DD-4): skill name, semantic version, entry_point pointing to tools/SKILL.md, a capabilities[] list mapping named capabilities to the framework modules that back them (methodology/, standard/, schema/, templates/, registry/), and a runtime_requirements object describing generic prerequisites (e.g. filesystem read/write, JSON parsing, shell execution) needed to consume the payload. Pure data \u2014 no per-runtime keys, no vendor/tool-brand identifiers (no 'claude', 'codex', 'anthropic', 'openai', 'gpt' strings) anywhere in the document."
+      },
+      {
+        "path": "tools/SKILL.md",
+        "purpose": "THE single instructions payload any agent runtime loads to act on the Nizam framework (DD-4 \u2014 the only SKILL.md in the repository). Written in a runtime-agnostic voice with no vendor-specific tool names: explains how to query NIZAM.json as the entry index rather than bulk-reading governance directories (DD-1), how to follow the methodology/ protocols (planning \u2192 execution \u2192 adversarial TDD \u2192 release train), the mandatory 3-strike circuit breaker (DD-2 / methodology/03_circuit_breaker.md), the anti-hallucination constraints (AH-1..AH-3, standard/anti_hallucination.md), and the durable-state convention (writing results to a project's own .agent/ directory rather than oral-tradition chat handoff, DD-3 evidence externalisation). Carries real frontmatter (id: nizam-tools-skill, authoritative_source: nizam-framework/tools/SKILL.md) describing the document itself, not a consumer's filled-in copy."
+      },
+      {
+        "path": "tools/interface.md",
+        "purpose": "Runtime-adapter specification (DD-4): documents how any agent runtime discovers tools/skill.json, loads tools/SKILL.md as its instructions payload, and maps the framework's three abstract operations \u2014 read-state, write-evidence, run-verification \u2014 onto that runtime's own native tool primitives (e.g. a generic file-read capability satisfies read-state, a generic file-write capability satisfies write-evidence, a generic shell/command-execution capability satisfies run-verification). Includes an explicit 'Adapter Conformance Checklist' section a runtime integrator can tick through. Describes the adapter contract only \u2014 ships no vendor-specific adapter implementation and no per-runtime fork directory. Carries real frontmatter (id: nizam-tools-interface, authoritative_source: nizam-framework/tools/interface.md)."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/README.md",
+        "purpose": "Replace the feature-000 stub (which only announces full content ships in feature 005) with the full tools/ module index: frontmatter intact (6 required keys, version bumped from 0.1.0, status updated if warranted), and a body enumerating all three payload files (skill.json, SKILL.md, interface.md) each with a one-line purpose, plus an explicit statement of the DD-4 no-per-runtime-fork rule (no tools/.claude, no tools/.codex, exactly one SKILL.md in the repo)."
+      }
+    ]
+  },
+  "non_goals": [
+    "No NIZAM.json or registry/ content (registry/nizam-index.schema.json, registry/scope_definition_patterns.md, root NIZAM.json) \u2014 those belong to feature 006",
+    "No bootstrap.sh script \u2014 that belongs to feature 007",
+    "No per-runtime adapter implementations or fork directories (no tools/.claude/, no tools/.codex/, no vendor-specific payload copies) \u2014 tools/interface.md describes the adapter contract only, it does not ship a runtime's native implementation of it",
+    "No edits to any file under schema/, standard/, methodology/, templates/, or registry/ \u2014 those already shipped in prior features and are only referenced by path or by protocol name from tools/, never restated or modified here",
+    "No CHANGELOG.md edits as part of this contract's verified implementation scope (any changelog entry required by the generator's Docs Sync Gate is tracked separately and is not part of this contract's verified scope)",
+    "No edits to any file outside tools/ and this contract file itself (no other module README stubs, no docs/planning/ changes)"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "All four contracted files exist under tools/ (skill.json, SKILL.md, interface.md, README.md) with no stray files",
+      "command": "count=$(find tools -maxdepth 1 -type f | wc -l); test \"$count\" -eq 4 && test -f tools/skill.json && test -f tools/SKILL.md && test -f tools/interface.md && test -f tools/README.md && echo PASS || { echo \"unexpected file state, count=$count\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "skill.json is valid JSON (python3 -c json.load succeeds) and contains no vendor/runtime-specific identifiers (pure data, no per-runtime keys)",
+      "command": "test -f tools/skill.json && python3 -c \"import json; doc = json.load(open('tools/skill.json')); blob = json.dumps(doc).lower(); forbidden = ['claude', 'anthropic', 'codex', 'openai', 'gpt']; hits = [w for w in forbidden if w in blob]; assert not hits, f'vendor-specific identifiers found: {hits}'; print('PASS')\""
+    },
+    {
+      "acceptance_test": "Exactly ONE SKILL.md exists in the whole repository, excluding .git (DD-4 acceptance anchor)",
+      "command": "count=$(find . -name 'SKILL.md' -not -path './.git/*' | wc -l); test \"$count\" -eq 1 && echo PASS || { echo \"found $count SKILL.md files, expected exactly 1\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "No per-runtime skill fork directories exist under tools/ (no tools/.claude, no tools/.codex)",
+      "command": "test ! -d tools/.claude && test ! -d tools/.codex && echo PASS || { echo \"per-runtime fork directory found under tools/\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "Every .md in tools/ starts with YAML frontmatter containing the 6 required keys (id/title/description/version/status/authoritative_source)",
+      "command": "count=$(find tools -maxdepth 1 -name '*.md' -type f | wc -l); test \"$count\" -eq 3 || { echo \"unexpected md file count $count\"; exit 1; }; status=0; for f in tools/*.md; do test \"$(head -1 \"$f\")\" = '---' || { echo \"NOT FRONTMATTER: $f\"; status=1; }; for k in id title description version status authoritative_source; do grep -q \"^$k:\" \"$f\" || { echo \"MISSING $k in $f\"; status=1; }; done; done; test \"$status\" -eq 0 && echo PASS"
+    },
+    {
+      "acceptance_test": "SKILL.md is written in a runtime-agnostic voice (no vendor-specific tool names) and documents the circuit breaker, anti-hallucination constraints, and durable-state convention",
+      "command": "f=tools/SKILL.md; test -f \"$f\" || exit 1; if grep -Eiq 'claude|anthropic|codex|openai|gpt' \"$f\"; then echo \"VENDOR-SPECIFIC REFERENCE FOUND IN SKILL.md\"; exit 1; fi; grep -qi 'circuit breaker' \"$f\" && grep -Eqi 'anti-hallucination|anti_hallucination' \"$f\" && grep -Eqi 'durable state|NIZAM\\.json' \"$f\" && echo PASS || { echo \"MISSING REQUIRED TOPIC IN SKILL.md\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "interface.md maps the three abstract operations (read-state, write-evidence, run-verification) onto native runtime tools and includes an Adapter Conformance Checklist",
+      "command": "f=tools/interface.md; test -f \"$f\" || exit 1; grep -qi 'read-state' \"$f\" && grep -qi 'write-evidence' \"$f\" && grep -qi 'run-verification' \"$f\" && grep -qi 'conformance checklist' \"$f\" && echo PASS || { echo \"MISSING ADAPTER SPEC ELEMENT IN interface.md\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "No NizamIQ branding remains (grep -ri 'nizamiq' tools/ returns nothing)",
+      "command": "test -d tools || exit 1; count=$(find tools -maxdepth 1 -type f | wc -l); test \"$count\" -eq 4 || { echo \"unexpected file count $count, refusing to trust an absence-of-match result\"; exit 1; }; if grep -ril 'nizamiq' tools/ 2>/dev/null; then echo FAIL; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "tools/ contains EXACTLY the 4 contracted files (skill.json, SKILL.md, interface.md, README.md) and no stray out-of-contract files",
+      "command": "actual=\"$(find tools -maxdepth 1 -type f | LC_ALL=C sort | tr '\\n' ' ')\"; expected=\"tools/README.md tools/SKILL.md tools/interface.md tools/skill.json \"; test \"$actual\" = \"$expected\" && echo PASS || { echo \"MISMATCH: got [$actual] expected [$expected]\"; exit 1; }"
+    }
+  ],
+  "estimated_lines": 450,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/005-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/005-verify-01.txt for the first entry, ..., .agent/evidence/005-verify-09.txt for the ninth). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T13:15:00Z",
+    "revisions": 0
+  }
+}

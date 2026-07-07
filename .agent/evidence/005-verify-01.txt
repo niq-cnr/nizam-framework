@@ -1,0 +1,7 @@
+COMMAND:
+count=$(find tools -maxdepth 1 -type f | wc -l); test "$count" -eq 4 && test -f tools/skill.json && test -f tools/SKILL.md && test -f tools/interface.md && test -f tools/README.md && echo PASS || { echo "unexpected file state, count=$count"; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

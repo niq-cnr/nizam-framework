@@ -1,12 +1,12 @@
 {
   "repository": "nizam-framework",
   "current_phase": "001-framework-genesis",
-  "current_feature": "005",
+  "current_feature": "006",
   "status": "contract_negotiation",
-  "updated_at": "2026-07-07T12:40:00Z",
+  "updated_at": "2026-07-07T14:10:00Z",
   "scope_budget": {
     "original_estimate_lines": 3850,
-    "total_lines_changed": 2543,
+    "total_lines_changed": 3037,
     "per_feature": [
       {
         "id": "000",
@@ -35,6 +35,12 @@
         "id": "004",
         "estimated": 410,
         "actual": 307,
+        "flag": null
+      },
+      {
+        "id": "005",
+        "estimated": 450,
+        "actual": 494,
         "flag": null
       }
     ]
@@ -123,6 +129,16 @@
       "at": "2026-07-07T12:40:00Z",
       "event": "feature_complete",
       "detail": "Feature 004 complete: both gates first-pass, QA 9/9 + filled-template adversarial pass. 307 lines vs 410 est. Cumulative 2543/5005. Advancing to 005."
+    },
+    {
+      "at": "2026-07-07T13:15:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 005 approved first-pass by both gates (vendor-neutrality blacklist verified consistent with scope). Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T14:10:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 005 complete: both gates first-pass, QA 9/9 + adapter-simulation adversarial pass. 494 lines vs 450 est. Cumulative 3037/5005. Advancing to 006 (deps 000-005 all complete)."
     }
   ]
 }

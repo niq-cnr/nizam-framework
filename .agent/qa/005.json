@@ -1,0 +1,58 @@
+{
+  "feature_id": "005",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {
+      "command": "find tools -maxdepth 1 -type f | wc -l equals 4, all 4 contracted files present",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/005-qa-01.txt"
+    },
+    {
+      "command": "skill.json valid JSON, no vendor/runtime identifiers (claude/anthropic/codex/openai/gpt)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/005-qa-02.txt"
+    },
+    {
+      "command": "exactly ONE SKILL.md in the whole repo (excluding .git)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/005-qa-03.txt"
+    },
+    {
+      "command": "no tools/.claude or tools/.codex fork directories",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/005-qa-04.txt"
+    },
+    {
+      "command": "every tools/*.md has frontmatter with 6 required keys",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/005-qa-05.txt"
+    },
+    {
+      "command": "SKILL.md runtime-agnostic, documents circuit breaker/anti-hallucination/durable-state",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/005-qa-06.txt"
+    },
+    {
+      "command": "interface.md maps read-state/write-evidence/run-verification + Adapter Conformance Checklist",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/005-qa-07.txt"
+    },
+    {
+      "command": "no 'nizamiq' branding in tools/ (file-count guarded)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/005-qa-08.txt"
+    },
+    {
+      "command": "tools/ contains exactly the 4 contracted files, no stray extras",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/005-qa-09.txt"
+    }
+  ],
+  "adversarial_check": {
+    "description": "Two-part check beyond the 9 listed commands. (1) Runtime-adapter simulation: loaded tools/skill.json programmatically, confirmed its 'entry_point' field resolves to tools/SKILL.md on disk, confirmed all 10 capabilities[].module paths resolve to real files, then extracted every backtick-quoted path-like reference from SKILL.md's body (excluding fenced code blocks) and confirmed each resolves on disk as a file or directory as appropriate -- with two explicit, justified exceptions: NIZAM.json and registry/nizam-index.schema.json, both forward-references to content contracted for feature 006 per this contract's own non_goals, correctly still absent. All in-scope references resolve; zero unexplained dangling references. (2) DD-4 uniqueness negative test, conducted entirely in the scratchpad (never inside the repo): confirmed the real repo's 'find . -name SKILL.md -not -path ./.git/* | wc -l' yields 1, then built a simulated duplicate-fork tree solely under /tmp/claude-1000/.../scratchpad/dd4_sim/ (tools/SKILL.md copied to both tools/SKILL.md and tools/.duplicate-runtime-fork/SKILL.md) and re-ran the identical find|wc -l logic against that scratchpad tree, yielding 2 -- proving verification command 3 is load-bearing and would catch a genuine DD-4 violation, not a vacuous pass. The repo's own tools/ directory was confirmed unmodified (no .duplicate-runtime-fork present) after the simulation.",
+    "result": "pass",
+    "evidence": ".agent/evidence/005-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}
