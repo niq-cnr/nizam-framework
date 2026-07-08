@@ -1,0 +1,35 @@
+(script: z06.sh)
+f=.github/workflows/compliance.yml; test -f "$f" || { echo "MISSING $f"; exit 1; }; test -f tools/validate.sh || { echo "MISSING tools/validate.sh"; exit 1; }
+run_line=$(python3 -c "
+import yaml
+doc = yaml.safe_load(open('.github/workflows/compliance.yml'))
+jobs = doc.get('jobs', {}) or {}
+found = None
+for job in jobs.values():
+    for step in (job.get('steps') or []):
+        run = step.get('run')
+        if isinstance(run, str) and 'tools/validate.sh' in run:
+            found = run
+if found is None:
+    raise SystemExit(1)
+print(found)
+")
+rc=$?
+test "$rc" -eq 0 || { echo "could not extract a run: step invoking tools/validate.sh from $f"; exit 1; }
+test -n "$run_line" || { echo "extracted run line was empty"; exit 1; }
+echo "extracted CI run command: $run_line"
+bash -c "$run_line"
+rc2=$?
+test "$rc2" -eq 0 && echo PASS || { echo "extracted CI command '$run_line' exited $rc2 locally, expected 0"; exit 1; }
+extracted CI run command: bash tools/validate.sh
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+PASS
+EXIT:0

@@ -1,0 +1,20 @@
+{
+  "feature_id": "013",
+  "verdict": "pass",
+  "executed_at": "2026-07-08",
+  "checks": [
+    {"command": "workflow file exists", "exit_code": 0, "evidence": ".agent/evidence/013-qa-01.txt"},
+    {"command": "workflow is valid YAML", "exit_code": 0, "evidence": ".agent/evidence/013-qa-02.txt"},
+    {"command": "triggers on pull_request and push", "exit_code": 0, "evidence": ".agent/evidence/013-qa-03.txt"},
+    {"command": "a real run: step invokes tools/validate.sh (not a comment)", "exit_code": 0, "evidence": ".agent/evidence/013-qa-04.txt"},
+    {"command": "push trigger restricted to branches==[main] exactly, pull_request unfiltered (structural YAML parse)", "exit_code": 0, "evidence": ".agent/evidence/013-qa-05.txt"},
+    {"command": "the exact extracted CI command passes locally", "exit_code": 0, "evidence": ".agent/evidence/013-qa-06.txt"},
+    {"command": "checkout fetch-depth:0 AND pip installs both jsonschema and pyyaml (structural parse)", "exit_code": 0, "evidence": ".agent/evidence/013-qa-07.txt"}
+  ],
+  "adversarial_check": {
+    "description": "Mandatory CI dry-run simulation beyond the 7 listed commands, entirely in a scratchpad cp-a copy (repo untouched): (0) confirmed python3+jsonschema+pyyaml already importable, matching what the workflow's pip-install step guarantees in real CI. (1) cp -a copy preserving .git (simulating actions/checkout fetch-depth:0). (2) Extracted the workflow's exact run: command programmatically ('bash tools/validate.sh'). (3) POSITIVE dry-run: ran that exact command against the clean scratch copy -- SUMMARY: 8 passed, 0 failed, exit 0, confirming CI would pass this tree. (4) NEGATIVE dry-run: untagged one real fence-opener in standard/NDS.md within the same scratch copy, re-ran the identical extracted command -- exited non-zero with an explicit [C3] FAIL naming the file and line, proving the CI gate is load-bearing and would genuinely block a PR carrying that violation, not merely pass by construction.",
+    "result": "pass",
+    "evidence": ".agent/evidence/013-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

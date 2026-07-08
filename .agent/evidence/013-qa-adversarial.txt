@@ -1,0 +1,47 @@
+=== Step 0: pre-flight -- confirm python3 + jsonschema + pyyaml already importable, exactly what the workflow's 'pip install jsonschema pyyaml' step guarantees ===
+jsonschema and yaml (pyyaml) already importable: jsonschema yaml
+
+=== Step 1: cp -a scratch copy of the repo (simulating actions/checkout with fetch-depth: 0 -- .git preserved) ===
+scratch copy ready at /tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/013_ci_dryrun/repo
+
+=== Step 2: extract the workflow's exact run: command (dogfooding the same extraction the contract's own verification[5] performs) ===
+extracted CI run command: 'bash tools/validate.sh'
+
+=== Step 3: POSITIVE dry-run -- execute the exact extracted command against the clean scratch copy ===
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+exit code: 0
+POSITIVE DRY-RUN PASS: the workflow's exact command would let this PR/push pass CI (SUMMARY: 8 passed, 0 failed, exit 0).
+
+=== Step 4: NEGATIVE dry-run -- introduce one real NDS violation (untag a fence in the scratch copy) and re-run the identical CI command ===
+before mutation, confirming a tagged fence exists to mutate:
+56:```yaml
+65:```
+71:```text
+73:```
+untagged one fence-opener line in /tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/013_ci_dryrun/repo/standard/NDS.md
+after mutation:
+56:```
+65:```
+73:```
+
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] FAIL untagged-fence-sweep
+  standard/NDS.md:56
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 7 passed, 1 failed
+exit code: 1
+NEGATIVE DRY-RUN PASS: with the untagged-fence NDS violation present, the workflow's exact command exits non-zero with an explicit [C3] FAIL -- confirming the CI gate is load-bearing and would BLOCK this PR.
+EXIT:0

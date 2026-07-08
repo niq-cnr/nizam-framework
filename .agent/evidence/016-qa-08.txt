@@ -1,0 +1,11 @@
+f=.github/workflows/compliance.yml; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import yaml
+doc = yaml.safe_load(open('$f'))
+steps = doc['jobs']['validate']['steps']
+run_steps = [s for s in steps if 'run' in s]
+matches = [s['run'].strip() for s in run_steps if s['run'].strip() == 'bash tools/validate.sh']
+assert matches, f\"no step with run == exactly 'bash tools/validate.sh' -- run steps were: {[s['run'] for s in run_steps]}\"
+print('PASS')
+"
+PASS
+EXIT:0

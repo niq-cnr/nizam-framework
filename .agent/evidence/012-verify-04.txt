@@ -1,0 +1,12 @@
+COMMAND:
+v=tools/validate.sh; fx=tools/fixtures/bad_authoritative_source.md; test -f "$v" || { echo "MISSING $v"; exit 1; }; test -f "$fx" || { echo "MISSING $fx"; exit 1; }; bash "$v" --target "$fx"; rc=$?; test "$rc" -ne 0 && echo PASS || { echo "expected non-zero exit for $fx, got $rc"; exit 1; }
+
+OUTPUT:
+[C1] PASS frontmatter-schema
+[C2] FAIL format
+  tools/fixtures/bad_authoritative_source.md: authoritative_source 'standard/NDS.md' != own path 'tools/fixtures/bad_authoritative_source.md' and != 'NA'
+[C3] PASS untagged-fence-sweep
+SUMMARY: 2 passed, 1 failed
+PASS
+
+EXIT:0

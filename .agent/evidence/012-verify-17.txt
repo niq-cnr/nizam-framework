@@ -1,0 +1,7 @@
+COMMAND:
+v=tools/validate.sh; test -f "$v" || { echo "MISSING $v"; exit 1; }; scratch=$(mktemp -d) || { echo 'mktemp failed'; exit 1; }; trap 'rm -rf "$scratch"' EXIT; cp -a . "$scratch/repo" || { echo 'cp -a failed'; exit 1; }; test -d "$scratch/repo/.git" || { echo 'MISSING .git in copy -- HEAD comparison would not be meaningful'; exit 1; }; test -f "$scratch/repo/tools/validate.sh" || { echo 'MISSING tools/validate.sh in copy'; exit 1; }; f="$scratch/repo/CONTEXT.md"; test -f "$f" || { echo 'MISSING CONTEXT.md in copy'; exit 1; }; grep -q '^version: 0.1.0$' "$f" || { echo 'expected version line "version: 0.1.0" not found in copied CONTEXT.md, cannot safely mutate'; exit 1; }; sed -i 's/^version: 0.1.0$/version: 0.2.0/' "$f"; grep -q '^version: 0.2.0$' "$f" || { echo 'version mutation did not apply'; exit 1; }; grep -q 'change_log' "$f" && { echo 'unexpected pre-existing change_log key would confound this test'; exit 1; }; out=$(cd "$scratch/repo" && bash tools/validate.sh 2>&1); rc=$?; test "$rc" -ne 0 || { echo "expected non-zero exit after unrecorded version bump, got 0"; echo "$out"; exit 1; }; echo "$out" | grep -Eq '^\[C8\] FAIL' && echo PASS || { echo 'no [C8] FAIL line found'; echo "$out"; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

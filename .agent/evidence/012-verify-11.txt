@@ -1,0 +1,7 @@
+COMMAND:
+f=tools/validate.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'schema/frontmatter.schema.json' "$f" && echo PASS || { echo 'no reference to schema/frontmatter.schema.json found' ; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

@@ -1,0 +1,7 @@
+(script: y06.sh)
+v=tools/validate.sh; fx=tools/fixtures/broken_index.json; test -f "$v" || { echo "MISSING $v"; exit 1; }; test -f "$fx" || { echo "MISSING $fx"; exit 1; }; bash "$v" --target "$fx"; rc=$?; test "$rc" -ne 0 && echo PASS || { echo "expected non-zero exit for $fx, got $rc"; exit 1; }
+[C4] FAIL index-integrity
+  tools/fixtures/broken_index.json: indexed path(s) do not resolve on disk: ['tools/fixtures/does-not-exist.md']
+SUMMARY: 0 passed, 1 failed
+PASS
+EXIT:0

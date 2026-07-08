@@ -1,0 +1,37 @@
+name: compliance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # fetch-depth: 0 is load-bearing, not hardening: tools/validate.sh's
+          # C8 check (NDS Sec 4 version-bump-vs-changelog) runs
+          # `git show HEAD:<path>` for every shipped-doc file and treats a
+          # failed lookup as "new file, skip comparison". GitHub Actions'
+          # default shallow checkout would leave HEAD's history/object graph
+          # incomplete on both the pull_request (merge-ref) and push (main)
+          # trigger contexts, so full history is required here.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+
+      - run: pip install jsonschema pyyaml
+
+      - run: bash tools/validate.sh

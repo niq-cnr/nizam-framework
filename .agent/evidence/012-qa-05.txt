@@ -1,0 +1,9 @@
+(script: y05.sh)
+v=tools/validate.sh; fx=tools/fixtures/untagged_fence.md; test -f "$v" || { echo "MISSING $v"; exit 1; }; test -f "$fx" || { echo "MISSING $fx"; exit 1; }; bash "$v" --target "$fx"; rc=$?; test "$rc" -ne 0 && echo PASS || { echo "expected non-zero exit for $fx, got $rc"; exit 1; }
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] FAIL untagged-fence-sweep
+  tools/fixtures/untagged_fence.md:17
+SUMMARY: 2 passed, 1 failed
+PASS
+EXIT:0

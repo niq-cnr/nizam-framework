@@ -1,0 +1,3 @@
+f=CHANGELOG.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q '_No unreleased changes_\.' "$f" && { echo "placeholder '_No unreleased changes._' is still present -- must be replaced, not appended alongside"; exit 1; }; grep -q 'tools/validate.sh' "$f" && grep -q 'compliance.yml' "$f" && echo PASS || { echo "missing 'tools/validate.sh' or 'compliance.yml' reference in $f"; exit 1; }
+PASS
+EXIT:0

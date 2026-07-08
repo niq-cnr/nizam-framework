@@ -1,0 +1,15 @@
+scratch=$(mktemp -d); trap 'rm -rf "$scratch"' EXIT; cp -a . "$scratch/repo"; rm -f "$scratch/repo/NIZAM.json"; out=$(cd "$scratch/repo" && bash tools/validate.sh 2>&1); rc=$?; echo "$out"; echo "rc=$rc"; test "$rc" -ne 0 || { echo "expected non-zero exit with NIZAM.json missing"; exit 1; }; echo "$out" | grep -q '\[C5\] FAIL' || { echo "missing '[C5] FAIL' in output"; exit 1; }; echo "$out" | grep -Eq '^SUMMARY:' || { echo "missing SUMMARY line -- script aborted before reaching it (die regression)"; exit 1; }; echo PASS
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] FAIL index-integrity
+  NIZAM.json: not valid JSON: [Errno 2] No such file or directory: 'NIZAM.json'
+[C5] FAIL branding-leakage
+  sweep target(s) missing: NIZAM.json -- refusing to trust an absence-of-match result (skipping grep sweep for this invocation).
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 6 passed, 2 failed
+rc=1
+PASS
+EXIT:0

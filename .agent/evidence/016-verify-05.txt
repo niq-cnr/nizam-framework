@@ -1,0 +1,13 @@
+f=.agent/product_spec_002.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'tools/fixtures/' "$f" || { echo "Sec 3 tree missing tools/fixtures/ line"; exit 1; }; python3 -c "
+lines = open('$f', encoding='utf-8').read().splitlines()
+assert lines[0].strip() == '---', 'frontmatter must open with ---'
+end = next(i for i in range(1, len(lines)) if lines[i].strip() == '---')
+import yaml
+fm = yaml.safe_load('\n'.join(lines[1:end]))
+assert fm['version'] == '1.0.1', f\"version not 1.0.1: {fm['version']}\"
+assert fm['spec_version'] == '1.0.1', f\"spec_version not 1.0.1: {fm['spec_version']}\"
+versions = [str(c['version']) for c in fm['change_log']]
+assert '1.0.1' in versions, f\"change_log missing 1.0.1 entry: {versions}\"
+print('PASS')
+"PASS
+EXIT:0

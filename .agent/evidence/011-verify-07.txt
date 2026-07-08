@@ -1,0 +1,3 @@
+f=.agent/product_spec.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q '.github/workflows' "$f" && grep -q 'tools/validate.sh' "$f" && echo PASS || { echo 'one or both new layout locations missing from product_spec.md'; exit 1; }
+PASS
+EXIT:0

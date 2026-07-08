@@ -1,80 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "001-framework-genesis",
+  "current_phase": "002-self-compliance",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-07-08T08:00:00Z",
-  "scope_budget": {
-    "original_estimate_lines": 3850,
-    "total_lines_changed": 4156,
-    "per_feature": [
-      {
-        "id": "000",
-        "estimated": 220,
-        "actual": 213
-      },
-      {
-        "id": "001",
-        "estimated": 450,
-        "actual": 603,
-        "flag": null
-      },
-      {
-        "id": "002",
-        "estimated": 720,
-        "actual": 520,
-        "flag": null
-      },
-      {
-        "id": "003",
-        "estimated": 900,
-        "actual": 900,
-        "flag": null
-      },
-      {
-        "id": "004",
-        "estimated": 410,
-        "actual": 307,
-        "flag": null
-      },
-      {
-        "id": "005",
-        "estimated": 450,
-        "actual": 494,
-        "flag": null
-      },
-      {
-        "id": "006",
-        "estimated": 400,
-        "actual": 516,
-        "flag": null
-      },
-      {
-        "id": "007",
-        "estimated": 300,
-        "actual": 435,
-        "flag": null
-      },
-      {
-        "id": "008",
-        "estimated": 1,
-        "actual": 2,
-        "flag": null
-      },
-      {
-        "id": "009",
-        "estimated": 90,
-        "actual": 146,
-        "flag": null
-      },
-      {
-        "id": "010",
-        "estimated": 20,
-        "actual": 20,
-        "flag": null
-      }
-    ]
-  },
+  "updated_at": "2026-07-09T00:40:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -105,6 +34,30 @@
       "limit": 3
     },
     "010-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "011-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "012-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "013-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "014-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "015-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "016-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -259,6 +212,207 @@
       "at": "2026-07-08T08:00:00Z",
       "event": "pr_merged",
       "detail": "PR #1 merged to main by human (merge commit b1ea7e6). Release prep: CHANGELOG Unreleased entries folded into [0.1.0] (dated 2026-07-08) on branch chore/release-v0.1.0 per methodology/05_release_train.md; v0.1.0 tag to be cut on the release-prep merge commit."
+    },
+    {
+      "at": "2026-07-08T09:30:00Z",
+      "event": "phase_activated",
+      "detail": "Phase 002-self-compliance authorized by human (\"approved. please proceed.\", 2026-07-08). Manifest flipped to in_progress; scope budget reset (770-line estimate, phase-001 final budget archived in phase_001_scope_budget_final). Beginning contract negotiation on feature 011."
+    },
+    {
+      "at": "2026-07-08T10:30:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 011 approved after 1 revision (template-comment false-fail policy fix; substring false-pass replaced with YAML-parsed assertion; version-field coverage added). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T11:20:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 011 complete: contract 1 revision (template-comment false-fail, substring false-pass, version coverage), Mode B + QA 9/9 first-pass + template-fidelity adversarial. 218 lines vs 100 est (first feature of phase - no rolling baseline per 00_planning bootstrap rule; cumulative 218/1001 healthy). Advancing to 012."
+    },
+    {
+      "at": "2026-07-08T13:00:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 012 approved after 2 revisions (no-op-stub false-pass closed with stdout assertions + C5-C8 mutation tests; git-clone false-fail replaced with cp -a isolation). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T14:40:00Z",
+      "event": "scope_flag_raised",
+      "detail": "Feature 012 complete (contract 2 revisions incl. no-op-stub and cp-a false-fail catches; Mode B + QA 17/17 first-pass; QA independently ran all 4 mutation tests + historical-defect regression). Contract-scoped 818 lines vs 360 estimate -> per-feature flag (3x rolling avg = 243). Cumulative 899/1001 (89.8%); remaining estimates (~310) project a cumulative-ceiling breach during feature 014. Pipeline paused: feature 013 will NOT begin until human acknowledgment is recorded, per Scope Budget Protocol."
+    },
+    {
+      "at": "2026-07-08T15:00:00Z",
+      "event": "scope_acknowledged_rebaselined",
+      "detail": "Human acknowledged the feature-012 scope flag and authorized re-baseline (option 1): original_estimate_lines 770 -> 1250, ceiling 1625. Plan Amendment Rule applies (human-authorized, orchestrator-recorded). Pipeline resumed; feature 013 dependency gate satisfied (012 complete)."
+    },
+    {
+      "at": "2026-07-08T16:00:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 013 approved after 1 revision (multi-branch push false-pass + missing pull_request no-filter coverage, both fixed structurally with YAML-1.1 True-key defense). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T16:30:00Z",
+      "event": "state_correction",
+      "detail": "Generator (feature 013 implementation) wrote to orchestrator-owned run_state.json despite explicit instruction: advanced current_feature to 014 prematurely, set status=implemented, added foreign keys (active_contract_id/last_action/completed_contract_ids). Violates AGF Sec 5 rule 4 (roles update only their assigned fields). Orchestrator restored correct state (feature 013 not complete until Mode B + QA pass); foreign keys removed; history/budget verified intact. Deviation logged for Mode B awareness; implementation artifacts themselves unaffected."
+    },
+    {
+      "at": "2026-07-08T17:10:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 013 complete: contract 1 revision (multi-branch false-pass + PR-filter coverage), Mode B first-pass (incl. ratifying the run_state deviation remediation), QA 7/7 + CI dry-run adversarial proof (untagged fence blocks the run). 29 lines vs 50 est. Cumulative 928/1625. Advancing to 014."
+    },
+    {
+      "at": "2026-07-08T18:00:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 014 approved first-pass by both gates (vacuous-match supersessions verified against live files; scope guard reproduced). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T19:20:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 014 complete: both gates first-pass, QA 9/9 + self-referential adversarial audit. QA honestly self-reported that its own 012-014 evidence files predate-violate the new Evidence Capture Convention (script labels + session paths) - corrective item: all future evidence rounds, starting with 015, must comply with 04_tool_driven_state Sec 5. 158 lines vs 220 est. Cumulative 1086/1625. Advancing to 015 (deps 013+014 complete)."
+    },
+    {
+      "at": "2026-07-08T20:10:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 015 (phase close) approved first-pass by both gates. Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T21:30:00Z",
+      "event": "phase_complete",
+      "detail": "Feature 015 complete: both gates first-pass, QA 6/6 + phase-completeness adversarial audit; evaluator evidence-format regression corrected (015-qa files strictly per 04 Sec 5). Phase 002-self-compliance CLOSED: 5/5 features through the full lifecycle, validator green (SUMMARY: 8 passed, 0 failed), cumulative 1121/1625. v0.2.0 release remains the human gate per 05_release_train Sec 6. Opening PR."
+    },
+    {
+      "at": "2026-07-08T22:40:00Z",
+      "event": "amendment_authorized",
+      "detail": "PR #3 review findings triaged per human instruction (verify/fix-valid/skip-with-reason): 7 still-valid (4 workflow hardenings incl. source-verified SHA pins checkout@11bd7190/setup-python@0b93645e, 2 validator fixes, 1 spec_002 tree line), 1 orchestrator state fix (manifest stale note, corrected in this update), 2 skipped (immutable 013-verify-05 evidence with companion-check coverage; completed-plan loose grep superseded by contract 014 v[7] exact assertion). Feature 016 registered per Plan Amendment Rule (00_planning Sec 9)."
+    },
+    {
+      "at": "2026-07-08T23:30:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 016 approved first-pass by both gates; evaluator empirically reproduced the C5-die abort and the comment-tolerance evasion pre-fix, and the corrected behavior post-fix. Delegating implementation."
+    },
+    {
+      "at": "2026-07-09T00:40:00Z",
+      "event": "amendment_complete",
+      "detail": "Feature 016 complete: contract first-pass both gates, 1 post-approval amendment (unquoted-literal SyntaxError in v[5]; missing run_state exclusion in v[7] - both ratified by Mode B as test-defect corrections), QA 8/8 + API-anchored SHA verification + structural workflow regression. 49 lines vs 45 est. Cumulative 1170/1625. Pushing to PR #3 and answering review threads."
     }
-  ]
+  ],
+  "phase_001_scope_budget_final": {
+    "original_estimate_lines": 3850,
+    "total_lines_changed": 4156,
+    "per_feature": [
+      {
+        "id": "000",
+        "estimated": 220,
+        "actual": 213
+      },
+      {
+        "id": "001",
+        "estimated": 450,
+        "actual": 603,
+        "flag": null
+      },
+      {
+        "id": "002",
+        "estimated": 720,
+        "actual": 520,
+        "flag": null
+      },
+      {
+        "id": "003",
+        "estimated": 900,
+        "actual": 900,
+        "flag": null
+      },
+      {
+        "id": "004",
+        "estimated": 410,
+        "actual": 307,
+        "flag": null
+      },
+      {
+        "id": "005",
+        "estimated": 450,
+        "actual": 494,
+        "flag": null
+      },
+      {
+        "id": "006",
+        "estimated": 400,
+        "actual": 516,
+        "flag": null
+      },
+      {
+        "id": "007",
+        "estimated": 300,
+        "actual": 435,
+        "flag": null
+      },
+      {
+        "id": "008",
+        "estimated": 1,
+        "actual": 2,
+        "flag": null
+      },
+      {
+        "id": "009",
+        "estimated": 90,
+        "actual": 146,
+        "flag": null
+      },
+      {
+        "id": "010",
+        "estimated": 20,
+        "actual": 20,
+        "flag": null
+      }
+    ]
+  },
+  "scope_budget": {
+    "original_estimate_lines": 1250,
+    "total_lines_changed": 1170,
+    "per_feature": [
+      {
+        "id": "011",
+        "estimated": 100,
+        "actual": 81,
+        "flag": null,
+        "note": "corrected 2026-07-08 from 218 (which wrongly included .agent evidence overhead) to the contract-scoped git stat (77+4), matching phase-001 accounting convention"
+      },
+      {
+        "id": "012",
+        "estimated": 360,
+        "actual": 818,
+        "flag": "SCOPE FLAG per methodology/00_planning.md: 818 > 3x rolling average (3x81=243). Non-halting; explicit human acknowledgment REQUIRED before feature 013 begins. ACKNOWLEDGED by human 2026-07-08 (\"1. proceed\")."
+      },
+      {
+        "id": "013",
+        "estimated": 50,
+        "actual": 29,
+        "flag": null
+      },
+      {
+        "id": "014",
+        "estimated": 220,
+        "actual": 158,
+        "flag": null
+      },
+      {
+        "id": "015",
+        "estimated": 40,
+        "actual": 35,
+        "flag": null
+      },
+      {
+        "id": "016",
+        "estimated": 45,
+        "actual": 49,
+        "flag": null
+      }
+    ],
+    "rebaseline": {
+      "from": 770,
+      "to": 1250,
+      "authorized_by": "human",
+      "at": "2026-07-08T15:00:00Z",
+      "reason": "Option 1: flag acknowledged + phase estimate re-baselined to reflect the gate-hardened validator (899 actual through 012 + ~310 remaining estimates, rounded up). New cumulative ceiling: 1625 (130%)."
+    }
+  }
 }

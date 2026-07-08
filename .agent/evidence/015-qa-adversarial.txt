@@ -1,0 +1,77 @@
+python3 <<'PYEOF'
+import json, os
+feature_list = json.load(open(".agent/feature_list_002.json"))
+features = {f["id"]: f for f in feature_list["features"]}
+all_ok = True
+for fid in ["011", "012", "013", "014", "015"]:
+    print("--- feature " + fid + " ---")
+    contract = json.load(open(".agent/contracts/" + fid + ".json"))
+    status = contract.get("status")
+    approvals = contract.get("approvals", {})
+    print("contract status: " + str(status) + " approvals: " + str(approvals))
+    contract_ok = status in ("implemented", "complete") and approvals.get("validator_mode_a") and approvals.get("evaluator_contract_review")
+    qa_path = ".agent/qa/" + fid + ".json"
+    if not os.path.isfile(qa_path):
+        print("qa verdict not yet on disk (expected only for 015, in-flight in this QA round)")
+        qa_ok = (fid == "015")
+    else:
+        qa = json.load(open(qa_path))
+        print("qa verdict: " + str(qa.get("verdict")))
+        qa_ok = (qa.get("verdict") == "pass")
+    verify_files = sorted([p for p in os.listdir(".agent/evidence") if p.startswith(fid + "-verify-")])
+    qa_files = sorted([p for p in os.listdir(".agent/evidence") if p.startswith(fid + "-qa-")])
+    print(fid + "-verify-* count: " + str(len(verify_files)) + "  " + fid + "-qa-* count: " + str(len(qa_files)))
+    evidence_ok = len(verify_files) > 0 and len(qa_files) > 0
+    fl_status = features.get(fid, {}).get("status")
+    print("feature_list_002.json status: " + str(fl_status))
+    fl_ok = (fl_status == "complete") if fid != "015" else (fl_status == "pending")
+    ok = contract_ok and qa_ok and evidence_ok and fl_ok
+    print("OVERALL " + fid + ": " + ("OK" if ok else "FAIL"))
+    all_ok = all_ok and ok
+print("SUMMARY: " + ("ALL_OK (015 correctly in-flight)" if all_ok else "FAIL"))
+PYEOF
+--- part 1 output: phase-002 completeness audit (011-015) ---
+--- feature 011 ---
+contract status: complete approvals: {'validator_mode_a': True, 'evaluator_contract_review': True, 'approved_at': '2026-07-08T10:30:00Z', 'revisions': 1}
+qa verdict: pass
+011-verify-* count: 9  011-qa-* count: 10
+feature_list_002.json status: complete
+OVERALL 011: OK
+--- feature 012 ---
+contract status: complete approvals: {'validator_mode_a': True, 'evaluator_contract_review': True, 'approved_at': '2026-07-08T13:00:00Z', 'revisions': 2}
+qa verdict: pass
+012-verify-* count: 17  012-qa-* count: 18
+feature_list_002.json status: complete
+OVERALL 012: OK
+--- feature 013 ---
+contract status: complete approvals: {'validator_mode_a': True, 'evaluator_contract_review': True, 'approved_at': '2026-07-08T16:00:00Z', 'revisions': 1}
+qa verdict: pass
+013-verify-* count: 7  013-qa-* count: 8
+feature_list_002.json status: complete
+OVERALL 013: OK
+--- feature 014 ---
+contract status: complete approvals: {'validator_mode_a': True, 'evaluator_contract_review': True, 'approved_at': '2026-07-08T18:00:00Z', 'revisions': 0}
+qa verdict: pass
+014-verify-* count: 9  014-qa-* count: 10
+feature_list_002.json status: complete
+OVERALL 014: OK
+--- feature 015 ---
+contract status: implemented approvals: {'validator_mode_a': True, 'evaluator_contract_review': True, 'approved_at': '2026-07-08T20:10:00Z', 'revisions': 0}
+qa verdict not yet on disk (expected only for 015, in-flight in this QA round)
+015-verify-* count: 6  015-qa-* count: 7
+feature_list_002.json status: pending
+OVERALL 015: OK
+SUMMARY: ALL_OK (015 correctly in-flight)
+
+bash tools/validate.sh
+--- part 2 output: final full-tree validator run ---
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+EXIT:0

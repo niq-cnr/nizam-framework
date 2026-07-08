@@ -2,9 +2,13 @@
 id: nizam-planning-enforcer
 title: "Planning Enforcer"
 description: "The mandatory pre-code planning protocol: the spec + feature-DAG artifact pair every phase must produce before implementation begins, the dependency enforcement rule, atomic-step decomposition, and the scope budget protocol."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: methodology/00_planning.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-08"
+    summary: "Add the Plan Amendment Rule (Section 9), covering orchestrator-registrable amendments, Planner-routed re-planning, and scope-budget re-baselines."
 ---
 
 # Planning Enforcer
@@ -162,7 +166,40 @@ responsibility for that feature ends. Control passes to the contract-first
 harness loop defined in `01_execution.md`, beginning with the Generator's
 contract proposal.
 
-## 8. References
+## 9. The Plan Amendment Rule
+
+A phase's plan, once established via Sections 2-3, is not immutable, but
+changing it after the fact follows a strict division of authority between
+the orchestrator's own registration power and the Planner role.
+
+**Orchestrator-registrable amendments.** A post-phase or in-phase amendment
+that has been **explicitly authorized by a human** may be registered
+directly by the orchestrator as a new or modified feature in
+`feature_list.json`, PROVIDED the authorization cites a recorded
+authorization event already present in `run_state.json`'s `history` log — an
+actual entry the orchestrator can point to, not a paraphrase or a
+recollection of a conversation. This is the orchestrator's own registration
+power and does not require routing the amendment through the Planner.
+
+**Substantive re-planning routes to the Planner.** By contrast, any
+amendment that introduces scope the human's authorization did not directly
+specify — a new architecture, a new acceptance-test shape, or anything the
+orchestrator would otherwise have to invent to fill in the amendment's
+details — MUST route through the Planner role. The orchestrator's
+registration power covers recording what a human has already decided; it
+does not extend to deciding new plan content on the human's behalf.
+
+**Scope-budget re-baselines follow the identical pattern.** When a human
+authorizes raising `original_estimate_lines` or the cumulative ceiling
+(Section 6's cumulative check), that re-baseline is human-authorized and
+orchestrator-recorded exactly like any other amendment — and it MUST be
+recorded structurally in the `scope_budget` object itself (a `rebaseline`
+record naming `from`, `to`, `authorized_by`, and `at`, plus a `reason`), not
+left as free-text history prose alone. Free-text history is a useful
+narrative trail, but the structural record is what a downstream role or a
+future audit actually reads.
+
+## 10. References
 
 - `standard/AGF.md` — the four agent roles (including Planner) and the dual
   validator gate this protocol's output feeds into.

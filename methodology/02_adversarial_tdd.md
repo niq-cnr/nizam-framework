@@ -2,9 +2,13 @@
 id: nizam-adversarial-tdd
 title: "Adversarial Test Design"
 description: "The evaluator independence model, false-pass and false-fail hunting patterns, and the negative-testing requirement that keeps acceptance test suites load-bearing rather than tautological."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: methodology/02_adversarial_tdd.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-08"
+    summary: "Add the External Anchor Rule (Section 7) and the Mandatory Adversarial Evidence requirement (Section 8)."
 ---
 
 # Adversarial Test Design
@@ -141,7 +145,43 @@ listed tests happen not to cross. A QA round that only re-runs the contract's
 own list, verbatim, has not independently verified anything beyond what the
 contract's author already anticipated.
 
-## 7. References
+## 7. The External Anchor Rule
+
+Every consistency or QA check that asserts a document matches actual practice,
+a schema, or another artifact's shape MUST anchor its expected value on a
+**source external to the artifact under test** — for example the schema file
+itself, a sibling protocol document, `run_state.json`'s recorded history, or
+the actual behavior of the pipeline the document describes. A check MUST
+NEVER derive its expected value by grepping, quoting, or otherwise
+re-deriving it from the artifact-under-test's own content or phrasing.
+
+This rule remediates a generic and recurring failure mode: a check that
+verifies a document "matches practice" by searching the document itself for
+its own claimed phrasing can report PASS even when the document's claim is
+substantively wrong, because the thing being graded and the thing supplying
+the expected answer are one and the same artifact — the check has nothing
+external to disagree with it. A verification command's source of truth MUST
+always live outside the file it is grading; a check whose only citation is
+the artifact under test quoting itself has established nothing and MUST be
+rejected as vacuous, per the false-pass discipline in Section 3.
+
+## 8. Mandatory Adversarial Evidence
+
+Every QA round's Section 6 adversarial spot-check MUST be captured to its own
+evidence file, in addition to being recorded in the QA verdict's
+`adversarial_check` object. The file naming convention is
+`<contract-id>-qa-adversarial.txt` (for example
+`.agent/evidence/014-qa-adversarial.txt`), following the same evidence-file
+family defined in `04_tool_driven_state.md` Section 4, and the QA verdict's
+`adversarial_check` object MUST reference that evidence file by path.
+
+A verdict whose `adversarial_check` has no corresponding evidence file
+present on disk is **incomplete**, per `standard/anti_hallucination.md` AH-3
+(evidence-anchored completion) — such a verdict MUST be treated as a
+rejection, not a pass, regardless of what the verdict's prose claims about
+the spot-check having been performed.
+
+## 9. References
 
 - `standard/AGF.md` — the Evaluator role definition and the JSON Verdict Parse
   Rule this protocol's verdicts must satisfy.

@@ -1,0 +1,7 @@
+COMMAND:
+v=tools/validate.sh; test -f "$v" || { echo "MISSING $v"; exit 1; }; scratch=$(mktemp -d) || { echo 'mktemp failed'; exit 1; }; trap 'rm -rf "$scratch"' EXIT; cp -a . "$scratch/repo" || { echo 'cp -a failed'; exit 1; }; test -f "$scratch/repo/tools/validate.sh" || { echo 'MISSING tools/validate.sh in copy'; exit 1; }; test -f "$scratch/repo/registry/README.md" || { echo 'MISSING registry/README.md in copy (precondition)'; exit 1; }; rm -f "$scratch/repo/registry/README.md"; out=$(cd "$scratch/repo" && bash tools/validate.sh 2>&1); rc=$?; test "$rc" -ne 0 || { echo "expected non-zero exit after deleting registry/README.md, got 0"; echo "$out"; exit 1; }; echo "$out" | grep -Eq '^\[C7\] FAIL' && echo PASS || { echo 'no [C7] FAIL line found'; echo "$out"; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

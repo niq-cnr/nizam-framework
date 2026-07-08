@@ -1,0 +1,38 @@
+(script: q05.sh)
+f=methodology/00_planning.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eqi 'plan amendment rule' "$f" || { echo "missing 'Plan Amendment Rule' heading in $f"; exit 1; }
+python3 -c "
+import re, sys
+text = open('$f', encoding='utf-8').read()
+lines = text.splitlines()
+heading_idx = None
+heading_level = None
+for i, line in enumerate(lines):
+    m = re.match(r'^(#{1,6})\s+.*plan amendment rule', line, re.I)
+    if m:
+        heading_idx = i
+        heading_level = len(m.group(1))
+        break
+if heading_idx is None:
+    print('no heading matching /plan amendment rule/i found')
+    sys.exit(1)
+end_idx = len(lines)
+for j in range(heading_idx + 1, len(lines)):
+    m2 = re.match(r'^(#{1,6})\s+', lines[j])
+    if m2 and len(m2.group(1)) <= heading_level:
+        end_idx = j
+        break
+section = '\n'.join(lines[heading_idx:end_idx])
+checks = {
+    'authoriz* within section': bool(re.search(r'authoriz', section, re.I)),
+    'orchestrator registration power': bool(re.search(r'orchestrator', section, re.I)),
+    'run_state/history authorization record': bool(re.search(r'run_state|history', section, re.I)),
+    'planner routing for substantive re-planning': bool(re.search(r'planner', section, re.I)),
+}
+failed = [k for k, v in checks.items() if not v]
+if failed:
+    print('Plan Amendment Rule section missing: ' + ', '.join(failed))
+    sys.exit(1)
+print('PASS')
+"
+PASS
+EXIT:0

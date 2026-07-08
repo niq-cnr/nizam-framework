@@ -1,0 +1,29 @@
+$ f=.github/workflows/compliance.yml; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import yaml
+doc = yaml.safe_load(open('.github/workflows/compliance.yml'))
+jobs = doc.get('jobs', {}) or {}
+checkout_fetch_depth_0 = False
+installs_jsonschema = False
+installs_pyyaml = False
+for job in jobs.values():
+    for step in (job.get('steps') or []):
+        uses = step.get('uses') or ''
+        if uses.startswith('actions/checkout'):
+            with_block = step.get('with') or {}
+            if with_block.get('fetch-depth') == 0:
+                checkout_fetch_depth_0 = True
+        run = step.get('run') or ''
+        run_lower = run.lower()
+        if 'pip install' in run_lower or 'pip3 install' in run_lower:
+            if 'jsonschema' in run_lower:
+                installs_jsonschema = True
+            if 'pyyaml' in run_lower:
+                installs_pyyaml = True
+ok = checkout_fetch_depth_0 and installs_jsonschema and installs_pyyaml
+if not ok:
+    print('checkout_fetch_depth_0=' + str(checkout_fetch_depth_0) + ' installs_jsonschema=' + str(installs_jsonschema) + ' installs_pyyaml=' + str(installs_pyyaml))
+    raise SystemExit(1)
+print('PASS')
+"
+PASS
+EXIT:0

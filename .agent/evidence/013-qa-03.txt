@@ -1,0 +1,4 @@
+(script: z03.sh)
+f=.github/workflows/compliance.yml; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'pull_request' "$f" && grep -q 'push' "$f" && echo PASS || { echo "missing pull_request or push trigger in $f"; exit 1; }
+PASS
+EXIT:0

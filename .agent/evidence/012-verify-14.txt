@@ -1,0 +1,7 @@
+COMMAND:
+v=tools/validate.sh; test -f "$v" || { echo "MISSING $v"; exit 1; }; scratch=$(mktemp -d) || { echo 'mktemp failed'; exit 1; }; trap 'rm -rf "$scratch"' EXIT; cp -a . "$scratch/repo" || { echo 'cp -a failed'; exit 1; }; test -f "$scratch/repo/tools/validate.sh" || { echo 'MISSING tools/validate.sh in copy'; exit 1; }; test -f "$scratch/repo/CONTEXT.md" || { echo 'MISSING CONTEXT.md in copy'; exit 1; }; printf '\nnizamiq\n' >> "$scratch/repo/CONTEXT.md"; out=$(cd "$scratch/repo" && bash tools/validate.sh 2>&1); rc=$?; test "$rc" -ne 0 || { echo "expected non-zero exit after nizamiq injection, got 0"; echo "$out"; exit 1; }; echo "$out" | grep -Eq '^\[C5\] FAIL' && echo PASS || { echo 'no [C5] FAIL line found'; echo "$out"; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

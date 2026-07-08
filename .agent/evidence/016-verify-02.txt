@@ -1,0 +1,18 @@
+f=.github/workflows/compliance.yml; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import yaml
+doc = yaml.safe_load(open('$f'))
+assert doc.get('permissions') == {'contents': 'read'}, f\"permissions mismatch: {doc.get('permissions')}\"
+conc = doc.get('concurrency')
+assert isinstance(conc, dict), f\"concurrency missing or not a mapping: {conc}\"
+assert 'group' in conc and conc['group'], f\"concurrency.group missing/empty: {conc}\"
+assert conc.get('cancel-in-progress') is True, f\"cancel-in-progress not True: {conc.get('cancel-in-progress')}\"
+steps = doc['jobs']['validate']['steps']
+checkout_steps = [s for s in steps if str(s.get('uses', '')).startswith('actions/checkout@')]
+assert checkout_steps, 'no actions/checkout step found'
+with_block = checkout_steps[0].get('with', {})
+assert with_block.get('persist-credentials') is False, f\"persist-credentials not False: {with_block.get('persist-credentials')}\"
+assert with_block.get('fetch-depth') == 0, f\"fetch-depth: 0 regressed: {with_block.get('fetch-depth')}\"
+print('PASS')
+"
+PASS
+EXIT:0

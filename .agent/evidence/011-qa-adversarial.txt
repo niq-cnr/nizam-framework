@@ -1,0 +1,49 @@
+=== Part 1: ADR frontmatter validated against schema/frontmatter.schema.json ===
+ADR frontmatter validates against schema/frontmatter.schema.json: {'id': 'adr-001-ci-compliance-enforcement', 'title': 'ADR-001: CI Compliance Enforcement', 'description': "Architecture decision to adopt a repo-local, runtime-agnostic compliance validator executed by CI on every pull request and push to main, closing the gap between NDS §7's prescribed enforcement and the framework's shipped (unenforced) state.", 'version': '0.1.0', 'status': 'active', 'authoritative_source': 'docs/architecture/ADR-001-ci-compliance-enforcement.md'}
+
+=== Part 2: ADR section structure diffed against templates/ADR_TEMPLATE.md's body sections ===
+Template sections (## / ###): [('##', 'Context'), ('##', 'Decision'), ('##', 'Consequences'), ('###', 'Positive'), ('###', 'Negative'), ('###', 'Follow-Up Actions'), ('##', 'Alternatives Considered')]
+ADR sections (## / ###):      [('##', 'Context'), ('##', 'Decision'), ('##', 'Consequences'), ('###', 'Positive'), ('###', 'Negative'), ('###', 'Follow-Up Actions'), ('##', 'Alternatives Considered')]
+Template sections missing from ADR (should be empty): []
+Sections invented in ADR beyond the template (should be empty): []
+Section order matches template exactly: True
+
+=== Part 2b: leading instructional HTML comment correctly absent from the ADR (template scaffolding, not decision content) ===
+ADR body starts with a leading HTML comment: False (expected: False)
+
+SUMMARY (parts 1-2): PASS
+
+=== Part 3: product_spec.md Sec 2.1 tree internal consistency (box-drawing + comment style) ===
+Full tree block:
+'nizam-framework/'
+'├── NIZAM.json          # Machine-readable capability index + context router (root entry point)'
+'├── CONTEXT.md          # Token-efficient architecture + execution-command summary'
+'├── README.md           # Human entry point'
+'├── CHANGELOG.md        # Semantic version history'
+'├── bootstrap.sh        # Unified clone → inject → verify (evolution of AGIP)'
+'├── standard/           # Documentation standard + frontmatter rules'
+'├── methodology/        # Planning, execution, adversarial TDD, circuit breaker, release train'
+'├── registry/           # NIZAM.json schema + scope-definition patterns'
+'├── templates/          # CONTEXT / AGENTS / DEBT / ADR / work-packet / phase / manifest templates'
+'├── schema/             # JSON Schemas: frontmatter, manifest, phase, feature_list, contract, qa, run_state'
+'├── tools/              # Runtime-agnostic unified skill payload (ONE payload, no per-runtime forks)'
+'│   └── validate.sh     # Runtime-agnostic repo-local compliance validator (ADR-001)'
+'└── .github/workflows/  # CI enforcement of NDS §7 (compliance.yml) (ADR-001)'
+
+New line indices: [12, 13]
+All non-empty lines use a sanctioned box-drawing connector: True
+Last top-level entry: '└── .github/workflows/  # CI enforcement of NDS §7 (compliance.yml) (ADR-001)'
+Last top-level entry correctly uses closing connector '└── ': True
+Every top-level entry except the last uses '├── ': True
+tools/ line: '├── tools/              # Runtime-agnostic unified skill payload (ONE payload, no per-runtime forks)'
+tools/ correctly uses '├── ' (no longer the last top-level entry): True
+validate.sh line: '│   └── validate.sh     # Runtime-agnostic repo-local compliance validator (ADR-001)'
+validate.sh correctly nested as tools/'s sole child ('│   └── '): True
+.github/workflows/ line: '└── .github/workflows/  # CI enforcement of NDS §7 (compliance.yml) (ADR-001)'
+.github/workflows/ is the final top-level entry using '└── ': True
+Top-level entry comment start columns: [24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24]
+Comment column spread across top-level entries: 0 (tolerance <=2): True
+Both new lines carry a '# ' comment and an explicit '(ADR-001)' provenance citation: True
+
+SUMMARY (part 3): PASS
+EXIT:0

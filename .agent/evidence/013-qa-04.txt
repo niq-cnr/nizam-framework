@@ -1,0 +1,19 @@
+(script: z04.sh)
+f=.github/workflows/compliance.yml; test -f "$f" || { echo "MISSING $f"; exit 1; }
+python3 -c "
+import yaml
+doc = yaml.safe_load(open('.github/workflows/compliance.yml'))
+jobs = doc.get('jobs', {}) or {}
+found = False
+for job in jobs.values():
+    for step in (job.get('steps') or []):
+        run = step.get('run')
+        if isinstance(run, str) and 'tools/validate.sh' in run:
+            found = True
+if not found:
+    print('no run: step invokes tools/validate.sh (a comment-only or name-only reference does not count)')
+    raise SystemExit(1)
+print('PASS')
+"
+PASS
+EXIT:0

@@ -1,0 +1,35 @@
+(script: y17_c8.sh) -- scratch copy under $SCRATCH/012_mutation_c8
+set -u
+v=tools/validate.sh; test -f "$v" || { echo "MISSING $v"; exit 1; }
+SCRATCH_ROOT="/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad"
+scratch="$SCRATCH_ROOT/012_mutation_c8"
+rm -rf "$scratch" 2>/dev/null
+mkdir -p "$scratch"
+cp -a . "$scratch/repo" || { echo 'cp -a failed'; exit 1; }
+test -d "$scratch/repo/.git" || { echo 'MISSING .git in copy -- HEAD comparison would not be meaningful'; rm -rf "$scratch"; exit 1; }
+test -f "$scratch/repo/tools/validate.sh" || { echo 'MISSING tools/validate.sh in copy'; exit 1; }
+f="$scratch/repo/CONTEXT.md"
+test -f "$f" || { echo 'MISSING CONTEXT.md in copy'; exit 1; }
+grep -q '^version: 0.1.0$' "$f" || { echo 'expected version line "version: 0.1.0" not found in copied CONTEXT.md, cannot safely mutate'; cat "$f" | head -10; rm -rf "$scratch"; exit 1; }
+sed -i 's/^version: 0.1.0$/version: 0.2.0/' "$f"
+grep -q '^version: 0.2.0$' "$f" || { echo 'version mutation did not apply'; rm -rf "$scratch"; exit 1; }
+grep -q 'change_log' "$f" && { echo 'unexpected pre-existing change_log key would confound this test'; rm -rf "$scratch"; exit 1; }
+out=$(cd "$scratch/repo" && bash tools/validate.sh 2>&1)
+rc=$?
+test "$rc" -ne 0 || { echo "expected non-zero exit after unrecorded version bump, got 0"; echo "$out"; rm -rf "$scratch"; exit 1; }
+echo "$out" | grep -Eq '^\[C8\] FAIL' && result=PASS || result=FAIL
+echo "$out"
+rm -rf "$scratch"
+test "$result" = PASS && echo PASS || { echo 'no [C8] FAIL line found'; exit 1; }
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] FAIL version-bump-vs-changelog
+  CONTEXT.md: version bumped 0.1.0 -> 0.2.0 with no matching change_log entry for 0.2.0 and no CHANGELOG.md line naming CONTEXT.md
+SUMMARY: 7 passed, 1 failed
+PASS
+EXIT:0

@@ -1,0 +1,4 @@
+(script: z02.sh)
+f=.github/workflows/compliance.yml; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "import yaml, sys; yaml.safe_load(open('$f'))" && echo PASS || { echo "YAML parse failed for $f"; exit 1; }
+PASS
+EXIT:0
