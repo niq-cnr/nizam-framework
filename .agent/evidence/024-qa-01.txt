@@ -1,0 +1,3 @@
+f=methodology/02_adversarial_tdd.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eqi 'verification[- ]authoring' "$f" && echo PASS || { echo 'missing verification-authoring section heading'; exit 1; }
+PASS
+EXIT:0

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "004-durable-enforcement",
-  "current_feature": "024",
+  "current_feature": "025",
   "status": "implementing",
-  "updated_at": "2026-07-08T13:03:26Z",
+  "updated_at": "2026-07-08T13:37:17Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -90,6 +90,10 @@
       "limit": 3
     },
     "023-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "024-contract": {
       "attempts": 2,
       "limit": 3
     }
@@ -439,6 +443,16 @@
       "at": "2026-07-08T13:03:26Z",
       "event": "feature_complete",
       "detail": "Feature 023 complete (phase-004 foundational): tools/verify_lib.sh (5 vetted primitives vlib_section_grep/scope_guard/version_increased/path_resolves/no_stale_payload + a punctuation-strip helper, sourced-only/side-effect-free) + 11 pass/fail fixtures. 1 contract revision (evaluator's content-blind stub proved 4 fixture checks were cheatable via identity-leaking filenames + entry 2 didn't prove side-effect-freedom; rev1 copies fixtures to neutral doc.md + strict empty-output assertion). Both contract gates re-approved. Mode B + QA first-pass: BOTH ran independent adversarial anti-gaming checks with self-authored inputs (not the shipped fixtures) confirming genuine logic - incl. true semver tuple ordering (0.9.0->0.10.0 accepted, 1.1.9 decrease rejected) and untracked-file catching that git-diff-HEAD is blind to. 19/19 verifications EXIT:0, validate.sh SUMMARY unchanged at 8 passed. 408 lines vs 260 est (first feature, no baseline). Cumulative 408/1625. Every downstream feature (024-030) can now source these primitives. Advancing to 024 (verification-authoring standard, dep 023 complete)."
+    },
+    {
+      "at": "2026-07-08T13:24:27Z",
+      "event": "contract_approved",
+      "detail": "Contract 024 (verification-authoring standard section in methodology/02_adversarial_tdd.md) approved after 1 revision by both gates. Mode A approved rev0; the evaluator caught a real FALSE-FAIL (inverse of the usual class): entry 4 dogfoods vlib_section_grep whose span ends at ANY '#'-line, so a naturally subheading-structured section (### N.1-N.4, mirroring the doc's own Sec-3 convention) would be wrongly rejected - reproduced with a fixture. Rev1 fix (in the CONTRACT, since verify_lib.sh is F-023 read-only): added a flat-prose constraint to scope.files_modify[0].purpose (no ###+ subheadings in the section span) + extended entry 4 to section-scope a real vlib_* citation. Both gates re-approved rev1 with flat-prose(pass)/subheading(fail) fixtures. WATCH-ITEM: vlib_section_grep's span-ends-at-any-# behavior may bite F-026/F-027 section-scoped checks on subheading-bearing docs - to be handled there (likely a backward-compatible optional-boundary enhancement). 15 verifications, dogfoods F-023 primitives. Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T13:37:17Z",
+      "event": "feature_complete",
+      "detail": "Feature 024 complete: methodology/02_adversarial_tdd.md gained a flat-prose '## 10. Verification-Authoring Standard' section codifying the 4 forbidden anti-patterns (whole-file/vacuous greps, git-diff-blind-to-untracked scope guards, bare-adjacency/parenthetical checks, false-passing substrings) each paired with the compliant tools/verify_lib.sh primitive; version 0.2.0->0.3.0 + change_log. 1 contract revision (false-fail fix). Mode B + QA first-pass: QA cross-checked each anti-pattern description against verify_lib.sh's real code (no mischaracterization) + independently confirmed flat-prose/section-scoping. 15/15 verifications EXIT:0, validate.sh unchanged at 8. The phase's verification-authoring standard is now codified in the methodology (dogfooding: this phase's OWN gate rejections are the source material). 69 lines vs 70 est. Cumulative 477/1625. Advancing to 025 (R4a schema reconciliation, dep 023 complete)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -612,7 +626,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1250,
-    "total_lines_changed": 408,
+    "total_lines_changed": 477,
     "per_feature": [
       {
         "id": "023",
@@ -620,6 +634,13 @@
         "actual": 408,
         "flag": null,
         "note": "tools/verify_lib.sh 336 + 11 new fixtures 72 = 408 (pre-existing phase-002 fixtures excluded). FIRST feature of phase 004 - no rolling baseline per 00_planning bootstrap rule, so no per-feature flag despite 57% over est (5 primitives + helper + 11 pass/fail fixtures, all adversarially proven genuine). Cumulative 408/1625 (25%). 1 contract revision (evaluator's content-blind stub caught cheatable filename-keyed fixtures - the verification library's OWN verification had the exact defect it guards against), Mode B + QA first-pass with independent adversarial anti-gaming checks."
+      },
+      {
+        "id": "024",
+        "estimated": 70,
+        "actual": 69,
+        "flag": null,
+        "note": "methodology/02_adversarial_tdd.md 68+1 = 69 (0.2.0->0.3.0 + change_log entry). Rolling avg (023=408) 3x=1224; 69 well under, no flag. Cumulative 477/1625 (29%). 1 contract revision (evaluator caught a FALSE-fail: entry 4's vlib_section_grep span-ends-at-any-# would wrongly reject a subheading-structured section; fixed via a flat-prose scope constraint). Dogfooded F-023 primitives in verification."
       }
     ]
   }

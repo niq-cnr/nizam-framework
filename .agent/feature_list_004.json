@@ -27,7 +27,7 @@
       "id": "024",
       "name": "Verification-Authoring Standard — methodology/02_adversarial_tdd.md Section",
       "description": "Extend methodology/02_adversarial_tdd.md with a new section codifying the verification-authoring standard (R3): the anti-patterns a contract's verification suite MUST NOT use — (a) whole-file greps that vacuously match text elsewhere in the file (use a section-scoped grep instead); (b) 'git diff HEAD' scope guards blind to new untracked files (use the untracked-aware guard); (c) bare-adjacency / parenthetical 'appears near' checks; (d) literal-substring checks that do not require real content (a substring that false-passes on unrelated text). The section points at tools/verify_lib.sh (F-023) as the canonical, fixture-tested implementations of the compliant primitives. methodology/02_adversarial_tdd.md is in the validator's shipped-doc set (C1/C2/C3/C8), so its frontmatter version bump carries a matching change_log entry per NDS Section 4 / validator C8 and validate.sh stays green at 8. Depends on F-023 so the new section can reference verify_lib.sh's real primitives.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": ["023"],
       "acceptance_tests": [
         "The doc gained a verification-authoring-standard section: grep -Eqi 'verification[- ]authoring' methodology/02_adversarial_tdd.md",

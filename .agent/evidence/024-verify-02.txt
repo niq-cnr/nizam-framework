@@ -1,0 +1,8 @@
+f=methodology/02_adversarial_tdd.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+t = open('$f', encoding='utf-8').read().lower()
+import sys
+ok = ('whole-file' in t or 'vacuous' in t) and ('untracked' in t or 'new file' in t) and ('adjacen' in t or 'parenthetical' in t) and ('substring' in t)
+sys.exit(0 if ok else 1)
+" && echo PASS || { echo 'missing one or more of the four forbidden anti-pattern keyword groups'; exit 1; }
+PASS
+EXIT:0

@@ -2,13 +2,16 @@
 id: nizam-adversarial-tdd
 title: "Adversarial Test Design"
 description: "The evaluator independence model, false-pass and false-fail hunting patterns, and the negative-testing requirement that keeps acceptance test suites load-bearing rather than tautological."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: methodology/02_adversarial_tdd.md
 change_log:
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "Add the External Anchor Rule (Section 7) and the Mandatory Adversarial Evidence requirement (Section 8)."
+  - version: "0.3.0"
+    date: "2026-07-08"
+    summary: "Add the Verification-Authoring Standard (Section 10), naming the four forbidden verification anti-patterns (whole-file/vacuous greps, git-diff-HEAD scope guards blind to untracked/new files, bare-adjacency/parenthetical checks, literal-substring checks) and their tools/verify_lib.sh primitive replacements."
 ---
 
 # Adversarial Test Design
@@ -191,3 +194,67 @@ the spot-check having been performed.
   QA verdict steps occur.
 - `03_circuit_breaker.md` — bounds the rework loop triggered by a QA failure
   this protocol's checks produce.
+
+## 10. Verification-Authoring Standard
+
+A verification command is only as trustworthy as its resistance to the
+false-pass and false-fail patterns catalogued in Sections 3 and 4. This
+section codifies four specific anti-patterns that MUST NOT appear in any
+contract's verification suite, each paired with the compliant primitive from
+`tools/verify_lib.sh` (the vetted verification-helper library, F-023) that
+replaces it.
+
+**(a) Whole-file / vacuous greps** — A check that greps an entire file for a
+token proves only that the token appears somewhere in the file, not that it
+appears within the section, block, or context the acceptance criterion
+actually cares about; per Section 3's false-pass discipline, such a
+whole-file match is vacuous whenever the same token can legitimately appear
+elsewhere (a prior version's change_log entry, an unrelated section, a
+sibling document quoted verbatim). Use `verify_lib.sh`'s section-scoped
+primitive `vlib_section_grep <file> <heading-regex> <token-regex>` instead,
+which confines the match to the span running from the named heading up to
+the next markdown heading at any depth (or EOF), so a token present only
+outside the relevant section correctly fails the check.
+
+**(b) `git diff HEAD` scope guards blind to new / untracked files** — A
+scope guard built on `git diff --name-only HEAD` (or any other `git diff
+HEAD` variant) reports changes only against paths git already knows about at
+`HEAD`; it is structurally blind to a brand-new file that was never
+committed, so a contract that introduces a wholly new out-of-scope file
+would pass such a guard entirely undetected. Use `verify_lib.sh`'s
+untracked-aware primitive `vlib_scope_guard <allowed-path-or-prefix> ...`,
+built on `git status --porcelain --untracked-files=all -- .
+':(exclude).agent'`, which sees new/untracked paths as well as modified
+ones.
+
+**(c) Bare-adjacency / parenthetical "appears near" checks** — A check that
+only confirms two tokens occur near one another in the same paragraph or
+parenthetical aside — without asserting any real structural or semantic
+relationship between them (the same heading's span, the same table row, the
+same schema field, the same parsed record) — can be satisfied by unrelated
+prose that merely happens to mention both words close together. A bare
+adjacency or parenthetical "appears near" test is not evidence of the
+relationship an acceptance criterion is meant to assert, and MUST be
+replaced with a check that ties the two values to the same concrete
+structural anchor (for example, both tokens verified within the same
+`vlib_section_grep` span, or both fields read from the same parsed record).
+
+**(d) Literal-substring checks that false-pass on unrelated text** — A check
+that merely searches for a literal substring (a version number, a path
+fragment, a keyword) can false-pass when that same substring occurs in
+unrelated text that has nothing to do with the acceptance criterion — a
+version string embedded in an unrelated sentence, or a path fragment that is
+itself a substring of a longer, different path. Require a check that asserts
+real content instead: `vlib_version_increased <file>` (a YAML-parsed strict
+semver tuple comparison against the file's own HEAD copy, not a substring or
+`!=` comparison), `vlib_path_resolves <path-token>` (an actual `test -e`
+resolution against the working tree, not a string match against the path
+text), and `vlib_no_stale_payload <file>` (a real per-line structural scan
+for a stale multi-directory enumeration, not a substring hit).
+
+Every contract's verification suite MUST be reviewed against all four of
+these anti-patterns, in addition to the false-pass and false-fail hunting
+practice of Sections 3 and 4, before it is approved; a verification command
+that relies on any of (a)-(d) is not acceptance coverage and MUST be
+rejected and rewritten using the corresponding `tools/verify_lib.sh`
+primitive named above.
