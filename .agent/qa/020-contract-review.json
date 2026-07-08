@@ -1,0 +1,41 @@
+{
+  "review": "contract-testability",
+  "feature": "020",
+  "issues": [
+    {
+      "verification_index": 3,
+      "criterion": "CONTEXT.md describes the 4-dir + NIZAM.json payload (names tools/ in the inject list and NIZAM.json)",
+      "evidence": "Ran verbatim against the CURRENT, unmodified tree: `grep -q 'tools/' CONTEXT.md && grep -q 'NIZAM.json' CONTEXT.md` -> PASS, EXIT:0 (captured in .agent/evidence/020-contract-review-03.txt and 020-contract-review-adversarial-v03.txt). CONTEXT.md's actual payload sentence (line 38-39) still reads 'injects standard/, templates/, and schema/' -- 3 dirs, omitting tools/, the exact H1/H5 stale-payload defect this test exists to catch. The check passes anyway because 'tools/' already appears in the unrelated Module Map bullet (line 25) and 'NIZAM.json' already appears in the unrelated 'How Agents Consume' sentence (line 30/33). The check is fully vacuous: a Generator could leave the payload sentence uncorrected and this test would never detect it.",
+      "required_fix": "Anchor the check to the actual injection-list sentence, e.g. require standard/, templates/, schema/, tools/ (and NIZAM.json) to co-occur within the same paragraph/sentence describing what bootstrap.sh injects -- mirroring the ADDITIONAL-robustness-check pattern already used elsewhere in this same contract (v05 -> v14/v15).",
+      "severity": "high"
+    },
+    {
+      "verification_index": 10,
+      "criterion": "Acronyms expanded at first use in README.md (NDS, AGF, GIP each appear with a parenthetical or inline expansion)",
+      "evidence": "Adversarial fixture 'See NDS (Section 2) for details. Also consult AGF (see appendix) and GIP (chapter 4).' (contains ZERO real canonical expansions) makes the check's primary python regex return True for all three acronyms and the whole python3 -c invocation exit 0 (PASS), because the regex only requires 'ACRONYM' followed by up to 3 non-letter characters then '(' -- it never inspects the parenthetical's contents. Captured in .agent/evidence/020-contract-review-adversarial-v10.txt. This directly contradicts the contract's own scope requirement that NDS/AGF/GIP be expanded 'with their verbatim canonical titles.' A positive-control fixture ('...the Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), and the Governance Inheritance Protocol (GIP).') does correctly pass via the second regex alternative, confirming the check is not fail-by-construction -- it is simply too permissive on the accept side.",
+      "required_fix": "Require the actual canonical phrase adjacent to each acronym (e.g. match literal 'Nizam Documentation Standard' near 'NDS', 'Agent Governance Framework' near 'AGF', 'Governance Inheritance Protocol' near 'GIP'), not merely any parenthesis within a few characters of the acronym. Also note: the fallback grep branch (triggered only if the python3 -c call itself errors) checks only NDS, silently ignoring AGF/GIP -- should be extended or removed.",
+      "severity": "high"
+    },
+    {
+      "verification_index": 11,
+      "criterion": "bootstrap.sh expands AGIP at its first mention",
+      "evidence": "Adversarial fixture line '# This evolved from the earlier AGIP (see below) into a single script.' (a non-gloss cross-reference, not an expansion) satisfies `grep -Eq 'AGIP \\(|\\([^)]*AGIP\\)'` (exit 0). Captured in .agent/evidence/020-contract-review-adversarial-v11.txt. Same class of weakness as the NDS/AGF/GIP check: any adjacent parenthesis satisfies it regardless of content.",
+      "required_fix": "Since no canonical AGIP expansion exists to anchor against (acknowledged in the contract's own non-goals), full semantic validation isn't mechanically achievable, but a minimum content-quality guard would meaningfully reduce the false-pass surface -- e.g. require the parenthetical to be longer than a few characters and/or reject common non-gloss filler ('see below', 'see above', 'cf.', 'TBD'). Lower priority than issues 1-2 since this is an inherent limitation of glossing an acronym with no canonical source, but still a demonstrated false-pass.",
+      "severity": "medium"
+    },
+    {
+      "verification_index": null,
+      "criterion": "Contract scope commitment with no corresponding verification: README.md purpose text (scope.files_modify[1]) explicitly commits to '...Link the HTML guide (docs/guide/index.html...) and the GitHub Release for the real tag (https://github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0)'",
+      "evidence": "Scanned all 17 verification entries' acceptance_test and command text for 'release' or 'github.com' -- zero matches. Only the HTML-guide half of that sentence (docs/guide/index.html) has a corresponding check (verification[7]); the GitHub Release link has none. `git remote -v` confirms origin is indeed https://github.com/niq-cnr/nizam-framework.git, so the URL is plausible, but its presence in the Generator's output is entirely unverified by this contract.",
+      "required_fix": "Either add a verification entry requiring the Release URL (or a repo-relative equivalent) to appear in README.md, or remove the Release-link commitment from the scope purpose text so the contract does not promise unverified scope.",
+      "severity": "medium"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false,
+    "feature": "020",
+    "summary": "13/13 of feature 020's acceptance_tests are verbatim represented in the 17-entry verification suite, and the 4 ADDITIONAL robustness checks (v14-v17) are sound and correctly close the version/change_log/scope-guard gaps flagged in prior contracts (019 precedent). However dry-running all 17 commands against the current tree plus targeted adversarial fixtures surfaced two HIGH-severity false-passing checks: verification[2] (CONTEXT.md 4-dir+NIZAM.json payload) already PASSES on the unmodified, still-buggy tree because it bare-greps for 'tools/' and 'NIZAM.json' which already exist elsewhere in the file for unrelated reasons -- it gives zero signal on the actual H1/H5 defect. verification[9] (NDS/AGF/GIP acronym expansion) false-passes on a fixture with no real expansion at all, proven by adversarial fixture, contradicting the contract's own 'verbatim canonical titles' requirement. Two additional MEDIUM findings: the AGIP gloss check (verification[10]) has the same parenthetical-adjacency weakness (lower priority since no canonical AGIP phrase exists to anchor against), and the contract's own README scope text commits to a GitHub Release link that no verification entry checks at all. REJECTED pending revision of verification[2] and verification[9] at minimum (verification[10] and the missing Release-link check are recommended but lower priority)."
+  }
+}

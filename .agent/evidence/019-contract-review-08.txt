@@ -1,0 +1,53 @@
+python3 -c "
+import subprocess, sys, yaml
+
+def frontmatter(text):
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != '---':
+        return None
+    end = None
+    for i, l in enumerate(lines[1:], start=1):
+        if l.strip() == '---':
+            end = i
+            break
+    if end is None:
+        return None
+    return yaml.safe_load(chr(10).join(lines[1:end])) or {}
+
+def parts(v):
+    return tuple(int(x) for x in str(v).split('.'))
+
+failed = False
+for path in sys.argv[1:]:
+    try:
+        head_text = subprocess.run(['git', 'show', 'HEAD:' + path], capture_output=True, text=True, check=True).stdout
+    except subprocess.CalledProcessError as exc:
+        print(path + ': could not read HEAD copy: ' + exc.stderr.strip())
+        failed = True
+        continue
+    cur_text = open(path, encoding='utf-8').read()
+    head_fm = frontmatter(head_text)
+    cur_fm = frontmatter(cur_text)
+    if head_fm is None or cur_fm is None:
+        print(path + ': could not parse frontmatter (HEAD or current)')
+        failed = True
+        continue
+    head_v, cur_v = head_fm.get('version'), cur_fm.get('version')
+    if not head_v or not cur_v:
+        print(path + ': missing version field (HEAD=' + repr(head_v) + ', current=' + repr(cur_v) + ')')
+        failed = True
+        continue
+    if parts(cur_v) <= parts(head_v):
+        print(path + ': version did not strictly increase (' + str(head_v) + ' -> ' + str(cur_v) + ')')
+        failed = True
+        continue
+    print(path + ': version OK (' + str(head_v) + ' -> ' + str(cur_v) + ')')
+
+sys.exit(1 if failed else 0)
+" tools/interface.md standard/GIP.md templates/README.md methodology/README.md
+tools/interface.md: version did not strictly increase (0.1.0 -> 0.1.0)
+standard/GIP.md: version did not strictly increase (0.1.0 -> 0.1.0)
+templates/README.md: version did not strictly increase (0.2.0 -> 0.2.0)
+methodology/README.md: version did not strictly increase (0.2.0 -> 0.2.0)
+
+EXIT:1

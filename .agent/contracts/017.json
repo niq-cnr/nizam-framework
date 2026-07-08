@@ -1,0 +1,95 @@
+{
+  "contract_id": "017",
+  "feature_id": "017",
+  "name": "ADR-002 (HTML User Guide) + product_spec.md \u00a72.1 Layout Amendment + docs/ Status Declaration",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_003.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "docs/architecture/ADR-002-html-user-guide.md",
+        "purpose": "Instantiate from templates/ADR_TEMPLATE.md (dogfooding the template, per the ADR-001/F-011 precedent): DELETE the template's leading instructional HTML comment block in its entirety on instantiation (the <!-- ... --> comment preceding the H1 heading, containing illustrative {{...}} tokens and the Status-values documentation) -- template scaffolding, not decision content, MUST NOT appear in the shipped ADR. Every {{...}} placeholder token in the copied body replaced with decision-specific values; no token left unfilled anywhere in the file. Frontmatter: 6 required NDS keys (id, title, description, version, status, authoritative_source) with authoritative_source equal to this file's own repo-relative path 'docs/architecture/ADR-002-html-user-guide.md', status: active (the document itself is a live, in-force decision record), plus one change_log entry (version/date/summary) recording this initial ADR so NDS \u00a74's change-log-frontmatter-entry branch is satisfied without touching CHANGELOG.md. Body Status line set to '**Status:** ACCEPTED' (human authorized phase 003) with Date set to the instantiation date (2026-07-08). Context section records the documentation-clarity audit findings H1-H9 from .agent/product_spec_003.md \u00a72: cold-read ratings at audit time were humans 6/10, agents 7.5/10; the shipped markdown corpus is reference-shaped (standards, protocols, schemas, templates) with no narrative adoption surface for a human first-time reader. Decision section states: ship a single, self-contained HTML user guide at docs/guide/index.html as the human-facing presentation surface -- inline CSS and JS, zero external network requests, prefers-color-scheme light/dark, WCAG-AA contrast -- and version-anchor it: the guide's embedded framework version MUST equal NIZAM.json's framework.version, giving HTML (which sits outside the NDS markdown-frontmatter contract) a machine-checkable consistency mechanism of its own. This same Decision section (or an adjoining subsection) declares docs/ shipped-vs-internal status: docs/architecture/ and docs/guide/ are SHIPPED documentation (distributed with the framework, NIZAM.json-indexed by F-018); docs/planning/ (manifest.json, DEBT.md) is repo-internal governance state, not shipped, not indexed. Consequences section covers: (positive) a dependency-free, GitHub-Pages-or-locally-renderable guide raises human legibility without adding a runtime dependency; (negative/follow-up) HTML falls outside validate.sh's C1 (frontmatter schema) and C3 (fence sweep) checks, so the guide's correctness checks live as F-018's feature acceptance tests and F-022's phase-close checks, not as new validate.sh C-numbered checks; NIZAM.json indexing itself is deferred to F-018 because validator C4 requires every indexed path to resolve on disk and docs/guide/index.html does not exist until F-018. Supersedes: None. No guide HTML and no NIZAM.json edit in this feature -- decision and layout of record only."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": ".agent/product_spec.md",
+        "purpose": "Two coordinated edits, no others. (1) In \u00a72.1 Hybrid Mono-Repo Layout's fenced tree diagram, add docs/architecture/ and docs/guide/ entries (docs/architecture/ as ADR home, docs/guide/ containing index.html as the self-contained HTML user guide -- NEW), positioned and worded per the shape previewed in product_spec_003.md \u00a73, adapted to sit correctly inside product_spec.md's own existing tree fence without duplicating or reordering the existing .github/workflows/ and tools/validate.sh entries already present from F-011. Adjoining this same \u00a72.1 area (or a clearly-linked subsection), declare the docs/ shipped-vs-internal status: docs/architecture/ and docs/guide/ are shipped documentation (NIZAM.json-indexed, not part of bootstrap.sh's consumer-injected payload); docs/planning/ is framework-internal governance state, not shipped, not indexed -- resolving H6. (2) Bump frontmatter 'spec_version' from '1.1.0' to '1.2.0' (MINOR/additive per NDS \u00a74 -- new layout locations plus a status declaration, no breaking change to existing content) and append ONE new change_log entry object ({version: \"1.2.0\", date: <today, ISO 8601>, summary: <names the \u00a72.1 docs/architecture+docs/guide amendment and the docs/ shipped-vs-internal declaration, citing F-017>) after the existing 1.1.0 entry, preserving the 1.0.0 and 1.1.0 entries byte-for-byte. 'updated_at' MAY be bumped to the same date as the new change_log entry as part of this same edit. No other frontmatter key, design tenet, module-boundary table, or body text changes. The full frontmatter block (both '---' delimiters and everything between them) MUST remain valid, parseable YAML after the edit."
+      }
+    ]
+  },
+  "non_goals": [
+    "No docs/guide/index.html and no guide HTML content of any kind -- the guide itself belongs to feature 018",
+    "No NIZAM.json edit of any kind (no docs module, no capability entries, no indexed paths) -- deferred to feature 018 because validator C4 requires every indexed path to resolve on disk, and docs/guide/index.html does not exist until F-018 lands",
+    "No tools/interface.md, standard/GIP.md, templates/README.md, or methodology/README.md edits -- adoption-contract corrections belong to feature 019",
+    "No README.md or CONTEXT.md edits -- first-contact truth fixes belong to feature 020",
+    "No LICENSE file -- feature 021, human-gated",
+    "No CHANGELOG.md edit -- this feature's NDS \u00a74 change-record obligation is satisfied entirely by ADR-002's own frontmatter change_log entry, not the CHANGELOG.md branch; phase-close CHANGELOG entries belong to feature 022",
+    "No edit to .agent/product_spec_003.md -- it is this contract's spec input, not a deliverable",
+    "No change to product_spec.md's existing 1.0.0 or 1.1.0 change_log entries, design tenets, module boundary table, or any section other than \u00a72.1's layout diagram / docs status declaration and the frontmatter spec_version/change_log/updated_at fields named above",
+    "No edit to any file beyond docs/architecture/ADR-002-html-user-guide.md, .agent/product_spec.md, and this contract file"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ADR file exists: test -f docs/architecture/ADR-002-html-user-guide.md",
+      "command": "test -f docs/architecture/ADR-002-html-user-guide.md && echo PASS || { echo 'MISSING docs/architecture/ADR-002-html-user-guide.md'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADR begins with YAML frontmatter (head -1 equals '---') carrying all 6 required keys (id/title/description/version/status/authoritative_source each grep-present)",
+      "command": "f=docs/architecture/ADR-002-html-user-guide.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; test \"$(head -1 \"$f\")\" = '---' || { echo 'first line is not ---'; exit 1; }; fail=0; for k in id title description version status authoritative_source; do grep -q \"^$k:\" \"$f\" || { echo \"MISSING key $k\"; fail=1; }; done; test \"$fail\" -eq 0 && echo PASS || exit 1"
+    },
+    {
+      "acceptance_test": "ADR frontmatter authoritative_source equals its own repo-relative path: grep -q 'authoritative_source: docs/architecture/ADR-002-html-user-guide.md' docs/architecture/ADR-002-html-user-guide.md",
+      "command": "f=docs/architecture/ADR-002-html-user-guide.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'authoritative_source: docs/architecture/ADR-002-html-user-guide.md' \"$f\" && echo PASS || { echo 'authoritative_source does not match own path'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADR Status line names a valid ADR status: grep -Eq '^\\*\\*Status:\\*\\* (PROPOSED|ACCEPTED|SUPERSEDED|DEPRECATED)' docs/architecture/ADR-002-html-user-guide.md",
+      "command": "f=docs/architecture/ADR-002-html-user-guide.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eq '^\\*\\*Status:\\*\\* (PROPOSED|ACCEPTED|SUPERSEDED|DEPRECATED)' \"$f\" && echo PASS || { echo 'no valid Status line found'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADR body contains no unreplaced template tokens: ! grep -q '{{' docs/architecture/ADR-002-html-user-guide.md",
+      "command": "f=docs/architecture/ADR-002-html-user-guide.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -q '{{' \"$f\"; then echo 'unreplaced {{ token(s) found'; grep -n '{{' \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "ADR body records the version-consistency anchor decision: grep -q 'docs/guide/index.html' docs/architecture/ADR-002-html-user-guide.md && grep -Eqi 'framework.version|framework-version' docs/architecture/ADR-002-html-user-guide.md",
+      "command": "f=docs/architecture/ADR-002-html-user-guide.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'docs/guide/index.html' \"$f\" && grep -Eqi 'framework.version|framework-version' \"$f\" && echo PASS || { echo 'ADR body missing the version-consistency anchor decision text'; exit 1; }"
+    },
+    {
+      "acceptance_test": "product_spec.md spec_version is 1.2.0: grep -Eq 'spec_version: \"1\\.2\\.0\"' .agent/product_spec.md",
+      "command": "f=.agent/product_spec.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\nlines = open('$f').read().split(chr(10))\nassert lines[0] == '---', 'first line is not ---'\nend = None\nfor i, l in enumerate(lines[1:], start=1):\n    if l == '---':\n        end = i\n        break\nassert end is not None, 'no closing --- found'\nblock = chr(10).join(lines[1:end])\nfm = yaml.safe_load(block)\nassert fm.get('spec_version') == '1.2.0', 'spec_version is ' + repr(fm.get('spec_version'))\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "product_spec.md change_log gained a 1.2.0 entry: grep -q 'version: \"1.2.0\"' .agent/product_spec.md",
+      "command": "f=.agent/product_spec.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\nlines = open('$f').read().split(chr(10))\nassert lines[0] == '---', 'first line is not ---'\nend = None\nfor i, l in enumerate(lines[1:], start=1):\n    if l == '---':\n        end = i\n        break\nassert end is not None, 'no closing --- found'\nblock = chr(10).join(lines[1:end])\nfm = yaml.safe_load(block)\ncl = fm.get('change_log') or []\nassert any(str(e.get('version')) == '1.2.0' for e in cl), 'no change_log entry with version 1.2.0 found'\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "product_spec.md \u00a72.1 admits docs/guide/: grep -q 'docs/guide' .agent/product_spec.md",
+      "command": "f=.agent/product_spec.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'docs/guide' \"$f\" && echo PASS || { echo 'product_spec.md does not mention docs/guide' ; exit 1; }"
+    },
+    {
+      "acceptance_test": "product_spec.md declares docs/ shipped-vs-internal status (names docs/planning as internal): grep -q 'docs/planning' .agent/product_spec.md",
+      "command": "f=.agent/product_spec.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'docs/planning' \"$f\" && echo PASS || { echo 'product_spec.md does not name docs/planning'; exit 1; }"
+    },
+    {
+      "acceptance_test": "product_spec.md frontmatter still parses as YAML (python3 reads the block between the first two '---' lines and yaml.safe_load succeeds)",
+      "command": "f=.agent/product_spec.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\nlines = open('$f').read().split(chr(10))\nassert lines[0] == '---', 'first line is not ---'\nend = None\nfor i, l in enumerate(lines[1:], start=1):\n    if l == '---':\n        end = i\n        break\nassert end is not None, 'no closing --- found'\nblock = chr(10).join(lines[1:end])\ndata = yaml.safe_load(block)\nassert isinstance(data, dict), 'frontmatter did not parse to a mapping'\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "ADR-002 addition is recorded for NDS \u00a74 (a CHANGELOG.md [Unreleased] line names docs/architecture/ADR-002-html-user-guide.md OR the ADR frontmatter carries a change_log entry): validated by bash tools/validate.sh exit 0",
+      "command": "f=docs/architecture/ADR-002-html-user-guide.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; adr_has_changelog=$(python3 -c \"\nimport yaml\nlines = open('$f').read().split(chr(10))\nend = None\nfor i, l in enumerate(lines[1:], start=1):\n    if l == '---':\n        end = i\n        break\nfm = yaml.safe_load(chr(10).join(lines[1:end])) or {}\ncl = fm.get('change_log') or []\nprint('yes' if len(cl) > 0 else 'no')\n\"); changelog_names_path=$(grep -q 'docs/architecture/ADR-002-html-user-guide.md' CHANGELOG.md 2>/dev/null && echo yes || echo no); if [ \"$adr_has_changelog\" != \"yes\" ] && [ \"$changelog_names_path\" != \"yes\" ]; then echo 'NDS Sec4 not recorded: no ADR frontmatter change_log entry and CHANGELOG.md does not name the path'; exit 1; fi; out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | grep -qx 'SUMMARY: 8 passed, 0 failed' || { echo \"expected exact summary line 'SUMMARY: 8 passed, 0 failed', got: $(echo \"$out\" | grep '^SUMMARY:')\"; exit 1; }; test \"$rc\" -eq 0 && echo PASS || { echo \"tools/validate.sh exited $rc, expected 0\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness, per the F-011/contract-011 exact-listing precedent, updated for the two-ADR state this feature creates): docs/architecture/ contains exactly the two expected ADR files, no stray artifacts",
+      "command": "test -d docs/architecture || { echo 'MISSING docs/architecture directory'; exit 1; }; count=$(LC_ALL=C ls -1 docs/architecture/ | wc -l); listing=$(LC_ALL=C ls -1 docs/architecture/ | tr '\\n' ' '); expected='ADR-001-ci-compliance-enforcement.md ADR-002-html-user-guide.md '; test \"$count\" -eq 2 && test \"$listing\" = \"$expected\" && echo PASS || { echo \"unexpected docs/architecture/ contents (count=$count): $listing\"; exit 1; }"
+    }
+  ],
+  "estimated_lines": 130,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/017-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/017-verify-01.txt for the first entry, ..., .agent/evidence/017-verify-13.txt for the thirteenth). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T05:26:23Z",
+    "revisions": 0
+  }
+}

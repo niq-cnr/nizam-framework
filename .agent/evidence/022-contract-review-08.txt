@@ -1,0 +1,3 @@
+f=CHANGELOG.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; count=$(grep -c "^## \[Unreleased\]" "$f"); test "$count" -eq 1 || { echo "expected exactly one $count"; exit 1; }; unrel_line=$(grep -n "^## \[Unreleased\]" "$f" | head -1 | cut -d: -f1); first_ver_line=$(grep -n "^## \[0\.1\.0\]" "$f" | head -1 | cut -d: -f1); test -n "$first_ver_line" || { echo "expected released 0.1.0"; exit 1; }; test "$unrel_line" -lt "$first_ver_line" || { echo "Unreleased must precede 0.1.0"; exit 1; }; echo PASS
+PASS
+EXIT:0

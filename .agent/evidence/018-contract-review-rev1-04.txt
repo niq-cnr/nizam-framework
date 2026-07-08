@@ -1,0 +1,13 @@
+f=docs/guide/index.html; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 - "$f" <<'PYEOF'
+import re, sys
+path = sys.argv[1]
+text = open(path, encoding='utf-8').read()
+urls = re.findall(r'(?:href|src)\s*=\s*[\x22\x27]?(https?://[^\x22\x27\s>]+)', text)
+bad = [u for u in urls if not re.match(r'https?://(github\.com|niq-cnr\.github\.io)/', u)]
+if bad:
+    print('bad external url(s): ' + ', '.join(bad))
+    sys.exit(1)
+print('PASS')
+PYEOF
+MISSING docs/guide/index.html
+EXIT:1

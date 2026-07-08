@@ -1,0 +1,23 @@
+f=docs/guide/index.html; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 - "$f" <<'PYEOF'
+import re, sys
+path = sys.argv[1]
+text = open(path, encoding='utf-8').read()
+style_match = re.search(r'<style[^>]*>(.*?)</style>', text, re.DOTALL | re.IGNORECASE)
+style_content = style_match.group(1) if style_match else ''
+found = False
+for sel, decl in re.findall(r'([^{}]+)\{([^}]*)\}', style_content, re.DOTALL):
+    if 'nav' in sel.lower() and re.search(r'position\s*:\s*sticky', decl, re.IGNORECASE):
+        found = True
+        break
+if not found:
+    for m in re.finditer(r'<nav\b[^>]*style=\x22([^\x22]*)\x22', text, re.IGNORECASE):
+        if re.search(r'position\s*:\s*sticky', m.group(1), re.IGNORECASE):
+            found = True
+            break
+if not found:
+    print('no CSS rule or inline style targeting a nav-related selector sets position: sticky (co-occurrence not found)')
+    sys.exit(1)
+print('PASS')
+PYEOF
+PASS
+EXIT:0

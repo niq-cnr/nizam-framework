@@ -1,0 +1,23 @@
+f=docs/guide/index.html; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 - "$f" <<'PYEOF'
+import json, re, sys
+path = sys.argv[1]
+version = json.load(open('NIZAM.json', encoding='utf-8'))['framework']['version']
+text = open(path, encoding='utf-8').read()
+m = re.search(r'<meta\s+name="framework-version"\s+content="([^"]*)"', text)
+if not m:
+    print('no <meta name="framework-version"> element found')
+    sys.exit(1)
+if m.group(1) != version:
+    print('meta content ' + repr(m.group(1)) + ' != NIZAM.json framework.version ' + repr(version))
+    sys.exit(1)
+fm = re.search(r'<footer\b.*?</footer>', text, re.DOTALL | re.IGNORECASE)
+if not fm:
+    print('no <footer> element found')
+    sys.exit(1)
+if version not in fm.group(0):
+    print('footer element missing exact version string ' + repr(version))
+    sys.exit(1)
+print('PASS')
+PYEOF
+PASS
+EXIT:0

@@ -1,0 +1,6 @@
+f=bootstrap.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; bash -n "$f" || { echo "bash -n $f failed"; exit 1; }; out=$(timeout 5 bash "$f" --help 2>&1); rc=$?; echo "$out" | tail -3; test "$rc" -eq 0 || { echo "$f --help exited $rc"; exit 1; }; echo PASS
+Exit status:
+  0   Success (including --help and a passing --verify-only run).
+  1   Configuration error, verification failure, or clone/injection failure.
+PASS
+EXIT:0

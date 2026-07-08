@@ -1,0 +1,16 @@
+f=CONTEXT.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import re, sys
+text = open('CONTEXT.md', encoding='utf-8').read()
+pat = re.compile(r'standard/.{0,6}templates/.{0,10}schema/')
+bad = []
+for m in pat.finditer(text):
+    window = text[m.start():m.end()+45]
+    if 'tools/' not in window:
+        bad.append(text[:m.start()].count(chr(10)) + 1)
+if bad:
+    print('stale 3-dir payload enumeration (omits tools/) at line(s): ' + repr(bad))
+    sys.exit(1)
+print('no stale payload enumeration found')
+" || exit 1; grep -q 'tools/' "$f" || { echo 'missing tools/ mention (companion literal check)'; exit 1; }; grep -q 'NIZAM.json' "$f" || { echo 'missing NIZAM.json mention (companion literal check)'; exit 1; }; echo PASS
+stale 3-dir payload enumeration (omits tools/) at line(s): [39]
+EXIT:1

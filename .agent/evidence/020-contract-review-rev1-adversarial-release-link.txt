@@ -1,0 +1,18 @@
+REV1 re-test of NEW verification[8] (GitHub Release link).
+
+Dry-run on current, unmodified README.md (captured in
+020-contract-review-rev1-09.txt) -> exit 1, "missing GitHub Release link
+(expected github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0 or a /releases
+URL)". Confirms the previously-missing verification (my prior finding #4) is now
+present and correctly fails on the command-free README.
+
+Positive control: "See the release: https://github.com/niq-cnr/nizam-framework/
+releases/tag/v0.1.0" -> "PASS (tag-specific link)". Satisfiable.
+
+Note (LOW severity, non-blocking): the check has a fallback branch accepting any
+generic .../releases URL (without the specific /tag/v0.1.0 suffix) with the
+message "PASS (general /releases link found, not tag-specific)". This is
+slightly looser than the contract's own scope text ("the GitHub Release for the
+real tag v0.1.0"), but it still requires a real, correctly-scoped repository
+releases URL (github.com/niq-cnr/nizam-framework/releases), not an arbitrary
+string, so it remains meaningfully discriminating. Not blocking.

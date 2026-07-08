@@ -1,0 +1,3 @@
+f=methodology/README.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; if grep -q 'product_spec' "$f"; then echo 'product_spec reference still present'; grep -n 'product_spec' "$f"; exit 1; else echo PASS; fi
+PASS
+EXIT:0

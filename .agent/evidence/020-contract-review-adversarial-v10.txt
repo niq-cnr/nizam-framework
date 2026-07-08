@@ -1,0 +1,8 @@
+Adversarial fixture proving verification[9] (acceptance_test #10, NDS/AGF/GIP acronym
+expansion check) false-passes on text that contains NO real canonical expansion.
+FIXTURE TEXT: 'See NDS (Section 2) for details. Also consult AGF (see appendix) and GIP (chapter 4).'
+NDS: primary_regex_match=True  (matches with NO real expansion present)
+AGF: primary_regex_match=True  (matches with NO real expansion present)
+GIP: primary_regex_match=True  (matches with NO real expansion present)
+python3 -c check exit=0
+CONCLUSION: exit 0 == the check's PASS branch would fire on this fixture despite zero real acronym expansion -- FALSE PASS CONFIRMED.

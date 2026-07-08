@@ -1,0 +1,82 @@
+{
+  "contract_id": "022",
+  "feature_id": "022",
+  "name": "Phase Close — CHANGELOG Phase-003 Entries, AGIP Gloss, Green Validator, Publishing + Release Human Gates",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_003.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Close phase 003-communication. (1) Under the EXISTING '## [Unreleased]' section (line 8 — currently holding the phase-002 deliverables awaiting the unmerged v0.2.0 roll-up), ADD entries for the phase-003 deliverables in Keep-a-Changelog format matching the existing style: an Added entry naming `docs/guide/index.html` (the self-contained HTML user guide) and the NIZAM.json docs module indexing (both ADRs + the guide); a Changed entry naming the `CONTEXT.md` and `README.md` first-contact rewrites; a Fixed/Changed entry naming the `tools/interface.md` discovery-order correction and the `standard/GIP.md` payload-set + existing-repo-tiers corrections; an Added entry naming the MIT `LICENSE`. Do NOT create a second `[Unreleased]` heading and do NOT roll `[Unreleased]` into a versioned section — the release roll-up (v0.2.0 and v0.3.0 both) is a human gate per methodology/05_release_train.md Sec 6, untouched by this feature. (2) At the existing AGIP mention (line 62, inside the RELEASED '## [0.1.0]' section: '...the evolution of the earlier AGIP prototype...'), add a MINIMAL, non-substantive parenthetical gloss so AGIP is expanded in place — e.g. rephrase 'the earlier AGIP prototype' to 'the earlier AGIP (a predecessor governance-automation prototype)'. The gloss MUST be sourced from bootstrap.sh's own framing of AGIP as a predecessor prototype (bootstrap.sh already carries this framing per F-020's 'prototype' gloss) — do NOT fabricate a canonical 4-letter expansion; none exists in-tree (that absence IS finding H7, and inventing one here would violate the External Anchor Rule / AH-4). Do not otherwise alter the substance of the released [0.1.0] record. (3) Introduce no `nizamiq`/`.svc`/`cluster.local` string anywhere in the file (CHANGELOG.md is inside validator C5's branding sweep)."
+      }
+    ]
+  },
+  "non_goals": [
+    "Do NOT cut a v0.3.0 git tag — the release decision (v0.3.0, MINOR per methodology/05_release_train.md) is a human gate; this feature only records that the decision is pending, it does not execute it",
+    "Do NOT add a GitHub Pages workflow (.github/workflows/pages.yml or gh-pages.yml) — the publishing decision (enabling GitHub Pages for docs/guide/) is a human gate; this feature does not execute it",
+    "Do NOT roll the '[Unreleased]' section into any versioned section (neither v0.2.0 nor v0.3.0) — the changelog roll-up + date-stamping is release-manager/orchestrator-owned per methodology/05_release_train.md Sec 6, and is a human-authorized action for a later step, not this feature",
+    "Do NOT bump NIZAM.json framework.version or any NIZAM.json content — out of scope for phase close; the release version bump is bundled with the human-gated release, not this feature",
+    "Do NOT create a second '## [Unreleased]' heading — the phase-002 deliverables already resident in the existing Unreleased section are appended to, not replaced or duplicated",
+    "Do NOT edit LICENSE, README.md, CONTEXT.md, docs/guide/index.html, NIZAM.json, tools/interface.md, standard/GIP.md, bootstrap.sh, or any other prior-feature deliverable — those are complete and immutable inputs this feature only references by name",
+    "Do NOT edit .agent/product_spec_003.md or any immutable prior-phase/prior-feature artifact (completed contracts, evidence, qa verdicts, or phase-001/002 feature lists)",
+    "Do NOT edit any file beyond CHANGELOG.md and this contract file itself",
+    "Does not re-litigate or alter the LICENSE choice (MIT, already decided and landed in F-021) — this feature only names the LICENSE addition in the changelog entry"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "CHANGELOG.md [Unreleased] names the HTML user guide and the CONTEXT/README rewrite: grep -q '## \\[Unreleased\\]' CHANGELOG.md && grep -q 'docs/guide/index.html' CHANGELOG.md && grep -Eqi 'README|CONTEXT' CHANGELOG.md — STRENGTHENED (QA rev1, HIGH-severity fix): the base regex is whole-file and is vacuously satisfiable by pre-existing, unrelated text (line 21 'README presence' already inside [Unreleased] from a phase-002 C7 entry; line 56 'CONTEXT/AGENTS' inside the released [0.1.0] section). This entry now scopes to the [Unreleased] section span only and requires the literal filenames 'CONTEXT.md' and 'README.md' (not the bare words), which discriminates because line 21's 'README presence' lacks the '.md' suffix.",
+      "command": "f=CHANGELOG.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q '## \\[Unreleased\\]' \"$f\" || { echo \"CHANGELOG.md missing [Unreleased]-heading\"; exit 1; }; unrel=$(awk '/^## \\[Unreleased\\]/{f=1;next}/^## \\[/{f=0}f' \"$f\"); missing=\"\"; echo \"$unrel\" | grep -q 'docs/guide/index.html' || missing=\"$missing docs/guide/index.html\"; echo \"$unrel\" | grep -q 'CONTEXT.md' || missing=\"$missing CONTEXT.md\"; echo \"$unrel\" | grep -q 'README.md' || missing=\"$missing README.md\"; if [ -n \"$missing\" ]; then echo \"[Unreleased] section missing:$missing\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "CHANGELOG.md [Unreleased] names the adoption-contract corrections: grep -q 'interface.md' CHANGELOG.md && grep -q 'GIP.md' CHANGELOG.md — STRENGTHENED (QA rev1, HIGH-severity fix): the base regex is whole-file and is vacuously satisfiable by CHANGELOG.md's released [0.1.0] section, which already names 'tools/interface.md' in an unrelated phase-001 entry. This entry now scopes to the [Unreleased] section span only, so the released [0.1.0] mention cannot satisfy it and it only passes once the F-019 correction is actually named inside [Unreleased].",
+      "command": "f=CHANGELOG.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; unrel=$(awk '/^## \\[Unreleased\\]/{f=1;next}/^## \\[/{f=0}f' \"$f\"); missing=\"\"; echo \"$unrel\" | grep -q 'interface.md' || missing=\"$missing interface.md\"; echo \"$unrel\" | grep -q 'GIP.md' || missing=\"$missing GIP.md\"; if [ -n \"$missing\" ]; then echo \"[Unreleased] section missing:$missing\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "CHANGELOG.md expands AGIP at its mention (H7), strengthened to require the gloss be a sourced 'prototype' framing rather than a bare/fabricated parenthetical: grep -Eq 'AGIP \\(|\\([^)]*AGIP\\)' CHANGELOG.md",
+      "command": "f=CHANGELOG.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eq 'AGIP \\(|\\([^)]*AGIP\\)' \"$f\" || { echo \"AGIP not expanded with parenthetical gloss\"; exit 1; }; grep -Eq '\\bAGIP\\b.{0,60}\\bprototype\\b|\\bprototype\\b.{0,60}\\bAGIP\\b' \"$f\" || { echo \"AGIP gloss missing sourced 'prototype' framing (fabricated/non-sourced expansion suspected)\"; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "The final tree passes the compliance validator: bash tools/validate.sh; test $? -eq 0",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | grep -qx 'SUMMARY: 8 passed, 0 failed' || { echo \"expected exact summary line 'SUMMARY: 8 passed, 0 failed', got: $(echo \"$out\" | grep '^SUMMARY:')\"; exit 1; }; test \"$rc\" -eq 0 && echo PASS || { echo \"tools/validate.sh exited $rc, expected 0\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "The release decision is a human gate (v0.3.0 MINOR) and NOT auto-cut: git tag -l 'v0.3.0' | wc -l outputs 0",
+      "command": "n=$(git tag -l 'v0.3.0' | wc -l); test \"$n\" -eq 0 && echo \"PASS (tag count: $n)\" || { echo \"v0.3.0 tag exists unexpectedly (count=$n) - release is a human gate, must not be auto-cut\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "The publishing decision is a human gate and GitHub Pages is NOT auto-enabled by this pipeline (no Pages workflow added by phase 003): ! test -f .github/workflows/pages.yml && ! test -f .github/workflows/gh-pages.yml",
+      "command": "if test -f .github/workflows/pages.yml || test -f .github/workflows/gh-pages.yml; then echo \"Pages workflow file found - publishing is a human gate, must not be auto-enabled by this pipeline\"; ls -la .github/workflows/ 2>&1; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "NIZAM.json remains schema-valid with all indexed paths resolving on the final tree (regression guard, run independently of validate.sh in case its C4 check has a blind spot): python3 -c 'import json,jsonschema; jsonschema.validate(json.load(open(\"NIZAM.json\")), json.load(open(\"registry/nizam-index.schema.json\")))'",
+      "command": "python3 -c \"\nimport json, jsonschema\ndata = json.load(open('NIZAM.json'))\nschema = json.load(open('registry/nizam-index.schema.json'))\njsonschema.validate(data, schema)\nprint('schema-valid')\n\" && echo PASS || { echo \"NIZAM.json failed schema validation\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness — phase-002's deliverables must not be lost, duplicated, or prematurely rolled up): exactly one '## [Unreleased]' heading exists and it precedes the released '## [0.1.0]' section",
+      "command": "f=CHANGELOG.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; count=$(grep -c '^## \\[Unreleased\\]' \"$f\"); test \"$count\" -eq 1 || { echo \"expected exactly one '## [Unreleased]' heading, found $count (must not create a second Unreleased section or roll it up)\"; exit 1; }; unrel_line=$(grep -n '^## \\[Unreleased\\]' \"$f\" | head -1 | cut -d: -f1); first_ver_line=$(grep -n '^## \\[0\\.1\\.0\\]' \"$f\" | head -1 | cut -d: -f1); test -n \"$first_ver_line\" || { echo \"expected a released [0.1.0] section to remain present\"; exit 1; }; test \"$unrel_line\" -lt \"$first_ver_line\" || { echo \"[Unreleased] section must precede [0.1.0] (release roll-up is a human gate, not to be performed by this feature)\"; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness — spec Sec 5 F-022 requires the entries cover 'LICENSE if it landed'; LICENSE landed in F-021, so it MUST be named): CHANGELOG.md [Unreleased] names the LICENSE addition — SCOPED to the [Unreleased] span (QA rev1 defense-in-depth, consistent with entries #1/#2) rather than whole-file, for the same discrimination reason.",
+      "command": "f=CHANGELOG.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; unrel=$(awk '/^## \\[Unreleased\\]/{f=1;next}/^## \\[/{f=0}f' \"$f\"); echo \"$unrel\" | grep -q 'LICENSE' || { echo \"[Unreleased] section does not name the LICENSE addition\"; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness — CHANGELOG.md is in C5's branding sweep; this feature's own edit must not introduce leakage even though C5 also re-checks it): CHANGELOG.md introduces no branding/endpoint leakage",
+      "command": "f=CHANGELOG.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -Eqi 'nizamiq|\\.svc|cluster\\.local' \"$f\"; then echo \"branding/endpoint leakage found in CHANGELOG.md\"; grep -niE 'nizamiq|\\.svc|cluster\\.local' \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness, per the contract-018/019/020/021 git-status-based out-of-scope-edit precedent, using --untracked-files=all): only {CHANGELOG.md} appears as new or modified in the working tree, excluding .agent/",
+      "command": "changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | cut -c4-); bad=\"\"; while IFS= read -r f; do [ -z \"$f\" ] && continue; case \"$f\" in CHANGELOG.md) ;; *) bad=\"$bad|$f\" ;; esac; done <<< \"$changed\"; if [ -n \"$bad\" ]; then echo \"out-of-scope new/modified file(s):$bad\"; exit 1; fi; echo \"PASS (status-scanned: $changed)\""
+    }
+  ],
+  "estimated_lines": 60,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/022-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/022-verify-01.txt for the first entry, ..., .agent/evidence/022-verify-11.txt for the eleventh). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T10:33:07Z",
+    "revisions": 1
+  }
+}

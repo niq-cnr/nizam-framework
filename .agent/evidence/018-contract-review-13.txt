@@ -1,0 +1,18 @@
+python3 - <<'PYEOF'
+import json, os, sys
+import jsonschema
+data = json.load(open('NIZAM.json', encoding='utf-8'))
+schema = json.load(open('registry/nizam-index.schema.json', encoding='utf-8'))
+jsonschema.validate(data, schema)
+docs_module = next((m for m in data.get('modules', []) if m.get('path') == 'docs'), None)
+if docs_module is None:
+    print('no docs module found in NIZAM.json modules[]')
+    sys.exit(1)
+missing = [d for d in docs_module.get('key_documents', []) if not os.path.isfile(d)]
+if missing:
+    print('docs module indexed path(s) failed to resolve: ' + ', '.join(missing))
+    sys.exit(1)
+print('PASS')
+PYEOF
+no docs module found in NIZAM.json modules[]
+EXIT:1

@@ -25,6 +25,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   on `pull_request` and on `push` to `main` (full-history checkout, so the
   C8 version-bump-vs-changelog check's `git show HEAD:<path>` lookups
   resolve correctly).
+- `docs/guide/index.html`, a self-contained, dependency-free HTML user guide
+  covering discovery, adoption, the contract-first execution loop, and the
+  circuit breaker; and `docs/architecture/ADR-002-html-user-guide.md`,
+  recording the decision to ship it. `NIZAM.json` gains a `docs` module
+  indexing both Architecture Decision Records (`ADR-001`, `ADR-002`) and the
+  guide.
+- `LICENSE`, the MIT license (copyright held by "The Nizam Framework
+  Authors"), with a corresponding license notice added to `README.md`.
 
 ### Changed
 
@@ -41,6 +49,26 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `methodology/05_release_train.md` (0.2.0): adds Release Mechanics
   Ownership (Section 6), assigning changelog roll-up, date-stamping, and tag
   creation to the release-manager/orchestrator role.
+- `CONTEXT.md`: rewritten to be current — stale forward-references removed,
+  the phase-002 compliance-validator and CI-gate surfaces added, the
+  injected payload corrected to the actual four directories plus
+  `NIZAM.json`, the `.agent/` path documented, and `status` flipped to
+  `active`.
+- `README.md`: given a quickstart, a two-audience (framework-maintainer
+  vs. consumer-repo) split, links to the HTML guide and the GitHub Release,
+  and mentions of the compliance validator, the CI gate, and the
+  Architecture Decision Records.
+
+### Fixed
+
+- `tools/interface.md`: corrected the runtime-adapter discovery order so a
+  bootstrapped consumer's `.nizam/tools/skill.json` is checked first, with
+  the repository-root `tools/skill.json` retained as an explicitly labeled
+  framework-checkout fallback.
+- `standard/GIP.md`: corrected the injected-payload description (previously
+  stale at three directories) to the actual four directories plus
+  `NIZAM.json` everywhere it is enumerated, and added an Adopting in an
+  Existing Repository section defining incremental adoption tiers.
 
 ## [0.1.0] - 2026-07-08
 
@@ -59,9 +87,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `NIZAM.json`, the root machine-readable capability index and context
   router, validating against `registry/nizam-index.schema.json`.
 - `bootstrap.sh`, the unified clone → inject → verify governance inheritance
-  mechanism (the evolution of the earlier AGIP prototype) — clones a pinned
-  `GOVERNANCE_TAG`, stages and injects `standard/`, `templates/`, `schema/`,
-  `tools/`, and `NIZAM.json` into a consumer repository's `.nizam/`
+  mechanism (the evolution of the earlier AGIP (a predecessor prototype)) —
+  clones a pinned `GOVERNANCE_TAG`, stages and injects `standard/`,
+  `templates/`, `schema/`, `tools/`, and `NIZAM.json` into a consumer
+  repository's `.nizam/`
   directory, verifies the injection, and records provenance. Supports a
   network-free `--verify-only` drift-detection mode and a `--help` mode.
 

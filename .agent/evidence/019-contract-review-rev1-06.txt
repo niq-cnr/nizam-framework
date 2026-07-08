@@ -1,0 +1,6 @@
+f=methodology/README.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; if grep -q 'product_spec' "$f"; then echo 'product_spec reference still present'; grep -n 'product_spec' "$f"; exit 1; else echo PASS; fi
+product_spec reference still present
+20:| [`00_planning.md`](00_planning.md) | Planning Enforcer — the mandatory pre-code `product_spec.md` + `feature_list.json` artifact pair, the feature list as a validated DAG, the Dependency Enforcement Rule, atomic-step acceptance-test decomposition, and the Scope Budget Protocol (per-feature 3x rolling-average flag, cumulative 130% halt). |
+30:framework's named Design Decisions (`product_spec.md` Section 4):
+
+EXIT:1

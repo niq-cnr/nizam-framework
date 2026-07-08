@@ -1,0 +1,2 @@
+f=CHANGELOG.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; missing=""; grep -q 'interface.md' "$f" || missing="$missing interface.md"; grep -q 'GIP.md' "$f" || missing="$missing GIP.md"; if [ -n "$missing" ]; then echo "CHANGELOG.md missing:$missing"; exit 1; fi; echo PASS
+CHANGELOG.md missing: GIP.md

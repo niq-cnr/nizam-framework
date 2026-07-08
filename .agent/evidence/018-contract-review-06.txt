@@ -1,0 +1,3 @@
+f=docs/guide/index.html; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q '<nav' "$f" && grep -Eq 'position:\s*sticky' "$f" && echo PASS || { echo "missing nav or sticky positioning"; exit 1; }
+MISSING docs/guide/index.html
+EXIT:1

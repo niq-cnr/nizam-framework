@@ -1,0 +1,3 @@
+changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | cut -c4-); bad=""; while IFS= read -r f; do [ -z "$f" ] && continue; case "$f" in CONTEXT.md|README.md|bootstrap.sh) ;; *) bad="$bad|$f" ;; esac; done <<< "$changed"; if [ -n "$bad" ]; then echo "out-of-scope new/modified file(s):$bad"; exit 1; fi; echo "PASS (status-scanned: $changed)"
+PASS (status-scanned: )
+EXIT:0

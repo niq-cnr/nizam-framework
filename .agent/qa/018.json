@@ -1,0 +1,40 @@
+{
+  "feature_id": "018",
+  "qa_pass": true,
+  "checks_run": 16,
+  "checks_passed": 16,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/018-qa-adversarial.txt",
+    "findings": "8 probes run (6 mandated categories + 2 bonus hallucination-audit claims), all PASS, no defects found. (1) Hidden-external-resource sweep: grep/regex sweep for url(), @import, <img>, favicon <link>, @font-face, fetch/XMLHttpRequest, <iframe> found NONE; the only https:// URL in the entire file is the single footer anchor to github.com/niq-cnr/nizam-framework -- every other href is an in-page anchor link. (2) Version anchor completeness: <meta name=\"framework-version\" content=\"0.1.0\"> in <head> AND the footer's rendered text both independently confirmed equal to NIZAM.json framework.version (0.1.0). (3) Hallucination re-audit of five claims (three required + two bonus): (a) all six module-reference-card key_documents paths cross-checked against NIZAM.json modules[] key_documents arrays -- exact match, no drift; (b) .nizam/ quickstart tree (standard/, templates/, schema/, tools/, NIZAM.json, provenance.json) matches bootstrap.sh's REQUIRED_MODULE_DIRS array (standard, templates, schema, tools) plus the provenance.json artifact bootstrap.sh's own provenance-recording code path writes -- no invented or omitted directory; (c) circuit-breaker attempt-table prose (\"attempt 1 direct fix, attempt 2 type/interface analysis, attempt 3 architectural review, attempt 4 forbidden\") matches methodology/03_circuit_breaker.md Section 3's table verbatim in substance and order; (d) the three abstract operations (read-state, write-evidence, run-verification) match tools/interface.md Section 4.1-4.3 exactly, same order, matching purposes; (e) the guide's agent-discovery order (bootstrapped-consumer .nizam/tools/skill.json first, repository-root framework-checkout fallback second, pinned-checkout third) matches tools/interface.md Section 2's post-H4-corrected order. (4) License claim safety: no LICENSE file exists anywhere in the repo, no license text found by a repo-wide grep, and the guide's FAQ correctly states the license choice is a separate human-gated feature (F-021) that has not landed, asserting no specific license. (5) Print + dark/light integrity: exactly one @media print block (hides nav/toggle/CTA, forces print-safe colors) and a genuine @media (prefers-color-scheme: dark) override block coexist with an explicit light default and manual html[data-theme] overrides -- both schemes are actually implemented, not merely mentioned. (6) Structural well-formedness: html/head/body/nav/footer/header/main each open exactly once and close exactly once (balanced); the sticky positioning (position: sticky) is declared on the bare `nav` element selector itself, confirming the sticky TOC targets the real <nav> element rather than an unrelated class. (7) git status --porcelain re-confirmed only NIZAM.json (modified) and docs/guide/index.html (new) changed outside .agent/. (8) An independent `bash tools/validate.sh` re-run is green: exact line 'SUMMARY: 8 passed, 0 failed', exit 0."
+  },
+  "evidence_files": [
+    ".agent/evidence/018-qa-01.txt",
+    ".agent/evidence/018-qa-02.txt",
+    ".agent/evidence/018-qa-03.txt",
+    ".agent/evidence/018-qa-04.txt",
+    ".agent/evidence/018-qa-05.txt",
+    ".agent/evidence/018-qa-06.txt",
+    ".agent/evidence/018-qa-07.txt",
+    ".agent/evidence/018-qa-08.txt",
+    ".agent/evidence/018-qa-09.txt",
+    ".agent/evidence/018-qa-10.txt",
+    ".agent/evidence/018-qa-11.txt",
+    ".agent/evidence/018-qa-12.txt",
+    ".agent/evidence/018-qa-13.txt",
+    ".agent/evidence/018-qa-14.txt",
+    ".agent/evidence/018-qa-15.txt",
+    ".agent/evidence/018-qa-16.txt",
+    ".agent/evidence/018-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "018",
+    "summary": "All 16 contract-018 verification commands were independently re-run from repo root, into fresh 018-qa-NN.txt evidence files (not reused from the generator's 018-verify-NN.txt), and all 16 pass (16/16 EXIT:0): guide exists and is valid HTML per html.parser; is fully self-contained (zero <link rel=stylesheet>, zero <script src>); makes zero external requests beyond github.com/niq-cnr; supports dark/light via prefers-color-scheme; has a genuinely sticky in-page nav TOC; embeds NIZAM.json's exact framework.version (0.1.0) in both <meta name=framework-version> and the footer; every repository-relative path the guide names resolves on disk; contains no 'nizamiq' branding string; renders all four DD-1..DD-4 cards; covers the execution loop naming 'circuit breaker', 'Mode A', and 'Mode B' literally; NIZAM.json indexes both ADRs and the guide; NIZAM.json still validates against registry/nizam-index.schema.json with the new docs module's key_documents resolving on disk; tools/validate.sh is green (8/8, exit 0); git-status scoping confirms only docs/guide/index.html and NIZAM.json changed outside .agent/; and NDS/AGF/GIP are each expanded to their canonical shipped title phrase with AGIP given an adjacent parenthetical expansion. A mandatory 8-probe adversarial spot-check (6 required categories plus 2 bonus hallucination-audit claims) found no hidden external resource, no version-anchor drift, no hallucinated or drifted factual claim across five independently re-checked claims (module reference cards, .nizam/ quickstart tree vs bootstrap.sh REQUIRED_MODULE_DIRS+provenance, circuit-breaker attempt table, the three abstract operations, and the agent-discovery order), no unsafe license assertion (repo has no LICENSE file; the guide's FAQ correctly defers to human-gated F-021 without asserting a specific license), genuine print and dark/light styling, balanced critical structural tags with a real sticky <nav>, and a clean git-status scope. QA verdict: PASS."
+  }
+}

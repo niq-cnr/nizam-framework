@@ -1,0 +1,3 @@
+f=bootstrap.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eq 'AGIP \(|\([^)]*AGIP\)' "$f" && echo PASS || { echo 'AGIP not expanded at its mention'; exit 1; }
+AGIP not expanded at its mention
+EXIT:1

@@ -1,0 +1,3 @@
+f=CHANGELOG.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; unrel=$(awk '/^## \[Unreleased\]/{f=1;next}/^## \[/{f=0}f' "$f"); echo "$unrel" | grep -q 'LICENSE' || { echo "[Unreleased] section does not name the LICENSE addition"; exit 1; }; echo PASS
+PASS
+EXIT:0

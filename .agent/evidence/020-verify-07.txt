@@ -1,0 +1,3 @@
+f=README.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eqi 'humans start here' "$f" || { echo 'missing humans-start-here entry'; exit 1; }; grep -q 'tools/SKILL.md' "$f" || { echo 'missing tools/SKILL.md agent-entry mention'; exit 1; }; echo PASS
+PASS
+EXIT:0

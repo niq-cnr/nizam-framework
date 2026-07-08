@@ -6,8 +6,8 @@ tags: [spec, governance, framework, ai-legible, mono-repo]
 status: draft
 last_audited: "2026-07-07"
 authoritative_source: NA
-version: 1.1.0
-spec_version: "1.1.0"
+version: 1.2.0
+spec_version: "1.2.0"
 created_at: "2026-07-07T00:00:00Z"
 updated_at: "2026-07-08T00:00:00Z"
 change_log:
@@ -17,6 +17,9 @@ change_log:
   - version: "1.1.0"
     date: "2026-07-08T00:00:00Z"
     summary: "ADR-001 layout amendment - .github/workflows/ CI enforcement and tools/validate.sh compliance validator added to the architecture (F-011)."
+  - version: "1.2.0"
+    date: "2026-07-08T00:00:00Z"
+    summary: "ADR-002 layout amendment - docs/architecture/ and docs/guide/ admitted as shipped documentation surfaces, and the docs/ shipped-vs-internal status (docs/planning/ is framework-internal, not shipped) declared (F-017)."
 ---
 
 # Nizam Framework — Product Specification
@@ -63,8 +66,21 @@ nizam-framework/
 ├── schema/             # JSON Schemas: frontmatter, manifest, phase, feature_list, contract, qa, run_state
 ├── tools/              # Runtime-agnostic unified skill payload (ONE payload, no per-runtime forks)
 │   └── validate.sh     # Runtime-agnostic repo-local compliance validator (ADR-001)
-└── .github/workflows/  # CI enforcement of NDS §7 (compliance.yml) (ADR-001)
+├── .github/workflows/  # CI enforcement of NDS §7 (compliance.yml) (ADR-001)
+└── docs/
+    ├── architecture/   # ADRs — shipped documentation (ADR-001, ADR-002, …)
+    ├── guide/
+    │   └── index.html  # Self-contained HTML user guide — shipped documentation (NEW)
+    └── planning/       # manifest.json, DEBT.md — framework-internal (NOT shipped to consumers)
 ```
+
+**`docs/` shipped-vs-internal status (ADR-002):** `docs/architecture/` and `docs/guide/`
+are shipped documentation — distributed with the framework repository and indexed by
+`NIZAM.json` — but they are NOT part of `bootstrap.sh`'s consumer-injected payload
+(`bootstrap.sh` injects only `standard/`, `templates/`, `schema/`, `tools/`, and
+`NIZAM.json` into a consumer's `.nizam/`). `docs/planning/` (`manifest.json`, `DEBT.md`)
+is framework-internal governance and pipeline state — not shipped documentation, and not
+indexed by `NIZAM.json`.
 
 ### 2.2 Module Boundaries (internal contracts)
 

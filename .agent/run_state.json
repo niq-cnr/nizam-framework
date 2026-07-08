@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "002-self-compliance",
-  "current_feature": null,
+  "current_phase": "003-communication",
+  "current_feature": "022",
   "status": "phase_complete",
-  "updated_at": "2026-07-09T00:40:00Z",
+  "updated_at": "2026-07-08T11:03:36Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -59,6 +59,34 @@
     },
     "016-contract": {
       "attempts": 1,
+      "limit": 3
+    },
+    "017-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "019-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "019-implementation": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "018-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "020-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "021-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "022-contract": {
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -292,6 +320,106 @@
       "at": "2026-07-09T00:40:00Z",
       "event": "amendment_complete",
       "detail": "Feature 016 complete: contract first-pass both gates, 1 post-approval amendment (unquoted-literal SyntaxError in v[5]; missing run_state exclusion in v[7] - both ratified by Mode B as test-defect corrections), QA 8/8 + API-anchored SHA verification + structural workflow regression. 49 lines vs 45 est. Cumulative 1170/1625. Pushing to PR #3 and answering review threads."
+    },
+    {
+      "at": "2026-07-08T05:19:45Z",
+      "event": "phase_activated",
+      "detail": "Phase 003-communication authorized by human. Budget reset (1395 est, ceiling 1813; phase-002 final archived). Execution order 017 -> 019 -> 018 -> 020 -> 022 (019 deliberately precedes 018 so the guide documents the corrected adoption contract); 021 LICENSE remains human-gated pending license choice. Beginning contract negotiation on 017."
+    },
+    {
+      "at": "2026-07-08T05:26:23Z",
+      "event": "contract_approved",
+      "detail": "Contract 017 approved first-pass by both gates. Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T06:59:39Z",
+      "event": "feature_complete",
+      "detail": "Feature 017 complete: both gates first-pass (Mode B + QA). QA 13/13 verification commands independently re-run (exit 0 each) + mandatory adversarial spot-check (template instructional HTML comment block deleted in its entirety; authoritative_source repo-relative and frontmatter YAML-valid; product_spec.md 1.0.0/1.1.0 change_log entries byte-for-byte intact; non-goals held - no docs/guide/index.html, empty NIZAM.json diff, no out-of-scope edits; validate.sh SUMMARY: 8 passed, 0 failed). Deliverables: docs/architecture/ADR-002-html-user-guide.md (HTML user guide decision + docs/ shipped-vs-internal declaration) and product_spec.md amended to spec_version 1.2.0. 154 lines vs 130 est (contract-scoped: ADR 132+0, product_spec 19+3; first feature of phase 003, no rolling baseline). Cumulative 154/1813. QA evaluator surfaced a pre-existing schema/qa_verdict.schema.json drift (required keys verdict/executed_at/checks[] differ from the richer qa/*.json shape actually produced; unenforced by validate.sh) - logged as NDEBT-002. Advancing to 019 (deps [] satisfied) per execution order 017->019->018->020->022."
+    },
+    {
+      "at": "2026-07-08T07:25:58Z",
+      "event": "contract_approved",
+      "detail": "Contract 019 approved after 1 revision by both gates. Rev0 rejected on 3 real defects: (Mode A) H4 scope entry mislabeled interface.md pinned-checkout discovery as 'current item 3' when it is item 2; (evaluator) v2 repo-root-fallback check false-passed via the pre-existing 'root-relative' substring; (evaluator) v7's 'CI' 2-char token false-passed inside words like 'reconciled'. Rev1 fixes: dropped the numeric label + required the fallback be labeled 'framework checkout' (v2 now greps that literal phrase, absent pre-fix); v7 CI token now word-boundary anchored (\\bCI\\b or 'continuous integration') with CONTEXT.md/AGENTS.md filename-anchored. Both gates re-verified rev1: Mode A approved (ISSUE-1 resolved, no new defect); evaluator approved (both findings closed by dry-run, 9 unchanged entries byte-identical). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T07:37:32Z",
+      "event": "contract_amended",
+      "detail": "Contract 019 verification[10] (out-of-scope scope guard) amended post-approval (test-defect correction, NOT an implementation attempt): added \"-- . ':(exclude).agent'\" to 'git diff --name-only HEAD'. Generator implementation was CORRECT (10/11 verifications EXIT:0, validate.sh 8/8 green) but v11 as written scanned .agent/run_state.json, which the orchestrator legitimately modified during Loop-1 (circuit breaker + contract_approved history) BEFORE the generator ran; the generator correctly refused to touch run_state.json or the deliverables to route around it and flagged the defect (AH-2). Dry-run proof: raw diff lists the 4 deliverables + run_state.json; excluded diff lists only the 4 deliverables; run_state diff is +10/-1 orchestrator-only. Matches contract-014 form / feature-016 'missing run_state exclusion' precedent. To be ratified by Mode B. Generator instructed to re-capture 019-verify-11.txt with the corrected command."
+    },
+    {
+      "at": "2026-07-08T07:45:00Z",
+      "event": "mode_b_approved",
+      "detail": "Feature 019 Mode B APPROVED first-pass: exactly the 4 deliverables changed (each faithful to contract), all non-goals held, run_state.json diff orchestrator-only, every claim traces to bootstrap.sh, all 11 verifications EXIT:0, validate.sh 8/8. verification[10] .agent-exclusion amendment RATIFIED. Contract -> implemented. Proceeding to QA."
+    },
+    {
+      "at": "2026-07-08T07:51:35Z",
+      "event": "qa_fail_amendment_rework",
+      "detail": "Feature 019 QA FAILED (honest catch by the adversarial spot-check that all 3 prior gates missed): standard/GIP.md Section 1 (Core Directive) line 22 still asserted the stale 3-dir payload '(standard/, templates/, schema/)', contradicting the corrected Section 2 item 2 and new Section 5.1 (both 4-dir + NIZAM.json) - H5 was not actually resolved; the doc was internally self-contradictory. Root cause: the contract scoped only the two Section 2 item-2 locations; verification[3] (block-scoped to Sec 2) and verification[4] (regex needing a literal 'and' Sec 1 lacks) silently passed over the third occurrence. Orchestrator AMENDMENT 2 (scope-completeness correction): expanded H5 GIP.md scope to include Section 1's Core Directive payload parenthetical + added generalized verification[11] (12th) guard asserting no single-line standard/+templates/+schema/ enumeration omits tools/ anywhere in GIP.md (dry-run flags exactly line 22 pre-fix, EXIT:1). Contract status reverted approved; 019-implementation circuit breaker attempts=2/3 (rework 1). Routing the QA report to @generator for the Section 1 fix; then re-run Mode B (ratify amendment) + QA."
+    },
+    {
+      "at": "2026-07-08T08:00:51Z",
+      "event": "feature_complete",
+      "detail": "Feature 019 complete: 1 contract revision + 2 orchestrator amendments (verification[10] .agent exclusion [test-defect]; H5 scope expansion to Section 1 + generalized guard [QA-driven scope-completeness], both Mode-B ratified) + 1 implementation rework (QA caught the GIP.md Section 1 stale 3-dir payload all 3 prior gates missed). Final gates: Mode B re-approved + QA 12/12 verifications EXIT:0 + 8-probe adversarial clean, validate.sh 8/8. Deliverables: tools/interface.md (H4 .nizam-first discovery + framework-checkout fallback), standard/GIP.md (H5 4-dir+NIZAM.json payload consistent across Sec 1/2/2.1/5.1, H8 existing-repo tiers), templates/README.md + methodology/README.md (H6 product_spec de-leak). 122 lines vs 190 est. Cumulative 276/1813. Advancing to 018 (dep 017 complete) - the self-contained HTML user guide centerpiece, which will document the now-corrected adoption contract."
+    },
+    {
+      "at": "2026-07-08T08:37:24Z",
+      "event": "contract_approved",
+      "detail": "Contract 018 (HTML user guide + NIZAM.json docs indexing) approved after 1 revision by both gates. Mode A approved rev0 on scope/spec fidelity; the evaluator's adversarial contract review REJECTED rev0 on 4 real verification-suite soundness defects (built fixtures A-F to prove each): (4) external-URL check matched only double-quoted attrs (single-quote external URL false-passed); (8) path-resolution regex captured trailing sentence periods (false-fail on real files); (11) Mode A/B used OR where scope demands AND; (15) scope guard used 'git diff --name-only HEAD' which never lists new untracked files, so it was blind to the guide (a new file) itself. Rev1 fixed all four + tightened sticky-TOC co-occurrence + added verification[16] acronym-expansion (NDS/AGF/GIP verbatim canonical titles; AGIP parenthetical-gloss only, since AGIP has no shipped expansion - honors External Anchor Rule / H7). Both gates re-approved rev1 with fixture-verified closure. 16 verification entries. estimated_lines 900 (large self-contained HTML). Delegating implementation. Implementation note: AGIP's gloss must be sourced (bootstrap.sh 'earlier prototype this evolved from'), not a fabricated 4-word expansion."
+    },
+    {
+      "at": "2026-07-08T08:57:18Z",
+      "event": "feature_complete",
+      "detail": "Feature 018 complete (the phase centerpiece): contract 1 revision (evaluator's adversarial contract review caught 4 verification-suite soundness defects, all fixed + acronym check added, both gates re-approved). Implementation first-pass: Mode B approved with a full AH-4 hallucination audit (all 6 factual-claim categories - discovery order, 4-dir+NIZAM.json payload, DD-1..DD-4, execution loop + 3-strike breaker, quickstart, AGIP gloss - trace to the post-019 shipped tree) + QA 16/16 + 8-probe adversarial clean (no hidden external request, no hallucinated claim across 5 re-audited claims, no false license assertion, print + dark/light present), validate.sh 8/8 incl C4 over the 3 new docs paths. Deliverables: docs/guide/index.html (720-line self-contained HTML user guide, all 10 sections, version-anchored to NIZAM.json framework.version 0.1.0 in meta+footer) + NIZAM.json docs module indexing both ADRs + the guide. 729 lines vs 900 est. Cumulative 1005/1813."
+    },
+    {
+      "at": "2026-07-08T08:57:18Z",
+      "event": "scope_flag_raised",
+      "detail": "Feature 018's 729 lines trip the per-feature rolling-average flag (3x rolling avg of last 3 = 3x138 = 414). HEURISTIC FALSE-POSITIVE: 018 is the human-authorized planned centerpiece, estimated 900, delivered UNDER at 729; the rolling average is artificially low because 017 (154) and 019 (122) were small doc features. Cumulative 1005/1813 (55%) is healthy - no ceiling risk. Per Scope Budget Protocol the flag is non-halting for 018 but REQUIRES human acknowledgment before feature 020 begins. Pipeline paused: feature 020 will NOT start until the human acknowledges (surfaced to human 2026-07-08 alongside the rendered guide)."
+    },
+    {
+      "at": "2026-07-08T09:13:00Z",
+      "event": "scope_acknowledged",
+      "detail": "Human acknowledged the feature-018 per-feature scope flag ('Acknowledge & continue to 020'). Confirmed as a heuristic false-positive (under-estimate, planned centerpiece); no re-baseline needed (cumulative 1005/1813 healthy). Pipeline resumed; feature 020 dependency gate satisfied (018 complete). Beginning contract negotiation on 020."
+    },
+    {
+      "at": "2026-07-08T09:13:00Z",
+      "event": "license_authorized",
+      "detail": "Human resolved the F-021 LICENSE human gate: chose MIT (per the spec recommendation, matching the source repositories' lineage). F-021 (which runs after F-020) will add a top-level MIT LICENSE + a README license line. NOTE: feature 021's acceptance test forbids the substring 'nizamiq' in LICENSE (C5-style branding sweep), so the MIT copyright holder must be branding-neutral (e.g. 'The Nizam Framework Authors' / the maintainer's name), NOT 'NizamIQ'. F-021 is no longer blocked-on-human."
+    },
+    {
+      "at": "2026-07-08T09:42:14Z",
+      "event": "contract_approved",
+      "detail": "Contract 020 (first-contact truth fixes: CONTEXT.md rewrite + README.md quickstart + acronym expansion) approved after 1 revision by both gates. Mode A approved rev0; the evaluator's adversarial contract review REJECTED rev0 on 4 verification-suite defects (fixtures): (2) CONTEXT.md payload check VACUOUS (passed unedited because tools/+NIZAM.json appear elsewhere - missed the stale line-39 3-dir sentence); (9/NDS-AGF-GIP) UNSOUND (false-passed on 'NDS (Section 2)...' without the real phrases); (10/AGIP) weak parenthetical; (missing) README Release link committed in scope but unverified. Rev1 fixed all four: payload now the 019-precedent generalized stale-3-dir guard; NDS/AGF/GIP now requires verbatim canonical titles; AGIP now requires the sourced 'prototype' gloss; added a Release-link check. Both gates re-approved rev1 (evaluator's 2 low residuals independently judged non-blocking -> observations[], issues[] empty per parse rule). 18 verification entries. estimated_lines 210. Delegating implementation. Impl notes: canonical expansion phrases must be single-line (line-based grep); AGIP gloss parenthetical must contain 'prototype'; README must carry the exact URL github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0; CONTEXT.md C8 via change_log frontmatter entry (NOT CHANGELOG - that is F-022)."
+    },
+    {
+      "at": "2026-07-08T09:55:57Z",
+      "event": "feature_complete",
+      "detail": "Feature 020 complete: contract 1 revision (evaluator caught 4 verification-suite defects: vacuous payload check, unsound acronym check, weak AGIP gloss, missing Release-link check), Mode B + QA first-pass. Mode B ran a full AH-4 hallucination audit (quickstart works with real v0.1.0 tag; .nizam/ tree matches bootstrap payload; agent path + linked paths all real). QA 18/18 + 11-probe adversarial clean (no surviving staleness, no dangling paths, single-line acronym phrases, exact Release URL, clean frontmatter). validate.sh 8/8. Deliverables: CONTEXT.md (0.1.0->0.2.0, status active, de-staled, 4-dir payload, agent path, NDS/AGF/GIP, change_log entry - no CHANGELOG edit), README.md (quickstart + two-audience + guide/Release links + validator/CI/ADR + acronyms), bootstrap.sh (AGIP 'prototype' gloss). 75 lines vs 210 est. Cumulative 1080/1813. Advancing to 021 (LICENSE, MIT authorized by human) then 022 (phase close)."
+    },
+    {
+      "at": "2026-07-08T10:06:44Z",
+      "event": "contract_approved",
+      "detail": "Contract 021 (LICENSE human gate, MIT) approved first-pass by both gates. Scope: create root LICENSE (full MIT text, 'Copyright (c) 2026 The Nizam Framework Authors' - branding-neutral, no 'nizamiq' per the F-021 acceptance test) + one README.md license notice naming MIT and linking LICENSE. 8 verifications (v2 strengthens the weak 'MIT License' regex to require the verbatim grant + warranty clauses; v8 scope guard uses git status --untracked-files=all, empirically proven to SEE the new LICENSE file where git diff HEAD would be blind). Mode A verified the branding-neutral holder + spec fidelity; evaluator dry-ran all 8 + positive-control fixture. Non-goals fence F-022 (CHANGELOG). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T10:33:07Z",
+      "event": "contract_approved",
+      "detail": "Contract 022 (phase-003 CLOSE: CHANGELOG entries + AGIP gloss + green validator + record 2 human gates) approved after 1 revision by both gates. Mode A approved rev0; the evaluator's contract review REJECTED rev0 on 2 HIGH-severity vacuous-match defects (fixtures): verification #1 'README|CONTEXT' whole-file grep matched pre-existing line 21 'README presence' (phase-002, inside [Unreleased]) and line 56 'CONTEXT/AGENTS' ([0.1.0]); #2 'interface.md' matched line 81 'tools/interface.md' in the released [0.1.0]. Rev1 scoped #1/#2/#9 to the awk-extracted [Unreleased] span with literal filenames (docs/guide/index.html+CONTEXT.md+README.md; interface.md+GIP.md; LICENSE); #3 AGIP correctly left whole-file (target in [0.1.0]). Both gates re-approved rev1 with wrong-section/right-section fixtures proving discrimination. 11 verifications. Scope: CHANGELOG.md only (add phase-003 [Unreleased] entries + minimal sourced AGIP prototype gloss at line 62); both human gates (v0.3.0 release, GitHub Pages) recorded but NOT executed. Delegating implementation - the final feature of phase 003."
+    },
+    {
+      "at": "2026-07-08T10:44:45Z",
+      "event": "feature_complete",
+      "detail": "Feature 022 complete (phase-003 CLOSE): contract 1 revision (evaluator caught 2 HIGH vacuous-match defects - whole-file greps satisfied by pre-existing README/interface.md text in other CHANGELOG sections; rev1 scoped #1/#2/#9 to the awk-extracted [Unreleased] span with literal filenames), Mode B + QA first-pass. Both gates ran AH-4 accuracy cross-checks (every CHANGELOG entry accurately describes its deliverable) + [Unreleased]-scoping fixtures. QA 11/11 + 6-probe adversarial clean. validate.sh 8/8. Deliverable: CHANGELOG.md [Unreleased] gained phase-003 entries (guide + NIZAM.json docs indexing + LICENSE Added; CONTEXT.md + README.md Changed; interface.md + GIP.md Fixed) + a minimal sourced AGIP 'prototype' gloss in [0.1.0]. 35 lines vs 60 est. Cumulative 1140/1813 (63%)."
+    },
+    {
+      "at": "2026-07-08T10:44:45Z",
+      "event": "phase_complete",
+      "detail": "Phase 003-communication CLOSED. All 6 features (017-022) through the full planner->contract->Mode A->evaluator review->implement->Mode B->QA lifecycle with durable .agent/ state; validator green (SUMMARY: 8 passed, 0 failed) on the final tree; cumulative 1140/1813 (63% of ceiling, well under the 130% halt). Notable process events: the independent QA adversarial gate caught a real GIP.md Section-1 stale-payload defect all 3 prior gates missed (F-019 rework); the contract-testability evaluator rejected 4 of 6 feature contracts on genuine verification-suite soundness defects (018: 4 fixtures incl. a git-diff-blind-to-new-files scope guard; 020: vacuous payload + unsound acronym checks; 022: 2 vacuous CHANGELOG whole-file greps) - each fixed pre-implementation; F-018 tripped the rolling-average scope flag (heuristic false-positive, human-acknowledged); NDEBT-002 logged (qa_verdict.schema.json drift). Human decision received: MIT license (F-021). THREE HUMAN GATES OUTSTANDING, NONE executed by the pipeline: (1) v0.3.0 release - MINOR per 05_release_train (new user guide + additive docs; interface.md discovery is a doc fix, .nizam/ layout unchanged, not a breaking runtime change); (2) GitHub Pages publishing for docs/guide/; (3) human review/merge of the phase/003-communication PR. Also still open upstream: the v0.2.0 roll-up PR #4 (unmerged; NIZAM.json framework.version still 0.1.0 on this branch). Awaiting human."
+    },
+    {
+      "at": "2026-07-08T11:03:36Z",
+      "event": "pr_opened",
+      "detail": "Phase 003 handed off to human review on authorization ('Push + open PR'): pushed the 6 feature commits (f84cca0..e6024c2) to origin/phase/003-communication and opened PR #5 (https://github.com/niq-cnr/nizam-framework/pull/5) into main, with the phase summary + the 3 outstanding human gates (PR merge, v0.3.0 release, GitHub Pages) in the body incl. an Ecosystem Impact section (none - NDEBT-001, repo out of ECOSYSTEM.json scope). Pipeline self-merges nothing. Awaiting human review/merge."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -365,7 +493,7 @@
       }
     ]
   },
-  "scope_budget": {
+  "phase_002_scope_budget_final": {
     "original_estimate_lines": 1250,
     "total_lines_changed": 1170,
     "per_feature": [
@@ -414,5 +542,53 @@
       "at": "2026-07-08T15:00:00Z",
       "reason": "Option 1: flag acknowledged + phase estimate re-baselined to reflect the gate-hardened validator (899 actual through 012 + ~310 remaining estimates, rounded up). New cumulative ceiling: 1625 (130%)."
     }
+  },
+  "scope_budget": {
+    "original_estimate_lines": 1395,
+    "total_lines_changed": 1140,
+    "per_feature": [
+      {
+        "id": "017",
+        "estimated": 130,
+        "actual": 154,
+        "flag": null,
+        "note": "contract-scoped git stat (ADR-002 132+0, product_spec.md 19+3); first feature of phase 003 - no rolling baseline per 00_planning bootstrap rule"
+      },
+      {
+        "id": "019",
+        "estimated": 190,
+        "actual": 122,
+        "flag": null,
+        "note": "contract-scoped git stat (interface.md 21+9, GIP.md 63+10, templates/README.md 6+2, methodology/README.md 8+3). Executed 2nd per order 017->019->018. Rolling avg prior=154, 3x=462, no per-feature flag. 1 contract revision + 2 Mode-B-ratified amendments + 1 QA-driven rework."
+      },
+      {
+        "id": "018",
+        "estimated": 900,
+        "actual": 729,
+        "flag": "PER-FEATURE FLAG (non-halting) per Scope Budget Protocol: 729 > 3x rolling average of last 3 features (3x138=414). HEURISTIC FALSE-POSITIVE: 018 is the human-authorized phase centerpiece (the HTML user guide), estimated 900, delivered UNDER at 729; the rolling average is skewed low because the two prior features (017=154, 019=122) were small doc edits. Cumulative 1005/1813 (55%) - no ceiling concern. Per protocol, non-halting for 018 but REQUIRES human acknowledgment before feature 020 begins.",
+        "note": "contract-scoped: docs/guide/index.html 720 (new self-contained HTML) + NIZAM.json 9 (docs module). Executed 3rd per order 017->019->018->020->022."
+      },
+      {
+        "id": "020",
+        "estimated": 210,
+        "actual": 75,
+        "flag": null,
+        "note": "contract-scoped git stat (CONTEXT.md 22+9, README.md 36+1, bootstrap.sh 4+3). Executed 4th. Rolling avg last 3 (017,019,018)=335, 3x=1005; 75 well under, no flag. 1 contract revision (evaluator caught 4 verification-suite defects), Mode B + QA first-pass."
+      },
+      {
+        "id": "021",
+        "estimated": 25,
+        "actual": 25,
+        "flag": null,
+        "note": "contract-scoped (LICENSE 21 new + README.md 4). MIT, holder 'The Nizam Framework Authors' (branding-neutral). Human gate resolved (MIT chosen). Both contract gates + Mode B + QA all first-pass."
+      },
+      {
+        "id": "022",
+        "estimated": 60,
+        "actual": 35,
+        "flag": null,
+        "note": "contract-scoped git stat (CHANGELOG.md 32+3). Phase-close feature. Rolling avg last 3 (018,020,021)=276, 3x=828; 35 well under, no flag. 1 contract revision (evaluator caught 2 vacuous CHANGELOG whole-file greps), Mode B + QA first-pass."
+      }
+    ]
   }
 }

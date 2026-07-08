@@ -1,0 +1,9 @@
+f=docs/guide/index.html; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 - "$f" <<'PYEOF'
+import sys
+from html.parser import HTMLParser
+path = sys.argv[1]
+HTMLParser().feed(open(path, encoding='utf-8').read())
+print('PASS')
+PYEOF
+MISSING docs/guide/index.html
+EXIT:1

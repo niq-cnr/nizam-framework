@@ -1,0 +1,26 @@
+f=bootstrap.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import re, sys
+text = open('bootstrap.sh', encoding='utf-8').read()
+ok = False
+detail = None
+for m in re.finditer(r'AGIP \\(([^)]*)\\)', text):
+    detail = m.group(0)
+    if 'prototype' in m.group(1):
+        ok = True
+        break
+if not ok:
+    for m in re.finditer(r'\\(([^)]*)\\)\\s*AGIP', text):
+        detail = m.group(0)
+        if 'prototype' in m.group(1):
+            ok = True
+            break
+if not ok:
+    if detail:
+        print('AGIP gloss parenthetical found but does not contain the sourced word prototype: ' + detail)
+    else:
+        print('no AGIP-adjacent parenthetical gloss found at all')
+    sys.exit(1)
+print('PASS: ' + detail)
+"
+no AGIP-adjacent parenthetical gloss found at all
+EXIT:1

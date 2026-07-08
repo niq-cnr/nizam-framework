@@ -1,0 +1,156 @@
+bash <<'ADVERSARIAL_SCRIPT'
+set -u
+fail=0
+
+echo "--- Check A: template instructional HTML comment fully deleted from ADR-002 ---"
+f=docs/architecture/ADR-002-html-user-guide.md
+if grep -n '<!--' "$f"; then
+  echo "FAIL: HTML comment(s) found in ADR-002"
+  fail=1
+else
+  echo "OK: zero HTML comments remain in ADR-002 (template scaffolding fully removed)"
+fi
+if grep -n -i -E "Copy this file to docs/architecture|PLACEHOLDER|Status values: PROPOSED \| ACCEPTED|only the body is|fill-in-the-blanks" "$f"; then
+  echo "FAIL: leftover template instructional prose found"
+  fail=1
+else
+  echo "OK: no leftover template instructional prose strings found"
+fi
+
+echo
+echo "--- Check B: ADR authoritative_source is repo-relative and frontmatter is valid YAML ---"
+python3 -c "
+import yaml, sys
+f = 'docs/architecture/ADR-002-html-user-guide.md'
+lines = open(f).read().split(chr(10))
+assert lines[0] == '---', 'first line not ---'
+end = None
+for i, l in enumerate(lines[1:], start=1):
+    if l == '---':
+        end = i
+        break
+assert end is not None, 'no closing ---'
+block = chr(10).join(lines[1:end])
+fm = yaml.safe_load(block)
+assert isinstance(fm, dict), 'frontmatter did not parse to mapping'
+src = fm.get('authoritative_source', '')
+assert src == 'docs/architecture/ADR-002-html-user-guide.md', 'authoritative_source mismatch: ' + repr(src)
+assert not src.startswith('/'), 'authoritative_source is absolute!'
+assert 'home' not in src and '/tmp' not in src, 'authoritative_source leaks session path!'
+print('OK: frontmatter parses as valid YAML; authoritative_source is repo-relative:', src)
+" || fail=1
+
+echo
+echo "--- Check C: product_spec.md 1.0.0 and 1.1.0 change_log entries survived byte-for-byte ---"
+python3 -c "
+import re, subprocess
+prev = subprocess.run(['git','show','HEAD:.agent/product_spec.md'], capture_output=True, text=True, check=True).stdout
+cur = open('.agent/product_spec.md').read()
+def extract_entry(text, version):
+    m = re.search(r'  - version: \"'+re.escape(version)+r'\"\n    date: \"[^\"]*\"\n    summary: \"[^\"]*\"', text)
+    return m.group(0) if m else None
+ok = True
+for v in ['1.0.0','1.1.0']:
+    p = extract_entry(prev, v)
+    c = extract_entry(cur, v)
+    same = (p is not None and p == c)
+    print(v, 'byte-for-byte preserved:', same)
+    if not same:
+        ok = False
+        print('  PREV:', repr(p))
+        print('  CUR :', repr(c))
+if not ok:
+    raise SystemExit(1)
+print('OK: both prior change_log entries preserved byte-for-byte')
+"
+if [ $? -ne 0 ]; then fail=1; fi
+
+echo
+echo "--- Check D: non-goals held (no guide HTML, no NIZAM.json diff, no out-of-scope edits) ---"
+if [ -e docs/guide/index.html ]; then
+  echo "FAIL: docs/guide/index.html exists (should not yet)"
+  fail=1
+else
+  echo "OK: docs/guide/index.html does not exist"
+fi
+nizam_diff="$(git diff HEAD -- NIZAM.json)"
+if [ -n "$nizam_diff" ]; then
+  echo "FAIL: NIZAM.json has an unexpected diff"
+  fail=1
+else
+  echo "OK: git diff HEAD -- NIZAM.json is empty"
+fi
+changed_files="$(git status --short | awk '{print $2}')"
+allowed_prefixes="docs/architecture/ADR-002-html-user-guide.md .agent/product_spec.md .agent/contracts/017.json .agent/evidence/017- .agent/run_state.json"
+unexpected=0
+for cf in $changed_files; do
+  ok=0
+  for pfx in $allowed_prefixes; do
+    case "$cf" in
+      "$pfx"*) ok=1 ;;
+    esac
+  done
+  if [ "$ok" -eq 0 ]; then
+    echo "UNEXPECTED CHANGED FILE: $cf"
+    unexpected=1
+  fi
+done
+if [ "$unexpected" -eq 0 ]; then
+  echo "OK: no edits outside the permitted file set"
+else
+  fail=1
+fi
+
+echo
+echo "--- Check E: bash tools/validate.sh exact summary line and exit code ---"
+out="$(bash tools/validate.sh 2>&1)"
+rc=$?
+echo "$out"
+echo "$out" | grep -qx 'SUMMARY: 8 passed, 0 failed'
+summary_ok=$?
+if [ "$rc" -eq 0 ] && [ "$summary_ok" -eq 0 ]; then
+  echo "OK: validate.sh exited 0 with exact summary line 'SUMMARY: 8 passed, 0 failed'"
+else
+  echo "FAIL: validate.sh rc=$rc summary_ok=$summary_ok"
+  fail=1
+fi
+
+echo
+if [ "$fail" -eq 0 ]; then
+  echo "ADVERSARIAL RESULT: ALL PROBES PASSED"
+else
+  echo "ADVERSARIAL RESULT: ONE OR MORE PROBES FAILED"
+fi
+exit $fail
+ADVERSARIAL_SCRIPT
+--- Check A: template instructional HTML comment fully deleted from ADR-002 ---
+OK: zero HTML comments remain in ADR-002 (template scaffolding fully removed)
+OK: no leftover template instructional prose strings found
+
+--- Check B: ADR authoritative_source is repo-relative and frontmatter is valid YAML ---
+OK: frontmatter parses as valid YAML; authoritative_source is repo-relative: docs/architecture/ADR-002-html-user-guide.md
+
+--- Check C: product_spec.md 1.0.0 and 1.1.0 change_log entries survived byte-for-byte ---
+1.0.0 byte-for-byte preserved: True
+1.1.0 byte-for-byte preserved: True
+OK: both prior change_log entries preserved byte-for-byte
+
+--- Check D: non-goals held (no guide HTML, no NIZAM.json diff, no out-of-scope edits) ---
+OK: docs/guide/index.html does not exist
+OK: git diff HEAD -- NIZAM.json is empty
+OK: no edits outside the permitted file set
+
+--- Check E: bash tools/validate.sh exact summary line and exit code ---
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+OK: validate.sh exited 0 with exact summary line 'SUMMARY: 8 passed, 0 failed'
+
+ADVERSARIAL RESULT: ALL PROBES PASSED
+EXIT:0

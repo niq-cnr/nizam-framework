@@ -1,0 +1,3 @@
+f=CONTEXT.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; if grep -Eq "ships in feature 00[67]" "$f"; then echo "stale ships-in-feature claim still present"; grep -nE "ships in feature 00[67]" "$f"; exit 1; else echo PASS; fi
+PASS
+EXIT:0

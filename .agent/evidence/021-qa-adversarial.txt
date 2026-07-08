@@ -1,0 +1,55 @@
+=== ADVERSARIAL PROBE 1: Genuine MIT clauses present verbatim ===
+cmd: grep -n 'Permission is hereby granted, free of charge' LICENSE
+5:Permission is hereby granted, free of charge, to any person obtaining a copy
+---
+cmd: grep -n 'THE SOFTWARE IS PROVIDED "AS IS"' LICENSE
+15:THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+---
+cmd: grep -n 'IN NO EVENT SHALL THE' LICENSE (liability clause)
+17:FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+EXIT:0
+
+=== ADVERSARIAL PROBE 2: Exact copyright line ===
+cmd: grep -n '^Copyright' LICENSE
+3:Copyright (c) 2026 The Nizam Framework Authors
+EXACT MATCH: PASS
+
+=== ADVERSARIAL PROBE 3: No forbidden branding/endpoint substrings in LICENSE or README ===
+cmd: grep -niE 'nizamiq|\.svc|cluster\.local' LICENSE README.md
+NONE FOUND (grep exit 1 = no match): PASS
+
+=== ADVERSARIAL PROBE 4: README LICENSE link target resolves ===
+cmd: grep -n '\[LICENSE\](LICENSE)' README.md
+77:Licensed under the MIT License — see [LICENSE](LICENSE).
+cmd: test -f LICENSE && echo 'link target exists on disk: PASS'
+link target exists on disk: PASS
+
+=== ADVERSARIAL PROBE 5: Non-goals held -- CHANGELOG.md untouched ===
+cmd: git diff HEAD -- CHANGELOG.md | wc -l
+0
+cmd: git status --porcelain -- CHANGELOG.md
+(empty diff, empty status = untouched: PASS)
+
+=== ADVERSARIAL PROBE 6: Non-goals held -- NIZAM.json, CONTEXT.md, bootstrap.sh untouched ===
+cmd: git diff HEAD -- NIZAM.json CONTEXT.md bootstrap.sh | wc -l
+0
+cmd: git status --porcelain -- NIZAM.json CONTEXT.md bootstrap.sh
+(empty diff, empty status = untouched: PASS)
+
+=== ADVERSARIAL PROBE 7: framework.version not touched ===
+cmd: git diff HEAD -- NIZAM.json | grep -i 'framework' 
+(no output expected = version untouched: PASS if empty)
+
+=== ADVERSARIAL PROBE 8: Independent bash tools/validate.sh re-run ===
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+exact summary line confirmed: PASS
+exit code: 0
+EXIT:0

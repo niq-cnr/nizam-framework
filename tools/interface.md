@@ -2,9 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: tools/interface.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-08"
+    summary: "H4: reordered Section 2 Discovery so bootstrapped-consumer .nizam/tools/skill.json discovery runs first, matching bootstrap.sh's .nizam default install layout, with the repository-root tools/skill.json path retained as an explicitly labeled framework-checkout fallback."
 ---
 
 # Runtime-Adapter Interface
@@ -24,22 +28,30 @@ and every runtime loads that same file.
 
 An agent runtime locates the skill payload as follows:
 
-1. **Consumer-repo discovery.** In a repository that has bootstrapped the
-   Nizam framework, the runtime looks for `tools/skill.json` at the consumer
-   repository's own root-relative `tools/skill.json` path. If present, this is
-   the authoritative manifest for that repository's governed work.
-2. **Pinned-checkout discovery.** Where a consumer repository instead
+1. **Bootstrapped-consumer discovery.** In a repository that has bootstrapped
+   the Nizam framework via `bootstrap.sh` (`standard/GIP.md` Section 2.1), the
+   runtime FIRST looks for `tools/skill.json` under the injected governance
+   target directory — by default `.nizam/tools/skill.json` (`bootstrap.sh`'s
+   `NIZAM_TARGET_DIR`, which defaults to `.nizam`). If present, this is the
+   authoritative manifest for that repository's governed work.
+2. **Framework-checkout fallback.** If no `.nizam/tools/skill.json` is found,
+   the runtime falls back to a repository-root `tools/skill.json` path — the
+   layout this framework repository itself ships at its own root. This
+   fallback exists for a framework checkout evaluating itself (rather than a
+   bootstrapped consumer repository), and is retained explicitly so it is
+   unambiguously distinguishable from the bootstrapped-consumer path above.
+3. **Pinned-checkout discovery.** Where a consumer repository instead
    references a pinned Nizam release tag without vendoring the framework's
    files locally, the runtime resolves `tools/skill.json` inside a checkout of
    that pinned tag (see `methodology/05_release_train.md` for the tag/version
    model).
-3. **Manifest resolution.** Once `tools/skill.json` is located, the runtime
+4. **Manifest resolution.** Once `tools/skill.json` is located, the runtime
    reads its `entry_point` field to resolve the path to the instructions
    payload (`tools/SKILL.md`) and its `capabilities` array to resolve any
    individual protocol module path a task needs, without loading the whole
    framework.
-4. **Failure behavior.** If no `tools/skill.json` can be found by either
-   method above, the runtime MUST treat the repository as ungoverned by this
+5. **Failure behavior.** If no `tools/skill.json` can be found by any of the
+   methods above, the runtime MUST treat the repository as ungoverned by this
    framework for the current task and MUST NOT fabricate governance behavior
    in its absence.
 

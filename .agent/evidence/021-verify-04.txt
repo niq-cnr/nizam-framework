@@ -1,0 +1,3 @@
+f=README.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; missing=""; grep -Eqi "licen[sc]e" "$f" || missing="$missing licen[sc]e-word"; grep -q "LICENSE" "$f" || missing="$missing LICENSE-token"; grep -q "MIT" "$f" || missing="$missing MIT-name"; grep -q "(LICENSE)" "$f" || missing="$missing LICENSE-link-target"; if [ -n "$missing" ]; then echo "README.md license notice incomplete, missing:$missing"; exit 1; fi; echo PASS
+PASS
+EXIT:0

@@ -1,0 +1,35 @@
+{
+  "feature_id": "021",
+  "qa_pass": true,
+  "checks_run": 8,
+  "checks_passed": 8,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/021-qa-adversarial.txt",
+    "findings": "8 probes run, all PASS, no defects found. (1) Genuine MIT clauses verbatim: LICENSE line 5 contains the exact grant clause 'Permission is hereby granted, free of charge, to any person obtaining a copy'; line 15 contains the exact warranty-disclaimer clause 'THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR'; line 17-20 contain the exact liability clause 'IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE...' -- this is the canonical, unmodified MIT License boilerplate, not a paraphrase and not a different license mislabeled. (2) Copyright line: LICENSE line 3 is exactly 'Copyright (c) 2026 The Nizam Framework Authors', an exact string match against the required text (verified via direct string comparison, not just regex). (3) Branding/endpoint sweep: grep -niE 'nizamiq|\\.svc|cluster\\.local' across LICENSE and README.md returned no matches (grep exit 1). (4) README LICENSE link: README.md line 77 reads 'Licensed under the MIT License — see [LICENSE](LICENSE).' and the link target LICENSE exists on disk at repo root -- resolves correctly. (5) Non-goal check: git diff HEAD -- CHANGELOG.md is empty and git status --porcelain -- CHANGELOG.md is empty -- CHANGELOG.md is fully untouched. (6) Non-goal check: git diff HEAD -- NIZAM.json CONTEXT.md bootstrap.sh is empty and git status --porcelain for the same three files is empty -- none were touched. (7) framework.version specifically: git diff HEAD -- NIZAM.json produced zero lines (file untouched entirely), so framework.version was not touched. (8) Independent re-run of bash tools/validate.sh reproduced the exact line 'SUMMARY: 8 passed, 0 failed' with all 8 checks (C1-C8) individually PASS and process exit code 0. A direct git diff HEAD -- README.md was also inspected and shows only a 4-line clean addition (blank line + '## License' heading + notice sentence) appended after the existing Versioning section, with zero disturbance to any pre-existing content -- confirming the scope boundary held exactly as contracted."
+  },
+  "evidence_files": [
+    ".agent/evidence/021-qa-01.txt",
+    ".agent/evidence/021-qa-02.txt",
+    ".agent/evidence/021-qa-03.txt",
+    ".agent/evidence/021-qa-04.txt",
+    ".agent/evidence/021-qa-05.txt",
+    ".agent/evidence/021-qa-06.txt",
+    ".agent/evidence/021-qa-07.txt",
+    ".agent/evidence/021-qa-08.txt",
+    ".agent/evidence/021-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "observations": [
+    "README.md's '## License' section heading duplicates the generic word 'License' also used informally elsewhere in prose (e.g. contract/spec references), but this is expected and required by the contract's own instruction to add a short '## License' section -- not a defect."
+  ],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "021",
+    "summary": "All 8 contract-021 verification commands were independently re-run from repo root into fresh 021-qa-NN.txt evidence files (not reused from the generator's 021-verify-NN.txt), and all 8 pass (8/8 EXIT:0): LICENSE exists at repo root; LICENSE contains the recognizable, verbatim MIT boilerplate (grant clause + warranty disclaimer); LICENSE carries a Copyright (c) YYYY line; README.md carries a license notice naming MIT and linking (LICENSE); LICENSE has no nizamiq/.svc/cluster.local leakage; README.md has no nizamiq/.svc/cluster.local leakage; tools/validate.sh is green with the exact 'SUMMARY: 8 passed, 0 failed' line and exit 0; and git-status scoping (untracked-files=all) confirms only LICENSE (new) and README.md (modified) changed outside .agent/. A mandatory 8-probe adversarial spot-check found: the LICENSE text is the genuine canonical MIT license (exact grant clause, warranty disclaimer, and liability clause all present verbatim, not a paraphrase or mislabeled license), the copyright line is an exact match to 'Copyright (c) 2026 The Nizam Framework Authors', no branding/endpoint leakage in either file, the README's [LICENSE](LICENSE) link target resolves to a real file on disk, CHANGELOG.md/NIZAM.json/CONTEXT.md/bootstrap.sh are all fully untouched (empty git diff and git status), NIZAM.json's framework.version specifically was not touched, and an independent tools/validate.sh re-run reproduced the exact green summary line with exit 0. A direct inspection of git diff HEAD -- README.md confirms the change is a minimal, clean 4-line addition appended after the Versioning section with zero disturbance elsewhere. QA verdict: PASS."
+  }
+}

@@ -1,0 +1,3 @@
+changed=$(git diff --name-only HEAD -- . ':(exclude).agent'); bad=""; for f in $changed; do case "$f" in docs/guide/index.html|NIZAM.json) ;; *) bad="$bad $f" ;; esac; done; if [ -n "$bad" ]; then echo "out-of-scope modified file(s):$bad"; exit 1; fi; echo "PASS (modified:$changed)"
+PASS (modified:)
+EXIT:0

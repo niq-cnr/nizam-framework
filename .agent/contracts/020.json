@@ -1,0 +1,116 @@
+{
+  "contract_id": "020",
+  "feature_id": "020",
+  "name": "First-Contact Truth Fixes — CONTEXT.md Rewrite + README.md Quickstart + Acronym Expansion",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_003.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "CONTEXT.md",
+        "purpose": "H1/H7 rewrite to be current. Remove the stale claims at lines 33 (\"NIZAM.json itself ships in feature 006 of phase 001-framework-genesis; until then, consult the module READMEs and this file directly\") and 38 (\"bootstrap.sh (ships in feature 007)\") — both NIZAM.json and bootstrap.sh have shipped. Add the phase-002 surfaces: name tools/validate.sh (the repo-local compliance validator), .github/workflows/compliance.yml (the CI workflow that runs it), and docs/architecture/ (where ADRs are recorded). Correct the bootstrap payload description to the 4 injected directories (standard/, templates/, schema/, tools/) plus NIZAM.json, anchored on bootstrap.sh's own REQUIRED_MODULE_DIRS + NIZAM.json copy. State the agent entry path as NIZAM.json -> tools/SKILL.md (via tools/skill.json's entry_point field, per tools/interface.md Section 4). Flip frontmatter status draft -> active and bump version strictly above 0.1.0 (e.g. 0.2.0). Expand NDS/AGF/GIP at first use with their verbatim canonical titles (standard/NDS.md = \"Nizam Documentation Standard (NDS)\", standard/AGF.md = \"Agent Governance Framework (AGF)\", standard/GIP.md = \"Governance Inheritance Protocol (GIP)\"). Because CONTEXT.md is in the validator's shipped-doc set (C1/C2/C3/C8), the version bump MUST carry a change record: add ONE change_log frontmatter entry (version/date/summary) naming this rewrite, per the F-017/F-019 precedent — this satisfies validator C8's 'change_log entry OR CHANGELOG.md line' alternative without touching CHANGELOG.md (which is F-022's scope). No other content change beyond what H1/H7 require; the Identity, Module Map, and Out of Scope sections' substantive claims are preserved (reorganizing surrounding prose to fit the new content is permitted)."
+      },
+      {
+        "path": "README.md",
+        "purpose": "H2/H9/H7. Add a Quickstart: a copy-pasteable command sequence that obtains bootstrap.sh pinned to the real released tag v0.1.0 (e.g. a pinned raw-URL curl fetch) and then runs it with an explicit pinned-tag invocation matching one of bootstrap.sh's actually-accepted forms (--tag v0.1.0 or GOVERNANCE_TAG=v0.1.0 — sourced from bootstrap.sh's own usage text, never a floating branch per standard/GIP.md Section 2 point 1), plus a \"what you get\" .nizam/ tree naming the 4 injected directories + NIZAM.json (+ provenance.json). Add a two-audience entry split: a line matching 'humans start here' (case-insensitive) pointing at docs/guide/index.html, and an agent-facing line stating agents load tools/SKILL.md via NIZAM.json. Link the HTML guide (docs/guide/index.html, which exists post-F-018) and the GitHub Release for the real tag (https://github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0). Mention the validator/CI/ADRs (tools/validate.sh, .github/workflows/compliance.yml, and docs/architecture/ ADRs). Expand NDS/AGF/GIP at first use with their verbatim canonical titles (same three titles as the CONTEXT.md task). README.md carries no frontmatter (C8 does not apply) but IS in validator C5's branding sweep (plus the root-README extra target) — introduce no 'nizamiq', '.svc', or 'cluster.local' string anywhere in the rewrite. No LICENSE section (F-021) and no CHANGELOG.md reference required."
+      },
+      {
+        "path": "bootstrap.sh",
+        "purpose": "H7. Expand 'AGIP' at its first mention (the header comment at line 6: \"This is an evolution of the earlier AGIP prototype into a single, reusable,\") with a SOURCED parenthetical gloss consistent with the header's own framing — e.g. \"AGIP (the earlier governance prototype this framework evolved from)\" — since no canonical four-word AGIP letter-expansion exists anywhere in the shipped tree (H7) and WebFetch is unavailable to the generator; do NOT fabricate a four-word acronym expansion. This is a comment-only edit (lines 1-16 header block); no change to any executable line, function, variable, or the REQUIRED_MODULE_DIRS/REQUIRED_RELATIVE_FILES arrays. `bash -n ./bootstrap.sh` and `./bootstrap.sh --help` MUST continue to exit 0 unchanged. No 'nizamiq', '.svc', or 'cluster.local' string introduced."
+      }
+    ]
+  },
+  "non_goals": [
+    "No LICENSE file or README license line — the license choice is F-021's human gate",
+    "No CHANGELOG.md edit of any kind — phase-close CHANGELOG entries for phase-003 deliverables belong to feature 022; CONTEXT.md's NDS Sec 4 / validator C8 change-record obligation is satisfied entirely by its own frontmatter change_log entry",
+    "No edit to docs/guide/index.html, NIZAM.json, tools/interface.md, standard/GIP.md, standard/NDS.md, standard/AGF.md, templates/README.md, or methodology/README.md — all are completed prior-feature deliverables (F-017/F-018/F-019) or read-only sources this contract cites, not targets",
+    "No bump to NIZAM.json framework.version — the release version bump is F-022's human gate",
+    "No change to any executable line, function, variable, or array in bootstrap.sh — only its line-6 header comment changes",
+    "No edit to any file beyond CONTEXT.md, README.md, bootstrap.sh, and this contract file itself",
+    "No change to .agent/product_spec_003.md or any immutable prior-phase/prior-feature artifact (completed contracts, evidence, qa verdicts, or phase-001/002 feature lists)"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "CONTEXT.md no longer carries the stale ships-in-feature claims: ! grep -Eq 'ships in feature 00[67]' CONTEXT.md",
+      "command": "f=CONTEXT.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -Eq 'ships in feature 00[67]' \"$f\"; then echo 'stale ships-in-feature claim still present'; grep -nE 'ships in feature 00[67]' \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "CONTEXT.md names the phase-002 surfaces: grep -q 'tools/validate.sh' CONTEXT.md && grep -q 'compliance.yml' CONTEXT.md && grep -q 'docs/architecture' CONTEXT.md",
+      "command": "f=CONTEXT.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; missing=\"\"; grep -q 'tools/validate.sh' \"$f\" || missing=\"$missing tools/validate.sh\"; grep -q 'compliance.yml' \"$f\" || missing=\"$missing compliance.yml\"; grep -q 'docs/architecture' \"$f\" || missing=\"$missing docs/architecture\"; if [ -n \"$missing\" ]; then echo \"missing phase-002 surface mention(s):$missing\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "CONTEXT.md describes the 4-dir + NIZAM.json payload (names tools/ in the inject list and NIZAM.json), AND no single-line standard/+templates/+schema/ payload enumeration anywhere in CONTEXT.md omits tools/ (the H1/H5 stale-payload discriminator; contract-019 verification[11] precedent) -- companion literal check: grep -q 'tools/' CONTEXT.md && grep -q 'NIZAM.json' CONTEXT.md",
+      "command": "f=CONTEXT.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport re, sys\ntext = open('CONTEXT.md', encoding='utf-8').read()\npat = re.compile(r'standard/.{0,6}templates/.{0,10}schema/')\nbad = []\nfor m in pat.finditer(text):\n    window = text[m.start():m.end()+45]\n    if 'tools/' not in window:\n        bad.append(text[:m.start()].count(chr(10)) + 1)\nif bad:\n    print('stale 3-dir payload enumeration (omits tools/) at line(s): ' + repr(bad))\n    sys.exit(1)\nprint('no stale payload enumeration found')\n\" || exit 1; grep -q 'tools/' \"$f\" || { echo 'missing tools/ mention (companion literal check)'; exit 1; }; grep -q 'NIZAM.json' \"$f\" || { echo 'missing NIZAM.json mention (companion literal check)'; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "CONTEXT.md states the agent path NIZAM.json -> SKILL.md: grep -q 'SKILL.md' CONTEXT.md",
+      "command": "f=CONTEXT.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'SKILL.md' \"$f\" && echo PASS || { echo 'missing SKILL.md mention'; exit 1; }"
+    },
+    {
+      "acceptance_test": "CONTEXT.md frontmatter status is active and version bumped above 0.1.0: grep -Eq '^status: active' CONTEXT.md && grep -Eq '^version: 0\\.[2-9]|^version: [1-9]' CONTEXT.md",
+      "command": "f=CONTEXT.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eq '^status: active' \"$f\" || { echo 'status not active'; exit 1; }; grep -Eq '^version: 0\\.[2-9]|^version: [1-9]' \"$f\" || { echo 'version not bumped above 0.1.0'; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "README.md has a copy-pasteable pinned-tag bootstrap command with a real vMAJOR.MINOR.PATCH tag: grep -Eq 'bootstrap.sh' README.md && grep -Eq -- '--tag v[0-9]+\\.[0-9]+\\.[0-9]+|GOVERNANCE_TAG=v[0-9]+\\.[0-9]+\\.[0-9]+' README.md",
+      "command": "f=README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eq 'bootstrap\\.sh' \"$f\" || { echo 'no bootstrap.sh mention'; exit 1; }; grep -Eq -- '--tag v[0-9]+\\.[0-9]+\\.[0-9]+|GOVERNANCE_TAG=v[0-9]+\\.[0-9]+\\.[0-9]+' \"$f\" || { echo 'no pinned-tag bootstrap invocation form found'; exit 1; }; tag=$(grep -oE -- '--tag v[0-9]+\\.[0-9]+\\.[0-9]+|GOVERNANCE_TAG=v[0-9]+\\.[0-9]+\\.[0-9]+' \"$f\" | head -1 | grep -oE 'v[0-9]+\\.[0-9]+\\.[0-9]+'); git rev-parse -q --verify \"refs/tags/${tag}\" >/dev/null || { echo \"tag $tag named in README.md does not exist in the repository -- not a real pinned tag\"; exit 1; }; echo \"PASS (tag=$tag)\""
+    },
+    {
+      "acceptance_test": "README.md has a two-audience entry split: grep -Eqi 'humans start here' README.md && grep -q 'tools/SKILL.md' README.md",
+      "command": "f=README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eqi 'humans start here' \"$f\" || { echo 'missing humans-start-here entry'; exit 1; }; grep -q 'tools/SKILL.md' \"$f\" || { echo 'missing tools/SKILL.md agent-entry mention'; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "README.md links the HTML guide: grep -q 'docs/guide/index.html' README.md",
+      "command": "f=README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'docs/guide/index.html' \"$f\" || { echo 'missing guide link'; exit 1; }; test -f docs/guide/index.html || { echo 'README.md links docs/guide/index.html but it does not exist on disk'; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "README.md links the GitHub Release for the real pinned tag v0.1.0 (the contract's own scope commitment, previously unverified): grep -Eq 'github\\.com/niq-cnr/nizam-framework/releases/tag/v0\\.1\\.0' README.md",
+      "command": "f=README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -Eq 'github\\.com/niq-cnr/nizam-framework/releases/tag/v0\\.1\\.0' \"$f\"; then echo PASS; elif grep -Eq 'github\\.com/niq-cnr/nizam-framework/releases' \"$f\"; then echo 'PASS (general /releases link found, not tag-specific)'; else echo 'missing GitHub Release link (expected github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0 or a /releases URL)'; exit 1; fi"
+    },
+    {
+      "acceptance_test": "README.md mentions the validator/CI/ADRs: grep -Eqi 'validate.sh|compliance|ADR' README.md",
+      "command": "f=README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eqi 'validate\\.sh|compliance|ADR' \"$f\" || { echo 'missing validator/CI/ADR mention'; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "README.md expands NDS, AGF, and GIP at first use with their VERBATIM canonical titles (sourced exactly from standard/NDS.md, standard/AGF.md, and standard/GIP.md's own shipped frontmatter titles) -- not merely an adjacent, content-free parenthesis: grep -q 'Nizam Documentation Standard' README.md && grep -q 'Agent Governance Framework' README.md && grep -q 'Governance Inheritance Protocol' README.md",
+      "command": "f=README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; missing=\"\"; grep -q 'Nizam Documentation Standard' \"$f\" || missing=\"$missing NDS->'Nizam Documentation Standard'\"; grep -q 'Agent Governance Framework' \"$f\" || missing=\"$missing AGF->'Agent Governance Framework'\"; grep -q 'Governance Inheritance Protocol' \"$f\" || missing=\"$missing GIP->'Governance Inheritance Protocol'\"; if [ -n \"$missing\" ]; then echo \"missing verbatim canonical acronym expansion(s):$missing\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "bootstrap.sh expands AGIP at its first mention with a SOURCED gloss, not merely an adjacent, content-free parenthesis: the parenthetical immediately following (or preceding) 'AGIP' must contain the word 'prototype', anchoring to bootstrap.sh's own header framing ('the earlier AGIP prototype') rather than accepting e.g. 'AGIP (see below)'",
+      "command": "f=bootstrap.sh; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport re, sys\ntext = open('bootstrap.sh', encoding='utf-8').read()\nok = False\ndetail = None\nfor m in re.finditer(r'AGIP \\\\(([^)]*)\\\\)', text):\n    detail = m.group(0)\n    if 'prototype' in m.group(1):\n        ok = True\n        break\nif not ok:\n    for m in re.finditer(r'\\\\(([^)]*)\\\\)\\\\s*AGIP', text):\n        detail = m.group(0)\n        if 'prototype' in m.group(1):\n            ok = True\n            break\nif not ok:\n    if detail:\n        print('AGIP gloss parenthetical found but does not contain the sourced word prototype: ' + detail)\n    else:\n        print('no AGIP-adjacent parenthetical gloss found at all')\n    sys.exit(1)\nprint('PASS: ' + detail)\n\""
+    },
+    {
+      "acceptance_test": "README.md introduces no branding/endpoint leakage: ! grep -Eqi 'nizamiq|\\.svc|cluster\\.local' README.md",
+      "command": "f=README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -Eqi 'nizamiq|\\.svc|cluster\\.local' \"$f\"; then echo 'branding/endpoint leakage found'; grep -niE 'nizamiq|\\.svc|cluster\\.local' \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "Validator stays green on the clean tree (CONTEXT.md C1/C2/C3/C8 + README.md C5): bash tools/validate.sh; test $? -eq 0",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | grep -qx 'SUMMARY: 8 passed, 0 failed' || { echo \"expected exact summary line 'SUMMARY: 8 passed, 0 failed', got: $(echo \"$out\" | grep '^SUMMARY:')\"; exit 1; }; test \"$rc\" -eq 0 && echo PASS || { echo \"tools/validate.sh exited $rc, expected 0\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness — closes the gap where a literal-string grep for 'version:' would false-pass on an unchanged version line, per the contract-019 verification[6] precedent): CONTEXT.md's frontmatter version strictly increased vs its own git show HEAD copy (YAML-parsed, not grep) and status is exactly 'active'",
+      "command": "python3 -c \"\nimport subprocess, sys, yaml\n\ndef frontmatter(text):\n    lines = text.splitlines()\n    if not lines or lines[0].strip() != '---':\n        return None\n    end = None\n    for i, l in enumerate(lines[1:], start=1):\n        if l.strip() == '---':\n            end = i\n            break\n    if end is None:\n        return None\n    return yaml.safe_load(chr(10).join(lines[1:end])) or {}\n\ndef parts(v):\n    return tuple(int(x) for x in str(v).split('.'))\n\npath = 'CONTEXT.md'\ntry:\n    head_text = subprocess.run(['git', 'show', 'HEAD:' + path], capture_output=True, text=True, check=True).stdout\nexcept subprocess.CalledProcessError as exc:\n    print(path + ': could not read HEAD copy: ' + exc.stderr.strip())\n    sys.exit(1)\ncur_text = open(path, encoding='utf-8').read()\nhead_fm = frontmatter(head_text)\ncur_fm = frontmatter(cur_text)\nif head_fm is None or cur_fm is None:\n    print(path + ': could not parse frontmatter (HEAD or current)')\n    sys.exit(1)\nhead_v, cur_v = head_fm.get('version'), cur_fm.get('version')\nif not head_v or not cur_v:\n    print(path + ': missing version field (HEAD=' + repr(head_v) + ', current=' + repr(cur_v) + ')')\n    sys.exit(1)\nif parts(cur_v) <= parts(head_v):\n    print(path + ': version did not strictly increase (' + str(head_v) + ' -> ' + str(cur_v) + ')')\n    sys.exit(1)\nif cur_fm.get('status') != 'active':\n    print(path + ': status is ' + repr(cur_fm.get('status')) + ', expected active')\n    sys.exit(1)\nprint(path + ': version OK (' + str(head_v) + ' -> ' + str(cur_v) + '), status active')\n\"\n"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness — NDS Sec 4 / validator C8 record-keeping: confirms the version bump's change record lands as CONTEXT.md's OWN frontmatter change_log entry, per the F-017/F-019 precedent chosen over a CHANGELOG.md line, and that CHANGELOG.md was NOT touched by this feature, since phase-close CHANGELOG entries belong to F-022): CONTEXT.md's change_log array contains an entry whose version equals its own current frontmatter version, and CHANGELOG.md has zero diff vs HEAD",
+      "command": "python3 -c \"\nimport subprocess, sys, yaml\n\ndef frontmatter(text):\n    lines = text.splitlines()\n    if not lines or lines[0].strip() != '---':\n        return None\n    end = None\n    for i, l in enumerate(lines[1:], start=1):\n        if l.strip() == '---':\n            end = i\n            break\n    if end is None:\n        return None\n    return yaml.safe_load(chr(10).join(lines[1:end])) or {}\n\ncur_fm = frontmatter(open('CONTEXT.md', encoding='utf-8').read())\nversion = cur_fm.get('version')\nentries = cur_fm.get('change_log') or []\nversions = {str(e.get('version')) for e in entries if isinstance(e, dict)}\nif version not in versions:\n    print('CONTEXT.md change_log has no entry matching its own version ' + repr(version))\n    sys.exit(1)\nchanged = subprocess.run(['git', 'diff', '--name-only', 'HEAD', '--', 'CHANGELOG.md'], capture_output=True, text=True, check=True).stdout.strip()\nif changed:\n    print('CHANGELOG.md was modified -- out of scope for feature 020 (F-022 owns phase-close CHANGELOG entries)')\n    sys.exit(1)\nprint('PASS (change_log entry present for version ' + version + '; CHANGELOG.md untouched)')\n\"\n"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness, C6 precedent isolated to this feature's sole executable-adjacent deliverable): bootstrap.sh remains syntactically valid and its --help mode still exits 0 after the line-6 comment-only edit",
+      "command": "f=bootstrap.sh; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; bash -n \"$f\" || { echo \"bash -n $f failed\"; exit 1; }; out=$(timeout 5 bash \"$f\" --help 2>&1); rc=$?; echo \"$out\" | tail -3; test \"$rc\" -eq 0 || { echo \"$f --help exited $rc\"; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness, per the contract-018/019 git-status-based out-of-scope-edit precedent, using --untracked-files=all so a brand-new file would also be caught): git status --porcelain --untracked-files=all (excluding .agent/) reports, after stripping each line's 3-character status prefix, only paths in {CONTEXT.md, README.md, bootstrap.sh} -- no other new or modified file exists in the working tree",
+      "command": "changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | cut -c4-); bad=\"\"; while IFS= read -r f; do [ -z \"$f\" ] && continue; case \"$f\" in CONTEXT.md|README.md|bootstrap.sh) ;; *) bad=\"$bad|$f\" ;; esac; done <<< \"$changed\"; if [ -n \"$bad\" ]; then echo \"out-of-scope new/modified file(s):$bad\"; exit 1; fi; echo \"PASS (status-scanned: $changed)\""
+    }
+  ],
+  "estimated_lines": 210,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/020-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/020-verify-01.txt for the first entry, ..., .agent/evidence/020-verify-18.txt for the eighteenth). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T09:42:14Z",
+    "revisions": 1
+  }
+}

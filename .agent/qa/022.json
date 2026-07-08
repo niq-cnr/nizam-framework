@@ -1,0 +1,61 @@
+{
+  "review": "contract-testability",
+  "feature": "022",
+  "contract_id": "022",
+  "revision_reviewed": 1,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Verification entry #4 hardcodes the literal string 'SUMMARY: 8 passed, 0 failed'; accurate for the current validator (C1-C8) but will need updating if a future phase adds/removes a validator check. Not a defect for this contract.",
+    "Entries #1, #2, and #9 are now consistently [Unreleased]-scoped via the same awk idiom; entry #3 (AGIP) is correctly left whole-file-scoped since its target text lives in the released [0.1.0] section, not [Unreleased] -- scoping it to [Unreleased] would make it permanently unsatisfiable. This asymmetry is intentional and correct, not an inconsistency.",
+    "Rev1's #1 requires the literal filenames 'CONTEXT.md' and 'README.md' (not the bare words) -- this matches the contract's own instructed changelog style (all existing entries use backtick-quoted full filenames with extensions), so it should not cause a false failure against a compliant implementation."
+  ],
+  "rev1_findings_closed": [
+    {
+      "prior_issue": "Verification #1 (README/CONTEXT) was whole-file-scoped and vacuously satisfiable by pre-existing, unrelated text (line 21 'README presence', a bare word with no .md suffix, already inside [Unreleased] from a phase-002 entry).",
+      "fix_applied": "Now extracts the [Unreleased] span via awk and requires the literal filenames 'CONTEXT.md' and 'README.md' (with .md suffix) within that span.",
+      "verified_closed": true,
+      "evidence": [
+        ".agent/evidence/022-contract-review-rev1-01.txt (current tree: FAILS -- '[Unreleased] section missing: docs/guide/index.html CONTEXT.md README.md', confirming line 21's bare 'README' word no longer satisfies it)",
+        "wrong-section fixture (/tmp/.../CHANGELOG_wrongsection.md, mentions placed in [0.1.0] only): still FAILS with the same missing-list",
+        "right-section fixture (/tmp/.../CHANGELOG_rightsection.md, mentions placed correctly in [Unreleased]): PASSES"
+      ]
+    },
+    {
+      "prior_issue": "Verification #2 (interface.md/GIP.md) was whole-file-scoped and vacuously satisfiable by CHANGELOG.md line 81's pre-existing, unrelated 'tools/interface.md' mention inside the released [0.1.0] section.",
+      "fix_applied": "Now extracts the [Unreleased] span via awk and requires both 'interface.md' and 'GIP.md' within that span only.",
+      "verified_closed": true,
+      "evidence": [
+        ".agent/evidence/022-contract-review-rev1-02.txt (current tree: FAILS -- '[Unreleased] section missing: interface.md GIP.md', confirming line 81's [0.1.0] mention no longer satisfies it)",
+        "Direct check: awk-extracted [Unreleased] span currently contains none of interface.md/GIP.md/LICENSE/CONTEXT.md/README.md/docs/guide -- confirms both checks fail purely because the phase-003 entries are genuinely absent, not for a coincidental/wrong reason",
+        "wrong-section fixture: still FAILS; right-section fixture: PASSES"
+      ]
+    },
+    {
+      "prior_issue": "(non-blocking defense-in-depth request) Scope entry #9 (LICENSE) to [Unreleased] as well, for consistency with #1/#2.",
+      "fix_applied": "Now uses the same awk-scoped extraction and requires 'LICENSE' within the [Unreleased] span.",
+      "verified_closed": true,
+      "evidence": [
+        ".agent/evidence/022-contract-review-rev1-09.txt (current tree: FAILS -- '[Unreleased] section does not name the LICENSE addition')",
+        "wrong-section fixture: still FAILS; right-section fixture: PASSES"
+      ]
+    }
+  ],
+  "verification_entry_3_agip": {
+    "scoping": "correctly left whole-file (unchanged from initial contract)",
+    "rationale": "AGIP's only occurrence in the current tree is inside the released [0.1.0] section (line 62); scoping to [Unreleased] would make the check permanently unsatisfiable.",
+    "current_tree_result": "FAILS for the correct reason -- .agent/evidence/022-contract-review-rev1-03.txt: 'AGIP not expanded with parenthetical gloss' (pre-existing '...the earlier AGIP prototype)...' text still does not match 'AGIP \\(|\\([^)]*AGIP\\)', confirmed by direct regex test)",
+    "positive_control": "PASSES against a fixture with the sourced gloss '(the evolution of the earlier AGIP (a predecessor governance-automation prototype))'"
+  },
+  "full_suite_regression_on_positive_control": {
+    "fixture": "/tmp/.../CHANGELOG_rightsection.md (phase-003 Added/Changed/Fixed entries in [Unreleased] + sourced AGIP gloss in [0.1.0])",
+    "result": "all applicable checks (1, 2, 3, 8, 9, 10) PASS; checks 4, 5, 6, 7, 11 are unaffected by CHANGELOG.md content and remain PASS as previously verified on the real tree"
+  },
+  "acceptance_coverage_recheck": "All 7 of feature 022's acceptance_tests in .agent/feature_list_003.json remain covered 1:1 by verification entries 1-7 (rev1 only tightened the command bodies; acceptance_test prose and coverage mapping unchanged from the initial review).",
+  "final_verdict": {
+    "approved": true,
+    "feature": "022",
+    "summary": "Both HIGH-severity findings from the initial review (whole-file, vacuously-satisfiable greps in verification entries #1 and #2) are confirmed CLOSED in contract revision 1: both now scope to the [Unreleased] section via a consistent awk extraction, both correctly still FAIL on the current unmodified tree (for the right reason -- the phase-003 entries are genuinely absent from [Unreleased], and the pre-existing unrelated text at lines 21/81 no longer satisfies them), and both correctly FAIL against a constructed fixture that places the required mentions in the wrong section ([0.1.0]) while PASSING against a fixture that places them correctly in [Unreleased]. Entry #9 (LICENSE) received the same defense-in-depth scoping and is sound. Entry #3 (AGIP) was correctly left whole-file-scoped since its target lives in [0.1.0], and still fails now for the right reason. No new vacuous or wrong-reason check was introduced; a full positive-control fixture with genuine phase-003 entries plus the sourced AGIP gloss passes all 11 checks; all 7 feature-022 acceptance tests remain covered. The contract is APPROVED for evaluator contract review sign-off."
+  }
+}
