@@ -1,0 +1,138 @@
+{
+  "phase": "003-communication",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 1395,
+  "features": [
+    {
+      "id": "017",
+      "name": "ADR-002 (HTML User Guide) + product_spec §2.1 Layout Amendment + docs/ Status Declaration",
+      "description": "Dogfood templates/ADR_TEMPLATE.md -> docs/architecture/ADR-002-html-user-guide.md recording the decision to adopt a shipped, dependency-free single-file HTML user guide at docs/guide/index.html as a presentation surface (rationale: single-file, zero external requests, GitHub-Pages- or locally-renderable; HTML is exempt from NDS md-frontmatter, so the embedded-version-equals-NIZAM.json-framework.version anchor is its enforceable consistency contract). Amend .agent/product_spec.md §2.1 to admit docs/guide/ into the layout and declare the docs/ shipped-vs-internal status (docs/architecture + docs/guide shipped and NIZAM.json-indexed; docs/planning framework-internal), bumping product_spec.md spec_version 1.1.0 -> 1.2.0 (MINOR/additive) with a matching change_log entry per NDS §4. Decision and layout of record only; no guide HTML and no NIZAM.json index change here (mirrors F-011). Remediates H6 (declare docs/ status); records the layout the guide lands in.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "ADR file exists: test -f docs/architecture/ADR-002-html-user-guide.md",
+        "ADR begins with YAML frontmatter (head -1 docs/architecture/ADR-002-html-user-guide.md equals '---') carrying all 6 required keys (id/title/description/version/status/authoritative_source each grep-present)",
+        "ADR frontmatter authoritative_source equals its own repo-relative path: grep -q 'authoritative_source: docs/architecture/ADR-002-html-user-guide.md' docs/architecture/ADR-002-html-user-guide.md",
+        "ADR Status line names a valid ADR status: grep -Eq '^\\*\\*Status:\\*\\* (PROPOSED|ACCEPTED|SUPERSEDED|DEPRECATED)' docs/architecture/ADR-002-html-user-guide.md",
+        "ADR body contains no unreplaced template tokens: ! grep -q '{{' docs/architecture/ADR-002-html-user-guide.md",
+        "ADR body records the version-consistency anchor decision: grep -q 'docs/guide/index.html' docs/architecture/ADR-002-html-user-guide.md && grep -Eqi 'framework.version|framework-version' docs/architecture/ADR-002-html-user-guide.md",
+        "product_spec.md spec_version is 1.2.0: grep -Eq 'spec_version: \"1\\.2\\.0\"' .agent/product_spec.md",
+        "product_spec.md change_log gained a 1.2.0 entry: grep -q 'version: \"1.2.0\"' .agent/product_spec.md",
+        "product_spec.md §2.1 admits docs/guide/: grep -q 'docs/guide' .agent/product_spec.md",
+        "product_spec.md declares docs/ shipped-vs-internal status (names docs/planning as internal): grep -q 'docs/planning' .agent/product_spec.md",
+        "product_spec.md frontmatter still parses as YAML (python3 reads the block between the first two '---' lines and yaml.safe_load succeeds)",
+        "ADR-002 addition is recorded for NDS §4 (a CHANGELOG.md [Unreleased] line names docs/architecture/ADR-002-html-user-guide.md OR the ADR frontmatter carries a change_log entry): validated by bash tools/validate.sh exit 0"
+      ],
+      "estimated_lines": 130
+    },
+    {
+      "id": "018",
+      "name": "docs/guide/index.html — Self-Contained HTML User Guide + NIZAM.json docs Indexing",
+      "description": "Author docs/guide/index.html to the full design contract in product_spec_003.md §4: one fully self-contained file (inline CSS/JS, zero external requests, system font stack, prefers-color-scheme light/dark, semantic HTML, WCAG-AA contrast, print-friendly, sticky in-page TOC) with the ten required content sections (hero + two persona CTAs; four-flaw DD-1..DD-4 cards; pinned-tag quickstart + .nizam/ tree + --verify-only; new-repo + existing-repo adoption paths; the planner->contract->Mode A->review->implement->Mode B->QA execution loop with the 3-strike circuit breaker annotated; anatomy of a governed repo incl. the .agent/ artifact families; per-module reference cards linking real repo paths; agent integration incl. skill.json discovery, the three abstract operations, and a conformance-checklist digest; FAQ incl. what-Nizam-is-not/versioning/drift/license; footer with the framework version). Every factual claim is sourced FROM the shipped docs (External Anchor Rule) — no invented behavior. Carry the framework version in a <meta name=\"framework-version\" content=\"X\"> element AND the footer, both equal to NIZAM.json framework.version. Then index the now-real docs documentation in NIZAM.json (a docs module and/or capability entries pointing at both ADRs and docs/guide/index.html), keeping NIZAM.json schema-valid with every indexed path resolving (validator C4). The phase's largest feature. Remediates H9 and H6 (index docs/).",
+      "status": "pending",
+      "dependencies": [
+        "017"
+      ],
+      "acceptance_tests": [
+        "Guide exists: test -f docs/guide/index.html",
+        "Guide is valid HTML (html.parser feeds it without raising): python3 -c 'from html.parser import HTMLParser; HTMLParser().feed(open(\"docs/guide/index.html\", encoding=\"utf-8\").read())'",
+        "Guide is fully self-contained — no external stylesheet or script: ! grep -Eq '<link[^>]+rel=[\"'\\'']?stylesheet|<script[^>]+src=' docs/guide/index.html",
+        "Guide makes zero external requests other than github.com / niq-cnr links: python3 -c 'import re,sys; urls=re.findall(r\"(?:href|src)=\\\"(https?://[^\\\"]+)\\\"\", open(\"docs/guide/index.html\",encoding=\"utf-8\").read()); bad=[u for u in urls if not re.match(r\"https?://(github\\.com|niq-cnr\\.github\\.io)/\", u)]; sys.exit(1 if bad else 0)'",
+        "Guide supports dark/light: grep -q 'prefers-color-scheme' docs/guide/index.html",
+        "Guide has a sticky in-page TOC: grep -q '<nav' docs/guide/index.html && grep -Eq 'position:\\s*sticky' docs/guide/index.html",
+        "Guide embedded framework-version equals NIZAM.json framework.version (meta + presence): V=$(python3 -c 'import json;print(json.load(open(\"NIZAM.json\"))[\"framework\"][\"version\"])'); grep -q \"name=\\\"framework-version\\\" content=\\\"$V\\\"\" docs/guide/index.html",
+        "Every repository-relative path the guide names resolves on disk: python3 -c 'import re,os,sys; paths=set(re.findall(r\"(?:standard|methodology|registry|templates|schema|tools|docs)/[A-Za-z0-9_./-]+\", open(\"docs/guide/index.html\",encoding=\"utf-8\").read())); missing=[p for p in paths if not os.path.exists(p)]; sys.exit(1 if missing else 0)'",
+        "Guide contains no nizamiq branding (guide is outside validate.sh C5): ! grep -qi 'nizamiq' docs/guide/index.html",
+        "Guide renders all four design-decision cards: for dd in DD-1 DD-2 DD-3 DD-4; do grep -q \"$dd\" docs/guide/index.html || exit 1; done",
+        "Guide covers the execution loop and circuit breaker: grep -Eqi 'circuit breaker' docs/guide/index.html && grep -Eqi 'Mode A|Mode B' docs/guide/index.html",
+        "NIZAM.json indexes both ADRs and the guide: grep -q 'docs/architecture/ADR-001' NIZAM.json && grep -q 'docs/architecture/ADR-002' NIZAM.json && grep -q 'docs/guide/index.html' NIZAM.json",
+        "NIZAM.json still validates against its schema: python3 -c 'import json,jsonschema; jsonschema.validate(json.load(open(\"NIZAM.json\")), json.load(open(\"registry/nizam-index.schema.json\")))'",
+        "Validator stays green on the clean tree (C4 index-integrity incl. the new docs paths): bash tools/validate.sh; test $? -eq 0"
+      ],
+      "estimated_lines": 780
+    },
+    {
+      "id": "019",
+      "name": "Adoption-Contract Correctness — interface.md Discovery, GIP Payload Set, README De-Leak, Existing-Repo Tiers",
+      "description": "Fix the framework's adoption contract where its documentation contradicts its own shipped behavior. H4: correct tools/interface.md §2 discovery order to look for .nizam/tools/skill.json first (the actual bootstrap layout), then a repository-root tools/skill.json fallback (for a framework checkout itself), then pinned-checkout resolution — reconciled with bootstrap.sh's .nizam/ default so discovery no longer misses every bootstrapped consumer. H5: correct standard/GIP.md §2 item 2 and §2.1 item 2 injection lists to name standard/, templates/, schema/, tools/, AND NIZAM.json (4 dirs + index), matching bootstrap.sh REQUIRED_MODULE_DIRS. H6 (de-leak): rephrase templates/README.md and methodology/README.md to remove every .agent/product_spec.md / product_spec reference a fresh consumer lacks, pointing instead to framework-relative concepts (standard/NDS.md, the README/guide DD cards). H8: add an 'Adopting in an Existing Repository' section to standard/GIP.md with conflict rules for pre-existing CONTEXT/AGENTS/CI and the incremental tiers (docs-standard-only -> +templates -> full loop). Each edited .md is in the validator's shipped-doc set, so version bumps carry a change_log entry or a CHANGELOG.md line (NDS §4 / C8) and validate.sh stays green.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "interface.md discovery names .nizam/tools/skill.json first: grep -q '.nizam/tools/skill.json' tools/interface.md",
+        "interface.md retains a repository-root fallback for a framework checkout: grep -Eqi 'root|framework checkout|repository root' tools/interface.md",
+        "GIP.md injection lists name tools/ and NIZAM.json in the bootstrap-inject description: grep -q 'tools/' standard/GIP.md && grep -q 'NIZAM.json' standard/GIP.md",
+        "GIP.md no longer describes the inject set as exactly the three dirs standard/templates/schema: ! grep -Eq 'standard/`, `templates/`, and `schema/` (directories|into' standard/GIP.md || grep -q 'tools/' standard/GIP.md",
+        "templates/README.md contains no product_spec reference: ! grep -q 'product_spec' templates/README.md",
+        "methodology/README.md contains no product_spec reference: ! grep -q 'product_spec' methodology/README.md",
+        "GIP.md carries an existing-repo adoption section with the three incremental tiers: grep -Eqi 'existing repositor' standard/GIP.md && grep -Eqi 'docs-standard-only|incremental tier|full loop' standard/GIP.md",
+        "Each edited shipped .md bumped its frontmatter version above its prior value (GIP.md, interface.md, templates/README.md, methodology/README.md each grep a version line) and every bump is recorded (change_log entry or CHANGELOG.md line): verified structurally by validate.sh C8",
+        "Validator stays green on the clean tree: bash tools/validate.sh; test $? -eq 0"
+      ],
+      "estimated_lines": 190
+    },
+    {
+      "id": "020",
+      "name": "First-Contact Truth Fixes — CONTEXT.md Rewrite + README.md Quickstart + Acronym Expansion",
+      "description": "H1: rewrite CONTEXT.md to be current — remove the stale 'NIZAM.json ships in feature 006' and 'bootstrap.sh ships in feature 007' claims; add the phase-002 surfaces (tools/validate.sh, .github/workflows/compliance.yml, docs/architecture/); correct the bootstrap payload description to 4 dirs (standard/templates/schema/tools) + NIZAM.json; state the agent path as NIZAM.json -> tools/SKILL.md; flip frontmatter status draft -> active and bump version. H2/H9: give README.md a Quickstart (obtain bootstrap.sh via the pinned raw URL or a framework clone; one copy-pasteable command with a real pinned tag; a 'what you get' .nizam/ tree), a two-audience entry split ('Humans start here' / 'Agents load tools/SKILL.md via NIZAM.json'), a link to the HTML guide (docs/guide/index.html) and the GitHub Release, and a mention of the validator/CI/ADRs. H7: expand NDS/AGF/GIP at first use in README.md and CONTEXT.md, and expand 'AGIP' at its first mention in bootstrap.sh's header comment (sourcing the exact expansion from the AGIP standard — External Anchor). CONTEXT.md is in the validator's shipped-doc set (C1/C2/C3/C8); its version bump carries a CHANGELOG.md line so validate.sh stays green. README.md is outside the frontmatter set but inside C5's branding sweep — the rewrite introduces no nizamiq/endpoint strings. Depends on F-018 because README/CONTEXT link to docs/guide/index.html and the ADRs, and 'every named repo-relative path resolves' requires those files present.",
+      "status": "pending",
+      "dependencies": [
+        "018"
+      ],
+      "acceptance_tests": [
+        "CONTEXT.md no longer carries the stale ships-in-feature claims: ! grep -Eq 'ships in feature 00[67]' CONTEXT.md",
+        "CONTEXT.md names the phase-002 surfaces: grep -q 'tools/validate.sh' CONTEXT.md && grep -q 'compliance.yml' CONTEXT.md && grep -q 'docs/architecture' CONTEXT.md",
+        "CONTEXT.md describes the 4-dir + NIZAM.json payload (names tools/ in the inject list and NIZAM.json): grep -q 'tools/' CONTEXT.md && grep -q 'NIZAM.json' CONTEXT.md",
+        "CONTEXT.md states the agent path NIZAM.json -> SKILL.md: grep -q 'SKILL.md' CONTEXT.md",
+        "CONTEXT.md frontmatter status is active and version bumped above 0.1.0: grep -Eq '^status: active' CONTEXT.md && grep -Eq '^version: 0\\.[2-9]|^version: [1-9]' CONTEXT.md",
+        "README.md has a copy-pasteable pinned-tag bootstrap command with a real vMAJOR.MINOR.PATCH tag: grep -Eq 'bootstrap.sh' README.md && grep -Eq -- '--tag v[0-9]+\\.[0-9]+\\.[0-9]+|GOVERNANCE_TAG=v[0-9]+\\.[0-9]+\\.[0-9]+' README.md",
+        "README.md has a two-audience entry split: grep -Eqi 'humans start here' README.md && grep -q 'tools/SKILL.md' README.md",
+        "README.md links the HTML guide: grep -q 'docs/guide/index.html' README.md",
+        "README.md mentions the validator/CI/ADRs: grep -Eqi 'validate.sh|compliance|ADR' README.md",
+        "Acronyms expanded at first use in README.md (each of NDS, AGF, GIP appears with a parenthetical or inline expansion): python3 -c 'import re,sys; t=open(\"README.md\",encoding=\"utf-8\").read(); sys.exit(0 if all(re.search(a+r\"[^A-Za-z]{0,3}\\(|\\([^)]*\\)\\s*\\(?\"+a, t) or re.search(r\"[A-Z][a-z].*\\(\"+a+r\"\\)\", t) for a in [\"NDS\",\"AGF\",\"GIP\"]) else 1)' || grep -Eq 'Nizam Documentation Standard.*NDS|\\(NDS\\)' README.md",
+        "bootstrap.sh expands AGIP at first mention: grep -Eq 'AGIP \\(|\\([^)]*AGIP\\)' bootstrap.sh",
+        "README.md introduces no branding/endpoint leakage: ! grep -Eqi 'nizamiq|\\.svc|cluster\\.local' README.md",
+        "Validator stays green on the clean tree (CONTEXT.md C1/C2/C3/C8 + README.md C5): bash tools/validate.sh; test $? -eq 0"
+      ],
+      "estimated_lines": 210
+    },
+    {
+      "id": "021",
+      "name": "LICENSE (Human Gate)",
+      "description": "Add a top-level LICENSE file and a one-line license notice in README.md. The license CHOICE is a HUMAN GATE: the recommendation is MIT, matching the source repositories' lineage. This feature is deliberately structured so the phase can COMPLETE with it explicitly 'blocked' (blocked-on-human) if the choice is undecided — it is NOT a dependency of the phase-close feature (F-022), so phase close is never held hostage to the license decision. Once the human chooses, the generator adds the LICENSE file (full text of the chosen license, with the correct copyright holder/year) and the README license line. Remediates H3. Depends on F-020 so the README license line lands after the README rewrite.",
+      "status": "pending",
+      "dependencies": [
+        "020"
+      ],
+      "acceptance_tests": [
+        "LICENSE file exists at repo root: test -f LICENSE",
+        "LICENSE names a recognized OSI license (MIT recommended): grep -Eq 'MIT License|Apache License|BSD ' LICENSE",
+        "LICENSE carries a copyright line with a year: grep -Eq 'Copyright \\(c\\) [0-9]{4}' LICENSE",
+        "README.md carries a one-line license notice naming the same license and pointing to LICENSE: grep -Eqi 'licen[sc]e' README.md && grep -q 'LICENSE' README.md",
+        "LICENSE introduces no branding/endpoint leakage: ! grep -Eqi 'nizamiq|\\.svc|cluster\\.local' LICENSE",
+        "Validator stays green on the clean tree: bash tools/validate.sh; test $? -eq 0"
+      ],
+      "estimated_lines": 25
+    },
+    {
+      "id": "022",
+      "name": "Phase Close — CHANGELOG, Green Validator, Publishing + Release Human Gates",
+      "description": "Close phase 003. Add root CHANGELOG.md [Unreleased] entries covering the phase-003 deliverables (the docs/guide/index.html HTML user guide, the CONTEXT.md/README.md rewrites, the tools/interface.md + standard/GIP.md adoption-contract corrections, the NIZAM.json docs indexing, and the LICENSE if it landed) and expand 'AGIP' at its CHANGELOG.md mention (H7). Confirm tools/validate.sh exits 0 on the final tree (C5's branding sweep covers README.md; the guide is HTML and outside C1/C3, so the guide's nizamiq-absence check lives in F-018's acceptance). Record two HUMAN GATES, executing neither: (1) the publishing decision — enabling GitHub Pages for docs/guide/ — and (2) the release decision — v0.3.0, MINOR per methodology/05_release_train.md (new user guide + additive documentation; the interface.md discovery correction is a documentation fix, the actual .nizam/ bootstrap layout is unchanged, so it is not a breaking runtime change). The pipeline does NOT cut the tag or enable Pages. Depends on F-018, F-019, F-020 (NOT F-021, so phase close can proceed while LICENSE waits blocked-on-human).",
+      "status": "pending",
+      "dependencies": [
+        "018",
+        "019",
+        "020"
+      ],
+      "acceptance_tests": [
+        "CHANGELOG.md [Unreleased] names the HTML user guide and the CONTEXT/README rewrite: grep -q '## \\[Unreleased\\]' CHANGELOG.md && grep -q 'docs/guide/index.html' CHANGELOG.md && grep -Eqi 'README|CONTEXT' CHANGELOG.md",
+        "CHANGELOG.md [Unreleased] names the adoption-contract corrections: grep -q 'interface.md' CHANGELOG.md && grep -q 'GIP.md' CHANGELOG.md",
+        "CHANGELOG.md expands AGIP at its mention: grep -Eq 'AGIP \\(|\\([^)]*AGIP\\)' CHANGELOG.md",
+        "The final tree passes the compliance validator: bash tools/validate.sh; test $? -eq 0",
+        "The release decision is a human gate (v0.3.0 MINOR) and NOT auto-cut: git tag -l 'v0.3.0' | wc -l outputs 0",
+        "The publishing decision is a human gate and GitHub Pages is NOT auto-enabled by this pipeline (no Pages workflow added by phase 003): ! test -f .github/workflows/pages.yml && ! test -f .github/workflows/gh-pages.yml",
+        "NIZAM.json remains schema-valid with all indexed paths resolving on the final tree (regression guard via bash tools/validate.sh exit 0)"
+      ],
+      "estimated_lines": 60
+    }
+  ]
+}

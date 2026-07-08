@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "updated_at": "2026-07-08",
+  "updated_at": "2026-07-08T05:05:03Z",
   "current_phase": "002-self-compliance",
   "phases": [
     {
@@ -16,6 +16,14 @@
       "status": "complete",
       "activation_state": "active",
       "note": "Lifecycle: proposed 2026-07-08 (planner; schema enum has no 'proposed' value, so 'pending' + activation_state was used) -> activated 2026-07-08 on human authorization ('approved. please proceed.', run_state event phase_activated) -> completed 2026-07-08 (run_state event phase_complete). Status/activation_state/current_phase now all reflect the completed, previously-active state; this note superseded the original proposal-time wording, which had gone stale after activation (PR #3 review finding)."
+    },
+    {
+      "id": "003-communication",
+      "title": "Communication & User Guide — First-Contact Clarity Remediation & Shipped HTML User Guide",
+      "feature_list": ".agent/feature_list_003.json",
+      "status": "pending",
+      "activation_state": "proposed",
+      "note": "PROPOSED 2026-07-08 by @planner (schema enum has no 'proposed' value, so 'pending' + activation_state 'proposed' is used, mirroring the phase-002 proposal pattern). Remediates the human-directed documentation-clarity audit (findings H1-H9 in .agent/product_spec_003.md): ships a self-contained HTML user guide (docs/guide/index.html), corrects stale/incorrect first-contact and adoption-contract documentation, and adds a LICENSE. Does NOT change run_state.json (current_phase/status remain phase-002-complete) or manifest current_phase until a human authorizes activation. 6 features (017-022), original_estimate_lines 1395. v0.3.0 (MINOR) release, GitHub Pages publishing, and the LICENSE choice are all human gates the pipeline records but does not execute."
     }
   ]
 }
