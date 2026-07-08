@@ -1,0 +1,3 @@
+f=.agent/product_spec.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'docs/planning' "$f" && echo PASS || { echo 'product_spec.md does not name docs/planning'; exit 1; }
+PASS
+EXIT:0

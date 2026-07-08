@@ -1,0 +1,3 @@
+f=docs/architecture/ADR-002-html-user-guide.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'docs/guide/index.html' "$f" && grep -Eqi 'framework.version|framework-version' "$f" && echo PASS || { echo 'ADR body missing the version-consistency anchor decision text'; exit 1; }
+PASS
+EXIT:0

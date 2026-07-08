@@ -7,7 +7,7 @@
       "id": "017",
       "name": "ADR-002 (HTML User Guide) + product_spec §2.1 Layout Amendment + docs/ Status Declaration",
       "description": "Dogfood templates/ADR_TEMPLATE.md -> docs/architecture/ADR-002-html-user-guide.md recording the decision to adopt a shipped, dependency-free single-file HTML user guide at docs/guide/index.html as a presentation surface (rationale: single-file, zero external requests, GitHub-Pages- or locally-renderable; HTML is exempt from NDS md-frontmatter, so the embedded-version-equals-NIZAM.json-framework.version anchor is its enforceable consistency contract). Amend .agent/product_spec.md §2.1 to admit docs/guide/ into the layout and declare the docs/ shipped-vs-internal status (docs/architecture + docs/guide shipped and NIZAM.json-indexed; docs/planning framework-internal), bumping product_spec.md spec_version 1.1.0 -> 1.2.0 (MINOR/additive) with a matching change_log entry per NDS §4. Decision and layout of record only; no guide HTML and no NIZAM.json index change here (mirrors F-011). Remediates H6 (declare docs/ status); records the layout the guide lands in.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [],
       "acceptance_tests": [
         "ADR file exists: test -f docs/architecture/ADR-002-html-user-guide.md",

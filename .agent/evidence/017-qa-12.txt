@@ -1,0 +1,23 @@
+f=docs/architecture/ADR-002-html-user-guide.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; adr_has_changelog=$(python3 -c "
+import yaml
+lines = open('$f').read().split(chr(10))
+end = None
+for i, l in enumerate(lines[1:], start=1):
+    if l == '---':
+        end = i
+        break
+fm = yaml.safe_load(chr(10).join(lines[1:end])) or {}
+cl = fm.get('change_log') or []
+print('yes' if len(cl) > 0 else 'no')
+"); changelog_names_path=$(grep -q 'docs/architecture/ADR-002-html-user-guide.md' CHANGELOG.md 2>/dev/null && echo yes || echo no); if [ "$adr_has_changelog" != "yes" ] && [ "$changelog_names_path" != "yes" ]; then echo 'NDS Sec4 not recorded: no ADR frontmatter change_log entry and CHANGELOG.md does not name the path'; exit 1; fi; out=$(bash tools/validate.sh 2>&1); rc=$?; echo "$out"; echo "$out" | grep -qx 'SUMMARY: 8 passed, 0 failed' || { echo "expected exact summary line 'SUMMARY: 8 passed, 0 failed', got: $(echo "$out" | grep '^SUMMARY:')"; exit 1; }; test "$rc" -eq 0 && echo PASS || { echo "tools/validate.sh exited $rc, expected 0"; exit 1; }
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+PASS
+EXIT:0

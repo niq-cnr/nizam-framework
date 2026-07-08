@@ -1,0 +1,37 @@
+{
+  "feature_id": "017",
+  "qa_pass": true,
+  "checks_run": 13,
+  "checks_passed": 13,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/017-qa-adversarial.txt",
+    "findings": "No defects found. (A) Zero '<!--' HTML comments remain anywhere in docs/architecture/ADR-002-html-user-guide.md and no leftover template instructional phrases ('Copy this file to docs/architecture...', 'PLACEHOLDER', the Status-values doc line, 'fill-in-the-blanks') were found -- the template's leading instructional comment block was deleted in its entirety, not merely stripped of '{{' tokens. (B) The ADR frontmatter parses as valid YAML via python3 yaml.safe_load and authoritative_source equals the file's own repo-relative path 'docs/architecture/ADR-002-html-user-guide.md' with no leading '/' and no 'home'/'tmp' substring. (C) Both the 1.0.0 and 1.1.0 product_spec.md change_log entries compare byte-for-byte identical between 'git show HEAD:.agent/product_spec.md' and the working copy -- neither was altered. (D) docs/guide/index.html does not exist; 'git diff HEAD -- NIZAM.json' is empty; the full changed-file set (git status --short) contains only docs/architecture/ADR-002-html-user-guide.md, .agent/product_spec.md, .agent/contracts/017.json, .agent/evidence/017-* files, and .agent/run_state.json (orchestrator state) -- no edit outside the permitted scope. (E) 'bash tools/validate.sh' independently re-run by the evaluator exits 0 with the exact line 'SUMMARY: 8 passed, 0 failed'."
+  },
+  "evidence_files": [
+    ".agent/evidence/017-qa-01.txt",
+    ".agent/evidence/017-qa-02.txt",
+    ".agent/evidence/017-qa-03.txt",
+    ".agent/evidence/017-qa-04.txt",
+    ".agent/evidence/017-qa-05.txt",
+    ".agent/evidence/017-qa-06.txt",
+    ".agent/evidence/017-qa-07.txt",
+    ".agent/evidence/017-qa-08.txt",
+    ".agent/evidence/017-qa-09.txt",
+    ".agent/evidence/017-qa-10.txt",
+    ".agent/evidence/017-qa-11.txt",
+    ".agent/evidence/017-qa-12.txt",
+    ".agent/evidence/017-qa-13.txt",
+    ".agent/evidence/017-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "017",
+    "summary": "All 13 contract-017 verification commands independently re-run from repo root and pass (exit 0 each), matching the generator's claimed results. Mandatory adversarial spot-check found no defects: the ADR's template instructional HTML comment block was deleted in its entirety (zero '<!--' comments remain), authoritative_source is repo-relative and the frontmatter parses as valid YAML, the pre-existing 1.0.0/1.1.0 product_spec.md change_log entries survived byte-for-byte, the declared non-goals held (no docs/guide/index.html, no NIZAM.json diff, no edits outside the three permitted deliverable files plus orchestrator/evidence artifacts), and an independent 'bash tools/validate.sh' run exits 0 with 'SUMMARY: 8 passed, 0 failed'. QA verdict: PASS."
+  }
+}

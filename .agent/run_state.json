@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "003-communication",
-  "current_feature": "017",
-  "status": "contract_negotiation",
-  "updated_at": "2026-07-08T05:19:45Z",
+  "current_feature": "019",
+  "status": "implementing",
+  "updated_at": "2026-07-08T06:59:39Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -58,6 +58,10 @@
       "limit": 3
     },
     "016-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "017-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -297,6 +301,16 @@
       "at": "2026-07-08T05:19:45Z",
       "event": "phase_activated",
       "detail": "Phase 003-communication authorized by human. Budget reset (1395 est, ceiling 1813; phase-002 final archived). Execution order 017 -> 019 -> 018 -> 020 -> 022 (019 deliberately precedes 018 so the guide documents the corrected adoption contract); 021 LICENSE remains human-gated pending license choice. Beginning contract negotiation on 017."
+    },
+    {
+      "at": "2026-07-08T05:26:23Z",
+      "event": "contract_approved",
+      "detail": "Contract 017 approved first-pass by both gates. Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T06:59:39Z",
+      "event": "feature_complete",
+      "detail": "Feature 017 complete: both gates first-pass (Mode B + QA). QA 13/13 verification commands independently re-run (exit 0 each) + mandatory adversarial spot-check (template instructional HTML comment block deleted in its entirety; authoritative_source repo-relative and frontmatter YAML-valid; product_spec.md 1.0.0/1.1.0 change_log entries byte-for-byte intact; non-goals held - no docs/guide/index.html, empty NIZAM.json diff, no out-of-scope edits; validate.sh SUMMARY: 8 passed, 0 failed). Deliverables: docs/architecture/ADR-002-html-user-guide.md (HTML user guide decision + docs/ shipped-vs-internal declaration) and product_spec.md amended to spec_version 1.2.0. 154 lines vs 130 est (contract-scoped: ADR 132+0, product_spec 19+3; first feature of phase 003, no rolling baseline). Cumulative 154/1813. QA evaluator surfaced a pre-existing schema/qa_verdict.schema.json drift (required keys verdict/executed_at/checks[] differ from the richer qa/*.json shape actually produced; unenforced by validate.sh) - logged as NDEBT-002. Advancing to 019 (deps [] satisfied) per execution order 017->019->018->020->022."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -422,7 +436,15 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1395,
-    "total_lines_changed": 0,
-    "per_feature": []
+    "total_lines_changed": 154,
+    "per_feature": [
+      {
+        "id": "017",
+        "estimated": 130,
+        "actual": 154,
+        "flag": null,
+        "note": "contract-scoped git stat (ADR-002 132+0, product_spec.md 19+3); first feature of phase 003 - no rolling baseline per 00_planning bootstrap rule"
+      }
+    ]
   }
 }
