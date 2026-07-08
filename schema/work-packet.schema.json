@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:work-packet.schema.json",
+  "title": "Nizam Work-Packet Schema",
+  "description": "Validates a work-packet (templates/work-packet.template.json): the atomic, dispatchable unit of contracted work an execution ledger (for example a Kanban dispatcher) binds to a plan of record before implementation begins. The six required fields (id, objective, scope, acceptance, evidence, non_goals) are the historical minimal work-packet and keep every pre-existing packet valid. The optional linking/dispatch fields let a runtime dispatcher bind a packet to cross-repo governance -- its architecture tier (standard/cross_repo_governance.md seven-tier model), its upstream/downstream dependency edges and merge ordering (methodology/08_cross_repo_dependency_gate.md), and the contract/feature/phase/release-train records it belongs to -- without introducing vocabulary that conflicts with those two governance documents.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique work-packet identifier."
+    },
+    "objective": {
+      "type": "string",
+      "description": "The single, concrete outcome this work-packet must achieve."
+    },
+    "scope": {
+      "type": "object",
+      "description": "The explicit path boundary this work-packet authorizes work within.",
+      "properties": {
+        "allowed_paths": {
+          "type": "array",
+          "description": "Repository-relative path globs the packet may create or modify.",
+          "items": { "type": "string" }
+        },
+        "forbidden_paths": {
+          "type": "array",
+          "description": "Repository-relative path globs the packet must never touch.",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["allowed_paths", "forbidden_paths"],
+      "additionalProperties": true
+    },
+    "acceptance": {
+      "type": "array",
+      "description": "Human-readable acceptance criteria the packet must satisfy to be considered complete.",
+      "items": { "type": "string" }
+    },
+    "evidence": {
+      "type": "array",
+      "description": "Paths to the externalised evidence files proving the acceptance criteria are met.",
+      "items": { "type": "string" }
+    },
+    "non_goals": {
+      "type": "array",
+      "description": "Explicit statements of what this work-packet does NOT authorize.",
+      "items": { "type": "string" }
+    },
+    "repo": {
+      "type": "string",
+      "description": "Optional. Identifier of the repository this work-packet executes in, for a dispatcher coordinating work across a multi-repository ecosystem (standard/cross_repo_governance.md)."
+    },
+    "tier": {
+      "type": "string",
+      "description": "Optional. The executing repository's tier in the seven-tier architecture model (standard/cross_repo_governance.md Sec 3). Lower tiers are upstream; higher tiers depend on them. tier-0 Identity & Access; tier-1 Edge & Web Presence; tier-2 Gated Portals; tier-3 Governance & Strategy; tier-4 Runtime Services; tier-5 Infrastructure & Persistence; tier-6 Reference Archive & Legacy.",
+      "enum": ["tier-0", "tier-1", "tier-2", "tier-3", "tier-4", "tier-5", "tier-6"]
+    },
+    "blast_radius": {
+      "type": "string",
+      "description": "Optional. How far the packet's change can propagate, so a dispatcher can gate concurrency and review depth: 'local' (confined to the executing repository), 'cluster' (affects a group of same-tier or tightly-coupled repositories), 'ecosystem' (crosses tiers or alters a shared contract, engaging the cross-repo dependency gate of methodology/08_cross_repo_dependency_gate.md).",
+      "enum": ["local", "cluster", "ecosystem"]
+    },
+    "concurrency_lane": {
+      "type": "string",
+      "description": "Optional. Dispatcher lane identifier used to serialise packets that must not run concurrently (for example packets touching the same shared contract) while allowing packets in different lanes to proceed in parallel."
+    },
+    "dependency_edges": {
+      "type": "object",
+      "description": "Optional. This packet's edges in the ecosystem dependency DAG (methodology/08_cross_repo_dependency_gate.md). A dispatcher uses these to block a packet until its upstream deltas are approved and to notify downstream consumers.",
+      "properties": {
+        "depends_on": {
+          "type": "array",
+          "description": "Identifiers of upstream work-packets, contracts, or repositories whose contract deltas must be approved before this packet may execute.",
+          "items": { "type": "string" }
+        },
+        "consumed_by": {
+          "type": "array",
+          "description": "Identifiers of downstream work-packets, contracts, or repositories that depend on this packet's output.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "contract_id": {
+      "type": "string",
+      "description": "Optional. Foreign key to the .agent/contracts/NNN.json contract this packet implements (schema/contract.schema.json 'contract_id')."
+    },
+    "phase_id": {
+      "type": "string",
+      "description": "Optional. Foreign key to the phase this packet belongs to (schema/phase.schema.json 'id')."
+    },
+    "feature_id": {
+      "type": "string",
+      "description": "Optional. Foreign key to the feature this packet delivers (schema/feature_list.schema.json feature 'id')."
+    },
+    "train_id": {
+      "type": "string",
+      "description": "Optional. Foreign key to the release train this packet is scheduled into (methodology/06_release_train.md)."
+    },
+    "merge_order": {
+      "type": "integer",
+      "description": "Optional. The packet's position in its train's merge sequence, honouring the upstream-before-downstream ordering of the cross-repo dependency gate (methodology/08_cross_repo_dependency_gate.md). Lower merges first.",
+      "minimum": 0
+    }
+  },
+  "required": ["id", "objective", "scope", "acceptance", "evidence", "non_goals"],
+  "additionalProperties": true
+}

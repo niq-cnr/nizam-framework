@@ -7,6 +7,22 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `schema/work-packet.schema.json`: JSON Schema for the work-packet artifact
+  (`templates/work-packet.template.json`). Requires the historical minimal set
+  (`id`, `objective`, `scope`, `acceptance`, `evidence`, `non_goals`) so every
+  pre-existing packet stays valid, and adds optional linking/dispatch fields an
+  execution ledger (for example a Kanban dispatcher) needs to bind a packet to a
+  plan of record: `repo`, `tier` (seven-tier model of
+  `standard/cross_repo_governance.md`), `blast_radius` (local/cluster/ecosystem),
+  `concurrency_lane`, `dependency_edges` (`depends_on`/`consumed_by`) and
+  `merge_order` (upstream-before-downstream ordering of
+  `methodology/08_cross_repo_dependency_gate.md`), and the foreign keys
+  `contract_id`, `phase_id`, `feature_id`, and `train_id`. `templates/work-packet.template.json`
+  gains the matching optional `{{PLACEHOLDER}}` fields, and `NIZAM.json` indexes
+  the new schema. No framework version bump.
+
 ## [0.4.0] - 2026-07-08
 
 ### Added
