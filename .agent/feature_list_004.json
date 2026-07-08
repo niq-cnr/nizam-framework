@@ -1,0 +1,168 @@
+{
+  "phase": "004-durable-enforcement",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 1250,
+  "features": [
+    {
+      "id": "023",
+      "name": "tools/verify_lib.sh — Vetted Verification-Helper Library + Fixtures",
+      "description": "Create tools/verify_lib.sh (R3): a sourced library of reusable, individually-testable shell functions that phase-004 contracts and validate.sh checks use instead of re-inventing (and re-breaking) verification primitives. Expose at least five functions: (1) section-scoped grep — assert a token appears within a named doc-section span, not vacuously anywhere in the file; (2) untracked-aware scope guard — git status --porcelain --untracked-files=all -- . ':(exclude).agent' (sees NEW files that a plain 'git diff HEAD' scope guard is blind to, the exact 018/021 precedent defect); (3) strict-version-increase-vs-HEAD — parse frontmatter version at the working tree vs 'git show HEAD:<file>' and assert a strict semver increase; (4) punctuation-stripped path resolution — resolve a repo-relative path reference after stripping trailing sentence punctuation (the 018 false-fail defect), honoring the P1 placeholder/illustrative exemption (skip NNN/XXX/step-NN placeholder tokens and directory-only refs); (5) generalized stale-enumeration guard — no single-line standard/+templates/+schema/ payload enumeration omits tools/ (the F-019 rework guard). Each function is a library primitive (sourced, not executed standalone) and is FIXTURE-TESTED for BOTH pass and fail modes under tools/fixtures/. This is the phase's foundational feature — every downstream feature depends on it so their contracts compose verification from these primitives. tools/verify_lib.sh is a .sh (not in the shipped-doc set), so it carries no frontmatter/C8 obligation; validate.sh stays green at 8.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "Library exists and is syntactically valid: test -f tools/verify_lib.sh && bash -n tools/verify_lib.sh",
+        "Library is a sourced library, not a standalone script that runs work on source (sourcing it defines functions without side effects): out=$(bash -c 'set -e; source tools/verify_lib.sh; echo SOURCED_OK'); echo \"$out\" | grep -q SOURCED_OK",
+        "All five named primitives are defined as functions after sourcing: bash -c 'source tools/verify_lib.sh; for fn in vlib_section_grep vlib_scope_guard vlib_version_increased vlib_path_resolves vlib_no_stale_payload; do declare -F \"$fn\" >/dev/null || { echo \"missing $fn\"; exit 1; }; done'",
+        "The scope-guard primitive uses the untracked-aware form (sees new files): grep -q 'untracked-files=all' tools/verify_lib.sh && grep -q \"exclude).agent\" tools/verify_lib.sh",
+        "The path-resolution primitive strips trailing punctuation and honors the placeholder exemption (references NNN/XXX/step-NN and directory-only refs are exempt): grep -Eq 'NNN|XXX|step-|placeholder' tools/verify_lib.sh",
+        "Each primitive has a fixture that PROVES its FAIL mode fires: for each of the five primitives a corresponding tools/fixtures/ input exists that the primitive rejects with a non-zero exit (verified by a fixture-driver run capturing EXIT:1 for each fail fixture) — evidence: .agent/evidence/023-verify-*.txt each ends EXIT:0 asserting the primitive returned non-zero on its negative fixture",
+        "Each primitive has a fixture/input that PROVES its PASS mode (returns 0 on valid input): verified per-primitive with captured EXIT:0",
+        "verify_lib.sh introduces no branding/endpoint leakage: ! grep -Eqi 'nizamiq|\\.svc|cluster\\.local' tools/verify_lib.sh",
+        "Validator stays green and the count is UNCHANGED at this feature (no new check added yet): out=$(bash tools/validate.sh 2>&1); echo \"$out\" | grep -qx 'SUMMARY: 8 passed, 0 failed'; test ${PIPESTATUS:-0} -eq 0 || true; echo \"$out\" | tail -1 | grep -qx 'SUMMARY: 8 passed, 0 failed'",
+        "New fixtures live only under tools/fixtures/ (never in the default sweep): git diff --name-only HEAD -- . ':(exclude).agent' | grep -E '^tools/fixtures/' -q && ! (git diff --name-only HEAD -- . ':(exclude).agent' | grep -Ev '^(tools/verify_lib.sh|tools/fixtures/)' )"
+      ],
+      "estimated_lines": 260
+    },
+    {
+      "id": "024",
+      "name": "Verification-Authoring Standard — methodology/02_adversarial_tdd.md Section",
+      "description": "Extend methodology/02_adversarial_tdd.md with a new section codifying the verification-authoring standard (R3): the anti-patterns a contract's verification suite MUST NOT use — (a) whole-file greps that vacuously match text elsewhere in the file (use a section-scoped grep instead); (b) 'git diff HEAD' scope guards blind to new untracked files (use the untracked-aware guard); (c) bare-adjacency / parenthetical 'appears near' checks; (d) literal-substring checks that do not require real content (a substring that false-passes on unrelated text). The section points at tools/verify_lib.sh (F-023) as the canonical, fixture-tested implementations of the compliant primitives. methodology/02_adversarial_tdd.md is in the validator's shipped-doc set (C1/C2/C3/C8), so its frontmatter version bump carries a matching change_log entry per NDS Section 4 / validator C8 and validate.sh stays green at 8. Depends on F-023 so the new section can reference verify_lib.sh's real primitives.",
+      "status": "pending",
+      "dependencies": ["023"],
+      "acceptance_tests": [
+        "The doc gained a verification-authoring-standard section: grep -Eqi 'verification[- ]authoring' methodology/02_adversarial_tdd.md",
+        "All four forbidden anti-patterns are named: python3 -c \"t=open('methodology/02_adversarial_tdd.md',encoding='utf-8').read().lower(); import sys; sys.exit(0 if ('whole-file' in t or 'vacuous' in t) and ('untracked' in t or 'new file' in t) and ('adjacen' in t or 'parenthetical' in t) and ('substring' in t) else 1)\"",
+        "The section points at the canonical library: grep -q 'verify_lib.sh' methodology/02_adversarial_tdd.md",
+        "Frontmatter version strictly increased vs HEAD and is recorded (change_log entry or CHANGELOG line): verified structurally by validate.sh C8 reporting PASS",
+        "Frontmatter still schema-valid: bash tools/validate.sh --target methodology/02_adversarial_tdd.md; test $? -eq 0",
+        "No new untagged fences introduced (C3): bash tools/validate.sh --target methodology/02_adversarial_tdd.md | grep -q '\\[C3\\] PASS'",
+        "Validator stays green with UNCHANGED count (still 8; no new check in this feature): bash tools/validate.sh 2>&1 | tail -1 | grep -qx 'SUMMARY: 8 passed, 0 failed'",
+        "Only methodology/02_adversarial_tdd.md changed outside .agent/ (untracked-aware scope guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -v 'methodology/02_adversarial_tdd.md')\""
+      ],
+      "estimated_lines": 70
+    },
+    {
+      "id": "025",
+      "name": "R4a — Reconcile Schemas to Actual Artifact Shapes (resolves NDEBT-002 part a)",
+      "description": "Reconcile the shipped JSON schemas to the ACTUAL produced artifact shapes so the framework's own immutable .agent/ audit records validate WITHOUT edits — the prerequisite for R4b enforcement. (1) Reconcile schema/qa_verdict.schema.json to an anyOf UNION of the two produced QA-verdict shapes: the legacy shape (feature_id + verdict[pass/fail] + executed_at + checks[] + required_fixes, files 000-016) and the evolved shape (feature_id + qa_pass + checks_run/checks_passed + adversarial{} + evidence_files[] + issues[] + required_fixes[] + unsupported_claims[] + missing_acceptance_coverage[] + observations[] + final_verdict{}, files 017-022). (2) Add a NEW schema/contract_review.schema.json describing the pre-code contract-review shape (review + feature + issues[] + missing_acceptance_coverage[] + unsupported_claims[] + final_verdict{}, files 020-contract-review/021-contract-review/022). Goal: EVERY historical .agent/qa/*.json validates against qa_verdict.schema.json OR contract_review.schema.json with ZERO edits to those files. (3) Confirm schema/contract.schema.json matches the produced contract shape and make amendments[] (carried by 001/016/019) and approvals.revisions explicit documented properties (they validate today only via additionalProperties). (4) Per AH-2, CONFIRM schema/run_state.schema.json already exists and .agent/run_state.json already validates against it — do NOT recreate it. (5) Index the new contract_review.schema.json in NIZAM.json schemas[] and add a schema/README.md entry, keeping NIZAM.json C4-green with every indexed path resolving; bump schema/README.md version with a change_log entry (C8). No validate.sh check is added here (that is F-028), so validate.sh stays green at 8. STRICTLY precedes F-028. Depends on F-023.",
+      "status": "pending",
+      "dependencies": ["023"],
+      "acceptance_tests": [
+        "qa_verdict.schema.json is now a union (anyOf) of the two verdict shapes: python3 -c \"import json; s=json.load(open('schema/qa_verdict.schema.json')); import sys; sys.exit(0 if 'anyOf' in s or 'oneOf' in s else 1)\"",
+        "New contract_review.schema.json exists and is itself valid JSON Schema: test -f schema/contract_review.schema.json && python3 -c \"import json,jsonschema; jsonschema.Draft202012Validator.check_schema(json.load(open('schema/contract_review.schema.json')))\"",
+        "EVERY historical .agent/qa/*.json validates against qa_verdict OR contract_review, with no edits: python3 -c \"import json,glob,jsonschema,sys; qv=json.load(open('schema/qa_verdict.schema.json')); cr=json.load(open('schema/contract_review.schema.json')); bad=[]\nfor f in glob.glob('.agent/qa/*.json'):\n    d=json.load(open(f))\n    ok=False\n    for s in (qv,cr):\n        try: jsonschema.validate(d,s); ok=True; break\n        except jsonschema.ValidationError: pass\n    if not ok: bad.append(f)\nsys.exit(1 if bad else 0)\"",
+        "EVERY .agent/contracts/*.json validates against contract.schema.json: python3 -c \"import json,glob,jsonschema,sys; s=json.load(open('schema/contract.schema.json')); bad=[f for f in glob.glob('.agent/contracts/*.json') if not _ok(f,s)] if False else []\nimport json as J\nbad=[]\nfor f in glob.glob('.agent/contracts/*.json'):\n    try: jsonschema.validate(J.load(open(f)),s)\n    except jsonschema.ValidationError: bad.append(f)\nsys.exit(1 if bad else 0)\"",
+        "contract.schema.json now documents amendments[] explicitly: python3 -c \"import json,sys; s=json.load(open('schema/contract.schema.json')); sys.exit(0 if 'amendments' in s.get('properties',{}) else 1)\"",
+        "run_state.schema.json is UNCHANGED vs HEAD (confirmed pre-existing, not recreated) and run_state.json still validates: git diff --quiet HEAD -- schema/run_state.schema.json && python3 -c \"import json,jsonschema; jsonschema.validate(json.load(open('.agent/run_state.json')), json.load(open('schema/run_state.schema.json')))\"",
+        "No historical .agent/qa or .agent/contracts file was edited (immutable audit records): test -z \"$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts)\"",
+        "NIZAM.json indexes the new schema and stays C4-green: grep -q 'schema/contract_review.schema.json' NIZAM.json && bash tools/validate.sh --target NIZAM.json; test $? -eq 0",
+        "schema/README.md version bumped and recorded (C8) and still frontmatter-valid: bash tools/validate.sh --target schema/README.md; test $? -eq 0",
+        "At least one deliberately-invalid document is REJECTED by each new/changed schema (negative test per 02_adversarial_tdd Section 5): a fixture verdict missing every discriminating key is rejected by BOTH union branches, captured EXIT:0 asserting rejection in .agent/evidence/025-verify-*.txt",
+        "Validator stays green with UNCHANGED count (still 8; enforcement is F-028): bash tools/validate.sh 2>&1 | tail -1 | grep -qx 'SUMMARY: 8 passed, 0 failed'"
+      ],
+      "estimated_lines": 180
+    },
+    {
+      "id": "026",
+      "name": "R1 — C9 Repo-Wide Path-Resolution Check + Fixtures (validate.sh 8->9)",
+      "description": "Add check C9 to tools/validate.sh: every concrete repo-relative FILE path named in any shipped .md (the C1/C3 shipped-doc set) AND in docs/guide/index.html resolves on disk, applying the P1 placeholder/illustrative exemption from the spec: enforce only references naming a file with a shipped extension (.md/.json/.sh/.html/.yml) and containing no placeholder token; directory-only refs and placeholder/example paths (NNN, step-NN, tools/.claude/, tools/.codex/) are documented-exempt so the check is NON-BREAKING against the current tree (proven by the plan-time P1 dry-run). Generalizes the guide's one-off F-018 path-resolution acceptance test into a first-class validator check, composing from verify_lib.sh's punctuation-stripped path resolution (F-023). Update validate.sh's in-script print_usage() to describe C9 and the new total, and register C9 in main() so the full sweep reports SUMMARY: 9 passed, 0 failed. Fixture-test both modes under tools/fixtures/: a .md naming a real nonexistent file -> C9 FAILs (via --target); a .md naming only resolving + exempt-placeholder paths -> C9 PASSes. Depends on F-023. First of the three serialized validate.sh-editing features (SUMMARY-count migration).",
+      "status": "pending",
+      "dependencies": ["023"],
+      "acceptance_tests": [
+        "validate.sh registers a C9 check and print_usage documents it: grep -q 'C9' tools/validate.sh && bash tools/validate.sh --help | grep -q 'C9'",
+        "The full sweep now reports exactly nine checks passing on the CLEAN current tree (non-breaking, proven by the P1 dry-run): out=$(bash tools/validate.sh 2>&1); echo \"$out\" | grep -qx 'SUMMARY: 9 passed, 0 failed'; echo \"$out\" | grep -q '\\[C9\\] PASS'",
+        "validate.sh exits 0 on the current tree: bash tools/validate.sh; test $? -eq 0",
+        "C9 composes from verify_lib.sh (sources it) rather than re-implementing path resolution: grep -q 'verify_lib.sh' tools/validate.sh",
+        "C9 FAIL fixture: a tools/fixtures/ .md naming a real nonexistent file is rejected by C9: out=$(bash tools/validate.sh --target tools/fixtures/unresolved_path.md 2>&1); test $? -ne 0 && echo \"$out\" | grep -q '\\[C9\\] FAIL'",
+        "C9 PASS/exemption fixture: a tools/fixtures/ .md naming only resolving paths plus exempt placeholders (NNN/step-NN/.claude) passes C9: bash tools/validate.sh --target tools/fixtures/exempt_paths.md | grep -q '\\[C9\\] PASS'",
+        "The placeholder exemption is documented in print_usage: bash tools/validate.sh --help | grep -Eqi 'placeholder|exempt|NNN'",
+        "New fixtures live only under tools/fixtures/; only validate.sh + tools/fixtures/ changed outside .agent/ (untracked-aware guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/validate.sh|tools/fixtures/')\"",
+        "No pre-existing check regressed: for c in C1 C2 C3 C4 C5 C6 C7 C8; do bash tools/validate.sh 2>&1 | grep -q \"\\[$c\\] PASS\" || exit 1; done"
+      ],
+      "estimated_lines": 150
+    },
+    {
+      "id": "027",
+      "name": "R1 — C10 Single-Source-of-Truth Consistency Check + Fixtures (validate.sh 9->10)",
+      "description": "Add check C10 to tools/validate.sh generalizing three proven one-offs repo-wide: (1) payload-set consistency — the injected payload is uniformly described as standard/+templates/+schema/+tools/+NIZAM.json across shipped docs; NO stale 3-dir enumeration (standard/+templates/+schema/ without tools/) survives anywhere (the F-019 rework guard, via verify_lib.sh's generalized stale-enumeration primitive). (2) Discovery-order consistency — scoped per spec finding P3: only WHERE a doc describes the bootstrapped-consumer discovery must .nizam/tools/skill.json precede the repository-root fallback, so CONTEXT.md's legitimate framework-checkout (repo-root) description is NOT false-flagged. (3) Framework-version anchor — every doc that embeds the framework version (today the guide's <meta name=framework-version> + footer) equals NIZAM.json framework.version, generalizing the F-018 anchor and honoring the External Anchor Rule (expected value read from NIZAM.json, never re-derived from the doc under test). Update print_usage() and register C10 in main() so the sweep reports SUMMARY: 10 passed, 0 failed. Fixture-test each of the three sub-checks' fail modes under tools/fixtures/ (a stale-3-dir doc; a wrong-order discovery doc; a doc embedding a version != NIZAM.json). NON-BREAKING against the current tree (proven by the plan-time P2/P3 dry-runs). Depends on F-023 and F-026 (serialized after C9 for a deterministic count).",
+      "status": "pending",
+      "dependencies": ["023", "026"],
+      "acceptance_tests": [
+        "validate.sh registers a C10 check and print_usage documents it: grep -q 'C10' tools/validate.sh && bash tools/validate.sh --help | grep -q 'C10'",
+        "The full sweep now reports exactly ten checks passing on the CLEAN current tree (non-breaking, proven by the P2/P3 dry-runs): out=$(bash tools/validate.sh 2>&1); echo \"$out\" | grep -qx 'SUMMARY: 10 passed, 0 failed'; echo \"$out\" | grep -q '\\[C10\\] PASS'",
+        "validate.sh exits 0 on the current tree: bash tools/validate.sh; test $? -eq 0",
+        "C10 payload sub-check FAIL fixture: a tools/fixtures/ doc with a stale 3-dir payload enumeration (no tools/) is rejected: bash tools/validate.sh --target tools/fixtures/stale_payload.md; test $? -ne 0",
+        "C10 discovery-order sub-check FAIL fixture: a tools/fixtures/ doc placing repo-root tools/skill.json before .nizam/tools/skill.json in a bootstrapped-consumer context is rejected: bash tools/validate.sh --target tools/fixtures/bad_discovery_order.md; test $? -ne 0",
+        "C10 version-anchor sub-check FAIL fixture: a fixture embedding a framework-version != NIZAM.json framework.version is rejected: bash tools/validate.sh --target tools/fixtures/version_drift.html; test $? -ne 0",
+        "C10 version anchor reads its expected value from NIZAM.json (External Anchor Rule), not from the doc under test: grep -q 'framework' tools/validate.sh && grep -q 'NIZAM.json' tools/validate.sh",
+        "CONTEXT.md's legitimate framework-checkout discovery description is NOT false-flagged (regression proof P3): bash tools/validate.sh 2>&1 | grep -q '\\[C10\\] PASS'",
+        "Only validate.sh + tools/fixtures/ changed outside .agent/ (untracked-aware guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/validate.sh|tools/fixtures/')\"",
+        "No pre-existing check regressed (C1-C9 all PASS): for c in C1 C2 C3 C4 C5 C6 C7 C8 C9; do bash tools/validate.sh 2>&1 | grep -q \"\\[$c\\] PASS\" || exit 1; done"
+      ],
+      "estimated_lines": 170
+    },
+    {
+      "id": "028",
+      "name": "R4b — C11 Dogfood Schema Validation on .agent/ Artifacts + Fixtures (resolves NDEBT-002 part b; validate.sh 10->11)",
+      "description": "Add check C11 to tools/validate.sh: validate every .agent/qa/*.json (against schema/qa_verdict.schema.json OR schema/contract_review.schema.json), every .agent/contracts/*.json (against schema/contract.schema.json), and .agent/run_state.json (against schema/run_state.schema.json) using python3 + jsonschema (the same stack C4 uses). ENFORCE-IF-PRESENT, SKIP-IF-ABSENT: when .agent/qa/, .agent/contracts/, or .agent/run_state.json do not exist (a fresh or ungoverned bootstrapped consumer running its own copy of validate.sh), C11 passes trivially rather than failing — validate.sh is injected into consumers and must stay green there. Where the artifacts exist they are validated against the shipped (reconciled, permissive-union) schemas, so the framework's own historical artifacts pass (guaranteed by F-025 landing strictly first) and a conformant consumer passes. Update print_usage() and register C11 in main() so the sweep reports SUMMARY: 11 passed, 0 failed. Fixture-test under tools/fixtures/: a deliberately schema-invalid verdict/contract/run_state artifact is REJECTED (the 02_adversarial_tdd Section 5 schema-rejection requirement — a schema fed only valid input has constrained nothing). Depends on F-025 (schemas reconciled first, so C11 passes over ALL historical .agent/*) and F-027 (serialized for a deterministic count).",
+      "status": "pending",
+      "dependencies": ["025", "027"],
+      "acceptance_tests": [
+        "validate.sh registers a C11 check and print_usage documents it: grep -q 'C11' tools/validate.sh && bash tools/validate.sh --help | grep -q 'C11'",
+        "The full sweep now reports exactly eleven checks passing on the current tree (all historical .agent/* validate, guaranteed by F-025): out=$(bash tools/validate.sh 2>&1); echo \"$out\" | grep -qx 'SUMMARY: 11 passed, 0 failed'; echo \"$out\" | grep -q '\\[C11\\] PASS'",
+        "validate.sh exits 0 on the current tree: bash tools/validate.sh; test $? -eq 0",
+        "C11 validates all three artifact families (qa, contracts, run_state) — named in print_usage: bash tools/validate.sh --help | grep -Eq 'qa.*contract.*run_state|\\.agent'",
+        "C11 SKIPS gracefully when .agent/ is absent (consumer-safety): run validate.sh from a scratch copy that has tools/ + schema/ + NIZAM.json + the shipped .md set but NO .agent/, and confirm C11 still reports PASS and the sweep does not fail on C11's account; evidence captured in .agent/evidence/028-verify-*.txt",
+        "C11 FAIL fixture (qa): a deliberately schema-invalid verdict fixture is rejected: bash tools/validate.sh --target tools/fixtures/invalid_qa_verdict.json; test $? -ne 0",
+        "C11 FAIL fixture (contract): a deliberately schema-invalid contract fixture is rejected: bash tools/validate.sh --target tools/fixtures/invalid_contract.json; test $? -ne 0",
+        "C11 FAIL fixture (run_state): a deliberately schema-invalid run_state fixture is rejected: bash tools/validate.sh --target tools/fixtures/invalid_run_state.json; test $? -ne 0",
+        "No historical .agent/ artifact was edited to make C11 pass (immutable): test -z \"$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts .agent/run_state.json)\"",
+        "Only validate.sh + tools/fixtures/ changed outside .agent/ (untracked-aware guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/validate.sh|tools/fixtures/')\"",
+        "No pre-existing check regressed (C1-C10 all PASS): for c in C1 C2 C3 C4 C5 C6 C7 C8 C9 C10; do bash tools/validate.sh 2>&1 | grep -q \"\\[$c\\] PASS\" || exit 1; done"
+      ],
+      "estimated_lines": 150
+    },
+    {
+      "id": "029",
+      "name": "R2 — Hermetic End-to-End Consumer-Bootstrap Test + CI Job",
+      "description": "Create tools/e2e_bootstrap_test.sh, a hermetic (network-free) harness that actually exercises the real inject->verify adoption path end to end, plus a CI job that runs it. Per spec Section 4.2, the harness needs NO bootstrap.sh modification: it creates an ephemeral annotated git tag on the working checkout HEAD, runs bootstrap.sh --repo-url \"file://$(pwd)\" --tag <ephemeral> --target <scratch>/.nizam into a mktemp scratch consumer directory (a local git clone over the file:// transport, no network), then asserts (a) the injected payload (standard/, templates/, schema/, tools/, NIZAM.json, provenance.json) is present, (b) NIZAM.json under the target is index-valid, (c) the DOCUMENTED discovery path <scratch>/.nizam/tools/skill.json resolves (the H4 regression guard — per tools/interface.md Section 2 item 1: the exact functional adoption bug that shipped in v0.1.0), and (d) bootstrap.sh --verify-only --tag <ephemeral> --target <scratch>/.nizam exits 0; then trap-cleans the ephemeral tag and scratch dir even on failure. Add a second CI job to .github/workflows/compliance.yml (alongside 'validate') that runs the harness. The harness carries a negative-mode self-test (dogfood): invoked against a deliberately-broken payload (e.g. a removed .nizam/tools/skill.json) it MUST exit non-zero, proving the H4 guard is load-bearing. bootstrap.sh is NOT modified. Composes assertions from verify_lib.sh where applicable. Depends on F-023. Independent of the validate.sh check features (does not change the SUMMARY count).",
+      "status": "pending",
+      "dependencies": ["023"],
+      "acceptance_tests": [
+        "Harness exists and is syntactically valid: test -f tools/e2e_bootstrap_test.sh && bash -n tools/e2e_bootstrap_test.sh",
+        "The harness runs hermetically and exits 0 on a clean checkout (no network — uses file:// + an ephemeral tag): out=$(bash tools/e2e_bootstrap_test.sh 2>&1); test $? -eq 0; echo \"$out\" | grep -Eqi 'pass|ok|success'",
+        "The harness uses a LOCAL file:// source and an ephemeral pinned tag, not a network clone of a published tag: grep -q 'file://' tools/e2e_bootstrap_test.sh && grep -Eq 'git tag' tools/e2e_bootstrap_test.sh",
+        "bootstrap.sh is NOT modified by this feature: git diff --quiet HEAD -- bootstrap.sh",
+        "The harness asserts the documented .nizam/tools/skill.json discovery path (H4 regression guard): grep -q '.nizam/tools/skill.json' tools/e2e_bootstrap_test.sh || grep -Eq 'tools/skill.json' tools/e2e_bootstrap_test.sh",
+        "The harness asserts --verify-only passes against the injected target: grep -q -- '--verify-only' tools/e2e_bootstrap_test.sh",
+        "The harness cleans up (ephemeral tag + scratch dir) via a trap even on failure: grep -Eq 'trap .*(cleanup|EXIT)' tools/e2e_bootstrap_test.sh",
+        "Negative self-test: invoking the harness's broken-payload mode exits non-zero (the H4 guard is load-bearing): out=$(bash tools/e2e_bootstrap_test.sh --self-test-negative 2>&1 || echo NONZERO); echo \"$out\" | grep -q NONZERO",
+        "A CI job runs the harness: python3 -c \"import yaml,sys; w=yaml.safe_load(open('.github/workflows/compliance.yml')); jobs=w.get('jobs',{}); ok=any('e2e_bootstrap_test.sh' in str(j) for j in jobs.values()); sys.exit(0 if ok else 1)\"",
+        "The harness leaves no residue in the repo tree (ephemeral tag deleted, no scratch dir committed): test -z \"$(git tag -l 'e2e-*')\" && test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/e2e_bootstrap_test.sh|.github/workflows/compliance.yml')\"",
+        "validate.sh count is UNCHANGED by this feature (harness + CI job, not a validate.sh check): bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: (8|9|10|11) passed, 0 failed'"
+      ],
+      "estimated_lines": 200
+    },
+    {
+      "id": "030",
+      "name": "Phase Close — tools/README + CHANGELOG Count Sync, NDEBT-002 Resolved, Green Validator, v0.4.0 Release Gate",
+      "description": "Close phase 004. Sync tools/README.md to describe the new C1-C11 check set and the SUMMARY: 11 passed, 0 failed total (single doc bump; frontmatter version + change_log entry, C8). Add CHANGELOG.md [Unreleased] entries for the phase-004 deliverables: tools/verify_lib.sh + the verification-authoring standard (methodology/02); the C9/C10/C11 validator checks; the reconciled qa_verdict.schema.json union + new contract_review.schema.json + explicit contract amendments[] (resolving NDEBT-002); the hermetic e2e bootstrap harness + CI job. Move NDEBT-002 from Open to Resolved in docs/planning/DEBT.md (reconciled schemas + C11 enforcement). Confirm tools/validate.sh exits 0 with SUMMARY: 11 passed, 0 failed on the final tree. Record the v0.4.0 release HUMAN GATE — MINOR per methodology/05_release_train.md (additive checks C9-C11 + verify_lib + e2e harness + CI job + permissive schema reconciliation; no breaking runtime change; bootstrap.sh unmodified) — and note the still-outstanding upstream phase-003 gates (v0.3.0, GitHub Pages, PR #5 merge). The pipeline records but does NOT execute any release/publishing gate. Depends on F-024, F-025, F-026, F-027, F-028, F-029.",
+      "status": "pending",
+      "dependencies": ["024", "025", "026", "027", "028", "029"],
+      "acceptance_tests": [
+        "tools/README.md describes the C1-C11 set and the new total: grep -q 'C11' tools/README.md && grep -Eq '11 (checks|passed)' tools/README.md",
+        "tools/README.md version bumped and recorded (C8) and still frontmatter-valid: bash tools/validate.sh --target tools/README.md; test $? -eq 0",
+        "CHANGELOG.md [Unreleased] names the phase-004 deliverables: python3 -c \"import re,sys; t=open('CHANGELOG.md',encoding='utf-8').read(); m=re.search(r'## \\[Unreleased\\](.*?)(\\n## \\[|$)', t, re.S); s=(m.group(1) if m else ''); need=['verify_lib.sh','contract_review.schema.json','e2e']; sys.exit(0 if all(any(k in s for k in [n]) for n in need) else 1)\"",
+        "CHANGELOG.md [Unreleased] names the new validator checks and the count migration: python3 -c \"import re,sys; t=open('CHANGELOG.md',encoding='utf-8').read(); m=re.search(r'## \\[Unreleased\\](.*?)(\\n## \\[|$)', t, re.S); s=(m.group(1) if m else ''); sys.exit(0 if ('C9' in s and 'C10' in s and 'C11' in s) else 1)\"",
+        "NDEBT-002 moved to Resolved in DEBT.md: python3 -c \"import re,sys; t=open('docs/planning/DEBT.md',encoding='utf-8').read(); res=t.split('## Resolved')[-1]; sys.exit(0 if 'NDEBT-002' in res else 1)\"",
+        "NDEBT-002 no longer appears in the Open section: python3 -c \"import sys; t=open('docs/planning/DEBT.md',encoding='utf-8').read(); openpart=t.split('## Resolved')[0]; sys.exit(1 if 'NDEBT-002' in openpart else 0)\"",
+        "The final tree passes the compliance validator at the new count: out=$(bash tools/validate.sh 2>&1); test $? -eq 0; echo \"$out\" | grep -qx 'SUMMARY: 11 passed, 0 failed'",
+        "The v0.4.0 release is a human gate and NOT auto-cut: test \"$(git tag -l 'v0.4.0' | wc -l)\" -eq 0",
+        "GitHub Pages / publishing not auto-enabled by this phase (no new Pages workflow): ! test -f .github/workflows/pages.yml && ! test -f .github/workflows/gh-pages.yml",
+        "CHANGELOG.md introduces no branding/endpoint leakage (C5 covers it): ! grep -Eqi 'nizamiq|\\.svc|cluster\\.local' CHANGELOG.md",
+        "Only phase-close deliverable files changed outside .agent/ (untracked-aware guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/README.md|CHANGELOG.md|docs/planning/DEBT.md')\""
+      ],
+      "estimated_lines": 70
+    }
+  ]
+}

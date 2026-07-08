@@ -24,6 +24,14 @@
       "status": "complete",
       "activation_state": "active",
       "note": "Lifecycle: proposed 2026-07-08 (planner) -> activated 2026-07-08 on human authorization (\"approveed. please proceed.\", run_state event phase_activated) -> completed 2026-07-08 (run_state event phase_complete; all 6 features 017-022 through the full contract lifecycle, validator green). Human gates outstanding at close (none executed by the pipeline): v0.3.0 release (MINOR), GitHub Pages publishing for docs/guide/, and human review/merge of the phase/003-communication PR."
+    },
+    {
+      "id": "004-durable-enforcement",
+      "title": "Durable Enforcement & Dogfooding — Narrative-Truth CI Checks, Vetted Verification Library, E2E Bootstrap Test & Schema Dogfooding",
+      "feature_list": ".agent/feature_list_004.json",
+      "status": "pending",
+      "activation_state": "proposed",
+      "note": "PROPOSED 2026-07-08 by @planner (spec .agent/product_spec_004.md, feature_list_004.json: 8 features 023-030, DAG validated acyclic, original_estimate_lines=1250). NOT ACTIVATED — awaiting human authorization (same pre-activation lifecycle as phases 002/003: schema enum has no 'proposed' value, so 'pending' + activation_state 'proposed' is used; current_phase stays 003-communication until activation). Realizes four recommendations: R1 narrative-truth CI checks C9 (path resolution) + C10 (single-source-of-truth consistency); R2 hermetic end-to-end consumer-bootstrap test + CI job; R3 tools/verify_lib.sh vetted verification-helper library + a verification-authoring standard in methodology/02; R4 schema reconciliation (qa_verdict union + new contract_review schema) + C11 dogfood validation of the framework's own .agent/ artifacts, resolving NDEBT-002. Adding C9/C10/C11 migrates the validator SUMMARY from '8 passed' to '11 passed' (immutable historical records keep '8 passed'). Execution MUST begin after phase-003 PR #5 merges (rebase onto main); the checks are proven non-breaking against the current tree. Human gate at close: v0.4.0 release (MINOR; additive, no breaking runtime change, bootstrap.sh unmodified) — recorded, not executed."
     }
   ]
 }
