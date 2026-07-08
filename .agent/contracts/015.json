@@ -1,0 +1,60 @@
+{
+  "contract_id": "015",
+  "feature_id": "015",
+  "name": "Phase Close \u2014 CHANGELOG, Green Validator, Release-Decision Human Gate",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_002.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Replace the `_No unreleased changes._` placeholder under the existing `## [Unreleased]` heading with real `### Added` / `### Changed` entries covering all four phase-002 deliverables: (1) ADR-001 (`docs/architecture/ADR-001-ci-compliance-enforcement.md`) recording the CI-compliance-enforcement decision, plus the matching `product_spec.md` \u00a72.1 layout amendment bumping `spec_version` 1.0.0 -> 1.1.0 (feature 011); (2) `tools/validate.sh`, the repo-local NDS compliance validator (C1-C8), its `tools/fixtures/` negative fixtures, and its `NIZAM.json` capability-index entry (feature 012); (3) `.github/workflows/compliance.yml`, the CI gate running the validator on `pull_request` and `push` to `main` (feature 013); (4) the four methodology 0.2.0 hardening sections \u2014 the External Anchor Rule and Mandatory Adversarial Evidence requirement in `methodology/02_adversarial_tdd.md`, the Evidence Capture Convention and Clock-Read Timestamps rule in `methodology/04_tool_driven_state.md`, the Plan Amendment Rule in `methodology/00_planning.md`, and the Release Mechanics Ownership section in `methodology/05_release_train.md` (feature 014). `## [Unreleased]` MUST remain the first version heading in the file, positioned above `## [0.1.0] - 2026-07-08` exactly as today (Keep a Changelog convention \u2014 the ordering lesson from contract 007). The `[0.1.0]` section and everything below it is untouched byte-for-byte. Per `methodology/05_release_train.md` \u00a76 (Release Mechanics Ownership, added in feature 014), the eventual v0.2.0 roll-up of these `[Unreleased]` entries into a dated `## [0.2.0]` heading, and the git tag itself, are release mechanics owned by the release-manager/orchestrator role AFTER human sign-off \u2014 this contract does NOT perform that roll-up and does NOT create any tag."
+      }
+    ]
+  },
+  "non_goals": [
+    "No creation of a v0.2.0 git tag \u2014 the release decision is recorded as a human gate only; the pipeline never cuts the tag",
+    "No version-section roll-up \u2014 CHANGELOG.md's [Unreleased] entries are NOT folded into a new dated [0.2.0] heading in this contract; that roll-up is release mechanics per methodology/05_release_train.md \u00a76, performed by the release-manager/orchestrator role only after human sign-off",
+    "No edits to docs/architecture/ADR-001-ci-compliance-enforcement.md, tools/validate.sh, tools/fixtures/*, .github/workflows/compliance.yml, NIZAM.json, or any methodology/*.md file \u2014 those are the already-complete deliverables of features 011-014 being described, not re-implemented, here",
+    "No edit to any schema/*.json or standard/*.md file",
+    "No edit to the existing [0.1.0] section of CHANGELOG.md or anything below it",
+    "No edit to .agent/run_state.json, .agent/feature_list_002.json, or any completed .agent/contracts/*.json, .agent/qa/*.json, or .agent/evidence/* file \u2014 those are immutable audit records",
+    "No edit to any file beyond CHANGELOG.md and this contract file"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "CHANGELOG.md has an [Unreleased] section naming the phase-002 deliverables: grep -q '## \\[Unreleased\\]' CHANGELOG.md && grep -Eqi 'validate\\.sh|compliance|CI enforcement' CHANGELOG.md -- STRENGTHENED (Keep-a-Changelog ordering lesson from contract 007): also asserts, by line number, that '## [Unreleased]' is the FIRST version heading in the file and remains positioned above '## [0.1.0]', and that the deliverable phrasing is found specifically within the Unreleased section's own body (not merely somewhere in the whole file), so a check anchored on the wrong section cannot vacuously pass.",
+      "command": "f=CHANGELOG.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; first_heading_line=$(grep -n '^## \\[' \"$f\" | head -1 | cut -d: -f1); u_line=$(grep -n '^## \\[Unreleased\\]' \"$f\" | head -1 | cut -d: -f1); test -n \"$u_line\" || { echo \"no '## [Unreleased]' heading found\"; exit 1; }; test \"$first_heading_line\" = \"$u_line\" || { echo \"[Unreleased] (line $u_line) is not the first version heading (first is line $first_heading_line) -- ordering violation\"; exit 1; }; v_line=$(grep -n '^## \\[0\\.1\\.0\\]' \"$f\" | head -1 | cut -d: -f1); test -n \"$v_line\" || { echo \"no '## [0.1.0]' heading found\"; exit 1; }; test \"$u_line\" -lt \"$v_line\" || { echo \"ordering violation: [Unreleased] (line $u_line) must stay above [0.1.0] (line $v_line)\"; exit 1; }; next_line=$(awk -v start=\"$u_line\" 'NR>start && /^## \\[/{print NR; exit}' \"$f\"); test -n \"$next_line\" || { echo \"could not bound the Unreleased section (no following heading found)\"; exit 1; }; section=$(sed -n \"${u_line},${next_line}p\" \"$f\"); echo \"$section\" | grep -Eqi 'validate\\.sh|compliance|CI enforcement' && echo PASS || { echo \"Unreleased section body lacks phase-002 deliverable phrasing (validate.sh/compliance/CI enforcement)\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "CHANGELOG [Unreleased] references the compliance validator and CI workflow: grep -q 'tools/validate.sh' CHANGELOG.md && grep -q 'compliance.yml' CHANGELOG.md -- STRENGTHENED: also asserts the placeholder '_No unreleased changes._' has been removed (replaced with real content), since a file could satisfy the literal grep while leaving the placeholder line present alongside new content.",
+      "command": "f=CHANGELOG.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q '_No unreleased changes_\\.' \"$f\" && { echo \"placeholder '_No unreleased changes._' is still present -- must be replaced, not appended alongside\"; exit 1; }; grep -q 'tools/validate.sh' \"$f\" && grep -q 'compliance.yml' \"$f\" && echo PASS || { echo \"missing 'tools/validate.sh' or 'compliance.yml' reference in $f\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "The final tree passes the compliance validator: bash tools/validate.sh; test $? -eq 0 -- STRENGTHENED per the 014 lesson: asserts the exact summary line 'SUMMARY: 8 passed, 0 failed' in addition to the exit code, so a validator that silently skipped or miscounted a check cannot false-pass this entry.",
+      "command": "test -f tools/validate.sh || { echo \"MISSING tools/validate.sh\"; exit 1; }; out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | grep -qx 'SUMMARY: 8 passed, 0 failed' || { echo \"expected exact summary line 'SUMMARY: 8 passed, 0 failed', got: $(echo \"$out\" | grep '^SUMMARY:')\"; exit 1; }; test \"$rc\" -eq 0 && echo PASS || { echo \"tools/validate.sh exited $rc, expected 0\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "The release decision is recorded as a human gate (v0.2.0 MINOR) and NOT auto-cut: git tag -l 'v0.2.0' | wc -l outputs 0",
+      "command": "cnt=$(git tag -l 'v0.2.0' | wc -l); test \"$cnt\" -eq 0 && echo PASS || { echo \"expected 0 v0.2.0 tags (release remains a human gate), found $cnt\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "NIZAM.json remains schema-valid with all indexed paths resolving on the final tree (regression guard via bash tools/validate.sh exit 0) -- STRENGTHENED per the External Anchor Rule (methodology/02_adversarial_tdd.md, G6): re-running tools/validate.sh a second time would anchor this check's truth reference on the same artifact test 3 already ran, not an independent source. This command instead validates NIZAM.json directly against registry/nizam-index.schema.json via jsonschema and independently walks every indexed path with a fresh walker script (the same generalised logic proven in contract 012's verification), anchoring on the schema and filesystem themselves rather than on validate.sh's own self-reported summary.",
+      "command": "test -f NIZAM.json || { echo 'MISSING NIZAM.json'; exit 1; }; test -f registry/nizam-index.schema.json || { echo 'MISSING registry/nizam-index.schema.json'; exit 1; }; python3 -c \"\nimport json, jsonschema, os\nschema = json.load(open('registry/nizam-index.schema.json'))\ninstance = json.load(open('NIZAM.json'))\njsonschema.validate(instance=instance, schema=schema)\npath_keys = ('path', 'authoritative_source')\nlist_path_keys = ('key_documents', 'schemas', 'templates')\npaths = []\ndef walk(node, key=None):\n    if isinstance(node, dict):\n        for k, v in node.items():\n            walk(v, k)\n    elif isinstance(node, list):\n        if key in list_path_keys:\n            for item in node:\n                if isinstance(item, str):\n                    paths.append(item)\n                else:\n                    walk(item, key)\n        else:\n            for item in node:\n                walk(item, key)\n    elif isinstance(node, str):\n        if key in path_keys:\n            paths.append(node)\nwalk(instance)\nassert paths, 'no paths discovered by walker -- index appears empty'\nmissing = [p for p in paths if p != 'NA' and not os.path.exists(p)]\nassert not missing, f'missing paths: {missing}'\nprint(f'PASS ({len(paths)} paths checked)')\n\""
+    },
+    {
+      "acceptance_test": "ADDITIONAL (not in feature_list_002.json; a scope-guard per methodology/02_adversarial_tdd.md Sec 5, dogfooded on this very contract, matching the pattern used in contract 014): confirms the non-.agent working-tree diff touches exactly CHANGELOG.md, no more and no fewer -- catching an accidental leftover edit or missed file (e.g. any of the already-complete feature 011-014 deliverables, or the [0.1.0] section, all explicitly out of scope per this contract's non_goals).",
+      "command": "changed=$(git diff --name-only HEAD -- . ':(exclude).agent' | LC_ALL=C sort); expected=$(printf '%s\\n' CHANGELOG.md | LC_ALL=C sort); if [ \"$changed\" = \"$expected\" ]; then echo PASS; else echo \"scope drift -- got:\"; echo \"$changed\"; echo \"expected:\"; echo \"$expected\"; exit 1; fi"
+    }
+  ],
+  "estimated_lines": 40,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/015-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/015-verify-01.txt for the first entry, ..., .agent/evidence/015-verify-06.txt for the sixth). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths (e.g. no /tmp scratch-session paths) inside any recorded command. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T20:10:00Z",
+    "revisions": 0
+  }
+}

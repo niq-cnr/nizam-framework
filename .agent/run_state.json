@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "002-self-compliance",
-  "current_feature": "015",
-  "status": "contract_negotiation",
-  "updated_at": "2026-07-08T19:20:00Z",
+  "current_feature": null,
+  "status": "phase_complete",
+  "updated_at": "2026-07-08T21:30:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -50,6 +50,10 @@
       "limit": 3
     },
     "014-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "015-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -259,6 +263,16 @@
       "at": "2026-07-08T19:20:00Z",
       "event": "feature_complete",
       "detail": "Feature 014 complete: both gates first-pass, QA 9/9 + self-referential adversarial audit. QA honestly self-reported that its own 012-014 evidence files predate-violate the new Evidence Capture Convention (script labels + session paths) - corrective item: all future evidence rounds, starting with 015, must comply with 04_tool_driven_state Sec 5. 158 lines vs 220 est. Cumulative 1086/1625. Advancing to 015 (deps 013+014 complete)."
+    },
+    {
+      "at": "2026-07-08T20:10:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 015 (phase close) approved first-pass by both gates. Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T21:30:00Z",
+      "event": "phase_complete",
+      "detail": "Feature 015 complete: both gates first-pass, QA 6/6 + phase-completeness adversarial audit; evaluator evidence-format regression corrected (015-qa files strictly per 04 Sec 5). Phase 002-self-compliance CLOSED: 5/5 features through the full lifecycle, validator green (SUMMARY: 8 passed, 0 failed), cumulative 1121/1625. v0.2.0 release remains the human gate per 05_release_train Sec 6. Opening PR."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -334,7 +348,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1250,
-    "total_lines_changed": 1086,
+    "total_lines_changed": 1121,
     "per_feature": [
       {
         "id": "011",
@@ -359,6 +373,12 @@
         "id": "014",
         "estimated": 220,
         "actual": 158,
+        "flag": null
+      },
+      {
+        "id": "015",
+        "estimated": 40,
+        "actual": 35,
         "flag": null
       }
     ],
