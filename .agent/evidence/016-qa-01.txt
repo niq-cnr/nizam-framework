@@ -1,0 +1,4 @@
+f=.github/workflows/compliance.yml; test -f "$f" || { echo "MISSING $f"; exit 1; }; cnt=$(grep -Ec 'uses: actions/(checkout|setup-python)@[0-9a-f]{40} # v' "$f"); echo "count=$cnt"; test "$cnt" -eq 2 && echo PASS || { echo "expected 2 SHA-pinned uses: lines, got $cnt"; exit 1; }
+count=2
+PASS
+EXIT:0

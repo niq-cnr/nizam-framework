@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "002-self-compliance",
-  "current_feature": "016",
-  "status": "contract_negotiation",
-  "updated_at": "2026-07-08T22:40:00Z",
+  "current_feature": null,
+  "status": "phase_complete",
+  "updated_at": "2026-07-09T00:40:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -54,6 +54,10 @@
       "limit": 3
     },
     "015-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "016-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -278,6 +282,16 @@
       "at": "2026-07-08T22:40:00Z",
       "event": "amendment_authorized",
       "detail": "PR #3 review findings triaged per human instruction (verify/fix-valid/skip-with-reason): 7 still-valid (4 workflow hardenings incl. source-verified SHA pins checkout@11bd7190/setup-python@0b93645e, 2 validator fixes, 1 spec_002 tree line), 1 orchestrator state fix (manifest stale note, corrected in this update), 2 skipped (immutable 013-verify-05 evidence with companion-check coverage; completed-plan loose grep superseded by contract 014 v[7] exact assertion). Feature 016 registered per Plan Amendment Rule (00_planning Sec 9)."
+    },
+    {
+      "at": "2026-07-08T23:30:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 016 approved first-pass by both gates; evaluator empirically reproduced the C5-die abort and the comment-tolerance evasion pre-fix, and the corrected behavior post-fix. Delegating implementation."
+    },
+    {
+      "at": "2026-07-09T00:40:00Z",
+      "event": "amendment_complete",
+      "detail": "Feature 016 complete: contract first-pass both gates, 1 post-approval amendment (unquoted-literal SyntaxError in v[5]; missing run_state exclusion in v[7] - both ratified by Mode B as test-defect corrections), QA 8/8 + API-anchored SHA verification + structural workflow regression. 49 lines vs 45 est. Cumulative 1170/1625. Pushing to PR #3 and answering review threads."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -353,7 +367,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1250,
-    "total_lines_changed": 1121,
+    "total_lines_changed": 1170,
     "per_feature": [
       {
         "id": "011",
@@ -384,6 +398,12 @@
         "id": "015",
         "estimated": 40,
         "actual": 35,
+        "flag": null
+      },
+      {
+        "id": "016",
+        "estimated": 45,
+        "actual": 49,
         "flag": null
       }
     ],

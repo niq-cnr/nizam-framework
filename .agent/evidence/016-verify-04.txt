@@ -1,0 +1,19 @@
+scratch=$(mktemp -d); trap 'rm -rf "$scratch"' EXIT; cp -a . "$scratch/repo"; cd "$scratch/repo"; mkdir -p docs/architecture; { echo '<!-- not a fixture -->'; sed -n '/^---$/,/^---$/p' CONTEXT.md; } > docs/architecture/SCRATCH-COMMENT-TEST.md; out1=$(bash tools/validate.sh --target docs/architecture/SCRATCH-COMMENT-TEST.md 2>&1); rc1=$?; echo "$out1"; test "$rc1" -ne 0 || { echo "expected non-fixture leading-comment doc to FAIL C1"; exit 1; }; echo "$out1" | grep -q "does not begin with a '---' frontmatter delimiter" || { echo "expected the specific C1 delimiter-missing error, got different failure"; exit 1; }; for fx in tools/fixtures/bad_authoritative_source.md tools/fixtures/untagged_fence.md; do out2=$(bash tools/validate.sh --target "$fx" 2>&1); echo "$out2"; echo "$out2" | grep -q "does not begin with a '---' frontmatter delimiter" && { echo "regression: $fx no longer tolerated as a fixture"; exit 1; }; echo "$out2" | grep -q '\[C1\] PASS' || { echo "$fx: C1 did not pass"; exit 1; }; done; echo PASS
+[C1] FAIL frontmatter-schema
+  docs/architecture/SCRATCH-COMMENT-TEST.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  docs/architecture/SCRATCH-COMMENT-TEST.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+SUMMARY: 1 passed, 2 failed
+[C1] PASS frontmatter-schema
+[C2] FAIL format
+  tools/fixtures/bad_authoritative_source.md: authoritative_source 'standard/NDS.md' != own path 'tools/fixtures/bad_authoritative_source.md' and != 'NA'
+[C3] PASS untagged-fence-sweep
+SUMMARY: 2 passed, 1 failed
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] FAIL untagged-fence-sweep
+  tools/fixtures/untagged_fence.md:17
+SUMMARY: 2 passed, 1 failed
+PASS
+EXIT:0

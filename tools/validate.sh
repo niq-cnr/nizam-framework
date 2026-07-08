@@ -217,12 +217,19 @@ except OSError as exc:
 
 lines = text.splitlines()
 
-# A single leading HTML comment line (`<!-- ... -->`) is tolerated ONLY as
-# the intentional-negative-fixture marker documented in .agent/contracts/012.json
-# (tools/fixtures/*.md); real shipped documents never carry one, so this is
-# a no-op for the production shipped-doc set.
+# A single leading HTML comment line (`<!-- ... -->`) is tolerated ONLY for
+# paths under tools/fixtures/ -- the intentional-negative-fixture marker
+# documented in .agent/contracts/012.json. Any shipped (non-fixtures) `.md`
+# with a leading HTML comment before its frontmatter fails C1 below with the
+# "does not begin with a '---' frontmatter delimiter" message, same as any
+# other missing-frontmatter file.
 start = 0
-if lines and lines[0].strip().startswith("<!--") and lines[0].strip().endswith("-->"):
+if (
+    path.startswith("tools/fixtures/")
+    and lines
+    and lines[0].strip().startswith("<!--")
+    and lines[0].strip().endswith("-->")
+):
     start = 1
 
 if start >= len(lines) or lines[start].strip() != "---":
@@ -476,11 +483,17 @@ check_c5_branding() {
   local extra=(NIZAM.json CHANGELOG.md README.md bootstrap.sh)
   local all=("${shipped[@]}" "${extra[@]}")
   local f
+  local missing=()
 
   for f in "${all[@]}"; do
-    [ -f "${f}" ] \
-      || die "C5 leakage sweep target '${f}' is missing -- refusing to trust an absence-of-match result."
+    [ -f "${f}" ] || missing+=("${f}")
   done
+
+  if [ "${#missing[@]}" -gt 0 ]; then
+    echo "[C5] FAIL branding-leakage"
+    echo "  sweep target(s) missing: ${missing[*]} -- refusing to trust an absence-of-match result (skipping grep sweep for this invocation)."
+    return 1
+  fi
 
   local hits
   if hits=$(grep -InE 'nizamiq|\.svc|cluster\.local' "${all[@]}" 2>/dev/null); then

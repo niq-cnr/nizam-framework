@@ -6,14 +6,17 @@ tags: [spec, governance, self-compliance, ci, validator, phase-002]
 status: draft
 last_audited: "2026-07-08"
 authoritative_source: NA
-version: 1.0.0
-spec_version: "1.0.0"
+version: 1.0.1
+spec_version: "1.0.1"
 created_at: "2026-07-08T00:00:00Z"
 updated_at: "2026-07-08T00:00:00Z"
 change_log:
   - version: "1.0.0"
     date: "2026-07-08T00:00:00Z"
     summary: "Initial phase-002 spec addendum (self-compliance hardening). PROPOSED — awaiting human authorization."
+  - version: "1.0.1"
+    date: "2026-07-08T00:00:00Z"
+    summary: "PR #3 review finding (feature 016): §3 layout tree gains a tools/fixtures/ line documenting the already-shipped negative fixtures (F-012)."
 ---
 
 # Nizam Framework — Phase 002 Spec Addendum (Self-Compliance Hardening)
@@ -53,7 +56,8 @@ entry per NDS §4) to record them:
 ```text
 nizam-framework/
 ├── .github/workflows/     # CI enforcement of NDS §7 (compliance.yml)
-└── tools/validate.sh      # Runtime-agnostic repo-local compliance validator
+├── tools/validate.sh      # Runtime-agnostic repo-local compliance validator
+└── tools/fixtures/        # Negative fixtures for tools/validate.sh --target (F-012)
 ```
 
 The layout amendment is F-011's deliverable, not the planner's; this section only

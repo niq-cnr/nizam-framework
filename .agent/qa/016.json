@@ -1,0 +1,21 @@
+{
+  "feature_id": "016",
+  "verdict": "pass",
+  "executed_at": "2026-07-08",
+  "checks": [
+    {"command": "compliance.yml: 2 SHA-pinned uses: lines with version comments", "exit_code": 0, "evidence": ".agent/evidence/016-qa-01.txt"},
+    {"command": "permissions/concurrency/persist-credentials structural assertions (fetch-depth:0 preserved)", "exit_code": 0, "evidence": ".agent/evidence/016-qa-02.txt"},
+    {"command": "behavioral: C5 missing-target (NIZAM.json deleted, mktemp scratch) emits [C5] FAIL and still reaches SUMMARY", "exit_code": 0, "evidence": ".agent/evidence/016-qa-03.txt"},
+    {"command": "behavioral: fixture-scoped comment tolerance -- non-fixture leading-comment doc fails C1, existing fixtures still pass", "exit_code": 0, "evidence": ".agent/evidence/016-qa-04.txt"},
+    {"command": "product_spec_002.md: Sec 3 tree has tools/fixtures/, frontmatter version/spec_version 1.0.1 + matching change_log", "exit_code": 0, "evidence": ".agent/evidence/016-qa-05.txt"},
+    {"command": "clean-tree validate.sh: exact 'SUMMARY: 8 passed, 0 failed', exit 0", "exit_code": 0, "evidence": ".agent/evidence/016-qa-06.txt"},
+    {"command": "scope guard: non-.agent diff exactly compliance.yml+validate.sh; .agent diff limited to product_spec_002.md/contract/evidence/run_state", "exit_code": 0, "evidence": ".agent/evidence/016-qa-07.txt"},
+    {"command": "equivalence guard: workflow run step is still exactly 'bash tools/validate.sh'", "exit_code": 0, "evidence": ".agent/evidence/016-qa-08.txt"}
+  ],
+  "adversarial_check": {
+    "description": "Three-part mandatory check beyond the 8 listed commands. (a) External Anchor: queried the live GitHub API directly (not run_state's recorded provenance) for both tags -- api.github.com/repos/actions/checkout/git/refs/tags/v4.2.2 resolves to 11bd71901bbe5b1630ceea73d27597364c9af683, and api.github.com/repos/actions/setup-python/git/refs/tags/v5.3.0 resolves to 0b93645e9fea7318ecaed2b359559ac225c90a2b -- both match the workflow's pinned SHAs exactly, independently reconfirming the provenance this contract consumed rather than trusting it. (b) Full structural YAML parse of the complete final workflow shape: triggers (pull_request unfiltered, push branches==[main]), permissions=={'contents':'read'}, concurrency group+cancel-in-progress, exactly 1 job/4 steps, both pinned uses: lines with their full with-blocks (fetch-depth:0 + persist-credentials:false; python-version:3.x), the pip-install step, and the run step -- all present, nothing silently dropped in the hardening edit. (c) git-stash-isolated comparison of tools/validate.sh's clean-tree summary immediately before vs. after this feature's three file changes: both sides produce byte-identical 'SUMMARY: 8 passed, 0 failed' with exit 0 -- no check-count drift. Working tree confirmed restored and stash-clean afterward.",
+    "result": "pass",
+    "evidence": ".agent/evidence/016-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

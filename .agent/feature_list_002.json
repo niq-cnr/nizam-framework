@@ -106,7 +106,7 @@
       "id": "016",
       "name": "PR #3 Review Remediation (post-phase amendment)",
       "description": "Human-directed remediation of still-valid PR #3 review findings on shipped content, registered per methodology/00_planning.md Sec 9 (Plan Amendment Rule): compliance.yml hardening (actions pinned to source-verified commit SHAs, least-privilege permissions contents:read, concurrency cancel-in-progress, persist-credentials false); tools/validate.sh robustness (check_c5_branding fails with [C5] FAIL + return 1 instead of die so C6-C8 and SUMMARY still run; frontmatter leading-HTML-comment tolerance scoped to tools/fixtures/ paths only, closing a latent C1 evasion vector); product_spec_002.md Sec 3 layout tree gains tools/fixtures/ (patch bump + change_log). Manifest stale-note fix handled as orchestrator state correction. Skipped with reasons: 013-verify-05 evidence (immutable capture; pull_request-absence covered by companion grep check v[3]) and feature_list_002 test 7's loose version grep (completed plan artifact; superseded at execution by contract 014 v[7]'s exact YAML-parsed version==0.2.0 assertion).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "015"
       ],

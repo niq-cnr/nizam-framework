@@ -1,0 +1,81 @@
+{
+  "contract_id": "016",
+  "feature_id": "016",
+  "name": "PR #3 Review Remediation (post-phase amendment)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_002.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "Four hardenings, all cited by run_state.json history event 2026-07-08T22:40:00Z (amendment_authorized) as still-valid PR #3 findings; triggers, job shape, `fetch-depth: 0`, `pip install jsonschema pyyaml`, and the `run: bash tools/validate.sh` step are UNCHANGED. (a) Pin both `uses:` refs to source-verified commit SHAs with trailing version comments, replacing floating major-version tags: `uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2` and `uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0` -- both 40-char SHAs were verified against the GitHub API by the orchestrator and recorded as source-verified in the same 2026-07-08T22:40:00Z history event; this contract consumes that provenance, it does not re-verify the SHAs itself. (b) Add a top-level `permissions:` block scoped to least privilege: `contents: read`. (c) Add a top-level `concurrency:` block: `group: ${{ github.workflow }}-${{ github.ref }}` and `cancel-in-progress: true`, so overlapping runs on the same ref are superseded rather than queued. (d) Add `persist-credentials: false` to the existing `actions/checkout` step's `with:` block, alongside the existing `fetch-depth: 0` key (both keys coexist under the same `with:` mapping)."
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "Two fixes, both cited by the same 2026-07-08T22:40:00Z history event. (a) check_c5_branding (~lines 474-494): the per-target existence loop currently calls `die \"C5 leakage sweep target '${f}' is missing...\"` on a missing file, and `die()` unconditionally exits the entire script (see lines 33-36), which aborts before C6-C8 run and before the `SUMMARY:` line prints -- inconsistent with every other check_* function (e.g. check_c6_bootstrap, lines 500-505), which report failure locally via `echo \"[CN] FAIL ...\"` + an explanatory `echo \"  ...\"` line and `return 1`, letting main()'s `&&/||` accumulation continue to the next check. Replace the `die` call: collect missing targets into an array during the existence loop instead of dying inline, and if any are missing, `echo \"[C5] FAIL branding-leakage\"`, echo an explanatory line naming the missing target(s) (preserving the existing refusing-to-trust-an-absence-of-match rationale), and `return 1` -- skipping the grep sweep for that invocation, exactly as check_c6_bootstrap skips its `bash -n` step when `./bootstrap.sh` is absent. The grep-hit failure path and the PASS path (lines 486-493) are unchanged. (b) frontmatter_python (~lines 219-226): the single-leading-HTML-comment tolerance currently applies to every path passed to the helper, keyed only on the first line's shape, not on where the file lives. `path` (sys.argv[2]) is already passed into the same Python heredoc that reads the tolerance condition, so no new argument threading is required -- add a `path.startswith(\"tools/fixtures/\")` guard to the existing `if lines and lines[0].strip().startswith(\"<!--\")...` condition so the tolerance activates ONLY for paths under `tools/fixtures/`. Update the adjacent comment (currently describing the tolerance as a repo-wide no-op for shipped docs) to instead state the now-true, narrower behavior: the tolerance is fixture-scoped, and any shipped (non-fixtures) `.md` with a leading HTML comment before its frontmatter now fails C1 with the existing 'does not begin with a `---` frontmatter delimiter' message. No other frontmatter_python logic (YAML parse, schema/format branches) changes."
+      },
+      {
+        "path": ".agent/product_spec_002.md",
+        "purpose": "Two changes. (a) SS3's layout tree (lines 53-57) gains a `tools/fixtures/` line consistent with the tree's existing style (box-drawing prefix + right-aligned `#` comment), documenting the negative fixtures already shipped under F-012: since `tools/validate.sh` is no longer the last entry once `tools/fixtures/` is added, its prefix changes from `\u2514\u2500\u2500` to `\u251c\u2500\u2500` and the new `tools/fixtures/` line becomes the final `\u2514\u2500\u2500` entry, e.g. `\u2514\u2500\u2500 tools/fixtures/         # Negative fixtures for tools/validate.sh --target (F-012)`. (b) Frontmatter (lines 9-16): bump `version` 1.0.0 -> 1.0.1 and `spec_version` \"1.0.0\" -> \"1.0.1\" (PATCH -- editorial/documentation addition to an already-implemented feature's layout record, not a new capability), and append one `change_log` entry (NDS SS4) dated after the existing 1.0.0 entry describing the `tools/fixtures/` tree-line addition per feature 016."
+      }
+    ]
+  },
+  "non_goals": [
+    "No changes to the workflow's triggers (pull_request / push-to-main), job/step shape, fetch-depth: 0, pip install line, or the `run: bash tools/validate.sh` step itself",
+    "No validator check-logic changes beyond check_c5_branding's missing-target handling and frontmatter_python's comment-tolerance scoping -- C1-C4, C6-C8, and the rest of C5 (the grep sweep and its extra-targets list) are unchanged",
+    "No edits to tools/fixtures/*.md or tools/fixtures/broken_index.json (the existing negative fixtures) -- feature 016 only documents their directory in the spec tree, it does not modify them",
+    "No edits to any immutable completed-feature artifact: .agent/contracts/000.json-015.json, .agent/qa/*.json, .agent/evidence/000-*.txt through 015-*.txt, or feature_list_002.json's acceptance-test text for any already-complete feature",
+    "No CHANGELOG.md edit -- this amendment is not a phase-close or release event",
+    "No manifest.json edit -- the manifest stale-note fix is an orchestrator state correction handled outside this contract, per the 2026-07-08T22:40:00Z history event",
+    "No .agent/run_state.json edit by the generator -- run_state is orchestrator-owned (AGF Sec 5 rule 4; see the 2026-07-08T16:30:00Z state_correction history precedent)",
+    "No re-verification of the two commit SHAs against the GitHub API -- this contract consumes the orchestrator's already-recorded source-verified provenance, it does not re-derive it",
+    "No edit to any file beyond .github/workflows/compliance.yml, tools/validate.sh, .agent/product_spec_002.md, and this contract file"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "compliance.yml pins both actions to full 40-char commit SHAs with version comments: grep -Ec 'uses: actions/(checkout|setup-python)@[0-9a-f]{40} # v' .github/workflows/compliance.yml outputs 2",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; cnt=$(grep -Ec 'uses: actions/(checkout|setup-python)@[0-9a-f]{40} # v' \"$f\"); echo \"count=$cnt\"; test \"$cnt\" -eq 2 && echo PASS || { echo \"expected 2 SHA-pinned uses: lines, got $cnt\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "compliance.yml declares permissions contents: read, a concurrency group with cancel-in-progress true, and persist-credentials: false (python3 yaml structural assertions)",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\ndoc = yaml.safe_load(open('$f'))\nassert doc.get('permissions') == {'contents': 'read'}, f\\\"permissions mismatch: {doc.get('permissions')}\\\"\nconc = doc.get('concurrency')\nassert isinstance(conc, dict), f\\\"concurrency missing or not a mapping: {conc}\\\"\nassert 'group' in conc and conc['group'], f\\\"concurrency.group missing/empty: {conc}\\\"\nassert conc.get('cancel-in-progress') is True, f\\\"cancel-in-progress not True: {conc.get('cancel-in-progress')}\\\"\nsteps = doc['jobs']['validate']['steps']\ncheckout_steps = [s for s in steps if str(s.get('uses', '')).startswith('actions/checkout@')]\nassert checkout_steps, 'no actions/checkout step found'\nwith_block = checkout_steps[0].get('with', {})\nassert with_block.get('persist-credentials') is False, f\\\"persist-credentials not False: {with_block.get('persist-credentials')}\\\"\nassert with_block.get('fetch-depth') == 0, f\\\"fetch-depth: 0 regressed: {with_block.get('fetch-depth')}\\\"\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "validate.sh C5 missing-target failure emits [C5] FAIL and still reaches SUMMARY (mutated-copy behavioral test: delete NIZAM.json in a cp -a scratch copy, run validator, assert non-zero exit AND '[C5] FAIL' AND a 'SUMMARY:' line both present)",
+      "command": "scratch=$(mktemp -d); trap 'rm -rf \"$scratch\"' EXIT; cp -a . \"$scratch/repo\"; rm -f \"$scratch/repo/NIZAM.json\"; out=$(cd \"$scratch/repo\" && bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"rc=$rc\"; test \"$rc\" -ne 0 || { echo \"expected non-zero exit with NIZAM.json missing\"; exit 1; }; echo \"$out\" | grep -q '\\[C5\\] FAIL' || { echo \"missing '[C5] FAIL' in output\"; exit 1; }; echo \"$out\" | grep -Eq '^SUMMARY:' || { echo \"missing SUMMARY line -- script aborted before reaching it (die regression)\"; exit 1; }; echo PASS"
+    },
+    {
+      "acceptance_test": "validate.sh frontmatter comment tolerance is fixture-scoped (behavioral: a scratch shipped .md with a leading HTML comment before frontmatter now FAILS C1; the shipped fixtures still parse via --target)",
+      "command": "scratch=$(mktemp -d); trap 'rm -rf \"$scratch\"' EXIT; cp -a . \"$scratch/repo\"; cd \"$scratch/repo\"; mkdir -p docs/architecture; { echo '<!-- not a fixture -->'; sed -n '/^---$/,/^---$/p' CONTEXT.md; } > docs/architecture/SCRATCH-COMMENT-TEST.md; out1=$(bash tools/validate.sh --target docs/architecture/SCRATCH-COMMENT-TEST.md 2>&1); rc1=$?; echo \"$out1\"; test \"$rc1\" -ne 0 || { echo \"expected non-fixture leading-comment doc to FAIL C1\"; exit 1; }; echo \"$out1\" | grep -q \"does not begin with a '---' frontmatter delimiter\" || { echo \"expected the specific C1 delimiter-missing error, got different failure\"; exit 1; }; for fx in tools/fixtures/bad_authoritative_source.md tools/fixtures/untagged_fence.md; do out2=$(bash tools/validate.sh --target \"$fx\" 2>&1); echo \"$out2\"; echo \"$out2\" | grep -q \"does not begin with a '---' frontmatter delimiter\" && { echo \"regression: $fx no longer tolerated as a fixture\"; exit 1; }; echo \"$out2\" | grep -q '\\[C1\\] PASS' || { echo \"$fx: C1 did not pass\"; exit 1; }; done; echo PASS"
+    },
+    {
+      "acceptance_test": "product_spec_002.md Sec 3 tree includes tools/fixtures/ and its frontmatter carries version 1.0.1 with a matching change_log entry (YAML-parsed)",
+      "command": "f=.agent/product_spec_002.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'tools/fixtures/' \"$f\" || { echo \"Sec 3 tree missing tools/fixtures/ line\"; exit 1; }; python3 -c \"\nlines = open('$f', encoding='utf-8').read().splitlines()\nassert lines[0].strip() == '---', 'frontmatter must open with ---'\nend = next(i for i in range(1, len(lines)) if lines[i].strip() == '---')\nimport yaml\nfm = yaml.safe_load('\\n'.join(lines[1:end]))\nassert fm['version'] == '1.0.1', f\\\"version not 1.0.1: {fm['version']}\\\"\nassert fm['spec_version'] == '1.0.1', f\\\"spec_version not 1.0.1: {fm['spec_version']}\\\"\nversions = [str(c['version']) for c in fm['change_log']]\nassert '1.0.1' in versions, f\\\"change_log missing 1.0.1 entry: {versions}\\\"\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "bash tools/validate.sh on the clean tree still prints SUMMARY: 8 passed, 0 failed and exits 0",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | grep -qx 'SUMMARY: 8 passed, 0 failed' || { echo \"expected exact summary line 'SUMMARY: 8 passed, 0 failed', got: $(echo \"$out\" | grep '^SUMMARY:')\"; exit 1; }; test \"$rc\" -eq 0 && echo PASS || { echo \"tools/validate.sh exited $rc, expected 0\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (not in feature_list_002.json; a scope guard per methodology/02_adversarial_tdd.md Sec 5, dogfooded on this contract, matching the pattern used in contracts 014/015): confirms the non-.agent working-tree diff touches exactly compliance.yml + validate.sh, and that the only .agent content change beyond this contract file, this feature's own evidence directory, and the standing run_state.json orchestrator-overhead exclusion (established convention, contracts 008/009 -- run_state.json is orchestrator-owned and legitimately dirty at evaluator time) is product_spec_002.md.",
+      "command": "changed_non_agent=$(git diff --name-only HEAD -- . ':(exclude).agent' | LC_ALL=C sort); expected_non_agent=$(printf '%s\\n' .github/workflows/compliance.yml tools/validate.sh | LC_ALL=C sort); if [ \"$changed_non_agent\" != \"$expected_non_agent\" ]; then echo \"scope drift outside .agent -- got:\"; echo \"$changed_non_agent\"; echo \"expected:\"; echo \"$expected_non_agent\"; exit 1; fi; changed_agent=$(git diff --name-only HEAD -- .agent | LC_ALL=C sort); unexpected_agent=$(echo \"$changed_agent\" | grep -v -E '^\\.agent/product_spec_002\\.md$|^\\.agent/contracts/016\\.json$|^\\.agent/evidence/016-verify-[0-9]+\\.txt$|^\\.agent/run_state\\.json$' || true); if [ -n \"$unexpected_agent\" ]; then echo \"unexpected .agent changes:\"; echo \"$unexpected_agent\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (equivalence guard): the workflow's extracted run command is still exactly `bash tools/validate.sh` -- catches an accidental rewrite of the invocation line while hardening the surrounding YAML.",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\ndoc = yaml.safe_load(open('$f'))\nsteps = doc['jobs']['validate']['steps']\nrun_steps = [s for s in steps if 'run' in s]\nmatches = [s['run'].strip() for s in run_steps if s['run'].strip() == 'bash tools/validate.sh']\nassert matches, f\\\"no step with run == exactly 'bash tools/validate.sh' -- run steps were: {[s['run'] for s in run_steps]}\\\"\nprint('PASS')\n\""
+    }
+  ],
+  "estimated_lines": 45,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/016-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/016-verify-01.txt for the first entry, ..., .agent/evidence/016-verify-08.txt for the eighth). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths (mktemp-created scratch directories used by verify-03 and verify-04 are runtime-generated, not session-absolute, and are cleaned up via trap; the recorded invocation itself contains no /tmp session path literal). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T23:30:00Z",
+    "revisions": 0
+  },
+  "amendments": [
+    "2026-07-08: verification[5] unquoted 1.0.1 literal quoted (SyntaxError -- test could never pass); verification[7] .agent guard gains the standing run_state.json orchestrator-overhead exclusion. Both defects surfaced at implementation; deliverables unaffected."
+  ]
+}
