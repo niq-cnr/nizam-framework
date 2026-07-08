@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "003-communication",
-  "current_feature": "022",
-  "status": "phase_complete",
-  "updated_at": "2026-07-08T11:03:36Z",
+  "current_phase": "004-durable-enforcement",
+  "current_feature": "023",
+  "status": "implementing",
+  "updated_at": "2026-07-08T12:16:43Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -420,6 +420,11 @@
       "at": "2026-07-08T11:03:36Z",
       "event": "pr_opened",
       "detail": "Phase 003 handed off to human review on authorization ('Push + open PR'): pushed the 6 feature commits (f84cca0..e6024c2) to origin/phase/003-communication and opened PR #5 (https://github.com/niq-cnr/nizam-framework/pull/5) into main, with the phase summary + the 3 outstanding human gates (PR merge, v0.3.0 release, GitHub Pages) in the body incl. an Ecosystem Impact section (none - NDEBT-001, repo out of ECOSYSTEM.json scope). Pipeline self-merges nothing. Awaiting human review/merge."
+    },
+    {
+      "at": "2026-07-08T12:16:43Z",
+      "event": "phase_activated",
+      "detail": "Phase 004-durable-enforcement ACTIVATED by human ('approved. please proceed.', 2026-07-08) after PR #5 (phase 003) and PR #6 (release roll-up) merged and v0.2.0+v0.3.0 were released. Branch phase/004-durable-enforcement rebased onto the released main (913aa49). Manifest flipped to in_progress/active; scope budget reset (1250 est, ceiling 1625 at 130%; phase-003 final archived as phase_003_scope_budget_final). 8 features 023-030 realize R1 narrative-truth CI checks (C9 path-resolution + C10 single-source-of-truth consistency), R2 hermetic e2e bootstrap test, R3 tools/verify_lib.sh vetted verification library + authoring standard, R4 schema reconciliation + C11 dogfood validation (resolves NDEBT-002). Execution begins at feature 023 (tools/verify_lib.sh - foundational, so later contracts compose vetted primitives). Adding C9/C10/C11 migrates the validator SUMMARY 8->11 (immutable historical records keep '8 passed'). Beginning contract negotiation on 023."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -543,7 +548,7 @@
       "reason": "Option 1: flag acknowledged + phase estimate re-baselined to reflect the gate-hardened validator (899 actual through 012 + ~310 remaining estimates, rounded up). New cumulative ceiling: 1625 (130%)."
     }
   },
-  "scope_budget": {
+  "phase_003_scope_budget_final": {
     "original_estimate_lines": 1395,
     "total_lines_changed": 1140,
     "per_feature": [
@@ -590,5 +595,10 @@
         "note": "contract-scoped git stat (CHANGELOG.md 32+3). Phase-close feature. Rolling avg last 3 (018,020,021)=276, 3x=828; 35 well under, no flag. 1 contract revision (evaluator caught 2 vacuous CHANGELOG whole-file greps), Mode B + QA first-pass."
       }
     ]
+  },
+  "scope_budget": {
+    "original_estimate_lines": 1250,
+    "total_lines_changed": 0,
+    "per_feature": []
   }
 }
