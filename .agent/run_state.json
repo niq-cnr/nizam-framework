@@ -3,7 +3,7 @@
   "current_phase": "003-communication",
   "current_feature": "022",
   "status": "phase_complete",
-  "updated_at": "2026-07-08T10:44:45Z",
+  "updated_at": "2026-07-08T11:03:36Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -415,6 +415,11 @@
       "at": "2026-07-08T10:44:45Z",
       "event": "phase_complete",
       "detail": "Phase 003-communication CLOSED. All 6 features (017-022) through the full planner->contract->Mode A->evaluator review->implement->Mode B->QA lifecycle with durable .agent/ state; validator green (SUMMARY: 8 passed, 0 failed) on the final tree; cumulative 1140/1813 (63% of ceiling, well under the 130% halt). Notable process events: the independent QA adversarial gate caught a real GIP.md Section-1 stale-payload defect all 3 prior gates missed (F-019 rework); the contract-testability evaluator rejected 4 of 6 feature contracts on genuine verification-suite soundness defects (018: 4 fixtures incl. a git-diff-blind-to-new-files scope guard; 020: vacuous payload + unsound acronym checks; 022: 2 vacuous CHANGELOG whole-file greps) - each fixed pre-implementation; F-018 tripped the rolling-average scope flag (heuristic false-positive, human-acknowledged); NDEBT-002 logged (qa_verdict.schema.json drift). Human decision received: MIT license (F-021). THREE HUMAN GATES OUTSTANDING, NONE executed by the pipeline: (1) v0.3.0 release - MINOR per 05_release_train (new user guide + additive docs; interface.md discovery is a doc fix, .nizam/ layout unchanged, not a breaking runtime change); (2) GitHub Pages publishing for docs/guide/; (3) human review/merge of the phase/003-communication PR. Also still open upstream: the v0.2.0 roll-up PR #4 (unmerged; NIZAM.json framework.version still 0.1.0 on this branch). Awaiting human."
+    },
+    {
+      "at": "2026-07-08T11:03:36Z",
+      "event": "pr_opened",
+      "detail": "Phase 003 handed off to human review on authorization ('Push + open PR'): pushed the 6 feature commits (f84cca0..e6024c2) to origin/phase/003-communication and opened PR #5 (https://github.com/niq-cnr/nizam-framework/pull/5) into main, with the phase summary + the 3 outstanding human gates (PR merge, v0.3.0 release, GitHub Pages) in the body incl. an Ecosystem Impact section (none - NDEBT-001, repo out of ECOSYSTEM.json scope). Pipeline self-merges nothing. Awaiting human review/merge."
     }
   ],
   "phase_001_scope_budget_final": {
