@@ -7,6 +7,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-07-08
+
 ### Changed
 
 - **Tool-agnostic automated-review gate**: Renamed the `MERGE_READY` formula
@@ -17,8 +19,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   no longer dictates the specific tool — the consumer declares it (e.g. in its
   `NIZAM.json` / governance config). `methodology/05_eval_and_trace.md` L8 is
   likewise generalized from a CodeRabbit-specific reference to a tool-agnostic
-  automated code-review gate. No framework version bump; the attributed 10-gate
-  enforcement table is unchanged.
+  automated code-review gate. The attributed 10-gate enforcement table is unchanged.
 
 ## [0.4.0] - 2026-07-08
 
