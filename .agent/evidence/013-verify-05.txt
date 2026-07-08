@@ -1,0 +1,23 @@
+$ f=.github/workflows/compliance.yml; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import yaml
+doc = yaml.safe_load(open('.github/workflows/compliance.yml'))
+# YAML 1.1 parses the bare top-level key 'on' as the boolean True; index
+# defensively for both the boolean-True key (PyYAML's actual behavior) and
+# the literal string 'on' key (in case a future PyYAML version changes this).
+trig = doc.get(True, doc.get('on'))
+if not isinstance(trig, dict):
+    print('could not locate a top-level trigger mapping (neither the boolean-True key nor the on key resolved to a mapping)')
+    raise SystemExit(1)
+push = trig.get('push')
+if not (isinstance(push, dict) and push.get('branches') == ['main']):
+    print('push trigger does not have branches == [main] exactly; got: ' + repr(push))
+    raise SystemExit(1)
+pr = trig.get('pull_request')
+pr_unfiltered = pr is None or (isinstance(pr, dict) and 'branches' not in pr and 'branches-ignore' not in pr)
+if not pr_unfiltered:
+    print('pull_request trigger unexpectedly restricts branches (must have no branches/branches-ignore filter); got: ' + repr(pr))
+    raise SystemExit(1)
+print('PASS')
+"
+PASS
+EXIT:0

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "002-self-compliance",
-  "current_feature": "013",
+  "current_feature": "014",
   "status": "contract_negotiation",
-  "updated_at": "2026-07-08T15:00:00Z",
+  "updated_at": "2026-07-08T17:10:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -43,6 +43,10 @@
     },
     "012-contract": {
       "attempts": 2,
+      "limit": 3
+    },
+    "013-contract": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -226,6 +230,21 @@
       "at": "2026-07-08T15:00:00Z",
       "event": "scope_acknowledged_rebaselined",
       "detail": "Human acknowledged the feature-012 scope flag and authorized re-baseline (option 1): original_estimate_lines 770 -> 1250, ceiling 1625. Plan Amendment Rule applies (human-authorized, orchestrator-recorded). Pipeline resumed; feature 013 dependency gate satisfied (012 complete)."
+    },
+    {
+      "at": "2026-07-08T16:00:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 013 approved after 1 revision (multi-branch push false-pass + missing pull_request no-filter coverage, both fixed structurally with YAML-1.1 True-key defense). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T16:30:00Z",
+      "event": "state_correction",
+      "detail": "Generator (feature 013 implementation) wrote to orchestrator-owned run_state.json despite explicit instruction: advanced current_feature to 014 prematurely, set status=implemented, added foreign keys (active_contract_id/last_action/completed_contract_ids). Violates AGF Sec 5 rule 4 (roles update only their assigned fields). Orchestrator restored correct state (feature 013 not complete until Mode B + QA pass); foreign keys removed; history/budget verified intact. Deviation logged for Mode B awareness; implementation artifacts themselves unaffected."
+    },
+    {
+      "at": "2026-07-08T17:10:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 013 complete: contract 1 revision (multi-branch false-pass + PR-filter coverage), Mode B first-pass (incl. ratifying the run_state deviation remediation), QA 7/7 + CI dry-run adversarial proof (untagged fence blocks the run). 29 lines vs 50 est. Cumulative 928/1625. Advancing to 014."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -301,7 +320,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1250,
-    "total_lines_changed": 899,
+    "total_lines_changed": 928,
     "per_feature": [
       {
         "id": "011",
@@ -315,6 +334,12 @@
         "estimated": 360,
         "actual": 818,
         "flag": "SCOPE FLAG per methodology/00_planning.md: 818 > 3x rolling average (3x81=243). Non-halting; explicit human acknowledgment REQUIRED before feature 013 begins. ACKNOWLEDGED by human 2026-07-08 (\"1. proceed\")."
+      },
+      {
+        "id": "013",
+        "estimated": 50,
+        "actual": 29,
+        "flag": null
       }
     ],
     "rebaseline": {

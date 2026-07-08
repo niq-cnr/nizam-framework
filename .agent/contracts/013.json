@@ -1,0 +1,63 @@
+{
+  "contract_id": "013",
+  "feature_id": "013",
+  "name": ".github/workflows/compliance.yml CI Enforcement",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_002.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "A GitHub Actions workflow file wiring tools/validate.sh (feature F-012, already shipped) into CI as ADR-001 requires. Top-level `name:` must be clearly descriptive of its purpose (e.g. `compliance` or `NDS Compliance`), so it is unambiguous in the GitHub Actions UI / status checks list. \n\nTriggers: `pull_request` with no `branches` filter (runs against a PR targeting any branch); `push` restricted to `branches: [main]` only (per product_spec_002.md F-013 and feature-013 acceptance test 5) -- push to any other branch does not trigger this workflow. No other trigger types (no `workflow_dispatch`, `schedule`, etc. -- out of scope, ADR-001 scopes this to pull_request + push-to-main only).\n\nExactly one job on `runs-on: ubuntu-latest`. No matrix, no other jobs -- ADR-001 explicitly accepts the unavoidable GitHub Actions YAML syntax as the platform-specific surface but authorizes nothing beyond the minimal single-job wiring described here.\n\nSteps, in order: (1) Checkout the repository via `actions/checkout` (a pinned major version tag, e.g. `actions/checkout@v4`) WITH `fetch-depth: 0` (full history) in its `with:` block -- this is a REQUIRED, load-bearing setting, not an optional hardening step: tools/validate.sh's C8 check (NDS Sec 4 version-bump-vs-changelog, tools/validate.sh:553-654) performs `git show HEAD:<path>` for every file in the shipped-doc set and treats a failed lookup (file not found at HEAD) as 'new file, skip comparison'. On BOTH trigger contexts this workflow runs under -- the `pull_request` event, where GitHub Actions checks out the synthetic merge-ref commit (`refs/pull/<n>/merge`) as a detached HEAD, and the `push`-to-main event, where it checks out the pushed commit directly -- `fetch-depth: 0` guarantees the checked-out ref's full commit history and object graph are present locally, so `git show HEAD:<path>` always resolves against a complete, unambiguous HEAD rather than depending on GitHub Actions' default shallow (`fetch-depth: 1`) checkout behavior for either event type. This removes any environment-specific ambiguity about what 'HEAD' contains in CI and keeps this workflow's checkout step robust against future C8 changes that might walk commit ancestry (e.g. a merge-base comparison against the PR's target branch) without requiring this workflow file to change again. (2) Set up Python via `actions/setup-python` (a pinned major version tag, e.g. `actions/setup-python@v5`) with a `python-version` pinned to a 3.x release, satisfying tools/validate.sh's stated `python3` runtime dependency. (3) Install tools/validate.sh's two required-importable python3 modules via pip: a single `run:` step executing a `pip install` command naming both `jsonschema` and `pyyaml` (mirroring tools/validate.sh --help's documented runtime dependency: python3 with `jsonschema` and `yaml`/PyYAML importable; tools/validate.sh's own `require_python_module` fail-closed guard will abort with a named diagnostic if either is missing, so this install step is what keeps the job from immediately failing on that guard). (4) Run the validator: a single `run:` step whose command is exactly `bash tools/validate.sh` (no flags -- the full repo sweep, not `--target`) -- this is the load-bearing `run:` step feature-013's acceptance test 4 and 6 key on; it must be a real `run:` step, not merely referenced in a comment or step `name:`.\n\nNo other steps, no other jobs, no vendor-specific extensions beyond the four actions/steps named above."
+      }
+    ],
+    "files_modify": []
+  },
+  "non_goals": [
+    "No changes to tools/validate.sh or any other validator logic -- this feature wires the existing, already-shipped validator into CI, it does not modify it (validator changes belong to feature 012, already complete)",
+    "No edits to methodology/ or standard/ document content -- protocol hardening belongs to feature 014",
+    "No edit to CHANGELOG.md -- phase-close changelog entries belong to feature 015",
+    "No other GitHub Actions workflow files beyond .github/workflows/compliance.yml",
+    "No GitHub branch-protection API calls or required-status-check configuration -- repository settings are human-owned, out of scope for this contract",
+    "No edit to any file beyond .github/workflows/compliance.yml and this contract file"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "Workflow exists: test -f .github/workflows/compliance.yml",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" && echo PASS || { echo \"MISSING $f\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "Workflow is valid YAML: python3 -c 'import yaml,sys; yaml.safe_load(open(\".github/workflows/compliance.yml\"))'",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"import yaml, sys; yaml.safe_load(open('$f'))\" && echo PASS || { echo \"YAML parse failed for $f\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "Workflow triggers on pull_request and push: grep -q 'pull_request' .github/workflows/compliance.yml && grep -q 'push' .github/workflows/compliance.yml",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'pull_request' \"$f\" && grep -q 'push' \"$f\" && echo PASS || { echo \"missing pull_request or push trigger in $f\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "Workflow invokes the validator: grep -q 'tools/validate.sh' .github/workflows/compliance.yml -- anchored on the actual `run:` step, not a comment",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\ndoc = yaml.safe_load(open('.github/workflows/compliance.yml'))\njobs = doc.get('jobs', {}) or {}\nfound = False\nfor job in jobs.values():\n    for step in (job.get('steps') or []):\n        run = step.get('run')\n        if isinstance(run, str) and 'tools/validate.sh' in run:\n            found = True\nif not found:\n    print('no run: step invokes tools/validate.sh (a comment-only or name-only reference does not count)')\n    raise SystemExit(1)\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "Workflow restricts the push trigger to main: grep -Eq 'branches:\\s*\\[?\\s*main' .github/workflows/compliance.yml || (grep -A2 'push:' .github/workflows/compliance.yml | grep -q 'main') -- NOTE (evaluator revision round 1): the literal grep/substring form false-passes on a multi-branch list such as `branches: [main, dev]`, so this entry's `command` supersedes it with a structural python3/PyYAML parse asserting `trig['push']['branches'] == ['main']` exactly (as done in prior contracts, e.g. verification[4] here mirrors the pattern used for the fetch-depth/deps robustness check and the run:-step anchor above). Supplemented with an additional assertion, not present in the original feature-013 acceptance-test wording, that the `pull_request` trigger carries NO `branches` or `branches-ignore` filter (either absent/null, or present as a mapping without those keys) -- closing the missing_acceptance_coverage gap the evaluator identified.",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\ndoc = yaml.safe_load(open('.github/workflows/compliance.yml'))\n# YAML 1.1 parses the bare top-level key 'on' as the boolean True; index\n# defensively for both the boolean-True key (PyYAML's actual behavior) and\n# the literal string 'on' key (in case a future PyYAML version changes this).\ntrig = doc.get(True, doc.get('on'))\nif not isinstance(trig, dict):\n    print('could not locate a top-level trigger mapping (neither the boolean-True key nor the on key resolved to a mapping)')\n    raise SystemExit(1)\npush = trig.get('push')\nif not (isinstance(push, dict) and push.get('branches') == ['main']):\n    print('push trigger does not have branches == [main] exactly; got: ' + repr(push))\n    raise SystemExit(1)\npr = trig.get('pull_request')\npr_unfiltered = pr is None or (isinstance(pr, dict) and 'branches' not in pr and 'branches-ignore' not in pr)\nif not pr_unfiltered:\n    print('pull_request trigger unexpectedly restricts branches (must have no branches/branches-ignore filter); got: ' + repr(pr))\n    raise SystemExit(1)\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "The exact command CI runs also passes locally: bash tools/validate.sh; test $? -eq 0",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; test -f tools/validate.sh || { echo \"MISSING tools/validate.sh\"; exit 1; }; run_line=$(python3 -c \"\nimport yaml\ndoc = yaml.safe_load(open('.github/workflows/compliance.yml'))\njobs = doc.get('jobs', {}) or {}\nfound = None\nfor job in jobs.values():\n    for step in (job.get('steps') or []):\n        run = step.get('run')\n        if isinstance(run, str) and 'tools/validate.sh' in run:\n            found = run\nif found is None:\n    raise SystemExit(1)\nprint(found)\n\"); rc=$?; test \"$rc\" -eq 0 || { echo \"could not extract a run: step invoking tools/validate.sh from $f\"; exit 1; }; test -n \"$run_line\" || { echo \"extracted run line was empty\"; exit 1; }; echo \"extracted CI run command: $run_line\"; bash -c \"$run_line\"; rc2=$?; test \"$rc2\" -eq 0 && echo PASS || { echo \"extracted CI command '$run_line' exited $rc2 locally, expected 0\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "robustness: the checkout step sets fetch-depth: 0 (so C8 has history) AND the python setup step installs both jsonschema and pyyaml (validate.sh's fail-closed deps) -- asserted via structural python YAML parse of the workflow, not substring grep",
+      "command": "f=.github/workflows/compliance.yml; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\ndoc = yaml.safe_load(open('.github/workflows/compliance.yml'))\njobs = doc.get('jobs', {}) or {}\ncheckout_fetch_depth_0 = False\ninstalls_jsonschema = False\ninstalls_pyyaml = False\nfor job in jobs.values():\n    for step in (job.get('steps') or []):\n        uses = step.get('uses') or ''\n        if uses.startswith('actions/checkout'):\n            with_block = step.get('with') or {}\n            if with_block.get('fetch-depth') == 0:\n                checkout_fetch_depth_0 = True\n        run = step.get('run') or ''\n        run_lower = run.lower()\n        if 'pip install' in run_lower or 'pip3 install' in run_lower:\n            if 'jsonschema' in run_lower:\n                installs_jsonschema = True\n            if 'pyyaml' in run_lower:\n                installs_pyyaml = True\nok = checkout_fetch_depth_0 and installs_jsonschema and installs_pyyaml\nif not ok:\n    print('checkout_fetch_depth_0=' + str(checkout_fetch_depth_0) + ' installs_jsonschema=' + str(installs_jsonschema) + ' installs_pyyaml=' + str(installs_pyyaml))\n    raise SystemExit(1)\nprint('PASS')\n\""
+    }
+  ],
+  "estimated_lines": 50,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/013-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/013-verify-01.txt for the first entry, ..., .agent/evidence/013-verify-07.txt for the seventh). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T16:00:00Z",
+    "revisions": 1
+  }
+}
