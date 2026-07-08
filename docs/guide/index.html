@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="framework-version" content="0.1.0">
+<meta name="description" content="Nizam: a generalised, AI-legible, versioned governance framework. This self-contained guide explains what it is, how to adopt it, and how its contract-first execution loop works.">
+<meta name="color-scheme" content="light dark">
+<title>Nizam User Guide</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --bg-alt: #f6f8fa;
+    --fg: #1b1f23;
+    --fg-muted: #444c56;
+    --border: #d0d7de;
+    --accent: #0552b3;
+    --accent-contrast: #ffffff;
+    --code-bg: #eef1f4;
+    --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono-stack: ui-monospace, SFMono-Regular, "Segoe UI Mono", Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --bg-alt: #161b22;
+      --fg: #e6edf3;
+      --fg-muted: #9198a1;
+      --border: #30363d;
+      --accent: #79b8ff;
+      --accent-contrast: #0d1117;
+      --code-bg: #1b2129;
+    }
+  }
+
+  html[data-theme="light"] {
+    --bg: #ffffff;
+    --bg-alt: #f6f8fa;
+    --fg: #1b1f23;
+    --fg-muted: #444c56;
+    --border: #d0d7de;
+    --accent: #0552b3;
+    --accent-contrast: #ffffff;
+    --code-bg: #eef1f4;
+  }
+
+  html[data-theme="dark"] {
+    --bg: #0d1117;
+    --bg-alt: #161b22;
+    --fg: #e6edf3;
+    --fg-muted: #9198a1;
+    --border: #30363d;
+    --accent: #79b8ff;
+    --accent-contrast: #0d1117;
+    --code-bg: #1b2129;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-stack);
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.6;
+  }
+
+  a {
+    color: var(--accent);
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: var(--accent);
+    color: var(--accent-contrast);
+    padding: 0.5rem 1rem;
+    z-index: 100;
+  }
+
+  .skip-link:focus {
+    left: 0.5rem;
+    top: 0.5rem;
+  }
+
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 1rem;
+    overflow-x: auto;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    color: var(--fg);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.55rem;
+    border-radius: 0.3rem;
+    white-space: nowrap;
+  }
+
+  nav a[aria-current="true"] {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+
+  header.hero {
+    padding: 3rem 1.5rem 2.5rem;
+    text-align: center;
+    background: var(--bg-alt);
+    border-bottom: 1px solid var(--border);
+  }
+
+  header.hero h1 {
+    margin: 0 0 0.75rem;
+    font-size: 2.5rem;
+  }
+
+  .tagline {
+    max-width: 42rem;
+    margin: 0 auto;
+    color: var(--fg-muted);
+    font-size: 1.05rem;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.75rem;
+  }
+
+  .cta {
+    display: inline-block;
+    padding: 0.65rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .cta-human {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+
+  .cta-agent {
+    border: 1px solid var(--border);
+    color: var(--fg);
+    background: transparent;
+  }
+
+  main {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 1rem;
+  }
+
+  section {
+    margin-bottom: 3.5rem;
+  }
+
+  section h2 {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-alt);
+  }
+
+  .card h3 {
+    margin-top: 0;
+  }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 0.4rem;
+    padding: 1rem;
+    overflow-x: auto;
+    font-family: var(--mono-stack);
+    font-size: 0.85rem;
+  }
+
+  code {
+    font-family: var(--mono-stack);
+    background: var(--code-bg);
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+  }
+
+  .loop-diagram {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+
+  .loop-diagram li {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.85rem 1.1rem;
+    flex: 1 1 11rem;
+    position: relative;
+  }
+
+  .loop-diagram li:not(:last-child)::after {
+    content: "\2192";
+    position: absolute;
+    right: -1.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--fg-muted);
+    font-size: 1.1rem;
+  }
+
+  dl.faq dt {
+    font-weight: 600;
+    margin-top: 1.25rem;
+  }
+
+  dl.faq dd {
+    margin-left: 0;
+    color: var(--fg-muted);
+  }
+
+  dl.ops dt {
+    font-weight: 600;
+    font-family: var(--mono-stack);
+    margin-top: 1rem;
+  }
+
+  dl.ops dd {
+    margin-left: 0;
+  }
+
+  #theme-toggle {
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--fg);
+    border-radius: 0.3rem;
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+
+  footer {
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    color: var(--fg-muted);
+    font-size: 0.9rem;
+  }
+
+  footer a {
+    color: var(--accent);
+  }
+
+  @media print {
+    nav, #theme-toggle, .cta-group, .skip-link {
+      display: none;
+    }
+    body {
+      background: #ffffff;
+      color: #000000;
+    }
+    a {
+      color: #000000;
+      text-decoration: underline;
+    }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<header class="hero" id="hero">
+  <h1>Nizam</h1>
+  <p class="tagline">A generalised, AI-legible, versioned governance framework — one portable payload of
+  documentation standards, planning and execution protocols, adversarial TDD, contract-first execution
+  loops, durable agent state, and governance inheritance that any AI agent or engineering team can
+  consume, in any runtime, for any project. Nizam ships no application code, infrastructure, or
+  runtime services.</p>
+  <div class="cta-group">
+    <a class="cta cta-human" href="#quickstart">Humans start here</a>
+    <span class="cta cta-agent">Agents load <code>tools/SKILL.md</code> via <code>NIZAM.json</code></span>
+  </div>
+  <p style="margin-top:1.5rem;">
+    <button type="button" id="theme-toggle" aria-pressed="false">Toggle light / dark</button>
+  </p>
+</header>
+
+<nav aria-label="Table of contents">
+  <ul>
+    <li><a href="#hero">Overview</a></li>
+    <li><a href="#problem-solution">Problem &rarr; Solution</a></li>
+    <li><a href="#quickstart">Quickstart</a></li>
+    <li><a href="#adoption-paths">Adoption Paths</a></li>
+    <li><a href="#execution-loop">Execution Loop</a></li>
+    <li><a href="#anatomy">Anatomy</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#agent-integration">Agent Integration</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+</nav>
+
+<main id="main-content">
+
+  <section id="problem-solution" aria-labelledby="problem-solution-heading">
+    <h2 id="problem-solution-heading">Problem &rarr; Solution</h2>
+    <p>Four named design decisions remediate four recurring flaws in agent-driven engineering
+    pipelines. Each is binding on the framework's own implementation.</p>
+    <div class="card-grid">
+      <article class="card">
+        <h3>DD-1 &mdash; Tool-Driven State Management</h3>
+        <p><strong>Flaw remediated:</strong> context exhaustion from bulk-reading governance
+        directories.</p>
+        <p>Agents route through the root <code>NIZAM.json</code> capability index (validated against
+        <code>registry/nizam-index.schema.json</code>) to locate only the minimal governance files a
+        task needs, instead of reading an entire <code>standard/</code>, <code>methodology/</code>,
+        <code>templates/</code>, or <code>tools/</code> directory "just in case." Authoritative in
+        <code>methodology/04_tool_driven_state.md</code>.</p>
+      </article>
+      <article class="card">
+        <h3>DD-2 &mdash; Universal Circuit Breaker</h3>
+        <p><strong>Flaw remediated:</strong> infinite retry loops.</p>
+        <p>Every execution loop embeds a mandatory 3-strike circuit breaker: three failed attempts on
+        a single step halts it, marks it <code>BLOCKED</code>, logs the failure, and escalates to a
+        human &mdash; a fourth attempt is forbidden. Authoritative in
+        <code>methodology/03_circuit_breaker.md</code>.</p>
+      </article>
+      <article class="card">
+        <h3>DD-3 &mdash; Evidence Externalisation</h3>
+        <p><strong>Flaw remediated:</strong> brittle proof pasted inline into YAML or JSON strings.</p>
+        <p>Every piece of proof that a step succeeded is written to its own file under
+        <code>.agent/evidence/</code> and referenced by path, never pasted inline. See
+        <code>methodology/04_tool_driven_state.md</code> Section 3.</p>
+      </article>
+      <article class="card">
+        <h3>DD-4 &mdash; Unified Skill Payload</h3>
+        <p><strong>Flaw remediated:</strong> duplicated, per-runtime skill forks.</p>
+        <p>Exactly one skill payload ships under <code>tools/</code> &mdash; no <code>.claude/</code>,
+        <code>.codex/</code>, or other per-runtime fork directories. Any runtime loads the same
+        <code>tools/SKILL.md</code> through the adapter contract in <code>tools/interface.md</code>.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="quickstart" aria-labelledby="quickstart-heading">
+    <h2 id="quickstart-heading">Quickstart</h2>
+    <p>Governance inheritance is one atomic clone &rarr; inject &rarr; verify operation, implemented
+    once as <code>bootstrap.sh</code> at the framework's repository root &mdash; an evolution of
+    AGIP (the earlier prototype this framework evolved from, per <code>bootstrap.sh</code>'s own
+    header comment) into a single, reusable, runtime-agnostic script. From a checkout (or vendored
+    copy) of
+    the framework at a pinned tag, run:</p>
+    <pre><code>GOVERNANCE_TAG=v0.1.0 ./bootstrap.sh --tag v0.1.0</code></pre>
+    <p><code>GOVERNANCE_TAG</code> (or the equivalent <code>--tag</code> flag) is required and never
+    defaulted: an empty tag, <code>main</code>, <code>master</code>, <code>HEAD</code>, or any
+    <code>refs/heads/*</code> branch reference is refused, because a floating branch is never an
+    acceptable inheritance pin (<code>standard/GIP.md</code> Section 2, point 1).</p>
+    <p>This clones the pinned tag, stages the governance payload, verifies it landed correctly, and
+    only then atomically installs it under the target directory (<code>.nizam/</code> by default).
+    What you get:</p>
+    <pre><code>.nizam/
+&#9500;&#9472;&#9472; standard/
+&#9500;&#9472;&#9472; templates/
+&#9500;&#9472;&#9472; schema/
+&#9500;&#9472;&#9472; tools/
+&#9500;&#9472;&#9472; NIZAM.json
+&#9492;&#9472;&#9472; provenance.json</code></pre>
+    <p>To check an already-bootstrapped target for drift, with no network access and no write, run:</p>
+    <pre><code>GOVERNANCE_TAG=v0.1.0 ./bootstrap.sh --verify-only --tag v0.1.0</code></pre>
+    <p><code>--verify-only</code> confirms the target directory exists, its <code>NIZAM.json</code>
+    parses, every path it indexes resolves on disk, and its recorded <code>provenance.json</code> tag
+    matches the expected pinned tag &mdash; performing no clone and no write.</p>
+  </section>
+
+  <section id="adoption-paths" aria-labelledby="adoption-paths-heading">
+    <h2 id="adoption-paths-heading">Adoption Paths</h2>
+
+    <h3>New repository</h3>
+    <p>Per the Governance Inheritance Protocol (GIP) (<code>standard/GIP.md</code> Section 2): clone a
+    pinned semantic-version git tag of the framework (never <code>main</code> or any floating branch),
+    inject <code>standard/</code>, <code>templates/</code>, <code>schema/</code>, and
+    <code>tools/</code> together with the root <code>NIZAM.json</code> capability index into your
+    workspace, load the injected documents into working context before acting, and record the pinned
+    tag as your inheritance baseline. <code>bootstrap.sh</code> performs this as one atomic
+    clone &rarr; inject &rarr; verify operation (Section 2.1).</p>
+
+    <h3>Existing repository</h3>
+    <p>A repository is rarely empty when it first adopts Nizam. <code>standard/GIP.md</code> Section 5
+    governs coexistence:</p>
+    <ul>
+      <li><strong>Conflict rules.</strong> A pre-existing <code>CONTEXT.md</code>,
+      <code>AGENTS.md</code>, or CI (continuous integration) configuration is never silently
+      overwritten. Bootstrap injects only <code>standard/</code>, <code>templates/</code>,
+      <code>schema/</code>, <code>tools/</code>, and <code>NIZAM.json</code>; a colliding pre-existing
+      file is preserved under a renamed path (for example <code>CONTEXT.md.pre-nizam</code>) so a
+      human or agent can diff it against the framework's <code>templates/</code> version and reconcile
+      by hand. Existing CI is reconciled &mdash; the recommended compliance checks are added to it, not
+      substituted for it.</li>
+      <li><strong>Tier 1 &mdash; <code>docs-standard-only</code>.</strong> Inherit
+      <code>standard/</code> alone. Agents read and are bound by the governance documents; no
+      Generator/Validator/Evaluator cycle runs yet.</li>
+      <li><strong>Tier 2 &mdash; <code>templates</code>.</strong> Additionally inherit
+      <code>templates/</code>, so the repository can author its own governed <code>CONTEXT.md</code>,
+      <code>AGENTS.md</code>, ADRs, and other project documents, still without running the contract
+      loop.</li>
+      <li><strong>Tier 3 &mdash; full loop.</strong> Inherit the complete governance payload and run
+      the complete contract-first Generator/Validator/Evaluator cycle described in
+      <code>methodology/01_execution.md</code>, end to end.</li>
+    </ul>
+  </section>
+
+  <section id="execution-loop" aria-labelledby="execution-loop-heading">
+    <h2 id="execution-loop-heading">The Execution Loop</h2>
+    <p>Under the Agent Governance Framework (AGF) (<code>standard/AGF.md</code>), every feature moves
+    through a two-loop, contract-first state machine (<code>methodology/01_execution.md</code>) before
+    it is considered complete:</p>
+    <ol class="loop-diagram">
+      <li><strong>Planner</strong> expands a request into a specification and feature list.</li>
+      <li><strong>Generator</strong> proposes a contract (<code>status: "proposed"</code>) scoping the
+      feature's deliverables, non-goals, and verification commands.</li>
+      <li><strong>Validator Mode A</strong> &mdash; the pre-code contract gate &mdash; confirms the
+      contract is complete, bounded, testable, and traceable to the specification.</li>
+      <li><strong>Evaluator contract review</strong> &mdash; an independent second read of the same
+      contract.</li>
+      <li><strong>Generator implements</strong> only the approved contract's scope.</li>
+      <li><strong>Validator Mode B</strong> &mdash; the post-code implementation gate &mdash; diffs the
+      resulting change set against the approved contract, confirming only contracted files were
+      touched and nothing is a stub.</li>
+      <li><strong>Evaluator QA verdict</strong> &mdash; independently executes the contract's
+      verification commands and records a pass/fail verdict with evidence.</li>
+    </ol>
+    <p>Validator Mode A, Validator Mode B, the Evaluator's contract review, and the Evaluator's QA
+    verdict each culminate in a machine-parseable JSON verdict; advancement is permitted only when
+    <code>approved</code> is <code>true</code> and <code>issues</code>,
+    <code>missing_acceptance_coverage</code>, and <code>unsupported_claims</code> are all empty
+    (<code>standard/AGF.md</code> Section 4).</p>
+    <p>Every repeatable step above &mdash; a contract revision after a Mode A or contract-review
+    rejection, or an implementation rework after a Mode B or QA rejection &mdash; is bound by the
+    framework's mandatory 3-strike circuit breaker (<code>methodology/03_circuit_breaker.md</code>):
+    attempt 1 is a direct fix, attempt 2 a type/interface analysis, attempt 3 an architectural review,
+    and attempt 4 is forbidden &mdash; the step's working changes are discarded, the step is marked
+    <code>BLOCKED</code>, the failure is logged to the technical-debt register, and the pipeline halts
+    for human review.</p>
+  </section>
+
+  <section id="anatomy" aria-labelledby="anatomy-heading">
+    <h2 id="anatomy-heading">Anatomy of a Governed Repository</h2>
+    <p>A repository governed by Nizam communicates results exclusively through durable, file-based
+    state &mdash; never through chat history or conversational memory (the durable-state rule,
+    <code>standard/AGF.md</code> Section 5). Every run maintains its position through file families
+    under <code>.agent/</code>:</p>
+    <pre><code>.agent/
+&#9500;&#9472;&#9472; run_state.json      # current phase/feature position, status, circuit-breaker counters, history
+&#9500;&#9472;&#9472; feature_list.json   # the planned feature DAG: dependencies and acceptance tests
+&#9500;&#9472;&#9472; contracts/
+&#9474;   &#9492;&#9472;&#9472; NNN.json        # per-feature scope: deliverables, non-goals, verification commands
+&#9500;&#9472;&#9472; qa/
+&#9474;   &#9492;&#9472;&#9472; NNN.json        # the Evaluator's independent pass/fail verdict, with evidence
+&#9492;&#9472;&#9472; evidence/
+    &#9492;&#9472;&#9472; *.txt           # captured terminal output, one file per verification command</code></pre>
+    <p>Lifecycle: a Planner writes <code>feature_list.json</code>; a Generator writes a proposed
+    <code>contracts/NNN.json</code>; once both Validator gates approve, the Generator implements and
+    captures proof to <code>evidence/</code>; the Evaluator writes the corresponding
+    <code>qa/NNN.json</code> verdict; <code>run_state.json</code> then advances to the next eligible
+    feature. See <code>methodology/04_tool_driven_state.md</code> Section 4.</p>
+  </section>
+
+  <section id="modules" aria-labelledby="modules-heading">
+    <h2 id="modules-heading">Module Reference</h2>
+    <p>The root <code>NIZAM.json</code> capability index enumerates every shipped module. Query it
+    first; read only the module a task needs.</p>
+    <div class="card-grid">
+      <article class="card">
+        <h3><code>standard/</code></h3>
+        <p>Documentation standard, governance inheritance protocol, agent governance framework, and
+        universal anti-hallucination constraints every consumer repository inherits verbatim &mdash;
+        including the Nizam Documentation Standard (NDS), <code>standard/NDS.md</code>.</p>
+        <p>Key documents: <code>standard/NDS.md</code>, <code>standard/GIP.md</code>,
+        <code>standard/AGF.md</code>, <code>standard/anti_hallucination.md</code>,
+        <code>standard/README.md</code>.</p>
+      </article>
+      <article class="card">
+        <h3><code>methodology/</code></h3>
+        <p>Planning enforcement, the contract-first execution harness loop, adversarial TDD, the
+        universal circuit breaker, tool-driven durable state, and the release train protocol.</p>
+        <p>Key documents: <code>methodology/00_planning.md</code>,
+        <code>methodology/01_execution.md</code>, <code>methodology/02_adversarial_tdd.md</code>,
+        <code>methodology/03_circuit_breaker.md</code>,
+        <code>methodology/04_tool_driven_state.md</code>,
+        <code>methodology/05_release_train.md</code>.</p>
+      </article>
+      <article class="card">
+        <h3><code>registry/</code></h3>
+        <p>The JSON Schema the root index validates against, plus generalised scope-definition and
+        registry patterns for consumer repositories building their own ecosystem-level registries on
+        top of Nizam.</p>
+        <p>Key documents: <code>registry/nizam-index.schema.json</code>,
+        <code>registry/scope_definition_patterns.md</code>, <code>registry/README.md</code>.</p>
+      </article>
+      <article class="card">
+        <h3><code>templates/</code></h3>
+        <p>Consumer-repo document and manifest templates a bootstrapped repository copies and fills in
+        with its own content.</p>
+        <p>Key documents: <code>templates/CONTEXT.md</code>, <code>templates/AGENTS.md</code>,
+        <code>templates/DEBT.md</code>, <code>templates/ADR_TEMPLATE.md</code>,
+        <code>templates/README.md</code>.</p>
+      </article>
+      <article class="card">
+        <h3><code>schema/</code></h3>
+        <p>JSON Schemas validating every machine-readable artifact the framework and its consumers
+        produce.</p>
+        <p>Key documents: <code>schema/frontmatter.schema.json</code>,
+        <code>schema/contract.schema.json</code>, <code>schema/qa_verdict.schema.json</code>,
+        <code>schema/run_state.schema.json</code>, <code>schema/README.md</code>.</p>
+      </article>
+      <article class="card">
+        <h3><code>tools/</code></h3>
+        <p>The one unified, runtime-agnostic skill payload &mdash; manifest, instructions, and adapter
+        interface &mdash; any agent runtime loads to act on the framework.</p>
+        <p>Key documents: <code>tools/skill.json</code>, <code>tools/SKILL.md</code>,
+        <code>tools/interface.md</code>, <code>tools/validate.sh</code>, <code>tools/README.md</code>.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="agent-integration" aria-labelledby="agent-integration-heading">
+    <h2 id="agent-integration-heading">Agent Integration</h2>
+    <p>An agent runtime discovers the skill payload per <code>tools/interface.md</code> Section 2, in
+    this order:</p>
+    <ol>
+      <li><strong>Bootstrapped-consumer discovery.</strong> First look for <code>tools/skill.json</code>
+      under the injected governance target directory &mdash; by default
+      <code>.nizam/tools/skill.json</code>.</li>
+      <li><strong>Framework-checkout fallback.</strong> If no <code>.nizam/tools/skill.json</code> is
+      found, fall back to a repository-root <code>tools/skill.json</code> &mdash; the layout this
+      framework repository ships at its own root for a framework checkout evaluating itself.</li>
+      <li><strong>Pinned-checkout discovery.</strong> Where a consumer instead references a pinned
+      release tag without vendoring files locally, resolve <code>tools/skill.json</code> inside a
+      checkout of that pinned tag.</li>
+    </ol>
+    <p>Once <code>tools/skill.json</code> is located, every protocol this skill summarizes assumes an
+    agent runtime can perform exactly three abstract operations (<code>tools/interface.md</code>
+    Section 4), each mapped by the runtime's own adapter onto its native tool-calling primitives:</p>
+    <dl class="ops">
+      <dt>read-state</dt>
+      <dd>Read the current durable-state content a task needs &mdash; <code>NIZAM.json</code>, a
+      governance module file, or a <code>.agent/</code> artifact.</dd>
+      <dt>write-evidence</dt>
+      <dd>Persist a material result &mdash; a document, a durable-state update, or captured
+      verification output &mdash; to its canonical durable location.</dd>
+      <dt>run-verification</dt>
+      <dd>Execute a contract's verification commands and capture the command's output and exit code as
+      evidence.</dd>
+    </dl>
+    <p>An integrator adapting a new runtime checks conformance against <code>tools/interface.md</code>
+    Section 5's numbered checklist, condensed here: the adapter locates <code>tools/skill.json</code>,
+    loads its <code>entry_point</code> (<code>tools/SKILL.md</code>) content verbatim rather than a
+    paraphrase, injects it as instructions-tier context rather than ordinary conversation, loads it
+    conditionally on the triggers <code>tools/SKILL.md</code> Section 1 defines, maintains no forked or
+    rewritten copy of it, backs all three abstract operations above with a real file-read, file-write,
+    and command-execution primitive respectively, surfaces every operation's errors rather than
+    suppressing them, and does not fabricate governance behavior when no <code>tools/skill.json</code>
+    can be discovered.</p>
+  </section>
+
+  <section id="faq" aria-labelledby="faq-heading">
+    <h2 id="faq-heading">FAQ</h2>
+    <dl class="faq">
+      <dt>What is Nizam not?</dt>
+      <dd>Nizam is a pure governance / methodology payload. It ships standards, protocols, schemas, and
+      templates &mdash; it does not ship application code, infrastructure, or runtime services.</dd>
+
+      <dt>How is a version pinned?</dt>
+      <dd>Consumers clone a specific semantic-version git tag (for example <code>v0.1.0</code>), never
+      <code>main</code> or any other floating branch reference (<code>standard/GIP.md</code>
+      Section 2, point 1).</dd>
+
+      <dt>How is drift detected, and how is it fixed?</dt>
+      <dd>A consumer periodically re-verifies its injected governance content against its recorded
+      pinned tag, checking for local hand-mutation and staleness against newer releases
+      (<code>standard/GIP.md</code> Section 4). The correct remediation is always to re-run
+      <code>bootstrap.sh</code> against the appropriate tag &mdash; hand-patching an individual
+      injected file is prohibited, because it reintroduces exactly the divergence drift detection
+      exists to catch.</dd>
+
+      <dt>What license does Nizam ship under?</dt>
+      <dd>The license choice is a separate, human-gated feature and has not landed as of this guide's
+      publication. This guide does not assert a specific license.</dd>
+    </dl>
+  </section>
+
+</main>
+
+<footer>
+  <p>Nizam framework version <strong><span id="footer-version">0.1.0</span></strong>.</p>
+  <p><a href="https://github.com/niq-cnr/nizam-framework">github.com/niq-cnr/nizam-framework</a></p>
+</footer>
+
+<script>
+  (function () {
+    'use strict';
+
+    var toggleButton = document.getElementById('theme-toggle');
+    var htmlElement = document.documentElement;
+    var STORAGE_KEY = 'nizam-guide-theme-override';
+
+    function applyStoredThemeOverride() {
+      var stored = null;
+      try {
+        stored = window.localStorage.getItem(STORAGE_KEY);
+      } catch (error) {
+        stored = null;
+      }
+      if (stored === 'light' || stored === 'dark') {
+        htmlElement.setAttribute('data-theme', stored);
+        if (toggleButton) {
+          toggleButton.setAttribute('aria-pressed', 'true');
+        }
+      }
+    }
+
+    function toggleTheme() {
+      var current = htmlElement.getAttribute('data-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var effective = current || (prefersDark ? 'dark' : 'light');
+      var next = effective === 'dark' ? 'light' : 'dark';
+      htmlElement.setAttribute('data-theme', next);
+      if (toggleButton) {
+        toggleButton.setAttribute('aria-pressed', 'true');
+      }
+      try {
+        window.localStorage.setItem(STORAGE_KEY, next);
+      } catch (error) {
+        /* progressive enhancement only: an override that cannot be saved is not fatal */
+      }
+    }
+
+    if (toggleButton) {
+      toggleButton.addEventListener('click', toggleTheme);
+    }
+    applyStoredThemeOverride();
+
+    var sections = document.querySelectorAll('main section[id]');
+    var tocLinks = document.querySelectorAll('nav a[href^="#"]');
+
+    function setActiveLink(id) {
+      var target = '#' + id;
+      tocLinks.forEach(function (link) {
+        if (link.getAttribute('href') === target) {
+          link.setAttribute('aria-current', 'true');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    if (window.IntersectionObserver && sections.length) {
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              setActiveLink(entry.target.id);
+            }
+          });
+        },
+        { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
+      );
+      sections.forEach(function (section) {
+        observer.observe(section);
+      });
+    }
+  })();
+</script>
+</body>
+</html>

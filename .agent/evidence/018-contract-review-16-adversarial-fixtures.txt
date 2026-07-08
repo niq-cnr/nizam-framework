@@ -1,0 +1,78 @@
+Adversarial fixture tests run against contract 018's verification-array logic (extracted commands executed against synthetic fixtures under a scratch directory, NOT under docs/guide/index.html, to probe soundness without touching the read-only source tree).
+
+--- FIXTURE A: external-URL check (verification index 4) single-quote blind spot ---
+Fixture text: <a href='https://evil-tracker.example.com/beacon'>bad single-quoted link</a>
+Command under test (verbatim regex from contract):
+  urls = re.findall(r'(?:href|src)="(https?://[^"]+)"', text)
+  bad = [u for u in urls if not re.match(r'https?://(github\.com|niq-cnr\.github\.io)/', u)]
+Result: urls=[] bad=[] -> script prints "PASS (urls found: [])"
+EXIT:0
+FINDING: the regex only matches double-quoted href/src attribute values. A disallowed
+external URL written with single quotes (or unquoted) is invisible to this check and the
+verification FALSE-PASSES. Confirmed reproducible.
+
+--- FIXTURE A2: same check, double-quoted bad URL (control — confirms it DOES catch the common case) ---
+Fixture text: <a href="https://evil.example.com/x">here</a>
+Result: urls=['https://evil.example.com/x'] bad=['https://evil.example.com/x']
+EXIT:1 (correctly rejected)
+
+--- FIXTURE A3: same check, allowed hosts (control) ---
+Fixture text: href="https://github.com/niq-cnr/nizam-framework" and href="https://niq-cnr.github.io/docs"
+Result: bad=[] (correctly allowed)
+
+--- FIXTURE B: path-resolution check (verification index 8) trailing-period false-fail ---
+Fixture text: "For details, read docs/architecture/ADR-002-html-user-guide.md."
+Command under test (verbatim regex from contract):
+  paths = set(re.findall(r'(?:standard|methodology|registry|templates|schema|tools|docs)/[A-Za-z0-9_./-]+', text))
+Result: paths = {'docs/architecture/ADR-002-html-user-guide.md.'}
+FINDING: the character class [A-Za-z0-9_./-] includes '.', so a real, existing path named
+in ordinary prose immediately followed by a sentence-ending period is captured WITH the
+trailing period appended, producing a path string that does not exist on disk
+("...md." vs the real "...md"). This is a false FAIL for the right file referenced the
+wrong way — the check would reject a guide that correctly names a real path in body prose
+without wrapping it in <code>/href. Confirmed reproducible.
+
+--- FIXTURE C: self-containment check (verification index 3) — control, confirms discriminates correctly ---
+Fixture 1: <link rel="stylesheet" href="https://fonts.example.com/a.css"> -> "external stylesheet or script src found", EXIT:1 (correctly rejected)
+Fixture 2: <script src="https://cdn.example.com/lib.js"></script> -> "external stylesheet or script src found", EXIT:1 (correctly rejected)
+Positive fixture (inline <style> + inline <script>, no link/script-src) -> PASS, EXIT:0 (correctly tolerated)
+
+--- FIXTURE D: "Mode A|Mode B" OR-logic vs contract's stated "both" requirement (verification index 11) ---
+Fixture text: "The generator implements the plan through Mode A only in this doc." (no "Mode B" anywhere)
+Command: grep -Eqi 'Mode A|Mode B' <file>
+Result: match found (exit 0) -> PASS
+FINDING: contract scope (files_create.purpose) explicitly states the guide "Must literally
+name 'circuit breaker' and both 'Mode A' and 'Mode B'" (AND semantics), but the verification
+command uses OR (alternation) between "Mode A" and "Mode B", so a guide that names only one
+of the two terms still passes this acceptance test, contradicting the contract's own stated
+design requirement. Confirmed reproducible.
+
+--- FIXTURE E: positive control — minimal well-formed fixture (docs/guide/index.html analog) ---
+A hand-built minimal fixture with: valid HTML5, inline <style> (incl. prefers-color-scheme
+dark+light + nav.toc { position: sticky }), inline <script>, <meta name="framework-version"
+content="0.1.0">, footer text "Framework version 0.1.0.", one real repo-relative path
+(standard/NDS.md, created in the fixture repo), and an allowed-host external link.
+Verification indices 1,2,3,4,5,6,7,8 run against this fixture (cwd = fixture repo root,
+with a copy of the real NIZAM.json and a touch'd standard/NDS.md) ALL PASS (EXIT 0), proving
+the structural checks are not fail-by-construction on well-formed input.
+EXIT:0 (all 8)
+
+--- FIXTURE F: scope-guard (verification index 15) blind to brand-new untracked files ---
+Setup: a git repo with one committed tracked file (tracked.txt). Then: (a) tracked.txt is
+modified, (b) a brand-new directory docs/guide/index.html is created (untracked, exactly
+mirroring this feature's primary deliverable), (c) a brand-new NIZAM.json is created
+(untracked, standing in for "NIZAM.json modified" -- in the real repo NIZAM.json is already
+tracked so it WOULD show; this sub-case isolates the untracked-file behavior only).
+Command under test: git diff --name-only HEAD -- . ':(exclude).agent'
+Result: only "tracked.txt" (and, in one run, another pre-existing tracked file) appeared.
+Neither the new docs/ directory nor the new file were listed, despite `git status --short`
+showing them with `??`.
+FINDING: `git diff --name-only HEAD` never reports brand-new (untracked) files, only
+modifications to already-tracked paths. In the real feature-018 change set, docs/guide/index.html
+is a NEW file (untracked at verification time) and NIZAM.json is an EXISTING tracked file
+being modified. Therefore this scope guard can only ever observe/allowlist NIZAM.json; its
+"docs/guide/index.html" branch of the allow-list is dead code, and -- more importantly -- the
+check provides NO protection against the generator creating any OTHER new, out-of-scope
+untracked file anywhere in the tree (e.g. a stray docs/guide/style.css, a scratch file, or an
+extra doc). Such a file would silently pass this "scope guard" while genuinely violating
+scope. Confirmed reproducible; not a hypothetical.

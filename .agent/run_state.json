@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "003-communication",
-  "current_feature": "018",
+  "current_feature": "020",
   "status": "implementing",
-  "updated_at": "2026-07-08T08:00:51Z",
+  "updated_at": "2026-07-08T08:57:18Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -70,6 +70,10 @@
       "limit": 3
     },
     "019-implementation": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "018-contract": {
       "attempts": 2,
       "limit": 3
     }
@@ -344,6 +348,21 @@
       "at": "2026-07-08T08:00:51Z",
       "event": "feature_complete",
       "detail": "Feature 019 complete: 1 contract revision + 2 orchestrator amendments (verification[10] .agent exclusion [test-defect]; H5 scope expansion to Section 1 + generalized guard [QA-driven scope-completeness], both Mode-B ratified) + 1 implementation rework (QA caught the GIP.md Section 1 stale 3-dir payload all 3 prior gates missed). Final gates: Mode B re-approved + QA 12/12 verifications EXIT:0 + 8-probe adversarial clean, validate.sh 8/8. Deliverables: tools/interface.md (H4 .nizam-first discovery + framework-checkout fallback), standard/GIP.md (H5 4-dir+NIZAM.json payload consistent across Sec 1/2/2.1/5.1, H8 existing-repo tiers), templates/README.md + methodology/README.md (H6 product_spec de-leak). 122 lines vs 190 est. Cumulative 276/1813. Advancing to 018 (dep 017 complete) - the self-contained HTML user guide centerpiece, which will document the now-corrected adoption contract."
+    },
+    {
+      "at": "2026-07-08T08:37:24Z",
+      "event": "contract_approved",
+      "detail": "Contract 018 (HTML user guide + NIZAM.json docs indexing) approved after 1 revision by both gates. Mode A approved rev0 on scope/spec fidelity; the evaluator's adversarial contract review REJECTED rev0 on 4 real verification-suite soundness defects (built fixtures A-F to prove each): (4) external-URL check matched only double-quoted attrs (single-quote external URL false-passed); (8) path-resolution regex captured trailing sentence periods (false-fail on real files); (11) Mode A/B used OR where scope demands AND; (15) scope guard used 'git diff --name-only HEAD' which never lists new untracked files, so it was blind to the guide (a new file) itself. Rev1 fixed all four + tightened sticky-TOC co-occurrence + added verification[16] acronym-expansion (NDS/AGF/GIP verbatim canonical titles; AGIP parenthetical-gloss only, since AGIP has no shipped expansion - honors External Anchor Rule / H7). Both gates re-approved rev1 with fixture-verified closure. 16 verification entries. estimated_lines 900 (large self-contained HTML). Delegating implementation. Implementation note: AGIP's gloss must be sourced (bootstrap.sh 'earlier prototype this evolved from'), not a fabricated 4-word expansion."
+    },
+    {
+      "at": "2026-07-08T08:57:18Z",
+      "event": "feature_complete",
+      "detail": "Feature 018 complete (the phase centerpiece): contract 1 revision (evaluator's adversarial contract review caught 4 verification-suite soundness defects, all fixed + acronym check added, both gates re-approved). Implementation first-pass: Mode B approved with a full AH-4 hallucination audit (all 6 factual-claim categories - discovery order, 4-dir+NIZAM.json payload, DD-1..DD-4, execution loop + 3-strike breaker, quickstart, AGIP gloss - trace to the post-019 shipped tree) + QA 16/16 + 8-probe adversarial clean (no hidden external request, no hallucinated claim across 5 re-audited claims, no false license assertion, print + dark/light present), validate.sh 8/8 incl C4 over the 3 new docs paths. Deliverables: docs/guide/index.html (720-line self-contained HTML user guide, all 10 sections, version-anchored to NIZAM.json framework.version 0.1.0 in meta+footer) + NIZAM.json docs module indexing both ADRs + the guide. 729 lines vs 900 est. Cumulative 1005/1813."
+    },
+    {
+      "at": "2026-07-08T08:57:18Z",
+      "event": "scope_flag_raised",
+      "detail": "Feature 018's 729 lines trip the per-feature rolling-average flag (3x rolling avg of last 3 = 3x138 = 414). HEURISTIC FALSE-POSITIVE: 018 is the human-authorized planned centerpiece, estimated 900, delivered UNDER at 729; the rolling average is artificially low because 017 (154) and 019 (122) were small doc features. Cumulative 1005/1813 (55%) is healthy - no ceiling risk. Per Scope Budget Protocol the flag is non-halting for 018 but REQUIRES human acknowledgment before feature 020 begins. Pipeline paused: feature 020 will NOT start until the human acknowledges (surfaced to human 2026-07-08 alongside the rendered guide)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -469,7 +488,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1395,
-    "total_lines_changed": 276,
+    "total_lines_changed": 1005,
     "per_feature": [
       {
         "id": "017",
@@ -484,6 +503,13 @@
         "actual": 122,
         "flag": null,
         "note": "contract-scoped git stat (interface.md 21+9, GIP.md 63+10, templates/README.md 6+2, methodology/README.md 8+3). Executed 2nd per order 017->019->018. Rolling avg prior=154, 3x=462, no per-feature flag. 1 contract revision + 2 Mode-B-ratified amendments + 1 QA-driven rework."
+      },
+      {
+        "id": "018",
+        "estimated": 900,
+        "actual": 729,
+        "flag": "PER-FEATURE FLAG (non-halting) per Scope Budget Protocol: 729 > 3x rolling average of last 3 features (3x138=414). HEURISTIC FALSE-POSITIVE: 018 is the human-authorized phase centerpiece (the HTML user guide), estimated 900, delivered UNDER at 729; the rolling average is skewed low because the two prior features (017=154, 019=122) were small doc edits. Cumulative 1005/1813 (55%) - no ceiling concern. Per protocol, non-halting for 018 but REQUIRES human acknowledgment before feature 020 begins.",
+        "note": "contract-scoped: docs/guide/index.html 720 (new self-contained HTML) + NIZAM.json 9 (docs module). Executed 3rd per order 017->019->018->020->022."
       }
     ]
   }

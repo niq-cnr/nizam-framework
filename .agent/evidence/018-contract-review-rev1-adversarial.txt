@@ -1,0 +1,37 @@
+Adversarial re-test of contract 018 rev1's revised verification logic.
+[single-quoted-bad] urls=['https://evil.example.com/x'] bad=['https://evil.example.com/x']
+[double-quoted-bad] urls=['https://evil.example.com/x'] bad=['https://evil.example.com/x']
+[unquoted-bad] urls=['https://evil.example.com/x'] bad=['https://evil.example.com/x']
+[single-quoted-good] urls=['https://github.com/niq-cnr/nizam-framework', 'https://niq-cnr.github.io/docs'] bad=[]
+[real-path-trailing-period] raw=['standard/NDS.md.'] sanitized={'standard/NDS.md'} missing=[]
+[missing-path-trailing-period] raw=['standard/NOT_REAL_FILE.md.'] sanitized={'standard/NOT_REAL_FILE.md'} missing=['standard/NOT_REAL_FILE.md']
+[real-path-trailing-comma] raw=['standard/NDS.md'] sanitized={'standard/NDS.md'} missing=[]
+[real-path-in-parens] raw=['standard/NDS.md'] sanitized={'standard/NDS.md'} missing=[]
+[css-rule-nav-sticky (should PASS)] PASS
+[non-sticky-nav-plus-unrelated-sticky-elsewhere (should now FAIL)] FAIL (no co-occurrence)
+[inline-style-on-nav (should PASS)] PASS
+[independent-mentions-only (should FAIL)] FAIL (no co-occurrence)
+--- check 01 exit=0 ---
+PASS
+
+--- check 02 exit=0 ---
+PASS
+
+--- check 03 exit=0 ---
+PASS
+
+--- check 04 exit=0 ---
+PASS
+
+--- check 05 exit=0 ---
+PASS
+
+--- check 06 exit=0 ---
+PASS
+
+--- check 07 exit=0 ---
+PASS
+
+--- check 08 exit=0 ---
+PASS (1 paths resolved)
+

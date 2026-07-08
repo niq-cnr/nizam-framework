@@ -1,0 +1,3 @@
+f=NIZAM.json; grep -q 'docs/architecture/ADR-001' "$f" || { echo "NIZAM.json missing ADR-001 path"; exit 1; }; grep -q 'docs/architecture/ADR-002' "$f" || { echo "NIZAM.json missing ADR-002 path"; exit 1; }; grep -q 'docs/guide/index.html' "$f" || { echo "NIZAM.json missing docs/guide/index.html path"; exit 1; }; echo PASS
+PASS
+EXIT:0

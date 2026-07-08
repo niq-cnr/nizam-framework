@@ -1,0 +1,195 @@
+INVOCATION (multi-probe adversarial spot-check, run from repo root, feature 018 QA gate):
+
+--- PROBE 1: hidden-external-resource sweep (url(), @import, <img src>, favicon <link>, background:url(), @font-face src, fetch(/XMLHttpRequest, <iframe>) ---
+$ grep -n -iE "url\(|@import|<img|<link|@font-face|fetch\(|XMLHttpRequest|<iframe" docs/guide/index.html || echo "NONE FOUND"
+NONE FOUND
+
+$ python3 -c "
+import re
+text = open('docs/guide/index.html', encoding='utf-8').read()
+print('font-face count:', len(re.findall(r'@font-face', text, re.IGNORECASE)))
+print('script src count:', len(re.findall(r'<script[^>]+src=', text, re.IGNORECASE)))
+print('link rel stylesheet count:', len(re.findall(r'<link[^>]+rel=[\"\']?stylesheet', text, re.IGNORECASE)))
+"
+font-face count: 0
+script src count: 0
+link rel stylesheet count: 0
+
+$ grep -noE '(href|src)="[^"]*"' docs/guide/index.html
+316:href="#main-content"
+326:href="#quickstart"
+336:href="#hero"
+337:href="#problem-solution"
+338:href="#quickstart"
+339:href="#adoption-paths"
+340:href="#execution-loop"
+341:href="#anatomy"
+342:href="#modules"
+343:href="#agent-integration"
+344:href="#faq"
+641:href="https://github.com/niq-cnr/nizam-framework"
+FINDING: only one external URL in the entire document (footer github.com/niq-cnr anchor link); every
+other href is an in-page anchor. No url(), @import, <img>, favicon <link>, @font-face, fetch/XHR, or
+<iframe> anywhere in the file. PASS -- confirmed zero-external-request beyond the permitted anchor.
+
+--- PROBE 2: version anchor completeness (both <meta> AND footer, equal to NIZAM.json) ---
+$ python3 -c "
+import re, json
+text = open('docs/guide/index.html', encoding='utf-8').read()
+version = json.load(open('NIZAM.json'))['framework']['version']
+m = re.search(r'<meta\s+name=\"framework-version\"\s+content=\"([^\"]*)\"', text)
+fm = re.search(r'<footer\b.*?</footer>', text, re.DOTALL)
+print('NIZAM version:', version)
+print('meta:', m.group(1))
+print('footer contains version:', version in fm.group(0))
+"
+NIZAM version: 0.1.0
+meta: 0.1.0
+footer contains version: True
+FINDING: <meta name="framework-version" content="0.1.0"> in <head> AND footer text "Nizam framework
+version 0.1.0." both present and both equal NIZAM.json framework.version (0.1.0). PASS.
+
+--- PROBE 3: hallucination re-audit of three independently-picked factual claims ---
+
+(a) Module reference cards' key_documents paths vs NIZAM.json modules[] -- independently diffed
+    the guide's six module cards (standard/, methodology/, registry/, templates/, schema/, tools/)
+    against NIZAM.json's modules[] key_documents arrays. Every path named in each card (e.g.
+    standard/NDS.md, standard/GIP.md, standard/AGF.md, standard/anti_hallucination.md,
+    standard/README.md; methodology/00-05_*.md; registry/nizam-index.schema.json,
+    registry/scope_definition_patterns.md, registry/README.md; templates/CONTEXT.md,
+    templates/AGENTS.md, templates/DEBT.md, templates/ADR_TEMPLATE.md, templates/README.md;
+    schema/frontmatter.schema.json, schema/contract.schema.json, schema/qa_verdict.schema.json,
+    schema/run_state.schema.json, schema/README.md; tools/skill.json, tools/SKILL.md,
+    tools/interface.md, tools/validate.sh, tools/README.md) matches an entry present in
+    NIZAM.json's corresponding modules[].key_documents array verbatim. No drift found.
+
+(b) .nizam/ quickstart tree vs bootstrap.sh REQUIRED_MODULE_DIRS + provenance:
+$ sed -n '45,58p' bootstrap.sh
+readonly REQUIRED_MODULE_DIRS=(
+  "standard"
+  "templates"
+  "schema"
+  "tools"
+)
+    Guide's rendered tree: standard/, templates/, schema/, tools/, NIZAM.json, provenance.json.
+    bootstrap.sh's own provenance-writing code path (check_provenance_tag, record provenance
+    around lines 287-381) confirms provenance.json is a real artifact bootstrap.sh writes at
+    install time. The guide's tree names exactly REQUIRED_MODULE_DIRS (4 dirs) + NIZAM.json +
+    provenance.json -- no invented directory, no omitted one. PASS.
+
+(c) Circuit-breaker attempt table vs methodology/03_circuit_breaker.md Section 3:
+$ sed -n '45,50p' methodology/03_circuit_breaker.md
+| **1** | **Direct fix.** ...
+| **2** | **Type/interface analysis.** ...
+| **3** | **Architectural review.** ...
+| **4+** | **FORBIDDEN.** ...
+    Guide's execution-loop section states: "attempt 1 is a direct fix, attempt 2 a type/interface
+    analysis, attempt 3 an architectural review, and attempt 4 is forbidden" -- matches the shipped
+    table's strategy labels exactly, in the same order. PASS.
+
+(d) (bonus, 4th claim) Three abstract operations vs tools/interface.md Section 4:
+$ grep -n "### 4.1\|### 4.2\|### 4.3" tools/interface.md
+85:### 4.1 `read-state`
+100:### 4.2 `write-evidence`
+118:### 4.3 `run-verification`
+    Guide's <dl class="ops"> lists exactly read-state, write-evidence, run-verification, in the
+    same order, with purposes matching tools/interface.md's own purpose bullets. PASS.
+
+(e) (bonus, 5th claim) tools/interface.md discovery order (Section 2) vs guide's Agent Integration
+    <ol>: guide states (1) bootstrapped-consumer .nizam/tools/skill.json first, (2)
+    repository-root tools/skill.json framework-checkout fallback, (3) pinned-checkout discovery --
+    matches tools/interface.md Section 2 items 1-3 verbatim in substance and order (post-H4
+    correction, per interface.md's own 0.2.0 change_log entry). PASS.
+
+No drift found across five independently re-audited claims (three required minimum, two bonus).
+
+--- PROBE 4: license claim safety ---
+$ ls LICENSE* 2>&1 || echo "NO LICENSE FILE"
+NO LICENSE FILE
+$ grep -rli "MIT License\|Apache License\|GNU General Public" --include="*.md" . 2>/dev/null | grep -v ".git/"
+(no output -- no license text anywhere in the repository)
+$ grep -n -A3 "What license does Nizam ship under?" docs/guide/index.html
+      <dt>What license does Nizam ship under?</dt>
+      <dd>The license choice is a separate, human-gated feature and has not landed as of this
+      guide's publication. This guide does not assert a specific license.</dd>
+FINDING: guide's FAQ does NOT claim MIT or any other specific license; it correctly states the
+license decision (F-021) is human-gated and has not landed. Repo has no LICENSE file and no license
+text anywhere. Claim is safe and consistent with feature_list_003.json's F-021 entry (human gate,
+recommendation-only, not yet executed). PASS.
+
+--- PROBE 5: print + dark/light integrity ---
+$ python3 -c "
+import re
+text = open('docs/guide/index.html', encoding='utf-8').read()
+print('media print blocks:', len(re.findall(r'@media print', text)))
+print('prefers-color-scheme dark blocks:', len(re.findall(r'prefers-color-scheme:\s*dark', text)))
+"
+media print blocks: 1
+prefers-color-scheme dark blocks: 2
+FINDING: exactly one @media print block (hides nav/theme-toggle/CTA group, forces black-on-white
+for print) exists; a @media (prefers-color-scheme: dark) block overrides CSS custom properties for
+dark rendering, and a :root default (light) block plus html[data-theme="light"/"dark"] manual
+override blocks provide explicit light styling too. Both light and dark schemes are genuinely
+implemented, not merely mentioned. PASS.
+
+--- PROBE 6: structural well-formedness beyond html.parser -- balanced critical tags + sticky nav ---
+$ python3 -c "
+import re
+text = open('docs/guide/index.html', encoding='utf-8').read()
+for tag in ['html','head','body','nav','footer','header','main']:
+    opens = len(re.findall(r'<'+tag+r'(?=[\s>])', text, re.IGNORECASE))
+    closes = len(re.findall(r'</'+tag+r'\s*>', text, re.IGNORECASE))
+    print(tag, 'opens=', opens, 'closes=', closes)
+"
+html opens= 1 closes= 1
+head opens= 1 closes= 1
+body opens= 1 closes= 1
+nav opens= 1 closes= 1
+footer opens= 1 closes= 1
+header opens= 1 closes= 1
+main opens= 1 closes= 1
+FINDING: every critical structural tag (html/head/body/nav/footer/header/main) opens exactly once
+and closes exactly once -- balanced, no orphan or duplicate.
+
+$ grep -n -A5 "^  nav {" docs/guide/index.html
+95:  nav {
+96-    position: sticky;
+97-    top: 0;
+98-    z-index: 20;
+99-    background: var(--bg-alt);
+100-    border-bottom: 1px solid var(--border);
+FINDING: the sticky positioning is declared on a bare `nav` element selector (not a class-based
+proxy selector merely containing the substring "nav") -- the sticky TOC genuinely targets the
+actual <nav> element in the body. PASS.
+
+--- PROBE 7: git-status scope re-confirmation (independent of contract verification[13]) ---
+$ git status --porcelain --untracked-files=all -- . ':(exclude).agent'
+ M NIZAM.json
+?? docs/guide/index.html
+FINDING: only the two contracted deliverables are changed in the working tree outside .agent/. PASS.
+
+--- PROBE 8: bash tools/validate.sh independent re-run ---
+$ bash tools/validate.sh
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+$ echo "EXIT:$?"
+EXIT:0
+FINDING: exact summary line "SUMMARY: 8 passed, 0 failed", exit 0. C4 (index-integrity) covers the
+new docs module (validated separately in verification[10]/qa-11, which independently confirms
+NIZAM.json's docs module and its three key_documents paths resolve on disk and the whole file
+validates against registry/nizam-index.schema.json).
+
+SUMMARY OF ADVERSARIAL PROBE: 8 probes run (6 mandated categories + 2 bonus hallucination-audit
+claims). No defect found in any probe. No hidden external request, no version-anchor drift, no
+hallucinated/drifted factual claim across five independently re-checked claims, no unsafe license
+assertion, print/dark/light styling both genuinely present, structural tags balanced with a
+genuinely sticky <nav>, git-status scope clean, and an independent tools/validate.sh re-run is
+green (8/8, exit 0).
+EXIT:0
