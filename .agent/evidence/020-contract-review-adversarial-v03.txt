@@ -1,0 +1,18 @@
+--- current CONTEXT.md Execution Commands section (the actual payload description, STILL WRONG -- 3 dirs, missing tools/) ---
+36:## Execution Commands
+37-
+38-- Bootstrap a consumer repo: `bootstrap.sh` (ships in feature 007) clones a pinned
+39-  framework tag, injects `standard/`, `templates/`, and `schema/`, and verifies compliance.
+
+--- verification[2]'s command run against the unmodified tree ---
+f=CONTEXT.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'tools/' "$f" || { echo 'missing tools/ mention'; exit 1; }; grep -q 'NIZAM.json' "$f" || { echo 'missing NIZAM.json mention'; exit 1; }; echo PASS
+PASS
+EXIT:0
+
+--- where the bare strings the check greps for actually come from (unrelated to the payload sentence) ---
+25:- `tools/` — The single runtime-agnostic skill payload (no per-runtime forks).
+26:- `registry/` — The `NIZAM.json` index schema and scope-definition patterns.
+30:Agents route through the root `NIZAM.json` capability index rather than bulk-reading
+33:`NIZAM.json` itself ships in feature 006 of phase 001-framework-genesis; until then,
+
+CONCLUSION: verification[2] passes (exit 0) with ZERO edits to CONTEXT.md because 'tools/' and 'NIZAM.json' already appear in unrelated sections (Module Map, How Agents Consume). The Execution Commands payload sentence still incorrectly lists only 3 dirs (standard/, templates/, schema/) and omits tools/ -- the actual H1/H5 defect this test is meant to catch remains completely undetected.

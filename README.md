@@ -9,6 +9,41 @@ Nizam does not ship application code or infrastructure. It ships the rules by wh
 software gets built responsibly — and the machine-readable index that lets an AI agent
 find exactly the rule it needs, without reading everything.
 
+**Humans start here:** read this README, then the full [HTML user guide](docs/guide/index.html)
+for a walkthrough of every design decision, the bootstrap flow, and the execution loop.
+**Agents:** load `tools/SKILL.md` (discovered via the root `NIZAM.json` capability index)
+as your instructions payload — do not bulk-read the governance directories.
+
+## Quickstart
+
+Fetch `bootstrap.sh` pinned to the latest released tag and run it against your repo:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v0.1.0/bootstrap.sh -o bootstrap.sh
+chmod +x bootstrap.sh
+GOVERNANCE_TAG=v0.1.0 ./bootstrap.sh --tag v0.1.0
+```
+
+`--tag v0.1.0` (equivalently `GOVERNANCE_TAG=v0.1.0`) pins the inheritance to a real
+released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). This
+clones the pinned tag, stages the governance payload, verifies it landed correctly, and
+atomically installs it under `.nizam/` (the default target). What you get:
+
+```
+.nizam/
+├── standard/
+├── templates/
+├── schema/
+├── tools/
+├── NIZAM.json
+└── provenance.json
+```
+
+See the [v0.1.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0)
+for release notes, and run `tools/validate.sh` (the same repo-local compliance check that
+`.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the
+`docs/architecture/` ADRs) to confirm a bootstrapped target stays compliant.
+
 ## Design Decisions
 
 - **DD-1 — Tool-Driven State Management.** Agents query the root `NIZAM.json` index to
@@ -25,7 +60,7 @@ find exactly the rule it needs, without reading everything.
 | Module | Purpose |
 |--------|---------|
 | `schema/` | JSON Schemas for every machine-readable framework artifact. |
-| `standard/` | Documentation standard, frontmatter rules, governance inheritance. |
+| `standard/` | The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), and the anti-hallucination constraints. |
 | `methodology/` | Planning, execution, adversarial TDD, circuit breaker, release train. |
 | `templates/` | Consumer-repo document and manifest templates. |
 | `tools/` | The single runtime-agnostic skill payload. |

@@ -1,0 +1,5 @@
+f=CONTEXT.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; if grep -Eq 'ships in feature 00[67]' "$f"; then echo 'stale ships-in-feature claim still present'; grep -nE 'ships in feature 00[67]' "$f"; exit 1; else echo PASS; fi
+stale ships-in-feature claim still present
+33:`NIZAM.json` itself ships in feature 006 of phase 001-framework-genesis; until then,
+38:- Bootstrap a consumer repo: `bootstrap.sh` (ships in feature 007) clones a pinned
+EXIT:1

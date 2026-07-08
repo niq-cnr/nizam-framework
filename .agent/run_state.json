@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "003-communication",
-  "current_feature": "020",
+  "current_feature": "021",
   "status": "implementing",
-  "updated_at": "2026-07-08T08:57:18Z",
+  "updated_at": "2026-07-08T09:55:57Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -74,6 +74,10 @@
       "limit": 3
     },
     "018-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "020-contract": {
       "attempts": 2,
       "limit": 3
     }
@@ -363,6 +367,26 @@
       "at": "2026-07-08T08:57:18Z",
       "event": "scope_flag_raised",
       "detail": "Feature 018's 729 lines trip the per-feature rolling-average flag (3x rolling avg of last 3 = 3x138 = 414). HEURISTIC FALSE-POSITIVE: 018 is the human-authorized planned centerpiece, estimated 900, delivered UNDER at 729; the rolling average is artificially low because 017 (154) and 019 (122) were small doc features. Cumulative 1005/1813 (55%) is healthy - no ceiling risk. Per Scope Budget Protocol the flag is non-halting for 018 but REQUIRES human acknowledgment before feature 020 begins. Pipeline paused: feature 020 will NOT start until the human acknowledges (surfaced to human 2026-07-08 alongside the rendered guide)."
+    },
+    {
+      "at": "2026-07-08T09:13:00Z",
+      "event": "scope_acknowledged",
+      "detail": "Human acknowledged the feature-018 per-feature scope flag ('Acknowledge & continue to 020'). Confirmed as a heuristic false-positive (under-estimate, planned centerpiece); no re-baseline needed (cumulative 1005/1813 healthy). Pipeline resumed; feature 020 dependency gate satisfied (018 complete). Beginning contract negotiation on 020."
+    },
+    {
+      "at": "2026-07-08T09:13:00Z",
+      "event": "license_authorized",
+      "detail": "Human resolved the F-021 LICENSE human gate: chose MIT (per the spec recommendation, matching the source repositories' lineage). F-021 (which runs after F-020) will add a top-level MIT LICENSE + a README license line. NOTE: feature 021's acceptance test forbids the substring 'nizamiq' in LICENSE (C5-style branding sweep), so the MIT copyright holder must be branding-neutral (e.g. 'The Nizam Framework Authors' / the maintainer's name), NOT 'NizamIQ'. F-021 is no longer blocked-on-human."
+    },
+    {
+      "at": "2026-07-08T09:42:14Z",
+      "event": "contract_approved",
+      "detail": "Contract 020 (first-contact truth fixes: CONTEXT.md rewrite + README.md quickstart + acronym expansion) approved after 1 revision by both gates. Mode A approved rev0; the evaluator's adversarial contract review REJECTED rev0 on 4 verification-suite defects (fixtures): (2) CONTEXT.md payload check VACUOUS (passed unedited because tools/+NIZAM.json appear elsewhere - missed the stale line-39 3-dir sentence); (9/NDS-AGF-GIP) UNSOUND (false-passed on 'NDS (Section 2)...' without the real phrases); (10/AGIP) weak parenthetical; (missing) README Release link committed in scope but unverified. Rev1 fixed all four: payload now the 019-precedent generalized stale-3-dir guard; NDS/AGF/GIP now requires verbatim canonical titles; AGIP now requires the sourced 'prototype' gloss; added a Release-link check. Both gates re-approved rev1 (evaluator's 2 low residuals independently judged non-blocking -> observations[], issues[] empty per parse rule). 18 verification entries. estimated_lines 210. Delegating implementation. Impl notes: canonical expansion phrases must be single-line (line-based grep); AGIP gloss parenthetical must contain 'prototype'; README must carry the exact URL github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0; CONTEXT.md C8 via change_log frontmatter entry (NOT CHANGELOG - that is F-022)."
+    },
+    {
+      "at": "2026-07-08T09:55:57Z",
+      "event": "feature_complete",
+      "detail": "Feature 020 complete: contract 1 revision (evaluator caught 4 verification-suite defects: vacuous payload check, unsound acronym check, weak AGIP gloss, missing Release-link check), Mode B + QA first-pass. Mode B ran a full AH-4 hallucination audit (quickstart works with real v0.1.0 tag; .nizam/ tree matches bootstrap payload; agent path + linked paths all real). QA 18/18 + 11-probe adversarial clean (no surviving staleness, no dangling paths, single-line acronym phrases, exact Release URL, clean frontmatter). validate.sh 8/8. Deliverables: CONTEXT.md (0.1.0->0.2.0, status active, de-staled, 4-dir payload, agent path, NDS/AGF/GIP, change_log entry - no CHANGELOG edit), README.md (quickstart + two-audience + guide/Release links + validator/CI/ADR + acronyms), bootstrap.sh (AGIP 'prototype' gloss). 75 lines vs 210 est. Cumulative 1080/1813. Advancing to 021 (LICENSE, MIT authorized by human) then 022 (phase close)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -488,7 +512,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1395,
-    "total_lines_changed": 1005,
+    "total_lines_changed": 1080,
     "per_feature": [
       {
         "id": "017",
@@ -510,6 +534,13 @@
         "actual": 729,
         "flag": "PER-FEATURE FLAG (non-halting) per Scope Budget Protocol: 729 > 3x rolling average of last 3 features (3x138=414). HEURISTIC FALSE-POSITIVE: 018 is the human-authorized phase centerpiece (the HTML user guide), estimated 900, delivered UNDER at 729; the rolling average is skewed low because the two prior features (017=154, 019=122) were small doc edits. Cumulative 1005/1813 (55%) - no ceiling concern. Per protocol, non-halting for 018 but REQUIRES human acknowledgment before feature 020 begins.",
         "note": "contract-scoped: docs/guide/index.html 720 (new self-contained HTML) + NIZAM.json 9 (docs module). Executed 3rd per order 017->019->018->020->022."
+      },
+      {
+        "id": "020",
+        "estimated": 210,
+        "actual": 75,
+        "flag": null,
+        "note": "contract-scoped git stat (CONTEXT.md 22+9, README.md 36+1, bootstrap.sh 4+3). Executed 4th. Rolling avg last 3 (017,019,018)=335, 3x=1005; 75 well under, no flag. 1 contract revision (evaluator caught 4 verification-suite defects), Mode B + QA first-pass."
       }
     ]
   }

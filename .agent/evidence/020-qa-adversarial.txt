@@ -1,0 +1,139 @@
+ADVERSARIAL SPOT-CHECK — feature 020 (CONTEXT.md + README.md + bootstrap.sh first-contact truth fixes)
+Invocation: manual probe suite, run from repository root, 2026-07-08.
+
+--- Probe 1: No surviving staleness in CONTEXT.md beyond the two literal-checked claims ---
+$ grep -niE 'ships in feature|until then|\(planned\)|coming soon|not yet|TBD|todo|draft' CONTEXT.md
+(no output; exit 1 = no match)
+$ grep -n 'draft' CONTEXT.md
+(no output; exit 1 = no match)
+RESULT: No stale forward-reference, "(planned)", or "draft" language survives anywhere in
+CONTEXT.md's body or frontmatter. Frontmatter status is exactly "active".
+
+--- Probe 2: No surviving stale 3-dir payload enumeration anywhere in CONTEXT.md/README.md ---
+$ grep -n 'standard/' CONTEXT.md ; grep -n 'templates/' CONTEXT.md ; grep -n 'schema/' CONTEXT.md ; grep -n 'tools/' CONTEXT.md
+Every line that mentions standard/, templates/, and schema/ together (frontmatter change_log
+line 11; Module Map line 26; Execution Commands line 49-51) also names tools/ in the same
+sentence/window. No line enumerates only the 3 legacy directories.
+Same check on README.md (Quickstart tree lines 33-39, Modules table lines 62-67): every
+enumeration includes tools/ and NIZAM.json. No stale 3-dir description survives.
+
+--- Probe 3: Quickstart correctness against bootstrap.sh's actual interface ---
+$ git tag -l v0.1.0
+v0.1.0   (real, pre-existing tag confirmed)
+$ grep -n -- '--tag\b\|GOVERNANCE_TAG' bootstrap.sh
+Confirms both --tag (parse_args case '--tag') and GOVERNANCE_TAG (env var default at line 60,
+usage text lines 25/93/100) are real, currently-accepted forms in bootstrap.sh -- README's
+`GOVERNANCE_TAG=v0.1.0 ./bootstrap.sh --tag v0.1.0` is not fabricated syntax.
+$ grep -n 'raw.githubusercontent.com' README.md
+line 22: https://raw.githubusercontent.com/niq-cnr/nizam-framework/v0.1.0/bootstrap.sh
+Host is raw.githubusercontent.com (github raw-content host) -- consistent with
+DEFAULT_GOVERNANCE_REPO_URL="https://github.com/niq-cnr/nizam-framework.git" (bootstrap.sh
+line 36), same org/repo (niq-cnr/nizam-framework), pinned to the real tag v0.1.0.
+.nizam/ tree shown in README (lines 33-39): standard/, templates/, schema/, tools/,
+NIZAM.json, provenance.json -- matches bootstrap.sh's REQUIRED_MODULE_DIRS array exactly
+("standard" "templates" "schema" "tools", lines 52-57) plus the NIZAM.json copy (line 348)
+plus the provenance.json file run_install() writes (lines 365-382). No invented or omitted
+entry.
+
+--- Probe 4: Every repo-relative path named in README.md and CONTEXT.md resolves on disk ---
+Paths named in README.md: docs/guide/index.html, NIZAM.json, tools/SKILL.md, bootstrap.sh,
+tools/validate.sh, .github/workflows/compliance.yml, CHANGELOG.md -- all confirmed present
+via `test -e` (see individual checks below).
+Paths named in CONTEXT.md: bootstrap.sh, .github/workflows/compliance.yml, NIZAM.json,
+tools/SKILL.md, tools/validate.sh, tools/skill.json, docs/architecture/ -- all confirmed
+present.
+$ for p in docs/guide/index.html NIZAM.json tools/SKILL.md bootstrap.sh tools/validate.sh \
+    .github/workflows/compliance.yml CHANGELOG.md tools/skill.json; do [ -e "$p" ] && echo "OK  $p" || echo "MISSING $p"; done
+OK  docs/guide/index.html
+OK  NIZAM.json
+OK  tools/SKILL.md
+OK  bootstrap.sh
+OK  tools/validate.sh
+OK  .github/workflows/compliance.yml
+OK  CHANGELOG.md
+OK  tools/skill.json
+$ ls docs/architecture/
+ADR-001-ci-compliance-enforcement.md
+ADR-002-html-user-guide.md
+(CONTEXT.md's "docs/architecture" mention resolves to a real, non-empty directory
+containing the two ADRs it references by number: "ADR-001 and ADR-002 are recorded".)
+RESULT: zero dangling paths in either file.
+
+--- Probe 5: Acronym phrases appear as complete single-line phrases adjacent to first use ---
+$ grep -n '\bNDS\b\|\bAGF\b\|\bGIP\b' README.md
+63:| `standard/` | The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), and the anti-hallucination constraints. |
+This is the FIRST occurrence of NDS/AGF/GIP anywhere in README.md (no earlier bare mention
+exists) -- confirmed by re-grepping the whole file for the bare acronyms; line 63 is the only
+hit, so it is trivially "at first use." All three canonical titles appear on a single physical
+line (line 63, a one-line Markdown table row -- not wrapped across multiple lines), each
+immediately followed by its parenthesized acronym, e.g. "The Nizam Documentation Standard
+(NDS)". Same structure independently present in CONTEXT.md line 26 (Module Map bullet), also
+a single physical line.
+RESULT: PASS -- verbatim, unwrapped, adjacent-to-first-use in both files.
+
+--- Probe 6: Release URL exactness + no branding ---
+$ grep -n 'github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0' README.md
+42:See the [v0.1.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0)
+$ grep -niE 'nizamiq|\.svc|cluster\.local' README.md CONTEXT.md bootstrap.sh
+(no output; exit 1 = no match across all three edited files)
+RESULT: exact release URL present; zero branding/endpoint leakage in any of the three edited
+files (README.md, CONTEXT.md, bootstrap.sh -- bootstrap.sh checked in addition to the
+contractually-required README.md sweep, as a bonus).
+
+--- Probe 7: CONTEXT.md frontmatter integrity ---
+$ python3 -c "import yaml; ..." (parses CONTEXT.md frontmatter block)
+{'id': 'nizam-context', 'title': 'Nizam Framework — Context', ...,
+ 'version': '0.2.0', 'status': 'active', 'authoritative_source': 'CONTEXT.md',
+ 'change_log': [{'version': '0.2.0', 'date': '2026-07-08', 'summary': '...'}]}
+RESULT: YAML parses cleanly; status == 'active'; version == '0.2.0'; change_log has exactly
+one entry whose version == '0.2.0' (matches current frontmatter version).
+$ git diff --name-only HEAD -- CHANGELOG.md
+(no output -- CHANGELOG.md has zero diff vs HEAD)
+RESULT: no CHANGELOG.md edit, per non-goal.
+
+--- Probe 8: bootstrap.sh AGIP gloss + syntax + no branding ---
+$ grep -n 'AGIP' bootstrap.sh
+line 6: "This is an evolution of the earlier AGIP (the earlier governance prototype this"
+Parenthetical "(the earlier governance prototype this framework evolved from)" immediately
+follows AGIP and contains the word "prototype" -- sourced from the header's own framing, not
+a fabricated 4-word letter-expansion (H7 constraint honored: no invented "Autonomous
+Governance ... Protocol" style expansion appears anywhere).
+$ bash -n bootstrap.sh ; echo EXIT:$?
+EXIT:0
+$ ./bootstrap.sh --help ; echo EXIT:$?
+(usage text printed) EXIT:0
+$ grep -niE 'nizamiq|\.svc|cluster\.local' bootstrap.sh
+(no output; exit 1 = no match)
+RESULT: PASS on all four sub-checks.
+
+--- Probe 9: bash tools/validate.sh full independent re-run ---
+$ bash tools/validate.sh
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+$ echo EXIT:$?
+EXIT:0
+RESULT: exact expected summary line, exit 0.
+
+--- Probe 10 (bonus): out-of-scope edit scan ---
+$ git status --porcelain --untracked-files=all -- . ':(exclude).agent'
+ M CONTEXT.md
+ M README.md
+ M bootstrap.sh
+RESULT: only the three contracted files are modified; no other file (tracked or untracked)
+changed outside .agent/.
+
+--- Probe 11 (bonus): LICENSE non-goal honored ---
+$ find . -maxdepth 1 -iname "LICENSE*"
+(no output -- no LICENSE file added, correctly deferred to F-021)
+$ grep -ni 'license' README.md
+(no output -- no license line introduced)
+
+OVERALL: 11 probes run (6 mandated categories + 5 bonus), all PASS, zero defects found.
+EXIT:0

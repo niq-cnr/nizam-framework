@@ -1,0 +1,3 @@
+f=CONTEXT.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; missing=""; grep -q 'tools/validate.sh' "$f" || missing="$missing tools/validate.sh"; grep -q 'compliance.yml' "$f" || missing="$missing compliance.yml"; grep -q 'docs/architecture' "$f" || missing="$missing docs/architecture"; if [ -n "$missing" ]; then echo "missing phase-002 surface mention(s):$missing"; exit 1; fi; echo PASS
+PASS
+EXIT:0

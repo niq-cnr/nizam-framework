@@ -1,0 +1,46 @@
+{
+  "feature_id": "020",
+  "qa_pass": true,
+  "checks_run": 18,
+  "checks_passed": 18,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/020-qa-adversarial.txt",
+    "findings": "11 probes run (6 mandated categories + 5 bonus), all PASS, no defects found. (1) No surviving staleness in CONTEXT.md: a sweep for 'ships in feature', 'until then', '(planned)', 'coming soon', 'not yet', 'TBD', 'todo', and 'draft' found zero hits anywhere in CONTEXT.md's body or frontmatter beyond the two literal-checked claims, which are themselves absent; frontmatter status is exactly 'active'. (2) No surviving stale 3-dir payload enumeration: every line in CONTEXT.md or README.md naming standard/, templates/, and schema/ together also names tools/ in the same window (frontmatter change_log, Module Map, Execution Commands, Quickstart tree, Modules table) -- no line omits tools/. (3) Quickstart correctness: v0.1.0 is a real, pre-existing git tag (git tag -l v0.1.0); both --tag and GOVERNANCE_TAG are real, currently-accepted bootstrap.sh forms (parse_args case, env-var default, usage text); the raw URL host raw.githubusercontent.com is a genuine GitHub raw-content host consistent with DEFAULT_GOVERNANCE_REPO_URL's niq-cnr/nizam-framework repo; the shown .nizam/ tree (standard/, templates/, schema/, tools/, NIZAM.json, provenance.json) matches bootstrap.sh's REQUIRED_MODULE_DIRS array plus the NIZAM.json copy plus the provenance.json file run_install() actually writes -- no invented or omitted entry. (4) Every repo-relative path named in README.md and CONTEXT.md (docs/guide/index.html, NIZAM.json, tools/SKILL.md, bootstrap.sh, tools/validate.sh, .github/workflows/compliance.yml, CHANGELOG.md, tools/skill.json, docs/architecture/ with its two ADRs) resolves on disk -- zero dangling paths. (5) Acronym phrases: 'Nizam Documentation Standard', 'Agent Governance Framework', and 'Governance Inheritance Protocol' each appear as complete, unwrapped single-line phrases immediately followed by their parenthesized acronym, at their first (and only) bare-acronym occurrence in README.md (line 63) and CONTEXT.md (line 26). (6) Release URL exactness + no branding: the exact github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0 URL is present in README.md; a branding/endpoint sweep (nizamiq|.svc|cluster.local) across all three edited files (README.md, CONTEXT.md, bootstrap.sh) found zero matches. (7) CONTEXT.md frontmatter integrity: YAML-parses cleanly; status active; version 0.2.0; change_log has exactly one entry whose version equals 0.2.0; git diff --name-only HEAD -- CHANGELOG.md is empty (no CHANGELOG.md edit). (8) bootstrap.sh: the AGIP parenthetical ('the earlier governance prototype this framework evolved from') contains 'prototype' and is sourced from the header's own framing, not a fabricated 4-word expansion; bash -n is clean; ./bootstrap.sh --help exits 0; no branding string present. (9) An independent bash tools/validate.sh re-run is green: exact line 'SUMMARY: 8 passed, 0 failed', exit 0. (10, bonus) git status --porcelain --untracked-files=all confirms only CONTEXT.md, README.md, and bootstrap.sh changed outside .agent/ -- no other file, tracked or untracked, was touched. (11, bonus) LICENSE non-goal honored: no LICENSE file exists and no 'license' string appears in README.md."
+  },
+  "evidence_files": [
+    ".agent/evidence/020-qa-01.txt",
+    ".agent/evidence/020-qa-02.txt",
+    ".agent/evidence/020-qa-03.txt",
+    ".agent/evidence/020-qa-04.txt",
+    ".agent/evidence/020-qa-05.txt",
+    ".agent/evidence/020-qa-06.txt",
+    ".agent/evidence/020-qa-07.txt",
+    ".agent/evidence/020-qa-08.txt",
+    ".agent/evidence/020-qa-09.txt",
+    ".agent/evidence/020-qa-10.txt",
+    ".agent/evidence/020-qa-11.txt",
+    ".agent/evidence/020-qa-12.txt",
+    ".agent/evidence/020-qa-13.txt",
+    ".agent/evidence/020-qa-14.txt",
+    ".agent/evidence/020-qa-15.txt",
+    ".agent/evidence/020-qa-16.txt",
+    ".agent/evidence/020-qa-17.txt",
+    ".agent/evidence/020-qa-18.txt",
+    ".agent/evidence/020-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "observations": [
+    "This feature is documentation-only (CONTEXT.md, README.md, bootstrap.sh comment-only edit); the repo has no npm/pytest/go unit test suite -- tools/validate.sh (the repo's own compliance validator, 8/8 green) plus the 18 contract acceptance commands are the full verification surface for this contract. No regression_baseline.json update is applicable since there is no evolving unit-test suite to baseline; the validator's 8-check summary is the durable regression signal and it is unchanged (8 passed, 0 failed) from prior features.",
+    "The README Quickstart's --tag v0.1.0 and GOVERNANCE_TAG=v0.1.0 are redundant (both set the same effective tag; --tag as the CLI flag takes precedence). This is harmless and arguably pedagogical (shows both accepted forms) but is not strictly necessary -- non-blocking."
+  ],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "020",
+    "summary": "All 18 contract-020 verification commands were independently re-run from repo root into fresh 020-qa-NN.txt evidence files (not reused from the generator's 020-verify-NN.txt), and all 18 pass (18/18 EXIT:0): CONTEXT.md no longer carries the stale 'ships in feature 006/007' claims; names tools/validate.sh, compliance.yml, and docs/architecture; has no stale 3-dir payload enumeration and names tools/ + NIZAM.json; states the NIZAM.json -> SKILL.md agent path; frontmatter status is active with version bumped to 0.2.0 (strictly above 0.1.0, confirmed via YAML diff against HEAD, not a literal grep false-pass risk); README.md has a copy-pasteable pinned-tag bootstrap command referencing the real v0.1.0 tag (confirmed to exist via git rev-parse against refs/tags); has the two-audience 'humans start here' / tools/SKILL.md entry split; links docs/guide/index.html (confirmed to exist on disk) and the exact GitHub Release tag URL; mentions the validator/CI/ADRs; expands NDS/AGF/GIP with their verbatim canonical titles; introduces zero branding/endpoint leakage; bootstrap.sh's AGIP gloss is a sourced 'prototype' parenthetical, not a fabricated expansion; tools/validate.sh is green (8/8, exit 0); CONTEXT.md's change_log carries a matching-version entry and CHANGELOG.md is untouched; bootstrap.sh remains bash -n clean and --help exits 0 after the comment-only edit; and git-status scoping confirms only CONTEXT.md, README.md, and bootstrap.sh changed outside .agent/. A mandatory 11-probe adversarial spot-check (6 required categories plus 5 bonus checks) found no surviving staleness beyond the two literally-checked claims, no surviving stale 3-dir payload enumeration anywhere, a quickstart that is genuinely copy-paste-correct against bootstrap.sh's real interface and a real v0.1.0 tag, zero dangling repo-relative paths in either rewritten file, all three acronym phrases appearing as complete unwrapped single-line phrases at their true first use, the exact release URL with zero branding, clean CONTEXT.md frontmatter (YAML-valid, active, 0.2.0, matching change_log entry, CHANGELOG.md untouched), a sourced (non-fabricated) AGIP gloss with bootstrap.sh syntactically and behaviorally intact, a green tools/validate.sh (8/8), a clean git-status scope, and the LICENSE non-goal honored. Two non-blocking observations were logged (no unit-test suite exists to baseline for this docs-only feature; the Quickstart's --tag/GOVERNANCE_TAG redundancy is harmless) but no genuine defect was found. QA verdict: PASS."
+  }
+}

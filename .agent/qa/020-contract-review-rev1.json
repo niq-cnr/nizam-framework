@@ -1,0 +1,52 @@
+{
+  "review": "contract-testability",
+  "feature": "020",
+  "issues": [],
+  "observations": [
+    {
+      "verification_index": 3,
+      "criterion": "CONTEXT.md 4-dir + NIZAM.json payload check (revised, contract-019 verification[11] precedent)",
+      "evidence": "The 45-char tools/-adjacency window can in theory be satisfied by a decoy mention (e.g. a stray '(see also the tools/ module elsewhere)' aside placed within 45 chars of an unfixed stale 3-dir enumeration) without a genuine fix -- confirmed via adversarial fixture in .agent/evidence/020-contract-review-rev1-adversarial-v03.txt, case (c). Independent determination: NOT a blocker. This requires deliberately contrived, adversarial placement that no plausible non-adversarial implementation of 'correct the payload description to 4 dirs' would produce by accident. It reuses the identical heuristic already accepted in contract-019 verification[11] without prior objection. Mode B (contract-vs-diff fidelity check) and the post-implementation evaluator QA run both independently re-read the actual CONTEXT.md content, providing a second layer of defense.",
+      "disposition": "non-blocking, tracked for awareness only"
+    },
+    {
+      "verification_index": 9,
+      "criterion": "NEW GitHub Release link check -- generic-/releases fallback branch",
+      "evidence": "The check's fallback branch accepts any generic .../releases URL (not tag-specific) if the exact tag-specific URL is absent, which is looser than the acceptance_test's own stated criterion ('links the GitHub Release for the real pinned tag v0.1.0'). Confirmed via .agent/evidence/020-contract-review-rev1-adversarial-release-link.txt. Independent determination: NOT a blocker. The contract's own scope purpose text hands the generator the literal exact URL to use (https://github.com/niq-cnr/nizam-framework/releases/tag/v0.1.0), so the realistic, compliant implementation path is the strict primary branch (tag-specific, fully sound). The fallback would only be reached if the generator deviated from its own explicit, literal scope instruction -- a contract-fidelity risk that Mode B validation is designed to catch, not a defect in this check's ability to verify the acceptance criterion for a compliant implementation.",
+      "disposition": "non-blocking, tracked for awareness only"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "closed_findings": [
+    {
+      "prior_verification_index": 3,
+      "prior_severity": "high",
+      "status": "CLOSED",
+      "confirmation": "Prior vacuous-pass proof (bare 'tools/'/'NIZAM.json' grep anywhere in file, satisfied by zero edits) is replaced by a contract-019-precedent regex (`standard/.{0,6}templates/.{0,10}schema/` with a 45-char tools/-adjacency requirement) anchored to the actual stale enumeration sentence. Confirmed FAILS on the real stale line 39 and PASSES on a genuinely corrected sentence. See .agent/evidence/020-contract-review-rev1-03.txt and -adversarial-v03.txt."
+    },
+    {
+      "prior_verification_index": 10,
+      "prior_severity": "high",
+      "status": "CLOSED",
+      "confirmation": "Prior false-pass fixture ('See NDS (Section 2)... AGF (see appendix)... GIP (chapter 4).', zero real expansions) now correctly fails the revised verbatim-canonical-title check (verification[10], now requiring literal 'Nizam Documentation Standard' / 'Agent Governance Framework' / 'Governance Inheritance Protocol'). Positive control with the real phrases (kept on single lines) passes. The generator's line-based-grep caveat was independently reproduced and confirmed accurate (a mid-phrase line wrap breaks the match) -- this is a satisfiable authoring constraint, not a check defect. See .agent/evidence/020-contract-review-rev1-11.txt and -adversarial-v10-v11.txt."
+    },
+    {
+      "prior_verification_index": 11,
+      "prior_severity": "medium",
+      "status": "CLOSED",
+      "confirmation": "Prior false-pass fixtures 'AGIP (see appendix)' and 'AGIP (see below)' now correctly fail the revised check requiring the word 'prototype' inside the AGIP-adjacent parenthetical. Positive control with the contract's own suggested wording ('AGIP (the earlier governance prototype this framework evolved from)') passes. See .agent/evidence/020-contract-review-rev1-12.txt and -adversarial-v10-v11.txt."
+    },
+    {
+      "prior_verification_index": "missing (new)",
+      "prior_severity": "medium",
+      "status": "CLOSED",
+      "confirmation": "New verification[8] added, requiring the GitHub Release URL for tag v0.1.0 in README.md. Confirmed fails on the current command-free README and passes on a fixture containing the tag-specific URL. See .agent/evidence/020-contract-review-rev1-09.txt and -adversarial-release-link.txt."
+    }
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "020",
+    "summary": "Rev1 closes all four defects from the prior review. Dry-ran all 18 verification entries against the current, unmodified tree: all defect-detecting checks correctly FAIL for the right reason; all guard/baseline checks behave as expected. Adversarial re-fixturing confirms all three previously-unsound checks (CONTEXT.md payload, README NDS/AGF/GIP verbatim titles, bootstrap.sh AGIP prototype-gloss) now correctly reject the exact fixtures that previously false-passed, and all three remain satisfiable by a genuinely correct positive-control fixture (not fail-by-construction). The new Release-link check correctly fails now and passes on a tag-specific fixture. On independent re-review, both remaining residual edge cases (payload decoy-adjacency; Release-link generic fallback) are judged NON-BLOCKING and moved to observations[] -- neither would plausibly false-pass on a correct-but-defective implementation a compliant generator would actually produce: the payload decoy requires contrived adversarial placement matching an already-accepted contract-019 precedent, and the Release-link fallback is reachable only if the generator ignores the literal URL its own scope text already specifies (a Mode-B fidelity matter, not a testability defect). issues[] is therefore empty. All 13 of feature 020's original acceptance_tests remain covered (three legitimately strengthened in place). No new vacuous or wrong-reason check was introduced. Working tree confirmed clean outside .agent/ throughout this review. APPROVED for evaluator_contract_review -- advance to validator Mode A."
+  }
+}

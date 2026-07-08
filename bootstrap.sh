@@ -3,9 +3,10 @@
 # bootstrap.sh -- Nizam Governance Inheritance Protocol (GIP) bootstrap.
 #
 # The unified clone -> inject -> verify mechanism described in standard/GIP.md.
-# This is an evolution of the earlier AGIP prototype into a single, reusable,
-# runtime-agnostic script any consumer repository can invoke directly instead
-# of hand-reimplementing the GIP Section 2 inheritance sequence.
+# This is an evolution of the earlier AGIP (the earlier governance prototype this
+# framework evolved from) into a single, reusable, runtime-agnostic script any
+# consumer repository can invoke directly instead of hand-reimplementing the
+# GIP Section 2 inheritance sequence.
 #
 # It clones a pinned semantic-version git tag of the nizam-framework
 # governance payload, stages it in a temporary directory, injects standard/,

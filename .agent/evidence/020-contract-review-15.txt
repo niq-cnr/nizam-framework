@@ -1,0 +1,31 @@
+python3 -c "
+import subprocess, sys, yaml
+
+def frontmatter(text):
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != '---':
+        return None
+    end = None
+    for i, l in enumerate(lines[1:], start=1):
+        if l.strip() == '---':
+            end = i
+            break
+    if end is None:
+        return None
+    return yaml.safe_load(chr(10).join(lines[1:end])) or {}
+
+cur_fm = frontmatter(open('CONTEXT.md', encoding='utf-8').read())
+version = cur_fm.get('version')
+entries = cur_fm.get('change_log') or []
+versions = {str(e.get('version')) for e in entries if isinstance(e, dict)}
+if version not in versions:
+    print('CONTEXT.md change_log has no entry matching its own version ' + repr(version))
+    sys.exit(1)
+changed = subprocess.run(['git', 'diff', '--name-only', 'HEAD', '--', 'CHANGELOG.md'], capture_output=True, text=True, check=True).stdout.strip()
+if changed:
+    print('CHANGELOG.md was modified -- out of scope for feature 020 (F-022 owns phase-close CHANGELOG entries)')
+    sys.exit(1)
+print('PASS (change_log entry present for version ' + version + '; CHANGELOG.md untouched)')
+"
+CONTEXT.md change_log has no entry matching its own version '0.1.0'
+EXIT:1

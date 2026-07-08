@@ -1,0 +1,29 @@
+REV1 re-test of verification[10] (README NDS/AGF/GIP verbatim-title check) and
+verification[11] (bootstrap.sh AGIP "prototype" gloss check).
+
+verification[10]:
+(a) Prior false-passing fixture "See NDS (Section 2)... AGF (see appendix)... GIP
+    (chapter 4)." -> grep for the three verbatim canonical phrases -> "correctly
+    FAILS -- missing: NDS AGF GIP". CLOSED.
+(b) Positive control: "...the Nizam Documentation Standard (NDS), the Agent
+    Governance Framework (AGF), and the Governance Inheritance Protocol (GIP)."
+    (each phrase kept on a single physical line) -> "PASS (all three verbatim
+    phrases found, single line each)". Satisfiable, not fail-by-construction.
+(c) Line-wrap caveat check: an accidental mid-phrase wrap ("Nizam Documentation"
+    \n "Standard (NDS).") caused grep to MISS the phrase ("FAIL: confirmed --
+    grep is LINE-BASED ... a mid-phrase line-wrap breaks the match"). This
+    confirms the coordinator's/generator's note is accurate: the check is a
+    correct, sound requirement of the phrase; the constraint that the
+    implementer must not hard-wrap the phrase across lines is a satisfiable
+    authoring constraint, not a check defect (plain prose is trivially kept on
+    one line; this is not a claim about the file's line-wrapping being forced by
+    any tool).
+
+verification[11]:
+(a) Prior false-passing fixtures "AGIP (see appendix)" and "AGIP (see below)" ->
+    both now report "AGIP gloss parenthetical found but does not contain the
+    sourced word prototype: AGIP (see appendix)" / "... AGIP (see below)" and
+    exit 1. CLOSED.
+(b) Positive control: "AGIP (the earlier governance prototype this framework
+    evolved from)" and a second-form fixture both -> "PASS: AGIP (...)".
+    Satisfiable, not fail-by-construction.

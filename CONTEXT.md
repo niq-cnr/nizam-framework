@@ -2,9 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 0.1.0
-status: draft
+version: 0.2.0
+status: active
 authoritative_source: CONTEXT.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-08"
+    summary: "Rewrite to reflect the shipped state: NIZAM.json and bootstrap.sh have both shipped (removed stale 'ships in feature 00X' claims); named the phase-002 compliance surfaces (tools/validate.sh, .github/workflows/compliance.yml, docs/architecture/); corrected the bootstrap payload sentence to the 4 injected directories (standard/, templates/, schema/, tools/) plus NIZAM.json; stated the agent entry path (NIZAM.json -> tools/SKILL.md); expanded NDS/AGF/GIP at first use with their verbatim canonical titles."
 ---
 
 # Nizam Framework — CONTEXT
@@ -19,26 +23,35 @@ infrastructure, and not a runtime service.
 ## Module Map (Hybrid Mono-Repo)
 
 - `schema/` — JSON Schemas for every machine-readable artifact (frontmatter, manifest, phase, feature list, contract, QA verdict, run state).
-- `standard/` — Documentation standard, frontmatter rules, governance inheritance, anti-hallucination constraints.
+- `standard/` — The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), and the anti-hallucination constraints.
 - `methodology/` — Planning, execution, adversarial TDD, circuit breaker, tool-driven state, release train protocols.
 - `templates/` — Consumer-repo templates (CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest).
-- `tools/` — The single runtime-agnostic skill payload (no per-runtime forks).
+- `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md`.
 - `registry/` — The `NIZAM.json` index schema and scope-definition patterns.
+
+Compliance surfaces, added in phase 002-self-compliance, keep the shipped payload honest:
+`tools/validate.sh` (the repo-local compliance validator), `.github/workflows/compliance.yml`
+(the CI workflow that runs it on every push and pull request), and `docs/architecture/`
+(where Architecture Decision Records such as ADR-001 and ADR-002 are recorded).
 
 ## How Agents Consume the Framework
 
 Agents route through the root `NIZAM.json` capability index rather than bulk-reading
 governance directories. The index resolves the minimal set of files a task requires
 (protocol, schema, or template path) so context stays engineered, not exhausted.
-`NIZAM.json` itself ships in feature 006 of phase 001-framework-genesis; until then,
-consult the module READMEs and this file directly.
+`NIZAM.json` is the shipped root capability index; it indexes `tools/skill.json`, whose
+`entry_point` field names `tools/SKILL.md` as the agent entry path. An agent resolves
+`NIZAM.json` first, then `tools/skill.json`, then loads `tools/SKILL.md` to learn how to
+plan, execute, gate, and durably record work.
 
 ## Execution Commands
 
-- Bootstrap a consumer repo: `bootstrap.sh` (ships in feature 007) clones a pinned
-  framework tag, injects `standard/`, `templates/`, and `schema/`, and verifies compliance.
+- Bootstrap a consumer repo: `bootstrap.sh` clones a pinned framework tag, injects the
+  four governance directories `standard/`, `templates/`, `schema/`, and `tools/` plus the
+  root `NIZAM.json` capability index, and verifies compliance before declaring success.
 - Validate framework artifacts against their schemas using any standard JSON Schema
-  validator against the files under `schema/`.
+  validator against the files under `schema/`, or run `tools/validate.sh` for the
+  repo-local compliance check that `.github/workflows/compliance.yml` runs in CI.
 
 ## Out of Scope
 

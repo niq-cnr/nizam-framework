@@ -1,0 +1,23 @@
+REV1 re-test of verification[2] (revised CONTEXT.md payload check).
+
+(a) Current unmodified tree (previously vacuous-pass fixture): dry-run captured in
+    020-contract-review-rev1-03.txt -> exit 1, "stale 3-dir payload enumeration
+    (omits tools/) at line(s): [39]". CLOSED: the check now correctly FAILS on the
+    real stale sentence instead of vacuously passing.
+
+(b) Positive control: CONTEXT.md's Execution Commands sentence rewritten to
+    "injects `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json`" ->
+    regex scan result: "no stale payload enumeration found -- PASS". Companion
+    literal check (grep tools/ + NIZAM.json) also PASS. CONFIRMED: the check is
+    satisfiable by a genuinely-corrected sentence, not fail-by-construction.
+
+(c) Residual narrow edge case (LOW severity, not blocking): a deliberately
+    adversarial sentence keeping the stale 3-dir enumeration but adding an
+    unrelated "(see also the tools/ module elsewhere)" aside within the 45-char
+    post-match window still causes the check to report "no stale payload
+    enumeration found -- PASS" even though the actual injected-dirs list is still
+    wrong (3 dirs). This is a much narrower version of the original whole-file
+    vacuity: it now requires deliberately placing a decoy tools/ mention within
+    45 characters of the exact stale enumeration, not merely anywhere in the
+    ~3000-word file. Considered an acceptable residual risk given the effort
+    required to trigger it accidentally; flagged as a minor observation only.
