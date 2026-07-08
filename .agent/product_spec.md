@@ -6,14 +6,17 @@ tags: [spec, governance, framework, ai-legible, mono-repo]
 status: draft
 last_audited: "2026-07-07"
 authoritative_source: NA
-version: 1.0.0
-spec_version: "1.0.0"
+version: 1.1.0
+spec_version: "1.1.0"
 created_at: "2026-07-07T00:00:00Z"
-updated_at: "2026-07-07T00:00:00Z"
+updated_at: "2026-07-08T00:00:00Z"
 change_log:
   - version: "1.0.0"
     date: "2026-07-07T00:00:00Z"
     summary: "Initial spec for Nizam framework genesis (phase 001)."
+  - version: "1.1.0"
+    date: "2026-07-08T00:00:00Z"
+    summary: "ADR-001 layout amendment - .github/workflows/ CI enforcement and tools/validate.sh compliance validator added to the architecture (F-011)."
 ---
 
 # Nizam Framework — Product Specification
@@ -58,7 +61,9 @@ nizam-framework/
 ├── registry/           # NIZAM.json schema + scope-definition patterns
 ├── templates/          # CONTEXT / AGENTS / DEBT / ADR / work-packet / phase / manifest templates
 ├── schema/             # JSON Schemas: frontmatter, manifest, phase, feature_list, contract, qa, run_state
-└── tools/              # Runtime-agnostic unified skill payload (ONE payload, no per-runtime forks)
+├── tools/              # Runtime-agnostic unified skill payload (ONE payload, no per-runtime forks)
+│   └── validate.sh     # Runtime-agnostic repo-local compliance validator (ADR-001)
+└── .github/workflows/  # CI enforcement of NDS §7 (compliance.yml) (ADR-001)
 ```
 
 ### 2.2 Module Boundaries (internal contracts)

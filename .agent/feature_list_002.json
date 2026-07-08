@@ -5,9 +5,9 @@
   "features": [
     {
       "id": "011",
-      "name": "ADR-001 CI-Compliance Decision & product_spec §2.1 Layout Amendment",
-      "description": "Instantiate docs/architecture/ADR-001-ci-compliance-enforcement.md from templates/ADR_TEMPLATE.md (dogfooding the template) recording the decision to adopt CI enforcement of NDS §7 plus a repo-local compliance validator, with .github/workflows/ and tools/validate.sh as the layout addendum. Amend product_spec.md §2.1 to record both new locations, bumping its spec_version 1.0.0 -> 1.1.0 (MINOR/additive) with a matching change_log entry per NDS §4. Decision and layout of record only; no CI or validator code in this feature.",
-      "status": "pending",
+      "name": "ADR-001 CI-Compliance Decision & product_spec \u00a72.1 Layout Amendment",
+      "description": "Instantiate docs/architecture/ADR-001-ci-compliance-enforcement.md from templates/ADR_TEMPLATE.md (dogfooding the template) recording the decision to adopt CI enforcement of NDS \u00a77 plus a repo-local compliance validator, with .github/workflows/ and tools/validate.sh as the layout addendum. Amend product_spec.md \u00a72.1 to record both new locations, bumping its spec_version 1.0.0 -> 1.1.0 (MINOR/additive) with a matching change_log entry per NDS \u00a74. Decision and layout of record only; no CI or validator code in this feature.",
+      "status": "complete",
       "dependencies": [],
       "acceptance_tests": [
         "ADR file exists: test -f docs/architecture/ADR-001-ci-compliance-enforcement.md",
@@ -17,7 +17,7 @@
         "ADR body contains no unreplaced template tokens: ! grep -q '{{' docs/architecture/ADR-001-ci-compliance-enforcement.md",
         "product_spec.md spec_version is 1.1.0: grep -Eq 'spec_version: \"1\\.1\\.0\"' .agent/product_spec.md",
         "product_spec.md change_log gained a 1.1.0 entry: grep -q 'version: \"1.1.0\"' .agent/product_spec.md",
-        "product_spec.md §2.1 references both new locations: grep -q '.github/workflows' .agent/product_spec.md && grep -q 'tools/validate.sh' .agent/product_spec.md",
+        "product_spec.md \u00a72.1 references both new locations: grep -q '.github/workflows' .agent/product_spec.md && grep -q 'tools/validate.sh' .agent/product_spec.md",
         "product_spec.md frontmatter still parses as YAML (python3 -c reads the frontmatter block between the first two '---' lines and yaml.safe_load succeeds)"
       ],
       "estimated_lines": 100
@@ -25,9 +25,11 @@
     {
       "id": "012",
       "name": "tools/validate.sh Repo-Local Compliance Validator + NIZAM.json Indexing",
-      "description": "Ship tools/validate.sh: one runtime-agnostic command, exit 0 on a clean tree and non-zero on any violation. It validates every shipped .md frontmatter against schema/frontmatter.schema.json PLUS format checks (authoritative_source equals the file's own repo-relative path or NA; status enum; semver version), runs the NDS §6.2 untagged-fence sweep, validates NIZAM.json against registry/nizam-index.schema.json and walks every indexed path, greps for branding/endpoint leakage, runs bootstrap.sh through bash -n and a timeout-guarded --help, checks module-README presence (NDS §5.3), and enforces the NDS §4 version-bump-requires-changelog rule against git history. Index tools/validate.sh in NIZAM.json (capabilities array grows; index stays schema-valid with all paths resolving). Ship negative fixtures under tools/fixtures/ (bad authoritative_source value, untagged fence, broken indexed path) that each drive a non-zero exit. Remediates G2: format is asserted, not mere key presence.",
+      "description": "Ship tools/validate.sh: one runtime-agnostic command, exit 0 on a clean tree and non-zero on any violation. It validates every shipped .md frontmatter against schema/frontmatter.schema.json PLUS format checks (authoritative_source equals the file's own repo-relative path or NA; status enum; semver version), runs the NDS \u00a76.2 untagged-fence sweep, validates NIZAM.json against registry/nizam-index.schema.json and walks every indexed path, greps for branding/endpoint leakage, runs bootstrap.sh through bash -n and a timeout-guarded --help, checks module-README presence (NDS \u00a75.3), and enforces the NDS \u00a74 version-bump-requires-changelog rule against git history. Index tools/validate.sh in NIZAM.json (capabilities array grows; index stays schema-valid with all paths resolving). Ship negative fixtures under tools/fixtures/ (bad authoritative_source value, untagged fence, broken indexed path) that each drive a non-zero exit. Remediates G2: format is asserted, not mere key presence.",
       "status": "pending",
-      "dependencies": ["011"],
+      "dependencies": [
+        "011"
+      ],
       "acceptance_tests": [
         "Validator exists and passes syntax: test -f tools/validate.sh && bash -n tools/validate.sh",
         "Validator is executable: test -x tools/validate.sh",
@@ -46,9 +48,11 @@
     {
       "id": "013",
       "name": ".github/workflows/compliance.yml CI Enforcement",
-      "description": "Add .github/workflows/compliance.yml: a GitHub Actions workflow that runs tools/validate.sh on pull_request and on push to main, enforcing NDS §7 in CI. The exact command the workflow runs must also pass locally against the repo tree.",
+      "description": "Add .github/workflows/compliance.yml: a GitHub Actions workflow that runs tools/validate.sh on pull_request and on push to main, enforcing NDS \u00a77 in CI. The exact command the workflow runs must also pass locally against the repo tree.",
       "status": "pending",
-      "dependencies": ["012"],
+      "dependencies": [
+        "012"
+      ],
       "acceptance_tests": [
         "Workflow exists: test -f .github/workflows/compliance.yml",
         "Workflow is valid YAML: python3 -c 'import yaml,sys; yaml.safe_load(open(\".github/workflows/compliance.yml\"))'",
@@ -62,9 +66,11 @@
     {
       "id": "014",
       "name": "Methodology & Standard Hardening (External Anchor, Evidence Capture, Plan Amendment, Release Roles)",
-      "description": "Dogfood NDS §4 on every edit (version bump + change_log entry or root CHANGELOG line). 02_adversarial_tdd.md gains the External Anchor Rule (a consistency check MUST anchor on the source of truth, never the artifact under test — G6) and a mandate to capture one adversarial-evidence file per QA round (G3). 04_tool_driven_state.md gains the Evidence Capture Convention (exact invocation as first line, EXIT:<code> as last line, no session-absolute paths, replayable from repo root — G3) and a clock-read-timestamps rule for durable state (G4). 00_planning.md gains the Plan Amendment Rule (human-authorized post-phase amendments the orchestrator may register citing a recorded authorization event; substantive re-planning routes to the planner — G5). 05_release_train.md assigns changelog roll-up + tag mechanics explicitly to the release-manager/orchestrator role (G5).",
+      "description": "Dogfood NDS \u00a74 on every edit (version bump + change_log entry or root CHANGELOG line). 02_adversarial_tdd.md gains the External Anchor Rule (a consistency check MUST anchor on the source of truth, never the artifact under test \u2014 G6) and a mandate to capture one adversarial-evidence file per QA round (G3). 04_tool_driven_state.md gains the Evidence Capture Convention (exact invocation as first line, EXIT:<code> as last line, no session-absolute paths, replayable from repo root \u2014 G3) and a clock-read-timestamps rule for durable state (G4). 00_planning.md gains the Plan Amendment Rule (human-authorized post-phase amendments the orchestrator may register citing a recorded authorization event; substantive re-planning routes to the planner \u2014 G5). 05_release_train.md assigns changelog roll-up + tag mechanics explicitly to the release-manager/orchestrator role (G5).",
       "status": "pending",
-      "dependencies": ["012"],
+      "dependencies": [
+        "012"
+      ],
       "acceptance_tests": [
         "02_adversarial_tdd.md contains an External Anchor Rule anchoring on the source of truth: grep -Eqi 'external anchor' methodology/02_adversarial_tdd.md && grep -qi 'source of truth' methodology/02_adversarial_tdd.md",
         "02_adversarial_tdd.md mandates a captured adversarial-evidence file per QA round: grep -qi 'adversarial' methodology/02_adversarial_tdd.md && grep -Eqi 'evidence file|evidence path' methodology/02_adversarial_tdd.md",
@@ -73,17 +79,20 @@
         "00_planning.md defines the Plan Amendment Rule routing substantive re-planning to the planner: grep -Eqi 'plan amendment rule' methodology/00_planning.md && grep -qi 'authoriz' methodology/00_planning.md",
         "05_release_train.md assigns changelog roll-up and tag mechanics to the release-manager/orchestrator role: grep -Eqi 'release[- ]manager|orchestrator' methodology/05_release_train.md && grep -qi 'roll-up' methodology/05_release_train.md",
         "Each of the four edited methodology docs bumped version above 0.1.0: for f in 00_planning 02_adversarial_tdd 04_tool_driven_state 05_release_train; do grep -Eq 'version: 0\\.[1-9]|version: [1-9]' methodology/$f.md || exit 1; done",
-        "Each version bump has a change record: for each edited doc a change_log entry in its own frontmatter OR a root CHANGELOG.md line naming it (validate.sh NDS §4 check passes)",
+        "Each version bump has a change record: for each edited doc a change_log entry in its own frontmatter OR a root CHANGELOG.md line naming it (validate.sh NDS \u00a74 check passes)",
         "All four edited docs still carry the 6 required frontmatter keys and remain schema-valid: bash tools/validate.sh; test $? -eq 0"
       ],
       "estimated_lines": 220
     },
     {
       "id": "015",
-      "name": "Phase Close — CHANGELOG, Green Validator, Release-Decision Human Gate",
-      "description": "Close phase 002. Add root CHANGELOG.md [Unreleased] entries covering the phase-002 deliverables (CI enforcement, validator, protocol hardening). Confirm tools/validate.sh exits 0 against the final tree. Record the release decision — v0.2.0, MINOR per methodology/05_release_train.md §3.2 (new tooling + additive protocol content) — as an explicit HUMAN GATE. The pipeline does NOT cut the tag; it records that a human sign-off is required.",
+      "name": "Phase Close \u2014 CHANGELOG, Green Validator, Release-Decision Human Gate",
+      "description": "Close phase 002. Add root CHANGELOG.md [Unreleased] entries covering the phase-002 deliverables (CI enforcement, validator, protocol hardening). Confirm tools/validate.sh exits 0 against the final tree. Record the release decision \u2014 v0.2.0, MINOR per methodology/05_release_train.md \u00a73.2 (new tooling + additive protocol content) \u2014 as an explicit HUMAN GATE. The pipeline does NOT cut the tag; it records that a human sign-off is required.",
       "status": "pending",
-      "dependencies": ["013", "014"],
+      "dependencies": [
+        "013",
+        "014"
+      ],
       "acceptance_tests": [
         "CHANGELOG.md has an [Unreleased] section naming the phase-002 deliverables: grep -q '## \\[Unreleased\\]' CHANGELOG.md && grep -Eqi 'validate\\.sh|compliance|CI enforcement' CHANGELOG.md",
         "CHANGELOG [Unreleased] references the compliance validator and CI workflow: grep -q 'tools/validate.sh' CHANGELOG.md && grep -q 'compliance.yml' CHANGELOG.md",

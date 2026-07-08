@@ -1,0 +1,4 @@
+(script: x05.sh)
+f=docs/architecture/ADR-001-ci-compliance-enforcement.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; if grep -q '{{' "$f"; then echo 'unreplaced {{ token(s) found'; grep -n '{{' "$f"; exit 1; else echo PASS; fi
+PASS
+EXIT:0

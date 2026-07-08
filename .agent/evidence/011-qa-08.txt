@@ -1,0 +1,19 @@
+(script: x08.sh)
+f=.agent/product_spec.md; test -f "$f" || { echo "MISSING $f"; exit 1; }
+python3 -c "
+import yaml
+lines = open('$f').read().split(chr(10))
+assert lines[0] == '---', 'first line is not ---'
+end = None
+for i, l in enumerate(lines[1:], start=1):
+    if l == '---':
+        end = i
+        break
+assert end is not None, 'no closing --- found'
+block = chr(10).join(lines[1:end])
+data = yaml.safe_load(block)
+assert isinstance(data, dict), 'frontmatter did not parse to a mapping'
+print('PASS')
+"
+PASS
+EXIT:0

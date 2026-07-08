@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "002-self-compliance",
-  "current_feature": "011",
+  "current_feature": "012",
   "status": "contract_negotiation",
-  "updated_at": "2026-07-08T09:30:00Z",
+  "updated_at": "2026-07-08T11:20:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -34,6 +34,10 @@
       "limit": 3
     },
     "010-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "011-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -193,6 +197,16 @@
       "at": "2026-07-08T09:30:00Z",
       "event": "phase_activated",
       "detail": "Phase 002-self-compliance authorized by human (\"approved. please proceed.\", 2026-07-08). Manifest flipped to in_progress; scope budget reset (770-line estimate, phase-001 final budget archived in phase_001_scope_budget_final). Beginning contract negotiation on feature 011."
+    },
+    {
+      "at": "2026-07-08T10:30:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 011 approved after 1 revision (template-comment false-fail policy fix; substring false-pass replaced with YAML-parsed assertion; version-field coverage added). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T11:20:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 011 complete: contract 1 revision (template-comment false-fail, substring false-pass, version coverage), Mode B + QA 9/9 first-pass + template-fidelity adversarial. 218 lines vs 100 est (first feature of phase - no rolling baseline per 00_planning bootstrap rule; cumulative 218/1001 healthy). Advancing to 012."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -268,7 +282,14 @@
   },
   "scope_budget": {
     "original_estimate_lines": 770,
-    "total_lines_changed": 0,
-    "per_feature": []
+    "total_lines_changed": 218,
+    "per_feature": [
+      {
+        "id": "011",
+        "estimated": 100,
+        "actual": 218,
+        "flag": null
+      }
+    ]
   }
 }

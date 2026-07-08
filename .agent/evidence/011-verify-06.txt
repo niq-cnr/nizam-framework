@@ -1,0 +1,21 @@
+f=.agent/product_spec.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import yaml
+lines = open('$f').read().split(chr(10))
+assert lines[0] == '---', 'first line is not ---'
+end = None
+for i, l in enumerate(lines[1:], start=1):
+    if l == '---':
+        end = i
+        break
+assert end is not None, 'no closing --- found'
+block = chr(10).join(lines[1:end])
+fm = yaml.safe_load(block)
+assert fm.get('version') == '1.1.0', 'version is ' + repr(fm.get('version'))
+assert fm.get('spec_version') == '1.1.0', 'spec_version is ' + repr(fm.get('spec_version'))
+cl = fm.get('change_log', [])
+assert any(e.get('version') == '1.1.0' for e in cl), 'no change_log entry with version 1.1.0 found'
+print('PASS')
+"
+---OUTPUT---
+PASS
+EXIT:0

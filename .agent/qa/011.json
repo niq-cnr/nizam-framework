@@ -1,0 +1,22 @@
+{
+  "feature_id": "011",
+  "verdict": "pass",
+  "executed_at": "2026-07-08",
+  "checks": [
+    {"command": "ADR file exists", "exit_code": 0, "evidence": ".agent/evidence/011-qa-01.txt"},
+    {"command": "ADR frontmatter: '---' first line + 6 required keys", "exit_code": 0, "evidence": ".agent/evidence/011-qa-02.txt"},
+    {"command": "ADR Status line names a valid ADR status", "exit_code": 0, "evidence": ".agent/evidence/011-qa-03.txt"},
+    {"command": "ADR authoritative_source equals its own repo-relative path", "exit_code": 0, "evidence": ".agent/evidence/011-qa-04.txt"},
+    {"command": "ADR body contains no unreplaced {{ tokens", "exit_code": 0, "evidence": ".agent/evidence/011-qa-05.txt"},
+    {"command": "product_spec.md version/spec_version 1.1.0 + change_log 1.1.0 entry (parsed YAML)", "exit_code": 0, "evidence": ".agent/evidence/011-qa-06.txt"},
+    {"command": "product_spec.md Sec 2.1 references both new locations", "exit_code": 0, "evidence": ".agent/evidence/011-qa-07.txt"},
+    {"command": "product_spec.md frontmatter still parses as YAML", "exit_code": 0, "evidence": ".agent/evidence/011-qa-08.txt"},
+    {"command": "docs/architecture/ contains exactly the 1 contracted file", "exit_code": 0, "evidence": ".agent/evidence/011-qa-09.txt"}
+  ],
+  "adversarial_check": {
+    "description": "Three-part mandatory check beyond the 9 listed commands. (1) Validated the ADR's frontmatter against schema/frontmatter.schema.json via python3+yaml+jsonschema -- passes cleanly. (2) Diffed the ADR's ## / ### section structure against templates/ADR_TEMPLATE.md's body sections: identical set and identical order (Context, Decision, Consequences/Positive/Negative/Follow-Up Actions, Alternatives Considered) -- zero missing, zero invented sections; separately confirmed the template's leading instructional HTML comment is correctly absent from the shipped ADR (deleted on instantiation, not left in place). (3) Verified product_spec.md Sec 2.1's tree internal consistency: every non-root line uses a sanctioned box-drawing connector (no ASCII substitutes), tools/ correctly switched from '└──' to '├──' now that it has a following sibling, the new validate.sh line is correctly nested as tools/'s sole child ('│   └── '), .github/workflows/ correctly closes the tree as the new final '└── ' entry, comment-column alignment across all 12 top-level entries is identical (column 24, zero spread), and both new lines carry the same '# description (ADR-001)' comment style as their neighbors.",
+    "result": "pass",
+    "evidence": ".agent/evidence/011-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

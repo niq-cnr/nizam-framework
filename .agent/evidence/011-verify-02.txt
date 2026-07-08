@@ -1,0 +1,3 @@
+f=docs/architecture/ADR-001-ci-compliance-enforcement.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; test "$(head -1 "$f")" = '---' || { echo 'first line is not ---'; exit 1; }; fail=0; for k in id title description version status authoritative_source; do grep -q "^$k:" "$f" || { echo "MISSING key $k"; fail=1; }; done; test "$fail" -eq 0 && echo PASS || exit 1
+PASS
+EXIT:0

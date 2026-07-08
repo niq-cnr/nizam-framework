@@ -1,0 +1,77 @@
+{
+  "contract_id": "011",
+  "feature_id": "011",
+  "name": "ADR-001 CI-Compliance Decision & product_spec \u00a72.1 Layout Amendment",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_002.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "docs/architecture/ADR-001-ci-compliance-enforcement.md",
+        "purpose": "Instantiate from templates/ADR_TEMPLATE.md (dogfooding the template): DELETE the template's leading instructional HTML comment block in its entirety on instantiation (the <!-- ... --> comment preceding the H1 heading, which itself contains illustrative {{...}} example tokens and the Status-values documentation) -- it is template scaffolding, not decision content, and MUST NOT appear in the shipped ADR. Additionally, every {{...}} placeholder token remaining in the copied body replaced with decision-specific values, no token left unfilled anywhere in the file. Frontmatter: 6 required NDS keys (id, title, description, version, status, authoritative_source), with authoritative_source equal to this file's own repo-relative path 'docs/architecture/ADR-001-ci-compliance-enforcement.md'. Body Status line set to '**Status:** ACCEPTED' (the human has already authorized phase 002, so this decision is accepted, not merely proposed). Context section records the compliance-audit G1/G2 findings from .agent/product_spec_002.md Sec 2: genesis (phase 001) shipped NDS violations (non-repo-relative authoritative_source x24, untagged fences x8, verdict-shape drift) that no internal gate caught across 22 reviews, and no CI enforcement of NDS \u00a77 exists in the repo despite NDS \u00a77 prescribing it; verification checked key presence, not value format (G2), which is why the violations passed. Decision section states: adopt CI enforcement of NDS \u00a77 via a repo-local, runtime-agnostic compliance validator (tools/validate.sh) invoked by .github/workflows/compliance.yml on both pull_request and push-to-main. Consequences section covers: (positive) violations are caught before merge instead of by external review; (negative/follow-up) the repo layout gains two new top-level locations (.github/workflows/ and tools/validate.sh), which is why product_spec.md \u00a72.1 is amended in this same contract; and tools/validate.sh becomes an indexed capability in NIZAM.json (deferred to feature 012, noted here as a Follow-Up Action, not implemented in this feature). Supersedes: None. No CI workflow file and no validator code are authored in this feature -- decision and layout of record only."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": ".agent/product_spec.md",
+        "purpose": "Three coordinated edits, no others: (1) In Sec 2.1 Hybrid Mono-Repo Layout, add two lines to the fenced tree diagram recording the new top-level locations: '.github/workflows/' (CI enforcement of NDS \u00a77) and 'tools/validate.sh' (runtime-agnostic repo-local compliance validator) -- wording/shape as previewed in product_spec_002.md Sec 3, adapted to sit correctly inside product_spec.md's own existing tree fence without duplicating or reordering existing entries. (2) Bump frontmatter 'version' and 'spec_version' both from '1.0.0' to '1.1.0' (MINOR/additive per NDS \u00a74 -- new layout locations, no breaking change to existing content), and append ONE new change_log entry object ({version: \"1.1.0\", date: <today, ISO 8601>, summary: <names the \u00a72.1 layout amendment and cites F-011>) after the existing 1.0.0 entry, preserving the 1.0.0 entry byte-for-byte. (3) No other frontmatter key, section, or body text in product_spec.md changes -- 'updated_at' MAY be bumped to the same date as the new change_log entry as part of this same edit, but no other timestamp, tag, or design-tenet text moves. The full frontmatter block (both '---' delimiters and everything between them) MUST remain valid, parseable YAML after the edit."
+      }
+    ]
+  },
+  "non_goals": [
+    "No tools/validate.sh code, no tools/fixtures/, and no NIZAM.json edit -- validator implementation and its indexing belong to feature 012",
+    "No .github/workflows/compliance.yml -- the CI workflow file belongs to feature 013",
+    "No edits to methodology/ or standard/ documents -- protocol hardening belongs to feature 014",
+    "No edit to CHANGELOG.md -- phase-close changelog entries belong to feature 015; this contract's spec version-bump change record lives entirely in product_spec.md's own change_log, per NDS \u00a74's change_log-frontmatter-entry branch, not the CHANGELOG.md branch",
+    "No edit to .agent/product_spec_002.md -- it is the phase-002 spec addendum input, not a deliverable of this contract",
+    "No edit to any file beyond docs/architecture/ADR-001-ci-compliance-enforcement.md, .agent/product_spec.md, and this contract file",
+    "No change to product_spec.md's existing 1.0.0 change_log entry, design tenets, module boundary table, or any section other than 2.1's layout diagram and the frontmatter version/spec_version/change_log/updated_at fields named above"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ADR file exists",
+      "command": "test -f docs/architecture/ADR-001-ci-compliance-enforcement.md && echo PASS || { echo 'MISSING docs/architecture/ADR-001-ci-compliance-enforcement.md'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADR begins with YAML frontmatter (first line is exactly '---') containing all 6 required keys",
+      "command": "f=docs/architecture/ADR-001-ci-compliance-enforcement.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; test \"$(head -1 \"$f\")\" = '---' || { echo 'first line is not ---'; exit 1; }; fail=0; for k in id title description version status authoritative_source; do grep -q \"^$k:\" \"$f\" || { echo \"MISSING key $k\"; fail=1; }; done; test \"$fail\" -eq 0 && echo PASS || exit 1"
+    },
+    {
+      "acceptance_test": "ADR Status line names a valid ADR status",
+      "command": "f=docs/architecture/ADR-001-ci-compliance-enforcement.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eq '^\\*\\*Status:\\*\\* (PROPOSED|ACCEPTED|SUPERSEDED|DEPRECATED)' \"$f\" && echo PASS || { echo 'no valid Status line found'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADR frontmatter authoritative_source equals its own repo-relative path",
+      "command": "f=docs/architecture/ADR-001-ci-compliance-enforcement.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'authoritative_source: docs/architecture/ADR-001-ci-compliance-enforcement.md' \"$f\" && echo PASS || { echo 'authoritative_source does not match own path'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADR body contains no unreplaced template tokens anywhere in the file -- the absolute {{ ban holds across the WHOLE file, including where the leading instructional HTML comment used to be, because that comment (which itself contained illustrative {{...}} tokens) MUST have been deleted entirely on instantiation per the files_create purpose, not merely left in place with its tokens filled",
+      "command": "f=docs/architecture/ADR-001-ci-compliance-enforcement.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -q '{{' \"$f\"; then echo 'unreplaced {{ token(s) found'; grep -n '{{' \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "product_spec.md top-level frontmatter version is 1.1.0 AND spec_version is 1.1.0 AND change_log gained a corresponding 1.1.0 entry (feature_list acceptance tests 6 and 7, verified via parsed YAML frontmatter rather than substring grep, so a spec_version-only match or a version bump with no change_log entry cannot false-pass)",
+      "command": "f=.agent/product_spec.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\nlines = open('$f').read().split(chr(10))\nassert lines[0] == '---', 'first line is not ---'\nend = None\nfor i, l in enumerate(lines[1:], start=1):\n    if l == '---':\n        end = i\n        break\nassert end is not None, 'no closing --- found'\nblock = chr(10).join(lines[1:end])\nfm = yaml.safe_load(block)\nassert fm.get('version') == '1.1.0', 'version is ' + repr(fm.get('version'))\nassert fm.get('spec_version') == '1.1.0', 'spec_version is ' + repr(fm.get('spec_version'))\ncl = fm.get('change_log', [])\nassert any(e.get('version') == '1.1.0' for e in cl), 'no change_log entry with version 1.1.0 found'\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "product_spec.md \u00a72.1 references both new locations",
+      "command": "f=.agent/product_spec.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q '.github/workflows' \"$f\" && grep -q 'tools/validate.sh' \"$f\" && echo PASS || { echo 'one or both new layout locations missing from product_spec.md'; exit 1; }"
+    },
+    {
+      "acceptance_test": "product_spec.md frontmatter still parses as YAML",
+      "command": "f=.agent/product_spec.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport yaml\nlines = open('$f').read().split(chr(10))\nassert lines[0] == '---', 'first line is not ---'\nend = None\nfor i, l in enumerate(lines[1:], start=1):\n    if l == '---':\n        end = i\n        break\nassert end is not None, 'no closing --- found'\nblock = chr(10).join(lines[1:end])\ndata = yaml.safe_load(block)\nassert isinstance(data, dict), 'frontmatter did not parse to a mapping'\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "robustness: docs/architecture/ contains exactly the one contracted file, no stray artifacts",
+      "command": "test -d docs/architecture || { echo 'MISSING docs/architecture directory'; exit 1; }; count=$(LC_ALL=C ls -1 docs/architecture/ | wc -l); listing=$(LC_ALL=C ls -1 docs/architecture/); test \"$count\" -eq 1 && test \"$listing\" = 'ADR-001-ci-compliance-enforcement.md' && echo PASS || { echo \"unexpected docs/architecture/ contents (count=$count): $listing\"; exit 1; }"
+    }
+  ],
+  "estimated_lines": 100,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/011-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/011-verify-01.txt for the first entry, ..., .agent/evidence/011-verify-09.txt for the ninth). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T10:30:00Z",
+    "revisions": 1
+  }
+}
