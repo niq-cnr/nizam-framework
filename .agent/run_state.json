@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "003-communication",
-  "current_feature": "019",
+  "current_feature": "018",
   "status": "implementing",
-  "updated_at": "2026-07-08T06:59:39Z",
+  "updated_at": "2026-07-08T08:00:51Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -63,6 +63,14 @@
     },
     "017-contract": {
       "attempts": 1,
+      "limit": 3
+    },
+    "019-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "019-implementation": {
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -311,6 +319,31 @@
       "at": "2026-07-08T06:59:39Z",
       "event": "feature_complete",
       "detail": "Feature 017 complete: both gates first-pass (Mode B + QA). QA 13/13 verification commands independently re-run (exit 0 each) + mandatory adversarial spot-check (template instructional HTML comment block deleted in its entirety; authoritative_source repo-relative and frontmatter YAML-valid; product_spec.md 1.0.0/1.1.0 change_log entries byte-for-byte intact; non-goals held - no docs/guide/index.html, empty NIZAM.json diff, no out-of-scope edits; validate.sh SUMMARY: 8 passed, 0 failed). Deliverables: docs/architecture/ADR-002-html-user-guide.md (HTML user guide decision + docs/ shipped-vs-internal declaration) and product_spec.md amended to spec_version 1.2.0. 154 lines vs 130 est (contract-scoped: ADR 132+0, product_spec 19+3; first feature of phase 003, no rolling baseline). Cumulative 154/1813. QA evaluator surfaced a pre-existing schema/qa_verdict.schema.json drift (required keys verdict/executed_at/checks[] differ from the richer qa/*.json shape actually produced; unenforced by validate.sh) - logged as NDEBT-002. Advancing to 019 (deps [] satisfied) per execution order 017->019->018->020->022."
+    },
+    {
+      "at": "2026-07-08T07:25:58Z",
+      "event": "contract_approved",
+      "detail": "Contract 019 approved after 1 revision by both gates. Rev0 rejected on 3 real defects: (Mode A) H4 scope entry mislabeled interface.md pinned-checkout discovery as 'current item 3' when it is item 2; (evaluator) v2 repo-root-fallback check false-passed via the pre-existing 'root-relative' substring; (evaluator) v7's 'CI' 2-char token false-passed inside words like 'reconciled'. Rev1 fixes: dropped the numeric label + required the fallback be labeled 'framework checkout' (v2 now greps that literal phrase, absent pre-fix); v7 CI token now word-boundary anchored (\\bCI\\b or 'continuous integration') with CONTEXT.md/AGENTS.md filename-anchored. Both gates re-verified rev1: Mode A approved (ISSUE-1 resolved, no new defect); evaluator approved (both findings closed by dry-run, 9 unchanged entries byte-identical). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T07:37:32Z",
+      "event": "contract_amended",
+      "detail": "Contract 019 verification[10] (out-of-scope scope guard) amended post-approval (test-defect correction, NOT an implementation attempt): added \"-- . ':(exclude).agent'\" to 'git diff --name-only HEAD'. Generator implementation was CORRECT (10/11 verifications EXIT:0, validate.sh 8/8 green) but v11 as written scanned .agent/run_state.json, which the orchestrator legitimately modified during Loop-1 (circuit breaker + contract_approved history) BEFORE the generator ran; the generator correctly refused to touch run_state.json or the deliverables to route around it and flagged the defect (AH-2). Dry-run proof: raw diff lists the 4 deliverables + run_state.json; excluded diff lists only the 4 deliverables; run_state diff is +10/-1 orchestrator-only. Matches contract-014 form / feature-016 'missing run_state exclusion' precedent. To be ratified by Mode B. Generator instructed to re-capture 019-verify-11.txt with the corrected command."
+    },
+    {
+      "at": "2026-07-08T07:45:00Z",
+      "event": "mode_b_approved",
+      "detail": "Feature 019 Mode B APPROVED first-pass: exactly the 4 deliverables changed (each faithful to contract), all non-goals held, run_state.json diff orchestrator-only, every claim traces to bootstrap.sh, all 11 verifications EXIT:0, validate.sh 8/8. verification[10] .agent-exclusion amendment RATIFIED. Contract -> implemented. Proceeding to QA."
+    },
+    {
+      "at": "2026-07-08T07:51:35Z",
+      "event": "qa_fail_amendment_rework",
+      "detail": "Feature 019 QA FAILED (honest catch by the adversarial spot-check that all 3 prior gates missed): standard/GIP.md Section 1 (Core Directive) line 22 still asserted the stale 3-dir payload '(standard/, templates/, schema/)', contradicting the corrected Section 2 item 2 and new Section 5.1 (both 4-dir + NIZAM.json) - H5 was not actually resolved; the doc was internally self-contradictory. Root cause: the contract scoped only the two Section 2 item-2 locations; verification[3] (block-scoped to Sec 2) and verification[4] (regex needing a literal 'and' Sec 1 lacks) silently passed over the third occurrence. Orchestrator AMENDMENT 2 (scope-completeness correction): expanded H5 GIP.md scope to include Section 1's Core Directive payload parenthetical + added generalized verification[11] (12th) guard asserting no single-line standard/+templates/+schema/ enumeration omits tools/ anywhere in GIP.md (dry-run flags exactly line 22 pre-fix, EXIT:1). Contract status reverted approved; 019-implementation circuit breaker attempts=2/3 (rework 1). Routing the QA report to @generator for the Section 1 fix; then re-run Mode B (ratify amendment) + QA."
+    },
+    {
+      "at": "2026-07-08T08:00:51Z",
+      "event": "feature_complete",
+      "detail": "Feature 019 complete: 1 contract revision + 2 orchestrator amendments (verification[10] .agent exclusion [test-defect]; H5 scope expansion to Section 1 + generalized guard [QA-driven scope-completeness], both Mode-B ratified) + 1 implementation rework (QA caught the GIP.md Section 1 stale 3-dir payload all 3 prior gates missed). Final gates: Mode B re-approved + QA 12/12 verifications EXIT:0 + 8-probe adversarial clean, validate.sh 8/8. Deliverables: tools/interface.md (H4 .nizam-first discovery + framework-checkout fallback), standard/GIP.md (H5 4-dir+NIZAM.json payload consistent across Sec 1/2/2.1/5.1, H8 existing-repo tiers), templates/README.md + methodology/README.md (H6 product_spec de-leak). 122 lines vs 190 est. Cumulative 276/1813. Advancing to 018 (dep 017 complete) - the self-contained HTML user guide centerpiece, which will document the now-corrected adoption contract."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -436,7 +469,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1395,
-    "total_lines_changed": 154,
+    "total_lines_changed": 276,
     "per_feature": [
       {
         "id": "017",
@@ -444,6 +477,13 @@
         "actual": 154,
         "flag": null,
         "note": "contract-scoped git stat (ADR-002 132+0, product_spec.md 19+3); first feature of phase 003 - no rolling baseline per 00_planning bootstrap rule"
+      },
+      {
+        "id": "019",
+        "estimated": 190,
+        "actual": 122,
+        "flag": null,
+        "note": "contract-scoped git stat (interface.md 21+9, GIP.md 63+10, templates/README.md 6+2, methodology/README.md 8+3). Executed 2nd per order 017->019->018. Rolling avg prior=154, 3x=462, no per-feature flag. 1 contract revision + 2 Mode-B-ratified amendments + 1 QA-driven rework."
       }
     ]
   }

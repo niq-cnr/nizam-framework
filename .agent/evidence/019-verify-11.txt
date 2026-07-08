@@ -1,0 +1,6 @@
+changed=$(git diff --name-only HEAD -- . ':(exclude).agent'); bad=""; for f in $changed; do case "$f" in tools/interface.md|standard/GIP.md|templates/README.md|methodology/README.md) ;; *) bad="$bad $f" ;; esac; done; if [ -n "$bad" ]; then echo "out-of-scope modified file(s):$bad"; exit 1; fi; echo "PASS (modified:$changed)"
+PASS (modified:methodology/README.md
+standard/GIP.md
+templates/README.md
+tools/interface.md)
+EXIT:0

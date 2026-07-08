@@ -2,16 +2,20 @@
 id: nizam-templates-readme
 title: "Templates Module — Index"
 description: "Index for the templates/ module: the seven consumer-repo document and manifest templates a bootstrapped repository copies and fills in — CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, and manifest templates."
-version: 0.2.0
+version: 0.2.1
 status: active
 authoritative_source: templates/README.md
+change_log:
+  - version: "0.2.1"
+    date: "2026-07-08"
+    summary: "H6 de-leak: rephrased the internal .agent-directory spec citation to cite standard/NDS.md directly, a source a fresh consumer repository actually has."
 ---
 
 # templates/
 
 The `templates/` module owns the templates a consumer repository copies after
 bootstrap and fills in with its own content. It depends on `standard/` (see
-`.agent/product_spec.md` Sec 2.2) for the frontmatter and documentation conventions its `.md`
+`standard/NDS.md`) for the frontmatter and documentation conventions its `.md`
 templates carry, and contains no filled-in project content of its own.
 
 | File | Purpose |

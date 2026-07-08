@@ -1,0 +1,4 @@
+f=tools/interface.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eqi 'root|framework checkout|repository root' "$f" && echo PASS || { echo 'no repository-root fallback language found'; exit 1; }
+PASS
+
+EXIT:0

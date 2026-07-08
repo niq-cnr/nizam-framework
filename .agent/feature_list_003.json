@@ -55,7 +55,7 @@
       "id": "019",
       "name": "Adoption-Contract Correctness — interface.md Discovery, GIP Payload Set, README De-Leak, Existing-Repo Tiers",
       "description": "Fix the framework's adoption contract where its documentation contradicts its own shipped behavior. H4: correct tools/interface.md §2 discovery order to look for .nizam/tools/skill.json first (the actual bootstrap layout), then a repository-root tools/skill.json fallback (for a framework checkout itself), then pinned-checkout resolution — reconciled with bootstrap.sh's .nizam/ default so discovery no longer misses every bootstrapped consumer. H5: correct standard/GIP.md §2 item 2 and §2.1 item 2 injection lists to name standard/, templates/, schema/, tools/, AND NIZAM.json (4 dirs + index), matching bootstrap.sh REQUIRED_MODULE_DIRS. H6 (de-leak): rephrase templates/README.md and methodology/README.md to remove every .agent/product_spec.md / product_spec reference a fresh consumer lacks, pointing instead to framework-relative concepts (standard/NDS.md, the README/guide DD cards). H8: add an 'Adopting in an Existing Repository' section to standard/GIP.md with conflict rules for pre-existing CONTEXT/AGENTS/CI and the incremental tiers (docs-standard-only -> +templates -> full loop). Each edited .md is in the validator's shipped-doc set, so version bumps carry a change_log entry or a CHANGELOG.md line (NDS §4 / C8) and validate.sh stays green.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [],
       "acceptance_tests": [
         "interface.md discovery names .nizam/tools/skill.json first: grep -q '.nizam/tools/skill.json' tools/interface.md",

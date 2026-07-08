@@ -2,9 +2,13 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: standard/GIP.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-08"
+    summary: "H5: corrected Section 2 item 2, Section 2.1 item 2, and Section 1's Core Directive payload parenthetical to all name the full injected payload (standard/, templates/, schema/, tools/, and NIZAM.json), replacing the stale 3-dir description and resolving the self-contradiction between Section 1 and Sections 2/5.1. H8: added the Adopting in an Existing Repository section (existing-CONTEXT.md/AGENTS.md/CI conflict rules and the docs-standard-only / templates / full loop incremental adoption tiers), renumbering Enforcement to Section 6."
 ---
 
 # Governance Inheritance Protocol (GIP)
@@ -15,10 +19,12 @@ authoritative_source: standard/GIP.md
 governance content is not framework-compliant.**
 
 Any repository that adopts the Nizam framework MUST inherit its governance content
-(`standard/`, `templates/`, `schema/`) through a single, atomic, verifiable operation, not
-through ad hoc copy-paste or hand-authored reproductions. This protocol defines that
-operation, the compliance checks that follow it, and how a consumer repository detects
-when its inherited copy has drifted from the framework it claims to follow.
+(`standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json` — the full payload
+defined authoritatively in Section 2, point 2) through a single, atomic, verifiable
+operation, not through ad hoc copy-paste or hand-authored reproductions. This protocol
+defines that operation, the compliance checks that follow it, and how a consumer
+repository detects when its inherited copy has drifted from the framework it claims to
+follow.
 
 ## 2. Pinned-Tag Inheritance
 
@@ -30,9 +36,9 @@ whenever it upgrades to a newer framework release.
    any other floating branch reference. Pinning prevents a consumer from silently
    inheriting mid-development governance changes.
 2. **Inject the governance directories.** The consumer copies the framework's `standard/`,
-   `templates/`, and `schema/` directories into its own workspace (conventionally at its
-   repository root, or a dedicated governance directory it declares in its own
-   `CONTEXT.md`).
+   `templates/`, `schema/`, and `tools/` directories, together with the framework's root
+   `NIZAM.json` capability index, into its own workspace (conventionally at its repository
+   root, or a dedicated governance directory it declares in its own `CONTEXT.md`).
 3. **Load, don't just copy.** Any agent operating in the consumer repository MUST read the
    injected governance documents into its working context before acting, and is bound by
    their directives for the duration of its session.
@@ -50,7 +56,8 @@ Any consumer MAY invoke it directly rather than reimplementing the steps in Sect
 `bootstrap.sh` performs, as one atomic operation:
 
 1. Clone the pinned tag (never a floating branch) of the framework repository.
-2. Inject `standard/`, `templates/`, and `schema/` into the consumer's target location.
+2. Inject `standard/`, `templates/`, `schema/`, and `tools/`, together with `NIZAM.json`,
+   into the consumer's target location.
 3. Verify the injection succeeded before declaring success.
 
 The verification step confirms, at minimum:
@@ -109,7 +116,53 @@ process of catching this divergence.
    and it defeats the auditability of "this repository runs framework version X" as a
    single, verifiable claim.
 
-## 5. Enforcement
+## 5. Adopting in an Existing Repository
+
+A repository is rarely empty when it first adopts this framework. Bootstrapping MUST
+coexist with whatever a consumer repository already has in place, rather than silently
+overwriting it.
+
+### 5.1 Conflict Rules for Pre-Existing Files
+
+If a consumer repository already has its own `CONTEXT.md`, `AGENTS.md`, or CI
+(continuous integration) configuration before it bootstraps this framework, the
+bootstrap operation MUST NOT silently overwrite that pre-existing content. Instead:
+
+- **Rename-and-diff, never silent overwrite.** Before injection, any pre-existing file
+  that collides by name or purpose with a bootstrap-injected artifact (for example, the
+  consumer's own `CONTEXT.md` or `AGENTS.md`) MUST be preserved under a renamed path
+  (e.g. `CONTEXT.md.pre-nizam`) so a human or agent can diff the pre-existing content
+  against the framework's `templates/` version and reconcile the two by hand, rather
+  than losing either version.
+- **CI configuration is reconciled, not replaced.** A consumer's pre-existing CI
+  configuration is not part of the injected governance payload (`standard/`,
+  `templates/`, `schema/`, `tools/`, `NIZAM.json` — Section 2, point 2) and MUST NOT be
+  deleted or overwritten by bootstrapping. Where this protocol recommends CI-driven
+  compliance checks (Section 3), those checks are added to the consumer's existing CI
+  configuration, not substituted for it.
+- **Injection never touches these three categories directly.** `bootstrap.sh` injects
+  only `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json`; it never writes
+  to a consumer's `CONTEXT.md`, `AGENTS.md`, or CI configuration itself, which is why
+  those are exactly the categories a consumer repository must reconcile by hand against
+  the templates this framework ships.
+
+### 5.2 Incremental Adoption Tiers
+
+A consumer repository does not have to adopt the full contract-first loop on day one.
+Three incremental tiers are supported:
+
+1. **Tier 1 — `docs-standard-only`.** The consumer inherits `standard/` alone (the
+   governance documents themselves), with no `templates/` and no contract loop. This is
+   the minimum viable adoption: the consumer's agents read and are bound by the
+   governance documents, but no Generator/Validator/Evaluator cycle runs yet.
+2. **Tier 2 — `templates`.** The consumer additionally inherits `templates/`, adding the
+   `CONTEXT.md`, `AGENTS.md`, ADR, and other consumer-authored templates so it can author
+   its own governed project documents, still without running the contract loop.
+3. **Tier 3 — `full loop`.** The consumer inherits the complete governance payload and
+   runs the complete contract-first Generator/Validator/Evaluator cycle described in
+   `methodology/01_execution.md`, end to end.
+
+## 6. Enforcement
 
 - Any process responsible for onboarding a new consumer repository to the framework MUST
   ensure Section 2's inheritance sequence (or an invocation of `bootstrap.sh`) is

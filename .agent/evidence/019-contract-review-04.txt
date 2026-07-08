@@ -1,0 +1,4 @@
+f=standard/GIP.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; if ! grep -Eq 'standard/`, `templates/`, and `schema/` \(directories|into' "$f" || grep -q 'tools/' "$f"; then echo PASS; else echo 'GIP.md still describes inject set as exactly 3 dirs and tools/ not found'; exit 1; fi
+GIP.md still describes inject set as exactly 3 dirs and tools/ not found
+
+EXIT:1

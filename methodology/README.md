@@ -2,9 +2,13 @@
 id: nizam-methodology-readme
 title: "Methodology Module — Index"
 description: "Index for the methodology/ module: the six protocol documents governing planning, contract-first execution, adversarial TDD, the universal circuit breaker, tool-driven durable state, and the release train."
-version: 0.2.0
+version: 0.2.1
 status: active
 authoritative_source: methodology/README.md
+change_log:
+  - version: "0.2.1"
+    date: "2026-07-08"
+    summary: "H6 de-leak: rephrased both internal .agent-directory spec-file references (the 00_planning.md table row and the Design Decision Cross-Reference citation) to point to framework-relative sources a fresh consumer repository actually has."
 ---
 
 # methodology/
@@ -17,7 +21,7 @@ gates defined in `standard/AGF.md`.
 
 | File | Purpose |
 |---|---|
-| [`00_planning.md`](00_planning.md) | Planning Enforcer — the mandatory pre-code `product_spec.md` + `feature_list.json` artifact pair, the feature list as a validated DAG, the Dependency Enforcement Rule, atomic-step acceptance-test decomposition, and the Scope Budget Protocol (per-feature 3x rolling-average flag, cumulative 130% halt). |
+| [`00_planning.md`](00_planning.md) | Planning Enforcer — the mandatory pre-code specification and feature-list artifact pair, the feature list as a validated DAG, the Dependency Enforcement Rule, atomic-step acceptance-test decomposition, and the Scope Budget Protocol (per-feature 3x rolling-average flag, cumulative 130% halt). |
 | [`01_execution.md`](01_execution.md) | Contract-First Harness Loop — the two-loop state machine (Loop 1 pre-code alignment, Loop 2 post-code repair) driving Generator/Validator/Evaluator interaction, and the JSON Verdict Parse Rule that gates every stage. |
 | [`02_adversarial_tdd.md`](02_adversarial_tdd.md) | Adversarial Test Design — Evaluator independence (never trust generator-supplied evidence), false-pass and false-fail hunting patterns, the negative-testing requirement, and the mandatory per-QA-round adversarial spot-check. |
 | [`03_circuit_breaker.md`](03_circuit_breaker.md) | Universal Circuit Breaker (DD-2) — the single authoritative 3-strike attempt limit embedded by every repeatable loop in the framework, its per-attempt strategy table, and the forbidden-fourth-attempt halt/escalation procedure. |
@@ -27,7 +31,8 @@ gates defined in `standard/AGF.md`.
 ## Design Decision Cross-Reference
 
 Two documents in this module are each the authoritative home for one of the
-framework's named Design Decisions (`product_spec.md` Section 4):
+framework's named Design Decisions (this repository's root `README.md`, "Design
+Decisions" section):
 
 - **`03_circuit_breaker.md`** remediates **DD-2 (Universal Circuit Breaker)** —
   the mandatory 3-strike limit that prevents any execution loop from retrying a

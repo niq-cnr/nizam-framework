@@ -1,0 +1,15 @@
+python3 -c "
+import re, sys
+text = open('standard/GIP.md', encoding='utf-8').read()
+pat = re.compile(r'standard/.{0,6}templates/.{0,10}schema/')
+bad = []
+for m in pat.finditer(text):
+    window = text[m.start():m.end()+45]
+    if 'tools/' not in window:
+        bad.append(text[:m.start()].count(chr(10)) + 1)
+if bad:
+    print('stale 3-dir payload claim (omits tools/) at line(s): ' + repr(bad)); sys.exit(1)
+print('PASS')
+"
+PASS
+EXIT:0

@@ -1,0 +1,23 @@
+f=standard/GIP.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import sys
+text = open('standard/GIP.md', encoding='utf-8').read()
+def slice_between(a, b):
+    i = text.find(a)
+    j = text.find(b)
+    if i == -1 or j == -1 or j <= i:
+        print('could not locate section markers ' + repr(a) + ' / ' + repr(b))
+        sys.exit(1)
+    return text[i:j]
+sec2 = slice_between('## 2. Pinned-Tag Inheritance', '### 2.1')
+sec21 = slice_between('### 2.1', '## 3. Compliance Verification')
+tokens = ['tools/', 'NIZAM.json']
+for name, block in [('Section 2 item 2', sec2), ('Section 2.1 item 2', sec21)]:
+    for t in tokens:
+        if t not in block:
+            print(name + ' block missing ' + repr(t))
+            sys.exit(1)
+print('PASS')
+"
+Section 2 item 2 block missing 'tools/'
+
+EXIT:1

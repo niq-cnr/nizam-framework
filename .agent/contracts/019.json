@@ -1,0 +1,117 @@
+{
+  "contract_id": "019",
+  "feature_id": "019",
+  "name": "Adoption-Contract Correctness \u2014 interface.md Discovery, GIP Payload Set, README De-Leak, Existing-Repo Tiers",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_003.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "tools/interface.md",
+        "purpose": "Correct Section 2 (Discovery) to remediate H4: reorder discovery to (1) FIRST check `.nizam/tools/skill.json`, matching bootstrap.sh's actual `.nizam/` DEFAULT_TARGET_DIR install layout for a bootstrapped consumer (currently this path is named nowhere in the file), (2) a repository-root `tools/skill.json` FALLBACK, retained explicitly for a framework checkout evaluating itself (the document's current item 1, 'Consumer-repo discovery') \u2014 this fallback MUST be labeled in the document text with the literal phrase \"framework checkout\" (not merely implied), so it is unambiguously distinguishable from the bootstrapped-consumer path, (3) pinned-checkout discovery resolving a pinned tag without local vendoring \u2014 reconciled with bootstrap.sh's `.nizam/` default so discovery no longer misses every bootstrapped consumer. The `.nizam/tools/skill.json` mention MUST appear, in reading order, before the repository-root fallback mention. Preserve the existing 'Manifest resolution' and 'Failure behavior' items and the rest of the document (Sections 1, 3-6) unchanged except for any renumbering the reordered discovery items require. Bump frontmatter `version` strictly above its current value and add ONE `change_log` frontmatter entry (`version`/`date`/`summary`) naming the H4 discovery-order correction, per NDS Sec 4 / validator C8. No other content change."
+      },
+      {
+        "path": "standard/GIP.md",
+        "purpose": "Three coordinated edits, no others. (1) H5: correct Section 2 item 2 ('Inject the governance directories') and Section 2.1 item 2 (the `bootstrap.sh` inject-step description) to name all four injected directories \u2014 `standard/`, `templates/`, `schema/`, `tools/` \u2014 AND `NIZAM.json`, matching `bootstrap.sh`'s `REQUIRED_MODULE_DIRS` plus its `NIZAM.json` copy, replacing the stale 3-dir (`standard/`, `templates/`, `schema/`) description currently present in both locations. Both corrected locations MUST literally name `tools/` and `NIZAM.json` within their own item-2 description (not merely elsewhere in the file). (2) H8: add a new '## Adopting in an Existing Repository' section (inserted after Section 4 Drift Detection, with Section 5 Enforcement renumbered to Section 6, or an equivalent placement that keeps section numbering monotonic) stating: conflict rules for a consumer repository with pre-existing `CONTEXT.md`/`AGENTS.md`/CI configuration (how bootstrap-injected governance content coexists with, or is reconciled against, pre-existing files of the same name/purpose \u2014 e.g. rename-and-diff rather than silent overwrite), and the three incremental adoption tiers: Tier 1 docs-standard-only (inherit `standard/` alone, no contract loop), Tier 2 +templates (add `templates/` for consumer-authored `CONTEXT`/`AGENTS`/ADR/etc. content), Tier 3 full loop (the complete contract-first Generator/Validator/Evaluator cycle). The new section MUST literally name `CONTEXT.md` and `AGENTS.md` (by filename) and MUST reference CI either as a standalone word (e.g. \"CI\") or via the phrase \"continuous integration\" \u2014 not merely alluded to \u2014 so the section's existing-repo conflict-rule coverage of CONTEXT.md/AGENTS.md/CI is unambiguously machine-verifiable. (3) Bump frontmatter `version` strictly above its current value and add ONE `change_log` entry naming both the H5 payload-set correction and the H8 existing-repo section, per NDS Sec 4 / validator C8. No other section content changes; Sections 1-3 (Core Directive, the remainder of Pinned-Tag Inheritance, Compliance Verification) and Section 4 (Drift Detection) remain textually unchanged apart from the new section's insertion and any resulting renumbering. [POST-QA AMENDMENT (F-019 rework, 2026-07-08): ALSO correct Section 1 (Core Directive)'s payload parenthetical, which still reads the stale 3-dir '(standard/, templates/, schema/)' and contradicts the corrected Section 2 item 2 and the new Section 5.1 -- either name the full payload (standard/, templates/, schema/, tools/ + NIZAM.json) or generalize the Core Directive so it asserts no incomplete payload list. After this fix, NO stale 3-dir payload enumeration (standard/ + templates/ + schema/ on one line without tools/) may remain ANYWHERE in standard/GIP.md. This clause supersedes the earlier 'Sections 1-3 ... remain textually unchanged' statement for the Section 1 Core Directive payload parenthetical only. Root cause: the original contract scoped only the two Section 2 item-2 locations, leaving a third stale occurrence QA caught as an internal self-contradiction.]"
+      },
+      {
+        "path": "templates/README.md",
+        "purpose": "H6 de-leak: rephrase the single `.agent/product_spec.md` Sec 2.2 reference (currently: 'It depends on `standard/` (see `.agent/product_spec.md` Sec 2.2) for the frontmatter and documentation conventions...') to cite a framework-relative source a fresh consumer actually has \u2014 e.g. `standard/NDS.md` directly, for the frontmatter/documentation conventions \u2014 such that zero occurrences of the substring `product_spec` remain anywhere in the file. Bump frontmatter `version` strictly above its current value and add ONE `change_log` entry naming the de-leak correction, per NDS Sec 4 / validator C8. No other content change."
+      },
+      {
+        "path": "methodology/README.md",
+        "purpose": "H6 de-leak: rephrase both `product_spec` references so zero occurrences of the substring `product_spec` remain anywhere in the file: (1) the `00_planning.md` table-row description of 'the mandatory pre-code `product_spec.md` + `feature_list.json` artifact pair' \u2014 rephrase to describe the pre-code artifact pair without naming `product_spec.md` by filename (e.g. 'the mandatory pre-code specification and feature-list artifact pair'); (2) the Design Decision Cross-Reference's '(`product_spec.md` Section 4)' citation for the framework's named Design Decisions \u2014 rephrase to point to the README/guide DD cards (or the `standard/` concept the Design Decisions are actually anchored to) instead of the product_spec filename. Bump frontmatter `version` strictly above its current value and add ONE `change_log` entry naming the de-leak correction, per NDS Sec 4 / validator C8. No other content change."
+      }
+    ]
+  },
+  "non_goals": [
+    "No CONTEXT.md or README.md edits \u2014 the first-contact truth fixes are feature 020's scope",
+    "No CHANGELOG.md edit of any kind \u2014 phase-close CHANGELOG entries for phase-003 deliverables belong to feature 022; this feature's NDS Sec 4 change-record obligation is satisfied entirely by each edited file's own frontmatter change_log entry",
+    "No NIZAM.json, ADR, docs/guide/, or schema/ edits \u2014 out of this feature's remediation scope (H4/H5/H6/H8 only)",
+    "No edit to any file beyond tools/interface.md, standard/GIP.md, templates/README.md, methodology/README.md, and this contract file itself",
+    "No change to .agent/product_spec_003.md \u2014 it is this contract's spec input, not a deliverable",
+    "No change to the section headers, numbering conventions, or body content of tools/interface.md Sections 1 and 3-6, or of standard/GIP.md Sections 1-3 and 4, beyond what the H4/H5/H8 corrections and consequent renumbering require [POST-QA AMENDMENT: correcting standard/GIP.md Section 1 Core Directive's stale 3-dir payload parenthetical IS within H5's scope and is expressly permitted by this amendment.]"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "interface.md discovery names .nizam/tools/skill.json first: grep -q '.nizam/tools/skill.json' tools/interface.md",
+      "command": "f=tools/interface.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q '\\.nizam/tools/skill\\.json' \"$f\" || { echo 'missing literal .nizam/tools/skill.json mention'; exit 1; }; nizam_line=$(grep -n '\\.nizam/tools/skill\\.json' \"$f\" | head -1 | cut -d: -f1); fallback_line=$(grep -niE 'repository root|framework checkout' \"$f\" | head -1 | cut -d: -f1); test -n \"$nizam_line\" || { echo 'could not locate .nizam/tools/skill.json line'; exit 1; }; test -n \"$fallback_line\" || { echo 'could not locate repository-root/framework-checkout fallback line'; exit 1; }; if [ \"$nizam_line\" -lt \"$fallback_line\" ]; then echo PASS; else echo \".nizam/tools/skill.json (line $nizam_line) does not precede the repository-root/framework-checkout fallback (line $fallback_line) -- H4 discovery order not corrected\"; exit 1; fi"
+    },
+    {
+      "acceptance_test": "interface.md retains a repository-root fallback for a framework checkout, explicitly labeled as such (not a false-pass on the pre-existing 'root-relative' substring): grep -q 'framework checkout' tools/interface.md",
+      "command": "f=tools/interface.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'framework checkout' \"$f\" && echo PASS || { echo 'no explicit \"framework checkout\" repository-root fallback label found'; exit 1; }"
+    },
+    {
+      "acceptance_test": "GIP.md injection lists name tools/ and NIZAM.json in the bootstrap-inject description: grep -q 'tools/' standard/GIP.md && grep -q 'NIZAM.json' standard/GIP.md",
+      "command": "f=standard/GIP.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport sys\ntext = open('standard/GIP.md', encoding='utf-8').read()\ndef slice_between(a, b):\n    i = text.find(a)\n    j = text.find(b)\n    if i == -1 or j == -1 or j <= i:\n        print('could not locate section markers ' + repr(a) + ' / ' + repr(b))\n        sys.exit(1)\n    return text[i:j]\nsec2 = slice_between('## 2. Pinned-Tag Inheritance', '### 2.1')\nsec21 = slice_between('### 2.1', '## 3. Compliance Verification')\ntokens = ['tools/', 'NIZAM.json']\nfor name, block in [('Section 2 item 2', sec2), ('Section 2.1 item 2', sec21)]:\n    for t in tokens:\n        if t not in block:\n            print(name + ' block missing ' + repr(t))\n            sys.exit(1)\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "GIP.md no longer describes the inject set as exactly the three dirs standard/templates/schema: ! grep -Eq 'standard/`, `templates/`, and `schema/` (directories|into' standard/GIP.md || grep -q 'tools/' standard/GIP.md",
+      "command": "f=standard/GIP.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if ! grep -Eq 'standard/`, `templates/`, and `schema/` \\(directories|into' \"$f\" || grep -q 'tools/' \"$f\"; then echo PASS; else echo 'GIP.md still describes inject set as exactly 3 dirs and tools/ not found'; exit 1; fi"
+    },
+    {
+      "acceptance_test": "templates/README.md contains no product_spec reference: ! grep -q 'product_spec' templates/README.md",
+      "command": "f=templates/README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -q 'product_spec' \"$f\"; then echo 'product_spec reference still present'; grep -n 'product_spec' \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "methodology/README.md contains no product_spec reference: ! grep -q 'product_spec' methodology/README.md",
+      "command": "f=methodology/README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -q 'product_spec' \"$f\"; then echo 'product_spec reference still present'; grep -n 'product_spec' \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "GIP.md carries an existing-repo adoption section with the three incremental tiers and word-boundary/filename-anchored CONTEXT.md/AGENTS.md/CI (or \"continuous integration\") coverage (not a substring false-pass, e.g. inside 'reconciled'): grep -Eqi 'existing repositor' standard/GIP.md && grep -Eqi 'docs-standard-only|incremental tier|full loop' standard/GIP.md",
+      "command": "f=standard/GIP.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eqi 'existing repositor' \"$f\" || { echo 'no existing-repository section heading found'; exit 1; }; grep -Eqi 'docs-standard-only|incremental tier|full loop' \"$f\" || { echo 'no incremental-tier language found'; exit 1; }; python3 -c \"\nimport re, sys\ntext = open('standard/GIP.md', encoding='utf-8').read()\nm = re.search(r'existing repositor', text, re.IGNORECASE)\nif not m:\n    print('existing-repository marker not found for section-scoped check')\n    sys.exit(1)\nsection = text[m.start():]\nnxt = re.search(r'\\n## ', section[1:])\nif nxt:\n    section = section[:nxt.start() + 1]\nmissing = []\nfor token in ('docs-standard-only', 'templates', 'full loop'):\n    if token.lower() not in section.lower():\n        missing.append(token)\nif 'CONTEXT.md' not in section:\n    missing.append('CONTEXT.md')\nif 'AGENTS.md' not in section:\n    missing.append('AGENTS.md')\nif not (re.search(r'\\bCI\\b', section) or 'continuous integration' in section.lower()):\n    missing.append('CI (standalone word) or continuous integration')\nif missing:\n    print('existing-repo section missing: ' + ', '.join(missing))\n    sys.exit(1)\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness \u2014 closes the gap where the C8 structural check alone only fires when a version differs, and a literal-string grep for 'version:' would false-pass on an unchanged version line): each of the four edited files' frontmatter version strictly increased vs its own git show HEAD copy",
+      "command": "python3 -c \"\nimport subprocess, sys, yaml\n\ndef frontmatter(text):\n    lines = text.splitlines()\n    if not lines or lines[0].strip() != '---':\n        return None\n    end = None\n    for i, l in enumerate(lines[1:], start=1):\n        if l.strip() == '---':\n            end = i\n            break\n    if end is None:\n        return None\n    return yaml.safe_load(chr(10).join(lines[1:end])) or {}\n\ndef parts(v):\n    return tuple(int(x) for x in str(v).split('.'))\n\nfailed = False\nfor path in sys.argv[1:]:\n    try:\n        head_text = subprocess.run(['git', 'show', 'HEAD:' + path], capture_output=True, text=True, check=True).stdout\n    except subprocess.CalledProcessError as exc:\n        print(path + ': could not read HEAD copy: ' + exc.stderr.strip())\n        failed = True\n        continue\n    cur_text = open(path, encoding='utf-8').read()\n    head_fm = frontmatter(head_text)\n    cur_fm = frontmatter(cur_text)\n    if head_fm is None or cur_fm is None:\n        print(path + ': could not parse frontmatter (HEAD or current)')\n        failed = True\n        continue\n    head_v, cur_v = head_fm.get('version'), cur_fm.get('version')\n    if not head_v or not cur_v:\n        print(path + ': missing version field (HEAD=' + repr(head_v) + ', current=' + repr(cur_v) + ')')\n        failed = True\n        continue\n    if parts(cur_v) <= parts(head_v):\n        print(path + ': version did not strictly increase (' + str(head_v) + ' -> ' + str(cur_v) + ')')\n        failed = True\n        continue\n    print(path + ': version OK (' + str(head_v) + ' -> ' + str(cur_v) + ')')\n\nsys.exit(1 if failed else 0)\n\" tools/interface.md standard/GIP.md templates/README.md methodology/README.md"
+    },
+    {
+      "acceptance_test": "Each edited shipped .md bumped its frontmatter version above its prior value (GIP.md, interface.md, templates/README.md, methodology/README.md each grep a version line) and every bump is recorded (change_log entry or CHANGELOG.md line): verified structurally by validate.sh C8",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | grep -q '\\[C8\\] PASS version-bump-vs-changelog' || { echo \"C8 did not report PASS\"; exit 1; }; test \"$rc\" -eq 0 && echo PASS || { echo \"tools/validate.sh exited $rc\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "Validator stays green on the clean tree: bash tools/validate.sh; test $? -eq 0",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | grep -qx 'SUMMARY: 8 passed, 0 failed' || { echo \"expected exact summary line 'SUMMARY: 8 passed, 0 failed', got: $(echo \"$out\" | grep '^SUMMARY:')\"; exit 1; }; test \"$rc\" -eq 0 && echo PASS || { echo \"tools/validate.sh exited $rc, expected 0\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness, per the contract-001 Mode-B out-of-scope-edit precedent; AMENDED post-approval to exclude .agent/ per the contract-014/016 precedent, because orchestrator-owned .agent/run_state.json legitimately changes during Loop-1 contract negotiation before the generator implements): git diff --name-only HEAD (excluding .agent/) names only this contract's four allowed deliverable paths, no out-of-scope shipped/tracked file (CHANGELOG.md, NIZAM.json, README.md, CONTEXT.md, or any other) was touched",
+      "command": "changed=$(git diff --name-only HEAD -- . ':(exclude).agent'); bad=\"\"; for f in $changed; do case \"$f\" in tools/interface.md|standard/GIP.md|templates/README.md|methodology/README.md) ;; *) bad=\"$bad $f\" ;; esac; done; if [ -n \"$bad\" ]; then echo \"out-of-scope modified file(s):$bad\"; exit 1; fi; echo \"PASS (modified:$changed)\""
+    },
+    {
+      "acceptance_test": "AMENDMENT (post-QA F-019 rework; generalized H5 completeness guard the original verification[3]/[4] missed): NO stale 3-directory payload enumeration remains ANYWHERE in standard/GIP.md -- every single-line occurrence listing standard/, templates/, schema/ in sequence as the governance/inject payload also names tools/ within the same enumeration window. Catches the Section 1 Core Directive self-contradiction QA found.",
+      "command": "python3 -c \"\nimport re, sys\ntext = open('standard/GIP.md', encoding='utf-8').read()\npat = re.compile(r'standard/.{0,6}templates/.{0,10}schema/')\nbad = []\nfor m in pat.finditer(text):\n    window = text[m.start():m.end()+45]\n    if 'tools/' not in window:\n        bad.append(text[:m.start()].count(chr(10)) + 1)\nif bad:\n    print('stale 3-dir payload claim (omits tools/) at line(s): ' + repr(bad)); sys.exit(1)\nprint('PASS')\n\""
+    }
+  ],
+  "estimated_lines": 190,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/019-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/019-verify-01.txt for the first entry, ..., .agent/evidence/019-verify-12.txt for the twelfth). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T07:25:58Z",
+    "revisions": 1
+  },
+  "amendments": [
+    {
+      "at": "2026-07-08T07:25:58Z",
+      "by": "orchestrator",
+      "target": "verification[10] (the 11th entry, out-of-scope-edit scope guard)",
+      "type": "test-defect correction",
+      "change": "Added \"-- . ':(exclude).agent'\" to the 'git diff --name-only HEAD' invocation so the scope guard scans only non-.agent/ files.",
+      "rationale": "As written, the guard scanned .agent/run_state.json, which the ORCHESTRATOR legitimately modifies during Loop-1 contract negotiation (019-contract circuit-breaker counter + contract_approved history) BEFORE the generator implements. The generator, correctly forbidden from writing run_state.json per AGF Sec 5, never touched it, yet the raw guard flagged it as out-of-scope on every feature. Matches the ratified contract-014 form and the feature-016 'missing run_state exclusion' amendment precedent. Intra-.agent/ role-boundary enforcement is handled by Mode B git-diff review + orchestrator state_correction, not by this guard, whose purpose is protecting shipped/tracked out-of-.agent files.",
+      "dry_run_proof": "Raw 'git diff --name-only HEAD' -> {tools/interface.md, standard/GIP.md, templates/README.md, methodology/README.md, .agent/run_state.json}; with exclusion -> {the four deliverables only}. 'git diff --stat HEAD -- .agent/run_state.json' = orchestrator Loop-1 bookkeeping only (circuit breaker + contract_approved/contract_amended history + updated_at).",
+      "ratified_by_mode_b": true
+    },
+    {
+      "at": "2026-07-08T07:37:32Z",
+      "by": "orchestrator",
+      "target": "scope.files_modify[1] (standard/GIP.md) H5 purpose + non_goals[5] + new verification[11] (12th entry)",
+      "type": "scope-completeness correction (QA-driven)",
+      "change": "Expanded H5 GIP.md scope to also correct Section 1 (Core Directive) line ~22's stale 3-dir payload parenthetical; added a generalized whole-file guard asserting no single-line standard/+templates/+schema/ payload enumeration omits tools/.",
+      "rationale": "Independent QA adversarial spot-check found standard/GIP.md Section 1 still asserted the stale 3-dir payload (standard/, templates/, schema/), contradicting the corrected Section 2 item 2 / Section 2.1 item 2 and the new Section 5.1. The original contract scoped only the two Section 2 item-2 locations, so verification[3] (block-scoped to Section 2) and verification[4] (regex requiring a literal 'and' Section 1 lacks) both silently passed over the third occurrence. H5's intent is payload-description correctness; leaving Section 1 stale left the document internally self-contradictory and H5 unresolved. This amendment closes the specific defect and the class.",
+      "dry_run_proof": "New guard run against the pre-rework tree flags exactly line 22 (EXIT:1); lines 57 and 142 pass because tools/ follows schema/ in-window. Implemented by generator rework (Section 1 line 22 now names the full payload) and ratified by Mode B (2026-07-08).",
+      "ratified_by_mode_b": true
+    }
+  ]
+}

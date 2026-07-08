@@ -1,0 +1,4 @@
+f=tools/interface.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'framework checkout' "$f" && echo PASS || { echo 'no explicit "framework checkout" repository-root fallback label found'; exit 1; }
+no explicit "framework checkout" repository-root fallback label found
+
+EXIT:1

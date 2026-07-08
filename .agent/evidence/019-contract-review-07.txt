@@ -1,0 +1,21 @@
+f=standard/GIP.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eqi 'existing repositor' "$f" || { echo 'no existing-repository section heading found'; exit 1; }; grep -Eqi 'docs-standard-only|incremental tier|full loop' "$f" || { echo 'no incremental-tier language found'; exit 1; }; python3 -c "
+import re, sys
+text = open('standard/GIP.md', encoding='utf-8').read()
+m = re.search(r'existing repositor', text, re.IGNORECASE)
+if not m:
+    print('existing-repository marker not found for section-scoped check')
+    sys.exit(1)
+section = text[m.start():]
+nxt = re.search(r'\n## ', section[1:])
+if nxt:
+    section = section[:nxt.start() + 1]
+required = ['docs-standard-only', 'templates', 'full loop', 'CONTEXT', 'AGENTS', 'CI']
+missing = [r for r in required if r.lower() not in section.lower()]
+if missing:
+    print('existing-repo section missing: ' + ', '.join(missing))
+    sys.exit(1)
+print('PASS')
+"
+no existing-repository section heading found
+
+EXIT:1

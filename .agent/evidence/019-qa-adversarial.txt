@@ -1,0 +1,156 @@
+# Feature 019 -- Mandatory Adversarial Spot-Check, RE-QA ROUND 2 (post-rework, contract amendments[1])
+# Format per methodology/04_tool_driven_state.md Sec 5: invocation(s), captured output, EXIT:<code> last.
+# All paths repo-root-relative. All commands replayable from repository root.
+# Round 1 found one real defect (GIP.md Section 1 stale 3-dir claim). This round confirms the fix
+# and probes broadly for ANY other remaining contradiction, stale claim, dangling prose, broken
+# cross-reference, or non-goal violation across all four deliverables.
+
+## Probe 1 -- Confirm prior defect RESOLVED (GIP.md Section 1 Core Directive)
+
+$ sed -n '16,27p' standard/GIP.md
+## 1. Core Directive
+
+**A repository that does not inherit a pinned, verifiable copy of the framework's
+governance content is not framework-compliant.**
+
+Any repository that adopts the Nizam framework MUST inherit its governance content
+(`standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json` -- the full payload
+defined authoritatively in Section 2, point 2) through a single, atomic, verifiable
+operation, not through ad hoc copy-paste or hand-authored reproductions. This protocol
+defines that operation, the compliance checks that follow it, and how a consumer
+repository detects when its inherited copy has drifted from the framework it claims to
+follow.
+
+FINDING: RESOLVED. Section 1 now names all four directories plus NIZAM.json and
+explicitly cross-references "the full payload defined authoritatively in Section 2,
+point 2" -- an accurate, self-consistent statement that no longer contradicts Sections
+2/5.1. The prior QA-blocking defect is fixed.
+EXIT:0
+
+## Probe 2 -- Whole-file stale-3-dir sweep across ALL FOUR deliverables (not just GIP.md)
+
+$ for f in tools/interface.md standard/GIP.md templates/README.md methodology/README.md; do
+    grep -n "standard/.\{0,10\}templates/.\{0,15\}schema/" "$f" || echo "(no match in $f)"
+  done
+tools/interface.md: (no match)
+standard/GIP.md:
+  11: change_log summary text (prose, references the fix itself -- not a live claim)
+  22: `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json` -- full payload, tools/ present
+  59: Inject `standard/`, `templates/`, `schema/`, and `tools/`, together with `NIZAM.json` -- tools/ present
+  144: only `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json` -- tools/ present
+templates/README.md: (no match)
+methodology/README.md: (no match)
+
+FINDING: PASS. Every enumeration of the payload set in standard/GIP.md (lines 22, 59,
+144; the changelog line 11 is prose describing the fix, not an independent claim) now
+includes tools/ and NIZAM.json. No other deliverable contains any standard/+templates/
++schema/-style enumeration at all. No stale or contradictory payload description
+remains anywhere across the four files.
+EXIT:0
+
+## Probe 3 -- H4 discovery order (unchanged file this round; reconfirm no regression)
+
+$ grep -n "Bootstrapped-consumer discovery\|Framework-checkout fallback\|Pinned-checkout discovery" tools/interface.md
+31:1. **Bootstrapped-consumer discovery.**
+37:2. **Framework-checkout fallback.**
+43:3. **Pinned-checkout discovery.**
+FINDING: PASS, unchanged from round 1 (this file was not touched by the rework). No
+regression.
+EXIT:0
+
+## Probe 4 -- H8 existing-repo section integrity after Section-1 edit shifted line numbers
+
+$ grep -n "## 5. Adopting in an Existing Repository\|### 5.1\|### 5.2\|Tier 1\|Tier 2\|Tier 3\|## 6. Enforcement" standard/GIP.md
+119:## 5. Adopting in an Existing Repository
+125:### 5.1 Conflict Rules for Pre-Existing Files
+149:### 5.2 Incremental Adoption Tiers
+154:1. **Tier 1 -- `docs-standard-only`.**
+158:2. **Tier 2 -- `templates`.**
+161:3. **Tier 3 -- `full loop`.**
+FINDING: PASS. The Section-1 insertion shifted downstream line numbers by exactly the
+inserted-line delta but the section content, structure, and numbering (5, 5.1, 5.2, 6)
+remain monotonic and intact -- no truncation, no duplicate heading, no renumbering
+error introduced by the rework.
+EXIT:0
+
+## Probe 5 -- H6 de-leak still clean + rephrasings still point to real, resolvable targets
+
+$ grep -c "product_spec" templates/README.md methodology/README.md
+templates/README.md:0
+methodology/README.md:0
+
+$ ls standard/NDS.md && grep -n "Design Decisions" README.md
+standard/NDS.md
+12:## Design Decisions
+
+FINDING: PASS. Both files remain at zero product_spec occurrences (this round's rework
+touched only standard/GIP.md, so no regression risk here, confirmed empirically).
+templates/README.md's citation target (standard/NDS.md) and methodology/README.md's
+citation target (root README.md "Design Decisions" section, DD-1..DD-4) both still
+exist and are on-point. No dangling prose, no broken cross-reference.
+EXIT:0
+
+## Probe 6 -- C8 / frontmatter integrity, all four files (version + change_log consistency)
+
+$ python3 (parse frontmatter, compare version to change_log[-1].version, all 4 files)
+tools/interface.md: version 0.2.0; change_log[-1].version == 0.2.0 -> True
+standard/GIP.md: version 0.2.0; change_log[-1].version == 0.2.0 -> True
+templates/README.md: version 0.2.1; change_log[-1].version == 0.2.1 -> True
+methodology/README.md: version 0.2.1; change_log[-1].version == 0.2.1 -> True
+
+FINDING: PASS. standard/GIP.md's rework updated only its existing 0.2.0 change_log
+summary text (now naming the Section 1 fix) without a version re-bump, exactly as the
+coordinator described and as amendments[1] anticipated (no new version bump required
+since the version was not yet released and the amendment ratified the in-place summary
+update). All four frontmatter blocks parse as valid YAML; each file's version and
+change_log stay mutually consistent.
+EXIT:0
+
+## Probe 7 -- Non-goals / scope guard (independent git diff re-run)
+
+$ git diff --name-status HEAD
+M	.agent/run_state.json
+M	methodology/README.md
+M	standard/GIP.md
+M	templates/README.md
+M	tools/interface.md
+
+$ for f in CONTEXT.md README.md CHANGELOG.md NIZAM.json; do d=$(git diff HEAD -- "$f"); echo "$f: diff-empty=$([ -z "$d" ] && echo YES || echo NO)"; done
+CONTEXT.md: diff-empty=YES
+README.md: diff-empty=YES
+CHANGELOG.md: diff-empty=YES
+NIZAM.json: diff-empty=YES
+
+$ git diff HEAD -- docs/ schema/ .agent/feature_list.json .agent/product_spec_003.md
+(empty)
+
+FINDING: PASS. Rework touched only standard/GIP.md within the four contracted
+deliverables (plus orchestrator-owned .agent/run_state.json, excluded per the ratified
+amendment). No out-of-scope file changed.
+EXIT:0
+
+## Probe 8 -- Independent bash tools/validate.sh re-run
+
+$ bash tools/validate.sh
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+FINDING: PASS. Exact expected summary line, exit 0.
+EXIT:0
+
+## Overall Adversarial Verdict (Round 2)
+
+8 probes run, 8 PASS, 0 defects found. The Round-1 defect (GIP.md Section 1 stale
+3-directory payload claim) is confirmed resolved: Section 1 now names the full 4-dir +
+NIZAM.json payload and cross-references Section 2 explicitly. A whole-file sweep across
+all four deliverables finds no other stale, contradictory, or dangling claim. H4/H8
+sections are intact and unregressed. H6 de-leak rephrasings continue to point to real,
+resolvable targets. Frontmatter/change_log integrity holds across all four files. No
+non-goal (out-of-scope file) was touched. Independent tools/validate.sh re-run is green
+(8/8, exit 0). No basis found to withhold approval.
