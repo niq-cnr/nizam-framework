@@ -1,0 +1,4 @@
+test -f tools/verify_lib.sh || { echo "MISSING tools/verify_lib.sh"; exit 1; }; test -f tools/fixtures/stale_payload_fail.md || { echo "MISSING tools/fixtures/stale_payload_fail.md"; exit 1; }; tmp=$(mktemp -d); trap 'rm -rf "$tmp"' EXIT; cp tools/fixtures/stale_payload_fail.md "$tmp/doc.md"; bash -c 'source tools/verify_lib.sh; vlib_no_stale_payload "$1"' _ "$tmp/doc.md"; rc=$?; if [ $rc -eq 0 ]; then echo "vlib_no_stale_payload FAIL-fixture (neutral filename $tmp/doc.md, content copied from stale_payload_fail.md) unexpectedly PASSED -- stale 3-dir enumeration (omits tools/) was not rejected (or a filename-keyed stub was detected)"; exit 1; fi; echo "PASS (correctly rejected, rc=$rc)"
+vlib_no_stale_payload: stale payload enumeration (omits tools/): The framework payload consists of standard/, templates/, and schema/
+PASS (correctly rejected, rc=1)
+EXIT:0

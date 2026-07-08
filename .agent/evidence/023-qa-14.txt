@@ -1,0 +1,4 @@
+$ test -f tools/verify_lib.sh || { echo "MISSING tools/verify_lib.sh"; exit 1; }; test -f tools/fixtures/path_resolves_fail.txt || { echo "MISSING tools/fixtures/path_resolves_fail.txt"; exit 1; }; tok=$(head -1 tools/fixtures/path_resolves_fail.txt); test -n "$tok" || { echo "fixture setup error: path_resolves_fail.txt is empty"; exit 1; }; bash -c 'source tools/verify_lib.sh; vlib_path_resolves "$1"' _ "$tok"; rc=$?; if [ $rc -eq 0 ]; then echo "vlib_path_resolves unexpectedly accepted a concrete, non-placeholder, nonexistent path: '$tok'"; exit 1; fi; echo "PASS (correctly rejected, rc=$rc)"
+vlib_path_resolves: path does not resolve: 'docs/architecture/ADR-999-does-not-exist.md.' (stripped: 'docs/architecture/ADR-999-does-not-exist.md')
+PASS (correctly rejected, rc=1)
+EXIT:0

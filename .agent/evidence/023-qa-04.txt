@@ -1,0 +1,3 @@
+$ f=tools/verify_lib.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; missing=""; grep -q "untracked-files=all" "$f" || missing="$missing untracked-files=all"; grep -q "exclude).agent" "$f" || missing="$missing exclude).agent"; if [ -n "$missing" ]; then echo "verify_lib.sh scope-guard primitive missing required substring(s):$missing"; exit 1; fi; echo PASS
+PASS
+EXIT:0

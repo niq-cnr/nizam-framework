@@ -1,0 +1,14 @@
+changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | cut -c4-); bad=""; while IFS= read -r f; do [ -z "$f" ] && continue; case "$f" in tools/verify_lib.sh|tools/fixtures/*) ;; *) bad="$bad|$f" ;; esac; done <<< "$changed"; if [ -n "$bad" ]; then echo "out-of-scope new/modified file(s):$bad"; exit 1; fi; echo "PASS (status-scanned: $changed)"
+PASS (status-scanned: tools/fixtures/path_resolves_fail.txt
+tools/fixtures/path_resolves_pass.txt
+tools/fixtures/scope_guard_allowlist.txt
+tools/fixtures/section_grep_fail.md
+tools/fixtures/section_grep_pass.md
+tools/fixtures/stale_payload_fail.md
+tools/fixtures/stale_payload_pass.md
+tools/fixtures/version_increased_new_fail.md
+tools/fixtures/version_increased_new_fail_decrease.md
+tools/fixtures/version_increased_new_pass.md
+tools/fixtures/version_increased_old.md
+tools/verify_lib.sh)
+EXIT:0

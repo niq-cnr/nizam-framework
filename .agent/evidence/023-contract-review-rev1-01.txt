@@ -1,0 +1,3 @@
+f=tools/verify_lib.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; bash -n "$f" && echo PASS || { echo "bash -n $f failed"; exit 1; }
+MISSING tools/verify_lib.sh
+EXIT:1

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "004-durable-enforcement",
-  "current_feature": "023",
+  "current_feature": "024",
   "status": "implementing",
-  "updated_at": "2026-07-08T12:16:43Z",
+  "updated_at": "2026-07-08T13:03:26Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -86,6 +86,10 @@
       "limit": 3
     },
     "022-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "023-contract": {
       "attempts": 2,
       "limit": 3
     }
@@ -425,6 +429,16 @@
       "at": "2026-07-08T12:16:43Z",
       "event": "phase_activated",
       "detail": "Phase 004-durable-enforcement ACTIVATED by human ('approved. please proceed.', 2026-07-08) after PR #5 (phase 003) and PR #6 (release roll-up) merged and v0.2.0+v0.3.0 were released. Branch phase/004-durable-enforcement rebased onto the released main (913aa49). Manifest flipped to in_progress/active; scope budget reset (1250 est, ceiling 1625 at 130%; phase-003 final archived as phase_003_scope_budget_final). 8 features 023-030 realize R1 narrative-truth CI checks (C9 path-resolution + C10 single-source-of-truth consistency), R2 hermetic e2e bootstrap test, R3 tools/verify_lib.sh vetted verification library + authoring standard, R4 schema reconciliation + C11 dogfood validation (resolves NDEBT-002). Execution begins at feature 023 (tools/verify_lib.sh - foundational, so later contracts compose vetted primitives). Adding C9/C10/C11 migrates the validator SUMMARY 8->11 (immutable historical records keep '8 passed'). Beginning contract negotiation on 023."
+    },
+    {
+      "at": "2026-07-08T12:48:20Z",
+      "event": "contract_approved",
+      "detail": "Contract 023 (tools/verify_lib.sh vetted verification library + fixtures, R3 foundational) approved after 1 revision by both gates. Mode A approved rev0; the evaluator's adversarial contract review REJECTED rev0 on 2 real verification-soundness defects it proved with a content-blind stub: (HIGH) entries 7/8/15/16 passed the fixture's own path (filename encoding _pass/_fail) to section_grep/no_stale_payload, so a filename-keyed stub passed without reading content; (MED) entry 2's SOURCED_OK check didn't prove side-effect-freedom. Rev1 fixes: copy fixtures to a neutral $tmp/doc.md before invoking (defeats filename-keyed stubs - FAIL entries 8/16 now reject the stub); entry 2 asserts empty stdout+stderr+rc0; plus a version-DECREASE fail fixture (evaluator proved it catches an equality-only comparison bug). Both gates re-approved rev1 with fresh adversarial evidence. Fittingly, the verification-library feature's own verification had a cheatable-fixture defect - caught pre-implementation. 19 verifications, 12 files (verify_lib.sh + 11 fixtures). Orchestrator fixed a cosmetic non_goals count (ten->eleven). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T13:03:26Z",
+      "event": "feature_complete",
+      "detail": "Feature 023 complete (phase-004 foundational): tools/verify_lib.sh (5 vetted primitives vlib_section_grep/scope_guard/version_increased/path_resolves/no_stale_payload + a punctuation-strip helper, sourced-only/side-effect-free) + 11 pass/fail fixtures. 1 contract revision (evaluator's content-blind stub proved 4 fixture checks were cheatable via identity-leaking filenames + entry 2 didn't prove side-effect-freedom; rev1 copies fixtures to neutral doc.md + strict empty-output assertion). Both contract gates re-approved. Mode B + QA first-pass: BOTH ran independent adversarial anti-gaming checks with self-authored inputs (not the shipped fixtures) confirming genuine logic - incl. true semver tuple ordering (0.9.0->0.10.0 accepted, 1.1.9 decrease rejected) and untracked-file catching that git-diff-HEAD is blind to. 19/19 verifications EXIT:0, validate.sh SUMMARY unchanged at 8 passed. 408 lines vs 260 est (first feature, no baseline). Cumulative 408/1625. Every downstream feature (024-030) can now source these primitives. Advancing to 024 (verification-authoring standard, dep 023 complete)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -598,7 +612,15 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1250,
-    "total_lines_changed": 0,
-    "per_feature": []
+    "total_lines_changed": 408,
+    "per_feature": [
+      {
+        "id": "023",
+        "estimated": 260,
+        "actual": 408,
+        "flag": null,
+        "note": "tools/verify_lib.sh 336 + 11 new fixtures 72 = 408 (pre-existing phase-002 fixtures excluded). FIRST feature of phase 004 - no rolling baseline per 00_planning bootstrap rule, so no per-feature flag despite 57% over est (5 primitives + helper + 11 pass/fail fixtures, all adversarially proven genuine). Cumulative 408/1625 (25%). 1 contract revision (evaluator's content-blind stub caught cheatable filename-keyed fixtures - the verification library's OWN verification had the exact defect it guards against), Mode B + QA first-pass with independent adversarial anti-gaming checks."
+      }
+    ]
   }
 }
