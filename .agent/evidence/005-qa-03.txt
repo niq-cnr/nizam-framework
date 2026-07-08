@@ -1,0 +1,3 @@
+count=$(find . -name 'SKILL.md' -not -path './.git/*' | wc -l); test "$count" -eq 1 && echo PASS || { echo "found $count SKILL.md files, expected exactly 1"; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,22 @@
+test -f schema/phase.schema.json && python3 -c "
+import json
+d = json.load(open(\"schema/phase.schema.json\"))
+props = set()
+def walk(o):
+    if isinstance(o, dict):
+        if isinstance(o.get(\"properties\"), dict):
+            props.update(o[\"properties\"].keys())
+        for v in o.values():
+            walk(v)
+    elif isinstance(o, list):
+        for v in o:
+            walk(v)
+walk(d)
+forbidden = {\"proof\", \"raw_output\", \"terminal_output\", \"console_output\", \"stdout\", \"output\"}
+bad = props & forbidden
+assert not bad, f\"forbidden inline-output field(s) present: {bad}\"
+assert any(\"evidence\" in p.lower() for p in props), \"no evidence-path property found\"
+print(\"PASS\")
+"
+PASS
+EXIT:0

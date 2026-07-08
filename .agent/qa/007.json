@@ -1,0 +1,73 @@
+{
+  "feature_id": "007",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {
+      "command": "bootstrap.sh exists at root, passes bash -n syntax check",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-01.txt"
+    },
+    {
+      "command": "bootstrap.sh enables 'set -euo pipefail'",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-02.txt"
+    },
+    {
+      "command": "clone invocation uses pinned GOVERNANCE_TAG on a non-comment line, no floating 'main' reference",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-03.txt"
+    },
+    {
+      "command": "no NizamIQ infrastructure endpoint strings in bootstrap.sh (file-presence guarded)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-04.txt"
+    },
+    {
+      "command": "injects standard/, templates/, schema/ and includes an explicit verify step",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-05.txt"
+    },
+    {
+      "command": "writes .nizam/provenance.json with pinned tag, source URL, and timestamp",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-06.txt"
+    },
+    {
+      "command": "supports --verify-only drift-detection mode",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-07.txt"
+    },
+    {
+      "command": "stages via mktemp, uses trap-based cleanup (atomicity)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-08.txt"
+    },
+    {
+      "command": "'bash bootstrap.sh --help' exits 0, prints usage, no network hang (5s timeout)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-09.txt"
+    },
+    {
+      "command": "CHANGELOG.md v0.1.0 entry positioned below [Unreleased]",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-10.txt"
+    },
+    {
+      "command": "v0.1.0 entry describes the framework genesis content",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-11.txt"
+    },
+    {
+      "command": "docs/planning/manifest.json marks phase 001-framework-genesis complete",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/007-qa-12.txt"
+    }
+  ],
+  "adversarial_check": {
+    "description": "Local end-to-end drift-detection scenario beyond the 12 listed commands, conducted entirely in the scratchpad (never touching the real repo's git state, tags, or working tree): (1) built a throwaway scratch source repo under /tmp/.../scratchpad/e2e_src_repo containing only standard/, templates/, schema/, tools/, NIZAM.json copied from the real repo; git-init'd it, committed, and tagged it 'v0.1.0-e2e-test' (a scratch-local tag, never applied to the real repo). (2) Ran the REAL, unmodified bootstrap.sh (full install mode) against that scratch repo via a file:// URL, installing into a scratch consumer directory's .nizam/ -- succeeded, exit 0, provenance.json written. (3) Ran --verify-only against the freshly-installed .nizam/ before tampering -- passed, exit 0 (control case). (4) TAMPERED: deleted the injected .nizam/schema/frontmatter.schema.json file. (5) Re-ran --verify-only against the tampered .nizam/ -- correctly detected the missing required governance file and exited 1, printing 'required governance file missing or empty under .nizam: schema/frontmatter.schema.json'. This is the drift-detection path the generator's own e2e evidence (007-smoke-e2e.txt) did not exercise. (6) Independently confirmed afterward that the real repo has no .nizam/ directory, no e2e-tagged git tag, and no stray e2e artifacts in its working tree.",
+    "result": "pass",
+    "evidence": ".agent/evidence/007-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

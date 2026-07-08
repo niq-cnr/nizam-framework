@@ -1,0 +1,3 @@
+test -f CHANGELOG.md || { echo 'MISSING CHANGELOG.md'; exit 1; }; grep -Eiq 'genesis|standard/|methodology/|registry/|templates/|schema/|tools/|bootstrap' CHANGELOG.md && echo PASS || { echo 'v0.1.0 entry lacks genesis description content'; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,17 @@
+python3 adversarial schema-conformance check (live exemplars) + phase.schema.json negative test for inline 'stdout'
+OK  feature_list: .agent/feature_list.json validates against schema/feature_list.schema.json
+OK  contract_000: .agent/contracts/000.json validates against schema/contract.schema.json
+OK  contract_001: .agent/contracts/001.json validates against schema/contract.schema.json
+OK  qa_000: .agent/qa/000.json validates against schema/qa_verdict.schema.json
+OK  run_state: .agent/run_state.json validates against schema/run_state.schema.json
+OK  manifest: docs/planning/manifest.json validates against schema/manifest.schema.json
+
+ALL_VALID
+NEGATIVE TEST PASS: schema correctly REJECTED synthetic doc with inline 'stdout' field: 'title' is a required property
+NEGATIVE_TEST_PASS
+---
+CONTROL PASS: otherwise-valid phase doc (no stdout) validates cleanly
+NEGATIVE TEST: rejected as expected. validator=additionalProperties message=Additional properties are not allowed ('stdout' was unexpected)
+CONTROL_PASS
+NEGATIVE_TEST_PASS
+EXIT:0

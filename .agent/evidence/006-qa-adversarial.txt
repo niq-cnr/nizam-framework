@@ -1,0 +1,25 @@
+Randomly picked 3 of 13 capabilities (seed=42): ['nizam-governance-skill-manifest', 'governance-inheritance-protocol', 'nizam-documentation-standard']
+
+capability id='nizam-governance-skill-manifest' -> authoritative_source='tools/skill.json' (JSON artifact)
+  resolved skill.json name='nizam-governance' description='Unified, runtime-agnostic capability manifest for the Nizam governance framework (DD-4): a...'
+  summary/description word overlap: ['agnostic', 'capability', 'manifest', 'payload', 'runtime', 'single', 'skill', 'unified']  semantic_ok=True
+  RESULT: OK
+
+capability id='governance-inheritance-protocol' -> authoritative_source='standard/GIP.md'
+  resolved frontmatter id='governance-inheritance-protocol' title='Governance Inheritance Protocol (GIP)'
+  id exact match: True
+  title/summary word overlap: ['inheritance']  semantic_ok=True
+  RESULT: OK
+
+capability id='nizam-documentation-standard' -> authoritative_source='standard/NDS.md'
+  resolved frontmatter id='nizam-documentation-standard' title='Nizam Documentation Standard (NDS)'
+  id exact match: True
+  title/summary word overlap: (none)  semantic_ok=True
+  RESULT: OK
+
+SUMMARY: ALL_CONSISTENT
+
+=== Negative test: mutated NIZAM.json (scratchpad-only copy, framework.version set to 'not-a-semver') against real registry/nizam-index.schema.json ===
+NEGATIVE TEST: rejected as expected. validator=pattern path=['framework', 'version'] message='not-a-semver' does not match '^\\d+\\.\\d+\\.\\d+$'
+NEGATIVE_TEST_PASS
+EXIT:0

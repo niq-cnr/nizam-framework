@@ -1,0 +1,88 @@
+{
+  "contract_id": "003",
+  "feature_id": "003",
+  "name": "Methodology Module (/methodology/)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "methodology/00_planning.md",
+        "purpose": "Planning Enforcer \u2014 a runtime-agnostic distillation of the NizamIQ planning-enforcer protocol. Defines: (1) the mandatory pre-code product_spec.md + feature_list.json artifact pair every phase must produce before any generator work begins; (2) the feature list as a Directed Acyclic Graph \u2014 every feature carries an explicit 'dependencies' array of other feature ids, and the plan is REJECTED if the graph contains a cycle or references a non-existent dependency id; (3) the Dependency Enforcement Rule \u2014 before any feature is handed to implementation, every id in its 'dependencies' array must resolve to a feature whose status is 'complete' or 'cancelled', else the feature is skipped and, if no eligible pending feature remains, the run is a logged, escalated deadlock; (4) atomic-step decomposition \u2014 each feature's acceptance_tests must be phrased as a concrete, independently-runnable command or check, never a vague prose goal, so that a later validator/evaluator has a verifiable-truth anchor rather than a subjective judgement call."
+      },
+      {
+        "path": "methodology/01_execution.md",
+        "purpose": "Contract-First Harness Loop \u2014 the authoritative execution protocol driving the two-loop state machine: Loop 1 (Pre-Code Alignment) propose contract \u2192 dual gate (validator Mode A pre-code contract review, then evaluator contract review) \u2192 revise on rejection (bounded by the circuit breaker); Loop 2 (Post-Code Repair) implement contracted scope only \u2192 validator Mode B post-code implementation gate (diff-verified against the approved contract) \u2192 evaluator QA verdict \u2192 rework on failure (bounded by the circuit breaker) \u2192 on pass, advance durable state to the next feature. Documents the JSON Verdict Parse Rule (approved===true AND issues/missing_acceptance_coverage/unsupported_claims all empty \u2014 prose alone never suffices) as the sole gate-passing signal at every stage of the loop. Every named stage of this loop that can fail repeatedly (contract revision, Mode-B rework) explicitly embeds and cross-references the mandatory 3-strike circuit breaker defined in `03_circuit_breaker.md`; this document does not restate the breaker's internal mechanics, only where in the loop it applies."
+      },
+      {
+        "path": "methodology/02_adversarial_tdd.md",
+        "purpose": "Adversarial Test Design \u2014 a runtime-agnostic distillation of the adversarial TDD material from the source NizamIQ methodology (the Test Engineer / evaluator protocol), generalised and stripped of NizamIQ-specific references. Defines: (1) Evaluator Independence \u2014 the evaluator that authors and runs acceptance tests MUST be a distinct role from the generator that writes implementation code, and MUST NOT accept the generator's own claim of correctness as evidence; every verdict is re-derived from re-executed commands, never from generator-supplied prose; (2) False-Pass Hunting \u2014 the evaluator actively searches for verification commands that could report PASS without the underlying acceptance criterion truly holding (e.g. an empty-glob loop that vacuously succeeds, a grep whose absence-of-match is indistinguishable from a typo in the pattern, a count assertion satisfied by the wrong set of files) and hardens or rejects such commands before trusting their output, as demonstrated by this framework's own contract 002 adversarial_check (frontmatter cross-validated against a JSON Schema rather than trusted from grep alone); (3) Negative Tests \u2014 acceptance coverage MUST include at least one deliberately-adversarial or negative-space check per feature (a stray-file guard, a forbidden-string absence check with a directory-emptiness guard, or an out-of-scope-edit detector) so that the test suite can fail, not just pass, proving the tests are load-bearing rather than tautological."
+      },
+      {
+        "path": "methodology/03_circuit_breaker.md",
+        "purpose": "Universal Circuit Breaker (DD-2) \u2014 the single authoritative 3-strike / three-attempt limit protocol embedded by every execution loop in the framework (contract revision, implementation rework, or any other repeatable repair cycle). Defines the per-attempt strategy table (Attempt 1: direct fix \u2014 read the exact error, fix the specific line; Attempt 2: type/interface analysis \u2014 check for structural mismatches; Attempt 3: architectural review \u2014 reconsider whether the approach itself is wrong) and states plainly that Attempt 4 and beyond is FORBIDDEN. On breach: the acting agent MUST discard the failed attempt's working changes (e.g. `git reset --hard` where a git working tree is in play), set the step's status to BLOCKED in durable state, log the failure with phase/feature/failure-type/last-response detail to the technical-debt register, and escalate to a human \u2014 autonomous continuation past the third failed attempt on any single step is never permitted."
+      },
+      {
+        "path": "methodology/04_tool_driven_state.md",
+        "purpose": "Tool-Driven State Management (DD-1 + DD-3) \u2014 defines the query-not-bulk-read discipline: agents MUST route through the root `NIZAM.json` capability index to locate the minimal set of governance files a task requires, rather than bulk-reading entire governance directories; bulk-reading is explicitly prohibited as a violation of context-engineering discipline. Also defines Evidence Externalisation (DD-3): all captured terminal output and file-diff proof MUST be written to files under `.agent/evidence/` and referenced by path from the corresponding phase/contract/QA artifact \u2014 raw terminal output is NEVER pasted inline into a YAML or JSON string field. Documents the three durable-state artifact families every run maintains \u2014 `.agent/run_state.json` (current run position), `.agent/contracts/NNN.json` (per-feature contracts), and `.agent/qa/NNN.json` (QA verdicts) \u2014 as the sole channel of inter-agent communication; subagents MUST NEVER report results via chat prose alone."
+      },
+      {
+        "path": "methodology/05_release_train.md",
+        "purpose": "Release Train Protocol \u2014 defines the framework's own release discipline: versions are cut as semantic-version git tags (`vMAJOR.MINOR.PATCH`), never a floating branch reference; every cut release requires a corresponding `CHANGELOG.md` entry describing the change class (major/minor/patch) and a human sign-off gate before the tag is pushed; documents the consumer upgrade path \u2014 a consumer repository re-runs its governance bootstrap against a newer pinned tag to pick up a release, verifies post-upgrade compliance (required governance files present, index parses), and never hand-patches injected governance files in place of re-bootstrapping."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "methodology/README.md",
+        "purpose": "Replace the feature-000 stub (which only announces that full content ships in feature 003) with the full methodology/ module index: frontmatter intact (6 required keys, version bumped from 0.1.0, status updated if warranted), and a body enumerating all six protocol documents (00_planning.md through 05_release_train.md), each with a one-line purpose, plus a short cross-reference note identifying which named Design Decision (DD-1 through DD-3) each of 03_circuit_breaker.md and 04_tool_driven_state.md remediates."
+      }
+    ]
+  },
+  "non_goals": [
+    "No skill payload content (tools/skill.json, tools/SKILL.md, tools/interface.md) \u2014 those belong to tools/, feature 005",
+    "No root NIZAM.json or registry/nizam-index.schema.json content \u2014 those belong to registry/, feature 006",
+    "No bootstrap.sh script \u2014 that belongs to feature 007; 05_release_train.md documents the upgrade model in prose only, it does not implement or embed an inline copy of the script",
+    "No edits to any file under standard/ \u2014 the documentation standard, frontmatter rules, and anti-hallucination constraints already shipped in feature 002 and are only referenced by id/filename from methodology/, never restated or modified here",
+    "No CHANGELOG.md edits of any kind as part of this contract's implementation phase (any changelog entry required by the generator's Docs Sync Gate is tracked separately and is not part of this contract's verified scope)",
+    "No edits to any file outside methodology/ and this contract file itself (no schema/ changes, no templates/, no other module README stubs)"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "All six protocol docs plus README exist (ls methodology/*.md | wc -l equals 7)",
+      "command": "count=$(ls methodology/*.md 2>/dev/null | wc -l); test \"$count\" -eq 7 && echo PASS"
+    },
+    {
+      "acceptance_test": "03_circuit_breaker.md defines a 3-strike / three-attempt limit (grep -Eq '3-strike|three|Attempt 4' methodology/03_circuit_breaker.md)",
+      "command": "test -f methodology/03_circuit_breaker.md && grep -Eq '3-strike|three|Attempt 4' methodology/03_circuit_breaker.md && echo PASS"
+    },
+    {
+      "acceptance_test": "01_execution.md cross-references the circuit breaker (grep -q '03_circuit_breaker' methodology/01_execution.md)",
+      "command": "test -f methodology/01_execution.md && grep -q '03_circuit_breaker' methodology/01_execution.md && echo PASS"
+    },
+    {
+      "acceptance_test": "04_tool_driven_state.md mandates querying the index over bulk-reading (grep -qi 'NIZAM.json' methodology/04_tool_driven_state.md)",
+      "command": "test -f methodology/04_tool_driven_state.md && grep -qi 'NIZAM.json' methodology/04_tool_driven_state.md && echo PASS"
+    },
+    {
+      "acceptance_test": "Every .md in methodology/ starts with YAML frontmatter containing the 6 required keys (id/title/description/version/status/authoritative_source)",
+      "command": "count=$(ls methodology/*.md 2>/dev/null | wc -l); test \"$count\" -eq 7 || { echo \"unexpected file count $count\"; exit 1; }; status=0; for f in methodology/*.md; do test \"$(head -1 \"$f\")\" = '---' || { echo \"NOT FRONTMATTER: $f\"; status=1; }; for k in id title description version status authoritative_source; do grep -q \"^$k:\" \"$f\" || { echo \"MISSING $k in $f\"; status=1; }; done; done; test \"$status\" -eq 0 && echo PASS"
+    },
+    {
+      "acceptance_test": "No NizamIQ branding remains (grep -ri 'nizamiq' methodology/ returns nothing)",
+      "command": "test -d methodology || exit 1; count=$(find methodology -maxdepth 1 -type f | wc -l); test \"$count\" -eq 7 || { echo \"unexpected file count $count, refusing to trust an absence-of-match result\"; exit 1; }; if grep -ril 'nizamiq' methodology/ 2>/dev/null; then echo FAIL; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "methodology/ contains EXACTLY the 7 contracted files (the six 00_planning.md..05_release_train.md protocol documents plus methodology/README.md) and no stray out-of-contract files (generator-added robustness check distinct from tests 1 and 5: test 1 confirms a count of 7 but does not name the files, and test 5 only bounds the '*.md' glob to count 7; this check bounds the entire top-level directory listing, so an accidental stray file \u2014 e.g. a leftover draft or a non-'.md' artifact \u2014 would be caught even though it wouldn't affect either of the other counts).",
+      "command": "actual=\"$(find methodology -maxdepth 1 -type f | LC_ALL=C sort | tr '\\n' ' ')\"; expected=\"methodology/00_planning.md methodology/01_execution.md methodology/02_adversarial_tdd.md methodology/03_circuit_breaker.md methodology/04_tool_driven_state.md methodology/05_release_train.md methodology/README.md \"; test \"$actual\" = \"$expected\" && echo PASS || { echo \"MISMATCH: got [$actual] expected [$expected]\"; exit 1; }"
+    }
+  ],
+  "estimated_lines": 900,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/003-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/003-verify-01.txt for the first entry, ..., .agent/evidence/003-verify-07.txt for the seventh). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T10:20:00Z",
+    "revisions": 0
+  }
+}

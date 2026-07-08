@@ -1,0 +1,4 @@
+COMMAND: count=$(find registry -maxdepth 1 -type f | wc -l); test "$count" -eq 3 && test -f registry/nizam-index.schema.json && test -f registry/scope_definition_patterns.md && test -f registry/README.md && test -f NIZAM.json && echo PASS || { echo "unexpected file state, registry count=$count"; exit 1; }
+OUTPUT:
+PASS
+EXIT:0

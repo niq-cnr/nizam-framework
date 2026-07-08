@@ -1,0 +1,3 @@
+f=tools/interface.md; test -f "$f" || exit 1; grep -qi 'read-state' "$f" && grep -qi 'write-evidence' "$f" && grep -qi 'run-verification' "$f" && grep -qi 'conformance checklist' "$f" && echo PASS || { echo "MISSING ADAPTER SPEC ELEMENT IN interface.md"; exit 1; }
+PASS
+EXIT:0

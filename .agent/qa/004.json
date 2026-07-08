@@ -1,0 +1,58 @@
+{
+  "feature_id": "004",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {
+      "command": "find templates -maxdepth 1 -type f | wc -l equals 8",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/004-qa-01.txt"
+    },
+    {
+      "command": "work-packet.template.json and manifest.template.json are valid JSON",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/004-qa-02.txt"
+    },
+    {
+      "command": "phase_template.yaml is valid YAML, validates against schema/phase.schema.json, no forbidden inline output field",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/004-qa-03.txt"
+    },
+    {
+      "command": "manifest.template.json validates against schema/manifest.schema.json",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/004-qa-04.txt"
+    },
+    {
+      "command": "every .md template starts with frontmatter containing 6 required keys",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/004-qa-05.txt"
+    },
+    {
+      "command": "CONTEXT.md template includes '## Out of Scope' section",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/004-qa-06.txt"
+    },
+    {
+      "command": "CONTEXT.md placeholders live in body only, not frontmatter",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/004-qa-07.txt"
+    },
+    {
+      "command": "no 'nizamiq' branding in templates/ (file-count guarded)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/004-qa-08.txt"
+    },
+    {
+      "command": "templates/ contains exactly the 8 contracted files, no stray extras",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/004-qa-09.txt"
+    }
+  ],
+  "adversarial_check": {
+    "description": "Consumer-simulation check beyond the 9 listed commands, using python3+yaml+jsonschema: copied templates/phase_template.yaml and templates/manifest.template.json to the scratchpad and programmatically substituted every {{PLACEHOLDER}} token with a plausible, distinct real value (e.g. {{PHASE_ID}} -> '002-consumer-onboarding', {{STEP_ID}} -> '002.1', {{EVIDENCE_PATH}} -> '002-verify-01.txt') rather than trusting that the raw unfilled placeholder text happened to satisfy schema constraints. Both filled instances still validate cleanly against schema/phase.schema.json and schema/manifest.schema.json respectively -- this rules out a template that only 'passes' in its contract's own verification because the literal placeholder string coincidentally matched a pattern/enum, and confirms it also passes once genuinely filled in. Negative test: took the filled phase-doc instance (already proven valid) and added only an inline 'output:' field to its step, keeping everything else identical; schema/phase.schema.json rejected it, with the validator error specifically attributing rejection to 'additionalProperties' on the unexpected 'output' key -- confirming DD-3 evidence externalisation is enforced against a realistic filled document, not merely the placeholder skeleton.",
+    "result": "pass",
+    "evidence": ".agent/evidence/004-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

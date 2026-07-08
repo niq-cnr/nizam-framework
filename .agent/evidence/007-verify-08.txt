@@ -1,0 +1,4 @@
+COMMAND: test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -Eq 'mktemp' bootstrap.sh && grep -q 'trap' bootstrap.sh && echo PASS || { echo 'missing mktemp staging or trap-based cleanup' ; exit 1; }
+--- OUTPUT ---
+PASS
+EXIT:0

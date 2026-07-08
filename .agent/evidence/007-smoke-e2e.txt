@@ -1,0 +1,137 @@
+=== Feature 007 functional end-to-end smoke test ===
+Entirely local. Scratchpad clone of this repo is git-cloned (never the real repo),
+a local-only tag is created in that scratch clone, and bootstrap.sh is run against it
+via a file:// URL into a scratch consumer directory. The real repo is never tagged.
+
+Scratch clone source : /tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/clone-src
+Scratch consumer      : /tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer2
+Local-only tag         : v0.1.0-smoke-test (created only in the scratch clone)
+
+--- Step 1: git clone the real repo into the scratchpad ---
+Command: git clone /home/cnross/workspace02/nizam-framework /tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/clone-src
+(executed earlier in this session; result: Cloning into '.../clone-src'... done.)
+EXIT:0
+
+--- Step 2: copy current (uncommitted) feature-007 content into the scratch clone, commit + tag locally ---
+Command: git log --oneline -1 && git tag -l
+b22dcd2 smoke-test: local commit of feature 007 content for e2e bootstrap test
+v0.1.0-smoke-test
+EXIT:0
+
+--- Step 3: bootstrap.sh default install, file:// source, pinned tag v0.1.0-smoke-test ---
+bootstrap.sh: cloning file:///tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/clone-src at pinned tag v0.1.0-smoke-test (--depth 1)...
+Cloning into '/tmp/nizam-bootstrap-clone.L1wzMs'...
+Note: switching to 'b22dcd2e791b78c44815d60525320025529d56e6'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: staging governance payload in ./.nizam-stage.QQhTwg...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 26 indexed path(s) resolve under ./.nizam-stage.QQhTwg.
+bootstrap.sh: recording provenance (framework_version=0.1.0, tag=v0.1.0-smoke-test)...
+bootstrap.sh: install complete. Governance payload version 0.1.0 (tag v0.1.0-smoke-test) is now at '.nizam'.
+EXIT:0
+
+--- Step 4: installed .nizam/ tree (find -maxdepth 2) ---
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/NIZAM.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/provenance.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/schema
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/schema/contract.schema.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/schema/feature_list.schema.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/schema/frontmatter.schema.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/schema/manifest.schema.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/schema/phase.schema.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/schema/qa_verdict.schema.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/schema/README.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/schema/run_state.schema.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/standard
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/standard/AGF.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/standard/anti_hallucination.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/standard/GIP.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/standard/NDS.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/standard/README.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/templates
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/templates/ADR_TEMPLATE.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/templates/AGENTS.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/templates/CONTEXT.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/templates/DEBT.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/templates/manifest.template.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/templates/phase_template.yaml
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/templates/README.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/templates/work-packet.template.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/tools
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/tools/interface.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/tools/README.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/tools/skill.json
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/consumer3/.nizam/tools/SKILL.md
+EXIT:0
+
+--- Step 5: installed .nizam/provenance.json ---
+{
+  "framework_version": "0.1.0",
+  "tag": "v0.1.0-smoke-test",
+  "source_url": "file:///tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/clone-src",
+  "installed_at": "2026-07-07T09:25:43Z"
+}
+EXIT:0
+
+--- Step 6: bootstrap.sh --verify-only, matching tag (expect PASS, exit 0) ---
+bootstrap.sh: verify-only: checking '.nizam' against pinned tag 'v0.1.0-smoke-test' (no clone, no network)...
+NIZAM.json parses; 26 indexed path(s) resolve under .nizam.
+bootstrap.sh: verify-only: PASS -- '.nizam' is present, well-formed, and matches pinned tag 'v0.1.0-smoke-test'.
+EXIT:0
+
+--- Step 7: bootstrap.sh --verify-only, mismatched tag (expect drift FAIL, exit 1) ---
+bootstrap.sh: verify-only: checking '.nizam' against pinned tag 'v9.9.9-does-not-match' (no clone, no network)...
+NIZAM.json parses; 26 indexed path(s) resolve under .nizam.
+bootstrap.sh: error: drift detected: provenance.json under '.nizam' records tag 'v0.1.0-smoke-test' but the expected pinned tag is 'v9.9.9-does-not-match' (standard/GIP.md Section 4 -- re-bootstrap against the expected tag; do not hand-patch).
+EXIT:1
+
+--- Step 8: bootstrap.sh --verify-only against a directory with no .nizam/ (expect FAIL, exit 1) ---
+bootstrap.sh: error: --verify-only: target directory '.nizam' does not exist -- nothing to verify. Run bootstrap.sh in default (install) mode first.
+EXIT:1
+
+--- Step 9: re-install over the existing .nizam/ (atomic replace, expect exit 0, no leftover .old/.stage dirs) ---
+bootstrap.sh: cloning file:///tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/007-smoke2/clone-src at pinned tag v0.1.0-smoke-test (--depth 1)...
+Cloning into '/tmp/nizam-bootstrap-clone.WHFtTT'...
+Note: switching to 'b22dcd2e791b78c44815d60525320025529d56e6'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: staging governance payload in ./.nizam-stage.cgcKQo...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 26 indexed path(s) resolve under ./.nizam-stage.cgcKQo.
+bootstrap.sh: recording provenance (framework_version=0.1.0, tag=v0.1.0-smoke-test)...
+bootstrap.sh: install complete. Governance payload version 0.1.0 (tag v0.1.0-smoke-test) is now at '.nizam'.
+EXIT:0
+drwx------ 6 cnross cnross 160 Jul  7 13:25 .nizam
+
+=== Summary ===
+install_exit=0 verify_match_exit=0 verify_mismatch_exit=1 verify_empty_exit=1 reinstall_exit=0

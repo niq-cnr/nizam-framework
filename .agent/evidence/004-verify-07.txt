@@ -1,0 +1,7 @@
+COMMAND:
+f=templates/CONTEXT.md; test -f "$f" || exit 1; fm=$(awk '/^---$/{c++; next} c==1{print}' "$f"); body=$(awk '/^---$/{c++; next} c>=2{print}' "$f"); if echo "$fm" | grep -q '{{'; then echo 'PLACEHOLDER LEAKED INTO FRONTMATTER'; exit 1; fi; if echo "$body" | grep -q '{{REPO_NAME}}'; then echo PASS; else echo 'MISSING PLACEHOLDER IN BODY'; exit 1; fi
+
+OUTPUT:
+PASS
+
+EXIT:0

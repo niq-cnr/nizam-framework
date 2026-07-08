@@ -1,0 +1,3 @@
+test -f tools/skill.json && python3 -c "import json; doc = json.load(open('tools/skill.json')); blob = json.dumps(doc).lower(); forbidden = ['claude', 'anthropic', 'codex', 'openai', 'gpt']; hits = [w for w in forbidden if w in blob]; assert not hits, f'vendor-specific identifiers found: {hits}'; print('PASS')"
+PASS
+EXIT:0

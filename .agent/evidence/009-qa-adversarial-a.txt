@@ -1,0 +1,20 @@
+=== (a) python3-less environment simulation: bootstrap.sh --verify-only ===
+Minimal PATH dir contents (bash, git, coreutils only -- no python3):
+basename
+bash
+cat
+cp
+date
+dirname
+env
+git
+mkdir
+mktemp
+mv
+rm
+sh
+
+Invocation: env -i PATH=<minimal_bin> HOME=$HOME bash bootstrap.sh --verify-only --tag v0.1.0 --target <nonexistent-target>
+bootstrap.sh: error: required command 'python3' not found on PATH.
+exit status: 1
+ADVERSARIAL CHECK (a) PASS: run_verify_only's require_command python3 guard fires FIRST (before the target-directory-exists check and before check_nizam_index), producing the clear 'required command python3 not found on PATH' message rather than a python3-invocation crash or a misleading NIZAM.json error.

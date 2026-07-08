@@ -1,0 +1,7 @@
+COMMAND:
+test -d tools || exit 1; count=$(find tools -maxdepth 1 -type f | wc -l); test "$count" -eq 4 || { echo "unexpected file count $count, refusing to trust an absence-of-match result"; exit 1; }; if grep -ril "nizamiq" tools/ 2>/dev/null; then echo FAIL; exit 1; else echo PASS; fi
+
+OUTPUT:
+PASS
+
+EXIT:0

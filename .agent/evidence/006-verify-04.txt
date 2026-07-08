@@ -1,0 +1,4 @@
+COMMAND: python3 -c "import json, jsonschema; schema = json.load(open('registry/nizam-index.schema.json')); instance = json.load(open('NIZAM.json')); jsonschema.validate(instance=instance, schema=schema); print('PASS')"
+OUTPUT:
+PASS
+EXIT:0

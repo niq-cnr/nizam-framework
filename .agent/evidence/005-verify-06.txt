@@ -1,0 +1,7 @@
+COMMAND:
+f=tools/SKILL.md; test -f "$f" || exit 1; if grep -Eiq "claude|anthropic|codex|openai|gpt" "$f"; then echo "VENDOR-SPECIFIC REFERENCE FOUND IN SKILL.md"; exit 1; fi; grep -qi "circuit breaker" "$f" && grep -Eqi "anti-hallucination|anti_hallucination" "$f" && grep -Eqi "durable state|NIZAM\.json" "$f" && echo PASS || { echo "MISSING REQUIRED TOPIC IN SKILL.md"; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

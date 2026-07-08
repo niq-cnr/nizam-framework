@@ -1,0 +1,91 @@
+{
+  "contract_id": "006",
+  "feature_id": "006",
+  "name": "Registry Module (/registry/) & Root NIZAM.json Index",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "registry/nizam-index.schema.json",
+        "purpose": "JSON Schema (draft 2020-12, $schema: https://json-schema.org/draft/2020-12/schema) that the root NIZAM.json must validate against. Declares: a framework object (name, version, description); a modules[] array, each entry requiring path, purpose, and key_documents[] (an array of repository-relative document paths); a capabilities[] array, each entry requiring id, summary, and authoritative_source (a repository-relative path to the document backing that capability) \u2014 covering the 4 standard/ documents, 6 methodology/ protocols, and 3 tools/ payload files (13 capability entries total); a schemas[] index covering all 7 schema/*.schema.json files; a templates[] index covering all 8 templates/ files; consumption_guidance fields instructing agents to query the index and read only the specific file a task requires, never to bulk-read governance directories (DD-1); and a self_reference field/entry pointing back at NIZAM.json itself. Declares 'framework' and 'modules' as required top-level properties at minimum."
+      },
+      {
+        "path": "registry/scope_definition_patterns.md",
+        "purpose": "Generalised registry patterns distilled and de-branded from the NizamIQ ECOSYSTEM.json convention: documents the in_scope / out_of_scope repository-list pattern, the dependency-map pattern, and the phase-progress-tracking pattern as a reusable pattern guide for any consumer repo building its own ecosystem-level registry on top of Nizam. Prose-only; ships no consumer-specific or NizamIQ-specific registry data, no repo names, no infrastructure endpoints. Carries real frontmatter (id: nizam-registry-scope-patterns, authoritative_source: nizam-framework/registry/scope_definition_patterns.md) describing the document itself."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "THE root capability index and context router (DD-1), located at the repository root (not under registry/). The live, accurate index of every module and document shipped by features 000-005 plus this feature's own registry/ additions: a framework object (name, version 0.1.0, description); a modules[] entry for each of the six shipped modules (standard/, methodology/, registry/, templates/, schema/, tools/) with path + purpose + key_documents[]; a capabilities[] entry for each of the 4 standard/ documents, 6 methodology/ protocol documents, and 3 tools/ skill-payload files (13 entries) each with id + summary + authoritative_source; a schemas[] index of all 7 schema/*.schema.json files; a templates[] index of all 8 templates/ files; consumption_guidance text instructing agents to query this index and read only the file a task needs rather than bulk-reading governance directories (methodology/04_tool_driven_state.md); and a self-referencing entry indexing NIZAM.json itself. version field is a semver string matching the framework version (0.1.0). Must validate against registry/nizam-index.schema.json and every path it indexes must resolve on disk."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "registry/README.md",
+        "purpose": "Replace the feature-000 stub (which only announces full content ships in feature 006) with the full registry/ module index: frontmatter intact (6 required keys, version bumped from 0.1.0 if warranted, status updated from draft if warranted), and a body enumerating nizam-index.schema.json and scope_definition_patterns.md each with a one-line purpose, plus an explicit note that the root NIZAM.json (a root-level file, not itself under registry/) is the artifact this module's schema validates against."
+      }
+    ]
+  },
+  "non_goals": [
+    "No bootstrap.sh script \u2014 that belongs to feature 007",
+    "No CHANGELOG.md edits as part of this contract's verified implementation scope (any changelog entry required by the generator's Docs Sync Gate is tracked separately and is not part of this contract's verified scope)",
+    "No edits to any file outside registry/, the root NIZAM.json, and this contract file itself (no other module README stubs, no docs/planning/ changes)",
+    "No modification of any already-shipped indexed module content \u2014 schema/, standard/, methodology/, templates/, and tools/ files are referenced by path only from NIZAM.json and nizam-index.schema.json, never restated or edited here",
+    "No per-consumer or per-project ecosystem registry data (e.g. no filled-in in_scope/out_of_scope repo lists) \u2014 scope_definition_patterns.md documents the pattern only, generically"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "All three contracted registry/ files exist (nizam-index.schema.json, scope_definition_patterns.md, README.md) with no stray files, and root NIZAM.json exists",
+      "command": "count=$(find registry -maxdepth 1 -type f | wc -l); test \"$count\" -eq 3 && test -f registry/nizam-index.schema.json && test -f registry/scope_definition_patterns.md && test -f registry/README.md && test -f NIZAM.json && echo PASS || { echo \"unexpected file state, registry count=$count\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "registry/nizam-index.schema.json is valid JSON and declares a draft 2020-12 $schema key",
+      "command": "test -f registry/nizam-index.schema.json && python3 -c \"import json; doc = json.load(open('registry/nizam-index.schema.json')); assert doc.get('\\$schema','').endswith('2020-12/schema'), f'unexpected \\$schema: {doc.get(\\\"\\$schema\\\")}'; print('PASS')\""
+    },
+    {
+      "acceptance_test": "NIZAM.json is valid JSON",
+      "command": "test -f NIZAM.json && python3 -c \"import json; json.load(open('NIZAM.json')); print('PASS')\""
+    },
+    {
+      "acceptance_test": "NIZAM.json validates against registry/nizam-index.schema.json (jsonschema)",
+      "command": "python3 -c \"import json, jsonschema; schema = json.load(open('registry/nizam-index.schema.json')); instance = json.load(open('NIZAM.json')); jsonschema.validate(instance=instance, schema=schema); print('PASS')\""
+    },
+    {
+      "acceptance_test": "Every repository-relative path indexed anywhere in NIZAM.json resolves on disk. Checked unconditionally, by parent key, with no free-text extension guessing: (a) any string value under key 'path' or 'authoritative_source'; (b) every item of any list under key 'key_documents'; (c) every string item within the top-level 'schemas' or 'templates' index arrays. Prose fields (e.g. consumption_guidance text that merely mentions a filename) are never misread as paths, and extensionless key_documents entries (e.g. a bare directory name) are never silently skipped.",
+      "command": "python3 -c \"\nimport json, os\ndoc = json.load(open('NIZAM.json'))\npath_keys = ('path', 'authoritative_source')\nlist_path_keys = ('key_documents', 'schemas', 'templates')\npaths = []\ndef walk(node, key=None):\n    if isinstance(node, dict):\n        for k, v in node.items():\n            walk(v, k)\n    elif isinstance(node, list):\n        if key in list_path_keys:\n            for item in node:\n                if isinstance(item, str):\n                    paths.append(item)\n                else:\n                    walk(item, key)\n        else:\n            for item in node:\n                walk(item, key)\n    elif isinstance(node, str):\n        if key in path_keys:\n            paths.append(node)\nwalk(doc)\nassert paths, 'no paths discovered by walker - index appears empty'\nmissing = [p for p in paths if p != 'NA' and not os.path.exists(p)]\nassert not missing, f'missing paths: {missing}'\nprint(f'PASS ({len(paths)} paths checked)')\n\""
+    },
+    {
+      "acceptance_test": "NIZAM.json carries a top-level semver version field matching the framework version 0.1.0",
+      "command": "python3 -c \"\nimport json, re\ndoc = json.load(open('NIZAM.json'))\nversion = doc.get('framework', {}).get('version') or doc.get('version')\nassert version, 'no version field found'\nassert re.match(r'^\\d+\\.\\d+\\.\\d+$', version), f'not semver: {version}'\nassert version == '0.1.0', f'expected 0.1.0, got {version}'\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "NIZAM.json indexes exactly 6 modules, 7 schemas, 8 templates, and 13 capabilities (4 standards + 6 methodology protocols + 3 tools files), plus a self-reference to NIZAM.json",
+      "command": "python3 -c \"\nimport json\ndoc = json.load(open('NIZAM.json'))\nassert len(doc.get('modules', [])) == 6, f\\\"modules count {len(doc.get('modules', []))} != 6\\\"\nassert len(doc.get('schemas', [])) == 7, f\\\"schemas count {len(doc.get('schemas', []))} != 7\\\"\nassert len(doc.get('templates', [])) == 8, f\\\"templates count {len(doc.get('templates', []))} != 8\\\"\nassert len(doc.get('capabilities', [])) == 13, f\\\"capabilities count {len(doc.get('capabilities', []))} != 13\\\"\nblob = json.dumps(doc)\nassert 'NIZAM.json' in blob, 'NIZAM.json does not index itself (no self-reference found)'\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "NIZAM.json includes consumption guidance instructing agents to query the index rather than bulk-read governance directories",
+      "command": "f=NIZAM.json; test -f \"$f\" || exit 1; python3 -c \"\nimport json\ndoc = json.load(open('$f'))\nblob = json.dumps(doc).lower()\nassert 'query' in blob and ('bulk' in blob or 'do not' in blob or 'instead of' in blob), 'missing consumption guidance language'\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "registry/scope_definition_patterns.md and registry/README.md start with YAML frontmatter containing the 6 required keys",
+      "command": "status=0; for f in registry/scope_definition_patterns.md registry/README.md; do test -f \"$f\" || { echo \"MISSING $f\"; status=1; continue; }; test \"$(head -1 \"$f\")\" = '---' || { echo \"NOT FRONTMATTER: $f\"; status=1; }; for k in id title description version status authoritative_source; do grep -q \"^$k:\" \"$f\" || { echo \"MISSING $k in $f\"; status=1; }; done; done; test \"$status\" -eq 0 && echo PASS"
+    },
+    {
+      "acceptance_test": "No NizamIQ branding remains in registry/ or NIZAM.json (guarded absence check \u2014 refuses to trust an empty grep result unless the expected files are confirmed present first)",
+      "command": "test -d registry || exit 1; count=$(find registry -maxdepth 1 -type f | wc -l); test \"$count\" -eq 3 || { echo \"unexpected registry file count $count, refusing to trust an absence-of-match result\"; exit 1; }; test -f NIZAM.json || { echo \"NIZAM.json missing, refusing to trust an absence-of-match result\"; exit 1; }; if grep -ril 'nizamiq' registry/ NIZAM.json 2>/dev/null; then echo FAIL; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "registry/ contains EXACTLY the 3 contracted files (nizam-index.schema.json, README.md, scope_definition_patterns.md) and no stray out-of-contract files",
+      "command": "actual=\"$(find registry -maxdepth 1 -type f | LC_ALL=C sort | tr '\\n' ' ')\"; expected=\"registry/README.md registry/nizam-index.schema.json registry/scope_definition_patterns.md \"; test \"$actual\" = \"$expected\" && echo PASS || { echo \"MISMATCH: got [$actual] expected [$expected]\"; exit 1; }"
+    }
+  ],
+  "estimated_lines": 400,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/006-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/006-verify-01.txt for the first entry, ..., .agent/evidence/006-verify-11.txt for the eleventh). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T15:05:00Z",
+    "revisions": 1
+  }
+}

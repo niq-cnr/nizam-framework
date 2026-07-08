@@ -1,0 +1,4 @@
+(script: v11.sh)
+test -f templates/README.md || { echo 'MISSING templates/README.md'; exit 1; }; grep -q '.agent/product_spec.md' templates/README.md && echo PASS || { echo '.agent/product_spec.md reference not found'; exit 1; }
+PASS
+EXIT:0

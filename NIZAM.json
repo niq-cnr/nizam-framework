@@ -1,0 +1,175 @@
+{
+  "framework": {
+    "name": "nizam-framework",
+    "version": "0.1.0",
+    "description": "A generalised, AI-legible, versioned governance framework distilling documentation standards, planning and execution protocols, adversarial TDD, contract-first harness loops, durable agent state, and governance inheritance into a single portable payload any AI agent or engineering team can consume in any runtime, for any project."
+  },
+  "modules": [
+    {
+      "path": "standard",
+      "purpose": "Documentation standard, governance inheritance protocol, agent governance framework, and universal anti-hallucination constraints every consumer repository inherits verbatim.",
+      "key_documents": [
+        "standard/NDS.md",
+        "standard/GIP.md",
+        "standard/AGF.md",
+        "standard/anti_hallucination.md",
+        "standard/README.md"
+      ]
+    },
+    {
+      "path": "methodology",
+      "purpose": "Planning enforcement, the contract-first execution harness loop, adversarial TDD, the universal circuit breaker, tool-driven durable state, and the release train protocol.",
+      "key_documents": [
+        "methodology/00_planning.md",
+        "methodology/01_execution.md",
+        "methodology/02_adversarial_tdd.md",
+        "methodology/03_circuit_breaker.md",
+        "methodology/04_tool_driven_state.md",
+        "methodology/05_release_train.md",
+        "methodology/README.md"
+      ]
+    },
+    {
+      "path": "registry",
+      "purpose": "The JSON Schema this root index validates against, plus generalised scope-definition and registry patterns for consumer repositories building their own ecosystem-level registries on top of Nizam.",
+      "key_documents": [
+        "registry/nizam-index.schema.json",
+        "registry/scope_definition_patterns.md",
+        "registry/README.md"
+      ]
+    },
+    {
+      "path": "templates",
+      "purpose": "Consumer-repo document and manifest templates a bootstrapped repository copies and fills in with its own content.",
+      "key_documents": [
+        "templates/CONTEXT.md",
+        "templates/AGENTS.md",
+        "templates/DEBT.md",
+        "templates/ADR_TEMPLATE.md",
+        "templates/work-packet.template.json",
+        "templates/phase_template.yaml",
+        "templates/manifest.template.json",
+        "templates/README.md"
+      ]
+    },
+    {
+      "path": "schema",
+      "purpose": "JSON Schemas validating every machine-readable artifact the framework and its consumers produce.",
+      "key_documents": [
+        "schema/frontmatter.schema.json",
+        "schema/manifest.schema.json",
+        "schema/phase.schema.json",
+        "schema/feature_list.schema.json",
+        "schema/contract.schema.json",
+        "schema/qa_verdict.schema.json",
+        "schema/run_state.schema.json",
+        "schema/README.md"
+      ]
+    },
+    {
+      "path": "tools",
+      "purpose": "The one unified, runtime-agnostic skill payload (manifest, instructions, adapter interface) any agent runtime loads to act on the framework.",
+      "key_documents": [
+        "tools/skill.json",
+        "tools/SKILL.md",
+        "tools/interface.md",
+        "tools/README.md"
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "nizam-documentation-standard",
+      "summary": "The required frontmatter, status lifecycle, versioning, and machine-readability rules every governed document must satisfy.",
+      "authoritative_source": "standard/NDS.md"
+    },
+    {
+      "id": "governance-inheritance-protocol",
+      "summary": "How a consumer repository inherits the framework via pinned-tag cloning and bootstrap.sh, verifies inheritance, and detects drift.",
+      "authoritative_source": "standard/GIP.md"
+    },
+    {
+      "id": "agent-governance-framework",
+      "summary": "The generalised multi-agent execution model: agent roles, the dual validator gate, and the JSON verdict parse rule.",
+      "authoritative_source": "standard/AGF.md"
+    },
+    {
+      "id": "anti-hallucination-constraints",
+      "summary": "The universal AH-1 through AH-4 constraints binding every agent action, independent of protocol or task.",
+      "authoritative_source": "standard/anti_hallucination.md"
+    },
+    {
+      "id": "nizam-planning-enforcer",
+      "summary": "The mandatory pre-code product_spec.md + feature_list.json artifact pair and the Dependency Enforcement Rule.",
+      "authoritative_source": "methodology/00_planning.md"
+    },
+    {
+      "id": "nizam-contract-first-execution",
+      "summary": "The two-loop state machine (pre-code contract alignment, post-code implementation repair) and the JSON Verdict Parse Rule that gates every stage.",
+      "authoritative_source": "methodology/01_execution.md"
+    },
+    {
+      "id": "nizam-adversarial-tdd",
+      "summary": "Evaluator independence, false-pass and false-fail hunting patterns, and the negative-testing requirement.",
+      "authoritative_source": "methodology/02_adversarial_tdd.md"
+    },
+    {
+      "id": "nizam-circuit-breaker",
+      "summary": "The single authoritative 3-strike attempt limit (DD-2) embedded by every repeatable execution loop.",
+      "authoritative_source": "methodology/03_circuit_breaker.md"
+    },
+    {
+      "id": "nizam-tool-driven-state",
+      "summary": "Query-not-bulk-read discipline (DD-1) via the root index, and evidence externalisation to .agent/evidence/ (DD-3).",
+      "authoritative_source": "methodology/04_tool_driven_state.md"
+    },
+    {
+      "id": "nizam-release-train",
+      "summary": "Semantic-version git-tag release cuts, changelog discipline, and the consumer upgrade path via re-bootstrap.",
+      "authoritative_source": "methodology/05_release_train.md"
+    },
+    {
+      "id": "nizam-governance-skill-manifest",
+      "summary": "The machine-readable capability manifest for the single unified, runtime-agnostic skill payload (DD-4).",
+      "authoritative_source": "tools/skill.json"
+    },
+    {
+      "id": "nizam-tools-skill",
+      "summary": "The single skill-instructions payload any agent runtime loads to plan, execute, gate, and durably record contract-first work.",
+      "authoritative_source": "tools/SKILL.md"
+    },
+    {
+      "id": "nizam-tools-interface",
+      "summary": "The runtime-adapter contract mapping the framework's abstract operations onto any runtime's native tool primitives.",
+      "authoritative_source": "tools/interface.md"
+    }
+  ],
+  "schemas": [
+    "schema/frontmatter.schema.json",
+    "schema/manifest.schema.json",
+    "schema/phase.schema.json",
+    "schema/feature_list.schema.json",
+    "schema/contract.schema.json",
+    "schema/qa_verdict.schema.json",
+    "schema/run_state.schema.json"
+  ],
+  "templates": [
+    "templates/CONTEXT.md",
+    "templates/AGENTS.md",
+    "templates/DEBT.md",
+    "templates/ADR_TEMPLATE.md",
+    "templates/work-packet.template.json",
+    "templates/phase_template.yaml",
+    "templates/manifest.template.json",
+    "templates/README.md"
+  ],
+  "consumption_guidance": "Query this index first. Locate the module, capability, schema, or template path that matches the task at hand, then read only that one file. Do not bulk-read an entire governance directory (standard/, methodology/, templates/, schema/, or tools/) for a single task; that is context exhaustion, the failure DD-1 remediates (see methodology/04_tool_driven_state.md). Use the 'capabilities' array to resolve a named concern to its single authoritative_source, the 'modules' array to find a module's key_documents, and the 'schemas'/'templates' arrays to resolve a machine-artifact path directly.",
+  "index_schema": {
+    "path": "registry/nizam-index.schema.json",
+    "description": "The JSON Schema (draft 2020-12) this document, NIZAM.json, must validate against."
+  },
+  "self_reference": {
+    "path": "NIZAM.json",
+    "description": "This file. NIZAM.json indexes itself so the root context router always appears in its own capability map."
+  }
+}

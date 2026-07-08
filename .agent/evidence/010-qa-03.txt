@@ -1,0 +1,16 @@
+(script: w03.sh)
+test -f standard/AGF.md || { echo 'MISSING standard/AGF.md'; exit 1; }; test -f methodology/01_execution.md || { echo 'MISSING methodology/01_execution.md'; exit 1; }
+python3 -c '
+import re
+def extract(path):
+    text = open(path).read()
+    m = re.search(r"## 4\..*?```text\n(.*?)\n```", text, re.S)
+    assert m, f"gate-rule text-fenced block not found in {path}"
+    return m.group(1).strip()
+a = extract("standard/AGF.md")
+b = extract("methodology/01_execution.md")
+assert a == b, f"blocks differ:\nAGF.md:\n{a}\n---\n01_execution.md:\n{b}"
+print("PASS")
+'
+PASS
+EXIT:0

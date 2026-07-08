@@ -1,0 +1,151 @@
+---
+id: nizam-registry-scope-patterns
+title: "Ecosystem Registry & Scope-Definition Patterns"
+description: "Generalised patterns for a consumer repository that maintains its own ecosystem-level registry of repositories, services, or modules on top of the Nizam framework: the scope-list shape, dependency-map conventions, phase-progress tracking, and drift rules."
+version: 0.1.0
+status: draft
+authoritative_source: registry/scope_definition_patterns.md
+---
+
+# Ecosystem Registry & Scope-Definition Patterns
+
+## 1. Overview
+
+Some consumer repositories are not just a single codebase — they are the strategy or
+platform repository for a whole ecosystem of other repositories, services, or modules.
+That repository needs its own machine-readable registry describing what is in scope,
+what depends on what, and how far along each piece is. This document generalises the
+registry shape observed across such deployments into a reusable pattern. It ships no
+project-specific data: no repository names, no infrastructure endpoints, no filled-in
+scope lists. A consumer repository authors its own instance of this shape.
+
+This pattern is a *consumer-level* concern. It sits above the Nizam framework itself:
+Nizam's own `NIZAM.json` (validated by `registry/nizam-index.schema.json`) indexes
+Nizam's own modules and capabilities; an ecosystem registry built with the patterns
+below indexes a *consumer's* fleet of repositories or services and is a separate,
+project-specific artifact.
+
+## 2. The Ecosystem Registry JSON Shape
+
+A single JSON document, versioned and timestamped, with a top-level `schema_version`
+(or equivalent) and `last_updated` field, plus a small number of named lists that
+partition every tracked entity by scope status:
+
+```text
+{
+  "schema_version": "<semver>",
+  "last_updated": "<ISO 8601 timestamp>",
+  "authoritative_source": "<repository-relative path to this document>",
+  "dependency_map": "<link or path to a human-readable dependency document, if maintained separately>",
+  "phase_progress": { ... },
+  "in_scope": [ { ...entry... }, ... ],
+  "incubating": [ { ...entry... }, ... ],
+  "reference_archive": [ { ...entry... }, ... ],
+  "out_of_scope": [ { ...entry... }, ... ]
+}
+```
+
+### 2.1 The list-partition pattern
+
+Every tracked entity appears in **exactly one** list, chosen by its current
+relationship to the ecosystem, not by its perceived importance:
+
+| List | Meaning |
+|---|---|
+| `in_scope` | Actively maintained and part of the current masterplan or roadmap. |
+| `incubating` | Exists, is tracked, but has not yet met the bar for full `in_scope` status (e.g. governance not yet bootstrapped, concept-stage, or pre-implementation). |
+| `reference_archive` | No longer independently maintained, but retained as a reference for one or more `in_scope` entries (e.g. a predecessor implementation, a migration source). |
+| `out_of_scope` | Explicitly excluded, with a `reason` field so the exclusion is a recorded decision rather than an omission. |
+
+An entity's list membership, not a status string alone, is the authoritative signal for
+whether it currently receives ecosystem-level governance, resourcing, or dependency
+guarantees.
+
+### 2.2 The entry shape
+
+Each entry in any list is an object. A minimal entry needs only an identifying key and
+enough context to explain why it is in that list (`out_of_scope` entries in particular
+may be nothing more than a name and a `reason`). A fuller entry, typical of `in_scope`,
+commonly carries:
+
+- An identifying key (a name) and a link to its canonical location.
+- A one-line `role` or `description` — what this entity is *for*, in business terms.
+- A `status` field describing operational state (e.g. `active`, `IN_DEVELOPMENT`,
+  `deprecated`) — kept distinct from the list it lives in, since a `deprecated` entity
+  can still be `in_scope` during a wind-down window.
+- A `depends_on` array (Section 3).
+- An `exposes` array — the interfaces, packages, or endpoints this entity provides to
+  the rest of the ecosystem, so a consumer can reason about impact without cloning it.
+- A free-text `note` capturing the latest material fact about the entity, dated
+  implicitly by the registry's own `last_updated`/`last_audited` fields.
+- A `last_audited` timestamp, so registry consumers can distinguish a freshly verified
+  entry from a stale one.
+
+Optional enrichment fields (a maturity or health score, a tier/grouping label, a
+superseding-entity pointer) may be layered on top without changing the base shape,
+provided they do not replace the required identifying and scope-list fields above.
+
+## 3. Dependency-Map Conventions
+
+Two complementary mechanisms, not one, are used to express dependency:
+
+1. **Inline `depends_on` arrays.** Each entry lists the identifying keys of the other
+   entries it depends on. This is the machine-checkable form: a validator can confirm
+   every name in a `depends_on` array resolves to another entry somewhere in the
+   registry (in any list — a dependency on a `reference_archive` entry is a signal
+   worth flagging, not silently ignored).
+2. **A separate human-readable dependency map.** A prose or diagram document
+   (referenced from the registry's top-level `dependency_map` field) that explains the
+   *shape* of the dependency graph — tiers, layers, or waves — in a way a flat list of
+   `depends_on` arrays cannot convey on its own. The registry points to this document;
+   it does not inline it, keeping the JSON registry itself lint-friendly and diffable.
+
+Both mechanisms describe the same underlying graph and should agree; a registry
+validator should be able to detect drift between the two.
+
+## 4. Phase-Progress Tracking
+
+A registry commonly tracks not just *what* is in scope but *how far along* a shared,
+ecosystem-wide effort is, via a single `phase_progress` block distinct from any one
+entry's own `status`:
+
+- One status field per named phase or workstream (e.g. `phase_NN_status`), using a
+  small closed vocabulary (`COMPLETE`, `IN_PROGRESS`, `NOT_STARTED`, `BLOCKED`).
+  Ecosystem-specific milestones (a particular gap-closure effort, a particular
+  cross-cutting initiative) may get their own named status field alongside the
+  numbered phases.
+  These phase records exist independently of a project's own internal phase runner state
+  (of the kind produced by `methodology/00_planning.md` / `.agent/run_state.json`);
+  `phase_progress` is the ecosystem's outside view, not a project's own execution state.
+- A `last_assessment` timestamp recording when the whole block was last reviewed as a
+  unit, distinct from any single entry's own `last_audited` field.
+- A free-text `notes` field summarising the current cross-entity narrative — what
+  unblocked what, what is now sequenced after what — so a reader gets the *story*, not
+  just a table of independent statuses.
+- A readiness or blocking-items field for whatever the ecosystem's next major
+  milestone is, so "are we ready to ship/launch/cut over" has one authoritative,
+  queryable answer instead of being re-derived from prose scattered across entries.
+
+## 5. Drift Rules
+
+1. **The registry is authoritative, not any individual entity's own self-description.**
+   If an entity's own repository claims a status, role, or dependency set that conflicts
+   with the ecosystem registry, the registry wins until a registry update reconciles
+   the two. Individual repositories describe themselves for their own contributors;
+   the registry describes them for the rest of the ecosystem.
+2. **Consumers verify against a pinned reference, not a moving target.** Any process
+   that reads the registry to make a decision (a dependency check, a scope check, a
+   release gate) should read it at a specific, addressable revision (a commit, tag, or
+   timestamped snapshot) — the same discipline `standard/GIP.md` requires for
+   inheriting the framework itself via a pinned tag rather than a floating branch.
+   A consumer that silently tracks a moving `main` risks acting on a registry state
+   that changed mid-decision.
+3. **Every exclusion is recorded, not implied.** An entity absent from every list is a
+   gap, not a decision. Deliberate exclusions belong in `out_of_scope` with a `reason`;
+   an entity that stops being tracked should move to `reference_archive` or
+   `out_of_scope` explicitly rather than simply being deleted from the document.
+4. **Drift is a first-class, loggable condition.** When a registry consumer detects
+   that live state (a dependency that no longer resolves, a status that has silently
+   gone stale past some staleness threshold, an entry in two lists at once) disagrees
+   with the registry, that disagreement is logged as debt against the registry itself,
+   not quietly patched over by the consumer.

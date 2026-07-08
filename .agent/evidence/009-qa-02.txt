@@ -1,0 +1,4 @@
+(script: v02.sh)
+test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; start=$(grep -n '^run_verify_only()' bootstrap.sh | head -1 | cut -d: -f1); end=$(awk -v s="$start" 'NR>s && /^}/{print NR; exit}' bootstrap.sh); test -n "$start" && test -n "$end" || { echo 'could not locate run_verify_only() function bounds'; exit 1; }; body=$(sed -n "${start},${end}p" bootstrap.sh); echo "$body" | grep -q 'require_command python3' && echo PASS || { echo 'require_command python3 not found inside run_verify_only() body'; exit 1; }
+PASS
+EXIT:0

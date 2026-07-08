@@ -1,0 +1,48 @@
+{
+  "feature_id": "002",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {
+      "command": "test -f standard/NDS.md && test -f standard/GIP.md && test -f standard/AGF.md && test -f standard/anti_hallucination.md && test -f standard/README.md && echo PASS",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/002-qa-01.txt"
+    },
+    {
+      "command": "for f in standard/*.md; do test \"$(head -1 \"$f\")\" = '---'; done (5 files, all frontmatter)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/002-qa-02.txt"
+    },
+    {
+      "command": "every standard/*.md frontmatter contains id/title/description/version/status/authoritative_source",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/002-qa-03.txt"
+    },
+    {
+      "command": "NDS.md mentions all 6 required frontmatter keys",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/002-qa-04.txt"
+    },
+    {
+      "command": "anti_hallucination.md documents AH-1, AH-2, AH-3",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/002-qa-05.txt"
+    },
+    {
+      "command": "no 'nizamiq' branding in standard/ (with file-count guard against silent no-op)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/002-qa-06.txt"
+    },
+    {
+      "command": "standard/ contains exactly the 5 contracted files, no stray extras",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/002-qa-07.txt"
+    }
+  ],
+  "adversarial_check": {
+    "description": "Two-part check beyond the 7 listed commands, using python3+yaml+jsonschema: (1) parsed the YAML block between the first two '---' lines of all 5 standard/*.md files and validated each against schema/frontmatter.schema.json (draft 2020-12) -- all 5 validated cleanly (id kebab-case, version semver, status in draft/active/deprecated enum, authoritative_source non-empty). (2) Cross-checked standard/AGF.md Section 4's JSON Verdict Parse Rule prose against the literal gate rule this evaluation pipeline enforces: searched AGF.md verbatim for the four fragments 'final_verdict.approved === true', 'final_verdict.issues.length === 0', 'final_verdict.missing_acceptance_coverage.length === 0', 'final_verdict.unsupported_claims.length === 0' -- all four present verbatim, confirming AGF.md's documented gate matches the actual approved/issues/missing_acceptance_coverage/unsupported_claims gate used to advance this pipeline (no drift between doc and practice).",
+    "result": "pass",
+    "evidence": ".agent/evidence/002-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

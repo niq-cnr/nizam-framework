@@ -1,0 +1,37 @@
+COMMAND: test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; output=$(timeout 5 bash bootstrap.sh --help 2>&1); status=$?; echo "$output"; test "$status" -eq 0 && echo PASS || { echo "exit status $status (possible network hang or --help failure)"; exit 1; }
+--- OUTPUT ---
+Usage: bootstrap.sh [OPTIONS]
+
+Inherit, or verify inheritance of, the Nizam governance payload (standard/,
+templates/, schema/, tools/, NIZAM.json) into this repository, per
+standard/GIP.md (Governance Inheritance Protocol).
+
+Modes:
+  (default)         Clone the pinned GOVERNANCE_TAG, stage the governance
+                     payload in a temp directory, verify it, record
+                     provenance, and atomically install it under the target
+                     directory.
+  --verify-only      Network-free drift check against an already-injected
+                     target directory: confirms the target exists, its
+                     NIZAM.json parses, every path it indexes resolves on
+                     disk, and its recorded provenance tag matches the
+                     expected pinned tag. Performs no clone and no write.
+  --help, -h         Print this usage text and exit 0. Network-free.
+
+Options:
+  --repo-url URL     Override GOVERNANCE_REPO_URL for this invocation.
+  --tag TAG          Override GOVERNANCE_TAG for this invocation. Must be a
+                     pinned tag -- "", "main", "master", "HEAD", and any
+                     "refs/heads/*" reference are all refused.
+  --target DIR       Override the injection target directory (default: .nizam).
+
+Environment variables (overridden by the matching flag above when both are given):
+  GOVERNANCE_REPO_URL   Source repository of the governance payload.
+  GOVERNANCE_TAG        Pinned tag to install or to verify against.
+  NIZAM_TARGET_DIR      Injection target directory.
+
+Exit status:
+  0   Success (including --help and a passing --verify-only run).
+  1   Configuration error, verification failure, or clone/injection failure.
+PASS
+EXIT:0

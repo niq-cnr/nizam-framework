@@ -1,0 +1,97 @@
+{
+  "contract_id": "000",
+  "feature_id": "000",
+  "name": "Repository Scaffold & Root AI-Legible Entry Points",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "standard/README.md",
+        "purpose": "Stub index for the standard/ module (compliant frontmatter only; full content is feature 002)."
+      },
+      {
+        "path": "methodology/README.md",
+        "purpose": "Stub index for the methodology/ module (compliant frontmatter only; full content is feature 003)."
+      },
+      {
+        "path": "registry/README.md",
+        "purpose": "Stub index for the registry/ module (compliant frontmatter only; full content is feature 006)."
+      },
+      {
+        "path": "templates/README.md",
+        "purpose": "Stub index for the templates/ module (compliant frontmatter only; full content is feature 004)."
+      },
+      {
+        "path": "schema/README.md",
+        "purpose": "Stub index for the schema/ module (compliant frontmatter only; full content is feature 001)."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Stub index for the tools/ module (compliant frontmatter only; full content is feature 005)."
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "Root token-efficient architecture + execution-command summary; YAML frontmatter with 6 required keys; includes '## Out of Scope' section."
+      },
+      {
+        "path": "README.md",
+        "purpose": "Root human-readable overview and quick-start entry point."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Semantic version history file seeded with an 'Unreleased' section only (v0.1.0 entry belongs to feature 007)."
+      },
+      {
+        "path": ".gitignore",
+        "purpose": "Standard ignore patterns for the repository."
+      }
+    ],
+    "files_modify": []
+  },
+  "non_goals": [
+    "No module content beyond the six README stubs (schema files are feature 001)",
+    "No standard/ protocol content (NDS.md, GIP.md, AGF.md, anti_hallucination.md are feature 002)",
+    "No methodology/ protocol docs (00_planning.md through 05_release_train.md are feature 003)",
+    "No templates/ content beyond the module README (feature 004)",
+    "No tools/ skill payload content (skill.json, SKILL.md, interface.md are feature 005)",
+    "No registry/ content beyond the module README, and no root NIZAM.json (feature 006)",
+    "No bootstrap.sh (feature 007)",
+    "No CHANGELOG.md v0.1.0 entry (feature 007 seeds the first real release entry)",
+    "No NizamIQ branding or infrastructure endpoints anywhere in shipped content"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "The six module directories exist: test -d standard && test -d methodology && test -d registry && test -d templates && test -d schema && test -d tools",
+      "command": "test -d standard && test -d methodology && test -d registry && test -d templates && test -d schema && test -d tools && echo PASS"
+    },
+    {
+      "acceptance_test": "Root files exist: test -f CONTEXT.md && test -f README.md && test -f CHANGELOG.md && test -f .gitignore",
+      "command": "test -f CONTEXT.md && test -f README.md && test -f CHANGELOG.md && test -f .gitignore && echo PASS"
+    },
+    {
+      "acceptance_test": "CONTEXT.md contains an '## Out of Scope' section (grep -q '## Out of Scope' CONTEXT.md)",
+      "command": "grep -q '## Out of Scope' CONTEXT.md && echo PASS"
+    },
+    {
+      "acceptance_test": "CONTEXT.md begins with YAML frontmatter (head -1 CONTEXT.md equals '---')",
+      "command": "test \"$(head -1 CONTEXT.md)\" = '---' && echo PASS"
+    },
+    {
+      "acceptance_test": "The six module README stub files exist: standard/README.md, methodology/README.md, registry/README.md, templates/README.md, schema/README.md, tools/README.md",
+      "command": "test -f standard/README.md && test -f methodology/README.md && test -f registry/README.md && test -f templates/README.md && test -f schema/README.md && test -f tools/README.md && echo PASS"
+    },
+    {
+      "acceptance_test": "No shipped file references a NizamIQ infrastructure endpoint (grep -ri 'nizamiq' CONTEXT.md README.md returns nothing)",
+      "command": "test -f CONTEXT.md && test -f README.md && ! grep -riq 'nizamiq' CONTEXT.md README.md && echo PASS"
+    }
+  ],
+  "estimated_lines": 220,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/000-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/000-verify-01.txt for the first entry, 000-verify-02.txt for the second, ..., 000-verify-06.txt for the sixth). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T07:38:00Z"
+  }
+}

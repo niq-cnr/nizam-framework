@@ -1,0 +1,3 @@
+test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; code_lines=$(grep -v '^[[:space:]]*#' bootstrap.sh); echo "$code_lines" | grep -Eq -- '--branch[= ]+"?\$\{?GOVERNANCE_TAG' || { echo 'no non-comment clone invocation using --branch with GOVERNANCE_TAG found'; exit 1; }; echo "$code_lines" | grep -Eq -- '--branch[= ]+main\b|checkout[[:space:]]+main\b|refs/heads/main' && { echo 'floating main-branch reference found on a non-comment line'; exit 1; } || echo PASS
+PASS
+EXIT:0

@@ -1,0 +1,101 @@
+{
+  "contract_id": "004",
+  "feature_id": "004",
+  "name": "Templates Module (/templates/)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "templates/CONTEXT.md",
+        "purpose": "Consumer-repo CONTEXT.md template. Carries REAL frontmatter describing the template artifact itself (id: nizam-template-context, authoritative_source: nizam-framework/templates/CONTEXT.md, version/status/title/description of the template, not of a consumer's filled-in document). The body is the fill-in-the-blanks skeleton a bootstrapped consumer repo copies and completes: architecture summary, module boundaries, execution-command summary, and a mandatory '## Out of Scope' section instructing the consumer to enumerate what the repo explicitly does not own. Uses placeholder tokens (e.g. {{REPO_NAME}}, {{ARCHITECTURE_SUMMARY}}, {{OUT_OF_SCOPE_ITEMS}}) inside the body only, never inside the frontmatter block."
+      },
+      {
+        "path": "templates/AGENTS.md",
+        "purpose": "Consumer-repo AGENTS.md template. Real template frontmatter (id: nizam-template-agents, authoritative_source: nizam-framework/templates/AGENTS.md). Body is a session-objective skeleton: placeholders for {{REPO_NAME}}, current session objective, delegation matrix reference, and a scope-check reminder, for a consumer repo to fill in after bootstrap."
+      },
+      {
+        "path": "templates/DEBT.md",
+        "purpose": "Technical-debt register template. Real template frontmatter (id: nizam-template-debt, authoritative_source: nizam-framework/templates/DEBT.md). Body is the empty debt-register table skeleton (ID | Date | Severity | Description | Remediation columns) with a placeholder example row using tokens like {{DEBT_ID_PREFIX}}, for a consumer repo to populate as debt is logged."
+      },
+      {
+        "path": "templates/ADR_TEMPLATE.md",
+        "purpose": "Architecture Decision Record template. Real template frontmatter (id: nizam-template-adr, authoritative_source: nizam-framework/templates/ADR_TEMPLATE.md). Body is the standard ADR skeleton (Status, Context, Decision, Consequences sections) with placeholder tokens ({{ADR_NUMBER}}, {{ADR_TITLE}}, {{DECISION_DATE}}) for a consumer repo to copy per decision."
+      },
+      {
+        "path": "templates/work-packet.template.json",
+        "purpose": "Scoped work-packet JSON template: a minimal parse-valid JSON object with placeholder string values (e.g. \"{{WORK_PACKET_ID}}\") for keys 'id', 'objective', 'scope' (allowed/forbidden paths), 'acceptance' (array of acceptance criteria), and 'evidence' (array of evidence file paths), for a consumer repo to copy and fill per delegated unit of work. Must be syntactically valid JSON (all placeholders are quoted strings, not bare tokens) so python3 json.load succeeds on the template file itself."
+      },
+      {
+        "path": "templates/phase_template.yaml",
+        "purpose": "Phase definition YAML template. Must be valid YAML and validate against schema/phase.schema.json when loaded and checked (python3 yaml.safe_load + jsonschema.validate), meaning it must supply id/title/status/steps with each step carrying id/description/status/evidence, using placeholder token values ({{PHASE_ID}}, {{STEP_ID}}, {{EVIDENCE_PATH}} matching the '^.agent/evidence/' pattern) rather than the forbidden inline output fields (proof/raw_output/terminal_output/console_output/stdout/output) per DD-3 Evidence Externalisation; status enum values in the template use a real allowed enum member (e.g. 'pending') so the document validates, since schema/phase.schema.json has additionalProperties:false and a closed enum."
+      },
+      {
+        "path": "templates/manifest.template.json",
+        "purpose": "Planning manifest JSON template. Must be parse-valid JSON and structurally shaped to satisfy schema/manifest.schema.json's required keys (schema_version, updated_at, current_phase, phases[] each with id/title/feature_list/status) using placeholder string values (e.g. \"{{PHASE_ID}}\") and one real enum member for 'status' (e.g. \"pending\") so the template is schema-shaped, not merely free-form JSON."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "templates/README.md",
+        "purpose": "Replace the feature-000 stub (which only announces full content ships in feature 004) with the full templates/ module index: frontmatter intact (6 required keys, version bumped from 0.1.0, status updated if warranted), and a body enumerating all seven template files (CONTEXT.md, AGENTS.md, DEBT.md, ADR_TEMPLATE.md, work-packet.template.json, phase_template.yaml, manifest.template.json), each with a one-line purpose, plus a short note clarifying the frontmatter convention used by the .md templates (real frontmatter describing the template artifact; placeholders live in the body only)."
+      }
+    ]
+  },
+  "non_goals": [
+    "No tools/ skill payload content (tools/skill.json, tools/SKILL.md, tools/interface.md) \u2014 those belong to feature 005",
+    "No registry/ content or root NIZAM.json (registry/nizam-index.schema.json, NIZAM.json) \u2014 those belong to feature 006",
+    "No bootstrap.sh script \u2014 that belongs to feature 007",
+    "No edits to any file under schema/ \u2014 schema/phase.schema.json, schema/manifest.schema.json, and schema/contract.schema.json already shipped in feature 001 and are only referenced by path from templates/, never restated or modified here",
+    "No edits to any file under standard/ or methodology/ \u2014 those shipped in features 002 and 003 respectively",
+    "No CHANGELOG.md edits as part of this contract's verified implementation scope (any changelog entry required by the generator's Docs Sync Gate is tracked separately and is not part of this contract's verified scope)",
+    "No edits to any file outside templates/ and this contract file itself (no other module README stubs, no docs/planning/ changes)"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "All seven template files plus README exist under templates/ (ls templates/* | wc -l equals 8)",
+      "command": "count=$(find templates -maxdepth 1 -type f | wc -l); test \"$count\" -eq 8 && echo PASS || { echo \"unexpected file count $count\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "work-packet.template.json and manifest.template.json are each valid JSON (python3 -c json.load succeeds on each)",
+      "command": "test -f templates/work-packet.template.json && test -f templates/manifest.template.json && python3 -c \"import json; json.load(open('templates/work-packet.template.json')); json.load(open('templates/manifest.template.json')); print('PASS')\""
+    },
+    {
+      "acceptance_test": "phase_template.yaml is valid YAML and validates against schema/phase.schema.json, and does not contain a forbidden inline output field",
+      "command": "test -f templates/phase_template.yaml && python3 -c \"import yaml, json, jsonschema; doc = yaml.safe_load(open('templates/phase_template.yaml')); schema = json.load(open('schema/phase.schema.json')); jsonschema.validate(instance=doc, schema=schema); assert 'proof' not in json.dumps(doc) and 'raw_output' not in json.dumps(doc) and 'terminal_output' not in json.dumps(doc); print('PASS')\""
+    },
+    {
+      "acceptance_test": "manifest.template.json validates against schema/manifest.schema.json",
+      "command": "test -f templates/manifest.template.json && python3 -c \"import json, jsonschema; doc = json.load(open('templates/manifest.template.json')); schema = json.load(open('schema/manifest.schema.json')); jsonschema.validate(instance=doc, schema=schema); print('PASS')\""
+    },
+    {
+      "acceptance_test": "Every .md template starts with YAML frontmatter containing the 6 required keys (id/title/description/version/status/authoritative_source), and the frontmatter validates against schema/frontmatter.schema.json",
+      "command": "count=$(find templates -maxdepth 1 -name '*.md' -type f | wc -l); test \"$count\" -eq 5 || { echo \"unexpected md file count $count\"; exit 1; }; status=0; for f in templates/*.md; do test \"$(head -1 \"$f\")\" = '---' || { echo \"NOT FRONTMATTER: $f\"; status=1; }; for k in id title description version status authoritative_source; do grep -q \"^$k:\" \"$f\" || { echo \"MISSING $k in $f\"; status=1; }; done; done; test \"$status\" -eq 0 && echo PASS"
+    },
+    {
+      "acceptance_test": "CONTEXT.md template includes a mandatory '## Out of Scope' section",
+      "command": "test -f templates/CONTEXT.md && grep -q '^## Out of Scope' templates/CONTEXT.md && echo PASS"
+    },
+    {
+      "acceptance_test": "CONTEXT.md template body contains placeholder tokens (e.g. {{REPO_NAME}}) distinct from its real frontmatter, proving placeholders live in the body only, not the frontmatter block",
+      "command": "f=templates/CONTEXT.md; test -f \"$f\" || exit 1; fm=$(awk '/^---$/{c++; next} c==1{print}' \"$f\"); body=$(awk '/^---$/{c++; next} c>=2{print}' \"$f\"); if echo \"$fm\" | grep -q '{{'; then echo 'PLACEHOLDER LEAKED INTO FRONTMATTER'; exit 1; fi; if echo \"$body\" | grep -q '{{REPO_NAME}}'; then echo PASS; else echo 'MISSING PLACEHOLDER IN BODY'; exit 1; fi"
+    },
+    {
+      "acceptance_test": "No NizamIQ branding remains (grep -ri 'nizamiq' templates/ returns nothing)",
+      "command": "test -d templates || exit 1; count=$(find templates -maxdepth 1 -type f | wc -l); test \"$count\" -eq 8 || { echo \"unexpected file count $count, refusing to trust an absence-of-match result\"; exit 1; }; if grep -ril 'nizamiq' templates/ 2>/dev/null; then echo FAIL; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "templates/ contains EXACTLY the 8 contracted files (the seven template artifacts plus templates/README.md) and no stray out-of-contract files",
+      "command": "actual=\"$(find templates -maxdepth 1 -type f | LC_ALL=C sort | tr '\\n' ' ')\"; expected=\"templates/ADR_TEMPLATE.md templates/AGENTS.md templates/CONTEXT.md templates/DEBT.md templates/README.md templates/manifest.template.json templates/phase_template.yaml templates/work-packet.template.json \"; test \"$actual\" = \"$expected\" && echo PASS || { echo \"MISMATCH: got [$actual] expected [$expected]\"; exit 1; }"
+    }
+  ],
+  "estimated_lines": 410,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/004-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/004-verify-01.txt for the first entry, ..., .agent/evidence/004-verify-09.txt for the ninth). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T11:45:00Z",
+    "revisions": 0
+  }
+}

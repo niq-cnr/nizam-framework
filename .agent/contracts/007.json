@@ -1,0 +1,92 @@
+{
+  "contract_id": "007",
+  "feature_id": "007",
+  "name": "Versioning & Unified bootstrap.sh",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "bootstrap.sh",
+        "purpose": "The GIP inheritance mechanism at the repo root (standard/GIP.md Section 2). POSIX-compatible bash; begins with `set -euo pipefail`. Configuration exclusively via GOVERNANCE_REPO_URL and a pinned GOVERNANCE_TAG (both overridable by environment variable or CLI flag) \u2014 never a floating branch reference such as 'main'. Implements, as one atomic operation: (1) clone the framework at the pinned GOVERNANCE_TAG into a `mktemp` temp directory (never operates in place first); (2) inject standard/, templates/, schema/, tools/, and NIZAM.json from the cloned tag into the consumer repo under a `.nizam/` governance directory by default, with the target directory configurable via flag/variable; (3) verify the injection before declaring success \u2014 NIZAM.json parses as valid JSON, all required governance files are present and non-empty, and every path indexed under the injected `.nizam/` tree resolves on disk; (4) write `.nizam/provenance.json` recording the pinned GOVERNANCE_TAG, an ISO-8601 timestamp, and the GOVERNANCE_REPO_URL source; (5) atomicity \u2014 all cloning and staging happens in the temp directory, the temp stage is moved into place under `.nizam/` only after verification passes, and `trap` handlers clean up the temp directory on any failure or early exit so a failed run never leaves a partial `.nizam/` in place. Also implements a `--verify-only` mode (per GIP.md Section 3/4 drift detection) that re-runs step 3's checks against an already-injected `.nizam/` directory without cloning or writing anything, and a `--help` mode that prints usage and exits 0. Both `--help` and `--verify-only` are pure local operations and MUST NOT invoke git clone or otherwise touch the network \u2014 network access is confined to the clone step of a full (non-flag) bootstrap run. Contains no NizamIQ-specific infrastructure endpoint strings (no 'nizamiq', no '.svc' / 'cluster.local' hostnames); GOVERNANCE_REPO_URL defaults to the generic nizam-framework repository reference only."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Add the v0.1.0 genesis release entry, positioned in the file below (following) the existing '## [Unreleased]' heading, per Keep a Changelog convention (Unreleased stays topmost; dated releases are listed beneath it). The v0.1.0 entry carries a dated heading (e.g. '## [0.1.0] - 2026-07-07') and prose/bullet content describing the framework genesis \u2014 the six governance modules (standard/, methodology/, registry/, templates/, schema/, tools/) plus the root NIZAM.json index and bootstrap.sh shipped in this release. This is the sole contracted changelog authoring scope for the whole phase; no other feature's contract covers a CHANGELOG.md entry."
+      },
+      {
+        "path": "docs/planning/manifest.json",
+        "purpose": "Orchestrator-sanctioned exception: mark phase '001-framework-genesis' status as 'complete' (from 'in_progress') now that this final feature (007) closes the phase, and refresh 'updated_at'. No other manifest fields change; no other docs/planning/ file is touched by this contract."
+      }
+    ]
+  },
+  "non_goals": [
+    "No edits to any content within standard/, methodology/, registry/, templates/, schema/, or tools/ \u2014 those modules are shipped as-is and only referenced/copied by path from bootstrap.sh",
+    "No new governance modules and no changes to NIZAM.json's indexed content",
+    "No actual network operations performed during this contract's verification \u2014 the --help and --verify-only code paths under test are designed to require no network access; verification never invokes a real `git clone` of any remote URL",
+    "No CI/CD pipeline wiring, no release-tagging automation, and no actual creation of a git tag \u2014 bootstrap.sh reads a GOVERNANCE_TAG value, it does not create one",
+    "No changes to any contract, qa verdict, or run_state.json content beyond what the generator's Step 7 durable-state update performs after this contract is implemented",
+    "No modification of any file under .agent/contracts/, .agent/qa/, or .agent/evidence/ other than this contract file and this feature's own numbered evidence files"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "bootstrap.sh exists at the repository root and passes a bash syntax check",
+      "command": "test -f bootstrap.sh && bash -n bootstrap.sh && echo PASS || { echo \"bootstrap.sh missing or fails bash -n\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "bootstrap.sh enables bash strict mode (set -euo pipefail)",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -q 'set -euo pipefail' bootstrap.sh && echo PASS || { echo 'strict mode line not found'; exit 1; }"
+    },
+    {
+      "acceptance_test": "bootstrap.sh's clone invocation uses the pinned GOVERNANCE_TAG variable on a non-comment line, and no non-comment line contains a floating 'main' branch reference (--branch=main, --branch main, checkout main, or refs/heads/main). Comment lines (first non-space character '#') are excluded from the scan so an illustrative anti-pattern comment cannot cause a false fail, and only precise ERE spellings of the floating-branch anti-patterns are rejected so an unrelated 'main' substring cannot cause a false pass.",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; code_lines=$(grep -v '^[[:space:]]*#' bootstrap.sh); echo \"$code_lines\" | grep -Eq -- '--branch[= ]+\"?\\$\\{?GOVERNANCE_TAG' || { echo 'no non-comment clone invocation using --branch with GOVERNANCE_TAG found'; exit 1; }; echo \"$code_lines\" | grep -Eq -- '--branch[= ]+main\\b|checkout[[:space:]]+main\\b|refs/heads/main' && { echo 'floating main-branch reference found on a non-comment line'; exit 1; } || echo PASS"
+    },
+    {
+      "acceptance_test": "No NizamIQ infrastructure endpoint strings anywhere in bootstrap.sh (guarded absence check \u2014 refuses to trust an empty grep unless the file is confirmed present first)",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh, refusing to trust an absence-of-match result'; exit 1; }; if grep -Eiq 'nizamiq|\\.svc|cluster\\.local' bootstrap.sh; then echo FAIL; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "bootstrap.sh injects standard/, templates/, and schema/ into the consumer target and includes an explicit verification step",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -q 'standard' bootstrap.sh && grep -q 'templates' bootstrap.sh && grep -q 'schema' bootstrap.sh && grep -Eiq 'verify' bootstrap.sh && echo PASS || { echo 'missing an injected module reference or a verify step'; exit 1; }"
+    },
+    {
+      "acceptance_test": "bootstrap.sh writes .nizam/provenance.json recording the pinned tag, a timestamp, and the source repo URL",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -q 'provenance.json' bootstrap.sh && grep -q 'GOVERNANCE_REPO_URL' bootstrap.sh && grep -Eiq 'timestamp|date' bootstrap.sh && echo PASS || { echo 'provenance recording incomplete'; exit 1; }"
+    },
+    {
+      "acceptance_test": "bootstrap.sh supports a --verify-only mode for drift detection",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -q -- '--verify-only' bootstrap.sh && echo PASS || { echo 'no --verify-only flag found'; exit 1; }"
+    },
+    {
+      "acceptance_test": "bootstrap.sh stages into a temp directory and only moves into place after verification, with a cleanup trap on failure (atomicity)",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; grep -Eq 'mktemp' bootstrap.sh && grep -q 'trap' bootstrap.sh && echo PASS || { echo 'missing mktemp staging or trap-based cleanup' ; exit 1; }"
+    },
+    {
+      "acceptance_test": "Functional smoke test: bash bootstrap.sh --help exits 0, prints usage, and requires no network access (a 5s timeout guards against an accidental network hang)",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; output=$(timeout 5 bash bootstrap.sh --help 2>&1); status=$?; echo \"$output\"; test \"$status\" -eq 0 && echo PASS || { echo \"exit status $status (possible network hang or --help failure)\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "CHANGELOG.md contains a v0.1.0 genesis entry, positioned below (following, later in the file than) the existing '## [Unreleased]' heading, per Keep a Changelog convention",
+      "command": "test -f CHANGELOG.md || { echo 'MISSING CHANGELOG.md'; exit 1; }; grep -q '\\[0.1.0\\]' CHANGELOG.md || { echo 'no [0.1.0] heading found'; exit 1; }; grep -q '\\[Unreleased\\]' CHANGELOG.md || { echo 'no [Unreleased] heading found'; exit 1; }; v_line=$(grep -n '\\[0.1.0\\]' CHANGELOG.md | head -1 | cut -d: -f1); u_line=$(grep -n '\\[Unreleased\\]' CHANGELOG.md | head -1 | cut -d: -f1); test \"$u_line\" -lt \"$v_line\" && echo PASS || { echo \"expected [Unreleased] (line $u_line) above [0.1.0] (line $v_line)\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "The v0.1.0 CHANGELOG entry describes the framework genesis (mentions the shipped governance modules or bootstrap.sh, not just a bare version heading)",
+      "command": "test -f CHANGELOG.md || { echo 'MISSING CHANGELOG.md'; exit 1; }; grep -Eiq 'genesis|standard/|methodology/|registry/|templates/|schema/|tools/|bootstrap' CHANGELOG.md && echo PASS || { echo 'v0.1.0 entry lacks genesis description content'; exit 1; }"
+    },
+    {
+      "acceptance_test": "docs/planning/manifest.json marks phase 001-framework-genesis as complete",
+      "command": "test -f docs/planning/manifest.json || { echo 'MISSING docs/planning/manifest.json'; exit 1; }; python3 -c \"\nimport json\nd = json.load(open('docs/planning/manifest.json'))\nmatches = [p for p in d.get('phases', []) if p.get('id') == '001-framework-genesis']\nassert matches, 'phase 001-framework-genesis not found in manifest.json'\nassert matches[0].get('status') == 'complete', f\\\"expected status complete, got {matches[0].get('status')}\\\"\nprint('PASS')\n\""
+    }
+  ],
+  "estimated_lines": 300,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/007-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/007-verify-01.txt for the first entry, ..., .agent/evidence/007-verify-12.txt for the twelfth). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T17:15:00Z",
+    "revisions": 1
+  }
+}

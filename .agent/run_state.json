@@ -1,0 +1,259 @@
+{
+  "repository": "nizam-framework",
+  "current_phase": "001-framework-genesis",
+  "current_feature": null,
+  "status": "phase_complete",
+  "updated_at": "2026-07-08T00:10:00Z",
+  "scope_budget": {
+    "original_estimate_lines": 3850,
+    "total_lines_changed": 4156,
+    "per_feature": [
+      {
+        "id": "000",
+        "estimated": 220,
+        "actual": 213
+      },
+      {
+        "id": "001",
+        "estimated": 450,
+        "actual": 603,
+        "flag": null
+      },
+      {
+        "id": "002",
+        "estimated": 720,
+        "actual": 520,
+        "flag": null
+      },
+      {
+        "id": "003",
+        "estimated": 900,
+        "actual": 900,
+        "flag": null
+      },
+      {
+        "id": "004",
+        "estimated": 410,
+        "actual": 307,
+        "flag": null
+      },
+      {
+        "id": "005",
+        "estimated": 450,
+        "actual": 494,
+        "flag": null
+      },
+      {
+        "id": "006",
+        "estimated": 400,
+        "actual": 516,
+        "flag": null
+      },
+      {
+        "id": "007",
+        "estimated": 300,
+        "actual": 435,
+        "flag": null
+      },
+      {
+        "id": "008",
+        "estimated": 1,
+        "actual": 2,
+        "flag": null
+      },
+      {
+        "id": "009",
+        "estimated": 90,
+        "actual": 146,
+        "flag": null
+      },
+      {
+        "id": "010",
+        "estimated": 20,
+        "actual": 20,
+        "flag": null
+      }
+    ]
+  },
+  "circuit_breaker": {
+    "000-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "001-implementation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "002-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "006-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "007-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "008-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "009-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "010-contract": {
+      "attempts": 1,
+      "limit": 3
+    }
+  },
+  "history": [
+    {
+      "at": "2026-07-07T07:23:00Z",
+      "event": "first_run_initialized",
+      "detail": "Repository created under mandate 'nizam-framework genesis'. Branch phase/001-framework-genesis. Orchestrator entering planning; delegating to @planner."
+    },
+    {
+      "at": "2026-07-07T07:27:00Z",
+      "event": "planning_complete",
+      "detail": "@planner produced product_spec.md (spec v1.0.0), feature_list.json (8 features, DAG validated acyclic, original_estimate_lines=3850), and docs/planning/manifest.json. Ready for contract negotiation on feature 000. [Timestamp corrected 2026-07-07 from 08:00:00Z (planner self-reported estimate) to 07:27:00Z (actual completion, per planner run duration); original value made history non-monotonic and causally misordered vs the 07:35 contract-revision event.]"
+    },
+    {
+      "at": "2026-07-07T07:35:00Z",
+      "event": "contract_revision",
+      "detail": "Contract 000 rev1: validator A approved; evaluator rejected (false-pass grep, missing README-stub coverage, no evidence convention); generator revised; evaluator re-review in flight."
+    },
+    {
+      "at": "2026-07-07T07:38:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 000 rev1 approved by validator (Mode A) and evaluator. Delegating implementation to @generator."
+    },
+    {
+      "at": "2026-07-07T07:50:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 000 complete: validator B approved, QA pass (qa/000.json, 6/6 checks + adversarial spot-check). 213 lines vs 220 estimate. Advancing to feature 001."
+    },
+    {
+      "at": "2026-07-07T08:05:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 001 approved first-pass by validator (Mode A) and evaluator. Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T08:20:00Z",
+      "event": "mode_b_rejection",
+      "detail": "Feature 001 Mode B rejected: out-of-scope CHANGELOG edit, NizamIQ string in schema/README.md:57, draft-07 wording mismatch. Generator rework attempt 1 dispatched."
+    },
+    {
+      "at": "2026-07-07T08:55:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 001 complete after 1 Mode-B rework. QA pass 6/6 + adversarial DD-3 negative test. 603 lines vs 450 estimate. Cumulative 816/5005 ceiling. Advancing to 002."
+    },
+    {
+      "at": "2026-07-07T09:20:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 002 approved after 2 evaluator-driven revisions (duplicate verification entry; locale-dependent sort). Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T10:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 002 complete: Mode B approved first pass (AH-4 ruled legitimate source-backed distillation), QA 7/7 + adversarial pass. 520 lines vs 720 est. Cumulative 1336/5005. Advancing to 003."
+    },
+    {
+      "at": "2026-07-07T10:20:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 003 approved first-pass by both gates. Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T11:10:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 003 complete: both gates first-pass, QA 7/7 + 3-part adversarial pass. 900 lines = estimate. Cumulative 2236/5005. Advancing to 004."
+    },
+    {
+      "at": "2026-07-07T11:45:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 004 approved first-pass by both gates. Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T12:40:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 004 complete: both gates first-pass, QA 9/9 + filled-template adversarial pass. 307 lines vs 410 est. Cumulative 2543/5005. Advancing to 005."
+    },
+    {
+      "at": "2026-07-07T13:15:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 005 approved first-pass by both gates (vendor-neutrality blacklist verified consistent with scope). Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T14:10:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 005 complete: both gates first-pass, QA 9/9 + adapter-simulation adversarial pass. 494 lines vs 450 est. Cumulative 3037/5005. Advancing to 006 (deps 000-005 all complete)."
+    },
+    {
+      "at": "2026-07-07T15:05:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 006 approved after 1 revision (path-walker false-fail/false-pass defects fixed, independently re-verified by evaluator). Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T16:20:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 006 complete: contract took 1 revision (path-walker), Mode B first-pass, QA 11/11 + router adversarial pass. 516 lines vs 400 est. Cumulative 3553/5005. Advancing to 007 (final feature)."
+    },
+    {
+      "at": "2026-07-07T17:15:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 007 approved after 1 revision (Keep-a-Changelog ordering corrected \u2014 orchestrator instruction overruled by evaluator; floating-branch grep precision). Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T18:30:00Z",
+      "event": "phase_complete",
+      "detail": "Feature 007 complete (QA 12/12 + drift-detection e2e). All 8 features complete. Final review sweep clean: zero branding/endpoint strings in shipped files, NIZAM.json schema-valid with all 71 paths resolving, all frontmatter complete, bootstrap.sh functional. Total 3988/5005 lines (80% of estimate ceiling). Phase 001-framework-genesis CLOSED. Awaiting human: PR + v0.1.0 tag."
+    },
+    {
+      "at": "2026-07-07T19:00:00Z",
+      "event": "amendment_authorized",
+      "detail": "Human decisions received: (1) NDEBT-001 resolved - repo deliberately kept outside ecosystem scope; (2) canonical origin https://github.com/niq-cnr/nizam-framework.git. Feature 008 (canonical origin wiring) added as human-authorized post-phase amendment. Standard contract loop applies."
+    },
+    {
+      "at": "2026-07-07T19:40:00Z",
+      "event": "contract_approved",
+      "detail": "Micro-contract 008 approved after 1 revision (pathspec-scoped numstat false-pass gap closed with unscoped name-only check). Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T20:00:00Z",
+      "event": "amendment_complete",
+      "detail": "Feature 008 complete: contract 1 revision (unscoped diff check), Mode B + QA 5/5 first-pass. Canonical origin wired into bootstrap.sh. Phase 001 closed again; proceeding to push + PR."
+    },
+    {
+      "at": "2026-07-07T21:00:00Z",
+      "event": "review_remediation_authorized",
+      "detail": "PR #1 code-review findings triaged: shipped-content and live-state fixes bundled as feature 009 (review remediation); findings against completed contracts/evidence/qa artifacts skipped as immutable audit records with gaps already mitigated at QA time. history planning_complete timestamp corrected in this same update."
+    },
+    {
+      "at": "2026-07-07T21:40:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 009 (review remediation) approved first-pass by both gates; all 6 scrutinized verification mechanisms fixture-tested. Delegating implementation."
+    },
+    {
+      "at": "2026-07-07T22:30:00Z",
+      "event": "amendment_complete",
+      "detail": "Feature 009 complete: both gates first-pass, QA 16/16 + python3-less --verify-only simulation + frontmatter schema re-validation. 15 still-valid review findings fixed across 27 files; 13 findings on immutable audit artifacts skipped with documented reasons. Pushing to PR #1."
+    },
+    {
+      "at": "2026-07-07T23:10:00Z",
+      "event": "amendment_authorized",
+      "detail": "PR #1 follow-up review comment 3538444007 verified valid: verdict-shape drift across AGF.md predicates (nested paths), AGF.md example (sibling arrays), 01_execution.md predicates (nested paths), SKILL.md Sec 7 example (nested arrays). Feature 010 registered; canonical shape = sibling arrays per actual pipeline practice. All 29 prior review threads answered on the PR."
+    },
+    {
+      "at": "2026-07-07T23:40:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 010 (verdict shape canonicalization) approved first-pass by both gates; extraction/assertion mechanisms fixture-tested against live files. Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T00:10:00Z",
+      "event": "amendment_complete",
+      "detail": "Feature 010 complete: both gates first-pass, QA 9/9 + parse-and-gate adversarial simulation. Verdict shape canonicalized (sibling arrays) across AGF.md, 01_execution.md, SKILL.md. All 30 PR #1 review threads answered on GitHub. Pushing."
+    }
+  ]
+}

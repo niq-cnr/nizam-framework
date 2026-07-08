@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:feature_list.schema.json",
+  "title": "Nizam Feature List Schema",
+  "description": "Validates .agent/feature_list.json, the DAG-validated, acceptance-test-bearing feature breakdown of a phase, produced by the planner and consumed by the generator/validator/evaluator loop.",
+  "type": "object",
+  "properties": {
+    "phase": {
+      "type": "string",
+      "description": "Id of the phase this feature list belongs to."
+    },
+    "spec_version": {
+      "type": "string",
+      "description": "Version of the product_spec.md this feature list was derived from.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "original_estimate_lines": {
+      "type": "integer",
+      "description": "Total estimated lines of change across every feature in the phase, used by the Scope Budget Protocol.",
+      "minimum": 0
+    },
+    "features": {
+      "type": "array",
+      "description": "Every feature in the phase, in dependency order.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique feature identifier within the phase, e.g. '001'."
+          },
+          "name": {
+            "type": "string",
+            "description": "Short human-readable feature name."
+          },
+          "description": {
+            "type": "string",
+            "description": "What the feature delivers and why."
+          },
+          "status": {
+            "type": "string",
+            "description": "Current lifecycle state of the feature.",
+            "enum": ["pending", "in_progress", "complete", "blocked", "cancelled"]
+          },
+          "dependencies": {
+            "type": "array",
+            "description": "Ids of features that must be 'complete' or 'cancelled' before this feature may begin.",
+            "items": { "type": "string" }
+          },
+          "acceptance_tests": {
+            "type": "array",
+            "description": "Human-readable acceptance criteria this feature must satisfy.",
+            "items": { "type": "string" }
+          },
+          "estimated_lines": {
+            "type": "integer",
+            "description": "Estimated lines of change for this feature.",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "status",
+          "dependencies",
+          "acceptance_tests",
+          "estimated_lines"
+        ],
+        "additionalProperties": true
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["phase", "spec_version", "original_estimate_lines", "features"],
+  "additionalProperties": true
+}

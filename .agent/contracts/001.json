@@ -1,0 +1,89 @@
+{
+  "contract_id": "001",
+  "feature_id": "001",
+  "name": "Schema Module (/schema/)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "schema/frontmatter.schema.json",
+        "purpose": "JSON Schema (draft 2020-12, declares '$schema') validating the YAML frontmatter block required on every governance '.md' file. Requires the 6 keys named in product_spec.md Sec 6.1: 'id', 'title', 'description', 'version', 'status', 'authoritative_source', each typed (string), plus documents the optional 'change_log' array shape observed in live frontmatter (product_spec.md itself). additionalProperties left permissive for module-specific extension keys."
+      },
+      {
+        "path": "schema/manifest.schema.json",
+        "purpose": "JSON Schema (draft 2020-12, declares '$schema') for a planning 'manifest.json' (current_phase, phase list with id/name/status, spec_version, original_estimate_lines) as referenced by the Session Startup Sequence ('docs/planning/manifest.json')."
+      },
+      {
+        "path": "schema/phase.schema.json",
+        "purpose": "JSON Schema (draft 2020-12, declares '$schema') for a phase definition, implementing DD-3 Evidence Externalisation. Declares an 'evidence' (or 'evidence_path') string property constrained by a 'pattern' anchored to '^\\\\.agent/evidence/' (referencing the file where captured terminal output lives), and structurally FORBIDS any inline free-text proof/output field by omitting properties named 'proof', 'raw_output', 'terminal_output', 'console_output', 'stdout', or 'output' from the schema's 'properties' (recursively, including nested step objects), so authoring a phase YAML/JSON with pasted-in terminal output cannot validate silently as an unrecognised-but-tolerated extra key alongside a legitimate evidence path field named similarly."
+      },
+      {
+        "path": "schema/feature_list.schema.json",
+        "purpose": "JSON Schema (draft 2020-12, declares '$schema') for '.agent/feature_list.json', matching the live shape in this repo: top-level 'phase', 'spec_version', 'original_estimate_lines', and 'features' array of objects each requiring 'id', 'name', 'description', 'status' (enum: pending/in_progress/complete/blocked/cancelled), 'dependencies' (array of feature-id strings), 'acceptance_tests' (array of strings), 'estimated_lines' (integer)."
+      },
+      {
+        "path": "schema/contract.schema.json",
+        "purpose": "JSON Schema (draft 2020-12, declares '$schema') for per-feature contracts, matching the live shape of '.agent/contracts/000.json': 'contract_id', 'feature_id', 'name', 'status' (enum: proposed/approved/complete), 'spec_ref', 'scope' (object with 'files_create' array of {path,purpose} and 'files_modify' array), 'non_goals' (array of strings), 'verification' (array of {acceptance_test, command}), 'estimated_lines' (integer), 'evidence_dir', 'evidence_convention' (string), and optional 'approvals' object ({validator_mode_a, evaluator_contract_review, approved_at})."
+      },
+      {
+        "path": "schema/qa_verdict.schema.json",
+        "purpose": "JSON Schema (draft 2020-12, declares '$schema') for QA verdicts, matching the live shape of '.agent/qa/000.json': 'feature_id', 'verdict' (enum: pass/fail), 'executed_at', 'checks' (array of {command, exit_code (integer), evidence (string path)}), 'adversarial_check' (object with 'description', 'result', 'evidence'), 'required_fixes' (array of strings, empty when verdict is pass)."
+      },
+      {
+        "path": "schema/run_state.schema.json",
+        "purpose": "JSON Schema (draft 2020-12, declares '$schema') for '.agent/run_state.json', matching the live shape in this repo: 'repository', 'current_phase', 'current_feature' (string or null), 'status', 'updated_at', 'scope_budget' (object: 'original_estimate_lines', 'total_lines_changed', 'per_feature' array of {id, estimated, actual}), 'circuit_breaker' (object keyed by step-id, each value {attempts (integer), limit (integer)}), 'history' (array of {at, event, detail}); additionally declares optional properties 'active_contract_id', 'completed_contract_ids', 'blocked_features', and 'last_action' referenced by the Execution Engine protocol's durable-state update table, without requiring them, so the schema tolerates both the current live shape and the protocol-documented forward fields."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "schema/README.md",
+        "purpose": "Replace the feature-000 stub (which only announces that full content ships in feature 001) with the full schema/ module index: frontmatter intact (6 required keys, version bumped from 0.1.0), and a body enumerating all seven schemas, each with a one-line purpose and the artifact path it validates, plus a short note on DD-3 evidence externalisation as implemented by phase.schema.json."
+      }
+    ]
+  },
+  "non_goals": [
+    "No validation tooling, CLI, or scripts that execute schema validation (schemas only; a validator script would belong to tools/, if anywhere, tracked separately and not part of feature 001)",
+    "No changes to any other module (standard/, methodology/, registry/, templates/, tools/) or their README stubs",
+    "No root NIZAM.json and no registry/nizam-index.schema.json (both belong to feature 006)",
+    "No phase_template.yaml, manifest.template.json, or work-packet.template.json content (those belong to feature 004; schema/phase.schema.json and schema/manifest.schema.json here are the validating schemas only, not the templates themselves)",
+    "No CHANGELOG.md v0.1.0 entry (feature 007 seeds the first real release entry); only an 'Unreleased' bullet for this change"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "All seven schema files exist under schema/ (ls schema/*.schema.json | wc -l equals 7)",
+      "command": "count=$(ls schema/*.schema.json 2>/dev/null | wc -l); test \"$count\" -eq 7 && echo PASS"
+    },
+    {
+      "acceptance_test": "Every schema is valid JSON: for f in schema/*.schema.json; do python3 -c 'import json,sys; json.load(open(sys.argv[1]))' \"$f\"; done exits 0",
+      "command": "count=$(ls schema/*.schema.json 2>/dev/null | wc -l); test \"$count\" -eq 7 || exit 1; status=0; for f in schema/*.schema.json; do python3 -c 'import json,sys; json.load(open(sys.argv[1]))' \"$f\" || status=1; done; test \"$status\" -eq 0 && echo PASS"
+    },
+    {
+      "acceptance_test": "phase.schema.json declares an evidence-path property and NOT an inline proof-output string field (grep -q 'evidence' schema/phase.schema.json)",
+      "command": "test -f schema/phase.schema.json && python3 -c \"\nimport json\nd = json.load(open('schema/phase.schema.json'))\nprops = set()\ndef walk(o):\n    if isinstance(o, dict):\n        if isinstance(o.get('properties'), dict):\n            props.update(o['properties'].keys())\n        for v in o.values():\n            walk(v)\n    elif isinstance(o, list):\n        for v in o:\n            walk(v)\nwalk(d)\nforbidden = {'proof', 'raw_output', 'terminal_output', 'console_output', 'stdout', 'output'}\nbad = props & forbidden\nassert not bad, f'forbidden inline-output field(s) present: {bad}'\nassert any('evidence' in p.lower() for p in props), 'no evidence-path property found'\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "Each schema declares a $schema draft key (grep -l '\\$schema' schema/*.schema.json | wc -l equals 7)",
+      "command": "count=$(ls schema/*.schema.json 2>/dev/null | wc -l); test \"$count\" -eq 7 || exit 1; matches=$(grep -l '\\$schema' schema/*.schema.json 2>/dev/null | wc -l); test \"$matches\" -eq 7 && echo PASS"
+    },
+    {
+      "acceptance_test": "schema/README.md begins with YAML frontmatter containing the 6 required keys",
+      "command": "test -f schema/README.md && test \"$(head -1 schema/README.md)\" = '---' && for k in id title description version status authoritative_source; do grep -q \"^$k:\" schema/README.md || { echo \"MISSING $k\"; exit 1; }; done && echo PASS"
+    },
+    {
+      "acceptance_test": "Each files_create path (the seven '*.schema.json' files) plus the modified 'schema/README.md' individually exists (generator-added robustness check beyond the aggregate 'ls | wc -l' count assertion, to guard against a count that is coincidentally correct but composed of the wrong filenames).",
+      "command": "test -f schema/frontmatter.schema.json && test -f schema/manifest.schema.json && test -f schema/phase.schema.json && test -f schema/feature_list.schema.json && test -f schema/contract.schema.json && test -f schema/qa_verdict.schema.json && test -f schema/run_state.schema.json && test -f schema/README.md && echo PASS"
+    }
+  ],
+  "estimated_lines": 450,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/001-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/001-verify-01.txt for the first entry, ..., .agent/evidence/001-verify-06.txt for the sixth). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T08:05:00Z"
+  },
+  "amendments": [
+    "2026-07-07: purpose text draft-07 \u2192 draft 2020-12, per validator Mode B finding (minor)"
+  ]
+}

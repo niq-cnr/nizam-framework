@@ -1,0 +1,17 @@
+(script: w04.sh)
+test -f tools/SKILL.md || { echo 'MISSING tools/SKILL.md'; exit 1; }
+python3 -c '
+import re, json
+text = open("tools/SKILL.md").read()
+m = re.search(r"## 7\..*?```json\n(.*?)\n```", text, re.S)
+assert m, "Section 7 json-fenced example not found"
+doc = json.loads(m.group(1))
+top_level = {"issues", "missing_acceptance_coverage", "unsupported_claims"}
+assert top_level <= set(doc.keys()), f"missing top-level key(s): {top_level - set(doc.keys())}"
+assert "final_verdict" in doc and isinstance(doc["final_verdict"], dict), "final_verdict missing or not an object"
+assert "approved" in doc["final_verdict"], "approved missing from final_verdict"
+assert not (top_level & set(doc["final_verdict"].keys())), "arrays still nested inside final_verdict"
+print("PASS")
+'
+PASS
+EXIT:0

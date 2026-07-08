@@ -1,0 +1,7 @@
+COMMAND:
+files=(standard/AGF.md methodology/01_execution.md tools/SKILL.md); fail=0; for f in "${files[@]}"; do test -f "$f" || { echo "MISSING $f"; fail=1; continue; }; test "$(head -1 "$f")" = "---" || { echo "NOT FRONTMATTER: $f"; fail=1; }; for k in id title description version status authoritative_source; do grep -q "^$k:" "$f" || { echo "MISSING $k in $f"; fail=1; }; done; done; test "$fail" -eq 0 && echo PASS || { echo "frontmatter regression found above"; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

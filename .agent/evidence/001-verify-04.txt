@@ -1,0 +1,3 @@
+$ count=$(ls schema/*.schema.json 2>/dev/null | wc -l); test "$count" -eq 7 || exit 1; matches=$(grep -l "\$schema" schema/*.schema.json 2>/dev/null | wc -l); test "$matches" -eq 7 && echo PASS
+PASS
+EXIT:0

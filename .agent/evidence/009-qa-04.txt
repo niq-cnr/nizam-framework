@@ -1,0 +1,21 @@
+(script: v04.sh)
+test -f methodology/03_circuit_breaker.md || { echo 'MISSING methodology/03_circuit_breaker.md'; exit 1; }
+python3 -c '
+import re
+text = open("methodology/03_circuit_breaker.md").read()
+for anchor in ("3-strike", "Attempt 4", "FORBIDDEN"):
+    assert anchor in text, f"missing preserved anchor: {anchor}"
+m = re.search(r"## 4\..*?\n(.*?)\n## 5\.", text, re.S)
+assert m, "Section 4 not found"
+section = m.group(1)
+steps = re.findall(r"^\d+\.", section, re.M)
+assert len(steps) == 4, f"expected 4 numbered steps in Section 4, found {len(steps)}"
+assert re.search(r"git clean", section, re.I), "untracked-artifact discard language (git clean or equivalent) missing from step 1"
+blocked = re.search(r"\d+\..*?BLOCKED.*?(?=\n\d+\.|\Z)", section, re.S)
+assert blocked, "no BLOCKED-status step found in Section 4"
+blocked_text = blocked.group(0)
+assert "phase.schema.json" in blocked_text and "run_state.json" in blocked_text, "BLOCKED step must single-source the phase-document status and run_state.json update in the same step"
+print("PASS")
+'
+PASS
+EXIT:0

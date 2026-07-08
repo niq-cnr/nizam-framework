@@ -1,0 +1,10 @@
+=== (a) syntactic validation of canonical URL as a valid https git URL ending in .git ===
+extracted URL: https://github.com/niq-cnr/nizam-framework.git
+matches strict https-github-.git pattern: True
+PASS
+
+=== (b) '--verify-only' against a directory with no .nizam/ still exits non-zero (script behavior unchanged) ===
+bootstrap.sh: error: --verify-only: target directory '.nizam' does not exist -- nothing to verify. Run bootstrap.sh in default (install) mode first.
+exit status: 1
+NEGATIVE TEST PASS: --verify-only against a target with no .nizam/ correctly exits non-zero
+EXIT:0

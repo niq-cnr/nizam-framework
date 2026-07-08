@@ -1,0 +1,3 @@
+test -f standard/NDS.md || exit 1; status=0; for k in id title description version status authoritative_source; do grep -qw "$k" standard/NDS.md || { echo "NDS.md does not mention key: $k"; status=1; }; done; test "$status" -eq 0 && echo PASS
+PASS
+EXIT:0

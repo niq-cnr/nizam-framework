@@ -1,0 +1,4 @@
+(script: v14.sh)
+test -f CHANGELOG.md || { echo 'MISSING CHANGELOG.md'; exit 1; }; unreleased_line=$(grep -n '^## \[Unreleased\]' CHANGELOG.md | head -1 | cut -d: -f1); v010_line=$(grep -n '^## \[0.1.0\]' CHANGELOG.md | head -1 | cut -d: -f1); test -n "$unreleased_line" && test -n "$v010_line" && test "$unreleased_line" -lt "$v010_line" || { echo 'Unreleased section missing or does not precede 0.1.0'; exit 1; }; block=$(sed -n "${unreleased_line},${v010_line}p" CHANGELOG.md); echo "$block" | grep -qi 'authoritative_source' && echo "$block" | grep -Eqi 'verify-only|python3' && echo "$block" | grep -qi 'fence' && echo PASS || { echo 'Unreleased block does not summarize the remediation (missing expected keywords)'; exit 1; }
+PASS
+EXIT:0

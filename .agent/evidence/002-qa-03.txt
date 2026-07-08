@@ -1,0 +1,3 @@
+status=0; for f in standard/NDS.md standard/GIP.md standard/AGF.md standard/anti_hallucination.md standard/README.md; do test -f "$f" || { echo "MISSING FILE $f"; exit 1; }; for k in id title description version status authoritative_source; do grep -q "^$k:" "$f" || { echo "MISSING $k in $f"; status=1; }; done; done; test "$status" -eq 0 && echo PASS
+PASS
+EXIT:0

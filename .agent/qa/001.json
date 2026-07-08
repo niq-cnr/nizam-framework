@@ -1,0 +1,43 @@
+{
+  "feature_id": "001",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {
+      "command": "count=$(ls schema/*.schema.json 2>/dev/null | wc -l); test \"$count\" -eq 7 && echo PASS",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/001-qa-01.txt"
+    },
+    {
+      "command": "for f in schema/*.schema.json; do python3 -c 'import json,sys; json.load(open(sys.argv[1]))' \"$f\"; done (all 7 valid JSON)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/001-qa-02.txt"
+    },
+    {
+      "command": "python3 walk of schema/phase.schema.json properties: contains an evidence-path property, no forbidden inline-output keys (proof/raw_output/terminal_output/console_output/stdout/output)",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/001-qa-03.txt"
+    },
+    {
+      "command": "grep -l '\\$schema' schema/*.schema.json | wc -l equals 7",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/001-qa-04.txt"
+    },
+    {
+      "command": "schema/README.md begins with '---' and contains id/title/description/version/status/authoritative_source keys",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/001-qa-05.txt"
+    },
+    {
+      "command": "test -f for each of the 7 schema/*.schema.json files plus schema/README.md",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/001-qa-06.txt"
+    }
+  ],
+  "adversarial_check": {
+    "description": "Two-part check beyond the 6 listed commands, using python3+jsonschema 4.26.0: (1) validated every live .agent exemplar against its corresponding new schema -- feature_list.json against feature_list.schema.json, contracts/000.json and contracts/001.json against contract.schema.json, qa/000.json against qa_verdict.schema.json, run_state.json against run_state.schema.json, and docs/planning/manifest.json against manifest.schema.json -- all six validated cleanly with zero errors. (2) Constructed a control phase doc that is otherwise fully valid per phase.schema.json (correct required id/title/status/steps, correct step status enum value, evidence path matching the '^\\.agent/evidence/' pattern) and confirmed it validates cleanly; then added only an inline 'stdout' field to the step and confirmed phase.schema.json rejects it, with the validator error specifically attributing rejection to 'additionalProperties' on the unexpected 'stdout' key (not an incidental missing-field error), proving DD-3 evidence externalisation is structurally enforced rather than coincidentally passing.",
+    "result": "pass",
+    "evidence": ".agent/evidence/001-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

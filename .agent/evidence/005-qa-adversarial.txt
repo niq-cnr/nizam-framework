@@ -1,0 +1,46 @@
+=== STEP 1: load tools/skill.json, resolve entry_point ===
+entry_point declared: tools/SKILL.md
+OK: entry_point resolves on disk -> tools/SKILL.md
+
+=== STEP 2: every capabilities[].module path resolves on disk (as a file) ===
+OK  capability 'planning' -> module 'methodology/00_planning.md'
+OK  capability 'contract_first_execution' -> module 'methodology/01_execution.md'
+OK  capability 'adversarial_testing' -> module 'methodology/02_adversarial_tdd.md'
+OK  capability 'circuit_breaker' -> module 'methodology/03_circuit_breaker.md'
+OK  capability 'durable_state' -> module 'methodology/04_tool_driven_state.md'
+OK  capability 'release_train' -> module 'methodology/05_release_train.md'
+OK  capability 'documentation_standard' -> module 'standard/NDS.md'
+OK  capability 'governance_inheritance' -> module 'standard/GIP.md'
+OK  capability 'agent_governance' -> module 'standard/AGF.md'
+OK  capability 'anti_hallucination' -> module 'standard/anti_hallucination.md'
+ALL_CAPABILITIES_RESOLVE
+
+=== STEP 3: extract every backtick-quoted path-like reference in SKILL.md body, resolve each ===
+candidate path-like references found: ['NIZAM.json', 'methodology/', 'methodology/01_execution.md', 'methodology/03_circuit_breaker.md', 'methodology/04_tool_driven_state.md', 'registry/nizam-index.schema.json', 'schema/qa_verdict.schema.json', 'standard/', 'standard/anti_hallucination.md', 'templates/', 'tools/', 'tools/interface.md', 'tools/skill.json']
+SKIP (expected-absent forward reference, ships in a later feature): NIZAM.json
+OK  reference 'methodology/' (dir) resolves: True
+OK  reference 'methodology/01_execution.md' (file) resolves: True
+OK  reference 'methodology/03_circuit_breaker.md' (file) resolves: True
+OK  reference 'methodology/04_tool_driven_state.md' (file) resolves: True
+SKIP (expected-absent forward reference, ships in a later feature): registry/nizam-index.schema.json
+OK  reference 'schema/qa_verdict.schema.json' (file) resolves: True
+OK  reference 'standard/' (dir) resolves: True
+OK  reference 'standard/anti_hallucination.md' (file) resolves: True
+OK  reference 'templates/' (dir) resolves: True
+OK  reference 'tools/' (dir) resolves: True
+OK  reference 'tools/interface.md' (file) resolves: True
+OK  reference 'tools/skill.json' (file) resolves: True
+
+STEP3_RESULT: ALL_RESOLVE
+
+OVERALL: PASS
+
+=== DD-4 uniqueness negative test (entirely scratchpad-simulated, never inside the repo) ===
+Real repo count (find . -name SKILL.md -not -path './.git/*' | wc -l):
+1
+Scratchpad-simulated duplicate-fork tree (tools/SKILL.md copied twice: once at tools/SKILL.md, once at tools/.duplicate-runtime-fork/SKILL.md, both created ONLY under /tmp/claude-1000/.../scratchpad/dd4_sim, never inside the repo):
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/dd4_sim/tools/.duplicate-runtime-fork/SKILL.md
+/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad/dd4_sim/tools/SKILL.md
+Scratchpad-simulated count: 2
+NEGATIVE TEST PASS: identical find|wc -l logic yields 1 for the real (compliant) repo and 2 for a simulated DD-4-violating tree, confirming verification command 3 is load-bearing, not vacuously true.
+EXIT:0

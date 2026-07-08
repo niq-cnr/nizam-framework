@@ -1,0 +1,4 @@
+COMMAND: test -f bootstrap.sh || { echo 'MISSING bootstrap.sh, refusing to trust an absence-of-match result'; exit 1; }; if grep -Eiq 'nizamiq|\.svc|cluster\.local' bootstrap.sh; then echo FAIL; exit 1; else echo PASS; fi
+--- OUTPUT ---
+PASS
+EXIT:0

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:phase.schema.json",
+  "title": "Nizam Phase Definition Schema",
+  "description": "Validates a phase definition (the structured document produced from templates/phase_template.yaml). Implements DD-3, Evidence Externalisation: every step records its proof as a file path under '.agent/evidence/' rather than as pasted-in terminal output. Both the phase-level and step-level objects declare 'additionalProperties: false' over an explicit, closed property set that intentionally omits any inline free-text output field (for example 'proof', 'raw_output', 'terminal_output', 'console_output', 'stdout', or 'output'), so a phase document that tries to smuggle raw terminal output into an unrecognised key is rejected rather than silently tolerated as an unknown extension property.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique phase identifier, e.g. '001-framework-genesis'."
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable phase title."
+    },
+    "description": {
+      "type": "string",
+      "description": "Summary of what the phase delivers."
+    },
+    "status": {
+      "type": "string",
+      "description": "Current lifecycle state of the phase.",
+      "enum": ["pending", "in_progress", "complete", "blocked"]
+    },
+    "steps": {
+      "type": "array",
+      "description": "The ordered, atomic steps that make up the phase.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique step identifier within the phase, e.g. '01.1'."
+          },
+          "description": {
+            "type": "string",
+            "description": "What the step accomplishes."
+          },
+          "status": {
+            "type": "string",
+            "description": "Current lifecycle state of the step.",
+            "enum": ["PENDING", "IN_PROGRESS", "AWAITING_IMPLEMENTATION", "COMPLETED", "BLOCKED"]
+          },
+          "evidence": {
+            "type": "string",
+            "description": "Path to the externalised evidence file proving this step's completion. MUST reference a file under '.agent/evidence/'; raw terminal output MUST NEVER be pasted directly into this or any other field.",
+            "pattern": "^\\.agent/evidence/"
+          },
+          "docs_updated": {
+            "type": "string",
+            "description": "Path to the documentation file updated as part of this step, populated before the step may be marked COMPLETED."
+          },
+          "changelog_entry": {
+            "type": "string",
+            "description": "One-line CHANGELOG.md summary for this step, populated before the step may be marked COMPLETED."
+          }
+        },
+        "required": ["id", "description", "status", "evidence"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["id", "title", "status", "steps"],
+  "additionalProperties": false
+}

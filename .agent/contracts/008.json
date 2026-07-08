@@ -1,0 +1,54 @@
+{
+  "contract_id": "008",
+  "feature_id": "008",
+  "name": "Canonical Origin Wiring (post-phase amendment)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "bootstrap.sh",
+        "purpose": "Human-authorized one-line amendment (2026-07-07): replace the placeholder DEFAULT_GOVERNANCE_REPO_URL value 'https://github.com/nizam-framework/nizam-framework.git' with the canonical origin 'https://github.com/niq-cnr/nizam-framework.git' on line 35. No other line in bootstrap.sh changes."
+      }
+    ]
+  },
+  "non_goals": [
+    "No other bootstrap.sh changes beyond the single DEFAULT_GOVERNANCE_REPO_URL value swap",
+    "No edits to any file other than bootstrap.sh",
+    "No CHANGELOG.md edit as part of this contract (the change lands under '## [Unreleased]' at the next release, not authored here)",
+    "No git tagging or retagging of any kind",
+    "No changes to GOVERNANCE_TAG, DEFAULT_TARGET_DIR, or any other bootstrap.sh variable"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "grep -c 'github.com/niq-cnr/nizam-framework.git' bootstrap.sh outputs 1",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; count=$(grep -c 'github.com/niq-cnr/nizam-framework.git' bootstrap.sh); echo \"count=$count\"; test \"$count\" -eq 1 && echo PASS || { echo 'expected exactly 1 occurrence of canonical URL'; exit 1; }"
+    },
+    {
+      "acceptance_test": "grep -c 'github.com/nizam-framework/nizam-framework' bootstrap.sh outputs 0 (placeholder gone), guarded so an absent file cannot masquerade as a pass",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh, refusing to trust an absence-of-match result'; exit 1; }; count=$(grep -c 'github.com/nizam-framework/nizam-framework' bootstrap.sh || true); echo \"count=$count\"; test \"$count\" -eq 0 && echo PASS || { echo 'placeholder URL still present'; exit 1; }"
+    },
+    {
+      "acceptance_test": "bootstrap.sh passes a bash syntax check",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; bash -n bootstrap.sh && echo PASS || { echo 'bash -n failed'; exit 1; }"
+    },
+    {
+      "acceptance_test": "Functional smoke test: bash bootstrap.sh --help exits 0, with a 5s timeout guarding against an accidental network hang",
+      "command": "test -f bootstrap.sh || { echo 'MISSING bootstrap.sh'; exit 1; }; output=$(timeout 5 bash bootstrap.sh --help 2>&1); status=$?; echo \"$output\"; test \"$status\" -eq 0 && echo PASS || { echo \"exit status $status (possible network hang or --help failure)\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "Robustness check, two parts: (1) the pathspec-scoped diff against HEAD for bootstrap.sh shows exactly 1 insertion and 1 deletion, proving a single-line change to that file; (2) the unscoped diff (git diff HEAD --name-only), after filtering out legitimate .agent/ durable-state overhead paths (contract file, evidence files, run_state.json), lists exactly bootstrap.sh and no other file \u2014 proving no unauthorized edits exist anywhere else in the tree. Part (1) alone is pathspec-scoped and cannot detect stray edits to other files, so part (2) is required to close that gap.",
+      "command": "stat=$(git diff HEAD --numstat -- bootstrap.sh); echo \"$stat\"; ins=$(echo \"$stat\" | awk '{print $1}'); del=$(echo \"$stat\" | awk '{print $2}'); lines=$(echo \"$stat\" | wc -l); test \"$lines\" -eq 1 && test \"$ins\" -eq 1 && test \"$del\" -eq 1 || { echo 'expected exactly 1 insertion and 1 deletion in bootstrap.sh'; exit 1; }; scope=$(git diff HEAD --name-only | grep -v '^\\.agent/' | LC_ALL=C sort | tr '\\n' ' '); echo \"scope=[$scope]\"; test \"$scope\" = \"bootstrap.sh \" && echo PASS || { echo \"unscoped diff touches files beyond bootstrap.sh (excluding .agent/ overhead): [$scope]\"; exit 1; }"
+    }
+  ],
+  "estimated_lines": 1,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/008-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/008-verify-01.txt for the first entry, ..., .agent/evidence/008-verify-05.txt for the fifth). One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-07T19:40:00Z",
+    "revisions": 1
+  }
+}

@@ -1,0 +1,7 @@
+COMMAND:
+for d in standard methodology registry templates schema tools; do test -d "$d" || { echo "MISSING dir $d, refusing to trust an absence-of-match result"; exit 1; }; done; test -f CONTEXT.md && test -f README.md && test -f CHANGELOG.md && test -f NIZAM.json && test -f bootstrap.sh || { echo "MISSING one or more root files, refusing to trust an absence-of-match result"; exit 1; }; if grep -ril "nizamiq" CONTEXT.md README.md CHANGELOG.md NIZAM.json bootstrap.sh standard/ methodology/ registry/ templates/ schema/ tools/ 2>/dev/null; then echo FAIL; exit 1; else echo PASS; fi
+
+OUTPUT:
+PASS
+
+EXIT:0

@@ -1,0 +1,29 @@
+{
+  "feature_id": "009",
+  "verdict": "pass",
+  "executed_at": "2026-07-07",
+  "checks": [
+    {"command": "bootstrap.sh regression: bash -n + --help exits 0", "exit_code": 0, "evidence": ".agent/evidence/009-qa-01.txt"},
+    {"command": "run_verify_only() body contains 'require_command python3' (function-scoped grep)", "exit_code": 0, "evidence": ".agent/evidence/009-qa-02.txt"},
+    {"command": "00_planning.md defines rolling-average bootstrap rule for <3 completed features", "exit_code": 0, "evidence": ".agent/evidence/009-qa-03.txt"},
+    {"command": "03_circuit_breaker.md Section 4 restructured to 4 steps; 3-strike/Attempt 4/FORBIDDEN preserved verbatim", "exit_code": 0, "evidence": ".agent/evidence/009-qa-04.txt"},
+    {"command": "AGF.md retains 4 verbatim gate fragments + gains parse-valid json example verdict", "exit_code": 0, "evidence": ".agent/evidence/009-qa-05.txt"},
+    {"command": "zero untagged code-fence openers across 24 shipped .md files", "exit_code": 0, "evidence": ".agent/evidence/009-qa-06.txt"},
+    {"command": "zero stale 'nizam-framework/' authoritative_source prefixes; each value equals own repo-relative path", "exit_code": 0, "evidence": ".agent/evidence/009-qa-07.txt"},
+    {"command": "all 24 files retain frontmatter with 6 required keys (regression guard)", "exit_code": 0, "evidence": ".agent/evidence/009-qa-08.txt"},
+    {"command": "ADR_TEMPLATE.md documents PROPOSED as default; pre-filled Status line unchanged", "exit_code": 0, "evidence": ".agent/evidence/009-qa-09.txt"},
+    {"command": "AGENTS.md single-token timestamp placeholder, old two-token pattern gone", "exit_code": 0, "evidence": ".agent/evidence/009-qa-10.txt"},
+    {"command": "templates/README.md references disambiguated '.agent/product_spec.md'", "exit_code": 0, "evidence": ".agent/evidence/009-qa-11.txt"},
+    {"command": "interface.md no longer cites nonexistent Section 3.1/3.3; correct SKILL.md Section 1 citation untouched", "exit_code": 0, "evidence": ".agent/evidence/009-qa-12.txt"},
+    {"command": ".agent/product_spec.md status is lowercase 'draft', old 'DRAFT' gone", "exit_code": 0, "evidence": ".agent/evidence/009-qa-13.txt"},
+    {"command": "CHANGELOG.md Unreleased precedes 0.1.0 and summarizes remediation", "exit_code": 0, "evidence": ".agent/evidence/009-qa-14.txt"},
+    {"command": "NIZAM.json regression: schema-valid, all 71 indexed paths resolve", "exit_code": 0, "evidence": ".agent/evidence/009-qa-15.txt"},
+    {"command": "repo-wide shipped-content NizamIQ-branding sweep remains clean", "exit_code": 0, "evidence": ".agent/evidence/009-qa-16.txt"}
+  ],
+  "adversarial_check": {
+    "description": "Two-part check beyond the 16 listed commands. (a) Simulated a python3-less environment: built a minimal PATH directory containing only symlinks to bash, git, and coreutils (basename/cat/cp/date/dirname/mkdir/mktemp/mv/rm/sh/env) -- explicitly no python3 -- then ran 'env -i PATH=<minimal_bin> bash bootstrap.sh --verify-only --tag v0.1.0 --target <nonexistent-target>'. It failed immediately with 'required command python3 not found on PATH' and exit 1, confirming the new require_command python3 guard fires before the target-directory-exists check and before check_nizam_index/check_provenance_tag's python3 heredoc invocations, eliminating the misleading crash the fix targets. (b) Re-validated all 24 shipped .md frontmatter blocks (parsed as YAML) against schema/frontmatter.schema.json via python3+jsonschema, and separately asserted each file's authoritative_source value exactly equals its own repo-relative path -- all 24 pass both checks with zero mismatches and zero stale prefixes.",
+    "result": "pass",
+    "evidence": ".agent/evidence/009-qa-adversarial-a.txt, .agent/evidence/009-qa-adversarial-b.txt"
+  },
+  "required_fixes": []
+}

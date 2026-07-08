@@ -1,0 +1,3 @@
+test -f schema/README.md && test "$(head -1 schema/README.md)" = "---" && for k in id title description version status authoritative_source; do grep -q "^$k:" schema/README.md || { echo "MISSING $k"; exit 1; }; done && echo PASS
+PASS
+EXIT:0

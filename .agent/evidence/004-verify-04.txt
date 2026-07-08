@@ -1,0 +1,7 @@
+COMMAND:
+test -f templates/manifest.template.json && python3 -c "import json, jsonschema; doc = json.load(open('templates/manifest.template.json')); schema = json.load(open('schema/manifest.schema.json')); jsonschema.validate(instance=doc, schema=schema); print('PASS')"
+
+OUTPUT:
+PASS
+
+EXIT:0

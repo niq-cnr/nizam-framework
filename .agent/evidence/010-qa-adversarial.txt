@@ -1,0 +1,27 @@
+=== Extracted examples ===
+AGF.md example: {'final_verdict': {'approved': True}, 'issues': [], 'missing_acceptance_coverage': [], 'unsupported_claims': []}
+SKILL.md example: {'final_verdict': {'approved': False}, 'issues': [], 'missing_acceptance_coverage': [], 'unsupported_claims': []}
+
+=== Shape check: both examples use the canonical sibling-array shape (final_verdict holds ONLY 'approved'; issues/missing_acceptance_coverage/unsupported_claims are top-level siblings) ===
+AGF.md: shape OK (final_verdict keys=['approved'], top-level array keys present=['issues', 'missing_acceptance_coverage', 'unsupported_claims'])
+SKILL.md: shape OK (final_verdict keys=['approved'], top-level array keys present=['issues', 'missing_acceptance_coverage', 'unsupported_claims'])
+
+=== Positive gate run: AGF.md's own example documents approved=true and must pass the documented gate ===
+AGF.md example (approved=True) passes gate: True
+POSITIVE_PASS (AGF.md example)
+
+=== Positive gate run: SKILL.md documents its example with approved=false (a generic shape template, not asserted to pass) -- confirm the gate correctly REJECTS it as-is ===
+SKILL.md example (approved=False) passes gate as-is: False
+CONFIRMED: gate correctly rejects the as-documented approved=false example (expected -- SKILL.md's example is a shape template, not a passing instance)
+
+=== Positive gate run: same SKILL.md sibling-array shape, with approved flipped to true (proving the SHAPE composes correctly with the predicate once the approved condition is also satisfied) ===
+shape-equivalent doc with approved=true: {'final_verdict': {'approved': True}, 'issues': [], 'missing_acceptance_coverage': [], 'unsupported_claims': []} -> passes gate: True
+POSITIVE_PASS (SKILL.md shape, approved flipped true)
+
+=== Negative gate run: mutate a copy of the (now-passing) SKILL.md-shaped doc with one non-empty issues array ===
+mutated doc: {'final_verdict': {'approved': True}, 'issues': ['some blocking issue'], 'missing_acceptance_coverage': [], 'unsupported_claims': []}
+mutated doc (approved=true, but issues non-empty) passes gate: False
+NEGATIVE_PASS: gate correctly rejects a verdict with a single non-empty issues[] entry despite approved=true
+
+SUMMARY: ALL_PASS
+EXIT:0
