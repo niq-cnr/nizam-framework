@@ -7,6 +7,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Compliance hotfix restoring `tools/validate.sh` to green (the v0.4.0/v0.4.1
+  releases had shipped a tree failing the framework's own validator): removed
+  vendor-specific org branding — a stray org name in
+  `standard/cross_repo_governance.md` (C5 branding sweep) and the `$id` URLs of
+  `schema/debt.schema.json` and `schema/capability_profile.schema.json`, now in
+  the vendor-neutral `urn:nizam-framework:schema:*` form matching the other
+  shipped schemas; corrected `methodology/06_release_train.md`'s
+  `authoritative_source` to its own path after the `05` -> `06` rename (C2 format);
+  and synced `docs/guide/index.html`'s embedded framework-version anchor to `0.4.1`
+  to match `NIZAM.json` `framework.version`.
+
 ## [0.4.1] - 2026-07-08
 
 ### Changed
