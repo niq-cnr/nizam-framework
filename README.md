@@ -71,3 +71,7 @@ for release notes, and run `tools/validate.sh` (the same repo-local compliance c
 Nizam is released as semantically versioned git tags (`vMAJOR.MINOR.PATCH`). See
 `CHANGELOG.md` for the version history. Consumer repos pin to a specific tag when
 bootstrapping — never to a floating branch.
+
+## License
+
+Licensed under the MIT License — see [LICENSE](LICENSE).

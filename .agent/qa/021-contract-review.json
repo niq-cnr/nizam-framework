@@ -1,0 +1,59 @@
+{
+  "review": "contract-testability",
+  "feature": "021",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Entry 6 (README branding-neutrality) and entry 8's overlap with validator C5 are intentionally redundant per the contract's own annotation ('ADDITIONAL'/'robustness') — non-blocking duplication, not a defect.",
+    "Entry 7 hardcodes the exact string 'SUMMARY: 8 passed, 0 failed', which is brittle to future changes in the validator's check count; correct for the current tree (confirmed: tools/validate.sh currently reports exactly 8 checks, all PASS), but will need updating if a future feature adds/removes a validator check (out of this feature's scope to fix now).",
+    "Entry 2's tightening from the original acceptance test's 'MIT License|Apache License|BSD ' alternation to an MIT-specific requirement is justified by the human's explicit license_authorized event in run_state.json choosing MIT; verified this event exists and records the MIT decision."
+  ],
+  "dry_run_results": [
+    {"entry": 1, "expected": "fail", "observed": "fail", "exit_code": 1, "evidence": ".agent/evidence/021-contract-review-01.txt", "note": "MISSING LICENSE (correct reason)"},
+    {"entry": 2, "expected": "fail", "observed": "fail", "exit_code": 1, "evidence": ".agent/evidence/021-contract-review-02.txt", "note": "MISSING LICENSE (correct reason)"},
+    {"entry": 3, "expected": "fail", "observed": "fail", "exit_code": 1, "evidence": ".agent/evidence/021-contract-review-03.txt", "note": "MISSING LICENSE (correct reason)"},
+    {"entry": 4, "expected": "fail", "observed": "fail", "exit_code": 1, "evidence": ".agent/evidence/021-contract-review-04.txt", "note": "README.md missing all 4 sub-checks (licen[sc]e-word, LICENSE-token, MIT-name, LICENSE-link-target) - correct reason, not vacuous"},
+    {"entry": 5, "expected": "fail", "observed": "fail", "exit_code": 1, "evidence": ".agent/evidence/021-contract-review-05.txt", "note": "MISSING LICENSE (correct reason)"},
+    {"entry": 6, "expected": "pass", "observed": "pass", "exit_code": 0, "evidence": ".agent/evidence/021-contract-review-06.txt", "note": "README already exists with no branding leakage - genuine non-vacuous pass"},
+    {"entry": 7, "expected": "pass", "observed": "pass", "exit_code": 0, "evidence": ".agent/evidence/021-contract-review-07.txt", "note": "validator baseline green: SUMMARY: 8 passed, 0 failed"},
+    {"entry": 8, "expected": "pass", "observed": "pass", "exit_code": 0, "evidence": ".agent/evidence/021-contract-review-08.txt", "note": "scope guard clean on unmodified tree"}
+  ],
+  "adversarial_probes": [
+    {
+      "probe": "stray untracked file catch",
+      "method": "created STRAY_TEST_FILE_021.txt at repo root, re-ran entry 8's exact command",
+      "result": "caught: 'out-of-scope new/modified file(s):|STRAY_TEST_FILE_021.txt', exit 1 as expected; file removed and tree re-verified clean"
+    },
+    {
+      "probe": "git diff HEAD blindness confirmation",
+      "method": "with the same stray untracked file present, ran 'git diff HEAD -- . :(exclude).agent'",
+      "result": "zero output (blind to untracked file), confirming the contract's rationale for using git status --untracked-files=all instead"
+    },
+    {
+      "probe": ".agent exclusion correctness",
+      "method": "ran entry 8's command while 8 new .agent/evidence/*.txt files and .agent/contracts/021.json existed as untracked",
+      "result": "correctly excluded, zero false positives"
+    },
+    {
+      "probe": "positive control (minimal correct fixture)",
+      "method": "built a real MIT LICENSE + README '## License' section in an isolated scratch directory, re-ran entries 1-6 against the fixture",
+      "result": "all 6 entries PASS, confirming the suite is satisfiable and not a false-fail trap"
+    },
+    {
+      "probe": "unsupported-claim check: LICENSE outside validator scope",
+      "method": "grep -n LICENSE tools/validate.sh",
+      "result": "zero matches, confirming LICENSE is genuinely outside the validator's C1-C8 shipped-doc set as the contract claims"
+    },
+    {
+      "probe": "unsupported-claim check: README inside C5 branding sweep",
+      "method": "grep -n 'C5|branding' tools/validate.sh",
+      "result": "confirmed README.md is part of the shared shipped-doc set operated on by C1/C2/C3/C5/C8"
+    }
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "021",
+    "summary": "The 8-entry verification suite is sound, discriminating, and complete. All 6 of F-021's acceptance tests from feature_list_003.json are covered (entries 1,2,3,4,5,7), with 2 additional non-required robustness checks (entries 6, 8) correctly labeled ADDITIONAL. Dry-run against the current tree: entries 1,2,3,4,5 correctly FAIL for the right reason (LICENSE absent / README notice incomplete, not vacuously or for a wrong reason); entries 6,7,8 correctly and non-vacuously PASS on the clean baseline. The scope guard (entry 8) was empirically proven to see untracked new files and catch a stray out-of-scope file, unlike a git diff HEAD alternative which was empirically confirmed blind to the same stray file. A positive-control fixture (real MIT LICENSE + README notice) was built in an isolated scratch directory and passes all 6 feature-specific checks, confirming satisfiability. No genuine defects found; approved."
+  }
+}

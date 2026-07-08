@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "003-communication",
-  "current_feature": "021",
+  "current_feature": "022",
   "status": "implementing",
-  "updated_at": "2026-07-08T09:55:57Z",
+  "updated_at": "2026-07-08T10:12:48Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -79,6 +79,10 @@
     },
     "020-contract": {
       "attempts": 2,
+      "limit": 3
+    },
+    "021-contract": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -387,6 +391,11 @@
       "at": "2026-07-08T09:55:57Z",
       "event": "feature_complete",
       "detail": "Feature 020 complete: contract 1 revision (evaluator caught 4 verification-suite defects: vacuous payload check, unsound acronym check, weak AGIP gloss, missing Release-link check), Mode B + QA first-pass. Mode B ran a full AH-4 hallucination audit (quickstart works with real v0.1.0 tag; .nizam/ tree matches bootstrap payload; agent path + linked paths all real). QA 18/18 + 11-probe adversarial clean (no surviving staleness, no dangling paths, single-line acronym phrases, exact Release URL, clean frontmatter). validate.sh 8/8. Deliverables: CONTEXT.md (0.1.0->0.2.0, status active, de-staled, 4-dir payload, agent path, NDS/AGF/GIP, change_log entry - no CHANGELOG edit), README.md (quickstart + two-audience + guide/Release links + validator/CI/ADR + acronyms), bootstrap.sh (AGIP 'prototype' gloss). 75 lines vs 210 est. Cumulative 1080/1813. Advancing to 021 (LICENSE, MIT authorized by human) then 022 (phase close)."
+    },
+    {
+      "at": "2026-07-08T10:06:44Z",
+      "event": "contract_approved",
+      "detail": "Contract 021 (LICENSE human gate, MIT) approved first-pass by both gates. Scope: create root LICENSE (full MIT text, 'Copyright (c) 2026 The Nizam Framework Authors' - branding-neutral, no 'nizamiq' per the F-021 acceptance test) + one README.md license notice naming MIT and linking LICENSE. 8 verifications (v2 strengthens the weak 'MIT License' regex to require the verbatim grant + warranty clauses; v8 scope guard uses git status --untracked-files=all, empirically proven to SEE the new LICENSE file where git diff HEAD would be blind). Mode A verified the branding-neutral holder + spec fidelity; evaluator dry-ran all 8 + positive-control fixture. Non-goals fence F-022 (CHANGELOG). Delegating implementation."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -512,7 +521,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1395,
-    "total_lines_changed": 1080,
+    "total_lines_changed": 1105,
     "per_feature": [
       {
         "id": "017",
@@ -541,6 +550,13 @@
         "actual": 75,
         "flag": null,
         "note": "contract-scoped git stat (CONTEXT.md 22+9, README.md 36+1, bootstrap.sh 4+3). Executed 4th. Rolling avg last 3 (017,019,018)=335, 3x=1005; 75 well under, no flag. 1 contract revision (evaluator caught 4 verification-suite defects), Mode B + QA first-pass."
+      },
+      {
+        "id": "021",
+        "estimated": 25,
+        "actual": 25,
+        "flag": null,
+        "note": "contract-scoped (LICENSE 21 new + README.md 4). MIT, holder 'The Nizam Framework Authors' (branding-neutral). Human gate resolved (MIT chosen). Both contract gates + Mode B + QA all first-pass."
       }
     ]
   }

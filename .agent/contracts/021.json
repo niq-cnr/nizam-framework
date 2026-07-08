@@ -1,0 +1,73 @@
+{
+  "contract_id": "021",
+  "feature_id": "021",
+  "name": "LICENSE (Human Gate) — MIT License + README Notice",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_003.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "LICENSE",
+        "purpose": "H3 (human gate resolved: MIT). Add the full, verbatim MIT License text at the repository root (the standard 'Permission is hereby granted, free of charge...' boilerplate through the 'THE SOFTWARE IS PROVIDED \"AS IS\"...' warranty disclaimer). Copyright line MUST read 'Copyright (c) 2026 The Nizam Framework Authors' — branding-neutral (contains neither 'NizamIQ' nor any other forbidden substring) per the human's explicit instruction recorded in run_state.json's license_authorized history event, since F-021's own acceptance test forbids 'nizamiq' in LICENSE. LICENSE carries no NDS frontmatter (it is not a shipped .md governed by schema/frontmatter.schema.json) and is outside tools/validate.sh's shipped-doc set (C1/C2/C3/C8) and outside its C5 extra-target list — the no-nizamiq-in-LICENSE and MIT-recognizability checks are therefore this contract's own per-feature verification obligations, not something the validator enforces."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "README.md",
+        "purpose": "H3. Add ONE concise license notice — e.g. a footer line or a short '## License' section — naming the MIT License by name and linking to the LICENSE file with a markdown link target of the literal form (LICENSE) (e.g. 'Licensed under the MIT License — see [LICENSE](LICENSE).'). Placement: append after the existing '## Versioning' section (the current final section per the F-020-shipped README.md), so no existing section is disturbed. Introduces no other content change. README.md carries no frontmatter (C8 does not apply) but IS in validator C5's branding sweep — introduce no 'nizamiq', '.svc', or 'cluster.local' string."
+      }
+    ]
+  },
+  "non_goals": [
+    "No CHANGELOG.md edit of any kind — F-022 (phase close) records the LICENSE addition in its [Unreleased] CHANGELOG entries, not this feature",
+    "No bump to NIZAM.json framework.version — the release version bump is F-022's human gate",
+    "No edit to NIZAM.json, CONTEXT.md, docs/guide/index.html, tools/interface.md, standard/GIP.md, bootstrap.sh, or any other prior-feature deliverable",
+    "No edit to .agent/product_spec_003.md or any immutable prior-phase/prior-feature artifact (completed contracts, evidence, qa verdicts, or phase-001/002 feature lists)",
+    "No edit to any file beyond LICENSE (new), README.md, and this contract file itself",
+    "No CONTEXT.md frontmatter change_log entry — CONTEXT.md is untouched by this feature",
+    "Does not choose or reconsider the license type — MIT was already decided by the human (run_state.json license_authorized event); this contract only implements that decision"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "LICENSE file exists at repo root: test -f LICENSE",
+      "command": "f=LICENSE; test -f \"$f\" && echo PASS || { echo \"MISSING $f\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "LICENSE names a recognized OSI license (MIT) and is recognizably the actual MIT boilerplate text, not merely the string 'MIT License' pasted in isolation (robustness beyond the bare acceptance-test regex): grep -Eq 'MIT License|Apache License|BSD ' LICENSE, strengthened to require the MIT grant clause and warranty-disclaimer clause verbatim",
+      "command": "f=LICENSE; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; missing=\"\"; grep -Eq 'MIT License' \"$f\" || missing=\"$missing 'MIT License'\"; grep -q 'Permission is hereby granted' \"$f\" || missing=\"$missing 'Permission is hereby granted'\"; grep -q 'THE SOFTWARE IS PROVIDED' \"$f\" || missing=\"$missing 'THE SOFTWARE IS PROVIDED'\"; if [ -n \"$missing\" ]; then echo \"LICENSE is missing required MIT text substring(s):$missing\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "LICENSE carries a copyright line with a year: grep -Eq 'Copyright \\(c\\) [0-9]{4}' LICENSE",
+      "command": "f=LICENSE; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eq 'Copyright \\(c\\) [0-9]{4}' \"$f\" && echo PASS || { echo 'missing Copyright (c) YYYY line'; exit 1; }"
+    },
+    {
+      "acceptance_test": "README.md carries a one-line license notice naming the same license and pointing to LICENSE: grep -Eqi 'licen[sc]e' README.md && grep -q 'LICENSE' README.md, strengthened to require the notice name MIT specifically (not just any 'license' word) and link the LICENSE file as a markdown target",
+      "command": "f=README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; missing=\"\"; grep -Eqi 'licen[sc]e' \"$f\" || missing=\"$missing licen[sc]e-word\"; grep -q 'LICENSE' \"$f\" || missing=\"$missing LICENSE-token\"; grep -q 'MIT' \"$f\" || missing=\"$missing MIT-name\"; grep -q '(LICENSE)' \"$f\" || missing=\"$missing LICENSE-link-target\"; if [ -n \"$missing\" ]; then echo \"README.md license notice incomplete, missing:$missing\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "LICENSE introduces no branding/endpoint leakage: ! grep -Eqi 'nizamiq|\\.svc|cluster\\.local' LICENSE",
+      "command": "f=LICENSE; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -Eqi 'nizamiq|\\.svc|cluster\\.local' \"$f\"; then echo 'branding/endpoint leakage found in LICENSE'; grep -niE 'nizamiq|\\.svc|cluster\\.local' \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness — README.md is inside validator C5's branding sweep; this feature's own README edit must not introduce leakage even though C5 also re-checks it): README.md introduces no branding/endpoint leakage after the license-notice edit",
+      "command": "f=README.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -Eqi 'nizamiq|\\.svc|cluster\\.local' \"$f\"; then echo 'branding/endpoint leakage found in README.md'; grep -niE 'nizamiq|\\.svc|cluster\\.local' \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "Validator stays green on the clean tree: bash tools/validate.sh; test $? -eq 0",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | grep -qx 'SUMMARY: 8 passed, 0 failed' || { echo \"expected exact summary line 'SUMMARY: 8 passed, 0 failed', got: $(echo \"$out\" | grep '^SUMMARY:')\"; exit 1; }; test \"$rc\" -eq 0 && echo PASS || { echo \"tools/validate.sh exited $rc, expected 0\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness, per the contract-018/019/020 git-status-based out-of-scope-edit precedent, using --untracked-files=all so LICENSE — a brand-new file — is also caught, unlike a plain 'git diff HEAD' which is blind to untracked files): only {LICENSE, README.md} appear as new or modified in the working tree, excluding .agent/",
+      "command": "changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | cut -c4-); bad=\"\"; while IFS= read -r f; do [ -z \"$f\" ] && continue; case \"$f\" in LICENSE|README.md) ;; *) bad=\"$bad|$f\" ;; esac; done <<< \"$changed\"; if [ -n \"$bad\" ]; then echo \"out-of-scope new/modified file(s):$bad\"; exit 1; fi; echo \"PASS (status-scanned: $changed)\""
+    }
+  ],
+  "estimated_lines": 25,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/021-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/021-verify-01.txt for the first entry, ..., .agent/evidence/021-verify-08.txt for the eighth). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T10:06:44Z",
+    "revisions": 0
+  }
+}
