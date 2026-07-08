@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "002-self-compliance",
-  "current_feature": "012",
-  "status": "contract_negotiation",
-  "updated_at": "2026-07-08T11:20:00Z",
+  "current_feature": null,
+  "status": "awaiting_human_scope_acknowledgment",
+  "updated_at": "2026-07-08T14:40:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -39,6 +39,10 @@
     },
     "011-contract": {
       "attempts": 1,
+      "limit": 3
+    },
+    "012-contract": {
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -207,6 +211,16 @@
       "at": "2026-07-08T11:20:00Z",
       "event": "feature_complete",
       "detail": "Feature 011 complete: contract 1 revision (template-comment false-fail, substring false-pass, version coverage), Mode B + QA 9/9 first-pass + template-fidelity adversarial. 218 lines vs 100 est (first feature of phase - no rolling baseline per 00_planning bootstrap rule; cumulative 218/1001 healthy). Advancing to 012."
+    },
+    {
+      "at": "2026-07-08T13:00:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 012 approved after 2 revisions (no-op-stub false-pass closed with stdout assertions + C5-C8 mutation tests; git-clone false-fail replaced with cp -a isolation). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T14:40:00Z",
+      "event": "scope_flag_raised",
+      "detail": "Feature 012 complete (contract 2 revisions incl. no-op-stub and cp-a false-fail catches; Mode B + QA 17/17 first-pass; QA independently ran all 4 mutation tests + historical-defect regression). Contract-scoped 818 lines vs 360 estimate -> per-feature flag (3x rolling avg = 243). Cumulative 899/1001 (89.8%); remaining estimates (~310) project a cumulative-ceiling breach during feature 014. Pipeline paused: feature 013 will NOT begin until human acknowledgment is recorded, per Scope Budget Protocol."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -282,13 +296,20 @@
   },
   "scope_budget": {
     "original_estimate_lines": 770,
-    "total_lines_changed": 218,
+    "total_lines_changed": 899,
     "per_feature": [
       {
         "id": "011",
         "estimated": 100,
-        "actual": 218,
-        "flag": null
+        "actual": 81,
+        "flag": null,
+        "note": "corrected 2026-07-08 from 218 (which wrongly included .agent evidence overhead) to the contract-scoped git stat (77+4), matching phase-001 accounting convention"
+      },
+      {
+        "id": "012",
+        "estimated": 360,
+        "actual": 818,
+        "flag": "SCOPE FLAG per methodology/00_planning.md: 818 > 3x rolling average (3x81=243). Non-halting; explicit human acknowledgment REQUIRED before feature 013 begins."
       }
     ]
   }

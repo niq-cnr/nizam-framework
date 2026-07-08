@@ -26,7 +26,7 @@
       "id": "012",
       "name": "tools/validate.sh Repo-Local Compliance Validator + NIZAM.json Indexing",
       "description": "Ship tools/validate.sh: one runtime-agnostic command, exit 0 on a clean tree and non-zero on any violation. It validates every shipped .md frontmatter against schema/frontmatter.schema.json PLUS format checks (authoritative_source equals the file's own repo-relative path or NA; status enum; semver version), runs the NDS \u00a76.2 untagged-fence sweep, validates NIZAM.json against registry/nizam-index.schema.json and walks every indexed path, greps for branding/endpoint leakage, runs bootstrap.sh through bash -n and a timeout-guarded --help, checks module-README presence (NDS \u00a75.3), and enforces the NDS \u00a74 version-bump-requires-changelog rule against git history. Index tools/validate.sh in NIZAM.json (capabilities array grows; index stays schema-valid with all paths resolving). Ship negative fixtures under tools/fixtures/ (bad authoritative_source value, untagged fence, broken indexed path) that each drive a non-zero exit. Remediates G2: format is asserted, not mere key presence.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "011"
       ],

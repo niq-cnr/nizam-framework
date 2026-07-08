@@ -1,0 +1,31 @@
+(script: y15_c6.sh) -- scratch copy under $SCRATCH/012_mutation_c6
+set -u
+v=tools/validate.sh; test -f "$v" || { echo "MISSING $v"; exit 1; }
+SCRATCH_ROOT="/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad"
+scratch="$SCRATCH_ROOT/012_mutation_c6"
+rm -rf "$scratch" 2>/dev/null
+mkdir -p "$scratch"
+cp -a . "$scratch/repo" || { echo 'cp -a failed'; exit 1; }
+test -f "$scratch/repo/tools/validate.sh" || { echo 'MISSING tools/validate.sh in copy'; exit 1; }
+test -f "$scratch/repo/bootstrap.sh" || { echo 'MISSING bootstrap.sh in copy'; exit 1; }
+printf '\nif [\n' >> "$scratch/repo/bootstrap.sh"
+bash -n "$scratch/repo/bootstrap.sh" 2>/dev/null && { echo 'mutation did not break bootstrap.sh syntax as expected'; rm -rf "$scratch"; exit 1; }
+out=$(cd "$scratch/repo" && bash tools/validate.sh 2>&1)
+rc=$?
+test "$rc" -ne 0 || { echo "expected non-zero exit after corrupting bootstrap.sh, got 0"; echo "$out"; rm -rf "$scratch"; exit 1; }
+echo "$out" | grep -Eq '^\[C6\] FAIL' && result=PASS || result=FAIL
+echo "$out"
+rm -rf "$scratch"
+test "$result" = PASS && echo PASS || { echo 'no [C6] FAIL line found'; exit 1; }
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] FAIL bootstrap-sanity
+  bash -n ./bootstrap.sh failed: ./bootstrap.sh: line 412: syntax error: unexpected end of file from `if' command on line 411
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 7 passed, 1 failed
+PASS
+EXIT:0

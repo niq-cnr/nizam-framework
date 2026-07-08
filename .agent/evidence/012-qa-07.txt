@@ -1,0 +1,4 @@
+(script: y07.sh)
+f=tools/validate.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'authoritative_source' "$f" || { echo "no authoritative_source reference found in $f"; exit 1; }; grep -Eq 'version|semver' "$f" || { echo "no version/semver reference found in $f"; exit 1; }; echo PASS
+PASS
+EXIT:0

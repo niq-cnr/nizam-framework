@@ -1,0 +1,146 @@
+=== (a) Dogfood cross-check: reintroduce the historical phase-001 defect (nizam-framework/ prefix in authoritative_source) into a scratch copy and confirm C2 catches it ===
+before mutation:
+authoritative_source: standard/NDS.md
+authoritative_source: src/services/example/index.ts
+after mutation (reintroducing the exact phase-001 defect pattern that 22 gate reviews missed):
+authoritative_source: nizam-framework/standard/NDS.md
+authoritative_source: src/services/example/index.ts
+[C1] PASS frontmatter-schema
+[C2] FAIL format
+  standard/NDS.md: authoritative_source 'nizam-framework/standard/NDS.md' != own path 'standard/NDS.md' and != 'NA'
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 7 passed, 1 failed
+exit code: 1
+DOGFOOD CHECK (a) PASS: C2 catches the reintroduced 'nizam-framework/' prefix defect -- the exact class of violation that shipped undetected through 22 internal gate reviews in phase 001 (ADR-001 Context).
+
+=== (b) validate.sh --help documents the shipped-doc set and C8 semantics as contracted ===
+Usage: tools/validate.sh [--help]
+       tools/validate.sh
+       tools/validate.sh --target <file>
+
+tools/validate.sh is the repo-local NDS compliance validator. It ALWAYS
+operates on the repository rooted at the current working directory at
+invocation time (never a hardcoded absolute path back to any particular
+checkout) -- so `cd <any-repo-copy> && bash tools/validate.sh` always
+evaluates that copy's own tree.
+
+Runtime dependencies (checked up front, fails closed with a named diagnostic
+if any is missing): bash, git, grep, find, awk, python3 -- with python3's
+`jsonschema` and `yaml` (PyYAML) modules importable. This script never
+installs or vendors these dependencies itself.
+
+Modes:
+  (no arguments)      Full repo sweep. Runs all 8 checks (C1-C8) and prints
+                      one PASS/FAIL line per check plus a final summary
+                      line. Exits 0 only if every check passed.
+
+  --target <file>     Runs only the checks applicable to a single named
+                      file, printing PASS/FAIL per applicable check.
+                        - For a `.md` target: C1 (frontmatter schema), C2
+                          (format), and C3 (untagged-fence sweep) run
+                          against exactly that one file.
+                        - For a `.json` target shaped like a Nizam index
+                          file: C4 (schema validation + indexed-path
+                          walker) runs against exactly that one file.
+                      Checks that are inherently repo-wide (C5 branding
+                      sweep, C6 bootstrap.sh sanity, C7 module-README
+                      presence, C8 git-history version/changelog diff) do
+                      NOT run under --target. Exits non-zero if any
+                      applicable check fails. --target is the only mode
+                      under which files in tools/fixtures/ are ever read.
+
+  --help, -h          Prints this usage and exits 0.
+
+Checks (each check function emits exactly one line matching
+`[C<N>] PASS <name>` or `[C<N>] FAIL <name>`, with any offending
+file(s)/detail(s) printed on the following indented line(s)):
+
+  C1  Frontmatter schema. Every file in the "shipped-doc set" (see below)
+      begins with a YAML frontmatter block (first content in the file,
+      opened and closed by a bare `---` line) that schema-validates via
+      python3 + jsonschema against schema/frontmatter.schema.json.
+
+  C2  Format (belt-and-braces beyond schema). For the same shipped-doc
+      set: `authoritative_source` equals the file's own repository-relative
+      path exactly, or the literal string `NA`; `status` is one of
+      draft/active/deprecated; `version` matches semver MAJOR.MINOR.PATCH.
+
+  C3  Untagged fence sweep (NDS Sec 6.2). For the same shipped-doc set:
+      zero fenced code blocks opened with a bare ``` (no language tag).
+
+  C4  NIZAM.json index integrity. NIZAM.json parses as JSON and validates
+      via python3 + jsonschema against registry/nizam-index.schema.json,
+      AND every repository-relative path indexed anywhere within it (every
+      string under a `path` or `authoritative_source` key, plus every
+      string item of any `key_documents`/`schemas`/`templates` list,
+      skipping the literal `NA`) resolves on disk.
+
+  C5  Branding/endpoint leakage. Zero case-insensitive occurrences of
+      `nizamiq`, `.svc`, or `cluster.local` anywhere in shipped content:
+      the shipped-doc set, plus NIZAM.json, CHANGELOG.md, root README.md,
+      and bootstrap.sh. Repo-wide only; does not run under --target.
+
+  C6  bootstrap.sh sanity. `bash -n ./bootstrap.sh` (syntax check) AND
+      `timeout 5 ./bootstrap.sh --help` exits 0. Repo-wide only; does not
+      run under --target. Note: bootstrap.sh lives at the REPO ROOT
+      (./bootstrap.sh), not under tools/.
+
+  C7  Module README presence (NDS Sec 5.3). Each of standard/, methodology/,
+      registry/, templates/, schema/, tools/ contains a README.md.
+      Repo-wide only; does not run under --target.
+
+  C8  Version-bump-vs-changelog (NDS Sec 4). For each file in the
+      shipped-doc set: compares the working tree's frontmatter `version`
+      against the same file's frontmatter `version` at `git show
+      HEAD:<file>`. This comparison is only meaningful in CI on a PR diff
+      against HEAD. If the file did not exist at HEAD (new file), it is
+      skipped -- no prior version to compare against, no change record
+      required. If the file is unchanged vs HEAD, it passes trivially. If
+      the version differs, a change record is required: either a
+      `change_log` frontmatter entry on the file whose `version` matches
+      the new version, or a line in root CHANGELOG.md naming the file's
+      path. Repo-wide only; does not run under --target.
+
+Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,
+consistently): CONTEXT.md; every .md under docs/architecture/; every .md
+under standard/, methodology/, registry/, and templates/; every .md under
+tools/ EXCLUDING tools/fixtures/ (which is never part of the default sweep
+and is reachable only via --target); and schema/README.md (the only .md
+under schema/). Root README.md and docs/planning/* carry no frontmatter
+contract and are NOT part of this set (root README.md and bootstrap.sh are
+still covered by C5's separately-listed extra targets).
+
+Exit code: 0 only when every check that ran passed (0 failed).
+EXIT_HELP:0
+
+=== (c) Confirm the shipped-doc set correctly EXCLUDES non-.md files (validate.sh itself, skill.json) rather than crashing on them ===
+Replicating build_shipped_md_set()'s exact 'find ... -name *.md' commands (verbatim from tools/validate.sh lines 165-183):
+--- tools/ subset (find tools -type f -name '*.md' -not -path 'tools/fixtures/*') ---
+tools/README.md
+tools/SKILL.md
+tools/interface.md
+
+Checking for tools/validate.sh (a .sh file) and tools/skill.json (a .json file) in that set:
+0
+0 (correctly absent -- validate.sh)
+0
+0 (correctly absent -- skill.json)
+
+Confirming the full sweep (already executed in check 3/12 above) completed without any parse/open error on tools/validate.sh or tools/skill.json -- re-running once more here and grepping stderr-equivalent for any error mentioning those two non-.md files as a frontmatter-parse target:
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+exit code: 0
+DOGFOOD CHECK (c) PASS: the shipped-doc-set builder's find-by-'*.md'-glob logic structurally excludes tools/validate.sh and tools/skill.json (and every other non-.md file) from C1/C2/C3/C5/C8 -- confirmed by direct enumeration above, and the full sweep completed cleanly (SUMMARY: 8 passed, 0 failed) with no error referencing either file as a frontmatter target.
+EXIT:0

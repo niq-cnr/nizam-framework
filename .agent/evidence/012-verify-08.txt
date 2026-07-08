@@ -1,0 +1,7 @@
+COMMAND:
+test -f NIZAM.json || { echo 'MISSING NIZAM.json'; exit 1; }; grep -q 'tools/validate.sh' NIZAM.json && echo PASS || { echo 'tools/validate.sh not referenced in NIZAM.json'; exit 1; }
+
+OUTPUT:
+PASS
+
+EXIT:0

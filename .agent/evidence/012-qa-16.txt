@@ -1,0 +1,31 @@
+(script: y16_c7.sh) -- scratch copy under $SCRATCH/012_mutation_c7
+set -u
+v=tools/validate.sh; test -f "$v" || { echo "MISSING $v"; exit 1; }
+SCRATCH_ROOT="/tmp/claude-1000/-home-cnross-workspace02/e6be91f8-17ab-4b4b-841c-fd9333b9baea/scratchpad"
+scratch="$SCRATCH_ROOT/012_mutation_c7"
+rm -rf "$scratch" 2>/dev/null
+mkdir -p "$scratch"
+cp -a . "$scratch/repo" || { echo 'cp -a failed'; exit 1; }
+test -f "$scratch/repo/tools/validate.sh" || { echo 'MISSING tools/validate.sh in copy'; exit 1; }
+test -f "$scratch/repo/registry/README.md" || { echo 'MISSING registry/README.md in copy (precondition)'; exit 1; }
+rm -f "$scratch/repo/registry/README.md"
+out=$(cd "$scratch/repo" && bash tools/validate.sh 2>&1)
+rc=$?
+test "$rc" -ne 0 || { echo "expected non-zero exit after deleting registry/README.md, got 0"; echo "$out"; rm -rf "$scratch"; exit 1; }
+echo "$out" | grep -Eq '^\[C7\] FAIL' && result=PASS || result=FAIL
+echo "$out"
+rm -rf "$scratch"
+test "$result" = PASS && echo PASS || { echo 'no [C7] FAIL line found'; exit 1; }
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] FAIL index-integrity
+  NIZAM.json: indexed path(s) do not resolve on disk: ['registry/README.md']
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] FAIL module-readme-presence
+  missing registry/README.md
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 6 passed, 2 failed
+PASS
+EXIT:0

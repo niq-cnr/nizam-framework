@@ -1,0 +1,4 @@
+(script: y08.sh)
+test -f NIZAM.json || { echo 'MISSING NIZAM.json'; exit 1; }; grep -q 'tools/validate.sh' NIZAM.json && echo PASS || { echo 'tools/validate.sh not referenced in NIZAM.json'; exit 1; }
+PASS
+EXIT:0

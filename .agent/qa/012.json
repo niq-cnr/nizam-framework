@@ -1,0 +1,30 @@
+{
+  "feature_id": "012",
+  "verdict": "pass",
+  "executed_at": "2026-07-08",
+  "checks": [
+    {"command": "validate.sh exists, passes bash -n", "exit_code": 0, "evidence": ".agent/evidence/012-qa-01.txt"},
+    {"command": "validate.sh is executable", "exit_code": 0, "evidence": ".agent/evidence/012-qa-02.txt"},
+    {"command": "validate.sh exits 0 on clean tree, all 8 checks ran, SUMMARY: 8 passed, 0 failed", "exit_code": 0, "evidence": ".agent/evidence/012-qa-03.txt"},
+    {"command": "NEGATIVE bad_authoritative_source.md fixture drives non-zero exit", "exit_code": 0, "evidence": ".agent/evidence/012-qa-04.txt"},
+    {"command": "NEGATIVE untagged_fence.md fixture drives non-zero exit", "exit_code": 0, "evidence": ".agent/evidence/012-qa-05.txt"},
+    {"command": "NEGATIVE broken_index.json fixture drives non-zero exit", "exit_code": 0, "evidence": ".agent/evidence/012-qa-06.txt"},
+    {"command": "validator performs format (not presence) checks", "exit_code": 0, "evidence": ".agent/evidence/012-qa-07.txt"},
+    {"command": "tools/validate.sh indexed in NIZAM.json", "exit_code": 0, "evidence": ".agent/evidence/012-qa-08.txt"},
+    {"command": "NIZAM.json schema-valid, capabilities count 14", "exit_code": 0, "evidence": ".agent/evidence/012-qa-09.txt"},
+    {"command": "every NIZAM.json indexed path resolves (73 paths)", "exit_code": 0, "evidence": ".agent/evidence/012-qa-10.txt"},
+    {"command": "validator references schema/frontmatter.schema.json", "exit_code": 0, "evidence": ".agent/evidence/012-qa-11.txt"},
+    {"command": "default sweep excludes tools/fixtures/, exits 0 with fixtures present", "exit_code": 0, "evidence": ".agent/evidence/012-qa-12.txt"},
+    {"command": "tools/ and tools/fixtures/ contain exactly the expected file sets", "exit_code": 0, "evidence": ".agent/evidence/012-qa-13.txt"},
+    {"command": "behavioral: C5 fires on nizamiq injection into scratch copy (scratchpad-located)", "exit_code": 0, "evidence": ".agent/evidence/012-qa-14.txt"},
+    {"command": "behavioral: C6 fires on corrupted bootstrap.sh in scratch copy (scratchpad-located)", "exit_code": 0, "evidence": ".agent/evidence/012-qa-15.txt"},
+    {"command": "behavioral: C7 fires on deleted registry/README.md in scratch copy (scratchpad-located)", "exit_code": 0, "evidence": ".agent/evidence/012-qa-16.txt"},
+    {"command": "behavioral: C8 fires on unrecorded version bump in scratch copy w/ .git (scratchpad-located)", "exit_code": 0, "evidence": ".agent/evidence/012-qa-17.txt"}
+  ],
+  "adversarial_check": {
+    "description": "Three-part mandatory dogfood check beyond the 17 listed commands, all scratchpad-located per instruction (avoiding the sandbox denial Mode B hit). (a) Reintroduced the exact phase-001 historical defect into a scratch copy: changed standard/NDS.md's authoritative_source from 'standard/NDS.md' to 'nizam-framework/standard/NDS.md' (the precise pattern that shipped through 22 internal gate reviews per ADR-001's Context). C2 correctly failed, naming the file and the mismatch, proving the validator catches what the pipeline's own history once missed. (b) Ran 'validate.sh --help' and confirmed it documents the shipped-doc set (CONTEXT.md, docs/architecture/*.md, standard/methodology/registry/templates/*.md, tools/*.md excluding fixtures/, schema/README.md) and C8's git-HEAD-diff semantics (new files skipped, meaningful only against a PR diff) verbatim as contracted. (c) Enumerated build_shipped_md_set()'s actual 'find ... -name *.md' commands directly and confirmed tools/validate.sh (.sh) and tools/skill.json (.json) are structurally absent from the C1/C2/C3/C5/C8 file set (not merely accidentally passing) -- the glob cannot match non-.md files -- and re-ran the full sweep, which completed cleanly with no error referencing either file as a frontmatter-parse target.",
+    "result": "pass",
+    "evidence": ".agent/evidence/012-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

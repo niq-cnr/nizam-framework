@@ -1,0 +1,4 @@
+(script: y13.sh)
+test -d tools || { echo 'MISSING tools directory'; exit 1; }; actual="$(LC_ALL=C find tools -maxdepth 1 -type f | LC_ALL=C sort | tr '\n' ' ')"; expected="tools/README.md tools/SKILL.md tools/interface.md tools/skill.json tools/validate.sh "; test "$actual" = "$expected" || { echo "unexpected tools/ top-level file set: got [$actual] expected [$expected]"; exit 1; }; test -d tools/fixtures || { echo 'MISSING tools/fixtures directory'; exit 1; }; fxactual="$(LC_ALL=C find tools/fixtures -maxdepth 1 -type f | LC_ALL=C sort | tr '\n' ' ')"; fxexpected="tools/fixtures/bad_authoritative_source.md tools/fixtures/broken_index.json tools/fixtures/untagged_fence.md "; test "$fxactual" = "$fxexpected" && echo PASS || { echo "unexpected tools/fixtures/ file set: got [$fxactual] expected [$fxexpected]"; exit 1; }
+PASS
+EXIT:0

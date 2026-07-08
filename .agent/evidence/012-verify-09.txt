@@ -1,0 +1,14 @@
+COMMAND:
+test -f NIZAM.json || { echo 'MISSING NIZAM.json'; exit 1; }; test -f registry/nizam-index.schema.json || { echo 'MISSING registry/nizam-index.schema.json'; exit 1; }; python3 -c "
+import json, jsonschema
+schema = json.load(open('registry/nizam-index.schema.json'))
+instance = json.load(open('NIZAM.json'))
+jsonschema.validate(instance=instance, schema=schema)
+assert len(instance.get('capabilities', [])) == 14, f\"capabilities count {len(instance.get('capabilities', []))} != 14\"
+print('PASS')
+"
+
+OUTPUT:
+PASS
+
+EXIT:0
