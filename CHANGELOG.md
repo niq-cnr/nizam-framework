@@ -7,24 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-08
+
 ### Added
 
-- `docs/architecture/ADR-001-ci-compliance-enforcement.md`: records the
-  decision to adopt CI enforcement of `standard/NDS.md` §7 via a repo-local,
-  runtime-agnostic compliance validator invoked by a GitHub Actions workflow
-  on every pull request and every push to `main`, closing the gap between
-  the framework's prescribed enforcement and its previously-unenforced
-  shipped state.
-- `tools/validate.sh`, the repo-local NDS compliance validator: eight checks
-  (C1-C8) — frontmatter schema, format, untagged-fence sweep, `NIZAM.json`
-  index integrity, branding/endpoint leakage, `bootstrap.sh` sanity, module
-  README presence, and version-bump-vs-changelog — plus `tools/fixtures/`
-  negative fixtures exercising each failure mode, and a `nizam-compliance-validator`
-  capability entry indexing it in `NIZAM.json`.
-- `.github/workflows/compliance.yml`, the CI gate running `tools/validate.sh`
-  on `pull_request` and on `push` to `main` (full-history checkout, so the
-  C8 version-bump-vs-changelog check's `git show HEAD:<path>` lookups
-  resolve correctly).
 - `docs/guide/index.html`, a self-contained, dependency-free HTML user guide
   covering discovery, adoption, the contract-first execution loop, and the
   circuit breaker; and `docs/architecture/ADR-002-html-user-guide.md`,
@@ -36,19 +22,6 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- `.agent/product_spec.md` §2.1 (Hybrid Mono-Repo Layout): amended to add
-  `.github/workflows/` and `tools/validate.sh` to the architecture diagram;
-  `spec_version` bumped 1.0.0 → 1.1.0.
-- `methodology/02_adversarial_tdd.md` (0.2.0): adds the External Anchor Rule
-  (Section 7) and the Mandatory Adversarial Evidence requirement (Section 8).
-- `methodology/04_tool_driven_state.md` (0.2.0): adds the Evidence Capture
-  Convention and the Clock-Read Timestamps rule (Section 5).
-- `methodology/00_planning.md` (0.2.0): adds the Plan Amendment Rule
-  (Section 9), covering orchestrator-registrable amendments, Planner-routed
-  re-planning, and scope-budget re-baselines.
-- `methodology/05_release_train.md` (0.2.0): adds Release Mechanics
-  Ownership (Section 6), assigning changelog roll-up, date-stamping, and tag
-  creation to the release-manager/orchestrator role.
 - `CONTEXT.md`: rewritten to be current — stale forward-references removed,
   the phase-002 compliance-validator and CI-gate surfaces added, the
   injected payload corrected to the actual four directories plus
@@ -69,6 +42,43 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   stale at three directories) to the actual four directories plus
   `NIZAM.json` everywhere it is enumerated, and added an Adopting in an
   Existing Repository section defining incremental adoption tiers.
+
+## [0.2.0] - 2026-07-08
+
+### Added
+
+- `docs/architecture/ADR-001-ci-compliance-enforcement.md`: records the
+  decision to adopt CI enforcement of `standard/NDS.md` §7 via a repo-local,
+  runtime-agnostic compliance validator invoked by a GitHub Actions workflow
+  on every pull request and every push to `main`, closing the gap between
+  the framework's prescribed enforcement and its previously-unenforced
+  shipped state.
+- `tools/validate.sh`, the repo-local NDS compliance validator: eight checks
+  (C1-C8) — frontmatter schema, format, untagged-fence sweep, `NIZAM.json`
+  index integrity, branding/endpoint leakage, `bootstrap.sh` sanity, module
+  README presence, and version-bump-vs-changelog — plus `tools/fixtures/`
+  negative fixtures exercising each failure mode, and a `nizam-compliance-validator`
+  capability entry indexing it in `NIZAM.json`.
+- `.github/workflows/compliance.yml`, the CI gate running `tools/validate.sh`
+  on `pull_request` and on `push` to `main` (full-history checkout, so the
+  C8 version-bump-vs-changelog check's `git show HEAD:<path>` lookups
+  resolve correctly).
+
+### Changed
+
+- `.agent/product_spec.md` §2.1 (Hybrid Mono-Repo Layout): amended to add
+  `.github/workflows/` and `tools/validate.sh` to the architecture diagram;
+  `spec_version` bumped 1.0.0 → 1.1.0.
+- `methodology/02_adversarial_tdd.md` (0.2.0): adds the External Anchor Rule
+  (Section 7) and the Mandatory Adversarial Evidence requirement (Section 8).
+- `methodology/04_tool_driven_state.md` (0.2.0): adds the Evidence Capture
+  Convention and the Clock-Read Timestamps rule (Section 5).
+- `methodology/00_planning.md` (0.2.0): adds the Plan Amendment Rule
+  (Section 9), covering orchestrator-registrable amendments, Planner-routed
+  re-planning, and scope-budget re-baselines.
+- `methodology/05_release_train.md` (0.2.0): adds Release Mechanics
+  Ownership (Section 6), assigning changelog roll-up, date-stamping, and tag
+  creation to the release-manager/orchestrator role.
 
 ## [0.1.0] - 2026-07-08
 
