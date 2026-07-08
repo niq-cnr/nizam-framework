@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "002-self-compliance",
-  "current_feature": null,
-  "status": "phase_complete",
-  "updated_at": "2026-07-09T00:40:00Z",
+  "current_phase": "003-communication",
+  "current_feature": "017",
+  "status": "contract_negotiation",
+  "updated_at": "2026-07-08T05:19:45Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -292,6 +292,11 @@
       "at": "2026-07-09T00:40:00Z",
       "event": "amendment_complete",
       "detail": "Feature 016 complete: contract first-pass both gates, 1 post-approval amendment (unquoted-literal SyntaxError in v[5]; missing run_state exclusion in v[7] - both ratified by Mode B as test-defect corrections), QA 8/8 + API-anchored SHA verification + structural workflow regression. 49 lines vs 45 est. Cumulative 1170/1625. Pushing to PR #3 and answering review threads."
+    },
+    {
+      "at": "2026-07-08T05:19:45Z",
+      "event": "phase_activated",
+      "detail": "Phase 003-communication authorized by human. Budget reset (1395 est, ceiling 1813; phase-002 final archived). Execution order 017 -> 019 -> 018 -> 020 -> 022 (019 deliberately precedes 018 so the guide documents the corrected adoption contract); 021 LICENSE remains human-gated pending license choice. Beginning contract negotiation on 017."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -365,7 +370,7 @@
       }
     ]
   },
-  "scope_budget": {
+  "phase_002_scope_budget_final": {
     "original_estimate_lines": 1250,
     "total_lines_changed": 1170,
     "per_feature": [
@@ -414,5 +419,10 @@
       "at": "2026-07-08T15:00:00Z",
       "reason": "Option 1: flag acknowledged + phase estimate re-baselined to reflect the gate-hardened validator (899 actual through 012 + ~310 remaining estimates, rounded up). New cumulative ceiling: 1625 (130%)."
     }
+  },
+  "scope_budget": {
+    "original_estimate_lines": 1395,
+    "total_lines_changed": 0,
+    "per_feature": []
   }
 }
