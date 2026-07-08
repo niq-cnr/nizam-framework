@@ -1,0 +1,4 @@
+(script: q09.sh)
+changed=$(git diff --name-only HEAD -- . ':(exclude).agent' | LC_ALL=C sort); expected=$(printf '%s\n' methodology/00_planning.md methodology/02_adversarial_tdd.md methodology/04_tool_driven_state.md methodology/05_release_train.md | LC_ALL=C sort); if [ "$changed" = "$expected" ]; then echo PASS; else echo "scope drift -- got:"; echo "$changed"; echo "expected:"; echo "$expected"; exit 1; fi
+PASS
+EXIT:0

@@ -1,0 +1,3 @@
+$ f=methodology/04_tool_driven_state.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eqi 'session-absolute|/tmp' "$f" && grep -Eqi 'clock' "$f" && echo PASS || { echo "missing session-absolute/tmp prohibition or clock-read rule in $f"; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,22 @@
+{
+  "feature_id": "014",
+  "verdict": "pass",
+  "executed_at": "2026-07-08",
+  "checks": [
+    {"command": "02_adversarial_tdd.md has External Anchor Rule + 'source of truth' phrasing", "exit_code": 0, "evidence": ".agent/evidence/014-qa-01.txt"},
+    {"command": "Mandatory Adversarial Evidence section anchored on its own heading (not doc-wide grep)", "exit_code": 0, "evidence": ".agent/evidence/014-qa-02.txt"},
+    {"command": "04_tool_driven_state.md has Evidence Capture Convention heading + literal EXIT: marker", "exit_code": 0, "evidence": ".agent/evidence/014-qa-03.txt"},
+    {"command": "04_tool_driven_state.md forbids session-absolute/tmp paths and mandates clock-read timestamps", "exit_code": 0, "evidence": ".agent/evidence/014-qa-04.txt"},
+    {"command": "00_planning.md Plan Amendment Rule section anchored on its own heading, names orchestrator/run_state/planner", "exit_code": 0, "evidence": ".agent/evidence/014-qa-05.txt"},
+    {"command": "05_release_train.md assigns roll-up/tag mechanics to release-manager/orchestrator", "exit_code": 0, "evidence": ".agent/evidence/014-qa-06.txt"},
+    {"command": "all 4 docs parsed-YAML version==0.2.0 AND change_log entry version==0.2.0", "exit_code": 0, "evidence": ".agent/evidence/014-qa-07.txt"},
+    {"command": "full validate.sh sweep: exact 'SUMMARY: 8 passed, 0 failed', exit 0", "exit_code": 0, "evidence": ".agent/evidence/014-qa-08.txt"},
+    {"command": "scope guard: working-tree diff touches exactly the 4 contracted files", "exit_code": 0, "evidence": ".agent/evidence/014-qa-09.txt"}
+  ],
+  "adversarial_check": {
+    "description": "Mandatory self-referential audit beyond the 9 listed commands, per the coordinator's three-part instruction (this requirement is itself now codified in 02_adversarial_tdd.md Sec 8, the doc under test). (a) Compared 04_tool_driven_state.md Sec 5's Evidence Capture Convention against this evaluator's own 014-qa-01..09.txt files: found a genuine partial non-compliance -- their first line is a '(script: qNN.sh)' label rather than the exact invocation, and the invocation truly executed embedded a forbidden session-absolute /tmp path (the command BODIES remain repo-relative and replayable, but line 1 does not satisfy Sec 5's letter); cross-checked against features 000-011's evidence files, which DO comply exactly, showing this is a real regression introduced around feature 012-013. Logged honestly as a corrective item; does not affect this contract's deliverable correctness. (b) Cross-checked 00_planning.md Sec 9's Plan Amendment Rule against .agent/run_state.json's actual history entries for features 008/009/010 and the 012 re-baseline: all four match the rule's orchestrator-registrable-amendment pattern (human-authorized, cites a recorded history event, no Planner routing needed) and the 012 re-baseline specifically satisfies the structural scope_budget.rebaseline requirement verbatim. (c) Applied 02_adversarial_tdd.md Sec 7's External Anchor Rule retroactively to qa/002.json's adversarial_check: confirmed it is correctly classified as a violation -- its expected-value fragments were read out of standard/AGF.md itself (the artifact under test) rather than an external source, exactly the failure mode Sec 7 targets, and exactly why that check could not detect AGF.md's later-corrected (feature 010) verdict-shape drift.",
+    "result": "pass",
+    "evidence": ".agent/evidence/014-qa-adversarial.txt"
+  },
+  "required_fixes": []
+}

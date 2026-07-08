@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "002-self-compliance",
-  "current_feature": "014",
+  "current_feature": "015",
   "status": "contract_negotiation",
-  "updated_at": "2026-07-08T17:10:00Z",
+  "updated_at": "2026-07-08T19:20:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -46,6 +46,10 @@
       "limit": 3
     },
     "013-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "014-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -245,6 +249,16 @@
       "at": "2026-07-08T17:10:00Z",
       "event": "feature_complete",
       "detail": "Feature 013 complete: contract 1 revision (multi-branch false-pass + PR-filter coverage), Mode B first-pass (incl. ratifying the run_state deviation remediation), QA 7/7 + CI dry-run adversarial proof (untagged fence blocks the run). 29 lines vs 50 est. Cumulative 928/1625. Advancing to 014."
+    },
+    {
+      "at": "2026-07-08T18:00:00Z",
+      "event": "contract_approved",
+      "detail": "Contract 014 approved first-pass by both gates (vacuous-match supersessions verified against live files; scope guard reproduced). Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T19:20:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 014 complete: both gates first-pass, QA 9/9 + self-referential adversarial audit. QA honestly self-reported that its own 012-014 evidence files predate-violate the new Evidence Capture Convention (script labels + session paths) - corrective item: all future evidence rounds, starting with 015, must comply with 04_tool_driven_state Sec 5. 158 lines vs 220 est. Cumulative 1086/1625. Advancing to 015 (deps 013+014 complete)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -320,7 +334,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1250,
-    "total_lines_changed": 928,
+    "total_lines_changed": 1086,
     "per_feature": [
       {
         "id": "011",
@@ -339,6 +353,12 @@
         "id": "013",
         "estimated": 50,
         "actual": 29,
+        "flag": null
+      },
+      {
+        "id": "014",
+        "estimated": 220,
+        "actual": 158,
         "flag": null
       }
     ],

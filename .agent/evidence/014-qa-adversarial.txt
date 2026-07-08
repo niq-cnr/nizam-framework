@@ -1,0 +1,125 @@
+=== (a) Evidence Capture Convention (04_tool_driven_state.md Sec 5) vs. the evaluator's OWN 014-qa evidence files ===
+
+Convention requires (04_tool_driven_state.md Sec 5, inspected directly):
+  1. First line: the exact invocation, verbatim, as actually run.
+  2. Captured output next, unmodified.
+  3. Last line: literal EXIT:<code>.
+  4. Replayable from repo root; helper scripts/commands must be repo-relative
+     or fully inlined; session-absolute paths (e.g. a /tmp scratch dir tied
+     to one agent session) are explicitly FORBIDDEN inside evidence commands.
+
+Inspected this round's own output: .agent/evidence/014-qa-01.txt through
+014-qa-09.txt (all 9 files created earlier in this QA round).
+
+FINDING -- PARTIAL NON-COMPLIANCE (self-critical, honestly reported):
+  - Content check: none of the 9 files embed a /tmp session-absolute path
+    inside their body (grep -l "/tmp/claude-1000" 014-qa-*.txt returned zero
+    matches) -- the inlined command bodies are repo-relative and genuinely
+    replayable from repo root.
+  - BUT: every one of the 9 files' actual FIRST LINE is a label
+    "(script: qNN.sh)", not the exact invocation the convention requires.
+    The literal command that was ACTUALLY executed to produce each file was
+    `bash /tmp/claude-1000/.../scratchpad/qNN.sh` -- a session-absolute
+    invocation, which Sec 5 explicitly forbids. The "(script: ...)" label
+    was an attempt to avoid printing that forbidden path, but the result is
+    a first line that is neither the true invocation (forbidden) nor a
+    compliant substitute -- it is a paraphrase, which the convention does
+    not authorize as an alternative to line 1.
+
+Cross-check against history: feature 000-011's own evidence files (spot
+-checked .agent/evidence/000-qa-01.txt) DO comply exactly -- their first
+line is the true, fully-inlined, repo-relative command with no scratch-file
+indirection at all (commands were run directly via the Bash tool without an
+intermediate scratchpad script). The "(script: NN.sh)" pattern was
+introduced starting around feature 012-013 as a convenience for longer
+python3 -c blocks and constitutes a real regression against the convention
+codified in THIS contract.
+
+VERDICT ON (a): NO, this evaluator's own 012-014 evidence files as currently
+written do not fully match Sec 5's letter (first-line invocation
+requirement), even though their command bodies remain repo-relative and
+replayable. This is exactly the kind of self-referential gap the coordinator
+asked to surface. It does not change feature 014's PASS verdict (014's
+contracted deliverable is the methodology prose itself, which is correct and
+independently verified above; evidence-format hygiene is a process matter,
+not a feature-014 acceptance criterion) -- but it is logged here honestly as
+a corrective item: future evidence files should either (i) run the command
+directly via the tool with no scratch-file indirection (as 000-011 did), or
+(ii) if a helper script is unavoidable, store it at a repo-relative path
+(not /tmp) and cite that path verbatim as line 1.
+
+=== (b) Plan Amendment Rule (00_planning.md Sec 9) vs. actual run_state.json history for features 008-010 and the 012 re-baseline ===
+
+-- Inspected: .agent/run_state.json history entries and scope_budget.rebaseline object --
+2026-07-07T19:00:00Z [amendment_authorized] Human decisions received: (1) NDEBT-001 resolved - repo deliberately kept outside ecosystem scope; (2) canonical origin https://github.com/niq-cnr/nizam-framework.git. Feature 008 (canonical origin wiring) added as human-authorized post-phase amendment. Standard contract loop applies.
+2026-07-07T20:00:00Z [amendment_complete] Feature 008 complete: contract 1 revision (unscoped diff check), Mode B + QA 5/5 first-pass. Canonical origin wired into bootstrap.sh. Phase 001 closed again; proceeding to push + PR.
+2026-07-07T22:30:00Z [amendment_complete] Feature 009 complete: both gates first-pass, QA 16/16 + python3-less --verify-only simulation + frontmatter schema re-validation. 15 still-valid review findings fixed across 27 files; 13 findings on immutable audit artifacts skipped with documented reasons. Pushing to PR #1.
+2026-07-07T23:10:00Z [amendment_authorized] PR #1 follow-up review comment 3538444007 verified valid: verdict-shape drift across AGF.md predicates (nested paths), AGF.md example (sibling arrays), 01_execution.md predicates (nested paths), SKILL.md Sec 7 example (nested arrays). Feature 010 registered; canonical shape = sibling arrays per actual pipeline practice. All 29 prior review threads answered on the PR.
+2026-07-08T00:10:00Z [amendment_complete] Feature 010 complete: both gates first-pass, QA 9/9 + parse-and-gate adversarial simulation. Verdict shape canonicalized (sibling arrays) across AGF.md, 01_execution.md, SKILL.md. All 30 PR #1 review threads answered on GitHub. Pushing.
+2026-07-08T14:40:00Z [scope_flag_raised] Feature 012 complete (contract 2 revisions incl. no-op-stub and cp-a false-fail catches; Mode B + QA 17/17 first-pass; QA independently ran all 4 mutation tests + historical-defect regression). Contract-scoped 818 lines vs 360 estimate -> per-feature flag (3x rolling avg = 243). Cumulative 899/1001 (89.8%); remaining estimates (~310) project a cumulative-ceiling breach during feature 014. Pipeline paused: feature 013 will NOT begin until human acknowledgment is recorded, per Scope Budget Protocol.
+2026-07-08T15:00:00Z [scope_acknowledged_rebaselined] Human acknowledged the feature-012 scope flag and authorized re-baseline (option 1): original_estimate_lines 770 -> 1250, ceiling 1625. Plan Amendment Rule applies (human-authorized, orchestrator-recorded). Pipeline resumed; feature 013 dependency gate satisfied (012 complete).
+
+scope_budget.rebaseline object:
+{
+  "from": 770,
+  "to": 1250,
+  "authorized_by": "human",
+  "at": "2026-07-08T15:00:00Z",
+  "reason": "Option 1: flag acknowledged + phase estimate re-baselined to reflect the gate-hardened validator (899 actual through 012 + ~310 remaining estimates, rounded up). New cumulative ceiling: 1625 (130%)."
+}
+
+Cross-check against 00_planning.md Sec 9's Plan Amendment Rule text:
+  - Feature 008: history event 'amendment_authorized' (2026-07-07T19:00:00Z) cites
+    concrete human decisions (canonical origin URL) and registers feature 008
+    directly, no Planner routing -- matches Sec 9's 'orchestrator-registrable
+    amendments' clause (human-authorized, cites a recorded event, no new
+    architecture/acceptance-test shape invented).
+  - Feature 009: history event 'review_remediation_authorized' (21:00:00Z) cites
+    PR #1 review findings triage -- same pattern: human-sourced (PR review),
+    orchestrator bundles and registers, no Planner routing. Matches.
+  - Feature 010: history event 'amendment_authorized' (23:10:00Z) cites a specific
+    PR follow-up review comment (id 3538444007) verified valid -- same pattern.
+    Matches.
+  - Feature 012 re-baseline: history event 'scope_acknowledged_rebaselined'
+    (15:00:00Z) states 'Plan Amendment Rule applies (human-authorized,
+    orchestrator-recorded)' AND the re-baseline is recorded structurally in
+    scope_budget.rebaseline {from, to, authorized_by, at, reason} -- exactly
+    matching Sec 9's third paragraph requirement that a re-baseline 'MUST be
+    recorded structurally ... not left as free-text history prose alone'.
+
+VERDICT ON (b): YES, 00_planning.md Sec 9's Plan Amendment Rule accurately
+describes what actually happened for features 008, 009, 010, and the 012
+re-baseline -- every one is human-authorized, cites (or IS) a recorded
+run_state.json history event, was orchestrator-registered without Planner
+routing (none introduced architecture/acceptance-test shape beyond the human's
+explicit authorization), and the 012 re-baseline specifically satisfies the
+structural scope_budget.rebaseline requirement verbatim.
+
+=== (c) External Anchor Rule (02_adversarial_tdd.md Sec 7) applied retroactively to the G6 incident (qa/002.json adversarial_check) ===
+
+-- Inspected: .agent/qa/002.json adversarial_check.description verbatim --
+Two-part check beyond the 7 listed commands, using python3+yaml+jsonschema: (1) parsed the YAML block between the first two '---' lines of all 5 standard/*.md files and validated each against schema/frontmatter.schema.json (draft 2020-12) -- all 5 validated cleanly (id kebab-case, version semver, status in draft/active/deprecated enum, authoritative_source non-empty). (2) Cross-checked standard/AGF.md Section 4's JSON Verdict Parse Rule prose against the literal gate rule this evaluation pipeline enforces: searched AGF.md verbatim for the four fragments 'final_verdict.approved === true', 'final_verdict.issues.length === 0', 'final_verdict.missing_acceptance_coverage.length === 0', 'final_verdict.unsupported_claims.length === 0' -- all four present verbatim, confirming AGF.md's documented gate matches the actual approved/issues/missing_acceptance_coverage/unsupported_claims gate used to advance this pipeline (no drift between doc and practice).
+
+Inspected: methodology/02_adversarial_tdd.md Sec 7 (External Anchor Rule), key line:
+  A check MUST NEVER derive its expected value by grepping, quoting, or
+  otherwise re-deriving it from the artifact-under-tests own content or phrasing.
+
+Applying Sec 7 to the QA-002 adversarial_check part 2 quoted above: that check
+searched standard/AGF.md for four specific fragments, and those four fragments
+were themselves read out of standard/AGF.md own Section 4 text (the artifact
+under test) rather than sourced from something external to it -- e.g. the
+orchestrators actual JSON-verdict-parsing behavior, CLAUDE.md stated gate
+rule, or a schema. The checks own conclusion (confirming AGF.md documented
+gate matches the actual gate used to advance this pipeline) was reached by
+comparing AGF.md against itself, which cannot detect AGF.md being wrong -- and
+AGF.md fragments WERE later found wrong (feature 010 canonicalized them from
+the prefixed nested-path form QA-002 verified to the sibling-array form actually
+used in every real verdict this pipeline emits, including this one).
+
+VERDICT ON (c): YES, 02_adversarial_tdd.md Sec 7 External Anchor Rule, applied
+retroactively, correctly classifies the QA-002 check as a VIOLATION: its source
+of truth for the four fragments was the artifact under test itself
+(standard/AGF.md), not an external anchor, which is precisely the failure mode
+Sec 7 exists to remediate, and precisely why that check could not detect AGF.md
+later-corrected verdict-shape drift (feature 010).
+EXIT:0

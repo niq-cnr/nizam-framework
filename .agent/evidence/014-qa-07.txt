@@ -1,0 +1,41 @@
+(script: q07.sh)
+python3 -c "
+import yaml, sys
+docs = ['methodology/00_planning.md', 'methodology/02_adversarial_tdd.md', 'methodology/04_tool_driven_state.md', 'methodology/05_release_train.md']
+errors = []
+for path in docs:
+    try:
+        text = open(path, encoding='utf-8').read()
+    except OSError:
+        errors.append(f'{path}: MISSING')
+        continue
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != '---':
+        errors.append(f'{path}: no opening frontmatter fence')
+        continue
+    end_idx = None
+    for i in range(1, len(lines)):
+        if lines[i].strip() == '---':
+            end_idx = i
+            break
+    if end_idx is None:
+        errors.append(f'{path}: no closing frontmatter fence')
+        continue
+    fm = yaml.safe_load('\n'.join(lines[1:end_idx]))
+    if not isinstance(fm, dict):
+        errors.append(f'{path}: frontmatter did not parse as a mapping')
+        continue
+    version = fm.get('version')
+    if version != '0.2.0':
+        errors.append(f'{path}: version == {version!r}, expected \'0.2.0\' exactly')
+    change_log = fm.get('change_log') or []
+    versions = {str(e.get('version')) for e in change_log if isinstance(e, dict)}
+    if '0.2.0' not in versions:
+        errors.append(f'{path}: no change_log entry with version == \'0.2.0\' (found versions: {sorted(versions)!r})')
+if errors:
+    print('\n'.join(errors))
+    sys.exit(1)
+print('PASS')
+"
+PASS
+EXIT:0

@@ -2,9 +2,13 @@
 id: nizam-tool-driven-state
 title: "Tool-Driven State Management (DD-1 + DD-3)"
 description: "The query-not-bulk-read discipline for locating governance files via the root capability index, evidence externalisation to .agent/evidence/, and the durable-state artifact families every run maintains."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: methodology/04_tool_driven_state.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-08"
+    summary: "Add the Evidence Capture Convention and the Clock-Read Timestamps rule (Section 5)."
 ---
 
 # Tool-Driven State Management (DD-1 + DD-3)
@@ -108,7 +112,43 @@ the correct family above before considering its turn complete. A result that
 exists only as a chat message and was never written to its canonical location
 is treated as not having happened by every downstream role.
 
-## 5. References
+## 5. Evidence Capture Convention
+
+Every evidence file under `.agent/evidence/` MUST take a fixed, three-part
+shape:
+
+1. **First line: the exact invocation.** The literal command that was
+   executed, verbatim, as it was actually run.
+2. **Captured output next.** The command's actual stdout/stderr, exactly as
+   produced — no summarization, no paraphrase, no reformatting.
+3. **Last line: a literal `EXIT:<code>` marker** recording the command's
+   actual exit status (for example `EXIT:0` on success, `EXIT:1` on
+   failure).
+
+Every evidence file MUST be replayable from the repository root: the
+invocation recorded on its first line MUST run correctly when executed from
+the repo's top-level working directory, with no assumed subshell `cd` or
+ambient working directory. Any helper script or command an evidence file's
+invocation depends on MUST be repo-relative (a path resolvable from the repo
+root, e.g. `tools/validate.sh`) or fully inlined in the invocation itself.
+**Session-absolute paths are forbidden inside evidence commands** — a path
+rooted in a particular agent run's ephemeral environment (for example a
+`/tmp` scratch directory tied to one session) is not reproducible by a later
+agent or a human replaying the file from a fresh checkout, and an evidence
+file that depends on one has not actually proven anything a subsequent
+reviewer can independently confirm.
+
+### 5.1 Clock-Read Timestamps
+
+Every durable-state timestamp — `run_state.json` history entries,
+contract/QA/evidence timestamps, and `change_log` dates — MUST be read from
+the system clock at the moment of writing. A timestamp MUST NEVER be
+estimated, guessed, or reconstructed after the fact from context; an
+estimated timestamp risks being non-monotonic against surrounding history
+entries and, if later found wrong, requires a corrective annotation rather
+than simply having been correct the first time.
+
+## 6. References
 
 - `registry/` — `NIZAM.json`'s schema and the index this document's DD-1
   section requires agents to route through (feature 006).

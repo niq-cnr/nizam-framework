@@ -2,9 +2,13 @@
 id: nizam-release-train
 title: "Release Train Protocol"
 description: "The framework's own release discipline: semantic-version git-tag cuts, what constitutes a breaking vs minor vs patch change, changelog discipline, and the consumer upgrade path via bootstrap re-run against a new pinned tag."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: methodology/05_release_train.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-08"
+    summary: "Add Release Mechanics Ownership (Section 6), assigning changelog roll-up, date-stamping, and tag creation to the release-manager/orchestrator role."
 ---
 
 # Release Train Protocol
@@ -129,7 +133,28 @@ Re-bootstrapping, not hand-patching, is the only path — this is unchanged from
 `standard/GIP.md`'s drift-remediation model and this protocol does not
 introduce a second, competing upgrade mechanism.
 
-## 6. References
+## 6. Release Mechanics Ownership
+
+Once the Section 2 human sign-off gate is satisfied, three specific
+release-time mechanics belong to the **release-manager role** — in practice
+the **orchestrator**, since `standard/AGF.md`'s role set defines no separate
+release-manager role:
+
+1. **The changelog roll-up** — folding `CHANGELOG.md`'s `[Unreleased]`
+   entries into the new version's dated section heading.
+2. **Stamping the release date** on that section heading.
+3. **Creating and pushing the annotated git tag** (Section 2) once 1 and 2
+   are complete.
+
+These three actions are release **mechanics**, not feature implementation:
+they do not require a Generator contract, and they do not pass through the
+Loop 1 / Loop 2 contract-first harness defined in `01_execution.md`. They
+are nonetheless still subject to the same branch discipline as every other
+change in the repository — they MUST be performed on a dedicated branch
+(for example `chore/release-vX.Y.Z`) and merged via a reviewed pull request,
+never committed directly to the mainline branch.
+
+## 7. References
 
 - `standard/GIP.md` — pinned-tag inheritance, bootstrap verification, and the
   re-bootstrap-not-hand-patch remediation model this protocol's Section 5

@@ -1,0 +1,4 @@
+(script: q06.sh)
+f=methodology/05_release_train.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eqi 'release[- ]manager|orchestrator' "$f" && grep -qi 'roll-up' "$f" && echo PASS || { echo "missing release-manager/orchestrator role assignment or 'roll-up' phrasing in $f"; exit 1; }
+PASS
+EXIT:0
