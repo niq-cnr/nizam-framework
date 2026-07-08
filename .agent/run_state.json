@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "004-durable-enforcement",
-  "current_feature": "025",
+  "current_feature": "026",
   "status": "implementing",
-  "updated_at": "2026-07-08T13:37:17Z",
+  "updated_at": "2026-07-08T16:12:09Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -94,6 +94,10 @@
       "limit": 3
     },
     "024-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "025-contract": {
       "attempts": 2,
       "limit": 3
     }
@@ -453,6 +457,21 @@
       "at": "2026-07-08T13:37:17Z",
       "event": "feature_complete",
       "detail": "Feature 024 complete: methodology/02_adversarial_tdd.md gained a flat-prose '## 10. Verification-Authoring Standard' section codifying the 4 forbidden anti-patterns (whole-file/vacuous greps, git-diff-blind-to-untracked scope guards, bare-adjacency/parenthetical checks, false-passing substrings) each paired with the compliant tools/verify_lib.sh primitive; version 0.2.0->0.3.0 + change_log. 1 contract revision (false-fail fix). Mode B + QA first-pass: QA cross-checked each anti-pattern description against verify_lib.sh's real code (no mischaracterization) + independently confirmed flat-prose/section-scoping. 15/15 verifications EXIT:0, validate.sh unchanged at 8. The phase's verification-authoring standard is now codified in the methodology (dogfooding: this phase's OWN gate rejections are the source material). 69 lines vs 70 est. Cumulative 477/1625. Advancing to 025 (R4a schema reconciliation, dep 023 complete)."
+    },
+    {
+      "at": "2026-07-08T15:39:48Z",
+      "event": "base_rebased_release_hygiene",
+      "detail": "Human note: main advanced to v0.4.1 OUTSIDE the phase/contract process (v0.4.0 'NMF Hybrid' + v0.4.1 'tool-agnostic review gate'; ~20 new standard/methodology/schema files; main's manifest still lists only 001-003). CRITICAL: those releases shipped a tree FAILING the framework's own validator (6 passed, 2 failed) - the CI/review gate was relaxed/bypassed (v0.4.1's own theme). Found 3 nizamiq branding leaks: standard/cross_repo_governance.md prose (C5-caught) + schema/debt.schema.json & schema/capability_profile.schema.json $id URLs (NOT C5-caught -> C5 GAP: it doesn't sweep schema/*.json); plus C2 authoritative_source rename-fallout in methodology/06; plus a stale guide version anchor (0.3.0 vs framework.version 0.4.1). Human decisions: nizamiq refs are leaks (make vendor-neutral), hotfix main first. Hotfix branch fix/compliance-hotfix (PR #9): all 3 leaks fixed to urn:nizam-framework:schema:* form, C2 corrected, guide anchor synced to 0.4.1; validate.sh restored to 8 passed 0 failed. phase/004 REBASED onto the hotfix (green base); 023/024 intact + still green. PLAN IMPACT: (1) F-030 release gate v0.4.0 is now TAKEN -> phase 004 releases as v0.5.0 (next MINOR); F-030's acceptance test must switch v0.4.0->v0.5.0. (2) WATCH-ITEM: C5 doesn't sweep schema/*.json (the $id leaks slipped past) - F-027/C10 or a C5-hardening should close it. (3) Guide anchor now 0.4.1 -> F-027 C10 version-consistency will pass. Stale feature-025 contract dropped; re-proposing fresh on the green base."
+    },
+    {
+      "at": "2026-07-08T15:57:23Z",
+      "event": "contract_approved",
+      "detail": "Contract 025 (R4a schema reconciliation, resolves NDEBT-002 part a) approved after 1 revision by both gates, re-proposed fresh on the green (v0.4.1+hotfix) base. Mode A approved rev0; the evaluator caught a real HIGH false-fail: entry 7's immutability guard excluded only .agent/contracts/025.json, not this feature's own new .agent/qa/025-contract-review.json (which the 020/021/022 precedent guarantees exists by Loop-2) - proven to false-fail. Rev1 broadened the exclusion to ':(exclude,glob).agent/qa/025*.json' (glob matches ONLY 025* - no historical record excluded; tamper still caught) + 2 minor cleanups (entry 9 prose C1-C3 not C8; entry 13 dead .agent/ args removed). Both gates re-approved rev1 with fresh probes. Scope: reconcile qa_verdict.schema.json to an anyOf union (legacy 000-016 + evolved 017-024 shapes), CREATE schema/contract_review.schema.json (urn $id), make contract.schema.json amendments[]/approvals.revisions explicit, index the new schema in NIZAM.json + schema/README.md (version bump/change_log), confirm run_state.schema.json unchanged. Immutable audit records validate WITHOUT edits (schemas conform to artifacts). 15 verifications. Delegating implementation."
+    },
+    {
+      "at": "2026-07-08T16:12:09Z",
+      "event": "feature_complete",
+      "detail": "Feature 025 complete (R4a, resolves NDEBT-002 part a): schema/qa_verdict.schema.json reconciled to an anyOf union (legacy 000-016 + evolved 017-024); NEW schema/contract_review.schema.json (urn $id) for the contract-review verdicts; contract.schema.json amendments[]/approvals.revisions made explicit; new schema indexed in NIZAM.json + schema/README.md (0.2.0->0.3.0 + change_log). 1 contract revision (immutability-guard false-fail). Mode B + QA first-pass: BOTH ran independent AH-4 ANTI-PERMISSIVE checks - the unions REJECT garbage ({foo:1}, {}, missing-discriminator-key fixtures) via both schemas (not accept-anything) with clean qa-vs-contract-review discriminator separation; all 29 qa + 26 contracts validate WITHOUT editing the immutable records; run_state.schema.json byte-unchanged (AH-2). QA self-check: qa/025.json itself validates against the reconciled schema. 15/15 verifications EXIT:0, validate.sh unchanged at 8. 303 lines vs 180 est. Cumulative 780/1625. NDEBT-002 part a resolved; part b (C11 enforcement) is F-028. Advancing to 026 (C9 path-resolution check, dep 023 complete)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -626,7 +645,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1250,
-    "total_lines_changed": 477,
+    "total_lines_changed": 780,
     "per_feature": [
       {
         "id": "023",
@@ -641,6 +660,13 @@
         "actual": 69,
         "flag": null,
         "note": "methodology/02_adversarial_tdd.md 68+1 = 69 (0.2.0->0.3.0 + change_log entry). Rolling avg (023=408) 3x=1224; 69 well under, no flag. Cumulative 477/1625 (29%). 1 contract revision (evaluator caught a FALSE-fail: entry 4's vlib_section_grep span-ends-at-any-# would wrongly reject a subheading-structured section; fixed via a flat-prose scope constraint). Dogfooded F-023 primitives in verification."
+      },
+      {
+        "id": "025",
+        "estimated": 180,
+        "actual": 303,
+        "flag": null,
+        "note": "5 files: qa_verdict.schema.json anyOf-union restructure (135+45=180 churn, net ~+90), contract_review.schema.json 98 (new), contract.schema.json 16+1, schema/README.md 6+1, NIZAM.json 1. Re-proposed fresh on the green (v0.4.1+hotfix) base after the stale contract was dropped. Rolling avg (023=408,024=69)=238, 3x=715; 303 under, no flag. Cumulative 780/1625 (48%). 1 contract revision (evaluator caught the entry-7 immutability-guard false-fail on the feature's own qa artifacts). Resolves NDEBT-002 part a (schemas reconciled to the actual artifact shapes; all 29 qa + 26 contracts validate WITHOUT editing the immutable records)."
       }
     ]
   }

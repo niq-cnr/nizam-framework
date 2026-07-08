@@ -1,0 +1,20 @@
+python3 -c "
+import json, glob, jsonschema, sys
+s = json.load(open('schema/contract.schema.json'))
+bad = []
+files = sorted(glob.glob('.agent/contracts/*.json'))
+for f in files:
+    d = json.load(open(f))
+    try:
+        jsonschema.validate(d, s)
+    except jsonschema.ValidationError as e:
+        bad.append((f, str(e)[:200]))
+if bad:
+    for f, msg in bad:
+        print(f'{f}: {msg}')
+    sys.exit(1)
+print(f'PASS ({len(files)} contracts, all validate)')
+"
+---
+PASS (26 contracts, all validate)
+EXIT:0

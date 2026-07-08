@@ -1,0 +1,38 @@
+f=schema/README.md; grep -q 'contract_review.schema.json' "$f" || { echo 'schema/README.md does not name contract_review.schema.json'; exit 1; }; python3 -c "
+import subprocess, sys, yaml
+
+def frontmatter(text):
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != '---':
+        return None
+    end = None
+    for i, l in enumerate(lines[1:], start=1):
+        if l.strip() == '---':
+            end = i
+            break
+    if end is None:
+        return None
+    return yaml.safe_load(chr(10).join(lines[1:end])) or {}
+
+def parts(v):
+    return tuple(int(x) for x in str(v).split('.'))
+
+path = '$f'
+cur_text = open(path, encoding='utf-8').read()
+cur_fm = frontmatter(cur_text)
+head_text = subprocess.run(['git', 'show', f'HEAD:{path}'], capture_output=True, text=True, check=True).stdout
+head_fm = frontmatter(head_text) or {}
+head_v, cur_v = head_fm.get('version'), cur_fm.get('version')
+if not head_v or not cur_v or parts(cur_v) <= parts(head_v):
+    print(f'version did not strictly increase ({head_v} -> {cur_v})')
+    sys.exit(1)
+cur_entries = cur_fm.get('change_log') or []
+head_entries = head_fm.get('change_log') or []
+if len(cur_entries) != len(head_entries) + 1:
+    print(f'expected exactly one new change_log entry vs HEAD; HEAD had {len(head_entries)}, current has {len(cur_entries)}')
+    sys.exit(1)
+print(f'PASS (version {head_v} -> {cur_v})')
+"
+---
+PASS (version 0.2.0 -> 0.3.0)
+EXIT:0

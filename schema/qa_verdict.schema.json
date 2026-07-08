@@ -3,56 +3,146 @@
   "$id": "urn:nizam-framework:schema:qa_verdict.schema.json",
   "title": "Nizam QA Verdict Schema",
   "description": "Validates .agent/qa/NNN.json, the evaluator's pass/fail verdict for a feature, recording each verification command's exit code and an evidence file path per DD-3.",
-  "type": "object",
-  "properties": {
-    "feature_id": {
-      "type": "string",
-      "description": "Id of the feature this verdict evaluates."
-    },
-    "verdict": {
-      "type": "string",
-      "description": "The overall QA outcome for this feature.",
-      "enum": ["pass", "fail"]
-    },
-    "executed_at": {
-      "type": "string",
-      "description": "Date or date-time the QA checks were executed."
-    },
-    "checks": {
-      "type": "array",
-      "description": "One entry per contract verification command that was executed.",
-      "items": {
-        "type": "object",
-        "properties": {
-          "command": { "type": "string" },
-          "exit_code": { "type": "integer" },
-          "evidence": {
-            "type": "string",
-            "description": "Path to the externalised evidence file capturing this check's terminal output."
-          }
-        },
-        "required": ["command", "exit_code", "evidence"],
-        "additionalProperties": true
-      },
-      "minItems": 1
-    },
-    "adversarial_check": {
+  "anyOf": [
+    {
+      "title": "Legacy QA verdict shape (features 000-016)",
       "type": "object",
-      "description": "The evaluator's own additional adversarial spot-check, beyond the contract's listed verification commands.",
       "properties": {
-        "description": { "type": "string" },
-        "result": { "type": "string" },
-        "evidence": { "type": "string" }
+        "feature_id": {
+          "type": "string",
+          "description": "Id of the feature this verdict evaluates."
+        },
+        "verdict": {
+          "type": "string",
+          "description": "The overall QA outcome for this feature.",
+          "enum": ["pass", "fail"]
+        },
+        "executed_at": {
+          "type": "string",
+          "description": "Date or date-time the QA checks were executed."
+        },
+        "checks": {
+          "type": "array",
+          "description": "One entry per contract verification command that was executed.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "command": { "type": "string" },
+              "exit_code": { "type": "integer" },
+              "evidence": {
+                "type": "string",
+                "description": "Path to the externalised evidence file capturing this check's terminal output."
+              }
+            },
+            "required": ["command", "exit_code", "evidence"],
+            "additionalProperties": true
+          },
+          "minItems": 1
+        },
+        "adversarial_check": {
+          "type": "object",
+          "description": "The evaluator's own additional adversarial spot-check, beyond the contract's listed verification commands.",
+          "properties": {
+            "description": { "type": "string" },
+            "result": { "type": "string" },
+            "evidence": { "type": "string" }
+          },
+          "required": ["description", "result", "evidence"],
+          "additionalProperties": true
+        },
+        "required_fixes": {
+          "type": "array",
+          "description": "Fixes the generator must make before this feature can pass QA. Empty when verdict is 'pass'.",
+          "items": { "type": "string" }
+        }
       },
-      "required": ["description", "result", "evidence"],
+      "required": ["feature_id", "verdict", "executed_at", "checks", "required_fixes"],
       "additionalProperties": true
     },
-    "required_fixes": {
-      "type": "array",
-      "description": "Fixes the generator must make before this feature can pass QA. Empty when verdict is 'pass'.",
-      "items": { "type": "string" }
+    {
+      "title": "Evolved QA verdict shape (features 017 onward)",
+      "type": "object",
+      "properties": {
+        "feature_id": {
+          "type": "string",
+          "description": "Id of the feature this verdict evaluates."
+        },
+        "qa_pass": {
+          "type": "boolean",
+          "description": "The overall QA outcome for this feature."
+        },
+        "checks_run": {
+          "type": "integer",
+          "description": "Number of contract verification commands independently re-run by the evaluator."
+        },
+        "checks_passed": {
+          "type": "integer",
+          "description": "Number of those commands that passed (exit 0)."
+        },
+        "adversarial": {
+          "type": "object",
+          "description": "The evaluator's mandatory adversarial spot-check, beyond the contract's listed verification commands.",
+          "properties": {
+            "performed": {
+              "type": "boolean",
+              "description": "Whether the adversarial spot-check was actually performed."
+            }
+          },
+          "required": ["performed"],
+          "additionalProperties": true
+        },
+        "evidence_files": {
+          "type": "array",
+          "description": "Paths to the externalised evidence files capturing each check's terminal output.",
+          "items": { "type": "string" }
+        },
+        "issues": {
+          "type": "array",
+          "description": "Defects found during QA, beyond required_fixes."
+        },
+        "unsupported_claims": {
+          "type": "array",
+          "description": "Claims made by the implementation or contract that QA could not substantiate."
+        },
+        "missing_acceptance_coverage": {
+          "type": "array",
+          "description": "Acceptance criteria not actually covered by any executed verification command."
+        },
+        "required_fixes": {
+          "type": "array",
+          "description": "Fixes the generator must make before this feature can pass QA. Empty when qa_pass is true."
+        },
+        "final_verdict": {
+          "type": "object",
+          "description": "The QA round's overall outcome.",
+          "properties": {
+            "approved": {
+              "type": "boolean",
+              "description": "Whether this feature's implementation is approved."
+            },
+            "summary": {
+              "type": "string",
+              "description": "Human-readable summary of the QA round's findings and disposition."
+            }
+          },
+          "required": ["approved", "summary"],
+          "additionalProperties": true
+        }
+      },
+      "required": [
+        "feature_id",
+        "qa_pass",
+        "checks_run",
+        "checks_passed",
+        "adversarial",
+        "evidence_files",
+        "issues",
+        "unsupported_claims",
+        "missing_acceptance_coverage",
+        "required_fixes",
+        "final_verdict"
+      ],
+      "additionalProperties": true
     }
-  },
-  "required": ["feature_id", "verdict", "executed_at", "checks", "required_fixes"],
-  "additionalProperties": true
+  ]
 }

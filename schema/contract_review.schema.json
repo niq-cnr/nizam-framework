@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:contract_review.schema.json",
+  "title": "Nizam Contract-Review Verdict Schema",
+  "description": "Validates the evaluator's pre-code contract-testability review verdict for a feature contract, produced during Loop 1 (Pre-Code Alignment) as .agent/qa/NNN-contract-review.json (or a revision-suffixed variant such as NNN-contract-review-revN.json). Distinct from qa_verdict.schema.json, which validates the POST-code QA pass/fail verdict; this schema validates the PRE-code review of the verification suite's own soundness (vacuous-match, false-fail, and coverage-gap hunting) before implementation begins.",
+  "type": "object",
+  "properties": {
+    "review": {
+      "type": "string",
+      "description": "The kind of review performed, e.g. 'contract-testability'."
+    },
+    "feature": {
+      "type": "string",
+      "description": "Id of the feature whose contract is under review."
+    },
+    "contract_id": {
+      "type": "string",
+      "description": "Id of the contract under review, when distinct bookkeeping from 'feature' is useful (e.g. tracking a specific revision)."
+    },
+    "revision_reviewed": {
+      "type": "integer",
+      "description": "Which contract-negotiation revision round this review evaluated (0 for the initial proposal).",
+      "minimum": 0
+    },
+    "issues": {
+      "type": "array",
+      "description": "Verification-suite soundness defects found (vacuous matches, false-fails, false-passes, coverage gaps). Empty when the contract is approved with no blocking findings.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "verification_index": {
+            "description": "Which verification entry (by array index or ordinal) the issue concerns; null if the issue is not tied to a single entry (e.g. a missing-coverage gap).",
+            "type": ["string", "integer", "null"]
+          },
+          "criterion": {
+            "type": "string",
+            "description": "The acceptance criterion the flagged verification entry was supposed to prove."
+          },
+          "evidence": {
+            "type": "string",
+            "description": "The dry-run or fixture-based proof demonstrating the defect."
+          },
+          "required_fix": {
+            "type": "string",
+            "description": "The change needed to close the defect."
+          },
+          "severity": {
+            "type": "string",
+            "description": "Defect severity, e.g. 'high', 'medium', 'low'."
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "missing_acceptance_coverage": {
+      "type": "array",
+      "description": "Acceptance criteria from the feature/spec that no verification entry in the contract actually covers."
+    },
+    "unsupported_claims": {
+      "type": "array",
+      "description": "Claims made by the contract or its scope text that are not backed by a corresponding verification entry."
+    },
+    "observations": {
+      "type": "array",
+      "description": "Non-blocking notes: residual edge cases judged non-blocking, intentional design asymmetries, or awareness items that do not gate approval.",
+      "items": {}
+    },
+    "final_verdict": {
+      "type": "object",
+      "description": "The review's overall outcome.",
+      "properties": {
+        "approved": {
+          "type": "boolean",
+          "description": "Whether the contract (at the reviewed revision) is approved to proceed to implementation."
+        },
+        "feature": {
+          "type": "string",
+          "description": "Id of the feature this verdict concerns, mirroring the top-level 'feature' key."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Human-readable summary of the review's findings and disposition."
+        }
+      },
+      "required": ["approved", "summary"],
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "review",
+    "feature",
+    "issues",
+    "missing_acceptance_coverage",
+    "unsupported_claims",
+    "final_verdict"
+  ],
+  "additionalProperties": true
+}

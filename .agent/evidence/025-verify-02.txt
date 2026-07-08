@@ -1,0 +1,10 @@
+f=schema/contract_review.schema.json; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import json, jsonschema
+schema = json.load(open('$f'))
+jsonschema.Draft202012Validator.check_schema(schema)
+assert schema.get('\$id', '').startswith('urn:nizam-framework:schema:'), f\"\$id not vendor-neutral urn form: {schema.get('\$id')}\"
+print('PASS')
+"
+---
+PASS
+EXIT:0

@@ -1,0 +1,115 @@
+{
+  "contract_id": "025",
+  "feature_id": "025",
+  "name": "R4a — Reconcile Schemas to Actual Artifact Shapes (resolves NDEBT-002 part a)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_004.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "schema/contract_review.schema.json",
+        "purpose": "NEW schema describing the pre-code contract-review verdict shape produced in .agent/qa/020-contract-review.json, .agent/qa/020-contract-review-rev1.json, .agent/qa/021-contract-review.json, and .agent/qa/022.json: top-level 'review' (string, e.g. 'contract-testability'), 'feature' (string feature id), 'issues' (array of objects, each MAY carry verification_index [string|integer|null], criterion, evidence, required_fix, severity — additionalProperties true so richer issue shapes like 022.json's rev1_findings_closed/observations remain tolerated), 'missing_acceptance_coverage' (array), 'unsupported_claims' (array), and 'final_verdict' (object requiring at least 'approved' [boolean] and 'summary' [string], additionalProperties true so 'feature' may also appear nested as it does in every sample). Declares '$schema': 'https://json-schema.org/draft/2020-12/schema' and '$id': 'urn:nizam-framework:schema:contract_review.schema.json' (vendor-neutral urn form, matching the current schema/capability_profile.schema.json and schema/debt.schema.json $id precedent, NOT the older https://... form). additionalProperties: true at every object level so the optional richer fields actually present in the four sample files (observations[], rev1_findings_closed[], verification_entry_3_agip{}, full_suite_regression_on_positive_control{}, acceptance_coverage_recheck, dry_run_results[], adversarial_probes[], contract_id, revision_reviewed) validate without being required. Only 'review', 'feature', 'issues', 'missing_acceptance_coverage', 'unsupported_claims', and 'final_verdict' (with final_verdict.approved + final_verdict.summary) are required — the minimum common shape across all four samples."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "schema/qa_verdict.schema.json",
+        "purpose": "Reconcile to an anyOf UNION of the two produced feature-QA-verdict shapes so every historical .agent/qa/*.json feature-QA file (000-016 legacy, 017-019/020/021/022-qa/023/024 evolved) validates with ZERO edits to those files. Restructure the schema's top level to 'anyOf': [<legacy-branch>, <evolved-branch>], preserving the existing '$schema'/'$id'/'title'/'description' keys unchanged (only the validation body is restructured). Legacy branch: object requiring 'feature_id', 'verdict' (enum pass/fail), 'executed_at', 'checks' (array of {command, exit_code, evidence}, minItems 1), 'required_fixes' (array) — i.e. the CURRENT schema body verbatim, becoming anyOf[0]. Evolved branch (anyOf[1]): object requiring 'feature_id', 'qa_pass' (boolean), 'checks_run' (integer), 'checks_passed' (integer), 'adversarial' (object with at least 'performed' [boolean]; additionalProperties true), 'evidence_files' (array of strings), 'issues' (array), 'unsupported_claims' (array), 'missing_acceptance_coverage' (array), 'required_fixes' (array), 'final_verdict' (object requiring 'approved' [boolean] and 'summary' [string]; additionalProperties true) — additionalProperties true at every level of this branch so 'observations', 'coverage_warning', and any other field present in one evolved sample but not another (e.g. 022-qa.json's 'observations' vs 017.json lacking it) remain tolerated as optional. Both branches keep additionalProperties: true at the object root exactly as today. No change to required-ness semantics beyond what the two-branch split necessitates; the schema still describes ONLY the shapes actually observed in .agent/qa/*.json — it does not invent a third hypothetical shape."
+      },
+      {
+        "path": "schema/contract.schema.json",
+        "purpose": "Make two already-tolerated-via-additionalProperties fields into explicit, documented properties, matching the shapes actually carried by .agent/contracts/001.json, 016.json, and 019.json (git-blame-verified live samples). (1) Add a top-level 'amendments' property: 'type': 'array', with 'description' explaining it records post-approval amendment records (either legacy free-text strings, per 001.json/016.json's 'YYYY-MM-DD: <summary>' form, or the richer 019.json object form {at, by, target, type, change, rationale, dry_run_proof, ratified_by_mode_b}) — so declare 'items' permissively as 'oneOf': [{'type': 'string'}, {'type': 'object', 'additionalProperties': true}] (NOT required at the top level; contracts with zero amendments, the common case, must still validate). (2) Within the existing 'approvals' object's 'properties', add an explicit 'revisions' property: 'type': 'integer', 'minimum': 0, 'description' noting it counts contract-negotiation revision rounds (per 016.json/019.json/024.json's 'revisions' field) — 'approvals' itself stays non-required and additionalProperties: true is preserved on it. No other property, required-list, or $id/$schema change to this file."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Add exactly one new entry, 'schema/contract_review.schema.json', to the top-level 'schemas' array (alongside the existing schema/capability_profile.schema.json, schema/debt.schema.json, and the seven pre-existing entries), preserving the current array's ordering convention and every other key (framework.version stays 0.4.1 — NOT bumped by this feature; modules[], capabilities[], templates[], consumption_guidance, index_schema, self_reference all unchanged). No other edit to this file."
+      },
+      {
+        "path": "schema/README.md",
+        "purpose": "Add one new row to the '## Schemas' table for 'contract_review.schema.json' (Purpose: validates the pre-code contract-testability review verdict; Validates: .agent/qa/NNN-contract-review.json), immediately after the existing 'qa_verdict.schema.json' row (or wherever reads naturally alongside it) so the module index names all schemas actually shipped. Bump the frontmatter 'version' strictly above its current 0.2.0 (e.g. 0.3.0) and add exactly ONE new 'change_log' frontmatter entry (version/date/summary) naming the contract_review.schema.json addition and the qa_verdict.schema.json union reconciliation, per NDS Sec 4 / validator C8. No other prose change; the existing seven-row table's other rows and the DD-3 section remain textually unchanged."
+      }
+    ]
+  },
+  "non_goals": [
+    "No edit to tools/validate.sh of any kind — the validator's check count stays at 8 (no new check added by this feature; C11 dogfood enforcement is F-028, strictly after this feature)",
+    "No edit to tools/verify_lib.sh — F-023 is complete and read-only for this feature",
+    "No edit to schema/run_state.schema.json — per AH-2 (detect before fix) it is CONFIRMED already correct and .agent/run_state.json already validates against it; this feature only proves that fact, it does not touch the file",
+    "No edit to schema/debt.schema.json or schema/capability_profile.schema.json (the v0.4.x schemas landed by the out-of-band release/hotfix) — out of this feature's remediation scope",
+    "No edit to any .agent/qa/*.json or .agent/contracts/*.json file (except creating the NEW .agent/contracts/025.json itself, which this contract's own approval lifecycle owns) — all prior QA verdicts, contract-review verdicts, and contracts are immutable audit records; the reconciled schemas must accept them AS-IS",
+    "No CHANGELOG.md edit of any kind — phase-close CHANGELOG entries for phase-004 deliverables belong to F-030",
+    "No NIZAM.json framework.version bump — stays 0.4.1; only the 'schemas' array gains one entry",
+    "No .github/workflows/ changes, no tools/e2e_bootstrap_test.sh, no bootstrap.sh edit — those belong to F-029 and are unrelated to schema reconciliation",
+    "No edit to any file beyond schema/qa_verdict.schema.json, schema/contract.schema.json, schema/contract_review.schema.json (new), NIZAM.json, schema/README.md, and this contract file itself"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "qa_verdict.schema.json is now a union (anyOf) of the two verdict shapes: python3 -c \"import json; s=json.load(open('schema/qa_verdict.schema.json')); import sys; sys.exit(0 if 'anyOf' in s or 'oneOf' in s else 1)\"",
+      "command": "f=schema/qa_verdict.schema.json; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport json, sys\ns = json.load(open('$f'))\nsys.exit(0 if ('anyOf' in s or 'oneOf' in s) else 1)\n\" && echo PASS || { echo 'qa_verdict.schema.json is not a union schema'; exit 1; }"
+    },
+    {
+      "acceptance_test": "New contract_review.schema.json exists and is itself valid JSON Schema: test -f schema/contract_review.schema.json && python3 -c \"import json,jsonschema; jsonschema.Draft202012Validator.check_schema(json.load(open('schema/contract_review.schema.json')))\"",
+      "command": "f=schema/contract_review.schema.json; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport json, jsonschema\nschema = json.load(open('$f'))\njsonschema.Draft202012Validator.check_schema(schema)\nassert schema.get('\\$id', '').startswith('urn:nizam-framework:schema:'), f\\\"\\$id not vendor-neutral urn form: {schema.get('\\$id')}\\\"\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "EVERY historical .agent/qa/*.json validates against qa_verdict OR contract_review, with no edits: python3 -c \"import json,glob,jsonschema,sys; qv=json.load(open('schema/qa_verdict.schema.json')); cr=json.load(open('schema/contract_review.schema.json')); bad=[] ... \"",
+      "command": "python3 -c \"\nimport json, glob, jsonschema, sys\nqv = json.load(open('schema/qa_verdict.schema.json'))\ncr = json.load(open('schema/contract_review.schema.json'))\nbad = []\nfiles = sorted(glob.glob('.agent/qa/*.json'))\nif not files:\n    print('no .agent/qa/*.json files found -- unexpected on this tree')\n    sys.exit(1)\nfor f in files:\n    d = json.load(open(f))\n    ok = False\n    for schema in (qv, cr):\n        try:\n            jsonschema.validate(d, schema)\n            ok = True\n            break\n        except jsonschema.ValidationError:\n            pass\n    if not ok:\n        bad.append(f)\nif bad:\n    print('FAILED to validate against either schema: ' + ', '.join(bad))\n    sys.exit(1)\nprint(f'PASS ({len(files)} qa artifacts, all validate)')\n\""
+    },
+    {
+      "acceptance_test": "EVERY .agent/contracts/*.json validates against contract.schema.json (cleaned up form of the feature_list's malformed acceptance test 4, same intent: zero contracts fail validation)",
+      "command": "python3 -c \"\nimport json, glob, jsonschema, sys\ns = json.load(open('schema/contract.schema.json'))\nbad = []\nfiles = sorted(glob.glob('.agent/contracts/*.json'))\nfor f in files:\n    d = json.load(open(f))\n    try:\n        jsonschema.validate(d, s)\n    except jsonschema.ValidationError as e:\n        bad.append((f, str(e)[:200]))\nif bad:\n    for f, msg in bad:\n        print(f'{f}: {msg}')\n    sys.exit(1)\nprint(f'PASS ({len(files)} contracts, all validate)')\n\""
+    },
+    {
+      "acceptance_test": "contract.schema.json now documents amendments[] AND approvals.revisions explicitly (not merely tolerated via additionalProperties): python3 -c \"import json,sys; s=json.load(open('schema/contract.schema.json')); sys.exit(0 if 'amendments' in s.get('properties',{}) else 1)\"",
+      "command": "f=schema/contract.schema.json; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nimport json, sys\ns = json.load(open('$f'))\nprops = s.get('properties', {})\nmissing = []\nif 'amendments' not in props:\n    missing.append('properties.amendments')\napprovals_props = props.get('approvals', {}).get('properties', {})\nif 'revisions' not in approvals_props:\n    missing.append('properties.approvals.properties.revisions')\nif missing:\n    print('missing explicit propert(y/ies): ' + ', '.join(missing))\n    sys.exit(1)\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "run_state.schema.json is UNCHANGED vs HEAD (confirmed pre-existing, not recreated) and run_state.json still validates: git diff --quiet HEAD -- schema/run_state.schema.json && python3 -c \"import json,jsonschema; jsonschema.validate(json.load(open('.agent/run_state.json')), json.load(open('schema/run_state.schema.json')))\"",
+      "command": "git diff --quiet HEAD -- schema/run_state.schema.json || { echo 'schema/run_state.schema.json was modified -- AH-2 violation, this feature must CONFIRM not recreate it'; exit 1; }; python3 -c \"\nimport json, jsonschema\njsonschema.validate(json.load(open('.agent/run_state.json')), json.load(open('schema/run_state.schema.json')))\nprint('PASS')\n\""
+    },
+    {
+      "acceptance_test": "No historical .agent/qa or .agent/contracts file was edited (immutable audit records), excluding this feature's own new contract file AND this feature's own new Loop-1 .agent/qa/025* review artifacts (evaluator's 025-contract-review[-rev1].json / eventual 025.json final verdict, per the 020/021/022 precedent that those legitimately exist in the tree by the time this guard runs in Loop 2): test -z \"$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/025.json' ':(exclude,glob).agent/qa/025*.json')\"",
+      "command": "changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/025.json' ':(exclude,glob).agent/qa/025*.json'); if [ -n \"$changed\" ]; then echo 'immutable audit record(s) touched:'; echo \"$changed\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "NIZAM.json indexes the new schema and stays C4-green: grep -q 'schema/contract_review.schema.json' NIZAM.json && bash tools/validate.sh --target NIZAM.json; test $? -eq 0",
+      "command": "grep -q 'schema/contract_review.schema.json' NIZAM.json || { echo 'NIZAM.json does not index schema/contract_review.schema.json'; exit 1; }; out=$(bash tools/validate.sh --target NIZAM.json 2>&1); rc=$?; echo \"$out\"; test \"$rc\" -eq 0 && echo \"$out\" | grep -q '\\[C4\\] PASS' && echo PASS || { echo \"NIZAM.json failed C4 (rc=$rc)\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "schema/README.md is still frontmatter-schema-valid, format-valid, and free of untagged fences (C1-C3 via --target; --target never runs the repo-wide C8 check by validate.sh's documented design -- the C8 version-bump/change_log obligation is independently enforced by verification entries 12 and 15's full-sweep '[C8] PASS' assertion, not by this entry): bash tools/validate.sh --target schema/README.md; test $? -eq 0",
+      "command": "out=$(bash tools/validate.sh --target schema/README.md 2>&1); rc=$?; echo \"$out\"; test \"$rc\" -eq 0 && echo \"$out\" | grep -q '\\[C1\\] PASS' && echo \"$out\" | grep -q '\\[C2\\] PASS' && echo \"$out\" | grep -q '\\[C3\\] PASS' && echo PASS || { echo \"schema/README.md failed --target sweep (rc=$rc)\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "schema/README.md names the new schema and its Validates column, and its own frontmatter version strictly increased vs HEAD with exactly one new change_log entry",
+      "command": "f=schema/README.md; grep -q 'contract_review.schema.json' \"$f\" || { echo 'schema/README.md does not name contract_review.schema.json'; exit 1; }; python3 -c \"\nimport subprocess, sys, yaml\n\ndef frontmatter(text):\n    lines = text.splitlines()\n    if not lines or lines[0].strip() != '---':\n        return None\n    end = None\n    for i, l in enumerate(lines[1:], start=1):\n        if l.strip() == '---':\n            end = i\n            break\n    if end is None:\n        return None\n    return yaml.safe_load(chr(10).join(lines[1:end])) or {}\n\ndef parts(v):\n    return tuple(int(x) for x in str(v).split('.'))\n\npath = '$f'\ncur_text = open(path, encoding='utf-8').read()\ncur_fm = frontmatter(cur_text)\nhead_text = subprocess.run(['git', 'show', f'HEAD:{path}'], capture_output=True, text=True, check=True).stdout\nhead_fm = frontmatter(head_text) or {}\nhead_v, cur_v = head_fm.get('version'), cur_fm.get('version')\nif not head_v or not cur_v or parts(cur_v) <= parts(head_v):\n    print(f'version did not strictly increase ({head_v} -> {cur_v})')\n    sys.exit(1)\ncur_entries = cur_fm.get('change_log') or []\nhead_entries = head_fm.get('change_log') or []\nif len(cur_entries) != len(head_entries) + 1:\n    print(f'expected exactly one new change_log entry vs HEAD; HEAD had {len(head_entries)}, current has {len(cur_entries)}')\n    sys.exit(1)\nprint(f'PASS (version {head_v} -> {cur_v})')\n\""
+    },
+    {
+      "acceptance_test": "At least one deliberately-invalid document is REJECTED by each new/changed schema (negative test per 02_adversarial_tdd Section 5): a fixture verdict missing every discriminating key is rejected by BOTH union branches",
+      "command": "python3 -c \"\nimport json, jsonschema, sys\nqv = json.load(open('schema/qa_verdict.schema.json'))\ncr = json.load(open('schema/contract_review.schema.json'))\nbad_doc = {'unrelated_key': 'no discriminating fields at all'}\nrejected_all = True\nfor name, schema in (('qa_verdict.schema.json', qv), ('contract_review.schema.json', cr)):\n    try:\n        jsonschema.validate(bad_doc, schema)\n        print(f'{name} incorrectly ACCEPTED the deliberately-invalid fixture')\n        rejected_all = False\n    except jsonschema.ValidationError:\n        pass\nsys.exit(0 if rejected_all else 1)\n\" && echo PASS || { echo 'negative fixture was not rejected by both schemas'; exit 1; }"
+    },
+    {
+      "acceptance_test": "Validator stays green with UNCHANGED count (still 8; enforcement is F-028): bash tools/validate.sh 2>&1 | tail -1 | grep -qx 'SUMMARY: 8 passed, 0 failed'",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | tail -1 | grep -qx 'SUMMARY: 8 passed, 0 failed' && test \"$rc\" -eq 0 && echo PASS || { echo 'validator summary/count regressed'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (untracked-aware scope guard, composed from tools/verify_lib.sh's vlib_scope_guard): only the five expected paths (the four modified files plus the one new schema file) changed outside .agent/",
+      "command": "source tools/verify_lib.sh; vlib_scope_guard 'schema/qa_verdict.schema.json' 'schema/contract_review.schema.json' 'schema/contract.schema.json' 'schema/README.md' 'NIZAM.json' && echo PASS || exit 1"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (non-goal enforcement): tools/validate.sh, CHANGELOG.md, schema/run_state.schema.json, schema/debt.schema.json, and schema/capability_profile.schema.json are untouched, and NIZAM.json framework.version stays 0.4.1",
+      "command": "git diff --quiet HEAD -- tools/validate.sh CHANGELOG.md schema/run_state.schema.json schema/debt.schema.json schema/capability_profile.schema.json || { echo 'an out-of-scope file was modified'; exit 1; }; v=$(python3 -c \"import json; print(json.load(open('NIZAM.json'))['framework']['version'])\"); test \"$v\" = '0.4.1' && echo PASS || { echo \"NIZAM.json framework.version changed to $v, expected 0.4.1 unchanged\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness -- no pre-existing check regressed, C1-C8 all still PASS on the full sweep)",
+      "command": "out=$(bash tools/validate.sh 2>&1); fail=0; for c in C1 C2 C3 C4 C5 C6 C7 C8; do echo \"$out\" | grep -q \"\\[$c\\] PASS\" || { echo \"regression: $c did not report PASS\"; fail=1; }; done; test \"$fail\" -eq 0 && echo PASS || exit 1"
+    }
+  ],
+  "estimated_lines": 180,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/025-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/025-verify-01.txt for the first entry, ..., .agent/evidence/025-verify-15.txt for the fifteenth). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T15:57:23Z",
+    "revisions": 1
+  }
+}

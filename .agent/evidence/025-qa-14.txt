@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- tools/validate.sh CHANGELOG.md schema/run_state.schema.json schema/debt.schema.json schema/capability_profile.schema.json || { echo 'an out-of-scope file was modified'; exit 1; }; v=$(python3 -c "import json; print(json.load(open('NIZAM.json'))['framework']['version'])"); test "$v" = '0.4.1' && echo PASS || { echo "NIZAM.json framework.version changed to $v, expected 0.4.1 unchanged"; exit 1; }
+PASS
+EXIT:0

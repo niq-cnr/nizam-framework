@@ -1,0 +1,200 @@
+set -u
+echo "### PART 1: git diff HEAD -- .agent/qa .agent/contracts (must be EMPTY -- no immutable record edited)"
+git diff HEAD -- .agent/qa .agent/contracts
+echo "diff_exit:$?"
+
+echo
+echo "### PART 2: every .agent/qa/*.json validates against qa_verdict OR contract_review (independent re-derivation)"
+python3 -c "
+import json, glob, jsonschema
+qv = json.load(open('schema/qa_verdict.schema.json'))
+cr = json.load(open('schema/contract_review.schema.json'))
+files = sorted(glob.glob('.agent/qa/*.json'))
+bad = []
+for f in files:
+    d = json.load(open(f))
+    ok = False
+    for s in (qv, cr):
+        try:
+            jsonschema.validate(d, s); ok = True; break
+        except jsonschema.ValidationError:
+            pass
+    if not ok:
+        bad.append(f)
+print(f'{len(files)} qa artifacts checked; failures: {bad}')
+"
+
+echo
+echo "### PART 3: every .agent/contracts/*.json validates against contract.schema.json"
+python3 -c "
+import json, glob, jsonschema
+s = json.load(open('schema/contract.schema.json'))
+files = sorted(glob.glob('.agent/contracts/*.json'))
+bad = []
+for f in files:
+    d = json.load(open(f))
+    try:
+        jsonschema.validate(d, s)
+    except jsonschema.ValidationError as e:
+        bad.append((f, str(e)[:150]))
+print(f'{len(files)} contracts checked; failures: {bad}')
+"
+
+echo
+echo "### PART 4: anti-permissive garbage/near-miss fixtures REJECTED by both new/changed schemas"
+python3 -c "
+import json, jsonschema
+qv = json.load(open('schema/qa_verdict.schema.json'))
+cr = json.load(open('schema/contract_review.schema.json'))
+
+def check(name, doc, schema, schema_name):
+    try:
+        jsonschema.validate(doc, schema)
+        return f'{name} vs {schema_name}: ACCEPTED (BAD -- schema is too permissive)'
+    except jsonschema.ValidationError as e:
+        return f'{name} vs {schema_name}: REJECTED (expected)'
+
+fixtures = {}
+fixtures['empty_object'] = {}
+fixtures['foo_only'] = {'foo': 1}
+fixtures['legacy_qa_missing_checks'] = {
+    'feature_id': '999', 'verdict': 'pass', 'executed_at': '2026-01-01', 'required_fixes': []
+}
+fixtures['evolved_qa_missing_final_verdict'] = {
+    'feature_id': '999', 'qa_pass': True, 'checks_run': 5, 'checks_passed': 5,
+    'adversarial': {'performed': True}, 'evidence_files': [], 'issues': [],
+    'unsupported_claims': [], 'missing_acceptance_coverage': [], 'required_fixes': []
+}
+fixtures['contract_review_missing_final_verdict'] = {
+    'review': 'contract-testability', 'feature': '999', 'issues': [],
+    'missing_acceptance_coverage': [], 'unsupported_claims': []
+}
+fixtures['contract_review_missing_issues'] = {
+    'review': 'contract-testability', 'feature': '999',
+    'missing_acceptance_coverage': [], 'unsupported_claims': [],
+    'final_verdict': {'approved': True, 'summary': 'x'}
+}
+
+any_bad = False
+for name, doc in fixtures.items():
+    r1 = check(name, doc, qv, 'qa_verdict')
+    r2 = check(name, doc, cr, 'contract_review')
+    print(r1); print(r2)
+    if 'BAD' in r1 or 'BAD' in r2:
+        any_bad = True
+print('ALL_REJECTED_OK' if not any_bad else 'PERMISSIVENESS_DEFECT_FOUND')
+"
+
+echo
+echo "### PART 5: discriminator separation -- legacy(000)/evolved(017) qa validate under qa_verdict only; contract-review verdicts (020/021/022) validate under contract_review only"
+python3 -c "
+import json, jsonschema
+qv = json.load(open('schema/qa_verdict.schema.json'))
+cr = json.load(open('schema/contract_review.schema.json'))
+
+def which(doc, label):
+    qv_ok = cr_ok = False
+    try:
+        jsonschema.validate(doc, qv); qv_ok = True
+    except jsonschema.ValidationError: pass
+    try:
+        jsonschema.validate(doc, cr); cr_ok = True
+    except jsonschema.ValidationError: pass
+    print(f'{label}: qa_verdict={qv_ok} contract_review={cr_ok}')
+
+which(json.load(open('.agent/qa/000.json')), '000.json (legacy qa)')
+which(json.load(open('.agent/qa/017.json')), '017.json (evolved qa)')
+which(json.load(open('.agent/qa/020-contract-review.json')), '020-contract-review.json')
+which(json.load(open('.agent/qa/021-contract-review.json')), '021-contract-review.json')
+which(json.load(open('.agent/qa/022.json')), '022.json (contract-review shape, qa-style filename)')
+"
+
+echo
+echo "### PART 6: contract.schema.json amendments (string form 001/016, object form 019) + approvals.revisions (016/019/024) validate"
+python3 -c "
+import json, jsonschema
+s = json.load(open('schema/contract.schema.json'))
+for n in ('001','016','019'):
+    c = json.load(open(f'.agent/contracts/{n}.json'))
+    jsonschema.validate(c, s)
+    print(f'{n}.json: amendments={type(c.get(\"amendments\"))} -- validates OK')
+for n in ('016','019','024'):
+    c = json.load(open(f'.agent/contracts/{n}.json'))
+    rev = c.get('approvals', {}).get('revisions')
+    print(f'{n}.json approvals.revisions={rev!r}')
+print('26 contracts total validated separately in Part 3')
+"
+
+echo
+echo "### PART 7: run_state.schema.json unchanged vs HEAD, and run_state.json still validates"
+git diff --quiet HEAD -- schema/run_state.schema.json && echo "run_state.schema.json: UNCHANGED (git diff empty)" || echo "run_state.schema.json: CHANGED (VIOLATION)"
+python3 -c "
+import json, jsonschema
+jsonschema.validate(json.load(open('.agent/run_state.json')), json.load(open('schema/run_state.schema.json')))
+print('run_state.json validates against run_state.schema.json: PASS')
+"
+
+echo
+echo "### PART 8: non-goals -- no validate.sh/CHANGELOG/debt/capability_profile edit; framework.version still 0.4.1"
+git diff --quiet HEAD -- tools/validate.sh CHANGELOG.md schema/debt.schema.json schema/capability_profile.schema.json && echo "non-goal files UNCHANGED" || echo "VIOLATION: a non-goal file was modified"
+python3 -c "
+import json
+v = json.load(open('NIZAM.json'))['framework']['version']
+print('framework.version =', v, '-- OK' if v == '0.4.1' else 'VIOLATION')
+"
+
+echo
+echo "### PART 9: full validator sweep"
+bash tools/validate.sh 2>&1 | tail -1
+--- OUTPUT ---
+### PART 1: git diff HEAD -- .agent/qa .agent/contracts (must be EMPTY -- no immutable record edited)
+diff_exit:0
+
+### PART 2: every .agent/qa/*.json validates against qa_verdict OR contract_review (independent re-derivation)
+29 qa artifacts checked; failures: []
+
+### PART 3: every .agent/contracts/*.json validates against contract.schema.json
+26 contracts checked; failures: []
+
+### PART 4: anti-permissive garbage/near-miss fixtures REJECTED by both new/changed schemas
+empty_object vs qa_verdict: REJECTED (expected)
+empty_object vs contract_review: REJECTED (expected)
+foo_only vs qa_verdict: REJECTED (expected)
+foo_only vs contract_review: REJECTED (expected)
+legacy_qa_missing_checks vs qa_verdict: REJECTED (expected)
+legacy_qa_missing_checks vs contract_review: REJECTED (expected)
+evolved_qa_missing_final_verdict vs qa_verdict: REJECTED (expected)
+evolved_qa_missing_final_verdict vs contract_review: REJECTED (expected)
+contract_review_missing_final_verdict vs qa_verdict: REJECTED (expected)
+contract_review_missing_final_verdict vs contract_review: REJECTED (expected)
+contract_review_missing_issues vs qa_verdict: REJECTED (expected)
+contract_review_missing_issues vs contract_review: REJECTED (expected)
+ALL_REJECTED_OK
+
+### PART 5: discriminator separation -- legacy(000)/evolved(017) qa validate under qa_verdict only; contract-review verdicts (020/021/022) validate under contract_review only
+000.json (legacy qa): qa_verdict=True contract_review=False
+017.json (evolved qa): qa_verdict=True contract_review=False
+020-contract-review.json: qa_verdict=False contract_review=True
+021-contract-review.json: qa_verdict=False contract_review=True
+022.json (contract-review shape, qa-style filename): qa_verdict=False contract_review=True
+
+### PART 6: contract.schema.json amendments (string form 001/016, object form 019) + approvals.revisions (016/019/024) validate
+001.json: amendments=<class 'list'> -- validates OK
+016.json: amendments=<class 'list'> -- validates OK
+019.json: amendments=<class 'list'> -- validates OK
+016.json approvals.revisions=0
+019.json approvals.revisions=1
+024.json approvals.revisions=1
+26 contracts total validated separately in Part 3
+
+### PART 7: run_state.schema.json unchanged vs HEAD, and run_state.json still validates
+run_state.schema.json: UNCHANGED (git diff empty)
+run_state.json validates against run_state.schema.json: PASS
+
+### PART 8: non-goals -- no validate.sh/CHANGELOG/debt/capability_profile edit; framework.version still 0.4.1
+non-goal files UNCHANGED
+framework.version = 0.4.1 -- OK
+
+### PART 9: full validator sweep
+SUMMARY: 8 passed, 0 failed
+EXIT:0

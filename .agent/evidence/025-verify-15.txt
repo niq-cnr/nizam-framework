@@ -1,0 +1,4 @@
+out=$(bash tools/validate.sh 2>&1); fail=0; for c in C1 C2 C3 C4 C5 C6 C7 C8; do echo "$out" | grep -q "\[$c\] PASS" || { echo "regression: $c did not report PASS"; fail=1; }; done; test "$fail" -eq 0 && echo PASS || exit 1
+---
+PASS
+EXIT:0

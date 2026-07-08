@@ -63,6 +63,16 @@
       "description": "Explicit statements of what this contract does NOT authorize.",
       "items": { "type": "string" }
     },
+    "amendments": {
+      "type": "array",
+      "description": "Records of post-approval amendments to this contract, if any. Each entry is either a legacy free-text string in the form 'YYYY-MM-DD: <summary>' (per contracts 001.json and 016.json), or the richer structured object form {at, by, target, type, change, rationale, dry_run_proof, ratified_by_mode_b} (per contract 019.json). Not required at the top level -- contracts with zero amendments (the common case) still validate without this key.",
+      "items": {
+        "oneOf": [
+          { "type": "string" },
+          { "type": "object", "additionalProperties": true }
+        ]
+      }
+    },
     "verification": {
       "type": "array",
       "description": "The commands the generator and validator/evaluator run to prove the contract's acceptance tests are met.",
@@ -95,7 +105,12 @@
       "properties": {
         "validator_mode_a": { "type": "boolean" },
         "evaluator_contract_review": { "type": "boolean" },
-        "approved_at": { "type": "string" }
+        "approved_at": { "type": "string" },
+        "revisions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of contract-negotiation revision rounds this contract went through before approval."
+        }
       },
       "additionalProperties": true
     }

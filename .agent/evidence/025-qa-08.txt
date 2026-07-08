@@ -1,0 +1,5 @@
+grep -q 'schema/contract_review.schema.json' NIZAM.json || { echo 'NIZAM.json does not index schema/contract_review.schema.json'; exit 1; }; out=$(bash tools/validate.sh --target NIZAM.json 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 && echo "$out" | grep -q '\[C4\] PASS' && echo PASS || { echo "NIZAM.json failed C4 (rc=$rc)"; exit 1; }
+[C4] PASS index-integrity
+SUMMARY: 1 passed, 0 failed
+PASS
+EXIT:0

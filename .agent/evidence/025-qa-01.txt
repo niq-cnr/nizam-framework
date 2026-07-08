@@ -1,0 +1,7 @@
+f=schema/qa_verdict.schema.json; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import json, sys
+s = json.load(open('$f'))
+sys.exit(0 if ('anyOf' in s or 'oneOf' in s) else 1)
+" && echo PASS || { echo 'qa_verdict.schema.json is not a union schema'; exit 1; }
+PASS
+EXIT:0
