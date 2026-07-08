@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "002-self-compliance",
-  "current_feature": null,
-  "status": "awaiting_human_scope_acknowledgment",
-  "updated_at": "2026-07-08T14:40:00Z",
+  "current_feature": "013",
+  "status": "contract_negotiation",
+  "updated_at": "2026-07-08T15:00:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -221,6 +221,11 @@
       "at": "2026-07-08T14:40:00Z",
       "event": "scope_flag_raised",
       "detail": "Feature 012 complete (contract 2 revisions incl. no-op-stub and cp-a false-fail catches; Mode B + QA 17/17 first-pass; QA independently ran all 4 mutation tests + historical-defect regression). Contract-scoped 818 lines vs 360 estimate -> per-feature flag (3x rolling avg = 243). Cumulative 899/1001 (89.8%); remaining estimates (~310) project a cumulative-ceiling breach during feature 014. Pipeline paused: feature 013 will NOT begin until human acknowledgment is recorded, per Scope Budget Protocol."
+    },
+    {
+      "at": "2026-07-08T15:00:00Z",
+      "event": "scope_acknowledged_rebaselined",
+      "detail": "Human acknowledged the feature-012 scope flag and authorized re-baseline (option 1): original_estimate_lines 770 -> 1250, ceiling 1625. Plan Amendment Rule applies (human-authorized, orchestrator-recorded). Pipeline resumed; feature 013 dependency gate satisfied (012 complete)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -295,7 +300,7 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 770,
+    "original_estimate_lines": 1250,
     "total_lines_changed": 899,
     "per_feature": [
       {
@@ -309,8 +314,15 @@
         "id": "012",
         "estimated": 360,
         "actual": 818,
-        "flag": "SCOPE FLAG per methodology/00_planning.md: 818 > 3x rolling average (3x81=243). Non-halting; explicit human acknowledgment REQUIRED before feature 013 begins."
+        "flag": "SCOPE FLAG per methodology/00_planning.md: 818 > 3x rolling average (3x81=243). Non-halting; explicit human acknowledgment REQUIRED before feature 013 begins. ACKNOWLEDGED by human 2026-07-08 (\"1. proceed\")."
       }
-    ]
+    ],
+    "rebaseline": {
+      "from": 770,
+      "to": 1250,
+      "authorized_by": "human",
+      "at": "2026-07-08T15:00:00Z",
+      "reason": "Option 1: flag acknowledged + phase estimate re-baselined to reflect the gate-hardened validator (899 actual through 012 + ~310 remaining estimates, rounded up). New cumulative ceiling: 1625 (130%)."
+    }
   }
 }
