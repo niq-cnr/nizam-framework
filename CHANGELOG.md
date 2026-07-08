@@ -7,6 +7,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+_No unreleased changes._
+
+## [0.2.0] - 2026-07-08
+
 ### Added
 
 - `docs/architecture/ADR-001-ci-compliance-enforcement.md`: records the
@@ -41,6 +45,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `methodology/05_release_train.md` (0.2.0): adds Release Mechanics
   Ownership (Section 6), assigning changelog roll-up, date-stamping, and tag
   creation to the release-manager/orchestrator role.
+
+### Fixed
+
+- `tools/validate.sh`: a missing C5 sweep target now emits `[C5] FAIL` and
+  continues to the `SUMMARY` line instead of aborting the whole run; the
+  leading-HTML-comment frontmatter tolerance is now scoped to
+  `tools/fixtures/` only, so a shipped document cannot evade the C1 check.
+
+### Security
+
+- `.github/workflows/compliance.yml`: actions pinned to source-verified
+  commit SHAs (`actions/checkout` v4.2.2, `actions/setup-python` v5.3.0),
+  least-privilege `permissions: contents: read`, `persist-credentials: false`
+  on checkout, and a `concurrency` group with `cancel-in-progress`.
 
 ## [0.1.0] - 2026-07-08
 
