@@ -1,7 +1,7 @@
 ---
 id: nizam-methodology-readme
 title: "Methodology Module — Index"
-description: "Index for the methodology/ module: the six protocol documents governing planning, contract-first execution, adversarial TDD, the universal circuit breaker, tool-driven durable state, and the release train."
+description: "Index for the methodology/ module: the protocol documents governing planning, contract-first execution, adversarial TDD, the universal circuit breaker, tool-driven durable state, eval and trace infrastructure, the release train, and cross-repo dependency gates."
 version: 0.2.1
 status: active
 authoritative_source: methodology/README.md
@@ -26,7 +26,10 @@ gates defined in `standard/AGF.md`.
 | [`02_adversarial_tdd.md`](02_adversarial_tdd.md) | Adversarial Test Design — Evaluator independence (never trust generator-supplied evidence), false-pass and false-fail hunting patterns, the negative-testing requirement, and the mandatory per-QA-round adversarial spot-check. |
 | [`03_circuit_breaker.md`](03_circuit_breaker.md) | Universal Circuit Breaker (DD-2) — the single authoritative 3-strike attempt limit embedded by every repeatable loop in the framework, its per-attempt strategy table, and the forbidden-fourth-attempt halt/escalation procedure. |
 | [`04_tool_driven_state.md`](04_tool_driven_state.md) | Tool-Driven State Management (DD-1 + DD-3) — querying the `NIZAM.json` capability index instead of bulk-reading governance directories, evidence externalisation to `.agent/evidence/`, and the durable-state artifact family table. |
-| [`05_release_train.md`](05_release_train.md) | Release Train Protocol — semantic-version git-tag releases, the breaking/minor/patch classification rules, changelog discipline, and the consumer upgrade path via re-bootstrap against a new pinned tag. |
+| [`05_eval_and_trace.md`](05_eval_and_trace.md) | Eval and Trace Infrastructure — the verification hierarchy, trace capture requirements, and role-specific eval suites. |
+| [`06_release_train.md`](06_release_train.md) | Release Train Protocol — semantic-version git-tag releases, the breaking/minor/patch classification rules, changelog discipline, and the consumer upgrade path via re-bootstrap against a new pinned tag. |
+| [`07_eval_gated_promotion.md`](07_eval_gated_promotion.md) | Eval-Gated Model Promotion Protocol — treats model and prompt changes as code changes requiring contract-first execution and eval passage. |
+| [`08_cross_repo_dependency_gate.md`](08_cross_repo_dependency_gate.md) | Cross-Repo Dependency Gate — how the Planner updates the ecosystem dependency graph and blocks execution until upstream contract deltas are reviewed. |
 
 ## Design Decision Cross-Reference
 

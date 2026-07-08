@@ -22,11 +22,11 @@ This document tracks known technical debt, architectural gaps, and deferred work
 
 ## Active Debt Items
 
-| ID | Date | Severity | Description | Remediation |
-| --- | --- | --- | --- | --- |
-| {{DEBT_ID_PREFIX}}-001 | {{YYYY-MM-DD}} | {{SEVERITY}} | {{DEBT_DESCRIPTION}} | {{REMEDIATION_PLAN}} |
+| ID | Date | Feature ID | Failed Step | Attempt Count | Failure Mode | Human Resolution |
+| --- | --- | --- | --- | --- | --- | --- |
+| {{DEBT_ID_PREFIX}}-001 | {{YYYY-MM-DD}} | {{FEATURE_ID}} | {{FAILED_STEP}} | {{ATTEMPT_COUNT}} | {{FAILURE_MODE}} | {{HUMAN_RESOLUTION}} |
 
-<!-- Severity SHOULD be one of: BLOCKER, HIGH, MEDIUM, LOW. -->
+<!-- Failure Mode SHOULD be one of: context_drift, contract_drift, privilege_creep, tool_ambiguity, eval_blindness, provenance_break, deployment_mismatch, other. -->
 
 ## Resolved Items
 

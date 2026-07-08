@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nizamiq.com/schema/debt.schema.json",
+  "title": "Circuit Breaker Debt Log",
+  "description": "Schema for recording circuit breaker trips and architectural debt.",
+  "type": "object",
+  "properties": {
+    "incidents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "feature_id": {
+            "type": "string"
+          },
+          "failed_step": {
+            "type": "string"
+          },
+          "attempt_count": {
+            "type": "integer"
+          },
+          "failure_mode": {
+            "type": "string",
+            "enum": [
+              "context_drift",
+              "contract_drift",
+              "privilege_creep",
+              "tool_ambiguity",
+              "eval_blindness",
+              "provenance_break",
+              "deployment_mismatch",
+              "other"
+            ]
+          },
+          "human_resolution": {
+            "type": "string",
+            "description": "How the human reviewer resolved the block."
+          }
+        },
+        "required": ["timestamp", "feature_id", "failed_step", "attempt_count", "failure_mode"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["incidents"],
+  "additionalProperties": false
+}

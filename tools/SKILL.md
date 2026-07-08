@@ -54,6 +54,8 @@ The full statement of this discipline lives in
 `methodology/04_tool_driven_state.md` (DD-1 and DD-3); this section only
 summarizes it for the runtime's first action.
 
+**Cross-Repo Intelligence (NMF Hybrid)**: Before acting in a repository, the runtime MUST read the strategy repository's `SCOPE.md`, the local `ECOSYSTEM.json`, and relevant ADRs per `standard/cross_repo_governance.md`.
+
 ## 3. The Execution Loop Summary
 
 Every feature moves through a two-loop, contract-first state machine before it
@@ -79,6 +81,10 @@ loading this skill must recognize its shape:
 
 Read `methodology/01_execution.md` before proposing, implementing, or
 reviewing any contract.
+
+**Eval-Gated Promotion**: Model and prompt changes are treated as code changes and MUST pass through this exact execution loop, blocking promotion until role-specific evals pass per `methodology/07_eval_gated_promotion.md`.
+
+**Cross-Repo Dependency Gate**: If a feature requires upstream API changes, the downstream Generator is blocked until the upstream contract delta is approved per `methodology/08_cross_repo_dependency_gate.md`.
 
 ## 4. Circuit Breaker Obligations
 
@@ -187,5 +193,6 @@ whether to advance; prose framing around it is informational only.
   payload, and the adapter contract for the three abstract operations
   (read-state, write-evidence, run-verification).
 - `methodology/01_execution.md`, `methodology/03_circuit_breaker.md`,
-  `methodology/04_tool_driven_state.md`, `standard/anti_hallucination.md` —
+  `methodology/04_tool_driven_state.md`, `standard/anti_hallucination.md`,
+  `methodology/07_eval_gated_promotion.md`, `methodology/08_cross_repo_dependency_gate.md` —
   the authoritative protocol documents this skill summarizes and defers to.

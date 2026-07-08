@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nizamiq.com/schema/capability_profile.schema.json",
+  "title": "Capability Profile Binding",
+  "description": "Schema for binding capability profiles to specific models and tool permissions.",
+  "type": "object",
+  "properties": {
+    "profiles": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9-]+$": {
+          "type": "object",
+          "properties": {
+            "primary_model": {
+              "type": "string",
+              "description": "The current eval-gated primary model for this profile."
+            },
+            "fallback_model": {
+              "type": "string",
+              "description": "The pre-approved fallback model from a different provider."
+            },
+            "allowed_tools": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "The explicit list of MCP tools or bash/kubectl permissions allowed for this profile."
+            },
+            "safety_class": {
+              "type": "string",
+              "enum": ["low", "medium", "high", "critical"]
+            }
+          },
+          "required": ["primary_model", "fallback_model", "allowed_tools", "safety_class"],
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "required": ["profiles"],
+  "additionalProperties": false
+}

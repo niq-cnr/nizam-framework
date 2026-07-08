@@ -1,7 +1,7 @@
 {
   "framework": {
     "name": "nizam-framework",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "A generalised, AI-legible, versioned governance framework distilling documentation standards, planning and execution protocols, adversarial TDD, contract-first harness loops, durable agent state, and governance inheritance into a single portable payload any AI agent or engineering team can consume in any runtime, for any project."
   },
   "modules": [
@@ -13,6 +13,13 @@
         "standard/GIP.md",
         "standard/AGF.md",
         "standard/anti_hallucination.md",
+        "standard/capability_profiles.md",
+        "standard/ci_gates.md",
+        "standard/mcp_policy.md",
+        "standard/failure_modes.md",
+        "standard/provenance_policy.md",
+        "standard/permission_classes.md",
+        "standard/cross_repo_governance.md",
         "standard/README.md"
       ]
     },
@@ -25,7 +32,10 @@
         "methodology/02_adversarial_tdd.md",
         "methodology/03_circuit_breaker.md",
         "methodology/04_tool_driven_state.md",
-        "methodology/05_release_train.md",
+        "methodology/05_eval_and_trace.md",
+        "methodology/06_release_train.md",
+        "methodology/07_eval_gated_promotion.md",
+        "methodology/08_cross_repo_dependency_gate.md",
         "methodology/README.md"
       ]
     },
@@ -83,6 +93,7 @@
       "key_documents": [
         "docs/architecture/ADR-001-ci-compliance-enforcement.md",
         "docs/architecture/ADR-002-html-user-guide.md",
+        "docs/architecture/ADR-003-vibe-coding-manifesto-hybrid.md",
         "docs/guide/index.html"
       ]
     }
@@ -102,6 +113,41 @@
       "id": "agent-governance-framework",
       "summary": "The generalised multi-agent execution model: agent roles, the dual validator gate, and the JSON verdict parse rule.",
       "authoritative_source": "standard/AGF.md"
+    },
+    {
+      "id": "nizam-capability-profiles",
+      "summary": "Binds agent roles to task types, latency budgets, cost budgets, and safety classes rather than to specific models.",
+      "authoritative_source": "standard/capability_profiles.md"
+    },
+    {
+      "id": "nizam-ci-gates",
+      "summary": "The mandatory 10-gate MERGE_READY formula that ensures no unverified code bypasses the contract-first execution loop.",
+      "authoritative_source": "standard/ci_gates.md"
+    },
+    {
+      "id": "nizam-mcp-policy",
+      "summary": "Rules for integrating Model Context Protocol (MCP) servers: treating MCP as a capability plane, not a trust plane.",
+      "authoritative_source": "standard/mcp_policy.md"
+    },
+    {
+      "id": "nizam-failure-modes",
+      "summary": "The seven canonical failure modes in agentic software engineering, with explicit detection and response protocols.",
+      "authoritative_source": "standard/failure_modes.md"
+    },
+    {
+      "id": "nizam-provenance-policy",
+      "summary": "Rules for ensuring every artifact, prompt, model, tool call, and release is attestable and auditable.",
+      "authoritative_source": "standard/provenance_policy.md"
+    },
+    {
+      "id": "nizam-permission-classes",
+      "summary": "Deny-by-default role permission classes and Kubernetes RBAC allocations for agentic systems.",
+      "authoritative_source": "standard/permission_classes.md"
+    },
+    {
+      "id": "nizam-cross-repo-governance",
+      "summary": "The executable truth layer, the cross-repo query protocol, and the seven-tier architecture model for ecosystem-scale governance.",
+      "authoritative_source": "standard/cross_repo_governance.md"
     },
     {
       "id": "anti-hallucination-constraints",
@@ -134,9 +180,24 @@
       "authoritative_source": "methodology/04_tool_driven_state.md"
     },
     {
+      "id": "nizam-eval-and-trace",
+      "summary": "The verification hierarchy, trace capture requirements, and role-specific eval suites that guarantee quality as models and prompts change.",
+      "authoritative_source": "methodology/05_eval_and_trace.md"
+    },
+    {
       "id": "nizam-release-train",
       "summary": "Semantic-version git-tag release cuts, changelog discipline, and the consumer upgrade path via re-bootstrap.",
-      "authoritative_source": "methodology/05_release_train.md"
+      "authoritative_source": "methodology/06_release_train.md"
+    },
+    {
+      "id": "nizam-eval-gated-promotion",
+      "summary": "Treats model and prompt changes as code changes, routing them through the contract-first execution loop and blocking promotion until role-specific evals pass.",
+      "authoritative_source": "methodology/07_eval_gated_promotion.md"
+    },
+    {
+      "id": "nizam-cross-repo-dependency-gate",
+      "summary": "How the Planner updates the ecosystem dependency graph and blocks execution until upstream contract deltas are reviewed.",
+      "authoritative_source": "methodology/08_cross_repo_dependency_gate.md"
     },
     {
       "id": "nizam-governance-skill-manifest",
@@ -160,6 +221,8 @@
     }
   ],
   "schemas": [
+    "schema/capability_profile.schema.json",
+    "schema/debt.schema.json",
     "schema/frontmatter.schema.json",
     "schema/manifest.schema.json",
     "schema/phase.schema.json",

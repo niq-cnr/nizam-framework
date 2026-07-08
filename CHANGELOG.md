@@ -7,6 +7,30 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-08
+
+### Added
+
+- **Nizam Manifesto Framework (NMF) Hybrid**: Integrated the constitutional breadth of the Vibe Coding Manifesto into the installable, schema-driven Nizam Framework format (ADR-003).
+- `standard/capability_profiles.md` and `schema/capability_profile.schema.json`: Capability Profile Model binding roles to task types and safety classes, not specific models.
+- `standard/ci_gates.md`: The mandatory 10-gate `MERGE_READY` formula.
+- `standard/mcp_policy.md`: MCP Security Policy for namespace rules and surface allocations.
+- `standard/failure_modes.md`: The seven canonical failure modes and detection/response protocols.
+- `standard/provenance_policy.md`: Supply-Chain Provenance Policy for artifact attestations and audit envelopes.
+- `standard/permission_classes.md`: Permission and Sandbox Policy defining deny-by-default RBAC and Kubernetes allocations.
+- `standard/cross_repo_governance.md`: Cross-Repository Intelligence rules, executable truth layer, and seven-tier architecture model.
+- `methodology/05_eval_and_trace.md`: Eval and Trace Infrastructure defining the verification hierarchy and role-specific eval suites.
+- `methodology/07_eval_gated_promotion.md`: Eval-Gated Model Promotion Protocol treating model changes as code changes.
+- `methodology/08_cross_repo_dependency_gate.md`: Cross-Repo Dependency Gate requiring upstream contract delta approval before downstream execution.
+- `templates/DEBT.md` and `schema/debt.schema.json`: Circuit Breaker Debt Log for recording circuit breaker trips and architectural debt.
+
+### Changed
+
+- Renamed `methodology/05_release_train.md` to `methodology/06_release_train.md` to maintain ordering.
+- Updated `NIZAM.json` to index all new capabilities, modules, schemas, and templates.
+- Updated `standard/README.md` and `methodology/README.md` to reflect new protocol documents.
+- Updated `tools/SKILL.md` to mandate Cross-Repo Intelligence queries before action, and to acknowledge Eval-Gated Promotion and Cross-Repo Dependency Gates.
+
 ## [0.3.0] - 2026-07-08
 
 ### Added
