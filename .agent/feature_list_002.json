@@ -101,6 +101,24 @@
         "NIZAM.json remains schema-valid with all indexed paths resolving on the final tree (regression guard via bash tools/validate.sh exit 0)"
       ],
       "estimated_lines": 40
+    },
+    {
+      "id": "016",
+      "name": "PR #3 Review Remediation (post-phase amendment)",
+      "description": "Human-directed remediation of still-valid PR #3 review findings on shipped content, registered per methodology/00_planning.md Sec 9 (Plan Amendment Rule): compliance.yml hardening (actions pinned to source-verified commit SHAs, least-privilege permissions contents:read, concurrency cancel-in-progress, persist-credentials false); tools/validate.sh robustness (check_c5_branding fails with [C5] FAIL + return 1 instead of die so C6-C8 and SUMMARY still run; frontmatter leading-HTML-comment tolerance scoped to tools/fixtures/ paths only, closing a latent C1 evasion vector); product_spec_002.md Sec 3 layout tree gains tools/fixtures/ (patch bump + change_log). Manifest stale-note fix handled as orchestrator state correction. Skipped with reasons: 013-verify-05 evidence (immutable capture; pull_request-absence covered by companion grep check v[3]) and feature_list_002 test 7's loose version grep (completed plan artifact; superseded at execution by contract 014 v[7]'s exact YAML-parsed version==0.2.0 assertion).",
+      "status": "pending",
+      "dependencies": [
+        "015"
+      ],
+      "acceptance_tests": [
+        "compliance.yml pins both actions to full 40-char commit SHAs with version comments: grep -Ec 'uses: actions/(checkout|setup-python)@[0-9a-f]{40} # v' .github/workflows/compliance.yml outputs 2",
+        "compliance.yml declares permissions contents: read, a concurrency group with cancel-in-progress true, and persist-credentials: false (python3 yaml structural assertions)",
+        "validate.sh C5 missing-target failure emits [C5] FAIL and still reaches SUMMARY (mutated-copy behavioral test: delete NIZAM.json in a cp -a scratch copy, run validator, assert non-zero exit AND '[C5] FAIL' AND a 'SUMMARY:' line both present)",
+        "validate.sh frontmatter comment tolerance is fixture-scoped (behavioral: a scratch shipped .md with a leading HTML comment before frontmatter now FAILS C1; the shipped fixtures still parse via --target)",
+        "product_spec_002.md Sec 3 tree includes tools/fixtures/ and its frontmatter carries version 1.0.1 with a matching change_log entry (YAML-parsed)",
+        "bash tools/validate.sh on the clean tree still prints SUMMARY: 8 passed, 0 failed and exits 0"
+      ],
+      "estimated_lines": 45
     }
   ]
 }
