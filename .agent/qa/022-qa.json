@@ -1,0 +1,39 @@
+{
+  "feature_id": "022",
+  "qa_pass": true,
+  "checks_run": 11,
+  "checks_passed": 11,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/022-qa-adversarial.txt",
+    "findings": "6 mandated probe categories run, all PASS, no defects found. (1) [Unreleased]-scoping is real: an independent awk span extraction (from '## [Unreleased]' to the first subsequent '## [') confirmed all six phase-003 mentions (docs/guide/index.html, the NIZAM.json docs-module sentence, CONTEXT.md, README.md, tools/interface.md, standard/GIP.md, LICENSE) genuinely fall within the [Unreleased] span, not the released [0.1.0] section; grep -c confirmed exactly one '## [Unreleased]' heading exists (line 8); grep -n confirmed it precedes '## [0.1.0]' (line 73) with no roll-up. (2) Accuracy (AH-4): 4 entries spot-checked against actual deliverables -- guide self-containment (zero <link rel=stylesheet> / <script src=> in docs/guide/index.html, confirming 'self-contained, dependency-free' is accurate), tools/interface.md discovery order (the CHANGELOG's Fixed bullet is an exact paraphrase of interface.md Section 2 items 1-2: bootstrapped-consumer .nizam/tools/skill.json checked first, repo-root tools/skill.json an explicitly labeled fallback), standard/GIP.md (Section 5 'Adopting in an Existing Repository' with 5.1 Conflict Rules genuinely exists, matching the claimed incremental-adoption-tiers addition), and CONTEXT.md/README.md (both files' own frontmatter change_log entries corroborate the CHANGELOG's Changed bullets). No inaccurate or drifted claim found. (3) AGIP gloss: bootstrap.sh's own header comment (line 6: 'the earlier governance prototype') is the in-tree source for the CHANGELOG's parenthetical 'a predecessor prototype' gloss -- not a fabricated canonical 4-letter expansion; git diff HEAD -- CHANGELOG.md confirmed the ONLY change inside the released [0.1.0] section is this one AGIP-gloss line (plus a cosmetic line-wrap), the record is otherwise byte-identical to HEAD. (4) Human gates un-executed: git tag -l v0.3.0 is empty; neither .github/workflows/pages.yml nor gh-pages.yml exists. (5) No branding: grep -niE 'nizamiq|.svc|cluster.local' CHANGELOG.md returns no match. (6) An independent bash tools/validate.sh re-run is green: exact line 'SUMMARY: 8 passed, 0 failed', exit 0."
+  },
+  "evidence_files": [
+    ".agent/evidence/022-qa-01.txt",
+    ".agent/evidence/022-qa-02.txt",
+    ".agent/evidence/022-qa-03.txt",
+    ".agent/evidence/022-qa-04.txt",
+    ".agent/evidence/022-qa-05.txt",
+    ".agent/evidence/022-qa-06.txt",
+    ".agent/evidence/022-qa-07.txt",
+    ".agent/evidence/022-qa-08.txt",
+    ".agent/evidence/022-qa-09.txt",
+    ".agent/evidence/022-qa-10.txt",
+    ".agent/evidence/022-qa-11.txt",
+    ".agent/evidence/022-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "observations": [
+    "This is the last feature of phase 003; the [Unreleased] section now carries both phase-002 and phase-003 deliverables awaiting a single future human-gated roll-up (v0.2.0/v0.3.0 decision, per methodology/05_release_train.md Sec 6) -- this is by design per the contract's non-goals, not a defect.",
+    "The AGIP parenthetical gloss ('a predecessor prototype') is minimal and non-canonical by design (contract explicitly forbids inventing a 4-letter expansion since none exists in-tree); this is a deliberate scope-limited fix, not a shortcoming."
+  ],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "022",
+    "summary": "All 11 contract-022 verification commands were independently re-run from repo root into fresh 022-qa-NN.txt evidence files (not reused from the generator's 022-verify-NN.txt), and all 11 pass (11/11 EXIT:0): the [Unreleased] section (scoped via awk span, not whole-file grep) names docs/guide/index.html, CONTEXT.md, and README.md; separately names interface.md and GIP.md; the AGIP mention carries a parenthetical gloss containing a sourced 'prototype' framing; tools/validate.sh is green (exact 'SUMMARY: 8 passed, 0 failed', exit 0); no v0.3.0 git tag exists (release remains a human gate); no GitHub Pages workflow file exists (publishing remains a human gate); NIZAM.json still validates against registry/nizam-index.schema.json; exactly one '## [Unreleased]' heading exists and precedes '## [0.1.0]' (no roll-up, no duplicate); the [Unreleased] section names the LICENSE addition; CHANGELOG.md introduces no nizamiq/.svc/cluster.local branding leakage; and git status --porcelain --untracked-files=all confirms only CHANGELOG.md changed outside .agent/. A mandatory 6-probe adversarial spot-check found no defects: the [Unreleased]-scoping is genuinely real (independently re-extracted via awk, not vacuously satisfied by the released section); 4 CHANGELOG entries were spot-checked for accuracy against their actual deliverables (guide self-containment, interface.md discovery order, GIP.md existing-repo-adoption section, CONTEXT.md/README.md changes) with zero inaccurate or drifted claims found; the AGIP gloss is traceable to bootstrap.sh's own in-tree 'governance prototype' framing rather than a fabricated canonical expansion, and git diff HEAD confirms the released [0.1.0] section is otherwise byte-identical to HEAD except that one line; both the release (v0.3.0 tag) and publishing (Pages workflow) human gates remain genuinely un-executed; no branding leakage was introduced; and an independent tools/validate.sh re-run is green. This is the final feature of phase 003. QA verdict: PASS. Phase 003 is ready to advance to closure/human release-gate handoff."
+  }
+}

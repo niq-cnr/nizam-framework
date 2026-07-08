@@ -1,0 +1,3 @@
+f=CHANGELOG.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q '## \[Unreleased\]' "$f" || { echo "CHANGELOG.md missing [Unreleased]-heading"; exit 1; }; unrel=$(awk '/^## \[Unreleased\]/{f=1;next}/^## \[/{f=0}f' "$f"); missing=""; echo "$unrel" | grep -q 'docs/guide/index.html' || missing="$missing docs/guide/index.html"; echo "$unrel" | grep -q 'CONTEXT.md' || missing="$missing CONTEXT.md"; echo "$unrel" | grep -q 'README.md' || missing="$missing README.md"; if [ -n "$missing" ]; then echo "[Unreleased] section missing:$missing"; exit 1; fi; echo PASS
+PASS
+EXIT:0

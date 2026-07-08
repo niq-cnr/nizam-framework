@@ -1,0 +1,3 @@
+n=$(git tag -l 'v0.3.0' | wc -l); test "$n" -eq 0 && echo "PASS (tag count: $n)" || { echo "v0.3.0 tag exists unexpectedly (count=$n) - release is a human gate, must not be auto-cut"; exit 1; }
+PASS (tag count: 0)
+EXIT:0

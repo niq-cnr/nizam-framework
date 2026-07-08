@@ -1,0 +1,2 @@
+f=CHANGELOG.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eq 'AGIP \(|\([^)]*AGIP\)' "$f" || { echo "AGIP not expanded with parenthetical gloss"; exit 1; }; grep -Eq '\bAGIP\b.{0,60}\bprototype\b|\bprototype\b.{0,60}\bAGIP\b' "$f" || { echo "AGIP gloss missing sourced prototype framing"; exit 1; }; echo PASS
+AGIP not expanded with parenthetical gloss

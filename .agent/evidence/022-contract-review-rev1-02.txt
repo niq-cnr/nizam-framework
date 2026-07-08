@@ -1,0 +1,2 @@
+f=CHANGELOG.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; unrel=$(awk '/^## \[Unreleased\]/{f=1;next}/^## \[/{f=0}f' "$f"); missing=""; echo "$unrel" | grep -q 'interface.md' || missing="$missing interface.md"; echo "$unrel" | grep -q 'GIP.md' || missing="$missing GIP.md"; if [ -n "$missing" ]; then echo "[Unreleased] section missing:$missing"; exit 1; fi; echo PASS
+[Unreleased] section missing: interface.md GIP.md

@@ -1,0 +1,124 @@
+INVOCATION (multi-probe adversarial spot-check, run from repo root, feature 022 QA gate):
+
+--- PROBE 1: [Unreleased]-scoping is real (span extraction + heading-count + ordering) ---
+$ awk '/^## \[Unreleased\]/{f=1} f{print} /^## \[0\.1\.0\]/{exit}' CHANGELOG.md
+[full span printed — see below]
+FINDING: the extracted [Unreleased] span (lines 8-72) contains, verbatim, all six phase-003
+mentions required by the contract: `docs/guide/index.html` (Added), the NIZAM.json `docs` module
+sentence (Added, same bullet), `CONTEXT.md` and `README.md` (both named literally with the .md
+suffix, under Changed), `tools/interface.md` and `standard/GIP.md` (both named literally, under
+Fixed), and `LICENSE` (Added). None of these six mentions appear only in [0.1.0] — the awk span
+that stops at the first `## [` after `## [Unreleased]` genuinely captures them, confirming they are
+not vacuously satisfied by whole-file grep against the released section.
+
+$ grep -c '^## \[Unreleased\]' CHANGELOG.md
+1
+FINDING: exactly one `## [Unreleased]` heading exists — no duplicate, no second Unreleased section.
+
+$ grep -n '^## \[' CHANGELOG.md
+8:## [Unreleased]
+73:## [0.1.0] - 2026-07-08
+FINDING: `## [Unreleased]` (line 8) precedes `## [0.1.0]` (line 73) — no roll-up occurred, exactly
+two `## [` headings total (Unreleased + the one released version), consistent with the phase-003
+non-goal "do not roll [Unreleased] into any versioned section."
+PASS.
+
+--- PROBE 2: Accuracy (AH-4) — spot-check >=3 CHANGELOG entries against the actual deliverable ---
+
+(a) Guide self-containment claim ("self-contained, dependency-free HTML user guide") vs
+    docs/guide/index.html:
+    $ grep -n -iE '<link[^>]+rel=.?stylesheet|<script[^>]+src=' docs/guide/index.html
+    none found (self-contained confirmed)
+    FINDING: zero external stylesheet <link> tags and zero <script src=> tags in the 720-line
+    guide — the "self-contained" claim is accurate, not aspirational.
+
+(b) interface.md discovery-order claim ("bootstrapped consumer's .nizam/tools/skill.json is
+    checked first, with the repository-root tools/skill.json retained as an explicitly labeled
+    framework-checkout fallback") vs the actual tools/interface.md Section 2:
+    $ grep -n -A3 'skill.json' tools/interface.md (excerpt)
+    1. Bootstrapped-consumer discovery ... FIRST looks for tools/skill.json under ... by default
+       .nizam/tools/skill.json ...
+    2. Framework-checkout fallback. If no .nizam/tools/skill.json is found, the runtime falls
+       back to a repository-root tools/skill.json path ...
+    FINDING: the CHANGELOG's Fixed entry is an exact paraphrase of interface.md's own Section 2
+    items 1-2 (bootstrapped-consumer-first, repo-root-fallback-second, explicitly labeled) —
+    accurate, no drift.
+
+(c) GIP.md claim ("added an Adopting in an Existing Repository section defining incremental
+    adoption tiers") vs the actual file:
+    $ grep -n 'Adopting in an Existing Repository' standard/GIP.md
+    119:## 5. Adopting in an Existing Repository
+    FINDING: Section 5 "Adopting in an Existing Repository" exists in standard/GIP.md with a 5.1
+    "Conflict Rules for Pre-Existing Files" subsection — the CHANGELOG's claim of an added
+    existing-repo-adoption section with tiers is accurate, matches the file's own change_log entry
+    (H8: "added the Adopting in an Existing Repository section ... docs-standard-only / templates
+    / full loop incremental adoption tiers").
+
+(d) CONTEXT.md/README.md claims (Changed entries) cross-checked against each file's own
+    frontmatter change_log summary — both match: CONTEXT.md's own change_log records "status
+    active", the 4-directory+NIZAM.json payload correction, and the phase-002 compliance surfaces
+    (matching the CHANGELOG bullet verbatim); README.md contains the quickstart, HTML-guide link,
+    GitHub Release link, and validate.sh/compliance.yml/ADR mentions the CHANGELOG bullet claims.
+No inaccurate claim found across the four entries spot-checked (guide, interface.md, GIP.md,
+CONTEXT.md/README.md). PASS.
+
+--- PROBE 3: AGIP gloss — sourcing + [0.1.0] minimality ---
+$ grep -n -i 'agip\|prototype' bootstrap.sh
+6:# This is an evolution of the earlier AGIP (the earlier governance prototype this
+FINDING: bootstrap.sh's own header comment frames AGIP as "the earlier governance prototype" —
+this is the source the contract requires the CHANGELOG gloss to be drawn from. The CHANGELOG's
+gloss ("the earlier AGIP (a predecessor prototype)") is a faithful, non-fabricated paraphrase of
+this in-tree framing; it does not invent a canonical 4-letter expansion.
+
+$ git diff HEAD -- CHANGELOG.md   (relevant hunk, [0.1.0] section only)
+-  mechanism (the evolution of the earlier AGIP prototype) — clones a pinned
++  mechanism (the evolution of the earlier AGIP (a predecessor prototype)) —
++  clones a pinned
+FINDING: the ONLY change inside the released [0.1.0] section, across the entire git diff HEAD --
+CHANGELOG.md, is this one AGIP-gloss line (plus a cosmetic line-wrap of the following clause, no
+wording change). Every other diff hunk lands inside [Unreleased] (lines 25-72, all additions).
+The [0.1.0] record's substance is otherwise byte-identical to HEAD. PASS.
+
+--- PROBE 4: Human gates un-executed ---
+$ git tag -l v0.3.0
+(empty)
+$ test -f .github/workflows/pages.yml; echo $?
+1
+$ test -f .github/workflows/gh-pages.yml; echo $?
+1
+FINDING: no v0.3.0 tag exists; no Pages workflow file exists at either candidate path. Both
+release and publishing decisions remain un-executed human gates. PASS.
+
+--- PROBE 5: No branding ---
+$ grep -niE 'nizamiq|\.svc|cluster\.local' CHANGELOG.md
+(no output, no match)
+FINDING: CHANGELOG.md contains no nizamiq/.svc/cluster.local branding or endpoint leakage. PASS.
+
+--- PROBE 6: independent tools/validate.sh re-run ---
+$ bash tools/validate.sh
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+$ echo $?
+0
+FINDING: exact line "SUMMARY: 8 passed, 0 failed", exit 0. PASS.
+
+--- SUMMARY ---
+6 probe categories run (all mandated), all PASS, no defects found:
+1. [Unreleased]-scoping genuinely real (span extraction, single heading, correct ordering).
+2. 4 CHANGELOG entries spot-checked for accuracy against actual deliverables (guide
+   self-containment, interface.md discovery order, GIP.md existing-repo section, CONTEXT.md/
+   README.md changes) — all accurate, no drift or fabrication.
+3. AGIP gloss sourced from bootstrap.sh's own in-tree "governance prototype" framing (not a
+   fabricated canonical expansion); [0.1.0] section otherwise byte-identical to HEAD except the
+   one AGIP-gloss line (confirmed via git diff HEAD).
+4. Both release (v0.3.0 tag) and publishing (Pages workflow) human gates remain un-executed.
+5. No branding/endpoint leakage introduced.
+6. tools/validate.sh independently re-run green (8/8, exit 0).
+EXIT:0

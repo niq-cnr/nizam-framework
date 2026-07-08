@@ -1,0 +1,10 @@
+python3 -c "
+import json, jsonschema
+data = json.load(open('NIZAM.json'))
+schema = json.load(open('registry/nizam-index.schema.json'))
+jsonschema.validate(data, schema)
+print('schema-valid')
+" && echo PASS || { echo "NIZAM.json failed schema validation"; exit 1; }
+schema-valid
+PASS
+EXIT:0

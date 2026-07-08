@@ -1,0 +1,2 @@
+f=CHANGELOG.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; missing=""; grep -q '## \[Unreleased\]' "$f" || missing="$missing [Unreleased]-heading"; grep -q 'docs/guide/index.html' "$f" || missing="$missing docs/guide/index.html"; grep -Eqi 'README|CONTEXT' "$f" || missing="$missing README-or-CONTEXT"; if [ -n "$missing" ]; then echo "CHANGELOG.md missing:$missing"; exit 1; fi; echo PASS
+CHANGELOG.md missing: docs/guide/index.html
