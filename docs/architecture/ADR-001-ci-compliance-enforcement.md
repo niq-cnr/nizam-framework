@@ -59,6 +59,11 @@ path rather than through repository-specific tribal knowledge.
 - F-013 implements `.github/workflows/compliance.yml`, wiring `tools/validate.sh` into CI.
 - Consumer repositories can reuse `tools/validate.sh` directly per the Governance
   Inheritance Protocol (`standard/GIP.md`), independent of the GitHub-specific CI wrapper.
+- `tools/validate.sh --payload` supports validating the subset of the framework that
+  `bootstrap.sh` injects into consumer repositories (`standard/`, `templates/`, `schema/`,
+  `tools/`, and `NIZAM.json`) without requiring framework-envelope files that consumers
+  generate themselves (`CONTEXT.md`, `README.md`, `CHANGELOG.md`, `bootstrap.sh`,
+  `methodology/`, `registry/`, `docs/`).
 
 ## Alternatives Considered
 

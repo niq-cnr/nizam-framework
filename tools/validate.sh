@@ -20,6 +20,7 @@
 # Modes:
 #   (default, no args)   Full repo sweep: runs checks C1-C8.
 #   --target <file>      Runs only the checks applicable to a single file.
+#   --payload            Validates a consumer-injected .nizam/ payload subset.
 #   --help / -h           Prints usage and exits 0.
 #
 # See print_usage() below for the full description of every check and mode.
@@ -88,6 +89,17 @@ Modes:
                       applicable check fails. --target is the only mode
                       under which files in tools/fixtures/ are ever read.
 
+  --payload           Consumer-payload mode. Validates only the subset of
+                      checks relevant to a `bootstrap.sh`-injected consumer
+                      payload (standard/, templates/, schema/, tools/, and
+                      NIZAM.json). Framework-envelope files that are
+                      intentionally absent from consumer payloads
+                      (CONTEXT.md, README.md, CHANGELOG.md, bootstrap.sh,
+                      methodology/, registry/, docs/) are not required.
+                      Runs C1-C5, C7-C8 with payload-appropriate file sets;
+                      C6 is skipped. Exits 0 only if every applicable check
+                      passed.
+
   --help, -h          Prints this usage and exits 0.
 
 Checks (each check function emits exactly one line matching
@@ -112,21 +124,29 @@ file(s)/detail(s) printed on the following indented line(s)):
       AND every repository-relative path indexed anywhere within it (every
       string under a `path` or `authoritative_source` key, plus every
       string item of any `key_documents`/`schemas`/`templates` list,
-      skipping the literal `NA`) resolves on disk.
+      skipping the literal `NA`) resolves on disk. In --payload mode the
+      registry schema is optional (skipped if missing), and paths under
+      non-injected dirs (methodology/, registry/, docs/) are skipped as
+      expected-absent while paths under injected dirs (standard/,
+      templates/, schema/, tools/) are still required to resolve.
 
   C5  Branding/endpoint leakage. Zero case-insensitive occurrences of
       `nizamiq`, `.svc`, or `cluster.local` anywhere in shipped content:
       the shipped-doc set, plus NIZAM.json, CHANGELOG.md, root README.md,
-      and bootstrap.sh. Repo-wide only; does not run under --target.
+      and bootstrap.sh. Repo-wide only; does not run under --target. In
+      --payload mode the extra targets are swept only when present; missing
+      envelope files do not cause a failure.
 
   C6  bootstrap.sh sanity. `bash -n ./bootstrap.sh` (syntax check) AND
       `timeout 5 ./bootstrap.sh --help` exits 0. Repo-wide only; does not
-      run under --target. Note: bootstrap.sh lives at the REPO ROOT
-      (./bootstrap.sh), not under tools/.
+      run under --target or --payload. Note: bootstrap.sh lives at the REPO
+      ROOT (./bootstrap.sh), not under tools/.
 
   C7  Module README presence (NDS Sec 5.3). Each of standard/, methodology/,
       registry/, templates/, schema/, tools/ contains a README.md.
-      Repo-wide only; does not run under --target.
+      Repo-wide only; does not run under --target. In --payload mode only
+      the injected module READMEs (standard/, templates/, schema/, tools/)
+      are required.
 
   C8  Version-bump-vs-changelog (NDS Sec 4). For each file in the
       shipped-doc set: compares the working tree's frontmatter `version`
@@ -149,6 +169,12 @@ under schema/). Root README.md and docs/planning/* carry no frontmatter
 contract and are NOT part of this set (root README.md and bootstrap.sh are
 still covered by C5's separately-listed extra targets).
 
+Payload-doc set (the --payload mode file set, used by C1, C2, C3, C5, and
+C8): every .md under standard/, templates/, and tools/ EXCLUDING
+tools/fixtures/; and schema/README.md. CONTEXT.md, docs/architecture/,
+methodology/, and registry/ are intentionally excluded because they are not
+injected into consumer repositories by bootstrap.sh.
+
 Exit code: 0 only when every check that ran passed (0 failed).
 USAGE
 }
@@ -170,6 +196,36 @@ build_shipped_md_set() {
 
   local d
   for d in standard methodology registry templates; do
+    if [ -d "${d}" ]; then
+      while IFS= read -r f; do
+        files+=("${f}")
+      done < <(find "${d}" -type f -name '*.md' | LC_ALL=C sort)
+    fi
+  done
+
+  if [ -d tools ]; then
+    while IFS= read -r f; do
+      files+=("${f}")
+    done < <(find tools -type f -name '*.md' -not -path 'tools/fixtures/*' | LC_ALL=C sort)
+  fi
+
+  if [ -f schema/README.md ]; then
+    files+=("schema/README.md")
+  fi
+
+  printf '%s\n' "${files[@]}"
+}
+
+# ---------------------------------------------------------------------------
+# Payload file-set builder (used by C1, C2, C3, C5, C8 in --payload mode)
+# ---------------------------------------------------------------------------
+
+build_payload_md_set() {
+  local files=()
+  local f
+  local d
+
+  for d in standard templates; do
     if [ -d "${d}" ]; then
       while IFS= read -r f; do
         files+=("${f}")
@@ -398,7 +454,7 @@ check_c4_index() {
   local target="$1"
   local out
 
-  if out=$(python3 - "${target}" <<'PY'
+  if out=$(python3 - "${target}" "${VALIDATOR_MODE}" <<'PY'
 import json
 import os
 import sys
@@ -406,6 +462,7 @@ import sys
 import jsonschema
 
 path = sys.argv[1]
+mode = sys.argv[2]
 
 try:
     with open(path, "r", encoding="utf-8") as fh:
@@ -414,18 +471,19 @@ except (OSError, json.JSONDecodeError) as exc:
     print(f"{path}: not valid JSON: {exc}")
     sys.exit(1)
 
-try:
-    with open("registry/nizam-index.schema.json", "r", encoding="utf-8") as fh:
-        schema = json.load(fh)
-except (OSError, json.JSONDecodeError) as exc:
-    print(f"{path}: could not read registry/nizam-index.schema.json: {exc}")
-    sys.exit(1)
+if mode != "payload":
+    try:
+        with open("registry/nizam-index.schema.json", "r", encoding="utf-8") as fh:
+            schema = json.load(fh)
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"{path}: could not read registry/nizam-index.schema.json: {exc}")
+        sys.exit(1)
 
-try:
-    jsonschema.validate(instance=doc, schema=schema)
-except jsonschema.ValidationError as exc:
-    print(f"{path}: schema violation: {exc.message}")
-    sys.exit(1)
+    try:
+        jsonschema.validate(instance=doc, schema=schema)
+    except jsonschema.ValidationError as exc:
+        print(f"{path}: schema violation: {exc.message}")
+        sys.exit(1)
 
 path_keys = ("path", "authoritative_source")
 list_path_keys = ("key_documents", "schemas", "templates")
@@ -457,6 +515,14 @@ if not paths:
     print(f"{path}: no paths discovered by walker -- index appears empty")
     sys.exit(1)
 
+if mode == "payload":
+    skipped_dirs = {"methodology", "registry", "docs"}
+    paths = [
+        p for p in paths
+        if p != "NA"
+        and not any(p == d or p.startswith(d + "/") for d in skipped_dirs)
+    ]
+
 missing = [p for p in paths if p != "NA" and not os.path.exists(p)]
 if missing:
     print(f"{path}: indexed path(s) do not resolve on disk: {missing}")
@@ -481,18 +547,32 @@ PY
 check_c5_branding() {
   local shipped=("$@")
   local extra=(NIZAM.json CHANGELOG.md README.md bootstrap.sh)
-  local all=("${shipped[@]}" "${extra[@]}")
   local f
-  local missing=()
+  local all=()
 
-  for f in "${all[@]}"; do
-    [ -f "${f}" ] || missing+=("${f}")
-  done
+  if [ "${VALIDATOR_MODE}" = "payload" ]; then
+    for f in "${shipped[@]}"; do
+      [ -f "${f}" ] && all+=("${f}")
+    done
+    for f in "${extra[@]}"; do
+      [ -f "${f}" ] && all+=("${f}")
+    done
+    if [ "${#all[@]}" -eq 0 ]; then
+      echo "[C5] PASS branding-leakage"
+      return 0
+    fi
+  else
+    all=("${shipped[@]}" "${extra[@]}")
+    local missing=()
+    for f in "${all[@]}"; do
+      [ -f "${f}" ] || missing+=("${f}")
+    done
 
-  if [ "${#missing[@]}" -gt 0 ]; then
-    echo "[C5] FAIL branding-leakage"
-    echo "  sweep target(s) missing: ${missing[*]} -- refusing to trust an absence-of-match result (skipping grep sweep for this invocation)."
-    return 1
+    if [ "${#missing[@]}" -gt 0 ]; then
+      echo "[C5] FAIL branding-leakage"
+      echo "  sweep target(s) missing: ${missing[*]} -- refusing to trust an absence-of-match result (skipping grep sweep for this invocation)."
+      return 1
+    fi
   fi
 
   local hits
@@ -539,7 +619,12 @@ check_c6_bootstrap() {
 # ---------------------------------------------------------------------------
 
 check_c7_module_readmes() {
-  local modules=(standard methodology registry templates schema tools)
+  local modules=()
+  if [ "${VALIDATOR_MODE}" = "payload" ]; then
+    modules=(standard templates schema tools)
+  else
+    modules=(standard methodology registry templates schema tools)
+  fi
   local missing=()
   local m
 
@@ -671,7 +756,7 @@ PY
 # ---------------------------------------------------------------------------
 
 main() {
-  local mode="default"
+  VALIDATOR_MODE="default"
   local target=""
 
   while [ "$#" -gt 0 ]; do
@@ -680,14 +765,18 @@ main() {
         print_usage
         exit 0
         ;;
+      --payload)
+        VALIDATOR_MODE="payload"
+        shift
+        ;;
       --target)
         [ "$#" -ge 2 ] || die "--target requires a file argument. See --help."
-        mode="target"
+        VALIDATOR_MODE="target"
         target="$2"
         shift 2
         ;;
       --target=*)
-        mode="target"
+        VALIDATOR_MODE="target"
         target="${1#--target=}"
         shift
         ;;
@@ -709,7 +798,7 @@ main() {
   local passed=0
   local failed=0
 
-  if [ "${mode}" = "target" ]; then
+  if [ "${VALIDATOR_MODE}" = "target" ]; then
     [ -f "${target}" ] || die "--target file '${target}' does not exist."
     case "${target}" in
       *.md)
@@ -724,6 +813,25 @@ main() {
         die "--target file '${target}' is neither .md nor .json -- no applicable checks."
         ;;
     esac
+  elif [ "${VALIDATOR_MODE}" = "payload" ]; then
+    echo "MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)"
+
+    local payload_md=()
+    local f
+    while IFS= read -r f; do
+      payload_md+=("${f}")
+    done < <(build_payload_md_set)
+
+    check_c1_frontmatter_schema "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c2_format "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c3_fences "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c4_index "NIZAM.json" && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c5_branding "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    echo "[C6] SKIP bootstrap-sanity (payload mode)"
+    check_c7_module_readmes && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c8_version_changelog "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+
+    echo "SUMMARY (payload mode): ${passed} passed, ${failed} failed"
   else
     local shipped_md=()
     local f
@@ -739,9 +847,10 @@ main() {
     check_c6_bootstrap && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c7_module_readmes && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c8_version_changelog "${shipped_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+
+    echo "SUMMARY: ${passed} passed, ${failed} failed"
   fi
 
-  echo "SUMMARY: ${passed} passed, ${failed} failed"
   [ "${failed}" -eq 0 ]
 }
 

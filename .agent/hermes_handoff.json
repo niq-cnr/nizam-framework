@@ -1,0 +1,12 @@
+{
+  "status": "complete",
+  "tests_passed": true,
+  "proof_of_work": {
+    "default_mode": "bash tools/validate.sh\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] PASS bootstrap-sanity\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\nSUMMARY: 8 passed, 0 failed",
+    "payload_mode": "MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] SKIP bootstrap-sanity (payload mode)\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\nSUMMARY (payload mode): 7 passed, 0 failed",
+    "target_mode": "bash tools/validate.sh --target standard/NDS.md\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep",
+    "help": "tools/validate.sh --help documents --payload, --target, default, and --help modes"
+  },
+  "blockers": [],
+  "new_dependencies_discovered": []
+}
