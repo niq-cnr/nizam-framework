@@ -3,9 +3,9 @@
   "tests_passed": true,
   "proof_of_work": {
     "default_mode": "bash tools/validate.sh\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] PASS bootstrap-sanity\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\nSUMMARY: 8 passed, 0 failed",
-    "payload_mode": "MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] SKIP bootstrap-sanity (payload mode)\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\nSUMMARY (payload mode): 7 passed, 0 failed",
+    "payload_mode_edge_case": "Simulated consumer repo with repo-root tools/README.md at version 9.0.0 and a .nizam/ payload whose tools/README.md is version 1.0.0. Ran bash ../tools/validate.sh --payload from inside .nizam/. C8 correctly skipped .nizam/tools/README.md because git show HEAD:.nizam/tools/README.md found no tracked file, avoiding the false downgrade failure against the repo-root tools/README.md. Output:\nMODE: payload (validating consumer-injected subset; framework-envelope checks skipped)\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep\n[C4] PASS index-integrity\n[C5] PASS branding-leakage\n[C6] SKIP bootstrap-sanity (payload mode)\n[C7] PASS module-readme-presence\n[C8] PASS version-bump-vs-changelog\nSUMMARY (payload mode): 7 passed, 0 failed",
     "target_mode": "bash tools/validate.sh --target standard/NDS.md\n[C1] PASS frontmatter-schema\n[C2] PASS format\n[C3] PASS untagged-fence-sweep",
-    "help": "tools/validate.sh --help documents --payload, --target, default, and --help modes"
+    "code_change": "tools/validate.sh: check_c8_version_changelog() now computes git_prefix=$(git rev-parse --show-prefix 2>/dev/null || echo \"\") and calls git show \"HEAD:${git_prefix}${f}\" so payload-mode paths resolve relative to the repo root."
   },
   "blockers": [],
   "new_dependencies_discovered": []

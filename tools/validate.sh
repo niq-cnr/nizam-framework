@@ -653,8 +653,12 @@ check_c8_version_changelog() {
   local errors=()
   local f head_content head_tmp out
 
+  # Compute the repo-root-relative prefix (empty when CWD is the repo root).
+  local git_prefix
+  git_prefix=$(git rev-parse --show-prefix 2>/dev/null || echo "")
+
   for f in "${files[@]}"; do
-    if ! head_content=$(git show "HEAD:${f}" 2>/dev/null); then
+    if ! head_content=$(git show "HEAD:${git_prefix}${f}" 2>/dev/null); then
       # File is new at HEAD (did not exist there) -- no prior version to
       # compare against, no change record required.
       continue
