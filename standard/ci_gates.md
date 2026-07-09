@@ -20,13 +20,26 @@ This document defines the CI gating formula. No cross-repo change may be merged 
 ```text
 MERGE_READY = CI_GREEN
             ∧ CONTRACT_PLANES_ALIGNED
-            ∧ CODERABBIT_CLEAN
+            ∧ AUTOMATED_REVIEW_CLEAN
             ∧ EVAL_REGRESSION_PASS
             ∧ PROVENANCE_EMIT
             ∧ HUMAN_APPROVED
 ```
 
 No single factor is sufficient. All MUST be true simultaneously on the latest relevant SHA.
+
+The umbrella terms in the formula map to the 10 required CI gates as follows:
+
+| Formula Factor | Required CI Gate(s) |
+|---|---|
+| `CI_GREEN` | `unit-and-component` ∧ `integration` ∧ `playwright-e2e` |
+| `CONTRACT_PLANES_ALIGNED` | `plan-pack-valid` ∧ `contract-delta-reviewed` ∧ `consumer-provider-contract` |
+| `AUTOMATED_REVIEW_CLEAN` | The tool-agnostic automated-review gate (declared by the consumer, not one of the 10 mandatory pipeline gates) |
+| `EVAL_REGRESSION_PASS` | `agent-eval-regression` |
+| `PROVENANCE_EMIT` | `supply-chain-security` ∧ `artifact-attestation` |
+| `HUMAN_APPROVED` | `human-review` |
+
+The `AUTOMATED_REVIEW_CLEAN` factor requires that **a conformant automated code-review tool has run on the latest relevant SHA and reports no unresolved blocking findings**. The framework MANDATES this gate but deliberately does NOT fix the tool: the specific automated code-review tool (CodeRabbit, OpenCodeReview/OCR, or any conformant equivalent) is declared by the consumer — for example in its `NIZAM.json` / governance config — not by this framework. The gate is BLOCKING and deny-by-default: an absent, stale, or failed automated review means the change is NOT `MERGE_READY`.
 
 ## 3. Required CI Gates
 
@@ -46,3 +59,5 @@ A compliant repository MUST enforce the following gates in its CI pipeline befor
 | `human-review` | CODEOWNERS and human reviewer approvals complete | Missing approval |
 
 *Attribution: The MERGE_READY formula and the 10 required CI gates are derived directly from the Vibe Coding Manifesto (v2.0), Section VI.*
+
+*Generalization: Where the manifesto names a specific automated code-review tool, the Nizam Framework generalizes that tool-specific reference into the tool-agnostic `AUTOMATED_REVIEW_CLEAN` gate — the conformant review tool is declared by the consumer, not fixed by this framework.*

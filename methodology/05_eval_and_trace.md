@@ -26,7 +26,7 @@ This document defines the infrastructure required to prove that the agentic syst
 | **L5** | API conformance | Evaluator |
 | **L6** | E2E via Playwright | Evaluator + Orchestrator |
 | **L7** | Agent eval regression (traces, graders, datasets) | Evaluator |
-| **L8** | CodeRabbit review | Automated |
+| **L8** | Automated code-review gate (tool declared by consumer) | Automated |
 | **L9** | Supply-chain provenance check | Automated |
 | **L10** | Human review | Human |
 

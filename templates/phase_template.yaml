@@ -1,13 +1,15 @@
 # Phase definition template. Copy to a repository-local path (e.g.
-# docs/planning/phases/phase_{{PHASE_ID}}.yaml) and replace every {{PLACEHOLDER}}
-# token with real content. MUST validate against schema/phase.schema.json.
+# docs/planning/phases/phase_{{PHASE_ID}}.yaml) and replace every
+# {{PLACEHOLDER}} token with real content. MUST validate against
+# schema/phase.schema.json.
 #
-# Per DD-3 Evidence Externalisation (schema/phase.schema.json, methodology/04_tool_driven_state.md):
-# every step's proof of completion lives in a file under .agent/evidence/ and is
-# referenced here BY PATH ONLY. Never paste raw terminal output into this file or
-# into any inline field (no "proof", "raw_output", "terminal_output",
-# "console_output", "stdout", or "output" key exists in the schema — additionalProperties
-# is false at both the phase and step level, so such a key would fail validation).
+# Per DD-3 Evidence Externalisation (schema/phase.schema.json,
+# methodology/04_tool_driven_state.md): every step's proof of completion
+# lives in a file under .agent/evidence/ and is referenced here BY PATH ONLY.
+# Never paste raw terminal output into this file or into any inline field
+# (no "proof", "raw_output", "terminal_output", "console_output", "stdout",
+# or "output" key exists in the schema — additionalProperties is false at
+# both the phase and step level, so such a key would fail validation).
 id: "{{PHASE_ID}}"
 title: "{{PHASE_TITLE}}"
 description: "{{PHASE_DESCRIPTION}}"
@@ -17,7 +19,8 @@ steps:
   - id: "{{STEP_ID}}"
     description: "{{STEP_DESCRIPTION}}"
     status: PENDING
-    # status enum: PENDING | IN_PROGRESS | AWAITING_IMPLEMENTATION | COMPLETED | BLOCKED
+    # status enum: PENDING | IN_PROGRESS | AWAITING_IMPLEMENTATION |
+    #              COMPLETED | BLOCKED
     evidence: ".agent/evidence/{{EVIDENCE_PATH}}"
     # MUST be a path under .agent/evidence/ — never inline output.
     docs_updated: "{{DOCS_UPDATED_PATH}}"

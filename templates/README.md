@@ -22,7 +22,7 @@ templates carry, and contains no filled-in project content of its own.
 |---|---|
 | [`CONTEXT.md`](CONTEXT.md) | Consumer-repo `CONTEXT.md` template: architecture summary, module map, execution commands, and the mandatory `## Out of Scope` boundary section. |
 | [`AGENTS.md`](AGENTS.md) | Consumer-repo `AGENTS.md` template: current session objective, active phase, delegation-matrix reference, and scope-check reminder. |
-| [`DEBT.md`](DEBT.md) | Technical-debt register template: the empty ID/Date/Severity/Description/Remediation table skeleton. |
+| [`DEBT.md`](DEBT.md) | Technical-debt register template: the empty ID/Date/Feature ID/Failed Step/Attempt Count/Failure Mode/Human Resolution table skeleton. |
 | [`ADR_TEMPLATE.md`](ADR_TEMPLATE.md) | Architecture Decision Record template: Status/Context/Decision/Consequences skeleton, copied once per decision. |
 | [`work-packet.template.json`](work-packet.template.json) | Scoped work-packet JSON template: id, objective, allowed/forbidden scope paths, acceptance criteria, and evidence file paths. |
 | [`phase_template.yaml`](phase_template.yaml) | Phase definition YAML template; validates against `schema/phase.schema.json` and follows DD-3 Evidence Externalisation. |

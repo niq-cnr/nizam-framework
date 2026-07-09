@@ -35,6 +35,8 @@ Every schema in this module:
 | `contract.schema.json` | Validates a per-feature contract: scope, non-goals, and verification commands agreed before implementation. | `.agent/contracts/NNN.json` |
 | `qa_verdict.schema.json` | Validates an evaluator's pass/fail verdict for a feature, including per-check exit codes and evidence paths. | `.agent/qa/NNN.json` |
 | `run_state.schema.json` | Validates the durable run state an execution engine reads and writes across a session. | `.agent/run_state.json` |
+| `debt.schema.json` | Validates the circuit-breaker debt log: timestamp, feature, failed step, attempt count, failure mode, and human resolution. | `.agent/debt.json` |
+| `capability_profile.schema.json` | Validates capability-profile bindings that map agent roles to primary/fallback models, allowed tools, and safety classes. | Capability-profile blocks in `AGENTS.md` or standalone `.agent/capability_profile.json` |
 
 ## DD-3 — Evidence Externalisation
 
@@ -45,8 +47,9 @@ string field.
 
 The schema enforces this structurally, not just by convention:
 
-1. Every step declares an `evidence` property whose value MUST match the pattern
-   `^\.agent/evidence/` — a path, not a payload.
+1. A step whose `status` is `COMPLETED` declares an `evidence` property whose value
+   MUST match the pattern `^\.agent/evidence/` — a path, not a payload. Steps with
+   any other status omit this property.
 2. Both the phase object and the step object declare `"additionalProperties": false`
    over an explicit, closed property set. That set intentionally omits any inline
    free-text output field (`proof`, `raw_output`, `terminal_output`, `console_output`,

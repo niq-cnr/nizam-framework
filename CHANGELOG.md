@@ -20,8 +20,36 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `merge_order` (upstream-before-downstream ordering of
   `methodology/08_cross_repo_dependency_gate.md`), and the foreign keys
   `contract_id`, `phase_id`, `feature_id`, and `train_id`. `templates/work-packet.template.json`
-  gains the matching optional `{{PLACEHOLDER}}` fields, and `NIZAM.json` indexes
-  the new schema. No framework version bump.
+  gains the matching optional placeholder fields and corrects the `merge_order`
+  placeholder to an unquoted integer (`0`) matching the integer schema. `NIZAM.json`
+  indexes the new schema.
+
+### Fixed
+
+- Compliance hotfix restoring `tools/validate.sh` to green (the v0.4.0/v0.4.1
+  releases had shipped a tree failing the framework's own validator): removed
+  vendor-specific org branding — a stray org name in
+  `standard/cross_repo_governance.md` (C5 branding sweep) and the `$id` URLs of
+  `schema/debt.schema.json` and `schema/capability_profile.schema.json`, now in
+  the vendor-neutral `urn:nizam-framework:schema:*` form matching the other
+  shipped schemas; corrected `methodology/06_release_train.md`'s
+  `authoritative_source` to its own path after the `05` -> `06` rename (C2 format);
+  and synced `docs/guide/index.html`'s embedded framework-version anchor to `0.4.1`
+  to match `NIZAM.json` `framework.version`.
+
+## [0.4.1] - 2026-07-08
+
+### Changed
+
+- **Tool-agnostic automated-review gate**: Renamed the `MERGE_READY` formula
+  factor `CODERABBIT_CLEAN` to `AUTOMATED_REVIEW_CLEAN` in `standard/ci_gates.md`
+  and generalized the corresponding gate description. The framework now MANDATES
+  a blocking, deny-by-default automated code-review gate (a conformant tool must
+  have run on the latest relevant SHA with no unresolved blocking findings) but
+  no longer dictates the specific tool — the consumer declares it (e.g. in its
+  `NIZAM.json` / governance config). `methodology/05_eval_and_trace.md` L8 is
+  likewise generalized from a CodeRabbit-specific reference to a tool-agnostic
+  automated code-review gate. The attributed 10-gate enforcement table is unchanged.
 
 ## [0.4.0] - 2026-07-08
 
