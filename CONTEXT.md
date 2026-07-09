@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-07-09"
+    summary: "Bump version for v0.5.1 release (payload validation mode)."
   - version: "0.3.0"
     date: "2026-07-09"
     summary: "Add docs/ to Module Map (ADRs and HTML user guide); bump version to reflect v0.5.0 release state."
