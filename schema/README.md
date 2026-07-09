@@ -47,8 +47,9 @@ string field.
 
 The schema enforces this structurally, not just by convention:
 
-1. Every step declares an `evidence` property whose value MUST match the pattern
-   `^\.agent/evidence/` — a path, not a payload.
+1. A step whose `status` is `COMPLETED` declares an `evidence` property whose value
+   MUST match the pattern `^\.agent/evidence/` — a path, not a payload. Steps with
+   any other status omit this property.
 2. Both the phase object and the step object declare `"additionalProperties": false`
    over an explicit, closed property set. That set intentionally omits any inline
    free-text output field (`proof`, `raw_output`, `terminal_output`, `console_output`,
