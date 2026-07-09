@@ -43,8 +43,8 @@
             "type": "object",
             "properties": {
               "id": { "type": "string" },
-              "estimated": { "type": "integer" },
-              "actual": { "type": "integer" }
+              "estimated": { "type": "integer", "minimum": 0 },
+              "actual": { "type": "integer", "minimum": 0 }
             },
             "required": ["id", "estimated", "actual"],
             "additionalProperties": true
@@ -61,7 +61,7 @@
         "type": "object",
         "properties": {
           "attempts": { "type": "integer", "minimum": 0 },
-          "limit": { "type": "integer", "minimum": 1 }
+          "limit": { "type": "integer", "minimum": 1, "maximum": 3 }
         },
         "required": ["attempts", "limit"],
         "additionalProperties": true
