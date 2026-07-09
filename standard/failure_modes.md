@@ -11,7 +11,7 @@ authoritative_source: standard/failure_modes.md
 
 ## 1. Overview
 
-Agentic systems fail differently than traditional software. An agentic governance framework must explicitly name, detect, and respond to these novel failure classes. 
+Agentic systems fail differently than traditional software. An agentic governance framework must explicitly name, detect, and respond to these novel failure classes.
 
 A compliant repository MUST design its observability and incident response playbooks around the following seven failure modes.
 

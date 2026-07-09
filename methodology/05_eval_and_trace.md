@@ -11,7 +11,7 @@ authoritative_source: methodology/05_eval_and_trace.md
 
 ## 1. Overview
 
-TDD remains necessary, but no longer sufficient. The governing quality stack in the Nizam Framework is **tests + traces + evals + CI**. 
+TDD remains necessary, but no longer sufficient. The governing quality stack in the Nizam Framework is **tests + traces + evals + CI**.
 
 This document defines the infrastructure required to prove that the agentic system still meets quality targets as inputs, prompts, tools, and models change.
 

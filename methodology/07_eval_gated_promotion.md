@@ -11,7 +11,7 @@ authoritative_source: methodology/07_eval_gated_promotion.md
 
 ## 1. Overview
 
-In an agentic ecosystem, changing a model or a prompt template is an architectural change with blast radius equal to changing a core library dependency. 
+In an agentic ecosystem, changing a model or a prompt template is an architectural change with blast radius equal to changing a core library dependency.
 
 The Nizam Framework treats model and prompt changes identically to code changes. They MUST pass through the contract-first execution loop defined in `methodology/01_execution.md` and MUST pass role-specific evals before promotion.
 

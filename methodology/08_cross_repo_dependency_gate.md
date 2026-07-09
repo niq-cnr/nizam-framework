@@ -23,7 +23,7 @@ If the requested feature requires an upstream change (e.g., adding a new endpoin
 
 ## 3. The Contract Delta Gate
 
-If a cross-repo dependency is declared, the pipeline MUST halt before Generator execution. 
+If a cross-repo dependency is declared, the pipeline MUST halt before Generator execution.
 
 The orchestrator (e.g., the Hermes agent) MUST:
 1. Generate the proposed API contract delta (e.g., OpenAPI diff, Pact file).
