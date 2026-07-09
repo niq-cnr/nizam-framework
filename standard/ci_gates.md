@@ -28,6 +28,17 @@ MERGE_READY = CI_GREEN
 
 No single factor is sufficient. All MUST be true simultaneously on the latest relevant SHA.
 
+The umbrella terms in the formula map to the 10 required CI gates as follows:
+
+| Formula Factor | Required CI Gate(s) |
+|---|---|
+| `CI_GREEN` | `unit-and-component` ∧ `integration` ∧ `playwright-e2e` |
+| `CONTRACT_PLANES_ALIGNED` | `plan-pack-valid` ∧ `contract-delta-reviewed` ∧ `consumer-provider-contract` |
+| `AUTOMATED_REVIEW_CLEAN` | The tool-agnostic automated-review gate (declared by the consumer, not one of the 10 mandatory pipeline gates) |
+| `EVAL_REGRESSION_PASS` | `agent-eval-regression` |
+| `PROVENANCE_EMIT` | `supply-chain-security` ∧ `artifact-attestation` |
+| `HUMAN_APPROVED` | `human-review` |
+
 The `AUTOMATED_REVIEW_CLEAN` factor requires that **a conformant automated code-review tool has run on the latest relevant SHA and reports no unresolved blocking findings**. The framework MANDATES this gate but deliberately does NOT fix the tool: the specific automated code-review tool (CodeRabbit, OpenCodeReview/OCR, or any conformant equivalent) is declared by the consumer — for example in its `NIZAM.json` / governance config — not by this framework. The gate is BLOCKING and deny-by-default: an absent, stale, or failed automated review means the change is NOT `MERGE_READY`.
 
 ## 3. Required CI Gates

@@ -55,7 +55,15 @@
             "description": "One-line CHANGELOG.md summary for this step, populated before the step may be marked COMPLETED."
           }
         },
-        "required": ["id", "description", "status", "evidence"],
+        "required": ["id", "description", "status"],
+        "if": {
+          "properties": {
+            "status": { "enum": ["COMPLETED"] }
+          }
+        },
+        "then": {
+          "required": ["evidence"]
+        },
         "additionalProperties": false
       },
       "minItems": 1

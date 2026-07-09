@@ -11,7 +11,7 @@ authoritative_source: standard/cross_repo_governance.md
 
 ## 1. Overview
 
-Maintaining architectural coherence across a multi-repository ecosystem requires a centralized intelligence layer. A single repository acting as the **executable source of truth** (e.g., `nizamiq-strategy`) prevents drift and misaligned dependencies.
+Maintaining architectural coherence across a multi-repository ecosystem requires a centralized intelligence layer. A single repository acting as the **executable source of truth** (a designated strategy or governance repository) prevents drift and misaligned dependencies.
 
 ## 2. The Cross-Repo Query Protocol
 
