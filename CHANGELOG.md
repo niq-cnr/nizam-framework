@@ -7,6 +7,23 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-07-09
+
+### Added
+
+- `tools/validate.sh --payload` mode: validates the `bootstrap.sh`-injected
+  consumer payload subset (`standard/`, `templates/`, `schema/`, `tools/`,
+  `NIZAM.json`) without requiring framework-envelope files (`CONTEXT.md`,
+  `README.md`, `CHANGELOG.md`, `bootstrap.sh`, `methodology/`, `registry/`,
+  `docs/`). C4 skips registry schema validation when absent and filters
+  non-injected dir paths; C5 sweeps only existing files; C6 is skipped;
+  C7 checks only injected module READMEs. Default and `--target` modes are
+  unchanged (8/8 pass, no regression). (PR #12)
+
+### Fixed
+
+- ADR-001 follow-up note documenting the `--payload` validation path.
+
 ## [0.5.0] - 2026-07-09
 
 ### Added

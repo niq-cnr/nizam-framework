@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-07-09"
+    summary: "Bump version for v0.5.1 release (payload validation mode)."
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "Add Cross-Repo Intelligence mandate (read strategy SCOPE.md, ECOSYSTEM.json, and ADRs before acting); add Eval-Gated Promotion rule (model/prompt changes treated as code changes, blocked until evals pass); add Cross-Repo Dependency Gate rule (downstream blocked until upstream contract delta approved). References methodology/07_eval_gated_promotion.md and methodology/08_cross_repo_dependency_gate.md."
