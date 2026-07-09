@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-07-09"
+    summary: "Add docs/ to Module Map (ADRs and HTML user guide); bump version to reflect v0.5.0 release state."
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "Rewrite to reflect the shipped state: NIZAM.json and bootstrap.sh have both shipped (removed stale 'ships in feature 00X' claims); named the phase-002 compliance surfaces (tools/validate.sh, .github/workflows/compliance.yml, docs/architecture/); corrected the bootstrap payload sentence to the 4 injected directories (standard/, templates/, schema/, tools/) plus NIZAM.json; stated the agent entry path (NIZAM.json -> tools/SKILL.md); expanded NDS/AGF/GIP at first use with their verbatim canonical titles."
@@ -28,6 +31,7 @@ infrastructure, and not a runtime service.
 - `templates/` — Consumer-repo templates (CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest).
 - `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md`.
 - `registry/` — The `NIZAM.json` index schema and scope-definition patterns.
+- `docs/` — Architecture Decision Records (`docs/architecture/`) and the self-contained HTML user guide (`docs/guide/index.html`).
 
 Compliance surfaces, added in phase 002-self-compliance, keep the shipped payload honest:
 `tools/validate.sh` (the repo-local compliance validator), `.github/workflows/compliance.yml`
