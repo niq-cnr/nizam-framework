@@ -7,6 +7,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-09
+
 ### Added
 
 - `schema/work-packet.schema.json`: JSON Schema for the work-packet artifact
@@ -36,6 +38,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `authoritative_source` to its own path after the `05` -> `06` rename (C2 format);
   and synced `docs/guide/index.html`'s embedded framework-version anchor to `0.4.1`
   to match `NIZAM.json` `framework.version`.
+- Schema hardening: clamped `qa_verdict.schema.json` `exit_code` to `0..255`
+  (POSIX range); enforced `minimum: 0` on `run_state.schema.json` per-feature
+  line count fields; enforced `maximum: 3` on circuit breaker `limit` (aligning
+  with the documented mandatory 3-strike rule).
+- Documentation drift: updated `README.md` quickstart tag from `v0.1.0` to
+  `v0.5.0`; added `docs/` to the `README.md` Modules table and `CONTEXT.md`
+  Module Map; bumped `CONTEXT.md` version from `0.2.0` to `0.3.0`; bumped
+  `tools/SKILL.md` version from `0.1.0` to `0.2.0` to reflect the Cross-Repo
+  Intelligence, Eval-Gated Promotion, and Cross-Repo Dependency Gate additions
+  that landed in `v0.4.0` but were not versioned; synced `docs/guide/index.html`
+  and `NIZAM.json` `framework.version` to `0.5.0`.
 
 ## [0.4.1] - 2026-07-08
 
