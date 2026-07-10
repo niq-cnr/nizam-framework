@@ -1,0 +1,11 @@
+test -f tools/fixtures/stale_payload_cosentence.md || { echo "MISSING tools/fixtures/stale_payload_cosentence.md"; exit 1; }; tmp=$(mktemp --suffix=.md); trap 'rm -f "$tmp"' EXIT; cp tools/fixtures/stale_payload_cosentence.md "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "neutral-filename copy unexpectedly PASSED -- suspected filename-keyed behavior"; exit 1; }; echo "$out" | grep -q 'payload-set' || { echo "neutral-filename copy lost the payload-set FAIL tag"; exit 1; }; echo "$out" | grep -q 'unrelated utility scripts' && { echo "neutral-filename copy merged the unrelated tools/ sentence into the offending group"; exit 1; }; echo "PASS (correctly rejected, rc=$rc)"
+[C1] FAIL frontmatter-schema
+  /tmp/tmp.qGGtDAtXfn.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  /tmp/tmp.qGGtDAtXfn.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] FAIL consistency
+  /tmp/tmp.qGGtDAtXfn.md: [payload-set] vlib_no_stale_payload: stale payload enumeration (omits tools/): # C10 Sub-Check (1) Regression Fixture -- Co-Sentence Resist-False-Pass The framework's payload, as some people mistakenly describe it, lives under `standard/`, `templates/`, and `schema/` only.
+PASS (correctly rejected, rc=1)
+EXIT:0

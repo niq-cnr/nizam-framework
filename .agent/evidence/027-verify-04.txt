@@ -1,0 +1,11 @@
+test -f tools/fixtures/stale_payload.md || { echo "MISSING tools/fixtures/stale_payload.md"; exit 1; }; out=$(bash tools/validate.sh --target tools/fixtures/stale_payload.md 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit, got 0"; exit 1; }; echo "$out" | grep -q '\[C10\] FAIL' || { echo "no [C10] FAIL line"; exit 1; }; echo "$out" | grep -q 'payload-set' || { echo "[C10] FAIL output does not tag the payload-set sub-check"; exit 1; }; echo PASS
+[C1] FAIL frontmatter-schema
+  tools/fixtures/stale_payload.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  tools/fixtures/stale_payload.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] FAIL consistency
+  tools/fixtures/stale_payload.md: [payload-set] vlib_no_stale_payload: stale payload enumeration (omits tools/): # C10 Sub-Check (1) FAIL Fixture The framework payload consists of `standard/`, `templates/`, and `schema/` shipped together.
+PASS
+EXIT:0

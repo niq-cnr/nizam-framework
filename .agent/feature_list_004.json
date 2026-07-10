@@ -85,7 +85,7 @@
       "id": "027",
       "name": "R1 — C10 Single-Source-of-Truth Consistency Check + Fixtures (validate.sh 9->10)",
       "description": "Add check C10 to tools/validate.sh generalizing three proven one-offs repo-wide: (1) payload-set consistency — the injected payload is uniformly described as standard/+templates/+schema/+tools/+NIZAM.json across shipped docs; NO stale 3-dir enumeration (standard/+templates/+schema/ without tools/) survives anywhere (the F-019 rework guard, via verify_lib.sh's generalized stale-enumeration primitive). (2) Discovery-order consistency — scoped per spec finding P3: only WHERE a doc describes the bootstrapped-consumer discovery must .nizam/tools/skill.json precede the repository-root fallback, so CONTEXT.md's legitimate framework-checkout (repo-root) description is NOT false-flagged. (3) Framework-version anchor — every doc that embeds the framework version (today the guide's <meta name=framework-version> + footer) equals NIZAM.json framework.version, generalizing the F-018 anchor and honoring the External Anchor Rule (expected value read from NIZAM.json, never re-derived from the doc under test). Update print_usage() and register C10 in main() so the sweep reports SUMMARY: 10 passed, 0 failed. Fixture-test each of the three sub-checks' fail modes under tools/fixtures/ (a stale-3-dir doc; a wrong-order discovery doc; a doc embedding a version != NIZAM.json). NON-BREAKING against the current tree (proven by the plan-time P2/P3 dry-runs). Depends on F-023 and F-026 (serialized after C9 for a deterministic count).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": ["023", "026"],
       "acceptance_tests": [
         "validate.sh registers a C10 check and print_usage documents it: grep -q 'C10' tools/validate.sh && bash tools/validate.sh --help | grep -q 'C10'",
@@ -96,7 +96,7 @@
         "C10 version-anchor sub-check FAIL fixture: a fixture embedding a framework-version != NIZAM.json framework.version is rejected: bash tools/validate.sh --target tools/fixtures/version_drift.html; test $? -ne 0",
         "C10 version anchor reads its expected value from NIZAM.json (External Anchor Rule), not from the doc under test: grep -q 'framework' tools/validate.sh && grep -q 'NIZAM.json' tools/validate.sh",
         "CONTEXT.md's legitimate framework-checkout discovery description is NOT false-flagged (regression proof P3): bash tools/validate.sh 2>&1 | grep -q '\\[C10\\] PASS'",
-        "Only validate.sh + tools/fixtures/ changed outside .agent/ (untracked-aware guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/validate.sh|tools/fixtures/')\"",
+        "[AMENDED 2026-07-10 per contract-027 approval, F-026 AT8 precedent: allow-list widened to include the C10-forced GIP.md fix + the two NDEBT-003 content fixes (guide, 06_release_train.md) that C10's non-breaking gate requires] Only validate.sh + tools/fixtures/ + standard/GIP.md + docs/guide/index.html + methodology/06_release_train.md changed outside .agent/ (untracked-aware guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/validate.sh|tools/fixtures/|standard/GIP.md|docs/guide/index.html|methodology/06_release_train.md')\"",
         "No pre-existing check regressed (C1-C9 all PASS): for c in C1 C2 C3 C4 C5 C6 C7 C8 C9; do bash tools/validate.sh 2>&1 | grep -q \"\\[$c\\] PASS\" || exit 1; done"
       ],
       "estimated_lines": 170

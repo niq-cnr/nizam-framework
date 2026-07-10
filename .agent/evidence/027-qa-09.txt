@@ -1,0 +1,3 @@
+source tools/verify_lib.sh; vlib_scope_guard 'tools/validate.sh' 'tools/fixtures/' 'docs/guide/index.html' 'methodology/06_release_train.md' 'standard/GIP.md' && echo PASS || { echo "out-of-scope change(s) detected -- see vlib_scope_guard output above"; exit 1; }
+PASS
+EXIT:0

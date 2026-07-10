@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "004-durable-enforcement",
-  "current_feature": "027",
-  "status": "blocked",
-  "updated_at": "2026-07-10T08:02:35Z",
+  "current_feature": "028",
+  "status": "contract_negotiation",
+  "updated_at": "2026-07-10T08:52:50Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -106,8 +106,9 @@
       "limit": 3
     },
     "027-contract": {
-      "attempts": 3,
-      "limit": 3
+      "attempts": 4,
+      "limit": 5,
+      "human_authorized_extension": "2026-07-10T08:11:25Z: human authorized attempt 4 with a REDESIGN of sub-check 1 (option b); limit extended 3->5 (redesign attempt + 1 revision headroom); the 3 prior line-join-lineage attempts preserved in .agent/qa/027_failures.json + history. RESOLVED: the format-agnostic redesign (attempt 4) was APPROVED first-pass by both gates - the 1-revision headroom was not needed."
     }
   },
   "history": [
@@ -505,6 +506,21 @@
       "at": "2026-07-10T08:02:35Z",
       "event": "circuit_breaker_halt",
       "detail": "F-027 (contract 027, C10) HALTED at the 3-strike circuit breaker. rev2 was REJECTED by the evaluator (Mode A approved rev2) on a THIRD distinct, genuine, corpus-anchored defect: the cap-free sentence-terminal-only join's close condition (regex [.!?][]*'\\\")]*[[:space:]]*$) does NOT recognize HTML block-level closing tags. docs/guide/index.html - the corpus's ONLY real .html file, swept by C10 in default mode AND via this contract's own new *.html --target case - ends every <p> sentence with '.</p>', never a bare '.', so the join's only real close condition there is a (sparse) blank line; a stale-3-dir enumeration in one <p> immediately followed (no blank line) by an unrelated tools/-mentioning <p> merges into one group -> false-PASS (evaluator reproduced live on the real file's Module Reference card-grid + a guide-styled fixture). Root cause: all 3 join iterations were adversarially tested against MARKDOWN line-termination shapes (. ; :); none probed the one .html file's categorically different </p>-suffixed convention until the rev2 review. 027-contract circuit breaker at attempts=3/limit=3; ATTEMPT 4 IS FORBIDDEN without explicit human authorization (methodology/03_circuit_breaker.md + CLAUDE.md 3-strike rule). Status -> blocked. Durable failure record: docs/planning/DEBT.md NDEBT-006 (High, BLOCKED, + candidate fix direction: extend the close condition to also recognize a closing HTML block-level tag e.g. </p></li> after terminal punctuation, with a guide-styled regression fixture), .agent/qa/027_failures.json (3-attempt root-cause history), .agent/qa/027-contract-review.json (rev2 verdict, revision_reviewed=2), .agent/validator/027-mode-a.json (rev2 Mode-A approval). Contract 027 remains status='proposed' (never approved); NO implementation occurred (all 3 rejections were pre-code contract-review gates), so validate.sh is unchanged at 9 passed 0 failed and the working tree outside .agent is clean except the NDEBT-006 log. IMPORTANT NOTE FOR THE HUMAN DECISION: this is PRODUCTIVE CONVERGENCE, not thrashing - each of the 3 rejections found a genuinely different real defect and the check is now robust for ALL markdown; the sole remaining gap is HTML </p> line-termination in the single .html file, with a known simple fix. Escalated to human for authorization: (a) authorize attempt-4 with the targeted </p>-recognition fix, (b) authorize attempt-4 with a redesigned non-line-join sub-check-1, (c) descope sub-check-1, or (d) other. Awaiting human."
+    },
+    {
+      "at": "2026-07-10T08:11:25Z",
+      "event": "human_authorized_redesign",
+      "detail": "Human resolved the F-027 circuit-breaker halt: chose 'Authorize attempt 4 - redesign sub-check 1' (option b). MANDATE: replace the line-join heuristic ENTIRELY with a fundamentally more robust, FORMAT-AGNOSTIC stale-3-dir-payload-enumeration detector, ending the format-edge whack-a-mole (markdown wraps -> semicolons -> HTML </p> tags). 027-contract circuit breaker extended attempts=3/limit 3->5 (human-authorized: the redesign is attempt 4, with 1 revision of headroom before a re-halt); the 3 prior line-join-lineage failures remain the immutable record (027_failures.json + circuit_breaker_halt event). Recommended redesign direction briefed to @generator: normalize the doc body (strip HTML tags + collapse all whitespace so line-wrapping and </p> are irrelevant), then sentence-segment on [.!?] followed by whitespace/EOL (so .json filenames and ;/: never split), then check each sentence via the UNMODIFIED vlib_no_stale_payload - this eliminates all three format edges at the root while keeping the compositional discipline. Must prove BOTH directions across the full corpus + ALL prior fixtures + a NEW guide-styled HTML-</p> fixture (the rev2 defect): catches GIP.md §4 item 3 (forced) + longwrap + semicolon + the HTML-</p> false-pass; passes ADR-001 + guide <p> + guide <pre> ASCII tree + the co-sentence resist-false-pass case. Everything else in the contract (sub-checks 2/3, P3 scoping, version-anchor External Anchor Rule, *.html --target case, 3-mode pinning, the four content fixes, non-goals) stays unchanged - only sub-check 1's detection MECHANISM is redesigned. Status -> contract_negotiation; dispatching the redesign to @generator (attempt 4). NOTE: sub-check-1 redesign obsoletes the un-mechanized recurrence-guard concern for the NDEBT-003 items partially, but the deferred NDEBT-005 (recurrence-guard for enumeration-completeness + bare cross-refs) is still to be logged post-implementation."
+    },
+    {
+      "at": "2026-07-10T08:32:06Z",
+      "event": "contract_approved",
+      "detail": "Contract 027 (R1 C10 single-source-of-truth consistency, validate.sh 9->10) APPROVED on the human-authorized REDESIGN (attempt 4 = rev3; revisions=3; 027-contract circuit breaker attempts=4/limit=5, the 1-revision headroom unused). Both Loop-1 gates approved: Mode A (validator) confirmed the redesign faithfully realizes sub-check 1 while composing the unmodified vlib_no_stale_payload; the adversarial evaluator PASSED via an independent oracle dry-run confirming all three prior defect classes closed AT THE ROOT (rev0 paragraph-merge false-pass, rev1 cap/semicolon false-negatives, rev2 HTML-</p> false-pass) and the 4th feared class (abbreviation-period segmentation e.g./i.e.) demoted to a non-blocking observation after an exhaustive corpus grep found ZERO occurrences. The redesigned sub-check 1 mechanism: frontmatter-strip -> NORMALIZE (python3: strip HTML tag spans <[^>]*> to a SPACE, then collapse all whitespace) -> SEGMENT via re.split (?<=[.!?])\\s+ (boundary only after . ! ? + whitespace; never ;/:; never inside filename tokens) -> each segment checked once via the UNMODIFIED vlib_no_stale_payload. Format-agnostic by construction (kills line-wrap/semicolon/HTML-tag edges at the root) - the human's redesign mandate (option b) vindicated over a targeted patch. Scope: tools/validate.sh (check_c10_consistency: 3 sub-checks - normalize/segment payload-set consistency, P3-scoped discovery-order, version-anchor External Anchor Rule reading NIZAM.json; registered default/target[.md+.html]/payload; print_usage) + THREE forced/authorized content fixes (standard/GIP.md §4 item 3 tools/ omission [FORCED, C10 catches it]; docs/guide/index.html methodology key-docs 05_eval_and_trace.md omission [NDEBT-003a]; methodology/06_release_train.md:72 bare 05_release_train.md [NDEBT-003b]) with GIP.md + 06_release_train.md C8 bumps 0.2.0->0.3.0; 7 fixtures. 27 verifications. estimated_lines 215. feature_list_004 F-027 AT9 reconciled to the corrected 5-path scope guard (mirrors F-026 AT8). POST-IMPLEMENTATION orchestrator to-do: log NDEBT-005 (un-mechanized recurrence-guard for enumeration-completeness + bare cross-refs, deferred per the spec's exactly-3-sub-check scope). Delegating implementation to @generator (attempt-4 contract now durably status=approved)."
+    },
+    {
+      "at": "2026-07-10T08:52:50Z",
+      "event": "feature_complete",
+      "detail": "Feature 027 complete (R1 C10 single-source-of-truth consistency, validate.sh 9->10). RECOVERED from the 3-strike circuit-breaker halt: the human-authorized format-agnostic REDESIGN (attempt 4) passed both Loop-1 gates first-pass, then Mode B + QA first-pass. Mode B (validator): implementation matches contract EXACTLY - exactly the 4 files_modify (tools/validate.sh, standard/GIP.md, methodology/06_release_train.md, docs/guide/index.html) + 7 tools/fixtures/ created, strictly additive to C1-C9 (no check-fn/build_*_set/frontmatter_python/die-require-logic change), non-goals all held (verify_lib.sh byte-unchanged, NIZAM.json 0.5.1, CHANGELOG/CONTEXT/README/bootstrap/schema/workflows/DEBT/interface.md untouched), AH-4 change_logs accurate. ONE non-blocking Mode-B observation: the --target fall-through die message text was updated ('neither .md nor .json' -> 'neither .md, .json, nor .html') as the FORCED corollary of the contractually-mandated new *.html target case (leaving it stale would itself be the single-source-of-truth inconsistency C10 targets) - ruled non-blocking, observations[] not issues[]. QA (evaluator): all 27 contract verifications independently re-run 27/27 EXIT:0 + 12 FRESH-SCRATCH adversarial probes across all 3 sub-checks - sub-check 1 format-agnostic detection confirmed in markdown-wrap/semicolon/HTML forms + co-sentence resistance + complete-4-dir PASS control; sub-check 2 discovery-order reversed-FAIL/correct-PASS/single-label-exempt/real-CONTEXT.md-not-flagged; sub-check 3 version-anchor fresh-drift-FAIL/real-guide-PASS/mutated-NIZAM.json non-re-derivation proof. validate.sh SUMMARY: 10 passed, 0 failed (default) + 9 passed, 0 failed (payload). Deliverables: check_c10_consistency (3 sub-checks; the sub-check-1 mechanism = frontmatter-strip -> python3 normalize [strip HTML tags->space + collapse whitespace] -> re.split (?<=[.!?])\\s+ segment -> unmodified vlib_no_stale_payload per segment) registered default/target[.md+.html]/payload + print_usage; the 3 drift fixes (GIP.md §4 item3 tools/ [C10-forced]; guide key-docs 05_eval_and_trace.md [NDEBT-003a]; 06_release_train.md:72 05->06 [NDEBT-003b]); 7 fixtures. 269 lines vs 215 est (no flag). Cumulative 1219/1625 (75%). POST-COMMIT orchestrator to-do: log NDEBT-005 (deferred un-mechanized recurrence-guard for enumeration-completeness + bare cross-refs) + mark NDEBT-006 RESOLVED (circuit breaker cleared via the redesign). Advancing to 028 (R4b C11 dogfood schema validation of .agent/, deps 025+027 complete)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -678,7 +694,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1250,
-    "total_lines_changed": 950,
+    "total_lines_changed": 1219,
     "per_feature": [
       {
         "id": "023",
@@ -707,6 +723,13 @@
         "actual": 170,
         "flag": null,
         "note": "5 files (git numstat ins+del): tools/validate.sh 127+7=134 (new check_c9_path_resolution + guarded source verify_lib.sh + 3-mode registration + print_usage), tools/interface.md 5+2=7 (05->06 ref fix + 0.2.0->0.3.0 + change_log), docs/guide/index.html 1+1=2 (05->06 ref fix), tools/fixtures/unresolved_path.md 6 (new), tools/fixtures/exempt_paths.md 21 (new). Rolling avg last 3 (023=408,024=69,025=303)=260, 3x=780; 170 well under, no flag. Cumulative 950/1625 (58%). Contract approved FIRST-PASS by both Loop-1 gates (revisions=0); the evaluator independently re-derived C9's extraction + dry-ran it (2 unresolved without the doc fixes, 0 with) proving the non-breaking claim; Mode B + QA first-pass with 9 fresh-scratch adversarial probes (genuine content-driven detection, prefix-anchored .nizam/ exemption, narrow .agent/ singleton exemption, load-bearing frontmatter-strip). Realizes R1/C9 (validate.sh 8->9); also fixed 2 pre-existing v0.5.x-renumbering drift refs (interface.md:46, guide:535). Advancing to 027 (deps 023+026 complete)."
+      },
+      {
+        "id": "027",
+        "estimated": 215,
+        "actual": 269,
+        "flag": null,
+        "note": "11 files (git numstat ins+del): tools/validate.sh 188+13=201 (check_c10_consistency: format-agnostic normalize/segment payload-set + P3 discovery-order + External-Anchor version-anchor; default/target[.md+.html]/payload registration + print_usage), standard/GIP.md 8+5=13 (§4 item3 tools/ fix + 0.2.0->0.3.0 + change_log), methodology/06_release_train.md 5+2=7 (line72 05->06 + 0.2.0->0.3.0 + change_log), docs/guide/index.html 1+0=1 (add 05_eval_and_trace.md key-doc), + 7 fixtures 47. Est 215 was the rev3 estimate after 3 revisions+redesign grew it from 170 (rev0). Rolling avg last 3 (024=69,025=303,026=170)=180.67, 3x=542; 269 under, no per-feature flag. Cumulative 1219/1625 (75%). NOTABLE: this feature hit the 3-strike circuit breaker at the contract-review gate (rev0 paragraph-join false-pass; rev1 cap/semicolon false-negatives; rev2 HTML-</p> false-pass) - HUMAN authorized attempt 4 with a REDESIGN mandate; the format-agnostic normalize->segment->check (composing unmodified vlib_no_stale_payload) passed both Loop-1 gates first-pass on attempt 4 (revisions=3, 1-revision headroom unused), then Mode B + QA first-pass with 12 fresh-scratch adversarial probes across all 3 sub-checks. Realizes R1/C10 (validate.sh 9->10); resolves NDEBT-006 (circuit-breaker) via redesign; fixes 3 drift items (GIP.md §4 item3 tools/ [C10-forced]; NDEBT-003a guide key-docs 05_eval_and_trace.md; NDEBT-003b 06_release_train.md:72 bare ref). WATCH: cumulative 1219/1250-original-estimate = 97.5%; remaining F-028(~150)+F-029(~200)+F-030(~70)=~420 projects ~1639 > 1625 ceiling -> a cumulative-ceiling breach is likely during F-029/F-030, which will require human acknowledgment per the Scope Budget Protocol. Advancing to 028 (deps 025+027 complete)."
       }
     ]
   }

@@ -1,0 +1,6 @@
+test -f tools/fixtures/version_drift.html || { echo "MISSING tools/fixtures/version_drift.html"; exit 1; }; tmp=$(mktemp --suffix=.html); trap 'rm -f "$tmp"' EXIT; cp tools/fixtures/version_drift.html "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "neutral-filename copy unexpectedly PASSED -- suspected filename-keyed behavior"; exit 1; }; echo "$out" | grep -q 'version-anchor' && echo "$out" | grep -q '0\.4\.0' || { echo "neutral-filename copy lost the version-anchor FAIL tag or the offending value"; exit 1; }; echo "PASS (correctly rejected, rc=$rc)"
+[C10] FAIL consistency
+  /tmp/tmp.kD99ywqJT9.html: [version-anchor] meta framework-version '0.4.0' != NIZAM.json framework.version '0.5.1'
+  /tmp/tmp.kD99ywqJT9.html: [version-anchor] footer version '0.4.0' != NIZAM.json framework.version '0.5.1'
+PASS (correctly rejected, rc=1)
+EXIT:0

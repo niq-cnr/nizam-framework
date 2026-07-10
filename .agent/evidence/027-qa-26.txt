@@ -1,0 +1,20 @@
+f=standard/GIP.md; python3 - "$f" <<'PY'
+import re, sys
+text = open(sys.argv[1], encoding='utf-8').read()
+m = re.search(r'Detecting local mutation.*?no longer matches', text, re.S)
+if not m:
+    print('could not locate the Detecting local mutation sentence'); sys.exit(1)
+span = m.group(0)
+for tok in ('standard/', 'templates/', 'schema/', 'tools/'):
+    if tok not in span:
+        print(f'Detecting local mutation span still missing {tok}'); sys.exit(1)
+sys.exit(0)
+PY
+rc=$?; test "$rc" -eq 0 || { echo "GIP.md Section 4 item 3 fix not found/incomplete"; exit 1; }; source tools/verify_lib.sh; vlib_version_increased "$f" || { echo "$f's frontmatter version did not strictly increase vs HEAD"; exit 1; }; out=$(bash tools/validate.sh --target "$f" 2>&1); rc2=$?; echo "$out"; test "$rc2" -eq 0 && echo "$out" | grep -q '\[C1\] PASS' && echo "$out" | grep -q '\[C2\] PASS' && echo "$out" | grep -q '\[C3\] PASS' && echo "$out" | grep -q '\[C9\] PASS' && echo "$out" | grep -q '\[C10\] PASS' || { echo "$f failed the --target sweep"; exit 1; }; echo PASS
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] PASS consistency
+PASS
+EXIT:0

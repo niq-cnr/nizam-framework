@@ -1,0 +1,11 @@
+test -f tools/fixtures/bad_discovery_order.md || { echo "MISSING tools/fixtures/bad_discovery_order.md"; exit 1; }; out=$(bash tools/validate.sh --target tools/fixtures/bad_discovery_order.md 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit, got 0"; exit 1; }; echo "$out" | grep -q '\[C10\] FAIL' || { echo "no [C10] FAIL line"; exit 1; }; echo "$out" | grep -q 'discovery-order' || { echo "[C10] FAIL output does not tag the discovery-order sub-check"; exit 1; }; echo PASS
+[C1] FAIL frontmatter-schema
+  tools/fixtures/bad_discovery_order.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  tools/fixtures/bad_discovery_order.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] FAIL consistency
+  tools/fixtures/bad_discovery_order.md: [discovery-order] 'Framework-checkout fallback' (line 6) precedes 'Bootstrapped-consumer discovery' (line 9)
+PASS
+EXIT:0

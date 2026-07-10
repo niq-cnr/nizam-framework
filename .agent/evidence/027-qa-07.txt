@@ -1,0 +1,3 @@
+f=tools/validate.sh; grep -q "framework" "$f" || { echo "tools/validate.sh does not reference 'framework'"; exit 1; }; grep -q "NIZAM.json" "$f" || { echo "tools/validate.sh does not reference NIZAM.json"; exit 1; }; grep -Eq "json\.load\(open\('NIZAM\.json'\)\)\['framework'\]\['version'\]" "$f" || { echo "C10 does not read framework.version from NIZAM.json via python3"; exit 1; }; echo PASS
+PASS
+EXIT:0

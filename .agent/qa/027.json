@@ -1,0 +1,56 @@
+{
+  "feature_id": "027",
+  "qa_pass": true,
+  "checks_run": 27,
+  "checks_passed": 27,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/027-qa-adversarial.txt",
+    "findings": "12 independent adversarial probes run against FRESH scratch fixtures (never seen by the generator, neutral filenames, not tools/fixtures/*), covering all three C10 sub-checks, all correctly resolved with no defects found. Sub-check 1 (payload-set, format-agnostic): (a) a >3-line unpunctuated markdown wrap naming standard/,templates/,schema/ (no tools/) correctly FAILed with the fully-reconstructed sentence; (b) an HTML <p>...only.</p><p>...tools/...</p> co-located-on-one-physical-line pair correctly FAILed on only the stale <p>, never leaking the unrelated <p>'s text; (c) a `;`-broken enumeration correctly FAILed with the full sentence reconstructed across the semicolon; (d) a stale sentence sharing a paragraph with a separately-punctuated, unrelated tools/-mentioning sentence correctly FAILed on the stale sentence alone, never swallowing the unrelated sentence; (e) a genuinely complete 4-dir enumeration correctly reported [C10] PASS. Sub-check 2 (P3 discovery-order): (f) both canonical labels present in reversed order correctly FAILed naming both line numbers; (g) both labels in correct order correctly PASSed; (h) only one label present correctly reported PASS (vacuous exemption, not a special-case); (i) the real CONTEXT.md was independently grepped (case-insensitive) and confirmed to contain neither canonical label, and --target CONTEXT.md correctly reported [C10] PASS -- not false-flagged. Sub-check 3 (version-anchor, External Anchor Rule): (j) a fresh .html embedding framework-version 9.9.9 correctly FAILed against the real repo's NIZAM.json (independently confirmed framework.version=0.5.1); (k) the real docs/guide/index.html correctly PASSed; (l) an isolated minimal directory (containing only tools/verify_lib.sh, a python3-mutated NIZAM.json with framework.version rewritten to 9.9.9, and a fixture embedding 9.9.9) was built and tools/validate.sh was invoked with CWD set to that directory -- the check correctly PASSed there (matching the doc's 9.9.9 against the MUTATED NIZAM.json's 9.9.9), proving the expected value is read live from NIZAM.json at invocation time, never hardcoded or re-derived from the doc under test; the identical anchor value was independently re-confirmed to FAIL against the real repo's NIZAM.json in probe (j). Full-sweep regression re-confirmation: default mode SUMMARY: 10 passed, 0 failed (EXIT:0, [C1]-[C10] all PASS); --payload mode SUMMARY (payload mode): 9 passed, 0 failed (EXIT:0, [C1]-[C5]/[C7]-[C10] PASS, [C6] SKIP as designed, no C1-C9 regression). All three content fixes (standard/GIP.md Sec 4 item 3 now names tools/; docs/guide/index.html key-docs list now includes methodology/05_eval_and_trace.md; methodology/06_release_train.md's stale bare 05_release_train.md token replaced with 06_release_train.md) were independently re-read directly from disk and confirmed complete and minimal, with both edited protocol docs' frontmatter version bumped 0.2.0->0.3.0 and one new change_log entry each. Scope independently re-confirmed via raw `git status --porcelain --untracked-files=all -- . ':(exclude).agent'`: exactly tools/validate.sh, tools/fixtures/* (6 new fixtures), docs/guide/index.html, methodology/06_release_train.md, standard/GIP.md changed outside .agent/ -- matching the contract's allow-list exactly, no out-of-scope changes. Anti-cheat: all evaluator-authored FAIL fixtures used neutral filenames sharing no name with any generator fixture and still correctly FAILed on the right sub-check, independently corroborating (not merely trusting) the contract's own 7 built-in neutral-mktemp anti-cheat verification entries (11/13/15/17/19/20/21), all independently re-run and passed."
+  },
+  "evidence_files": [
+    ".agent/evidence/027-qa-01.txt",
+    ".agent/evidence/027-qa-02.txt",
+    ".agent/evidence/027-qa-03.txt",
+    ".agent/evidence/027-qa-04.txt",
+    ".agent/evidence/027-qa-05.txt",
+    ".agent/evidence/027-qa-06.txt",
+    ".agent/evidence/027-qa-07.txt",
+    ".agent/evidence/027-qa-08.txt",
+    ".agent/evidence/027-qa-09.txt",
+    ".agent/evidence/027-qa-10.txt",
+    ".agent/evidence/027-qa-11.txt",
+    ".agent/evidence/027-qa-12.txt",
+    ".agent/evidence/027-qa-13.txt",
+    ".agent/evidence/027-qa-14.txt",
+    ".agent/evidence/027-qa-15.txt",
+    ".agent/evidence/027-qa-16.txt",
+    ".agent/evidence/027-qa-17.txt",
+    ".agent/evidence/027-qa-18.txt",
+    ".agent/evidence/027-qa-19.txt",
+    ".agent/evidence/027-qa-20.txt",
+    ".agent/evidence/027-qa-21.txt",
+    ".agent/evidence/027-qa-22.txt",
+    ".agent/evidence/027-qa-23.txt",
+    ".agent/evidence/027-qa-24.txt",
+    ".agent/evidence/027-qa-25.txt",
+    ".agent/evidence/027-qa-26.txt",
+    ".agent/evidence/027-qa-27.txt",
+    ".agent/evidence/027-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "observations": [
+    "No unit-test framework (Vitest/pytest/etc.) applies to this repository -- the verification surface is tools/validate.sh's shell-based NDS compliance checks (now C1-C10), independently re-run in full (27/27 contract commands, all EXIT:0) plus 12 additional adversarial probes against fresh scratch fixtures. No code coverage tool exists in this repository, consistent with prior QA precedent (e.g. 026); coverage_warning recorded as null.",
+    "The generator's own evidence trail (.agent/evidence/027-verify-01.txt..027-verify-27.txt) and Mode A/B validator artifacts remain present in the tree alongside this feature's independently-generated Loop-2 QA evidence (.agent/evidence/027-qa-*.txt); the evaluator did not trust or reuse the generator's evidence files -- every command was independently re-executed from repo root into fresh files.",
+    "The redesigned (REV3) normalize-then-segment pipeline for sub-check (1) was independently confirmed to be genuinely format-agnostic: it correctly handled markdown line-wraps, semicolon-broken lines, and HTML tag-adjacent sentence boundaries with no reliance on physical line structure, matching design_notes.c10_subcheck_design_and_normalization_finding's claims exactly."
+  ],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "027",
+    "summary": "All 27 contract-027 verification commands were independently re-run from repo root into fresh .agent/evidence/027-qa-NN.txt files (not reused from the generator's 027-verify-NN.txt) and all 27 pass (EXIT:0 each). bash tools/validate.sh independently re-confirmed: SUMMARY: 10 passed, 0 failed, exit 0, [C1]-[C10] all PASS. bash tools/validate.sh --payload independently re-confirmed: SUMMARY (payload mode): 9 passed, 0 failed, exit 0, [C1]-[C5]/[C7]-[C10] PASS, [C6] SKIP (payload mode, by design) -- no C1-C9 regression. Twelve additional adversarial probes against FRESH scratch fixtures (never seen by the generator, neutral filenames) independently confirmed genuine, content-driven, format-agnostic detection across all three C10 sub-checks in multiple formats (markdown line-wrap, semicolon-broken, HTML tag-adjacent), correct resistance to the co-sentence false-pass, correct exemption behavior for discovery-order when a label is missing or when targeting the real CONTEXT.md, and correct External Anchor Rule behavior (independently proven non-re-derivation by swapping in a mutated NIZAM.json in an isolated CWD). All three content fixes (standard/GIP.md, docs/guide/index.html, methodology/06_release_train.md) were independently re-read from disk and confirmed complete, minimal, and correctly version-bumped/change-logged. Scope independently re-confirmed via raw git status against the contract's allow-list: exact match, no out-of-scope changes. No blocking defects, no unsupported claims, no missing acceptance coverage. QA verdict: PASS."
+  }
+}

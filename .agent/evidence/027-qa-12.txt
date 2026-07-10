@@ -1,0 +1,11 @@
+test -f tools/fixtures/stale_payload_cosentence.md || { echo "MISSING tools/fixtures/stale_payload_cosentence.md"; exit 1; }; out=$(bash tools/validate.sh --target tools/fixtures/stale_payload_cosentence.md 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit -- the wrapped stale enumeration was NOT caught (false-pass regression), got 0"; exit 1; }; echo "$out" | grep -q '\[C10\] FAIL' || { echo "no [C10] FAIL line"; exit 1; }; echo "$out" | grep -q 'payload-set' || { echo "[C10] FAIL output does not tag the payload-set sub-check"; exit 1; }; echo "$out" | grep -q 'only\.' || { echo "[C10] FAIL output does not name the wrapped stale sentence's own content -- true-positive-preservation not demonstrated"; exit 1; }; echo "$out" | grep -q 'unrelated utility scripts' && { echo "[C10] FAIL output includes the UNRELATED tools/ sentence's text in the offending segment -- the normalize/segment pipeline merged them, the exact false-pass-adjacent defect this fixture exists to catch"; exit 1; }; echo PASS
+[C1] FAIL frontmatter-schema
+  tools/fixtures/stale_payload_cosentence.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  tools/fixtures/stale_payload_cosentence.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] FAIL consistency
+  tools/fixtures/stale_payload_cosentence.md: [payload-set] vlib_no_stale_payload: stale payload enumeration (omits tools/): # C10 Sub-Check (1) Regression Fixture -- Co-Sentence Resist-False-Pass The framework's payload, as some people mistakenly describe it, lives under `standard/`, `templates/`, and `schema/` only.
+PASS
+EXIT:0

@@ -1,0 +1,11 @@
+test -f tools/fixtures/stale_payload_longwrap.md || { echo "MISSING tools/fixtures/stale_payload_longwrap.md"; exit 1; }; tmp=$(mktemp --suffix=.md); trap 'rm -f "$tmp"' EXIT; cp tools/fixtures/stale_payload_longwrap.md "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "neutral-filename copy unexpectedly PASSED -- suspected filename-keyed behavior"; exit 1; }; echo "$out" | grep -q 'payload-set' || { echo "neutral-filename copy lost the payload-set FAIL tag"; exit 1; }; echo "PASS (correctly rejected, rc=$rc)"
+[C1] FAIL frontmatter-schema
+  /tmp/tmp.oyY5ItSpyX.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  /tmp/tmp.oyY5ItSpyX.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] FAIL consistency
+  /tmp/tmp.oyY5ItSpyX.md: [payload-set] vlib_no_stale_payload: stale payload enumeration (omits tools/): # C10 Sub-Check (1) Regression Fixture -- Long-Wrap (>3 Physical Lines) The payload includes the following: `standard/`, `templates/`, and `schema/` only.
+PASS (correctly rejected, rc=1)
+EXIT:0

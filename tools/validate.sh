@@ -18,7 +18,7 @@
 # `yaml` (PyYAML) modules importable).
 #
 # Modes:
-#   (default, no args)   Full repo sweep: runs checks C1-C9.
+#   (default, no args)   Full repo sweep: runs checks C1-C10.
 #   --target <file>      Runs only the checks applicable to a single file.
 #   --payload            Validates a consumer-injected .nizam/ payload subset.
 #   --help / -h           Prints usage and exits 0.
@@ -70,20 +70,24 @@ if any is missing): bash, git, grep, find, awk, python3 -- with python3's
 installs or vendors these dependencies itself.
 
 Modes:
-  (no arguments)      Full repo sweep. Runs all 9 checks (C1-C9) and prints
-                      one PASS/FAIL line per check plus a final summary
-                      line. Exits 0 only if every check passed.
+  (no arguments)      Full repo sweep. Runs all 10 checks (C1-C10) and
+                      prints one PASS/FAIL line per check plus a final
+                      summary line. Exits 0 only if every check passed.
 
   --target <file>     Runs only the checks applicable to a single named
                       file, printing PASS/FAIL per applicable check.
                         - For a `.md` target: C1 (frontmatter schema), C2
-                          (format), C3 (untagged-fence sweep), and C9
+                          (format), C3 (untagged-fence sweep), C9
                           (repo-wide path resolution, scanning only that
-                          file's own body) run against exactly that one
-                          file.
+                          file's own body), and C10 (single-source-of-truth
+                          consistency, scanning only that file's own body)
+                          run against exactly that one file.
                         - For a `.json` target shaped like a Nizam index
                           file: C4 (schema validation + indexed-path
                           walker) runs against exactly that one file.
+                        - For a `.html` target: C10 (single-source-of-truth
+                          consistency) runs against exactly that one file.
+                          No other check has a `.html` target case.
                       Checks that are inherently repo-wide (C5 branding
                       sweep, C6 bootstrap.sh sanity, C7 module-README
                       presence, C8 git-history version/changelog diff) do
@@ -98,12 +102,16 @@ Modes:
                       intentionally absent from consumer payloads
                       (CONTEXT.md, README.md, CHANGELOG.md, bootstrap.sh,
                       methodology/, registry/, docs/) are not required.
-                      Runs C1-C5, C7-C9 with payload-appropriate file sets;
-                      C6 is skipped. C9 sweeps only the payload-doc set
-                      (standard/, templates/, and tools/ excluding
-                      tools/fixtures/, plus schema/README.md) --
+                      Runs C1-C5, C7-C10 with payload-appropriate file
+                      sets; C6 is skipped. C9 and C10 both sweep only the
+                      payload-doc set (standard/, templates/, and tools/
+                      excluding tools/fixtures/, plus schema/README.md) --
                       docs/guide/index.html is never swept in --payload
-                      mode. Exits 0 only if every applicable check passed.
+                      mode, so C10's version-anchor sub-check finds no
+                      anchor to check there and passes trivially (the
+                      framework-version anchor lives only in the guide,
+                      which bootstrap.sh does not inject). Exits 0 only if
+                      every applicable check passed.
 
   --help, -h          Prints this usage and exits 0.
 
@@ -193,6 +201,51 @@ file(s)/detail(s) printed on the following indented line(s)):
       directory contains such a file). Any remaining token that does not
       resolve is a C9 FAIL, reported as
       `<file>: unresolved path reference '<token>'`.
+
+  C10 Single-source-of-truth consistency (narrative-truth: do the docs
+      agree with each other and with the framework's own recorded state?).
+      Sweeps the SAME set C9 sweeps in each mode (shipped-doc set UNION
+      {docs/guide/index.html} by default; the payload-doc set in --payload
+      mode; a single --target `.md` or `.html` file). Strips a leading YAML
+      frontmatter block first, exactly as C9 does, then runs three
+      independent sub-checks against the remaining BODY:
+        (1) Payload-set consistency -- the body is made FORMAT-AGNOSTIC
+            before checking: every HTML/XML-style tag span (`<...>`) is
+            replaced with a single space (so `<code>tools/</code>` becomes
+            ` tools/ ` and a `</p><p>` boundary becomes a plain space,
+            regardless of whether the two sentences shared one physical
+            source line), then every run of whitespace (including all
+            newlines) collapses to a single space -- physical line-wrapping
+            becomes irrelevant. The normalized text is then split into
+            sentence segments wherever a `.`, `!`, or `?` is immediately
+            followed by whitespace (never on `;` or `:`, and never inside a
+            `.md`/`.json`/`.sh` filename token, since there the `.` is
+            followed by a letter, not whitespace). Each segment is checked,
+            in isolation, via `tools/verify_lib.sh`'s `vlib_no_stale_payload`
+            (F-023): a segment that mentions `standard/`, `templates/`, and
+            `schema/` together but omits `tools/` is a stale payload
+            enumeration and fails this sub-check.
+        (2) Discovery-order (P3-scoped) -- only where a file's BODY
+            contains BOTH of the exact canonical labels 'Bootstrapped-
+            consumer discovery' and 'Framework-checkout fallback' (the
+            structural labels tools/interface.md Section 2 and the guide's
+            mirrored discovery list both use verbatim) does this sub-check
+            require the former to appear (by line number) before the
+            latter -- a file mentioning neither or only one label is not
+            describing the bootstrapped-consumer-vs-fallback sequence at
+            all, and is therefore not applicable, not vacuously passed.
+        (3) Framework-version anchor (External Anchor Rule) -- the
+            expected version is read ONCE, directly from `NIZAM.json`'s
+            `framework.version` (never re-derived from the doc under
+            test); any `<meta name="framework-version" content="X">` or
+            `<span id="footer-version">X</span>` value found in the body
+            must equal it, or this sub-check fails.
+      A file failing any of the three sub-checks is a single C10 FAIL,
+      with each offending sub-check's detail tagged `[payload-set]`,
+      `[discovery-order]`, or `[version-anchor]` and printed on its own
+      indented line beneath. `tools/verify_lib.sh` is sourced once already
+      (by C9, above); C10 composes its existing `vlib_no_stale_payload`
+      primitive and never modifies the library.
 
 Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,
 consistently): CONTEXT.md; every .md under docs/architecture/; every .md
@@ -863,6 +916,122 @@ check_c9_path_resolution() {
 }
 
 # ---------------------------------------------------------------------------
+# C10 -- single-source-of-truth consistency (payload-set / discovery-order /
+# framework-version anchor)
+# ---------------------------------------------------------------------------
+
+# check_c10_consistency <file> [<file> ...]
+#
+# For each given file, strips a leading YAML frontmatter block (if present,
+# identical convention to check_c9_path_resolution) and runs three
+# independent sub-checks against the remaining BODY:
+#
+#   (1) payload-set consistency -- the body is normalized (HTML tags
+#       replaced with a space, all whitespace collapsed) and split into
+#       sentence segments on a `.`/`!`/`?` immediately followed by
+#       whitespace (via a single python3 pass); each segment is checked,
+#       in isolation, via tools/verify_lib.sh's vlib_no_stale_payload
+#       (F-023, composed here, never modified).
+#   (2) discovery-order (P3-scoped) -- when the body names BOTH the
+#       'Bootstrapped-consumer discovery' and 'Framework-checkout
+#       fallback' canonical labels, asserts the former precedes the
+#       latter by line number; not applicable (no assertion) if either
+#       label is absent.
+#   (3) framework-version anchor (External Anchor Rule) -- any
+#       <meta name="framework-version"> or <span id="footer-version">
+#       value found in the body must equal NIZAM.json's framework.version
+#       (read once from NIZAM.json, never re-derived from the doc under
+#       test).
+#
+# Composes from vlib_no_stale_payload rather than re-implementing stale-
+# payload detection; never modifies tools/verify_lib.sh.
+check_c10_consistency() {
+  local files=("$@")
+  local errors=()
+  local f body_tmp seg_tmp out
+  local expected_version
+
+  expected_version=$(python3 -c "import json; print(json.load(open('NIZAM.json'))['framework']['version'])")
+
+  for f in "${files[@]}"; do
+    if [ ! -f "${f}" ]; then
+      errors+=("${f}: MISSING file")
+      continue
+    fi
+
+    # Strip a leading YAML frontmatter block (identical convention to
+    # check_c9_path_resolution); scan only the remaining BODY.
+    body_tmp=$(mktemp)
+    awk '
+      NR == 1 && $0 == "---" { in_frontmatter = 1; next }
+      in_frontmatter && $0 == "---" { in_frontmatter = 0; next }
+      in_frontmatter { next }
+      { print }
+    ' "${f}" > "${body_tmp}"
+
+    # --- sub-check (1): payload-set consistency (normalize -> segment) ---
+    seg_tmp=$(mktemp)
+    python3 - "${body_tmp}" > "${seg_tmp}" <<'PY'
+import re
+import sys
+
+text = open(sys.argv[1], encoding="utf-8").read()
+# Strip HTML/XML-style tags, replacing each with a space (not deleting) so
+# tag-adjacent words are never wrongly concatenated (e.g. `the</code> hosts`).
+text = re.sub(r"<[^>]*>", " ", text)
+# Collapse every run of whitespace (including newlines) to a single space --
+# physical line-wrapping is now irrelevant.
+text = re.sub(r"\s+", " ", text).strip()
+# Segment on a sentence terminator immediately followed by whitespace (or
+# end-of-stream); never splits on `;`/`:`, never splits inside a filename
+# token such as `standard/GIP.md` (the `.` there is followed by a letter,
+# not whitespace).
+for seg in re.split(r"(?<=[.!?])\s+", text):
+    seg = seg.strip()
+    if seg:
+        print(seg)
+PY
+    if ! out=$(vlib_no_stale_payload "${seg_tmp}" 2>&1); then
+      errors+=("${f}: [payload-set] ${out}")
+    fi
+    rm -f "${seg_tmp}"
+
+    # --- sub-check (2): discovery-order (P3-scoped) ---
+    local boot_line fallback_line
+    boot_line=$(grep -inE 'bootstrapped-consumer discovery' "${body_tmp}" | head -1 | cut -d: -f1) || true
+    fallback_line=$(grep -inE 'framework-checkout fallback' "${body_tmp}" | head -1 | cut -d: -f1) || true
+    if [ -n "${boot_line}" ] && [ -n "${fallback_line}" ] && [ "${boot_line}" -gt "${fallback_line}" ]; then
+      errors+=("${f}: [discovery-order] 'Framework-checkout fallback' (line ${fallback_line}) precedes 'Bootstrapped-consumer discovery' (line ${boot_line})")
+    fi
+
+    # --- sub-check (3): framework-version anchor (External Anchor Rule) ---
+    local meta_version footer_version
+    meta_version=$(grep -oE 'name="framework-version" content="[0-9]+\.[0-9]+\.[0-9]+"' "${body_tmp}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1) || true
+    if [ -n "${meta_version}" ] && [ "${meta_version}" != "${expected_version}" ]; then
+      errors+=("${f}: [version-anchor] meta framework-version '${meta_version}' != NIZAM.json framework.version '${expected_version}'")
+    fi
+    footer_version=$(grep -oE 'id="footer-version">[0-9]+\.[0-9]+\.[0-9]+' "${body_tmp}" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1) || true
+    if [ -n "${footer_version}" ] && [ "${footer_version}" != "${expected_version}" ]; then
+      errors+=("${f}: [version-anchor] footer version '${footer_version}' != NIZAM.json framework.version '${expected_version}'")
+    fi
+
+    rm -f "${body_tmp}"
+  done
+
+  if [ "${#errors[@]}" -eq 0 ]; then
+    echo "[C10] PASS consistency"
+    return 0
+  fi
+
+  echo "[C10] FAIL consistency"
+  local e
+  for e in "${errors[@]}"; do
+    echo "  ${e}"
+  done
+  return 1
+}
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -922,12 +1091,16 @@ main() {
         check_c2_format "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
         check_c3_fences "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
         check_c9_path_resolution "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
+        check_c10_consistency "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
         ;;
       *.json)
         check_c4_index "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
         ;;
+      *.html)
+        check_c10_consistency "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
+        ;;
       *)
-        die "--target file '${target}' is neither .md nor .json -- no applicable checks."
+        die "--target file '${target}' is neither .md, .json, nor .html -- no applicable checks."
         ;;
     esac
   elif [ "${VALIDATOR_MODE}" = "payload" ]; then
@@ -948,6 +1121,7 @@ main() {
     check_c7_module_readmes && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c8_version_changelog "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c9_path_resolution "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c10_consistency "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY (payload mode): ${passed} passed, ${failed} failed"
   else
@@ -971,6 +1145,7 @@ main() {
       c9_default_files+=("docs/guide/index.html")
     fi
     check_c9_path_resolution "${c9_default_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c10_consistency "${c9_default_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY: ${passed} passed, ${failed} failed"
   fi

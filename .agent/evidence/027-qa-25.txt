@@ -1,0 +1,8 @@
+f=methodology/06_release_train.md; grep -q '05_release_train.md' "$f" && { echo "$f still contains the stale bare 05_release_train.md token"; exit 1; }; grep -q '06_release_train.md' "$f" || { echo "$f is missing the corrected 06_release_train.md token"; exit 1; }; source tools/verify_lib.sh; vlib_version_increased "$f" || { echo "$f's frontmatter version did not strictly increase vs HEAD"; exit 1; }; out=$(bash tools/validate.sh --target "$f" 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 && echo "$out" | grep -q '\[C1\] PASS' && echo "$out" | grep -q '\[C2\] PASS' && echo "$out" | grep -q '\[C3\] PASS' && echo "$out" | grep -q '\[C9\] PASS' && echo "$out" | grep -q '\[C10\] PASS' || { echo "$f failed the --target sweep"; exit 1; }; echo PASS
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] PASS consistency
+PASS
+EXIT:0
