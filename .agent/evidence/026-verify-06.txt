@@ -1,0 +1,9 @@
+test -f tools/fixtures/exempt_paths.md || { echo "MISSING tools/fixtures/exempt_paths.md"; exit 1; }; out=$(bash tools/validate.sh --target tools/fixtures/exempt_paths.md 2>&1); echo "$out"; echo "$out" | grep -q '\[C9\] PASS' || { echo "exempt_paths.md did not report [C9] PASS"; exit 1; }; echo PASS
+[C1] FAIL frontmatter-schema
+  tools/fixtures/exempt_paths.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  tools/fixtures/exempt_paths.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+PASS
+EXIT:0

@@ -1,0 +1,3 @@
+f=tools/validate.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'check_c9_path_resolution' "$f" || { echo "C9 check function not found in tools/validate.sh"; exit 1; }; bash tools/validate.sh --help | grep -q 'C9' || { echo "--help does not document C9"; exit 1; }; echo PASS
+PASS
+EXIT:0

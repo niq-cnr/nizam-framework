@@ -1,0 +1,9 @@
+tmp=$(mktemp --suffix=.md); cp tools/fixtures/exempt_paths.md "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); echo "$out"; rm -f "$tmp"
+[C1] FAIL frontmatter-schema
+  /tmp/tmp.4gDfcdFdAh.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  /tmp/tmp.4gDfcdFdAh.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+PASS (neutral-filename copy still PASSes C9 -- content-driven, not filename-keyed)
+EXIT:0

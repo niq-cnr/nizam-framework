@@ -1,0 +1,7 @@
+f=tools/interface.md; grep -q 'methodology/06_release_train.md' "$f" || { echo "$f still missing the corrected methodology/06_release_train.md reference"; exit 1; }; grep -q 'methodology/05_release_train.md' "$f" && { echo "$f still contains the stale methodology/05_release_train.md reference"; exit 1; }; source tools/verify_lib.sh; vlib_version_increased "$f" || { echo "$f's frontmatter version did not strictly increase vs HEAD"; exit 1; }; out=$(bash tools/validate.sh --target "$f" 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 && echo "$out" | grep -q '\[C1\] PASS' && echo "$out" | grep -q '\[C2\] PASS' && echo "$out" | grep -q '\[C3\] PASS' || { echo "$f failed the --target C1/C2/C3 sweep"; exit 1; }; echo PASS
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+PASS
+EXIT:0

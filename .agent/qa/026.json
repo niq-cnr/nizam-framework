@@ -1,0 +1,44 @@
+{
+  "feature_id": "026",
+  "qa_pass": true,
+  "checks_run": 15,
+  "checks_passed": 15,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/026-qa-adversarial.txt",
+    "findings": "9-part independent adversarial spot-check run, all PASS, no defects found. (1) Genuine detection: a fresh scratch .md (never seen by the generator) naming a new, nonexistent, non-placeholder, '/'-qualified, shipped-extension path (standard/DOES_NOT_EXIST_xyz.md) was --target-ed; C9 correctly FAILed (rc=1) and named the exact offending token, proving C9 reads content rather than being keyed to the two shipped fixture filenames. (2) No over-exemption of the .nizam/ prefix: scratch .md fixtures naming broken paths that CONTAIN but do not START WITH .nizam/ (foo/.nizam/bar.md and x.nizam/y.md) both correctly FAILed and named their tokens -- the exemption is prefix-anchored, not substring-matched. (3) No over-exemption of the .agent/ singleton tokens: a broken .agent/contracts/nonexistent_real.json (not one of the two named exempt tokens, no NNN/XXX/step- pattern) correctly FAILed and named the token; conversely the two literal named tokens (.agent/capability_profile.json, .agent/debt.json, independently confirmed absent from disk via ls) correctly reported [C9] PASS per the contract's narrow, enumerated design. (4) No under-detection masking: a scratch .md combining a genuinely resolving path, a trailing-punctuation-mangled real path, an NNN placeholder, and a step-N placeholder all correctly PASSed together. (5) Frontmatter-strip is load-bearing, proven by contrast: the exact free-text substring from standard/GIP.md's real frontmatter change_log entry ('existing-CONTEXT.md/AGENTS.md/CI') independently confirmed to regex-match as a candidate token -- PASSES C9 when confined to GIP.md's real frontmatter (--target standard/GIP.md reports [C9] PASS) but FAILS C9 (naming the same token) when the identical substring is placed in a scratch file's BODY instead. (6) Anti-cheat fixtures (contract entries 10/11) independently re-run: neutral mktemp-renamed byte-identical copies of both shipped fixtures preserve their PASS/FAIL behavior and the FAIL copy still names the real offending token 'ADR-999-does-not-exist.md' -- defeats a filename-keyed stub. (7) Pre-existing-drift remediation independently verified complete and minimal via git diff HEAD on both tools/interface.md (version bump + one change_log entry + the single-line 05->06 fix, nothing else) and docs/guide/index.html (the single-line 05->06 fix only, framework-version meta anchor untouched); a targeted sweep of all 38 files in the actual C9 default-sweep universe (independently re-derived from build_shipped_md_set()'s own logic) for the literal stale string returned zero matches -- the drift is fully gone from every file C9 actually sweeps (CHANGELOG.md and the immutable .agent/contracts/015.json still name it correctly as historical record, out of C9's swept universe and out of this feature's scope). (8) Scope guard cross-checked via raw `git status --porcelain --untracked-files=all -- . ':(exclude).agent'`: exactly 3 modified + 2 new untracked files outside .agent/, matching the contract's allow-list exactly. (9) One disclosed, non-blocking design limitation independently reproduced: methodology/06_release_train.md:72 contains a genuine, currently-broken BARE (non-'/'-qualified) '05_release_train.md' reference that C9's '/'-qualification requirement will never catch -- this is the same recall gap already disclosed in the contract's own design_notes and the generator's pre-code .agent/qa/026-contract-review.json, evidence-backed and approved at Mode A, not an undisclosed gaming shortcut; logged as an observation, not a blocking defect."
+  },
+  "evidence_files": [
+    ".agent/evidence/026-qa-01.txt",
+    ".agent/evidence/026-qa-02.txt",
+    ".agent/evidence/026-qa-03.txt",
+    ".agent/evidence/026-qa-04.txt",
+    ".agent/evidence/026-qa-05.txt",
+    ".agent/evidence/026-qa-06.txt",
+    ".agent/evidence/026-qa-07.txt",
+    ".agent/evidence/026-qa-08.txt",
+    ".agent/evidence/026-qa-09.txt",
+    ".agent/evidence/026-qa-10.txt",
+    ".agent/evidence/026-qa-11.txt",
+    ".agent/evidence/026-qa-12.txt",
+    ".agent/evidence/026-qa-13.txt",
+    ".agent/evidence/026-qa-14.txt",
+    ".agent/evidence/026-qa-15.txt",
+    ".agent/evidence/026-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "observations": [
+    "Known, disclosed, non-blocking design limitation independently reproduced: methodology/06_release_train.md:72 contains a genuine, currently-broken bare (non-'/'-qualified) '05_release_train.md' reference that C9's '/'-qualification requirement structurally cannot catch. This is the identical recall gap already disclosed in the approved contract's own design_notes (with an evidence-backed false-positive rationale for the '/' requirement) and independently flagged in the generator's pre-code .agent/qa/026-contract-review.json. Not gaming or an undisclosed defect -- a reviewed, accepted design tradeoff. Recommend the orchestrator log this specific token as a DEBT.md follow-up item for a future feature, since fixing it is out of this contract's non_goals-scoped mandate.",
+    "The generator's own Loop-1 evidence trail (.agent/qa/026-contract-review.json) and Mode A/B validator artifacts (.agent/validator/026-mode-a.json, .agent/validator/026-mode-b.json) remain present in the tree alongside this feature's Loop-2 QA evidence, matching prior-feature precedent (e.g. 025) that pre-code review evidence and post-code QA evidence coexist. Non-blocking; not part of this feature's own verification scope.",
+    "No unit-test framework (Vitest/pytest/etc.) applies to this feature -- the project's verification surface is tools/validate.sh's shell-based NDS compliance checks, independently re-run in full (15/15 contract commands plus 9 additional adversarial probes). No code coverage tool exists in this repository, consistent with prior QA precedent (e.g. 024, 025); coverage_warning recorded as null."
+  ],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "026",
+    "summary": "All 15 contract-026 verification commands were independently re-run from repo root into fresh .agent/evidence/026-qa-NN.txt files (not reused from the generator's 026-verify-NN.txt) and all 15 pass (15/15 EXIT:0), byte-for-byte matching the generator's own claimed outcomes: bash tools/validate.sh reports 'SUMMARY: 9 passed, 0 failed' with [C9] PASS and exit 0; --payload reports 'SUMMARY (payload mode): 8 passed, 0 failed' with [C9] PASS and exit 0; all C1-C8 checks PASS in both modes (no regression); the FAIL fixture (tools/fixtures/unresolved_path.md) correctly fails C9 and names 'ADR-999-does-not-exist.md'; the PASS/exemption fixture (tools/fixtures/exempt_paths.md) correctly passes C9; --help documents C9, the placeholder/exemption rule, and the .nizam/ exemption; the vlib_scope_guard confirms only tools/validate.sh, tools/fixtures/*, tools/interface.md, and docs/guide/index.html changed outside .agent/; tools/interface.md and docs/guide/index.html both carry the corrected methodology/06_release_train.md reference with the stale methodology/05_release_train.md reference fully gone, and NIZAM.json/CHANGELOG.md/CONTEXT.md/README.md/bootstrap.sh/schema/.github-workflows remain untouched. Nine additional adversarial probes, run against fresh scratch fixtures never seen by the generator (not the shipped tools/fixtures/*.md), independently confirmed: (a) genuine content-driven detection of a brand-new broken path; (b)/(c) the .nizam/ and .agent/ singleton exemptions are narrowly prefix-anchored/enumerated, not over-broad -- broken paths that merely contain (rather than start with) .nizam/, and broken .agent/ paths that are not one of the two named tokens, both correctly FAIL; (d) genuine resolution, trailing-punctuation stripping, and NNN/step- placeholder exemptions all correctly co-fire; (e) the frontmatter-strip is proven load-bearing by direct contrast (the identical real GIP.md substring PASSes in frontmatter, FAILs in body); (f) the neutral-mktemp anti-cheat fixtures genuinely defeat a filename-keyed stub; (g) the full C9-swept universe (38 files, independently re-derived) is confirmed free of the stale drift token; (h) the raw git status scope diff matches the contract's allow-list exactly. One disclosed, evidence-backed, non-blocking design limitation was independently reproduced (a bare, non-'/'-qualified stale reference in methodology/06_release_train.md:72 that C9 structurally cannot catch by design) -- already surfaced at Mode A review, not a hidden defect, and does not gate approval. No blocking defects, no unsupported claims, no missing acceptance coverage. QA verdict: PASS."
+  }
+}

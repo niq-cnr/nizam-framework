@@ -66,7 +66,7 @@
       "id": "026",
       "name": "R1 — C9 Repo-Wide Path-Resolution Check + Fixtures (validate.sh 8->9)",
       "description": "Add check C9 to tools/validate.sh: every concrete repo-relative FILE path named in any shipped .md (the C1/C3 shipped-doc set) AND in docs/guide/index.html resolves on disk, applying the P1 placeholder/illustrative exemption from the spec: enforce only references naming a file with a shipped extension (.md/.json/.sh/.html/.yml) and containing no placeholder token; directory-only refs and placeholder/example paths (NNN, step-NN, tools/.claude/, tools/.codex/) are documented-exempt so the check is NON-BREAKING against the current tree (proven by the plan-time P1 dry-run). Generalizes the guide's one-off F-018 path-resolution acceptance test into a first-class validator check, composing from verify_lib.sh's punctuation-stripped path resolution (F-023). Update validate.sh's in-script print_usage() to describe C9 and the new total, and register C9 in main() so the full sweep reports SUMMARY: 9 passed, 0 failed. Fixture-test both modes under tools/fixtures/: a .md naming a real nonexistent file -> C9 FAILs (via --target); a .md naming only resolving + exempt-placeholder paths -> C9 PASSes. Depends on F-023. First of the three serialized validate.sh-editing features (SUMMARY-count migration).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": ["023"],
       "acceptance_tests": [
         "validate.sh registers a C9 check and print_usage documents it: grep -q 'C9' tools/validate.sh && bash tools/validate.sh --help | grep -q 'C9'",
@@ -76,7 +76,7 @@
         "C9 FAIL fixture: a tools/fixtures/ .md naming a real nonexistent file is rejected by C9: out=$(bash tools/validate.sh --target tools/fixtures/unresolved_path.md 2>&1); test $? -ne 0 && echo \"$out\" | grep -q '\\[C9\\] FAIL'",
         "C9 PASS/exemption fixture: a tools/fixtures/ .md naming only resolving paths plus exempt placeholders (NNN/step-NN/.claude) passes C9: bash tools/validate.sh --target tools/fixtures/exempt_paths.md | grep -q '\\[C9\\] PASS'",
         "The placeholder exemption is documented in print_usage: bash tools/validate.sh --help | grep -Eqi 'placeholder|exempt|NNN'",
-        "New fixtures live only under tools/fixtures/; only validate.sh + tools/fixtures/ changed outside .agent/ (untracked-aware guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/validate.sh|tools/fixtures/')\"",
+        "[AMENDED 2026-07-10 per contract-026 approval, F-019/F-025 precedent: allow-list widened to include the two pre-existing-drift fixes (tools/interface.md:46 + docs/guide/index.html:535, methodology/05_release_train.md -> 06_release_train.md) that AT#2's non-breaking gate forces C9 to require] New fixtures live only under tools/fixtures/; only validate.sh + tools/fixtures/ + tools/interface.md + docs/guide/index.html changed outside .agent/ (untracked-aware guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/validate.sh|tools/fixtures/|tools/interface.md|docs/guide/index.html')\"",
         "No pre-existing check regressed: for c in C1 C2 C3 C4 C5 C6 C7 C8; do bash tools/validate.sh 2>&1 | grep -q \"\\[$c\\] PASS\" || exit 1; done"
       ],
       "estimated_lines": 150

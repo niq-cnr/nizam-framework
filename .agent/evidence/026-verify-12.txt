@@ -1,0 +1,14 @@
+out=$(bash tools/validate.sh --payload 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 || { echo "--payload exited $rc, expected 0"; exit 1; }; echo "$out" | grep -q '\[C9\] PASS' || { echo "--payload mode did not report [C9] PASS"; exit 1; }; echo "$out" | tail -1 | grep -qx 'SUMMARY (payload mode): 8 passed, 0 failed' || { echo "expected 'SUMMARY (payload mode): 8 passed, 0 failed', got: $(echo "$out" | grep '^SUMMARY')"; exit 1; }; echo PASS
+MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] SKIP bootstrap-sanity (payload mode)
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+SUMMARY (payload mode): 8 passed, 0 failed
+PASS
+EXIT:0

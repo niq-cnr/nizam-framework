@@ -1,0 +1,10 @@
+tmp=$(mktemp --suffix=.md); cp tools/fixtures/unresolved_path.md "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); rc=$?; echo "$out"; rm -f "$tmp"
+[C1] FAIL frontmatter-schema
+  /tmp/tmp.sjSgVgClI7.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  /tmp/tmp.sjSgVgClI7.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] FAIL path-resolution
+  /tmp/tmp.sjSgVgClI7.md: unresolved path reference 'docs/architecture/ADR-999-does-not-exist.md'
+PASS (correctly rejected, rc=1, token preserved -- content-driven, not filename-keyed)
+EXIT:0

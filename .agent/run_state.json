@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "004-durable-enforcement",
-  "current_feature": "026",
-  "status": "implementing",
-  "updated_at": "2026-07-08T16:12:09Z",
+  "current_feature": "027",
+  "status": "contract_negotiation",
+  "updated_at": "2026-07-10T06:40:28Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -99,6 +99,10 @@
     },
     "025-contract": {
       "attempts": 2,
+      "limit": 3
+    },
+    "026-contract": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -472,6 +476,21 @@
       "at": "2026-07-08T16:12:09Z",
       "event": "feature_complete",
       "detail": "Feature 025 complete (R4a, resolves NDEBT-002 part a): schema/qa_verdict.schema.json reconciled to an anyOf union (legacy 000-016 + evolved 017-024); NEW schema/contract_review.schema.json (urn $id) for the contract-review verdicts; contract.schema.json amendments[]/approvals.revisions made explicit; new schema indexed in NIZAM.json + schema/README.md (0.2.0->0.3.0 + change_log). 1 contract revision (immutability-guard false-fail). Mode B + QA first-pass: BOTH ran independent AH-4 ANTI-PERMISSIVE checks - the unions REJECT garbage ({foo:1}, {}, missing-discriminator-key fixtures) via both schemas (not accept-anything) with clean qa-vs-contract-review discriminator separation; all 29 qa + 26 contracts validate WITHOUT editing the immutable records; run_state.schema.json byte-unchanged (AH-2). QA self-check: qa/025.json itself validates against the reconciled schema. 15/15 verifications EXIT:0, validate.sh unchanged at 8. 303 lines vs 180 est. Cumulative 780/1625. NDEBT-002 part a resolved; part b (C11 enforcement) is F-028. Advancing to 026 (C9 path-resolution check, dep 023 complete)."
+    },
+    {
+      "at": "2026-07-10T05:43:55Z",
+      "event": "base_rebased_v05x",
+      "detail": "Readiness sync before feature 026 ('ensure latest code ready for further development'). Human MERGED hotfix PR #9 (3a1d808) AND advanced main 11 further commits THROUGH the normal review/CI process (unlike the v0.4.x bypass): PR #10 (qa_verdict exit_code/run_state/circuit-breaker schema hardening), PR #11 v0.5.0 (doc-drift fixes + schema hardening + work-packet schema), PR #12 (+validate.sh --payload consumer-payload mode), PR #13 v0.5.1, PR #14 (C8 path-resolution in payload mode), + a trailing-whitespace fix (e1df1c7, current main tip). Framework now v0.5.1 on main; tags to v0.5.3. phase/004-durable-enforcement REBASED onto origin/main e1df1c7 - my 5 commits (plan/activate/023/024/025) replayed with ZERO conflicts. Tree re-verified GREEN + semantically sound (a clean rebase != correct, so checked): validate.sh SUMMARY 8 passed 0 failed; NIZAM.json C4-clean indexing 11 schemas incl BOTH main's schema/work-packet.schema.json AND F-025's contract_review (nothing clobbered); framework.version 0.5.1 preserved (F-025 didn't bump it); F-025 qa_verdict union validates ALL 30 .agent/qa-dir files via CONTENT routing (26 qa_verdict-class + 4 contract_review-class, 0 fail); verify_lib.sh + methodology/02 Sec-10 + 14 fixtures + contract_review.schema.json all intact; main's validate.sh --payload mode preserved (30 refs). Cumulative budget unchanged 780/1625 (rebase adds no lines). PLAN IMPACT from v0.5.x drift (all handled per-feature; features 026-030 remain NEEDED + non-redundant - main's validate.sh is still only C1-C8): (1) validate.sh is now 3-MODE (default C1-C8 / --target <file> / --payload consumer .nizam subset for C1-C3,C5,C8) - F-026/027/028's C9/C10/C11 MUST be mode-aware (each contract specifies default/target/payload behavior). (2) F-030 release gate: v0.4.0 AND v0.5.0/0.5.1 now TAKEN (tags thru v0.5.3) -> phase 004 releases as v0.6.0 (next MINOR); F-030 acceptance test must target v0.6.0 (was v0.4.0 original spec, v0.5.0 after hotfix note) - feature_list_004 F-030 to be corrected at F-030 time. (3) F-028 C11 ROUTER (discovered this sync): .agent/qa/ holds a MIX of qa_verdict AND contract_review docs (020/021-contract-review*.json + the bare-named 022.json which is actually a contract-review; feature 022's real verdict is 022-qa.json) - C11 must route by CONTENT (a 'review' field -> contract_review.schema.json; else qa_verdict), NOT by directory/filename. (4) F-029 (hermetic e2e + CI): main's new --payload mode IS the consumer-payload validation surface + only compliance.yml CI exists (no e2e/bootstrap workflow) -> F-029 path = bootstrap.sh into temp dir then validate.sh --payload then assert; extend/complement compliance.yml, don't duplicate. (5) C5-doesn't-sweep-schema/*.json gap (prior hotfix watch-item) still OPEN for F-027/C10 or a C5-hardening to close. Status -> contract_negotiation; beginning fresh contract proposal on feature 026 against the current 3-mode validate.sh."
+    },
+    {
+      "at": "2026-07-10T06:17:05Z",
+      "event": "contract_approved",
+      "detail": "Contract 026 (R1 C9 repo-wide path-resolution check, validate.sh 8->9) APPROVED first-pass by BOTH Loop-1 gates (026-contract attempts=1, no revisions). Mode A (validator) approved: scope-expansion legitimate/minimal/spec-forced, C8 discipline correct, exemptions within-class, non-goals complete, all 9 acceptance tests covered. Evaluator (contract-testability) approved after INDEPENDENTLY re-deriving C9's extraction (regex [A-Za-z0-9_.-]+/[...]\\.(md|json|sh|html|yml) over frontmatter-stripped BODY, '/'-qualified only, + the vlib_path_resolves + 2 extra exemptions) and dry-running it over the real corpus: WITHOUT the two fixes -> exactly 2 unresolved (tools/interface.md:46 + docs/guide/index.html:535, both the renamed methodology/05_release_train.md); WITH fixes -> ZERO unresolved in BOTH default and payload modes (baseline validate.sh 8/0, payload 7/0 -> so 9/0 and 8/0 are provably achievable, non-breaking claim substantiated NOT asserted). Evaluator also empirically confirmed frontmatter-stripping is load-bearing (standard/GIP.md's change_log substring 'existing-CONTEXT.md/AGENTS.md' would false-fail without it), the 2 extra exemptions mask no real bug, and the neutral-mktemp anti-cheat entries (10/11) defeat filename-keyed stubs. AMENDMENT (recorded per F-019/F-025 precedent): contract scope was expanded at authoring-time beyond the feature's literal 'validate.sh + 2 fixtures' framing to ALSO fix two real broken refs (tools/interface.md:46, docs/guide/index.html:535: methodology/05_release_train.md -> 06_release_train.md, drift caused by main's v0.5.x methodology renumbering that inserted 05_eval_and_trace.md) - these are genuine directory-qualified shipped-extension broken paths, exactly C9's target class, so fixing (not exempting) is correct and is FORCED by spec Sec 3.1 non-breaking + AT#2's SUMMARY 9/0; feature_list_004 F-026 acceptance test #8's scope guard reconciled to the corrected 4-path allow-list (tools/validate.sh, tools/fixtures/, tools/interface.md, docs/guide/index.html). TWO NON-BLOCKING WATCH-ITEMS logged by the gates (to be formally added to docs/planning/DEBT.md after feature 026 commits, since DEBT.md is outside .agent and would otherwise trip the generator's scope guard): (WI-1, F-027/C10) docs/guide/index.html's methodology key-documents list omits the new methodology/05_eval_and_trace.md entirely - a single-source-of-truth completeness gap, not a path-resolution bug, deferred to F-027/C10; (WI-2, F-029) C9 in --payload is verified non-breaking on the FRAMEWORK tree only - a real bootstrapped consumer (no injected methodology/ or docs/architecture/) could false-fail on directory-qualified cross-refs since C9 lacks C4's payload skipped_dirs skip; spec mandates consumer-safety only for C11 (Sec 4.1), so out of F-026 scope, surfaced for F-029. Delegating implementation to @generator (implement contracted scope only: check_c9_path_resolution + 3-mode registration + print_usage + 2 fixtures + the 2 one-line doc fixes)."
+    },
+    {
+      "at": "2026-07-10T06:40:28Z",
+      "event": "feature_complete",
+      "detail": "Feature 026 complete (R1 C9 repo-wide path-resolution, validate.sh 8->9): contract approved first-pass by both Loop-1 gates (revisions=0), Mode B + QA first-pass. PROCESS NOTE: the first implementation dispatch was correctly HALTED by @generator's Step-0 contract-re-read gate because the orchestrator had recorded the approval in run_state history but not yet flipped the contract artifact's own status/approvals (the 'no oral tradition' discipline working as designed); orchestrator persisted status='approved' + approvals booleans + approved_at, clarified that active_contract_id is intentionally absent (F-013 foreign-key removal precedent; locate via current_feature), and re-dispatched. Generator self-caught + fixed a change_log wording defect (its first interface.md v0.3.0 summary quoted the literal stale token, which verification #13 correctly rejected) within the same pass, no circuit-breaker strike. Mode B (validator): implementation matches contract EXACTLY - exactly 5 in-scope files (tools/validate.sh + tools/interface.md + docs/guide/index.html modified, 2 tools/fixtures/ created), strictly additive to C1-C8 (no change to any check fn/build_*_set/frontmatter_python/die/require), no *.html target case, non-goals all held (verify_lib.sh/NIZAM.json[0.5.1]/CHANGELOG/CONTEXT/README/bootstrap/schema/workflows/DEBT untouched), AH-4 change_log accurate. QA (evaluator): all 15 contract verifications independently re-run 15/15 EXIT:0 + 9 FRESH-SCRATCH adversarial probes - genuine content-driven detection (new nonexistent /-qualified path -> [C9] FAIL naming token), .nizam/ exemption prefix-anchored NOT substring (foo/.nizam/bar.md FAILs), .agent/ singleton exemption narrow (.agent/contracts/nonexistent_real.json FAILs; only the 2 named tokens pass), placeholder/punctuation correct, frontmatter-strip proven LOAD-BEARING via direct GIP.md contrast; scope guard confirms exact diff. validate.sh SUMMARY: 9 passed, 0 failed (default) + SUMMARY (payload mode): 8 passed, 0 failed. Deliverables: check_c9_path_resolution (frontmatter-stripped BODY scan, /-qualified shipped-extension ERE, .nizam/ + 2 named .agent/ singleton exemptions, delegates to vlib_path_resolves) registered in all 3 modes + print_usage; the 2 pre-existing v0.5.x-renumbering drift fixes (interface.md:46, guide:535: 05_release_train.md->06_release_train.md; interface.md 0.2.0->0.3.0 + change_log); 2 fixtures. 170 lines vs 150 est (no flag). Cumulative 950/1625 (58%). TWO DEBT items to log post-commit (WI-1/WI-2 from Loop-1 + the QA-reproduced bare-ref recall gap): a C10/consistency cluster for F-027 (guide key-docs omits methodology/05_eval_and_trace.md; methodology/06_release_train.md:72 bare '05_release_train.md' stale ref C9's /-qualification structurally cannot catch) and a consumer-safety item for F-029 (C9 --payload proven non-breaking on the FRAMEWORK tree only; a real bootstrapped consumer lacking injected methodology/ + docs/architecture/ could false-fail since C9 lacks C4's payload skipped_dirs skip). Advancing to 027 (C10 single-source-of-truth consistency, deps 023+026 complete)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -645,7 +664,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1250,
-    "total_lines_changed": 780,
+    "total_lines_changed": 950,
     "per_feature": [
       {
         "id": "023",
@@ -667,6 +686,13 @@
         "actual": 303,
         "flag": null,
         "note": "5 files: qa_verdict.schema.json anyOf-union restructure (135+45=180 churn, net ~+90), contract_review.schema.json 98 (new), contract.schema.json 16+1, schema/README.md 6+1, NIZAM.json 1. Re-proposed fresh on the green (v0.4.1+hotfix) base after the stale contract was dropped. Rolling avg (023=408,024=69)=238, 3x=715; 303 under, no flag. Cumulative 780/1625 (48%). 1 contract revision (evaluator caught the entry-7 immutability-guard false-fail on the feature's own qa artifacts). Resolves NDEBT-002 part a (schemas reconciled to the actual artifact shapes; all 29 qa + 26 contracts validate WITHOUT editing the immutable records)."
+      },
+      {
+        "id": "026",
+        "estimated": 150,
+        "actual": 170,
+        "flag": null,
+        "note": "5 files (git numstat ins+del): tools/validate.sh 127+7=134 (new check_c9_path_resolution + guarded source verify_lib.sh + 3-mode registration + print_usage), tools/interface.md 5+2=7 (05->06 ref fix + 0.2.0->0.3.0 + change_log), docs/guide/index.html 1+1=2 (05->06 ref fix), tools/fixtures/unresolved_path.md 6 (new), tools/fixtures/exempt_paths.md 21 (new). Rolling avg last 3 (023=408,024=69,025=303)=260, 3x=780; 170 well under, no flag. Cumulative 950/1625 (58%). Contract approved FIRST-PASS by both Loop-1 gates (revisions=0); the evaluator independently re-derived C9's extraction + dry-ran it (2 unresolved without the doc fixes, 0 with) proving the non-breaking claim; Mode B + QA first-pass with 9 fresh-scratch adversarial probes (genuine content-driven detection, prefix-anchored .nizam/ exemption, narrow .agent/ singleton exemption, load-bearing frontmatter-strip). Realizes R1/C9 (validate.sh 8->9); also fixed 2 pre-existing v0.5.x-renumbering drift refs (interface.md:46, guide:535). Advancing to 027 (deps 023+026 complete)."
       }
     ]
   }

@@ -18,7 +18,7 @@
 # `yaml` (PyYAML) modules importable).
 #
 # Modes:
-#   (default, no args)   Full repo sweep: runs checks C1-C8.
+#   (default, no args)   Full repo sweep: runs checks C1-C9.
 #   --target <file>      Runs only the checks applicable to a single file.
 #   --payload            Validates a consumer-injected .nizam/ payload subset.
 #   --help / -h           Prints usage and exits 0.
@@ -70,15 +70,17 @@ if any is missing): bash, git, grep, find, awk, python3 -- with python3's
 installs or vendors these dependencies itself.
 
 Modes:
-  (no arguments)      Full repo sweep. Runs all 8 checks (C1-C8) and prints
+  (no arguments)      Full repo sweep. Runs all 9 checks (C1-C9) and prints
                       one PASS/FAIL line per check plus a final summary
                       line. Exits 0 only if every check passed.
 
   --target <file>     Runs only the checks applicable to a single named
                       file, printing PASS/FAIL per applicable check.
                         - For a `.md` target: C1 (frontmatter schema), C2
-                          (format), and C3 (untagged-fence sweep) run
-                          against exactly that one file.
+                          (format), C3 (untagged-fence sweep), and C9
+                          (repo-wide path resolution, scanning only that
+                          file's own body) run against exactly that one
+                          file.
                         - For a `.json` target shaped like a Nizam index
                           file: C4 (schema validation + indexed-path
                           walker) runs against exactly that one file.
@@ -96,9 +98,12 @@ Modes:
                       intentionally absent from consumer payloads
                       (CONTEXT.md, README.md, CHANGELOG.md, bootstrap.sh,
                       methodology/, registry/, docs/) are not required.
-                      Runs C1-C5, C7-C8 with payload-appropriate file sets;
-                      C6 is skipped. Exits 0 only if every applicable check
-                      passed.
+                      Runs C1-C5, C7-C9 with payload-appropriate file sets;
+                      C6 is skipped. C9 sweeps only the payload-doc set
+                      (standard/, templates/, and tools/ excluding
+                      tools/fixtures/, plus schema/README.md) --
+                      docs/guide/index.html is never swept in --payload
+                      mode. Exits 0 only if every applicable check passed.
 
   --help, -h          Prints this usage and exits 0.
 
@@ -159,6 +164,35 @@ file(s)/detail(s) printed on the following indented line(s)):
       `change_log` frontmatter entry on the file whose `version` matches
       the new version, or a line in root CHANGELOG.md naming the file's
       path. Repo-wide only; does not run under --target.
+
+  C9  Repo-wide path resolution (narrative-truth: does every named path
+      actually exist?). For the shipped-doc set UNION {docs/guide/index.html}
+      (default mode), the payload-doc set (--payload mode, no guide), or a
+      single --target `.md` file: strips a leading YAML frontmatter block
+      if present and scans only the remaining BODY text -- frontmatter
+      content is C1/C2's concern, not C9's -- with the extended regex
+      `[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]*\.(md|json|sh|html|yml)`; i.e. only
+      directory-qualified ('/'-containing) tokens ending in a shipped
+      extension are treated as candidate path references (bare,
+      non-'/'-qualified extension-bearing words -- cross-repo terms,
+      same-directory markdown-link targets, ASCII tree-diagram leaf
+      labels -- are never extracted). Each candidate token is resolved via
+      `tools/verify_lib.sh`'s `vlib_path_resolves`, which strips trailing
+      sentence punctuation and exempts placeholder/illustrative forms
+      (tokens containing `NNN` or `XXX`, matching `step-<digits>`,
+      containing the word `placeholder`, or ending in `/`) before testing
+      `test -e` against the current working directory. On top of that
+      inherited exemption, C9 applies two of its own, narrower exemptions
+      before handing a token to `vlib_path_resolves`: any token beginning
+      with the literal prefix `.nizam/` (the bootstrap.sh-created,
+      consumer-side install root, which structurally never exists in this
+      framework's own working tree); and the two literal tokens
+      `.agent/capability_profile.json` and `.agent/debt.json` (naming the
+      canonical artifact shape a schema/README.md 'Validates' column
+      describes, not a claim that this repository's own `.agent/`
+      directory contains such a file). Any remaining token that does not
+      resolve is a C9 FAIL, reported as
+      `<file>: unresolved path reference '<token>'`.
 
 Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,
 consistently): CONTEXT.md; every .md under docs/architecture/; every .md
@@ -756,6 +790,79 @@ PY
 }
 
 # ---------------------------------------------------------------------------
+# C9 -- repo-wide path resolution (narrative-truth check)
+# ---------------------------------------------------------------------------
+
+# check_c9_path_resolution <file> [<file> ...]
+#
+# For each given file, strips a leading YAML frontmatter block (if present)
+# and scans only the remaining body text with an extended regex that
+# extracts directory-qualified ('/'-containing) tokens ending in a shipped
+# extension. Applies two C9-specific exemptions (a `.nizam/`-prefix
+# bootstrapped-consumer exemption, and the two named schema/README.md
+# 'Validates'-column singleton-artifact tokens) BEFORE handing each
+# remaining token to `vlib_path_resolves` (sourced from tools/verify_lib.sh,
+# F-023), which strips trailing sentence punctuation, applies its own
+# placeholder/illustrative/directory-only exemption, and tests the token
+# against the current working directory. Composes from vlib_path_resolves
+# rather than re-implementing path resolution; never modifies
+# tools/verify_lib.sh.
+check_c9_path_resolution() {
+  local files=("$@")
+  local errors=()
+  local f body token e
+
+  for f in "${files[@]}"; do
+    if [ ! -f "${f}" ]; then
+      errors+=("${f}: MISSING file")
+      continue
+    fi
+
+    # Strip a leading YAML frontmatter block (first line '---' through the
+    # next bare '---' line) if present; scan only the remaining BODY.
+    body=$(awk '
+      NR == 1 && $0 == "---" { in_frontmatter = 1; next }
+      in_frontmatter && $0 == "---" { in_frontmatter = 0; next }
+      in_frontmatter { next }
+      { print }
+    ' "${f}")
+
+    while IFS= read -r token; do
+      [ -z "${token}" ] && continue
+
+      # C9-specific exemptions, applied BEFORE handing the token to
+      # vlib_path_resolves (never inside tools/verify_lib.sh itself).
+      case "${token}" in
+        .nizam/*)
+          continue
+          ;;
+      esac
+      if [ "${token}" = ".agent/capability_profile.json" ] \
+        || [ "${token}" = ".agent/debt.json" ]; then
+        continue
+      fi
+
+      if ! vlib_path_resolves "${token}" >/dev/null 2>&1; then
+        errors+=("${f}: unresolved path reference '${token}'")
+      fi
+    done < <(printf '%s\n' "${body}" \
+      | grep -oE '[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]*\.(md|json|sh|html|yml)' \
+      | LC_ALL=C sort -u)
+  done
+
+  if [ "${#errors[@]}" -eq 0 ]; then
+    echo "[C9] PASS path-resolution"
+    return 0
+  fi
+
+  echo "[C9] FAIL path-resolution"
+  for e in "${errors[@]}"; do
+    echo "  ${e}"
+  done
+  return 1
+}
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -799,6 +906,11 @@ main() {
   require_python_module jsonschema
   require_python_module yaml
 
+  [ -f tools/verify_lib.sh ] \
+    || die "required library tools/verify_lib.sh not found. tools/validate.sh's C9 check cannot run without it."
+  # shellcheck source=tools/verify_lib.sh
+  source tools/verify_lib.sh
+
   local passed=0
   local failed=0
 
@@ -809,6 +921,7 @@ main() {
         check_c1_frontmatter_schema "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
         check_c2_format "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
         check_c3_fences "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
+        check_c9_path_resolution "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
         ;;
       *.json)
         check_c4_index "${target}" && passed=$((passed + 1)) || failed=$((failed + 1))
@@ -834,6 +947,7 @@ main() {
     echo "[C6] SKIP bootstrap-sanity (payload mode)"
     check_c7_module_readmes && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c8_version_changelog "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c9_path_resolution "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY (payload mode): ${passed} passed, ${failed} failed"
   else
@@ -851,6 +965,12 @@ main() {
     check_c6_bootstrap && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c7_module_readmes && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c8_version_changelog "${shipped_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+
+    local c9_default_files=("${shipped_md[@]}")
+    if [ -f docs/guide/index.html ]; then
+      c9_default_files+=("docs/guide/index.html")
+    fi
+    check_c9_path_resolution "${c9_default_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY: ${passed} passed, ${failed} failed"
   fi

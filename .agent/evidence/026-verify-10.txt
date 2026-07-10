@@ -1,0 +1,9 @@
+test -f tools/fixtures/exempt_paths.md || { echo "MISSING tools/fixtures/exempt_paths.md"; exit 1; }; tmp=$(mktemp --suffix=.md); trap 'rm -f "$tmp"' EXIT; cp tools/fixtures/exempt_paths.md "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); echo "$out"; echo "$out" | grep -q '\[C9\] PASS' || { echo "neutral-filename copy of exempt_paths.md unexpectedly failed C9 -- suspected filename-keyed behavior"; exit 1; }; echo PASS
+[C1] FAIL frontmatter-schema
+  /tmp/tmp.CLlpPiRGHc.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  /tmp/tmp.CLlpPiRGHc.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+PASS
+EXIT:0

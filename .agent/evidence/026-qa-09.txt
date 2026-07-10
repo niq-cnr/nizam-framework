@@ -1,0 +1,3 @@
+out=$(bash tools/validate.sh 2>&1); for c in C1 C2 C3 C4 C5 C6 C7 C8; do echo "$out" | grep -q "\[$c\] PASS" || exit 1; done; echo PASS
+PASS
+EXIT:0
