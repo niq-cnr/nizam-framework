@@ -1,0 +1,28 @@
+{
+  "feature_id": "027",
+  "circuit_breaker": "evaluator_contract_review",
+  "attempts": 3,
+  "note": "Rev0's full original JSON verdict was not preserved on disk (untracked file, overwritten in a prior session before this evaluator session began) and is reconstructed here only from its own text as quoted verbatim inside the rev1 verdict and inside .agent/contracts/027.json's design_notes (both of which cite rev0's exact defect description). Rev1 and rev2 are the exact verdicts this evaluator session produced/re-confirmed.",
+  "failures": [
+    {
+      "revision_reviewed": 0,
+      "root_cause": "Sub-check (1)'s join merged the ENTIRE blank-line-delimited paragraph before calling vlib_no_stale_payload. A stale 3-directory enumeration sharing one paragraph with an unrelated, legitimate tools/-mentioning sentence got merged into one blob containing all four directory tokens, producing a false [C10] PASS.",
+      "verdict": "fail",
+      "source": "Quoted verbatim from .agent/contracts/027.json design_notes.c10_subcheck_design_and_join_bounding_finding, 'REVISION HISTORY' / REV0 paragraph (original .agent/qa/027-contract-review.json revision_reviewed=0 not preserved on disk)."
+    },
+    {
+      "revision_reviewed": 1,
+      "root_cause": "Two distinct false-negatives introduced by the rev0 fix's replacement design: (a) a hard 3-physical-line cap silently fragmented a genuine stale 3-directory enumeration spanning more than 3 physical lines before its own terminal punctuation (reproduced with an unpunctuated 4-line prose wrap and a 4-line bulleted list); (b) treating a line-final ';' or ':' as an unconditional sentence terminator force-closed a group mid-enumeration when the only line break fell at a ';'/':' list separator rather than a true sentence end.",
+      "verdict": "fail",
+      "source": "Full verdict preserved verbatim in this evaluator's own prior read of .agent/qa/027-contract-review.json (revision_reviewed=1) at the start of this session; superseded on disk by the revision_reviewed=2 verdict below."
+    },
+    {
+      "revision_reviewed": 2,
+      "root_cause": "Removing the hard line cap and the ';'/':' terminator rule genuinely closed both rev1 false-negatives (independently re-verified). However, the cap-free join's ONLY remaining close conditions -- '.'/'!'/'?' at physical-line-end (optionally + closing quote/paren/emphasis char), or a blank line -- do not recognize HTML block-level closing tags. docs/guide/index.html (the one real .html file in the corpus, swept both by the default-mode 10-check sweep and by this contract's own new '*.html' --target case) writes every <p> sentence ending in '.</p>', never a bare '.', so none of its sentences ever close via the terminal-punctuation rule; the ONLY remaining close condition for this file's markup is a blank line, which is sparse (66 across 720 lines). Directly demonstrated: the real file's 'Module Reference' card-grid block (lines 513-567, six distinct article cards) collapses into one merged group today, benign only by content coincidence; a fixture faithfully reproducing the guide's own <p>...</p>, no-blank-line convention (a stale 3-dir paragraph immediately followed, same block, by an unrelated tools/-mentioning paragraph, both ending '.</p>') reproduces a genuine false-PASS.",
+      "verdict": "fail",
+      "source": ".agent/qa/027-contract-review.json (revision_reviewed=2, current on-disk content, produced by this evaluator session)."
+    }
+  ],
+  "pattern_summary": "Three consecutive, genuinely DISTINCT root causes across three design iterations of the same sub-check-(1) join mechanism: (0) join too coarse (whole paragraph), (1) join too rigid in two ways (hard line-count cap; ';'/':'  as terminator), (2) join correctly tuned for markdown prose but blind to HTML block-level closing tags, so it degenerates back to coarse 'whole un-blank-line-separated block' joining specifically for the corpus's one .html file. Root cause hypothesis: the join was designed and iteratively adversarially-tested almost exclusively against markdown ('.', ';', ':' at line-end) shapes; the corpus's .html file uses a categorically different line-termination convention ('</p>' after the sentence terminator) that was not covered by any of the three design iterations' own dry runs until this evaluator session's item-3 probe.",
+  "required": "Human review before proceeding. Circuit breaker triggered per methodology/03_circuit_breaker.md / this evaluator's Protocol 07A mandate: 3 consecutive contract-review rejections on feature 027. Attempt 4 is FORBIDDEN without explicit human authorization."
+}
