@@ -297,7 +297,13 @@ main() {
   trap cleanup EXIT
 
   EPHEMERAL_TAG="e2e-$(date -u +%s)-$$"
-  git tag -a "${EPHEMERAL_TAG}" -m "ephemeral e2e-bootstrap-test tag (tools/e2e_bootstrap_test.sh) -- auto-deleted on exit" HEAD
+  # Scoped (-c) git identity: annotated tags record a tagger, but CI runners
+  # have no ambient user.name/user.email configured, which fails this single
+  # invocation with "empty ident name ... not allowed" (exit 128). Supplying
+  # the identity inline keeps the harness hermetic and self-contained in any
+  # environment without mutating global/repo git config via `git config`.
+  git -c user.name='nizam-e2e-bootstrap' -c user.email='e2e-bootstrap@nizam.local' \
+    tag -a "${EPHEMERAL_TAG}" -m "ephemeral e2e-bootstrap-test tag (tools/e2e_bootstrap_test.sh) -- auto-deleted on exit" HEAD
 
   SCRATCH_DIR="$(mktemp -d)"
   local target="${SCRATCH_DIR}/.nizam"

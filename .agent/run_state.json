@@ -3,7 +3,7 @@
   "current_phase": "004-durable-enforcement",
   "current_feature": "030",
   "status": "phase_complete",
-  "updated_at": "2026-07-10T11:34:52Z",
+  "updated_at": "2026-07-10T11:47:06Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -589,6 +589,16 @@
       "at": "2026-07-10T11:34:52Z",
       "event": "phase_complete",
       "detail": "Phase 004-durable-enforcement CLOSED. All 8 features (023-030) through the full planner->contract->Mode A + evaluator-review->implement->Mode B->QA lifecycle with durable .agent/ state; validator GREEN (SUMMARY: 11 passed, 0 failed) on the final tree. Delivered: R3 - tools/verify_lib.sh (5 vetted verification primitives) + the verification-authoring standard (methodology/02 Sec 10); R1 - C9 repo-wide path-resolution + C10 single-source-of-truth consistency (payload/discovery/version, format-agnostic) validator checks (the 8->11 migration); R4 - qa_verdict.schema.json anyOf union + new contract_review.schema.json + explicit contract amendments[] (F-025) AND C11 dogfood schema validation of .agent/ (F-028) - together RESOLVING NDEBT-002; R2 - the hermetic e2e consumer-bootstrap test (tools/e2e_bootstrap_test.sh) + CI job (proving the H4 v0.1.0 adoption bug cannot silently recur). PROCESS NOTABLES (the phase's durable-enforcement thesis validating itself): the adversarial contract-review gate repeatedly caught REAL verification-soundness defects pre-implementation (cheatable fixtures, false-passes, false-negatives, vacuous/non-load-bearing verifications, an unsatisfiable immutability guard, an empirically-refuted CI claim); F-027's sub-check-1 hit the 3-strike circuit breaker on line-join format edges and was recovered via a HUMAN-authorized format-agnostic REDESIGN; C11 (F-028) later caught a schema defect in the phase's OWN closing contract (030.json missing files_create). Scope budget: cumulative 2029 vs the human-re-baselined 1550 estimate (ceiling 2015) - 2029 is +14 (0.7%) over the re-baselined ceiling, an accounting artifact fully within the human's explicit 'Re-baseline & finish' authorization to complete F-029+F-030 (F-030 itself came in UNDER at 65 vs 70); no per-feature flags on any phase-004 feature. NDEBT-002 RESOLVED; NDEBT-003/004/005 remain Open (deferred: consistency recurrence-guard, C9 --payload consumer-safety, un-mechanized enumeration/bare-ref guard). THREE HUMAN GATES OUTSTANDING, NONE executed by the pipeline: (1) v0.6.0 release (next MINOR; additive - no breaking runtime change), (2) GitHub Pages publishing for docs/guide/, (3) the phase-004 PR merge. Status -> phase_complete. Next: push phase/004-durable-enforcement + open the phase-004 PR for human review. Pipeline self-merges nothing."
+    },
+    {
+      "at": "2026-07-10T11:41:00Z",
+      "event": "pr_opened",
+      "detail": "Phase 004 handed off: force-with-lease-pushed the rebased 15-commit phase/004-durable-enforcement (replacing the stale pre-rebase origin stub 1da67ca) + opened PR #15 (https://github.com/niq-cnr/nizam-framework/pull/15) into main, with the full phase summary (R1-R4 deliverables, C1-C11 migration, NDEBT-002 resolved) + the 3 outstanding human gates (v0.6.0 release, GitHub Pages, PR merge) + an Ecosystem Impact section (None - NDEBT-001). Pipeline self-merges nothing."
+    },
+    {
+      "at": "2026-07-10T11:47:06Z",
+      "event": "amendment_complete",
+      "detail": "POST-CLOSE CI HOTFIX on PR #15 (analogous to a fix/ remediation, NOT a new feature - no new contract): the NEW e2e_bootstrap CI job (shipped by F-029) FAILED on PR #15 in ~5s with `Committer identity unknown ... fatal: empty ident name ... not allowed` (exit 128). Root cause: tools/e2e_bootstrap_test.sh line 300 creates an ANNOTATED git tag (`git tag -a`), which records a tagger identity, but GitHub-hosted runners have NO ambient git user.name/user.email - so it fails in CI though it passed locally (dev machines have an identity configured). This is EXACTLY the watch-item the F-029 Mode-A review flagged ('git tag -a needs a tagger identity, which GitHub-hosted runners do not set globally') - and F-029's own CI job caught it, the 'live proof' working as designed. Fix (@generator, verified): supply a SCOPED inline identity to ONLY that invocation - `git -c user.name='nizam-e2e-bootstrap' -c user.email='e2e-bootstrap@nizam.local' tag -a ...` - keeping the annotated-tag design + hermetic self-containment without mutating global/repo config. Verified locally under the ACCURATE CI no-identity condition (env -u the 4 GIT_*_NAME/EMAIL vars + HOME=empty + GIT_CONFIG_GLOBAL/SYSTEM=/dev/null): before fix -> fatal identity error (reproduces CI); after fix -> harness exit 0, PASS, no e2e-* tag residue, validate.sh still 11/0 (the generator also correctly noted my suggested repro with explicit-empty-string env vars was STRICTER than real CI, and used env -u for the accurate absence-of-config condition). Scope: ONLY tools/e2e_bootstrap_test.sh (line 300 + comment). The CI e2e_bootstrap job re-run on the pushed fix is the definitive verifier. Committing to the PR branch."
     }
   ],
   "phase_001_scope_budget_final": {
