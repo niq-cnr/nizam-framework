@@ -1,0 +1,6 @@
+test -f tools/fixtures/invalid_run_state.json || { echo "MISSING tools/fixtures/invalid_run_state.json"; exit 1; }; out=$(bash tools/validate.sh --target tools/fixtures/invalid_run_state.json 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit, got 0"; exit 1; }; echo "$out" | grep -q '\[C11\] FAIL' || { echo "no [C11] FAIL line"; exit 1; }; echo "$out" | grep -q 'routed: run_state' || { echo "[C11] FAIL output does not show the run_state route -- discriminator routing suspected broken"; exit 1; }; echo PASS
+--- OUTPUT ---
+[C11] FAIL dogfood --target routed: run_state
+  tools/fixtures/invalid_run_state.json: schema violation (run_state): 'history' is a required property
+PASS
+EXIT:0

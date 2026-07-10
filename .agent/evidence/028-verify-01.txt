@@ -1,0 +1,4 @@
+f=tools/validate.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -q 'check_c11_dogfood_sweep' "$f" || { echo "C11 default-mode function not found in tools/validate.sh"; exit 1; }; bash tools/validate.sh --help | grep -q 'C11' || { echo "--help does not document C11"; exit 1; }; echo PASS
+--- OUTPUT ---
+PASS
+EXIT:0

@@ -1,0 +1,6 @@
+test -f tools/fixtures/invalid_qa_verdict.json || { echo "MISSING tools/fixtures/invalid_qa_verdict.json"; exit 1; }; tmp=$(mktemp --suffix=.json); trap 'rm -f "$tmp"' EXIT; cp tools/fixtures/invalid_qa_verdict.json "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "neutral-filename copy unexpectedly PASSED -- suspected filename-keyed behavior"; exit 1; }; echo "$out" | grep -q 'routed: qa_verdict' || { echo "neutral-filename copy lost the qa_verdict route"; exit 1; }; echo "PASS (correctly rejected, rc=$rc)"
+--- OUTPUT ---
+[C11] FAIL dogfood --target routed: qa_verdict
+  /tmp/tmp.6sIMGCTRjy.json: schema violation (qa_verdict): {'_fixture_notice': 'INTENTIONAL NEGATIVE FIXTURE (F-028/C11) - carries the qa_pass discriminator so it is ROUTED to qa_verdict.schema.json, but omits every other key both the legacy and evolved anyOf branches require. Used only via tools/validate.sh --target.', 'feature_id': '999', 'qa_pass': True} is not valid under any of the given schemas
+PASS (correctly rejected, rc=1)
+EXIT:0

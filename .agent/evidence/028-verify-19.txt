@@ -1,0 +1,32 @@
+python3 -c "
+import glob, json
+import jsonschema
+qa_schema = json.load(open('schema/qa_verdict.schema.json', encoding='utf-8'))
+cr_schema = json.load(open('schema/contract_review.schema.json', encoding='utf-8'))
+qa = sorted(glob.glob('.agent/qa/*.json'))
+routed = 0
+skipped = []
+errors = []
+for f in qa:
+    d = json.load(open(f, encoding='utf-8'))
+    if 'review' in d:
+        schema = cr_schema
+    elif 'qa_pass' in d or 'verdict' in d:
+        schema = qa_schema
+    else:
+        skipped.append(f)
+        continue
+    routed += 1
+    try:
+        jsonschema.validate(instance=d, schema=schema)
+    except jsonschema.ValidationError as exc:
+        errors.append(f'{f}: {exc.message}')
+assert skipped == ['.agent/qa/027_failures.json'], f'expected exactly [.agent/qa/027_failures.json] skipped under the restricted rule, got {skipped}'
+assert not errors, f'routed file(s) failed schema validation (non-breaking claim violated): {errors}'
+assert routed == len(qa) - 1, f'routed ({routed}) + skipped ({len(skipped)}) does not account for all {len(qa)} files'
+print(f'CONFIRMED: {routed} of {len(qa)} .agent/qa/*.json files routed and validated with zero errors; exactly 1 skipped ({skipped[0]})')
+" && echo PASS || { echo "quantitative reconciliation failed -- see output above"; exit 1; }
+--- OUTPUT ---
+CONFIRMED: 35 of 36 .agent/qa/*.json files routed and validated with zero errors; exactly 1 skipped (.agent/qa/027_failures.json)
+PASS
+EXIT:0

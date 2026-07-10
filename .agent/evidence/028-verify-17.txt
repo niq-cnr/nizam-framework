@@ -1,0 +1,7 @@
+out1=$(bash tools/validate.sh --target NIZAM.json 2>&1); rc1=$?; echo "$out1"; test "$rc1" -eq 0 && echo "$out1" | grep -q '\[C4\] PASS' || { echo "NIZAM.json --target regressed: rc=$rc1"; exit 1; }; echo "$out1" | grep -q '\[C11\]' && { echo "NIZAM.json was unexpectedly routed to C11 instead of C4"; exit 1; }; out2=$(bash tools/validate.sh --target tools/fixtures/broken_index.json 2>&1); rc2=$?; echo "$out2"; test "$rc2" -ne 0 && echo "$out2" | grep -q '\[C4\] FAIL' || { echo "broken_index.json --target regressed: expected [C4] FAIL nonzero, got rc=$rc2"; exit 1; }; echo "$out2" | grep -q '\[C11\]' && { echo "broken_index.json was unexpectedly routed to C11 instead of C4"; exit 1; }; echo PASS
+--- OUTPUT ---
+[C4] PASS index-integrity
+[C4] FAIL index-integrity
+  tools/fixtures/broken_index.json: indexed path(s) do not resolve on disk: ['tools/fixtures/does-not-exist.md']
+PASS
+EXIT:0

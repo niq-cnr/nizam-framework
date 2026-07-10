@@ -1,0 +1,6 @@
+test -f tools/fixtures/invalid_contract.json || { echo "MISSING tools/fixtures/invalid_contract.json"; exit 1; }; out=$(bash tools/validate.sh --target tools/fixtures/invalid_contract.json 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit, got 0"; exit 1; }; echo "$out" | grep -q '\[C11\] FAIL' || { echo "no [C11] FAIL line"; exit 1; }; echo "$out" | grep -q 'routed: contract$' || { echo "[C11] FAIL output does not show the contract route -- discriminator routing suspected broken"; exit 1; }; echo PASS
+--- OUTPUT ---
+[C11] FAIL dogfood --target routed: contract
+  tools/fixtures/invalid_contract.json: schema violation (contract): 'drafting' is not one of ['proposed', 'approved', 'implemented', 'complete', 'rejected']
+PASS
+EXIT:0
