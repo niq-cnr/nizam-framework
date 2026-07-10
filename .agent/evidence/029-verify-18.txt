@@ -1,0 +1,17 @@
+$ python3 -c "
+import yaml, sys
+w = yaml.safe_load(open('.github/workflows/compliance.yml', encoding='utf-8'))
+jobs = w.get('jobs', {})
+assert 'validate' in jobs
+e2e_name = next((n for n in jobs if n != 'validate'), None)
+assert e2e_name, 'no second job found'
+e2e = jobs[e2e_name]
+steps = e2e.get('steps', [])
+uses = [s.get('uses','') for s in steps]
+assert any('actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' in u for u in uses), 'checkout SHA pin mismatch or missing'
+assert any('actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b' in u for u in uses), 'setup-python SHA pin mismatch or missing'
+print('CONFIRMED: e2e job', e2e_name, 'action pins match the validate job')
+" && echo PASS || { echo "CI job SHA-pin parity check failed"; exit 1; }
+CONFIRMED: e2e job e2e_bootstrap action pins match the validate job
+PASS
+EXIT:0

@@ -35,3 +35,24 @@ jobs:
       - run: pip install jsonschema pyyaml
 
       - run: bash tools/validate.sh
+
+  e2e_bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      # No fetch-depth override here (unlike the validate job): the harness's
+      # ephemeral tag is created locally on this checkout's own HEAD (a
+      # commit object present regardless of clone depth), and bootstrap.sh's
+      # own --depth 1 file:// self-clone from this checkout succeeds whether
+      # the checkout itself is shallow or full (empirically verified at
+      # contract-authoring time: a real shallow clone tagged on its own HEAD
+      # still clones successfully via --depth 1 file://). GitHub Actions' own
+      # default (a shallow, depth-1 checkout) applies.
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+
+      - run: bash tools/e2e_bootstrap_test.sh

@@ -1,0 +1,36 @@
+f=tools/e2e_bootstrap_test.sh; test -f "$f" || { echo "MISSING $f -- cannot prove no-residue for a harness that does not exist"; exit 1; }; out1=$(bash "$f" 2>&1); rc1=$?; echo "$out1"; test "$rc1" -eq 0 || { echo "harness (default/positive run) exited $rc1, expected 0 -- cannot prove genuine no-residue if the run under test did not actually succeed"; exit 1; }; bash "$f" --self-test-negative >/dev/null 2>&1 || true; test -z "$(git tag -l 'e2e-*')" || { echo "leaked e2e-* tag(s):"; git tag -l 'e2e-*'; exit 1; }; changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -Ev 'tools/e2e_bootstrap_test.sh|\.github/workflows/compliance\.yml'); test -z "$changed" || { echo "residue outside scope:"; echo "$changed"; exit 1; }; echo PASS
+e2e_bootstrap_test.sh: installing pinned tag 'e2e-1783681114-3972904' from 'file:///home/cnross/workspace02/nizam-framework' into '/tmp/tmp.1v0Gh9VG6R/.nizam' (hermetic -- local file:// clone, no network)...
+bootstrap.sh: cloning file:///home/cnross/workspace02/nizam-framework at pinned tag e2e-1783681114-3972904 (--depth 1)...
+Cloning into '/tmp/nizam-bootstrap-clone.Zz2xe4'...
+warning: refs/tags/e2e-1783681114-3972904 ee310558140d404fd0aee62267b8ee03da8495ef is not a commit!
+Note: switching to '8d1e80484df8ef1086dd387886dba1362b0b931f'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: staging governance payload in /tmp/tmp.1v0Gh9VG6R/.nizam-stage.5MCzgx...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 38 indexed path(s) resolve under /tmp/tmp.1v0Gh9VG6R/.nizam-stage.5MCzgx.
+bootstrap.sh: recording provenance (framework_version=0.5.1, tag=e2e-1783681114-3972904)...
+bootstrap.sh: install complete. Governance payload version 0.5.1 (tag e2e-1783681114-3972904) is now at '/tmp/tmp.1v0Gh9VG6R/.nizam'.
+assert_payload_present: OK -- standard/, templates/, schema/, tools/, NIZAM.json, provenance.json all present under /tmp/tmp.1v0Gh9VG6R/.nizam
+assert_nizam_index_valid: OK -- NIZAM.json parses; 37 indexed path(s) resolve under /tmp/tmp.1v0Gh9VG6R/.nizam.
+assert_discovery_path: OK -- /tmp/tmp.1v0Gh9VG6R/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
+bootstrap.sh: verify-only: checking '/tmp/tmp.1v0Gh9VG6R/.nizam' against pinned tag 'e2e-1783681114-3972904' (no clone, no network)...
+NIZAM.json parses; 38 indexed path(s) resolve under /tmp/tmp.1v0Gh9VG6R/.nizam.
+bootstrap.sh: verify-only: PASS -- '/tmp/tmp.1v0Gh9VG6R/.nizam' is present, well-formed, and matches pinned tag 'e2e-1783681114-3972904'.
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1783681114-3972904, target /tmp/tmp.1v0Gh9VG6R/.nizam).
+PASS
+EXIT:0

@@ -1,0 +1,3 @@
+$ f=tools/e2e_bootstrap_test.sh; grep -q 'file://' "$f" || { echo "no file:// usage found"; exit 1; }; grep -Eq 'git tag -a' "$f" || { echo "no annotated (git tag -a) usage found"; exit 1; }; echo PASS
+PASS
+EXIT:0

@@ -1,0 +1,4 @@
+out=$(bash -c 'set -e; source tools/e2e_bootstrap_test.sh; for fn in assert_payload_present assert_nizam_index_valid assert_discovery_path run_bootstrap_verify_only cleanup main; do declare -F "$fn" >/dev/null || { echo "missing $fn"; exit 1; }; done; echo SOURCED_OK'); echo "$out"; echo "$out" | grep -qx SOURCED_OK && test -z "$(git tag -l 'e2e-*')" && echo PASS || { echo "sourcing had a side effect or a required function is missing"; exit 1; }
+SOURCED_OK
+PASS
+EXIT:0

@@ -1,0 +1,115 @@
+INDEPENDENT EVALUATOR ADVERSARIAL SPOT-CHECK -- Feature 029 (hermetic e2e consumer-bootstrap harness)
+All commands run from repo root (/home/cnross/workspace02/nizam-framework), branch phase/004-durable-enforcement.
+
+=== 1. Hermeticity: no remote-scheme / network references ===
+$ grep -nE 'https?://|git clone.*github|ssh://' tools/e2e_bootstrap_test.sh
+NO remote-scheme references found
+EXIT:1 (grep found nothing, expected -- confirms hermeticity)
+
+$ grep -n 'file://' tools/e2e_bootstrap_test.sh
+9:# own HEAD, runs bootstrap.sh against a local `file://` clone of THIS
+17:# `file://` clone reads bootstrap.sh's cloned-from URL directly from this
+35:# performs one full ephemeral-tag + file:// clone + inject + assert cycle.
+305:  echo "e2e_bootstrap_test.sh: installing pinned tag '${EPHEMERAL_TAG}' from 'file://$(pwd)' into '${target}' (hermetic -- local file:// clone, no network)..."
+306:  bash bootstrap.sh --repo-url "file://$(pwd)" --tag "${EPHEMERAL_TAG}" --target "${target}"
+EXIT:0
+
+CONCLUSION: only file:// (local checkout) source is used; no remote git host or scheme is referenced anywhere in the harness.
+
+=== 2. Positive run: confirmed real inject-then-verify cycle (not a no-op) ===
+$ bash tools/e2e_bootstrap_test.sh
+(full captured stdout -- representative, tag/paths vary per run)
+e2e_bootstrap_test.sh: installing pinned tag 'e2e-<epoch>-<pid>' from 'file:///home/cnross/workspace02/nizam-framework' into '/tmp/tmp.XXXXXXXXXX/.nizam' (hermetic -- local file:// clone, no network)...
+bootstrap.sh: cloning file:///home/cnross/workspace02/nizam-framework at pinned tag e2e-<epoch>-<pid> (--depth 1)...
+Cloning into '/tmp/nizam-bootstrap-clone.XXXXXX'...
+warning: refs/tags/e2e-<epoch>-<pid> <sha> is not a commit! (harmless advisory re: annotated tag object, no fatal error)
+bootstrap.sh: staging governance payload in /tmp/tmp.XXXXXXXXXX/.nizam-stage.XXXXXX...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 38 indexed path(s) resolve under /tmp/tmp.XXXXXXXXXX/.nizam-stage.XXXXXX.
+bootstrap.sh: recording provenance (framework_version=0.5.1, tag=e2e-<epoch>-<pid>)...
+bootstrap.sh: install complete. Governance payload version 0.5.1 (tag e2e-<epoch>-<pid>) is now at '/tmp/tmp.XXXXXXXXXX/.nizam'.
+assert_payload_present: OK -- standard/, templates/, schema/, tools/, NIZAM.json, provenance.json all present under /tmp/tmp.XXXXXXXXXX/.nizam
+assert_nizam_index_valid: OK -- NIZAM.json parses; 37 indexed path(s) resolve under /tmp/tmp.XXXXXXXXXX/.nizam.
+assert_discovery_path: OK -- /tmp/tmp.XXXXXXXXXX/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
+bootstrap.sh: verify-only: checking '/tmp/tmp.XXXXXXXXXX/.nizam' against pinned tag 'e2e-<epoch>-<pid>' (no clone, no network)...
+NIZAM.json parses; 38 indexed path(s) resolve under /tmp/tmp.XXXXXXXXXX/.nizam.
+bootstrap.sh: verify-only: PASS -- '/tmp/tmp.XXXXXXXXXX/.nizam' is present, well-formed, and matches pinned tag 'e2e-<epoch>-<pid>'.
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded.
+EXIT:0
+
+CONCLUSION: the run performs a genuine bootstrap.sh clone -> stage -> check_required_files -> check_nizam_index -> provenance-write -> atomic-install cycle into a fresh /tmp scratch dir, followed by a genuine, separate --verify-only invocation. This is not a stub/no-op: distinct scratch paths and a new tag are generated every invocation, and both the install and verify-only sub-processes independently confirm the payload.
+
+=== 3. H4 guard load-bearing probe (non-tautology proof via NEUTERED SCRATCH COPY -- real bootstrap.sh/harness untouched) ===
+Scratch copy: /tmp/claude-*/scratchpad/qa029/neuter_test/harness_neutered.sh
+Change made ONLY to the scratch copy (verified via diff against the real tools/e2e_bootstrap_test.sh):
+  removed the line: rm -f "${target}/tools/skill.json"
+(i.e. the deliberate breakage step was neutered -- the negative-mode payload is no longer actually broken)
+
+$ bash <scratch>/harness_neutered.sh --self-test-negative
+...
+assert_discovery_path: OK -- /tmp/tmp.XXXXXXXXXX/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
+e2e_bootstrap_test.sh: --self-test-negative -- deliberately removing .../tools/skill.json to prove the H4 discovery-path guard is load-bearing, not tautological...
+assert_discovery_path: OK -- /tmp/tmp.XXXXXXXXXX/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
+e2e_bootstrap_test.sh: H4 REGRESSION: discovery-path guard did NOT detect the deliberately broken payload (tools/skill.json missing) -- guard is NOT load-bearing
+EXIT:1
+
+CONCLUSION: with the break neutered, assert_discovery_path genuinely re-evaluates the (now intact) file and returns 0 ("OK...resolves"), which drives the harness down the DIFFERENT "H4 REGRESSION...NOT load-bearing" branch (a distinct message from the genuine-detection "CONFIRMED LOAD-BEARING" message). Both branches exit 1 by design, but the MESSAGE differs based on the ACTUAL, REAL result of assert_discovery_path against the ACTUAL, REAL state of the target directory -- proving the assertion (not a hardcoded exit 1) drives the reported outcome. This is not a vacuous/tautological guard.
+
+Unmodified harness's real negative run (for comparison, re-run independently):
+$ bash tools/e2e_bootstrap_test.sh --self-test-negative
+...
+vlib_path_resolves: path does not resolve: '/tmp/tmp.XXXXXXXXXX/.nizam/tools/skill.json' (stripped: same)
+assert_discovery_path: H4 regression -- documented discovery path does not resolve: /tmp/tmp.XXXXXXXXXX/.nizam/tools/skill.json
+e2e_bootstrap_test.sh: H4 GUARD CONFIRMED LOAD-BEARING: broken payload (missing tools/skill.json) correctly rejected by the discovery-path assertion.
+EXIT:1
+
+=== 4. No-residue / cleanup-under-failure probe (SCRATCH COPY forced mid-run failure) ===
+Scratch copy: /tmp/claude-*/scratchpad/qa029/neuter_test/harness_midfail.sh
+Change made ONLY to the scratch copy: inserted `echo ...; false` immediately after the
+`bash bootstrap.sh --repo-url ... --tag ... --target ...` install line succeeds, BEFORE any
+assertion function runs -- simulating a genuine mid-run failure.
+
+$ git tag -l 'e2e-*'          (before)   -> (empty)
+$ bash <scratch>/harness_midfail.sh
+...
+bootstrap.sh: install complete. Governance payload version 0.5.1 (tag e2e-<epoch>-<pid>) is now at '/tmp/tmp.CXWM6WnzIv/.nizam'.
+INJECTED MID-RUN FAILURE FOR CLEANUP-ON-FAILURE PROBE
+EXIT:1
+$ git tag -l 'e2e-*'          (after)    -> (empty)  -- ephemeral tag cleaned up despite injected failure
+$ test -d /tmp/tmp.CXWM6WnzIv                        -> DOES NOT EXIST -- scratch dir cleaned up despite injected failure
+$ test -d /tmp/nizam-bootstrap-clone.jiY7vP           -> DOES NOT EXIST -- bootstrap.sh's own clone-dir cleanup trap also fired
+$ git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -v 'tools/e2e_bootstrap_test.sh\|.github/workflows/compliance.yml'
+(no output -- no residue outside the two in-scope files)
+
+CONCLUSION: `trap cleanup EXIT` genuinely fires and removes both the ephemeral tag and the scratch directory even when an unexpected failure occurs mid-run (after tag+scratch-dir creation, before any assertion executes), confirming cleanup is unconditional and does not depend on reaching the end of main().
+
+=== 5. Idempotency / no cross-run tag accumulation (real harness, run twice consecutively) ===
+$ bash tools/e2e_bootstrap_test.sh   -> EXIT:0
+$ bash tools/e2e_bootstrap_test.sh   -> EXIT:0
+$ git tag -l 'e2e-*'                 -> (empty)
+
+=== 6. Final tree state after ALL probes (positive x2 direct + positive x2 via CMD2/CMD10/CMD17 reruns + negative x2 + 2 scratch-copy adversarial runs) ===
+$ git tag -l 'e2e-*'
+(empty)
+$ git status --porcelain --untracked-files=all -- . ':(exclude).agent'
+ M .github/workflows/compliance.yml
+?? tools/e2e_bootstrap_test.sh
+(only the two contract-scoped files changed; no leaked tags, no leaked scratch dirs in the repo tree, no residue in .nizam at repo root)
+
+=== 7. Non-goal file integrity (independently re-confirmed) ===
+$ git diff --stat HEAD -- .github/workflows/compliance.yml bootstrap.sh tools/verify_lib.sh docs/planning/DEBT.md
+ .github/workflows/compliance.yml | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+(bootstrap.sh, tools/verify_lib.sh, docs/planning/DEBT.md all show zero diff -- confirmed unchanged; compliance.yml diff is purely additive, 0 deletions)
+
+=== 8. CI workflow structural parse (independently re-confirmed) ===
+$ python3 -c "import yaml; w=yaml.safe_load(open('.github/workflows/compliance.yml')); print(list(w['jobs'].keys()))"
+['validate', 'e2e_bootstrap']
+validate job steps (uses): actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 (fetch-depth:0, persist-credentials:false), actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b, run: pip install jsonschema pyyaml, run: bash tools/validate.sh
+e2e_bootstrap job steps (uses): actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 (persist-credentials:false, no fetch-depth override), actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b, run: bash tools/e2e_bootstrap_test.sh
+CONCLUSION: e2e_bootstrap job is present, SHA-pinned identically to validate's checkout/setup-python actions, and the validate job's own step list/config is unchanged (matches the additive-only diff in section 7).
+
+=== 9. Final validate.sh re-confirmation ===
+$ bash tools/validate.sh 2>&1 | tail -1
+SUMMARY: 11 passed, 0 failed
+EXIT:0

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "004-durable-enforcement",
-  "current_feature": "029",
-  "status": "scope_budget_review",
-  "updated_at": "2026-07-10T10:03:19Z",
+  "current_feature": "030",
+  "status": "contract_negotiation",
+  "updated_at": "2026-07-10T11:00:41Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -114,6 +114,10 @@
       "attempts": 3,
       "limit": 3,
       "note": "rev0 rejected (027_failures.json circuit_breaker misroute + vacuous verify-12); rev1 rejected (AT9 immutability check unsatisfiable - caught the feature's own 028 artifacts + run_state, F-025 precedent); rev2 (attempt 3, LAST) dispatched with the narrow 025-precedented AT9 pathspec fix - evaluator confirmed items 1-4 sound + 'no further change needed' beyond AT9. If rev2 rejected -> 3-strike halt + escalate. RESOLVED: rev2 APPROVED by both gates on attempt 3 (the last permitted); no halt."
+    },
+    "029-contract": {
+      "attempts": 2,
+      "limit": 3
     }
   },
   "history": [
@@ -541,6 +545,26 @@
       "at": "2026-07-10T10:03:19Z",
       "event": "feature_complete",
       "detail": "Feature 028 complete (R4b C11 dogfood schema validation, validate.sh 10->11) - COMPLETES THE 8->11 VALIDATOR MIGRATION (C9+C10+C11, the load-bearing serial spine of phase 004). Contract approved on attempt 3 (2 revisions, no circuit-breaker halt); Mode B + QA first-pass. Mode B (validator): faithful, strictly-additive C11 across all 3 modes; check_c4_index BODY byte-unchanged (only its --target *.json call-site reroutes through check_c11_or_c4_target); scope exactly tools/validate.sh + 3 tools/fixtures/; non-goals all held; green (11/0 default, 10/0 payload). Mode B RATIFIED one post-approval test-defect correction (AT5: the original required the full sweep to be 11/0 from a .agent-stripped scratch copy, but C9 legitimately FAILs there on shipped-doc .agent/ path refs [out of C11's scope] - corrected to assert only [C11] PASS present + [C11] FAIL absent, matching feature_list AT5's literal wording; C9's .agent-stripped-default-mode failure is a REAL consumer-context observation, adjacent to NDEBT-004) + 2 in-scope impl fixes (missing check_c11_dogfood_payload_skip fn definition; PASS/FAIL message format to satisfy AT7's routed:-anchored assertion). QA (evaluator): all 19 verifications independently re-run 19/19 EXIT:0 + deep adversarial probing - fresh genuine-vs-mutated qa_verdict/contract/run_state scratch fixtures (discriminator kept + violation introduced -> caught naming the violation); an INDEPENDENT router-diff (rebuilt the {review,qa_pass|verdict} restricted router, diffed vs the live .agent/qa/ = 35 routed/valid + exactly 1 skip 027_failures.json); a DIRECT full-route --target probe of 027_failures.json (routes to run_state via circuit_breaker -> FAILS 'repository required') PROVING the default-sweep skip is a restricted-route DESIGN property, not an 'unrecognized shapes are safe' amnesty; consumer-safety no-.agent/ scratch copy -> [C11] PASS; sha256 immutability tamper-probe (corrupted .agent/qa/000.json -> [C11] FAIL caught, restored byte-for-byte, git clean). validate.sh SUMMARY: 11 passed, 0 failed (default) + 10 passed, 0 failed (payload). Deliverables: 4 C11 functions in tools/validate.sh (sweep/target/dispatcher/payload-skip) + print_usage + 3 FAIL fixtures. 384 lines vs 150 est (2.56x under-estimate, C11 is the most complex check; no per-feature flag, 384 < 3x-rolling-742). RESOLVES NDEBT-002 FULLY (part a F-025 schemas reconciled; part b F-028 C11 enforces them). POST-COMMIT orchestrator to-do: mark NDEBT-002 RESOLVED in docs/planning/DEBT.md. SCOPE BUDGET GATE: cumulative 1603/1625 (98.6% of the 130% ceiling; 128.2% of original 1250 est); F-029(~200) will BREACH the ceiling -> per the Scope Budget Protocol, HALTING before F-029's contract to surface a re-baseline/authorization decision to the human (status=scope_budget_review). Phase 004 progress: 6 of 8 features complete (023-028); F-029 (e2e+CI, dep F-023) + F-030 (phase close) remain."
+    },
+    {
+      "at": "2026-07-10T10:07:52Z",
+      "event": "scope_acknowledged_rebaselined",
+      "detail": "Human resolved the F-028 cumulative scope-budget gate: chose 'Re-baseline & finish'. original_estimate_lines 1250 -> 1550 (new 130% ceiling 2015; cumulative 1603 now at 78% of the new ceiling); the overage is genuine per-feature under-estimation on already-planned features, not scope creep. Authorizes completing F-029 (hermetic e2e consumer-bootstrap test + CI, R2) + F-030 (phase close, incl. the v0.6.0 release gate). Plan Amendment Rule (phase-002 precedent). Status -> contract_negotiation; resuming F-029's contract lifecycle (dep F-023 complete)."
+    },
+    {
+      "at": "2026-07-10T10:31:38Z",
+      "event": "contract_revision",
+      "detail": "Contract 029 (R2 hermetic e2e consumer-bootstrap test + CI) rev0 REJECTED by the evaluator (Mode A APPROVED; 029-contract attempts=2/3). GOOD: the evaluator DRY-RAN the harness mechanism end-to-end and CONFIRMED it works (bootstrap over file:// + ephemeral annotated tag on HEAD -> payload present + NIZAM.json 38 paths resolve + .nizam/tools/skill.json non-empty + --verify-only exit 0; cleanup left git clean, no e2e-* tag) - the design is sound + bootstrap.sh's real interface (--repo-url/--tag/--target/--verify-only, git clone --depth 1 --branch, provenance.json) matches. THREE blocking defects: (1) FIVE verification entries (10,14,15,16,19) vacuously false-pass on the unimplemented tree - missing set -e/existence guards before invoking the not-yet-existent harness (incl. a Vacuous Negated Grep at #19 and a no-residue check #10 that never runs the harness) - the exact methodology/02 §10 anti-pattern the phase codified; (2) the fetch-depth:0 justification is an UNSUPPORTED CLAIM - the evaluator empirically REFUTED the 'shallow clone fails' reason (shallow->file:// --depth 1 clone succeeded); (3) NDEBT-004 ledger CONTRADICTION - the contract's spec-faithful NO-decision (no validate.sh --payload, per spec §4.2) contradicted DEBT.md NDEBT-004's remediation which the orchestrator had OVER-SCOPED to assign the validate --payload diagnostic to F-029. ORCHESTRATOR ACTION: reconciled DEBT.md NDEBT-004 remediation -> 'DEFERRED beyond F-029' (committed 8d1e804), so the ledger now MATCHES the spec-faithful NO-decision; the validate --payload consumer-safety diagnostic + any C9 payload carve-out is deferred to a future feature. Routed rev1 to @generator: harden the 5 vacuous verifications (existence-guard + load-bearing, incl. entry 10 running the harness before the no-residue assert), drop-or-correctly-justify fetch-depth:0 (empirically), update ndebt_004 design_notes to reference the reconciled ledger, fix the evidence_convention off-by-one (19->20 entries). Core mechanism + Mode-A-approved design unchanged."
+    },
+    {
+      "at": "2026-07-10T10:45:06Z",
+      "event": "contract_approved",
+      "detail": "Contract 029 (R2 hermetic e2e consumer-bootstrap test + CI) APPROVED by both Loop-1 gates on rev1 (revisions=1; 029-contract attempts=2/limit=3). rev0->rev1 closed all 3 evaluator blockers: (1) 5 vacuous verifications (10,14,15,16,19) hardened with existence-guards + load-bearing (entry 10 now runs the harness before the no-residue assert) - re-run confirms 16/20 fail pre-implementation, only the 4 baseline-invariant entries pass (bootstrap.sh unmodified, validate.sh already 11/0, scope-guard clean, DEBT.md untouched); (2) fetch-depth:0 DROPPED from the e2e CI job (empirically refuted shallow-clone claim; the ephemeral tag is created locally on HEAD so clone depth is irrelevant), SHA-pin parity retained, validate job byte-unchanged; (3) NDEBT-004 contradiction CLOSED - the orchestrator reconciled DEBT.md NDEBT-004 to 'DEFERRED beyond F-029' (commit 8d1e804) and design_notes.ndebt_004_decision now quotes it verbatim. Bonus generator self-catch: 4 entries used root-level /tmp_out paths (would fail on non-root CI runner) -> switched to mktemp. Both gates independently re-confirmed at rev0 that the CORE MECHANISM works end-to-end (bootstrap over file:// + ephemeral annotated tag on HEAD -> payload + NIZAM.json 38 paths + .nizam/tools/skill.json + --verify-only exit 0; cleanup clean, no e2e-* tag). Scope: tools/e2e_bootstrap_test.sh (create; hermetic harness + --self-test-negative H4 guard) + .github/workflows/compliance.yml (modify; add SHA-pinned e2e_bootstrap job). bootstrap.sh NOT modified (spec §4.2); validate.sh SUMMARY count UNCHANGED. NDEBT-004 stays open (deferred beyond F-029, spec-scoped). estimated_lines 200. Delegating implementation to @generator (attempt-4... no: this is F-029's implementation on an approved contract)."
+    },
+    {
+      "at": "2026-07-10T11:00:41Z",
+      "event": "feature_complete",
+      "detail": "Feature 029 complete (R2 hermetic e2e consumer-bootstrap test + CI). ALL 7 IMPLEMENTATION FEATURES OF PHASE 004 (023-029) ARE NOW DONE; only F-030 (phase close) remains. Contract 1 revision; Mode B + QA first-pass. Mode B (validator): faithful, purely-additive - exactly tools/e2e_bootstrap_test.sh (new, 340) + .github/workflows/compliance.yml (+21, e2e_bootstrap job; validate job BYTE-unchanged); non-goals held (bootstrap.sh + verify_lib.sh + DEBT.md + NIZAM.json unchanged); validate.sh SUMMARY unchanged 11/0; behavior verified (positive exit 0 hermetic, negative --self-test-negative exit 1 with the H4 guard naming tools/skill.json, no e2e-* tag residue); ratified the in-scope header-comment reword (dropped a validate.sh reference that tripped non-goal verify #19). QA (evaluator): all 20 verifications independently re-run TWICE (20/20 EXIT:0) + adversarial proofs - HERMETICITY (grep: zero https/ssh/remote refs, only file://), H4-GUARD NON-TAUTOLOGY (neutered the deliberate break in a SCRATCH COPY -> harness takes the different 'NOT load-bearing' branch, proving the outcome is assertion-driven not a hardcoded exit), CLEANUP-UNDER-FAILURE (injected a failure right after install in a scratch copy -> the EXIT trap still removed both the ephemeral tag AND the mktemp scratch dir), idempotency (2 consecutive clean runs). Deliverables: tools/e2e_bootstrap_test.sh (dual-mode hermetic harness exercising the real inject->verify adoption path over file:// + an ephemeral annotated tag, composing vlib_path_resolves for the H4 .nizam/tools/skill.json discovery guard) + the compliance.yml e2e_bootstrap CI job. 361 lines vs 200 est (no flag). Cumulative 1964/2015 (97.5% of the re-baselined ceiling). Realizes R2. THREE HUMAN GATES remain for F-030/phase-close: (1) the v0.6.0 release (F-030's release gate; v0.4.x + v0.5.x are taken, so v0.6.0 is the next MINOR - additive validator checks C9-C11 + verify_lib + e2e harness + schema reconciliation, no breaking runtime change), (2) GitHub Pages publishing for docs/guide/ (long-outstanding), (3) the phase-004 PR merge. Advancing to 030 (phase close - docs/count sync to C1-C11, CHANGELOG, tools/README.md, green-validator confirmation, v0.6.0 release gate; deps ALL complete)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -713,8 +737,15 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 1250,
-    "total_lines_changed": 1603,
+    "original_estimate_lines": 1550,
+    "total_lines_changed": 1964,
+    "rebaseline": {
+      "from": 1250,
+      "to": 1550,
+      "authorized_by": "human",
+      "at": "2026-07-10T10:07:52Z",
+      "reason": "Human chose 'Re-baseline & finish' at the F-028 scope-budget gate (cumulative 1603/1625 = 98.6% of the old 130% ceiling; F-029 would breach it). The overage is genuine under-estimation on already-planned features (adversarial-quality validator checks + schema validation ran larger than the optimistic per-feature estimates: 023 408/260, 025 303/180, 027 269/215, 028 384/150), NOT scope creep. Original 1250 -> 1550; new 130% ceiling 2015. Authorizes completing F-029 (hermetic e2e consumer-bootstrap test + CI, R2) + F-030 (phase close). Plan Amendment Rule (human-authorized, orchestrator-recorded), mirrors the phase-002 770->1250 re-baseline precedent."
+    },
     "per_feature": [
       {
         "id": "023",
@@ -757,6 +788,13 @@
         "actual": 384,
         "flag": null,
         "note": "4 files (git numstat ins+del): tools/validate.sh 376+8=384 (check_c11_dogfood_sweep [default; .agent/qa/*.json content-routed {review,qa_pass|verdict} else skip; contracts/run_state by path; existence-guarded skip-if-absent] + check_c11_dogfood_target + check_c11_or_c4_target [--target dispatcher wrapping unmodified check_c4_index] + check_c11_dogfood_payload_skip + 3-mode registration + print_usage) - wait, that 384 is validate.sh ALONE per numstat but includes the 3 fixtures... correction: validate.sh 341 (333+8) + 3 fixtures (invalid_qa_verdict 5 + invalid_contract 24 + invalid_run_state 14 = 43) = 384 total. C11 is genuinely the most complex check (schema validation across 3 artifact families + content-routing + a --target dispatcher + consumer-safety). 384 vs 150 est is a 2.56x UNDER-ESTIMATE (not scope creep) - rolling avg last 3 (025=303,026=170,027=269)=247, 3x=742; 384 < 742 so NO per-feature flag. Contract took 2 revisions (attempt 3, no halt): rev0->rev1 fixed the 027_failures.json circuit_breaker misroute + a vacuous verify-12; rev1->rev2 fixed the unsatisfiable AT9 immutability guard (F-025 precedent). Mode B ratified 1 post-approval test-defect correction (AT5's over-specified full-sweep -> [C11] PASS-only, since C9 legitimately fails in a .agent-stripped copy on shipped-doc .agent/ refs) + 2 in-scope impl fixes (missing payload_skip fn; message-format for AT7's anchored assertion). QA PASS with deep adversarial probing (independent router-diff = exactly 1 skip 027_failures.json; a direct full-route probe proving the default-sweep skip is a restricted-route property not a gaming amnesty; sha256 immutability tamper-probe reverted clean). Resolves NDEBT-002 part b (C11 enforces the F-025-reconciled schemas over all 34 verdict/review + 28 contracts + run_state). CUMULATIVE 1603/1625 (98.6% of 130%-ceiling; 128.2% of the original 1250 est) - F-029(~200) will BREACH the ceiling; per the Scope Budget Protocol this is surfaced to the human for a re-baseline/authorization decision BEFORE F-029's contract lifecycle begins (status=scope_budget_review). Completes the 8->11 validator migration (C9+C10+C11). Advancing to 029 pending the budget decision (deps: F-029 depends on F-023 only, complete)."
+      },
+      {
+        "id": "029",
+        "estimated": 200,
+        "actual": 361,
+        "flag": null,
+        "note": "2 files (git numstat ins+del): tools/e2e_bootstrap_test.sh 340 (new; hermetic harness - ephemeral annotated tag on HEAD + bootstrap.sh --repo-url file:// --tag --target scratch/.nizam + assert payload/index/.nizam-tools-skill.json-discovery[composes vlib_path_resolves]/--verify-only; trap cleanup; --self-test-negative H4 guard) + .github/workflows/compliance.yml 21 (add SHA-pinned e2e_bootstrap job; validate job byte-unchanged). Est 200; rolling avg last 3 (026=170,027=269,028=384)=274, 3x=823; 361 < 823 no per-feature flag. Contract 1 revision (rev0 evaluator caught 5 vacuous verifications + a refuted fetch-depth:0 claim + an NDEBT-004 ledger contradiction the orchestrator had over-scoped; rev1 fixed all + a generator self-caught root-path-tmpfile portability bug); the evaluator DRY-RAN the mechanism end-to-end at rev0 confirming it works. Mode B + QA first-pass: QA re-ran 20/20 twice + adversarially proved hermeticity (only file://), H4-guard NON-tautology (neutering the break in a scratch copy flips to the 'NOT load-bearing' branch), and cleanup-under-mid-run-failure (trap fires even on early failure). bootstrap.sh NOT modified (spec §4.2); validate.sh SUMMARY UNCHANGED at 11. Realizes R2 (the live inject->verify proof that the H4 v0.1.0 adoption bug cannot silently recur). NDEBT-004 stays open (deferred beyond F-029). CUMULATIVE 1964/2015 (97.5% of the re-baselined 1550 ceiling); F-030 (phase close, ~70-150) may nudge slightly over 2015 but is within the human's 'Re-baseline & finish' authorization. Advancing to 030 (phase close - the FINAL feature; deps F-024,025,026,027,028,029 ALL complete)."
       }
     ]
   }

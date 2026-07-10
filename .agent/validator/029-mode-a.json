@@ -1,0 +1,27 @@
+{
+  "review": "contract-validation-mode-a",
+  "feature": "029",
+  "contract_id": "029",
+  "revision_reviewed": 1,
+  "risk_level": "medium",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Re-review of contract 029 rev1: confirmed the three rev0 rejection classes (evaluator .agent/qa/029-contract-review.json) are fully remediated with no regression against the rev0-approved design.",
+    "VACUITY FIXED: hardened verification entries 10, 14, 15, 16, 19 now each gate on `test -f/-s tools/e2e_bootstrap_test.sh || exit 1` (and a failed-source / undefined-function guard) BEFORE the assertion; entry 10 additionally RUNS the harness and requires rc=0 before the no-residue assert; entry 19's negated grep is now preceded by the methodology/02 Sec 3.1-prescribed existence gate (Vacuous Negated Grep remedy). Spot-ran entries 10, 14, 19 VERBATIM against the current unimplemented tree: all exited rc=1 with explicit MISSING diagnostics (no false-pass). Entries 15/16 use the byte-identical guard pattern.",
+    "FETCH-DEPTH REFUTATION APPLIED: contract scope.files_modify drops the empirically-refuted `fetch-depth: 0` requirement from the new e2e_bootstrap job (SHA-pin parity retained via entry 18, which no longer asserts fetch-depth). The existing `validate` job's own fetch-depth:0 (compliance.yml line 28, its own C8 git-show-HEAD reason) is untouched. Confirmed repo is non-shallow.",
+    "NDEBT-004 CONTRADICTION CLOSED: docs/planning/DEBT.md NDEBT-004 remediation now reads 'DEFERRED beyond F-029 ... NOT validate.sh --payload'; design_notes.ndebt_004_decision now quotes that reconciled ledger text verbatim. The NO-decision (no 5th validate.sh --payload assertion) is spec-faithful: product_spec_004 Sec 4.2 enumerates the harness assertions as exactly (a) payload-present, (b) index-valid, (c) .nizam/tools/skill.json discovery, (d) --verify-only exit 0; AT11 requires validate.sh untouched. DEBT.md is a held non-goal (entry 20 asserts the generator diff never touches it).",
+    "mktemp PORTABILITY FIX (entries 14/15/16/17) is a legitimate non-root CI-runner correction replacing absolute ROOT paths; no scope or behavioral change.",
+    "evidence_convention off-by-one corrected (nineteenth -> twentieth; 20 entries, directly counted).",
+    "NO REGRESSION: harness (a)-(d) mechanism, ephemeral annotated-tag + file:// hermeticity, trap cleanup EXIT (bootstrap.sh idiom), --self-test-negative same-code-path guard, additive CI e2e job, scope = tools/e2e_bootstrap_test.sh + .github/workflows/compliance.yml, and the bootstrap.sh-unmodified / validate.sh-count-unchanged non-goals are all intact. All 11 F-029 acceptance tests (AT1-AT11) remain mapped to verification entries 1-11; entries 12-20 are additional soundness guards."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "mode": "A",
+    "contract_id": "029",
+    "feature_id": "029",
+    "risk_level": "medium",
+    "summary": "APPROVED (rev1). All three rev0 rejection classes are remediated with zero regression. (1) The five previously-vacuous verification commands (10, 14, 15, 16, 19) are now load-bearing: each fails rc=1 with an explicit MISSING diagnostic pre-implementation (entries 10/14/19 spot-run verbatim and confirmed rc=1; 15/16 use the identical guard pattern), and entry 10 now runs the harness (requiring rc=0) before the no-residue assert. (2) The empirically-refuted fetch-depth:0 requirement is dropped from the new e2e_bootstrap job while SHA-pin parity is retained (entry 18) and the validate job's own fetch-depth:0 is untouched. (3) The NDEBT-004 ledger contradiction is closed: DEBT.md now reads 'DEFERRED beyond F-029' and design_notes.ndebt_004_decision quotes it verbatim; the decision to omit a 5th validate.sh --payload assertion is spec-faithful per product_spec_004 Sec 4.2 and AT11. Design integrity preserved: all 11 acceptance tests mapped, scope unchanged, non-goals intact. Zero unresolved discrepancies, zero missing acceptance coverage, zero unsupported claims. Cleared for implementation."
+  }
+}

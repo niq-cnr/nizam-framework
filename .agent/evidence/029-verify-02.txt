@@ -1,0 +1,36 @@
+$ out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 || { echo "harness exited $rc, expected 0"; exit 1; }; echo "$out" | grep -Eqi 'pass|ok|success' || { echo "no pass/ok/success indication in output"; exit 1; }; echo VERIFY_PASS
+e2e_bootstrap_test.sh: installing pinned tag 'e2e-1783680727-3945583' from 'file:///home/cnross/workspace02/nizam-framework' into '/tmp/tmp.T5PGrskTa6/.nizam' (hermetic -- local file:// clone, no network)...
+bootstrap.sh: cloning file:///home/cnross/workspace02/nizam-framework at pinned tag e2e-1783680727-3945583 (--depth 1)...
+Cloning into '/tmp/nizam-bootstrap-clone.9kfDDY'...
+warning: refs/tags/e2e-1783680727-3945583 267ff634c8afb3f13c837b58a4ad43a6f3e92e49 is not a commit!
+Note: switching to '8d1e80484df8ef1086dd387886dba1362b0b931f'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: staging governance payload in /tmp/tmp.T5PGrskTa6/.nizam-stage.5py62o...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 38 indexed path(s) resolve under /tmp/tmp.T5PGrskTa6/.nizam-stage.5py62o.
+bootstrap.sh: recording provenance (framework_version=0.5.1, tag=e2e-1783680727-3945583)...
+bootstrap.sh: install complete. Governance payload version 0.5.1 (tag e2e-1783680727-3945583) is now at '/tmp/tmp.T5PGrskTa6/.nizam'.
+assert_payload_present: OK -- standard/, templates/, schema/, tools/, NIZAM.json, provenance.json all present under /tmp/tmp.T5PGrskTa6/.nizam
+assert_nizam_index_valid: OK -- NIZAM.json parses; 37 indexed path(s) resolve under /tmp/tmp.T5PGrskTa6/.nizam.
+assert_discovery_path: OK -- /tmp/tmp.T5PGrskTa6/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
+bootstrap.sh: verify-only: checking '/tmp/tmp.T5PGrskTa6/.nizam' against pinned tag 'e2e-1783680727-3945583' (no clone, no network)...
+NIZAM.json parses; 38 indexed path(s) resolve under /tmp/tmp.T5PGrskTa6/.nizam.
+bootstrap.sh: verify-only: PASS -- '/tmp/tmp.T5PGrskTa6/.nizam' is present, well-formed, and matches pinned tag 'e2e-1783680727-3945583'.
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1783680727-3945583, target /tmp/tmp.T5PGrskTa6/.nizam).
+VERIFY_PASS
+EXIT:0
