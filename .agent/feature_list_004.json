@@ -147,7 +147,7 @@
       "id": "030",
       "name": "Phase Close — tools/README + CHANGELOG Count Sync, NDEBT-002 Resolved, Green Validator, v0.4.0 Release Gate",
       "description": "Close phase 004. Sync tools/README.md to describe the new C1-C11 check set and the SUMMARY: 11 passed, 0 failed total (single doc bump; frontmatter version + change_log entry, C8). Add CHANGELOG.md [Unreleased] entries for the phase-004 deliverables: tools/verify_lib.sh + the verification-authoring standard (methodology/02); the C9/C10/C11 validator checks; the reconciled qa_verdict.schema.json union + new contract_review.schema.json + explicit contract amendments[] (resolving NDEBT-002); the hermetic e2e bootstrap harness + CI job. Move NDEBT-002 from Open to Resolved in docs/planning/DEBT.md (reconciled schemas + C11 enforcement). Confirm tools/validate.sh exits 0 with SUMMARY: 11 passed, 0 failed on the final tree. Record the v0.4.0 release HUMAN GATE — MINOR per methodology/05_release_train.md (additive checks C9-C11 + verify_lib + e2e harness + CI job + permissive schema reconciliation; no breaking runtime change; bootstrap.sh unmodified) — and note the still-outstanding upstream phase-003 gates (v0.3.0, GitHub Pages, PR #5 merge). The pipeline records but does NOT execute any release/publishing gate. Depends on F-024, F-025, F-026, F-027, F-028, F-029.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": ["024", "025", "026", "027", "028", "029"],
       "acceptance_tests": [
         "tools/README.md describes the C1-C11 set and the new total: grep -q 'C11' tools/README.md && grep -Eq '11 (checks|passed)' tools/README.md",

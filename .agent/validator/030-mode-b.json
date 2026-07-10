@@ -1,0 +1,19 @@
+{
+  "review": "contract-validation-mode-b",
+  "feature": "030",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "B1/B3 Scope fidelity: `git diff HEAD -- . ':(exclude).agent'` shows EXACTLY two changed files outside .agent/: tools/README.md (M) and CHANGELOG.md (M). Nothing else. (.agent/ churn — 030.json, evidence 01-17, mode-a, contract-review, run_state — is orchestrator/pipeline metadata, correctly out of the consumer diff scope.)",
+    "B2/B4 tools/README.md faithful to contract: frontmatter version bumped 0.2.0->0.3.0 WITH a frontmatter `change_log` entry for 0.3.0 (dated 2026-07-10, C8-satisfying — a real frontmatter array entry, not a body note); a new '## Compliance Coverage — C1–C11' body table enumerates every check C1 through C11 individually (python check: missing=[]) and states 'SUMMARY: 11 passed, 0 failed'; literals 'C11' and '11 passed' both present. Default full sweep reports [C8] PASS for README's version bump.",
+    "B4 CHANGELOG.md faithful to contract: the phase-004 ### Added entries are placed INSIDE ## [Unreleased] (between the [Unreleased] heading and ## [0.5.1] - 2026-07-09; no released section touched) and name all real deliverables — tools/verify_lib.sh + the methodology/02_adversarial_tdd.md verification-authoring standard; C9/C10/C11 with the 8->11 SUMMARY migration; the reconciled schema/qa_verdict.schema.json anyOf union + new schema/contract_review.schema.json + contract.schema.json amendments[] (Resolves NDEBT-002); tools/e2e_bootstrap_test.sh + its CI job in compliance.yml. Branding-clean (grep for nizamiq/.svc/cluster.local => CLEAN).",
+    "B6/Non-goals held: `git diff --name-only HEAD` for docs/planning/DEBT.md, NIZAM.json, tools/validate.sh, tools/verify_lib.sh, tools/e2e_bootstrap_test.sh, bootstrap.sh, .github/workflows/compliance.yml, and schema/ is EMPTY (all byte-identical to HEAD). NIZAM.json framework.version still 0.5.1. `git tag -l 'v0.6.0'` empty (no release cut). No pages.yml/gh-pages.yml — .github/workflows/ holds only compliance.yml.",
+    "B7/B8 Anti-gaming + AH-4: `bash tools/validate.sh` => 'SUMMARY: 11 passed, 0 failed' (exit 0) with [C8] PASS and [C11] PASS. No skipped/weakened tests, no TODO/future-work placeholders in the diff; both deliverables are complete, not stubs. CHANGELOG entries accurately describe the phase-004 deliverables (cross-checked against contract 030 scope) with no hallucination.",
+    "B5 Dependency fidelity: contract declares no dependency additions; the two doc-only edits introduce no imports/packages. N/A satisfied."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "MODE B PASS. Implementation of F-030 faithfully executes approved contract 030 (rev1). Scope is exactly tools/README.md + CHANGELOG.md outside .agent/ — no unapproved files. tools/README.md carries the C1-C11 description (C11 + '11 passed'), a version bump 0.2.0->0.3.0 with a C8-satisfying frontmatter change_log entry, and the default sweep shows [C8] PASS. CHANGELOG [Unreleased] names all real phase-004 deliverables (verify_lib.sh + verification standard, C9/C10/C11 8->11 migration, reconciled schemas + contract_review.schema.json + amendments[] for NDEBT-002, e2e harness + CI) inside the Unreleased section, branding-clean. All non-goals held: DEBT.md, NIZAM.json (framework.version 0.5.1), validate.sh, verify_lib.sh, e2e_bootstrap_test.sh, bootstrap.sh, compliance.yml, schema/*.json all byte-identical to HEAD; no v0.6.0 tag; no Pages workflow. Green tree: SUMMARY: 11 passed, 0 failed (exit 0), [C11] PASS. All eight Mode-B checks pass with zero failures."
+  }
+}

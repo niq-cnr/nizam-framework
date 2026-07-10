@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "004-durable-enforcement",
   "current_feature": "030",
-  "status": "contract_negotiation",
-  "updated_at": "2026-07-10T11:00:41Z",
+  "status": "phase_complete",
+  "updated_at": "2026-07-10T11:34:52Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -116,6 +116,10 @@
       "note": "rev0 rejected (027_failures.json circuit_breaker misroute + vacuous verify-12); rev1 rejected (AT9 immutability check unsatisfiable - caught the feature's own 028 artifacts + run_state, F-025 precedent); rev2 (attempt 3, LAST) dispatched with the narrow 025-precedented AT9 pathspec fix - evaluator confirmed items 1-4 sound + 'no further change needed' beyond AT9. If rev2 rejected -> 3-strike halt + escalate. RESOLVED: rev2 APPROVED by both gates on attempt 3 (the last permitted); no halt."
     },
     "029-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "030-contract": {
       "attempts": 2,
       "limit": 3
     }
@@ -565,6 +569,26 @@
       "at": "2026-07-10T11:00:41Z",
       "event": "feature_complete",
       "detail": "Feature 029 complete (R2 hermetic e2e consumer-bootstrap test + CI). ALL 7 IMPLEMENTATION FEATURES OF PHASE 004 (023-029) ARE NOW DONE; only F-030 (phase close) remains. Contract 1 revision; Mode B + QA first-pass. Mode B (validator): faithful, purely-additive - exactly tools/e2e_bootstrap_test.sh (new, 340) + .github/workflows/compliance.yml (+21, e2e_bootstrap job; validate job BYTE-unchanged); non-goals held (bootstrap.sh + verify_lib.sh + DEBT.md + NIZAM.json unchanged); validate.sh SUMMARY unchanged 11/0; behavior verified (positive exit 0 hermetic, negative --self-test-negative exit 1 with the H4 guard naming tools/skill.json, no e2e-* tag residue); ratified the in-scope header-comment reword (dropped a validate.sh reference that tripped non-goal verify #19). QA (evaluator): all 20 verifications independently re-run TWICE (20/20 EXIT:0) + adversarial proofs - HERMETICITY (grep: zero https/ssh/remote refs, only file://), H4-GUARD NON-TAUTOLOGY (neutered the deliberate break in a SCRATCH COPY -> harness takes the different 'NOT load-bearing' branch, proving the outcome is assertion-driven not a hardcoded exit), CLEANUP-UNDER-FAILURE (injected a failure right after install in a scratch copy -> the EXIT trap still removed both the ephemeral tag AND the mktemp scratch dir), idempotency (2 consecutive clean runs). Deliverables: tools/e2e_bootstrap_test.sh (dual-mode hermetic harness exercising the real inject->verify adoption path over file:// + an ephemeral annotated tag, composing vlib_path_resolves for the H4 .nizam/tools/skill.json discovery guard) + the compliance.yml e2e_bootstrap CI job. 361 lines vs 200 est (no flag). Cumulative 1964/2015 (97.5% of the re-baselined ceiling). Realizes R2. THREE HUMAN GATES remain for F-030/phase-close: (1) the v0.6.0 release (F-030's release gate; v0.4.x + v0.5.x are taken, so v0.6.0 is the next MINOR - additive validator checks C9-C11 + verify_lib + e2e harness + schema reconciliation, no breaking runtime change), (2) GitHub Pages publishing for docs/guide/ (long-outstanding), (3) the phase-004 PR merge. Advancing to 030 (phase close - docs/count sync to C1-C11, CHANGELOG, tools/README.md, green-validator confirmation, v0.6.0 release gate; deps ALL complete)."
+    },
+    {
+      "at": "2026-07-10T11:16:53Z",
+      "event": "contract_revision",
+      "detail": "Contract 030 (phase-004 CLOSE) rev0 REJECTED by BOTH Loop-1 gates (030-contract attempts=2/3). POETIC DOGFOODING: C11 - the schema-validation check shipped just two features ago (F-028) - CAUGHT a defect in the phase's OWN closing contract: 030.json's scope object OMITTED the schema-required `files_create` key (contract.schema.json requires files_create + files_modify; all of 000-029 have both), so `bash tools/validate.sh` currently reports [C11] FAIL on .agent/contracts/030.json -> SUMMARY 10 passed 1 failed. The phase's durable-enforcement thesis validating itself on its final artifact. Second defect: the contract's tools/README.md C8-satisfaction plan (record the 0.2.0->0.3.0 bump 'via a body note') is empirically WRONG - C8 (check_c8_version_changelog) reads only a frontmatter change_log entry or a CHANGELOG.md path mention, never the body; and AT2's `validate.sh --target tools/README.md` runs C1/C2/C3/C9/C10 but NOT C8 (confirmed), so it can't detect the failure - a body-note bump reproduces [C8] FAIL. Everything else confirmed SOUND by both gates (the v0.4.0->v0.6.0 gate correction - v0.4.0/v0.5.x taken, v0.6.0 is next MINOR; NDEBT-002 read-only no-op already resolved at F-028; NIZAM.json held 0.5.1 to keep C10 green; the [Unreleased]-scoped CHANGELOG entries; scope guard; C5). Routed rev1 to @generator: (1) add `files_create: []` (F-030 creates no files) -> restores validate.sh to 11/0; (2) switch the README bump to a frontmatter change_log entry (v0.3.0, matching tools/SKILL.md + tools/interface.md precedent) + add a verification that DIRECTLY proves C8 passes (default-mode [C8] PASS / vlib_version_increased, since --target skips C8)."
+    },
+    {
+      "at": "2026-07-10T11:26:08Z",
+      "event": "contract_approved",
+      "detail": "Contract 030 (phase-004 CLOSE) APPROVED by both Loop-1 gates on rev1 (revisions=1; 030-contract attempts=2/limit=3). rev0->rev1 closed both blockers: (1) added `files_create: []` -> 030.json now schema-valid -> C11 no longer fails on it -> validate.sh restored to 11/0 (the phase's own C11 dogfood having caught the malformed closing contract); (2) switched the tools/README.md 0.2.0->0.3.0 bump from a body note to a FRONTMATTER change_log entry (C8 reads only frontmatter change_log or a CHANGELOG.md path mention, never the body; --target skips C8 entirely) + added verification #17 directly proving [C8] PASS on the default sweep. The evaluator built positive+negative-control git worktrees confirming #17 discriminates (rev1 plan -> [C8] PASS; rev0 body-note plan -> [C8] FAIL) and fails on the unimplemented tree (non-vacuous). Both gates confirmed the rest sound: the v0.4.0->v0.6.0 release-gate correction (v0.4.0/v0.5.x taken, v0.6.0 is the next MINOR - additive C9-C11 + verify_lib + e2e + permissive schema reconciliation, no breaking runtime change), NDEBT-002 read-only no-op (already Resolved at F-028), NIZAM.json held at 0.5.1 (keeps C10 anchor green; the v0.6.0 bump is the human's release action), the [Unreleased]-scoped CHANGELOG phase-004 entries, scope guard, C5. Scope: tools/README.md (C1-C11 + '11 passed' description + frontmatter change_log 0.3.0) + CHANGELOG.md ([Unreleased] phase-004 entries); DEBT.md byte-identical (NDEBT-002 already moved); NIZAM.json byte-identical. 17 verifications. estimated_lines 70. Delegating implementation to @generator - the FINAL feature's implementation; on completion phase 004 CLOSES and the phase-004 PR opens (3 human gates: v0.6.0 release, GitHub Pages, PR merge)."
+    },
+    {
+      "at": "2026-07-10T11:34:52Z",
+      "event": "feature_complete",
+      "detail": "Feature 030 complete (phase-004 CLOSE) - the FINAL feature. Contract 1 revision (rev0: C11 caught 030.json missing files_create + the README C8-body-note error; rev1 fixed both); Mode B + QA first-pass. Mode B: faithful, exactly tools/README.md + CHANGELOG.md changed; README gained a C1-C11 Compliance Coverage section (literals C11 + '11 passed') + version 0.2.0->0.3.0 with a FRONTMATTER change_log entry ([C8] PASS on the default sweep); CHANGELOG [Unreleased] populated with the 4 phase-004 deliverable groups, branding-clean; all non-goals byte-identical (DEBT.md, NIZAM.json@0.5.1, validate.sh, verify_lib.sh, e2e harness, bootstrap.sh, compliance.yml, schema/*); no v0.6.0 tag cut; no Pages workflow. QA: all 17 verifications re-run + adversarial (CHANGELOG [Unreleased] regex-boundary-parsed + confirmed the required strings are ABSENT from pre-change HEAD -> non-vacuous; human gates confirmed not auto-executed; DEBT/NIZAM byte-identical). validate.sh SUMMARY: 11 passed, 0 failed. 65 lines vs 70 est (UNDER). Realizes phase close: docs/count sync to C1-C11, CHANGELOG [Unreleased], green validator, v0.6.0 release gate recorded (NOT executed)."
+    },
+    {
+      "at": "2026-07-10T11:34:52Z",
+      "event": "phase_complete",
+      "detail": "Phase 004-durable-enforcement CLOSED. All 8 features (023-030) through the full planner->contract->Mode A + evaluator-review->implement->Mode B->QA lifecycle with durable .agent/ state; validator GREEN (SUMMARY: 11 passed, 0 failed) on the final tree. Delivered: R3 - tools/verify_lib.sh (5 vetted verification primitives) + the verification-authoring standard (methodology/02 Sec 10); R1 - C9 repo-wide path-resolution + C10 single-source-of-truth consistency (payload/discovery/version, format-agnostic) validator checks (the 8->11 migration); R4 - qa_verdict.schema.json anyOf union + new contract_review.schema.json + explicit contract amendments[] (F-025) AND C11 dogfood schema validation of .agent/ (F-028) - together RESOLVING NDEBT-002; R2 - the hermetic e2e consumer-bootstrap test (tools/e2e_bootstrap_test.sh) + CI job (proving the H4 v0.1.0 adoption bug cannot silently recur). PROCESS NOTABLES (the phase's durable-enforcement thesis validating itself): the adversarial contract-review gate repeatedly caught REAL verification-soundness defects pre-implementation (cheatable fixtures, false-passes, false-negatives, vacuous/non-load-bearing verifications, an unsatisfiable immutability guard, an empirically-refuted CI claim); F-027's sub-check-1 hit the 3-strike circuit breaker on line-join format edges and was recovered via a HUMAN-authorized format-agnostic REDESIGN; C11 (F-028) later caught a schema defect in the phase's OWN closing contract (030.json missing files_create). Scope budget: cumulative 2029 vs the human-re-baselined 1550 estimate (ceiling 2015) - 2029 is +14 (0.7%) over the re-baselined ceiling, an accounting artifact fully within the human's explicit 'Re-baseline & finish' authorization to complete F-029+F-030 (F-030 itself came in UNDER at 65 vs 70); no per-feature flags on any phase-004 feature. NDEBT-002 RESOLVED; NDEBT-003/004/005 remain Open (deferred: consistency recurrence-guard, C9 --payload consumer-safety, un-mechanized enumeration/bare-ref guard). THREE HUMAN GATES OUTSTANDING, NONE executed by the pipeline: (1) v0.6.0 release (next MINOR; additive - no breaking runtime change), (2) GitHub Pages publishing for docs/guide/, (3) the phase-004 PR merge. Status -> phase_complete. Next: push phase/004-durable-enforcement + open the phase-004 PR for human review. Pipeline self-merges nothing."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -738,7 +762,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1550,
-    "total_lines_changed": 1964,
+    "total_lines_changed": 2029,
     "rebaseline": {
       "from": 1250,
       "to": 1550,
@@ -795,6 +819,13 @@
         "actual": 361,
         "flag": null,
         "note": "2 files (git numstat ins+del): tools/e2e_bootstrap_test.sh 340 (new; hermetic harness - ephemeral annotated tag on HEAD + bootstrap.sh --repo-url file:// --tag --target scratch/.nizam + assert payload/index/.nizam-tools-skill.json-discovery[composes vlib_path_resolves]/--verify-only; trap cleanup; --self-test-negative H4 guard) + .github/workflows/compliance.yml 21 (add SHA-pinned e2e_bootstrap job; validate job byte-unchanged). Est 200; rolling avg last 3 (026=170,027=269,028=384)=274, 3x=823; 361 < 823 no per-feature flag. Contract 1 revision (rev0 evaluator caught 5 vacuous verifications + a refuted fetch-depth:0 claim + an NDEBT-004 ledger contradiction the orchestrator had over-scoped; rev1 fixed all + a generator self-caught root-path-tmpfile portability bug); the evaluator DRY-RAN the mechanism end-to-end at rev0 confirming it works. Mode B + QA first-pass: QA re-ran 20/20 twice + adversarially proved hermeticity (only file://), H4-guard NON-tautology (neutering the break in a scratch copy flips to the 'NOT load-bearing' branch), and cleanup-under-mid-run-failure (trap fires even on early failure). bootstrap.sh NOT modified (spec §4.2); validate.sh SUMMARY UNCHANGED at 11. Realizes R2 (the live inject->verify proof that the H4 v0.1.0 adoption bug cannot silently recur). NDEBT-004 stays open (deferred beyond F-029). CUMULATIVE 1964/2015 (97.5% of the re-baselined 1550 ceiling); F-030 (phase close, ~70-150) may nudge slightly over 2015 but is within the human's 'Re-baseline & finish' authorization. Advancing to 030 (phase close - the FINAL feature; deps F-024,025,026,027,028,029 ALL complete)."
+      },
+      {
+        "id": "030",
+        "estimated": 70,
+        "actual": 65,
+        "flag": null,
+        "note": "2 files (git numstat ins+del): tools/README.md 30+1=31 (C1-C11 Compliance Coverage section + version 0.2.0->0.3.0 + frontmatter change_log entry) + CHANGELOG.md 34+0=34 ([Unreleased] phase-004 deliverable groups). 65 vs 70 est - UNDER. Rolling avg last 3 (027=269,028=384,029=361)=338, 3x=1005; 65 well under, no flag. 1 contract revision (rev0: C11 dogfood caught 030.json itself missing files_create -> [C11] FAIL -> validate.sh 10/1; + the README C8-body-note error since C8 reads only frontmatter change_log/CHANGELOG-path, and --target skips C8; rev1 added files_create:[] + switched to a frontmatter change_log + added verification #17 proving default-sweep [C8] PASS). Mode B + QA first-pass. Phase-close deliverable: docs/count sync to C1-C11 + '11 passed', CHANGELOG [Unreleased], green validator confirmed, v0.6.0 release gate RECORDED not executed. FINAL cumulative 2029/2015 (100.7% of the re-baselined ceiling; +14/0.7% over - within the human 'Re-baseline & finish' authorization; F-030 itself under-budget). Phase 004 CLOSED."
       }
     ]
   }

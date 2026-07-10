@@ -1,0 +1,28 @@
+python3 -c "
+import re, sys
+import yaml
+text = open('tools/README.md', encoding='utf-8').read()
+lines = text.splitlines()
+assert lines and lines[0].strip() == '---', 'no frontmatter fence found'
+end = next(i for i in range(1, len(lines)) if lines[i].strip() == '---')
+fm = yaml.safe_load('\n'.join(lines[1:end]))
+assert isinstance(fm, dict), 'frontmatter did not parse as a mapping'
+entries = fm.get('change_log') or []
+assert isinstance(entries, list) and any(str(e.get('version')) == '0.3.0' for e in entries), 'no change_log entry for version 0.3.0 found in tools/README.md frontmatter'
+print('frontmatter change_log 0.3.0 entry: CONFIRMED')
+" || { echo "tools/README.md frontmatter change_log 0.3.0 entry missing"; exit 1; }; out=$(bash tools/validate.sh 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 || { echo "validate.sh exited $rc"; exit 1; }; echo "$out" | grep -q '\[C8\] PASS' || { echo "C8 did not report PASS on the full sweep"; exit 1; }; echo PASS
+frontmatter change_log 0.3.0 entry: CONFIRMED
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood
+SUMMARY: 11 passed, 0 failed
+PASS
+EXIT:0

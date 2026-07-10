@@ -1,0 +1,10 @@
+python3 -c "
+import re, sys
+t = open('CHANGELOG.md', encoding='utf-8').read()
+m = re.search(r'## \[Unreleased\](.*?)(\n## \[|\Z)', t, re.S)
+assert m, 'no [Unreleased] section found'
+s = m.group(1)
+sys.exit(0 if ('C9' in s and 'C10' in s and 'C11' in s) else 1)
+" && echo PASS || { echo "CHANGELOG [Unreleased] missing C9/C10/C11"; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,3 @@
+grep -q 'C11' tools/README.md && grep -Eq '11 (checks|passed)' tools/README.md && echo PASS || { echo "tools/README.md missing C11 or the '11 checks/passed' total"; exit 1; }
+PASS
+EXIT:0
