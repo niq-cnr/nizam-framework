@@ -1,0 +1,86 @@
+# Adversarial spot-check for feature 024 (evaluator-originated, methodology/02_adversarial_tdd.md Sec 6/8)
+
+## Probe 1: anti-pattern (a)-(d) genuinely codified with a matching compliant alternative (not keyword-stuffed)
+Read methodology/02_adversarial_tdd.md Section 10 (lines 198-260) directly and cross-checked each named vlib_ primitive's described behavior against tools/verify_lib.sh's actual implementation.
+
+(a) Whole-file/vacuous greps -> vlib_section_grep <file> <heading-regex> <token-regex>.
+  Section 10 claims: 'confines the match to the span running from the named heading up to the next markdown heading at any depth (or EOF)'.
+  tools/verify_lib.sh actual vlib_section_grep (lines 76-100): awk loop sets in_span=1 at the first line matching heading-regex, sets in_span=0 at the first subsequent line matching /^#+/, matches token only while in_span. MATCHES the doc's description exactly.
+
+(b) git diff HEAD scope guards blind to untracked/new files -> vlib_scope_guard <allowed-path-or-prefix> ...
+  Section 10 claims: 'built on git status --porcelain --untracked-files=all -- . '\'':(exclude).agent'\'', which sees new/untracked paths as well as modified ones'.
+  tools/verify_lib.sh actual vlib_scope_guard (lines 123-147): changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent') -- literal match, confirmed via: 
+106:# `git status --porcelain --untracked-files=all -- . ':(exclude).agent'`
+126:  changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent') || return 1
+  MATCHES exactly (same command string).
+
+(c) Bare-adjacency/parenthetical checks -> no single dedicated vlib_ primitive exists for this one (correctly so -- verify_lib.sh has no vlib_adjacency-type function); Section 10 instead directs the reader to tie tokens to 'the same concrete structural anchor (for example, both tokens verified within the same vlib_section_grep span...)', reusing vlib_section_grep rather than inventing a fictitious primitive name. Confirmed tools/verify_lib.sh exposes exactly 5 primitives (vlib_section_grep, vlib_scope_guard, vlib_version_increased, vlib_path_resolves, vlib_no_stale_payload) and Section 10 does not attribute a 6th, non-existent primitive to anti-pattern (c). No mischaracterization.
+
+(d) Literal-substring checks -> vlib_version_increased / vlib_path_resolves / vlib_no_stale_payload.
+  Section 10 claims vlib_version_increased is 'a YAML-parsed strict semver tuple comparison against the file's own HEAD copy, not a substring or != comparison'.
+  tools/verify_lib.sh actual (lines 170-254): parses working-tree and 'git show HEAD:<file>' YAML frontmatter via PyYAML, regex-parses MAJOR.MINOR.PATCH into a tuple, and requires working_tuple > head_tuple (strict). MATCHES.
+  Section 10 claims vlib_path_resolves is 'an actual test -e resolution against the working tree, not a string match against the path text'.
+  tools/verify_lib.sh actual (lines 280-299): after stripping trailing punctuation and exempting placeholder-shaped tokens, runs '[ -e "${stripped}" ]'. MATCHES.
+  Section 10 claims vlib_no_stale_payload is 'a real per-line structural scan for a stale multi-directory enumeration, not a substring hit'.
+  tools/verify_lib.sh actual (lines 319-336): reads file line by line, flags any single line containing standard/ + templates/ + schema/ but omitting tools/. MATCHES (it IS a substring test per-line, but the doc's claim is about detecting a *structural* stale-enumeration pattern across a fixed 3-vs-4-directory set, not an arbitrary single-token substring hit -- this is the same characterization tools/verify_lib.sh's own header comment (lines 12-18) uses). No mischaracterization found.
+
+VERDICT probe 1: PASS -- all four anti-patterns are genuinely described with accurate, real primitive behavior; none are fabricated or mischaracterized.
+
+## Probe 2: Section 10 is flat prose, no ### (or deeper) subheading within its own span
+Command: awk '/^## 10\. Verification-Authoring Standard/{flag=1;next} flag && /^#+/{exit} flag' methodology/02_adversarial_tdd.md | grep -nE '^#+'
+grep exit code: 1 (1 == no matches == no subheadings found, as required)
+VERDICT probe 2: PASS -- section 10 has zero lines beginning with '#' from its own heading to EOF (it is the file's last section); its four anti-patterns are distinguished only by bold lead-ins '**(a)**'..'**(d)**', never a markdown heading.
+
+## Probe 3: verify_lib.sh + at least one real vlib_ primitive name are WITHIN the new section span (not just elsewhere in file)
+Command: source tools/verify_lib.sh; vlib_section_grep methodology/02_adversarial_tdd.md '^## 10\. Verification-Authoring Standard' 'verify_lib\.sh'
+rc=0
+Command: vlib_section_grep methodology/02_adversarial_tdd.md '^## 10\. Verification-Authoring Standard' 'vlib_section_grep|vlib_scope_guard|vlib_version_increased|vlib_path_resolves|vlib_no_stale_payload'
+rc=0
+VERDICT probe 3: PASS -- both confirmed present strictly within the new section's own span, independent of the contract's own verification entry 4 that asserts the same thing (External Anchor Rule: re-derived independently here, not merely re-trusting the contract's command string).
+
+## Probe 4: frontmatter version 0.3.0 strictly > HEAD 0.2.0; exactly one new change_log entry for 0.3.0; YAML valid
+version: 0.3.0
+change_log entries: [('0.2.0', '2026-07-08'), ('0.3.0', '2026-07-08')]
+YAML parsed OK, no exception raised
+Independently confirmed HEAD copy version via: git show HEAD:methodology/02_adversarial_tdd.md | head -8
+---
+id: nizam-adversarial-tdd
+title: "Adversarial Test Design"
+description: "The evaluator independence model, false-pass and false-fail hunting patterns, and the negative-testing requirement that keeps acceptance test suites load-bearing rather than tautological."
+version: 0.2.0
+status: active
+authoritative_source: methodology/02_adversarial_tdd.md
+change_log:
+VERDICT probe 4: PASS -- HEAD version is 0.2.0 with 1 change_log entry (0.2.0); working tree is 0.3.0 with 2 change_log entries (0.2.0 unchanged + new 0.3.0 entry dated 2026-07-08). Strict semver increase confirmed. Exactly one new entry confirmed. YAML valid.
+
+## Probe 5: non-goals -- git diff HEAD shows no CHANGELOG.md / tools/validate.sh / tools/verify_lib.sh / other-file change; only methodology/02_adversarial_tdd.md (outside .agent/)
+Command: git diff --stat HEAD -- .
+ .agent/run_state.json             | 11 ++++++-
+ methodology/02_adversarial_tdd.md | 69 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 78 insertions(+), 2 deletions(-)
+Command: git status --porcelain --untracked-files=all -- . ':(exclude).agent'
+ M methodology/02_adversarial_tdd.md
+VERDICT probe 5: PASS -- only methodology/02_adversarial_tdd.md is modified outside .agent/ (the .agent/run_state.json change is expected orchestrator state and is excluded from scope by the contract's own vlib_scope_guard/':(exclude).agent' convention); CHANGELOG.md, tools/validate.sh, tools/verify_lib.sh are all untouched.
+
+## Probe 6: bash tools/validate.sh full sweep and --target run
+Command: bash tools/validate.sh
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+exit=0
+Command: bash tools/validate.sh --target methodology/02_adversarial_tdd.md
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+SUMMARY: 3 passed, 0 failed
+exit=0
+VERDICT probe 6: PASS -- full sweep SUMMARY: 8 passed, 0 failed, exit 0; targeted run C1/C2/C3 all PASS, exit 0.
+
+OVERALL ADVERSARIAL SPOT-CHECK VERDICT: PASS -- no defect found across 6 independent probes (content-accuracy of the four primitive descriptions vs actual verify_lib.sh behavior, flat-prose structural constraint, section-scoped presence of verify_lib.sh + a real primitive name, frontmatter version/change_log correctness, non-goal scope isolation, and full/targeted validator green state).
+EXIT:0

@@ -1,0 +1,4 @@
+changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/028.json' ':(exclude,glob).agent/qa/028*.json'); if [ -n "$changed" ]; then echo 'immutable audit record(s) touched:'; echo "$changed"; exit 1; fi; echo PASS
+--- OUTPUT ---
+PASS
+EXIT:0

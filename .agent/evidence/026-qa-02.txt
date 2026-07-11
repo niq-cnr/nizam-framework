@@ -1,0 +1,13 @@
+out=$(bash tools/validate.sh 2>&1); rc=$?; echo "$out"; echo "$out" | tail -1 | grep -qx 'SUMMARY: 9 passed, 0 failed' || { echo "expected exact summary"; exit 1; }; echo "$out" | grep -q '[C9] PASS' || { echo "no C9 PASS"; exit 1; }; test "$rc" -eq 0 && echo PASS
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+SUMMARY: 9 passed, 0 failed
+PASS
+EXIT:0

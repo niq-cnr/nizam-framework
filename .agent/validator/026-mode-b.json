@@ -1,0 +1,21 @@
+{
+  "review": "contract-validation-mode-b",
+  "feature": "026",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Scope fidelity confirmed: git status --untracked-files=all outside .agent shows exactly tools/validate.sh (M), tools/interface.md (M), docs/guide/index.html (M), tools/fixtures/unresolved_path.md (new), tools/fixtures/exempt_paths.md (new). Nothing else.",
+    "validate.sh: check_c9_path_resolution added per design_notes (awk frontmatter-strip, ERE [A-Za-z0-9_.-]+/[A-Za-z0-9_./-]*\\.(md|json|sh|html|yml) over BODY, .nizam/* + .agent/capability_profile.json + .agent/debt.json exemptions, delegates to vlib_path_resolves). Guarded source tools/verify_lib.sh added in main() after require_python_module calls with fail-closed die(). C9 registered in all three branches: default sweep with docs/guide/index.html existence guard; --target *.md case; --payload payload_md set with no guide. No *.html target case added. print_usage C9 paragraph + Modes bullets updated. Strictly additive: no C1-C8 logic, build_shipped_md_set/build_payload_md_set, frontmatter_python, or die()/require_* change.",
+    "interface.md: only line-46 token methodology/05_release_train.md -> 06_release_train.md; version 0.2.0 -> 0.3.0; exactly one new change_log entry (v0.3.0, 2026-07-10) accurately describing the 05->06 renumbering fix; entry lives in frontmatter (C9-stripped) and does not reproduce the stale directory-qualified token in the body. No other prose changed.",
+    "docs/guide/index.html: only line-535 <code> token fixed to 06_release_train.md; <meta name=\"framework-version\" content=\"0.5.1\"> untouched; no other content.",
+    "Fixtures carry no frontmatter. unresolved_path.md names exactly one nonexistent ref docs/architecture/ADR-999-does-not-exist.md. exempt_paths.md names only resolving refs (tools/verify_lib.sh, schema/README.md) plus the placeholder/exempt classes.",
+    "Non-goals held: git diff --quiet HEAD confirms tools/verify_lib.sh, NIZAM.json (framework.version still 0.5.1), CHANGELOG.md, CONTEXT.md, README.md, bootstrap.sh, schema/*, .github/workflows/, docs/planning/DEBT.md all unchanged.",
+    "AH-4 accuracy audit: the interface.md change_log entry accurately describes the actual diff (05_release_train -> 06_release_train, driven by the inserted 05_eval_and_trace.md). Verified on disk: 06_release_train.md and 05_eval_and_trace.md exist; 05_release_train.md absent.",
+    "Green tree verified: `bash tools/validate.sh` -> SUMMARY: 9 passed, 0 failed (exit 0), [C9] PASS. `bash tools/validate.sh --payload` -> SUMMARY (payload mode): 8 passed, 0 failed (exit 0), [C9] PASS. --help documents C9. --target unresolved_path.md -> [C9] FAIL naming ADR-999-does-not-exist.md. --target exempt_paths.md -> [C9] PASS."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Mode B APPROVED. Implementation matches approved contract 026 exactly: 5 in-scope files changed and nothing else, each deliverable faithful to scope/design_notes, all non-goals held (verify_lib.sh/NIZAM.json/schema/workflows/DEBT untouched, framework.version 0.5.1, framework-version anchor 0.5.1), strictly additive C1-C8, no *.html target case, AH-4 accurate, and green in all modes (9/0 default, 8/0 payload, C9 FAIL/PASS fixtures behave)."
+  }
+}

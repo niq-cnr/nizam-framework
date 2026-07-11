@@ -1,0 +1,14 @@
+python3 -c "
+import json
+d = json.load(open('.agent/qa/027_failures.json', encoding='utf-8'))
+keys = set(d.keys())
+qa_sweep_discriminators = {'review', 'qa_pass', 'verdict'}
+hit = keys & qa_sweep_discriminators
+assert not hit, f'027_failures.json unexpectedly carries default-sweep discriminator(s) {hit} -- it should be genuinely non-verdict-shaped under the restricted (a)/(b) rule'
+assert 'circuit_breaker' in keys, \"027_failures.json no longer carries circuit_breaker -- the fixture this proof depends on has changed; re-verify\"
+print('CONFIRMED: 027_failures.json matches none of {review, qa_pass, verdict} -- default-sweep SKIP is correct; its real circuit_breaker key is a --target-only route (d) discriminator, never consulted here, so this is not a gaming hole')
+" && out=$(bash tools/validate.sh 2>&1) && echo "$out" | grep -q '\[C11\] PASS' && echo PASS || { echo "either the discriminator assertion failed, or the default sweep did not report [C11] PASS"; exit 1; }
+--- OUTPUT ---
+CONFIRMED: 027_failures.json matches none of {review, qa_pass, verdict} -- default-sweep SKIP is correct; its real circuit_breaker key is a --target-only route (d) discriminator, never consulted here, so this is not a gaming hole
+PASS
+EXIT:0

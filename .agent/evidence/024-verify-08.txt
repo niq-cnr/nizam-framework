@@ -1,0 +1,7 @@
+f=methodology/02_adversarial_tdd.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; out=$(bash tools/validate.sh --target "$f" 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 && echo PASS || { echo "validate.sh --target exited $rc"; exit 1; }
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+SUMMARY: 3 passed, 0 failed
+PASS
+EXIT:0

@@ -1,0 +1,6 @@
+test -f tools/fixtures/invalid_qa_verdict.json || { echo "MISSING tools/fixtures/invalid_qa_verdict.json"; exit 1; }; out=$(bash tools/validate.sh --target tools/fixtures/invalid_qa_verdict.json 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit, got 0"; exit 1; }; echo "$out" | grep -q '\[C11\] FAIL' || { echo "no [C11] FAIL line"; exit 1; }; echo "$out" | grep -q 'routed: qa_verdict' || { echo "[C11] FAIL output does not show the qa_verdict route -- discriminator routing suspected broken"; exit 1; }; echo PASS
+--- OUTPUT ---
+[C11] FAIL dogfood --target routed: qa_verdict
+  tools/fixtures/invalid_qa_verdict.json: schema violation (qa_verdict): {'_fixture_notice': 'INTENTIONAL NEGATIVE FIXTURE (F-028/C11) - carries the qa_pass discriminator so it is ROUTED to qa_verdict.schema.json, but omits every other key both the legacy and evolved anyOf branches require. Used only via tools/validate.sh --target.', 'feature_id': '999', 'qa_pass': True} is not valid under any of the given schemas
+PASS
+EXIT:0

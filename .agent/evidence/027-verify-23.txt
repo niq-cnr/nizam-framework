@@ -1,0 +1,4 @@
+out=$(bash tools/validate.sh --target docs/guide/index.html 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 || { echo "targeting the real guide exited $rc, expected 0"; exit 1; }; echo "$out" | grep -q '\[C10\] PASS' || { echo "targeting docs/guide/index.html did not report [C10] PASS"; exit 1; }; echo PASS
+[C10] PASS consistency
+PASS
+EXIT:0

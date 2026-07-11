@@ -2,13 +2,16 @@
 id: nizam-release-train
 title: "Release Train Protocol"
 description: "The framework's own release discipline: semantic-version git-tag cuts, what constitutes a breaking vs minor vs patch change, changelog discipline, and the consumer upgrade path via bootstrap re-run against a new pinned tag."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: methodology/06_release_train.md
 change_log:
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "Add Release Mechanics Ownership (Section 6), assigning changelog roll-up, date-stamping, and tag creation to the release-manager/orchestrator role."
+  - version: "0.3.0"
+    date: "2026-07-10"
+    summary: "NDEBT-003(b)/F-027: Section 3.2's Minor-change example named this document by a filename slot main's v0.5.x methodology renumbering had already reassigned to a different, newly-inserted document; corrected the reference to this document's real current filename."
 ---
 
 # Release Train Protocol
@@ -69,7 +72,7 @@ anything that previously validated or worked. This includes, at minimum:
 
 - **A new template** added under `templates/`.
 - **A new protocol document** added under `methodology/` (as this phase's
-  `00_planning.md` through `05_release_train.md` were, at initial framework
+  `00_planning.md` through `06_release_train.md` were, at initial framework
   genesis).
 - **A schema change that only loosens constraints** — for example adding a new
   *optional* property, or widening an enum — such that every document that

@@ -1,0 +1,17 @@
+f=schema/contract.schema.json; test -f "$f" || { echo "MISSING $f"; exit 1; }; python3 -c "
+import json, sys
+s = json.load(open('$f'))
+props = s.get('properties', {})
+missing = []
+if 'amendments' not in props:
+    missing.append('properties.amendments')
+approvals_props = props.get('approvals', {}).get('properties', {})
+if 'revisions' not in approvals_props:
+    missing.append('properties.approvals.properties.revisions')
+if missing:
+    print('missing explicit propert(y/ies): ' + ', '.join(missing))
+    sys.exit(1)
+print('PASS')
+"
+PASS
+EXIT:0

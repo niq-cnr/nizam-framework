@@ -1,0 +1,52 @@
+{
+  "feature_id": "029",
+  "qa_pass": true,
+  "checks_run": 20,
+  "checks_passed": 20,
+  "adversarial": {
+    "performed": true,
+    "hermeticity_grep": "confirmed no https://, ssh://, or remote git-clone reference anywhere in tools/e2e_bootstrap_test.sh; only file:// usage found (5 occurrences, all local-checkout-relative)",
+    "h4_guard_non_tautology_probe": "PASS -- a scratch COPY of the harness (never the real file) had its deliberate breakage line (`rm -f \"${target}/tools/skill.json\"`) removed; re-running --self-test-negative against the neutered copy caused assert_discovery_path to genuinely return 0 (file still present) and the harness to take the DIFFERENT 'H4 REGRESSION...NOT load-bearing' branch instead of 'CONFIRMED LOAD-BEARING', proving the outcome is assertion-driven, not a hardcoded exit 1",
+    "cleanup_under_mid_run_failure_probe": "PASS -- a scratch COPY with an injected forced failure right after the bootstrap.sh install step (before any assertion runs) still had its ephemeral git tag AND its mktemp scratch directory removed by the EXIT trap; independently confirmed both the harness's own SCRATCH_DIR and bootstrap.sh's own CLONE_DIR were absent after the failing run",
+    "idempotency_probe": "PASS -- two consecutive real positive runs both exited 0 with no leaked e2e-* tag afterward",
+    "evidence": [
+      ".agent/evidence/029-qa-adversarial.txt"
+    ]
+  },
+  "evidence_files": [
+    ".agent/evidence/029-qa-01.txt",
+    ".agent/evidence/029-qa-02.txt",
+    ".agent/evidence/029-qa-03.txt",
+    ".agent/evidence/029-qa-04.txt",
+    ".agent/evidence/029-qa-05.txt",
+    ".agent/evidence/029-qa-06.txt",
+    ".agent/evidence/029-qa-07.txt",
+    ".agent/evidence/029-qa-08.txt",
+    ".agent/evidence/029-qa-09.txt",
+    ".agent/evidence/029-qa-10.txt",
+    ".agent/evidence/029-qa-11.txt",
+    ".agent/evidence/029-qa-12.txt",
+    ".agent/evidence/029-qa-13.txt",
+    ".agent/evidence/029-qa-14.txt",
+    ".agent/evidence/029-qa-15.txt",
+    ".agent/evidence/029-qa-16.txt",
+    ".agent/evidence/029-qa-17.txt",
+    ".agent/evidence/029-qa-18.txt",
+    ".agent/evidence/029-qa-19.txt",
+    ".agent/evidence/029-qa-20.txt",
+    ".agent/evidence/029-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "regression": {
+    "validate_sh_summary": "SUMMARY: 11 passed, 0 failed",
+    "non_goal_files_diff_stat": "bootstrap.sh: 0 changes; tools/verify_lib.sh: 0 changes; docs/planning/DEBT.md: 0 changes; .github/workflows/compliance.yml: +21/-0 (purely additive new job)"
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "All 20 contract verification commands independently re-run twice (once inline, once with per-command evidence captured to .agent/evidence/029-qa-NN.txt) and all pass. tools/e2e_bootstrap_test.sh performs a genuine, non-trivial bootstrap.sh clone->stage->verify->install cycle against a local file:// source with an ephemeral annotated tag -- confirmed hermetic (no remote scheme referenced anywhere) and confirmed non-tautological: an adversarial scratch-copy probe (source file never modified) that neuters the deliberate H4 breakage step causes the harness to take a genuinely different code branch and message, proving the guard's non-zero exit is driven by the real assertion result, not a hardcoded exit code. A second scratch-copy probe with an injected mid-run failure confirms the EXIT trap unconditionally cleans up both the ephemeral tag and the scratch directory even when a failure occurs before any assertion runs. The repo tree shows zero leaked e2e-* tags and no residue outside the two contract-scoped files (tools/e2e_bootstrap_test.sh, .github/workflows/compliance.yml) after all runs. bootstrap.sh, tools/verify_lib.sh, and docs/planning/DEBT.md are confirmed byte-for-byte unchanged (git diff --stat = 0 for all three); compliance.yml's diff is purely additive (+21/-0), adding only the e2e_bootstrap job (SHA-pinned identically to the untouched validate job). tools/validate.sh independently re-confirmed at SUMMARY: 11 passed, 0 failed. No blocking issues, no unsupported claims, no missing acceptance coverage found."
+  }
+}

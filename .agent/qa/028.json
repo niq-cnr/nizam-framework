@@ -1,0 +1,40 @@
+{
+  "feature_id": "028",
+  "qa_pass": true,
+  "checks_run": 19,
+  "checks_passed": 19,
+  "adversarial": {
+    "performed": true,
+    "description": "Independent re-run of all 19 contract-028 verification commands from repo root (none trusted from generator evidence files), plus scratch-fixture adversarial probes built fresh under the evaluator's own scratchpad (not the shipped tools/fixtures/ files): (1) genuine-then-mutated qa_verdict/contract/run_state scratch fixtures proving discriminator-kept-but-invalid documents are routed and rejected for the correct schema reason; (2) an independently-built {review,qa_pass|verdict}-restricted default-sweep router diffed against the real .agent/qa/*.json directory listing, confirming exactly one skip (.agent/qa/027_failures.json) and 35/36 routed+valid; (3) a direct --target probe of .agent/qa/027_failures.json under the FULL route universe, proving it routes to run_state via its circuit_breaker key and FAILS there (schema violation: 'repository' is a required property) -- demonstrating the default-sweep skip is a restricted-route-universe design choice, not a blanket amnesty; (4) a review-shaped real artifact (.agent/qa/020-contract-review-rev1.json) and a verdict-shaped real artifact (.agent/qa/000.json) each independently targeted to confirm correct routing; (5) NIZAM.json and tools/fixtures/broken_index.json re-confirmed to still route to none/C4, unchanged; (6) a from-scratch consumer-safety copy (tools/+schema/+NIZAM.json only, no .agent/) confirming [C11] PASS with no [C11] FAIL, matching the contract's corrected AT5 scope; (7) an immutability tamper-probe against the real, historical .agent/qa/000.json (corrupted its 'verdict' enum, confirmed [C11] FAIL detects it, then restored the exact original bytes -- sha256 2ce955c2071ef0a6701b2441041a711aebc2952aeb5abfcd053ee584579a8e48 verified identical before/after, git status clean) plus a before/after sha256 sweep of every .agent/qa/*.json and .agent/contracts/*.json file across multiple validate.sh invocations (default, --payload, --target) proving C11 is read-only.",
+    "result": "All adversarial probes behaved exactly as the contract and design_notes claim: no gaming hole found."
+  },
+  "evidence_files": [
+    ".agent/evidence/028-verify-01.txt",
+    ".agent/evidence/028-verify-02.txt",
+    ".agent/evidence/028-verify-03.txt",
+    ".agent/evidence/028-verify-04.txt",
+    ".agent/evidence/028-verify-05.txt",
+    ".agent/evidence/028-verify-06.txt",
+    ".agent/evidence/028-verify-07.txt",
+    ".agent/evidence/028-verify-08.txt",
+    ".agent/evidence/028-verify-09.txt",
+    ".agent/evidence/028-verify-10.txt",
+    ".agent/evidence/028-verify-11.txt",
+    ".agent/evidence/028-verify-12.txt",
+    ".agent/evidence/028-verify-13.txt",
+    ".agent/evidence/028-verify-14.txt",
+    ".agent/evidence/028-verify-15.txt",
+    ".agent/evidence/028-verify-16.txt",
+    ".agent/evidence/028-verify-17.txt",
+    ".agent/evidence/028-verify-18.txt",
+    ".agent/evidence/028-verify-19.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "All 19 contract-028 verification commands independently re-executed from repo root and passed. Fresh `bash tools/validate.sh` reports 'SUMMARY: 11 passed, 0 failed' (exit 0); fresh `--payload` reports 'SUMMARY (payload mode): 10 passed, 0 failed' (exit 0); no C1-C10 regression. Adversarial probing with evaluator-built scratch fixtures (outside the shipped tools/fixtures/ set) confirmed genuine qa_verdict/contract/run_state documents PASS and their discriminator-preserving-but-schema-invalid mutations FAIL with the correct routed schema and violation message. The default-sweep router, rebuilt independently and diffed against the live .agent/qa/ directory, confirms exactly one skip (.agent/qa/027_failures.json, which genuinely lacks review/qa_pass/verdict at the top level) out of 36 files, with the remaining 35 all validating with zero errors. A direct --target probe of .agent/qa/027_failures.json (full route universe) proves it would route to run_state via its circuit_breaker key and FAIL there -- confirming the default-sweep skip is a restricted-route design property, not a gaming hole. The --target dispatcher's non-regression for NIZAM.json and tools/fixtures/broken_index.json (both still route to none/C4, unchanged) was reconfirmed directly. A from-scratch tools/+schema/+NIZAM.json copy with no .agent/ at all still reports [C11] PASS with no [C11] FAIL, matching the contract's AT5 correction. Immutability was proven both by a full sha256 sweep of .agent/qa/*.json and .agent/contracts/*.json before/after multiple validate.sh invocations (identical) and by a tamper-probe against the real .agent/qa/000.json (corruption correctly caught by C11, then the file was restored byte-for-byte, verified by sha256 and a clean git status). The working tree was left exactly as found. Verdict: PASS -- approved to advance."
+  }
+}

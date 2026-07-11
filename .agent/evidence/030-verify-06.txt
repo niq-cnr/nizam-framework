@@ -1,0 +1,8 @@
+python3 -c "
+import sys
+t = open('docs/planning/DEBT.md', encoding='utf-8').read()
+openpart = t.split('## Resolved')[0]
+sys.exit(1 if 'NDEBT-002' in openpart else 0)
+" && echo PASS || { echo "NDEBT-002 unexpectedly still present in the Open section"; exit 1; }
+PASS
+EXIT:0

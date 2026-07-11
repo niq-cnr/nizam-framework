@@ -2,13 +2,16 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: standard/GIP.md
 change_log:
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "H5: corrected Section 2 item 2, Section 2.1 item 2, and Section 1's Core Directive payload parenthetical to all name the full injected payload (standard/, templates/, schema/, tools/, and NIZAM.json), replacing the stale 3-dir description and resolving the self-contradiction between Section 1 and Sections 2/5.1. H8: added the Adopting in an Existing Repository section (existing-CONTEXT.md/AGENTS.md/CI conflict rules and the docs-standard-only / templates / full loop incremental adoption tiers), renumbering Enforcement to Section 6."
+  - version: "0.3.0"
+    date: "2026-07-10"
+    summary: "F-027/C10: Section 4 item 3's local-mutation drift-detection enumeration was missing one of the four injected directories despite the other three, an omission the new C10 single-source-of-truth check surfaced; the item now names all four injected directories consistently with Sections 1, 2, 2.1, and 5.1."
 ---
 
 # Governance Inheritance Protocol (GIP)
@@ -100,10 +103,10 @@ process of catching this divergence.
 2. **Re-verification cadence.** A consumer repository SHOULD re-verify its injected
    governance content against its recorded pinned tag on a regular cadence (for example,
    before each release, or on a scheduled interval), not only at initial bootstrap time.
-3. **Detecting local mutation.** If an injected file under `standard/`, `templates/`, or
-   `schema/` no longer matches the content shipped at the recorded pinned tag, the
-   consumer has drifted through local mutation. Locally hand-patched governance files are
-   themselves a drift signal, independent of whether the patch was well-intentioned.
+3. **Detecting local mutation.** If an injected file under `standard/`, `templates/`,
+   `schema/`, or `tools/` no longer matches the content shipped at the recorded pinned tag,
+   the consumer has drifted through local mutation. Locally hand-patched governance files
+   are themselves a drift signal, independent of whether the patch was well-intentioned.
 4. **Detecting staleness.** If a newer semantic-version tag of the framework has been
    released since the consumer's recorded pin, the consumer is stale relative to the
    framework's current governance content, even if its own injected copy is internally

@@ -1,0 +1,4 @@
+out=$(bash tools/validate.sh --help); echo "$out" | grep -Fq '.agent/qa' || { echo "--help does not name .agent/qa"; exit 1; }; echo "$out" | grep -Fq '.agent/contracts' || { echo "--help does not name .agent/contracts"; exit 1; }; echo "$out" | grep -Fq '.agent/run_state.json' || { echo "--help does not name .agent/run_state.json"; exit 1; }; echo PASS
+--- OUTPUT ---
+PASS
+EXIT:0

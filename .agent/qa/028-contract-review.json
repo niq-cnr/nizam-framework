@@ -1,0 +1,36 @@
+{
+  "review": "contract-testability",
+  "feature": "028",
+  "contract_id": "028",
+  "revision_reviewed": 2,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    {
+      "topic": "AT9 rev2 fix (the sole rev1->rev2 change): independently re-verified live, not reasoned about",
+      "detail": "Ran the corrected verification_index 9 command verbatim against the real, current working tree: `changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/028.json' ':(exclude,glob).agent/qa/028*.json'); if [ -n \"$changed\" ]; then echo 'immutable audit record(s) touched:'; echo \"$changed\"; exit 1; fi; echo PASS` -> output `PASS`, rc=0. Directly confirmed via `git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts .agent/run_state.json` (no exclusions) that the only dirty paths on the current tree are ` M .agent/run_state.json` (now correctly dropped from AT9's checked path set entirely, per the 025 precedent -- orchestrator-owned continuous state, not an immutability concern), `?? .agent/contracts/028.json` (this feature's own new contract, correctly excluded via `:(exclude).agent/contracts/028.json`), and `?? .agent/qa/028-contract-review.json` (this feature's own new Loop-1 review artifact, correctly excluded via the `:(exclude,glob).agent/qa/028*.json` glob) -- exactly the three items the required_fix named, and nothing else.",
+      "verification_index": 9
+    },
+    {
+      "topic": "Tamper-detection proof: AT9 rev2 still catches a real historical edit, and the glob does not over-exclude",
+      "detail": "Adversarially tampered a genuinely historical, unrelated artifact (`echo >> .agent/qa/017.json`) and re-ran AT9 rev2's exact command: it correctly output `immutable audit record(s) touched:` followed by ` M .agent/qa/017.json`, exit 1 -- proving the fix did not over-broaden the exclusion beyond `028*`. Immediately reverted with `git checkout -- .agent/qa/017.json`; confirmed via `git status --porcelain --untracked-files=all -- .agent/qa/017.json` and `git diff -- .agent/qa/017.json` (both empty) that the tree was restored to its pre-probe state, and re-confirmed the overall dirty set reduces back to exactly the same three expected .agent/ paths (run_state.json + 028's own new contract + qa-review file).",
+      "verification_index": 9
+    },
+    {
+      "topic": "No regression: verify-12 discriminator logic (027_failures.json skip) unaffected by the AT9-only rev1->rev2 change",
+      "detail": "Re-ran verify-12's assertion body standalone: `.agent/qa/027_failures.json`'s real top-level keys ({circuit_breaker, attempts, required, pattern_summary, failures, feature_id, note}) intersect the restricted default-sweep discriminator set {review, qa_pass, verdict} in zero keys, and it does carry `circuit_breaker` -- confirming the restricted-rule SKIP is still correct and this logic is byte-identical to the already-vetted rev1 state (this revision touched only AT9's command text, per the task's stated diff; no other verification entry, design_notes text, or scope.files_modify/files_create entry changed).",
+      "verification_index": 12
+    },
+    {
+      "topic": "Confirmed still pre-code (Mode A / Loop 1): fixtures and check_c11 functions correctly absent",
+      "detail": "`tools/fixtures/invalid_qa_verdict.json`, `invalid_contract.json`, `invalid_run_state.json` do not exist on disk, and `tools/validate.sh` contains zero occurrences of `check_c11` -- both expected at this pre-implementation contract-review stage (scope.files_create/files_modify are Generator/Mode-B responsibilities). The 3 FAIL-fixture verification entries and the verify-17 C4 non-regression proof are therefore out of scope for this rev2 re-review (they were not touched by the rev1->rev2 diff and will be re-exercised live at Mode B / QA once implemented).",
+      "verification_index": null
+    }
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "028",
+    "summary": "APPROVED at revision 2 (circuit-breaker attempt 3 of 3). The single rev1 blocking defect -- F-028 AT9's immutability check being unsatisfiable because it lacked exclusions for this feature's own new, legitimately-untracked .agent/contracts/028.json and .agent/qa/028*.json artifacts, and because it wrongly included the orchestrator-owned .agent/run_state.json in its checked path set -- is genuinely and independently closed. Directly re-ran the corrected AT9 command verbatim against the real, current tree: PASS, rc=0, with the only dirty .agent/ paths being run_state.json (now correctly dropped from the checked set), the feature's own 028.json contract (excluded), and its own 028-contract-review.json (excluded via the 028* glob) -- exactly matching the 025-precedented fix form. Adversarially confirmed the fix does not over-exclude: tampering a genuinely historical file (.agent/qa/017.json) is still caught by name and causes a nonzero exit; the tamper was immediately reverted and the tree confirmed clean again. Spot-confirmed no regression elsewhere: verify-12's 027_failures.json restricted-rule skip logic is unchanged and still correct, and the contract remains correctly in its pre-code state (no fixtures, no check_c11 functions yet) since this rev2 diff touched only AT9's command text, per the task's stated scope. No blocking issues, no missing acceptance coverage, no unsupported claims remain. Approved to proceed to implementation (Generator, contracted scope only, then Validator Mode B, then Evaluator QA)."
+  }
+}

@@ -1,0 +1,6 @@
+test -f tools/fixtures/invalid_run_state.json || { echo "MISSING tools/fixtures/invalid_run_state.json"; exit 1; }; tmp=$(mktemp --suffix=.json); trap 'rm -f "$tmp"' EXIT; cp tools/fixtures/invalid_run_state.json "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "neutral-filename copy unexpectedly PASSED -- suspected filename-keyed behavior"; exit 1; }; echo "$out" | grep -q 'routed: run_state' || { echo "neutral-filename copy lost the run_state route"; exit 1; }; echo "PASS (correctly rejected, rc=$rc)"
+--- OUTPUT ---
+[C11] FAIL dogfood --target routed: run_state
+  /tmp/tmp.X3D1dMlU3v.json: schema violation (run_state): 'history' is a required property
+PASS (correctly rejected, rc=1)
+EXIT:0

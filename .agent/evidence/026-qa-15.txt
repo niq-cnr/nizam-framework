@@ -1,0 +1,3 @@
+v=$(python3 -c "import json; print(json.load(open('NIZAM.json'))['framework']['version'])"); test "$v" = "0.5.1" && git diff --quiet HEAD -- NIZAM.json CHANGELOG.md CONTEXT.md README.md bootstrap.sh schema .github/workflows && echo PASS
+PASS
+EXIT:0

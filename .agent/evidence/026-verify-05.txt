@@ -1,0 +1,10 @@
+test -f tools/fixtures/unresolved_path.md || { echo "MISSING tools/fixtures/unresolved_path.md"; exit 1; }; out=$(bash tools/validate.sh --target tools/fixtures/unresolved_path.md 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit targeting unresolved_path.md, got 0"; exit 1; }; echo "$out" | grep -q '\[C9\] FAIL' || { echo "no [C9] FAIL line"; exit 1; }; echo "$out" | grep -q 'ADR-999-does-not-exist.md' || { echo "[C9] FAIL output does not name the actual offending token -- content-blind stub suspected"; exit 1; }; echo PASS
+[C1] FAIL frontmatter-schema
+  tools/fixtures/unresolved_path.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  tools/fixtures/unresolved_path.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] FAIL path-resolution
+  tools/fixtures/unresolved_path.md: unresolved path reference 'docs/architecture/ADR-999-does-not-exist.md'
+PASS
+EXIT:0

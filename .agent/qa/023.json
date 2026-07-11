@@ -1,0 +1,47 @@
+{
+  "feature_id": "023",
+  "qa_pass": true,
+  "checks_run": 19,
+  "checks_passed": 19,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/023-qa-adversarial.txt",
+    "findings": "19 independent adversarial probes run against tools/verify_lib.sh using QA-authored inputs (not the shipped tools/fixtures/ files), all consistent with the contracted behavior, no genuine defects found. (1) vlib_section_grep: token present but OUTSIDE the named section (custom '## Other Section' after '## Target Section') correctly REJECTED (rc=1). (2) token INSIDE the named section correctly ACCEPTED (rc=0). (3) named section as the LAST section in the file (span running to EOF, no trailing heading) correctly ACCEPTED (rc=0) -- confirms the EOF-span edge case works. (4) vlib_scope_guard: a stray untracked file in a fresh sandbox that a plain 'git diff --name-only HEAD' is proven blind to (empty output) was correctly CAUGHT (rc=1, offending path printed). (5) .agent/ exclusion: after correcting a QA-harness setup error in the first attempt (sourcing the library via absolute path so the sandbox tree stays pristine except the deliberate .agent/qa/999.json write), a lone .agent/ change was correctly NOT flagged (rc=0) -- the exclusion works as designed. (6-9) vlib_version_increased: EQUAL version (1.2.3->1.2.3) rejected, genuine DECREASE (2.0.0->1.9.9) rejected, genuine INCREASE (3.4.5->3.4.6) accepted, and critically a semver-ordering probe (0.9.0->0.10.0, where naive STRING comparison would wrongly say '0.10.0' < '0.9.0' and reject) was correctly ACCEPTED -- confirms true tuple/semver comparison, not string comparison. (10-13) vlib_path_resolves: a real existing file with multi-character trailing punctuation (')' + ',') stripped and accepted; NNN/step-01/placeholder tokens all exempt regardless of trailing punctuation; a concrete nonexistent file correctly rejected with diagnostic; both an existing and a deliberately NONEXISTENT directory-only reference (trailing '/') were exempt/accepted per the directory-only exemption rule. (14-16) vlib_no_stale_payload: a QA-authored single-line 3-dir enumeration (omits tools/) rejected; a QA-authored single-line 4-dir enumeration (includes tools/) accepted; a multi-line spread (standard/+templates/+schema/ on one line, tools/ on the next) was rejected -- this is DOCUMENTED, CONTRACTED behavior (the primitive is explicitly single-line/current-line scoped per its own docstring 'scans <file> line by line ... any single line'), not a defect, and is logged as a non-blocking observation for possible future hardening. (17) Reusability probe: sourcing tools/verify_lib.sh in a fresh shell followed by declare -F checks for all five primitives succeeded with the only stdout being the QA harness's own deliberate echo, empty stderr, exit 0 -- confirms F-024..F-030 can rely on this composition. (18) Side-effect-freedom rigor: sourcing the library ALONE (no added statements) produced strictly EMPTY stdout AND stderr with exit 0. (19) Independent bash tools/validate.sh re-run reproduced the exact 'SUMMARY: 8 passed, 0 failed' line with all C1-C8 individually PASS and exit code 0, confirming the non-goal (no new validator check yet, count unchanged) holds."
+  },
+  "evidence_files": [
+    ".agent/evidence/023-qa-01.txt",
+    ".agent/evidence/023-qa-02.txt",
+    ".agent/evidence/023-qa-03.txt",
+    ".agent/evidence/023-qa-04.txt",
+    ".agent/evidence/023-qa-05.txt",
+    ".agent/evidence/023-qa-06.txt",
+    ".agent/evidence/023-qa-07.txt",
+    ".agent/evidence/023-qa-08.txt",
+    ".agent/evidence/023-qa-09.txt",
+    ".agent/evidence/023-qa-10.txt",
+    ".agent/evidence/023-qa-11.txt",
+    ".agent/evidence/023-qa-12.txt",
+    ".agent/evidence/023-qa-13.txt",
+    ".agent/evidence/023-qa-14.txt",
+    ".agent/evidence/023-qa-15.txt",
+    ".agent/evidence/023-qa-16.txt",
+    ".agent/evidence/023-qa-17.txt",
+    ".agent/evidence/023-qa-18.txt",
+    ".agent/evidence/023-qa-19.txt",
+    ".agent/evidence/023-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "observations": [
+    "vlib_no_stale_payload is line-scoped by explicit contracted design (docstring states 'scans <file> line by line ... any single line'). A hypothetical multi-line spread of the payload enumeration (e.g. standard/+templates/+schema/ on one physical line, tools/ on the following line) is flagged as stale by the current-line test even though the four directories all appear somewhere in the file across two lines. This matches the contract's stated single-line design and is NOT a defect against contract 023's acceptance criteria, but is logged here as a candidate for future hardening (F-024+) if authors are found to legitimately wrap the enumeration across lines.",
+    "During adversarial probing, an initial vlib_scope_guard .agent-exclusion probe attempt (copying verify_lib.sh into the sandbox root without adding it to the allow-list) produced a false rc=1 due to QA-harness setup error, not a library defect; the corrected probe (sourcing via absolute path, leaving the sandbox tree pristine except the deliberate .agent/ write) confirmed rc=0 as expected. Documented in .agent/evidence/023-qa-adversarial.txt for transparency."
+  ],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "023",
+    "summary": "All 19 contract-023 verification commands were independently re-run from repo root into fresh 023-qa-NN.txt evidence files (not reused from the generator's 023-verify-NN.txt), and all 19 pass (19/19 EXIT:0): library exists and is syntactically valid (bash -n); sourcing is strictly side-effect-free (empty stdout/stderr, exit 0); all five named primitives (vlib_section_grep, vlib_scope_guard, vlib_version_increased, vlib_path_resolves, vlib_no_stale_payload) are defined as functions after sourcing; the scope-guard primitive uses the untracked-aware git status form with the .agent exclusion; the path-resolution primitive carries the placeholder-exemption tokens; no nizamiq/.svc/cluster.local branding leakage; all ten PASS/FAIL fixture scenarios (section_grep x2, scope_guard x2, version_increased x3, path_resolves x2, no_stale_payload x2) behave correctly when invoked against neutral filenames/sandboxes, proving the primitives read file content genuinely rather than keying off filenames or shipped-fixture identity; tools/validate.sh remains green at the exact unchanged 'SUMMARY: 8 passed, 0 failed'; and both the authoritative untracked-aware and legacy git-diff-HEAD scope-proof checks confirm only tools/verify_lib.sh and tools/fixtures/* changed outside .agent/. A mandatory 19-probe adversarial spot-check using QA-authored (non-shipped-fixture) inputs independently confirmed every primitive's genuine logic: vlib_section_grep correctly rejects an out-of-span token and correctly handles a section that runs to EOF; vlib_scope_guard catches a stray untracked file invisible to plain 'git diff --name-only HEAD' and correctly honors the .agent/ exclusion; vlib_version_increased rejects equal and decreasing versions, accepts a genuine increase, and -- critically -- correctly performs SEMVER tuple comparison rather than string comparison (0.9.0 -> 0.10.0 accepted, which a naive string compare would wrongly reject); vlib_path_resolves correctly strips multi-character trailing punctuation, exempts placeholder/step-NN/directory-only tokens, and rejects concrete nonexistent paths; vlib_no_stale_payload correctly rejects/accepts custom 3-dir/4-dir single-line enumerations and its documented line-scoped (not document-scoped) behavior on a multi-line spread matches the contract's own stated single-line design (logged as a non-blocking observation, not a defect); the library is confirmed reusable via a fresh-shell source producing zero output with all five functions callable (the property F-024..F-030 depend on); and an independent bash tools/validate.sh run reproduced the exact green summary with exit 0. This is a genuinely implemented, non-cheating foundational primitive library. QA verdict: PASS."
+  }
+}

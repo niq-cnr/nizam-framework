@@ -1,0 +1,8 @@
+out=$(bash tools/validate.sh --target schema/README.md 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 && echo "$out" | grep -q '\[C1\] PASS' && echo "$out" | grep -q '\[C2\] PASS' && echo "$out" | grep -q '\[C3\] PASS' && echo PASS || { echo "schema/README.md failed --target sweep (rc=$rc)"; exit 1; }
+---
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+SUMMARY: 3 passed, 0 failed
+PASS
+EXIT:0

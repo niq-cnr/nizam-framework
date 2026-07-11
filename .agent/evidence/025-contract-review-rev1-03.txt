@@ -1,0 +1,32 @@
+python3 -c "
+import json, glob, jsonschema, sys
+qv = json.load(open('schema/qa_verdict.schema.json'))
+cr = json.load(open('schema/contract_review.schema.json'))
+bad = []
+files = sorted(glob.glob('.agent/qa/*.json'))
+if not files:
+    print('no .agent/qa/*.json files found -- unexpected on this tree')
+    sys.exit(1)
+for f in files:
+    d = json.load(open(f))
+    ok = False
+    for schema in (qv, cr):
+        try:
+            jsonschema.validate(d, schema)
+            ok = True
+            break
+        except jsonschema.ValidationError:
+            pass
+    if not ok:
+        bad.append(f)
+if bad:
+    print('FAILED to validate against either schema: ' + ', '.join(bad))
+    sys.exit(1)
+print(f'PASS ({len(files)} qa artifacts, all validate)')
+"
+Traceback (most recent call last):
+  File "<string>", line 4, in <module>
+    cr = json.load(open('schema/contract_review.schema.json'))
+                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'schema/contract_review.schema.json'
+EXIT:1

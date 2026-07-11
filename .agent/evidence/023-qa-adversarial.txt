@@ -1,0 +1,96 @@
+$ Adversarial spot-check for tools/verify_lib.sh (feature 023) -- custom inputs, NOT the shipped fixtures
+
+--- PROBE 1: vlib_section_grep -- token present but OUTSIDE named section must REJECT ---
+rc=1 (expect 1 -- FAIL as designed)
+
+--- PROBE 2: vlib_section_grep -- token INSIDE named section must ACCEPT ---
+rc=0 (expect 0 -- PASS as designed)
+
+--- PROBE 3: vlib_section_grep -- named section is the LAST section in file (span to EOF) ---
+rc=0 (expect 0 -- token in span that runs to EOF must be found)
+
+--- PROBE 4: vlib_scope_guard -- stray untracked file plain 'git diff --name-only HEAD' is blind to, must be CAUGHT ---
+plain git diff --name-only HEAD sees:
+(should be empty -- proving plain diff is blind)
+vlib_scope_guard: out-of-scope changed path: STRAY_UNTRACKED.txt
+vlib_scope_guard: out-of-scope changed path: verify_lib.sh
+rc=1 (expect 1 -- must catch STRAY_UNTRACKED.txt)
+
+--- PROBE 5: vlib_scope_guard -- .agent exclusion works (a .agent/ change is NOT flagged) ---
+vlib_scope_guard: out-of-scope changed path: verify_lib.sh
+rc=1 (expect 0 -- .agent/ change alone must NOT be flagged, no allowed dirs even needed to exist)
+
+--- PROBE 5 (corrected): vlib_scope_guard -- .agent exclusion works (a .agent/ change is NOT flagged), sourcing verify_lib.sh via ABSOLUTE path so the sandbox tree itself stays pristine except the .agent/ addition ---
+sandbox git status (untracked-aware, raw, no exclude filter):
+?? .agent/qa/999.json
+rc=0 (expect 0 -- .agent/ change alone, no allow-list needed, must NOT be flagged since git status already excludes .agent)
+
+NOTE on PROBE 5 first attempt: the initial attempt's rc=1 was a QA harness setup error (copying verify_lib.sh into the sandbox tree itself created an out-of-scope untracked file, since the allow-list only contained 'allowed_dir/'), NOT a defect in vlib_scope_guard. PROBE 5 (corrected), which sources the library via an absolute path so the sandbox tree is untouched except the deliberate .agent/ write, correctly returns rc=0 -- confirming the .agent exclusion works as designed.
+
+--- PROBE 6: vlib_version_increased -- EQUAL version must reject ---
+vlib_version_increased: doc.md: working-tree version 1.2.3 is not a strict increase over HEAD version 1.2.3
+rc=1 (expect 1)
+
+--- PROBE 7: vlib_version_increased -- DECREASE must reject ---
+vlib_version_increased: doc.md: working-tree version 1.9.9 is not a strict increase over HEAD version 2.0.0
+rc=1 (expect 1)
+
+--- PROBE 8: vlib_version_increased -- genuine INCREASE must accept ---
+rc=0 (expect 0)
+
+--- PROBE 9: vlib_version_increased -- SEMVER ordering (0.9.0 -> 0.10.0), not string ordering ---
+rc=0 (expect 0 -- a naive string comparison would say '0.10.0' < '0.9.0' and WRONGLY reject; semver tuple comparison must accept)
+
+--- PROBE 10: vlib_path_resolves -- real path + trailing punctuation must ACCEPT ---
+rc=0 (expect 0 -- real file with multi-char trailing punctuation ')' + ',' stripped)
+
+--- PROBE 11: vlib_path_resolves -- NNN/step-01/placeholder tokens exempt ---
+token='.agent/contracts/NNN.json.' rc=0 (expect 0 -- exempt)
+token='docs/step-01-overview.md;' rc=0 (expect 0 -- exempt)
+token='some/placeholder-path/file.txt!' rc=0 (expect 0 -- exempt)
+
+--- PROBE 12: vlib_path_resolves -- concrete nonexistent path must REJECT ---
+vlib_path_resolves: path does not resolve: 'tools/fixtures/DOES_NOT_EXIST_XYZ123.md.' (stripped: 'tools/fixtures/DOES_NOT_EXIST_XYZ123.md')
+rc=1 (expect 1 -- concrete nonexistent, non-placeholder path)
+
+--- PROBE 13: vlib_path_resolves -- directory-only ref (trailing slash) exempt/resolves ---
+rc=0 for real existing dir with trailing slash (expect 0, exempt via trailing-/ rule)
+rc=0 for NONEXISTENT dir with trailing slash (expect 0 -- exempt via trailing-/ rule regardless of existence, per contract's directory-only exemption)
+
+--- PROBE 14: vlib_no_stale_payload -- single-line 3-dir enumeration (omits tools/) must REJECT ---
+vlib_no_stale_payload: stale payload enumeration (omits tools/): The ship consists of standard/, templates/, and schema/ bundled together.
+rc=1 (expect 1)
+
+--- PROBE 15: vlib_no_stale_payload -- single-line 4-dir enumeration (includes tools/) must ACCEPT ---
+rc=0 (expect 0)
+
+--- PROBE 16: vlib_no_stale_payload -- MULTI-LINE spread (tools/ on the NEXT line) -- documenting behavior per single-line-by-contract design ---
+vlib_no_stale_payload: stale payload enumeration (omits tools/): The ship consists of standard/, templates/, and schema/
+rc=1
+DOCUMENTED BEHAVIOR: the primitive is explicitly single-line-scoped per its contracted design (docstring: 'scans <file> line by line ... any single line'). A multi-line spread where tools/ appears on the FOLLOWING line, not the SAME line as standard/+templates/+schema/, is NOT flagged as stale by the current-line test (rc=1 expected here because the FIRST line, 'The ship consists of standard/, templates/, and schema/', itself matches the 3-of-4 stale pattern on its own line -- tools/ appearing on the next line does not rescue that specific line). This is working as contracted: line-scoped, not document-scoped. Not a defect against the contract's stated 'single line' design; flagged as an observation for potential future hardening (F-024+) since a human author could legitimately spread a compliant enumeration across two lines and trip a false positive.
+
+--- PROBE 17: REUSABILITY PROBE -- fresh shell 'source tools/verify_lib.sh', ZERO output, five functions callable ---
+stdout=[ALL_FIVE_CALLABLE]
+stderr=[]
+rc=0
+(expect: stdout ends with ALL_FIVE_CALLABLE only after the deliberate echo, stderr empty, rc=0 -- confirming F-024..F-030 can rely on this)
+
+--- PROBE 18: side-effect-freedom rigor -- source ALONE (no added echo), stdout AND stderr must be EMPTY ---
+stdout=[] (expect empty)
+stderr=[] (expect empty)
+rc=0 (expect 0)
+PASS: strictly side-effect-free
+
+--- PROBE 19: bash tools/validate.sh -- confirm exact SUMMARY line and exit 0 ---
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+SUMMARY: 8 passed, 0 failed
+rc=0
+SUMMARY LINE MATCH: yes
+

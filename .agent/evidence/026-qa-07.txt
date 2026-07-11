@@ -1,0 +1,3 @@
+out=$(bash tools/validate.sh --help); echo "$out" | grep -Eqi 'placeholder|exempt|NNN' && echo "$out" | grep -Fq '.nizam/' && echo PASS
+PASS
+EXIT:0

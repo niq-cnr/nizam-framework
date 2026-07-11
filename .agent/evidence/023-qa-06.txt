@@ -1,0 +1,3 @@
+$ f=tools/verify_lib.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; if grep -Eqi "nizamiq|\.svc|cluster\.local" "$f"; then echo "branding/endpoint leakage found in verify_lib.sh"; grep -niE "nizamiq|\.svc|cluster\.local" "$f"; exit 1; else echo PASS; fi
+PASS
+EXIT:0

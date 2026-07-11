@@ -1,0 +1,21 @@
+{
+  "review": "contract-validation-mode-b",
+  "feature": "029",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Scope fidelity: git diff HEAD -- . ':(exclude).agent' touches EXACTLY tools/e2e_bootstrap_test.sh (new) and .github/workflows/compliance.yml (M). Nothing else outside .agent/. The run_state.json change is orchestrator-owned (contract_approved event) and outside this feature's implementation scope.",
+    "compliance.yml is strictly additive (numstat 21 added, 0 removed): the existing `validate` job (lines 16-37) is byte-unchanged including its own fetch-depth:0. New `e2e_bootstrap` job appended, SHA-pinned identically (checkout@11bd7190..., setup-python@0b93645e...), persist-credentials:false, NO fetch-depth override, `- run: bash tools/e2e_bootstrap_test.sh`.",
+    "B1 Deliverable existence: both contracted deliverables present. B2 Interface fidelity: harness defines exactly the contracted sourceable surface (assert_payload_present, assert_nizam_index_valid, assert_discovery_path, run_bootstrap_verify_only, cleanup, main), BASH_SOURCE-guarded main, zero side effects on source.",
+    "B4/behavior: positive run exit 0, prints 'PASS'; hermetic (file:///... local clone, no network); trap cleanup deletes ephemeral annotated tag + scratch. Negative run (--self-test-negative) exit 1 with 'H4 GUARD CONFIRMED LOAD-BEARING' naming tools/skill.json (not a vacuous always-fail). git tag -l 'e2e-*' EMPTY after both runs (no residue).",
+    "B5 Dependency fidelity: only bash/git/python3 (json stdlib); no new pip step; action SHAs match validate. B6 anti-scope-creep: bootstrap.sh, tools/validate.sh, tools/verify_lib.sh, NIZAM.json, tools/skill.json, docs/planning/DEBT.md all UNCHANGED (git diff --quiet each). No un-spec'd 5th validate.sh --payload assertion (NDEBT-004 decision held).",
+    "B3/AT11: bash tools/validate.sh -> 'SUMMARY: 11 passed, 0 failed' (unchanged; F-029 is a harness+CI job, not a validate.sh check).",
+    "Disclosed in-scope fix RATIFIED: the harness header comment contains NO reference to 'validate.sh' (grep ABSENT), satisfying non-goal verification #19's negated grep. This is a legitimate wording-only fix in the harness's own comment block, not a scope or behavior change.",
+    "AT9/CI: PyYAML parse confirms jobs=['validate','e2e_bootstrap']; the e2e_bootstrap job's run step invokes 'bash tools/e2e_bootstrap_test.sh'; checkout carries no fetch-depth:0 (matches rev1 decision)."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Mode B PASS. Implementation is a faithful, complete, purely-additive execution of approved contract 029 rev1. Outside .agent/, exactly the two contracted files changed: tools/e2e_bootstrap_test.sh (new hermetic dual-mode harness) and .github/workflows/compliance.yml (one additive e2e_bootstrap job, validate job byte-unchanged). All 8 Mode-B checks pass: deliverables exist, interface surface matches contract, scope adheres, self-tests exist and are load-bearing (negative mode genuinely fires: exit 1, 'H4 GUARD CONFIRMED LOAD-BEARING', names tools/skill.json), no unapproved dependencies (bash/git/python3 only, SHA pins mirror validate), no scope creep (bootstrap.sh/validate.sh/verify_lib.sh/NIZAM.json/skill.json/DEBT.md all unchanged), no gaming/TODOs, implementation complete. Behavior verified: positive exit 0 hermetic file:// run, no e2e-* tag residue after positive or negative runs, validate.sh 11 passed/0 failed unchanged, CI e2e job invokes the harness. Disclosed in-scope header-comment reword (dropping the validate.sh reference that tripped non-goal verification #19) ratified as a legitimate wording fix. All three blocking arrays empty."
+  }
+}

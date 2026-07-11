@@ -2,9 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.2.0
+version: 0.3.0
 status: draft
 authoritative_source: schema/README.md
+change_log:
+  - version: 0.3.0
+    date: "2026-07-08"
+    summary: "R4a schema reconciliation (resolves NDEBT-002 part a): added schema/contract_review.schema.json (validates the pre-code contract-testability review verdict) and reconciled qa_verdict.schema.json to an anyOf union of the legacy and evolved feature-QA-verdict shapes actually produced across .agent/qa/*.json."
 ---
 
 # schema/
@@ -34,6 +38,7 @@ Every schema in this module:
 | `feature_list.schema.json` | Validates the DAG-validated, acceptance-test-bearing feature breakdown of a phase. | `.agent/feature_list.json` |
 | `contract.schema.json` | Validates a per-feature contract: scope, non-goals, and verification commands agreed before implementation. | `.agent/contracts/NNN.json` |
 | `qa_verdict.schema.json` | Validates an evaluator's pass/fail verdict for a feature, including per-check exit codes and evidence paths. | `.agent/qa/NNN.json` |
+| `contract_review.schema.json` | Validates the pre-code contract-testability review verdict. | `.agent/qa/NNN-contract-review.json` |
 | `run_state.schema.json` | Validates the durable run state an execution engine reads and writes across a session. | `.agent/run_state.json` |
 | `debt.schema.json` | Validates the circuit-breaker debt log: timestamp, feature, failed step, attempt count, failure mode, and human resolution. | `.agent/debt.json` |
 | `capability_profile.schema.json` | Validates capability-profile bindings that map agent roles to primary/fallback models, allowed tools, and safety classes. | Capability-profile blocks in `AGENTS.md` or standalone `.agent/capability_profile.json` |

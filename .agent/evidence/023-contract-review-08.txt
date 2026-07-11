@@ -1,0 +1,3 @@
+test -f tools/verify_lib.sh || { echo "MISSING tools/verify_lib.sh"; exit 1; }; test -f tools/fixtures/section_grep_fail.md || { echo "MISSING tools/fixtures/section_grep_fail.md"; exit 1; }; grep -q "SECTION_GREP_MARKER" tools/fixtures/section_grep_fail.md || { echo "fixture setup error: marker absent from section_grep_fail.md entirely -- fixture does not exercise the vacuous-match defect"; exit 1; }; bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/fixtures/section_grep_fail.md "^## Target Section" "SECTION_GREP_MARKER"'; rc=$?; if [ $rc -eq 0 ]; then echo "vlib_section_grep FAIL-fixture unexpectedly PASSED -- vacuous whole-file match was not rejected"; exit 1; fi; echo "PASS (correctly rejected, rc=$rc)"
+MISSING tools/verify_lib.sh
+EXIT:1

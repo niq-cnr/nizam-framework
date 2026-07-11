@@ -1,0 +1,6 @@
+source tools/verify_lib.sh
+f=methodology/02_adversarial_tdd.md
+test -f "$f" || { echo "MISSING $f"; exit 1; }
+vlib_version_increased "$f" && echo PASS || exit 1
+PASS
+EXIT:0

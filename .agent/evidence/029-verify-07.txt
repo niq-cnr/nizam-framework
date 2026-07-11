@@ -1,0 +1,3 @@
+$ grep -Eq 'trap[[:space:]]+cleanup[[:space:]]+EXIT' tools/e2e_bootstrap_test.sh && echo PASS || { echo "no 'trap cleanup EXIT' registration found"; exit 1; }
+PASS
+EXIT:0

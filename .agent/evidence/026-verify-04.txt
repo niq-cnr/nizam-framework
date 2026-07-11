@@ -1,0 +1,3 @@
+f=tools/validate.sh; grep -Eq 'source[[:space:]]+.?tools/verify_lib\.sh' "$f" || { echo "tools/validate.sh does not source tools/verify_lib.sh"; exit 1; }; grep -q 'vlib_path_resolves' "$f" || { echo "tools/validate.sh's C9 does not call vlib_path_resolves"; exit 1; }; echo PASS
+PASS
+EXIT:0

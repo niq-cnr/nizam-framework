@@ -1,0 +1,11 @@
+test -f tools/fixtures/stale_payload_longwrap.md || { echo "MISSING tools/fixtures/stale_payload_longwrap.md"; exit 1; }; lines=$(wc -l < tools/fixtures/stale_payload_longwrap.md); out=$(bash tools/validate.sh --target tools/fixtures/stale_payload_longwrap.md 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit -- the long-wrapped stale enumeration was NOT caught (cap-fragmentation regression), got 0"; exit 1; }; echo "$out" | grep -q '\[C10\] FAIL' || { echo "no [C10] FAIL line"; exit 1; }; echo "$out" | grep -q 'payload-set' || { echo "[C10] FAIL output does not tag the payload-set sub-check"; exit 1; }; echo "$out" | grep -q 'standard/' && echo "$out" | grep -q 'templates/' && echo "$out" | grep -q 'schema/' || { echo "[C10] FAIL output does not name the fully-reconstructed multi-line enumeration -- suspected fragmentation"; exit 1; }; echo PASS
+[C1] FAIL frontmatter-schema
+  tools/fixtures/stale_payload_longwrap.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  tools/fixtures/stale_payload_longwrap.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] FAIL consistency
+  tools/fixtures/stale_payload_longwrap.md: [payload-set] vlib_no_stale_payload: stale payload enumeration (omits tools/): # C10 Sub-Check (1) Regression Fixture -- Long-Wrap (>3 Physical Lines) The payload includes the following: `standard/`, `templates/`, and `schema/` only.
+PASS
+EXIT:0

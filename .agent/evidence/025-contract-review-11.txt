@@ -1,0 +1,22 @@
+python3 -c "
+import json, jsonschema, sys
+qv = json.load(open('schema/qa_verdict.schema.json'))
+cr = json.load(open('schema/contract_review.schema.json'))
+bad_doc = {'unrelated_key': 'no discriminating fields at all'}
+rejected_all = True
+for name, schema in (('qa_verdict.schema.json', qv), ('contract_review.schema.json', cr)):
+    try:
+        jsonschema.validate(bad_doc, schema)
+        print(f'{name} incorrectly ACCEPTED the deliberately-invalid fixture')
+        rejected_all = False
+    except jsonschema.ValidationError:
+        pass
+sys.exit(0 if rejected_all else 1)
+" && echo PASS || { echo 'negative fixture was not rejected by both schemas'; exit 1; }
+Traceback (most recent call last):
+  File "<string>", line 4, in <module>
+    cr = json.load(open('schema/contract_review.schema.json'))
+                   ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'schema/contract_review.schema.json'
+negative fixture was not rejected by both schemas
+EXIT:1

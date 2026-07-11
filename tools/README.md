@@ -2,9 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: tools/README.md
+change_log:
+  - version: "0.3.0"
+    date: "2026-07-10"
+    summary: "Sync to the phase-004 compliance validator: document the full C1-C11 check set (C9 repo-wide path-resolution, C10 single-source-of-truth consistency, C11 dogfood schema validation, all added by phase 004) and the new SUMMARY: 11 passed, 0 failed total."
 ---
 
 # tools/
@@ -55,3 +59,28 @@ documents. `skill.json` is validated as plain JSON (`python3 -c
 "import json; json.load(open('tools/skill.json'))"`); it carries no schema of
 its own within this module — it is pure data consumed by `SKILL.md` and
 `interface.md`, not a document requiring frontmatter.
+
+## Compliance Coverage — C1–C11
+
+`tools/validate.sh`, the repo-local NDS compliance validator, runs eleven
+checks on every PR and push to `main` (`.github/workflows/compliance.yml`).
+As of phase 004 (durable enforcement & dogfooding), the full default sweep
+reports `SUMMARY: 11 passed, 0 failed`:
+
+| Check | Name | What it enforces |
+|---|---|---|
+| C1 | Frontmatter schema | Every shipped `.md`'s frontmatter validates against `schema/frontmatter.schema.json`. |
+| C2 | Format | Frontmatter fields (`version`, `status`, etc.) match their required format. |
+| C3 | Untagged-fence sweep | No fenced code block in a shipped `.md` is missing a language tag. |
+| C4 | `NIZAM.json` index integrity | Every path `NIZAM.json` indexes resolves on disk. |
+| C5 | Branding/endpoint leakage | No vendor-specific branding or internal endpoint strings ship in the framework payload. |
+| C6 | `bootstrap.sh` sanity | The inject/verify script passes its own internal sanity checks. |
+| C7 | Module README presence | Every module directory carries a governed `README.md`. |
+| C8 | Version-bump-vs-changelog | Any file whose frontmatter `version` increased vs `HEAD` is matched by a `change_log` entry for the new version, or a `CHANGELOG.md` line naming the file. |
+| C9 | Repo-wide path-resolution | Every concrete repo-relative file path named in a shipped doc resolves on disk (placeholder/illustrative paths documented-exempt). |
+| C10 | Single-source-of-truth consistency | Payload-set enumeration, bootstrapped-consumer discovery order, and the framework-version anchor stay consistent across every shipped doc. |
+| C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present, skip-if-absent for a fresh consumer. |
+
+C9, C10, and C11 were added by phase 004 (`tools/verify_lib.sh` supplies
+their shared, fixture-tested primitives); C1–C8 shipped in earlier phases.
+Run `bash tools/validate.sh --help` for the full per-check description.

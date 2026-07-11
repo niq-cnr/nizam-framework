@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- bootstrap.sh && echo PASS || { echo "bootstrap.sh was modified"; git diff HEAD -- bootstrap.sh; exit 1; }
+PASS
+EXIT:0

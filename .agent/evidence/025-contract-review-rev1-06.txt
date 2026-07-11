@@ -1,0 +1,7 @@
+git diff --quiet HEAD -- schema/run_state.schema.json || { echo 'schema/run_state.schema.json was modified -- AH-2 violation, this feature must CONFIRM not recreate it'; exit 1; }; python3 -c "
+import json, jsonschema
+jsonschema.validate(json.load(open('.agent/run_state.json')), json.load(open('schema/run_state.schema.json')))
+print('PASS')
+"
+PASS
+EXIT:0

@@ -1,0 +1,158 @@
+{
+  "contract_id": "023",
+  "feature_id": "023",
+  "name": "tools/verify_lib.sh -- Vetted Verification-Helper Library + Fixtures (R3, phase foundational)",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_004.md",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/verify_lib.sh",
+        "purpose": "R3 foundational library. A SOURCED bash library (defines functions only; sourcing it has NO side effects beyond function definitions -- proved by the SOURCED_OK smoke test) exposing at least five named primitives, each documented here as its exact calling convention so downstream contracts (F-024..F-029) and this contract's own fixture-driven verification can invoke it deterministically: (1) `vlib_section_grep <file> <heading-regex> <token-regex>` -- returns 0 iff <token-regex> is found strictly within the span from the first line matching <heading-regex> up to (but not including) the next markdown heading line (a line beginning with one or more `#` characters) or EOF; returns 1 if the heading is not found OR the token is absent from that span, even if the token appears elsewhere in the file (the vacuous-whole-file-grep defect this primitive exists to prevent). (2) `vlib_scope_guard <allowed-path-or-prefix> [<allowed-path-or-prefix> ...]` -- MUST be invoked with CWD at a git repo root; runs `git status --porcelain --untracked-files=all -- . ':(exclude).agent'`, strips each line's 3-character status prefix, and for every remaining changed path checks whether it exactly equals, or is prefixed by, one of the given allowed patterns; returns 0 if every changed path is allowed (or there are zero changed paths), 1 (printing the offending path(s)) otherwise. This is the untracked-aware form -- it sees brand-new untracked files that a plain `git diff HEAD` guard is structurally blind to (the exact 018/021-precedent defect). (3) `vlib_version_increased <file>` -- MUST be invoked with CWD at a git repo root where <file> exists in the working tree; parses the YAML frontmatter `version` field of the working-tree copy and of `git show HEAD:<file>` (via python3 + PyYAML), and returns 0 only if the HEAD copy exists, both values parse as MAJOR.MINOR.PATCH, and the working-tree version is a STRICT semver increase over the HEAD version; returns 1 (printing a diagnostic) if the HEAD copy is missing, either version fails to parse, or the working-tree version is equal to or less than the HEAD version. (4) `vlib_path_resolves <path-token>` -- strips trailing sentence punctuation characters (one or more of `.,;:!?)]}\"'` `) from the end of <path-token>; if the stripped token matches the placeholder/illustrative exemption (contains the literal substring `NNN` or `XXX`, matches a `step-<digits>` pattern, contains the word `placeholder`, or ends in `/` -- a directory-only reference), returns 0 trivially without touching disk; otherwise tests whether the stripped token resolves as a path relative to the current working directory (`test -e`), returning 0 if it resolves and 1 (printing the offending token) if it does not. (5) `vlib_no_stale_payload <file>` -- scans <file> line by line; for any single line that mentions `standard/`, `templates/`, AND `schema/` together but OMITS `tools/` (the exact F-019 rework defect: a stale 3-dir payload enumeration), returns 1 (printing the offending line); returns 0 if no such stale line exists anywhere in the file. Each primitive is a library primitive only -- it is never executed as a standalone script and produces no output or side effect from merely being sourced. Dependency-light: bash + coreutils + git + python3 (with PyYAML, already required by tools/validate.sh) only. No `nizamiq`/`.svc`/`cluster.local` string anywhere in the file. `tools/verify_lib.sh` is a `.sh`, not in the shipped-doc set governed by schema/frontmatter.schema.json, so it carries no frontmatter/C8 obligation, and `tools/validate.sh`'s SUMMARY stays unchanged at `8 passed, 0 failed` for this feature (no new check is added until F-026)."
+      },
+      {
+        "path": "tools/fixtures/section_grep_pass.md",
+        "purpose": "PASS-mode fixture for `vlib_section_grep`: a markdown doc with a `## Target Section` heading whose span contains the token `SECTION_GREP_MARKER`. Reachable only via the sourced-library test harness (this contract's verification), never via the default validator sweep (tools/fixtures/ is structurally excluded from the shipped-doc set)."
+      },
+      {
+        "path": "tools/fixtures/section_grep_fail.md",
+        "purpose": "FAIL-mode fixture for `vlib_section_grep`: a markdown doc where `SECTION_GREP_MARKER` appears in an UNRELATED section (proving a whole-file grep would vacuously false-pass) but is absent from the `## Target Section` span itself, so the section-scoped primitive must correctly reject it."
+      },
+      {
+        "path": "tools/fixtures/scope_guard_allowlist.txt",
+        "purpose": "Fixture input for `vlib_scope_guard`: a newline-delimited allow-list (`tools/verify_lib.sh`, `tools/fixtures/`) consumed by this contract's verification, which spins up an isolated sandbox git repository (mktemp + git init, per the contract-012 cp-a-isolation precedent) to exercise both the PASS mode (only allow-listed new/untracked files present) and the FAIL mode (an additional out-of-allowlist untracked file present, which a plain `git diff HEAD` is proven blind to but the guard must still catch)."
+      },
+      {
+        "path": "tools/fixtures/version_increased_old.md",
+        "purpose": "Fixture input for `vlib_version_increased`: a minimal file with YAML frontmatter `version: 0.1.0`, committed as the sandbox's HEAD baseline."
+      },
+      {
+        "path": "tools/fixtures/version_increased_new_pass.md",
+        "purpose": "PASS-mode fixture for `vlib_version_increased`: same fixture family as version_increased_old.md but `version: 0.2.0` -- a strict semver increase over the sandboxed HEAD copy, copied into the sandbox's working tree in place of the committed file to prove the primitive accepts it."
+      },
+      {
+        "path": "tools/fixtures/version_increased_new_fail.md",
+        "purpose": "FAIL-mode fixture for `vlib_version_increased`: same fixture family but `version: 0.1.0` (unchanged vs the sandboxed HEAD copy) -- proves the primitive rejects a non-increasing version."
+      },
+      {
+        "path": "tools/fixtures/path_resolves_pass.txt",
+        "purpose": "PASS-mode fixture for `vlib_path_resolves`: one path-reference token per line covering (a) a real repo file reference with trailing sentence punctuation that must be stripped before resolution (`tools/verify_lib.sh.`), (b) a placeholder-token reference that is exempt (`.agent/contracts/NNN.json`), and (c) a directory-only reference that is exempt (`docs/architecture/`)."
+      },
+      {
+        "path": "tools/fixtures/path_resolves_fail.txt",
+        "purpose": "FAIL-mode fixture for `vlib_path_resolves`: a single line naming a concrete, non-placeholder file reference (with trailing sentence punctuation) that does not exist on disk after stripping the punctuation, proving the primitive correctly rejects it rather than exempting it."
+      },
+      {
+        "path": "tools/fixtures/stale_payload_pass.md",
+        "purpose": "PASS-mode fixture for `vlib_no_stale_payload`: one line naming the payload as `standard/, templates/, schema/, and tools/` together (the compliant 4-dir enumeration)."
+      },
+      {
+        "path": "tools/fixtures/stale_payload_fail.md",
+        "purpose": "FAIL-mode fixture for `vlib_no_stale_payload`: one line naming the payload as `standard/, templates/, and schema/` WITHOUT `tools/` -- the exact stale-3-dir enumeration defect F-019 had to rework, reproduced here as a permanent regression fixture."
+      },
+      {
+        "path": "tools/fixtures/version_increased_new_fail_decrease.md",
+        "purpose": "Additional FAIL-mode fixture for `vlib_version_increased` (robustness beyond the equal-version case): same fixture family but `version: 0.0.9` -- a genuine DECREASE vs the sandboxed HEAD copy's `0.1.0` -- proves the primitive rejects a decrease, not only an unchanged version."
+      }
+    ],
+    "files_modify": []
+  },
+  "non_goals": [
+    "No edit to tools/validate.sh -- the SUMMARY count stays exactly 'SUMMARY: 8 passed, 0 failed' at this feature; validate.sh does not yet source or invoke tools/verify_lib.sh (that composition begins in F-026/C9)",
+    "No C9, C10, or C11 validator checks -- those are F-026, F-027, and F-028 respectively",
+    "No schema edits of any kind (schema/qa_verdict.schema.json, schema/contract.schema.json, new schema/contract_review.schema.json) -- that is F-025",
+    "No e2e/CI harness or workflow edit -- that is F-029",
+    "No edit to NIZAM.json, CHANGELOG.md, CONTEXT.md, README.md, bootstrap.sh, or any standard/methodology/templates/schema/docs file",
+    "No bump to NIZAM.json framework.version",
+    "No edit to any file beyond tools/verify_lib.sh, the eleven tools/fixtures/ files listed in scope.files_create, and this contract file itself",
+    "No edit to any immutable prior-phase/prior-feature artifact (completed contracts, evidence, qa verdicts, run_state.json, or any phase-001/002/003 feature list or product_spec)",
+    "Does not implement methodology/02_adversarial_tdd.md's verification-authoring standard section -- that is F-024 (depends on this feature)"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "Library exists and is syntactically valid: test -f tools/verify_lib.sh && bash -n tools/verify_lib.sh",
+      "command": "f=tools/verify_lib.sh; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; bash -n \"$f\" && echo PASS || { echo \"bash -n $f failed\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "Sourcing tools/verify_lib.sh ALONE (no library-added noise) is side-effect-free: produces EXACTLY EMPTY stdout AND empty stderr, and exit 0 (isolates the side-effect-free claim from the separate function-definition check in entry 3, which asserts the functions themselves exist): out=$(bash -c 'source tools/verify_lib.sh' 2>ERRFILE); rc=$?; test \"$rc\" -eq 0 && test -z \"$out\" && test -z \"$(cat ERRFILE)\"",
+      "command": "errfile=$(mktemp); out=$(bash -c 'source tools/verify_lib.sh' 2>\"$errfile\"); rc=$?; err=$(cat \"$errfile\"); rm -f \"$errfile\"; if [ \"$rc\" -eq 0 ] && [ -z \"$out\" ] && [ -z \"$err\" ]; then echo PASS; else echo \"sourcing tools/verify_lib.sh had side effects or failed: rc=$rc out=[$out] err=[$err]\"; exit 1; fi"
+    },
+    {
+      "acceptance_test": "All five named primitives are defined as functions after sourcing (no side effects, only definitions): bash -c 'source tools/verify_lib.sh; for fn in vlib_section_grep vlib_scope_guard vlib_version_increased vlib_path_resolves vlib_no_stale_payload; do declare -F \"$fn\" >/dev/null || { echo \"missing $fn\"; exit 1; }; done'",
+      "command": "f=tools/verify_lib.sh; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; bash -c 'source tools/verify_lib.sh; missing=\"\"; for fn in vlib_section_grep vlib_scope_guard vlib_version_increased vlib_path_resolves vlib_no_stale_payload; do declare -F \"$fn\" >/dev/null || missing=\"$missing $fn\"; done; if [ -n \"$missing\" ]; then echo \"missing function(s):$missing\"; exit 1; fi; echo PASS'"
+    },
+    {
+      "acceptance_test": "The scope-guard primitive uses the untracked-aware form (sees new files, unlike a plain 'git diff HEAD' guard): grep -q 'untracked-files=all' tools/verify_lib.sh && grep -q \"exclude).agent\" tools/verify_lib.sh",
+      "command": "f=tools/verify_lib.sh; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; missing=\"\"; grep -q \"untracked-files=all\" \"$f\" || missing=\"$missing untracked-files=all\"; grep -q \"exclude).agent\" \"$f\" || missing=\"$missing exclude).agent\"; if [ -n \"$missing\" ]; then echo \"verify_lib.sh scope-guard primitive missing required substring(s):$missing\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "The path-resolution primitive honors the placeholder/illustrative exemption (references NNN/XXX/step-NN and directory-only refs are exempt): grep -Eq 'NNN|XXX|step-|placeholder' tools/verify_lib.sh",
+      "command": "f=tools/verify_lib.sh; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eq \"NNN|XXX|step-|placeholder\" \"$f\" && echo PASS || { echo \"no placeholder-exemption token (NNN|XXX|step-|placeholder) found in tools/verify_lib.sh\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "verify_lib.sh introduces no branding/endpoint leakage: ! grep -Eqi 'nizamiq|\\.svc|cluster\\.local' tools/verify_lib.sh",
+      "command": "f=tools/verify_lib.sh; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; if grep -Eqi \"nizamiq|\\.svc|cluster\\.local\" \"$f\"; then echo \"branding/endpoint leakage found in verify_lib.sh\"; grep -niE \"nizamiq|\\.svc|cluster\\.local\" \"$f\"; exit 1; else echo PASS; fi"
+    },
+    {
+      "acceptance_test": "vlib_section_grep PASS fixture, invoked against a NEUTRAL filename (copied off the fixture's own path so a filename-keyed stub cannot cheat): a token placed WITHIN the named section span is found (not a vacuous whole-file match): tools/fixtures/section_grep_pass.md copied to a neutral doc.md",
+      "command": "test -f tools/verify_lib.sh || { echo \"MISSING tools/verify_lib.sh\"; exit 1; }; test -f tools/fixtures/section_grep_pass.md || { echo \"MISSING tools/fixtures/section_grep_pass.md\"; exit 1; }; tmp=$(mktemp -d); trap 'rm -rf \"$tmp\"' EXIT; cp tools/fixtures/section_grep_pass.md \"$tmp/doc.md\"; bash -c 'source tools/verify_lib.sh; vlib_section_grep \"$1\" \"^## Target Section\" \"SECTION_GREP_MARKER\"' _ \"$tmp/doc.md\"; rc=$?; if [ $rc -ne 0 ]; then echo \"vlib_section_grep PASS-fixture (neutral filename $tmp/doc.md, content copied from section_grep_pass.md) unexpectedly failed (rc=$rc)\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "vlib_section_grep FAIL fixture, invoked against a NEUTRAL filename (copied off the fixture's own path so a filename-keyed stub cannot cheat): the token appears ELSEWHERE in the file but NOT within the named section span -- a whole-file grep would vacuously false-pass; the section-scoped primitive must reject it: tools/fixtures/section_grep_fail.md copied to a neutral doc.md",
+      "command": "test -f tools/verify_lib.sh || { echo \"MISSING tools/verify_lib.sh\"; exit 1; }; test -f tools/fixtures/section_grep_fail.md || { echo \"MISSING tools/fixtures/section_grep_fail.md\"; exit 1; }; grep -q \"SECTION_GREP_MARKER\" tools/fixtures/section_grep_fail.md || { echo \"fixture setup error: marker absent from section_grep_fail.md entirely -- fixture does not exercise the vacuous-match defect\"; exit 1; }; tmp=$(mktemp -d); trap 'rm -rf \"$tmp\"' EXIT; cp tools/fixtures/section_grep_fail.md \"$tmp/doc.md\"; bash -c 'source tools/verify_lib.sh; vlib_section_grep \"$1\" \"^## Target Section\" \"SECTION_GREP_MARKER\"' _ \"$tmp/doc.md\"; rc=$?; if [ $rc -eq 0 ]; then echo \"vlib_section_grep FAIL-fixture (neutral filename $tmp/doc.md, content copied from section_grep_fail.md) unexpectedly PASSED -- vacuous whole-file match was not rejected (or a filename-keyed stub was detected)\"; exit 1; fi; echo \"PASS (correctly rejected, rc=$rc)\""
+    },
+    {
+      "acceptance_test": "vlib_scope_guard PASS scenario: in an isolated sandbox git repo, only allow-listed new/untracked files (tools/verify_lib.sh, tools/fixtures/*) exist beyond the committed baseline -- the guard passes: tools/fixtures/scope_guard_allowlist.txt",
+      "command": "repo_root=$(pwd); test -f \"$repo_root/tools/verify_lib.sh\" || { echo \"MISSING tools/verify_lib.sh\"; exit 1; }; test -f \"$repo_root/tools/fixtures/scope_guard_allowlist.txt\" || { echo \"MISSING tools/fixtures/scope_guard_allowlist.txt\"; exit 1; }; tmpdir=$(mktemp -d); trap 'rm -rf \"$tmpdir\"' EXIT; git -C \"$tmpdir\" init -q -b main; printf 'baseline\\n' > \"$tmpdir/README.md\"; git -C \"$tmpdir\" -c user.email=fixture@example.invalid -c user.name=fixture add README.md; git -C \"$tmpdir\" -c user.email=fixture@example.invalid -c user.name=fixture commit -q -m baseline; mkdir -p \"$tmpdir/tools/fixtures\"; cp \"$repo_root/tools/verify_lib.sh\" \"$tmpdir/tools/verify_lib.sh\"; printf 'fixture\\n' > \"$tmpdir/tools/fixtures/dummy.txt\"; mapfile -t allow < \"$repo_root/tools/fixtures/scope_guard_allowlist.txt\"; ( cd \"$tmpdir\" && bash -c 'source tools/verify_lib.sh; vlib_scope_guard \"$@\"' _ \"${allow[@]}\" ); rc=$?; if [ $rc -ne 0 ]; then echo \"vlib_scope_guard PASS-scenario unexpectedly failed (rc=$rc) -- allow-listed new/untracked files should be accepted\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "vlib_scope_guard FAIL scenario: an out-of-allowlist untracked file exists alongside allow-listed ones; a plain 'git diff HEAD' is proven blind to it (empty diff) but the untracked-aware guard must still reject: tools/fixtures/scope_guard_allowlist.txt",
+      "command": "repo_root=$(pwd); test -f \"$repo_root/tools/verify_lib.sh\" || { echo \"MISSING tools/verify_lib.sh\"; exit 1; }; test -f \"$repo_root/tools/fixtures/scope_guard_allowlist.txt\" || { echo \"MISSING tools/fixtures/scope_guard_allowlist.txt\"; exit 1; }; tmpdir=$(mktemp -d); trap 'rm -rf \"$tmpdir\"' EXIT; git -C \"$tmpdir\" init -q -b main; printf 'baseline\\n' > \"$tmpdir/README.md\"; git -C \"$tmpdir\" -c user.email=fixture@example.invalid -c user.name=fixture add README.md; git -C \"$tmpdir\" -c user.email=fixture@example.invalid -c user.name=fixture commit -q -m baseline; mkdir -p \"$tmpdir/tools/fixtures\"; cp \"$repo_root/tools/verify_lib.sh\" \"$tmpdir/tools/verify_lib.sh\"; printf 'fixture\\n' > \"$tmpdir/tools/fixtures/dummy.txt\"; printf 'rogue\\n' > \"$tmpdir/rogue_out_of_scope.txt\"; blind=$(git -C \"$tmpdir\" diff --name-only HEAD); if [ -n \"$blind\" ]; then echo \"fixture setup error: a plain 'git diff HEAD' unexpectedly already sees changes: $blind (it should be blind to these untracked files -- that is the whole point of this fixture)\"; exit 1; fi; mapfile -t allow < \"$repo_root/tools/fixtures/scope_guard_allowlist.txt\"; ( cd \"$tmpdir\" && bash -c 'source tools/verify_lib.sh; vlib_scope_guard \"$@\"' _ \"${allow[@]}\" ); rc=$?; if [ $rc -eq 0 ]; then echo \"vlib_scope_guard FAIL-scenario unexpectedly PASSED -- did not catch the out-of-allowlist untracked file (the exact 018/021 git-diff-blind-to-new-files defect this primitive must guard against)\"; exit 1; fi; echo \"PASS (correctly rejected, rc=$rc; note a plain git diff HEAD was blind to all these files: '$blind')\""
+    },
+    {
+      "acceptance_test": "vlib_version_increased PASS scenario: in an isolated sandbox git repo, the working-tree frontmatter version (0.2.0) strictly exceeds the HEAD copy's version (0.1.0) -- accepted: tools/fixtures/version_increased_old.md, tools/fixtures/version_increased_new_pass.md",
+      "command": "repo_root=$(pwd); for f in tools/verify_lib.sh tools/fixtures/version_increased_old.md tools/fixtures/version_increased_new_pass.md; do test -f \"$repo_root/$f\" || { echo \"MISSING $f\"; exit 1; }; done; tmpdir=$(mktemp -d); trap 'rm -rf \"$tmpdir\"' EXIT; git -C \"$tmpdir\" init -q -b main; cp \"$repo_root/tools/fixtures/version_increased_old.md\" \"$tmpdir/doc.md\"; git -C \"$tmpdir\" -c user.email=fixture@example.invalid -c user.name=fixture add doc.md; git -C \"$tmpdir\" -c user.email=fixture@example.invalid -c user.name=fixture commit -q -m baseline; cp \"$repo_root/tools/fixtures/version_increased_new_pass.md\" \"$tmpdir/doc.md\"; cp \"$repo_root/tools/verify_lib.sh\" \"$tmpdir/verify_lib.sh\"; ( cd \"$tmpdir\" && bash -c 'source verify_lib.sh; vlib_version_increased doc.md' ); rc=$?; if [ $rc -ne 0 ]; then echo \"vlib_version_increased PASS-scenario unexpectedly failed (rc=$rc) -- a strict semver increase (0.1.0 -> 0.2.0) vs HEAD should be accepted\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "vlib_version_increased FAIL scenarios: the working-tree frontmatter version does NOT strictly exceed the HEAD copy's version, covering BOTH the equal-version case (0.1.0 -> 0.1.0, unchanged) and a genuine DECREASE (0.1.0 -> 0.0.9) -- both rejected: tools/fixtures/version_increased_old.md, tools/fixtures/version_increased_new_fail.md, tools/fixtures/version_increased_new_fail_decrease.md",
+      "command": "repo_root=$(pwd); for f in tools/verify_lib.sh tools/fixtures/version_increased_old.md tools/fixtures/version_increased_new_fail.md tools/fixtures/version_increased_new_fail_decrease.md; do test -f \"$repo_root/$f\" || { echo \"MISSING $f\"; exit 1; }; done; for variant in version_increased_new_fail.md version_increased_new_fail_decrease.md; do tmpdir=$(mktemp -d); git -C \"$tmpdir\" init -q -b main; cp \"$repo_root/tools/fixtures/version_increased_old.md\" \"$tmpdir/doc.md\"; git -C \"$tmpdir\" -c user.email=fixture@example.invalid -c user.name=fixture add doc.md; git -C \"$tmpdir\" -c user.email=fixture@example.invalid -c user.name=fixture commit -q -m baseline; cp \"$repo_root/tools/fixtures/$variant\" \"$tmpdir/doc.md\"; cp \"$repo_root/tools/verify_lib.sh\" \"$tmpdir/verify_lib.sh\"; ( cd \"$tmpdir\" && bash -c 'source verify_lib.sh; vlib_version_increased doc.md' ); rc=$?; rm -rf \"$tmpdir\"; if [ $rc -eq 0 ]; then echo \"vlib_version_increased FAIL-scenario ($variant) unexpectedly PASSED -- a non-increasing version must be rejected\"; exit 1; fi; done; echo \"PASS (both equal-version and decreased-version scenarios correctly rejected)\""
+    },
+    {
+      "acceptance_test": "vlib_path_resolves PASS fixture: a trailing-punctuation-stripped real path plus placeholder/directory-only exemptions all resolve/exempt correctly: tools/fixtures/path_resolves_pass.txt",
+      "command": "test -f tools/verify_lib.sh || { echo \"MISSING tools/verify_lib.sh\"; exit 1; }; test -f tools/fixtures/path_resolves_pass.txt || { echo \"MISSING tools/fixtures/path_resolves_pass.txt\"; exit 1; }; fail=0; while IFS= read -r tok; do [ -z \"$tok\" ] && continue; bash -c 'source tools/verify_lib.sh; vlib_path_resolves \"$1\"' _ \"$tok\"; rc=$?; if [ $rc -ne 0 ]; then echo \"vlib_path_resolves rejected an expected-PASS token: '$tok' (rc=$rc)\"; fail=1; fi; done < tools/fixtures/path_resolves_pass.txt; if [ $fail -ne 0 ]; then exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "vlib_path_resolves FAIL fixture: a concrete, non-placeholder file reference that does not exist on disk (after stripping trailing punctuation) is rejected: tools/fixtures/path_resolves_fail.txt",
+      "command": "test -f tools/verify_lib.sh || { echo \"MISSING tools/verify_lib.sh\"; exit 1; }; test -f tools/fixtures/path_resolves_fail.txt || { echo \"MISSING tools/fixtures/path_resolves_fail.txt\"; exit 1; }; tok=$(head -1 tools/fixtures/path_resolves_fail.txt); test -n \"$tok\" || { echo \"fixture setup error: path_resolves_fail.txt is empty\"; exit 1; }; bash -c 'source tools/verify_lib.sh; vlib_path_resolves \"$1\"' _ \"$tok\"; rc=$?; if [ $rc -eq 0 ]; then echo \"vlib_path_resolves unexpectedly accepted a concrete, non-placeholder, nonexistent path: '$tok'\"; exit 1; fi; echo \"PASS (correctly rejected, rc=$rc)\""
+    },
+    {
+      "acceptance_test": "vlib_no_stale_payload PASS fixture, invoked against a NEUTRAL filename (copied off the fixture's own path so a filename-keyed stub cannot cheat): a compliant single-line payload enumeration naming standard/+templates/+schema/+tools/ together passes: tools/fixtures/stale_payload_pass.md copied to a neutral doc.md",
+      "command": "test -f tools/verify_lib.sh || { echo \"MISSING tools/verify_lib.sh\"; exit 1; }; test -f tools/fixtures/stale_payload_pass.md || { echo \"MISSING tools/fixtures/stale_payload_pass.md\"; exit 1; }; tmp=$(mktemp -d); trap 'rm -rf \"$tmp\"' EXIT; cp tools/fixtures/stale_payload_pass.md \"$tmp/doc.md\"; bash -c 'source tools/verify_lib.sh; vlib_no_stale_payload \"$1\"' _ \"$tmp/doc.md\"; rc=$?; if [ $rc -ne 0 ]; then echo \"vlib_no_stale_payload PASS-fixture (neutral filename $tmp/doc.md, content copied from stale_payload_pass.md) unexpectedly failed (rc=$rc)\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "vlib_no_stale_payload FAIL fixture, invoked against a NEUTRAL filename (copied off the fixture's own path so a filename-keyed stub cannot cheat): a stale single-line enumeration naming standard/+templates/+schema/ but OMITTING tools/ (the exact F-019 rework defect) is rejected: tools/fixtures/stale_payload_fail.md copied to a neutral doc.md",
+      "command": "test -f tools/verify_lib.sh || { echo \"MISSING tools/verify_lib.sh\"; exit 1; }; test -f tools/fixtures/stale_payload_fail.md || { echo \"MISSING tools/fixtures/stale_payload_fail.md\"; exit 1; }; tmp=$(mktemp -d); trap 'rm -rf \"$tmp\"' EXIT; cp tools/fixtures/stale_payload_fail.md \"$tmp/doc.md\"; bash -c 'source tools/verify_lib.sh; vlib_no_stale_payload \"$1\"' _ \"$tmp/doc.md\"; rc=$?; if [ $rc -eq 0 ]; then echo \"vlib_no_stale_payload FAIL-fixture (neutral filename $tmp/doc.md, content copied from stale_payload_fail.md) unexpectedly PASSED -- stale 3-dir enumeration (omits tools/) was not rejected (or a filename-keyed stub was detected)\"; exit 1; fi; echo \"PASS (correctly rejected, rc=$rc)\""
+    },
+    {
+      "acceptance_test": "Validator stays green and the count is UNCHANGED at this feature (no new check added yet): out=$(bash tools/validate.sh 2>&1); echo \"$out\" | tail -1 | grep -qx 'SUMMARY: 8 passed, 0 failed'",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | tail -1 | grep -qx \"SUMMARY: 8 passed, 0 failed\" || { echo \"expected exact summary line 'SUMMARY: 8 passed, 0 failed', got: $(echo \"$out\" | grep \"^SUMMARY:\")\"; exit 1; }; test \"$rc\" -eq 0 && echo PASS || { echo \"tools/validate.sh exited $rc, expected 0\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (authoritative scope proof, untracked-aware form per this feature's own design principle -- unlike a plain 'git diff HEAD' guard, which is blind to these brand-new files): only tools/verify_lib.sh and tools/fixtures/* appear as new or modified in the working tree, excluding .agent/",
+      "command": "changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | cut -c4-); bad=\"\"; while IFS= read -r f; do [ -z \"$f\" ] && continue; case \"$f\" in tools/verify_lib.sh|tools/fixtures/*) ;; *) bad=\"$bad|$f\" ;; esac; done <<< \"$changed\"; if [ -n \"$bad\" ]; then echo \"out-of-scope new/modified file(s):$bad\"; exit 1; fi; echo \"PASS (status-scanned: $changed)\""
+    },
+    {
+      "acceptance_test": "New fixtures live only under tools/fixtures/ (never in the default sweep); literal acceptance-test form (git diff --name-only HEAD, staged-files view -- see the authoritative untracked-aware entry above for this feature's own design principle if these new files are not yet staged): git diff --name-only HEAD -- . ':(exclude).agent' | grep -E '^tools/fixtures/' -q && ! (git diff --name-only HEAD -- . ':(exclude).agent' | grep -Ev '^(tools/verify_lib.sh|tools/fixtures/)')",
+      "command": "present=$(git diff --name-only HEAD -- . ':(exclude).agent' | grep -E \"^tools/fixtures/\" || true); outside=$(git diff --name-only HEAD -- . ':(exclude).agent' | grep -Ev \"^(tools/verify_lib\\.sh|tools/fixtures/)\" || true); if [ -z \"$present\" ]; then echo \"NOTE: the legacy git-diff-HEAD form (staged-files-only view) shows no tools/fixtures/ entries -- expected if the new files are untracked/not yet git-added, since this form is blind to untracked files by design (the exact defect this feature's scope-guard primitive exists to fix); the untracked-aware entry above is the authoritative scope proof.\"; fi; if [ -n \"$outside\" ]; then echo \"out-of-scope change(s) visible even under the narrower git-diff-HEAD view:$outside\"; exit 1; fi; if [ -n \"$present\" ]; then fp=yes; else fp=no; fi; echo \"PASS (git-diff-HEAD view: fixtures-present=$fp; no out-of-scope entries)\""
+    }
+  ],
+  "estimated_lines": 260,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/023-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/023-verify-01.txt for the first entry, ..., .agent/evidence/023-verify-19.txt for the nineteenth). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T12:48:20Z",
+    "revisions": 1
+  }
+}

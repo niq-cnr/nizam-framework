@@ -1,0 +1,14 @@
+out=$(bash tools/validate.sh 2>&1); echo "$out"; echo "$out" | grep -q '\[C10\] PASS' || { echo "[C10] did not PASS on the default sweep -- CONTEXT.md or another file was false-flagged"; exit 1; }; grep -Eq 'NIZAM\.json.*first.*tools/skill\.json|resolves.*NIZAM\.json.*first' CONTEXT.md || true; grep -q 'bootstrapped-consumer discovery' CONTEXT.md && { echo "REGRESSION: CONTEXT.md now contains the canonical discovery-order label -- P3 scoping assumption invalidated, re-verify"; exit 1; }; echo PASS
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+SUMMARY: 10 passed, 0 failed
+PASS
+EXIT:0

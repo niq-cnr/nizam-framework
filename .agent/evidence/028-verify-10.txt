@@ -1,0 +1,4 @@
+source tools/verify_lib.sh; vlib_scope_guard 'tools/validate.sh' 'tools/fixtures/' && echo PASS || { echo "out-of-scope change(s) detected -- see vlib_scope_guard output above"; exit 1; }
+--- OUTPUT ---
+PASS
+EXIT:0

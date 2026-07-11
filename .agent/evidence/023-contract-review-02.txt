@@ -1,0 +1,4 @@
+out=$(bash -c 'set -e; source tools/verify_lib.sh; echo SOURCED_OK' 2>&1); rc=$?; echo "$out"; if [ $rc -ne 0 ]; then echo "sourcing tools/verify_lib.sh failed (rc=$rc)"; exit 1; fi; echo "$out" | grep -q SOURCED_OK && echo PASS || { echo "SOURCED_OK marker not found in sourcing output"; exit 1; }
+bash: line 1: tools/verify_lib.sh: No such file or directory
+sourcing tools/verify_lib.sh failed (rc=1)
+EXIT:1

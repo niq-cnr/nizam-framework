@@ -7,6 +7,40 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `tools/verify_lib.sh`: a vetted, sourced verification-helper library exposing
+  five fixture-tested primitives contracts and `validate.sh` checks compose
+  instead of re-inventing — section-scoped grep, the untracked-aware scope
+  guard, strict-version-increase-vs-HEAD, punctuation-stripped path
+  resolution, and the generalized stale-payload-enumeration guard. A matching
+  verification-authoring standard section was added to
+  `methodology/02_adversarial_tdd.md`, codifying the anti-patterns a
+  contract's verification suite must not use (whole-file vacuous greps,
+  `git diff HEAD` scope guards blind to new untracked files, bare-adjacency
+  checks, and content-free substring checks).
+- `tools/validate.sh` checks **C9** (repo-wide path-resolution), **C10**
+  (single-source-of-truth consistency: payload-set enumeration, bootstrapped-
+  consumer discovery order, framework-version anchor), and **C11** (dogfood
+  schema validation of `.agent/qa/*.json`, `.agent/contracts/*.json`, and
+  `.agent/run_state.json` against the shipped schemas, enforce-if-present /
+  skip-if-absent). The full sweep's `SUMMARY` migrated from `8 passed, 0
+  failed` to `11 passed, 0 failed`.
+- `schema/contract_review.schema.json`, describing the pre-code
+  contract-review artifact shape, and a reconciled `schema/qa_verdict.schema.json`
+  (`anyOf` union of the legacy and evolved QA-verdict shapes) so every
+  historical `.agent/qa/*.json` validates without edits; `schema/contract.schema.json`
+  now documents `amendments[]` as an explicit property. Resolves NDEBT-002.
+- `tools/e2e_bootstrap_test.sh`: a hermetic (network-free), dual-mode
+  end-to-end harness that exercises the real `bootstrap.sh` inject → verify
+  adoption path via a local `file://` clone and an ephemeral annotated tag —
+  asserting the injected payload, `NIZAM.json` index integrity, the
+  documented `.nizam/tools/skill.json` discovery path, and a `--verify-only`
+  pass — plus a `--self-test-negative` mode proving the discovery-path guard
+  is load-bearing. A second CI job in `.github/workflows/compliance.yml`
+  (`e2e_bootstrap`, alongside the existing `validate` job) runs it on every
+  PR and push to `main`. `bootstrap.sh` itself is unmodified.
+
 ## [0.5.1] - 2026-07-09
 
 ### Added

@@ -1,0 +1,116 @@
+Evaluator (@evaluator, Protocol 07A/08) independent adversarial spot-check for
+feature 026 (C9 repo-wide path-resolution), post-code QA. All commands run
+from repo root /home/cnross/workspace02/nizam-framework, branch
+phase/004-durable-enforcement, against the real tree; NO shipped file was
+modified -- all adversarial fixtures were scratch files under the isolated
+scratchpad tmp dir, deleted after use.
+
+1) GENUINE DETECTION (fresh, never-before-seen input, not the shipped
+   fixtures): a scratch .md naming a new nonexistent, non-placeholder,
+   '/'-qualified, shipped-extension path (standard/DOES_NOT_EXIST_xyz.md)
+   was --target-ed.
+   RESULT: [C9] FAIL, rc=1, output names the exact token
+   'standard/DOES_NOT_EXIST_xyz.md'. PASS (proves C9 reads content, not a
+   fixture-keyed or filename-keyed stub).
+
+2) NO OVER-EXEMPTION -- .nizam/ prefix must be a PREFIX, not a substring:
+   2a) scratch .md naming broken 'foo/.nizam/bar.md' (contains, doesn't
+       start with, .nizam/) -- RESULT: [C9] FAIL, names the token. PASS.
+   2b) scratch .md naming broken 'x.nizam/y.md' (mid-token .nizam/, no
+       leading-prefix match) -- RESULT: [C9] FAIL, names the token. PASS.
+   Confirms the C9-specific `.nizam/*` case-pattern exemption in
+   tools/validate.sh is anchored to token START, not a substring match.
+
+3) NO OVER-EXEMPTION -- the two named .agent/ singleton tokens are the ONLY
+   .agent/ exemption, not a generic .agent/ carve-out:
+   3a) scratch .md naming broken '.agent/contracts/nonexistent_real.json'
+       (not one of the two named tokens, no NNN/XXX/step- placeholder
+       pattern) -- RESULT: [C9] FAIL, names the token. PASS.
+   3b) scratch .md naming exactly '.agent/capability_profile.json' and
+       '.agent/debt.json' (neither exists on disk, confirmed via `ls`
+       failure) -- RESULT: [C9] PASS (the two exempt singleton tokens
+       correctly pass despite not resolving on disk, per design). The
+       overall script rc was 1 only because of an unrelated C1/C2
+       frontmatter-missing failure on the scratch file itself, not a C9
+       failure -- C9 line explicitly read PASS.
+
+4) NO UNDER-DETECTION MASKING / placeholder + punctuation handling: scratch
+   .md combining a real resolving path (tools/verify_lib.sh), a real path
+   with trailing sentence punctuation (tools/validate.sh.), an NNN
+   placeholder (.agent/contracts/NNN.json), and a step-N placeholder
+   (docs/planning/step-77-report.md) -- RESULT: [C9] PASS. Confirms genuine
+   resolution, trailing-punctuation stripping, and the NNN/step- placeholder
+   exemptions all fire correctly together.
+
+5) FRONTMATTER-STRIP IS LOAD-BEARING: standard/GIP.md's real, in-tree
+   frontmatter change_log entry (line 11, inside the '---'...'---' block
+   confirmed at lines 1/12) contains the free-text substring
+   'existing-CONTEXT.md/AGENTS.md/CI', which the C9 extraction regex
+   independently confirmed DOES match as a candidate token
+   ('existing-CONTEXT.md/AGENTS.md') when tested standalone. Two
+   confirmations:
+     a) `bash tools/validate.sh --target standard/GIP.md` reports
+        [C9] PASS -- the frontmatter-resident token is correctly never
+        extracted because it lives inside the stripped frontmatter block.
+     b) A scratch .md placing the IDENTICAL substring in the BODY (not
+        frontmatter) was --target-ed: RESULT: [C9] FAIL, naming
+        'existing-CONTEXT.md/AGENTS.md' as the unresolved token.
+   The same token PASSES when confined to frontmatter and FAILS when
+   placed in the body -- directly proving the frontmatter-strip logic is
+   real and load-bearing, not a no-op.
+
+6) ANTI-CHEAT FIXTURES (neutral mktemp copies, contract verification
+   entries 10/11, independently re-run): a byte-identical copy of
+   tools/fixtures/exempt_paths.md under a neutral /tmp/tmp.XXXXXX.md name
+   still reports [C9] PASS; a byte-identical copy of
+   tools/fixtures/unresolved_path.md under a neutral name still reports
+   [C9] FAIL and names 'ADR-999-does-not-exist.md'. Confirms per-file
+   content-driven resolution, not a hardcoded fixture-path check.
+
+7) PRE-EXISTING-DRIFT REMEDIATION, verified complete and minimal:
+   `git diff HEAD -- tools/interface.md` shows exactly a version bump
+   (0.2.0->0.3.0), one new change_log entry, and the single-line
+   methodology/05_release_train.md -> methodology/06_release_train.md
+   fix (line 46) -- no other prose changed. `git diff HEAD --
+   docs/guide/index.html` shows exactly the single-line
+   methodology/05_release_train.md -> methodology/06_release_train.md fix
+   (line 535) -- no other content changed, framework-version meta anchor
+   untouched (0.5.1). A targeted sweep of all 38 files in the actual C9
+   default-mode sweep universe (shipped-doc set + docs/guide/index.html,
+   independently re-derived from build_shipped_md_set()'s own logic) for
+   the literal string 'methodology/05_release_train.md' returned ZERO
+   matches -- the stale token is fully gone from every file C9 actually
+   sweeps. (The string still appears, correctly, in CHANGELOG.md as a
+   historical record of a past rename, and in the immutable prior
+   .agent/contracts/015.json -- neither is part of C9's swept universe and
+   neither is a current narrative-truth claim; out of scope per the
+   contract's non_goals.)
+
+8) SCOPE GUARD, independently confirmed via raw git status (not just
+   vlib_scope_guard's own report): `git status --porcelain
+   --untracked-files=all -- . ':(exclude).agent'` shows exactly 3 modified
+   files (docs/guide/index.html, tools/interface.md, tools/validate.sh) and
+   2 new untracked files (tools/fixtures/exempt_paths.md,
+   tools/fixtures/unresolved_path.md) outside .agent/ -- matching the
+   contract's allow-list exactly, nothing else.
+
+9) KNOWN, DISCLOSED, NON-BLOCKING DESIGN LIMITATION (not a gaming defect):
+   independently confirmed methodology/06_release_train.md:72 contains a
+   genuine, currently-broken BARE (non-'/'-qualified) reference
+   '05_release_train.md' (in the phrase "`00_planning.md` through
+   `05_release_train.md` were, at initial framework genesis") that C9's
+   '/'-qualification requirement will never extract as a candidate token.
+   This is the same recall gap the generator's own pre-code
+   .agent/qa/026-contract-review.json already disclosed and the contract's
+   own design_notes explicitly justify (bare-word extraction would
+   false-fail on real cross-repo terms, same-directory relative-link
+   targets, and ASCII-tree diagram labels present in this corpus). Logged
+   here as a non-blocking observation, not a defect: it is a disclosed,
+   evidence-backed design tradeoff approved at Mode A, not an undisclosed
+   gaming shortcut, and it does not affect the soundness of any of this
+   contract's 15 verification entries, all of which test only
+   '/'-qualified references.
+
+No defects found. All 9 adversarial probes behaved exactly as the contract's
+design specifies. No filename-keyed, fixture-path-keyed, or content-blind
+stub behavior detected anywhere.

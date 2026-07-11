@@ -1,0 +1,35 @@
+{
+  "review": "contract-validation-mode-a",
+  "feature": "028",
+  "contract_id": "028",
+  "revision_reviewed": 2,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    {
+      "topic": "rev2 AT9 fix confirmed: mirrors contract 025 precedent exactly",
+      "detail": "The rev2 AT9 command (.agent/contracts/028.json verification entry 9, line 84) is byte-identical to contract 025's immutability-guard precedent (.agent/contracts/025.json verification entry 7, line 71) except for the feature number 025->028: `changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/028.json' ':(exclude,glob).agent/qa/028*.json'); if [ -n \"$changed\" ]; then echo 'immutable audit record(s) touched:'; echo \"$changed\"; exit 1; fi; echo PASS`. It correctly (1) drops .agent/run_state.json from the checked path set entirely (025 likewise never included it; run_state is orchestrator-owned and mutated every step per CLAUDE.md state-management rule), and (2) excludes this feature's OWN new untracked artifacts (028.json contract + 028*.json qa review records)."
+    },
+    {
+      "topic": "rev2 AT9 PASSES on the current tree (executed, not reasoned)",
+      "detail": "Ran the exact rev2 AT9 command against the real phase/004-durable-enforcement tree: output PASS, exit 0. Confirmed the full unexcluded dirty state under .agent/ is exactly three entries -- ' M .agent/run_state.json' (dropped from pathspec), '?? .agent/contracts/028.json' (excluded), '?? .agent/qa/028-contract-review.json' (excluded via 028* glob) -- so the guard is empty and the criterion is now satisfiable through the legitimate implementation path, closing the evaluator's rev1 issues[0]."
+    },
+    {
+      "topic": "rev2 AT9 still CATCHES tampering with historical audit records (no regression, adversarially verified)",
+      "detail": "Reversibly appended a byte to tracked historical .agent/qa/017.json AND .agent/contracts/025.json, then re-ran the rev2 AT9 command: it correctly reported 'immutable audit record(s) touched:' listing both files and exited 1. The 028* exclusion glob matches only this feature's own artifacts, so any historical qa/contract file (e.g. 017.json, 025.json) is still fully guarded. Both files were restored exactly via git checkout; post-restore AT9 returns PASS and git status shows the two files clean -- no residual mutation."
+    },
+    {
+      "topic": "No regression: nothing else changed vs rev1 (the revision I approved and the evaluator confirmed sound)",
+      "detail": "The evaluator's rev1 verdict (.agent/qa/028-contract-review.json, revision_reviewed=1) raised exactly ONE blocking issue -- AT9 unsatisfiability -- and its observations independently confirmed every other element sound: the restricted {a,b,e} default-sweep discriminator scheme, the discriminator_scheme prose, load-bearing verify-12 anti-gaming assertion, the count-invariant verify-19, verify-17 C4 non-regression (NIZAM.json + broken_index.json still route to none), the 3 tools/fixtures FAIL fixtures, consumer-safety skip-if-absent (AT5), the --target content-routing dispatcher, the 3-mode pinning, .agent/validator/ out-of-scope decision, scope.files_modify/files_create, and non_goals. The generator changed ONLY AT9's command text; all 18 other verification entries, both design_notes, scope, and non_goals are unchanged and remain sound. 19 verification entries total, consistent with evidence_convention (028-verify-01..19)."
+    }
+  ],
+  "final_verdict": {
+    "approved": true,
+    "mode": "A",
+    "contract_id": "028",
+    "feature_id": "028",
+    "risk_level": "medium",
+    "summary": "APPROVED at revision 2. The single narrow rev1 defect the evaluator flagged -- F-028 AT9's immutability check being unsatisfiable (its pathspec carried no exclusions for this feature's own new untracked contract/qa artifacts and additionally included the orchestrator-owned, per-step-mutated .agent/run_state.json) -- is fully and correctly fixed. rev2's AT9 command is byte-identical to contract 025's approved immutability-guard precedent aside from the 025->028 feature number: it drops .agent/run_state.json from the checked set (025 never included it) and excludes exactly this feature's own new artifacts via ':(exclude).agent/contracts/028.json' and ':(exclude,glob).agent/qa/028*.json'. Verified by direct execution against the live tree: (a) the command PASSES (exit 0) with the only dirty paths being the three deliberately dropped/excluded entries; (b) it still CATCHES tampering -- reversible edits to historical .agent/qa/017.json and .agent/contracts/025.json were both flagged with exit 1, then restored exactly (tree clean), proving the 028* glob excludes only this feature's own artifacts and leaves every historical audit record guarded; (c) it faithfully realizes AT9's intent that C11 is read-only over .agent/ and no historical audit record is edited to make C11 pass. Nothing else changed versus rev1: the discriminator scheme, verify-12/verify-17/verify-19, the 3 FAIL fixtures, consumer-safety, the --target dispatcher, 3-mode pinning, validator-dir-out-of-scope, scope, and non_goals are all unchanged and were confirmed sound at rev1 by both me and the evaluator. Zero blocking issues, zero missing acceptance coverage, zero unsupported claims. Cleared to proceed to the evaluator for rev2 contract review."
+  }
+}

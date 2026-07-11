@@ -1,0 +1,3 @@
+test "$(git tag -l 'v0.6.0' | wc -l)" -eq 0 && echo PASS || { echo "a v0.6.0 tag unexpectedly exists -- this feature must not cut it"; exit 1; }
+PASS
+EXIT:0

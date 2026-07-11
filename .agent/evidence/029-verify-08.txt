@@ -1,0 +1,35 @@
+$ out=$(bash tools/e2e_bootstrap_test.sh --self-test-negative 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit from --self-test-negative, got 0"; exit 1; }; echo "$out" | grep -q 'CONFIRMED LOAD-BEARING' || { echo "missing the specific genuine-detection diagnostic -- possible vacuous always-fail stub"; exit 1; }; echo "$out" | grep -q 'tools/skill.json' || { echo "diagnostic does not name the broken file"; exit 1; }; echo VERIFY_PASS
+e2e_bootstrap_test.sh: installing pinned tag 'e2e-1783680727-3945658' from 'file:///home/cnross/workspace02/nizam-framework' into '/tmp/tmp.RvdOZPdMB0/.nizam' (hermetic -- local file:// clone, no network)...
+bootstrap.sh: cloning file:///home/cnross/workspace02/nizam-framework at pinned tag e2e-1783680727-3945658 (--depth 1)...
+Cloning into '/tmp/nizam-bootstrap-clone.IYrTsC'...
+warning: refs/tags/e2e-1783680727-3945658 dd7da5e18d1476aa41d6351772a7e5a941715713 is not a commit!
+Note: switching to '8d1e80484df8ef1086dd387886dba1362b0b931f'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: staging governance payload in /tmp/tmp.RvdOZPdMB0/.nizam-stage.7ab1F9...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 38 indexed path(s) resolve under /tmp/tmp.RvdOZPdMB0/.nizam-stage.7ab1F9.
+bootstrap.sh: recording provenance (framework_version=0.5.1, tag=e2e-1783680727-3945658)...
+bootstrap.sh: install complete. Governance payload version 0.5.1 (tag e2e-1783680727-3945658) is now at '/tmp/tmp.RvdOZPdMB0/.nizam'.
+assert_payload_present: OK -- standard/, templates/, schema/, tools/, NIZAM.json, provenance.json all present under /tmp/tmp.RvdOZPdMB0/.nizam
+assert_nizam_index_valid: OK -- NIZAM.json parses; 37 indexed path(s) resolve under /tmp/tmp.RvdOZPdMB0/.nizam.
+e2e_bootstrap_test.sh: --self-test-negative -- deliberately removing /tmp/tmp.RvdOZPdMB0/.nizam/tools/skill.json to prove the H4 discovery-path guard is load-bearing, not tautological...
+vlib_path_resolves: path does not resolve: '/tmp/tmp.RvdOZPdMB0/.nizam/tools/skill.json' (stripped: '/tmp/tmp.RvdOZPdMB0/.nizam/tools/skill.json')
+assert_discovery_path: H4 regression -- documented discovery path does not resolve: /tmp/tmp.RvdOZPdMB0/.nizam/tools/skill.json
+e2e_bootstrap_test.sh: H4 GUARD CONFIRMED LOAD-BEARING: broken payload (missing tools/skill.json) correctly rejected by the discovery-path assertion.
+VERIFY_PASS
+EXIT:0

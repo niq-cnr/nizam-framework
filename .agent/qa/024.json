@@ -1,0 +1,43 @@
+{
+  "feature_id": "024",
+  "qa_pass": true,
+  "checks_run": 15,
+  "checks_passed": 15,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/024-qa-adversarial.txt",
+    "findings": "6 independent probes run, all PASS, no defects found. (1) Content-accuracy probe: each of the four anti-patterns (a)-(d) in the new Section 10 was read directly and each cited primitive's described behavior was diffed against tools/verify_lib.sh's actual implementation -- vlib_section_grep's span logic (awk in_span toggled by heading-regex and /^#+/), vlib_scope_guard's literal 'git status --porcelain --untracked-files=all -- . \":(exclude).agent\"' command string, vlib_version_increased's YAML-parsed strict semver tuple comparison, vlib_path_resolves's real test -e resolution, and vlib_no_stale_payload's per-line 3-of-4-directory stale scan all MATCH their described behavior exactly; anti-pattern (c) correctly cites no fictitious 6th primitive, only reusing vlib_section_grep as an example structural anchor. No mischaracterization or keyword-stuffing found. (2) Structural probe: an independent awk/grep scan of Section 10's own span (its heading to EOF, since it is the file's final section) found zero lines beginning with '#' -- confirmed flat prose with only bold '**(a)**'..'**(d)**' lead-ins, no ### or deeper subheading. (3) Section-scoped presence probe: independently re-ran vlib_section_grep against Section 10's span for both 'verify_lib.sh' and the vlib_ primitive-name alternation, both rc=0, confirming both are within the new section (not merely elsewhere in the file), re-derived independently of the contract's own verification entry 4 logic. (4) Frontmatter probe: independently YAML-parsed the working-tree frontmatter (version 0.3.0, change_log has 2 entries) and the HEAD copy via 'git show HEAD:...' (version 0.2.0, 1 change_log entry) -- confirms a strict semver increase and exactly one new change_log entry added, matching version 0.3.0, dated 2026-07-08, YAML valid with no exception. (5) Non-goal probe: 'git diff --stat HEAD -- .' and 'git status --porcelain --untracked-files=all -- . \":(exclude).agent\"' both confirm only methodology/02_adversarial_tdd.md changed outside .agent/ (the .agent/run_state.json diff is expected orchestrator state, excluded from scope by the same ':(exclude).agent' convention the contract itself uses); CHANGELOG.md, tools/validate.sh, tools/verify_lib.sh are all untouched. (6) Full and targeted validator probe: 'bash tools/validate.sh' reproduces the exact 'SUMMARY: 8 passed, 0 failed' line with all 8 checks individually PASS and exit 0; 'bash tools/validate.sh --target methodology/02_adversarial_tdd.md' reproduces 'SUMMARY: 3 passed, 0 failed' with C1/C2/C3 all PASS and exit 0."
+  },
+  "evidence_files": [
+    ".agent/evidence/024-qa-01.txt",
+    ".agent/evidence/024-qa-02.txt",
+    ".agent/evidence/024-qa-03.txt",
+    ".agent/evidence/024-qa-04.txt",
+    ".agent/evidence/024-qa-05.txt",
+    ".agent/evidence/024-qa-06.txt",
+    ".agent/evidence/024-qa-07.txt",
+    ".agent/evidence/024-qa-08.txt",
+    ".agent/evidence/024-qa-09.txt",
+    ".agent/evidence/024-qa-10.txt",
+    ".agent/evidence/024-qa-11.txt",
+    ".agent/evidence/024-qa-12.txt",
+    ".agent/evidence/024-qa-13.txt",
+    ".agent/evidence/024-qa-14.txt",
+    ".agent/evidence/024-qa-15.txt",
+    ".agent/evidence/024-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "observations": [
+    "The Section 10 anti-pattern (c) bare-adjacency/parenthetical description does not name a dedicated 6th vlib_ primitive (verify_lib.sh only ships 5), and instead reuses vlib_section_grep as an illustrative structural anchor. This is consistent with tools/verify_lib.sh's actual five-primitive surface and the contract's own scope (contract explicitly requires only 'vlib_version_increased and/or vlib_path_resolves and/or vlib_no_stale_payload' as the named alternative for anti-pattern (d), leaving (c) as a general principle) -- not a defect.",
+    "vlib_no_stale_payload is characterized in Section 10 as detecting 'a stale multi-directory enumeration, not a substring hit'; its actual implementation is technically a per-line substring test for four specific directory tokens (standard/, templates/, schema/, tools/), not a non-substring mechanism in the strictest sense. This phrasing is inherited verbatim from tools/verify_lib.sh's own header comment (lines 12-18) describing itself the same way, so it is not a generator-introduced mischaracterization, but a pre-existing framing from the library's own documentation. Non-blocking."
+  ],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "024",
+    "summary": "All 15 contract-024 verification commands were independently re-run from repo root into fresh 024-qa-NN.txt evidence files (not reused from the generator's 024-verify-NN.txt), and all 15 pass (15/15 EXIT:0): the Verification-Authoring Standard heading exists; all four forbidden anti-pattern keyword groups are present (whole-file/vacuous, untracked/new-file, adjacency/parenthetical, substring), both whole-file and section-scoped (vlib_section_grep-confirmed); verify_lib.sh is referenced and a real vlib_ primitive is cited, both scoped to the new section; frontmatter version 0.3.0 is a structurally-verified strict semver increase over HEAD's 0.2.0 (vlib_version_increased); exactly one new change_log entry was added matching 0.3.0; tools/validate.sh --target is green (C1/C2/C3 PASS, exit 0); the full validator sweep is unchanged at 'SUMMARY: 8 passed, 0 failed' with all of C1-C8 individually PASS (no regression); the untracked-aware scope guard (vlib_scope_guard, and independently restated via git status --porcelain --untracked-files=all) confirms only methodology/02_adversarial_tdd.md changed outside .agent/; and CHANGELOG.md / tools/verify_lib.sh / tools/validate.sh are all confirmed untouched (non-goal enforcement). A mandatory 6-probe adversarial spot-check independently verified: (1) each of the four anti-patterns is genuinely and accurately paired with its compliant vlib_ primitive, cross-checked line-by-line against tools/verify_lib.sh's real implementation, with no fabricated or mischaracterized primitive; (2) the new section is structurally flat prose with zero '#'-prefixed lines within its own span (independently confirmed via awk/grep, not reused from the contract's vlib_section_grep call); (3) verify_lib.sh and a real vlib_ primitive name both occur strictly within the new section's span, independently re-derived; (4) frontmatter version/change_log correctness independently re-parsed via YAML and 'git show HEAD:'; (5) non-goal scope isolation independently re-confirmed via git diff/status; (6) full and targeted validator green state independently re-run. Existing sections 1-9 are confirmed byte-identical in heading text and order against the HEAD copy (only Section 10 is new, appended after Section 9 References, no renumbering). QA verdict: PASS."
+  }
+}

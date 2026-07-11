@@ -1,0 +1,6 @@
+test -f tools/fixtures/version_drift.html || { echo "MISSING tools/fixtures/version_drift.html"; exit 1; }; out=$(bash tools/validate.sh --target tools/fixtures/version_drift.html 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "expected nonzero exit, got 0"; exit 1; }; echo "$out" | grep -q '\[C10\] FAIL' || { echo "no [C10] FAIL line"; exit 1; }; echo "$out" | grep -q 'version-anchor' || { echo "[C10] FAIL output does not tag the version-anchor sub-check"; exit 1; }; echo "$out" | grep -q '0\.4\.0' || { echo "[C10] FAIL output does not name the actual drifted value 0.4.0 -- content-blind stub suspected"; exit 1; }; echo PASS
+[C10] FAIL consistency
+  tools/fixtures/version_drift.html: [version-anchor] meta framework-version '0.4.0' != NIZAM.json framework.version '0.5.1'
+  tools/fixtures/version_drift.html: [version-anchor] footer version '0.4.0' != NIZAM.json framework.version '0.5.1'
+PASS
+EXIT:0

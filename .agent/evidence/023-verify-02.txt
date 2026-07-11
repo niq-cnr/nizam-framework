@@ -1,0 +1,3 @@
+errfile=$(mktemp); out=$(bash -c 'source tools/verify_lib.sh' 2>"$errfile"); rc=$?; err=$(cat "$errfile"); rm -f "$errfile"; if [ "$rc" -eq 0 ] && [ -z "$out" ] && [ -z "$err" ]; then echo PASS; else echo "sourcing tools/verify_lib.sh had side effects or failed: rc=$rc out=[$out] err=[$err]"; exit 1; fi
+PASS
+EXIT:0

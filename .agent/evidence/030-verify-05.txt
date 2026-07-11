@@ -1,0 +1,8 @@
+python3 -c "
+import sys
+t = open('docs/planning/DEBT.md', encoding='utf-8').read()
+res = t.split('## Resolved')[-1]
+sys.exit(0 if 'NDEBT-002' in res else 1)
+" && echo PASS || { echo "NDEBT-002 not found in Resolved section"; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,10 @@
+python3 -c "
+import yaml, sys
+w = yaml.safe_load(open('.github/workflows/compliance.yml', encoding='utf-8'))
+jobs = w.get('jobs', {})
+assert 'validate' in jobs, 'existing validate job missing -- regression'
+ok = any('e2e_bootstrap_test.sh' in str(j) for name, j in jobs.items() if name != 'validate')
+sys.exit(0 if ok else 1)
+" && echo PASS || { echo "no CI job (other than the existing validate job) runs the harness"; exit 1; }
+PASS
+EXIT:0

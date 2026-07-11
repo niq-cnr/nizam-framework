@@ -1,0 +1,28 @@
+set -e; repo_root=$(pwd); scratch=$(mktemp -d); trap 'rm -rf "$scratch"' EXIT; git -C "$repo_root" ls-files -z | xargs -0 -I{} sh -c 'mkdir -p "$(dirname "'"$scratch"'/{}")" && cp "'"$repo_root"'/{}" "'"$scratch"'/{}"'; rm -rf "${scratch}/.agent"; test ! -d "${scratch}/.agent" || { echo "scratch copy still has .agent/ -- test setup failed"; exit 1; }; out=$(cd "${scratch}" && bash tools/validate.sh 2>&1) || true; echo "$out"; echo "$out" | grep -q '\[C11\] PASS' || { echo "C11 did not PASS in the .agent/-absent scratch copy"; exit 1; }; echo "$out" | grep -q '\[C11\] FAIL' && { echo "C11 unexpectedly FAILed in the .agent/-absent scratch copy -- the sweep failed on C11's account"; exit 1; }; echo PASS
+--- OUTPUT ---
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] FAIL path-resolution
+  docs/architecture/ADR-001-ci-compliance-enforcement.md: unresolved path reference '.agent/product_spec_002.md'
+  docs/architecture/ADR-002-html-user-guide.md: unresolved path reference '.agent/product_spec_003.md'
+  methodology/00_planning.md: unresolved path reference '.agent/feature_list.json'
+  methodology/00_planning.md: unresolved path reference '.agent/product_spec.md'
+  methodology/00_planning.md: unresolved path reference '.agent/run_state.json'
+  methodology/03_circuit_breaker.md: unresolved path reference '.agent/run_state.json'
+  methodology/04_tool_driven_state.md: unresolved path reference '.agent/feature_list.json'
+  methodology/04_tool_driven_state.md: unresolved path reference '.agent/run_state.json'
+  registry/scope_definition_patterns.md: unresolved path reference '.agent/run_state.json'
+  templates/AGENTS.md: unresolved path reference '.agent/run_state.json'
+  schema/README.md: unresolved path reference '.agent/feature_list.json'
+  schema/README.md: unresolved path reference '.agent/run_state.json'
+[C10] PASS consistency
+[C11] PASS dogfood
+SUMMARY: 10 passed, 1 failed
+PASS
+EXIT:0

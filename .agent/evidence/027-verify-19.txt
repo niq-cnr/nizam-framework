@@ -1,0 +1,5 @@
+test -f tools/fixtures/stale_payload_html.html || { echo "MISSING tools/fixtures/stale_payload_html.html"; exit 1; }; tmp=$(mktemp --suffix=.html); trap 'rm -f "$tmp"' EXIT; cp tools/fixtures/stale_payload_html.html "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "neutral-filename copy unexpectedly PASSED -- suspected filename-keyed behavior"; exit 1; }; echo "$out" | grep -q 'payload-set' || { echo "neutral-filename copy lost the payload-set FAIL tag"; exit 1; }; echo "$out" | grep -q 'unrelated utility scripts' && { echo "neutral-filename copy merged the unrelated tools/ <p> sentence into the offending segment"; exit 1; }; echo "PASS (correctly rejected, rc=$rc)"
+[C10] FAIL consistency
+  /tmp/tmp.o9LWnE45Ek.html: [payload-set] vlib_no_stale_payload: stale payload enumeration (omits tools/): The payload as some people describe it lives under standard/ , templates/ , and schema/ only.
+PASS (correctly rejected, rc=1)
+EXIT:0

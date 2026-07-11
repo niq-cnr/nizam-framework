@@ -2,13 +2,16 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: tools/interface.md
 change_log:
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "H4: reordered Section 2 Discovery so bootstrapped-consumer .nizam/tools/skill.json discovery runs first, matching bootstrap.sh's .nizam default install layout, with the repository-root tools/skill.json path retained as an explicitly labeled framework-checkout fallback."
+  - version: "0.3.0"
+    date: "2026-07-10"
+    summary: "Fixed a stale Section 2 Item 3 reference to the release-train protocol doc's pre-renumbering filename (a slot-05 path that no longer exists) -> methodology/06_release_train.md, the file's real current name after main's v0.5.x methodology renumbering inserted a new slot-05 doc (methodology/05_eval_and_trace.md) and shifted the release-train protocol doc from slot 05 to slot 06."
 ---
 
 # Runtime-Adapter Interface
@@ -43,7 +46,7 @@ An agent runtime locates the skill payload as follows:
 3. **Pinned-checkout discovery.** Where a consumer repository instead
    references a pinned Nizam release tag without vendoring the framework's
    files locally, the runtime resolves `tools/skill.json` inside a checkout of
-   that pinned tag (see `methodology/05_release_train.md` for the tag/version
+   that pinned tag (see `methodology/06_release_train.md` for the tag/version
    model).
 4. **Manifest resolution.** Once `tools/skill.json` is located, the runtime
    reads its `entry_point` field to resolve the path to the instructions

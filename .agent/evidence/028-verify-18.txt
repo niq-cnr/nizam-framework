@@ -1,0 +1,4 @@
+! grep -q '.agent/validator' tools/validate.sh && echo PASS || { echo "tools/validate.sh unexpectedly references .agent/validator/ -- out-of-scope per contract"; exit 1; }
+--- OUTPUT ---
+PASS
+EXIT:0

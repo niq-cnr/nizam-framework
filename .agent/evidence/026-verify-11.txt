@@ -1,0 +1,10 @@
+test -f tools/fixtures/unresolved_path.md || { echo "MISSING tools/fixtures/unresolved_path.md"; exit 1; }; tmp=$(mktemp --suffix=.md); trap 'rm -f "$tmp"' EXIT; cp tools/fixtures/unresolved_path.md "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "neutral-filename copy of unresolved_path.md unexpectedly PASSED -- suspected filename-keyed behavior"; exit 1; }; echo "$out" | grep -q 'ADR-999-does-not-exist.md' || { echo "neutral-filename copy's [C9] FAIL output lost the offending token"; exit 1; }; echo "PASS (correctly rejected, rc=$rc)"
+[C1] FAIL frontmatter-schema
+  /tmp/tmp.BTqTmVFjZk.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  /tmp/tmp.BTqTmVFjZk.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] FAIL path-resolution
+  /tmp/tmp.BTqTmVFjZk.md: unresolved path reference 'docs/architecture/ADR-999-does-not-exist.md'
+PASS (correctly rejected, rc=1)
+EXIT:0

@@ -1,0 +1,3 @@
+$ test -f tools/e2e_bootstrap_test.sh || { echo "MISSING tools/e2e_bootstrap_test.sh"; exit 1; }; source tools/verify_lib.sh; source tools/e2e_bootstrap_test.sh || { echo "failed to source tools/e2e_bootstrap_test.sh"; exit 1; }; declare -F assert_payload_present >/dev/null || { echo "assert_payload_present not defined after sourcing"; exit 1; }; scratch=$(mktemp -d); out=$(mktemp); trap 'rm -rf "$scratch"; rm -f "$out"' EXIT; mkdir -p "$scratch/standard" "$scratch/templates" "$scratch/schema"; echo '{}' > "$scratch/NIZAM.json"; echo '{}' > "$scratch/provenance.json"; if assert_payload_present "$scratch" >"$out" 2>&1; then echo "assert_payload_present incorrectly PASSED with tools/ missing"; cat "$out" 2>/dev/null; exit 1; fi; echo PASS
+PASS
+EXIT:0

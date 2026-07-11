@@ -1,0 +1,12 @@
+python3 -c "
+import re, sys
+t = open('CHANGELOG.md', encoding='utf-8').read()
+m = re.search(r'## \[Unreleased\](.*?)(\n## \[|\Z)', t, re.S)
+assert m, 'no [Unreleased] section found'
+s = m.group(1)
+need = ['verify_lib.sh', 'contract_review.schema.json', 'e2e_bootstrap_test.sh']
+missing = [n for n in need if n not in s]
+sys.exit(1 if missing else 0)
+" && echo PASS || { echo "CHANGELOG [Unreleased] missing one or more of: verify_lib.sh, contract_review.schema.json, e2e_bootstrap_test.sh"; exit 1; }
+PASS
+EXIT:0

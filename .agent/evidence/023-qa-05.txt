@@ -1,0 +1,3 @@
+$ f=tools/verify_lib.sh; test -f "$f" || { echo "MISSING $f"; exit 1; }; grep -Eq "NNN|XXX|step-|placeholder" "$f" && echo PASS || { echo "no placeholder-exemption token (NNN|XXX|step-|placeholder) found in tools/verify_lib.sh"; exit 1; }
+PASS
+EXIT:0

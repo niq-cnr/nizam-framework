@@ -1,0 +1,11 @@
+test -f tools/fixtures/bad_discovery_order.md || { echo "MISSING tools/fixtures/bad_discovery_order.md"; exit 1; }; tmp=$(mktemp --suffix=.md); trap 'rm -f "$tmp"' EXIT; cp tools/fixtures/bad_discovery_order.md "$tmp"; out=$(bash tools/validate.sh --target "$tmp" 2>&1); rc=$?; echo "$out"; test "$rc" -ne 0 || { echo "neutral-filename copy unexpectedly PASSED -- suspected filename-keyed behavior"; exit 1; }; echo "$out" | grep -q 'discovery-order' || { echo "neutral-filename copy lost the discovery-order FAIL tag"; exit 1; }; echo "PASS (correctly rejected, rc=$rc)"
+[C1] FAIL frontmatter-schema
+  /tmp/tmp.0b266UQWwK.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  /tmp/tmp.0b266UQWwK.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] FAIL consistency
+  /tmp/tmp.0b266UQWwK.md: [discovery-order] 'Framework-checkout fallback' (line 6) precedes 'Bootstrapped-consumer discovery' (line 9)
+PASS (correctly rejected, rc=1)
+EXIT:0

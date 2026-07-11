@@ -1,0 +1,15 @@
+source tools/verify_lib.sh
+f=methodology/02_adversarial_tdd.md
+test -f "$f" || { echo "MISSING $f"; exit 1; }
+heading='^## [0-9]+[.] Verification-Authoring Standard'
+fail=0
+vlib_section_grep "$f" "$heading" 'whole-file|vacuous' || { echo 'whole-file/vacuous keyword not found within the new section span'; fail=1; }
+vlib_section_grep "$f" "$heading" 'untracked|new file' || { echo 'untracked/new-file keyword not found within the new section span'; fail=1; }
+vlib_section_grep "$f" "$heading" 'adjacen|parenthetical' || { echo 'adjacency/parenthetical keyword not found within the new section span'; fail=1; }
+vlib_section_grep "$f" "$heading" 'substring' || { echo 'substring keyword not found within the new section span'; fail=1; }
+vlib_section_grep "$f" "$heading" 'verify_lib.sh' || { echo 'verify_lib.sh reference not found within the new section span'; fail=1; }
+vlib_section_grep "$f" "$heading" 'vlib_section_grep|vlib_scope_guard|vlib_version_increased|vlib_path_resolves|vlib_no_stale_payload' || { echo 'no real vlib_ primitive name found within the new section span'; fail=1; }
+if [ "$fail" -eq 1 ]; then exit 1; fi
+echo PASS
+PASS
+EXIT:0

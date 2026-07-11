@@ -1,0 +1,15 @@
+out=$(bash tools/validate.sh 2>&1); rc=$?; echo "$out"; test "$rc" -eq 0 || { echo "validate.sh exited $rc"; exit 1; }; echo "$out" | tail -1 | grep -Eqx 'SUMMARY: (8|9|10|11) passed, 0 failed' || { echo "unexpected SUMMARY line: $(echo "$out" | grep '^SUMMARY:')"; exit 1; }; echo PASS
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood
+SUMMARY: 11 passed, 0 failed
+PASS
+EXIT:0

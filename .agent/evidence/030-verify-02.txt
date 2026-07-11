@@ -1,0 +1,8 @@
+source tools/verify_lib.sh; vlib_version_increased tools/README.md || { echo "tools/README.md version was not strictly increased vs HEAD"; exit 1; }; bash tools/validate.sh --target tools/README.md; rc=$?; test "$rc" -eq 0 || { echo "validate.sh --target tools/README.md exited $rc"; exit 1; }; echo PASS
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] PASS consistency
+PASS
+EXIT:0

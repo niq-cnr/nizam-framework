@@ -1,0 +1,44 @@
+{
+  "feature_id": "025",
+  "qa_pass": true,
+  "checks_run": 15,
+  "checks_passed": 15,
+  "adversarial": {
+    "performed": true,
+    "evidence": ".agent/evidence/025-qa-adversarial.txt",
+    "findings": "9-part independent adversarial spot-check run, all PASS, no defects found. (1) Immutable-record integrity: 'git diff HEAD -- .agent/qa .agent/contracts' produced ZERO output (exit 0) -- no historical QA verdict or contract file was edited; the only new artifact under those trees is the untracked .agent/contracts/025.json itself, which this contract's own approval lifecycle legitimately owns. (2) Every one of the 29 files under .agent/qa/*.json (000-024 plus the 020/021/022 contract-review variants) independently validated against qa_verdict.schema.json OR contract_review.schema.json with zero failures -- re-derived from scratch, not reused from the generator's verification entry 3. (3) All 26 files under .agent/contracts/*.json (000-025) independently validated against contract.schema.json with zero failures. (4) Anti-permissive probe: six deliberately-garbage/near-miss fixtures ({}, {'foo':1}, a legacy-qa-shaped doc missing 'checks', an evolved-qa-shaped doc missing 'final_verdict', a contract-review-shaped doc missing 'final_verdict', and a contract-review-shaped doc missing 'issues') were each tested against BOTH qa_verdict.schema.json and contract_review.schema.json -- all 12 (6 fixtures x 2 schemas) were REJECTED. The anyOf union has not become accept-anything. (5) Discriminator separation: .agent/qa/000.json (legacy) and .agent/qa/017.json (evolved) each validate under qa_verdict.schema.json only (contract_review=False); .agent/qa/020-contract-review.json, 021-contract-review.json, and 022.json (which despite its qa-style filename carries the contract-review shape, per the contract's own note) each validate under contract_review.schema.json only (qa_verdict=False). The two schemas cleanly partition the two families of file actually observed, with no accidental cross-acceptance. (6) contract.schema.json's newly-explicit 'amendments' property was independently exercised against its two live shapes -- 001.json and 016.json (free-text string form) and 019.json (structured object form, two entries) -- all three validate; 'approvals.revisions' was independently read from 016.json (0), 019.json (1), and 024.json (1), all present and validating as required by the schema's own integer/minimum:0 constraint (already exercised in the full 26-contract sweep of point 3). (7) schema/run_state.schema.json is confirmed byte-identical to HEAD ('git diff --quiet' exit 0, zero diff), and .agent/run_state.json still independently validates against it -- AH-2 (detect, don't recreate) honoured. (8) Non-goal isolation independently re-confirmed: tools/validate.sh, CHANGELOG.md, schema/debt.schema.json, and schema/capability_profile.schema.json are all byte-identical to HEAD, and NIZAM.json's framework.version remains exactly '0.4.1'. (9) The full validator sweep independently reproduces 'SUMMARY: 8 passed, 0 failed' with exit 0."
+  },
+  "evidence_files": [
+    ".agent/evidence/025-qa-01.txt",
+    ".agent/evidence/025-qa-02.txt",
+    ".agent/evidence/025-qa-03.txt",
+    ".agent/evidence/025-qa-04.txt",
+    ".agent/evidence/025-qa-05.txt",
+    ".agent/evidence/025-qa-06.txt",
+    ".agent/evidence/025-qa-07.txt",
+    ".agent/evidence/025-qa-08.txt",
+    ".agent/evidence/025-qa-09.txt",
+    ".agent/evidence/025-qa-10.txt",
+    ".agent/evidence/025-qa-11.txt",
+    ".agent/evidence/025-qa-12.txt",
+    ".agent/evidence/025-qa-13.txt",
+    ".agent/evidence/025-qa-14.txt",
+    ".agent/evidence/025-qa-15.txt",
+    ".agent/evidence/025-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "observations": [
+    "The generator's own Loop-1 evidence trail (.agent/evidence/025-contract-review-01..15.txt and 025-contract-review-rev1-01..15.txt) remains present in the tree alongside this feature's Loop-2 QA evidence, matching the 020/021/022 precedent that pre-code review evidence and post-code QA evidence coexist rather than one superseding the other. Non-blocking; not part of this feature's own verification scope.",
+    "022.json carries the contract-review verdict shape but lacks the '-contract-review' filename suffix used by 020/021's sibling files. This is a pre-existing naming inconsistency from feature 022's own history, not something feature 025 introduced or was scoped to fix; the contract_review.schema.json's description explicitly anticipates this file by name as one of its four worked samples. Non-blocking.",
+    "No unit-test framework (Vitest/pytest/etc.) applies to this feature -- the project's verification surface is JSON Schema validation plus tools/validate.sh's shell-based NDS compliance checks, both independently re-run in full. No regression_baseline.json exists yet in this tree (consistent with feature 024's QA precedent, which also did not create one); this is a schema/config-only repository with no code coverage tool, so the Coverage Threshold Warning protocol does not apply here (coverage_warning recorded as null, matching 024.json's precedent)."
+  ],
+  "required_fixes": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "025",
+    "summary": "All 15 contract-025 verification commands were independently re-run from repo root into fresh .agent/evidence/025-qa-NN.txt files (not reused from the generator's 025-verify-NN.txt), and all 15 pass (15/15 EXIT:0): schema/qa_verdict.schema.json is now an anyOf union of the legacy (000-016) and evolved (017+) verdict shapes; the new schema/contract_review.schema.json exists, is itself a valid Draft 2020-12 schema, and declares the vendor-neutral urn:nizam-framework:... $id form; every one of the 29 .agent/qa/*.json files validates against qa_verdict OR contract_review with zero edits to those files; all 26 .agent/contracts/*.json files validate against contract.schema.json; contract.schema.json now explicitly documents 'amendments' and 'approvals.revisions' as first-class properties; schema/run_state.schema.json is confirmed unchanged (AH-2 honoured) and .agent/run_state.json still validates; no immutable .agent/qa or .agent/contracts record was edited (only .agent/contracts/025.json and this feature's own .agent/qa/025* artifacts are new); NIZAM.json indexes schema/contract_review.schema.json and passes C4; schema/README.md passes the C1-C3 --target sweep, names the new schema, and its frontmatter version strictly increased (0.2.0 -> 0.3.0) with exactly one new change_log entry; a deliberately-invalid fixture is rejected by both the qa_verdict and contract_review schemas; the full validator sweep reproduces 'SUMMARY: 8 passed, 0 failed' with no regression across C1-C8; and the untracked-aware scope guard confirms only the five expected files (qa_verdict.schema.json, contract_review.schema.json [new], contract.schema.json, README.md, NIZAM.json) changed outside .agent/, with tools/validate.sh, CHANGELOG.md, schema/run_state.schema.json, schema/debt.schema.json, and schema/capability_profile.schema.json all untouched and framework.version still 0.4.1. A mandatory 9-part adversarial spot-check independently confirmed: zero edits to any historical qa/contract audit record; all 29 qa artifacts and all 26 contracts independently re-validate; six deliberately-garbage/near-miss fixtures (spanning both legacy-qa-shaped, evolved-qa-shaped, and contract-review-shaped near-misses) are rejected by both schemas -- the union has not become accept-anything; the qa_verdict and contract_review schemas cleanly and correctly partition the legacy/evolved-qa family from the contract-review family with no cross-acceptance (000/017 vs 020/021/022 checked); both live amendments shapes (string and object) and all three sampled approvals.revisions values validate; run_state.schema.json byte-identical to HEAD; all non-goal files byte-identical to HEAD and framework.version unchanged; full validator sweep green. No blocking defects found. QA verdict: PASS."
+  }
+}

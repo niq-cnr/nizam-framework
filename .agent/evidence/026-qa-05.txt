@@ -1,0 +1,10 @@
+out=$(bash tools/validate.sh --target tools/fixtures/unresolved_path.md 2>&1); rc=$?; echo "$out"
+[C1] FAIL frontmatter-schema
+  tools/fixtures/unresolved_path.md: does not begin with a '---' frontmatter delimiter
+[C2] FAIL format
+  tools/fixtures/unresolved_path.md: does not begin with a '---' frontmatter delimiter
+[C3] PASS untagged-fence-sweep
+[C9] FAIL path-resolution
+  tools/fixtures/unresolved_path.md: unresolved path reference 'docs/architecture/ADR-999-does-not-exist.md'
+rc=1; token named; PASS
+EXIT:0

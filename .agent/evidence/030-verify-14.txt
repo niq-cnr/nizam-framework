@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- tools/validate.sh tools/verify_lib.sh tools/e2e_bootstrap_test.sh bootstrap.sh .github/workflows/compliance.yml schema/ && echo PASS || { echo "an out-of-scope immutable-for-this-feature file was modified"; git diff --name-only HEAD -- tools/validate.sh tools/verify_lib.sh tools/e2e_bootstrap_test.sh bootstrap.sh .github/workflows/compliance.yml schema/; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,154 @@
+Evaluator-authored adversarial spot-check for feature 027 (C10 single-source-
+of-truth consistency), independent of the generator's shipped
+tools/fixtures/*. All fixtures below are FRESH scratch files (never seen by
+the generator), created under the evaluator's own scratchpad tmp directory,
+targeted directly via `bash tools/validate.sh --target <fresh-fixture>` from
+the repo root. Paths shown below are session-scratchpad-absolute at capture
+time; commands are otherwise replayable against any equivalent fresh fixture
+reproducing the described content shape.
+
+=== Sub-check 1 (payload-set, format-agnostic) ===
+
+(a) >3-line unpunctuated markdown wrap naming standard/, templates/, schema/
+    (omitting tools/):
+    "Our consumer bundle\ntakes items from\n`standard/`,\n`templates/`,\nand `schema/` alone."
+    Result: [C10] FAIL consistency / [payload-set] vlib_no_stale_payload:
+    stale payload enumeration (omits tools/): "Our consumer bundle takes
+    items from `standard/`, `templates/`, and `schema/` alone."
+    EXIT:1 -- CORRECTLY CAUGHT (long unpunctuated wrap reconstructed).
+
+(b) HTML <p>...only.</p> immediately followed, same physical source line, by
+    an unrelated <p>...tools/...</p>:
+    "<p>People sometimes claim the bundle ships from <code>standard/</code>,
+    <code>templates/</code>, and <code>schema/</code> only.</p><p>By the way,
+    <code>tools/</code> also contains helper scripts for developers.</p>"
+    Result: [C10] FAIL consistency / [payload-set] ... "People sometimes
+    claim the bundle ships from standard/ , templates/ , and schema/ only."
+    -- the unrelated "helper scripts for developers" sentence is NOT present
+    in the reported offending segment. EXIT:1 -- CORRECTLY CAUGHT, and
+    correctly NOT swallowed together with the unrelated sentence.
+
+(c) `;`-broken enumeration (line break falls at an internal `;` list
+    separator, not a sentence end):
+    "The distributed set covers `standard/`, `templates/`;\n`schema/`
+    exclusively."
+    Result: [C10] FAIL consistency / [payload-set] ... "The distributed set
+    covers `standard/`, `templates/`; `schema/` exclusively." EXIT:1 --
+    CORRECTLY CAUGHT (semicolon did not prematurely terminate the segment).
+
+(d) Resist-false-pass: a stale sentence + an unrelated tools/ sentence in the
+    SAME paragraph, as two DIFFERENT terminally-punctuated sentences:
+    "Some readers mistakenly assume the set is only\n`standard/`,
+    `templates/`, and `schema/` altogether. Separately, note that `tools/`
+    contains build helpers unrelated to this claim."
+    Result: [C10] FAIL consistency / [payload-set] ... "Some readers
+    mistakenly assume the set is only `standard/`, `templates/`, and
+    `schema/` altogether." -- the unrelated tools/ sentence is NOT part of
+    the reported offending segment. EXIT:1 -- stale sentence correctly
+    FAILed in isolation, not swallowed by the co-located unrelated sentence.
+
+(e) Genuinely COMPLETE 4-dir enumeration control:
+    "The full distributed set spans `standard/`, `templates/`, `schema/`,
+    and `tools/` together."
+    Result: [C10] PASS consistency (overall script rc=1 due to unrelated
+    C1/C2 frontmatter-schema FAILs on this frontmatter-less scratch file --
+    irrelevant to C10, which reported PASS on this fixture).
+
+=== Sub-check 2 (P3 discovery-order) ===
+
+(f) Both canonical labels present, REVERSED order (Framework-checkout
+    fallback before Bootstrapped-consumer discovery):
+    Result: [C10] FAIL consistency / [discovery-order] 'Framework-checkout
+    fallback' (line 1) precedes 'Bootstrapped-consumer discovery' (line 2).
+    EXIT:1 -- CORRECTLY CAUGHT.
+
+(g) Both canonical labels present, CORRECT order:
+    Result: [C10] PASS consistency. CORRECTLY PASSED.
+
+(h) Only ONE canonical label present (Bootstrapped-consumer discovery, no
+    Framework-checkout fallback mention):
+    Result: [C10] PASS consistency (sub-check vacuously not-applicable, as
+    designed). CORRECTLY EXEMPT.
+
+(i) Real CONTEXT.md: independently grepped for both canonical labels
+    (case-insensitive) -- zero matches confirmed directly (CONTEXT.md's own
+    discovery sentence uses neither canonical label). `bash tools/validate.sh
+    --target CONTEXT.md` -> [C10] PASS consistency, EXIT:0. NOT
+    false-flagged.
+
+=== Sub-check 3 (version-anchor, External Anchor Rule) ===
+
+(j) Fresh scratch .html embedding <meta name="framework-version"
+    content="9.9.9"> (NIZAM.json's real framework.version independently
+    confirmed = 0.5.1 via
+    `python3 -c "import json; print(json.load(open('NIZAM.json'))['framework']['version'])"`):
+    Result: [C10] FAIL consistency / [version-anchor] meta framework-version
+    '9.9.9' != NIZAM.json framework.version '0.5.1'. EXIT:1 -- CORRECTLY
+    CAUGHT.
+
+(k) Real docs/guide/index.html targeted directly:
+    `bash tools/validate.sh --target docs/guide/index.html` ->
+    [C10] PASS consistency, EXIT:0. CORRECTLY PASSED (anchor matches
+    NIZAM.json's 0.5.1).
+
+(l) External Anchor Rule non-re-derivation proof: built an isolated minimal
+    directory containing ONLY a copy of tools/verify_lib.sh, a MUTATED copy
+    of NIZAM.json (framework.version manually rewritten to "9.9.9" via
+    python3/json, independently confirmed by re-reading the mutated file),
+    and a fresh .html fixture embedding <meta name="framework-version"
+    content="9.9.9">. Ran `bash <repo>/tools/validate.sh --target
+    qa_version_match_mutated.html` with CWD set to this isolated directory
+    (so `open('NIZAM.json')` resolves to the MUTATED scratch copy, not the
+    real repo's). Result: [C10] PASS consistency, EXIT:0 -- the check
+    matched the doc's 9.9.9 anchor against the MUTATED NIZAM.json's 9.9.9,
+    proving the expected value is read live from NIZAM.json at invocation
+    time (never hardcoded, never re-derived from the doc under test). The
+    SAME anchor value (9.9.9) was independently re-confirmed to FAIL against
+    the REAL repo's NIZAM.json (0.5.1) in probe (j)/qa_version_drift.html,
+    closing the loop: identical doc content passes or fails purely as a
+    function of which NIZAM.json is read, never a function of the doc
+    itself.
+
+=== Full sweep / regression re-confirmation ===
+
+`bash tools/validate.sh` (repo root, real tree): SUMMARY: 10 passed, 0
+failed; EXIT:0; [C1]..[C10] all PASS.
+`bash tools/validate.sh --payload`: SUMMARY (payload mode): 9 passed, 0
+failed; EXIT:0; [C1]-[C5],[C7]-[C10] all PASS, [C6] SKIP (payload mode, as
+designed).
+
+=== Content-fix independent re-verification ===
+
+- standard/GIP.md Section 4 item 3 (lines 106-108) independently re-read:
+  now reads "...under `standard/`, `templates/`, `schema/`, or `tools/` no
+  longer matches..." -- tools/ present, fix confirmed complete.
+- docs/guide/index.html line 535 independently re-read: contains
+  `<code>methodology/05_eval_and_trace.md</code>` between the
+  04_tool_driven_state.md and 06_release_train.md entries -- fix confirmed
+  complete.
+- methodology/06_release_train.md independently greped: zero matches for
+  the literal stale token "05_release_train.md"; the corrected
+  "06_release_train.md" token confirmed present at line 75 (Section 3.2
+  Minor-change example) and line 7 (frontmatter authoritative_source) --
+  fix confirmed complete.
+- Both edited protocol docs (standard/GIP.md, methodology/06_release_train.md)
+  independently re-read: frontmatter version 0.2.0 -> 0.3.0, with one new
+  change_log entry each naming the exact fix. Confirmed via direct file read.
+
+=== Anti-cheat (content-driven, not filename-keyed) ===
+
+All FAIL fixtures above ((a)-(d), (f), (j)) were authored under
+evaluator-chosen NEUTRAL scratch filenames (qa_longwrap.md, qa_html.html,
+qa_semicolon.md, qa_cosentence.md, qa_order_bad.md,
+qa_version_drift.html/qa_version_match_mutated.html) that share NO name with
+any generator-authored fixture in tools/fixtures/, and all correctly FAILed
+on the RIGHT sub-check, proving detection is content-driven. This
+independently corroborates (does not merely trust) the contract's own
+built-in neutral-mktemp anti-cheat verification entries 11/13/15/17/19/20/21,
+all of which were also independently re-run (see .agent/evidence/027-qa-11.txt,
+-13.txt, -15.txt, -17.txt, -19.txt, -20.txt, -21.txt) and passed (EXIT:0
+each).
+
+No defects found. No false-passes, no false-negatives, no filename-keying,
+no cross-sub-check leakage observed in any of the 12 independent adversarial
+probes above.

@@ -1,0 +1,97 @@
+{
+  "contract_id": "024",
+  "feature_id": "024",
+  "name": "Verification-Authoring Standard — methodology/02_adversarial_tdd.md Section",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_004.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "methodology/02_adversarial_tdd.md",
+        "purpose": "R3 (F-024). Append ONE new section, 'Verification-Authoring Standard' (heading form '## <N>. Verification-Authoring Standard', <N> being the next sequential number after the doc's existing final section 9 'References' — i.e. renumbering-safe: do not renumber or otherwise disturb any existing section 1-9 content), codifying the four FORBIDDEN verification anti-patterns a contract's verification suite MUST NOT use, each named with the exact discriminating keyword(s) and paired with the compliant tools/verify_lib.sh (F-023) primitive: (a) whole-file / vacuous greps that match text anywhere in the file rather than within the relevant section -> use the section-scoped grep primitive vlib_section_grep; (b) 'git diff HEAD' scope guards blind to NEW/untracked files -> use the untracked-aware guard primitive vlib_scope_guard (git status --porcelain --untracked-files=all -- . ':(exclude).agent'); (c) bare-adjacency / parenthetical 'appears near' checks that do not require a real structural or semantic relationship; (d) literal-substring checks that false-pass on unrelated text containing the same substring -> require checks that assert real content (name vlib_version_increased and/or vlib_path_resolves and/or vlib_no_stale_payload as the compliant real-content alternative(s)). CRITICAL STRUCTURAL CONSTRAINT (per verification entries 4/6's use of tools/verify_lib.sh's vlib_section_grep, which ends a section's span at the FIRST line beginning with one or more '#' characters, at ANY heading depth including '###'): the new section's body MUST be written as FLAT prose and/or an inline numbered/bulleted list -- it MUST NOT introduce any '###' (or deeper) subheading anywhere within its own span, even though existing sections 1-9 elsewhere in the file use that convention (e.g. Section 3's 3.1/3.2). Use bold lead-ins (e.g. '**(a) Whole-file / vacuous greps:**') or a numbered/bulleted list to distinguish the four anti-patterns, never a markdown heading. ALL of the following MUST appear in the section body BEFORE any '#'-prefixed line is reached (i.e. before the next markdown heading of any depth, or EOF if none follows): the four anti-pattern keyword groups (whole-file/vacuous; untracked/new-file; adjacen(cy)/parenthetical; substring), the literal string 'verify_lib.sh', and at least one real function name from tools/verify_lib.sh's five primitives (vlib_section_grep, vlib_scope_guard, vlib_version_increased, vlib_path_resolves, vlib_no_stale_payload) -- not merely an unattributed mention. Any fenced code block introduced anywhere in the file MUST carry a language tag (no bare ``` per C3). Bump frontmatter 'version' strictly above the current 0.2.0 (e.g. 0.3.0 — additive/MINOR, since this is a purely additive new section) and add EXACTLY ONE new matching 'change_log' frontmatter entry (version/date/summary) for the new version, per the F-017/F-019/F-020 precedent of satisfying validator C8 via the file's own change_log rather than a CHANGELOG.md line (CHANGELOG.md is out of scope for this feature). No other content change beyond what this section requires; existing sections 1-9 are preserved verbatim in substance."
+      }
+    ]
+  },
+  "non_goals": [
+    "No edit to tools/validate.sh — the validator's check count stays at 8 (no new check added by this feature; that is F-026/F-027/F-028)",
+    "No edit to tools/verify_lib.sh — F-023 is complete and its primitives are read-only canonical references for this feature",
+    "No C9/C10/C11 validator work of any kind — those are F-026/F-027/F-028",
+    "No schema edits (schema/qa_verdict.schema.json, schema/contract.schema.json, schema/contract_review.schema.json, schema/run_state.schema.json) — those are F-025",
+    "No e2e harness or CI workflow changes (tools/e2e_bootstrap_test.sh, .github/workflows/compliance.yml) — those are F-029",
+    "No CHANGELOG.md edit of any kind — this feature's NDS Sec 4 / validator C8 change-record obligation is satisfied entirely by methodology/02_adversarial_tdd.md's own frontmatter change_log entry, per the F-017/F-019/F-020 precedent; phase-close CHANGELOG entries are F-030's scope",
+    "No renumbering or substantive rewrite of methodology/02_adversarial_tdd.md's existing sections 1-9 — strictly additive",
+    "No edit to any file beyond methodology/02_adversarial_tdd.md and this contract file itself"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "The doc gained a verification-authoring-standard section: grep -Eqi 'verification[- ]authoring' methodology/02_adversarial_tdd.md",
+      "command": "f=methodology/02_adversarial_tdd.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eqi 'verification[- ]authoring' \"$f\" && echo PASS || { echo 'missing verification-authoring section heading'; exit 1; }"
+    },
+    {
+      "acceptance_test": "All four forbidden anti-patterns are named (verbatim feature-024 acceptance test 2, whole-file scope): python3 -c \"t=open('methodology/02_adversarial_tdd.md',encoding='utf-8').read().lower(); import sys; sys.exit(0 if ('whole-file' in t or 'vacuous' in t) and ('untracked' in t or 'new file' in t) and ('adjacen' in t or 'parenthetical' in t) and ('substring' in t) else 1)\"",
+      "command": "f=methodology/02_adversarial_tdd.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; python3 -c \"\nt = open('$f', encoding='utf-8').read().lower()\nimport sys\nok = ('whole-file' in t or 'vacuous' in t) and ('untracked' in t or 'new file' in t) and ('adjacen' in t or 'parenthetical' in t) and ('substring' in t)\nsys.exit(0 if ok else 1)\n\" && echo PASS || { echo 'missing one or more of the four forbidden anti-pattern keyword groups'; exit 1; }"
+    },
+    {
+      "acceptance_test": "The section points at the canonical library: grep -q 'verify_lib.sh' methodology/02_adversarial_tdd.md",
+      "command": "f=methodology/02_adversarial_tdd.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -q 'verify_lib.sh' \"$f\" && echo PASS || { echo 'missing verify_lib.sh reference'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (dogfooding / section-scoped hardening per methodology/02 Sec 3.1's own vacuous-match doctrine, composed from tools/verify_lib.sh's vlib_section_grep -- 'vacuous' already appears elsewhere in the doc at existing Section 3.1, so a whole-file check alone cannot prove the keywords are actually IN the new section rather than merely present somewhere else): each of the four anti-pattern keyword groups, PLUS the literal 'verify_lib.sh' string, PLUS at least one real vlib_ primitive name, occurs strictly WITHIN the new section's own span (from its heading to the FIRST line beginning with one or more '#' characters at ANY heading depth, or EOF -- vlib_section_grep's documented behavior, which is exactly why the contract's scope.files_modify[0].purpose mandates a flat-prose/list section body with no '###' subheadings)",
+      "command": "source tools/verify_lib.sh\nf=methodology/02_adversarial_tdd.md\ntest -f \"$f\" || { echo \"MISSING $f\"; exit 1; }\nheading='^## [0-9]+[.] Verification-Authoring Standard'\nfail=0\nvlib_section_grep \"$f\" \"$heading\" 'whole-file|vacuous' || { echo 'whole-file/vacuous keyword not found within the new section span'; fail=1; }\nvlib_section_grep \"$f\" \"$heading\" 'untracked|new file' || { echo 'untracked/new-file keyword not found within the new section span'; fail=1; }\nvlib_section_grep \"$f\" \"$heading\" 'adjacen|parenthetical' || { echo 'adjacency/parenthetical keyword not found within the new section span'; fail=1; }\nvlib_section_grep \"$f\" \"$heading\" 'substring' || { echo 'substring keyword not found within the new section span'; fail=1; }\nvlib_section_grep \"$f\" \"$heading\" 'verify_lib.sh' || { echo 'verify_lib.sh reference not found within the new section span'; fail=1; }\nvlib_section_grep \"$f\" \"$heading\" 'vlib_section_grep|vlib_scope_guard|vlib_version_increased|vlib_path_resolves|vlib_no_stale_payload' || { echo 'no real vlib_ primitive name found within the new section span'; fail=1; }\nif [ \"$fail\" -eq 1 ]; then exit 1; fi\necho PASS"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness -- closes the gap where 'verify_lib.sh' could be cited with no attribution to any real primitive, an unbacked citation the External Anchor Rule / Section 7 of this same doc would reject): the section cites at least one real vlib_ function name actually defined in tools/verify_lib.sh",
+      "command": "f=methodology/02_adversarial_tdd.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; grep -Eq 'vlib_section_grep|vlib_scope_guard|vlib_version_increased|vlib_path_resolves|vlib_no_stale_payload' \"$f\" && echo PASS || { echo 'verify_lib.sh referenced but no real primitive function name cited'; exit 1; }"
+    },
+    {
+      "acceptance_test": "Frontmatter version strictly increased vs HEAD (structurally verified via tools/verify_lib.sh's vlib_version_increased, YAML-parsed proper semver tuple comparison, not a substring/grep): validate.sh C8 relies on this same comparison logic",
+      "command": "source tools/verify_lib.sh\nf=methodology/02_adversarial_tdd.md\ntest -f \"$f\" || { echo \"MISSING $f\"; exit 1; }\nvlib_version_increased \"$f\" && echo PASS || exit 1"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness, NDS Sec 4 / validator C8 record-keeping precedent from contract 020): the file's change_log array carries an entry whose version equals its own current frontmatter version, AND exactly one NEW change_log entry was added vs the HEAD copy (not zero, not more than one)",
+      "command": "python3 -c \"\nimport subprocess, sys, yaml\n\ndef frontmatter(text):\n    lines = text.splitlines()\n    if not lines or lines[0].strip() != '---':\n        return None\n    end = None\n    for i, l in enumerate(lines[1:], start=1):\n        if l.strip() == '---':\n            end = i\n            break\n    if end is None:\n        return None\n    return yaml.safe_load(chr(10).join(lines[1:end])) or {}\n\npath = 'methodology/02_adversarial_tdd.md'\ncur_text = open(path, encoding='utf-8').read()\ncur_fm = frontmatter(cur_text)\nif cur_fm is None:\n    print(path + ': could not parse current frontmatter')\n    sys.exit(1)\nversion = cur_fm.get('version')\ncur_entries = cur_fm.get('change_log') or []\nversions = {str(e.get('version')) for e in cur_entries if isinstance(e, dict)}\nif version not in versions:\n    print('no change_log entry matching current version ' + repr(version))\n    sys.exit(1)\n\ntry:\n    head_text = subprocess.run(['git', 'show', 'HEAD:' + path], capture_output=True, text=True, check=True).stdout\nexcept subprocess.CalledProcessError as exc:\n    print(path + ': could not read HEAD copy: ' + exc.stderr.strip())\n    sys.exit(1)\nhead_fm = frontmatter(head_text) or {}\nhead_entries = head_fm.get('change_log') or []\nif len(cur_entries) != len(head_entries) + 1:\n    print('expected exactly one new change_log entry vs HEAD; HEAD had ' + str(len(head_entries)) + ', current has ' + str(len(cur_entries)))\n    sys.exit(1)\nprint('PASS (version ' + str(version) + ', change_log entries HEAD=' + str(len(head_entries)) + ' -> current=' + str(len(cur_entries)) + ')')\n\"\n"
+    },
+    {
+      "acceptance_test": "Frontmatter still schema-valid: bash tools/validate.sh --target methodology/02_adversarial_tdd.md; test $? -eq 0",
+      "command": "f=methodology/02_adversarial_tdd.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; out=$(bash tools/validate.sh --target \"$f\" 2>&1); rc=$?; echo \"$out\"; test \"$rc\" -eq 0 && echo PASS || { echo \"validate.sh --target exited $rc\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "No new untagged fences introduced (C3): bash tools/validate.sh --target methodology/02_adversarial_tdd.md | grep -q '\\[C3\\] PASS'",
+      "command": "f=methodology/02_adversarial_tdd.md; test -f \"$f\" || { echo \"MISSING $f\"; exit 1; }; out=$(bash tools/validate.sh --target \"$f\" 2>&1); echo \"$out\" | grep -q '\\[C3\\] PASS' && echo PASS || { echo \"$out\"; echo 'C3 did not report PASS'; exit 1; }"
+    },
+    {
+      "acceptance_test": "Validator stays green with UNCHANGED count (still 8; no new check in this feature): bash tools/validate.sh 2>&1 | tail -1 | grep -qx 'SUMMARY: 8 passed, 0 failed'",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; echo \"$out\"; echo \"$out\" | tail -1 | grep -qx 'SUMMARY: 8 passed, 0 failed' && test \"$rc\" -eq 0 && echo PASS || { echo 'validator summary/count regressed'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness -- no pre-existing check regressed, C1/C2/C4-C8 all still PASS on the full sweep): for c in C1 C2 C3 C4 C5 C6 C7 C8; do bash tools/validate.sh 2>&1 | grep -q \"[$c] PASS\" || exit 1; done",
+      "command": "out=$(bash tools/validate.sh 2>&1); fail=0; for c in C1 C2 C3 C4 C5 C6 C7 C8; do echo \"$out\" | grep -q \"\\[$c\\] PASS\" || { echo \"regression: $c did not report PASS\"; fail=1; }; done; test \"$fail\" -eq 0 && echo PASS || exit 1"
+    },
+    {
+      "acceptance_test": "Only methodology/02_adversarial_tdd.md changed outside .agent/ (untracked-aware scope guard, composed from tools/verify_lib.sh's vlib_scope_guard): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -v 'methodology/02_adversarial_tdd.md')\"",
+      "command": "source tools/verify_lib.sh\nvlib_scope_guard 'methodology/02_adversarial_tdd.md' && echo PASS || exit 1"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (robustness -- literal restatement of the feature-024 acceptance test 8 form, independent of vlib_scope_guard's own logic, so the two do not share a single point of failure): test -z \"$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -v 'methodology/02_adversarial_tdd.md')\"",
+      "command": "changed=$(git status --porcelain --untracked-files=all -- . ':(exclude).agent' | grep -v 'methodology/02_adversarial_tdd.md'); if [ -n \"$changed\" ]; then echo 'out-of-scope changed path(s) detected:'; echo \"$changed\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (non-goal enforcement -- CHANGELOG.md must NOT be touched by this feature; its own frontmatter change_log entry alone satisfies C8): git diff --quiet HEAD -- CHANGELOG.md",
+      "command": "git diff --quiet HEAD -- CHANGELOG.md && echo PASS || { echo 'CHANGELOG.md was modified -- out of scope for feature 024 (F-030 owns phase-close CHANGELOG entries)'; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (non-goal enforcement -- tools/verify_lib.sh and tools/validate.sh must NOT be touched by this feature): git diff --quiet HEAD -- tools/verify_lib.sh tools/validate.sh",
+      "command": "git diff --quiet HEAD -- tools/verify_lib.sh tools/validate.sh && echo PASS || { echo 'tools/verify_lib.sh or tools/validate.sh was modified -- both are out of scope for feature 024'; exit 1; }"
+    }
+  ],
+  "estimated_lines": 70,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/024-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/024-verify-01.txt for the first entry, ..., .agent/evidence/024-verify-15.txt for the fifteenth). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-08T13:24:27Z",
+    "revisions": 1
+  }
+}

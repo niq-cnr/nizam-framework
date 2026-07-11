@@ -1,0 +1,3 @@
+f=methodology/02_adversarial_tdd.md; test -f "$f" || { echo "MISSING $f"; exit 1; }; out=$(bash tools/validate.sh --target "$f" 2>&1); echo "$out" | grep -q '\[C3\] PASS' && echo PASS || { echo "$out"; echo 'C3 did not report PASS'; exit 1; }
+PASS
+EXIT:0
