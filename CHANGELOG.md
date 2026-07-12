@@ -84,6 +84,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   defects were fixed by F-027 and verified in-tree, but the register was
   never updated); new entries NDEBT-007 through NDEBT-011 registered from
   the 2026-07-12 external project review.
+- `NIZAM.json` `framework.version` and the `docs/guide/index.html` version
+  anchors (meta `framework-version` and the footer version span) reconciled
+  from the stale `0.5.1` to `0.5.3`: the v0.5.2 and v0.5.3 hotfix releases
+  were tagged without bumping the root capability index, leaving agents that
+  discover the framework through `NIZAM.json` a conflicting release identity
+  (PR #16 review finding).
 
 ## [0.5.3] - 2026-07-09
 
