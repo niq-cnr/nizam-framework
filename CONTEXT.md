@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 0.4.0
+version: 0.4.1
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "0.4.1"
+    date: "2026-07-12"
+    summary: "Stale-enumeration cleanup: the Module Map's standard/ entry now names the constitutional policy documents (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance) shipped since v0.4.0, instead of only the four genesis-era core documents."
   - version: "0.4.0"
     date: "2026-07-09"
     summary: "Bump version for v0.5.1 release (payload validation mode)."
@@ -29,7 +32,7 @@ infrastructure, and not a runtime service.
 ## Module Map (Hybrid Mono-Repo)
 
 - `schema/` — JSON Schemas for every machine-readable artifact (frontmatter, manifest, phase, feature list, contract, QA verdict, run state).
-- `standard/` — The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), and the anti-hallucination constraints.
+- `standard/` — The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), the anti-hallucination constraints, and the constitutional policy set (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance).
 - `methodology/` — Planning, execution, adversarial TDD, circuit breaker, tool-driven state, release train protocols.
 - `templates/` — Consumer-repo templates (CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest).
 - `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md`.
