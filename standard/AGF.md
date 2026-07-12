@@ -2,9 +2,13 @@
 id: agent-governance-framework
 title: "Agent Governance Framework (AGF)"
 description: "The generalised multi-agent execution model: agent roles, the dual validator gate, the JSON verdict parse rule, and the durable-state rule for agent coordination."
-version: 0.1.0
+version: 0.1.1
 status: active
 authoritative_source: standard/AGF.md
+change_log:
+  - version: "0.1.1"
+    date: "2026-07-12"
+    summary: "Documentation-truth cleanup: Section 6's circuit-breaker cross-reference now names methodology/03_circuit_breaker.md (shipped at genesis; the 'forthcoming' wording was stale), and the Section 4 verdict rule's dropped word is restored ('entry in any of the three arrays blocks advancement')."
 ---
 
 # Agent Governance Framework (AGF)
@@ -91,7 +95,7 @@ Rules for applying this gate:
    conditions above, the result is a rejection, regardless of surrounding prose tone.
 2. **Empty arrays are load-bearing.** `issues`, `missing_acceptance_coverage`, and
    `unsupported_claims` are not advisory fields; each is a hard gate. A single non-empty
-   entry in any of the three blocks advancement even if `approved` is `true`.
+   entry in any of the three arrays blocks advancement even if `approved` is `true`.
 3. **No inferred approval.** An orchestrator or calling agent MUST NOT synthesize an
    `approved: true` verdict on a validator's behalf from an incomplete or malformed
    response. A missing or malformed verdict block is treated as a rejection and triggers
@@ -126,8 +130,8 @@ Every execution loop governed by this framework embeds a mandatory circuit break
 limiting self-correction attempts on any single step, so that repeated failures halt for
 human review rather than looping indefinitely. The full 3-strike protocol — attempt
 strategy per strike, the halt procedure, and required state updates on trigger — is
-defined in the framework's execution methodology (a forthcoming `methodology/` document
-on circuit breakers). This document establishes only the cross-cutting requirement: no
+defined in the framework's execution methodology (`methodology/03_circuit_breaker.md`).
+This document establishes only the cross-cutting requirement: no
 role defined in Section 2 may bypass or override the circuit breaker's halt decision.
 
 ## 7. References

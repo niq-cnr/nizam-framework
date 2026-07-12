@@ -2,10 +2,13 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.3.0
+version: 0.3.1
 status: active
 authoritative_source: standard/GIP.md
 change_log:
+  - version: "0.3.1"
+    date: "2026-07-12"
+    summary: "Stale-count cleanup: Section 2.1's bootstrap verification minimum no longer hard-codes 'the four standard/ documents' (standard/ has since grown past the original four core documents); the check is now phrased against the injected standard/ document set, so the sentence cannot silently drift again as the module grows."
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "H5: corrected Section 2 item 2, Section 2.1 item 2, and Section 1's Core Directive payload parenthetical to all name the full injected payload (standard/, templates/, schema/, tools/, and NIZAM.json), replacing the stale 3-dir description and resolving the self-contradiction between Section 1 and Sections 2/5.1. H8: added the Adopting in an Existing Repository section (existing-CONTEXT.md/AGENTS.md/CI conflict rules and the docs-standard-only / templates / full loop incremental adoption tiers), renumbering Enforcement to Section 6."
@@ -65,7 +68,7 @@ Any consumer MAY invoke it directly rather than reimplementing the steps in Sect
 
 The verification step confirms, at minimum:
 
-- Every required governance file landed on disk (a minimum set including the four
+- Every required governance file landed on disk (a minimum set including the injected
   `standard/` documents and the `schema/frontmatter.schema.json` validation target).
 - Any machine-readable index the framework ships (its root capability index) parses as
   valid JSON.

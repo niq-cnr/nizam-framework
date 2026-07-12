@@ -2,9 +2,13 @@
 id: nizam-registry-readme
 title: "Registry Module — Index"
 description: "Index for the registry/ module: the JSON Schema the root NIZAM.json context router validates against, plus generalised ecosystem scope-definition and registry patterns for consumer repositories."
-version: 0.2.0
+version: 0.2.1
 status: active
 authoritative_source: registry/README.md
+change_log:
+  - version: "0.2.1"
+    date: "2026-07-12"
+    summary: "Stale-count cleanup: the 'Relationship to NIZAM.json' section no longer hard-codes '13 capability entries' (the index had grown to 24); the sentence now refers to the capability entries without a count, so it cannot silently drift as the index grows."
 ---
 
 # registry/
@@ -29,7 +33,7 @@ The root `NIZAM.json` is **not** a file under this directory — it lives at the
 repository root, per `product_spec.md` Sec 2.3, so it is the very first thing an agent
 or `bootstrap.sh` run finds. This module supplies the schema `NIZAM.json` must satisfy
 (`nizam-index.schema.json`) and nothing else about `NIZAM.json` itself; the index's
-actual content — the module map, the 13 capability entries, the schema and template
+actual content — the module map, the capability entries, the schema and template
 path indexes, and the consumption guidance — is authored and maintained at the
 repository root, not restated here.
 

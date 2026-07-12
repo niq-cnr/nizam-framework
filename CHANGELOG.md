@@ -40,6 +40,80 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   is load-bearing. A second CI job in `.github/workflows/compliance.yml`
   (`e2e_bootstrap`, alongside the existing `validate` job) runs it on every
   PR and push to `main`. `bootstrap.sh` itself is unmodified.
+- `docs/planning/ROADMAP.md`: a forward roadmap naming the outstanding human
+  gates (the v0.6.0 release cut, GitHub Pages publishing for `docs/guide/`),
+  the candidate scope for a phase 005 sourced from the open debt register,
+  and the mechanize-or-descope decision required for the constitutional
+  policy surface shipped in v0.4.0.
+
+### Fixed
+
+- `tools/skill.json`: the `release_train` capability's `module` pointer now
+  names `methodology/06_release_train.md`; it had pointed at
+  `methodology/05_release_train.md`, a path retired by the v0.4.0 methodology
+  renumbering that inserted `05_eval_and_trace.md`. The identical stale
+  pointer in `tools/interface.md` was fixed during the v0.5.x cycle, but
+  `skill.json` — whose content no validator check sweeps (C4 parses only
+  `NIZAM.json`; C9 sweeps only `.md`/`.html` bodies) — was missed and shipped
+  broken from v0.4.0 through v0.5.3. `skill.json` `version` bumped
+  0.1.0 → 0.1.1; the enforcement gap is registered as NDEBT-007.
+- `standard/AGF.md` (0.1.1): Section 6's circuit-breaker cross-reference no
+  longer calls `methodology/03_circuit_breaker.md` "forthcoming" (it shipped
+  at genesis), and the Section 4 verdict rule's dropped word is restored
+  ("a single non-empty entry in any of the three arrays blocks advancement").
+- `standard/GIP.md` (0.3.1): Section 2.1's verification minimum no longer
+  hard-codes "the four `standard/` documents" — the module has shipped eleven
+  governance documents since v0.4.0.
+- `registry/README.md` (0.2.1): removed the stale "13 capability entries"
+  hard count (the root index now carries 24 capability entries).
+- `schema/README.md` (0.4.0): added the missing `work-packet.schema.json` row
+  to the Schemas table — the schema shipped in v0.5.0 but was never indexed
+  in its own module README.
+- `NIZAM.json`: the `schema` module's `key_documents` list now includes
+  `schema/contract_review.schema.json`, which was present in the top-level
+  `schemas[]` array but missing from the module index.
+- `CONTEXT.md` (0.4.1) and root `README.md`: the `standard/` module
+  descriptions now name the constitutional policy documents shipped since
+  v0.4.0 instead of only the four genesis-era core documents; the README
+  quickstart is re-pinned from v0.5.1 to v0.5.3 (the latest released tag).
+- `docs/planning/manifest.json`: phase `004-durable-enforcement` status
+  corrected from the stale `in_progress` to `complete` — run_state recorded
+  `phase_complete` on 2026-07-10 and the phase PR merged — with a lifecycle
+  note recording the outstanding v0.6.0 human release gate.
+- `docs/planning/DEBT.md` (0.7.0): NDEBT-003 moved to Resolved (both of its
+  defects were fixed by F-027 and verified in-tree, but the register was
+  never updated); new entries NDEBT-007 through NDEBT-011 registered from
+  the 2026-07-12 external project review.
+- `NIZAM.json` `framework.version` and the `docs/guide/index.html` version
+  anchors (meta `framework-version` and the footer version span) reconciled
+  from the stale `0.5.1` to `0.5.3`: the v0.5.2 and v0.5.3 hotfix releases
+  were tagged without bumping the root capability index, leaving agents that
+  discover the framework through `NIZAM.json` a conflicting release identity
+  (PR #16 review finding).
+
+## [0.5.3] - 2026-07-09
+
+### Fixed
+
+- Stripped trailing whitespace from `standard/failure_modes.md` in the
+  governance payload, which caused CI failures on consumer repos.
+  *(Backfilled 2026-07-12: v0.5.3 was tagged and released on GitHub without a
+  CHANGELOG entry, violating `methodology/06_release_train.md`'s changelog
+  discipline; this entry restores the record. See the v0.5.3 GitHub Release.)*
+
+## [0.5.2] - 2026-07-09
+
+### Fixed
+
+- `tools/validate.sh` C8 (`check_c8_version_changelog`) path resolution in
+  payload mode: `git show HEAD:<path>` now prepends
+  `git rev-parse --show-prefix`, so in payload mode (CWD = `.nizam/`) it
+  correctly resolves `.nizam/`-relative paths instead of repo-root paths,
+  eliminating false "version downgrade" failures on consumer repos that have
+  their own `tools/` or `templates/` directories at the repo root. (PR #14)
+  *(Backfilled 2026-07-12: v0.5.2 was tagged and released on GitHub without a
+  CHANGELOG entry; this entry restores the record. See the v0.5.2 GitHub
+  Release.)*
 
 ## [0.5.1] - 2026-07-09
 

@@ -1,6 +1,7 @@
 {
   "schema_version": "2.0.0",
-  "updated_at": "2026-07-08",
+  "updated_at": "2026-07-12",
+  "forward_planning": "docs/planning/ROADMAP.md",
   "current_phase": "004-durable-enforcement",
   "phases": [
     {
@@ -29,9 +30,9 @@
       "id": "004-durable-enforcement",
       "title": "Durable Enforcement & Dogfooding — Narrative-Truth CI Checks, Vetted Verification Library, E2E Bootstrap Test & Schema Dogfooding",
       "feature_list": ".agent/feature_list_004.json",
-      "status": "in_progress",
+      "status": "complete",
       "activation_state": "active",
-      "note": "PROPOSED 2026-07-08 by @planner (spec .agent/product_spec_004.md, feature_list_004.json: 8 features 023-030, DAG validated acyclic, original_estimate_lines=1250). ACTIVATED 2026-07-08 on human authorization ('approved. please proceed.'); manifest flipped to in_progress/active and current_phase advanced to 004-durable-enforcement; run_state phase_activated recorded; branch rebased onto the released main (913aa49) after v0.2.0+v0.3.0 shipped. Realizes four recommendations: R1 narrative-truth CI checks C9 (path resolution) + C10 (single-source-of-truth consistency); R2 hermetic end-to-end consumer-bootstrap test + CI job; R3 tools/verify_lib.sh vetted verification-helper library + a verification-authoring standard in methodology/02; R4 schema reconciliation (qa_verdict union + new contract_review schema) + C11 dogfood validation of the framework's own .agent/ artifacts, resolving NDEBT-002. Adding C9/C10/C11 migrates the validator SUMMARY from '8 passed' to '11 passed' (immutable historical records keep '8 passed'). Execution MUST begin after phase-003 PR #5 merges (rebase onto main); the checks are proven non-breaking against the current tree. Human gate at close: v0.4.0 release (MINOR; additive, no breaking runtime change, bootstrap.sh unmodified) — recorded, not executed."
+      "note": "Lifecycle: PROPOSED 2026-07-08 by @planner (spec .agent/product_spec_004.md, feature_list_004.json: 8 features 023-030, DAG validated acyclic, original_estimate_lines=1250) -> ACTIVATED 2026-07-08 on human authorization ('approved. please proceed.') -> COMPLETED 2026-07-10 (run_state event phase_complete: all 8 features 023-030 through the full contract lifecycle, validator green SUMMARY: 11 passed, 0 failed; phase PR #15 merged to main). Realized four recommendations: R1 narrative-truth CI checks C9 (path resolution) + C10 (single-source-of-truth consistency); R2 hermetic end-to-end consumer-bootstrap test + CI job; R3 tools/verify_lib.sh vetted verification-helper library + a verification-authoring standard in methodology/02; R4 schema reconciliation (qa_verdict union + new contract_review schema) + C11 dogfood validation of the framework's own .agent/ artifacts, resolving NDEBT-002. NOTE the release-gate drift: the proposal-time note named v0.4.0 as the close gate, but v0.4.0/v0.4.1 (NMF hybrid) and v0.5.0-v0.5.3 were consumed by out-of-band work while this phase executed; the phase's [Unreleased] CHANGELOG content awaits the next MINOR cut (v0.6.0 per run_state). Human gates outstanding at close: the v0.6.0 release cut and GitHub Pages publishing for docs/guide/ (open since phase 003) — recorded, not executed. Status corrected from stale 'in_progress' 2026-07-12 (the manifest was never updated at phase close; run_state, feature_list_004, DEBT.md, and git history all corroborate completion). Forward planning: docs/planning/ROADMAP.md."
     }
   ]
 }
