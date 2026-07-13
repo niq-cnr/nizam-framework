@@ -7,6 +7,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-07-13
+
 ### Added
 
 - `tools/verify_lib.sh`: a vetted, sourced verification-helper library exposing
@@ -90,6 +92,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   were tagged without bumping the root capability index, leaving agents that
   discover the framework through `NIZAM.json` a conflicting release identity
   (PR #16 review finding).
+
+### Changed
+
+- Release metadata: `NIZAM.json` `framework.version` and the
+  `docs/guide/index.html` version anchors bumped to `0.6.0`; the `README.md`
+  quickstart re-pinned to `v0.6.0`; `CONTEXT.md` bumped to 0.5.0 for the
+  release state.
+- `NIZAM.json`: the `nizam-compliance-validator` capability summary now
+  describes the full C1–C11 check set — it had continued to enumerate only
+  the eight v0.2.0-era check domains after C9 (repo-wide path resolution),
+  C10 (single-source-of-truth consistency), and C11 (dogfood schema
+  validation) shipped in this release.
 
 ## [0.5.3] - 2026-07-09
 
