@@ -7,6 +7,35 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `.github/workflows/release.yml`: mechanizes GitHub Release publication.
+  On every `vMAJOR.MINOR.PATCH` tag push (or manual dispatch for a
+  pre-existing tag), it extracts the tag's own `## [X.Y.Z]` CHANGELOG
+  section (read at the tag, not at `main`), titles the Release from the
+  annotated tag's subject line, and creates-or-updates the Release page
+  idempotently. A tag whose at-tag CHANGELOG carries no matching section
+  fails loudly, enforcing `methodology/06_release_train.md` Section 2's
+  changelog discipline at publication time — the failure class of the
+  v0.5.2/v0.5.3 cycle (tagged without CHANGELOG entries) and of v0.6.0
+  (tagged without a Release page). The logic is inline in the workflow, not
+  under `tools/`, because `tools/` is bootstrap-injected consumer payload
+  and Release publication is a framework-envelope concern.
+
+### Changed
+
+- `docs/planning/ROADMAP.md` (0.2.0): Current Position refreshed after the
+  2026-07-15 release-readiness audit — the v0.6.0 annotated tag was cut and
+  pushed 2026-07-15 at the release commit (955c1d7), executing Track 1's first
+  human gate; the residual v0.6.0 GitHub Release publication and the GitHub
+  Pages gate remain recorded, and the phase-005 candidate scope gains the
+  NDEBT-012 payload-validator fix.
+- `docs/planning/DEBT.md` (0.8.0): registered NDEBT-012 — `tools/validate.sh
+  --payload` is CWD-sensitive and fails when invoked from a consumer
+  repository root instead of inside `.nizam/` (GitHub issue #18, the first
+  bug report from a real external consumer; corroborates NDEBT-004 and
+  NDEBT-008's consumer-context concerns).
+
 ## [0.6.0] - 2026-07-13
 
 ### Added

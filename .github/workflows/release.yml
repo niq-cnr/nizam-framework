@@ -1,0 +1,114 @@
+name: release
+
+# Mechanizes the GitHub Release publication residual of
+# methodology/06_release_train.md: the tag is (and remains) the release per
+# Section 2, but README.md links consumers to the tag's GitHub Release page,
+# and two consecutive release cycles drifted (v0.5.2/v0.5.3 tagged with no
+# CHANGELOG entry; v0.6.0 tagged with no Release page). This workflow makes
+# the page a deterministic consequence of the tag push, and makes a tag
+# WITHOUT a matching CHANGELOG section a loud failure instead of a silent
+# omission — enforcing release-train step 2 (changelog discipline) at
+# publication time.
+#
+# The extraction logic lives inline here, NOT under tools/: everything in
+# tools/ is bootstrap-injected consumer payload, and Release publication is
+# framework-envelope concern only.
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+  # workflow_dispatch exists for tags cut before this workflow landed (e.g.
+  # v0.6.0) or for re-publishing corrected notes for an existing tag.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to publish (e.g. v0.6.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # fetch-depth: 0 is load-bearing: it makes checkout fetch all tags
+          # (including their annotation objects, read below for the Release
+          # title) and guarantees a dispatch-supplied tag ref resolves even
+          # though the dispatch context's default ref is a branch.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Resolve and verify the tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          TAG="$INPUT_TAG"
+          if [[ ! "$TAG" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "FATAL: '$TAG' is not a vMAJOR.MINOR.PATCH release tag." >&2
+            exit 1
+          fi
+          git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || {
+            echo "FATAL: tag '$TAG' does not exist on this repository." >&2; exit 1
+          }
+          # Release title: the annotated tag's subject line (the release
+          # train's human sign-off artifact names the release); fall back to
+          # the bare tag for lightweight tags.
+          TITLE="$(git for-each-ref "refs/tags/$TAG" --format='%(contents:subject)')"
+          [ -n "$TITLE" ] || TITLE="$TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+
+      - name: Extract the tag's CHANGELOG section
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+          VERSION="${TAG#v}"
+          # Read CHANGELOG.md as it exists AT THE TAG, not at the workflow's
+          # checkout ref, so re-publishing an old tag reproduces that
+          # release's own record.
+          git show "$TAG:CHANGELOG.md" > "$RUNNER_TEMP/CHANGELOG.at-tag.md"
+          # index() == 1 is a literal starts-with check: VERSION contains
+          # dots, which an interpolated awk regex would treat as wildcards.
+          awk -v ver="$VERSION" '
+            index($0, "## [" ver "]") == 1 { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' "$RUNNER_TEMP/CHANGELOG.at-tag.md" \
+            | sed -e '/./,$!d' > "$RUNNER_TEMP/notes.md"
+          if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
+            echo "FATAL: CHANGELOG.md at tag $TAG carries no '## [$VERSION]' section." >&2
+            echo "A release without a changelog entry violates methodology/06_release_train.md Section 2." >&2
+            exit 1
+          fi
+          {
+            printf '\n**Full Changelog**: %s\n' \
+              "https://github.com/${GITHUB_REPOSITORY}/blob/$TAG/CHANGELOG.md"
+          } >> "$RUNNER_TEMP/notes.md"
+
+      - name: Create or update the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          TITLE: ${{ steps.tag.outputs.title }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" \
+              --title "$TITLE" --notes-file "$RUNNER_TEMP/notes.md"
+            echo "Updated existing Release for $TAG."
+          else
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag \
+              --title "$TITLE" --notes-file "$RUNNER_TEMP/notes.md"
+            echo "Created Release for $TAG."
+          fi

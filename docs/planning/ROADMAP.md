@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-07-15"
+    summary: "Post-release refresh after the 2026-07-15 release-readiness audit: v0.6.0 annotated tag cut (Track 1 gate 1 executed; residual GitHub Release publication recorded), Current Position updated from v0.5.3 to v0.6.0, NDEBT-012 (payload-validator CWD sensitivity, issue #18) added to the open-debt roll and the phase 005 candidate scope."
   - version: "0.1.0"
     date: "2026-07-12"
     summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
@@ -24,26 +27,28 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-07-12)
+## Current Position (2026-07-15)
 
 - Phases 001–004 are complete. Phase 004 (Durable Enforcement & Dogfooding) merged to
   `main`; the validator runs green at `SUMMARY: 11 passed, 0 failed` (C1–C11) and the
   hermetic e2e bootstrap harness passes in CI.
-- Latest released tag: v0.5.3. The phase-004 work sits in the CHANGELOG `[Unreleased]`
-  section awaiting the next MINOR cut.
+- Latest released tag: v0.6.0 — the annotated tag was cut and pushed 2026-07-15 at the
+  release commit 955c1d7 (CHANGELOG section dated 2026-07-13), executing Track 1's
+  first human gate. The CHANGELOG `[Unreleased]` section holds post-release
+  planning and release-automation updates.
 - Open debt: NDEBT-004, NDEBT-005, NDEBT-007, NDEBT-008, NDEBT-009, NDEBT-010,
-  NDEBT-011 (see `docs/planning/DEBT.md`).
+  NDEBT-011, NDEBT-012 (see `docs/planning/DEBT.md`).
 
 ## Track 1 — Outstanding Human Gates (no planning required)
 
 These are recorded decisions awaiting execution by a human with release authority;
 they need no new phase.
 
-1. **Cut v0.6.0.** Roll the `[Unreleased]` CHANGELOG content (phase 004: C9/C10/C11,
-   `tools/verify_lib.sh`, the e2e harness, schema reconciliation, plus the 2026-07-12
-   documentation-truth cleanup) into a dated `0.6.0` section and tag the release per
-   `methodology/06_release_train.md`. MINOR: additive, no breaking runtime change,
-   `bootstrap.sh` unmodified.
+1. **Cut v0.6.0 — EXECUTED 2026-07-15.** The annotated tag `v0.6.0` was pushed at
+   commit 955c1d7 per `methodology/06_release_train.md` (MINOR: additive, no breaking
+   runtime change, `bootstrap.sh` unmodified). Residual: **publish the v0.6.0 GitHub
+   Release page** — `README.md`'s release link points at it and 404s until it exists
+   (every prior tag v0.1.0–v0.5.3 has a published Release page).
 2. **Publish the user guide to GitHub Pages.** Outstanding since phase 003
    (`docs/guide/index.html` ships in-repo but is not yet published). Recorded in the
    phase-003 manifest note; still unexecuted.
@@ -74,6 +79,12 @@ debt register (IDs refer to `docs/planning/DEBT.md`):
    enumeration-completeness and bare-cross-reference checks, ideally sourced from a
    canonical index rather than hand-maintained lists.
 6. **Align the work-packet template with its schema** (NDEBT-011).
+7. **Fix the payload validator's CWD sensitivity** (NDEBT-012): anchor
+   `tools/validate.sh --payload` path resolution to the script/payload root so
+   `bash .nizam/tools/validate.sh --payload` from a consumer repository root behaves
+   identically to invocation from inside `.nizam/`. Sourced from the first real
+   external-consumer bug report (issue #18) — the exact consumer-reality evidence
+   this phase exists to generate.
 
 ## Track 3 — Strategic Decision: Mechanize or Descope the Constitutional Layer
 
