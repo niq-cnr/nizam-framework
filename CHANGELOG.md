@@ -7,6 +7,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `.github/workflows/release.yml`: mechanizes GitHub Release publication.
+  On every `vMAJOR.MINOR.PATCH` tag push (or manual dispatch for a
+  pre-existing tag), it extracts the tag's own `## [X.Y.Z]` CHANGELOG
+  section (read at the tag, not at `main`), titles the Release from the
+  annotated tag's subject line, and creates-or-updates the Release page
+  idempotently. A tag whose at-tag CHANGELOG carries no matching section
+  fails loudly, enforcing `methodology/06_release_train.md` Section 2's
+  changelog discipline at publication time — the failure class of the
+  v0.5.2/v0.5.3 cycle (tagged without CHANGELOG entries) and of v0.6.0
+  (tagged without a Release page). The logic is inline in the workflow, not
+  under `tools/`, because `tools/` is bootstrap-injected consumer payload
+  and Release publication is a framework-envelope concern.
+
 ### Changed
 
 - `docs/planning/ROADMAP.md` (0.2.0): Current Position refreshed after the
