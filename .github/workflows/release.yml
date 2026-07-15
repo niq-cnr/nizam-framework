@@ -53,10 +53,10 @@ jobs:
         run: |
           set -euo pipefail
           TAG="$INPUT_TAG"
-          case "$TAG" in
-            v[0-9]*.[0-9]*.[0-9]*) : ;;
-            *) echo "FATAL: '$TAG' is not a vMAJOR.MINOR.PATCH release tag." >&2; exit 1 ;;
-          esac
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "FATAL: '$TAG' is not a vMAJOR.MINOR.PATCH release tag." >&2
+            exit 1
+          fi
           git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || {
             echo "FATAL: tag '$TAG' does not exist on this repository." >&2; exit 1
           }
@@ -78,8 +78,10 @@ jobs:
           # checkout ref, so re-publishing an old tag reproduces that
           # release's own record.
           git show "$TAG:CHANGELOG.md" > "$RUNNER_TEMP/CHANGELOG.at-tag.md"
+          # index() == 1 is a literal starts-with check: VERSION contains
+          # dots, which an interpolated awk regex would treat as wildcards.
           awk -v ver="$VERSION" '
-            $0 ~ "^## \\[" ver "\\]" { found = 1; next }
+            index($0, "## [" ver "]") == 1 { found = 1; next }
             found && /^## \[/ { exit }
             found { print }
           ' "$RUNNER_TEMP/CHANGELOG.at-tag.md" \

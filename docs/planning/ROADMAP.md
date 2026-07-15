@@ -34,8 +34,8 @@ successor, leaving open debt deferred to unscoped "future phases").
   hermetic e2e bootstrap harness passes in CI.
 - Latest released tag: v0.6.0 — the annotated tag was cut and pushed 2026-07-15 at the
   release commit 955c1d7 (CHANGELOG section dated 2026-07-13), executing Track 1's
-  first human gate. The CHANGELOG `[Unreleased]` section holds only post-release
-  planning-doc updates.
+  first human gate. The CHANGELOG `[Unreleased]` section holds post-release
+  planning and release-automation updates.
 - Open debt: NDEBT-004, NDEBT-005, NDEBT-007, NDEBT-008, NDEBT-009, NDEBT-010,
   NDEBT-011, NDEBT-012 (see `docs/planning/DEBT.md`).
 
