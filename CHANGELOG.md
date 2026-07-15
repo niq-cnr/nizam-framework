@@ -7,6 +7,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- `docs/planning/ROADMAP.md` (0.2.0): Current Position refreshed after the
+  2026-07-15 release-readiness audit — the v0.6.0 annotated tag was cut and
+  pushed 2026-07-15 at the release commit (955c1d7), executing Track 1's first
+  human gate; the residual v0.6.0 GitHub Release publication and the GitHub
+  Pages gate remain recorded, and the phase-005 candidate scope gains the
+  NDEBT-012 payload-validator fix.
+- `docs/planning/DEBT.md` (0.8.0): registered NDEBT-012 — `tools/validate.sh
+  --payload` is CWD-sensitive and fails when invoked from a consumer
+  repository root instead of inside `.nizam/` (GitHub issue #18, the first
+  bug report from a real external consumer; corroborates NDEBT-004 and
+  NDEBT-008's consumer-context concerns).
+
 ## [0.6.0] - 2026-07-13
 
 ### Added
