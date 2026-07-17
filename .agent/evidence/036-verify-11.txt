@@ -1,0 +1,4 @@
+source tools/verify_lib.sh; vlib_section_grep ecosystem/07_progress_comparison.md '^## 7\. Comparison Artifact$' '\.agent/audits/<audit-id>/delta\.json' && echo PASS || { echo "Comparison Artifact section missing the .agent/audits/<audit-id>/delta.json convention"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0

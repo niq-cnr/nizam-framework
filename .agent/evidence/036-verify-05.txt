@@ -1,0 +1,7 @@
+source tools/verify_lib.sh; for tok in '`new`' '`resolved`' '`reopened`' '`stale`'; do vlib_section_grep ecosystem/07_progress_comparison.md '^## 3\. Finding-State Transitions$' "$tok" || { echo "Finding-State Transitions section missing class token: $tok"; exit 1; }; done; echo PASS
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0

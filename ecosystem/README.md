@@ -73,7 +73,7 @@ as later features land their protocol document.
 | 04 | `04_dependency_reconciliation.md` | Plan (typed dependencies) | Planned |
 | 05 | `05_release_train_coordination.md` | Promote (release-train coordination) | Planned |
 | 06 | `06_simplification_review.md` | Repeat (recurring simplification) | Planned |
-| 07 | `07_progress_comparison.md` | Compare | Planned |
+| 07 | `07_progress_comparison.md` | Compare | Shipped |
 | 08 | `08_ga_gate.md` | Promote (GA gate) | Planned |
 
 "Shipped" means the document already exists in this repository's `ecosystem/`
