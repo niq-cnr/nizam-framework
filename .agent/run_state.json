@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "005-ecosystem-cycle",
-  "current_feature": "038",
+  "current_feature": "035",
   "status": "feature_complete",
   "updated_at": "2026-07-17T00:00:00Z",
   "circuit_breaker": {
@@ -634,6 +634,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 038 (Preflight Verdict Schema + Fixtures, handover F-008) COMPLETE through the full contract lifecycle, including TWO orchestrator-authorized Loop-2 amendments to the approved contract, both ratified by validator Mode B and independently confirmed by evaluator QA. Lifecycle: contract rev0 REJECTED by evaluator (HIGH: no verification could detect a schema accepting operator_approval:{} for PASS_WITH_EXCEPTIONS -- proven with loose-vs-strict scratch variants); rev1 closed it (entries 7/8 + third negative fixture) but was REJECTED by validator Mode A on a stale fixture count token; rev2 (one-token fix) approved by both gates. Loop-2 implementation surfaced amendment_1 (entry 13 anti-vacuity was working-tree-anchored, mutually exclusive with entry 12 post-implementation -- a NEW defect class: anti-vacuity companions must be HEAD-anchored; generator honestly escalated rather than editing the approved test) and amendment_2 (entry 25 immutability guard allow-list predated parallel drafting; re-shaped to two-part invariant: tracked-history clean + untracked additions confined to phase-005 in-flight globs). Both amendments load-bearing-proven on scratch repos, ratified at Mode B (which verified nothing else drifted, diff.patch sha256-matched live), QA PASS at qa/038.json with fresh adversarial probes against the real schema (PWE+{} rejected; all 6 fixtures re-validated; 26/26 live). Scope: est 110 / actual 147; cumulative 1587/2990. Meanwhile: 035 approved by both Loop-1 gates (first-try) and HELD for implementation until this commit (diff.patch byte-compare race avoidance); 036 rejected at evaluator round 0 (HIGH x2: bare substring tokens 'new'/'stale' false-pass via 'renewed'/'stalemate' -- another new defect class: word-boundary/backtick-delimited tokens required) and is revising. Advancing: committing 038, then serialized implementations 035 -> 036, then 037 contract launch (schema-surface contention with 038 now resolved by this commit)."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 035 (Engineering Audit Protocol, handover F-005) COMPLETE. First feature this phase approved FIRST-TRY at both Loop-1 gates (contract pre-empted all known defect classes; evaluator killed wrong-row/two-line/9-of-10/opposite-meaning gaming vectors pre-implementation). Implementation: ecosystem/03_engineering_audit.md (198 lines: evidence-first flow, Tier 1-4 hierarchy, all ten maturity levels + no-promotion-beyond-evidence, Confirmed/Probable/Suspected confidence, commercial-exclusion MUST NOT phrase, .agent/audits/<audit-id>/ artifacts) + README 03-row flip. One attempt-1 fix (line-wrap split a literal phrase; vlib_section_grep is line-based -- second occurrence of this defect class after 033). Mode B 8/8; QA PASS (qa/035.json, 22/22 first re-run + real-document kill-shots). QA's second re-run saw entry 16 fail solely because 037's contract draft appeared concurrently (same environmental class as 038's entry-25; root-caused, non-attributable, evaluator passed with flag). Scope: est 180 / actual 199. Cumulative 1786/2990. 036 (approved rev1 at both gates) now UNBLOCKED for implementation per serialization rule; 037 in Mode A validation. Advancing: committing 035, dispatching 036 implementation, then 039 contract (dep 035 now complete)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -807,7 +812,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2300,
-    "total_lines_changed": 1587,
+    "total_lines_changed": 1786,
     "per_feature": [
       {
         "id": "031",
@@ -838,6 +843,12 @@
         "estimated": 110,
         "actual": 147,
         "note": "139 new lines (preflight_verdict.schema.json + 6 fixtures) + 8 tracked-diff insertions (NIZAM.json dual-surface index, schema/README.md row/version/change_log). Contract disclosed estimated_lines 231 vs feature-list 110; actual landed at 147 (1.3x feature-list estimate). No flag condition met."
+      },
+      {
+        "id": "035",
+        "estimated": 180,
+        "actual": 199,
+        "note": "198 new lines (ecosystem/03_engineering_audit.md) + 1/1 README row flip. Slightly over the 180 estimate; no flag condition."
       }
     ]
   },
