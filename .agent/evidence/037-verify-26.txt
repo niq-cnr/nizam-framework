@@ -1,0 +1,3 @@
+source tools/verify_lib.sh; vlib_scope_guard 'schema/ecosystem_baseline.schema.json' 'schema/README.md' 'NIZAM.json' 'tools/fixtures/ecosystem_baseline_valid.json' 'tools/fixtures/ecosystem_baseline_neg_missing_revision.json' 'tools/fixtures/ecosystem_baseline_neg_mixed_timestamps.json' 'ecosystem/03_engineering_audit.md' 'ecosystem/07_progress_comparison.md' 'ecosystem/README.md' 'v0.6.0-release-notes.md' && echo PASS || { echo "out-of-scope change(s) detected"; exit 1; }
+PASS
+EXIT:0

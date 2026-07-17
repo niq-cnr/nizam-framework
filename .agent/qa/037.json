@@ -1,0 +1,86 @@
+{
+  "feature_id": "037",
+  "qa_pass": true,
+  "checks_run": 26,
+  "checks_passed": 26,
+  "adversarial": {
+    "performed": true,
+    "description": "Independently re-exercised the real, implemented schema/ecosystem_baseline.schema.json and tools/fixtures/ecosystem_baseline_*.json fixtures with the evaluator's own probes, beyond the contract's 26 listed commands: (1) the round-0 'five-loose' kill shot -- for each of the six Sec 3 reference categories, deleted it in turn from the real positive fixture (proves top-level 'required') and separately set it to [] in turn (proves 'minItems':1) -- all 12 probes correctly raised jsonschema.ValidationError against the real schema, with no gaps; (2) per-item revision/timestamp minLength:1 -- an empty-string (not merely absent) revision and, separately, an empty-string timestamp on the real positive fixture were both correctly rejected ('' should be non-empty); (3) the real positive fixture validates with zero errors; (4) both named negative fixtures (ecosystem_baseline_neg_missing_revision.json, ecosystem_baseline_neg_mixed_timestamps.json) independently raise ValidationError, citing 'revision' and 'timestamp' as the respective missing required properties; (5) the schema self-validates as Draft202012 (jsonschema.Draft202012Validator.check_schema); (6) additionalProperties:true on reference_item does not create a type bypass -- an item with revision=123 (a JSON number) is still correctly rejected ('123 is not of type string'); (7) the real NIZAM.json edit was confirmed to name the schema in BOTH the top-level 'schemas' array and the 'schema' module's 'key_documents' array (the round-0 dual-surface gap, closed).",
+    "result": "All adversarial probes behaved as required: the real schema correctly rejects every one of the 12 five-loose-style category gaps, both empty-string anchoring probes, and both named negative fixtures, while validating the positive fixture cleanly and self-validating as a Draft202012 schema. No gap, no false-pass, and no type bypass was found in the real, implemented artifacts -- the round-0 and round-1 contract-review findings are confirmed genuinely closed in the shipped implementation, not merely in the contract's verification commands.",
+    "evidence": ".agent/evidence/037-verify-05.txt (contract's own six-category loop, independently re-run), plus this QA pass's own inline adversarial commands re-run live against schema/ecosystem_baseline.schema.json and tools/fixtures/ecosystem_baseline_*.json from the repository root (session-local re-execution, not separately externalised as new .agent/evidence/ files since this QA verdict's own verification is captured in this document per the Evaluator's adversarial-check convention)."
+  },
+  "evidence_files": [
+    ".agent/evidence/037-verify-01.txt",
+    ".agent/evidence/037-verify-02.txt",
+    ".agent/evidence/037-verify-03.txt",
+    ".agent/evidence/037-verify-04.txt",
+    ".agent/evidence/037-verify-05.txt",
+    ".agent/evidence/037-verify-06.txt",
+    ".agent/evidence/037-verify-07.txt",
+    ".agent/evidence/037-verify-08.txt",
+    ".agent/evidence/037-verify-09.txt",
+    ".agent/evidence/037-verify-10.txt",
+    ".agent/evidence/037-verify-11.txt",
+    ".agent/evidence/037-verify-12.txt",
+    ".agent/evidence/037-verify-13.txt",
+    ".agent/evidence/037-verify-14.txt",
+    ".agent/evidence/037-verify-15.txt",
+    ".agent/evidence/037-verify-16.txt",
+    ".agent/evidence/037-verify-17.txt",
+    ".agent/evidence/037-verify-18.txt",
+    ".agent/evidence/037-verify-19.txt",
+    ".agent/evidence/037-verify-20.txt",
+    ".agent/evidence/037-verify-21.txt",
+    ".agent/evidence/037-verify-22.txt",
+    ".agent/evidence/037-verify-23.txt",
+    ".agent/evidence/037-verify-24.txt",
+    ".agent/evidence/037-verify-25.txt",
+    ".agent/evidence/037-verify-26.txt",
+    ".agent/evidence/037/diff.patch",
+    ".agent/evidence/037/verification.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_005.json feature 037",
+    "criteria": [
+      {
+        "criterion": "Positive fixture validates",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/037-verify-08.txt (glob-discovered positive fixture validates); independently re-confirmed by this QA pass's own adversarial probe (3) against the real fixture."
+      },
+      {
+        "criterion": "Negative fixture fails",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/037-verify-09.txt (both named negative fixtures independently rejected by name); independently re-confirmed by this QA pass's own adversarial probe (4)."
+      },
+      {
+        "criterion": "The schema is itself a valid JSON Schema (literal AT)",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/037-verify-03.txt; independently re-confirmed by adversarial probe (5)."
+      },
+      {
+        "criterion": "A positive baseline fixture validates AND a negative baseline fixture is rejected (literal, glob-discovered AT)",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/037-verify-08.txt."
+      },
+      {
+        "criterion": "NIZAM.json indexes the new schema and stays C4-green (literal AT)",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/037-verify-11.txt ([C4] PASS index-integrity); independently re-confirmed both NIZAM.json surfaces (top-level 'schemas' array and 'schema' module 'key_documents') name the schema, via .agent/evidence/037-verify-13.txt and 037-verify-14.txt and this QA pass's own adversarial probe (7)."
+      },
+      {
+        "criterion": "Compliance validator stays green (literal AT)",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/037-verify-19.txt; independently re-confirmed live in this QA pass: `bash tools/validate.sh` -> 'SUMMARY: 11 passed, 0 failed'."
+      }
+    ],
+    "amended_or_flagged_for_orchestrator": []
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. All 26 of contract 037 (revision 1)'s verification commands were independently re-run, live, from the repository root against the real implemented tree (schema/ecosystem_baseline.schema.json, the three tools/fixtures/ecosystem_baseline_*.json fixtures, and the NIZAM.json/schema/README.md edits) -- 26/26 exit 0, matching the Validator's Mode B report (B1-B8 PASS, diff.patch byte-identical for the tracked-file portion, confirmed independently in this QA pass). A mandatory adversarial spot-check was performed against the REAL, shipped schema and fixtures (not scratch copies): the round-0 'five-loose' kill shot (12 probes: each of the six Sec 3 reference categories independently deleted and independently emptied) all correctly raised ValidationError, closing the six-category coverage gap in the actual implementation; per-item revision/timestamp minLength:1 correctly rejects empty strings, not merely absent keys; both named negative fixtures (missing-revision, mixed-timestamps) are independently rejected by the real schema; the real positive fixture validates cleanly; the schema self-validates as Draft202012; additionalProperties:true does not create a type bypass on revision/timestamp; and both NIZAM.json indexing surfaces (top-level 'schemas' array and the 'schema' module's 'key_documents' array) genuinely name the new schema. All six of feature 037's .agent/feature_list_005.json acceptance criteria are satisfied with evidence captured by path (.agent/evidence/037-verify-01.txt through -26.txt, plus .agent/evidence/037/diff.patch and verification.txt); no criterion required [AMENDED] reconciliation. `bash tools/validate.sh` independently re-run in this QA pass: 'SUMMARY: 11 passed, 0 failed'. Feature 037's status in .agent/feature_list_005.json remains 'pending' (not flipped by this evaluator, per instruction); .agent/run_state.json was not touched; feature 039's own untracked contract artifact was observed and tolerated, not touched. No issues, no unsupported claims, no missing acceptance coverage. Approved for advancement."
+  }
+}

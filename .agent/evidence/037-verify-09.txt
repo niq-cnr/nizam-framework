@@ -1,0 +1,10 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/ecosystem_baseline.schema.json'))
+for f in ['tools/fixtures/ecosystem_baseline_neg_missing_revision.json','tools/fixtures/ecosystem_baseline_neg_mixed_timestamps.json']:
+  try:
+    jsonschema.validate(json.load(open(f)), s)
+    raise SystemExit(f'{f} unexpectedly validated')
+  except jsonschema.ValidationError:
+    pass" && echo PASS || { echo "one of the two named negative fixtures unexpectedly validated"; exit 1; }
+PASS
+EXIT:0

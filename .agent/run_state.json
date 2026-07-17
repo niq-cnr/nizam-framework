@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "005-ecosystem-cycle",
-  "current_feature": "036",
+  "current_feature": "037",
   "status": "feature_complete",
   "updated_at": "2026-07-17T00:00:00Z",
   "circuit_breaker": {
@@ -644,6 +644,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 036 (Progress Comparison Protocol, handover F-006) COMPLETE. Contract rev0 REJECTED by evaluator (2x HIGH: bare substring tokens 'new'/'stale' false-passed via 'renewed'/'stalemate' decoys -- new defect class; fixed by committing the doc design to backtick-delimited code-span state names per 033 precedent); rev1 approved by both gates. Implementation: ecosystem/07_progress_comparison.md (163 lines: two-approved-inputs, backticked new/resolved/reopened/stale transitions, closure-only-with-evidence, stale-evidence non-reuse, score-movement traceability, .agent/audits/<audit-id>/delta.json) + README 07-row flip. One Loop-2 amendment (entry-16 exclude extended for 037's concurrent draft -- environmental class; RATIFIED by Mode B; ratified_by_mode_b field reconciled by orchestrator after evaluator flagged it stale-false in qa/036.json). Mode B 8/8 + amendment ratified; QA PASS (qa/036.json, 20/20 live + kill-shots against the real shipped doc). HARMONIZATION DEBT flagged by Mode B for DEBT.md at tranche close: per-feature-ID exclude-list guards (036 form) are fragile under parallel drafting vs 038 amendment_2's general two-part invariant -- future contracts should use the two-part form from the start. Scope: est 150 / actual 164. Cumulative 1950/2990. Advancing: committing 036; 037 rev1 (all three round-0 findings fixed) to parallel re-review; 039 in Mode A."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 037 (Baseline Schema + Fixtures, handover F-007) COMPLETE. Contract rev0 REJECTED by evaluator (3x HIGH: stale concurrency allow-list after 036 progressed mid-review; NIZAM.json dual-surface indexing asymmetry -- new defect class, single-surface edits passed all checks; six-category requirement unproven at instance level for 5 of 6); rev1 approved by both gates (new 12-probe category loop proven strict-PASS/five-loose-FAIL; top-level schemas-array assertion added; scope guard refreshed HEAD-relative). Implementation: schema/ecosystem_baseline.schema.json (six required minItems:1 category arrays; reference_item requires non-empty revision+timestamp -- encodes 02_evidence_baseline.md 3/4 verbatim), 3 fixtures ('neg' naming avoiding the invalid-contains-valid glob landmine, pre-empted by the generator unprompted), NIZAM.json dual-surface, schema/README.md 0.6.0. Mode B 8/8 with real-schema adversarial probes; QA PASS (qa/037.json, 26/26 + all 12 five-loose kill shots rejected by the shipped schema). Scope: est 140 / actual 133. Cumulative 2083/2990. 039 rev1 approved by Mode A; its evaluator review in flight; 039 implements after this commit (schema-surface serialization). Then 040 (capability routing) closes PR-F2."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -817,7 +822,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2300,
-    "total_lines_changed": 1950,
+    "total_lines_changed": 2110,
     "per_feature": [
       {
         "id": "031",
@@ -860,6 +865,12 @@
         "estimated": 150,
         "actual": 164,
         "note": "163 new lines (ecosystem/07_progress_comparison.md) + 1/1 README row flip. Near estimate."
+      },
+      {
+        "id": "037",
+        "estimated": 140,
+        "actual": 160,
+        "note": "152 new lines (ecosystem_baseline schema + 3 fixtures) + 8 tracked insertions (NIZAM.json dual-surface, schema/README.md 0.6.0). Slightly over the 140 estimate. (Corrected from a pre-measurement figure per AH-3.)"
       }
     ]
   },

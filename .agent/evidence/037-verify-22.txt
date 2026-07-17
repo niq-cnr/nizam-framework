@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- schema/ ':(exclude)schema/README.md' && echo PASS || { echo "an out-of-scope schema/*.json file was modified"; git diff --name-only HEAD -- schema/ ':(exclude)schema/README.md'; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,12 @@
+python3 -c "import json,jsonschema,sys; s=json.load(open('schema/ecosystem_baseline.schema.json'))
+import glob
+pos=[f for f in glob.glob('tools/fixtures/*baseline*') if 'valid' in f or 'pos' in f]
+neg=[f for f in glob.glob('tools/fixtures/*baseline*') if 'invalid' in f or 'neg' in f]
+assert pos and neg, 'need positive and negative baseline fixtures'
+jsonschema.validate(json.load(open(pos[0])), s)
+try:
+  jsonschema.validate(json.load(open(neg[0])), s); sys.exit(1)
+except jsonschema.ValidationError:
+  sys.exit(0)" && echo PASS || { echo "glob-discovered positive/negative fixture check failed"; exit 1; }
+PASS
+EXIT:0
