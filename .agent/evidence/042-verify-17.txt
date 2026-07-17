@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- schema/ tools/fixtures/ ecosystem/ NIZAM.json tools/skill.json tools/SKILL.md tools/ecosystem_preflight.py CHANGELOG.md docs/planning/ .agent/run_state.json && echo PASS || { echo "an out-of-scope path was modified"; git diff --name-only HEAD -- schema/ tools/fixtures/ ecosystem/ NIZAM.json tools/skill.json tools/SKILL.md tools/ecosystem_preflight.py CHANGELOG.md docs/planning/ .agent/run_state.json; exit 1; }
+PASS
+EXIT:0

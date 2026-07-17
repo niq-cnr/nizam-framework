@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "005-ecosystem-cycle",
-  "current_feature": "041",
+  "current_feature": "042",
   "status": "feature_complete",
   "updated_at": "2026-07-17T00:00:00Z",
   "circuit_breaker": {
@@ -678,6 +678,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "scope_budget_rebaselined",
       "detail": "Operator authorized the phase-005 scope re-baseline 2300 -> 3500 (verbatim: 'approved, re-baseline original_estimate_lines from 2,300 to 3,500 and finish the phase'). New 130% ceiling: 4550; current cumulative 2868 (63%). The pre-042-implementation HALT condition is lifted: feature 042 may proceed to implementation once its contract clears both Loop-1 gates. Remaining plan: 042 (validator/CI fixtures, closes PR-F3) -> 043-044 (framework dogfood, PR-F4; 043 carries operator gate H-DOGFOOD-EXCEPTION if the self-preflight returns PASS_WITH_EXCEPTIONS) -> 045 (release prep; H-FRAMEWORK-RELEASE is a human gate -- the orchestrator prepares, the operator releases). This event also serves as the standing human acknowledgment for the per-feature scope flags recorded at 031 (1046/260) and 041 (501/220)."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 042 (Extend Validator + CI Fixtures, handover F-012) COMPLETE -- closes PR-F3's feature work. Contract rev0 REJECTED by evaluator on the meta-risk trifecta (C12 dormancy vacuity -- it would have recreated the exact NDEBT-009 debt it remediates; a proxy-regex test not bound to shipped bytes -- the 041 content-honesty class; 3-of-6 direction coverage); rev1 approved by both gates (per-family per-polarity dormancy guard proven loud on single-polarity and empty-dir shapes; extraction guard proven against two independent regex mutants; 6/6 coverage). Implementation: check_c12_ecosystem_fixtures in tools/validate.sh (default sweep now C1-C12, SUMMARY 12 passed; --target/--payload untouched) + tools/README.md 0.3.1. Mode B 8/8 (zero collateral edits traced); QA PASS (qa/042.json, 19/19 + independent adversarial battery on shipped code). NDEBT-009 partially remediated: the three ecosystem fixture families are now permanently load-bearing in CI with dormancy regression protection. QA BROADENED a debt finding: the pre-existing --target misroute affects ALL THREE ecosystem families (baseline/finding fall through to C4; preflight_verdict collides with the qa_verdict route) -- registered as NDEBT-015 at tranche close together with NDEBT-016 (classification-regex residual for future fixture names). Scope: est 200 / actual 141. Cumulative 3009/4550 (66%). Advancing: committing 042, PR-F3 tranche close (DEBT registration + draft PR), then feature 043 (Dogfood Framework Preflight -- operator gate H-DOGFOOD-EXCEPTION triggers only if the self-preflight returns PASS_WITH_EXCEPTIONS, which is EXPECTED given the branch is ahead of main and carries the untracked v0.6.0-release-notes.md; the orchestrator will present the exception set to the operator when it materializes)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -851,7 +856,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 3500,
-    "total_lines_changed": 2868,
+    "total_lines_changed": 3009,
     "per_feature": [
       {
         "id": "031",
@@ -918,6 +923,12 @@
         "estimated": 220,
         "actual": 501,
         "note": "501 new lines (tools/ecosystem_preflight.py, create-only). 2.3x the feature-list estimate (contract disclosed 260 after prototyping; final inflation is docstring exit-code table, full type hints, and house-style helper decomposition -- Mode B code review found no scope creep, entries 17-22 all green). Below the 3x rolling-average per-feature flag threshold; recorded per validator/evaluator ledger notes for human awareness."
+      },
+      {
+        "id": "042",
+        "estimated": 200,
+        "actual": 141,
+        "note": "141 changed lines (tools/validate.sh C12 + tools/README.md 0.3.1). Under both the feature-list 200 and the contract's prototype-derived 150."
       }
     ],
     "rebaseline": {

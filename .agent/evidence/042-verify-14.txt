@@ -1,0 +1,3 @@
+bash tools/validate.sh --payload 2>&1 | tail -1 | grep -Eqx 'SUMMARY \(payload mode\): 10 passed, 0 failed' && echo PASS || { echo "payload-mode SUMMARY regressed from the pre-042 baseline"; exit 1; }
+PASS
+EXIT:0

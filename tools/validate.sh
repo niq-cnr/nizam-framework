@@ -70,7 +70,7 @@ if any is missing): bash, git, grep, find, awk, python3 -- with python3's
 installs or vendors these dependencies itself.
 
 Modes:
-  (no arguments)      Full repo sweep. Runs all 11 checks (C1-C11) and
+  (no arguments)      Full repo sweep. Runs all 12 checks (C1-C12) and
                       prints one PASS/FAIL line per check plus a final
                       summary line. Exits 0 only if every check passed.
 
@@ -297,6 +297,30 @@ file(s)/detail(s) printed on the following indented line(s)):
       never part of a bootstrap.sh-injected payload. `tools/verify_lib.sh`
       is never modified or consulted by C11 (none of its five primitives
       address JSON-Schema validation).
+
+  C12 Ecosystem schema-family fixture validation (are the ecosystem schema
+      families' fixtures actually load-bearing, or merely present?). For
+      each of the three families shipped in features 037-039 (baseline,
+      preflight-verdict, engineering-finding), validates every matching
+      `tools/fixtures/<family>_*.json` fixture, via python3 + jsonschema,
+      against its shipped schema (`schema/ecosystem_baseline.schema.json`,
+      `schema/preflight_verdict.schema.json`,
+      `schema/engineering_finding.schema.json` respectively). A fixture is
+      NEGATIVE (MUST fail validation) iff its filename carries the
+      delimited token `_neg_` or `_invalid_`; every other matching fixture
+      is POSITIVE and MUST validate. A positive fixture that fails, or a
+      negative fixture that validates, is a single C12 FAIL naming the
+      offending path and schema. Each family MUST also contribute at least
+      one POSITIVE and one NEGATIVE matched fixture -- a family
+      contributing zero of either polarity (e.g. its fixtures were moved,
+      renamed, or deleted) is itself a named FAIL, never a silent pass
+      (NDEBT-009's own dormancy-regression meta-risk, guarded against
+      structurally). Full repo sweep only; does not run under `--target`
+      (each ecosystem fixture is already independently inspectable via a
+      direct `python3`+`jsonschema` invocation) or `--payload` (no
+      acceptance test requires payload-mode fixture coverage; consumer
+      payloads carry no governed `.agent/` audit trail for these families
+      to reconcile against).
 
 Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,
 consistently): CONTEXT.md; every .md under docs/architecture/; every .md
@@ -1303,6 +1327,101 @@ check_c11_dogfood_payload_skip() {
   return 0
 }
 
+# ---------------------------------------------------------------------------
+# C12 -- ecosystem schema-family fixture validation (NDEBT-009 fix, scoped to
+# the three ecosystem schema families shipped in features 037/038/039: proves
+# the tools/fixtures/{ecosystem_baseline,preflight_verdict,
+# engineering_finding}_*.json fixtures are load-bearing, not merely present).
+# Default full-sweep only (mirrors C6/C7's repo-wide-only precedent); not run
+# under --target (each fixture is already individually inspectable that way)
+# or --payload (no acceptance test requires payload-mode fixture coverage;
+# see NON-GOALS).
+# ---------------------------------------------------------------------------
+
+# check_c12_ecosystem_fixtures
+#
+# For each of the three families, validates every matching
+# tools/fixtures/<family>_*.json fixture against its shipped schema. A
+# fixture is NEGATIVE (MUST fail schema validation) iff its filename
+# contains the delimited token '_neg_' or '_invalid_' -- checked as an
+# explicit NEGATIVE marker, never derived from the ABSENCE of the substring
+# 'valid' (which is itself a substring of 'invalid' and would silently
+# misclassify negative fixtures as positive; NDEBT-014 defect class 4). Every
+# other matching fixture is POSITIVE and MUST validate. A positive fixture
+# that fails, or a negative fixture that validates, is this check's failure.
+#
+# DORMANCY GUARD (this check's own meta-risk, per NDEBT-009's exact failure
+# mode -- a fixture-driver check that stops inspecting anything, e.g. because
+# its fixtures were moved/renamed/deleted, must NOT silently pass): each
+# family MUST contribute at least one POSITIVE and at least one NEGATIVE
+# matched fixture. A family contributing zero of either polarity is itself a
+# named failure -- MINIMUM_PER_FAMILY is never satisfied by "no files to
+# check".
+check_c12_ecosystem_fixtures() {
+  local py_out
+  py_out=$(python3 - <<'PY'
+import glob
+import json
+import re
+import sys
+
+import jsonschema
+
+FAMILIES = {
+    "ecosystem_baseline": "schema/ecosystem_baseline.schema.json",
+    "preflight_verdict": "schema/preflight_verdict.schema.json",
+    "engineering_finding": "schema/engineering_finding.schema.json",
+}
+NEGATIVE_TOKEN = re.compile(r"(?:^|_)(?:neg|invalid)(?:_|\.)")
+
+failures = []
+for family, schema_path in FAMILIES.items():
+    with open(schema_path, encoding="utf-8") as fh:
+        schema = json.load(fh)
+    paths = sorted(glob.glob(f"tools/fixtures/{family}_*.json"))
+    positive_paths = [p for p in paths if not NEGATIVE_TOKEN.search(p.rsplit("/", 1)[-1])]
+    negative_paths = [p for p in paths if NEGATIVE_TOKEN.search(p.rsplit("/", 1)[-1])]
+
+    if not positive_paths:
+        failures.append(
+            f"{family}: zero POSITIVE fixtures matched tools/fixtures/{family}_*.json "
+            "-- dormant or missing coverage (NDEBT-009 regression)"
+        )
+    if not negative_paths:
+        failures.append(
+            f"{family}: zero NEGATIVE fixtures matched tools/fixtures/{family}_*.json "
+            "-- dormant or missing coverage (NDEBT-009 regression)"
+        )
+
+    for path in paths:
+        is_negative = path in negative_paths
+        with open(path, encoding="utf-8") as fh:
+            data = json.load(fh)
+        try:
+            jsonschema.validate(data, schema)
+            is_valid = True
+        except jsonschema.ValidationError:
+            is_valid = False
+        if is_negative and is_valid:
+            failures.append(f"{path}: negative fixture unexpectedly VALIDATED against {schema_path}")
+        elif not is_negative and not is_valid:
+            failures.append(f"{path}: positive fixture unexpectedly FAILED to validate against {schema_path}")
+
+for line in failures:
+    print(line)
+sys.exit(1 if failures else 0)
+PY
+)
+  local rc=$?
+  if [ "${rc}" -eq 0 ]; then
+    echo "[C12] PASS ecosystem-fixtures"
+    return 0
+  fi
+  echo "[C12] FAIL ecosystem-fixtures"
+  echo "${py_out}" | sed 's/^/  /'
+  return 1
+}
+
 # check_c11_or_c4_target <file>
 #
 # --target dispatcher for a `.json` file: content-routes using the FULL
@@ -1471,6 +1590,7 @@ main() {
     check_c9_path_resolution "${c9_default_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c10_consistency "${c9_default_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c11_dogfood_sweep && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c12_ecosystem_fixtures && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY: ${passed} passed, ${failed} failed"
   fi

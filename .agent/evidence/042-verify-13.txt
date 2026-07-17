@@ -1,0 +1,3 @@
+bash tools/validate.sh --target NIZAM.json 2>&1 | grep -Fq '[C12]' && { echo "C12 unexpectedly ran under --target"; exit 1; } || echo PASS
+PASS
+EXIT:0

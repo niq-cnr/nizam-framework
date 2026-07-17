@@ -1,0 +1,22 @@
+python3 -c "
+import re, sys
+src = open('tools/validate.sh', encoding='utf-8').read()
+m = re.search(r'NEGATIVE_TOKEN\s*=\s*re\.compile\(r\"([^\"]*)\"\)', src)
+if not m:
+    print('COULD NOT EXTRACT the shipped NEGATIVE_TOKEN pattern from tools/validate.sh -- classification logic may have been refactored without updating this test')
+    sys.exit(1)
+pattern = m.group(1)
+NEGATIVE_TOKEN = re.compile(pattern)
+cases = {
+    'ecosystem_baseline_neg_missing_revision.json': True,
+    'preflight_verdict_invalid_verdict.json': True,
+    'ecosystem_baseline_valid.json': False,
+    'preflight_verdict_pass.json': False,
+    'engineering_finding_valid_resolved.json': False,
+    'ecosystem_baseline_revalidated.json': False,
+}
+ok = all(bool(NEGATIVE_TOKEN.search(n)) == exp for n, exp in cases.items())
+sys.exit(0 if ok else 1)
+" && echo PASS || { echo "the shipped NEGATIVE_TOKEN pattern misclassified a case (or could not be extracted)"; exit 1; }
+PASS
+EXIT:0

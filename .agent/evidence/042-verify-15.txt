@@ -1,0 +1,3 @@
+h=$(bash tools/validate.sh --help 2>&1); echo "$h" | grep -q 'C12' && echo "$h" | grep -qi '12 checks' && echo PASS || { echo "--help does not document C12 / the 12-check total"; exit 1; }
+PASS
+EXIT:0
