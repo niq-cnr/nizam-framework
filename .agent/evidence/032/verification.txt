@@ -1,0 +1,108 @@
+Contract 032 (Ecosystem Module Index, PR-F2, handover F-002) -- full 19-entry verification suite
+Run from repository root, all commands extracted programmatically from .agent/contracts/032.json
+
+===== VERIFY[1] =====
+python3 -c "t=open('ecosystem/README.md',encoding='utf-8').read().lower(); import sys; sys.exit(0 if all(k in t for k in ['preflight','baseline','audit','compare']) else 1)" && echo PASS || { echo "README.md missing one or more of the 4 official lifecycle keywords"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[2] =====
+python3 -c "import re,sys; t=open('ecosystem/README.md',encoding='utf-8').read().lower(); stages=['bootstrap','preflight','baseline','audit','plan','execute','verify','promote','compare','repeat']; missing=[s for s in stages if not re.search(r'\b'+s+r'\b', t)]; sys.exit(1 if missing else 0)" && echo PASS || { echo "README.md missing one or more of the 10 canonical lifecycle stages"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[3] =====
+! (git show HEAD:ecosystem/README.md | python3 -c "import re,sys; t=sys.stdin.read().lower(); stages=['bootstrap','preflight','baseline','audit','plan','execute','verify','promote','compare','repeat']; missing=[s for s in stages if not re.search(r'\b'+s+r'\b', t)]; sys.exit(1 if missing else 0)") && echo PASS || { echo "HEAD ecosystem/README.md already names all 10 stages -- the check would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[4] =====
+python3 -c "import json,yaml,jsonschema; d=open('ecosystem/README.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS || { echo "ecosystem/README.md frontmatter invalid"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[5] =====
+python3 -c "import yaml,re,sys; d=open('ecosystem/README.md',encoding='utf-8').read().split('---')[1]; fm=yaml.safe_load(d); v=fm.get('version') or ''; m=re.match(r'^(\d+)\.(\d+)\.(\d+)$', v); cl=fm.get('change_log') or []; ok = bool(m) and tuple(int(x) for x in m.groups()) > (0,1,0) and any(isinstance(e,dict) and e.get('version')==v for e in cl); sys.exit(0 if ok else 1)" && echo PASS || { echo "ecosystem/README.md frontmatter version is not a genuine semver increase past 0.1.0, or lacks a matching change_log entry"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[6] =====
+! (git show HEAD:ecosystem/README.md | python3 -c "import yaml,re,sys; d=sys.stdin.read().split('---')[1]; fm=yaml.safe_load(d); v=fm.get('version') or ''; m=re.match(r'^(\d+)\.(\d+)\.(\d+)$', v); cl=fm.get('change_log') or []; ok = bool(m) and tuple(int(x) for x in m.groups()) > (0,1,0) and any(isinstance(e,dict) and e.get('version')==v for e in cl); sys.exit(0 if ok else 1)") && echo PASS || { echo "HEAD ecosystem/README.md already has a bumped version + change_log -- the check would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[7] =====
+python3 -c "t=open('ecosystem/README.md',encoding='utf-8').read().lower(); docs=['00_ecosystem_bootstrap.md','01_clean_state_preflight.md','02_evidence_baseline.md','03_engineering_audit.md','04_dependency_reconciliation.md','05_release_train_coordination.md','06_simplification_review.md','07_progress_comparison.md','08_ga_gate.md']; missing=[d for d in docs if d not in t]; import sys; sys.exit(1 if missing else 0)" && echo PASS || { echo "README.md module navigation missing one or more of the 9 protocol document references"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[8] =====
+! (git show HEAD:ecosystem/README.md | python3 -c "import sys; t=sys.stdin.read().lower(); docs=['00_ecosystem_bootstrap.md','01_clean_state_preflight.md','02_evidence_baseline.md','03_engineering_audit.md','04_dependency_reconciliation.md','05_release_train_coordination.md','06_simplification_review.md','07_progress_comparison.md','08_ga_gate.md']; missing=[d for d in docs if d not in t]; sys.exit(1 if missing else 0)") && echo PASS || { echo "HEAD ecosystem/README.md already names all 9 protocol documents -- the check would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[9] =====
+python3 -c "import os,sys; t=open('ecosystem/README.md',encoding='utf-8').read(); lines=t.splitlines(); docs=['00_ecosystem_bootstrap.md','01_clean_state_preflight.md','02_evidence_baseline.md','03_engineering_audit.md','04_dependency_reconciliation.md','05_release_train_coordination.md','06_simplification_review.md','07_progress_comparison.md','08_ga_gate.md']; bad=[]
+for d in docs:
+    expected = 'shipped' if os.path.exists(os.path.join('ecosystem', d)) else 'planned'
+    if not any(d.lower() in ln.lower() and expected in ln.lower() for ln in lines):
+        bad.append((d, expected))
+sys.exit(1 if bad else 0)" && echo PASS || { echo "README.md module-navigation table is missing a correct Shipped/Planned annotation for one or more of the 9 protocol documents"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[10] =====
+! (git show HEAD:ecosystem/README.md | python3 -c "import os,sys; t=sys.stdin.read(); lines=t.splitlines(); docs=['00_ecosystem_bootstrap.md','01_clean_state_preflight.md','02_evidence_baseline.md','03_engineering_audit.md','04_dependency_reconciliation.md','05_release_train_coordination.md','06_simplification_review.md','07_progress_comparison.md','08_ga_gate.md']; bad=[]
+for d in docs:
+    expected = 'shipped' if os.path.exists(os.path.join('ecosystem', d)) else 'planned'
+    if not any(d.lower() in ln.lower() and expected in ln.lower() for ln in lines):
+        bad.append((d, expected))
+sys.exit(1 if bad else 0)") && echo PASS || { echo "HEAD ecosystem/README.md already carries correct Shipped/Planned annotations for all 9 documents -- the check would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[11] =====
+python3 -c "import re,os,sys; t=open('ecosystem/README.md',encoding='utf-8').read(); parts=t.split('---'); body = '---'.join(parts[2:]) if len(parts)>=3 else t; tokens = re.findall(r'[A-Za-z0-9_.-]+/[A-Za-z0-9_./-]*\.(?:md|json|sh|html|yml)', body); bad=[tok for tok in tokens if not os.path.exists(tok.rstrip('.,;:'))]; sys.exit(1 if bad else 0)" && echo PASS || { echo "ecosystem/README.md body contains a directory-qualified path reference that does not resolve on disk"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[12] =====
+grep -q 'ecosystem' NIZAM.json && bash tools/validate.sh --target NIZAM.json; test $? -eq 0
+[C4] PASS index-integrity
+EXIT:0
+
+===== VERIFY[13] =====
+python3 -c "import json,sys; d=json.load(open('NIZAM.json')); mods=[m for m in d.get('modules',[]) if m.get('path')=='ecosystem']; sys.exit(0 if (len(mods)==1 and mods[0].get('key_documents')==['ecosystem/README.md'] and mods[0].get('purpose')) else 1)" && echo PASS || { echo "NIZAM.json modules array missing a well-formed ecosystem module entry with key_documents EXACTLY ['ecosystem/README.md']"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[14] =====
+! (git show HEAD:NIZAM.json | python3 -c "import json,sys; d=json.load(sys.stdin); mods=[m for m in d.get('modules',[]) if m.get('path')=='ecosystem']; sys.exit(0 if mods else 1)") && echo PASS || { echo "HEAD NIZAM.json already indexes an ecosystem module -- verification[10] would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[15] =====
+bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: 11 passed, 0 failed' && echo PASS || { echo "validate.sh SUMMARY regressed from 11 passed, 0 failed"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[16] =====
+source tools/verify_lib.sh; vlib_scope_guard 'ecosystem/README.md' 'NIZAM.json' 'ecosystem/01_clean_state_preflight.md' 'v0.6.0-release-notes.md' && echo PASS || { echo "out-of-scope change(s) detected"; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[17] =====
+changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/032.json' ':(exclude,glob).agent/qa/032*.json' ':(exclude).agent/contracts/033.json' ':(exclude,glob).agent/qa/033*.json'); if [ -n "$changed" ]; then echo 'immutable audit record(s) touched:'; echo "$changed"; exit 1; fi; echo PASS
+PASS
+EXIT:0
+
+===== VERIFY[18] =====
+git diff --quiet HEAD -- schema/ tools/ && echo PASS || { echo "an out-of-scope schema/tooling file was modified"; git diff --name-only HEAD -- schema/ tools/; exit 1; }
+PASS
+EXIT:0
+
+===== VERIFY[19] =====
+git diff --quiet HEAD -- docs/planning/DEBT.md && echo PASS || { echo "docs/planning/DEBT.md was modified -- out of scope for this feature"; exit 1; }
+PASS
+EXIT:0
+

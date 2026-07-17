@@ -1,0 +1,3 @@
+! (git show HEAD:NIZAM.json | python3 -c "import json,sys; d=json.load(sys.stdin); mods=[m for m in d.get('modules',[]) if m.get('path')=='ecosystem']; sys.exit(0 if mods else 1)") && echo PASS || { echo "HEAD NIZAM.json already indexes an ecosystem module -- verification[10] would be vacuous"; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,3 @@
+python3 -c "t=open('ecosystem/README.md',encoding='utf-8').read().lower(); docs=['00_ecosystem_bootstrap.md','01_clean_state_preflight.md','02_evidence_baseline.md','03_engineering_audit.md','04_dependency_reconciliation.md','05_release_train_coordination.md','06_simplification_review.md','07_progress_comparison.md','08_ga_gate.md']; missing=[d for d in docs if d not in t]; import sys; sys.exit(1 if missing else 0)" && echo PASS || { echo "README.md module navigation missing one or more of the 9 protocol document references"; exit 1; }
+PASS
+EXIT:0
