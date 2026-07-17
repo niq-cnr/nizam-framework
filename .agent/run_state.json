@@ -673,6 +673,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 041 (Minimum Preflight CLI, handover F-011) COMPLETE -- the phase's first executable-code feature. Contract rev0 REJECTED by evaluator on a landmark finding: a fabricated-content mutant (fake SHA, stale timestamp, fabricated verified-green CI claim) passed all 22 entries -- schemas validate shape, not truth. Rev1 added content-honesty anchoring (baseline revisions must equal freshly-recomputed git rev-parse HEAD; honest ci_references note asserted with fabrication-token rejection; captured_at 600s freshness), proven by bidirectional kill shots incl. boundary probes at exactly 600s; both gates approved. Implementation: tools/ecosystem_preflight.py (501 lines, stdlib-only, five documented exit codes 0/1/2/3/64, blocking-never-downgrades structural precedence, pending-PWE artifact withholding, NDEBT-012 script-dir anchoring, injection-safe list-argv subprocess). Mode B included the phase's first full source-level code review (all paths traced, house standards verified); QA reproduced all six Loop-1 attack behaviors as structurally impossible in the shipped code and ran the CLI live against this repository (--self-fixture, exit 3, tree byte-unchanged, artifacts anchored to real HEAD 17408d9). SCOPE FLAG for human awareness: actual 501 vs estimate 220 (2.3x) -- style/documentation inflation, no scope creep per Mode B review. Cumulative 2868/2990 (96%) -- the ceiling breach is now IMMINENT: feature 042 (est 200) will cross 2990. Per the Scope Budget Protocol the orchestrator will HALT before dispatching 042 implementation unless the operator authorizes a re-baseline (F-028 precedent); 042's CONTRACT negotiation (planning artifact only, .agent/-fenced) proceeds meanwhile. Advancing: committing 041; dispatching 042 contract proposal; awaiting operator re-baseline decision."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "scope_budget_rebaselined",
+      "detail": "Operator authorized the phase-005 scope re-baseline 2300 -> 3500 (verbatim: 'approved, re-baseline original_estimate_lines from 2,300 to 3,500 and finish the phase'). New 130% ceiling: 4550; current cumulative 2868 (63%). The pre-042-implementation HALT condition is lifted: feature 042 may proceed to implementation once its contract clears both Loop-1 gates. Remaining plan: 042 (validator/CI fixtures, closes PR-F3) -> 043-044 (framework dogfood, PR-F4; 043 carries operator gate H-DOGFOOD-EXCEPTION if the self-preflight returns PASS_WITH_EXCEPTIONS) -> 045 (release prep; H-FRAMEWORK-RELEASE is a human gate -- the orchestrator prepares, the operator releases). This event also serves as the standing human acknowledgment for the per-feature scope flags recorded at 031 (1046/260) and 041 (501/220)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -845,7 +850,7 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 2300,
+    "original_estimate_lines": 3500,
     "total_lines_changed": 2868,
     "per_feature": [
       {
@@ -914,7 +919,14 @@
         "actual": 501,
         "note": "501 new lines (tools/ecosystem_preflight.py, create-only). 2.3x the feature-list estimate (contract disclosed 260 after prototyping; final inflation is docstring exit-code table, full type hints, and house-style helper decomposition -- Mode B code review found no scope creep, entries 17-22 all green). Below the 3x rolling-average per-feature flag threshold; recorded per validator/evaluator ledger notes for human awareness."
       }
-    ]
+    ],
+    "rebaseline": {
+      "from": 2300,
+      "to": 3500,
+      "authorized_by": "human",
+      "at": "2026-07-17T00:00:00Z",
+      "reason": "Operator authorization (verbatim): 'approved, re-baseline original_estimate_lines from 2,300 to 3,500 and finish the phase' -- given at the pre-042 scope-budget gate the orchestrator raised when cumulative actuals reached 2868/2990 (96% of the old 130% ceiling; remaining features 042-045 projected ~149% of the old estimate). Overage analysis presented to the operator: 031 plan-of-record artifacts 1046 vs 260 and 041 CLI 501 vs 220 (Mode B code review confirmed documentation/type-hint/house-style inflation, no scope creep); features 032-040 collectively on estimate; feature count and scope boundaries unchanged. Mirrors the phase-004 F-028 'Re-baseline & finish' precedent (1250 -> 1550)."
+    }
   },
   "phase_004_scope_budget_final": {
     "original_estimate_lines": 1550,
