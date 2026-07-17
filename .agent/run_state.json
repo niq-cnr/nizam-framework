@@ -1,8 +1,8 @@
 {
   "repository": "nizam-framework",
   "current_phase": "005-ecosystem-cycle",
-  "current_feature": "042",
-  "status": "feature_complete",
+  "current_feature": "043",
+  "status": "implementing",
   "updated_at": "2026-07-17T00:00:00Z",
   "circuit_breaker": {
     "000-contract": {
@@ -683,6 +683,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 042 (Extend Validator + CI Fixtures, handover F-012) COMPLETE -- closes PR-F3's feature work. Contract rev0 REJECTED by evaluator on the meta-risk trifecta (C12 dormancy vacuity -- it would have recreated the exact NDEBT-009 debt it remediates; a proxy-regex test not bound to shipped bytes -- the 041 content-honesty class; 3-of-6 direction coverage); rev1 approved by both gates (per-family per-polarity dormancy guard proven loud on single-polarity and empty-dir shapes; extraction guard proven against two independent regex mutants; 6/6 coverage). Implementation: check_c12_ecosystem_fixtures in tools/validate.sh (default sweep now C1-C12, SUMMARY 12 passed; --target/--payload untouched) + tools/README.md 0.3.1. Mode B 8/8 (zero collateral edits traced); QA PASS (qa/042.json, 19/19 + independent adversarial battery on shipped code). NDEBT-009 partially remediated: the three ecosystem fixture families are now permanently load-bearing in CI with dormancy regression protection. QA BROADENED a debt finding: the pre-existing --target misroute affects ALL THREE ecosystem families (baseline/finding fall through to C4; preflight_verdict collides with the qa_verdict route) -- registered as NDEBT-015 at tranche close together with NDEBT-016 (classification-regex residual for future fixture names). Scope: est 200 / actual 141. Cumulative 3009/4550 (66%). Advancing: committing 042, PR-F3 tranche close (DEBT registration + draft PR), then feature 043 (Dogfood Framework Preflight -- operator gate H-DOGFOOD-EXCEPTION triggers only if the self-preflight returns PASS_WITH_EXCEPTIONS, which is EXPECTED given the branch is ahead of main and carries the untracked v0.6.0-release-notes.md; the orchestrator will present the exception set to the operator when it materializes)."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "operator_gate_decision",
+      "detail": "Gate H-DOGFOOD-EXCEPTION: APPROVED by the human operator. Verbatim authorization: 'I approve and authorized you to proceed. expedite.' Approver identity: rosscn@nizamiq.com (the operator of record per the NIP-0001 acceptance). Decision applies to EXACTLY the four-exception set presented from the pending dogfood run dogfood-2026-07-17-28c8253 (exit 2, zero blocking findings): (1) .agent/contracts/043.json, (2) .agent/qa/043-contract-review.json, (3) .agent/qa/043-contract-review-rev1.json \u2014 all three the dogfood feature's own in-flight self-reference artifacts, NDEBT-018 class \u2014 and (4) v0.6.0-release-notes.md (pre-existing untracked, NDEBT-013/014 context). Pending record preserved at .agent/evidence/dogfood-2026-07-17-28c8253/pending/preflight.pending.json. GROUND TRUTH FOR MODE-A ADVISORY A1 RECONCILIATION: at Mode B the orchestrator must verify .agent/reconciliation/dogfood-2026-07-17-28c8253/preflight.json operator_approval.approver == 'rosscn@nizamiq.com' AND operator_approval.authorization == 'I approve and authorized you to proceed. expedite.' \u2014 this event is the durable relay record those values must match. Dispatching the approved-step invocation to @generator now."
     }
   ],
   "phase_001_scope_budget_final": {
