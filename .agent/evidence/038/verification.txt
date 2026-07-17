@@ -1,0 +1,126 @@
+Feature 038 (Preflight Verdict Schema + Fixtures, PR-F2, handover F-008)
+Contract: .agent/contracts/038.json (status: approved, revisions: 3, amendment_1 + amendment_2
+applied). Amendments to an already-approved contract are recorded as amendment_N provenance
+objects under approvals, not as revision increments, per the phase-004 amendments-are-not-
+revisions precedent -- approvals.revisions stayed at 3 across both amendments.
+
+Run: all 26 verification entries executed live against the post-implementation, post-amendment-2
+working tree. Per-entry captured output: .agent/evidence/038-verify-01.txt .. 038-verify-26.txt
+(exact invocation as first line, captured stdout/stderr, literal EXIT:<code> as last line, per
+methodology/04_tool_driven_state.md Sec 5).
+
+RESULT: 26 of 26 entries PASS (EXIT:0).
+
+AMENDMENT 1 (entry 13, applied previously): re-anchored from the working tree to HEAD
+(`! (git show HEAD:NIZAM.json | grep -q 'preflight_verdict.schema.json') && echo PASS || ...`),
+mirroring entry 16's pattern. Still passing in this run.
+
+AMENDMENT 2 (entry 25, applied in this round -- attempt 3 of 3 on the implementation step under
+the circuit breaker):
+  OLD acceptance_test: "ADDITIONAL (.agent/ immutability guard, mirroring the precedent in
+    contracts 025/028/031/033, extended per design_notes.concurrency_fence to tolerate feature
+    034's concurrently in-flight contract/qa artifacts): no historical (pre-existing,
+    already-approved) .agent/qa or .agent/contracts artifact was edited -- excludes only this
+    feature's own new 038.json contract and 038*.json qa/review artifacts, AND feature 034's own
+    concurrently-authored 034.json contract and 034*.json qa/review artifacts."
+  OLD command: changed=$(git status --porcelain --untracked-files=all -- .agent/qa
+    .agent/contracts ':(exclude).agent/contracts/038.json' ':(exclude,glob).agent/qa/038*.json'
+    ':(exclude).agent/contracts/034.json' ':(exclude,glob).agent/qa/034*.json'); if [ -n
+    "$changed" ]; then echo 'immutable audit record(s) touched:'; echo "$changed"; exit 1; fi;
+    echo PASS
+  NEW acceptance_test: "ADDITIONAL (.agent/ immutability guard, RE-SHAPED per amendment_2 to
+    assert its actual two-part invariant directly, closing the coverage gap the original
+    single allow-list-based form hit once sibling phase-005 contract drafts 035/036 legitimately
+    appeared mid-implementation): (a) no TRACKED/HISTORICAL .agent/qa or .agent/contracts record
+    was modified (git diff --quiet HEAD, not an allow-list); (b) every UNTRACKED addition under
+    .agent/qa or .agent/contracts is confined to a legitimately in-flight phase-005 feature
+    (034-045) or its review artifacts -- any untracked file matching the already-committed-
+    history range (031-033) or any other name is rejected."
+  NEW command: bad=0; if ! git diff --quiet HEAD -- .agent/qa .agent/contracts; then echo
+    "tracked/historical .agent/qa or .agent/contracts record modified:"; git diff --name-only
+    HEAD -- .agent/qa .agent/contracts; bad=1; fi; while IFS= read -r line; do case "$line" in
+    "?? "*) path="${line:3}"; case "$path" in .agent/contracts/03[4-9]*.json|
+    .agent/contracts/04[0-5]*.json|.agent/qa/03[4-9]*.json|.agent/qa/04[0-5]*.json) ;; *) echo
+    "out-of-scope untracked .agent/qa or .agent/contracts artifact: $path"; bad=1 ;; esac ;;
+    esac; done < <(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts);
+    if [ "$bad" -eq 0 ]; then echo PASS; else exit 1; fi
+  Nothing else in the contract changed. approvals.revisions stays at 3 (NOT incremented, per
+  explicit orchestrator instruction); approvals.amendment_2 provenance object added, mirroring
+  amendment_1's shape.
+
+  1  PASS  F-008/AT: the schema file exists.
+  2  PASS  ADDITIONAL (anti-vacuity master proof for the schema): schema absent AT HEAD.
+  3  PASS  F-008/AT (literal): schema is a valid JSON Schema, contains all 3 verdict tokens.
+  4  PASS  ADDITIONAL: inline unsupported verdict value rejected directly by the schema.
+  5  PASS  ADDITIONAL: bare PASS_WITH_EXCEPTIONS (no operator_approval) rejected directly.
+  6  PASS  ADDITIONAL: bare PASS and bare FAIL both validate with no operator_approval required.
+  7  PASS  ADDITIONAL (rev1 fix): operator_approval:{} (present, empty) rejected directly.
+  8  PASS  ADDITIONAL (rev1 fix): all 6 missing/empty sub-field probes rejected directly.
+  9  PASS  F-008/AT: all 3 positive fixtures (PASS, FAIL, PASS_WITH_EXCEPTIONS+approval) validate.
+ 10  PASS  F-008/AT (literal): glob-discovered negative fixture rejected.
+ 11  PASS  ADDITIONAL (rev1 extension): all 3 named negative fixtures independently rejected.
+ 12  PASS  F-008/AT (literal): NIZAM.json indexes the new schema; --target NIZAM.json is C4-green.
+ 13  PASS  ADDITIONAL (amendment_1, HEAD-anchored): HEAD copy of NIZAM.json does NOT name the
+           schema -- TRUE, since nothing has been committed under this contract.
+ 14  PASS  ADDITIONAL: schema module's key_documents array also lists the new schema.
+ 15  PASS  ADDITIONAL: schema/README.md '## Schemas' section names preflight_verdict.schema.json.
+ 16  PASS  ADDITIONAL (anti-vacuity for entry 15, HEAD-anchored): HEAD copy still lacks the row.
+ 17  PASS  ADDITIONAL: schema/README.md frontmatter version strictly increased (0.4.0 -> 0.5.0).
+ 18  PASS  ADDITIONAL: change_log entry matches the bumped version.
+ 19  PASS  F-008/AT (literal): compliance validator stays green ("SUMMARY: 11 passed, 0 failed").
+ 20  PASS  ADDITIONAL (non-goal): none of the 7 other ecosystem/*.md protocol docs created.
+ 21  PASS  ADDITIONAL (non-goal): ecosystem/01_clean_state_preflight.md byte-identical to HEAD.
+ 22  PASS  ADDITIONAL (non-goal): no other schema/*.json file modified besides README.md.
+ 23  PASS  ADDITIONAL (non-goal): no pre-existing tools/ file modified.
+ 24  PASS  ADDITIONAL (non-goal): planning docs (manifest/ROADMAP/DEBT) byte-identical to HEAD.
+ 25  PASS  ADDITIONAL (amendment_2): (a) git diff --quiet HEAD -- .agent/qa .agent/contracts is
+           clean; (b) the only untracked additions present -- .agent/contracts/035.json,
+           .agent/contracts/036.json, .agent/contracts/038.json, .agent/qa/038-contract-
+           review*.json -- all match the 034-045 in-flight-phase-005 glob patterns.
+ 26  PASS  ADDITIONAL: scope guard -- tracked diff is exactly NIZAM.json + schema/README.md, plus
+           the 6 authorized new untracked fixtures/schema, plus v0.6.0-release-notes.md.
+
+LOAD-BEARING PROOFS FOR THE AMENDED ENTRY 25 (disposable scratch git repo only, never the real
+repository -- built under the session scratchpad, .git init, a committed baseline of
+.agent/contracts/038.json + .agent/qa/038-contract-review.json):
+
+  BASELINE SANITY (nothing changed yet): PASS, exit 0.
+
+  PROBE (i) -- bogus untracked .agent/contracts/999-probe.json (matches neither glob pattern):
+    "out-of-scope untracked .agent/qa or .agent/contracts artifact: .agent/contracts/999-probe.json"
+    exit 1 -- correctly FAILS part (b). Probe file removed; re-ran -> PASS, exit 0 (confirms no
+    residual false-fail).
+
+  PROBE (ii) -- simulated TRACKED modification to the committed .agent/qa/038-contract-review.json
+    (edited in place, still tracked, not re-committed):
+    "tracked/historical .agent/qa or .agent/contracts record modified:
+     .agent/qa/038-contract-review.json"
+    exit 1 -- correctly FAILS part (a). Reverted via `git checkout --`; re-ran -> PASS, exit 0.
+
+  EXTRA BOUNDARY CHECKS (same scratch repo, additional rigor beyond the two required probes):
+    - Legitimate in-range untracked additions (.agent/contracts/040.json,
+      .agent/qa/045-contract-review.json) -> PASS, exit 0 (part b correctly tolerates them).
+    - Out-of-range, already-committed-history-numbered untracked file
+      (.agent/contracts/031-stray.json, matching the 031-033 range the orchestrator specified
+      must always fail regardless of filename) -> "out-of-scope untracked .agent/qa or
+      .agent/contracts artifact: .agent/contracts/031-stray.json", exit 1 -- correctly REJECTED.
+
+  All four probes (2 required + 2 extra) plus both baseline-restoration re-checks confirm the
+  amended entry 25 is genuinely load-bearing: it discriminates real state changes in both halves
+  of its invariant, tolerates only the legitimately in-flight 034-045 range, and returns cleanly
+  to PASS once a probe is undone -- it is not vacuously true nor vacuously false.
+
+TRACKED-DIFF / REGRESSION CONFIRMATION (unchanged since before this amendment):
+  git diff --stat HEAD -- . :
+    NIZAM.json       | 4 +++-
+    schema/README.md | 6 +++++-
+    2 files changed, 8 insertions(+), 2 deletions(-)
+  bash tools/validate.sh: "SUMMARY: 11 passed, 0 failed", unchanged.
+  .agent/run_state.json and ecosystem/ remain untouched
+  (git status --porcelain --untracked-files=all -- .agent/run_state.json ecosystem/ is empty).
+
+FINAL COUNT: 26/26 PASS. Both amendments (entry 13, entry 25) are closed, schema-valid, and each
+independently proven load-bearing on disposable scratch git repos -- never the real repository.
+The implementation itself (schema/preflight_verdict.schema.json, all 6 fixtures, NIZAM.json's two
+indexing surfaces, schema/README.md's row + version bump + change_log entry) is unchanged from
+the original Loop-2 implementation and remains fully correct.

@@ -1,0 +1,7 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/preflight_verdict.schema.json'))
+for f in ['tools/fixtures/preflight_verdict_pass.json','tools/fixtures/preflight_verdict_fail.json','tools/fixtures/preflight_verdict_pass_with_exceptions.json']:
+  jsonschema.validate(json.load(open(f)), s)" && echo PASS || { echo "a positive fixture failed to validate"; exit 1; }
+PASS
+
+EXIT:0

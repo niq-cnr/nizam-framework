@@ -1,0 +1,9 @@
+python3 -c "import json,jsonschema; s=json.load(open('schema/preflight_verdict.schema.json'))
+import sys
+try:
+  jsonschema.validate({'verdict':'BOGUS'}, s); sys.exit(1)
+except jsonschema.ValidationError:
+  sys.exit(0)" && echo PASS || { echo "unsupported inline verdict value was NOT rejected"; exit 1; }
+PASS
+
+EXIT:0

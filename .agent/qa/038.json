@@ -1,0 +1,62 @@
+{
+  "review": "qa",
+  "feature": "038",
+  "feature_id": "038",
+  "qa_pass": true,
+  "checks_run": 26,
+  "checks_passed": 26,
+  "adversarial": {
+    "performed": true,
+    "notes": "Independently re-derived (not trusted from generator evidence, the contract's own claims, or this evaluator's own prior Loop-1 scratch-schema probes) by exercising the REAL, implemented schema/preflight_verdict.schema.json directly with fresh hand-built instances mirroring the exact round-0 kill-shot that drove revision 1: (1) jsonschema.Draft202012Validator.check_schema confirms the shipped schema is itself valid Draft 2020-12. (2) {'verdict':'BOGUS'} -- REJECTED ('BOGUS' is not one of the three-value enum). (3) bare {'verdict':'PASS'} and {'verdict':'FAIL'} -- both ACCEPTED with zero operator_approval demanded. (4) {'verdict':'PASS_WITH_EXCEPTIONS','exceptions':[...]} with NO operator_approval key -- REJECTED ('operator_approval' is a required property). (5) THE ROUND-0 KILL SHOT ITSELF, re-run against the shipped file: {'verdict':'PASS_WITH_EXCEPTIONS','exceptions':[...],'operator_approval':{}} (key present, empty) -- REJECTED ('approver' is a required property), confirming the Loop-1 HIGH finding is genuinely closed in the shipped artifact, not merely in a scratch prototype. (6) operator_approval present but missing 'approver' only -- REJECTED ('approver' is a required property). (7) operator_approval present with 'authorization' as an empty string -- REJECTED (''' should be non-empty'). (8) A complete PASS_WITH_EXCEPTIONS instance (all three operator_approval sub-fields non-empty, non-empty exceptions array) -- ACCEPTED. All 8 outcomes matched expectation exactly (see .agent/evidence/038-verify-07.txt and -08.txt for the contract's own equivalent direct-instance proofs, which this adversarial pass independently reproduced with distinct hand-built instances rather than re-running the contract's literal python bodies verbatim). Additionally validated all 6 shipped tools/fixtures/preflight_verdict_*.json fixtures directly against the shipped schema (independent of the contract's own glob/named-file verification logic): the 3 positive fixtures (pass, fail, pass_with_exceptions) all VALID; the 3 negative fixtures (invalid_verdict, invalid_exceptions, invalid_approval_incomplete) all correctly REJECTED, each citing the expected distinct violation (unsupported enum value; missing operator_approval key; missing 'approver' sub-field). Independently re-confirmed NIZAM.json's two indexing surfaces (top-level 'schemas' array AND the 'schema' module's 'key_documents' array) both name the new schema, and schema/README.md's frontmatter version (0.5.0) has a matching change_log entry and the '## Schemas' section names the new file -- all via fresh, hand-written python/grep, not the contract's own command bodies. Cross-checked .agent/evidence/038/diff.patch's sha256 against a live `git diff HEAD | sha256sum`: identical (5d5308995e06ddca26dec54c7447803047d964c2b72e9cf79f6adefd3782fac2), confirming the evidence bundle's diff artifact is the genuine, current tracked diff (NIZAM.json + schema/README.md, 8 insertions/2 deletions), not stale or fabricated."
+  },
+  "evidence_files": [
+    ".agent/evidence/038/verification.txt",
+    ".agent/evidence/038/diff.patch",
+    ".agent/evidence/038-verify-01.txt",
+    ".agent/evidence/038-verify-02.txt",
+    ".agent/evidence/038-verify-03.txt",
+    ".agent/evidence/038-verify-04.txt",
+    ".agent/evidence/038-verify-05.txt",
+    ".agent/evidence/038-verify-06.txt",
+    ".agent/evidence/038-verify-07.txt",
+    ".agent/evidence/038-verify-08.txt",
+    ".agent/evidence/038-verify-09.txt",
+    ".agent/evidence/038-verify-10.txt",
+    ".agent/evidence/038-verify-11.txt",
+    ".agent/evidence/038-verify-12.txt",
+    ".agent/evidence/038-verify-13.txt",
+    ".agent/evidence/038-verify-14.txt",
+    ".agent/evidence/038-verify-15.txt",
+    ".agent/evidence/038-verify-16.txt",
+    ".agent/evidence/038-verify-17.txt",
+    ".agent/evidence/038-verify-18.txt",
+    ".agent/evidence/038-verify-19.txt",
+    ".agent/evidence/038-verify-20.txt",
+    ".agent/evidence/038-verify-21.txt",
+    ".agent/evidence/038-verify-22.txt",
+    ".agent/evidence/038-verify-23.txt",
+    ".agent/evidence/038-verify-24.txt",
+    ".agent/evidence/038-verify-25.txt",
+    ".agent/evidence/038-verify-26.txt"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "ALL 26 VERIFICATION ENTRIES RE-RUN LIVE FROM REPO ROOT (commands extracted programmatically from the live, amended .agent/contracts/038.json, not retyped): 26/26 PASS (EXIT:0), matching the evidence bundle's own claimed 26/26 and this evaluator's own independent execution.",
+    "AMENDMENT 1 (entry 13, HEAD-anchored) RE-CONFIRMED SOUND: entry 13 now asserts `! (git show HEAD:NIZAM.json | grep -q 'preflight_verdict.schema.json')`, mirroring entry 16's pattern, resolving the mutual-exclusivity-with-entry-12 defect that a working-tree-anchored form would have hit post-implementation (entry 12 requires the WORKING TREE to contain the string; the old entry 13 would have required the WORKING TREE to NOT contain it -- impossible to satisfy simultaneously once implemented). Independently re-run: PASS, and correctly so, since no commit has been made under this contract (git commit is explicitly out of scope per non_goals) -- HEAD still lacks the string, entry 12 remains non-vacuous.",
+    "AMENDMENT 2 (entry 25, two-part invariant) RE-CONFIRMED SOUND AND CORRECTLY SCOPED: re-read the amended command; part (a) (`git diff --quiet HEAD -- .agent/qa .agent/contracts`) is a direct, allow-list-free assertion that no TRACKED historical record was modified -- confirmed empty via direct re-run. Part (b) walks every untracked ('??') addition under .agent/qa/.agent/contracts and requires it to match one of four globs confining it to the legitimately in-flight phase-005 feature range (034-045); re-confirmed live that the CURRENT untracked set under those two directories -- .agent/contracts/035.json, .agent/contracts/036.json, .agent/contracts/038.json, .agent/qa/035-contract-review.json, .agent/qa/036-contract-review.json, .agent/qa/038-contract-review.json, .agent/qa/038-contract-review-rev1.json, .agent/qa/038-contract-review-rev2.json -- all match the '03[4-9]*'/'04[0-5]*' globs. This is a stronger, more scalable invariant than amendment_1 predates: it now tolerates any legitimate 034-045 sibling (035, 036 confirmed present and correctly tolerated) without needing a per-feature-ID allow-list edit each time a new sibling contract appears.",
+    "DIFF.PATCH INTEGRITY: `sha256sum .agent/evidence/038/diff.patch` and a live `git diff HEAD | sha256sum` both produce 5d5308995e06ddca26dec54c7447803047d964c2b72e9cf79f6adefd3782fac2 -- byte-identical, confirming the evidence bundle's diff artifact is genuine and current, not stale. The diff touches exactly NIZAM.json and schema/README.md (8 insertions, 2 deletions), matching contract scope.files_modify exactly; no other tracked file is touched.",
+    "IMPLEMENTATION SCOPE CONFIRMED VIA LIVE git status: exactly the 2 authorized tracked modifications (NIZAM.json, schema/README.md) plus the 7 authorized new untracked files (schema/preflight_verdict.schema.json and the 6 tools/fixtures/preflight_verdict_*.json fixtures) are present, plus this feature's own evidence/.agent/qa artifacts. No ecosystem/*, tools/validate.sh, tools/verify_lib.sh, docs/planning/*, .agent/run_state.json, or 035/036 surface was touched by this feature or by this QA pass -- independently confirmed via `git status --porcelain --untracked-files=all -- .agent/run_state.json ecosystem/03_engineering_audit.md ecosystem/07_progress_comparison.md` returning empty.",
+    "FEATURE_LIST_005.JSON ACCEPTANCE CRITERIA INDEPENDENTLY RE-RUN, LITERAL TEXT, NOT THE CONTRACT'S PARAPHRASED MIRROR: all 4 embedded-command acceptance tests for feature 038 ('the schema is itself a valid JSON Schema...', 'a fixture with an unsupported verdict is rejected...', 'NIZAM.json indexes the new schema and stays C4-green...', 'compliance validator stays green...') were extracted verbatim from .agent/feature_list_005.json and re-run directly (not merely via the contract's structurally-similar entries): all 4 PASS (EXIT:0). The two prose-only criteria ('Three verdicts supported', 'Exceptions require structured approval state') are satisfied by the schema's enum + if/then conditional, independently confirmed via this QA pass's own adversarial instance probes. No [AMENDED] reconciliation flag is needed: neither of contract 038's two Loop-2 amendments (entries 13 and 25) touches any of the four embedded-command literal acceptance tests or their underlying mechanisms -- both amendments are confined to internal anti-vacuity/immutability-guard plumbing, not to any feature_list-visible acceptance criterion.",
+    "bash tools/validate.sh: 'SUMMARY: 11 passed, 0 failed', independently re-run and confirmed by this QA pass, matching both the evidence bundle's claim and every prior round's baseline.",
+    "run_state.json and any 035/036 surface were not touched, read-modified, or otherwise altered by this QA pass; feature 038's status flip and run_state.json update remain the orchestrator's own subsequent action, per the task's explicit instruction not to perform them here."
+  ],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "final_verdict": {
+    "approved": true,
+    "feature": "038",
+    "summary": "PASS. All 26 contract (revision 3, amendments 1 and 2 applied) verification commands independently re-run from repo root and all exited 0/PASS -- including the two Loop-2-discovered-and-amended entries (13, re-anchored to HEAD to resolve mutual exclusivity with entry 12; 25, re-shaped to a direct two-part invariant to tolerate legitimately in-flight sibling contracts 035/036 without a per-feature allow-list edit). This evaluator independently re-exercised the shipped schema/preflight_verdict.schema.json with its own fresh probe instances (not the contract's own command bodies) reproducing the exact Loop-1 round-0 kill shot -- PASS_WITH_EXCEPTIONS with operator_approval:{} is REJECTED citing the missing 'approver' sub-field, confirming the Loop-1 HIGH finding is genuinely closed in the real artifact -- plus BOGUS-verdict rejection, bare PASS/FAIL acceptance, missing- and empty-sub-field rejection, and complete-approval acceptance, all matching expectation. All 6 shipped fixtures were independently validated directly against the shipped schema (3 positive VALID, 3 negative REJECTED with the expected distinct violations). NIZAM.json's two indexing surfaces and schema/README.md's Schemas-table row, version bump (0.5.0), and matching change_log entry were independently re-confirmed. The evidence bundle is genuine and current: all 26 flat 038-verify-NN.txt files carry the exact amended invocations (spot-checked entries 13 and 25) with a literal EXIT:0 as their last line; .agent/evidence/038/diff.patch's sha256 is byte-identical to a live `git diff HEAD` (5d5308995e06ddca26dec54c7447803047d964c2b72e9cf79f6adefd3782fac2), confirming it is not stale; .agent/evidence/038/verification.txt's narrative matches this pass's own independent findings. All four embedded-command acceptance tests in .agent/feature_list_005.json for feature 038 were independently re-run verbatim (not the contract's paraphrase) and all pass; no [AMENDED] reconciliation is needed since neither Loop-2 amendment touches any feature_list-visible acceptance criterion. `bash tools/validate.sh` reports 'SUMMARY: 11 passed, 0 failed'. Live `git status` confirms the implementation's tracked diff is confined to exactly NIZAM.json and schema/README.md, plus the 7 authorized new untracked files, with .agent/run_state.json and every 035/036 surface confirmed untouched. Feature 038 is approved for Loop-2 completion; status flip and run_state.json update are left to the orchestrator, per instruction."
+  }
+}

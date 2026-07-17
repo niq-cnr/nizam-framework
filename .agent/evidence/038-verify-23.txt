@@ -1,0 +1,4 @@
+git diff --quiet HEAD -- tools/ && echo PASS || { echo "an out-of-scope tools/ file was modified"; git diff --name-only HEAD -- tools/; exit 1; }
+PASS
+
+EXIT:0

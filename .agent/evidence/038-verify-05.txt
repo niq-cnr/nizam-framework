@@ -1,0 +1,10 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/preflight_verdict.schema.json'))
+import sys
+try:
+  jsonschema.validate({'verdict':'PASS_WITH_EXCEPTIONS'}, s); sys.exit(1)
+except jsonschema.ValidationError:
+  sys.exit(0)" && echo PASS || { echo "bare PASS_WITH_EXCEPTIONS (no operator_approval) was NOT rejected"; exit 1; }
+PASS
+
+EXIT:0

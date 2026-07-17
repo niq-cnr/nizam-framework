@@ -1,0 +1,11 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/preflight_verdict.schema.json'))
+import sys
+instance={'verdict':'PASS_WITH_EXCEPTIONS','exceptions':[{'finding':'x'}],'operator_approval':{}}
+try:
+  jsonschema.validate(instance, s); sys.exit(1)
+except jsonschema.ValidationError:
+  sys.exit(0)" && echo PASS || { echo "empty operator_approval object ({}) was NOT rejected -- structured approval content is unenforced"; exit 1; }
+PASS
+
+EXIT:0

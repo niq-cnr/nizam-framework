@@ -1,0 +1,7 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/preflight_verdict.schema.json'))
+jsonschema.validate({'verdict':'PASS'}, s)
+jsonschema.validate({'verdict':'FAIL'}, s)" && echo PASS || { echo "PASS or FAIL incorrectly required operator_approval"; exit 1; }
+PASS
+
+EXIT:0

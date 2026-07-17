@@ -1,0 +1,4 @@
+python3 -c "import yaml; d=open('schema/README.md',encoding='utf-8').read().split('---')[1]; fm=yaml.safe_load(d); v=fm['version']; assert any(str(e.get('version'))==v for e in (fm.get('change_log') or []))" && echo PASS || { echo "no matching change_log entry for the bumped version"; exit 1; }
+PASS
+
+EXIT:0

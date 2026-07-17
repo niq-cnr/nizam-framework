@@ -1,0 +1,49 @@
+diff --git a/NIZAM.json b/NIZAM.json
+index cb4ea17..35319b1 100644
+--- a/NIZAM.json
++++ b/NIZAM.json
+@@ -77,6 +77,7 @@
+         "schema/work-packet.schema.json",
+         "schema/debt.schema.json",
+         "schema/capability_profile.schema.json",
++        "schema/preflight_verdict.schema.json",
+         "schema/README.md"
+       ]
+     },
+@@ -242,7 +243,8 @@
+     "schema/contract_review.schema.json",
+     "schema/qa_verdict.schema.json",
+     "schema/run_state.schema.json",
+-    "schema/work-packet.schema.json"
++    "schema/work-packet.schema.json",
++    "schema/preflight_verdict.schema.json"
+   ],
+   "templates": [
+     "templates/CONTEXT.md",
+diff --git a/schema/README.md b/schema/README.md
+index 7e92c00..b8e5e98 100644
+--- a/schema/README.md
++++ b/schema/README.md
+@@ -2,10 +2,13 @@
+ id: nizam-schema-readme
+ title: "Schema Module — Index"
+ description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
+-version: 0.4.0
++version: 0.5.0
+ status: draft
+ authoritative_source: schema/README.md
+ change_log:
++  - version: "0.5.0"
++    date: "2026-07-17"
++    summary: "Added schema/preflight_verdict.schema.json (feature 038, handover F-008): validates the ecosystem clean-state preflight run's machine-readable verdict artifact -- the exact three-verdict enum (PASS / PASS_WITH_EXCEPTIONS / FAIL) and the structured operator-approval state PASS_WITH_EXCEPTIONS requires."
+   - version: "0.4.0"
+     date: "2026-07-12"
+     summary: "Enumeration-completeness cleanup: added the missing work-packet.schema.json row to the Schemas table (the schema shipped in v0.5.0 but was never indexed here), including the parse-validity-only caveat for its template documented in templates/README.md."
+@@ -46,6 +49,7 @@ Every schema in this module:
+ | `work-packet.schema.json` | Validates a work-packet artifact: the minimal packet core (`id`, `objective`, `scope`, `acceptance`, `evidence`, `non_goals`) plus the optional cross-repo dispatch and linking fields (`tier`, `blast_radius`, `concurrency_lane`, `dependency_edges`, `merge_order`, and the `contract_id`/`phase_id`/`feature_id`/`train_id` foreign keys). | Work packets authored from `templates/work-packet.template.json` (the template itself is checked for JSON parse-validity only; its `{{...}}` placeholders occupy enum- and integer-typed fields). |
+ | `debt.schema.json` | Validates the circuit-breaker debt log: timestamp, feature, failed step, attempt count, failure mode, and human resolution. | `.agent/debt.json` |
+ | `capability_profile.schema.json` | Validates capability-profile bindings that map agent roles to primary/fallback models, allowed tools, and safety classes. | Capability-profile blocks in `AGENTS.md` or standalone `.agent/capability_profile.json` |
++| `preflight_verdict.schema.json` | Validates the ecosystem clean-state preflight run's machine-readable verdict artifact: the exact three-verdict enum (`PASS` / `PASS_WITH_EXCEPTIONS` / `FAIL`) and the structured operator-approval state `PASS_WITH_EXCEPTIONS` requires. | `.agent/reconciliation/<execution-id>/preflight.json` |
+ 
+ ## DD-3 — Evidence Externalisation
+ 
