@@ -1,0 +1,5 @@
+source tools/verify_lib.sh; vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 4\. Blocking Rules$' '`FAIL`' && vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 4\. Blocking Rules$' 'MUST NOT proceed' && echo PASS || { echo "Blocking Rules section missing FAIL token or the 'MUST NOT proceed' rule"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0

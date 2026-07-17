@@ -1,0 +1,4 @@
+source tools/verify_lib.sh; vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 6\. Verdict Artifact$' '\.agent/reconciliation/<execution-id>/preflight\.json' && echo PASS || { echo "Verdict Artifact section missing the .agent/reconciliation/<execution-id>/preflight.json convention"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0

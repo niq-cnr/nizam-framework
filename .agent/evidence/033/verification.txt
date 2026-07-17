@@ -1,0 +1,81 @@
+=== [01] F-003/AT: the protocol doc file exists.
+$ test -f ecosystem/01_clean_state_preflight.md && echo PASS || { echo "ecosystem/01_clean_state_preflight.md missing"; exit 1; }
+PASS
+EXIT:0
+
+=== [02] ADDITIONAL (anti-vacuity master proof, mirroring the 031 rev1 fixture-probe precedent): ecosystem/01_clean_state_preflight.md does not exist at HEAD, so every content-anchored check below (entries 3-9) is proven non-vacuous by construction -- nothing at HEAD can satisfy them because the target artifact itself does not yet exist there.
+$ ! git show HEAD:ecosystem/01_clean_state_preflight.md >/dev/null 2>&1 && echo PASS || { echo "ecosystem/01_clean_state_preflight.md already exists at HEAD -- content checks below would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+=== [03] F-003/AT: frontmatter validates against schema/frontmatter.schema.json.
+$ python3 -c "import json,yaml,jsonschema; d=open('ecosystem/01_clean_state_preflight.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS || { echo "frontmatter invalid"; exit 1; }
+PASS
+EXIT:0
+
+=== [04] ADDITIONAL (house-pattern frontmatter fields): id is 'nizam-ecosystem-clean-state-preflight', status is 'active', and authoritative_source is self-referential.
+$ python3 -c "import yaml,sys; d=open('ecosystem/01_clean_state_preflight.md',encoding='utf-8').read().split('---')[1]; fm=yaml.safe_load(d); ok=(fm.get('id')=='nizam-ecosystem-clean-state-preflight' and fm.get('status')=='active' and fm.get('authoritative_source')=='ecosystem/01_clean_state_preflight.md'); sys.exit(0 if ok else 1)" && echo PASS || { echo "frontmatter house-pattern fields incorrect"; exit 1; }
+PASS
+EXIT:0
+
+=== [05] F-003/AT (STRENGTHENED from feature_list_005.json's coarse whole-file check per the anti-vacuity mandate -- section-anchored, not vacuous): the '## 3. Verdict' section names all three backtick-wrapped verdicts and states the literal phrase 'exactly one'.
+$ source tools/verify_lib.sh; vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 3\. Verdict$' '`PASS`' && vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 3\. Verdict$' '`PASS_WITH_EXCEPTIONS`' && vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 3\. Verdict$' '`FAIL`' && vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 3\. Verdict$' 'exactly one' && echo PASS || { echo "Verdict section missing one of: PASS / PASS_WITH_EXCEPTIONS / FAIL / 'exactly one'"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+=== [06] F-003/AT (STRENGTHENED, section-anchored): the '## 4. Blocking Rules' section names `FAIL` and states the literal phrase 'MUST NOT proceed' -- the explicit blocking rule.
+$ source tools/verify_lib.sh; vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 4\. Blocking Rules$' '`FAIL`' && vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 4\. Blocking Rules$' 'MUST NOT proceed' && echo PASS || { echo "Blocking Rules section missing FAIL token or the 'MUST NOT proceed' rule"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+=== [07] F-003/AT (STRENGTHENED, section-anchored): the '## 5. Operator-Exception Rule' section names `PASS_WITH_EXCEPTIONS` and states both 'operator approval' and 'before execution continues' -- the explicit operator-exception rule.
+$ source tools/verify_lib.sh; vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 5\. Operator-Exception Rule$' '`PASS_WITH_EXCEPTIONS`' && vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 5\. Operator-Exception Rule$' 'operator approval' && vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 5\. Operator-Exception Rule$' 'before execution continues' && echo PASS || { echo "Operator-Exception Rule section missing PASS_WITH_EXCEPTIONS token, 'operator approval', or 'before execution continues'"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+=== [08] ADDITIONAL (machine-readable verdict artifact convention, per the NIP's 'Artifact Locations' section and feature 043's required first-run output): the '## 6. Verdict Artifact' section states the literal path convention `.agent/reconciliation/<execution-id>/preflight.json`.
+$ source tools/verify_lib.sh; vlib_section_grep ecosystem/01_clean_state_preflight.md '^## 6\. Verdict Artifact$' '\.agent/reconciliation/<execution-id>/preflight\.json' && echo PASS || { echo "Verdict Artifact section missing the .agent/reconciliation/<execution-id>/preflight.json convention"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+=== [09] F-003/AT: compliance validator stays green.
+$ bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: 11 passed, 0 failed' && echo PASS || { echo "validate.sh SUMMARY regressed from 11 passed, 0 failed"; exit 1; }
+PASS
+EXIT:0
+
+=== [10] ADDITIONAL (scope guard, untracked-aware, concurrency-tolerant per design_notes.concurrency_fence -- ecosystem/README.md and NIZAM.json are 032's concurrently in-flight scope, and v0.6.0-release-notes.md is a pre-existing untracked artifact this feature does not touch): only this feature's own new file, plus the tolerated concurrent/pre-existing paths, changed outside .agent/.
+$ source tools/verify_lib.sh; vlib_scope_guard 'ecosystem/01_clean_state_preflight.md' 'ecosystem/README.md' 'NIZAM.json' 'v0.6.0-release-notes.md' && echo PASS || { echo "out-of-scope change(s) detected"; exit 1; }
+PASS
+EXIT:0
+
+=== [11] ADDITIONAL (.agent/ immutability guard, mirroring the precedent in contracts 025/028/031, extended per design_notes.concurrency_fence to tolerate feature 032's concurrently in-flight contract/qa artifacts): no historical (pre-existing, already-approved) .agent/qa or .agent/contracts artifact was edited -- excludes only this feature's own new 033.json contract and 033*.json qa/review artifacts, AND feature 032's own concurrently-authored 032.json contract and 032*.json qa/review artifacts (032 is a different, independently-scoped in-flight feature, not a historical/immutable one).
+$ changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/033.json' ':(exclude,glob).agent/qa/033*.json' ':(exclude).agent/contracts/032.json' ':(exclude,glob).agent/qa/032*.json'); if [ -n "$changed" ]; then echo 'immutable audit record(s) touched:'; echo "$changed"; exit 1; fi; echo PASS
+PASS
+EXIT:0
+
+=== [12] ADDITIONAL (non-goal enforcement): every schema/*.json file and every file under tools/ are byte-identical to HEAD -- this feature performs zero schema/tooling work.
+$ git diff --quiet HEAD -- schema/ tools/ && echo PASS || { echo "an out-of-scope schema/tooling file was modified"; git diff --name-only HEAD -- schema/ tools/; exit 1; }
+PASS
+EXIT:0
+
+=== [13] ADDITIONAL (non-goal enforcement): docs/planning/manifest.json, docs/planning/ROADMAP.md, and docs/planning/DEBT.md are byte-identical to HEAD.
+$ git diff --quiet HEAD -- docs/planning/manifest.json docs/planning/ROADMAP.md docs/planning/DEBT.md && echo PASS || { echo "an out-of-scope planning document was modified"; exit 1; }
+PASS
+EXIT:0
+
+=== [14] ADDITIONAL (non-goal enforcement, REVISED per .agent/qa/033-contract-review.json required_fix, HIGH: the original single multi-argument `ls` call false-passed because GNU ls's exit code reflects whether ANY argument was missing, not whether ALL were -- reproduced by the evaluator: creating exactly one forbidden file still left `ls` exiting nonzero, so the negated check still printed PASS. Replaced with a per-file existence loop that fails as soon as ANY one of the 8 named files exists): no other ecosystem/*.md protocol document (00/02-08) was created.
+$ bad=0; for f in ecosystem/00_ecosystem_bootstrap.md ecosystem/02_evidence_baseline.md ecosystem/03_engineering_audit.md ecosystem/04_dependency_reconciliation.md ecosystem/05_release_train_coordination.md ecosystem/06_simplification_review.md ecosystem/07_progress_comparison.md ecosystem/08_ga_gate.md; do if [ -e "$f" ]; then echo "out-of-scope ecosystem protocol document created: $f"; bad=1; fi; done; if [ "$bad" -eq 0 ]; then echo PASS; else exit 1; fi
+PASS
+EXIT:0
+
+ALL_PASS=True

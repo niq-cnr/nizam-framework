@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "005-ecosystem-cycle",
-  "current_feature": "031",
+  "current_feature": "033",
   "status": "feature_complete",
   "updated_at": "2026-07-17T00:00:00Z",
   "circuit_breaker": {
@@ -619,6 +619,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 031 (PR-F1, handover F-001) COMPLETE through the full contract lifecycle. Pipeline: contract 031 proposed -> evaluator Loop-1 REJECTED rev0 (qa/031-contract-review.json: vacuous ROADMAP check, missing .agent immutability guard, operator-attribution gap) -> rev1 -> validator Mode A APPROVED + evaluator round-2 APPROVED (qa/031-contract-review-rev1.json) -> implementation (no deliverable edits needed; planner artifacts satisfied scope as authored) -> validator Mode B REJECTED once (B7 stale diff.patch) -> evidence regenerated -> Mode B APPROVED (8/8 checks) -> QA verdict PASS (qa/031.json, 15/15 verification, validate.sh 11/0). Orchestrator actions this event: feature_list_005.json F-031 status -> complete; acceptance_tests[8] reconciled in-place with [AMENDED 2026-07-17] note per F-026/027/028 precedent (original grep-005 command was the rejected false-pass; enforced check is contract-031-rev1 entries 7-8). Scope budget: phase-004 budget archived to phase_004_scope_budget_final; phase-005 budget initialized (estimate 2300); feature 031 actual 1046 vs estimate 260 -- FLAGGED for human acknowledgment (first feature of phase, 3x-rolling-average not computable; cumulative 1046 well under the 2990 ceiling). Advancing to features 032 and 033 (PR-F2 group 2, safe parallelism per product_spec_005 execution order): delegating contract proposals to @generator."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Features 032 (Ecosystem Module Index, handover F-002) and 033 (Clean-State Preflight Protocol, handover F-003) COMPLETE through the full contract lifecycle, executed as the phase's first PARALLEL feature pair (file-disjoint scopes, concurrency fences in both contracts, generators barred from run_state.json). Both contracts were REJECTED once at evaluator Loop-1 review (032: membership-vs-exact-equality on NIZAM.json key_documents [HIGH] + semver-downgrade hole [LOW] + unverified Shipped/Planned commitment; 033: ls-based multi-argument non-goal check that false-passed unless all 8 forbidden files existed [HIGH]) and approved at rev1 after probe-proven fixes. Both passed validator Mode B (032: diff.patch byte-identical to live git diff HEAD, exactly 2 tracked files; 033: legitimately empty diff.patch, create-only contract) and evaluator QA (qa/032.json, qa/033.json, both pass; 19/19 and 14/14 live verification; validate.sh 11/0 throughout). CONCURRENCY INCIDENT (recorded as dogfood friction, to be registered in DEBT.md at PR-F2 tranche close): feature 033's freshly-authored deliverable ecosystem/01_clean_state_preflight.md was transiently DELETED mid-implementation by the 032 evaluator's dynamic-awareness probe, which touch/rm'd that exact real path for its filesystem-awareness simulation while 033 was landing it; 033's generator detected the loss, recreated the file identically, and re-verified 14/14 twice. Orchestration rule adopted going forward: reviewer probes MUST use scratch copies outside every in-flight contracted path, never the real path of a sibling feature. Orchestrator actions this event: feature_list_005 statuses 032+033 -> complete; 032's vacuous grep AT reconciled in-place with [AMENDED 2026-07-17] note (031/F-026..028 precedent); scope budget actuals 032=97 (est 120), 033=141 (est 150), both under estimate, cumulative 1284/2990 ceiling OK. Advancing to parallel features 034 (Immutable Baseline Protocol) and 038 (Preflight Verdict Schema + Fixtures): delegating contract proposals to @generator."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -792,13 +797,25 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2300,
-    "total_lines_changed": 1046,
+    "total_lines_changed": 1284,
     "per_feature": [
       {
         "id": "031",
         "estimated": 260,
         "actual": 1046,
         "note": "Actual = 987 lines of new plan-of-record artifacts (NIP 282, product_spec_005 310, feature_list_005 395) + 59 tracked-diff lines (ROADMAP/manifest). 4.0x the planner's 260-line estimate; per-feature 3x-rolling-average check not computable on the first feature of the phase. FLAGGED for human acknowledgment per Scope Budget Protocol (flag, not halt). Cumulative 1046/2990 (130% ceiling) OK."
+      },
+      {
+        "id": "032",
+        "estimated": 120,
+        "actual": 97,
+        "note": "97 tracked-diff lines (ecosystem/README.md expansion + NIZAM.json module entry). Under the 120-line estimate."
+      },
+      {
+        "id": "033",
+        "estimated": 150,
+        "actual": 141,
+        "note": "141 new lines (ecosystem/01_clean_state_preflight.md). Under the 150-line estimate."
       }
     ]
   },
