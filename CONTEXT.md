@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 0.5.0
+version: 0.6.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-07-17"
+    summary: "Add ecosystem/ to the Module Map (the reusable Ecosystem Engineering Cycle module, framework-side only this phase); bump version to reflect the v0.7.0 release state."
   - version: "0.5.0"
     date: "2026-07-13"
     summary: "Bump version for v0.6.0 release (durable enforcement C9-C11, verify_lib, hermetic e2e bootstrap test, schema reconciliation, and the documentation-truth cleanup)."
@@ -41,6 +44,7 @@ infrastructure, and not a runtime service.
 - `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md`.
 - `registry/` — The `NIZAM.json` index schema and scope-definition patterns.
 - `docs/` — Architecture Decision Records (`docs/architecture/`) and the self-contained HTML user guide (`docs/guide/index.html`).
+- `ecosystem/` — The reusable, schema-governed Ecosystem Engineering Cycle protocols (clean-state preflight, evidence baseline, engineering audit, progress comparison), framework-side only so far.
 
 Compliance surfaces, added in phase 002-self-compliance, keep the shipped payload honest:
 `tools/validate.sh` (the repo-local compliance validator), `.github/workflows/compliance.yml`

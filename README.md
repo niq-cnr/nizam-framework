@@ -19,12 +19,12 @@ as your instructions payload — do not bulk-read the governance directories.
 Fetch `bootstrap.sh` pinned to the latest released tag and run it against your repo:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v0.6.0/bootstrap.sh -o bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v0.7.0/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v0.6.0 ./bootstrap.sh --tag v0.6.0
+GOVERNANCE_TAG=v0.7.0 ./bootstrap.sh --tag v0.7.0
 ```
 
-`--tag v0.6.0` (equivalently `GOVERNANCE_TAG=v0.6.0`) pins the inheritance to a real
+`--tag v0.7.0` (equivalently `GOVERNANCE_TAG=v0.7.0`) pins the inheritance to a real
 released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). This
 clones the pinned tag, stages the governance payload, verifies it landed correctly, and
 atomically installs it under `.nizam/` (the default target). What you get:
@@ -39,7 +39,7 @@ atomically installs it under `.nizam/` (the default target). What you get:
 └── provenance.json
 ```
 
-See the [v0.6.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v0.6.0)
+See the [v0.7.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v0.7.0)
 for release notes, and run `tools/validate.sh` (the same repo-local compliance check that
 `.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the
 `docs/architecture/` ADRs) to confirm a bootstrapped target stays compliant.

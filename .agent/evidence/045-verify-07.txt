@@ -1,0 +1,12 @@
+python3 -c "
+import json, re
+d = json.load(open('NIZAM.json'))
+caps = {c['id']: c for c in d['capabilities']}
+s = caps['nizam-compliance-validator']['summary']
+assert 'C1-C12' in s, s
+assert 'C1-C11' not in s, s
+assert not re.search(r'C1-C1[3-9]\\b', s), s
+print('PASS')
+"
+PASS
+EXIT:0

@@ -7,6 +7,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-07-17
+
 ### Added
 
 - `.github/workflows/release.yml`: mechanizes GitHub Release publication.
@@ -21,6 +23,31 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (tagged without a Release page). The logic is inline in the workflow, not
   under `tools/`, because `tools/` is bootstrap-injected consumer payload
   and Release publication is a framework-envelope concern.
+- `ecosystem/README.md` plus 4 new protocol documents
+  (`ecosystem/01_clean_state_preflight.md`, `ecosystem/02_evidence_baseline.md`,
+  `ecosystem/03_engineering_audit.md`, `ecosystem/07_progress_comparison.md`):
+  the reusable, schema-governed Ecosystem Engineering Cycle (handover
+  NIP-0001), extending Nizam's repository-local contract-first loop to
+  ecosystem scale. Framework-side only this phase; consumer adoption is
+  deferred to a successor programme phase.
+- `schema/preflight_verdict.schema.json`, `schema/ecosystem_baseline.schema.json`,
+  `schema/engineering_finding.schema.json`, plus matching positive/negative
+  `tools/fixtures/` fixtures for all three schema families.
+- `tools/ecosystem_preflight.py`: a deterministic, self-fixture-capable CLI
+  implementing the clean-state preflight protocol (three-verdict vocabulary,
+  operator-exception rule).
+- `tools/validate.sh` check **C12** (ecosystem schema-family fixture
+  validation). The default sweep's `SUMMARY` migrates from `11 passed, 0
+  failed` to `12 passed, 0 failed`; `--payload` mode is unaffected (still
+  `10 passed, 0 failed`), since C12 is deliberately full-sweep-only.
+- `docs/nips/NIP-0001-ecosystem-engineering-cycle.md`: the accepted NIP
+  recording the Ecosystem Engineering Cycle's scope and rationale.
+- The framework's first self-dogfood evidence cycle: two gated preflight +
+  baseline runs (`.agent/reconciliation/dogfood-2026-07-17-28c8253/`,
+  `.agent/reconciliation/dogfood-2026-07-17-6d7a47b/`) and a first
+  engineering audit + progress comparison
+  (`.agent/audits/audit-2026-07-17-cba6422/`), registering NDEBT-013 through
+  NDEBT-018.
 
 ### Changed
 
@@ -35,6 +62,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   repository root instead of inside `.nizam/` (GitHub issue #18, the first
   bug report from a real external consumer; corroborates NDEBT-004 and
   NDEBT-008's consumer-context concerns).
+- Release metadata: `NIZAM.json` `framework.version` and the
+  `docs/guide/index.html` version anchors bumped to `0.7.0`; the `README.md`
+  quickstart re-pinned to `v0.7.0`; `CONTEXT.md` bumped to 0.6.0 for the
+  release state.
+- `NIZAM.json`: the `nizam-compliance-validator` capability summary now
+  describes the full C1-C12 check set — it had continued to enumerate only
+  the eleven v0.6.0-era check domains after C12 (ecosystem schema-family
+  fixture validation) shipped in this release.
 
 ## [0.6.0] - 2026-07-13
 

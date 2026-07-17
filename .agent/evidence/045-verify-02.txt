@@ -1,0 +1,18 @@
+python3 -c "
+lines = open('CHANGELOG.md', encoding='utf-8').read().splitlines()
+headings = [(i, l) for i, l in enumerate(lines) if l.startswith('## [')]
+idx = {l.split(' ')[1]: i for i, l in headings}
+assert '[Unreleased]' in idx, 'missing [Unreleased] heading'
+assert any(l.startswith('## [0.7.0] - 2026-07-17') for _, l in headings), 'missing [0.7.0] - 2026-07-17 heading'
+ur_i = idx['[Unreleased]']
+heading_positions = [i for i, _ in headings]
+next_after_ur = min(p for p in heading_positions if p > ur_i)
+assert lines[next_after_ur].startswith('## [0.7.0]'), '[0.7.0] does not immediately follow [Unreleased]'
+for l in lines[ur_i+1:next_after_ur]:
+    assert l.strip() == '', 'non-blank content directly under [Unreleased]: ' + l
+next_after_070 = min(p for p in heading_positions if p > next_after_ur)
+assert lines[next_after_070].startswith('## [0.6.0]'), '[0.6.0] does not immediately follow [0.7.0]'
+print('PASS')
+"
+PASS
+EXIT:0

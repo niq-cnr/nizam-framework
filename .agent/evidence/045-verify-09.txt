@@ -1,0 +1,3 @@
+card=$(awk '/<article class="card">/{buf=""; ia=1} ia{buf=buf $0 "\n"} /<\/article>/{if (ia && buf ~ /<code>ecosystem\/<\/code>/) print buf; ia=0}' docs/guide/index.html); echo "$card" | grep -qiE 'adopt|bootstrap\.sh' && { echo 'ecosystem/ card contains out-of-scope adoption-flow language'; exit 1; } || echo PASS
+PASS
+EXIT:0
