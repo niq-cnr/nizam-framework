@@ -1,0 +1,53 @@
+{
+  "review": "qa",
+  "feature": "034",
+  "feature_id": "034",
+  "qa_pass": true,
+  "checks_run": 18,
+  "checks_passed": 18,
+  "adversarial": {
+    "performed": true,
+    "notes": "Independently re-derived (not trusted from generator or Mode-B evidence): (1) `git diff HEAD` freshly captured during this QA pass byte-matches `.agent/evidence/034/diff.patch` exactly (`diff -u` produces zero output) -- the only tracked-file change is ecosystem/README.md's single-line 02-row flip (Planned -> Shipped); the new ecosystem/02_evidence_baseline.md is untracked and correctly does not appear in a `git diff HEAD` capture (expected git semantics, not a gap -- its existence and content are independently verified by entries 1-8 instead). No 038-attributable divergence exists in the diff at all, since 034's tracked-file footprint is exactly the one README line; no attribution note was needed. (2) `git status --porcelain --untracked-files=all -- . ':(exclude).agent'` confirms the only changed paths outside .agent/ are ecosystem/README.md (modified) and ecosystem/02_evidence_baseline.md (new), plus the pre-existing untracked v0.6.0-release-notes.md -- matching the contract's scope exactly, independently re-confirming entry 12's scope-guard PASS with a manual read of the raw status output rather than trusting the guard's own PASS string alone. (3) Mutation probe: copied the REAL, shipped ecosystem/02_evidence_baseline.md to a disposable scratch copy (never the real repository tree) and replaced the literal Section-4 phrase 'A baseline MUST NOT mix evidence from unspecified revisions' with a paraphrase ('A baseline should avoid mixing evidence from unspecified revisions'); re-ran entry 6's exact, unmodified command against the mutated scratch copy (via a scratch 'miniroot' containing the real, unmodified tools/verify_lib.sh) -- correctly flips to FAIL ('Revision and Timestamp Anchoring Rule section missing one of: revision / timestamp / ... / FAIL condition'), confirming the live PASS on the real, unmutated shipped file is genuine and not a residual or vacuous false-pass. No file in the working repository tree was altered by this probe; the mutated copy existed only under the evaluator's own scratchpad and was afterward overwritten back to the real file's content (a scratch-only file, with zero effect on the repository)."
+  },
+  "evidence_files": [
+    ".agent/evidence/034/verification.txt",
+    ".agent/evidence/034/diff.patch",
+    ".agent/evidence/034-verify-01.txt",
+    ".agent/evidence/034-verify-02.txt",
+    ".agent/evidence/034-verify-03.txt",
+    ".agent/evidence/034-verify-04.txt",
+    ".agent/evidence/034-verify-05.txt",
+    ".agent/evidence/034-verify-06.txt",
+    ".agent/evidence/034-verify-07.txt",
+    ".agent/evidence/034-verify-08.txt",
+    ".agent/evidence/034-verify-09.txt",
+    ".agent/evidence/034-verify-10.txt",
+    ".agent/evidence/034-verify-11.txt",
+    ".agent/evidence/034-verify-12.txt",
+    ".agent/evidence/034-verify-13.txt",
+    ".agent/evidence/034-verify-14.txt",
+    ".agent/evidence/034-verify-15.txt",
+    ".agent/evidence/034-verify-16.txt",
+    ".agent/evidence/034-verify-17.txt",
+    ".agent/evidence/034-verify-18.txt"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Independently re-ran all 18 contract (revision 1) verification commands from repo root, extracted programmatically from .agent/contracts/034.json (not retyped, not trusted from .agent/evidence/034-verify-NN.txt in advance): all 18 exit 0 / PASS against the current, implemented working tree. Each of the 18 flat-convention evidence files was independently spot-checked (invocation-first line, literal EXIT:0 last line) and confirmed, via a programmatic first-line/last-line comparison against the live contract's own command strings, to match verbatim -- per methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention.",
+    "`.agent/evidence/034/diff.patch` byte-matches a fresh `git diff HEAD` captured during this QA pass (`diff -u` exits with zero output) -- confirms the coordinator's Mode-B claim of byte-identical currency. The patch contains exactly one `diff --git` header (ecosystem/README.md), matching the feature's sole tracked-file edit; no divergence, and therefore nothing attributable to feature 038's concurrent work, was found.",
+    "bash tools/validate.sh (default sweep) reports the full C1-C11 sweep with the literal last line 'SUMMARY: 11 passed, 0 failed', exit 0 -- no regression introduced by feature 034's implementation.",
+    "Cross-checked feature 034's acceptance_tests in .agent/feature_list_005.json against the approved contract's 18 verification entries: 'Baseline fields and evidence rules are defined' and 'Baseline cannot mix evidence from unspecified revisions' are covered (and strengthened, section-anchored) by contract entries 5 and 6; the feature-list's own embedded coarse whole-document command was additionally re-run directly and independently exits 0/PASS; the frontmatter-validity and compliance-validator acceptance tests are covered verbatim by contract entries 3 and 11. Every criterion is satisfied with evidence traceable by path (see evidence_files).",
+    "Scope re-confirmed via a manual read of raw `git status --porcelain --untracked-files=all -- . ':(exclude).agent'` output (not merely trusting entry 12's own PASS string): the only changed paths outside .agent/ are ecosystem/README.md (the contracted one-line 02-row flip) and the new ecosystem/02_evidence_baseline.md, plus the pre-existing, untouched, untracked v0.6.0-release-notes.md. No 038 surface (schema/preflight_verdict.schema.json, schema/README.md, tools/fixtures/*, .agent/contracts/038.json, .agent/qa/038*.json) was created, modified, or touched by this QA pass; both were observed present and unaltered before and after.",
+    "Adversarial mutation probe (Section-4 'MUST NOT mix evidence from unspecified revisions' phrase paraphrase-substitution on a disposable scratch copy of the REAL, now-shipped ecosystem/02_evidence_baseline.md) confirms entry 6's check genuinely discriminates against the real file's actual content, not merely against a synthetic fixture built before implementation existed -- see adversarial.notes.",
+    "Repository tree left exactly as found by this QA pass except for this verdict's own new artifact: `git status --porcelain --untracked-files=all` before and after this review shows the identical changed/untracked-path set, now additionally including this .agent/qa/034.json file. .agent/run_state.json was not read for writing and was not modified; feature_list_005.json's F-034 status field was not modified (per the coordinator's explicit instruction and the same orchestrator-owns-status-flips precedent already applied in .agent/qa/031.json); no 038 surface was touched; the scratch mutation probe operated only on a disposable copy under the evaluator's own scratchpad, never on any path in the repository tree."
+  ],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "feature": "034",
+    "summary": "PASS. All 18 contract (revision 1) verification commands independently re-run from repo root and all exited 0/PASS against the implemented working tree, matching Mode-B's claimed B1-B8 result and the generator's captured evidence (all 18 flat 034-verify-NN.txt files, each format-compliant with invocation-first/EXIT-last and verbatim-matching the live contract's commands, plus the consolidated .agent/evidence/034/verification.txt). The evidence bundle is confirmed genuine and current: .agent/evidence/034/diff.patch byte-matches a freshly captured `git diff HEAD` (zero diff lines) and contains exactly the one expected ecosystem/README.md hunk, with no divergence to attribute to feature 038's concurrent work. bash tools/validate.sh reports the full default sweep at SUMMARY: 11 passed, 0 failed (exit 0) -- no regression. Feature 034's acceptance criteria in .agent/feature_list_005.json (baseline fields and evidence rules defined; cannot mix evidence from unspecified revisions; the embedded coarse whole-document check; frontmatter validity; compliance validator green) are all satisfied with evidence traceable by path. Scope was independently re-confirmed by a manual read of raw git-status output: only ecosystem/README.md (one-line flip) and the new ecosystem/02_evidence_baseline.md changed outside .agent/, with no 038 surface touched. An adversarial mutation probe against a disposable scratch copy of the REAL shipped document (paraphrasing away the literal 'MUST NOT mix evidence from unspecified revisions' phrase) confirms entry 6 genuinely discriminates on the actual implementation, not merely on a pre-implementation fixture. No issues, no missing acceptance coverage, no unsupported claims found. Per the coordinator's explicit instruction and the precedent already established in .agent/qa/031.json, feature_list_005.json's F-034 status field, .agent/run_state.json, and every feature-038 surface were left untouched by this QA pass; this .agent/qa/034.json artifact is the durable pass signal for the orchestrator to act on."
+  },
+  "coverage_warning": null
+}

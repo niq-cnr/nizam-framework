@@ -1,0 +1,102 @@
+=== ENTRY 1: F-004/AT: the protocol doc file exists. ===
+test -f ecosystem/02_evidence_baseline.md && echo PASS || { echo "ecosystem/02_evidence_baseline.md missing"; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 2: ADDITIONAL (anti-vacuity master proof, mirroring the 031/033 fixture-p ===
+! git show HEAD:ecosystem/02_evidence_baseline.md >/dev/null 2>&1 && echo PASS || { echo "ecosystem/02_evidence_baseline.md already exists at HEAD -- content checks below would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 3: F-004/AT: frontmatter validates against schema/frontmatter.schema.json ===
+python3 -c "import json,yaml,jsonschema; d=open('ecosystem/02_evidence_baseline.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS || { echo "frontmatter invalid"; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 4: ADDITIONAL (house-pattern frontmatter fields): id is 'nizam-ecosystem- ===
+python3 -c "import yaml,sys; d=open('ecosystem/02_evidence_baseline.md',encoding='utf-8').read().split('---')[1]; fm=yaml.safe_load(d); ok=(fm.get('id')=='nizam-ecosystem-evidence-baseline' and fm.get('status')=='active' and fm.get('authoritative_source')=='ecosystem/02_evidence_baseline.md'); sys.exit(0 if ok else 1)" && echo PASS || { echo "frontmatter house-pattern fields incorrect"; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 5: F-004/AT 'Baseline fields ... are defined' (STRENGTHENED from feature_ ===
+source tools/verify_lib.sh; for tok in framework repository dependency 'CI' planning evidence; do vlib_section_grep ecosystem/02_evidence_baseline.md '^## 3\. Baseline Fields$' "$tok" || { echo "Baseline Fields section missing category token: $tok"; exit 1; }; done; echo PASS
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+=== ENTRY 6: F-004/AT 'Baseline cannot mix evidence from unspecified revisions' (ST ===
+source tools/verify_lib.sh; vlib_section_grep ecosystem/02_evidence_baseline.md '^## 4\. Revision and Timestamp Anchoring Rule$' 'revision' && vlib_section_grep ecosystem/02_evidence_baseline.md '^## 4\. Revision and Timestamp Anchoring Rule$' 'timestamp' && vlib_section_grep ecosystem/02_evidence_baseline.md '^## 4\. Revision and Timestamp Anchoring Rule$' 'MUST NOT mix evidence from unspecified revisions' && vlib_section_grep ecosystem/02_evidence_baseline.md '^## 4\. Revision and Timestamp Anchoring Rule$' 'FAIL condition' && echo PASS || { echo "Revision and Timestamp Anchoring Rule section missing one of: revision / timestamp / 'MUST NOT mix evidence from unspecified revisions' / 'FAIL condition'"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+=== ENTRY 7: ADDITIONAL (immutability, point-in-time nature, per NIP-0001's 'immuta ===
+source tools/verify_lib.sh; vlib_section_grep ecosystem/02_evidence_baseline.md '^## 5\. Immutability Rule$' 'immutable' && vlib_section_grep ecosystem/02_evidence_baseline.md '^## 5\. Immutability Rule$' 'point-in-time' && echo PASS || { echo "Immutability Rule section missing 'immutable' or 'point-in-time'"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+=== ENTRY 8: ADDITIONAL (machine-readable baseline artifact convention, per the NIP ===
+source tools/verify_lib.sh; vlib_section_grep ecosystem/02_evidence_baseline.md '^## 6\. Baseline Artifact$' '\.agent/reconciliation/<execution-id>/baseline\.json' && echo PASS || { echo "Baseline Artifact section missing the .agent/reconciliation/<execution-id>/baseline.json convention"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+=== ENTRY 9: ADDITIONAL (README one-line flip, scoped to exactly the '02' row): eco ===
+grep -Fq '| 02 | `02_evidence_baseline.md` | Baseline | Shipped |' ecosystem/README.md && echo PASS || { echo "ecosystem/README.md 02 row not flipped to Shipped"; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 10: ADDITIONAL (README one-line-only edit guard, dry-run proven against be ===
+out=$(git diff --numstat HEAD -- ecosystem/README.md); [ "$out" = "$(printf '1\t1\tecosystem/README.md')" ] && echo PASS || { echo "ecosystem/README.md diff is not exactly 1 insertion + 1 deletion: [$out]"; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 11: F-004/AT: compliance validator stays green. ===
+bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: 11 passed, 0 failed' && echo PASS || { echo "validate.sh SUMMARY regressed from 11 passed, 0 failed"; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 12: ADDITIONAL (scope guard, untracked-aware, concurrency-tolerant per des ===
+source tools/verify_lib.sh; vlib_scope_guard 'ecosystem/02_evidence_baseline.md' 'ecosystem/README.md' 'schema/preflight_verdict.schema.json' 'schema/README.md' 'tools/fixtures/' 'v0.6.0-release-notes.md' && echo PASS || { echo "out-of-scope change(s) detected"; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 13: ADDITIONAL (.agent/ immutability guard, mirroring the precedent in con ===
+changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/034.json' ':(exclude,glob).agent/qa/034*.json' ':(exclude).agent/contracts/038.json' ':(exclude,glob).agent/qa/038*.json'); if [ -n "$changed" ]; then echo 'immutable audit record(s) touched:'; echo "$changed"; exit 1; fi; echo PASS
+PASS
+EXIT:0
+
+=== ENTRY 14: ADDITIONAL (non-goal enforcement, dependency-order guard per design_no ===
+test -f schema/ecosystem_baseline.schema.json && { echo "schema/ecosystem_baseline.schema.json already exists -- out of dependency order or out of this feature's scope"; exit 1; } || echo PASS
+PASS
+EXIT:0
+
+=== ENTRY 15: ADDITIONAL (non-goal enforcement, concurrency-tolerant via git pathspe ===
+git diff --quiet HEAD -- schema/ tools/ ':(exclude)schema/preflight_verdict.schema.json' ':(exclude)schema/README.md' ':(exclude)tools/fixtures' && echo PASS || { echo "an out-of-scope schema/tooling file was modified"; git diff --name-only HEAD -- schema/ tools/ ':(exclude)schema/preflight_verdict.schema.json' ':(exclude)schema/README.md' ':(exclude)tools/fixtures'; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 16: ADDITIONAL (non-goal enforcement): docs/planning/manifest.json, docs/p ===
+git diff --quiet HEAD -- docs/planning/manifest.json docs/planning/ROADMAP.md docs/planning/DEBT.md && echo PASS || { echo "an out-of-scope planning document was modified"; exit 1; }
+PASS
+EXIT:0
+
+=== ENTRY 17: ADDITIONAL (non-goal enforcement, per-file existence loop per contract ===
+bad=0; for f in ecosystem/00_ecosystem_bootstrap.md ecosystem/03_engineering_audit.md ecosystem/04_dependency_reconciliation.md ecosystem/05_release_train_coordination.md ecosystem/06_simplification_review.md ecosystem/07_progress_comparison.md ecosystem/08_ga_gate.md; do if [ -e "$f" ]; then echo "out-of-scope ecosystem protocol document created: $f"; bad=1; fi; done; if [ "$bad" -eq 0 ]; then echo PASS; else exit 1; fi
+PASS
+EXIT:0
+
+=== ENTRY 18: ADDITIONAL (non-goal enforcement): ecosystem/01_clean_state_preflight. ===
+git diff --quiet HEAD -- ecosystem/01_clean_state_preflight.md CHANGELOG.md && echo PASS || { echo "an out-of-scope file (01_clean_state_preflight.md or CHANGELOG.md) was modified"; exit 1; }
+PASS
+EXIT:0

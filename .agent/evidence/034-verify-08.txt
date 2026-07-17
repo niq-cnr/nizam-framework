@@ -1,0 +1,4 @@
+source tools/verify_lib.sh; vlib_section_grep ecosystem/02_evidence_baseline.md '^## 6\. Baseline Artifact$' '\.agent/reconciliation/<execution-id>/baseline\.json' && echo PASS || { echo "Baseline Artifact section missing the .agent/reconciliation/<execution-id>/baseline.json convention"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0

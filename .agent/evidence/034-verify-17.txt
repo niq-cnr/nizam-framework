@@ -1,0 +1,3 @@
+bad=0; for f in ecosystem/00_ecosystem_bootstrap.md ecosystem/03_engineering_audit.md ecosystem/04_dependency_reconciliation.md ecosystem/05_release_train_coordination.md ecosystem/06_simplification_review.md ecosystem/07_progress_comparison.md ecosystem/08_ga_gate.md; do if [ -e "$f" ]; then echo "out-of-scope ecosystem protocol document created: $f"; bad=1; fi; done; if [ "$bad" -eq 0 ]; then echo PASS; else exit 1; fi
+PASS
+EXIT:0

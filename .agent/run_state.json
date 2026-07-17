@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "005-ecosystem-cycle",
-  "current_feature": "033",
+  "current_feature": "034",
   "status": "feature_complete",
   "updated_at": "2026-07-17T00:00:00Z",
   "circuit_breaker": {
@@ -624,6 +624,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "feature_complete",
       "detail": "Features 032 (Ecosystem Module Index, handover F-002) and 033 (Clean-State Preflight Protocol, handover F-003) COMPLETE through the full contract lifecycle, executed as the phase's first PARALLEL feature pair (file-disjoint scopes, concurrency fences in both contracts, generators barred from run_state.json). Both contracts were REJECTED once at evaluator Loop-1 review (032: membership-vs-exact-equality on NIZAM.json key_documents [HIGH] + semver-downgrade hole [LOW] + unverified Shipped/Planned commitment; 033: ls-based multi-argument non-goal check that false-passed unless all 8 forbidden files existed [HIGH]) and approved at rev1 after probe-proven fixes. Both passed validator Mode B (032: diff.patch byte-identical to live git diff HEAD, exactly 2 tracked files; 033: legitimately empty diff.patch, create-only contract) and evaluator QA (qa/032.json, qa/033.json, both pass; 19/19 and 14/14 live verification; validate.sh 11/0 throughout). CONCURRENCY INCIDENT (recorded as dogfood friction, to be registered in DEBT.md at PR-F2 tranche close): feature 033's freshly-authored deliverable ecosystem/01_clean_state_preflight.md was transiently DELETED mid-implementation by the 032 evaluator's dynamic-awareness probe, which touch/rm'd that exact real path for its filesystem-awareness simulation while 033 was landing it; 033's generator detected the loss, recreated the file identically, and re-verified 14/14 twice. Orchestration rule adopted going forward: reviewer probes MUST use scratch copies outside every in-flight contracted path, never the real path of a sibling feature. Orchestrator actions this event: feature_list_005 statuses 032+033 -> complete; 032's vacuous grep AT reconciled in-place with [AMENDED 2026-07-17] note (031/F-026..028 precedent); scope budget actuals 032=97 (est 120), 033=141 (est 150), both under estimate, cumulative 1284/2990 ceiling OK. Advancing to parallel features 034 (Immutable Baseline Protocol) and 038 (Preflight Verdict Schema + Fixtures): delegating contract proposals to @generator."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 034 (Immutable Baseline Protocol, handover F-004) COMPLETE through the full contract lifecycle. Contract rev0 REJECTED by validator Mode A (grep -F backslash-backtick pattern that could never match the real plain-backtick README row + a false dry-run claim -- a new defect class: fixed-string quoting vs real content); rev1 approved by Mode A + evaluator (qa/034-contract-review.json, which also killed wrong-row/two-line README gaming vectors in a disposable clone). Implementation: ecosystem/02_evidence_baseline.md (154 lines; six baseline categories, revision-pinning with MUST-NOT-mix FAIL condition, immutability semantics, baseline.json artifact convention) + one-line README 02-row Planned->Shipped flip. Mode B 8/8 (diff.patch byte-identical, single hunk); QA PASS (qa/034.json, 18/18 live, adversarial mutation probe on the real shipped doc confirmed discrimination). Scope: est 150 / actual 156. Cumulative 1440/2990. Feature 038 (Preflight Verdict Schema) continues in parallel: rev1 closed the operator_approval-content gap (empty-object acceptance) found by its evaluator; re-reviews in flight. Advancing: committing 034; 038 to implementation upon dual-gate approval."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -797,7 +802,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2300,
-    "total_lines_changed": 1284,
+    "total_lines_changed": 1440,
     "per_feature": [
       {
         "id": "031",
@@ -816,6 +821,12 @@
         "estimated": 150,
         "actual": 141,
         "note": "141 new lines (ecosystem/01_clean_state_preflight.md). Under the 150-line estimate."
+      },
+      {
+        "id": "034",
+        "estimated": 150,
+        "actual": 156,
+        "note": "154 new lines (ecosystem/02_evidence_baseline.md) + 1/1 README row flip. On estimate."
       }
     ]
   },

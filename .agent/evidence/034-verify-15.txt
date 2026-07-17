@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- schema/ tools/ ':(exclude)schema/preflight_verdict.schema.json' ':(exclude)schema/README.md' ':(exclude)tools/fixtures' && echo PASS || { echo "an out-of-scope schema/tooling file was modified"; git diff --name-only HEAD -- schema/ tools/ ':(exclude)schema/preflight_verdict.schema.json' ':(exclude)schema/README.md' ':(exclude)tools/fixtures'; exit 1; }
+PASS
+EXIT:0

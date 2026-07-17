@@ -68,7 +68,7 @@ as later features land their protocol document.
 |---|----------------|--------------------|--------|
 | 00 | `00_ecosystem_bootstrap.md` | Bootstrap | Planned |
 | 01 | `01_clean_state_preflight.md` | Preflight | Shipped |
-| 02 | `02_evidence_baseline.md` | Baseline | Planned |
+| 02 | `02_evidence_baseline.md` | Baseline | Shipped |
 | 03 | `03_engineering_audit.md` | Audit | Planned |
 | 04 | `04_dependency_reconciliation.md` | Plan (typed dependencies) | Planned |
 | 05 | `05_release_train_coordination.md` | Promote (release-train coordination) | Planned |
