@@ -1,0 +1,5 @@
+source tools/verify_lib.sh; vlib_scope_guard 'NIZAM.json' 'tools/skill.json' 'tools/SKILL.md' 'v0.6.0-release-notes.md' && echo PASS || { echo "out-of-scope change(s) detected"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

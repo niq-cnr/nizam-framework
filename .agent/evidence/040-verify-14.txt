@@ -1,0 +1,5 @@
+t=$(mktemp); git show HEAD:tools/SKILL.md > "${t}"; python3 -c "txt=open('${t}',encoding='utf-8').read(); paths=['ecosystem/01_clean_state_preflight.md','ecosystem/02_evidence_baseline.md','ecosystem/03_engineering_audit.md','ecosystem/07_progress_comparison.md']; found=[p for p in paths if p in txt]; import sys; sys.exit(1 if found else 0)"; rc=$?; rm -f "${t}"; [ "${rc}" -eq 0 ] && echo PASS || { echo "tools/SKILL.md already names one of the four protocol paths at HEAD -- would be vacuous"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

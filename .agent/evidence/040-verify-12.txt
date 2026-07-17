@@ -1,0 +1,8 @@
+python3 -c "t=open('tools/SKILL.md',encoding='utf-8').read(); paths=['ecosystem/01_clean_state_preflight.md','ecosystem/02_evidence_baseline.md','ecosystem/03_engineering_audit.md','ecosystem/07_progress_comparison.md']
+for p in paths:
+  tok='\`'+p+'\`'
+  assert tok in t, p" && echo PASS || { echo "tools/SKILL.md is missing a backtick-delimited routing reference to one of the four shipped protocols"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

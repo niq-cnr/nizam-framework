@@ -1,0 +1,5 @@
+t=$(mktemp); git show HEAD:NIZAM.json > "${t}"; python3 -c "import json,sys; d=json.load(open('${t}')); mod=[m for m in d['modules'] if m['path']=='ecosystem'][0]; new_paths=['ecosystem/01_clean_state_preflight.md','ecosystem/02_evidence_baseline.md','ecosystem/03_engineering_audit.md','ecosystem/07_progress_comparison.md']; present=[p for p in new_paths if p in mod['key_documents']]; ids=[c['id'] for c in d['capabilities']]; new_ids=['nizam-ecosystem-preflight','nizam-ecosystem-baseline','nizam-ecosystem-audit','nizam-ecosystem-progress-comparison']; present_ids=[i for i in new_ids if i in ids]; sys.exit(1 if (present or present_ids) else 0)"; rc=$?; rm -f "${t}"; [ "${rc}" -eq 0 ] && echo PASS || { echo "NIZAM.json already carries one or more of the new paths/ids at HEAD -- would be vacuous"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

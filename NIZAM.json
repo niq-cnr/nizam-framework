@@ -108,7 +108,11 @@
       "path": "ecosystem",
       "purpose": "The reusable, schema-governed Ecosystem Engineering Cycle: a multi-repository governance lifecycle (Bootstrap->Preflight->Baseline->Audit->Plan->Execute->Verify->Promote->Compare->Repeat) extending Nizam's repository-local contract-first loop to ecosystem scale.",
       "key_documents": [
-        "ecosystem/README.md"
+        "ecosystem/README.md",
+        "ecosystem/01_clean_state_preflight.md",
+        "ecosystem/02_evidence_baseline.md",
+        "ecosystem/03_engineering_audit.md",
+        "ecosystem/07_progress_comparison.md"
       ]
     }
   ],
@@ -232,6 +236,26 @@
       "id": "nizam-compliance-validator",
       "summary": "The repo-local NDS compliance validator (checks C1-C11): frontmatter schema + format, untagged-fence sweep, NIZAM.json index integrity, branding/endpoint leakage, bootstrap.sh sanity, module-README presence, version-bump-vs-changelog (NDS Sec 7), repo-wide path resolution, single-source-of-truth consistency, and dogfood schema validation of the .agent/ audit artifacts against the shipped schemas.",
       "authoritative_source": "tools/validate.sh"
+    },
+    {
+      "id": "nizam-ecosystem-preflight",
+      "summary": "The reusable clean-state preflight protocol gating entry into the ecosystem cycle, with its three-verdict vocabulary and operator-exception rule.",
+      "authoritative_source": "ecosystem/01_clean_state_preflight.md"
+    },
+    {
+      "id": "nizam-ecosystem-baseline",
+      "summary": "The reusable protocol for capturing a point-in-time, immutable baseline over framework, repository, dependency, CI, planning, and evidence references.",
+      "authoritative_source": "ecosystem/02_evidence_baseline.md"
+    },
+    {
+      "id": "nizam-ecosystem-audit",
+      "summary": "The evidence-first engineering audit protocol: evidence tiers, the ten-state maturity model, and finding confidence, excluding commercial readiness from generic engineering scoring.",
+      "authoritative_source": "ecosystem/03_engineering_audit.md"
+    },
+    {
+      "id": "nizam-ecosystem-progress-comparison",
+      "summary": "The protocol for comparing two approved baselines or audits, classifying new/resolved/reopened/stale findings with every score movement traceable to evidence.",
+      "authoritative_source": "ecosystem/07_progress_comparison.md"
     }
   ],
   "schemas": [

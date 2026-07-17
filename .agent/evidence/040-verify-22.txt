@@ -1,0 +1,5 @@
+git diff --quiet HEAD -- schema/ && echo PASS || { echo "an out-of-scope schema/ file was modified"; git diff --name-only HEAD -- schema/; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

@@ -1,0 +1,5 @@
+git diff --quiet HEAD -- tools/ ':(exclude)tools/skill.json' ':(exclude)tools/SKILL.md' && echo PASS || { echo "an out-of-scope tools/ file was modified"; git diff --name-only HEAD -- tools/ ':(exclude)tools/skill.json' ':(exclude)tools/SKILL.md'; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

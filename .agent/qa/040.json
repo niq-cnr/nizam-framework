@@ -1,0 +1,86 @@
+{
+  "feature_id": "040",
+  "qa_pass": true,
+  "checks_run": 26,
+  "checks_passed": 26,
+  "adversarial": {
+    "performed": true,
+    "description": "Beyond independently re-running all 26 of contract 040 (revision 3)'s verification commands live from the repository root against the real, implemented tree (not scratch copies), this QA pass: (1) byte-inspected the real, shipped tools/SKILL.md Section 8 directly (awk-bounded extraction between the '## 8.' and '## 9.' headings) and independently parsed its two preamble lines, confirming programmatically -- not merely trusting entry 13's own internal assertion -- that they are byte-identical to design_notes.pinned_preamble_text (70 and 84 characters respectively, no trailing whitespace, no character-level deviation); (2) independently confirmed the four shipped bullet labels are 'Preflight.', 'Baseline.', 'Audit.', 'Compare.' -- natural single-word lifecycle-stage labels (6-10 characters, 1 counted word each), containing NONE of the slash/colon/underscore delimiters that this evaluator's own round-3 contract review identified as a theoretical word-counter loophole capable of smuggling verbatim enum vocabulary -- the residual risk did not materialize in the real implementation; (3) took a scratch copy of the REAL shipped tools/SKILL.md (not a synthetic fixture) and mutated it with a fifth, unauthorized bullet (routing to ecosystem/README.md) to confirm entry 13 is still genuinely live against the actual shipped file and not vacuously passing for incidental reasons -- the mutated scratch copy correctly FAILED ('expected exactly 4 bullets, found 5'), and the real, unmutated file was re-confirmed to PASS immediately afterward; (4) independently recomputed `git diff HEAD -- NIZAM.json tools/SKILL.md tools/skill.json` and diffed it byte-for-byte against the stored .agent/evidence/040/diff.patch (excluding git blob index lines) -- exact content match, confirming the evidence bundle is genuine and current, not stale or fabricated; (5) spot-checked two evidence files (040-verify-01.txt, 040-verify-13.txt, 040-verify-26.txt) for Evidence Capture Convention compliance (exact invocation first, captured output, literal EXIT:<code> last) -- all compliant; (6) independently executed all three literal, non-paraphrased acceptance_tests from .agent/feature_list_005.json feature 040 verbatim (not the contract's paraphrased duplicates) -- all three exit 0; (7) confirmed feature 040's five listed dependencies (032, 033, 034, 035, 036) are all status 'complete' in .agent/feature_list_005.json; (8) read .agent/run_state.json's diff captured in .agent/evidence/040/diff.patch and independently confirmed its content (current_feature/status bookkeeping fields plus the circuit_breaker_adjudication history entry) is byte-identical to the orchestrator-authored text this evaluator directly observed in .agent/run_state.json during its own prior round-3 contract review of this same feature -- confirming it is genuine, pre-existing orchestrator bookkeeping rather than a generator-introduced or fabricated edit, consistent with the Validator Mode B finding reported by the coordinator, and consistent with the contract's own non_goals (run_state.json is explicitly exempted from every verification entry).",
+    "result": "All adversarial probes behaved as required, against the REAL shipped artifacts: the pinned preamble byte-matches exactly with zero deviation; the four shipped labels are natural, non-smuggling lifecycle-stage words, so this evaluator's own previously-identified round-3 residual (a theoretical, judged-non-blocking word-counter loophole) does not manifest in the actual implementation; entry 13 is confirmed genuinely live (not vacuously passing) by reproducing a known-fatal mutation on a scratch copy of the real file and observing a correct FAIL, followed by a correct PASS on the real, unmutated file; the evidence bundle (diff.patch, 26 verify-NN.txt files, verification.txt) is genuine, current, and convention-compliant; all three literal feature_list_005.json acceptance_tests pass independently; all five dependencies are complete; and the .agent/run_state.json modification present in the working tree is confirmed to be legitimate, pre-existing orchestrator adjudication bookkeeping, not an out-of-scope generator edit.",
+    "evidence": ".agent/evidence/040-verify-01.txt through -26.txt (independently re-run live in this QA pass, not merely re-read); .agent/evidence/040/diff.patch (independently byte-diffed against a freshly recomputed `git diff HEAD` in this QA pass); this QA pass's own scratch-copy mutation probe (fifth-bullet fixture) was run under the session scratchpad directory, outside the repository tree, and discarded -- not persisted as a repository artifact."
+  },
+  "evidence_files": [
+    ".agent/evidence/040-verify-01.txt",
+    ".agent/evidence/040-verify-02.txt",
+    ".agent/evidence/040-verify-03.txt",
+    ".agent/evidence/040-verify-04.txt",
+    ".agent/evidence/040-verify-05.txt",
+    ".agent/evidence/040-verify-06.txt",
+    ".agent/evidence/040-verify-07.txt",
+    ".agent/evidence/040-verify-08.txt",
+    ".agent/evidence/040-verify-09.txt",
+    ".agent/evidence/040-verify-10.txt",
+    ".agent/evidence/040-verify-11.txt",
+    ".agent/evidence/040-verify-12.txt",
+    ".agent/evidence/040-verify-13.txt",
+    ".agent/evidence/040-verify-14.txt",
+    ".agent/evidence/040-verify-15.txt",
+    ".agent/evidence/040-verify-16.txt",
+    ".agent/evidence/040-verify-17.txt",
+    ".agent/evidence/040-verify-18.txt",
+    ".agent/evidence/040-verify-19.txt",
+    ".agent/evidence/040-verify-20.txt",
+    ".agent/evidence/040-verify-21.txt",
+    ".agent/evidence/040-verify-22.txt",
+    ".agent/evidence/040-verify-23.txt",
+    ".agent/evidence/040-verify-24.txt",
+    ".agent/evidence/040-verify-25.txt",
+    ".agent/evidence/040-verify-26.txt",
+    ".agent/evidence/040/diff.patch",
+    ".agent/evidence/040/verification.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_005.json feature 040",
+    "criteria": [
+      {
+        "criterion": "NIZAM.json paths resolve",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/040-verify-01.txt ([C4] PASS index-integrity); independently re-confirmed live in this QA pass by re-running `bash tools/validate.sh --target NIZAM.json` -> exit 0."
+      },
+      {
+        "criterion": "tools/skill.json routes capabilities",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/040-verify-07.txt and -09.txt (literal 'ecosystem' substring present, and the exact four new capability entries -- ecosystem_preflight/baseline/audit/progress_comparison -- each with a module path that resolves on disk); independently re-confirmed live by re-parsing the real tools/skill.json and confirming all four entries and their module paths exist."
+      },
+      {
+        "criterion": "tools/SKILL.md remains a router rather than a mirror",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/040-verify-13.txt (SECTION 8 IS A CLOSED SET, pinned preamble byte-matched); independently re-confirmed in this QA pass by directly extracting and byte-comparing the real Section 8's preamble against design_notes.pinned_preamble_text (exact match, 70+84 characters, no deviation), confirming the four shipped labels ('Preflight.', 'Baseline.', 'Audit.', 'Compare.') are natural non-smuggling words, and reproducing a known-fatal fifth-bullet mutation on a scratch copy of the real file to confirm the check is genuinely live, not vacuous. This criterion required four negotiation rounds (.agent/qa/040-contract-review.json through -rev3.json) to reach a verification design that is not gameable by aggregate-line-count bloat, per-bullet stretching, free-standing prose anywhere in the section, or a length-bounded (rather than exact-pinned) preamble; all of those previously-identified attack shapes were independently re-confirmed still closed against the real shipped file's own design in this evaluator's prior round-3 contract review, and the shipped implementation matches that approved design exactly."
+      },
+      {
+        "criterion": "NIZAM.json stays C4-green with every indexed path resolving: bash tools/validate.sh --target NIZAM.json; test $? -eq 0",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/040-verify-01.txt; independently re-executed verbatim in this QA pass -> exit 0."
+      },
+      {
+        "criterion": "tools/skill.json parses and routes an ecosystem capability whose module path resolves on disk: python3 -c \"import json,os,sys; s=json.load(open('tools/skill.json')); caps=s.get('capabilities',s); js=json.dumps(s); sys.exit(0 if 'ecosystem' in js.lower() else 1)\"",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/040-verify-07.txt; independently re-executed verbatim in this QA pass -> exit 0. Note (non-blocking, carried forward from this evaluator's round-0 contract review): this literal command is a weak, substring-only check on its own (it would pass on any single 'ecosystem' occurrence anywhere in the file) but is genuinely non-vacuous at prior HEAD (independently confirmed in round 0 that HEAD's tools/skill.json contains no 'ecosystem' substring) and is backed by the much stronger, exact structural check at contract entry 9 (exactly four new capability entries, each module path verified to resolve on disk, no mutation of pre-existing entries) -- not a vacuous-match defect of the 031/032 class (those were flagged because their literal commands already matched at HEAD before implementation), so no [AMENDED] reconciliation is warranted."
+      },
+      {
+        "criterion": "Compliance validator stays green: bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: 11 passed, 0 failed'",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/040-verify-20.txt; independently re-executed in this QA pass: `bash tools/validate.sh` -> 'SUMMARY: 11 passed, 0 failed' (all 11 checks C1-C11 individually PASS)."
+      }
+    ],
+    "amended_or_flagged_for_orchestrator": []
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. All 26 of contract 040 (revision 3)'s verification commands were independently re-run, live, from the repository root against the real, implemented tree (NIZAM.json's ecosystem key_documents extension and four new capability entries; tools/skill.json's four new capability entries and 0.1.1->0.2.0 version bump; tools/SKILL.md's new Section 8 with its exact-text-pinned two-line preamble and four one-line routing bullets, plus its 0.3.0->0.4.0 version bump and matching change_log entry) -- 26/26 exit 0, matching Validator Mode B's B1-B8 report and the generator's own re-run captured in .agent/evidence/040/verification.txt. A mandatory adversarial spot-check was performed against the REAL shipped artifacts, not scratch fixtures: the real Section 8 preamble was independently byte-compared against design_notes.pinned_preamble_text with zero deviation; the four real shipped bullet labels ('Preflight.', 'Baseline.', 'Audit.', 'Compare.') were confirmed to be natural, non-smuggling words, meaning this evaluator's own round-3 contract-review residual (a theoretical word-counter loophole permitting slash-joined verbatim enum reproduction) did not manifest in the actual implementation; a scratch copy of the real shipped tools/SKILL.md was mutated with a known-fatal fifth bullet to confirm entry 13 is genuinely live (not vacuously passing) against the real file, and correctly failed, with the real unmutated file re-confirmed to pass immediately after. The evidence bundle was independently verified genuine and current: .agent/evidence/040/diff.patch was byte-diffed against a freshly recomputed `git diff HEAD` for the three contracted files with an exact match, and three spot-checked evidence files comply with the Evidence Capture Convention. All six of feature 040's .agent/feature_list_005.json acceptance criteria (three high-level plus three literal commands) are satisfied with evidence captured by path; one literal acceptance_test (the skill.json substring check) is intentionally weak-but-genuinely-non-vacuous and backed by a much stronger structural entry, carried forward as a non-blocking note rather than an [AMENDED] reconciliation, since it does not match the vacuous-at-HEAD defect class that warranted [AMENDED] tags for features 031/032. `bash tools/validate.sh` independently re-run in this QA pass: 'SUMMARY: 11 passed, 0 failed'. The .agent/run_state.json modification present in the working tree (current_feature/status bookkeeping plus the circuit_breaker_adjudication history entry) was inspected and confirmed to be genuine, pre-existing orchestrator bookkeeping this evaluator had already independently observed during its round-3 contract review -- not an out-of-scope generator edit, and not gated by any of this contract's verification entries per its own non_goals. Feature 040's status in .agent/feature_list_005.json remains 'pending' and .agent/run_state.json was not touched by this evaluator, per instruction. This is the last feature of PR-F2; no issues, no unsupported claims, no missing acceptance coverage. Approved for advancement."
+  }
+}
