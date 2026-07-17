@@ -1,0 +1,6 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/engineering_finding.schema.json'))
+inst={'id':'x','severity':'medium','confidence':'Probable','evidence':[{'path':'.agent/evidence/e/1.txt','revision':'r'}],'impact':'i','owner':'o','status':'open','closure_criteria':'c'}
+jsonschema.validate(inst, s)" && echo PASS || { echo "open status incorrectly demanded closure_evidence"; exit 1; }
+PASS
+EXIT:0

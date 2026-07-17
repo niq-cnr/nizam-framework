@@ -1,0 +1,15 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/engineering_finding.schema.json'))
+base={'id':'x','severity':'medium','confidence':'Probable','impact':'i','owner':'o','status':'open','closure_criteria':'c'}
+bad_abs=dict(base); bad_abs['evidence']=[{'path':'/etc/passwd','revision':'r'}]
+bad_rel=dict(base); bad_rel['evidence']=[{'path':'evidence/e/1.txt','revision':'r'}]
+good=dict(base); good['evidence']=[{'path':'.agent/evidence/e/1.txt','revision':'r'}]
+for label, inst in (('abs', bad_abs), ('rel', bad_rel)):
+  try:
+    jsonschema.validate(inst, s)
+    raise SystemExit(f'{label} unexpectedly validated')
+  except jsonschema.ValidationError:
+    pass
+jsonschema.validate(good, s)" && echo PASS || { echo "a wrong-prefix evidence path was NOT rejected, or the conforming path was incorrectly rejected"; exit 1; }
+PASS
+EXIT:0

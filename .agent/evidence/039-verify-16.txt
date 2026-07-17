@@ -1,0 +1,8 @@
+python3 -c "import json,jsonschema,sys,glob; s=json.load(open('schema/engineering_finding.schema.json')); pos=[f for f in glob.glob('tools/fixtures/*finding*') if 'valid' in f or 'pos' in f]; neg=[f for f in glob.glob('tools/fixtures/*finding*') if 'invalid' in f or 'neg' in f]; assert pos and neg
+jsonschema.validate(json.load(open(pos[0])), s)
+try:
+  jsonschema.validate(json.load(open(neg[0])), s); sys.exit(1)
+except jsonschema.ValidationError:
+  sys.exit(0)" && echo PASS || { echo "glob-discovered positive/negative fixture check failed"; exit 1; }
+PASS
+EXIT:0

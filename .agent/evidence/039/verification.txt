@@ -1,0 +1,76 @@
+Feature 039 -- Engineering Finding Schema + Fixtures (PR-F2, handover F-009)
+Contract .agent/contracts/039.json, status=approved, revisions=3
+Full verification sweep, 35/35 entries, run from repository root at HEAD 8c7c3ee (pre-commit working tree).
+
+[01] PASS (exit=0) -- F-009/AT: the schema file exists.
+     evidence: .agent/evidence/039-verify-01.txt
+[02] PASS (exit=0) -- ADDITIONAL (anti-vacuity master proof for the schema, mirroring the 033/037/038 precedent): schema/e
+     evidence: .agent/evidence/039-verify-02.txt
+[03] PASS (exit=0) -- F-009/AT (literal, feature_list_005.json): the schema is itself a valid JSON Schema and names the re
+     evidence: .agent/evidence/039-verify-03.txt
+[04] PASS (exit=0) -- ADDITIONAL (direct, non-fixture-dependent proof of the fixed confidence vocabulary, ecosystem/03_eng
+     evidence: .agent/evidence/039-verify-04.txt
+[05] PASS (exit=0) -- ADDED IN REVISION 3 (per Validator Mode A's round-2 rejection, BLOCKER -- mirrors the immediately-pr
+     evidence: .agent/evidence/039-verify-05.txt
+[06] PASS (exit=0) -- ADDITIONAL (direct, non-fixture-dependent proof of per-item evidence anchoring, ecosystem/02_evidenc
+     evidence: .agent/evidence/039-verify-06.txt
+[07] PASS (exit=0) -- ADDED IN REVISION 2 (per .agent/qa/039-contract-review.json issues[1]/required_fix, HIGH -- direct, 
+     evidence: .agent/evidence/039-verify-07.txt
+[08] PASS (exit=0) -- ADDED IN REVISION 3 (per .agent/qa/039-contract-review-rev2.json's non-blocking residual, folded in 
+     evidence: .agent/evidence/039-verify-08.txt
+[09] PASS (exit=0) -- ADDED IN REVISION 3 (per Validator Mode A's round-2 rejection, MAJOR -- entry 5 above covers only ke
+     evidence: .agent/evidence/039-verify-09.txt
+[10] PASS (exit=0) -- ADDITIONAL (direct, non-fixture-dependent proof each of the 8 required top-level keys is independent
+     evidence: .agent/evidence/039-verify-10.txt
+[11] PASS (exit=0) -- ADDED IN REVISION 2 (per .agent/qa/039-contract-review.json issues[0]/required_fix, HIGH -- mirrors 
+     evidence: .agent/evidence/039-verify-11.txt
+[12] PASS (exit=0) -- ADDITIONAL (direct, non-fixture-dependent proof the closure_evidence conditional is correctly scoped
+     evidence: .agent/evidence/039-verify-12.txt
+[13] PASS (exit=0) -- ADDITIONAL (content-completeness proof, per .agent/qa/038-contract-review.json's HIGH finding class 
+     evidence: .agent/evidence/039-verify-13.txt
+[14] PASS (exit=0) -- ADDED IN REVISION 3 (per Validator Mode A's round-2 rejection, MAJOR -- distinct from both the missi
+     evidence: .agent/evidence/039-verify-14.txt
+[15] PASS (exit=0) -- ADDED IN REVISION 2 (per .agent/qa/039-contract-review.json issues[2]/required_fix, MEDIUM -- zero p
+     evidence: .agent/evidence/039-verify-15.txt
+[16] PASS (exit=0) -- F-009/AT (literal, feature_list_005.json): a positive finding fixture validates AND a negative findi
+     evidence: .agent/evidence/039-verify-16.txt
+[17] PASS (exit=0) -- ADDITIONAL (both POSITIVE fixtures independently confirmed to validate, not just whichever the glob 
+     evidence: .agent/evidence/039-verify-17.txt
+[18] PASS (exit=0) -- ADDITIONAL (all three named negative fixtures independently confirmed rejected by name, not just whi
+     evidence: .agent/evidence/039-verify-18.txt
+[19] PASS (exit=0) -- ADDITIONAL (proves the fixture-naming convention itself is non-vacuous, per .agent/contracts/037.jso
+     evidence: .agent/evidence/039-verify-19.txt
+[20] PASS (exit=0) -- F-009/AT (literal, feature_list_005.json): NIZAM.json indexes the new schema and stays C4-green.
+     evidence: .agent/evidence/039-verify-20.txt
+[21] PASS (exit=0) -- ADDITIONAL (anti-vacuity for the prior entry, HEAD-anchored per the 037/038 precedent so it remains 
+     evidence: .agent/evidence/039-verify-21.txt
+[22] PASS (exit=0) -- ADDITIONAL (both NIZAM.json indexing surfaces, not only the top-level 'schemas' array): the 'schema'
+     evidence: .agent/evidence/039-verify-22.txt
+[23] PASS (exit=0) -- ADDED IN REVISION 1 (per Validator Mode A's round-0 rejection -- mirrors the immediately-prior entry
+     evidence: .agent/evidence/039-verify-23.txt
+[24] PASS (exit=0) -- ADDITIONAL (schema/README.md indexes the new schema, section-anchored per the module's own 'Schemas'
+     evidence: .agent/evidence/039-verify-24.txt
+[25] PASS (exit=0) -- ADDITIONAL (anti-vacuity for the prior entry, HEAD-anchored): the HEAD copy of schema/README.md's '#
+     evidence: .agent/evidence/039-verify-25.txt
+[26] PASS (exit=0) -- ADDITIONAL (schema/README.md version-bump discipline, NDS Sec 7 / tools/validate.sh C8 -- HEAD-relat
+     evidence: .agent/evidence/039-verify-26.txt
+[27] PASS (exit=0) -- ADDITIONAL: schema/README.md's frontmatter change_log includes an entry whose version equals the bum
+     evidence: .agent/evidence/039-verify-27.txt
+[28] PASS (exit=0) -- F-009/AT (literal, feature_list_005.json): compliance validator stays green.
+     evidence: .agent/evidence/039-verify-28.txt
+[29] PASS (exit=0) -- ADDITIONAL (non-goal enforcement, per-file existence loop -- never an ls-based multi-argument check,
+     evidence: .agent/evidence/039-verify-29.txt
+[30] PASS (exit=0) -- ADDITIONAL (non-goal enforcement, STRENGTHENED in revision 1 -- feature 036 committed to HEAD 1c8b07
+     evidence: .agent/evidence/039-verify-30.txt
+[31] PASS (exit=0) -- ADDITIONAL (non-goal enforcement, SIMPLIFIED in revision 2: feature 037 has since committed to HEAD 
+     evidence: .agent/evidence/039-verify-31.txt
+[32] PASS (exit=0) -- ADDITIONAL (non-goal enforcement): no pre-existing file under tools/ (validate.sh, verify_lib.sh, sk
+     evidence: .agent/evidence/039-verify-32.txt
+[33] PASS (exit=0) -- ADDITIONAL (non-goal enforcement): docs/planning/manifest.json, docs/planning/ROADMAP.md, and docs/p
+     evidence: .agent/evidence/039-verify-33.txt
+[34] PASS (exit=0) -- ADDITIONAL (.agent/ immutability guard, adopted DIRECTLY in its final, twice-amended two-part invari
+     evidence: .agent/evidence/039-verify-34.txt
+[35] PASS (exit=0) -- ADDITIONAL (scope guard, untracked-aware, SIMPLIFIED in revision 2 -- feature 036 (HEAD 1c8b07a) and
+     evidence: .agent/evidence/039-verify-35.txt
+
+SUMMARY: 35/35 passed, 0 failed

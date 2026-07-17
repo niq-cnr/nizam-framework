@@ -1,0 +1,4 @@
+t=$(mktemp); git show HEAD:schema/README.md > "${t}"; source tools/verify_lib.sh; if vlib_section_grep "${t}" '^## Schemas$' 'engineering_finding\.schema\.json'; then echo "HEAD copy already names the schema -- prior entry would be vacuous"; rm -f "${t}"; exit 1; else echo PASS; rm -f "${t}"; fi
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0

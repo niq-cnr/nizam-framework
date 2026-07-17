@@ -1,0 +1,14 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/engineering_finding.schema.json'))
+complete={'id':'x','severity':'medium','confidence':'Probable','evidence':[{'path':'.agent/evidence/e/1.txt','revision':'r'}],'impact':'i','owner':'o','status':'open','closure_criteria':'c'}
+failures=[]
+for k in ('id','severity','impact','owner','closure_criteria'):
+  inst=dict(complete); inst[k]=''
+  try:
+    jsonschema.validate(inst, s)
+    failures.append(k)
+  except jsonschema.ValidationError:
+    pass
+assert not failures, failures" && echo PASS || { echo "one or more empty-string minLength probes was NOT rejected"; exit 1; }
+PASS
+EXIT:0

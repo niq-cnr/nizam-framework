@@ -1,0 +1,10 @@
+python3 -c "import json,jsonschema,sys
+s=json.load(open('schema/engineering_finding.schema.json'))
+inst={'id':'x','severity':'medium','confidence':'Probable','evidence':[],'impact':'i','owner':'o','status':'open','closure_criteria':'c'}
+try:
+  jsonschema.validate(inst, s)
+  sys.exit(1)
+except jsonschema.ValidationError:
+  sys.exit(0)" && echo PASS || { echo "an empty top-level evidence array ([]) was NOT rejected"; exit 1; }
+PASS
+EXIT:0

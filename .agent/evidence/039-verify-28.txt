@@ -1,0 +1,3 @@
+bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: [0-9]+ passed, 0 failed' && echo PASS || { echo "validate.sh SUMMARY regressed to a non-zero failure count"; exit 1; }
+PASS
+EXIT:0

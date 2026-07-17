@@ -1,0 +1,6 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/engineering_finding.schema.json'))
+for f in ['tools/fixtures/engineering_finding_valid.json','tools/fixtures/engineering_finding_valid_resolved.json']:
+  jsonschema.validate(json.load(open(f)), s)" && echo PASS || { echo "one of the two positive fixtures failed to validate"; exit 1; }
+PASS
+EXIT:0

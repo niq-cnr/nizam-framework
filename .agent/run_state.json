@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "005-ecosystem-cycle",
-  "current_feature": "037",
+  "current_feature": "039",
   "status": "feature_complete",
   "updated_at": "2026-07-17T00:00:00Z",
   "circuit_breaker": {
@@ -649,6 +649,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 037 (Baseline Schema + Fixtures, handover F-007) COMPLETE. Contract rev0 REJECTED by evaluator (3x HIGH: stale concurrency allow-list after 036 progressed mid-review; NIZAM.json dual-surface indexing asymmetry -- new defect class, single-surface edits passed all checks; six-category requirement unproven at instance level for 5 of 6); rev1 approved by both gates (new 12-probe category loop proven strict-PASS/five-loose-FAIL; top-level schemas-array assertion added; scope guard refreshed HEAD-relative). Implementation: schema/ecosystem_baseline.schema.json (six required minItems:1 category arrays; reference_item requires non-empty revision+timestamp -- encodes 02_evidence_baseline.md 3/4 verbatim), 3 fixtures ('neg' naming avoiding the invalid-contains-valid glob landmine, pre-empted by the generator unprompted), NIZAM.json dual-surface, schema/README.md 0.6.0. Mode B 8/8 with real-schema adversarial probes; QA PASS (qa/037.json, 26/26 + all 12 five-loose kill shots rejected by the shipped schema). Scope: est 140 / actual 133. Cumulative 2083/2990. 039 rev1 approved by Mode A; its evaluator review in flight; 039 implements after this commit (schema-surface serialization). Then 040 (capability routing) closes PR-F2."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 039 (Engineering Finding Schema + Fixtures, handover F-009) COMPLETE -- the phase's hardest contract negotiation, consuming all three permitted revision rounds: rev0 REJECTED by validator Mode A (dual-surface indexing asymmetry, the 037 class); rev1 REJECTED by evaluator (three unsupported design claims with zero verification: minLength empty-strings, evidence-path prefix pattern, maturity vocabulary); rev2 REJECTED by Mode A applying the evaluator's gap-variant standard uniformly (status enum negative probe missing -- the closure-discipline pivot; evidence:[] and closure_evidence:[] boundaries); rev3 (orchestrator-ruled final round; orchestrator also corrected its own premature 'final round' label on rev2 -- max-3-rounds rule allows rev3) closed all four gaps incl. the evaluator's anchored-regex residual, approved by BOTH gates (Mode A ran an exhaustive 17-constraint gap-variant sweep). Implementation: schema/engineering_finding.schema.json (8 required keys; severity open extension point per audit protocol 1; confidence + status + maturity enums; evidence minItems with anchored ^.agent/evidence/ paths + revision pinning; resolved findings REQUIRE non-empty closure_evidence) + 5 fixtures + dual-surface NIZAM.json + schema/README.md 0.7.0. Mode B 8/8 (full 3-round kill-shot battery re-probed on the shipped schema); QA PASS (qa/039.json, 35/35, ~40 probes, diff.patch sha256-matched). Scope: est 140 / actual 192. Cumulative 2302/2990 (77%). Remaining: 040 only (contract rev1 in progress: router-not-mirror paraphrase gap -- per-bullet structural constraint). Advancing: committing 039; 040 implements after both gates approve its rev1."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -822,7 +827,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2300,
-    "total_lines_changed": 2110,
+    "total_lines_changed": 2302,
     "per_feature": [
       {
         "id": "031",
@@ -871,6 +876,12 @@
         "estimated": 140,
         "actual": 160,
         "note": "152 new lines (ecosystem_baseline schema + 3 fixtures) + 8 tracked insertions (NIZAM.json dual-surface, schema/README.md 0.6.0). Slightly over the 140 estimate. (Corrected from a pre-measurement figure per AH-3.)"
+      },
+      {
+        "id": "039",
+        "estimated": 140,
+        "actual": 192,
+        "note": "184 new lines (engineering_finding schema + 5 fixtures) + 8 tracked insertions. Over the 140 estimate (fixture count grew through three review rounds); no per-feature flag condition (< 3x rolling average)."
       }
     ]
   },

@@ -1,0 +1,4 @@
+grep -q 'engineering_finding.schema.json' NIZAM.json && bash tools/validate.sh --target NIZAM.json; test $? -eq 0 && echo PASS || { echo "NIZAM.json does not index the schema, or --target NIZAM.json failed"; exit 1; }
+[C4] PASS index-integrity
+PASS
+EXIT:0
