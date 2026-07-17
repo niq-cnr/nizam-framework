@@ -1,0 +1,6 @@
+grep -A0 'NDEBT-016' docs/planning/DEBT.md
+| NDEBT-016 | 2026-07-17 | Low | C12's fixture-polarity classification regex `(?:^|_)(?:neg|invalid)(?:_|\.)` has confirmed dodges for FUTURE fixture filenames only (none of the 15 shipped fixtures are affected): full-word `negative_`, uppercase `_NEG_`, and false-trigger `_invalid_handling`-style names for positive fixtures that test invalid-input handling. Disclosed in contract 042's design_notes; deliberately not fixed under the phase-005 budget. | When the next fixture family lands, either normalize the naming convention in a fixtures README (authoritative token list: `neg_`/`invalid_` lowercase, delimited) or harden the regex (case-insensitive + full-token match) with fixture-name conformance asserted by C12 itself. |
+---
+git show e73cd04:docs/planning/DEBT.md | grep -c NDEBT-016  (confirms already present at baseline #1, i.e. NOT freshly discovered)
+1
+EXIT:0

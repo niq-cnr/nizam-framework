@@ -1,0 +1,3 @@
+AUDIT_DIR=$(ls -dt .agent/audits/audit-* 2>/dev/null | head -1); [ -n "$AUDIT_DIR" ] || { echo 'no .agent/audits/audit-* directory found yet -- expected before implementation lands'; exit 1; }; test -s "${AUDIT_DIR}/report.md" || { echo 'report.md missing or empty'; exit 1; }; grep -qi 'findings.json' "${AUDIT_DIR}/report.md" && grep -qi 'delta.json' "${AUDIT_DIR}/report.md" && grep -qE 'dogfood-2026-07-17-28c8253' "${AUDIT_DIR}/report.md" && grep -B2 -A2 'NDEBT-002' "${AUDIT_DIR}/report.md" | grep -qF 'previously resolved (pre-baseline-1)' && echo PASS || { echo 'report.md missing required content anchors, or missing the NDEBT-002 pre-baseline-1 framing phrase'; exit 1; }
+PASS
+EXIT:0

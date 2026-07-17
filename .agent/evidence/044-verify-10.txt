@@ -1,0 +1,11 @@
+python3 -c "import json, jsonschema
+s = json.load(open('schema/engineering_finding.schema.json'))
+d = json.load(open('tools/fixtures/engineering_finding_neg_resolved_without_closure_evidence.json'))
+try:
+    jsonschema.validate(d, s)
+    raise SystemExit('UNEXPECTED: a resolved finding with no closure_evidence validated')
+except jsonschema.ValidationError as e:
+    assert 'closure_evidence' in str(e), e
+" && echo PASS
+PASS
+EXIT:0

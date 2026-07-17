@@ -1,0 +1,22 @@
+AUDIT_DIR=$(ls -dt .agent/audits/audit-* 2>/dev/null | head -1); [ -n "$AUDIT_DIR" ] || { echo 'no .agent/audits/audit-* directory found yet'; exit 1; }; python3 -c "import json, jsonschema
+EXPECTED_CONFIDENCE = {'F-audit044-ndebt-015': 'Confirmed', 'F-audit044-ndebt-002': 'Confirmed', 'F-audit044-ndebt-016': 'Suspected', 'F-audit044-ndebt-017': 'Confirmed', 'F-audit044-ndebt-018': 'Confirmed'}
+s = json.load(open('schema/engineering_finding.schema.json'))
+findings = json.load(open('${AUDIT_DIR}/findings.json'))
+assert isinstance(findings, list) and len(findings) >= 1
+for f in findings:
+    jsonschema.validate(f, s)
+by_id = {f['id']: f for f in findings}
+for fid, expected_conf in EXPECTED_CONFIDENCE.items():
+    assert fid in by_id, f'missing expected finding id {fid}'
+    actual = by_id[fid]['confidence']
+    assert actual == expected_conf, f'{fid} confidence must be EXACTLY {expected_conf!r}, got {actual!r}'
+assert by_id['F-audit044-ndebt-002']['status'] == 'resolved', 'F-audit044-ndebt-002 must be status resolved'
+assert by_id['F-audit044-ndebt-002'].get('closure_evidence'), 'F-audit044-ndebt-002 must carry non-empty closure_evidence'
+for fid in ('F-audit044-ndebt-015','F-audit044-ndebt-016','F-audit044-ndebt-017','F-audit044-ndebt-018'):
+    actual_status = by_id[fid]['status']
+    assert actual_status == 'open', f'{fid} must be status open, got {actual_status}'
+print('PASS')
+" && echo PASS || exit 1
+PASS
+PASS
+EXIT:0

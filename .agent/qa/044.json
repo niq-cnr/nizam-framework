@@ -1,0 +1,110 @@
+{
+  "feature_id": "044",
+  "qa_pass": true,
+  "checks_run": 27,
+  "checks_passed": 27,
+  "adversarial": {
+    "performed": true,
+    "description": "Independently re-ran all 27 of contract 044 (revision 2, Mode-A/Mode-B-ratified)'s verification commands live from the repository root against the real, implemented tree in a clean shell (env -i, minimal PATH, to rule out any local shell/grep customization) -- 27/27 exit 0, including the 5 scratch-clone mechanism entries (2, 3, 4, 5, 14) that re-clone the repository into a disposable mktemp directory internally; this evaluator's sandbox permits mktemp/cp -a, so all 27 were independently exercised (Mode B reported 22/22 runnable and relied on the landed-artifact entries for the remaining 5 -- disclosed here for completeness, not a discrepancy). Beyond the live re-run, this QA pass independently reconstructed the entire second-dogfood-run + audit + delta + roadmap chain from ground truth and ran FIVE mutation kill-shots against COPIES of the actual shipped artifacts (never the real files, staged under this evaluator's own session scratchpad) to confirm the load-bearing checks are genuinely discriminating: (1) CLASS-SWAP KILL SHOT on a copy of the real delta.json (NDEBT-017 moved into `stale`, NDEBT-016 moved into `new` -- both real ids, transposed buckets) -- entry 16's exact per-id-membership assertion correctly raised AssertionError naming the wrong set. (2) CONFIDENCE-UPGRADE KILL SHOT on a copy of the real findings.json (NDEBT-016 flipped Suspected->Confirmed) -- entry 24 correctly raised AssertionError. (3) STATUS-FLIP KILL SHOT on a copy of the real findings.json (NDEBT-002 flipped resolved->open, closure_evidence stripped) -- entry 24 correctly raised AssertionError. (4) FRAMING-PHRASE-REMOVAL KILL SHOT on copies of the real report.md and ROADMAP.md (the literal 'previously resolved (pre-baseline-1)' phrase replaced with 'closed cleanly') -- entry 17 correctly failed on the report.md copy, and the equivalent phrase-adjacency check correctly failed on the ROADMAP.md copy. (5) FABRICATED-REVISION KILL SHOT on a copy of the real delta.json (compared_baselines.after.revision replaced with a fabricated 40-hex value) -- entry 27 correctly raised AssertionError naming the real baseline #2 revision it should have matched. All five kill-shots correctly failed, proving the checks are load-bearing against this specific real run, not vacuously passing because nothing happened to be wrong. Independently reconstructed the full ground-truth chain from .agent/run_state.json's operator_gate_decision history event (commit cba6422): the pending step's five-exception set (.agent/contracts/044.json, .agent/qa/044-contract-review.json, .agent/qa/044-contract-review-rev1.json, .agent/qa/044-contract-review-rev2.json, v0.6.0-release-notes.md) is byte-set-identical to both the real .agent/evidence/dogfood-2026-07-17-6d7a47b/pending/preflight.pending.json exceptions and the run_state relay record's named five paths; the real approved artifact's six-exception set equals those five plus exactly the one permitted self-reference addition (.agent/evidence/dogfood-2026-07-17-6d7a47b/); the real preflight.json's operator_approval.approver ('rosscn@nizamiq.com') and .authorization ('I approve and authorized you to proceed. expedite.') are BYTE-IDENTICAL (Python string equality) to both the run_state relay record's verbatim-quoted values and the first dogfood run's own real operator_approval content, confirming the same real human decision-maker across both runs. Baseline #2 (.agent/reconciliation/dogfood-2026-07-17-6d7a47b/baseline.json) independently confirmed anchored to commit cba6422c01ee024cd3c597adaed977590f6373ef (the gate-decision commit, landed BEFORE the approved-step invocation per the NDEBT-018 lesson, exactly as run_state's own history event requires) in five of its six reference categories, with dependency_references correctly stable at python3 3.14.4 (matching baseline #1). delta.json's per-id findings-transition classes independently re-verified against the real findings.json: new == exactly {F-audit044-ndebt-017, F-audit044-ndebt-018}; stale == exactly {F-audit044-ndebt-016}; resolved and reopened both honestly empty; score_movement.cited_findings == {F-audit044-ndebt-017, F-audit044-ndebt-018}, a genuine subset of new union stale. The 'previously resolved (pre-baseline-1)' framing phrase independently confirmed present, within 2 lines of NDEBT-002's own mention, in BOTH the real report.md (lines 18-19 and 46-48) and the real docs/planning/ROADMAP.md bullet (same line as the NDEBT-002 mention). Two benign, non-blocking observations independently reproduced and concurred with Mode B's own disposition: (a) 5-vs-2 finding-evidence enumeration -- findings.json's closure_evidence for F-audit044-ndebt-002 cites the SAME underlying raw evidence file (.agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-002-closure.txt) twice, once per real closure commit (bcb02d2, 0840094) -- each closure_evidence item is independently schema-valid (path+revision), so this is a benign citation-multiplicity style (one physical file, two commit-revision pins), not a discrepancy; (b) audit-id/execution-id suffix divergence -- execution-id-2 (dogfood-2026-07-17-6d7a47b) is frozen at the PENDING step's HEAD per the pinned convention, while audit-id (audit-2026-07-17-cba6422) is computed fresh at audit-authoring time against the real, then-current HEAD (cba6422, the gate-decision commit that landed between the pending and approved steps) -- design_notes.execution_id_2_and_audit_id_conventions' own prediction that the two suffixes would match assumed no commit lands between the approved step and audit-authoring (true here) but did not anticipate that the commit instead lands between pending and approved (per the NDEBT-018 ordering requirement), which is exactly what happened; the disjoint `dogfood-`/`audit-` prefixes mean no path collision risk exists, and every artifact correctly, honestly cites its OWN real id/revision (confirmed via entry 13's revision-field-not-label invariant, generalized) -- a documentation-prediction footnote, not a functional defect.",
+    "result": "All five mutation kill-shots against copies of the ACTUAL shipped artifacts correctly failed, confirming the per-id classification, confidence-pin, status-pin, framing-phrase, and revision-content checks are genuinely load-bearing against this specific real run. The full second-dogfood-run + audit + delta + roadmap chain was independently reconstructed end-to-end from ground truth (run_state's operator_gate_decision event at commit cba6422) and found internally consistent at every link. Two benign observations (evidence-citation multiplicity; audit-id/execution-id suffix divergence) independently reproduced and confirmed non-blocking, consistent with Mode B's own disposition.",
+    "evidence": ".agent/evidence/044-verify-01.txt through -27.txt (independently re-run live in this QA pass in a clean env, not merely re-read); .agent/evidence/044/diff.patch confirmed byte-identical to a fresh `git diff -- docs/planning/ROADMAP.md` in this QA pass; .agent/evidence/044/verification.txt's '27/27 PASS' summary cross-checked against this pass's own independent 27/27 live re-run. The five mutation kill-shots were performed on copies under this evaluator's own session scratchpad (never the real .agent/audits, .agent/reconciliation, or docs/planning paths); `git status --porcelain --untracked-files=all` on the real repository was checked before and after this entire QA pass and shows no change attributable to this evaluator beyond this pass's own .agent/qa/044.json artifact; .agent/run_state.json was read only, never edited."
+  },
+  "evidence_files": [
+    ".agent/evidence/044-verify-01.txt",
+    ".agent/evidence/044-verify-02.txt",
+    ".agent/evidence/044-verify-03.txt",
+    ".agent/evidence/044-verify-04.txt",
+    ".agent/evidence/044-verify-05.txt",
+    ".agent/evidence/044-verify-06.txt",
+    ".agent/evidence/044-verify-07.txt",
+    ".agent/evidence/044-verify-08.txt",
+    ".agent/evidence/044-verify-09.txt",
+    ".agent/evidence/044-verify-10.txt",
+    ".agent/evidence/044-verify-11.txt",
+    ".agent/evidence/044-verify-12.txt",
+    ".agent/evidence/044-verify-13.txt",
+    ".agent/evidence/044-verify-14.txt",
+    ".agent/evidence/044-verify-15.txt",
+    ".agent/evidence/044-verify-16.txt",
+    ".agent/evidence/044-verify-17.txt",
+    ".agent/evidence/044-verify-18.txt",
+    ".agent/evidence/044-verify-19.txt",
+    ".agent/evidence/044-verify-20.txt",
+    ".agent/evidence/044-verify-21.txt",
+    ".agent/evidence/044-verify-22.txt",
+    ".agent/evidence/044-verify-23.txt",
+    ".agent/evidence/044-verify-24.txt",
+    ".agent/evidence/044-verify-25.txt",
+    ".agent/evidence/044-verify-26.txt",
+    ".agent/evidence/044-verify-27.txt",
+    ".agent/evidence/044/diff.patch",
+    ".agent/evidence/044/verification.txt",
+    ".agent/reconciliation/dogfood-2026-07-17-6d7a47b/preflight.json",
+    ".agent/reconciliation/dogfood-2026-07-17-6d7a47b/baseline.json",
+    ".agent/evidence/dogfood-2026-07-17-6d7a47b/pending/preflight.pending.json",
+    ".agent/evidence/dogfood-2026-07-17-6d7a47b/pending/collection-log.txt",
+    ".agent/evidence/dogfood-2026-07-17-6d7a47b/approved/collection-log.txt",
+    ".agent/audits/audit-2026-07-17-cba6422/findings.json",
+    ".agent/audits/audit-2026-07-17-cba6422/delta.json",
+    ".agent/audits/audit-2026-07-17-cba6422/report.md",
+    ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-015-repro.txt",
+    ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-002-closure.txt",
+    ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-016-stale-evidence.txt",
+    ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-017-new-evidence.txt",
+    ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-018-new-evidence.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": "`diff <(git diff -- docs/planning/ROADMAP.md) .agent/evidence/044/diff.patch` is byte-identical -- independently confirmed in this QA pass (the only tracked-file diff for feature 044 is docs/planning/ROADMAP.md; every other deliverable is an untracked addition under .agent/reconciliation, .agent/evidence, and .agent/audits, per the contract's own design). The diff shows exactly the frontmatter version bump (0.3.0 -> 0.4.0) plus one new change_log entry and one new, bounded (14-line) dated subsection, with zero pre-existing ROADMAP.md content altered or removed -- independently re-confirmed against entry 18's own additive-only and boundedness assertions.",
+    "verify_txt_and_verification_log_consistency": "Cross-checked .agent/evidence/044/verification.txt's 'SUMMARY: 27/27 PASS' against this QA pass's own independent, live re-run of all 27 verification commands (27/27 exit 0, matching exactly) in a clean env. Spot-checked .agent/evidence/044-verify-01.txt and -27.txt in full -- both comply with the Evidence Capture Convention (exact invocation as the first line, a literal EXIT:<code> as the last line)."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_005.json feature 044 (status left 'pending', not touched by this evaluator)",
+    "amended_class_check": "All 7 of feature 044's acceptance_tests strings in .agent/feature_list_005.json were compared against the contract's 27 verification entries for any needed [AMENDED]-style reconciliation. No such reconciliation is needed: every one of the 7 ATs is satisfied by a contract verification entry that implements the AT's own literal wording directly, and this evaluator additionally re-ran AT#6's and AT#7's literal grep/validate.sh commands standalone (not merely via the contract's own paraphrase) to confirm no gap between the feature-list's literal text and the contract's stronger, more specific checks.",
+    "criteria": [
+      {
+        "criterion": "At least one finding validates",
+        "status": "satisfied",
+        "evidence": ".agent/audits/audit-2026-07-17-cba6422/findings.json contains 5 entries; all 5 independently re-validated against schema/engineering_finding.schema.json in this QA pass (PASS), not merely 1."
+      },
+      {
+        "criterion": "Second baseline compared with first",
+        "status": "satisfied",
+        "evidence": ".agent/reconciliation/dogfood-2026-07-17-6d7a47b/baseline.json (anchored to commit cba6422, independently schema-validated) compared against .agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json (anchored to e73cd04) in .agent/audits/audit-2026-07-17-cba6422/delta.json's compared_baselines block, both revision fields independently confirmed to equal each baseline artifact's own declared revision (never derived from an execution-id label)."
+      },
+      {
+        "criterion": "Roadmap updated from evidence",
+        "status": "satisfied",
+        "evidence": "docs/planning/ROADMAP.md diff (.agent/evidence/044/diff.patch, byte-identical to the live `git diff`) adds a bounded, dated 'Dogfood Audit + Delta (2026-07-17)' subsection naming audit-2026-07-17-cba6422 and both compared execution-ids/revisions, with the four transition-class counts and concrete finding ids."
+      },
+      {
+        "criterion": "At least one .agent/audits/<id>/findings.json entry validates against schema/engineering_finding.schema.json",
+        "status": "satisfied",
+        "evidence": "All 5 findings.json entries independently re-validated in this QA pass; literal AT re-run standalone: `python3 -c \"import json,jsonschema; ...\"` PASS."
+      },
+      {
+        "criterion": "A second baseline exists and an audit delta artifact (.agent/audits/<id>/report.md) distinguishes new/resolved/reopened/stale findings and traces score movement to evidence",
+        "status": "satisfied",
+        "evidence": ".agent/audits/audit-2026-07-17-cba6422/delta.json's findings.{new,resolved,reopened,stale} independently re-verified exact per-id (new=={017,018}, stale=={016}, resolved==[], reopened==[]); score_movement.cited_findings=={017,018}, a genuine subset citing real finding ids; report.md narrates all four classes by reference to findings.json/delta.json without re-pasting raw evidence inline."
+      },
+      {
+        "criterion": "docs/planning/ROADMAP.md was updated from the dogfood evidence: grep -Eqi 'dogfood|audit|ecosystem' docs/planning/ROADMAP.md",
+        "status": "satisfied",
+        "evidence": "Literal AT re-run standalone against the real, current docs/planning/ROADMAP.md in this QA pass: PASS."
+      },
+      {
+        "criterion": "Compliance validator stays green: bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: [0-9]+ passed, 0 failed'",
+        "status": "satisfied",
+        "evidence": "Literal AT re-run standalone in this QA pass: `bash tools/validate.sh` -> 'SUMMARY: 12 passed, 0 failed', PASS."
+      }
+    ]
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. Feature 044 (Dogfood Framework Audit + Delta, the LAST dogfood feature, PR-F4/handover F-014) is complete and correct. All 27 of contract 044 (revision 2)'s verification entries independently re-run live against the real, implemented tree in a clean shell -- 27/27 exit 0, including the 5 scratch-clone mechanism entries this evaluator's sandbox permits running (unlike Mode B's reported 22/22, disclosed here for transparency, not a discrepancy). Five independent mutation kill-shots against copies of the actual shipped artifacts (class-swap, confidence-upgrade, status-flip, framing-phrase-removal, fabricated-revision) all correctly failed, confirming the per-id classification, confidence-pin, status-pin, framing, and revision-content checks are genuinely load-bearing, not vacuously passing. The full second-dogfood-run + audit + delta + roadmap chain was independently reconstructed end-to-end from ground truth (.agent/run_state.json's operator_gate_decision event at commit cba6422): pending five-exception set == approved-minus-self-reference set; operator_approval byte-identical to both the run_state relay record and the first dogfood run's own real approver identity; baseline #2 correctly anchored to cba6422 (the gate-decision commit, committed before the approved-step invocation per the NDEBT-018 lesson); delta.json's four finding-transition classes exactly and correctly populated (new=={NDEBT-017,018}, stale=={NDEBT-016}, resolved and reopened both honestly empty, with NDEBT-002 correctly excluded from the resolved transition bucket and instead framed as 'previously resolved (pre-baseline-1)' in both report.md and the ROADMAP.md bullet); score_movement traceable to the two new findings. All 7 feature-list acceptance criteria are satisfied with evidence by path, re-verified via both the contract's own entries and standalone literal re-runs of the feature-list's exact AT text; no [AMENDED]-class reconciliation was needed. bash tools/validate.sh: 12 passed, 0 failed. No out-of-scope surface (schema/, tools/, ecosystem/, NIZAM.json, CHANGELOG.md, docs/planning/manifest.json, docs/planning/DEBT.md, .agent/run_state.json) was modified, independently reconfirmed in this QA pass. Two benign, non-blocking observations (evidence-citation multiplicity for NDEBT-002's closure_evidence; audit-id/execution-id suffix divergence from the mid-run gate-decision commit) independently reproduced and concurred non-blocking, consistent with Mode B's own disposition -- neither creates a path collision, a schema violation, or a misrepresentation risk. Feature status and .agent/run_state.json were left untouched by this evaluator, per instruction; the orchestrator owns the advance decision."
+  }
+}

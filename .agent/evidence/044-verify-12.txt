@@ -1,0 +1,3 @@
+for id in NDEBT-002 NDEBT-016; do git show e73cd04:docs/planning/DEBT.md | grep -q "$id" || { echo "$id unexpectedly absent at baseline #1 revision e73cd04"; exit 1; }; grep -q "$id" docs/planning/DEBT.md || { echo "$id unexpectedly absent at the current tree"; exit 1; }; done; e1=$(git show e73cd04:docs/planning/DEBT.md | grep -c 'NDEBT-002'); e2=$(grep -c 'NDEBT-002' docs/planning/DEBT.md); [ "$e1" -eq "$e2" ] && [ "$e1" -eq 1 ] || { echo 'NDEBT-002 row count differs between the two revisions (unchanged-fact expectation violated)'; exit 1; }; echo PASS
+PASS
+EXIT:0

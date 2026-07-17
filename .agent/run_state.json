@@ -2,7 +2,7 @@
   "repository": "nizam-framework",
   "current_phase": "005-ecosystem-cycle",
   "current_feature": "044",
-  "status": "implementing",
+  "status": "feature_complete",
   "updated_at": "2026-07-17T00:00:00Z",
   "circuit_breaker": {
     "000-contract": {
@@ -698,6 +698,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "operator_gate_decision",
       "detail": "Gate H-DOGFOOD-EXCEPTION (second dogfood run, feature 044): APPROVED by the human operator. Verbatim authorization: 'I approve and authorized you to proceed. expedite.' Approver identity: rosscn@nizamiq.com. Decision applies to EXACTLY the five-exception set presented from pending run dogfood-2026-07-17-6d7a47b (exit 2, zero blocking findings): (1) .agent/contracts/044.json, (2) .agent/qa/044-contract-review.json, (3) .agent/qa/044-contract-review-rev1.json, (4) .agent/qa/044-contract-review-rev2.json -- the audit feature's own in-flight lifecycle records, NDEBT-018 class -- and (5) v0.6.0-release-notes.md (pre-existing untracked, NDEBT-013/014). Pending record: .agent/evidence/dogfood-2026-07-17-6d7a47b/pending/preflight.pending.json. GROUND TRUTH FOR RECONCILIATION at Mode B: the approved artifact's operator_approval must carry approver 'rosscn@nizamiq.com' and authorization 'I approve and authorized you to proceed. expedite.' exactly. Per the NDEBT-018 lesson from the first run, this gate decision is being COMMITTED BEFORE the approved-step invocation is dispatched."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 044 (Dogfood Framework Audit + Delta, handover F-014) COMPLETE -- PR-F4's dogfood evidence is DONE and with it handover dogfood requirements 1-6. The framework's FIRST self-audit: five real findings (F-audit044-ndebt-015 Confirmed/open with live misroute reproduction; -002 Confirmed/resolved with real closure commits, honestly framed 'previously resolved (pre-baseline-1)' and EXCLUDED from the delta transition bucket; -016 Suspected/open/stale; -017/-018 Confirmed/open/new with git-history absence proofs at e73cd04), all 5/5 schema-valid with per-finding evidence by path. SECOND gated preflight run (operator approved the five-exception set verbatim; gate decision committed BEFORE the approved invocation per the NDEBT-018 lesson -- applied, and it worked first try this time); baseline #2 anchored to cba6422. Audit-to-audit delta per ecosystem/07: new={017,018}, stale={016}, resolved=[] and reopened=[] HONESTLY EMPTY on this first comparison; unchanged/changed facts cite the two real baseline revisions; score movement traceable. ROADMAP updated from evidence (15 added lines, bounded). Contract lifecycle: rev0 rejected by evaluator (3x HIGH: no per-finding-id delta correctness, NDEBT-002 category error, dead grep cap); rev1 rejected by Mode A (nested-quote crash in entry 24 -- crashed identically on correct and gamed input); rev2 approved by both gates; one Loop-2 amendment (evidence-glob under-inclusion) Mode-B-ratified. QA: 27/27 incl. the clone entries, five kill shots on artifact copies, full ground-truth chain reconstruction. ALSO: 043's ledger actual corrected 175->116 per AH-3. Scope: 044 est 150 / actual 320 (contract disclosed 320). Cumulative 3445/4550 (76%). Advancing: committing 044, opening draft PR-F4, then feature 045 (Release Framework Capability -- prepares version classification/changelog/guide for the operator's H-FRAMEWORK-RELEASE decision; the orchestrator prepares, the human releases)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -871,7 +876,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 3500,
-    "total_lines_changed": 3184,
+    "total_lines_changed": 3445,
     "per_feature": [
       {
         "id": "031",
@@ -948,8 +953,14 @@
       {
         "id": "043",
         "estimated": 120,
-        "actual": 175,
-        "note": "~171 lines of real dogfood artifacts (reconciliation preflight+baseline, pending record) + 4 DEBT.md tracked-diff lines. Over the 120 estimate (artifact verbosity); no flag condition."
+        "actual": 116,
+        "note": "CORRECTED per AH-3 at 044 close: measured 112 artifact lines + 4 DEBT tracked-diff lines = 116 (the committed 043 close-out note carried a pre-measurement ~175 figure). Under-estimate stands corrected."
+      },
+      {
+        "id": "044",
+        "estimated": 150,
+        "actual": 320,
+        "note": "~304 lines of real audit/delta/baseline/evidence artifacts + 16 ROADMAP tracked-diff lines. Matches the contract's disclosed prototype-derived estimate (320) rather than the a-priori 150; two first-time deliverable families. Under 3x rolling average."
       }
     ],
     "rebaseline": {

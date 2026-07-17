@@ -1,0 +1,80 @@
+{
+  "audit_id": "audit-2026-07-17-cba6422",
+  "compared_baselines": {
+    "before": {
+      "execution_id": "dogfood-2026-07-17-28c8253",
+      "revision": "e73cd04bad78c696c815bf253fb627a93f20c9c0",
+      "path": ".agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json"
+    },
+    "after": {
+      "execution_id": "dogfood-2026-07-17-6d7a47b",
+      "revision": "cba6422c01ee024cd3c597adaed977590f6373ef",
+      "path": ".agent/reconciliation/dogfood-2026-07-17-6d7a47b/baseline.json"
+    }
+  },
+  "unchanged_facts": [
+    {
+      "field": "dependency_references[0].revision",
+      "value": "3.14.4",
+      "note": "python3 runtime version identical across both baseline captures (Tier 1, re-derived directly from both real baseline.json files)."
+    },
+    {
+      "field": "docs/planning/DEBT.md NDEBT-002 row (Resolved section)",
+      "value": "present exactly once, in the Resolved section, at both revisions",
+      "note": "NDEBT-002 was already resolved (2026-07-10) well before baseline #1 (2026-07-17); it remains resolved, unchanged, at baseline #2 -- see findings.json's F-audit044-ndebt-002 (status resolved, real closure_evidence citing commits bcb02d2/0840094), never classified in this delta's findings.resolved transition class (see report.md)."
+    },
+    {
+      "field": "docs/planning/DEBT.md NDEBT-016 row (Open section)",
+      "value": "present exactly once, in the Open section, at both revisions, evidence unchanged/not re-verified",
+      "note": "confirms NDEBT-016 is genuinely pre-existing at baseline #1, not newly discovered -- its evidence is not fresh relative to baseline #2's own captured_at, hence flagged stale below rather than silently carried forward."
+    }
+  ],
+  "changed_facts": [
+    {
+      "field": "repository_references[0].revision",
+      "before": "e73cd04bad78c696c815bf253fb627a93f20c9c0",
+      "after": "cba6422c01ee024cd3c597adaed977590f6373ef",
+      "note": "a REAL, honestly-detected change: real framework commits (including this feature's own contract-negotiation and gate-decision commits) landed between the two dogfood executions. Read from each baseline.json's own declared revision field -- never derived by parsing either execution-id label."
+    },
+    {
+      "field": "framework_references[0].revision",
+      "before": "e73cd04bad78c696c815bf253fb627a93f20c9c0",
+      "after": "cba6422c01ee024cd3c597adaed977590f6373ef",
+      "note": "mirrors repository_references[0].revision (the framework IS the repository in this self-referential minimum-viable default)."
+    }
+  ],
+  "findings": {
+    "new": [
+      {
+        "id": "F-audit044-ndebt-017",
+        "absent_at_revision": "e73cd04bad78c696c815bf253fb627a93f20c9c0",
+        "present_at_revision": "cba6422c01ee024cd3c597adaed977590f6373ef",
+        "note": "genuinely absent from docs/planning/DEBT.md at baseline #1's pinned revision; present at baseline #2's."
+      },
+      {
+        "id": "F-audit044-ndebt-018",
+        "absent_at_revision": "e73cd04bad78c696c815bf253fb627a93f20c9c0",
+        "present_at_revision": "cba6422c01ee024cd3c597adaed977590f6373ef",
+        "note": "genuinely absent from docs/planning/DEBT.md at baseline #1's pinned revision; present at baseline #2's -- and independently re-observed live in this run's own pending/approved preflight exception sets."
+      }
+    ],
+    "resolved": [],
+    "reopened": [],
+    "stale": [
+      {
+        "id": "F-audit044-ndebt-016",
+        "evidence_captured_at": "2026-07-17",
+        "note": "evidence is contract 042's own design_notes disclosure, dated 2026-07-17, predating baseline #2's own captured_at (2026-07-17T12:54:09Z) with no fresh re-confirmation captured at or after that time -- flagged stale per the stale-evidence-non-reuse rule (ecosystem/07 Sec 5), not silently carried forward as freshly confirmed."
+      }
+    ]
+  },
+  "score_movement": {
+    "open_findings_before": 3,
+    "open_findings_after": 5,
+    "note": "3 open findings attributable to this audit's own retrospective baseline-#1-era reference point (F-audit044-ndebt-015 and F-audit044-ndebt-016 already open, plus NDEBT-002 already resolved and excluded from this count); 5 open+resolved findings recorded in this audit's own findings.json at baseline #2 (015 open, 002 resolved, 016 open/stale, 017 open/new, 018 open/new). The +2 movement is entirely attributable to the two new findings below.",
+    "cited_findings": [
+      "F-audit044-ndebt-017",
+      "F-audit044-ndebt-018"
+    ]
+  }
+}

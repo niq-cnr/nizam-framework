@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- schema/ tools/ ecosystem/ NIZAM.json CHANGELOG.md docs/planning/manifest.json docs/planning/DEBT.md .agent/run_state.json && echo PASS || { echo "an out-of-scope path was modified"; git diff --name-only HEAD -- schema/ tools/ ecosystem/ NIZAM.json CHANGELOG.md docs/planning/manifest.json docs/planning/DEBT.md .agent/run_state.json; exit 1; }
+PASS
+EXIT:0

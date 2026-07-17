@@ -1,0 +1,30 @@
+AUDIT_DIR=$(ls -dt .agent/audits/audit-* 2>/dev/null | head -1); [ -n "$AUDIT_DIR" ] || { echo 'no .agent/audits/audit-* directory found yet -- expected before implementation lands (anti-vacuity: this MUST fail pre-implementation)'; exit 1; }; python3 -c "import json
+EXPECTED_NEW = {'F-audit044-ndebt-017', 'F-audit044-ndebt-018'}
+EXPECTED_STALE = {'F-audit044-ndebt-016'}
+d = json.load(open('${AUDIT_DIR}/delta.json'))
+for k in ('compared_baselines','unchanged_facts','changed_facts','findings','score_movement'):
+    assert k in d, f'missing top-level key: {k}'
+f = d['findings']
+for k in ('new','resolved','reopened','stale'):
+    assert k in f, f'missing findings transition class: {k}'
+    assert isinstance(f[k], list), f'{k} must be an array'
+new_ids = {x['id'] for x in f['new']}
+stale_ids = {x['id'] for x in f['stale']}
+assert new_ids == EXPECTED_NEW, ('new set must be EXACTLY the two NDEBT-017/018 ids, got', new_ids)
+assert stale_ids == EXPECTED_STALE, ('stale set must be EXACTLY the one NDEBT-016 id, got', stale_ids)
+assert f['resolved'] == [], 'resolved must be honestly EMPTY -- NDEBT-002 resolved pre-baseline-1, never an in-window transition (see design_notes.resolved_class_is_pre_baseline1_only)'
+assert f['reopened'] == [], 'reopened must be honestly EMPTY -- no prior comparison exists'
+for x in f['new']:
+    assert x.get('absent_at_revision'), ('new entry missing absent_at_revision proof', x)
+for x in f['stale']:
+    assert x.get('evidence_captured_at'), ('stale entry missing evidence_captured_at proof', x)
+for x in f['resolved']:
+    assert x.get('closure_evidence'), ('any resolved entry, if ever present, must carry non-empty closure_evidence', x)
+sm = d['score_movement']
+cited = set(sm.get('cited_findings', []))
+assert cited, 'score_movement must cite specific finding ids (ecosystem/07 Sec 6)'
+assert cited <= (new_ids | stale_ids), ('score_movement cites ids outside the new/stale sets (resolved/reopened are empty this run)', cited)
+print('PASS')
+"
+PASS
+EXIT:0

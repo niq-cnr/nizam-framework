@@ -1,0 +1,22 @@
+EXEC_ID2=$(basename $(ls -dt .agent/reconciliation/dogfood-* 2>/dev/null | grep -v 'dogfood-2026-07-17-28c8253' | head -1) 2>/dev/null); AUDIT_DIR=$(ls -dt .agent/audits/audit-* 2>/dev/null | head -1); [ -n "$EXEC_ID2" ] && [ -n "$AUDIT_DIR" ] || { echo 'second baseline or audit directory not found yet'; exit 1; }; python3 -c "import json
+b1 = json.load(open('.agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json'))
+b2 = json.load(open('.agent/reconciliation/${EXEC_ID2}/baseline.json'))
+d = json.load(open('${AUDIT_DIR}/delta.json'))
+rev1 = b1['repository_references'][0]['revision']
+rev2 = b2['repository_references'][0]['revision']
+dep1 = b1['dependency_references'][0]['revision']
+dep2 = b2['dependency_references'][0]['revision']
+assert dep1 == dep2, ('dependency_references expected stable', dep1, dep2)
+assert rev1 != rev2, ('repository_references expected to differ (deliberate change)', rev1, rev2)
+unchanged_blob = json.dumps(d['unchanged_facts'])
+changed_blob = json.dumps(d['changed_facts'])
+assert dep1 in unchanged_blob, 'unchanged_facts must cite the ACTUAL stable dependency revision value'
+assert rev1 in changed_blob and rev2 in changed_blob, 'changed_facts must cite the ACTUAL before/after revision values'
+cb = d['compared_baselines']
+assert cb['before']['revision'] == rev1, ('compared_baselines.before.revision must equal the real baseline #1 field', cb['before'].get('revision'), rev1)
+assert cb['after']['revision'] == rev2, ('compared_baselines.after.revision must equal the real baseline #2 field', cb['after'].get('revision'), rev2)
+print('PASS')
+" && echo PASS || exit 1
+PASS
+PASS
+EXIT:0
