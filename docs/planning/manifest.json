@@ -1,8 +1,8 @@
 {
   "schema_version": "2.0.0",
-  "updated_at": "2026-07-12",
+  "updated_at": "2026-07-17",
   "forward_planning": "docs/planning/ROADMAP.md",
-  "current_phase": "004-durable-enforcement",
+  "current_phase": "005-ecosystem-cycle",
   "phases": [
     {
       "id": "001-framework-genesis",
@@ -33,6 +33,14 @@
       "status": "complete",
       "activation_state": "active",
       "note": "Lifecycle: PROPOSED 2026-07-08 by @planner (spec .agent/product_spec_004.md, feature_list_004.json: 8 features 023-030, DAG validated acyclic, original_estimate_lines=1250) -> ACTIVATED 2026-07-08 on human authorization ('approved. please proceed.') -> COMPLETED 2026-07-10 (run_state event phase_complete: all 8 features 023-030 through the full contract lifecycle, validator green SUMMARY: 11 passed, 0 failed; phase PR #15 merged to main). Realized four recommendations: R1 narrative-truth CI checks C9 (path resolution) + C10 (single-source-of-truth consistency); R2 hermetic end-to-end consumer-bootstrap test + CI job; R3 tools/verify_lib.sh vetted verification-helper library + a verification-authoring standard in methodology/02; R4 schema reconciliation (qa_verdict union + new contract_review schema) + C11 dogfood validation of the framework's own .agent/ artifacts, resolving NDEBT-002. NOTE the release-gate drift: the proposal-time note named v0.4.0 as the close gate, but v0.4.0/v0.4.1 (NMF hybrid) and v0.5.0-v0.5.3 were consumed by out-of-band work while this phase executed; the phase's [Unreleased] CHANGELOG content awaits the next MINOR cut (v0.6.0 per run_state). Human gates outstanding at close: the v0.6.0 release cut and GitHub Pages publishing for docs/guide/ (open since phase 003) — recorded, not executed. Status corrected from stale 'in_progress' 2026-07-12 (the manifest was never updated at phase close; run_state, feature_list_004, DEBT.md, and git history all corroborate completion). Forward planning: docs/planning/ROADMAP.md."
+    },
+    {
+      "id": "005-ecosystem-cycle",
+      "title": "Ecosystem Engineering Cycle (Framework Side) — Reusable Reconcile/Preflight/Baseline/Audit/Compare Lifecycle, Schemas, Preflight CLI & Framework Dogfood",
+      "feature_list": ".agent/feature_list_005.json",
+      "status": "in_progress",
+      "activation_state": "active",
+      "note": "Lifecycle: PROPOSED 2026-07-17 by @planner (spec .agent/product_spec_005.md, feature_list_005.json: 15 features 031-045, DAG validated acyclic — deps all resolve, no cycles, topological order exists — original_estimate_lines=2300) -> ACTIVATED 2026-07-17 on operator authorization. Activation authorization (verbatim): 'approved. expedite.' (remote-control message, 2026-07-17), which accepts NIP-0001 (docs/nips/NIP-0001-ecosystem-engineering-cycle.md, status Accepted) satisfying operator gate H-NIP and makes the ecosystem cycle the plan of record. Scope: FRAMEWORK SIDE ONLY — the accepted programme's framework features (handover F-001..F-015), mapped 1:1 to framework features 031..045 via each feature's handover_feature_ids field, grouped into four PRs: PR-F1=NIP + plan of record (031); PR-F2=ecosystem module protocols + baseline/preflight-verdict/finding schemas + capability routing (032-040); PR-F3=preflight CLI + validator/CI fixtures (041-042); PR-F4=framework dogfood evidence (043-044); plus release preparation (045, HUMAN GATE). Consumer adoption (handover F-016..F-020, targeting nizamiq/nizamiq-strategy) is EXPLICITLY OUT OF SCOPE for this phase and deferred to the successor programme phase, gated on the framework release. status='in_progress' + activation_state='active' reflect the operator-authorized activation (manifest.schema status enum has no 'proposed'/'active' value; the proposed->active decision-lifecycle is carried by activation_state + this note, matching the phase 002/003/004 house pattern). Outstanding human gates (recorded, NOT executed by the pipeline): H-FRAMEWORK-SCOPE (minimum-viable v1 scope-lock), H-DOGFOOD-EXCEPTION (approve any PASS_WITH_EXCEPTIONS framework preflight, feature 043), H-FRAMEWORK-RELEASE (approve version/changelog/tag, feature 045), H-RISK (accept any residual P1 engineering risk). Also inherited-open from prior phases: the v0.6.0 GitHub Release page publication and GitHub Pages publishing for docs/guide/. Forward planning: docs/planning/ROADMAP.md."
     }
   ]
 }

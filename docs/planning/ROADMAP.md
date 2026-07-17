@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-07-17"
+    summary: "Phase 005 activated as the Ecosystem Engineering Cycle (framework side). Operator accepted NIP-0001 on 2026-07-17 ('approved. expedite.', gate H-NIP), which selects phase 005's scope. Added a 'Plan of Record' banner recording the activation and marked the former Track 2 candidate ('Consumer Reality & Enforcement Closure') as superseded-as-the-phase-005-selection: its enforcement-closure debt items (NDEBT-007/008/009/010/011/012/005) remain candidate scope for a subsequent phase and are partly exercisable by the framework self-dogfood (features 043-044). Prior content preserved."
   - version: "0.2.0"
     date: "2026-07-15"
     summary: "Post-release refresh after the 2026-07-15 release-readiness audit: v0.6.0 annotated tag cut (Track 1 gate 1 executed; residual GitHub Release publication recorded), Current Position updated from v0.5.3 to v0.6.0, NDEBT-012 (payload-validator CWD sensitivity, issue #18) added to the open-debt roll and the phase 005 candidate scope."
@@ -15,6 +18,39 @@ change_log:
 ---
 
 # Forward Roadmap
+
+## Plan of Record (2026-07-17) — Phase 005 Activated: Ecosystem Engineering Cycle
+
+Phase `005-ecosystem-cycle` is **active** and is the current plan of record. On
+2026-07-17 the ecosystem operator accepted **NIP-0001 — Ecosystem Engineering
+Cycle** (`docs/nips/NIP-0001-ecosystem-engineering-cycle.md`) via the remote-control
+message **"approved. expedite."**, satisfying gate **H-NIP** and authorizing phase
+activation. The Planner produced the phase-005 spec (`.agent/product_spec_005.md`)
+and a DAG-validated feature list (`.agent/feature_list_005.json`, 15 features
+031-045, `original_estimate_lines` 2300); `docs/planning/manifest.json` now carries
+phase 005 as `status: in_progress`, `activation_state: active`, `current_phase:
+005-ecosystem-cycle`.
+
+**Scope:** framework side only (handover F-001..F-015) — the ecosystem module
+protocols, the baseline / preflight-verdict / engineering-finding schemas, capability
+routing, a deterministic preflight CLI, a validator + CI fixtures extension, and
+framework self-dogfood evidence, ending at a human-gated framework release
+(H-FRAMEWORK-RELEASE). Consumer adoption (handover F-016..F-020, targeting
+`nizamiq/nizamiq-strategy`) is deferred to the successor programme phase, gated on
+that release.
+
+**Outstanding phase-005 human gates (recorded, not executed):** H-FRAMEWORK-SCOPE
+(minimum-viable v1 scope-lock), H-DOGFOOD-EXCEPTION (any PASS_WITH_EXCEPTIONS
+framework preflight), H-FRAMEWORK-RELEASE (version/changelog/tag), H-RISK (residual
+P1 risk acceptance).
+
+**Relationship to the prior candidate scope:** the former "Track 2 — Phase 005
+Candidate Scope: Consumer Reality & Enforcement Closure" (below) is **superseded as
+the phase-005 selection** by the operator-accepted NIP-0001. Its enforcement-closure
+debt items (NDEBT-007/008/009/010/011/012 and NDEBT-005) remain candidate scope for a
+subsequent phase; several are directly exercised as friction evidence by the
+framework self-dogfood (features 043-044) and by the successor consumer-adoption
+phase. The Track 1 human gates and Tracks 3-4 below remain valid forward intent.
 
 ## Purpose and Authority
 
@@ -53,7 +89,14 @@ they need no new phase.
    (`docs/guide/index.html` ships in-repo but is not yet published). Recorded in the
    phase-003 manifest note; still unexecuted.
 
-## Track 2 — Phase 005 Candidate Scope: Consumer Reality & Enforcement Closure
+## Track 2 — [SUPERSEDED as the phase-005 selection, 2026-07-17] Candidate Scope: Consumer Reality & Enforcement Closure
+
+> **Superseded 2026-07-17:** phase 005 was activated as the Ecosystem Engineering
+> Cycle (see the Plan of Record banner above) on the operator-accepted NIP-0001. The
+> enforcement-closure items below are NOT the phase-005 scope; they remain candidate
+> scope for a subsequent phase and are partly exercised as friction evidence by the
+> phase-005 framework self-dogfood (features 043-044). Retained verbatim as the
+> durable candidate-scope record.
 
 The highest-leverage next phase closes the gap between what the framework enforces on
 itself and what a real consumer experiences. Candidate features, sourced from the open

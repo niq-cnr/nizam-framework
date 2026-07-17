@@ -1,0 +1,3 @@
+test -f .agent/product_spec_005.md && python3 -c "import json,yaml,jsonschema; d=open('.agent/product_spec_005.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS || { echo "product_spec_005.md missing or frontmatter-invalid"; exit 1; }
+PASS
+EXIT:0

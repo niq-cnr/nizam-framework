@@ -1,0 +1,3 @@
+! (git show HEAD:docs/planning/manifest.json | python3 -c "import json,sys; m=json.load(sys.stdin); ids=[p['id'] for p in m['phases']]; sys.exit(0 if any(i.startswith('005') for i in ids) else 1)") && echo PASS || { echo "HEAD manifest.json already indexed phase 005 -- verification entry 4 would be vacuous"; exit 1; }
+PASS
+EXIT:0

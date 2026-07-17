@@ -1,0 +1,146 @@
+diff --git a/.agent/run_state.json b/.agent/run_state.json
+index f67e696..36bf330 100644
+--- a/.agent/run_state.json
++++ b/.agent/run_state.json
+@@ -1,9 +1,9 @@
+ {
+   "repository": "nizam-framework",
+-  "current_phase": "004-durable-enforcement",
+-  "current_feature": "030",
+-  "status": "phase_complete",
+-  "updated_at": "2026-07-10T11:47:06Z",
++  "current_phase": "005-ecosystem-cycle",
++  "current_feature": "031",
++  "status": "implemented",
++  "updated_at": "2026-07-17T00:00:00Z",
+   "circuit_breaker": {
+     "000-contract": {
+       "attempts": 1,
+@@ -599,6 +599,21 @@
+       "at": "2026-07-10T11:47:06Z",
+       "event": "amendment_complete",
+       "detail": "POST-CLOSE CI HOTFIX on PR #15 (analogous to a fix/ remediation, NOT a new feature - no new contract): the NEW e2e_bootstrap CI job (shipped by F-029) FAILED on PR #15 in ~5s with `Committer identity unknown ... fatal: empty ident name ... not allowed` (exit 128). Root cause: tools/e2e_bootstrap_test.sh line 300 creates an ANNOTATED git tag (`git tag -a`), which records a tagger identity, but GitHub-hosted runners have NO ambient git user.name/user.email - so it fails in CI though it passed locally (dev machines have an identity configured). This is EXACTLY the watch-item the F-029 Mode-A review flagged ('git tag -a needs a tagger identity, which GitHub-hosted runners do not set globally') - and F-029's own CI job caught it, the 'live proof' working as designed. Fix (@generator, verified): supply a SCOPED inline identity to ONLY that invocation - `git -c user.name='nizam-e2e-bootstrap' -c user.email='e2e-bootstrap@nizam.local' tag -a ...` - keeping the annotated-tag design + hermetic self-containment without mutating global/repo config. Verified locally under the ACCURATE CI no-identity condition (env -u the 4 GIT_*_NAME/EMAIL vars + HOME=empty + GIT_CONFIG_GLOBAL/SYSTEM=/dev/null): before fix -> fatal identity error (reproduces CI); after fix -> harness exit 0, PASS, no e2e-* tag residue, validate.sh still 11/0 (the generator also correctly noted my suggested repro with explicit-empty-string env vars was STRICTER than real CI, and used env -u for the accurate absence-of-config condition). Scope: ONLY tools/e2e_bootstrap_test.sh (line 300 + comment). The CI e2e_bootstrap job re-run on the pushed fix is the definitive verifier. Committing to the PR branch."
++    },
++    {
++      "at": "2026-07-17T00:00:00Z",
++      "event": "phase_activated",
++      "detail": "Phase 005-ecosystem-cycle (Ecosystem Engineering Cycle, framework side) ACTIVATED on operator authorization. Activation authorization (verbatim): \"approved. expedite.\" (remote-control message, 2026-07-17), which accepts NIP-0001 (docs/nips/NIP-0001-ecosystem-engineering-cycle.md) satisfying gate H-NIP and makes the ecosystem cycle the plan of record. @planner has authored (uncommitted, in the working tree): docs/nips/NIP-0001-ecosystem-engineering-cycle.md (new, body Status Accepted + acceptance record), .agent/product_spec_005.md (new), .agent/feature_list_005.json (new, 15 features 031-045, DAG-validated acyclic, original_estimate_lines=2300), docs/planning/manifest.json (modified: current_phase -> 005-ecosystem-cycle, phase 005 entry appended, status in_progress/activation_state active), docs/planning/ROADMAP.md (modified: Plan of Record banner + Track 2 superseded note). Scope: FRAMEWORK SIDE ONLY (handover F-001..F-015 -> framework features 031-045); consumer adoption (handover F-016..F-020) is explicitly deferred to the successor programme phase. Outstanding phase-005 human gates (recorded, not executed): H-FRAMEWORK-SCOPE, H-DOGFOOD-EXCEPTION, H-FRAMEWORK-RELEASE, H-RISK. Beginning contract negotiation on feature 031 (PR-F1, handover F-001, NIP-0001 acceptance + phase-005 plan of record): contract .agent/contracts/031.json PROPOSED, scoping exactly the 5 plan-of-record artifacts above for verification (no new authoring, no ecosystem module/schema/tooling work, no commit). All 13 of its verification commands independently re-run against the current working tree with EXIT:0 (frontmatter schema x2, NIP acceptance-record substring check, manifest schema + phase-005 index, feature_list_005 schema, ROADMAP phase-005 mention, validate.sh SUMMARY: 11 passed, 0 failed, untracked-aware scope guard, and 3 anti-vacuity/non-goal-enforcement checks). NOTE: scope_budget is NOT yet reset for phase 005 in this update -- that is deferred to the orchestrator's full phase-activation action; this dispatch is scoped to the feature-031 contract proposal only. Awaiting validator (Mode A) + evaluator contract review."
++    },
++    {
++      "at": "2026-07-17T00:00:00Z",
++      "event": "contract_revision",
++      "detail": "Contract 031 rev0 REJECTED by @evaluator (.agent/qa/031-contract-review.json, revision_reviewed=0): verification entry 7's bare `grep -Eqi '005' docs/planning/ROADMAP.md` was a reproduced false-pass (six pre-existing 'phase 005 candidate scope' lines already match at HEAD, so a no-op implementation would still pass) -- HIGH, blocking; the .agent/ immutability guard precedented in contracts 025/028 (.agent/qa + .agent/contracts, excluding this feature's own new artifacts) was missing entirely -- MEDIUM, blocking; entry 3 did not independently verify operator attribution (only Accepted/date/verbatim-quote substrings) -- non-blocking coverage gap. @generator revised (rev1): entry 7 replaced with a check anchored to the literal 'Plan of Record (2026-07-17)' banner AND a Track-2-heading-anchored SUPERSEDED marker, plus a new entry-13-style anti-vacuity companion proving the tightened check fails at HEAD; a new .agent/qa+.agent/contracts immutability-guard entry added mirroring contracts 025/028 exactly; entry 3 strengthened to require an Operator keyword + email-shaped identity pattern. scope and non_goals held byte-identical to rev0 (independently confirmed by @evaluator via structural JSON diff). Verification array grew 13 -> 15. Rev1 APPROVED by both @validator (Mode A) and @evaluator (.agent/qa/031-contract-review-rev1.json, revision_reviewed=1, approved=true, zero issues/missing_acceptance_coverage/unsupported_claims) -- all 15 commands independently re-run with EXIT:0, both anti-vacuity companions independently confirmed to fail at HEAD via a separate git-show probe, and the .agent/ immutability guard confirmed load-bearing via two disposable reverted negative-control probes. Contract 031 status flipped proposed -> approved (approvals.validator_mode_a=true, evaluator_contract_review=true, approved_at=2026-07-17T00:00:00Z, revisions=1)."
++    },
++    {
++      "at": "2026-07-17T00:00:00Z",
++      "event": "feature_complete",
++      "detail": "Feature 031 (PR-F1, handover F-001, NIP-0001 acceptance + phase-005 plan of record) Loop-2 implementation complete. @generator re-read all 5 contracted deliverables (docs/nips/NIP-0001-ecosystem-engineering-cycle.md, .agent/product_spec_005.md, .agent/feature_list_005.json, docs/planning/manifest.json, docs/planning/ROADMAP.md) against the approved contract's scope.purpose fields per AH-1/AH-2: all 5 already satisfy their contracted purpose (authored correctly by @planner) -- no residual gap found, so no edits were made to any of the 5 deliverables (nothing to fix). All 15 verification entries independently re-run against the live tree: 15/15 PASS (EXIT:0), including the two rev1-tightened entries (3, 7) and the two rev1-new entries (8 anti-vacuity companion, 11 immutability guard). Evidence captured: .agent/evidence/031/verification.txt (consolidated full-suite run) + .agent/evidence/031/diff.patch (git diff HEAD, 3 tracked-file changes: run_state.json, manifest.json, ROADMAP.md), plus per-command .agent/evidence/031-verify-01.txt..15.txt per the contract's own stated evidence_convention. No commit made. status -> implemented (awaiting Mode B / QA). Not yet advanced to feature 032 pending Mode B validation and QA verdict."
+     }
+   ],
+   "phase_001_scope_budget_final": {
+diff --git a/docs/planning/ROADMAP.md b/docs/planning/ROADMAP.md
+index cbbb029..300c548 100644
+--- a/docs/planning/ROADMAP.md
++++ b/docs/planning/ROADMAP.md
+@@ -2,10 +2,13 @@
+ id: nizam-roadmap
+ title: "Forward Roadmap — nizam-framework"
+ description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
+-version: 0.2.0
++version: 0.3.0
+ status: active
+ authoritative_source: docs/planning/ROADMAP.md
+ change_log:
++  - version: "0.3.0"
++    date: "2026-07-17"
++    summary: "Phase 005 activated as the Ecosystem Engineering Cycle (framework side). Operator accepted NIP-0001 on 2026-07-17 ('approved. expedite.', gate H-NIP), which selects phase 005's scope. Added a 'Plan of Record' banner recording the activation and marked the former Track 2 candidate ('Consumer Reality & Enforcement Closure') as superseded-as-the-phase-005-selection: its enforcement-closure debt items (NDEBT-007/008/009/010/011/012/005) remain candidate scope for a subsequent phase and are partly exercisable by the framework self-dogfood (features 043-044). Prior content preserved."
+   - version: "0.2.0"
+     date: "2026-07-15"
+     summary: "Post-release refresh after the 2026-07-15 release-readiness audit: v0.6.0 annotated tag cut (Track 1 gate 1 executed; residual GitHub Release publication recorded), Current Position updated from v0.5.3 to v0.6.0, NDEBT-012 (payload-validator CWD sensitivity, issue #18) added to the open-debt roll and the phase 005 candidate scope."
+@@ -16,6 +19,39 @@ change_log:
+ 
+ # Forward Roadmap
+ 
++## Plan of Record (2026-07-17) — Phase 005 Activated: Ecosystem Engineering Cycle
++
++Phase `005-ecosystem-cycle` is **active** and is the current plan of record. On
++2026-07-17 the ecosystem operator accepted **NIP-0001 — Ecosystem Engineering
++Cycle** (`docs/nips/NIP-0001-ecosystem-engineering-cycle.md`) via the remote-control
++message **"approved. expedite."**, satisfying gate **H-NIP** and authorizing phase
++activation. The Planner produced the phase-005 spec (`.agent/product_spec_005.md`)
++and a DAG-validated feature list (`.agent/feature_list_005.json`, 15 features
++031-045, `original_estimate_lines` 2300); `docs/planning/manifest.json` now carries
++phase 005 as `status: in_progress`, `activation_state: active`, `current_phase:
++005-ecosystem-cycle`.
++
++**Scope:** framework side only (handover F-001..F-015) — the ecosystem module
++protocols, the baseline / preflight-verdict / engineering-finding schemas, capability
++routing, a deterministic preflight CLI, a validator + CI fixtures extension, and
++framework self-dogfood evidence, ending at a human-gated framework release
++(H-FRAMEWORK-RELEASE). Consumer adoption (handover F-016..F-020, targeting
++`nizamiq/nizamiq-strategy`) is deferred to the successor programme phase, gated on
++that release.
++
++**Outstanding phase-005 human gates (recorded, not executed):** H-FRAMEWORK-SCOPE
++(minimum-viable v1 scope-lock), H-DOGFOOD-EXCEPTION (any PASS_WITH_EXCEPTIONS
++framework preflight), H-FRAMEWORK-RELEASE (version/changelog/tag), H-RISK (residual
++P1 risk acceptance).
++
++**Relationship to the prior candidate scope:** the former "Track 2 — Phase 005
++Candidate Scope: Consumer Reality & Enforcement Closure" (below) is **superseded as
++the phase-005 selection** by the operator-accepted NIP-0001. Its enforcement-closure
++debt items (NDEBT-007/008/009/010/011/012 and NDEBT-005) remain candidate scope for a
++subsequent phase; several are directly exercised as friction evidence by the
++framework self-dogfood (features 043-044) and by the successor consumer-adoption
++phase. The Track 1 human gates and Tracks 3-4 below remain valid forward intent.
++
+ ## Purpose and Authority
+ 
+ This document is the durable forward-planning surface for the framework. It is
+@@ -53,7 +89,14 @@ they need no new phase.
+    (`docs/guide/index.html` ships in-repo but is not yet published). Recorded in the
+    phase-003 manifest note; still unexecuted.
+ 
+-## Track 2 — Phase 005 Candidate Scope: Consumer Reality & Enforcement Closure
++## Track 2 — [SUPERSEDED as the phase-005 selection, 2026-07-17] Candidate Scope: Consumer Reality & Enforcement Closure
++
++> **Superseded 2026-07-17:** phase 005 was activated as the Ecosystem Engineering
++> Cycle (see the Plan of Record banner above) on the operator-accepted NIP-0001. The
++> enforcement-closure items below are NOT the phase-005 scope; they remain candidate
++> scope for a subsequent phase and are partly exercised as friction evidence by the
++> phase-005 framework self-dogfood (features 043-044). Retained verbatim as the
++> durable candidate-scope record.
+ 
+ The highest-leverage next phase closes the gap between what the framework enforces on
+ itself and what a real consumer experiences. Candidate features, sourced from the open
+diff --git a/docs/planning/manifest.json b/docs/planning/manifest.json
+index 82ac397..78f2779 100644
+--- a/docs/planning/manifest.json
++++ b/docs/planning/manifest.json
+@@ -1,8 +1,8 @@
+ {
+   "schema_version": "2.0.0",
+-  "updated_at": "2026-07-12",
++  "updated_at": "2026-07-17",
+   "forward_planning": "docs/planning/ROADMAP.md",
+-  "current_phase": "004-durable-enforcement",
++  "current_phase": "005-ecosystem-cycle",
+   "phases": [
+     {
+       "id": "001-framework-genesis",
+@@ -33,6 +33,14 @@
+       "status": "complete",
+       "activation_state": "active",
+       "note": "Lifecycle: PROPOSED 2026-07-08 by @planner (spec .agent/product_spec_004.md, feature_list_004.json: 8 features 023-030, DAG validated acyclic, original_estimate_lines=1250) -> ACTIVATED 2026-07-08 on human authorization ('approved. please proceed.') -> COMPLETED 2026-07-10 (run_state event phase_complete: all 8 features 023-030 through the full contract lifecycle, validator green SUMMARY: 11 passed, 0 failed; phase PR #15 merged to main). Realized four recommendations: R1 narrative-truth CI checks C9 (path resolution) + C10 (single-source-of-truth consistency); R2 hermetic end-to-end consumer-bootstrap test + CI job; R3 tools/verify_lib.sh vetted verification-helper library + a verification-authoring standard in methodology/02; R4 schema reconciliation (qa_verdict union + new contract_review schema) + C11 dogfood validation of the framework's own .agent/ artifacts, resolving NDEBT-002. NOTE the release-gate drift: the proposal-time note named v0.4.0 as the close gate, but v0.4.0/v0.4.1 (NMF hybrid) and v0.5.0-v0.5.3 were consumed by out-of-band work while this phase executed; the phase's [Unreleased] CHANGELOG content awaits the next MINOR cut (v0.6.0 per run_state). Human gates outstanding at close: the v0.6.0 release cut and GitHub Pages publishing for docs/guide/ (open since phase 003) — recorded, not executed. Status corrected from stale 'in_progress' 2026-07-12 (the manifest was never updated at phase close; run_state, feature_list_004, DEBT.md, and git history all corroborate completion). Forward planning: docs/planning/ROADMAP.md."
++    },
++    {
++      "id": "005-ecosystem-cycle",
++      "title": "Ecosystem Engineering Cycle (Framework Side) — Reusable Reconcile/Preflight/Baseline/Audit/Compare Lifecycle, Schemas, Preflight CLI & Framework Dogfood",
++      "feature_list": ".agent/feature_list_005.json",
++      "status": "in_progress",
++      "activation_state": "active",
++      "note": "Lifecycle: PROPOSED 2026-07-17 by @planner (spec .agent/product_spec_005.md, feature_list_005.json: 15 features 031-045, DAG validated acyclic — deps all resolve, no cycles, topological order exists — original_estimate_lines=2300) -> ACTIVATED 2026-07-17 on operator authorization. Activation authorization (verbatim): 'approved. expedite.' (remote-control message, 2026-07-17), which accepts NIP-0001 (docs/nips/NIP-0001-ecosystem-engineering-cycle.md, status Accepted) satisfying operator gate H-NIP and makes the ecosystem cycle the plan of record. Scope: FRAMEWORK SIDE ONLY — the accepted programme's framework features (handover F-001..F-015), mapped 1:1 to framework features 031..045 via each feature's handover_feature_ids field, grouped into four PRs: PR-F1=NIP + plan of record (031); PR-F2=ecosystem module protocols + baseline/preflight-verdict/finding schemas + capability routing (032-040); PR-F3=preflight CLI + validator/CI fixtures (041-042); PR-F4=framework dogfood evidence (043-044); plus release preparation (045, HUMAN GATE). Consumer adoption (handover F-016..F-020, targeting nizamiq/nizamiq-strategy) is EXPLICITLY OUT OF SCOPE for this phase and deferred to the successor programme phase, gated on the framework release. status='in_progress' + activation_state='active' reflect the operator-authorized activation (manifest.schema status enum has no 'proposed'/'active' value; the proposed->active decision-lifecycle is carried by activation_state + this note, matching the phase 002/003/004 house pattern). Outstanding human gates (recorded, NOT executed by the pipeline): H-FRAMEWORK-SCOPE (minimum-viable v1 scope-lock), H-DOGFOOD-EXCEPTION (approve any PASS_WITH_EXCEPTIONS framework preflight, feature 043), H-FRAMEWORK-RELEASE (approve version/changelog/tag, feature 045), H-RISK (accept any residual P1 engineering risk). Also inherited-open from prior phases: the v0.6.0 GitHub Release page publication and GitHub Pages publishing for docs/guide/. Forward planning: docs/planning/ROADMAP.md."
+     }
+   ]
+ }
+\ No newline at end of file

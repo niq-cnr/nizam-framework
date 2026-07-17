@@ -1,0 +1,50 @@
+{
+  "review": "qa",
+  "feature": "031",
+  "feature_id": "031",
+  "qa_pass": true,
+  "checks_run": 15,
+  "checks_passed": 15,
+  "adversarial": {
+    "performed": true,
+    "notes": "Independently re-derived (not trusted from generator evidence): (1) `git diff --name-only HEAD` confirms exactly 3 tracked files changed (.agent/run_state.json, docs/planning/ROADMAP.md, docs/planning/manifest.json), matching entry 13/14's byte-identical scoping and the diff.patch's own 3 `diff --git` headers -- no undisclosed tracked change exists. (2) `.agent/evidence/031/diff.patch` byte-compared (`diff`) against a freshly captured `git diff HEAD` run in this QA pass: identical, confirming the coordinator's claimed diff.patch regeneration is genuine and current, not stale. (3) Mutation probe: copied docs/nips/NIP-0001-ecosystem-engineering-cycle.md to a disposable scratch file, replaced 'Operator' and the email with redacted text, and re-ran entry 3's exact check logic against the mutated copy -- correctly evaluates to FAIL, confirming the rev1-strengthened operator-attribution check is genuinely discriminating (not a residual false-pass) and that the real, unmutated file's PASS is not accidental. No file in the working tree was altered by this probe (operated on a scratch copy only)."
+  },
+  "evidence_files": [
+    ".agent/evidence/031/verification.txt",
+    ".agent/evidence/031/diff.patch",
+    ".agent/evidence/031-verify-01.txt",
+    ".agent/evidence/031-verify-02.txt",
+    ".agent/evidence/031-verify-03.txt",
+    ".agent/evidence/031-verify-04.txt",
+    ".agent/evidence/031-verify-05.txt",
+    ".agent/evidence/031-verify-06.txt",
+    ".agent/evidence/031-verify-07.txt",
+    ".agent/evidence/031-verify-08.txt",
+    ".agent/evidence/031-verify-09.txt",
+    ".agent/evidence/031-verify-10.txt",
+    ".agent/evidence/031-verify-11.txt",
+    ".agent/evidence/031-verify-12.txt",
+    ".agent/evidence/031-verify-13.txt",
+    ".agent/evidence/031-verify-14.txt",
+    ".agent/evidence/031-verify-15.txt"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Independently re-ran all 15 contract (revision 1) verification commands from repo root, extracted programmatically from .agent/contracts/031.json (not retyped, not trusted from .agent/evidence/031-verify-NN.txt in advance): all 15 exit 0 / PASS. Each of the 15 flat-convention evidence files was independently spot-checked and confirmed to carry the exact invocation as its first line and a literal `EXIT:0` as its last line, per methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention.",
+    "`.agent/evidence/031/diff.patch` byte-matches a fresh `git diff HEAD` captured during this QA pass (`diff` exits 0, no output) -- confirms the coordinator's claim that the earlier Mode-B B7 stale-diff finding was fixed by regenerating this file, and that it remains current as of this QA run (not merely regenerated once and since drifted).",
+    "bash tools/validate.sh (default sweep) reports the full C1-C11 sweep with the literal last line 'SUMMARY: 11 passed, 0 failed', exit 0 -- no regression introduced by feature 031's docs-only changes.",
+    "Cross-checked feature 031's acceptance_tests in .agent/feature_list_005.json against the approved contract's 15 verification entries: every criterion (NIP exists/status-accepted, frontmatter validity, body acceptance record, manifest phase-005 index + schema validity, feature_list_005.json schema validity, ROADMAP plan-of-record marking, validator green) is covered and independently confirmed passing by path-referenced evidence (see evidence_files). One documentation-sync gap noted (non-blocking, does not affect this verdict): feature_list_005.json's own F-031 acceptance_tests array still embeds the ORIGINAL, pre-revision verbatim command for the ROADMAP criterion (`grep -Eqi '005' docs/planning/ROADMAP.md`, the exact command rejected in round-1 contract review as a reproduced false-pass) rather than the corrected, contract-031-rev1 command actually enforced and passing (the 'Plan of Record (2026-07-17)' + Track-2-SUPERSEDED python check). This mirrors the precedented '[AMENDED ...]' in-place reconciliation pattern already applied to feature_list_004.json's F-026/F-027/F-028 acceptance_tests after their own contract corrections (re-read directly from .agent/feature_list_004.json to confirm the precedent exists) -- 031's equivalent reconciliation has not yet been applied. This is a documentation-drift observation, not an acceptance-coverage gap: the ACTUAL enforced and passing check (contract entry 7) is the corrected, non-vacuous one; only feature_list_005.json's descriptive text is stale. Flagged for the orchestrator/generator to reconcile in-place per the established precedent; does not block this QA pass because the feature's real behavior is correctly verified and evidenced.",
+    "Adversarial mutation probe (operator/email redaction on a disposable scratch copy of the NIP file) confirms entry 3's rev1 strengthening is genuinely discriminating, not a residual false-pass -- see adversarial.notes.",
+    "Repository tree confirmed left exactly as found by this QA pass: `git status --porcelain --untracked-files=all` before and after this review is identical (same 3 modified tracked files + same untracked pipeline artifacts, now including this .agent/qa/031.json verdict itself); the scratch mutation probe operated only on a copy outside the repository tree.",
+    "Feature-status ownership check (per the coordinator's explicit instruction to verify precedent before touching feature_list_005.json): re-read standard/AGF.md Sec 5 rule 4 ('a role updates only the fields its contract or protocol assigns to it') and this evaluator's own governing protocol (07A+08), which instructs updating .agent/run_state.json on a pass verdict, not .agent/feature_list_NNN.json. Searched .agent/run_state.json's history entries for phase 004 feature completions (e.g. 'feature_complete', 'amendment_complete' events) -- all are written in the orchestrator's own voice ('Advancing to NNN', 'Delegating to @generator'), and the feature_list_004.json AT-reconciliation actions ('to be reconciled in-place post-approval', later appearing as '[AMENDED ...]') are likewise logged as orchestrator actions in run_state.json history, not evaluator actions. No governing document assigns feature_list.json status-field writes to the evaluator role. Per this precedent and the Durable State Rule (AGF Sec 5.4), feature_list_005.json's F-031 status field was left untouched (still 'pending' as authored) -- this verdict artifact (.agent/qa/031.json, qa_pass=true) is the durable signal the orchestrator reads to perform the status flip and advance to feature 032, consistent with how phase 004 handled every prior feature completion."
+  ],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "feature": "031",
+    "summary": "PASS. All 15 contract (revision 1) verification commands independently re-run from repo root and all exited 0/PASS, matching the generator's captured evidence (both the 15 flat 031-verify-NN.txt files, each format-compliant with invocation-first/EXIT-last, and the consolidated .agent/evidence/031/verification.txt). The evidence bundle is confirmed genuine and current: .agent/evidence/031/diff.patch byte-matches a freshly captured `git diff HEAD` (0 diff lines), resolving the earlier Mode-B B7 stale-diff finding. bash tools/validate.sh reports the full default sweep at SUMMARY: 11 passed, 0 failed (exit 0) -- no regression. Feature 031's acceptance criteria in .agent/feature_list_005.json are all satisfied with evidence traceable by path; one non-blocking documentation-sync observation was logged (F-031's acceptance_tests text still embeds the pre-revision ROADMAP command rather than the corrected contract-031-rev1 check, mirroring the F-026/027/028 in-place-reconciliation precedent not yet applied here) but does not affect this verdict since the actually-enforced behavior is the corrected, non-vacuous one. Adversarial checks confirm: exactly 3 tracked files changed vs HEAD (matching the diff.patch and contract's byte-identical non-goal checks) and a disposable mutation probe (operator/email redaction on a scratch NIP copy, not persisted) confirms the rev1-strengthened entry 3 genuinely discriminates rather than false-passing. No issues, no missing acceptance coverage, no unsupported claims found. Per AGF Sec 5.4 and this evaluator's own governing protocol, feature_list_005.json's F-031 status field was deliberately NOT modified by this verdict -- phase-004 precedent shows feature-status flips are an orchestrator action performed after reading the evaluator's qa_pass verdict, not an evaluator-owned field; this .agent/qa/031.json artifact is that durable signal."
+  },
+  "coverage_warning": null
+}

@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- NIZAM.json schema/ tools/ ecosystem/ && echo PASS || { echo "an out-of-scope ecosystem/tooling/schema file was modified"; git diff --name-only HEAD -- NIZAM.json schema/ tools/ ecosystem/; exit 1; }
+PASS
+EXIT:0
