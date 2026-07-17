@@ -1,0 +1,94 @@
+{
+  "feature_id": "041",
+  "qa_pass": true,
+  "checks_run": 22,
+  "checks_passed": 22,
+  "adversarial": {
+    "performed": true,
+    "description": "Beyond independently re-running all 22 of contract 041 (revision 1)'s verification commands live from the repository root against the real, implemented tree (not scratch copies) -- 22/22 exit 0 -- this QA pass exercised the REAL shipped tools/ecosystem_preflight.py (501 lines) directly with this evaluator's own Loop-1 mutant-derived behavioral battery, on fresh ephemeral `mktemp -d` git fixtures independent of the contract's own fixture-construction shell text (six of six attack behaviors spot-verified, exceeding the required minimum of four): (1) DIRTY-TRACKED-BYPASS: a disposable fixture with an uncommitted tracked-file change correctly returns exit 1, blocking_findings names 'uncommitted tracked change (M): schema/preflight_verdict.schema.json', and no baseline.json is written. (2) BLOCKING-PRECEDENCE: a fixture combining a dirty tracked file, a declared-tolerated untracked file, AND supplied operator-approval flags simultaneously still correctly returns FAIL/exit 1 -- blocking is never overridden by exceptions or approval. (3) PENDING-SMUGGLE: an unapproved-exceptions fixture correctly returns exit 2, preflight.json is confirmed ABSENT on disk, and the informational preflight.pending.json correctly and independently fails jsonschema.validate against schema/preflight_verdict.schema.json ('operator_approval' is a required property) -- no schema-valid unapproved verdict can be smuggled. (4) USAGE-ERROR: invoking with a missing required argument returns exit exactly 64 with a clear stderr usage message, distinct from every domain code. (5) PARTIAL-REFERENCE: a fixture missing only schema/preflight_verdict.schema.json (schema/ecosystem_baseline.schema.json present) correctly returns exit 1 naming exactly and only the one missing path, not a fabricated pair. (6) OUTPUT-ISOLATION / SIDE-EFFECTS: a full --self-fixture run against the REAL repository (scratch --output-dir) leaves `git status --porcelain` byte-identical before and after. In addition: (7) REAL-HEAD ANCHORING (round-0/rev1 contract-review closure, re-verified against the shipped binary, not a scratch mutant): a --self-fixture run against the real repository independently confirmed baseline.json's repository_references[0].revision AND framework_references[0].revision both exactly equal a freshly recomputed `git rev-parse HEAD` (17408d942cb09acced7c0874cd4bd363dce3bfc5), ci_references[0] carries the honest, non-fabricated 'KNOWN LIMITATION' note with no run_id/verified-green claim, and captured_at is a fresh clock read. (8) NDEBT-012 SCRIPT-DIR ANCHORING, independently re-confirmed behaviorally (not merely by reading the source): invoked the real script with `cd /tmp` as the calling CWD (a directory unrelated to the repository) and --self-fixture still correctly resolved the real nizam-framework repository root (matching the real HEAD SHA in the emitted baseline) and left the repository tree byte-unchanged, proving --self-fixture resolution is anchored to the script's own file path (`os.path.dirname(os.path.abspath(__file__))`), not the caller's CWD -- the exact defect class NDEBT-012 catalogues for tools/validate.sh was independently confirmed absent here. Source code was also read in full (501 lines): all git subprocess invocations use list-form argv (no shell=True), confirming Validator Mode B's injection-safety claim; a custom PreflightUsageError class distinguishes usage errors (exit 64) from argparse's own default exit 2, avoiding collision with the domain PASS_WITH_EXCEPTIONS-pending exit code; no bare except; blocking findings are computed unconditionally before exceptions are ever considered, structurally enforcing the non-downgrade invariant rather than merely testing for it as an emergent property.",
+    "result": "All eight probes behaved as required against the REAL shipped binary: every one of this evaluator's six round-0 attack behaviors is structurally impossible in the shipped code (each correctly produces its contracted exit code / artifact-presence / schema-validity outcome); the real-HEAD content-anchoring fix from contract revision 1 holds against the actual live repository, not just scratch fixtures; and the NDEBT-012 script-dir-anchoring claim was independently reproduced from a foreign CWD (/tmp), not merely read from source.",
+    "evidence": ".agent/evidence/041-verify-01.txt through -22.txt (independently re-run live in this QA pass, not merely re-read); this QA pass's own eight adversarial probes were run under the session scratchpad directory and /tmp using ephemeral `mktemp -d` git fixtures plus one real --self-fixture invocation against the actual repository (scratch --output-dir only) -- none persisted as repository artifacts, all discarded after inspection."
+  },
+  "evidence_files": [
+    ".agent/evidence/041-verify-01.txt",
+    ".agent/evidence/041-verify-02.txt",
+    ".agent/evidence/041-verify-03.txt",
+    ".agent/evidence/041-verify-04.txt",
+    ".agent/evidence/041-verify-05.txt",
+    ".agent/evidence/041-verify-06.txt",
+    ".agent/evidence/041-verify-07.txt",
+    ".agent/evidence/041-verify-08.txt",
+    ".agent/evidence/041-verify-09.txt",
+    ".agent/evidence/041-verify-10.txt",
+    ".agent/evidence/041-verify-11.txt",
+    ".agent/evidence/041-verify-12.txt",
+    ".agent/evidence/041-verify-13.txt",
+    ".agent/evidence/041-verify-14.txt",
+    ".agent/evidence/041-verify-15.txt",
+    ".agent/evidence/041-verify-16.txt",
+    ".agent/evidence/041-verify-17.txt",
+    ".agent/evidence/041-verify-18.txt",
+    ".agent/evidence/041-verify-19.txt",
+    ".agent/evidence/041-verify-20.txt",
+    ".agent/evidence/041-verify-21.txt",
+    ".agent/evidence/041-verify-22.txt",
+    ".agent/evidence/041/diff.patch",
+    ".agent/evidence/041/verification.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "evidence_bundle_check": {
+    "diff_patch_empty_and_legitimate": true,
+    "diff_patch_reasoning": "tools/ecosystem_preflight.py is a brand-new file (create-only, per contract scope.files_create with files_modify: []), so it is untracked, not modified-tracked; independently re-confirmed `git diff --stat HEAD -- tools/ecosystem_preflight.py` returns empty output and `git status --porcelain --untracked-files=all -- tools/` shows only '?? tools/ecosystem_preflight.py'. An empty diff.patch is therefore the CORRECT and expected evidence artifact for a create-only file, not a sign of a stale or fabricated bundle.",
+    "verify_txt_and_verification_log_consistency": "Cross-checked .agent/evidence/041/verification.txt's 'TOTAL: 22 passed, 0 failed (of 22)' summary against the 22 individual .agent/evidence/041-verify-NN.txt files: every file's last line is the literal 'EXIT:0' required by methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention, and two spot-checked files (041-verify-05.txt, 041-verify-15.txt) additionally carry the exact invocation as their first line(s) with no session-absolute paths, matching the convention exactly and matching this QA pass's own independent live re-run of the same 22 commands."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_005.json feature 041",
+    "criteria": [
+      {
+        "criterion": "CLI emits schema-valid preflight and baseline artifacts",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/041-verify-05.txt, -11.txt, -12.txt; independently re-confirmed live in this QA pass via a fresh --self-fixture run against the real repository, whose baseline.json additionally content-anchors to the real HEAD (see adversarial probe 7)."
+      },
+      {
+        "criterion": "CLI supports framework-self fixture mode",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/041-verify-05.txt, -06.txt; independently re-confirmed live from a foreign CWD (/tmp) in this QA pass, resolving the real repository root via script-path anchoring, not CWD (adversarial probe 8)."
+      },
+      {
+        "criterion": "Failure exit codes are documented",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/041-verify-03.txt, -04.txt; independently re-read the module docstring's exit-code table (module lines 20-44 of tools/ecosystem_preflight.py) -- all five codes (0/1/2/3/64) documented with matching semantics, also surfaced via --help through argparse's own description=__doc__ wiring."
+      },
+      {
+        "criterion": "The CLI exists and is syntactically valid Python: test -f tools/ecosystem_preflight.py && python3 -m py_compile tools/ecosystem_preflight.py",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/041-verify-01.txt; independently re-executed verbatim in this QA pass -> exit 0."
+      },
+      {
+        "criterion": "Run in framework-self fixture mode emits a preflight artifact that validates against schema/preflight_verdict.schema.json and a baseline artifact that validates against schema/ecosystem_baseline.schema.json (evidence captured by path under .agent/evidence/)",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/041-verify-05.txt; independently re-executed in this QA pass with an additional real-HEAD content-anchoring check beyond the literal criterion's text (see adversarial probe 7) -> exit 0."
+      },
+      {
+        "criterion": "Failure exit codes are documented in the CLI (help text or module docstring): grep -Eqi 'exit|code|fail' on --help, or ast docstring check",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/041-verify-03.txt; independently re-executed verbatim in this QA pass -> exit 0."
+      },
+      {
+        "criterion": "Compliance validator stays green: bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: 11 passed, 0 failed'",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/041-verify-16.txt; independently re-executed in this QA pass: `bash tools/validate.sh` -> 'SUMMARY: 11 passed, 0 failed' (all 11 checks C1-C11 individually PASS)."
+      }
+    ],
+    "amended_or_flagged_for_orchestrator": [
+      "SIZE OBSERVATION (non-blocking, not an [AMENDED] acceptance-criteria reconciliation -- flagged for the orchestrator's own Scope Budget Protocol tracking, not a QA defect): the shipped tools/ecosystem_preflight.py is 501 physical lines, materially above both this contract's own estimated_lines (260, +92.7%) and feature_list_005.json feature 041's original estimated_lines (220, +127.7%). This QA pass's adversarial and behavioral testing found no functional, security, or scope defect attributable to this size (no out-of-scope files touched per verification entries 17-22, all passing; the size increase appears attributable to the module docstring's exit-code table/example, per-function docstrings, and the three independent content-honesty helper functions added in contract revision 1, not to unrelated scope creep). Recorded here for the orchestrator to weigh against the Scope Budget Protocol's per-feature and cumulative thresholds; not treated as a QA blocking issue by this evaluator, since it is a size signal, not a correctness or scope-boundary defect."
+    ]
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. All 22 of contract 041 (revision 1)'s verification commands were independently re-run, live, from the repository root against the real, implemented tree -- 22/22 exit 0, matching Validator Mode B's 8-check report. A mandatory adversarial spot-check was performed against the REAL shipped tools/ecosystem_preflight.py (not scratch fixtures): all six of this evaluator's Loop-1 attack behaviors (dirty-tracked-bypass, blocking-precedence, pending-smuggle, usage-error miscoding, partial-reference-check, output-isolation/side-effects) were independently reproduced on fresh ephemeral git fixtures and confirmed structurally impossible in the shipped code, exceeding the required minimum of four; a real --self-fixture run against the live repository confirmed baseline.json's repository_references and framework_references both anchor exactly to the real, freshly-recomputed `git rev-parse HEAD` (17408d942cb09acced7c0874cd4bd363dce3bfc5) with an honest, non-fabricated ci_references note, closing this evaluator's own round-0 contract-review HIGH finding against the actual live artifact, not merely the contract's own dry-run claim; and the NDEBT-012 script-dir-anchoring claim was independently reproduced by invoking the CLI from an unrelated CWD (/tmp), confirming --self-fixture resolution is anchored to the script's own file path, not the caller's working directory. The evidence bundle was independently verified genuine and current: the empty .agent/evidence/041/diff.patch is correct and expected for a create-only new file (confirmed via a fresh `git diff --stat HEAD` and `git status --untracked-files=all`), and all 22 evidence files comply with the Evidence Capture Convention (exact invocation first, literal EXIT:0 last). All seven of feature 041's .agent/feature_list_005.json acceptance criteria (three high-level plus four literal commands) are satisfied with evidence captured by path; none required an [AMENDED] reconciliation (no vacuous-at-HEAD or false-pass defect class was found in any literal acceptance test). `bash tools/validate.sh` independently re-run in this QA pass: 'SUMMARY: 11 passed, 0 failed'. One non-blocking, non-[AMENDED] size observation is flagged for the orchestrator's own Scope Budget Protocol tracking (501 shipped lines vs. 260 contracted / 220 originally estimated) -- not treated as a QA defect, since no functional or scope-boundary problem was found attributable to it. Feature 041's status in .agent/feature_list_005.json was left 'pending' and .agent/run_state.json was not touched by this evaluator, per instruction. No issues, no unsupported claims, no missing acceptance coverage. Approved for advancement."
+  }
+}

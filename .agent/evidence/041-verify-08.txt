@@ -1,0 +1,4 @@
+T=$(mktemp -d); mkdir -p "$T/schema"; cp schema/preflight_verdict.schema.json schema/ecosystem_baseline.schema.json "$T/schema/"; ( cd "$T" && git init -q && git config user.email a@a.com && git config user.name a && git add -A && git commit -q -m init ); echo x > "$T/EXTRA.md"; OUT=$(mktemp -d); python3 tools/ecosystem_preflight.py --execution-id verify-untracked --output-dir "$OUT" --repo-root "$T"; rc=$?; [ "$rc" -eq 1 ] && echo PASS || { echo "expected exit 1 (default-deny untracked), got $rc"; exit 1; }
+PREFLIGHT VERDICT: FAIL (1 blocking finding(s))
+PASS
+EXIT:0

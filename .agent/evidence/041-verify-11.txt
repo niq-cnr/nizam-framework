@@ -1,0 +1,28 @@
+T=$(mktemp -d); mkdir -p "$T/schema"; cp schema/preflight_verdict.schema.json schema/ecosystem_baseline.schema.json "$T/schema/"; ( cd "$T" && git init -q && git config user.email a@a.com && git config user.name a && git add -A && git commit -q -m init ); echo x > "$T/NOTES.md"; REAL_HEAD=$(git -C "$T" rev-parse HEAD); OUT=$(mktemp -d); python3 tools/ecosystem_preflight.py --execution-id verify-approved --output-dir "$OUT" --repo-root "$T" --tolerate-untracked NOTES.md --operator-approver jane --operator-authorization 'reviewed exceptions, approved'; rc=$?; [ "$rc" -eq 3 ] || { echo "expected exit 3, got $rc"; exit 1; }; python3 -c "
+import json, jsonschema, datetime
+pv = json.load(open('schema/preflight_verdict.schema.json'))
+bv = json.load(open('schema/ecosystem_baseline.schema.json'))
+d = json.load(open('$OUT/preflight.json'))
+jsonschema.validate(d, pv)
+assert d['operator_approval']['approver'] == 'jane', d
+assert d['operator_approval']['authorization'] == 'reviewed exceptions, approved', d
+b = json.load(open('$OUT/baseline.json'))
+jsonschema.validate(b, bv)
+real_head = '$REAL_HEAD'
+assert b['repository_references'][0]['revision'] == real_head, ('repository_references revision mismatch', b['repository_references'][0]['revision'], real_head)
+assert b['framework_references'][0]['revision'] == real_head, ('framework_references revision mismatch', b['framework_references'][0]['revision'], real_head)
+ci = b['ci_references'][0]
+note = ci.get('note', '')
+assert isinstance(note, str) and note.strip(), ('ci_references missing a non-empty honest limitation note', ci)
+assert 'ci' in note.lower() and ('limitation' in note.lower() or 'no' in note.lower() or 'not' in note.lower()), ('ci_references note does not read as an honest limitation statement', ci)
+assert 'run_id' not in ci, ('ci_references fabricates a run_id as if a real CI run were checked', ci)
+assert ci.get('status') != 'verified-green', ('ci_references fabricates a verified-green claim', ci)
+ts = b['captured_at'].rstrip('Z')
+parsed = datetime.datetime.fromisoformat(ts).replace(tzinfo=datetime.timezone.utc)
+now = datetime.datetime.now(datetime.timezone.utc)
+delta = abs((now - parsed).total_seconds())
+assert delta < 600, ('captured_at is stale or not close to the actual run clock', b['captured_at'], delta)
+" && echo PASS || { echo "approved-exceptions fixture did not behave as contracted"; exit 1; }
+PREFLIGHT VERDICT: PASS_WITH_EXCEPTIONS (approved)
+PASS
+EXIT:0

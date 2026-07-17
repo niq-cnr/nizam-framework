@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "005-ecosystem-cycle",
-  "current_feature": "040",
+  "current_feature": "041",
   "status": "feature_complete",
   "updated_at": "2026-07-17T00:00:00Z",
   "circuit_breaker": {
@@ -668,6 +668,11 @@
       "at": "2026-07-17T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 040 (Register Ecosystem Capabilities, handover F-010) COMPLETE -- and with it ALL TEN PR-F2 features (032-040) and the full framework capability surface for the ecosystem cycle. 040's negotiation consumed all three revision rounds with an evaluator-raised circuit-breaker flag adjudicated by the orchestrator (see circuit_breaker_adjudication event): round 0 aggregate-line-cap gameable by paraphrase; round 1 per-bullet fix left free-prose uninspected; round 2 the closed-set's length-only preamble was itself a canvas (Mode A approved but evaluator's deeper probe prevailed); rev3 architectural fix -- BYTE-PINNED preamble eliminating free text entirely -- approved by both gates (Mode A: nine-fixture stress, zero bypass; evaluator: both digest fixtures + subtle variants fail). Implementation: NIZAM.json ecosystem key_documents (5 paths) + 4 capabilities; tools/skill.json 4 capabilities + 0.2.0; tools/SKILL.md Section 8 router (pinned preamble byte-exact, natural one-word labels, References -> Section 9) + 0.4.0. Mode B 8/8 (run_state adjudication hunk correctly attributed to orchestrator); QA PASS (qa/040.json, 26/26, live mutation probe on the real shipped file). Scope: est 120 / actual 65. Cumulative 2367/2990 (79%): PR-F3 estimates (~420) fit under the ceiling; the 130% breach now projects DURING PR-F4/release -- human re-baseline (phase-004 F-028 precedent) will be required around feature 043; flagged to operator. PR-F2 TRANCHE CLOSE follows: DEBT.md dogfood-friction registration (probe-isolation incident, guard-form harmonization, verification-authoring defect catalogue), then draft PR-F2 stacked on PR-F1."
+    },
+    {
+      "at": "2026-07-17T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 041 (Minimum Preflight CLI, handover F-011) COMPLETE -- the phase's first executable-code feature. Contract rev0 REJECTED by evaluator on a landmark finding: a fabricated-content mutant (fake SHA, stale timestamp, fabricated verified-green CI claim) passed all 22 entries -- schemas validate shape, not truth. Rev1 added content-honesty anchoring (baseline revisions must equal freshly-recomputed git rev-parse HEAD; honest ci_references note asserted with fabrication-token rejection; captured_at 600s freshness), proven by bidirectional kill shots incl. boundary probes at exactly 600s; both gates approved. Implementation: tools/ecosystem_preflight.py (501 lines, stdlib-only, five documented exit codes 0/1/2/3/64, blocking-never-downgrades structural precedence, pending-PWE artifact withholding, NDEBT-012 script-dir anchoring, injection-safe list-argv subprocess). Mode B included the phase's first full source-level code review (all paths traced, house standards verified); QA reproduced all six Loop-1 attack behaviors as structurally impossible in the shipped code and ran the CLI live against this repository (--self-fixture, exit 3, tree byte-unchanged, artifacts anchored to real HEAD 17408d9). SCOPE FLAG for human awareness: actual 501 vs estimate 220 (2.3x) -- style/documentation inflation, no scope creep per Mode B review. Cumulative 2868/2990 (96%) -- the ceiling breach is now IMMINENT: feature 042 (est 200) will cross 2990. Per the Scope Budget Protocol the orchestrator will HALT before dispatching 042 implementation unless the operator authorizes a re-baseline (F-028 precedent); 042's CONTRACT negotiation (planning artifact only, .agent/-fenced) proceeds meanwhile. Advancing: committing 041; dispatching 042 contract proposal; awaiting operator re-baseline decision."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -841,7 +846,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2300,
-    "total_lines_changed": 2367,
+    "total_lines_changed": 2868,
     "per_feature": [
       {
         "id": "031",
@@ -902,6 +907,12 @@
         "estimated": 120,
         "actual": 65,
         "note": "61 insertions / 4 deletions across NIZAM.json + tools/skill.json + tools/SKILL.md. Well under estimate."
+      },
+      {
+        "id": "041",
+        "estimated": 220,
+        "actual": 501,
+        "note": "501 new lines (tools/ecosystem_preflight.py, create-only). 2.3x the feature-list estimate (contract disclosed 260 after prototyping; final inflation is docstring exit-code table, full type hints, and house-style helper decomposition -- Mode B code review found no scope creep, entries 17-22 all green). Below the 3x rolling-average per-feature flag threshold; recorded per validator/evaluator ledger notes for human awareness."
       }
     ]
   },
