@@ -1,0 +1,9 @@
+$ T=$(mktemp -d); cp -a . "$T/repo"; ( cd "$T/repo" && git reset --hard -q HEAD && git clean -fdq && echo x > v0.6.0-release-notes.md && echo 'fake in-flight contract' > .agent/contracts/043.json && EXEC_ID=dogfood-verify-move && mkdir -p ".agent/evidence/${EXEC_ID}/pending" && python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/pending" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --tolerate-untracked .agent/contracts/043.json >/dev/null; mkdir -p ".agent/evidence/${EXEC_ID}/approved"; python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/approved" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --tolerate-untracked .agent/contracts/043.json --tolerate-untracked ".agent/evidence/${EXEC_ID}/" --operator-approver jane --operator-authorization approved >/dev/null; mkdir -p ".agent/reconciliation/${EXEC_ID}"; mv ".agent/evidence/${EXEC_ID}/approved/preflight.json" ".agent/evidence/${EXEC_ID}/approved/baseline.json" ".agent/reconciliation/${EXEC_ID}/"; python3 -c "
+import json, jsonschema
+pv = json.load(open('schema/preflight_verdict.schema.json'))
+bv = json.load(open('schema/ecosystem_baseline.schema.json'))
+jsonschema.validate(json.load(open('.agent/reconciliation/${EXEC_ID}/preflight.json')), pv)
+jsonschema.validate(json.load(open('.agent/reconciliation/${EXEC_ID}/baseline.json')), bv)
+" && [ ! -f ".agent/evidence/${EXEC_ID}/approved/preflight.json" ] && [ ! -f ".agent/evidence/${EXEC_ID}/approved/baseline.json" ] && [ -f ".agent/evidence/${EXEC_ID}/approved/collection-log.txt" ] && echo PASS || { echo "move-semantics check failed: duplicate(s) remained in evidence/approved/, or reconciliation artifacts missing/invalid"; exit 1; } )
+PASS
+EXIT:0

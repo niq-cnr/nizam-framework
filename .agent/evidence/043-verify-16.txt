@@ -1,0 +1,3 @@
+$ diff_out=$(git diff -U0 -- docs/planning/DEBT.md); removed=$(echo "$diff_out" | grep -E '^-\|' | grep -v '^---'); [ -z "$removed" ] || { echo "an existing DEBT.md row was altered/removed:"; echo "$removed"; exit 1; }; grep -q 'NDEBT-017' docs/planning/DEBT.md && grep -q 'NDEBT-018' docs/planning/DEBT.md || { echo 'NDEBT-017/018 not both present'; exit 1; }; grep -A0 'NDEBT-017' docs/planning/DEBT.md | grep -q '.agent/evidence/' && grep -A0 'NDEBT-018' docs/planning/DEBT.md | grep -q '.agent/evidence/' || { echo 'NDEBT-017/018 rows do not reference the evidence path'; exit 1; }; echo PASS
+PASS
+EXIT:0

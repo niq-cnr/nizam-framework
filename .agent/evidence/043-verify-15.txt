@@ -1,0 +1,3 @@
+$ EXEC_ID=$(basename $(ls -dt .agent/evidence/dogfood-* 2>/dev/null | head -1) 2>/dev/null); [ -n "$EXEC_ID" ] || { echo "no .agent/evidence/dogfood-* directory found yet"; exit 1; }; [ -f ".agent/evidence/${EXEC_ID}/approved/preflight.json" ] && { echo "duplicate preflight.json unexpectedly present under .agent/evidence/${EXEC_ID}/approved/ -- should have been MOVED, not copied"; exit 1; }; [ -f ".agent/evidence/${EXEC_ID}/approved/baseline.json" ] && { echo "duplicate baseline.json unexpectedly present under .agent/evidence/${EXEC_ID}/approved/ -- should have been MOVED, not copied"; exit 1; }; test -s ".agent/evidence/${EXEC_ID}/approved/collection-log.txt" && echo PASS || { echo "approved/collection-log.txt missing or empty"; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,11 @@
+$ EXEC_ID=$(basename $(ls -dt .agent/reconciliation/dogfood-* 2>/dev/null | head -1) 2>/dev/null); [ -n "$EXEC_ID" ] || { echo 'no .agent/reconciliation/dogfood-* directory found yet'; exit 1; }; REAL_HEAD=$(git rev-parse HEAD); python3 -c "
+import json, jsonschema
+bv = json.load(open('schema/ecosystem_baseline.schema.json'))
+b = json.load(open('.agent/reconciliation/${EXEC_ID}/baseline.json'))
+jsonschema.validate(b, bv)
+real_head = '$REAL_HEAD'
+assert b['repository_references'][0]['revision'] == real_head
+assert b['framework_references'][0]['revision'] == real_head
+" && echo PASS || exit 1
+PASS
+EXIT:0
