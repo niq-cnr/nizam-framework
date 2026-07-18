@@ -1,0 +1,76 @@
+=== [01] F-001/AT: NIP file exists.
+$ test -f docs/nips/NIP-0001-ecosystem-engineering-cycle.md && echo PASS || { echo "NIP file missing"; exit 1; }
+PASS
+EXIT:0
+
+=== [02] F-001/AT: NIP frontmatter validates against schema/frontmatter.schema.json.
+$ python3 -c "import json,yaml,jsonschema; d=open('docs/nips/NIP-0001-ecosystem-engineering-cycle.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS || { echo "NIP frontmatter invalid"; exit 1; }
+PASS
+EXIT:0
+
+=== [03] F-001/AT: NIP body records the Accepted decision, the operator, the 2026-07-17 date, and the verbatim authorization (REVISED rev1: also proves operator ATTRIBUTION, not merely the three original substrings -- per .agent/qa/031-contract-review.json missing_acceptance_coverage).
+$ python3 -c "import re,sys; t=open('docs/nips/NIP-0001-ecosystem-engineering-cycle.md',encoding='utf-8').read(); ok=('Accepted' in t and '2026-07-17' in t and 'approved. expedite.' in t and re.search(r'Operator', t, re.I) and re.search(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}', t)); sys.exit(0 if ok else 1)" && echo PASS || { echo "NIP body missing the acceptance record and/or operator attribution (Operator keyword + email-shaped identity)"; exit 1; }
+PASS
+EXIT:0
+
+=== [04] F-001/AT: manifest.json indexes phase 005 with its feature list path and current_phase points at it.
+$ python3 -c "import json,sys; m=json.load(open('docs/planning/manifest.json')); ids=[p['id'] for p in m['phases']]; ok=any(i.startswith('005') for i in ids) and m['current_phase'].startswith('005'); sys.exit(0 if ok else 1)" && echo PASS || { echo "manifest.json does not index phase 005 as current"; exit 1; }
+PASS
+EXIT:0
+
+=== [05] F-001/AT: manifest.json still validates against schema/manifest.schema.json.
+$ python3 -c "import json,jsonschema; jsonschema.validate(json.load(open('docs/planning/manifest.json')), json.load(open('schema/manifest.schema.json')))" && echo PASS || { echo "manifest.json schema-invalid"; exit 1; }
+PASS
+EXIT:0
+
+=== [06] F-001/AT: feature_list_005.json validates against schema/feature_list.schema.json.
+$ python3 -c "import json,jsonschema; jsonschema.validate(json.load(open('.agent/feature_list_005.json')), json.load(open('schema/feature_list.schema.json')))" && echo PASS || { echo "feature_list_005.json schema-invalid"; exit 1; }
+PASS
+EXIT:0
+
+=== [07] F-001/AT: ROADMAP.md marks phase 005 as the active plan of record (not merely candidate scope) (REVISED rev1: the original bare `grep -Eqi '005'` was a reproduced false-pass -- six pre-existing 'phase 005 candidate scope' lines already match at HEAD -- per .agent/qa/031-contract-review.json issue #1, HIGH). Now anchored to the literal Plan-of-Record banner text AND the Track-2-superseded marker.
+$ python3 -c "import re,sys; t=open('docs/planning/ROADMAP.md',encoding='utf-8').read(); ok=('Plan of Record (2026-07-17)' in t and re.search(r'^##\s+Track 2.*SUPERSEDED', t, re.M | re.I)); sys.exit(0 if ok else 1)" && echo PASS || { echo "ROADMAP.md missing the Plan-of-Record banner and/or the Track-2-superseded marker"; exit 1; }
+PASS
+EXIT:0
+
+=== [08] ADDITIONAL (anti-vacuity companion for the revised entry 7, mirroring the entry-4/entry-13 pattern per .agent/qa/031-contract-review.json required_fix #1): re-confirm HEAD's docs/planning/ROADMAP.md does NOT already satisfy the tightened marker, so the revised entry 7 is proven non-vacuous.
+$ ! (git show HEAD:docs/planning/ROADMAP.md | python3 -c "import re,sys; t=sys.stdin.read(); ok=('Plan of Record (2026-07-17)' in t and re.search(r'^##\s+Track 2.*SUPERSEDED', t, re.M | re.I)); sys.exit(0 if ok else 1)") && echo PASS || { echo "HEAD ROADMAP.md already satisfies the tightened marker -- revised entry 7 would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+=== [09] F-001/AT: existing compliance validator stays green.
+$ bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: 11 passed, 0 failed' && echo PASS || { echo "validate.sh SUMMARY regressed from 11 passed, 0 failed"; exit 1; }
+PASS
+EXIT:0
+
+=== [10] ADDITIONAL (scope guard, untracked-aware, per methodology/02 Sec 10 / verify_lib.sh precedent -- v0.6.0-release-notes.md is a pre-existing untracked artifact this feature does not touch, see design_notes.pre_existing_untracked_file_out_of_scope): only the 3 non-.agent deliverables changed outside .agent/.
+$ source tools/verify_lib.sh; vlib_scope_guard 'docs/nips/NIP-0001-ecosystem-engineering-cycle.md' 'docs/planning/manifest.json' 'docs/planning/ROADMAP.md' 'v0.6.0-release-notes.md' && echo PASS || { echo "out-of-scope change(s) detected"; exit 1; }
+PASS
+EXIT:0
+
+=== [11] ADDITIONAL (.agent/ immutability guard, NEW rev1, mirroring the precedent in contracts 025 and 028 exactly, per .agent/qa/031-contract-review.json required_fix #2, MEDIUM): no historical .agent/qa or .agent/contracts artifact was edited -- excludes only this feature's own new 031.json contract and 031*.json qa/review artifacts. .agent/run_state.json and prior feature_list_00N.json are deliberately NOT in the checked path set, matching the 025/028 precedent (run_state.json is the orchestrator's own routinely-modified concern).
+$ changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/031.json' ':(exclude,glob).agent/qa/031*.json'); if [ -n "$changed" ]; then echo 'immutable audit record(s) touched:'; echo "$changed"; exit 1; fi; echo PASS
+PASS
+EXIT:0
+
+=== [12] ADDITIONAL (anti-vacuity): .agent/product_spec_005.md exists and its own frontmatter validates against schema/frontmatter.schema.json.
+$ test -f .agent/product_spec_005.md && python3 -c "import json,yaml,jsonschema; d=open('.agent/product_spec_005.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS || { echo "product_spec_005.md missing or frontmatter-invalid"; exit 1; }
+PASS
+EXIT:0
+
+=== [13] ADDITIONAL (non-goal enforcement): NIZAM.json, every schema/*.json, and every file under tools/ and ecosystem/ are byte-identical to HEAD.
+$ git diff --quiet HEAD -- NIZAM.json schema/ tools/ ecosystem/ && echo PASS || { echo "an out-of-scope ecosystem/tooling/schema file was modified"; git diff --name-only HEAD -- NIZAM.json schema/ tools/ ecosystem/; exit 1; }
+PASS
+EXIT:0
+
+=== [14] ADDITIONAL (non-goal enforcement): docs/planning/DEBT.md is byte-identical to HEAD.
+$ git diff --quiet HEAD -- docs/planning/DEBT.md && echo PASS || { echo "docs/planning/DEBT.md was modified -- out of scope for this feature"; exit 1; }
+PASS
+EXIT:0
+
+=== [15] ADDITIONAL (anti-vacuity, non-vacuous manifest phase-005 mention): re-confirm HEAD (pre-change) manifest.json does NOT already index phase 005, so the manifest verification entry is proven non-vacuous.
+$ ! (git show HEAD:docs/planning/manifest.json | python3 -c "import json,sys; m=json.load(sys.stdin); ids=[p['id'] for p in m['phases']]; sys.exit(0 if any(i.startswith('005') for i in ids) else 1)") && echo PASS || { echo "HEAD manifest.json already indexed phase 005 -- verification entry 4 would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+ALL_PASS=True

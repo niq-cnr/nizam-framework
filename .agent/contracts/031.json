@@ -1,0 +1,121 @@
+{
+  "contract_id": "031",
+  "feature_id": "031",
+  "name": "NIP-0001 Acceptance + Phase-005 Plan of Record (PR-F1, handover F-001)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_005.md",
+  "design_notes": {
+    "nature_of_this_feature": "Phase 005 was just activated by operator authorization (2026-07-17, verbatim: \"approved. expedite.\"), satisfying gate H-NIP. The @planner has ALREADY authored all five plan-of-record deliverables in the working tree (uncommitted): docs/nips/NIP-0001-ecosystem-engineering-cycle.md (new, status Accepted in body / 'active' in frontmatter per the draft/active/deprecated enum), .agent/product_spec_005.md (new), .agent/feature_list_005.json (new), docs/planning/manifest.json (modified: current_phase -> 005-ecosystem-cycle, phase 005 entry appended), docs/planning/ROADMAP.md (modified: Plan of Record banner + Track 2 superseded note). This contract's implementation step is therefore VERIFICATION of these five already-authored artifacts against their schemas and acceptance criteria, plus closing any residual gap found -- not authoring net-new planning prose. Confirmed at contract-authoring time by re-running every one of feature 031's acceptance-test commands from .agent/feature_list_005.json against the current working tree: all 8 pass (frontmatter schema, body acceptance record, manifest schema + phase-005 index, feature_list schema, ROADMAP phase-005 mention, validate.sh SUMMARY: 11 passed, 0 failed).",
+    "pre_existing_untracked_file_out_of_scope": "`git status --porcelain --untracked-files=all -- . ':(exclude).agent'` shows a SIXTH changed/untracked path outside .agent/ that is NOT part of this feature: `v0.6.0-release-notes.md` (root), a pre-existing untracked residual artifact from the already-shipped v0.6.0 release-notes prep (content matches the v0.6.0 CHANGELOG entries; unrelated to phase 005 planning). It predates this contract and this feature does not create, edit, or delete it. It is included in the scope-guard allow-list (verification entry 9) SOLELY to prevent a false-positive scope-guard failure on an untracked file this feature does not touch -- not because this feature is authorized to modify it. No non-goal permits future edits to it under this contract.",
+    "no_commit_no_reset": "This is a CONTRACT-PROPOSAL step (status=proposed). No implementation edits, no git commit, and no run_state.json rewrite happen under this document. The orchestrator's run_state.json update (current_phase/current_feature/status/history) is a separate, already-completed action by this same dispatch, tracked outside this contract artifact.",
+    "revision1_corrections": "REVISION 1 of 3 (per .agent/qa/031-contract-review.json, revision_reviewed=0, REJECTED). Three findings, all fixed here; nothing else changed. FIX 1 (HIGH, blocking): verification entry 7's original command (`grep -Eqi '005' docs/planning/ROADMAP.md`) was a reproduced false-pass -- the evaluator built a disposable HEAD worktree and confirmed the bare case-insensitive '005' substring already matches six pre-existing 'phase 005 candidate scope' lines (11, 14, 56, 122, 124, 126) in ROADMAP.md at HEAD, so a no-op or wrong implementation would still pass. Replaced with a python check requiring BOTH the literal 'Plan of Record (2026-07-17)' banner text AND a Track-2-heading-anchored 'SUPERSEDED' marker (`^##\\s+Track 2.*SUPERSEDED`, multiline+case-insensitive) -- re-run live: PASSES on the current working tree (both markers present) and, independently via `git show HEAD:docs/planning/ROADMAP.md`, FAILS at HEAD (neither marker present), closing the false-pass. Added a new anti-vacuity companion entry (mirroring the original entry 13/entry-4 pattern) that re-confirms HEAD's ROADMAP.md does NOT already satisfy the tightened check. FIX 2 (MEDIUM, blocking): added a new immutability-guard verification entry mirroring the exact precedent in contracts 025 (rev-approved) and 028 (rev2-approved): `git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/031.json' ':(exclude,glob).agent/qa/031*.json'` must be empty -- scoped to .agent/qa and .agent/contracts only (matching both precedents, which deliberately drop .agent/run_state.json and prior feature_list_00N.json from the checked path set, since run_state.json is the orchestrator's own routinely-and-legitimately-modified concern, not a per-feature acceptance test), excluding only this feature's own new 031.json contract and 031*.json qa/review artifacts. Re-run live: PASSES (no historical .agent/qa or .agent/contracts file is touched at contract-authoring time; the evaluator's own new .agent/qa/031-contract-review.json is correctly excluded by the glob). FIX 3 (COVERAGE, non-blocking but addressed): extended entry 3's command to additionally require an 'Operator' keyword AND an email-shaped identity pattern (`[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}`) somewhere in the NIP body, proving the acceptance record attributes to an identifiable operator rather than merely containing the three original substrings (Accepted/date/verbatim-quote). Re-run live: PASSES (the real Acceptance Record table row records 'Operator | Ecosystem operator (`rosscn@nizamiq.com`)'); a probe removing that table row (not persisted) confirms the strengthened check correctly FAILS without it, closing the missing_acceptance_coverage gap. Nothing outside these three findings was changed: scope, non_goals, and the other 10 original verification entries are byte-identical to revision 0."
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": "docs/nips/NIP-0001-ecosystem-engineering-cycle.md",
+        "purpose": "The accepted Nizam Improvement Proposal: body Status section records the ACCEPTED decision, the operator, the 2026-07-17 date, the verbatim authorization ('approved. expedite.'), and gate H-NIP; frontmatter status is 'active' (schema enum draft/active/deprecated has no 'accepted' value -- the decision-lifecycle state lives in the body, matching the docs/architecture/ADR house pattern). Defines the ecosystem module surface, schemas, capability routing, preflight verdict, maturity model, dogfood requirement, and adoption requirement that .agent/feature_list_005.json's features 032-045 implement."
+      },
+      {
+        "path": ".agent/product_spec_005.md",
+        "purpose": "Phase-005 product spec (framework side of the handover): scope (2.1 in-scope PR-F1..PR-F4 + release, 2.2 out-of-scope consumer adoption F-016..F-020), functional requirements FR-01..FR-12 mapped to framework features, the 031..045 feature/PR/handover traceability table, the topological execution order, the five human gates (H-NIP satisfied; H-FRAMEWORK-SCOPE/H-DOGFOOD-EXCEPTION/H-FRAMEWORK-RELEASE/H-RISK outstanding), and the dogfood/validation plan. Extends product_spec.md..product_spec_004.md; supersedes none."
+      },
+      {
+        "path": ".agent/feature_list_005.json",
+        "purpose": "DAG-validated feature list for phase 005 (15 features, 031-045, original_estimate_lines 2300), each carrying handover_feature_ids, pr, merge_order, operator_gate, and acceptance_tests (including the handover acceptance criteria verbatim). Must validate against schema/feature_list.schema.json."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "docs/planning/manifest.json",
+        "purpose": "Bump updated_at to 2026-07-17; flip current_phase to '005-ecosystem-cycle'; append the phase-005 phase entry (status 'in_progress' -- the only truthful value in the pending/in_progress/complete/blocked enum for an operator-activated, in-flight phase; activation_state 'active' + a lifecycle note carry the proposed->activated narrative, matching the phase 002/003/004 house pattern) pointing at .agent/feature_list_005.json. Must remain schema-valid against schema/manifest.schema.json; no edits to any existing phase entry (001-004)."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Bump frontmatter version 0.2.0 -> 0.3.0 with a matching change_log entry; add the 'Plan of Record (2026-07-17)' banner recording the H-NIP acceptance, phase-005 scope, and outstanding phase-005 human gates; mark the former Track 2 candidate scope as superseded-as-the-phase-005-selection (retained verbatim underneath for its still-open debt items). All other sections (Track 1, 3, 4, Current Position, Sequencing Recommendation) remain textually unchanged."
+      }
+    ]
+  },
+  "non_goals": [
+    "No edit to NIZAM.json, tools/*, schema/*.json, or any file under ecosystem/ -- this feature performs zero ecosystem module/schema/tooling work; that is features 032-042",
+    "No git commit of any kind is performed under this contract or its implementation -- the five deliverables are verified in the working tree; committing is a separate, later pipeline action",
+    "No edit to .agent/run_state.json, any .agent/contracts/*.json other than this 031.json, any .agent/qa/*.json, or any prior feature_list_00N.json -- those are immutable audit records or owned by the orchestrator",
+    "No creation, edit, or deletion of the pre-existing untracked v0.6.0-release-notes.md (see design_notes.pre_existing_untracked_file_out_of_scope) -- it is tolerated in the scope-guard allow-list, not authorized for modification",
+    "No execution of any of the five outstanding phase-005 human gates (H-FRAMEWORK-SCOPE, H-DOGFOOD-EXCEPTION, H-FRAMEWORK-RELEASE, H-RISK) -- H-NIP is the only gate this feature's artifacts record as satisfied, and only because the operator already satisfied it before this contract was authored",
+    "No edit to docs/planning/DEBT.md -- no new debt is registered by this feature",
+    "No edit to any existing phase entry (001-004) inside docs/planning/manifest.json, and no textual change to ROADMAP.md's Track 1/3/4 sections or its 'Current Position' section"
+  ],
+  "verification": [
+    {
+      "acceptance_test": "F-001/AT: NIP file exists.",
+      "command": "test -f docs/nips/NIP-0001-ecosystem-engineering-cycle.md && echo PASS || { echo \"NIP file missing\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "F-001/AT: NIP frontmatter validates against schema/frontmatter.schema.json.",
+      "command": "python3 -c \"import json,yaml,jsonschema; d=open('docs/nips/NIP-0001-ecosystem-engineering-cycle.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))\" && echo PASS || { echo \"NIP frontmatter invalid\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "F-001/AT: NIP body records the Accepted decision, the operator, the 2026-07-17 date, and the verbatim authorization (REVISED rev1: also proves operator ATTRIBUTION, not merely the three original substrings -- per .agent/qa/031-contract-review.json missing_acceptance_coverage).",
+      "command": "python3 -c \"import re,sys; t=open('docs/nips/NIP-0001-ecosystem-engineering-cycle.md',encoding='utf-8').read(); ok=('Accepted' in t and '2026-07-17' in t and 'approved. expedite.' in t and re.search(r'Operator', t, re.I) and re.search(r'[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}', t)); sys.exit(0 if ok else 1)\" && echo PASS || { echo \"NIP body missing the acceptance record and/or operator attribution (Operator keyword + email-shaped identity)\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "F-001/AT: manifest.json indexes phase 005 with its feature list path and current_phase points at it.",
+      "command": "python3 -c \"import json,sys; m=json.load(open('docs/planning/manifest.json')); ids=[p['id'] for p in m['phases']]; ok=any(i.startswith('005') for i in ids) and m['current_phase'].startswith('005'); sys.exit(0 if ok else 1)\" && echo PASS || { echo \"manifest.json does not index phase 005 as current\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "F-001/AT: manifest.json still validates against schema/manifest.schema.json.",
+      "command": "python3 -c \"import json,jsonschema; jsonschema.validate(json.load(open('docs/planning/manifest.json')), json.load(open('schema/manifest.schema.json')))\" && echo PASS || { echo \"manifest.json schema-invalid\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "F-001/AT: feature_list_005.json validates against schema/feature_list.schema.json.",
+      "command": "python3 -c \"import json,jsonschema; jsonschema.validate(json.load(open('.agent/feature_list_005.json')), json.load(open('schema/feature_list.schema.json')))\" && echo PASS || { echo \"feature_list_005.json schema-invalid\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "F-001/AT: ROADMAP.md marks phase 005 as the active plan of record (not merely candidate scope) (REVISED rev1: the original bare `grep -Eqi '005'` was a reproduced false-pass -- six pre-existing 'phase 005 candidate scope' lines already match at HEAD -- per .agent/qa/031-contract-review.json issue #1, HIGH). Now anchored to the literal Plan-of-Record banner text AND the Track-2-superseded marker.",
+      "command": "python3 -c \"import re,sys; t=open('docs/planning/ROADMAP.md',encoding='utf-8').read(); ok=('Plan of Record (2026-07-17)' in t and re.search(r'^##\\s+Track 2.*SUPERSEDED', t, re.M | re.I)); sys.exit(0 if ok else 1)\" && echo PASS || { echo \"ROADMAP.md missing the Plan-of-Record banner and/or the Track-2-superseded marker\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (anti-vacuity companion for the revised entry 7, mirroring the entry-4/entry-13 pattern per .agent/qa/031-contract-review.json required_fix #1): re-confirm HEAD's docs/planning/ROADMAP.md does NOT already satisfy the tightened marker, so the revised entry 7 is proven non-vacuous.",
+      "command": "! (git show HEAD:docs/planning/ROADMAP.md | python3 -c \"import re,sys; t=sys.stdin.read(); ok=('Plan of Record (2026-07-17)' in t and re.search(r'^##\\s+Track 2.*SUPERSEDED', t, re.M | re.I)); sys.exit(0 if ok else 1)\") && echo PASS || { echo \"HEAD ROADMAP.md already satisfies the tightened marker -- revised entry 7 would be vacuous\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "F-001/AT: existing compliance validator stays green.",
+      "command": "bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: 11 passed, 0 failed' && echo PASS || { echo \"validate.sh SUMMARY regressed from 11 passed, 0 failed\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (scope guard, untracked-aware, per methodology/02 Sec 10 / verify_lib.sh precedent -- v0.6.0-release-notes.md is a pre-existing untracked artifact this feature does not touch, see design_notes.pre_existing_untracked_file_out_of_scope): only the 3 non-.agent deliverables changed outside .agent/.",
+      "command": "source tools/verify_lib.sh; vlib_scope_guard 'docs/nips/NIP-0001-ecosystem-engineering-cycle.md' 'docs/planning/manifest.json' 'docs/planning/ROADMAP.md' 'v0.6.0-release-notes.md' && echo PASS || { echo \"out-of-scope change(s) detected\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (.agent/ immutability guard, NEW rev1, mirroring the precedent in contracts 025 and 028 exactly, per .agent/qa/031-contract-review.json required_fix #2, MEDIUM): no historical .agent/qa or .agent/contracts artifact was edited -- excludes only this feature's own new 031.json contract and 031*.json qa/review artifacts. .agent/run_state.json and prior feature_list_00N.json are deliberately NOT in the checked path set, matching the 025/028 precedent (run_state.json is the orchestrator's own routinely-modified concern).",
+      "command": "changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/031.json' ':(exclude,glob).agent/qa/031*.json'); if [ -n \"$changed\" ]; then echo 'immutable audit record(s) touched:'; echo \"$changed\"; exit 1; fi; echo PASS"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (anti-vacuity): .agent/product_spec_005.md exists and its own frontmatter validates against schema/frontmatter.schema.json.",
+      "command": "test -f .agent/product_spec_005.md && python3 -c \"import json,yaml,jsonschema; d=open('.agent/product_spec_005.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))\" && echo PASS || { echo \"product_spec_005.md missing or frontmatter-invalid\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (non-goal enforcement): NIZAM.json, every schema/*.json, and every file under tools/ and ecosystem/ are byte-identical to HEAD.",
+      "command": "git diff --quiet HEAD -- NIZAM.json schema/ tools/ ecosystem/ && echo PASS || { echo \"an out-of-scope ecosystem/tooling/schema file was modified\"; git diff --name-only HEAD -- NIZAM.json schema/ tools/ ecosystem/; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (non-goal enforcement): docs/planning/DEBT.md is byte-identical to HEAD.",
+      "command": "git diff --quiet HEAD -- docs/planning/DEBT.md && echo PASS || { echo \"docs/planning/DEBT.md was modified -- out of scope for this feature\"; exit 1; }"
+    },
+    {
+      "acceptance_test": "ADDITIONAL (anti-vacuity, non-vacuous manifest phase-005 mention): re-confirm HEAD (pre-change) manifest.json does NOT already index phase 005, so the manifest verification entry is proven non-vacuous.",
+      "command": "! (git show HEAD:docs/planning/manifest.json | python3 -c \"import json,sys; m=json.load(sys.stdin); ids=[p['id'] for p in m['phases']]; sys.exit(0 if any(i.startswith('005') for i in ids) else 1)\") && echo PASS || { echo \"HEAD manifest.json already indexed phase 005 -- verification entry 4 would be vacuous\"; exit 1; }"
+    }
+  ],
+  "estimated_lines": 260,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/031-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (e.g. .agent/evidence/031-verify-01.txt for the first entry, ..., .agent/evidence/031-verify-15.txt for the fifteenth -- the 'verification' array has exactly 15 entries as of revision 1). Every evidence file MUST comply with methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention: the exact invocation as the FIRST line, captured output next, a literal EXIT:<code> as the LAST line, replayable from the repository root, with NO session-absolute paths. One file per command; no inline proof output in this contract or in run_state.json.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-07-17T00:00:00Z",
+    "revisions": 1,
+    "evaluator_review_ref": ".agent/qa/031-contract-review-rev1.json",
+    "round0_review_ref": ".agent/qa/031-contract-review.json"
+  }
+}
