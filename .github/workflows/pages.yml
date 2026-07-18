@@ -3,17 +3,21 @@ name: pages
 # Publishes the self-contained HTML user guide (docs/guide/) to GitHub
 # Pages — the human gate recorded open since phase 003 (ROADMAP Track 1
 # item 2). The site is the guide directory itself; docs/guide/index.html
-# is the page. actions/configure-pages runs with enablement: true so the
-# first successful run CREATES the Pages site (source: GitHub Actions)
-# without a manual settings step; if organization policy forbids
-# token-driven enablement, this job fails loudly at that step and the
-# one-click manual enable (Settings -> Pages -> Source: GitHub Actions)
-# remains the fallback, after which a re-run publishes.
+# is the page.
 #
-# The deploy actions below are pinned to major-version tags, not commit
-# SHAs, unlike this repository's other workflows: resolving the SHAs
-# requires reading the external action repositories, which the authoring
-# session could not reach. Reviewers may harden the pins to SHAs.
+# ONE-TIME PREREQUISITE (operator): enable Pages with Source "GitHub
+# Actions" (Settings -> Pages). The default GITHUB_TOKEN cannot CREATE the
+# Pages site (site creation needs administration scope, which
+# configure-pages' enablement option can only exercise with a PAT/App
+# token — a heavier secret than the one-click setting justifies). Until
+# Pages is enabled, this job fails loudly at the configure step; after the
+# one-time enable, every run publishes automatically.
+#
+# The three Pages deploy actions below are pinned to major-version tags,
+# not commit SHAs, unlike this repository's other workflows: resolving the
+# SHAs requires reading the external action repositories, which the
+# authoring session's repository scope could not reach. Reviewers may
+# harden the pins to SHAs.
 
 on:
   workflow_dispatch:
@@ -23,11 +27,6 @@ on:
       - "docs/guide/**"
       - ".github/workflows/pages.yml"
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -35,6 +34,15 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Permissions are job-scoped (not workflow-level) so any future job in
+    # this file does not silently inherit Pages-write or OIDC privileges:
+    #   contents: read  — checkout of the guide sources
+    #   pages: write    — create the Pages deployment
+    #   id-token: write — OIDC token deploy-pages uses to authenticate
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -43,10 +51,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Configure GitHub Pages (creates the site on first run)
+      - name: Configure GitHub Pages (requires the one-time Pages enable, see header)
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload the user guide as the Pages artifact
         uses: actions/upload-pages-artifact@v3

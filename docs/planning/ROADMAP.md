@@ -38,8 +38,8 @@ exist (`.agent/product_spec_006.md`, `.agent/feature_list_006.json` — 11 featu
 049-059, DAG-validated acyclic, `original_estimate_lines` 1720), the manifest carries
 the phase as `status: pending`, and per `methodology/00_planning.md` execution begins
 only when the operator authorizes activation (gate **H-PHASE-006**). Scope: the
-debt-driven enforcement closure (Track 2's revived candidates NDEBT-005/007/008/009/
-010/011/012 plus the phase-005 additions NDEBT-013..024), codification of the
+debt-driven enforcement closure (Track 2's revived candidates NDEBT-004/005/007/008/
+009/010/011/012 plus the phase-005 additions NDEBT-013..024), codification of the
 incident-proven operational rules, the Track 3 constitutional mechanize-or-descope
 decision (operator gate H-CONSTITUTIONAL), the injected-payload contract decision
 (H-PAYLOAD-CONTRACT), and a v0.8.0 release gate (H-FRAMEWORK-RELEASE). Consumer
@@ -123,11 +123,12 @@ they need no new phase.
    Release page — EXECUTED 2026-07-15** (the page exists, published 05:53 UTC;
    every tag v0.1.0–v0.6.0 now has a published Release page).
 2. **Publish the user guide to GitHub Pages — MECHANIZED 2026-07-18.** Outstanding
-   since phase 003; now `.github/workflows/pages.yml` publishes `docs/guide/` on
-   merge to `main` (configure-pages `enablement: true` creates the site on the
-   first run; if organization policy forbids token-driven enablement the run fails
-   loudly at that step and the one-click manual enable remains the fallback, after
-   which a re-run publishes). Executed automatically when the workflow's PR merges.
+   since phase 003; `.github/workflows/pages.yml` now publishes `docs/guide/` on
+   every merge to `main` touching the guide (and on dispatch). One-time
+   prerequisite for the operator: enable Pages with Source "GitHub Actions"
+   (Settings → Pages) — the default GITHUB_TOKEN cannot create the Pages site, so
+   the job fails loudly at the configure step until that one-click enable is done,
+   after which publication is fully automatic.
 3. **Fix the v0.7.0 GitHub Release page title — EXECUTED 2026-07-18.** The title
    now reads `v0.7.0 — Ecosystem Engineering Cycle` (corrected by a branch-scoped
    one-shot applying the fixed `release.yml` extraction logic; body untouched).

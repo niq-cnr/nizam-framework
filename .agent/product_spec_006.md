@@ -1,7 +1,7 @@
 ---
 id: nizam-product-spec-006
 title: "Nizam Framework — Phase 006 Spec (Enforcement Closure & Hardening) — PROPOSAL"
-description: "Phase-006 proposal: close the enforcement gaps and consumer-reality defects accumulated in the open debt register (NDEBT-004..025), codify the operational rules phase 005 proved by incident, and take the deferred constitutional-layer mechanize-or-descope decision — ending at a v0.8.0 release gate. PROPOSED, not activated: execution requires operator authorization (gate H-PHASE-006). Extends product_spec.md..product_spec_005.md; replaces none."
+description: "Phase-006 proposal: close the enforcement gaps and consumer-reality defects accumulated in the open debt register (NDEBT-004..024; NDEBT-025 was resolved pre-phase), codify the operational rules phase 005 proved by incident, and take the deferred constitutional-layer mechanize-or-descope decision — ending at a v0.8.0 release gate. PROPOSED, not activated: execution requires operator authorization (gate H-PHASE-006). Extends product_spec.md..product_spec_005.md; replaces none."
 tags: [spec, self-compliance, enforcement, hardening, debt, phase-006, proposal]
 status: draft
 last_audited: "2026-07-18"

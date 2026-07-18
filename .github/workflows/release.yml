@@ -69,7 +69,20 @@ jobs:
           # local ref still disagrees, fail loudly instead of mistitling.
           git fetch --force --no-tags origin "+refs/tags/$TAG:refs/tags/$TAG"
           OBJTYPE="$(git cat-file -t "$(git rev-parse "refs/tags/$TAG")")"
-          REMOTE_PEELED="$(git ls-remote origin "refs/tags/$TAG" | grep -c '\^{}' || true)"
+          # Capture the remote lookup's own status separately: a failed
+          # ls-remote (network, auth) must fail this step, not be silently
+          # collapsed into "no peeled line" — which would let an annotated
+          # tag slip past the fail-closed guard as if it were lightweight.
+          # grep's no-match status 1 stays non-fatal (REMOTE_PEELED=0).
+          set +e
+          LSREMOTE_OUT="$(git ls-remote origin "refs/tags/$TAG")"
+          LSREMOTE_STATUS=$?
+          set -e
+          if [ "$LSREMOTE_STATUS" -ne 0 ]; then
+            echo "FATAL: git ls-remote failed (status $LSREMOTE_STATUS) while checking whether tag '$TAG' is annotated on the remote (NDEBT-025 guard)." >&2
+            exit 1
+          fi
+          REMOTE_PEELED="$(printf '%s\n' "$LSREMOTE_OUT" | grep -c '\^{}' || true)"
           if [ "$REMOTE_PEELED" -ge 1 ] && [ "$OBJTYPE" != "tag" ]; then
             echo "FATAL: remote tag '$TAG' is annotated but the local ref resolves to a $OBJTYPE object; refusing to derive a Release title from the wrong object (NDEBT-025)." >&2
             exit 1
