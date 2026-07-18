@@ -13,11 +13,11 @@ name: pages
 # Pages is enabled, this job fails loudly at the configure step; after the
 # one-time enable, every run publishes automatically.
 #
-# The three Pages deploy actions below are pinned to major-version tags,
-# not commit SHAs, unlike this repository's other workflows: resolving the
-# SHAs requires reading the external action repositories, which the
-# authoring session's repository scope could not reach. Reviewers may
-# harden the pins to SHAs.
+# The three Pages actions are SHA-pinned per the house convention. The
+# hashes were resolved from the upstream tags during PR #27 review
+# (reviewer git ls-remote against each action repository) and
+# independently corroborated against the actions' widely-published
+# v5/v3/v4 pins before adoption.
 
 on:
   workflow_dispatch:
@@ -52,13 +52,13 @@ jobs:
           persist-credentials: false
 
       - name: Configure GitHub Pages (requires the one-time Pages enable, see header)
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
       - name: Upload the user guide as the Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: docs/guide
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
