@@ -1,0 +1,15 @@
+python3 -c "
+import re
+t = open('docs/planning/DEBT.md', encoding='utf-8').read()
+lines = t.splitlines()
+line19 = next((l for l in lines if re.match(r'^\| *NDEBT-019 *\|', l)), None)
+assert line19, 'NDEBT-019 row not found'
+assert ('pipefail' in line19) or ('exit code' in line19) or ('exit status' in line19) or ('exit-code' in line19), 'NDEBT-019 row missing pipefail/exit-code/exit-status mention'
+line20 = next((l for l in lines if re.match(r'^\| *NDEBT-020 *\|', l)), None)
+assert line20, 'NDEBT-020 row not found'
+assert 'rm -f' in line20, 'NDEBT-020 row missing rm -f mention'
+assert ('cwd' in line20.lower()) or ('working directory' in line20.lower()), 'NDEBT-020 row missing cwd/working-directory mention'
+print('PASS')
+"
+PASS
+EXIT:0

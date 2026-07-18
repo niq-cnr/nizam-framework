@@ -1,0 +1,7 @@
+source tools/verify_lib.sh
+vlib_scope_guard ".agent/product_spec_005.md" "docs/planning/ROADMAP.md" "docs/planning/DEBT.md" "v0.6.0-release-notes.md" || { echo 'vlib_scope_guard reported out-of-scope changed path(s)'; exit 1; }
+echo "NOTE (non-blocking, pre-commit): the mandated HEAD-caret..HEAD literal check is timing-deferred until the orchestrator commits feature 046 as the new tip -- see design_notes.head_caret_timing_note"
+echo PASS
+NOTE (non-blocking, pre-commit): the mandated HEAD-caret..HEAD literal check is timing-deferred until the orchestrator commits feature 046 as the new tip -- see design_notes.head_caret_timing_note
+PASS
+EXIT:0

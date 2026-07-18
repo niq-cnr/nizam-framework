@@ -1,0 +1,12 @@
+set -e
+s=$(git show HEAD:.agent/product_spec_005.md | python3 -c "import yaml,sys; print(yaml.safe_load(sys.stdin.read().split('---')[1])['status'])")
+[ "$s" = "draft" ] || { echo "expected HEAD spec status 'draft', got '$s'"; exit 1; }
+git show HEAD:docs/planning/ROADMAP.md | grep -Eq 'Track 2 is the recommended phase 005' || { echo 'stale ROADMAP sentence unexpectedly absent at HEAD'; exit 1; }
+n=$(git show HEAD:docs/planning/ROADMAP.md | python3 -c "import yaml,sys; print(len(yaml.safe_load(sys.stdin.read().split('---')[1]).get('change_log',[])))")
+[ "$n" -eq 4 ] || { echo "expected HEAD ROADMAP change_log length 4, got $n"; exit 1; }
+v=$(git show HEAD:docs/planning/DEBT.md | python3 -c "import yaml,sys; print(yaml.safe_load(sys.stdin.read().split('---')[1])['version'])")
+[ "$v" = "0.11.0" ] || { echo "expected HEAD DEBT.md version 0.11.0, got $v"; exit 1; }
+git show HEAD:docs/planning/DEBT.md | grep -Eq 'NDEBT-019|NDEBT-020' && { echo 'NDEBT-019/020 unexpectedly already present at HEAD'; exit 1; }
+echo PASS
+PASS
+EXIT:0

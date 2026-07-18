@@ -1,0 +1,207 @@
+===== .agent/evidence/046-verify-01.txt =====
+set -e
+s=$(git show HEAD:.agent/product_spec_005.md | python3 -c "import yaml,sys; print(yaml.safe_load(sys.stdin.read().split('---')[1])['status'])")
+[ "$s" = "draft" ] || { echo "expected HEAD spec status 'draft', got '$s'"; exit 1; }
+git show HEAD:docs/planning/ROADMAP.md | grep -Eq 'Track 2 is the recommended phase 005' || { echo 'stale ROADMAP sentence unexpectedly absent at HEAD'; exit 1; }
+n=$(git show HEAD:docs/planning/ROADMAP.md | python3 -c "import yaml,sys; print(len(yaml.safe_load(sys.stdin.read().split('---')[1]).get('change_log',[])))")
+[ "$n" -eq 4 ] || { echo "expected HEAD ROADMAP change_log length 4, got $n"; exit 1; }
+v=$(git show HEAD:docs/planning/DEBT.md | python3 -c "import yaml,sys; print(yaml.safe_load(sys.stdin.read().split('---')[1])['version'])")
+[ "$v" = "0.11.0" ] || { echo "expected HEAD DEBT.md version 0.11.0, got $v"; exit 1; }
+git show HEAD:docs/planning/DEBT.md | grep -Eq 'NDEBT-019|NDEBT-020' && { echo 'NDEBT-019/020 unexpectedly already present at HEAD'; exit 1; }
+echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-02.txt =====
+python3 -c "import yaml,sys; d=yaml.safe_load(open('.agent/product_spec_005.md',encoding='utf-8').read().split('---')[1]); sys.exit(0 if d['status']=='active' and len(d.get('change_log',[]))>=2 else 1)" && echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-03.txt =====
+python3 -c "import json,yaml,jsonschema; d=open('.agent/product_spec_005.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-04.txt =====
+python3 -c "
+import subprocess, yaml
+head_text = subprocess.check_output(['git', 'show', 'HEAD:.agent/product_spec_005.md']).decode()
+work_text = open('.agent/product_spec_005.md', encoding='utf-8').read()
+head_body = head_text.split('---', 2)[2]
+work_body = work_text.split('---', 2)[2]
+assert head_body == work_body, 'spec body changed -- forbidden'
+head_fm = yaml.safe_load(head_text.split('---')[1])
+work_fm = yaml.safe_load(work_text.split('---')[1])
+allowed = {'status', 'version', 'change_log'}
+for k in set(head_fm) | set(work_fm):
+    if k in allowed:
+        continue
+    assert head_fm.get(k) == work_fm.get(k), f'frontmatter field {k} changed -- forbidden'
+print('PASS')
+"
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-05.txt =====
+grep -Eq 'Track 2 is the recommended phase 005' docs/planning/ROADMAP.md && { echo 'stale sentence still present'; exit 1; } || echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-06.txt =====
+git show HEAD^:docs/planning/ROADMAP.md | grep -Eq 'Track 2 is the recommended phase 005' && echo PASS || { echo "mandated HEAD^ anti-vacuity literal did not match (note: pre-046-commit, HEAD^ resolves to feature 044's commit, not the pre-046 tip -- see design_notes for the timing caveat)"; exit 1; }
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-07.txt =====
+python3 -c "import yaml,sys; d=yaml.safe_load(open('docs/planning/ROADMAP.md',encoding='utf-8').read().split('---')[1]); sys.exit(0 if len(d.get('change_log',[]))>=5 else 1)" && echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-08.txt =====
+python3 -c "import json,yaml,jsonschema; d=open('docs/planning/ROADMAP.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-09.txt =====
+python3 -c "
+lines = open('docs/planning/ROADMAP.md', encoding='utf-8').read().splitlines()
+start = next(i for i, l in enumerate(lines) if l.strip() == '## Sequencing Recommendation')
+end = next(i for i in range(start + 1, len(lines)) if lines[i].startswith('## '))
+block = ' '.join(lines[start + 1:end])
+pinned = 'Track 2 was superseded as the phase-005 selection by NIP-0001 (see the supersession note above) and remains candidate scope for a subsequent phase.'
+assert pinned in block, 'exact pinned replacement sentence not found (verbatim, contiguous) in the Sequencing Recommendation section'
+assert 'recommended phase 005' not in block, 'stale phrase still present in Sequencing Recommendation section'
+remainder = block.replace(pinned, '', 1)
+assert not ('Track 2' in remainder and 'recommended' in remainder), 'a sentence OTHER than the pinned one still co-mentions Track 2 and recommended -- possible meaning-reversing restatement'
+print('PASS')
+"
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-10.txt =====
+python3 -c "import re,sys; t=open('docs/planning/DEBT.md',encoding='utf-8').read(); rows={m.group(1):m.group(2).strip() for m in re.finditer(r'\|\s*(NDEBT-0(?:19|20))\s*\|[^|]*\|\s*(Low|Medium|High|P0|P1)\s*\|', t)}; sys.exit(0 if set(rows)=={'NDEBT-019','NDEBT-020'} and all(v in ('Low','Medium') for v in rows.values()) else 1)" && echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-11.txt =====
+python3 -c "import yaml,sys; d=yaml.safe_load(open('docs/planning/DEBT.md',encoding='utf-8').read().split('---')[1]); sys.exit(0 if str(d['version'])!='0.11.0' else 1)" && echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-12.txt =====
+python3 -c "import json,yaml,jsonschema; d=open('docs/planning/DEBT.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-13.txt =====
+python3 -c "
+import re
+t = open('docs/planning/DEBT.md', encoding='utf-8').read()
+lines = t.splitlines()
+line19 = next((l for l in lines if re.match(r'^\| *NDEBT-019 *\|', l)), None)
+assert line19, 'NDEBT-019 row not found'
+assert ('pipefail' in line19) or ('exit code' in line19) or ('exit status' in line19) or ('exit-code' in line19), 'NDEBT-019 row missing pipefail/exit-code/exit-status mention'
+line20 = next((l for l in lines if re.match(r'^\| *NDEBT-020 *\|', l)), None)
+assert line20, 'NDEBT-020 row not found'
+assert 'rm -f' in line20, 'NDEBT-020 row missing rm -f mention'
+assert ('cwd' in line20.lower()) or ('working directory' in line20.lower()), 'NDEBT-020 row missing cwd/working-directory mention'
+print('PASS')
+"
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-14.txt =====
+tracked_bad=0
+while IFS= read -r path; do
+  [ -z "$path" ] && continue
+  case "$path" in
+    .agent/feature_list_005.json|.agent/product_spec_005.md) ;;
+    *) echo "out-of-scope tracked .agent modification: $path"; tracked_bad=1 ;;
+  esac
+done <<< "$(git diff --name-only HEAD -- .agent)"
+[ "$tracked_bad" -eq 0 ] || exit 1
+
+untracked_bad=0
+while IFS= read -r line; do
+  [ -z "$line" ] && continue
+  case "$line" in
+    '?? '*) ;;
+    *) continue ;;
+  esac
+  path="${line:3}"
+  case "$path" in
+    .agent/contracts/046.json|.agent/qa/046*.json|.agent/evidence/046-*|.agent/evidence/046/*|.agent/planning_notes_046.md) ;;
+    *) echo "out-of-scope untracked .agent artifact: $path"; untracked_bad=1 ;;
+  esac
+done <<< "$(git status --porcelain --untracked-files=all -- .agent)"
+[ "$untracked_bad" -eq 0 ] && echo PASS || exit 1
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-15.txt =====
+source tools/verify_lib.sh
+vlib_scope_guard ".agent/product_spec_005.md" "docs/planning/ROADMAP.md" "docs/planning/DEBT.md" "v0.6.0-release-notes.md" || { echo 'vlib_scope_guard reported out-of-scope changed path(s)'; exit 1; }
+echo "NOTE (non-blocking, pre-commit): the mandated HEAD-caret..HEAD literal check is timing-deferred until the orchestrator commits feature 046 as the new tip -- see design_notes.head_caret_timing_note"
+echo PASS
+NOTE (non-blocking, pre-commit): the mandated HEAD-caret..HEAD literal check is timing-deferred until the orchestrator commits feature 046 as the new tip -- see design_notes.head_caret_timing_note
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-16.txt =====
+git diff --quiet HEAD -- .agent/run_state.json && echo PASS || { echo '.agent/run_state.json was modified -- orchestrator-owned, forbidden'; exit 1; }
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-17.txt =====
+if [ -f v0.6.0-release-notes.md ]; then
+  h=$(sha256sum v0.6.0-release-notes.md | awk '{print $1}')
+  [ "$h" = "15ac6acaa9a549a171b5f49617654cac189322fbab760d78104b4c3f4662c00b" ] || { echo "v0.6.0-release-notes.md hash changed: $h"; exit 1; }
+fi
+echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-18.txt =====
+f=.agent/evidence/045-release-readiness-checklist.md
+test -f "$f" || { echo 'checklist missing'; exit 1; }
+n=$(grep -c . "$f")
+[ "$n" -eq 8 ] || { echo "expected exactly 8 non-blank lines, got $n"; exit 1; }
+for i in 1 2 3 4 5 6 7 8; do
+  c=$(grep -cE "^${i}\." "$f")
+  [ "$c" -eq 1 ] || { echo "item ${i} label must appear exactly once, found ${c}"; exit 1; }
+done
+grep -qxF '7. Human sign-off complete: PENDING -- human-gated (H-FRAMEWORK-RELEASE)' "$f" || { echo 'item 7 is not byte-identical to the pinned literal'; exit 1; }
+grep -qxF '8. Immutable tag published: PENDING -- human-gated (H-FRAMEWORK-RELEASE)' "$f" || { echo 'item 8 is not byte-identical to the pinned literal'; exit 1; }
+h=$(sha256sum "$f" | awk '{print $1}'); rc=$?
+[ "$rc" -eq 0 ] || { echo 'sha256sum failed'; exit 1; }
+[ "$h" = "06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea" ] || { echo "checklist content does not match the pinned exact byte content (got $h)"; exit 1; }
+echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-19.txt =====
+n=$(awk '/^## Open/{f=1} /^## Resolved/{f=0} f' docs/planning/DEBT.md | grep '^| NDEBT' | grep -icE '\| *(High|Critical) *\|'); rc=$?
+[ "$n" -eq 0 ] || { echo "found $n open High/Critical debt item(s) -- release exit criterion 6 violated"; exit 1; }
+echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-20.txt =====
+out=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0 && echo "$out" | tail -1 | grep -Eqx 'SUMMARY: 12 passed, 0 failed' && echo PASS || { echo "default sweep failed (rc=$rc)"; exit 1; }
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-21.txt =====
+out=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0 && echo "$out" | tail -1 | grep -Eqx 'SUMMARY \(payload mode\): 10 passed, 0 failed' && echo PASS || { echo "payload sweep failed (rc=$rc)"; exit 1; }
+PASS
+EXIT:0
+
+===== .agent/evidence/046-verify-22.txt =====
+head_count=$(git show HEAD:docs/planning/DEBT.md | grep -c '^| NDEBT-')
+work_count=$(grep -c '^| NDEBT-' docs/planning/DEBT.md)
+delta=$((work_count - head_count))
+[ "$delta" -eq 2 ] || { echo "expected exactly 2 new NDEBT rows (HEAD had $head_count, working tree has $work_count, delta=$delta)"; exit 1; }
+echo PASS
+PASS
+EXIT:0
+

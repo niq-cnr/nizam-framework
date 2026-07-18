@@ -1,0 +1,14 @@
+python3 -c "
+lines = open('docs/planning/ROADMAP.md', encoding='utf-8').read().splitlines()
+start = next(i for i, l in enumerate(lines) if l.strip() == '## Sequencing Recommendation')
+end = next(i for i in range(start + 1, len(lines)) if lines[i].startswith('## '))
+block = ' '.join(lines[start + 1:end])
+pinned = 'Track 2 was superseded as the phase-005 selection by NIP-0001 (see the supersession note above) and remains candidate scope for a subsequent phase.'
+assert pinned in block, 'exact pinned replacement sentence not found (verbatim, contiguous) in the Sequencing Recommendation section'
+assert 'recommended phase 005' not in block, 'stale phrase still present in Sequencing Recommendation section'
+remainder = block.replace(pinned, '', 1)
+assert not ('Track 2' in remainder and 'recommended' in remainder), 'a sentence OTHER than the pinned one still co-mentions Track 2 and recommended -- possible meaning-reversing restatement'
+print('PASS')
+"
+PASS
+EXIT:0

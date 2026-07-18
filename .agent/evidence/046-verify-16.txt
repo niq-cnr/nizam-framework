@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- .agent/run_state.json && echo PASS || { echo '.agent/run_state.json was modified -- orchestrator-owned, forbidden'; exit 1; }
+PASS
+EXIT:0

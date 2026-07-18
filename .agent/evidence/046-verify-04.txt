@@ -1,0 +1,18 @@
+python3 -c "
+import subprocess, yaml
+head_text = subprocess.check_output(['git', 'show', 'HEAD:.agent/product_spec_005.md']).decode()
+work_text = open('.agent/product_spec_005.md', encoding='utf-8').read()
+head_body = head_text.split('---', 2)[2]
+work_body = work_text.split('---', 2)[2]
+assert head_body == work_body, 'spec body changed -- forbidden'
+head_fm = yaml.safe_load(head_text.split('---')[1])
+work_fm = yaml.safe_load(work_text.split('---')[1])
+allowed = {'status', 'version', 'change_log'}
+for k in set(head_fm) | set(work_fm):
+    if k in allowed:
+        continue
+    assert head_fm.get(k) == work_fm.get(k), f'frontmatter field {k} changed -- forbidden'
+print('PASS')
+"
+PASS
+EXIT:0

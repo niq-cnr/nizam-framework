@@ -1,0 +1,3 @@
+git show HEAD^:docs/planning/ROADMAP.md | grep -Eq 'Track 2 is the recommended phase 005' && echo PASS || { echo "mandated HEAD^ anti-vacuity literal did not match (note: pre-046-commit, HEAD^ resolves to feature 044's commit, not the pre-046 tip -- see design_notes for the timing caveat)"; exit 1; }
+PASS
+EXIT:0

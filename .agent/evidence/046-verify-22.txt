@@ -1,0 +1,7 @@
+head_count=$(git show HEAD:docs/planning/DEBT.md | grep -c '^| NDEBT-')
+work_count=$(grep -c '^| NDEBT-' docs/planning/DEBT.md)
+delta=$((work_count - head_count))
+[ "$delta" -eq 2 ] || { echo "expected exactly 2 new NDEBT rows (HEAD had $head_count, working tree has $work_count, delta=$delta)"; exit 1; }
+echo PASS
+PASS
+EXIT:0
