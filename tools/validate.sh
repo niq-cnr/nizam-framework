@@ -105,8 +105,9 @@ Modes:
                       sweep, C6 bootstrap.sh sanity, C7 module-README
                       presence, C8 git-history version/changelog diff) do
                       NOT run under --target. Exits non-zero if any
-                      applicable check fails. --target is the only mode
-                      under which files in tools/fixtures/ are ever read.
+                      applicable check fails. Files in tools/fixtures/ are
+                      read only under --target and by the default sweep's
+                      C12 ecosystem-fixture check.
 
   --payload           Consumer-payload mode. Validates only the subset of
                       checks relevant to a `bootstrap.sh`-injected consumer
@@ -1333,7 +1334,9 @@ check_c11_dogfood_payload_skip() {
 # the tools/fixtures/{ecosystem_baseline,preflight_verdict,
 # engineering_finding}_*.json fixtures are load-bearing, not merely present).
 # Default full-sweep only (mirrors C6/C7's repo-wide-only precedent); not run
-# under --target (each fixture is already individually inspectable that way)
+# under --target (each fixture is directly inspectable via
+# python3+jsonschema; --target currently misroutes these families --
+# NDEBT-015)
 # or --payload (no acceptance test requires payload-mode fixture coverage;
 # see NON-GOALS).
 # ---------------------------------------------------------------------------
