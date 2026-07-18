@@ -60,10 +60,28 @@ jobs:
           git rev-parse -q --verify "refs/tags/$TAG" >/dev/null || {
             echo "FATAL: tag '$TAG' does not exist on this repository." >&2; exit 1
           }
+          # NDEBT-025 fix: actions/checkout can materialize an annotated tag
+          # as a peeled (lightweight) ref in the runner — the v0.7.0 run
+          # published the MERGE-COMMIT subject as the Release title because
+          # %(contents:subject) read a commit object. Re-fetch the genuine
+          # tag object from the remote, then derive the title from its real
+          # object type; if the remote says the tag is annotated but the
+          # local ref still disagrees, fail loudly instead of mistitling.
+          git fetch --force --no-tags origin "+refs/tags/$TAG:refs/tags/$TAG"
+          OBJTYPE="$(git cat-file -t "$(git rev-parse "refs/tags/$TAG")")"
+          REMOTE_PEELED="$(git ls-remote origin "refs/tags/$TAG" | grep -c '\^{}' || true)"
+          if [ "$REMOTE_PEELED" -ge 1 ] && [ "$OBJTYPE" != "tag" ]; then
+            echo "FATAL: remote tag '$TAG' is annotated but the local ref resolves to a $OBJTYPE object; refusing to derive a Release title from the wrong object (NDEBT-025)." >&2
+            exit 1
+          fi
           # Release title: the annotated tag's subject line (the release
           # train's human sign-off artifact names the release); fall back to
-          # the bare tag for lightweight tags.
-          TITLE="$(git for-each-ref "refs/tags/$TAG" --format='%(contents:subject)')"
+          # the bare tag for genuinely lightweight tags.
+          if [ "$OBJTYPE" = "tag" ]; then
+            TITLE="$(git for-each-ref "refs/tags/$TAG" --format='%(contents:subject)')"
+          else
+            TITLE="$TAG"
+          fi
           [ -n "$TITLE" ] || TITLE="$TAG"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "title=$TITLE" >> "$GITHUB_OUTPUT"

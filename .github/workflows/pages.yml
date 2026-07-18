@@ -1,0 +1,58 @@
+name: pages
+
+# Publishes the self-contained HTML user guide (docs/guide/) to GitHub
+# Pages — the human gate recorded open since phase 003 (ROADMAP Track 1
+# item 2). The site is the guide directory itself; docs/guide/index.html
+# is the page. actions/configure-pages runs with enablement: true so the
+# first successful run CREATES the Pages site (source: GitHub Actions)
+# without a manual settings step; if organization policy forbids
+# token-driven enablement, this job fails loudly at that step and the
+# one-click manual enable (Settings -> Pages -> Source: GitHub Actions)
+# remains the fallback, after which a re-run publishes.
+#
+# The deploy actions below are pinned to major-version tags, not commit
+# SHAs, unlike this repository's other workflows: resolving the SHAs
+# requires reading the external action repositories, which the authoring
+# session could not reach. Reviewers may harden the pins to SHAs.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    paths:
+      - "docs/guide/**"
+      - ".github/workflows/pages.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Configure GitHub Pages (creates the site on first run)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload the user guide as the Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/guide
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
