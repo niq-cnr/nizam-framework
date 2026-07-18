@@ -2,10 +2,13 @@
 id: nizam-ecosystem-module
 title: "Ecosystem Engineering Cycle"
 description: "Reusable governance lifecycle for reconciling, auditing, planning, executing, and improving multi-repository software ecosystems."
-version: 0.2.0
+version: 0.2.1
 status: active
 authoritative_source: ecosystem/README.md
 change_log:
+  - version: "0.2.1"
+    date: "2026-07-18"
+    summary: "Feature 048 (operator PR #21 review, finding 1): the module-navigation paragraph no longer calls 02/03/07 'Planned' — the four core protocols shipped at features 033-036; the five Planned documents (00/04/05/06/08) are the deferrable set. Prose re-synced with the table the 034-036 row-flips had left contradicting it."
   - version: "0.2.0"
     date: "2026-07-17"
     summary: "Completed the module index (handover F-002, phase 005-ecosystem-cycle): defined the canonical 10-stage lifecycle and added the module-navigation section for the 9 numbered protocol documents."
@@ -77,13 +80,16 @@ as later features land their protocol document.
 | 08 | `08_ga_gate.md` | Promote (GA gate) | Planned |
 
 "Shipped" means the document already exists in this repository's `ecosystem/`
-directory; "Planned" means it does not yet exist here. Of the Planned documents,
+directory; "Planned" means it does not yet exist here. All four Shipped documents —
+the mandatory first-release surface's four core protocols
+(preflight/baseline/audit/comparison, product_spec_005.md Sec 2.3) — landed in phase
+005-ecosystem-cycle: `01_clean_state_preflight.md` (feature 033), then
 `02_evidence_baseline.md`, `03_engineering_audit.md`, and `07_progress_comparison.md`
-are mandatory-first-release scope for phase 005-ecosystem-cycle (product_spec_005.md
-Sec 2.1); `00_ecosystem_bootstrap.md`, `04_dependency_reconciliation.md`,
-`05_release_train_coordination.md`, `06_simplification_review.md`, and
-`08_ga_gate.md` are deferrable beyond phase 005 entirely (product_spec_005.md Sec 2.3)
-and may be protocol-only or land in a later programme phase.
+(features 034-036). The five Planned documents — `00_ecosystem_bootstrap.md`,
+`04_dependency_reconciliation.md`, `05_release_train_coordination.md`,
+`06_simplification_review.md`, and `08_ga_gate.md` — are deferrable beyond phase 005
+entirely (product_spec_005.md Sec 2.3) and may be protocol-only or land in a later
+programme phase.
 
 ## Capability Routing
 

@@ -2,9 +2,13 @@
 id: nizam-ecosystem-engineering-audit
 title: "Engineering Audit Protocol"
 description: "The reusable, evidence-first engineering audit protocol: consumes the current execution's Preflight verdict and Baseline, ranks evidence into four tiers, assesses claims against the ten-state maturity model under the no-promotion-beyond-evidence rule, records finding confidence, and explicitly excludes commercial/market readiness from generic engineering scoring."
-version: 0.1.0
+version: 0.1.1
 status: active
 authoritative_source: ecosystem/03_engineering_audit.md
+change_log:
+  - version: "0.1.1"
+    date: "2026-07-18"
+    summary: "Feature 048 (operator PR #21 review, finding 4): the deferred GA-gate reference now uses the module's bare-filename convention (08_ga_gate.md) instead of a directory-qualified path that dangles until the document ships."
 ---
 
 # Engineering Audit Protocol
@@ -137,7 +141,7 @@ observed running, and proven in production, backed by evidence an auditor
 can point to.
 
 Commercial and GA readiness are assessed separately, by the deferred GA gate
-(`ecosystem/08_ga_gate.md`, per
+(`08_ga_gate.md`, this module's planned protocol document, per
 `docs/nips/NIP-0001-ecosystem-engineering-cycle.md` Section 2.3), and MUST
 NOT be conflated with, or substituted for, an engineering audit finding. An
 engineering finding that scores a capability's commercial fit, pricing

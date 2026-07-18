@@ -2,9 +2,13 @@
 id: nizam-ecosystem-progress-comparison
 title: "Progress Comparison Protocol"
 description: "The reusable protocol for comparing two approved baselines or audits: distinguishing new, resolved, reopened, and stale findings, closing a resolved finding only with closure evidence, refusing to silently reuse stale evidence, and making every score movement traceable to evidence."
-version: 0.1.0
+version: 0.1.1
 status: active
 authoritative_source: ecosystem/07_progress_comparison.md
+change_log:
+  - version: "0.1.1"
+    date: "2026-07-18"
+    summary: "Feature 048 (operator PR #21 review, finding 4): both references to the deferred delta schema now use the module's bare-filename convention (audit_delta.schema.json, planned under schema/) instead of a directory-qualified path that dangles until the schema ships."
 ---
 
 # Progress Comparison Protocol
@@ -128,9 +132,9 @@ comparison execution, per the framework's Artifact Locations convention
 (the four finding-state transition classes of Section 3, the closure
 evidence and stale-evidence references of Sections 4-5, and the
 score-movement citations of Section 6) is defined by an optional
-`schema/audit_delta.schema.json`; per `product_spec_005.md` Section 2.3,
-this schema is deferrable within the minimal-viable release and is not yet
-present in this repository. This protocol governs the artifact's required
+`audit_delta.schema.json` (planned under `schema/`); per
+`product_spec_005.md` Section 2.3, this schema is deferrable within the
+minimal-viable release and is not yet present in this repository. This protocol governs the artifact's required
 semantics regardless of whether that schema has landed; it does not itself
 define the JSON Schema.
 
@@ -157,7 +161,8 @@ pasted inline into the delta artifact or into a chat transcript.
   this protocol's evidence externalisation follows.
 - `methodology/03_circuit_breaker.md` -- the house pattern this document's
   structure, tone, and immutability discipline follow.
-- `schema/audit_delta.schema.json` -- the optional, deferrable machine-readable
-  schema for the delta artifact this protocol describes (per
-  `product_spec_005.md` Section 2.3, not scheduled in this phase's
-  execution order; not yet present at the time this protocol was authored).
+- `audit_delta.schema.json` -- the optional, deferrable machine-readable
+  schema for the delta artifact this protocol describes (planned under
+  `schema/`; per `product_spec_005.md` Section 2.3, not scheduled in this
+  phase's execution order; not yet present at the time this protocol was
+  authored).

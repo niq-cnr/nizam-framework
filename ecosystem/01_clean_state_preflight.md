@@ -2,9 +2,13 @@
 id: nizam-ecosystem-clean-state-preflight
 title: "Clean-State Preflight Protocol"
 description: "The reusable preflight protocol that gates entry into the ecosystem engineering cycle: a machine-readable verdict of exactly one of PASS, PASS_WITH_EXCEPTIONS, or FAIL, explicit blocking rules, and the operator-exception rule PASS_WITH_EXCEPTIONS carries before execution continues."
-version: 0.1.0
+version: 0.1.1
 status: active
 authoritative_source: ecosystem/01_clean_state_preflight.md
+change_log:
+  - version: "0.1.1"
+    date: "2026-07-18"
+    summary: "Feature 048 (operator PR #21 review, finding 2): Section 6 now defines when schema-validity binds — the finalized artifact only; a run halted pending the Section-5 operator decision records its exceptions in an informational pending artifact (the shipped CLI's preflight.pending.json) and withholds preflight.json, resolving the Sec 5/Sec 6 pre-approval contradiction empirically confirmed in review."
 ---
 
 # Clean-State Preflight Protocol
@@ -118,6 +122,20 @@ The artifact's shape (the exact three-verdict enum and the structured
 operator-approval fields `PASS_WITH_EXCEPTIONS` requires) is defined by
 `schema/preflight_verdict.schema.json`. This protocol governs the artifact's
 required semantics; it does not itself define the JSON Schema.
+
+Schema-validity binds the artifact once it is final. A verdict artifact is
+final when it records `PASS`, `FAIL`, or `PASS_WITH_EXCEPTIONS` together with
+the structured operator-approval decision Section 5 requires. A run that halts
+pending operator approval (Section 5) does not yet emit `preflight.json`: it
+records the pending exceptions in an informational pending artifact alongside
+the eventual artifact location — the shipped preflight CLI
+(`tools/ecosystem_preflight.py`) writes `preflight.pending.json`, deliberately
+non-schema-conformant, and withholds `preflight.json` entirely — and the
+schema-valid `preflight.json` is emitted only once the operator's decision is
+folded in. That a pre-approval `PASS_WITH_EXCEPTIONS` state is unrepresentable
+as a schema-valid `preflight.json` is by design, not accident: the schema's
+required `operator_approval` block is the mechanism that makes an unapproved
+exception set impossible to mistake for an approved one.
 
 Evidence backing the verdict (raw tool output, logs, or intermediate checks)
 is externalised by path under `.agent/evidence/<execution-id>/`, per the
