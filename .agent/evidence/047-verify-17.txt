@@ -1,0 +1,7 @@
+source tools/verify_lib.sh
+vlib_scope_guard "docs/planning/DEBT.md" "tools/validate.sh" "v0.6.0-release-notes.md" || { echo 'vlib_scope_guard reported out-of-scope changed path(s)'; exit 1; }
+echo "NOTE (non-blocking, pre-commit): the mandated HEAD-caret..HEAD tip-diff-confinement literal is timing-deferred until this feature is committed as the single stack-tip commit -- see design_notes.head_caret_timing_note"
+echo PASS
+NOTE (non-blocking, pre-commit): the mandated HEAD-caret..HEAD tip-diff-confinement literal is timing-deferred until this feature is committed as the single stack-tip commit -- see design_notes.head_caret_timing_note
+PASS
+EXIT:0

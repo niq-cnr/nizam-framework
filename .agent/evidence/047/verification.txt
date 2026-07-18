@@ -1,0 +1,220 @@
+set -e
+git show HEAD:docs/planning/DEBT.md | grep -Fq '(?:^|_)(?:neg|invalid)(?:_|\.)' || { echo 'raw-pipe NDEBT-016 regex unexpectedly already fixed at HEAD'; exit 1; }
+v=$(git show HEAD:docs/planning/DEBT.md | python3 -c "import yaml,sys; print(yaml.safe_load(sys.stdin.read().split('---')[1])['version'])")
+[ "$v" = "0.12.0" ] || { echo "expected HEAD DEBT.md version 0.12.0, got $v"; exit 1; }
+git show HEAD:docs/planning/DEBT.md | grep -Eq 'NDEBT-021|NDEBT-022' && { echo 'NDEBT-021/022 unexpectedly already present at HEAD'; exit 1; }
+git show HEAD:tools/validate.sh | python3 -c "
+import sys
+t = ' '.join(sys.stdin.read().split())
+assert '--target is the only mode under which files in tools/fixtures/ are ever read' in t, 'help text unexpectedly already fixed at HEAD'
+assert 'each fixture is already individually inspectable that way' in t, 'line-1336 comment unexpectedly already fixed at HEAD'
+"
+echo PASS
+PASS
+EXIT:0
+-----
+python3 -c "import sys; ls=[l for l in open('docs/planning/DEBT.md',encoding='utf-8') if l.lstrip().startswith('| NDEBT-016 ')]; assert ls, 'row missing'; s=ls[0].strip().replace(chr(92)+'|',chr(0)); cells=s.split('|')[1:-1]; sys.exit(0 if len(cells)==5 and cells[0].strip()=='NDEBT-016' and cells[2].strip()=='Low' else 1)"
+
+EXIT:0
+-----
+grep -Fq '(?:^\|_)(?:neg\|invalid)(?:_\|\.)' docs/planning/DEBT.md && ! grep -Fq '(?:^|_)(?:neg|invalid)(?:_|\.)' docs/planning/DEBT.md
+
+EXIT:0
+-----
+git show HEAD^:docs/planning/DEBT.md | grep -Fq '(?:^|_)(?:neg|invalid)(?:_|\.)'
+
+EXIT:0
+-----
+python3 -c "import sys; t=' '.join(open('tools/validate.sh',encoding='utf-8').read().split()); bad='--target is the only mode under which files in tools/fixtures/ are ever read'; ok='Files in tools/fixtures/ are read only under --target and by the default sweep'; sys.exit(0 if bad not in t and ok in t else 1)"
+
+EXIT:0
+-----
+git show HEAD^:tools/validate.sh | python3 -c "import sys; t=' '.join(sys.stdin.read().split()); sys.exit(0 if '--target is the only mode under which files in tools/fixtures/ are ever read' in t else 1)"
+
+EXIT:0
+-----
+python3 -c "import sys; t=' '.join(open('tools/validate.sh',encoding='utf-8').read().split()); old='each fixture is already individually inspectable that way'; sys.exit(0 if old not in t and 'NDEBT-015' in t else 1)"
+
+EXIT:0
+-----
+git show HEAD^:tools/validate.sh | python3 -c "import sys; t=' '.join(sys.stdin.read().split()); sys.exit(0 if 'each fixture is already individually inspectable that way' in t else 1)"
+
+EXIT:0
+-----
+python3 -c "
+t = ' '.join(open('tools/validate.sh', encoding='utf-8').read().split())
+pinned = 'already independently inspectable via a direct \`python3\`+\`jsonschema\` invocation'
+assert pinned in t, 'line-319 already-correct phrasing changed or missing -- forbidden to touch'
+print('PASS')
+"
+PASS
+EXIT:0
+-----
+python3 -c "
+import subprocess
+head_text = subprocess.check_output(['git', 'show', 'HEAD:tools/validate.sh']).decode()
+work_text = open('tools/validate.sh', encoding='utf-8').read()
+
+from_a = '                      applicable check fails. --target is the only mode\n                      under which files in tools/fixtures/ are ever read.\n'
+to_a   = '                      applicable check fails. Files in tools/fixtures/ are\n                      read only under --target and by the default sweep\'s\n                      C12 ecosystem-fixture check.\n'
+from_b = '# under --target (each fixture is already individually inspectable that way)\n'
+to_b   = '# under --target (each fixture is directly inspectable via\n# python3+jsonschema; --target currently misroutes these families --\n# NDEBT-015)\n'
+
+assert head_text.count(from_a) == 1, f'Spot A FROM text must occur exactly once in HEAD, found {head_text.count(from_a)}'
+assert head_text.count(from_b) == 1, f'Spot B FROM text must occur exactly once in HEAD, found {head_text.count(from_b)}'
+
+transformed = head_text.replace(from_a, to_a, 1).replace(from_b, to_b, 1)
+assert transformed == work_text, 'working-tree tools/validate.sh is not byte-identical to HEAD-with-exactly-the-two-pinned-substitutions-applied -- unauthorized change detected'
+print('PASS')
+"
+PASS
+EXIT:0
+-----
+python3 -c "import re,sys; t=open('docs/planning/DEBT.md',encoding='utf-8').read(); rows={m.group(1):m.group(2).strip() for m in re.finditer(r'\|\s*(NDEBT-0(?:21|22))\s*\|[^|]*\|\s*(Low|Medium|High|P0|P1)\s*\|', t)}; sys.exit(0 if set(rows)=={'NDEBT-021','NDEBT-022'} and rows['NDEBT-021']=='Low' and rows['NDEBT-022']=='Medium' else 1)"
+
+EXIT:0
+-----
+python3 -c "import yaml,sys; d=yaml.safe_load(open('docs/planning/DEBT.md',encoding='utf-8').read().split('---')[1]); sys.exit(0 if str(d['version'])!='0.12.0' else 1)"
+
+EXIT:0
+-----
+head_count=$(git show HEAD:docs/planning/DEBT.md | grep -c '^| NDEBT-')
+work_count=$(grep -c '^| NDEBT-' docs/planning/DEBT.md)
+delta=$((work_count - head_count))
+[ "$delta" -eq 2 ] || { echo "expected exactly 2 new NDEBT rows (HEAD had $head_count, working tree has $work_count, delta=$delta)"; exit 1; }
+echo PASS
+PASS
+EXIT:0
+-----
+python3 -c "
+import re
+t = open('docs/planning/DEBT.md', encoding='utf-8').read()
+lines = t.splitlines()
+line21 = next((l for l in lines if re.match(r'^\| *NDEBT-021 *\|', l)), None)
+assert line21, 'NDEBT-021 row not found'
+assert ('ecosystem_preflight.py' in line21) and ('fail' in line21.lower()), 'NDEBT-021 row missing ecosystem_preflight.py / fail-closed substance'
+line22 = next((l for l in lines if re.match(r'^\| *NDEBT-022 *\|', l)), None)
+assert line22, 'NDEBT-022 row not found'
+assert ('ecosystem/07' in line22) and (('taxonomy' in line22.lower()) or ('non-exhaustive' in line22.lower())), 'NDEBT-022 row missing ecosystem/07 taxonomy substance'
+print('PASS')
+"
+PASS
+EXIT:0
+-----
+python3 -c "
+import re
+t = open('docs/planning/DEBT.md', encoding='utf-8').read()
+lines = t.splitlines()
+for rid in ('NDEBT-021', 'NDEBT-022'):
+    line = next((l for l in lines if re.match(rf'^\| *{rid} *\|', l)), None)
+    assert line, f'{rid} row not found'
+    stripped = line.replace('\\\\|', '')
+    cells = stripped.split('|')[1:-1]
+    assert len(cells) == 5, f'{rid} row does not parse to 5 cells after escape-neutralisation (got {len(cells)})'
+print('PASS')
+"
+PASS
+EXIT:0
+-----
+tracked_bad=0
+while IFS= read -r path; do
+  [ -z "$path" ] && continue
+  case "$path" in
+    .agent/feature_list_005.json) ;;
+    *) echo "out-of-scope tracked .agent modification: $path"; tracked_bad=1 ;;
+  esac
+done <<< "$(git diff --name-only HEAD -- .agent)"
+[ "$tracked_bad" -eq 0 ] || exit 1
+
+untracked_bad=0
+while IFS= read -r line; do
+  [ -z "$line" ] && continue
+  case "$line" in
+    '?? '*) ;;
+    *) continue ;;
+  esac
+  path="${line:3}"
+  case "$path" in
+    .agent/contracts/047.json|.agent/qa/047*.json|.agent/evidence/047-*|.agent/evidence/047/*|.agent/planning_notes_047.md) ;;
+    *) echo "out-of-scope untracked .agent artifact: $path"; untracked_bad=1 ;;
+  esac
+done <<< "$(git status --porcelain --untracked-files=all -- .agent)"
+[ "$untracked_bad" -eq 0 ] && echo PASS || exit 1
+PASS
+EXIT:0
+-----
+source tools/verify_lib.sh
+vlib_scope_guard "docs/planning/DEBT.md" "tools/validate.sh" "v0.6.0-release-notes.md" || { echo 'vlib_scope_guard reported out-of-scope changed path(s)'; exit 1; }
+echo "NOTE (non-blocking, pre-commit): the mandated HEAD-caret..HEAD tip-diff-confinement literal is timing-deferred until this feature is committed as the single stack-tip commit -- see design_notes.head_caret_timing_note"
+echo PASS
+NOTE (non-blocking, pre-commit): the mandated HEAD-caret..HEAD tip-diff-confinement literal is timing-deferred until this feature is committed as the single stack-tip commit -- see design_notes.head_caret_timing_note
+PASS
+EXIT:0
+-----
+out=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0 && echo "$out" | tail -1 | grep -Eqx 'SUMMARY: 12 passed, 0 failed' && echo PASS || { echo "default sweep failed (rc=$rc)"; exit 1; }
+PASS
+EXIT:0
+-----
+out=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0 && echo "$out" | tail -1 | grep -Eqx 'SUMMARY \(payload mode\): 10 passed, 0 failed' && echo PASS || { echo "payload sweep failed (rc=$rc)"; exit 1; }
+PASS
+EXIT:0
+-----
+bash tools/e2e_bootstrap_test.sh >/dev/null 2>&1; test $? -eq 0 && echo PASS || { echo "e2e bootstrap test failed"; exit 1; }
+PASS
+EXIT:0
+-----
+git diff --quiet HEAD -- .agent/run_state.json && echo PASS || { echo '.agent/run_state.json was modified -- orchestrator-owned, forbidden'; exit 1; }
+PASS
+EXIT:0
+-----
+git diff --quiet HEAD -- docs/planning/manifest.json && echo PASS || { echo 'docs/planning/manifest.json was modified -- forbidden'; exit 1; }
+PASS
+EXIT:0
+-----
+if [ -f v0.6.0-release-notes.md ]; then
+  h=$(sha256sum v0.6.0-release-notes.md | awk '{print $1}')
+  [ "$h" = "15ac6acaa9a549a171b5f49617654cac189322fbab760d78104b4c3f4662c00b" ] || { echo "v0.6.0-release-notes.md hash changed: $h"; exit 1; }
+fi
+echo PASS
+PASS
+EXIT:0
+-----
+f=.agent/evidence/045-release-readiness-checklist.md
+h=$(sha256sum "$f" | awk '{print $1}')
+[ "$h" = "06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea" ] || { echo "045 checklist hash changed: $h"; exit 1; }
+echo PASS
+PASS
+EXIT:0
+-----
+n=$(awk '/^## Open/{f=1} /^## Resolved/{f=0} f' docs/planning/DEBT.md | grep '^| NDEBT' | grep -icE '\| *(High|Critical) *\|')
+[ "$n" -eq 0 ] || { echo "found $n open High/Critical debt item(s) -- release exit criterion violated"; exit 1; }
+echo PASS
+PASS
+EXIT:0
+-----
+python3 -c "
+import re
+t = open('docs/planning/DEBT.md', encoding='utf-8').read()
+lines = t.splitlines()
+line19 = next((l for l in lines if re.match(r'^\| *NDEBT-019 *\|', l)), None)
+line20 = next((l for l in lines if re.match(r'^\| *NDEBT-020 *\|', l)), None)
+assert line19, 'NDEBT-019 row missing'
+assert line20, 'NDEBT-020 row missing'
+m19 = re.match(r'^\| *NDEBT-019 *\| *[^|]*\| *([^|]*)\|', line19)
+m20 = re.match(r'^\| *NDEBT-020 *\| *[^|]*\| *([^|]*)\|', line20)
+assert m19 and m19.group(1).strip() == 'Low', 'NDEBT-019 severity changed'
+assert m20 and m20.group(1).strip() == 'Medium', 'NDEBT-020 severity changed'
+assert 'pipefail' in line19, 'NDEBT-019 substance text changed'
+assert 'rm -f' in line20, 'NDEBT-020 substance text changed'
+print('PASS')
+"
+PASS
+EXIT:0
+-----
+before_count=10
+after=$(git tag -l | wc -l)
+[ "$after" -eq "$before_count" ] || { echo "tag count changed: expected $before_count, got $after"; exit 1; }
+git tag -l 'v0.7.0' | grep -q . && { echo 'v0.7.0 tag was created -- forbidden'; exit 1; } || echo PASS
+PASS
+EXIT:0
+-----

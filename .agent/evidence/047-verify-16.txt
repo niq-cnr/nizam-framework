@@ -1,0 +1,26 @@
+tracked_bad=0
+while IFS= read -r path; do
+  [ -z "$path" ] && continue
+  case "$path" in
+    .agent/feature_list_005.json) ;;
+    *) echo "out-of-scope tracked .agent modification: $path"; tracked_bad=1 ;;
+  esac
+done <<< "$(git diff --name-only HEAD -- .agent)"
+[ "$tracked_bad" -eq 0 ] || exit 1
+
+untracked_bad=0
+while IFS= read -r line; do
+  [ -z "$line" ] && continue
+  case "$line" in
+    '?? '*) ;;
+    *) continue ;;
+  esac
+  path="${line:3}"
+  case "$path" in
+    .agent/contracts/047.json|.agent/qa/047*.json|.agent/evidence/047-*|.agent/evidence/047/*|.agent/planning_notes_047.md) ;;
+    *) echo "out-of-scope untracked .agent artifact: $path"; untracked_bad=1 ;;
+  esac
+done <<< "$(git status --porcelain --untracked-files=all -- .agent)"
+[ "$untracked_bad" -eq 0 ] && echo PASS || exit 1
+PASS
+EXIT:0

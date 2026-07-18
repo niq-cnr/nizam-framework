@@ -1,0 +1,6 @@
+f=.agent/evidence/045-release-readiness-checklist.md
+h=$(sha256sum "$f" | awk '{print $1}')
+[ "$h" = "06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea" ] || { echo "045 checklist hash changed: $h"; exit 1; }
+echo PASS
+PASS
+EXIT:0

@@ -1,0 +1,5 @@
+n=$(awk '/^## Open/{f=1} /^## Resolved/{f=0} f' docs/planning/DEBT.md | grep '^| NDEBT' | grep -icE '\| *(High|Critical) *\|')
+[ "$n" -eq 0 ] || { echo "found $n open High/Critical debt item(s) -- release exit criterion violated"; exit 1; }
+echo PASS
+PASS
+EXIT:0

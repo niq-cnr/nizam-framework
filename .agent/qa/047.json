@@ -1,0 +1,156 @@
+{
+  "feature_id": "047",
+  "qa_pass": true,
+  "checks_run": 27,
+  "checks_passed": 27,
+  "adversarial": {
+    "performed": true,
+    "description": "Independently re-ran all 27 of contract 047 (revision 1, approved at Loop-1 after a round-0 HIGH finding on entry 10 was fixed and re-confirmed by contract_review round 1)'s verification commands, extracted programmatically via json.load from .agent/contracts/047.json, live from the repository root against the real, implemented (uncommitted) working tree in a scratch harness under /tmp/claude-1000/scratch-047-qa/ (never a real repository path) -- 27/27 exit 0. Acceptance-test reconciliation: independently re-extracted feature 047's 18-entry acceptance_tests array from .agent/feature_list_005.json (4 prose criteria + 14 literal/command entries, including the [AMENDED 2026-07-18] entry at index 10 replacing the unsatisfiable line-319 grep -Fq literal with the whitespace-collapse content check -- confirmed this is indeed index 10 and treated its amended text as authoritative per dispatch instruction) and independently re-ran each of the 14 command entries standalone (not merely via the contract's own paraphrase): indices 4-16 (13 commands) all independently PASS (exit 0); index 17 (the HEAD^..HEAD tip-diff-confinement literal) independently re-confirmed non-empty/FAIL pre-commit for the same disclosed, pre-existing timing reason as contract design_notes.head_caret_timing_note and the AT's own embedded TIMING NOTE text -- HEAD^ currently resolves to feature 045's commit and HEAD to feature 046's close-out commit (git diff --name-only HEAD^ HEAD independently inspected: entirely 046-lifecycle paths, zero relation to 047's own scope), not a genuine 047 scope violation. Its real, load-bearing pre-commit substitute -- contract verification entry 17 (vlib_scope_guard scoped to docs/planning/DEBT.md, tools/validate.sh, v0.6.0-release-notes.md) -- independently re-confirmed PASS. This is correctly and honestly represented as pre-commit-timing-deferred, not a coverage gap, per the 046 QA precedent (qa/046.json's own identical treatment of its analogous tip-diff AT). Adversarial spot-checks, each independently performed against the REAL repository (never a scratch substitute for the actual target files): (a) re-ran entry 10's exact-transform-and-compare standalone AND independently inspected the full `git diff HEAD -- tools/validate.sh` by eye: exactly two hunks, corresponding precisely to Spot A (help text, lines ~108-109) and Spot B (line-1336 comment), nothing else changed anywhere in the file -- both the mechanical byte-identity assertion and the direct visual diff inspection agree. (b) independently read the real, current docs/planning/DEBT.md NDEBT-016 row directly: the code-span now reads `(?:^\\|_)(?:neg\\|invalid)(?:_\\|\\.)`, byte-identical to the contract's own pinned TO string; parses to exactly 5 cells with 'Low' in cell 3; the full `git diff HEAD -- docs/planning/DEBT.md` shows only the one-line NDEBT-016 regex-escape change, two new appended rows (NDEBT-021, NDEBT-022), and the version-line change -- nothing else. (c) independently read NDEBT-021 (Low) and NDEBT-022 (Medium) in full against planning_notes_047.md Sec 3's source texts: verbatim match; row-count delta independently re-confirmed exactly +2 via both entry 13's re-run and direct row counting in the diff; NDEBT-019/020 (registered by feature 046) independently confirmed present and byte-untouched in the diff context (no +/- lines near them) and via entry 25's re-run. (d) independently verified at the call site that check_c12_ecosystem_fixtures (validate.sh line 1363, invoked only at line 1596 inside the default-sweep branch, never inside the --target dispatcher check_c11_or_c4_target nor the --payload branch) is the mechanism that makes Spot A's new claim true -- C12 genuinely reads tools/fixtures/{family}_*.json only in the default sweep, confirming the reworded help text is accurate of current behavior, not merely internally consistent; independently confirmed the NDEBT-015 row (Medium, misrouting of all three ecosystem families under --target) referenced by Spot B's new comment text matches the registered row's actual substance. (e) independently recomputed and matched every pinned invariant against the real repository: 045 checklist sha256 06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea (exact match); v0.6.0-release-notes.md sha256 15ac6acaa9a549a171b5f49617654cac189322fbab760d78104b4c3f4662c00b (exact match); tag count exactly 10, `git tag -l v0.7.0` empty; `git diff --quiet HEAD` empty (byte-identical to HEAD) independently re-run for .agent/run_state.json, docs/planning/manifest.json, ecosystem/, schema/, tools/fixtures/, tools/ecosystem_preflight.py, NIZAM.json, README.md, CHANGELOG.md, CONTEXT.md, and docs/guide/; `git rev-parse HEAD` independently re-confirmed 6db8363e021327764298d389abbb316e2fd88bcf, unchanged. Both compliance sweeps independently re-run with exit status asserted: `bash tools/validate.sh` -> rc=0, 'SUMMARY: 12 passed, 0 failed'; `bash tools/validate.sh --payload` -> rc=0, 'SUMMARY (payload mode): 10 passed, 0 failed'; `bash tools/e2e_bootstrap_test.sh` -> rc=0. Evidence-bundle quality independently checked: all 27 flat .agent/evidence/047-verify-NN.txt files programmatically swept for a literal 'EXIT:0' last line (zero exceptions) and spot-checked (entries 1, 9, 10, 27) for first-line command fidelity against the contract JSON; no session-absolute path (/home/ or /tmp/) found in any evidence file; the consolidated .agent/evidence/047/verification.txt independently confirmed to contain exactly 27 'EXIT:0' markers; .agent/evidence/047/diff.patch was byte-compared (via `diff`) against a freshly generated `git diff HEAD -- docs/planning/DEBT.md tools/validate.sh` produced in this QA pass and found byte-identical. A full untracked-aware `git status --porcelain --untracked-files=all` was independently checked before, during, and after this QA pass and shows only the two contracted deliverables modified, the planner's pre-existing tolerated .agent/feature_list_005.json addition (independently confirmed to be purely additive -- the new feature-047 entry only, nothing else changed), the expected new untracked .agent/ contract/qa-review/planning-note/evidence artifacts, and the pre-existing untouched v0.6.0-release-notes.md -- no out-of-scope path was changed. All probe/fixture work was performed exclusively under this evaluator's own scratch directory (/tmp/claude-1000/scratch-047-qa/), cwd verified before every command, and no destructive command ever carried a real-repository path. No git tag was created or deleted, no sign-off was simulated, and feature/run_state status was left untouched by this evaluator.",
+    "result": "27/27 contract verification entries independently re-run, all exit 0. All 18 of feature 047's feature-list acceptance tests accounted for: 13 command entries independently re-run and PASS, 1 (index 17, the HEAD^..HEAD tip-diff literal) correctly and honestly represented as pre-commit-timing-deferred with its real substitute (entry 17 / vlib_scope_guard) independently confirmed passing, and the 4 prose criteria independently confirmed satisfied by direct inspection of the real deliverables. All 5 targeted adversarial spot-checks (entry-10 byte-identity + direct diff inspection, NDEBT-016 row content/parse, NDEBT-021/022 substance + row delta + NDEBT-019/020 preservation, validate.sh call-site truth-of-claim for both reworded strings, and the full cross-feature invariant set) independently confirmed against the real, current working tree. Full compliance sweep unregressed at 12/12 default and 10/10 payload plus the e2e bootstrap test, all with exit status independently asserted. Evidence bundle (27 flat files, consolidated verification.txt, diff.patch) independently confirmed fresh, complete, and correctly shaped. No out-of-scope path touched; HEAD unchanged at 6db8363.",
+    "evidence": ".agent/evidence/047-verify-01.txt through -27.txt (independently re-run live in this QA pass under /tmp/claude-1000/scratch-047-qa/, not merely re-read); .agent/evidence/047/diff.patch confirmed byte-identical via `diff` to a fresh `git diff HEAD -- docs/planning/DEBT.md tools/validate.sh` produced in this QA pass; .agent/evidence/047/verification.txt's 27 EXIT:0 markers cross-checked against this pass's own 27/27 live re-run; the real docs/planning/DEBT.md NDEBT-016/019/020/021/022 rows and tools/validate.sh's two reworded spots plus line 319 were read directly in this QA pass (not inferred from the contract's own claims); `git status --porcelain --untracked-files=all` and `git diff --stat HEAD` on the real repository checked before, during, and after this QA pass show no change attributable to this evaluator beyond this pass's own .agent/qa/047.json artifact write; all scratch-fixture work (the 27-entry re-run harness, the 18-entry acceptance-test re-run harness, and the diff-freshness comparison) was written and executed under this evaluator's own session scratchpad, never a real repository path."
+  },
+  "evidence_files": [
+    ".agent/evidence/047-verify-01.txt",
+    ".agent/evidence/047-verify-02.txt",
+    ".agent/evidence/047-verify-03.txt",
+    ".agent/evidence/047-verify-04.txt",
+    ".agent/evidence/047-verify-05.txt",
+    ".agent/evidence/047-verify-06.txt",
+    ".agent/evidence/047-verify-07.txt",
+    ".agent/evidence/047-verify-08.txt",
+    ".agent/evidence/047-verify-09.txt",
+    ".agent/evidence/047-verify-10.txt",
+    ".agent/evidence/047-verify-11.txt",
+    ".agent/evidence/047-verify-12.txt",
+    ".agent/evidence/047-verify-13.txt",
+    ".agent/evidence/047-verify-14.txt",
+    ".agent/evidence/047-verify-15.txt",
+    ".agent/evidence/047-verify-16.txt",
+    ".agent/evidence/047-verify-17.txt",
+    ".agent/evidence/047-verify-18.txt",
+    ".agent/evidence/047-verify-19.txt",
+    ".agent/evidence/047-verify-20.txt",
+    ".agent/evidence/047-verify-21.txt",
+    ".agent/evidence/047-verify-22.txt",
+    ".agent/evidence/047-verify-23.txt",
+    ".agent/evidence/047-verify-24.txt",
+    ".agent/evidence/047-verify-25.txt",
+    ".agent/evidence/047-verify-26.txt",
+    ".agent/evidence/047-verify-27.txt",
+    ".agent/evidence/047/diff.patch",
+    ".agent/evidence/047/verification.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": "`diff` of .agent/evidence/047/diff.patch against a freshly-generated `git diff HEAD -- docs/planning/DEBT.md tools/validate.sh` produced in this QA pass shows zero difference (byte-identical). The diff covers exactly the 2 contracted files; no other tracked file shows a diff against HEAD other than the planner's own pre-existing, tolerated .agent/feature_list_005.json addition (independently re-confirmed purely additive via `git diff HEAD -- .agent/feature_list_005.json` and via a full untracked-aware `git status --porcelain --untracked-files=all`).",
+    "verify_txt_and_verification_log_consistency": "Cross-checked .agent/evidence/047/verification.txt's 27 EXIT:0 markers against this QA pass's own independent, live re-run of all 27 verification commands (27/27 exit 0, matching exactly). Swept all 27 flat evidence files programmatically for a literal EXIT:0 last line (zero exceptions) and spot-checked entries 1, 9, 10, and 27 in full for first-line command fidelity against .agent/contracts/047.json's verification array."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_005.json feature 047 (status left 'pending', not touched by this evaluator; flipping status is the orchestrator's job)",
+    "amended_class_check": "All 18 of feature 047's acceptance_tests strings (4 prose criteria + 14 literal/command entries) were compared against contract 047's 27 verification entries and, where the AT itself supplies a literal command, independently re-run standalone in this QA pass (not merely via the contract's own paraphrase). Index 10 carries the [AMENDED 2026-07-18] note (the planner-authored grep -Fq literal for line 319 was unsatisfiable as written -- it wraps across two source lines and backtick-delimits python3/jsonschema -- and was replaced with a whitespace-collapse content check matching contract entry 9's own approach); its amended text was treated as authoritative per dispatch instruction and independently re-run standalone: PASS. One AT (index 17, the HEAD^ HEAD tip-commit-diff literal) is NOT literally satisfiable pre-commit -- independently re-confirmed non-empty when run standalone, for the same documented, pre-existing timing reason contract 047's own design_notes.head_caret_timing_note discloses (HEAD^ currently resolves to feature 045's commit and HEAD to feature 046's close-out commit, capturing 046's own lifecycle-artifact diff window, not a genuine 047 scope violation) -- its real, load-bearing pre-commit substitute is contract entry 17 (vlib_scope_guard), independently re-confirmed PASS in this QA pass. This is a correctly-disclosed, pre-existing timing deferral (identical in kind to feature 046's own analogous AT and qa/046.json's own treatment of it), not a coverage gap requiring further [AMENDED] reconciliation. The remaining 13 command ATs (indices 4-9, 11-16) are each satisfied with independently re-run evidence.",
+    "criteria": [
+      {
+        "criterion": "DEBT.md NDEBT-016 row parses to exactly 5 cells with severity 'Low' in position 3 (the raw regex pipes are escaped so GFM no longer mis-splits the row)",
+        "status": "satisfied",
+        "evidence": "Read the real docs/planning/DEBT.md NDEBT-016 row directly: code-span is `(?:^\\|_)(?:neg\\|invalid)(?:_\\|\\.)`, 'Low' in cell 3. Literal AT (index 4) re-run standalone: PASS."
+      },
+      {
+        "criterion": "tools/validate.sh help text and the C12 comment no longer misstate fixture-read modes; line 319's already-correct phrasing is untouched; zero behavior change",
+        "status": "satisfied",
+        "evidence": "Read the real tools/validate.sh directly via `git diff HEAD`: exactly two hunks (Spot A help text, Spot B line-1336 comment), line 319 absent from the diff (untouched). Literal ATs (indices 7, 9, 10-amended) re-run standalone: PASS. Entry-10 exact-transform byte-identity independently reproduced: PASS."
+      },
+      {
+        "criterion": "DEBT.md registers exactly NDEBT-021 (Low) and NDEBT-022 (Medium) with a frontmatter version bump",
+        "status": "satisfied",
+        "evidence": "Read the real DEBT.md rows directly: NDEBT-021 (Low), NDEBT-022 (Medium), verbatim match to planning_notes_047.md Sec 3. Literal ATs (indices 12, 13) re-run standalone: PASS. Version 0.12.0 -> 0.13.0 confirmed."
+      },
+      {
+        "criterion": "Both sweeps stay green (12/12 default, 10/10 payload), the e2e bootstrap is unaffected, and the tip commit touches only the two allowed files",
+        "status": "satisfied",
+        "evidence": "Literal ATs (indices 14, 15, 16) re-run standalone: rc=0 for all three, correct SUMMARY lines. Tip-commit scope proof (index 17, HEAD^..HEAD) is pre-commit-timing-deferred (see amended_class_check); its real substitute (contract entry 17, vlib_scope_guard) independently re-confirmed PASS -- only the two contracted files (plus pre-existing tolerated v0.6.0-release-notes.md) are changed outside .agent/."
+      },
+      {
+        "criterion": "DEBT.md NDEBT-016 row parses to exactly 5 markdown cells with 'NDEBT-016' in cell 1 and 'Low' in cell 3 (index 4, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": "The escaped regex code-span is present and the raw-pipe form is gone at HEAD (index 5, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": "Anti-vacuity companion, HEAD^-anchored: the raw-pipe form existed on the parent commit (index 6, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": "validate.sh help text no longer claims --target is the only fixture-read mode (index 7, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS. Independently verified TRUE of current behavior at the call site (check_c12_ecosystem_fixtures invoked only in the default-sweep branch, line 1596, never under --target or --payload)."
+      },
+      {
+        "criterion": "Anti-vacuity companion, HEAD^-anchored: the inaccurate help sentence existed on the parent commit (index 8, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": "The line-1336 comment now references NDEBT-015 and the old wording is gone (index 9, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS. NDEBT-015 row content independently confirmed to match the referenced substance (all three ecosystem families misroute under --target)."
+      },
+      {
+        "criterion": "Line-319 guidance preserved, [AMENDED 2026-07-18] whitespace-collapse content check (index 10, literal, amended text treated as authoritative)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS. Line 319 independently confirmed absent from `git diff HEAD -- tools/validate.sh` (untouched)."
+      },
+      {
+        "criterion": "The validate.sh diff is doc-only -- no changed line defines a function, invokes a check, or alters the exit expression (index 11, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS. Independently corroborated by entry 10's stronger HEAD-anchored exact-transform byte-identity proof."
+      },
+      {
+        "criterion": "DEBT.md registers exactly NDEBT-021 (Low) and NDEBT-022 (Medium) as Open rows (index 12, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": "DEBT.md frontmatter version was bumped from 0.12.0 (index 13, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS (now 0.13.0)."
+      },
+      {
+        "criterion": "Default compliance sweep stays green AND the validator exit status is asserted (index 14, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: rc=0, 'SUMMARY: 12 passed, 0 failed', PASS."
+      },
+      {
+        "criterion": "Payload compliance sweep stays green with its exit status asserted (index 15, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: rc=0, 'SUMMARY (payload mode): 10 passed, 0 failed', PASS."
+      },
+      {
+        "criterion": "The e2e bootstrap test is unaffected by the doc-only validate.sh edit (index 16, literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: rc=0, PASS."
+      },
+      {
+        "criterion": "TIMING NOTE: tip commit touches ONLY the two allowed files, HEAD^ HEAD form (index 17, literal)",
+        "status": "correctly-deferred (documented pre-commit timing caveat, not yet meaningful)",
+        "evidence": "Re-run standalone: reports non-empty pre-commit (HEAD^ resolves to feature 045's commit, HEAD to feature 046's close-out commit -- entirely 046-lifecycle paths, no relation to 047). The real, load-bearing pre-commit substitute (vlib_scope_guard, contract entry 17) independently re-confirmed PASS. Will become literally meaningful and should be re-checked once the orchestrator commits feature 047 as the new tip, per the identical treatment feature 046's own analogous AT received in qa/046.json."
+      }
+    ]
+  },
+  "non_blocking_observations": [
+    "Pre-existing NDEBT-019 row's own cited authoring pattern (raw `2>&1 | tail -1 | grep` pipes without pipefail/rc capture) is out of scope for feature 047 -- it is a pre-existing debt row inherited unmodified from feature 046, already queued for a follow-up self-compliance slice. Not treated as a 047 failure, per dispatch instruction."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. Feature 047 (PR-stack review response, round 2: PRs #22-#24) is complete and correct as an uncommitted, working-tree package (HEAD unchanged at 6db8363). All 27 of contract 047 (revision 1, approved at Loop-1 after the round-0 HIGH finding on entry 10 was fixed)'s verification entries independently re-run live against the real, implemented tree -- 27/27 exit 0. Acceptance-test reconciliation across all 18 of feature 047's feature-list acceptance tests found zero coverage gaps: 13 command entries independently PASS, index 10's [AMENDED 2026-07-18] line-319 literal (treated as authoritative per dispatch instruction) independently PASSes, and index 17's HEAD^..HEAD tip-diff literal is correctly and honestly represented as pre-commit-timing-deferred (its real substitute, vlib_scope_guard / contract entry 17, independently confirmed passing) -- identical treatment to feature 046's own analogous AT. Every adversarial vector specified in the dispatch was independently re-checked against the REAL repository: entry-10's exact-transform byte-identity was independently reproduced and corroborated by direct visual inspection of `git diff HEAD -- tools/validate.sh` (exactly two hunks, Spot A + Spot B, nothing else); the fixed NDEBT-016 row parses to the correct cell count with the GFM-neutralized regex byte-identical to the contract's pinned TO string; NDEBT-021 (Low)/NDEBT-022 (Medium) rows are verbatim matches to the contract pins, row delta is exactly +2, and NDEBT-019/020 are untouched; both of the two new validate.sh strings were independently verified TRUE of current behavior at the call site (check_c12_ecosystem_fixtures is invoked only in the default-sweep branch, never under --target or --payload) and the NDEBT-015 cross-reference matches its registered row; and every pinned cross-feature invariant (045 checklist SHA, release-notes hash, tag count of 10 with no v0.7.0, byte-identity of run_state.json/manifest.json/ecosystem//schema//tools/fixtures//tools/ecosystem_preflight.py/NIZAM.json/README.md/CHANGELOG.md/CONTEXT.md/docs/guide/, and HEAD unchanged at 6db8363) was independently reconfirmed. Both compliance sweeps are unregressed: rc=0 'SUMMARY: 12 passed, 0 failed' (default), rc=0 'SUMMARY (payload mode): 10 passed, 0 failed' (payload), plus the e2e bootstrap test (rc=0), all with exit status independently asserted, not merely grepped output. The evidence bundle is independently confirmed fresh and correctly shaped: all 27 flat evidence files carry a literal EXIT:0 as their last line and the exact contract command as their first line, the consolidated verification.txt agrees (27/27 EXIT:0 markers), and diff.patch is byte-identical to a freshly generated git diff of the 2 contracted files produced in this QA pass. The one non-blocking observation noted in the dispatch (the pre-existing NDEBT-019 row's raw-pipe authoring pattern) is out of 047's scope and not treated as a failure. No out-of-scope path was touched, independently reconfirmed via a full untracked-aware git status; only the two contracted files (docs/planning/DEBT.md, tools/validate.sh) plus the planner's pre-existing, purely-additive .agent/feature_list_005.json edit and the pre-existing untouched v0.6.0-release-notes.md are changed. No git tag was created or deleted, no sign-off was simulated, and no destructive command was run against any real repository path during this QA pass -- all probes ran under /tmp/claude-1000/scratch-047-qa/, cwd verified before every command. Only .agent/qa/047.json was written to the real repository, as instructed. Feature status in .agent/feature_list_005.json and .agent/run_state.json were left untouched by this evaluator -- the orchestrator owns advancing state and, per this feature's ordering note, ensuring this review-response fix lands before the operator executes H-FRAMEWORK-RELEASE for feature 045."
+  }
+}

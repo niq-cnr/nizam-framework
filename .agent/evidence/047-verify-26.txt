@@ -1,0 +1,18 @@
+python3 -c "
+import re
+t = open('docs/planning/DEBT.md', encoding='utf-8').read()
+lines = t.splitlines()
+line19 = next((l for l in lines if re.match(r'^\| *NDEBT-019 *\|', l)), None)
+line20 = next((l for l in lines if re.match(r'^\| *NDEBT-020 *\|', l)), None)
+assert line19, 'NDEBT-019 row missing'
+assert line20, 'NDEBT-020 row missing'
+m19 = re.match(r'^\| *NDEBT-019 *\| *[^|]*\| *([^|]*)\|', line19)
+m20 = re.match(r'^\| *NDEBT-020 *\| *[^|]*\| *([^|]*)\|', line20)
+assert m19 and m19.group(1).strip() == 'Low', 'NDEBT-019 severity changed'
+assert m20 and m20.group(1).strip() == 'Medium', 'NDEBT-020 severity changed'
+assert 'pipefail' in line19, 'NDEBT-019 substance text changed'
+assert 'rm -f' in line20, 'NDEBT-020 substance text changed'
+print('PASS')
+"
+PASS
+EXIT:0

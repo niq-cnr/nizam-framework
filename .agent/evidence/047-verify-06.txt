@@ -1,0 +1,3 @@
+git show HEAD^:tools/validate.sh | python3 -c "import sys; t=' '.join(sys.stdin.read().split()); sys.exit(0 if '--target is the only mode under which files in tools/fixtures/ are ever read' in t else 1)"
+
+EXIT:0

@@ -1,0 +1,3 @@
+out=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0 && echo "$out" | tail -1 | grep -Eqx 'SUMMARY \(payload mode\): 10 passed, 0 failed' && echo PASS || { echo "payload sweep failed (rc=$rc)"; exit 1; }
+PASS
+EXIT:0
