@@ -1,0 +1,3 @@
+EXEC_ID2=$(ls -dt .agent/evidence/dogfood-* 2>/dev/null | grep -v 'dogfood-2026-07-17-28c8253' | head -1); [ -n "$EXEC_ID2" ] || { echo 'no SECOND .agent/evidence/dogfood-* directory found yet'; exit 1; }; test -s "${EXEC_ID2}/pending/collection-log.txt" && test -s "${EXEC_ID2}/pending/preflight.pending.json" && test -s "${EXEC_ID2}/approved/collection-log.txt" && [ ! -f "${EXEC_ID2}/approved/preflight.json" ] && [ ! -f "${EXEC_ID2}/approved/baseline.json" ] && AUDIT_DIR=$(ls -dt .agent/audits/audit-* 2>/dev/null | head -1) && [ -n "$AUDIT_DIR" ] && ls ".agent/evidence/$(basename $AUDIT_DIR)"/*.txt >/dev/null 2>&1 && echo PASS || { echo 'evidence directories missing expected raw files, or a duplicate verdict artifact remained'; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,114 @@
+===== verify-01: F-006/AT: the protocol doc file exists. =====
+test -f ecosystem/07_progress_comparison.md && echo PASS || { echo "ecosystem/07_progress_comparison.md missing"; exit 1; }
+PASS
+EXIT:0
+
+===== verify-02: ADDITIONAL (anti-vacuity master proof, mirroring the 031/033/034 fixture-probe precedent): =====
+! git show HEAD:ecosystem/07_progress_comparison.md >/dev/null 2>&1 && echo PASS || { echo "ecosystem/07_progress_comparison.md already exists at HEAD -- content checks below would be vacuous"; exit 1; }
+PASS
+EXIT:0
+
+===== verify-03: F-006/AT: frontmatter validates against schema/frontmatter.schema.json. =====
+python3 -c "import json,yaml,jsonschema; d=open('ecosystem/07_progress_comparison.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS || { echo "frontmatter invalid"; exit 1; }
+PASS
+EXIT:0
+
+===== verify-04: ADDITIONAL (house-pattern frontmatter fields): id is 'nizam-ecosystem-progress-comparison' =====
+python3 -c "import yaml,sys; d=open('ecosystem/07_progress_comparison.md',encoding='utf-8').read().split('---')[1]; fm=yaml.safe_load(d); ok=(fm.get('id')=='nizam-ecosystem-progress-comparison' and fm.get('status')=='active' and fm.get('authoritative_source')=='ecosystem/07_progress_comparison.md'); sys.exit(0 if ok else 1)" && echo PASS || { echo "frontmatter house-pattern fields incorrect"; exit 1; }
+PASS
+EXIT:0
+
+===== verify-05: F-006/AT 'Comparison distinguishes new/resolved/reopened/stale findings' (STRENGTHENED fro =====
+source tools/verify_lib.sh; for tok in '`new`' '`resolved`' '`reopened`' '`stale`'; do vlib_section_grep ecosystem/07_progress_comparison.md '^## 3\. Finding-State Transitions$' "$tok" || { echo "Finding-State Transitions section missing class token: $tok"; exit 1; }; done; echo PASS
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+===== verify-06: F-006/AT 'Score movement is traceable to evidence' (STRENGTHENED, section-anchored): the ' =====
+source tools/verify_lib.sh; vlib_section_grep ecosystem/07_progress_comparison.md '^## 6\. Score-Movement Traceability$' 'traceable' && vlib_section_grep ecosystem/07_progress_comparison.md '^## 6\. Score-Movement Traceability$' 'evidence' && echo PASS || { echo "Score-Movement Traceability section missing 'traceable' or 'evidence'"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+===== verify-07: F-006/AT (feature_list_005.json entry 3, verbatim whole-file check): the protocol doc name =====
+python3 -c "t=open('ecosystem/07_progress_comparison.md',encoding='utf-8').read().lower(); import sys; sys.exit(0 if all(k in t for k in ['new','resolved','reopened','stale']) else 1)" && echo PASS || { echo "protocol doc missing one of the four finding-transition classes"; exit 1; }
+PASS
+EXIT:0
+
+===== verify-08: ADDITIONAL (inputs, per NIP-0001's Compare stage definition -- 'a Compare with no baseline =====
+source tools/verify_lib.sh; vlib_section_grep ecosystem/07_progress_comparison.md '^## 2\. Inputs$' 'two approved' && vlib_section_grep ecosystem/07_progress_comparison.md '^## 2\. Inputs$' 'baseline' && vlib_section_grep ecosystem/07_progress_comparison.md '^## 2\. Inputs$' 'audit' && echo PASS || { echo "Inputs section missing 'two approved' / 'baseline' / 'audit'"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+===== verify-09: ADDITIONAL (closure-only-with-evidence rule, per the task's explicit acceptance core): the =====
+source tools/verify_lib.sh; vlib_section_grep ecosystem/07_progress_comparison.md '^## 4\. Closure-Only-With-Evidence Rule$' 'closure evidence' && vlib_section_grep ecosystem/07_progress_comparison.md '^## 4\. Closure-Only-With-Evidence Rule$' 'MUST NOT' && echo PASS || { echo "Closure-Only-With-Evidence Rule section missing 'closure evidence' or 'MUST NOT'"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+===== verify-10: ADDITIONAL (stale-evidence non-reuse rule, per the task's explicit acceptance core; REVISE =====
+source tools/verify_lib.sh; vlib_section_grep ecosystem/07_progress_comparison.md '^## 5\. Stale-Evidence Non-Reuse Rule$' 'MUST NOT be silently reused' && vlib_section_grep ecosystem/07_progress_comparison.md '^## 5\. Stale-Evidence Non-Reuse Rule$' '`stale`' && echo PASS || { echo "Stale-Evidence Non-Reuse Rule section missing 'MUST NOT be silently reused' or backtick-delimited \`stale\`"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+===== verify-11: ADDITIONAL (machine-readable delta artifact convention, per the NIP's 'Artifact Locations' =====
+source tools/verify_lib.sh; vlib_section_grep ecosystem/07_progress_comparison.md '^## 7\. Comparison Artifact$' '\.agent/audits/<audit-id>/delta\.json' && echo PASS || { echo "Comparison Artifact section missing the .agent/audits/<audit-id>/delta.json convention"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0
+
+===== verify-12: ADDITIONAL (README one-line flip, scoped to exactly the '07' row): ecosystem/README.md's M =====
+grep -Fq '| 07 | `07_progress_comparison.md` | Compare | Shipped |' ecosystem/README.md && echo PASS || { echo "ecosystem/README.md 07 row not flipped to Shipped"; exit 1; }
+PASS
+EXIT:0
+
+===== verify-13: ADDITIONAL (README one-line-only edit guard, dry-run proven against before/after scratch c =====
+out=$(git diff --numstat HEAD -- ecosystem/README.md); [ "$out" = "$(printf '1\t1\tecosystem/README.md')" ] && echo PASS || { echo "ecosystem/README.md diff is not exactly 1 insertion + 1 deletion: [$out]"; exit 1; }
+PASS
+EXIT:0
+
+===== verify-14: F-006/AT: compliance validator stays green. =====
+bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: 11 passed, 0 failed' && echo PASS || { echo "validate.sh SUMMARY regressed from 11 passed, 0 failed"; exit 1; }
+PASS
+EXIT:0
+
+===== verify-15: ADDITIONAL (scope guard, untracked-aware, concurrency-tolerant per design_notes.concurrenc =====
+source tools/verify_lib.sh; vlib_scope_guard 'ecosystem/07_progress_comparison.md' 'ecosystem/README.md' 'NIZAM.json' 'schema/README.md' 'schema/preflight_verdict.schema.json' 'tools/fixtures/' 'v0.6.0-release-notes.md' && echo PASS || { echo "out-of-scope change(s) detected"; exit 1; }
+PASS
+EXIT:0
+
+===== verify-16: ADDITIONAL (.agent/ immutability guard, mirroring the precedent in contracts 025/028/031/0 =====
+changed=$(git status --porcelain --untracked-files=all -- .agent/qa .agent/contracts ':(exclude).agent/contracts/036.json' ':(exclude,glob).agent/qa/036*.json' ':(exclude).agent/contracts/035.json' ':(exclude,glob).agent/qa/035*.json' ':(exclude).agent/contracts/037.json' ':(exclude,glob).agent/qa/037*.json' ':(exclude).agent/contracts/038.json' ':(exclude,glob).agent/qa/038*.json'); if [ -n "$changed" ]; then echo 'immutable audit record(s) touched:'; echo "$changed"; exit 1; fi; echo PASS
+PASS
+EXIT:0
+
+===== verify-17: ADDITIONAL (non-goal enforcement, deferred-schema guard): schema/audit_delta.schema.json ( =====
+test -f schema/audit_delta.schema.json && { echo "schema/audit_delta.schema.json already exists -- out of this feature's scope"; exit 1; } || echo PASS
+PASS
+EXIT:0
+
+===== verify-18: ADDITIONAL (non-goal enforcement, per-file existence loop, scoped only to the docs NOT sch =====
+bad=0; for f in ecosystem/00_ecosystem_bootstrap.md ecosystem/04_dependency_reconciliation.md ecosystem/05_release_train_coordination.md ecosystem/06_simplification_review.md ecosystem/08_ga_gate.md; do if [ -e "$f" ]; then echo "out-of-scope ecosystem protocol document created: $f"; bad=1; fi; done; if [ "$bad" -eq 0 ]; then echo PASS; else exit 1; fi
+PASS
+EXIT:0
+
+===== verify-19: ADDITIONAL (non-goal enforcement, per-file byte-identity loop per the task's explicit 'sco =====
+bad=0; for f in ecosystem/01_clean_state_preflight.md ecosystem/02_evidence_baseline.md ecosystem/03_engineering_audit.md CHANGELOG.md; do if ! git diff --quiet HEAD -- "$f"; then echo "out-of-scope file modified: $f"; bad=1; fi; done; if [ "$bad" -eq 0 ]; then echo PASS; else exit 1; fi
+PASS
+EXIT:0
+
+===== verify-20: ADDITIONAL (non-goal enforcement, per-file): tools/skill.json, tools/SKILL.md, docs/planni =====
+bad=0; for f in tools/skill.json tools/SKILL.md docs/planning/manifest.json docs/planning/ROADMAP.md docs/planning/DEBT.md; do if ! git diff --quiet HEAD -- "$f"; then echo "out-of-scope file modified: $f"; bad=1; fi; done; if [ "$bad" -eq 0 ]; then echo PASS; else exit 1; fi
+PASS
+EXIT:0
+

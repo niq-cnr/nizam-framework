@@ -1,0 +1,16 @@
+# .agent/evidence/048-verify-04.txt
+# Contract 048 verification entry 04 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: FIX 2 PROTOCOL<->TOOL CONSISTENCY: the Sec-6 passage's mechanics (pending artifact name, withholding, deliberately non-schema-conformant pending state) match the shipped CLI byte-for-byte -- tools/ecosystem_preflight.py's exit-2 path writes preflight.pending.json with status PENDING_OPERATOR_APPROVAL and WITHHOLDS preflight.json entirely.
+$ python3 - <<'PY'
+src=open('tools/ecosystem_preflight.py',encoding='utf-8').read()
+assert 'preflight.pending.json' in src
+assert 'WITHHELD entirely' in src
+assert '"status": "PENDING_OPERATOR_APPROVAL"' in src
+doc=open('ecosystem/01_clean_state_preflight.md',encoding='utf-8').read()
+assert 'preflight.pending.json' in doc
+assert 'withholds `preflight.json` entirely' in doc
+assert 'non-schema-conformant' in doc
+print('E04 PASS: Sec-6 finalization passage matches the shipped CLI mechanics')
+PY
+E04 PASS: Sec-6 finalization passage matches the shipped CLI mechanics
+[exit 0]

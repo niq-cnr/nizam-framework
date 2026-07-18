@@ -1,0 +1,92 @@
+{
+  "feature_id": "042",
+  "qa_pass": true,
+  "checks_run": 19,
+  "checks_passed": 19,
+  "adversarial": {
+    "performed": true,
+    "description": "Beyond independently re-running all 19 of contract 042 (revision 1)'s verification commands live from the repository root against the real, implemented tree (not scratch copies) -- 19/19 exit 0, and `bash tools/validate.sh` independently re-run live: 'SUMMARY: 12 passed, 0 failed' -- this QA pass exercised the REAL shipped check_c12_ecosystem_fixtures (tools/validate.sh) directly with this evaluator's own battery, built fresh in disposable `mktemp -d` clones of the real, post-implementation tree, independent of the contract's own fixture-construction shell text: (1) SINGLE-POLARITY DORMANCY: moved only ecosystem_baseline's *_neg_*.json fixtures aside (positive fixture left in place) -- C12 correctly FAILED naming ONLY 'ecosystem_baseline: zero NEGATIVE fixtures ... (NDEBT-009 regression)', never falsely claiming zero POSITIVE. (2) TOTAL-EMPTY tools/fixtures/: removed every file from the directory entirely (not just the three families) -- C12 correctly FAILED, naming all six lines (zero POSITIVE and zero NEGATIVE for each of the three families independently), sweep exit non-zero; C1-C11 remained unaffected (dormancy failure confined to C12's own line, never bleeding into or masking a sibling check). (3) NEGATIVE-MADE-VALID on a fixture NOT used by the contract's own entries 5-10 (tools/fixtures/preflight_verdict_invalid_exceptions.json, fabricated a schema-valid operator_approval block) -- C12 correctly FAILED: 'negative fixture unexpectedly VALIDATED against schema/preflight_verdict.schema.json'. (4) POSITIVE-BROKEN on a different untested fixture (tools/fixtures/engineering_finding_valid_resolved.json, stripped the required 'closure_criteria' field) -- C12 correctly FAILED: 'positive fixture unexpectedly FAILED to validate'. (5) REGEX MUTANT 1 (naive, buggy pattern dropping the 'neg' alternative, `re.compile(r\"invalid\")`, sed-applied directly to the shipped tools/validate.sh in a disposable clone): entry 12's literal extraction-based command, re-run against this mutant, correctly failed ('the shipped NEGATIVE_TOKEN pattern misclassified a case'). (6) REGEX MUTANT 2 (a semantically-IDENTICAL refactor extracting the same pattern string to a named constant, `NEG_PATTERN_STR` then `re.compile(NEG_PATTERN_STR)` -- confirmed functionally correct: the full sweep still runs green, 12 passed 0 failed, under this refactor): entry 12 correctly fails-closed with an explicit 'COULD NOT EXTRACT the shipped NEGATIVE_TOKEN pattern' message rather than silently passing -- confirming entry 12 is genuinely bound to the exact shipped source form, an intentional, disclosed conservative tradeoff (blocks CI loudly on a benign refactor, never silently passes on a broken one), not a hidden defect. (7) --target/--payload RE-CONFIRMED UNCHANGED on the real shipped code: `--target NIZAM.json` shows no [C12] line; `--payload` SUMMARY is byte-identical ('SUMMARY (payload mode): 10 passed, 0 failed'); `--help` documents C12 and the 12-check total. (8) PRE-EXISTING --target GAP RE-PROBED AND FOUND BROADER THAN DISCLOSED: `--target tools/fixtures/preflight_verdict_pass.json` reproduces the exact, previously-disclosed 'verdict' vs qa_verdict routing collision unchanged; additionally probing the OTHER two families (not previously tested under --target by either Loop-1 review), `--target tools/fixtures/ecosystem_baseline_valid.json` and `--target tools/fixtures/engineering_finding_valid.json` (both POSITIVE fixtures) both misroute to C4 and FAIL identically against schema/registry's NIZAM-index schema ('framework' is a required property) -- i.e. --target provides ZERO discriminating signal for either polarity of these two families (not merely a wrong-schema routing collision limited to preflight_verdict's 'verdict' key, as design_notes.known_preexisting_gap_not_fixed_here describes, but a structural absence of ANY ecosystem-family route in check_c11_or_c4_target for all three families). This is a genuinely new evaluator finding at this final QA stage, confirmed pre-existing (unrelated to 042's own diff -- check_c11_or_c4_target is untouched by this contract) and non-blocking for feature 042's own acceptance criterion 4, since that criterion's 'fixture-driver / --target path' wording is explicitly disjunctive and is fully satisfied via the fixture-driver (C12) disjunct for all three families (see acceptance_reconciliation below); flagged for the orchestrator to broaden the existing candidate NDEBT entry's scope (see amended_or_flagged_for_orchestrator).",
+    "result": "All eight probes behaved as required against the REAL shipped tools/validate.sh: both dormancy-guard shapes (single-polarity, total-empty) fail loudly and precisely, never vacuously; two independently-constructed negative/positive mutations on previously-untested fixtures both correctly flip C12 to FAIL; both regex mutants against the extraction guard behave as contracted (a genuinely buggy shipped regex is caught; a benign refactor fails closed rather than silently passing); --target and --payload are confirmed unchanged; and a broader-than-disclosed (but non-blocking, pre-existing, and not worsened) --target gap was found and is reconciled against feature 042's own disjunctive acceptance wording.",
+    "evidence": ".agent/evidence/042-verify-01.txt through -19.txt (independently re-run live in this QA pass, not merely re-read); this QA pass's own eight adversarial probes were run under the session scratchpad directory using ephemeral `mktemp -d` clones of the real, post-implementation repository tree -- none persisted as repository artifacts, all discarded after inspection; `git status --porcelain --untracked-files=all` on the real repository confirmed unchanged by any of these probes."
+  },
+  "evidence_files": [
+    ".agent/evidence/042-verify-01.txt",
+    ".agent/evidence/042-verify-02.txt",
+    ".agent/evidence/042-verify-03.txt",
+    ".agent/evidence/042-verify-04.txt",
+    ".agent/evidence/042-verify-05.txt",
+    ".agent/evidence/042-verify-06.txt",
+    ".agent/evidence/042-verify-07.txt",
+    ".agent/evidence/042-verify-08.txt",
+    ".agent/evidence/042-verify-09.txt",
+    ".agent/evidence/042-verify-10.txt",
+    ".agent/evidence/042-verify-11.txt",
+    ".agent/evidence/042-verify-12.txt",
+    ".agent/evidence/042-verify-13.txt",
+    ".agent/evidence/042-verify-14.txt",
+    ".agent/evidence/042-verify-15.txt",
+    ".agent/evidence/042-verify-16.txt",
+    ".agent/evidence/042-verify-17.txt",
+    ".agent/evidence/042-verify-18.txt",
+    ".agent/evidence/042-verify-19.txt",
+    ".agent/evidence/042/diff.patch",
+    ".agent/evidence/042/verification.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": "`diff <(git diff HEAD -- tools/validate.sh tools/README.md) .agent/evidence/042/diff.patch` is byte-identical. `git diff --numstat HEAD` shows tools/validate.sh +121/-1, tools/README.md +12/-7 (141 total changed lines), comfortably under contract 042 revision 1's own estimated_lines (150) -- no scope-budget overrun to flag, unlike the precedent observed on feature 041.",
+    "verify_txt_and_verification_log_consistency": "Cross-checked .agent/evidence/042/verification.txt's 'RESULT: 19 of 19 entries PASS (EXIT:0 each)' summary against the 19 individual .agent/evidence/042-verify-NN.txt files: every file's last line is the literal 'EXIT:0' required by methodology/04_tool_driven_state.md Sec 5's Evidence Capture Convention, with the exact invocation as the first line (spot-checked 042-verify-01.txt, 042-verify-11.txt, 042-verify-12.txt in full); 042-verify-11.txt's captured output is byte-identical to this QA pass's own independent live re-run of the same command. verification.txt also correctly records the contract's approval bookkeeping (status: approved, revisions: 1, both review refs) and the shipped NEGATIVE_TOKEN's double-quoted declaration form, both independently re-confirmed against .agent/contracts/042.json and tools/validate.sh directly in this QA pass."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_005.json feature 042",
+    "criteria": [
+      {
+        "criterion": "New schema families are validated",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/042-verify-05.txt through -10.txt (all six family x direction load-bearing combinations); independently re-confirmed live in this QA pass plus two additional battery mutations (adversarial probes 3-4) on fixtures not used by the contract's own entries."
+      },
+      {
+        "criterion": "Negative fixtures prove checks are load-bearing",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/042-verify-05.txt, -08.txt, -09.txt (negative-made-valid, all three families); independently re-confirmed live plus this QA pass's own single-polarity and total-empty dormancy probes, which additionally prove the check cannot pass vacuously if a family's negative coverage silently disappears."
+      },
+      {
+        "criterion": "Existing C1-C11 and bootstrap tests pass",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/042-verify-03.txt (all of C1-C12 individually PASS), .agent/evidence/042-verify-04.txt (e2e bootstrap); independently re-executed live in this QA pass -> exit 0 each, and re-confirmed unaffected across every dormancy probe run in this QA pass's adversarial battery."
+      },
+      {
+        "criterion": "Each new ecosystem schema family has a negative fixture that its validation rejects (non-zero exit) via the fixture-driver / --target path",
+        "status": "satisfied (via the fixture-driver disjunct)",
+        "evidence": ".agent/evidence/042-verify-05.txt, -08.txt, -09.txt prove the fixture-driver (C12) disjunct for all three families. The --target disjunct remains non-functional for all three families as shipped (see amended_or_flagged_for_orchestrator) -- pre-existing, not introduced or worsened by this contract (check_c11_or_c4_target is untouched by 042's diff), and the criterion's own '/' wording explicitly permits satisfying it via either path, so this is not treated as missing coverage."
+      },
+      {
+        "criterion": "The full validator sweep passes at its (deterministically migrated) count and exits 0",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/042-verify-02.txt; independently re-executed live in this QA pass -> `bash tools/validate.sh` exits 0, 'SUMMARY: 12 passed, 0 failed' (migrated from 11, as contracted)."
+      },
+      {
+        "criterion": "No pre-existing check regressed",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/042-verify-03.txt; independently re-executed live -> all of [C1] through [C11] individually print PASS (and the new [C12] also prints PASS)."
+      },
+      {
+        "criterion": "The hermetic e2e bootstrap test still passes",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/042-verify-04.txt; independently re-executed live -> `bash tools/e2e_bootstrap_test.sh` exits 0."
+      }
+    ],
+    "amended_or_flagged_for_orchestrator": [
+      "[AMENDED-STYLE RECONCILIATION, non-blocking] Acceptance criterion 4 ('... via the fixture-driver / --target path') is satisfied via the fixture-driver (C12) disjunct for all three families, not via --target. This QA pass independently probed --target for ALL three families (not just the previously-disclosed preflight_verdict case) and found the gap is BROADER than contract 042's design_notes.known_preexisting_gap_not_fixed_here discloses: that text names only preflight_verdict's 'verdict'-vs-qa_verdict routing collision, but `--target` on either POSITIVE fixture of the other two families (ecosystem_baseline, engineering_finding) also misroutes -- falling through to C4 against the unrelated NIZAM-index schema and failing identically regardless of fixture polarity, i.e. providing zero discriminating signal for those two families under --target, not merely a wrong-schema collision limited to one family. This does not block feature 042's own acceptance (the criterion's disjunctive wording is satisfied via fixture-driver, and check_c11_or_c4_target is untouched by 042's diff -- confirmed pre-existing, not introduced or worsened here), but the existing candidate NDEBT entry for the --target routing collision should be broadened by the orchestrator/evaluator from 'preflight_verdict only' to 'all three ecosystem families have no dedicated --target route and either misroute or fall through to the wrong schema', so a future contract addressing it scopes the fix completely.",
+      "SIZE OBSERVATION (non-blocking, informational): 141 total changed lines (tools/validate.sh +121/-1, tools/README.md +12/-7) against contract 042 revision 1's estimated_lines of 150 -- within budget, no Scope Budget Protocol flag warranted."
+    ]
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. All 19 of contract 042 (revision 1)'s verification commands were independently re-run, live, from the repository root against the real, implemented tree -- 19/19 exit 0 -- and `bash tools/validate.sh` independently re-run live: 'SUMMARY: 12 passed, 0 failed'. A mandatory adversarial spot-check was performed against the REAL shipped check_c12_ecosystem_fixtures (not scratch fixtures): single-polarity dormancy (only a family's negative fixtures relocated) and total-empty tools/fixtures/ (every file removed) both correctly fail loudly and precisely, closing this evaluator's own round-0 HIGH dormancy-vacuity finding against the actual live artifact; two independently-constructed mutations on fixtures NOT used by the contract's own entries (a different family's negative-made-valid, a different family's positive-broken) both correctly flip C12 to FAIL; two independently-constructed regex mutants against the shipped NDEBT-014 extraction guard (a genuinely buggy naive pattern, and a semantically-identical refactor) both behave exactly as contracted -- the buggy one is caught, the benign refactor fails safely closed rather than silently passing -- closing this evaluator's own round-0 HIGH proxy-test finding against the actual live artifact. The evidence bundle was independently verified genuine and current: diff.patch is byte-identical to a fresh `git diff HEAD`, all 19 evidence files comply with the Evidence Capture Convention, and the 141-line total changed-line count sits comfortably within contract 042's own 150-line estimate (no scope-budget flag). All seven of feature 042's .agent/feature_list_005.json acceptance criteria are satisfied with evidence captured by path. One acceptance criterion (4) required an [AMENDED]-style reconciliation, disclosed here: it is satisfied via the fixture-driver (C12) disjunct rather than --target, and this QA pass additionally found the pre-existing --target gap is broader than contract 042's own design_notes disclose (affecting all three ecosystem families' --target routing, not only preflight_verdict) -- non-blocking since the criterion's own wording is disjunctive and the gap is confirmed pre-existing and untouched by this contract's diff, but flagged for the orchestrator to broaden the existing candidate NDEBT entry accordingly. Feature 042's status in .agent/feature_list_005.json was left 'pending' and .agent/run_state.json was not touched by this evaluator, per instruction. No issues, no unsupported claims, no missing acceptance coverage. Approved for advancement -- this is the last feature of PR-F3."
+  }
+}

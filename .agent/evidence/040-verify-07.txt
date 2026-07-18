@@ -1,0 +1,5 @@
+python3 -c "import json,os,sys; s=json.load(open('tools/skill.json')); caps=s.get('capabilities',s); js=json.dumps(s); sys.exit(0 if 'ecosystem' in js.lower() else 1)" && echo PASS || { echo "tools/skill.json literal acceptance test failed"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

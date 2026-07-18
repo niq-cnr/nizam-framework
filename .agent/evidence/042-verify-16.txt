@@ -1,0 +1,3 @@
+o=$(bash tools/validate.sh --target tools/README.md 2>&1); echo "$o" | grep -Fq '[C1] PASS' && echo "$o" | grep -Fq '[C2] PASS' && echo PASS || { echo "tools/README.md failed C1/C2"; echo "$o"; exit 1; }
+PASS
+EXIT:0

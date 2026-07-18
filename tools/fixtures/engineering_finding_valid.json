@@ -1,0 +1,15 @@
+{
+  "id": "F-audit-001-01",
+  "severity": "medium",
+  "confidence": "Probable",
+  "evidence": [
+    {
+      "path": ".agent/evidence/audit-001/verify-01.txt",
+      "revision": "4b01290"
+    }
+  ],
+  "impact": "tools/validate.sh does not yet cover the new ecosystem schema families, so a malformed baseline or finding artifact would not be caught before merge.",
+  "owner": "platform-team",
+  "status": "open",
+  "closure_criteria": "tools/validate.sh gains a check that rejects a schema-invalid ecosystem baseline, preflight-verdict, or finding fixture, and the check is proven non-vacuous against a negative fixture."
+}

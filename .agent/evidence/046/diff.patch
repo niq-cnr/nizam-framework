@@ -1,0 +1,76 @@
+diff --git a/.agent/product_spec_005.md b/.agent/product_spec_005.md
+index d954023..8461649 100644
+--- a/.agent/product_spec_005.md
++++ b/.agent/product_spec_005.md
+@@ -3,14 +3,17 @@ id: nizam-product-spec-005
+ title: "Nizam Framework — Phase 005 Spec (Ecosystem Engineering Cycle — Framework Side)"
+ description: "Phase-005 specification: implement and dogfood the framework side of the reusable, schema-governed Ecosystem Engineering Cycle (handover NIP-0001, features F-001..F-015). Adds the ecosystem module protocols, baseline/preflight/finding schemas, capability routing, a deterministic preflight CLI, validator/CI fixtures, and framework self-dogfood evidence, ending at a human-gated framework release. Consumer adoption (handover F-016..F-020) is explicitly deferred to the successor programme phase. Extends product_spec.md..product_spec_004.md; replaces none."
+ tags: [spec, ecosystem, governance, audit, dogfood, release-train, phase-005]
+-status: draft
++status: active
+ last_audited: "2026-07-17"
+ authoritative_source: NA
+-version: 1.0.0
++version: 1.1.0
+ spec_version: "1.0.0"
+ created_at: "2026-07-17T00:00:00Z"
+ updated_at: "2026-07-17T00:00:00Z"
+ change_log:
++  - version: "1.1.0"
++    date: "2026-07-18T00:00:00Z"
++    summary: "Feature 046 (PR-stack review response): frontmatter status flipped draft -> active, correcting a truth-sync defect against the body's own Status: ACTIVE declaration and the already-active manifest phase-005 entry (activated 2026-07-17). Body and all other frontmatter fields unchanged."
+   - version: "1.0.0"
+     date: "2026-07-17T00:00:00Z"
+     summary: "Initial phase-005 spec (Ecosystem Engineering Cycle, framework side). Derived from the accepted handover programme definition (NIP-0001, product_spec.md, feature_list.json, implementation_dag.md, work_packets.json, validation_and_dogfood_plan.md, operator_gates.md). ACTIVE plan of record — phase activation authorized by operator 2026-07-17 (\"approved. expedite.\", gate H-NIP)."
+diff --git a/docs/planning/DEBT.md b/docs/planning/DEBT.md
+index 5123704..a8e5248 100644
+--- a/docs/planning/DEBT.md
++++ b/docs/planning/DEBT.md
+@@ -2,7 +2,7 @@
+ id: nizam-debt
+ title: Technical Debt Register — nizam-framework
+ description: Known debt, deferred decisions, and cross-repo impacts for the nizam-framework repository.
+-version: 0.11.0
++version: 0.12.0
+ status: active
+ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ ---
+@@ -13,6 +13,8 @@ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ 
+ | ID | Date | Severity | Description | Remediation |
+ |----|------|----------|-------------|-------------|
++| NDEBT-019 | 2026-07-18 | Low | The `bash tools/validate.sh 2>&1 | tail -1 | grep ...` verification-command authoring pattern (used in historical evidence captures, e.g. `.agent/evidence/031-verify-09.txt`, and in some committed acceptance-test commands) lacks `pipefail`/explicit exit-code capture, so the validator's own real exit status is not asserted -- only the piped `grep` exit status is. False-PASS risk is only theoretical (a genuinely failing sweep never emits a `0 failed` `SUMMARY` line for `grep` to match), and historical evidence captures are IMMUTABLE point-in-time records, not edited here. Surfaced by CodeRabbit review of PR #20. | Fold an explicit `rc=$?`/`set -o pipefail` requirement into the `methodology/02_adversarial_tdd.md` verification-authoring standard so future contracts assert the validator's own exit code, not only its piped SUMMARY line; candidate scope for a future self-compliance phase. |
++| NDEBT-020 | 2026-07-18 | Medium | During feature 045's contract-review round 1, the evaluator misfired `rm -f` against the REAL repository path `CHANGELOG.md` while intending a scratch-directory cleanup command (the wrong, real-repo path was passed by mistake). Self-caught within the same turn (`git status --porcelain -- CHANGELOG.md` reported ` D CHANGELOG.md`) and fully restored via `git checkout -- CHANGELOG.md`; `git diff --stat HEAD -- CHANGELOG.md` confirmed zero lasting effect. Disclosed in full by the evaluator in `.agent/qa/045-contract-review.json`'s review history. Surfaced by CodeRabbit review of PR #20. | Strengthen the probe-isolation rule (NDEBT-013's precedent) to explicitly require: verify the current working directory before issuing any destructive command (`rm`, `rm -f`, `git clean`, etc.), and never pass a real-repository path as the argument to a destructive command during a review/verification probe -- scratch paths only, always constructed from a session-scratch root variable, never a bare filename. Candidate scope for `methodology/02_adversarial_tdd.md` or `standard/AGF.md`'s role obligations. |
+ | NDEBT-017 | 2026-07-17 | Low | `tools/ecosystem_preflight.py`'s `ci_references` field is repo-HEAD-anchored with an honest `KNOWN LIMITATION` note (no real CI-run lookup) — a limitation contract 041 explicitly deferred registering as its own NDEBT entry ("a later orchestrator/evaluator action"). Feature 043's real framework self-dogfood run (execution-id `dogfood-2026-07-17-28c8253`, evidence: `.agent/evidence/dogfood-2026-07-17-28c8253/`, artifact: `.agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json`) is the first time this limitation is exercised for real against the framework's own tree (not a scratch fixture), landing a tracked `baseline.json` carrying the same honest note. | Wire a real CI-run lookup (e.g. a GitHub Actions API call keyed off the repository/commit) into `build_baseline_document`'s `ci_references` synthesis; candidate scope for the next ecosystem-tooling feature. |
+ | NDEBT-018 | 2026-07-17 | Medium | Dogfood preflight self-reference, discovered TWICE during feature 043's real framework self-dogfood run (execution-id `dogfood-2026-07-17-28c8253`, evidence: `.agent/evidence/dogfood-2026-07-17-28c8253/`): (1) the feature's own in-flight contract/qa-review artifacts (`.agent/contracts/043.json`, `.agent/qa/043-contract-review.json`, `.agent/qa/043-contract-review-rev1.json`) and the run's own evidence-output directory necessarily appear as untracked exceptions inside the very preflight run they help produce, requiring an explicit, bounded tolerate-list rather than genuine pre-existing debt. (2) MORE SEVERELY: the orchestrator's own H-DOGFOOD-EXCEPTION gate-decision write to `.agent/run_state.json` first landed as an UNCOMMITTED tracked modification before the approved-step invocation was attempted, which `tools/ecosystem_preflight.py` correctly and unconditionally treats as a blocking finding no `--tolerate-untracked` flag can rescue (tracked-file changes are never tolerable, by design) — the approved invocation genuinely FAILed (exit 1, blocking_findings=["uncommitted tracked change (M): .agent/run_state.json"]) on the first attempt and only succeeded (exit 3) after the orchestrator committed that write (HEAD `28c8253` -> `e73cd04`). | (1) Consider a clean-worktree/scratch-checkout isolation mode for the preflight tool's self-fixture invocation so a feature's own in-flight `.agent` artifacts do not need to be individually enumerated in a tolerate-list. (2) Codify, durably (not just per-dispatch instruction), that any orchestrator-owned tracked-state write relevant to a gate decision (e.g. `run_state.json`'s `operator_gate_decision` event) MUST be committed BEFORE the corresponding gated CLI invocation runs — candidate scope for `methodology/03_circuit_breaker.md` or a new ecosystem-module operational note. |
+ | NDEBT-015 | 2026-07-17 | Medium | `tools/validate.sh --target` misroutes ALL THREE ecosystem fixture families (broader than first observed): `preflight_verdict_*.json` fixtures carry a top-level `verdict` key and collide with C11's qa_verdict route, while `ecosystem_baseline_*.json` and `engineering_finding_*.json` fixtures fall through to C4 and fail against the unrelated NIZAM-index schema regardless of polarity — zero discriminating signal on any `--target` invocation against an ecosystem fixture. Pre-existing before feature 042 (confirmed byte-identical routing code on unmodified HEAD by three independent reviews); C12 now provides the load-bearing full-sweep coverage, so the gap is confined to targeted invocations. Surfaced during 042's contract negotiation and broadened by its final QA (qa/042.json). | Extend `check_c11_or_c4_target`'s content routing to recognize the three ecosystem schema families (e.g. filename-prefix or dual-key heuristics: `verdict`+`execution_id` → preflight_verdict; the six category arrays → ecosystem_baseline; `closure_criteria` → engineering_finding) with matching negative fixtures; candidate scope for the next self-compliance feature alongside NDEBT-007. |
+diff --git a/docs/planning/ROADMAP.md b/docs/planning/ROADMAP.md
+index 8674b9b..c70fbd9 100644
+--- a/docs/planning/ROADMAP.md
++++ b/docs/planning/ROADMAP.md
+@@ -2,10 +2,13 @@
+ id: nizam-roadmap
+ title: "Forward Roadmap — nizam-framework"
+ description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
+-version: 0.4.0
++version: 0.5.0
+ status: active
+ authoritative_source: docs/planning/ROADMAP.md
+ change_log:
++  - version: "0.5.0"
++    date: "2026-07-18"
++    summary: "Feature 046 (PR-stack review response): rewrote the stale Sequencing Recommendation sentence (which had wrongly continued to call Track 2 the phase-005 selection) to correctly frame Track 2 as candidate scope for a subsequent phase, consistent with the existing Track 2 supersession note. No other content changed."
+   - version: "0.4.0"
+     date: "2026-07-17"
+     summary: "Added a Dogfood Audit + Delta subsection (feature 044, audit-id audit-2026-07-17-cba6422): 2 new findings (NDEBT-017/018), 1 stale (NDEBT-016), 0 in-window resolved (NDEBT-002 previously resolved (pre-baseline-1))."
+@@ -165,8 +168,8 @@ actually describe, and produces the first non-self-referential adoption evidence
+ 
+ ## Sequencing Recommendation
+ 
+-Track 1 is immediate (minutes of human effort). Track 2 is the recommended phase 005,
+-activated through the standard planning lifecycle. Track 3's decision should be taken
++Track 1 is immediate (minutes of human effort). Track 2 was superseded as the phase-005 selection by NIP-0001 (see the
++supersession note above) and remains candidate scope for a subsequent phase. Track 3's decision should be taken
+ during phase 005 planning — its outcome determines whether a phase 006 is an
+ enforcement phase or a documentation-truth phase. Track 4 can run in parallel with
+ phase 005 and should complete before any phase that expands cross-repo or

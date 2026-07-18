@@ -1,0 +1,23 @@
+# .agent/evidence/048-verify-11.txt
+# Contract 048 verification entry 11 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: DEFAULT SWEEP GREEN, EXIT CODE ASSERTED (the NDEBT-019-corrected authoring pattern): bash tools/validate.sh exits 0 AND its final line is exactly SUMMARY: 12 passed, 0 failed.
+$ out=$(bash tools/validate.sh 2>&1); rc=$?
+printf '%s\n' "$out" | tail -13
+test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY: 12 passed, 0 failed'
+echo "E11 PASS (rc=$rc)" 
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood
+[C12] PASS ecosystem-fixtures
+SUMMARY: 12 passed, 0 failed
+E11 PASS (rc=0)
+[exit 0]

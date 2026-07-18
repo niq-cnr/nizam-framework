@@ -1,0 +1,5 @@
+source tools/verify_lib.sh; vlib_section_grep schema/README.md '^## Schemas$' 'preflight_verdict\.schema\.json' && echo PASS || { echo "schema/README.md Schemas table missing the new row"; exit 1; }
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+
+EXIT:0

@@ -1,0 +1,3 @@
+git ls-tree -r HEAD --name-only | grep -q '^\.agent/audits/' && { echo 'a .agent/audits/ path already exists at HEAD -- would be vacuous'; exit 1; }; n=$(git ls-tree -r HEAD --name-only | grep -oE '^\.agent/reconciliation/dogfood-[^/]+' | sort -u | wc -l); [ "$n" -eq 1 ] || { echo "expected exactly 1 existing .agent/reconciliation/dogfood-* directory at HEAD (only 043's); got $n"; exit 1; }; git show HEAD:docs/planning/ROADMAP.md | grep -qi 'Dogfood Audit + Delta' && { echo 'the 044 ROADMAP subsection already exists at HEAD -- would be vacuous'; exit 1; }; echo PASS
+PASS
+EXIT:0

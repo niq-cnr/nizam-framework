@@ -1,0 +1,15 @@
+f=.agent/evidence/045-release-readiness-checklist.md
+test -f "$f" || { echo 'checklist missing'; exit 1; }
+n=$(grep -c . "$f")
+[ "$n" -eq 8 ] || { echo "expected exactly 8 non-blank lines, got $n"; exit 1; }
+for i in 1 2 3 4 5 6 7 8; do
+  c=$(grep -cE "^${i}\." "$f")
+  [ "$c" -eq 1 ] || { echo "item ${i} label must appear exactly once, found ${c}"; exit 1; }
+done
+grep -qxF '7. Human sign-off complete: PENDING -- human-gated (H-FRAMEWORK-RELEASE)' "$f" || { echo 'item 7 is not byte-identical to the pinned literal'; exit 1; }
+grep -qxF '8. Immutable tag published: PENDING -- human-gated (H-FRAMEWORK-RELEASE)' "$f" || { echo 'item 8 is not byte-identical to the pinned literal'; exit 1; }
+h=$(sha256sum "$f" | awk '{print $1}')
+[ "$h" = "06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea" ] || { echo "checklist content does not match the pinned exact byte content (got $h)"; exit 1; }
+echo PASS
+PASS
+EXIT:0

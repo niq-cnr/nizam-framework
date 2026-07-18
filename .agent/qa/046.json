@@ -1,0 +1,127 @@
+{
+  "feature_id": "046",
+  "qa_pass": true,
+  "checks_run": 22,
+  "checks_passed": 22,
+  "adversarial": {
+    "performed": true,
+    "description": "Independently re-ran all 22 of contract 046 (revision 2, twice-rejected then approved at Loop-1)'s verification commands, extracted programmatically from .agent/contracts/046.json via json.load, live from the repository root against the real, implemented working tree -- 22/22 exit 0. Adversarial spot-checks against the REAL shipped artifacts, targeting exactly the vectors this evaluator's own two Loop-1 contract-review rounds probed: (a) read the real, current docs/planning/ROADMAP.md's full Sequencing Recommendation section directly (not merely re-running entry 9's own extraction): 'Track 1 is immediate (minutes of human effort). Track 2 was superseded as the phase-005 selection by NIP-0001 (see the supersession note above) and remains candidate scope for a subsequent phase. Track 3's decision should be taken during phase 005 planning...' -- the exact pinned sentence appears verbatim (line-wrapped in the markdown source, exactly as this evaluator's own line-join-tolerant fixture testing predicted), the stale phrase is gone, and NO reversing, negating, or synonym-swapped language (e.g. 'preferred', 'still recommended', 'no longer true that') appears anywhere in the section -- this evaluator's own round-1 meaning-reversal concern is confirmed dead in the real file, not merely passing a mechanical check. (b) docs/planning/DEBT.md's real NDEBT-019 and NDEBT-020 rows were read in full: NDEBT-019 (Low) names the pipefail-less pattern, the historical evidence-immutability constraint, and the false-PASS-is-theoretical framing; NDEBT-020 (Medium) accurately narrates this evaluator's own actual round-1 incident (misfired `rm -f` against real CHANGELOG.md, self-caught via `git status --porcelain` reporting ` D CHANGELOG.md`, restored via `git checkout`, `git diff --stat HEAD` confirming zero lasting effect) and cites the disclosure as being in '.agent/qa/045-contract-review.json's review history' -- a more precise phrasing than earlier drafts, correctly avoiding an overclaim about that file's CURRENT byte content. Row-count delta independently re-confirmed exactly +2 (HEAD 18 rows, working tree 20 rows); NDEBT-016's own row (a real, pre-existing, unrelated row) was independently confirmed byte-untouched via `git diff HEAD -- docs/planning/DEBT.md` showing no hunk anywhere near it. (c) .agent/product_spec_005.md: frontmatter status is 'active', version 1.1.0; body text independently re-confirmed byte-identical to HEAD via a fresh Python comparison in this QA pass (not merely re-trusting contract entry 4). (d) Independently re-verified: the 045 release-readiness checklist's sha256 still matches its pin exactly (06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea); v0.6.0-release-notes.md's hash is unchanged (15ac6acaa9a549a171b5f49617654cac189322fbab760d78104b4c3f4662c00b); the real repository's tag count is unchanged at 10; .agent/run_state.json and docs/planning/manifest.json are both byte-identical to HEAD (empty git diff). (e) NDEBT-020's row text was read in full and cross-checked, sentence by sentence, against this evaluator's own first-hand memory of the actual incident -- every factual claim (real path CHANGELOG.md, self-caught via git status, same-turn git checkout restoration, zero lasting effect via git diff --stat, disclosure location) is accurate; no overclaim or underclaim found. A full compliance sweep was independently re-run: `bash tools/validate.sh` -> rc=0, 'SUMMARY: 12 passed, 0 failed'; `bash tools/validate.sh --payload` -> rc=0, 'SUMMARY (payload mode): 10 passed, 0 failed'. Evidence-bundle quality was independently checked: all 22 flat .agent/evidence/046-verify-NN.txt files have a literal 'EXIT:0' as their last line (swept programmatically, zero exceptions) and the exact contract command as their first line (spot-checked entries 1, 9, 14, 22 against the contract JSON verbatim); the consolidated .agent/evidence/046/verification.txt contains all 22 EXIT:0 markers; .agent/evidence/046/diff.patch was byte-compared (sha256) against a freshly generated `git diff HEAD -- .agent/product_spec_005.md docs/planning/ROADMAP.md docs/planning/DEBT.md` produced in this QA pass and is IDENTICAL (44ff492134daab249a7b0e88e32d5673f9bfcbcd49216e99ef41bca4f1ab93b6 for both) -- the evidence bundle is fresh, not stale. `git status --porcelain --untracked-files=all` was checked at the end of this QA pass and shows only the 3 authorized modified files, the planner's pre-existing .agent/feature_list_005.json edit, the expected new .agent/ evidence/contract/qa artifacts, and the pre-existing untouched v0.6.0-release-notes.md -- no out-of-scope path was changed, independently reconfirmed via a standalone `vlib_scope_guard` re-run (PASS) in addition to the contract's own entry 15.",
+    "result": "22/22 contract verification entries independently re-run, all exit 0. All 5 targeted adversarial spot-checks (ROADMAP section content and meaning, DEBT row text/delta/NDEBT-016-untouched, spec status/body-invariance, cross-feature 045-checklist/release-notes/tag/run_state/manifest invariants, and NDEBT-020's own truth-accuracy) independently confirmed against the real, current working tree. Full compliance sweep unregressed at 12/12 default and 10/10 payload, both with exit status independently asserted. Evidence bundle (22 flat files, consolidated verification.txt, diff.patch) independently confirmed fresh and correctly shaped. No out-of-scope path touched.",
+    "evidence": ".agent/evidence/046-verify-01.txt through -22.txt (independently re-run live in this QA pass, not merely re-read); .agent/evidence/046/diff.patch confirmed byte-identical (sha256 44ff492134daab249a7b0e88e32d5673f9bfcbcd49216e99ef41bca4f1ab93b6) to a fresh `git diff HEAD` of the 3 tracked deliverable files produced in this QA pass; .agent/evidence/046/verification.txt's 22 EXIT:0 markers cross-checked against this pass's own 22/22 live re-run; the real docs/planning/ROADMAP.md Sequencing Recommendation section, docs/planning/DEBT.md's NDEBT-019/020/016 rows, and .agent/product_spec_005.md's frontmatter were read directly in this QA pass (not inferred from the contract's own claims); `git status --porcelain --untracked-files=all` and `git diff --stat HEAD` on the real repository checked before, during, and after this QA pass show no change attributable to this evaluator beyond this pass's own .agent/qa/046.json artifact write; all scratch-fixture work for the diff-freshness comparison was written under this evaluator's own session scratchpad, never a real repository path."
+  },
+  "evidence_files": [
+    ".agent/evidence/046-verify-01.txt",
+    ".agent/evidence/046-verify-02.txt",
+    ".agent/evidence/046-verify-03.txt",
+    ".agent/evidence/046-verify-04.txt",
+    ".agent/evidence/046-verify-05.txt",
+    ".agent/evidence/046-verify-06.txt",
+    ".agent/evidence/046-verify-07.txt",
+    ".agent/evidence/046-verify-08.txt",
+    ".agent/evidence/046-verify-09.txt",
+    ".agent/evidence/046-verify-10.txt",
+    ".agent/evidence/046-verify-11.txt",
+    ".agent/evidence/046-verify-12.txt",
+    ".agent/evidence/046-verify-13.txt",
+    ".agent/evidence/046-verify-14.txt",
+    ".agent/evidence/046-verify-15.txt",
+    ".agent/evidence/046-verify-16.txt",
+    ".agent/evidence/046-verify-17.txt",
+    ".agent/evidence/046-verify-18.txt",
+    ".agent/evidence/046-verify-19.txt",
+    ".agent/evidence/046-verify-20.txt",
+    ".agent/evidence/046-verify-21.txt",
+    ".agent/evidence/046-verify-22.txt",
+    ".agent/evidence/046/diff.patch",
+    ".agent/evidence/046/verification.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": "sha256sum of .agent/evidence/046/diff.patch and of a freshly-generated `git diff HEAD -- .agent/product_spec_005.md docs/planning/ROADMAP.md docs/planning/DEBT.md` produced in this QA pass are IDENTICAL (44ff492134daab249a7b0e88e32d5673f9bfcbcd49216e99ef41bca4f1ab93b6 for both). The diff covers exactly the 3 contracted files; no other tracked file shows a diff against HEAD other than the planner's own pre-existing, tolerated .agent/feature_list_005.json edit (independently re-confirmed via `git status --porcelain --untracked-files=all`).",
+    "verify_txt_and_verification_log_consistency": "Cross-checked .agent/evidence/046/verification.txt's 22 EXIT:0 markers against this QA pass's own independent, live re-run of all 22 verification commands (22/22 exit 0, matching exactly). Swept all 22 flat evidence files programmatically for a literal EXIT:0 last line (zero exceptions) and spot-checked entries 1, 9, 14, and 22 in full for first-line command fidelity against .agent/contracts/046.json's verification array."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_005.json feature 046 (status left 'pending', not touched by this evaluator; flipping status is the orchestrator's job)",
+    "amended_class_check": "All 14 of feature 046's acceptance_tests strings in .agent/feature_list_005.json (4 prose criteria + 10 literal commands, including the [AMENDED 2026-07-18] payload-literal correction) were compared against contract 046's 22 verification entries and, where the AT itself supplies a literal command, independently re-run standalone in this QA pass (not merely via the contract's own paraphrase). One AT (the HEAD^ HEAD tip-commit-diff literal) is NOT literally satisfiable pre-commit -- independently re-confirmed non-empty when run standalone, for the same documented, pre-existing timing reason contract 046's own design_notes.head_caret_timing_note discloses (HEAD^ currently resolves to feature 044's commit, capturing feature 045's own 5-file diff window, not a genuine 046 scope violation) -- its real, load-bearing pre-commit substitute is contract entry 15 (vlib_scope_guard), independently re-confirmed PASS in this QA pass. This is a correctly-disclosed, pre-existing timing deferral (identical in kind to entries 6/15's own documented caveats), not a coverage gap requiring [AMENDED] reconciliation of its own. The remaining 13 ATs are each satisfied with independently re-run or independently-read evidence.",
+    "criteria": [
+      {
+        "criterion": "Spec frontmatter status flipped from draft to active with a new change_log entry, still schema-valid",
+        "status": "satisfied",
+        "evidence": "Read the real .agent/product_spec_005.md: status: active, version: 1.1.0. Literal AT re-run standalone: python3 status+change_log-length check -> PASS; frontmatter schema validation -> PASS."
+      },
+      {
+        "criterion": "ROADMAP Sequencing Recommendation no longer recommends Track 2 as the phase-005 selection; ROADMAP version bumped with a change_log entry",
+        "status": "satisfied",
+        "evidence": "Read the real docs/planning/ROADMAP.md's full Sequencing Recommendation section directly: the pinned replacement sentence is present verbatim, the stale phrase is gone, no reversing language anywhere. Literal AT re-runs standalone: stale-phrase-absence -> PASS; HEAD^ anti-vacuity -> PASS; change_log growth (>=5) -> PASS."
+      },
+      {
+        "criterion": "DEBT.md registers exactly NDEBT-019 and NDEBT-020, both severity Low or Medium, with a version bump",
+        "status": "satisfied",
+        "evidence": "Read the real docs/planning/DEBT.md rows directly: NDEBT-019 (Low), NDEBT-020 (Medium), both substantively accurate. Literal AT re-runs standalone: row-registration closed-set -> PASS; version-bump-changed-from-0.11.0 -> PASS. Row-count delta independently re-confirmed exactly +2 (18->20); NDEBT-016 independently confirmed untouched via git diff."
+      },
+      {
+        "criterion": "The tip commit touches ONLY the three allowed files; both compliance sweeps stay green",
+        "status": "satisfied",
+        "evidence": "vlib_scope_guard independently re-run standalone: PASS (only the 3 contracted files plus the pre-existing tolerated v0.6.0-release-notes.md changed outside .agent/). Both compliance sweeps independently re-run: default rc=0 'SUMMARY: 12 passed, 0 failed'; payload rc=0 'SUMMARY (payload mode): 10 passed, 0 failed'."
+      },
+      {
+        "criterion": ".agent/product_spec_005.md frontmatter status is 'active' and the change_log grew (literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": ".agent/product_spec_005.md frontmatter still validates against schema/frontmatter.schema.json (literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": "The stale ROADMAP sentence is gone at HEAD (literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": "Anti-vacuity companion, HEAD-anchored: the stale sentence DID exist on the parent commit (literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": "ROADMAP frontmatter change_log grew, was 4 entries (literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS (now >= 5)."
+      },
+      {
+        "criterion": "DEBT.md registers exactly NDEBT-019 and NDEBT-020 as Open rows, both Low or Medium (literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS."
+      },
+      {
+        "criterion": "DEBT.md frontmatter version was bumped from 0.11.0 (literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: PASS (now 0.12.0)."
+      },
+      {
+        "criterion": "The tip commit's diff touches ONLY the three allowed files, HEAD^ HEAD form (literal)",
+        "status": "correctly-deferred (documented pre-commit timing caveat, not yet meaningful)",
+        "evidence": "Re-run standalone: reports non-empty pre-commit, for the same documented reason as contract entries 6/15 (HEAD^ currently resolves to feature 044's commit, capturing feature 045's own 5-file window, not a real 046 violation). The real, load-bearing pre-commit substitute (vlib_scope_guard, contract entry 15) independently re-confirmed PASS. Will become literally meaningful and should be re-checked once the orchestrator commits feature 046 as the new tip."
+      },
+      {
+        "criterion": "Default compliance sweep stays green AND the validator exit status is asserted (literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass: rc=0, 'SUMMARY: 12 passed, 0 failed', PASS."
+      },
+      {
+        "criterion": "Payload compliance sweep stays green with its exit status asserted [AMENDED 2026-07-18] (literal)",
+        "status": "satisfied",
+        "evidence": "Re-run standalone in this QA pass against the corrected, real literal: rc=0, 'SUMMARY (payload mode): 10 passed, 0 failed', PASS."
+      }
+    ]
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. Feature 046 (PR-stack Review Response, round 1: PR #20) is complete and correct as an uncommitted, working-tree package (HEAD unchanged at ada3b9c). All 22 of contract 046 (revision 2, twice-rejected at Loop-1 then approved)'s verification entries independently re-run live against the real, implemented tree -- 22/22 exit 0. Every adversarial vector this evaluator's own two Loop-1 contract-review rounds specifically probed was independently re-checked against the REAL shipped artifacts and confirmed closed: the real ROADMAP.md Sequencing Recommendation section contains the exact pinned replacement sentence verbatim with no reversing, negating, or synonym-swapped language anywhere -- this evaluator's own round-1 meaning-reversal concern is confirmed dead in the real file, not merely passing a mechanical check; the real DEBT.md registers NDEBT-019 (Low) and NDEBT-020 (Medium) with substantively accurate text, a row-count delta of exactly +2, and NDEBT-016 fully untouched; NDEBT-020's own narration of this evaluator's actual round-1 incident was read in full and independently cross-checked against first-hand memory -- fully accurate, no overclaim or underclaim; the real .agent/product_spec_005.md has status active, version 1.1.0, and a body independently re-confirmed byte-identical to HEAD; the 045 release-readiness checklist's SHA, the v0.6.0-release-notes.md hash, the real repository's tag count (10, unchanged), and .agent/run_state.json/docs/planning/manifest.json (both byte-identical to HEAD) are all independently reconfirmed untouched. Full compliance sweep is unregressed: rc=0 'SUMMARY: 12 passed, 0 failed' (default), rc=0 'SUMMARY (payload mode): 10 passed, 0 failed' (payload), both with exit status independently asserted, not merely grepped output. The evidence bundle is independently confirmed fresh and correctly shaped: all 22 flat evidence files carry a literal EXIT:0 as their last line (swept programmatically) and the exact contract command as their first line (spot-checked), the consolidated verification.txt agrees, and diff.patch is byte-identical (sha256) to a freshly generated git diff of the 3 contracted files produced in this QA pass. All 14 of feature 046's feature-list acceptance tests are accounted for: 13 are satisfied with independently re-run or independently-read evidence, and 1 (the HEAD^ HEAD tip-commit-diff literal) is correctly and honestly represented as pre-commit-timing-deferred, exactly as contract 046's own design_notes disclose, with its real load-bearing pre-commit substitute (vlib_scope_guard) independently confirmed passing -- not a coverage gap. No out-of-scope path was touched, independently reconfirmed via a standalone vlib_scope_guard re-run and a full untracked-aware git status. No git tag was created or deleted, no sign-off was simulated, and no destructive command was run against any real repository path during this QA pass; only .agent/qa/046.json was written to the real repository, as instructed. Feature status in .agent/feature_list_005.json and .agent/run_state.json were left untouched by this evaluator -- the orchestrator owns advancing state and, per this feature's ordering note, ensuring this review-response fix lands before the operator executes H-FRAMEWORK-RELEASE for feature 045."
+  }
+}

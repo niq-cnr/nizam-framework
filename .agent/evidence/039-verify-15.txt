@@ -1,0 +1,15 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/engineering_finding.schema.json'))
+base={'id':'x','severity':'medium','confidence':'Probable','evidence':[{'path':'.agent/evidence/e/1.txt','revision':'r'}],'impact':'i','owner':'o','status':'open','closure_criteria':'c'}
+bogus=dict(base); bogus['maturity']='Battle-Tested'
+try:
+  jsonschema.validate(bogus, s)
+  raise SystemExit('bogus maturity value unexpectedly validated')
+except jsonschema.ValidationError:
+  pass
+for lvl in ['Designed','Authored','Implemented','Unit Tested','Integrated','Rendered','Deployed','Exercised','Observable','Production Proven']:
+  inst=dict(base); inst['maturity']=lvl
+  jsonschema.validate(inst, s)
+jsonschema.validate(base, s)" && echo PASS || { echo "maturity enum incorrectly scoped, or omission incorrectly rejected"; exit 1; }
+PASS
+EXIT:0

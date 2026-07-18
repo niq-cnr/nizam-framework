@@ -1,0 +1,12 @@
+$ T=$(mktemp -d); mkdir -p "$T/schema"; cp schema/preflight_verdict.schema.json schema/ecosystem_baseline.schema.json "$T/schema/"; ( cd "$T" && git init -q && git config user.email a@a.com && git config user.name a && git add -A && git commit -q -m init ); OUT=$(mktemp -d); python3 tools/ecosystem_preflight.py --execution-id dogfood-verify-clean --output-dir "$OUT" --repo-root "$T"; rc=$?; [ "$rc" -eq 0 ] || { echo "expected exit 0, got $rc"; exit 1; }; python3 -c "
+import json, jsonschema
+pv = json.load(open('schema/preflight_verdict.schema.json'))
+d = json.load(open('$OUT/preflight.json'))
+jsonschema.validate(d, pv)
+assert d['verdict'] == 'PASS'
+assert 'exceptions' not in d
+assert 'operator_approval' not in d
+" && echo PASS || exit 1
+PREFLIGHT VERDICT: PASS
+PASS
+EXIT:0

@@ -1,0 +1,164 @@
+===== .agent/evidence/045-verify-01.txt =====
+set -e; git show HEAD:CHANGELOG.md | grep -q '^## \[0\.7\.0\]' && { echo 'CHANGELOG already has a [0.7.0] section at HEAD'; exit 1; }; v=$(git show HEAD:NIZAM.json | python3 -c "import json,sys; print(json.load(sys.stdin)['framework']['version'])"); [ "$v" = "0.6.0" ] || { echo "expected HEAD NIZAM.json framework.version 0.6.0, got $v"; exit 1; }; git show HEAD:docs/guide/index.html | grep -q '<code>ecosystem/</code>' && { echo 'guide already has an ecosystem/ card at HEAD'; exit 1; }; git show HEAD:docs/guide/index.html | grep -q 'framework-version" content="0.7.0"' && { echo 'guide version anchor already 0.7.0 at HEAD'; exit 1; }; git show HEAD:CONTEXT.md | grep -q '`ecosystem/`' && { echo 'CONTEXT.md already has an ecosystem/ Module Map bullet at HEAD'; exit 1; }; n=$(git show HEAD:README.md | grep -o 'v0\.6\.0' | wc -l); [ "$n" -eq 7 ] || { echo "expected exactly 7 v0.6.0 occurrences in HEAD README.md, got $n"; exit 1; }; git tag -l 'v0.7.0' | grep -q . && { echo 'v0.7.0 tag already exists'; exit 1; }; git ls-tree -r HEAD --name-only | grep -q '^\.agent/evidence/045-release-readiness-checklist\.md$' && { echo 'checklist already exists at HEAD'; exit 1; }; echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-02.txt =====
+python3 -c "
+lines = open('CHANGELOG.md', encoding='utf-8').read().splitlines()
+headings = [(i, l) for i, l in enumerate(lines) if l.startswith('## [')]
+idx = {l.split(' ')[1]: i for i, l in headings}
+assert '[Unreleased]' in idx, 'missing [Unreleased] heading'
+assert any(l.startswith('## [0.7.0] - 2026-07-17') for _, l in headings), 'missing [0.7.0] - 2026-07-17 heading'
+ur_i = idx['[Unreleased]']
+heading_positions = [i for i, _ in headings]
+next_after_ur = min(p for p in heading_positions if p > ur_i)
+assert lines[next_after_ur].startswith('## [0.7.0]'), '[0.7.0] does not immediately follow [Unreleased]'
+for l in lines[ur_i+1:next_after_ur]:
+    assert l.strip() == '', 'non-blank content directly under [Unreleased]: ' + l
+next_after_070 = min(p for p in heading_positions if p > next_after_ur)
+assert lines[next_after_070].startswith('## [0.6.0]'), '[0.6.0] does not immediately follow [0.7.0]'
+print('PASS')
+"
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-03.txt =====
+python3 -c "import re,sys; t=open('CHANGELOG.md',encoding='utf-8').read().lower(); sys.exit(0 if 'ecosystem' in t else 1)" && echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-04.txt =====
+extract() { awk '
+  /^## \[0\.7\.0\]/ { in_span=1; next }
+  in_span && /^## \[/ { exit }
+  in_span { print }
+' "$1"; }
+span=$(extract CHANGELOG.md)
+[ -n "$span" ] || { echo 'empty [0.7.0] span'; exit 1; }
+for tok in 'ecosystem' 'preflight_verdict.schema.json' 'ecosystem_baseline.schema.json' 'engineering_finding.schema.json' 'ecosystem_preflight.py' 'C12' 'NIP-0001'; do
+  echo "$span" | grep -qF -- "$tok" || { echo "missing token in [0.7.0] section: $tok"; exit 1; }
+done
+echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-05.txt =====
+extract() { awk '
+  /^## \[0\.7\.0\]/ { in_span=1; next }
+  in_span && /^## \[/ { exit }
+  in_span { print }
+' "$1"; }
+span=$(extract CHANGELOG.md)
+echo "$span" | grep -qF '0.7.0' || { echo 'no 0.7.0 metadata-bump mention in real [0.7.0] section content'; exit 1; }
+echo "$span" | grep -qF 'C1-C12' || { echo 'no C1-C12 capability-summary fix mention'; exit 1; }
+echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-06.txt =====
+python3 -c "
+import json, subprocess
+head = json.loads(subprocess.check_output(['git','show','HEAD:NIZAM.json']))['framework']['version']
+work = json.load(open('NIZAM.json'))['framework']['version']
+tup = lambda v: tuple(int(x) for x in v.split('.'))
+assert tup(work) > tup(head), (head, work)
+assert work == '0.7.0', work
+print('PASS')
+"
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-07.txt =====
+python3 -c "
+import json, re
+d = json.load(open('NIZAM.json'))
+caps = {c['id']: c for c in d['capabilities']}
+s = caps['nizam-compliance-validator']['summary']
+assert 'C1-C12' in s, s
+assert 'C1-C11' not in s, s
+assert not re.search(r'C1-C1[3-9]\\b', s), s
+print('PASS')
+"
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-08.txt =====
+card=$(awk '/<article class="card">/{buf=""; ia=1} ia{buf=buf $0 "\n"} /<\/article>/{if (ia && buf ~ /<code>ecosystem\/<\/code>/) print buf; ia=0}' docs/guide/index.html); [ -n "$card" ] || { echo 'no ecosystem/ card found'; exit 1; }; echo "$card" | grep -qF 'ecosystem/README.md' || { echo 'card missing key-document mention'; exit 1; }; echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-09.txt =====
+card=$(awk '/<article class="card">/{buf=""; ia=1} ia{buf=buf $0 "\n"} /<\/article>/{if (ia && buf ~ /<code>ecosystem\/<\/code>/) print buf; ia=0}' docs/guide/index.html); echo "$card" | grep -qiE 'adopt|bootstrap\.sh' && { echo 'ecosystem/ card contains out-of-scope adoption-flow language'; exit 1; } || echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-10.txt =====
+grep -q 'name="framework-version" content="0.7.0"' docs/guide/index.html || { echo 'meta framework-version not bumped'; exit 1; }; grep -q 'id="footer-version">0.7.0<' docs/guide/index.html || { echo 'footer-version not bumped'; exit 1; }; echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-11.txt =====
+extract() { awk '
+  /^## Module Map/ { in_span=1; next }
+  in_span && /^## / { exit }
+  in_span { print }
+' "$1"; }
+span=$(extract CONTEXT.md)
+echo "$span" | grep -qF '`ecosystem/`' || { echo 'missing ecosystem/ Module Map bullet within the Module Map section span'; exit 1; }
+source tools/verify_lib.sh && vlib_version_increased CONTEXT.md && echo PASS || { echo 'CONTEXT.md version not strictly increased'; exit 1; }
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-12.txt =====
+n=$(grep -o 'v0\.6\.0' README.md | wc -l); [ "$n" -eq 0 ] || { echo "README.md still has $n v0.6.0 occurrence(s)"; exit 1; }; grep -q 'releases/tag/v0.7.0' README.md || { echo 'release link not updated to v0.7.0'; exit 1; }; echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-13.txt =====
+source tools/verify_lib.sh && vlib_scope_guard "CHANGELOG.md" "NIZAM.json" "docs/guide/index.html" "README.md" "CONTEXT.md" "v0.6.0-release-notes.md" ".agent/evidence/045" && echo PASS || { echo 'out-of-scope changed path(s) detected'; exit 1; }
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-14.txt =====
+before_count=10; after=$(git tag -l | wc -l); [ "$after" -eq "$before_count" ] || { echo "tag count changed: expected $before_count, got $after"; exit 1; }; git tag -l 'v0.7.0' | grep -q . && { echo 'v0.7.0 tag was created -- forbidden'; exit 1; } || echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-15.txt =====
+git diff --quiet HEAD -- .agent/run_state.json && echo PASS || { echo '.agent/run_state.json was modified -- orchestrator-owned, forbidden'; exit 1; }
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-16.txt =====
+bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: [0-9]+ passed, 0 failed' || { echo 'default sweep not green'; exit 1; }; bash tools/validate.sh --payload 2>&1 | tail -1 | grep -Eqx 'SUMMARY \(payload mode\): 10 passed, 0 failed' || { echo 'payload sweep regressed from 10/10'; exit 1; }; echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-17.txt =====
+f=.agent/evidence/045-release-readiness-checklist.md
+test -f "$f" || { echo 'checklist missing'; exit 1; }
+n=$(grep -c . "$f")
+[ "$n" -eq 8 ] || { echo "expected exactly 8 non-blank lines, got $n"; exit 1; }
+for i in 1 2 3 4 5 6 7 8; do
+  c=$(grep -cE "^${i}\." "$f")
+  [ "$c" -eq 1 ] || { echo "item ${i} label must appear exactly once, found ${c}"; exit 1; }
+done
+grep -qxF '7. Human sign-off complete: PENDING -- human-gated (H-FRAMEWORK-RELEASE)' "$f" || { echo 'item 7 is not byte-identical to the pinned literal'; exit 1; }
+grep -qxF '8. Immutable tag published: PENDING -- human-gated (H-FRAMEWORK-RELEASE)' "$f" || { echo 'item 8 is not byte-identical to the pinned literal'; exit 1; }
+h=$(sha256sum "$f" | awk '{print $1}')
+[ "$h" = "06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea" ] || { echo "checklist content does not match the pinned exact byte content (got $h)"; exit 1; }
+echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-18.txt =====
+n=$(awk '/^## Open/{f=1} /^## Resolved/{f=0} f' docs/planning/DEBT.md | grep '^| NDEBT' | grep -icE '\| *(High|Critical) *\|'); [ "$n" -eq 0 ] || { echo "found $n open High/Critical debt item(s) -- release exit criterion 6 violated"; exit 1; }; echo PASS
+PASS
+EXIT:0
+
+===== .agent/evidence/045-verify-19.txt =====
+if [ -f v0.6.0-release-notes.md ]; then h=$(sha256sum v0.6.0-release-notes.md | awk '{print $1}'); [ "$h" = "15ac6acaa9a549a171b5f49617654cac189322fbab760d78104b4c3f4662c00b" ] || { echo "v0.6.0-release-notes.md hash changed: $h"; exit 1; }; fi; echo PASS
+PASS
+EXIT:0
+

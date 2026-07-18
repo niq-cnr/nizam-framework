@@ -1,0 +1,12 @@
+T=$(mktemp -d); mkdir -p "$T/schema"; cp schema/preflight_verdict.schema.json schema/ecosystem_baseline.schema.json "$T/schema/"; ( cd "$T" && git init -q && git config user.email a@a.com && git config user.name a && git add -A && git commit -q -m init ); echo x > "$T/NOTES.md"; OUT=$(mktemp -d); python3 tools/ecosystem_preflight.py --execution-id verify-pending --output-dir "$OUT" --repo-root "$T" --tolerate-untracked NOTES.md; rc=$?; [ "$rc" -eq 2 ] || { echo "expected exit 2, got $rc"; exit 1; }; test -f "$OUT/preflight.json" && { echo "an unapproved PASS_WITH_EXCEPTIONS must not write the final schema-gated artifact"; exit 1; }; test -f "$OUT/preflight.pending.json" || { echo "pending informational file missing"; exit 1; }; python3 -c "import json,jsonschema
+pv=json.load(open('schema/preflight_verdict.schema.json'))
+d=json.load(open('$OUT/preflight.pending.json'))
+try:
+    jsonschema.validate(d, pv)
+    raise SystemExit('pending artifact incorrectly validates without operator_approval')
+except jsonschema.ValidationError:
+    pass
+" && echo PASS || { echo "pending-exceptions fixture did not behave as contracted"; exit 1; }
+PREFLIGHT VERDICT: PASS_WITH_EXCEPTIONS (pending operator approval) -- re-invoke with --operator-approver and --operator-authorization
+PASS
+EXIT:0

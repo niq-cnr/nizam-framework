@@ -1,0 +1,9 @@
+T=$(mktemp -d); cp -a . "$T/repo"; ( cd "$T/repo" && python3 -c "
+import json
+d = json.load(open('tools/fixtures/preflight_verdict_invalid_verdict.json'))
+d.pop('_fixture_notice', None)
+d['verdict'] = 'FAIL'
+json.dump(d, open('tools/fixtures/preflight_verdict_invalid_verdict.json', 'w'), indent=2)
+" && out=$(bash tools/validate.sh 2>&1); rc=$?; echo "$out" | grep -Fq '[C12] FAIL ecosystem-fixtures' && [ "$rc" -ne 0 ] && echo PASS || { echo "load-bearing proof (preflight_verdict, negative-made-valid) failed"; echo "$out" | tail -8; exit 1; } )
+PASS
+EXIT:0

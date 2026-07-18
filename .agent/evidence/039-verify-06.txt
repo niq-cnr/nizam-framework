@@ -1,0 +1,13 @@
+python3 -c "import json,jsonschema,sys
+s=json.load(open('schema/engineering_finding.schema.json'))
+base={'id':'x','severity':'medium','confidence':'Probable','impact':'i','owner':'o','status':'open','closure_criteria':'c'}
+no_rev=dict(base); no_rev['evidence']=[{'path':'.agent/evidence/e/1.txt'}]
+no_path=dict(base); no_path['evidence']=[{'revision':'r'}]
+for label, inst in (('no_rev', no_rev), ('no_path', no_path)):
+  try:
+    jsonschema.validate(inst, s)
+    sys.exit(f'{label} unexpectedly validated')
+  except jsonschema.ValidationError:
+    pass" && echo PASS || { echo "incomplete evidence item was NOT rejected"; exit 1; }
+PASS
+EXIT:0

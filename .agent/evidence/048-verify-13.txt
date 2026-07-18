@@ -1,0 +1,11 @@
+# .agent/evidence/048-verify-13.txt
+# Contract 048 verification entry 13 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: E2E BOOTSTRAP GREEN, EXIT CODE ASSERTED: the hermetic inject->verify harness passes against the working tree containing this feature's payload-shipped doc edits.
+$ out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?
+printf '%s\n' "$out" | tail -2
+test $rc -eq 0
+echo "E13 PASS (rc=$rc)" 
+bootstrap.sh: verify-only: PASS -- '/tmp/tmp.HkVNBotEIP/.nizam' is present, well-formed, and matches pinned tag 'e2e-1784360018-20860'.
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1784360018-20860, target /tmp/tmp.HkVNBotEIP/.nizam).
+E13 PASS (rc=0)
+[exit 0]

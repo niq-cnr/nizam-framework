@@ -1,0 +1,15 @@
+T=$(mktemp -d); cp -a . "$T/repo"; ( cd "$T/repo" && python3 -c "
+import json
+d = json.load(open('tools/fixtures/ecosystem_baseline_neg_mixed_timestamps.json'))
+d.pop('_fixture_notice', None)
+def fill(refs):
+    for r in refs:
+        r.setdefault('revision', 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef')
+        r.setdefault('timestamp', '2026-01-01T00:00:00Z')
+for k in ['framework_references','repository_references','dependency_references','ci_references','planning_references','evidence_references']:
+    if k in d:
+        fill(d[k])
+json.dump(d, open('tools/fixtures/ecosystem_baseline_neg_mixed_timestamps.json', 'w'), indent=2)
+" && out=$(bash tools/validate.sh 2>&1); rc=$?; echo "$out" | grep -Fq '[C12] FAIL ecosystem-fixtures' && [ "$rc" -ne 0 ] && echo PASS || { echo "load-bearing proof (baseline, negative-made-valid) failed"; echo "$out" | tail -8; exit 1; } )
+PASS
+EXIT:0

@@ -1,0 +1,11 @@
+python3 -c "import json,jsonschema,sys
+s=json.load(open('schema/engineering_finding.schema.json'))
+base={'id':'x','severity':'medium','confidence':'Probable','impact':'i','owner':'o','status':'open','closure_criteria':'c'}
+nested=dict(base); nested['evidence']=[{'path':'foo/.agent/evidence/bar.txt','revision':'r'}]
+try:
+  jsonschema.validate(nested, s)
+  sys.exit('nested path unexpectedly validated')
+except jsonschema.ValidationError:
+  sys.exit(0)" && echo PASS || { echo "a nested, non-prefix path containing the '.agent/evidence/' substring was NOT rejected -- the anchor is unguarded"; exit 1; }
+PASS
+EXIT:0

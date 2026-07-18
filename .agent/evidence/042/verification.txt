@@ -1,0 +1,49 @@
+Feature 042 (Extend Validator + CI Fixtures, PR-F3, handover F-012)
+Contract: .agent/contracts/042.json (status: approved, revisions: 1, evaluator_review_ref:
+.agent/qa/042-contract-review-rev1.json). Round-0 review (.agent/qa/042-contract-review.json)
+raised two HIGH findings (dormancy vacuity; proxy regex test) and one MEDIUM finding (partial
+family x direction coverage); rev1 closed all three and was approved by both Loop-1 gates
+(validator Mode A rev1; evaluator round-2, .agent/qa/042-contract-review-rev1.json).
+
+Implementation: tools/validate.sh (check_c12_ecosystem_fixtures -- three-family glob + schema
+map, per-family positive/negative minimum-coverage dormancy guard, default-full-sweep-only
+wiring, usage-doc bullet + C1-C11->C1-C12 / 11->12 checks count bump) and tools/README.md
+(version 0.3.0 -> 0.3.1, new change_log entry, Compliance Coverage heading/count/SUMMARY text,
+new C12 table row). The shipped NEGATIVE_TOKEN regex is declared as a DOUBLE-quoted raw string
+(`re.compile(r"(?:^|_)(?:neg|invalid)(?:_|\.)")`, tools/validate.sh line 1375) per the Mode-A
+constraint that verification entry 12's extraction guard binds to that exact declaration shape.
+
+Run: all 19 verification entries executed live against the post-implementation working tree
+(real repository, no scratch substitution -- entries 5-11's own internal disposable mktemp
+clones/relocations ran for real). Per-entry captured output: .agent/evidence/042-verify-01.txt
+.. 042-verify-19.txt (exact invocation as first line, captured stdout/stderr, literal
+EXIT:<code> as last line, per methodology/04_tool_driven_state.md Sec 5).
+
+RESULT: 19 of 19 entries PASS (EXIT:0 each).
+
+Entry summary:
+  01 ANTI-VACUITY (HEAD-anchored): check_c12_ecosystem_fixtures absent at HEAD -- PASS
+  02 Full validator sweep passes, migrated SUMMARY count -- PASS (SUMMARY: 12 passed, 0 failed)
+  03 C1-C12 all individually PASS (no regression) -- PASS
+  04 Hermetic e2e bootstrap test still passes -- PASS
+  05 LOAD-BEARING, ecosystem_baseline, negative-made-valid -- PASS
+  06 LOAD-BEARING, ecosystem_baseline, positive-broken -- PASS
+  07 LOAD-BEARING, engineering_finding, positive-broken -- PASS
+  08 LOAD-BEARING, engineering_finding, negative-made-valid -- PASS
+  09 LOAD-BEARING, preflight_verdict, negative-made-valid -- PASS
+  10 LOAD-BEARING, preflight_verdict, positive-broken -- PASS
+  11 DORMANCY GUARD, all three families (fixtures relocated in disposable clones) -- PASS
+  12 NDEBT-014 class-4 guard, rev1 (extracts real shipped regex, mutant-tested) -- PASS
+  13 REGRESSION: C12 does not run under --target -- PASS
+  14 REGRESSION: --payload SUMMARY unchanged (10 passed, 0 failed) -- PASS
+  15 DOCS: --help documents C12 / 12-check total -- PASS
+  16 DOCS: tools/README.md stays C1/C2-compliant -- PASS
+  17 NON-GOAL enforcement: out-of-scope surfaces untouched -- PASS
+  18 Scope guard: only tools/validate.sh + tools/README.md changed outside .agent/ -- PASS
+  19 .agent/ immutability two-part guard (034-042 in-flight window) -- PASS
+
+Full sweep, final state: `bash tools/validate.sh` -> SUMMARY: 12 passed, 0 failed, exit 0.
+Tracked diff (`git diff --stat HEAD`): exactly tools/validate.sh and tools/README.md.
+No edit to .agent/run_state.json or any other file outside this feature's authorized scope
+(tools/validate.sh, tools/README.md, and this contract's own .agent/evidence/ and
+.agent/contracts/042.json artifacts). No git commit performed.

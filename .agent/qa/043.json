@@ -1,0 +1,105 @@
+{
+  "feature_id": "043",
+  "qa_pass": true,
+  "checks_run": 20,
+  "checks_passed": 20,
+  "adversarial": {
+    "performed": true,
+    "description": "Beyond independently re-running all 20 of contract 043 (revision 1, with three ratified Loop-2 amendments)'s verification commands live from the repository root against the real, implemented tree (not scratch copies) -- 20/20 exit 0 -- this QA pass independently reconstructed the entire dogfood chain's ground truth and ran three mutation probes against COPIES of the actual shipped artifacts (never the real files) to confirm the load-bearing checks are genuinely discriminating, not vacuously passing only because nothing happened to be wrong: (1) EXCEPTION-SET-EQUALITY KILL SHOT ON THE REAL ARTIFACT: took a copy of the real .agent/reconciliation/dogfood-2026-07-17-28c8253/preflight.json, appended a bogus, never-presented exception path to its exceptions[], and re-ran the exact equality-check logic (entry 12's own assertions) against the mutated copy plus the real pending record -- correctly raised AssertionError naming the bogus path, proving the check would have caught real drift had it occurred, not merely because this particular run happened to be clean. (2) HEAD-ANCHOR KILL SHOT ON THE REAL ARTIFACT: took a copy of the real baseline.json, fabricated a false repository_references[0].revision (an unrelated 40-hex SHA), and re-ran entry 13's HEAD-anchor assertion against it -- correctly failed, confirming the check is bound to the real, independently-recomputed git rev-parse HEAD rather than trusting the artifact's own self-reported content (the exact class of defect this evaluator's own 041-contract-review flagged and the shipped CLI was hardened against). (3) SENTINEL KILL SHOT ON THE REAL ARTIFACT: took a copy of the real preflight.json, replaced operator_approval.approver with the sentinel 'test-operator', and re-ran entry 11's SENTINELS check against it -- correctly failed. Independently reconstructed the full ground-truth chain from .agent/run_state.json's operator_gate_decision history event (HEAD e73cd04): the pending step's four-exception set (.agent/contracts/043.json, .agent/qa/043-contract-review.json, .agent/qa/043-contract-review-rev1.json, v0.6.0-release-notes.md) is byte-set-identical to both the real .agent/evidence/dogfood-2026-07-17-28c8253/pending/preflight.pending.json exceptions AND the run_state relay record's named four paths; the real approved artifact's five-exception set equals those four plus exactly the one permitted self-reference (.agent/evidence/dogfood-2026-07-17-28c8253/); the real preflight.json's operator_approval.approver ('rosscn@nizamiq.com') and .authorization ('I approve and authorized you to proceed. expedite.') are BYTE-IDENTICAL (Python string equality, not merely visual similarity) to the run_state relay record's verbatim-quoted values -- discharging Mode-A advisory A1's reconciliation duty against real, durable, orchestrator-authored ground truth (not the generator's own self-report) for this specific run. All six baseline.json reference categories (framework, repository, dependency, ci, planning, evidence) were independently checked: five of six anchor to a freshly, independently-recomputed `git rev-parse HEAD` (e73cd04bad78c696c815bf253fb627a93f20c9c0, confirmed still current HEAD at QA time) and the sixth (dependency_references) correctly anchors to the python3 runtime version per the schema's own open reference_item design; the ci_references item carries the honest, non-fabricated KNOWN LIMITATION note with no run_id and no verified-green claim. .agent/evidence/dogfood-2026-07-17-28c8253/approved/ was independently confirmed to contain ONLY collection-log.txt (move semantics correctly executed both directions, per contract entries 4/15). docs/planning/DEBT.md's NDEBT-018 row was independently read and confirmed to honestly disclose the real, non-hypothetical mid-run friction this dogfood run actually hit (the orchestrator's own run_state.json gate-decision write briefly existed as an uncommitted tracked modification, which genuinely FAILED the approved-step's first attempt (exit 1, blocking) before the orchestrator committed it (HEAD 28c8253 -> e73cd04) and the retry succeeded (exit 3)) -- this evaluator independently corroborates this account is consistent with the observed artifact state (baseline anchors to e73cd04, not the execution-id's embedded 28c8253, exactly as this disclosed sequence implies) and finds it disclosed, not concealed.",
+    "result": "All three mutation kill-shots against copies of the ACTUAL shipped artifacts correctly fail, confirming the exception-set-equality, HEAD-anchor, and sentinel checks are genuinely load-bearing against this specific real run, not vacuously passing. The full dogfood chain (pending exceptions -> run_state relay decision -> approved exceptions -> operator_approval fields -> baseline anchoring -> move-semantics hand-off -> DEBT registration) was independently reconstructed end-to-end from ground truth and found internally consistent at every link, with one genuine, disclosed, non-concealed mid-run friction incident (NDEBT-018 item 2) that is itself evidence of an honest run rather than a fabricated one.",
+    "evidence": ".agent/evidence/043-verify-01.txt through -20.txt (independently re-run live in this QA pass, not merely re-read); the three mutation kill-shots were performed on copies under the evaluator's session scratchpad (never the real .agent/reconciliation or .agent/evidence paths); `git status --porcelain --untracked-files=all` on the real repository was checked before and after this entire QA pass and shows no change attributable to this evaluator beyond this pass's own .agent/qa/043.json artifact."
+  },
+  "evidence_files": [
+    ".agent/evidence/043-verify-01.txt",
+    ".agent/evidence/043-verify-02.txt",
+    ".agent/evidence/043-verify-03.txt",
+    ".agent/evidence/043-verify-04.txt",
+    ".agent/evidence/043-verify-05.txt",
+    ".agent/evidence/043-verify-06.txt",
+    ".agent/evidence/043-verify-07.txt",
+    ".agent/evidence/043-verify-08.txt",
+    ".agent/evidence/043-verify-09.txt",
+    ".agent/evidence/043-verify-10.txt",
+    ".agent/evidence/043-verify-11.txt",
+    ".agent/evidence/043-verify-12.txt",
+    ".agent/evidence/043-verify-13.txt",
+    ".agent/evidence/043-verify-14.txt",
+    ".agent/evidence/043-verify-15.txt",
+    ".agent/evidence/043-verify-16.txt",
+    ".agent/evidence/043-verify-17.txt",
+    ".agent/evidence/043-verify-18.txt",
+    ".agent/evidence/043-verify-19.txt",
+    ".agent/evidence/043-verify-20.txt",
+    ".agent/evidence/043/diff.patch",
+    ".agent/evidence/043/verification.txt",
+    ".agent/reconciliation/dogfood-2026-07-17-28c8253/preflight.json",
+    ".agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json",
+    ".agent/evidence/dogfood-2026-07-17-28c8253/pending/preflight.pending.json",
+    ".agent/evidence/dogfood-2026-07-17-28c8253/pending/collection-log.txt",
+    ".agent/evidence/dogfood-2026-07-17-28c8253/approved/collection-log.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": "`diff <(git diff HEAD) .agent/evidence/043/diff.patch` (the only tracked-file diff is docs/planning/DEBT.md, since all other feature-043 deliverables are untracked additions per the contract's own design) is byte-identical -- independently confirmed in this QA pass. The diff shows exactly the frontmatter version bump (0.10.0 -> 0.11.0, matching the identical precedent in commits 17408d9/28c8253) plus the two additive NDEBT-017/018 table rows, with zero pre-existing table rows altered or removed (contract entry 16's now-narrowed '^-\\|' check, itself a ratified Loop-2 amendment, independently re-confirmed correct against this real diff).",
+    "verify_txt_and_verification_log_consistency": "Cross-checked .agent/evidence/043/verification.txt's 'SUMMARY: 20/20 PASS' against this QA pass's own independent, live re-run of all 20 verification commands (20/20 exit 0, matching exactly) and against the 20 individual .agent/evidence/043-verify-NN.txt files: spot-checked 043-verify-01.txt and 043-verify-20.txt in full -- both comply with the Evidence Capture Convention (exact invocation as the first line, a literal 'EXIT:0' as the last line)."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_005.json feature 043 (status left 'pending', not touched by this evaluator)",
+    "amended_class_check": "All 8 of feature 043's acceptance_tests strings in .agent/feature_list_005.json were compared against the contract's 20 verification entries for any needed [AMENDED]-style reconciliation (the house convention used for features 031/032, where a literal AT command was a reproduced vacuous match requiring a stronger substitute check to be disclosed inline). No such reconciliation is needed for feature 043: every one of the 8 ATs is satisfied by a contract verification entry that implements the AT's own literal wording directly (including AT#8, backfilled as new entry 20 during Mode B specifically to close a literal coverage gap, not to reinterpret the AT's meaning). No feature-list text changes are required.",
+    "criteria": [
+      {
+        "criterion": "Framework baseline generated",
+        "status": "satisfied",
+        "evidence": ".agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json exists, independently schema-validated against schema/ecosystem_baseline.schema.json in this QA pass (PASS), and independently confirmed anchored to the real, current HEAD (e73cd04bad78c696c815bf253fb627a93f20c9c0) in five of its six reference categories."
+      },
+      {
+        "criterion": "Preflight verdict recorded",
+        "status": "satisfied",
+        "evidence": ".agent/reconciliation/dogfood-2026-07-17-28c8253/preflight.json exists, independently schema-validated against schema/preflight_verdict.schema.json in this QA pass (PASS), verdict=PASS_WITH_EXCEPTIONS."
+      },
+      {
+        "criterion": "Evidence stored by path",
+        "status": "satisfied",
+        "evidence": ".agent/evidence/dogfood-2026-07-17-28c8253/pending/{preflight.pending.json,collection-log.txt} and .agent/evidence/dogfood-2026-07-17-28c8253/approved/collection-log.txt independently confirmed non-empty and present; contract entries 14 and 20-sweep re-confirmed live."
+      },
+      {
+        "criterion": "Friction registered as debt",
+        "status": "satisfied",
+        "evidence": "docs/planning/DEBT.md carries NDEBT-017 (ci_references honest-limitation, now exercised for real) and NDEBT-018 (self-reference friction, including the honestly-disclosed mid-run run_state.json commit-ordering incident) -- both independently read in this QA pass and confirmed to reference the run's own .agent/evidence/ path; independently confirmed no pre-existing table row was altered via `git diff -U0 -- docs/planning/DEBT.md`."
+      },
+      {
+        "criterion": "A preflight verdict artifact exists and validates against schema/preflight_verdict.schema.json, and a baseline artifact exists and validates against schema/ecosystem_baseline.schema.json (both under .agent/, referenced by path)",
+        "status": "satisfied",
+        "evidence": "Both independently re-validated via jsonschema.validate() in this QA pass against the real, shipped schema files -- PASS for both."
+      },
+      {
+        "criterion": "Any recorded friction has a corresponding NDEBT-### row in docs/planning/DEBT.md (or an explicit 'no friction' note in the evidence)",
+        "status": "satisfied",
+        "evidence": "NDEBT-017 and NDEBT-018 both present and both reference the .agent/evidence/ path, independently confirmed via grep in this QA pass (contract entry 16, ratified narrowed form)."
+      },
+      {
+        "criterion": "A PASS_WITH_EXCEPTIONS verdict carries structured operator-approval metadata (gate H-DOGFOOD-EXCEPTION) before execution continues",
+        "status": "satisfied",
+        "evidence": "preflight.json's operator_approval block (approver, approved_at, authorization, all required by schema and present) independently confirmed BYTE-IDENTICAL (Python string equality) to .agent/run_state.json's operator_gate_decision history event -- the durable, orchestrator-authored ground truth for gate H-DOGFOOD-EXCEPTION, discharging Mode-A advisory A1's reconciliation duty against real evidence for this run."
+      },
+      {
+        "criterion": "Compliance validator stays green: bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: [0-9]+ passed, 0 failed'",
+        "status": "satisfied",
+        "evidence": "Independently re-run live in this QA pass: `bash tools/validate.sh` exits 0, final line 'SUMMARY: 12 passed, 0 failed', matching the AT's literal regex exactly. Also covered by contract's new entry 20 (Loop-2 coverage-backfill amendment), .agent/evidence/043-verify-20.txt."
+      }
+    ],
+    "amended_or_flagged_for_orchestrator": [
+      "NO [AMENDED]-CLASS RECONCILIATION NEEDED for feature 043's own feature-list acceptance_tests text (see amended_class_check above) -- all 8 ATs are satisfied by literal, non-reinterpreted contract verification entries.",
+      "FLAGGED FOR ORCHESTRATOR AWARENESS (non-blocking, already self-disclosed by the generator/orchestrator in NDEBT-018 item 2, independently corroborated by this QA pass): the real dogfood run's execution-id (dogfood-2026-07-17-28c8253) embeds the pre-commit HEAD short-SHA at the time the pending step ran, but the final baseline.json/preflight.json (approved step) actually anchor to a LATER HEAD (e73cd04) because the orchestrator committed the H-DOGFOOD-EXCEPTION gate decision into run_state.json between the pending and approved invocations -- a deliberate, ratified deviation from the contract's original 'no commit happens mid-run' assumption (design_notes.execution_id_convention), adopted specifically to create a durable, generator-inaccessible relay record for Mode-A advisory A1's reconciliation. This QA pass independently confirms the resulting artifacts are internally consistent with this disclosed sequence (baseline correctly anchors to the real HEAD at capture time, not the execution-id's embedded SHA, exactly as ecosystem/02_evidence_baseline.md Sec 4/5's point-in-time anchoring rule requires) and is not a defect -- but the execution_id_convention design note's 'no commit happens mid-run' phrasing is now stale relative to actual practice and could mislead a future contract author; recommend a future documentation touch-up (not required for this feature's own acceptance) noting that a durable-relay-record commit MAY legitimately land between the pending and approved steps, and that baseline anchoring always follows the real HEAD at approved-step time, never the execution-id's embedded SHA.",
+      "This evaluator independently re-confirms (per procedure item 4) that NDEBT-018's own remediation column already proposes exactly the durable-relay-record codification this finding recommends ('Codify, durably ... that any orchestrator-owned tracked-state write relevant to a gate decision ... MUST be committed BEFORE the corresponding gated CLI invocation runs') -- this QA pass's flag above is a documentation-consistency echo of that same, already-registered debt row, not a new, separate debt item."
+    ]
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. All 20 of contract 043 (revision 1, with three ratified Loop-2 amendments: table-row guard narrowing, clone-reset + evidence-glob fix, and validate.sh AT#8 coverage backfill)'s verification commands were independently re-run, live, from the repository root against the real, implemented tree -- 20/20 exit 0. The full real dogfood chain was independently reconstructed end-to-end from ground truth and found consistent at every link: the pending step's four-path exception set is byte-set-identical to .agent/run_state.json's operator_gate_decision relay record; the approved artifact's five-path exception set equals those four plus exactly the one permitted self-reference path; operator_approval.approver and .authorization are byte-identical (Python string equality) to the relay record's verbatim text, discharging Mode-A advisory A1's reconciliation duty against real, durable, orchestrator-authored ground truth; baseline.json anchors to the real, current HEAD (e73cd04) in five of six categories (the sixth, dependency, correctly anchors to the python3 runtime version) with an honest, non-fabricated ci_references limitation note; .agent/evidence/dogfood-2026-07-17-28c8253/approved/ contains only collection-log.txt, confirming move semantics were executed correctly in both directions. Three independent mutation kill-shots against copies of the ACTUAL shipped artifacts (exception-set drift, fabricated baseline revision, sentinel operator approver) all correctly failed the relevant check logic, confirming these checks are genuinely load-bearing for this specific real run, not vacuously passing. The evidence bundle is genuine and current: diff.patch is byte-identical to a fresh git diff HEAD, all 20 flat evidence files comply with the Evidence Capture Convention, and .agent/evidence/043/verification.txt's claimed 20/20 matches this QA pass's own independent re-run exactly. All 8 of feature 043's .agent/feature_list_005.json acceptance criteria (including AT#8, now covered by the Loop-2 backfilled entry 20) are satisfied with evidence captured by path; no [AMENDED]-style feature-list text reconciliation is needed. One non-blocking, already-self-disclosed observation is flagged for orchestrator awareness: the execution-id's embedded SHA (28c8253) now predates the artifacts' actual HEAD anchor (e73cd04) because the orchestrator deliberately committed the gate-decision relay record mid-run -- confirmed consistent with the protocol's point-in-time anchoring rule and already registered as NDEBT-018 item 2, not a new defect. Feature 043's status in .agent/feature_list_005.json was left 'pending' and .agent/run_state.json was not touched by this evaluator, per instruction. No issues, no unsupported claims, no missing acceptance coverage. Approved for advancement to the orchestrator's own commit/close-out step."
+  }
+}

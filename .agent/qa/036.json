@@ -1,0 +1,82 @@
+{
+  "feature_id": "036",
+  "qa_pass": true,
+  "checks_run": 20,
+  "checks_passed": 20,
+  "adversarial": {
+    "performed": true,
+    "description": "Beyond the contract's 20 listed verification commands: (1) independently re-ran a full non-.agent working-tree scope scan (`git status --porcelain --untracked-files=all -- . ':(exclude).agent'` and `git diff --stat -- . ':(exclude).agent'`) rather than trusting entry 15's own scope-guard output, to confirm no stray file outside ecosystem/README.md (1 line) + the new ecosystem/07_progress_comparison.md + the pre-existing untracked v0.6.0-release-notes.md changed anywhere in the repository. (2) Rebuilt all three of the evaluator's own round-0/round-1 kill-shot fixtures (renewed-decoy, stalemate-decoy in both Section 3 and Section 5, a case-flip, and a NEW cross-section backtick-leak) as scratch mutations of the REAL, as-shipped ecosystem/07_progress_comparison.md itself (not a hand-built miniroot stand-in), and re-ran entries 5 and 10's live, unmodified commands against each: every mutation fails exactly its targeted entry, the unmodified real document passes all nine content-anchored entries, and no cross-contamination was observed. (3) Independently re-ran `bash tools/validate.sh` fresh (not reusing the contract's own captured evidence) and confirmed 'SUMMARY: 11 passed, 0 failed'. (4) Byte-compared .agent/evidence/036/diff.patch against a freshly-generated `git diff -- ecosystem/README.md` and confirmed an exact match. (5) Confirmed every one of the 20 flat evidence files' first line is byte-identical to the FINAL, amended live contract command (not a stale pre-amendment command) and every last line is a literal 'EXIT:<code>' with code 0, with no session-absolute paths anywhere in the bundle.",
+    "result": "All adversarial probes passed: scope is genuinely minimal and correct; the backtick-delimiter fix (from contract revisions 5/10) discriminates on the real shipped artifact, not merely a hand-built stand-in; validate.sh is independently green; the evidence bundle is genuine, current, and byte-matches the working tree.",
+    "evidence": ".agent/evidence/036-verify-01.txt .. 036-verify-20.txt; .agent/evidence/036/diff.patch; .agent/evidence/036/verification.txt (all independently re-verified in this QA round; kill-shot re-proof fixtures built and run in the evaluator's own scratchpad, never committed to the repository)"
+  },
+  "evidence_files": [
+    ".agent/evidence/036-verify-01.txt",
+    ".agent/evidence/036-verify-02.txt",
+    ".agent/evidence/036-verify-03.txt",
+    ".agent/evidence/036-verify-04.txt",
+    ".agent/evidence/036-verify-05.txt",
+    ".agent/evidence/036-verify-06.txt",
+    ".agent/evidence/036-verify-07.txt",
+    ".agent/evidence/036-verify-08.txt",
+    ".agent/evidence/036-verify-09.txt",
+    ".agent/evidence/036-verify-10.txt",
+    ".agent/evidence/036-verify-11.txt",
+    ".agent/evidence/036-verify-12.txt",
+    ".agent/evidence/036-verify-13.txt",
+    ".agent/evidence/036-verify-14.txt",
+    ".agent/evidence/036-verify-15.txt",
+    ".agent/evidence/036-verify-16.txt",
+    ".agent/evidence/036-verify-17.txt",
+    ".agent/evidence/036-verify-18.txt",
+    ".agent/evidence/036-verify-19.txt",
+    ".agent/evidence/036-verify-20.txt",
+    ".agent/evidence/036/diff.patch",
+    ".agent/evidence/036/verification.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [
+    "The coordinator's dispatch message asserted 'Contract 036 passed Mode B with its Loop-2 amendment RATIFIED (entry-16 exclude extension for 037's draft)'. Re-reading the live .agent/contracts/036.json directly (not trusting the chat claim): amendments[0].ratified_by_mode_b is persisted as `false`, not `true`, and no separate Mode-B validator artifact for feature 036 exists anywhere under .agent/qa (searched; only 036-contract-review.json and 036-contract-review-rev1.json, both Loop-1 contract-review artifacts, are present). This is a durable-state gap (per the Durable State Rule: results must be written to .agent/, not communicated via chat alone), not a technical defect this QA round found: the amendment's own substance was independently re-verified in this round (see issues/observations below) and is sound regardless of whether the bookkeeping field was flipped. Recommend the orchestrator/validator correct amendments[0].ratified_by_mode_b to `true` (or record the Mode-B ratification in its own artifact) so the contract's audit trail accurately reflects what actually happened, before this feature is marked complete."
+  ],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "feature_list_acceptance_check": {
+    "source": ".agent/feature_list_005.json, feature id 036",
+    "mapping": [
+      {
+        "acceptance_test": "Comparison distinguishes new/resolved/reopened/stale findings",
+        "covered_by": "contract verification entry 5 (STRENGTHENED, section-anchored, backtick-delimited-token form per the round-0 HIGH fix)",
+        "evidence": ".agent/evidence/036-verify-05.txt",
+        "result": "PASS (independently re-run live, exit 0)"
+      },
+      {
+        "acceptance_test": "Score movement is traceable to evidence",
+        "covered_by": "contract verification entry 6",
+        "evidence": ".agent/evidence/036-verify-06.txt",
+        "result": "PASS (independently re-run live, exit 0)"
+      },
+      {
+        "acceptance_test": "The protocol doc names the four finding-transition classes: python3 -c \"...\" (embedded literal command)",
+        "covered_by": "contract verification entry 7 -- confirmed programmatically byte-identical (as a substring, after stripping the contract's own '&& echo PASS || {...}' wrapper) to the feature_list's own embedded literal command; kept verbatim, unchanged since round 0",
+        "evidence": ".agent/evidence/036-verify-07.txt",
+        "result": "PASS (independently re-run live, exit 0)"
+      },
+      {
+        "acceptance_test": "Frontmatter validates against schema/frontmatter.schema.json: python3 -c \"...\" (embedded literal command)",
+        "covered_by": "contract verification entry 3 -- confirmed programmatically byte-identical (as a substring) to the feature_list's own embedded literal command",
+        "evidence": ".agent/evidence/036-verify-03.txt",
+        "result": "PASS (independently re-run live, exit 0)"
+      },
+      {
+        "acceptance_test": "Compliance validator stays green: bash tools/validate.sh ... (embedded literal command)",
+        "covered_by": "contract verification entry 14 -- confirmed programmatically byte-identical (as a substring) to the feature_list's own embedded literal command",
+        "evidence": ".agent/evidence/036-verify-14.txt",
+        "result": "PASS (independently re-run live, exit 0, AND independently re-run fresh by this QA round outside the contract's own evidence capture: 'SUMMARY: 11 passed, 0 failed')"
+      }
+    ],
+    "amendment_reconciliation_judgment": "No '[AMENDED]' in-place note is needed on feature_list_005.json's feature-036 acceptance_tests. The existing house convention (confirmed by grepping feature_list_005.json and feature_list_004.json for the literal '[AMENDED' marker) reserves that annotation for cases where the ORIGINAL embedded literal check was found DEFECTIVE -- a reproduced false-pass/vacuous match (features 031, 032) or an unsatisfiable check (feature-004's 028) -- and had to be functionally superseded by a stronger replacement. Feature 036's entry 7 is the OPPOSITE case, and matches the sibling precedent of features 033 and 034 exactly (both of which also kept their own feature-list literal whole-file token checks byte-identical and unamended, while their contracts separately added stronger, section-anchored companion entries): entry 7's coarse, case-insensitive, whole-file substring check is not defective -- it was never tied to any particular Markdown formatting convention (bold vs. bare vs. backtick) in the first place, so the document's actual backtick-delimited code-span convention (`new`/`resolved`/`reopened`/`stale`) satisfies it exactly as trivially and correctly as a bold or bare form would have. It is supplemented, not superseded, by the STRENGTHENED entry 5. No amendment note is warranted; feature_list_005.json's feature-036 acceptance_tests can remain exactly as written."
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. All 20 of contract 036's verification entries were independently re-run live from the repository root (extracted programmatically from the live, final, post-amendment .agent/contracts/036.json, never retyped) against HEAD 4b01290 with the feature's own uncommitted implementation in the working tree: 20/20 PASS, matching the captured evidence bundle exactly. All 20 flat evidence files (.agent/evidence/036-verify-01.txt..20.txt) were independently checked and confirmed genuine and current: each file's first line is byte-identical to the corresponding live, FINAL (post Loop-2 entry-16 amendment) contract command, each file's last line is a literal 'EXIT:0', and none contains a session-absolute path. .agent/evidence/036/diff.patch was byte-compared against a freshly generated `git diff -- ecosystem/README.md` and matches exactly (the sole one-line 07-row Planned->Shipped flip). The Loop-2 amendment to verification entry 16 (extending the .agent/qa + .agent/contracts immutability guard's exclude pathspec to also tolerate feature 037's concurrently-drafting contract/qa artifacts) was independently verified live: it is technically necessary (037's genuinely new .agent/contracts/037.json is present in the current tree and would otherwise cause a false-fail) and does not weaken the guard's real defect-catching power (its exclude form is byte-identical in structure to the already-approved 035/036/038 exclusions). One durable-state discrepancy was found and is reported under unsupported_claims, not gating this pass: the contract's own amendments[0].ratified_by_mode_b field is persisted as `false`, contradicting the coordinator's dispatch claim that Mode B ratified it; no separate Mode-B artifact exists to substantiate the claim either. This QA round independently re-proved the amendment's substance is sound regardless, but recommends the orchestrator correct the field for audit-trail accuracy. The evaluator's own round-0/round-1 kill-shot fixtures (renewed-decoy, stalemate-decoy in Sections 3 and 5, a case-flip, and a new cross-section backtick-leak probe) were rebuilt this round as scratch mutations of the REAL, as-shipped ecosystem/07_progress_comparison.md itself, and re-run against the live entries 5/10: every mutation fails exactly and only its targeted entry, the unmodified real document passes all nine content-anchored entries, and no cross-contamination was found -- the backtick-delimiter fix genuinely holds on the actual shipped artifact, not only a hand-built stand-in. All five of feature_list_005.json's feature-036 acceptance_tests are satisfied with evidence mapped by path; the three that embed a literal command are confirmed programmatically byte-identical (as substrings, after the contract's PASS/FAIL wrapper) to their corresponding contract verification entries. No '[AMENDED]' in-place note is warranted on feature_list_005.json's feature-036 entry: entry 7's coarse, format-agnostic whole-file check was never defective and remains verbatim, exactly matching the unamended precedent already set by sibling features 033 and 034. `bash tools/validate.sh` was independently re-run fresh by this QA round: 'SUMMARY: 11 passed, 0 failed'. Feature status in .agent/feature_list_005.json remains 'pending' and .agent/run_state.json shows no diff -- neither was touched by this QA round, per instruction. No 037 or 039 real surface was created, modified, or touched; all fixture/probe activity was scratch-only. Approved; feature 036 is fit to be marked complete by the orchestrator."
+  }
+}

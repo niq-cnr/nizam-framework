@@ -1,0 +1,9 @@
+T=$(mktemp -d); mkdir -p "$T/schema"; cp schema/preflight_verdict.schema.json schema/ecosystem_baseline.schema.json "$T/schema/"; ( cd "$T" && git init -q && git config user.email a@a.com && git config user.name a && git add -A && git commit -q -m init ); echo '// dirty' >> "$T/schema/preflight_verdict.schema.json"; OUT=$(mktemp -d); python3 tools/ecosystem_preflight.py --execution-id verify-fail --output-dir "$OUT" --repo-root "$T"; rc=$?; [ "$rc" -eq 1 ] || { echo "expected exit 1, got $rc"; exit 1; }; test -f "$OUT/baseline.json" && { echo "baseline must not be captured on FAIL"; exit 1; }; python3 -c "import json,jsonschema
+pv=json.load(open('schema/preflight_verdict.schema.json'))
+d=json.load(open('$OUT/preflight.json'))
+jsonschema.validate(d, pv)
+assert d['verdict']=='FAIL', d
+" && echo PASS || { echo "FAIL fixture did not behave as contracted"; exit 1; }
+PREFLIGHT VERDICT: FAIL (1 blocking finding(s))
+PASS
+EXIT:0

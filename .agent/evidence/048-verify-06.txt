@@ -1,0 +1,18 @@
+# .agent/evidence/048-verify-06.txt
+# Contract 048 verification entry 06 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: FIX 3b LANDED (ecosystem/07_progress_comparison.md): zero occurrences of the directory-qualified schema/audit_delta.schema.json remain; the bare-filename form appears exactly twice (Sec 7 + References), each stating the planned schema/ location without a dangling path; version 0.1.1 with a feature-048 change_log entry.
+$ set -e
+test "$(grep -Fc 'schema/audit_delta.schema.json' ecosystem/07_progress_comparison.md)" = "0"
+test "$(grep -Fc '`audit_delta.schema.json`' ecosystem/07_progress_comparison.md)" = "2"
+python3 -c "
+import re
+body=open('ecosystem/07_progress_comparison.md',encoding='utf-8').read().split('---',2)[2]
+norm=re.sub(r'\s+',' ',body)
+assert norm.count('planned under \`schema/\`')==2, norm.count('planned under \`schema/\`')
+print('both body references state the planned schema/ location (whitespace-normalized count = 2)')"
+grep -Fq 'version: 0.1.1' ecosystem/07_progress_comparison.md
+grep -Fq 'Feature 048 (operator PR #21 review, finding 4)' ecosystem/07_progress_comparison.md
+echo 'E06 PASS'
+both body references state the planned schema/ location (whitespace-normalized count = 2)
+E06 PASS
+[exit 0]

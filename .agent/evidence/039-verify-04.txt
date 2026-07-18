@@ -1,0 +1,13 @@
+python3 -c "import json,jsonschema,sys
+s=json.load(open('schema/engineering_finding.schema.json'))
+base={'id':'x','severity':'medium','evidence':[{'path':'.agent/evidence/e/1.txt','revision':'r'}],'impact':'i','owner':'o','status':'open','closure_criteria':'c'}
+bad=dict(base); bad['confidence']='Definitely'
+try:
+  jsonschema.validate(bad, s); sys.exit(1)
+except jsonschema.ValidationError:
+  pass
+for c in ('Confirmed','Probable','Suspected'):
+  inst=dict(base); inst['confidence']=c
+  jsonschema.validate(inst, s)" && echo PASS || { echo "confidence enum incorrectly scoped"; exit 1; }
+PASS
+EXIT:0

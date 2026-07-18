@@ -1,0 +1,3 @@
+h=$(python3 tools/ecosystem_preflight.py --help 2>&1); for f in --execution-id --output-dir --repo-root --self-fixture --tolerate-untracked --operator-approver --operator-authorization --operator-approved-at; do echo "$h" | grep -Fq -- "$f" || { echo "missing documented flag: $f"; exit 1; }; done; echo PASS
+PASS
+EXIT:0

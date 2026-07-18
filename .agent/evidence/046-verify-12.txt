@@ -1,0 +1,3 @@
+python3 -c "import json,yaml,jsonschema; d=open('docs/planning/DEBT.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS
+PASS
+EXIT:0

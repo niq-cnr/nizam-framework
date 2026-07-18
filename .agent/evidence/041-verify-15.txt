@@ -1,0 +1,4 @@
+T=$(mktemp -d); mkdir -p "$T/schema"; cp schema/preflight_verdict.schema.json schema/ecosystem_baseline.schema.json "$T/schema/"; ( cd "$T" && git init -q && git config user.email a@a.com && git config user.name a && git add -A && git commit -q -m init ); echo x > "$T/NOTES.md"; echo '// dirty' >> "$T/schema/preflight_verdict.schema.json"; OUT=$(mktemp -d); python3 tools/ecosystem_preflight.py --execution-id verify-precedence --output-dir "$OUT" --repo-root "$T" --tolerate-untracked NOTES.md --operator-approver x --operator-authorization y; rc=$?; [ "$rc" -eq 1 ] && echo PASS || { echo "expected FAIL (exit 1) to win over exceptions+approval, got $rc"; exit 1; }
+PREFLIGHT VERDICT: FAIL (1 blocking finding(s))
+PASS
+EXIT:0

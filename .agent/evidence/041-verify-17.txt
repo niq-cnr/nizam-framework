@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- ecosystem/ schema/ && echo PASS || { echo "an out-of-scope ecosystem/ or schema/ file was modified"; git diff --name-only HEAD -- ecosystem/ schema/; exit 1; }
+PASS
+EXIT:0

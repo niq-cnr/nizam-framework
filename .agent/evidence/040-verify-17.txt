@@ -1,0 +1,5 @@
+python3 -c "import json,yaml,jsonschema; d=open('tools/SKILL.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))" && echo PASS || { echo "tools/SKILL.md frontmatter failed schema validation"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

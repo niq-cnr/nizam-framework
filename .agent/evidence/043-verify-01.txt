@@ -1,0 +1,3 @@
+$ git ls-tree -r HEAD --name-only | grep -q '^\.agent/reconciliation/' && { echo 'a .agent/reconciliation/ path already exists at HEAD -- would be vacuous'; exit 1; }; git ls-tree -r HEAD --name-only | grep -qE '^\.agent/evidence/dogfood-' && { echo 'a .agent/evidence/dogfood-* path already exists at HEAD -- would be vacuous'; exit 1; }; git show HEAD:docs/planning/DEBT.md | grep -qE 'NDEBT-01[78]' && { echo 'NDEBT-017/018 already present at HEAD -- would be vacuous'; exit 1; }; echo PASS
+PASS
+EXIT:0

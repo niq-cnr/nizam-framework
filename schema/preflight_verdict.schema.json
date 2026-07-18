@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:preflight_verdict.schema.json",
+  "title": "Nizam Ecosystem Preflight Verdict Schema",
+  "description": "Validates the machine-readable verdict artifact a clean-state preflight run emits at .agent/reconciliation/<execution-id>/preflight.json, per ecosystem/01_clean_state_preflight.md Sec 6 (Verdict Artifact) and docs/nips/NIP-0001-ecosystem-engineering-cycle.md (Preflight Verdict). Enforces the exact three-verdict enum (PASS, PASS_WITH_EXCEPTIONS, FAIL) and the structured operator-approval state PASS_WITH_EXCEPTIONS requires before execution continues (Sec 5, Operator-Exception Rule).",
+  "type": "object",
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "description": "The preflight run's outcome. Exactly one of the three values; no other value is a valid preflight verdict (protocol Sec 3).",
+      "enum": ["PASS", "PASS_WITH_EXCEPTIONS", "FAIL"]
+    },
+    "execution_id": {
+      "type": "string",
+      "description": "The ecosystem-cycle execution identifier this preflight run belongs to, matching the <execution-id> path segment of the artifact's own location."
+    },
+    "generated_at": {
+      "type": "string",
+      "description": "Date or date-time the preflight run produced this verdict."
+    },
+    "exceptions": {
+      "type": "array",
+      "description": "The non-blocking findings surfaced by the run. Populated when verdict is PASS_WITH_EXCEPTIONS (protocol Sec 3); the shape of an individual finding is intentionally open here (additionalProperties true) so it composes with, and does not redefine, schema/engineering_finding.schema.json.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "operator_approval": {
+      "type": "object",
+      "description": "The structured operator-approval state required whenever verdict is PASS_WITH_EXCEPTIONS (protocol Sec 5, Operator-Exception Rule): the approver's identity, the timestamp of the decision, and either the verbatim authorization text or a reference to it. Recorded in this same verdict artifact, never as a separate, unlinked record.",
+      "properties": {
+        "approver": {
+          "type": "string",
+          "description": "Identity of the operator who reviewed and approved the recorded exceptions.",
+          "minLength": 1
+        },
+        "approved_at": {
+          "type": "string",
+          "description": "Date or date-time the operator recorded the approval decision.",
+          "minLength": 1
+        },
+        "authorization": {
+          "type": "string",
+          "description": "The verbatim operator authorization text, or a reference (e.g. a ticket or PR URL) to where it is recorded.",
+          "minLength": 1
+        }
+      },
+      "required": ["approver", "approved_at", "authorization"],
+      "additionalProperties": true
+    }
+  },
+  "required": ["verdict"],
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "verdict": { "const": "PASS_WITH_EXCEPTIONS" } },
+        "required": ["verdict"]
+      },
+      "then": {
+        "required": ["operator_approval", "exceptions"],
+        "properties": {
+          "exceptions": {
+            "type": "array",
+            "minItems": 1
+          },
+          "operator_approval": {
+            "type": "object",
+            "required": ["approver", "approved_at", "authorization"]
+          }
+        }
+      }
+    }
+  ]
+}

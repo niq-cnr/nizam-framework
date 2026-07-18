@@ -1,0 +1,129 @@
+{
+  "contract_id": "048",
+  "feature_id": "048",
+  "name": "PR-stack Review Response (round 3: operator review of PR #21) -- doc-truth fixes + debt registration + NDEBT-019 pipe fix",
+  "status": "approved",
+  "spec_ref": ".agent/planning_notes_048.md",
+  "design_notes": {
+    "what_this_feature_is": "Review-response overhead feature (not a handover deliverable): answers the operator's six inline review threads on PR #21 (five logical findings; CodeRabbit skipped PR #21 -- 291 files over the 150-file limit) as one new commit at the stack tip per the stacked-PR convention (house precedent 046/047), plus two reply-only round-2 stragglers (the contested PR #20 acceptance-check thread; CodeRabbit's issue-vs-debt question on PR #22). Queued by feature 047's close-out run_state event.",
+    "process_honesty": "Executed by a single operator-directed session (2026-07-18) with all roles collapsed: no separate planner/generator/Mode-A/evaluator agents were dispatched for this overhead feature. The triage brief (.agent/planning_notes_048.md), this contract, the 16-entry verification suite, and the QA record were authored and executed in-session; every verification entry ran live against the implemented working tree with captured output (AH-3). The prior session's loss-and-recovery note on 047 (subagent transcripts lost mid-feature; durable .agent state carried the work) is the precedent this single-session execution leans on: the artifacts, not the process theater, are the record.",
+    "zero_behavior_change": "All five files are documentation/prose surfaces (four governed .md docs + the DEBT register). No executable file is touched; behavior invariance is asserted by both sweeps green with rc asserted (E11/E12), the e2e bootstrap green (E13), and the 045 release-package invariants (E14).",
+    "severity_discipline": "Both new DEBT rows are Low so the Open register stays free of High/Critical (045-verify-18 recurrence guard, re-proven mechanically by E10)."
+  },
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "Escape the two raw pipes in the NDEBT-019 row's code-span (2>&1 \\| tail -1 \\| grep) so the row parses back to 5 GFM cells with rendered content byte-identical (047's NDEBT-016 mechanism); add NDEBT-023 (Low, ecosystem_baseline same-repo revision-consistency rule unenforced by schema/fixture/tool) and NDEBT-024 (Low, preflight_verdict_fail.json blocking-item-in-exceptions semantic muddle vs the shipped CLI's blocking_findings FAIL shape) after NDEBT-022; bump version 0.13.0 -> 0.14.0. No other row touched."
+      },
+      {
+        "path": "ecosystem/README.md",
+        "purpose": "FIX 1: replace the stale 'Of the Planned documents' paragraph (contradicted by the table since the 034-036 row-flips) with the truthful state: the four core protocols (Sec 2.3 mandatory surface) shipped at features 033-036; the five Planned documents (00/04/05/06/08) are the deferrable set. Version 0.2.0 -> 0.2.1 + change_log entry, modeling the NDS Sec 7 discipline the operator's process note flagged."
+      },
+      {
+        "path": "ecosystem/01_clean_state_preflight.md",
+        "purpose": "FIX 2: append the Sec-6 finalization-timing passage (schema-validity binds the FINAL artifact; pending runs record exceptions in an informational pending artifact -- the shipped CLI's preflight.pending.json -- and withhold preflight.json until the operator decision is folded in; pre-approval PASS_WITH_EXCEPTIONS unrepresentable BY DESIGN). Version 0.1.0 -> 0.1.1 + change_log added."
+      },
+      {
+        "path": "ecosystem/03_engineering_audit.md",
+        "purpose": "FIX 3a: GA-gate reference to bare-filename form (08_ga_gate.md) per the module convention contract 032 established. Version 0.1.0 -> 0.1.1 + change_log added."
+      },
+      {
+        "path": "ecosystem/07_progress_comparison.md",
+        "purpose": "FIX 3b: both audit-delta schema references to bare-filename form (audit_delta.schema.json, 'planned under schema/'). Version 0.1.0 -> 0.1.1 + change_log added."
+      }
+    ]
+  },
+  "non_goals": [
+    "No edit to any .agent/evidence/* file -- immutable point-in-time audit captures.",
+    "No edit to .agent/evidence/045-release-readiness-checklist.md -- SHA-pinned by contract 045; byte-identity re-proven live by E14.",
+    "No edit to CHANGELOG.md (the [0.7.0] section stays byte-stable for H-FRAMEWORK-RELEASE; house precedent 046/047: review-response doc-truth fixes carry in-file change_log records only) or to v0.6.0-release-notes.md.",
+    "No edit to schema/preflight_verdict.schema.json, schema/ecosystem_baseline.schema.json, or tools/fixtures/* -- the finding-3 and finding-5 gaps are REGISTERED (NDEBT-023/024), not hot-patched pre-tag.",
+    "No edit to tools/ecosystem_preflight.py or tools/validate.sh -- zero-behavior-change feature.",
+    "No re-triage of the operator's findings beyond AH-2 re-verification -- dispositions follow feature 047's close-out queue (fix items 1-3 + NDEBT-023/024 + NDEBT-019 pipe fix)."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (HEAD-anchored at the pre-implementation tip 68cb36f, NDEBT-014 class-1 rule): every defect this contract fixes is present at HEAD -- the README stale paragraph, the missing Sec-6 finalization passage in 01, the directory-qualified dangling refs in 03 (x1) and 07 (x2), DEBT.md at 0.13.0 with the NDEBT-019 row parsing to 7 cells and NDEBT-023/024 absent.",
+      "command": "set -e\ngit show HEAD:ecosystem/README.md | grep -Fq 'Of the Planned documents,'\n! git show HEAD:ecosystem/01_clean_state_preflight.md | grep -Fq 'Schema-validity binds the artifact once it is final.'\ngit show HEAD:ecosystem/03_engineering_audit.md | grep -Fq 'ecosystem/08_ga_gate.md'\ntest \"$(git show HEAD:ecosystem/07_progress_comparison.md | grep -Fc 'schema/audit_delta.schema.json')\" = \"2\"\ngit show HEAD:docs/planning/DEBT.md | grep -Fq 'version: 0.13.0'\n! git show HEAD:docs/planning/DEBT.md | grep -Fq 'NDEBT-023'\n! git show HEAD:docs/planning/DEBT.md | grep -Fq 'NDEBT-024'\ngit show HEAD:docs/planning/DEBT.md | python3 -c \"\nimport sys,re\nl=[x for x in sys.stdin if x.startswith('| NDEBT-019 ')][0]\ncells=re.split(r'(?<!\\\\\\\\)\\|', l.strip())\nassert len(cells)-2==7, len(cells)-2\nprint('HEAD NDEBT-019 row: 7 cells (defect present)')\"\necho 'E01 PASS: all defects present at HEAD (anti-vacuity)'"
+    },
+    {
+      "acceptance_test": "FIX 1 LANDED (ecosystem/README.md): the stale 'Of the Planned documents' sentence is gone; the truthful four-shipped (features 033-036, Sec 2.3 four-core-protocols surface) / five-planned-deferrable paragraph is present; version 0.2.1 with a feature-048 change_log entry (modeling the NDS Sec 7 edit discipline the operator's process note flagged).",
+      "command": "set -e\n! grep -Fq 'Of the Planned documents,' ecosystem/README.md\ngrep -Fq 'All four Shipped documents' ecosystem/README.md\ngrep -Fq 'preflight/baseline/audit/comparison, product_spec_005.md Sec 2.3' ecosystem/README.md\ngrep -Fq '(features 034-036). The five Planned documents' ecosystem/README.md\ngrep -Fq '`01_clean_state_preflight.md` (feature 033), then' ecosystem/README.md\ngrep -Fq 'version: 0.2.1' ecosystem/README.md\ngrep -Fq 'Feature 048 (operator PR #21 review, finding 1)' ecosystem/README.md\necho 'E02 PASS'"
+    },
+    {
+      "acceptance_test": "FIX 2 LANDED (ecosystem/01_clean_state_preflight.md): Section 6 now carries the finalization-timing passage (schema-validity binds the FINAL artifact; pending runs record exceptions in an informational pending artifact and withhold preflight.json; pre-approval PASS_WITH_EXCEPTIONS unrepresentable BY DESIGN); version 0.1.1 with a feature-048 change_log entry.",
+      "command": "set -e\ngrep -Fq 'Schema-validity binds the artifact once it is final.' ecosystem/01_clean_state_preflight.md\ngrep -Fq 'writes `preflight.pending.json`, deliberately' ecosystem/01_clean_state_preflight.md\ngrep -Fq 'is by design, not accident' ecosystem/01_clean_state_preflight.md\ngrep -Fq 'version: 0.1.1' ecosystem/01_clean_state_preflight.md\ngrep -Fq 'Feature 048 (operator PR #21 review, finding 2)' ecosystem/01_clean_state_preflight.md\necho 'E03 PASS'"
+    },
+    {
+      "acceptance_test": "FIX 2 PROTOCOL<->TOOL CONSISTENCY: the Sec-6 passage's mechanics (pending artifact name, withholding, deliberately non-schema-conformant pending state) match the shipped CLI byte-for-byte -- tools/ecosystem_preflight.py's exit-2 path writes preflight.pending.json with status PENDING_OPERATOR_APPROVAL and WITHHOLDS preflight.json entirely.",
+      "command": "python3 - <<'PY'\nsrc=open('tools/ecosystem_preflight.py',encoding='utf-8').read()\nassert 'preflight.pending.json' in src\nassert 'WITHHELD entirely' in src\nassert '\"status\": \"PENDING_OPERATOR_APPROVAL\"' in src\ndoc=open('ecosystem/01_clean_state_preflight.md',encoding='utf-8').read()\nassert 'preflight.pending.json' in doc\nassert 'withholds `preflight.json` entirely' in doc\nassert 'non-schema-conformant' in doc\nprint('E04 PASS: Sec-6 finalization passage matches the shipped CLI mechanics')\nPY"
+    },
+    {
+      "acceptance_test": "FIX 3a LANDED (ecosystem/03_engineering_audit.md): zero occurrences of the directory-qualified ecosystem/08_ga_gate.md remain; the bare-filename form is present at the GA-gate reference; version 0.1.1 with a feature-048 change_log entry.",
+      "command": "set -e\ntest \"$(grep -Fc 'ecosystem/08_ga_gate.md' ecosystem/03_engineering_audit.md)\" = \"0\"\ngrep -Fq '(`08_ga_gate.md`, this module' ecosystem/03_engineering_audit.md\ngrep -Fq 'version: 0.1.1' ecosystem/03_engineering_audit.md\ngrep -Fq 'Feature 048 (operator PR #21 review, finding 4)' ecosystem/03_engineering_audit.md\necho 'E05 PASS'"
+    },
+    {
+      "acceptance_test": "FIX 3b LANDED (ecosystem/07_progress_comparison.md): zero occurrences of the directory-qualified schema/audit_delta.schema.json remain; the bare-filename form appears exactly twice (Sec 7 + References), each stating the planned schema/ location without a dangling path; version 0.1.1 with a feature-048 change_log entry.",
+      "command": "set -e\ntest \"$(grep -Fc 'schema/audit_delta.schema.json' ecosystem/07_progress_comparison.md)\" = \"0\"\ntest \"$(grep -Fc '`audit_delta.schema.json`' ecosystem/07_progress_comparison.md)\" = \"2\"\npython3 -c \"\nimport re\nbody=open('ecosystem/07_progress_comparison.md',encoding='utf-8').read().split('---',2)[2]\nnorm=re.sub(r'\\s+',' ',body)\nassert norm.count('planned under \\`schema/\\`')==2, norm.count('planned under \\`schema/\\`')\nprint('both body references state the planned schema/ location (whitespace-normalized count = 2)')\"\ngrep -Fq 'version: 0.1.1' ecosystem/07_progress_comparison.md\ngrep -Fq 'Feature 048 (operator PR #21 review, finding 4)' ecosystem/07_progress_comparison.md\necho 'E06 PASS'"
+    },
+    {
+      "acceptance_test": "MODULE-WIDE RECURRENCE SWEEP: zero dangling directory-qualified references across every ecosystem/*.md (the exact extraction class the operator's finding names; guards against a third site having been missed).",
+      "command": "python3 - <<'PY'\nimport re,os,glob\nbad=[]\nfor f in sorted(glob.glob('ecosystem/*.md')):\n    for i,l in enumerate(open(f,encoding='utf-8'),1):\n        for m in re.finditer(r'(?:ecosystem|schema|tools|methodology|docs)/[A-Za-z0-9_./-]+\\.(?:md|json|sh|py|html)', l):\n            if not os.path.exists(m.group(0)):\n                bad.append((f,i,m.group(0)))\nassert not bad, bad\nprint('E07 PASS: zero dangling directory-qualified references across ecosystem/*.md')\nPY"
+    },
+    {
+      "acceptance_test": "NDEBT-019 PIPE FIX (047 Mode B queued observation, same class/mechanism as 047's NDEBT-016 fix): the row parses to exactly 5 GFM cells with severity 'Low' in cell 3, the two raw pipes are escaped exactly once each, and escape-neutralization proves the RENDERED code-span is byte-identical to the documented command.",
+      "command": "python3 - <<'PY'\nimport re\nl=[x for x in open('docs/planning/DEBT.md',encoding='utf-8') if x.startswith('| NDEBT-019 ')][0]\ncells=re.split(r'(?<!\\\\)\\|', l.strip())\nassert len(cells)-2==5, len(cells)-2\nassert cells[3].strip()=='Low', cells[3]\nrendered=l.replace('\\\\|','|')\nassert 'bash tools/validate.sh 2>&1 | tail -1 | grep ...' in rendered\nassert l.count('2>&1 \\\\| tail -1 \\\\| grep')==1\nprint('E08 PASS: NDEBT-019 row 5 cells, Low in cell 3, rendered content byte-identical')\nPY"
+    },
+    {
+      "acceptance_test": "DEBT REGISTRATION LANDED: NDEBT-023 (Low; baseline same-repo revision-consistency rule unenforced by schema/fixture/tool) and NDEBT-024 (Low; FAIL-fixture blocking-item-in-exceptions muddle vs the tool's real blocking_findings shape) each present exactly once, 5 cells, severity Low, carrying PR #21 provenance; DEBT.md frontmatter at 0.14.0.",
+      "command": "python3 - <<'PY'\nimport re\nlines=open('docs/planning/DEBT.md',encoding='utf-8').readlines()\nfor rid,frag in [('NDEBT-023','same-repo'),('NDEBT-024','blocking_findings')]:\n    r=[x for x in lines if x.startswith('| '+rid+' ')]\n    assert len(r)==1, (rid,len(r))\n    cells=re.split(r'(?<!\\\\)\\|', r[0].strip())\n    assert len(cells)-2==5, (rid,len(cells)-2)\n    assert cells[3].strip()=='Low', (rid,cells[3])\n    assert frag in r[0], (rid,frag)\n    assert 'Surfaced by operator review of PR #21' in r[0], rid\nassert 'version: 0.14.0' in ''.join(lines[:8])\nprint('E09 PASS: NDEBT-023/024 registered; DEBT.md 0.14.0')\nPY"
+    },
+    {
+      "acceptance_test": "WHOLE-REGISTER STRUCTURAL GUARD (045-verify-18 recurrence protection): every | NDEBT- row in DEBT.md parses to exactly 5 GFM cells, and the Open table's severity set is confined to {Low, Medium} -- no High/Critical open row.",
+      "command": "python3 - <<'PY'\nimport re\nopen_sect=True; sevs=[]; bad=[]\nfor i,l in enumerate(open('docs/planning/DEBT.md',encoding='utf-8'),1):\n    if l.startswith('## Resolved'): open_sect=False\n    if l.startswith('| NDEBT'):\n        cells=re.split(r'(?<!\\\\)\\|', l.strip())\n        if len(cells)-2!=5: bad.append((i,len(cells)-2))\n        if open_sect: sevs.append(cells[3].strip())\nassert not bad, bad\nassert set(sevs) <= {'Low','Medium'}, sorted(set(sevs))\nprint('E10 PASS: all NDEBT rows 5 cells; Open severities', sorted(set(sevs)))\nPY"
+    },
+    {
+      "acceptance_test": "DEFAULT SWEEP GREEN, EXIT CODE ASSERTED (the NDEBT-019-corrected authoring pattern): bash tools/validate.sh exits 0 AND its final line is exactly SUMMARY: 12 passed, 0 failed.",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?\nprintf '%s\\n' \"$out\" | tail -13\ntest $rc -eq 0\nprintf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 12 passed, 0 failed'\necho \"E11 PASS (rc=$rc)\" "
+    },
+    {
+      "acceptance_test": "PAYLOAD SWEEP GREEN, EXIT CODE ASSERTED: bash tools/validate.sh --payload exits 0 AND its final line is exactly SUMMARY (payload mode): 10 passed, 0 failed.",
+      "command": "out=$(bash tools/validate.sh --payload 2>&1); rc=$?\nprintf '%s\\n' \"$out\" | tail -3\ntest $rc -eq 0\nprintf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 10 passed, 0 failed'\necho \"E12 PASS (rc=$rc)\" "
+    },
+    {
+      "acceptance_test": "E2E BOOTSTRAP GREEN, EXIT CODE ASSERTED: the hermetic inject->verify harness passes against the working tree containing this feature's payload-shipped doc edits.",
+      "command": "out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?\nprintf '%s\\n' \"$out\" | tail -2\ntest $rc -eq 0\necho \"E13 PASS (rc=$rc)\" "
+    },
+    {
+      "acceptance_test": "045 RELEASE-PACKAGE INVARIANTS INTACT: the release-readiness checklist's full-file SHA-256 equals the contract-045 pinned value; neither CHANGELOG.md nor v0.6.0-release-notes.md appears in this feature's tracked diff; the remote carries exactly 10 vMAJOR.MINOR.PATCH tags and no v0.7.0 (the pipeline never self-tags).",
+      "command": "set -e\necho \"06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea  .agent/evidence/045-release-readiness-checklist.md\" | sha256sum -c -\ngit diff --name-only HEAD | grep -E '^(CHANGELOG\\.md|v0\\.6\\.0-release-notes\\.md)$' && exit 1 || true\ntags=$(git ls-remote --tags origin | grep -v '\\^{}' | awk -F/ '{print $NF}' | grep -E '^v[0-9]+\\.[0-9]+\\.[0-9]+$')\ntest \"$(printf '%s\\n' \"$tags\" | wc -l)\" = \"10\"\n! printf '%s\\n' \"$tags\" | grep -Fxq v0.7.0\necho 'E14 PASS: checklist SHA pinned; CHANGELOG + v0.6.0 release notes untouched; 10 release tags, no v0.7.0'"
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT: the tracked diff against HEAD names exactly the five contracted files and nothing else.",
+      "command": "set -e\ntest \"$(git diff --name-only HEAD | LC_ALL=C sort | tr '\\n' ' ')\" = \"docs/planning/DEBT.md ecosystem/01_clean_state_preflight.md ecosystem/03_engineering_audit.md ecosystem/07_progress_comparison.md ecosystem/README.md \"\necho 'E15 PASS: tracked diff confined to exactly the 5 contracted files'"
+    },
+    {
+      "acceptance_test": ".AGENT IMMUTABILITY AT DELIVERABLE TIME: zero tracked .agent modifications in the deliverable diff; untracked .agent additions confined to this feature's own in-flight range (planning note, contract 048, evidence 048-verify-*, qa 048).",
+      "command": "set -e\ntest -z \"$(git diff --name-only HEAD -- .agent/)\"\ngit status --porcelain .agent/ | python3 -c \"\nimport sys\nallowed=('.agent/planning_notes_048.md','.agent/contracts/048.json','.agent/qa/048.json','.agent/evidence/048-verify-')\nfor l in sys.stdin:\n    st,p=l[:2],l[3:].strip()\n    assert st=='??', (st,p)\n    assert p.startswith(allowed), p\nprint('E16 PASS: no tracked .agent modification; untracked additions confined to the 048 in-flight range')\n\" "
+    }
+  ],
+  "estimated_lines": 70,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/048-verify-NN.txt, where NN is the 1-based index of the command in the 'verification' array, zero-padded to 2 digits, in array order (16 entries: 048-verify-01.txt .. 048-verify-16.txt). Commands run from the repository root against the implemented, uncommitted working tree at pre-commit time (HEAD = 68cb36f), matching the house pre-commit capture convention; HEAD-anchored entries (E01) therefore prove anti-vacuity against the true pre-implementation tip.",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-directed review-response session, 2026-07-18 ('The PRs have review comments that need to be addressed before we can proceed'). No separate Loop-1 gate agents were dispatched; the 16-entry suite was executed live, 16/16 exit 0, outputs captured per the evidence convention. The QA record (.agent/qa/048.json) documents the same session's independent full-suite re-run."
+  },
+  "amendments": [
+    {
+      "entry": 6,
+      "amended_at": "2026-07-18",
+      "class": "NDEBT-014 classes 4 then 3, both caught live at execution",
+      "what": "E06's third assertion failed twice, each failure a catalogued verification-authoring defect: (round 1, class 4 -- bare substring too loose) counting the bare phrase 'planned under' expected 2 but the file legitimately carries 3 (two body sites + the new change_log summary describing them); (round 2, class 3 -- line-based grep vs markdown line-wrap) the backtick-tightened single-line form 'planned under `schema/`' matches only once because the References occurrence wraps 'planned under' / '`schema/`' across a line break. Final form: whitespace-normalized body-only count via python (frontmatter stripped, \\s+ collapsed) == 2 -- the exact class-3 remedy the NDEBT-014 catalogue prescribes.",
+      "disposition": "Assertion rebuilt; deliverable content unchanged in both rounds (the failures were in the check, not the fix). Two more live datapoints for the NDEBT-014 mechanization case."
+    }
+  ]
+}

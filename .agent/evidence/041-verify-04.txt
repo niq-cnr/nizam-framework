@@ -1,0 +1,18 @@
+python3 -c "import ast,re,sys
+t = ast.get_docstring(ast.parse(open('tools/ecosystem_preflight.py').read())) or ''
+required = [
+    (r'^\s*0\b.*PASS\b', '0 -> PASS'),
+    (r'^\s*1\b.*FAIL\b', '1 -> FAIL'),
+    (r'^\s*2\b.*PASS_WITH_EXCEPTIONS\b', '2 -> PASS_WITH_EXCEPTIONS (pending)'),
+    (r'^\s*3\b.*PASS_WITH_EXCEPTIONS\b', '3 -> PASS_WITH_EXCEPTIONS (approved)'),
+    (r'^\s*64\b.*[Uu]sage error\b', '64 -> usage error'),
+]
+lines = t.splitlines()
+missing = [label for pat, label in required if not any(re.search(pat, ln) for ln in lines)]
+if missing:
+    print('missing exit-code table rows:', missing); sys.exit(1)
+print('exit-code table structurally present')
+" && echo PASS || { echo "exit-code table is not structurally present in the module docstring"; exit 1; }
+exit-code table structurally present
+PASS
+EXIT:0

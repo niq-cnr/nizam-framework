@@ -1,0 +1,16 @@
+# .agent/evidence/048-verify-07.txt
+# Contract 048 verification entry 07 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: MODULE-WIDE RECURRENCE SWEEP: zero dangling directory-qualified references across every ecosystem/*.md (the exact extraction class the operator's finding names; guards against a third site having been missed).
+$ python3 - <<'PY'
+import re,os,glob
+bad=[]
+for f in sorted(glob.glob('ecosystem/*.md')):
+    for i,l in enumerate(open(f,encoding='utf-8'),1):
+        for m in re.finditer(r'(?:ecosystem|schema|tools|methodology|docs)/[A-Za-z0-9_./-]+\.(?:md|json|sh|py|html)', l):
+            if not os.path.exists(m.group(0)):
+                bad.append((f,i,m.group(0)))
+assert not bad, bad
+print('E07 PASS: zero dangling directory-qualified references across ecosystem/*.md')
+PY
+E07 PASS: zero dangling directory-qualified references across ecosystem/*.md
+[exit 0]

@@ -1,0 +1,3 @@
+source tools/verify_lib.sh && vlib_scope_guard "CHANGELOG.md" "NIZAM.json" "docs/guide/index.html" "README.md" "CONTEXT.md" "v0.6.0-release-notes.md" ".agent/evidence/045" && echo PASS || { echo 'out-of-scope changed path(s) detected'; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,5 @@
+python3 -c "import json; d=json.load(open('tools/skill.json')); assert isinstance(d.get('capabilities'), list) and len(d['capabilities'])>0" && echo PASS || { echo "tools/skill.json is not valid JSON or lacks a non-empty capabilities array"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

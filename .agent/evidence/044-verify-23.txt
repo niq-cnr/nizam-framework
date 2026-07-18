@@ -1,0 +1,12 @@
+EXEC_ID2=$(ls -dt .agent/reconciliation/dogfood-* 2>/dev/null | grep -v 'dogfood-2026-07-17-28c8253' | head -1); [ -n "$EXEC_ID2" ] || { echo 'no SECOND .agent/reconciliation/dogfood-* directory found yet -- expected before implementation lands'; exit 1; }; python3 -c "import json, jsonschema
+pv = json.load(open('schema/preflight_verdict.schema.json'))
+bv = json.load(open('schema/ecosystem_baseline.schema.json'))
+d = json.load(open('${EXEC_ID2}/preflight.json'))
+jsonschema.validate(d, pv)
+b = json.load(open('${EXEC_ID2}/baseline.json'))
+jsonschema.validate(b, bv)
+b1 = json.load(open('.agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json'))
+assert b['repository_references'][0]['revision'] != b1['repository_references'][0]['revision'], 'baseline #2 must pin a DIFFERENT revision than baseline #1 (the deliberate-change proof)'
+" && echo PASS || exit 1
+PASS
+EXIT:0

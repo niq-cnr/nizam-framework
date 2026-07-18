@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:engineering_finding.schema.json",
+  "title": "Nizam Ecosystem Engineering Finding Schema",
+  "description": "Validates a single engineering finding, per ecosystem/03_engineering_audit.md Sec 7 (Audit Artifact) and docs/nips/NIP-0001-ecosystem-engineering-cycle.md: a repository- or ecosystem-scoped finding recorded in .agent/audits/<audit-id>/findings.json. Requires severity, confidence (the protocol's fixed Confirmed/Probable/Suspected vocabulary, Sec 5), evidence (externalised by path, per-item revision-pinned per ecosystem/02_evidence_baseline.md Sec 4's anchoring rule), impact, owner, and closure_criteria on every finding; requires a structured, non-empty closure_evidence whenever a finding's status is resolved (never for open findings), so a finding cannot be marked resolved without closure evidence.",
+  "$defs": {
+    "evidence_item": {
+      "type": "object",
+      "description": "A single, path-referenced piece of evidence, revision-pinned per ecosystem/02_evidence_baseline.md Sec 4 (an evidence item with no declared revision is not valid). Raw output is never pasted inline here (methodology/04_tool_driven_state.md Sec 5); only the path and its revision anchor are recorded.",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path to the externalised evidence file, per ecosystem/03_engineering_audit.md Sec 7 (evidence is externalised by path under .agent/evidence/<execution-id>/, never pasted inline).",
+          "minLength": 1,
+          "pattern": "^\\.agent/evidence/"
+        },
+        "revision": {
+          "type": "string",
+          "description": "The repository (or artifact) revision this evidence item is anchored to, per ecosystem/02_evidence_baseline.md Sec 4's revision anchoring rule.",
+          "minLength": 1
+        }
+      },
+      "required": ["path", "revision"],
+      "additionalProperties": true
+    }
+  },
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this finding within its audit run.",
+      "minLength": 1
+    },
+    "severity": {
+      "type": "string",
+      "description": "The finding's severity category. Deliberately NOT a fixed enum: ecosystem/03_engineering_audit.md Sec 1 states consumers extend this protocol with their OWN repository- and ecosystem-specific finding categories and severities, and that this protocol does not redefine them (only its evidence hierarchy, maturity model, confidence vocabulary, and commercial-readiness exclusion are fixed, Sec 1). Required and non-empty so every finding names a severity, without this schema hardcoding a consumer-specific severity vocabulary the protocol explicitly reserves as an extension point.",
+      "minLength": 1
+    },
+    "confidence": {
+      "type": "string",
+      "description": "The finding's confidence level. Exactly the protocol's fixed, closed vocabulary (ecosystem/03_engineering_audit.md Sec 5): Confirmed (Tier 1 evidence), Probable (Tier 2), Suspected (Tier 3). Unlike severity, this vocabulary is NOT consumer-extensible -- the protocol defines it once, here.",
+      "enum": ["Confirmed", "Probable", "Suspected"]
+    },
+    "maturity": {
+      "type": "string",
+      "description": "OPTIONAL maturity-model claim the finding asserts, exactly one of the protocol's ten ascending levels (ecosystem/03_engineering_audit.md Sec 4). Not every finding asserts a maturity claim (e.g. a finding solely about evidence or closure state may not), so this property is not required by any acceptance test in this feature; when present it MUST be one of the ten named levels, in the protocol's own spelling and order.",
+      "enum": ["Designed", "Authored", "Implemented", "Unit Tested", "Integrated", "Rendered", "Deployed", "Exercised", "Observable", "Production Proven"]
+    },
+    "evidence": {
+      "type": "array",
+      "description": "The evidence backing this finding (ecosystem/03_engineering_audit.md Sec 3/7). At least one item; every item is path-referenced and revision-pinned (see $defs/evidence_item) -- a finding recorded with no evidence, or evidence missing a path or revision, is not valid.",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "impact": {
+      "type": "string",
+      "description": "The finding's engineering impact -- what is affected, and how, if the underlying condition is not addressed.",
+      "minLength": 1
+    },
+    "owner": {
+      "type": "string",
+      "description": "The identity (person, team, or role) accountable for the finding until it is closed.",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "description": "The finding's current lifecycle state within this audit run. 'resolved' triggers the closure_evidence requirement below (see allOf); this is a within-finding lifecycle flag, distinct from ecosystem/07_progress_comparison.md's own new/resolved/reopened/stale classification of findings ACROSS two compared executions (that protocol's vocabulary governs comparisons of finding SETS, not a single finding's own required fields, and is out of this feature's scope).",
+      "enum": ["open", "resolved"]
+    },
+    "closure_criteria": {
+      "type": "string",
+      "description": "The criteria that must be met for this finding to be considered closed (ecosystem/03_engineering_audit.md Sec 7). Required on every finding, regardless of current status, so a finding always states what 'done' looks like -- distinct from closure_evidence, which records that those criteria were actually met.",
+      "minLength": 1
+    },
+    "closure_evidence": {
+      "type": "array",
+      "description": "Evidence demonstrating the closure_criteria were met. Required, and non-empty, ONLY when status is 'resolved' (see allOf below); a finding marked resolved with no closure_evidence, or with a closure_evidence array present but containing only structurally-incomplete items (missing path or revision), is not valid.",
+      "items": { "$ref": "#/$defs/evidence_item" }
+    }
+  },
+  "required": ["id", "severity", "confidence", "evidence", "impact", "owner", "status", "closure_criteria"],
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "if": {
+        "properties": { "status": { "const": "resolved" } },
+        "required": ["status"]
+      },
+      "then": {
+        "required": ["closure_evidence"],
+        "properties": {
+          "closure_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/$defs/evidence_item" }
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+python3 -c "
+import re
+t = open('docs/planning/DEBT.md', encoding='utf-8').read()
+lines = t.splitlines()
+line21 = next((l for l in lines if re.match(r'^\| *NDEBT-021 *\|', l)), None)
+assert line21, 'NDEBT-021 row not found'
+assert ('ecosystem_preflight.py' in line21) and ('fail' in line21.lower()), 'NDEBT-021 row missing ecosystem_preflight.py / fail-closed substance'
+line22 = next((l for l in lines if re.match(r'^\| *NDEBT-022 *\|', l)), None)
+assert line22, 'NDEBT-022 row not found'
+assert ('ecosystem/07' in line22) and (('taxonomy' in line22.lower()) or ('non-exhaustive' in line22.lower())), 'NDEBT-022 row missing ecosystem/07 taxonomy substance'
+print('PASS')
+"
+PASS
+EXIT:0

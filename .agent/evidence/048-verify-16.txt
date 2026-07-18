@@ -1,0 +1,16 @@
+# .agent/evidence/048-verify-16.txt
+# Contract 048 verification entry 16 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: .AGENT IMMUTABILITY AT DELIVERABLE TIME: zero tracked .agent modifications in the deliverable diff; untracked .agent additions confined to this feature's own in-flight range (planning note, contract 048, evidence 048-verify-*, qa 048).
+$ set -e
+test -z "$(git diff --name-only HEAD -- .agent/)"
+git status --porcelain .agent/ | python3 -c "
+import sys
+allowed=('.agent/planning_notes_048.md','.agent/contracts/048.json','.agent/qa/048.json','.agent/evidence/048-verify-')
+for l in sys.stdin:
+    st,p=l[:2],l[3:].strip()
+    assert st=='??', (st,p)
+    assert p.startswith(allowed), p
+print('E16 PASS: no tracked .agent modification; untracked additions confined to the 048 in-flight range')
+" 
+E16 PASS: no tracked .agent modification; untracked additions confined to the 048 in-flight range
+[exit 0]

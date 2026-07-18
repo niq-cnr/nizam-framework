@@ -1,0 +1,14 @@
+$ T=$(mktemp -d); cp -a . "$T/repo"; ( cd "$T/repo" && git reset --hard -q HEAD && git clean -fdq && echo x > v0.6.0-release-notes.md && echo 'fake in-flight contract' > .agent/contracts/043.json && EXEC_ID=dogfood-verify-approved && mkdir -p ".agent/evidence/${EXEC_ID}/pending" && python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/pending" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --tolerate-untracked .agent/contracts/043.json >/dev/null; mkdir -p ".agent/evidence/${EXEC_ID}/approved"; python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/approved" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --tolerate-untracked .agent/contracts/043.json --tolerate-untracked ".agent/evidence/${EXEC_ID}/" --operator-approver jane --operator-authorization 'reviewed exceptions, approved'; rc=$?; [ "$rc" -eq 3 ] || { echo "expected exit 3, got $rc"; exit 1; }; python3 -c "
+import json, jsonschema
+pv = json.load(open('schema/preflight_verdict.schema.json'))
+bv = json.load(open('schema/ecosystem_baseline.schema.json'))
+d = json.load(open('.agent/evidence/${EXEC_ID}/approved/preflight.json'))
+jsonschema.validate(d, pv)
+assert d['operator_approval']['approver'] == 'jane', d
+assert d['operator_approval']['authorization'] == 'reviewed exceptions, approved', d
+b = json.load(open('.agent/evidence/${EXEC_ID}/approved/baseline.json'))
+jsonschema.validate(b, bv)
+" && echo PASS || exit 1 )
+PREFLIGHT VERDICT: PASS_WITH_EXCEPTIONS (approved)
+PASS
+EXIT:0

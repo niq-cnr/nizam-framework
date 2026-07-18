@@ -1,0 +1,8 @@
+python3 -c "import json,jsonschema,sys,glob; s=json.load(open('schema/preflight_verdict.schema.json')); neg=[f for f in glob.glob('tools/fixtures/*preflight*') if 'invalid' in f or 'neg' in f]; assert neg
+try:
+  jsonschema.validate(json.load(open(neg[0])), s); sys.exit(1)
+except jsonschema.ValidationError:
+  sys.exit(0)" && echo PASS || { echo "glob-discovered negative fixture unexpectedly validated"; exit 1; }
+PASS
+
+EXIT:0

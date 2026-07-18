@@ -1,0 +1,3 @@
+bad=0; for f in ecosystem/01_clean_state_preflight.md ecosystem/02_evidence_baseline.md ecosystem/03_engineering_audit.md CHANGELOG.md; do if ! git diff --quiet HEAD -- "$f"; then echo "out-of-scope file modified: $f"; bad=1; fi; done; if [ "$bad" -eq 0 ]; then echo PASS; else exit 1; fi
+PASS
+EXIT:0

@@ -1,0 +1,4 @@
+source tools/verify_lib.sh; vlib_scope_guard 'schema/preflight_verdict.schema.json' 'schema/README.md' 'NIZAM.json' 'tools/fixtures/preflight_verdict_pass.json' 'tools/fixtures/preflight_verdict_fail.json' 'tools/fixtures/preflight_verdict_pass_with_exceptions.json' 'tools/fixtures/preflight_verdict_invalid_verdict.json' 'tools/fixtures/preflight_verdict_invalid_exceptions.json' 'tools/fixtures/preflight_verdict_invalid_approval_incomplete.json' 'ecosystem/README.md' 'ecosystem/02_evidence_baseline.md' 'v0.6.0-release-notes.md' && echo PASS || { echo "out-of-scope change(s) detected"; exit 1; }
+PASS
+
+EXIT:0

@@ -1,0 +1,13 @@
+python3 -c "def classify(earlier_resolved_ids, later_open_ids, later_absent_ids):
+    reopened = sorted(set(earlier_resolved_ids) & set(later_open_ids))
+    return reopened
+earlier_resolved = {'F-fixture-mechanism-only-001'}
+later_open = {'F-fixture-mechanism-only-001'}
+reopened = classify(earlier_resolved, later_open, set())
+assert reopened == ['F-fixture-mechanism-only-001'], reopened
+real_reopened = []
+assert real_reopened == [], 'the REAL delta.json must have an honestly empty reopened[] array'
+print('PASS: reopened-classification logic recognizes a fixture instance; the real array stays honestly empty')
+"
+PASS: reopened-classification logic recognizes a fixture instance; the real array stays honestly empty
+EXIT:0

@@ -1,0 +1,14 @@
+python3 -c "import json,jsonschema,sys
+s=json.load(open('schema/ecosystem_baseline.schema.json'))
+base={'framework_references':[{'revision':'v0.6.0','timestamp':'t'}],'repository_references':[{}],'dependency_references':[{'revision':'r','timestamp':'t'}],'ci_references':[{'revision':'r','timestamp':'t'}],'planning_references':[{'revision':'r','timestamp':'t'}],'evidence_references':[{'revision':'r','timestamp':'t'}]}
+import copy
+no_rev=copy.deepcopy(base); no_rev['repository_references']=[{'timestamp':'t'}]
+no_ts=copy.deepcopy(base); no_ts['repository_references']=[{'revision':'r'}]
+for label, inst in (('no_rev', no_rev), ('no_ts', no_ts)):
+  try:
+    jsonschema.validate(inst, s)
+    sys.exit(f'{label} unexpectedly validated')
+  except jsonschema.ValidationError:
+    pass" && echo PASS || { echo "missing-revision or missing-timestamp probe was NOT rejected"; exit 1; }
+PASS
+EXIT:0

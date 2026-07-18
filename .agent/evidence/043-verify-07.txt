@@ -1,0 +1,14 @@
+$ T=$(mktemp -d); cp -a . "$T/repo"; ( cd "$T/repo" && git reset --hard -q HEAD && git clean -fdq && echo x > v0.6.0-release-notes.md && REAL_HEAD=$(git rev-parse HEAD) && EXEC_ID=dogfood-verify-honesty && mkdir -p ".agent/evidence/${EXEC_ID}/approved" && python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/approved" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --operator-approver jane --operator-authorization approved >/dev/null; python3 -c "
+import json
+b = json.load(open('.agent/evidence/${EXEC_ID}/approved/baseline.json'))
+real_head = '$REAL_HEAD'
+assert b['repository_references'][0]['revision'] == real_head, (b['repository_references'][0]['revision'], real_head)
+assert b['framework_references'][0]['revision'] == real_head
+ci = b['ci_references'][0]
+note = ci.get('note', '')
+assert isinstance(note, str) and note.strip()
+assert 'run_id' not in ci
+assert ci.get('status') != 'verified-green'
+" && echo PASS || exit 1 )
+PASS
+EXIT:0

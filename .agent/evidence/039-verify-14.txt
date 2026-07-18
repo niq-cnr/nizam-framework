@@ -1,0 +1,9 @@
+python3 -c "import json,jsonschema,sys
+s=json.load(open('schema/engineering_finding.schema.json'))
+inst={'id':'x','severity':'medium','confidence':'Probable','evidence':[{'path':'.agent/evidence/e/1.txt','revision':'r'}],'impact':'i','owner':'o','status':'resolved','closure_criteria':'c','closure_evidence':[]}
+try:
+  jsonschema.validate(inst, s); sys.exit(1)
+except jsonschema.ValidationError:
+  sys.exit(0)" && echo PASS || { echo "resolved finding with an empty closure_evidence array ([]) was NOT rejected"; exit 1; }
+PASS
+EXIT:0

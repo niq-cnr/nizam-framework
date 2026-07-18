@@ -1,0 +1,3 @@
+ok=1; for fam in ecosystem_baseline preflight_verdict engineering_finding; do T=$(mktemp -d); cp -a . "$T/repo"; ( cd "$T/repo" && mkdir -p elsewhere && mv tools/fixtures/${fam}_*.json elsewhere/ && out=$(bash tools/validate.sh 2>&1); rc=$?; echo "$out" | grep -Fq '[C12] FAIL ecosystem-fixtures' && echo "$out" | grep -q "${fam}: zero POSITIVE fixtures" && echo "$out" | grep -q "${fam}: zero NEGATIVE fixtures" && [ "$rc" -ne 0 ] ); if [ "$?" -ne 0 ]; then echo "dormancy guard failed to catch zero-match for family: $fam"; ok=0; fi; done; [ "$ok" -eq 1 ] && echo PASS || exit 1
+PASS
+EXIT:0

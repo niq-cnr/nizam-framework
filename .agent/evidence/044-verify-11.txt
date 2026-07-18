@@ -1,0 +1,3 @@
+git show e73cd04:docs/planning/DEBT.md | grep -qE 'NDEBT-01[78]' && { echo 'NDEBT-017/018 unexpectedly already present at baseline #1 revision e73cd04 -- would not be new'; exit 1; }; grep -q 'NDEBT-017' docs/planning/DEBT.md && grep -q 'NDEBT-018' docs/planning/DEBT.md || { echo 'NDEBT-017/018 not present at the current tree'; exit 1; }; echo PASS
+PASS
+EXIT:0

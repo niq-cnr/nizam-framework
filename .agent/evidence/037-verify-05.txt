@@ -1,0 +1,22 @@
+python3 -c "import json,jsonschema,copy,sys
+s=json.load(open('schema/ecosystem_baseline.schema.json'))
+base=json.load(open('tools/fixtures/ecosystem_baseline_valid.json'))
+categories=['framework_references','repository_references','dependency_references','ci_references','planning_references','evidence_references']
+failures=[]
+for cat in categories:
+  missing=copy.deepcopy(base); del missing[cat]
+  try:
+    jsonschema.validate(missing, s)
+    failures.append(cat+': missing-category unexpectedly validated')
+  except jsonschema.ValidationError:
+    pass
+  empty=copy.deepcopy(base); empty[cat]=[]
+  try:
+    jsonschema.validate(empty, s)
+    failures.append(cat+': empty-array unexpectedly validated')
+  except jsonschema.ValidationError:
+    pass
+if failures:
+  sys.exit('GAPS FOUND: '+'; '.join(failures))" && echo PASS || { echo "one or more of the six categories is not independently required and/or not independently non-empty"; exit 1; }
+PASS
+EXIT:0

@@ -1,6 +1,6 @@
 {
   "name": "nizam-governance",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Unified, runtime-agnostic capability manifest for the Nizam governance framework (DD-4): a single skill payload any agent runtime can load to plan, execute, gate, and durably record contract-first work.",
   "entry_point": "tools/SKILL.md",
   "capabilities": [
@@ -53,6 +53,26 @@
       "name": "anti_hallucination",
       "description": "The mandatory constraints preventing hallucinated edits, phantom fixes, and unsubstantiated completion claims.",
       "module": "standard/anti_hallucination.md"
+    },
+    {
+      "name": "ecosystem_preflight",
+      "description": "Clean-state preflight gating entry into the ecosystem cycle: three-verdict vocabulary and the operator-exception rule for PASS_WITH_EXCEPTIONS.",
+      "module": "ecosystem/01_clean_state_preflight.md"
+    },
+    {
+      "name": "ecosystem_baseline",
+      "description": "Capturing a point-in-time, immutable baseline over framework, repository, dependency, CI, planning, and evidence references, every fact anchored to a stated revision and timestamp.",
+      "module": "ecosystem/02_evidence_baseline.md"
+    },
+    {
+      "name": "ecosystem_audit",
+      "description": "Evidence-first engineering audit against the ten-state maturity model and finding-confidence vocabulary, excluding commercial readiness from generic engineering scoring.",
+      "module": "ecosystem/03_engineering_audit.md"
+    },
+    {
+      "name": "ecosystem_progress_comparison",
+      "description": "Comparing two approved baselines or audits, classifying new/resolved/reopened/stale findings with every score movement traceable to evidence.",
+      "module": "ecosystem/07_progress_comparison.md"
     }
   ],
   "runtime_requirements": {

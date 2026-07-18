@@ -1,0 +1,3 @@
+out=$(git diff --numstat HEAD -- ecosystem/README.md); [ "$out" = "$(printf '1\t1\tecosystem/README.md')" ] && echo PASS || { echo "ecosystem/README.md diff is not exactly 1 insertion + 1 deletion: [$out]"; exit 1; }
+PASS
+EXIT:0

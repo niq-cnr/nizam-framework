@@ -1,0 +1,8 @@
+python3 -c "import os,sys; t=open('ecosystem/README.md',encoding='utf-8').read(); lines=t.splitlines(); docs=['00_ecosystem_bootstrap.md','01_clean_state_preflight.md','02_evidence_baseline.md','03_engineering_audit.md','04_dependency_reconciliation.md','05_release_train_coordination.md','06_simplification_review.md','07_progress_comparison.md','08_ga_gate.md']; bad=[]
+for d in docs:
+    expected = 'shipped' if os.path.exists(os.path.join('ecosystem', d)) else 'planned'
+    if not any(d.lower() in ln.lower() and expected in ln.lower() for ln in lines):
+        bad.append((d, expected))
+sys.exit(1 if bad else 0)" && echo PASS || { echo "README.md module-navigation table is missing a correct Shipped/Planned annotation for one or more of the 9 protocol documents"; exit 1; }
+PASS
+EXIT:0

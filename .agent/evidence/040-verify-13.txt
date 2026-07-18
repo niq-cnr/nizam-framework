@@ -1,0 +1,65 @@
+python3 -c "import re,sys
+HEADING='## 8. Ecosystem Engineering Cycle Routing'
+PINNED_PREAMBLE=['This skill remains the sole router for the Ecosystem Engineering Cycle','module (\`ecosystem/README.md\`); it routes to, never reproduces, the protocols below:']
+EXPECTED_PATHS=['ecosystem/01_clean_state_preflight.md','ecosystem/02_evidence_baseline.md','ecosystem/03_engineering_audit.md','ecosystem/07_progress_comparison.md']
+MAX_LABEL_WORDS=6
+MAX_LABEL_CHARS=40
+t=open('tools/SKILL.md',encoding='utf-8').read()
+lines=t.split('\n')
+if HEADING not in lines:
+  print(f'heading {HEADING!r} not found'); sys.exit(1)
+start=lines.index(HEADING)
+end=len(lines)
+for i in range(start+1, len(lines)):
+  if lines[i].startswith('## '):
+    end=i; break
+body=lines[start+1:end]
+bullet_re=re.compile(r'^- \`(ecosystem/[^\`]+)\` -- (.+)$')
+errors=[]
+preamble_lines_seen=[]
+bullet_mode=False
+bullets_seen=[]
+for raw in body:
+  line=raw.rstrip('\n')
+  if line.strip()=='':
+    continue
+  m=bullet_re.match(line.strip())
+  if m:
+    bullet_mode=True
+    bullets_seen.append((m.group(1), m.group(2), line))
+    continue
+  if bullet_mode:
+    errors.append(f'non-blank, non-bullet line found after bullets began (section is not a closed set): {line!r}')
+    continue
+  preamble_lines_seen.append(line)
+if preamble_lines_seen != PINNED_PREAMBLE:
+  errors.append(f'preamble does not byte-match the pinned text. expected={PINNED_PREAMBLE!r} got={preamble_lines_seen!r}')
+if not bullets_seen:
+  errors.append('no bullets found in Section 8 at all')
+elif len(bullets_seen) != len(EXPECTED_PATHS):
+  errors.append(f'expected exactly {len(EXPECTED_PATHS)} bullets, found {len(bullets_seen)}: {[b[0] for b in bullets_seen]}')
+else:
+  for (path,label,line), expected_path in zip(bullets_seen, EXPECTED_PATHS):
+    if path != expected_path:
+      errors.append(f'bullet order/path mismatch: expected {expected_path!r}, got {path!r}')
+  seen_paths=[b[0] for b in bullets_seen]
+  if len(set(seen_paths)) != len(seen_paths):
+    errors.append(f'duplicate bullet path(s): {seen_paths}')
+  if set(seen_paths) != set(EXPECTED_PATHS):
+    errors.append(f'unexpected bullet path(s): {sorted(set(seen_paths) - set(EXPECTED_PATHS))}')
+for path,label,line in bullets_seen:
+  words=label.replace('.',' ').split()
+  if len(words) > MAX_LABEL_WORDS:
+    errors.append(f'{path}: label has {len(words)} words (> {MAX_LABEL_WORDS}): {label!r}')
+  if len(label) > MAX_LABEL_CHARS:
+    errors.append(f'{path}: label has {len(label)} chars (> {MAX_LABEL_CHARS}): {label!r}')
+if errors:
+  for e in errors: print(e)
+  sys.exit(1)
+print('SECTION 8 IS A CLOSED SET (pinned preamble byte-matched)')
+" && echo PASS || { echo "Section 8 is not a closed set -- see the listed line(s) above"; exit 1; }
+--- stdout ---
+SECTION 8 IS A CLOSED SET (pinned preamble byte-matched)
+PASS
+
+EXIT:0

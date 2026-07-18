@@ -1,0 +1,3 @@
+git diff --quiet HEAD -- tools/validate.sh tools/verify_lib.sh tools/skill.json tools/SKILL.md tools/interface.md && echo PASS || { echo "an out-of-scope tools/ file was modified"; git diff --name-only HEAD -- tools/validate.sh tools/verify_lib.sh tools/skill.json tools/SKILL.md tools/interface.md; exit 1; }
+PASS
+EXIT:0

@@ -1,0 +1,8 @@
+T=$(mktemp -d); cp -a . "$T/repo"; ( cd "$T/repo" && python3 -c "
+import json
+d = json.load(open('tools/fixtures/engineering_finding_valid.json'))
+d.pop('owner', None)
+json.dump(d, open('tools/fixtures/engineering_finding_valid.json', 'w'), indent=2)
+" && out=$(bash tools/validate.sh 2>&1); rc=$?; echo "$out" | grep -Fq '[C12] FAIL ecosystem-fixtures' && [ "$rc" -ne 0 ] && echo PASS || { echo "load-bearing proof (finding, positive-broken) failed"; echo "$out" | tail -8; exit 1; } )
+PASS
+EXIT:0

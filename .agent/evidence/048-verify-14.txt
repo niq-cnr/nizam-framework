@@ -1,0 +1,13 @@
+# .agent/evidence/048-verify-14.txt
+# Contract 048 verification entry 14 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: 045 RELEASE-PACKAGE INVARIANTS INTACT: the release-readiness checklist's full-file SHA-256 equals the contract-045 pinned value; neither CHANGELOG.md nor v0.6.0-release-notes.md appears in this feature's tracked diff; the remote carries exactly 10 vMAJOR.MINOR.PATCH tags and no v0.7.0 (the pipeline never self-tags).
+$ set -e
+echo "06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea  .agent/evidence/045-release-readiness-checklist.md" | sha256sum -c -
+git diff --name-only HEAD | grep -E '^(CHANGELOG\.md|v0\.6\.0-release-notes\.md)$' && exit 1 || true
+tags=$(git ls-remote --tags origin | grep -v '\^{}' | awk -F/ '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$')
+test "$(printf '%s\n' "$tags" | wc -l)" = "10"
+! printf '%s\n' "$tags" | grep -Fxq v0.7.0
+echo 'E14 PASS: checklist SHA pinned; CHANGELOG + v0.6.0 release notes untouched; 10 release tags, no v0.7.0'
+.agent/evidence/045-release-readiness-checklist.md: OK
+E14 PASS: checklist SHA pinned; CHANGELOG + v0.6.0 release notes untouched; 10 release tags, no v0.7.0
+[exit 0]

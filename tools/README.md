@@ -2,13 +2,16 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.3.0
+version: 0.3.1
 status: active
 authoritative_source: tools/README.md
 change_log:
   - version: "0.3.0"
     date: "2026-07-10"
     summary: "Sync to the phase-004 compliance validator: document the full C1-C11 check set (C9 repo-wide path-resolution, C10 single-source-of-truth consistency, C11 dogfood schema validation, all added by phase 004) and the new SUMMARY: 11 passed, 0 failed total."
+  - version: "0.3.1"
+    date: "2026-07-17"
+    summary: "Sync to the phase-005 compliance validator: document the new C12 ecosystem schema-family fixture check (feature 042) and the new SUMMARY: 12 passed, 0 failed total."
 ---
 
 # tools/
@@ -60,12 +63,12 @@ documents. `skill.json` is validated as plain JSON (`python3 -c
 its own within this module — it is pure data consumed by `SKILL.md` and
 `interface.md`, not a document requiring frontmatter.
 
-## Compliance Coverage — C1–C11
+## Compliance Coverage — C1–C12
 
-`tools/validate.sh`, the repo-local NDS compliance validator, runs eleven
+`tools/validate.sh`, the repo-local NDS compliance validator, runs twelve
 checks on every PR and push to `main` (`.github/workflows/compliance.yml`).
-As of phase 004 (durable enforcement & dogfooding), the full default sweep
-reports `SUMMARY: 11 passed, 0 failed`:
+As of phase 005 (extended validator + CI fixtures), the full default sweep
+reports `SUMMARY: 12 passed, 0 failed`:
 
 | Check | Name | What it enforces |
 |---|---|---|
@@ -80,7 +83,9 @@ reports `SUMMARY: 11 passed, 0 failed`:
 | C9 | Repo-wide path-resolution | Every concrete repo-relative file path named in a shipped doc resolves on disk (placeholder/illustrative paths documented-exempt). |
 | C10 | Single-source-of-truth consistency | Payload-set enumeration, bootstrapped-consumer discovery order, and the framework-version anchor stay consistent across every shipped doc. |
 | C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present, skip-if-absent for a fresh consumer. |
+| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving the fixtures are load-bearing rather than dormant. |
 
 C9, C10, and C11 were added by phase 004 (`tools/verify_lib.sh` supplies
-their shared, fixture-tested primitives); C1–C8 shipped in earlier phases.
-Run `bash tools/validate.sh --help` for the full per-check description.
+their shared, fixture-tested primitives); C12 was added by phase 005
+(feature 042); C1–C8 shipped in earlier phases. Run `bash tools/validate.sh
+--help` for the full per-check description.

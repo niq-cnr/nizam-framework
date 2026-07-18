@@ -1,0 +1,182 @@
+diff --git a/docs/planning/DEBT.md b/docs/planning/DEBT.md
+index 44d8e1a..723cf6d 100644
+--- a/docs/planning/DEBT.md
++++ b/docs/planning/DEBT.md
+@@ -2,7 +2,7 @@
+ id: nizam-debt
+ title: Technical Debt Register — nizam-framework
+ description: Known debt, deferred decisions, and cross-repo impacts for the nizam-framework repository.
+-version: 0.13.0
++version: 0.14.0
+ status: active
+ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ ---
+@@ -13,10 +13,12 @@ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ 
+ | ID | Date | Severity | Description | Remediation |
+ |----|------|----------|-------------|-------------|
+-| NDEBT-019 | 2026-07-18 | Low | The `bash tools/validate.sh 2>&1 | tail -1 | grep ...` verification-command authoring pattern (used in historical evidence captures, e.g. `.agent/evidence/031-verify-09.txt`, and in some committed acceptance-test commands) lacks `pipefail`/explicit exit-code capture, so the validator's own real exit status is not asserted -- only the piped `grep` exit status is. False-PASS risk is only theoretical (a genuinely failing sweep never emits a `0 failed` `SUMMARY` line for `grep` to match), and historical evidence captures are IMMUTABLE point-in-time records, not edited here. Surfaced by CodeRabbit review of PR #20. | Fold an explicit `rc=$?`/`set -o pipefail` requirement into the `methodology/02_adversarial_tdd.md` verification-authoring standard so future contracts assert the validator's own exit code, not only its piped SUMMARY line; candidate scope for a future self-compliance phase. |
++| NDEBT-019 | 2026-07-18 | Low | The `bash tools/validate.sh 2>&1 \| tail -1 \| grep ...` verification-command authoring pattern (used in historical evidence captures, e.g. `.agent/evidence/031-verify-09.txt`, and in some committed acceptance-test commands) lacks `pipefail`/explicit exit-code capture, so the validator's own real exit status is not asserted -- only the piped `grep` exit status is. False-PASS risk is only theoretical (a genuinely failing sweep never emits a `0 failed` `SUMMARY` line for `grep` to match), and historical evidence captures are IMMUTABLE point-in-time records, not edited here. Surfaced by CodeRabbit review of PR #20. | Fold an explicit `rc=$?`/`set -o pipefail` requirement into the `methodology/02_adversarial_tdd.md` verification-authoring standard so future contracts assert the validator's own exit code, not only its piped SUMMARY line; candidate scope for a future self-compliance phase. |
+ | NDEBT-020 | 2026-07-18 | Medium | During feature 045's contract-review round 1, the evaluator misfired `rm -f` against the REAL repository path `CHANGELOG.md` while intending a scratch-directory cleanup command (the wrong, real-repo path was passed by mistake). Self-caught within the same turn (`git status --porcelain -- CHANGELOG.md` reported ` D CHANGELOG.md`) and fully restored via `git checkout -- CHANGELOG.md`; `git diff --stat HEAD -- CHANGELOG.md` confirmed zero lasting effect. Disclosed in full by the evaluator in `.agent/qa/045-contract-review.json`'s review history. Surfaced by CodeRabbit review of PR #20. | Strengthen the probe-isolation rule (NDEBT-013's precedent) to explicitly require: verify the current working directory before issuing any destructive command (`rm`, `rm -f`, `git clean`, etc.), and never pass a real-repository path as the argument to a destructive command during a review/verification probe -- scratch paths only, always constructed from a session-scratch root variable, never a bare filename. Candidate scope for `methodology/02_adversarial_tdd.md` or `standard/AGF.md`'s role obligations. |
+ | NDEBT-021 | 2026-07-18 | Low | `tools/ecosystem_preflight.py` minimum-CLI hardening backlog (bundles CodeRabbit PR-22 items 3607425422/3607425426/3607425428/3607425430 + the PR-23 untracked-rejection probe note from 3607428783), deferred post-v0.7.0 alongside NDEBT-017. Severity Low: all fail-closed / pathological-input / unused-combination edges; no shipped invocation is affected (043/044 dogfood runs used fresh per-step dirs and ASCII paths). | (1) it parses default porcelain-v1 output, so special-character/space/non-ASCII paths are C-quoted and fail literal tolerate-list matching -- fails CLOSED (a tolerated odd path becomes blocking, never a silent pass); the naive `-z --untracked-files=all` fix would BREAK the directory-prefix exception semantics the committed 043/044 approved exception sets rely on (`.agent/evidence/<exec-id>/` tolerated as one porcelain dir entry), so the fix must be NUL-delimited parsing that preserves dir-prefix exceptions; (2) the required-reference check uses `os.path.exists` (accepts directories) and an unresolved HEAD yields baseline revision `"unknown"` rather than its own blocking finding -- reachable only in an unborn-repo-with-gitignored-schemas setup; (3) explicit `--repo-root '.'` is indistinguishable from the default under `--self-fixture` (`default="."`); default it to `None`; (4) a reused `--output-dir` is not pre-cleaned, so mixed-verdict runs can leave contradictory `preflight.json`/`preflight.pending.json`/`baseline.json` leftovers; (5) add an executed untracked-not-tolerated -> FAIL probe to the hardening test scope. |
+ | NDEBT-022 | 2026-07-18 | Medium | `ecosystem/07_progress_comparison.md` Sec 3's four-class transition taxonomy {new, resolved, reopened, stale} is non-exhaustive: it has no class for a finding that persists across both inputs with freshly re-confirmed evidence (F-audit044-ndebt-015, re-captured at revision `cba6422`), nor for a finding resolved before the first baseline (ndebt-002); and the delta score fields (`open_findings_before/after` = 3->5) count recorded findings, not open-only (which would be 2->4). The committed audit-044 delta (`.agent/audits/audit-2026-07-17-cba6422/`) bridged both transparently via `unchanged_facts` + explicit notes (report.md:16-23,46-57) with correct, fully-cited +2 net movement -- nothing hidden or distorted, so the immutable committed artifact needs NO change. | Fix path: amend the LIVE `ecosystem/07` protocol doc in a future phase with a persisting/re-confirmed class, a first-comparison (pre-window-resolved) rule, and exact open-vs-recorded score-count semantics before the next audit. Severity Medium (not Low): a spec-completeness defect that will recur in every future comparison; not High (nothing concealed, movement correct and traceable, and DEBT Open must stay free of High/Critical for 045-verify-18). |
++| NDEBT-023 | 2026-07-18 | Low | `ecosystem/02_evidence_baseline.md` Sec 4 declares a baseline invalid when declared revisions for the same repository are inconsistent across the baseline's fields, but nothing mechanized enforces the rule: `schema/ecosystem_baseline.schema.json` accepts two fully-anchored `repository_references` entries for the same repository at different revisions (confirmed empirically with jsonschema Draft 2020-12 during the operator's PR #21 review), the sole related negative fixture `ecosystem_baseline_neg_mixed_timestamps.json` exercises only the missing-timestamp sub-case, and `tools/ecosystem_preflight.py`'s `build_baseline_document` performs no cross-entry same-repo consistency check -- self-runs anchor every reference to the one freshly-resolved HEAD, so the framework's own dogfood runs cannot produce the inconsistency; the exposure is hand-authored and future multi-repo baselines. Surfaced by operator review of PR #21. | Add a same-repo revision-consistency negative fixture (e.g. `ecosystem_baseline_neg_inconsistent_revisions.json`) exercised by C12, plus a documented capture-tool check in `build_baseline_document` (a schema-level guard only if expressible without false positives); candidate scope post-v0.7.0 alongside NDEBT-021's preflight-hardening bundle. |
++| NDEBT-024 | 2026-07-18 | Low | `tools/fixtures/preflight_verdict_fail.json` places a `blocking: true` item inside `exceptions`, whose schema field description reads 'the non-blocking findings surfaced by the run' -- schema-valid (exception items are deliberately open objects) but semantically muddled, and divergent from the shipped CLI's real FAIL emission: `tools/ecosystem_preflight.py` records blocking findings under a separate `blocking_findings` key and never inside `exceptions`. Surfaced by operator review of PR #21. | Align the three surfaces post-v0.7.0: either add a `blocking_findings` array to `schema/preflight_verdict.schema.json` (matching the tool's real FAIL shape) and rebuild the FAIL fixture on it, or loosen the `exceptions` field description to cover recorded blocking conditions; keep C12 green and the fixture's C12 polarity positive throughout. |
+ | NDEBT-017 | 2026-07-17 | Low | `tools/ecosystem_preflight.py`'s `ci_references` field is repo-HEAD-anchored with an honest `KNOWN LIMITATION` note (no real CI-run lookup) — a limitation contract 041 explicitly deferred registering as its own NDEBT entry ("a later orchestrator/evaluator action"). Feature 043's real framework self-dogfood run (execution-id `dogfood-2026-07-17-28c8253`, evidence: `.agent/evidence/dogfood-2026-07-17-28c8253/`, artifact: `.agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json`) is the first time this limitation is exercised for real against the framework's own tree (not a scratch fixture), landing a tracked `baseline.json` carrying the same honest note. | Wire a real CI-run lookup (e.g. a GitHub Actions API call keyed off the repository/commit) into `build_baseline_document`'s `ci_references` synthesis; candidate scope for the next ecosystem-tooling feature. |
+ | NDEBT-018 | 2026-07-17 | Medium | Dogfood preflight self-reference, discovered TWICE during feature 043's real framework self-dogfood run (execution-id `dogfood-2026-07-17-28c8253`, evidence: `.agent/evidence/dogfood-2026-07-17-28c8253/`): (1) the feature's own in-flight contract/qa-review artifacts (`.agent/contracts/043.json`, `.agent/qa/043-contract-review.json`, `.agent/qa/043-contract-review-rev1.json`) and the run's own evidence-output directory necessarily appear as untracked exceptions inside the very preflight run they help produce, requiring an explicit, bounded tolerate-list rather than genuine pre-existing debt. (2) MORE SEVERELY: the orchestrator's own H-DOGFOOD-EXCEPTION gate-decision write to `.agent/run_state.json` first landed as an UNCOMMITTED tracked modification before the approved-step invocation was attempted, which `tools/ecosystem_preflight.py` correctly and unconditionally treats as a blocking finding no `--tolerate-untracked` flag can rescue (tracked-file changes are never tolerable, by design) — the approved invocation genuinely FAILed (exit 1, blocking_findings=["uncommitted tracked change (M): .agent/run_state.json"]) on the first attempt and only succeeded (exit 3) after the orchestrator committed that write (HEAD `28c8253` -> `e73cd04`). | (1) Consider a clean-worktree/scratch-checkout isolation mode for the preflight tool's self-fixture invocation so a feature's own in-flight `.agent` artifacts do not need to be individually enumerated in a tolerate-list. (2) Codify, durably (not just per-dispatch instruction), that any orchestrator-owned tracked-state write relevant to a gate decision (e.g. `run_state.json`'s `operator_gate_decision` event) MUST be committed BEFORE the corresponding gated CLI invocation runs — candidate scope for `methodology/03_circuit_breaker.md` or a new ecosystem-module operational note. |
+ | NDEBT-015 | 2026-07-17 | Medium | `tools/validate.sh --target` misroutes ALL THREE ecosystem fixture families (broader than first observed): `preflight_verdict_*.json` fixtures carry a top-level `verdict` key and collide with C11's qa_verdict route, while `ecosystem_baseline_*.json` and `engineering_finding_*.json` fixtures fall through to C4 and fail against the unrelated NIZAM-index schema regardless of polarity — zero discriminating signal on any `--target` invocation against an ecosystem fixture. Pre-existing before feature 042 (confirmed byte-identical routing code on unmodified HEAD by three independent reviews); C12 now provides the load-bearing full-sweep coverage, so the gap is confined to targeted invocations. Surfaced during 042's contract negotiation and broadened by its final QA (qa/042.json). | Extend `check_c11_or_c4_target`'s content routing to recognize the three ecosystem schema families (e.g. filename-prefix or dual-key heuristics: `verdict`+`execution_id` → preflight_verdict; the six category arrays → ecosystem_baseline; `closure_criteria` → engineering_finding) with matching negative fixtures; candidate scope for the next self-compliance feature alongside NDEBT-007. |
+diff --git a/ecosystem/01_clean_state_preflight.md b/ecosystem/01_clean_state_preflight.md
+index d51800e..3bc7881 100644
+--- a/ecosystem/01_clean_state_preflight.md
++++ b/ecosystem/01_clean_state_preflight.md
+@@ -2,9 +2,13 @@
+ id: nizam-ecosystem-clean-state-preflight
+ title: "Clean-State Preflight Protocol"
+ description: "The reusable preflight protocol that gates entry into the ecosystem engineering cycle: a machine-readable verdict of exactly one of PASS, PASS_WITH_EXCEPTIONS, or FAIL, explicit blocking rules, and the operator-exception rule PASS_WITH_EXCEPTIONS carries before execution continues."
+-version: 0.1.0
++version: 0.1.1
+ status: active
+ authoritative_source: ecosystem/01_clean_state_preflight.md
++change_log:
++  - version: "0.1.1"
++    date: "2026-07-18"
++    summary: "Feature 048 (operator PR #21 review, finding 2): Section 6 now defines when schema-validity binds — the finalized artifact only; a run halted pending the Section-5 operator decision records its exceptions in an informational pending artifact (the shipped CLI's preflight.pending.json) and withholds preflight.json, resolving the Sec 5/Sec 6 pre-approval contradiction empirically confirmed in review."
+ ---
+ 
+ # Clean-State Preflight Protocol
+@@ -119,6 +123,20 @@ operator-approval fields `PASS_WITH_EXCEPTIONS` requires) is defined by
+ `schema/preflight_verdict.schema.json`. This protocol governs the artifact's
+ required semantics; it does not itself define the JSON Schema.
+ 
++Schema-validity binds the artifact once it is final. A verdict artifact is
++final when it records `PASS`, `FAIL`, or `PASS_WITH_EXCEPTIONS` together with
++the structured operator-approval decision Section 5 requires. A run that halts
++pending operator approval (Section 5) does not yet emit `preflight.json`: it
++records the pending exceptions in an informational pending artifact alongside
++the eventual artifact location — the shipped preflight CLI
++(`tools/ecosystem_preflight.py`) writes `preflight.pending.json`, deliberately
++non-schema-conformant, and withholds `preflight.json` entirely — and the
++schema-valid `preflight.json` is emitted only once the operator's decision is
++folded in. That a pre-approval `PASS_WITH_EXCEPTIONS` state is unrepresentable
++as a schema-valid `preflight.json` is by design, not accident: the schema's
++required `operator_approval` block is the mechanism that makes an unapproved
++exception set impossible to mistake for an approved one.
++
+ Evidence backing the verdict (raw tool output, logs, or intermediate checks)
+ is externalised by path under `.agent/evidence/<execution-id>/`, per the
+ framework's Evidence Capture Convention
+diff --git a/ecosystem/03_engineering_audit.md b/ecosystem/03_engineering_audit.md
+index a9ef5ef..7f70671 100644
+--- a/ecosystem/03_engineering_audit.md
++++ b/ecosystem/03_engineering_audit.md
+@@ -2,9 +2,13 @@
+ id: nizam-ecosystem-engineering-audit
+ title: "Engineering Audit Protocol"
+ description: "The reusable, evidence-first engineering audit protocol: consumes the current execution's Preflight verdict and Baseline, ranks evidence into four tiers, assesses claims against the ten-state maturity model under the no-promotion-beyond-evidence rule, records finding confidence, and explicitly excludes commercial/market readiness from generic engineering scoring."
+-version: 0.1.0
++version: 0.1.1
+ status: active
+ authoritative_source: ecosystem/03_engineering_audit.md
++change_log:
++  - version: "0.1.1"
++    date: "2026-07-18"
++    summary: "Feature 048 (operator PR #21 review, finding 4): the deferred GA-gate reference now uses the module's bare-filename convention (08_ga_gate.md) instead of a directory-qualified path that dangles until the document ships."
+ ---
+ 
+ # Engineering Audit Protocol
+@@ -137,7 +141,7 @@ observed running, and proven in production, backed by evidence an auditor
+ can point to.
+ 
+ Commercial and GA readiness are assessed separately, by the deferred GA gate
+-(`ecosystem/08_ga_gate.md`, per
++(`08_ga_gate.md`, this module's planned protocol document, per
+ `docs/nips/NIP-0001-ecosystem-engineering-cycle.md` Section 2.3), and MUST
+ NOT be conflated with, or substituted for, an engineering audit finding. An
+ engineering finding that scores a capability's commercial fit, pricing
+diff --git a/ecosystem/07_progress_comparison.md b/ecosystem/07_progress_comparison.md
+index e1068e0..22b5e52 100644
+--- a/ecosystem/07_progress_comparison.md
++++ b/ecosystem/07_progress_comparison.md
+@@ -2,9 +2,13 @@
+ id: nizam-ecosystem-progress-comparison
+ title: "Progress Comparison Protocol"
+ description: "The reusable protocol for comparing two approved baselines or audits: distinguishing new, resolved, reopened, and stale findings, closing a resolved finding only with closure evidence, refusing to silently reuse stale evidence, and making every score movement traceable to evidence."
+-version: 0.1.0
++version: 0.1.1
+ status: active
+ authoritative_source: ecosystem/07_progress_comparison.md
++change_log:
++  - version: "0.1.1"
++    date: "2026-07-18"
++    summary: "Feature 048 (operator PR #21 review, finding 4): both references to the deferred delta schema now use the module's bare-filename convention (audit_delta.schema.json, planned under schema/) instead of a directory-qualified path that dangles until the schema ships."
+ ---
+ 
+ # Progress Comparison Protocol
+@@ -128,9 +132,9 @@ comparison execution, per the framework's Artifact Locations convention
+ (the four finding-state transition classes of Section 3, the closure
+ evidence and stale-evidence references of Sections 4-5, and the
+ score-movement citations of Section 6) is defined by an optional
+-`schema/audit_delta.schema.json`; per `product_spec_005.md` Section 2.3,
+-this schema is deferrable within the minimal-viable release and is not yet
+-present in this repository. This protocol governs the artifact's required
++`audit_delta.schema.json` (planned under `schema/`); per
++`product_spec_005.md` Section 2.3, this schema is deferrable within the
++minimal-viable release and is not yet present in this repository. This protocol governs the artifact's required
+ semantics regardless of whether that schema has landed; it does not itself
+ define the JSON Schema.
+ 
+@@ -157,7 +161,8 @@ pasted inline into the delta artifact or into a chat transcript.
+   this protocol's evidence externalisation follows.
+ - `methodology/03_circuit_breaker.md` -- the house pattern this document's
+   structure, tone, and immutability discipline follow.
+-- `schema/audit_delta.schema.json` -- the optional, deferrable machine-readable
+-  schema for the delta artifact this protocol describes (per
+-  `product_spec_005.md` Section 2.3, not scheduled in this phase's
+-  execution order; not yet present at the time this protocol was authored).
++- `audit_delta.schema.json` -- the optional, deferrable machine-readable
++  schema for the delta artifact this protocol describes (planned under
++  `schema/`; per `product_spec_005.md` Section 2.3, not scheduled in this
++  phase's execution order; not yet present at the time this protocol was
++  authored).
+diff --git a/ecosystem/README.md b/ecosystem/README.md
+index bf36b02..73b3d12 100644
+--- a/ecosystem/README.md
++++ b/ecosystem/README.md
+@@ -2,10 +2,13 @@
+ id: nizam-ecosystem-module
+ title: "Ecosystem Engineering Cycle"
+ description: "Reusable governance lifecycle for reconciling, auditing, planning, executing, and improving multi-repository software ecosystems."
+-version: 0.2.0
++version: 0.2.1
+ status: active
+ authoritative_source: ecosystem/README.md
+ change_log:
++  - version: "0.2.1"
++    date: "2026-07-18"
++    summary: "Feature 048 (operator PR #21 review, finding 1): the module-navigation paragraph no longer calls 02/03/07 'Planned' — the four core protocols shipped at features 033-036; the five Planned documents (00/04/05/06/08) are the deferrable set. Prose re-synced with the table the 034-036 row-flips had left contradicting it."
+   - version: "0.2.0"
+     date: "2026-07-17"
+     summary: "Completed the module index (handover F-002, phase 005-ecosystem-cycle): defined the canonical 10-stage lifecycle and added the module-navigation section for the 9 numbered protocol documents."
+@@ -77,13 +80,16 @@ as later features land their protocol document.
+ | 08 | `08_ga_gate.md` | Promote (GA gate) | Planned |
+ 
+ "Shipped" means the document already exists in this repository's `ecosystem/`
+-directory; "Planned" means it does not yet exist here. Of the Planned documents,
++directory; "Planned" means it does not yet exist here. All four Shipped documents —
++the mandatory first-release surface's four core protocols
++(preflight/baseline/audit/comparison, product_spec_005.md Sec 2.3) — landed in phase
++005-ecosystem-cycle: `01_clean_state_preflight.md` (feature 033), then
+ `02_evidence_baseline.md`, `03_engineering_audit.md`, and `07_progress_comparison.md`
+-are mandatory-first-release scope for phase 005-ecosystem-cycle (product_spec_005.md
+-Sec 2.1); `00_ecosystem_bootstrap.md`, `04_dependency_reconciliation.md`,
+-`05_release_train_coordination.md`, `06_simplification_review.md`, and
+-`08_ga_gate.md` are deferrable beyond phase 005 entirely (product_spec_005.md Sec 2.3)
+-and may be protocol-only or land in a later programme phase.
++(features 034-036). The five Planned documents — `00_ecosystem_bootstrap.md`,
++`04_dependency_reconciliation.md`, `05_release_train_coordination.md`,
++`06_simplification_review.md`, and `08_ga_gate.md` — are deferrable beyond phase 005
++entirely (product_spec_005.md Sec 2.3) and may be protocol-only or land in a later
++programme phase.
+ 
+ ## Capability Routing
+ 

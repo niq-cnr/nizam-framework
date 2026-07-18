@@ -1,0 +1,5 @@
+added=$(git diff --numstat HEAD -- tools/SKILL.md | awk '{print $1}'); [ -n "${added}" ] && [ "${added}" -le 40 ] && echo PASS || { echo "tools/SKILL.md added ${added:-0} lines, exceeding the 40-line router-not-mirror cap"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

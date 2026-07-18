@@ -1,0 +1,7 @@
+T=$(mktemp -d); cp -a . "$T/repo"; ( cd "$T/repo" && git reset --hard -q HEAD && git clean -fdq && echo x > v0.6.0-release-notes.md && EXEC_ID=dogfood-verify2-depstable && mkdir -p ".agent/evidence/${EXEC_ID}/approved" && python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/approved" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --operator-approver dry-run-mechanism-proof --operator-authorization dry-run-mechanism-proof >/dev/null; python3 -c "import json
+b2 = json.load(open('.agent/evidence/${EXEC_ID}/approved/baseline.json'))
+assert b2['dependency_references'][0]['revision'] == '3.14.4', b2['dependency_references']
+print('PASS: dependency_references stable at 3.14.4, matching baseline #1')
+" )
+PASS: dependency_references stable at 3.14.4, matching baseline #1
+EXIT:0

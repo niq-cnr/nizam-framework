@@ -1,0 +1,3 @@
+$ out=$(bash tools/validate.sh 2>&1); rc=$?; [ "$rc" -eq 0 ] && echo "$out" | tail -1 | grep -Eq '^SUMMARY: [0-9]+ passed, 0 failed$' && echo PASS || { echo "validator sweep did not exit 0 with a clean SUMMARY"; echo "$out" | tail -3; exit 1; }
+PASS
+EXIT:0

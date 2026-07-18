@@ -1,0 +1,19 @@
+python3 -c "
+import subprocess
+head_text = subprocess.check_output(['git', 'show', 'HEAD:tools/validate.sh']).decode()
+work_text = open('tools/validate.sh', encoding='utf-8').read()
+
+from_a = '                      applicable check fails. --target is the only mode\n                      under which files in tools/fixtures/ are ever read.\n'
+to_a   = '                      applicable check fails. Files in tools/fixtures/ are\n                      read only under --target and by the default sweep\'s\n                      C12 ecosystem-fixture check.\n'
+from_b = '# under --target (each fixture is already individually inspectable that way)\n'
+to_b   = '# under --target (each fixture is directly inspectable via\n# python3+jsonschema; --target currently misroutes these families --\n# NDEBT-015)\n'
+
+assert head_text.count(from_a) == 1, f'Spot A FROM text must occur exactly once in HEAD, found {head_text.count(from_a)}'
+assert head_text.count(from_b) == 1, f'Spot B FROM text must occur exactly once in HEAD, found {head_text.count(from_b)}'
+
+transformed = head_text.replace(from_a, to_a, 1).replace(from_b, to_b, 1)
+assert transformed == work_text, 'working-tree tools/validate.sh is not byte-identical to HEAD-with-exactly-the-two-pinned-substitutions-applied -- unauthorized change detected'
+print('PASS')
+"
+PASS
+EXIT:0

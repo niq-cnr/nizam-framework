@@ -1,0 +1,166 @@
+git show --stat bcb02d2 0840094
+commit bcb02d2e9b1e56d9def12a02db038ada5a987400
+Author: NizamIQ Agent <agent@nizamiq.ai>
+Date:   Wed Jul 8 20:13:51 2026 +0400
+
+    feat(004): reconcile schemas to actual artifact shapes — R4a (feature 025)
+    
+    Resolves NDEBT-002 part a: the framework shipped schemas that had drifted from
+    the artifacts it actually produces. Reconciles the schemas to reality so every
+    immutable .agent/ audit record validates WITHOUT editing it — the prerequisite
+    for F-028's C11 enforcement.
+    
+    - schema/qa_verdict.schema.json -> anyOf union of the legacy (000-016) and
+      evolved (017+) QA-verdict shapes.
+    - schema/contract_review.schema.json (NEW, urn:nizam-framework:* $id) for the
+      contract-review verdict shape.
+    - schema/contract.schema.json: amendments[] (string|object) and
+      approvals.revisions made explicit properties.
+    - NIZAM.json indexes the new schema (C4-green); schema/README.md 0.2.0->0.3.0
+      with a change_log entry.
+    
+    Immutability preserved (schemas conform to artifacts, never the reverse): all
+    29 qa + 26 contracts validate with zero artifact edits. Both gates ran
+    independent anti-permissive checks confirming the unions reject garbage (not
+    accept-anything). validate.sh unchanged at 8/8. 1 contract revision (evaluator
+    caught an immutability-guard false-fail on the feature's own qa artifacts).
+    303 lines vs 180 est; cumulative 780/1625.
+    
+    Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01TW5JuYD7RDrrya9mwLfj19
+
+ .agent/contracts/025.json                       | 115 ++++++++++++++
+ .agent/evidence/025-contract-review-01.txt      |   7 +
+ .agent/evidence/025-contract-review-02.txt      |   9 ++
+ .agent/evidence/025-contract-review-03.txt      |  32 ++++
+ .agent/evidence/025-contract-review-04.txt      |  19 +++
+ .agent/evidence/025-contract-review-05.txt      |  17 ++
+ .agent/evidence/025-contract-review-06.txt      |   7 +
+ .agent/evidence/025-contract-review-07.txt      |   3 +
+ .agent/evidence/025-contract-review-08.txt      |   3 +
+ .agent/evidence/025-contract-review-09.txt      |   7 +
+ .agent/evidence/025-contract-review-10.txt      |  37 +++++
+ .agent/evidence/025-contract-review-11.txt      |  22 +++
+ .agent/evidence/025-contract-review-12.txt      |  12 ++
+ .agent/evidence/025-contract-review-13.txt      |   3 +
+ .agent/evidence/025-contract-review-14.txt      |   3 +
+ .agent/evidence/025-contract-review-15.txt      |   3 +
+ .agent/evidence/025-contract-review-rev1-01.txt |   7 +
+ .agent/evidence/025-contract-review-rev1-02.txt |   9 ++
+ .agent/evidence/025-contract-review-rev1-03.txt |  32 ++++
+ .agent/evidence/025-contract-review-rev1-04.txt |  19 +++
+ .agent/evidence/025-contract-review-rev1-05.txt |  17 ++
+ .agent/evidence/025-contract-review-rev1-06.txt |   7 +
+ .agent/evidence/025-contract-review-rev1-07.txt |   3 +
+ .agent/evidence/025-contract-review-rev1-08.txt |   3 +
+ .agent/evidence/025-contract-review-rev1-09.txt |   7 +
+ .agent/evidence/025-contract-review-rev1-10.txt |  37 +++++
+ .agent/evidence/025-contract-review-rev1-11.txt |  22 +++
+ .agent/evidence/025-contract-review-rev1-12.txt |  12 ++
+ .agent/evidence/025-contract-review-rev1-13.txt |   3 +
+ .agent/evidence/025-contract-review-rev1-14.txt |   3 +
+ .agent/evidence/025-contract-review-rev1-15.txt |   3 +
+ .agent/evidence/025-qa-01.txt                   |   7 +
+ .agent/evidence/025-qa-02.txt                   |   9 ++
+ .agent/evidence/025-qa-03.txt                   |  28 ++++
+ .agent/evidence/025-qa-04.txt                   |  19 +++
+ .agent/evidence/025-qa-05.txt                   |  17 ++
+ .agent/evidence/025-qa-06.txt                   |   7 +
+ .agent/evidence/025-qa-07.txt                   |   3 +
+ .agent/evidence/025-qa-08.txt                   |   5 +
+ .agent/evidence/025-qa-09.txt                   |   7 +
+ .agent/evidence/025-qa-10.txt                   |  37 +++++
+ .agent/evidence/025-qa-11.txt                   |  17 ++
+ .agent/evidence/025-qa-12.txt                   |  12 ++
+ .agent/evidence/025-qa-13.txt                   |   3 +
+ .agent/evidence/025-qa-14.txt                   |   3 +
+ .agent/evidence/025-qa-15.txt                   |   3 +
+ .agent/evidence/025-qa-adversarial.txt          | 200 ++++++++++++++++++++++++
+ .agent/evidence/025-verify-01.txt               |   8 +
+ .agent/evidence/025-verify-02.txt               |  10 ++
+ .agent/evidence/025-verify-03.txt               |  29 ++++
+ .agent/evidence/025-verify-04.txt               |  20 +++
+ .agent/evidence/025-verify-05.txt               |  18 +++
+ .agent/evidence/025-verify-06.txt               |   8 +
+ .agent/evidence/025-verify-07.txt               |   4 +
+ .agent/evidence/025-verify-08.txt               |   6 +
+ .agent/evidence/025-verify-09.txt               |   8 +
+ .agent/evidence/025-verify-10.txt               |  38 +++++
+ .agent/evidence/025-verify-11.txt               |  18 +++
+ .agent/evidence/025-verify-12.txt               |  13 ++
+ .agent/evidence/025-verify-13.txt               |   4 +
+ .agent/evidence/025-verify-14.txt               |   4 +
+ .agent/evidence/025-verify-15.txt               |   4 +
+ .agent/feature_list_004.json                    |   2 +-
+ .agent/qa/025.json                              |  44 ++++++
+ .agent/run_state.json                           |  32 +++-
+ NIZAM.json                                      |   1 +
+ schema/README.md                                |   7 +-
+ schema/contract.schema.json                     |  17 +-
+ schema/contract_review.schema.json              |  98 ++++++++++++
+ schema/qa_verdict.schema.json                   | 180 +++++++++++++++------
+ 70 files changed, 1382 insertions(+), 51 deletions(-)
+---
+commit 0840094432de44e97281ea78fdcc6140299da9ab
+Author: NizamIQ Agent <agent@nizamiq.ai>
+Date:   Fri Jul 10 14:05:32 2026 +0400
+
+    feat(004): C11 dogfood schema validation of .agent/ — R4b (feature 028)
+    
+    Add validate.sh check C11 (10→11 checks): validate the framework's own
+    .agent/ audit artifacts against the shipped, reconciled schemas —
+    .agent/qa/*.json (content-routed: review→contract_review,
+    qa_pass|verdict→qa_verdict, else skip), .agent/contracts/*.json→contract,
+    .agent/run_state.json→run_state — using python3+jsonschema (C4's stack).
+    Enforce-if-present, skip-if-absent (spec §4.1) so validate.sh stays green
+    in a bootstrapped consumer with no .agent/. The --target *.json case now
+    routes recognized shapes to C11 and falls the rest through to the
+    unmodified check_c4_index. Three FAIL fixtures (invalid qa_verdict /
+    contract / run_state) satisfy the schema-rejection requirement.
+    
+    This completes the 8→11 validator migration (C9+C10+C11) and RESOLVES
+    NDEBT-002 fully: F-025 reconciled the schemas to the produced artifact
+    shapes; C11 now enforces them. The one non-verdict artifact in .agent/qa/
+    (027_failures.json, the circuit-breaker history) is correctly skipped by
+    the restricted-route design — proven not to be a gaming hole.
+    
+    Contract took two revisions (attempt 3, no halt); Mode B ratified an AT5
+    test-defect correction; QA passed with independent router-diff + full-route
+    probe + sha256 immutability tamper-test. 384 lines vs 150 est (C11 is the
+    most complex check); cumulative 1603/1625.
+    
+    Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01TW5JuYD7RDrrya9mwLfj19
+
+ .agent/contracts/028.json              | 136 +++++++++++++
+ .agent/evidence/028-verify-01.txt      |   4 +
+ .agent/evidence/028-verify-02.txt      |  16 ++
+ .agent/evidence/028-verify-03.txt      |   4 +
+ .agent/evidence/028-verify-04.txt      |   4 +
+ .agent/evidence/028-verify-05.txt      |  28 +++
+ .agent/evidence/028-verify-06.txt      |   6 +
+ .agent/evidence/028-verify-07.txt      |   6 +
+ .agent/evidence/028-verify-08.txt      |   6 +
+ .agent/evidence/028-verify-09.txt      |   4 +
+ .agent/evidence/028-verify-10.txt      |   4 +
+ .agent/evidence/028-verify-11.txt      |   4 +
+ .agent/evidence/028-verify-12.txt      |  14 ++
+ .agent/evidence/028-verify-13.txt      |   6 +
+ .agent/evidence/028-verify-14.txt      |   6 +
+ .agent/evidence/028-verify-15.txt      |   6 +
+ .agent/evidence/028-verify-16.txt      |  17 ++
+ .agent/evidence/028-verify-17.txt      |   7 +
+ .agent/evidence/028-verify-18.txt      |   4 +
+ .agent/evidence/028-verify-19.txt      |  32 ++++
+ .agent/feature_list_004.json           |   4 +-
+ .agent/qa/028-contract-review.json     |  36 ++++
+ .agent/qa/028.json                     |  40 ++++
+ .agent/run_state.json                  |  35 +++-
+ .agent/validator/028-mode-a.json       |  35 ++++
+ .agent/validator/028-mode-b.json       |  19 ++
+ tools/fixtures/invalid_contract.json   |  24 +++
+ tools/fixtures/invalid_qa_verdict.json |   5 +
+ tools/fixtures/invalid_run_state.json  |  14 ++
+ tools/validate.sh                      | 341 ++++++++++++++++++++++++++++++++-
+ 30 files changed, 853 insertions(+), 14 deletions(-)
+EXIT:0

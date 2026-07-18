@@ -1,0 +1,10 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/engineering_finding.schema.json'))
+for f in ['tools/fixtures/engineering_finding_neg_resolved_without_closure_evidence.json','tools/fixtures/engineering_finding_neg_closure_evidence_incomplete.json','tools/fixtures/engineering_finding_neg_missing_owner.json']:
+  try:
+    jsonschema.validate(json.load(open(f)), s)
+    raise SystemExit(f'{f} unexpectedly validated')
+  except jsonschema.ValidationError:
+    pass" && echo PASS || { echo "one of the three named negative fixtures unexpectedly validated"; exit 1; }
+PASS
+EXIT:0

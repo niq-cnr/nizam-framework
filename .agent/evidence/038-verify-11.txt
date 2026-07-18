@@ -1,0 +1,11 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/preflight_verdict.schema.json'))
+for f in ['tools/fixtures/preflight_verdict_invalid_verdict.json','tools/fixtures/preflight_verdict_invalid_exceptions.json','tools/fixtures/preflight_verdict_invalid_approval_incomplete.json']:
+  try:
+    jsonschema.validate(json.load(open(f)), s)
+    raise SystemExit(f'{f} unexpectedly validated')
+  except jsonschema.ValidationError:
+    pass" && echo PASS || { echo "one of the three named negative fixtures unexpectedly validated"; exit 1; }
+PASS
+
+EXIT:0

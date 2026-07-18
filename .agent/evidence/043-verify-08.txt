@@ -1,0 +1,4 @@
+$ T=$(mktemp -d); cp -a . "$T/repo"; ( cd "$T/repo" && git reset --hard -q HEAD && git clean -fdq && echo x > v0.6.0-release-notes.md && echo y > .agent/contracts/043.json && echo z > .agent/qa/043-contract-review.json && echo surprise > oops_unrelated.txt && UNTRACKED=$(git status --porcelain=v1 | awk '/^\?\? / {print substr($0,4)}'); bad=0; for p in $UNTRACKED; do case "$p" in v0.6.0-release-notes.md|.agent/contracts/043.json|.agent/qa/043*.json) ;; *) echo "correctly refused to tolerate: $p"; bad=1 ;; esac; done; [ "$bad" -eq 1 ] && echo PASS || { echo 'FAILED to catch the unauthorized untracked path'; exit 1; } )
+correctly refused to tolerate: oops_unrelated.txt
+PASS
+EXIT:0

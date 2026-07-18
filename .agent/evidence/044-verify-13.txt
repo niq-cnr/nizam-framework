@@ -1,0 +1,11 @@
+python3 -c "import json
+b1 = json.load(open('.agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json'))
+rev1 = b1['repository_references'][0]['revision']
+assert rev1 == 'e73cd04bad78c696c815bf253fb627a93f20c9c0', rev1
+exec_id_suffix = 'dogfood-2026-07-17-28c8253'.rsplit('-', 1)[-1]
+assert exec_id_suffix == '28c8253'
+assert not rev1.startswith(exec_id_suffix), 'the baseline revision field must NOT be derivable from the execution-id label suffix'
+print('PASS: revision field (', rev1[:12], ') is genuinely distinct from the execution-id label suffix (', exec_id_suffix, ')')
+"
+PASS: revision field ( e73cd04bad78 ) is genuinely distinct from the execution-id label suffix ( 28c8253 )
+EXIT:0

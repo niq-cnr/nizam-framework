@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-07-17"
+    summary: "Add Section 8, Ecosystem Engineering Cycle Routing (handover F-010, feature 040): routes the four shipped ecosystem lifecycle protocol documents (01/02/03/07) by path, as a closed set with an exact-text-pinned preamble and exactly four one-line bullets, nothing else; ecosystem/README.md remains authoritative for the full ten-stage lifecycle. References tools/skill.json and NIZAM.json, both extended with matching ecosystem capability entries in this same feature."
   - version: "0.3.0"
     date: "2026-07-09"
     summary: "Bump version for v0.5.1 release (payload validation mode)."
@@ -195,7 +198,17 @@ a required-fixes list — see `schema/qa_verdict.schema.json` for the full
 structural definition. An agent runtime parses only the JSON block to decide
 whether to advance; prose framing around it is informational only.
 
-## 8. References
+## 8. Ecosystem Engineering Cycle Routing
+
+This skill remains the sole router for the Ecosystem Engineering Cycle
+module (`ecosystem/README.md`); it routes to, never reproduces, the protocols below:
+
+- `ecosystem/01_clean_state_preflight.md` -- Preflight.
+- `ecosystem/02_evidence_baseline.md` -- Baseline.
+- `ecosystem/03_engineering_audit.md` -- Audit.
+- `ecosystem/07_progress_comparison.md` -- Compare.
+
+## 9. References
 
 - `tools/skill.json` — the capability manifest this document is the payload
   for.

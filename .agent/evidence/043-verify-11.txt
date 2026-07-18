@@ -1,0 +1,14 @@
+$ EXEC_ID=$(basename $(ls -dt .agent/reconciliation/dogfood-* 2>/dev/null | head -1) 2>/dev/null); [ -n "$EXEC_ID" ] || { echo 'no .agent/reconciliation/dogfood-* directory found yet -- expected before implementation lands, must exist and validate after'; exit 1; }; python3 -c "
+import json, jsonschema
+pv = json.load(open('schema/preflight_verdict.schema.json'))
+d = json.load(open('.agent/reconciliation/${EXEC_ID}/preflight.json'))
+jsonschema.validate(d, pv)
+if d['verdict'] == 'PASS_WITH_EXCEPTIONS':
+    oa = d.get('operator_approval', {})
+    approver, auth = oa.get('approver',''), oa.get('authorization','')
+    SENTINELS = {'dry-run-mechanism-proof','test-operator','test','jane',''}
+    assert approver and approver not in SENTINELS, ('placeholder-looking approver', approver)
+    assert auth and auth not in SENTINELS, ('placeholder-looking authorization', auth)
+" && echo PASS || exit 1
+PASS
+EXIT:0

@@ -1,0 +1,3 @@
+BEFORE=$(git status --porcelain | sort); OUT=$(mktemp -d); UNTRACKED=$(git status --porcelain | awk '/^\?\? / {print $2}'); ARGS=(); for f in $UNTRACKED; do ARGS+=(--tolerate-untracked "$f"); done; python3 tools/ecosystem_preflight.py --execution-id verify-041-isolation --output-dir "$OUT" --self-fixture "${ARGS[@]}" >/dev/null; rc=$?; [ "$rc" -eq 64 ] && { echo "usage error (rc=64) -- CLI invocation itself is broken"; exit 1; }; AFTER=$(git status --porcelain | sort); [ "$BEFORE" = "$AFTER" ] && echo PASS || { echo "CLI run altered the repository tree's git status"; echo "BEFORE=[$BEFORE]"; echo "AFTER=[$AFTER]"; exit 1; }
+PASS
+EXIT:0

@@ -48,7 +48,7 @@
       "id": "032",
       "name": "Ecosystem Module Index (PR-F2)",
       "description": "Handover F-002 (Create ecosystem module index). Complete ecosystem/README.md so it defines the canonical Bootstrap->Preflight->Baseline->Audit->Plan->Execute->Verify->Promote->Compare->Repeat lifecycle and navigates the module's protocol documents, and index the ecosystem module in NIZAM.json. The existing 12-line ecosystem/README.md stub on the branch is completed here (not in this planning feature).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "031"
       ],
@@ -63,7 +63,7 @@
         "NIZAM.json indexes the module",
         "ecosystem/README.md names the full canonical lifecycle: python3 -c \"t=open('ecosystem/README.md',encoding='utf-8').read().lower(); import sys; sys.exit(0 if all(k in t for k in ['preflight','baseline','audit','compare']) else 1)\"",
         "ecosystem/README.md frontmatter validates against schema/frontmatter.schema.json: python3 -c \"import json,yaml,jsonschema; d=open('ecosystem/README.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))\"",
-        "NIZAM.json indexes the ecosystem module and every indexed path resolves (C4-green): grep -q 'ecosystem' NIZAM.json && bash tools/validate.sh --target NIZAM.json; test $? -eq 0",
+        "[AMENDED 2026-07-17 per contract 032 rev1 / qa/032-contract-review.json + qa/032.json: the literal grep command is a reproduced vacuous match (pre-existing 'ecosystem' substrings in NIZAM.json prose, confirmed still vacuous post-implementation); the enforced gate is contract-032 verification entry 13 (exactly one path=='ecosystem' module object with key_documents exactly ['ecosystem/README.md']) with anti-vacuity companion entry 14] NIZAM.json indexes the ecosystem module and every indexed path resolves (C4-green): grep -q 'ecosystem' NIZAM.json && bash tools/validate.sh --target NIZAM.json; test $? -eq 0",
         "Compliance validator stays green: bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: 11 passed, 0 failed'"
       ],
       "estimated_lines": 120
@@ -72,7 +72,7 @@
       "id": "033",
       "name": "Clean-State Preflight Protocol (PR-F2)",
       "description": "Handover F-003 (Define clean-state preflight protocol). Author ecosystem/01_clean_state_preflight.md defining the reusable preflight protocol and its machine-readable verdict: exactly one of PASS / PASS_WITH_EXCEPTIONS / FAIL, with explicit blocking rules and the operator-exception rule (PASS_WITH_EXCEPTIONS requires explicit operator approval before execution continues).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "031"
       ],
@@ -95,7 +95,7 @@
       "id": "034",
       "name": "Immutable Baseline Protocol (PR-F2)",
       "description": "Handover F-004 (Define immutable baseline protocol). Author ecosystem/02_evidence_baseline.md defining a point-in-time baseline over framework, repository, dependency, CI, planning, and evidence references, with explicit fields and evidence rules. A baseline MUST NOT mix evidence from unspecified revisions (every fact is anchored to a stated SHA/timestamp).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "033"
       ],
@@ -118,7 +118,7 @@
       "id": "035",
       "name": "Engineering Audit Protocol (PR-F2)",
       "description": "Handover F-005 (Define engineering audit protocol). Author ecosystem/03_engineering_audit.md defining an evidence-first engineering audit that uses the evidence hierarchy and the ten-state maturity model (Designed..Production Proven) with confidence. No claim may be promoted beyond its evidence. Commercial/GA readiness MUST NOT be embedded in generic engineering scoring (kept to the separate GA gate).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "034"
       ],
@@ -141,7 +141,7 @@
       "id": "036",
       "name": "Progress Comparison Protocol (PR-F2)",
       "description": "Handover F-006 (Define progress comparison protocol). Author ecosystem/07_progress_comparison.md defining how two approved baselines or audits are compared: the comparison distinguishes new / resolved / reopened / stale findings, and every score movement is traceable to evidence (resolved findings close only with closure evidence; stale evidence is not silently reused).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "034"
       ],
@@ -164,7 +164,7 @@
       "id": "037",
       "name": "Baseline Schema + Fixtures (PR-F2)",
       "description": "Handover F-007 (Add baseline schema). Add schema/ecosystem_baseline.schema.json describing the immutable baseline artifact (framework/repository/dependency/CI/planning/evidence references with revision anchors), index it in NIZAM.json, and add positive + negative fixtures under tools/fixtures/. The positive fixture validates; the negative fixture (e.g. baseline mixing states without timestamps) fails.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "034"
       ],
@@ -188,7 +188,7 @@
       "id": "038",
       "name": "Preflight Verdict Schema + Fixtures (PR-F2)",
       "description": "Handover F-008 (Add preflight verdict schema). Add schema/preflight_verdict.schema.json supporting exactly the three verdicts (PASS / PASS_WITH_EXCEPTIONS / FAIL) and requiring a structured operator-approval state whenever the verdict is PASS_WITH_EXCEPTIONS. Index it in NIZAM.json and add positive + negative fixtures (a fixture with an unsupported verdict, and a PASS_WITH_EXCEPTIONS fixture lacking operator-approval metadata, are rejected).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "033"
       ],
@@ -212,7 +212,7 @@
       "id": "039",
       "name": "Engineering Finding Schema + Fixtures (PR-F2)",
       "description": "Handover F-009 (Add engineering finding schema). Add schema/engineering_finding.schema.json supporting severity, confidence, evidence, impact, owner, and closure criteria for repository and ecosystem findings. Index it in NIZAM.json and add positive + negative fixtures (e.g. a finding marked resolved without closure evidence is rejected).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "035"
       ],
@@ -236,7 +236,7 @@
       "id": "040",
       "name": "Register Ecosystem Capabilities (PR-F2)",
       "description": "Handover F-010 (Register ecosystem capabilities). Register the ecosystem lifecycle capabilities so agents can discover and route them: NIZAM.json paths resolve, tools/skill.json routes the capabilities, and tools/SKILL.md remains a router (not a mirror of the protocol bodies). The single runtime-agnostic skill stays the router; no runtime-specific ecosystem skills are introduced.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "032",
         "033",
@@ -264,7 +264,7 @@
       "id": "041",
       "name": "Minimum Preflight CLI (PR-F3)",
       "description": "Handover F-011 (Implement minimum preflight CLI). Add tools/ecosystem_preflight.py, the minimum deterministic preflight tool: it emits schema-valid preflight and baseline artifacts, supports a framework-self fixture mode (so the framework can dogfood against itself), and documents its failure exit codes. Composes evidence externalisation per the framework's tool-driven-state convention.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "037",
         "038"
@@ -290,7 +290,7 @@
       "id": "042",
       "name": "Extend Validator + CI Fixtures (PR-F3)",
       "description": "Handover F-012 (Extend validator and CI fixtures). Extend the framework's validation to cover the new ecosystem schema families (baseline / preflight-verdict / finding) with positive AND negative fixtures that prove the checks are load-bearing, wired so the existing C1-C11 and bootstrap tests continue to pass. Any new validate.sh check migrates the SUMMARY count deterministically and is proven non-breaking against the current tree first (the phase-004 C-check precedent).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "037",
         "038",
@@ -318,7 +318,7 @@
       "id": "043",
       "name": "Dogfood Framework Preflight (PR-F4)",
       "description": "Handover F-013 (Dogfood framework preflight). Run the new preflight against nizam-framework as a one-repository ecosystem: generate a framework baseline, record the preflight verdict, store all evidence by path (.agent/reconciliation/<id>/preflight.json, .agent/reconciliation/<id>/baseline.json, .agent/evidence/<id>/), and register any friction as debt in docs/planning/DEBT.md. A PASS_WITH_EXCEPTIONS verdict requires operator approval (gate H-DOGFOOD-EXCEPTION) before execution continues.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "042"
       ],
@@ -344,7 +344,7 @@
       "id": "044",
       "name": "Dogfood Framework Audit + Delta (PR-F4)",
       "description": "Handover F-014 (Dogfood framework audit and delta). Produce at least one schema-valid engineering finding for nizam-framework, run a second baseline and compare it with the first (an audit delta proving unchanged facts stay stable, a deliberately changed fixture is detected, resolved findings close only with evidence, and stale evidence is not silently reused), and update docs/planning/ROADMAP.md from the dogfood evidence. Outputs: .agent/audits/<id>/findings.json and .agent/audits/<id>/report.md.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "043"
       ],
@@ -367,9 +367,9 @@
     },
     {
       "id": "045",
-      "name": "Release Framework Capability \u2014 HUMAN GATE (H-FRAMEWORK-RELEASE)",
-      "description": "Handover F-015 (Release framework capability). Prepare the framework release of the ecosystem cycle: classify the version correctly (expected MINOR per methodology/06_release_train.md \u2014 additive module/schemas/tooling, no breaking runtime change), update CHANGELOG.md and the user guide, obtain human sign-off, and publish an immutable tag. This is a HUMAN GATE (H-FRAMEWORK-RELEASE): the pipeline prepares and records the release but does NOT self-cut the tag or self-approve. Release exit criteria (validation green, dogfood complete, no unresolved P0/P1 in the new capability) must hold first.",
-      "status": "pending",
+      "name": "Release Framework Capability — HUMAN GATE (H-FRAMEWORK-RELEASE)",
+      "description": "Handover F-015 (Release framework capability). Prepare the framework release of the ecosystem cycle: classify the version correctly (expected MINOR per methodology/06_release_train.md — additive module/schemas/tooling, no breaking runtime change), update CHANGELOG.md and the user guide, obtain human sign-off, and publish an immutable tag. This is a HUMAN GATE (H-FRAMEWORK-RELEASE): the pipeline prepares and records the release but does NOT self-cut the tag or self-approve. Release exit criteria (validation green, dogfood complete, no unresolved P0/P1 in the new capability) must hold first.",
+      "status": "in_progress",
       "dependencies": [
         "044"
       ],
@@ -390,6 +390,91 @@
         "Compliance validator stays green: bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: [0-9]+ passed, 0 failed'"
       ],
       "estimated_lines": 90
+    },
+    {
+      "id": "046",
+      "name": "PR-stack review response (round 1: PR #20)",
+      "description": "Review-response overhead feature (not a handover deliverable): resolve CodeRabbit's six actionable comments on PR #20 (CHANGES_REQUESTED) as a single new commit at the stack tip, per the stacked-PR convention (earlier PR threads resolved by reference to the tip commit). The six findings were AH-2 triaged against the live tree at HEAD ada3b9c into three dispositions. FIX (two live truth-sync defects, both confirmed still present): (1) `.agent/product_spec_005.md` frontmatter `status: draft` contradicts its own body ('Status: ACTIVE — plan of record') and the manifest (phase 005 active since 2026-07-17) — flip status to 'active' (frontmatter enum draft/active/deprecated) with a house-pattern version bump + change_log entry; (2) `docs/planning/ROADMAP.md` Sequencing Recommendation ('Track 2 is the recommended phase 005') contradicts the same file's own supersession note (Track 2 was SUPERSEDED as the phase-005 selection by NIP-0001) — rewrite the sentence to frame Track 2 as candidate scope for a subsequent phase, with a ROADMAP version bump + change_log entry. REGISTER AS DEBT (no code change now; both rows MUST be severity Low or Medium so 045's release-readiness verification entry 18 (zero Open P0/P1) stays satisfied on re-run): NDEBT-019 (Low) — the `bash tools/validate.sh 2>&1 | tail -1 | grep ...` authoring pattern lacks pipefail/explicit exit-code capture so the validator's own exit status is not asserted (false-PASS only theoretical: a failing sweep emits no '0 failed' SUMMARY line); hardening deferred to the methodology/02 verification-authoring standard, historical evidence captures are IMMUTABLE; NDEBT-020 (Medium) — during 045's contract review round 1 the evaluator misfired `rm -f` at the real CHANGELOG.md during a probe (self-caught and restored same turn via git checkout, zero lasting effect, disclosed in `.agent/qa/045-contract-review.json`); registers the incident plus the strengthened probe-isolation rule (verify cwd before any destructive command; destructive commands must never carry real-repo paths). EXPLAIN-AND-RESOLVE (no repo change; deliverable is documented resolution rationale the orchestrator posts as PR reply comments — source text in `.agent/planning_notes_046.md`): comment on `.agent/evidence/031-verify-04.txt` (looseness already catalogued in NDEBT-014, immutable point-in-time capture of committed-and-correct manifest state); comment on `.agent/feature_list_005.json` acceptance checks 'not load-bearing' (REFUTED: `tools/fixtures/preflight_verdict_invalid_exceptions.json` IS the PASS_WITH_EXCEPTIONS-without-operator_approval negative fixture, invalid_approval_incomplete covers the incomplete case, C12 asserts every invalid_ fixture is rejected each sweep; capability-path concern enforced by C9+C10 on NIZAM.json); comment on `ecosystem/README.md` 'stub in PR-F1' (shipped complete-for-031 and completed by 032-040 within this stack — at the stack tip it is v0.2.0/active/complete; PR-F1 history cannot be rewritten without invalidating SHA-pinned dogfood baselines). SCOPE: exactly three files — `.agent/product_spec_005.md` (status flip + its own change_log only; the 046 rationale lives in THIS feature entry, NOT in the spec body, so the spec stays stable while under review in PR #20), `docs/planning/ROADMAP.md` (one-sentence staleness fix + version/change_log), `docs/planning/DEBT.md` (two new rows + version bump + register-section prose per house format). NOTHING else: no evidence-file edits (immutable), no touch to the SHA-pinned `.agent/evidence/045-release-readiness-checklist.md`, no methodology edits (deferred via NDEBT-019), no NIZAM/README/CHANGELOG edits. Both compliance sweeps must stay green (12/12 default, 10/10 payload). Ordering note: depends on the committed 045 preparation (ada3b9c) but must LAND BEFORE the operator executes H-FRAMEWORK-RELEASE — review-response fixes precede the merge/tag; 045's completion (human sign-off + tag) comes after.",
+      "status": "complete",
+      "dependencies": [
+        "044"
+      ],
+      "handover_feature_ids": [],
+      "pr": "Review-response",
+      "merge_order": 16,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "Spec frontmatter status flipped from draft to active with a new change_log entry, still schema-valid",
+        "ROADMAP Sequencing Recommendation no longer recommends Track 2 as the phase-005 selection; ROADMAP version bumped with a change_log entry",
+        "DEBT.md registers exactly NDEBT-019 and NDEBT-020, both severity Low or Medium, with a version bump",
+        "The tip commit touches ONLY the three allowed files; both compliance sweeps stay green",
+        ".agent/product_spec_005.md frontmatter status is 'active' and the change_log grew: python3 -c \"import yaml,sys; d=yaml.safe_load(open('.agent/product_spec_005.md',encoding='utf-8').read().split('---')[1]); sys.exit(0 if d['status']=='active' and len(d.get('change_log',[]))>=2 else 1)\"",
+        ".agent/product_spec_005.md frontmatter still validates against schema/frontmatter.schema.json: python3 -c \"import json,yaml,jsonschema; d=open('.agent/product_spec_005.md',encoding='utf-8').read().split('---')[1]; jsonschema.validate(yaml.safe_load(d), json.load(open('schema/frontmatter.schema.json')))\"",
+        "The stale ROADMAP sentence is gone at HEAD: ! grep -Eq 'Track 2 is the recommended phase 005' docs/planning/ROADMAP.md",
+        "Anti-vacuity companion (HEAD-anchored, proves the removal check is load-bearing): the stale sentence DID exist on the parent commit: git show HEAD^:docs/planning/ROADMAP.md | grep -Eq 'Track 2 is the recommended phase 005'",
+        "ROADMAP frontmatter change_log grew (was 4 entries): python3 -c \"import yaml,sys; d=yaml.safe_load(open('docs/planning/ROADMAP.md',encoding='utf-8').read().split('---')[1]); sys.exit(0 if len(d.get('change_log',[]))>=5 else 1)\"",
+        "DEBT.md registers exactly NDEBT-019 and NDEBT-020 as Open rows, both severity Low or Medium (guards 045 verification entry 18): python3 -c \"import re,sys; t=open('docs/planning/DEBT.md',encoding='utf-8').read(); rows={m.group(1):m.group(2).strip() for m in re.finditer(r'\\|\\s*(NDEBT-0(?:19|20))\\s*\\|[^|]*\\|\\s*(Low|Medium|High|P0|P1)\\s*\\|', t)}; sys.exit(0 if set(rows)=={'NDEBT-019','NDEBT-020'} and all(v in ('Low','Medium') for v in rows.values()) else 1)\"",
+        "DEBT.md frontmatter version was bumped from 0.11.0: python3 -c \"import yaml,sys; d=yaml.safe_load(open('docs/planning/DEBT.md',encoding='utf-8').read().split('---')[1]); sys.exit(0 if str(d['version'])!='0.11.0' else 1)\"",
+        "The tip commit's diff touches ONLY the three allowed files (immutable checklist and everything else untouched): test -z \"$(git diff --name-only HEAD^ HEAD -- ':!.agent/product_spec_005.md' ':!docs/planning/ROADMAP.md' ':!docs/planning/DEBT.md')\" [VERIFIED 2026-07-18 at deliverable tip commit dd4e234: command run verbatim, exit 0 — the tip diff was confined to the three allowed files; executed at that tip because the subsequent lifecycle close-out commit (feature_list/run_state/qa/evidence/contract artifacts) intentionally advances HEAD, per the contract's disclosed head_caret_timing_note; the standing scope proof is contract entry 15 (vlib_scope_guard), evidence 046-verify-15.txt]",
+        "Default compliance sweep stays green AND the validator exit status is asserted (per the NDEBT-019 lesson, not only the piped SUMMARY line): out=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0 && echo \"$out\" | tail -1 | grep -Eqx 'SUMMARY: 12 passed, 0 failed'",
+        "Payload compliance sweep stays green with its exit status asserted: out=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0 && echo \"$out\" | tail -1 | grep -Eqx 'SUMMARY \\(payload mode\\): 10 passed, 0 failed' [AMENDED 2026-07-18 per contract 046 rev0 generator disclosure payload_literal_discrepancy: the planner-authored literal 'SUMMARY: 10 passed, 0 failed' does not match the payload sweep's real, unchanged output line 'SUMMARY (payload mode): 10 passed, 0 failed', making the test unsatisfiable as written; corrected to the real string, no semantic change to the criterion]"
+      ],
+      "estimated_lines": 60
+    },
+    {
+      "id": "047",
+      "name": "PR-stack review response (round 2: PRs #22-#24)",
+      "description": "Review-response overhead feature (not a handover deliverable): resolve CodeRabbit's round-2 comments across PRs #22/#23/#24 (30 comments total; PR #21 was skipped by CodeRabbit — 291 files > 150 limit — no inline comments, surfaced to the operator, no feature action). AH-2 triage completed in .agent/planning_notes_047.md (source: the completed 30-comment triage); do not re-triage. Both FIX items AH-2-re-verified still present at HEAD 6db8363. Disposition breakdown: 2 FIX, 6 DEBT (registered as 2 bundled rows), 20 EXPLAIN + 2 DUPLICATE (22 ready-to-post PR replies in the planning note). FIX 1 (docs/planning/DEBT.md): the NDEBT-016 row's regex code-span `(?:^|_)(?:neg|invalid)(?:_|\\.)` carries three raw pipes, so GFM parses the row as 8 cells (MD056) — escape the three pipes as `\\|` so the row renders back to its correct 5 cells with identical content; the severity cell MUST stay 'Low' in position 3 so 045's committed release-readiness scan (045-verify-18, counts open High/Critical rows via the severity cell) and 046's NDEBT-scan style checks stay green. FIX 2 (tools/validate.sh, DOC-ONLY, ZERO behavior change): reword two inaccurate spots — (a) the help text 'the only mode under which files in tools/fixtures/ are ever read' is false since C12 reads the three ecosystem fixture families in the DEFAULT sweep (validate.sh:1593), and (b) the line-1336 comment '(each fixture is already individually inspectable that way)' contradicts registered NDEBT-015 (all three ecosystem families misroute under --target). Line 319's phrasing ('independently inspectable via a direct python3+jsonschema invocation') is ALREADY correct — the refuted part of the finding — and MUST NOT be touched. Fix now, pre-tag, because validate.sh ships in the v0.7.0 consumer payload. DEBT (no code change now; both rows Low/Medium ONLY so 045-verify-18 stays satisfied): NDEBT-021 (Low) — bundled ecosystem_preflight.py minimum-CLI hardening backlog (porcelain-quoting robustness — NOTE it fails CLOSED, and a naive `-z --untracked-files=all` fix would break the directory-prefix exception semantics the committed 043/044 approved exception sets rely on; os.path.exists()/unknown-HEAD edge; explicit `--repo-root '.'` indistinguishable from default; stale output-dir artifacts on reuse; plus the executed untracked-rejection probe note), deferred post-v0.7.0 alongside NDEBT-017; NDEBT-022 (Medium) — ecosystem/07 progress-comparison Sec 3's four-class transition taxonomy is non-exhaustive (no class for a persisting finding with freshly re-confirmed evidence, none for a pre-window-resolved finding) and the delta score fields count recorded-not-open findings; the audit-044 delta bridged both transparently with explicit notes (nothing hidden, +2 movement correct and cited), so the immutable committed delta artifact needs NO change — the fix is amending the LIVE ecosystem/07 protocol doc in a future phase. Explain-and-resolve (no repo change; deliverable is documented rationale the orchestrator posts as PR replies, source in .agent/planning_notes_047.md §replies): all 20 EXPLAIN comments (immutable point-in-time evidence captures, HEAD-anchored anti-vacuity house pattern, non-goal-guard-not-allowlist semantics, single-directory-at-capture determinism, burden-of-staleness fail-safe, orchestrator-owned run_state resolved-at-tip, README/CHANGELOG release-package convention) plus the 2 DUPLICATE cross-references (044-verify-19 dup of 043-verify-17; 045-verify-16 dup of 042-verify-14). CHANGELOG [0.7.0] date-vs-tag-date is NOT touched here — carried by the orchestrator as a release-day note to the operator (release.yml extraction is date-agnostic, prefix-match). SCOPE: exactly two files — docs/planning/DEBT.md and tools/validate.sh — NOTHING else: no evidence-file edits (immutable), no touch to the SHA-pinned .agent/evidence/045-release-readiness-checklist.md or the release-notes hash, no run_state edit, no tags, no NIZAM/README/CHANGELOG/ecosystem_preflight.py/ecosystem-doc edits. Ordering: lands as a single new commit at the stack tip (depends on the committed 046 close-out, HEAD 6db8363) and must LAND BEFORE the operator executes H-FRAMEWORK-RELEASE — the validate.sh doc fix ships inside the v0.7.0 payload. Both compliance sweeps must stay green (12/12 default, 10/10 payload) and the e2e bootstrap test must stay unaffected.",
+      "status": "complete",
+      "dependencies": [
+        "046"
+      ],
+      "handover_feature_ids": [],
+      "pr": "Review-response",
+      "merge_order": 17,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "DEBT.md NDEBT-016 row parses to exactly 5 cells with severity 'Low' in position 3 (the raw regex pipes are escaped so GFM no longer mis-splits the row)",
+        "tools/validate.sh help text and the C12 comment no longer misstate fixture-read modes; line 319's already-correct phrasing is untouched; zero behavior change",
+        "DEBT.md registers exactly NDEBT-021 (Low) and NDEBT-022 (Medium) with a frontmatter version bump",
+        "Both sweeps stay green (12/12 default, 10/10 payload), the e2e bootstrap is unaffected, and the tip commit touches only the two allowed files",
+        "DEBT.md NDEBT-016 row parses to exactly 5 markdown cells with 'NDEBT-016' in cell 1 and 'Low' in cell 3 (literal escaped pipes neutralised before splitting on the real cell delimiters): python3 -c \"import sys; ls=[l for l in open('docs/planning/DEBT.md',encoding='utf-8') if l.lstrip().startswith('| NDEBT-016 ')]; assert ls, 'row missing'; s=ls[0].strip().replace(chr(92)+'|',chr(0)); cells=s.split('|')[1:-1]; sys.exit(0 if len(cells)==5 and cells[0].strip()=='NDEBT-016' and cells[2].strip()=='Low' else 1)\"",
+        "The escaped regex code-span is present and the raw-pipe form is gone at HEAD: grep -Fq '(?:^\\|_)(?:neg\\|invalid)(?:_\\|\\.)' docs/planning/DEBT.md && ! grep -Fq '(?:^|_)(?:neg|invalid)(?:_|\\.)' docs/planning/DEBT.md",
+        "Anti-vacuity companion (HEAD^-anchored, proves the escape check is load-bearing): the raw-pipe form existed on the parent commit: git show HEAD^:docs/planning/DEBT.md | grep -Fq '(?:^|_)(?:neg|invalid)(?:_|\\.)'",
+        "validate.sh help text no longer claims --target is the only fixture-read mode (whitespace-collapsed to survive line-wrap, per NDEBT-014 class 3): python3 -c \"import sys; t=' '.join(open('tools/validate.sh',encoding='utf-8').read().split()); bad='--target is the only mode under which files in tools/fixtures/ are ever read'; ok='Files in tools/fixtures/ are read only under --target and by the default sweep'; sys.exit(0 if bad not in t and ok in t else 1)\"",
+        "Anti-vacuity companion (HEAD^-anchored): the inaccurate help sentence existed on the parent commit: git show HEAD^:tools/validate.sh | python3 -c \"import sys; t=' '.join(sys.stdin.read().split()); sys.exit(0 if '--target is the only mode under which files in tools/fixtures/ are ever read' in t else 1)\"",
+        "The line-1336 comment now references NDEBT-015 and the old wording is gone (whitespace-collapsed): python3 -c \"import sys; t=' '.join(open('tools/validate.sh',encoding='utf-8').read().split()); old='each fixture is already individually inspectable that way'; sys.exit(0 if old not in t and 'NDEBT-015' in t else 1)\"",
+        "Line-319 guidance preserved (whitespace-collapsed content check): python3 -c \"import sys; t=' '.join(open('tools/validate.sh',encoding='utf-8').read().split()); sys.exit(0 if 'independently inspectable via a direct' in t and 'invocation' in t else 1)\" [AMENDED 2026-07-18 per contract 047 rev0 generator disclosure line319_literal_discrepancy: the planner-authored grep -Fq literal cannot match the real line 319, which wraps across two lines and backtick-delimits python3/jsonschema — unsatisfiable as written (live-verified); replaced with the whitespace-collapse content check matching contract entry 9's approach, no semantic change to the criterion]",
+        "The validate.sh diff is doc-only — no changed (+/-) line defines a function, invokes a check, or alters the exit expression: test -z \"$(git diff HEAD^ HEAD -- tools/validate.sh | grep -E '^[-+]' | grep -vE '^(---|\\+\\+\\+)' | grep -E '\\)[[:space:]]*\\{|check_c[0-9]|failed.*-eq 0')\"",
+        "DEBT.md registers exactly NDEBT-021 (Low) and NDEBT-022 (Medium) as Open rows, both severity Low/Medium so 045-verify-18 stays green: python3 -c \"import re,sys; t=open('docs/planning/DEBT.md',encoding='utf-8').read(); rows={m.group(1):m.group(2).strip() for m in re.finditer(r'\\|\\s*(NDEBT-0(?:21|22))\\s*\\|[^|]*\\|\\s*(Low|Medium|High|P0|P1)\\s*\\|', t)}; sys.exit(0 if set(rows)=={'NDEBT-021','NDEBT-022'} and rows['NDEBT-021']=='Low' and rows['NDEBT-022']=='Medium' else 1)\"",
+        "DEBT.md frontmatter version was bumped from 0.12.0: python3 -c \"import yaml,sys; d=yaml.safe_load(open('docs/planning/DEBT.md',encoding='utf-8').read().split('---')[1]); sys.exit(0 if str(d['version'])!='0.12.0' else 1)\"",
+        "Default compliance sweep stays green AND the validator exit status is asserted (NDEBT-019 lesson): out=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0 && echo \"$out\" | tail -1 | grep -Eqx 'SUMMARY: 12 passed, 0 failed'",
+        "Payload compliance sweep stays green with its exit status asserted (note the real payload literal carries the '(payload mode)' qualifier, per the feature-046 correction): out=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0 && echo \"$out\" | tail -1 | grep -Eqx 'SUMMARY \\(payload mode\\): 10 passed, 0 failed'",
+        "The e2e bootstrap test is unaffected by the doc-only validate.sh edit: bash tools/e2e_bootstrap_test.sh >/dev/null 2>&1; test $? -eq 0",
+        "TIMING NOTE (learned from feature 046 AT#12 / its head_caret_timing_note): run this tip-diff confinement check ONLY after the 047 fixes are committed as the single stack-tip commit, so HEAD is the 047 commit and HEAD^ its parent — the lifecycle close-out commit (feature_list/run_state/qa/evidence) intentionally advances HEAD afterward, so the standing scope proof is contract 047's vlib_scope_guard entry, not this HEAD^..HEAD diff. The tip commit touches ONLY the two allowed files: test -z \"$(git diff --name-only HEAD^ HEAD -- ':!docs/planning/DEBT.md' ':!tools/validate.sh')\" [VERIFIED 2026-07-18 at deliverable tip commit 6d273c6: command run verbatim, exit 0 — tip diff confined to the two allowed files; executed at that tip per this AT's own timing note before the lifecycle close-out commit advanced HEAD]"
+      ],
+      "estimated_lines": 25
+    },
+    {
+      "id": "048",
+      "name": "PR-stack review response (round 3: operator review of PR #21)",
+      "description": "Review-response overhead feature (not a handover deliverable): resolve the operator's six inline review threads on PR #21 (five logical findings; CodeRabbit skipped PR #21 -- 291 files > 150 limit) as a single new commit at the stack tip per the stacked-PR convention, plus two reply-only round-2 stragglers (the contested PR #20 acceptance-check thread; CodeRabbit's issue-vs-debt question on PR #22). Scope queued by feature 047's close-out (fix items 1-3 + NDEBT-023/024 + NDEBT-019 pipe fix); triage brief .agent/planning_notes_048.md; AH-2 re-verified at HEAD 68cb36f. FIX 1: ecosystem/README.md 0.2.1 -- stale 'Of the Planned documents' paragraph re-synced with the table (four core protocols shipped at features 033-036; five Planned docs are the deferrable set), modeling the NDS Sec 7 discipline the operator's process note flagged. FIX 2: ecosystem/01_clean_state_preflight.md 0.1.1 -- Sec 6 finalization-timing passage (schema-validity binds the FINAL artifact; pending runs record exceptions in the shipped CLI's preflight.pending.json and withhold preflight.json; pre-approval PASS_WITH_EXCEPTIONS unrepresentable BY DESIGN), resolving the Sec 5/Sec 6 contradiction the operator confirmed empirically. FIX 3: bare-filename convention for the three dangling directory-qualified refs (03_engineering_audit.md 0.1.1: 08_ga_gate.md; 07_progress_comparison.md 0.1.1: audit_delta.schema.json x2). DEBT 0.14.0: NDEBT-023 (Low, baseline same-repo revision-consistency rule unenforced by schema/fixture/tool) + NDEBT-024 (Low, FAIL-fixture blocking-item-in-exceptions muddle vs the CLI's real blocking_findings shape) + the queued NDEBT-019 raw-pipe escape. Single-session execution disclosed in contract 048 design_notes and qa/048.json.",
+      "status": "complete",
+      "dependencies": [
+        "047"
+      ],
+      "handover_feature_ids": [],
+      "pr": "Review-response",
+      "merge_order": 18,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "ecosystem/README.md no longer contains the stale 'Of the Planned documents' paragraph; the four-shipped (features 033-036) / five-planned-deferrable state is stated; version 0.2.1 with a feature-048 change_log entry (contract E02)",
+        "ecosystem/01_clean_state_preflight.md Sec 6 defines when schema-validity binds (finalized artifact only; pending runs record exceptions in an informational pending artifact and withhold preflight.json), byte-consistent with tools/ecosystem_preflight.py's shipped exit-2/exit-3 mechanics (E03/E04)",
+        "zero dangling directory-qualified references across ecosystem/*.md after the bare-filename fixes in 03_engineering_audit.md and 07_progress_comparison.md (E05/E06/E07)",
+        "DEBT.md at 0.14.0: NDEBT-019 row restored to 5 GFM cells with rendered code-span byte-identical, NDEBT-023/024 registered at Low with PR #21 provenance, whole register 5-cells clean and Open severities confined to Low/Medium (E08/E09/E10)",
+        "both compliance sweeps and the e2e bootstrap green with exit codes asserted; 045 release-package invariants intact; tracked deliverable diff confined to the five contracted files; no tracked .agent modification at deliverable time (E11-E16)"
+      ],
+      "estimated_lines": 70
     }
   ]
 }

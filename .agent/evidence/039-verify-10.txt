@@ -1,0 +1,14 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/engineering_finding.schema.json'))
+complete={'id':'x','severity':'medium','confidence':'Probable','evidence':[{'path':'.agent/evidence/e/1.txt','revision':'r'}],'impact':'i','owner':'o','status':'open','closure_criteria':'c'}
+failures=[]
+for k in complete:
+  inst=dict(complete); del inst[k]
+  try:
+    jsonschema.validate(inst, s)
+    failures.append(k)
+  except jsonschema.ValidationError:
+    pass
+assert not failures, failures" && echo PASS || { echo "one or more required-field-omission probes was NOT rejected"; exit 1; }
+PASS
+EXIT:0

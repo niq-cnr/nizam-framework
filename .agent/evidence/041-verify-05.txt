@@ -1,0 +1,27 @@
+OUT=$(mktemp -d); UNTRACKED=$(git status --porcelain | awk '/^\?\? / {print $2}'); ARGS=(); for f in $UNTRACKED; do ARGS+=(--tolerate-untracked "$f"); done; REAL_HEAD=$(git rev-parse HEAD); python3 tools/ecosystem_preflight.py --execution-id verify-041-selffixture --output-dir "$OUT" --self-fixture "${ARGS[@]}" --operator-approver "contract-041-verification" --operator-authorization "verification run for feature 041"; rc=$?; if [ "$rc" -ne 0 ] && [ "$rc" -ne 3 ]; then echo "unexpected exit $rc"; exit 1; fi; python3 -c "
+import json, jsonschema, datetime
+pv = json.load(open('schema/preflight_verdict.schema.json'))
+bv = json.load(open('schema/ecosystem_baseline.schema.json'))
+jsonschema.validate(json.load(open('$OUT/preflight.json')), pv)
+b = json.load(open('$OUT/baseline.json'))
+jsonschema.validate(b, bv)
+real_head = '$REAL_HEAD'
+assert b['repository_references'][0]['revision'] == real_head, ('repository_references revision mismatch', b['repository_references'][0]['revision'], real_head)
+assert b['framework_references'][0]['revision'] == real_head, ('framework_references revision mismatch', b['framework_references'][0]['revision'], real_head)
+ci = b['ci_references'][0]
+note = ci.get('note', '')
+assert isinstance(note, str) and note.strip(), ('ci_references missing a non-empty honest limitation note', ci)
+assert 'ci' in note.lower() and ('limitation' in note.lower() or 'no' in note.lower() or 'not' in note.lower()), ('ci_references note does not read as an honest limitation statement', ci)
+assert 'run_id' not in ci, ('ci_references fabricates a run_id as if a real CI run were checked', ci)
+assert ci.get('status') != 'verified-green', ('ci_references fabricates a verified-green claim', ci)
+ts = b['captured_at'].rstrip('Z')
+parsed = datetime.datetime.fromisoformat(ts).replace(tzinfo=datetime.timezone.utc)
+now = datetime.datetime.now(datetime.timezone.utc)
+delta = abs((now - parsed).total_seconds())
+assert delta < 600, ('captured_at is stale or not close to the actual run clock', b['captured_at'], delta)
+print('self-fixture artifacts schema-valid AND content-anchored (real HEAD, honest CI note, fresh timestamp)')
+" && echo PASS || { echo "self-fixture run failed content-honesty checks (HEAD anchor / honest CI note / fresh timestamp)"; exit 1; }
+PREFLIGHT VERDICT: PASS_WITH_EXCEPTIONS (approved)
+self-fixture artifacts schema-valid AND content-anchored (real HEAD, honest CI note, fresh timestamp)
+PASS
+EXIT:0

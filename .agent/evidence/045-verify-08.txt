@@ -1,0 +1,3 @@
+card=$(awk '/<article class="card">/{buf=""; ia=1} ia{buf=buf $0 "\n"} /<\/article>/{if (ia && buf ~ /<code>ecosystem\/<\/code>/) print buf; ia=0}' docs/guide/index.html); [ -n "$card" ] || { echo 'no ecosystem/ card found'; exit 1; }; echo "$card" | grep -qF 'ecosystem/README.md' || { echo 'card missing key-document mention'; exit 1; }; echo PASS
+PASS
+EXIT:0

@@ -1,0 +1,21 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/preflight_verdict.schema.json'))
+complete={'approver':'a@example.com','approved_at':'2026-07-17T00:00:00Z','authorization':'approved'}
+bad=[]
+for field in ('approver','approved_at','authorization'):
+  missing=dict(complete); del missing[field]
+  bad.append(('missing:'+field, missing))
+  empty=dict(complete); empty[field]=''
+  bad.append(('empty:'+field, empty))
+failures=[]
+for label, approval in bad:
+  instance={'verdict':'PASS_WITH_EXCEPTIONS','exceptions':[{'finding':'x'}],'operator_approval':approval}
+  try:
+    jsonschema.validate(instance, s)
+    failures.append(label)
+  except jsonschema.ValidationError:
+    pass
+assert not failures, failures" && echo PASS || { echo "one or more incomplete/empty operator_approval sub-field probes was NOT rejected"; exit 1; }
+PASS
+
+EXIT:0

@@ -2,10 +2,19 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.4.0
+version: 0.7.0
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-07-17"
+    summary: "Added schema/engineering_finding.schema.json (feature 039, handover F-009): validates a single engineering finding -- severity, confidence (the protocol's fixed Confirmed/Probable/Suspected vocabulary), path-referenced revision-pinned evidence, impact, owner, and closure_criteria, plus a structured, non-empty closure_evidence requirement whenever a finding's status is resolved."
+  - version: "0.6.0"
+    date: "2026-07-17"
+    summary: "Added schema/ecosystem_baseline.schema.json (feature 037, handover F-007): validates the ecosystem immutable-baseline artifact -- the six baseline reference categories (framework/repository/dependency/CI/planning/evidence) and the per-item revision/timestamp anchoring rule a baseline MUST NOT mix unspecified revisions under."
+  - version: "0.5.0"
+    date: "2026-07-17"
+    summary: "Added schema/preflight_verdict.schema.json (feature 038, handover F-008): validates the ecosystem clean-state preflight run's machine-readable verdict artifact -- the exact three-verdict enum (PASS / PASS_WITH_EXCEPTIONS / FAIL) and the structured operator-approval state PASS_WITH_EXCEPTIONS requires."
   - version: "0.4.0"
     date: "2026-07-12"
     summary: "Enumeration-completeness cleanup: added the missing work-packet.schema.json row to the Schemas table (the schema shipped in v0.5.0 but was never indexed here), including the parse-validity-only caveat for its template documented in templates/README.md."
@@ -46,6 +55,9 @@ Every schema in this module:
 | `work-packet.schema.json` | Validates a work-packet artifact: the minimal packet core (`id`, `objective`, `scope`, `acceptance`, `evidence`, `non_goals`) plus the optional cross-repo dispatch and linking fields (`tier`, `blast_radius`, `concurrency_lane`, `dependency_edges`, `merge_order`, and the `contract_id`/`phase_id`/`feature_id`/`train_id` foreign keys). | Work packets authored from `templates/work-packet.template.json` (the template itself is checked for JSON parse-validity only; its `{{...}}` placeholders occupy enum- and integer-typed fields). |
 | `debt.schema.json` | Validates the circuit-breaker debt log: timestamp, feature, failed step, attempt count, failure mode, and human resolution. | `.agent/debt.json` |
 | `capability_profile.schema.json` | Validates capability-profile bindings that map agent roles to primary/fallback models, allowed tools, and safety classes. | Capability-profile blocks in `AGENTS.md` or standalone `.agent/capability_profile.json` |
+| `preflight_verdict.schema.json` | Validates the ecosystem clean-state preflight run's machine-readable verdict artifact: the exact three-verdict enum (`PASS` / `PASS_WITH_EXCEPTIONS` / `FAIL`) and the structured operator-approval state `PASS_WITH_EXCEPTIONS` requires. | `.agent/reconciliation/<execution-id>/preflight.json` |
+| `ecosystem_baseline.schema.json` | Validates the ecosystem immutable-baseline artifact: the six baseline reference categories (framework/repository/dependency/CI/planning/evidence) and the per-item revision/timestamp anchoring rule (a baseline MUST NOT mix evidence from unspecified revisions). | `.agent/reconciliation/<execution-id>/baseline.json` |
+| `engineering_finding.schema.json` | Validates a single engineering finding: severity, confidence (`Confirmed`/`Probable`/`Suspected`), path-referenced revision-pinned evidence, impact, owner, closure_criteria, and a structured, non-empty closure_evidence requirement whenever a finding's status is `resolved`. | `.agent/audits/<audit-id>/findings.json` |
 
 ## DD-3 — Evidence Externalisation
 

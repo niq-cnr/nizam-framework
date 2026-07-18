@@ -1,0 +1,179 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 331051a..ca0903f 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -7,6 +7,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ## [Unreleased]
+ 
++## [0.7.0] - 2026-07-17
++
+ ### Added
+ 
+ - `.github/workflows/release.yml`: mechanizes GitHub Release publication.
+@@ -21,6 +23,31 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+   (tagged without a Release page). The logic is inline in the workflow, not
+   under `tools/`, because `tools/` is bootstrap-injected consumer payload
+   and Release publication is a framework-envelope concern.
++- `ecosystem/README.md` plus 4 new protocol documents
++  (`ecosystem/01_clean_state_preflight.md`, `ecosystem/02_evidence_baseline.md`,
++  `ecosystem/03_engineering_audit.md`, `ecosystem/07_progress_comparison.md`):
++  the reusable, schema-governed Ecosystem Engineering Cycle (handover
++  NIP-0001), extending Nizam's repository-local contract-first loop to
++  ecosystem scale. Framework-side only this phase; consumer adoption is
++  deferred to a successor programme phase.
++- `schema/preflight_verdict.schema.json`, `schema/ecosystem_baseline.schema.json`,
++  `schema/engineering_finding.schema.json`, plus matching positive/negative
++  `tools/fixtures/` fixtures for all three schema families.
++- `tools/ecosystem_preflight.py`: a deterministic, self-fixture-capable CLI
++  implementing the clean-state preflight protocol (three-verdict vocabulary,
++  operator-exception rule).
++- `tools/validate.sh` check **C12** (ecosystem schema-family fixture
++  validation). The default sweep's `SUMMARY` migrates from `11 passed, 0
++  failed` to `12 passed, 0 failed`; `--payload` mode is unaffected (still
++  `10 passed, 0 failed`), since C12 is deliberately full-sweep-only.
++- `docs/nips/NIP-0001-ecosystem-engineering-cycle.md`: the accepted NIP
++  recording the Ecosystem Engineering Cycle's scope and rationale.
++- The framework's first self-dogfood evidence cycle: two gated preflight +
++  baseline runs (`.agent/reconciliation/dogfood-2026-07-17-28c8253/`,
++  `.agent/reconciliation/dogfood-2026-07-17-6d7a47b/`) and a first
++  engineering audit + progress comparison
++  (`.agent/audits/audit-2026-07-17-cba6422/`), registering NDEBT-013 through
++  NDEBT-018.
+ 
+ ### Changed
+ 
+@@ -35,6 +62,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+   repository root instead of inside `.nizam/` (GitHub issue #18, the first
+   bug report from a real external consumer; corroborates NDEBT-004 and
+   NDEBT-008's consumer-context concerns).
++- Release metadata: `NIZAM.json` `framework.version` and the
++  `docs/guide/index.html` version anchors bumped to `0.7.0`; the `README.md`
++  quickstart re-pinned to `v0.7.0`; `CONTEXT.md` bumped to 0.6.0 for the
++  release state.
++- `NIZAM.json`: the `nizam-compliance-validator` capability summary now
++  describes the full C1-C12 check set — it had continued to enumerate only
++  the eleven v0.6.0-era check domains after C12 (ecosystem schema-family
++  fixture validation) shipped in this release.
+ 
+ ## [0.6.0] - 2026-07-13
+ 
+diff --git a/CONTEXT.md b/CONTEXT.md
+index 557f39f..69de21f 100644
+--- a/CONTEXT.md
++++ b/CONTEXT.md
+@@ -2,10 +2,13 @@
+ id: nizam-context
+ title: "Nizam Framework — Context"
+ description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
+-version: 0.5.0
++version: 0.6.0
+ status: active
+ authoritative_source: CONTEXT.md
+ change_log:
++  - version: "0.6.0"
++    date: "2026-07-17"
++    summary: "Add ecosystem/ to the Module Map (the reusable Ecosystem Engineering Cycle module, framework-side only this phase); bump version to reflect the v0.7.0 release state."
+   - version: "0.5.0"
+     date: "2026-07-13"
+     summary: "Bump version for v0.6.0 release (durable enforcement C9-C11, verify_lib, hermetic e2e bootstrap test, schema reconciliation, and the documentation-truth cleanup)."
+@@ -41,6 +44,7 @@ infrastructure, and not a runtime service.
+ - `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md`.
+ - `registry/` — The `NIZAM.json` index schema and scope-definition patterns.
+ - `docs/` — Architecture Decision Records (`docs/architecture/`) and the self-contained HTML user guide (`docs/guide/index.html`).
++- `ecosystem/` — The reusable, schema-governed Ecosystem Engineering Cycle protocols (clean-state preflight, evidence baseline, engineering audit, progress comparison), framework-side only so far.
+ 
+ Compliance surfaces, added in phase 002-self-compliance, keep the shipped payload honest:
+ `tools/validate.sh` (the repo-local compliance validator), `.github/workflows/compliance.yml`
+diff --git a/NIZAM.json b/NIZAM.json
+index ad3381a..6e39e6e 100644
+--- a/NIZAM.json
++++ b/NIZAM.json
+@@ -1,7 +1,7 @@
+ {
+   "framework": {
+     "name": "nizam-framework",
+-    "version": "0.6.0",
++    "version": "0.7.0",
+     "description": "A generalised, AI-legible, versioned governance framework distilling documentation standards, planning and execution protocols, adversarial TDD, contract-first harness loops, durable agent state, and governance inheritance into a single portable payload any AI agent or engineering team can consume in any runtime, for any project."
+   },
+   "modules": [
+@@ -234,7 +234,7 @@
+     },
+     {
+       "id": "nizam-compliance-validator",
+-      "summary": "The repo-local NDS compliance validator (checks C1-C11): frontmatter schema + format, untagged-fence sweep, NIZAM.json index integrity, branding/endpoint leakage, bootstrap.sh sanity, module-README presence, version-bump-vs-changelog (NDS Sec 7), repo-wide path resolution, single-source-of-truth consistency, and dogfood schema validation of the .agent/ audit artifacts against the shipped schemas.",
++      "summary": "The repo-local NDS compliance validator (checks C1-C12): frontmatter schema + format, untagged-fence sweep, NIZAM.json index integrity, branding/endpoint leakage, bootstrap.sh sanity, module-README presence, version-bump-vs-changelog (NDS Sec 7), repo-wide path resolution, single-source-of-truth consistency, dogfood schema validation of the .agent/ audit artifacts against the shipped schemas, and ecosystem schema-family fixture validation.",
+       "authoritative_source": "tools/validate.sh"
+     },
+     {
+diff --git a/README.md b/README.md
+index 4a4c03a..97878d2 100644
+--- a/README.md
++++ b/README.md
+@@ -19,12 +19,12 @@ as your instructions payload — do not bulk-read the governance directories.
+ Fetch `bootstrap.sh` pinned to the latest released tag and run it against your repo:
+ 
+ ```sh
+-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v0.6.0/bootstrap.sh -o bootstrap.sh
++curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v0.7.0/bootstrap.sh -o bootstrap.sh
+ chmod +x bootstrap.sh
+-GOVERNANCE_TAG=v0.6.0 ./bootstrap.sh --tag v0.6.0
++GOVERNANCE_TAG=v0.7.0 ./bootstrap.sh --tag v0.7.0
+ ```
+ 
+-`--tag v0.6.0` (equivalently `GOVERNANCE_TAG=v0.6.0`) pins the inheritance to a real
++`--tag v0.7.0` (equivalently `GOVERNANCE_TAG=v0.7.0`) pins the inheritance to a real
+ released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). This
+ clones the pinned tag, stages the governance payload, verifies it landed correctly, and
+ atomically installs it under `.nizam/` (the default target). What you get:
+@@ -39,7 +39,7 @@ atomically installs it under `.nizam/` (the default target). What you get:
+ └── provenance.json
+ ```
+ 
+-See the [v0.6.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v0.6.0)
++See the [v0.7.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v0.7.0)
+ for release notes, and run `tools/validate.sh` (the same repo-local compliance check that
+ `.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the
+ `docs/architecture/` ADRs) to confirm a bootstrapped target stays compliant.
+diff --git a/docs/guide/index.html b/docs/guide/index.html
+index 15a5e56..f3b6310 100644
+--- a/docs/guide/index.html
++++ b/docs/guide/index.html
+@@ -3,7 +3,7 @@
+ <head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+-<meta name="framework-version" content="0.6.0">
++<meta name="framework-version" content="0.7.0">
+ <meta name="description" content="Nizam: a generalised, AI-legible, versioned governance framework. This self-contained guide explains what it is, how to adopt it, and how its contract-first execution loop works.">
+ <meta name="color-scheme" content="light dark">
+ <title>Nizam User Guide</title>
+@@ -566,6 +566,18 @@
+         <p>Key documents: <code>tools/skill.json</code>, <code>tools/SKILL.md</code>,
+         <code>tools/interface.md</code>, <code>tools/validate.sh</code>, <code>tools/README.md</code>.</p>
+       </article>
++      <article class="card">
++        <h3><code>ecosystem/</code></h3>
++        <p>The reusable, schema-governed Ecosystem Engineering Cycle: a multi-repository governance
++        lifecycle (clean-state preflight, evidence baseline, engineering audit, progress comparison)
++        extending Nizam's repository-local contract-first loop to ecosystem scale. Framework-side
++        only so far, self-dogfooded against this repository's own tree.</p>
++        <p>Key documents: <code>ecosystem/README.md</code>,
++        <code>ecosystem/01_clean_state_preflight.md</code>,
++        <code>ecosystem/02_evidence_baseline.md</code>,
++        <code>ecosystem/03_engineering_audit.md</code>,
++        <code>ecosystem/07_progress_comparison.md</code>.</p>
++      </article>
+     </div>
+   </section>
+ 
+@@ -638,7 +650,7 @@
+ </main>
+ 
+ <footer>
+-  <p>Nizam framework version <strong><span id="footer-version">0.6.0</span></strong>.</p>
++  <p>Nizam framework version <strong><span id="footer-version">0.7.0</span></strong>.</p>
+   <p><a href="https://github.com/niq-cnr/nizam-framework">github.com/niq-cnr/nizam-framework</a></p>
+ </footer>
+ 

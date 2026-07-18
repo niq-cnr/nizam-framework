@@ -1,0 +1,13 @@
+$ EXEC_ID=$(basename $(ls -dt .agent/reconciliation/dogfood-* 2>/dev/null | head -1) 2>/dev/null); [ -n "$EXEC_ID" ] || { echo "no .agent/reconciliation/dogfood-* directory found yet"; exit 1; }; [ -f ".agent/evidence/${EXEC_ID}/pending/preflight.pending.json" ] || { echo "missing pending/preflight.pending.json -- cannot verify exception-set equality"; exit 1; }; python3 -c "
+import json
+EXEC_ID = '$EXEC_ID'
+pending = json.load(open(f'.agent/evidence/{EXEC_ID}/pending/preflight.pending.json'))
+approved = json.load(open(f'.agent/reconciliation/{EXEC_ID}/preflight.json'))
+pset = {e['path'] for e in pending.get('exceptions', [])}
+aset = {e['path'] for e in approved.get('exceptions', [])}
+allowed = {f'.agent/evidence/{EXEC_ID}/'}
+assert aset - pset <= allowed, ('unexpected extra exception(s) never presented at the pending step', aset - pset)
+assert (aset - allowed) == pset, ('approved set (minus the known self-reference dir) does not equal the pending set', aset, pset)
+" && echo PASS || exit 1
+PASS
+EXIT:0

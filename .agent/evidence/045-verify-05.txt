@@ -1,0 +1,11 @@
+extract() { awk '
+  /^## \[0\.7\.0\]/ { in_span=1; next }
+  in_span && /^## \[/ { exit }
+  in_span { print }
+' "$1"; }
+span=$(extract CHANGELOG.md)
+echo "$span" | grep -qF '0.7.0' || { echo 'no 0.7.0 metadata-bump mention in real [0.7.0] section content'; exit 1; }
+echo "$span" | grep -qF 'C1-C12' || { echo 'no C1-C12 capability-summary fix mention'; exit 1; }
+echo PASS
+PASS
+EXIT:0

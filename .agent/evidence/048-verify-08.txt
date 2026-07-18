@@ -1,0 +1,16 @@
+# .agent/evidence/048-verify-08.txt
+# Contract 048 verification entry 08 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: NDEBT-019 PIPE FIX (047 Mode B queued observation, same class/mechanism as 047's NDEBT-016 fix): the row parses to exactly 5 GFM cells with severity 'Low' in cell 3, the two raw pipes are escaped exactly once each, and escape-neutralization proves the RENDERED code-span is byte-identical to the documented command.
+$ python3 - <<'PY'
+import re
+l=[x for x in open('docs/planning/DEBT.md',encoding='utf-8') if x.startswith('| NDEBT-019 ')][0]
+cells=re.split(r'(?<!\\)\|', l.strip())
+assert len(cells)-2==5, len(cells)-2
+assert cells[3].strip()=='Low', cells[3]
+rendered=l.replace('\\|','|')
+assert 'bash tools/validate.sh 2>&1 | tail -1 | grep ...' in rendered
+assert l.count('2>&1 \\| tail -1 \\| grep')==1
+print('E08 PASS: NDEBT-019 row 5 cells, Low in cell 3, rendered content byte-identical')
+PY
+E08 PASS: NDEBT-019 row 5 cells, Low in cell 3, rendered content byte-identical
+[exit 0]

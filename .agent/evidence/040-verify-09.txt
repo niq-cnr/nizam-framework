@@ -1,0 +1,15 @@
+python3 -c "import json,os,subprocess; head=json.loads(subprocess.check_output(['git','show','HEAD:tools/skill.json']).decode()); work=json.load(open('tools/skill.json'))
+hcaps=head['capabilities']; wcaps=work['capabilities']
+assert wcaps[:len(hcaps)]==hcaps, 'prior skill.json capability entries mutated or reordered'
+new=wcaps[len(hcaps):]
+expected={'ecosystem_preflight':'ecosystem/01_clean_state_preflight.md','ecosystem_baseline':'ecosystem/02_evidence_baseline.md','ecosystem_audit':'ecosystem/03_engineering_audit.md','ecosystem_progress_comparison':'ecosystem/07_progress_comparison.md'}
+by_name={c['name']:c for c in new}
+assert set(by_name)==set(expected), (set(by_name), set(expected))
+for name,path in expected.items():
+  assert by_name[name]['module']==path, (name, by_name[name])
+  assert os.path.exists(path), path
+  assert by_name[name].get('description'), name" && echo PASS || { echo "tools/skill.json did not gain exactly the four expected new capability entries"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

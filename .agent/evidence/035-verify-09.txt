@@ -1,0 +1,6 @@
+source tools/verify_lib.sh; for tok in Confirmed Probable Suspected; do vlib_section_grep ecosystem/03_engineering_audit.md '^## 5\. Finding Confidence Levels$' "$tok" || { echo "Finding Confidence Levels section missing: $tok"; exit 1; }; done; echo PASS
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0

@@ -1,0 +1,15 @@
+EXEC_ID2=$(basename $(ls -dt .agent/reconciliation/dogfood-* 2>/dev/null | grep -v 'dogfood-2026-07-17-28c8253' | head -1) 2>/dev/null); [ -n "$EXEC_ID2" ] || { echo 'no SECOND .agent/reconciliation/dogfood-* directory found yet'; exit 1; }; python3 -c "import json, jsonschema
+pv = json.load(open('schema/preflight_verdict.schema.json'))
+d = json.load(open('.agent/reconciliation/${EXEC_ID2}/preflight.json'))
+jsonschema.validate(d, pv)
+if d['verdict'] == 'PASS_WITH_EXCEPTIONS':
+    oa = d.get('operator_approval', {})
+    approver, auth = oa.get('approver',''), oa.get('authorization','')
+    SENTINELS = {'dry-run-mechanism-proof','test-operator','test','jane',''}
+    assert approver and approver not in SENTINELS, ('placeholder-looking approver', approver)
+    assert auth and auth not in SENTINELS, ('placeholder-looking authorization', auth)
+print('PASS')
+" && echo PASS || exit 1
+PASS
+PASS
+EXIT:0

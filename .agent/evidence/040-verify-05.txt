@@ -1,0 +1,20 @@
+python3 -c "import json,subprocess; head=json.loads(subprocess.check_output(['git','show','HEAD:NIZAM.json']).decode()); work=json.load(open('NIZAM.json'))
+for k in set(head)|set(work):
+  if k in ('modules','capabilities'): continue
+  assert head.get(k)==work.get(k), ('top-level key changed out of scope', k)
+hmods={m['path']:m for m in head['modules']}; wmods={m['path']:m for m in work['modules']}
+assert set(hmods)==set(wmods), 'module path set changed'
+for p in hmods:
+  if p=='ecosystem': continue
+  assert hmods[p]==wmods[p], ('non-ecosystem module changed', p)
+added=[x for x in wmods['ecosystem']['key_documents'] if x not in hmods['ecosystem']['key_documents']]
+expected_added=['ecosystem/01_clean_state_preflight.md','ecosystem/02_evidence_baseline.md','ecosystem/03_engineering_audit.md','ecosystem/07_progress_comparison.md']
+assert sorted(added)==sorted(expected_added), added
+hcaps=head['capabilities']; wcaps=work['capabilities']
+assert wcaps[:len(hcaps)]==hcaps, 'prior capability entries mutated or reordered'
+new_ids=[c['id'] for c in wcaps[len(hcaps):]]
+assert new_ids==['nizam-ecosystem-preflight','nizam-ecosystem-baseline','nizam-ecosystem-audit','nizam-ecosystem-progress-comparison'], new_ids" && echo PASS || { echo "NIZAM.json diff touches something outside the authorized modules.ecosystem + capabilities-append surface"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

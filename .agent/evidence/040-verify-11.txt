@@ -1,0 +1,5 @@
+python3 -c "import json,subprocess; head=json.loads(subprocess.check_output(['git','show','HEAD:tools/skill.json']).decode()); work=json.load(open('tools/skill.json')); hv=tuple(int(x) for x in head['version'].split('.')); wv=tuple(int(x) for x in work['version'].split('.')); assert wv>hv, (hv, wv)" && echo PASS || { echo "tools/skill.json version did not strictly increase"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

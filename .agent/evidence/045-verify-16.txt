@@ -1,0 +1,3 @@
+bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: [0-9]+ passed, 0 failed' || { echo 'default sweep not green'; exit 1; }; bash tools/validate.sh --payload 2>&1 | tail -1 | grep -Eqx 'SUMMARY \(payload mode\): 10 passed, 0 failed' || { echo 'payload sweep regressed from 10/10'; exit 1; }; echo PASS
+PASS
+EXIT:0

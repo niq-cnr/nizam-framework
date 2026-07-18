@@ -1,0 +1,5 @@
+python3 -c "t=open('tools/SKILL.md',encoding='utf-8').read(); distinctive=['No other value is a valid preflight verdict','A baseline MUST NOT mix evidence from unspecified revisions','No claim may be promoted beyond its evidence','Every score movement between the two compared executions is traceable to']; bad=[d for d in distinctive if d in t]; assert not bad, bad" && echo PASS || { echo "tools/SKILL.md reproduces a distinctive protocol-body sentence verbatim -- it is mirroring, not routing"; exit 1; }
+--- stdout ---
+PASS
+
+EXIT:0

@@ -1,0 +1,10 @@
+extract() { awk '
+  /^## Module Map/ { in_span=1; next }
+  in_span && /^## / { exit }
+  in_span { print }
+' "$1"; }
+span=$(extract CONTEXT.md)
+echo "$span" | grep -qF '`ecosystem/`' || { echo 'missing ecosystem/ Module Map bullet within the Module Map section span'; exit 1; }
+source tools/verify_lib.sh && vlib_version_increased CONTEXT.md && echo PASS || { echo 'CONTEXT.md version not strictly increased'; exit 1; }
+PASS
+EXIT:0

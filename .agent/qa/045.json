@@ -1,0 +1,95 @@
+{
+  "feature_id": "045",
+  "qa_pass": true,
+  "checks_run": 19,
+  "checks_passed": 19,
+  "adversarial": {
+    "performed": true,
+    "description": "Independently re-ran all 19 of contract 045 (revision 2, approved after two Loop-1 rejection rounds)'s verification commands, extracted programmatically from .agent/contracts/045.json via json.load (never manually retyped), live from the repository root against the real, implemented working tree -- 19/19 exit 0. Beyond the literal re-run, this QA pass performed the adversarial spot-checks this evaluator's own two rounds of Loop-1 contract review specifically hardened against, applied now to the REAL shipped artifacts (never scratch fixtures for this step, since the real tree is what is being certified): (a) release-readiness checklist -- sha256sum of the real .agent/evidence/045-release-readiness-checklist.md equals the pinned 06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea exactly; `grep -c .` confirms exactly 8 non-blank lines; items 7 and 8 are byte-identical (`grep -qxF`) to 'PENDING -- human-gated (H-FRAMEWORK-RELEASE)', with no adjacent, duplicate, or trailing smuggled content of any kind (the round-1/round-2 kill-shot classes this evaluator itself discovered during contract review). (b) CHANGELOG.md's [0.7.0] section was independently re-extracted (same start/exit awk logic as contract entry 4, run standalone) and its content spot-verified against the real filesystem: `ecosystem/01_clean_state_preflight.md`, `schema/preflight_verdict.schema.json`, `tools/ecosystem_preflight.py`, `docs/nips/NIP-0001-ecosystem-engineering-cycle.md`, `.agent/reconciliation/dogfood-2026-07-17-28c8253/`, and `.github/workflows/release.yml` all exist on disk exactly as the section's Added bullets claim. (c) README.md: `grep -o 'v0\\.6\\.0' | wc -l` == 0, `grep -o 'v0\\.7\\.0' | wc -l` == 7, matching entry 12's full-re-pin requirement exactly. (d) NIZAM.json: `framework.version` == '0.7.0'; the nizam-compliance-validator summary contains 'C1-C12', does not contain 'C1-C11', and does not match the `C1-C1[3-9]\\b` over-claim pattern this evaluator's own round-0 contract-review kill-shot targeted. (e) `git tag -l | wc -l` == 10 (unchanged from the pre-implementation baseline both this evaluator's contract reviews and Mode B independently confirmed) and `git tag -l 'v0.7.0'` is empty -- no tag was self-cut. (f) v0.6.0-release-notes.md's sha256 is unchanged from its pinned pre-image (15ac6acaa9a549a171b5f49617654cac189322fbab760d78104b4c3f4662c00b). (g) `git diff --stat HEAD` against .agent/run_state.json, docs/planning/DEBT.md, docs/planning/manifest.json, and docs/planning/ROADMAP.md is empty -- none of these orchestrator/planning-owned files were touched. A full compliance sweep was independently re-run: `bash tools/validate.sh` -> 'SUMMARY: 12 passed, 0 failed' (including a live '[C12] PASS ecosystem-fixtures' line); `bash tools/validate.sh --payload` -> 'SUMMARY (payload mode): 10 passed, 0 failed', unregressed. Evidence-bundle quality was independently checked: all 19 flat .agent/evidence/045-verify-NN.txt files have the exact contract command as their first line (spot-checked entries 1, 4, 17, 19 against the contract JSON verbatim) and a literal 'EXIT:0' as their last line; the consolidated .agent/evidence/045/verification.txt contains all 19 EXIT:0 markers; .agent/evidence/045/diff.patch was byte-compared (sha256) against a freshly generated `git diff HEAD -- CHANGELOG.md CONTEXT.md NIZAM.json README.md docs/guide/index.html` produced in this QA pass and is IDENTICAL -- the evidence bundle is fresh, not stale. `git status --porcelain --untracked-files=all` was checked at the end of this QA pass and shows only the 5 authorized modified files plus the expected new .agent/ evidence/contract/qa artifacts and the pre-existing, untouched v0.6.0-release-notes.md -- no out-of-scope path was changed, independently reconfirmed via a standalone `vlib_scope_guard` re-run (PASS) in addition to the contract's own entry 13.",
+    "result": "19/19 contract verification entries independently re-run, all exit 0. All 7 targeted adversarial spot-checks (checklist hash/shape/pins, CHANGELOG section content + artifact existence, README re-pin counts, NIZAM.json version+summary+no-overclaim, tag count/no-v0.7.0-tag, release-notes hash, orchestrator/planning-file immutability) independently confirmed against the real, current working tree. Full compliance sweep unregressed at 12/12 default and 10/10 payload. Evidence bundle (flat files, consolidated verification.txt, diff.patch) independently confirmed fresh and correctly shaped. No out-of-scope path touched.",
+    "evidence": ".agent/evidence/045-verify-01.txt through -19.txt (independently re-run live in this QA pass, not merely re-read); .agent/evidence/045/diff.patch confirmed byte-identical (sha256 fa9f172d1824fadceb66350052369f87f68b91ae0533dd667b6802c7315bd305) to a fresh `git diff HEAD` of the 5 tracked deliverable files produced in this QA pass; .agent/evidence/045/verification.txt's 19 EXIT:0 markers cross-checked against this pass's own 19/19 live re-run; .agent/evidence/045-release-readiness-checklist.md's live sha256sum matches the pinned 06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea; `git status --porcelain --untracked-files=all` and `git diff --stat HEAD` on the real repository checked before, during, and after this QA pass and show no change attributable to this evaluator beyond this pass's own .agent/qa/045.json artifact write; all scratch-fixture work for the SHA-freshness comparison was written under this evaluator's own session scratchpad, never a real repository path."
+  },
+  "evidence_files": [
+    ".agent/evidence/045-verify-01.txt",
+    ".agent/evidence/045-verify-02.txt",
+    ".agent/evidence/045-verify-03.txt",
+    ".agent/evidence/045-verify-04.txt",
+    ".agent/evidence/045-verify-05.txt",
+    ".agent/evidence/045-verify-06.txt",
+    ".agent/evidence/045-verify-07.txt",
+    ".agent/evidence/045-verify-08.txt",
+    ".agent/evidence/045-verify-09.txt",
+    ".agent/evidence/045-verify-10.txt",
+    ".agent/evidence/045-verify-11.txt",
+    ".agent/evidence/045-verify-12.txt",
+    ".agent/evidence/045-verify-13.txt",
+    ".agent/evidence/045-verify-14.txt",
+    ".agent/evidence/045-verify-15.txt",
+    ".agent/evidence/045-verify-16.txt",
+    ".agent/evidence/045-verify-17.txt",
+    ".agent/evidence/045-verify-18.txt",
+    ".agent/evidence/045-verify-19.txt",
+    ".agent/evidence/045/diff.patch",
+    ".agent/evidence/045/verification.txt",
+    ".agent/evidence/045-release-readiness-checklist.md"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": "sha256sum of .agent/evidence/045/diff.patch and of a freshly-generated `git diff HEAD -- CHANGELOG.md CONTEXT.md NIZAM.json README.md docs/guide/index.html` produced in this QA pass are IDENTICAL (fa9f172d1824fadceb66350052369f87f68b91ae0533dd667b6802c7315bd305 for both). The diff covers exactly the 5 contracted files; no other tracked file shows a diff against HEAD (independently re-confirmed via `git status --porcelain --untracked-files=all`).",
+    "verify_txt_and_verification_log_consistency": "Cross-checked .agent/evidence/045/verification.txt's 19 EXIT:0 markers against this QA pass's own independent, live re-run of all 19 verification commands (19/19 exit 0, matching exactly). Spot-checked .agent/evidence/045-verify-01.txt, -04.txt, -17.txt, and -19.txt in full -- all four comply with the Evidence Capture Convention (the exact contract command as the first line, verified byte-for-byte against the corresponding entry in .agent/contracts/045.json's verification array, and a literal EXIT:0 as the last line)."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_005.json feature 045 (status left 'pending', not touched by this evaluator; flipping status is the orchestrator's job)",
+    "amended_class_check": "All 8 of feature 045's acceptance_tests strings in .agent/feature_list_005.json were compared against contract 045's 19 verification entries. Two of the eight ('Human sign-off complete', 'Immutable tag published') are, by the feature's own explicit design (operator_gate: true, H-FRAMEWORK-RELEASE), NOT satisfiable by this contract or its implementation -- they are correctly, honestly represented as the exact literal PENDING string in the release-readiness checklist and are NOT claimed as complete anywhere in the implementation. This is not a coverage gap requiring [AMENDED] reconciliation; it is the intended, correctly-implemented behavior of a human-gated feature, independently re-confirmed against the real checklist file and non_goals text. The remaining six ATs are each satisfied by one or more contract verification entries, independently re-run standalone (not merely via the contract's paraphrase) where the AT itself supplies a literal command.",
+    "criteria": [
+      {
+        "criterion": "Version classified correctly",
+        "status": "satisfied",
+        "evidence": "NIZAM.json framework.version == '0.7.0', a strict semver increase over HEAD's 0.6.0 (entry 6, independently re-run: PASS), consistent with the MINOR classification design_notes.version_classification_analysis derives from the real diff surface (additive-only module/schema/tooling surface, zero consumer-facing breaking change, bootstrap.sh byte-unmodified, --payload sweep unregressed at 10/10)."
+      },
+      {
+        "criterion": "Changelog and guide updated",
+        "status": "satisfied",
+        "evidence": "CHANGELOG.md: entries 2 (structure), 3 (feature-list literal), 4 (section-scoped artifact-name coverage), 5 (metadata-bump + C1-C12 fix mention) all independently re-run PASS; the real [0.7.0] section's Added/Changed content independently re-extracted and spot-verified against 6 real on-disk artifacts. docs/guide/index.html: entries 8 (card present, names ecosystem/README.md), 9 (no adopt/bootstrap.sh language), 10 (version anchors 0.7.0) all independently re-run PASS."
+      },
+      {
+        "criterion": "Human sign-off complete",
+        "status": "correctly-deferred (gate-dependent, not implementation-satisfiable)",
+        "evidence": "The real .agent/evidence/045-release-readiness-checklist.md item 7 reads, byte-exact, '7. Human sign-off complete: PENDING -- human-gated (H-FRAMEWORK-RELEASE)' -- independently re-verified via grep -qxF and the whole-file sha256 pin. non_goals explicitly forbid this contract or its implementation from marking this item as anything else. Correct as implemented; not a defect."
+      },
+      {
+        "criterion": "Immutable tag published",
+        "status": "correctly-deferred (gate-dependent, not implementation-satisfiable)",
+        "evidence": "The real checklist's item 8 reads, byte-exact, '8. Immutable tag published: PENDING -- human-gated (H-FRAMEWORK-RELEASE)'. git tag -l | wc -l == 10 (unchanged) and git tag -l 'v0.7.0' is empty -- no tag was self-cut, independently re-confirmed (entry 14, PASS)."
+      },
+      {
+        "criterion": "CHANGELOG.md [Unreleased] (or the release section) names the ecosystem-cycle deliverables and the classified version: python3 -c \"...sys.exit(0 if 'ecosystem' in t else 1)\"",
+        "status": "satisfied",
+        "evidence": "Literal AT re-run standalone (not merely via contract entry 3) against the real, current CHANGELOG.md in this QA pass: exit 0, PASS."
+      },
+      {
+        "criterion": "The release tag is NOT auto-cut by the pipeline (human gate)",
+        "status": "satisfied",
+        "evidence": "Entry 14 (NO-SELF-TAG INVARIANT) independently re-run: PASS, real tag count unchanged at 10, no v0.7.0 tag exists."
+      },
+      {
+        "criterion": "Release exit criteria hold: compliance validator green and no unresolved P0/P1 in the new capability recorded as Open in docs/planning/DEBT.md",
+        "status": "satisfied",
+        "evidence": "Entry 16 (compliance validator dual sweep) and entry 18 (Open-section-only P0/P1 severity sweep) both independently re-run: PASS. Live re-confirmation: real docs/planning/DEBT.md Open section has exactly 14 rows, all Low or Medium, zero High/Critical."
+      },
+      {
+        "criterion": "Compliance validator stays green: bash tools/validate.sh 2>&1 | tail -1 | grep -Eqx 'SUMMARY: [0-9]+ passed, 0 failed'",
+        "status": "satisfied",
+        "evidence": "Literal AT re-run standalone in this QA pass against the real, current tree: 'SUMMARY: 12 passed, 0 failed', PASS."
+      }
+    ]
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. Feature 045 (Release Framework Capability, PREPARE ONLY, the phase's FINAL human-gated feature, handover F-015) is complete and correct as an uncommitted, prepare-only working-tree package ready for operator review under H-FRAMEWORK-RELEASE. All 19 of contract 045 (revision 2, twice-rejected then approved at Loop-1)'s verification entries independently re-run live against the real, implemented tree -- 19/19 exit 0. Every adversarial vector this evaluator's own two Loop-1 contract-review rounds specifically hardened against was independently re-checked against the REAL shipped artifacts and confirmed closed: the release-readiness checklist's whole-file sha256 matches the pin exactly (8 non-blank lines, items 7/8 byte-identical PENDING pins, no smuggled adjacent/duplicate/trailing content); CHANGELOG.md's real [0.7.0] section content was spot-verified against 6 real on-disk artifacts; README.md is fully re-pinned (0 v0.6.0, 7 v0.7.0 occurrences); NIZAM.json is at 0.7.0 with an honest C1-C12 summary and no C1-C1[3-9] over-claim; the real tag count is unchanged at 10 with no v0.7.0 tag; v0.6.0-release-notes.md's hash is unchanged; .agent/run_state.json, docs/planning/DEBT.md, docs/planning/manifest.json, and docs/planning/ROADMAP.md are all byte-identical to HEAD. Full compliance sweep is unregressed: 'SUMMARY: 12 passed, 0 failed' (default) and 'SUMMARY (payload mode): 10 passed, 0 failed'. The evidence bundle is independently confirmed fresh and correctly shaped: all 19 flat evidence files carry the exact contract command as their first line and a literal EXIT:0 as their last line, the consolidated verification.txt agrees, and diff.patch is byte-identical (sha256) to a freshly generated git diff of the 5 contracted files produced in this QA pass. All 8 of feature 045's feature-list acceptance tests are accounted for: 6 are satisfied with independently re-run evidence, and 2 ('Human sign-off complete', 'Immutable tag published') are correctly and honestly represented as PENDING/gate-dependent, exactly as the feature's own operator_gate design requires -- not a coverage gap. No out-of-scope path was touched, independently reconfirmed via a standalone vlib_scope_guard re-run and a full untracked-aware git status. No git tag was created or deleted, no sign-off was simulated, and no destructive command was run against any real repository path during this QA pass; only .agent/qa/045.json was written to the real repository, as instructed. Feature status in .agent/feature_list_005.json and .agent/run_state.json were left untouched by this evaluator -- the orchestrator owns relaying this package to the human operator for the H-FRAMEWORK-RELEASE decision and advancing state thereafter."
+  }
+}

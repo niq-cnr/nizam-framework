@@ -1,0 +1,8 @@
+source tools/verify_lib.sh; vlib_section_grep ecosystem/03_engineering_audit.md '^## 3\. Evidence Hierarchy$' 'evidence hierarchy' || { echo "Evidence Hierarchy section missing the 'evidence hierarchy' phrase"; exit 1; }; for tok in 'Tier 1' 'Tier 2' 'Tier 3' 'Tier 4'; do vlib_section_grep ecosystem/03_engineering_audit.md '^## 3\. Evidence Hierarchy$' "$tok" || { echo "Evidence Hierarchy section missing tier token: $tok"; exit 1; }; done; echo PASS
+PASS
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+awk: warning: escape sequence `\.' treated as plain `.'
+EXIT:0

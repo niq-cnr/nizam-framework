@@ -1,0 +1,17 @@
+python3 -c "import json,jsonschema,sys
+s=json.load(open('schema/engineering_finding.schema.json'))
+base={'id':'x','severity':'medium','confidence':'Probable','evidence':[{'path':'.agent/evidence/e/1.txt','revision':'r'}],'impact':'i','owner':'o','closure_criteria':'c'}
+bad1=dict(base); bad1['status']='reopened'
+bad2=dict(base); bad2['status']='closed'
+for label, inst in (('reopened', bad1), ('closed', bad2)):
+  try:
+    jsonschema.validate(inst, s)
+    sys.exit(f'status={label} unexpectedly validated')
+  except jsonschema.ValidationError:
+    pass
+good_open=dict(base); good_open['status']='open'
+jsonschema.validate(good_open, s)
+good_resolved=dict(base); good_resolved['status']='resolved'; good_resolved['closure_evidence']=[{'path':'.agent/evidence/e/2.txt','revision':'r2'}]
+jsonschema.validate(good_resolved, s)" && echo PASS || { echo "status enum incorrectly scoped"; exit 1; }
+PASS
+EXIT:0

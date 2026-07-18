@@ -1,0 +1,87 @@
+[
+  {
+    "id": "F-audit044-ndebt-015",
+    "severity": "medium",
+    "confidence": "Confirmed",
+    "evidence": [
+      {
+        "path": ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-015-repro.txt",
+        "revision": "cba6422c01ee024cd3c597adaed977590f6373ef"
+      }
+    ],
+    "impact": "tools/validate.sh --target misroutes all three ecosystem fixture families (preflight_verdict, ecosystem_baseline, engineering_finding), so a targeted invocation against any of these fixtures gives zero discriminating signal -- a malformed ecosystem artifact would not be caught by a --target invocation, only by the full sweep (C12).",
+    "owner": "platform-team",
+    "status": "open",
+    "closure_criteria": "check_c11_or_c4_target's content routing recognizes the three ecosystem schema families (e.g. filename-prefix or dual-key heuristics) with matching negative fixtures, per docs/planning/DEBT.md NDEBT-015's own remediation note; candidate scope for the next self-compliance feature, not this one."
+  },
+  {
+    "id": "F-audit044-ndebt-002",
+    "severity": "medium",
+    "confidence": "Confirmed",
+    "evidence": [
+      {
+        "path": ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-002-closure.txt",
+        "revision": "cba6422c01ee024cd3c597adaed977590f6373ef"
+      }
+    ],
+    "impact": "Historically, schema/qa_verdict.schema.json required keys the reference implementation's own .agent/qa/*.json verdicts did not carry, and nothing validated .agent/qa/*.json against a schema at all.",
+    "owner": "platform-team",
+    "status": "resolved",
+    "closure_criteria": "The shipped schemas are reconciled to the produced artifact shapes, and validate.sh gains a check enforcing them against every .agent/qa/*.json, .agent/contracts/*.json, and .agent/run_state.json artifact.",
+    "closure_evidence": [
+      {
+        "path": ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-002-closure.txt",
+        "revision": "bcb02d2e9b1e56d9def12a02db038ada5a987400"
+      },
+      {
+        "path": ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-002-closure.txt",
+        "revision": "0840094432de44e97281ea78fdcc6140299da9ab"
+      }
+    ]
+  },
+  {
+    "id": "F-audit044-ndebt-016",
+    "severity": "low",
+    "confidence": "Suspected",
+    "evidence": [
+      {
+        "path": ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-016-stale-evidence.txt",
+        "revision": "e73cd04bad78c696c815bf253fb627a93f20c9c0"
+      }
+    ],
+    "impact": "C12's fixture-polarity classification regex has confirmed dodges for FUTURE fixture filenames (full-word negative_, uppercase _NEG_, false-trigger _invalid_handling-style names) -- none of the 15 currently shipped fixtures are affected, but a future fixture family could silently defeat the polarity check.",
+    "owner": "platform-team",
+    "status": "open",
+    "closure_criteria": "Either normalize the fixture-naming convention in a fixtures README (authoritative token list) or harden the regex (case-insensitive + full-token match) with fixture-name conformance asserted by C12 itself, per docs/planning/DEBT.md NDEBT-016's own remediation note."
+  },
+  {
+    "id": "F-audit044-ndebt-017",
+    "severity": "low",
+    "confidence": "Confirmed",
+    "evidence": [
+      {
+        "path": ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-017-new-evidence.txt",
+        "revision": "cba6422c01ee024cd3c597adaed977590f6373ef"
+      }
+    ],
+    "impact": "tools/ecosystem_preflight.py's ci_references field is repo-HEAD-anchored with an honest KNOWN LIMITATION note (no real CI-run lookup); this second dogfood run's own baseline again carries the same honest limitation, now exercised for a second real execution.",
+    "owner": "platform-team",
+    "status": "open",
+    "closure_criteria": "Wire a real CI-run lookup (e.g. a GitHub Actions API call keyed off the repository/commit) into build_baseline_document's ci_references synthesis, per docs/planning/DEBT.md NDEBT-017's own remediation note; candidate scope for the next ecosystem-tooling feature, not this one."
+  },
+  {
+    "id": "F-audit044-ndebt-018",
+    "severity": "medium",
+    "confidence": "Confirmed",
+    "evidence": [
+      {
+        "path": ".agent/evidence/audit-2026-07-17-cba6422/finding-ndebt-018-new-evidence.txt",
+        "revision": "cba6422c01ee024cd3c597adaed977590f6373ef"
+      }
+    ],
+    "impact": "This feature's own second dogfood preflight run again surfaced its own in-flight contract/qa-review artifacts and evidence-output directory as untracked exceptions inside the very run they help produce -- the same self-reference friction class NDEBT-018 already catalogues, now reproduced a second time for real.",
+    "owner": "platform-team",
+    "status": "open",
+    "closure_criteria": "Per docs/planning/DEBT.md NDEBT-018's own remediation notes: (1) consider a clean-worktree/scratch-checkout isolation mode for the preflight tool's self-fixture invocation; (2) codify durably that any orchestrator-owned tracked-state write relevant to a gate decision must be committed before the corresponding gated CLI invocation runs. Candidate scope beyond this feature."
+  }
+]

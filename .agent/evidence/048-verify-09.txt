@@ -1,0 +1,19 @@
+# .agent/evidence/048-verify-09.txt
+# Contract 048 verification entry 09 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: DEBT REGISTRATION LANDED: NDEBT-023 (Low; baseline same-repo revision-consistency rule unenforced by schema/fixture/tool) and NDEBT-024 (Low; FAIL-fixture blocking-item-in-exceptions muddle vs the tool's real blocking_findings shape) each present exactly once, 5 cells, severity Low, carrying PR #21 provenance; DEBT.md frontmatter at 0.14.0.
+$ python3 - <<'PY'
+import re
+lines=open('docs/planning/DEBT.md',encoding='utf-8').readlines()
+for rid,frag in [('NDEBT-023','same-repo'),('NDEBT-024','blocking_findings')]:
+    r=[x for x in lines if x.startswith('| '+rid+' ')]
+    assert len(r)==1, (rid,len(r))
+    cells=re.split(r'(?<!\\)\|', r[0].strip())
+    assert len(cells)-2==5, (rid,len(cells)-2)
+    assert cells[3].strip()=='Low', (rid,cells[3])
+    assert frag in r[0], (rid,frag)
+    assert 'Surfaced by operator review of PR #21' in r[0], rid
+assert 'version: 0.14.0' in ''.join(lines[:8])
+print('E09 PASS: NDEBT-023/024 registered; DEBT.md 0.14.0')
+PY
+E09 PASS: NDEBT-023/024 registered; DEBT.md 0.14.0
+[exit 0]

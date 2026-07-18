@@ -1,0 +1,6 @@
+python3 -c "import json,jsonschema
+s=json.load(open('schema/ecosystem_baseline.schema.json'))
+good={k: [{'revision':'r','timestamp':'t'}] for k in ['framework_references','repository_references','dependency_references','ci_references','planning_references','evidence_references']}
+jsonschema.validate(good, s)" && echo PASS || { echo "a fully-anchored minimal instance was incorrectly rejected"; exit 1; }
+PASS
+EXIT:0

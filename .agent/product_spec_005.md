@@ -3,14 +3,17 @@ id: nizam-product-spec-005
 title: "Nizam Framework — Phase 005 Spec (Ecosystem Engineering Cycle — Framework Side)"
 description: "Phase-005 specification: implement and dogfood the framework side of the reusable, schema-governed Ecosystem Engineering Cycle (handover NIP-0001, features F-001..F-015). Adds the ecosystem module protocols, baseline/preflight/finding schemas, capability routing, a deterministic preflight CLI, validator/CI fixtures, and framework self-dogfood evidence, ending at a human-gated framework release. Consumer adoption (handover F-016..F-020) is explicitly deferred to the successor programme phase. Extends product_spec.md..product_spec_004.md; replaces none."
 tags: [spec, ecosystem, governance, audit, dogfood, release-train, phase-005]
-status: draft
+status: active
 last_audited: "2026-07-17"
 authoritative_source: NA
-version: 1.0.0
+version: 1.1.0
 spec_version: "1.0.0"
 created_at: "2026-07-17T00:00:00Z"
 updated_at: "2026-07-17T00:00:00Z"
 change_log:
+  - version: "1.1.0"
+    date: "2026-07-18T00:00:00Z"
+    summary: "Feature 046 (PR-stack review response): frontmatter status flipped draft -> active, correcting a truth-sync defect against the body's own Status: ACTIVE declaration and the already-active manifest phase-005 entry (activated 2026-07-17). Body and all other frontmatter fields unchanged."
   - version: "1.0.0"
     date: "2026-07-17T00:00:00Z"
     summary: "Initial phase-005 spec (Ecosystem Engineering Cycle, framework side). Derived from the accepted handover programme definition (NIP-0001, product_spec.md, feature_list.json, implementation_dag.md, work_packets.json, validation_and_dogfood_plan.md, operator_gates.md). ACTIVE plan of record — phase activation authorized by operator 2026-07-17 (\"approved. expedite.\", gate H-NIP)."

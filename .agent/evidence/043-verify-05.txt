@@ -1,0 +1,28 @@
+$ GOOD_OK=0; T1=$(mktemp -d); cp -a . "$T1/repo"; ( cd "$T1/repo" && git reset --hard -q HEAD && git clean -fdq && echo x > v0.6.0-release-notes.md && echo 'fake in-flight contract' > .agent/contracts/043.json && EXEC_ID=dogfood-verify-excset-good && mkdir -p ".agent/evidence/${EXEC_ID}/pending" && python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/pending" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --tolerate-untracked .agent/contracts/043.json >/dev/null; mkdir -p ".agent/evidence/${EXEC_ID}/approved"; python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/approved" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --tolerate-untracked .agent/contracts/043.json --tolerate-untracked ".agent/evidence/${EXEC_ID}/" --operator-approver jane --operator-authorization approved >/dev/null; python3 -c "
+import json
+EXEC_ID = '${EXEC_ID}'
+pending = json.load(open(f'.agent/evidence/{EXEC_ID}/pending/preflight.pending.json'))
+approved = json.load(open(f'.agent/evidence/{EXEC_ID}/approved/preflight.json'))
+pset = {e['path'] for e in pending.get('exceptions', [])}
+aset = {e['path'] for e in approved.get('exceptions', [])}
+allowed = {f'.agent/evidence/{EXEC_ID}/'}
+assert aset - pset <= allowed, ('unexpected extra exception(s)', aset - pset)
+assert (aset - allowed) == pset, ('approved set (minus self-reference dir) != pending set', aset, pset)
+" ) && GOOD_OK=1 || GOOD_OK=0; DRIFT_CAUGHT=0; T2=$(mktemp -d); cp -a . "$T2/repo"; ( cd "$T2/repo" && git reset --hard -q HEAD && git clean -fdq && echo x > v0.6.0-release-notes.md && echo 'fake in-flight contract' > .agent/contracts/043.json && EXEC_ID=dogfood-verify-excset-drift && mkdir -p ".agent/evidence/${EXEC_ID}/pending" && python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/pending" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --tolerate-untracked .agent/contracts/043.json >/dev/null; echo 'drifted, never shown to the operator' > .agent/contracts/999-drift.json; mkdir -p ".agent/evidence/${EXEC_ID}/approved"; python3 tools/ecosystem_preflight.py --execution-id "$EXEC_ID" --output-dir ".agent/evidence/${EXEC_ID}/approved" --self-fixture --tolerate-untracked v0.6.0-release-notes.md --tolerate-untracked .agent/contracts/043.json --tolerate-untracked ".agent/evidence/${EXEC_ID}/" --tolerate-untracked .agent/contracts/999-drift.json --operator-approver alice.chen --operator-authorization 'reviewed and approved the two pending exceptions' >/dev/null; python3 -c "
+import json
+EXEC_ID = '${EXEC_ID}'
+pending = json.load(open(f'.agent/evidence/{EXEC_ID}/pending/preflight.pending.json'))
+approved = json.load(open(f'.agent/evidence/{EXEC_ID}/approved/preflight.json'))
+pset = {e['path'] for e in pending.get('exceptions', [])}
+aset = {e['path'] for e in approved.get('exceptions', [])}
+allowed = {f'.agent/evidence/{EXEC_ID}/'}
+assert aset - pset <= allowed, ('unexpected extra exception(s)', aset - pset)
+assert (aset - allowed) == pset, ('approved set (minus self-reference dir) != pending set', aset, pset)
+" ) && DRIFT_CAUGHT=0 || DRIFT_CAUGHT=1; if [ "$GOOD_OK" -eq 1 ] && [ "$DRIFT_CAUGHT" -eq 1 ]; then echo PASS; else echo "FAILED: GOOD_OK=$GOOD_OK DRIFT_CAUGHT=$DRIFT_CAUGHT"; exit 1; fi
+PASS
+Traceback (most recent call last):
+  File "<string>", line 9, in <module>
+    assert aset - pset <= allowed, ('unexpected extra exception(s)', aset - pset)
+           ^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('unexpected extra exception(s)', {'.agent/evidence/dogfood-verify-excset-drift/', '.agent/contracts/999-drift.json'})
+EXIT:0

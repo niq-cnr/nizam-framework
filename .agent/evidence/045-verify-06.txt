@@ -1,0 +1,11 @@
+python3 -c "
+import json, subprocess
+head = json.loads(subprocess.check_output(['git','show','HEAD:NIZAM.json']))['framework']['version']
+work = json.load(open('NIZAM.json'))['framework']['version']
+tup = lambda v: tuple(int(x) for x in v.split('.'))
+assert tup(work) > tup(head), (head, work)
+assert work == '0.7.0', work
+print('PASS')
+"
+PASS
+EXIT:0

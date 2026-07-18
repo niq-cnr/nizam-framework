@@ -1,0 +1,3 @@
+for c in bcb02d2 0840094; do git cat-file -t "$c" >/dev/null 2>&1 || { echo "commit $c does not exist"; exit 1; }; done; git show --no-patch --format=%s bcb02d2 | grep -qi 'reconcile schemas' || { echo 'bcb02d2 does not match the expected F-025 schema-reconciliation commit'; exit 1; }; git show --no-patch --format=%s 0840094 | grep -qi 'C11 dogfood' || { echo '0840094 does not match the expected F-028 C11 commit'; exit 1; }; echo PASS
+PASS
+EXIT:0

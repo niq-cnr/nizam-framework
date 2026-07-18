@@ -1,0 +1,13 @@
+extract() { awk '
+  /^## \[0\.7\.0\]/ { in_span=1; next }
+  in_span && /^## \[/ { exit }
+  in_span { print }
+' "$1"; }
+span=$(extract CHANGELOG.md)
+[ -n "$span" ] || { echo 'empty [0.7.0] span'; exit 1; }
+for tok in 'ecosystem' 'preflight_verdict.schema.json' 'ecosystem_baseline.schema.json' 'engineering_finding.schema.json' 'ecosystem_preflight.py' 'C12' 'NIP-0001'; do
+  echo "$span" | grep -qF -- "$tok" || { echo "missing token in [0.7.0] section: $tok"; exit 1; }
+done
+echo PASS
+PASS
+EXIT:0

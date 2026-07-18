@@ -1,0 +1,4 @@
+python3 -c "import json,jsonschema; s=json.load(open('schema/preflight_verdict.schema.json')); jsonschema.Draft202012Validator.check_schema(s); assert 'PASS' in json.dumps(s) and 'PASS_WITH_EXCEPTIONS' in json.dumps(s) and 'FAIL' in json.dumps(s)" && echo PASS || { echo "schema invalid or missing a verdict token"; exit 1; }
+PASS
+
+EXIT:0
