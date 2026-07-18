@@ -4,5 +4,5 @@
 4. Open dogfood defects recorded as debt: docs/planning/DEBT.md NDEBT-013, NDEBT-014, NDEBT-015, NDEBT-016, NDEBT-017, NDEBT-018
 5. Documentation reflects actual implemented behaviour: CHANGELOG.md [0.7.0], docs/guide/index.html ecosystem card, CONTEXT.md Module Map, NIZAM.json C1-C12 fix (.agent/evidence/045-verify-04.txt, .agent/evidence/045-verify-07.txt, .agent/evidence/045-verify-08.txt, .agent/evidence/045-verify-11.txt)
 6. No unresolved P0/P1 defect in the new capability: docs/planning/DEBT.md Open section, 14 rows, all Low or Medium (.agent/evidence/045-verify-18.txt)
-7. Human sign-off complete: PENDING -- human-gated (H-FRAMEWORK-RELEASE)
+7. Human sign-off complete: SIGNED OFF 2026-07-18 by the human operator (verbatim: 'I Sign off release-readiness', operator-controlled session; gate decision recorded in .agent/run_state.json before tag execution per the NDEBT-018 rule; the original contract-045 pinned pre-release state remains verifiable at git show 4833322:.agent/evidence/045-release-readiness-checklist.md, SHA-256 06f266c0..b5ea)
 8. Immutable tag published: PENDING -- human-gated (H-FRAMEWORK-RELEASE)
