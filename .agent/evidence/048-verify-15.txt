@@ -1,0 +1,8 @@
+# .agent/evidence/048-verify-15.txt
+# Contract 048 verification entry 15 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: DELIVERABLE CONFINEMENT: the tracked diff against HEAD names exactly the five contracted files and nothing else.
+$ set -e
+test "$(git diff --name-only HEAD | LC_ALL=C sort | tr '\n' ' ')" = "docs/planning/DEBT.md ecosystem/01_clean_state_preflight.md ecosystem/03_engineering_audit.md ecosystem/07_progress_comparison.md ecosystem/README.md "
+echo 'E15 PASS: tracked diff confined to exactly the 5 contracted files'
+E15 PASS: tracked diff confined to exactly the 5 contracted files
+[exit 0]

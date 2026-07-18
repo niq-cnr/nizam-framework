@@ -1,0 +1,13 @@
+# .agent/evidence/048-verify-12.txt
+# Contract 048 verification entry 12 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: PAYLOAD SWEEP GREEN, EXIT CODE ASSERTED: bash tools/validate.sh --payload exits 0 AND its final line is exactly SUMMARY (payload mode): 10 passed, 0 failed.
+$ out=$(bash tools/validate.sh --payload 2>&1); rc=$?
+printf '%s\n' "$out" | tail -3
+test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 10 passed, 0 failed'
+echo "E12 PASS (rc=$rc)" 
+[C10] PASS consistency
+[C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+SUMMARY (payload mode): 10 passed, 0 failed
+E12 PASS (rc=0)
+[exit 0]

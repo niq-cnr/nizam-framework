@@ -1,0 +1,21 @@
+# .agent/evidence/048-verify-01.txt
+# Contract 048 verification entry 01 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: ANTI-VACUITY (HEAD-anchored at the pre-implementation tip 68cb36f, NDEBT-014 class-1 rule): every defect this contract fixes is present at HEAD -- the README stale paragraph, the missing Sec-6 finalization passage in 01, the directory-qualified dangling refs in 03 (x1) and 07 (x2), DEBT.md at 0.13.0 with the NDEBT-019 row parsing to 7 cells and NDEBT-023/024 absent.
+$ set -e
+git show HEAD:ecosystem/README.md | grep -Fq 'Of the Planned documents,'
+! git show HEAD:ecosystem/01_clean_state_preflight.md | grep -Fq 'Schema-validity binds the artifact once it is final.'
+git show HEAD:ecosystem/03_engineering_audit.md | grep -Fq 'ecosystem/08_ga_gate.md'
+test "$(git show HEAD:ecosystem/07_progress_comparison.md | grep -Fc 'schema/audit_delta.schema.json')" = "2"
+git show HEAD:docs/planning/DEBT.md | grep -Fq 'version: 0.13.0'
+! git show HEAD:docs/planning/DEBT.md | grep -Fq 'NDEBT-023'
+! git show HEAD:docs/planning/DEBT.md | grep -Fq 'NDEBT-024'
+git show HEAD:docs/planning/DEBT.md | python3 -c "
+import sys,re
+l=[x for x in sys.stdin if x.startswith('| NDEBT-019 ')][0]
+cells=re.split(r'(?<!\\\\)\|', l.strip())
+assert len(cells)-2==7, len(cells)-2
+print('HEAD NDEBT-019 row: 7 cells (defect present)')"
+echo 'E01 PASS: all defects present at HEAD (anti-vacuity)'
+HEAD NDEBT-019 row: 7 cells (defect present)
+E01 PASS: all defects present at HEAD (anti-vacuity)
+[exit 0]

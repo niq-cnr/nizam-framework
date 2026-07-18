@@ -1,0 +1,14 @@
+# .agent/evidence/048-verify-02.txt
+# Contract 048 verification entry 02 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: FIX 1 LANDED (ecosystem/README.md): the stale 'Of the Planned documents' sentence is gone; the truthful four-shipped (features 033-036, Sec 2.3 four-core-protocols surface) / five-planned-deferrable paragraph is present; version 0.2.1 with a feature-048 change_log entry (modeling the NDS Sec 7 edit discipline the operator's process note flagged).
+$ set -e
+! grep -Fq 'Of the Planned documents,' ecosystem/README.md
+grep -Fq 'All four Shipped documents' ecosystem/README.md
+grep -Fq 'preflight/baseline/audit/comparison, product_spec_005.md Sec 2.3' ecosystem/README.md
+grep -Fq '(features 034-036). The five Planned documents' ecosystem/README.md
+grep -Fq '`01_clean_state_preflight.md` (feature 033), then' ecosystem/README.md
+grep -Fq 'version: 0.2.1' ecosystem/README.md
+grep -Fq 'Feature 048 (operator PR #21 review, finding 1)' ecosystem/README.md
+echo 'E02 PASS'
+E02 PASS
+[exit 0]

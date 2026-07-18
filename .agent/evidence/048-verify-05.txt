@@ -1,0 +1,11 @@
+# .agent/evidence/048-verify-05.txt
+# Contract 048 verification entry 05 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: FIX 3a LANDED (ecosystem/03_engineering_audit.md): zero occurrences of the directory-qualified ecosystem/08_ga_gate.md remain; the bare-filename form is present at the GA-gate reference; version 0.1.1 with a feature-048 change_log entry.
+$ set -e
+test "$(grep -Fc 'ecosystem/08_ga_gate.md' ecosystem/03_engineering_audit.md)" = "0"
+grep -Fq '(`08_ga_gate.md`, this module' ecosystem/03_engineering_audit.md
+grep -Fq 'version: 0.1.1' ecosystem/03_engineering_audit.md
+grep -Fq 'Feature 048 (operator PR #21 review, finding 4)' ecosystem/03_engineering_audit.md
+echo 'E05 PASS'
+E05 PASS
+[exit 0]

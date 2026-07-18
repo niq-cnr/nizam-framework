@@ -1,0 +1,12 @@
+# .agent/evidence/048-verify-03.txt
+# Contract 048 verification entry 03 -- captured 2026-07-18, pre-commit working tree at HEAD 68cb36f
+# ACCEPTANCE TEST: FIX 2 LANDED (ecosystem/01_clean_state_preflight.md): Section 6 now carries the finalization-timing passage (schema-validity binds the FINAL artifact; pending runs record exceptions in an informational pending artifact and withhold preflight.json; pre-approval PASS_WITH_EXCEPTIONS unrepresentable BY DESIGN); version 0.1.1 with a feature-048 change_log entry.
+$ set -e
+grep -Fq 'Schema-validity binds the artifact once it is final.' ecosystem/01_clean_state_preflight.md
+grep -Fq 'writes `preflight.pending.json`, deliberately' ecosystem/01_clean_state_preflight.md
+grep -Fq 'is by design, not accident' ecosystem/01_clean_state_preflight.md
+grep -Fq 'version: 0.1.1' ecosystem/01_clean_state_preflight.md
+grep -Fq 'Feature 048 (operator PR #21 review, finding 2)' ecosystem/01_clean_state_preflight.md
+echo 'E03 PASS'
+E03 PASS
+[exit 0]

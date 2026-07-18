@@ -1,0 +1,213 @@
+set -e
+git show HEAD:ecosystem/README.md | grep -Fq 'Of the Planned documents,'
+! git show HEAD:ecosystem/01_clean_state_preflight.md | grep -Fq 'Schema-validity binds the artifact once it is final.'
+git show HEAD:ecosystem/03_engineering_audit.md | grep -Fq 'ecosystem/08_ga_gate.md'
+test "$(git show HEAD:ecosystem/07_progress_comparison.md | grep -Fc 'schema/audit_delta.schema.json')" = "2"
+git show HEAD:docs/planning/DEBT.md | grep -Fq 'version: 0.13.0'
+! git show HEAD:docs/planning/DEBT.md | grep -Fq 'NDEBT-023'
+! git show HEAD:docs/planning/DEBT.md | grep -Fq 'NDEBT-024'
+git show HEAD:docs/planning/DEBT.md | python3 -c "
+import sys,re
+l=[x for x in sys.stdin if x.startswith('| NDEBT-019 ')][0]
+cells=re.split(r'(?<!\\\\)\|', l.strip())
+assert len(cells)-2==7, len(cells)-2
+print('HEAD NDEBT-019 row: 7 cells (defect present)')"
+echo 'E01 PASS: all defects present at HEAD (anti-vacuity)'
+HEAD NDEBT-019 row: 7 cells (defect present)
+E01 PASS: all defects present at HEAD (anti-vacuity)
+EXIT:0
+-----
+set -e
+! grep -Fq 'Of the Planned documents,' ecosystem/README.md
+grep -Fq 'All four Shipped documents' ecosystem/README.md
+grep -Fq 'preflight/baseline/audit/comparison, product_spec_005.md Sec 2.3' ecosystem/README.md
+grep -Fq '(features 034-036). The five Planned documents' ecosystem/README.md
+grep -Fq '`01_clean_state_preflight.md` (feature 033), then' ecosystem/README.md
+grep -Fq 'version: 0.2.1' ecosystem/README.md
+grep -Fq 'Feature 048 (operator PR #21 review, finding 1)' ecosystem/README.md
+echo 'E02 PASS'
+E02 PASS
+EXIT:0
+-----
+set -e
+grep -Fq 'Schema-validity binds the artifact once it is final.' ecosystem/01_clean_state_preflight.md
+grep -Fq 'writes `preflight.pending.json`, deliberately' ecosystem/01_clean_state_preflight.md
+grep -Fq 'is by design, not accident' ecosystem/01_clean_state_preflight.md
+grep -Fq 'version: 0.1.1' ecosystem/01_clean_state_preflight.md
+grep -Fq 'Feature 048 (operator PR #21 review, finding 2)' ecosystem/01_clean_state_preflight.md
+echo 'E03 PASS'
+E03 PASS
+EXIT:0
+-----
+python3 - <<'PY'
+src=open('tools/ecosystem_preflight.py',encoding='utf-8').read()
+assert 'preflight.pending.json' in src
+assert 'WITHHELD entirely' in src
+assert '"status": "PENDING_OPERATOR_APPROVAL"' in src
+doc=open('ecosystem/01_clean_state_preflight.md',encoding='utf-8').read()
+assert 'preflight.pending.json' in doc
+assert 'withholds `preflight.json` entirely' in doc
+assert 'non-schema-conformant' in doc
+print('E04 PASS: Sec-6 finalization passage matches the shipped CLI mechanics')
+PY
+E04 PASS: Sec-6 finalization passage matches the shipped CLI mechanics
+EXIT:0
+-----
+set -e
+test "$(grep -Fc 'ecosystem/08_ga_gate.md' ecosystem/03_engineering_audit.md)" = "0"
+grep -Fq '(`08_ga_gate.md`, this module' ecosystem/03_engineering_audit.md
+grep -Fq 'version: 0.1.1' ecosystem/03_engineering_audit.md
+grep -Fq 'Feature 048 (operator PR #21 review, finding 4)' ecosystem/03_engineering_audit.md
+echo 'E05 PASS'
+E05 PASS
+EXIT:0
+-----
+set -e
+test "$(grep -Fc 'schema/audit_delta.schema.json' ecosystem/07_progress_comparison.md)" = "0"
+test "$(grep -Fc '`audit_delta.schema.json`' ecosystem/07_progress_comparison.md)" = "2"
+python3 -c "
+import re
+body=open('ecosystem/07_progress_comparison.md',encoding='utf-8').read().split('---',2)[2]
+norm=re.sub(r'\s+',' ',body)
+assert norm.count('planned under \`schema/\`')==2, norm.count('planned under \`schema/\`')
+print('both body references state the planned schema/ location (whitespace-normalized count = 2)')"
+grep -Fq 'version: 0.1.1' ecosystem/07_progress_comparison.md
+grep -Fq 'Feature 048 (operator PR #21 review, finding 4)' ecosystem/07_progress_comparison.md
+echo 'E06 PASS'
+both body references state the planned schema/ location (whitespace-normalized count = 2)
+E06 PASS
+EXIT:0
+-----
+python3 - <<'PY'
+import re,os,glob
+bad=[]
+for f in sorted(glob.glob('ecosystem/*.md')):
+    for i,l in enumerate(open(f,encoding='utf-8'),1):
+        for m in re.finditer(r'(?:ecosystem|schema|tools|methodology|docs)/[A-Za-z0-9_./-]+\.(?:md|json|sh|py|html)', l):
+            if not os.path.exists(m.group(0)):
+                bad.append((f,i,m.group(0)))
+assert not bad, bad
+print('E07 PASS: zero dangling directory-qualified references across ecosystem/*.md')
+PY
+E07 PASS: zero dangling directory-qualified references across ecosystem/*.md
+EXIT:0
+-----
+python3 - <<'PY'
+import re
+l=[x for x in open('docs/planning/DEBT.md',encoding='utf-8') if x.startswith('| NDEBT-019 ')][0]
+cells=re.split(r'(?<!\\)\|', l.strip())
+assert len(cells)-2==5, len(cells)-2
+assert cells[3].strip()=='Low', cells[3]
+rendered=l.replace('\\|','|')
+assert 'bash tools/validate.sh 2>&1 | tail -1 | grep ...' in rendered
+assert l.count('2>&1 \\| tail -1 \\| grep')==1
+print('E08 PASS: NDEBT-019 row 5 cells, Low in cell 3, rendered content byte-identical')
+PY
+E08 PASS: NDEBT-019 row 5 cells, Low in cell 3, rendered content byte-identical
+EXIT:0
+-----
+python3 - <<'PY'
+import re
+lines=open('docs/planning/DEBT.md',encoding='utf-8').readlines()
+for rid,frag in [('NDEBT-023','same-repo'),('NDEBT-024','blocking_findings')]:
+    r=[x for x in lines if x.startswith('| '+rid+' ')]
+    assert len(r)==1, (rid,len(r))
+    cells=re.split(r'(?<!\\)\|', r[0].strip())
+    assert len(cells)-2==5, (rid,len(cells)-2)
+    assert cells[3].strip()=='Low', (rid,cells[3])
+    assert frag in r[0], (rid,frag)
+    assert 'Surfaced by operator review of PR #21' in r[0], rid
+assert 'version: 0.14.0' in ''.join(lines[:8])
+print('E09 PASS: NDEBT-023/024 registered; DEBT.md 0.14.0')
+PY
+E09 PASS: NDEBT-023/024 registered; DEBT.md 0.14.0
+EXIT:0
+-----
+python3 - <<'PY'
+import re
+open_sect=True; sevs=[]; bad=[]
+for i,l in enumerate(open('docs/planning/DEBT.md',encoding='utf-8'),1):
+    if l.startswith('## Resolved'): open_sect=False
+    if l.startswith('| NDEBT'):
+        cells=re.split(r'(?<!\\)\|', l.strip())
+        if len(cells)-2!=5: bad.append((i,len(cells)-2))
+        if open_sect: sevs.append(cells[3].strip())
+assert not bad, bad
+assert set(sevs) <= {'Low','Medium'}, sorted(set(sevs))
+print('E10 PASS: all NDEBT rows 5 cells; Open severities', sorted(set(sevs)))
+PY
+E10 PASS: all NDEBT rows 5 cells; Open severities ['Low', 'Medium']
+EXIT:0
+-----
+out=$(bash tools/validate.sh 2>&1); rc=$?
+printf '%s\n' "$out" | tail -13
+test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY: 12 passed, 0 failed'
+echo "E11 PASS (rc=$rc)" 
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood
+[C12] PASS ecosystem-fixtures
+SUMMARY: 12 passed, 0 failed
+E11 PASS (rc=0)
+EXIT:0
+-----
+out=$(bash tools/validate.sh --payload 2>&1); rc=$?
+printf '%s\n' "$out" | tail -3
+test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 10 passed, 0 failed'
+echo "E12 PASS (rc=$rc)" 
+[C10] PASS consistency
+[C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+SUMMARY (payload mode): 10 passed, 0 failed
+E12 PASS (rc=0)
+EXIT:0
+-----
+out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?
+printf '%s\n' "$out" | tail -2
+test $rc -eq 0
+echo "E13 PASS (rc=$rc)" 
+bootstrap.sh: verify-only: PASS -- '/tmp/tmp.UkXQPAy1l2/.nizam' is present, well-formed, and matches pinned tag 'e2e-1784360086-25040'.
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1784360086-25040, target /tmp/tmp.UkXQPAy1l2/.nizam).
+E13 PASS (rc=0)
+EXIT:0
+-----
+set -e
+echo "06f266c06abd9b3793477771de265698dbec0a00761c6d81818decbc7e31b5ea  .agent/evidence/045-release-readiness-checklist.md" | sha256sum -c -
+git diff --name-only HEAD | grep -E '^(CHANGELOG\.md|v0\.6\.0-release-notes\.md)$' && exit 1 || true
+tags=$(git ls-remote --tags origin | grep -v '\^{}' | awk -F/ '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$')
+test "$(printf '%s\n' "$tags" | wc -l)" = "10"
+! printf '%s\n' "$tags" | grep -Fxq v0.7.0
+echo 'E14 PASS: checklist SHA pinned; CHANGELOG + v0.6.0 release notes untouched; 10 release tags, no v0.7.0'
+.agent/evidence/045-release-readiness-checklist.md: OK
+E14 PASS: checklist SHA pinned; CHANGELOG + v0.6.0 release notes untouched; 10 release tags, no v0.7.0
+EXIT:0
+-----
+set -e
+test "$(git diff --name-only HEAD | LC_ALL=C sort | tr '\n' ' ')" = "docs/planning/DEBT.md ecosystem/01_clean_state_preflight.md ecosystem/03_engineering_audit.md ecosystem/07_progress_comparison.md ecosystem/README.md "
+echo 'E15 PASS: tracked diff confined to exactly the 5 contracted files'
+E15 PASS: tracked diff confined to exactly the 5 contracted files
+EXIT:0
+-----
+set -e
+test -z "$(git diff --name-only HEAD -- .agent/)"
+git status --porcelain .agent/ | python3 -c "
+import sys
+allowed=('.agent/planning_notes_048.md','.agent/contracts/048.json','.agent/qa/048.json','.agent/evidence/048-verify-')
+for l in sys.stdin:
+    st,p=l[:2],l[3:].strip()
+    assert st=='??', (st,p)
+    assert p.startswith(allowed), p
+print('E16 PASS: no tracked .agent modification; untracked additions confined to the 048 in-flight range')
+" 
+E16 PASS: no tracked .agent modification; untracked additions confined to the 048 in-flight range
+EXIT:0
+-----

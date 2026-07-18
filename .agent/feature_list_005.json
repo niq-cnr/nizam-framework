@@ -454,6 +454,27 @@
         "TIMING NOTE (learned from feature 046 AT#12 / its head_caret_timing_note): run this tip-diff confinement check ONLY after the 047 fixes are committed as the single stack-tip commit, so HEAD is the 047 commit and HEAD^ its parent — the lifecycle close-out commit (feature_list/run_state/qa/evidence) intentionally advances HEAD afterward, so the standing scope proof is contract 047's vlib_scope_guard entry, not this HEAD^..HEAD diff. The tip commit touches ONLY the two allowed files: test -z \"$(git diff --name-only HEAD^ HEAD -- ':!docs/planning/DEBT.md' ':!tools/validate.sh')\" [VERIFIED 2026-07-18 at deliverable tip commit 6d273c6: command run verbatim, exit 0 — tip diff confined to the two allowed files; executed at that tip per this AT's own timing note before the lifecycle close-out commit advanced HEAD]"
       ],
       "estimated_lines": 25
+    },
+    {
+      "id": "048",
+      "name": "PR-stack review response (round 3: operator review of PR #21)",
+      "description": "Review-response overhead feature (not a handover deliverable): resolve the operator's six inline review threads on PR #21 (five logical findings; CodeRabbit skipped PR #21 -- 291 files > 150 limit) as a single new commit at the stack tip per the stacked-PR convention, plus two reply-only round-2 stragglers (the contested PR #20 acceptance-check thread; CodeRabbit's issue-vs-debt question on PR #22). Scope queued by feature 047's close-out (fix items 1-3 + NDEBT-023/024 + NDEBT-019 pipe fix); triage brief .agent/planning_notes_048.md; AH-2 re-verified at HEAD 68cb36f. FIX 1: ecosystem/README.md 0.2.1 -- stale 'Of the Planned documents' paragraph re-synced with the table (four core protocols shipped at features 033-036; five Planned docs are the deferrable set), modeling the NDS Sec 7 discipline the operator's process note flagged. FIX 2: ecosystem/01_clean_state_preflight.md 0.1.1 -- Sec 6 finalization-timing passage (schema-validity binds the FINAL artifact; pending runs record exceptions in the shipped CLI's preflight.pending.json and withhold preflight.json; pre-approval PASS_WITH_EXCEPTIONS unrepresentable BY DESIGN), resolving the Sec 5/Sec 6 contradiction the operator confirmed empirically. FIX 3: bare-filename convention for the three dangling directory-qualified refs (03_engineering_audit.md 0.1.1: 08_ga_gate.md; 07_progress_comparison.md 0.1.1: audit_delta.schema.json x2). DEBT 0.14.0: NDEBT-023 (Low, baseline same-repo revision-consistency rule unenforced by schema/fixture/tool) + NDEBT-024 (Low, FAIL-fixture blocking-item-in-exceptions muddle vs the CLI's real blocking_findings shape) + the queued NDEBT-019 raw-pipe escape. Single-session execution disclosed in contract 048 design_notes and qa/048.json.",
+      "status": "complete",
+      "dependencies": [
+        "047"
+      ],
+      "handover_feature_ids": [],
+      "pr": "Review-response",
+      "merge_order": 18,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "ecosystem/README.md no longer contains the stale 'Of the Planned documents' paragraph; the four-shipped (features 033-036) / five-planned-deferrable state is stated; version 0.2.1 with a feature-048 change_log entry (contract E02)",
+        "ecosystem/01_clean_state_preflight.md Sec 6 defines when schema-validity binds (finalized artifact only; pending runs record exceptions in an informational pending artifact and withhold preflight.json), byte-consistent with tools/ecosystem_preflight.py's shipped exit-2/exit-3 mechanics (E03/E04)",
+        "zero dangling directory-qualified references across ecosystem/*.md after the bare-filename fixes in 03_engineering_audit.md and 07_progress_comparison.md (E05/E06/E07)",
+        "DEBT.md at 0.14.0: NDEBT-019 row restored to 5 GFM cells with rendered code-span byte-identical, NDEBT-023/024 registered at Low with PR #21 provenance, whole register 5-cells clean and Open severities confined to Low/Medium (E08/E09/E10)",
+        "both compliance sweeps and the e2e bootstrap green with exit codes asserted; 045 release-package invariants intact; tracked deliverable diff confined to the five contracted files; no tracked .agent modification at deliverable time (E11-E16)"
+      ],
+      "estimated_lines": 70
     }
   ]
 }
