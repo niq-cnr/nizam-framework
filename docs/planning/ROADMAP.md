@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.4.0
+version: 0.5.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-07-18"
+    summary: "Feature 046 (PR-stack review response): rewrote the stale Sequencing Recommendation sentence (which had wrongly continued to call Track 2 the phase-005 selection) to correctly frame Track 2 as candidate scope for a subsequent phase, consistent with the existing Track 2 supersession note. No other content changed."
   - version: "0.4.0"
     date: "2026-07-17"
     summary: "Added a Dogfood Audit + Delta subsection (feature 044, audit-id audit-2026-07-17-cba6422): 2 new findings (NDEBT-017/018), 1 stale (NDEBT-016), 0 in-window resolved (NDEBT-002 previously resolved (pre-baseline-1))."
@@ -165,8 +168,8 @@ actually describe, and produces the first non-self-referential adoption evidence
 
 ## Sequencing Recommendation
 
-Track 1 is immediate (minutes of human effort). Track 2 is the recommended phase 005,
-activated through the standard planning lifecycle. Track 3's decision should be taken
+Track 1 is immediate (minutes of human effort). Track 2 was superseded as the phase-005 selection by NIP-0001 (see the
+supersession note above) and remains candidate scope for a subsequent phase. Track 3's decision should be taken
 during phase 005 planning — its outcome determines whether a phase 006 is an
 enforcement phase or a documentation-truth phase. Track 4 can run in parallel with
 phase 005 and should complete before any phase that expands cross-repo or
