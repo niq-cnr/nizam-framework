@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.5.0
+version: 0.6.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-07-18"
+    summary: "Phase-005 completion refresh: v0.7.0 released (annotated tag pushed by the operator at merge commit 4833322 after the recorded H-FRAMEWORK-RELEASE sign-off; Release page auto-published by release.yml, title defect NDEBT-025). Current Position updated to 2026-07-18 (phases 001-005 complete, C1-C12 sweep, open-debt roll refreshed through NDEBT-025); Plan of Record banner marked complete; Track 1 gains the v0.6.0-Release-page execution record and the v0.7.0 title-fix action."
   - version: "0.5.0"
     date: "2026-07-18"
     summary: "Feature 046 (PR-stack review response): rewrote the stale Sequencing Recommendation sentence (which had wrongly continued to call Track 2 the phase-005 selection) to correctly frame Track 2 as candidate scope for a subsequent phase, consistent with the existing Track 2 supersession note. No other content changed."
@@ -27,7 +30,8 @@ change_log:
 
 ## Plan of Record (2026-07-17) — Phase 005 Activated: Ecosystem Engineering Cycle
 
-Phase `005-ecosystem-cycle` is **active** and is the current plan of record. On
+Phase `005-ecosystem-cycle` — activated as the plan of record on 2026-07-17 — is
+now **COMPLETE** (v0.7.0 released 2026-07-18; see Current Position below). On
 2026-07-17 the ecosystem operator accepted **NIP-0001 — Ecosystem Engineering
 Cycle** (`docs/nips/NIP-0001-ecosystem-engineering-cycle.md`) via the remote-control
 message **"approved. expedite."**, satisfying gate **H-NIP** and authorizing phase
@@ -45,10 +49,15 @@ framework self-dogfood evidence, ending at a human-gated framework release
 `nizamiq/nizamiq-strategy`) is deferred to the successor programme phase, gated on
 that release.
 
-**Outstanding phase-005 human gates (recorded, not executed):** H-FRAMEWORK-SCOPE
-(minimum-viable v1 scope-lock), H-DOGFOOD-EXCEPTION (any PASS_WITH_EXCEPTIONS
-framework preflight), H-FRAMEWORK-RELEASE (version/changelog/tag), H-RISK (residual
-P1 risk acceptance).
+**Phase-005 human gates — final disposition (2026-07-18):** H-NIP satisfied
+2026-07-17; H-DOGFOOD-EXCEPTION exercised twice, both operator-approved with
+recorded verbatim authorizations; the scope re-baseline 2300→3500 was
+operator-authorized (H-FRAMEWORK-SCOPE was subsumed by the activation
+authorization and that re-baseline — no standalone scope-lock event was executed,
+stated plainly rather than backfilled); H-FRAMEWORK-RELEASE executed 2026-07-18
+(operator sign-off recorded at 31f3fff before the tag, per the NDEBT-018 rule,
+then the operator-pushed annotated tag v0.7.0 at 4833322); H-RISK not required
+(the DEBT Open register carries zero High/Critical rows at close).
 
 **Relationship to the prior candidate scope:** the former "Track 2 — Phase 005
 Candidate Scope: Consumer Reality & Enforcement Closure" (below) is **superseded as
@@ -69,17 +78,21 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-07-15)
+## Current Position (2026-07-18)
 
-- Phases 001–004 are complete. Phase 004 (Durable Enforcement & Dogfooding) merged to
-  `main`; the validator runs green at `SUMMARY: 11 passed, 0 failed` (C1–C11) and the
-  hermetic e2e bootstrap harness passes in CI.
-- Latest released tag: v0.6.0 — the annotated tag was cut and pushed 2026-07-15 at the
-  release commit 955c1d7 (CHANGELOG section dated 2026-07-13), executing Track 1's
-  first human gate. The CHANGELOG `[Unreleased]` section holds post-release
-  planning and release-automation updates.
-- Open debt: NDEBT-004, NDEBT-005, NDEBT-007, NDEBT-008, NDEBT-009, NDEBT-010,
-  NDEBT-011, NDEBT-012 (see `docs/planning/DEBT.md`).
+- Phases 001–005 are complete. Phase 005 (Ecosystem Engineering Cycle, framework
+  side) landed on `main` via the re-landing PR #25 (merge commit 4833322) after the
+  2026-07-18 stack collapse; the validator runs green at `SUMMARY: 12 passed, 0
+  failed` (C1–C12), payload mode at `10 passed, 0 failed`, and the hermetic e2e
+  bootstrap harness passes in CI.
+- Latest released tag: v0.7.0 — the annotated tag was pushed by the operator
+  2026-07-18 at the phase merge commit 4833322, executing H-FRAMEWORK-RELEASE after
+  the recorded sign-off; `release.yml` auto-published the GitHub Release page from
+  the `[0.7.0]` CHANGELOG section (its title defect is NDEBT-025, Track 1 item 3).
+  The successor consumer-adoption phase (handover F-016..F-020) is now unblocked.
+- Open debt: NDEBT-004, NDEBT-005, NDEBT-007 through NDEBT-025 excluding the
+  resolved NDEBT-001/002/003/006 (21 Open rows, all Low or Medium; see
+  `docs/planning/DEBT.md`).
 
 ## Track 1 — Outstanding Human Gates (no planning required)
 
@@ -89,11 +102,15 @@ they need no new phase.
 1. **Cut v0.6.0 — EXECUTED 2026-07-15.** The annotated tag `v0.6.0` was pushed at
    commit 955c1d7 per `methodology/06_release_train.md` (MINOR: additive, no breaking
    runtime change, `bootstrap.sh` unmodified). Residual: **publish the v0.6.0 GitHub
-   Release page** — `README.md`'s release link points at it and 404s until it exists
-   (every prior tag v0.1.0–v0.5.3 has a published Release page).
+   Release page — EXECUTED 2026-07-15** (the page exists, published 05:53 UTC;
+   every tag v0.1.0–v0.6.0 now has a published Release page).
 2. **Publish the user guide to GitHub Pages.** Outstanding since phase 003
    (`docs/guide/index.html` ships in-repo but is not yet published). Recorded in the
    phase-003 manifest note; still unexecuted.
+3. **Fix the v0.7.0 GitHub Release page title (NDEBT-025).** One-click UI edit:
+   the auto-published title carries the merge-commit subject instead of the
+   annotated tag's subject `v0.7.0 — Ecosystem Engineering Cycle`; the body is
+   correct. The workflow fix is registered as NDEBT-025.
 
 ## Track 2 — [SUPERSEDED as the phase-005 selection, 2026-07-17] Candidate Scope: Consumer Reality & Enforcement Closure
 

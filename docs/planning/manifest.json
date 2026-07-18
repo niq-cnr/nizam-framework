@@ -1,18 +1,18 @@
 {
   "schema_version": "2.0.0",
-  "updated_at": "2026-07-17",
+  "updated_at": "2026-07-18",
   "forward_planning": "docs/planning/ROADMAP.md",
   "current_phase": "005-ecosystem-cycle",
   "phases": [
     {
       "id": "001-framework-genesis",
-      "title": "Framework Genesis \u2014 Nizam Hybrid Mono-Repo",
+      "title": "Framework Genesis — Nizam Hybrid Mono-Repo",
       "feature_list": ".agent/feature_list.json",
       "status": "complete"
     },
     {
       "id": "002-self-compliance",
-      "title": "Self-Compliance Hardening \u2014 CI Enforcement, Compliance Validator & Protocol Hardening",
+      "title": "Self-Compliance Hardening — CI Enforcement, Compliance Validator & Protocol Hardening",
       "feature_list": ".agent/feature_list_002.json",
       "status": "complete",
       "activation_state": "active",
@@ -20,7 +20,7 @@
     },
     {
       "id": "003-communication",
-      "title": "Communication & User Guide \u2014 First-Contact Clarity Remediation & Shipped HTML User Guide",
+      "title": "Communication & User Guide — First-Contact Clarity Remediation & Shipped HTML User Guide",
       "feature_list": ".agent/feature_list_003.json",
       "status": "complete",
       "activation_state": "active",
@@ -38,9 +38,9 @@
       "id": "005-ecosystem-cycle",
       "title": "Ecosystem Engineering Cycle (Framework Side) — Reusable Reconcile/Preflight/Baseline/Audit/Compare Lifecycle, Schemas, Preflight CLI & Framework Dogfood",
       "feature_list": ".agent/feature_list_005.json",
-      "status": "in_progress",
+      "status": "complete",
       "activation_state": "active",
-      "note": "Lifecycle: PROPOSED 2026-07-17 by @planner (spec .agent/product_spec_005.md, feature_list_005.json: 15 features 031-045, DAG validated acyclic — deps all resolve, no cycles, topological order exists — original_estimate_lines=2300) -> ACTIVATED 2026-07-17 on operator authorization. Activation authorization (verbatim): 'approved. expedite.' (remote-control message, 2026-07-17), which accepts NIP-0001 (docs/nips/NIP-0001-ecosystem-engineering-cycle.md, status Accepted) satisfying operator gate H-NIP and makes the ecosystem cycle the plan of record. Scope: FRAMEWORK SIDE ONLY — the accepted programme's framework features (handover F-001..F-015), mapped 1:1 to framework features 031..045 via each feature's handover_feature_ids field, grouped into four PRs: PR-F1=NIP + plan of record (031); PR-F2=ecosystem module protocols + baseline/preflight-verdict/finding schemas + capability routing (032-040); PR-F3=preflight CLI + validator/CI fixtures (041-042); PR-F4=framework dogfood evidence (043-044); plus release preparation (045, HUMAN GATE). Consumer adoption (handover F-016..F-020, targeting nizamiq/nizamiq-strategy) is EXPLICITLY OUT OF SCOPE for this phase and deferred to the successor programme phase, gated on the framework release. status='in_progress' + activation_state='active' reflect the operator-authorized activation (manifest.schema status enum has no 'proposed'/'active' value; the proposed->active decision-lifecycle is carried by activation_state + this note, matching the phase 002/003/004 house pattern). Outstanding human gates (recorded, NOT executed by the pipeline): H-FRAMEWORK-SCOPE (minimum-viable v1 scope-lock), H-DOGFOOD-EXCEPTION (approve any PASS_WITH_EXCEPTIONS framework preflight, feature 043), H-FRAMEWORK-RELEASE (approve version/changelog/tag, feature 045), H-RISK (accept any residual P1 engineering risk). Also inherited-open from prior phases: the v0.6.0 GitHub Release page publication and GitHub Pages publishing for docs/guide/. Forward planning: docs/planning/ROADMAP.md."
+      "note": "Lifecycle: PROPOSED 2026-07-17 by @planner (spec .agent/product_spec_005.md, feature_list_005.json: 15 features 031-045, DAG validated acyclic — deps all resolve, no cycles, topological order exists — original_estimate_lines=2300) -> ACTIVATED 2026-07-17 on operator authorization. Activation authorization (verbatim): 'approved. expedite.' (remote-control message, 2026-07-17), which accepts NIP-0001 (docs/nips/NIP-0001-ecosystem-engineering-cycle.md, status Accepted) satisfying operator gate H-NIP and makes the ecosystem cycle the plan of record. Scope: FRAMEWORK SIDE ONLY — the accepted programme's framework features (handover F-001..F-015), mapped 1:1 to framework features 031..045 via each feature's handover_feature_ids field, grouped into four PRs: PR-F1=NIP + plan of record (031); PR-F2=ecosystem module protocols + baseline/preflight-verdict/finding schemas + capability routing (032-040); PR-F3=preflight CLI + validator/CI fixtures (041-042); PR-F4=framework dogfood evidence (043-044); plus release preparation (045, HUMAN GATE). Consumer adoption (handover F-016..F-020, targeting nizamiq/nizamiq-strategy) is EXPLICITLY OUT OF SCOPE for this phase and deferred to the successor programme phase, gated on the framework release. status='in_progress' + activation_state='active' reflect the operator-authorized activation (manifest.schema status enum has no 'proposed'/'active' value; the proposed->active decision-lifecycle is carried by activation_state + this note, matching the phase 002/003/004 house pattern). Outstanding human gates (recorded, NOT executed by the pipeline): H-FRAMEWORK-SCOPE (minimum-viable v1 scope-lock), H-DOGFOOD-EXCEPTION (approve any PASS_WITH_EXCEPTIONS framework preflight, feature 043), H-FRAMEWORK-RELEASE (approve version/changelog/tag, feature 045), H-RISK (accept any residual P1 engineering risk). Also inherited-open from prior phases: the v0.6.0 GitHub Release page publication and GitHub Pages publishing for docs/guide/. Forward planning: docs/planning/ROADMAP.md. -> COMPLETED 2026-07-18 (run_state event phase_complete): all 15 planned features 031-045 plus review-response overhead features 046-048 through the full lifecycle; the stack landed on main via the re-landing PR #25 (merge 4833322) after the 2026-07-18 stack collapse (#20 squash-merged with branch deletion auto-closed #21 unmerged; #22-#24 merged branch-to-branch, never reaching main; recovery: reconciliation merge bed7a55, provably lossless, result tree byte-identical to the validated lineage tip 26eb99b). H-FRAMEWORK-RELEASE executed 2026-07-18: operator sign-off (verbatim 'I Sign off release-readiness', recorded at 31f3fff BEFORE the tag per the NDEBT-018 rule) + operator-pushed annotated tag v0.7.0 at 4833322; release.yml auto-published the GitHub Release page (title defect registered as NDEBT-025). Consumer adoption (handover F-016..F-020) remains successor-phase scope, now unblocked by the released tag. Forward planning: docs/planning/ROADMAP.md."
     }
   ]
 }
