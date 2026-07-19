@@ -1,0 +1,304 @@
+#!/usr/bin/env bash
+# tools/fixtures_self_test.sh -- Fixture dormancy self-test (NDEBT-009,
+# phase-006 feature 052).
+#
+# Closes the dormancy gap flagged by NDEBT-009: the negative fixtures under
+# tools/fixtures/ are substantive and discriminating, but no CI job ran them,
+# so a validator check that regressed to a vacuous pass would not be caught.
+# This harness runs EVERY shipped fixture through its TARGETED surface and
+# asserts the discriminating verdict, then proves -- via a COMPLETENESS GUARD
+# -- that every file under tools/fixtures/ is accounted for, so a newly-added
+# fixture cannot silently go dormant.
+#
+# NON-VACUOUS BY CONSTRUCTION: it asserts the SPECIFIC verdict of the targeted
+# check ([C2]/[C9]/[C10]/... or a verify_lib primitive return), never a bare
+# non-zero exit. Most .md fixtures already exit non-zero from incidental
+# C1/C2 frontmatter failures unrelated to what they test (e.g.
+# stale_payload_pass.md exits 1 but its targeted check, C10, correctly
+# PASSES), so an exit-code-only self-test would pass vacuously on the wrong
+# check -- exactly the failure mode NDEBT-009 exists to prevent.
+#
+# Three surfaces exercise the fixtures:
+#   (1) validate.sh --target   -- check-level fixtures (.md/.html/.json); the
+#                                 ecosystem families route via NDEBT-015.
+#   (2) verify_lib primitives  -- primitive-level fixtures (source + invoke),
+#                                 including two git-scratch primitives.
+#   (3) C13 skill-index        -- via tools/skill.json substitution.
+#
+# Framework-internal (reads tools/fixtures/, which is a development/QA
+# concern); run in CI as its own job alongside validate + e2e_bootstrap.
+# Exits 0 only if every assertion passed AND every fixture is accounted for.
+
+set -uo pipefail
+
+REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)" || {
+  echo "fixtures_self_test: cannot resolve repo root" >&2
+  exit 2
+}
+cd -- "${REPO}" || exit 2
+
+[ -f tools/verify_lib.sh ] || { echo "fixtures_self_test: tools/verify_lib.sh not found" >&2; exit 2; }
+# shellcheck source=tools/verify_lib.sh
+source tools/verify_lib.sh
+
+fail=0
+COVERED=()
+SKILL_BAK=""
+
+# Backstop: if a C13 substitution is interrupted, restore the real skill.json.
+cleanup() {
+  if [ -n "${SKILL_BAK}" ] && [ -f "${SKILL_BAK}" ]; then
+    cp -- "${SKILL_BAK}" tools/skill.json
+    rm -f -- "${SKILL_BAK}"
+  fi
+}
+trap cleanup EXIT
+
+note_covered() { COVERED+=("$1"); }
+
+# assert_target <fixture-basename> <check-tag> <PASS|FAIL>
+# Runs `validate.sh --target tools/fixtures/<fixture>` and asserts the named
+# check emitted the expected verdict line. The fixture is marked covered.
+assert_target() {
+  local fx="$1" tag="$2" pol="$3"
+  note_covered "${fx}"
+  local out
+  out=$(bash tools/validate.sh --target "tools/fixtures/${fx}" 2>&1)
+  if printf '%s\n' "${out}" | grep -Eq "^\[${tag}\] ${pol}( |\$)"; then
+    echo "OK   target      ${fx} -> [${tag}] ${pol}"
+  else
+    echo "FAIL target      ${fx} -> expected [${tag}] ${pol}, got:"
+    printf '%s\n' "${out}" | grep -E '^\[C[0-9]+\] ' | sed 's/^/       /'
+    fail=1
+  fi
+}
+
+# assert_rc <label> <expected-rc> <command...>
+# Runs the command, captures its return, asserts it equals <expected-rc>.
+assert_rc() {
+  local label="$1" want="$2"; shift 2
+  "$@" >/dev/null 2>&1
+  local got=$?
+  if [ "${got}" -eq "${want}" ]; then
+    echo "OK   ${label} (rc=${got})"
+  else
+    echo "FAIL ${label}: expected rc=${want}, got rc=${got}"
+    fail=1
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# (1) validate.sh --target check-level fixtures
+# ---------------------------------------------------------------------------
+echo "== check-level fixtures (validate.sh --target) =="
+
+# Negatives: the targeted check MUST FAIL.
+assert_target bad_authoritative_source.md                          C2  FAIL
+assert_target bad_discovery_order.md                               C10 FAIL
+assert_target untagged_fence.md                                    C3  FAIL
+assert_target unresolved_path.md                                   C9  FAIL
+assert_target stale_payload.md                                     C10 FAIL
+assert_target stale_payload_cosentence.md                          C10 FAIL
+assert_target stale_payload_longwrap.md                            C10 FAIL
+assert_target stale_payload_semicolon.md                           C10 FAIL
+assert_target stale_payload_html.html                              C10 FAIL
+assert_target version_drift.html                                   C10 FAIL
+assert_target broken_index.json                                    C4  FAIL
+assert_target invalid_contract.json                                C11 FAIL
+assert_target invalid_qa_verdict.json                              C11 FAIL
+assert_target invalid_run_state.json                               C11 FAIL
+assert_target ecosystem_baseline_neg_missing_revision.json         C12 FAIL
+assert_target ecosystem_baseline_neg_mixed_timestamps.json         C12 FAIL
+assert_target engineering_finding_neg_closure_evidence_incomplete.json C12 FAIL
+assert_target engineering_finding_neg_missing_owner.json           C12 FAIL
+assert_target engineering_finding_neg_resolved_without_closure_evidence.json C12 FAIL
+assert_target preflight_verdict_invalid_approval_incomplete.json   C12 FAIL
+assert_target preflight_verdict_invalid_exceptions.json            C12 FAIL
+assert_target preflight_verdict_invalid_verdict.json               C12 FAIL
+
+# Positives: the targeted check MUST PASS (proves the negative's signal is
+# discriminating, not a check that fails on everything).
+assert_target exempt_paths.md                                      C9  PASS
+assert_target ecosystem_baseline_valid.json                        C12 PASS
+assert_target engineering_finding_valid.json                       C12 PASS
+assert_target engineering_finding_valid_resolved.json              C12 PASS
+assert_target preflight_verdict_pass.json                          C12 PASS
+assert_target preflight_verdict_pass_with_exceptions.json          C12 PASS
+assert_target preflight_verdict_fail.json                          C12 PASS
+
+# ---------------------------------------------------------------------------
+# (2) verify_lib primitive fixtures
+# ---------------------------------------------------------------------------
+echo "== primitive fixtures (verify_lib) =="
+
+# vlib_no_stale_payload: pass fixture returns 0, fail fixture returns 1.
+note_covered stale_payload_pass.md
+note_covered stale_payload_fail.md
+assert_rc "primitive   vlib_no_stale_payload pass" 0 vlib_no_stale_payload tools/fixtures/stale_payload_pass.md
+assert_rc "primitive   vlib_no_stale_payload fail" 1 vlib_no_stale_payload tools/fixtures/stale_payload_fail.md
+
+# vlib_section_grep: marker in the target section returns 0; marker only in a
+# non-target section returns 1 (a vacuous whole-file grep would false-pass).
+note_covered section_grep_pass.md
+note_covered section_grep_fail.md
+assert_rc "primitive   vlib_section_grep pass" 0 vlib_section_grep tools/fixtures/section_grep_pass.md '^## Target Section' 'SECTION_GREP_MARKER'
+assert_rc "primitive   vlib_section_grep fail" 1 vlib_section_grep tools/fixtures/section_grep_fail.md '^## Target Section' 'SECTION_GREP_MARKER'
+
+# vlib_path_resolves: every token line in the pass fixture resolves/exempts
+# (rc 0); the fail fixture's token does not (rc 1). Tokens resolve relative to
+# the repo root (this script's CWD).
+test_path_resolves() {
+  note_covered path_resolves_pass.txt
+  note_covered path_resolves_fail.txt
+  local line ok=1
+  while IFS= read -r line || [ -n "${line}" ]; do
+    [ -z "${line}" ] && continue
+    vlib_path_resolves "${line}" >/dev/null 2>&1 || ok=0
+  done < tools/fixtures/path_resolves_pass.txt
+  if [ "${ok}" -eq 1 ]; then echo "OK   primitive   vlib_path_resolves pass (all tokens resolve/exempt)"
+  else echo "FAIL primitive   vlib_path_resolves pass: a token failed to resolve"; fail=1; fi
+  ok=1
+  while IFS= read -r line || [ -n "${line}" ]; do
+    [ -z "${line}" ] && continue
+    vlib_path_resolves "${line}" >/dev/null 2>&1 && ok=0
+  done < tools/fixtures/path_resolves_fail.txt
+  if [ "${ok}" -eq 1 ]; then echo "OK   primitive   vlib_path_resolves fail (token does not resolve)"
+  else echo "FAIL primitive   vlib_path_resolves fail: a token unexpectedly resolved"; fail=1; fi
+}
+test_path_resolves
+
+# vlib_version_increased (git-scratch): old.md is the HEAD baseline (0.1.0);
+# new_pass (0.2.0) is a strict increase (rc 0); new_fail (0.1.0, equal) and
+# new_fail_decrease (0.0.9, lower) are not (rc 1).
+test_version_increased() {
+  note_covered version_increased_old.md
+  note_covered version_increased_new_pass.md
+  note_covered version_increased_new_fail.md
+  note_covered version_increased_new_fail_decrease.md
+  if _version_increased_scratch; then
+    echo "OK   primitive   vlib_version_increased (pass / equal-fail / decrease-fail)"
+  else
+    echo "FAIL primitive   vlib_version_increased: a scratch assertion did not hold"
+    fail=1
+  fi
+}
+_version_increased_scratch() (
+  local d; d=$(mktemp -d) || return 1
+  trap 'rm -rf "${d}"' EXIT
+  cd -- "${d}" || return 1
+  git init -q . || return 1
+  git config user.email self-test@nizam.local
+  git config user.name fixtures-self-test
+  cp -- "${REPO}/tools/fixtures/version_increased_old.md" f.md
+  git add f.md && git commit -qm baseline || return 1
+  cp -- "${REPO}/tools/fixtures/version_increased_new_pass.md" f.md
+  vlib_version_increased f.md >/dev/null 2>&1 || return 1
+  cp -- "${REPO}/tools/fixtures/version_increased_new_fail.md" f.md
+  vlib_version_increased f.md >/dev/null 2>&1 && return 1
+  cp -- "${REPO}/tools/fixtures/version_increased_new_fail_decrease.md" f.md
+  vlib_version_increased f.md >/dev/null 2>&1 && return 1
+  return 0
+)
+test_version_increased
+
+# vlib_scope_guard (git-scratch): a change to an allow-listed path passes; an
+# out-of-scope change fails. The allow-list is the fixture's contents.
+test_scope_guard() {
+  note_covered scope_guard_allowlist.txt
+  if _scope_guard_scratch; then
+    echo "OK   primitive   vlib_scope_guard (allowed pass / out-of-scope fail)"
+  else
+    echo "FAIL primitive   vlib_scope_guard: a scratch assertion did not hold"
+    fail=1
+  fi
+}
+_scope_guard_scratch() (
+  local d; d=$(mktemp -d) || return 1
+  trap 'rm -rf "${d}"' EXIT
+  local allow=()
+  local a
+  while IFS= read -r a || [ -n "${a}" ]; do
+    [ -z "${a}" ] && continue
+    allow+=("${a}")
+  done < "${REPO}/tools/fixtures/scope_guard_allowlist.txt"
+  cd -- "${d}" || return 1
+  git init -q . || return 1
+  git config user.email self-test@nizam.local
+  git config user.name fixtures-self-test
+  mkdir -p tools/fixtures
+  printf 'seed\n' > tools/verify_lib.sh
+  git add -A && git commit -qm baseline || return 1
+  # Allowed change only (tools/verify_lib.sh is in the allow-list): passes.
+  printf 'change\n' >> tools/verify_lib.sh
+  vlib_scope_guard "${allow[@]}" >/dev/null 2>&1 || return 1
+  # Add an out-of-scope path (README.md is not allow-listed): fails.
+  printf 'oops\n' > README.md
+  vlib_scope_guard "${allow[@]}" >/dev/null 2>&1 && return 1
+  return 0
+)
+test_scope_guard
+
+# ---------------------------------------------------------------------------
+# (3) C13 skill-index negative fixture (substitution)
+# ---------------------------------------------------------------------------
+echo "== C13 skill-index negative fixture (substitution) =="
+test_c13() {
+  note_covered skill_index_neg_dangling_module.json
+  SKILL_BAK=$(mktemp)
+  cp -- tools/skill.json "${SKILL_BAK}"
+  cp -- tools/fixtures/skill_index_neg_dangling_module.json tools/skill.json
+  local out; out=$(bash tools/validate.sh 2>&1)
+  cp -- "${SKILL_BAK}" tools/skill.json
+  rm -f -- "${SKILL_BAK}"; SKILL_BAK=""
+  if printf '%s\n' "${out}" | grep -Eq "^\[C13\] FAIL"; then
+    echo "OK   c13-substitute skill_index_neg_dangling_module.json -> [C13] FAIL"
+  else
+    echo "FAIL c13-substitute: substituting the dangling-module fixture did not yield [C13] FAIL"
+    fail=1
+  fi
+}
+test_c13
+
+# ---------------------------------------------------------------------------
+# COMPLETENESS GUARD: every file under tools/fixtures/ must be accounted for
+# by exactly one row above; an unlisted fixture (a newly-added dormant
+# negative) or a manifest row naming an absent fixture is a FAIL.
+# ---------------------------------------------------------------------------
+echo "== completeness guard =="
+ondisk=()
+# find (not `ls -1 -- *`): a glob skips dot-prefixed entries and, if a
+# subdirectory ever appears under tools/fixtures/, expands to that dir's
+# CONTENTS -- either would let a fixture escape the on-disk set and defeat the
+# guard's sole purpose (PR #31 review). -maxdepth 1 -type f lists only the
+# immediate regular files, dotfiles included; the leading './' is stripped so
+# the names match the bare basenames in COVERED. (No -printf: portable to
+# non-GNU find.)
+while IFS= read -r f; do ondisk+=("${f}"); done \
+  < <(cd tools/fixtures && find . -maxdepth 1 -type f | sed 's#^\./##' | LC_ALL=C sort)
+covered_sorted=()
+while IFS= read -r f; do covered_sorted+=("${f}"); done \
+  < <(printf '%s\n' "${COVERED[@]}" | LC_ALL=C sort -u)
+
+unaccounted=$(comm -23 <(printf '%s\n' "${ondisk[@]}") <(printf '%s\n' "${covered_sorted[@]}"))
+phantom=$(comm -13 <(printf '%s\n' "${ondisk[@]}") <(printf '%s\n' "${covered_sorted[@]}"))
+
+if [ -n "${unaccounted}" ]; then
+  echo "FAIL completeness: fixture(s) on disk not accounted for by any manifest row (dormant):"
+  printf '%s\n' "${unaccounted}" | sed 's/^/       /'
+  fail=1
+fi
+if [ -n "${phantom}" ]; then
+  echo "FAIL completeness: manifest row(s) name a fixture that is not on disk:"
+  printf '%s\n' "${phantom}" | sed 's/^/       /'
+  fail=1
+fi
+
+total=${#ondisk[@]}
+accounted=${#covered_sorted[@]}
+echo "---"
+if [ "${fail}" -eq 0 ]; then
+  echo "SELF-TEST OK: ${accounted}/${total} fixtures accounted for, 0 failed"
+  exit 0
+fi
+echo "SELF-TEST FAILED: ${accounted}/${total} fixtures accounted for (see FAIL lines above)"
+exit 1

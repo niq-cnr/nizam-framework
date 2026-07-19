@@ -21,6 +21,26 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `tools/fixtures/skill_index_neg_dangling_module.json` reproduces the defect
   class; `tools/README.md` (0.4.0) and the `NIZAM.json` validator capability
   summary document the C1–C13 set.
+- **Fixtures self-test** `tools/fixtures_self_test.sh` and a `fixtures_self_test`
+  CI job (phase 006 feature 052, resolving **NDEBT-009**): every shipped
+  `tools/fixtures/` fixture is run through its targeted surface —
+  `validate.sh --target` for check-level fixtures, the `verify_lib.sh`
+  primitives for primitive-level ones, and a `tools/skill.json` substitution
+  for the C13 negative fixture — asserting the **specific** verdict (not a
+  bare non-zero exit, which most `.md` fixtures already return from incidental
+  C1/C2 failures), with a completeness guard that fails on any unaccounted
+  fixture. Closes the dormancy gap where a check regressing to a vacuous pass
+  would not have been caught.
+- `tools/validate.sh` **C12 `--target` routing** (feature 052, resolving
+  **NDEBT-015**): a `--target` invocation against an `ecosystem_baseline`,
+  `preflight_verdict`, or `engineering_finding` fixture now content-routes to
+  its shipped schema and emits a discriminating `[C12]` verdict, instead of
+  misrouting to C4/C11 and failing regardless of polarity.
+- `tools/validate.sh` **C12 naming-conformance guard** (feature 052, resolving
+  **NDEBT-016**): the fixture-polarity classifier is case-insensitive and a
+  basename carrying a `neg`/`invalid` look-alike that is not the canonical
+  delimited-lowercase token (uppercase `_NEG_`, full-word `_negative_`) is a
+  named FAIL, so the classifier cannot be gamed by a look-alike name.
 
 ### Changed
 
@@ -43,6 +63,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `tools/validate.sh` self-description drift left by feature 051 (found and
+  corrected in-scope during feature 052): the C4/C13 `--help` text, the C13
+  function comment, and the C13 payload-mode PASS message still named
+  `methodology/`+`ecosystem/` among the payload-skipped directories and said
+  the carve-out was "pending the F-051 payload-contract decision" — but
+  feature 051 already made those two directories injected/required, narrowing
+  the skip set to `registry/`+`docs/`. The code (`skipped_dirs`,
+  `SKIPPED_DIR_PREFIXES`, the C9 allow-list) was already correct; only the
+  human-readable descriptions lagged. An NDEBT-005-class enumeration-
+  completeness miss.
 - `tools/validate.sh` C4 payload mode: `ecosystem` joined the non-injected
   carve-out set (`methodology`, `registry`, `docs`). NIZAM.json has indexed
   `ecosystem/` paths since feature 040, but `bootstrap.sh` does not inject the

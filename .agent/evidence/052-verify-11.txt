@@ -1,0 +1,15 @@
+# .agent/evidence/052-verify-11.txt
+# Contract 052 verification entry 11 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: CI WIRING + REGRESSION BUNDLE: compliance.yml carries the fixtures_self_test job (with pip install jsonschema pyyaml) running the harness; default 13/13, payload 11/11, and e2e all still green.
+# --- command (from .agent/contracts/052.json verification[11].command) ---
+set -e
+grep -Fq 'fixtures_self_test:' .github/workflows/compliance.yml
+grep -Fq 'bash tools/fixtures_self_test.sh' .github/workflows/compliance.yml
+awk '/fixtures_self_test:/{f=1} f&&/pip install jsonschema pyyaml/{print "pip-ok"; exit}' .github/workflows/compliance.yml | grep -Fq pip-ok
+bash tools/validate.sh 2>&1 | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'
+bash tools/validate.sh --payload 2>&1 | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'
+bash tools/e2e_bootstrap_test.sh >/dev/null 2>&1
+echo 'E11 PASS: CI job wired (jsonschema/pyyaml); default 13/13, payload 11/11, e2e green'
+# --- output ---
+E11 PASS: CI job wired (jsonschema/pyyaml); default 13/13, payload 11/11, e2e green
+[exit 0]

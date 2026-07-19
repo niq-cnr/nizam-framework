@@ -1,0 +1,50 @@
+{
+  "feature_id": "052",
+  "qa_pass": true,
+  "checks_run": 12,
+  "checks_passed": 12,
+  "adversarial": {
+    "performed": true,
+    "description": "Beyond re-running all 12 contract verifications to EXIT:0, the QA independently exercised the self-test's own load-bearingness (the meta-risk for a feature whose purpose is catching vacuous checks): (E03) mutating tools/fixtures/unresolved_path.md in a scratch copy so its targeted check C9 PASSes makes the self-test FAIL naming that fixture -- proving it asserts the specific verdict, not a bare exit code; (E04) an unaccounted fixture and a missing fixture each fail the completeness guard; (E07) all three NDEBT-016 dodge shapes (uppercase _NEG_, full-word _negative_, false-trigger _invalid_ masquerade) are rejected; (E10) corrupting section_grep_fail.md so the marker lands in the target section makes the primitive assertion FAIL. NDEBT-015 routing was checked for non-regression (E06: invalid_qa_verdict still routes qa_verdict via qa_pass, broken_index/NIZAM.json still C4) as well as for the new discrimination (E05).",
+    "process_note": "Single-session collapsed-role execution (046-051 precedent, disclosed at phase activation): the same operator ran generation, verification, and this QA. All adversarial probes use MINIMAL scratch copies (tools/+schema/+NIZAM.json) under a session-scratch root, never mutating the real tree (NDEBT-013/020 probe-isolation); the C13 substitution inside the harness backs up and restores tools/skill.json with an EXIT-trap backstop (E09 asserts the tree is clean afterward)."
+  },
+  "evidence_files": [
+    ".agent/evidence/052-verify-01.txt",
+    ".agent/evidence/052-verify-02.txt",
+    ".agent/evidence/052-verify-03.txt",
+    ".agent/evidence/052-verify-04.txt",
+    ".agent/evidence/052-verify-05.txt",
+    ".agent/evidence/052-verify-06.txt",
+    ".agent/evidence/052-verify-07.txt",
+    ".agent/evidence/052-verify-08.txt",
+    ".agent/evidence/052-verify-09.txt",
+    ".agent/evidence/052-verify-10.txt",
+    ".agent/evidence/052-verify-11.txt",
+    ".agent/evidence/052-verify-12.txt",
+    ".agent/evidence/052/verification.txt",
+    ".agent/evidence/052/diff.patch"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": ".agent/evidence/052/diff.patch was captured as `git diff HEAD~1..HEAD` at the deliverable commit 86a67ab and equals the six-file deliverable diff; E12 independently re-asserts HEAD~1..HEAD touches exactly {.github/workflows/compliance.yml, CHANGELOG.md, docs/planning/DEBT.md, tools/README.md, tools/fixtures_self_test.sh, tools/validate.sh} and no .agent path.",
+    "flat_files": "12 per-entry captures .agent/evidence/052-verify-01..12.txt + the consolidated .agent/evidence/052/verification.txt (12 EXIT:0 markers) + .agent/evidence/052/diff.patch."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_006.json feature 052 acceptance_tests (3) + contract 052 verification (12)",
+    "summary": "AT1 ('every shipped negative fixture provably fails its targeted check via the self-test surface, asserted in CI') -> E02/E03/E09/E10 + the completeness guard (41/41) + the fixtures_self_test CI job (E11). AT2 ('--target against each ecosystem fixture family routes to the correct schema and polarity') -> E05 (all 3 families, both polarities) + E06 (no regression). AT3 ('the NDEBT-016 dodge shapes are rejected by the hardened classifier') -> E07 (uppercase + full-word by conformance, false-trigger by polarity assertion). All three acceptance tests are covered by executed evidence; no acceptance test is left unverified."
+  },
+  "non_blocking_observations": [
+    "LARGE SCOPE OVERAGE (disclosed, held for operator acknowledgment): 678 lines changed vs the 180-line plan-of-record estimate (~3.8x), which EXCEEDS 3x the rolling average (049=164, 050=194, 051=155; avg 171, 3x=513). Not blocking: the overage is inherent to acceptance test 1's 'every shipped negative fixture' mandate (the harness alone is ~297 lines to cover all 41 fixtures), not scope creep; cumulative 1191/2236 ceiling (53%), well under the 130% halt. The PR is held for the operator to acknowledge/ratify or redirect at review, per the 049/050 precedent.",
+    "IN-SCOPE F-051-DRIFT CORRECTION (disclosed): four live-state validator self-descriptions left stale by feature 051 (the C4/C13 --help, the C13 function comment, and the C13 payload PASS echo still named methodology/+ecosystem/ among the payload-skipped dirs and said the carve-out was 'pending F-051') were corrected in-scope to name only registry/+docs/, since F-051 made those two dirs injected/required. An NDEBT-005-class enumeration-completeness miss; historical change_log/CHANGELOG entries true when written were left intact (AH-3). The correction rides in tools/validate.sh + a CHANGELOG Fixed entry.",
+    "VERIFICATION-AUTHORING DATAPOINT (NDEBT-019, opposite polarity): the first two evidence-capture runs failed on E05/E07 because those commands captured a legitimately-FAILING command into `out=$(...)` under `set -e`, which trips set -e on the command-substitution's non-zero status BEFORE `rc=$?` can run -- the manual reproductions (which omitted set -e) masked it. Fixed by guarding the expected-failure captures with `set +e`/`set -e` (the pattern E03/E04/E10 already used) and re-captured 12/12. This is a live datapoint that F-053's NDEBT-019 codification should cover set -e's OVER-aggression on expected-failure captures, not only pipefail UNDER-assertion of piped exit codes."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 052 APPROVED. All 12 contract verifications re-run to EXIT:0 with captured evidence; the self-test is proven non-vacuous and complete (41/41 fixtures, load-bearing three ways); NDEBT-015 routing discriminates all three ecosystem families with no regression; NDEBT-016 rejects all three dodge shapes; the framework self-sweeps (13/13 default, 11/11 payload), e2e, and the new fixtures_self_test job are green. Two disclosed, non-blocking items ride to the operator at PR review: the large (inherent) scope overage and the in-scope F-051-drift correction. Diff confined to the six contracted files, zero .agent in the deliverable."
+  }
+}

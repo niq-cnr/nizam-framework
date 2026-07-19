@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.4.1
+version: 0.5.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-07-19"
+    summary: "Sync to phase-006 feature 052 (fixtures self-test closure): document tools/fixtures_self_test.sh (NDEBT-009 -- runs every fixture through its targeted check, non-vacuously, with a completeness guard), C12's --target ecosystem routing (NDEBT-015) and naming-conformance guard (NDEBT-016), and correct the C13 row's payload carve-out to registry/+docs/ only (methodology/+ecosystem/ became injected in feature 051)."
   - version: "0.4.1"
     date: "2026-07-19"
     summary: "Review-round correction (PR #28): the Compliance Coverage prose still said 'runs twelve checks' and 'As of phase 005' after the 0.4.0 C13 sync; both now match the thirteen-check C1-C13 set delivered by phase 006 feature 049."
@@ -89,10 +92,27 @@ reports `SUMMARY: 13 passed, 0 failed`:
 | C9 | Repo-wide path-resolution | Every concrete repo-relative file path named in a shipped doc resolves on disk (placeholder/illustrative paths documented-exempt). |
 | C10 | Single-source-of-truth consistency | Payload-set enumeration, bootstrapped-consumer discovery order, and the framework-version anchor stay consistent across every shipped doc. |
 | C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present, skip-if-absent for a fresh consumer. |
-| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving the fixtures are load-bearing rather than dormant. |
-| C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the non-injected directories (methodology/, registry/, docs/, ecosystem/) are skipped pending the F-051 payload-contract decision. |
+| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving the fixtures are load-bearing rather than dormant. A `--target` invocation against one of these fixtures now routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). |
+| C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. |
 
 C9, C10, and C11 were added by phase 004 (`tools/verify_lib.sh` supplies
 their shared, fixture-tested primitives); C12 was added by phase 005
-(feature 042); C1–C8 shipped in earlier phases. Run `bash tools/validate.sh
---help` for the full per-check description.
+(feature 042); C13 by phase 006 (feature 049); C1–C8 shipped in earlier
+phases. Run `bash tools/validate.sh --help` for the full per-check
+description.
+
+### Fixture self-test (`tools/fixtures_self_test.sh`)
+
+The negative fixtures under `tools/fixtures/` are the evidence that each
+check is load-bearing rather than vacuous, but nothing exercised them in CI
+until phase-006 feature 052 (NDEBT-009). `tools/fixtures_self_test.sh` runs
+**every** fixture through its targeted surface — `validate.sh --target` for
+the check-level fixtures, the `verify_lib.sh` primitives for the
+primitive-level ones, and a `tools/skill.json` substitution for the C13
+fixture — and asserts the **specific** verdict, never a bare non-zero exit
+(most `.md` fixtures exit non-zero from incidental C1/C2 failures unrelated
+to what they test, so an exit-code-only test would pass vacuously). A
+**completeness guard** fails if any file under `tools/fixtures/` is not
+accounted for, so a newly-added fixture cannot silently go dormant. It runs
+as its own CI job (`fixtures_self_test`) alongside `validate` and
+`e2e_bootstrap`.

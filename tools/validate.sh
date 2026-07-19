@@ -83,21 +83,32 @@ Modes:
                           consistency, scanning only that file's own body)
                           run against exactly that one file.
                         - For a `.json` target: the file is CONTENT-ROUTED
-                          between C4 and C11. If the file carries a
-                          top-level `review` key, a top-level `qa_pass` or
-                          `verdict` key, a top-level `contract_id` key, or a
-                          top-level `circuit_breaker` or `scope_budget` key
-                          (checked in that order), C11 (dogfood schema
-                          validation) runs against exactly that one file,
-                          validated against schema/contract_review.schema.json,
+                          between C4, C11, and C12. If the file carries a
+                          top-level `review` key, a `verdict`+`execution_id`
+                          pair, a top-level `qa_pass` or `verdict` key, a
+                          top-level `contract_id` key, or a top-level
+                          `circuit_breaker` or `scope_budget` key (checked in
+                          that order), it routes to C12 (ecosystem
+                          preflight_verdict) or C11 (dogfood schema
+                          validation) against exactly that one file, validated
+                          against schema/contract_review.schema.json,
+                          schema/preflight_verdict.schema.json,
                           schema/qa_verdict.schema.json,
                           schema/contract.schema.json, or
-                          schema/run_state.schema.json respectively --
-                          C4 does NOT also run in this case. Otherwise (no
-                          recognized key present -- e.g. NIZAM.json or a
-                          Nizam-index-shaped fixture) C4 (schema validation
-                          + indexed-path walker) runs against exactly that
-                          one file, exactly as before C11 existed.
+                          schema/run_state.schema.json respectively. Failing
+                          those, an ecosystem_baseline shape (the six
+                          `*_references` arrays) or an engineering_finding
+                          shape (`closure_criteria`) routes to C12 against
+                          schema/ecosystem_baseline.schema.json or
+                          schema/engineering_finding.schema.json (NDEBT-015,
+                          feature 052 -- these three ecosystem families
+                          formerly misrouted to C4/C11 and failed regardless
+                          of polarity). C4 does NOT also run in any of these
+                          routed cases. Otherwise (no recognized key present
+                          -- e.g. NIZAM.json or a Nizam-index-shaped fixture)
+                          C4 (schema validation + indexed-path walker) runs
+                          against exactly that one file, exactly as before C11
+                          existed.
                         - For a `.html` target: C10 (single-source-of-truth
                           consistency) runs against exactly that one file.
                           No other check has a `.html` target case.
@@ -170,12 +181,13 @@ file(s)/detail(s) printed on the following indented line(s)):
       whose normalized form escapes the root (leading `..`), or a path
       that resolves through a symlink to outside the repo root FAILs in
       every mode. In --payload mode the registry schema is optional
-      (skipped if missing), and paths under non-injected dirs
-      (methodology/, registry/, docs/, ecosystem/) are skipped as
-      expected-absent while paths under injected dirs (standard/,
-      templates/, schema/, tools/) are still required to resolve; the
-      carve-out tests the NORMALIZED path, so a traversal spelling
-      (e.g. `ecosystem/../tools/x.md`) cannot ride a skip.
+      (skipped if missing), and paths under the non-injected dirs
+      (registry/, docs/) are skipped as expected-absent while paths under
+      the injected dirs (standard/, templates/, schema/, tools/,
+      methodology/, ecosystem/ -- the last two joined the payload in
+      feature 051) are still required to resolve; the carve-out tests the
+      NORMALIZED path, so a traversal spelling
+      (e.g. `docs/../tools/x.md`) cannot ride a skip.
 
   C5  Branding/endpoint leakage. Zero case-insensitive occurrences of
       `nizamiq`, `.svc`, or `cluster.local` anywhere in shipped content:
@@ -332,21 +344,26 @@ file(s)/detail(s) printed on the following indented line(s)):
       against its shipped schema (`schema/ecosystem_baseline.schema.json`,
       `schema/preflight_verdict.schema.json`,
       `schema/engineering_finding.schema.json` respectively). A fixture is
-      NEGATIVE (MUST fail validation) iff its filename carries the
-      delimited token `_neg_` or `_invalid_`; every other matching fixture
-      is POSITIVE and MUST validate. A positive fixture that fails, or a
-      negative fixture that validates, is a single C12 FAIL naming the
-      offending path and schema. Each family MUST also contribute at least
-      one POSITIVE and one NEGATIVE matched fixture -- a family
-      contributing zero of either polarity (e.g. its fixtures were moved,
-      renamed, or deleted) is itself a named FAIL, never a silent pass
-      (NDEBT-009's own dormancy-regression meta-risk, guarded against
-      structurally). Full repo sweep only; does not run under `--target`
-      (each ecosystem fixture is already independently inspectable via a
-      direct `python3`+`jsonschema` invocation) or `--payload` (no
-      acceptance test requires payload-mode fixture coverage; consumer
-      payloads carry no governed `.agent/` audit trail for these families
-      to reconcile against).
+      NEGATIVE (MUST fail validation) iff its filename carries the canonical
+      delimited-lowercase token `_neg_` or `_invalid_`; every other
+      conforming fixture is POSITIVE and MUST validate. A positive fixture
+      that fails, or a negative fixture that validates, is a single C12 FAIL
+      naming the offending path and schema. NAMING CONFORMANCE (NDEBT-016): a
+      basename carrying a case-insensitive `neg`/`invalid` look-alike that is
+      NOT the canonical token (uppercase `_NEG_`, full-word `_negative_`) is
+      itself a named FAIL, so the polarity classifier cannot be gamed by a
+      look-alike name. Each family MUST also contribute at least one POSITIVE
+      and one NEGATIVE matched fixture -- a family contributing zero of either
+      polarity (e.g. its fixtures were moved, renamed, or deleted) is itself a
+      named FAIL, never a silent pass (NDEBT-009's own dormancy-regression
+      meta-risk, guarded against structurally). This full-sweep form is
+      default-mode only and does not run under `--payload` (no acceptance test
+      requires payload-mode fixture coverage; consumer payloads carry no
+      governed `.agent/` audit trail for these families to reconcile against).
+      Under `--target`, a single ecosystem fixture IS routed to a discriminating
+      per-file C12 verdict (NDEBT-015). The standing self-test that exercises
+      every negative fixture against its targeted check (closing NDEBT-009's
+      dormancy for the non-ecosystem fixtures too) is `tools/fixtures_self_test.sh`.
 
   C13 Skill-index integrity (does every capability pointer in
       tools/skill.json resolve?). JSON-parses `tools/skill.json` and
@@ -357,14 +374,15 @@ file(s)/detail(s) printed on the following indented line(s)):
       retired module pointer from v0.4.0 through v0.5.3 because nothing
       parsed this file's content. Runs in the full sweep AND under
       `--payload`; in payload mode, pointers into the non-injected
-      directories (methodology/, registry/, docs/, ecosystem/) are
-      skipped -- the same carve-out set and normalized-path discipline
-      C4 uses (absolute or root-escaping pointers FAIL in every mode;
-      traversal spellings cannot ride the skip) -- pending the F-051
-      payload-contract decision (NDEBT-008). Negative fixture:
-      `tools/fixtures/skill_index_neg_dangling_module.json` (exercised by
-      substituting it for tools/skill.json in a scratch clone; standing
-      self-test wiring is feature 052 / NDEBT-009 scope).
+      directories (registry/, docs/) are skipped -- the same carve-out
+      set and normalized-path discipline C4 uses (absolute or
+      root-escaping pointers FAIL in every mode; traversal spellings
+      cannot ride the skip); methodology/ and ecosystem/ joined the
+      injected payload in feature 051 (NDEBT-008) and are now required to
+      resolve. Negative fixture:
+      `tools/fixtures/skill_index_neg_dangling_module.json`, exercised as a
+      standing test by `tools/fixtures_self_test.sh` (feature 052 / NDEBT-009),
+      which substitutes it for tools/skill.json and asserts the `[C13] FAIL`.
 
 Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,
 consistently): CONTEXT.md; every .md under docs/architecture/; every .md
@@ -1448,12 +1466,14 @@ check_c11_dogfood_payload_skip() {
 # the three ecosystem schema families shipped in features 037/038/039: proves
 # the tools/fixtures/{ecosystem_baseline,preflight_verdict,
 # engineering_finding}_*.json fixtures are load-bearing, not merely present).
-# Default full-sweep only (mirrors C6/C7's repo-wide-only precedent); not run
-# under --target (each fixture is directly inspectable via
-# python3+jsonschema; --target currently misroutes these families --
-# NDEBT-015)
-# or --payload (no acceptance test requires payload-mode fixture coverage;
-# see NON-GOALS).
+# The full-sweep check_c12_ecosystem_fixtures below is default-mode only
+# (mirrors C6/C7's repo-wide-only precedent) and not run under --payload (no
+# acceptance test requires payload-mode fixture coverage; see NON-GOALS). As
+# of feature 052 (NDEBT-015) a `--target` invocation against a single
+# ecosystem fixture IS routed -- to check_c12_target, further below -- so it
+# emits a discriminating [C12] verdict instead of misrouting to C4/C11; the
+# full-sweep polarity/dormancy guard and the single-file --target validation
+# are two distinct entry points that share the three family schemas.
 # ---------------------------------------------------------------------------
 
 # check_c12_ecosystem_fixtures
@@ -1461,12 +1481,21 @@ check_c11_dogfood_payload_skip() {
 # For each of the three families, validates every matching
 # tools/fixtures/<family>_*.json fixture against its shipped schema. A
 # fixture is NEGATIVE (MUST fail schema validation) iff its filename
-# contains the delimited token '_neg_' or '_invalid_' -- checked as an
-# explicit NEGATIVE marker, never derived from the ABSENCE of the substring
+# contains the canonical delimited token '_neg_' or '_invalid_' -- checked as
+# an explicit NEGATIVE marker, never derived from the ABSENCE of the substring
 # 'valid' (which is itself a substring of 'invalid' and would silently
 # misclassify negative fixtures as positive; NDEBT-014 defect class 4). Every
-# other matching fixture is POSITIVE and MUST validate. A positive fixture
-# that fails, or a negative fixture that validates, is this check's failure.
+# other matching (conforming) fixture is POSITIVE and MUST validate. A positive
+# fixture that fails, or a negative fixture that validates, is this check's
+# failure.
+#
+# NAMING CONFORMANCE (NDEBT-016, feature 052): the polarity marker is reserved.
+# A basename carrying a case-insensitive `neg`/`invalid` look-alike that is NOT
+# the canonical delimited-lowercase token (uppercase `_NEG_`, full-word
+# `_negative_`, etc.) is a named FAIL, so the classifier cannot be gamed by a
+# look-alike name; the earlier case-sensitive regex tolerated those spellings
+# for future fixtures. A schema-valid doc that borrows a canonical negative
+# marker is likewise caught (as "negative unexpectedly VALIDATED").
 #
 # DORMANCY GUARD (this check's own meta-risk, per NDEBT-009's exact failure
 # mode -- a fixture-driver check that stops inspecting anything, e.g. because
@@ -1490,15 +1519,46 @@ FAMILIES = {
     "preflight_verdict": "schema/preflight_verdict.schema.json",
     "engineering_finding": "schema/engineering_finding.schema.json",
 }
-NEGATIVE_TOKEN = re.compile(r"(?:^|_)(?:neg|invalid)(?:_|\.)")
+# NDEBT-016 (feature 052): the polarity marker is AUTHORITATIVE and RESERVED.
+# A fixture is NEGATIVE iff its basename carries the canonical, delimited,
+# lowercase token `_neg_`/`_invalid_` (CANONICAL_NEG). To stop the classifier
+# being gamed by look-alike names, a CONFORMANCE guard rejects any basename
+# carrying a case-insensitive `neg`/`invalid` letter-sequence that is NOT that
+# canonical token -- uppercase (`_NEG_`), full-word (`_negative_`), or any
+# other non-delimited spelling -- FAILing it by name rather than silently
+# (mis)classifying it. The earlier case-sensitive regex left three dodges for
+# FUTURE names (none of the shipped fixtures were affected): full-word,
+# uppercase, and false-trigger. Full-word/uppercase are now conformance FAILs;
+# the false-trigger (a positive "invalid-input-handling" doc borrowing the
+# reserved token) is caught by the polarity assertion below -- a schema-VALID
+# doc under a canonical negative marker FAILs as "negative unexpectedly
+# VALIDATED", so the reserved token cannot be borrowed by a positive fixture.
+CANONICAL_NEG = re.compile(r"(?:^|_)(?:neg|invalid)(?:_|\.)")
+LOOKALIKE = re.compile(r"neg|invalid", re.IGNORECASE)
 
 failures = []
 for family, schema_path in FAMILIES.items():
     with open(schema_path, encoding="utf-8") as fh:
         schema = json.load(fh)
     paths = sorted(glob.glob(f"tools/fixtures/{family}_*.json"))
-    positive_paths = [p for p in paths if not NEGATIVE_TOKEN.search(p.rsplit("/", 1)[-1])]
-    negative_paths = [p for p in paths if NEGATIVE_TOKEN.search(p.rsplit("/", 1)[-1])]
+
+    # Conformance gate: a basename with a neg/invalid look-alike that is not
+    # the canonical delimited-lowercase token is non-conforming; it is removed
+    # from classification (its polarity is undefined until renamed) and
+    # reported. Conforming names classify by the canonical token alone.
+    conforming = []
+    for path in paths:
+        name = path.rsplit("/", 1)[-1]
+        if LOOKALIKE.search(name) and not CANONICAL_NEG.search(name):
+            failures.append(
+                f"{path}: non-conforming polarity marker -- a negative fixture MUST "
+                "use the delimited lowercase token '_neg_' or '_invalid_' (NDEBT-016)"
+            )
+            continue
+        conforming.append(path)
+
+    positive_paths = [p for p in conforming if not CANONICAL_NEG.search(p.rsplit("/", 1)[-1])]
+    negative_paths = [p for p in conforming if CANONICAL_NEG.search(p.rsplit("/", 1)[-1])]
 
     if not positive_paths:
         failures.append(
@@ -1511,7 +1571,7 @@ for family, schema_path in FAMILIES.items():
             "-- dormant or missing coverage (NDEBT-009 regression)"
         )
 
-    for path in paths:
+    for path in conforming:
         is_negative = path in negative_paths
         with open(path, encoding="utf-8") as fh:
             data = json.load(fh)
@@ -1540,6 +1600,71 @@ PY
   return 1
 }
 
+# check_c12_target <file> <family>
+#
+# NDEBT-015 (feature 052): single-fixture ecosystem-schema validation for the
+# `--target` dispatcher. The full-sweep check_c12_ecosystem_fixtures validates
+# EVERY fixture of all three families with a polarity/dormancy guard; this
+# variant validates exactly ONE `--target` file against the schema of the
+# family the router (check_c11_or_c4_target) identified, emitting a
+# discriminating [C12] verdict -- a valid fixture PASSes, a negative fixture
+# FAILs. (Before feature 052 these files fell through to C4 or misrouted to
+# C11's qa_verdict route and failed regardless of polarity: zero signal.) It
+# does NOT apply the naming-polarity/conformance classification -- under
+# --target the caller names one file explicitly and the schema verdict IS the
+# signal; polarity is the caller's to interpret.
+check_c12_target() {
+  local target="$1"
+  local family="$2"
+  local out
+
+  if out=$(python3 - "${target}" "${family}" <<'PY'
+import json
+import sys
+
+import jsonschema
+
+path, family = sys.argv[1], sys.argv[2]
+
+schema_paths = {
+    "ecosystem_baseline": "schema/ecosystem_baseline.schema.json",
+    "preflight_verdict": "schema/preflight_verdict.schema.json",
+    "engineering_finding": "schema/engineering_finding.schema.json",
+}
+schema_path = schema_paths[family]
+
+try:
+    with open(schema_path, "r", encoding="utf-8") as fh:
+        schema = json.load(fh)
+except OSError as exc:
+    print(f"{path}: could not read {schema_path}: {exc}")
+    sys.exit(1)
+
+try:
+    with open(path, "r", encoding="utf-8") as fh:
+        doc = json.load(fh)
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"{path}: not valid JSON: {exc}")
+    sys.exit(1)
+
+try:
+    jsonschema.validate(instance=doc, schema=schema)
+except jsonschema.ValidationError as exc:
+    print(f"{path}: schema violation ({family}): {exc.message}")
+    sys.exit(1)
+
+sys.exit(0)
+PY
+  ); then
+    echo "[C12] PASS ecosystem-fixtures --target routed: ${family}"
+    return 0
+  fi
+
+  echo "[C12] FAIL ecosystem-fixtures --target routed: ${family}"
+  printf '%s\n' "${out}" | sed 's/^/  /'
+  return 1
+}
+
 # C13 -- skill-index integrity (NDEBT-007 fix, feature 049): JSON-parses
 # tools/skill.json and resolves its entry_point and every
 # capabilities[].module pointer to an existing file. Closes the enforcement
@@ -1547,11 +1672,11 @@ PY
 # from v0.4.0 through v0.5.3 undetected (C4 parses only NIZAM.json; C9
 # sweeps only .md/.html bodies; the e2e harness asserts only the file's
 # existence). In payload mode, pointers into the non-injected directories
-# (methodology/, registry/, docs/, ecosystem/) are skipped -- the same
-# carve-out set C4 uses -- because bootstrap.sh does not inject them; the
-# F-051 payload-contract decision (NDEBT-008) will narrow or retire that
-# carve-out. Structural honesty: a missing/empty entry_point or an empty
-# capabilities array is itself a FAIL, so the check cannot go vacuous.
+# (registry/, docs/) are skipped -- the same carve-out set C4 uses -- because
+# bootstrap.sh does not inject them; methodology/ and ecosystem/ joined the
+# injected payload in feature 051 (H-PAYLOAD-CONTRACT, NDEBT-008) and are now
+# required to resolve. Structural honesty: a missing/empty entry_point or an
+# empty capabilities array is itself a FAIL, so the check cannot go vacuous.
 #
 # check_c13_skill_index [payload]
 check_c13_skill_index() {
@@ -1646,7 +1771,7 @@ sys.exit(1 if problems else 0)
 PY
   ); then
     if [ "${mode}" = "payload" ]; then
-      echo "[C13] PASS skill-index (payload mode: non-injected module dirs skipped pending the F-051 payload-contract decision)"
+      echo "[C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)"
     else
       echo "[C13] PASS skill-index"
     fi
@@ -1688,24 +1813,56 @@ if not isinstance(doc, dict):
     print("none")
     sys.exit(0)
 
+# NDEBT-015 (feature 052): recognize the three ecosystem schema families so a
+# `--target` invocation against one of their fixtures produces a
+# DISCRIMINATING signal instead of misrouting. Before this, an ecosystem
+# fixture carried no route discriminator and fell through to C4 (or, for
+# preflight_verdict, collided with the qa_verdict route on its top-level
+# `verdict` key), so EVERY ecosystem `--target` invocation failed regardless
+# of the fixture's polarity. Discriminators (dual-key / required-key
+# heuristics): `verdict`+`execution_id` -> preflight_verdict (checked BEFORE
+# the generic `verdict`->qa_verdict route so preflight is not swallowed;
+# qa_verdict artifacts carry no `execution_id`); the six mandatory
+# `*_references` category arrays -> ecosystem_baseline; `closure_criteria` ->
+# engineering_finding. These `ecosystem:<family>` routes dispatch to
+# check_c12_target (schema validation emitting a [C12] verdict); the existing
+# review/qa_verdict/contract/run_state routes and the C4 fall-through are
+# unchanged.
+ECOSYSTEM_BASELINE_KEYS = {
+    "framework_references", "repository_references", "dependency_references",
+    "ci_references", "planning_references", "evidence_references",
+}
+
 if "review" in doc:
     print("contract_review")
+elif "verdict" in doc and "execution_id" in doc:
+    print("ecosystem:preflight_verdict")
 elif "qa_pass" in doc or "verdict" in doc:
     print("qa_verdict")
 elif "contract_id" in doc:
     print("contract")
 elif "circuit_breaker" in doc or "scope_budget" in doc:
     print("run_state")
+elif ECOSYSTEM_BASELINE_KEYS.issubset(doc):
+    print("ecosystem:ecosystem_baseline")
+elif "closure_criteria" in doc:
+    print("ecosystem:engineering_finding")
 else:
     print("none")
 PY
 )
 
-  if [ "${route}" = "none" ]; then
-    check_c4_index "${target}"
-  else
-    check_c11_dogfood_target "${target}" "${route}"
-  fi
+  case "${route}" in
+    none)
+      check_c4_index "${target}"
+      ;;
+    ecosystem:*)
+      check_c12_target "${target}" "${route#ecosystem:}"
+      ;;
+    *)
+      check_c11_dogfood_target "${target}" "${route}"
+      ;;
+  esac
 }
 
 # ---------------------------------------------------------------------------

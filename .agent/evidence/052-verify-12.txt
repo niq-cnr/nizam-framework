@@ -1,0 +1,28 @@
+# .agent/evidence/052-verify-12.txt
+# Contract 052 verification entry 12 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: DELIVERABLE CONFINEMENT + DOCS/DEBT: HEAD~1..HEAD touches exactly the six contracted files and no .agent path; DEBT 0.22.0 has NDEBT-009/015/016 in Resolved; README 0.5.0; CHANGELOG names the harness.
+# --- command (from .agent/contracts/052.json verification[12].command) ---
+set -e
+test "$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr '\n' ' ')" = '.github/workflows/compliance.yml CHANGELOG.md docs/planning/DEBT.md tools/README.md tools/fixtures_self_test.sh tools/validate.sh '
+test -z "$(git diff --name-only HEAD~1..HEAD -- .agent/)"
+grep -Fq 'version: 0.22.0' docs/planning/DEBT.md
+python3 - <<'PY'
+import re
+sect=None; resolved=set()
+for l in open('docs/planning/DEBT.md'):
+    if l.startswith('## Open'): sect='open'
+    elif l.startswith('## Resolved'): sect='resolved'
+    m=re.match(r'\| (NDEBT-\d+) ', l)
+    if m and sect=='resolved': resolved.add(m.group(1))
+    if l.startswith('| NDEBT-009 ') or l.startswith('| NDEBT-015 ') or l.startswith('| NDEBT-016 '):
+        assert sect=='resolved', l[:14]+' not Resolved'
+for n in ('NDEBT-009','NDEBT-015','NDEBT-016'): assert n in resolved, n
+print('debt ok')
+PY
+grep -Fq 'version: 0.5.0' tools/README.md
+sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' CHANGELOG.md | grep -Fq 'fixtures_self_test'
+echo 'E12 PASS: confined to the 6 files, zero .agent; DEBT 0.22.0 (009/015/016 Resolved); README 0.5.0; CHANGELOG synced'
+# --- output ---
+debt ok
+E12 PASS: confined to the 6 files, zero .agent; DEBT 0.22.0 (009/015/016 Resolved); README 0.5.0; CHANGELOG synced
+[exit 0]

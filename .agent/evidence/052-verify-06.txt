@@ -1,0 +1,14 @@
+# .agent/evidence/052-verify-06.txt
+# Contract 052 verification entry 06 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: NDEBT-015 ANTI-REGRESSION: the pre-existing routes are unchanged -- invalid_qa_verdict->C11, invalid_contract->C11, invalid_run_state->C11, broken_index->C4, NIZAM.json->C4 PASS. The new ecosystem routes did not steal any existing route.
+# --- command (from .agent/contracts/052.json verification[06].command) ---
+set -e
+bash tools/validate.sh --target tools/fixtures/invalid_qa_verdict.json 2>&1 | grep -Eq '^\[C11\] FAIL'
+bash tools/validate.sh --target tools/fixtures/invalid_contract.json 2>&1 | grep -Eq '^\[C11\] FAIL'
+bash tools/validate.sh --target tools/fixtures/invalid_run_state.json 2>&1 | grep -Eq '^\[C11\] FAIL'
+bash tools/validate.sh --target tools/fixtures/broken_index.json 2>&1 | grep -Eq '^\[C4\] FAIL'
+bash tools/validate.sh --target NIZAM.json 2>&1 | grep -Eq '^\[C4\] PASS'
+echo 'E06 PASS: qa_verdict/contract/run_state/C4 routes unchanged'
+# --- output ---
+E06 PASS: qa_verdict/contract/run_state/C4 routes unchanged
+[exit 0]

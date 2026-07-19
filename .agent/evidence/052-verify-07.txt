@@ -1,0 +1,19 @@
+# .agent/evidence/052-verify-07.txt
+# Contract 052 verification entry 07 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: NDEBT-016: all three dodge shapes are rejected -- uppercase (_NEG_) and full-word (_negative_) by the naming-conformance guard, and the false-trigger (a schema-valid doc under a reserved _invalid_ token) by the polarity assertion (acceptance test 3). Probed in a minimal scratch copy.
+# --- command (from .agent/contracts/052.json verification[07].command) ---
+set -e
+S="$SB/e07"; rm -rf "$S"; mkdir -p "$S"; cp -a tools schema NIZAM.json "$S/"
+V="$S/tools/fixtures/ecosystem_baseline_valid.json"
+cp "$V" "$S/tools/fixtures/ecosystem_baseline_NEG_upper.json"
+cp "$V" "$S/tools/fixtures/ecosystem_baseline_negative_word.json"
+cp "$V" "$S/tools/fixtures/ecosystem_baseline_invalid_masquerade.json"
+set +e; out=$(cd "$S" && bash tools/validate.sh 2>&1); set -e
+printf '%s\n' "$out" | grep -Fq 'ecosystem_baseline_NEG_upper.json: non-conforming'
+printf '%s\n' "$out" | grep -Fq 'ecosystem_baseline_negative_word.json: non-conforming'
+printf '%s\n' "$out" | grep -Fq 'ecosystem_baseline_invalid_masquerade.json: negative fixture unexpectedly VALIDATED'
+rm -rf "$S"
+echo 'E07 PASS: uppercase+full-word rejected by conformance; false-trigger rejected by polarity assertion'
+# --- output ---
+E07 PASS: uppercase+full-word rejected by conformance; false-trigger rejected by polarity assertion
+[exit 0]

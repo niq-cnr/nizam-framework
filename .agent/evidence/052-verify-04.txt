@@ -1,0 +1,18 @@
+# .agent/evidence/052-verify-04.txt
+# Contract 052 verification entry 04 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: COMPLETENESS GUARD is load-bearing BOTH directions: an unaccounted fixture on disk FAILs, and a manifest row naming an absent fixture FAILs. Probed in a minimal scratch copy.
+# --- command (from .agent/contracts/052.json verification[04].command) ---
+set -e
+S="$SB/e04"; rm -rf "$S"; mkdir -p "$S"; cp -a tools schema NIZAM.json "$S/"
+cp "$S/tools/fixtures/ecosystem_baseline_valid.json" "$S/tools/fixtures/zzz_new_dormant.json"
+set +e; a=$(bash "$S/tools/fixtures_self_test.sh" 2>&1); arc=$?; set -e
+test $arc -ne 0; printf '%s\n' "$a" | grep -Fq 'zzz_new_dormant.json'
+rm -f "$S/tools/fixtures/zzz_new_dormant.json"
+mv "$S/tools/fixtures/exempt_paths.md" "$S/exempt_paths.md.bak"
+set +e; b=$(bash "$S/tools/fixtures_self_test.sh" 2>&1); brc=$?; set -e
+test $brc -ne 0; printf '%s\n' "$b" | grep -Fq 'not on disk'
+rm -rf "$S"
+echo "E04 PASS: completeness guard fails on unaccounted (rc=$arc) and on missing (rc=$brc)"
+# --- output ---
+E04 PASS: completeness guard fails on unaccounted (rc=1) and on missing (rc=1)
+[exit 0]

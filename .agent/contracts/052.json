@@ -1,0 +1,109 @@
+{
+  "contract_id": "052",
+  "feature_id": "052",
+  "name": "Fixtures self-test closure + --target routing (NDEBT-009, NDEBT-015, NDEBT-016)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_006.md",
+  "design_notes": {
+    "what_this_feature_is": "Phase-006 F-052: close the tools/fixtures/ dormancy. Three coupled parts. (NDEBT-009) A standing self-test tools/fixtures_self_test.sh + a fixtures_self_test CI job run EVERY shipped fixture through its targeted surface and assert the SPECIFIC verdict -- validate.sh --target for check-level fixtures, the verify_lib.sh primitives for primitive-level ones (incl. two git-scratch primitives), and a tools/skill.json substitution for the C13 negative fixture -- with a completeness guard so no fixture can silently go dormant. (NDEBT-015) check_c11_or_c4_target's router recognizes the three ecosystem families (verdict+execution_id -> preflight_verdict; the six *_references arrays -> ecosystem_baseline; closure_criteria -> engineering_finding), dispatching to a new check_c12_target that emits a discriminating [C12] verdict; before this, --target on any ecosystem fixture misrouted to C4/C11 and failed regardless of polarity. (NDEBT-016) C12's polarity classifier is case-insensitive with a naming-conformance guard that FAILs a basename carrying a neg/invalid look-alike that is not the canonical delimited-lowercase token.",
+    "non_vacuity_thesis": "The self-test's whole purpose is to catch a check gone vacuous, so it must not itself be vacuous. The trap discovered empirically: most .md fixtures already exit non-zero under --target from incidental C1/C2 frontmatter failures unrelated to what they test (stale_payload_pass.md exits 1 but its targeted check C10 correctly PASSES), so an exit-code-only self-test would pass on the WRONG check. The harness therefore asserts the specific [C<N>] verdict line (or a verify_lib primitive return), never a bare exit code. Proven load-bearing three ways (E03/E04/E10): making a negative's targeted check pass, adding an unaccounted fixture, and removing a listed fixture each fail the self-test.",
+    "f051_drift_corrected_in_scope": "DISCOVERED during F-052 and corrected in-scope (NDEBT-005-class enumeration-completeness miss, F-027/F-049 precedent for adjacent-drift correction, disclosed here + in the PR + CHANGELOG Fixed): feature 051 made methodology/+ecosystem/ injected/required and narrowed the payload skip set to registry/+docs/ in the CODE (skipped_dirs, SKIPPED_DIR_PREFIXES, the C9 allow-list) and the code-adjacent comment, but left four LIVE-STATE self-descriptions stale -- the C4 --help, the C13 --help, the C13 function doc comment, and the C13 payload-mode PASS echo all still named methodology/+ecosystem/ among the skipped dirs and said the carve-out was 'pending the F-051 payload-contract decision'. Shipping consumer-facing --help that states the opposite of the truth is exactly the narrative drift the framework exists to prevent, so all four were corrected to name only registry/+docs/. Historical change_log/CHANGELOG entries that were true when written are left intact (AH-3).",
+    "scope_overage_disclosure": "SCOPE FLAG (large): the deliverable is 678 lines changed (git numstat ins+del at 86a67ab: validate.sh 224+67, fixtures_self_test.sh 297 new, README 25+5, compliance.yml 22, CHANGELOG 30, DEBT 4+4) vs the 180-line plan-of-record estimate (feature_list_006.json) -- ~3.8x, which EXCEEDS 3x the recent rolling average (049=164, 050=194, 051=155; avg 171, 3x=513; 678 > 513). The overage is inherent to the acceptance tests, not scope creep: acceptance test 1 mandates 'every shipped negative fixture', so the harness must cover all 41 fixtures (29 --target rows + 5 verify_lib primitives incl. 2 git-scratch + C13 substitution + a completeness guard) and is ~297 lines alone; the validate.sh routing/conformance/help work is another ~291. The planning estimate was simply low for a comprehensive, non-vacuous, complete-coverage self-test. Cumulative 513+678 = 1191/2236 ceiling (53%), well under the 130% halt. Surfaced to the operator for acknowledgment; the PR is held for operator merge and the operator may redirect at review.",
+    "process_honesty": "Single-session execution, roles collapsed (046-051 precedent, disclosed at phase activation): contract, implementation, verification, and QA authored and executed in-session; all 12 entries ran live with captured evidence (fail-fast commands, NDEBT-019 lesson); adversarial probes (E03/E04/E07/E10) use MINIMAL scratch copies of the tree (tools/+schema/+NIZAM.json) under a session-scratch root, never mutating the real repository, per the NDEBT-013/020 probe-isolation rule; the C13 substitution inside the harness backs up and restores tools/skill.json with an EXIT-trap backstop."
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "NDEBT-009: standing self-test harness. Runs every tools/fixtures/ fixture through its targeted surface (validate.sh --target / verify_lib primitives / C13 substitution), asserts the specific verdict (never a bare exit code), and a completeness guard fails on any unaccounted fixture. Framework-internal; run as its own CI job."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/validate.sh",
+        "purpose": "NDEBT-015: check_c11_or_c4_target's router recognizes the three ecosystem families and dispatches to a new check_c12_target (single-file schema validation emitting [C12]). NDEBT-016: C12's polarity classifier is case-insensitive with a naming-conformance guard rejecting non-canonical neg/invalid look-alikes. Help text (--target .json routing, C12, C13) synced. F-051-drift correction: the C4/C13 --help, the C13 function comment, and the C13 payload PASS echo now name only registry/+docs/ as skipped (methodology/+ecosystem/ are injected/required since F-051)."
+      },
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "Add the fixtures_self_test CI job (checkout + setup-python + pip install jsonschema pyyaml + bash tools/fixtures_self_test.sh) alongside validate and e2e_bootstrap."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "0.5.0: document tools/fixtures_self_test.sh (new subsection), the C12 --target ecosystem routing (NDEBT-015) and naming-conformance guard (NDEBT-016) in the C12 row, and correct the C13 row's payload carve-out to registry/+docs/ only (F-051 made methodology/+ecosystem/ injected)."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "[Unreleased] Added: the fixtures self-test + CI job (NDEBT-009), C12 --target routing (NDEBT-015), C12 conformance guard (NDEBT-016). Fixed: the F-051 self-description drift."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "0.22.0: NDEBT-009, NDEBT-015, NDEBT-016 -> Resolved with resolution notes."
+      }
+    ]
+  },
+  "non_goals": [
+    "No change to what the default/--payload sweeps enforce on the framework's own tree (default stays 13/13, payload 11/11); C12's full-sweep polarity/dormancy guard is unchanged except for the added case-insensitive conformance gate.",
+    "No new SHIPPED fixtures: the NDEBT-016 dodge shapes and the NDEBT-009 adversarial cases are exercised in scratch copies during verification, never committed (a shipped dodge fixture would itself fail conformance / go dormant).",
+    "The self-test is framework-internal (reads tools/fixtures/, a dev/QA concern) and is NOT added to the bootstrap payload contract or NIZAM.json index; it mirrors tools/e2e_bootstrap_test.sh's precedent (a tools/ .sh not in the shipped-doc set).",
+    "No edit to any .agent/evidence/* historical capture, and no change to the verify_lib.sh primitives themselves (they are exercised, not modified).",
+    "The broader F-051 leftover audit beyond the four live-state validator self-descriptions is not performed here; historical change_log/CHANGELOG entries true when written are left intact per AH-3."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (HEAD~1 = 37185da, the F-051 merge / PR #30 squash): before this deliverable there was NO tools/fixtures_self_test.sh, the router had NO ecosystem routes, C12 had NO conformance guard, and compliance.yml had NO fixtures_self_test job.",
+      "command": "set -e\ngit cat-file -e HEAD~1:tools/fixtures_self_test.sh 2>/dev/null && { echo 'VACUITY: harness already present at HEAD~1'; exit 1; } || true\ngit show HEAD~1:tools/validate.sh | grep -Fq 'ecosystem:preflight_verdict' && { echo 'VACUITY: routing already present'; exit 1; } || true\ngit show HEAD~1:tools/validate.sh | grep -Fq 'LOOKALIKE = re.compile' && { echo 'VACUITY: conformance already present'; exit 1; } || true\ngit show HEAD~1:.github/workflows/compliance.yml | grep -Fq 'fixtures_self_test' && { echo 'VACUITY: CI job already present'; exit 1; } || true\necho 'E01 PASS: harness/routing/conformance/CI-job all absent at HEAD~1 (anti-vacuity)'"
+    },
+    {
+      "acceptance_test": "SELF-TEST GREEN + EXIT ASSERTED: tools/fixtures_self_test.sh exits 0 and reports every fixture accounted for with zero failures.",
+      "command": "out=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; printf '%s\\n' \"$out\" | tail -1; test $rc -eq 0 && printf '%s\\n' \"$out\" | tail -1 | grep -Eq 'SELF-TEST OK: [0-9]+/[0-9]+ fixtures accounted for, 0 failed' && echo \"E02 PASS (rc=$rc)\""
+    },
+    {
+      "acceptance_test": "NON-VACUITY (headline): when a negative fixture's TARGETED check is made to PASS, the self-test FAILs -- so it genuinely catches a check gone vacuous, not merely a non-zero exit. Probed in a minimal scratch copy (never the real tree).",
+      "command": "set -e\nS=\"$SB/e03\"; rm -rf \"$S\"; mkdir -p \"$S\"; cp -a tools schema NIZAM.json \"$S/\"\nprintf '# resolvable now\\n\\nThis body cites tools/verify_lib.sh which resolves fine.\\n' > \"$S/tools/fixtures/unresolved_path.md\"\nset +e; out=$(bash \"$S/tools/fixtures_self_test.sh\" 2>&1); rc=$?; set -e\ntest $rc -ne 0\nprintf '%s\\n' \"$out\" | grep -Eq 'FAIL target +unresolved_path.md'\nrm -rf \"$S\"\necho \"E03 PASS: self-test FAILs when a negative fixture's targeted check goes vacuous (rc=$rc)\""
+    },
+    {
+      "acceptance_test": "COMPLETENESS GUARD is load-bearing BOTH directions: an unaccounted fixture on disk FAILs, and a manifest row naming an absent fixture FAILs. Probed in a minimal scratch copy.",
+      "command": "set -e\nS=\"$SB/e04\"; rm -rf \"$S\"; mkdir -p \"$S\"; cp -a tools schema NIZAM.json \"$S/\"\ncp \"$S/tools/fixtures/ecosystem_baseline_valid.json\" \"$S/tools/fixtures/zzz_new_dormant.json\"\nset +e; a=$(bash \"$S/tools/fixtures_self_test.sh\" 2>&1); arc=$?; set -e\ntest $arc -ne 0; printf '%s\\n' \"$a\" | grep -Fq 'zzz_new_dormant.json'\nrm -f \"$S/tools/fixtures/zzz_new_dormant.json\"\nmv \"$S/tools/fixtures/exempt_paths.md\" \"$S/exempt_paths.md.bak\"\nset +e; b=$(bash \"$S/tools/fixtures_self_test.sh\" 2>&1); brc=$?; set -e\ntest $brc -ne 0; printf '%s\\n' \"$b\" | grep -Fq 'not on disk'\nrm -rf \"$S\"\necho \"E04 PASS: completeness guard fails on unaccounted (rc=$arc) and on missing (rc=$brc)\""
+    },
+    {
+      "acceptance_test": "NDEBT-015: --target against each of the three ecosystem families routes to [C12] with DISCRIMINATING polarity -- valid PASSes, negative FAILs (acceptance test 2).",
+      "command": "set -e\nfor f in ecosystem_baseline_valid preflight_verdict_pass engineering_finding_valid; do\n  bash tools/validate.sh --target \"tools/fixtures/$f.json\" 2>&1 | grep -Eq '^\\[C12\\] PASS'\ndone\nfor f in ecosystem_baseline_neg_missing_revision preflight_verdict_invalid_verdict engineering_finding_neg_missing_owner; do\n  set +e; out=$(bash tools/validate.sh --target \"tools/fixtures/$f.json\" 2>&1); rc=$?; set -e\n  test $rc -ne 0\n  printf '%s\\n' \"$out\" | grep -Eq '^\\[C12\\] FAIL'\ndone\necho 'E05 PASS: all 3 ecosystem families route to [C12] with discriminating polarity'"
+    },
+    {
+      "acceptance_test": "NDEBT-015 ANTI-REGRESSION: the pre-existing routes are unchanged -- invalid_qa_verdict->C11, invalid_contract->C11, invalid_run_state->C11, broken_index->C4, NIZAM.json->C4 PASS. The new ecosystem routes did not steal any existing route.",
+      "command": "set -e\nbash tools/validate.sh --target tools/fixtures/invalid_qa_verdict.json 2>&1 | grep -Eq '^\\[C11\\] FAIL'\nbash tools/validate.sh --target tools/fixtures/invalid_contract.json 2>&1 | grep -Eq '^\\[C11\\] FAIL'\nbash tools/validate.sh --target tools/fixtures/invalid_run_state.json 2>&1 | grep -Eq '^\\[C11\\] FAIL'\nbash tools/validate.sh --target tools/fixtures/broken_index.json 2>&1 | grep -Eq '^\\[C4\\] FAIL'\nbash tools/validate.sh --target NIZAM.json 2>&1 | grep -Eq '^\\[C4\\] PASS'\necho 'E06 PASS: qa_verdict/contract/run_state/C4 routes unchanged'"
+    },
+    {
+      "acceptance_test": "NDEBT-016: all three dodge shapes are rejected -- uppercase (_NEG_) and full-word (_negative_) by the naming-conformance guard, and the false-trigger (a schema-valid doc under a reserved _invalid_ token) by the polarity assertion (acceptance test 3). Probed in a minimal scratch copy.",
+      "command": "set -e\nS=\"$SB/e07\"; rm -rf \"$S\"; mkdir -p \"$S\"; cp -a tools schema NIZAM.json \"$S/\"\nV=\"$S/tools/fixtures/ecosystem_baseline_valid.json\"\ncp \"$V\" \"$S/tools/fixtures/ecosystem_baseline_NEG_upper.json\"\ncp \"$V\" \"$S/tools/fixtures/ecosystem_baseline_negative_word.json\"\ncp \"$V\" \"$S/tools/fixtures/ecosystem_baseline_invalid_masquerade.json\"\nset +e; out=$(cd \"$S\" && bash tools/validate.sh 2>&1); set -e\nprintf '%s\\n' \"$out\" | grep -Fq 'ecosystem_baseline_NEG_upper.json: non-conforming'\nprintf '%s\\n' \"$out\" | grep -Fq 'ecosystem_baseline_negative_word.json: non-conforming'\nprintf '%s\\n' \"$out\" | grep -Fq 'ecosystem_baseline_invalid_masquerade.json: negative fixture unexpectedly VALIDATED'\nrm -rf \"$S\"\necho 'E07 PASS: uppercase+full-word rejected by conformance; false-trigger rejected by polarity assertion'"
+    },
+    {
+      "acceptance_test": "NDEBT-016 does not disturb the shipped set: the hardened, case-insensitive classifier + conformance gate keeps every shipped fixture conforming, so the default sweep C12 stays PASS and SUMMARY stays 13/13.",
+      "command": "set -e\nout=$(bash tools/validate.sh 2>&1)\nprintf '%s\\n' \"$out\" | grep -Eq '^\\[C12\\] PASS'\nprintf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'\necho 'E08 PASS: hardened C12 keeps the shipped fixtures green (default 13/13)'"
+    },
+    {
+      "acceptance_test": "C13 NEGATIVE FIXTURE EXERCISED: the self-test substitutes skill_index_neg_dangling_module.json for tools/skill.json, observes [C13] FAIL, and RESTORES skill.json (working tree clean afterward) -- closing the standing-wiring F-049 deferred to F-052.",
+      "command": "set -e\nout=$(bash tools/fixtures_self_test.sh 2>&1)\nprintf '%s\\n' \"$out\" | grep -Fq 'c13-substitute skill_index_neg_dangling_module.json -> [C13] FAIL'\ngit diff --quiet -- tools/skill.json\necho 'E09 PASS: C13 negative fixture exercised via substitution; skill.json restored clean'"
+    },
+    {
+      "acceptance_test": "PRIMITIVE FIXTURES EXERCISED + load-bearing: the self-test drives all five verify_lib primitives (incl. the two git-scratch ones), and a corrupted section_grep_fail fixture makes the self-test FAIL. Probed in a minimal scratch copy.",
+      "command": "set -e\nout=$(bash tools/fixtures_self_test.sh 2>&1)\nfor p in vlib_no_stale_payload vlib_section_grep vlib_path_resolves vlib_version_increased vlib_scope_guard; do\n  printf '%s\\n' \"$out\" | grep -Eq \"OK +primitive +$p\"\ndone\nS=\"$SB/e10\"; rm -rf \"$S\"; mkdir -p \"$S\"; cp -a tools schema NIZAM.json \"$S/\"\nprintf '# x\\n\\n## Target Section\\n\\nSECTION_GREP_MARKER planted in the target span.\\n' > \"$S/tools/fixtures/section_grep_fail.md\"\nset +e; b=$(bash \"$S/tools/fixtures_self_test.sh\" 2>&1); brc=$?; set -e\ntest $brc -ne 0; printf '%s\\n' \"$b\" | grep -Eq 'FAIL .*vlib_section_grep fail'\nrm -rf \"$S\"\necho 'E10 PASS: all 5 primitives exercised; primitive assertions load-bearing'"
+    },
+    {
+      "acceptance_test": "CI WIRING + REGRESSION BUNDLE: compliance.yml carries the fixtures_self_test job (with pip install jsonschema pyyaml) running the harness; default 13/13, payload 11/11, and e2e all still green.",
+      "command": "set -e\ngrep -Fq 'fixtures_self_test:' .github/workflows/compliance.yml\ngrep -Fq 'bash tools/fixtures_self_test.sh' .github/workflows/compliance.yml\nawk '/fixtures_self_test:/{f=1} f&&/pip install jsonschema pyyaml/{print \"pip-ok\"; exit}' .github/workflows/compliance.yml | grep -Fq pip-ok\nbash tools/validate.sh 2>&1 | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'\nbash tools/validate.sh --payload 2>&1 | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'\nbash tools/e2e_bootstrap_test.sh >/dev/null 2>&1\necho 'E11 PASS: CI job wired (jsonschema/pyyaml); default 13/13, payload 11/11, e2e green'"
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT + DOCS/DEBT: HEAD~1..HEAD touches exactly the six contracted files and no .agent path; DEBT 0.22.0 has NDEBT-009/015/016 in Resolved; README 0.5.0; CHANGELOG names the harness.",
+      "command": "set -e\ntest \"$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr '\\n' ' ')\" = '.github/workflows/compliance.yml CHANGELOG.md docs/planning/DEBT.md tools/README.md tools/fixtures_self_test.sh tools/validate.sh '\ntest -z \"$(git diff --name-only HEAD~1..HEAD -- .agent/)\"\ngrep -Fq 'version: 0.22.0' docs/planning/DEBT.md\npython3 - <<'PY'\nimport re\nsect=None; resolved=set()\nfor l in open('docs/planning/DEBT.md'):\n    if l.startswith('## Open'): sect='open'\n    elif l.startswith('## Resolved'): sect='resolved'\n    m=re.match(r'\\| (NDEBT-\\d+) ', l)\n    if m and sect=='resolved': resolved.add(m.group(1))\n    if l.startswith('| NDEBT-009 ') or l.startswith('| NDEBT-015 ') or l.startswith('| NDEBT-016 '):\n        assert sect=='resolved', l[:14]+' not Resolved'\nfor n in ('NDEBT-009','NDEBT-015','NDEBT-016'): assert n in resolved, n\nprint('debt ok')\nPY\ngrep -Fq 'version: 0.5.0' tools/README.md\nsed -n '/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p' CHANGELOG.md | grep -Fq 'fixtures_self_test'\necho 'E12 PASS: confined to the 6 files, zero .agent; DEBT 0.22.0 (009/015/016 Resolved); README 0.5.0; CHANGELOG synced'"
+    }
+  ],
+  "estimated_lines": 180,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured output is in .agent/evidence/052-verify-NN.txt (12 entries), plus the consolidated .agent/evidence/052/verification.txt (12 EXIT:0 markers) and .agent/evidence/052/diff.patch (the deliverable diff). Commands run from the repo root at deliverable commit (HEAD), with HEAD~1 = the F-051 merge 37185da as the anti-vacuity anchor; adversarial probes (E03/E04/E07/E10) build MINIMAL scratch copies (tools/+schema/+NIZAM.json) under a session-scratch root $SB, never mutating the real tree.",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-directed phase execution (ungated DAG root, operator chose 052 via AskUserQuestion after PR #30 merged). No separate Loop-1 gate agents; the 12-entry suite executed live with captured evidence; QA record .agent/qa/052.json documents the independent full re-run. LARGE SCOPE OVERAGE disclosed (see design_notes.scope_overage_disclosure): 678 lines vs 180 estimated (~3.8x), exceeding 3x the rolling average (513) -- inherent to the 'every fixture' acceptance test, not scope creep; the PR is held for operator acknowledgment/ratification."
+  }
+}

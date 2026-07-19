@@ -1,0 +1,12 @@
+# .agent/evidence/052-verify-09.txt
+# Contract 052 verification entry 09 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: C13 NEGATIVE FIXTURE EXERCISED: the self-test substitutes skill_index_neg_dangling_module.json for tools/skill.json, observes [C13] FAIL, and RESTORES skill.json (working tree clean afterward) -- closing the standing-wiring F-049 deferred to F-052.
+# --- command (from .agent/contracts/052.json verification[09].command) ---
+set -e
+out=$(bash tools/fixtures_self_test.sh 2>&1)
+printf '%s\n' "$out" | grep -Fq 'c13-substitute skill_index_neg_dangling_module.json -> [C13] FAIL'
+git diff --quiet -- tools/skill.json
+echo 'E09 PASS: C13 negative fixture exercised via substitution; skill.json restored clean'
+# --- output ---
+E09 PASS: C13 negative fixture exercised via substitution; skill.json restored clean
+[exit 0]

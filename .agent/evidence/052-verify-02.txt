@@ -1,0 +1,9 @@
+# .agent/evidence/052-verify-02.txt
+# Contract 052 verification entry 02 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: SELF-TEST GREEN + EXIT ASSERTED: tools/fixtures_self_test.sh exits 0 and reports every fixture accounted for with zero failures.
+# --- command (from .agent/contracts/052.json verification[02].command) ---
+out=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; printf '%s\n' "$out" | tail -1; test $rc -eq 0 && printf '%s\n' "$out" | tail -1 | grep -Eq 'SELF-TEST OK: [0-9]+/[0-9]+ fixtures accounted for, 0 failed' && echo "E02 PASS (rc=$rc)"
+# --- output ---
+SELF-TEST OK: 41/41 fixtures accounted for, 0 failed
+E02 PASS (rc=0)
+[exit 0]
