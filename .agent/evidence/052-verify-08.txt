@@ -1,0 +1,12 @@
+# .agent/evidence/052-verify-08.txt
+# Contract 052 verification entry 08 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: NDEBT-016 does not disturb the shipped set: the hardened, case-insensitive classifier + conformance gate keeps every shipped fixture conforming, so the default sweep C12 stays PASS and SUMMARY stays 13/13.
+# --- command (from .agent/contracts/052.json verification[08].command) ---
+set -e
+out=$(bash tools/validate.sh 2>&1)
+printf '%s\n' "$out" | grep -Eq '^\[C12\] PASS'
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'
+echo 'E08 PASS: hardened C12 keeps the shipped fixtures green (default 13/13)'
+# --- output ---
+E08 PASS: hardened C12 keeps the shipped fixtures green (default 13/13)
+[exit 0]

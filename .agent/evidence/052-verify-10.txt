@@ -1,0 +1,18 @@
+# .agent/evidence/052-verify-10.txt
+# Contract 052 verification entry 10 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: PRIMITIVE FIXTURES EXERCISED + load-bearing: the self-test drives all five verify_lib primitives (incl. the two git-scratch ones), and a corrupted section_grep_fail fixture makes the self-test FAIL. Probed in a minimal scratch copy.
+# --- command (from .agent/contracts/052.json verification[10].command) ---
+set -e
+out=$(bash tools/fixtures_self_test.sh 2>&1)
+for p in vlib_no_stale_payload vlib_section_grep vlib_path_resolves vlib_version_increased vlib_scope_guard; do
+  printf '%s\n' "$out" | grep -Eq "OK +primitive +$p"
+done
+S="$SB/e10"; rm -rf "$S"; mkdir -p "$S"; cp -a tools schema NIZAM.json "$S/"
+printf '# x\n\n## Target Section\n\nSECTION_GREP_MARKER planted in the target span.\n' > "$S/tools/fixtures/section_grep_fail.md"
+set +e; b=$(bash "$S/tools/fixtures_self_test.sh" 2>&1); brc=$?; set -e
+test $brc -ne 0; printf '%s\n' "$b" | grep -Eq 'FAIL .*vlib_section_grep fail'
+rm -rf "$S"
+echo 'E10 PASS: all 5 primitives exercised; primitive assertions load-bearing'
+# --- output ---
+E10 PASS: all 5 primitives exercised; primitive assertions load-bearing
+[exit 0]

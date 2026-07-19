@@ -1,0 +1,13 @@
+# .agent/evidence/052-verify-01.txt
+# Contract 052 verification entry 01 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: ANTI-VACUITY (HEAD~1 = 37185da, the F-051 merge / PR #30 squash): before this deliverable there was NO tools/fixtures_self_test.sh, the router had NO ecosystem routes, C12 had NO conformance guard, and compliance.yml had NO fixtures_self_test job.
+# --- command (from .agent/contracts/052.json verification[01].command) ---
+set -e
+git cat-file -e HEAD~1:tools/fixtures_self_test.sh 2>/dev/null && { echo 'VACUITY: harness already present at HEAD~1'; exit 1; } || true
+git show HEAD~1:tools/validate.sh | grep -Fq 'ecosystem:preflight_verdict' && { echo 'VACUITY: routing already present'; exit 1; } || true
+git show HEAD~1:tools/validate.sh | grep -Fq 'LOOKALIKE = re.compile' && { echo 'VACUITY: conformance already present'; exit 1; } || true
+git show HEAD~1:.github/workflows/compliance.yml | grep -Fq 'fixtures_self_test' && { echo 'VACUITY: CI job already present'; exit 1; } || true
+echo 'E01 PASS: harness/routing/conformance/CI-job all absent at HEAD~1 (anti-vacuity)'
+# --- output ---
+E01 PASS: harness/routing/conformance/CI-job all absent at HEAD~1 (anti-vacuity)
+[exit 0]

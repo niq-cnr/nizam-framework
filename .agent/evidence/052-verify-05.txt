@@ -1,0 +1,17 @@
+# .agent/evidence/052-verify-05.txt
+# Contract 052 verification entry 05 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: NDEBT-015: --target against each of the three ecosystem families routes to [C12] with DISCRIMINATING polarity -- valid PASSes, negative FAILs (acceptance test 2).
+# --- command (from .agent/contracts/052.json verification[05].command) ---
+set -e
+for f in ecosystem_baseline_valid preflight_verdict_pass engineering_finding_valid; do
+  bash tools/validate.sh --target "tools/fixtures/$f.json" 2>&1 | grep -Eq '^\[C12\] PASS'
+done
+for f in ecosystem_baseline_neg_missing_revision preflight_verdict_invalid_verdict engineering_finding_neg_missing_owner; do
+  set +e; out=$(bash tools/validate.sh --target "tools/fixtures/$f.json" 2>&1); rc=$?; set -e
+  test $rc -ne 0
+  printf '%s\n' "$out" | grep -Eq '^\[C12\] FAIL'
+done
+echo 'E05 PASS: all 3 ecosystem families route to [C12] with discriminating polarity'
+# --- output ---
+E05 PASS: all 3 ecosystem families route to [C12] with discriminating polarity
+[exit 0]

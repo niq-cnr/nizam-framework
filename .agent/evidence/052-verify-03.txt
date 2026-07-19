@@ -1,0 +1,15 @@
+# .agent/evidence/052-verify-03.txt
+# Contract 052 verification entry 03 -- captured 2026-07-19 at deliverable commit 86a67ab (HEAD~1 = F-051 merge 37185da)
+# ACCEPTANCE TEST: NON-VACUITY (headline): when a negative fixture's TARGETED check is made to PASS, the self-test FAILs -- so it genuinely catches a check gone vacuous, not merely a non-zero exit. Probed in a minimal scratch copy (never the real tree).
+# --- command (from .agent/contracts/052.json verification[03].command) ---
+set -e
+S="$SB/e03"; rm -rf "$S"; mkdir -p "$S"; cp -a tools schema NIZAM.json "$S/"
+printf '# resolvable now\n\nThis body cites tools/verify_lib.sh which resolves fine.\n' > "$S/tools/fixtures/unresolved_path.md"
+set +e; out=$(bash "$S/tools/fixtures_self_test.sh" 2>&1); rc=$?; set -e
+test $rc -ne 0
+printf '%s\n' "$out" | grep -Eq 'FAIL target +unresolved_path.md'
+rm -rf "$S"
+echo "E03 PASS: self-test FAILs when a negative fixture's targeted check goes vacuous (rc=$rc)"
+# --- output ---
+E03 PASS: self-test FAILs when a negative fixture's targeted check goes vacuous (rc=1)
+[exit 0]
