@@ -1,0 +1,15 @@
+# .agent/evidence/055-verify-07.txt
+# Contract 055 verification entry 07 -- captured 2026-07-19 at deliverable commit f2c109a (HEAD~1 = F-053 merge 5d49fb5)
+# ACCEPTANCE TEST: FALSE-POSITIVE SCOPING IS DELIBERATE + DOCUMENTED: ecosystem/README.md carries legitimate forward-refs to planned stages, so the bare-ref guard WOULD flag it (rc 1) -- which is why the real-tree sweep is scoped to methodology/+standard/ and excludes ecosystem/, documented in the self-test.
+# --- command (from .agent/contracts/055.json verification[07].command) ---
+set -e
+source tools/verify_lib.sh
+set +e; vlib_bare_ref_resolves ecosystem/README.md NIZAM.json; rc=$?; set -e
+test $rc -eq 1
+grep -Fq 'for f in methodology/*.md standard/*.md' tools/fixtures_self_test.sh
+grep -Fq 'out of the bare-ref sweep by design' tools/fixtures_self_test.sh
+echo 'E07 PASS: ecosystem/README would false-positive (rc=1); the sweep is deliberately scoped to methodology/+standard/, documented in the self-test'
+# --- output ---
+vlib_bare_ref_resolves: ecosystem/README.md: unresolved bare reference(s): ['00_ecosystem_bootstrap.md', '04_dependency_reconciliation.md', '05_release_train_coordination.md', '06_simplification_review.md', '08_ga_gate.md']
+E07 PASS: ecosystem/README would false-positive (rc=1); the sweep is deliberately scoped to methodology/+standard/, documented in the self-test
+[exit 0]

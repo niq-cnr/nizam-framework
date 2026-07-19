@@ -1,0 +1,15 @@
+# .agent/evidence/055-verify-03.txt
+# Contract 055 verification entry 03 -- captured 2026-07-19 at deliverable commit f2c109a (HEAD~1 = F-053 merge 5d49fb5)
+# ACCEPTANCE TEST: vlib_bare_ref_resolves DEFINED + DISCRIMINATES: resolves every bare ref in the pass fixture (rc 0), returns exactly 1 on the stale fixture -- both resolved against the canonical index enum_index.json.
+# --- command (from .agent/contracts/055.json verification[03].command) ---
+set -e
+source tools/verify_lib.sh
+declare -F vlib_bare_ref_resolves >/dev/null || { echo 'vlib_bare_ref_resolves not defined'; exit 1; }
+vlib_bare_ref_resolves tools/fixtures/bare_ref_pass.md tools/fixtures/enum_index.json
+set +e; vlib_bare_ref_resolves tools/fixtures/bare_ref_fail.md tools/fixtures/enum_index.json; rc=$?; set -e
+test $rc -eq 1
+echo 'E03 PASS: vlib_bare_ref_resolves defined; resolves the pass fixture, returns 1 on the seeded stale fixture'
+# --- output ---
+vlib_bare_ref_resolves: tools/fixtures/bare_ref_fail.md: unresolved bare reference(s): ['05_gamma.md']
+E03 PASS: vlib_bare_ref_resolves defined; resolves the pass fixture, returns 1 on the seeded stale fixture
+[exit 0]

@@ -1,0 +1,18 @@
+# .agent/evidence/055-verify-05.txt
+# Contract 055 verification entry 05 -- captured 2026-07-19 at deliverable commit f2c109a (HEAD~1 = F-053 merge 5d49fb5)
+# ACCEPTANCE TEST: ENUMERATION REAL-TREE recurrence guard + load-bearing: NIZAM.json enumerates every on-disk *.md in standard/, methodology/, registry/, ecosystem/ (rc 0 each); a scratch index listing only one methodology doc FAILS against the real methodology/ dir.
+# --- command (from .agent/contracts/055.json verification[05].command) ---
+set -e
+: "${SB:?SB must be set}"; case "$SB" in /*) ;; *) exit 1;; esac
+source tools/verify_lib.sh
+for m in standard methodology registry ecosystem; do vlib_enumeration_complete NIZAM.json "$m" "$m" '*.md'; done
+S="$SB/e05"; case "$S" in "$PWD"/*) exit 1;; esac; rm -rf -- "$S"; mkdir -p -- "$S"
+printf '%s\n' '{"modules":[{"path":"methodology","key_documents":["methodology/00_planning.md"]}]}' > "$S/idx.json"
+set +e; vlib_enumeration_complete "$S/idx.json" methodology methodology '*.md'; rc=$?; set -e
+test $rc -eq 1
+rm -rf -- "$S"
+echo 'E05 PASS: NIZAM.json complete vs disk over 4 modules; a scratch index dropping methodology docs FAILS (guard load-bearing)'
+# --- output ---
+vlib_enumeration_complete: methodology file(s) omitted from 'methodology' key_documents in /tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/e05/idx.json: ['01_execution.md', '02_adversarial_tdd.md', '03_circuit_breaker.md', '04_tool_driven_state.md', '05_eval_and_trace.md', '06_release_train.md', '07_eval_gated_promotion.md', '08_cross_repo_dependency_gate.md', 'README.md']
+E05 PASS: NIZAM.json complete vs disk over 4 modules; a scratch index dropping methodology docs FAILS (guard load-bearing)
+[exit 0]

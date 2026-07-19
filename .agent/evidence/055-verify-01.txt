@@ -1,0 +1,13 @@
+# .agent/evidence/055-verify-01.txt
+# Contract 055 verification entry 01 -- captured 2026-07-19 at deliverable commit f2c109a (HEAD~1 = F-053 merge 5d49fb5)
+# ACCEPTANCE TEST: ANTI-VACUITY (HEAD~1 = 5d49fb5, the F-053 merge / PR #32): at HEAD~1 verify_lib had neither new primitive, the enum_index fixture did not exist, and fixtures_self_test had no bare-ref wiring.
+# --- command (from .agent/contracts/055.json verification[01].command) ---
+set -e
+if git show HEAD~1:tools/verify_lib.sh | grep -Fq 'vlib_enumeration_complete'; then echo 'VACUITY: vlib_enumeration_complete already at HEAD~1'; exit 1; fi
+if git show HEAD~1:tools/verify_lib.sh | grep -Fq 'vlib_bare_ref_resolves'; then echo 'VACUITY: vlib_bare_ref_resolves already at HEAD~1'; exit 1; fi
+if git show HEAD~1:tools/fixtures/enum_index.json >/dev/null 2>&1; then echo 'VACUITY: enum_index.json already at HEAD~1'; exit 1; fi
+if git show HEAD~1:tools/fixtures_self_test.sh | grep -Fq 'vlib_bare_ref_resolves'; then echo 'VACUITY: self-test wiring already at HEAD~1'; exit 1; fi
+echo 'E01 PASS: HEAD~1 lacks both primitives, the enum_index fixture, and the self-test wiring (anti-vacuity)'
+# --- output ---
+E01 PASS: HEAD~1 lacks both primitives, the enum_index fixture, and the self-test wiring (anti-vacuity)
+[exit 0]

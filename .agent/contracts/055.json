@@ -1,0 +1,113 @@
+{
+  "contract_id": "055",
+  "feature_id": "055",
+  "name": "Enumeration/bare-ref recurrence guards (NDEBT-005)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_006.md",
+  "design_notes": {
+    "what_this_feature_is": "Phase-006 F-055: mechanize the two NDEBT-003 defect classes F-027 fixed by hand, as the NDEBT-005 recurrence guard, sourced from the single canonical index NIZAM.json rather than re-derived lists. Two new verify_lib.sh primitives (the 7th and 8th): vlib_enumeration_complete asserts the disk->index (completeness) direction tools/validate.sh C4 does NOT cover (C4 checks index->disk: every listed doc resolves; this checks the reverse: no on-disk governed doc is silently omitted from key_documents); vlib_bare_ref_resolves flags a bare (non-/-qualified) NN_name.md whose basename matches no key_document -- the NDEBT-003b shape C9's /-qualification and C10's three sub-checks both miss. Both are wired into the F-052 self-test surface (fixtures_self_test.sh, a CI job): fixture discrimination (a seeded omission in a scratch dir; static bare_ref pass/fail fixtures) PLUS a real-tree recurrence sweep that is the actual guard.",
+    "canonical_index_choice": "NIZAM.json is the canonical index -- its modules[].key_documents enumerate every governed doc per module. The guards resolve against it (or, in fixtures, against the minimal enum_index.json), never against a hand-maintained list duplicated elsewhere. This is exactly the 'single canonical index rather than re-derived' remediation NDEBT-005 prescribed: guard the canonical source's completeness so any downstream list that SOURCES from it inherits completeness, instead of separately guarding every hand-maintained consumer list (docs/guide/index.html was the NDEBT-003a surface -- and it is deliberately NOT required to be exhaustive, so requiring it would false-positive).",
+    "false_positive_mitigation": "NDEBT-005 was deferred over 'real false-positive risk' (Mode A, contract 027). That risk is real and confirmed: a naive bare-ref sweep over the whole tree flags 19 tokens, ALL false positives -- ecosystem/README.md + NIP-0001 forward-refs to planned-but-unshipped stages (00/04/05/06/08_*.md) and '05_release_train.md' quoted in DEBT.md itself as the historical NDEBT-003b defect. The mitigation, confronted head-on rather than ignored: (1) the enumeration guard uses disk->index, which is unambiguous (a real file is or is not indexed) and green over all four doc modules; (2) the bare-ref real-tree sweep is scoped to methodology/ + standard/ -- the stable, fully-shipped modules where NDEBT-003b actually occurred -- EXCLUDING ecosystem/ (still-evolving, carries intentional forward-refs), registers, and NIPs (quote historical defects). E07 proves the exclusion is necessary (ecosystem/README would rc=1) and deliberate (documented in the self-test). methodology/ + standard/ currently carry ZERO unresolved bare refs, so the sweep is green.",
+    "dogfooding_note": "The feature dogfoods the rules F-053 just codified: E04 and E06 build their scratch probes under a fail-closed $SB guard that refuses an unset/relative $SB and any scratch path inside the repo, with rm -rf -- (methodology/02 Section 11 probe isolation); E03/E04/E05/E06/E09/E10 capture expected-FAIL exit codes explicitly (set +e; ...; rc=$?; set -e; test $rc -eq 1) rather than trusting a pipeline (Section 10(e) / NDEBT-019). The self-test's own enumeration scratch probe uses the mktemp + EXIT-trap pattern the two git-scratch primitives established.",
+    "next_feature_decision": "The next-feature AskUserQuestion aborted (permission stream closed, as before features 050 and 053). Proceeded with the RECOMMENDED ungated root 055 under the phase-006 activation's standing 'Approved. Proceed with the logical next steps.' authorization + the operator's explicit 'Continue from where you left off.', disclosed here and in the PR so the operator may redirect at review (the PR is the steer mechanism; nothing merges without the operator). F-050/F-053 precedent for aborted-question -> proceed-with-disclosure.",
+    "process_honesty": "Single-session collapsed-role execution (046-053 precedent), disclosed-and-permitted by the AGF Orchestrator clause. Design was validated by an implementation spike on the real tree (both guards green; both seeded negatives fail) BEFORE the contract was finalized, so the verification plan reflects verified-working commands. SCOPE: actual ~282 changed lines vs the 160 estimate -- the overrun is the two primitives' heavily-documented python bodies (matching verify_lib.sh's existing header style), the self-test wiring with its real-tree sweep, and the thorough DEBT/CHANGELOG resolution; it is documentation-and-mechanization density, not silent scope creep, and stays well under the phase cumulative gate. No new validate.sh C-check was added (the feature spec places the guards on the F-052 self-test surface, which runs in CI), keeping validate.sh's 13-check count and blast radius unchanged."
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/fixtures/enum_index.json",
+        "purpose": "Minimal canonical-index fixture (modules[].key_documents only) for both new primitives; exercised solely via the self-test, never validate.sh --target."
+      },
+      {
+        "path": "tools/fixtures/bare_ref_pass.md",
+        "purpose": "Positive fixture: every bare NN_name.md resolves against enum_index.json; a /-qualified path and an embedded token are present to show they are not treated as bare refs."
+      },
+      {
+        "path": "tools/fixtures/bare_ref_fail.md",
+        "purpose": "Negative fixture: a bare, stale 05_gamma.md (basename in no key_document) must make vlib_bare_ref_resolves FAIL; a resolving ref shows it flags only the stale token."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/verify_lib.sh",
+        "purpose": "Add the 7th and 8th vetted primitives vlib_enumeration_complete + vlib_bare_ref_resolves; header primitive count 6 -> 8 (and the stale internal 'five' comment corrected to eight) with the two new anti-patterns named (NDEBT-005 mechanization)."
+      },
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "Wire both guards into the self-test surface: bare-ref static fixture discrimination, enumeration seeded-omission scratch probe (Section 11), and the real-tree recurrence sweep (enumeration over 4 modules; bare-ref over methodology/ + standard/); completeness manifest accounts for the 3 new fixtures (46 total)."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "[Unreleased] Added: the enumeration/bare-ref recurrence guards entry."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "0.24.0: NDEBT-005 Open -> Resolved with the resolution note."
+      }
+    ]
+  },
+  "non_goals": [
+    "No new tools/validate.sh C-check -- the feature spec places the guards on the F-052 self-test surface (itself a CI job), so validate.sh's 13-check sweep and its schema/docs are untouched.",
+    "No bare-ref sweep over ecosystem/, docs/planning registers, or docs/nips NIPs -- they legitimately carry forward-refs to planned stages and quoted historical defects; sweeping them would reintroduce exactly the false-positive risk NDEBT-005 was deferred over (E07 proves it).",
+    "No change to C4 (index->disk), C9 (/-qualified resolution), or C10 (the three spec-scoped sub-checks) -- the new guards are the missing complementary direction, not a modification of the existing checks.",
+    "No change to NIZAM.json content (it is already complete vs disk over all four doc modules) and no new shipped fixtures beyond the three named."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (HEAD~1 = 5d49fb5, the F-053 merge / PR #32): at HEAD~1 verify_lib had neither new primitive, the enum_index fixture did not exist, and fixtures_self_test had no bare-ref wiring.",
+      "command": "set -e\nif git show HEAD~1:tools/verify_lib.sh | grep -Fq 'vlib_enumeration_complete'; then echo 'VACUITY: vlib_enumeration_complete already at HEAD~1'; exit 1; fi\nif git show HEAD~1:tools/verify_lib.sh | grep -Fq 'vlib_bare_ref_resolves'; then echo 'VACUITY: vlib_bare_ref_resolves already at HEAD~1'; exit 1; fi\nif git show HEAD~1:tools/fixtures/enum_index.json >/dev/null 2>&1; then echo 'VACUITY: enum_index.json already at HEAD~1'; exit 1; fi\nif git show HEAD~1:tools/fixtures_self_test.sh | grep -Fq 'vlib_bare_ref_resolves'; then echo 'VACUITY: self-test wiring already at HEAD~1'; exit 1; fi\necho 'E01 PASS: HEAD~1 lacks both primitives, the enum_index fixture, and the self-test wiring (anti-vacuity)'"
+    },
+    {
+      "acceptance_test": "vlib_enumeration_complete DEFINED + verify_lib has no sourcing side effect: the primitive is a shell function and sourcing verify_lib.sh emits nothing (its standing contract).",
+      "command": "set -e\nsource tools/verify_lib.sh\ndeclare -F vlib_enumeration_complete >/dev/null || { echo 'vlib_enumeration_complete not defined'; exit 1; }\nsourced_out=$(bash -c 'source tools/verify_lib.sh' 2>&1); test -z \"$sourced_out\"\necho 'E02 PASS: vlib_enumeration_complete is defined; sourcing verify_lib.sh emits nothing (no side effect)'"
+    },
+    {
+      "acceptance_test": "vlib_bare_ref_resolves DEFINED + DISCRIMINATES: resolves every bare ref in the pass fixture (rc 0), returns exactly 1 on the stale fixture -- both resolved against the canonical index enum_index.json.",
+      "command": "set -e\nsource tools/verify_lib.sh\ndeclare -F vlib_bare_ref_resolves >/dev/null || { echo 'vlib_bare_ref_resolves not defined'; exit 1; }\nvlib_bare_ref_resolves tools/fixtures/bare_ref_pass.md tools/fixtures/enum_index.json\nset +e; vlib_bare_ref_resolves tools/fixtures/bare_ref_fail.md tools/fixtures/enum_index.json; rc=$?; set -e\ntest $rc -eq 1\necho 'E03 PASS: vlib_bare_ref_resolves defined; resolves the pass fixture, returns 1 on the seeded stale fixture'"
+    },
+    {
+      "acceptance_test": "vlib_enumeration_complete DISCRIMINATES (seeded omission, Section 11 probe isolation): a scratch dir whose files are all enumerated by enum_index.json passes; adding one on-disk file the index omits returns exactly 1.",
+      "command": "set -e\n: \"${SB:?SB (session scratch root) must be set for probe isolation}\"\ncase \"$SB\" in /*) ;; *) echo 'E04 ABORT: SB not absolute'; exit 1;; esac\nsource tools/verify_lib.sh\nS=\"$SB/e04\"\ncase \"$S\" in \"$PWD\"/*) echo 'E04 ABORT: scratch path inside repo'; exit 1;; esac\nrm -rf -- \"$S\"; mkdir -p -- \"$S/m1\"\n: > \"$S/m1/00_alpha.md\"; : > \"$S/m1/01_beta.md\"\nvlib_enumeration_complete tools/fixtures/enum_index.json m1 \"$S/m1\" '*.md'\n: > \"$S/m1/02_gamma.md\"\nset +e; vlib_enumeration_complete tools/fixtures/enum_index.json m1 \"$S/m1\" '*.md'; rc=$?; set -e\ntest $rc -eq 1\nrm -rf -- \"$S\"\necho 'E04 PASS: enumeration guard passes a complete dir, returns 1 on a seeded omission (sourced from enum_index.json)'"
+    },
+    {
+      "acceptance_test": "ENUMERATION REAL-TREE recurrence guard + load-bearing: NIZAM.json enumerates every on-disk *.md in standard/, methodology/, registry/, ecosystem/ (rc 0 each); a scratch index listing only one methodology doc FAILS against the real methodology/ dir.",
+      "command": "set -e\n: \"${SB:?SB must be set}\"; case \"$SB\" in /*) ;; *) exit 1;; esac\nsource tools/verify_lib.sh\nfor m in standard methodology registry ecosystem; do vlib_enumeration_complete NIZAM.json \"$m\" \"$m\" '*.md'; done\nS=\"$SB/e05\"; case \"$S\" in \"$PWD\"/*) exit 1;; esac; rm -rf -- \"$S\"; mkdir -p -- \"$S\"\nprintf '%s\\n' '{\"modules\":[{\"path\":\"methodology\",\"key_documents\":[\"methodology/00_planning.md\"]}]}' > \"$S/idx.json\"\nset +e; vlib_enumeration_complete \"$S/idx.json\" methodology methodology '*.md'; rc=$?; set -e\ntest $rc -eq 1\nrm -rf -- \"$S\"\necho 'E05 PASS: NIZAM.json complete vs disk over 4 modules; a scratch index dropping methodology docs FAILS (guard load-bearing)'"
+    },
+    {
+      "acceptance_test": "BARE-REF REAL-TREE recurrence guard + load-bearing: every methodology/ + standard/ doc resolves its bare refs against NIZAM.json (rc 0); a seeded bare '05_release_train.md' (the exact NDEBT-003b shape) FAILS.",
+      "command": "set -e\nsource tools/verify_lib.sh\nfor f in methodology/*.md standard/*.md; do vlib_bare_ref_resolves \"$f\" NIZAM.json; done\n: \"${SB:?SB must be set}\"; case \"$SB\" in /*) ;; *) exit 1;; esac\nS=\"$SB/e06\"; case \"$S\" in \"$PWD\"/*) exit 1;; esac; rm -rf -- \"$S\"; mkdir -p -- \"$S\"\nprintf 'A stale bare ref: 05_release_train.md (the file is now 06_release_train.md).\\n' > \"$S/probe.md\"\nset +e; vlib_bare_ref_resolves \"$S/probe.md\" NIZAM.json; rc=$?; set -e\ntest $rc -eq 1\nrm -rf -- \"$S\"\necho 'E06 PASS: methodology/ + standard/ bare refs all resolve; a seeded bare 05_release_train.md FAILS (load-bearing, NDEBT-003b shape)'"
+    },
+    {
+      "acceptance_test": "FALSE-POSITIVE SCOPING IS DELIBERATE + DOCUMENTED: ecosystem/README.md carries legitimate forward-refs to planned stages, so the bare-ref guard WOULD flag it (rc 1) -- which is why the real-tree sweep is scoped to methodology/+standard/ and excludes ecosystem/, documented in the self-test.",
+      "command": "set -e\nsource tools/verify_lib.sh\nset +e; vlib_bare_ref_resolves ecosystem/README.md NIZAM.json; rc=$?; set -e\ntest $rc -eq 1\ngrep -Fq 'for f in methodology/*.md standard/*.md' tools/fixtures_self_test.sh\ngrep -Fq 'out of the bare-ref sweep by design' tools/fixtures_self_test.sh\necho 'E07 PASS: ecosystem/README would false-positive (rc=1); the sweep is deliberately scoped to methodology/+standard/, documented in the self-test'"
+    },
+    {
+      "acceptance_test": "CANONICAL-INDEX SOURCING (not duplicated lists): both primitives resolve from a JSON index argument (modules[].key_documents via json.load), and the self-test passes the canonical index as an argument (enum_index.json / NIZAM.json).",
+      "command": "set -e\nawk '/^vlib_enumeration_complete\\(\\)/,/^}/' tools/verify_lib.sh | grep -Fq 'json.load'\nawk '/^vlib_enumeration_complete\\(\\)/,/^}/' tools/verify_lib.sh | grep -Fq 'key_documents'\nawk '/^vlib_bare_ref_resolves\\(\\)/,/^}/' tools/verify_lib.sh | grep -Fq 'json.load'\nawk '/^vlib_bare_ref_resolves\\(\\)/,/^}/' tools/verify_lib.sh | grep -Fq 'key_documents'\ngrep -Fq 'vlib_enumeration_complete NIZAM.json' tools/fixtures_self_test.sh\ngrep -Fq 'vlib_bare_ref_resolves \"${f}\" NIZAM.json' tools/fixtures_self_test.sh\ngrep -Fq 'tools/fixtures/enum_index.json' tools/fixtures_self_test.sh\necho 'E08 PASS: both guards resolve from a JSON canonical index (key_documents) passed as an argument -- not a duplicated inline list'"
+    },
+    {
+      "acceptance_test": "SELF-TEST 46/46 + WIRED: the two new fixtures + enum_index.json are accounted for, and the five F-055 assertion lines (2 bare-ref, 1 enumeration discrimination, 2 real-tree guards) all report OK.",
+      "command": "set -e\nout=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0\nprintf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SELF-TEST OK: 46/46 fixtures accounted for, 0 failed'\nprintf '%s\\n' \"$out\" | grep -Eq 'OK +primitive +vlib_bare_ref_resolves pass'\nprintf '%s\\n' \"$out\" | grep -Eq 'OK +primitive +vlib_bare_ref_resolves fail'\nprintf '%s\\n' \"$out\" | grep -Eq 'OK +primitive +vlib_enumeration_complete '\nprintf '%s\\n' \"$out\" | grep -Eq 'OK +guard +vlib_enumeration_complete real-tree'\nprintf '%s\\n' \"$out\" | grep -Eq 'OK +guard +vlib_bare_ref_resolves real-tree'\necho 'E09 PASS: self-test 46/46 with all five F-055 assertion lines present'"
+    },
+    {
+      "acceptance_test": "REGRESSION BUNDLE (dogfoods NDEBT-019 rc-capture): self-test 46/46, default 13/13, payload 11/11, e2e green -- each with explicit exit-code capture.",
+      "command": "set -e\nout=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SELF-TEST OK: 46/46 fixtures accounted for, 0 failed'\nout=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'\nout=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'\nbash tools/e2e_bootstrap_test.sh >/dev/null 2>&1\necho 'E10 PASS: self-test 46/46; default 13/13 (rc=0), payload 11/11 (rc=0), e2e green'"
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT: HEAD~1..HEAD touches exactly the seven contracted files and no .agent path.",
+      "command": "set -e\ntest \"$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr '\\n' ' ')\" = 'CHANGELOG.md docs/planning/DEBT.md tools/fixtures/bare_ref_fail.md tools/fixtures/bare_ref_pass.md tools/fixtures/enum_index.json tools/fixtures_self_test.sh tools/verify_lib.sh '\ntest -z \"$(git diff --name-only HEAD~1..HEAD -- .agent/)\"\necho 'E11 PASS: confined to the 7 contracted files, zero .agent'"
+    },
+    {
+      "acceptance_test": "DOCS/DEBT SYNCED: DEBT 0.24.0 has NDEBT-005 in Resolved (not Open); verify_lib header documents eight primitives; CHANGELOG [Unreleased] names the F-055 entry.",
+      "command": "set -e\ngrep -Fq 'version: 0.24.0' docs/planning/DEBT.md\npython3 - <<'PY'\nimport re\nsect=None; resolved=set(); openset=set()\nfor l in open('docs/planning/DEBT.md'):\n    if l.startswith('## Open'): sect='open'\n    elif l.startswith('## Resolved'): sect='resolved'\n    m=re.match(r'\\| (NDEBT-\\d+) ', l)\n    if m and sect=='resolved': resolved.add(m.group(1))\n    if m and sect=='open': openset.add(m.group(1))\nassert 'NDEBT-005' in resolved, 'NDEBT-005 not Resolved'\nassert 'NDEBT-005' not in openset, 'NDEBT-005 still Open'\nprint('debt ok')\nPY\ngrep -Fq 'exactly the eight documented primitives' tools/verify_lib.sh\nsed -n '/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p' CHANGELOG.md | grep -Fq 'Enumeration/bare-ref recurrence guards'\necho 'E12 PASS: DEBT 0.24.0 (NDEBT-005 Resolved, not Open); verify_lib header eight; CHANGELOG names the F-055 entry'"
+    }
+  ],
+  "estimated_lines": 160,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured output is in .agent/evidence/055-verify-NN.txt (12 entries), plus the consolidated .agent/evidence/055/verification.txt (12 EXIT:0 markers) and .agent/evidence/055/diff.patch. Commands run from the repo root at deliverable commit f2c109a (HEAD), with HEAD~1 = the F-053 merge 5d49fb5 as the anti-vacuity anchor; the scratch probes (E04/E05/E06) build under a fail-closed session-scratch root $SB and never mutate the real tree (Section 11 probe isolation).",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-directed phase execution (ungated DAG root). The feature-choice AskUserQuestion aborted; proceeded with the recommended 055 under standing authorization + the operator's 'Continue', disclosed here + in the PR for redirect-at-review (F-050/F-053 precedent). No separate Loop-1 gate agents; the 12-entry suite executed live with captured evidence (dogfooding the NDEBT-019 rc-capture + Section 11 probe-isolation rules F-053 added); QA record .agent/qa/055.json documents the independent re-run. Scope OVER the 160 estimate at ~282 changed lines (documented in design_notes.process_honesty), under the phase cumulative gate."
+  }
+}

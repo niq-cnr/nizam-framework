@@ -1,0 +1,372 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 28e9ace..4f3f947 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,6 +9,22 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Added
+ 
++- **Enumeration/bare-ref recurrence guards** (phase 006 feature 055, resolving
++  **NDEBT-005**): two vetted `tools/verify_lib.sh` primitives — the library's
++  seventh and eighth — mechanize the two NDEBT-003 defect classes F-027 had
++  fixed by hand, both sourced from the single canonical index `NIZAM.json`
++  rather than re-derived lists. `vlib_enumeration_complete` asserts the
++  disk→index (completeness) direction `C4` does not cover: every on-disk
++  governed document under a module directory must be enumerated in that
++  module's `key_documents`. `vlib_bare_ref_resolves` flags a bare,
++  non-`/`-qualified `NN_name.md` reference whose basename matches no
++  `key_document` — the shape `C9` and `C10` both miss. Both ride the F-052
++  self-test surface with seeded-omission and seeded-bare-stale-reference
++  fixtures plus a real-tree recurrence sweep (enumeration over all four
++  documentation modules; bare-ref over `methodology/` + `standard/`, the
++  stable modules where the defect occurred, excluding the still-evolving
++  `ecosystem/` and quoting registers to avoid false positives).
++  `fixtures_self_test` now accounts for 46 fixtures (was 43).
+ - `tools/validate.sh` check **C13** (skill-index integrity; phase 006 feature
+   049, resolving NDEBT-007): `tools/skill.json` is JSON-parsed and its
+   `entry_point` plus every `capabilities[].module` pointer must resolve to an
+diff --git a/docs/planning/DEBT.md b/docs/planning/DEBT.md
+index 919ae98..32374bf 100644
+--- a/docs/planning/DEBT.md
++++ b/docs/planning/DEBT.md
+@@ -2,7 +2,7 @@
+ id: nizam-debt
+ title: Technical Debt Register — nizam-framework
+ description: Known debt, deferred decisions, and cross-repo impacts for the nizam-framework repository.
+-version: 0.23.0
++version: 0.24.0
+ status: active
+ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ ---
+@@ -20,12 +20,12 @@ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ | NDEBT-017 | 2026-07-17 | Low | `tools/ecosystem_preflight.py`'s `ci_references` field is repo-HEAD-anchored with an honest `KNOWN LIMITATION` note (no real CI-run lookup) — a limitation contract 041 explicitly deferred registering as its own NDEBT entry ("a later orchestrator/evaluator action"). Feature 043's real framework self-dogfood run (execution-id `dogfood-2026-07-17-28c8253`, evidence: `.agent/evidence/dogfood-2026-07-17-28c8253/`, artifact: `.agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json`) is the first time this limitation is exercised for real against the framework's own tree (not a scratch fixture), landing a tracked `baseline.json` carrying the same honest note. | Wire a real CI-run lookup (e.g. a GitHub Actions API call keyed off the repository/commit) into `build_baseline_document`'s `ci_references` synthesis; candidate scope for the next ecosystem-tooling feature. |
+ | NDEBT-018 | 2026-07-17 | Medium | Dogfood preflight self-reference, discovered TWICE during feature 043's real framework self-dogfood run (execution-id `dogfood-2026-07-17-28c8253`, evidence: `.agent/evidence/dogfood-2026-07-17-28c8253/`): (1) the feature's own in-flight contract/qa-review artifacts (`.agent/contracts/043.json`, `.agent/qa/043-contract-review.json`, `.agent/qa/043-contract-review-rev1.json`) and the run's own evidence-output directory necessarily appear as untracked exceptions inside the very preflight run they help produce, requiring an explicit, bounded tolerate-list rather than genuine pre-existing debt. (2) MORE SEVERELY: the orchestrator's own H-DOGFOOD-EXCEPTION gate-decision write to `.agent/run_state.json` first landed as an UNCOMMITTED tracked modification before the approved-step invocation was attempted, which `tools/ecosystem_preflight.py` correctly and unconditionally treats as a blocking finding no `--tolerate-untracked` flag can rescue (tracked-file changes are never tolerable, by design) — the approved invocation genuinely FAILed (exit 1, blocking_findings=["uncommitted tracked change (M): .agent/run_state.json"]) on the first attempt and only succeeded (exit 3) after the orchestrator committed that write (HEAD `28c8253` -> `e73cd04`). | (1) Consider a clean-worktree/scratch-checkout isolation mode for the preflight tool's self-fixture invocation so a feature's own in-flight `.agent` artifacts do not need to be individually enumerated in a tolerate-list. (2) Codify, durably (not just per-dispatch instruction), that any orchestrator-owned tracked-state write relevant to a gate decision (e.g. `run_state.json`'s `operator_gate_decision` event) MUST be committed BEFORE the corresponding gated CLI invocation runs — candidate scope for `methodology/03_circuit_breaker.md` or a new ecosystem-module operational note. |
+ | NDEBT-011 | 2026-07-12 | Low | `templates/work-packet.template.json` does not validate against `schema/work-packet.schema.json` (three errors: `{{TIER}}` and `{{BLAST_RADIUS}}` placeholder tokens occupy enum-constrained fields; `{{MERGE_ORDER}}` occupies an integer field), while the schema's own `description` claims it validates the template. `templates/README.md` quietly downgrades the template's contract to JSON parse-validity only; the two claims disagree. | Align the surfaces: either give the template schema-valid literal defaults (e.g. `tier-0`, `local`, `0`) so it validates end-to-end, or correct the schema `description` to name work-packet *artifacts* rather than the template and keep the parse-validity-only contract, stating the choice in `templates/README.md` (the `schema/README.md` table row added 2026-07-12 already carries the caveat). |
+-| NDEBT-005 | 2026-07-10 | Low | C10's three spec-scoped sub-checks (payload-set / discovery-order / version-anchor) do NOT mechanize a recurrence-guard for the two NDEBT-003 defect CLASSES that F-027 fixed by hand: (a) enumeration-completeness (a future doc could again omit a `methodology/`/`registry/` file from a hand-maintained key-documents list) and (b) bare (non-`/`-qualified) stale cross-references (neither C9's `/`-qualification nor C10's three sub-checks catch a bare `NN_name.md` that no longer resolves). Deferred deliberately: spec_004 §5 F-027 scopes C10 to exactly three sub-checks; adding a 4th/5th checker was ruled un-spec'd scope creep with real false-positive risk (Mode A, contract 027). | Address in a future self-compliance phase (or fold into F-028/C11's dogfooding if a schema-driven enumeration source is introduced): add an enumeration-completeness + bare-cross-ref-resolution guard, ideally sourced from a single canonical index rather than re-derived, so hand-maintained lists cannot silently drift. |
+ 
+ ## Resolved
+ 
+ | ID | Date | Severity | Description | Resolution |
+ |----|------|----------|-------------|------------|
++| NDEBT-005 | 2026-07-10 | Low | C10's three spec-scoped sub-checks (payload-set / discovery-order / version-anchor) do NOT mechanize a recurrence-guard for the two NDEBT-003 defect CLASSES that F-027 fixed by hand: (a) enumeration-completeness (a future doc could again omit a `methodology/`/`registry/` file from a hand-maintained key-documents list) and (b) bare (non-`/`-qualified) stale cross-references (neither C9's `/`-qualification nor C10's three sub-checks catch a bare `NN_name.md` that no longer resolves). Deferred deliberately: spec_004 §5 F-027 scopes C10 to exactly three sub-checks; adding a 4th/5th checker was ruled un-spec'd scope creep with real false-positive risk (Mode A, contract 027). | RESOLVED 2026-07-19 by phase-006 feature 055, PR #TBD: two vetted `tools/verify_lib.sh` primitives (the library's seventh and eighth) mechanize both defect classes, sourced from the single canonical index `NIZAM.json` rather than re-derived lists. `vlib_enumeration_complete` asserts the disk->index (completeness) direction C4 omits -- every on-disk governed doc under a module dir must be enumerated in that module's `key_documents` (green now over standard/, methodology/, registry/, ecosystem/). `vlib_bare_ref_resolves` flags a bare non-`/`-qualified `NN_name.md` whose basename matches no `key_document` (the shape C9 and C10 both miss). Both ride the F-052 self-test surface: a seeded enumeration omission and a seeded bare stale reference each fail their guard, plus a real-tree recurrence sweep (enumeration over all four doc modules; bare-ref over methodology/ + standard/). The bare-ref sweep is scoped to the stable, fully-shipped modules where NDEBT-003b occurred, EXCLUDING ecosystem/, registers, and NIPs -- which legitimately carry forward-refs to planned stages and quoted historical defects -- directly confronting the false-positive risk this item was deferred over. Self-test 46/46; validate 13/13, payload 11/11, e2e green. |
+ | NDEBT-010 | 2026-07-12 | Medium | The Orchestrator role is load-bearing but undefined: `standard/AGF.md` Section 2 defines exactly four roles (Planner/Generator/Validator/Evaluator), yet `standard/capability_profiles.md` ships an `orchestrator-primary` profile while claiming every profile maps to an AGF role, `standard/permission_classes.md` and `standard/mcp_policy.md` allocate orchestrator permissions and tool surfaces, and `methodology/06_release_train.md` concedes AGF defines no release-manager role. The framework's own run history is orchestrator-driven throughout. | RESOLVED 2026-07-19 by phase-006 feature 053, PR #32: `standard/AGF.md` 0.2.0 defines the Orchestrator in Section 2 (coordination/state-ownership -- sequences the four execution roles, parses each gate's JSON verdict and advances only on a pass, owns `run_state.json`'s run-position/coordination fields per Section 5 rule 4, enforces the circuit breaker). The load-bearing references now all resolve: `capability_profiles.md`'s `orchestrator-primary` profile + its 'every role maps to an AGF role' claim (now a true 5-role↔​5-profile correspondence), `permission_classes.md`'s Orchestrator row, `mcp_policy.md`'s Orchestrator surface, and `methodology/06_release_train.md` 0.3.1 (the 'AGF defines no separate release-manager role' concession retired). Three stale 'four agent roles' descriptions of AGF were corrected in-scope (`standard/README.md` 0.2.1, `methodology/01_execution.md` 0.1.1, `methodology/00_planning.md` 0.2.1) -- an NDEBT-005-class enumeration-completeness follow-through the role change created. |
+ | NDEBT-013 | 2026-07-17 | Medium | Reviewer probe isolation was undefined and caused a real incident during phase-005 parallel feature execution: the feature-032 evaluator's dynamic-awareness probe touch/rm'd the REAL path `ecosystem/01_clean_state_preflight.md` to simulate a sibling landing, and deleted feature 033's freshly-authored actual deliverable mid-implementation (033's generator detected the loss, recreated the file identically, and re-verified 14/14 twice; recorded in run_state feature_complete event for 032+033). No protocol forbade probing at real contracted paths. An orchestration-level probe-isolation rule (scratch copies only; never create/touch/delete a sibling's real path, including "simulating" its file landing) was adopted mid-phase via dispatch prompts and prevented recurrence across features 034-040. | RESOLVED 2026-07-19 by phase-006 feature 053: `methodology/02_adversarial_tdd.md` 0.4.0 Section 11 (Probe Isolation) codifies the rule durably -- a probe operates on scratch state only (a session-scratch root held in a variable, never a real contracted path or a bare filename), never creates/touches/deletes a sibling's real path (including 'simulating' that sibling's file landing), and restores any borrowed real tracked file with a trap-based backstop. It names the F-032 incident it remediates, so the rule binds by document rather than by per-dispatch prompt text. |
+ | NDEBT-014 | 2026-07-17 | Medium | Contract-verification authoring has a recurring defect catalogue, each class caught (and fixed) at least once by phase-005 Loop-1/Loop-2 gates but none yet mechanized as reusable guidance or vetted helpers: (1) working-tree-anchored anti-vacuity companions become mutually exclusive with their positive check post-implementation — they must be HEAD-anchored (038 entry-13, discovered at Loop-2, required a ratified amendment); (2) per-feature-ID exclude-list immutability guards are fragile under parallel drafting and need live amendments each time a sibling appears (036 entry-16), whereas 038 amendment_2's two-part invariant (tracked-history clean + untracked additions confined to in-flight-range globs) is robust — the forms should be harmonized; (3) vlib_section_grep is line-based, so required literal phrases split across a markdown line-wrap silently fail (033, 035, 036 all hit this at implementation); (4) bare substring tokens false-pass on containing words ('renewed'⊃'new', 'stalemate'⊃'stale'; 'invalid'⊃'valid' in fixture-name globs) — backtick-delimited code-span tokens or 'neg' naming are the proven fixes; (5) natural-language content bounds (line caps, word caps) cannot stop paraphrase mirroring — only closed-set shapes with exact-text pinning proved airtight (040, three rounds). | RESOLVED 2026-07-19 by phase-006 feature 053: `methodology/02_adversarial_tdd.md` 0.4.0 Section 12 documents the five-class verification-authoring defect catalogue, each with its proven fix (HEAD-anchored anti-vacuity companions; the F-038 two-part immutability invariant; `vlib_section_grep` line-wrap; whole-word/code-span tokens; closed-set exact-text pinning). The mechanizable primitive is added -- `vlib_word_present` (a whole-word, delimited-token match fixing class 4's substring-on-containing-word false-pass, e.g. `renewed`⊃`new`), fixture-tested (`word_present_pass.md`/`word_present_fail.md`, exercised as standing tests by `tools/fixtures_self_test.sh`). Classes 1-2's fixes are documented authoring patterns rather than standalone primitives (they are contextual, not pure functions); the catalogue binds by document so future contracts inherit it instead of rediscovering it gate-by-gate. |
+diff --git a/tools/fixtures/bare_ref_fail.md b/tools/fixtures/bare_ref_fail.md
+new file mode 100644
+index 0000000..cf67fb8
+--- /dev/null
++++ b/tools/fixtures/bare_ref_fail.md
+@@ -0,0 +1,10 @@
++# Bare-reference negative fixture (F-055, NDEBT-005b)
++
++This fixture carries a BARE, stale numbered-document reference: 05_gamma.md,
++whose basename is enumerated by no key_document in the canonical index
++`enum_index.json`. It is the exact NDEBT-003b shape -- a bare `NN_name.md`
++surviving a renumbering -- that C9's `/`-qualification and C10's three
++sub-checks both miss. vlib_bare_ref_resolves must FAIL (return 1) on this file.
++
++The resolving reference 00_alpha.md is included so the guard is shown to flag
++only the stale token, not every bare reference in the file.
+diff --git a/tools/fixtures/bare_ref_pass.md b/tools/fixtures/bare_ref_pass.md
+new file mode 100644
+index 0000000..e32d455
+--- /dev/null
++++ b/tools/fixtures/bare_ref_pass.md
+@@ -0,0 +1,8 @@
++# Bare-reference positive fixture (F-055, NDEBT-005b)
++
++Every BARE numbered-document reference in this file resolves against the
++canonical index `enum_index.json`: see 00_alpha.md and 01_beta.md for the
++governing rules. A `/`-qualified path such as other/09_ignored.md is not a
++bare reference (it carries a directory prefix), so vlib_bare_ref_resolves does
++not check it, and the embedded token in `a01_beta.md` is not a bare reference
++either. vlib_bare_ref_resolves must return 0 for this file.
+diff --git a/tools/fixtures/enum_index.json b/tools/fixtures/enum_index.json
+new file mode 100644
+index 0000000..0634f43
+--- /dev/null
++++ b/tools/fixtures/enum_index.json
+@@ -0,0 +1,12 @@
++{
++  "_fixture": "F-055 (NDEBT-005) canonical-index fixture for vlib_enumeration_complete and vlib_bare_ref_resolves. Intentionally minimal (modules[].key_documents only) -- the guards read nothing else, and this file is exercised solely through those primitives in tools/fixtures_self_test.sh, never validate.sh --target, so it is deliberately not a full nizam-index.schema.json instance.",
++  "modules": [
++    {
++      "path": "m1",
++      "key_documents": [
++        "m1/00_alpha.md",
++        "m1/01_beta.md"
++      ]
++    }
++  ]
++}
+diff --git a/tools/fixtures_self_test.sh b/tools/fixtures_self_test.sh
+index 64af14d..f7264c5 100755
+--- a/tools/fixtures_self_test.sh
++++ b/tools/fixtures_self_test.sh
+@@ -151,6 +151,67 @@ note_covered word_present_fail.md
+ assert_rc "primitive   vlib_word_present pass" 0 vlib_word_present tools/fixtures/word_present_pass.md new
+ assert_rc "primitive   vlib_word_present fail" 1 vlib_word_present tools/fixtures/word_present_fail.md new
+ 
++# vlib_bare_ref_resolves (F-055, NDEBT-005b): bare '05_gamma.md' in the fail
++# fixture is enumerated by no key_document in the canonical index enum_index.json;
++# every bare ref in the pass fixture resolves. Sourced from the canonical index,
++# not a duplicated list.
++note_covered enum_index.json
++note_covered bare_ref_pass.md
++note_covered bare_ref_fail.md
++assert_rc "primitive   vlib_bare_ref_resolves pass" 0 vlib_bare_ref_resolves tools/fixtures/bare_ref_pass.md tools/fixtures/enum_index.json
++assert_rc "primitive   vlib_bare_ref_resolves fail" 1 vlib_bare_ref_resolves tools/fixtures/bare_ref_fail.md tools/fixtures/enum_index.json
++
++# vlib_enumeration_complete (F-055, NDEBT-005a): the guard enumerates a
++# DIRECTORY, so its seeded omission is built in a scratch dir (mktemp + EXIT
++# trap -- Section 11 probe isolation), the same git-scratch pattern the two
++# primitives below use. A dir whose files are all enumerated by enum_index.json
++# passes; adding one on-disk file the index omits must fail.
++_enumeration_complete_scratch() (
++  local d; d=$(mktemp -d) || return 1
++  trap 'rm -rf "${d}"' EXIT
++  mkdir -p "${d}/m1"
++  : > "${d}/m1/00_alpha.md"
++  : > "${d}/m1/01_beta.md"
++  vlib_enumeration_complete tools/fixtures/enum_index.json m1 "${d}/m1" '*.md' >/dev/null 2>&1 || return 1
++  : > "${d}/m1/02_gamma.md"   # seeded omission: on disk, absent from the index
++  vlib_enumeration_complete tools/fixtures/enum_index.json m1 "${d}/m1" '*.md' >/dev/null 2>&1 && return 1
++  return 0
++)
++if _enumeration_complete_scratch; then
++  echo "OK   primitive   vlib_enumeration_complete (complete pass / seeded-omission fail)"
++else
++  echo "FAIL primitive   vlib_enumeration_complete: a scratch assertion did not hold"
++  fail=1
++fi
++
++# Real-tree recurrence guards (the actual NDEBT-005 mechanization, not just
++# fixture discrimination): the canonical index NIZAM.json must enumerate every
++# on-disk governed doc, and no methodology/ or standard/ doc may carry an
++# unresolved bare NN_name.md reference. ecosystem/, registers, and NIPs are
++# out of the bare-ref sweep by design -- they legitimately carry forward-refs
++# to planned-but-unshipped stages and quoted historical defects, the exact
++# false-positive risk NDEBT-005 was deferred over; methodology/ + standard/ are
++# the stable, fully-shipped modules where NDEBT-003b actually occurred.
++_f055_real_tree() {
++  local m f bad=0
++  for m in standard methodology registry ecosystem; do
++    vlib_enumeration_complete NIZAM.json "${m}" "${m}" '*.md' >/dev/null 2>&1 \
++      || { echo "FAIL guard       enumeration real-tree: NIZAM.json omits an on-disk ${m}/ doc"; bad=1; }
++  done
++  [ "${bad}" -eq 0 ] \
++    && echo "OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk)" \
++    || fail=1
++  bad=0
++  for f in methodology/*.md standard/*.md; do
++    vlib_bare_ref_resolves "${f}" NIZAM.json >/dev/null 2>&1 \
++      || { echo "FAIL guard       bare-ref real-tree: ${f} carries an unresolved bare reference"; bad=1; }
++  done
++  [ "${bad}" -eq 0 ] \
++    && echo "OK   guard       vlib_bare_ref_resolves real-tree (methodology/ + standard/ clean)" \
++    || fail=1
++}
++_f055_real_tree
++
+ # vlib_path_resolves: every token line in the pass fixture resolves/exempts
+ # (rc 0); the fail fixture's token does not (rc 1). Tokens resolve relative to
+ # the repo root (this script's CWD).
+diff --git a/tools/verify_lib.sh b/tools/verify_lib.sh
+index 6377ad0..d64cc67 100644
+--- a/tools/verify_lib.sh
++++ b/tools/verify_lib.sh
+@@ -9,14 +9,16 @@
+ # tools/verify_lib.sh` unconditionally without perturbing its own shell
+ # options, output streams, or exit status.
+ #
+-# Exposes six vetted, individually fixture-tested primitives that
+-# contracts (F-024..F-029, F-053) and future `tools/validate.sh` checks should
+-# compose their verification from, instead of re-inventing (and
++# Exposes eight vetted, individually fixture-tested primitives that
++# contracts (F-024..F-029, F-053, F-055) and future `tools/validate.sh` checks
++# should compose their verification from, instead of re-inventing (and
+ # re-breaking) the historical anti-patterns this library exists to fix:
+ # vacuous whole-file greps, `git diff HEAD` scope guards blind to new
+ # untracked files, equal-or-decreasing version "increases", punctuation-
+-# mangled path resolution, stale multi-directory payload enumerations, and
+-# bare-substring matches that false-pass on a containing word.
++# mangled path resolution, stale multi-directory payload enumerations,
++# bare-substring matches that false-pass on a containing word, hand-maintained
++# document enumerations that silently omit a shipped file, and bare (non-`/`-
++# qualified) numbered-document cross-references left stale by a renumbering.
+ #
+ # Dependency-light: bash + coreutils + git + python3 (with PyYAML, already
+ # required by tools/validate.sh). No network access, no vendored
+@@ -27,10 +29,10 @@
+ # from being sourced -- only when explicitly invoked.
+ 
+ # ---------------------------------------------------------------------------
+-# Internal helper (not one of the five named primitives): strips one or
++# Internal helper (not one of the eight named primitives): strips one or
+ # more trailing sentence-punctuation characters from a token. Used by
+ # vlib_path_resolves. Kept private (leading underscore) to keep the
+-# library's public surface to exactly the five documented primitives.
++# library's public surface to exactly the eight documented primitives.
+ # ---------------------------------------------------------------------------
+ 
+ _vlib_strip_trailing_punct() {
+@@ -366,3 +368,158 @@ vlib_word_present() {
+ 
+   grep -qwF -- "${word}" "${file}"
+ }
++
++# ---------------------------------------------------------------------------
++# vlib_enumeration_complete <index-json> <module-key> <dir> [glob]
++#
++# Sources the canonical index <index-json> (a nizam-index-shaped JSON with a
++# top-level "modules" array of {"path", "key_documents": [...]}), selects the
++# module whose "path" equals <module-key>, and asserts that EVERY file in <dir>
++# matching [glob] (default '*.md') is enumerated -- by basename -- in that
++# module's key_documents list. This is the disk->index (completeness)
++# direction that tools/validate.sh C4 does NOT cover: C4 checks index->disk
++# (every listed doc resolves on disk -- no dangling entry), while this checks
++# the reverse (no on-disk document is silently OMITTED from the canonical
++# index). The NDEBT-005 recurrence guard for the enumeration-completeness
++# defect class F-027 fixed by hand (NDEBT-003a: a key-documents list dropping
++# a shipped file) -- resolution sourced from the single canonical index, never
++# a re-derived or duplicated list.
++#
++# Args:
++#   index-json: path to the canonical index JSON.
++#   module-key: the module's "path" value to select within the index.
++#   dir:        the on-disk directory whose files are checked for enumeration.
++#   glob:       optional filename glob (default '*.md').
++#
++# Returns:
++#   0 if every matching on-disk file is enumerated in the index for the module.
++#   1 otherwise (index/dir unreadable, index unpariseable, module absent, or an
++#     on-disk file is missing from key_documents -- the omission(s) printed).
++# ---------------------------------------------------------------------------
++
++vlib_enumeration_complete() {
++  local index="$1"
++  local module_key="$2"
++  local dir="$3"
++  local glob="${4:-*.md}"
++
++  [ -f "${index}" ] || { echo "vlib_enumeration_complete: index not found: ${index}"; return 1; }
++  [ -d "${dir}" ] || { echo "vlib_enumeration_complete: dir not found: ${dir}"; return 1; }
++
++  python3 - "${index}" "${module_key}" "${dir}" "${glob}" <<'PY'
++import glob as globmod
++import json
++import os
++import sys
++
++index_path, module_key, directory, pattern = sys.argv[1:5]
++
++try:
++    with open(index_path, encoding="utf-8") as fh:
++        index = json.load(fh)
++except (OSError, json.JSONDecodeError) as exc:
++    print(f"vlib_enumeration_complete: cannot read index {index_path}: {exc}")
++    sys.exit(1)
++
++modules = index.get("modules")
++if not isinstance(modules, list):
++    print(f"vlib_enumeration_complete: index {index_path} has no 'modules' array")
++    sys.exit(1)
++
++listed = None
++for module in modules:
++    if isinstance(module, dict) and module.get("path") == module_key:
++        listed = module.get("key_documents", [])
++        break
++if listed is None:
++    print(f"vlib_enumeration_complete: module '{module_key}' not present in index {index_path}")
++    sys.exit(1)
++
++listed_basenames = {os.path.basename(p) for p in listed if isinstance(p, str)}
++on_disk = sorted(
++    os.path.basename(p)
++    for p in globmod.glob(os.path.join(directory, pattern))
++    if os.path.isfile(p)
++)
++omitted = [b for b in on_disk if b not in listed_basenames]
++if omitted:
++    print(
++        f"vlib_enumeration_complete: {directory} file(s) omitted from '{module_key}' "
++        f"key_documents in {index_path}: {omitted}"
++    )
++    sys.exit(1)
++sys.exit(0)
++PY
++}
++
++# ---------------------------------------------------------------------------
++# vlib_bare_ref_resolves <file> <index-json>
++#
++# Scans <file> for BARE numbered-document references -- a 'NN_name.md' token
++# (two digits, an underscore, a name, then '.md') that is NOT '/'-qualified
++# (carries no directory prefix). For each bare token, asserts its basename
++# appears among the basenames of the canonical index <index-json>'s
++# key_documents. tools/validate.sh C9 resolves only '/'-qualified path tokens
++# and C10's three sub-checks never inspect a bare filename, so a bare
++# 'NN_name.md' left stale by a renumbering (the NDEBT-003b defect: a bare
++# '05_release_train.md' surviving after the file became '06_release_train.md')
++# slips past both. The NDEBT-005 recurrence guard for that class -- resolution
++# sourced from the canonical index, not a re-derived list.
++#
++# Args:
++#   file:       path to the text file to scan.
++#   index-json: path to the canonical index JSON supplying the valid basenames.
++#
++# Returns:
++#   0 if every bare NN_name.md token resolves to an indexed basename (or the
++#     file contains no bare tokens at all).
++#   1 otherwise (file/index unreadable, index unparseable, or a bare token does
++#     not resolve -- the unresolved token(s) are printed).
++# ---------------------------------------------------------------------------
++
++vlib_bare_ref_resolves() {
++  local file="$1"
++  local index="$2"
++
++  [ -f "${file}" ] || { echo "vlib_bare_ref_resolves: file not found: ${file}"; return 1; }
++  [ -f "${index}" ] || { echo "vlib_bare_ref_resolves: index not found: ${index}"; return 1; }
++
++  python3 - "${file}" "${index}" <<'PY'
++import json
++import os
++import re
++import sys
++
++file_path, index_path = sys.argv[1:3]
++
++try:
++    with open(index_path, encoding="utf-8") as fh:
++        index = json.load(fh)
++except (OSError, json.JSONDecodeError) as exc:
++    print(f"vlib_bare_ref_resolves: cannot read index {index_path}: {exc}")
++    sys.exit(1)
++
++basenames = set()
++for module in index.get("modules", []):
++    if isinstance(module, dict):
++        for kd in module.get("key_documents", []):
++            if isinstance(kd, str):
++                basenames.add(os.path.basename(kd))
++
++try:
++    with open(file_path, encoding="utf-8") as fh:
++        text = fh.read()
++except OSError as exc:
++    print(f"vlib_bare_ref_resolves: cannot read {file_path}: {exc}")
++    sys.exit(1)
++
++# Bare NN_name.md: two digits, '_', word chars, '.md'; NOT preceded by '/' or a
++# word char, so 'dir/05_x.md' (qualified) and 'a05_x.md' (embedded) never match.
++bare = re.compile(r"(?<![/\w])([0-9]{2}_[A-Za-z0-9_]+\.md)\b")
++unresolved = sorted({m.group(1) for m in bare.finditer(text) if m.group(1) not in basenames})
++if unresolved:
++    print(f"vlib_bare_ref_resolves: {file_path}: unresolved bare reference(s): {unresolved}")
++    sys.exit(1)
++sys.exit(0)
++PY
++}

@@ -1,0 +1,26 @@
+# .agent/evidence/055-verify-12.txt
+# Contract 055 verification entry 12 -- captured 2026-07-19 at deliverable commit f2c109a (HEAD~1 = F-053 merge 5d49fb5)
+# ACCEPTANCE TEST: DOCS/DEBT SYNCED: DEBT 0.24.0 has NDEBT-005 in Resolved (not Open); verify_lib header documents eight primitives; CHANGELOG [Unreleased] names the F-055 entry.
+# --- command (from .agent/contracts/055.json verification[12].command) ---
+set -e
+grep -Fq 'version: 0.24.0' docs/planning/DEBT.md
+python3 - <<'PY'
+import re
+sect=None; resolved=set(); openset=set()
+for l in open('docs/planning/DEBT.md'):
+    if l.startswith('## Open'): sect='open'
+    elif l.startswith('## Resolved'): sect='resolved'
+    m=re.match(r'\| (NDEBT-\d+) ', l)
+    if m and sect=='resolved': resolved.add(m.group(1))
+    if m and sect=='open': openset.add(m.group(1))
+assert 'NDEBT-005' in resolved, 'NDEBT-005 not Resolved'
+assert 'NDEBT-005' not in openset, 'NDEBT-005 still Open'
+print('debt ok')
+PY
+grep -Fq 'exactly the eight documented primitives' tools/verify_lib.sh
+sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' CHANGELOG.md | grep -Fq 'Enumeration/bare-ref recurrence guards'
+echo 'E12 PASS: DEBT 0.24.0 (NDEBT-005 Resolved, not Open); verify_lib header eight; CHANGELOG names the F-055 entry'
+# --- output ---
+debt ok
+E12 PASS: DEBT 0.24.0 (NDEBT-005 Resolved, not Open); verify_lib header eight; CHANGELOG names the F-055 entry
+[exit 0]

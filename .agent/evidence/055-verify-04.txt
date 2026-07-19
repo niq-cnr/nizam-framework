@@ -1,0 +1,22 @@
+# .agent/evidence/055-verify-04.txt
+# Contract 055 verification entry 04 -- captured 2026-07-19 at deliverable commit f2c109a (HEAD~1 = F-053 merge 5d49fb5)
+# ACCEPTANCE TEST: vlib_enumeration_complete DISCRIMINATES (seeded omission, Section 11 probe isolation): a scratch dir whose files are all enumerated by enum_index.json passes; adding one on-disk file the index omits returns exactly 1.
+# --- command (from .agent/contracts/055.json verification[04].command) ---
+set -e
+: "${SB:?SB (session scratch root) must be set for probe isolation}"
+case "$SB" in /*) ;; *) echo 'E04 ABORT: SB not absolute'; exit 1;; esac
+source tools/verify_lib.sh
+S="$SB/e04"
+case "$S" in "$PWD"/*) echo 'E04 ABORT: scratch path inside repo'; exit 1;; esac
+rm -rf -- "$S"; mkdir -p -- "$S/m1"
+: > "$S/m1/00_alpha.md"; : > "$S/m1/01_beta.md"
+vlib_enumeration_complete tools/fixtures/enum_index.json m1 "$S/m1" '*.md'
+: > "$S/m1/02_gamma.md"
+set +e; vlib_enumeration_complete tools/fixtures/enum_index.json m1 "$S/m1" '*.md'; rc=$?; set -e
+test $rc -eq 1
+rm -rf -- "$S"
+echo 'E04 PASS: enumeration guard passes a complete dir, returns 1 on a seeded omission (sourced from enum_index.json)'
+# --- output ---
+vlib_enumeration_complete: /tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/e04/m1 file(s) omitted from 'm1' key_documents in tools/fixtures/enum_index.json: ['02_gamma.md']
+E04 PASS: enumeration guard passes a complete dir, returns 1 on a seeded omission (sourced from enum_index.json)
+[exit 0]

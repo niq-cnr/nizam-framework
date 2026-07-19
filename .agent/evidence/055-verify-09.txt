@@ -1,0 +1,16 @@
+# .agent/evidence/055-verify-09.txt
+# Contract 055 verification entry 09 -- captured 2026-07-19 at deliverable commit f2c109a (HEAD~1 = F-053 merge 5d49fb5)
+# ACCEPTANCE TEST: SELF-TEST 46/46 + WIRED: the two new fixtures + enum_index.json are accounted for, and the five F-055 assertion lines (2 bare-ref, 1 enumeration discrimination, 2 real-tree guards) all report OK.
+# --- command (from .agent/contracts/055.json verification[09].command) ---
+set -e
+out=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SELF-TEST OK: 46/46 fixtures accounted for, 0 failed'
+printf '%s\n' "$out" | grep -Eq 'OK +primitive +vlib_bare_ref_resolves pass'
+printf '%s\n' "$out" | grep -Eq 'OK +primitive +vlib_bare_ref_resolves fail'
+printf '%s\n' "$out" | grep -Eq 'OK +primitive +vlib_enumeration_complete '
+printf '%s\n' "$out" | grep -Eq 'OK +guard +vlib_enumeration_complete real-tree'
+printf '%s\n' "$out" | grep -Eq 'OK +guard +vlib_bare_ref_resolves real-tree'
+echo 'E09 PASS: self-test 46/46 with all five F-055 assertion lines present'
+# --- output ---
+E09 PASS: self-test 46/46 with all five F-055 assertion lines present
+[exit 0]

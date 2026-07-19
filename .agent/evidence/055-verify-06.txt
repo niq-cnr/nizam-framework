@@ -1,0 +1,18 @@
+# .agent/evidence/055-verify-06.txt
+# Contract 055 verification entry 06 -- captured 2026-07-19 at deliverable commit f2c109a (HEAD~1 = F-053 merge 5d49fb5)
+# ACCEPTANCE TEST: BARE-REF REAL-TREE recurrence guard + load-bearing: every methodology/ + standard/ doc resolves its bare refs against NIZAM.json (rc 0); a seeded bare '05_release_train.md' (the exact NDEBT-003b shape) FAILS.
+# --- command (from .agent/contracts/055.json verification[06].command) ---
+set -e
+source tools/verify_lib.sh
+for f in methodology/*.md standard/*.md; do vlib_bare_ref_resolves "$f" NIZAM.json; done
+: "${SB:?SB must be set}"; case "$SB" in /*) ;; *) exit 1;; esac
+S="$SB/e06"; case "$S" in "$PWD"/*) exit 1;; esac; rm -rf -- "$S"; mkdir -p -- "$S"
+printf 'A stale bare ref: 05_release_train.md (the file is now 06_release_train.md).\n' > "$S/probe.md"
+set +e; vlib_bare_ref_resolves "$S/probe.md" NIZAM.json; rc=$?; set -e
+test $rc -eq 1
+rm -rf -- "$S"
+echo 'E06 PASS: methodology/ + standard/ bare refs all resolve; a seeded bare 05_release_train.md FAILS (load-bearing, NDEBT-003b shape)'
+# --- output ---
+vlib_bare_ref_resolves: /tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/e06/probe.md: unresolved bare reference(s): ['05_release_train.md']
+E06 PASS: methodology/ + standard/ bare refs all resolve; a seeded bare 05_release_train.md FAILS (load-bearing, NDEBT-003b shape)
+[exit 0]
