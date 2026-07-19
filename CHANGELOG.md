@@ -7,6 +7,31 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- `tools/validate.sh` check **C13** (skill-index integrity; phase 006 feature
+  049, resolving NDEBT-007): `tools/skill.json` is JSON-parsed and its
+  `entry_point` plus every `capabilities[].module` pointer must resolve to an
+  existing file — the enforcement hole that let the `release_train` capability
+  ship a retired module pointer from v0.4.0 through v0.5.3 undetected is
+  closed. Runs in the full sweep (SUMMARY migrates `12 passed` → `13 passed`)
+  and in `--payload` mode (`10 passed` → `11 passed`), where pointers into the
+  non-injected directories are skipped pending the F-051 payload-contract
+  decision. Negative fixture
+  `tools/fixtures/skill_index_neg_dangling_module.json` reproduces the defect
+  class; `tools/README.md` (0.4.0) and the `NIZAM.json` validator capability
+  summary document the C1–C13 set.
+
+### Fixed
+
+- `tools/validate.sh` C4 payload mode: `ecosystem` joined the non-injected
+  carve-out set (`methodology`, `registry`, `docs`). NIZAM.json has indexed
+  `ecosystem/` paths since feature 040, but `bootstrap.sh` does not inject the
+  directory, so a real consumer v0.7.0 payload would have false-failed C4 —
+  masked in the framework's own payload-mode runs because the directory exists
+  on disk here. Registered as an NDEBT-008 broadening; the carve-out narrows
+  again when F-051 decides the payload contract.
+
 ## [0.7.0] - 2026-07-17
 
 ### Added

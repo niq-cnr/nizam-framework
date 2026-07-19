@@ -70,7 +70,7 @@ if any is missing): bash, git, grep, find, awk, python3 -- with python3's
 installs or vendors these dependencies itself.
 
 Modes:
-  (no arguments)      Full repo sweep. Runs all 12 checks (C1-C12) and
+  (no arguments)      Full repo sweep. Runs all 13 checks (C1-C13) and
                       prints one PASS/FAIL line per check plus a final
                       summary line. Exits 0 only if every check passed.
 
@@ -322,6 +322,22 @@ file(s)/detail(s) printed on the following indented line(s)):
       acceptance test requires payload-mode fixture coverage; consumer
       payloads carry no governed `.agent/` audit trail for these families
       to reconcile against).
+
+  C13 Skill-index integrity (does every capability pointer in
+      tools/skill.json resolve?). JSON-parses `tools/skill.json` and
+      requires the `entry_point` and every `capabilities[].module` path to
+      resolve to an existing file; a missing/empty `entry_point` or an
+      empty `capabilities` array is itself a FAIL, so the check cannot go
+      vacuous. Closes NDEBT-007: the release_train capability shipped a
+      retired module pointer from v0.4.0 through v0.5.3 because nothing
+      parsed this file's content. Runs in the full sweep AND under
+      `--payload`; in payload mode, pointers into the non-injected
+      directories (methodology/, registry/, docs/, ecosystem/) are
+      skipped -- the same carve-out set C4 uses -- pending the F-051
+      payload-contract decision (NDEBT-008). Negative fixture:
+      `tools/fixtures/skill_index_neg_dangling_module.json` (exercised by
+      substituting it for tools/skill.json in a scratch clone; standing
+      self-test wiring is feature 052 / NDEBT-009 scope).
 
 Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,
 consistently): CONTEXT.md; every .md under docs/architecture/; every .md
@@ -679,7 +695,13 @@ if not paths:
     sys.exit(1)
 
 if mode == "payload":
-    skipped_dirs = {"methodology", "registry", "docs"}
+    # "ecosystem" joined this set in feature 049: NIZAM.json has indexed
+    # ecosystem/ paths since feature 040, but ecosystem/ is not part of the
+    # bootstrap-injected payload, so a REAL consumer install would false-fail
+    # C4 here (the framework's own payload-mode run masked it because the
+    # directory exists on disk in the framework checkout). NDEBT-008 class;
+    # the F-051 payload-contract decision may narrow this set again.
+    skipped_dirs = {"methodology", "registry", "docs", "ecosystem"}
     paths = [
         p for p in paths
         if p != "NA"
@@ -1425,6 +1447,83 @@ PY
   return 1
 }
 
+# C13 -- skill-index integrity (NDEBT-007 fix, feature 049): JSON-parses
+# tools/skill.json and resolves its entry_point and every
+# capabilities[].module pointer to an existing file. Closes the enforcement
+# hole that let the release_train capability ship a retired module pointer
+# from v0.4.0 through v0.5.3 undetected (C4 parses only NIZAM.json; C9
+# sweeps only .md/.html bodies; the e2e harness asserts only the file's
+# existence). In payload mode, pointers into the non-injected directories
+# (methodology/, registry/, docs/, ecosystem/) are skipped -- the same
+# carve-out set C4 uses -- because bootstrap.sh does not inject them; the
+# F-051 payload-contract decision (NDEBT-008) will narrow or retire that
+# carve-out. Structural honesty: a missing/empty entry_point or an empty
+# capabilities array is itself a FAIL, so the check cannot go vacuous.
+#
+# check_c13_skill_index [payload]
+check_c13_skill_index() {
+  local mode="${1:-default}"
+  local out
+  if out=$(python3 - "${mode}" <<'PY'
+import json
+import os
+import sys
+
+mode = sys.argv[1]
+SKIPPED_DIR_PREFIXES = ("methodology/", "registry/", "docs/", "ecosystem/")
+
+try:
+    with open("tools/skill.json", encoding="utf-8") as fh:
+        skill = json.load(fh)
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"tools/skill.json unreadable or not valid JSON: {exc}")
+    sys.exit(1)
+
+problems = []
+paths = []
+
+entry_point = skill.get("entry_point")
+if not entry_point:
+    problems.append("entry_point missing or empty")
+else:
+    paths.append(("entry_point", entry_point))
+
+capabilities = skill.get("capabilities")
+if not isinstance(capabilities, list) or not capabilities:
+    problems.append("capabilities missing or empty")
+    capabilities = []
+
+for index, capability in enumerate(capabilities):
+    module = capability.get("module") if isinstance(capability, dict) else None
+    label = f"capabilities[{index}] ({capability.get('name', '?') if isinstance(capability, dict) else '?'})"
+    if not module:
+        problems.append(f"{label} has no module pointer")
+        continue
+    paths.append((label, module))
+
+for label, path in paths:
+    if mode == "payload" and path.startswith(SKIPPED_DIR_PREFIXES):
+        continue
+    if not os.path.isfile(path):
+        problems.append(f"{label} -> {path} does not resolve to a file")
+
+for problem in problems:
+    print(problem)
+sys.exit(1 if problems else 0)
+PY
+  ); then
+    if [ "${mode}" = "payload" ]; then
+      echo "[C13] PASS skill-index (payload mode: non-injected module dirs skipped pending the F-051 payload-contract decision)"
+    else
+      echo "[C13] PASS skill-index"
+    fi
+    return 0
+  fi
+  echo "[C13] FAIL skill-index"
+  printf '%s\n' "${out}" | sed 's/^/  /'
+  return 1
+}
+
 # check_c11_or_c4_target <file>
 #
 # --target dispatcher for a `.json` file: content-routes using the FULL
@@ -1568,6 +1667,7 @@ main() {
     check_c9_path_resolution "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c10_consistency "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c11_dogfood_payload_skip && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c13_skill_index payload && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY (payload mode): ${passed} passed, ${failed} failed"
   else
@@ -1594,6 +1694,7 @@ main() {
     check_c10_consistency "${c9_default_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c11_dogfood_sweep && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c12_ecosystem_fixtures && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c13_skill_index && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY: ${passed} passed, ${failed} failed"
   fi
