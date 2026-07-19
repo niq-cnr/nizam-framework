@@ -1527,12 +1527,22 @@ except (OSError, json.JSONDecodeError) as exc:
     print(f"tools/skill.json unreadable or not valid JSON: {exc}")
     sys.exit(1)
 
+# Shape/type hardening (PR #28 review): valid JSON that is not the expected
+# object -- null, a list, a scalar -- or a truthy non-string entry_point/
+# module would otherwise reach .get()/os.path APIs and raise an
+# AttributeError/TypeError traceback. Report those as actionable C13
+# failures instead (the check still FAILs either way; this makes the
+# failure legible rather than a stack trace).
+if not isinstance(skill, dict):
+    print(f"tools/skill.json must be a JSON object, got {type(skill).__name__}")
+    sys.exit(1)
+
 problems = []
 paths = []
 
 entry_point = skill.get("entry_point")
-if not entry_point:
-    problems.append("entry_point missing or empty")
+if not isinstance(entry_point, str) or not entry_point:
+    problems.append("entry_point missing, empty, or not a string")
 else:
     paths.append(("entry_point", entry_point))
 
@@ -1544,8 +1554,8 @@ if not isinstance(capabilities, list) or not capabilities:
 for index, capability in enumerate(capabilities):
     module = capability.get("module") if isinstance(capability, dict) else None
     label = f"capabilities[{index}] ({capability.get('name', '?') if isinstance(capability, dict) else '?'})"
-    if not module:
-        problems.append(f"{label} has no module pointer")
+    if not isinstance(module, str) or not module:
+        problems.append(f"{label} has no non-empty string module pointer")
         continue
     paths.append((label, module))
 
