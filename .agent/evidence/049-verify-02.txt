@@ -1,0 +1,10 @@
+# .agent/evidence/049-verify-02.txt
+# Contract 049 verification entry 02 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: C13 IS WIRED IN BOTH SWEEP BRANCHES: the function exists once and is invoked in the default branch (no argument) and in the payload branch (with the payload argument).
+$ set -e
+test "$(grep -c 'check_c13_skill_index() {' tools/validate.sh)" = "1"
+grep -Eq '^[[:space:]]*check_c13_skill_index && passed=' tools/validate.sh
+grep -Eq '^[[:space:]]*check_c13_skill_index payload && passed=' tools/validate.sh
+echo 'E02 PASS'
+E02 PASS
+[exit 0]

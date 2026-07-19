@@ -1,0 +1,18 @@
+# .agent/evidence/049-verify-08.txt
+# Contract 049 verification entry 08 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: STRUCTURAL-HONESTY GUARD (the check cannot go vacuous): a scratch clone whose tools/skill.json has an empty capabilities array FAILs C13 with the 'capabilities missing or empty' finding.
+$ set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f049"/vacclone
+rm -rf "$S"; mkdir -p "$S"
+git clone -q . "$S"
+printf '%s' '{"entry_point": "tools/SKILL.md", "capabilities": []}' > "$S/tools/skill.json"
+set +e
+out=$(cd "$S" && bash tools/validate.sh 2>&1); rc=$?
+set -e
+test $rc -ne 0
+printf '%s\n' "$out" | grep -Fxq '[C13] FAIL skill-index'
+printf '%s\n' "$out" | grep -Fq 'capabilities missing or empty'
+rm -rf "$S"
+echo "E08 PASS (empty capabilities is a named FAIL, not a vacuous pass)" 
+E08 PASS (empty capabilities is a named FAIL, not a vacuous pass)
+[exit 0]

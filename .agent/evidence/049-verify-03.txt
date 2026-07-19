@@ -1,0 +1,14 @@
+# .agent/evidence/049-verify-03.txt
+# Contract 049 verification entry 03 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: DEFAULT SWEEP GREEN AT 13, EXIT CODE ASSERTED: bash tools/validate.sh exits 0, its final line is exactly 'SUMMARY: 13 passed, 0 failed', and a '[C13] PASS skill-index' line is present.
+$ out=$(bash tools/validate.sh 2>&1); rc=$?
+printf '%s\n' "$out" | tail -3
+test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'
+printf '%s\n' "$out" | grep -Fxq '[C13] PASS skill-index'
+echo "E03 PASS (rc=$rc)" 
+[C12] PASS ecosystem-fixtures
+[C13] PASS skill-index
+SUMMARY: 13 passed, 0 failed
+E03 PASS (rc=0)
+[exit 0]

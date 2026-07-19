@@ -1,0 +1,170 @@
+set -e
+! git show HEAD~1:tools/validate.sh | grep -Fq 'check_c13_skill_index'
+git show HEAD~1:tools/validate.sh | grep -Fq 'skipped_dirs = {"methodology", "registry", "docs"}'
+! git cat-file -e HEAD~1:tools/fixtures/skill_index_neg_dangling_module.json 2>/dev/null
+git show HEAD~1:tools/README.md | grep -Fq 'version: 0.3.1'
+git show HEAD~1:tools/README.md | grep -Fq 'C1–C12'
+git show HEAD~1:NIZAM.json | grep -Fq 'checks C1-C12'
+test "$(git show HEAD~1:CHANGELOG.md | sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' | grep -c '^- ')" = "0"
+echo 'E01 PASS: all deliverables absent at HEAD~1 (anti-vacuity)'
+E01 PASS: all deliverables absent at HEAD~1 (anti-vacuity)
+EXIT:0
+-----
+set -e
+test "$(grep -c 'check_c13_skill_index() {' tools/validate.sh)" = "1"
+grep -Eq '^[[:space:]]*check_c13_skill_index && passed=' tools/validate.sh
+grep -Eq '^[[:space:]]*check_c13_skill_index payload && passed=' tools/validate.sh
+echo 'E02 PASS'
+E02 PASS
+EXIT:0
+-----
+out=$(bash tools/validate.sh 2>&1); rc=$?
+printf '%s\n' "$out" | tail -3
+test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'
+printf '%s\n' "$out" | grep -Fxq '[C13] PASS skill-index'
+echo "E03 PASS (rc=$rc)" 
+[C12] PASS ecosystem-fixtures
+[C13] PASS skill-index
+SUMMARY: 13 passed, 0 failed
+E03 PASS (rc=0)
+EXIT:0
+-----
+out=$(bash tools/validate.sh --payload 2>&1); rc=$?
+printf '%s\n' "$out" | tail -3
+test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'
+printf '%s\n' "$out" | grep -Fq '[C13] PASS skill-index (payload mode:'
+echo "E04 PASS (rc=$rc)" 
+[C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+[C13] PASS skill-index (payload mode: non-injected module dirs skipped pending the F-051 payload-contract decision)
+SUMMARY (payload mode): 11 passed, 0 failed
+E04 PASS (rc=0)
+EXIT:0
+-----
+set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f049"/negclone
+rm -rf "$S"; mkdir -p "$S"
+git clone -q . "$S"
+cp tools/fixtures/skill_index_neg_dangling_module.json "$S/tools/skill.json"
+set +e
+out=$(cd "$S" && bash tools/validate.sh 2>&1); rc=$?
+set -e
+test $rc -ne 0
+printf '%s\n' "$out" | grep -Fxq '[C13] FAIL skill-index'
+printf '%s\n' "$out" | grep -Fq 'methodology/99_retired.md does not resolve to a file'
+printf '%s\n' "$out" | grep -F '[C13]'
+rm -rf "$S"
+echo "E05 PASS (scratch sweep rc=$rc, C13 FAIL named the dangling pointer)" 
+[C13] FAIL skill-index
+E05 PASS (scratch sweep rc=1, C13 FAIL named the dangling pointer)
+EXIT:0
+-----
+set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f049"/paysim
+rm -rf "$S"; mkdir -p "$S"
+cp -r standard templates schema tools "$S/"
+cp NIZAM.json "$S/"
+(cd "$S" && git init -q && git add -A && git -c user.email=sim@sim -c user.name=sim commit -qm sim)
+git show HEAD~1:tools/validate.sh > "$S/tools/validate.sh"
+set +e
+before=$(cd "$S" && bash tools/validate.sh --payload 2>&1); rc_before=$?
+set -e
+printf '%s\n' "$before" | grep -F '[C4]'
+printf '%s\n' "$before" | grep -Fq '[C4] FAIL'
+git show HEAD:tools/validate.sh > "$S/tools/validate.sh"
+set +e
+after=$(cd "$S" && bash tools/validate.sh --payload 2>&1); rc_after=$?
+set -e
+printf '%s\n' "$after" | grep -F -e '[C4]' -e '[C13]'
+printf '%s\n' "$after" | grep -Fq '[C4] PASS'
+printf '%s\n' "$after" | grep -Fq '[C13] PASS skill-index (payload mode:'
+rm -rf "$S"
+echo "E06 PASS (before: C4 FAIL on real-consumer sim; after: C4 PASS + C13 PASS)" 
+[C4] FAIL index-integrity
+[C4] PASS index-integrity
+[C13] PASS skill-index (payload mode: non-injected module dirs skipped pending the F-051 payload-contract decision)
+E06 PASS (before: C4 FAIL on real-consumer sim; after: C4 PASS + C13 PASS)
+EXIT:0
+-----
+python3 - <<'PY'
+import json
+f=json.load(open('tools/fixtures/skill_index_neg_dangling_module.json'))
+assert f['entry_point']=='tools/SKILL.md'
+mods=[c['module'] for c in f['capabilities']]
+import os
+dangling=[m for m in mods if not os.path.isfile(m)]
+valid=[m for m in mods if os.path.isfile(m)]
+assert dangling==['methodology/99_retired.md'], dangling
+assert valid==['methodology/00_planning.md'], valid
+name='skill_index_neg_dangling_module.json'
+assert not name.startswith(('ecosystem_baseline','preflight_verdict','engineering_finding'))
+print('E07 PASS: fixture shape, single dangling pointer, C12-prefix-safe name')
+PY
+E07 PASS: fixture shape, single dangling pointer, C12-prefix-safe name
+EXIT:0
+-----
+set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f049"/vacclone
+rm -rf "$S"; mkdir -p "$S"
+git clone -q . "$S"
+printf '%s' '{"entry_point": "tools/SKILL.md", "capabilities": []}' > "$S/tools/skill.json"
+set +e
+out=$(cd "$S" && bash tools/validate.sh 2>&1); rc=$?
+set -e
+test $rc -ne 0
+printf '%s\n' "$out" | grep -Fxq '[C13] FAIL skill-index'
+printf '%s\n' "$out" | grep -Fq 'capabilities missing or empty'
+rm -rf "$S"
+echo "E08 PASS (empty capabilities is a named FAIL, not a vacuous pass)" 
+E08 PASS (empty capabilities is a named FAIL, not a vacuous pass)
+EXIT:0
+-----
+set -e
+grep -Fq 'version: 0.4.0' tools/README.md
+grep -Fq 'C1–C13' tools/README.md
+grep -Fq '| C13 | Skill-index integrity |' tools/README.md
+grep -Fq 'SUMMARY: 13 passed, 0 failed' tools/README.md
+grep -Fq 'checks C1-C13' NIZAM.json
+grep -Fq 'skill-index integrity' NIZAM.json
+sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' CHANGELOG.md | grep -Fq 'check **C13**'
+sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' CHANGELOG.md | grep -Fq '`ecosystem` joined the non-injected'
+echo 'E09 PASS'
+E09 PASS
+EXIT:0
+-----
+python3 - <<'PY'
+import re
+lines=open('docs/planning/DEBT.md',encoding='utf-8').readlines()
+row=[l for l in lines if l.startswith('| NDEBT-008 ')]
+assert len(row)==1
+assert 'BROADENED by feature 049' in row[0]
+cells=re.split(r'(?<!\\)\|', row[0].strip())
+assert len(cells)-2==5, len(cells)-2
+assert 'version: 0.17.0' in ''.join(lines[:8])
+open_sect=True; sevs=[]
+for l in lines:
+    if l.startswith('## Resolved'): open_sect=False
+    if open_sect and l.startswith('| NDEBT'):
+        sevs.append(re.split(r'(?<!\\)\|', l.strip())[3].strip())
+assert set(sevs) <= {'Low','Medium'}, sorted(set(sevs))
+print('E10 PASS: NDEBT-008 broadened, 5 cells, 0.17.0, Open severities', sorted(set(sevs)))
+PY
+E10 PASS: NDEBT-008 broadened, 5 cells, 0.17.0, Open severities ['Low', 'Medium']
+EXIT:0
+-----
+out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?
+printf '%s\n' "$out" | tail -1
+test $rc -eq 0
+echo "E11 PASS (rc=$rc)" 
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1784421565-18294, target /tmp/tmp.sDcH61uYa9/.nizam).
+E11 PASS (rc=0)
+EXIT:0
+-----
+set -e
+test "$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr '\n' ' ')" = "CHANGELOG.md NIZAM.json docs/planning/DEBT.md tools/README.md tools/fixtures/skill_index_neg_dangling_module.json tools/validate.sh "
+test -z "$(git diff --name-only HEAD~1..HEAD -- .agent/)"
+echo 'E12 PASS'
+E12 PASS
+EXIT:0
+-----

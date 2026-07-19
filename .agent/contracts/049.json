@@ -1,0 +1,107 @@
+{
+  "contract_id": "049",
+  "feature_id": "049",
+  "name": "Gate tools/skill.json Content -- validator check C13 (NDEBT-007) + C4 payload ecosystem carve-out (NDEBT-008 broadening)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_006.md",
+  "design_notes": {
+    "what_this_feature_is": "Phase-006 F-049 (DAG root, ungated): mechanize the skill.json enforcement NDEBT-007 records as missing. New validator check C13 JSON-parses tools/skill.json and resolves entry_point + every capabilities[].module; runs in the default sweep (SUMMARY 12->13) and payload mode (10->11) with the non-injected-dirs carve-out mirroring C4's, pending F-051.",
+    "live_discovery": "Building the carve-out exposed a masked consumer-reality bug: C4's payload skipped_dirs predated F-040 and lacked 'ecosystem', so a REAL consumer v0.7.0 payload would false-fail C4 on the ecosystem/ paths NIZAM.json indexes (the framework's own payload runs masked it because the directory exists on disk in a framework checkout). Fixed with the one-word set addition, proven by E06's before/after consumer simulation, and recorded as an NDEBT-008 broadening rather than silently patched.",
+    "process_honesty": "Single-session execution, roles collapsed (046-048 precedent, re-disclosed at phase activation): contract, implementation, verification, and QA authored and executed in-session; all 12 entries ran live with captured evidence; scratch probes used only session-scratchpad paths and scratch clones (NDEBT-013/020 probe-isolation rule), never a real repository path.",
+    "vacuity_guards": "E01 anchors anti-vacuity to the true pre-implementation commit; E05/E08 prove the check is load-bearing (dangling pointer) and structurally honest (empty capabilities) end-to-end in scratch clones; E06 proves the C4 fix against the real defect, not a synthetic one."
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/fixtures/skill_index_neg_dangling_module.json",
+        "purpose": "Negative fixture reproducing the v0.4.0-v0.5.3 release_train defect class: one dangling capabilities[].module pointer beside a valid control entry; name avoids the C12 family prefixes; standing self-test wiring is F-052 scope."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/validate.sh",
+        "purpose": "Add check_c13_skill_index (default + payload modes, structural-honesty FAILs, carve-out set {methodology/, registry/, docs/, ecosystem/}); wire into both sweep branches; add 'ecosystem' to C4's payload skipped_dirs with the masking explanation; update the help enumerations (13 checks) and the C13 description block."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "0.4.0: C1-C13 heading, C13 coverage row, 13-passed total, change_log entry."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Validator capability summary C1-C12 -> C1-C13 with the skill-index clause."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "[Unreleased] Added (C13) + Fixed (C4 ecosystem carve-out) entries, satisfying C8 for the tools/README bump."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "0.17.0: append the feature-049 broadening to the NDEBT-008 description (14 capabilities, 10 non-injected; the masked C4 consumer false-fail; both interim carve-outs pending F-051)."
+      }
+    ]
+  },
+  "non_goals": [
+    "No preemption of the F-051 payload-contract decision: both carve-outs are explicitly interim, annotated in code, help text, README, CHANGELOG, and the NDEBT-008 row.",
+    "No self-test/CI wiring for the new fixture (F-052 / NDEBT-009 scope) and no --target routing for it (NDEBT-015 scope).",
+    "No edit to tools/skill.json itself (its content is currently correct -- C13 proves it), to bootstrap.sh, or to any .agent/evidence/* historical capture.",
+    "No change to the e2e harness (it asserts bootstrap's own inject->verify path, not validate.sh counts -- verified free of SUMMARY pins)."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (anchored to HEAD~1, the pre-implementation activation commit 77e9fe0): none of this contract's deliverables existed before the deliverable commit -- no check_c13_skill_index in validate.sh, C4's payload skipped_dirs lacked 'ecosystem', the negative fixture was absent, tools/README.md was 0.3.1 with a C1-C12 heading, the NIZAM.json validator summary said C1-C12, and CHANGELOG [Unreleased] was empty.",
+      "command": "set -e\n! git show HEAD~1:tools/validate.sh | grep -Fq 'check_c13_skill_index'\ngit show HEAD~1:tools/validate.sh | grep -Fq 'skipped_dirs = {\"methodology\", \"registry\", \"docs\"}'\n! git cat-file -e HEAD~1:tools/fixtures/skill_index_neg_dangling_module.json 2>/dev/null\ngit show HEAD~1:tools/README.md | grep -Fq 'version: 0.3.1'\ngit show HEAD~1:tools/README.md | grep -Fq 'C1–C12'\ngit show HEAD~1:NIZAM.json | grep -Fq 'checks C1-C12'\ntest \"$(git show HEAD~1:CHANGELOG.md | sed -n '/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p' | grep -c '^- ')\" = \"0\"\necho 'E01 PASS: all deliverables absent at HEAD~1 (anti-vacuity)'"
+    },
+    {
+      "acceptance_test": "C13 IS WIRED IN BOTH SWEEP BRANCHES: the function exists once and is invoked in the default branch (no argument) and in the payload branch (with the payload argument).",
+      "command": "set -e\ntest \"$(grep -c 'check_c13_skill_index() {' tools/validate.sh)\" = \"1\"\ngrep -Eq '^[[:space:]]*check_c13_skill_index && passed=' tools/validate.sh\ngrep -Eq '^[[:space:]]*check_c13_skill_index payload && passed=' tools/validate.sh\necho 'E02 PASS'"
+    },
+    {
+      "acceptance_test": "DEFAULT SWEEP GREEN AT 13, EXIT CODE ASSERTED: bash tools/validate.sh exits 0, its final line is exactly 'SUMMARY: 13 passed, 0 failed', and a '[C13] PASS skill-index' line is present.",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?\nprintf '%s\\n' \"$out\" | tail -3\ntest $rc -eq 0\nprintf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'\nprintf '%s\\n' \"$out\" | grep -Fxq '[C13] PASS skill-index'\necho \"E03 PASS (rc=$rc)\" "
+    },
+    {
+      "acceptance_test": "PAYLOAD SWEEP GREEN AT 11, EXIT CODE ASSERTED: --payload exits 0, final line exactly 'SUMMARY (payload mode): 11 passed, 0 failed', with the carve-out-annotated [C13] PASS line present.",
+      "command": "out=$(bash tools/validate.sh --payload 2>&1); rc=$?\nprintf '%s\\n' \"$out\" | tail -3\ntest $rc -eq 0\nprintf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'\nprintf '%s\\n' \"$out\" | grep -Fq '[C13] PASS skill-index (payload mode:'\necho \"E04 PASS (rc=$rc)\" "
+    },
+    {
+      "acceptance_test": "NEGATIVE END-TO-END (the fixture is load-bearing): in a scratch clone of HEAD with the negative fixture substituted for tools/skill.json, the full sweep exits non-zero and reports [C13] FAIL naming the dangling methodology/99_retired.md pointer.",
+      "command": "set -e\nS=\"/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f049\"/negclone\nrm -rf \"$S\"; mkdir -p \"$S\"\ngit clone -q . \"$S\"\ncp tools/fixtures/skill_index_neg_dangling_module.json \"$S/tools/skill.json\"\nset +e\nout=$(cd \"$S\" && bash tools/validate.sh 2>&1); rc=$?\nset -e\ntest $rc -ne 0\nprintf '%s\\n' \"$out\" | grep -Fxq '[C13] FAIL skill-index'\nprintf '%s\\n' \"$out\" | grep -Fq 'methodology/99_retired.md does not resolve to a file'\nprintf '%s\\n' \"$out\" | grep -F '[C13]'\nrm -rf \"$S\"\necho \"E05 PASS (scratch sweep rc=$rc, C13 FAIL named the dangling pointer)\" "
+    },
+    {
+      "acceptance_test": "CONSUMER-SIM C4 BEFORE/AFTER (the masked v0.7.0 consumer bug was real and is fixed): in a scratch simulation containing only the bootstrap-injected subset (standard/, templates/, schema/, tools/, NIZAM.json; git-initialized), HEAD~1's validate.sh --payload reports [C4] FAIL (the non-injected ecosystem/ paths NIZAM.json indexes), while HEAD's validate.sh --payload reports [C4] PASS and [C13] PASS.",
+      "command": "set -e\nS=\"/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f049\"/paysim\nrm -rf \"$S\"; mkdir -p \"$S\"\ncp -r standard templates schema tools \"$S/\"\ncp NIZAM.json \"$S/\"\n(cd \"$S\" && git init -q && git add -A && git -c user.email=sim@sim -c user.name=sim commit -qm sim)\ngit show HEAD~1:tools/validate.sh > \"$S/tools/validate.sh\"\nset +e\nbefore=$(cd \"$S\" && bash tools/validate.sh --payload 2>&1); rc_before=$?\nset -e\nprintf '%s\\n' \"$before\" | grep -F '[C4]'\nprintf '%s\\n' \"$before\" | grep -Fq '[C4] FAIL'\ngit show HEAD:tools/validate.sh > \"$S/tools/validate.sh\"\nset +e\nafter=$(cd \"$S\" && bash tools/validate.sh --payload 2>&1); rc_after=$?\nset -e\nprintf '%s\\n' \"$after\" | grep -F -e '[C4]' -e '[C13]'\nprintf '%s\\n' \"$after\" | grep -Fq '[C4] PASS'\nprintf '%s\\n' \"$after\" | grep -Fq '[C13] PASS skill-index (payload mode:'\nrm -rf \"$S\"\necho \"E06 PASS (before: C4 FAIL on real-consumer sim; after: C4 PASS + C13 PASS)\" "
+    },
+    {
+      "acceptance_test": "FIXTURE HYGIENE: the negative fixture is valid JSON in the skill.json shape, carries exactly one dangling module pointer plus one valid control pointer, and its filename avoids every C12 family prefix so C12 ignores it (C12 stayed green in E03).",
+      "command": "python3 - <<'PY'\nimport json\nf=json.load(open('tools/fixtures/skill_index_neg_dangling_module.json'))\nassert f['entry_point']=='tools/SKILL.md'\nmods=[c['module'] for c in f['capabilities']]\nimport os\ndangling=[m for m in mods if not os.path.isfile(m)]\nvalid=[m for m in mods if os.path.isfile(m)]\nassert dangling==['methodology/99_retired.md'], dangling\nassert valid==['methodology/00_planning.md'], valid\nname='skill_index_neg_dangling_module.json'\nassert not name.startswith(('ecosystem_baseline','preflight_verdict','engineering_finding'))\nprint('E07 PASS: fixture shape, single dangling pointer, C12-prefix-safe name')\nPY"
+    },
+    {
+      "acceptance_test": "STRUCTURAL-HONESTY GUARD (the check cannot go vacuous): a scratch clone whose tools/skill.json has an empty capabilities array FAILs C13 with the 'capabilities missing or empty' finding.",
+      "command": "set -e\nS=\"/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f049\"/vacclone\nrm -rf \"$S\"; mkdir -p \"$S\"\ngit clone -q . \"$S\"\nprintf '%s' '{\"entry_point\": \"tools/SKILL.md\", \"capabilities\": []}' > \"$S/tools/skill.json\"\nset +e\nout=$(cd \"$S\" && bash tools/validate.sh 2>&1); rc=$?\nset -e\ntest $rc -ne 0\nprintf '%s\\n' \"$out\" | grep -Fxq '[C13] FAIL skill-index'\nprintf '%s\\n' \"$out\" | grep -Fq 'capabilities missing or empty'\nrm -rf \"$S\"\necho \"E08 PASS (empty capabilities is a named FAIL, not a vacuous pass)\" "
+    },
+    {
+      "acceptance_test": "DOCS SYNCED: tools/README.md at 0.4.0 with the C1–C13 heading, the C13 table row, and the 13-passed total; the NIZAM.json validator capability summary names C1-C13 and the skill-index clause; CHANGELOG [Unreleased] carries the Added and Fixed entries (C8 discipline proven by E03's sweep).",
+      "command": "set -e\ngrep -Fq 'version: 0.4.0' tools/README.md\ngrep -Fq 'C1–C13' tools/README.md\ngrep -Fq '| C13 | Skill-index integrity |' tools/README.md\ngrep -Fq 'SUMMARY: 13 passed, 0 failed' tools/README.md\ngrep -Fq 'checks C1-C13' NIZAM.json\ngrep -Fq 'skill-index integrity' NIZAM.json\nsed -n '/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p' CHANGELOG.md | grep -Fq 'check **C13**'\nsed -n '/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p' CHANGELOG.md | grep -Fq '`ecosystem` joined the non-injected'\necho 'E09 PASS'"
+    },
+    {
+      "acceptance_test": "DEBT REGISTER TRUTH: the NDEBT-008 row carries the feature-049 broadening (F-040 ecosystem capabilities + the masked C4 consumer false-fail + both interim carve-outs), still parses to 5 GFM cells, DEBT.md is at 0.17.0, and the Open table remains free of High/Critical.",
+      "command": "python3 - <<'PY'\nimport re\nlines=open('docs/planning/DEBT.md',encoding='utf-8').readlines()\nrow=[l for l in lines if l.startswith('| NDEBT-008 ')]\nassert len(row)==1\nassert 'BROADENED by feature 049' in row[0]\ncells=re.split(r'(?<!\\\\)\\|', row[0].strip())\nassert len(cells)-2==5, len(cells)-2\nassert 'version: 0.17.0' in ''.join(lines[:8])\nopen_sect=True; sevs=[]\nfor l in lines:\n    if l.startswith('## Resolved'): open_sect=False\n    if open_sect and l.startswith('| NDEBT'):\n        sevs.append(re.split(r'(?<!\\\\)\\|', l.strip())[3].strip())\nassert set(sevs) <= {'Low','Medium'}, sorted(set(sevs))\nprint('E10 PASS: NDEBT-008 broadened, 5 cells, 0.17.0, Open severities', sorted(set(sevs)))\nPY"
+    },
+    {
+      "acceptance_test": "E2E BOOTSTRAP GREEN, EXIT CODE ASSERTED: the hermetic inject->verify harness passes with C13 and the C4 carve-out in the payload.",
+      "command": "out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?\nprintf '%s\\n' \"$out\" | tail -1\ntest $rc -eq 0\necho \"E11 PASS (rc=$rc)\" "
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT: the deliverable commit (HEAD) touches exactly the six contracted files and no tracked .agent path.",
+      "command": "set -e\ntest \"$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr '\\n' ' ')\" = \"CHANGELOG.md NIZAM.json docs/planning/DEBT.md tools/README.md tools/fixtures/skill_index_neg_dangling_module.json tools/validate.sh \"\ntest -z \"$(git diff --name-only HEAD~1..HEAD -- .agent/)\"\necho 'E12 PASS'"
+    }
+  ],
+  "estimated_lines": 120,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/049-verify-NN.txt (12 entries, 1-based, zero-padded, array order), plus the consolidated .agent/evidence/049/verification.txt (12 EXIT:0 markers) and .agent/evidence/049/diff.patch (the deliverable commit's diff). Commands run from the repository root at the deliverable commit 5193973 (HEAD), with HEAD~1 = the activation commit 77e9fe0 as the anti-vacuity anchor.",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-directed phase execution ('Approved. Proceed with the logical next steps.', H-PHASE-006, 2026-07-19). No separate Loop-1 gate agents; the 12-entry suite executed live with captured evidence per the convention; QA record .agent/qa/049.json documents the independent full re-run."
+  }
+}

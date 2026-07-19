@@ -1,0 +1,10 @@
+# .agent/evidence/049-verify-11.txt
+# Contract 049 verification entry 11 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: E2E BOOTSTRAP GREEN, EXIT CODE ASSERTED: the hermetic inject->verify harness passes with C13 and the C4 carve-out in the payload.
+$ out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?
+printf '%s\n' "$out" | tail -1
+test $rc -eq 0
+echo "E11 PASS (rc=$rc)" 
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1784421565-18294, target /tmp/tmp.sDcH61uYa9/.nizam).
+E11 PASS (rc=0)
+[exit 0]

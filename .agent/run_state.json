@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "005-ecosystem-cycle",
-  "current_feature": "048",
-  "status": "phase_complete",
-  "updated_at": "2026-07-18T00:00:00Z",
+  "current_phase": "006-enforcement-closure",
+  "current_feature": "049",
+  "status": "in_progress",
+  "updated_at": "2026-07-19T00:00:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -131,6 +131,10 @@
       "attempts": 1,
       "limit": 3,
       "note": "Single negotiation attempt (no gate rejection). Entry 6's own assertion was rebuilt in-session after failing live at first execution on two NDEBT-014-catalogued authoring classes (4: bare substring; then 3: line-wrap vs line-based grep) -- disclosed in contract 048 amendments[0]; deliverable content unchanged across both rounds."
+    },
+    "049-contract": {
+      "attempts": 1,
+      "limit": 3
     }
   },
   "history": [
@@ -738,6 +742,21 @@
       "at": "2026-07-18T00:00:00Z",
       "event": "phase_complete",
       "detail": "Phase 005-ecosystem-cycle CLOSED. H-FRAMEWORK-RELEASE part 2 executed by the human operator 2026-07-18: annotated tag v0.7.0 (subject 'v0.7.0 -- Ecosystem Engineering Cycle') pushed at the phase merge commit 4833322 (verified on the remote: objecttype tag, correct subject and target); release.yml auto-published the GitHub Release page at 2026-07-18T16:16:02Z with the correct [0.7.0] CHANGELOG body. One publication defect observed and registered, not hidden: the Release TITLE came out as the merge-commit subject instead of the tag subject (actions/checkout materializes the tag as a peeled/lightweight ref in the runner, so the workflow's %(contents:subject) read the commit object) -- NDEBT-025 (Low), interim one-click manual title edit surfaced to the operator as ROADMAP Track 1 item 3. Landing path recorded honestly: the stacked PRs collapsed irregularly earlier on 2026-07-18 (#20 squash-merged to main + branch deletion auto-closed #21 unmerged; #22/#23/#24 merged branch-to-branch, never reaching main); recovery was one reconciliation merge (bed7a55, ours-strategy, PROVABLY lossless: main's squash tree byte-identical to the PR-F1 head 45e3b67, an ancestor of the lineage; result tree byte-identical to 26eb99b) + re-landing PR #25 (merged to main at 4833322 by the operator; both CI jobs green; CodeRabbit skipped, 538 files over its 150-file limit). Final ledger: features 031-045 complete (045's held-open acceptance now satisfied: sign-off recorded at 31f3fff before the tag, tag executed) plus overhead features 046-048 (three review-response rounds; every inline review comment across PRs #20-#24 answered). Gates final disposition: H-NIP satisfied 2026-07-17; H-DOGFOOD-EXCEPTION approved twice; scope re-baseline 2300->3500 authorized (final cumulative 3632/4550, 79.8%); H-FRAMEWORK-RELEASE executed 2026-07-18 (both parts); H-RISK not required (DEBT Open carries zero High/Critical at close); H-FRAMEWORK-SCOPE subsumed by the activation authorization and the recorded re-baseline (no standalone scope-lock event was ever executed -- stated plainly rather than backfilled). Inherited-open human gate: GitHub Pages publishing for docs/guide/ (open since phase 003). Successor scope now UNBLOCKED by the released tag: consumer adoption (handover F-016..F-020, nizamiq/nizamiq-strategy), the Track 2 enforcement-closure candidates (NDEBT-005/007-012), and the post-v0.7.0 hardening bundle (NDEBT-021/023/024/025). Forward planning: docs/planning/ROADMAP.md (0.6.0)."
+    },
+    {
+      "at": "2026-07-19T00:00:00Z",
+      "event": "phase_activated",
+      "detail": "Phase 006-enforcement-closure ACTIVATED on operator authorization. Verbatim: 'Approved. Proceed with the logical next steps.' (operator-controlled session, 2026-07-19, given after the phase-005 close, the v0.7.0 release, the post-release actions PR #27 merge, and the verified GitHub Pages publication of the user guide — i.e. with zero outstanding gates ahead of it). Gate H-PHASE-006 satisfied; the proposal artifacts (.agent/product_spec_006.md now active 1.1.0, .agent/feature_list_006.json: 11 features 049-059, DAG acyclic, original_estimate_lines 1720, 130% ceiling 2236) become the plan of record; manifest current_phase advanced. This decision is committed BEFORE any feature execution (NDEBT-018 rule). Execution plan: single phase branch phase/006-enforcement-closure with SEQUENTIAL PRs into main — the stacked-PR pattern is retired after the 2026-07-18 collapse (PR #20 squash auto-closed #21; #22-#24 merged branch-to-branch). First feature: 049 (Gate tools/skill.json content, NDEBT-007) — an ungated DAG root. Mid-phase operator gates recorded, not executed: H-PAYLOAD-CONTRACT (F-051 injected-payload/methodology contract decision), H-CONSTITUTIONAL (F-058 Track 3 mechanize-or-descope), H-FRAMEWORK-RELEASE (F-059 v0.8.0). SESSION NOTE (process honesty, 046-048 precedent): execution continues in the operator-directed single-session mode with roles collapsed and every lifecycle artifact authored and verified in-session; the durable .agent/ state remains the recovery surface."
+    },
+    {
+      "at": "2026-07-19T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 049 (Gate tools/skill.json Content, NDEBT-007) COMPLETE at deliverable commit 5193973 -- phase 006's first feature. New validator check C13 (skill-index integrity): tools/skill.json JSON-parsed, entry_point + all 14 capabilities[].module pointers resolved on the DEFAULT sweep (payload mode resolves entry_point + the 4 injected standard/ pointers and skips the 10 non-injected methodology/+ecosystem/ pointers pending F-051 -- the 'resolved on every sweep' phrasing in this note's first draft overstated payload coverage and was corrected in the PR #28 review round); structural-honesty FAILs (missing entry_point / empty capabilities) make the check non-neuterable, PROVEN live in a scratch clone (E08). Default sweep migrates to SUMMARY: 13 passed, payload to 11 passed; payload mode carves out the non-injected dirs {methodology/, registry/, docs/, ecosystem/} explicitly pending F-051. LIVE DISCOVERY, fixed in-contract: C4's payload skipped_dirs predated F-040 and lacked 'ecosystem' -- a REAL consumer v0.7.0 payload would false-fail C4 on the ecosystem/ paths NIZAM.json indexes, masked in framework-checkout payload runs; proven by the E06 consumer-simulation before/after pair (HEAD~1 validator: [C4] FAIL in the injected-subset sim; HEAD validator: [C4] PASS + [C13] PASS) and recorded as the NDEBT-008 broadening (DEBT 0.17.0). Negative fixture skill_index_neg_dangling_module.json proven load-bearing end-to-end (E05: scratch-clone substitution -> [C13] FAIL naming methodology/99_retired.md); standing self-test wiring remains F-052 scope. Docs synced (tools/README 0.4.0 C1-C13, NIZAM validator summary, validate.sh help, CHANGELOG [Unreleased] Added+Fixed). Verification 12/12 first pass; QA independent re-run 12/12 (.agent/qa/049.json); e2e green; deliverable diff confined to the six contracted files. SCOPE FLAG for operator acknowledgment: 164 actual vs 120 estimated (+37%, documentation weight; cumulative 7.3% of ceiling). BOOKKEEPING CORRECTION disclosed: the activation roll omitted the phase-005 scope-ledger archival; corrected here (scope_budget -> phase_005_scope_budget_final, final value preserved verbatim: 3632 actual / 3500 re-baselined / per-feature 031-048; fresh phase-006 ledger opened at original_estimate_lines 1720). Next per the DAG: feature 050 (payload validator CWD anchoring, NDEBT-012 / issue #18) -- ungated; the first mid-phase operator gate ahead is H-PAYLOAD-CONTRACT at F-051."
+    },
+    {
+      "at": "2026-07-19T00:00:00Z",
+      "event": "operator_gate_decision",
+      "detail": "Gate H-PAYLOAD-CONTRACT (NDEBT-008 + NDEBT-004): DIRECTION SET by the human operator ahead of feature 051. Verbatim: 'Scope acknowledged. The methodology/ (and now ecosystem/) shall join the bootstrap-injected payload' (operator-controlled session, 2026-07-19, given during the PR #28 feature-049 review round). Two decisions recorded: (1) SCOPE ACKNOWLEDGMENT -- the feature-049 overage (164 actual vs 120 estimated, +37%, documentation weight) is acknowledged; the 049 ledger flag is marked ACKNOWLEDGED (flag, not halt; no re-baseline needed at 164/2236 = 7.3%). (2) PAYLOAD CONTRACT -- NDEBT-008's open 'decide explicitly' question is resolved in favour of the INJECT branch: methodology/ AND ecosystem/ join the bootstrap-injected payload. registry/ and docs/ were NOT named by the operator and remain non-injected framework-envelope (their carve-out is retained). IMPLEMENTATION IS FEATURE 051, NOT PERFORMED HERE: bootstrap.sh must inject methodology/ + ecosystem/; the GIP/README/CONTEXT payload enumerations update together; the C4/C9/C13 payload-mode carve-outs for methodology/ and ecosystem/ retire (both become required-to-resolve like the other injected dirs), leaving only registry/+docs/ carved out; the e2e harness asserts the enlarged injected payload resolves; NDEBT-004 (C9 payload skipped_dirs) folds into the same implementation. Until F-051 ships that change the interim carve-outs added by F-049 stay in place and correct -- a real consumer v0.7.0 payload still lacks these dirs, so retiring the carve-out before the injection lands would newly false-fail consumers. This decision is COMMITTED BEFORE F-051's gated execution per the NDEBT-018 rule; NDEBT-008's remediation column is updated to record the decided direction and the row stays Open pending F-051 implementation."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -910,6 +929,88 @@
     ]
   },
   "scope_budget": {
+    "original_estimate_lines": 1720,
+    "total_lines_changed": 164,
+    "per_feature": [
+      {
+        "id": "049",
+        "estimated": 120,
+        "actual": 164,
+        "flag": "scope_over_estimate -- ACKNOWLEDGED by operator 2026-07-19 ('Scope acknowledged'); flag, not halt; no re-baseline at 164/2236 = 7.3%",
+        "note": "6 files (git numstat ins+del, deliverable commit 5193973): tools/validate.sh 103+2=105, tools/fixtures/skill_index_neg_dangling_module.json 18 (new), tools/README.md 7+3=10, NIZAM.json 1+1=2, CHANGELOG.md 25+0=25, docs/planning/DEBT.md 2+2=4 -- total 164 vs 120 estimated (+37%). [AH-3 CORRECTION, PR #28 review: the original close-out note's per-file figures (validate.sh 108, README 11, CHANGELOG 27) summed to 170, not the stated 164; corrected here to the real `git show 5193973 --numstat` values -- the 164 total was always right, the breakdown was mis-transcribed.] First feature of the phase-006 ledger: the 3x-rolling-average check is not computable (031 precedent); flagged against its own estimate instead. The overage is documentation weight (the C13 help/description block and the C4 masking explanation), not code sprawl. Cumulative 164/2236 ceiling (7.3%)."
+      }
+    ]
+  },
+  "phase_004_scope_budget_final": {
+    "original_estimate_lines": 1550,
+    "total_lines_changed": 2029,
+    "rebaseline": {
+      "from": 1250,
+      "to": 1550,
+      "authorized_by": "human",
+      "at": "2026-07-10T10:07:52Z",
+      "reason": "Human chose 'Re-baseline & finish' at the F-028 scope-budget gate (cumulative 1603/1625 = 98.6% of the old 130% ceiling; F-029 would breach it). The overage is genuine under-estimation on already-planned features (adversarial-quality validator checks + schema validation ran larger than the optimistic per-feature estimates: 023 408/260, 025 303/180, 027 269/215, 028 384/150), NOT scope creep. Original 1250 -> 1550; new 130% ceiling 2015. Authorizes completing F-029 (hermetic e2e consumer-bootstrap test + CI, R2) + F-030 (phase close). Plan Amendment Rule (human-authorized, orchestrator-recorded), mirrors the phase-002 770->1250 re-baseline precedent."
+    },
+    "per_feature": [
+      {
+        "id": "023",
+        "estimated": 260,
+        "actual": 408,
+        "flag": null,
+        "note": "tools/verify_lib.sh 336 + 11 new fixtures 72 = 408 (pre-existing phase-002 fixtures excluded). FIRST feature of phase 004 - no rolling baseline per 00_planning bootstrap rule, so no per-feature flag despite 57% over est (5 primitives + helper + 11 pass/fail fixtures, all adversarially proven genuine). Cumulative 408/1625 (25%). 1 contract revision (evaluator's content-blind stub caught cheatable filename-keyed fixtures - the verification library's OWN verification had the exact defect it guards against), Mode B + QA first-pass with independent adversarial anti-gaming checks."
+      },
+      {
+        "id": "024",
+        "estimated": 70,
+        "actual": 69,
+        "flag": null,
+        "note": "methodology/02_adversarial_tdd.md 68+1 = 69 (0.2.0->0.3.0 + change_log entry). Rolling avg (023=408) 3x=1224; 69 well under, no flag. Cumulative 477/1625 (29%). 1 contract revision (evaluator caught a FALSE-fail: entry 4's vlib_section_grep span-ends-at-any-# would wrongly reject a subheading-structured section; fixed via a flat-prose scope constraint). Dogfooded F-023 primitives in verification."
+      },
+      {
+        "id": "025",
+        "estimated": 180,
+        "actual": 303,
+        "flag": null,
+        "note": "5 files: qa_verdict.schema.json anyOf-union restructure (135+45=180 churn, net ~+90), contract_review.schema.json 98 (new), contract.schema.json 16+1, schema/README.md 6+1, NIZAM.json 1. Re-proposed fresh on the green (v0.4.1+hotfix) base after the stale contract was dropped. Rolling avg (023=408,024=69)=238, 3x=715; 303 under, no flag. Cumulative 780/1625 (48%). 1 contract revision (evaluator caught the entry-7 immutability-guard false-fail on the feature's own qa artifacts). Resolves NDEBT-002 part a (schemas reconciled to the actual artifact shapes; all 29 qa + 26 contracts validate WITHOUT editing the immutable records)."
+      },
+      {
+        "id": "026",
+        "estimated": 150,
+        "actual": 170,
+        "flag": null,
+        "note": "5 files (git numstat ins+del): tools/validate.sh 127+7=134 (new check_c9_path_resolution + guarded source verify_lib.sh + 3-mode registration + print_usage), tools/interface.md 5+2=7 (05->06 ref fix + 0.2.0->0.3.0 + change_log), docs/guide/index.html 1+1=2 (05->06 ref fix), tools/fixtures/unresolved_path.md 6 (new), tools/fixtures/exempt_paths.md 21 (new). Rolling avg last 3 (023=408,024=69,025=303)=260, 3x=780; 170 well under, no flag. Cumulative 950/1625 (58%). Contract approved FIRST-PASS by both Loop-1 gates (revisions=0); the evaluator independently re-derived C9's extraction + dry-ran it (2 unresolved without the doc fixes, 0 with) proving the non-breaking claim; Mode B + QA first-pass with 9 fresh-scratch adversarial probes (genuine content-driven detection, prefix-anchored .nizam/ exemption, narrow .agent/ singleton exemption, load-bearing frontmatter-strip). Realizes R1/C9 (validate.sh 8->9); also fixed 2 pre-existing v0.5.x-renumbering drift refs (interface.md:46, guide:535). Advancing to 027 (deps 023+026 complete)."
+      },
+      {
+        "id": "027",
+        "estimated": 215,
+        "actual": 269,
+        "flag": null,
+        "note": "11 files (git numstat ins+del): tools/validate.sh 188+13=201 (check_c10_consistency: format-agnostic normalize/segment payload-set + P3 discovery-order + External-Anchor version-anchor; default/target[.md+.html]/payload registration + print_usage), standard/GIP.md 8+5=13 (§4 item3 tools/ fix + 0.2.0->0.3.0 + change_log), methodology/06_release_train.md 5+2=7 (line72 05->06 + 0.2.0->0.3.0 + change_log), docs/guide/index.html 1+0=1 (add 05_eval_and_trace.md key-doc), + 7 fixtures 47. Est 215 was the rev3 estimate after 3 revisions+redesign grew it from 170 (rev0). Rolling avg last 3 (024=69,025=303,026=170)=180.67, 3x=542; 269 under, no per-feature flag. Cumulative 1219/1625 (75%). NOTABLE: this feature hit the 3-strike circuit breaker at the contract-review gate (rev0 paragraph-join false-pass; rev1 cap/semicolon false-negatives; rev2 HTML-</p> false-pass) - HUMAN authorized attempt 4 with a REDESIGN mandate; the format-agnostic normalize->segment->check (composing unmodified vlib_no_stale_payload) passed both Loop-1 gates first-pass on attempt 4 (revisions=3, 1-revision headroom unused), then Mode B + QA first-pass with 12 fresh-scratch adversarial probes across all 3 sub-checks. Realizes R1/C10 (validate.sh 9->10); resolves NDEBT-006 (circuit-breaker) via redesign; fixes 3 drift items (GIP.md §4 item3 tools/ [C10-forced]; NDEBT-003a guide key-docs 05_eval_and_trace.md; NDEBT-003b 06_release_train.md:72 bare ref). WATCH: cumulative 1219/1250-original-estimate = 97.5%; remaining F-028(~150)+F-029(~200)+F-030(~70)=~420 projects ~1639 > 1625 ceiling -> a cumulative-ceiling breach is likely during F-029/F-030, which will require human acknowledgment per the Scope Budget Protocol. Advancing to 028 (deps 025+027 complete)."
+      },
+      {
+        "id": "028",
+        "estimated": 150,
+        "actual": 384,
+        "flag": null,
+        "note": "4 files (git numstat ins+del): tools/validate.sh 376+8=384 (check_c11_dogfood_sweep [default; .agent/qa/*.json content-routed {review,qa_pass|verdict} else skip; contracts/run_state by path; existence-guarded skip-if-absent] + check_c11_dogfood_target + check_c11_or_c4_target [--target dispatcher wrapping unmodified check_c4_index] + check_c11_dogfood_payload_skip + 3-mode registration + print_usage) - wait, that 384 is validate.sh ALONE per numstat but includes the 3 fixtures... correction: validate.sh 341 (333+8) + 3 fixtures (invalid_qa_verdict 5 + invalid_contract 24 + invalid_run_state 14 = 43) = 384 total. C11 is genuinely the most complex check (schema validation across 3 artifact families + content-routing + a --target dispatcher + consumer-safety). 384 vs 150 est is a 2.56x UNDER-ESTIMATE (not scope creep) - rolling avg last 3 (025=303,026=170,027=269)=247, 3x=742; 384 < 742 so NO per-feature flag. Contract took 2 revisions (attempt 3, no halt): rev0->rev1 fixed the 027_failures.json circuit_breaker misroute + a vacuous verify-12; rev1->rev2 fixed the unsatisfiable AT9 immutability guard (F-025 precedent). Mode B ratified 1 post-approval test-defect correction (AT5's over-specified full-sweep -> [C11] PASS-only, since C9 legitimately fails in a .agent-stripped copy on shipped-doc .agent/ refs) + 2 in-scope impl fixes (missing payload_skip fn; message-format for AT7's anchored assertion). QA PASS with deep adversarial probing (independent router-diff = exactly 1 skip 027_failures.json; a direct full-route probe proving the default-sweep skip is a restricted-route property not a gaming amnesty; sha256 immutability tamper-probe reverted clean). Resolves NDEBT-002 part b (C11 enforces the F-025-reconciled schemas over all 34 verdict/review + 28 contracts + run_state). CUMULATIVE 1603/1625 (98.6% of 130%-ceiling; 128.2% of the original 1250 est) - F-029(~200) will BREACH the ceiling; per the Scope Budget Protocol this is surfaced to the human for a re-baseline/authorization decision BEFORE F-029's contract lifecycle begins (status=scope_budget_review). Completes the 8->11 validator migration (C9+C10+C11). Advancing to 029 pending the budget decision (deps: F-029 depends on F-023 only, complete)."
+      },
+      {
+        "id": "029",
+        "estimated": 200,
+        "actual": 361,
+        "flag": null,
+        "note": "2 files (git numstat ins+del): tools/e2e_bootstrap_test.sh 340 (new; hermetic harness - ephemeral annotated tag on HEAD + bootstrap.sh --repo-url file:// --tag --target scratch/.nizam + assert payload/index/.nizam-tools-skill.json-discovery[composes vlib_path_resolves]/--verify-only; trap cleanup; --self-test-negative H4 guard) + .github/workflows/compliance.yml 21 (add SHA-pinned e2e_bootstrap job; validate job byte-unchanged). Est 200; rolling avg last 3 (026=170,027=269,028=384)=274, 3x=823; 361 < 823 no per-feature flag. Contract 1 revision (rev0 evaluator caught 5 vacuous verifications + a refuted fetch-depth:0 claim + an NDEBT-004 ledger contradiction the orchestrator had over-scoped; rev1 fixed all + a generator self-caught root-path-tmpfile portability bug); the evaluator DRY-RAN the mechanism end-to-end at rev0 confirming it works. Mode B + QA first-pass: QA re-ran 20/20 twice + adversarially proved hermeticity (only file://), H4-guard NON-tautology (neutering the break in a scratch copy flips to the 'NOT load-bearing' branch), and cleanup-under-mid-run-failure (trap fires even on early failure). bootstrap.sh NOT modified (spec §4.2); validate.sh SUMMARY UNCHANGED at 11. Realizes R2 (the live inject->verify proof that the H4 v0.1.0 adoption bug cannot silently recur). NDEBT-004 stays open (deferred beyond F-029). CUMULATIVE 1964/2015 (97.5% of the re-baselined 1550 ceiling); F-030 (phase close, ~70-150) may nudge slightly over 2015 but is within the human's 'Re-baseline & finish' authorization. Advancing to 030 (phase close - the FINAL feature; deps F-024,025,026,027,028,029 ALL complete)."
+      },
+      {
+        "id": "030",
+        "estimated": 70,
+        "actual": 65,
+        "flag": null,
+        "note": "2 files (git numstat ins+del): tools/README.md 30+1=31 (C1-C11 Compliance Coverage section + version 0.2.0->0.3.0 + frontmatter change_log entry) + CHANGELOG.md 34+0=34 ([Unreleased] phase-004 deliverable groups). 65 vs 70 est - UNDER. Rolling avg last 3 (027=269,028=384,029=361)=338, 3x=1005; 65 well under, no flag. 1 contract revision (rev0: C11 dogfood caught 030.json itself missing files_create -> [C11] FAIL -> validate.sh 10/1; + the README C8-body-note error since C8 reads only frontmatter change_log/CHANGELOG-path, and --target skips C8; rev1 added files_create:[] + switched to a frontmatter change_log + added verification #17 proving default-sweep [C8] PASS). Mode B + QA first-pass. Phase-close deliverable: docs/count sync to C1-C11 + '11 passed', CHANGELOG [Unreleased], green validator confirmed, v0.6.0 release gate RECORDED not executed. FINAL cumulative 2029/2015 (100.7% of the re-baselined ceiling; +14/0.7% over - within the human 'Re-baseline & finish' authorization; F-030 itself under-budget). Phase 004 CLOSED."
+      }
+    ]
+  },
+  "phase_005_scope_budget_final": {
     "original_estimate_lines": 3500,
     "total_lines_changed": 3632,
     "per_feature": [
@@ -1030,74 +1131,5 @@
       "at": "2026-07-17T00:00:00Z",
       "reason": "Operator authorization (verbatim): 'approved, re-baseline original_estimate_lines from 2,300 to 3,500 and finish the phase' -- given at the pre-042 scope-budget gate the orchestrator raised when cumulative actuals reached 2868/2990 (96% of the old 130% ceiling; remaining features 042-045 projected ~149% of the old estimate). Overage analysis presented to the operator: 031 plan-of-record artifacts 1046 vs 260 and 041 CLI 501 vs 220 (Mode B code review confirmed documentation/type-hint/house-style inflation, no scope creep); features 032-040 collectively on estimate; feature count and scope boundaries unchanged. Mirrors the phase-004 F-028 'Re-baseline & finish' precedent (1250 -> 1550)."
     }
-  },
-  "phase_004_scope_budget_final": {
-    "original_estimate_lines": 1550,
-    "total_lines_changed": 2029,
-    "rebaseline": {
-      "from": 1250,
-      "to": 1550,
-      "authorized_by": "human",
-      "at": "2026-07-10T10:07:52Z",
-      "reason": "Human chose 'Re-baseline & finish' at the F-028 scope-budget gate (cumulative 1603/1625 = 98.6% of the old 130% ceiling; F-029 would breach it). The overage is genuine under-estimation on already-planned features (adversarial-quality validator checks + schema validation ran larger than the optimistic per-feature estimates: 023 408/260, 025 303/180, 027 269/215, 028 384/150), NOT scope creep. Original 1250 -> 1550; new 130% ceiling 2015. Authorizes completing F-029 (hermetic e2e consumer-bootstrap test + CI, R2) + F-030 (phase close). Plan Amendment Rule (human-authorized, orchestrator-recorded), mirrors the phase-002 770->1250 re-baseline precedent."
-    },
-    "per_feature": [
-      {
-        "id": "023",
-        "estimated": 260,
-        "actual": 408,
-        "flag": null,
-        "note": "tools/verify_lib.sh 336 + 11 new fixtures 72 = 408 (pre-existing phase-002 fixtures excluded). FIRST feature of phase 004 - no rolling baseline per 00_planning bootstrap rule, so no per-feature flag despite 57% over est (5 primitives + helper + 11 pass/fail fixtures, all adversarially proven genuine). Cumulative 408/1625 (25%). 1 contract revision (evaluator's content-blind stub caught cheatable filename-keyed fixtures - the verification library's OWN verification had the exact defect it guards against), Mode B + QA first-pass with independent adversarial anti-gaming checks."
-      },
-      {
-        "id": "024",
-        "estimated": 70,
-        "actual": 69,
-        "flag": null,
-        "note": "methodology/02_adversarial_tdd.md 68+1 = 69 (0.2.0->0.3.0 + change_log entry). Rolling avg (023=408) 3x=1224; 69 well under, no flag. Cumulative 477/1625 (29%). 1 contract revision (evaluator caught a FALSE-fail: entry 4's vlib_section_grep span-ends-at-any-# would wrongly reject a subheading-structured section; fixed via a flat-prose scope constraint). Dogfooded F-023 primitives in verification."
-      },
-      {
-        "id": "025",
-        "estimated": 180,
-        "actual": 303,
-        "flag": null,
-        "note": "5 files: qa_verdict.schema.json anyOf-union restructure (135+45=180 churn, net ~+90), contract_review.schema.json 98 (new), contract.schema.json 16+1, schema/README.md 6+1, NIZAM.json 1. Re-proposed fresh on the green (v0.4.1+hotfix) base after the stale contract was dropped. Rolling avg (023=408,024=69)=238, 3x=715; 303 under, no flag. Cumulative 780/1625 (48%). 1 contract revision (evaluator caught the entry-7 immutability-guard false-fail on the feature's own qa artifacts). Resolves NDEBT-002 part a (schemas reconciled to the actual artifact shapes; all 29 qa + 26 contracts validate WITHOUT editing the immutable records)."
-      },
-      {
-        "id": "026",
-        "estimated": 150,
-        "actual": 170,
-        "flag": null,
-        "note": "5 files (git numstat ins+del): tools/validate.sh 127+7=134 (new check_c9_path_resolution + guarded source verify_lib.sh + 3-mode registration + print_usage), tools/interface.md 5+2=7 (05->06 ref fix + 0.2.0->0.3.0 + change_log), docs/guide/index.html 1+1=2 (05->06 ref fix), tools/fixtures/unresolved_path.md 6 (new), tools/fixtures/exempt_paths.md 21 (new). Rolling avg last 3 (023=408,024=69,025=303)=260, 3x=780; 170 well under, no flag. Cumulative 950/1625 (58%). Contract approved FIRST-PASS by both Loop-1 gates (revisions=0); the evaluator independently re-derived C9's extraction + dry-ran it (2 unresolved without the doc fixes, 0 with) proving the non-breaking claim; Mode B + QA first-pass with 9 fresh-scratch adversarial probes (genuine content-driven detection, prefix-anchored .nizam/ exemption, narrow .agent/ singleton exemption, load-bearing frontmatter-strip). Realizes R1/C9 (validate.sh 8->9); also fixed 2 pre-existing v0.5.x-renumbering drift refs (interface.md:46, guide:535). Advancing to 027 (deps 023+026 complete)."
-      },
-      {
-        "id": "027",
-        "estimated": 215,
-        "actual": 269,
-        "flag": null,
-        "note": "11 files (git numstat ins+del): tools/validate.sh 188+13=201 (check_c10_consistency: format-agnostic normalize/segment payload-set + P3 discovery-order + External-Anchor version-anchor; default/target[.md+.html]/payload registration + print_usage), standard/GIP.md 8+5=13 (§4 item3 tools/ fix + 0.2.0->0.3.0 + change_log), methodology/06_release_train.md 5+2=7 (line72 05->06 + 0.2.0->0.3.0 + change_log), docs/guide/index.html 1+0=1 (add 05_eval_and_trace.md key-doc), + 7 fixtures 47. Est 215 was the rev3 estimate after 3 revisions+redesign grew it from 170 (rev0). Rolling avg last 3 (024=69,025=303,026=170)=180.67, 3x=542; 269 under, no per-feature flag. Cumulative 1219/1625 (75%). NOTABLE: this feature hit the 3-strike circuit breaker at the contract-review gate (rev0 paragraph-join false-pass; rev1 cap/semicolon false-negatives; rev2 HTML-</p> false-pass) - HUMAN authorized attempt 4 with a REDESIGN mandate; the format-agnostic normalize->segment->check (composing unmodified vlib_no_stale_payload) passed both Loop-1 gates first-pass on attempt 4 (revisions=3, 1-revision headroom unused), then Mode B + QA first-pass with 12 fresh-scratch adversarial probes across all 3 sub-checks. Realizes R1/C10 (validate.sh 9->10); resolves NDEBT-006 (circuit-breaker) via redesign; fixes 3 drift items (GIP.md §4 item3 tools/ [C10-forced]; NDEBT-003a guide key-docs 05_eval_and_trace.md; NDEBT-003b 06_release_train.md:72 bare ref). WATCH: cumulative 1219/1250-original-estimate = 97.5%; remaining F-028(~150)+F-029(~200)+F-030(~70)=~420 projects ~1639 > 1625 ceiling -> a cumulative-ceiling breach is likely during F-029/F-030, which will require human acknowledgment per the Scope Budget Protocol. Advancing to 028 (deps 025+027 complete)."
-      },
-      {
-        "id": "028",
-        "estimated": 150,
-        "actual": 384,
-        "flag": null,
-        "note": "4 files (git numstat ins+del): tools/validate.sh 376+8=384 (check_c11_dogfood_sweep [default; .agent/qa/*.json content-routed {review,qa_pass|verdict} else skip; contracts/run_state by path; existence-guarded skip-if-absent] + check_c11_dogfood_target + check_c11_or_c4_target [--target dispatcher wrapping unmodified check_c4_index] + check_c11_dogfood_payload_skip + 3-mode registration + print_usage) - wait, that 384 is validate.sh ALONE per numstat but includes the 3 fixtures... correction: validate.sh 341 (333+8) + 3 fixtures (invalid_qa_verdict 5 + invalid_contract 24 + invalid_run_state 14 = 43) = 384 total. C11 is genuinely the most complex check (schema validation across 3 artifact families + content-routing + a --target dispatcher + consumer-safety). 384 vs 150 est is a 2.56x UNDER-ESTIMATE (not scope creep) - rolling avg last 3 (025=303,026=170,027=269)=247, 3x=742; 384 < 742 so NO per-feature flag. Contract took 2 revisions (attempt 3, no halt): rev0->rev1 fixed the 027_failures.json circuit_breaker misroute + a vacuous verify-12; rev1->rev2 fixed the unsatisfiable AT9 immutability guard (F-025 precedent). Mode B ratified 1 post-approval test-defect correction (AT5's over-specified full-sweep -> [C11] PASS-only, since C9 legitimately fails in a .agent-stripped copy on shipped-doc .agent/ refs) + 2 in-scope impl fixes (missing payload_skip fn; message-format for AT7's anchored assertion). QA PASS with deep adversarial probing (independent router-diff = exactly 1 skip 027_failures.json; a direct full-route probe proving the default-sweep skip is a restricted-route property not a gaming amnesty; sha256 immutability tamper-probe reverted clean). Resolves NDEBT-002 part b (C11 enforces the F-025-reconciled schemas over all 34 verdict/review + 28 contracts + run_state). CUMULATIVE 1603/1625 (98.6% of 130%-ceiling; 128.2% of the original 1250 est) - F-029(~200) will BREACH the ceiling; per the Scope Budget Protocol this is surfaced to the human for a re-baseline/authorization decision BEFORE F-029's contract lifecycle begins (status=scope_budget_review). Completes the 8->11 validator migration (C9+C10+C11). Advancing to 029 pending the budget decision (deps: F-029 depends on F-023 only, complete)."
-      },
-      {
-        "id": "029",
-        "estimated": 200,
-        "actual": 361,
-        "flag": null,
-        "note": "2 files (git numstat ins+del): tools/e2e_bootstrap_test.sh 340 (new; hermetic harness - ephemeral annotated tag on HEAD + bootstrap.sh --repo-url file:// --tag --target scratch/.nizam + assert payload/index/.nizam-tools-skill.json-discovery[composes vlib_path_resolves]/--verify-only; trap cleanup; --self-test-negative H4 guard) + .github/workflows/compliance.yml 21 (add SHA-pinned e2e_bootstrap job; validate job byte-unchanged). Est 200; rolling avg last 3 (026=170,027=269,028=384)=274, 3x=823; 361 < 823 no per-feature flag. Contract 1 revision (rev0 evaluator caught 5 vacuous verifications + a refuted fetch-depth:0 claim + an NDEBT-004 ledger contradiction the orchestrator had over-scoped; rev1 fixed all + a generator self-caught root-path-tmpfile portability bug); the evaluator DRY-RAN the mechanism end-to-end at rev0 confirming it works. Mode B + QA first-pass: QA re-ran 20/20 twice + adversarially proved hermeticity (only file://), H4-guard NON-tautology (neutering the break in a scratch copy flips to the 'NOT load-bearing' branch), and cleanup-under-mid-run-failure (trap fires even on early failure). bootstrap.sh NOT modified (spec §4.2); validate.sh SUMMARY UNCHANGED at 11. Realizes R2 (the live inject->verify proof that the H4 v0.1.0 adoption bug cannot silently recur). NDEBT-004 stays open (deferred beyond F-029). CUMULATIVE 1964/2015 (97.5% of the re-baselined 1550 ceiling); F-030 (phase close, ~70-150) may nudge slightly over 2015 but is within the human's 'Re-baseline & finish' authorization. Advancing to 030 (phase close - the FINAL feature; deps F-024,025,026,027,028,029 ALL complete)."
-      },
-      {
-        "id": "030",
-        "estimated": 70,
-        "actual": 65,
-        "flag": null,
-        "note": "2 files (git numstat ins+del): tools/README.md 30+1=31 (C1-C11 Compliance Coverage section + version 0.2.0->0.3.0 + frontmatter change_log entry) + CHANGELOG.md 34+0=34 ([Unreleased] phase-004 deliverable groups). 65 vs 70 est - UNDER. Rolling avg last 3 (027=269,028=384,029=361)=338, 3x=1005; 65 well under, no flag. 1 contract revision (rev0: C11 dogfood caught 030.json itself missing files_create -> [C11] FAIL -> validate.sh 10/1; + the README C8-body-note error since C8 reads only frontmatter change_log/CHANGELOG-path, and --target skips C8; rev1 added files_create:[] + switched to a frontmatter change_log + added verification #17 proving default-sweep [C8] PASS). Mode B + QA first-pass. Phase-close deliverable: docs/count sync to C1-C11 + '11 passed', CHANGELOG [Unreleased], green validator confirmed, v0.6.0 release gate RECORDED not executed. FINAL cumulative 2029/2015 (100.7% of the re-baselined ceiling; +14/0.7% over - within the human 'Re-baseline & finish' authorization; F-030 itself under-budget). Phase 004 CLOSED."
-      }
-    ]
   }
 }

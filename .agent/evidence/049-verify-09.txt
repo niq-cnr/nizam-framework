@@ -1,0 +1,15 @@
+# .agent/evidence/049-verify-09.txt
+# Contract 049 verification entry 09 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: DOCS SYNCED: tools/README.md at 0.4.0 with the C1–C13 heading, the C13 table row, and the 13-passed total; the NIZAM.json validator capability summary names C1-C13 and the skill-index clause; CHANGELOG [Unreleased] carries the Added and Fixed entries (C8 discipline proven by E03's sweep).
+$ set -e
+grep -Fq 'version: 0.4.0' tools/README.md
+grep -Fq 'C1–C13' tools/README.md
+grep -Fq '| C13 | Skill-index integrity |' tools/README.md
+grep -Fq 'SUMMARY: 13 passed, 0 failed' tools/README.md
+grep -Fq 'checks C1-C13' NIZAM.json
+grep -Fq 'skill-index integrity' NIZAM.json
+sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' CHANGELOG.md | grep -Fq 'check **C13**'
+sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' CHANGELOG.md | grep -Fq '`ecosystem` joined the non-injected'
+echo 'E09 PASS'
+E09 PASS
+[exit 0]

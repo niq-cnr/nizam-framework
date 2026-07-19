@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.7.0
+version: 0.8.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.8.0"
+    date: "2026-07-19"
+    summary: "Phase 006 activated (operator verbatim: 'Approved. Proceed with the logical next steps.', gate H-PHASE-006, 2026-07-19): the Proposed Next Phase section becomes the Plan of Record banner. Track 1 item 2 truth-rolled to EXECUTED — the user guide is live on GitHub Pages (first deploy succeeded 2026-07-19 00:23 UTC after the one-time enable; verified serving the v0.7.0 guide), closing the last gate inherited from phase 003."
   - version: "0.7.0"
     date: "2026-07-18"
     summary: "Post-v0.7.0 actions (operator-directed): added the Proposed Next Phase section — phase 006 (Enforcement Closure & Hardening, features 049-059, est 1720 lines) PROPOSED and awaiting operator authorization (gate H-PHASE-006); Track 1 item 3 (v0.7.0 Release title) marked executed via the NDEBT-025 workflow fix + live retitle; Track 1 item 2 (GitHub Pages) marked mechanized via the new pages.yml workflow, publishing on merge."
@@ -31,13 +34,19 @@ change_log:
 
 # Forward Roadmap
 
-## Proposed Next Phase (2026-07-18) — 006 Enforcement Closure & Hardening [AWAITING OPERATOR AUTHORIZATION]
+## Plan of Record (2026-07-19) — Phase 006 Activated: Enforcement Closure & Hardening
 
-Phase `006-enforcement-closure` is **PROPOSED, not activated**: the planner artifacts
-exist (`.agent/product_spec_006.md`, `.agent/feature_list_006.json` — 11 features
-049-059, DAG-validated acyclic, `original_estimate_lines` 1720), the manifest carries
-the phase as `status: pending`, and per `methodology/00_planning.md` execution begins
-only when the operator authorizes activation (gate **H-PHASE-006**). Scope: the
+Phase `006-enforcement-closure` is **ACTIVE** and is the current plan of record. On
+2026-07-19 the operator authorized activation (verbatim: **"Approved. Proceed with
+the logical next steps."**, satisfying gate **H-PHASE-006**; recorded in
+`run_state` event `phase_activated` before any feature execution). The planner
+artifacts (`.agent/product_spec_006.md`, now active 1.1.0;
+`.agent/feature_list_006.json` — 11 features 049-059, DAG-validated acyclic,
+`original_estimate_lines` 1720) are the plan of record; the manifest carries the
+phase as `status: in_progress`, `current_phase: 006-enforcement-closure`.
+Execution runs on the single branch `phase/006-enforcement-closure` with
+sequential PRs into `main` (the stacked-PR pattern is retired after the
+2026-07-18 collapse). Scope: the
 debt-driven enforcement closure (Track 2's revived candidates NDEBT-004/005/007/008/
 009/010/011/012 plus the phase-005 additions NDEBT-013..024), codification of the
 incident-proven operational rules, the Track 3 constitutional mechanize-or-descope
@@ -122,13 +131,13 @@ they need no new phase.
    runtime change, `bootstrap.sh` unmodified). Residual: **publish the v0.6.0 GitHub
    Release page — EXECUTED 2026-07-15** (the page exists, published 05:53 UTC;
    every tag v0.1.0–v0.6.0 now has a published Release page).
-2. **Publish the user guide to GitHub Pages — MECHANIZED 2026-07-18.** Outstanding
-   since phase 003; `.github/workflows/pages.yml` now publishes `docs/guide/` on
-   every merge to `main` touching the guide (and on dispatch). One-time
-   prerequisite for the operator: enable Pages with Source "GitHub Actions"
-   (Settings → Pages) — the default GITHUB_TOKEN cannot create the Pages site, so
-   the job fails loudly at the configure step until that one-click enable is done,
-   after which publication is fully automatic.
+2. **Publish the user guide to GitHub Pages — EXECUTED 2026-07-19.** Outstanding
+   since phase 003, now closed: the operator performed the one-time Pages enable
+   (Source: GitHub Actions) and the first `.github/workflows/pages.yml` deploy
+   succeeded (run attempt 2, 2026-07-19 00:23 UTC). The guide is live at
+   https://niq-cnr.github.io/nizam-framework/ — verified serving the v0.7.0
+   content including the ecosystem module reference — and republishes
+   automatically on every merge to `main` touching `docs/guide/`.
 3. **Fix the v0.7.0 GitHub Release page title — EXECUTED 2026-07-18.** The title
    now reads `v0.7.0 — Ecosystem Engineering Cycle` (corrected by a branch-scoped
    one-shot applying the fixed `release.yml` extraction logic; body untouched).

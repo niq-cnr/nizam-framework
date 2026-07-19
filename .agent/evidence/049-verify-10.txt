@@ -1,0 +1,22 @@
+# .agent/evidence/049-verify-10.txt
+# Contract 049 verification entry 10 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: DEBT REGISTER TRUTH: the NDEBT-008 row carries the feature-049 broadening (F-040 ecosystem capabilities + the masked C4 consumer false-fail + both interim carve-outs), still parses to 5 GFM cells, DEBT.md is at 0.17.0, and the Open table remains free of High/Critical.
+$ python3 - <<'PY'
+import re
+lines=open('docs/planning/DEBT.md',encoding='utf-8').readlines()
+row=[l for l in lines if l.startswith('| NDEBT-008 ')]
+assert len(row)==1
+assert 'BROADENED by feature 049' in row[0]
+cells=re.split(r'(?<!\\)\|', row[0].strip())
+assert len(cells)-2==5, len(cells)-2
+assert 'version: 0.17.0' in ''.join(lines[:8])
+open_sect=True; sevs=[]
+for l in lines:
+    if l.startswith('## Resolved'): open_sect=False
+    if open_sect and l.startswith('| NDEBT'):
+        sevs.append(re.split(r'(?<!\\)\|', l.strip())[3].strip())
+assert set(sevs) <= {'Low','Medium'}, sorted(set(sevs))
+print('E10 PASS: NDEBT-008 broadened, 5 cells, 0.17.0, Open severities', sorted(set(sevs)))
+PY
+E10 PASS: NDEBT-008 broadened, 5 cells, 0.17.0, Open severities ['Low', 'Medium']
+[exit 0]
