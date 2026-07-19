@@ -11,10 +11,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - **Work-packet template ↔ schema alignment** (phase 006 feature 054, resolving
   **NDEBT-011**): `templates/work-packet.template.json` now validates end-to-end
-  against `schema/work-packet.schema.json` — the three enum/integer fields that
-  held the `{{TIER}}`/`{{BLAST_RADIUS}}`/`{{MERGE_ORDER}}` placeholders carry the
-  schema-valid defaults `tier-0`/`local`/`0`, so the schema's own `description`
-  claim to validate the template is now true. The parse-validity-only caveat is
+  against `schema/work-packet.schema.json` — the three enum/integer dispatch
+  fields that held the `{{TIER}}`/`{{BLAST_RADIUS}}`/`{{MERGE_ORDER}}`
+  placeholders are omitted from the starter template (they cannot be
+  schema-valid, and shipping literal defaults would let a copied packet silently
+  carry a wrong tier / blast-radius / merge-order) and are documented in the
+  schema for consumers that need cross-repo dispatch, so the schema's own
+  `description` claim to validate the template is now true. The parse-validity-only caveat is
   retired from `templates/README.md` (0.2.2) and `schema/README.md` (0.7.1), and
   a `tools/fixtures_self_test.sh` guard mechanically asserts the conformance in
   CI (`jsonschema.validate` of the template against its schema) so it cannot

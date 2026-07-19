@@ -8,7 +8,7 @@ authoritative_source: templates/README.md
 change_log:
   - version: "0.2.2"
     date: "2026-07-19"
-    summary: "Documentation-truth reconciliation (F-054/NDEBT-011): work-packet.template.json now validates end-to-end against schema/work-packet.schema.json (its three enum/integer fields carry the schema-valid defaults tier-0/local/0), so the Validate step no longer describes the template as JSON parse-validity only; a tools/fixtures_self_test.sh guard mechanically asserts the conformance."
+    summary: "Documentation-truth reconciliation (F-054/NDEBT-011): work-packet.template.json now validates end-to-end against schema/work-packet.schema.json. Its three optional enum/integer dispatch fields (tier/blast_radius/merge_order) cannot hold a {{...}} placeholder, so rather than ship literal defaults a copied packet could silently carry and misclassify on, they are omitted from the starter template (documented in the schema for consumers that need cross-repo dispatch); the Validate step no longer describes the template as JSON parse-validity only, and a tools/fixtures_self_test.sh guard mechanically asserts the conformance."
   - version: "0.2.1"
     date: "2026-07-08"
     summary: "H6 de-leak: rephrased the internal .agent-directory spec citation to cite standard/NDS.md directly, a source a fresh consumer repository actually has."
@@ -52,5 +52,7 @@ copying the file.
    against `schema/phase.schema.json`; `manifest.template.json` against
    `schema/manifest.schema.json`; `work-packet.template.json` against
    `schema/work-packet.schema.json` (it validates end-to-end — the optional
-   `tier`/`blast_radius`/`merge_order` fields carry the schema-valid defaults
-   `tier-0`/`local`/`0`).
+   enum/integer dispatch fields `tier`/`blast_radius`/`merge_order` are omitted
+   from the starter template rather than shipped as literal defaults a copied
+   packet could silently carry, and are documented in the schema for consumers
+   that add cross-repo dispatch).
