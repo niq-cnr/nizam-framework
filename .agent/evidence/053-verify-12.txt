@@ -1,0 +1,27 @@
+# .agent/evidence/053-verify-12.txt
+# Contract 053 verification entry 12 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# ACCEPTANCE TEST: DOCS/DEBT SYNCED: DEBT 0.23.0 has NDEBT-010/013/014/019/020 in Resolved; AGF 0.2.0; methodology/02 0.4.0; CHANGELOG names the Orchestrator role entry.
+# --- command (from .agent/contracts/053.json verification[12].command) ---
+set -e
+grep -Fq 'version: 0.23.0' docs/planning/DEBT.md
+python3 - <<'PY'
+import re
+sect=None; resolved=set()
+for l in open('docs/planning/DEBT.md'):
+    if l.startswith('## Open'): sect='open'
+    elif l.startswith('## Resolved'): sect='resolved'
+    m=re.match(r'\| (NDEBT-\d+) ', l)
+    if m and sect=='resolved': resolved.add(m.group(1))
+    if l.startswith(('| NDEBT-010 ','| NDEBT-013 ','| NDEBT-014 ','| NDEBT-019 ','| NDEBT-020 ')):
+        assert sect=='resolved', l[:14]+' not Resolved'
+for n in ('NDEBT-010','NDEBT-013','NDEBT-014','NDEBT-019','NDEBT-020'): assert n in resolved, n
+print('debt ok')
+PY
+grep -Fq 'version: 0.2.0' standard/AGF.md
+grep -Fq 'version: 0.4.0' methodology/02_adversarial_tdd.md
+sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' CHANGELOG.md | grep -Fq 'Orchestrator role + operational-rule codification'
+echo 'E12 PASS: DEBT 0.23.0 (5 NDEBTs Resolved); AGF 0.2.0; methodology/02 0.4.0; CHANGELOG synced'
+# --- output ---
+debt ok
+E12 PASS: DEBT 0.23.0 (5 NDEBTs Resolved); AGF 0.2.0; methodology/02 0.4.0; CHANGELOG synced
+[exit 0]

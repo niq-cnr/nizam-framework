@@ -1,0 +1,447 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 115a7b9..28e9ace 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -41,6 +41,23 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+   basename carrying a `neg`/`invalid` look-alike that is not the canonical
+   delimited-lowercase token (uppercase `_NEG_`, full-word `_negative_`) is a
+   named FAIL, so the classifier cannot be gamed by a look-alike name.
++- **Orchestrator role + operational-rule codification** (phase 006 feature
++  053): `standard/AGF.md` (0.2.0) now defines the **Orchestrator** in Section 2
++  — the coordination/state-ownership role that sequences the four execution
++  roles, parses each gate verdict, owns `run_state.json`'s run-position and
++  coordination fields (Section 5 rule 4), and enforces the circuit breaker —
++  resolving **NDEBT-010**, the load-bearing-but-undefined role that
++  `capability_profiles.md`, `permission_classes.md`, `mcp_policy.md`, and
++  `methodology/06_release_train.md` (0.3.1) all already referenced.
++  `methodology/02_adversarial_tdd.md` (0.4.0) gains Section 10 anti-pattern (e)
++  (explicit exit-code assertion — **NDEBT-019**), Section 11 Probe Isolation
++  (**NDEBT-013/020**), and Section 12, the five-class verification-authoring
++  defect catalogue (**NDEBT-014**). `tools/verify_lib.sh` gains a sixth vetted
++  primitive, `vlib_word_present` (whole-word match, fixing the
++  substring-on-containing-word false-pass), fixture-tested via
++  `tools/fixtures_self_test.sh`. Three stale "four agent roles" descriptions of
++  AGF were corrected in-scope (`standard/README.md`,
++  `methodology/01_execution.md`, `methodology/00_planning.md`).
+ 
+ ### Changed
+ 
+diff --git a/docs/planning/DEBT.md b/docs/planning/DEBT.md
+index 394628f..080a92b 100644
+--- a/docs/planning/DEBT.md
++++ b/docs/planning/DEBT.md
+@@ -2,7 +2,7 @@
+ id: nizam-debt
+ title: Technical Debt Register — nizam-framework
+ description: Known debt, deferred decisions, and cross-repo impacts for the nizam-framework repository.
+-version: 0.22.0
++version: 0.23.0
+ status: active
+ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ ---
+@@ -13,17 +13,12 @@ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ 
+ | ID | Date | Severity | Description | Remediation |
+ |----|------|----------|-------------|-------------|
+-| NDEBT-019 | 2026-07-18 | Low | The `bash tools/validate.sh 2>&1 \| tail -1 \| grep ...` verification-command authoring pattern (used in historical evidence captures, e.g. `.agent/evidence/031-verify-09.txt`, and in some committed acceptance-test commands) lacks `pipefail`/explicit exit-code capture, so the validator's own real exit status is not asserted -- only the piped `grep` exit status is. False-PASS risk is only theoretical (a genuinely failing sweep never emits a `0 failed` `SUMMARY` line for `grep` to match), and historical evidence captures are IMMUTABLE point-in-time records, not edited here. Surfaced by CodeRabbit review of PR #20. RECURRED in feature 049's evidence captures (surfaced by CodeRabbit review of PR #28, 2026-07-19): `.agent/evidence/049-verify-04.txt` and `049-verify-11.txt` run multi-command `test`/`grep` assertion sequences without `set -e`/`&&` chaining, so a failing middle assertion would not have stopped the block or suppressed the trailing PASS marker; no false PASS occurred in fact (each capture prints the real `rc=0` by interpolation and shows the load-bearing SUMMARY/tail lines verbatim), and the captures stay immutable per AH-3 — another live datapoint for this row's codification. | Fold an explicit `rc=$?`/`set -o pipefail` requirement into the `methodology/02_adversarial_tdd.md` verification-authoring standard so future contracts assert the validator's own exit code, not only its piped SUMMARY line; scheduled: phase-006 feature 053 bundles this row's codification. |
+-| NDEBT-020 | 2026-07-18 | Medium | During feature 045's contract-review round 1, the evaluator misfired `rm -f` against the REAL repository path `CHANGELOG.md` while intending a scratch-directory cleanup command (the wrong, real-repo path was passed by mistake). Self-caught within the same turn (`git status --porcelain -- CHANGELOG.md` reported ` D CHANGELOG.md`) and fully restored via `git checkout -- CHANGELOG.md`; `git diff --stat HEAD -- CHANGELOG.md` confirmed zero lasting effect. Disclosed in full by the evaluator in `.agent/qa/045-contract-review.json`'s review history. Surfaced by CodeRabbit review of PR #20. | Strengthen the probe-isolation rule (NDEBT-013's precedent) to explicitly require: verify the current working directory before issuing any destructive command (`rm`, `rm -f`, `git clean`, etc.), and never pass a real-repository path as the argument to a destructive command during a review/verification probe -- scratch paths only, always constructed from a session-scratch root variable, never a bare filename. Candidate scope for `methodology/02_adversarial_tdd.md` or `standard/AGF.md`'s role obligations. |
+ | NDEBT-021 | 2026-07-18 | Low | `tools/ecosystem_preflight.py` minimum-CLI hardening backlog (bundles CodeRabbit PR-22 items 3607425422/3607425426/3607425428/3607425430 + the PR-23 untracked-rejection probe note from 3607428783), deferred post-v0.7.0 alongside NDEBT-017. Severity Low: all fail-closed / pathological-input / unused-combination edges; no shipped invocation is affected (043/044 dogfood runs used fresh per-step dirs and ASCII paths). | (1) it parses default porcelain-v1 output, so special-character/space/non-ASCII paths are C-quoted and fail literal tolerate-list matching -- fails CLOSED (a tolerated odd path becomes blocking, never a silent pass); the naive `-z --untracked-files=all` fix would BREAK the directory-prefix exception semantics the committed 043/044 approved exception sets rely on (`.agent/evidence/<exec-id>/` tolerated as one porcelain dir entry), so the fix must be NUL-delimited parsing that preserves dir-prefix exceptions; (2) the required-reference check uses `os.path.exists` (accepts directories) and an unresolved HEAD yields baseline revision `"unknown"` rather than its own blocking finding -- reachable only in an unborn-repo-with-gitignored-schemas setup; (3) explicit `--repo-root '.'` is indistinguishable from the default under `--self-fixture` (`default="."`); default it to `None`; (4) a reused `--output-dir` is not pre-cleaned, so mixed-verdict runs can leave contradictory `preflight.json`/`preflight.pending.json`/`baseline.json` leftovers; (5) add an executed untracked-not-tolerated -> FAIL probe to the hardening test scope. |
+ | NDEBT-022 | 2026-07-18 | Medium | `ecosystem/07_progress_comparison.md` Sec 3's four-class transition taxonomy {new, resolved, reopened, stale} is non-exhaustive: it has no class for a finding that persists across both inputs with freshly re-confirmed evidence (F-audit044-ndebt-015, re-captured at revision `cba6422`), nor for a finding resolved before the first baseline (ndebt-002); and the delta score fields (`open_findings_before/after` = 3->5) count recorded findings, not open-only (which would be 2->4). The committed audit-044 delta (`.agent/audits/audit-2026-07-17-cba6422/`) bridged both transparently via `unchanged_facts` + explicit notes (report.md:16-23,46-57) with correct, fully-cited +2 net movement -- nothing hidden or distorted, so the immutable committed artifact needs NO change. | Fix path: amend the LIVE `ecosystem/07` protocol doc in a future phase with a persisting/re-confirmed class, a first-comparison (pre-window-resolved) rule, and exact open-vs-recorded score-count semantics before the next audit. Severity Medium (not Low): a spec-completeness defect that will recur in every future comparison; not High (nothing concealed, movement correct and traceable, and DEBT Open must stay free of High/Critical for 045-verify-18). |
+ | NDEBT-023 | 2026-07-18 | Low | `ecosystem/02_evidence_baseline.md` Sec 4 declares a baseline invalid when declared revisions for the same repository are inconsistent across the baseline's fields, but nothing mechanized enforces the rule: `schema/ecosystem_baseline.schema.json` accepts two fully-anchored `repository_references` entries for the same repository at different revisions (confirmed empirically with jsonschema Draft 2020-12 during the operator's PR #21 review), the sole related negative fixture `ecosystem_baseline_neg_mixed_timestamps.json` exercises only the missing-timestamp sub-case, and `tools/ecosystem_preflight.py`'s `build_baseline_document` performs no cross-entry same-repo consistency check -- self-runs anchor every reference to the one freshly-resolved HEAD, so the framework's own dogfood runs cannot produce the inconsistency; the exposure is hand-authored and future multi-repo baselines. Surfaced by operator review of PR #21. | Add a same-repo revision-consistency negative fixture (e.g. `ecosystem_baseline_neg_inconsistent_revisions.json`) exercised by C12, plus a documented capture-tool check in `build_baseline_document` (a schema-level guard only if expressible without false positives); candidate scope post-v0.7.0 alongside NDEBT-021's preflight-hardening bundle. |
+ | NDEBT-024 | 2026-07-18 | Low | `tools/fixtures/preflight_verdict_fail.json` places a `blocking: true` item inside `exceptions`, whose schema field description reads 'the non-blocking findings surfaced by the run' -- schema-valid (exception items are deliberately open objects) but semantically muddled, and divergent from the shipped CLI's real FAIL emission: `tools/ecosystem_preflight.py` records blocking findings under a separate `blocking_findings` key and never inside `exceptions`. Surfaced by operator review of PR #21. | Align the three surfaces post-v0.7.0: either add a `blocking_findings` array to `schema/preflight_verdict.schema.json` (matching the tool's real FAIL shape) and rebuild the FAIL fixture on it, or loosen the `exceptions` field description to cover recorded blocking conditions; keep C12 green and the fixture's C12 polarity positive throughout. |
+ | NDEBT-017 | 2026-07-17 | Low | `tools/ecosystem_preflight.py`'s `ci_references` field is repo-HEAD-anchored with an honest `KNOWN LIMITATION` note (no real CI-run lookup) — a limitation contract 041 explicitly deferred registering as its own NDEBT entry ("a later orchestrator/evaluator action"). Feature 043's real framework self-dogfood run (execution-id `dogfood-2026-07-17-28c8253`, evidence: `.agent/evidence/dogfood-2026-07-17-28c8253/`, artifact: `.agent/reconciliation/dogfood-2026-07-17-28c8253/baseline.json`) is the first time this limitation is exercised for real against the framework's own tree (not a scratch fixture), landing a tracked `baseline.json` carrying the same honest note. | Wire a real CI-run lookup (e.g. a GitHub Actions API call keyed off the repository/commit) into `build_baseline_document`'s `ci_references` synthesis; candidate scope for the next ecosystem-tooling feature. |
+ | NDEBT-018 | 2026-07-17 | Medium | Dogfood preflight self-reference, discovered TWICE during feature 043's real framework self-dogfood run (execution-id `dogfood-2026-07-17-28c8253`, evidence: `.agent/evidence/dogfood-2026-07-17-28c8253/`): (1) the feature's own in-flight contract/qa-review artifacts (`.agent/contracts/043.json`, `.agent/qa/043-contract-review.json`, `.agent/qa/043-contract-review-rev1.json`) and the run's own evidence-output directory necessarily appear as untracked exceptions inside the very preflight run they help produce, requiring an explicit, bounded tolerate-list rather than genuine pre-existing debt. (2) MORE SEVERELY: the orchestrator's own H-DOGFOOD-EXCEPTION gate-decision write to `.agent/run_state.json` first landed as an UNCOMMITTED tracked modification before the approved-step invocation was attempted, which `tools/ecosystem_preflight.py` correctly and unconditionally treats as a blocking finding no `--tolerate-untracked` flag can rescue (tracked-file changes are never tolerable, by design) — the approved invocation genuinely FAILed (exit 1, blocking_findings=["uncommitted tracked change (M): .agent/run_state.json"]) on the first attempt and only succeeded (exit 3) after the orchestrator committed that write (HEAD `28c8253` -> `e73cd04`). | (1) Consider a clean-worktree/scratch-checkout isolation mode for the preflight tool's self-fixture invocation so a feature's own in-flight `.agent` artifacts do not need to be individually enumerated in a tolerate-list. (2) Codify, durably (not just per-dispatch instruction), that any orchestrator-owned tracked-state write relevant to a gate decision (e.g. `run_state.json`'s `operator_gate_decision` event) MUST be committed BEFORE the corresponding gated CLI invocation runs — candidate scope for `methodology/03_circuit_breaker.md` or a new ecosystem-module operational note. |
+-| NDEBT-013 | 2026-07-17 | Medium | Reviewer probe isolation was undefined and caused a real incident during phase-005 parallel feature execution: the feature-032 evaluator's dynamic-awareness probe touch/rm'd the REAL path `ecosystem/01_clean_state_preflight.md` to simulate a sibling landing, and deleted feature 033's freshly-authored actual deliverable mid-implementation (033's generator detected the loss, recreated the file identically, and re-verified 14/14 twice; recorded in run_state feature_complete event for 032+033). No protocol forbade probing at real contracted paths. An orchestration-level probe-isolation rule (scratch copies only; never create/touch/delete a sibling's real path, including "simulating" its file landing) was adopted mid-phase via dispatch prompts and prevented recurrence across features 034-040. | Codify the probe-isolation rule durably: add it to the evaluator/validator protocols (methodology/02 verification-authoring standard and/or standard/AGF.md role obligations) so it binds by document rather than by per-dispatch prompt text — candidate scope for the phase-005 close or the next self-compliance phase. |
+-| NDEBT-014 | 2026-07-17 | Medium | Contract-verification authoring has a recurring defect catalogue, each class caught (and fixed) at least once by phase-005 Loop-1/Loop-2 gates but none yet mechanized as reusable guidance or vetted helpers: (1) working-tree-anchored anti-vacuity companions become mutually exclusive with their positive check post-implementation — they must be HEAD-anchored (038 entry-13, discovered at Loop-2, required a ratified amendment); (2) per-feature-ID exclude-list immutability guards are fragile under parallel drafting and need live amendments each time a sibling appears (036 entry-16), whereas 038 amendment_2's two-part invariant (tracked-history clean + untracked additions confined to in-flight-range globs) is robust — the forms should be harmonized; (3) vlib_section_grep is line-based, so required literal phrases split across a markdown line-wrap silently fail (033, 035, 036 all hit this at implementation); (4) bare substring tokens false-pass on containing words ('renewed'⊃'new', 'stalemate'⊃'stale'; 'invalid'⊃'valid' in fixture-name globs) — backtick-delimited code-span tokens or 'neg' naming are the proven fixes; (5) natural-language content bounds (line caps, word caps) cannot stop paraphrase mirroring — only closed-set shapes with exact-text pinning proved airtight (040, three rounds). | Fold the five classes into the verification-authoring standard (methodology/02, the R3 vetted-helpers home): document each anti-pattern with its proven fix, add vetted verify_lib.sh primitives where mechanizable (HEAD-anchored anti-vacuity helper; two-part .agent immutability helper; word-boundary/code-span token grep helper), and consider a contract-template checklist so future phases inherit the catalogue instead of rediscovering it gate-by-gate. |
+-| NDEBT-010 | 2026-07-12 | Medium | The Orchestrator role is load-bearing but undefined: `standard/AGF.md` Section 2 defines exactly four roles (Planner/Generator/Validator/Evaluator), yet `standard/capability_profiles.md` ships an `orchestrator-primary` profile while claiming every profile maps to an AGF role, `standard/permission_classes.md` and `standard/mcp_policy.md` allocate orchestrator permissions and tool surfaces, and `methodology/06_release_train.md` concedes AGF defines no release-manager role. The framework's own run history is orchestrator-driven throughout. | Define the Orchestrator (coordination/state-ownership role, its gate obligations, and which `run_state.json` fields it exclusively owns per AGF Section 5 rule 4) in AGF Section 2 — a deliberate standards change to route through the next planned phase, not a hot-patch. |
+ | NDEBT-011 | 2026-07-12 | Low | `templates/work-packet.template.json` does not validate against `schema/work-packet.schema.json` (three errors: `{{TIER}}` and `{{BLAST_RADIUS}}` placeholder tokens occupy enum-constrained fields; `{{MERGE_ORDER}}` occupies an integer field), while the schema's own `description` claims it validates the template. `templates/README.md` quietly downgrades the template's contract to JSON parse-validity only; the two claims disagree. | Align the surfaces: either give the template schema-valid literal defaults (e.g. `tier-0`, `local`, `0`) so it validates end-to-end, or correct the schema `description` to name work-packet *artifacts* rather than the template and keep the parse-validity-only contract, stating the choice in `templates/README.md` (the `schema/README.md` table row added 2026-07-12 already carries the caveat). |
+ | NDEBT-005 | 2026-07-10 | Low | C10's three spec-scoped sub-checks (payload-set / discovery-order / version-anchor) do NOT mechanize a recurrence-guard for the two NDEBT-003 defect CLASSES that F-027 fixed by hand: (a) enumeration-completeness (a future doc could again omit a `methodology/`/`registry/` file from a hand-maintained key-documents list) and (b) bare (non-`/`-qualified) stale cross-references (neither C9's `/`-qualification nor C10's three sub-checks catch a bare `NN_name.md` that no longer resolves). Deferred deliberately: spec_004 §5 F-027 scopes C10 to exactly three sub-checks; adding a 4th/5th checker was ruled un-spec'd scope creep with real false-positive risk (Mode A, contract 027). | Address in a future self-compliance phase (or fold into F-028/C11's dogfooding if a schema-driven enumeration source is introduced): add an enumeration-completeness + bare-cross-ref-resolution guard, ideally sourced from a single canonical index rather than re-derived, so hand-maintained lists cannot silently drift. |
+ 
+@@ -31,6 +26,11 @@ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ 
+ | ID | Date | Severity | Description | Resolution |
+ |----|------|----------|-------------|------------|
++| NDEBT-010 | 2026-07-12 | Medium | The Orchestrator role is load-bearing but undefined: `standard/AGF.md` Section 2 defines exactly four roles (Planner/Generator/Validator/Evaluator), yet `standard/capability_profiles.md` ships an `orchestrator-primary` profile while claiming every profile maps to an AGF role, `standard/permission_classes.md` and `standard/mcp_policy.md` allocate orchestrator permissions and tool surfaces, and `methodology/06_release_train.md` concedes AGF defines no release-manager role. The framework's own run history is orchestrator-driven throughout. | RESOLVED 2026-07-19 by phase-006 feature 053, PR #TBD: `standard/AGF.md` 0.2.0 defines the Orchestrator in Section 2 (coordination/state-ownership -- sequences the four execution roles, parses each gate's JSON verdict and advances only on a pass, owns `run_state.json`'s run-position/coordination fields per Section 5 rule 4, enforces the circuit breaker). The load-bearing references now all resolve: `capability_profiles.md`'s `orchestrator-primary` profile + its 'every role maps to an AGF role' claim (now a true 5-role↔​5-profile correspondence), `permission_classes.md`'s Orchestrator row, `mcp_policy.md`'s Orchestrator surface, and `methodology/06_release_train.md` 0.3.1 (the 'AGF defines no separate release-manager role' concession retired). Three stale 'four agent roles' descriptions of AGF were corrected in-scope (`standard/README.md` 0.2.1, `methodology/01_execution.md` 0.1.1, `methodology/00_planning.md` 0.2.1) -- an NDEBT-005-class enumeration-completeness follow-through the role change created. |
++| NDEBT-013 | 2026-07-17 | Medium | Reviewer probe isolation was undefined and caused a real incident during phase-005 parallel feature execution: the feature-032 evaluator's dynamic-awareness probe touch/rm'd the REAL path `ecosystem/01_clean_state_preflight.md` to simulate a sibling landing, and deleted feature 033's freshly-authored actual deliverable mid-implementation (033's generator detected the loss, recreated the file identically, and re-verified 14/14 twice; recorded in run_state feature_complete event for 032+033). No protocol forbade probing at real contracted paths. An orchestration-level probe-isolation rule (scratch copies only; never create/touch/delete a sibling's real path, including "simulating" its file landing) was adopted mid-phase via dispatch prompts and prevented recurrence across features 034-040. | RESOLVED 2026-07-19 by phase-006 feature 053: `methodology/02_adversarial_tdd.md` 0.4.0 Section 11 (Probe Isolation) codifies the rule durably -- a probe operates on scratch state only (a session-scratch root held in a variable, never a real contracted path or a bare filename), never creates/touches/deletes a sibling's real path (including 'simulating' that sibling's file landing), and restores any borrowed real tracked file with a trap-based backstop. It names the F-032 incident it remediates, so the rule binds by document rather than by per-dispatch prompt text. |
++| NDEBT-014 | 2026-07-17 | Medium | Contract-verification authoring has a recurring defect catalogue, each class caught (and fixed) at least once by phase-005 Loop-1/Loop-2 gates but none yet mechanized as reusable guidance or vetted helpers: (1) working-tree-anchored anti-vacuity companions become mutually exclusive with their positive check post-implementation — they must be HEAD-anchored (038 entry-13, discovered at Loop-2, required a ratified amendment); (2) per-feature-ID exclude-list immutability guards are fragile under parallel drafting and need live amendments each time a sibling appears (036 entry-16), whereas 038 amendment_2's two-part invariant (tracked-history clean + untracked additions confined to in-flight-range globs) is robust — the forms should be harmonized; (3) vlib_section_grep is line-based, so required literal phrases split across a markdown line-wrap silently fail (033, 035, 036 all hit this at implementation); (4) bare substring tokens false-pass on containing words ('renewed'⊃'new', 'stalemate'⊃'stale'; 'invalid'⊃'valid' in fixture-name globs) — backtick-delimited code-span tokens or 'neg' naming are the proven fixes; (5) natural-language content bounds (line caps, word caps) cannot stop paraphrase mirroring — only closed-set shapes with exact-text pinning proved airtight (040, three rounds). | RESOLVED 2026-07-19 by phase-006 feature 053: `methodology/02_adversarial_tdd.md` 0.4.0 Section 12 documents the five-class verification-authoring defect catalogue, each with its proven fix (HEAD-anchored anti-vacuity companions; the F-038 two-part immutability invariant; `vlib_section_grep` line-wrap; whole-word/code-span tokens; closed-set exact-text pinning). The mechanizable primitive is added -- `vlib_word_present` (a whole-word, delimited-token match fixing class 4's substring-on-containing-word false-pass, e.g. `renewed`⊃`new`), fixture-tested (`word_present_pass.md`/`word_present_fail.md`, exercised as standing tests by `tools/fixtures_self_test.sh`). Classes 1-2's fixes are documented authoring patterns rather than standalone primitives (they are contextual, not pure functions); the catalogue binds by document so future contracts inherit it instead of rediscovering it gate-by-gate. |
++| NDEBT-019 | 2026-07-18 | Low | The `bash tools/validate.sh 2>&1 \| tail -1 \| grep ...` verification-command authoring pattern (used in historical evidence captures, e.g. `.agent/evidence/031-verify-09.txt`, and in some committed acceptance-test commands) lacks `pipefail`/explicit exit-code capture, so the validator's own real exit status is not asserted -- only the piped `grep` exit status is. False-PASS risk is only theoretical (a genuinely failing sweep never emits a `0 failed` `SUMMARY` line for `grep` to match), and historical evidence captures are IMMUTABLE point-in-time records, not edited here. Surfaced by CodeRabbit review of PR #20. RECURRED in feature 049's evidence captures (surfaced by CodeRabbit review of PR #28, 2026-07-19): `.agent/evidence/049-verify-04.txt` and `049-verify-11.txt` run multi-command `test`/`grep` assertion sequences without `set -e`/`&&` chaining, so a failing middle assertion would not have stopped the block or suppressed the trailing PASS marker; no false PASS occurred in fact (each capture prints the real `rc=0` by interpolation and shows the load-bearing SUMMARY/tail lines verbatim), and the captures stay immutable per AH-3 — another live datapoint for this row's codification. | RESOLVED 2026-07-19 by phase-006 feature 053 (the row's own scheduled home): `methodology/02_adversarial_tdd.md` 0.4.0 Section 10 anti-pattern (e) folds the explicit exit-code requirement into the verification-authoring standard -- a pipeline (a tool piped into `tail` then `grep`) asserts only the last stage's exit, so capture the tool's own `rc` explicitly (or grep the specific targeted-check verdict line, not a bare exit), and guard an expected-FAIL capture under `set -e` (`set +e; out=$(cmd); rc=$?; set -e`) so `set -e` does not fire on the expected non-zero substitution before the assertion runs. Both datapoints are codified: the pipeline-swallow form (F-049/F-050) and the `set -e`-over-aggression form (F-052). Historical evidence captures stay immutable (AH-3); the rule binds future contracts. |
++| NDEBT-020 | 2026-07-18 | Medium | During feature 045's contract-review round 1, the evaluator misfired `rm -f` against the REAL repository path `CHANGELOG.md` while intending a scratch-directory cleanup command (the wrong, real-repo path was passed by mistake). Self-caught within the same turn (`git status --porcelain -- CHANGELOG.md` reported ` D CHANGELOG.md`) and fully restored via `git checkout -- CHANGELOG.md`; `git diff --stat HEAD -- CHANGELOG.md` confirmed zero lasting effect. Disclosed in full by the evaluator in `.agent/qa/045-contract-review.json`'s review history. Surfaced by CodeRabbit review of PR #20. | RESOLVED 2026-07-19 by phase-006 feature 053: `methodology/02_adversarial_tdd.md` 0.4.0 Section 11 point 2 requires verifying the current working directory before any destructive command (`rm`, `rm -f`, `git clean`, ...) and forbids passing a real-repository path as that command's argument -- the exact F-045 `rm -f`-against-real-`CHANGELOG.md` misfire this row names, now a document-binding rule alongside NDEBT-013's scratch-only requirement. |
+ | NDEBT-009 | 2026-07-12 | Low | The negative fixtures under `tools/fixtures/` are substantive and discriminating (each fails its targeted check when run via `--target`), but dormant: no CI job runs them, so a regression that made a validator check vacuously pass would not be caught. The full-sweep CI runs exclude `tools/fixtures/` by design. | RESOLVED 2026-07-19 by phase-006 feature 052, PR #31: `tools/fixtures_self_test.sh` and a `fixtures_self_test` CI job run EVERY shipped fixture (41) through its targeted surface — `validate.sh --target` for check-level fixtures, the `verify_lib.sh` primitives for primitive-level ones (including two git-scratch primitives), and a `tools/skill.json` substitution for the C13 negative fixture — asserting the SPECIFIC verdict, never a bare non-zero exit. That distinction is load-bearing: most `.md` fixtures already exit non-zero from incidental C1/C2 frontmatter failures unrelated to what they test (e.g. `stale_payload_pass.md` exits 1 but its targeted check C10 correctly PASSES), so an exit-code-only self-test would pass vacuously on the wrong check — the exact failure mode this row names. A completeness guard fails on any file under `tools/fixtures/` not accounted for by a manifest row, so a newly-added fixture cannot silently go dormant. Proven load-bearing three ways (making a negative's targeted check pass, adding an unaccounted fixture, removing a listed fixture each fail the self-test). |
+ | NDEBT-015 | 2026-07-17 | Medium | `tools/validate.sh --target` misroutes ALL THREE ecosystem fixture families (broader than first observed): `preflight_verdict_*.json` fixtures carry a top-level `verdict` key and collide with C11's qa_verdict route, while `ecosystem_baseline_*.json` and `engineering_finding_*.json` fixtures fall through to C4 and fail against the unrelated NIZAM-index schema regardless of polarity — zero discriminating signal on any `--target` invocation against an ecosystem fixture. Pre-existing before feature 042 (confirmed byte-identical routing code on unmodified HEAD by three independent reviews); C12 now provides the load-bearing full-sweep coverage, so the gap is confined to targeted invocations. Surfaced during 042's contract negotiation and broadened by its final QA (qa/042.json). | RESOLVED 2026-07-19 by phase-006 feature 052, PR #31: `check_c11_or_c4_target`'s content router now recognizes the three families — `verdict`+`execution_id` → preflight_verdict (checked BEFORE the generic `verdict`→qa_verdict route so preflight is not swallowed; qa_verdict artifacts carry no `execution_id`), the six `*_references` arrays → ecosystem_baseline, `closure_criteria` → engineering_finding — dispatching each to a new `check_c12_target` that validates the single file against its family schema and emits a discriminating `[C12]` verdict. A `--target` invocation against any ecosystem fixture now PASSes (valid) or FAILs (negative) by polarity. Regression-verified: the existing review/qa_verdict/contract/run_state routes and the C4 fall-through are unchanged (`invalid_qa_verdict.json` still routes qa_verdict via `qa_pass`, `broken_index.json`/`NIZAM.json` still route C4). All 14 ecosystem fixtures are exercised through this route by `tools/fixtures_self_test.sh`. |
+ | NDEBT-016 | 2026-07-17 | Low | C12's fixture-polarity classification regex has confirmed dodges for FUTURE fixture filenames only (none of the 15 shipped fixtures are affected): full-word `negative_`, uppercase `_NEG_`, and false-trigger `_invalid_handling`-style names for positive fixtures that test invalid-input handling. Disclosed in contract 042's design_notes; deliberately not fixed under the phase-005 budget. | RESOLVED 2026-07-19 by phase-006 feature 052, PR #31: C12's classifier is now case-insensitive with a naming-conformance guard. The canonical negative marker is the delimited lowercase token `_neg_`/`_invalid_` and is RESERVED; a basename carrying a case-insensitive `neg`/`invalid` look-alike that is NOT that canonical token (uppercase `_NEG_`, full-word `_negative_`) is a named FAIL, so the classifier cannot be gamed by a look-alike name. The false-trigger shape is handled by the reserved-token convention plus the existing polarity assertion — a schema-valid doc carrying a canonical negative marker FAILs as "negative unexpectedly VALIDATED", so a positive fixture cannot borrow the token. All three dodge shapes proven rejected in a scratch probe; the shipped fixtures all conform (default-sweep C12 stays green). |
+diff --git a/methodology/00_planning.md b/methodology/00_planning.md
+index 17c5ba9..fcec0e1 100644
+--- a/methodology/00_planning.md
++++ b/methodology/00_planning.md
+@@ -2,13 +2,16 @@
+ id: nizam-planning-enforcer
+ title: "Planning Enforcer"
+ description: "The mandatory pre-code planning protocol: the spec + feature-DAG artifact pair every phase must produce before implementation begins, the dependency enforcement rule, atomic-step decomposition, and the scope budget protocol."
+-version: 0.2.0
++version: 0.2.1
+ status: active
+ authoritative_source: methodology/00_planning.md
+ change_log:
+   - version: "0.2.0"
+     date: "2026-07-08"
+     summary: "Add the Plan Amendment Rule (Section 9), covering orchestrator-registrable amendments, Planner-routed re-planning, and scope-budget re-baselines."
++  - version: "0.2.1"
++    date: "2026-07-19"
++    summary: "Documentation-truth sync (F-053/NDEBT-010): the Section 7 reference to standard/AGF.md no longer describes it as 'the four agent roles' — AGF Section 2 now defines a coordinating Orchestrator plus the four execution roles."
+ ---
+ 
+ # Planning Enforcer
+@@ -201,8 +204,9 @@ future audit actually reads.
+ 
+ ## 10. References
+ 
+-- `standard/AGF.md` — the four agent roles (including Planner) and the dual
+-  validator gate this protocol's output feeds into.
++- `standard/AGF.md` — the agent roles (the coordinating Orchestrator and the
++  four execution roles, including Planner) and the dual validator gate this
++  protocol's output feeds into.
+ - `01_execution.md` — the harness loop that consumes an eligible, planned feature.
+ - `03_circuit_breaker.md` — the 3-strike limit that bounds contract-revision and
+   implementation-rework loops downstream of planning.
+diff --git a/methodology/01_execution.md b/methodology/01_execution.md
+index b56ca0d..7af735d 100644
+--- a/methodology/01_execution.md
++++ b/methodology/01_execution.md
+@@ -2,7 +2,7 @@
+ id: nizam-contract-first-execution
+ title: "Contract-First Harness Loop"
+ description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, and the JSON Verdict Parse Rule that gates every stage."
+-version: 0.1.0
++version: 0.1.1
+ status: active
+ authoritative_source: methodology/01_execution.md
+ ---
+@@ -131,8 +131,9 @@ Section 5 (the Dependency Enforcement Rule) to select the next eligible feature.
+ 
+ ## 7. References
+ 
+-- `standard/AGF.md` — the four agent roles, the Dual Validator Gate, and the
+-  authoritative definition of the JSON Verdict Parse Rule.
++- `standard/AGF.md` — the agent roles (the coordinating Orchestrator and the
++  four execution roles), the Dual Validator Gate, and the authoritative
++  definition of the JSON Verdict Parse Rule.
+ - `00_planning.md` — produces the eligible feature this loop consumes, and
+   receives control back on completion via the Dependency Enforcement Rule.
+ - `02_adversarial_tdd.md` — the independence and rigor requirements binding the
+diff --git a/methodology/02_adversarial_tdd.md b/methodology/02_adversarial_tdd.md
+index 81c0575..d6552fa 100644
+--- a/methodology/02_adversarial_tdd.md
++++ b/methodology/02_adversarial_tdd.md
+@@ -2,7 +2,7 @@
+ id: nizam-adversarial-tdd
+ title: "Adversarial Test Design"
+ description: "The evaluator independence model, false-pass and false-fail hunting patterns, and the negative-testing requirement that keeps acceptance test suites load-bearing rather than tautological."
+-version: 0.3.0
++version: 0.4.0
+ status: active
+ authoritative_source: methodology/02_adversarial_tdd.md
+ change_log:
+@@ -12,6 +12,9 @@ change_log:
+   - version: "0.3.0"
+     date: "2026-07-08"
+     summary: "Add the Verification-Authoring Standard (Section 10), naming the four forbidden verification anti-patterns (whole-file/vacuous greps, git-diff-HEAD scope guards blind to untracked/new files, bare-adjacency/parenthetical checks, literal-substring checks) and their tools/verify_lib.sh primitive replacements."
++  - version: "0.4.0"
++    date: "2026-07-19"
++    summary: "F-053 codification: add Section 10 anti-pattern (e) exit-code assertion (NDEBT-019 — pipeline-swallowed exits and set -e over-aggression on expected-failure captures), Section 11 Probe Isolation (NDEBT-013/020 — scratch-paths-only, cwd-verified-before-destructive, restore-with-trap), and Section 12 the five-class verification-authoring defect catalogue (NDEBT-014) with proven fixes and the new vlib_word_present primitive."
+ ---
+ 
+ # Adversarial Test Design
+@@ -252,9 +255,77 @@ resolution against the working tree, not a string match against the path
+ text), and `vlib_no_stale_payload <file>` (a real per-line structural scan
+ for a stale multi-directory enumeration, not a substring hit).
+ 
+-Every contract's verification suite MUST be reviewed against all four of
++**(e) Exit codes swallowed by a pipeline, or a bare non-zero exit** — A
++verification command that pipes a tool's output into `grep`/`tail`/`awk`
++(for example `bash tools/validate.sh | tail -1 | grep -Fxq 'SUMMARY: … 0
++failed'`) asserts only the *last* pipeline stage's exit status; the tool's own
++exit code is discarded, so a tool that fails but still prints the expected line
++passes the check. Symmetrically, a command that asserts merely a *non-zero*
++exit to prove a negative case can pass for an unrelated reason (a different
++check in the same tool failing). Capture and assert the tool's own return code
++explicitly — `out=$(cmd); rc=$?; test "$rc" -eq 0` (or grep for the specific
++verdict line of the *targeted* check, not a bare exit) — and when a command
++deliberately runs a tool that is *expected* to FAIL, guard the capture under
++`set -e` (`set +e; out=$(cmd); rc=$?; set -e`) so `set -e` does not fire on the
++expected non-zero command substitution before the assertion runs. (NDEBT-019:
++the pipeline-swallow form recurred across F-049's and F-050's evidence
++captures; the `set -e`-over-aggression form was caught live in F-052's.)
++
++Every contract's verification suite MUST be reviewed against all five of
+ these anti-patterns, in addition to the false-pass and false-fail hunting
+ practice of Sections 3 and 4, before it is approved; a verification command
+-that relies on any of (a)-(d) is not acceptance coverage and MUST be
++that relies on any of (a)-(e) is not acceptance coverage and MUST be
+ rejected and rewritten using the corresponding `tools/verify_lib.sh`
+-primitive named above.
++primitive (or the explicit exit-code capture) named above.
++
++## 11. Probe Isolation
++
++A reviewer or Evaluator that constructs an adversarial probe — a scratch file,
++a mutated fixture, a simulated sibling landing, a before/after substitution —
++operates on scratch state ONLY, never on the real repository the pipeline is
++delivering. This rule remediates two real incidents: a feature-032 evaluator
++probe that touched and then deleted a sibling feature's real contracted path
++(NDEBT-013), and a feature-045 review command that ran `rm -f` against the real
++`CHANGELOG.md` while intending a scratch cleanup (NDEBT-020).
++
++1. **Scratch paths only.** Every path a probe creates, mutates, or deletes MUST
++   live under a session-scratch root held in a variable, never a bare filename
++   and never a real contracted path. A probe never creates, touches, or deletes
++   a sibling's real path — including "simulating" that sibling's file landing.
++2. **Verify the working directory before any destructive command.** Before
++   issuing `rm`, `rm -f`, `git clean`, or any other destructive command, the
++   probe MUST confirm its current working directory is the intended scratch
++   location, and MUST NOT pass a real-repository path as that command's
++   argument.
++3. **Restore anything borrowed.** A probe that must temporarily substitute a
++   real tracked file (for example swapping a negative fixture in for a real
++   config to exercise a check) MUST back it up and restore it with a trap-based
++   backstop, and confirm the working tree is clean afterward.
++
++## 12. The Verification-Authoring Defect Catalogue
++
++Loop-1 and Loop-2 gates have repeatedly caught the same five
++verification-authoring defect classes (NDEBT-014). Each is recorded here with
++its proven fix, so future contracts inherit the catalogue instead of
++rediscovering it gate-by-gate:
++
++1. **Working-tree-anchored anti-vacuity companions** become mutually exclusive
++   with their positive check once the implementation lands — the "before" and
++   "after" states cannot both hold in the same tree. Anchor the anti-vacuity
++   companion to `HEAD` (or the pre-implementation base commit), never to the
++   working tree.
++2. **Per-feature-ID exclude-list immutability guards** are fragile under
++   parallel drafting: each new sibling needs a live amendment to the exclude
++   list. Prefer the two-part invariant proven in F-038 — tracked history clean
++   AND untracked additions confined to the in-flight feature-ID glob range.
++3. **`vlib_section_grep` is line-based**, so a required literal phrase split
++   across a markdown line-wrap silently fails the span match. Assert a phrase
++   that fits one physical line, or normalise the wrap before the section scan.
++4. **Bare substring tokens false-pass on containing words** (`renewed` ⊃
++   `new`, `stalemate` ⊃ `stale`, `invalid` ⊃ `valid` in a fixture-name glob).
++   Use a whole-word / delimited-token match (`vlib_word_present` in
++   `tools/verify_lib.sh`) or a backtick-delimited code-span token, never a bare
++   substring.
++5. **Natural-language content bounds** (line caps, word caps) cannot stop
++   paraphrase mirroring; only closed-set shapes with exact-text pinning proved
++   airtight for content whose own wording is the thing under test.
+diff --git a/methodology/06_release_train.md b/methodology/06_release_train.md
+index 1781b24..33c53d3 100644
+--- a/methodology/06_release_train.md
++++ b/methodology/06_release_train.md
+@@ -2,7 +2,7 @@
+ id: nizam-release-train
+ title: "Release Train Protocol"
+ description: "The framework's own release discipline: semantic-version git-tag cuts, what constitutes a breaking vs minor vs patch change, changelog discipline, and the consumer upgrade path via bootstrap re-run against a new pinned tag."
+-version: 0.3.0
++version: 0.3.1
+ status: active
+ authoritative_source: methodology/06_release_train.md
+ change_log:
+@@ -12,6 +12,9 @@ change_log:
+   - version: "0.3.0"
+     date: "2026-07-10"
+     summary: "NDEBT-003(b)/F-027: Section 3.2's Minor-change example named this document by a filename slot main's v0.5.x methodology renumbering had already reassigned to a different, newly-inserted document; corrected the reference to this document's real current filename."
++  - version: "0.3.1"
++    date: "2026-07-19"
++    summary: "Documentation-truth sync (F-053/NDEBT-010): Section 6's release-mechanics ownership no longer reads as a concession that 'AGF's role set defines no separate release-manager role' — standard/AGF.md Section 2 now defines the Orchestrator, so the three release mechanics are assigned to that defined role, which already owns run_state's coordination fields."
+ ---
+ 
+ # Release Train Protocol
+@@ -139,9 +142,11 @@ introduce a second, competing upgrade mechanism.
+ ## 6. Release Mechanics Ownership
+ 
+ Once the Section 2 human sign-off gate is satisfied, three specific
+-release-time mechanics belong to the **release-manager role** — in practice
+-the **orchestrator**, since `standard/AGF.md`'s role set defines no separate
+-release-manager role:
++release-time mechanics belong to the **Orchestrator** — the coordination role
++`standard/AGF.md` Section 2 defines, which already owns `run_state.json`'s
++run-position and coordination fields. The framework defines no separate
++release-manager role; these mechanics sit with the Orchestrator that owns the
++release-time state they record:
+ 
+ 1. **The changelog roll-up** — folding `CHANGELOG.md`'s `[Unreleased]`
+    entries into the new version's dated section heading.
+diff --git a/standard/AGF.md b/standard/AGF.md
+index 1431f61..15b0ac1 100644
+--- a/standard/AGF.md
++++ b/standard/AGF.md
+@@ -2,10 +2,13 @@
+ id: agent-governance-framework
+ title: "Agent Governance Framework (AGF)"
+ description: "The generalised multi-agent execution model: agent roles, the dual validator gate, the JSON verdict parse rule, and the durable-state rule for agent coordination."
+-version: 0.1.1
++version: 0.2.0
+ status: active
+ authoritative_source: standard/AGF.md
+ change_log:
++  - version: "0.2.0"
++    date: "2026-07-19"
++    summary: "Define the Orchestrator role in Section 2 (coordination/state-ownership: sequences the execution roles, parses each gate verdict, owns run_state's run-position/coordination fields per Section 5 rule 4, enforces the circuit breaker) — resolving NDEBT-010, the load-bearing-but-undefined role that capability_profiles.md, permission_classes.md, mcp_policy.md, and methodology/06_release_train.md all already referenced. Section heading generalised from 'Four Agent Roles'; Section 5 rule 4 now names the Orchestrator-owned coordination fields."
+   - version: "0.1.1"
+     date: "2026-07-12"
+     summary: "Documentation-truth cleanup: Section 6's circuit-breaker cross-reference now names methodology/03_circuit_breaker.md (shipped at genesis; the 'forthcoming' wording was stale), and the Section 4 verdict rule's dropped word is restored ('entry in any of the three arrays blocks advancement')."
+@@ -20,14 +23,17 @@ against a shared, contract-first delivery pipeline. It is deliberately silent on
+ specific agent runtime, tool-calling API, or orchestration harness — any runtime that can
+ route work between four role types and honour the gates below is compliant.
+ 
+-## 2. The Four Agent Roles
++## 2. The Agent Roles
+ 
+-Every execution pipeline governed by this framework is composed of four roles. A single
+-agent implementation MAY embody more than one role across different sessions, but a
+-single session MUST NOT blend roles in a way that lets one role bypass another's gate.
++Every execution pipeline governed by this framework is coordinated by a single
++**Orchestrator** and carried out by four execution roles (Planner, Generator, Validator,
++Evaluator). A single agent implementation MAY embody more than one role across different
++sessions, but a single session MUST NOT blend roles in a way that lets one role bypass
++another's gate.
+ 
+ | Role | Responsibility | Typical Output |
+ |---|---|---|
++| **Orchestrator** | Coordinates the pipeline: sequences the four execution roles, parses each gate's JSON verdict (Section 4) and advances only when it passes, owns the run-position and coordination fields of durable state (Section 5), and enforces the circuit breaker (Section 6). Authors no spec, contract, source code, or gate verdict of its own — it routes work between the execution roles and records the outcome. Where a deployment collapses the Orchestrator into another role, that collapse MUST be disclosed in durable state and every gate below still honoured. | Updated `run_state.json` coordination fields; gate-advance decisions recorded in durable state. |
+ | **Planner** | Expands a brief or request into product-level artifacts: an architecture/spec document and a feature list with acceptance criteria. Stays at high-level architecture; does not lock in low-level implementation detail. | A specification document, a feature list. |
+ | **Generator** | Proposes an implementation contract for a feature, then — once the contract is approved — implements only that contract's scope. Never expands scope silently. | A proposed contract; source code changes matching an approved contract. |
+ | **Validator** | Gatekeeps the pipeline at two points (Section 3): before code is written (Mode A) and after (Mode B). Does not write source code or repair contracts; it approves or rejects. | A JSON verdict (Section 4). |
+@@ -122,7 +128,12 @@ other channel that is not independently readable by the next agent in the pipeli
+    conversation.
+ 4. **Preserve, don't overwrite blindly.** Updates to durable state MUST preserve fields
+    the current step did not own or change; a role updates only the fields its contract or
+-   protocol assigns to it.
++   protocol assigns to it. In particular, the run-position and coordination fields of
++   `run_state.json` — the current phase and feature, the pipeline status, the scope
++   budget, the circuit-breaker state, the append-only history, and any recorded
++   operator-gate decisions — are owned exclusively by the **Orchestrator** (Section 2); an
++   execution role writes its own artifacts (its contract, verdict, or evidence) but never
++   these coordination fields.
+ 
+ ## 6. Circuit Breaker Cross-Reference
+ 
+diff --git a/standard/README.md b/standard/README.md
+index e5af7f3..8ab130f 100644
+--- a/standard/README.md
++++ b/standard/README.md
+@@ -2,7 +2,7 @@
+ id: nizam-standard-readme
+ title: "Standard Module — Index"
+ description: "Index for the standard/ module: the documentation, governance, security, and architectural standards every consumer repository inherits."
+-version: 0.2.0
++version: 0.2.1
+ status: active
+ authoritative_source: standard/README.md
+ ---
+@@ -18,7 +18,7 @@ consumer repository without modification.
+ |---|---|
+ | [`NDS.md`](NDS.md) | Nizam Documentation Standard — the six required frontmatter keys, the status lifecycle, versioning and change-log rules, and file/heading/machine-readability conventions every governed document must satisfy. |
+ | [`GIP.md`](GIP.md) | Governance Inheritance Protocol — how a consumer repository inherits the framework via pinned-tag cloning and `bootstrap.sh`, verifies the inheritance succeeded, and detects drift against the pinned tag over time. |
+-| [`AGF.md`](AGF.md) | Agent Governance Framework — the four agent roles, the dual validator gate (Mode A pre-code / Mode B post-code), the JSON verdict parse rule, and the durable-state ("no oral tradition") rule. |
++| [`AGF.md`](AGF.md) | Agent Governance Framework — the agent roles (a coordinating Orchestrator plus four execution roles), the dual validator gate (Mode A pre-code / Mode B post-code), the JSON verdict parse rule, and the durable-state ("no oral tradition") rule. |
+ | [`anti_hallucination.md`](anti_hallucination.md) | Universal anti-hallucination constraints (AH-1 through AH-4) that bind every agent role's actions, independent of protocol or task. |
+ | [`capability_profiles.md`](capability_profiles.md) | Binds agent roles to abstract capability profiles rather than hard-coded models. |
+ | [`ci_gates.md`](ci_gates.md) | The mandatory 10-gate `MERGE_READY` formula that ensures no unverified code bypasses the contract-first execution loop. |
+diff --git a/tools/fixtures/word_present_fail.md b/tools/fixtures/word_present_fail.md
+new file mode 100644
+index 0000000..7c01e80
+--- /dev/null
++++ b/tools/fixtures/word_present_fail.md
+@@ -0,0 +1,6 @@
++# vlib_word_present FAIL Fixture
++
++The contract was renewed twice, so the letters of the target token appear only
++inside the longer word renewed -- never delimited on their own. A whole-word
++probe must therefore reject the token here, where a bare substring grep would
++false-pass on the containing word.
+diff --git a/tools/fixtures/word_present_pass.md b/tools/fixtures/word_present_pass.md
+new file mode 100644
+index 0000000..e519e6b
+--- /dev/null
++++ b/tools/fixtures/word_present_pass.md
+@@ -0,0 +1,5 @@
++# vlib_word_present PASS Fixture
++
++This fixture documents a new capability, so the whole word `new` is present as a
++standalone, delimited token and `vlib_word_present <this-file> new` must accept
++it.
+diff --git a/tools/fixtures_self_test.sh b/tools/fixtures_self_test.sh
+index c171b91..64af14d 100755
+--- a/tools/fixtures_self_test.sh
++++ b/tools/fixtures_self_test.sh
+@@ -144,6 +144,13 @@ note_covered section_grep_fail.md
+ assert_rc "primitive   vlib_section_grep pass" 0 vlib_section_grep tools/fixtures/section_grep_pass.md '^## Target Section' 'SECTION_GREP_MARKER'
+ assert_rc "primitive   vlib_section_grep fail" 1 vlib_section_grep tools/fixtures/section_grep_fail.md '^## Target Section' 'SECTION_GREP_MARKER'
+ 
++# vlib_word_present (F-053): the whole word "new" is a delimited token in the
++# pass fixture; in the fail fixture it appears only inside "renewed".
++note_covered word_present_pass.md
++note_covered word_present_fail.md
++assert_rc "primitive   vlib_word_present pass" 0 vlib_word_present tools/fixtures/word_present_pass.md new
++assert_rc "primitive   vlib_word_present fail" 1 vlib_word_present tools/fixtures/word_present_fail.md new
++
+ # vlib_path_resolves: every token line in the pass fixture resolves/exempts
+ # (rc 0); the fail fixture's token does not (rc 1). Tokens resolve relative to
+ # the repo root (this script's CWD).
+diff --git a/tools/verify_lib.sh b/tools/verify_lib.sh
+index 838d307..6377ad0 100644
+--- a/tools/verify_lib.sh
++++ b/tools/verify_lib.sh
+@@ -9,13 +9,14 @@
+ # tools/verify_lib.sh` unconditionally without perturbing its own shell
+ # options, output streams, or exit status.
+ #
+-# Exposes five vetted, individually fixture-tested primitives that
+-# contracts (F-024..F-029) and future `tools/validate.sh` checks should
++# Exposes six vetted, individually fixture-tested primitives that
++# contracts (F-024..F-029, F-053) and future `tools/validate.sh` checks should
+ # compose their verification from, instead of re-inventing (and
+ # re-breaking) the historical anti-patterns this library exists to fix:
+ # vacuous whole-file greps, `git diff HEAD` scope guards blind to new
+ # untracked files, equal-or-decreasing version "increases", punctuation-
+-# mangled path resolution, and stale multi-directory payload enumerations.
++# mangled path resolution, stale multi-directory payload enumerations, and
++# bare-substring matches that false-pass on a containing word.
+ #
+ # Dependency-light: bash + coreutils + git + python3 (with PyYAML, already
+ # required by tools/validate.sh). No network access, no vendored
+@@ -334,3 +335,34 @@ vlib_no_stale_payload() {
+ 
+   return 0
+ }
++
++# ---------------------------------------------------------------------------
++# vlib_word_present <file> <word>
++#
++# Returns 0 iff <word> occurs in <file> as a whole, delimited word — not as a
++# substring of a longer word. This is the vetted replacement for a bare
++# substring check that false-passes on a containing word (the NDEBT-014
++# defect-class-4 catalogue in methodology/02_adversarial_tdd.md: `renewed`
++# contains `new`, `stalemate` contains `stale`, `invalid` contains `valid`),
++# where the acceptance criterion is the presence of the word itself, not any
++# word that happens to contain its letters. <word> is matched as a fixed
++# string (never a regex), bounded by grep's word-boundary (`-w`) semantics.
++#
++# Args:
++#   file: path to a text file. Actually read from disk (never keyed off the
++#     filename itself).
++#   word: the literal word whose whole-word presence is asserted.
++#
++# Returns:
++#   0 if <word> occurs as a whole word in <file>.
++#   1 otherwise (file missing, or the token appears only inside longer words).
++# ---------------------------------------------------------------------------
++
++vlib_word_present() {
++  local file="$1"
++  local word="$2"
++
++  [ -f "${file}" ] || return 1
++
++  grep -qwF -- "${word}" "${file}"
++}

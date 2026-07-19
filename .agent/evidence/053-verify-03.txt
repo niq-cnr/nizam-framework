@@ -1,0 +1,16 @@
+# .agent/evidence/053-verify-03.txt
+# Contract 053 verification entry 03 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# ACCEPTANCE TEST: CROSS-REFERENCES RESOLVE (NDEBT-010, acceptance test 1): the load-bearing references resolve to the AGF Orchestrator, the 06_release_train concession is retired, and AGF now has 5 role rows matching capability_profiles' 5 profiles.
+# --- command (from .agent/contracts/053.json verification[03].command) ---
+set -e
+grep -Fq 'orchestrator-primary' standard/capability_profiles.md
+grep -Fq '| Orchestrator |' standard/permission_classes.md
+grep -Fq 'Orchestrator, Planner, Validator' standard/mcp_policy.md
+grep -Fq 'belong to the **Orchestrator**' methodology/06_release_train.md
+grep -Fq 'these mechanics sit with the Orchestrator' methodology/06_release_train.md
+roles=$(grep -c '^| \*\*' standard/AGF.md); test "$roles" -eq 5
+grep -Fq 'The Five Standard Profiles' standard/capability_profiles.md
+echo "E03 PASS: cross-refs resolve; AGF role rows=$roles <-> 5 capability profiles; release-train mechanics now assigned to the defined Orchestrator (positive assertion, no negated grep)"
+# --- output ---
+E03 PASS: cross-refs resolve; AGF role rows=5 <-> 5 capability profiles; release-train mechanics now assigned to the defined Orchestrator (positive assertion, no negated grep)
+[exit 0]

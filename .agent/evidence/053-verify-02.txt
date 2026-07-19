@@ -1,0 +1,12 @@
+# .agent/evidence/053-verify-02.txt
+# Contract 053 verification entry 02 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# ACCEPTANCE TEST: ORCHESTRATOR DEFINED (NDEBT-010, acceptance test 1): AGF Section 2 defines the Orchestrator as a role-table row, and Section 5 rule 4 names its exclusively-owned run_state coordination fields.
+# --- command (from .agent/contracts/053.json verification[02].command) ---
+set -e
+grep -Fq '## 2. The Agent Roles' standard/AGF.md
+grep -Fq '| **Orchestrator** |' standard/AGF.md
+grep -Fq 'owned exclusively by the **Orchestrator**' standard/AGF.md
+echo 'E02 PASS: AGF Section 2 defines the Orchestrator (role row + Section 5 rule 4 field ownership)'
+# --- output ---
+E02 PASS: AGF Section 2 defines the Orchestrator (role row + Section 5 rule 4 field ownership)
+[exit 0]

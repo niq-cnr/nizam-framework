@@ -1,0 +1,13 @@
+# .agent/evidence/053-verify-06.txt
+# Contract 053 verification entry 06 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# ACCEPTANCE TEST: RC-CAPTURE CODIFIED (NDEBT-019, acceptance test 2): methodology/02 Section 10 anti-pattern (e) requires explicit exit-code capture and the set -e guard for expected-FAIL captures; the summary rule now reads 'all five'.
+# --- command (from .agent/contracts/053.json verification[06].command) ---
+set -e
+grep -Fq 'Exit codes swallowed by a pipeline' methodology/02_adversarial_tdd.md
+grep -Fq 'set +e; out=$(cmd); rc=$?; set -e' methodology/02_adversarial_tdd.md
+grep -Fq 'NDEBT-019' methodology/02_adversarial_tdd.md
+grep -Fq 'all five' methodology/02_adversarial_tdd.md
+echo 'E06 PASS: Section 10 (e) requires explicit rc capture + set -e guard (NDEBT-019); summary now all five'
+# --- output ---
+E06 PASS: Section 10 (e) requires explicit rc capture + set -e guard (NDEBT-019); summary now all five
+[exit 0]

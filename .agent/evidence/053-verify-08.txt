@@ -1,0 +1,16 @@
+# .agent/evidence/053-verify-08.txt
+# Contract 053 verification entry 08 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# ACCEPTANCE TEST: vlib_word_present WORKS + IS FIXTURE-TESTED (acceptance test 3): the primitive matches a whole word and rejects a containing-word substring, and both fixtures are exercised by tools/fixtures_self_test.sh.
+# --- command (from .agent/contracts/053.json verification[08].command) ---
+set -e
+source tools/verify_lib.sh
+vlib_word_present tools/fixtures/word_present_pass.md new
+set +e; vlib_word_present tools/fixtures/word_present_fail.md new; rc=$?; set -e
+test $rc -ne 0
+out=$(bash tools/fixtures_self_test.sh 2>&1)
+printf '%s\n' "$out" | grep -Eq 'OK +primitive +vlib_word_present pass'
+printf '%s\n' "$out" | grep -Eq 'OK +primitive +vlib_word_present fail'
+echo 'E08 PASS: vlib_word_present matches whole-word, rejects containing-word; both fixtures exercised by the self-test'
+# --- output ---
+E08 PASS: vlib_word_present matches whole-word, rejects containing-word; both fixtures exercised by the self-test
+[exit 0]
