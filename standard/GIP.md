@@ -2,10 +2,13 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.3.1
+version: 0.4.0
 status: active
 authoritative_source: standard/GIP.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-07-19"
+    summary: "H-PAYLOAD-CONTRACT (phase-006 feature 051): methodology/ and ecosystem/ joined the bootstrap-injected payload, resolving NDEBT-008 (consumer payloads previously omitted them, so the many tools/skill.json + tools/SKILL.md cross-references into methodology/ -- and the ecosystem/ references added in F-040 -- dangled in a real .nizam/ install). Section 1's Core Directive parenthetical, Section 2 point 2 (the authoritative payload definition), and Section 5.1's injection-scope statement now all name the six-directory payload (standard/, templates/, schema/, tools/, methodology/, ecosystem/) plus NIZAM.json. registry/ and docs/ remain framework-envelope and are still never injected."
   - version: "0.3.1"
     date: "2026-07-12"
     summary: "Stale-count cleanup: Section 2.1's bootstrap verification minimum no longer hard-codes 'the four standard/ documents' (standard/ has since grown past the original four core documents); the check is now phrased against the injected standard/ document set, so the sentence cannot silently drift again as the module grows."
@@ -25,7 +28,7 @@ change_log:
 governance content is not framework-compliant.**
 
 Any repository that adopts the Nizam framework MUST inherit its governance content
-(`standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json` — the full payload
+(`standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`, and `NIZAM.json` — the full payload
 defined authoritatively in Section 2, point 2) through a single, atomic, verifiable
 operation, not through ad hoc copy-paste or hand-authored reproductions. This protocol
 defines that operation, the compliance checks that follow it, and how a consumer
@@ -42,9 +45,11 @@ whenever it upgrades to a newer framework release.
    any other floating branch reference. Pinning prevents a consumer from silently
    inheriting mid-development governance changes.
 2. **Inject the governance directories.** The consumer copies the framework's `standard/`,
-   `templates/`, `schema/`, and `tools/` directories, together with the framework's root
-   `NIZAM.json` capability index, into its own workspace (conventionally at its repository
-   root, or a dedicated governance directory it declares in its own `CONTEXT.md`).
+   `templates/`, `schema/`, `tools/`, `methodology/`, and `ecosystem/` directories, together
+   with the framework's root `NIZAM.json` capability index, into its own workspace
+   (conventionally at its repository root, or a dedicated governance directory it declares
+   in its own `CONTEXT.md`). `registry/` and `docs/` are framework-envelope and are not
+   injected.
 3. **Load, don't just copy.** Any agent operating in the consumer repository MUST read the
    injected governance documents into its working context before acting, and is bound by
    their directives for the duration of its session.
@@ -62,8 +67,8 @@ Any consumer MAY invoke it directly rather than reimplementing the steps in Sect
 `bootstrap.sh` performs, as one atomic operation:
 
 1. Clone the pinned tag (never a floating branch) of the framework repository.
-2. Inject `standard/`, `templates/`, `schema/`, and `tools/`, together with `NIZAM.json`,
-   into the consumer's target location.
+2. Inject `standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, and `ecosystem/`,
+   together with `NIZAM.json`, into the consumer's target location.
 3. Verify the injection succeeded before declaring success.
 
 The verification step confirms, at minimum:
@@ -107,7 +112,7 @@ process of catching this divergence.
    governance content against its recorded pinned tag on a regular cadence (for example,
    before each release, or on a scheduled interval), not only at initial bootstrap time.
 3. **Detecting local mutation.** If an injected file under `standard/`, `templates/`,
-   `schema/`, or `tools/` no longer matches the content shipped at the recorded pinned tag,
+   `schema/`, `tools/`, `methodology/`, or `ecosystem/` no longer matches the content shipped at the recorded pinned tag,
    the consumer has drifted through local mutation. Locally hand-patched governance files
    are themselves a drift signal, independent of whether the patch was well-intentioned.
 4. **Detecting staleness.** If a newer semantic-version tag of the framework has been
@@ -142,12 +147,12 @@ bootstrap operation MUST NOT silently overwrite that pre-existing content. Inste
   than losing either version.
 - **CI configuration is reconciled, not replaced.** A consumer's pre-existing CI
   configuration is not part of the injected governance payload (`standard/`,
-  `templates/`, `schema/`, `tools/`, `NIZAM.json` — Section 2, point 2) and MUST NOT be
+  `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`, `NIZAM.json` — Section 2, point 2) and MUST NOT be
   deleted or overwritten by bootstrapping. Where this protocol recommends CI-driven
   compliance checks (Section 3), those checks are added to the consumer's existing CI
   configuration, not substituted for it.
 - **Injection never touches these three categories directly.** `bootstrap.sh` injects
-  only `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json`; it never writes
+  only `standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`, and `NIZAM.json`; it never writes
   to a consumer's `CONTEXT.md`, `AGENTS.md`, or CI configuration itself, which is why
   those are exactly the categories a consumer repository must reconcile by hand against
   the templates this framework ships.

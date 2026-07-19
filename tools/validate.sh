@@ -431,7 +431,10 @@ build_payload_md_set() {
   local f
   local d
 
-  for d in standard templates; do
+  # methodology/ and ecosystem/ joined the injected payload in feature 051
+  # (H-PAYLOAD-CONTRACT), so their .md files are now part of the payload-doc
+  # set that C1/C2/C3/C5/C8/C9/C10 sweep in --payload mode.
+  for d in standard templates methodology ecosystem; do
     if [ -d "${d}" ]; then
       while IFS= read -r f; do
         files+=("${f}")
@@ -762,13 +765,14 @@ if escaped:
     sys.exit(1)
 
 if mode == "payload":
-    # "ecosystem" joined this set in feature 049: NIZAM.json has indexed
-    # ecosystem/ paths since feature 040, but ecosystem/ is not part of the
-    # bootstrap-injected payload, so a REAL consumer install would false-fail
-    # C4 here (the framework's own payload-mode run masked it because the
-    # directory exists on disk in the framework checkout). NDEBT-008 class;
-    # the F-051 payload-contract decision may narrow this set again.
-    skipped_dirs = {"methodology", "registry", "docs", "ecosystem"}
+    # Non-injected framework-envelope dirs, skipped as expected-absent in a
+    # consumer payload. NARROWED in feature 051 (H-PAYLOAD-CONTRACT): only
+    # registry/ and docs/ remain non-injected -- methodology/ and ecosystem/
+    # joined the bootstrap-injected payload (they were carved out here on an
+    # interim basis by F-049/F-050 pending this decision), so NIZAM.json's
+    # methodology/ and ecosystem/ paths are now REQUIRED to resolve in a
+    # consumer install exactly like the other injected dirs.
+    skipped_dirs = {"registry", "docs"}
     normalized = [
         p for p in normalized
         if not any(p == d or p.startswith(d + "/") for d in skipped_dirs)
@@ -1065,21 +1069,18 @@ check_c9_path_resolution() {
 
       # NDEBT-004 (feature 050): the C9 analog of C4's payload carve-out. In
       # --payload mode a directory-qualified reference is only REQUIRED to
-      # resolve if its target is part of the bootstrap-injected payload
-      # (standard/, templates/, schema/, tools/). References into
-      # non-injected framework-envelope paths (methodology/, ecosystem/,
-      # registry/, docs/, .agent/, .github/, ...) are expected-absent in a
-      # consumer .nizam/ subset -- a real consumer payload legitimately
-      # carries these cross-references to docs it reaches via the pinned
-      # framework checkout, not via the injected subset -- so they are
-      # skipped here rather than false-failed (the exact issue #18-adjacent
-      # gap C9 had, unlike C4). The DEFAULT full sweep applies NO carve-out,
-      # so a stale non-injected reference is still caught there. F-051 (the
-      # H-PAYLOAD-CONTRACT decision to inject methodology/+ecosystem/) will
-      # extend the injected-prefix set below when those dirs join the payload.
+      # resolve if its target is part of the bootstrap-injected payload.
+      # EXTENDED in feature 051 (H-PAYLOAD-CONTRACT): methodology/ and
+      # ecosystem/ joined the injected payload, so references into them are
+      # now REQUIRED to resolve (they were skipped here on an interim basis
+      # by F-050 pending the decision). References into the still-non-injected
+      # framework-envelope paths (registry/, docs/, .agent/, .github/, ...)
+      # remain expected-absent in a consumer .nizam/ subset and are skipped.
+      # The DEFAULT full sweep applies NO carve-out, so a stale non-injected
+      # reference is still caught there.
       if [ "${VALIDATOR_MODE:-default}" = "payload" ]; then
         case "${token}" in
-          standard/*|templates/*|schema/*|tools/*) ;;
+          standard/*|templates/*|schema/*|tools/*|methodology/*|ecosystem/*) ;;
           *) continue ;;
         esac
       fi
@@ -1562,7 +1563,13 @@ import os
 import sys
 
 mode = sys.argv[1]
-SKIPPED_DIR_PREFIXES = ("methodology/", "registry/", "docs/", "ecosystem/")
+# Non-injected framework-envelope prefixes skipped in --payload mode.
+# NARROWED in feature 051 (H-PAYLOAD-CONTRACT): methodology/ and ecosystem/
+# joined the injected payload, so a skill.json module pointer into them is
+# now REQUIRED to resolve in a consumer install (they were carved out here on
+# an interim basis by F-049 pending the decision); only registry/ and docs/
+# remain non-injected.
+SKIPPED_DIR_PREFIXES = ("registry/", "docs/")
 
 try:
     with open("tools/skill.json", encoding="utf-8") as fh:

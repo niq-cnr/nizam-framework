@@ -10,7 +10,7 @@
 #
 # It clones a pinned semantic-version git tag of the nizam-framework
 # governance payload, stages it in a temporary directory, injects standard/,
-# templates/, schema/, tools/, and NIZAM.json into a consumer-declared target
+# templates/, schema/, tools/, methodology/, ecosystem/, and NIZAM.json into a consumer-declared target
 # directory (".nizam/" by default), verifies the injection before declaring
 # success, records provenance, and only then atomically replaces any prior
 # target contents.
@@ -38,22 +38,34 @@ readonly DEFAULT_TARGET_DIR=".nizam"
 
 # The minimum required-file set per standard/GIP.md Section 2.1: the four
 # standard/ documents and the schema/frontmatter.schema.json validation
-# target, plus the root capability index itself.
+# target, plus the root capability index itself, plus a representative
+# document from each of methodology/ and ecosystem/ (which joined the
+# injected payload in phase-006 feature 051, the H-PAYLOAD-CONTRACT decision).
 readonly REQUIRED_RELATIVE_FILES=(
   "standard/NDS.md"
   "standard/GIP.md"
   "standard/AGF.md"
   "standard/anti_hallucination.md"
   "schema/frontmatter.schema.json"
+  "methodology/00_planning.md"
+  "ecosystem/README.md"
   "NIZAM.json"
 )
 
 # The governance module directories injected as one atomic operation.
+# methodology/ and ecosystem/ joined this set in phase-006 feature 051
+# (H-PAYLOAD-CONTRACT): consumer payloads previously omitted them, so the
+# numerous tools/skill.json + tools/SKILL.md cross-references into
+# methodology/ (and the ecosystem/ references added in F-040) dangled in a
+# real .nizam/ install (NDEBT-008). registry/ and docs/ remain
+# framework-envelope and are NOT injected.
 readonly REQUIRED_MODULE_DIRS=(
   "standard"
   "templates"
   "schema"
   "tools"
+  "methodology"
+  "ecosystem"
 )
 
 GOVERNANCE_REPO_URL="${GOVERNANCE_REPO_URL:-${DEFAULT_GOVERNANCE_REPO_URL}}"
@@ -73,8 +85,8 @@ print_usage() {
 Usage: bootstrap.sh [OPTIONS]
 
 Inherit, or verify inheritance of, the Nizam governance payload (standard/,
-templates/, schema/, tools/, NIZAM.json) into this repository, per
-standard/GIP.md (Governance Inheritance Protocol).
+templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json) into this
+repository, per standard/GIP.md (Governance Inheritance Protocol).
 
 Modes:
   (default)         Clone the pinned GOVERNANCE_TAG, stage the governance
@@ -221,11 +233,12 @@ check_required_files() {
 
 # Confirms NIZAM.json parses as valid JSON and every path it indexes that
 # falls under an actually-injected module (standard/, templates/, schema/,
-# tools/ -- see REQUIRED_MODULE_DIRS) resolves to a real, non-empty file
-# under the given root. NIZAM.json also indexes the framework-internal-only
-# methodology/ and registry/ modules, which this script deliberately does
-# not inject into consumers (product_spec.md Section 5); paths under those
-# two modules are intentionally excluded from this check.
+# tools/, methodology/, ecosystem/ -- see REQUIRED_MODULE_DIRS) resolves to a
+# real, non-empty file under the given root. NIZAM.json also indexes the
+# framework-envelope-only registry/ and docs/ modules, which this script
+# deliberately does not inject into consumers (product_spec.md Section 5;
+# methodology/ and ecosystem/ joined the injected payload in feature 051);
+# paths under those two non-injected modules are excluded from this check.
 check_nizam_index() {
   local root="$1"
   if ! python3 - "${root}" <<'PYEOF'
@@ -243,7 +256,7 @@ except (OSError, json.JSONDecodeError) as exc:
     print(f"NIZAM.json failed to parse under {root}: {exc}", file=sys.stderr)
     sys.exit(1)
 
-injected_module_paths = {"standard", "templates", "schema", "tools"}
+injected_module_paths = {"standard", "templates", "schema", "tools", "methodology", "ecosystem"}
 
 
 def is_injected(rel_path):
