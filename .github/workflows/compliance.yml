@@ -55,4 +55,12 @@ jobs:
         with:
           python-version: "3.x"
 
+      # jsonschema + pyyaml are required because, as of phase-006 feature 050,
+      # the harness's assert_payload_validate_cwd_independent runs
+      # `tools/validate.sh --payload` against the injected payload (proving
+      # NDEBT-012 / issue #18 is fixed), and validate.sh fails closed on a
+      # missing jsonschema/yaml module. Before F-050 the e2e exercised only
+      # bootstrap.sh (which needs neither), so this step is new to this job.
+      - run: pip install jsonschema pyyaml
+
       - run: bash tools/e2e_bootstrap_test.sh
