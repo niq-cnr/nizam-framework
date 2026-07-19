@@ -726,6 +726,23 @@ if out_of_tree:
     print(f"{path}: indexed path(s) absolute or escaping the repo root: {out_of_tree}")
     sys.exit(1)
 
+# Symlink-escape check runs on every path that EXISTS on disk, in every
+# mode, and BEFORE the payload carve-out (PR #28 review): a present path
+# that resolves outside the repo root is rejected even under a carve-out
+# dir -- otherwise a symlinked `ecosystem/evil -> /etc` would ride the
+# payload skip and defeat the all-mode escape rule. lexists (not exists)
+# so a broken symlink escaping the root is still caught; genuinely-absent
+# carve-out paths (lexists False) stay allowed as expected-absent.
+escaped = []
+for p in normalized:
+    if os.path.lexists(p):
+        real = os.path.realpath(p)
+        if real != root and not real.startswith(root + os.sep):
+            escaped.append(p)
+if escaped:
+    print(f"{path}: indexed path(s) resolve outside the repo root (symlink escape): {escaped}")
+    sys.exit(1)
+
 if mode == "payload":
     # "ecosystem" joined this set in feature 049: NIZAM.json has indexed
     # ecosystem/ paths since feature 040, but ecosystem/ is not part of the
@@ -742,15 +759,6 @@ if mode == "payload":
 missing = [p for p in normalized if not os.path.exists(p)]
 if missing:
     print(f"{path}: indexed path(s) do not resolve on disk: {missing}")
-    sys.exit(1)
-
-escaped = []
-for p in normalized:
-    real = os.path.realpath(p)
-    if real != root and not real.startswith(root + os.sep):
-        escaped.append(p)
-if escaped:
-    print(f"{path}: indexed path(s) resolve outside the repo root (symlink escape): {escaped}")
     sys.exit(1)
 
 sys.exit(0)
@@ -1550,13 +1558,20 @@ for label, path in paths:
     if os.path.isabs(path) or norm == ".." or norm.startswith("../"):
         problems.append(f"{label} -> {path} is absolute or escapes the repo root")
         continue
+    # Symlink-escape check runs in every mode and BEFORE the payload
+    # carve-out (PR #28 review): a present pointer that resolves outside the
+    # repo root is rejected even under a carve-out dir. lexists (not
+    # isfile) so a broken symlink escaping the root is caught too;
+    # genuinely-absent carve-out pointers stay allowed as expected-absent.
+    if os.path.lexists(norm):
+        real = os.path.realpath(norm)
+        if real != root and not real.startswith(root + os.sep):
+            problems.append(f"{label} -> {path} resolves outside the repo root (symlink escape)")
+            continue
     if mode == "payload" and norm.startswith(SKIPPED_DIR_PREFIXES):
         continue
     if not os.path.isfile(norm):
         problems.append(f"{label} -> {path} does not resolve to a file")
-        continue
-    if not os.path.realpath(norm).startswith(root + os.sep):
-        problems.append(f"{label} -> {path} resolves outside the repo root (symlink escape)")
 
 for problem in problems:
     print(problem)

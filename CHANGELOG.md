@@ -35,8 +35,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   #28): indexed paths and skill-module pointers are normalized before the
   payload carve-out test, so a traversal spelling
   (`ecosystem/../tools/x.md`) can no longer ride a non-injected-dir skip;
-  absolute paths and paths escaping the repo root (including through
-  symlinks) now FAIL in every mode instead of matching host files. The
+  absolute paths and paths escaping the repo root now FAIL in every mode
+  instead of matching host files. The repo-containment check runs on every
+  present path *before* the carve-out, so a symlinked carve-out path
+  (`ecosystem/evil -> /etc`) is rejected in payload mode too rather than
+  riding the skip; genuinely-absent carve-out paths stay allowed. The
   `--help` payload descriptions now name the full carve-out set including
   `ecosystem/`.
 
