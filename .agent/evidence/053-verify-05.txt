@@ -1,14 +1,15 @@
 # .agent/evidence/053-verify-05.txt
-# Contract 053 verification entry 05 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# Contract 053 verification entry 05 -- ORIGINALLY captured at deliverable commit b848aac; the command was STRENGTHENED in the PR #32 review round (CodeRabbit) to also assert Section 11 rule 3 (restore-with-trap), anchored on a single physical line per the NDEBT-014 class-3 rule this feature adds; re-captured 2026-07-19 against the review-round tree.
 # ACCEPTANCE TEST: PROBE ISOLATION CODIFIED (NDEBT-013/020, acceptance test 2): methodology/02 Section 11 binds the scratch-paths-only, cwd-before-destructive, and restore-with-trap rules and cites the incidents.
 # --- command (from .agent/contracts/053.json verification[05].command) ---
 set -e
 grep -Fq '## 11. Probe Isolation' methodology/02_adversarial_tdd.md
 grep -Fq 'Scratch paths only' methodology/02_adversarial_tdd.md
 grep -Fq 'Verify the working directory before any destructive command' methodology/02_adversarial_tdd.md
+grep -Fq 'back it up and restore it with a trap-based' methodology/02_adversarial_tdd.md
 grep -Fq 'NDEBT-013' methodology/02_adversarial_tdd.md
 grep -Fq 'NDEBT-020' methodology/02_adversarial_tdd.md
-echo 'E05 PASS: Section 11 codifies probe isolation (scratch-only, cwd-before-destructive, restore) citing NDEBT-013/020'
+echo 'E05 PASS: Section 11 codifies probe isolation (scratch-only rule 1, cwd-before-destructive rule 2, restore-with-trap rule 3) citing NDEBT-013/020'
 # --- output ---
-E05 PASS: Section 11 codifies probe isolation (scratch-only, cwd-before-destructive, restore) citing NDEBT-013/020
+E05 PASS: Section 11 codifies probe isolation (scratch-only rule 1, cwd-before-destructive rule 2, restore-with-trap rule 3) citing NDEBT-013/020
 [exit 0]

@@ -202,9 +202,10 @@ the spot-check having been performed.
 
 A verification command is only as trustworthy as its resistance to the
 false-pass and false-fail patterns catalogued in Sections 3 and 4. This
-section codifies four specific anti-patterns that MUST NOT appear in any
-contract's verification suite, each paired with the compliant primitive from
-`tools/verify_lib.sh` (the vetted verification-helper library, F-023) that
+section codifies five specific anti-patterns that MUST NOT appear in any
+contract's verification suite, each paired with its compliant replacement —
+the vetted primitive from `tools/verify_lib.sh` (the verification-helper
+library, F-023), or, for (e), the explicit exit-code capture — that
 replaces it.
 
 **(a) Whole-file / vacuous greps** — A check that greps an entire file for a

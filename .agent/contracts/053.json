@@ -90,7 +90,7 @@
     },
     {
       "acceptance_test": "PROBE ISOLATION CODIFIED (NDEBT-013/020, acceptance test 2): methodology/02 Section 11 binds the scratch-paths-only, cwd-before-destructive, and restore-with-trap rules and cites the incidents.",
-      "command": "set -e\ngrep -Fq '## 11. Probe Isolation' methodology/02_adversarial_tdd.md\ngrep -Fq 'Scratch paths only' methodology/02_adversarial_tdd.md\ngrep -Fq 'Verify the working directory before any destructive command' methodology/02_adversarial_tdd.md\ngrep -Fq 'NDEBT-013' methodology/02_adversarial_tdd.md\ngrep -Fq 'NDEBT-020' methodology/02_adversarial_tdd.md\necho 'E05 PASS: Section 11 codifies probe isolation (scratch-only, cwd-before-destructive, restore) citing NDEBT-013/020'"
+      "command": "set -e\ngrep -Fq '## 11. Probe Isolation' methodology/02_adversarial_tdd.md\ngrep -Fq 'Scratch paths only' methodology/02_adversarial_tdd.md\ngrep -Fq 'Verify the working directory before any destructive command' methodology/02_adversarial_tdd.md\ngrep -Fq 'back it up and restore it with a trap-based' methodology/02_adversarial_tdd.md\ngrep -Fq 'NDEBT-013' methodology/02_adversarial_tdd.md\ngrep -Fq 'NDEBT-020' methodology/02_adversarial_tdd.md\necho 'E05 PASS: Section 11 codifies probe isolation (scratch-only rule 1, cwd-before-destructive rule 2, restore-with-trap rule 3) citing NDEBT-013/020'"
     },
     {
       "acceptance_test": "RC-CAPTURE CODIFIED (NDEBT-019, acceptance test 2): methodology/02 Section 10 anti-pattern (e) requires explicit exit-code capture and the set -e guard for expected-FAIL captures; the summary rule now reads 'all five'.",

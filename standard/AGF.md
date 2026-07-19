@@ -21,7 +21,7 @@ change_log:
 The AGF defines a runtime-agnostic execution model for coordinating multiple AI agents
 against a shared, contract-first delivery pipeline. It is deliberately silent on any
 specific agent runtime, tool-calling API, or orchestration harness — any runtime that can
-route work between four role types and honour the gates below is compliant.
+route work between the roles defined in Section 2 and honour the gates below is compliant.
 
 ## 2. The Agent Roles
 

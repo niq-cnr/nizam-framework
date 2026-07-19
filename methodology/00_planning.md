@@ -11,7 +11,7 @@ change_log:
     summary: "Add the Plan Amendment Rule (Section 9), covering orchestrator-registrable amendments, Planner-routed re-planning, and scope-budget re-baselines."
   - version: "0.2.1"
     date: "2026-07-19"
-    summary: "Documentation-truth sync (F-053/NDEBT-010): the Section 7 reference to standard/AGF.md no longer describes it as 'the four agent roles' — AGF Section 2 now defines a coordinating Orchestrator plus the four execution roles."
+    summary: "Documentation-truth sync (F-053/NDEBT-010): the Section 7 reference to standard/AGF.md no longer describes it as 'the four agent roles' — AGF Section 2 now defines a coordinating Orchestrator plus the four execution roles. Section 6's scope-budget protocol now names the Orchestrator as the sole writer of the scope_budget coordination field (AGF Section 5 rule 4), with an evaluator supplying only the raw measurement — resolving a PR #32 review conflict where 'the orchestrator or evaluator' both appeared to write durable state."
 ---
 
 # Planning Enforcer
@@ -134,9 +134,12 @@ feature list and echoed into each feature's contract, `01_execution.md` Section
 baseline the Scope Budget Protocol checks actual implementation against, once
 work begins.
 
-After each Generator implementation, the orchestrator or evaluator compares the
-actual lines changed for that feature against two thresholds, both tracked in
-`.agent/run_state.json`'s `scope_budget` object:
+After each Generator implementation, the **Orchestrator** compares the actual
+lines changed for that feature against two thresholds, both tracked in
+`.agent/run_state.json`'s `scope_budget` object (an evaluator may supply the raw
+line-count measurement, but `scope_budget` is an Orchestrator-owned coordination
+field — `standard/AGF.md` Section 5 rule 4 — so the Orchestrator is its sole
+writer):
 
 1. **Per-feature check.** If the lines changed for the just-completed feature
    exceed **3× the rolling average** of the actual lines changed for the last
@@ -157,9 +160,10 @@ actual lines changed for that feature against two thresholds, both tracked in
    has outgrown its original plan and needs a human decision, not an assumption
    that the plan still holds.
 
-Both checks read and write the same `scope_budget.per_feature` array and
+Both checks operate on the same `scope_budget.per_feature` array and
 `scope_budget.total_lines_changed` field that `schema/run_state.schema.json`
-declares; no parallel or duplicate tracking structure is introduced.
+declares — read by the check, written back only by the Orchestrator (Section 5
+rule 4) — with no parallel or duplicate tracking structure introduced.
 
 ## 7. Handoff
 
