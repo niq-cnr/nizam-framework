@@ -1,0 +1,99 @@
+{
+  "contract_id": "050",
+  "feature_id": "050",
+  "name": "Payload validator CWD anchoring (NDEBT-012, issue #18) + C9 payload carve-out (NDEBT-004 co-resolution)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_006.md",
+  "design_notes": {
+    "what_this_feature_is": "Phase-006 F-050 (DAG root, ungated): make `tools/validate.sh --payload` genuinely usable for a real bootstrapped consumer. Two coupled fixes: (1) NDEBT-012/issue #18 -- in --payload mode ONLY, anchor to the script's own payload root (parent of its tools/ dir) so `bash .nizam/tools/validate.sh --payload` from a consumer repo root behaves identically to `cd .nizam && bash tools/validate.sh --payload`; default/--target stay CWD-anchored (documented contract). (2) NDEBT-004 -- give C9 a payload carve-out (its analog of C4's): a directory-qualified reference is required to resolve only if under an injected-payload prefix (standard/, templates/, schema/, tools/); non-injected refs are expected-absent and skipped. tools/e2e_bootstrap_test.sh gains assert_payload_validate_cwd_independent, closing the regression class in the hermetic harness.",
+    "live_discovery": "The feature-list scoped F-050 to NDEBT-012 (CWD anchoring) alone. Reproducing issue #18 authentically (bootstrap a real payload, run --payload from the consumer repo root) revealed --payload was broken TWO independent ways: NDEBT-012 (from the consumer root it died at `source tools/verify_lib.sh`) AND NDEBT-004 (even from the payload root, C9 false-failed on 26 cross-references into non-injected dirs -> 10 passed, 1 failed). F-050's acceptance test ('both invocation forms produce identical GREEN results in the e2e harness') is unmeetable by the CWD fix alone, so NDEBT-004 was co-resolved. Same 'make --payload work for real consumers' class; the C9 carve-out mirrors C4's and F-051 narrows/extends both together when methodology/+ecosystem/ join the injected payload. Recorded exactly as F-049's C4-ecosystem discovery was.",
+    "scope_decision": "The scope expansion (absorbing NDEBT-004) was surfaced to the operator for a 1-vs-2 decision; the AskUserQuestion tool aborted (permission stream closed) and a re-ask in prose went unanswered while the stop-hook looped on the upstream merge commit. Given (a) the plan-of-record acceptance test mandates 'both forms green' which requires both fixes, (b) the operator's standing 'proceed with the logical next steps', (c) the F-049 in-feature-discovery precedent, and (d) NDEBT-004's own remediation note anticipating 'a future self-compliance feature', execution proceeded with Option 1 (co-resolve) -- reversibly, on a feature branch, PR held for operator confirmation. Disclosed here and in the run_state event so the operator can redirect at review.",
+    "process_honesty": "Single-session execution, roles collapsed (046-049 precedent, disclosed at phase activation): contract, implementation, verification, and QA authored and executed in-session; all 12 entries ran live with captured evidence; scratch probes used only session-scratchpad paths, scratch clones, and bootstrap-injected scratch payloads (NDEBT-013/020 probe-isolation), never a real repository path. Verification commands are fail-fast (set -e / explicit exit-code tests / && chaining) so each PASS marker is gated -- practicing the NDEBT-019 lesson feature 053 will codify.",
+    "vacuity_guards": "E01 anchors anti-vacuity to the true pre-implementation commit (c309521, merged-main base); E05 proves the fix against the REAL bug via a before/after bootstrap (HEAD~1 validator broken both forms, HEAD validator green both forms, identical verdicts); E06 proves the C9 carve-out is SCOPED (still catches a stale injected-prefix ref, only skips non-injected) so it is not a blanket suppression; E08 proves the new e2e assertion is load-bearing (fails on a pre-fix payload)."
+  },
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "tools/validate.sh",
+        "purpose": "main(): payload-mode-only cd to the script-derived payload root (NDEBT-012). C9: payload-mode injected-prefix carve-out (NDEBT-004). Sync --help --payload section (CWD-independence + C9 carve-out), the C9 function+detailed-help docs, and the C11 comment (which wrongly claimed --payload never cds)."
+      },
+      {
+        "path": "tools/e2e_bootstrap_test.sh",
+        "purpose": "Add assert_payload_validate_cwd_independent (both --payload invocation forms green + identical [C*] verdicts) and wire it into main()'s positive path; extend the header assertion list (e)."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "[Unreleased] Fixed entries for the --payload CWD anchoring (NDEBT-012/issue #18) and the C9 payload carve-out (NDEBT-004)."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "0.19.0: move NDEBT-012 and NDEBT-004 from Open to Resolved with F-050 resolution notes; Open stays free of High/Critical."
+      }
+    ]
+  },
+  "non_goals": [
+    "No preemption of the F-051 payload-contract decision: the C9 carve-out's injected-prefix set is the CURRENT bootstrap payload; F-051 extends it (methodology/+ecosystem/) when it injects those dirs, alongside the C4/C13 carve-out narrowing already planned.",
+    "No change to default/--target CWD-anchoring (the documented `cd <copy> && bash tools/validate.sh` contract); the payload-root cd is guarded to payload mode only (E10).",
+    "No edit to bootstrap.sh, tools/verify_lib.sh, or any .agent/evidence/* historical capture.",
+    "No self-test/CI wiring beyond the e2e harness (that remains NDEBT-009 / F-052 scope)."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (HEAD~1 = c309521): none of F-050's deliverables existed before the deliverable commit -- no payload-root cd in main(), no C9 payload carve-out, no e2e CWD-independence assertion.",
+      "command": "set -e\nfor m in \"cannot cd to the payload root\" \"NDEBT-004 (feature 050)\"; do\n  if git show HEAD~1:tools/validate.sh | grep -Fq \"$m\"; then echo \"VACUITY: \\\"$m\\\" already at HEAD~1\"; exit 1; fi\ndone\nif git show HEAD~1:tools/e2e_bootstrap_test.sh | grep -Fq \"assert_payload_validate_cwd_independent\"; then echo \"VACUITY: e2e assertion at HEAD~1\"; exit 1; fi\necho \"E01 PASS: all F-050 deliverables absent at HEAD~1 c309521 (anti-vacuity)\""
+    },
+    {
+      "acceptance_test": "CWD-ANCHOR WIRED: main() anchors --payload to the script-derived payload root, guarded so it runs ONLY in payload mode (default/--target stay CWD-anchored).",
+      "command": "set -e\ngrep -Fq 'if [ \"${VALIDATOR_MODE}\" = \"payload\" ]; then' tools/validate.sh\ngrep -Fq 'payload_root=\"$(dirname -- \"${script_dir}\")\"' tools/validate.sh\ngrep -Fq 'cd -- \"${payload_root}\"' tools/validate.sh\necho \"E02 PASS: payload-mode-guarded payload-root cd present in main()\""
+    },
+    {
+      "acceptance_test": "DEFAULT SWEEP GREEN 13/13, EXIT CODE ASSERTED (regression): default mode unchanged.",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?\nprintf \"%s\\n\" \"$out\" | tail -1\ntest $rc -eq 0 && printf \"%s\\n\" \"$out\" | tail -1 | grep -Fxq \"SUMMARY: 13 passed, 0 failed\" && echo \"E03 PASS (rc=$rc)\""
+    },
+    {
+      "acceptance_test": "PAYLOAD SWEEP GREEN 11/11 from the framework root, EXIT CODE ASSERTED (regression): the payload-root cd is a no-op when CWD already equals the payload root.",
+      "command": "out=$(bash tools/validate.sh --payload 2>&1); rc=$?\nprintf \"%s\\n\" \"$out\" | tail -1\ntest $rc -eq 0 && printf \"%s\\n\" \"$out\" | tail -1 | grep -Fxq \"SUMMARY (payload mode): 11 passed, 0 failed\" && echo \"E04 PASS (rc=$rc)\""
+    },
+    {
+      "acceptance_test": "ISSUE #18 BEFORE/AFTER on a REAL bootstrapped payload: with HEAD~1 validate.sh both --payload forms fail (Form A C9 10/1; Form B from consumer root dies at verify_lib); with HEAD validate.sh both forms report 11/11 with byte-identical [C*] verdicts. (Run against a scratch bootstrap under the session-scratch root; see .agent/evidence/050-verify-05.txt for the full capture.)",
+      "command": "S=\"$SCRATCH/e05\"; rm -rf \"$S\"; mkdir -p \"$S\"; TAG=\"f050e05-$$\"\ngit -c user.name=cap -c user.email=cap@nizam.local tag -a \"$TAG\" -m cap HEAD >/dev/null 2>&1\nT=\"$S/.nizam\"; bash bootstrap.sh --repo-url \"file://$(pwd)\" --tag \"$TAG\" --target \"$T\" >/dev/null 2>&1\ngit show HEAD~1:tools/validate.sh > \"$T/tools/validate.sh\"\n( cd \"$T\" && bash tools/validate.sh --payload ) >/dev/null 2>&1; a0=$?\n( cd \"$S\" && bash .nizam/tools/validate.sh --payload ) >/dev/null 2>&1; b0=$?\ntest $a0 -ne 0 && test $b0 -ne 0\ngit show HEAD:tools/validate.sh > \"$T/tools/validate.sh\"\naf=$( cd \"$T\" && bash tools/validate.sh --payload 2>&1 ); a1=$?\nbf=$( cd \"$S\" && bash .nizam/tools/validate.sh --payload 2>&1 ); b1=$?\ntest $a1 -eq 0 && test $b1 -eq 0\ndiff <(printf \"%s\\n\" \"$af\" | grep \"^\\[C\") <(printf \"%s\\n\" \"$bf\" | grep \"^\\[C\") >/dev/null\ngit tag -d \"$TAG\" >/dev/null 2>&1; rm -rf \"$S\"\necho \"E05 PASS: before A=$a0 B=$b0 (both broken); after A=$a1 B=$b1 (both 11/11, identical [C*] verdicts)\""
+    },
+    {
+      "acceptance_test": "C9 CARVE-OUT IS SCOPED (does not mask injected-dir staleness): in an injected-subset payload sim, a stale reference UNDER an injected prefix still FAILs C9 in --payload, while a non-injected reference is skipped.",
+      "command": "S=\"$SCRATCH/e06\"; rm -rf \"$S\"; mkdir -p \"$S\"\ncp -r standard templates schema tools \"$S/\"; cp NIZAM.json \"$S/\"\nprintf \"\\nSee tools/DOES_NOT_EXIST_probe.md and methodology/DOES_NOT_EXIST_probe.md\\n\" >> \"$S/tools/README.md\"\nout=$( cd \"$S\" && bash tools/validate.sh --payload 2>&1 ); rc=$?\ntest $rc -ne 0\nprintf \"%s\\n\" \"$out\" | grep -Fq \"tools/DOES_NOT_EXIST_probe.md\"\n! printf \"%s\\n\" \"$out\" | grep -Fq \"methodology/DOES_NOT_EXIST_probe.md\"\nrm -rf \"$S\"\necho \"E06 PASS: injected-prefix stale ref caught; non-injected ref carved out (scoped, not blanket)\""
+    },
+    {
+      "acceptance_test": "E2E HARNESS GREEN WITH THE NEW ASSERTION, EXIT CODE ASSERTED (post-fix): the hermetic inject->verify cycle plus assert_payload_validate_cwd_independent passes.",
+      "command": "out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?\nprintf \"%s\\n\" \"$out\" | grep -F \"assert_payload_validate_cwd_independent: OK\"\nprintf \"%s\\n\" \"$out\" | tail -1\ntest $rc -eq 0 && echo \"E07 PASS (rc=$rc)\""
+    },
+    {
+      "acceptance_test": "E2E ASSERTION IS LOAD-BEARING: sourced against a payload carrying HEAD~1 validate.sh, assert_payload_validate_cwd_independent returns non-zero (it would not pass a broken payload).",
+      "command": "S=\"$SCRATCH/e08\"; rm -rf \"$S\"; mkdir -p \"$S\"; TAG=\"f050e08-$$\"\ngit -c user.name=cap -c user.email=cap@nizam.local tag -a \"$TAG\" -m cap HEAD >/dev/null 2>&1\nT=\"$S/.nizam\"; bash bootstrap.sh --repo-url \"file://$(pwd)\" --tag \"$TAG\" --target \"$T\" >/dev/null 2>&1\ngit show HEAD~1:tools/validate.sh > \"$T/tools/validate.sh\"\nsource tools/e2e_bootstrap_test.sh\nassert_payload_validate_cwd_independent \"$T\" >/dev/null 2>&1; rc=$?\ntest $rc -ne 0\ngit tag -d \"$TAG\" >/dev/null 2>&1; rm -rf \"$S\"\necho \"E08 PASS: assertion returned $rc (non-zero) on a pre-fix payload -- load-bearing\""
+    },
+    {
+      "acceptance_test": "DOCS SYNCED: CHANGELOG [Unreleased] carries the F-050 NDEBT-012 + NDEBT-004 entries; --help documents CWD-independence; the C11 comment no longer claims --payload never cds.",
+      "command": "set -e\nsed -n \"/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p\" CHANGELOG.md | grep -Fq \"CWD-independent\"\nsed -n \"/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p\" CHANGELOG.md | grep -Fq \"NDEBT-012\"\nsed -n \"/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p\" CHANGELOG.md | grep -Fq \"payload carve-out (feature 050, resolving\"\ngrep -Fq \"anchors to its own payload root\" tools/validate.sh\n! grep -Fq \"does not chroot or cd into a\" tools/validate.sh\necho \"E09 PASS: CHANGELOG + --help + C11 comment synced to F-050\""
+    },
+    {
+      "acceptance_test": "DEFAULT/TARGET UNCHANGED: the payload-root cd is reached ONLY under VALIDATOR_MODE=payload; a --target run does not cd (the guard encloses the cd).",
+      "command": "set -e\nawk '/^main\\(\\) \\{/{m=1} m&&/VALIDATOR_MODE.*=.*payload.*then/{g=1} m&&/cd -- \"\\$\\{payload_root\\}\"/{print (g?\"GUARDED\":\"UNGUARDED\")}' tools/validate.sh | grep -Fxq GUARDED\nout=$(bash tools/validate.sh --target standard/AGF.md 2>&1); rc=$?\ntest $rc -eq 0\necho \"E10 PASS: payload cd is guarded; --target unaffected (rc=$rc)\""
+    },
+    {
+      "acceptance_test": "DEBT REGISTER TRUTH: NDEBT-012 and NDEBT-004 now sit in Resolved (not Open), each row parses to 5 GFM cells, DEBT.md is at 0.19.0, and the Open table remains free of High/Critical.",
+      "command": "python3 - <<PY\nimport re\nlines=open(\"docs/planning/DEBT.md\",encoding=\"utf-8\").readlines()\nassert \"version: 0.19.0\" in \"\".join(lines[:8])\nsect=None; loc={}; sevs=[]\nfor l in lines:\n    if l.startswith(\"## Open\"): sect=\"open\"\n    elif l.startswith(\"## Resolved\"): sect=\"resolved\"\n    m=re.match(r\"^\\| (NDEBT-\\d+) \",l)\n    if m:\n        nid=m.group(1); cells=len(re.split(r\"(?<!\\\\)\\|\", l.rstrip()))-2\n        if nid in (\"NDEBT-012\",\"NDEBT-004\"): loc[nid]=(sect,cells)\n        if sect==\"open\": sevs.append(re.split(r\"(?<!\\\\)\\|\", l.rstrip())[3].strip())\nassert loc.get(\"NDEBT-012\")==(\"resolved\",5), loc.get(\"NDEBT-012\")\nassert loc.get(\"NDEBT-004\")==(\"resolved\",5), loc.get(\"NDEBT-004\")\nassert set(sevs) <= {\"Low\",\"Medium\"}, sorted(set(sevs))\nprint(\"E11 PASS: NDEBT-012 + NDEBT-004 Resolved (5 cells); 0.19.0; Open severities\", sorted(set(sevs)))\nPY"
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT: the deliverable commit (c309521..47bd61d) touches exactly the four contracted files and no tracked .agent path.",
+      "command": "set -e\ntest \"$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr \"\\n\" \" \")\" = \"CHANGELOG.md docs/planning/DEBT.md tools/e2e_bootstrap_test.sh tools/validate.sh \"\ntest -z \"$(git diff --name-only HEAD~1..HEAD -- .agent/)\"\necho \"E12 PASS: deliverable confined to the four contracted files, no .agent path\""
+    }
+  ],
+  "estimated_lines": 140,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured terminal output is written to .agent/evidence/050-verify-NN.txt (12 entries, 1-based, zero-padded, array order), plus the consolidated .agent/evidence/050/verification.txt (12 EXIT:0 markers) and .agent/evidence/050/diff.patch (the deliverable commit's diff). Commands run from the repository root at the deliverable commit 47bd61d (HEAD), with HEAD~1 = the merged-main base c309521 as the anti-vacuity anchor; scratch entries (E05/E06/E08) use a session-scratch root ($SCRATCH) and bootstrap-injected scratch payloads / scratch clones exclusively.",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-directed phase execution ('Approved. Proceed with the logical next steps.', H-PHASE-006, 2026-07-19). No separate Loop-1 gate agents; the 12-entry suite executed live with captured evidence per the convention; QA record .agent/qa/050.json documents the independent full re-run. Scope-expansion (NDEBT-004 co-resolution) surfaced to the operator; the confirmation tool aborted, so execution proceeded with the acceptance-test-mandated Option 1, PR held for operator confirmation -- see design_notes.scope_decision."
+  }
+}

@@ -1,0 +1,12 @@
+# .agent/evidence/050-verify-09.txt
+# Contract 050 verification entry 09 -- captured 2026-07-19 at deliverable commit 47bd61d (HEAD~1 = merged-main base c309521)
+# ACCEPTANCE TEST: DOCS SYNCED: CHANGELOG [Unreleased] carries the F-050 NDEBT-012 + NDEBT-004 entries; --help documents CWD-independence; the C11 comment no longer claims --payload never cds.
+$ set -e
+sed -n "/## \[Unreleased\]/,/## \[0.7.0\]/p" CHANGELOG.md | grep -Fq "CWD-independent"
+sed -n "/## \[Unreleased\]/,/## \[0.7.0\]/p" CHANGELOG.md | grep -Fq "NDEBT-012"
+sed -n "/## \[Unreleased\]/,/## \[0.7.0\]/p" CHANGELOG.md | grep -Fq "payload carve-out (feature 050, resolving"
+grep -Fq "anchors to its own payload root" tools/validate.sh
+! grep -Fq "does not chroot or cd into a" tools/validate.sh
+echo "E09 PASS: CHANGELOG + --help + C11 comment synced to F-050"
+E09 PASS: CHANGELOG + --help + C11 comment synced to F-050
+[exit 0]

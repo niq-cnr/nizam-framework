@@ -34,8 +34,8 @@
     {
       "id": "050",
       "name": "Payload validator CWD anchoring (NDEBT-012, issue #18)",
-      "description": "Anchor tools/validate.sh --payload path resolution to the script/payload root so 'bash .nizam/tools/validate.sh --payload' from a consumer repository root behaves identically to invocation from inside .nizam/ — the first real external-consumer bug report (issue #18, nizamiq/documentation-standard on a v0.5.3 payload). Add a from-repo-root invocation to the e2e/fixture coverage so the regression class stays closed.",
-      "status": "pending",
+      "description": "Anchor tools/validate.sh --payload path resolution to the script/payload root so 'bash .nizam/tools/validate.sh --payload' from a consumer repository root behaves identically to invocation from inside .nizam/ — the first real external-consumer bug report (issue #18, nizamiq/documentation-standard on a v0.5.3 payload). Add a from-repo-root invocation to the e2e/fixture coverage so the regression class stays closed. Co-resolved NDEBT-004 (C9 payload carve-out) at execution: authentically reproducing issue #18 showed a real payload also false-fails C9, so 'both forms green' required both fixes.",
+      "status": "complete",
       "dependencies": [],
       "handover_feature_ids": [],
       "pr": "TBD-at-activation",

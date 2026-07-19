@@ -1,0 +1,18 @@
+# .agent/evidence/050-verify-06.txt
+# Contract 050 verification entry 06 -- captured 2026-07-19 at deliverable commit 47bd61d (HEAD~1 = merged-main base c309521)
+# ACCEPTANCE TEST: C9 CARVE-OUT IS SCOPED (does not mask injected-dir staleness): in an injected-subset payload sim, a stale reference UNDER an injected prefix still FAILs C9 in --payload, while a non-injected reference is skipped.
+$ set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f050/e06"; rm -rf "$S"; mkdir -p "$S"
+cp -r standard templates schema tools "$S/"; cp NIZAM.json "$S/"
+# inject a stale INJECTED-prefix ref and a stale NON-injected ref into a swept doc
+printf "\nSee tools/DOES_NOT_EXIST_probe.md and methodology/DOES_NOT_EXIST_probe.md\n" >> "$S/tools/README.md"
+set +e
+out=$( cd "$S" && bash tools/validate.sh --payload 2>&1 ); rc=$?
+set -e
+test $rc -ne 0
+printf "%s\n" "$out" | grep -Fq "tools/DOES_NOT_EXIST_probe.md"          # injected-prefix stale ref -> caught
+! printf "%s\n" "$out" | grep -Fq "methodology/DOES_NOT_EXIST_probe.md"  # non-injected stale ref -> skipped
+rm -rf "$S"
+echo "E06 PASS: injected-prefix stale ref caught; non-injected ref carved out (carve-out is scoped, not blanket)"
+E06 PASS: injected-prefix stale ref caught; non-injected ref carved out (carve-out is scoped, not blanket)
+[exit 0]

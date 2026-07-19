@@ -1,0 +1,11 @@
+# .agent/evidence/050-verify-01.txt
+# Contract 050 verification entry 01 -- captured 2026-07-19 at deliverable commit 47bd61d (HEAD~1 = merged-main base c309521)
+# ACCEPTANCE TEST: ANTI-VACUITY (HEAD~1 = c309521): none of F-050's deliverables existed before the deliverable commit -- no payload-root cd in main(), no C9 payload carve-out, no e2e CWD-independence assertion.
+$ set -e
+for m in "cannot cd to the payload root" "NDEBT-004 (feature 050)"; do
+  if git show HEAD~1:tools/validate.sh | grep -Fq "$m"; then echo "VACUITY: \"$m\" already at HEAD~1"; exit 1; fi
+done
+if git show HEAD~1:tools/e2e_bootstrap_test.sh | grep -Fq "assert_payload_validate_cwd_independent"; then echo "VACUITY: e2e assertion at HEAD~1"; exit 1; fi
+echo "E01 PASS: all F-050 deliverables absent at HEAD~1 c309521 (anti-vacuity)"
+E01 PASS: all F-050 deliverables absent at HEAD~1 c309521 (anti-vacuity)
+[exit 0]
