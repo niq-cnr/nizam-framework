@@ -65,7 +65,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   pass green. The default full sweep applies no carve-out, so stale
   non-injected references are still caught. `tools/e2e_bootstrap_test.sh`
   gains a from-consumer-repo-root `--payload` assertion so the regression
-  class stays closed.
+  class stays closed. (The NDEBT-004 fix is landed and verified; resolving it
+  *within* feature 050 rather than its own feature is an operator scope call
+  disclosed as pending ratification — see the PR #29 description — and
+  finalized on merge.)
 
 ## [0.7.0] - 2026-07-17
 
