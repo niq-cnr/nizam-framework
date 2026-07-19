@@ -787,6 +787,11 @@
       "at": "2026-07-19T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 054 (Work-packet template/schema alignment -- NDEBT-011) COMPLETE at deliverable commit ef58512 -- phase 006's seventh feature, on the phase branch restarted from the F-055 merge (main 15a30e1, PR #33). NEXT-FEATURE DECISION: the AskUserQuestion selecting the next ungated root ABORTED again (permission stream closed, as before 050/053/055); proceeded with 054 -- the smallest, most self-contained ungated root -- under standing authorization + the merge-as-endorsement of #33, deliberately choosing the small feature to preserve cumulative scope-budget headroom before the larger 056 (disclosed in contract design_notes + the PR, the redirect mechanism). IMPLEMENTATION (6 files, Option A): templates/work-packet.template.json's three enum/integer fields that held {{TIER}}/{{BLAST_RADIUS}}/{{MERGE_ORDER}} placeholders (which broke schema validation) now carry the schema-valid defaults tier-0/local/0, so the template validates end-to-end against schema/work-packet.schema.json and the schema's own description claim becomes true; templates/README.md 0.2.2 and schema/README.md 0.7.1 retire the parse-validity-only caveat; a tools/fixtures_self_test.sh guard mechanically asserts jsonschema.validate(template, schema) in CI (the F-055-precedent self-test surface, avoiding a new validate.sh C-check). Option A over B because Option B's only mechanical assertion would be a vacuous parse-validity check -- against this framework's anti-vacuity discipline. PROVEN: E01 anti-vacuity (HEAD~1 template held {{TIER}}, did not validate); E02 template validates; E03 guard load-bearing (a placeholder-restored copy FAILS jsonschema); E04 three surfaces agree + stale caveats gone; E05 self-test 46/46 with the guard OK; E06 regression bundle. Self-sweeps unchanged (13/13 default, 11/11 payload), e2e green, self-test 46/46. DEBT 0.25.0 (NDEBT-011 -> Resolved). Verification 8/8; QA independent re-run 8/8 (.agent/qa/054.json); diff confined to the 6 contracted files, zero .agent. SCOPE: 69 actual vs 40 estimated (+73%, scope_over_estimate flag; NOT 3x-rolling; cumulative 1763/2236 = 78.8%). SECTION-6 GATE FLAG: the remaining features (056 est 260, 057 est 80, 058 gated est 180, 059 close) will approach/breach the 130% cumulative ceiling and require operator re-baseline authorization -- surfacing when 056 is taken up. Phase 006: 7 of 11 complete (049/050/051/052/053/055/054)."
+    },
+    {
+      "at": "2026-07-19T00:00:00Z",
+      "event": "review_addressed",
+      "detail": "PR #34 (feature 054) CodeRabbit review (ASSERTIVE, CHANGES_REQUESTED, 2 findings) addressed in commit b3d3de1. (Major) 'do not ship operational fields as silent generic defaults': the template's tier/blast_radius/merge_order carried literal tier-0/local/0, which would survive the consumer's {{...}}-token fill-in and silently misclassify a copied packet -- resolved by OMITTING the three fields from the starter template (they cannot hold a {{...}} placeholder; documented in schema/work-packet.schema.json for consumers that need cross-repo dispatch), the framework-aligned resolution over a doc-warning. The template still validates end-to-end and the fixtures_self_test guard is unchanged. (Minor) the NDEBT-011 resolution's 'PR #TBD' placeholder filled with the actual PR #34 (CodeRabbit suggested #33, but that was run_state's F-055 base-merge reference, not 054's PR). CORRECTION to the feature_complete entry above: its 'carry the schema-valid defaults tier-0/local/0' wording is superseded -- the fields are OMITTED, not defaulted; history is append-only, so the correction is recorded here rather than by rewriting the earlier entry. E02 re-asserts the omission; E01/E07 re-anchored to the stable phase base 15a30e1; the 8-entry suite re-ran 8/8. 054 footprint 69 -> 73 lines; cumulative 1763 -> 1767/2236 (79.0%). Self-test 46/46, validate 13/13, payload 11/11."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -960,7 +965,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1720,
-    "total_lines_changed": 1763,
+    "total_lines_changed": 1767,
     "per_feature": [
       {
         "id": "049",
@@ -1007,9 +1012,9 @@
       {
         "id": "054",
         "estimated": 40,
-        "actual": 69,
-        "flag": "scope_over_estimate -- 69 vs 40 (+73%); small absolute. Flag, not halt, and NOT the 3x-rolling flag (last-3 avg 052=678/053=221/055=282 = 394, 3x=1181; 69 far under). The overage is the two governed-README version-bump + change_log entries C8 requires. Cumulative 1763/2236 = 78.8%.",
-        "note": "6 files (git numstat ins+del, deliverable commit ef58512): tools/fixtures_self_test.sh 32 (the template-schema conformance guard), templates/README.md 8+2=10, CHANGELOG.md 10, schema/README.md 5+2=7, templates/work-packet.template.json 3+3=6, docs/planning/DEBT.md 2+2=4 -- total 60+9=69 vs 40 estimated. Option A (schema-valid template) chosen over B so the mechanical assertion is non-vacuous. Cumulative 1694+69 = 1763/2236 ceiling (78.8%)."
+        "actual": 73,
+        "flag": "scope_over_estimate -- 73 vs 40 (+83%) after the PR #34 review round; small absolute. Flag, not halt, and NOT the 3x-rolling flag (last-3 avg 052=678/053=221/055=282 = 394, 3x=1181; 73 far under). Cumulative 1767/2236 = 79.0%.",
+        "note": "6 files (git numstat ins+del, base 15a30e1..HEAD after the PR #34 review round): tools/fixtures_self_test.sh 32 (the template-schema conformance guard), templates/README.md 10+2=12, CHANGELOG.md 13, schema/README.md 5+2=7, templates/work-packet.template.json 1+4=5, docs/planning/DEBT.md 2+2=4 -- total 73 vs 40 estimated. Option A (schema-valid template) chosen so the mechanical assertion is non-vacuous; the three enum/integer dispatch fields are OMITTED (PR #34 review) rather than shipped as literal defaults. Cumulative 1694+73 = 1767/2236 ceiling (79.0%)."
       }
     ]
   },

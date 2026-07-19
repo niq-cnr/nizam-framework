@@ -1,6 +1,6 @@
 # .agent/evidence/054-verify-02.txt
-# Contract 054 verification entry 02 -- captured 2026-07-19 at deliverable commit ef58512 (HEAD~1 = F-055 merge 15a30e1)
-# ACCEPTANCE TEST: TEMPLATE VALIDATES END-TO-END: the shipped templates/work-packet.template.json validates against schema/work-packet.schema.json, with tier-0 / local / 0 in the three formerly-placeholder enum/integer fields.
+# Contract 054 verification entry 02 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: TEMPLATE VALIDATES + DISPATCH FIELDS OMITTED: the shipped template validates end-to-end against the schema, and the three optional enum/integer dispatch fields (tier/blast_radius/merge_order) are OMITTED, not shipped as literal defaults a copied packet could silently carry (PR #34 review).
 # --- command (from .agent/contracts/054.json verification[02].command) ---
 set -e
 python3 - <<'PY'
@@ -9,9 +9,10 @@ import jsonschema
 tpl = json.load(open('templates/work-packet.template.json'))
 schema = json.load(open('schema/work-packet.schema.json'))
 jsonschema.validate(tpl, schema)
-assert tpl['tier'] == 'tier-0' and tpl['blast_radius'] == 'local' and tpl['merge_order'] == 0, tpl
+for f in ('tier', 'blast_radius', 'merge_order'):
+    assert f not in tpl, f + ' should be omitted, not shipped as a literal default'
 PY
-echo 'E02 PASS: template validates end-to-end; tier-0 / local / 0 in the three formerly-placeholder fields'
+echo 'E02 PASS: template validates end-to-end; the three optional enum/integer dispatch fields are omitted (not shipped as literal defaults)'
 # --- output ---
-E02 PASS: template validates end-to-end; tier-0 / local / 0 in the three formerly-placeholder fields
+E02 PASS: template validates end-to-end; the three optional enum/integer dispatch fields are omitted (not shipped as literal defaults)
 [exit 0]
