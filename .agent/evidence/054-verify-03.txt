@@ -1,0 +1,22 @@
+# .agent/evidence/054-verify-03.txt
+# Contract 054 verification entry 03 -- captured 2026-07-19 at deliverable commit ef58512 (HEAD~1 = F-055 merge 15a30e1)
+# ACCEPTANCE TEST: GUARD IS LOAD-BEARING (non-vacuous): the real template validates, and restoring a {{TIER}} placeholder makes jsonschema.validate FAIL -- so the conformance guard would catch a regression, not pass vacuously.
+# --- command (from .agent/contracts/054.json verification[03].command) ---
+set -e
+python3 - <<'PY'
+import json, sys
+import jsonschema
+schema = json.load(open('schema/work-packet.schema.json'))
+tpl = json.load(open('templates/work-packet.template.json'))
+jsonschema.validate(tpl, schema)          # real template MUST validate
+tpl['tier'] = '{{TIER}}'                   # restore a placeholder -> MUST fail
+try:
+    jsonschema.validate(tpl, schema); print('VACUITY: broken template still validated'); sys.exit(1)
+except jsonschema.ValidationError:
+    pass
+sys.exit(0)
+PY
+echo 'E03 PASS: real template validates; a placeholder-restored (in-memory) copy FAILS jsonschema -- the guard is load-bearing'
+# --- output ---
+E03 PASS: real template validates; a placeholder-restored (in-memory) copy FAILS jsonschema -- the guard is load-bearing
+[exit 0]

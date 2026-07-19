@@ -1,0 +1,13 @@
+# .agent/evidence/054-verify-06.txt
+# Contract 054 verification entry 06 -- captured 2026-07-19 at deliverable commit ef58512 (HEAD~1 = F-055 merge 15a30e1)
+# ACCEPTANCE TEST: REGRESSION BUNDLE (dogfoods NDEBT-019 rc-capture): self-test 46/46, validate 13/13, payload 11/11, e2e green -- each with explicit exit-code capture.
+# --- command (from .agent/contracts/054.json verification[06].command) ---
+set -e
+out=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\n' "$out" | tail -1 | grep -Fxq 'SELF-TEST OK: 46/46 fixtures accounted for, 0 failed'
+out=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'
+out=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0; printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'
+bash tools/e2e_bootstrap_test.sh >/dev/null 2>&1
+echo 'E06 PASS: self-test 46/46; validate 13/13, payload 11/11 (rc=0 each); e2e green'
+# --- output ---
+E06 PASS: self-test 46/46; validate 13/13, payload 11/11 (rc=0 each); e2e green
+[exit 0]

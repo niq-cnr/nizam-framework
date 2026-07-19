@@ -1,0 +1,12 @@
+# .agent/evidence/054-verify-05.txt
+# Contract 054 verification entry 05 -- captured 2026-07-19 at deliverable commit ef58512 (HEAD~1 = F-055 merge 15a30e1)
+# ACCEPTANCE TEST: SELF-TEST WIRED: the F-054 template-schema conformance guard reports OK inside a 46/46 self-test run.
+# --- command (from .agent/contracts/054.json verification[05].command) ---
+set -e
+out=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SELF-TEST OK: 46/46 fixtures accounted for, 0 failed'
+printf '%s\n' "$out" | grep -Fq 'OK   guard       work-packet.template.json validates end-to-end against work-packet.schema.json'
+echo 'E05 PASS: self-test 46/46 with the F-054 template-schema conformance guard OK'
+# --- output ---
+E05 PASS: self-test 46/46 with the F-054 template-schema conformance guard OK
+[exit 0]

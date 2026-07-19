@@ -1,0 +1,11 @@
+# .agent/evidence/054-verify-07.txt
+# Contract 054 verification entry 07 -- captured 2026-07-19 at deliverable commit ef58512 (HEAD~1 = F-055 merge 15a30e1)
+# ACCEPTANCE TEST: DELIVERABLE CONFINEMENT: HEAD~1..HEAD touches exactly the six contracted files and no .agent path.
+# --- command (from .agent/contracts/054.json verification[07].command) ---
+set -e
+test "$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr '\n' ' ')" = 'CHANGELOG.md docs/planning/DEBT.md schema/README.md templates/README.md templates/work-packet.template.json tools/fixtures_self_test.sh '
+test -z "$(git diff --name-only HEAD~1..HEAD -- .agent/)"
+echo 'E07 PASS: confined to the 6 contracted files, zero .agent'
+# --- output ---
+E07 PASS: confined to the 6 contracted files, zero .agent
+[exit 0]

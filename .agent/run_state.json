@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "006-enforcement-closure",
-  "current_feature": "055",
+  "current_feature": "054",
   "status": "in_progress",
   "updated_at": "2026-07-19T00:00:00Z",
   "circuit_breaker": {
@@ -782,6 +782,11 @@
       "at": "2026-07-19T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 055 (Enumeration/bare-ref recurrence guards -- NDEBT-005) COMPLETE at deliverable commit f2c109a -- phase 006's sixth feature, on the phase branch restarted from the F-053 merge (main 5d49fb5, PR #32). NEXT-FEATURE DECISION: the AskUserQuestion selecting the next ungated root ABORTED (permission stream closed, as before 050/053); proceeded with the RECOMMENDED 055 under the phase-006 activation's standing 'proceed with the logical next steps' authorization and the operator's 'Continue from where you left off.', with the PR as the redirect mechanism (disclosed in contract design_notes.next_feature_decision + the PR). IMPLEMENTATION (7 files, 3 new): two vetted tools/verify_lib.sh primitives (the 7th + 8th) mechanize the two NDEBT-003 defect classes F-027 fixed by hand, sourced from the single canonical index NIZAM.json. vlib_enumeration_complete asserts disk->index completeness (every on-disk governed doc under a module dir is in its key_documents) -- the direction C4 omits -- green over standard/, methodology/, registry/, ecosystem/. vlib_bare_ref_resolves flags a bare non-/-qualified NN_name.md whose basename matches no key_document -- the NDEBT-003b shape C9's /-qualification and C10's three sub-checks both miss. Both wired into the F-052 self-test surface (fixtures_self_test.sh, a CI job): fixture discrimination (seeded omission in a Section-11 scratch dir; static bare_ref pass/fail fixtures against enum_index.json) PLUS the real-tree recurrence sweep that is the actual guard (enumeration over 4 modules; bare-ref over methodology/ + standard/). FALSE-POSITIVE MITIGATION (the reason NDEBT-005 was deferred, confronted head-on): a naive whole-tree bare-ref scan flags 19 tokens, ALL false positives (ecosystem/ + NIP forward-refs to planned stages; DEBT.md quoting the historical 05_release_train.md defect); the sweep is therefore scoped to the stable, fully-shipped methodology/ + standard/ modules where NDEBT-003b occurred, EXCLUDING ecosystem/, registers, and NIPs. PROVEN: E01 anti-vacuity at HEAD~1; E03/E04 discrimination; E05 enumeration load-bearing (scratch index dropping docs FAILS); E06 bare-ref load-bearing (a seeded 05_release_train.md -- the exact NDEBT-003b defect -- FAILS while all real docs pass); E07 the false-positive scoping is proven necessary (ecosystem/README rc=1) and documented; E08 canonical-index sourcing (json.load of key_documents, index passed as an arg); E09 self-test 46/46 with all five F-055 lines; E10 regression bundle dogfooding NDEBT-019 rc-capture. Self-sweeps unchanged (13/13 default, 11/11 payload); e2e green; self-test 46/46 (was 43). verify_lib header 6->8 (and the stale internal 'five' corrected). DEBT 0.24.0 (NDEBT-005 -> Resolved). Verification 12/12 (fail-fast, rc-captured, Section-11 scratch isolation); QA independent re-run 12/12 (.agent/qa/055.json); diff confined to the 7 contracted files, zero .agent. SCOPE: 282 actual vs 160 estimated (+76%, scope_over_estimate flag; NOT 3x-rolling: avg 351, 3x=1054; cumulative 1694/2236 = 75.8%). Next per the DAG: an ungated root -- 054 (work-packet template, NDEBT-011), 056 (preflight hardening), 057 (progress-comparison taxonomy); 058 H-CONSTITUTIONAL-gated, 059 phase close + v0.8.0. Phase 006: 6 of 11 complete (049/050/051/052/053/055)."
+    },
+    {
+      "at": "2026-07-19T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 054 (Work-packet template/schema alignment -- NDEBT-011) COMPLETE at deliverable commit ef58512 -- phase 006's seventh feature, on the phase branch restarted from the F-055 merge (main 15a30e1, PR #33). NEXT-FEATURE DECISION: the AskUserQuestion selecting the next ungated root ABORTED again (permission stream closed, as before 050/053/055); proceeded with 054 -- the smallest, most self-contained ungated root -- under standing authorization + the merge-as-endorsement of #33, deliberately choosing the small feature to preserve cumulative scope-budget headroom before the larger 056 (disclosed in contract design_notes + the PR, the redirect mechanism). IMPLEMENTATION (6 files, Option A): templates/work-packet.template.json's three enum/integer fields that held {{TIER}}/{{BLAST_RADIUS}}/{{MERGE_ORDER}} placeholders (which broke schema validation) now carry the schema-valid defaults tier-0/local/0, so the template validates end-to-end against schema/work-packet.schema.json and the schema's own description claim becomes true; templates/README.md 0.2.2 and schema/README.md 0.7.1 retire the parse-validity-only caveat; a tools/fixtures_self_test.sh guard mechanically asserts jsonschema.validate(template, schema) in CI (the F-055-precedent self-test surface, avoiding a new validate.sh C-check). Option A over B because Option B's only mechanical assertion would be a vacuous parse-validity check -- against this framework's anti-vacuity discipline. PROVEN: E01 anti-vacuity (HEAD~1 template held {{TIER}}, did not validate); E02 template validates; E03 guard load-bearing (a placeholder-restored copy FAILS jsonschema); E04 three surfaces agree + stale caveats gone; E05 self-test 46/46 with the guard OK; E06 regression bundle. Self-sweeps unchanged (13/13 default, 11/11 payload), e2e green, self-test 46/46. DEBT 0.25.0 (NDEBT-011 -> Resolved). Verification 8/8; QA independent re-run 8/8 (.agent/qa/054.json); diff confined to the 6 contracted files, zero .agent. SCOPE: 69 actual vs 40 estimated (+73%, scope_over_estimate flag; NOT 3x-rolling; cumulative 1763/2236 = 78.8%). SECTION-6 GATE FLAG: the remaining features (056 est 260, 057 est 80, 058 gated est 180, 059 close) will approach/breach the 130% cumulative ceiling and require operator re-baseline authorization -- surfacing when 056 is taken up. Phase 006: 7 of 11 complete (049/050/051/052/053/055/054)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -955,7 +960,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1720,
-    "total_lines_changed": 1694,
+    "total_lines_changed": 1763,
     "per_feature": [
       {
         "id": "049",
@@ -998,6 +1003,13 @@
         "actual": 282,
         "flag": "scope_over_estimate -- 282 vs 160 (+76%); flag, not halt, and NOT the 3x-rolling flag (last-3 avg 051=155/052=678/053=221 = 351, 3x=1054; 282 well under). Operator acknowledgment requested. The weight is verify_lib.sh's two heavily-documented primitives; documentation density, not sprawl. Cumulative 1694/2236 = 75.8%, under the 130% halt.",
         "note": "7 files (git numstat ins+del, deliverable commit f2c109a): tools/verify_lib.sh 164+7=171, tools/fixtures_self_test.sh 61 (new wiring), tools/fixtures/enum_index.json 12 (new), tools/fixtures/bare_ref_fail.md 10 (new), tools/fixtures/bare_ref_pass.md 8 (new), CHANGELOG.md 16, docs/planning/DEBT.md 2+2=4 -- total 273+9=282 vs 160 estimated (+76%). The two new verify_lib primitives (vlib_enumeration_complete + vlib_bare_ref_resolves) carry ~40-line doc headers each matching the library's existing style, plus python bodies -- that is the bulk (171). Rolling 3x-average (051=155, 052=678, 053=221) = 351, 3x=1054; 282 < 1054, no 3x flag. Cumulative 1412+282 = 1694/2236 ceiling (75.8%)."
+      },
+      {
+        "id": "054",
+        "estimated": 40,
+        "actual": 69,
+        "flag": "scope_over_estimate -- 69 vs 40 (+73%); small absolute. Flag, not halt, and NOT the 3x-rolling flag (last-3 avg 052=678/053=221/055=282 = 394, 3x=1181; 69 far under). The overage is the two governed-README version-bump + change_log entries C8 requires. Cumulative 1763/2236 = 78.8%.",
+        "note": "6 files (git numstat ins+del, deliverable commit ef58512): tools/fixtures_self_test.sh 32 (the template-schema conformance guard), templates/README.md 8+2=10, CHANGELOG.md 10, schema/README.md 5+2=7, templates/work-packet.template.json 3+3=6, docs/planning/DEBT.md 2+2=4 -- total 60+9=69 vs 40 estimated. Option A (schema-valid template) chosen over B so the mechanical assertion is non-vacuous. Cumulative 1694+69 = 1763/2236 ceiling (78.8%)."
       }
     ]
   },
