@@ -328,6 +328,39 @@ test_c13() {
 test_c13
 
 # ---------------------------------------------------------------------------
+# TEMPLATE-SCHEMA CONFORMANCE (F-054, NDEBT-011): the shipped
+# templates/work-packet.template.json must validate end-to-end against
+# schema/work-packet.schema.json. The schema's own `description` claims it
+# validates the template; F-054 made that claim true by omitting the three
+# optional enum/integer dispatch fields (tier/blast_radius/merge_order), which
+# cannot hold a {{...}} placeholder, from the starter template, and this guard
+# keeps it true so the template can never silently drift back to non-conformance
+# -- the mechanical assertion of the template's contract NDEBT-011 required.
+# ---------------------------------------------------------------------------
+echo "== template-schema conformance (F-054) =="
+if python3 - <<'PY'
+import json
+import sys
+
+import jsonschema
+
+template = json.load(open("templates/work-packet.template.json"))
+schema = json.load(open("schema/work-packet.schema.json"))
+try:
+    jsonschema.validate(instance=template, schema=schema)
+except jsonschema.ValidationError as exc:
+    print(f"work-packet.template.json does not validate: {exc.message}")
+    sys.exit(1)
+sys.exit(0)
+PY
+then
+  echo "OK   guard       work-packet.template.json validates end-to-end against work-packet.schema.json"
+else
+  echo "FAIL guard       work-packet.template.json does NOT validate against schema/work-packet.schema.json"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
 # COMPLETENESS GUARD: every file under tools/fixtures/ must be accounted for
 # by exactly one row above; an unlisted fixture (a newly-added dormant
 # negative) or a manifest row naming an absent fixture is a FAIL.

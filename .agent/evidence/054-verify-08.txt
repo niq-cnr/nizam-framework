@@ -1,0 +1,27 @@
+# .agent/evidence/054-verify-08.txt
+# Contract 054 verification entry 08 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: DOCS/DEBT SYNCED: DEBT 0.25.0 has NDEBT-011 in Resolved (not Open); templates/README.md 0.2.2; schema/README.md 0.7.1; CHANGELOG [Unreleased] names the F-054 entry.
+# --- command (from .agent/contracts/054.json verification[08].command) ---
+set -e
+grep -Fq 'version: 0.25.0' docs/planning/DEBT.md
+python3 - <<'PY'
+import re
+sect=None; resolved=set(); openset=set()
+for l in open('docs/planning/DEBT.md'):
+    if l.startswith('## Open'): sect='open'
+    elif l.startswith('## Resolved'): sect='resolved'
+    m=re.match(r'\| (NDEBT-\d+) ', l)
+    if m and sect=='resolved': resolved.add(m.group(1))
+    if m and sect=='open': openset.add(m.group(1))
+assert 'NDEBT-011' in resolved, 'NDEBT-011 not Resolved'
+assert 'NDEBT-011' not in openset, 'NDEBT-011 still Open'
+print('debt ok')
+PY
+grep -Fq 'version: 0.2.2' templates/README.md
+grep -Fq 'version: 0.7.1' schema/README.md
+sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' CHANGELOG.md | grep -Fq 'Work-packet template'
+echo 'E08 PASS: DEBT 0.25.0 (NDEBT-011 Resolved); templates/README 0.2.2; schema/README 0.7.1; CHANGELOG names F-054'
+# --- output ---
+debt ok
+E08 PASS: DEBT 0.25.0 (NDEBT-011 Resolved); templates/README 0.2.2; schema/README 0.7.1; CHANGELOG names F-054
+[exit 0]

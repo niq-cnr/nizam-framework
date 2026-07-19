@@ -1,0 +1,93 @@
+{
+  "contract_id": "054",
+  "feature_id": "054",
+  "name": "Work-packet template/schema alignment (NDEBT-011)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_006.md",
+  "design_notes": {
+    "what_this_feature_is": "Phase-006 F-054: reconcile the three disagreeing work-packet surfaces NDEBT-011 flagged. templates/work-packet.template.json held {{TIER}}/{{BLAST_RADIUS}}/{{MERGE_ORDER}} placeholders in enum/integer-constrained fields, so it did NOT validate against schema/work-packet.schema.json -- while the schema's own description claimed it validated the template and both READMEs downgraded it to parse-validity-only. Fixed via Option A: the template now validates end-to-end. The three optional enum/integer dispatch fields cannot hold a {{...}} placeholder, so (after the PR #34 review) they are OMITTED from the starter template rather than shipped as literal defaults (tier-0/local/0) a copied packet could silently carry and misclassify on; they are documented in the schema for consumers that need cross-repo dispatch. Both README caveats are retired; a tools/fixtures_self_test.sh guard mechanically asserts jsonschema.validate(template, schema) in CI.",
+    "option_choice": "Option A (make the template schema-valid) over Option B (correct the schema description to name artifacts + keep parse-validity-only). Rationale: (1) the schema's PRIMARY description claims it validates the template -- Option A makes that true; (2) it enables a NON-VACUOUS mechanical assertion (jsonschema.validate) -- Option B's only assertion would be a vacuous parse-validity check; (3) precedent -- manifest.template.json already validates against its schema. The three enum/integer fields are OMITTED rather than defaulted (PR #34 review, CodeRabbit Major): they cannot carry an honest {{...}} placeholder, and a literal tier-0/local/0 would survive the consumer's {{...}}-token fill-in and silently misclassify the packet -- against the framework's mechanical-anti-silent-drift ethos. Omitting them keeps the template a minimal valid skeleton (the other optional dispatch fields keep obvious {{...}} placeholders) and defers the advanced dispatch fields to the schema, which fully documents them.",
+    "mechanical_assertion_home": "The conformance guard lives on the F-052 self-test surface (tools/fixtures_self_test.sh, a CI job), not a new validate.sh C-check. This follows the F-055 precedent (real-tree guards on that surface) and avoids the C-count blast radius (a new numbered check would touch the SUMMARY count, --help, NIZAM.json validator summary, and tools/README.md). The guard is a jsonschema.validate of the shipped template against its schema, load-bearing by construction (E03 proves a placeholder-restored copy fails it).",
+    "next_feature_decision": "After PR #33 (feature 055) merged, the next-feature AskUserQuestion has reliably aborted this session (permission stream closed, as before 050/053/055). Proceeded with 054 -- the smallest, most self-contained ungated root -- under the phase-006 standing 'proceed with the logical next steps' authorization, deliberately choosing the small feature to preserve cumulative scope-budget headroom before the larger 056; disclosed here and in the PR (the redirect mechanism). The cumulative Section-6 gate is approaching (see budget_note) and will require operator re-baseline authorization for 056/058/059.",
+    "process_honesty": "Single-session collapsed-role execution, disclosed-and-permitted by the AGF Orchestrator clause. SCOPE: 69 changed lines (ins+del) vs the 40 estimate (+73%); small in absolute terms, driven by the two governed-README version-bump + change_log entries required by C8 when reconciling their caveats. scope_over_estimate flag (not halt), well under the 3x-rolling and cumulative gates.",
+    "budget_note": "Cumulative after 054: 1763/2236 (78.8% of the 130% ceiling). The remaining ungated roots (056 est 260, 057 est 80) plus the gated 058 (est 180) and 059 (phase close) will approach or breach the ceiling, especially with typical overrun -- a Section-6 mandatory operator re-baseline decision that will surface when 056 is taken up. 054 alone (69 actual) stays comfortably clear.",
+    "review_round": "PR #34 CodeRabbit review (ASSERTIVE, CHANGES_REQUESTED, 2 findings, both addressed): (Major) 'do not ship operational fields as silent generic defaults' -- tier-0/local/0 would persist in a copied packet since the consumer workflow only replaces {{...}} tokens; resolved by omitting the three fields (the framework-aligned resolution over a doc-warning). (Minor) the NDEBT-011 resolution's 'PR #TBD' placeholder -- filled with the actual PR #34 (CodeRabbit suggested #33, but that was run_state's F-055 base-merge reference, not 054's PR). E02 re-asserts the fields are omitted; E01/E07 re-anchored to the stable phase base 15a30e1."
+  },
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "templates/work-packet.template.json",
+        "purpose": "The three optional enum/integer dispatch fields that held {{TIER}}/{{BLAST_RADIUS}}/{{MERGE_ORDER}} placeholders are omitted from the starter template -- they cannot hold a {{...}} placeholder and would silently misclassify a copied packet if shipped as literal defaults (PR #34 review) -- so the template validates end-to-end without them (they are documented in the schema for consumers that need cross-repo dispatch)."
+      },
+      {
+        "path": "templates/README.md",
+        "purpose": "0.2.2: the Validate step describes work-packet.template.json as validating against schema/work-packet.schema.json (with the tier-0/local/0 defaults), not JSON parse-validity only."
+      },
+      {
+        "path": "schema/README.md",
+        "purpose": "0.7.1: the work-packet.schema.json row's parse-validity-only caveat for its template is retired (the template now validates end-to-end)."
+      },
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "Add the template-schema conformance guard: jsonschema.validate(work-packet.template.json, work-packet.schema.json) in CI (the mechanical assertion NDEBT-011 required)."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "0.25.0: NDEBT-011 Open -> Resolved with the resolution note."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "[Unreleased] Added: the work-packet template/schema alignment entry."
+      }
+    ]
+  },
+  "non_goals": [
+    "No Option B (leaving the template non-validating and re-describing the schema as validating 'artifacts' only) -- rejected because its only mechanical assertion would be a vacuous parse-validity check.",
+    "No new tools/validate.sh C-check -- the conformance guard rides the F-052 self-test surface (a CI job), keeping validate.sh's 13-check sweep and its docs/count unchanged.",
+    "No change to schema/work-packet.schema.json's constraints (the enums and the integer type are correct; the template was wrong, not the schema) and no change to the required-field {{...}} placeholders (only the three optional constrained fields).",
+    "No change to any other template or schema pair."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (phase base 15a30e1 = the F-055 merge / PR #33): at the base the template held the {{TIER}} placeholder and did NOT validate against the schema, and fixtures_self_test had no template-schema guard.",
+      "command": "set -e\nif git show 15a30e1:templates/work-packet.template.json | grep -Fq '{{TIER}}'; then :; else echo 'VACUITY: {{TIER}} already gone at base 15a30e1'; exit 1; fi\nif git show 15a30e1:tools/fixtures_self_test.sh | grep -Fq 'template-schema conformance (F-054)'; then echo 'VACUITY: guard already at base'; exit 1; fi\npython3 - <<'PY'\nimport json, subprocess, sys\nimport jsonschema\nraw = subprocess.run(['git','show','15a30e1:templates/work-packet.template.json'], capture_output=True, text=True).stdout\ntpl = json.loads(raw)\nschema = json.load(open('schema/work-packet.schema.json'))\ntry:\n    jsonschema.validate(tpl, schema); print('VACUITY: base template already validated'); sys.exit(1)\nexcept jsonschema.ValidationError:\n    pass\nsys.exit(0)\nPY\necho 'E01 PASS: at phase base 15a30e1 the template held {{TIER}} and did NOT validate; no F-054 guard (anti-vacuity)'"
+    },
+    {
+      "acceptance_test": "TEMPLATE VALIDATES + DISPATCH FIELDS OMITTED: the shipped template validates end-to-end against the schema, and the three optional enum/integer dispatch fields (tier/blast_radius/merge_order) are OMITTED, not shipped as literal defaults a copied packet could silently carry (PR #34 review).",
+      "command": "set -e\npython3 - <<'PY'\nimport json\nimport jsonschema\ntpl = json.load(open('templates/work-packet.template.json'))\nschema = json.load(open('schema/work-packet.schema.json'))\njsonschema.validate(tpl, schema)\nfor f in ('tier', 'blast_radius', 'merge_order'):\n    assert f not in tpl, f + ' should be omitted, not shipped as a literal default'\nPY\necho 'E02 PASS: template validates end-to-end; the three optional enum/integer dispatch fields are omitted (not shipped as literal defaults)'"
+    },
+    {
+      "acceptance_test": "GUARD IS LOAD-BEARING (non-vacuous): the real template validates, and restoring a {{TIER}} placeholder makes jsonschema.validate FAIL -- so the conformance guard would catch a regression, not pass vacuously.",
+      "command": "set -e\npython3 - <<'PY'\nimport json, sys\nimport jsonschema\nschema = json.load(open('schema/work-packet.schema.json'))\ntpl = json.load(open('templates/work-packet.template.json'))\njsonschema.validate(tpl, schema)          # real template MUST validate\ntpl['tier'] = '{{TIER}}'                   # restore a placeholder -> MUST fail\ntry:\n    jsonschema.validate(tpl, schema); print('VACUITY: broken template still validated'); sys.exit(1)\nexcept jsonschema.ValidationError:\n    pass\nsys.exit(0)\nPY\necho 'E03 PASS: real template validates; a placeholder-restored (in-memory) copy FAILS jsonschema -- the guard is load-bearing'"
+    },
+    {
+      "acceptance_test": "THREE SURFACES AGREE: the schema description's claim to validate the template is now true, and both READMEs retire the parse-validity-only caveat.",
+      "command": "set -e\ngrep -Fq 'Validates a work-packet (templates/work-packet.template.json)' schema/work-packet.schema.json\ngrep -Fq '(it validates end-to-end' templates/README.md\nif grep -Fq 'for JSON parse-validity' templates/README.md; then echo 'stale parse-validity caveat in templates/README'; exit 1; fi\ngrep -Fq 'the shipped template now validates end-to-end against this schema' schema/README.md\nif grep -Fq 'checked for JSON parse-validity only' schema/README.md; then echo 'stale caveat in schema/README'; exit 1; fi\necho 'E04 PASS: schema description true; both READMEs retire the parse-validity-only caveat -- the three surfaces agree'"
+    },
+    {
+      "acceptance_test": "SELF-TEST WIRED: the F-054 template-schema conformance guard reports OK inside a 46/46 self-test run.",
+      "command": "set -e\nout=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0\nprintf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SELF-TEST OK: 46/46 fixtures accounted for, 0 failed'\nprintf '%s\\n' \"$out\" | grep -Fq 'OK   guard       work-packet.template.json validates end-to-end against work-packet.schema.json'\necho 'E05 PASS: self-test 46/46 with the F-054 template-schema conformance guard OK'"
+    },
+    {
+      "acceptance_test": "REGRESSION BUNDLE (dogfoods NDEBT-019 rc-capture): self-test 46/46, validate 13/13, payload 11/11, e2e green -- each with explicit exit-code capture.",
+      "command": "set -e\nout=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SELF-TEST OK: 46/46 fixtures accounted for, 0 failed'\nout=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'\nout=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'\nbash tools/e2e_bootstrap_test.sh >/dev/null 2>&1\necho 'E06 PASS: self-test 46/46; validate 13/13, payload 11/11 (rc=0 each); e2e green'"
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT: the non-.agent changes across the branch (base 15a30e1..HEAD) are exactly the six contracted files.",
+      "command": "set -e\nchanged=$(git diff --name-only 15a30e1..HEAD | grep -v '^.agent/' | LC_ALL=C sort | tr '\\n' ' ')\ntest \"$changed\" = 'CHANGELOG.md docs/planning/DEBT.md schema/README.md templates/README.md templates/work-packet.template.json tools/fixtures_self_test.sh '\necho 'E07 PASS: non-.agent changes across the branch (15a30e1..HEAD) are exactly the 6 deliverable files'"
+    },
+    {
+      "acceptance_test": "DOCS/DEBT SYNCED: DEBT 0.25.0 has NDEBT-011 in Resolved (not Open); templates/README.md 0.2.2; schema/README.md 0.7.1; CHANGELOG [Unreleased] names the F-054 entry.",
+      "command": "set -e\ngrep -Fq 'version: 0.25.0' docs/planning/DEBT.md\npython3 - <<'PY'\nimport re\nsect=None; resolved=set(); openset=set()\nfor l in open('docs/planning/DEBT.md'):\n    if l.startswith('## Open'): sect='open'\n    elif l.startswith('## Resolved'): sect='resolved'\n    m=re.match(r'\\| (NDEBT-\\d+) ', l)\n    if m and sect=='resolved': resolved.add(m.group(1))\n    if m and sect=='open': openset.add(m.group(1))\nassert 'NDEBT-011' in resolved, 'NDEBT-011 not Resolved'\nassert 'NDEBT-011' not in openset, 'NDEBT-011 still Open'\nprint('debt ok')\nPY\ngrep -Fq 'version: 0.2.2' templates/README.md\ngrep -Fq 'version: 0.7.1' schema/README.md\nsed -n '/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p' CHANGELOG.md | grep -Fq 'Work-packet template'\necho 'E08 PASS: DEBT 0.25.0 (NDEBT-011 Resolved); templates/README 0.2.2; schema/README 0.7.1; CHANGELOG names F-054'"
+    }
+  ],
+  "estimated_lines": 40,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured output is in .agent/evidence/054-verify-NN.txt (8 entries), plus the consolidated .agent/evidence/054/verification.txt (8 EXIT:0 markers) and .agent/evidence/054/diff.patch (git diff 15a30e1..HEAD). The suite was re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted); anti-vacuity (E01) and confinement (E07) anchor to the stable phase base 15a30e1 (the F-055 merge) rather than HEAD~1, since the review round adds commits.",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-directed phase execution (ungated DAG root). Proceeded with 054 (the small, budget-preserving next root) after #33 merged, under standing authorization, disclosed here + in the PR for redirect-at-review (F-050/053/055 precedent). The 8-entry suite executed live with captured evidence (dogfooding the NDEBT-019 rc-capture rule); QA record .agent/qa/054.json documents the independent re-run. Scope 69 vs 40 estimate (scope_over_estimate flag), under the cumulative gate; the approaching Section-6 re-baseline is flagged in design_notes.budget_note."
+  }
+}

@@ -1,0 +1,14 @@
+# .agent/evidence/054-verify-04.txt
+# Contract 054 verification entry 04 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: THREE SURFACES AGREE: the schema description's claim to validate the template is now true, and both READMEs retire the parse-validity-only caveat.
+# --- command (from .agent/contracts/054.json verification[04].command) ---
+set -e
+grep -Fq 'Validates a work-packet (templates/work-packet.template.json)' schema/work-packet.schema.json
+grep -Fq '(it validates end-to-end' templates/README.md
+if grep -Fq 'for JSON parse-validity' templates/README.md; then echo 'stale parse-validity caveat in templates/README'; exit 1; fi
+grep -Fq 'the shipped template now validates end-to-end against this schema' schema/README.md
+if grep -Fq 'checked for JSON parse-validity only' schema/README.md; then echo 'stale caveat in schema/README'; exit 1; fi
+echo 'E04 PASS: schema description true; both READMEs retire the parse-validity-only caveat -- the three surfaces agree'
+# --- output ---
+E04 PASS: schema description true; both READMEs retire the parse-validity-only caveat -- the three surfaces agree
+[exit 0]

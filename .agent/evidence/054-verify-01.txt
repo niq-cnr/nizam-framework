@@ -1,0 +1,23 @@
+# .agent/evidence/054-verify-01.txt
+# Contract 054 verification entry 01 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: ANTI-VACUITY (phase base 15a30e1 = the F-055 merge / PR #33): at the base the template held the {{TIER}} placeholder and did NOT validate against the schema, and fixtures_self_test had no template-schema guard.
+# --- command (from .agent/contracts/054.json verification[01].command) ---
+set -e
+if git show 15a30e1:templates/work-packet.template.json | grep -Fq '{{TIER}}'; then :; else echo 'VACUITY: {{TIER}} already gone at base 15a30e1'; exit 1; fi
+if git show 15a30e1:tools/fixtures_self_test.sh | grep -Fq 'template-schema conformance (F-054)'; then echo 'VACUITY: guard already at base'; exit 1; fi
+python3 - <<'PY'
+import json, subprocess, sys
+import jsonschema
+raw = subprocess.run(['git','show','15a30e1:templates/work-packet.template.json'], capture_output=True, text=True).stdout
+tpl = json.loads(raw)
+schema = json.load(open('schema/work-packet.schema.json'))
+try:
+    jsonschema.validate(tpl, schema); print('VACUITY: base template already validated'); sys.exit(1)
+except jsonschema.ValidationError:
+    pass
+sys.exit(0)
+PY
+echo 'E01 PASS: at phase base 15a30e1 the template held {{TIER}} and did NOT validate; no F-054 guard (anti-vacuity)'
+# --- output ---
+E01 PASS: at phase base 15a30e1 the template held {{TIER}} and did NOT validate; no F-054 guard (anti-vacuity)
+[exit 0]
