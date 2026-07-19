@@ -1,14 +1,20 @@
 # .agent/evidence/053-verify-09.txt
-# Contract 053 verification entry 09 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# Contract 053 verification entry 09 -- originally captured 2026-07-19 at deliverable
+# commit b848aac; RE-CAPTURED 2026-07-19 for the PR #32 review hardening (explicit test $rc -eq 1 per Section 10(e) + fail-closed $SB guard and scratch-inside-repo refusal per Section 11).
 # ACCEPTANCE TEST: vlib_word_present FIXTURE IS LOAD-BEARING: corrupting word_present_fail.md to contain a whole-word 'new' makes the self-test FAIL. Probed in a minimal scratch copy (Section 11 probe isolation).
 # --- command (from .agent/contracts/053.json verification[09].command) ---
 set -e
-S="$SB/e09"; rm -rf "$S"; mkdir -p "$S"; cp -a tools schema NIZAM.json "$S/"
+: "${SB:?SB (session scratch root) must be set for probe isolation}"
+case "$SB" in /*) ;; *) echo 'E09 ABORT: SB is not an absolute path'; exit 1;; esac
+test -f tools/fixtures_self_test.sh
+S="$SB/e09"
+case "$S" in "$PWD"/*) echo 'E09 ABORT: scratch path resolves inside the repo'; exit 1;; esac
+rm -rf -- "$S"; mkdir -p -- "$S"; cp -a tools schema NIZAM.json "$S/"
 printf 'This fixture now contains a new standalone token.\n' > "$S/tools/fixtures/word_present_fail.md"
 set +e; out=$(bash "$S/tools/fixtures_self_test.sh" 2>&1); rc=$?; set -e
-test $rc -ne 0
+test $rc -eq 1
 printf '%s\n' "$out" | grep -Eq 'FAIL .*vlib_word_present fail'
-rm -rf "$S"
+rm -rf -- "$S"
 echo 'E09 PASS: corrupting word_present_fail to hold a whole-word new makes the self-test FAIL (fixture load-bearing)'
 # --- output ---
 E09 PASS: corrupting word_present_fail to hold a whole-word new makes the self-test FAIL (fixture load-bearing)
