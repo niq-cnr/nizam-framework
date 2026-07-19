@@ -31,6 +31,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   masked in the framework's own payload-mode runs because the directory exists
   on disk here. Registered as an NDEBT-008 broadening; the carve-out narrows
   again when F-051 decides the payload contract.
+- `tools/validate.sh` C4 + C13 path hygiene (feature-049 review round, PR
+  #28): indexed paths and skill-module pointers are normalized before the
+  payload carve-out test, so a traversal spelling
+  (`ecosystem/../tools/x.md`) can no longer ride a non-injected-dir skip;
+  absolute paths and paths escaping the repo root (including through
+  symlinks) now FAIL in every mode instead of matching host files. The
+  `--help` payload descriptions now name the full carve-out set including
+  `ecosystem/`.
 
 ## [0.7.0] - 2026-07-17
 

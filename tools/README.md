@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.4.0
+version: 0.4.1
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.4.1"
+    date: "2026-07-19"
+    summary: "Review-round correction (PR #28): the Compliance Coverage prose still said 'runs twelve checks' and 'As of phase 005' after the 0.4.0 C13 sync; both now match the thirteen-check C1-C13 set delivered by phase 006 feature 049."
   - version: "0.4.0"
     date: "2026-07-19"
     summary: "Sync to the phase-006 compliance validator: document the new C13 skill-index integrity check (feature 049, NDEBT-007 fix — tools/skill.json entry_point and every capabilities[].module pointer must resolve; payload mode skips the non-injected dirs pending F-051) and the new SUMMARY: 13 passed, 0 failed total."
@@ -68,9 +71,9 @@ its own within this module — it is pure data consumed by `SKILL.md` and
 
 ## Compliance Coverage — C1–C13
 
-`tools/validate.sh`, the repo-local NDS compliance validator, runs twelve
+`tools/validate.sh`, the repo-local NDS compliance validator, runs thirteen
 checks on every PR and push to `main` (`.github/workflows/compliance.yml`).
-As of phase 005 (extended validator + CI fixtures), the full default sweep
+As of phase 006 (feature 049's C13 skill-index check), the full default sweep
 reports `SUMMARY: 13 passed, 0 failed`:
 
 | Check | Name | What it enforces |

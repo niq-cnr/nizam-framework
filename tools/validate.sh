@@ -115,7 +115,8 @@ Modes:
                       NIZAM.json). Framework-envelope files that are
                       intentionally absent from consumer payloads
                       (CONTEXT.md, README.md, CHANGELOG.md, bootstrap.sh,
-                      methodology/, registry/, docs/) are not required.
+                      methodology/, registry/, docs/, ecosystem/) are not
+                      required.
                       Runs C1-C5, C7-C11 with payload-appropriate file
                       sets; C6 is skipped. C9 and C10 both sweep only the
                       payload-doc set (standard/, templates/, and tools/
@@ -155,11 +156,17 @@ file(s)/detail(s) printed on the following indented line(s)):
       AND every repository-relative path indexed anywhere within it (every
       string under a `path` or `authoritative_source` key, plus every
       string item of any `key_documents`/`schemas`/`templates` list,
-      skipping the literal `NA`) resolves on disk. In --payload mode the
-      registry schema is optional (skipped if missing), and paths under
-      non-injected dirs (methodology/, registry/, docs/) are skipped as
+      skipping the literal `NA`) resolves on disk. Indexed paths must be
+      repo-relative and stay inside the repo: an absolute path, a path
+      whose normalized form escapes the root (leading `..`), or a path
+      that resolves through a symlink to outside the repo root FAILs in
+      every mode. In --payload mode the registry schema is optional
+      (skipped if missing), and paths under non-injected dirs
+      (methodology/, registry/, docs/, ecosystem/) are skipped as
       expected-absent while paths under injected dirs (standard/,
-      templates/, schema/, tools/) are still required to resolve.
+      templates/, schema/, tools/) are still required to resolve; the
+      carve-out tests the NORMALIZED path, so a traversal spelling
+      (e.g. `ecosystem/../tools/x.md`) cannot ride a skip.
 
   C5  Branding/endpoint leakage. Zero case-insensitive occurrences of
       `nizamiq`, `.svc`, or `cluster.local` anywhere in shipped content:
@@ -333,7 +340,9 @@ file(s)/detail(s) printed on the following indented line(s)):
       parsed this file's content. Runs in the full sweep AND under
       `--payload`; in payload mode, pointers into the non-injected
       directories (methodology/, registry/, docs/, ecosystem/) are
-      skipped -- the same carve-out set C4 uses -- pending the F-051
+      skipped -- the same carve-out set and normalized-path discipline
+      C4 uses (absolute or root-escaping pointers FAIL in every mode;
+      traversal spellings cannot ride the skip) -- pending the F-051
       payload-contract decision (NDEBT-008). Negative fixture:
       `tools/fixtures/skill_index_neg_dangling_module.json` (exercised by
       substituting it for tools/skill.json in a scratch clone; standing
@@ -694,6 +703,29 @@ if not paths:
     print(f"{path}: no paths discovered by walker -- index appears empty")
     sys.exit(1)
 
+# Path hygiene BEFORE any skip/resolve decision (feature 049 review
+# hardening): the index must stay inside the repo. A raw prefix test on
+# the un-normalized string would let a traversal spelling like
+# `ecosystem/../tools/x.md` ride the payload carve-out while really
+# pointing into an injected dir, and `os.path.exists` on an absolute
+# path like `/etc/hosts` would count host files as resolved index
+# content. Absolute and root-escaping entries FAIL in every mode.
+root = os.path.realpath(os.getcwd())
+normalized = []
+out_of_tree = []
+for p in paths:
+    if p == "NA":
+        continue
+    norm = os.path.normpath(p)
+    if os.path.isabs(p) or norm == ".." or norm.startswith("../"):
+        out_of_tree.append(p)
+    else:
+        normalized.append(norm)
+
+if out_of_tree:
+    print(f"{path}: indexed path(s) absolute or escaping the repo root: {out_of_tree}")
+    sys.exit(1)
+
 if mode == "payload":
     # "ecosystem" joined this set in feature 049: NIZAM.json has indexed
     # ecosystem/ paths since feature 040, but ecosystem/ is not part of the
@@ -702,15 +734,23 @@ if mode == "payload":
     # directory exists on disk in the framework checkout). NDEBT-008 class;
     # the F-051 payload-contract decision may narrow this set again.
     skipped_dirs = {"methodology", "registry", "docs", "ecosystem"}
-    paths = [
-        p for p in paths
-        if p != "NA"
-        and not any(p == d or p.startswith(d + "/") for d in skipped_dirs)
+    normalized = [
+        p for p in normalized
+        if not any(p == d or p.startswith(d + "/") for d in skipped_dirs)
     ]
 
-missing = [p for p in paths if p != "NA" and not os.path.exists(p)]
+missing = [p for p in normalized if not os.path.exists(p)]
 if missing:
     print(f"{path}: indexed path(s) do not resolve on disk: {missing}")
+    sys.exit(1)
+
+escaped = []
+for p in normalized:
+    real = os.path.realpath(p)
+    if real != root and not real.startswith(root + os.sep):
+        escaped.append(p)
+if escaped:
+    print(f"{path}: indexed path(s) resolve outside the repo root (symlink escape): {escaped}")
     sys.exit(1)
 
 sys.exit(0)
@@ -1501,11 +1541,22 @@ for index, capability in enumerate(capabilities):
         continue
     paths.append((label, module))
 
+root = os.path.realpath(os.getcwd())
 for label, path in paths:
-    if mode == "payload" and path.startswith(SKIPPED_DIR_PREFIXES):
+    # Same path hygiene as C4 (feature 049 review hardening): normalize
+    # BEFORE the carve-out test so a traversal spelling cannot ride a
+    # skip, and reject absolute or root-escaping pointers in every mode.
+    norm = os.path.normpath(path)
+    if os.path.isabs(path) or norm == ".." or norm.startswith("../"):
+        problems.append(f"{label} -> {path} is absolute or escapes the repo root")
         continue
-    if not os.path.isfile(path):
+    if mode == "payload" and norm.startswith(SKIPPED_DIR_PREFIXES):
+        continue
+    if not os.path.isfile(norm):
         problems.append(f"{label} -> {path} does not resolve to a file")
+        continue
+    if not os.path.realpath(norm).startswith(root + os.sep):
+        problems.append(f"{label} -> {path} resolves outside the repo root (symlink escape)")
 
 for problem in problems:
     print(problem)
