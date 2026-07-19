@@ -3,14 +3,17 @@ id: nizam-product-spec-006
 title: "Nizam Framework — Phase 006 Spec (Enforcement Closure & Hardening) — PROPOSAL"
 description: "Phase-006 proposal: close the enforcement gaps and consumer-reality defects accumulated in the open debt register (NDEBT-004..024; NDEBT-025 was resolved pre-phase), codify the operational rules phase 005 proved by incident, and take the deferred constitutional-layer mechanize-or-descope decision — ending at a v0.8.0 release gate. PROPOSED, not activated: execution requires operator authorization (gate H-PHASE-006). Extends product_spec.md..product_spec_005.md; replaces none."
 tags: [spec, self-compliance, enforcement, hardening, debt, phase-006, proposal]
-status: draft
-last_audited: "2026-07-18"
+status: active
+last_audited: "2026-07-19"
 authoritative_source: NA
-version: 1.0.0
+version: 1.1.0
 spec_version: "1.0.0"
 created_at: "2026-07-18T00:00:00Z"
-updated_at: "2026-07-18T00:00:00Z"
+updated_at: "2026-07-19T00:00:00Z"
 change_log:
+  - version: "1.1.0"
+    date: "2026-07-19T00:00:00Z"
+    summary: "Phase activated: frontmatter status draft -> active on operator authorization 2026-07-19 (verbatim: 'Approved. Proceed with the logical next steps.', gate H-PHASE-006, recorded in run_state event phase_activated). The draft status was the designed proposal state, flipped only now that the decision lifecycle reached activation — the 005 lesson applied as intended. Body Status banner updated to ACTIVE plan of record; no scope change."
   - version: "1.0.0"
     date: "2026-07-18T00:00:00Z"
     summary: "Initial phase-006 proposal, authored on operator direction ('Please action items 1-3', item 3) immediately after the phase-005 close and the v0.7.0 release. Scope sourced from ROADMAP Track 2 (the pre-005 candidate scope), Track 3 (the constitutional-layer decision), and the 21-row open debt register. Frontmatter status stays draft until operator activation (gate H-PHASE-006) — the 005 lesson: status must track the decision lifecycle, not anticipate it."
@@ -18,13 +21,15 @@ change_log:
 
 # Nizam Framework — Phase 006 Spec (Enforcement Closure & Hardening)
 
-**Status: PROPOSED — awaiting operator authorization (gate H-PHASE-006).** This
-document becomes the plan of record only when the operator authorizes activation;
-until then `docs/planning/manifest.json` carries phase 006 as `status: pending` and
-`current_phase` remains `005-ecosystem-cycle` (complete). Per
-`methodology/00_planning.md`, a phase becomes real only when a Planner-produced spec
-and a DAG-validated feature list exist AND a human authorizes activation — this
-proposal supplies the first two.
+**Status: ACTIVE — plan of record.** Phase `006-enforcement-closure` was authorized
+for activation by the operator on 2026-07-19 (verbatim: **"Approved. Proceed with
+the logical next steps."**, satisfying gate **H-PHASE-006**; recorded in
+`.agent/run_state.json` event `phase_activated` before any feature execution, per
+the NDEBT-018 rule). `docs/planning/manifest.json` carries phase 006 as
+`status: in_progress` with `current_phase: 006-enforcement-closure`. Per
+`methodology/00_planning.md`, the Planner-produced spec and DAG-validated feature
+list existed at proposal; the operator authorization completed the activation
+triad.
 
 ## 1. Purpose
 
