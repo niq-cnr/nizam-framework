@@ -807,6 +807,11 @@
       "at": "2026-07-19T00:00:00Z",
       "event": "feature_complete",
       "detail": "Feature 057 (Progress-comparison taxonomy amendment -- NDEBT-022) COMPLETE at deliverable commit a7679de -- phase 006's eighth feature, on the phase branch restarted from the F-054 merge (main 964fe48, PR #34). OPERATOR-SELECTED: directive 'Rebase line approved' + 'Option 1' (2026-07-19) authorized the Section-6/9 re-baseline (recorded in commit 085e568, scope_budget.rebaselines; original_estimate 1720->2300, ceiling 2236->2990) and chose 057. IMPLEMENTATION (3 files): the LIVE ecosystem/07_progress_comparison.md 0.2.0 completes its finding-state taxonomy so a real corpus classifies without workarounds -- Section 3 adds the fifth transition class `persisting` (present on both sides and still open, evidence freshly re-confirmed at/after the later execution's anchors, the exact opposite of `stale`; carried, never a score-movement source); Section 3.1 the pre-window-resolved recording rule (a finding resolved before the earlier input's reference point is recorded but is not a cross-execution transition and is excluded from the open-findings score; `resolved` reserved for an in-window closure); Section 3.2 the first-comparison rule (empty `reopened` on a first comparison is correct); Section 6.1 the open-vs-recorded score-count semantics (open findings only). PROVEN: E01 anti-vacuity at base 964fe48; E02/E03/E04 the class + rules + semantics present; E05 the ACCEPTANCE TEST -- the real audit-044 corpus classifies directly (015 persisting, 002 pre-window-resolved, 016 stale, 017/018 new; open-only 2->4) without unchanged_facts; E06 the committed audit-2026-07-17-cba6422 artifacts are immutable (byte-identical to base); E08 docs synced; E09 regression bundle. Self-sweeps 13/13 default, 11/11 payload; self-test 46/46; e2e green. DEBT 0.26.0 (NDEBT-022 Resolved). Verification 9/9; QA independent re-run 9/9 (.agent/qa/057.json); non-.agent diff confined to the 3 contracted files. SCOPE: 90 vs 80 estimate (~on target, no flag); cumulative 1858/2990 (62.1% of the re-baselined ceiling). Phase 006: 8 of 11 complete (049/050/051/052/053/055/054/057). Remaining: 056 (preflight/ecosystem hardening bundle, ungated), 058 (H-CONSTITUTIONAL-gated), 059 (phase close + v0.8.0)."
+    },
+    {
+      "at": "2026-07-19T00:00:00Z",
+      "event": "review_addressed",
+      "detail": "PR #35 (feature 057) CodeRabbit review (ASSERTIVE, CHANGES_REQUESTED, 4 Major, all valid) addressed in commit 95f3cc2 + re-captured evidence. (1) E01 anti-vacuity now asserts the absence of ALL four claimed sections at base (persisting/3.1/3.2/6.1), not just persisting+3.1. (2) E05 (the acceptance test) now DERIVES every finding's amended class from the delta buckets + amended rules and asserts all five, and derives the open-only scores 2->4, instead of a hardcoded map + two status spot-checks. (3) E07's `grep -v '^.agent/'` dot is now escaped (^\\.agent/) so an out-of-scope xagent/-style path cannot evade the confinement check. (4) TAXONOMY: ecosystem/07 Section 3 now makes `new` exclude previously-resolved findings and `reopened` their sole class on reappearance, closing a new/reopened overlap that violated the exactly-one-class rule (a real defect E05 could not catch since audit-044 has no reopened case), recorded in the 0.2.0 change_log. Evidence re-captured for the review round (pre-review captures remain in git at 0cd52fb); suite re-ran 9/9. 057 footprint 90 -> 101; cumulative 1869/2990 (62.5%)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -980,7 +985,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2300,
-    "total_lines_changed": 1858,
+    "total_lines_changed": 1869,
     "per_feature": [
       {
         "id": "049",
@@ -1034,9 +1039,9 @@
       {
         "id": "057",
         "estimated": 80,
-        "actual": 90,
+        "actual": 101,
         "flag": null,
-        "note": "3 files (git numstat ins+del, deliverable commit a7679de, base 964fe48..HEAD non-.agent): ecosystem/07_progress_comparison.md 62+9=71 (the persisting class + 3.1/3.2/6.1 + four->five + frontmatter), CHANGELOG.md 15, docs/planning/DEBT.md 2+2=4 -- total 90 vs 80 estimated (+12.5%, ~on estimate, no flag). Rolling 3x-average (053=221, 055=282, 054=74) = 192, 3x=577; 90 << 577. Cumulative 1768+90 = 1858 / 2990 re-baselined ceiling (62.1%)."
+        "note": "3 files (git numstat ins+del, deliverable commit a7679de, base 964fe48..HEAD non-.agent): ecosystem/07_progress_comparison.md 62+9=71 (the persisting class + 3.1/3.2/6.1 + four->five + frontmatter), CHANGELOG.md 15, docs/planning/DEBT.md 2+2=4 -- total 101 vs 80 estimated (grew from 90 in the PR #35 review: new/reopened disambiguation) (+12.5%, ~on estimate, no flag). Rolling 3x-average (053=221, 055=282, 054=74) = 192, 3x=577; 90 << 577. Cumulative 1768+101 = 1869 / 2990 re-baselined ceiling (62.1%)."
       }
     ],
     "rebaselines": [
