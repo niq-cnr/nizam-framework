@@ -1,0 +1,12 @@
+# .agent/evidence/051-verify-06.txt
+# Contract 051 verification entry 06 -- captured 2026-07-19 at deliverable commit 68832c9 (HEAD~1 = F-050 merge base 91f655d)
+# ACCEPTANCE TEST: GIP AUTHORITATIVE CONTRACT (0.4.0) names the six-dir payload consistently across Sections 1, 2 point 2, 2.1, 4 point 3, and 5.1; CONTEXT.md (0.7.0) names six dirs; both C10-consistent.
+$ set -e
+grep -Fq "version: 0.4.0" standard/GIP.md
+test "$(grep -c "methodology/\`, \`ecosystem/" standard/GIP.md)" -ge 3
+grep -Fq "version: 0.7.0" CONTEXT.md
+grep -Fq "six governance directories" CONTEXT.md
+out=$(bash tools/validate.sh --target standard/GIP.md 2>&1); printf "%s\n" "$out" | grep -Fq "[C10] PASS"
+echo "E06 PASS: GIP 0.4.0 six-dir payload (>=3 enumerations updated) + CONTEXT 0.7.0 six dirs; C10 consistent"
+E06 PASS: GIP 0.4.0 six-dir payload (>=3 enumerations updated) + CONTEXT 0.7.0 six dirs; C10 consistent
+[exit 0]

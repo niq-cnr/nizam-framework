@@ -1,0 +1,9 @@
+# .agent/evidence/051-verify-02.txt
+# Contract 051 verification entry 02 -- captured 2026-07-19 at deliverable commit 68832c9 (HEAD~1 = F-050 merge base 91f655d)
+# ACCEPTANCE TEST: BOOTSTRAP INJECTS THE ENLARGED SET: REQUIRED_MODULE_DIRS and the index-verification injected_module_paths both include methodology and ecosystem.
+$ set -e
+grep -Fq "\"methodology\"" bootstrap.sh && grep -Fq "\"ecosystem\"" bootstrap.sh
+grep -Fq "injected_module_paths = {\"standard\", \"templates\", \"schema\", \"tools\", \"methodology\", \"ecosystem\"}" bootstrap.sh
+echo "E02 PASS: bootstrap REQUIRED_MODULE_DIRS + injected_module_paths include methodology + ecosystem"
+E02 PASS: bootstrap REQUIRED_MODULE_DIRS + injected_module_paths include methodology + ecosystem
+[exit 0]

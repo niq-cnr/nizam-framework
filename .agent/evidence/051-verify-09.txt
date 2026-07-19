@@ -1,0 +1,20 @@
+# .agent/evidence/051-verify-09.txt
+# Contract 051 verification entry 09 -- captured 2026-07-19 at deliverable commit 68832c9 (HEAD~1 = F-050 merge base 91f655d)
+# ACCEPTANCE TEST: DOCS/DEBT SYNCED: CHANGELOG carries the six-directory Changed entry; DEBT 0.21.0 has NDEBT-008 in Resolved and NDEBT-004 ratified.
+$ set -e
+sed -n "/## \[Unreleased\]/,/## \[0.7.0\]/p" CHANGELOG.md | grep -Fq "Bootstrap payload enlarged to six directories"
+grep -Fq "version: 0.21.0" docs/planning/DEBT.md
+python3 - <<PY
+import re
+sect=None
+for l in open("docs/planning/DEBT.md"):
+    if l.startswith("## Open"): sect="open"
+    elif l.startswith("## Resolved"): sect="resolved"
+    if l.startswith("| NDEBT-008 "): assert sect=="resolved", "NDEBT-008 not Resolved"
+    if l.startswith("| NDEBT-004 "): assert "RATIFIED by" in l, "NDEBT-004 not ratified"
+print("ok")
+PY
+echo "E09 PASS: CHANGELOG six-dir entry; DEBT 0.21.0; NDEBT-008 Resolved; NDEBT-004 ratified"
+ok
+E09 PASS: CHANGELOG six-dir entry; DEBT 0.21.0; NDEBT-008 Resolved; NDEBT-004 ratified
+[exit 0]

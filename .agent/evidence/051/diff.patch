@@ -1,0 +1,384 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 794e54d..a99bea9 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -22,6 +22,25 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+   class; `tools/README.md` (0.4.0) and the `NIZAM.json` validator capability
+   summary document the C1–C13 set.
+ 
++### Changed
++
++- **Bootstrap payload enlarged to six directories** (phase 006 feature 051,
++  the H-PAYLOAD-CONTRACT decision, resolving **NDEBT-008**): `bootstrap.sh`
++  now injects `methodology/` and `ecosystem/` alongside `standard/`,
++  `templates/`, `schema/`, and `tools/` (plus `NIZAM.json`). Consumer
++  `.nizam/` installs previously omitted these two directories, so the many
++  `tools/skill.json` and `tools/SKILL.md` cross-references into `methodology/`
++  (and the `ecosystem/` references added in feature 040) dangled in a real
++  install. `standard/GIP.md` (0.4.0 — Sections 1, 2, 2.1, 4, 5.1) and
++  `CONTEXT.md` (0.7.0) now name the six-directory payload authoritatively; the
++  C4/C9/C13 `--payload` carve-outs for `methodology/`+`ecosystem/` are retired
++  (those paths are now required to resolve), leaving only the still-non-injected
++  `registry/` and `docs/` carved out; `tools/e2e_bootstrap_test.sh` asserts the
++  enlarged payload. Verified load-bearing: a payload missing the two dirs now
++  FAILs both `validate.sh --payload` and `bootstrap.sh --verify-only`. This
++  enlarges what consumers receive on their next re-bootstrap; `registry/` and
++  `docs/` remain framework-envelope and are still never injected.
++
+ ### Fixed
+ 
+ - `tools/validate.sh` C4 payload mode: `ecosystem` joined the non-injected
+diff --git a/CONTEXT.md b/CONTEXT.md
+index 69de21f..c089e99 100644
+--- a/CONTEXT.md
++++ b/CONTEXT.md
+@@ -2,10 +2,13 @@
+ id: nizam-context
+ title: "Nizam Framework — Context"
+ description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
+-version: 0.6.0
++version: 0.7.0
+ status: active
+ authoritative_source: CONTEXT.md
+ change_log:
++  - version: "0.7.0"
++    date: "2026-07-19"
++    summary: "H-PAYLOAD-CONTRACT (phase-006 feature 051): the bootstrap payload sentence now names the SIX injected governance directories (standard/, templates/, schema/, tools/, methodology/, ecosystem/) plus NIZAM.json -- methodology/ and ecosystem/ joined the injected payload, resolving NDEBT-008; registry/ and docs/ remain framework-envelope and are not injected."
+   - version: "0.6.0"
+     date: "2026-07-17"
+     summary: "Add ecosystem/ to the Module Map (the reusable Ecosystem Engineering Cycle module, framework-side only this phase); bump version to reflect the v0.7.0 release state."
+@@ -64,8 +67,9 @@ plan, execute, gate, and durably record work.
+ ## Execution Commands
+ 
+ - Bootstrap a consumer repo: `bootstrap.sh` clones a pinned framework tag, injects the
+-  four governance directories `standard/`, `templates/`, `schema/`, and `tools/` plus the
+-  root `NIZAM.json` capability index, and verifies compliance before declaring success.
++  six governance directories `standard/`, `templates/`, `schema/`, `tools/`,
++  `methodology/`, and `ecosystem/` plus the root `NIZAM.json` capability index, and
++  verifies compliance before declaring success.
+ - Validate framework artifacts against their schemas using any standard JSON Schema
+   validator against the files under `schema/`, or run `tools/validate.sh` for the
+   repo-local compliance check that `.github/workflows/compliance.yml` runs in CI.
+diff --git a/bootstrap.sh b/bootstrap.sh
+index 0400423..58e6293 100755
+--- a/bootstrap.sh
++++ b/bootstrap.sh
+@@ -10,7 +10,7 @@
+ #
+ # It clones a pinned semantic-version git tag of the nizam-framework
+ # governance payload, stages it in a temporary directory, injects standard/,
+-# templates/, schema/, tools/, and NIZAM.json into a consumer-declared target
++# templates/, schema/, tools/, methodology/, ecosystem/, and NIZAM.json into a consumer-declared target
+ # directory (".nizam/" by default), verifies the injection before declaring
+ # success, records provenance, and only then atomically replaces any prior
+ # target contents.
+@@ -38,22 +38,34 @@ readonly DEFAULT_TARGET_DIR=".nizam"
+ 
+ # The minimum required-file set per standard/GIP.md Section 2.1: the four
+ # standard/ documents and the schema/frontmatter.schema.json validation
+-# target, plus the root capability index itself.
++# target, plus the root capability index itself, plus a representative
++# document from each of methodology/ and ecosystem/ (which joined the
++# injected payload in phase-006 feature 051, the H-PAYLOAD-CONTRACT decision).
+ readonly REQUIRED_RELATIVE_FILES=(
+   "standard/NDS.md"
+   "standard/GIP.md"
+   "standard/AGF.md"
+   "standard/anti_hallucination.md"
+   "schema/frontmatter.schema.json"
++  "methodology/00_planning.md"
++  "ecosystem/README.md"
+   "NIZAM.json"
+ )
+ 
+ # The governance module directories injected as one atomic operation.
++# methodology/ and ecosystem/ joined this set in phase-006 feature 051
++# (H-PAYLOAD-CONTRACT): consumer payloads previously omitted them, so the
++# numerous tools/skill.json + tools/SKILL.md cross-references into
++# methodology/ (and the ecosystem/ references added in F-040) dangled in a
++# real .nizam/ install (NDEBT-008). registry/ and docs/ remain
++# framework-envelope and are NOT injected.
+ readonly REQUIRED_MODULE_DIRS=(
+   "standard"
+   "templates"
+   "schema"
+   "tools"
++  "methodology"
++  "ecosystem"
+ )
+ 
+ GOVERNANCE_REPO_URL="${GOVERNANCE_REPO_URL:-${DEFAULT_GOVERNANCE_REPO_URL}}"
+@@ -73,8 +85,8 @@ print_usage() {
+ Usage: bootstrap.sh [OPTIONS]
+ 
+ Inherit, or verify inheritance of, the Nizam governance payload (standard/,
+-templates/, schema/, tools/, NIZAM.json) into this repository, per
+-standard/GIP.md (Governance Inheritance Protocol).
++templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json) into this
++repository, per standard/GIP.md (Governance Inheritance Protocol).
+ 
+ Modes:
+   (default)         Clone the pinned GOVERNANCE_TAG, stage the governance
+@@ -221,11 +233,12 @@ check_required_files() {
+ 
+ # Confirms NIZAM.json parses as valid JSON and every path it indexes that
+ # falls under an actually-injected module (standard/, templates/, schema/,
+-# tools/ -- see REQUIRED_MODULE_DIRS) resolves to a real, non-empty file
+-# under the given root. NIZAM.json also indexes the framework-internal-only
+-# methodology/ and registry/ modules, which this script deliberately does
+-# not inject into consumers (product_spec.md Section 5); paths under those
+-# two modules are intentionally excluded from this check.
++# tools/, methodology/, ecosystem/ -- see REQUIRED_MODULE_DIRS) resolves to a
++# real, non-empty file under the given root. NIZAM.json also indexes the
++# framework-envelope-only registry/ and docs/ modules, which this script
++# deliberately does not inject into consumers (product_spec.md Section 5;
++# methodology/ and ecosystem/ joined the injected payload in feature 051);
++# paths under those two non-injected modules are excluded from this check.
+ check_nizam_index() {
+   local root="$1"
+   if ! python3 - "${root}" <<'PYEOF'
+@@ -243,7 +256,7 @@ except (OSError, json.JSONDecodeError) as exc:
+     print(f"NIZAM.json failed to parse under {root}: {exc}", file=sys.stderr)
+     sys.exit(1)
+ 
+-injected_module_paths = {"standard", "templates", "schema", "tools"}
++injected_module_paths = {"standard", "templates", "schema", "tools", "methodology", "ecosystem"}
+ 
+ 
+ def is_injected(rel_path):
+diff --git a/docs/planning/DEBT.md b/docs/planning/DEBT.md
+index 3a1f4d5..0e12a9b 100644
+--- a/docs/planning/DEBT.md
++++ b/docs/planning/DEBT.md
+@@ -2,7 +2,7 @@
+ id: nizam-debt
+ title: Technical Debt Register — nizam-framework
+ description: Known debt, deferred decisions, and cross-repo impacts for the nizam-framework repository.
+-version: 0.20.0
++version: 0.21.0
+ status: active
+ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ ---
+@@ -25,7 +25,6 @@ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ | NDEBT-016 | 2026-07-17 | Low | C12's fixture-polarity classification regex `(?:^\|_)(?:neg\|invalid)(?:_\|\.)` has confirmed dodges for FUTURE fixture filenames only (none of the 15 shipped fixtures are affected): full-word `negative_`, uppercase `_NEG_`, and false-trigger `_invalid_handling`-style names for positive fixtures that test invalid-input handling. Disclosed in contract 042's design_notes; deliberately not fixed under the phase-005 budget. | When the next fixture family lands, either normalize the naming convention in a fixtures README (authoritative token list: `neg_`/`invalid_` lowercase, delimited) or harden the regex (case-insensitive + full-token match) with fixture-name conformance asserted by C12 itself. |
+ | NDEBT-013 | 2026-07-17 | Medium | Reviewer probe isolation was undefined and caused a real incident during phase-005 parallel feature execution: the feature-032 evaluator's dynamic-awareness probe touch/rm'd the REAL path `ecosystem/01_clean_state_preflight.md` to simulate a sibling landing, and deleted feature 033's freshly-authored actual deliverable mid-implementation (033's generator detected the loss, recreated the file identically, and re-verified 14/14 twice; recorded in run_state feature_complete event for 032+033). No protocol forbade probing at real contracted paths. An orchestration-level probe-isolation rule (scratch copies only; never create/touch/delete a sibling's real path, including "simulating" its file landing) was adopted mid-phase via dispatch prompts and prevented recurrence across features 034-040. | Codify the probe-isolation rule durably: add it to the evaluator/validator protocols (methodology/02 verification-authoring standard and/or standard/AGF.md role obligations) so it binds by document rather than by per-dispatch prompt text — candidate scope for the phase-005 close or the next self-compliance phase. |
+ | NDEBT-014 | 2026-07-17 | Medium | Contract-verification authoring has a recurring defect catalogue, each class caught (and fixed) at least once by phase-005 Loop-1/Loop-2 gates but none yet mechanized as reusable guidance or vetted helpers: (1) working-tree-anchored anti-vacuity companions become mutually exclusive with their positive check post-implementation — they must be HEAD-anchored (038 entry-13, discovered at Loop-2, required a ratified amendment); (2) per-feature-ID exclude-list immutability guards are fragile under parallel drafting and need live amendments each time a sibling appears (036 entry-16), whereas 038 amendment_2's two-part invariant (tracked-history clean + untracked additions confined to in-flight-range globs) is robust — the forms should be harmonized; (3) vlib_section_grep is line-based, so required literal phrases split across a markdown line-wrap silently fail (033, 035, 036 all hit this at implementation); (4) bare substring tokens false-pass on containing words ('renewed'⊃'new', 'stalemate'⊃'stale'; 'invalid'⊃'valid' in fixture-name globs) — backtick-delimited code-span tokens or 'neg' naming are the proven fixes; (5) natural-language content bounds (line caps, word caps) cannot stop paraphrase mirroring — only closed-set shapes with exact-text pinning proved airtight (040, three rounds). | Fold the five classes into the verification-authoring standard (methodology/02, the R3 vetted-helpers home): document each anti-pattern with its proven fix, add vetted verify_lib.sh primitives where mechanizable (HEAD-anchored anti-vacuity helper; two-part .agent immutability helper; word-boundary/code-span token grep helper), and consider a contract-template checklist so future phases inherit the catalogue instead of rediscovering it gate-by-gate. |
+-| NDEBT-008 | 2026-07-12 | Medium | The bootstrap-injected payload references files it does not inject: 6 of 10 `tools/skill.json` capabilities and multiple `tools/SKILL.md` cross-references point at `methodology/*`, but `bootstrap.sh` injects only `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json`. In a consumer `.nizam/` install those paths dangle; `bootstrap.sh`'s own index verification deliberately skips `methodology/` paths, so inject→verify passes without noticing. Related consumer-context concern: NDEBT-004. BROADENED by feature 049 (2026-07-19): tools/skill.json now carries 14 capabilities of which 10 point at non-injected paths (6 `methodology/*` + the 4 `ecosystem/*` added by F-040), and NIZAM.json has indexed non-injected ecosystem/ paths since F-040 -- C4's payload skipped_dirs set lacked 'ecosystem', so a REAL consumer v0.7.0 payload would false-fail C4 (masked in the framework's own payload-mode runs because the directory exists on disk here); F-049 added 'ecosystem' to C4's carve-out and gave the new C13 skill-index check the same interim carve-out, both explicitly pending this row's F-051 contract decision. | DECIDED 2026-07-19 (operator, verbatim: 'The methodology/ (and now ecosystem/) shall join the bootstrap-injected payload'): the INJECT branch is chosen — `methodology/` AND `ecosystem/` join the bootstrap-injected payload; `registry/` and `docs/` stay non-injected framework-envelope (not named by the operator, carve-out retained). Implementation is phase-006 feature 051 (not this row's close): `bootstrap.sh` injects both dirs; the GIP/README/CONTEXT payload enumerations update together; the C4/C9/C13 payload-mode carve-outs for `methodology/`+`ecosystem/` retire (both become required-to-resolve, leaving only `registry/`+`docs/` carved out); the e2e harness asserts the enlarged payload resolves. Folds in NDEBT-004 (C9 payload `skipped_dirs`). Row stays Open until F-051 ships; the interim F-049 carve-outs remain correct until then (a real consumer v0.7.0 payload still lacks these dirs, so retiring them before the injection lands would newly false-fail consumers). |
+ | NDEBT-009 | 2026-07-12 | Low | The negative fixtures under `tools/fixtures/` are substantive and discriminating (each fails its targeted check when run via `--target`), but dormant: no CI job runs them, so a regression that made a validator check vacuously pass would not be caught. The full-sweep CI runs exclude `tools/fixtures/` by design. | Add a fixtures CI job (or a `validate.sh --self-test` mode) that runs every fixture through its targeted check and asserts the expected non-zero exit, alongside the existing `validate` and `e2e_bootstrap` jobs. |
+ | NDEBT-010 | 2026-07-12 | Medium | The Orchestrator role is load-bearing but undefined: `standard/AGF.md` Section 2 defines exactly four roles (Planner/Generator/Validator/Evaluator), yet `standard/capability_profiles.md` ships an `orchestrator-primary` profile while claiming every profile maps to an AGF role, `standard/permission_classes.md` and `standard/mcp_policy.md` allocate orchestrator permissions and tool surfaces, and `methodology/06_release_train.md` concedes AGF defines no release-manager role. The framework's own run history is orchestrator-driven throughout. | Define the Orchestrator (coordination/state-ownership role, its gate obligations, and which `run_state.json` fields it exclusively owns per AGF Section 5 rule 4) in AGF Section 2 — a deliberate standards change to route through the next planned phase, not a hot-patch. |
+ | NDEBT-011 | 2026-07-12 | Low | `templates/work-packet.template.json` does not validate against `schema/work-packet.schema.json` (three errors: `{{TIER}}` and `{{BLAST_RADIUS}}` placeholder tokens occupy enum-constrained fields; `{{MERGE_ORDER}}` occupies an integer field), while the schema's own `description` claims it validates the template. `templates/README.md` quietly downgrades the template's contract to JSON parse-validity only; the two claims disagree. | Align the surfaces: either give the template schema-valid literal defaults (e.g. `tier-0`, `local`, `0`) so it validates end-to-end, or correct the schema `description` to name work-packet *artifacts* rather than the template and keep the parse-validity-only contract, stating the choice in `templates/README.md` (the `schema/README.md` table row added 2026-07-12 already carries the caveat). |
+@@ -35,8 +34,9 @@ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ 
+ | ID | Date | Severity | Description | Resolution |
+ |----|------|----------|-------------|------------|
++| NDEBT-008 | 2026-07-12 | Medium | The bootstrap-injected payload references files it does not inject: 6 of 10 `tools/skill.json` capabilities and multiple `tools/SKILL.md` cross-references point at `methodology/*`, but `bootstrap.sh` injects only `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json`. In a consumer `.nizam/` install those paths dangle; `bootstrap.sh`'s own index verification deliberately skips `methodology/` paths, so inject→verify passes without noticing. Related consumer-context concern: NDEBT-004. BROADENED by feature 049 (2026-07-19): tools/skill.json now carries 14 capabilities of which 10 point at non-injected paths (6 `methodology/*` + the 4 `ecosystem/*` added by F-040), and NIZAM.json has indexed non-injected ecosystem/ paths since F-040 -- C4's payload skipped_dirs set lacked 'ecosystem', so a REAL consumer v0.7.0 payload would false-fail C4 (masked in the framework's own payload-mode runs because the directory exists on disk here); F-049 added 'ecosystem' to C4's carve-out and gave the new C13 skill-index check the same interim carve-out, both explicitly pending this row's F-051 contract decision. | RESOLVED 2026-07-19 by phase-006 feature 051 (H-PAYLOAD-CONTRACT), PR #30: methodology/ and ecosystem/ now join the bootstrap-injected payload. bootstrap.sh's REQUIRED_MODULE_DIRS + injected_module_paths, the GIP.md (0.4.0, Sections 1/2/2.1/4/5.1) and CONTEXT.md (0.7.0) payload enumerations, and the C4/C9/C13 payload-mode carve-outs were all updated together, so a consumer .nizam/ install now carries the methodology/* and ecosystem/* targets that tools/skill.json + tools/SKILL.md cross-reference. registry/ and docs/ remain framework-envelope (never injected). Proven load-bearing: the enlarged payload passes --payload both invocation forms (11/11); a payload MISSING methodology/+ecosystem/ now FAILs BOTH validate.sh (C4/C9/C13 require them) AND bootstrap --verify-only; the e2e harness asserts the enlarged payload. NDEBT-004's interim C9 carve-out folds in -- its methodology/ecosystem portion is superseded by actual injection; the carve-out remains only for the still-non-injected registry/docs/.agent/.github. |
+ | NDEBT-012 | 2026-07-15 | Medium | `tools/validate.sh --payload` is CWD-sensitive: invoked from a consumer repository root (`bash .nizam/tools/validate.sh --payload`) it fails multiple checks (e.g. `NIZAM.json: No such file or directory`) because paths resolve relative to the caller's CWD, while the identical invocation from inside `.nizam/` passes 7/7. First bug report from a real external consumer (GitHub issue #18, observed on a v0.5.3 payload in `nizamiq/documentation-standard` during RT-00 G0-NIZAM validation); independently corroborates the consumer-context concerns tracked as NDEBT-004 and NDEBT-008. | RESOLVED 2026-07-19 by phase-006 feature 050, co-resolved with NDEBT-004: `tools/validate.sh` now anchors `--payload` to its own payload root (the parent of its `tools/` dir), so `bash .nizam/tools/validate.sh --payload` from a consumer repository root behaves identically to `cd .nizam && bash tools/validate.sh --payload`; default/`--target` modes stay CWD-anchored (documented contract preserved). `tools/e2e_bootstrap_test.sh` gained `assert_payload_validate_cwd_independent`, asserting both invocation forms produce identical green results in the hermetic harness, closing the regression class. Proven by a before/after bootstrap: pre-fix the consumer-root form died at `source tools/verify_lib.sh`; post-fix both forms report `SUMMARY (payload mode): 11 passed, 0 failed` with byte-identical `[C*]` verdicts. |
+-| NDEBT-004 | 2026-07-10 | Low | C9 in `--payload` mode is proven non-breaking on the framework's OWN tree only. A real bootstrapped consumer whose `.nizam/` payload lacks injected `methodology/` and `docs/architecture/` could false-fail on directory-qualified cross-references, because C9 — unlike C4 — has no payload `skipped_dirs` carve-out. Surfaced by the F-026 Mode-A validator; the F-028 QA independently observed C9 legitimately fails in a `.agent/`-stripped consumer context. | RESOLVED 2026-07-19 by phase-006 feature 050, co-resolved with NDEBT-012: C9 gained a `--payload`-mode carve-out (the C9 analog of C4's) -- a directory-qualified cross-reference is required to resolve only if under an injected-payload prefix (`standard/`, `templates/`, `schema/`, `tools/`); references into non-injected framework-envelope paths (`methodology/`, `ecosystem/`, `registry/`, `docs/`, `.agent/`, `.github/`) are expected-absent in a consumer subset and skipped. Discovered during F-050 by authentically reproducing issue #18: a real bootstrapped payload false-failed C9 on 26 such references even from the payload root (10 passed, 1 failed); post-fix both `--payload` forms pass 11/11. The default full sweep applies no carve-out, so stale non-injected references are still caught. F-051 (H-PAYLOAD-CONTRACT) extends the injected-prefix set when `methodology/`+`ecosystem/` join the payload. SCOPE-RATIFICATION NOTE (PR #29 review, CodeRabbit): the DEFECT is fixed and verified (E05/E06), and 'Resolved' here means the defect is closed -- but resolving NDEBT-004 *within F-050* (rather than as its own feature) is an operator scope call that was surfaced (AskUserQuestion) yet not explicitly ratified (the prompt aborted; the prose re-ask went unanswered). PR #29's merge ratifies the F-050 scope-attribution; if the operator prefers Option 2 (split NDEBT-004 into its own feature/PR), this row re-homes there. The pending-ratification status is disclosed identically in the run_state F-050 event, contract 050 design_notes.scope_decision, and qa/050 non_blocking_observations. |
++| NDEBT-004 | 2026-07-10 | Low | C9 in `--payload` mode is proven non-breaking on the framework's OWN tree only. A real bootstrapped consumer whose `.nizam/` payload lacks injected `methodology/` and `docs/architecture/` could false-fail on directory-qualified cross-references, because C9 — unlike C4 — has no payload `skipped_dirs` carve-out. Surfaced by the F-026 Mode-A validator; the F-028 QA independently observed C9 legitimately fails in a `.agent/`-stripped consumer context. | RESOLVED 2026-07-19 by phase-006 feature 050, co-resolved with NDEBT-012: C9 gained a `--payload`-mode carve-out (the C9 analog of C4's) -- a directory-qualified cross-reference is required to resolve only if under an injected-payload prefix (`standard/`, `templates/`, `schema/`, `tools/`); references into non-injected framework-envelope paths (`methodology/`, `ecosystem/`, `registry/`, `docs/`, `.agent/`, `.github/`) are expected-absent in a consumer subset and skipped. Discovered during F-050 by authentically reproducing issue #18: a real bootstrapped payload false-failed C9 on 26 such references even from the payload root (10 passed, 1 failed); post-fix both `--payload` forms pass 11/11. The default full sweep applies no carve-out, so stale non-injected references are still caught. F-051 (H-PAYLOAD-CONTRACT) extends the injected-prefix set when `methodology/`+`ecosystem/` join the payload. SCOPE-RATIFICATION NOTE (PR #29 review, CodeRabbit): the DEFECT is fixed and verified (E05/E06), and 'Resolved' here means the defect is closed -- but resolving NDEBT-004 *within F-050* (rather than as its own feature) is an operator scope call that was surfaced (AskUserQuestion) yet not explicitly ratified (the prompt aborted; the prose re-ask went unanswered). RATIFIED by the operator's PR #29 merge (2026-07-19) -- the F-050 scope-attribution stands. F-051 subsequently narrowed this carve-out: methodology/+ecosystem/ became injected/required, so the carve-out now applies only to the still-non-injected registry/docs/.agent/.github. The pending-ratification status is disclosed identically in the run_state F-050 event, contract 050 design_notes.scope_decision, and qa/050 non_blocking_observations. |
+ | NDEBT-007 | 2026-07-12 | Medium | `tools/skill.json` content is validated by nothing in CI: C4 JSON-parses only `NIZAM.json`, C9 sweeps only `.md`/`.html` bodies, C5's sweep set excludes it, and the e2e harness asserts only the file's existence. Consequence: its `release_train` capability shipped pointing at the retired `methodology/05_release_train.md` from v0.4.0 through v0.5.3 undetected, while the identical stale pointer in `tools/interface.md` (an `.md` file, swept) WAS caught and fixed in the same renumbering cleanup. The pointer itself is fixed as of this entry; the enforcement gap is not. | RESOLVED 2026-07-19 by phase-006 feature 049 (deliverable commit 5193973, PR #28): validator check C13 (skill-index integrity) JSON-parses `tools/skill.json` and resolves the `entry_point` plus every `capabilities[].module` pointer on the default sweep and under `--payload` (payload mode skips the non-injected `methodology/`/`registry/`/`docs/`/`ecosystem/` prefixes pending the F-051 payload-contract decision — the NDEBT-008 carve-out, applied to normalized paths only); a missing/empty `entry_point` or an empty `capabilities` array is itself a FAIL, so the check cannot go vacuous. Negative fixture `tools/fixtures/skill_index_neg_dangling_module.json` proven load-bearing by scratch-clone substitution (`.agent/evidence/049-verify-05.txt`: `[C13] FAIL` naming `methodology/99_retired.md`); standing self-test wiring for the fixture remains F-052 (NDEBT-009) scope. This row's move to Resolved was itself a feature-049 close-out omission, corrected in the PR #28 review round. |
+ | NDEBT-025 | 2026-07-18 | Low | `.github/workflows/release.yml` titles the GitHub Release from the annotated tag's subject via `git for-each-ref refs/tags/$TAG --format='%(contents:subject)'`, but on its first real tag-push execution (v0.7.0, 2026-07-18) the published title came out as the MERGE-COMMIT subject ('Phase 005 -- ... (#25)') instead of the tag subject ('v0.7.0 -- Ecosystem Engineering Cycle'): actions/checkout materializes `refs/tags/<tag>` as a peeled/lightweight ref in the runner, so `%(contents:subject)` reads the commit object and the workflow's lightweight-tag fallback cannot distinguish the case. The remote tag itself is a correct annotated tag (verified: objecttype tag, correct subject, points at 4833322), and the body/notes extraction was unaffected (the [0.7.0] CHANGELOG section published correctly). Blast radius: Release page title only, cosmetic. | RESOLVED 2026-07-18, both parts: (a) `release.yml` now re-fetches the genuine tag object before title extraction, derives the title from the object's REAL type, and fails loudly on a remote-annotated/local-peeled disagreement (commit 4bb3fae, this branch); (b) the live symptom was corrected by a branch-scoped one-shot runner applying exactly the fixed extraction logic (Actions run 29652110854, success 2026-07-18T16:30:52Z) -- the v0.7.0 Release title now reads 'v0.7.0 -- Ecosystem Engineering Cycle' (verified via the Releases API, `updated_at` 2026-07-18T16:30:50Z, notes byte-untouched), doubling as the end-to-end proof of the fix; the temporary runner was then removed on the same branch and never lands on main. |
+ | NDEBT-003 | 2026-07-10 | Low | Two single-source-of-truth consistency gaps surfaced during F-026 that C9's `/`-qualification structurally cannot catch: (a) `docs/guide/index.html`'s methodology key-documents list omitted `methodology/05_eval_and_trace.md`; (b) `methodology/06_release_train.md` carried a bare stale `05_release_train.md` reference left by the v0.5.x renumbering. | RESOLVED by F-027 (shipped in commit 758ded4) and verified in-tree 2026-07-12: the guide's methodology key-documents list now names `methodology/05_eval_and_trace.md`, and `methodology/06_release_train.md`'s Section 3.2 example now reads `00_planning.md` through `06_release_train.md` with no bare `05_release_train.md` remnant. The register was not updated at F-027 close; corrected during the 2026-07-12 review. The recurrence-guard gap F-027 did NOT mechanize remains tracked separately as NDEBT-005. |
+diff --git a/standard/GIP.md b/standard/GIP.md
+index a651c5b..26856c7 100644
+--- a/standard/GIP.md
++++ b/standard/GIP.md
+@@ -2,10 +2,13 @@
+ id: governance-inheritance-protocol
+ title: "Governance Inheritance Protocol (GIP)"
+ description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
+-version: 0.3.1
++version: 0.4.0
+ status: active
+ authoritative_source: standard/GIP.md
+ change_log:
++  - version: "0.4.0"
++    date: "2026-07-19"
++    summary: "H-PAYLOAD-CONTRACT (phase-006 feature 051): methodology/ and ecosystem/ joined the bootstrap-injected payload, resolving NDEBT-008 (consumer payloads previously omitted them, so the many tools/skill.json + tools/SKILL.md cross-references into methodology/ -- and the ecosystem/ references added in F-040 -- dangled in a real .nizam/ install). Section 1's Core Directive parenthetical, Section 2 point 2 (the authoritative payload definition), and Section 5.1's injection-scope statement now all name the six-directory payload (standard/, templates/, schema/, tools/, methodology/, ecosystem/) plus NIZAM.json. registry/ and docs/ remain framework-envelope and are still never injected."
+   - version: "0.3.1"
+     date: "2026-07-12"
+     summary: "Stale-count cleanup: Section 2.1's bootstrap verification minimum no longer hard-codes 'the four standard/ documents' (standard/ has since grown past the original four core documents); the check is now phrased against the injected standard/ document set, so the sentence cannot silently drift again as the module grows."
+@@ -25,7 +28,7 @@ change_log:
+ governance content is not framework-compliant.**
+ 
+ Any repository that adopts the Nizam framework MUST inherit its governance content
+-(`standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json` — the full payload
++(`standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`, and `NIZAM.json` — the full payload
+ defined authoritatively in Section 2, point 2) through a single, atomic, verifiable
+ operation, not through ad hoc copy-paste or hand-authored reproductions. This protocol
+ defines that operation, the compliance checks that follow it, and how a consumer
+@@ -42,9 +45,11 @@ whenever it upgrades to a newer framework release.
+    any other floating branch reference. Pinning prevents a consumer from silently
+    inheriting mid-development governance changes.
+ 2. **Inject the governance directories.** The consumer copies the framework's `standard/`,
+-   `templates/`, `schema/`, and `tools/` directories, together with the framework's root
+-   `NIZAM.json` capability index, into its own workspace (conventionally at its repository
+-   root, or a dedicated governance directory it declares in its own `CONTEXT.md`).
++   `templates/`, `schema/`, `tools/`, `methodology/`, and `ecosystem/` directories, together
++   with the framework's root `NIZAM.json` capability index, into its own workspace
++   (conventionally at its repository root, or a dedicated governance directory it declares
++   in its own `CONTEXT.md`). `registry/` and `docs/` are framework-envelope and are not
++   injected.
+ 3. **Load, don't just copy.** Any agent operating in the consumer repository MUST read the
+    injected governance documents into its working context before acting, and is bound by
+    their directives for the duration of its session.
+@@ -62,8 +67,8 @@ Any consumer MAY invoke it directly rather than reimplementing the steps in Sect
+ `bootstrap.sh` performs, as one atomic operation:
+ 
+ 1. Clone the pinned tag (never a floating branch) of the framework repository.
+-2. Inject `standard/`, `templates/`, `schema/`, and `tools/`, together with `NIZAM.json`,
+-   into the consumer's target location.
++2. Inject `standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, and `ecosystem/`,
++   together with `NIZAM.json`, into the consumer's target location.
+ 3. Verify the injection succeeded before declaring success.
+ 
+ The verification step confirms, at minimum:
+@@ -107,7 +112,7 @@ process of catching this divergence.
+    governance content against its recorded pinned tag on a regular cadence (for example,
+    before each release, or on a scheduled interval), not only at initial bootstrap time.
+ 3. **Detecting local mutation.** If an injected file under `standard/`, `templates/`,
+-   `schema/`, or `tools/` no longer matches the content shipped at the recorded pinned tag,
++   `schema/`, `tools/`, `methodology/`, or `ecosystem/` no longer matches the content shipped at the recorded pinned tag,
+    the consumer has drifted through local mutation. Locally hand-patched governance files
+    are themselves a drift signal, independent of whether the patch was well-intentioned.
+ 4. **Detecting staleness.** If a newer semantic-version tag of the framework has been
+@@ -142,12 +147,12 @@ bootstrap operation MUST NOT silently overwrite that pre-existing content. Inste
+   than losing either version.
+ - **CI configuration is reconciled, not replaced.** A consumer's pre-existing CI
+   configuration is not part of the injected governance payload (`standard/`,
+-  `templates/`, `schema/`, `tools/`, `NIZAM.json` — Section 2, point 2) and MUST NOT be
++  `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`, `NIZAM.json` — Section 2, point 2) and MUST NOT be
+   deleted or overwritten by bootstrapping. Where this protocol recommends CI-driven
+   compliance checks (Section 3), those checks are added to the consumer's existing CI
+   configuration, not substituted for it.
+ - **Injection never touches these three categories directly.** `bootstrap.sh` injects
+-  only `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json`; it never writes
++  only `standard/`, `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`, and `NIZAM.json`; it never writes
+   to a consumer's `CONTEXT.md`, `AGENTS.md`, or CI configuration itself, which is why
+   those are exactly the categories a consumer repository must reconcile by hand against
+   the templates this framework ships.
+diff --git a/tools/e2e_bootstrap_test.sh b/tools/e2e_bootstrap_test.sh
+index c89b544..afbc6e1 100644
+--- a/tools/e2e_bootstrap_test.sh
++++ b/tools/e2e_bootstrap_test.sh
+@@ -74,14 +74,15 @@
+ #   target: repo-relative or absolute path to a bootstrap.sh injection root.
+ #
+ # Returns:
+-#   0 if standard/, templates/, schema/, tools/, NIZAM.json, and
+-#     provenance.json are all present (directories real, files non-empty).
++#   0 if standard/, templates/, schema/, tools/, methodology/, ecosystem/,
++#     NIZAM.json, and provenance.json are all present (dirs real, files
++#     non-empty).
+ #   1 otherwise (the first missing item is named).
+ assert_payload_present() {
+   local target="$1"
+   local d f
+ 
+-  for d in standard templates schema tools; do
++  for d in standard templates schema tools methodology ecosystem; do
+     if [ ! -d "${target}/${d}" ]; then
+       echo "assert_payload_present: missing injected module directory: ${target}/${d}"
+       return 1
+@@ -95,7 +96,7 @@ assert_payload_present() {
+     fi
+   done
+ 
+-  echo "assert_payload_present: OK -- standard/, templates/, schema/, tools/, NIZAM.json, provenance.json all present under ${target}"
++  echo "assert_payload_present: OK -- standard/, templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json, provenance.json all present under ${target}"
+   return 0
+ }
+ 
+@@ -137,7 +138,7 @@ except (OSError, json.JSONDecodeError) as exc:
+     print(f"assert_nizam_index_valid: NIZAM.json failed to parse under {root}: {exc}", file=sys.stderr)
+     sys.exit(1)
+ 
+-injected_module_paths = {"standard", "templates", "schema", "tools"}
++injected_module_paths = {"standard", "templates", "schema", "tools", "methodology", "ecosystem"}
+ 
+ 
+ def is_injected(rel_path):
+diff --git a/tools/validate.sh b/tools/validate.sh
+index c98e9d0..916ab79 100755
+--- a/tools/validate.sh
++++ b/tools/validate.sh
+@@ -431,7 +431,10 @@ build_payload_md_set() {
+   local f
+   local d
+ 
+-  for d in standard templates; do
++  # methodology/ and ecosystem/ joined the injected payload in feature 051
++  # (H-PAYLOAD-CONTRACT), so their .md files are now part of the payload-doc
++  # set that C1/C2/C3/C5/C8/C9/C10 sweep in --payload mode.
++  for d in standard templates methodology ecosystem; do
+     if [ -d "${d}" ]; then
+       while IFS= read -r f; do
+         files+=("${f}")
+@@ -762,13 +765,14 @@ if escaped:
+     sys.exit(1)
+ 
+ if mode == "payload":
+-    # "ecosystem" joined this set in feature 049: NIZAM.json has indexed
+-    # ecosystem/ paths since feature 040, but ecosystem/ is not part of the
+-    # bootstrap-injected payload, so a REAL consumer install would false-fail
+-    # C4 here (the framework's own payload-mode run masked it because the
+-    # directory exists on disk in the framework checkout). NDEBT-008 class;
+-    # the F-051 payload-contract decision may narrow this set again.
+-    skipped_dirs = {"methodology", "registry", "docs", "ecosystem"}
++    # Non-injected framework-envelope dirs, skipped as expected-absent in a
++    # consumer payload. NARROWED in feature 051 (H-PAYLOAD-CONTRACT): only
++    # registry/ and docs/ remain non-injected -- methodology/ and ecosystem/
++    # joined the bootstrap-injected payload (they were carved out here on an
++    # interim basis by F-049/F-050 pending this decision), so NIZAM.json's
++    # methodology/ and ecosystem/ paths are now REQUIRED to resolve in a
++    # consumer install exactly like the other injected dirs.
++    skipped_dirs = {"registry", "docs"}
+     normalized = [
+         p for p in normalized
+         if not any(p == d or p.startswith(d + "/") for d in skipped_dirs)
+@@ -1065,21 +1069,18 @@ check_c9_path_resolution() {
+ 
+       # NDEBT-004 (feature 050): the C9 analog of C4's payload carve-out. In
+       # --payload mode a directory-qualified reference is only REQUIRED to
+-      # resolve if its target is part of the bootstrap-injected payload
+-      # (standard/, templates/, schema/, tools/). References into
+-      # non-injected framework-envelope paths (methodology/, ecosystem/,
+-      # registry/, docs/, .agent/, .github/, ...) are expected-absent in a
+-      # consumer .nizam/ subset -- a real consumer payload legitimately
+-      # carries these cross-references to docs it reaches via the pinned
+-      # framework checkout, not via the injected subset -- so they are
+-      # skipped here rather than false-failed (the exact issue #18-adjacent
+-      # gap C9 had, unlike C4). The DEFAULT full sweep applies NO carve-out,
+-      # so a stale non-injected reference is still caught there. F-051 (the
+-      # H-PAYLOAD-CONTRACT decision to inject methodology/+ecosystem/) will
+-      # extend the injected-prefix set below when those dirs join the payload.
++      # resolve if its target is part of the bootstrap-injected payload.
++      # EXTENDED in feature 051 (H-PAYLOAD-CONTRACT): methodology/ and
++      # ecosystem/ joined the injected payload, so references into them are
++      # now REQUIRED to resolve (they were skipped here on an interim basis
++      # by F-050 pending the decision). References into the still-non-injected
++      # framework-envelope paths (registry/, docs/, .agent/, .github/, ...)
++      # remain expected-absent in a consumer .nizam/ subset and are skipped.
++      # The DEFAULT full sweep applies NO carve-out, so a stale non-injected
++      # reference is still caught there.
+       if [ "${VALIDATOR_MODE:-default}" = "payload" ]; then
+         case "${token}" in
+-          standard/*|templates/*|schema/*|tools/*) ;;
++          standard/*|templates/*|schema/*|tools/*|methodology/*|ecosystem/*) ;;
+           *) continue ;;
+         esac
+       fi
+@@ -1562,7 +1563,13 @@ import os
+ import sys
+ 
+ mode = sys.argv[1]
+-SKIPPED_DIR_PREFIXES = ("methodology/", "registry/", "docs/", "ecosystem/")
++# Non-injected framework-envelope prefixes skipped in --payload mode.
++# NARROWED in feature 051 (H-PAYLOAD-CONTRACT): methodology/ and ecosystem/
++# joined the injected payload, so a skill.json module pointer into them is
++# now REQUIRED to resolve in a consumer install (they were carved out here on
++# an interim basis by F-049 pending the decision); only registry/ and docs/
++# remain non-injected.
++SKIPPED_DIR_PREFIXES = ("registry/", "docs/")
+ 
+ try:
+     with open("tools/skill.json", encoding="utf-8") as fh:

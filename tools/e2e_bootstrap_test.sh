@@ -74,14 +74,15 @@
 #   target: repo-relative or absolute path to a bootstrap.sh injection root.
 #
 # Returns:
-#   0 if standard/, templates/, schema/, tools/, NIZAM.json, and
-#     provenance.json are all present (directories real, files non-empty).
+#   0 if standard/, templates/, schema/, tools/, methodology/, ecosystem/,
+#     NIZAM.json, and provenance.json are all present (dirs real, files
+#     non-empty).
 #   1 otherwise (the first missing item is named).
 assert_payload_present() {
   local target="$1"
   local d f
 
-  for d in standard templates schema tools; do
+  for d in standard templates schema tools methodology ecosystem; do
     if [ ! -d "${target}/${d}" ]; then
       echo "assert_payload_present: missing injected module directory: ${target}/${d}"
       return 1
@@ -95,7 +96,7 @@ assert_payload_present() {
     fi
   done
 
-  echo "assert_payload_present: OK -- standard/, templates/, schema/, tools/, NIZAM.json, provenance.json all present under ${target}"
+  echo "assert_payload_present: OK -- standard/, templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json, provenance.json all present under ${target}"
   return 0
 }
 
@@ -137,7 +138,7 @@ except (OSError, json.JSONDecodeError) as exc:
     print(f"assert_nizam_index_valid: NIZAM.json failed to parse under {root}: {exc}", file=sys.stderr)
     sys.exit(1)
 
-injected_module_paths = {"standard", "templates", "schema", "tools"}
+injected_module_paths = {"standard", "templates", "schema", "tools", "methodology", "ecosystem"}
 
 
 def is_injected(rel_path):

@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 0.6.0
+version: 0.7.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-07-19"
+    summary: "H-PAYLOAD-CONTRACT (phase-006 feature 051): the bootstrap payload sentence now names the SIX injected governance directories (standard/, templates/, schema/, tools/, methodology/, ecosystem/) plus NIZAM.json -- methodology/ and ecosystem/ joined the injected payload, resolving NDEBT-008; registry/ and docs/ remain framework-envelope and are not injected."
   - version: "0.6.0"
     date: "2026-07-17"
     summary: "Add ecosystem/ to the Module Map (the reusable Ecosystem Engineering Cycle module, framework-side only this phase); bump version to reflect the v0.7.0 release state."
@@ -64,8 +67,9 @@ plan, execute, gate, and durably record work.
 ## Execution Commands
 
 - Bootstrap a consumer repo: `bootstrap.sh` clones a pinned framework tag, injects the
-  four governance directories `standard/`, `templates/`, `schema/`, and `tools/` plus the
-  root `NIZAM.json` capability index, and verifies compliance before declaring success.
+  six governance directories `standard/`, `templates/`, `schema/`, `tools/`,
+  `methodology/`, and `ecosystem/` plus the root `NIZAM.json` capability index, and
+  verifies compliance before declaring success.
 - Validate framework artifacts against their schemas using any standard JSON Schema
   validator against the files under `schema/`, or run `tools/validate.sh` for the
   repo-local compliance check that `.github/workflows/compliance.yml` runs in CI.

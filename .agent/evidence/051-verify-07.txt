@@ -1,0 +1,10 @@
+# .agent/evidence/051-verify-07.txt
+# Contract 051 verification entry 07 -- captured 2026-07-19 at deliverable commit 68832c9 (HEAD~1 = F-050 merge base 91f655d)
+# ACCEPTANCE TEST: CARVE-OUTS NARROWED to {registry, docs}: C4 skipped_dirs, C9 injected-prefix allow-list (now includes methodology/ecosystem), and C13 SKIPPED_DIR_PREFIXES all reflect the injection.
+$ set -e
+grep -Fq "skipped_dirs = {\"registry\", \"docs\"}" tools/validate.sh
+grep -Fq "standard/*|templates/*|schema/*|tools/*|methodology/*|ecosystem/*" tools/validate.sh
+grep -Fq "SKIPPED_DIR_PREFIXES = (\"registry/\", \"docs/\")" tools/validate.sh
+echo "E07 PASS: C4/C9/C13 carve-outs narrowed to {registry, docs}; methodology/ecosystem now required in payload"
+E07 PASS: C4/C9/C13 carve-outs narrowed to {registry, docs}; methodology/ecosystem now required in payload
+[exit 0]

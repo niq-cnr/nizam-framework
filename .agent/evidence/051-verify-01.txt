@@ -1,0 +1,11 @@
+# .agent/evidence/051-verify-01.txt
+# Contract 051 verification entry 01 -- captured 2026-07-19 at deliverable commit 68832c9 (HEAD~1 = F-050 merge base 91f655d)
+# ACCEPTANCE TEST: ANTI-VACUITY (HEAD~1 = 91f655d, the F-050 merge base): before this deliverable bootstrap did NOT inject methodology/ecosystem, the carve-outs still listed them, and GIP/CONTEXT named the four-dir payload.
+$ set -e
+git show HEAD~1:bootstrap.sh | grep -Fq "readonly REQUIRED_MODULE_DIRS=("
+if git show HEAD~1:bootstrap.sh | grep -Ezoq "REQUIRED_MODULE_DIRS=\(\s*\n\s*\"standard\"\s*\n\s*\"templates\"\s*\n\s*\"schema\"\s*\n\s*\"tools\"\s*\n\s*\"methodology\""; then echo "VACUITY: methodology already injected at HEAD~1"; exit 1; fi
+git show HEAD~1:tools/validate.sh | grep -Fq "skipped_dirs = {\"methodology\", \"registry\", \"docs\", \"ecosystem\"}"
+git show HEAD~1:standard/GIP.md | grep -Fq "version: 0.3.1"
+echo "E01 PASS: methodology/ecosystem not injected, carve-outs intact, GIP 0.3.1 at HEAD~1 (anti-vacuity)"
+E01 PASS: methodology/ecosystem not injected, carve-outs intact, GIP 0.3.1 at HEAD~1 (anti-vacuity)
+[exit 0]

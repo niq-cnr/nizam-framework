@@ -22,6 +22,25 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   class; `tools/README.md` (0.4.0) and the `NIZAM.json` validator capability
   summary document the C1–C13 set.
 
+### Changed
+
+- **Bootstrap payload enlarged to six directories** (phase 006 feature 051,
+  the H-PAYLOAD-CONTRACT decision, resolving **NDEBT-008**): `bootstrap.sh`
+  now injects `methodology/` and `ecosystem/` alongside `standard/`,
+  `templates/`, `schema/`, and `tools/` (plus `NIZAM.json`). Consumer
+  `.nizam/` installs previously omitted these two directories, so the many
+  `tools/skill.json` and `tools/SKILL.md` cross-references into `methodology/`
+  (and the `ecosystem/` references added in feature 040) dangled in a real
+  install. `standard/GIP.md` (0.4.0 — Sections 1, 2, 2.1, 4, 5.1) and
+  `CONTEXT.md` (0.7.0) now name the six-directory payload authoritatively; the
+  C4/C9/C13 `--payload` carve-outs for `methodology/`+`ecosystem/` are retired
+  (those paths are now required to resolve), leaving only the still-non-injected
+  `registry/` and `docs/` carved out; `tools/e2e_bootstrap_test.sh` asserts the
+  enlarged payload. Verified load-bearing: a payload missing the two dirs now
+  FAILs both `validate.sh --payload` and `bootstrap.sh --verify-only`. This
+  enlarges what consumers receive on their next re-bootstrap; `registry/` and
+  `docs/` remain framework-envelope and are still never injected.
+
 ### Fixed
 
 - `tools/validate.sh` C4 payload mode: `ecosystem` joined the non-injected

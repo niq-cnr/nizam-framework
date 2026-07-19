@@ -1,0 +1,9 @@
+# .agent/evidence/051-verify-10.txt
+# Contract 051 verification entry 10 -- captured 2026-07-19 at deliverable commit 68832c9 (HEAD~1 = F-050 merge base 91f655d)
+# ACCEPTANCE TEST: DEFAULT/TARGET UNCHANGED: default mode applies NO payload carve-out (all refs required); --target on a single md still exits 0.
+$ set -e
+awk "/if mode == .payload.:/{p=1} p&&/skipped_dirs = /{print; exit}" tools/validate.sh | grep -Fq "{\"registry\", \"docs\"}"
+out=$(bash tools/validate.sh --target standard/GIP.md 2>&1); rc=$?; test $rc -eq 0
+echo "E10 PASS: carve-out is payload-mode-only (default requires all refs); --target rc=$rc"
+E10 PASS: carve-out is payload-mode-only (default requires all refs); --target rc=0
+[exit 0]
