@@ -64,3 +64,25 @@ jobs:
       - run: pip install jsonschema pyyaml
 
       - run: bash tools/e2e_bootstrap_test.sh
+
+  fixtures_self_test:
+    runs-on: ubuntu-latest
+    steps:
+      # No fetch-depth override: the self-test's vlib_version_increased case
+      # builds its OWN throwaway git repo (git init in a mktemp dir) rather
+      # than reading this checkout's history, so GitHub Actions' default
+      # shallow checkout is sufficient. The C13 substitution and every
+      # validate.sh --target invocation read only the working-tree fixtures.
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+
+      # tools/fixtures_self_test.sh (NDEBT-009, feature 052) drives
+      # tools/validate.sh --target, which fails closed without jsonschema/yaml.
+      - run: pip install jsonschema pyyaml
+
+      - run: bash tools/fixtures_self_test.sh
