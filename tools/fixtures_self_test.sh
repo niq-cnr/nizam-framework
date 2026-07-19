@@ -266,8 +266,15 @@ test_c13
 # ---------------------------------------------------------------------------
 echo "== completeness guard =="
 ondisk=()
+# find (not `ls -1 -- *`): a glob skips dot-prefixed entries and, if a
+# subdirectory ever appears under tools/fixtures/, expands to that dir's
+# CONTENTS -- either would let a fixture escape the on-disk set and defeat the
+# guard's sole purpose (PR #31 review). -maxdepth 1 -type f lists only the
+# immediate regular files, dotfiles included; the leading './' is stripped so
+# the names match the bare basenames in COVERED. (No -printf: portable to
+# non-GNU find.)
 while IFS= read -r f; do ondisk+=("${f}"); done \
-  < <(cd tools/fixtures && ls -1 -- * 2>/dev/null | LC_ALL=C sort)
+  < <(cd tools/fixtures && find . -maxdepth 1 -type f | sed 's#^\./##' | LC_ALL=C sort)
 covered_sorted=()
 while IFS= read -r f; do covered_sorted+=("${f}"); done \
   < <(printf '%s\n' "${COVERED[@]}" | LC_ALL=C sort -u)
