@@ -1568,7 +1568,13 @@ for label, path in paths:
         if real != root and not real.startswith(root + os.sep):
             problems.append(f"{label} -> {path} resolves outside the repo root (symlink escape)")
             continue
-    if mode == "payload" and norm.startswith(SKIPPED_DIR_PREFIXES):
+    # entry_point is NEVER carved out (PR #28 review): it is the skill's
+    # single load-bearing entry document and must resolve in any payload,
+    # so a mis-set entry_point under a non-injected prefix FAILs rather than
+    # ride the capability-module carve-out. (In practice entry_point is
+    # tools/SKILL.md -- injected -- so this changes nothing for the shipped
+    # skill.json; it closes the hole for a misdeclared entry_point.)
+    if label != "entry_point" and mode == "payload" and norm.startswith(SKIPPED_DIR_PREFIXES):
         continue
     if not os.path.isfile(norm):
         problems.append(f"{label} -> {path} does not resolve to a file")

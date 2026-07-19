@@ -39,9 +39,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   instead of matching host files. The repo-containment check runs on every
   present path *before* the carve-out, so a symlinked carve-out path
   (`ecosystem/evil -> /etc`) is rejected in payload mode too rather than
-  riding the skip; genuinely-absent carve-out paths stay allowed. The
-  `--help` payload descriptions now name the full carve-out set including
-  `ecosystem/`.
+  riding the skip; genuinely-absent carve-out paths stay allowed. C13 also
+  never carves out the `entry_point` in payload mode — the skill's single
+  entry document must resolve in any payload, so a mis-declared
+  `entry_point` under a non-injected prefix FAILs rather than ride the
+  capability-module carve-out. The `--help` payload descriptions now name
+  the full carve-out set including `ecosystem/`.
 
 ## [0.7.0] - 2026-07-17
 
