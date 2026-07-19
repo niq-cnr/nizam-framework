@@ -112,11 +112,20 @@ Modes:
   --payload           Consumer-payload mode. Validates only the subset of
                       checks relevant to a `bootstrap.sh`-injected consumer
                       payload (standard/, templates/, schema/, tools/, and
-                      NIZAM.json). Framework-envelope files that are
-                      intentionally absent from consumer payloads
-                      (CONTEXT.md, README.md, CHANGELOG.md, bootstrap.sh,
-                      methodology/, registry/, docs/, ecosystem/) are not
-                      required.
+                      NIZAM.json). UNLIKE the default/--target modes (which
+                      evaluate the tree at CWD), --payload anchors to its own
+                      payload root -- the parent of the tools/ directory this
+                      script lives in -- so `bash .nizam/tools/validate.sh
+                      --payload` from a consumer repository root behaves
+                      identically to `cd .nizam && bash tools/validate.sh
+                      --payload` (NDEBT-012 / issue #18, feature 050).
+                      Framework-envelope files that are intentionally absent
+                      from consumer payloads (CONTEXT.md, README.md,
+                      CHANGELOG.md, bootstrap.sh, methodology/, registry/,
+                      docs/, ecosystem/) are not required; directory-qualified
+                      cross-references into those non-injected paths are
+                      carved out of C9 in payload mode (NDEBT-004) exactly as
+                      C4 carves them out of the NIZAM.json index.
                       Runs C1-C5, C7-C11 with payload-appropriate file
                       sets; C6 is skipped. C9 and C10 both sweep only the
                       payload-doc set (standard/, templates/, and tools/
@@ -223,8 +232,17 @@ file(s)/detail(s) printed on the following indented line(s)):
       `.agent/capability_profile.json` and `.agent/debt.json` (naming the
       canonical artifact shape a schema/README.md 'Validates' column
       describes, not a claim that this repository's own `.agent/`
-      directory contains such a file). Any remaining token that does not
-      resolve is a C9 FAIL, reported as
+      directory contains such a file). In --payload mode ONLY, a third,
+      mode-gated carve-out (NDEBT-004, the C9 analog of C4's payload
+      carve-out) additionally skips any directory-qualified token whose
+      first segment is NOT an injected-payload dir (standard/, templates/,
+      schema/, tools/): a consumer .nizam/ subset legitimately carries
+      cross-references into non-injected framework-envelope paths
+      (methodology/, ecosystem/, registry/, docs/, .agent/, .github/, ...)
+      it reaches via the pinned framework checkout, not via the injected
+      subset. The default full sweep applies NO such carve-out, so a stale
+      non-injected reference is still caught there. Any remaining token that
+      does not resolve is a C9 FAIL, reported as
       `<file>: unresolved path reference '<token>'`.
 
   C10 Single-source-of-truth consistency (narrative-truth: do the docs
@@ -997,9 +1015,13 @@ PY
 # For each given file, strips a leading YAML frontmatter block (if present)
 # and scans only the remaining body text with an extended regex that
 # extracts directory-qualified ('/'-containing) tokens ending in a shipped
-# extension. Applies two C9-specific exemptions (a `.nizam/`-prefix
-# bootstrapped-consumer exemption, and the two named schema/README.md
-# 'Validates'-column singleton-artifact tokens) BEFORE handing each
+# extension. Applies C9-specific exemptions (a `.nizam/`-prefix
+# bootstrapped-consumer exemption; the two named schema/README.md
+# 'Validates'-column singleton-artifact tokens; and -- in --payload mode
+# only, NDEBT-004, the C9 analog of C4's payload carve-out -- any reference
+# NOT under an injected-payload prefix (standard/, templates/, schema/,
+# tools/), since such references are expected-absent in a consumer subset;
+# the default full sweep applies no carve-out) BEFORE handing each
 # remaining token to `vlib_path_resolves` (sourced from tools/verify_lib.sh,
 # F-023), which strips trailing sentence punctuation, applies its own
 # placeholder/illustrative/directory-only exemption, and tests the token
@@ -1039,6 +1061,27 @@ check_c9_path_resolution() {
       if [ "${token}" = ".agent/capability_profile.json" ] \
         || [ "${token}" = ".agent/debt.json" ]; then
         continue
+      fi
+
+      # NDEBT-004 (feature 050): the C9 analog of C4's payload carve-out. In
+      # --payload mode a directory-qualified reference is only REQUIRED to
+      # resolve if its target is part of the bootstrap-injected payload
+      # (standard/, templates/, schema/, tools/). References into
+      # non-injected framework-envelope paths (methodology/, ecosystem/,
+      # registry/, docs/, .agent/, .github/, ...) are expected-absent in a
+      # consumer .nizam/ subset -- a real consumer payload legitimately
+      # carries these cross-references to docs it reaches via the pinned
+      # framework checkout, not via the injected subset -- so they are
+      # skipped here rather than false-failed (the exact issue #18-adjacent
+      # gap C9 had, unlike C4). The DEFAULT full sweep applies NO carve-out,
+      # so a stale non-injected reference is still caught there. F-051 (the
+      # H-PAYLOAD-CONTRACT decision to inject methodology/+ecosystem/) will
+      # extend the injected-prefix set below when those dirs join the payload.
+      if [ "${VALIDATOR_MODE:-default}" = "payload" ]; then
+        case "${token}" in
+          standard/*|templates/*|schema/*|tools/*) ;;
+          *) continue ;;
+        esac
       fi
 
       if ! vlib_path_resolves "${token}" >/dev/null 2>&1; then
@@ -1385,11 +1428,12 @@ PY
 # orchestrator/governance state that bootstrap.sh NEVER injects into a
 # consumer payload (the injected set is exactly standard/, templates/,
 # schema/, tools/, NIZAM.json), so C11 has nothing to enforce in payload
-# mode regardless of whether .agent/ happens to physically exist in CWD
-# (which it always does when --payload is invoked from within the
-# framework's own checkout -- --payload does not chroot or cd into a
-# separately-bootstrapped consumer directory, it only restricts the FILE
-# SETS the other checks sweep). This is a COUNTED pass (unlike C6's
+# mode regardless of where CWD is. As of feature 050 (NDEBT-012 / issue
+# #18) --payload anchors to its own payload root, so on a real consumer
+# install CWD becomes the injected .nizam/ payload itself -- which still
+# carries no .agent/, so C11 has nothing to enforce either way (and on the
+# framework's own checkout the payload root simply equals the repo root).
+# This is a COUNTED pass (unlike C6's
 # uncounted SKIP), since C11 genuinely is applicable in concept to payload
 # validation (spec Sec 4.1) -- it just resolves to a trivial pass by
 # design, not a suppressed check.
@@ -1691,6 +1735,26 @@ main() {
         ;;
     esac
   done
+
+  # NDEBT-012 / issue #18 (feature 050): in --payload mode ONLY, anchor to
+  # this script's own payload root so a consumer running
+  # `bash .nizam/tools/validate.sh --payload` from their repository root
+  # behaves identically to `cd .nizam && bash tools/validate.sh --payload`.
+  # The validator's payload root is the parent of the tools/ directory this
+  # script lives in. Default and --target modes deliberately STAY
+  # CWD-anchored -- that is the documented contract (`cd <any-repo-copy> &&
+  # bash tools/validate.sh` evaluates that copy's own tree), and in the
+  # documented `cd <copy> && bash tools/validate.sh` invocation the script
+  # root already equals CWD, so payload-mode anchoring only ever changes the
+  # from-a-different-CWD consumer form that issue #18 reported broken.
+  if [ "${VALIDATOR_MODE}" = "payload" ]; then
+    local script_dir payload_root
+    script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)" \
+      || die "--payload: cannot resolve the validator's own script directory."
+    payload_root="$(dirname -- "${script_dir}")"
+    cd -- "${payload_root}" \
+      || die "--payload: cannot cd to the payload root '${payload_root}'."
+  fi
 
   require_command bash
   require_command git

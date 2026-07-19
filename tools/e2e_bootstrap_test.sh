@@ -12,8 +12,12 @@
 # independently index-valid, (c) the DOCUMENTED bootstrapped-consumer
 # discovery path `<target>/tools/skill.json` resolves -- the exact functional
 # adoption bug (H4) that shipped in v0.1.0 and survived untested to phase 003
-# (tools/interface.md Sec 2, item 1) -- and (d) `bootstrap.sh --verify-only`
-# passes against the injected target. No network access ever occurs: the
+# (tools/interface.md Sec 2, item 1) -- (d) `bootstrap.sh --verify-only`
+# passes against the injected target, and (e) the injected
+# `tools/validate.sh --payload` is CWD-INDEPENDENT: it produces identical,
+# green results whether invoked from inside the payload root or from the
+# consumer repository root above it (issue #18 / NDEBT-012, feature 050).
+# No network access ever occurs: the
 # `file://` clone reads bootstrap.sh's cloned-from URL directly from this
 # checkout's own object store.
 #
@@ -240,6 +244,70 @@ run_bootstrap_verify_only() {
   return 0
 }
 
+# assert_payload_validate_cwd_independent <target>
+#
+# Feature 050 (NDEBT-012 / issue #18): proves the injected validator's
+# `--payload` mode is CWD-INDEPENDENT -- it produces identical, green results
+# whether invoked from inside the payload root or from the consumer
+# repository root above it. This closes the regression class from the first
+# real external-consumer bug report (issue #18: from a consumer repo root,
+# `bash .nizam/tools/validate.sh --payload` used to fail because CWD-relative
+# resolution could not find the payload's own files).
+#
+# Runs BOTH documented invocation forms against the just-injected payload and
+# asserts (a) both exit 0 and (b) their `[C*]` per-check verdict lines are
+# byte-identical. Each `bash tools/validate.sh --payload` exit status is
+# captured via an `if` so this function observes a real non-zero rc without
+# main()'s `set -e` aborting the harness before the diagnostic is printed.
+#
+# Args:
+#   target: repo-relative or absolute path to a bootstrap.sh injection root
+#           (its parent directory is treated as the consumer repository root).
+#
+# Returns:
+#   0 if both invocation forms exit 0 with identical [C*] verdicts.
+#   1 otherwise (the failing form and its output tail, or the verdict diff).
+assert_payload_validate_cwd_independent() {
+  local target="$1"
+  local consumer_root payload_rel a_out b_out a_rc b_rc
+
+  consumer_root="$(cd -- "$(dirname -- "${target}")" && pwd)"
+  payload_rel="$(basename -- "${target}")"
+
+  # Form A: from inside the payload root (the always-worked form).
+  if a_out="$(cd -- "${target}" && bash tools/validate.sh --payload 2>&1)"; then
+    a_rc=0
+  else
+    a_rc=$?
+  fi
+  # Form B: from the consumer repository root, via the payload path (the
+  # form issue #18 reported broken).
+  if b_out="$(cd -- "${consumer_root}" && bash "${payload_rel}/tools/validate.sh" --payload 2>&1)"; then
+    b_rc=0
+  else
+    b_rc=$?
+  fi
+
+  if [ "${a_rc}" -ne 0 ]; then
+    echo "assert_payload_validate_cwd_independent: FORM A (from payload root) failed (rc=${a_rc}):"
+    printf '%s\n' "${a_out}" | tail -20
+    return 1
+  fi
+  if [ "${b_rc}" -ne 0 ]; then
+    echo "assert_payload_validate_cwd_independent: FORM B (issue #18, from consumer repo root) failed (rc=${b_rc}):"
+    printf '%s\n' "${b_out}" | tail -20
+    return 1
+  fi
+  if ! diff <(printf '%s\n' "${a_out}" | grep '^\[C') <(printf '%s\n' "${b_out}" | grep '^\[C') >/dev/null 2>&1; then
+    echo "assert_payload_validate_cwd_independent: the two --payload invocation forms produced DIFFERENT [C*] verdicts:"
+    diff <(printf '%s\n' "${a_out}" | grep '^\[C') <(printf '%s\n' "${b_out}" | grep '^\[C') || true
+    return 1
+  fi
+
+  echo "assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent (both invocation forms green with identical [C*] verdicts under ${target})"
+  return 0
+}
+
 # ---------------------------------------------------------------------------
 # cleanup -- registered as `trap cleanup EXIT` by main() (never at top level,
 # so sourcing this file never registers a trap in the sourcing shell).
@@ -333,6 +401,7 @@ main() {
 
   assert_discovery_path "${target}"
   run_bootstrap_verify_only "${EPHEMERAL_TAG}" "${target}"
+  assert_payload_validate_cwd_independent "${target}"
 
   echo "e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag ${EPHEMERAL_TAG}, target ${target})."
 }
