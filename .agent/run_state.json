@@ -797,6 +797,11 @@
       "at": "2026-07-19T00:00:00Z",
       "event": "review_addressed",
       "detail": "PR #34 follow-on (commit after 980dc0a): CodeRabbit Minor -- the tools/fixtures_self_test.sh guard comment and the contract's scope.files_modify purpose still described the template as carrying tier-0/local/0 defaults after the omit; both reworded to describe the omission (a documentation-truth drift of exactly the class F-055 mechanizes for docs, caught here in a shell comment + contract prose). Guard logic unchanged; suite re-ran 8/8. 054 footprint 73 -> 74; cumulative 1768/2236 (79.1%)."
+    },
+    {
+      "at": "2026-07-19T00:00:00Z",
+      "event": "operator_scope_rebaseline",
+      "detail": "Operator directive 'Rebase line approved' + 'Option 1' (2026-07-19): (1) AUTHORIZED a Section-6/9 scope-budget re-baseline raising scope_budget.original_estimate_lines 1720 -> 2300 (new 130% cumulative ceiling 2236 -> 2990), recorded structurally in scope_budget.rebaselines with from/to/authorized_by/at/reason. Rationale: the phase has done more real mechanization work than the initial estimate anticipated, and the four remaining features (056/057/058/059) would breach the old ceiling; the re-baseline lets the tail run without a mid-phase halt. (2) Chose Option 1 -- proceed with feature 057 (progress-comparison taxonomy, NDEBT-022) as the next ungated root. Current cumulative 1768/2990 = 59.1% of the new ceiling."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -969,7 +974,7 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 1720,
+    "original_estimate_lines": 2300,
     "total_lines_changed": 1768,
     "per_feature": [
       {
@@ -1020,6 +1025,15 @@
         "actual": 74,
         "flag": "scope_over_estimate -- 73 vs 40 (+83%) after the PR #34 review round; small absolute. Flag, not halt, and NOT the 3x-rolling flag (last-3 avg 052=678/053=221/055=282 = 394, 3x=1181; 73 far under). Cumulative 1767/2236 = 79.0%.",
         "note": "6 files (git numstat ins+del, base 15a30e1..HEAD after the PR #34 review round): tools/fixtures_self_test.sh 32 (the template-schema conformance guard), templates/README.md 10+2=12, CHANGELOG.md 13, schema/README.md 5+2=7, templates/work-packet.template.json 1+4=5, docs/planning/DEBT.md 2+2=4 -- total 74 vs 40 estimated (a +1 stale-comment reword landed in the PR #34 review's follow-on fix). Option A (schema-valid template) chosen so the mechanical assertion is non-vacuous; the three enum/integer dispatch fields are OMITTED (PR #34 review) rather than shipped as literal defaults. Cumulative 1694+73 = 1767/2236 ceiling (79.0%)."
+      }
+    ],
+    "rebaselines": [
+      {
+        "from": 1720,
+        "to": 2300,
+        "authorized_by": "operator",
+        "at": "2026-07-19T00:00:00Z",
+        "reason": "Phase 006 (Enforcement Closure & Hardening) legitimately exceeded its initial 1720-line estimate through real mechanization work (052 fixtures self-test 678, 055 recurrence-guard primitives 282, 053 Orchestrator/codification 221, etc.). At 1768/2236 (79.1% of the old 130% ceiling) with four features remaining (056 ~260, 057 ~80, gated 058 ~180, 059 phase-close ~150; ~670 at estimate plus the phase's typical overrun), the tail would breach the 130% cumulative ceiling mid-phase. Operator authorized raising original_estimate_lines 1720 -> 2300 (new 130% ceiling 2990) to run 056->059 without a mid-phase halt, per methodology/00_planning.md Section 9 (human-authorized, orchestrator-recorded, structural) and Section 6."
       }
     ]
   },
