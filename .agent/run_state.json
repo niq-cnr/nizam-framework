@@ -792,6 +792,11 @@
       "at": "2026-07-19T00:00:00Z",
       "event": "review_addressed",
       "detail": "PR #34 (feature 054) CodeRabbit review (ASSERTIVE, CHANGES_REQUESTED, 2 findings) addressed in commit b3d3de1. (Major) 'do not ship operational fields as silent generic defaults': the template's tier/blast_radius/merge_order carried literal tier-0/local/0, which would survive the consumer's {{...}}-token fill-in and silently misclassify a copied packet -- resolved by OMITTING the three fields from the starter template (they cannot hold a {{...}} placeholder; documented in schema/work-packet.schema.json for consumers that need cross-repo dispatch), the framework-aligned resolution over a doc-warning. The template still validates end-to-end and the fixtures_self_test guard is unchanged. (Minor) the NDEBT-011 resolution's 'PR #TBD' placeholder filled with the actual PR #34 (CodeRabbit suggested #33, but that was run_state's F-055 base-merge reference, not 054's PR). CORRECTION to the feature_complete entry above: its 'carry the schema-valid defaults tier-0/local/0' wording is superseded -- the fields are OMITTED, not defaulted; history is append-only, so the correction is recorded here rather than by rewriting the earlier entry. E02 re-asserts the omission; E01/E07 re-anchored to the stable phase base 15a30e1; the 8-entry suite re-ran 8/8. 054 footprint 69 -> 73 lines; cumulative 1763 -> 1767/2236 (79.0%). Self-test 46/46, validate 13/13, payload 11/11."
+    },
+    {
+      "at": "2026-07-19T00:00:00Z",
+      "event": "review_addressed",
+      "detail": "PR #34 follow-on (commit after 980dc0a): CodeRabbit Minor -- the tools/fixtures_self_test.sh guard comment and the contract's scope.files_modify purpose still described the template as carrying tier-0/local/0 defaults after the omit; both reworded to describe the omission (a documentation-truth drift of exactly the class F-055 mechanizes for docs, caught here in a shell comment + contract prose). Guard logic unchanged; suite re-ran 8/8. 054 footprint 73 -> 74; cumulative 1768/2236 (79.1%)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -965,7 +970,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1720,
-    "total_lines_changed": 1767,
+    "total_lines_changed": 1768,
     "per_feature": [
       {
         "id": "049",
@@ -1012,9 +1017,9 @@
       {
         "id": "054",
         "estimated": 40,
-        "actual": 73,
+        "actual": 74,
         "flag": "scope_over_estimate -- 73 vs 40 (+83%) after the PR #34 review round; small absolute. Flag, not halt, and NOT the 3x-rolling flag (last-3 avg 052=678/053=221/055=282 = 394, 3x=1181; 73 far under). Cumulative 1767/2236 = 79.0%.",
-        "note": "6 files (git numstat ins+del, base 15a30e1..HEAD after the PR #34 review round): tools/fixtures_self_test.sh 32 (the template-schema conformance guard), templates/README.md 10+2=12, CHANGELOG.md 13, schema/README.md 5+2=7, templates/work-packet.template.json 1+4=5, docs/planning/DEBT.md 2+2=4 -- total 73 vs 40 estimated. Option A (schema-valid template) chosen so the mechanical assertion is non-vacuous; the three enum/integer dispatch fields are OMITTED (PR #34 review) rather than shipped as literal defaults. Cumulative 1694+73 = 1767/2236 ceiling (79.0%)."
+        "note": "6 files (git numstat ins+del, base 15a30e1..HEAD after the PR #34 review round): tools/fixtures_self_test.sh 32 (the template-schema conformance guard), templates/README.md 10+2=12, CHANGELOG.md 13, schema/README.md 5+2=7, templates/work-packet.template.json 1+4=5, docs/planning/DEBT.md 2+2=4 -- total 74 vs 40 estimated (a +1 stale-comment reword landed in the PR #34 review's follow-on fix). Option A (schema-valid template) chosen so the mechanical assertion is non-vacuous; the three enum/integer dispatch fields are OMITTED (PR #34 review) rather than shipped as literal defaults. Cumulative 1694+73 = 1767/2236 ceiling (79.0%)."
       }
     ]
   },
