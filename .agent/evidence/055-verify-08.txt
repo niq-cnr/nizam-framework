@@ -1,0 +1,16 @@
+# .agent/evidence/055-verify-08.txt
+# Contract 055 verification entry 08 -- captured 2026-07-19 at deliverable commit f2c109a (HEAD~1 = F-053 merge 5d49fb5)
+# ACCEPTANCE TEST: CANONICAL-INDEX SOURCING (not duplicated lists): both primitives resolve from a JSON index argument (modules[].key_documents via json.load), and the self-test passes the canonical index as an argument (enum_index.json / NIZAM.json).
+# --- command (from .agent/contracts/055.json verification[08].command) ---
+set -e
+awk '/^vlib_enumeration_complete\(\)/,/^}/' tools/verify_lib.sh | grep -Fq 'json.load'
+awk '/^vlib_enumeration_complete\(\)/,/^}/' tools/verify_lib.sh | grep -Fq 'key_documents'
+awk '/^vlib_bare_ref_resolves\(\)/,/^}/' tools/verify_lib.sh | grep -Fq 'json.load'
+awk '/^vlib_bare_ref_resolves\(\)/,/^}/' tools/verify_lib.sh | grep -Fq 'key_documents'
+grep -Fq 'vlib_enumeration_complete NIZAM.json' tools/fixtures_self_test.sh
+grep -Fq 'vlib_bare_ref_resolves "${f}" NIZAM.json' tools/fixtures_self_test.sh
+grep -Fq 'tools/fixtures/enum_index.json' tools/fixtures_self_test.sh
+echo 'E08 PASS: both guards resolve from a JSON canonical index (key_documents) passed as an argument -- not a duplicated inline list'
+# --- output ---
+E08 PASS: both guards resolve from a JSON canonical index (key_documents) passed as an argument -- not a duplicated inline list
+[exit 0]

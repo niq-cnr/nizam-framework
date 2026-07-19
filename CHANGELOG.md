@@ -9,6 +9,22 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Enumeration/bare-ref recurrence guards** (phase 006 feature 055, resolving
+  **NDEBT-005**): two vetted `tools/verify_lib.sh` primitives — the library's
+  seventh and eighth — mechanize the two NDEBT-003 defect classes F-027 had
+  fixed by hand, both sourced from the single canonical index `NIZAM.json`
+  rather than re-derived lists. `vlib_enumeration_complete` asserts the
+  disk→index (completeness) direction `C4` does not cover: every on-disk
+  governed document under a module directory must be enumerated in that
+  module's `key_documents`. `vlib_bare_ref_resolves` flags a bare,
+  non-`/`-qualified `NN_name.md` reference whose basename matches no
+  `key_document` — the shape `C9` and `C10` both miss. Both ride the F-052
+  self-test surface with seeded-omission and seeded-bare-stale-reference
+  fixtures plus a real-tree recurrence sweep (enumeration over all four
+  documentation modules; bare-ref over `methodology/` + `standard/`, the
+  stable modules where the defect occurred, excluding the still-evolving
+  `ecosystem/` and quoting registers to avoid false positives).
+  `fixtures_self_test` now accounts for 46 fixtures (was 43).
 - `tools/validate.sh` check **C13** (skill-index integrity; phase 006 feature
   049, resolving NDEBT-007): `tools/skill.json` is JSON-parsed and its
   `entry_point` plus every `capabilities[].module` pointer must resolve to an
