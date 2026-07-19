@@ -1,0 +1,49 @@
+{
+  "feature_id": "049",
+  "qa_pass": true,
+  "checks_run": 12,
+  "checks_passed": 12,
+  "adversarial": {
+    "performed": true,
+    "description": "Independent full re-execution of all 12 contract-049 entries, extracted programmatically from .agent/contracts/049.json and run live at the deliverable commit 5193973 -- 12/12 exit 0 on the re-run (first pass also 12/12, captured per the evidence convention). The adversarial core is built into the suite itself: E05 substitutes the negative fixture for tools/skill.json in a scratch CLONE and proves the full sweep fails with [C13] FAIL naming the dangling pointer (the check is load-bearing end-to-end, not decorative); E08 proves the structural-honesty guard (empty capabilities is a named FAIL -- the check cannot be neutered into a vacuous pass by emptying the index); E06 reconstructs the REAL consumer context (injected-subset-only, git-initialized scratch sim) and demonstrates the masked v0.7.0 C4 false-fail under HEAD~1's validator, then its fix plus C13's carve-out under HEAD's -- the before/after pair proves the bug and the fix against the same reality, not a synthetic fixture. All probes used session-scratchpad paths and scratch clones exclusively (NDEBT-013/020 probe-isolation); no destructive command touched a real repository path.",
+    "process_note": "Single-session execution, roles collapsed (disclosed at phase activation and in contract 049 design_notes); the durable artifacts are the audit trail."
+  },
+  "evidence_files": [
+    ".agent/evidence/049-verify-01.txt",
+    ".agent/evidence/049-verify-02.txt",
+    ".agent/evidence/049-verify-03.txt",
+    ".agent/evidence/049-verify-04.txt",
+    ".agent/evidence/049-verify-05.txt",
+    ".agent/evidence/049-verify-06.txt",
+    ".agent/evidence/049-verify-07.txt",
+    ".agent/evidence/049-verify-08.txt",
+    ".agent/evidence/049-verify-09.txt",
+    ".agent/evidence/049-verify-10.txt",
+    ".agent/evidence/049-verify-11.txt",
+    ".agent/evidence/049-verify-12.txt",
+    ".agent/evidence/049/verification.txt",
+    ".agent/evidence/049/diff.patch"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": "diff of .agent/evidence/049/diff.patch against a freshly generated git diff HEAD~1..HEAD produced zero bytes of difference at QA time.",
+    "flat_files": "All 12 flat captures end with a literal [exit 0] line and open with the exact contract command; the consolidated verification.txt carries 12 EXIT:0 markers in contract order."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_006.json feature 049 (status flipped by the orchestrator at close-out)",
+    "summary": "Feature 049's two planner acceptance tests map onto the suite: 'sweep + payload exercise + negative fixture fails its targeted check' -> E03/E04/E05/E07/E08; 'both sweeps green with exit codes asserted + e2e green' -> E03/E04/E11. The C4 ecosystem carve-out (live discovery, in-contract scope) is covered by E06/E10. No criterion lacks a passing, evidence-backed entry."
+  },
+  "non_blocking_observations": [
+    "Scope: 164 actual lines (git numstat ins+del) vs the 120 planner estimate (+37%) -- flagged in the scope ledger for operator acknowledgment per the Scope Budget Protocol; the overage is the C13 help/description block and the E06-motivated C4 explanation comment, both documentation weight.",
+    "The activation roll omitted the phase-005 scope-ledger archival; corrected at this close-out (scope_budget -> phase_005_scope_budget_final, fresh phase-006 ledger opened) and disclosed in the run_state event."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. Feature 049 is complete and correct at deliverable commit 5193973: C13 gates tools/skill.json in both sweep modes with structural-honesty guards proven non-vacuous in scratch clones; the masked C4 consumer false-fail on v0.7.0 payloads is demonstrated and fixed with the before/after consumer simulation; docs, CHANGELOG, and the NDEBT-008 broadening are synced; both sweeps green with exit codes asserted (13/13 default, 11/11 payload), e2e green; deliverable diff confined to the six contracted files with zero tracked .agent changes."
+  }
+}

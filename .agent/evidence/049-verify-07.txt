@@ -1,0 +1,19 @@
+# .agent/evidence/049-verify-07.txt
+# Contract 049 verification entry 07 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: FIXTURE HYGIENE: the negative fixture is valid JSON in the skill.json shape, carries exactly one dangling module pointer plus one valid control pointer, and its filename avoids every C12 family prefix so C12 ignores it (C12 stayed green in E03).
+$ python3 - <<'PY'
+import json
+f=json.load(open('tools/fixtures/skill_index_neg_dangling_module.json'))
+assert f['entry_point']=='tools/SKILL.md'
+mods=[c['module'] for c in f['capabilities']]
+import os
+dangling=[m for m in mods if not os.path.isfile(m)]
+valid=[m for m in mods if os.path.isfile(m)]
+assert dangling==['methodology/99_retired.md'], dangling
+assert valid==['methodology/00_planning.md'], valid
+name='skill_index_neg_dangling_module.json'
+assert not name.startswith(('ecosystem_baseline','preflight_verdict','engineering_finding'))
+print('E07 PASS: fixture shape, single dangling pointer, C12-prefix-safe name')
+PY
+E07 PASS: fixture shape, single dangling pointer, C12-prefix-safe name
+[exit 0]

@@ -1,0 +1,29 @@
+# .agent/evidence/049-verify-06.txt
+# Contract 049 verification entry 06 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: CONSUMER-SIM C4 BEFORE/AFTER (the masked v0.7.0 consumer bug was real and is fixed): in a scratch simulation containing only the bootstrap-injected subset (standard/, templates/, schema/, tools/, NIZAM.json; git-initialized), HEAD~1's validate.sh --payload reports [C4] FAIL (the non-injected ecosystem/ paths NIZAM.json indexes), while HEAD's validate.sh --payload reports [C4] PASS and [C13] PASS.
+$ set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f049"/paysim
+rm -rf "$S"; mkdir -p "$S"
+cp -r standard templates schema tools "$S/"
+cp NIZAM.json "$S/"
+(cd "$S" && git init -q && git add -A && git -c user.email=sim@sim -c user.name=sim commit -qm sim)
+git show HEAD~1:tools/validate.sh > "$S/tools/validate.sh"
+set +e
+before=$(cd "$S" && bash tools/validate.sh --payload 2>&1); rc_before=$?
+set -e
+printf '%s\n' "$before" | grep -F '[C4]'
+printf '%s\n' "$before" | grep -Fq '[C4] FAIL'
+git show HEAD:tools/validate.sh > "$S/tools/validate.sh"
+set +e
+after=$(cd "$S" && bash tools/validate.sh --payload 2>&1); rc_after=$?
+set -e
+printf '%s\n' "$after" | grep -F -e '[C4]' -e '[C13]'
+printf '%s\n' "$after" | grep -Fq '[C4] PASS'
+printf '%s\n' "$after" | grep -Fq '[C13] PASS skill-index (payload mode:'
+rm -rf "$S"
+echo "E06 PASS (before: C4 FAIL on real-consumer sim; after: C4 PASS + C13 PASS)" 
+[C4] FAIL index-integrity
+[C4] PASS index-integrity
+[C13] PASS skill-index (payload mode: non-injected module dirs skipped pending the F-051 payload-contract decision)
+E06 PASS (before: C4 FAIL on real-consumer sim; after: C4 PASS + C13 PASS)
+[exit 0]

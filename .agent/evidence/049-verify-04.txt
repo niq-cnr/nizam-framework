@@ -1,0 +1,14 @@
+# .agent/evidence/049-verify-04.txt
+# Contract 049 verification entry 04 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: PAYLOAD SWEEP GREEN AT 11, EXIT CODE ASSERTED: --payload exits 0, final line exactly 'SUMMARY (payload mode): 11 passed, 0 failed', with the carve-out-annotated [C13] PASS line present.
+$ out=$(bash tools/validate.sh --payload 2>&1); rc=$?
+printf '%s\n' "$out" | tail -3
+test $rc -eq 0
+printf '%s\n' "$out" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'
+printf '%s\n' "$out" | grep -Fq '[C13] PASS skill-index (payload mode:'
+echo "E04 PASS (rc=$rc)" 
+[C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+[C13] PASS skill-index (payload mode: non-injected module dirs skipped pending the F-051 payload-contract decision)
+SUMMARY (payload mode): 11 passed, 0 failed
+E04 PASS (rc=0)
+[exit 0]

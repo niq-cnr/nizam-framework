@@ -1,0 +1,288 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index ca0903f..7820686 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -7,6 +7,31 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ## [Unreleased]
+ 
++### Added
++
++- `tools/validate.sh` check **C13** (skill-index integrity; phase 006 feature
++  049, resolving NDEBT-007): `tools/skill.json` is JSON-parsed and its
++  `entry_point` plus every `capabilities[].module` pointer must resolve to an
++  existing file — the enforcement hole that let the `release_train` capability
++  ship a retired module pointer from v0.4.0 through v0.5.3 undetected is
++  closed. Runs in the full sweep (SUMMARY migrates `12 passed` → `13 passed`)
++  and in `--payload` mode (`10 passed` → `11 passed`), where pointers into the
++  non-injected directories are skipped pending the F-051 payload-contract
++  decision. Negative fixture
++  `tools/fixtures/skill_index_neg_dangling_module.json` reproduces the defect
++  class; `tools/README.md` (0.4.0) and the `NIZAM.json` validator capability
++  summary document the C1–C13 set.
++
++### Fixed
++
++- `tools/validate.sh` C4 payload mode: `ecosystem` joined the non-injected
++  carve-out set (`methodology`, `registry`, `docs`). NIZAM.json has indexed
++  `ecosystem/` paths since feature 040, but `bootstrap.sh` does not inject the
++  directory, so a real consumer v0.7.0 payload would have false-failed C4 —
++  masked in the framework's own payload-mode runs because the directory exists
++  on disk here. Registered as an NDEBT-008 broadening; the carve-out narrows
++  again when F-051 decides the payload contract.
++
+ ## [0.7.0] - 2026-07-17
+ 
+ ### Added
+diff --git a/NIZAM.json b/NIZAM.json
+index 6e39e6e..c380e8d 100644
+--- a/NIZAM.json
++++ b/NIZAM.json
+@@ -234,7 +234,7 @@
+     },
+     {
+       "id": "nizam-compliance-validator",
+-      "summary": "The repo-local NDS compliance validator (checks C1-C12): frontmatter schema + format, untagged-fence sweep, NIZAM.json index integrity, branding/endpoint leakage, bootstrap.sh sanity, module-README presence, version-bump-vs-changelog (NDS Sec 7), repo-wide path resolution, single-source-of-truth consistency, dogfood schema validation of the .agent/ audit artifacts against the shipped schemas, and ecosystem schema-family fixture validation.",
++      "summary": "The repo-local NDS compliance validator (checks C1-C13): frontmatter schema + format, untagged-fence sweep, NIZAM.json index integrity, branding/endpoint leakage, bootstrap.sh sanity, module-README presence, version-bump-vs-changelog (NDS Sec 7), repo-wide path resolution, single-source-of-truth consistency, dogfood schema validation of the .agent/ audit artifacts against the shipped schemas, ecosystem schema-family fixture validation, and skill-index integrity (tools/skill.json entry_point + capability module pointers resolve; NDEBT-007 fix).",
+       "authoritative_source": "tools/validate.sh"
+     },
+     {
+diff --git a/docs/planning/DEBT.md b/docs/planning/DEBT.md
+index 22a204e..828c1ae 100644
+--- a/docs/planning/DEBT.md
++++ b/docs/planning/DEBT.md
+@@ -2,7 +2,7 @@
+ id: nizam-debt
+ title: Technical Debt Register — nizam-framework
+ description: Known debt, deferred decisions, and cross-repo impacts for the nizam-framework repository.
+-version: 0.16.0
++version: 0.17.0
+ status: active
+ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ ---
+@@ -27,7 +27,7 @@ authoritative_source: nizam-framework/docs/planning/DEBT.md
+ | NDEBT-014 | 2026-07-17 | Medium | Contract-verification authoring has a recurring defect catalogue, each class caught (and fixed) at least once by phase-005 Loop-1/Loop-2 gates but none yet mechanized as reusable guidance or vetted helpers: (1) working-tree-anchored anti-vacuity companions become mutually exclusive with their positive check post-implementation — they must be HEAD-anchored (038 entry-13, discovered at Loop-2, required a ratified amendment); (2) per-feature-ID exclude-list immutability guards are fragile under parallel drafting and need live amendments each time a sibling appears (036 entry-16), whereas 038 amendment_2's two-part invariant (tracked-history clean + untracked additions confined to in-flight-range globs) is robust — the forms should be harmonized; (3) vlib_section_grep is line-based, so required literal phrases split across a markdown line-wrap silently fail (033, 035, 036 all hit this at implementation); (4) bare substring tokens false-pass on containing words ('renewed'⊃'new', 'stalemate'⊃'stale'; 'invalid'⊃'valid' in fixture-name globs) — backtick-delimited code-span tokens or 'neg' naming are the proven fixes; (5) natural-language content bounds (line caps, word caps) cannot stop paraphrase mirroring — only closed-set shapes with exact-text pinning proved airtight (040, three rounds). | Fold the five classes into the verification-authoring standard (methodology/02, the R3 vetted-helpers home): document each anti-pattern with its proven fix, add vetted verify_lib.sh primitives where mechanizable (HEAD-anchored anti-vacuity helper; two-part .agent immutability helper; word-boundary/code-span token grep helper), and consider a contract-template checklist so future phases inherit the catalogue instead of rediscovering it gate-by-gate. |
+ | NDEBT-012 | 2026-07-15 | Medium | `tools/validate.sh --payload` is CWD-sensitive: invoked from a consumer repository root (`bash .nizam/tools/validate.sh --payload`) it fails multiple checks (e.g. `NIZAM.json: No such file or directory`) because paths resolve relative to the caller's CWD, while the identical invocation from inside `.nizam/` passes 7/7. First bug report from a real external consumer (GitHub issue #18, observed on a v0.5.3 payload in `nizamiq/documentation-standard` during RT-00 G0-NIZAM validation); independently corroborates the consumer-context concerns tracked as NDEBT-004 and NDEBT-008. | Anchor the validator's payload-root resolution to its own script path (or normalize the `git rev-parse --show-prefix` concatenation) so both invocation forms behave identically; add a from-repo-root invocation to the e2e/fixture coverage so the regression class stays closed. Candidate phase-005 scope alongside NDEBT-007/008/009. |
+ | NDEBT-007 | 2026-07-12 | Medium | `tools/skill.json` content is validated by nothing in CI: C4 JSON-parses only `NIZAM.json`, C9 sweeps only `.md`/`.html` bodies, C5's sweep set excludes it, and the e2e harness asserts only the file's existence. Consequence: its `release_train` capability shipped pointing at the retired `methodology/05_release_train.md` from v0.4.0 through v0.5.3 undetected, while the identical stale pointer in `tools/interface.md` (an `.md` file, swept) WAS caught and fixed in the same renumbering cleanup. The pointer itself is fixed as of this entry; the enforcement gap is not. | Extend the validator (a new check or a C4 extension) to JSON-parse `tools/skill.json`, resolve every `capabilities[].module` path and the `entry_point`, in default and `--payload` modes; add a matching negative fixture. |
+-| NDEBT-008 | 2026-07-12 | Medium | The bootstrap-injected payload references files it does not inject: 6 of 10 `tools/skill.json` capabilities and multiple `tools/SKILL.md` cross-references point at `methodology/*`, but `bootstrap.sh` injects only `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json`. In a consumer `.nizam/` install those paths dangle; `bootstrap.sh`'s own index verification deliberately skips `methodology/` paths, so inject→verify passes without noticing. Related consumer-context concern: NDEBT-004. | Decide explicitly: either add `methodology/` to the injected payload (GIP/README/CONTEXT payload enumerations and C4/C9 payload-mode rules all update together), or declare pinned-framework-checkout resolution the canonical answer for `methodology/*` references in consumer installs and state that in `tools/interface.md`'s discovery contract — then make the e2e assert whichever contract is chosen. |
++| NDEBT-008 | 2026-07-12 | Medium | The bootstrap-injected payload references files it does not inject: 6 of 10 `tools/skill.json` capabilities and multiple `tools/SKILL.md` cross-references point at `methodology/*`, but `bootstrap.sh` injects only `standard/`, `templates/`, `schema/`, `tools/`, and `NIZAM.json`. In a consumer `.nizam/` install those paths dangle; `bootstrap.sh`'s own index verification deliberately skips `methodology/` paths, so inject→verify passes without noticing. Related consumer-context concern: NDEBT-004. BROADENED by feature 049 (2026-07-19): tools/skill.json now carries 14 capabilities of which 10 point at non-injected paths (6 methodology/* + the 4 ecosystem/* added by F-040), and NIZAM.json has indexed non-injected ecosystem/ paths since F-040 -- C4's payload skipped_dirs set lacked 'ecosystem', so a REAL consumer v0.7.0 payload would false-fail C4 (masked in the framework's own payload-mode runs because the directory exists on disk here); F-049 added 'ecosystem' to C4's carve-out and gave the new C13 skill-index check the same interim carve-out, both explicitly pending this row's F-051 contract decision. | Decide explicitly: either add `methodology/` to the injected payload (GIP/README/CONTEXT payload enumerations and C4/C9 payload-mode rules all update together), or declare pinned-framework-checkout resolution the canonical answer for `methodology/*` references in consumer installs and state that in `tools/interface.md`'s discovery contract — then make the e2e assert whichever contract is chosen. |
+ | NDEBT-009 | 2026-07-12 | Low | The negative fixtures under `tools/fixtures/` are substantive and discriminating (each fails its targeted check when run via `--target`), but dormant: no CI job runs them, so a regression that made a validator check vacuously pass would not be caught. The full-sweep CI runs exclude `tools/fixtures/` by design. | Add a fixtures CI job (or a `validate.sh --self-test` mode) that runs every fixture through its targeted check and asserts the expected non-zero exit, alongside the existing `validate` and `e2e_bootstrap` jobs. |
+ | NDEBT-010 | 2026-07-12 | Medium | The Orchestrator role is load-bearing but undefined: `standard/AGF.md` Section 2 defines exactly four roles (Planner/Generator/Validator/Evaluator), yet `standard/capability_profiles.md` ships an `orchestrator-primary` profile while claiming every profile maps to an AGF role, `standard/permission_classes.md` and `standard/mcp_policy.md` allocate orchestrator permissions and tool surfaces, and `methodology/06_release_train.md` concedes AGF defines no release-manager role. The framework's own run history is orchestrator-driven throughout. | Define the Orchestrator (coordination/state-ownership role, its gate obligations, and which `run_state.json` fields it exclusively owns per AGF Section 5 rule 4) in AGF Section 2 — a deliberate standards change to route through the next planned phase, not a hot-patch. |
+ | NDEBT-011 | 2026-07-12 | Low | `templates/work-packet.template.json` does not validate against `schema/work-packet.schema.json` (three errors: `{{TIER}}` and `{{BLAST_RADIUS}}` placeholder tokens occupy enum-constrained fields; `{{MERGE_ORDER}}` occupies an integer field), while the schema's own `description` claims it validates the template. `templates/README.md` quietly downgrades the template's contract to JSON parse-validity only; the two claims disagree. | Align the surfaces: either give the template schema-valid literal defaults (e.g. `tier-0`, `local`, `0`) so it validates end-to-end, or correct the schema `description` to name work-packet *artifacts* rather than the template and keep the parse-validity-only contract, stating the choice in `templates/README.md` (the `schema/README.md` table row added 2026-07-12 already carries the caveat). |
+diff --git a/tools/README.md b/tools/README.md
+index 96106e0..73a305f 100644
+--- a/tools/README.md
++++ b/tools/README.md
+@@ -2,10 +2,13 @@
+ id: nizam-tools-readme
+ title: "Tools Module — Index"
+ description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
+-version: 0.3.1
++version: 0.4.0
+ status: active
+ authoritative_source: tools/README.md
+ change_log:
++  - version: "0.4.0"
++    date: "2026-07-19"
++    summary: "Sync to the phase-006 compliance validator: document the new C13 skill-index integrity check (feature 049, NDEBT-007 fix — tools/skill.json entry_point and every capabilities[].module pointer must resolve; payload mode skips the non-injected dirs pending F-051) and the new SUMMARY: 13 passed, 0 failed total."
+   - version: "0.3.0"
+     date: "2026-07-10"
+     summary: "Sync to the phase-004 compliance validator: document the full C1-C11 check set (C9 repo-wide path-resolution, C10 single-source-of-truth consistency, C11 dogfood schema validation, all added by phase 004) and the new SUMMARY: 11 passed, 0 failed total."
+@@ -63,12 +66,12 @@ documents. `skill.json` is validated as plain JSON (`python3 -c
+ its own within this module — it is pure data consumed by `SKILL.md` and
+ `interface.md`, not a document requiring frontmatter.
+ 
+-## Compliance Coverage — C1–C12
++## Compliance Coverage — C1–C13
+ 
+ `tools/validate.sh`, the repo-local NDS compliance validator, runs twelve
+ checks on every PR and push to `main` (`.github/workflows/compliance.yml`).
+ As of phase 005 (extended validator + CI fixtures), the full default sweep
+-reports `SUMMARY: 12 passed, 0 failed`:
++reports `SUMMARY: 13 passed, 0 failed`:
+ 
+ | Check | Name | What it enforces |
+ |---|---|---|
+@@ -84,6 +87,7 @@ reports `SUMMARY: 12 passed, 0 failed`:
+ | C10 | Single-source-of-truth consistency | Payload-set enumeration, bootstrapped-consumer discovery order, and the framework-version anchor stay consistent across every shipped doc. |
+ | C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present, skip-if-absent for a fresh consumer. |
+ | C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving the fixtures are load-bearing rather than dormant. |
++| C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the non-injected directories (methodology/, registry/, docs/, ecosystem/) are skipped pending the F-051 payload-contract decision. |
+ 
+ C9, C10, and C11 were added by phase 004 (`tools/verify_lib.sh` supplies
+ their shared, fixture-tested primitives); C12 was added by phase 005
+diff --git a/tools/fixtures/skill_index_neg_dangling_module.json b/tools/fixtures/skill_index_neg_dangling_module.json
+new file mode 100644
+index 0000000..b237980
+--- /dev/null
++++ b/tools/fixtures/skill_index_neg_dangling_module.json
+@@ -0,0 +1,18 @@
++{
++  "name": "nizam-skill-index-negative-fixture",
++  "version": "0.0.1",
++  "description": "Negative fixture for validator check C13 (skill-index integrity, feature 049 / NDEBT-007): the retired-capability entry's module pointer dangles (methodology/99_retired.md does not exist), reproducing the exact v0.4.0-v0.5.3 release_train defect class. Exercised end-to-end by substituting this file for tools/skill.json in a scratch clone and asserting the full sweep reports [C13] FAIL naming the dangling path; wired into the standing self-test surface by feature 052 (NDEBT-009). The filename deliberately avoids the C12 family prefixes (ecosystem_baseline/preflight_verdict/engineering_finding) so C12 ignores it.",
++  "entry_point": "tools/SKILL.md",
++  "capabilities": [
++    {
++      "name": "planning",
++      "description": "Valid pointer (control entry: proves the fixture fails on the dangling entry alone, not on shape).",
++      "module": "methodology/00_planning.md"
++    },
++    {
++      "name": "retired-capability",
++      "description": "Dangling pointer -- the defect this fixture proves C13 catches.",
++      "module": "methodology/99_retired.md"
++    }
++  ]
++}
+diff --git a/tools/validate.sh b/tools/validate.sh
+index d556040..fb498fb 100755
+--- a/tools/validate.sh
++++ b/tools/validate.sh
+@@ -70,7 +70,7 @@ if any is missing): bash, git, grep, find, awk, python3 -- with python3's
+ installs or vendors these dependencies itself.
+ 
+ Modes:
+-  (no arguments)      Full repo sweep. Runs all 12 checks (C1-C12) and
++  (no arguments)      Full repo sweep. Runs all 13 checks (C1-C13) and
+                       prints one PASS/FAIL line per check plus a final
+                       summary line. Exits 0 only if every check passed.
+ 
+@@ -323,6 +323,22 @@ file(s)/detail(s) printed on the following indented line(s)):
+       payloads carry no governed `.agent/` audit trail for these families
+       to reconcile against).
+ 
++  C13 Skill-index integrity (does every capability pointer in
++      tools/skill.json resolve?). JSON-parses `tools/skill.json` and
++      requires the `entry_point` and every `capabilities[].module` path to
++      resolve to an existing file; a missing/empty `entry_point` or an
++      empty `capabilities` array is itself a FAIL, so the check cannot go
++      vacuous. Closes NDEBT-007: the release_train capability shipped a
++      retired module pointer from v0.4.0 through v0.5.3 because nothing
++      parsed this file's content. Runs in the full sweep AND under
++      `--payload`; in payload mode, pointers into the non-injected
++      directories (methodology/, registry/, docs/, ecosystem/) are
++      skipped -- the same carve-out set C4 uses -- pending the F-051
++      payload-contract decision (NDEBT-008). Negative fixture:
++      `tools/fixtures/skill_index_neg_dangling_module.json` (exercised by
++      substituting it for tools/skill.json in a scratch clone; standing
++      self-test wiring is feature 052 / NDEBT-009 scope).
++
+ Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,
+ consistently): CONTEXT.md; every .md under docs/architecture/; every .md
+ under standard/, methodology/, registry/, and templates/; every .md under
+@@ -679,7 +695,13 @@ if not paths:
+     sys.exit(1)
+ 
+ if mode == "payload":
+-    skipped_dirs = {"methodology", "registry", "docs"}
++    # "ecosystem" joined this set in feature 049: NIZAM.json has indexed
++    # ecosystem/ paths since feature 040, but ecosystem/ is not part of the
++    # bootstrap-injected payload, so a REAL consumer install would false-fail
++    # C4 here (the framework's own payload-mode run masked it because the
++    # directory exists on disk in the framework checkout). NDEBT-008 class;
++    # the F-051 payload-contract decision may narrow this set again.
++    skipped_dirs = {"methodology", "registry", "docs", "ecosystem"}
+     paths = [
+         p for p in paths
+         if p != "NA"
+@@ -1425,6 +1447,83 @@ PY
+   return 1
+ }
+ 
++# C13 -- skill-index integrity (NDEBT-007 fix, feature 049): JSON-parses
++# tools/skill.json and resolves its entry_point and every
++# capabilities[].module pointer to an existing file. Closes the enforcement
++# hole that let the release_train capability ship a retired module pointer
++# from v0.4.0 through v0.5.3 undetected (C4 parses only NIZAM.json; C9
++# sweeps only .md/.html bodies; the e2e harness asserts only the file's
++# existence). In payload mode, pointers into the non-injected directories
++# (methodology/, registry/, docs/, ecosystem/) are skipped -- the same
++# carve-out set C4 uses -- because bootstrap.sh does not inject them; the
++# F-051 payload-contract decision (NDEBT-008) will narrow or retire that
++# carve-out. Structural honesty: a missing/empty entry_point or an empty
++# capabilities array is itself a FAIL, so the check cannot go vacuous.
++#
++# check_c13_skill_index [payload]
++check_c13_skill_index() {
++  local mode="${1:-default}"
++  local out
++  if out=$(python3 - "${mode}" <<'PY'
++import json
++import os
++import sys
++
++mode = sys.argv[1]
++SKIPPED_DIR_PREFIXES = ("methodology/", "registry/", "docs/", "ecosystem/")
++
++try:
++    with open("tools/skill.json", encoding="utf-8") as fh:
++        skill = json.load(fh)
++except (OSError, json.JSONDecodeError) as exc:
++    print(f"tools/skill.json unreadable or not valid JSON: {exc}")
++    sys.exit(1)
++
++problems = []
++paths = []
++
++entry_point = skill.get("entry_point")
++if not entry_point:
++    problems.append("entry_point missing or empty")
++else:
++    paths.append(("entry_point", entry_point))
++
++capabilities = skill.get("capabilities")
++if not isinstance(capabilities, list) or not capabilities:
++    problems.append("capabilities missing or empty")
++    capabilities = []
++
++for index, capability in enumerate(capabilities):
++    module = capability.get("module") if isinstance(capability, dict) else None
++    label = f"capabilities[{index}] ({capability.get('name', '?') if isinstance(capability, dict) else '?'})"
++    if not module:
++        problems.append(f"{label} has no module pointer")
++        continue
++    paths.append((label, module))
++
++for label, path in paths:
++    if mode == "payload" and path.startswith(SKIPPED_DIR_PREFIXES):
++        continue
++    if not os.path.isfile(path):
++        problems.append(f"{label} -> {path} does not resolve to a file")
++
++for problem in problems:
++    print(problem)
++sys.exit(1 if problems else 0)
++PY
++  ); then
++    if [ "${mode}" = "payload" ]; then
++      echo "[C13] PASS skill-index (payload mode: non-injected module dirs skipped pending the F-051 payload-contract decision)"
++    else
++      echo "[C13] PASS skill-index"
++    fi
++    return 0
++  fi
++  echo "[C13] FAIL skill-index"
++  printf '%s\n' "${out}" | sed 's/^/  /'
++  return 1
++}
++
+ # check_c11_or_c4_target <file>
+ #
+ # --target dispatcher for a `.json` file: content-routes using the FULL
+@@ -1568,6 +1667,7 @@ main() {
+     check_c9_path_resolution "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+     check_c10_consistency "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+     check_c11_dogfood_payload_skip && passed=$((passed + 1)) || failed=$((failed + 1))
++    check_c13_skill_index payload && passed=$((passed + 1)) || failed=$((failed + 1))
+ 
+     echo "SUMMARY (payload mode): ${passed} passed, ${failed} failed"
+   else
+@@ -1594,6 +1694,7 @@ main() {
+     check_c10_consistency "${c9_default_files[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+     check_c11_dogfood_sweep && passed=$((passed + 1)) || failed=$((failed + 1))
+     check_c12_ecosystem_fixtures && passed=$((passed + 1)) || failed=$((failed + 1))
++    check_c13_skill_index && passed=$((passed + 1)) || failed=$((failed + 1))
+ 
+     echo "SUMMARY: ${passed} passed, ${failed} failed"
+   fi

@@ -1,0 +1,14 @@
+# .agent/evidence/049-verify-01.txt
+# Contract 049 verification entry 01 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: ANTI-VACUITY (anchored to HEAD~1, the pre-implementation activation commit 77e9fe0): none of this contract's deliverables existed before the deliverable commit -- no check_c13_skill_index in validate.sh, C4's payload skipped_dirs lacked 'ecosystem', the negative fixture was absent, tools/README.md was 0.3.1 with a C1-C12 heading, the NIZAM.json validator summary said C1-C12, and CHANGELOG [Unreleased] was empty.
+$ set -e
+! git show HEAD~1:tools/validate.sh | grep -Fq 'check_c13_skill_index'
+git show HEAD~1:tools/validate.sh | grep -Fq 'skipped_dirs = {"methodology", "registry", "docs"}'
+! git cat-file -e HEAD~1:tools/fixtures/skill_index_neg_dangling_module.json 2>/dev/null
+git show HEAD~1:tools/README.md | grep -Fq 'version: 0.3.1'
+git show HEAD~1:tools/README.md | grep -Fq 'C1–C12'
+git show HEAD~1:NIZAM.json | grep -Fq 'checks C1-C12'
+test "$(git show HEAD~1:CHANGELOG.md | sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' | grep -c '^- ')" = "0"
+echo 'E01 PASS: all deliverables absent at HEAD~1 (anti-vacuity)'
+E01 PASS: all deliverables absent at HEAD~1 (anti-vacuity)
+[exit 0]

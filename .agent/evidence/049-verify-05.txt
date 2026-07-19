@@ -1,0 +1,20 @@
+# .agent/evidence/049-verify-05.txt
+# Contract 049 verification entry 05 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: NEGATIVE END-TO-END (the fixture is load-bearing): in a scratch clone of HEAD with the negative fixture substituted for tools/skill.json, the full sweep exits non-zero and reports [C13] FAIL naming the dangling methodology/99_retired.md pointer.
+$ set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f049"/negclone
+rm -rf "$S"; mkdir -p "$S"
+git clone -q . "$S"
+cp tools/fixtures/skill_index_neg_dangling_module.json "$S/tools/skill.json"
+set +e
+out=$(cd "$S" && bash tools/validate.sh 2>&1); rc=$?
+set -e
+test $rc -ne 0
+printf '%s\n' "$out" | grep -Fxq '[C13] FAIL skill-index'
+printf '%s\n' "$out" | grep -Fq 'methodology/99_retired.md does not resolve to a file'
+printf '%s\n' "$out" | grep -F '[C13]'
+rm -rf "$S"
+echo "E05 PASS (scratch sweep rc=$rc, C13 FAIL named the dangling pointer)" 
+[C13] FAIL skill-index
+E05 PASS (scratch sweep rc=1, C13 FAIL named the dangling pointer)
+[exit 0]

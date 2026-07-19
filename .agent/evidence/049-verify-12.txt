@@ -1,0 +1,9 @@
+# .agent/evidence/049-verify-12.txt
+# Contract 049 verification entry 12 -- captured 2026-07-19 at deliverable commit 5193973 (HEAD~1 = activation 77e9fe0)
+# ACCEPTANCE TEST: DELIVERABLE CONFINEMENT: the deliverable commit (HEAD) touches exactly the six contracted files and no tracked .agent path.
+$ set -e
+test "$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr '\n' ' ')" = "CHANGELOG.md NIZAM.json docs/planning/DEBT.md tools/README.md tools/fixtures/skill_index_neg_dangling_module.json tools/validate.sh "
+test -z "$(git diff --name-only HEAD~1..HEAD -- .agent/)"
+echo 'E12 PASS'
+E12 PASS
+[exit 0]
