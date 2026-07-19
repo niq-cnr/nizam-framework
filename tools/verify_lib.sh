@@ -9,13 +9,14 @@
 # tools/verify_lib.sh` unconditionally without perturbing its own shell
 # options, output streams, or exit status.
 #
-# Exposes five vetted, individually fixture-tested primitives that
-# contracts (F-024..F-029) and future `tools/validate.sh` checks should
+# Exposes six vetted, individually fixture-tested primitives that
+# contracts (F-024..F-029, F-053) and future `tools/validate.sh` checks should
 # compose their verification from, instead of re-inventing (and
 # re-breaking) the historical anti-patterns this library exists to fix:
 # vacuous whole-file greps, `git diff HEAD` scope guards blind to new
 # untracked files, equal-or-decreasing version "increases", punctuation-
-# mangled path resolution, and stale multi-directory payload enumerations.
+# mangled path resolution, stale multi-directory payload enumerations, and
+# bare-substring matches that false-pass on a containing word.
 #
 # Dependency-light: bash + coreutils + git + python3 (with PyYAML, already
 # required by tools/validate.sh). No network access, no vendored
@@ -333,4 +334,35 @@ vlib_no_stale_payload() {
   done < "${file}"
 
   return 0
+}
+
+# ---------------------------------------------------------------------------
+# vlib_word_present <file> <word>
+#
+# Returns 0 iff <word> occurs in <file> as a whole, delimited word — not as a
+# substring of a longer word. This is the vetted replacement for a bare
+# substring check that false-passes on a containing word (the NDEBT-014
+# defect-class-4 catalogue in methodology/02_adversarial_tdd.md: `renewed`
+# contains `new`, `stalemate` contains `stale`, `invalid` contains `valid`),
+# where the acceptance criterion is the presence of the word itself, not any
+# word that happens to contain its letters. <word> is matched as a fixed
+# string (never a regex), bounded by grep's word-boundary (`-w`) semantics.
+#
+# Args:
+#   file: path to a text file. Actually read from disk (never keyed off the
+#     filename itself).
+#   word: the literal word whose whole-word presence is asserted.
+#
+# Returns:
+#   0 if <word> occurs as a whole word in <file>.
+#   1 otherwise (file missing, or the token appears only inside longer words).
+# ---------------------------------------------------------------------------
+
+vlib_word_present() {
+  local file="$1"
+  local word="$2"
+
+  [ -f "${file}" ] || return 1
+
+  grep -qwF -- "${word}" "${file}"
 }

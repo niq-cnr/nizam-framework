@@ -1,0 +1,13 @@
+# .agent/evidence/053-verify-01.txt
+# Contract 053 verification entry 01 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# ACCEPTANCE TEST: ANTI-VACUITY (HEAD~1 = c2fabe3, the F-052 merge / PR #31 squash): at HEAD~1 AGF Section 2 was 'The Four Agent Roles' with NO Orchestrator row, methodology/02 had NO Section 11, and verify_lib had NO vlib_word_present.
+# --- command (from .agent/contracts/053.json verification[01].command) ---
+set -e
+git show HEAD~1:standard/AGF.md | grep -Fq 'The Four Agent Roles'
+git show HEAD~1:standard/AGF.md | grep -Fq '| **Orchestrator** |' && { echo 'VACUITY: Orchestrator row already present'; exit 1; } || true
+git show HEAD~1:methodology/02_adversarial_tdd.md | grep -Fq '## 11. Probe Isolation' && { echo 'VACUITY: Section 11 already present'; exit 1; } || true
+git show HEAD~1:tools/verify_lib.sh | grep -Fq 'vlib_word_present' && { echo 'VACUITY: primitive already present'; exit 1; } || true
+echo 'E01 PASS: at HEAD~1 no Orchestrator role, no Section 11, no vlib_word_present (anti-vacuity)'
+# --- output ---
+E01 PASS: at HEAD~1 no Orchestrator role, no Section 11, no vlib_word_present (anti-vacuity)
+[exit 0]

@@ -1,0 +1,132 @@
+{
+  "contract_id": "053",
+  "feature_id": "053",
+  "name": "Orchestrator role + operational-rule codification (NDEBT-010, -013, -014, -019, -020)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_006.md",
+  "design_notes": {
+    "what_this_feature_is": "Phase-006 F-053: define the load-bearing-but-undefined Orchestrator role and codify four incident-proven operational rules. (NDEBT-010) standard/AGF.md 0.2.0 Section 2 defines the Orchestrator -- coordination/state-ownership: sequences the four execution roles, parses each gate's JSON verdict and advances only on a pass, owns run_state's run-position/coordination fields (Section 5 rule 4), enforces the circuit breaker. The references in capability_profiles.md (orchestrator-primary + 'every role maps' -> a true 5-role/5-profile correspondence), permission_classes.md, mcp_policy.md, and methodology/06_release_train.md 0.3.1 (concession retired) all now resolve; three stale 'four agent roles' AGF descriptions fixed in-scope. (NDEBT-013/020) methodology/02 0.4.0 Section 11 codifies probe isolation. (NDEBT-019) Section 10 anti-pattern (e) codifies explicit exit-code assertion + the set -e guard. (NDEBT-014) Section 12 catalogues the five verification-authoring defect classes; the mechanizable one is added as tools/verify_lib.sh's sixth primitive vlib_word_present (whole-word match), fixture-tested.",
+    "foundational_standards_change": "This is a DELIBERATE standards change to a foundational document (standard/AGF.md's role model: 'The Four Agent Roles' -> a coordinating Orchestrator plus four execution roles), exactly as NDEBT-010's own remediation prescribed ('a deliberate standards change to route through the next planned phase, not a hot-patch'). The change is additive and reconciling -- it defines a role every other governance file already referenced -- and does not alter the four execution roles, the dual validator gate, the verdict parse rule, or the durable-state rule.",
+    "next_feature_decision": "The feature-choice AskUserQuestion aborted (permission stream closed, as it did before feature 050). Proceeded with the RECOMMENDED option (053) under the phase-006 activation's standing 'Approved. Proceed with the logical next steps.' authorization and the operator's explicit 'Continue from where you left off.', disclosing the abort-driven choice here + in the PR so the operator may redirect at review (the PR is the steer mechanism; nothing merges without the operator). F-050 precedent for an aborted-question -> proceed-with-disclosure.",
+    "dogfooding_note": "E10 deliberately PRACTICES the NDEBT-019 rc-capture rule this feature codifies -- it captures validate.sh's own exit code explicitly (out=$(cmd); rc=$?; test $rc -eq 0) rather than relying on a piped SUMMARY grep, so the feature's own evidence exemplifies the standard it adds.",
+    "process_honesty": "Single-session collapsed-role execution (046-052 precedent) -- now itself disclosed-and-permitted by the new AGF Orchestrator clause ('Where a deployment collapses the Orchestrator into another role, that collapse MUST be disclosed in durable state and every gate below still honoured'). The load-bearing probe (E09) uses a minimal scratch copy under a session-scratch root, never mutating the real tree, and (after the PR #32 review) failing closed on an unset/relative $SB and refusing any scratch path inside the repo -- practicing the Section 11 Probe Isolation rule this feature adds. NDEBT-014's two non-mechanized classes (HEAD-anchored anti-vacuity, two-part .agent immutability) are documented as authoring patterns in Section 12 rather than standalone primitives, because they are contextual, not pure functions -- stated plainly, not hidden."
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/fixtures/word_present_pass.md",
+        "purpose": "Positive fixture for vlib_word_present: contains the whole word 'new' as a delimited token."
+      },
+      {
+        "path": "tools/fixtures/word_present_fail.md",
+        "purpose": "Negative fixture for vlib_word_present: 'new' appears only inside 'renewed', so a whole-word probe must reject it."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "standard/AGF.md",
+        "purpose": "0.2.0: define the Orchestrator in Section 2 (role-table row + coordination/state-ownership language; heading generalised from 'The Four Agent Roles'); Section 5 rule 4 names the Orchestrator-owned run_state coordination fields (NDEBT-010)."
+      },
+      {
+        "path": "methodology/06_release_train.md",
+        "purpose": "0.3.1: Section 6 release-mechanics ownership no longer concedes 'AGF defines no separate release-manager role' -- assigned to the now-defined Orchestrator (NDEBT-010 reconciliation)."
+      },
+      {
+        "path": "standard/README.md",
+        "purpose": "0.2.1: the AGF module description no longer says 'the four agent roles' (names the coordinating Orchestrator plus four execution roles)."
+      },
+      {
+        "path": "methodology/01_execution.md",
+        "purpose": "0.1.1: Section 7 reference to AGF updated from 'the four agent roles' to name the Orchestrator + four execution roles."
+      },
+      {
+        "path": "methodology/00_planning.md",
+        "purpose": "0.2.1: Section 7 reference to AGF updated likewise."
+      },
+      {
+        "path": "methodology/02_adversarial_tdd.md",
+        "purpose": "0.4.0: Section 10 anti-pattern (e) exit-code assertion (NDEBT-019); Section 11 Probe Isolation (NDEBT-013/020); Section 12 the five-class verification-authoring defect catalogue (NDEBT-014)."
+      },
+      {
+        "path": "tools/verify_lib.sh",
+        "purpose": "Add the sixth vetted primitive vlib_word_present (whole-word/delimited-token match, fixing the substring-on-containing-word false-pass); header primitive count 5 -> 6 (NDEBT-014 class 4 mechanization)."
+      },
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "Add the two vlib_word_present fixtures to the manifest (completeness guard now accounts for 43 fixtures)."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "[Unreleased] Added: the Orchestrator role + the methodology/02 codifications + vlib_word_present."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "0.23.0: NDEBT-010, -013, -014, -019, -020 -> Resolved with resolution notes."
+      }
+    ]
+  },
+  "non_goals": [
+    "No content change to capability_profiles.md, permission_classes.md, or mcp_policy.md -- they already reference/allocate the Orchestrator; defining it in AGF makes their references resolve (the 5-profile <-> 5-role correspondence becomes true without editing them).",
+    "No new standalone verify_lib.sh primitive for NDEBT-014 classes 1-2 (HEAD-anchored anti-vacuity, two-part .agent immutability) -- they are documented authoring patterns in Section 12, not pure functions ('where mechanizable' per NDEBT-014's remediation); only the whole-word matcher is cleanly mechanizable.",
+    "No change to schema/run_state.schema.json (the field-ownership is a document-binding AGF rule, not a schema constraint) and no change to the four execution-role definitions, the dual validator gate, the verdict parse rule, or the durable-state rule.",
+    "No edit to any .agent/evidence/* historical capture (the NDEBT-019 codification binds future contracts; past captures stay immutable per AH-3), and no new shipped fixtures beyond the two vlib_word_present ones."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (HEAD~1 = c2fabe3, the F-052 merge / PR #31 squash): at HEAD~1 AGF Section 2 was 'The Four Agent Roles' with NO Orchestrator row, methodology/02 had NO Section 11, and verify_lib had NO vlib_word_present.",
+      "command": "set -e\ngit show HEAD~1:standard/AGF.md | grep -Fq 'The Four Agent Roles'\ngit show HEAD~1:standard/AGF.md | grep -Fq '| **Orchestrator** |' && { echo 'VACUITY: Orchestrator row already present'; exit 1; } || true\ngit show HEAD~1:methodology/02_adversarial_tdd.md | grep -Fq '## 11. Probe Isolation' && { echo 'VACUITY: Section 11 already present'; exit 1; } || true\ngit show HEAD~1:tools/verify_lib.sh | grep -Fq 'vlib_word_present' && { echo 'VACUITY: primitive already present'; exit 1; } || true\necho 'E01 PASS: at HEAD~1 no Orchestrator role, no Section 11, no vlib_word_present (anti-vacuity)'"
+    },
+    {
+      "acceptance_test": "ORCHESTRATOR DEFINED (NDEBT-010, acceptance test 1): AGF Section 2 defines the Orchestrator as a role-table row, and Section 5 rule 4 names its exclusively-owned run_state coordination fields.",
+      "command": "set -e\ngrep -Fq '## 2. The Agent Roles' standard/AGF.md\ngrep -Fq '| **Orchestrator** |' standard/AGF.md\ngrep -Fq 'owned exclusively by the **Orchestrator**' standard/AGF.md\necho 'E02 PASS: AGF Section 2 defines the Orchestrator (role row + Section 5 rule 4 field ownership)'"
+    },
+    {
+      "acceptance_test": "CROSS-REFERENCES RESOLVE (NDEBT-010, acceptance test 1): the load-bearing references resolve to the AGF Orchestrator, the 06_release_train concession is retired, and AGF now has 5 role rows matching capability_profiles' 5 profiles.",
+      "command": "set -e\ngrep -Fq 'orchestrator-primary' standard/capability_profiles.md\ngrep -Fq '| Orchestrator |' standard/permission_classes.md\ngrep -Fq 'Orchestrator, Planner, Validator' standard/mcp_policy.md\ngrep -Fq 'belong to the **Orchestrator**' methodology/06_release_train.md\ngrep -Fq 'these mechanics sit with the Orchestrator' methodology/06_release_train.md\nroles=$(grep -c '^| \\*\\*' standard/AGF.md); test \"$roles\" -eq 5\ngrep -Fq 'The Five Standard Profiles' standard/capability_profiles.md\necho \"E03 PASS: cross-refs resolve; AGF role rows=$roles <-> 5 capability profiles; release-train mechanics now assigned to the defined Orchestrator (positive assertion, no negated grep)\""
+    },
+    {
+      "acceptance_test": "NO STALE 'four agent roles' AGF DESCRIPTIONS: the three cross-references that described AGF as 'the four agent roles' now name the coordinating Orchestrator (enumeration-completeness follow-through).",
+      "command": "set -e\ngrep -Fq 'a coordinating Orchestrator plus four execution roles' standard/README.md\ngrep -Fq 'the coordinating Orchestrator and the' methodology/01_execution.md\ngrep -Fq 'coordinating Orchestrator and the' methodology/00_planning.md\necho 'E04 PASS: the 3 four-agent-roles AGF cross-refs now name the coordinating Orchestrator'"
+    },
+    {
+      "acceptance_test": "PROBE ISOLATION CODIFIED (NDEBT-013/020, acceptance test 2): methodology/02 Section 11 binds the scratch-paths-only, cwd-before-destructive, and restore-with-trap rules and cites the incidents.",
+      "command": "set -e\ngrep -Fq '## 11. Probe Isolation' methodology/02_adversarial_tdd.md\ngrep -Fq 'Scratch paths only' methodology/02_adversarial_tdd.md\ngrep -Fq 'Verify the working directory before any destructive command' methodology/02_adversarial_tdd.md\ngrep -Fq 'back it up and restore it with a trap-based' methodology/02_adversarial_tdd.md\ngrep -Fq 'NDEBT-013' methodology/02_adversarial_tdd.md\ngrep -Fq 'NDEBT-020' methodology/02_adversarial_tdd.md\necho 'E05 PASS: Section 11 codifies probe isolation (scratch-only rule 1, cwd-before-destructive rule 2, restore-with-trap rule 3) citing NDEBT-013/020'"
+    },
+    {
+      "acceptance_test": "RC-CAPTURE CODIFIED (NDEBT-019, acceptance test 2): methodology/02 Section 10 anti-pattern (e) requires explicit exit-code capture and the set -e guard for expected-FAIL captures; the summary rule now reads 'all five'.",
+      "command": "set -e\ngrep -Fq 'Exit codes swallowed by a pipeline' methodology/02_adversarial_tdd.md\ngrep -Fq 'set +e; out=$(cmd); rc=$?; set -e' methodology/02_adversarial_tdd.md\ngrep -Fq 'NDEBT-019' methodology/02_adversarial_tdd.md\ngrep -Fq 'all five' methodology/02_adversarial_tdd.md\necho 'E06 PASS: Section 10 (e) requires explicit rc capture + set -e guard (NDEBT-019); summary now all five'"
+    },
+    {
+      "acceptance_test": "FIVE-CLASS CATALOGUE CODIFIED (NDEBT-014, acceptance test 2): methodology/02 Section 12 catalogues all five verification-authoring defect classes with fixes and names vlib_word_present.",
+      "command": "set -e\ngrep -Fq '## 12. The Verification-Authoring Defect Catalogue' methodology/02_adversarial_tdd.md\ngrep -Fq 'NDEBT-014' methodology/02_adversarial_tdd.md\ngrep -Fq 'vlib_word_present' methodology/02_adversarial_tdd.md\nn=$(awk '/## 12\\. The Verification-Authoring Defect Catalogue/{s=1} s&&/^[0-9]\\. \\*\\*/{c++} END{print c+0}' methodology/02_adversarial_tdd.md)\ntest \"$n\" -eq 5\necho \"E07 PASS: Section 12 catalogues all $n classes (NDEBT-014) naming vlib_word_present\""
+    },
+    {
+      "acceptance_test": "vlib_word_present WORKS + IS FIXTURE-TESTED (acceptance test 3): the primitive matches a whole word and rejects a containing-word substring, and both fixtures are exercised by tools/fixtures_self_test.sh.",
+      "command": "set -e\nsource tools/verify_lib.sh\nvlib_word_present tools/fixtures/word_present_pass.md new\nset +e; vlib_word_present tools/fixtures/word_present_fail.md new; rc=$?; set -e\ntest $rc -eq 1\nout=$(bash tools/fixtures_self_test.sh 2>&1)\nprintf '%s\\n' \"$out\" | grep -Eq 'OK +primitive +vlib_word_present pass'\nprintf '%s\\n' \"$out\" | grep -Eq 'OK +primitive +vlib_word_present fail'\necho 'E08 PASS: vlib_word_present matches whole-word, rejects containing-word; both fixtures exercised by the self-test'"
+    },
+    {
+      "acceptance_test": "vlib_word_present FIXTURE IS LOAD-BEARING: corrupting word_present_fail.md to contain a whole-word 'new' makes the self-test FAIL. Probed in a minimal scratch copy (Section 11 probe isolation).",
+      "command": "set -e\n: \"${SB:?SB (session scratch root) must be set for probe isolation}\"\ncase \"$SB\" in /*) ;; *) echo 'E09 ABORT: SB is not an absolute path'; exit 1;; esac\ntest -f tools/fixtures_self_test.sh\nS=\"$SB/e09\"\ncase \"$S\" in \"$PWD\"/*) echo 'E09 ABORT: scratch path resolves inside the repo'; exit 1;; esac\nrm -rf -- \"$S\"; mkdir -p -- \"$S\"; cp -a tools schema NIZAM.json \"$S/\"\nprintf 'This fixture now contains a new standalone token.\\n' > \"$S/tools/fixtures/word_present_fail.md\"\nset +e; out=$(bash \"$S/tools/fixtures_self_test.sh\" 2>&1); rc=$?; set -e\ntest $rc -eq 1\nprintf '%s\\n' \"$out\" | grep -Eq 'FAIL .*vlib_word_present fail'\nrm -rf -- \"$S\"\necho 'E09 PASS: corrupting word_present_fail to hold a whole-word new makes the self-test FAIL (fixture load-bearing)'"
+    },
+    {
+      "acceptance_test": "SELF-TEST 43/43 + REGRESSION BUNDLE (dogfoods NDEBT-019 rc-capture): the two new fixtures are accounted for; default 13/13, payload 11/11 with EXPLICIT exit-code capture, e2e green.",
+      "command": "set -e\nout=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Eq 'SELF-TEST OK: 43/43 fixtures accounted for, 0 failed'\nout=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 13 passed, 0 failed'\nout=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'\nbash tools/e2e_bootstrap_test.sh >/dev/null 2>&1\necho 'E10 PASS: self-test 43/43; default 13/13 (rc=0), payload 11/11 (rc=0), e2e green'"
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT: HEAD~1..HEAD touches exactly the twelve contracted files and no .agent path.",
+      "command": "set -e\ntest \"$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr '\\n' ' ')\" = 'CHANGELOG.md docs/planning/DEBT.md methodology/00_planning.md methodology/01_execution.md methodology/02_adversarial_tdd.md methodology/06_release_train.md standard/AGF.md standard/README.md tools/fixtures/word_present_fail.md tools/fixtures/word_present_pass.md tools/fixtures_self_test.sh tools/verify_lib.sh '\ntest -z \"$(git diff --name-only HEAD~1..HEAD -- .agent/)\"\necho 'E11 PASS: confined to the 12 contracted files, zero .agent'"
+    },
+    {
+      "acceptance_test": "DOCS/DEBT SYNCED: DEBT 0.23.0 has NDEBT-010/013/014/019/020 in Resolved; AGF 0.2.0; methodology/02 0.4.0; CHANGELOG names the Orchestrator role entry.",
+      "command": "set -e\ngrep -Fq 'version: 0.23.0' docs/planning/DEBT.md\npython3 - <<'PY'\nimport re\nsect=None; resolved=set()\nfor l in open('docs/planning/DEBT.md'):\n    if l.startswith('## Open'): sect='open'\n    elif l.startswith('## Resolved'): sect='resolved'\n    m=re.match(r'\\| (NDEBT-\\d+) ', l)\n    if m and sect=='resolved': resolved.add(m.group(1))\n    if l.startswith(('| NDEBT-010 ','| NDEBT-013 ','| NDEBT-014 ','| NDEBT-019 ','| NDEBT-020 ')):\n        assert sect=='resolved', l[:14]+' not Resolved'\nfor n in ('NDEBT-010','NDEBT-013','NDEBT-014','NDEBT-019','NDEBT-020'): assert n in resolved, n\nprint('debt ok')\nPY\ngrep -Fq 'version: 0.2.0' standard/AGF.md\ngrep -Fq 'version: 0.4.0' methodology/02_adversarial_tdd.md\nsed -n '/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p' CHANGELOG.md | grep -Fq 'Orchestrator role + operational-rule codification'\necho 'E12 PASS: DEBT 0.23.0 (5 NDEBTs Resolved); AGF 0.2.0; methodology/02 0.4.0; CHANGELOG synced'"
+    }
+  ],
+  "estimated_lines": 260,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured output is in .agent/evidence/053-verify-NN.txt (12 entries), plus the consolidated .agent/evidence/053/verification.txt (12 EXIT:0 markers) and .agent/evidence/053/diff.patch. Commands run from the repo root at deliverable commit b848aac (HEAD), with HEAD~1 = the F-052 merge c2fabe3 as the anti-vacuity anchor; the load-bearing probe (E09) builds a MINIMAL scratch copy (tools/+schema/+NIZAM.json) under a session-scratch root $SB, never mutating the real tree (Section 11 probe isolation). E05 (line-wrap re-anchor) and E08/E09 were re-captured at the PR #32 review-hardening commit with tightened assertions -- E08/E09 now assert the SPECIFIC exit code (test $rc -eq 1, Section 10(e)) instead of a bare non-zero, and E09 fails closed on an unset/relative $SB and refuses any scratch path inside the repo (Section 11); each re-captured evidence header notes the re-capture.",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-directed phase execution (ungated DAG root). The feature-choice AskUserQuestion aborted; proceeded with the recommended 053 under standing authorization + the operator's 'Continue', disclosed here + in the PR for redirect-at-review (F-050 precedent). No separate Loop-1 gate agents; the 12-entry suite executed live with captured evidence (dogfooding the NDEBT-019 rc-capture rule it adds); QA record .agent/qa/053.json documents the independent re-run. Scope UNDER estimate (221 vs 260); a foundational AGF standards change, additive and reconciling."
+  }
+}

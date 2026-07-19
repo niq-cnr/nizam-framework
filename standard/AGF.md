@@ -2,10 +2,13 @@
 id: agent-governance-framework
 title: "Agent Governance Framework (AGF)"
 description: "The generalised multi-agent execution model: agent roles, the dual validator gate, the JSON verdict parse rule, and the durable-state rule for agent coordination."
-version: 0.1.1
+version: 0.2.0
 status: active
 authoritative_source: standard/AGF.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-07-19"
+    summary: "Define the Orchestrator role in Section 2 (coordination/state-ownership: sequences the execution roles, parses each gate verdict, owns run_state's run-position/coordination fields per Section 5 rule 4, enforces the circuit breaker) — resolving NDEBT-010, the load-bearing-but-undefined role that capability_profiles.md, permission_classes.md, mcp_policy.md, and methodology/06_release_train.md all already referenced. Section heading generalised from 'Four Agent Roles'; Section 5 rule 4 now names the Orchestrator-owned coordination fields."
   - version: "0.1.1"
     date: "2026-07-12"
     summary: "Documentation-truth cleanup: Section 6's circuit-breaker cross-reference now names methodology/03_circuit_breaker.md (shipped at genesis; the 'forthcoming' wording was stale), and the Section 4 verdict rule's dropped word is restored ('entry in any of the three arrays blocks advancement')."
@@ -18,16 +21,19 @@ change_log:
 The AGF defines a runtime-agnostic execution model for coordinating multiple AI agents
 against a shared, contract-first delivery pipeline. It is deliberately silent on any
 specific agent runtime, tool-calling API, or orchestration harness — any runtime that can
-route work between four role types and honour the gates below is compliant.
+route work between the roles defined in Section 2 and honour the gates below is compliant.
 
-## 2. The Four Agent Roles
+## 2. The Agent Roles
 
-Every execution pipeline governed by this framework is composed of four roles. A single
-agent implementation MAY embody more than one role across different sessions, but a
-single session MUST NOT blend roles in a way that lets one role bypass another's gate.
+Every execution pipeline governed by this framework is coordinated by a single
+**Orchestrator** and carried out by four execution roles (Planner, Generator, Validator,
+Evaluator). A single agent implementation MAY embody more than one role across different
+sessions, but a single session MUST NOT blend roles in a way that lets one role bypass
+another's gate.
 
 | Role | Responsibility | Typical Output |
 |---|---|---|
+| **Orchestrator** | Coordinates the pipeline: sequences the four execution roles, parses each gate's JSON verdict (Section 4) and advances only when it passes, owns the run-position and coordination fields of durable state (Section 5), and enforces the circuit breaker (Section 6). Authors no spec, contract, source code, or gate verdict of its own — it routes work between the execution roles and records the outcome. Where a deployment collapses the Orchestrator into another role, that collapse MUST be disclosed in durable state and every gate below still honoured. | Updated `run_state.json` coordination fields; gate-advance decisions recorded in durable state. |
 | **Planner** | Expands a brief or request into product-level artifacts: an architecture/spec document and a feature list with acceptance criteria. Stays at high-level architecture; does not lock in low-level implementation detail. | A specification document, a feature list. |
 | **Generator** | Proposes an implementation contract for a feature, then — once the contract is approved — implements only that contract's scope. Never expands scope silently. | A proposed contract; source code changes matching an approved contract. |
 | **Validator** | Gatekeeps the pipeline at two points (Section 3): before code is written (Mode A) and after (Mode B). Does not write source code or repair contracts; it approves or rejects. | A JSON verdict (Section 4). |
@@ -122,7 +128,12 @@ other channel that is not independently readable by the next agent in the pipeli
    conversation.
 4. **Preserve, don't overwrite blindly.** Updates to durable state MUST preserve fields
    the current step did not own or change; a role updates only the fields its contract or
-   protocol assigns to it.
+   protocol assigns to it. In particular, the run-position and coordination fields of
+   `run_state.json` — the current phase and feature, the pipeline status, the scope
+   budget, the circuit-breaker state, the append-only history, and any recorded
+   operator-gate decisions — are owned exclusively by the **Orchestrator** (Section 2); an
+   execution role writes its own artifacts (its contract, verdict, or evidence) but never
+   these coordination fields.
 
 ## 6. Circuit Breaker Cross-Reference
 

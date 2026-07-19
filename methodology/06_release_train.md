@@ -2,7 +2,7 @@
 id: nizam-release-train
 title: "Release Train Protocol"
 description: "The framework's own release discipline: semantic-version git-tag cuts, what constitutes a breaking vs minor vs patch change, changelog discipline, and the consumer upgrade path via bootstrap re-run against a new pinned tag."
-version: 0.3.0
+version: 0.3.1
 status: active
 authoritative_source: methodology/06_release_train.md
 change_log:
@@ -12,6 +12,9 @@ change_log:
   - version: "0.3.0"
     date: "2026-07-10"
     summary: "NDEBT-003(b)/F-027: Section 3.2's Minor-change example named this document by a filename slot main's v0.5.x methodology renumbering had already reassigned to a different, newly-inserted document; corrected the reference to this document's real current filename."
+  - version: "0.3.1"
+    date: "2026-07-19"
+    summary: "Documentation-truth sync (F-053/NDEBT-010): Section 6's release-mechanics ownership no longer reads as a concession that 'AGF's role set defines no separate release-manager role' — standard/AGF.md Section 2 now defines the Orchestrator, so the three release mechanics are assigned to that defined role, which already owns run_state's coordination fields."
 ---
 
 # Release Train Protocol
@@ -139,9 +142,11 @@ introduce a second, competing upgrade mechanism.
 ## 6. Release Mechanics Ownership
 
 Once the Section 2 human sign-off gate is satisfied, three specific
-release-time mechanics belong to the **release-manager role** — in practice
-the **orchestrator**, since `standard/AGF.md`'s role set defines no separate
-release-manager role:
+release-time mechanics belong to the **Orchestrator** — the coordination role
+`standard/AGF.md` Section 2 defines, which already owns `run_state.json`'s
+run-position and coordination fields. The framework defines no separate
+release-manager role; these mechanics sit with the Orchestrator that owns the
+release-time state they record:
 
 1. **The changelog roll-up** — folding `CHANGELOG.md`'s `[Unreleased]`
    entries into the new version's dated section heading.

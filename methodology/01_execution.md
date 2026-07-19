@@ -2,7 +2,7 @@
 id: nizam-contract-first-execution
 title: "Contract-First Harness Loop"
 description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, and the JSON Verdict Parse Rule that gates every stage."
-version: 0.1.0
+version: 0.1.1
 status: active
 authoritative_source: methodology/01_execution.md
 ---
@@ -131,8 +131,9 @@ Section 5 (the Dependency Enforcement Rule) to select the next eligible feature.
 
 ## 7. References
 
-- `standard/AGF.md` — the four agent roles, the Dual Validator Gate, and the
-  authoritative definition of the JSON Verdict Parse Rule.
+- `standard/AGF.md` — the agent roles (the coordinating Orchestrator and the
+  four execution roles), the Dual Validator Gate, and the authoritative
+  definition of the JSON Verdict Parse Rule.
 - `00_planning.md` — produces the eligible feature this loop consumes, and
   receives control back on completion via the Dependency Enforcement Rule.
 - `02_adversarial_tdd.md` — the independence and rigor requirements binding the

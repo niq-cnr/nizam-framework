@@ -1,0 +1,12 @@
+# .agent/evidence/053-verify-04.txt
+# Contract 053 verification entry 04 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# ACCEPTANCE TEST: NO STALE 'four agent roles' AGF DESCRIPTIONS: the three cross-references that described AGF as 'the four agent roles' now name the coordinating Orchestrator (enumeration-completeness follow-through).
+# --- command (from .agent/contracts/053.json verification[04].command) ---
+set -e
+grep -Fq 'a coordinating Orchestrator plus four execution roles' standard/README.md
+grep -Fq 'the coordinating Orchestrator and the' methodology/01_execution.md
+grep -Fq 'coordinating Orchestrator and the' methodology/00_planning.md
+echo 'E04 PASS: the 3 four-agent-roles AGF cross-refs now name the coordinating Orchestrator'
+# --- output ---
+E04 PASS: the 3 four-agent-roles AGF cross-refs now name the coordinating Orchestrator
+[exit 0]

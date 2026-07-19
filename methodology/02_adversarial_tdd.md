@@ -2,7 +2,7 @@
 id: nizam-adversarial-tdd
 title: "Adversarial Test Design"
 description: "The evaluator independence model, false-pass and false-fail hunting patterns, and the negative-testing requirement that keeps acceptance test suites load-bearing rather than tautological."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: methodology/02_adversarial_tdd.md
 change_log:
@@ -12,6 +12,9 @@ change_log:
   - version: "0.3.0"
     date: "2026-07-08"
     summary: "Add the Verification-Authoring Standard (Section 10), naming the four forbidden verification anti-patterns (whole-file/vacuous greps, git-diff-HEAD scope guards blind to untracked/new files, bare-adjacency/parenthetical checks, literal-substring checks) and their tools/verify_lib.sh primitive replacements."
+  - version: "0.4.0"
+    date: "2026-07-19"
+    summary: "F-053 codification: add Section 10 anti-pattern (e) exit-code assertion (NDEBT-019 — pipeline-swallowed exits and set -e over-aggression on expected-failure captures), Section 11 Probe Isolation (NDEBT-013/020 — scratch-paths-only, cwd-verified-before-destructive, restore-with-trap), and Section 12 the five-class verification-authoring defect catalogue (NDEBT-014) with proven fixes and the new vlib_word_present primitive."
 ---
 
 # Adversarial Test Design
@@ -199,9 +202,10 @@ the spot-check having been performed.
 
 A verification command is only as trustworthy as its resistance to the
 false-pass and false-fail patterns catalogued in Sections 3 and 4. This
-section codifies four specific anti-patterns that MUST NOT appear in any
-contract's verification suite, each paired with the compliant primitive from
-`tools/verify_lib.sh` (the vetted verification-helper library, F-023) that
+section codifies five specific anti-patterns that MUST NOT appear in any
+contract's verification suite, each paired with its compliant replacement —
+the vetted primitive from `tools/verify_lib.sh` (the verification-helper
+library, F-023), or, for (e), the explicit exit-code capture — that
 replaces it.
 
 **(a) Whole-file / vacuous greps** — A check that greps an entire file for a
@@ -252,9 +256,77 @@ resolution against the working tree, not a string match against the path
 text), and `vlib_no_stale_payload <file>` (a real per-line structural scan
 for a stale multi-directory enumeration, not a substring hit).
 
-Every contract's verification suite MUST be reviewed against all four of
+**(e) Exit codes swallowed by a pipeline, or a bare non-zero exit** — A
+verification command that pipes a tool's output into `grep`/`tail`/`awk`
+(for example `bash tools/validate.sh | tail -1 | grep -Fxq 'SUMMARY: … 0
+failed'`) asserts only the *last* pipeline stage's exit status; the tool's own
+exit code is discarded, so a tool that fails but still prints the expected line
+passes the check. Symmetrically, a command that asserts merely a *non-zero*
+exit to prove a negative case can pass for an unrelated reason (a different
+check in the same tool failing). Capture and assert the tool's own return code
+explicitly — `out=$(cmd); rc=$?; test "$rc" -eq 0` (or grep for the specific
+verdict line of the *targeted* check, not a bare exit) — and when a command
+deliberately runs a tool that is *expected* to FAIL, guard the capture under
+`set -e` (`set +e; out=$(cmd); rc=$?; set -e`) so `set -e` does not fire on the
+expected non-zero command substitution before the assertion runs. (NDEBT-019:
+the pipeline-swallow form recurred across F-049's and F-050's evidence
+captures; the `set -e`-over-aggression form was caught live in F-052's.)
+
+Every contract's verification suite MUST be reviewed against all five of
 these anti-patterns, in addition to the false-pass and false-fail hunting
 practice of Sections 3 and 4, before it is approved; a verification command
-that relies on any of (a)-(d) is not acceptance coverage and MUST be
+that relies on any of (a)-(e) is not acceptance coverage and MUST be
 rejected and rewritten using the corresponding `tools/verify_lib.sh`
-primitive named above.
+primitive (or the explicit exit-code capture) named above.
+
+## 11. Probe Isolation
+
+A reviewer or Evaluator that constructs an adversarial probe — a scratch file,
+a mutated fixture, a simulated sibling landing, a before/after substitution —
+operates on scratch state ONLY, never on the real repository the pipeline is
+delivering. This rule remediates two real incidents: a feature-032 evaluator
+probe that touched and then deleted a sibling feature's real contracted path
+(NDEBT-013), and a feature-045 review command that ran `rm -f` against the real
+`CHANGELOG.md` while intending a scratch cleanup (NDEBT-020).
+
+1. **Scratch paths only.** Every path a probe creates, mutates, or deletes MUST
+   live under a session-scratch root held in a variable, never a bare filename
+   and never a real contracted path. A probe never creates, touches, or deletes
+   a sibling's real path — including "simulating" that sibling's file landing.
+2. **Verify the working directory before any destructive command.** Before
+   issuing `rm`, `rm -f`, `git clean`, or any other destructive command, the
+   probe MUST confirm its current working directory is the intended scratch
+   location, and MUST NOT pass a real-repository path as that command's
+   argument.
+3. **Restore anything borrowed.** A probe that must temporarily substitute a
+   real tracked file (for example swapping a negative fixture in for a real
+   config to exercise a check) MUST back it up and restore it with a trap-based
+   backstop, and confirm the working tree is clean afterward.
+
+## 12. The Verification-Authoring Defect Catalogue
+
+Loop-1 and Loop-2 gates have repeatedly caught the same five
+verification-authoring defect classes (NDEBT-014). Each is recorded here with
+its proven fix, so future contracts inherit the catalogue instead of
+rediscovering it gate-by-gate:
+
+1. **Working-tree-anchored anti-vacuity companions** become mutually exclusive
+   with their positive check once the implementation lands — the "before" and
+   "after" states cannot both hold in the same tree. Anchor the anti-vacuity
+   companion to `HEAD` (or the pre-implementation base commit), never to the
+   working tree.
+2. **Per-feature-ID exclude-list immutability guards** are fragile under
+   parallel drafting: each new sibling needs a live amendment to the exclude
+   list. Prefer the two-part invariant proven in F-038 — tracked history clean
+   AND untracked additions confined to the in-flight feature-ID glob range.
+3. **`vlib_section_grep` is line-based**, so a required literal phrase split
+   across a markdown line-wrap silently fails the span match. Assert a phrase
+   that fits one physical line, or normalise the wrap before the section scan.
+4. **Bare substring tokens false-pass on containing words** (`renewed` ⊃
+   `new`, `stalemate` ⊃ `stale`, `invalid` ⊃ `valid` in a fixture-name glob).
+   Use a whole-word / delimited-token match (`vlib_word_present` in
+   `tools/verify_lib.sh`) or a backtick-delimited code-span token, never a bare
+   substring.
+5. **Natural-language content bounds** (line caps, word caps) cannot stop
+   paraphrase mirroring; only closed-set shapes with exact-text pinning proved
+   airtight for content whose own wording is the thing under test.

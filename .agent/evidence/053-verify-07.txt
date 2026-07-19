@@ -1,0 +1,14 @@
+# .agent/evidence/053-verify-07.txt
+# Contract 053 verification entry 07 -- captured 2026-07-19 at deliverable commit b848aac (HEAD~1 = F-052 merge c2fabe3)
+# ACCEPTANCE TEST: FIVE-CLASS CATALOGUE CODIFIED (NDEBT-014, acceptance test 2): methodology/02 Section 12 catalogues all five verification-authoring defect classes with fixes and names vlib_word_present.
+# --- command (from .agent/contracts/053.json verification[07].command) ---
+set -e
+grep -Fq '## 12. The Verification-Authoring Defect Catalogue' methodology/02_adversarial_tdd.md
+grep -Fq 'NDEBT-014' methodology/02_adversarial_tdd.md
+grep -Fq 'vlib_word_present' methodology/02_adversarial_tdd.md
+n=$(awk '/## 12\. The Verification-Authoring Defect Catalogue/{s=1} s&&/^[0-9]\. \*\*/{c++} END{print c+0}' methodology/02_adversarial_tdd.md)
+test "$n" -eq 5
+echo "E07 PASS: Section 12 catalogues all $n classes (NDEBT-014) naming vlib_word_present"
+# --- output ---
+E07 PASS: Section 12 catalogues all 5 classes (NDEBT-014) naming vlib_word_present
+[exit 0]
