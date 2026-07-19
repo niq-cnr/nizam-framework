@@ -41,6 +41,23 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   basename carrying a `neg`/`invalid` look-alike that is not the canonical
   delimited-lowercase token (uppercase `_NEG_`, full-word `_negative_`) is a
   named FAIL, so the classifier cannot be gamed by a look-alike name.
+- **Orchestrator role + operational-rule codification** (phase 006 feature
+  053): `standard/AGF.md` (0.2.0) now defines the **Orchestrator** in Section 2
+  — the coordination/state-ownership role that sequences the four execution
+  roles, parses each gate verdict, owns `run_state.json`'s run-position and
+  coordination fields (Section 5 rule 4), and enforces the circuit breaker —
+  resolving **NDEBT-010**, the load-bearing-but-undefined role that
+  `capability_profiles.md`, `permission_classes.md`, `mcp_policy.md`, and
+  `methodology/06_release_train.md` (0.3.1) all already referenced.
+  `methodology/02_adversarial_tdd.md` (0.4.0) gains Section 10 anti-pattern (e)
+  (explicit exit-code assertion — **NDEBT-019**), Section 11 Probe Isolation
+  (**NDEBT-013/020**), and Section 12, the five-class verification-authoring
+  defect catalogue (**NDEBT-014**). `tools/verify_lib.sh` gains a sixth vetted
+  primitive, `vlib_word_present` (whole-word match, fixing the
+  substring-on-containing-word false-pass), fixture-tested via
+  `tools/fixtures_self_test.sh`. Three stale "four agent roles" descriptions of
+  AGF were corrected in-scope (`standard/README.md`,
+  `methodology/01_execution.md`, `methodology/00_planning.md`).
 
 ### Changed
 

@@ -2,7 +2,7 @@
 id: nizam-standard-readme
 title: "Standard Module — Index"
 description: "Index for the standard/ module: the documentation, governance, security, and architectural standards every consumer repository inherits."
-version: 0.2.0
+version: 0.2.1
 status: active
 authoritative_source: standard/README.md
 ---
@@ -18,7 +18,7 @@ consumer repository without modification.
 |---|---|
 | [`NDS.md`](NDS.md) | Nizam Documentation Standard — the six required frontmatter keys, the status lifecycle, versioning and change-log rules, and file/heading/machine-readability conventions every governed document must satisfy. |
 | [`GIP.md`](GIP.md) | Governance Inheritance Protocol — how a consumer repository inherits the framework via pinned-tag cloning and `bootstrap.sh`, verifies the inheritance succeeded, and detects drift against the pinned tag over time. |
-| [`AGF.md`](AGF.md) | Agent Governance Framework — the four agent roles, the dual validator gate (Mode A pre-code / Mode B post-code), the JSON verdict parse rule, and the durable-state ("no oral tradition") rule. |
+| [`AGF.md`](AGF.md) | Agent Governance Framework — the agent roles (a coordinating Orchestrator plus four execution roles), the dual validator gate (Mode A pre-code / Mode B post-code), the JSON verdict parse rule, and the durable-state ("no oral tradition") rule. |
 | [`anti_hallucination.md`](anti_hallucination.md) | Universal anti-hallucination constraints (AH-1 through AH-4) that bind every agent role's actions, independent of protocol or task. |
 | [`capability_profiles.md`](capability_profiles.md) | Binds agent roles to abstract capability profiles rather than hard-coded models. |
 | [`ci_gates.md`](ci_gates.md) | The mandatory 10-gate `MERGE_READY` formula that ensures no unverified code bypasses the contract-first execution loop. |

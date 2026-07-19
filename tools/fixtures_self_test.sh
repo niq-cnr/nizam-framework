@@ -144,6 +144,13 @@ note_covered section_grep_fail.md
 assert_rc "primitive   vlib_section_grep pass" 0 vlib_section_grep tools/fixtures/section_grep_pass.md '^## Target Section' 'SECTION_GREP_MARKER'
 assert_rc "primitive   vlib_section_grep fail" 1 vlib_section_grep tools/fixtures/section_grep_fail.md '^## Target Section' 'SECTION_GREP_MARKER'
 
+# vlib_word_present (F-053): the whole word "new" is a delimited token in the
+# pass fixture; in the fail fixture it appears only inside "renewed".
+note_covered word_present_pass.md
+note_covered word_present_fail.md
+assert_rc "primitive   vlib_word_present pass" 0 vlib_word_present tools/fixtures/word_present_pass.md new
+assert_rc "primitive   vlib_word_present fail" 1 vlib_word_present tools/fixtures/word_present_fail.md new
+
 # vlib_path_resolves: every token line in the pass fixture resolves/exempts
 # (rc 0); the fail fixture's token does not (rc 1). Tokens resolve relative to
 # the repo root (this script's CWD).

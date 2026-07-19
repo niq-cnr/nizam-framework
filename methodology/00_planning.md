@@ -2,13 +2,16 @@
 id: nizam-planning-enforcer
 title: "Planning Enforcer"
 description: "The mandatory pre-code planning protocol: the spec + feature-DAG artifact pair every phase must produce before implementation begins, the dependency enforcement rule, atomic-step decomposition, and the scope budget protocol."
-version: 0.2.0
+version: 0.2.1
 status: active
 authoritative_source: methodology/00_planning.md
 change_log:
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "Add the Plan Amendment Rule (Section 9), covering orchestrator-registrable amendments, Planner-routed re-planning, and scope-budget re-baselines."
+  - version: "0.2.1"
+    date: "2026-07-19"
+    summary: "Documentation-truth sync (F-053/NDEBT-010): the Section 7 reference to standard/AGF.md no longer describes it as 'the four agent roles' — AGF Section 2 now defines a coordinating Orchestrator plus the four execution roles."
 ---
 
 # Planning Enforcer
@@ -201,8 +204,9 @@ future audit actually reads.
 
 ## 10. References
 
-- `standard/AGF.md` — the four agent roles (including Planner) and the dual
-  validator gate this protocol's output feeds into.
+- `standard/AGF.md` — the agent roles (the coordinating Orchestrator and the
+  four execution roles, including Planner) and the dual validator gate this
+  protocol's output feeds into.
 - `01_execution.md` — the harness loop that consumes an eligible, planned feature.
 - `03_circuit_breaker.md` — the 3-strike limit that bounds contract-revision and
   implementation-rework loops downstream of planning.
