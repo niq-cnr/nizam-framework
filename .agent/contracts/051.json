@@ -1,0 +1,111 @@
+{
+  "contract_id": "051",
+  "feature_id": "051",
+  "name": "Injected-payload/methodology contract decision -- H-PAYLOAD-CONTRACT (NDEBT-008 + NDEBT-004)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_006.md",
+  "design_notes": {
+    "what_this_feature_is": "Phase-006 F-051: implement the operator's H-PAYLOAD-CONTRACT decision -- methodology/ and ecosystem/ join the bootstrap-injected payload, resolving NDEBT-008 (consumer .nizam/ installs previously omitted them, so the many tools/skill.json + tools/SKILL.md cross-references into methodology/ and the ecosystem/ references added in F-040 dangled). Coupled change across 7 files: bootstrap.sh (REQUIRED_MODULE_DIRS + injected_module_paths + REQUIRED_RELATIVE_FILES + header/--help); standard/GIP.md (0.4.0, the authoritative payload contract, Sections 1/2.2/2.1/4.3/5.1) + CONTEXT.md (0.7.0); tools/validate.sh (build_payload_md_set now sweeps methodology/+ecosystem/; C4/C9/C13 payload carve-outs narrow to {registry, docs}); tools/e2e_bootstrap_test.sh (enlarged-payload assertions); docs/planning/DEBT.md (0.21.0). registry/ and docs/ stay framework-envelope and are never injected.",
+    "gate_decision": "H-PAYLOAD-CONTRACT was DECIDED by the operator on 2026-07-19 ('The methodology/ (and now ecosystem/) shall join the bootstrap-injected payload'), recorded as an operator_gate_decision event BEFORE this execution per the NDEBT-018 rule, and RATIFIED twice over: by the operator's merge of PR #29 (which the F-050 NDEBT-004 caveat named as the ratification event) and by the operator's explicit 'Feature 051 now (payload injection)' answer at this feature's start. The gate is satisfied; F-051 is its implementation, not its decision.",
+    "enumeration_completeness": "NDEBT-005-class discipline applied: the initial single-line grep found 3 GIP payload enumerations, but a full read of GIP.md caught 3 MORE authoritative enumerations it missed (Section 2 point 2 -- the canonical definition, spanning two lines; Section 4 point 3 drift-detection; Section 5.1's payload parenthetical). All six GIP sites plus CONTEXT.md were updated consistently; C10 (single-source-of-truth) confirms GIP internal consistency (E06).",
+    "process_honesty": "Single-session execution, roles collapsed (046-050 precedent, disclosed at phase activation): contract, implementation, verification, and QA authored and executed in-session; all 12 entries ran live with captured evidence (fail-fast commands, NDEBT-019 lesson); scratch probes used only session-scratchpad paths and bootstrap-injected scratch payloads (NDEBT-013/020 probe-isolation), never a real repository path.",
+    "vacuity_guards": "E01 anchors anti-vacuity to the F-050 merge base (91f655d): methodology/ecosystem not injected, carve-outs intact, GIP 0.3.1 there. E05 proves the injection is LOAD-BEARING both ways -- the enlarged payload passes --payload from both invocation forms, and a payload STRIPPED of methodology/+ecosystem/ FAILs BOTH validate.sh (C4/C9/C13 require them) AND bootstrap --verify-only. E12 proves registry/+docs/ genuinely stay out (absent from a real payload, which still passes). E10 proves default mode is unchanged (carve-out is payload-only)."
+  },
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "bootstrap.sh",
+        "purpose": "Inject methodology/ + ecosystem/: add both to REQUIRED_MODULE_DIRS and the index-verification injected_module_paths; add methodology/00_planning.md + ecosystem/README.md to REQUIRED_RELATIVE_FILES; update the header + --help payload enumerations and the check_nizam_index comment."
+      },
+      {
+        "path": "standard/GIP.md",
+        "purpose": "0.4.0: the authoritative payload contract now names the six-directory payload in Section 1 (Core Directive), Section 2 point 2 (canonical definition), Section 2.1, Section 4 point 3 (drift), and Section 5.1; registry/+docs/ explicitly remain non-injected."
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "0.7.0: the bootstrap sentence now names the six injected directories plus NIZAM.json."
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "build_payload_md_set sweeps methodology/+ecosystem/ .md in payload mode; the C4 skipped_dirs, C9 injected-prefix allow-list, and C13 SKIPPED_DIR_PREFIXES carve-outs narrow to {registry, docs} (the F-049/F-050 interim methodology/ecosystem carve-outs retire -- those paths now required to resolve in a consumer payload)."
+      },
+      {
+        "path": "tools/e2e_bootstrap_test.sh",
+        "purpose": "assert_payload_present checks all six dirs; the index-validation injected_module_paths requires methodology/+ecosystem/ to resolve; the success message names the six dirs."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "[Unreleased] Changed entry: bootstrap payload enlarged to six directories (NDEBT-008)."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "0.21.0: NDEBT-008 -> Resolved; NDEBT-004 caveat -> ratified (the operator's PR #29 merge ratified the F-050 scope-attribution)."
+      }
+    ]
+  },
+  "non_goals": [
+    "registry/ and docs/ are NOT injected -- they remain framework-envelope; the C4/C9/C13 carve-outs retain exactly those two prefixes, and E12 proves a real payload omits them and still passes.",
+    "No change to default/--target CWD-anchoring or to the default-mode sweep's no-carve-out behavior (E10); only --payload's required-set is enlarged.",
+    "No edit to tools/skill.json or NIZAM.json content (their methodology/+ecosystem/ references were already correct; F-051 makes the payload carry their targets), and no edit to any .agent/evidence/* historical capture.",
+    "No consumer-repository migration performed here; existing consumers pick up the enlarged payload on their next re-bootstrap (GIP Section 4 remediation)."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (HEAD~1 = 91f655d, the F-050 merge base): before this deliverable bootstrap did NOT inject methodology/ecosystem, the carve-outs still listed them, and GIP/CONTEXT named the four-dir payload.",
+      "command": "set -e\ngit show HEAD~1:bootstrap.sh | grep -Fq \"readonly REQUIRED_MODULE_DIRS=(\"\nif git show HEAD~1:bootstrap.sh | grep -Ezoq \"REQUIRED_MODULE_DIRS=\\(\\s*\\n\\s*\\\"standard\\\"\\s*\\n\\s*\\\"templates\\\"\\s*\\n\\s*\\\"schema\\\"\\s*\\n\\s*\\\"tools\\\"\\s*\\n\\s*\\\"methodology\\\"\"; then echo \"VACUITY: methodology already injected at HEAD~1\"; exit 1; fi\ngit show HEAD~1:tools/validate.sh | grep -Fq \"skipped_dirs = {\\\"methodology\\\", \\\"registry\\\", \\\"docs\\\", \\\"ecosystem\\\"}\"\ngit show HEAD~1:standard/GIP.md | grep -Fq \"version: 0.3.1\"\necho \"E01 PASS: methodology/ecosystem not injected, carve-outs intact, GIP 0.3.1 at HEAD~1 (anti-vacuity)\""
+    },
+    {
+      "acceptance_test": "BOOTSTRAP INJECTS THE ENLARGED SET: REQUIRED_MODULE_DIRS and the index-verification injected_module_paths both include methodology and ecosystem.",
+      "command": "set -e\ngrep -Fq \"\\\"methodology\\\"\" bootstrap.sh && grep -Fq \"\\\"ecosystem\\\"\" bootstrap.sh\ngrep -Fq \"injected_module_paths = {\\\"standard\\\", \\\"templates\\\", \\\"schema\\\", \\\"tools\\\", \\\"methodology\\\", \\\"ecosystem\\\"}\" bootstrap.sh\necho \"E02 PASS: bootstrap REQUIRED_MODULE_DIRS + injected_module_paths include methodology + ecosystem\""
+    },
+    {
+      "acceptance_test": "DEFAULT SWEEP GREEN 13/13, EXIT ASSERTED (regression).",
+      "command": "out=$(bash tools/validate.sh 2>&1); rc=$?; printf \"%s\\n\" \"$out\" | tail -1; test $rc -eq 0 && printf \"%s\\n\" \"$out\" | tail -1 | grep -Fxq \"SUMMARY: 13 passed, 0 failed\" && echo \"E03 PASS (rc=$rc)\""
+    },
+    {
+      "acceptance_test": "PAYLOAD SWEEP GREEN 11/11 from the framework root, EXIT ASSERTED: the enlarged payload-doc set (methodology/+ecosystem/ .md now swept) still passes.",
+      "command": "out=$(bash tools/validate.sh --payload 2>&1); rc=$?; printf \"%s\\n\" \"$out\" | tail -1; test $rc -eq 0 && printf \"%s\\n\" \"$out\" | tail -1 | grep -Fxq \"SUMMARY (payload mode): 11 passed, 0 failed\" && echo \"E04 PASS (rc=$rc)\""
+    },
+    {
+      "acceptance_test": "ENLARGED PAYLOAD IS LOAD-BEARING (headline): a real bootstrap injects all six dirs and passes --payload both forms (11/11); a payload MISSING methodology/+ecosystem/ FAILs BOTH validate.sh (C4/C9/C13) AND bootstrap --verify-only.",
+      "command": "set -e\nS=\"'\"$SB\"'/e05\"; rm -rf \"$S\"; mkdir -p \"$S\"; TAG=\"f051e05-$$\"\ngit -c user.name=c -c user.email=c@n.local tag -a \"$TAG\" -m c HEAD >/dev/null 2>&1\nT=\"$S/.nizam\"; bash bootstrap.sh --repo-url \"file://$(pwd)\" --tag \"$TAG\" --target \"$T\" >/dev/null 2>&1\nfor d in standard templates schema tools methodology ecosystem; do test -d \"$T/$d\"; done\ncp tools/validate.sh \"$T/tools/validate.sh\"\n( cd \"$T\" && bash tools/validate.sh --payload >/dev/null 2>&1 ); a=$?\n( cd \"$S\" && bash .nizam/tools/validate.sh --payload >/dev/null 2>&1 ); b=$?\ntest $a -eq 0 && test $b -eq 0\nrm -rf \"$T/methodology\" \"$T/ecosystem\"\nset +e\n( cd \"$T\" && bash tools/validate.sh --payload >/dev/null 2>&1 ); c=$?\n( bash bootstrap.sh --verify-only --tag \"$TAG\" --target \"$T\" >/dev/null 2>&1 ); v=$?\nset -e\ntest $c -ne 0 && test $v -ne 0\ngit tag -d \"$TAG\" >/dev/null 2>&1; rm -rf \"$S\"\necho \"E05 PASS: 6 dirs injected; --payload A=$a B=$b (green); stripped payload validate=$c verify-only=$v (both FAIL) -- injection load-bearing\""
+    },
+    {
+      "acceptance_test": "GIP AUTHORITATIVE CONTRACT (0.4.0) names the six-dir payload consistently across Sections 1, 2 point 2, 2.1, 4 point 3, and 5.1; CONTEXT.md (0.7.0) names six dirs; both C10-consistent.",
+      "command": "set -e\ngrep -Fq \"version: 0.4.0\" standard/GIP.md\ntest \"$(grep -c \"methodology/\\`, \\`ecosystem/\" standard/GIP.md)\" -ge 3\ngrep -Fq \"version: 0.7.0\" CONTEXT.md\ngrep -Fq \"six governance directories\" CONTEXT.md\nout=$(bash tools/validate.sh --target standard/GIP.md 2>&1); printf \"%s\\n\" \"$out\" | grep -Fq \"[C10] PASS\"\necho \"E06 PASS: GIP 0.4.0 six-dir payload (>=3 enumerations updated) + CONTEXT 0.7.0 six dirs; C10 consistent\""
+    },
+    {
+      "acceptance_test": "CARVE-OUTS NARROWED to {registry, docs}: C4 skipped_dirs, C9 injected-prefix allow-list (now includes methodology/ecosystem), and C13 SKIPPED_DIR_PREFIXES all reflect the injection.",
+      "command": "set -e\ngrep -Fq \"skipped_dirs = {\\\"registry\\\", \\\"docs\\\"}\" tools/validate.sh\ngrep -Fq \"standard/*|templates/*|schema/*|tools/*|methodology/*|ecosystem/*\" tools/validate.sh\ngrep -Fq \"SKIPPED_DIR_PREFIXES = (\\\"registry/\\\", \\\"docs/\\\")\" tools/validate.sh\necho \"E07 PASS: C4/C9/C13 carve-outs narrowed to {registry, docs}; methodology/ecosystem now required in payload\""
+    },
+    {
+      "acceptance_test": "E2E HARNESS GREEN with the enlarged-payload assertions (assert_payload_present checks 6 dirs; index-validation resolves methodology/ecosystem), EXIT ASSERTED.",
+      "command": "out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?; printf \"%s\\n\" \"$out\" | grep -F \"assert_payload_validate_cwd_independent: OK\"; printf \"%s\\n\" \"$out\" | tail -1; test $rc -eq 0 && echo \"E08 PASS (rc=$rc)\""
+    },
+    {
+      "acceptance_test": "DOCS/DEBT SYNCED: CHANGELOG carries the six-directory Changed entry; DEBT 0.21.0 has NDEBT-008 in Resolved and NDEBT-004 ratified.",
+      "command": "set -e\nsed -n \"/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p\" CHANGELOG.md | grep -Fq \"Bootstrap payload enlarged to six directories\"\ngrep -Fq \"version: 0.21.0\" docs/planning/DEBT.md\npython3 - <<PY\nimport re\nsect=None\nfor l in open(\"docs/planning/DEBT.md\"):\n    if l.startswith(\"## Open\"): sect=\"open\"\n    elif l.startswith(\"## Resolved\"): sect=\"resolved\"\n    if l.startswith(\"| NDEBT-008 \"): assert sect==\"resolved\", \"NDEBT-008 not Resolved\"\n    if l.startswith(\"| NDEBT-004 \"): assert \"RATIFIED by\" in l, \"NDEBT-004 not ratified\"\nprint(\"ok\")\nPY\necho \"E09 PASS: CHANGELOG six-dir entry; DEBT 0.21.0; NDEBT-008 Resolved; NDEBT-004 ratified\""
+    },
+    {
+      "acceptance_test": "DEFAULT/TARGET UNCHANGED: default mode applies NO payload carve-out (all refs required); --target on a single md still exits 0.",
+      "command": "set -e\nawk \"/if mode == .payload.:/{p=1} p&&/skipped_dirs = /{print; exit}\" tools/validate.sh | grep -Fq \"{\\\"registry\\\", \\\"docs\\\"}\"\nout=$(bash tools/validate.sh --target standard/GIP.md 2>&1); rc=$?; test $rc -eq 0\necho \"E10 PASS: carve-out is payload-mode-only (default requires all refs); --target rc=$rc\""
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT: HEAD~1..HEAD touches exactly the seven contracted files and no tracked .agent path.",
+      "command": "set -e\ntest \"$(git diff --name-only HEAD~1..HEAD | LC_ALL=C sort | tr \"\\n\" \" \")\" = \"CHANGELOG.md CONTEXT.md bootstrap.sh docs/planning/DEBT.md standard/GIP.md tools/e2e_bootstrap_test.sh tools/validate.sh \"\ntest -z \"$(git diff --name-only HEAD~1..HEAD -- .agent/)\"\necho \"E11 PASS: confined to the seven contracted files, no .agent path\""
+    },
+    {
+      "acceptance_test": "REGISTRY/DOCS STAY NON-INJECTED: a real bootstrap payload does NOT contain registry/ or docs/, and still passes --payload (they remain framework-envelope).",
+      "command": "set -e\nS=\"'\"$SB\"'/e12\"; rm -rf \"$S\"; mkdir -p \"$S\"; TAG=\"f051e12-$$\"\ngit -c user.name=c -c user.email=c@n.local tag -a \"$TAG\" -m c HEAD >/dev/null 2>&1\nT=\"$S/.nizam\"; bash bootstrap.sh --repo-url \"file://$(pwd)\" --tag \"$TAG\" --target \"$T\" >/dev/null 2>&1\ntest ! -d \"$T/registry\" && test ! -d \"$T/docs\"\ncp tools/validate.sh \"$T/tools/validate.sh\"\n( cd \"$T\" && bash tools/validate.sh --payload >/dev/null 2>&1 ); a=$?\ntest $a -eq 0\ngit tag -d \"$TAG\" >/dev/null 2>&1; rm -rf \"$S\"\necho \"E12 PASS: registry/ and docs/ absent from payload; --payload still green (rc=$a) -- they stay framework-envelope\""
+    }
+  ],
+  "estimated_lines": 200,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured output is in .agent/evidence/051-verify-NN.txt (12 entries), plus the consolidated .agent/evidence/051/verification.txt (12 EXIT:0 markers) and .agent/evidence/051/diff.patch (the deliverable diff). Commands run from the repo root at deliverable commit 68832c9 (HEAD), with HEAD~1 = the F-050 merge base 91f655d as the anti-vacuity anchor; scratch entries (E05/E12) use a session-scratch root and bootstrap-injected scratch payloads exclusively.",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-directed phase execution; H-PAYLOAD-CONTRACT gate decided + ratified (see design_notes.gate_decision). No separate Loop-1 gate agents; the 12-entry suite executed live with captured evidence; QA record .agent/qa/051.json documents the independent full re-run."
+  }
+}

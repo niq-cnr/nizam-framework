@@ -1,0 +1,8 @@
+# .agent/evidence/051-verify-08.txt
+# Contract 051 verification entry 08 -- captured 2026-07-19 at deliverable commit 68832c9 (HEAD~1 = F-050 merge base 91f655d)
+# ACCEPTANCE TEST: E2E HARNESS GREEN with the enlarged-payload assertions (assert_payload_present checks 6 dirs; index-validation resolves methodology/ecosystem), EXIT ASSERTED.
+$ out=$(bash tools/e2e_bootstrap_test.sh 2>&1); rc=$?; printf "%s\n" "$out" | grep -F "assert_payload_validate_cwd_independent: OK"; printf "%s\n" "$out" | tail -1; test $rc -eq 0 && echo "E08 PASS (rc=$rc)"
+assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent (both invocation forms green with identical [C*] verdicts under /tmp/tmp.jWxsZTNiU6/.nizam)
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1784438485-4987, target /tmp/tmp.jWxsZTNiU6/.nizam).
+E08 PASS (rc=0)
+[exit 0]

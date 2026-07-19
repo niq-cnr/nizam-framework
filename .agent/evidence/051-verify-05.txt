@@ -1,0 +1,22 @@
+# .agent/evidence/051-verify-05.txt
+# Contract 051 verification entry 05 -- captured 2026-07-19 at deliverable commit 68832c9 (HEAD~1 = F-050 merge base 91f655d)
+# ACCEPTANCE TEST: ENLARGED PAYLOAD IS LOAD-BEARING (headline): a real bootstrap injects all six dirs and passes --payload both forms (11/11); a payload MISSING methodology/+ecosystem/ FAILs BOTH validate.sh (C4/C9/C13) AND bootstrap --verify-only.
+$ set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f051/e05"; rm -rf "$S"; mkdir -p "$S"; TAG="f051e05-$$"
+git -c user.name=c -c user.email=c@n.local tag -a "$TAG" -m c HEAD >/dev/null 2>&1
+T="$S/.nizam"; bash bootstrap.sh --repo-url "file://$(pwd)" --tag "$TAG" --target "$T" >/dev/null 2>&1
+for d in standard templates schema tools methodology ecosystem; do test -d "$T/$d"; done
+cp tools/validate.sh "$T/tools/validate.sh"
+( cd "$T" && bash tools/validate.sh --payload >/dev/null 2>&1 ); a=$?
+( cd "$S" && bash .nizam/tools/validate.sh --payload >/dev/null 2>&1 ); b=$?
+test $a -eq 0 && test $b -eq 0
+rm -rf "$T/methodology" "$T/ecosystem"
+set +e
+( cd "$T" && bash tools/validate.sh --payload >/dev/null 2>&1 ); c=$?
+( bash bootstrap.sh --verify-only --tag "$TAG" --target "$T" >/dev/null 2>&1 ); v=$?
+set -e
+test $c -ne 0 && test $v -ne 0
+git tag -d "$TAG" >/dev/null 2>&1; rm -rf "$S"
+echo "E05 PASS: 6 dirs injected; --payload A=$a B=$b (green); stripped payload validate=$c verify-only=$v (both FAIL) -- injection load-bearing"
+E05 PASS: 6 dirs injected; --payload A=0 B=0 (green); stripped payload validate=1 verify-only=1 (both FAIL) -- injection load-bearing
+[exit 0]

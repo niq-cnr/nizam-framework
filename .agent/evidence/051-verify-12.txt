@@ -1,0 +1,15 @@
+# .agent/evidence/051-verify-12.txt
+# Contract 051 verification entry 12 -- captured 2026-07-19 at deliverable commit 68832c9 (HEAD~1 = F-050 merge base 91f655d)
+# ACCEPTANCE TEST: REGISTRY/DOCS STAY NON-INJECTED: a real bootstrap payload does NOT contain registry/ or docs/, and still passes --payload (they remain framework-envelope).
+$ set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f051/e12"; rm -rf "$S"; mkdir -p "$S"; TAG="f051e12-$$"
+git -c user.name=c -c user.email=c@n.local tag -a "$TAG" -m c HEAD >/dev/null 2>&1
+T="$S/.nizam"; bash bootstrap.sh --repo-url "file://$(pwd)" --tag "$TAG" --target "$T" >/dev/null 2>&1
+test ! -d "$T/registry" && test ! -d "$T/docs"
+cp tools/validate.sh "$T/tools/validate.sh"
+( cd "$T" && bash tools/validate.sh --payload >/dev/null 2>&1 ); a=$?
+test $a -eq 0
+git tag -d "$TAG" >/dev/null 2>&1; rm -rf "$S"
+echo "E12 PASS: registry/ and docs/ absent from payload; --payload still green (rc=$a) -- they stay framework-envelope"
+E12 PASS: registry/ and docs/ absent from payload; --payload still green (rc=0) -- they stay framework-envelope
+[exit 0]
