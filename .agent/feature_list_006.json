@@ -1,0 +1,209 @@
+{
+  "phase": "006-enforcement-closure",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 1720,
+  "estimate_rationale": "Sum of per-feature estimated_lines (049-059). Standards/docs codification dominates (F-053 role+rules, F-058 constitutional decision); the largest code deltas are the validator extensions (F-049/052/055) and the preflight hardening bundle (F-056). The release feature (F-059) follows the proven 045 prepare-only pattern.",
+  "provenance": {
+    "proposal_status": "PROPOSED 2026-07-18 — NOT ACTIVATED. Activation requires operator authorization (gate H-PHASE-006) per methodology/00_planning.md; until then no feature may enter contract negotiation.",
+    "sources": [
+      "docs/planning/ROADMAP.md Track 2 (pre-005 candidate scope) and Track 3 (constitutional-layer decision)",
+      "docs/planning/DEBT.md open register at 0.15.0 (21 rows)",
+      ".agent/run_state.json phase-005 close (incident-proven operational rules)",
+      "GitHub issue #18 (external consumer report, NDEBT-012)"
+    ],
+    "authorized_planning_direction": "Operator 2026-07-18: 'Please action items 1-3' (item 3: successor-phase planning through the standard lifecycle; activation explicitly remains a separate operator decision).",
+    "out_of_scope": "Consumer adoption (handover F-016..F-020, nizamiq/nizamiq-strategy) — a separate cross-repository successor programme phase, unblocked by v0.7.0 but requiring its own authorization and consumer-repo access."
+  },
+  "features": [
+    {
+      "id": "049",
+      "name": "Gate tools/skill.json content (NDEBT-007)",
+      "description": "Extend the validator (a new check or a C4 extension) to JSON-parse tools/skill.json, resolve every capabilities[].module path and the entry_point on disk, in default and --payload modes, with a matching negative fixture — closing the enforcement hole that let a broken module pointer ship from v0.4.0 to v0.5.3 undetected (the identical stale pointer in swept tools/interface.md WAS caught).",
+      "status": "pending",
+      "dependencies": [],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 1,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "tools/skill.json parse + full path resolution is exercised by the default sweep and payload mode; a negative fixture with a dangling module path fails its targeted check",
+        "both sweeps green with exit codes asserted after the new check lands; e2e bootstrap green"
+      ],
+      "estimated_lines": 120
+    },
+    {
+      "id": "050",
+      "name": "Payload validator CWD anchoring (NDEBT-012, issue #18)",
+      "description": "Anchor tools/validate.sh --payload path resolution to the script/payload root so 'bash .nizam/tools/validate.sh --payload' from a consumer repository root behaves identically to invocation from inside .nizam/ — the first real external-consumer bug report (issue #18, nizamiq/documentation-standard on a v0.5.3 payload). Add a from-repo-root invocation to the e2e/fixture coverage so the regression class stays closed.",
+      "status": "pending",
+      "dependencies": [],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 2,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "both --payload invocation forms (from payload root and from consumer repo root) produce identical green results in the e2e harness",
+        "issue #18's reproduction sequence passes; GitHub issue closed on merge with the fix commit referenced"
+      ],
+      "estimated_lines": 140
+    },
+    {
+      "id": "051",
+      "name": "Injected-payload/methodology contract decision (NDEBT-008 + NDEBT-004)",
+      "description": "Operator-gated standards decision (H-PAYLOAD-CONTRACT): either methodology/ joins the bootstrap-injected payload, or pinned-framework-checkout resolution becomes the stated contract for methodology/* references in consumer installs. Implement whichever branch the operator records: align bootstrap.sh, standard/GIP.md, tools/interface.md, the C4/C9 payload-mode rules (incl. the C9 payload skipped_dirs carve-out concern of NDEBT-004), and the e2e assertions with the single recorded decision.",
+      "status": "pending",
+      "dependencies": [],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 3,
+      "operator_gate": true,
+      "acceptance_tests": [
+        "the operator's decision is recorded verbatim in run_state before implementation begins",
+        "every enumeration of the injected payload (bootstrap.sh, GIP, README, CONTEXT, interface.md, validator payload rules, e2e assertions) states the same contract; no dangling methodology/* reference remains in a consumer-install context"
+      ],
+      "estimated_lines": 200
+    },
+    {
+      "id": "052",
+      "name": "Fixtures self-test closure + --target routing (NDEBT-009, NDEBT-015, NDEBT-016)",
+      "description": "Close the remaining fixture dormancy: a validate.sh --self-test mode (or fixtures CI job) that runs EVERY negative fixture through its targeted check and asserts the expected failure — beyond C12's ecosystem families. Extend check_c11_or_c4_target's content routing to recognize the three ecosystem schema families so --target invocations produce a discriminating signal (NDEBT-015), and harden C12's polarity-classification regex per NDEBT-016 (case-insensitive, full-token) with fixture-name conformance asserted.",
+      "status": "pending",
+      "dependencies": [
+        "049"
+      ],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 4,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "every shipped negative fixture provably fails its targeted check via the self-test surface, asserted in CI",
+        "--target against each ecosystem fixture family routes to the correct schema and polarity",
+        "the NDEBT-016 dodge shapes (full-word, uppercase, false-trigger names) are rejected by the hardened classifier"
+      ],
+      "estimated_lines": 180
+    },
+    {
+      "id": "053",
+      "name": "Orchestrator role + operational-rule codification (NDEBT-010, -013, -014, -019, -020)",
+      "description": "Define the Orchestrator in standard/AGF.md Section 2 (coordination/state-ownership role, gate obligations, exclusively-owned run_state fields per AGF Section 5 rule 4), reconciling capability_profiles/permission_classes/mcp_policy/release-train references. Codify into methodology/02 (and AGF role obligations where they bind): the probe-isolation rule (NDEBT-013/020 — scratch paths only, cwd verified before any destructive command, never a real-repo path in a probe), the rc-capture rule (NDEBT-019 — assert the validator's own exit code), and the five-class NDEBT-014 verification-authoring catalogue with vetted verify_lib.sh helpers where mechanizable.",
+      "status": "pending",
+      "dependencies": [],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 5,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "AGF Section 2 defines the Orchestrator and every load-bearing cross-reference resolves to it",
+        "methodology/02 carries the probe-isolation, rc-capture, and five-class authoring rules as document-binding requirements with their proven fixes",
+        "new/updated verify_lib.sh helpers are fixture-tested"
+      ],
+      "estimated_lines": 260
+    },
+    {
+      "id": "054",
+      "name": "Work-packet template/schema alignment (NDEBT-011)",
+      "description": "Align the three disagreeing surfaces: either give templates/work-packet.template.json schema-valid literal defaults so it validates end-to-end against schema/work-packet.schema.json, or correct the schema description to name work-packet artifacts rather than the template and state the parse-validity-only contract in templates/README.md.",
+      "status": "pending",
+      "dependencies": [],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 6,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "the chosen alignment is implemented and the three surfaces (template, schema description, templates/README.md) agree; the template's contract is mechanically asserted"
+      ],
+      "estimated_lines": 40
+    },
+    {
+      "id": "055",
+      "name": "Enumeration/bare-ref recurrence guards (NDEBT-005)",
+      "description": "Mechanize the two NDEBT-003 defect classes F-027 fixed by hand: enumeration-completeness (hand-maintained key-documents lists cannot silently omit a file) and bare non-directory-qualified stale cross-references (a bare NN_name.md that no longer resolves), ideally sourced from a canonical index rather than re-derived lists — wired into the self-test surface from F-052.",
+      "status": "pending",
+      "dependencies": [
+        "052"
+      ],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 7,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "a seeded enumeration omission and a seeded bare stale reference each fail their guard in the self-test surface; the guards source from a canonical index, not duplicated lists"
+      ],
+      "estimated_lines": 160
+    },
+    {
+      "id": "056",
+      "name": "Preflight + ecosystem-schema hardening bundle (NDEBT-021, -017, -018, -023, -024)",
+      "description": "Execute the deferred hardening backlog: NUL-delimited git-status parsing preserving directory-prefix tolerate semantics, readable-regular-file reference checks + unresolved-HEAD blocking, --repo-root None default, output-dir pre-clean/refusal, the untracked-not-tolerated FAIL probe (NDEBT-021); a real CI-run lookup for ci_references (NDEBT-017); a clean-worktree self-fixture isolation mode + the codified gate-decision-before-gated-run rule (NDEBT-018); the same-repo revision-consistency negative fixture + capture-tool check (NDEBT-023); and the FAIL-shape alignment across schema/fixture/tool (NDEBT-024) — all keeping C12 green.",
+      "status": "pending",
+      "dependencies": [],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 8,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "each bundled item carries a discriminating test (fixture or probe) proving the hardened behavior; the 043/044 committed approved-exception semantics are preserved",
+        "both sweeps and the e2e harness stay green; the preflight CLI's five documented exit codes are unchanged"
+      ],
+      "estimated_lines": 260
+    },
+    {
+      "id": "057",
+      "name": "Progress-comparison taxonomy amendment (NDEBT-022)",
+      "description": "Amend the LIVE ecosystem/07_progress_comparison.md with a persisting/re-confirmed transition class, a first-comparison (pre-window-resolved) rule, and exact open-vs-recorded score-count semantics — before the next audit runs. The committed audit-044 artifacts remain untouched (immutable; they bridged the gap transparently).",
+      "status": "pending",
+      "dependencies": [],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 9,
+      "operator_gate": false,
+      "acceptance_tests": [
+        "the amended protocol classifies the audit-044 corpus without recourse to unchanged_facts workarounds; version bump + change_log per NDS Sec 7"
+      ],
+      "estimated_lines": 80
+    },
+    {
+      "id": "058",
+      "name": "Constitutional layer: mechanize-or-descope decision (Track 3)",
+      "description": "Operator-gated strategic decision (H-CONSTITUTIONAL), taken per constitutional document (capability profiles, MERGE_READY CI-gate formula, eval-and-trace, eval-gated promotion, MCP policy, failure modes, provenance, permission classes, cross-repo governance): mechanize (an enforcement/verification surface or runnable conformance checklist) or descope explicitly (consumer-aspirational marking in frontmatter/body). Implement the recorded per-document decisions and refresh docs/guide/index.html, which still narrates the phase-003 world.",
+      "status": "pending",
+      "dependencies": [],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 10,
+      "operator_gate": true,
+      "acceptance_tests": [
+        "a recorded per-document decision exists for every constitutional document, operator-authorized verbatim",
+        "each document carries its decided state (enforcement surface, conformance checklist, or explicit consumer-aspirational marking); the guide reflects the outcome"
+      ],
+      "estimated_lines": 180
+    },
+    {
+      "id": "059",
+      "name": "Phase close + v0.8.0 release preparation (H-FRAMEWORK-RELEASE)",
+      "description": "Roll the phase into a prepare-only v0.8.0 MINOR package on the 045 pattern: CHANGELOG section, version surfaces, SHA-pinned release-readiness checklist with the human items held PENDING, docs/count sync — the operator signs off and tags per the recorded two-part gate.",
+      "status": "pending",
+      "dependencies": [
+        "049",
+        "050",
+        "051",
+        "052",
+        "053",
+        "054",
+        "055",
+        "056",
+        "057",
+        "058"
+      ],
+      "handover_feature_ids": [],
+      "pr": "TBD-at-activation",
+      "merge_order": 11,
+      "operator_gate": true,
+      "acceptance_tests": [
+        "release-readiness checklist items 1-6 carry evidence paths; items 7-8 held at the pinned PENDING literal until the operator executes them",
+        "both sweeps green with exit codes asserted; no v0.8.0 tag exists at close (the pipeline never self-tags)"
+      ],
+      "estimated_lines": 100
+    }
+  ]
+}

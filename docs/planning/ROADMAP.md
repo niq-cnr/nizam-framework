@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.6.0
+version: 0.7.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-07-18"
+    summary: "Post-v0.7.0 actions (operator-directed): added the Proposed Next Phase section — phase 006 (Enforcement Closure & Hardening, features 049-059, est 1720 lines) PROPOSED and awaiting operator authorization (gate H-PHASE-006); Track 1 item 3 (v0.7.0 Release title) marked executed via the NDEBT-025 workflow fix + live retitle; Track 1 item 2 (GitHub Pages) marked mechanized via the new pages.yml workflow, publishing on merge."
   - version: "0.6.0"
     date: "2026-07-18"
     summary: "Phase-005 completion refresh: v0.7.0 released (annotated tag pushed by the operator at merge commit 4833322 after the recorded H-FRAMEWORK-RELEASE sign-off; Release page auto-published by release.yml, title defect NDEBT-025). Current Position updated to 2026-07-18 (phases 001-005 complete, C1-C12 sweep, open-debt roll refreshed through NDEBT-025); Plan of Record banner marked complete; Track 1 gains the v0.6.0-Release-page execution record and the v0.7.0 title-fix action."
@@ -27,6 +30,21 @@ change_log:
 ---
 
 # Forward Roadmap
+
+## Proposed Next Phase (2026-07-18) — 006 Enforcement Closure & Hardening [AWAITING OPERATOR AUTHORIZATION]
+
+Phase `006-enforcement-closure` is **PROPOSED, not activated**: the planner artifacts
+exist (`.agent/product_spec_006.md`, `.agent/feature_list_006.json` — 11 features
+049-059, DAG-validated acyclic, `original_estimate_lines` 1720), the manifest carries
+the phase as `status: pending`, and per `methodology/00_planning.md` execution begins
+only when the operator authorizes activation (gate **H-PHASE-006**). Scope: the
+debt-driven enforcement closure (Track 2's revived candidates NDEBT-004/005/007/008/
+009/010/011/012 plus the phase-005 additions NDEBT-013..024), codification of the
+incident-proven operational rules, the Track 3 constitutional mechanize-or-descope
+decision (operator gate H-CONSTITUTIONAL), the injected-payload contract decision
+(H-PAYLOAD-CONTRACT), and a v0.8.0 release gate (H-FRAMEWORK-RELEASE). Consumer
+adoption (handover F-016..F-020, `nizamiq/nizamiq-strategy`) is a separate
+cross-repository successor programme phase, not part of this proposal.
 
 ## Plan of Record (2026-07-17) — Phase 005 Activated: Ecosystem Engineering Cycle
 
@@ -90,9 +108,9 @@ successor, leaving open debt deferred to unscoped "future phases").
   the recorded sign-off; `release.yml` auto-published the GitHub Release page from
   the `[0.7.0]` CHANGELOG section (its title defect is NDEBT-025, Track 1 item 3).
   The successor consumer-adoption phase (handover F-016..F-020) is now unblocked.
-- Open debt: NDEBT-004, NDEBT-005, NDEBT-007 through NDEBT-025 excluding the
-  resolved NDEBT-001/002/003/006 (21 Open rows, all Low or Medium; see
-  `docs/planning/DEBT.md`).
+- Open debt: NDEBT-004, NDEBT-005, NDEBT-007 through NDEBT-024 (20 Open rows, all
+  Low or Medium; NDEBT-001/002/003/006/025 are Resolved — 025 on 2026-07-18 via the
+  release.yml title fix and live retitle; see `docs/planning/DEBT.md`).
 
 ## Track 1 — Outstanding Human Gates (no planning required)
 
@@ -104,13 +122,18 @@ they need no new phase.
    runtime change, `bootstrap.sh` unmodified). Residual: **publish the v0.6.0 GitHub
    Release page — EXECUTED 2026-07-15** (the page exists, published 05:53 UTC;
    every tag v0.1.0–v0.6.0 now has a published Release page).
-2. **Publish the user guide to GitHub Pages.** Outstanding since phase 003
-   (`docs/guide/index.html` ships in-repo but is not yet published). Recorded in the
-   phase-003 manifest note; still unexecuted.
-3. **Fix the v0.7.0 GitHub Release page title (NDEBT-025).** One-click UI edit:
-   the auto-published title carries the merge-commit subject instead of the
-   annotated tag's subject `v0.7.0 — Ecosystem Engineering Cycle`; the body is
-   correct. The workflow fix is registered as NDEBT-025.
+2. **Publish the user guide to GitHub Pages — MECHANIZED 2026-07-18.** Outstanding
+   since phase 003; `.github/workflows/pages.yml` now publishes `docs/guide/` on
+   every merge to `main` touching the guide (and on dispatch). One-time
+   prerequisite for the operator: enable Pages with Source "GitHub Actions"
+   (Settings → Pages) — the default GITHUB_TOKEN cannot create the Pages site, so
+   the job fails loudly at the configure step until that one-click enable is done,
+   after which publication is fully automatic.
+3. **Fix the v0.7.0 GitHub Release page title — EXECUTED 2026-07-18.** The title
+   now reads `v0.7.0 — Ecosystem Engineering Cycle` (corrected by a branch-scoped
+   one-shot applying the fixed `release.yml` extraction logic; body untouched).
+   NDEBT-025 is Resolved: the workflow now derives the title from the genuine tag
+   object's real type and fails loudly on a remote/local type disagreement.
 
 ## Track 2 — [SUPERSEDED as the phase-005 selection, 2026-07-17] Candidate Scope: Consumer Reality & Enforcement Closure
 
