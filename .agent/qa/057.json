@@ -1,0 +1,47 @@
+{
+  "feature_id": "057",
+  "qa_pass": true,
+  "checks_run": 9,
+  "checks_passed": 9,
+  "adversarial": {
+    "performed": true,
+    "description": "Beyond re-running all 9 contract verifications to EXIT:0: (E01) anti-vacuity confirms the phase base 964fe48 had ecosystem/07 at 0.1.1 with four transition classes and no persisting/3.1/3.2/6.1; (E05) the acceptance test is exercised against the REAL audit-044 corpus -- all five findings map to an amended class (015 persisting, 002 pre-window-resolved, 016 stale, 017/018 new) and the open-only score is 2->4 with the resolved 002 excluded, so the delta the committed run bridged via unchanged_facts is now derivable directly from the taxonomy; (E06) the committed audit-2026-07-17-cba6422 artifacts are proven byte-identical to the base (immutability, AH-3). The persisting/stale duality was checked to be exhaustive-and-exclusive for a present-on-both finding (evidence current -> persisting; stale -> stale).",
+    "process_note": "Single-session collapsed-role execution, disclosed-and-permitted by the AGF Orchestrator clause. E09 dogfoods the NDEBT-019 rc-capture rule. The amendment binds future comparisons only; no committed audit artifact is mutated. E01/E07 anchor to the phase base 964fe48 because the operator-authorized re-baseline commit 085e568 sits between the base and this deliverable."
+  },
+  "evidence_files": [
+    ".agent/evidence/057-verify-01.txt",
+    ".agent/evidence/057-verify-02.txt",
+    ".agent/evidence/057-verify-03.txt",
+    ".agent/evidence/057-verify-04.txt",
+    ".agent/evidence/057-verify-05.txt",
+    ".agent/evidence/057-verify-06.txt",
+    ".agent/evidence/057-verify-07.txt",
+    ".agent/evidence/057-verify-08.txt",
+    ".agent/evidence/057-verify-09.txt",
+    ".agent/evidence/057/verification.txt",
+    ".agent/evidence/057/diff.patch"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": ".agent/evidence/057/diff.patch is `git diff 964fe48..HEAD` at the deliverable; E07 independently re-asserts the non-.agent changes are exactly the three contracted files.",
+    "flat_files": "9 per-entry captures 057-verify-01..09.txt + 057/verification.txt (9 EXIT:0) + 057/diff.patch."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_006.json feature 057 acceptance_tests (1) + contract 057 verification (9)",
+    "summary": "The single acceptance test -- 'the amended protocol classifies the audit-044 corpus without recourse to unchanged_facts workarounds; version bump + change_log per NDS Sec 7' -- maps to: classifies the corpus -> E05 (all five findings map to an amended class; open-only 2->4; the doc defines every class used) + E02/E03/E04 (the persisting class, the 3.1/3.2 rules, and the 6.1 semantics that make those classifications possible); version bump + change_log -> E08 (ecosystem/07 0.2.0 with a matching change_log). E06 additionally proves the committed corpus stays immutable while the LIVE protocol is amended."
+  },
+  "non_blocking_observations": [
+    "OPERATOR-SELECTED FEATURE + RE-BASELINE (disclosed): the operator directed 'Rebase line approved' + 'Option 1', authorizing a Section-6/9 scope-budget re-baseline (original_estimate_lines 1720 -> 2300, ceiling 2236 -> 2990; recorded structurally in scope_budget.rebaselines in the separate commit 085e568) and selecting feature 057. So 057 is operator-chosen, not abort-driven.",
+    "SCOPE ~ON ESTIMATE: 90 actual ins+del vs 80 estimated (+12.5%); no meaningful flag (well under the 3x-rolling: last-3 avg 053=221/055=282/054=74 = 192, 3x=577). Cumulative 1858/2990 = 62.1% of the re-baselined ceiling.",
+    "LIVE-DOC AMENDMENT, COMMITTED CORPUS IMMUTABLE: the amendment binds FUTURE comparisons; the committed audit-2026-07-17-cba6422 delta/findings/report are untouched (E06). NDEBT-022 was Medium severity precisely because it was a spec-completeness gap that would recur, not a concealment -- the committed delta was correct and fully traceable via its transparent unchanged_facts + prose bridge."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 057 APPROVED. All 9 contract verifications re-run to EXIT:0. ecosystem/07_progress_comparison.md 0.2.0 completes the finding-state taxonomy: the fifth `persisting` class (Section 3), the pre-window-resolved recording rule (3.1), the first-comparison rule (3.2), and the open-only score-count semantics (6.1). The real audit-044 corpus classifies directly (015 persisting, 002 pre-window-resolved, 016 stale, 017/018 new; open-only 2->4) without the unchanged_facts workaround the committed delta used, and that committed corpus stays immutable. DEBT 0.26.0 (NDEBT-022 Resolved). Sweep 13/13, payload 11/11, self-test 46/46, e2e green. Operator-selected feature under the authorized re-baseline."
+  }
+}

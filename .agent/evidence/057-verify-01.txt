@@ -1,0 +1,13 @@
+# .agent/evidence/057-verify-01.txt
+# Contract 057 verification entry 01 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: ANTI-VACUITY (phase base 964fe48 = the F-054 merge / PR #34): at the base ecosystem/07 was 0.1.1 with four transition classes and no `persisting`, Section 3.1/3.2, or Section 6.1.
+# --- command (from .agent/contracts/057.json verification[01].command) ---
+set -e
+git show 964fe48:ecosystem/07_progress_comparison.md | grep -Fq 'version: 0.1.1'
+git show 964fe48:ecosystem/07_progress_comparison.md | grep -Fq 'exactly one of four transition classes'
+if git show 964fe48:ecosystem/07_progress_comparison.md | grep -Fq '`persisting`'; then echo 'VACUITY: persisting already at base'; exit 1; fi
+if git show 964fe48:ecosystem/07_progress_comparison.md | grep -Fq '3.1 Pre-Window-Resolved'; then echo 'VACUITY: 3.1 already at base'; exit 1; fi
+echo 'E01 PASS: at base 964fe48 ecosystem/07 was 0.1.1 with four transition classes, no persisting / 3.1 / 3.2 / 6.1 (anti-vacuity)'
+# --- output ---
+E01 PASS: at base 964fe48 ecosystem/07 was 0.1.1 with four transition classes, no persisting / 3.1 / 3.2 / 6.1 (anti-vacuity)
+[exit 0]

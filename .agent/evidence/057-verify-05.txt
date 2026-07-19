@@ -1,0 +1,27 @@
+# .agent/evidence/057-verify-05.txt
+# Contract 057 verification entry 05 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: AUDIT-044 CLASSIFIES CLEANLY (the acceptance test): all five audit-044 findings map to an amended class (015 persisting, 002 pre-window-resolved, 016 stale, 017/018 new) with open-only score 2->4, without recourse to the unchanged_facts workaround.
+# --- command (from .agent/contracts/057.json verification[05].command) ---
+set -e
+python3 - <<'PY'
+import json
+doc = open('ecosystem/07_progress_comparison.md').read()
+for tok in ['`new`','`resolved`','`reopened`','`persisting`','`stale`','### 3.1 Pre-Window-Resolved','### 3.2 First-Comparison','### 6.1 Open-Findings Count']:
+    assert tok in doc, 'doc missing: ' + tok
+raw = json.load(open('.agent/audits/audit-2026-07-17-cba6422/findings.json'))
+findings = raw if isinstance(raw, list) else raw['findings']
+by = {f['id']: f for f in findings}
+amended = {'F-audit044-ndebt-015':'persisting','F-audit044-ndebt-002':'pre-window-resolved','F-audit044-ndebt-016':'stale','F-audit044-ndebt-017':'new','F-audit044-ndebt-018':'new'}
+assert set(by) == set(amended), sorted(by)
+assert by['F-audit044-ndebt-015']['status'] == 'open'     # present-both, re-confirmed -> persisting
+assert by['F-audit044-ndebt-002']['status'] == 'resolved' # pre-baseline-1 -> pre-window-resolved (recorded, not a transition)
+open_before = {'F-audit044-ndebt-015','F-audit044-ndebt-016'}
+open_after  = {'F-audit044-ndebt-015','F-audit044-ndebt-016','F-audit044-ndebt-017','F-audit044-ndebt-018'}
+assert len(open_before) == 2 and len(open_after) == 4, 'open-only score must be 2->4 (002 resolved, excluded)'
+print('audit-044 classifies cleanly:', amended)
+PY
+echo 'E05 PASS: all 5 audit-044 findings classify under the amended taxonomy; open-only 2->4; no unchanged_facts needed'
+# --- output ---
+audit-044 classifies cleanly: {'F-audit044-ndebt-015': 'persisting', 'F-audit044-ndebt-002': 'pre-window-resolved', 'F-audit044-ndebt-016': 'stale', 'F-audit044-ndebt-017': 'new', 'F-audit044-ndebt-018': 'new'}
+E05 PASS: all 5 audit-044 findings classify under the amended taxonomy; open-only 2->4; no unchanged_facts needed
+[exit 0]

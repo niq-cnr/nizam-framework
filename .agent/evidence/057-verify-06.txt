@@ -1,0 +1,10 @@
+# .agent/evidence/057-verify-06.txt
+# Contract 057 verification entry 06 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: AUDIT-044 IMMUTABLE (AH-3): the committed audit-2026-07-17-cba6422 delta/findings/report artifacts are byte-identical to the base -- the amendment binds FUTURE comparisons, the historical delta stays untouched.
+# --- command (from .agent/contracts/057.json verification[06].command) ---
+set -e
+test -z "$(git diff --name-only 964fe48..HEAD -- .agent/audits/)"
+echo 'E06 PASS: the committed audit-2026-07-17-cba6422 artifacts are unchanged (immutable)'
+# --- output ---
+E06 PASS: the committed audit-2026-07-17-cba6422 artifacts are unchanged (immutable)
+[exit 0]

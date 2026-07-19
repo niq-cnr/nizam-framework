@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "006-enforcement-closure",
-  "current_feature": "054",
+  "current_feature": "057",
   "status": "in_progress",
   "updated_at": "2026-07-19T00:00:00Z",
   "circuit_breaker": {
@@ -802,6 +802,11 @@
       "at": "2026-07-19T00:00:00Z",
       "event": "operator_scope_rebaseline",
       "detail": "Operator directive 'Rebase line approved' + 'Option 1' (2026-07-19): (1) AUTHORIZED a Section-6/9 scope-budget re-baseline raising scope_budget.original_estimate_lines 1720 -> 2300 (new 130% cumulative ceiling 2236 -> 2990), recorded structurally in scope_budget.rebaselines with from/to/authorized_by/at/reason. Rationale: the phase has done more real mechanization work than the initial estimate anticipated, and the four remaining features (056/057/058/059) would breach the old ceiling; the re-baseline lets the tail run without a mid-phase halt. (2) Chose Option 1 -- proceed with feature 057 (progress-comparison taxonomy, NDEBT-022) as the next ungated root. Current cumulative 1768/2990 = 59.1% of the new ceiling."
+    },
+    {
+      "at": "2026-07-19T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 057 (Progress-comparison taxonomy amendment -- NDEBT-022) COMPLETE at deliverable commit a7679de -- phase 006's eighth feature, on the phase branch restarted from the F-054 merge (main 964fe48, PR #34). OPERATOR-SELECTED: directive 'Rebase line approved' + 'Option 1' (2026-07-19) authorized the Section-6/9 re-baseline (recorded in commit 085e568, scope_budget.rebaselines; original_estimate 1720->2300, ceiling 2236->2990) and chose 057. IMPLEMENTATION (3 files): the LIVE ecosystem/07_progress_comparison.md 0.2.0 completes its finding-state taxonomy so a real corpus classifies without workarounds -- Section 3 adds the fifth transition class `persisting` (present on both sides and still open, evidence freshly re-confirmed at/after the later execution's anchors, the exact opposite of `stale`; carried, never a score-movement source); Section 3.1 the pre-window-resolved recording rule (a finding resolved before the earlier input's reference point is recorded but is not a cross-execution transition and is excluded from the open-findings score; `resolved` reserved for an in-window closure); Section 3.2 the first-comparison rule (empty `reopened` on a first comparison is correct); Section 6.1 the open-vs-recorded score-count semantics (open findings only). PROVEN: E01 anti-vacuity at base 964fe48; E02/E03/E04 the class + rules + semantics present; E05 the ACCEPTANCE TEST -- the real audit-044 corpus classifies directly (015 persisting, 002 pre-window-resolved, 016 stale, 017/018 new; open-only 2->4) without unchanged_facts; E06 the committed audit-2026-07-17-cba6422 artifacts are immutable (byte-identical to base); E08 docs synced; E09 regression bundle. Self-sweeps 13/13 default, 11/11 payload; self-test 46/46; e2e green. DEBT 0.26.0 (NDEBT-022 Resolved). Verification 9/9; QA independent re-run 9/9 (.agent/qa/057.json); non-.agent diff confined to the 3 contracted files. SCOPE: 90 vs 80 estimate (~on target, no flag); cumulative 1858/2990 (62.1% of the re-baselined ceiling). Phase 006: 8 of 11 complete (049/050/051/052/053/055/054/057). Remaining: 056 (preflight/ecosystem hardening bundle, ungated), 058 (H-CONSTITUTIONAL-gated), 059 (phase close + v0.8.0)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -975,7 +980,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2300,
-    "total_lines_changed": 1768,
+    "total_lines_changed": 1858,
     "per_feature": [
       {
         "id": "049",
@@ -1025,6 +1030,13 @@
         "actual": 74,
         "flag": "scope_over_estimate -- 73 vs 40 (+83%) after the PR #34 review round; small absolute. Flag, not halt, and NOT the 3x-rolling flag (last-3 avg 052=678/053=221/055=282 = 394, 3x=1181; 73 far under). Cumulative 1767/2236 = 79.0%.",
         "note": "6 files (git numstat ins+del, base 15a30e1..HEAD after the PR #34 review round): tools/fixtures_self_test.sh 32 (the template-schema conformance guard), templates/README.md 10+2=12, CHANGELOG.md 13, schema/README.md 5+2=7, templates/work-packet.template.json 1+4=5, docs/planning/DEBT.md 2+2=4 -- total 74 vs 40 estimated (a +1 stale-comment reword landed in the PR #34 review's follow-on fix). Option A (schema-valid template) chosen so the mechanical assertion is non-vacuous; the three enum/integer dispatch fields are OMITTED (PR #34 review) rather than shipped as literal defaults. Cumulative 1694+73 = 1767/2236 ceiling (79.0%)."
+      },
+      {
+        "id": "057",
+        "estimated": 80,
+        "actual": 90,
+        "flag": null,
+        "note": "3 files (git numstat ins+del, deliverable commit a7679de, base 964fe48..HEAD non-.agent): ecosystem/07_progress_comparison.md 62+9=71 (the persisting class + 3.1/3.2/6.1 + four->five + frontmatter), CHANGELOG.md 15, docs/planning/DEBT.md 2+2=4 -- total 90 vs 80 estimated (+12.5%, ~on estimate, no flag). Rolling 3x-average (053=221, 055=282, 054=74) = 192, 3x=577; 90 << 577. Cumulative 1768+90 = 1858 / 2990 re-baselined ceiling (62.1%)."
       }
     ],
     "rebaselines": [
