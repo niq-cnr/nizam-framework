@@ -8,7 +8,7 @@ authoritative_source: ecosystem/07_progress_comparison.md
 change_log:
   - version: "0.2.0"
     date: "2026-07-19"
-    summary: "Feature 057 (NDEBT-022): completes the finding-state taxonomy so it classifies a real corpus without workarounds. Section 3 adds the fifth transition class `persisting` (present on both sides with freshly re-confirmed, current evidence -- the exact opposite of `stale`), the Section 3.1 pre-window-resolved recording rule (a finding resolved before the earlier input's reference point is recorded but not a cross-execution transition), and the Section 3.2 first-comparison rule (an empty `reopened` bucket on a first comparison is correct). Section 6.1 fixes the score-count semantics: the open-findings score counts `open` findings only, never resolved or pre-window-resolved recorded findings. Motivated by audit-044, whose delta bridged the two gaps via unchanged_facts + prose notes; the amendment lets a future comparison classify that corpus directly."
+    summary: "Feature 057 (NDEBT-022): completes the finding-state taxonomy so it classifies a real corpus without workarounds. Section 3 adds the fifth transition class `persisting` (present on both sides with freshly re-confirmed, current evidence -- the exact opposite of `stale`), the Section 3.1 pre-window-resolved recording rule (a finding resolved before the earlier input's reference point is recorded but not a cross-execution transition), and the Section 3.2 first-comparison rule (an empty `reopened` bucket on a first comparison is correct). Section 6.1 fixes the score-count semantics: the open-findings score counts `open` findings only, never resolved or pre-window-resolved recorded findings. Section 3 also disambiguates `new` and `reopened` -- a previously-resolved finding that reappears is `reopened` only, never also `new` -- preserving the exactly-one-class rule. Motivated by audit-044, whose delta bridged the two gaps via unchanged_facts + prose notes; the amendment lets a future comparison classify that corpus directly."
   - version: "0.1.1"
     date: "2026-07-18"
     summary: "Feature 048 (operator PR #21 review, finding 4): both references to the deferred delta schema now use the module's bare-filename convention (audit_delta.schema.json, planned under schema/) instead of a directory-qualified path that dangles until the schema ships."
@@ -63,14 +63,19 @@ input MUST receive exactly one of them (subject to the pre-window-resolved
 recording rule of Section 3.1):
 
 - `new` -- present in the later execution's findings, absent from the
-  earlier one. A finding not seen before this comparison's later side.
+  earlier one, and NOT previously classified `resolved` in an earlier
+  comparison. A finding not seen before this comparison's later side; a
+  re-appearance of a previously-resolved finding is `reopened`, not `new`.
 - `resolved` -- present and open in the earlier execution, absent from the
   later one, and closed per the closure-only-with-evidence rule (Section 4)
   by a closure that occurred WITHIN the comparison window -- Section 3.1
   distinguishes this in-window closure from a resolution that predates the
   window.
-- `reopened` -- previously classified `resolved` in an earlier comparison,
-  now present again in the later execution's findings.
+- `reopened` -- absent from the earlier execution and previously classified
+  `resolved` in an earlier comparison, now present again in the later
+  execution's findings. This is the sole class for a previously-resolved
+  finding that reappears; the `new` class explicitly excludes it, so the two
+  never overlap.
 - `persisting` -- present in both executions and still open, with evidence
   that is CURRENT: freshly re-confirmed at or after the later execution's own
   revision and timestamp anchors (`ecosystem/02_evidence_baseline.md` Section
