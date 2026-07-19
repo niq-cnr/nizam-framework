@@ -151,6 +151,67 @@ note_covered word_present_fail.md
 assert_rc "primitive   vlib_word_present pass" 0 vlib_word_present tools/fixtures/word_present_pass.md new
 assert_rc "primitive   vlib_word_present fail" 1 vlib_word_present tools/fixtures/word_present_fail.md new
 
+# vlib_bare_ref_resolves (F-055, NDEBT-005b): bare '05_gamma.md' in the fail
+# fixture is enumerated by no key_document in the canonical index enum_index.json;
+# every bare ref in the pass fixture resolves. Sourced from the canonical index,
+# not a duplicated list.
+note_covered enum_index.json
+note_covered bare_ref_pass.md
+note_covered bare_ref_fail.md
+assert_rc "primitive   vlib_bare_ref_resolves pass" 0 vlib_bare_ref_resolves tools/fixtures/bare_ref_pass.md tools/fixtures/enum_index.json
+assert_rc "primitive   vlib_bare_ref_resolves fail" 1 vlib_bare_ref_resolves tools/fixtures/bare_ref_fail.md tools/fixtures/enum_index.json
+
+# vlib_enumeration_complete (F-055, NDEBT-005a): the guard enumerates a
+# DIRECTORY, so its seeded omission is built in a scratch dir (mktemp + EXIT
+# trap -- Section 11 probe isolation), the same git-scratch pattern the two
+# primitives below use. A dir whose files are all enumerated by enum_index.json
+# passes; adding one on-disk file the index omits must fail.
+_enumeration_complete_scratch() (
+  local d; d=$(mktemp -d) || return 1
+  trap 'rm -rf "${d}"' EXIT
+  mkdir -p "${d}/m1"
+  : > "${d}/m1/00_alpha.md"
+  : > "${d}/m1/01_beta.md"
+  vlib_enumeration_complete tools/fixtures/enum_index.json m1 "${d}/m1" '*.md' >/dev/null 2>&1 || return 1
+  : > "${d}/m1/02_gamma.md"   # seeded omission: on disk, absent from the index
+  vlib_enumeration_complete tools/fixtures/enum_index.json m1 "${d}/m1" '*.md' >/dev/null 2>&1 && return 1
+  return 0
+)
+if _enumeration_complete_scratch; then
+  echo "OK   primitive   vlib_enumeration_complete (complete pass / seeded-omission fail)"
+else
+  echo "FAIL primitive   vlib_enumeration_complete: a scratch assertion did not hold"
+  fail=1
+fi
+
+# Real-tree recurrence guards (the actual NDEBT-005 mechanization, not just
+# fixture discrimination): the canonical index NIZAM.json must enumerate every
+# on-disk governed doc, and no methodology/ or standard/ doc may carry an
+# unresolved bare NN_name.md reference. ecosystem/, registers, and NIPs are
+# out of the bare-ref sweep by design -- they legitimately carry forward-refs
+# to planned-but-unshipped stages and quoted historical defects, the exact
+# false-positive risk NDEBT-005 was deferred over; methodology/ + standard/ are
+# the stable, fully-shipped modules where NDEBT-003b actually occurred.
+_f055_real_tree() {
+  local m f bad=0
+  for m in standard methodology registry ecosystem; do
+    vlib_enumeration_complete NIZAM.json "${m}" "${m}" '*.md' >/dev/null 2>&1 \
+      || { echo "FAIL guard       enumeration real-tree: NIZAM.json omits an on-disk ${m}/ doc"; bad=1; }
+  done
+  [ "${bad}" -eq 0 ] \
+    && echo "OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk)" \
+    || fail=1
+  bad=0
+  for f in methodology/*.md standard/*.md; do
+    vlib_bare_ref_resolves "${f}" NIZAM.json >/dev/null 2>&1 \
+      || { echo "FAIL guard       bare-ref real-tree: ${f} carries an unresolved bare reference"; bad=1; }
+  done
+  [ "${bad}" -eq 0 ] \
+    && echo "OK   guard       vlib_bare_ref_resolves real-tree (methodology/ + standard/ clean)" \
+    || fail=1
+}
+_f055_real_tree
+
 # vlib_path_resolves: every token line in the pass fixture resolves/exempts
 # (rc 0); the fail fixture's token does not (rc 1). Tokens resolve relative to
 # the repo root (this script's CWD).

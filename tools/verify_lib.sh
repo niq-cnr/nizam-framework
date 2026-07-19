@@ -9,14 +9,16 @@
 # tools/verify_lib.sh` unconditionally without perturbing its own shell
 # options, output streams, or exit status.
 #
-# Exposes six vetted, individually fixture-tested primitives that
-# contracts (F-024..F-029, F-053) and future `tools/validate.sh` checks should
-# compose their verification from, instead of re-inventing (and
+# Exposes eight vetted, individually fixture-tested primitives that
+# contracts (F-024..F-029, F-053, F-055) and future `tools/validate.sh` checks
+# should compose their verification from, instead of re-inventing (and
 # re-breaking) the historical anti-patterns this library exists to fix:
 # vacuous whole-file greps, `git diff HEAD` scope guards blind to new
 # untracked files, equal-or-decreasing version "increases", punctuation-
-# mangled path resolution, stale multi-directory payload enumerations, and
-# bare-substring matches that false-pass on a containing word.
+# mangled path resolution, stale multi-directory payload enumerations,
+# bare-substring matches that false-pass on a containing word, hand-maintained
+# document enumerations that silently omit a shipped file, and bare (non-`/`-
+# qualified) numbered-document cross-references left stale by a renumbering.
 #
 # Dependency-light: bash + coreutils + git + python3 (with PyYAML, already
 # required by tools/validate.sh). No network access, no vendored
@@ -27,10 +29,10 @@
 # from being sourced -- only when explicitly invoked.
 
 # ---------------------------------------------------------------------------
-# Internal helper (not one of the five named primitives): strips one or
+# Internal helper (not one of the eight named primitives): strips one or
 # more trailing sentence-punctuation characters from a token. Used by
 # vlib_path_resolves. Kept private (leading underscore) to keep the
-# library's public surface to exactly the five documented primitives.
+# library's public surface to exactly the eight documented primitives.
 # ---------------------------------------------------------------------------
 
 _vlib_strip_trailing_punct() {
@@ -365,4 +367,159 @@ vlib_word_present() {
   [ -f "${file}" ] || return 1
 
   grep -qwF -- "${word}" "${file}"
+}
+
+# ---------------------------------------------------------------------------
+# vlib_enumeration_complete <index-json> <module-key> <dir> [glob]
+#
+# Sources the canonical index <index-json> (a nizam-index-shaped JSON with a
+# top-level "modules" array of {"path", "key_documents": [...]}), selects the
+# module whose "path" equals <module-key>, and asserts that EVERY file in <dir>
+# matching [glob] (default '*.md') is enumerated -- by basename -- in that
+# module's key_documents list. This is the disk->index (completeness)
+# direction that tools/validate.sh C4 does NOT cover: C4 checks index->disk
+# (every listed doc resolves on disk -- no dangling entry), while this checks
+# the reverse (no on-disk document is silently OMITTED from the canonical
+# index). The NDEBT-005 recurrence guard for the enumeration-completeness
+# defect class F-027 fixed by hand (NDEBT-003a: a key-documents list dropping
+# a shipped file) -- resolution sourced from the single canonical index, never
+# a re-derived or duplicated list.
+#
+# Args:
+#   index-json: path to the canonical index JSON.
+#   module-key: the module's "path" value to select within the index.
+#   dir:        the on-disk directory whose files are checked for enumeration.
+#   glob:       optional filename glob (default '*.md').
+#
+# Returns:
+#   0 if every matching on-disk file is enumerated in the index for the module.
+#   1 otherwise (index/dir unreadable, index unpariseable, module absent, or an
+#     on-disk file is missing from key_documents -- the omission(s) printed).
+# ---------------------------------------------------------------------------
+
+vlib_enumeration_complete() {
+  local index="$1"
+  local module_key="$2"
+  local dir="$3"
+  local glob="${4:-*.md}"
+
+  [ -f "${index}" ] || { echo "vlib_enumeration_complete: index not found: ${index}"; return 1; }
+  [ -d "${dir}" ] || { echo "vlib_enumeration_complete: dir not found: ${dir}"; return 1; }
+
+  python3 - "${index}" "${module_key}" "${dir}" "${glob}" <<'PY'
+import glob as globmod
+import json
+import os
+import sys
+
+index_path, module_key, directory, pattern = sys.argv[1:5]
+
+try:
+    with open(index_path, encoding="utf-8") as fh:
+        index = json.load(fh)
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"vlib_enumeration_complete: cannot read index {index_path}: {exc}")
+    sys.exit(1)
+
+modules = index.get("modules")
+if not isinstance(modules, list):
+    print(f"vlib_enumeration_complete: index {index_path} has no 'modules' array")
+    sys.exit(1)
+
+listed = None
+for module in modules:
+    if isinstance(module, dict) and module.get("path") == module_key:
+        listed = module.get("key_documents", [])
+        break
+if listed is None:
+    print(f"vlib_enumeration_complete: module '{module_key}' not present in index {index_path}")
+    sys.exit(1)
+
+listed_basenames = {os.path.basename(p) for p in listed if isinstance(p, str)}
+on_disk = sorted(
+    os.path.basename(p)
+    for p in globmod.glob(os.path.join(directory, pattern))
+    if os.path.isfile(p)
+)
+omitted = [b for b in on_disk if b not in listed_basenames]
+if omitted:
+    print(
+        f"vlib_enumeration_complete: {directory} file(s) omitted from '{module_key}' "
+        f"key_documents in {index_path}: {omitted}"
+    )
+    sys.exit(1)
+sys.exit(0)
+PY
+}
+
+# ---------------------------------------------------------------------------
+# vlib_bare_ref_resolves <file> <index-json>
+#
+# Scans <file> for BARE numbered-document references -- a 'NN_name.md' token
+# (two digits, an underscore, a name, then '.md') that is NOT '/'-qualified
+# (carries no directory prefix). For each bare token, asserts its basename
+# appears among the basenames of the canonical index <index-json>'s
+# key_documents. tools/validate.sh C9 resolves only '/'-qualified path tokens
+# and C10's three sub-checks never inspect a bare filename, so a bare
+# 'NN_name.md' left stale by a renumbering (the NDEBT-003b defect: a bare
+# '05_release_train.md' surviving after the file became '06_release_train.md')
+# slips past both. The NDEBT-005 recurrence guard for that class -- resolution
+# sourced from the canonical index, not a re-derived list.
+#
+# Args:
+#   file:       path to the text file to scan.
+#   index-json: path to the canonical index JSON supplying the valid basenames.
+#
+# Returns:
+#   0 if every bare NN_name.md token resolves to an indexed basename (or the
+#     file contains no bare tokens at all).
+#   1 otherwise (file/index unreadable, index unparseable, or a bare token does
+#     not resolve -- the unresolved token(s) are printed).
+# ---------------------------------------------------------------------------
+
+vlib_bare_ref_resolves() {
+  local file="$1"
+  local index="$2"
+
+  [ -f "${file}" ] || { echo "vlib_bare_ref_resolves: file not found: ${file}"; return 1; }
+  [ -f "${index}" ] || { echo "vlib_bare_ref_resolves: index not found: ${index}"; return 1; }
+
+  python3 - "${file}" "${index}" <<'PY'
+import json
+import os
+import re
+import sys
+
+file_path, index_path = sys.argv[1:3]
+
+try:
+    with open(index_path, encoding="utf-8") as fh:
+        index = json.load(fh)
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"vlib_bare_ref_resolves: cannot read index {index_path}: {exc}")
+    sys.exit(1)
+
+basenames = set()
+for module in index.get("modules", []):
+    if isinstance(module, dict):
+        for kd in module.get("key_documents", []):
+            if isinstance(kd, str):
+                basenames.add(os.path.basename(kd))
+
+try:
+    with open(file_path, encoding="utf-8") as fh:
+        text = fh.read()
+except OSError as exc:
+    print(f"vlib_bare_ref_resolves: cannot read {file_path}: {exc}")
+    sys.exit(1)
+
+# Bare NN_name.md: two digits, '_', word chars, '.md'; NOT preceded by '/' or a
+# word char, so 'dir/05_x.md' (qualified) and 'a05_x.md' (embedded) never match.
+bare = re.compile(r"(?<![/\w])([0-9]{2}_[A-Za-z0-9_]+\.md)\b")
+unresolved = sorted({m.group(1) for m in bare.finditer(text) if m.group(1) not in basenames})
+if unresolved:
+    print(f"vlib_bare_ref_resolves: {file_path}: unresolved bare reference(s): {unresolved}")
+    sys.exit(1)
+sys.exit(0)
+PY
 }
