@@ -2,10 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.7.0
+version: 0.7.1
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.7.1"
+    date: "2026-07-19"
+    summary: "Documentation-truth reconciliation (F-054/NDEBT-011): the work-packet.schema.json row's parse-validity-only caveat for its template is retired -- templates/work-packet.template.json now validates end-to-end against the schema (its three enum/integer fields carry the schema-valid defaults tier-0/local/0), mechanically asserted by a tools/fixtures_self_test.sh guard."
   - version: "0.7.0"
     date: "2026-07-17"
     summary: "Added schema/engineering_finding.schema.json (feature 039, handover F-009): validates a single engineering finding -- severity, confidence (the protocol's fixed Confirmed/Probable/Suspected vocabulary), path-referenced revision-pinned evidence, impact, owner, and closure_criteria, plus a structured, non-empty closure_evidence requirement whenever a finding's status is resolved."
@@ -52,7 +55,7 @@ Every schema in this module:
 | `qa_verdict.schema.json` | Validates an evaluator's pass/fail verdict for a feature, including per-check exit codes and evidence paths. | `.agent/qa/NNN.json` |
 | `contract_review.schema.json` | Validates the pre-code contract-testability review verdict. | `.agent/qa/NNN-contract-review.json` |
 | `run_state.schema.json` | Validates the durable run state an execution engine reads and writes across a session. | `.agent/run_state.json` |
-| `work-packet.schema.json` | Validates a work-packet artifact: the minimal packet core (`id`, `objective`, `scope`, `acceptance`, `evidence`, `non_goals`) plus the optional cross-repo dispatch and linking fields (`tier`, `blast_radius`, `concurrency_lane`, `dependency_edges`, `merge_order`, and the `contract_id`/`phase_id`/`feature_id`/`train_id` foreign keys). | Work packets authored from `templates/work-packet.template.json` (the template itself is checked for JSON parse-validity only; its `{{...}}` placeholders occupy enum- and integer-typed fields). |
+| `work-packet.schema.json` | Validates a work-packet artifact: the minimal packet core (`id`, `objective`, `scope`, `acceptance`, `evidence`, `non_goals`) plus the optional cross-repo dispatch and linking fields (`tier`, `blast_radius`, `concurrency_lane`, `dependency_edges`, `merge_order`, and the `contract_id`/`phase_id`/`feature_id`/`train_id` foreign keys). | Work packets authored from `templates/work-packet.template.json` (the shipped template now validates end-to-end against this schema — F-054/NDEBT-011 — its optional `tier`/`blast_radius`/`merge_order` fields carrying the schema-valid defaults `tier-0`/`local`/`0`). |
 | `debt.schema.json` | Validates the circuit-breaker debt log: timestamp, feature, failed step, attempt count, failure mode, and human resolution. | `.agent/debt.json` |
 | `capability_profile.schema.json` | Validates capability-profile bindings that map agent roles to primary/fallback models, allowed tools, and safety classes. | Capability-profile blocks in `AGENTS.md` or standalone `.agent/capability_profile.json` |
 | `preflight_verdict.schema.json` | Validates the ecosystem clean-state preflight run's machine-readable verdict artifact: the exact three-verdict enum (`PASS` / `PASS_WITH_EXCEPTIONS` / `FAIL`) and the structured operator-approval state `PASS_WITH_EXCEPTIONS` requires. | `.agent/reconciliation/<execution-id>/preflight.json` |
