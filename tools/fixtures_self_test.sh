@@ -331,10 +331,11 @@ test_c13
 # TEMPLATE-SCHEMA CONFORMANCE (F-054, NDEBT-011): the shipped
 # templates/work-packet.template.json must validate end-to-end against
 # schema/work-packet.schema.json. The schema's own `description` claims it
-# validates the template; F-054 made that claim true (the three enum/integer
-# fields carry the schema-valid defaults tier-0/local/0), and this guard keeps
-# it true so the template can never silently drift back to non-conformance --
-# the mechanical assertion of the template's contract NDEBT-011 required.
+# validates the template; F-054 made that claim true by omitting the three
+# optional enum/integer dispatch fields (tier/blast_radius/merge_order), which
+# cannot hold a {{...}} placeholder, from the starter template, and this guard
+# keeps it true so the template can never silently drift back to non-conformance
+# -- the mechanical assertion of the template's contract NDEBT-011 required.
 # ---------------------------------------------------------------------------
 echo "== template-schema conformance (F-054) =="
 if python3 - <<'PY'

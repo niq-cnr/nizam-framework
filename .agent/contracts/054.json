@@ -18,7 +18,7 @@
     "files_modify": [
       {
         "path": "templates/work-packet.template.json",
-        "purpose": "The three enum/integer fields that held {{TIER}}/{{BLAST_RADIUS}}/{{MERGE_ORDER}} placeholders now carry the schema-valid defaults tier-0/local/0, so the template validates end-to-end."
+        "purpose": "The three optional enum/integer dispatch fields that held {{TIER}}/{{BLAST_RADIUS}}/{{MERGE_ORDER}} placeholders are omitted from the starter template -- they cannot hold a {{...}} placeholder and would silently misclassify a copied packet if shipped as literal defaults (PR #34 review) -- so the template validates end-to-end without them (they are documented in the schema for consumers that need cross-repo dispatch)."
       },
       {
         "path": "templates/README.md",
