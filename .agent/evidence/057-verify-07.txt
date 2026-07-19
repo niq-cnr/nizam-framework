@@ -1,0 +1,11 @@
+# .agent/evidence/057-verify-07.txt
+# Contract 057 verification entry 07 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: DELIVERABLE CONFINEMENT: the non-.agent changes across the branch (base 964fe48..HEAD) are exactly the three contracted files.
+# --- command (from .agent/contracts/057.json verification[07].command) ---
+set -e
+changed=$(git diff --name-only 964fe48..HEAD | grep -v '^\.agent/' | LC_ALL=C sort | tr '\n' ' ')
+test "$changed" = 'CHANGELOG.md docs/planning/DEBT.md ecosystem/07_progress_comparison.md '
+echo 'E07 PASS: non-.agent changes across the branch (dot-anchored filter) are exactly the 3 deliverable files'
+# --- output ---
+E07 PASS: non-.agent changes across the branch (dot-anchored filter) are exactly the 3 deliverable files
+[exit 0]

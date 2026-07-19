@@ -1,0 +1,26 @@
+# .agent/evidence/057-verify-08.txt
+# Contract 057 verification entry 08 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: DOCS/DEBT SYNCED: ecosystem/07 0.2.0 with a matching change_log (NDS Sec 7); DEBT 0.26.0 has NDEBT-022 in Resolved (not Open); CHANGELOG [Unreleased] names the F-057 entry.
+# --- command (from .agent/contracts/057.json verification[08].command) ---
+set -e
+grep -Fq 'version: 0.2.0' ecosystem/07_progress_comparison.md
+grep -Fq 'Feature 057 (NDEBT-022)' ecosystem/07_progress_comparison.md
+grep -Fq 'version: 0.26.0' docs/planning/DEBT.md
+python3 - <<'PY'
+import re
+sect=None; resolved=set(); openset=set()
+for l in open('docs/planning/DEBT.md'):
+    if l.startswith('## Open'): sect='open'
+    elif l.startswith('## Resolved'): sect='resolved'
+    m=re.match(r'\| (NDEBT-\d+) ', l)
+    if m and sect=='resolved': resolved.add(m.group(1))
+    if m and sect=='open': openset.add(m.group(1))
+assert 'NDEBT-022' in resolved and 'NDEBT-022' not in openset, 'NDEBT-022 not Resolved'
+print('debt ok')
+PY
+sed -n '/## \[Unreleased\]/,/## \[0.7.0\]/p' CHANGELOG.md | grep -Fq 'Progress-comparison taxonomy completion'
+echo 'E08 PASS: ecosystem/07 0.2.0 (change_log synced); DEBT 0.26.0 (NDEBT-022 Resolved); CHANGELOG names F-057'
+# --- output ---
+debt ok
+E08 PASS: ecosystem/07 0.2.0 (change_log synced); DEBT 0.26.0 (NDEBT-022 Resolved); CHANGELOG names F-057
+[exit 0]

@@ -1,0 +1,53 @@
+# .agent/evidence/057-verify-05.txt
+# Contract 057 verification entry 05 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: AUDIT-044 CLASSIFIES CLEANLY (the acceptance test): all five audit-044 findings map to an amended class (015 persisting, 002 pre-window-resolved, 016 stale, 017/018 new) with open-only score 2->4, without recourse to the unchanged_facts workaround.
+# --- command (from .agent/contracts/057.json verification[05].command) ---
+set -e
+python3 - <<'PY'
+import json
+doc = open('ecosystem/07_progress_comparison.md').read()
+for tok in ['`new`','`resolved`','`reopened`','`persisting`','`stale`','### 3.1 Pre-Window-Resolved','### 3.2 First-Comparison','### 6.1 Open-Findings Count']:
+    assert tok in doc, 'doc missing: ' + tok
+A = '.agent/audits/audit-2026-07-17-cba6422'
+raw = json.load(open(A + '/findings.json'))
+findings = raw if isinstance(raw, list) else raw['findings']
+status = {f['id']: f['status'] for f in findings}
+delta = json.load(open(A + '/delta.json'))
+buckets = delta['findings']  # new / resolved / reopened / stale, as recorded by the run
+in_bucket = {}
+for cls in ('new','resolved','reopened','stale'):
+    for item in buckets.get(cls, []):
+        in_bucket[item['id']] = cls
+# derive the AMENDED class for every finding from the delta buckets + the
+# amended rules (persisting / pre-window-resolved), never hardcoded:
+def amended_class(fid):
+    if fid in in_bucket:
+        return in_bucket[fid]                 # new / resolved / reopened / stale
+    if status[fid] == 'open':
+        return 'persisting'                   # present-both, current evidence (Sec 3)
+    if status[fid] == 'resolved':
+        return 'pre-window-resolved'          # recorded, not a transition (Sec 3.1)
+    raise AssertionError('unclassifiable: ' + fid)
+derived = {fid: amended_class(fid) for fid in status}
+expected = {'F-audit044-ndebt-015':'persisting','F-audit044-ndebt-002':'pre-window-resolved',
+            'F-audit044-ndebt-016':'stale','F-audit044-ndebt-017':'new','F-audit044-ndebt-018':'new'}
+assert derived == expected, ('derived != expected', derived)
+# every finding gets exactly one class (the exactly-one-class rule)
+assert len(derived) == len(status) == 5
+# open-only scores DERIVED: open_after = findings open now; open_before = open
+# minus the `new` ones (new findings were absent at the earlier side).
+open_after = {fid for fid, s in status.items() if s == 'open'}
+new_ids = {item['id'] for item in buckets.get('new', [])}
+open_before = open_after - new_ids
+assert len(open_before) == 2 and len(open_after) == 4, (sorted(open_before), sorted(open_after))
+# and the resolved/pre-window-resolved finding is excluded from both open counts
+assert 'F-audit044-ndebt-002' not in open_after and 'F-audit044-ndebt-002' not in open_before
+print('derived classes:', derived)
+print('open-only score:', len(open_before), '->', len(open_after), '(+%d = the new findings %s)' % (len(open_after)-len(open_before), sorted(new_ids)))
+PY
+echo 'E05 PASS: every audit-044 finding DERIVED to its amended class (015 persisting, 002 pre-window-resolved, 016 stale, 017/018 new) from the delta buckets + amended rules; open-only score derived 2->4 (002 excluded); no unchanged_facts, no hardcoded map'
+# --- output ---
+derived classes: {'F-audit044-ndebt-015': 'persisting', 'F-audit044-ndebt-002': 'pre-window-resolved', 'F-audit044-ndebt-016': 'stale', 'F-audit044-ndebt-017': 'new', 'F-audit044-ndebt-018': 'new'}
+open-only score: 2 -> 4 (+2 = the new findings ['F-audit044-ndebt-017', 'F-audit044-ndebt-018'])
+E05 PASS: every audit-044 finding DERIVED to its amended class (015 persisting, 002 pre-window-resolved, 016 stale, 017/018 new) from the delta buckets + amended rules; open-only score derived 2->4 (002 excluded); no unchanged_facts, no hardcoded map
+[exit 0]

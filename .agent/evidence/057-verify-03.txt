@@ -1,0 +1,14 @@
+# .agent/evidence/057-verify-03.txt
+# Contract 057 verification entry 03 -- captured 2026-07-19, re-captured after the PR #34 review round (tier/blast_radius/merge_order omitted), anchored to phase base 15a30e1
+# ACCEPTANCE TEST: PRE-WINDOW-RESOLVED + FIRST-COMPARISON RULES: Section 3.1 records a pre-window-resolved finding without counting it as a transition or in the open score; Section 3.2 states an empty reopened bucket on a first comparison is correct.
+# --- command (from .agent/contracts/057.json verification[03].command) ---
+set -e
+grep -Fq '### 3.1 Pre-Window-Resolved Findings' ecosystem/07_progress_comparison.md
+grep -Fq 'is NOT assigned' ecosystem/07_progress_comparison.md
+grep -Fq 'reserved for an in-window closure' ecosystem/07_progress_comparison.md
+grep -Fq '### 3.2 First-Comparison Rule' ecosystem/07_progress_comparison.md
+grep -Fq 'reopened` class' ecosystem/07_progress_comparison.md
+echo 'E03 PASS: Section 3.1 pre-window-resolved recording rule + Section 3.2 first-comparison rule present'
+# --- output ---
+E03 PASS: Section 3.1 pre-window-resolved recording rule + Section 3.2 first-comparison rule present
+[exit 0]
