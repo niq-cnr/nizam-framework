@@ -1,0 +1,9 @@
+# .agent/evidence/050-verify-04.txt
+# Contract 050 verification entry 04 -- captured 2026-07-19 at deliverable commit 47bd61d (HEAD~1 = merged-main base c309521)
+# ACCEPTANCE TEST: PAYLOAD SWEEP GREEN 11/11 from the framework root, EXIT CODE ASSERTED (regression): the payload-root cd is a no-op when CWD already equals the payload root.
+$ out=$(bash tools/validate.sh --payload 2>&1); rc=$?
+printf "%s\n" "$out" | tail -1
+test $rc -eq 0 && printf "%s\n" "$out" | tail -1 | grep -Fxq "SUMMARY (payload mode): 11 passed, 0 failed" && echo "E04 PASS (rc=$rc)"
+SUMMARY (payload mode): 11 passed, 0 failed
+E04 PASS (rc=0)
+[exit 0]

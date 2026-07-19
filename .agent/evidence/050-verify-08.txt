@@ -1,0 +1,19 @@
+# .agent/evidence/050-verify-08.txt
+# Contract 050 verification entry 08 -- captured 2026-07-19 at deliverable commit 47bd61d (HEAD~1 = merged-main base c309521)
+# ACCEPTANCE TEST: E2E ASSERTION IS LOAD-BEARING: sourced against a payload carrying HEAD~1 validate.sh, assert_payload_validate_cwd_independent returns non-zero (it would not pass a broken payload).
+$ set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f050/e08"; rm -rf "$S"; mkdir -p "$S"
+TAG="f050e08-$$"
+git -c user.name=cap -c user.email=cap@nizam.local tag -a "$TAG" -m cap HEAD >/dev/null 2>&1
+T="$S/.nizam"
+bash bootstrap.sh --repo-url "file://$(pwd)" --tag "$TAG" --target "$T" >/dev/null 2>&1
+git show HEAD~1:tools/validate.sh > "$T/tools/validate.sh"
+source tools/e2e_bootstrap_test.sh
+set +e
+assert_payload_validate_cwd_independent "$T" >/dev/null 2>&1; rc=$?
+set -e
+test $rc -ne 0
+git tag -d "$TAG" >/dev/null 2>&1; rm -rf "$S"
+echo "E08 PASS: assertion returned $rc (non-zero) on a pre-fix payload -- load-bearing"
+E08 PASS: assertion returned 1 (non-zero) on a pre-fix payload -- load-bearing
+[exit 0]

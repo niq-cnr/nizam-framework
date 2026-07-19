@@ -1,0 +1,28 @@
+# .agent/evidence/050-verify-05.txt
+# Contract 050 verification entry 05 -- captured 2026-07-19 at deliverable commit 47bd61d (HEAD~1 = merged-main base c309521)
+# ACCEPTANCE TEST: ISSUE #18 BEFORE/AFTER on a REAL bootstrapped payload: with HEAD~1 validate.sh both --payload forms fail (Form A C9 10/1; Form B from consumer root dies at verify_lib); with HEAD validate.sh both forms report 11/11 with byte-identical [C*] verdicts.
+$ set -e
+S="/tmp/claude-0/-home-user-nizam-framework/cb633582-c78c-55fe-99c5-65705764a133/scratchpad/f050/e05"; rm -rf "$S"; mkdir -p "$S"
+TAG="f050e05-$$"
+git -c user.name=cap -c user.email=cap@nizam.local tag -a "$TAG" -m cap HEAD >/dev/null 2>&1
+T="$S/.nizam"
+bash bootstrap.sh --repo-url "file://$(pwd)" --tag "$TAG" --target "$T" >/dev/null 2>&1
+git show HEAD~1:tools/validate.sh > "$T/tools/validate.sh"
+set +e
+( cd "$T" && bash tools/validate.sh --payload ) >/dev/null 2>&1; a0=$?
+( cd "$S" && bash .nizam/tools/validate.sh --payload ) >/dev/null 2>&1; b0=$?
+set -e
+test $a0 -ne 0 && test $b0 -ne 0
+git show HEAD:tools/validate.sh > "$T/tools/validate.sh"
+set +e
+af=$( cd "$T" && bash tools/validate.sh --payload 2>&1 ); a1=$?
+bf=$( cd "$S" && bash .nizam/tools/validate.sh --payload 2>&1 ); b1=$?
+set -e
+test $a1 -eq 0 && test $b1 -eq 0
+printf "%s\n" "$af" | tail -1 | grep -Fxq "SUMMARY (payload mode): 11 passed, 0 failed"
+printf "%s\n" "$bf" | tail -1 | grep -Fxq "SUMMARY (payload mode): 11 passed, 0 failed"
+diff <(printf "%s\n" "$af" | grep "^\[C") <(printf "%s\n" "$bf" | grep "^\[C") >/dev/null
+git tag -d "$TAG" >/dev/null 2>&1; rm -rf "$S"
+echo "E05 PASS: before A=$a0 B=$b0 (both broken); after A=$a1 B=$b1 (both 11/11, identical [C*] verdicts)"
+E05 PASS: before A=1 B=1 (both broken); after A=0 B=0 (both 11/11, identical [C*] verdicts)
+[exit 0]

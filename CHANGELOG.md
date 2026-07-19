@@ -45,6 +45,30 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `entry_point` under a non-injected prefix FAILs rather than ride the
   capability-module carve-out. The `--help` payload descriptions now name
   the full carve-out set including `ecosystem/`.
+- `tools/validate.sh --payload` is now **CWD-independent** (phase 006 feature
+  050, resolving **NDEBT-012** / the first external-consumer bug report,
+  issue #18): in `--payload` mode the validator anchors to its own payload
+  root (the parent of its `tools/` directory), so
+  `bash .nizam/tools/validate.sh --payload` run from a consumer repository
+  root now behaves identically to `cd .nizam && bash tools/validate.sh
+  --payload` instead of failing to find the payload's own files. Default and
+  `--target` modes stay CWD-anchored (unchanged documented contract).
+- `tools/validate.sh` check **C9** payload carve-out (feature 050, resolving
+  **NDEBT-004**): in `--payload` mode a directory-qualified cross-reference is
+  only required to resolve if its target is under an injected-payload prefix
+  (`standard/`, `templates/`, `schema/`, `tools/`); references into
+  non-injected framework-envelope paths (`methodology/`, `ecosystem/`,
+  `registry/`, `docs/`, `.agent/`, `.github/`, …) are expected-absent in a
+  consumer subset and are skipped — the C9 analog of C4's existing carve-out.
+  A real bootstrapped payload previously false-failed C9 on 26 such
+  references even from the payload root; both `--payload` invocation forms now
+  pass green. The default full sweep applies no carve-out, so stale
+  non-injected references are still caught. `tools/e2e_bootstrap_test.sh`
+  gains a from-consumer-repo-root `--payload` assertion so the regression
+  class stays closed. (The NDEBT-004 fix is landed and verified; resolving it
+  *within* feature 050 rather than its own feature is an operator scope call
+  disclosed as pending ratification — see the PR #29 description — and
+  finalized on merge.)
 
 ## [0.7.0] - 2026-07-17
 

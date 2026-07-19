@@ -1,0 +1,9 @@
+# .agent/evidence/050-verify-03.txt
+# Contract 050 verification entry 03 -- captured 2026-07-19 at deliverable commit 47bd61d (HEAD~1 = merged-main base c309521)
+# ACCEPTANCE TEST: DEFAULT SWEEP GREEN 13/13, EXIT CODE ASSERTED (regression): default mode unchanged.
+$ out=$(bash tools/validate.sh 2>&1); rc=$?
+printf "%s\n" "$out" | tail -1
+test $rc -eq 0 && printf "%s\n" "$out" | tail -1 | grep -Fxq "SUMMARY: 13 passed, 0 failed" && echo "E03 PASS (rc=$rc)"
+SUMMARY: 13 passed, 0 failed
+E03 PASS (rc=0)
+[exit 0]

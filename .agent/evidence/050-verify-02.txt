@@ -1,0 +1,10 @@
+# .agent/evidence/050-verify-02.txt
+# Contract 050 verification entry 02 -- captured 2026-07-19 at deliverable commit 47bd61d (HEAD~1 = merged-main base c309521)
+# ACCEPTANCE TEST: CWD-ANCHOR WIRED: main() anchors --payload to the script-derived payload root, guarded so it runs ONLY in payload mode (default/--target stay CWD-anchored).
+$ set -e
+grep -Fq "if [ \"\${VALIDATOR_MODE}\" = \"payload\" ]; then" tools/validate.sh
+grep -Fq "payload_root=\"\$(dirname -- \"\${script_dir}\")\"" tools/validate.sh
+grep -Fq "cd -- \"\${payload_root}\"" tools/validate.sh
+echo "E02 PASS: payload-mode-guarded payload-root cd present in main()"
+E02 PASS: payload-mode-guarded payload-root cd present in main()
+[exit 0]

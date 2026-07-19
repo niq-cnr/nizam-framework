@@ -1,0 +1,12 @@
+# .agent/evidence/050-verify-10.txt
+# Contract 050 verification entry 10 -- captured 2026-07-19 at deliverable commit 47bd61d (HEAD~1 = merged-main base c309521)
+# ACCEPTANCE TEST: DEFAULT/TARGET UNCHANGED: the payload-root cd is reached ONLY under VALIDATOR_MODE=payload; a --target run does not cd (the guard encloses the cd).
+$ set -e
+# structural proof: the cd block is inside the payload-mode guard, and there is no unconditional cd in main()
+awk "/^main\(\) \{/{m=1} m&&/VALIDATOR_MODE.*=.*payload.*then/{g=1} m&&/cd -- \"\\\$\{payload_root\}\"/{print (g?\"GUARDED\":\"UNGUARDED\")}" tools/validate.sh | grep -Fxq GUARDED
+# functional proof: --target on a single md file still resolves relative to CWD (no payload behavior)
+out=$(bash tools/validate.sh --target standard/AGF.md 2>&1); rc=$?
+test $rc -eq 0
+echo "E10 PASS: payload cd is guarded; --target unaffected (rc=$rc)"
+E10 PASS: payload cd is guarded; --target unaffected (rc=0)
+[exit 0]

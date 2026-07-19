@@ -1,0 +1,50 @@
+{
+  "feature_id": "050",
+  "qa_pass": true,
+  "checks_run": 12,
+  "checks_passed": 12,
+  "adversarial": {
+    "performed": true,
+    "description": "Independent full re-execution of all 12 contract-050 entries at the deliverable commit 47bd61d -- 12/12 exit 0 (consolidated .agent/evidence/050/verification.txt). The adversarial core is built into the suite: E05 reconstructs the REAL consumer context (bootstrap a genuine payload, then run --payload from BOTH the payload root and the consumer repo root) and proves a before/after against the SAME reality -- HEAD~1's validator fails both forms (Form A C9 10/1; Form B dies at verify_lib), HEAD's validator passes both 11/11 with byte-identical [C*] verdicts; E06 proves the C9 carve-out is SCOPED, not blanket -- a stale reference under an injected prefix (tools/DOES_NOT_EXIST_probe.md) is still caught while a non-injected one (methodology/DOES_NOT_EXIST_probe.md) is skipped; E08 proves the new e2e assertion is load-bearing (returns non-zero when sourced against a pre-fix payload); E10 proves default/--target modes are unchanged (the payload cd is structurally guarded, and --target still exits 0). All probes used session-scratchpad paths, scratch clones, and bootstrap-injected scratch payloads exclusively (NDEBT-013/020 probe-isolation); no destructive command touched a real repository path.",
+    "process_note": "Single-session execution, roles collapsed (disclosed at phase activation and in contract 050 design_notes); the durable artifacts are the audit trail. Verification commands are fail-fast (NDEBT-019 lesson practiced)."
+  },
+  "evidence_files": [
+    ".agent/evidence/050-verify-01.txt",
+    ".agent/evidence/050-verify-02.txt",
+    ".agent/evidence/050-verify-03.txt",
+    ".agent/evidence/050-verify-04.txt",
+    ".agent/evidence/050-verify-05.txt",
+    ".agent/evidence/050-verify-06.txt",
+    ".agent/evidence/050-verify-07.txt",
+    ".agent/evidence/050-verify-08.txt",
+    ".agent/evidence/050-verify-09.txt",
+    ".agent/evidence/050-verify-10.txt",
+    ".agent/evidence/050-verify-11.txt",
+    ".agent/evidence/050-verify-12.txt",
+    ".agent/evidence/050/verification.txt",
+    ".agent/evidence/050/diff.patch"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": "diff of .agent/evidence/050/diff.patch against a freshly generated git diff HEAD~1..HEAD produced zero bytes of difference at QA time.",
+    "flat_files": "All 12 flat captures end with a literal [exit 0] line and open with the exact contract command; the consolidated verification.txt carries 12 EXIT:0 markers in contract order."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_006.json feature 050 (status flipped by the orchestrator at close-out)",
+    "summary": "F-050's two planner acceptance tests map onto the suite: 'both --payload invocation forms produce identical green results in the e2e harness' -> E05 (before/after on a real payload) + E07 (the e2e harness asserts it) + E08 (the assertion is load-bearing); 'issue #18's reproduction sequence passes; GitHub issue closed on merge with the fix commit referenced' -> E05 reproduces and fixes the exact sequence, and the PR will close issue #18 referencing commit 47bd61d. The co-resolved NDEBT-004 (required to reach green) is covered by E05/E06/E11. No criterion lacks a passing, evidence-backed entry."
+  },
+  "non_blocking_observations": [
+    "Scope: 194 actual lines (git numstat ins+del) vs the 140 planner estimate (+39%) -- the overage is the co-resolved NDEBT-004 C9 carve-out and the e2e assertion, neither in the CWD-only estimate; flagged in the scope ledger for operator acknowledgment.",
+    "SCOPE-EXPANSION DECISION for operator review: F-050 absorbed NDEBT-004 (a separately-deferred debt) because the plan-of-record acceptance test ('both forms green') is unmeetable without it. Surfaced via AskUserQuestion, which aborted; proceeded with the acceptance-test-mandated Option 1, reversibly, PR held for confirmation. Operator may redirect at review.",
+    "The two --payload invocation forms now produce byte-identical [C*] verdicts (E05); the only differences between their full outputs are the abs-path tokens in bootstrap/scratch banners, not check results."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. Feature 050 is complete and correct at deliverable commit 47bd61d: tools/validate.sh --payload is now CWD-independent (NDEBT-012/issue #18) and C9 carries the payload carve-out (NDEBT-004) required for a real bootstrapped payload to reach green; both invocation forms pass 11/11 with identical verdicts, proven before/after on a genuine bootstrap; the carve-out is scoped (still catches injected-dir staleness); default/--target CWD-anchoring is preserved; the e2e harness gains a load-bearing CWD-independence assertion; docs + DEBT (0.19.0, NDEBT-012 + NDEBT-004 -> Resolved) synced; framework self-sweeps unchanged (13/13 default, 11/11 payload); deliverable diff confined to the four contracted files with zero tracked .agent changes."
+  }
+}
