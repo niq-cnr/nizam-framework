@@ -9,6 +9,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Progress-comparison taxonomy completion** (phase 006 feature 057, resolving
+  **NDEBT-022**): `ecosystem/07_progress_comparison.md` (0.2.0) completes its
+  finding-state taxonomy so a real corpus classifies without workarounds.
+  Section 3 adds the fifth transition class **`persisting`** (present on both
+  sides with freshly re-confirmed, current evidence — the exact opposite of
+  `stale`), a **pre-window-resolved** recording rule (§3.1: a finding resolved
+  before the earlier input's reference point is recorded but is not a
+  cross-execution transition and is excluded from the open-findings score), and
+  a **first-comparison** rule (§3.2: an empty `reopened` bucket on a first
+  comparison is correct). Section 6.1 fixes the score-count semantics — the
+  open-findings score counts `open` findings only, never resolved or
+  pre-window-resolved recorded findings. The audit-044 corpus now classifies
+  directly (015 persisting, 002 pre-window-resolved, 016 stale, 017/018 new;
+  open-only 2→4); the committed `audit-2026-07-17-cba6422` artifacts stay
+  immutable.
 - **Work-packet template ↔ schema alignment** (phase 006 feature 054, resolving
   **NDEBT-011**): `templates/work-packet.template.json` now validates end-to-end
   against `schema/work-packet.schema.json` — the three enum/integer dispatch
