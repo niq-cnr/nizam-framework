@@ -3,7 +3,7 @@
   "current_phase": "006-enforcement-closure",
   "current_feature": "059",
   "status": "in_progress",
-  "updated_at": "2026-07-20T03:25:12Z",
+  "updated_at": "2026-07-20T03:51:23Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -837,6 +837,11 @@
       "at": "2026-07-20T03:25:12Z",
       "event": "feature_complete",
       "detail": "Feature 059 (Phase close + v0.8.0 release preparation, gate H-FRAMEWORK-RELEASE) COMPLETE at deliverable commit b79b263 -- phase 006's ELEVENTH and final feature, on the phase branch restarted from origin/main 707a3f5 (the F-058 merge, PR #37). PREPARE-ONLY v0.8.0 MINOR package on the feature-045 pattern: version surfaces 0.7.0->0.8.0 in C10 lockstep (NIZAM.json framework.version, docs/guide/index.html meta+footer, CONTEXT.md frontmatter + change_log), README.md fully re-pinned, CHANGELOG rolled to a dated [0.8.0] - 2026-07-20 MINOR section (06_release_train.md Sec 3.2) with the lone schema narrowing (preflight_verdict blocking_findings, F-056) disclosed minor-not-breaking (Sec 4), and the check-count synced 12->15 (C1-C15) across NIZAM.json, tools/README.md (0.6.0), and tools/validate.sh usage. 13/13 contract verifications EXIT:0; sweep 15/15, payload 11/11, self-test 47/47, e2e green. NO self-tag and NO H-FRAMEWORK-RELEASE self-sign-off: the release-readiness checklist's item 7 (sign-off) + item 8 (tag) stay at the pinned PENDING literal for the operator to execute after PR review, per the recorded two-part gate (v0.7.0 precedent 31f3fff -> 4833322). Non-.agent footprint 62 ins+del (707a3f5..HEAD), well under the 110 estimate. ALL 11 phase-006 features (049-059) are now implementation-complete; phase 006 awaits ONLY the operator's H-FRAMEWORK-RELEASE execution (sign-off + operator-pushed annotated tag v0.8.0 at the merge commit) to fully close -- the pipeline does not self-close a release-gated phase."
+    },
+    {
+      "at": "2026-07-20T03:51:23Z",
+      "event": "review_response",
+      "detail": "PR #38 (feature 059) CodeRabbit review round (Run 462469f8, profile ASSERTIVE): 3 findings triaged, each verified against the code before acting. (VALID -> FIXED) Finding 2 (C14 doc, Minor): tools/README.md's C14 row read 'Every uses: reference', but vlib_workflows_sha_pinned exempts local ./ and ../ actions (verify_lib.sh lines 36-37) -- reworded to 'every external (third-party) uses:...; local ./ /../ exempt'. Finding 3 (C15 doc, Major): the row read profiles 'each map to a role', overclaiming -- vlib_profiles_cover_roles is a coverage/tie-together check over a hardcoded ROLE_BY_PROFILE map (it confirms all five profile identifiers are present in capability_profiles.md and all five roles are defined in AGF.md, but does NOT parse per-profile assignment prose, so a swapped mapping is out of scope). Reworded to the honest 'coverage' framing, matching the already-accurate merged-058 language (capability_profiles.md banner + guide both say 'correspondence'). Both fixes are within 059's own new docs; no merged 058 file touched. (DECLINED -> PRECEDENT) Finding 1 (README v0.8.0 links, Major): the README re-pin to the not-yet-cut v0.8.0 tag is the ratified prepare-then-tag pattern -- feature 045 (v0.7.0) and the v0.6.0 prep both re-pinned README to the new tag in the prep PR, and the operator pushes the annotated tag at the merge commit (checklist item 8), closing the momentary window; the alternative (keep v0.7.0 pins) leaves a STALE README once v0.8.0 is tagged. Surfaced to the operator for override. Deliverable footprint unchanged at 62 non-.agent lines (rewording existing new rows); sweep 15/15, 13/13 contract verifications re-run EXIT:0, evidence re-captured to match the amended tree."
     }
   ],
   "phase_001_scope_budget_final": {
