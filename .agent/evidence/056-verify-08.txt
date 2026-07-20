@@ -1,0 +1,8 @@
+# verification E08
+# NDEBT-023 SAME-REPO REVISION CONSISTENCY: the tool-level find_repository_revision_inconsistencies() flags two same-repository entries at different revisions and passes distinct repositories; the new schema-VALID-but-rule-violating fixture is caught as [C12] FAIL via --target while the valid baseline stays [C12] PASS -- so the check is code-level (the schema cannot express it), not schema-level.
+
+tool-level consistency check: flags same-repo divergence, passes distinct repos
+the negative fixture is schema-valid alone -> the gap the code-level check closes
+E08 PASS: consistency mechanized at tool + validator level; neg fixture schema-valid-but-caught ([C12] FAIL), valid fixture [C12] PASS
+
+EXIT:0

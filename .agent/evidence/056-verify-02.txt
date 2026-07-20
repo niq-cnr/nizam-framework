@@ -1,0 +1,8 @@
+# verification E02
+# NDEBT-021.1 NUL-DELIMITED PARSE: an untracked file whose repo-relative path contains a SPACE is tolerated by an exact --tolerate-untracked match (exit 2, pending) -- proving -z raw paths, not C-quoted default porcelain-v1 (which would blockingly mis-match).
+
+PREFLIGHT VERDICT: PASS_WITH_EXCEPTIONS (pending operator approval) -- re-invoke with --operator-approver and --operator-authorization
+PREFLIGHT VERDICT: FAIL (1 blocking finding(s))
+E02 PASS: space-containing untracked path matches the exact tolerate-list under -z (exit 2); a non-matching tolerate leaves it blocking (exit 1)
+
+EXIT:0

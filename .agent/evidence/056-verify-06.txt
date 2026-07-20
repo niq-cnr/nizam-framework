@@ -1,0 +1,10 @@
+# verification E06
+# NDEBT-018.1 --tolerate-untracked-prefix + 043/044 PRESERVED: an entirely-untracked directory (git collapses it to one 'sub/' entry) is tolerated by --tolerate-untracked-prefix sub/ (exit 2) AND by the exact --tolerate-untracked sub/ dir-collapse form the committed 043/044 exception sets rely on (exit 2); a non-matching exact file path (exit 1) and no tolerate (exit 1) stay blocking.
+
+PREFLIGHT VERDICT: PASS_WITH_EXCEPTIONS (pending operator approval) -- re-invoke with --operator-approver and --operator-authorization
+PREFLIGHT VERDICT: PASS_WITH_EXCEPTIONS (pending operator approval) -- re-invoke with --operator-approver and --operator-authorization
+PREFLIGHT VERDICT: FAIL (1 blocking finding(s))
+PREFLIGHT VERDICT: FAIL (1 blocking finding(s))
+E06 PASS: prefix-tolerate (2) and exact dir-collapse tolerate (2) both work; non-matching exact (1) and no-tolerate (1) stay blocking -- 043/044 exact semantics preserved
+
+EXIT:0
