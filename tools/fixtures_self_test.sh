@@ -449,6 +449,47 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# (5) ecosystem_audit.py CLI behavior probes (Tier-1 audit tool)
+# ---------------------------------------------------------------------------
+# tools/ecosystem_audit.py is NOT covered by validate.sh (only its OUTPUT
+# schema is, via C12's engineering_finding family), so these standing probes
+# are its permanent regression guard. They assert the load-bearing polarity:
+# a valid audit is ASSEMBLED (exit 0, findings.json + report.md written); a
+# resolved finding with no closure evidence is INVALID (exit 1, no artifact);
+# a FAIL preflight verdict is REFUSED at the Sec 2 entry gate (exit 2). Inputs
+# are built inline in a mktemp -d scratch dir, cleaned via an EXIT-trap rm -rf
+# on the scratch dir only. Behavior probes, not fixtures -- they add nothing to
+# the completeness manifest.
+echo "== ecosystem_audit CLI behavior probes =="
+_audit_cli_probes() (
+  local d rc
+  d=$(mktemp -d) || return 1
+  trap 'rm -rf -- "${d}"' EXIT
+  printf '{"verdict":"PASS","execution_id":"e1","generated_at":"t"}' > "${d}/preflight.json"
+  printf '{"execution_id":"e1"}' > "${d}/baseline.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/e1/x.txt","revision":"abc123"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findings.json"
+  # (a) a valid audit -> ASSEMBLED (exit 0), both artifacts written
+  python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/out" --findings-input "${d}/findings.json" --preflight "${d}/preflight.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  valid audit: expected exit 0, got ${rc}"; return 1; }
+  [ -f "${d}/out/findings.json" ] && [ -f "${d}/out/report.md" ] || { echo "  valid audit: expected findings.json + report.md"; return 1; }
+  # (b) a resolved finding with no closure evidence -> FINDINGS_INVALID (exit 1)
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/e1/x.txt","revision":"abc123"}],"impact":"i","owner":"o","status":"resolved","closure_criteria":"c"}]' > "${d}/bad.json"
+  python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/o2" --findings-input "${d}/bad.json" --preflight "${d}/preflight.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  resolved-without-closure: expected exit 1, got ${rc}"; return 1; }
+  # (c) a FAIL preflight verdict -> ENTRY_CONDITION_UNMET (exit 2)
+  printf '{"verdict":"FAIL","execution_id":"e1","generated_at":"t","blocking_findings":["x"]}' > "${d}/pf-fail.json"
+  python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/o3" --findings-input "${d}/findings.json" --preflight "${d}/pf-fail.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  fail-preflight: expected exit 2, got ${rc}"; return 1; }
+  return 0
+)
+if _audit_cli_probes; then
+  echo "OK   audit       valid -> ASSEMBLED(0); resolved-without-closure -> INVALID(1); FAIL preflight -> refused(2)"
+else
+  echo "FAIL audit       a CLI behavior probe did not hold"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
 # COMPLETENESS GUARD: every file under tools/fixtures/ must be accounted for
 # by exactly one row above; an unlisted fixture (a newly-added dormant
 # negative) or a manifest row naming an absent fixture is a FAIL.

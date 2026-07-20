@@ -9,6 +9,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`tools/ecosystem_audit.py`** — a deterministic Audit-stage CLI, making the
+  Audit stage tool-driven (previously prose-only; its dogfood artifacts were
+  hand-authored). It mechanizes `ecosystem/03_engineering_audit.md`'s **entry
+  condition** (§2 — refuses to assemble an audit unless the preflight verdict is
+  `PASS` or an operator-approved `PASS_WITH_EXCEPTIONS` and a baseline exists for
+  the *same* execution) and **artifact production** (§7 — validates
+  auditor-authored findings against `schema/engineering_finding.schema.json`'s
+  shape and the no-promotion-beyond-evidence closure rule, then emits the
+  canonical `findings.json` top-level array + a rendered `report.md`, evidence
+  externalised by path). It makes no engineering judgement — findings come from
+  the auditor via `--findings-input`. Stdlib-only, mirroring
+  `ecosystem_preflight.py` (documented exit-code table 0/1/2/64,
+  `_UsageErrorArgumentParser`→64, single clock read); guarded by standing CLI
+  behavior probes in `tools/fixtures_self_test.sh`.
 - **`schema/audit_delta.schema.json`** — the fourth core ecosystem-cycle schema,
   validating the progress-comparison delta artifact
   (`ecosystem/07_progress_comparison.md` §7): the two revision/timestamp-anchored
