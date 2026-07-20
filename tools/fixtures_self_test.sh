@@ -213,6 +213,44 @@ _f055_real_tree() {
 }
 _f055_real_tree
 
+# vlib_workflows_sha_pinned (F-058, C14): a scratch workflow dir with a
+# tag-pinned ref fails; a SHA-pinned ref (+ an exempt local ./ action) passes;
+# and this repo's real .github/workflows passes (all refs pinned). Scratch via
+# mktemp + trap (Section 11 probe isolation), like the git-scratch primitives.
+_workflow_pins_scratch() (
+  local d; d=$(mktemp -d) || return 1
+  trap 'rm -rf -- "${d}"' EXIT
+  mkdir -p "${d}/wf"
+  printf 'jobs:\n  x:\n    steps:\n      - uses: actions/checkout@v4\n' > "${d}/wf/bad.yml"
+  vlib_workflows_sha_pinned "${d}/wf" >/dev/null 2>&1 && return 1   # tag ref must fail
+  printf 'jobs:\n  x:\n    steps:\n      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683\n      - uses: ./.github/actions/local\n' > "${d}/wf/bad.yml"
+  vlib_workflows_sha_pinned "${d}/wf" >/dev/null 2>&1 || return 1   # sha + local must pass
+  return 0
+)
+if _workflow_pins_scratch && vlib_workflows_sha_pinned .github/workflows >/dev/null 2>&1; then
+  echo "OK   primitive   vlib_workflows_sha_pinned (tag fail / sha+local pass / real-tree pass)"
+else
+  echo "FAIL primitive   vlib_workflows_sha_pinned: a scratch or real-tree assertion did not hold"
+  fail=1
+fi
+
+# vlib_profiles_cover_roles (F-058, C15): the real capability_profiles.md + AGF.md
+# pair passes; a scratch profiles doc omitting a profile identifier fails.
+_profiles_roles_scratch() (
+  local d; d=$(mktemp -d) || return 1
+  trap 'rm -rf -- "${d}"' EXIT
+  printf 'orchestrator-primary planner-creative generator-deterministic validator-structural\n' > "${d}/prof.md"
+  cp -- standard/AGF.md "${d}/agf.md"
+  vlib_profiles_cover_roles "${d}/prof.md" "${d}/agf.md" >/dev/null 2>&1 && return 1   # missing profile must fail
+  return 0
+)
+if vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md >/dev/null 2>&1 && _profiles_roles_scratch; then
+  echo "OK   primitive   vlib_profiles_cover_roles (real pair pass / missing-profile fail)"
+else
+  echo "FAIL primitive   vlib_profiles_cover_roles: a real-pair or scratch assertion did not hold"
+  fail=1
+fi
+
 # vlib_path_resolves: every token line in the pass fixture resolves/exempts
 # (rc 0); the fail fixture's token does not (rc 1). Tokens resolve relative to
 # the repo root (this script's CWD).

@@ -523,3 +523,164 @@ if unresolved:
 sys.exit(0)
 PY
 }
+
+# ---------------------------------------------------------------------------
+# vlib_workflows_sha_pinned [<dir-or-file>]
+#
+# Asserts that every third-party GitHub Actions `uses:` reference in the target
+# workflow file(s) is pinned to a full 40-hex commit SHA, not a mutable tag or
+# branch (`@v4`, `@main`). This mechanizes the supply-chain SHA-pinning
+# requirement of standard/provenance_policy.md as check C14: the rule was already
+# the house convention (every shipped workflow ref is SHA-pinned) but nothing
+# verified it, so a future `@v2` edit would have slipped past. Local actions
+# (`./...`, `../...`) carry no ref and are exempt.
+#
+# Args:
+#   dir-or-file: a directory of workflow YAML (default '.github/workflows', all
+#     *.yml/*.yaml scanned) or a single workflow file.
+#
+# Returns:
+#   0 if every third-party `uses:` ref is 40-hex-SHA-pinned.
+#   1 otherwise (target missing, an empty directory -- a dormancy guard, since a
+#     vanished workflow dir must not vacuously pass -- or any unpinned ref, which
+#     is printed with its file:line).
+# ---------------------------------------------------------------------------
+
+vlib_workflows_sha_pinned() {
+  local target="${1:-.github/workflows}"
+
+  [ -e "${target}" ] || { echo "vlib_workflows_sha_pinned: target not found: ${target}"; return 1; }
+
+  python3 - "${target}" <<'PY'
+import os
+import re
+import sys
+
+target = sys.argv[1]
+if os.path.isdir(target):
+    files = [
+        os.path.join(target, name)
+        for name in sorted(os.listdir(target))
+        if name.endswith((".yml", ".yaml")) and os.path.isfile(os.path.join(target, name))
+    ]
+else:
+    files = [target]
+
+# `uses: owner/repo[/path]@ref` (optionally quoted, optionally a list item). A
+# local action (`./...`/`../...`) needs no pin; every other ref is pinned iff
+# `@ref` is a 40-hex commit SHA.
+uses_re = re.compile(r'^\s*(?:-\s*)?uses:\s*(["\']?)([^"\'#\s]+)\1')
+sha_re = re.compile(r'^[0-9a-fA-F]{40}$')
+
+offenders = []
+for path in files:
+    try:
+        with open(path, encoding="utf-8") as fh:
+            for lineno, line in enumerate(fh, 1):
+                match = uses_re.match(line)
+                if not match:
+                    continue
+                ref = match.group(2)
+                if ref.startswith("./") or ref.startswith("../"):
+                    continue
+                if "@" not in ref:
+                    offenders.append(f"{path}:{lineno}: unpinned (no @sha): {ref}")
+                    continue
+                if not sha_re.match(ref.rsplit("@", 1)[1]):
+                    offenders.append(f"{path}:{lineno}: not SHA-pinned: {ref}")
+    except OSError as exc:
+        offenders.append(f"{path}: cannot read: {exc}")
+
+if offenders:
+    for offender in offenders:
+        print("vlib_workflows_sha_pinned: " + offender)
+    sys.exit(1)
+if not files:
+    print(f"vlib_workflows_sha_pinned: no workflow files under {target} (dormant)")
+    sys.exit(1)
+sys.exit(0)
+PY
+}
+
+# ---------------------------------------------------------------------------
+# vlib_profiles_cover_roles <profiles-doc> <agf-doc>
+#
+# Asserts the five-capability-profile <-> five-AGF-role correspondence: the AGF
+# doc defines all five canonical roles, and the profiles doc names all five
+# roles AND all five profile identifiers. This mechanizes the capability-profile
+# claim of standard/capability_profiles.md as check C15 -- the correspondence
+# feature 053 made true (NDEBT-010) is now guarded against drift (dropping a
+# role from the mapping, or a profile, fails the check). Whole-word/token
+# presence is used (never prose-table parsing), so it is robust to wording
+# changes while still catching a genuinely missing role or profile.
+#
+# Args:
+#   profiles-doc: standard/capability_profiles.md (the 5 profiles + role map).
+#   agf-doc:      standard/AGF.md (where the 5 roles are defined).
+#
+# Returns:
+#   0 if all five roles appear in both docs and all five profiles in the
+#     profiles doc.
+#   1 otherwise (a doc missing, or a role/profile absent -- the gap is printed).
+# ---------------------------------------------------------------------------
+
+vlib_profiles_cover_roles() {
+  local profiles_doc="$1"
+  local agf_doc="$2"
+
+  [ -f "${profiles_doc}" ] || { echo "vlib_profiles_cover_roles: profiles doc not found: ${profiles_doc}"; return 1; }
+  [ -f "${agf_doc}" ] || { echo "vlib_profiles_cover_roles: AGF doc not found: ${agf_doc}"; return 1; }
+
+  python3 - "${profiles_doc}" "${agf_doc}" <<'PY'
+import re
+import sys
+
+profiles_path, agf_path = sys.argv[1], sys.argv[2]
+
+# The five profile identifiers (standard/capability_profiles.md) and the AGF role
+# (standard/AGF.md Section 2) each corresponds to 1:1 -- the correspondence is
+# carried by the profile's stem (orchestrator-primary -> Orchestrator). The doc
+# names profiles by identifier (in a table), not by repeating the capitalised
+# role word, so the check verifies each named profile has its role DEFINED in the
+# AGF doc, tying the two documents together.
+ROLE_BY_PROFILE = {
+    "orchestrator-primary": "Orchestrator",
+    "planner-creative": "Planner",
+    "generator-deterministic": "Generator",
+    "validator-structural": "Validator",
+    "evaluator-adversarial": "Evaluator",
+}
+
+
+def read(path):
+    with open(path, encoding="utf-8") as fh:
+        return fh.read()
+
+
+def has_word(text, word):
+    return re.search(r"\b" + re.escape(word) + r"\b", text) is not None
+
+
+try:
+    profiles_text = read(profiles_path)
+    agf_text = read(agf_path)
+except OSError as exc:
+    print(f"vlib_profiles_cover_roles: cannot read: {exc}")
+    sys.exit(1)
+
+gaps = []
+for profile, role in ROLE_BY_PROFILE.items():
+    if profile not in profiles_text:
+        gaps.append(f"profiles doc {profiles_path} does not name profile '{profile}'")
+    if not has_word(agf_text, role):
+        gaps.append(
+            f"AGF doc {agf_path} does not define role '{role}' that profile '{profile}' maps to"
+        )
+
+if gaps:
+    for gap in gaps:
+        print("vlib_profiles_cover_roles: " + gap)
+    sys.exit(1)
+sys.exit(0)
+PY
+}

@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.8.0
+version: 0.9.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.9.0"
+    date: "2026-07-20"
+    summary: "Track 3 (mechanize-or-descope the constitutional layer) RESOLVED by phase-006 feature 058 (gate H-CONSTITUTIONAL, operator decision authorized verbatim): two surfaces mechanized (standard/provenance_policy.md SHA-pinned-Actions via validate.sh check C14; standard/capability_profiles.md 5-profile-to-5-role correspondence via check C15), the remaining seven marked consumer-aspirational, and docs/guide/index.html refreshed to reflect the outcome. Track 3's section now carries the resolution banner."
   - version: "0.8.0"
     date: "2026-07-19"
     summary: "Phase 006 activated (operator verbatim: 'Approved. Proceed with the logical next steps.', gate H-PHASE-006, 2026-07-19): the Proposed Next Phase section becomes the Plan of Record banner. Track 1 item 2 truth-rolled to EXECUTED — the user guide is live on GitHub Pages (first deploy succeeded 2026-07-19 00:23 UTC after the one-time enable; verified serving the v0.7.0 guide), closing the last gate inherited from phase 003."
@@ -185,6 +188,16 @@ debt register (IDs refer to `docs/planning/DEBT.md`):
    this phase exists to generate.
 
 ## Track 3 — Strategic Decision: Mechanize or Descope the Constitutional Layer
+
+> **RESOLVED 2026-07-20 by phase-006 feature 058 (gate H-CONSTITUTIONAL).** The operator's per-document
+> decision, authorized verbatim and recorded in `.agent/run_state.json`: **mechanize two** surfaces —
+> `standard/provenance_policy.md`'s SHA-pinned-Actions rule (`tools/validate.sh` check C14) and
+> `standard/capability_profiles.md`'s five-profile-to-five-role correspondence (check C15) — and **mark the
+> remaining seven consumer-aspirational** (`standard/ci_gates.md`, `methodology/05_eval_and_trace.md`,
+> `methodology/07_eval_gated_promotion.md`, `standard/mcp_policy.md`, `standard/permission_classes.md`,
+> `standard/failure_modes.md`, `standard/cross_repo_governance.md`), with `docs/guide/index.html` refreshed to
+> reflect the outcome. Each document now carries its decided enforcement state in frontmatter and a body
+> banner. The problem statement below is retained for provenance.
 
 The v0.4.0 NMF hybrid shipped a constitutional policy surface (capability profiles,
 the MERGE_READY CI-gate formula, eval-and-trace, eval-gated promotion, MCP policy,

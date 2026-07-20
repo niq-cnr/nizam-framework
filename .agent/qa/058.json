@@ -1,0 +1,50 @@
+{
+  "feature_id": "058",
+  "qa_pass": true,
+  "checks_run": 12,
+  "checks_passed": 12,
+  "adversarial": {
+    "performed": true,
+    "description": "Beyond re-running all 12 contract verifications to EXIT:0: (MECHANIZE LOAD-BEARING) both new checks were proven non-vacuous by scratch discrimination -- C14/vlib_workflows_sha_pinned FAILs a tag-pinned `@v4` ref and PASSes a 40-hex SHA + an exempt local `./` action and the real .github/workflows; C15/vlib_profiles_cover_roles PASSes the real capability_profiles.md+AGF.md pair and FAILs a profiles doc missing the evaluator-adversarial identifier (both standing in fixtures_self_test.sh). The SHA-pin check goes green immediately because every current workflow ref is already pinned -- it locks in a followed-but-unverified convention, not a dormant test. (HONEST MARKINGS) each of the 7 descoped docs carries `enforcement: consumer-aspirational` + a body banner and each of the 2 mechanized docs `enforcement: partially-enforced` + a banner naming its check (C14/C15); the guide names all 9 and reflects the split. (NO SEMANTIC DRIFT) the descope adds only the enforcement marking -- the normative bodies are unchanged; the two mechanized checks are default-mode only (.github/ and the framework-authoring invariant are never in a consumer payload).",
+    "process_note": "Single-session collapsed-role execution, disclosed-and-permitted by the AGF Orchestrator clause. The operator's verbatim H-CONSTITUTIONAL decision and the F-056 scope-flag acknowledgment were recorded in run_state BEFORE this implementation (coordination commit 8754465), per the gate-decision-before-acting principle this phase codified (NDEBT-018.2 / ecosystem/01 4.1). CLI/doc probes use mktemp -d scratch (methodology/02 Sec 11); expected-FAIL primitive calls capture rc explicitly (Sec 10(e)/NDEBT-019). Anti-vacuity (E01) and confinement (E11) anchor to the phase base 756a158."
+  },
+  "evidence_files": [
+    ".agent/evidence/058-verify-01.txt",
+    ".agent/evidence/058-verify-02.txt",
+    ".agent/evidence/058-verify-03.txt",
+    ".agent/evidence/058-verify-04.txt",
+    ".agent/evidence/058-verify-05.txt",
+    ".agent/evidence/058-verify-06.txt",
+    ".agent/evidence/058-verify-07.txt",
+    ".agent/evidence/058-verify-08.txt",
+    ".agent/evidence/058-verify-09.txt",
+    ".agent/evidence/058-verify-10.txt",
+    ".agent/evidence/058-verify-11.txt",
+    ".agent/evidence/058-verify-12.txt",
+    ".agent/evidence/058/verification.txt",
+    ".agent/evidence/058/diff.patch"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "evidence_bundle_check": {
+    "diff_patch_matches_live_diff": true,
+    "diff_patch_reasoning": ".agent/evidence/058/diff.patch is `git diff 756a158..HEAD` at the deliverable commit 8f5f29c; E11 independently re-asserts the non-.agent changes are exactly the 16 contracted files.",
+    "flat_files": "12 per-entry captures 058-verify-01..12.txt + 058/verification.txt (12 EXIT:0) + 058/diff.patch."
+  },
+  "acceptance_reconciliation": {
+    "source": ".agent/feature_list_006.json feature 058 acceptance_tests (2) + contract 058 verification (12)",
+    "summary": "Acceptance test 1 -- 'a recorded per-document decision exists for every constitutional document, operator-authorized verbatim' -- maps to E09: run_state records the operator's verbatim decision and all 9 per-document dispositions (coordination commit 8754465), and contract 058 design_notes.per_document_disposition enumerates them; ROADMAP Track 3 is marked resolved. Acceptance test 2 -- 'each document carries its decided state (enforcement surface, conformance checklist, or explicit consumer-aspirational marking); the guide reflects the outcome' -- maps to E05 (7 consumer-aspirational + 2 partially-enforced markings/banners), E02/E03 (the two enforcement SURFACES C14/C15 are load-bearing), E06 (each doc versioned 0.2.0 + change_log), and E08 (the guide names the constitutional docs + methodology 07/08 and reflects each decision). E01 anti-vacuity + E11 confinement + E12 CHANGELOG frame the deliverable."
+  },
+  "non_blocking_observations": [
+    "SCOPE OVER ESTIMATE (disclosed, NOT the 3x flag): actual 368 ins+del (non-.agent, 756a158..HEAD) vs 180 estimated (+104%). This is UNDER 3x the rolling average of the last three completed features (054=74, 057=101, 056=534; avg 236.3, 3x=709), so methodology/00_planning.md Section 6's per-feature flag does NOT fire and no acknowledgment is required. The weight is the two heavily-documented verify_lib primitives (161 ins, the F-055 documentation-density pattern the operator has accepted) plus the breadth of nine per-document markings + the guide/ROADMAP/CHANGELOG refresh; not sprawl.",
+    "CUMULATIVE WATCH for F-059: cumulative 2403+368 = 2771 / 2990 re-baselined ceiling (92.7%), under the 130% cumulative HALT but with only ~219 lines of headroom. The sole remaining feature 059 (phase close + v0.8.0, est 100) must land under ~219 non-.agent lines or it trips the cumulative halt (methodology/00_planning.md Section 6) -- a hard gate requiring operator authorization. Flagged here so 059 is scoped tightly or a further re-baseline is taken deliberately.",
+    "OPERATOR-VERBATIM GATE DECISION: H-CONSTITUTIONAL is an operator gate; the per-document decision was authorized verbatim ('Descope 7 as consumer-aspirational, mechanize the 2 cheap real wins ...') and recorded before implementation (coordination commit 8754465). The optional permission_classes credential-CI proxy was NOT selected -- exactly the two named wins were mechanized."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 058 APPROVED. All 12 contract verifications re-run to EXIT:0. The Track 3 constitutional mechanize-or-descope decision is implemented per the operator's verbatim authorization: 2 surfaces MECHANIZED with load-bearing checks -- provenance SHA-pinned-Actions (validate.sh C14, vlib_workflows_sha_pinned) and capability-profile<->AGF-role correspondence (C15, vlib_profiles_cover_roles), default sweep now 15/15 -- and 7 DESCOPED as consumer-aspirational (frontmatter + banner), with tools/SKILL.md softened, docs/guide/index.html refreshed to reflect the outcome, and ROADMAP Track 3 resolved. All 9 docs 0.2.0 + change_log. Sweep 15/15, payload 11/11, self-test 47/47, e2e green. SCOPE: 368 vs 180 (+104%, disclosed, NOT the 3x flag); cumulative 2771/2990 (92.7%) with a tight-headroom watch flagged for the final feature 059. Operator-gated feature, decision recorded verbatim."
+  }
+}

@@ -2,12 +2,19 @@
 id: nizam-eval-gated-promotion
 title: "Eval-Gated Model Promotion Protocol"
 description: "Treats model and prompt changes as code changes, routing them through the contract-first execution loop and blocking promotion until role-specific evals pass."
-version: 0.1.0
+version: 0.2.0
 status: active
+enforcement: consumer-aspirational
 authoritative_source: methodology/07_eval_gated_promotion.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-20"
+    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
 ---
 
 # Eval-Gated Model Promotion Protocol
+
+> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
 
 ## 1. Overview
 

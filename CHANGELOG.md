@@ -9,6 +9,24 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Constitutional-layer mechanize-or-descope decision** (phase 006 feature 058,
+  gate **H-CONSTITUTIONAL**, Track 3): the operator's per-document decision on the
+  v0.4.0 NMF-hybrid constitutional policy surface, so every consumer first-contact
+  surface is honest about what the framework enforces. **Mechanized (2):**
+  `standard/provenance_policy.md`'s SHA-pinned-Actions rule is now verified by
+  `tools/validate.sh` check **C14** (a new `vlib_workflows_sha_pinned` primitive over
+  the workflows directory), and `standard/capability_profiles.md`'s five-profile ↔
+  five-AGF-role correspondence by check **C15** (a new `vlib_profiles_cover_roles`
+  primitive) — the default sweep is now 15 checks, both dogfooded green.
+  **Descoped consumer-aspirational (7):** `standard/ci_gates.md`,
+  `methodology/05_eval_and_trace.md`, `methodology/07_eval_gated_promotion.md`,
+  `standard/mcp_policy.md`, `standard/permission_classes.md`,
+  `standard/failure_modes.md`, and `standard/cross_repo_governance.md` gain an
+  `enforcement: consumer-aspirational` frontmatter field and a body banner, and
+  `tools/SKILL.md`'s cross-repo directive is softened to match. `docs/guide/index.html`
+  is refreshed to name the constitutional documents and reflect each decision;
+  ROADMAP Track 3 is marked resolved. The two mechanized docs are marked
+  `enforcement: partially-enforced`.
 - **Preflight + ecosystem-schema hardening bundle** (phase 006 feature 056,
   resolving **NDEBT-021, -023, -024, -017, -018**): the deferred
   `tools/ecosystem_preflight.py` hardening backlog, each item carrying a
