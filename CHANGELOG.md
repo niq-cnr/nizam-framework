@@ -7,6 +7,41 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **`schema/audit_delta.schema.json`** — the fourth core ecosystem-cycle schema,
+  validating the progress-comparison delta artifact
+  (`ecosystem/07_progress_comparison.md` §7): the two revision/timestamp-anchored
+  reference points and the closed five-class transition taxonomy
+  (`new`/`resolved`/`reopened`/`persisting`/`stale` — all five buckets present, no
+  sixth class admitted). Enforces the protocol's invariants: the
+  closure-only-with-evidence rule (§4 — non-empty `closure_evidence` on every
+  `resolved` and pre-window-resolved finding), fresh evidence required on
+  `persisting` findings (§3), both `open_findings_count` endpoints present, and —
+  since JSON Schema cannot express a constraint spanning sibling arrays — a
+  code-level check in **both** C12 entry points rejecting a finding id classified
+  into more than one transition class (§3 "exactly one class", mirroring the
+  NDEBT-023 same-repo-revision check). Wired into `tools/validate.sh` **C12** as
+  the fourth ecosystem family at both entry points (full-sweep and `--target`
+  router, discriminated by its full `earlier`/`later`/`transitions` shape matched
+  ahead of the generic key routes so an additive property cannot divert a valid
+  delta), with one positive and three negative fixtures under `tools/fixtures/`,
+  registered in `NIZAM.json`,
+  indexed in `schema/README.md`, and covered by `tools/fixtures_self_test.sh`.
+  Completes the four core ecosystem-cycle schemas
+  (baseline / preflight-verdict / engineering-finding / audit-delta).
+
+### Fixed
+
+- **Doc-truth in the ecosystem protocols** — retired the stale "schema … not yet
+  present at the time this protocol was authored" parentheticals in
+  `ecosystem/01_clean_state_preflight.md`, `ecosystem/02_evidence_baseline.md`, and
+  `ecosystem/03_engineering_audit.md` (their schemas shipped in features 037–039 and
+  have been present under `schema/` since), and updated
+  `ecosystem/07_progress_comparison.md` from its "optional / deferrable / not yet
+  present" bare-filename reference to the now-present, directory-qualified
+  `schema/audit_delta.schema.json`. No protocol semantics changed.
+
 ## [0.8.0] - 2026-07-20
 
 **Minor release** (`methodology/06_release_train.md` §3.2): phase 006

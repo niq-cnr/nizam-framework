@@ -2,10 +2,13 @@
 id: nizam-ecosystem-clean-state-preflight
 title: "Clean-State Preflight Protocol"
 description: "The reusable preflight protocol that gates entry into the ecosystem engineering cycle: a machine-readable verdict of exactly one of PASS, PASS_WITH_EXCEPTIONS, or FAIL, explicit blocking rules, and the operator-exception rule PASS_WITH_EXCEPTIONS carries before execution continues."
-version: 0.1.2
+version: 0.1.3
 status: active
 authoritative_source: ecosystem/01_clean_state_preflight.md
 change_log:
+  - version: "0.1.3"
+    date: "2026-07-20"
+    summary: "Tier-0 doc-truth: Section 7's References entry for schema/preflight_verdict.schema.json retires the stale parenthetical 'added by a later feature in this phase; not yet present at the time this protocol was authored' -- the schema shipped in feature 038 and has been present under schema/ since. No semantic change; the reference now reads as the other sibling protocols' schema references do."
   - version: "0.1.2"
     date: "2026-07-20"
     summary: "Feature 056 (NDEBT-018.2): Section 4.1 codifies durably the operational corollary of the tracked-file blocking rule — an orchestrator-owned tracked-state write relevant to a gate decision (e.g. run_state.json's operator_gate_decision event) MUST be committed before the corresponding gated CLI invocation runs, since no --tolerate-untracked flag can rescue a tracked-file modification. Names the feature-043 self-dogfood incident it remediates, so the rule binds by document rather than by per-dispatch instruction."
@@ -180,5 +183,4 @@ the verdict artifact or into a chat transcript.
 - `methodology/03_circuit_breaker.md` — the house pattern this document's
   structure and tone follow.
 - `schema/preflight_verdict.schema.json` — the machine-readable schema for
-  the verdict artifact this protocol requires (added by a later feature in
-  this phase; not yet present at the time this protocol was authored).
+  the verdict artifact this protocol requires.

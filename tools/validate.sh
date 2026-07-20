@@ -97,13 +97,18 @@ Modes:
                           schema/contract.schema.json, or
                           schema/run_state.schema.json respectively. Failing
                           those, an ecosystem_baseline shape (the six
-                          `*_references` arrays) or an engineering_finding
-                          shape (`closure_criteria`) routes to C12 against
-                          schema/ecosystem_baseline.schema.json or
-                          schema/engineering_finding.schema.json (NDEBT-015,
-                          feature 052 -- these three ecosystem families
-                          formerly misrouted to C4/C11 and failed regardless
-                          of polarity). C4 does NOT also run in any of these
+                          `*_references` arrays), an engineering_finding
+                          shape (`closure_criteria`), or an audit_delta shape
+                          (top-level `earlier`+`later`+`transitions`, matched
+                          ahead of the generic `verdict`/`qa_pass` routes so an
+                          additive key cannot divert a valid delta) routes to C12
+                          against schema/ecosystem_baseline.schema.json,
+                          schema/engineering_finding.schema.json, or
+                          schema/audit_delta.schema.json (the first three
+                          families landed via NDEBT-015, feature 052, which
+                          fixed their former misroute to C4/C11 that failed
+                          regardless of polarity; audit_delta joined later).
+                          C4 does NOT also run in any of these
                           routed cases. Otherwise (no recognized key present
                           -- e.g. NIZAM.json or a Nizam-index-shaped fixture)
                           C4 (schema validation + indexed-path walker) runs
@@ -338,12 +343,14 @@ file(s)/detail(s) printed on the following indented line(s)):
 
   C12 Ecosystem schema-family fixture validation (are the ecosystem schema
       families' fixtures actually load-bearing, or merely present?). For
-      each of the three families shipped in features 037-039 (baseline,
-      preflight-verdict, engineering-finding), validates every matching
+      each of the four families -- the three shipped in features 037-039
+      (baseline, preflight-verdict, engineering-finding) plus audit_delta --
+      validates every matching
       `tools/fixtures/<family>_*.json` fixture, via python3 + jsonschema,
       against its shipped schema (`schema/ecosystem_baseline.schema.json`,
       `schema/preflight_verdict.schema.json`,
-      `schema/engineering_finding.schema.json` respectively). A fixture is
+      `schema/engineering_finding.schema.json`, and
+      `schema/audit_delta.schema.json`). A fixture is
       NEGATIVE (MUST fail validation) iff its filename carries the canonical
       delimited-lowercase token `_neg_` or `_invalid_`; every other
       conforming fixture is POSITIVE and MUST validate. A positive fixture
@@ -1463,9 +1470,10 @@ check_c11_dogfood_payload_skip() {
 
 # ---------------------------------------------------------------------------
 # C12 -- ecosystem schema-family fixture validation (NDEBT-009 fix, scoped to
-# the three ecosystem schema families shipped in features 037/038/039: proves
-# the tools/fixtures/{ecosystem_baseline,preflight_verdict,
-# engineering_finding}_*.json fixtures are load-bearing, not merely present).
+# the ecosystem schema families: the three shipped in features 037/038/039
+# plus audit_delta -- proves the tools/fixtures/{ecosystem_baseline,
+# preflight_verdict,engineering_finding,audit_delta}_*.json fixtures are
+# load-bearing, not merely present).
 # The full-sweep check_c12_ecosystem_fixtures below is default-mode only
 # (mirrors C6/C7's repo-wide-only precedent) and not run under --payload (no
 # acceptance test requires payload-mode fixture coverage; see NON-GOALS). As
@@ -1473,12 +1481,12 @@ check_c11_dogfood_payload_skip() {
 # ecosystem fixture IS routed -- to check_c12_target, further below -- so it
 # emits a discriminating [C12] verdict instead of misrouting to C4/C11; the
 # full-sweep polarity/dormancy guard and the single-file --target validation
-# are two distinct entry points that share the three family schemas.
+# are two distinct entry points that share the family schemas.
 # ---------------------------------------------------------------------------
 
 # check_c12_ecosystem_fixtures
 #
-# For each of the three families, validates every matching
+# For each of the four families, validates every matching
 # tools/fixtures/<family>_*.json fixture against its shipped schema. A
 # fixture is NEGATIVE (MUST fail schema validation) iff its filename
 # contains the canonical delimited token '_neg_' or '_invalid_' -- checked as
@@ -1518,6 +1526,7 @@ FAMILIES = {
     "ecosystem_baseline": "schema/ecosystem_baseline.schema.json",
     "preflight_verdict": "schema/preflight_verdict.schema.json",
     "engineering_finding": "schema/engineering_finding.schema.json",
+    "audit_delta": "schema/audit_delta.schema.json",
 }
 
 
@@ -1541,6 +1550,25 @@ def repository_revision_inconsistencies(doc):
                 continue
             by_repo.setdefault(repo, set()).add(rev)
     return sorted(r for r, revs in by_repo.items() if len(revs) > 1)
+
+
+def audit_delta_duplicate_ids(doc):
+    """ecosystem/07_progress_comparison.md Sec 3: every finding present in either
+    input receives EXACTLY ONE transition class; a finding "assigned to more than
+    one class at once, is not a valid comparison result". The same `id` appearing
+    in two of the five buckets (or twice within one) is therefore invalid, but the
+    constraint spans sibling arrays and is not expressible in JSON Schema, so C12
+    enforces it in code -- mirroring repository_revision_inconsistencies above."""
+    counts = {}
+    transitions = doc.get("transitions", {})
+    if isinstance(transitions, dict):
+        for bucket in ("new", "resolved", "reopened", "persisting", "stale"):
+            items = transitions.get(bucket, [])
+            if isinstance(items, list):
+                for item in items:
+                    if isinstance(item, dict) and isinstance(item.get("id"), str):
+                        counts[item["id"]] = counts.get(item["id"], 0) + 1
+    return sorted(fid for fid, n in counts.items() if n > 1)
 
 
 # NDEBT-016 (feature 052): the polarity marker is AUTHORITATIVE and RESERVED.
@@ -1610,6 +1638,11 @@ for family, schema_path in FAMILIES.items():
         # fixture is caught by polarity rather than validating unexpectedly.
         if is_valid and family == "ecosystem_baseline" and repository_revision_inconsistencies(data):
             is_valid = False
+        # Sec 3: a schema-valid audit_delta that classifies one finding id into
+        # more than one transition bucket is NOT a valid comparison; the
+        # code-level check completes the schema's coverage.
+        if is_valid and family == "audit_delta" and audit_delta_duplicate_ids(data):
+            is_valid = False
         if is_negative and is_valid:
             failures.append(f"{path}: negative fixture unexpectedly VALIDATED against {schema_path}")
         elif not is_negative and not is_valid:
@@ -1634,7 +1667,7 @@ PY
 #
 # NDEBT-015 (feature 052): single-fixture ecosystem-schema validation for the
 # `--target` dispatcher. The full-sweep check_c12_ecosystem_fixtures validates
-# EVERY fixture of all three families with a polarity/dormancy guard; this
+# EVERY fixture of all four families with a polarity/dormancy guard; this
 # variant validates exactly ONE `--target` file against the schema of the
 # family the router (check_c11_or_c4_target) identified, emitting a
 # discriminating [C12] verdict -- a valid fixture PASSes, a negative fixture
@@ -1660,6 +1693,7 @@ schema_paths = {
     "ecosystem_baseline": "schema/ecosystem_baseline.schema.json",
     "preflight_verdict": "schema/preflight_verdict.schema.json",
     "engineering_finding": "schema/engineering_finding.schema.json",
+    "audit_delta": "schema/audit_delta.schema.json",
 }
 schema_path = schema_paths[family]
 
@@ -1702,6 +1736,24 @@ if family == "ecosystem_baseline":
     inconsistent = sorted(r for r, revs in by_repo.items() if len(revs) > 1)
     if inconsistent:
         print(f"{path}: same-repo revision inconsistency ({family}): {inconsistent} (NDEBT-023)")
+        sys.exit(1)
+
+# ecosystem/07_progress_comparison.md Sec 3: a finding receives exactly one
+# transition class; the same id in two buckets is not expressible in JSON Schema,
+# so mirror the full-sweep audit_delta_duplicate_ids check here for --target too.
+if family == "audit_delta":
+    counts = {}
+    transitions = doc.get("transitions", {})
+    if isinstance(transitions, dict):
+        for bucket in ("new", "resolved", "reopened", "persisting", "stale"):
+            items = transitions.get(bucket, [])
+            if isinstance(items, list):
+                for item in items:
+                    if isinstance(item, dict) and isinstance(item.get("id"), str):
+                        counts[item["id"]] = counts.get(item["id"], 0) + 1
+    duplicates = sorted(fid for fid, n in counts.items() if n > 1)
+    if duplicates:
+        print(f"{path}: finding id in more than one transition class ({family}): {duplicates} (Sec 3)")
         sys.exit(1)
 
 sys.exit(0)
@@ -1864,27 +1916,42 @@ if not isinstance(doc, dict):
     print("none")
     sys.exit(0)
 
-# NDEBT-015 (feature 052): recognize the three ecosystem schema families so a
+# NDEBT-015 (feature 052): recognize the ecosystem schema families so a
 # `--target` invocation against one of their fixtures produces a
 # DISCRIMINATING signal instead of misrouting. Before this, an ecosystem
 # fixture carried no route discriminator and fell through to C4 (or, for
 # preflight_verdict, collided with the qa_verdict route on its top-level
 # `verdict` key), so EVERY ecosystem `--target` invocation failed regardless
 # of the fixture's polarity. Discriminators (dual-key / required-key
-# heuristics): `verdict`+`execution_id` -> preflight_verdict (checked BEFORE
-# the generic `verdict`->qa_verdict route so preflight is not swallowed;
-# qa_verdict artifacts carry no `execution_id`); the six mandatory
+# heuristics): the full audit_delta shape `earlier`+`later`+`transitions` ->
+# audit_delta, matched FIRST -- audit_delta declares additionalProperties: true,
+# so a delta that also carried a stray `verdict`/`qa_pass`/`closure_criteria` key
+# would otherwise be diverted into an earlier family's route; no other family's
+# artifact carries all three keys, so matching the whole shape up front never
+# steals their fixtures. Then `verdict`+`execution_id` -> preflight_verdict
+# (checked BEFORE the generic `verdict`->qa_verdict route so preflight is not
+# swallowed; qa_verdict artifacts carry no `execution_id`); the six mandatory
 # `*_references` category arrays -> ecosystem_baseline; `closure_criteria` ->
-# engineering_finding. These `ecosystem:<family>` routes dispatch to
-# check_c12_target (schema validation emitting a [C12] verdict); the existing
-# review/qa_verdict/contract/run_state routes and the C4 fall-through are
-# unchanged.
+# engineering_finding. These `ecosystem:<family>` routes
+# dispatch to check_c12_target (schema validation emitting a [C12] verdict);
+# the existing review/qa_verdict/contract/run_state routes and the C4
+# fall-through are unchanged.
 ECOSYSTEM_BASELINE_KEYS = {
     "framework_references", "repository_references", "dependency_references",
     "ci_references", "planning_references", "evidence_references",
 }
 
-if "review" in doc:
+if {"earlier", "later", "transitions"} <= doc.keys() and isinstance(doc.get("transitions"), dict):
+    # Checked FIRST, and on the full required shape (earlier + later +
+    # transitions), not a bare `transitions` key: audit_delta declares
+    # additionalProperties: true, so a delta that also carried a stray
+    # `verdict`/`qa_pass`/`closure_criteria` key would otherwise be diverted into
+    # an earlier family's route. Matching the whole audit_delta shape up front
+    # keeps additive keys from misrouting a valid delta. No other family's
+    # artifact carries all three of these keys, so this never steals their
+    # fixtures.
+    print("ecosystem:audit_delta")
+elif "review" in doc:
     print("contract_review")
 elif "verdict" in doc and "execution_id" in doc:
     print("ecosystem:preflight_verdict")
