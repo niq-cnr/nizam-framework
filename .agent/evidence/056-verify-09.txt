@@ -1,0 +1,9 @@
+# verification E09
+# NDEBT-024 blocking_findings ALIGNMENT: the schema now REQUIRES blocking_findings when verdict==FAIL (a FAIL doc without it is rejected; with it, valid; a PASS without it stays valid); the rebuilt preflight_verdict_fail.json is C12-positive/valid; and the tool's real FAIL emission carries blocking_findings and validates.
+
+schema: FAIL requires blocking_findings; PASS does not
+PREFLIGHT VERDICT: FAIL (1 blocking finding(s))
+the tool FAIL emission carries blocking_findings and validates against the real schema
+E09 PASS: schema/fixture/tool aligned on blocking_findings (FAIL requires it; fixture C12-positive; tool emission validates)
+
+EXIT:0

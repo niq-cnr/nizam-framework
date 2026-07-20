@@ -1,0 +1,8 @@
+# verification E05
+# NDEBT-021.4 OUTPUT-DIR PRE-CLEAN: reusing one --output-dir for a PASS run then a FAIL run leaves NO stale baseline.json from the PASS run alongside the FAIL preflight.json -- the pre-clean removes preflight.json/preflight.pending.json/baseline.json before each run so verdict artifacts never contradict.
+
+PREFLIGHT VERDICT: PASS
+PREFLIGHT VERDICT: FAIL (1 blocking finding(s))
+E05 PASS: the FAIL run pre-cleaned the PASS run stale baseline.json; no contradictory leftovers
+
+EXIT:0

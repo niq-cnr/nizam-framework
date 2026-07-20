@@ -1,11 +1,10 @@
 {
+  "_fixture_notice": "POSITIVE FIXTURE -- a VALID FAIL verdict document, modeling the shipped CLI's real FAIL emission (tools/ecosystem_preflight.py records blocking conditions under `blocking_findings`, never inside `exceptions`). Rebuilt on `blocking_findings` by feature 056 (NDEBT-024): the former shape placed a `blocking: true` item inside `exceptions` (schema-valid but semantically muddled). Must VALIDATE against schema/preflight_verdict.schema.json, whose FAIL branch now requires a non-empty blocking_findings array.",
   "verdict": "FAIL",
   "execution_id": "exec-2026-07-17-002",
   "generated_at": "2026-07-17T00:05:00Z",
-  "exceptions": [
-    {
-      "condition": "in-scope repository has untracked changes not declared tolerated",
-      "blocking": true
-    }
+  "blocking_findings": [
+    "untracked change not declared tolerated: build/output.tmp",
+    "uncommitted tracked change (M): src/config.yaml"
   ]
 }

@@ -20,11 +20,16 @@
     },
     "exceptions": {
       "type": "array",
-      "description": "The non-blocking findings surfaced by the run. Populated when verdict is PASS_WITH_EXCEPTIONS (protocol Sec 3); the shape of an individual finding is intentionally open here (additionalProperties true) so it composes with, and does not redefine, schema/engineering_finding.schema.json.",
+      "description": "The non-blocking findings surfaced by the run. Populated when verdict is PASS_WITH_EXCEPTIONS (protocol Sec 3); the shape of an individual finding is intentionally open here (additionalProperties true) so it composes with, and does not redefine, schema/engineering_finding.schema.json. Blocking conditions are NEVER recorded here -- they belong in `blocking_findings`.",
       "items": {
         "type": "object",
         "additionalProperties": true
       }
+    },
+    "blocking_findings": {
+      "type": "array",
+      "description": "The blocking findings that produced a FAIL verdict (protocol Sec 4). Required and non-empty when verdict is FAIL; this is the exact shape the shipped CLI (tools/ecosystem_preflight.py) emits on a FAIL run -- each entry a human-readable blocking-condition string. Blocking conditions are recorded here, never inside `exceptions` (which is reserved for non-blocking findings).",
+      "items": { "type": "string" }
     },
     "operator_approval": {
       "type": "object",
@@ -68,6 +73,21 @@
           "operator_approval": {
             "type": "object",
             "required": ["approver", "approved_at", "authorization"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "verdict": { "const": "FAIL" } },
+        "required": ["verdict"]
+      },
+      "then": {
+        "required": ["blocking_findings"],
+        "properties": {
+          "blocking_findings": {
+            "type": "array",
+            "minItems": 1
           }
         }
       }

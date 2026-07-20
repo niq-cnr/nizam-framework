@@ -1519,6 +1519,30 @@ FAMILIES = {
     "preflight_verdict": "schema/preflight_verdict.schema.json",
     "engineering_finding": "schema/engineering_finding.schema.json",
 }
+
+
+def repository_revision_inconsistencies(doc):
+    """NDEBT-023: within repository_references, entries sharing the same
+    `repository` MUST share the same `revision`. Revisions are compared only
+    among entries KNOWN to be the same repository (by the explicit key), so
+    distinct repositories -- and the dependency tool-version "revision" -- never
+    false-positive. This relational cross-item rule is not expressible in JSON
+    Schema, so C12 enforces it in code, mirroring the capture tool's own
+    find_repository_revision_inconsistencies (tools/ecosystem_preflight.py)."""
+    by_repo = {}
+    refs = doc.get("repository_references", [])
+    if isinstance(refs, list):
+        for item in refs:
+            if not isinstance(item, dict):
+                continue
+            repo = item.get("repository")
+            rev = item.get("revision")
+            if not isinstance(repo, str) or not isinstance(rev, str):
+                continue
+            by_repo.setdefault(repo, set()).add(rev)
+    return sorted(r for r, revs in by_repo.items() if len(revs) > 1)
+
+
 # NDEBT-016 (feature 052): the polarity marker is AUTHORITATIVE and RESERVED.
 # A fixture is NEGATIVE iff its basename carries the canonical, delimited,
 # lowercase token `_neg_`/`_invalid_` (CANONICAL_NEG). To stop the classifier
@@ -1579,6 +1603,12 @@ for family, schema_path in FAMILIES.items():
             jsonschema.validate(data, schema)
             is_valid = True
         except jsonschema.ValidationError:
+            is_valid = False
+        # NDEBT-023: a schema-valid ecosystem_baseline that declares
+        # inconsistent same-repository revisions is NOT a valid baseline; the
+        # code-level check completes the schema's coverage so the negative
+        # fixture is caught by polarity rather than validating unexpectedly.
+        if is_valid and family == "ecosystem_baseline" and repository_revision_inconsistencies(data):
             is_valid = False
         if is_negative and is_valid:
             failures.append(f"{path}: negative fixture unexpectedly VALIDATED against {schema_path}")
@@ -1652,6 +1682,27 @@ try:
 except jsonschema.ValidationError as exc:
     print(f"{path}: schema violation ({family}): {exc.message}")
     sys.exit(1)
+
+# NDEBT-023: same-repo revision-consistency is a code-level rule the schema
+# cannot express; mirror the full-sweep C12 check (and the capture tool's
+# find_repository_revision_inconsistencies) so a --target invocation against a
+# schema-valid-but-inconsistent baseline is caught, not passed.
+if family == "ecosystem_baseline":
+    by_repo = {}
+    refs = doc.get("repository_references", [])
+    if isinstance(refs, list):
+        for item in refs:
+            if not isinstance(item, dict):
+                continue
+            repo = item.get("repository")
+            rev = item.get("revision")
+            if not isinstance(repo, str) or not isinstance(rev, str):
+                continue
+            by_repo.setdefault(repo, set()).add(rev)
+    inconsistent = sorted(r for r, revs in by_repo.items() if len(revs) > 1)
+    if inconsistent:
+        print(f"{path}: same-repo revision inconsistency ({family}): {inconsistent} (NDEBT-023)")
+        sys.exit(1)
 
 sys.exit(0)
 PY

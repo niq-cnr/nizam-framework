@@ -9,6 +9,32 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Preflight + ecosystem-schema hardening bundle** (phase 006 feature 056,
+  resolving **NDEBT-021, -023, -024, -017, -018**): the deferred
+  `tools/ecosystem_preflight.py` hardening backlog, each item carrying a
+  discriminating executed probe (the CLI is not CI-covered, so the
+  untracked-not-tolerated and tolerate-polarity probes are now standing guards in
+  `tools/fixtures_self_test.sh`). **NDEBT-021** — NUL-delimited
+  `git status --porcelain=v1 -z` parsing that preserves the directory-prefix
+  tolerate semantics the 043/044 approved runs depend on; readable-regular-file
+  reference checks (`os.path.isfile` + `os.access`, rejecting a directory at the
+  path) and an unresolved-HEAD blocking finding; `--repo-root` defaulting to
+  `None` so an explicit `.` is honored under `--self-fixture`; and an output-dir
+  pre-clean so a reused directory never mixes contradictory verdicts.
+  **NDEBT-018** — an additive `--tolerate-untracked-prefix` option (tolerate a
+  whole in-flight artifact directory by one declared prefix, preserving the exact
+  043/044 dir-collapse semantics) and `ecosystem/01_clean_state_preflight.md`
+  (0.1.2) §4.1 codifying that an orchestrator gate-decision tracked-state write
+  must be committed before the gated preflight invocation. **NDEBT-017** — a
+  pluggable, offline `--ci-run-file` that anchors `ci_references` to a
+  caller-resolved CI run (no in-tool network call). **NDEBT-023** — same-repo
+  revision-consistency mechanized in the capture tool and validator `C12` (a new
+  schema-valid but rule-violating
+  `ecosystem_baseline_neg_inconsistent_revisions.json` fixture is caught by the
+  code-level check). **NDEBT-024** — a `blocking_findings` array required when
+  `verdict` is `FAIL` in `schema/preflight_verdict.schema.json`, with
+  `preflight_verdict_fail.json` rebuilt on it. The five documented exit codes
+  (0/1/2/3/64) are unchanged; sweeps 13/13 and 11/11, self-test 47/47, e2e green.
 - **Progress-comparison taxonomy completion** (phase 006 feature 057, resolving
   **NDEBT-022**): `ecosystem/07_progress_comparison.md` (0.2.0) completes its
   finding-state taxonomy so a real corpus classifies without workarounds.
