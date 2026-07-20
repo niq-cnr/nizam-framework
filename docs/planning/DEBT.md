@@ -2,7 +2,7 @@
 id: nizam-debt
 title: Technical Debt Register — nizam-framework
 description: Known debt, deferred decisions, and cross-repo impacts for the nizam-framework repository.
-version: 0.27.0
+version: 0.28.0
 status: active
 authoritative_source: nizam-framework/docs/planning/DEBT.md
 ---
@@ -11,7 +11,9 @@ authoritative_source: nizam-framework/docs/planning/DEBT.md
 
 ## Open
 
-_No open debt items at this time — the phase-006 hardening bundle (feature 056) resolved the last five (NDEBT-021, -023, -024, -017, -018); see Resolved below._
+| ID | Date | Severity | Description | Notes |
+|----|------|----------|-------------|-------|
+| NDEBT-026 | 2026-07-20 | Low | Validator check C15 (`vlib_profiles_cover_roles`) is a 5↔5 *coverage* check, not a mapping-direction validator: it confirms all five capability-profile identifiers are present in `standard/capability_profiles.md` and all five corresponding roles are defined in `standard/AGF.md` (keyed on a hardcoded `ROLE_BY_PROFILE` map), but it does not parse the doc's own per-profile assignment prose — a *swapped* profile→role mapping would still pass. Surfaced by the PR #38 (feature 059) CodeRabbit review; the C15 documentation in `tools/README.md` was corrected in that same PR to describe the coverage semantics honestly, so no shipped doc overclaims. Severity Low: the check is load-bearing for its designed purpose (a dropped or renamed profile/role fails it), and the two governed docs are small and stable. | OPEN — enhancement candidate for a future phase: strengthen C15 to parse `capability_profiles.md`'s actual per-profile mapping table and reject a swap. Deliberately deferred — the honest coverage framing ships in v0.8.0; no release surface overclaims. |
 
 ## Resolved
 
