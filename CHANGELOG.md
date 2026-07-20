@@ -7,6 +7,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-07-20
+
+**Minor release** (`methodology/06_release_train.md` §3.2): phase 006
+(Enforcement Closure & Hardening, features 049–059) adds new *optional*
+capability — validator checks C13/C14/C15, new `tools/verify_lib.sh`
+primitives, additional `tools/ecosystem_preflight.py` options, an additive
+`enforcement:` frontmatter field (rides `additionalProperties: true`), and
+documentation-honesty markings — without invalidating any consumer content
+that previously validated. One schema narrowing is disclosed per §4 and
+classified minor-not-breaking: `schema/preflight_verdict.schema.json` now
+requires `blocking_findings` when `verdict` is `FAIL` (feature 056), but a
+preflight verdict is tool output regenerated each run by the same-release
+`tools/ecosystem_preflight.py`, not durable consumer-authored content, so
+upgrading invalidates no consumer document.
+
 ### Added
 
 - **Constitutional-layer mechanize-or-descope decision** (phase 006 feature 058,

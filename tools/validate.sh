@@ -18,7 +18,7 @@
 # `yaml` (PyYAML) modules importable).
 #
 # Modes:
-#   (default, no args)   Full repo sweep: runs checks C1-C10.
+#   (default, no args)   Full repo sweep: runs checks C1-C15.
 #   --target <file>      Runs only the checks applicable to a single file.
 #   --payload            Validates a consumer-injected .nizam/ payload subset.
 #   --help / -h           Prints usage and exits 0.
@@ -70,7 +70,7 @@ if any is missing): bash, git, grep, find, awk, python3 -- with python3's
 installs or vendors these dependencies itself.
 
 Modes:
-  (no arguments)      Full repo sweep. Runs all 13 checks (C1-C13) and
+  (no arguments)      Full repo sweep. Runs all 15 checks (C1-C15) and
                       prints one PASS/FAIL line per check plus a final
                       summary line. Exits 0 only if every check passed.
 

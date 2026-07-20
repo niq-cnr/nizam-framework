@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.5.0
+version: 0.6.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-07-20"
+    summary: "Count sync for the v0.8.0 release (phase 006 feature 059): the Compliance Coverage section now documents fifteen checks (C1–C15, SUMMARY: 15 passed) with new rows for C14 (workflow SHA-pinning) and C15 (capability-profile ↔ AGF-role correspondence), both added by feature 058."
   - version: "0.5.0"
     date: "2026-07-19"
     summary: "Sync to phase-006 feature 052 (fixtures self-test closure): document tools/fixtures_self_test.sh (NDEBT-009 -- runs every fixture through its targeted check, non-vacuously, with a completeness guard), C12's --target ecosystem routing (NDEBT-015) and naming-conformance guard (NDEBT-016), and correct the C13 row's payload carve-out to registry/+docs/ only (methodology/+ecosystem/ became injected in feature 051)."
@@ -72,12 +75,12 @@ documents. `skill.json` is validated as plain JSON (`python3 -c
 its own within this module — it is pure data consumed by `SKILL.md` and
 `interface.md`, not a document requiring frontmatter.
 
-## Compliance Coverage — C1–C13
+## Compliance Coverage — C1–C15
 
-`tools/validate.sh`, the repo-local NDS compliance validator, runs thirteen
+`tools/validate.sh`, the repo-local NDS compliance validator, runs fifteen
 checks on every PR and push to `main` (`.github/workflows/compliance.yml`).
-As of phase 006 (feature 049's C13 skill-index check), the full default sweep
-reports `SUMMARY: 13 passed, 0 failed`:
+As of phase 006 (features 049's C13 skill-index check and 058's C14/C15), the
+full default sweep reports `SUMMARY: 15 passed, 0 failed`:
 
 | Check | Name | What it enforces |
 |---|---|---|
@@ -94,12 +97,15 @@ reports `SUMMARY: 13 passed, 0 failed`:
 | C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present, skip-if-absent for a fresh consumer. |
 | C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving the fixtures are load-bearing rather than dormant. A `--target` invocation against one of these fixtures now routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). |
 | C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. |
+| C14 | Workflow SHA-pinning | Every `uses:` reference in `.github/workflows/` is pinned to a 40-hex commit SHA, not a floating tag or branch (feature 058 — mechanizes `standard/provenance_policy.md`'s SHA-pinned-Actions requirement; default sweep only). |
+| C15 | Capability-profile ↔ AGF-role | The five capability profiles in `standard/capability_profiles.md` each map to a role defined in `standard/AGF.md` (feature 058 — mechanizes the five-profile ↔ five-role correspondence; default sweep only). |
 
 C9, C10, and C11 were added by phase 004 (`tools/verify_lib.sh` supplies
 their shared, fixture-tested primitives); C12 was added by phase 005
-(feature 042); C13 by phase 006 (feature 049); C1–C8 shipped in earlier
-phases. Run `bash tools/validate.sh --help` for the full per-check
-description.
+(feature 042); C13 by phase 006 (feature 049), and C14 (workflow
+SHA-pinning) and C15 (capability-profile ↔ AGF-role) by phase 006
+(feature 058); C1–C8 shipped in earlier phases. Run
+`bash tools/validate.sh --help` for the full per-check description.
 
 ### Fixture self-test (`tools/fixtures_self_test.sh`)
 
