@@ -1,0 +1,122 @@
+{
+  "contract_id": "059",
+  "feature_id": "059",
+  "name": "Phase close + v0.8.0 release preparation (H-FRAMEWORK-RELEASE)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_006.md",
+  "design_notes": {
+    "what_this_feature_is": "Phase-006 F-059, the phase's final feature: a PREPARE-ONLY v0.8.0 MINOR release package on the feature-045 pattern (phase 005 / v0.7.0). It rolls CHANGELOG's [Unreleased] into a dated [0.8.0] section, bumps the four version surfaces (NIZAM.json manifest, CONTEXT.md frontmatter, the guide's two anchors, README's release pins), syncs the phase-006 check-count growth 12->15 into the shipped docs, and emits a SHA-pinned release-readiness checklist whose two human items stay PENDING. It does NOT sign off the release and does NOT create the tag -- those are the operator's, per the recorded two-part gate.",
+    "operator_authorization_verbatim": "Rebase line to fit the objective. You are approved to proceed.",
+    "authorization_interpretation": "The operator's message clears the two things that gated F-059: (1) 'Rebase line to fit the objective' authorizes the methodology/00_planning.md Section 9 scope-budget re-baseline (original_estimate_lines 2300 -> 2600; new 130% ceiling 2990 -> 3380), recorded structurally in scope_budget.rebaselines before any implementation; (2) 'You are approved to proceed' authorizes PREPARING this prepare-only package. It is NOT the H-FRAMEWORK-RELEASE sign-off: per the 045 two-part gate, checklist item 7 (sign-off) and item 8 (tag) remain at the pinned PENDING literal until the operator executes them after reviewing the PR -- exactly as v0.7.0 was signed off ('I Sign off release-readiness', recorded at 31f3fff before the operator-pushed tag at 4833322).",
+    "release_tier_classification": "MINOR, per 06_release_train.md Section 3.2 -- phase 006 added new OPTIONAL capability (validator checks C13/C14/C15, new verify_lib primitives, new ecosystem_preflight CLI options, an additive `enforcement:` frontmatter field riding additionalProperties:true, and honesty banners) without invalidating consumer content that previously validated. The one schema narrowing -- schema/preflight_verdict.schema.json requiring `blocking_findings` when verdict==FAIL (F-056/NDEBT-024) -- is a TOOL-OUTPUT schema regenerated each run by the same-release ecosystem_preflight.py, not durable consumer-authored content, so no consumer document is invalidated by upgrading; it is disclosed in the [0.8.0] CHANGELOG entry per Section 4 with this rationale rather than rounded up to breaking.",
+    "the_045_pattern": "feature 045 (phase 005) shipped exactly five version surfaces (CHANGELOG.md, NIZAM.json, docs/guide/index.html, CONTEXT.md, README.md) plus .agent/evidence/045-release-readiness-checklist.md, and DEFERRED the ROADMAP/DEBT phase-close narrative to a separate post-release refresh (commit 27f28c3). F-059 mirrors that: it adds tools/README.md + tools/validate.sh to the shipped set ONLY for the honest check-count sync (12->15), and likewise defers the ROADMAP Current-Position / phase-006-COMPLETE narrative and any DEBT phase-close roll to a post-v0.8.0 refresh. The phase-close itself is carried by durable state (run_state phase_complete + feature_list 059 complete), not a doc rewrite.",
+    "process_honesty": "Single-session collapsed-role execution, disclosed-and-permitted by the AGF Orchestrator clause. Per 06_release_train.md Section 6, release mechanics (changelog roll-up, date stamp, tag) do not require a Generator contract and do not pass the Loop 1/Loop 2 harness -- but the phase applies its adversarial-verification discipline anyway, because a botched version bump, a broken CHANGELOG structure, a stale count, or an accidental self-tag are exactly the regressions a release feature must not ship. Anti-vacuity (E01) and confinement (E11) anchor to the phase base 707a3f5 (the F-058 merge, PR #37); the coordination commit recording the operator authorization + the Section-9 re-baseline sits between the base and the deliverable, per the gate-decision-before-acting rule (NDEBT-018.2 / ecosystem/01 4.1)."
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/evidence/059-release-readiness-checklist.md",
+        "purpose": "the 045-pattern SHA-pinned release-readiness checklist: items 1-6 cite evidence, items 7 (sign-off) + 8 (tag) held at the pinned PENDING literal."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "roll [Unreleased] into a dated [0.8.0] - 2026-07-20 MINOR section (tier + blocking_findings schema-change disclosure); add a fresh empty [Unreleased]."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "framework.version 0.7.0 -> 0.8.0 (the C10 anchor); validator capability summary C1-C13 -> C1-C15 + C14/C15 descriptions (count sync)."
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "meta framework-version + footer version 0.7.0 -> 0.8.0 (C10 lockstep with NIZAM.json)."
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "frontmatter version 0.7.0 -> 0.8.0 + a matching change_log entry (C8/NDS Sec 4)."
+      },
+      {
+        "path": "README.md",
+        "purpose": "full re-pin: every v0.7.0 bootstrap/release reference -> v0.8.0."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "count sync: Compliance Coverage C1-C13 -> C1-C15 (thirteen->fifteen, 13 passed -> 15 passed), add C14/C15 table rows; version + change_log bump (C8)."
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "count sync: usage/header comments 'checks C1-C10' and 'all 13 checks (C1-C13)' -> C1-C15 / 'all 15 checks (C1-C15)' (comment/help text only; no logic change)."
+      }
+    ]
+  },
+  "non_goals": [
+    "No H-FRAMEWORK-RELEASE self-sign-off -- checklist item 7 stays PENDING for the operator (the 'approved to proceed' message authorized PREPARING the package, not signing off the release).",
+    "No v0.8.0 tag -- checklist item 8 stays PENDING; the operator cuts the annotated tag at the merge commit (06_release_train.md Sec 2/6; v0.7.0 precedent).",
+    "No ROADMAP Current-Position / phase-006-COMPLETE narrative rewrite and no DEBT phase-close roll -- deferred to a post-v0.8.0 refresh, mirroring the 045 -> 27f28c3 precedent; the phase-close is carried by run_state phase_complete + feature_list.",
+    "No runtime/behaviour change and no new enforcement -- this is release packaging plus an honest count sync; validate.sh's logic is untouched (only its comment/help text).",
+    "No change to any schema, protocol id, or shipped file path -- consistent with the MINOR classification."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (base-anchored to 707a3f5 = the F-058 merge): at base NIZAM.json framework.version is 0.7.0 (not 0.8.0); CHANGELOG has no [0.8.0] section; the guide anchors are 0.7.0; tools/README.md coverage reads C1-C13; no 059 release-readiness checklist exists.",
+      "command": "set -e\nbase=707a3f5\nv=$(git show $base:NIZAM.json | python3 -c 'import json,sys;print(json.load(sys.stdin)[\"framework\"][\"version\"])')\ntest \"$v\" = \"0.7.0\" || { echo \"VACUITY: base version not 0.7.0 ($v)\"; exit 1; }\nif git show $base:CHANGELOG.md | grep -Fq '## [0.8.0]'; then echo \"VACUITY: base already has [0.8.0]\"; exit 1; fi\nif git show $base:docs/guide/index.html | grep -Fq 'content=\"0.8.0\"'; then echo \"VACUITY: guide already 0.8.0 at base\"; exit 1; fi\ngit show $base:tools/README.md | grep -Fq 'C1-C13' || git show $base:tools/README.md | grep -Fq $'C1\u2013C13' || { echo \"VACUITY: base tools/README already not C1-C13\"; exit 1; }\nif git cat-file -e $base:.agent/evidence/059-release-readiness-checklist.md 2>/dev/null; then echo \"VACUITY: 059 checklist exists at base\"; exit 1; fi\necho \"E01 PASS: at base 707a3f5 version=0.7.0, no [0.8.0] CHANGELOG, guide not 0.8.0, README C1-C13, no 059 checklist (anti-vacuity)\"\n"
+    },
+    {
+      "acceptance_test": "CHANGELOG STRUCTURE (roll-up): the first three '## [' headings are [Unreleased] (empty), then [0.8.0] - 2026-07-20, then [0.7.0]; the [Unreleased] section carries no ### subsection (the entries rolled into [0.8.0]).",
+      "command": "set -e\nh1=$(grep -nE '^## \\[' CHANGELOG.md | sed -n '1p')\nh2=$(grep -nE '^## \\[' CHANGELOG.md | sed -n '2p')\nh3=$(grep -nE '^## \\[' CHANGELOG.md | sed -n '3p')\nprintf '%s\\n' \"$h1\" | grep -Fq '## [Unreleased]' || { echo \"1st heading not [Unreleased]: $h1\"; exit 1; }\nprintf '%s\\n' \"$h2\" | grep -Eq '## \\[0\\.8\\.0\\] - 2026-07-20' || { echo \"2nd heading not [0.8.0] - 2026-07-20: $h2\"; exit 1; }\nprintf '%s\\n' \"$h3\" | grep -Fq '## [0.7.0]' || { echo \"3rd heading not [0.7.0]: $h3\"; exit 1; }\nu=$(awk '/^## \\[Unreleased\\]/{f=1;next} /^## \\[0\\.8\\.0\\]/{f=0} f&&/^### /{print}' CHANGELOG.md)\ntest -z \"$u\" || { echo \"[Unreleased] not empty: $u\"; exit 1; }\necho \"E02 PASS: [Unreleased](empty) -> [0.8.0] - 2026-07-20 -> [0.7.0]\"\n"
+    },
+    {
+      "acceptance_test": "CHANGELOG CONTENT + TIER: the [0.8.0] section names the MINOR tier, preserves the rolled-up phase-006 constitutional entry, and carries the schema-narrowing (blocking_findings) minor-not-breaking rationale required by 06_release_train.md Section 4.",
+      "command": "set -e\nsec=$(awk '/^## \\[0\\.8\\.0\\]/{f=1;next} /^## \\[0\\.7\\.0\\]/{f=0} f' CHANGELOG.md)\nprintf '%s\\n' \"$sec\" | grep -Fiq 'minor' || { echo \"no MINOR tier named\"; exit 1; }\nprintf '%s\\n' \"$sec\" | grep -Fiq 'constitutional' || { echo \"roll-up dropped the constitutional entry\"; exit 1; }\nprintf '%s\\n' \"$sec\" | grep -Fiq 'blocking_findings' || { echo \"schema-change not disclosed\"; exit 1; }\necho \"E03 PASS: [0.8.0] names MINOR tier, preserves phase-006 entries, discloses the blocking_findings schema change\"\n"
+    },
+    {
+      "acceptance_test": "NIZAM.json VERSION -- STRICT SEMVER INCREASE (JSON-parsed): framework.version is 0.8.0 and a strict tuple increase over the base 0.7.0.",
+      "command": "set -e\nhead=$(git show 707a3f5:NIZAM.json | python3 -c 'import json,sys;print(json.load(sys.stdin)[\"framework\"][\"version\"])')\nnow=$(python3 -c 'import json;print(json.load(open(\"NIZAM.json\"))[\"framework\"][\"version\"])')\ntest \"$now\" = \"0.8.0\" || { echo \"NIZAM.json version not 0.8.0 ($now)\"; exit 1; }\npython3 -c \"\ndef t(v): return tuple(int(x) for x in v.split('.'))\nassert t('$now') > t('$head'), 'not a strict increase: $head -> $now'\nprint('$head -> $now strict semver increase')\"\necho \"E04 PASS: NIZAM.json 0.7.0 -> 0.8.0 (strict semver increase)\"\n"
+    },
+    {
+      "acceptance_test": "GUIDE VERSION ANCHORS (C10 External Anchor Rule): the guide's meta framework-version AND footer version both read 0.8.0 and equal NIZAM.json framework.version.",
+      "command": "set -e\nexp=$(python3 -c 'import json;print(json.load(open(\"NIZAM.json\"))[\"framework\"][\"version\"])')\nmeta=$(grep -oE 'name=\"framework-version\" content=\"[0-9.]+\"' docs/guide/index.html | grep -oE '[0-9]+\\.[0-9]+\\.[0-9]+' | head -1)\nfoot=$(grep -oE 'id=\"footer-version\">[0-9.]+' docs/guide/index.html | grep -oE '[0-9]+\\.[0-9]+\\.[0-9]+' | head -1)\ntest \"$exp\" = \"0.8.0\" || { echo \"NIZAM.json not 0.8.0 ($exp)\"; exit 1; }\ntest \"$meta\" = \"$exp\" || { echo \"guide meta $meta != $exp\"; exit 1; }\ntest \"$foot\" = \"$exp\" || { echo \"guide footer $foot != $exp\"; exit 1; }\necho \"E05 PASS: guide meta=$meta footer=$foot == NIZAM.json $exp (C10 anchor consistent)\"\n"
+    },
+    {
+      "acceptance_test": "CONTEXT.md VERSION + CHANGE_LOG (C8/NDS Sec 4): the frontmatter version is 0.8.0, a strict increase over base, and the frontmatter change_log carries a matching 0.8.0 entry.",
+      "command": "set -e\nhead=$(git show 707a3f5:CONTEXT.md | awk -F': ' '/^version:/{print $2; exit}')\nnow=$(awk -F': ' '/^version:/{print $2; exit}' CONTEXT.md)\ntest \"$now\" = \"0.8.0\" || { echo \"CONTEXT.md version not 0.8.0 ($now)\"; exit 1; }\npython3 -c \"\ndef t(v): return tuple(int(x) for x in v.strip().split('.'))\nassert t('$now') > t('$head'), 'not a strict increase: $head -> $now'\"\nawk 'c<2{print} /^---/{c++}' CONTEXT.md | grep -Fq '\"0.8.0\"' || { echo \"no 0.8.0 change_log entry\"; exit 1; }\necho \"E06 PASS: CONTEXT.md 0.7.0 -> 0.8.0 with a matching change_log entry\"\n"
+    },
+    {
+      "acceptance_test": "README.md -- FULL RE-PIN: zero v0.7.0 occurrences remain and the bootstrap/release references now pin v0.8.0.",
+      "command": "set -e\nn=$(grep -cE 'v0\\.7\\.0' README.md || true)\ntest \"$n\" -eq 0 || { echo \"README still has $n v0.7.0 reference(s)\"; grep -nE 'v0\\.7\\.0' README.md; exit 1; }\ngrep -Fq 'v0.8.0' README.md || { echo \"README missing v0.8.0\"; exit 1; }\necho \"E07 PASS: README fully re-pinned to v0.8.0 (zero v0.7.0 remaining)\"\n"
+    },
+    {
+      "acceptance_test": "RELEASE-READINESS CHECKLIST (045 pattern): the checklist has 8 numbered items; items 1-6 each cite an evidence path/artifact; items 7 (sign-off) and 8 (tag) are held at the pinned literal 'PENDING -- human-gated (H-FRAMEWORK-RELEASE)'.",
+      "command": "set -e\nf=.agent/evidence/059-release-readiness-checklist.md\ntest -f \"$f\" || { echo \"no checklist\"; exit 1; }\nfor i in 1 2 3 4 5 6 7 8; do grep -Eq \"^$i\\. \" \"$f\" || { echo \"missing item $i\"; exit 1; }; done\ngrep -E '^7\\. ' \"$f\" | grep -Fq 'PENDING -- human-gated (H-FRAMEWORK-RELEASE)' || { echo \"item 7 not pinned PENDING\"; exit 1; }\ngrep -E '^8\\. ' \"$f\" | grep -Fq 'PENDING -- human-gated (H-FRAMEWORK-RELEASE)' || { echo \"item 8 not pinned PENDING\"; exit 1; }\nfor i in 1 2 3 4 5 6; do grep -E \"^$i\\. \" \"$f\" | grep -Eq '\\.agent/|\\.md|\\.json|\\.html|SUMMARY|NDEBT' || { echo \"item $i lacks an evidence citation\"; exit 1; }; done\nif grep -E '^[1-6]\\. ' \"$f\" | grep -Fq 'PENDING'; then echo \"an evidenced item 1-6 is still PENDING\"; exit 1; fi\necho \"E08 PASS: checklist items 1-6 evidenced; items 7-8 pinned PENDING (human-gated)\"\n"
+    },
+    {
+      "acceptance_test": "NO-SELF-TAG INVARIANT: no v0.8.0 git tag has been created by this feature (the pipeline never self-tags; the operator cuts the tag at merge per 06_release_train.md Sec 2/6).",
+      "command": "set -e\nif git tag | grep -qE '^v0\\.8\\.0$'; then echo \"VIOLATION: a v0.8.0 tag exists\"; exit 1; fi\necho \"E09 PASS: no v0.8.0 tag exists at close (the pipeline never self-tags)\"\n"
+    },
+    {
+      "acceptance_test": "REGRESSION (rc-captured): default sweep 15/15, payload 11/11, fixtures self-test OK, e2e bootstrap green -- each rc asserted.",
+      "command": "set -e\nout=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 15 passed, 0 failed'\nout=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'\nout=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fq 'SELF-TEST OK'\nbash tools/e2e_bootstrap_test.sh >/dev/null 2>&1 || { echo \"e2e failed\"; exit 1; }\necho \"E10 PASS: sweep 15/15, payload 11/11, self-test OK, e2e green (rc=0 each)\"\n"
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT: the non-.agent changes across 707a3f5..HEAD are exactly the 7 contracted files.",
+      "command": "set -e\nchanged=$(git diff --name-only 707a3f5..HEAD | grep -v '^\\.agent/' | LC_ALL=C sort | tr '\\n' ' ')\nexpected='CHANGELOG.md CONTEXT.md NIZAM.json README.md docs/guide/index.html tools/README.md tools/validate.sh '\ntest \"$changed\" = \"$expected\" || { echo \"confinement mismatch:\"; echo \" got:      [$changed]\"; echo \" expected: [$expected]\"; exit 1; }\necho \"E11 PASS: non-.agent changes are exactly the 7 contracted files\"\n"
+    },
+    {
+      "acceptance_test": "DOCS/COUNT SYNC: the phase-006 sweep growth 12->15 is reflected -- NIZAM.json validator summary reads C1-C15, tools/README.md coverage reads fifteen/15 passed/C1-C15 with C14 and C15 table rows, and validate.sh usage no longer states the stale 'all 13 checks (C1-C13)' or 'checks C1-C10'.",
+      "command": "set -e\ngrep -Fq 'C1-C15' NIZAM.json || { echo \"NIZAM.json not synced to C1-C15\"; exit 1; }\ngrep -Fq '15 passed, 0 failed' tools/README.md || { echo \"README not synced to 15 passed\"; exit 1; }\ngrep -Eq 'C1.C15' tools/README.md || { echo \"README not synced to C1-C15\"; exit 1; }\ngrep -Fq '| C14 |' tools/README.md || { echo \"README missing C14 row\"; exit 1; }\ngrep -Fq '| C15 |' tools/README.md || { echo \"README missing C15 row\"; exit 1; }\nif grep -Eq 'all 13 checks|checks C1-C10' tools/validate.sh; then echo \"stale count remains in validate.sh\"; exit 1; fi\ngrep -Fq 'all 15 checks' tools/validate.sh || { echo \"validate.sh usage not synced to 15\"; exit 1; }\necho \"E12 PASS: check-count synced to 15 (C1-C15) across NIZAM.json, tools/README.md, validate.sh\"\n"
+    },
+    {
+      "acceptance_test": "OPERATOR AUTHORIZATION + SECTION-9 RE-BASELINE RECORDED: run_state carries the verbatim operator authorization for F-059 (H-FRAMEWORK-RELEASE prep) and a structural scope_budget rebaseline {from:2300,to:2600,authorized_by:operator} with original_estimate_lines raised to 2600.",
+      "command": "set -e\npython3 - <<'PY'\nimport json\nrs=json.load(open('.agent/run_state.json'))\nsb=rs['scope_budget']\nassert sb['original_estimate_lines']==2600, sb['original_estimate_lines']\nrb=sb['rebaselines'][-1]\nassert rb['from']==2300 and rb['to']==2600, rb\nassert rb['authorized_by']=='operator' and 'reason' in rb and 'at' in rb, rb\nev=[h for h in rs['history'] if h.get('event')=='operator_gate_decision' and 'H-FRAMEWORK-RELEASE' in h.get('detail','') and '059' in h.get('detail','')]\nassert ev, 'no F-059 H-FRAMEWORK-RELEASE authorization event'\nd=ev[-1]['detail']\nassert 'Rebase line to fit the objective' in d and 'approved to proceed' in d, 'verbatim authorization not recorded'\nprint('run_state: rebaseline 2300->2600 (operator) + verbatim F-059 authorization recorded')\nPY\necho \"E13 PASS: Section-9 re-baseline (2300->2600) + verbatim operator authorization recorded in run_state\"\n"
+    }
+  ],
+  "estimated_lines": 110,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured output is in .agent/evidence/059-verify-NN.txt, plus the consolidated .agent/evidence/059/verification.txt and 059/diff.patch (git diff 707a3f5..HEAD). Commands run from the repo root; anti-vacuity (E01) and confinement (E11) anchor to the phase base 707a3f5 (the F-058 merge, PR #37), since the coordination commit recording the operator authorization + the Section-9 re-baseline sits between the base and this deliverable.",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-gated feature (H-FRAMEWORK-RELEASE, two-part). The operator verbatim authorization (design_notes.operator_authorization_verbatim) is recorded in the run_state coordination commit before implementation and re-verified by E13. Per 06_release_train.md Sec 6 the release mechanics need no Generator contract; the phase applies its verification discipline regardless. Items 7-8 remain PENDING by design; the operator executes them after PR review, and QA record .agent/qa/059.json documents the independent re-run."
+  }
+}

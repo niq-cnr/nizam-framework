@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 0.7.0
+version: 0.8.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "0.8.0"
+    date: "2026-07-20"
+    summary: "Bump version for the v0.8.0 MINOR release closing phase 006 (Enforcement Closure & Hardening). No Module Map change: phase 006 added enforcement surface (validator checks C13/C14/C15, tools/verify_lib.sh primitives, tools/ecosystem_preflight.py hardening) and documentation-honesty markings, not new injected modules."
   - version: "0.7.0"
     date: "2026-07-19"
     summary: "H-PAYLOAD-CONTRACT (phase-006 feature 051): the bootstrap payload sentence now names the SIX injected governance directories (standard/, templates/, schema/, tools/, methodology/, ecosystem/) plus NIZAM.json -- methodology/ and ecosystem/ joined the injected payload, resolving NDEBT-008; registry/ and docs/ remain framework-envelope and are not injected."

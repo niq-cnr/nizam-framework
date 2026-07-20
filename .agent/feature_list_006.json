@@ -4,7 +4,7 @@
   "original_estimate_lines": 1720,
   "estimate_rationale": "Sum of per-feature estimated_lines (049-059). Standards/docs codification dominates (F-053 role+rules, F-058 constitutional decision); the largest code deltas are the validator extensions (F-049/052/055) and the preflight hardening bundle (F-056). The release feature (F-059) follows the proven 045 prepare-only pattern.",
   "provenance": {
-    "proposal_status": "PROPOSED 2026-07-18 — NOT ACTIVATED. Activation requires operator authorization (gate H-PHASE-006) per methodology/00_planning.md; until then no feature may enter contract negotiation.",
+    "proposal_status": "PROPOSED 2026-07-18 \u2014 NOT ACTIVATED. Activation requires operator authorization (gate H-PHASE-006) per methodology/00_planning.md; until then no feature may enter contract negotiation.",
     "sources": [
       "docs/planning/ROADMAP.md Track 2 (pre-005 candidate scope) and Track 3 (constitutional-layer decision)",
       "docs/planning/DEBT.md open register at 0.15.0 (21 rows)",
@@ -12,13 +12,13 @@
       "GitHub issue #18 (external consumer report, NDEBT-012)"
     ],
     "authorized_planning_direction": "Operator 2026-07-18: 'Please action items 1-3' (item 3: successor-phase planning through the standard lifecycle; activation explicitly remains a separate operator decision).",
-    "out_of_scope": "Consumer adoption (handover F-016..F-020, nizamiq/nizamiq-strategy) — a separate cross-repository successor programme phase, unblocked by v0.7.0 but requiring its own authorization and consumer-repo access."
+    "out_of_scope": "Consumer adoption (handover F-016..F-020, nizamiq/nizamiq-strategy) \u2014 a separate cross-repository successor programme phase, unblocked by v0.7.0 but requiring its own authorization and consumer-repo access."
   },
   "features": [
     {
       "id": "049",
       "name": "Gate tools/skill.json content (NDEBT-007)",
-      "description": "Extend the validator (a new check or a C4 extension) to JSON-parse tools/skill.json, resolve every capabilities[].module path and the entry_point on disk, in default and --payload modes, with a matching negative fixture — closing the enforcement hole that let a broken module pointer ship from v0.4.0 to v0.5.3 undetected (the identical stale pointer in swept tools/interface.md WAS caught).",
+      "description": "Extend the validator (a new check or a C4 extension) to JSON-parse tools/skill.json, resolve every capabilities[].module path and the entry_point on disk, in default and --payload modes, with a matching negative fixture \u2014 closing the enforcement hole that let a broken module pointer ship from v0.4.0 to v0.5.3 undetected (the identical stale pointer in swept tools/interface.md WAS caught).",
       "status": "complete",
       "dependencies": [],
       "handover_feature_ids": [],
@@ -34,7 +34,7 @@
     {
       "id": "050",
       "name": "Payload validator CWD anchoring (NDEBT-012, issue #18)",
-      "description": "Anchor tools/validate.sh --payload path resolution to the script/payload root so 'bash .nizam/tools/validate.sh --payload' from a consumer repository root behaves identically to invocation from inside .nizam/ — the first real external-consumer bug report (issue #18, nizamiq/documentation-standard on a v0.5.3 payload). Add a from-repo-root invocation to the e2e/fixture coverage so the regression class stays closed. Co-resolved NDEBT-004 (C9 payload carve-out) at execution: authentically reproducing issue #18 showed a real payload also false-fails C9, so 'both forms green' required both fixes.",
+      "description": "Anchor tools/validate.sh --payload path resolution to the script/payload root so 'bash .nizam/tools/validate.sh --payload' from a consumer repository root behaves identically to invocation from inside .nizam/ \u2014 the first real external-consumer bug report (issue #18, nizamiq/documentation-standard on a v0.5.3 payload). Add a from-repo-root invocation to the e2e/fixture coverage so the regression class stays closed. Co-resolved NDEBT-004 (C9 payload carve-out) at execution: authentically reproducing issue #18 showed a real payload also false-fails C9, so 'both forms green' required both fixes.",
       "status": "complete",
       "dependencies": [],
       "handover_feature_ids": [],
@@ -66,7 +66,7 @@
     {
       "id": "052",
       "name": "Fixtures self-test closure + --target routing (NDEBT-009, NDEBT-015, NDEBT-016)",
-      "description": "Close the remaining fixture dormancy: a validate.sh --self-test mode (or fixtures CI job) that runs EVERY negative fixture through its targeted check and asserts the expected failure — beyond C12's ecosystem families. Extend check_c11_or_c4_target's content routing to recognize the three ecosystem schema families so --target invocations produce a discriminating signal (NDEBT-015), and harden C12's polarity-classification regex per NDEBT-016 (case-insensitive, full-token) with fixture-name conformance asserted.",
+      "description": "Close the remaining fixture dormancy: a validate.sh --self-test mode (or fixtures CI job) that runs EVERY negative fixture through its targeted check and asserts the expected failure \u2014 beyond C12's ecosystem families. Extend check_c11_or_c4_target's content routing to recognize the three ecosystem schema families so --target invocations produce a discriminating signal (NDEBT-015), and harden C12's polarity-classification regex per NDEBT-016 (case-insensitive, full-token) with fixture-name conformance asserted.",
       "status": "complete",
       "dependencies": [
         "049"
@@ -85,7 +85,7 @@
     {
       "id": "053",
       "name": "Orchestrator role + operational-rule codification (NDEBT-010, -013, -014, -019, -020)",
-      "description": "Define the Orchestrator in standard/AGF.md Section 2 (coordination/state-ownership role, gate obligations, exclusively-owned run_state fields per AGF Section 5 rule 4), reconciling capability_profiles/permission_classes/mcp_policy/release-train references. Codify into methodology/02 (and AGF role obligations where they bind): the probe-isolation rule (NDEBT-013/020 — scratch paths only, cwd verified before any destructive command, never a real-repo path in a probe), the rc-capture rule (NDEBT-019 — assert the validator's own exit code), and the five-class NDEBT-014 verification-authoring catalogue with vetted verify_lib.sh helpers where mechanizable.",
+      "description": "Define the Orchestrator in standard/AGF.md Section 2 (coordination/state-ownership role, gate obligations, exclusively-owned run_state fields per AGF Section 5 rule 4), reconciling capability_profiles/permission_classes/mcp_policy/release-train references. Codify into methodology/02 (and AGF role obligations where they bind): the probe-isolation rule (NDEBT-013/020 \u2014 scratch paths only, cwd verified before any destructive command, never a real-repo path in a probe), the rc-capture rule (NDEBT-019 \u2014 assert the validator's own exit code), and the five-class NDEBT-014 verification-authoring catalogue with vetted verify_lib.sh helpers where mechanizable.",
       "status": "complete",
       "dependencies": [],
       "handover_feature_ids": [],
@@ -117,7 +117,7 @@
     {
       "id": "055",
       "name": "Enumeration/bare-ref recurrence guards (NDEBT-005)",
-      "description": "Mechanize the two NDEBT-003 defect classes F-027 fixed by hand: enumeration-completeness (hand-maintained key-documents lists cannot silently omit a file) and bare non-directory-qualified stale cross-references (a bare NN_name.md that no longer resolves), ideally sourced from a canonical index rather than re-derived lists — wired into the self-test surface from F-052.",
+      "description": "Mechanize the two NDEBT-003 defect classes F-027 fixed by hand: enumeration-completeness (hand-maintained key-documents lists cannot silently omit a file) and bare non-directory-qualified stale cross-references (a bare NN_name.md that no longer resolves), ideally sourced from a canonical index rather than re-derived lists \u2014 wired into the self-test surface from F-052.",
       "status": "complete",
       "dependencies": [
         "052"
@@ -134,7 +134,7 @@
     {
       "id": "056",
       "name": "Preflight + ecosystem-schema hardening bundle (NDEBT-021, -017, -018, -023, -024)",
-      "description": "Execute the deferred hardening backlog: NUL-delimited git-status parsing preserving directory-prefix tolerate semantics, readable-regular-file reference checks + unresolved-HEAD blocking, --repo-root None default, output-dir pre-clean/refusal, the untracked-not-tolerated FAIL probe (NDEBT-021); a real CI-run lookup for ci_references (NDEBT-017); a clean-worktree self-fixture isolation mode + the codified gate-decision-before-gated-run rule (NDEBT-018); the same-repo revision-consistency negative fixture + capture-tool check (NDEBT-023); and the FAIL-shape alignment across schema/fixture/tool (NDEBT-024) — all keeping C12 green.",
+      "description": "Execute the deferred hardening backlog: NUL-delimited git-status parsing preserving directory-prefix tolerate semantics, readable-regular-file reference checks + unresolved-HEAD blocking, --repo-root None default, output-dir pre-clean/refusal, the untracked-not-tolerated FAIL probe (NDEBT-021); a real CI-run lookup for ci_references (NDEBT-017); a clean-worktree self-fixture isolation mode + the codified gate-decision-before-gated-run rule (NDEBT-018); the same-repo revision-consistency negative fixture + capture-tool check (NDEBT-023); and the FAIL-shape alignment across schema/fixture/tool (NDEBT-024) \u2014 all keeping C12 green.",
       "status": "complete",
       "dependencies": [],
       "handover_feature_ids": [],
@@ -150,7 +150,7 @@
     {
       "id": "057",
       "name": "Progress-comparison taxonomy amendment (NDEBT-022)",
-      "description": "Amend the LIVE ecosystem/07_progress_comparison.md with a persisting/re-confirmed transition class, a first-comparison (pre-window-resolved) rule, and exact open-vs-recorded score-count semantics — before the next audit runs. The committed audit-044 artifacts remain untouched (immutable; they bridged the gap transparently).",
+      "description": "Amend the LIVE ecosystem/07_progress_comparison.md with a persisting/re-confirmed transition class, a first-comparison (pre-window-resolved) rule, and exact open-vs-recorded score-count semantics \u2014 before the next audit runs. The committed audit-044 artifacts remain untouched (immutable; they bridged the gap transparently).",
       "status": "complete",
       "dependencies": [],
       "handover_feature_ids": [],
@@ -181,8 +181,8 @@
     {
       "id": "059",
       "name": "Phase close + v0.8.0 release preparation (H-FRAMEWORK-RELEASE)",
-      "description": "Roll the phase into a prepare-only v0.8.0 MINOR package on the 045 pattern: CHANGELOG section, version surfaces, SHA-pinned release-readiness checklist with the human items held PENDING, docs/count sync — the operator signs off and tags per the recorded two-part gate.",
-      "status": "pending",
+      "description": "Roll the phase into a prepare-only v0.8.0 MINOR package on the 045 pattern: CHANGELOG section, version surfaces, SHA-pinned release-readiness checklist with the human items held PENDING, docs/count sync \u2014 the operator signs off and tags per the recorded two-part gate.",
+      "status": "complete",
       "dependencies": [
         "049",
         "050",
@@ -196,7 +196,7 @@
         "058"
       ],
       "handover_feature_ids": [],
-      "pr": "TBD-at-activation",
+      "pr": "PR-11 (phase/006-enforcement-closure; number assigned on open)",
       "merge_order": 11,
       "operator_gate": true,
       "acceptance_tests": [
