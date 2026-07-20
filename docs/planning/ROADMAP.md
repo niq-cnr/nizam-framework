@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.9.0
+version: 0.10.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.10.0"
+    date: "2026-07-20"
+    summary: "Phase-006 completion refresh: phase 006 (Enforcement Closure & Hardening, features 049-059) COMPLETE and v0.8.0 released 2026-07-20 (operator sign-off via the PR #38 merge + operator-pushed annotated tag v0.8.0 at 183e468; release.yml published the GitHub Release page from the [0.8.0] CHANGELOG section, run 29717579479 success). The Plan of Record banner is marked complete and Current Position rolled to 2026-07-20 (phases 001-006 complete, validator 15/15 C1-C15, payload 11/11, self-test 47/47). The enforcement-closure debt backlog (NDEBT-004/005/007-024) is fully Resolved; one new Low item NDEBT-026 (validator C15 is coverage-only, not a mapping-direction validator) was surfaced in the PR #38 review and registered."
   - version: "0.9.0"
     date: "2026-07-20"
     summary: "Track 3 (mechanize-or-descope the constitutional layer) RESOLVED by phase-006 feature 058 (gate H-CONSTITUTIONAL, operator decision authorized verbatim): two surfaces mechanized (standard/provenance_policy.md SHA-pinned-Actions via validate.sh check C14; standard/capability_profiles.md 5-profile-to-5-role correspondence via check C15), the remaining seven marked consumer-aspirational, and docs/guide/index.html refreshed to reflect the outcome. Track 3's section now carries the resolution banner."
@@ -39,7 +42,7 @@ change_log:
 
 ## Plan of Record (2026-07-19) — Phase 006 Activated: Enforcement Closure & Hardening
 
-Phase `006-enforcement-closure` is **ACTIVE** and is the current plan of record. On
+Phase `006-enforcement-closure` is now **COMPLETE** — all 11 features (049–059) shipped via PRs #28–#38 and v0.8.0 was released 2026-07-20 (see Current Position below); it was the current plan of record through phase close. On
 2026-07-19 the operator authorized activation (verbatim: **"Approved. Proceed with
 the logical next steps."**, satisfying gate **H-PHASE-006**; recorded in
 `run_state` event `phase_activated` before any feature execution). The planner
@@ -108,21 +111,24 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-07-18)
+## Current Position (2026-07-20)
 
-- Phases 001–005 are complete. Phase 005 (Ecosystem Engineering Cycle, framework
-  side) landed on `main` via the re-landing PR #25 (merge commit 4833322) after the
-  2026-07-18 stack collapse; the validator runs green at `SUMMARY: 12 passed, 0
-  failed` (C1–C12), payload mode at `10 passed, 0 failed`, and the hermetic e2e
-  bootstrap harness passes in CI.
-- Latest released tag: v0.7.0 — the annotated tag was pushed by the operator
-  2026-07-18 at the phase merge commit 4833322, executing H-FRAMEWORK-RELEASE after
+- Phases 001–006 are complete. Phase 006 (Enforcement Closure & Hardening) landed
+  on `main` via eleven sequential PRs #28–#38 (features 049–059); the validator runs
+  green at `SUMMARY: 15 passed, 0 failed` (C1–C15), payload mode at `11 passed, 0
+  failed`, the fixtures self-test at 47/47, and the hermetic e2e bootstrap harness
+  passes in CI.
+- Latest released tag: v0.8.0 — the annotated tag was pushed by the operator
+  2026-07-20 at the phase merge commit 183e468, executing H-FRAMEWORK-RELEASE after
   the recorded sign-off; `release.yml` auto-published the GitHub Release page from
-  the `[0.7.0]` CHANGELOG section (its title defect is NDEBT-025, Track 1 item 3).
-  The successor consumer-adoption phase (handover F-016..F-020) is now unblocked.
-- Open debt: NDEBT-004, NDEBT-005, NDEBT-007 through NDEBT-024 (20 Open rows, all
-  Low or Medium; NDEBT-001/002/003/006/025 are Resolved — 025 on 2026-07-18 via the
-  release.yml title fix and live retitle; see `docs/planning/DEBT.md`).
+  the `[0.8.0]` CHANGELOG section (run 29717579479, success). A MINOR release per
+  `methodology/06_release_train.md` §3.2. The successor consumer-adoption phase
+  (handover F-016..F-020) remains unblocked.
+- Open debt: NDEBT-026 (Low) only — phase 006 resolved the entire enforcement-closure
+  backlog it inherited (NDEBT-004, -005, -007 through -024; NDEBT-001/002/003/006/025
+  were already Resolved). NDEBT-026 — validator check C15 is a coverage check, not a
+  mapping-direction validator (surfaced in the PR #38 review; the C15 docs were
+  corrected in that PR) — is the sole Open row; see `docs/planning/DEBT.md`.
 
 ## Track 1 — Outstanding Human Gates (no planning required)
 
