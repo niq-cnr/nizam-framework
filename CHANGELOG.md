@@ -9,6 +9,22 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`tools/compare_ecosystem_baselines.py`** + **`tools/validate_evidence_freshness.py`**
+  — the deterministic Compare stage (the two NIP-0001-named tools), making Compare
+  tool-driven (previously prose-only). `compare_ecosystem_baselines.py` classifies
+  every finding across two audits into the closed five-class taxonomy of
+  `ecosystem/07_progress_comparison.md` (`new`/`resolved`/`reopened`/`persisting`/`stale`)
+  plus `pre_window_resolved`, and emits a schema-valid `delta.json`
+  (`schema/audit_delta.schema.json`). It enforces the protocol's rules mechanically:
+  closure-only-with-evidence (§4 — a finding merely absent from the later audit is
+  reported UNCLASSIFIABLE, never auto-resolved), stale-evidence non-reuse (§5, via
+  the shared freshness rule), the open-findings-only score (§6.1), and the
+  first-comparison rule (§3.2 — `reopened` empty without `--prior-delta`).
+  `validate_evidence_freshness.py` defines and exposes that freshness rule (evidence
+  is current iff re-confirmed at or after the later anchor) as both a library
+  (imported by the Compare tool) and a CLI. Both mirror `ecosystem_preflight.py`
+  (stdlib-only, documented exit tables, `_UsageErrorArgumentParser`→64) and are
+  guarded by standing CLI behavior probes in `tools/fixtures_self_test.sh`.
 - **`tools/ecosystem_audit.py`** — a deterministic Audit-stage CLI, making the
   Audit stage tool-driven (previously prose-only; its dogfood artifacts were
   hand-authored). It mechanizes `ecosystem/03_engineering_audit.md`'s **entry

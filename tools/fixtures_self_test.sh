@@ -490,6 +490,47 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# (6) compare_ecosystem_baselines.py + validate_evidence_freshness.py probes
+# ---------------------------------------------------------------------------
+# The Compare-stage tools' OUTPUT (delta.json) is C12-covered via the
+# audit_delta family, but their CLI behavior is not, so these standing probes
+# guard it. They assert: a valid comparison emits a delta (exit 0); an
+# earlier-open finding gone from the later audit with no closure evidence is
+# UNCLASSIFIABLE (exit 1, Sec 4); freshness reports STALE (exit 1) for old
+# evidence and FRESH (exit 0) for evidence at the later anchor revision.
+echo "== compare + freshness CLI behavior probes =="
+_compare_cli_probes() (
+  local d rc
+  d=$(mktemp -d) || return 1
+  trap 'rm -rf -- "${d}"' EXIT
+  printf '{"execution_id":"eA","captured_at":"2026-07-01T00:00:00Z","repository_references":[{"revision":"aaa","timestamp":"t","repository":"r"}]}' > "${d}/baseA.json"
+  printf '{"execution_id":"eB","captured_at":"2026-07-20T00:00:00Z","repository_references":[{"revision":"bbb","timestamp":"t","repository":"r"}]}' > "${d}/baseB.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eA/x.txt","revision":"aaa"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findA.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eB/x.txt","revision":"bbb"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findB.json"
+  printf '[]' > "${d}/findEmpty.json"
+  # (a) a valid comparison -> delta emitted (exit 0), delta.json present
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/out" --earlier-findings "${d}/findA.json" --later-findings "${d}/findB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  valid compare: expected exit 0, got ${rc}"; return 1; }
+  [ -f "${d}/out/delta.json" ] || { echo "  valid compare: expected delta.json"; return 1; }
+  # (b) earlier-open finding gone from later, no closure -> UNCLASSIFIABLE (exit 1)
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/o2" --earlier-findings "${d}/findA.json" --later-findings "${d}/findEmpty.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  gone-without-closure: expected exit 1, got ${rc}"; return 1; }
+  # (c) freshness: old evidence (rev aaa) vs later anchor bbb -> STALE (exit 1)
+  python3 tools/validate_evidence_freshness.py --findings "${d}/findA.json" --anchor-revision bbb --anchor-timestamp "2026-07-20T00:00:00Z" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  stale evidence: expected exit 1, got ${rc}"; return 1; }
+  # (d) freshness: evidence at the anchor revision bbb -> FRESH (exit 0)
+  python3 tools/validate_evidence_freshness.py --findings "${d}/findB.json" --anchor-revision bbb --anchor-timestamp "2026-07-20T00:00:00Z" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  fresh evidence: expected exit 0, got ${rc}"; return 1; }
+  return 0
+)
+if _compare_cli_probes; then
+  echo "OK   compare     valid -> delta(0); gone-without-closure -> INVALID(1); freshness stale(1)/fresh(0)"
+else
+  echo "FAIL compare     a CLI behavior probe did not hold"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
 # COMPLETENESS GUARD: every file under tools/fixtures/ must be accounted for
 # by exactly one row above; an unlisted fixture (a newly-added dormant
 # negative) or a manifest row naming an absent fixture is a FAIL.
