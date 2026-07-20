@@ -1,0 +1,75 @@
+{
+  "phase": "007-consumer-adoption",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 870,
+  "planning_note": "DAG-validated acyclic: roots {060}; 060 -> 061 -> 063 -> 064; 060 -> 062 (conditional, inserted before 063 only if a real consumer with pre-existing root-level files surfaces the need). Features 060-062 are framework-internal and executable without any external repo; features 063-064 require operator-authorized access to a consumer repository (see product_spec_007.md Section 3). PROPOSED, not activated — no feature enters contract negotiation before gate H-PHASE-007.",
+  "features": [
+    {
+      "id": "060",
+      "name": "Bootstrap-stage protocol (ecosystem/00_ecosystem_bootstrap.md)",
+      "description": "Author the missing Bootstrap-stage protocol document, the entry point of the canonical lifecycle. Wrap standard/GIP.md (pinned-tag clone, inject the six module dirs + NIZAM.json, GIP Sec 5 rename-and-diff + incremental adoption tiers) and bootstrap.sh; define the stage's required semantics: pinned-immutable-tag precondition (floating refs refused), payload verification + provenance drift check, the consumer-supplied inputs each ecosystem must provide (its own registry/scope/thresholds/owners/gates per NIP-0001), and the entry condition into Preflight (ecosystem/01_clean_state_preflight.md). Follow the house protocol structure matching ecosystem/01 and 02. Flip the ecosystem/README.md Module Navigation status row for 00 from Planned to Shipped; register the capability in tools/skill.json if warranted; add a CHANGELOG [Unreleased] entry.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "ecosystem/00_ecosystem_bootstrap.md exists with valid UDS frontmatter and the house protocol structure (Overview / When / Rules / Artifact / References), matching the style of ecosystem/01 and 02.",
+        "The protocol reuses and cites standard/GIP.md and bootstrap.sh rather than restating their mechanics, and states the pinned-immutable-tag precondition, the injected six-module payload, and provenance/drift verification.",
+        "ecosystem/README.md Module Navigation table marks 00 as Shipped and the surrounding prose is consistent (C10 stays green).",
+        "bash tools/validate.sh is green 15/15 (C1/C8/C9/C10 in particular), fixtures self-test passes, and tools/e2e_bootstrap_test.sh passes."
+      ],
+      "estimated_lines": 280
+    },
+    {
+      "id": "061",
+      "name": "Define operator gate H-CONSUMER-UPGRADE",
+      "description": "Move H-CONSUMER-UPGRADE from the RESERVED table (docs/planning/operator_gates.md Section 2) into the defined/decided set with scope (a consumer repository adopting a newly released, immutable framework tag at the Bootstrap stage), trigger condition, and disposition semantics (record-but-never-self-execute). Keep the other four reserved gates reserved. Bump the operator_gates.md registry version + change_log.",
+      "status": "pending",
+      "dependencies": ["060"],
+      "acceptance_tests": [
+        "docs/planning/operator_gates.md defines H-CONSUMER-UPGRADE with scope, trigger, and disposition semantics; it is no longer listed as a reserved name only.",
+        "The four sibling gates (H-PLANNING-AUTHORITY, H-TRAIN-ENTRY, H-CONSOLIDATION, H-GA) remain RESERVED.",
+        "The gate references ecosystem/00_ecosystem_bootstrap.md as the stage it guards; registry version + change_log bumped; bash tools/validate.sh green."
+      ],
+      "estimated_lines": 90
+    },
+    {
+      "id": "062",
+      "name": "(Conditional) Real-consumer bootstrap reconciliation (GIP Sec 5.1)",
+      "description": "Implement the GIP Section 5.1 rename-and-diff behavior in bootstrap.sh so a consumer repository with a pre-existing root-level CONTEXT.md / AGENTS.md / CI configuration is never silently overwritten (today bootstrap.sh does an atomic replace of the dedicated .nizam/ target only). Add e2e coverage. CONDITIONAL: execute only if feature 063's pilot surfaces the need against a real consumer; otherwise cancelled with a recorded reason.",
+      "status": "pending",
+      "dependencies": ["060"],
+      "acceptance_tests": [
+        "bootstrap.sh preserves a pre-existing root-level CONTEXT.md/AGENTS.md under a renamed path (e.g. .pre-nizam) rather than overwriting, per GIP Sec 5.1.",
+        "tools/e2e_bootstrap_test.sh gains a case exercising the rename-and-diff path.",
+        "If not needed, the feature is marked cancelled in feature_list_007.json with a one-line reason; bash tools/validate.sh stays green either way."
+      ],
+      "estimated_lines": 210
+    },
+    {
+      "id": "063",
+      "name": "First external-consumer pilot (handover F-016 / F-019)",
+      "description": "Bootstrap a released framework tag (>= v0.8.0) into an operator-authorized consumer repository; run tools/validate.sh --payload inside it (must be green, proving CWD-independent payload validity in a real consumer); then drive the core loop against it: ecosystem_preflight.py --repo-root <consumer> to produce preflight.json + baseline.json, then author schema-valid findings and run ecosystem_audit.py, then compare_ecosystem_baselines.py on a second baseline/audit. Externalise evidence under the consumer's .agent/reconciliation|audits|evidence/. Record EVERY friction point as a new docs/planning/DEBT.md NDEBT-* row. Requires gate H-CONSUMER-UPGRADE (feature 061) and operator-provided consumer-repo access (product_spec_007.md Section 3).",
+      "status": "pending",
+      "dependencies": ["060", "061"],
+      "acceptance_tests": [
+        "A real, non-self consumer repository is bootstrapped against a released framework tag and tools/validate.sh --payload is green inside it.",
+        "Preflight -> Baseline -> Audit -> Compare run end-to-end against the consumer and produce schema-valid artifacts (validated via jsonschema / validate.sh --target).",
+        "Every friction point observed is recorded as an NDEBT-* row in docs/planning/DEBT.md with evidence.",
+        "The H-CONSUMER-UPGRADE gate decision for the adoption is recorded per operator_gates.md before the Bootstrap stage proceeds."
+      ],
+      "estimated_lines": 180
+    },
+    {
+      "id": "064",
+      "name": "Plan next automation tranche from real friction (handover F-020) + phase close",
+      "description": "From the pilot's recorded NDEBT friction, prioritise which of the deferred protocols (04_dependency_reconciliation, 05_release_train_coordination, 06_simplification_review, 08_ga_gate) and their companion schemas to author in a subsequent phase, evidence-driven rather than speculative. Update ROADMAP Track 4 with the pilot outcome, refresh Current Position, and close phase 007 (manifest + run_state phase_complete).",
+      "status": "pending",
+      "dependencies": ["063"],
+      "acceptance_tests": [
+        "docs/planning/ROADMAP.md records the pilot outcome and a prioritised, evidence-cited candidate scope for the next phase (which deferred protocols to author and why).",
+        "docs/planning/manifest.json and .agent/run_state.json reflect phase-007 completion; bash tools/validate.sh green.",
+        "No deferred protocol (04/05/06/08) is authored without a cited pilot-evidence justification."
+      ],
+      "estimated_lines": 110
+    }
+  ]
+}

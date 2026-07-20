@@ -6,6 +6,9 @@ version: 0.10.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.11.0"
+    date: "2026-07-20"
+    summary: "Added the Proposed Next Phase section — phase 007 (Consumer-Adoption Enablement & First External Pilot, features 060-064, est 870 lines) PROPOSED and awaiting operator authorization (gate H-PHASE-007). Scope: author the missing Bootstrap-stage protocol (ecosystem/00_ecosystem_bootstrap.md) + define the reserved gate H-CONSUMER-UPGRADE, then run the first REAL external-consumer pilot (Track 4 / handover F-016..F-020) and prioritise the deferred protocols from real friction — NOT speculative authoring of 04/05/06/08. Planner artifacts .agent/product_spec_007.md (status draft) + .agent/feature_list_007.json (DAG-validated acyclic) exist; current_phase stays 006-enforcement-closure until activation. The pilot (features 063-064) additionally requires operator-authorized access to a consumer repository — the canonical target nizamiq/nizamiq-strategy is outside this session's scope."
   - version: "0.10.0"
     date: "2026-07-20"
     summary: "Phase-006 completion refresh: phase 006 (Enforcement Closure & Hardening, features 049-059) COMPLETE and v0.8.0 released 2026-07-20 (operator sign-off via the PR #38 merge + operator-pushed annotated tag v0.8.0 at 183e468; release.yml published the GitHub Release page from the [0.8.0] CHANGELOG section, run 29717579479 success). The Plan of Record banner is marked complete and Current Position rolled to 2026-07-20 (phases 001-006 complete, validator 15/15 C1-C15, payload 11/11, self-test 47/47). The enforcement-closure debt backlog (NDEBT-004/005/007-024) is fully Resolved; one new Low item NDEBT-026 (validator C15 is coverage-only, not a mapping-direction validator) was surfaced in the PR #38 review and registered."
@@ -39,6 +42,45 @@ change_log:
 ---
 
 # Forward Roadmap
+
+## Proposed Next Phase (2026-07-20) — Phase 007: Consumer-Adoption Enablement & First External Pilot
+
+Phase `007-consumer-adoption` is **PROPOSED — awaiting operator authorization**
+(gate **H-PHASE-007**). It is not activated: `docs/planning/manifest.json` keeps
+`current_phase: 006-enforcement-closure` (complete) and carries phase 007 as
+`status: pending` until the authorization is recorded in `.agent/run_state.json`
+(event `phase_activated`), per `methodology/00_planning.md`. The planner artifacts
+exist: `.agent/product_spec_007.md` (status `draft`) and
+`.agent/feature_list_007.json` (5 features 060-064, DAG-validated acyclic,
+`original_estimate_lines` 870).
+
+**Why now.** The core ecosystem loop (Preflight → Baseline → Audit → Compare) is
+shipped, dogfooded, and released (v0.8.0). Two gaps remain: the lifecycle's **Bootstrap**
+entry stage has no protocol document (`00_ecosystem_bootstrap.md`, still *Planned*
+under `ecosystem/`) and its gate `H-CONSUMER-UPGRADE` is an undefined reserved name; and all
+adoption evidence is still self-referential (Track 4, below). Phase 007 closes the
+Bootstrap gap with the minimum authoring needed, then runs the first real pilot and
+lets that evidence prioritise the remaining deferred protocols — it does **not** author
+`04/05/06/08` speculatively (the framework's "no claim beyond evidence" rule).
+
+**Scope (features 060-064).** 060 — author the Bootstrap-stage protocol
+`00_ecosystem_bootstrap.md` (under `ecosystem/`, wrapping `standard/GIP.md` +
+`bootstrap.sh`; flip its `ecosystem/README.md` status row Planned→Shipped); 061 — define the reserved gate `H-CONSUMER-UPGRADE` in
+`docs/planning/operator_gates.md`; 062 (conditional) — implement GIP §5.1
+rename-and-diff in `bootstrap.sh` for a consumer with pre-existing root files; 063 —
+first external-consumer pilot (handover F-016/F-019: bootstrap a released tag into a
+real consumer, run `tools/validate.sh --payload`, drive the core loop, record friction
+as `NDEBT-*`); 064 — plan the next automation tranche from that friction (handover
+F-020) and close the phase.
+
+**Precondition for the pilot.** Features 060-062 are framework-internal and executable
+immediately on activation. The pilot (063-064) additionally **requires
+operator-authorized access to a consumer repository.** The canonical target
+`nizamiq/nizamiq-strategy` is a different organization outside this session's GitHub
+scope; activation must resolve which consumer repo the pilot runs against (the
+canonical target via `add_repo` subject to org authorization, another operator-provided
+repo, or a scratch consumer to exercise loop mechanics). This directly executes Track 4
+below.
 
 ## Plan of Record (2026-07-19) — Phase 006 Activated: Enforcement Closure & Hardening
 
