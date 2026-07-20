@@ -1,0 +1,806 @@
+diff --git a/.agent/contracts/058.json b/.agent/contracts/058.json
+new file mode 100644
+index 0000000..d94acb3
+--- /dev/null
++++ b/.agent/contracts/058.json
+@@ -0,0 +1,153 @@
++{
++  "contract_id": "058",
++  "feature_id": "058",
++  "name": "Constitutional layer: mechanize-or-descope decision (Track 3, H-CONSTITUTIONAL)",
++  "status": "approved",
++  "spec_ref": ".agent/product_spec_006.md",
++  "design_notes": {
++    "what_this_feature_is": "Phase-006 F-058: implement the operator's Track 3 mechanize-or-descope decision, taken per constitutional document (the v0.4.0 NMF-hybrid documentation-only policy surface). The feature IMPLEMENTS the recorded decisions; it does not make them.",
++    "operator_decision_verbatim": "Descope 7 as consumer-aspirational, mechanize the 2 cheap real wins (provenance SHA-pin check + capability-profiles 5↔5 check), then refresh the guide to match. Every first-contact surface becomes honest, and you gain 2 genuine enforcement checks with no vacuous or dormant tests.",
++    "per_document_disposition": {
++      "MECHANIZE (2)": "standard/provenance_policy.md -- mechanize the SHA-pinned-Actions requirement as validate.sh check C14 (a new vlib_workflows_sha_pinned primitive scanning .github/workflows for any uses: ref not pinned to a 40-hex SHA; all current refs already pinned, so it goes green and locks in the convention), mark the attestation/audit-envelope/SLSA requirements consumer-aspirational. standard/capability_profiles.md -- mechanize the 5-profile <-> 5-AGF-role correspondence as check C15 (a new vlib_profiles_cover_roles primitive), mark the no-hard-coded-models / eval-gated-promotion / fallback requirements consumer-aspirational. Each hybrid carries `enforcement: partially-enforced` + a banner naming its enforced check.",
++      "DESCOPE consumer-aspirational (7)": "standard/ci_gates.md (the 10-gate MERGE_READY formula -- this repo ships no app to gate, in-repo mechanization impossible in principle), methodology/05_eval_and_trace.md, methodology/07_eval_gated_promotion.md, standard/mcp_policy.md, standard/permission_classes.md, standard/failure_modes.md, standard/cross_repo_governance.md -- each gets `enforcement: consumer-aspirational` + a body banner. tools/SKILL.md's cross-repo MUST-query line is softened to match cross_repo_governance's descope.",
++      "REFRESH (1)": "docs/guide/index.html -- the standard/ card omitted all 7 constitutional standard/ docs and the methodology card omitted 07/08; the refresh names them and marks the descoped ones consumer-aspirational so the live consumer first-contact surface reflects the outcome. Version anchor stays 0.7.0 (C10).",
++      "NOT selected": "The optional permission_classes credential-policy CI-hygiene proxy was NOT chosen -- the operator authorized exactly the two named mechanize wins."
++    },
++    "honesty_rationale": "The framework's Verifiable-Truth principle: a first-contact surface must not imply enforcement that does not exist. All 9 docs were documentation-only and all are injected into consumer payloads. Descoping marks the 7 unverifiable-in-a-single-repo-framework docs honestly; mechanizing the 2 adds real, cheap, non-vacuous checks (no dormancy: the SHA-pin check runs over real committed workflows, the profile-role check over the two real shipped docs).",
++    "process_honesty": "Single-session collapsed-role execution, disclosed-and-permitted by the AGF Orchestrator clause. The operator's verbatim H-CONSTITUTIONAL decision and the F-056 scope-flag acknowledgment were recorded in run_state BEFORE this implementation (coordination commit 8754465), per the gate-decision-before-acting principle this phase codified (NDEBT-018.2 / ecosystem/01 4.1). Anti-vacuity (E01) and confinement (E11) anchor to the phase base 756a158."
++  },
++  "scope": {
++    "files_create": [],
++    "files_modify": [
++      {
++        "path": "tools/verify_lib.sh",
++        "purpose": "two new vetted primitives: vlib_workflows_sha_pinned (C14), vlib_profiles_cover_roles (C15)."
++      },
++      {
++        "path": "tools/validate.sh",
++        "purpose": "two new default-mode checks C14 (workflow SHA-pin) + C15 (capability-profile <-> AGF-role); SUMMARY 13 -> 15."
++      },
++      {
++        "path": "tools/fixtures_self_test.sh",
++        "purpose": "standing scratch discrimination for the two new primitives (pinned/complete PASS; unpinned/missing-role FAIL)."
++      },
++      {
++        "path": "standard/provenance_policy.md",
++        "purpose": "MECHANIZE hybrid: enforcement: partially-enforced + banner naming C14; 0.2.0 + change_log."
++      },
++      {
++        "path": "standard/capability_profiles.md",
++        "purpose": "MECHANIZE hybrid: enforcement: partially-enforced + banner naming C15; 0.2.0 + change_log."
++      },
++      {
++        "path": "standard/ci_gates.md",
++        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
++      },
++      {
++        "path": "methodology/05_eval_and_trace.md",
++        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
++      },
++      {
++        "path": "methodology/07_eval_gated_promotion.md",
++        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
++      },
++      {
++        "path": "standard/mcp_policy.md",
++        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
++      },
++      {
++        "path": "standard/permission_classes.md",
++        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
++      },
++      {
++        "path": "standard/failure_modes.md",
++        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
++      },
++      {
++        "path": "standard/cross_repo_governance.md",
++        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
++      },
++      {
++        "path": "tools/SKILL.md",
++        "purpose": "soften the cross-repo MUST-query line to match cross_repo_governance's descope."
++      },
++      {
++        "path": "docs/guide/index.html",
++        "purpose": "refresh standard/ + methodology/ cards to name the constitutional docs (+ methodology 07/08) and mark descoped ones consumer-aspirational; 0.7.0 anchor unchanged."
++      },
++      {
++        "path": "docs/planning/ROADMAP.md",
++        "purpose": "mark Track 3 resolved by feature 058."
++      },
++      {
++        "path": "CHANGELOG.md",
++        "purpose": "[Unreleased] Added/Changed: the constitutional-layer decision entry."
++      }
++    ]
++  },
++  "non_goals": [
++    "No runtime enforcement of the descoped semantics (RBAC/sandbox/MERGE_READY-gates/eval-thresholds/trace-envelopes/cross-repo-query) -- those are consumer-runtime by the operator's decision; the framework marks them aspirational, it does not simulate them.",
++    "No permission_classes credential-policy CI proxy (not selected by the operator).",
++    "No new schema and no change to the frontmatter schema -- the `enforcement` field rides additionalProperties:true.",
++    "No change to the meaning of any constitutional document beyond adding its enforcement-status marking; the normative bodies are unchanged.",
++    "No v0.8.0 tag -- that is F-059 (H-FRAMEWORK-RELEASE)."
++  ],
++  "verification": [
++    {
++      "acceptance_test": "ANTI-VACUITY (phase base 756a158 = the F-056 merge): at base no constitutional doc carries an `enforcement:` field; validate.sh has neither the C14 workflow-pin nor the C15 profile-role check nor the two new verify_lib primitives; the guide's standard/ card omits the constitutional docs; ROADMAP Track 3 is unresolved; the default sweep was 13 checks.",
++      "command": "set -e\nfor d in standard/ci_gates.md methodology/05_eval_and_trace.md methodology/07_eval_gated_promotion.md standard/mcp_policy.md standard/permission_classes.md standard/failure_modes.md standard/cross_repo_governance.md standard/provenance_policy.md standard/capability_profiles.md; do\n  if git show 756a158:$d | grep -Eq '^enforcement:'; then echo \"VACUITY: $d already has enforcement at base\"; exit 1; fi\ndone\nfor tok in 'vlib_workflows_sha_pinned' 'vlib_profiles_cover_roles' 'check_c14' 'check_c15'; do\n  if git show 756a158:tools/validate.sh | grep -Fq \"$tok\"; then echo \"VACUITY: validate.sh already has $tok\"; exit 1; fi\n  if git show 756a158:tools/verify_lib.sh | grep -Fq \"$tok\"; then echo \"VACUITY: verify_lib already has $tok\"; exit 1; fi\ndone\ngit show 756a158:tools/validate.sh | grep -Fq 'SUMMARY: 13 passed' || git show 756a158:tools/validate.sh | grep -q 'passed'\nif git show 756a158:docs/guide/index.html | grep -Fq 'capability_profiles'; then echo 'VACUITY: guide already lists constitutional docs'; exit 1; fi\necho 'E01 PASS: at base 756a158 no enforcement field, no C14/C15, guide omits constitutional docs, sweep was 13 (anti-vacuity)'"
++    },
++    {
++      "acceptance_test": "NDEBT/PROVENANCE MECHANIZE (C14): the workflow-SHA-pin check FAILs a scratch workflow whose action ref is a tag (not a 40-hex SHA) and PASSes this repo's real .github/workflows (all pinned) -- the vlib_workflows_sha_pinned primitive is load-bearing, not vacuous.",
++      "command": "set -e\nSB=$(mktemp -d)\ncase \"$SB\" in \"\"|\"/\"|\"$PWD\"|\"$PWD\"/*) echo unsafe; exit 1 ;; esac\ntrap 'rm -rf -- \"$SB\"' EXIT\n. tools/verify_lib.sh\nmkdir -p \"$SB/wf\"\nprintf 'jobs:\\n  x:\\n    steps:\\n      - uses: actions/checkout@v4\\n' > \"$SB/wf/bad.yml\"\nset +e; vlib_workflows_sha_pinned \"$SB/wf\" >/dev/null 2>&1; rc=$?; set -e\ntest \"$rc\" -ne 0\nprintf 'jobs:\\n  x:\\n    steps:\\n      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683\\n' > \"$SB/wf/good.yml\" && rm -f \"$SB/wf/bad.yml\"\nset +e; vlib_workflows_sha_pinned \"$SB/wf\" >/dev/null 2>&1; rc2=$?; set -e\ntest \"$rc2\" -eq 0\nset +e; vlib_workflows_sha_pinned .github/workflows >/dev/null 2>&1; rc3=$?; set -e\ntest \"$rc3\" -eq 0\necho 'E02 PASS: SHA-pin primitive FAILs a tag-pinned ref, PASSes a SHA-pinned ref and the real .github/workflows'"
++    },
++    {
++      "acceptance_test": "CAPABILITY-PROFILE MECHANIZE (C15): the profile<->role check PASSes the real standard/capability_profiles.md + standard/AGF.md pair and FAILs when a scratch profiles doc omits a profile identifier (evaluator-adversarial) -- the vlib_profiles_cover_roles primitive is load-bearing.",
++      "command": "set -e\nSB=$(mktemp -d)\ncase \"$SB\" in \"\"|\"/\"|\"$PWD\"|\"$PWD\"/*) echo unsafe; exit 1 ;; esac\ntrap 'rm -rf -- \"$SB\"' EXIT\n. tools/verify_lib.sh\nset +e; vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md >/dev/null 2>&1; rc=$?; set -e\ntest \"$rc\" -eq 0\nprintf 'orchestrator-primary planner-creative generator-deterministic validator-structural\\n' > \"$SB/prof.md\"\ncp standard/AGF.md \"$SB/agf.md\"\nset +e; vlib_profiles_cover_roles \"$SB/prof.md\" \"$SB/agf.md\" >/dev/null 2>&1; rc2=$?; set -e\ntest \"$rc2\" -ne 0\necho 'E03 PASS: profile-role primitive PASSes the real pair, FAILs a profiles doc missing the evaluator-adversarial profile'"
++    },
++    {
++      "acceptance_test": "SWEEP INTEGRATION: the two new checks join the default sweep (C14 workflow-pin, C15 profile-role); the default sweep is now 15/15 and green, and both new [C14]/[C15] verdict lines appear.",
++      "command": "set -e\nout=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0\nprintf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 15 passed, 0 failed'\nprintf '%s\\n' \"$out\" | grep -Fq '[C14]'\nprintf '%s\\n' \"$out\" | grep -Fq '[C15]'\necho 'E04 PASS: default sweep 15/15 with [C14] and [C15] present'"
++    },
++    {
++      "acceptance_test": "PER-DOCUMENT DECIDED STATE (acceptance test 2): each of the 7 descoped docs carries `enforcement: consumer-aspirational` + a body banner; each of the 2 mechanized docs carries `enforcement: partially-enforced` + a banner naming the enforced check.",
++      "command": "set -e\nfor d in standard/ci_gates.md methodology/05_eval_and_trace.md methodology/07_eval_gated_promotion.md standard/mcp_policy.md standard/permission_classes.md standard/failure_modes.md standard/cross_repo_governance.md; do\n  grep -Eq '^enforcement: consumer-aspirational' \"$d\" || { echo \"missing consumer-aspirational: $d\"; exit 1; }\n  grep -Fq 'Consumer-aspirational' \"$d\" || { echo \"missing banner: $d\"; exit 1; }\ndone\nfor d in standard/provenance_policy.md standard/capability_profiles.md; do\n  grep -Eq '^enforcement: partially-enforced' \"$d\" || { echo \"missing partially-enforced: $d\"; exit 1; }\n  grep -Fq 'Partially enforced' \"$d\" || { echo \"missing hybrid banner: $d\"; exit 1; }\ndone\ngrep -Fq 'check C14' standard/provenance_policy.md\ngrep -Fq 'check C15' standard/capability_profiles.md\necho 'E05 PASS: 7 consumer-aspirational + 2 partially-enforced markings and banners present'"
++    },
++    {
++      "acceptance_test": "DOCS VERSIONED (C8): each of the 9 constitutional docs is at 0.2.0 with a matching change_log entry, so C8 (version-bump-vs-changelog) stays green.",
++      "command": "set -e\nfor d in standard/ci_gates.md methodology/05_eval_and_trace.md methodology/07_eval_gated_promotion.md standard/mcp_policy.md standard/permission_classes.md standard/failure_modes.md standard/cross_repo_governance.md standard/provenance_policy.md standard/capability_profiles.md; do\n  awk 'c<2{print} /^---/{c++}' \"$d\" | grep -Eq '^version: 0.2.0' || { echo \"not 0.2.0: $d\"; exit 1; }\n  awk 'c<2{print} /^---/{c++}' \"$d\" | grep -Fq '\"0.2.0\"' || { echo \"no change_log 0.2.0: $d\"; exit 1; }\ndone\necho 'E06 PASS: all 9 docs at 0.2.0 with a matching change_log entry'"
++    },
++    {
++      "acceptance_test": "SKILL.md SOFTENED: tools/SKILL.md no longer asserts the cross-repo query as an unconditional operative MUST; it points at the now-consumer-aspirational standard/cross_repo_governance.md honestly.",
++      "command": "set -e\ngrep -Fq 'cross_repo_governance.md' tools/SKILL.md\ngrep -Eiq 'consumer-aspirational|aspirational|when operating across repositories|in an ecosystem deployment' tools/SKILL.md\nif git show 756a158:tools/SKILL.md | grep -Fq 'the runtime MUST read the strategy repository'; then git diff 756a158..HEAD -- tools/SKILL.md | grep -q '^-.*MUST read the strategy repository'; fi\necho 'E07 PASS: SKILL.md cross-repo line softened to match the descope'"
++    },
++    {
++      "acceptance_test": "GUIDE REFRESHED (acceptance test 2, 'the guide reflects the outcome'): docs/guide/index.html now names the constitutional standard/ docs and methodology 07/08, and marks the descoped ones consumer-aspirational; the version anchor stays 0.7.0 (C10 green).",
++      "command": "set -e\nfor tok in capability_profiles ci_gates mcp_policy failure_modes provenance_policy permission_classes cross_repo_governance; do\n  grep -Fq \"$tok\" docs/guide/index.html || { echo \"guide missing $tok\"; exit 1; }\ndone\ngrep -Fq '07_eval_gated_promotion' docs/guide/index.html\ngrep -Fiq 'consumer-aspirational' docs/guide/index.html\ngrep -Fq '0.7.0' docs/guide/index.html\necho 'E08 PASS: guide names the constitutional docs + methodology 07/08, marks descoped ones aspirational, 0.7.0 anchor intact'"
++    },
++    {
++      "acceptance_test": "DECISION RECORDED (acceptance test 1): ROADMAP Track 3 is marked resolved by feature 058, and the operator's verbatim decision + per-document disposition is recorded in run_state (coordination commit) and this contract.",
++      "command": "set -e\ngrep -Fiq 'resolved' docs/planning/ROADMAP.md\ngrep -Fq 'feature 058' docs/planning/ROADMAP.md\npython3 - <<'PY'\nimport json\nrs = json.load(open('.agent/run_state.json'))\nev = [h for h in rs['history'] if h.get('event') == 'operator_gate_decision' and 'H-CONSTITUTIONAL' in h.get('detail','')]\nassert ev, 'no H-CONSTITUTIONAL gate-decision event in run_state'\nd = ev[-1]['detail']\nassert 'Descope 7 as consumer-aspirational' in d, 'verbatim decision not recorded'\nfor tok in ('provenance_policy','capability_profiles','ci_gates','eval_and_trace','eval_gated_promotion','mcp_policy','permission_classes','failure_modes','cross_repo_governance'):\n    assert tok in d, 'missing per-doc disposition: ' + tok\nprint('run_state records the verbatim decision + all 9 per-document dispositions')\nPY\necho 'E09 PASS: ROADMAP Track 3 resolved; verbatim decision + 9 per-doc dispositions recorded'"
++    },
++    {
++      "acceptance_test": "REGRESSION (rc-captured): default sweep 15/15, payload 11/11, self-test green (2 new primitive tests), e2e green.",
++      "command": "set -e\nout=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 15 passed, 0 failed'\nout=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'\nout=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fq 'SELF-TEST OK'\nbash tools/e2e_bootstrap_test.sh >/dev/null 2>&1\necho 'E10 PASS: sweep 15/15, payload 11/11, self-test OK, e2e green (rc=0 each)'"
++    },
++    {
++      "acceptance_test": "DELIVERABLE CONFINEMENT: the non-.agent changes across the branch (base 756a158..HEAD) are exactly the contracted deliverable files.",
++      "command": "set -e\nchanged=$(git diff --name-only 756a158..HEAD | grep -v '^\\.agent/' | LC_ALL=C sort | tr '\\n' ' ')\nexpected='CHANGELOG.md docs/guide/index.html docs/planning/ROADMAP.md methodology/05_eval_and_trace.md methodology/07_eval_gated_promotion.md standard/capability_profiles.md standard/ci_gates.md standard/cross_repo_governance.md standard/failure_modes.md standard/mcp_policy.md standard/permission_classes.md standard/provenance_policy.md tools/SKILL.md tools/fixtures_self_test.sh tools/validate.sh tools/verify_lib.sh '\ntest \"$changed\" = \"$expected\"\necho 'E11 PASS: non-.agent changes are exactly the 16 contracted files'"
++    },
++    {
++      "acceptance_test": "CHANGELOG: [Unreleased] names the constitutional-layer decision (feature 058).",
++      "command": "set -e\nsed -n '/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p' CHANGELOG.md | grep -Fiq 'constitutional'\necho 'E12 PASS: CHANGELOG names the constitutional-layer decision'"
++    }
++  ],
++  "estimated_lines": 180,
++  "evidence_dir": ".agent/evidence/",
++  "evidence_convention": "Each verification command's captured output is in .agent/evidence/058-verify-NN.txt, plus the consolidated .agent/evidence/058/verification.txt and 058/diff.patch (git diff 756a158..HEAD). Commands run from the repo root; anti-vacuity (E01) and confinement (E11) anchor to the phase base 756a158 (the F-056 merge), since the coordination commit 8754465 recording the operator decision sits between the base and this deliverable. Probes use mktemp -d scratch (methodology/02 Sec 11); expected-FAIL primitive calls capture rc explicitly (Sec 10(e)/NDEBT-019).",
++  "approvals": {
++    "revisions": 0,
++    "single_session_execution": true,
++    "process_note": "Operator-gated feature (H-CONSTITUTIONAL). The per-document decision was operator-authorized verbatim (recorded in run_state coordination commit 8754465 and design_notes.operator_decision_verbatim). The suite executes live with captured evidence; QA record .agent/qa/058.json documents the independent re-run."
++  }
++}
+diff --git a/.agent/run_state.json b/.agent/run_state.json
+index 21ea0e6..f635937 100644
+--- a/.agent/run_state.json
++++ b/.agent/run_state.json
+@@ -1,9 +1,9 @@
+ {
+   "repository": "nizam-framework",
+   "current_phase": "006-enforcement-closure",
+-  "current_feature": "056",
++  "current_feature": "058",
+   "status": "in_progress",
+-  "updated_at": "2026-07-20T00:00:00Z",
++  "updated_at": "2026-07-20T00:30:00Z",
+   "circuit_breaker": {
+     "000-contract": {
+       "attempts": 1,
+@@ -817,6 +817,11 @@
+       "at": "2026-07-20T00:00:00Z",
+       "event": "feature_complete",
+       "detail": "Feature 056 (Preflight + ecosystem-schema hardening bundle -- NDEBT-021, -023, -024, -017, -018) COMPLETE at deliverable commit 50f3d11 -- phase 006's ninth feature, on the phase branch restarted from the F-057 merge (main a5d741d, PR #35). OPERATOR-APPROVED FULL BUNDLE: directive 'Approved, please proceed' after scope-down/pause was explicitly offered; two lighter mechanisms pre-approved (017 = pluggable offline --ci-run-file, not a live GitHub API call; 018.1 = additive --tolerate-untracked-prefix, not a scratch-checkout), recorded in contract 056 design_notes.operator_design_decisions. IMPLEMENTATION (9 non-.agent files): NDEBT-021 -- tools/ecosystem_preflight.py NUL-delimited `git status --porcelain=v1 -z` parse preserving the directory-prefix tolerate semantics 043/044 depend on (space/non-ASCII paths now match); readable-regular-file reference checks (os.path.isfile + os.access R_OK) and an unresolved-HEAD blocking finding; --repo-root default None (explicit '.' honored under --self-fixture); output-dir pre-clean of stale preflight.json/preflight.pending.json/baseline.json. NDEBT-018 -- additive --tolerate-untracked-prefix (kind declared_tolerated_untracked_prefix) + ecosystem/01 0.1.2 §4.1 codifying the commit-before-gated-invocation rule (names the F-043 run_state.json incident). NDEBT-017 -- --ci-run-file anchors ci_references to a caller-resolved CI run (no network call). NDEBT-023 -- find_repository_revision_inconsistencies in the tool + C12 same-repo consistency in BOTH entry points; new schema-valid-but-rule-violating ecosystem_baseline_neg_inconsistent_revisions.json caught by the code-level check ([C12] FAIL) while ecosystem_baseline_valid.json stays [C12] PASS. NDEBT-024 -- blocking_findings array required when verdict==FAIL in schema/preflight_verdict.schema.json; preflight_verdict_fail.json rebuilt on it (C12-positive). PROVEN: E01 anti-vacuity at base a5d741d; E02-E11 a discriminating executed probe per item (the tool is not CI-covered, so probes are its regression surface, now standing in tools/fixtures_self_test.sh); E12 sweep 13/13, payload 11/11, self-test 47/47, e2e green and the five exit codes 0/1/2/3/64 unchanged; E13 confinement = exactly the 9 files; E14 DEBT 0.27.0 (five rows Resolved) + CHANGELOG. Verification 14/14; QA independent re-run 14/14 (.agent/qa/056.json). SCOPE 3x-ROLLING FLAG (disclosed, flag-NOT-halt, Section 6): 534 vs 260 (+105%) exceeds 3x the last-three rolling average (avg 152.3, 3x=457) -- REQUIRES explicit operator acknowledgment recorded BEFORE feature 058 begins; cumulative 2403/2990 (80.4%), under the 130% halt. Phase 006: 9 of 11 complete (049/050/051/052/053/055/054/057/056). Remaining: 058 (H-CONSTITUTIONAL-gated -- its operator gate is the natural place to record the 056 scope acknowledgment), 059 (phase close + v0.8.0)."
++    },
++    {
++      "at": "2026-07-20T00:30:00Z",
++      "event": "operator_gate_decision",
++      "detail": "Phase-006 feature 058 (Constitutional layer: mechanize-or-descope, Track 3) BEGINS on the phase branch restarted from origin/main 756a158 (the F-056 squash-merge, PR #36). Two Orchestrator coordination records committed before the implementation acts on them (the gate-decision-before-acting principle codified as NDEBT-018.2 / ecosystem/01 4.1). (1) F-056 SCOPE-FLAG ACKNOWLEDGMENT (Section 6): F-056 tripped the per-feature 3x-rolling flag (534 vs 260; 3x-of-last-3 = 457); the flag is not a halt but requires an explicit human acknowledgment recorded before the next feature begins. The operator merged PR #36, whose body disclosed the flag prominently and requested acknowledgment -- that merge is the acknowledgment. Recorded here before 058 begins; cumulative stands at 2403/2990 (80.4%), under the 130% halt. (2) H-CONSTITUTIONAL GATE DECISION, operator-authorized VERBATIM: \"Descope 7 as consumer-aspirational, mechanize the 2 cheap real wins (provenance SHA-pin check + capability-profiles 5↔5 check), then refresh the guide to match. Every first-contact surface becomes honest, and you gain 2 genuine enforcement checks with no vacuous or dormant tests.\" Mapped per document: MECHANIZE (2) -- standard/provenance_policy.md req#2 (SHA-pinned Actions) + standard/capability_profiles.md (5-profile <-> 5-AGF-role correspondence), each also marking its consumer-runtime remainder aspirational; DESCOPE as consumer-aspirational (7) -- standard/ci_gates.md, methodology/05_eval_and_trace.md, methodology/07_eval_gated_promotion.md, standard/mcp_policy.md, standard/permission_classes.md, standard/failure_modes.md, standard/cross_repo_governance.md (plus softening tools/SKILL.md's cross-repo MUST-query line to match); REFRESH docs/guide/index.html to reflect the outcome. The optional permission_classes credential-CI proxy was NOT selected (the operator chose exactly the 2 named wins). ROADMAP Track 3 moves to resolved at feature close."
+     }
+   ],
+   "phase_001_scope_budget_final": {
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index e70b0bb..78eb18d 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,6 +9,24 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Added
+ 
++- **Constitutional-layer mechanize-or-descope decision** (phase 006 feature 058,
++  gate **H-CONSTITUTIONAL**, Track 3): the operator's per-document decision on the
++  v0.4.0 NMF-hybrid constitutional policy surface, so every consumer first-contact
++  surface is honest about what the framework enforces. **Mechanized (2):**
++  `standard/provenance_policy.md`'s SHA-pinned-Actions rule is now verified by
++  `tools/validate.sh` check **C14** (a new `vlib_workflows_sha_pinned` primitive over
++  the workflows directory), and `standard/capability_profiles.md`'s five-profile ↔
++  five-AGF-role correspondence by check **C15** (a new `vlib_profiles_cover_roles`
++  primitive) — the default sweep is now 15 checks, both dogfooded green.
++  **Descoped consumer-aspirational (7):** `standard/ci_gates.md`,
++  `methodology/05_eval_and_trace.md`, `methodology/07_eval_gated_promotion.md`,
++  `standard/mcp_policy.md`, `standard/permission_classes.md`,
++  `standard/failure_modes.md`, and `standard/cross_repo_governance.md` gain an
++  `enforcement: consumer-aspirational` frontmatter field and a body banner, and
++  `tools/SKILL.md`'s cross-repo directive is softened to match. `docs/guide/index.html`
++  is refreshed to name the constitutional documents and reflect each decision;
++  ROADMAP Track 3 is marked resolved. The two mechanized docs are marked
++  `enforcement: partially-enforced`.
+ - **Preflight + ecosystem-schema hardening bundle** (phase 006 feature 056,
+   resolving **NDEBT-021, -023, -024, -017, -018**): the deferred
+   `tools/ecosystem_preflight.py` hardening backlog, each item carrying a
+diff --git a/docs/guide/index.html b/docs/guide/index.html
+index f3b6310..ebb648b 100644
+--- a/docs/guide/index.html
++++ b/docs/guide/index.html
+@@ -523,6 +523,14 @@
+         <p>Key documents: <code>standard/NDS.md</code>, <code>standard/GIP.md</code>,
+         <code>standard/AGF.md</code>, <code>standard/anti_hallucination.md</code>,
+         <code>standard/README.md</code>.</p>
++        <p>Constitutional policy surface (the v0.4.0 NMF-hybrid layer): <code>standard/capability_profiles.md</code>
++        and <code>standard/provenance_policy.md</code> are <em>partially enforced</em> &mdash; their
++        capability-profile&#8596;role correspondence and SHA-pinned-Actions rule are verified by
++        <code>tools/validate.sh</code> (checks C15 and C14) &mdash; while <code>standard/ci_gates.md</code>,
++        <code>standard/mcp_policy.md</code>, <code>standard/permission_classes.md</code>,
++        <code>standard/failure_modes.md</code>, and <code>standard/cross_repo_governance.md</code> are marked
++        <em>consumer-aspirational</em>: a consuming repository enforces them in its own runtime and CI (Track 3
++        decision, feature 058).</p>
+       </article>
+       <article class="card">
+         <h3><code>methodology/</code></h3>
+@@ -533,7 +541,12 @@
+         <code>methodology/03_circuit_breaker.md</code>,
+         <code>methodology/04_tool_driven_state.md</code>,
+         <code>methodology/05_eval_and_trace.md</code>,
+-        <code>methodology/06_release_train.md</code>.</p>
++        <code>methodology/06_release_train.md</code>,
++        <code>methodology/07_eval_gated_promotion.md</code>,
++        <code>methodology/08_cross_repo_dependency_gate.md</code>.</p>
++        <p><code>methodology/05_eval_and_trace.md</code> and <code>methodology/07_eval_gated_promotion.md</code>
++        are <em>consumer-aspirational</em> (Track 3, feature 058): the framework defines the trace-envelope and
++        eval-gated-promotion requirements, but a consumer's runtime emits the traces and gates on the evals.</p>
+       </article>
+       <article class="card">
+         <h3><code>registry/</code></h3>
+diff --git a/docs/planning/ROADMAP.md b/docs/planning/ROADMAP.md
+index d6377e7..75bca11 100644
+--- a/docs/planning/ROADMAP.md
++++ b/docs/planning/ROADMAP.md
+@@ -2,10 +2,13 @@
+ id: nizam-roadmap
+ title: "Forward Roadmap — nizam-framework"
+ description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
+-version: 0.8.0
++version: 0.9.0
+ status: active
+ authoritative_source: docs/planning/ROADMAP.md
+ change_log:
++  - version: "0.9.0"
++    date: "2026-07-20"
++    summary: "Track 3 (mechanize-or-descope the constitutional layer) RESOLVED by phase-006 feature 058 (gate H-CONSTITUTIONAL, operator decision authorized verbatim): two surfaces mechanized (standard/provenance_policy.md SHA-pinned-Actions via validate.sh check C14; standard/capability_profiles.md 5-profile-to-5-role correspondence via check C15), the remaining seven marked consumer-aspirational, and docs/guide/index.html refreshed to reflect the outcome. Track 3's section now carries the resolution banner."
+   - version: "0.8.0"
+     date: "2026-07-19"
+     summary: "Phase 006 activated (operator verbatim: 'Approved. Proceed with the logical next steps.', gate H-PHASE-006, 2026-07-19): the Proposed Next Phase section becomes the Plan of Record banner. Track 1 item 2 truth-rolled to EXECUTED — the user guide is live on GitHub Pages (first deploy succeeded 2026-07-19 00:23 UTC after the one-time enable; verified serving the v0.7.0 guide), closing the last gate inherited from phase 003."
+@@ -186,6 +189,16 @@ debt register (IDs refer to `docs/planning/DEBT.md`):
+ 
+ ## Track 3 — Strategic Decision: Mechanize or Descope the Constitutional Layer
+ 
++> **RESOLVED 2026-07-20 by phase-006 feature 058 (gate H-CONSTITUTIONAL).** The operator's per-document
++> decision, authorized verbatim and recorded in `.agent/run_state.json`: **mechanize two** surfaces —
++> `standard/provenance_policy.md`'s SHA-pinned-Actions rule (`tools/validate.sh` check C14) and
++> `standard/capability_profiles.md`'s five-profile-to-five-role correspondence (check C15) — and **mark the
++> remaining seven consumer-aspirational** (`standard/ci_gates.md`, `methodology/05_eval_and_trace.md`,
++> `methodology/07_eval_gated_promotion.md`, `standard/mcp_policy.md`, `standard/permission_classes.md`,
++> `standard/failure_modes.md`, `standard/cross_repo_governance.md`), with `docs/guide/index.html` refreshed to
++> reflect the outcome. Each document now carries its decided enforcement state in frontmatter and a body
++> banner. The problem statement below is retained for provenance.
++
+ The v0.4.0 NMF hybrid shipped a constitutional policy surface (capability profiles,
+ the MERGE_READY CI-gate formula, eval-and-trace, eval-gated promotion, MCP policy,
+ failure modes, provenance, permission classes, cross-repo governance) that is
+diff --git a/methodology/05_eval_and_trace.md b/methodology/05_eval_and_trace.md
+index 958c74f..2eee87e 100644
+--- a/methodology/05_eval_and_trace.md
++++ b/methodology/05_eval_and_trace.md
+@@ -2,13 +2,20 @@
+ id: nizam-eval-and-trace
+ title: "Eval and Trace Infrastructure"
+ description: "The verification hierarchy, trace capture requirements, and role-specific eval suites that guarantee quality as models and prompts change."
+-version: 0.1.0
++version: 0.2.0
+ status: active
++enforcement: consumer-aspirational
+ authoritative_source: methodology/05_eval_and_trace.md
++change_log:
++  - version: "0.2.0"
++    date: "2026-07-20"
++    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
+ ---
+ 
+ # Eval and Trace Infrastructure
+ 
++> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
++
+ ## 1. Overview
+ 
+ TDD remains necessary, but no longer sufficient. The governing quality stack in the Nizam Framework is **tests + traces + evals + CI**.
+diff --git a/methodology/07_eval_gated_promotion.md b/methodology/07_eval_gated_promotion.md
+index 032044d..b5b3c36 100644
+--- a/methodology/07_eval_gated_promotion.md
++++ b/methodology/07_eval_gated_promotion.md
+@@ -2,13 +2,20 @@
+ id: nizam-eval-gated-promotion
+ title: "Eval-Gated Model Promotion Protocol"
+ description: "Treats model and prompt changes as code changes, routing them through the contract-first execution loop and blocking promotion until role-specific evals pass."
+-version: 0.1.0
++version: 0.2.0
+ status: active
++enforcement: consumer-aspirational
+ authoritative_source: methodology/07_eval_gated_promotion.md
++change_log:
++  - version: "0.2.0"
++    date: "2026-07-20"
++    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
+ ---
+ 
+ # Eval-Gated Model Promotion Protocol
+ 
++> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
++
+ ## 1. Overview
+ 
+ In an agentic ecosystem, changing a model or a prompt template is an architectural change with blast radius equal to changing a core library dependency.
+diff --git a/standard/capability_profiles.md b/standard/capability_profiles.md
+index e10cfb0..b9b8d64 100644
+--- a/standard/capability_profiles.md
++++ b/standard/capability_profiles.md
+@@ -2,13 +2,20 @@
+ id: nizam-capability-profiles
+ title: "Capability Profile Model"
+ description: "Binds agent roles to task types, latency budgets, cost budgets, and safety classes rather than to specific models, enabling eval-gated promotion and fallback."
+-version: 0.1.0
++version: 0.2.0
+ status: active
++enforcement: partially-enforced
+ authoritative_source: standard/capability_profiles.md
++change_log:
++  - version: "0.2.0"
++    date: "2026-07-20"
++    summary: "Feature 058 (Track 3, gate H-CONSTITUTIONAL): marked partially-enforced -- the five-profile to five-AGF-role correspondence is now mechanized as validate.sh check C15 (vlib_profiles_cover_roles), while the no-hard-coded-models, eval-gated-promotion, and cross-provider-fallback requirements are consumer-aspirational."
+ ---
+ 
+ # Capability Profile Model
+ 
++> **Partially enforced.** The five-profile ↔ five-AGF-role correspondence IS verified by `tools/validate.sh` (check C15). The no-hard-coded-model-names, eval-gated-promotion, and cross-provider-fallback requirements are consumer-aspirational — a consuming repository binds and gates models in its own runtime. Recorded per the Track 3 decision (feature 058).
++
+ ## 1. Overview
+ 
+ Models age, deprecate, and degrade. Hard-coding specific model names (e.g., `gpt-4o` or `claude-3-5-sonnet`) into orchestration logic or governance documents creates brittleness and prevents rapid response to outages.
+diff --git a/standard/ci_gates.md b/standard/ci_gates.md
+index e30f822..27ff131 100644
+--- a/standard/ci_gates.md
++++ b/standard/ci_gates.md
+@@ -2,13 +2,20 @@
+ id: nizam-ci-gates
+ title: "CI Gating Formula"
+ description: "The mandatory 10-gate MERGE_READY formula that ensures no unverified code bypasses the contract-first execution loop."
+-version: 0.1.0
++version: 0.2.0
+ status: active
++enforcement: consumer-aspirational
+ authoritative_source: standard/ci_gates.md
++change_log:
++  - version: "0.2.0"
++    date: "2026-07-20"
++    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
+ ---
+ 
+ # CI Gating Formula
+ 
++> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
++
+ ## 1. Overview
+ 
+ Agentic software engineering requires a quality stack that extends beyond traditional unit tests. The Nizam Framework adopts the **tests + traces + evals + CI** model from the Vibe Coding Manifesto.
+diff --git a/standard/cross_repo_governance.md b/standard/cross_repo_governance.md
+index 6673019..d404018 100644
+--- a/standard/cross_repo_governance.md
++++ b/standard/cross_repo_governance.md
+@@ -2,13 +2,20 @@
+ id: nizam-cross-repo-governance
+ title: "Cross-Repository Intelligence"
+ description: "The executable truth layer, the cross-repo query protocol, and the seven-tier architecture model for ecosystem-scale governance."
+-version: 0.1.0
++version: 0.2.0
+ status: active
++enforcement: consumer-aspirational
+ authoritative_source: standard/cross_repo_governance.md
++change_log:
++  - version: "0.2.0"
++    date: "2026-07-20"
++    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
+ ---
+ 
+ # Cross-Repository Intelligence
+ 
++> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
++
+ ## 1. Overview
+ 
+ Maintaining architectural coherence across a multi-repository ecosystem requires a centralized intelligence layer. A single repository acting as the **executable source of truth** (a designated strategy or governance repository) prevents drift and misaligned dependencies.
+diff --git a/standard/failure_modes.md b/standard/failure_modes.md
+index ae41f30..5634ad3 100644
+--- a/standard/failure_modes.md
++++ b/standard/failure_modes.md
+@@ -2,13 +2,20 @@
+ id: nizam-failure-modes
+ title: "Failure Mode Taxonomy"
+ description: "The seven canonical failure modes in agentic software engineering, with explicit detection and response protocols."
+-version: 0.1.0
++version: 0.2.0
+ status: active
++enforcement: consumer-aspirational
+ authoritative_source: standard/failure_modes.md
++change_log:
++  - version: "0.2.0"
++    date: "2026-07-20"
++    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
+ ---
+ 
+ # Failure Mode Taxonomy
+ 
++> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
++
+ ## 1. Overview
+ 
+ Agentic systems fail differently than traditional software. An agentic governance framework must explicitly name, detect, and respond to these novel failure classes.
+diff --git a/standard/mcp_policy.md b/standard/mcp_policy.md
+index da2d79a..a8d42d2 100644
+--- a/standard/mcp_policy.md
++++ b/standard/mcp_policy.md
+@@ -2,13 +2,20 @@
+ id: nizam-mcp-policy
+ title: "MCP Security Policy"
+ description: "Rules for integrating Model Context Protocol (MCP) servers: treating MCP as a capability plane, not a trust plane, and preventing tool ambiguity."
+-version: 0.1.0
++version: 0.2.0
+ status: active
++enforcement: consumer-aspirational
+ authoritative_source: standard/mcp_policy.md
++change_log:
++  - version: "0.2.0"
++    date: "2026-07-20"
++    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
+ ---
+ 
+ # MCP Security Policy
+ 
++> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
++
+ ## 1. Overview
+ 
+ The Model Context Protocol (MCP) provides capability negotiation, server features, and an authorization framework for HTTP transports — but its roots are informational. MCP is a **capability plane**, not a trust plane. Operating-system sandboxing and runtime RBAC remain mandatory regardless of MCP capability negotiation.
+diff --git a/standard/permission_classes.md b/standard/permission_classes.md
+index 2be47eb..2f39c22 100644
+--- a/standard/permission_classes.md
++++ b/standard/permission_classes.md
+@@ -2,13 +2,20 @@
+ id: nizam-permission-classes
+ title: "Permission and Sandbox Policy"
+ description: "Deny-by-default role permission classes and Kubernetes RBAC allocations for agentic systems."
+-version: 0.1.0
++version: 0.2.0
+ status: active
++enforcement: consumer-aspirational
+ authoritative_source: standard/permission_classes.md
++change_log:
++  - version: "0.2.0"
++    date: "2026-07-20"
++    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
+ ---
+ 
+ # Permission and Sandbox Policy
+ 
++> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
++
+ ## 1. Overview
+ 
+ The security baseline for any agentic system is **deny-by-default**. Tool access is bounded by role, sandbox, roots, environment, and time. `bash` and `kubectl` are privilege-bearing capabilities requiring strict sandboxing and RBAC.
+diff --git a/standard/provenance_policy.md b/standard/provenance_policy.md
+index 719762f..5aa17ff 100644
+--- a/standard/provenance_policy.md
++++ b/standard/provenance_policy.md
+@@ -2,13 +2,20 @@
+ id: nizam-provenance-policy
+ title: "Supply-Chain Provenance Policy"
+ description: "Rules for ensuring every artifact, prompt, model, tool call, and release is attestable and auditable."
+-version: 0.1.0
++version: 0.2.0
+ status: active
++enforcement: partially-enforced
+ authoritative_source: standard/provenance_policy.md
++change_log:
++  - version: "0.2.0"
++    date: "2026-07-20"
++    summary: "Feature 058 (Track 3, gate H-CONSTITUTIONAL): marked partially-enforced -- the SHA-pinned-Actions requirement is now mechanized as validate.sh check C14 (vlib_workflows_sha_pinned over the workflows directory), while the attestation, agent-audit-envelope, and SLSA-pipeline requirements are consumer-aspirational."
+ ---
+ 
+ # Supply-Chain Provenance Policy
+ 
++> **Partially enforced.** The SHA-pinned-Actions requirement IS verified on this repository's own workflows by `tools/validate.sh` (check C14). The artifact-attestation, agent-audit-envelope, and SLSA-pipeline requirements are consumer-aspirational — a consuming repository enforces them in its own build and release pipeline. Recorded per the Track 3 decision (feature 058).
++
+ ## 1. Overview
+ 
+ In an agentic engineering environment, knowing *who* wrote the code is no longer sufficient; the system must prove *which agent, using which model, under which prompt, against which contract* produced the artifact.
+diff --git a/tools/SKILL.md b/tools/SKILL.md
+index 0f63d7d..64d42ae 100644
+--- a/tools/SKILL.md
++++ b/tools/SKILL.md
+@@ -67,7 +67,7 @@ The full statement of this discipline lives in
+ `methodology/04_tool_driven_state.md` (DD-1 and DD-3); this section only
+ summarizes it for the runtime's first action.
+ 
+-**Cross-Repo Intelligence (NMF Hybrid)**: Before acting in a repository, the runtime MUST read the strategy repository's `SCOPE.md`, the local `ECOSYSTEM.json`, and relevant ADRs per `standard/cross_repo_governance.md`.
++**Cross-Repo Intelligence (NMF Hybrid)**: When operating across repositories in an ecosystem deployment, the runtime reads the strategy repository's `SCOPE.md`, the local `ECOSYSTEM.json`, and relevant ADRs per `standard/cross_repo_governance.md` — a consumer-aspirational protocol this framework ships as reference and does not itself enforce (the framework is deliberately outside any ecosystem scope; Track 3 decision, feature 058).
+ 
+ ## 3. The Execution Loop Summary
+ 
+diff --git a/tools/fixtures_self_test.sh b/tools/fixtures_self_test.sh
+index 8951358..026f14e 100755
+--- a/tools/fixtures_self_test.sh
++++ b/tools/fixtures_self_test.sh
+@@ -213,6 +213,44 @@ _f055_real_tree() {
+ }
+ _f055_real_tree
+ 
++# vlib_workflows_sha_pinned (F-058, C14): a scratch workflow dir with a
++# tag-pinned ref fails; a SHA-pinned ref (+ an exempt local ./ action) passes;
++# and this repo's real .github/workflows passes (all refs pinned). Scratch via
++# mktemp + trap (Section 11 probe isolation), like the git-scratch primitives.
++_workflow_pins_scratch() (
++  local d; d=$(mktemp -d) || return 1
++  trap 'rm -rf -- "${d}"' EXIT
++  mkdir -p "${d}/wf"
++  printf 'jobs:\n  x:\n    steps:\n      - uses: actions/checkout@v4\n' > "${d}/wf/bad.yml"
++  vlib_workflows_sha_pinned "${d}/wf" >/dev/null 2>&1 && return 1   # tag ref must fail
++  printf 'jobs:\n  x:\n    steps:\n      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683\n      - uses: ./.github/actions/local\n' > "${d}/wf/bad.yml"
++  vlib_workflows_sha_pinned "${d}/wf" >/dev/null 2>&1 || return 1   # sha + local must pass
++  return 0
++)
++if _workflow_pins_scratch && vlib_workflows_sha_pinned .github/workflows >/dev/null 2>&1; then
++  echo "OK   primitive   vlib_workflows_sha_pinned (tag fail / sha+local pass / real-tree pass)"
++else
++  echo "FAIL primitive   vlib_workflows_sha_pinned: a scratch or real-tree assertion did not hold"
++  fail=1
++fi
++
++# vlib_profiles_cover_roles (F-058, C15): the real capability_profiles.md + AGF.md
++# pair passes; a scratch profiles doc omitting a profile identifier fails.
++_profiles_roles_scratch() (
++  local d; d=$(mktemp -d) || return 1
++  trap 'rm -rf -- "${d}"' EXIT
++  printf 'orchestrator-primary planner-creative generator-deterministic validator-structural\n' > "${d}/prof.md"
++  cp -- standard/AGF.md "${d}/agf.md"
++  vlib_profiles_cover_roles "${d}/prof.md" "${d}/agf.md" >/dev/null 2>&1 && return 1   # missing profile must fail
++  return 0
++)
++if vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md >/dev/null 2>&1 && _profiles_roles_scratch; then
++  echo "OK   primitive   vlib_profiles_cover_roles (real pair pass / missing-profile fail)"
++else
++  echo "FAIL primitive   vlib_profiles_cover_roles: a real-pair or scratch assertion did not hold"
++  fail=1
++fi
++
+ # vlib_path_resolves: every token line in the pass fixture resolves/exempts
+ # (rc 0); the fail fixture's token does not (rc 1). Tokens resolve relative to
+ # the repo root (this script's CWD).
+diff --git a/tools/validate.sh b/tools/validate.sh
+index 30214da..0fb6297 100755
+--- a/tools/validate.sh
++++ b/tools/validate.sh
+@@ -1916,6 +1916,42 @@ PY
+   esac
+ }
+ 
++# C14 -- workflow SHA-pin integrity (feature 058, Track 3 provenance mechanize).
++# Every third-party GitHub Actions `uses:` ref in .github/workflows/ MUST be
++# pinned to a full 40-hex commit SHA, not a mutable tag/branch. Mechanizes the
++# SHA-pinning requirement of standard/provenance_policy.md via the vetted
++# vlib_workflows_sha_pinned primitive (which fails a vanished/empty workflow dir,
++# so the check cannot go vacuous). Default-mode only: .github/ is
++# framework-envelope, never part of a bootstrap-injected consumer payload.
++check_c14_workflow_pins() {
++  local out
++  if out=$(vlib_workflows_sha_pinned .github/workflows 2>&1); then
++    echo "[C14] PASS workflow-sha-pins"
++    return 0
++  fi
++  echo "[C14] FAIL workflow-sha-pins"
++  printf '%s\n' "${out}" | sed 's/^/  /'
++  return 1
++}
++
++# C15 -- capability-profile <-> AGF-role correspondence (feature 058, Track 3
++# capability-profile mechanize). Each of the five capability profiles
++# (standard/capability_profiles.md) maps to a role defined in standard/AGF.md;
++# the vetted vlib_profiles_cover_roles primitive guards the 5<->5 correspondence
++# feature 053 made true (NDEBT-010) against drift (a dropped profile or role
++# fails it). Default-mode only: a framework-authoring invariant the consumer
++# inherits already-verified.
++check_c15_capability_profile_roles() {
++  local out
++  if out=$(vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md 2>&1); then
++    echo "[C15] PASS capability-profile-roles"
++    return 0
++  fi
++  echo "[C15] FAIL capability-profile-roles"
++  printf '%s\n' "${out}" | sed 's/^/  /'
++  return 1
++}
++
+ # ---------------------------------------------------------------------------
+ # Main
+ # ---------------------------------------------------------------------------
+@@ -2056,6 +2092,8 @@ main() {
+     check_c11_dogfood_sweep && passed=$((passed + 1)) || failed=$((failed + 1))
+     check_c12_ecosystem_fixtures && passed=$((passed + 1)) || failed=$((failed + 1))
+     check_c13_skill_index && passed=$((passed + 1)) || failed=$((failed + 1))
++    check_c14_workflow_pins && passed=$((passed + 1)) || failed=$((failed + 1))
++    check_c15_capability_profile_roles && passed=$((passed + 1)) || failed=$((failed + 1))
+ 
+     echo "SUMMARY: ${passed} passed, ${failed} failed"
+   fi
+diff --git a/tools/verify_lib.sh b/tools/verify_lib.sh
+index d64cc67..f91bec3 100644
+--- a/tools/verify_lib.sh
++++ b/tools/verify_lib.sh
+@@ -523,3 +523,164 @@ if unresolved:
+ sys.exit(0)
+ PY
+ }
++
++# ---------------------------------------------------------------------------
++# vlib_workflows_sha_pinned [<dir-or-file>]
++#
++# Asserts that every third-party GitHub Actions `uses:` reference in the target
++# workflow file(s) is pinned to a full 40-hex commit SHA, not a mutable tag or
++# branch (`@v4`, `@main`). This mechanizes the supply-chain SHA-pinning
++# requirement of standard/provenance_policy.md as check C14: the rule was already
++# the house convention (every shipped workflow ref is SHA-pinned) but nothing
++# verified it, so a future `@v2` edit would have slipped past. Local actions
++# (`./...`, `../...`) carry no ref and are exempt.
++#
++# Args:
++#   dir-or-file: a directory of workflow YAML (default '.github/workflows', all
++#     *.yml/*.yaml scanned) or a single workflow file.
++#
++# Returns:
++#   0 if every third-party `uses:` ref is 40-hex-SHA-pinned.
++#   1 otherwise (target missing, an empty directory -- a dormancy guard, since a
++#     vanished workflow dir must not vacuously pass -- or any unpinned ref, which
++#     is printed with its file:line).
++# ---------------------------------------------------------------------------
++
++vlib_workflows_sha_pinned() {
++  local target="${1:-.github/workflows}"
++
++  [ -e "${target}" ] || { echo "vlib_workflows_sha_pinned: target not found: ${target}"; return 1; }
++
++  python3 - "${target}" <<'PY'
++import os
++import re
++import sys
++
++target = sys.argv[1]
++if os.path.isdir(target):
++    files = [
++        os.path.join(target, name)
++        for name in sorted(os.listdir(target))
++        if name.endswith((".yml", ".yaml")) and os.path.isfile(os.path.join(target, name))
++    ]
++else:
++    files = [target]
++
++# `uses: owner/repo[/path]@ref` (optionally quoted, optionally a list item). A
++# local action (`./...`/`../...`) needs no pin; every other ref is pinned iff
++# `@ref` is a 40-hex commit SHA.
++uses_re = re.compile(r'^\s*(?:-\s*)?uses:\s*(["\']?)([^"\'#\s]+)\1')
++sha_re = re.compile(r'^[0-9a-fA-F]{40}$')
++
++offenders = []
++for path in files:
++    try:
++        with open(path, encoding="utf-8") as fh:
++            for lineno, line in enumerate(fh, 1):
++                match = uses_re.match(line)
++                if not match:
++                    continue
++                ref = match.group(2)
++                if ref.startswith("./") or ref.startswith("../"):
++                    continue
++                if "@" not in ref:
++                    offenders.append(f"{path}:{lineno}: unpinned (no @sha): {ref}")
++                    continue
++                if not sha_re.match(ref.rsplit("@", 1)[1]):
++                    offenders.append(f"{path}:{lineno}: not SHA-pinned: {ref}")
++    except OSError as exc:
++        offenders.append(f"{path}: cannot read: {exc}")
++
++if offenders:
++    for offender in offenders:
++        print("vlib_workflows_sha_pinned: " + offender)
++    sys.exit(1)
++if not files:
++    print(f"vlib_workflows_sha_pinned: no workflow files under {target} (dormant)")
++    sys.exit(1)
++sys.exit(0)
++PY
++}
++
++# ---------------------------------------------------------------------------
++# vlib_profiles_cover_roles <profiles-doc> <agf-doc>
++#
++# Asserts the five-capability-profile <-> five-AGF-role correspondence: the AGF
++# doc defines all five canonical roles, and the profiles doc names all five
++# roles AND all five profile identifiers. This mechanizes the capability-profile
++# claim of standard/capability_profiles.md as check C15 -- the correspondence
++# feature 053 made true (NDEBT-010) is now guarded against drift (dropping a
++# role from the mapping, or a profile, fails the check). Whole-word/token
++# presence is used (never prose-table parsing), so it is robust to wording
++# changes while still catching a genuinely missing role or profile.
++#
++# Args:
++#   profiles-doc: standard/capability_profiles.md (the 5 profiles + role map).
++#   agf-doc:      standard/AGF.md (where the 5 roles are defined).
++#
++# Returns:
++#   0 if all five roles appear in both docs and all five profiles in the
++#     profiles doc.
++#   1 otherwise (a doc missing, or a role/profile absent -- the gap is printed).
++# ---------------------------------------------------------------------------
++
++vlib_profiles_cover_roles() {
++  local profiles_doc="$1"
++  local agf_doc="$2"
++
++  [ -f "${profiles_doc}" ] || { echo "vlib_profiles_cover_roles: profiles doc not found: ${profiles_doc}"; return 1; }
++  [ -f "${agf_doc}" ] || { echo "vlib_profiles_cover_roles: AGF doc not found: ${agf_doc}"; return 1; }
++
++  python3 - "${profiles_doc}" "${agf_doc}" <<'PY'
++import re
++import sys
++
++profiles_path, agf_path = sys.argv[1], sys.argv[2]
++
++# The five profile identifiers (standard/capability_profiles.md) and the AGF role
++# (standard/AGF.md Section 2) each corresponds to 1:1 -- the correspondence is
++# carried by the profile's stem (orchestrator-primary -> Orchestrator). The doc
++# names profiles by identifier (in a table), not by repeating the capitalised
++# role word, so the check verifies each named profile has its role DEFINED in the
++# AGF doc, tying the two documents together.
++ROLE_BY_PROFILE = {
++    "orchestrator-primary": "Orchestrator",
++    "planner-creative": "Planner",
++    "generator-deterministic": "Generator",
++    "validator-structural": "Validator",
++    "evaluator-adversarial": "Evaluator",
++}
++
++
++def read(path):
++    with open(path, encoding="utf-8") as fh:
++        return fh.read()
++
++
++def has_word(text, word):
++    return re.search(r"\b" + re.escape(word) + r"\b", text) is not None
++
++
++try:
++    profiles_text = read(profiles_path)
++    agf_text = read(agf_path)
++except OSError as exc:
++    print(f"vlib_profiles_cover_roles: cannot read: {exc}")
++    sys.exit(1)
++
++gaps = []
++for profile, role in ROLE_BY_PROFILE.items():
++    if profile not in profiles_text:
++        gaps.append(f"profiles doc {profiles_path} does not name profile '{profile}'")
++    if not has_word(agf_text, role):
++        gaps.append(
++            f"AGF doc {agf_path} does not define role '{role}' that profile '{profile}' maps to"
++        )
++
++if gaps:
++    for gap in gaps:
++        print("vlib_profiles_cover_roles: " + gap)
++    sys.exit(1)
++sys.exit(0)
++PY
++}
