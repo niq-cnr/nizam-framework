@@ -347,7 +347,8 @@ file(s)/detail(s) printed on the following indented line(s)):
       `tools/fixtures/<family>_*.json` fixture, via python3 + jsonschema,
       against its shipped schema (`schema/ecosystem_baseline.schema.json`,
       `schema/preflight_verdict.schema.json`,
-      `schema/engineering_finding.schema.json` respectively). A fixture is
+      `schema/engineering_finding.schema.json`, and
+      `schema/audit_delta.schema.json`). A fixture is
       NEGATIVE (MUST fail validation) iff its filename carries the canonical
       delimited-lowercase token `_neg_` or `_invalid_`; every other
       conforming fixture is POSITIVE and MUST validate. A positive fixture
@@ -1549,6 +1550,25 @@ def repository_revision_inconsistencies(doc):
     return sorted(r for r, revs in by_repo.items() if len(revs) > 1)
 
 
+def audit_delta_duplicate_ids(doc):
+    """ecosystem/07_progress_comparison.md Sec 3: every finding present in either
+    input receives EXACTLY ONE transition class; a finding "assigned to more than
+    one class at once, is not a valid comparison result". The same `id` appearing
+    in two of the five buckets (or twice within one) is therefore invalid, but the
+    constraint spans sibling arrays and is not expressible in JSON Schema, so C12
+    enforces it in code -- mirroring repository_revision_inconsistencies above."""
+    counts = {}
+    transitions = doc.get("transitions", {})
+    if isinstance(transitions, dict):
+        for bucket in ("new", "resolved", "reopened", "persisting", "stale"):
+            items = transitions.get(bucket, [])
+            if isinstance(items, list):
+                for item in items:
+                    if isinstance(item, dict) and isinstance(item.get("id"), str):
+                        counts[item["id"]] = counts.get(item["id"], 0) + 1
+    return sorted(fid for fid, n in counts.items() if n > 1)
+
+
 # NDEBT-016 (feature 052): the polarity marker is AUTHORITATIVE and RESERVED.
 # A fixture is NEGATIVE iff its basename carries the canonical, delimited,
 # lowercase token `_neg_`/`_invalid_` (CANONICAL_NEG). To stop the classifier
@@ -1615,6 +1635,11 @@ for family, schema_path in FAMILIES.items():
         # code-level check completes the schema's coverage so the negative
         # fixture is caught by polarity rather than validating unexpectedly.
         if is_valid and family == "ecosystem_baseline" and repository_revision_inconsistencies(data):
+            is_valid = False
+        # Sec 3: a schema-valid audit_delta that classifies one finding id into
+        # more than one transition bucket is NOT a valid comparison; the
+        # code-level check completes the schema's coverage.
+        if is_valid and family == "audit_delta" and audit_delta_duplicate_ids(data):
             is_valid = False
         if is_negative and is_valid:
             failures.append(f"{path}: negative fixture unexpectedly VALIDATED against {schema_path}")
@@ -1709,6 +1734,24 @@ if family == "ecosystem_baseline":
     inconsistent = sorted(r for r, revs in by_repo.items() if len(revs) > 1)
     if inconsistent:
         print(f"{path}: same-repo revision inconsistency ({family}): {inconsistent} (NDEBT-023)")
+        sys.exit(1)
+
+# ecosystem/07_progress_comparison.md Sec 3: a finding receives exactly one
+# transition class; the same id in two buckets is not expressible in JSON Schema,
+# so mirror the full-sweep audit_delta_duplicate_ids check here for --target too.
+if family == "audit_delta":
+    counts = {}
+    transitions = doc.get("transitions", {})
+    if isinstance(transitions, dict):
+        for bucket in ("new", "resolved", "reopened", "persisting", "stale"):
+            items = transitions.get(bucket, [])
+            if isinstance(items, list):
+                for item in items:
+                    if isinstance(item, dict) and isinstance(item.get("id"), str):
+                        counts[item["id"]] = counts.get(item["id"], 0) + 1
+    duplicates = sorted(fid for fid, n in counts.items() if n > 1)
+    if duplicates:
+        print(f"{path}: finding id in more than one transition class ({family}): {duplicates} (Sec 3)")
         sys.exit(1)
 
 sys.exit(0)

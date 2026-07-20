@@ -14,14 +14,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`ecosystem/07_progress_comparison.md` §7): the two revision/timestamp-anchored
   reference points and the closed five-class transition taxonomy
   (`new`/`resolved`/`reopened`/`persisting`/`stale` — all five buckets present, no
-  sixth class admitted), enforcing the closure-only-with-evidence rule (§4) at the
-  schema layer by requiring a non-empty `closure_evidence` on every `resolved` and
-  pre-window-resolved finding. Wired into `tools/validate.sh` **C12** as the fourth
-  ecosystem family at both entry points (full-sweep and `--target` router,
-  discriminated by a top-level `transitions` object), with one positive and two
-  negative fixtures under `tools/fixtures/`, registered in `NIZAM.json`, indexed in
-  `schema/README.md`, and covered by `tools/fixtures_self_test.sh`. Completes the
-  four core ecosystem-cycle schemas
+  sixth class admitted). Enforces the protocol's invariants: the
+  closure-only-with-evidence rule (§4 — non-empty `closure_evidence` on every
+  `resolved` and pre-window-resolved finding), fresh evidence required on
+  `persisting` findings (§3), both `open_findings_count` endpoints present, and —
+  since JSON Schema cannot express a constraint spanning sibling arrays — a
+  code-level check in **both** C12 entry points rejecting a finding id classified
+  into more than one transition class (§3 "exactly one class", mirroring the
+  NDEBT-023 same-repo-revision check). Wired into `tools/validate.sh` **C12** as
+  the fourth ecosystem family at both entry points (full-sweep and `--target`
+  router, discriminated by a top-level `transitions` object), with one positive and
+  three negative fixtures under `tools/fixtures/`, registered in `NIZAM.json`,
+  indexed in `schema/README.md`, and covered by `tools/fixtures_self_test.sh`.
+  Completes the four core ecosystem-cycle schemas
   (baseline / preflight-verdict / engineering-finding / audit-delta).
 
 ### Fixed

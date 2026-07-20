@@ -24,10 +24,15 @@ This document is **informational**. It is the single place to see every gate
 the framework recognizes and where each one currently stands. It does **not**
 define gates or grant authority: the authoritative definition of each gate
 lives in the phase specification that introduced it (cited per row), and the
-authoritative record of a gate *decision* is the operator's own recorded
-approval (typically a `run_state.json` `operator_gate_decision` event, verbatim
-operator text, or a signed release tag). Where this registry and a phase spec
-disagree, the phase spec wins.
+authoritative record of a gate *decision or disposition* is the operator's own
+recorded decision. For an **approval**, that is typically a `run_state.json`
+`operator_gate_decision` event, verbatim operator text, or a signed release tag.
+For a **non-approval outcome** — a gate recorded `NOT REQUIRED` because its
+trigger never arose, or one subsumed by a broader operator decision — the
+binding record is the disposition written into the cited phase specification's
+change_log or `docs/planning/ROADMAP.md`. Either way the record lives outside
+this registry; where this registry and a phase spec disagree, the phase spec
+wins.
 
 ## 1. Decided gates (phases 005–006)
 
@@ -71,10 +76,13 @@ expected to guard, purely to orient the reader — not as a definition.
   trigger recurs. The table records each one's latest disposition.
 - **This registry is not a gate.** Adding, editing, or reconciling a row here
   records an already-taken operator decision; it never constitutes one.
-- **Provenance of a decision.** The binding evidence for any disposition above
-  is the operator's own recorded approval (a `run_state.json`
+- **Provenance of a disposition.** The binding record for any row above is the
+  operator's own recorded decision — for an approval, a `run_state.json`
   `operator_gate_decision` event, verbatim operator text in the cited spec's
-  change_log, or a signed release tag), not this summary row.
+  change_log, or a signed release tag; for a non-approval outcome (a `NOT
+  REQUIRED` gate that never fired, or one subsumed by a broader decision), the
+  disposition recorded in the cited phase spec or `docs/planning/ROADMAP.md` —
+  never this summary row.
 
 ## 4. References
 

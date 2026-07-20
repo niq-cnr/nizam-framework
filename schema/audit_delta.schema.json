@@ -82,6 +82,17 @@
       },
       "required": ["id", "closure_evidence"],
       "additionalProperties": true
+    },
+    "current_evidence_finding": {
+      "description": "A both-sides finding carried under the persisting class, which Sec 3 defines as having CURRENT evidence freshly re-confirmed at or after the later anchor. It therefore requires a non-empty evidence array on top of the classified_finding shape, so an id-only persisting entry (which would assert freshness it never demonstrates) is invalid.",
+      "allOf": [
+        { "$ref": "#/$defs/classified_finding" },
+        {
+          "type": "object",
+          "required": ["evidence"],
+          "properties": { "evidence": { "type": "array", "minItems": 1 } }
+        }
+      ]
     }
   },
   "type": "object",
@@ -115,8 +126,8 @@
         },
         "persisting": {
           "type": "array",
-          "description": "Findings present in both executions and still open, with CURRENT evidence freshly re-confirmed at or after the later execution's anchors (Sec 3). Carried, not moved: counted in the open-findings score but never cited as a source of score movement (Sec 6).",
-          "items": { "$ref": "#/$defs/classified_finding" }
+          "description": "Findings present in both executions and still open, with CURRENT evidence freshly re-confirmed at or after the later execution's anchors (Sec 3). Carried, not moved: counted in the open-findings score but never cited as a source of score movement (Sec 6). Requires non-empty evidence (see $defs/current_evidence_finding) -- the class asserts fresh re-confirmation, so an id-only entry is invalid.",
+          "items": { "$ref": "#/$defs/current_evidence_finding" }
         },
         "stale": {
           "type": "array",
@@ -152,6 +163,7 @@
           "minimum": 0
         }
       },
+      "required": ["earlier", "later"],
       "additionalProperties": true
     }
   },

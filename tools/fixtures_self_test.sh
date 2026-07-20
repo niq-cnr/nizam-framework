@@ -118,6 +118,7 @@ assert_target preflight_verdict_invalid_exceptions.json            C12 FAIL
 assert_target preflight_verdict_invalid_verdict.json               C12 FAIL
 assert_target audit_delta_neg_resolved_without_closure_evidence.json C12 FAIL
 assert_target audit_delta_neg_missing_transition_class.json        C12 FAIL
+assert_target audit_delta_neg_duplicate_id_across_buckets.json     C12 FAIL
 
 # Positives: the targeted check MUST PASS (proves the negative's signal is
 # discriminating, not a check that fails on everything).
