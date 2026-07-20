@@ -97,13 +97,16 @@ Modes:
                           schema/contract.schema.json, or
                           schema/run_state.schema.json respectively. Failing
                           those, an ecosystem_baseline shape (the six
-                          `*_references` arrays) or an engineering_finding
-                          shape (`closure_criteria`) routes to C12 against
-                          schema/ecosystem_baseline.schema.json or
-                          schema/engineering_finding.schema.json (NDEBT-015,
-                          feature 052 -- these three ecosystem families
-                          formerly misrouted to C4/C11 and failed regardless
-                          of polarity). C4 does NOT also run in any of these
+                          `*_references` arrays), an engineering_finding
+                          shape (`closure_criteria`), or an audit_delta shape
+                          (a top-level `transitions` object) routes to C12
+                          against schema/ecosystem_baseline.schema.json,
+                          schema/engineering_finding.schema.json, or
+                          schema/audit_delta.schema.json (the first three
+                          families landed via NDEBT-015, feature 052, which
+                          fixed their former misroute to C4/C11 that failed
+                          regardless of polarity; audit_delta joined later).
+                          C4 does NOT also run in any of these
                           routed cases. Otherwise (no recognized key present
                           -- e.g. NIZAM.json or a Nizam-index-shaped fixture)
                           C4 (schema validation + indexed-path walker) runs
@@ -338,8 +341,9 @@ file(s)/detail(s) printed on the following indented line(s)):
 
   C12 Ecosystem schema-family fixture validation (are the ecosystem schema
       families' fixtures actually load-bearing, or merely present?). For
-      each of the three families shipped in features 037-039 (baseline,
-      preflight-verdict, engineering-finding), validates every matching
+      each of the four families -- the three shipped in features 037-039
+      (baseline, preflight-verdict, engineering-finding) plus audit_delta --
+      validates every matching
       `tools/fixtures/<family>_*.json` fixture, via python3 + jsonschema,
       against its shipped schema (`schema/ecosystem_baseline.schema.json`,
       `schema/preflight_verdict.schema.json`,
@@ -1463,9 +1467,10 @@ check_c11_dogfood_payload_skip() {
 
 # ---------------------------------------------------------------------------
 # C12 -- ecosystem schema-family fixture validation (NDEBT-009 fix, scoped to
-# the three ecosystem schema families shipped in features 037/038/039: proves
-# the tools/fixtures/{ecosystem_baseline,preflight_verdict,
-# engineering_finding}_*.json fixtures are load-bearing, not merely present).
+# the ecosystem schema families: the three shipped in features 037/038/039
+# plus audit_delta -- proves the tools/fixtures/{ecosystem_baseline,
+# preflight_verdict,engineering_finding,audit_delta}_*.json fixtures are
+# load-bearing, not merely present).
 # The full-sweep check_c12_ecosystem_fixtures below is default-mode only
 # (mirrors C6/C7's repo-wide-only precedent) and not run under --payload (no
 # acceptance test requires payload-mode fixture coverage; see NON-GOALS). As
@@ -1473,12 +1478,12 @@ check_c11_dogfood_payload_skip() {
 # ecosystem fixture IS routed -- to check_c12_target, further below -- so it
 # emits a discriminating [C12] verdict instead of misrouting to C4/C11; the
 # full-sweep polarity/dormancy guard and the single-file --target validation
-# are two distinct entry points that share the three family schemas.
+# are two distinct entry points that share the family schemas.
 # ---------------------------------------------------------------------------
 
 # check_c12_ecosystem_fixtures
 #
-# For each of the three families, validates every matching
+# For each of the four families, validates every matching
 # tools/fixtures/<family>_*.json fixture against its shipped schema. A
 # fixture is NEGATIVE (MUST fail schema validation) iff its filename
 # contains the canonical delimited token '_neg_' or '_invalid_' -- checked as
@@ -1518,6 +1523,7 @@ FAMILIES = {
     "ecosystem_baseline": "schema/ecosystem_baseline.schema.json",
     "preflight_verdict": "schema/preflight_verdict.schema.json",
     "engineering_finding": "schema/engineering_finding.schema.json",
+    "audit_delta": "schema/audit_delta.schema.json",
 }
 
 
@@ -1634,7 +1640,7 @@ PY
 #
 # NDEBT-015 (feature 052): single-fixture ecosystem-schema validation for the
 # `--target` dispatcher. The full-sweep check_c12_ecosystem_fixtures validates
-# EVERY fixture of all three families with a polarity/dormancy guard; this
+# EVERY fixture of all four families with a polarity/dormancy guard; this
 # variant validates exactly ONE `--target` file against the schema of the
 # family the router (check_c11_or_c4_target) identified, emitting a
 # discriminating [C12] verdict -- a valid fixture PASSes, a negative fixture
@@ -1660,6 +1666,7 @@ schema_paths = {
     "ecosystem_baseline": "schema/ecosystem_baseline.schema.json",
     "preflight_verdict": "schema/preflight_verdict.schema.json",
     "engineering_finding": "schema/engineering_finding.schema.json",
+    "audit_delta": "schema/audit_delta.schema.json",
 }
 schema_path = schema_paths[family]
 
@@ -1864,7 +1871,7 @@ if not isinstance(doc, dict):
     print("none")
     sys.exit(0)
 
-# NDEBT-015 (feature 052): recognize the three ecosystem schema families so a
+# NDEBT-015 (feature 052): recognize the ecosystem schema families so a
 # `--target` invocation against one of their fixtures produces a
 # DISCRIMINATING signal instead of misrouting. Before this, an ecosystem
 # fixture carried no route discriminator and fell through to C4 (or, for
@@ -1875,10 +1882,12 @@ if not isinstance(doc, dict):
 # the generic `verdict`->qa_verdict route so preflight is not swallowed;
 # qa_verdict artifacts carry no `execution_id`); the six mandatory
 # `*_references` category arrays -> ecosystem_baseline; `closure_criteria` ->
-# engineering_finding. These `ecosystem:<family>` routes dispatch to
-# check_c12_target (schema validation emitting a [C12] verdict); the existing
-# review/qa_verdict/contract/run_state routes and the C4 fall-through are
-# unchanged.
+# engineering_finding; a top-level `transitions` object -> audit_delta (added
+# with the audit_delta family; the progress-comparison delta artifact carries
+# none of the earlier discriminator keys). These `ecosystem:<family>` routes
+# dispatch to check_c12_target (schema validation emitting a [C12] verdict);
+# the existing review/qa_verdict/contract/run_state routes and the C4
+# fall-through are unchanged.
 ECOSYSTEM_BASELINE_KEYS = {
     "framework_references", "repository_references", "dependency_references",
     "ci_references", "planning_references", "evidence_references",
@@ -1898,6 +1907,8 @@ elif ECOSYSTEM_BASELINE_KEYS.issubset(doc):
     print("ecosystem:ecosystem_baseline")
 elif "closure_criteria" in doc:
     print("ecosystem:engineering_finding")
+elif isinstance(doc.get("transitions"), dict):
+    print("ecosystem:audit_delta")
 else:
     print("none")
 PY

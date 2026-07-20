@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:audit_delta.schema.json",
+  "title": "Nizam Ecosystem Audit Delta Schema",
+  "description": "Validates the progress-comparison delta artifact, per ecosystem/07_progress_comparison.md Sec 7 (Comparison Artifact) and docs/nips/NIP-0001-ecosystem-engineering-cycle.md: the classified, evidence-anchored account of what changed between two already-approved reference points, recorded in .agent/audits/<audit-id>/delta.json. Requires the two compared reference points (earlier, later), each anchored to a revision and timestamp per ecosystem/02_evidence_baseline.md Sec 4, and the closed five-class transition taxonomy of Sec 3 (new/resolved/reopened/persisting/stale) with all five buckets present and no sixth class. A finding classified resolved -- whether an in-window resolved transition (Sec 3) or a pre-window-resolved recording (Sec 3.1) -- MUST carry a structured, non-empty closure_evidence, so the closure-only-with-evidence rule (Sec 4) is enforced at the schema layer exactly as engineering_finding.schema.json enforces it for a single finding's own resolution. The five transition classes are the protocol's fixed vocabulary and are NOT consumer-extensible (Sec 3); consumer-specific finding categories, scoring weights, and thresholds remain open extension points.",
+  "$defs": {
+    "reference_point": {
+      "type": "object",
+      "description": "One of the two approved reference points a comparison spans (ecosystem/07_progress_comparison.md Sec 2). Each side is unambiguously identified per its own artifact's revision and timestamp anchors (ecosystem/02_evidence_baseline.md Sec 4), so 'the earlier side' and 'the later side' each name one specific, nameable point in time.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The identifier of the baseline or audit artifact this reference point is drawn from (its <execution-id> or <audit-id>).",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "description": "The repository (or artifact) revision this reference point is anchored to, per ecosystem/02_evidence_baseline.md Sec 4's revision anchoring rule.",
+          "minLength": 1
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The timestamp this reference point is anchored to, per ecosystem/02_evidence_baseline.md Sec 4. A reference point with no declared revision or no timestamp is not a valid comparison input.",
+          "minLength": 1
+        }
+      },
+      "required": ["id", "revision", "timestamp"],
+      "additionalProperties": true
+    },
+    "evidence_item": {
+      "type": "object",
+      "description": "A single, path-referenced piece of evidence, revision-pinned per ecosystem/02_evidence_baseline.md Sec 4. Raw output is never pasted inline here (methodology/04_tool_driven_state.md Sec 5); only the path and its revision anchor are recorded.",
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path to the externalised evidence file, per ecosystem/07_progress_comparison.md Sec 7 (evidence is externalised by path under .agent/evidence/<execution-id>/, never pasted inline).",
+          "minLength": 1,
+          "pattern": "^\\.agent/evidence/"
+        },
+        "revision": {
+          "type": "string",
+          "description": "The repository (or artifact) revision this evidence item is anchored to, per ecosystem/02_evidence_baseline.md Sec 4's revision anchoring rule.",
+          "minLength": 1
+        }
+      },
+      "required": ["path", "revision"],
+      "additionalProperties": true
+    },
+    "classified_finding": {
+      "type": "object",
+      "description": "A finding placed into exactly one transition class (ecosystem/07_progress_comparison.md Sec 3). Requires the finding's id; evidence is optional here because the class buckets that demand closure evidence (resolved, pre-window-resolved) use resolved_finding instead, which requires it.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The identifier of the finding being classified, stable across the two compared executions so a reopened finding can be matched to its prior resolved classification.",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "description": "Optional evidence backing this finding's classification (e.g. the fresh re-confirmation that makes a both-sides finding persisting rather than stale, per Sec 3). Each item is path-referenced and revision-pinned (see $defs/evidence_item).",
+          "items": { "$ref": "#/$defs/evidence_item" }
+        }
+      },
+      "required": ["id"],
+      "additionalProperties": true
+    },
+    "resolved_finding": {
+      "type": "object",
+      "description": "A finding recorded as resolved -- either an in-window resolved transition (Sec 3) or a pre-window-resolved recording (Sec 3.1). The closure-only-with-evidence rule (Sec 4) binds here: a resolved finding MUST carry a structured, non-empty closure_evidence, so a finding cannot be recorded resolved on the basis of its mere absence from the later scan.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The identifier of the resolved finding.",
+          "minLength": 1
+        },
+        "closure_evidence": {
+          "type": "array",
+          "description": "Evidence demonstrating the underlying condition the finding described no longer holds (Sec 4). Non-empty; each item is path-referenced and revision-pinned (see $defs/evidence_item).",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/evidence_item" }
+        }
+      },
+      "required": ["id", "closure_evidence"],
+      "additionalProperties": true
+    }
+  },
+  "type": "object",
+  "properties": {
+    "earlier": {
+      "description": "The earlier of the two compared reference points (ecosystem/07_progress_comparison.md Sec 2).",
+      "$ref": "#/$defs/reference_point"
+    },
+    "later": {
+      "description": "The later of the two compared reference points (ecosystem/07_progress_comparison.md Sec 2).",
+      "$ref": "#/$defs/reference_point"
+    },
+    "transitions": {
+      "type": "object",
+      "description": "The closed five-class transition taxonomy (ecosystem/07_progress_comparison.md Sec 3). All five buckets are present (a finding present in either input receives exactly one class), and no sixth class is admitted: additionalProperties is false so the protocol's fixed vocabulary cannot be silently extended, exactly as the preflight verdict enum is closed. An empty reopened bucket on a first comparison is correct (Sec 3.2), so empty arrays are permitted; the buckets are required to be PRESENT, not non-empty.",
+      "properties": {
+        "new": {
+          "type": "array",
+          "description": "Findings present in the later execution, absent from the earlier one, and NOT previously classified resolved (Sec 3).",
+          "items": { "$ref": "#/$defs/classified_finding" }
+        },
+        "resolved": {
+          "type": "array",
+          "description": "Findings present and open in the earlier execution, absent from the later one, and closed by an in-window closure per the closure-only-with-evidence rule (Sec 3, Sec 4). Each carries non-empty closure_evidence.",
+          "items": { "$ref": "#/$defs/resolved_finding" }
+        },
+        "reopened": {
+          "type": "array",
+          "description": "Findings previously classified resolved in an earlier comparison, now present again (Sec 3). Necessarily empty on a first comparison (Sec 3.2).",
+          "items": { "$ref": "#/$defs/classified_finding" }
+        },
+        "persisting": {
+          "type": "array",
+          "description": "Findings present in both executions and still open, with CURRENT evidence freshly re-confirmed at or after the later execution's anchors (Sec 3). Carried, not moved: counted in the open-findings score but never cited as a source of score movement (Sec 6).",
+          "items": { "$ref": "#/$defs/classified_finding" }
+        },
+        "stale": {
+          "type": "array",
+          "description": "Findings present in both executions whose backing evidence is no longer current per the stale-evidence non-reuse rule (Sec 3, Sec 5).",
+          "items": { "$ref": "#/$defs/classified_finding" }
+        }
+      },
+      "required": ["new", "resolved", "reopened", "persisting", "stale"],
+      "additionalProperties": false
+    },
+    "pre_window_resolved": {
+      "type": "array",
+      "description": "OPTIONAL. Findings whose resolution PREDATES the earlier input's own reference point (ecosystem/07_progress_comparison.md Sec 3.1): recorded with closure evidence for completeness and audit continuity, but excluded from the five-class transition taxonomy and from the open-findings score. Each item carries non-empty closure_evidence, exactly as an in-window resolved finding does.",
+      "items": { "$ref": "#/$defs/resolved_finding" }
+    },
+    "score_movement": {
+      "type": "object",
+      "description": "OPTIONAL. The evidence-traceable account of any aggregate engineering-score change between the two reference points (ecosystem/07_progress_comparison.md Sec 6). Any movement cites the specific new/resolved/reopened/stale findings responsible; a persisting finding is never cited (nothing about it changed). Consumer scoring weights and thresholds are an open extension point, so this object's inner shape is not fixed here beyond permitting the citing findings to be listed.",
+      "additionalProperties": true
+    },
+    "open_findings_count": {
+      "type": "object",
+      "description": "OPTIONAL. The open-findings score at each reference point (ecosystem/07_progress_comparison.md Sec 6.1): counts findings in open status ONLY -- never resolved or pre-window-resolved recorded findings. When present, earlier and later are non-negative integers.",
+      "properties": {
+        "earlier": {
+          "type": "integer",
+          "description": "Open-findings count at the earlier reference point (open status only, Sec 6.1).",
+          "minimum": 0
+        },
+        "later": {
+          "type": "integer",
+          "description": "Open-findings count at the later reference point (open status only, Sec 6.1).",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["earlier", "later", "transitions"],
+  "additionalProperties": true
+}

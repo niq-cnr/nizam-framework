@@ -2,9 +2,13 @@
 id: nizam-ecosystem-evidence-baseline
 title: "Immutable Evidence Baseline Protocol"
 description: "The reusable protocol for capturing a point-in-time, immutable baseline over framework, repository, dependency, CI, planning, and evidence references, with explicit baseline fields and the revision/timestamp anchoring rule that a baseline MUST NOT mix evidence from unspecified revisions."
-version: 0.1.0
+version: 0.1.1
 status: active
 authoritative_source: ecosystem/02_evidence_baseline.md
+change_log:
+  - version: "0.1.1"
+    date: "2026-07-20"
+    summary: "Tier-0 doc-truth: Section 7's References entry for schema/ecosystem_baseline.schema.json retires the stale parenthetical 'added by a later feature in this phase; not yet present at the time this protocol was authored' -- the schema shipped in feature 037 and has been present under schema/ since (and its same-repo revision-consistency FAIL condition is now mechanized at both levels per NDEBT-023). This is the document's first change_log entry; no semantic change to the protocol."
 ---
 
 # Immutable Evidence Baseline Protocol
@@ -150,5 +154,4 @@ inline into the baseline artifact or into a chat transcript.
 - `methodology/03_circuit_breaker.md` -- the house pattern this document's
   structure, tone, and immutability discipline follow.
 - `schema/ecosystem_baseline.schema.json` -- the machine-readable schema for
-  the baseline artifact this protocol requires (added by a later feature in
-  this phase; not yet present at the time this protocol was authored).
+  the baseline artifact this protocol requires.

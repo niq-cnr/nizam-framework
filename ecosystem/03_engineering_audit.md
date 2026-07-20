@@ -2,10 +2,13 @@
 id: nizam-ecosystem-engineering-audit
 title: "Engineering Audit Protocol"
 description: "The reusable, evidence-first engineering audit protocol: consumes the current execution's Preflight verdict and Baseline, ranks evidence into four tiers, assesses claims against the ten-state maturity model under the no-promotion-beyond-evidence rule, records finding confidence, and explicitly excludes commercial/market readiness from generic engineering scoring."
-version: 0.1.1
+version: 0.1.2
 status: active
 authoritative_source: ecosystem/03_engineering_audit.md
 change_log:
+  - version: "0.1.2"
+    date: "2026-07-20"
+    summary: "Tier-0 doc-truth: both stale parentheticals for schema/engineering_finding.schema.json -- in Section 7 and in the References entry, each reading 'added by a later feature in this phase; not yet present at the time this protocol was authored' -- are retired. The schema shipped in feature 039 and has been present under schema/ since. No semantic change; the commercial-readiness deferral to 08_ga_gate.md (Section 6) is unaffected."
   - version: "0.1.1"
     date: "2026-07-18"
     summary: "Feature 048 (operator PR #21 review, finding 4): the deferred GA-gate reference now uses the module's bare-filename convention (08_ga_gate.md) instead of a directory-qualified path that dangles until the document ships."
@@ -170,9 +173,7 @@ per the framework's Artifact Locations convention
 artifact's shape (severity, confidence per Section 5, evidence per Section 3,
 impact, owner, and closure criteria) is defined by
 `schema/engineering_finding.schema.json`. This protocol governs the
-artifact's required semantics; it does not itself define the JSON Schema
-(added by a later feature in this phase; not yet present at the time this
-protocol was authored).
+artifact's required semantics; it does not itself define the JSON Schema.
 
 Evidence backing every finding (raw tool output, logs, or intermediate
 collection results) is externalised by path under
@@ -198,5 +199,4 @@ inline into the findings artifact, the report, or a chat transcript.
 - `methodology/03_circuit_breaker.md` -- the house pattern this document's
   structure, tone, and immutability discipline follow.
 - `schema/engineering_finding.schema.json` -- the machine-readable schema for
-  the findings artifact this protocol requires (added by a later feature in
-  this phase; not yet present at the time this protocol was authored).
+  the findings artifact this protocol requires.

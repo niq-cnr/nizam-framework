@@ -116,6 +116,8 @@ assert_target engineering_finding_neg_resolved_without_closure_evidence.json C12
 assert_target preflight_verdict_invalid_approval_incomplete.json   C12 FAIL
 assert_target preflight_verdict_invalid_exceptions.json            C12 FAIL
 assert_target preflight_verdict_invalid_verdict.json               C12 FAIL
+assert_target audit_delta_neg_resolved_without_closure_evidence.json C12 FAIL
+assert_target audit_delta_neg_missing_transition_class.json        C12 FAIL
 
 # Positives: the targeted check MUST PASS (proves the negative's signal is
 # discriminating, not a check that fails on everything).
@@ -126,6 +128,7 @@ assert_target engineering_finding_valid_resolved.json              C12 PASS
 assert_target preflight_verdict_pass.json                          C12 PASS
 assert_target preflight_verdict_pass_with_exceptions.json          C12 PASS
 assert_target preflight_verdict_fail.json                          C12 PASS
+assert_target audit_delta_valid.json                               C12 PASS
 
 # ---------------------------------------------------------------------------
 # (2) verify_lib primitive fixtures

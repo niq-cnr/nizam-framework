@@ -1,0 +1,59 @@
+{
+  "earlier": {
+    "id": "audit-2026-07-01-aaaa111",
+    "revision": "aaaa1110000000000000000000000000000000000",
+    "timestamp": "2026-07-01T00:00:00Z"
+  },
+  "later": {
+    "id": "audit-2026-07-17-cba6422",
+    "revision": "cba6422000000000000000000000000000000000",
+    "timestamp": "2026-07-17T00:00:00Z"
+  },
+  "transitions": {
+    "new": [
+      {
+        "id": "F-100",
+        "evidence": [
+          { "path": ".agent/evidence/audit-2026-07-17-cba6422/f100.txt", "revision": "cba6422000000000000000000000000000000000" }
+        ]
+      }
+    ],
+    "resolved": [
+      {
+        "id": "F-050",
+        "closure_evidence": [
+          { "path": ".agent/evidence/audit-2026-07-17-cba6422/f050-closure.txt", "revision": "cba6422000000000000000000000000000000000" }
+        ]
+      }
+    ],
+    "reopened": [],
+    "persisting": [
+      {
+        "id": "F-070",
+        "evidence": [
+          { "path": ".agent/evidence/audit-2026-07-17-cba6422/f070-reconfirm.txt", "revision": "cba6422000000000000000000000000000000000" }
+        ]
+      }
+    ],
+    "stale": [
+      { "id": "F-080" }
+    ]
+  },
+  "pre_window_resolved": [
+    {
+      "id": "F-010",
+      "closure_evidence": [
+        { "path": ".agent/evidence/audit-2026-06-01-0aaa000/f010-closure.txt", "revision": "0aaa000000000000000000000000000000000000" }
+      ]
+    }
+  ],
+  "score_movement": {
+    "earlier_open_score": 5,
+    "later_open_score": 4,
+    "citations": ["F-050", "F-100"]
+  },
+  "open_findings_count": {
+    "earlier": 5,
+    "later": 4
+  }
+}

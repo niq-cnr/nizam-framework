@@ -2,10 +2,13 @@
 id: nizam-ecosystem-progress-comparison
 title: "Progress Comparison Protocol"
 description: "The reusable protocol for comparing two approved baselines or audits: distinguishing new, resolved, reopened, persisting, and stale findings, recording pre-window-resolved findings without miscounting them, closing a resolved finding only with closure evidence, refusing to silently reuse stale evidence, counting open findings (not all recorded findings) in the score, and making every score movement traceable to evidence."
-version: 0.2.0
+version: 0.2.1
 status: active
 authoritative_source: ecosystem/07_progress_comparison.md
 change_log:
+  - version: "0.2.1"
+    date: "2026-07-20"
+    summary: "Tier-0 schema completion: schema/audit_delta.schema.json has landed, so Section 7 and the References entry retire the 'optional / deferrable / not yet present' language and the bare-filename convention (adopted only to avoid a dangling reference while the file was absent) in favour of the directory-qualified `schema/audit_delta.schema.json`, matching the sibling protocols 01/02/03. The protocol's semantics are unchanged; only the schema's presence status is updated. The schema encodes this protocol's required shape -- the two anchored reference points, the closed five-class transition taxonomy, and the closure-only-with-evidence rule for resolved and pre-window-resolved findings -- and is enforced by tools/validate.sh C12 as the fourth ecosystem family."
   - version: "0.2.0"
     date: "2026-07-19"
     summary: "Feature 057 (NDEBT-022): completes the finding-state taxonomy so it classifies a real corpus without workarounds. Section 3 adds the fifth transition class `persisting` (present on both sides with freshly re-confirmed, current evidence -- the exact opposite of `stale`), the Section 3.1 pre-window-resolved recording rule (a finding resolved before the earlier input's reference point is recorded but not a cross-execution transition), and the Section 3.2 first-comparison rule (an empty `reopened` bucket on a first comparison is correct). Section 6.1 fixes the score-count semantics: the open-findings score counts `open` findings only, never resolved or pre-window-resolved recorded findings. Section 3 also disambiguates `new` and `reopened` -- a previously-resolved finding that reappears is `reopened` only, never also `new` -- preserving the exactly-one-class rule. Motivated by audit-044, whose delta bridged the two gaps via unchanged_facts + prose notes; the amendment lets a future comparison classify that corpus directly."
@@ -189,12 +192,9 @@ comparison execution, per the framework's Artifact Locations convention
 (`docs/nips/NIP-0001-ecosystem-engineering-cycle.md`). The artifact's shape
 (the five finding-state transition classes of Section 3, the closure
 evidence and stale-evidence references of Sections 4-5, and the
-score-movement citations of Section 6) is defined by an optional
-`audit_delta.schema.json` (planned under `schema/`); per
-`product_spec_005.md` Section 2.3, this schema is deferrable within the
-minimal-viable release and is not yet present in this repository. This protocol governs the artifact's required
-semantics regardless of whether that schema has landed; it does not itself
-define the JSON Schema.
+score-movement citations of Section 6) is defined by
+`schema/audit_delta.schema.json`. This protocol governs the artifact's
+required semantics; it does not itself define the JSON Schema.
 
 Evidence backing the comparison (raw tool output, logs, or intermediate
 collection results) is externalised by path under
@@ -219,8 +219,5 @@ pasted inline into the delta artifact or into a chat transcript.
   this protocol's evidence externalisation follows.
 - `methodology/03_circuit_breaker.md` -- the house pattern this document's
   structure, tone, and immutability discipline follow.
-- `audit_delta.schema.json` -- the optional, deferrable machine-readable
-  schema for the delta artifact this protocol describes (planned under
-  `schema/`; per `product_spec_005.md` Section 2.3, not scheduled in this
-  phase's execution order; not yet present at the time this protocol was
-  authored).
+- `schema/audit_delta.schema.json` -- the machine-readable schema for the
+  delta artifact this protocol requires.
