@@ -31,8 +31,20 @@ For a **non-approval outcome** — a gate recorded `NOT REQUIRED` because its
 trigger never arose, or one subsumed by a broader operator decision — the
 binding record is the disposition written into the cited phase specification's
 change_log or `docs/planning/ROADMAP.md`. Either way the record lives outside
-this registry; where this registry and a phase spec disagree, the phase spec
-wins.
+this registry.
+
+A phase specification is authoritative for a gate's **definition and scope**; a
+gate's **current disposition**, however, follows the *latest* recorded operator
+decision, which supersedes any earlier point-in-time status. This distinction
+matters because `.agent/product_spec_005.md` Sec 8 records `H-FRAMEWORK-SCOPE`,
+`H-DOGFOOD-EXCEPTION`, `H-FRAMEWORK-RELEASE`, and `H-RISK` as `OUTSTANDING` — that
+is their status *as of phase-005 activation*, not a standing claim. The final
+dispositions in Section 1 below (subsumed / exercised / executed / not required)
+are the *later* operator records that superseded that activation-time snapshot:
+the v0.7.0 and v0.8.0 release tags and `docs/planning/ROADMAP.md`'s phase-005/006
+completion entries. So where this registry and a phase spec disagree on a gate's
+**definition**, the phase spec wins; where they differ on a gate's **status**,
+the later operator record (cited in the Disposition column) is current.
 
 ## 1. Decided gates (phases 005–006)
 

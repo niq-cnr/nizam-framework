@@ -99,7 +99,9 @@ Modes:
                           those, an ecosystem_baseline shape (the six
                           `*_references` arrays), an engineering_finding
                           shape (`closure_criteria`), or an audit_delta shape
-                          (a top-level `transitions` object) routes to C12
+                          (top-level `earlier`+`later`+`transitions`, matched
+                          ahead of the generic `verdict`/`qa_pass` routes so an
+                          additive key cannot divert a valid delta) routes to C12
                           against schema/ecosystem_baseline.schema.json,
                           schema/engineering_finding.schema.json, or
                           schema/audit_delta.schema.json (the first three
@@ -1921,13 +1923,16 @@ if not isinstance(doc, dict):
 # preflight_verdict, collided with the qa_verdict route on its top-level
 # `verdict` key), so EVERY ecosystem `--target` invocation failed regardless
 # of the fixture's polarity. Discriminators (dual-key / required-key
-# heuristics): `verdict`+`execution_id` -> preflight_verdict (checked BEFORE
-# the generic `verdict`->qa_verdict route so preflight is not swallowed;
-# qa_verdict artifacts carry no `execution_id`); the six mandatory
+# heuristics): the full audit_delta shape `earlier`+`later`+`transitions` ->
+# audit_delta, matched FIRST -- audit_delta declares additionalProperties: true,
+# so a delta that also carried a stray `verdict`/`qa_pass`/`closure_criteria` key
+# would otherwise be diverted into an earlier family's route; no other family's
+# artifact carries all three keys, so matching the whole shape up front never
+# steals their fixtures. Then `verdict`+`execution_id` -> preflight_verdict
+# (checked BEFORE the generic `verdict`->qa_verdict route so preflight is not
+# swallowed; qa_verdict artifacts carry no `execution_id`); the six mandatory
 # `*_references` category arrays -> ecosystem_baseline; `closure_criteria` ->
-# engineering_finding; a top-level `transitions` object -> audit_delta (added
-# with the audit_delta family; the progress-comparison delta artifact carries
-# none of the earlier discriminator keys). These `ecosystem:<family>` routes
+# engineering_finding. These `ecosystem:<family>` routes
 # dispatch to check_c12_target (schema validation emitting a [C12] verdict);
 # the existing review/qa_verdict/contract/run_state routes and the C4
 # fall-through are unchanged.
@@ -1936,7 +1941,17 @@ ECOSYSTEM_BASELINE_KEYS = {
     "ci_references", "planning_references", "evidence_references",
 }
 
-if "review" in doc:
+if {"earlier", "later", "transitions"} <= doc.keys() and isinstance(doc.get("transitions"), dict):
+    # Checked FIRST, and on the full required shape (earlier + later +
+    # transitions), not a bare `transitions` key: audit_delta declares
+    # additionalProperties: true, so a delta that also carried a stray
+    # `verdict`/`qa_pass`/`closure_criteria` key would otherwise be diverted into
+    # an earlier family's route. Matching the whole audit_delta shape up front
+    # keeps additive keys from misrouting a valid delta. No other family's
+    # artifact carries all three of these keys, so this never steals their
+    # fixtures.
+    print("ecosystem:audit_delta")
+elif "review" in doc:
     print("contract_review")
 elif "verdict" in doc and "execution_id" in doc:
     print("ecosystem:preflight_verdict")
@@ -1950,8 +1965,6 @@ elif ECOSYSTEM_BASELINE_KEYS.issubset(doc):
     print("ecosystem:ecosystem_baseline")
 elif "closure_criteria" in doc:
     print("ecosystem:engineering_finding")
-elif isinstance(doc.get("transitions"), dict):
-    print("ecosystem:audit_delta")
 else:
     print("none")
 PY

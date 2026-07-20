@@ -23,8 +23,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   into more than one transition class (§3 "exactly one class", mirroring the
   NDEBT-023 same-repo-revision check). Wired into `tools/validate.sh` **C12** as
   the fourth ecosystem family at both entry points (full-sweep and `--target`
-  router, discriminated by a top-level `transitions` object), with one positive and
-  three negative fixtures under `tools/fixtures/`, registered in `NIZAM.json`,
+  router, discriminated by its full `earlier`/`later`/`transitions` shape matched
+  ahead of the generic key routes so an additive property cannot divert a valid
+  delta), with one positive and three negative fixtures under `tools/fixtures/`,
+  registered in `NIZAM.json`,
   indexed in `schema/README.md`, and covered by `tools/fixtures_self_test.sh`.
   Completes the four core ecosystem-cycle schemas
   (baseline / preflight-verdict / engineering-finding / audit-delta).
