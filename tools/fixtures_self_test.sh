@@ -109,6 +109,7 @@ assert_target invalid_qa_verdict.json                              C11 FAIL
 assert_target invalid_run_state.json                               C11 FAIL
 assert_target ecosystem_baseline_neg_missing_revision.json         C12 FAIL
 assert_target ecosystem_baseline_neg_mixed_timestamps.json         C12 FAIL
+assert_target ecosystem_baseline_neg_inconsistent_revisions.json   C12 FAIL
 assert_target engineering_finding_neg_closure_evidence_incomplete.json C12 FAIL
 assert_target engineering_finding_neg_missing_owner.json           C12 FAIL
 assert_target engineering_finding_neg_resolved_without_closure_evidence.json C12 FAIL
@@ -357,6 +358,51 @@ then
   echo "OK   guard       work-packet.template.json validates end-to-end against work-packet.schema.json"
 else
   echo "FAIL guard       work-packet.template.json does NOT validate against schema/work-packet.schema.json"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
+# (4) ecosystem_preflight.py CLI behavior probes (F-056, NDEBT-021.5/-018.1)
+# ---------------------------------------------------------------------------
+# tools/ecosystem_preflight.py is NOT covered by validate.sh (only its OUTPUT
+# schemas are, via C12), so these standing git-scratch probes are its permanent
+# regression guard. They assert the load-bearing clean-state polarity: an
+# untracked-not-tolerated file FAILs (exit 1); the exact --tolerate-untracked
+# and the additive --tolerate-untracked-prefix each downgrade it to a pending
+# PASS_WITH_EXCEPTIONS (exit 2). Probe isolation per methodology/02 Sec 11: a
+# mktemp -d scratch repo, cleaned via a trap with rm -rf -- on the scratch dirs
+# only (never a real path). These are behavior probes, not fixtures, so they add
+# nothing to the completeness manifest.
+echo "== preflight CLI behavior probes (F-056) =="
+_preflight_cli_probes() (
+  local sb out rc
+  sb=$(mktemp -d) || return 1
+  out=$(mktemp -d) || { rm -rf -- "${sb}"; return 1; }
+  trap 'rm -rf -- "${sb}" "${out}"' EXIT
+  git -C "${sb}" init -q
+  git -C "${sb}" config user.email t@example.invalid
+  git -C "${sb}" config user.name tester
+  mkdir -p "${sb}/schema"
+  printf '{}' > "${sb}/schema/preflight_verdict.schema.json"
+  printf '{}' > "${sb}/schema/ecosystem_baseline.schema.json"
+  git -C "${sb}" add -A
+  git -C "${sb}" commit -qm init
+  printf x > "${sb}/dirty.txt"
+  # (a) an untracked-not-tolerated file -> FAIL (exit 1) [the NDEBT-021.5 probe]
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  untracked-not-tolerated: expected exit 1, got ${rc}"; return 1; }
+  # (b) exact --tolerate-untracked downgrades it to pending PASS_WITH_EXCEPTIONS (exit 2)
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" --tolerate-untracked dirty.txt >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  exact tolerate: expected exit 2, got ${rc}"; return 1; }
+  # (c) additive --tolerate-untracked-prefix also downgrades it (exit 2) [NDEBT-018.1]
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" --tolerate-untracked-prefix dirty >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  prefix tolerate: expected exit 2, got ${rc}"; return 1; }
+  return 0
+)
+if _preflight_cli_probes; then
+  echo "OK   preflight   untracked-not-tolerated -> FAIL(1); exact + prefix tolerate -> pending(2)"
+else
+  echo "FAIL preflight   a CLI behavior probe did not hold"
   fail=1
 fi
 

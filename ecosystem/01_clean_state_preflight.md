@@ -2,10 +2,13 @@
 id: nizam-ecosystem-clean-state-preflight
 title: "Clean-State Preflight Protocol"
 description: "The reusable preflight protocol that gates entry into the ecosystem engineering cycle: a machine-readable verdict of exactly one of PASS, PASS_WITH_EXCEPTIONS, or FAIL, explicit blocking rules, and the operator-exception rule PASS_WITH_EXCEPTIONS carries before execution continues."
-version: 0.1.1
+version: 0.1.2
 status: active
 authoritative_source: ecosystem/01_clean_state_preflight.md
 change_log:
+  - version: "0.1.2"
+    date: "2026-07-20"
+    summary: "Feature 056 (NDEBT-018.2): Section 4.1 codifies durably the operational corollary of the tracked-file blocking rule — an orchestrator-owned tracked-state write relevant to a gate decision (e.g. run_state.json's operator_gate_decision event) MUST be committed before the corresponding gated CLI invocation runs, since no --tolerate-untracked flag can rescue a tracked-file modification. Names the feature-043 self-dogfood incident it remediates, so the rule binds by document rather than by per-dispatch instruction."
   - version: "0.1.1"
     date: "2026-07-18"
     summary: "Feature 048 (operator PR #21 review, finding 2): Section 6 now defines when schema-validity binds — the finalized artifact only; a run halted pending the Section-5 operator decision records its exceptions in an informational pending artifact (the shipped CLI's preflight.pending.json) and withholds preflight.json, resolving the Sec 5/Sec 6 pre-approval contradiction empirically confirmed in review."
@@ -88,6 +91,28 @@ A blocking condition is never silently downgraded to a non-blocking finding
 by the preflight tool itself; only an explicit, recorded operator decision
 (Section 5, or a superseding human risk-acceptance under `H-RISK`) changes
 how a finding is treated in a later run.
+
+### 4.1 Committing Gate-Decision State Before the Preflight
+
+The first blocking rule above has a direct operational corollary for the
+Orchestrator. Because any uncommitted change to a *tracked* file is
+unconditionally blocking, and no `--tolerate-untracked` declaration can rescue
+a tracked-file modification (that mechanism governs untracked files only), an
+orchestrator-owned tracked-state write that is relevant to a gate decision --
+for example an `operator_gate_decision` (or equivalent) event appended to
+`run_state.json` before an approved, gated step -- MUST be committed before the
+corresponding gated CLI invocation runs. Left uncommitted, that write is
+itself a blocking finding, so the preflight will correctly and unavoidably
+`FAIL` on the very state change that was meant to authorize the step.
+
+This rule binds durably, by this document rather than by any per-dispatch
+instruction. It was learned from feature 043's real self-dogfood run, where the
+orchestrator's `H-DOGFOOD-EXCEPTION` gate-decision write to `run_state.json`
+first landed as an uncommitted tracked modification: the approved invocation
+genuinely `FAIL`ed (exit 1, `uncommitted tracked change (M):
+.agent/run_state.json`) and only succeeded once that write was committed. The
+sequence is therefore fixed -- record the gate decision in durable state,
+commit it, and only then run the gated preflight invocation.
 
 ## 5. Operator-Exception Rule
 

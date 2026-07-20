@@ -50,6 +50,8 @@ Example
         --output-dir /tmp/preflight-out \\
         --self-fixture \\
         --tolerate-untracked v0.6.0-release-notes.md \\
+        --tolerate-untracked-prefix .agent/evidence/exec-2026-07-17-001/ \\
+        --ci-run-file /tmp/ci-run.json \\
         --operator-approver "jane@example.com" \\
         --operator-authorization "reviewed exceptions, approved for dogfood run"
 """
@@ -155,17 +157,39 @@ def resolve_self_fixture_repo_root(script_path: str) -> str:
 
 
 def collect_git_clean_state_findings(
-    repo_root: str, tolerated_untracked_paths: Sequence[str]
+    repo_root: str,
+    tolerated_untracked_paths: Sequence[str],
+    tolerated_untracked_prefixes: Sequence[str] = (),
 ) -> tuple[list[str], list[dict[str, str]]]:
     """Collect blocking findings and non-blocking exceptions from git status.
 
     Implements ecosystem/01_clean_state_preflight.md Sec 4 bullet 1: any
     staged or unstaged change to a tracked file is unconditionally blocking;
     an untracked file is blocking unless its repo-relative path was
-    explicitly declared tolerated via ``--tolerate-untracked``, in which case
-    it is surfaced as a non-blocking exception, never silently dropped (Sec 4's
-    non-downgrade invariant: a blocking finding is never produced here for a
-    tolerated path, and a tolerated path is never silently omitted either).
+    explicitly declared tolerated, in which case it is surfaced as a
+    non-blocking exception, never silently dropped (Sec 4's non-downgrade
+    invariant: a blocking finding is never produced here for a tolerated path,
+    and a tolerated path is never silently omitted either).
+
+    A path is tolerated if it exactly equals one of ``tolerated_untracked_paths``
+    (the ``--tolerate-untracked`` EXACT-match allow-list -- the 043/044 approved
+    runs depend on this exact semantics, including git's own collapse of an
+    entirely-untracked directory to one trailing-slash entry) OR it begins with
+    one of ``tolerated_untracked_prefixes`` (the ``--tolerate-untracked-prefix``
+    additive option, NDEBT-018: lets a run tolerate a whole in-flight artifact
+    directory by one declared prefix rather than enumerating each file). The
+    exact-match set is preferred: a path matched exactly keeps the historical
+    ``declared_tolerated_untracked`` kind, so 043/044 semantics are unchanged.
+
+    Parses ``git status --porcelain=v1 -z`` (NUL-delimited, NDEBT-021): the
+    default porcelain-v1 C-quotes paths with spaces or non-ASCII bytes, which
+    would break the literal tolerate-list membership test; the ``-z`` form emits
+    each path raw. ``-z`` does NOT pass ``--untracked-files=all``, so git still
+    collapses an untracked directory to a single entry -- the trailing-slash
+    directory form the 043/044 tolerate sets rely on is preserved. A rename/copy
+    entry (status ``R``/``C``) emits its original path as the following NUL
+    field; that paired field is consumed so it is never mis-parsed as its own
+    entry (a rename is a tracked change and blocks regardless).
 
     Returns:
         A ``(blocking_findings, exceptions)`` pair. ``blocking_findings`` is a
@@ -174,7 +198,7 @@ def collect_git_clean_state_findings(
         ``schema/preflight_verdict.schema.json``'s intentionally open
         ``exceptions[]`` item shape.
     """
-    result = run_git(repo_root, "status", "--porcelain=v1")
+    result = run_git(repo_root, "status", "--porcelain=v1", "-z")
     if result.returncode != 0:
         return (
             [
@@ -185,13 +209,22 @@ def collect_git_clean_state_findings(
         )
 
     tolerated = set(tolerated_untracked_paths)
+    prefixes = tuple(tolerated_untracked_prefixes)
     blocking_findings: list[str] = []
     exceptions: list[dict[str, str]] = []
 
-    for line in result.stdout.splitlines():
-        if not line:
+    entries = result.stdout.split("\0")
+    index = 0
+    while index < len(entries):
+        entry = entries[index]
+        index += 1
+        if not entry:
             continue
-        status_code, repo_relative_path = line[:2], line[3:]
+        status_code, repo_relative_path = entry[:2], entry[3:]
+        # porcelain -z renames/copies emit the ORIGINAL path as the next NUL
+        # field; consume it so it is never read as a spurious bare entry.
+        if status_code and status_code[0] in ("R", "C"):
+            index += 1
         if status_code == "??":
             if repo_relative_path in tolerated:
                 exceptions.append(
@@ -200,6 +233,17 @@ def collect_git_clean_state_findings(
                         "path": repo_relative_path,
                         "message": (
                             "declared-tolerated untracked file present: "
+                            f"{repo_relative_path}"
+                        ),
+                    }
+                )
+            elif any(repo_relative_path.startswith(prefix) for prefix in prefixes):
+                exceptions.append(
+                    {
+                        "kind": "declared_tolerated_untracked_prefix",
+                        "path": repo_relative_path,
+                        "message": (
+                            "untracked file under a declared-tolerated prefix: "
                             f"{repo_relative_path}"
                         ),
                     }
@@ -217,18 +261,47 @@ def collect_git_clean_state_findings(
 
 
 def collect_required_reference_findings(repo_root: str) -> list[str]:
-    """Return one blocking finding for each required schema path that is missing.
+    """Return one blocking finding for each required schema path not resolvable.
 
     Implements ecosystem/01_clean_state_preflight.md Sec 4 bullet 2: a
     required evidence/reference path that is missing, unreadable, or does not
     resolve to an existing path is its own blocking finding. This minimum CLI
     requires the two schemas its own output must validate against.
+
+    NDEBT-021.2: a required reference must resolve to a READABLE REGULAR FILE.
+    The former ``os.path.exists`` accepted a *directory* sitting at the path
+    (e.g. a stray ``schema/preflight_verdict.schema.json/`` directory), which is
+    not a usable schema; ``os.path.isfile`` plus an ``os.access`` read-permission
+    probe rejects both a directory and an unreadable file, so a non-file at a
+    required path is correctly blocking rather than silently accepted.
     """
-    return [
-        f"required reference missing or unreadable: {relative_path}"
-        for relative_path in REQUIRED_REFERENCE_PATHS
-        if not os.path.exists(os.path.join(repo_root, relative_path))
-    ]
+    findings: list[str] = []
+    for relative_path in REQUIRED_REFERENCE_PATHS:
+        absolute_path = os.path.join(repo_root, relative_path)
+        if not (os.path.isfile(absolute_path) and os.access(absolute_path, os.R_OK)):
+            findings.append(f"required reference missing or unreadable: {relative_path}")
+    return findings
+
+
+def collect_head_resolution_findings(repo_root: str) -> list[str]:
+    """Return a blocking finding if ``repo_root``'s git HEAD does not resolve.
+
+    NDEBT-021.2: an unresolved HEAD (e.g. an unborn repository with zero
+    commits) previously slipped through silently -- ``resolve_head_revision``
+    falls back to the literal string ``"unknown"`` and the baseline was
+    synthesized anchored to that non-revision. A baseline anchored to an
+    unresolvable revision is not a valid baseline, so an unresolved HEAD is
+    surfaced here as its own blocking finding; ``resolve_head_revision``'s
+    ``"unknown"`` fallback is thereby unreachable on the non-blocking path and
+    remains only as a defensive backstop.
+    """
+    result = run_git(repo_root, "rev-parse", "HEAD")
+    if result.returncode != 0:
+        return [
+            "required reference does not resolve: git HEAD does not resolve "
+            f"({result.stderr.strip()})"
+        ]
+    return []
 
 
 def resolve_head_revision(repo_root: str) -> str:
@@ -245,8 +318,80 @@ def resolve_head_revision(repo_root: str) -> str:
     return result.stdout.strip()
 
 
+def find_repository_revision_inconsistencies(document: dict[str, object]) -> list[str]:
+    """Return same-repository revision-inconsistency messages for a baseline.
+
+    NDEBT-023 / ecosystem/02_evidence_baseline.md Sec 4: a baseline MUST NOT
+    declare inconsistent revisions for the same repository. Checked within
+    ``repository_references``: all entries sharing the same explicit
+    ``repository`` identifier MUST declare the same ``revision``. Revisions are
+    compared only among entries KNOWN to be the same repository (by the explicit
+    key), so distinct repositories at distinct revisions -- and the
+    ``dependency_references`` tool-version "revision", never grouped here at all
+    -- can never trigger a false positive. The rule is a relational cross-item
+    constraint not cleanly expressible in JSON Schema, so it is enforced here
+    (and mirrored in ``tools/validate.sh``'s C12) rather than in the schema.
+    """
+    revisions_by_repository: dict[str, set[str]] = {}
+    references = document.get("repository_references", [])
+    if isinstance(references, list):
+        for item in references:
+            if not isinstance(item, dict):
+                continue
+            repository = item.get("repository")
+            revision = item.get("revision")
+            if not isinstance(repository, str) or not isinstance(revision, str):
+                continue
+            revisions_by_repository.setdefault(repository, set()).add(revision)
+    return [
+        f"repository '{repository}' declares inconsistent revisions across "
+        f"repository_references: {sorted(revisions)}"
+        for repository, revisions in sorted(revisions_by_repository.items())
+        if len(revisions) > 1
+    ]
+
+
+def load_ci_reference(path: str) -> dict[str, object]:
+    """Load and validate a caller-supplied CI-run reference (``--ci-run-file``).
+
+    NDEBT-017: the tool itself performs no CI lookup (no network call); a caller
+    or orchestrator that has already resolved a real CI run supplies it here.
+    The file MUST parse to a JSON object carrying at least a non-empty
+    ``revision`` and ``timestamp`` (the baseline reference-item contract,
+    ``schema/ecosystem_baseline.schema.json`` Sec 4); any other fields (system,
+    conclusion, url, ...) are preserved verbatim. A missing file, unparseable
+    JSON, a non-object, or a missing required key is a usage error (exit 64),
+    never a silently fabricated reference.
+
+    Raises:
+        PreflightUsageError: on an unreadable file, invalid JSON, a non-object,
+            or a missing/empty required key.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            reference = json.load(handle)
+    except OSError as error:
+        raise PreflightUsageError(f"--ci-run-file could not be read: {error}")
+    except json.JSONDecodeError as error:
+        raise PreflightUsageError(f"--ci-run-file is not valid JSON: {error}")
+    if not isinstance(reference, dict):
+        raise PreflightUsageError("--ci-run-file must contain a JSON object")
+    for required_key in ("revision", "timestamp"):
+        value = reference.get(required_key)
+        if not isinstance(value, str) or not value:
+            raise PreflightUsageError(
+                f"--ci-run-file object is missing a non-empty '{required_key}' "
+                "(a CI reference must be anchored to a revision and timestamp)"
+            )
+    return reference
+
+
 def build_baseline_document(
-    execution_id: str, repo_root: str, output_dir: str, captured_at: str
+    execution_id: str,
+    repo_root: str,
+    output_dir: str,
+    captured_at: str,
+    ci_reference: dict[str, object] | None = None,
 ) -> dict[str, object]:
     """Synthesize a schema-valid baseline document anchored to real, observed state.
 
@@ -262,20 +407,43 @@ def build_baseline_document(
     - ``dependency_references`` anchors to this CLI's own Python runtime
       version, the one real, inspectable tooling dependency the deterministic
       collection itself relies on.
-    - ``ci_references`` anchors to the same HEAD revision, carrying an
-      explicit, honest ``note`` documenting the known limitation that this
-      minimum CLI does not resolve a real CI run (a documented limitation,
-      never a fabricated "verified" claim).
+    - ``ci_references``: when ``ci_reference`` is supplied (``--ci-run-file``,
+      NDEBT-017) it is used verbatim (already validated to carry revision +
+      timestamp), tagged with a ``source`` marker; otherwise it anchors to the
+      HEAD revision with an explicit, honest ``note`` documenting that this
+      minimum CLI resolves no real CI run itself -- a documented limitation,
+      never a fabricated "verified" claim.
     - ``planning_references`` anchors to ``docs/planning/manifest.json``'s
       path at the same HEAD revision.
     - ``evidence_references`` anchors to this run's own collection-log.txt
       evidence file under ``output_dir``.
+
+    Raises:
+        RuntimeError: if the synthesized document declares inconsistent
+            revisions for the same repository (NDEBT-023). The self-fixture path
+            anchors every reference to one HEAD and never triggers it; the guard
+            is a defensive invariant for a future multi-repository extension.
     """
     head_revision = resolve_head_revision(repo_root)
     repository_name = os.path.basename(os.path.abspath(repo_root))
     evidence_log_path = os.path.join(output_dir, "collection-log.txt")
 
-    return {
+    if ci_reference is not None:
+        ci_entry: dict[str, object] = dict(ci_reference)
+        ci_entry.setdefault("source", "caller-supplied (--ci-run-file)")
+    else:
+        ci_entry = {
+            "revision": head_revision,
+            "timestamp": captured_at,
+            "system": "self-fixture (no externally-verified CI run available)",
+            "note": (
+                "KNOWN LIMITATION: this minimum-viable CLI does not itself resolve "
+                "a real CI run; supply --ci-run-file with a caller-resolved CI "
+                "reference to anchor this field (NDEBT-017)."
+            ),
+        }
+
+    document: dict[str, object] = {
         "execution_id": execution_id,
         "captured_at": captured_at,
         "framework_references": [
@@ -295,17 +463,7 @@ def build_baseline_document(
                 "dependency": "python3 runtime (this CLI's own deterministic-collection dependency)",
             }
         ],
-        "ci_references": [
-            {
-                "revision": head_revision,
-                "timestamp": captured_at,
-                "system": "self-fixture (no externally-verified CI run available)",
-                "note": (
-                    "KNOWN LIMITATION: this minimum-viable CLI does not yet resolve a "
-                    "real CI run; see the feature 041 contract's non_goals."
-                ),
-            }
-        ],
+        "ci_references": [ci_entry],
         "planning_references": [
             {"revision": head_revision, "timestamp": captured_at, "path": "docs/planning/manifest.json"}
         ],
@@ -314,12 +472,46 @@ def build_baseline_document(
         ],
     }
 
+    inconsistencies = find_repository_revision_inconsistencies(document)
+    if inconsistencies:
+        raise RuntimeError(
+            "internal invariant violated -- the synthesized baseline declares "
+            "inconsistent same-repository revisions (NDEBT-023): "
+            + "; ".join(inconsistencies)
+        )
+    return document
+
 
 def write_json_document(path: str, document: dict[str, object]) -> None:
     """Write ``document`` to ``path`` as indented JSON with a trailing newline."""
     with open(path, "w", encoding="utf-8") as handle:
         json.dump(document, handle, indent=2)
         handle.write("\n")
+
+
+STALE_OUTPUT_ARTIFACTS: tuple[str, ...] = (
+    "preflight.json",
+    "preflight.pending.json",
+    "baseline.json",
+)
+
+
+def clean_output_dir(output_dir: str) -> None:
+    """Remove any stale verdict/baseline artifacts from a reused output dir.
+
+    NDEBT-021.4: a reused ``--output-dir`` could otherwise retain a prior run's
+    ``preflight.json`` / ``preflight.pending.json`` / ``baseline.json`` alongside
+    this run's, producing a contradictory mix -- e.g. a FAIL ``preflight.json``
+    next to a stale PASS-run ``baseline.json``, or an approved ``preflight.json``
+    next to a stale ``preflight.pending.json``. Each run pre-cleans exactly the
+    three artifact names it may write, so the directory reflects only the current
+    run. Nothing else in the directory is touched (evidence logs and any
+    caller-supplied files are left intact).
+    """
+    for artifact_name in STALE_OUTPUT_ARTIFACTS:
+        artifact_path = os.path.join(output_dir, artifact_name)
+        if os.path.isfile(artifact_path):
+            os.remove(artifact_path)
 
 
 def write_collection_log(
@@ -366,8 +558,14 @@ def build_argument_parser() -> _UsageErrorArgumentParser:
     )
     parser.add_argument(
         "--repo-root",
-        default=".",
-        help="The git working tree to inspect (default: the current directory).",
+        default=None,
+        help=(
+            "The git working tree to inspect. Defaults to the current directory, "
+            "UNLESS --self-fixture is given with no explicit --repo-root, in which "
+            "case it auto-resolves to this script's own repository. An explicit "
+            "'.' is honored even under --self-fixture (NDEBT-021.3: the former "
+            "default='.' made an explicit '.' indistinguishable from the default)."
+        ),
     )
     parser.add_argument(
         "--self-fixture",
@@ -384,7 +582,35 @@ def build_argument_parser() -> _UsageErrorArgumentParser:
         metavar="PATH",
         help=(
             "A repo-relative path of an untracked file the operator has "
-            "explicitly declared tolerated. Repeatable."
+            "explicitly declared tolerated (EXACT match, including git's "
+            "collapsed 'dir/' entry for an entirely-untracked directory). "
+            "Repeatable."
+        ),
+    )
+    parser.add_argument(
+        "--tolerate-untracked-prefix",
+        action="append",
+        default=[],
+        metavar="PREFIX",
+        help=(
+            "A repo-relative path PREFIX; any untracked file whose path begins "
+            "with it is declared tolerated (surfaced as a non-blocking exception "
+            "of kind declared_tolerated_untracked_prefix). Additive to "
+            "--tolerate-untracked's exact-match set; repeatable. Lets a run "
+            "tolerate a whole in-flight artifact directory by one declared prefix "
+            "rather than enumerating each file (NDEBT-018.1)."
+        ),
+    )
+    parser.add_argument(
+        "--ci-run-file",
+        help=(
+            "Path to a JSON file describing a caller-resolved CI run, used to "
+            "anchor the baseline's ci_references instead of the honest "
+            "KNOWN-LIMITATION default. The object MUST carry a non-empty "
+            "'revision' and 'timestamp' (the baseline reference-item contract); "
+            "other fields (system, conclusion, url, ...) pass through. The tool "
+            "performs no network call -- the caller/orchestrator, which already "
+            "resolves CI runs, supplies the reference (NDEBT-017)."
         ),
     )
     parser.add_argument(
@@ -412,21 +638,25 @@ def main(argv: Sequence[str]) -> int:
         return EXIT_USAGE_ERROR
 
     try:
-        repo_root = args.repo_root
-        if args.self_fixture and args.repo_root == ".":
+        if args.self_fixture and args.repo_root is None:
             repo_root = resolve_self_fixture_repo_root(__file__)
+        else:
+            repo_root = args.repo_root if args.repo_root is not None else "."
         repo_root = os.path.abspath(repo_root)
+        ci_reference = load_ci_reference(args.ci_run_file) if args.ci_run_file else None
     except PreflightUsageError as usage_error:
         print(f"usage error: {usage_error}", file=sys.stderr)
         return EXIT_USAGE_ERROR
 
     os.makedirs(args.output_dir, exist_ok=True)
+    clean_output_dir(args.output_dir)
     captured_at = format_iso8601(read_utc_now())
 
     blocking_findings, exceptions = collect_git_clean_state_findings(
-        repo_root, args.tolerate_untracked
+        repo_root, args.tolerate_untracked, args.tolerate_untracked_prefix
     )
     blocking_findings += collect_required_reference_findings(repo_root)
+    blocking_findings += collect_head_resolution_findings(repo_root)
 
     write_collection_log(
         args.output_dir, args.execution_id, repo_root, captured_at, blocking_findings, exceptions
@@ -480,7 +710,9 @@ def main(argv: Sequence[str]) -> int:
         )
         write_json_document(
             os.path.join(args.output_dir, "baseline.json"),
-            build_baseline_document(args.execution_id, repo_root, args.output_dir, captured_at),
+            build_baseline_document(
+                args.execution_id, repo_root, args.output_dir, captured_at, ci_reference
+            ),
         )
         print("PREFLIGHT VERDICT: PASS_WITH_EXCEPTIONS (approved)")
         return EXIT_PASS_WITH_EXCEPTIONS_APPROVED
@@ -491,7 +723,9 @@ def main(argv: Sequence[str]) -> int:
     )
     write_json_document(
         os.path.join(args.output_dir, "baseline.json"),
-        build_baseline_document(args.execution_id, repo_root, args.output_dir, captured_at),
+        build_baseline_document(
+            args.execution_id, repo_root, args.output_dir, captured_at, ci_reference
+        ),
     )
     print("PREFLIGHT VERDICT: PASS")
     return EXIT_PASS
