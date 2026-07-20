@@ -2,12 +2,19 @@
 id: nizam-capability-profiles
 title: "Capability Profile Model"
 description: "Binds agent roles to task types, latency budgets, cost budgets, and safety classes rather than to specific models, enabling eval-gated promotion and fallback."
-version: 0.1.0
+version: 0.2.0
 status: active
+enforcement: partially-enforced
 authoritative_source: standard/capability_profiles.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-20"
+    summary: "Feature 058 (Track 3, gate H-CONSTITUTIONAL): marked partially-enforced -- the five-profile to five-AGF-role correspondence is now mechanized as validate.sh check C15 (vlib_profiles_cover_roles), while the no-hard-coded-models, eval-gated-promotion, and cross-provider-fallback requirements are consumer-aspirational."
 ---
 
 # Capability Profile Model
+
+> **Partially enforced.** The five-profile ↔ five-AGF-role correspondence IS verified by `tools/validate.sh` (check C15). The no-hard-coded-model-names, eval-gated-promotion, and cross-provider-fallback requirements are consumer-aspirational — a consuming repository binds and gates models in its own runtime. Recorded per the Track 3 decision (feature 058).
 
 ## 1. Overview
 

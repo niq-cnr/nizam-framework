@@ -1,0 +1,153 @@
+{
+  "contract_id": "058",
+  "feature_id": "058",
+  "name": "Constitutional layer: mechanize-or-descope decision (Track 3, H-CONSTITUTIONAL)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_006.md",
+  "design_notes": {
+    "what_this_feature_is": "Phase-006 F-058: implement the operator's Track 3 mechanize-or-descope decision, taken per constitutional document (the v0.4.0 NMF-hybrid documentation-only policy surface). The feature IMPLEMENTS the recorded decisions; it does not make them.",
+    "operator_decision_verbatim": "Descope 7 as consumer-aspirational, mechanize the 2 cheap real wins (provenance SHA-pin check + capability-profiles 5↔5 check), then refresh the guide to match. Every first-contact surface becomes honest, and you gain 2 genuine enforcement checks with no vacuous or dormant tests.",
+    "per_document_disposition": {
+      "MECHANIZE (2)": "standard/provenance_policy.md -- mechanize the SHA-pinned-Actions requirement as validate.sh check C14 (a new vlib_workflows_sha_pinned primitive scanning .github/workflows for any uses: ref not pinned to a 40-hex SHA; all current refs already pinned, so it goes green and locks in the convention), mark the attestation/audit-envelope/SLSA requirements consumer-aspirational. standard/capability_profiles.md -- mechanize the 5-profile <-> 5-AGF-role correspondence as check C15 (a new vlib_profiles_cover_roles primitive), mark the no-hard-coded-models / eval-gated-promotion / fallback requirements consumer-aspirational. Each hybrid carries `enforcement: partially-enforced` + a banner naming its enforced check.",
+      "DESCOPE consumer-aspirational (7)": "standard/ci_gates.md (the 10-gate MERGE_READY formula -- this repo ships no app to gate, in-repo mechanization impossible in principle), methodology/05_eval_and_trace.md, methodology/07_eval_gated_promotion.md, standard/mcp_policy.md, standard/permission_classes.md, standard/failure_modes.md, standard/cross_repo_governance.md -- each gets `enforcement: consumer-aspirational` + a body banner. tools/SKILL.md's cross-repo MUST-query line is softened to match cross_repo_governance's descope.",
+      "REFRESH (1)": "docs/guide/index.html -- the standard/ card omitted all 7 constitutional standard/ docs and the methodology card omitted 07/08; the refresh names them and marks the descoped ones consumer-aspirational so the live consumer first-contact surface reflects the outcome. Version anchor stays 0.7.0 (C10).",
+      "NOT selected": "The optional permission_classes credential-policy CI-hygiene proxy was NOT chosen -- the operator authorized exactly the two named mechanize wins."
+    },
+    "honesty_rationale": "The framework's Verifiable-Truth principle: a first-contact surface must not imply enforcement that does not exist. All 9 docs were documentation-only and all are injected into consumer payloads. Descoping marks the 7 unverifiable-in-a-single-repo-framework docs honestly; mechanizing the 2 adds real, cheap, non-vacuous checks (no dormancy: the SHA-pin check runs over real committed workflows, the profile-role check over the two real shipped docs).",
+    "process_honesty": "Single-session collapsed-role execution, disclosed-and-permitted by the AGF Orchestrator clause. The operator's verbatim H-CONSTITUTIONAL decision and the F-056 scope-flag acknowledgment were recorded in run_state BEFORE this implementation (coordination commit 8754465), per the gate-decision-before-acting principle this phase codified (NDEBT-018.2 / ecosystem/01 4.1). Anti-vacuity (E01) and confinement (E11) anchor to the phase base 756a158."
+  },
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "tools/verify_lib.sh",
+        "purpose": "two new vetted primitives: vlib_workflows_sha_pinned (C14), vlib_profiles_cover_roles (C15)."
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "two new default-mode checks C14 (workflow SHA-pin) + C15 (capability-profile <-> AGF-role); SUMMARY 13 -> 15."
+      },
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "standing scratch discrimination for the two new primitives (pinned/complete PASS; unpinned/missing-role FAIL)."
+      },
+      {
+        "path": "standard/provenance_policy.md",
+        "purpose": "MECHANIZE hybrid: enforcement: partially-enforced + banner naming C14; 0.2.0 + change_log."
+      },
+      {
+        "path": "standard/capability_profiles.md",
+        "purpose": "MECHANIZE hybrid: enforcement: partially-enforced + banner naming C15; 0.2.0 + change_log."
+      },
+      {
+        "path": "standard/ci_gates.md",
+        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
+      },
+      {
+        "path": "methodology/05_eval_and_trace.md",
+        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
+      },
+      {
+        "path": "methodology/07_eval_gated_promotion.md",
+        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
+      },
+      {
+        "path": "standard/mcp_policy.md",
+        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
+      },
+      {
+        "path": "standard/permission_classes.md",
+        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
+      },
+      {
+        "path": "standard/failure_modes.md",
+        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
+      },
+      {
+        "path": "standard/cross_repo_governance.md",
+        "purpose": "DESCOPE consumer-aspirational + banner; 0.2.0 + change_log."
+      },
+      {
+        "path": "tools/SKILL.md",
+        "purpose": "soften the cross-repo MUST-query line to match cross_repo_governance's descope."
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "refresh standard/ + methodology/ cards to name the constitutional docs (+ methodology 07/08) and mark descoped ones consumer-aspirational; 0.7.0 anchor unchanged."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "mark Track 3 resolved by feature 058."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "[Unreleased] Added/Changed: the constitutional-layer decision entry."
+      }
+    ]
+  },
+  "non_goals": [
+    "No runtime enforcement of the descoped semantics (RBAC/sandbox/MERGE_READY-gates/eval-thresholds/trace-envelopes/cross-repo-query) -- those are consumer-runtime by the operator's decision; the framework marks them aspirational, it does not simulate them.",
+    "No permission_classes credential-policy CI proxy (not selected by the operator).",
+    "No new schema and no change to the frontmatter schema -- the `enforcement` field rides additionalProperties:true.",
+    "No change to the meaning of any constitutional document beyond adding its enforcement-status marking; the normative bodies are unchanged.",
+    "No v0.8.0 tag -- that is F-059 (H-FRAMEWORK-RELEASE)."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "ANTI-VACUITY (phase base 756a158 = the F-056 merge): at base no constitutional doc carries an `enforcement:` field; validate.sh has neither the C14 workflow-pin nor the C15 profile-role check nor the two new verify_lib primitives; the guide's standard/ card omits the constitutional docs; ROADMAP Track 3 is unresolved; the default sweep was 13 checks.",
+      "command": "set -e\nfor d in standard/ci_gates.md methodology/05_eval_and_trace.md methodology/07_eval_gated_promotion.md standard/mcp_policy.md standard/permission_classes.md standard/failure_modes.md standard/cross_repo_governance.md standard/provenance_policy.md standard/capability_profiles.md; do\n  if git show 756a158:$d | grep -Eq '^enforcement:'; then echo \"VACUITY: $d already has enforcement at base\"; exit 1; fi\ndone\nfor tok in 'vlib_workflows_sha_pinned' 'vlib_profiles_cover_roles' 'check_c14' 'check_c15'; do\n  if git show 756a158:tools/validate.sh | grep -Fq \"$tok\"; then echo \"VACUITY: validate.sh already has $tok\"; exit 1; fi\n  if git show 756a158:tools/verify_lib.sh | grep -Fq \"$tok\"; then echo \"VACUITY: verify_lib already has $tok\"; exit 1; fi\ndone\ngit show 756a158:tools/validate.sh | grep -Fq 'SUMMARY: 13 passed' || git show 756a158:tools/validate.sh | grep -q 'passed'\nif git show 756a158:docs/guide/index.html | grep -Fq 'capability_profiles'; then echo 'VACUITY: guide already lists constitutional docs'; exit 1; fi\necho 'E01 PASS: at base 756a158 no enforcement field, no C14/C15, guide omits constitutional docs, sweep was 13 (anti-vacuity)'"
+    },
+    {
+      "acceptance_test": "NDEBT/PROVENANCE MECHANIZE (C14): the workflow-SHA-pin check FAILs a scratch workflow whose action ref is a tag (not a 40-hex SHA) and PASSes this repo's real .github/workflows (all pinned) -- the vlib_workflows_sha_pinned primitive is load-bearing, not vacuous.",
+      "command": "set -e\nSB=$(mktemp -d)\ncase \"$SB\" in \"\"|\"/\"|\"$PWD\"|\"$PWD\"/*) echo unsafe; exit 1 ;; esac\ntrap 'rm -rf -- \"$SB\"' EXIT\n. tools/verify_lib.sh\nmkdir -p \"$SB/wf\"\nprintf 'jobs:\\n  x:\\n    steps:\\n      - uses: actions/checkout@v4\\n' > \"$SB/wf/bad.yml\"\nset +e; vlib_workflows_sha_pinned \"$SB/wf\" >/dev/null 2>&1; rc=$?; set -e\ntest \"$rc\" -ne 0\nprintf 'jobs:\\n  x:\\n    steps:\\n      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683\\n' > \"$SB/wf/good.yml\" && rm -f \"$SB/wf/bad.yml\"\nset +e; vlib_workflows_sha_pinned \"$SB/wf\" >/dev/null 2>&1; rc2=$?; set -e\ntest \"$rc2\" -eq 0\nset +e; vlib_workflows_sha_pinned .github/workflows >/dev/null 2>&1; rc3=$?; set -e\ntest \"$rc3\" -eq 0\necho 'E02 PASS: SHA-pin primitive FAILs a tag-pinned ref, PASSes a SHA-pinned ref and the real .github/workflows'"
+    },
+    {
+      "acceptance_test": "CAPABILITY-PROFILE MECHANIZE (C15): the profile<->role check PASSes the real standard/capability_profiles.md + standard/AGF.md pair and FAILs when a scratch profiles doc omits a profile identifier (evaluator-adversarial) -- the vlib_profiles_cover_roles primitive is load-bearing.",
+      "command": "set -e\nSB=$(mktemp -d)\ncase \"$SB\" in \"\"|\"/\"|\"$PWD\"|\"$PWD\"/*) echo unsafe; exit 1 ;; esac\ntrap 'rm -rf -- \"$SB\"' EXIT\n. tools/verify_lib.sh\nset +e; vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md >/dev/null 2>&1; rc=$?; set -e\ntest \"$rc\" -eq 0\nprintf 'orchestrator-primary planner-creative generator-deterministic validator-structural\\n' > \"$SB/prof.md\"\ncp standard/AGF.md \"$SB/agf.md\"\nset +e; vlib_profiles_cover_roles \"$SB/prof.md\" \"$SB/agf.md\" >/dev/null 2>&1; rc2=$?; set -e\ntest \"$rc2\" -ne 0\necho 'E03 PASS: profile-role primitive PASSes the real pair, FAILs a profiles doc missing the evaluator-adversarial profile'"
+    },
+    {
+      "acceptance_test": "SWEEP INTEGRATION: the two new checks join the default sweep (C14 workflow-pin, C15 profile-role); the default sweep is now 15/15 and green, and both new [C14]/[C15] verdict lines appear.",
+      "command": "set -e\nout=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0\nprintf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 15 passed, 0 failed'\nprintf '%s\\n' \"$out\" | grep -Fq '[C14]'\nprintf '%s\\n' \"$out\" | grep -Fq '[C15]'\necho 'E04 PASS: default sweep 15/15 with [C14] and [C15] present'"
+    },
+    {
+      "acceptance_test": "PER-DOCUMENT DECIDED STATE (acceptance test 2): each of the 7 descoped docs carries `enforcement: consumer-aspirational` + a body banner; each of the 2 mechanized docs carries `enforcement: partially-enforced` + a banner naming the enforced check.",
+      "command": "set -e\nfor d in standard/ci_gates.md methodology/05_eval_and_trace.md methodology/07_eval_gated_promotion.md standard/mcp_policy.md standard/permission_classes.md standard/failure_modes.md standard/cross_repo_governance.md; do\n  grep -Eq '^enforcement: consumer-aspirational' \"$d\" || { echo \"missing consumer-aspirational: $d\"; exit 1; }\n  grep -Fq 'Consumer-aspirational' \"$d\" || { echo \"missing banner: $d\"; exit 1; }\ndone\nfor d in standard/provenance_policy.md standard/capability_profiles.md; do\n  grep -Eq '^enforcement: partially-enforced' \"$d\" || { echo \"missing partially-enforced: $d\"; exit 1; }\n  grep -Fq 'Partially enforced' \"$d\" || { echo \"missing hybrid banner: $d\"; exit 1; }\ndone\ngrep -Fq 'check C14' standard/provenance_policy.md\ngrep -Fq 'check C15' standard/capability_profiles.md\necho 'E05 PASS: 7 consumer-aspirational + 2 partially-enforced markings and banners present'"
+    },
+    {
+      "acceptance_test": "DOCS VERSIONED (C8): each of the 9 constitutional docs is at 0.2.0 with a matching change_log entry, so C8 (version-bump-vs-changelog) stays green.",
+      "command": "set -e\nfor d in standard/ci_gates.md methodology/05_eval_and_trace.md methodology/07_eval_gated_promotion.md standard/mcp_policy.md standard/permission_classes.md standard/failure_modes.md standard/cross_repo_governance.md standard/provenance_policy.md standard/capability_profiles.md; do\n  awk 'c<2{print} /^---/{c++}' \"$d\" | grep -Eq '^version: 0.2.0' || { echo \"not 0.2.0: $d\"; exit 1; }\n  awk 'c<2{print} /^---/{c++}' \"$d\" | grep -Fq '\"0.2.0\"' || { echo \"no change_log 0.2.0: $d\"; exit 1; }\ndone\necho 'E06 PASS: all 9 docs at 0.2.0 with a matching change_log entry'"
+    },
+    {
+      "acceptance_test": "SKILL.md SOFTENED: tools/SKILL.md no longer asserts the cross-repo query as an unconditional operative MUST; it points at the now-consumer-aspirational standard/cross_repo_governance.md honestly.",
+      "command": "set -e\ngrep -Fq 'cross_repo_governance.md' tools/SKILL.md\ngrep -Eiq 'consumer-aspirational|aspirational|when operating across repositories|in an ecosystem deployment' tools/SKILL.md\nif git show 756a158:tools/SKILL.md | grep -Fq 'the runtime MUST read the strategy repository'; then git diff 756a158..HEAD -- tools/SKILL.md | grep -q '^-.*MUST read the strategy repository'; fi\necho 'E07 PASS: SKILL.md cross-repo line softened to match the descope'"
+    },
+    {
+      "acceptance_test": "GUIDE REFRESHED (acceptance test 2, 'the guide reflects the outcome'): docs/guide/index.html now names the constitutional standard/ docs and methodology 07/08, and marks the descoped ones consumer-aspirational; the version anchor stays 0.7.0 (C10 green).",
+      "command": "set -e\nfor tok in capability_profiles ci_gates mcp_policy failure_modes provenance_policy permission_classes cross_repo_governance; do\n  grep -Fq \"$tok\" docs/guide/index.html || { echo \"guide missing $tok\"; exit 1; }\ndone\ngrep -Fq '07_eval_gated_promotion' docs/guide/index.html\ngrep -Fiq 'consumer-aspirational' docs/guide/index.html\ngrep -Fq '0.7.0' docs/guide/index.html\necho 'E08 PASS: guide names the constitutional docs + methodology 07/08, marks descoped ones aspirational, 0.7.0 anchor intact'"
+    },
+    {
+      "acceptance_test": "DECISION RECORDED (acceptance test 1): ROADMAP Track 3 is marked resolved by feature 058, and the operator's verbatim decision + per-document disposition is recorded in run_state (coordination commit) and this contract.",
+      "command": "set -e\ngrep -Fiq 'resolved' docs/planning/ROADMAP.md\ngrep -Fq 'feature 058' docs/planning/ROADMAP.md\npython3 - <<'PY'\nimport json\nrs = json.load(open('.agent/run_state.json'))\nev = [h for h in rs['history'] if h.get('event') == 'operator_gate_decision' and 'H-CONSTITUTIONAL' in h.get('detail','')]\nassert ev, 'no H-CONSTITUTIONAL gate-decision event in run_state'\nd = ev[-1]['detail']\nassert 'Descope 7 as consumer-aspirational' in d, 'verbatim decision not recorded'\nfor tok in ('provenance_policy','capability_profiles','ci_gates','eval_and_trace','eval_gated_promotion','mcp_policy','permission_classes','failure_modes','cross_repo_governance'):\n    assert tok in d, 'missing per-doc disposition: ' + tok\nprint('run_state records the verbatim decision + all 9 per-document dispositions')\nPY\necho 'E09 PASS: ROADMAP Track 3 resolved; verbatim decision + 9 per-doc dispositions recorded'"
+    },
+    {
+      "acceptance_test": "REGRESSION (rc-captured): default sweep 15/15, payload 11/11, self-test green (2 new primitive tests), e2e green.",
+      "command": "set -e\nout=$(bash tools/validate.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY: 15 passed, 0 failed'\nout=$(bash tools/validate.sh --payload 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fxq 'SUMMARY (payload mode): 11 passed, 0 failed'\nout=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; test $rc -eq 0; printf '%s\\n' \"$out\" | tail -1 | grep -Fq 'SELF-TEST OK'\nbash tools/e2e_bootstrap_test.sh >/dev/null 2>&1\necho 'E10 PASS: sweep 15/15, payload 11/11, self-test OK, e2e green (rc=0 each)'"
+    },
+    {
+      "acceptance_test": "DELIVERABLE CONFINEMENT: the non-.agent changes across the branch (base 756a158..HEAD) are exactly the contracted deliverable files.",
+      "command": "set -e\nchanged=$(git diff --name-only 756a158..HEAD | grep -v '^\\.agent/' | LC_ALL=C sort | tr '\\n' ' ')\nexpected='CHANGELOG.md docs/guide/index.html docs/planning/ROADMAP.md methodology/05_eval_and_trace.md methodology/07_eval_gated_promotion.md standard/capability_profiles.md standard/ci_gates.md standard/cross_repo_governance.md standard/failure_modes.md standard/mcp_policy.md standard/permission_classes.md standard/provenance_policy.md tools/SKILL.md tools/fixtures_self_test.sh tools/validate.sh tools/verify_lib.sh '\ntest \"$changed\" = \"$expected\"\necho 'E11 PASS: non-.agent changes are exactly the 16 contracted files'"
+    },
+    {
+      "acceptance_test": "CHANGELOG: [Unreleased] names the constitutional-layer decision (feature 058).",
+      "command": "set -e\nsed -n '/## \\[Unreleased\\]/,/## \\[0.7.0\\]/p' CHANGELOG.md | grep -Fiq 'constitutional'\necho 'E12 PASS: CHANGELOG names the constitutional-layer decision'"
+    }
+  ],
+  "estimated_lines": 180,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Each verification command's captured output is in .agent/evidence/058-verify-NN.txt, plus the consolidated .agent/evidence/058/verification.txt and 058/diff.patch (git diff 756a158..HEAD). Commands run from the repo root; anti-vacuity (E01) and confinement (E11) anchor to the phase base 756a158 (the F-056 merge), since the coordination commit 8754465 recording the operator decision sits between the base and this deliverable. Probes use mktemp -d scratch (methodology/02 Sec 11); expected-FAIL primitive calls capture rc explicitly (Sec 10(e)/NDEBT-019).",
+  "approvals": {
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Operator-gated feature (H-CONSTITUTIONAL). The per-document decision was operator-authorized verbatim (recorded in run_state coordination commit 8754465 and design_notes.operator_decision_verbatim). The suite executes live with captured evidence; QA record .agent/qa/058.json documents the independent re-run."
+  }
+}

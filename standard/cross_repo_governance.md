@@ -2,12 +2,19 @@
 id: nizam-cross-repo-governance
 title: "Cross-Repository Intelligence"
 description: "The executable truth layer, the cross-repo query protocol, and the seven-tier architecture model for ecosystem-scale governance."
-version: 0.1.0
+version: 0.2.0
 status: active
+enforcement: consumer-aspirational
 authoritative_source: standard/cross_repo_governance.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-20"
+    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
 ---
 
 # Cross-Repository Intelligence
+
+> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
 
 ## 1. Overview
 

@@ -523,6 +523,14 @@
         <p>Key documents: <code>standard/NDS.md</code>, <code>standard/GIP.md</code>,
         <code>standard/AGF.md</code>, <code>standard/anti_hallucination.md</code>,
         <code>standard/README.md</code>.</p>
+        <p>Constitutional policy surface (the v0.4.0 NMF-hybrid layer): <code>standard/capability_profiles.md</code>
+        and <code>standard/provenance_policy.md</code> are <em>partially enforced</em> &mdash; their
+        capability-profile&#8596;role correspondence and SHA-pinned-Actions rule are verified by
+        <code>tools/validate.sh</code> (checks C15 and C14) &mdash; while <code>standard/ci_gates.md</code>,
+        <code>standard/mcp_policy.md</code>, <code>standard/permission_classes.md</code>,
+        <code>standard/failure_modes.md</code>, and <code>standard/cross_repo_governance.md</code> are marked
+        <em>consumer-aspirational</em>: a consuming repository enforces them in its own runtime and CI (Track 3
+        decision, feature 058).</p>
       </article>
       <article class="card">
         <h3><code>methodology/</code></h3>
@@ -533,7 +541,12 @@
         <code>methodology/03_circuit_breaker.md</code>,
         <code>methodology/04_tool_driven_state.md</code>,
         <code>methodology/05_eval_and_trace.md</code>,
-        <code>methodology/06_release_train.md</code>.</p>
+        <code>methodology/06_release_train.md</code>,
+        <code>methodology/07_eval_gated_promotion.md</code>,
+        <code>methodology/08_cross_repo_dependency_gate.md</code>.</p>
+        <p><code>methodology/05_eval_and_trace.md</code> and <code>methodology/07_eval_gated_promotion.md</code>
+        are <em>consumer-aspirational</em> (Track 3, feature 058): the framework defines the trace-envelope and
+        eval-gated-promotion requirements, but a consumer's runtime emits the traces and gates on the evals.</p>
       </article>
       <article class="card">
         <h3><code>registry/</code></h3>

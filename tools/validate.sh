@@ -1916,6 +1916,42 @@ PY
   esac
 }
 
+# C14 -- workflow SHA-pin integrity (feature 058, Track 3 provenance mechanize).
+# Every third-party GitHub Actions `uses:` ref in .github/workflows/ MUST be
+# pinned to a full 40-hex commit SHA, not a mutable tag/branch. Mechanizes the
+# SHA-pinning requirement of standard/provenance_policy.md via the vetted
+# vlib_workflows_sha_pinned primitive (which fails a vanished/empty workflow dir,
+# so the check cannot go vacuous). Default-mode only: .github/ is
+# framework-envelope, never part of a bootstrap-injected consumer payload.
+check_c14_workflow_pins() {
+  local out
+  if out=$(vlib_workflows_sha_pinned .github/workflows 2>&1); then
+    echo "[C14] PASS workflow-sha-pins"
+    return 0
+  fi
+  echo "[C14] FAIL workflow-sha-pins"
+  printf '%s\n' "${out}" | sed 's/^/  /'
+  return 1
+}
+
+# C15 -- capability-profile <-> AGF-role correspondence (feature 058, Track 3
+# capability-profile mechanize). Each of the five capability profiles
+# (standard/capability_profiles.md) maps to a role defined in standard/AGF.md;
+# the vetted vlib_profiles_cover_roles primitive guards the 5<->5 correspondence
+# feature 053 made true (NDEBT-010) against drift (a dropped profile or role
+# fails it). Default-mode only: a framework-authoring invariant the consumer
+# inherits already-verified.
+check_c15_capability_profile_roles() {
+  local out
+  if out=$(vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md 2>&1); then
+    echo "[C15] PASS capability-profile-roles"
+    return 0
+  fi
+  echo "[C15] FAIL capability-profile-roles"
+  printf '%s\n' "${out}" | sed 's/^/  /'
+  return 1
+}
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -2056,6 +2092,8 @@ main() {
     check_c11_dogfood_sweep && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c12_ecosystem_fixtures && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c13_skill_index && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c14_workflow_pins && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c15_capability_profile_roles && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY: ${passed} passed, ${failed} failed"
   fi

@@ -2,12 +2,19 @@
 id: nizam-permission-classes
 title: "Permission and Sandbox Policy"
 description: "Deny-by-default role permission classes and Kubernetes RBAC allocations for agentic systems."
-version: 0.1.0
+version: 0.2.0
 status: active
+enforcement: consumer-aspirational
 authoritative_source: standard/permission_classes.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-20"
+    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
 ---
 
 # Permission and Sandbox Policy
+
+> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
 
 ## 1. Overview
 

@@ -67,7 +67,7 @@ The full statement of this discipline lives in
 `methodology/04_tool_driven_state.md` (DD-1 and DD-3); this section only
 summarizes it for the runtime's first action.
 
-**Cross-Repo Intelligence (NMF Hybrid)**: Before acting in a repository, the runtime MUST read the strategy repository's `SCOPE.md`, the local `ECOSYSTEM.json`, and relevant ADRs per `standard/cross_repo_governance.md`.
+**Cross-Repo Intelligence (NMF Hybrid)**: When operating across repositories in an ecosystem deployment, the runtime reads the strategy repository's `SCOPE.md`, the local `ECOSYSTEM.json`, and relevant ADRs per `standard/cross_repo_governance.md` — a consumer-aspirational protocol this framework ships as reference and does not itself enforce (the framework is deliberately outside any ecosystem scope; Track 3 decision, feature 058).
 
 ## 3. The Execution Loop Summary
 

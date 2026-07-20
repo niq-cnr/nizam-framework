@@ -2,12 +2,19 @@
 id: nizam-eval-and-trace
 title: "Eval and Trace Infrastructure"
 description: "The verification hierarchy, trace capture requirements, and role-specific eval suites that guarantee quality as models and prompts change."
-version: 0.1.0
+version: 0.2.0
 status: active
+enforcement: consumer-aspirational
 authoritative_source: methodology/05_eval_and_trace.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-20"
+    summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
 ---
 
 # Eval and Trace Infrastructure
+
+> **Consumer-aspirational.** A reference standard a consuming repository enforces in its own runtime and CI; this framework's validator does not verify these semantics. Recorded per the Track 3 mechanize-or-descope decision (feature 058).
 
 ## 1. Overview
 
