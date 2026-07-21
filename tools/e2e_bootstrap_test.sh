@@ -444,11 +444,17 @@ assert_preflight_governance_root() {
     rc=$?
   fi
   rm -rf -- "${out}"
-  if [ "${rc}" -eq 1 ]; then
-    echo "assert_preflight_governance_root: FAIL -- a real bootstrapped consumer hard-FAILed(1) Preflight; governance-root discovery did not resolve the injected .nizam/ (feature 065 / ADR-004 regression)"
+  # The injected (untracked) .nizam/ must always surface as an expected exception,
+  # so the ONLY valid outcomes are PASS_WITH_EXCEPTIONS -- exit 2 (pending) or 3
+  # (operator-approved). Anything else is a regression: 1 = the pre-065 hard FAIL,
+  # 0 = the injected payload was NOT surfaced as an exception, 64 = a CLI usage
+  # error from a future change, etc. -- all must fail this, the only assertion that
+  # exercises ecosystem_preflight.py against a genuinely bootstrap-produced .nizam/.
+  if [ "${rc}" -ne 2 ] && [ "${rc}" -ne 3 ]; then
+    echo "assert_preflight_governance_root: FAIL -- expected exit 2 (pending) or 3 (approved) against a bootstrapped consumer, got ${rc}; governance-root discovery did not resolve the injected .nizam/ as an expected exception (feature 065 / ADR-004 regression)"
     return 1
   fi
-  echo "assert_preflight_governance_root: OK -- ecosystem_preflight.py discovered the injected .nizam/ governance-root (exit ${rc}: no hard FAIL; the injected payload is an expected exception, required references resolve under .nizam/)."
+  echo "assert_preflight_governance_root: OK -- ecosystem_preflight.py discovered the injected .nizam/ governance-root (exit ${rc}: PASS_WITH_EXCEPTIONS; the injected payload is an expected exception, required references resolve under .nizam/)."
   return 0
 }
 
