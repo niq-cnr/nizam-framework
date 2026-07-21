@@ -20,14 +20,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   and `docs/planning/manifest.json` record the proposal (pending/proposed); it awaits activation
   gate `H-PHASE-008` and is not yet active.
 - **`docs/nips/NIP-0002-zero-to-n-project-spectrum.md`** — a framework-capability
-  proposal (status **Proposed**, awaiting operator gate H-NIP) that the Ecosystem
-  Engineering Cycle explicitly span an ecosystem of **0 to n projects**: 0 (greenfield
-  genesis — a new project from nothing), 1 (a single project, greenfield or brownfield),
-  and n (many associated repositories). Defines the ecosystem-membership/scope registry
-  (reusing `registry/scope_definition_patterns.md`'s `in_scope`/`incubating` partitions)
-  as the artifact that sets `n`, refines NIP-0001's "multi-repository" framing to be
-  explicit about project count, and lays out a staged, evidence-led realization. On
-  acceptance it becomes the plan of record for phase 008. Authored on the operator's
+  proposal (added at status Proposed; subsequently **Accepted** via gate H-NIP — see
+  the Changed entry below) that the Ecosystem Engineering Cycle explicitly span an
+  ecosystem of **0 to n projects**: 0 (greenfield genesis — a new project from nothing),
+  1 (a single project, greenfield or brownfield), and n (many associated repositories).
+  Defines the ecosystem-membership/scope registry (reusing
+  `registry/scope_definition_patterns.md`'s `in_scope`/`incubating` partitions) as the
+  artifact that sets `n`, refines NIP-0001's "multi-repository" framing to be explicit
+  about project count, and lays out a staged, evidence-led realization. On its acceptance
+  it became the plan-of-record selection for phase 008. Authored on the operator's
   2026-07-21 design requirement and the phase-007 pilot evidence.
 - **`docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md`** — the two narrower,
   pilot-proven architecture decisions NIP-0002 spawns (status **Accepted**, implementation

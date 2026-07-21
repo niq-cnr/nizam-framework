@@ -6,11 +6,14 @@ tags: [spec, ecosystem-cycle, consumer-readiness, zero-to-n, bootstrap, provenan
 status: draft
 last_audited: "2026-07-21"
 authoritative_source: NA
-version: 1.0.0
+version: 1.0.1
 spec_version: "1.0.0"
 created_at: "2026-07-21T00:00:00Z"
 updated_at: "2026-07-21T00:00:00Z"
 change_log:
+  - version: "1.0.1"
+    date: "2026-07-21T00:00:00Z"
+    summary: "PR #43 review corrections (proposal still draft, no scope change): F-069 and the Sequencing section reworded from 'author the phase-009 candidate scope' to 'refine/validate' the candidate scope this proposal already wrote into docs/planning/ROADMAP.md; the F-068 brownfield contract sharpened to distinguish file preservation (intact original + deterministic collision-safe renamed copy, per GIP Sec 5.1) from CI merging (added, never replaced); and the FR table header spelling normalised to 'Realized by' to match the document's American 'realize/realization' prose. The mirrored feature_list_008.json acceptance criteria and CHANGELOG NIP-0002 entry were reconciled in the same change."
   - version: "1.0.0"
     date: "2026-07-21T00:00:00Z"
     summary: "Initial phase-008 proposal, authored after PR #42 merged phase 007 to main and the operator accepted NIP-0002 (gate H-NIP, 'NIP-0002 is accepted') — which SELECTS phase 008 as the NIP's realization. Scope sourced from NIP-0002's Staged Realization Stage 1 (Consumer-readiness, the prerequisite for every larger project count) + ADR-004's two accepted decisions + the phase-007 pilot debt (NDEBT-027/028/032/033). Frontmatter status stays draft until operator activation (gate H-PHASE-008) — the 005 lesson: status tracks the decision lifecycle, not anticipates it. No feature may enter contract negotiation before that authorization; current_phase remains 007-consumer-adoption (complete) until then. NIP-0002 Stages 2–4 (0-case greenfield genesis, n-case multi-repo tooling + membership registry, 04/05 coordination protocols) are deferred to phase 009, evidence-gated on this phase's re-pilot."
@@ -62,14 +65,18 @@ This is the same prove-then-build shape phase 007 used.
   `--verify-only` compares the SHA as well as the tag (rejecting a tag that has been moved),
   preserving the existing immutable-ref validation.
 - **068 — Brownfield bootstrap reconciliation** (GIP §5.1; `NDEBT-032`, ex-conditional
-  feature 062). `bootstrap.sh` preserves a pre-existing root-level `CONTEXT.md`/`AGENTS.md`/CI
-  under a renamed path rather than an atomic `.nizam/`-only replace, completing the
-  1-brownfield point of the spectrum.
-- **069 — Re-pilot, prove, prioritise + phase close.** Re-run the full loop against a real,
+  feature 062). Two distinct behaviours per GIP §5.1: (a) *file preservation* — a
+  pre-existing root-level file that collides with an injected artifact (`CONTEXT.md`,
+  `AGENTS.md`) is left intact and also copied to a deterministic, collision-safe renamed
+  destination for hand reconciliation, never overwritten in place; (b) *CI merging* — a
+  consumer's own CI configuration is added to, never replaced. This replaces the current
+  atomic `.nizam/`-only replace and completes the 1-brownfield point of the spectrum.
+- **069 — Re-pilot, prove, refine + phase close.** Re-run the full loop against a real,
   bootstrapped consumer with the fixed tools: a clean Preflight PASS, a correctly
   provenance-anchored baseline, SHA-verified provenance. Record residual friction as
-  `NDEBT-*`, author the phase-009 candidate scope (NIP-0002 Stages 2–4) evidence-prioritised,
-  and close phase 008.
+  `NDEBT-*`, **refine and validate** the phase-009 candidate scope (NIP-0002 Stages 2–4)
+  *this proposal already authored in `docs/planning/ROADMAP.md`* against the re-pilot
+  evidence — confirming or re-ordering it, not re-authoring it — and close phase 008.
 
 ### 2.2 Out of scope (→ phase-009 candidate scope)
 
@@ -98,7 +105,7 @@ adoption, recorded before the bootstrap runs (the NDEBT-018 rule).
 
 ## 4. Functional Requirements
 
-| FR | Requirement | Realised by |
+| FR | Requirement | Realized by |
 |----|-------------|-------------|
 | FR-01 | The ecosystem tools resolve a governance-root and run cleanly against a real bootstrapped consumer: a correct Preflight verdict (not a spurious FAIL from the injected `.nizam/` or framework-root-relative reference paths). | F-065 |
 | FR-02 | A Baseline's `framework_references` records the injected framework pin (from `provenance.json`), not the consumer's HEAD; `repository_references` records the consumer HEAD. | F-066 |
@@ -139,5 +146,7 @@ stay reserved — their protocols remain out of scope.
 `065 → 066 → 067` (the provenance-shape change in 066/067 is coordinated) and `068`
 (independent bootstrap.sh work) run toward `069`, which depends on all four and proves them.
 Features 065–068 can land as a framework-internal PR on activation; 069 re-pilots and closes
-the phase. The 0-case/n-case/04-05 work (Section 2.2) is authored as phase-009 candidate scope
-by F-069 and is not begun in this phase.
+the phase. The 0-case/n-case/04-05 work (Section 2.2) is **already authored** as phase-009
+candidate scope in `docs/planning/ROADMAP.md` by this proposal; F-069 **refines and validates**
+that existing candidate against the re-pilot evidence (it does not re-author it), and no
+Stage-2–4 work is begun in this phase.
