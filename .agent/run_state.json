@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "007-consumer-adoption",
-  "current_feature": "064",
-  "status": "phase_complete",
-  "updated_at": "2026-07-21T06:20:00Z",
+  "current_phase": "008-consumer-readiness",
+  "current_feature": "067",
+  "status": "in_progress",
+  "updated_at": "2026-07-21T11:50:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -892,6 +892,21 @@
       "at": "2026-07-21T06:10:00Z",
       "event": "operator_gate_decision",
       "detail": "H-NIP EXERCISED (second exercise; the first accepted NIP-0001 -> selected phase 005 on 2026-07-17). Operator ACCEPTED docs/nips/NIP-0002-zero-to-n-project-spectrum.md (verbatim: 'NIP-0002 is accepted', controlled session, 2026-07-21). NIP-0002 status draft -> accepted. Acceptance SELECTS phase 008 (The 0-n Project Spectrum) as the NIP's realization \u2014 the evidence-prioritized staged plan: consumer-readiness (ADR-004 fixes, NDEBT-027/028) first, then the 0 greenfield-genesis capability (NDEBT-030), the n multi-repo tool extension + required membership registry (NDEBT-031), then the deferred 04/05 coordination protocols. Per the NIP-0001 -> phase-005 precedent, selection is NOT activation: phase 008 still needs its own Planner artifacts (product_spec_008 + feature_list_008) and an operator activation gate (H-PHASE-008) before feature work begins. current_phase remains 007-consumer-adoption (complete); status remains phase_complete. The pipeline records the acceptance; it does not self-activate the phase."
+    },
+    {
+      "at": "2026-07-21T11:00:00Z",
+      "event": "phase_activated",
+      "detail": "Phase 008-consumer-readiness ACTIVATED on operator authorization. Verbatim: 'Approved. Please proceed' (operator-controlled session, 2026-07-21, given after the phase-008 proposal was authored and merged to main via PR #43 at commit 14d3836), satisfying gate H-PHASE-008 and making phase 008 (0-n Project Spectrum, Stage 1: Consumer-Readiness) the plan of record. This realizes NIP-0002's selection (accepted via H-NIP). current_phase advanced 007-consumer-adoption -> 008-consumer-readiness; current_feature set to 065 (the ungated DAG root); status in_progress. Scope budget reset (1010 est; phase-007 final archived in run_state.phase_007_scope_budget_final). Recorded BEFORE any feature execution, per the NDEBT-018 gate-decision-before-execution rule (mirrors every prior phase_activated). Execution begins with feature 065 (governance-root resolution in tools/ecosystem_preflight.py; ADR-004 decision 1 / NDEBT-027) \u2014 the first real code change of the 0-n programme."
+    },
+    {
+      "at": "2026-07-21T11:30:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 065 (governance-root resolution in tools/ecosystem_preflight.py) COMPLETE. ADR-004 decision 1 / NDEBT-027: the Preflight tool resolves REQUIRED_REFERENCE_PATHS against a governance-root distinct from the repo-root (new --governance-root option; else discovers the injected .nizam/ payload by its NIZAM.json+schema/ markers under --repo-root; else falls back to repo-root for the framework-root/--self-fixture layout, unchanged), and surfaces the injected payload dir as an expected injected_governance_payload exception rather than a blocking untracked finding. Phase-007 pilot finding A is resolved: a clean Preflight against a real bootstrapped consumer is now PASS_WITH_EXCEPTIONS (verified end-to-end against a genuinely bootstrapped .nizam/ consumer), not the prior hard FAIL(3 blocking). New standing coverage: fixtures_self_test.sh governance-root probes (discovery + explicit --governance-root + clean-framework-root regression) and an e2e_bootstrap_test.sh assert_preflight_governance_root case. Full sweep 15/15, self-test 51/51, e2e PASS. Framework-internal, no external repo. Advancing to feature 066 (baseline provenance-pin anchoring, ADR-004 decision 2 / NDEBT-028)."
+    },
+    {
+      "at": "2026-07-21T11:50:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 066 (baseline provenance-pin anchoring in tools/ecosystem_preflight.py) COMPLETE. ADR-004 decision 2 / NDEBT-028: build_baseline_document now anchors framework_references to the injected framework pin read from the governance-root's provenance.json (tag preferred, else framework_version) via a new resolve_framework_pin helper, while repository_references still anchors to the consumer HEAD -- the two categories record two distinct correct facts (which framework vs which consumer revision). Falls back to the historical HEAD-anchored self-referential default when governance_root == repo_root (self-fixture/framework-root) or no readable pin, so self-fixture is unchanged. Phase-007 pilot finding B resolved (verified: a bootstrapped consumer's baseline names v0.8.0 for the framework and the consumer HEAD for the repo, baseline schema-valid). New self-test probe (f) asserts framework-pin != consumer-HEAD and each correct. Full sweep 15/15, self-test 51/51, e2e PASS. Framework-internal. Advancing to feature 067 (bootstrap commit-SHA pinning, NDEBT-033)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1064,43 +1079,22 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 870,
-    "total_lines_changed": 240,
+    "original_estimate_lines": 1010,
+    "total_lines_changed": 375,
     "per_feature": [
       {
-        "id": "060",
-        "estimated": 280,
-        "actual": 208,
+        "id": "065",
+        "estimated": 240,
+        "actual": 256,
         "flag": null,
-        "note": "5 files (git numstat ins+del, deliverable commit): ecosystem/00_ecosystem_bootstrap.md 170 (new), ecosystem/README.md 11+9=20 (00 row Planned->Shipped + prose), CHANGELOG.md 12, tools/skill.json 5 (ecosystem_bootstrap capability), NIZAM.json 1 (ecosystem module file entry) = 208 vs 280 estimated (UNDER, no flag). The Bootstrap protocol wraps GIP + bootstrap.sh rather than restating them, so it landed leaner than estimated. First feature of phase 007; 3x-rolling-average check not computable. Cumulative 208/1131 ceiling (130% of 870)."
+        "note": "tools/ecosystem_preflight.py (governance-root resolution + is_injected_governance_payload/resolve_governance_root helpers + --governance-root arg + injected_governance_payload exception kind + collection-log governance_root line), tools/fixtures_self_test.sh (governance-root probes + clean-framework-root regression probe), tools/e2e_bootstrap_test.sh (assert_preflight_governance_root), CHANGELOG. git numstat ins+del = 256 vs 240 estimated. First feature of phase 008."
       },
       {
-        "id": "061",
-        "estimated": 90,
-        "actual": 32,
+        "id": "066",
+        "estimated": 150,
+        "actual": 119,
         "flag": null,
-        "note": "1 file (git numstat ins+del): docs/planning/operator_gates.md 20+12=32 (0.1.0->0.2.0; H-CONSUMER-UPGRADE moved reserved->defined in Sec 1 with scope/trigger/disposition, Sec 2 reduced five->four, References + Sec 1 title updated) vs 90 estimated (UNDER). Cumulative 240/1131 ceiling (21.2%)."
-      },
-      {
-        "id": "062",
-        "estimated": 210,
-        "actual": 0,
-        "flag": null,
-        "note": "CANCELLED \u2014 the scratch-consumer pilot (063) surfaced no pre-existing root-level file collision, so GIP Sec 5.1 rename-and-diff in bootstrap.sh was not needed. Deferred to a real brownfield consumer, carried as NDEBT-032. Zero actual lines. Its 210-line estimate is retained so the per-feature estimates reconcile to the original_estimate_lines of 870."
-      },
-      {
-        "id": "063",
-        "estimated": 180,
-        "actual": 0,
-        "flag": null,
-        "note": "Pilot executed against an EPHEMERAL scratch consumer (created under the session scratchpad, never pushed); the consumer's artifacts are not committed. Framework-side output is the committed evidence snapshot .agent/evidence/pilot-063/ (findings/preflight/baseline/provenance/audit/delta) + the six NDEBT rows (027-032). Counted as 0 deliverable framework *source* lines by design \u2014 the pilot's product is recorded friction/evidence, not framework code (the fixes are phase-008 scope per ADR-004). Estimate 180 per the feature_list plan."
-      },
-      {
-        "id": "064",
-        "estimated": 110,
-        "actual": 0,
-        "flag": null,
-        "note": "Plan-and-close feature: phase-008 candidate scope in docs/planning/ROADMAP.md + phase-close ledger updates (run_state, manifest, product_spec_007 amendment, ecosystem/00 v0.2.0, NIP-0002, ADR-004, DEBT rows). Planning/governance-record edits folded into the phase-close change. Estimate 110 per the feature_list plan."
+        "note": "tools/ecosystem_preflight.py (resolve_framework_pin helper + build_baseline_document governance_root param + framework_reference anchoring + 2 call sites + docstring), tools/fixtures_self_test.sh (probe f: baseline framework-pin != consumer-HEAD), CHANGELOG. git numstat ins+del vs the 065 commit = 119 vs 150 estimated."
       }
     ]
   },
@@ -1394,5 +1388,46 @@
       }
     ]
   },
-  "blocked_features": []
+  "blocked_features": [],
+  "phase_007_scope_budget_final": {
+    "original_estimate_lines": 870,
+    "total_lines_changed": 240,
+    "per_feature": [
+      {
+        "id": "060",
+        "estimated": 280,
+        "actual": 208,
+        "flag": null,
+        "note": "5 files (git numstat ins+del, deliverable commit): ecosystem/00_ecosystem_bootstrap.md 170 (new), ecosystem/README.md 11+9=20 (00 row Planned->Shipped + prose), CHANGELOG.md 12, tools/skill.json 5 (ecosystem_bootstrap capability), NIZAM.json 1 (ecosystem module file entry) = 208 vs 280 estimated (UNDER, no flag). The Bootstrap protocol wraps GIP + bootstrap.sh rather than restating them, so it landed leaner than estimated. First feature of phase 007; 3x-rolling-average check not computable. Cumulative 208/1131 ceiling (130% of 870)."
+      },
+      {
+        "id": "061",
+        "estimated": 90,
+        "actual": 32,
+        "flag": null,
+        "note": "1 file (git numstat ins+del): docs/planning/operator_gates.md 20+12=32 (0.1.0->0.2.0; H-CONSUMER-UPGRADE moved reserved->defined in Sec 1 with scope/trigger/disposition, Sec 2 reduced five->four, References + Sec 1 title updated) vs 90 estimated (UNDER). Cumulative 240/1131 ceiling (21.2%)."
+      },
+      {
+        "id": "062",
+        "estimated": 210,
+        "actual": 0,
+        "flag": null,
+        "note": "CANCELLED \u2014 the scratch-consumer pilot (063) surfaced no pre-existing root-level file collision, so GIP Sec 5.1 rename-and-diff in bootstrap.sh was not needed. Deferred to a real brownfield consumer, carried as NDEBT-032. Zero actual lines. Its 210-line estimate is retained so the per-feature estimates reconcile to the original_estimate_lines of 870."
+      },
+      {
+        "id": "063",
+        "estimated": 180,
+        "actual": 0,
+        "flag": null,
+        "note": "Pilot executed against an EPHEMERAL scratch consumer (created under the session scratchpad, never pushed); the consumer's artifacts are not committed. Framework-side output is the committed evidence snapshot .agent/evidence/pilot-063/ (findings/preflight/baseline/provenance/audit/delta) + the six NDEBT rows (027-032). Counted as 0 deliverable framework *source* lines by design \u2014 the pilot's product is recorded friction/evidence, not framework code (the fixes are phase-008 scope per ADR-004). Estimate 180 per the feature_list plan."
+      },
+      {
+        "id": "064",
+        "estimated": 110,
+        "actual": 0,
+        "flag": null,
+        "note": "Plan-and-close feature: phase-008 candidate scope in docs/planning/ROADMAP.md + phase-close ledger updates (run_state, manifest, product_spec_007 amendment, ecosystem/00 v0.2.0, NIP-0002, ADR-004, DEBT rows). Planning/governance-record edits folded into the phase-close change. Estimate 110 per the feature_list plan."
+      }
+    ]
+  }
 }

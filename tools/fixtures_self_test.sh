@@ -429,6 +429,11 @@ _preflight_cli_probes() (
   printf '{}' > "${sb}/schema/ecosystem_baseline.schema.json"
   git -C "${sb}" add -A
   git -C "${sb}" commit -qm init
+  # (a0) a clean framework-root-layout tree (schema/ at the repo root, no .nizam/)
+  #      -> PASS (exit 0): governance-root discovery falls back to the repo-root and
+  #      the required references resolve there, unchanged by feature 065.
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  clean framework-root: expected exit 0, got ${rc}"; return 1; }
   printf x > "${sb}/dirty.txt"
   # (a) an untracked-not-tolerated file -> FAIL (exit 1) [the NDEBT-021.5 probe]
   python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
@@ -441,8 +446,68 @@ _preflight_cli_probes() (
   rc=$?; [ "${rc}" -eq 2 ] || { echo "  prefix tolerate: expected exit 2, got ${rc}"; return 1; }
   return 0
 )
+# feature 065 (ADR-004 decision 1; NDEBT-027): a bootstrapped-consumer layout has
+# the governance payload under .nizam/, NOT at the repo root. The tool must (i)
+# resolve the required references against that governance-root and (ii) treat the
+# injected .nizam/ as an expected 'injected_governance_payload' exception, so a
+# clean Preflight against a real consumer is a PASS_WITH_EXCEPTIONS, never the
+# pre-065 hard FAIL(1) on missing references + the untracked .nizam/.
+_preflight_governance_root_probes() (
+  local sb out rc
+  sb=$(mktemp -d) || return 1
+  out=$(mktemp -d) || { rm -rf -- "${sb}"; return 1; }
+  trap 'rm -rf -- "${sb}" "${out}"' EXIT
+  git -C "${sb}" init -q
+  git -C "${sb}" config user.email t@example.invalid
+  git -C "${sb}" config user.name tester
+  mkdir -p "${sb}/src" "${sb}/.nizam/schema"
+  printf 'x' > "${sb}/src/app.txt"
+  printf '{}' > "${sb}/.nizam/schema/preflight_verdict.schema.json"
+  printf '{}' > "${sb}/.nizam/schema/ecosystem_baseline.schema.json"
+  printf '{}' > "${sb}/.nizam/NIZAM.json"
+  printf '{"framework_version":"0.8.0","tag":"v0.8.0","source_url":"file:///fw","installed_at":"t"}' \
+    > "${sb}/.nizam/provenance.json"
+  git -C "${sb}" add src
+  git -C "${sb}" commit -qm init   # .nizam/ left untracked (the injected payload)
+  local consumer_head
+  consumer_head=$(git -C "${sb}" rev-parse HEAD)
+  # (d) discovery: refs resolve under the discovered .nizam/ and the injected
+  #     payload is an expected exception -> PASS_WITH_EXCEPTIONS pending (2), not FAIL(1).
+  python3 tools/ecosystem_preflight.py --execution-id g --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  gov-root discovery: expected exit 2 (not FAIL), got ${rc}"; return 1; }
+  python3 - "${out}/preflight.pending.json" <<'PY' || { echo "  gov-root exception kind wrong"; return 1; }
+import json, sys
+kinds = [e.get("kind") for e in json.load(open(sys.argv[1])).get("exceptions", [])]
+raise SystemExit(0 if kinds == ["injected_governance_payload"] else 1)
+PY
+  # (e) an explicit --governance-root at the payload behaves the same.
+  python3 tools/ecosystem_preflight.py --execution-id g --output-dir "${out}" --repo-root "${sb}" --governance-root "${sb}/.nizam" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  explicit gov-root: expected exit 2, got ${rc}"; return 1; }
+  # (f) feature 066: an operator-approved run captures a baseline whose
+  #     framework_references names the INJECTED PIN (provenance.json tag), while
+  #     repository_references names the consumer HEAD -- two distinct correct facts.
+  python3 tools/ecosystem_preflight.py --execution-id g --output-dir "${out}" --repo-root "${sb}" \
+    --operator-approver t@example.invalid --operator-authorization "self-test 066" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 3 ] || { echo "  baseline pin (approved): expected exit 3, got ${rc}"; return 1; }
+  CONSUMER_HEAD="${consumer_head}" python3 - "${out}/baseline.json" <<'PY' || { echo "  baseline framework-pin anchoring wrong"; return 1; }
+import json, os, sys
+d = json.load(open(sys.argv[1]))
+fr = d["framework_references"][0]["revision"]
+rr = d["repository_references"][0]["revision"]
+ok = fr == "v0.8.0" and rr == os.environ["CONSUMER_HEAD"] and fr != rr
+raise SystemExit(0 if ok else 1)
+PY
+  return 0
+)
+if _preflight_governance_root_probes; then
+  echo "OK   preflight   gov-root: injected .nizam/ discovered -> refs resolve + expected exception -> pending(2), not FAIL"
+else
+  echo "FAIL preflight   a governance-root behavior probe did not hold"
+  fail=1
+fi
+
 if _preflight_cli_probes; then
-  echo "OK   preflight   untracked-not-tolerated -> FAIL(1); exact + prefix tolerate -> pending(2)"
+  echo "OK   preflight   clean framework-root -> PASS(0); untracked-not-tolerated -> FAIL(1); exact + prefix tolerate -> pending(2)"
 else
   echo "FAIL preflight   a CLI behavior probe did not hold"
   fail=1
