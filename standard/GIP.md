@@ -2,10 +2,13 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.4.0
+version: 0.5.0
 status: active
 authoritative_source: standard/GIP.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-07-21"
+    summary: "Phase-008 feature 067 (NDEBT-033): Section 4 (Drift Detection) now treats the resolved commit SHA — not the tag name alone — as the immutable pin. Point 1 (Baseline) records the resolved_sha; a new point 5 (Detecting a moved tag) describes that bootstrap.sh --verify-only requires the recorded commit present and, with --expected-sha, rejects a differing commit (a moved remote tag replaying a different payload); the remediation point renumbers 5 -> 6. Kept in lockstep with bootstrap.sh and ecosystem/00_ecosystem_bootstrap.md Section 7."
   - version: "0.4.0"
     date: "2026-07-19"
     summary: "H-PAYLOAD-CONTRACT (phase-006 feature 051): methodology/ and ecosystem/ joined the bootstrap-injected payload, resolving NDEBT-008 (consumer payloads previously omitted them, so the many tools/skill.json + tools/SKILL.md cross-references into methodology/ -- and the ecosystem/ references added in F-040 -- dangled in a real .nizam/ install). Section 1's Core Directive parenthetical, Section 2 point 2 (the authoritative payload definition), and Section 5.1's injection-scope statement now all name the six-directory payload (standard/, templates/, schema/, tools/, methodology/, ecosystem/) plus NIZAM.json. registry/ and docs/ remain framework-envelope and are still never injected."
@@ -106,8 +109,10 @@ the pinned tag it was sourced from — through local hand-editing, partial re-in
 simple staleness as newer framework tags are released. Drift detection is the periodic
 process of catching this divergence.
 
-1. **Baseline.** The consumer's recorded pinned tag (Section 2, point 4) is the baseline
-   for comparison.
+1. **Baseline.** The consumer's recorded pinned tag (Section 2, point 4) — together with
+   the exact commit that tag resolved to at install (`resolved_sha`, recorded in
+   `provenance.json`) — is the baseline for comparison. The resolved commit, not the tag
+   *name* alone, is the immutable pin.
 2. **Re-verification cadence.** A consumer repository SHOULD re-verify its injected
    governance content against its recorded pinned tag on a regular cadence (for example,
    before each release, or on a scheduled interval), not only at initial bootstrap time.
@@ -119,7 +124,14 @@ process of catching this divergence.
    released since the consumer's recorded pin, the consumer is stale relative to the
    framework's current governance content, even if its own injected copy is internally
    unmodified.
-5. **Remediation: re-bootstrap, don't hand-patch.** The correct remediation for both local
+5. **Detecting a moved tag.** A tag *name* is not immutable — it can be moved on the remote
+   to point at a different commit, replaying a different payload under the same name. The
+   recorded `resolved_sha` catches this: `bootstrap.sh --verify-only` requires the recorded
+   commit to be present, and given a caller-supplied expected commit (`--expected-sha`,
+   resolved out-of-band from the authentic tag) rejects a recorded commit that differs
+   (NDEBT-033). A payload predating this recorded commit has no `resolved_sha` and is itself
+   treated as drift.
+6. **Remediation: re-bootstrap, don't hand-patch.** The correct remediation for both local
    mutation and staleness is to re-run `bootstrap.sh` against the appropriate pinned tag
    (the same tag, to undo local mutation, or a newer tag, to resolve staleness) and let
    the injection overwrite the drifted copy. Hand-patching individual injected files is

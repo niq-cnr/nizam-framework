@@ -72,6 +72,10 @@ GOVERNANCE_REPO_URL="${GOVERNANCE_REPO_URL:-${DEFAULT_GOVERNANCE_REPO_URL}}"
 GOVERNANCE_TAG="${GOVERNANCE_TAG:-}"
 TARGET_DIR="${NIZAM_TARGET_DIR:-${DEFAULT_TARGET_DIR}}"
 VERIFY_ONLY=0
+# Optional caller-supplied expected commit SHA (feature 067, NDEBT-033). When set,
+# --verify-only asserts the recorded provenance resolved_sha equals it, so a moved
+# remote tag replaying a different commit under the same tag name is rejected.
+EXPECTED_SHA="${EXPECTED_SHA:-}"
 
 # Tracked temp/backup paths for the cleanup trap. Cleared once ownership of a
 # directory transfers away from the tracker (e.g. after a successful atomic
@@ -96,8 +100,10 @@ Modes:
   --verify-only      Network-free drift check against an already-injected
                      target directory: confirms the target exists, its
                      NIZAM.json parses, every path it indexes resolves on
-                     disk, and its recorded provenance tag matches the
-                     expected pinned tag. Performs no clone and no write.
+                     disk, its recorded provenance tag matches the expected
+                     pinned tag, and its recorded commit SHA is present (and,
+                     with --expected-sha, matches). Performs no clone and no
+                     write, and never re-resolves the tag itself.
   --help, -h         Print this usage text and exit 0. Network-free.
 
 Options:
@@ -106,11 +112,18 @@ Options:
                      pinned tag -- "", "main", "master", "HEAD", and any
                      "refs/heads/*" reference are all refused.
   --target DIR       Override the injection target directory (default: .nizam).
+  --expected-sha SHA The commit SHA the pinned tag must resolve to. Install
+                     records the tag's resolved commit in provenance.json
+                     (resolved_sha); --verify-only with --expected-sha asserts
+                     the recorded SHA equals it, rejecting a moved remote tag
+                     that replays a different commit under the same tag name
+                     (NDEBT-033). Resolve it out-of-band from the authentic tag.
 
 Environment variables (overridden by the matching flag above when both are given):
   GOVERNANCE_REPO_URL   Source repository of the governance payload.
   GOVERNANCE_TAG        Pinned tag to install or to verify against.
   NIZAM_TARGET_DIR      Injection target directory.
+  EXPECTED_SHA          Expected commit SHA for --verify-only (see --expected-sha).
 
 Exit status:
   0   Success (including --help and a passing --verify-only run).
@@ -211,6 +224,15 @@ parse_args() {
         TARGET_DIR="${1#--target=}"
         shift
         ;;
+      --expected-sha)
+        [ "$#" -ge 2 ] || die "--expected-sha requires an argument."
+        EXPECTED_SHA="$2"
+        shift 2
+        ;;
+      --expected-sha=*)
+        EXPECTED_SHA="${1#--expected-sha=}"
+        shift
+        ;;
       *)
         die "unrecognized argument: $1 (see --help)"
         ;;
@@ -298,22 +320,43 @@ PYEOF
   fi
 }
 
-# Compares provenance.json's recorded tag against the expected pinned tag.
-# A mismatch is drift (standard/GIP.md Section 4): the correct remediation is
+# Compares provenance.json's recorded tag (and its recorded resolved commit SHA)
+# against the expected pinned tag and, when supplied, an expected commit SHA. A
+# mismatch is drift (standard/GIP.md Section 4): the correct remediation is
 # re-running this script against the expected tag, never hand-patching.
-check_provenance_tag() {
+#
+# resolved_sha (feature 067, NDEBT-033) makes the pin an immutable commit, not just
+# a tag NAME: the SHA is always required present (a payload predating this feature
+# has none and is correctly rejected as drift, prompting a re-bootstrap), and when
+# the caller passes an expected SHA (--expected-sha, resolved out-of-band from the
+# authentic tag) it MUST equal the recorded one -- so a moved remote tag replaying a
+# different commit under the same tag name is rejected even though the tag string
+# matches. --verify-only stays network-free: it never re-resolves the tag itself.
+check_provenance_pin() {
   local root="$1"
   local expected_tag="$2"
+  local expected_sha="$3"
   local provenance_path="${root}/provenance.json"
   [ -s "${provenance_path}" ] || die "provenance.json missing or empty under '${root}' -- cannot verify the recorded framework tag."
-  local recorded_tag
+  local recorded_tag recorded_sha
   recorded_tag="$(python3 -c '
 import json, sys
 with open(sys.argv[1], "r", encoding="utf-8") as handle:
     print(json.load(handle).get("tag", ""))
 ' "${provenance_path}")" || die "provenance.json failed to parse under '${root}'."
+  recorded_sha="$(python3 -c '
+import json, sys
+with open(sys.argv[1], "r", encoding="utf-8") as handle:
+    print(json.load(handle).get("resolved_sha", ""))
+' "${provenance_path}")" || die "provenance.json failed to parse under '${root}'."
   if [ "${recorded_tag}" != "${expected_tag}" ]; then
     die "drift detected: provenance.json under '${root}' records tag '${recorded_tag}' but the expected pinned tag is '${expected_tag}' (standard/GIP.md Section 4 -- re-bootstrap against the expected tag; do not hand-patch)."
+  fi
+  if [ -z "${recorded_sha}" ]; then
+    die "provenance.json under '${root}' records no resolved_sha -- it predates the commit-SHA pin (NDEBT-033). Re-bootstrap against tag '${expected_tag}' to record an immutable commit pin (standard/GIP.md Section 4)."
+  fi
+  if [ -n "${expected_sha}" ] && [ "${recorded_sha}" != "${expected_sha}" ]; then
+    die "drift detected: provenance.json under '${root}' records resolved_sha '${recorded_sha}' but the expected commit SHA is '${expected_sha}' -- the tag '${expected_tag}' resolved to a DIFFERENT commit at install time than the one expected now (a moved tag). Re-bootstrap against the authentic tag (standard/GIP.md Section 4)."
   fi
 }
 
@@ -326,8 +369,12 @@ run_verify_only() {
   log "verify-only: checking '${TARGET_DIR}' against pinned tag '${GOVERNANCE_TAG}' (no clone, no network)..."
   check_required_files "${TARGET_DIR}"
   check_nizam_index "${TARGET_DIR}"
-  check_provenance_tag "${TARGET_DIR}" "${GOVERNANCE_TAG}"
-  log "verify-only: PASS -- '${TARGET_DIR}' is present, well-formed, and matches pinned tag '${GOVERNANCE_TAG}'."
+  check_provenance_pin "${TARGET_DIR}" "${GOVERNANCE_TAG}" "${EXPECTED_SHA}"
+  if [ -n "${EXPECTED_SHA}" ]; then
+    log "verify-only: PASS -- '${TARGET_DIR}' is present, well-formed, and matches pinned tag '${GOVERNANCE_TAG}' at commit '${EXPECTED_SHA}'."
+  else
+    log "verify-only: PASS -- '${TARGET_DIR}' is present, well-formed, and matches pinned tag '${GOVERNANCE_TAG}' (recorded commit pin present; pass --expected-sha to also assert the commit)."
+  fi
 }
 
 # Default mode: clone the pinned tag, stage, inject, verify, record
@@ -342,6 +389,16 @@ run_install() {
   log "cloning ${GOVERNANCE_REPO_URL} at pinned tag ${GOVERNANCE_TAG} (--depth 1)..."
   git clone --depth 1 --branch "${GOVERNANCE_TAG}" "${GOVERNANCE_REPO_URL}" "${CLONE_DIR}" \
     || die "git clone of '${GOVERNANCE_REPO_URL}' at tag '${GOVERNANCE_TAG}' failed. Confirm the tag exists and the URL is reachable."
+
+  # Resolve the pinned tag to the exact commit SHA it points at, recorded in
+  # provenance alongside the tag (feature 067, NDEBT-033). The tag NAME alone is
+  # not an immutable pin -- a tag can be moved on the remote to replay a different
+  # payload -- so the resolved commit is the durable anchor a later --verify-only
+  # (with --expected-sha) or an out-of-band audit can compare against.
+  local resolved_sha
+  resolved_sha="$(git -C "${CLONE_DIR}" rev-parse "HEAD^{commit}")" \
+    || die "unable to resolve the commit SHA of tag '${GOVERNANCE_TAG}' in the clone."
+  [ -n "${resolved_sha}" ] || die "resolved an empty commit SHA for tag '${GOVERNANCE_TAG}' -- refusing to record incomplete provenance."
 
   local parent_dir
   parent_dir="$(dirname -- "${TARGET_DIR}")"
@@ -375,15 +432,16 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
   local installed_at
   installed_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-  log "recording provenance (framework_version=${framework_version}, tag=${GOVERNANCE_TAG})..."
+  log "recording provenance (framework_version=${framework_version}, tag=${GOVERNANCE_TAG}, resolved_sha=${resolved_sha})..."
   python3 -c '
 import json, sys
-path, version, tag, source_url, installed_at = sys.argv[1:6]
+path, version, tag, resolved_sha, source_url, installed_at = sys.argv[1:7]
 with open(path, "w", encoding="utf-8") as handle:
     json.dump(
         {
             "framework_version": version,
             "tag": tag,
+            "resolved_sha": resolved_sha,
             "source_url": source_url,
             "installed_at": installed_at,
         },
@@ -391,7 +449,7 @@ with open(path, "w", encoding="utf-8") as handle:
         indent=2,
     )
     handle.write("\n")
-' "${STAGE_DIR}/provenance.json" "${framework_version}" "${GOVERNANCE_TAG}" "${GOVERNANCE_REPO_URL}" "${installed_at}" \
+' "${STAGE_DIR}/provenance.json" "${framework_version}" "${GOVERNANCE_TAG}" "${resolved_sha}" "${GOVERNANCE_REPO_URL}" "${installed_at}" \
     || die "failed to write provenance.json into the staged payload."
 
   if [ -d "${TARGET_DIR}" ]; then
