@@ -69,7 +69,7 @@ as later features land their protocol document.
 
 | # | Bare filename | Lifecycle concern | Status |
 |---|----------------|--------------------|--------|
-| 00 | `00_ecosystem_bootstrap.md` | Bootstrap | Planned |
+| 00 | `00_ecosystem_bootstrap.md` | Bootstrap | Shipped |
 | 01 | `01_clean_state_preflight.md` | Preflight | Shipped |
 | 02 | `02_evidence_baseline.md` | Baseline | Shipped |
 | 03 | `03_engineering_audit.md` | Audit | Shipped |
@@ -80,16 +80,18 @@ as later features land their protocol document.
 | 08 | `08_ga_gate.md` | Promote (GA gate) | Planned |
 
 "Shipped" means the document already exists in this repository's `ecosystem/`
-directory; "Planned" means it does not yet exist here. All four Shipped documents —
-the mandatory first-release surface's four core protocols
-(preflight/baseline/audit/comparison, product_spec_005.md Sec 2.3) — landed in phase
+directory; "Planned" means it does not yet exist here. Five documents are Shipped.
+The mandatory first-release surface's four core protocols
+(preflight/baseline/audit/comparison, product_spec_005.md Sec 2.3) landed in phase
 005-ecosystem-cycle: `01_clean_state_preflight.md` (feature 033), then
 `02_evidence_baseline.md`, `03_engineering_audit.md`, and `07_progress_comparison.md`
-(features 034-036). The five Planned documents — `00_ecosystem_bootstrap.md`,
-`04_dependency_reconciliation.md`, `05_release_train_coordination.md`,
-`06_simplification_review.md`, and `08_ga_gate.md` — are deferrable beyond phase 005
-entirely (product_spec_005.md Sec 2.3) and may be protocol-only or land in a later
-programme phase.
+(features 034-036). The Bootstrap-stage protocol `00_ecosystem_bootstrap.md` (the
+lifecycle's entry stage) landed in phase 007-consumer-adoption (feature 060), wrapping
+the Governance Inheritance Protocol (`standard/GIP.md`) and `bootstrap.sh`. The four
+still-Planned documents — `04_dependency_reconciliation.md`,
+`05_release_train_coordination.md`, `06_simplification_review.md`, and `08_ga_gate.md`
+— are deferrable (product_spec_005.md Sec 2.3) and are prioritised from real
+consumer-pilot evidence (phase 007) rather than authored speculatively.
 
 ## Capability Routing
 

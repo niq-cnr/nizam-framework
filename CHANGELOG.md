@@ -9,6 +9,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`ecosystem/00_ecosystem_bootstrap.md`** — the Bootstrap-stage protocol (phase 007
+  feature 060), the lifecycle's entry stage, which had no protocol document until now.
+  It wraps (does not restate) `standard/GIP.md` and `bootstrap.sh`: the
+  pinned-immutable-tag precondition (floating refs refused), the injected six-module
+  payload + `NIZAM.json`, verification and provenance/drift, coexistence with a
+  non-empty consumer (GIP §5 rename-and-diff + adoption tiers), the consumer-supplied
+  inputs each ecosystem must provide, and the entry condition into Preflight. The
+  `ecosystem/README.md` Module Navigation status for `00` is flipped Planned→Shipped
+  (five of nine protocols now shipped); the capability is registered in `tools/skill.json`
+  and `NIZAM.json`. Authored under the operator-activated phase 007 (gate H-PHASE-007);
+  the still-Planned `04/05/06/08` protocols remain deferred until real consumer-pilot
+  evidence prioritises them.
 - **`tools/compare_ecosystem_baselines.py`** + **`tools/validate_evidence_freshness.py`**
   — the deterministic Compare stage (the two NIP-0001-named tools), making Compare
   tool-driven (previously prose-only). `compare_ecosystem_baselines.py` classifies

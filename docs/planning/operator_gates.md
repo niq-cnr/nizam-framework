@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-07-20"
+    summary: "Phase-007 feature 061: H-CONSUMER-UPGRADE is DEFINED and moved from the reserved table (Section 2) into the decided-and-active table (Section 1) with scope, trigger, and disposition semantics — it approves a consumer repository's adoption of, or upgrade to, a newly released immutable framework tag at the Bootstrap stage (ecosystem/00_ecosystem_bootstrap.md), record-but-never-self-execute. Status DEFINED/OUTSTANDING, awaiting its first exercise at the first external-consumer pilot (feature 063). The four sibling gates (H-PLANNING-AUTHORITY, H-TRAIN-ENTRY, H-CONSOLIDATION, H-GA) stay reserved. Section 1 retitled to 'Decided and active gates' since it now carries a defined-but-not-yet-exercised gate."
   - version: "0.1.0"
     date: "2026-07-20"
     summary: "Initial registry. Consolidates the operator (H-) gates that until now lived only inline in the phase specifications (.agent/product_spec_005.md Sec 8, .agent/product_spec_006.md, docs/planning/ROADMAP.md dispositions) into one informational ledger, fulfilling the canonical `operator_gates.md` reference that .agent/product_spec_005.md Sec 8 has pointed at since phase 005. Records the eight decided phase-005/006 gates with their dispositions and lists the five deferred successor-phase gates by name and reserved status only, without inventing semantics the successor consumer-adoption phase has not yet decided. Informational: it records dispositions, it does not define or execute them."
@@ -46,11 +49,12 @@ completion entries. So where this registry and a phase spec disagree on a gate's
 **definition**, the phase spec wins; where they differ on a gate's **status**,
 the later operator record (cited in the Disposition column) is current.
 
-## 1. Decided gates (phases 005–006)
+## 1. Decided and active gates
 
-Every gate below has been dispositioned. Recurring gates (noted as such) are
-re-satisfied each time their trigger recurs — this table records their most
-recent disposition, not a claim that they never fire again.
+Every gate below has been dispositioned, or — for a newly defined gate not yet
+exercised — has a defined scope and a stated current status. Recurring gates
+(noted as such) are re-satisfied each time their trigger recurs; this table records
+their most recent disposition, not a claim that they never fire again.
 
 | Gate | Scope — what the operator decides | Introduced | Disposition |
 |------|-----------------------------------|------------|-------------|
@@ -62,19 +66,20 @@ recent disposition, not a claim that they never fire again.
 | `H-PAYLOAD-CONTRACT` | Decide the injected-payload / methodology contract (which directories the bootstrap payload carries). | `.agent/product_spec_006.md` gates (F-051) | SATISFIED in phase 006 (feature 051). |
 | `H-CONSTITUTIONAL` | The mechanize-or-descope decision for the constitutional-policy surface (per document: mechanize into a validator check, or mark consumer-aspirational). | `.agent/product_spec_006.md` gates (F-058); `docs/planning/ROADMAP.md` Track 3 | RESOLVED 2026-07-20 — two surfaces mechanized (validate.sh C14/C15), seven marked consumer-aspirational. |
 | `H-FRAMEWORK-RELEASE` | Approve the semantic version, changelog, migration notes, and tag creation for a framework release (recurring, per release). | `.agent/product_spec_005.md` Sec 8; `methodology/06_release_train.md` | EXECUTED 2026-07-18 (v0.7.0) and 2026-07-20 (v0.8.0, phase 006 feature 059) — operator-signed tags. |
+| `H-CONSUMER-UPGRADE` | Approve a consumer repository's adoption of, or upgrade to, a newly released **immutable framework tag** at the Bootstrap stage — the pinned tag the consumer will inherit and run the cycle under. The pipeline records the adoption decision; it never adopts on a human's behalf (recurring, per adoption/upgrade). | `.agent/product_spec_007.md`; `ecosystem/00_ecosystem_bootstrap.md` Sec 2 | DEFINED 2026-07-20 (phase 007, feature 061). OUTSTANDING — awaiting its first exercise at the first external-consumer pilot (feature 063). |
 
 ## 2. Reserved gates (deferred to the successor consumer-adoption phase)
 
-The five gates below are named in `.agent/product_spec_005.md` Sec 8 as belonging
-to the successor consumer-adoption programme phase. They are **reserved names
-only**: their scope, trigger, and disposition are the successor phase's to
-define, and this registry deliberately records no invented semantics for them.
-Each is paired below with the lifecycle stage (`ecosystem/README.md`) it is
-expected to guard, purely to orient the reader — not as a definition.
+The four gates below are named in `.agent/product_spec_005.md` Sec 8 as belonging
+to the successor consumer-adoption programme phase (a fifth, `H-CONSUMER-UPGRADE`,
+was defined in phase 007 and now lives in Section 1). They are **reserved names
+only**: their scope, trigger, and disposition are a later phase's to define, and
+this registry deliberately records no invented semantics for them. Each is paired
+below with the lifecycle stage (`ecosystem/README.md`) it is expected to guard,
+purely to orient the reader — not as a definition.
 
 | Gate | Expected lifecycle stage | Status |
 |------|--------------------------|--------|
-| `H-CONSUMER-UPGRADE` | Bootstrap (stage 00) — a consumer repository adopting a newly released framework tag. | RESERVED — definition deferred to the successor consumer-adoption phase. |
 | `H-PLANNING-AUTHORITY` | Plan (stage 04) — reconciling planning authority across repositories. | RESERVED — definition deferred to the successor consumer-adoption phase. |
 | `H-TRAIN-ENTRY` | Promote (stage 05) — admitting work into a cross-repository release train. | RESERVED — definition deferred to the successor consumer-adoption phase. |
 | `H-CONSOLIDATION` | Repeat (stage 06) — authorizing an actual simplification/consolidation (the simplification review never consolidates automatically). | RESERVED — definition deferred to the successor consumer-adoption phase. |
@@ -103,6 +108,9 @@ expected to guard, purely to orient the reader — not as a definition.
   fulfills.
 - `.agent/product_spec_006.md` — the phase-006 gates (`H-PHASE-006`,
   `H-PAYLOAD-CONTRACT`, `H-CONSTITUTIONAL`, `H-FRAMEWORK-RELEASE`).
+- `.agent/product_spec_007.md` — the phase-007 gates (`H-PHASE-007` and the
+  now-defined `H-CONSUMER-UPGRADE`, guarding the Bootstrap stage
+  `ecosystem/00_ecosystem_bootstrap.md`).
 - `docs/planning/ROADMAP.md` — the durable forward-planning surface recording
   the outstanding and dispositioned human gates.
 - `ecosystem/README.md` — the canonical ecosystem lifecycle whose Promote
