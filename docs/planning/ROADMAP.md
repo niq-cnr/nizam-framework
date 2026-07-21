@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.13.0
+version: 0.14.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.14.0"
+    date: "2026-07-21"
+    summary: "NIP-0002 (The 0–n Project Spectrum) ACCEPTED by the operator via gate H-NIP (verbatim 'NIP-0002 is accepted'), selecting phase 008 as its realization. The 'Proposed Next Phase — Phase 008 (Candidate)' section rolled to 'Next Phase — Phase 008 (Authorized)', recording the acceptance and that selection is not activation (phase 008 still needs product_spec_008 + feature_list_008 + H-PHASE-008, the next planning cycle). Recorded alongside .agent/run_state.json (operator_gate_decision) and docs/planning/operator_gates.md (H-NIP second exercise, v0.4.0)."
   - version: "0.13.0"
     date: "2026-07-21"
     summary: "Phase-007 completion refresh + phase-008 candidate scope. Phase 007 (Consumer-Adoption Enablement & First External Pilot, features 060-064) marked COMPLETE 2026-07-21: the phase-007 Plan-of-Record banner carries the completion record; Current Position rolled to 2026-07-21 (phases 001-007 complete); Track 4 marked EXERCISED against a scratch consumer (feature 063 — adoption held, friction NDEBT-027..032, ADR-004 + NIP-0002), with a real-consumer pilot still open. Added the Proposed Next Phase — Phase 008 (Candidate): The 0-n Project Spectrum section, awaiting operator acceptance of NIP-0002 (gate H-NIP): an evidence-prioritized staged plan (consumer-readiness ADR-004 fixes first, then the 0 greenfield-genesis capability, the n multi-repo tooling + membership registry, then the deferred 04/05 coordination protocols). Open-debt roll updated with NDEBT-027..032. (Also corrected the frontmatter version field, which had drifted behind its own change_log at 0.10.0 vs 0.12.0.)"
@@ -49,16 +52,19 @@ change_log:
 
 # Forward Roadmap
 
-## Proposed Next Phase — Phase 008 (Candidate): The 0–n Project Spectrum
+## Next Phase — Phase 008 (Authorized): The 0–n Project Spectrum
 
-**Awaiting operator acceptance of `NIP-0002` (gate H-NIP).** The phase-007 pilot proved
-adoption holds but that even the single-project case is not yet consumer-ready, and the
-operator (2026-07-21) set a first-class design requirement that the system span an
+**`NIP-0002` ACCEPTED 2026-07-21 (gate H-NIP) — phase 008 selected.** The phase-007 pilot
+proved adoption holds but that even the single-project case is not yet consumer-ready, and
+the operator (2026-07-21) set a first-class design requirement that the system span an
 ecosystem of **0 to n projects**. `docs/nips/NIP-0002-zero-to-n-project-spectrum.md`
-(status **Proposed**) is the capability proposal; accepting it (gate **H-NIP**, the way
-NIP-0001 selected phase 005) would make the staged plan below phase 008's plan of record.
-Scope is **evidence-prioritized** — driven by the recorded pilot friction (`NDEBT-027`…
-`NDEBT-032`), not authored speculatively:
+(status **Accepted**) is the capability proposal; the operator accepted it (verbatim
+*"NIP-0002 is accepted"*, gate **H-NIP**, the way NIP-0001 selected phase 005), making the
+staged plan below phase 008's authorized scope. **Selection is not activation:** phase 008
+still needs its own Planner artifacts (`product_spec_008` + `feature_list_008`) and an
+activation gate (`H-PHASE-008`) before feature work begins — that authoring is the next
+planning cycle. Scope is **evidence-prioritized** — driven by the recorded pilot friction
+(`NDEBT-027`…`NDEBT-032`), not authored speculatively:
 
 1. **Consumer-readiness (prerequisite) — realize `ADR-004`.** Governance-root resolution
    so the tools locate the injected `.nizam/` payload (`NDEBT-027`), and anchor a

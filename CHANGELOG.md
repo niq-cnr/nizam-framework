@@ -92,6 +92,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **`NIP-0002` accepted (gate H-NIP) → phase 008 selected.** The operator accepted
+  `docs/nips/NIP-0002-zero-to-n-project-spectrum.md` (status draft → **accepted**, v0.2.0),
+  selecting **phase 008 (The 0–n Project Spectrum)** as its realization — the way NIP-0001's
+  acceptance selected phase 005. Selection is not activation: phase 008 still needs its own
+  `product_spec_008` + `feature_list_008` + `H-PHASE-008`. Recorded in `.agent/run_state.json`
+  (`operator_gate_decision`), `docs/planning/operator_gates.md` (H-NIP second exercise,
+  v0.4.0), and `docs/planning/ROADMAP.md` (phase-008 section rolled candidate → authorized,
+  v0.14.0).
 - **`ecosystem/00_ecosystem_bootstrap.md` → v0.2.0** — made the **0-to-n project
   spectrum** first-class (new Section 3), on the operator's 2026-07-21 design
   requirement: the Bootstrap stage now names and scopes the 0 (greenfield genesis),

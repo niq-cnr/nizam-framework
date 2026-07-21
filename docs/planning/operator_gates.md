@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-07-21"
+    summary: "H-NIP exercised a second time: operator accepted NIP-0002 (The 0–n Project Spectrum, verbatim 'NIP-0002 is accepted'), selecting phase 008 as its realization (the first exercise accepted NIP-0001 -> phase 005 on 2026-07-17). Row reworded to record H-NIP as recurring (once per NIP) and to make explicit that selection is not activation — the selected phase still needs its own H-PHASE-NNN. Recorded alongside .agent/run_state.json (event operator_gate_decision)."
   - version: "0.3.0"
     date: "2026-07-21"
     summary: "Phase-007 feature 063: H-CONSUMER-UPGRADE disposition rolled DEFINED/OUTSTANDING -> EXERCISED. First exercise 2026-07-21 — the operator authorized adopting a scratch/throwaway consumer against released tag v0.8.0 for the first pilot; recorded in .agent/run_state.json (event operator_gate_decision) before the bootstrap ran, per the NDEBT-018 rule. The gate is recurring, so it is outstanding again at the next adoption/upgrade."
@@ -61,7 +64,7 @@ their most recent disposition, not a claim that they never fire again.
 
 | Gate | Scope — what the operator decides | Introduced | Disposition |
 |------|-----------------------------------|------------|-------------|
-| `H-NIP` | Accept a NIP (handover proposal) as the plan of record and authorize phase activation. | `docs/nips/NIP-0001-ecosystem-engineering-cycle.md`; `.agent/product_spec_005.md` Sec 8 | SATISFIED 2026-07-17 — operator accepted NIP-0001 ("approved. expedite."), activating phase 005. |
+| `H-NIP` | Accept a NIP (handover proposal) as the plan of record and **select** the phase that realizes it (recurring, once per NIP; selection is not activation — the selected phase still needs its own `H-PHASE-NNN`). | `docs/nips/NIP-0001-ecosystem-engineering-cycle.md`; `docs/nips/NIP-0002-zero-to-n-project-spectrum.md`; `.agent/product_spec_005.md` Sec 8 | SATISFIED 2026-07-17 — operator accepted NIP-0001 ("approved. expedite."), selecting phase 005. EXERCISED AGAIN 2026-07-21 — operator accepted NIP-0002 ("NIP-0002 is accepted"), selecting phase 008 (The 0–n Project Spectrum); phase-008 authoring + activation (`H-PHASE-008`) is the next cycle. |
 | `H-PHASE-006` | Authorize activation of a proposed phase before any feature starts (the per-phase activation class; `H-NIP` was phase 005's activation gate). | `.agent/product_spec_006.md` gates | SATISFIED 2026-07-19 — operator authorized phase 006 ("Approved. Proceed with the logical next steps."). |
 | `H-FRAMEWORK-SCOPE` | Approve the minimum-viable capability of a release; prevent optional tooling/schemas from expanding the first release. | `.agent/product_spec_005.md` Sec 8 | DISPOSITIONED 2026-07-18 — subsumed by the `H-NIP` activation decision rather than taken separately (recorded plainly in `docs/planning/ROADMAP.md`, not backfilled). |
 | `H-DOGFOOD-EXCEPTION` | Approve a `PASS_WITH_EXCEPTIONS` framework preflight result before execution continues (recurring, per exception). | `.agent/product_spec_005.md` Sec 8; `ecosystem/01_clean_state_preflight.md` Sec 5 | EXERCISED twice in phase 005, both operator-approved. |

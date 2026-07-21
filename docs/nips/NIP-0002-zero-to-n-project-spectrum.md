@@ -2,12 +2,15 @@
 id: nip-0002-zero-to-n-project-spectrum
 title: "NIP-0002: The 0–n Project Spectrum"
 description: "Proposal that the Ecosystem Engineering Cycle explicitly span an ecosystem of 0 to n projects — 0 (bootstrapping a new project from nothing / greenfield genesis), 1 (a single project, greenfield or brownfield), and n (many associated projects forming a complex ecosystem) — with a scope/membership registry that sets n and a staged, evidence-led realization."
-version: 0.1.0
-status: draft
+version: 0.2.0
+status: accepted
 authoritative_source: docs/nips/NIP-0002-zero-to-n-project-spectrum.md
 last_audited: "2026-07-21"
 tags: [nip, ecosystem, governance, bootstrap, multi-repo, greenfield, brownfield]
 change_log:
+  - version: "0.2.0"
+    date: "2026-07-21"
+    summary: "ACCEPTED by the ecosystem operator via gate H-NIP on 2026-07-21 (operator verbatim: 'NIP-0002 is accepted'). Status draft -> accepted. Acceptance SELECTS phase 008 as this NIP's realization — the same way NIP-0001's acceptance selected phase 005 — but does not itself author or activate it: phase-008 planning (a product_spec_008 + feature_list_008 + operator activation gate H-PHASE-008) remains the next planning cycle. Recorded in .agent/run_state.json (event operator_gate_decision) and docs/planning/operator_gates.md (H-NIP second exercise); docs/planning/ROADMAP.md's phase-008 section rolled from candidate to authorized."
   - version: "0.1.0"
     date: "2026-07-21"
     summary: "Initial proposal, status PROPOSED — awaiting operator acceptance (gate H-NIP). Motivated by the operator's design requirement (2026-07-21) that the system must handle ecosystems of 0-n projects, and by the phase-007 scratch-consumer pilot evidence (ADR-004; DEBT NDEBT rows) proving that even the single-project case is not yet consumer-ready. Refines NIP-0001's 'multi-repository' framing to be explicit about project count; on acceptance it becomes the plan of record for phase 008."
@@ -17,22 +20,25 @@ change_log:
 
 ## Status
 
-**Proposed.** Awaiting acceptance by the ecosystem operator (gate **H-NIP**). This
-document is a framework-capability proposal in the sense NIP-0001's Placement note
+**Accepted** (2026-07-21, gate **H-NIP**, operator verbatim: *"NIP-0002 is accepted"*).
+This document is a framework-capability proposal in the sense NIP-0001's Placement note
 defines (NIPs are broader than a single architecture decision; a NIP may spawn ADRs —
-this one spawns `docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md`). Until
-accepted it changes no plan of record; on acceptance it authorizes phase `008` as its
-realization, the same way NIP-0001 authorized phase `005`.
+this one spawns `docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md`).
+Acceptance **selects phase `008` as this NIP's realization**, the same way NIP-0001's
+acceptance selected phase `005`; consistent with that precedent, selection is not
+activation — phase 008 still needs its own Planner artifacts (`product_spec_008` +
+`feature_list_008`) and an operator activation gate (`H-PHASE-008`) before feature work
+begins. The staged plan below is the authorized scope that planning cycle will realize.
 
 ### Proposal Record
 
 | Field | Value |
 |-------|-------|
-| Decision | PROPOSED (not yet accepted) |
+| Decision | ACCEPTED 2026-07-21 (operator verbatim: "NIP-0002 is accepted") |
 | Gate | H-NIP ("Approve a NIP before implementation becomes plan of record") |
 | Motivation | Operator design requirement (2026-07-21): "the system must handle ecosystems of 0-n projects … 0 is bootstrapping a new project, through an ecosystem of one project (greenfield or brownfield) through to n associated projects that form a complex ecosystem." |
 | Evidence | Phase-007 scratch-consumer pilot (feature 063); `ADR-004`; DEBT rows for pilot findings A–F |
-| Consequence if accepted | Phase `008` activated to realize the staged plan below; the deferred `04`/`05` ecosystem protocols and a greenfield-genesis capability are pulled into scope, evidence-prioritized. |
+| Consequence of acceptance | Phase `008` **selected** to realize the staged plan below (the deferred `04`/`05` ecosystem protocols and a greenfield-genesis capability are pulled into its scope, evidence-prioritized); phase-008 authoring + activation is the next planning cycle. |
 
 ## Problem
 
@@ -106,7 +112,7 @@ the hook.
 - Building the whole spectrum speculatively in one step — realization is staged and
   evidence-led (below), honoring "no claim beyond its evidence."
 
-## Staged Realization (phase 008 candidate scope)
+## Staged Realization (phase 008 authorized scope)
 
 1. **Consumer-readiness (prerequisite).** Realize `ADR-004`: governance-root resolution
    and provenance-pin anchoring, so Preflight/Baseline run against a real single consumer.
@@ -132,12 +138,13 @@ NIP-0001 already uses is backed by a defined mechanism rather than deferred pros
 
 ## Acceptance Criteria
 
-- Operator accepts this NIP (gate H-NIP), activating phase 008 as its realization.
-- The Bootstrap protocol (`ecosystem/00_ecosystem_bootstrap.md`) names and scopes the
-  0/1-greenfield/1-brownfield/n cases (done at proposal time, v0.2.0, referencing this
-  NIP).
-- Phase 008 delivers the staged plan above in evidence-prioritized order, beginning with
-  the ADR-004 consumer-readiness fixes.
+- **Met (2026-07-21).** Operator accepts this NIP (gate H-NIP), selecting phase 008 as
+  its realization. Phase-008 authoring + activation (`product_spec_008`,
+  `feature_list_008`, `H-PHASE-008`) is the next planning cycle.
+- **Met.** The Bootstrap protocol (`ecosystem/00_ecosystem_bootstrap.md`) names and
+  scopes the 0/1-greenfield/1-brownfield/n cases (v0.2.0, referencing this NIP).
+- **Pending phase 008.** Phase 008 delivers the staged plan above in evidence-prioritized
+  order, beginning with the ADR-004 consumer-readiness fixes.
 
 ## References
 
