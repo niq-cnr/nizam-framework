@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "008-consumer-readiness",
-  "current_feature": "068",
+  "current_feature": "069",
   "status": "in_progress",
-  "updated_at": "2026-07-21T12:30:00Z",
+  "updated_at": "2026-07-21T12:50:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -912,6 +912,11 @@
       "at": "2026-07-21T12:30:00Z",
       "event": "feature_complete",
       "detail": "Feature 067 (bootstrap commit-SHA pinning) COMPLETE. NDEBT-033: bootstrap.sh resolves the pinned tag to its commit SHA at clone (git rev-parse HEAD^{commit}) and records it as provenance.json resolved_sha, making the pin an immutable commit rather than a movable tag name. check_provenance_tag renamed check_provenance_pin: requires resolved_sha present (a pre-067 payload is rejected as drift) and, with a caller-supplied --expected-sha, rejects a differing recorded commit (a moved remote tag replaying a different payload); --verify-only stays network-free. New --expected-sha option (+ EXPECTED_SHA env) and usage docs. Kept in lockstep: ecosystem/00 Section 7 (v0.3.0) + standard/GIP.md Section 4 (v0.5.0, new point 5 'Detecting a moved tag'). New e2e assert_provenance_sha_pin case (record + correct/wrong --expected-sha). Verified: install records SHA; verify-only PASSES on match, FAILS on mismatch and on a missing resolved_sha. Full sweep 15/15, self-test 51/51, e2e PASS. Advancing to feature 068 (brownfield bootstrap reconciliation, NDEBT-032)."
+    },
+    {
+      "at": "2026-07-21T12:50:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 068 (brownfield bootstrap reconciliation) COMPLETE via operator Option A (resolved-by-design). The AH-2 detect-before-fix discipline surfaced that the feature premise did not hold: GIP Section 5.1 point 3 states bootstrap.sh injects ONLY the .nizam/ payload and never writes to a consumer's root CONTEXT.md/AGENTS.md/CI, so it cannot silently overwrite them -- the coexistence safety is guaranteed by construction, and 'mechanizing rename-and-diff of root files in bootstrap.sh' would CONTRADICT GIP 5.1 point 3. Surfaced to the operator, who chose Option A. No bootstrap.sh change; ecosystem/00_ecosystem_bootstrap.md Section 3 + Section 5.1 (v0.4.0) corrected from 'not yet mechanized' to 'covered by construction'; NDEBT-032 moved to Resolved (DEBT.md v0.31.0); CHANGELOG Changed entry. Full sweep 15/15, self-test 51/51. No code change, so no new fabricated mechanization (anti-hallucination honored). Advancing to feature 069 (re-pilot the fixed loop + close phase 008)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1085,7 +1090,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1010,
-    "total_lines_changed": 549,
+    "total_lines_changed": 584,
     "per_feature": [
       {
         "id": "065",
@@ -1107,6 +1112,13 @@
         "actual": 174,
         "flag": null,
         "note": "bootstrap.sh (resolve+record resolved_sha, check_provenance_pin with --expected-sha, --expected-sha arg + usage), ecosystem/00_ecosystem_bootstrap.md Sec 7 (v0.3.0), standard/GIP.md Sec 4 (v0.5.0), tools/e2e_bootstrap_test.sh (assert_provenance_sha_pin), CHANGELOG. git numstat ins+del = 174 vs 200 estimated."
+      },
+      {
+        "id": "068",
+        "estimated": 210,
+        "actual": 35,
+        "flag": "UNDER",
+        "note": "RESOLVED-BY-DESIGN (operator Option A): no bootstrap.sh change -- the premise contradicted GIP Sec 5.1 point 3 (bootstrap injects only .nizam/, never root files). Doc-only: ecosystem/00 Sec 3+5.1 (v0.4.0) corrected, DEBT.md NDEBT-032 -> Resolved (v0.31.0), CHANGELOG. git numstat ins+del = 35 vs 210 estimated (well UNDER because the estimated bash mechanization was correctly NOT built -- detect-before-fix)."
       }
     ]
   },

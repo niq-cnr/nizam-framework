@@ -2,10 +2,13 @@
 id: nizam-ecosystem-bootstrap
 title: "Ecosystem Bootstrap Protocol"
 description: "The reusable protocol for the ecosystem cycle's entry stage: how a consumer repository adopts the framework from a pinned, immutable released tag via the Governance Inheritance Protocol, verifies the injected payload, records its provenance pin, and reaches the clean, known state a Preflight run requires before any later stage may begin -- explicit about the 0-to-n project spectrum the stage must serve."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: ecosystem/00_ecosystem_bootstrap.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-07-21"
+    summary: "Phase-008 feature 068 (NDEBT-032, resolved-by-design / operator Option A): the 1-brownfield case (Section 3 table + Section 5.1) is corrected from 'documented but not yet mechanized in bootstrap.sh' to 'covered by construction' — bootstrap.sh injects only the .nizam/ payload and never writes to a consumer's root CONTEXT.md/AGENTS.md/CI (GIP Section 5.1 point 3), so it cannot silently overwrite them; reconciling a consumer's own root files against .nizam/templates/ is inherently a consumer-side manual rename-and-diff, not a bootstrap.sh operation. No bootstrap.sh change (the atomic .nizam/-only inject already satisfies GIP Section 5.1's safety). NDEBT-032 moved to Resolved in docs/planning/DEBT.md."
   - version: "0.3.0"
     date: "2026-07-21"
     summary: "Phase-008 feature 067 (NDEBT-033): Section 7 (Bootstrap Artifact) now documents the provenance.json resolved_sha field — the exact commit the pinned tag resolved to at install — as part of the recorded pin. Describes that the resolved commit makes the pin immutable (a tag name alone can be moved to replay a different payload) and that bootstrap.sh --verify-only requires the recorded commit present and, with a caller-supplied --expected-sha, rejects a differing commit. Kept in lockstep with bootstrap.sh and standard/GIP.md Section 4."
@@ -83,7 +86,7 @@ what the Bootstrap stage covers today and what it delegates.
 |-------|-----------|--------------------------------|
 | **0** -- greenfield genesis | Standing up a *new* project from nothing and bootstrapping the framework into it, distinct from adopting into a repository that already exists | **Delegated / not yet mechanized.** This protocol and `bootstrap.sh` presuppose a target repository that already exists; creating-and-scaffolding a new project is the staged phase-008 work in NIP-0002. The scope registry's `incubating` partition (`registry/scope_definition_patterns.md`) is the tracked-but-not-yet-real representation of a project at count 0. |
 | **1 -- greenfield** | A single repository that is new/empty | Covered as the degenerate, collision-free case of Section 5.1: with nothing pre-existing to reconcile, an inject + verify is the whole Bootstrap. |
-| **1 -- brownfield** | A single repository with existing content | Covered *in principle* by `standard/GIP.md` Section 5.1 (rename-and-diff) and Section 5.2 (adoption tiers); the reconciliation of colliding root files is documented but not yet mechanized in `bootstrap.sh` (see `docs/planning/DEBT.md`). Section 5.1 below is the stage-level rule. |
+| **1 -- brownfield** | A single repository with existing content | **Covered.** `bootstrap.sh` injects only the `.nizam/` payload directory and never writes to a consumer's root-level `CONTEXT.md`/`AGENTS.md`/CI (`standard/GIP.md` Section 5.1 point 3), so it *cannot* silently overwrite pre-existing content -- the coexistence safety is guaranteed by construction. Reconciling a consumer's own root files against the shipped `.nizam/templates/` is, by that same protocol, an inherently consumer-side manual (rename-and-diff) step, not a bootstrap.sh operation; adoption tiers (`standard/GIP.md` Section 5.2) govern how much is adopted. Section 5.1 below is the stage-level rule. |
 | **n -- multi-repository** | Many associated repositories forming one ecosystem | **Partially covered.** Each repository bootstraps individually by this protocol; the *set* is declared by the consumer's ecosystem-membership registry (`registry/scope_definition_patterns.md`, the `in_scope` partition), which sets `n`. The shipped ecosystem tools take a single `--repo-root` and do not yet iterate that set; genuine cross-repository coordination lives in the deferred `04_dependency_reconciliation.md` and `05_release_train_coordination.md` protocols. |
 
 Two honest limits follow from the table and are recorded as debt rather than papered
@@ -141,10 +144,14 @@ that has not verified has not produced a state any later stage may run against.
 
 A consumer is rarely empty when it first adopts the framework (the 1-brownfield case
 of Section 3). Bootstrapping MUST coexist with what the repository already has, never
-silently overwriting it: a pre-existing `CONTEXT.md`, `AGENTS.md`, or CI configuration
-that collides by name or purpose with an injected artifact is preserved under a
-renamed path and reconciled by hand, and a consumer's own CI configuration is added
-to, never replaced (`standard/GIP.md` Section 5.1). A consumer MAY also adopt
+silently overwriting it. This coexistence is guaranteed **by construction**:
+`bootstrap.sh` injects only the `.nizam/` payload directory (an atomic replace of that
+one target) and never writes to a consumer's root-level `CONTEXT.md`, `AGENTS.md`, or CI
+configuration (`standard/GIP.md` Section 5.1 point 3), so it cannot overwrite them at
+all. Reconciling a consumer's own pre-existing root files against the framework's shipped
+`.nizam/templates/` versions -- the rename-and-diff of `standard/GIP.md` Section 5.1 -- is
+therefore an inherently consumer-side manual step, not something `bootstrap.sh` performs;
+a consumer's own CI configuration is likewise added to, never replaced. A consumer MAY also adopt
 incrementally through the tiers `standard/GIP.md` Section 5.2 defines
 (`docs-standard-only` -> `templates` -> full loop) rather than the full contract-first
 loop on day one; the Bootstrap stage is complete for whichever tier the consumer

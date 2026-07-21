@@ -7,6 +7,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **Brownfield coexistence clarified as covered-by-construction** (phase 008 feature 068;
+  `NDEBT-032`, resolved-by-design). Investigation showed the premise "mechanize GIP §5.1
+  rename-and-diff in `bootstrap.sh`" contradicts **GIP §5.1 point 3**: `bootstrap.sh` injects
+  only the `.nizam/` payload and never writes to a consumer's root `CONTEXT.md`/`AGENTS.md`/CI,
+  so it *cannot* silently overwrite them — the coexistence safety is guaranteed by construction,
+  and reconciling a consumer's own root files against `.nizam/templates/` is inherently a
+  consumer-side manual step. `ecosystem/00_ecosystem_bootstrap.md` §3 + §5.1 (v0.4.0) corrected
+  from "not yet mechanized" to "covered by construction"; `NDEBT-032` moved to Resolved
+  (`docs/planning/DEBT.md` v0.31.0). No `bootstrap.sh` change.
+
 ### Added
 
 - **`bootstrap.sh` commit-SHA pinning** (phase 008 feature 067; `NDEBT-033`). The Bootstrap
