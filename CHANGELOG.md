@@ -9,6 +9,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`ecosystem_preflight.py` governance-root resolution** (phase 008 feature 065; ADR-004
+  decision 1, `NDEBT-027`). The Preflight tool now resolves its required schema references
+  against a **governance-root** distinct from the repository root, so a real bootstrapped
+  consumer — whose payload lives under `.nizam/` — no longer hard-FAILs on missing references.
+  A new `--governance-root` option sets it explicitly; otherwise it is discovered (the injected
+  `.nizam/` payload, identified by its `NIZAM.json` + `schema/` markers) under `--repo-root`,
+  falling back to the repo-root for the framework-root/`--self-fixture` layout (unchanged). The
+  injected payload directory is surfaced as an expected `injected_governance_payload` exception
+  rather than a blocking untracked finding, so a clean Preflight against a real consumer is a
+  `PASS_WITH_EXCEPTIONS`, not the phase-007 pilot's hard FAIL (finding A). Guarded by new
+  `tools/fixtures_self_test.sh` probes (discovery, explicit governance-root, clean framework-root
+  regression) and a `tools/e2e_bootstrap_test.sh` assertion that runs the fixed Preflight against
+  a genuinely bootstrapped `.nizam/` consumer.
+
 - **Phase 008 proposed** — `.agent/product_spec_008.md` (status draft) and
   `.agent/feature_list_008.json` (features 065–069, DAG-validated acyclic, est 1010 lines)
   propose **0–n Project Spectrum, Stage 1: Consumer-Readiness**, the realization of the

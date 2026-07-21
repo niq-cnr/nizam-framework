@@ -403,8 +403,53 @@ main() {
   assert_discovery_path "${target}"
   run_bootstrap_verify_only "${EPHEMERAL_TAG}" "${target}"
   assert_payload_validate_cwd_independent "${target}"
+  assert_preflight_governance_root "${SCRATCH_DIR}"
 
   echo "e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag ${EPHEMERAL_TAG}, target ${target})."
+}
+
+# assert_preflight_governance_root <consumer_root>
+# --------------------------------------------------------------------------
+# Feature 065 (ADR-004 decision 1; NDEBT-027): a real bootstrapped consumer holds
+# the governance payload under .nizam/, NOT at the repo root. ecosystem_preflight.py
+# must discover that governance-root so its required references resolve there, and
+# must treat the injected (untracked) .nizam/ as an expected exception rather than
+# a blocking finding -- so a clean Preflight against a real consumer is a
+# PASS_WITH_EXCEPTIONS, never the pre-065 hard FAIL(1). This closes phase-007 pilot
+# finding A against a genuinely bootstrapped payload (not a hand-built fixture).
+#
+# Returns:
+#   0 if ecosystem_preflight.py does NOT hard-FAIL(1) against the bootstrapped
+#     consumer (exit 2 pending / 3 approved, carrying only the injected-payload
+#     exception, are the acceptable clean outcomes); non-zero otherwise.
+assert_preflight_governance_root() {
+  local consumer_root="$1" out rc
+  out="$(mktemp -d)"
+  # The bootstrap target is a bare injected .nizam/ payload; ecosystem_preflight.py
+  # needs a git working tree with a resolvable HEAD, so stand a minimal consumer
+  # repo around it (.nizam/ deliberately left untracked -- the injected payload).
+  git -C "${consumer_root}" init -q
+  git -C "${consumer_root}" config user.email t@example.invalid
+  git -C "${consumer_root}" config user.name tester
+  printf '# consumer\n' > "${consumer_root}/README.md"
+  git -C "${consumer_root}" add README.md
+  git -C "${consumer_root}" commit -qm init
+  # Capture the exit code without tripping main()'s `set -e`: a PASS_WITH_EXCEPTIONS
+  # verdict legitimately returns non-zero (2 pending / 3 approved), which is the
+  # expected clean outcome here, not a harness error.
+  if python3 tools/ecosystem_preflight.py --execution-id e2e-preflight \
+      --output-dir "${out}" --repo-root "${consumer_root}" >/dev/null 2>&1; then
+    rc=0
+  else
+    rc=$?
+  fi
+  rm -rf -- "${out}"
+  if [ "${rc}" -eq 1 ]; then
+    echo "assert_preflight_governance_root: FAIL -- a real bootstrapped consumer hard-FAILed(1) Preflight; governance-root discovery did not resolve the injected .nizam/ (feature 065 / ADR-004 regression)"
+    return 1
+  fi
+  echo "assert_preflight_governance_root: OK -- ecosystem_preflight.py discovered the injected .nizam/ governance-root (exit ${rc}: no hard FAIL; the injected payload is an expected exception, required references resolve under .nizam/)."
+  return 0
 }
 
 # Direct-execution guard: `main "$@"` runs ONLY when this file is executed

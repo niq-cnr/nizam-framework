@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "008-consumer-readiness",
-  "current_feature": "065",
+  "current_feature": "066",
   "status": "in_progress",
-  "updated_at": "2026-07-21T11:00:00Z",
+  "updated_at": "2026-07-21T11:30:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -897,6 +897,11 @@
       "at": "2026-07-21T11:00:00Z",
       "event": "phase_activated",
       "detail": "Phase 008-consumer-readiness ACTIVATED on operator authorization. Verbatim: 'Approved. Please proceed' (operator-controlled session, 2026-07-21, given after the phase-008 proposal was authored and merged to main via PR #43 at commit 14d3836), satisfying gate H-PHASE-008 and making phase 008 (0-n Project Spectrum, Stage 1: Consumer-Readiness) the plan of record. This realizes NIP-0002's selection (accepted via H-NIP). current_phase advanced 007-consumer-adoption -> 008-consumer-readiness; current_feature set to 065 (the ungated DAG root); status in_progress. Scope budget reset (1010 est; phase-007 final archived in run_state.phase_007_scope_budget_final). Recorded BEFORE any feature execution, per the NDEBT-018 gate-decision-before-execution rule (mirrors every prior phase_activated). Execution begins with feature 065 (governance-root resolution in tools/ecosystem_preflight.py; ADR-004 decision 1 / NDEBT-027) \u2014 the first real code change of the 0-n programme."
+    },
+    {
+      "at": "2026-07-21T11:30:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 065 (governance-root resolution in tools/ecosystem_preflight.py) COMPLETE. ADR-004 decision 1 / NDEBT-027: the Preflight tool resolves REQUIRED_REFERENCE_PATHS against a governance-root distinct from the repo-root (new --governance-root option; else discovers the injected .nizam/ payload by its NIZAM.json+schema/ markers under --repo-root; else falls back to repo-root for the framework-root/--self-fixture layout, unchanged), and surfaces the injected payload dir as an expected injected_governance_payload exception rather than a blocking untracked finding. Phase-007 pilot finding A is resolved: a clean Preflight against a real bootstrapped consumer is now PASS_WITH_EXCEPTIONS (verified end-to-end against a genuinely bootstrapped .nizam/ consumer), not the prior hard FAIL(3 blocking). New standing coverage: fixtures_self_test.sh governance-root probes (discovery + explicit --governance-root + clean-framework-root regression) and an e2e_bootstrap_test.sh assert_preflight_governance_root case. Full sweep 15/15, self-test 51/51, e2e PASS. Framework-internal, no external repo. Advancing to feature 066 (baseline provenance-pin anchoring, ADR-004 decision 2 / NDEBT-028)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1070,8 +1075,16 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1010,
-    "total_lines_changed": 0,
-    "per_feature": []
+    "total_lines_changed": 256,
+    "per_feature": [
+      {
+        "id": "065",
+        "estimated": 240,
+        "actual": 256,
+        "flag": null,
+        "note": "tools/ecosystem_preflight.py (governance-root resolution + is_injected_governance_payload/resolve_governance_root helpers + --governance-root arg + injected_governance_payload exception kind + collection-log governance_root line), tools/fixtures_self_test.sh (governance-root probes + clean-framework-root regression probe), tools/e2e_bootstrap_test.sh (assert_preflight_governance_root), CHANGELOG. git numstat ins+del = 256 vs 240 estimated. First feature of phase 008."
+      }
+    ]
   },
   "phase_004_scope_budget_final": {
     "original_estimate_lines": 1550,

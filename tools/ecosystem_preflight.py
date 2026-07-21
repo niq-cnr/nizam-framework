@@ -160,6 +160,7 @@ def collect_git_clean_state_findings(
     repo_root: str,
     tolerated_untracked_paths: Sequence[str],
     tolerated_untracked_prefixes: Sequence[str] = (),
+    injected_payload_prefixes: Sequence[str] = (),
 ) -> tuple[list[str], list[dict[str, str]]]:
     """Collect blocking findings and non-blocking exceptions from git status.
 
@@ -180,6 +181,17 @@ def collect_git_clean_state_findings(
     directory by one declared prefix rather than enumerating each file). The
     exact-match set is preferred: a path matched exactly keeps the historical
     ``declared_tolerated_untracked`` kind, so 043/044 semantics are unchanged.
+
+    ``injected_payload_prefixes`` (feature 065, ADR-004 decision 1) names the
+    repo-relative prefix(es) of an injected governance payload (conventionally
+    ``.nizam/``) discovered/declared for this run. An untracked path under such a
+    prefix is the framework the cycle runs UNDER -- expected state in a
+    bootstrapped consumer, not repository content to reconcile -- so it is
+    surfaced as a distinct non-blocking ``injected_governance_payload`` exception
+    rather than a blocking untracked finding. It is checked after the exact-match
+    tolerate set and before the operator ``--tolerate-untracked-prefix`` set, and
+    defaults to empty so every prior (self-fixture/framework-root) run is
+    byte-for-byte unchanged.
 
     Parses ``git status --porcelain=v1 -z`` (NUL-delimited, NDEBT-021): the
     default porcelain-v1 C-quotes paths with spaces or non-ASCII bytes, which
@@ -210,6 +222,7 @@ def collect_git_clean_state_findings(
 
     tolerated = set(tolerated_untracked_paths)
     prefixes = tuple(tolerated_untracked_prefixes)
+    injected_prefixes = tuple(injected_payload_prefixes)
     blocking_findings: list[str] = []
     exceptions: list[dict[str, str]] = []
 
@@ -237,6 +250,25 @@ def collect_git_clean_state_findings(
                         ),
                     }
                 )
+            elif any(repo_relative_path.startswith(prefix) for prefix in injected_prefixes):
+                # The injected governance payload (conventionally .nizam/) is
+                # expected state in a bootstrapped consumer, not a working-tree
+                # change to reconcile: it is the framework the cycle runs UNDER,
+                # not repository content under inspection. Surfaced as its own
+                # non-blocking exception kind (never silently dropped, never
+                # conflated with an operator-declared toleration) so a clean
+                # Preflight against a real bootstrapped consumer no longer FAILs
+                # on the injected .nizam/ (ADR-004 decision 1; NDEBT-027).
+                exceptions.append(
+                    {
+                        "kind": "injected_governance_payload",
+                        "path": repo_relative_path,
+                        "message": (
+                            "injected governance payload present (expected, not a "
+                            f"working-tree change): {repo_relative_path}"
+                        ),
+                    }
+                )
             elif any(repo_relative_path.startswith(prefix) for prefix in prefixes):
                 exceptions.append(
                     {
@@ -260,13 +292,20 @@ def collect_git_clean_state_findings(
     return blocking_findings, exceptions
 
 
-def collect_required_reference_findings(repo_root: str) -> list[str]:
+def collect_required_reference_findings(governance_root: str) -> list[str]:
     """Return one blocking finding for each required schema path not resolvable.
 
     Implements ecosystem/01_clean_state_preflight.md Sec 4 bullet 2: a
     required evidence/reference path that is missing, unreadable, or does not
     resolve to an existing path is its own blocking finding. This minimum CLI
     requires the two schemas its own output must validate against.
+
+    The required references are resolved against the ``governance_root`` -- the
+    directory holding the injected governance payload (feature 065, ADR-004
+    decision 1) -- NOT the repository root, because in a real bootstrapped
+    consumer the payload lives under ``.nizam/`` (e.g. ``.nizam/schema/...``),
+    not at the repo root. In ``--self-fixture`` / framework-root layout the
+    governance-root IS the repo-root, so this is unchanged there.
 
     NDEBT-021.2: a required reference must resolve to a READABLE REGULAR FILE.
     The former ``os.path.exists`` accepted a *directory* sitting at the path
@@ -277,10 +316,76 @@ def collect_required_reference_findings(repo_root: str) -> list[str]:
     """
     findings: list[str] = []
     for relative_path in REQUIRED_REFERENCE_PATHS:
-        absolute_path = os.path.join(repo_root, relative_path)
+        absolute_path = os.path.join(governance_root, relative_path)
         if not (os.path.isfile(absolute_path) and os.access(absolute_path, os.R_OK)):
             findings.append(f"required reference missing or unreadable: {relative_path}")
     return findings
+
+
+GOVERNANCE_PAYLOAD_MARKERS: tuple[str, ...] = ("NIZAM.json", "schema")
+DEFAULT_GOVERNANCE_DIRNAME = ".nizam"
+
+
+def is_injected_governance_payload(candidate_dir: str) -> bool:
+    """Return True if ``candidate_dir`` looks like an injected governance payload.
+
+    A discovered governance-root must actually carry the payload (feature 065):
+    it exists and holds every marker in ``GOVERNANCE_PAYLOAD_MARKERS`` -- the
+    ``NIZAM.json`` capability index and the ``schema/`` module -- so an empty or
+    unrelated ``.nizam`` directory is never mistaken for a real payload.
+    """
+    if not os.path.isdir(candidate_dir):
+        return False
+    return all(
+        os.path.exists(os.path.join(candidate_dir, marker))
+        for marker in GOVERNANCE_PAYLOAD_MARKERS
+    )
+
+
+def resolve_governance_root(
+    repo_root: str,
+    explicit_governance_root: str | None,
+    self_fixture: bool,
+) -> tuple[str, list[str]]:
+    """Resolve the governance-root and any injected-payload prefix to expect.
+
+    The governance-root is where the injected governance payload
+    (``standard/``, ``schema/``, ``tools/``, ..., ``NIZAM.json``) lives, which is
+    distinct from the repository root in a real bootstrapped consumer (ADR-004
+    decision 1; NDEBT-027). Resolution precedence:
+
+    - An explicit ``--governance-root`` wins (absolutised).
+    - Otherwise under ``--self-fixture`` the governance-root IS the repo-root
+      (the framework is the repository under inspection) -- the degenerate case,
+      byte-for-byte unchanged.
+    - Otherwise discover the injected payload directory (conventionally
+      ``.nizam/``) under the repo-root: a subdirectory carrying the payload
+      markers. If found, it is the governance-root; if not, the governance-root
+      falls back to the repo-root (framework-root layout), also unchanged.
+
+    Returns ``(governance_root, injected_payload_prefixes)`` where the second
+    element is the repo-relative prefix list (e.g. ``[".nizam/"]``) for a
+    governance-root that sits *inside* the working tree, so the injected
+    (untracked) payload is treated as expected rather than a blocking finding.
+    A governance-root that equals the repo-root, or lies outside it, yields an
+    empty prefix list (nothing to auto-tolerate).
+    """
+    if explicit_governance_root is not None:
+        governance_root = os.path.abspath(explicit_governance_root)
+    elif self_fixture:
+        governance_root = repo_root
+    else:
+        candidate = os.path.join(repo_root, DEFAULT_GOVERNANCE_DIRNAME)
+        governance_root = candidate if is_injected_governance_payload(candidate) else repo_root
+
+    injected_prefixes: list[str] = []
+    if governance_root != repo_root:
+        relative = os.path.relpath(governance_root, repo_root)
+        # Only a governance-root strictly *inside* the working tree can appear in
+        # git status; one outside (relative starts with '..') never does.
+        if relative != os.pardir and not relative.startswith(os.pardir + os.sep):
+            injected_prefixes.append(relative.replace(os.sep, "/").rstrip("/") + "/")
+    return governance_root, injected_prefixes
 
 
 def collect_head_resolution_findings(repo_root: str) -> list[str]:
@@ -521,11 +626,16 @@ def write_collection_log(
     captured_at: str,
     blocking_findings: Sequence[str],
     exceptions: Sequence[dict[str, str]],
+    governance_root: str | None = None,
 ) -> None:
     """Write the run's plain-text evidence log to ``output_dir/collection-log.txt``."""
     lines = [
         f"ecosystem_preflight.py collection log -- execution_id={execution_id}",
         f"repo_root={repo_root}",
+    ]
+    if governance_root is not None:
+        lines.append(f"governance_root={governance_root}")
+    lines += [
         f"captured_at={captured_at}",
         f"blocking_findings={list(blocking_findings)}",
         f"exceptions={list(exceptions)}",
@@ -573,6 +683,22 @@ def build_argument_parser() -> _UsageErrorArgumentParser:
         help=(
             "Auto-resolve --repo-root (when not also explicitly given) to the "
             "repository this script itself lives inside, for framework dogfooding."
+        ),
+    )
+    parser.add_argument(
+        "--governance-root",
+        default=None,
+        help=(
+            "The directory holding the injected governance payload (standard/, "
+            "schema/, tools/, ..., NIZAM.json) that the required references are "
+            "resolved against -- distinct from --repo-root in a real bootstrapped "
+            "consumer, where the payload lives under .nizam/ (feature 065, ADR-004 "
+            "decision 1; NDEBT-027). When omitted: under --self-fixture it is the "
+            "repo-root; otherwise an injected payload directory (conventionally "
+            ".nizam/) is discovered under --repo-root, falling back to the repo-root "
+            "if none is present. An injected payload inside the working tree is "
+            "surfaced as an expected 'injected_governance_payload' exception, not a "
+            "blocking untracked finding."
         ),
     )
     parser.add_argument(
@@ -643,6 +769,9 @@ def main(argv: Sequence[str]) -> int:
         else:
             repo_root = args.repo_root if args.repo_root is not None else "."
         repo_root = os.path.abspath(repo_root)
+        governance_root, injected_payload_prefixes = resolve_governance_root(
+            repo_root, args.governance_root, args.self_fixture
+        )
         ci_reference = load_ci_reference(args.ci_run_file) if args.ci_run_file else None
     except PreflightUsageError as usage_error:
         print(f"usage error: {usage_error}", file=sys.stderr)
@@ -653,13 +782,22 @@ def main(argv: Sequence[str]) -> int:
     captured_at = format_iso8601(read_utc_now())
 
     blocking_findings, exceptions = collect_git_clean_state_findings(
-        repo_root, args.tolerate_untracked, args.tolerate_untracked_prefix
+        repo_root,
+        args.tolerate_untracked,
+        args.tolerate_untracked_prefix,
+        injected_payload_prefixes,
     )
-    blocking_findings += collect_required_reference_findings(repo_root)
+    blocking_findings += collect_required_reference_findings(governance_root)
     blocking_findings += collect_head_resolution_findings(repo_root)
 
     write_collection_log(
-        args.output_dir, args.execution_id, repo_root, captured_at, blocking_findings, exceptions
+        args.output_dir,
+        args.execution_id,
+        repo_root,
+        captured_at,
+        blocking_findings,
+        exceptions,
+        governance_root=governance_root,
     )
 
     if blocking_findings:
