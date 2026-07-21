@@ -3,7 +3,7 @@
   "current_phase": "007-consumer-adoption",
   "current_feature": "064",
   "status": "phase_complete",
-  "updated_at": "2026-07-21T06:10:00Z",
+  "updated_at": "2026-07-21T06:20:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1082,18 +1082,25 @@
         "note": "1 file (git numstat ins+del): docs/planning/operator_gates.md 20+12=32 (0.1.0->0.2.0; H-CONSUMER-UPGRADE moved reserved->defined in Sec 1 with scope/trigger/disposition, Sec 2 reduced five->four, References + Sec 1 title updated) vs 90 estimated (UNDER). Cumulative 240/1131 ceiling (21.2%)."
       },
       {
-        "id": "063",
-        "estimated": 260,
+        "id": "062",
+        "estimated": 210,
         "actual": 0,
         "flag": null,
-        "note": "Pilot executed against an EPHEMERAL scratch consumer (created under the session scratchpad, never pushed); the consumer's artifacts are not committed to the framework. Framework-side output is the committed evidence snapshot .agent/evidence/pilot-063/ (7 files: preflight FAIL + workaround, mis-anchored baseline, provenance pin, audit report, delta, README) + the six NDEBT rows (027-032). Counted as 0 deliverable *framework source* lines by design - the pilot's product is recorded friction/evidence, not framework code (the fixes are phase-008 scope per ADR-004). Cumulative framework source 240/1131."
+        "note": "CANCELLED \u2014 the scratch-consumer pilot (063) surfaced no pre-existing root-level file collision, so GIP Sec 5.1 rename-and-diff in bootstrap.sh was not needed. Deferred to a real brownfield consumer, carried as NDEBT-032. Zero actual lines. Its 210-line estimate is retained so the per-feature estimates reconcile to the original_estimate_lines of 870."
+      },
+      {
+        "id": "063",
+        "estimated": 180,
+        "actual": 0,
+        "flag": null,
+        "note": "Pilot executed against an EPHEMERAL scratch consumer (created under the session scratchpad, never pushed); the consumer's artifacts are not committed. Framework-side output is the committed evidence snapshot .agent/evidence/pilot-063/ (findings/preflight/baseline/provenance/audit/delta) + the six NDEBT rows (027-032). Counted as 0 deliverable framework *source* lines by design \u2014 the pilot's product is recorded friction/evidence, not framework code (the fixes are phase-008 scope per ADR-004). Estimate 180 per the feature_list plan."
       },
       {
         "id": "064",
-        "estimated": 140,
+        "estimated": 110,
         "actual": 0,
         "flag": null,
-        "note": "Plan-and-close feature: phase-008 candidate scope authored in docs/planning/ROADMAP.md + phase-close ledger updates (this file, manifest.json, product_spec_007 amendment, ecosystem/00 v0.2.0 amendment, NIP-0002, ADR-004, DEBT rows). These are planning/governance-record edits spread across the phase-close commit rather than a single feature deliverable file; line count folded into the phase-close change as a whole. Cumulative framework source 240/1131 (27.6% of the 870 estimate; well under ceiling - phase 007 was deliberately a prove-then-build phase, not a large authoring phase)."
+        "note": "Plan-and-close feature: phase-008 candidate scope in docs/planning/ROADMAP.md + phase-close ledger updates (run_state, manifest, product_spec_007 amendment, ecosystem/00 v0.2.0, NIP-0002, ADR-004, DEBT rows). Planning/governance-record edits folded into the phase-close change. Estimate 110 per the feature_list plan."
       }
     ]
   },
@@ -1387,7 +1394,5 @@
       }
     ]
   },
-  "blocked_features": [
-    "062"
-  ]
+  "blocked_features": []
 }

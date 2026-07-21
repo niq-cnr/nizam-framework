@@ -26,4 +26,11 @@ only these framework-side evidence snapshots are committed.
 | `B_baseline_framework_ref_misanchored.json` | `framework_references[0].revision` = the consumer's HEAD (`81054aac…`), labelled "self-referential minimum-viable default" — **not** the framework pin. | NDEBT-028 (finding B) |
 | `B_consumer_provenance_pin_v0.8.0.json` | The injected `.nizam/provenance.json` records the true framework pin `v0.8.0`, which the baseline should have anchored to. | NDEBT-028 |
 | `audit_run1_report.md` | Rendered audit for run 1 (2 findings against the consumer's modest engineering state). | — |
+| `audit_run1_findings.json` | The `findings.json` export the run-1 report is assembled from — included so the audit is independently reproducible from this snapshot alone. | — |
+| `audit_run2_findings.json` | The run-2 `findings.json` export (`F-cons-01` resolved with closure evidence, `F-cons-02` still open) that `compare_delta.json` classifies. | — |
 | `compare_delta.json` | Compare-stage delta across the two runs: `F-cons-01` resolved (with closure evidence), `F-cons-02` persisting. Downstream stages are consumer-ready today. | — |
+
+> Reproducibility note: this snapshot now bundles both `audit_run*_findings.json` exports
+> alongside the report and delta, so the audit and comparison claims are verifiable from
+> the committed evidence without the (ephemeral) scratch consumer. Future pilots should
+> likewise commit an immutable `findings.json` export next to each `report.md`/`delta.json`.

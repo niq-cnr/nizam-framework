@@ -6,11 +6,14 @@ tags: [spec, ecosystem-cycle, consumer-adoption, bootstrap, pilot, phase-007, pr
 status: active
 last_audited: "2026-07-20"
 authoritative_source: NA
-version: 1.2.0
+version: 1.3.0
 spec_version: "1.0.0"
 created_at: "2026-07-20T00:00:00Z"
 updated_at: "2026-07-21T00:00:00Z"
 change_log:
+  - version: "1.3.0"
+    date: "2026-07-21T00:00:00Z"
+    summary: "Planning-surface reconciliation after phase close (PR #42 review): Section 5 gate dispositions rolled to their exercised state (H-PHASE-007 EXERCISED 2026-07-20; H-CONSUMER-UPGRADE DEFINED+EXERCISED 2026-07-21), and the Status banner's stale 'pilot deferred' line replaced with the phase-COMPLETE record (features 060/061/063/064 complete, 062 cancelled). Mirrors the completion state already in .agent/run_state.json, .agent/feature_list_007.json, and docs/planning/manifest.json. No scope change."
   - version: "1.2.0"
     date: "2026-07-21T00:00:00Z"
     summary: "Phase-close amendment: records the operator's 2026-07-21 design requirement that the system span an ecosystem of 0-to-n projects, and cross-references the two governed docs authored to capture it — docs/nips/NIP-0002-zero-to-n-project-spectrum.md (the capability proposal, status Proposed, whose acceptance would make it phase 008's plan of record) and docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md (the pilot-proven single-project fixes, Accepted). No scope change to phase 007's shipped features 060-064; the pilot (063) executed against a scratch consumer (operator option c) and its friction is recorded as NDEBT-027..032. Section 3's consumer-repo question was resolved as the scratch-consumer path."
@@ -32,8 +35,10 @@ satisfying gate **H-PHASE-007**; recorded in `.agent/run_state.json` event
 phase-007 entry `status: in_progress`. Per `methodology/00_planning.md`, the
 Planner-produced spec and DAG-validated feature list (`.agent/feature_list_007.json`)
 existed at proposal; the operator authorization completed the activation triad.
-Execution begins with the ungated DAG root feature 060; the pilot features 063–064
-remain deferred pending operator-authorized consumer-repo access (Section 3).
+**Phase 007 is COMPLETE (2026-07-21).** Features 060, 061, 063, 064 landed; the
+conditional 062 was cancelled (no brownfield collision to force GIP §5.1, carried as
+NDEBT-032). The pilot (063–064) ran against a scratch/throwaway consumer (Section 3
+resolved as option c).
 
 **0–n design requirement (operator, 2026-07-21).** During execution the operator set a
 first-class requirement that the system handle an ecosystem of **0 to n projects** — 0
@@ -137,12 +142,13 @@ repo.
 Recorded per `docs/planning/operator_gates.md`. The pipeline records but never
 self-executes a human gate.
 
-1. **H-PHASE-007 — OUTSTANDING.** Authorize activation of this proposal (required
-   before any feature enters contract negotiation) and resolve the consumer-repo
-   sourcing question of Section 3.
-2. **H-CONSUMER-UPGRADE — OUTSTANDING (to be DEFINED by F-061).** Approve a consumer's
-   adoption of a newly released framework tag before the pilot's Bootstrap stage
-   proceeds. F-061 defines its semantics; F-063 is the first exercise of it.
+1. **H-PHASE-007 — EXERCISED 2026-07-20.** Operator authorized activation (verbatim
+   "Authorized to activate now"); the consumer-repo sourcing question of Section 3 was
+   resolved as the scratch-consumer path (option c).
+2. **H-CONSUMER-UPGRADE — DEFINED (F-061) and EXERCISED 2026-07-21 (F-063).** Defined in
+   `docs/planning/operator_gates.md`; first exercised when the operator authorized
+   adopting the scratch consumer against released tag v0.8.0 for the pilot (recorded in
+   `.agent/run_state.json` before the bootstrap ran, per the NDEBT-018 rule). Recurring.
 
 The other four reserved gates (`H-PLANNING-AUTHORITY`, `H-TRAIN-ENTRY`,
 `H-CONSOLIDATION`, `H-GA`) stay reserved — their deferred protocols are out of scope

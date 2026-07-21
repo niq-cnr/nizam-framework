@@ -8,7 +8,7 @@ authoritative_source: ecosystem/00_ecosystem_bootstrap.md
 change_log:
   - version: "0.2.0"
     date: "2026-07-21"
-    summary: "Made the 0-to-n project spectrum first-class (new Section 3), on the operator's 2026-07-21 design requirement that the system span an ecosystem of 0 to n projects: names and scopes the 0 (greenfield genesis), 1-greenfield, 1-brownfield, and n (multi-repository) cases, states honestly which are mechanized today versus delegated to the GIP tiers, the scope-membership registry, or the deferred 04/05 coordination protocols, and cross-references docs/nips/NIP-0002-zero-to-n-project-spectrum.md as the capability framing and docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md as the pilot-proven single-project fixes. Renumbered the subsequent sections (former 3-7 become 4-8)."
+    summary: "Made the 0-to-n project spectrum first-class (new Section 3), on the operator's 2026-07-21 design requirement that the system span an ecosystem of 0 to n projects: names and scopes the 0 (greenfield genesis), 1-greenfield, 1-brownfield, and n (multi-repository) cases, states honestly which are mechanized today versus delegated to the GIP tiers, the scope-membership registry, or the deferred 04/05 coordination protocols, and cross-references docs/nips/NIP-0002-zero-to-n-project-spectrum.md as the capability framing and docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md as the pilot-proven single-project fixes. Renumbered the subsequent sections (former 3-7 become 4-8). PR #42 review correction: the Section 2 determinism statement is scoped to the injected payload and framework pin only — the provenance install timestamp (Section 7) may differ between runs and is explicitly excluded, rather than claiming reruns reproduce identical recorded provenance."
   - version: "0.1.0"
     date: "2026-07-20"
     summary: "Initial Bootstrap-stage protocol (phase-007 feature 060). The canonical lifecycle (ecosystem/README.md) begins at Bootstrap, but the stage had no protocol document until now -- it is authored here by wrapping, not restating, the Governance Inheritance Protocol (standard/GIP.md) and bootstrap.sh: the pinned-immutable-tag precondition, the injected six-module payload + NIZAM.json, verification and provenance/drift, the consumer-supplied inputs each ecosystem must provide, and the entry condition into Preflight (ecosystem/01_clean_state_preflight.md). Flips the ecosystem/README.md Module Navigation status for 00 from Planned to Shipped."
@@ -62,9 +62,11 @@ operator-gated decision -- the human gate `H-CONSUMER-UPGRADE`
 (`docs/planning/operator_gates.md`) -- exactly as the Promote stage is human-gated.
 The pipeline records the adoption decision; it never adopts on a human's behalf.
 
-A Bootstrap run is deterministic and repeatable: re-running it against the same
-pinned tag and the same target reproduces the same injected payload and the same
-recorded provenance.
+A Bootstrap run is deterministic and repeatable with respect to the injected payload
+and the framework pin: re-running it against the same pinned tag and the same target
+reproduces the same injected payload and the same recorded pin. Installation metadata
+in the provenance artifact — notably the recorded install timestamp (Section 7) — may
+differ between runs and is not part of that determinism.
 
 ## 3. Ecosystem Scale: The 0-to-n Project Spectrum
 

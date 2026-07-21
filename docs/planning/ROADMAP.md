@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.14.0
+version: 0.15.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.15.0"
+    date: "2026-07-21"
+    summary: "PR #42 review corrections: fixed two stale 'NIP-0002 (Proposed — awaiting H-NIP)' references (completion banner + Current Position) to Accepted/phase-008-selected; corrected the open-debt count from 'seven' to 'six' phase-007 pilot rows (NDEBT-027..032); and added NDEBT-033 (bootstrap provenance pins tag name not resolved commit SHA, deferred to phase 008) to the open-debt roll. No plan-of-record change."
   - version: "0.14.0"
     date: "2026-07-21"
     summary: "NIP-0002 (The 0–n Project Spectrum) ACCEPTED by the operator via gate H-NIP (verbatim 'NIP-0002 is accepted'), selecting phase 008 as its realization. The 'Proposed Next Phase — Phase 008 (Candidate)' section rolled to 'Next Phase — Phase 008 (Authorized)', recording the acceptance and that selection is not activation (phase 008 still needs product_spec_008 + feature_list_008 + H-PHASE-008, the next planning cycle). Recorded alongside .agent/run_state.json (operator_gate_decision) and docs/planning/operator_gates.md (H-NIP second exercise, v0.4.0)."
@@ -95,7 +98,8 @@ first-exercised the `H-CONSUMER-UPGRADE` gate (061, 063), ran the first non-self
 ecosystem-cycle pilot against a scratch consumer (063 — adoption held: bootstrap + verify +
 `validate.sh --payload` 11/11; friction recorded as `NDEBT-027`…`NDEBT-032`), and authored
 the evidence-prioritized phase-008 candidate scope (064, above). The decisions were captured
-formally as `NIP-0002` (Proposed) and `ADR-004` (Accepted). The conditional feature 062 was
+formally as `NIP-0002` (Accepted 2026-07-21, gate H-NIP — selecting phase 008) and `ADR-004`
+(Accepted). The conditional feature 062 was
 intentionally not run (the scratch consumer had no colliding root files; carried as
 `NDEBT-032`). On 2026-07-20 the operator authorized activation (verbatim: **"Authorized to
 activate now"**, satisfying gate **H-PHASE-007**; recorded in `.agent/run_state.json` event
@@ -216,7 +220,7 @@ successor, leaving open debt deferred to unscoped "future phases").
   and first-exercised (063), the first non-self ecosystem-cycle pilot ran against a
   scratch consumer (063 — adoption held; friction recorded as `NDEBT-027`…`NDEBT-032`),
   and the evidence-prioritized phase-008 candidate scope is authored (064). Two governed
-  docs capture the decisions: `NIP-0002` (0–n spectrum, Proposed — awaiting H-NIP) and
+  docs capture the decisions: `NIP-0002` (0–n spectrum, Accepted 2026-07-21 via H-NIP — phase 008 selected) and
   `ADR-004` (consumer-readiness, Accepted). Phase 006 (features 049–059) landed
   on `main` via eleven sequential PRs #28–#38; the validator runs
   green at `SUMMARY: 15 passed, 0 failed` (C1–C15), payload mode at `11 passed, 0
@@ -228,12 +232,14 @@ successor, leaving open debt deferred to unscoped "future phases").
   the `[0.8.0]` CHANGELOG section (run 29717579479, success). A MINOR release per
   `methodology/06_release_train.md` §3.2. The successor consumer-adoption phase
   (handover F-016..F-020) remains unblocked.
-- Open debt: NDEBT-026 (Low, pre-existing) plus the seven phase-007 pilot rows
+- Open debt: NDEBT-026 (Low, pre-existing) plus the six phase-007 pilot rows
   `NDEBT-027`…`NDEBT-032` — the consumer-readiness and 0–n-spectrum gaps the scratch
   pilot surfaced (governance-root assumption, framework-pin mis-anchoring, audit/compare
   not yet in a released tag, the absent 0-case, single-`--repo-root` tools, and the
   brownfield `bootstrap.sh` gap), each cross-referencing `ADR-004`/`NIP-0002` and
-  sequenced into the phase-008 candidate scope above. Phase 006 resolved the entire
+  sequenced into the phase-008 candidate scope above; plus `NDEBT-033` (Medium) — bootstrap
+  provenance pins the tag name but not its resolved commit SHA (surfaced in the PR #42
+  review), also deferred to phase 008. Phase 006 resolved the entire
   enforcement-closure backlog it inherited (NDEBT-004, -005, -007 through -024;
   NDEBT-001/002/003/006/025 were already Resolved). See `docs/planning/DEBT.md`.
 

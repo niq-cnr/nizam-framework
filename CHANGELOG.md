@@ -93,7 +93,7 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - **`NIP-0002` accepted (gate H-NIP) → phase 008 selected.** The operator accepted
-  `docs/nips/NIP-0002-zero-to-n-project-spectrum.md` (status draft → **accepted**, v0.2.0),
+  `docs/nips/NIP-0002-zero-to-n-project-spectrum.md` (status proposed → **accepted**, v0.2.0),
   selecting **phase 008 (The 0–n Project Spectrum)** as its realization — the way NIP-0001's
   acceptance selected phase 005. Selection is not activation: phase 008 still needs its own
   `product_spec_008` + `feature_list_008` + `H-PHASE-008`. Recorded in `.agent/run_state.json`
@@ -107,12 +107,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   are mechanized today versus delegated to the GIP tiers, the scope-membership registry,
   or the deferred `04`/`05` coordination protocols. Cross-references NIP-0002 (the
   capability framing) and ADR-004 (the single-project consumer-readiness fixes).
-- **`docs/planning/DEBT.md` → v0.29.0** — recorded the phase-007 scratch-consumer pilot
+- **`docs/planning/DEBT.md` → v0.30.0** — recorded the phase-007 scratch-consumer pilot
   friction and the 0-to-n gaps as `NDEBT-027`…`NDEBT-032`: preflight governance-root
   assumption (A), baseline framework-pin mis-anchoring (B), audit/compare not yet in a
   released tag (C), the absent 0-case (D), single-`--repo-root` tools versus multi-repo
   prose (E), and `bootstrap.sh` lacking GIP §5.1 brownfield reconciliation (F). Each
-  cross-references ADR-004 or NIP-0002 and is sequenced into phase 008.
+  cross-references ADR-004 or NIP-0002 and is sequenced into phase 008. Plus `NDEBT-033`
+  (from the PR #42 review): bootstrap provenance pins the tag name but not its resolved
+  commit SHA — hardening deferred to phase 008.
 
 ### Fixed
 
