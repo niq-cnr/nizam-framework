@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.17.0
+version: 0.18.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.18.0"
+    date: "2026-07-21"
+    summary: "Phase 008 (0-n Project Spectrum, Stage 1: Consumer-Readiness, features 065-069) COMPLETE. The phase-008 Plan-of-Record banner carries the completion record (065/066 ADR-004 findings A/B; 067 SHA pin; 068 resolved-by-design Option A; 069 re-pilot proved A/B resolved against a real bootstrapped consumer, evidence .agent/evidence/pilot-069/). Current Position rolled to phases 001-008 complete. The phase-009 candidate scope (NIP-0002 Stages 2-4: 0-case genesis, n-case multi-repo tooling + membership registry, 04/05 protocols) is validated by the re-pilot and carried forward; a real non-scratch consumer pilot remains the open production-maturity criterion. Awaiting operator: the 067-069 PR + phase-009 planning."
   - version: "0.17.0"
     date: "2026-07-21"
     summary: "Phase 008 ACTIVATED (operator verbatim: 'Approved. Please proceed', gate H-PHASE-008, 2026-07-21): the Proposed Next Phase — Phase 008 section becomes the Plan of Record banner. current_phase advanced 007-consumer-adoption -> 008-consumer-readiness in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_008 flipped draft -> active (1.1.0); scope budget reset to 1010 (phase-007 final archived). operator_gates.md records H-PHASE-008 SATISFIED. Execution begins with the ungated DAG root feature 065 (governance-root resolution in tools/ecosystem_preflight.py; ADR-004 decision 1 / NDEBT-027) — the first real code change of the 0-n programme."
@@ -61,18 +64,19 @@ change_log:
 
 # Forward Roadmap
 
-## Plan of Record (2026-07-21) — Phase 008 Activated: 0–n Project Spectrum, Stage 1 — Consumer-Readiness
+## Plan of Record (2026-07-21) — Phase 008 Activated: 0–n Project Spectrum, Stage 1 — Consumer-Readiness — **COMPLETE 2026-07-21**
 
-**Phase `008-consumer-readiness` is ACTIVE — plan of record.** On 2026-07-21 the operator
-authorized activation (verbatim: **"Approved. Please proceed"**, satisfying gate
-**H-PHASE-008**; recorded in `.agent/run_state.json` event `phase_activated` before any
-feature execution, per the NDEBT-018 rule). It realizes `NIP-0002` (accepted via gate H-NIP).
-`docs/planning/manifest.json` carries `current_phase: 008-consumer-readiness` with the
-phase-008 entry `status: in_progress`; `.agent/product_spec_008.md` is active (1.1.0); the
-scope budget was reset to 1010 (phase-007 final archived). The planner artifacts
-(`.agent/feature_list_008.json` — features 065–069, DAG-validated acyclic, roots {065, 068})
-are the plan of record. Execution begins with the ungated DAG root feature **065**
-(governance-root resolution) — the first real *code* change of the 0–n programme.
+**Phase `008-consumer-readiness` is COMPLETE** (2026-07-21). It realized `NIP-0002` Stage 1
+(consumer-readiness): **065** governance-root resolution + **066** provenance-pin anchoring
+(ADR-004, pilot findings A/B) made the single-project case genuinely consumer-ready; **067**
+bootstrap commit-SHA pinning (`NDEBT-033`) hardened the pin against a moved tag; **068**
+brownfield coexistence was resolved-by-design (operator Option A — no code; the `.nizam/`-only
+inject already satisfies GIP §5.1 by construction); **069** re-piloted the fixed loop against a
+real bootstrapped consumer and proved findings A/B resolved with no hand-applied workaround
+(evidence `.agent/evidence/pilot-069/`). Activation was on 2026-07-21 (operator verbatim
+**"Approved. Please proceed"**, gate **H-PHASE-008**, recorded before feature execution per
+NDEBT-018). 065/066 landed on `main` via PR #44; 067–069 are on the phase-008 branch for a
+second PR. `manifest.json` carries phase-008 `status: complete`.
 
 **Scope — NIP-0002 Stage 1 only (prove-then-build).** NIP-0002's Staged Realization is
 explicitly *evidence-led — no stage claimed working until proven against real evidence* — and
@@ -231,19 +235,20 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-07-21)
 
-- Phases 001–007 are complete. **Phase 007 (Consumer-Adoption Enablement & First
-  External Pilot, features 060–064) is COMPLETE** (2026-07-21, on the phase-007 branch,
-  not yet released): the Bootstrap-stage protocol shipped (feature 060; amended to
-  v0.2.0 for the 0–n project spectrum), the `H-CONSUMER-UPGRADE` gate is defined (061)
-  and first-exercised (063), the first non-self ecosystem-cycle pilot ran against a
-  scratch consumer (063 — adoption held; friction recorded as `NDEBT-027`…`NDEBT-032`),
-  and the evidence-prioritized phase-008 candidate scope is authored (064). Two governed
-  docs capture the decisions: `NIP-0002` (0–n spectrum, Accepted 2026-07-21 via H-NIP — phase 008 selected) and
-  `ADR-004` (consumer-readiness, Accepted). Phase 006 (features 049–059) landed
-  on `main` via eleven sequential PRs #28–#38; the validator runs
-  green at `SUMMARY: 15 passed, 0 failed` (C1–C15), payload mode at `11 passed, 0
-  failed`, the fixtures self-test green, and the hermetic e2e bootstrap harness
-  passes in CI.
+- Phases 001–008 are complete. **Phase 008 (0–n Project Spectrum, Stage 1:
+  Consumer-Readiness, features 065–069) is COMPLETE** (2026-07-21): the ecosystem loop is
+  now genuinely consumer-ready — `ecosystem_preflight.py` resolves a governance-root (065)
+  and anchors a baseline to the injected framework pin (066), so a real bootstrapped
+  consumer gets a clean Preflight + honest baseline (ADR-004, pilot findings A/B);
+  `bootstrap.sh` records a commit-SHA pin (067, `NDEBT-033`); brownfield coexistence was
+  resolved-by-design (068); and a re-pilot proved findings A/B resolved against a real
+  consumer with no workaround (069, evidence `.agent/evidence/pilot-069/`). 065/066 are on
+  `main` (PR #44); 067–069 are on the phase-008 branch (second PR pending). **Phase 007**
+  (Consumer-Adoption Enablement & First External Pilot, features 060–064) is on `main`: the
+  Bootstrap-stage protocol, the `H-CONSUMER-UPGRADE` gate, the first scratch-consumer pilot,
+  and `NIP-0002` (0–n spectrum, Accepted via H-NIP) + `ADR-004` (Accepted). The validator
+  runs green at `SUMMARY: 15 passed, 0 failed` (C1–C15), the fixtures self-test at 51/51,
+  and the hermetic e2e bootstrap harness passes in CI.
 - Latest released tag: v0.8.0 — the annotated tag was pushed by the operator
   2026-07-20 at the phase merge commit 183e468, executing H-FRAMEWORK-RELEASE after
   the recorded sign-off; `release.yml` auto-published the GitHub Release page from

@@ -9,6 +9,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Phase 008 (0–n Project Spectrum, Stage 1: Consumer-Readiness) complete** (feature 069).
+  The fixed loop (065–068) was re-piloted against a real, freshly bootstrapped scratch
+  consumer and proved the phase-007 pilot findings resolved **with no hand-applied
+  workaround**: Preflight = `PASS_WITH_EXCEPTIONS` (the injected `.nizam/` is a single expected
+  exception, not a hard FAIL — finding A); the baseline `framework_references` names the
+  injected pin while `repository_references` names the consumer HEAD (finding B); provenance
+  carries `resolved_sha` and `--verify-only --expected-sha` holds (067). Evidence under
+  `.agent/evidence/pilot-069/`; `docs/planning/manifest.json` phase-008 → complete;
+  `H-CONSUMER-UPGRADE` exercised a second time. NIP-0002 Stages 2–4 remain the phase-009
+  candidate scope, validated by this re-pilot.
+
 - **Brownfield coexistence clarified as covered-by-construction** (phase 008 feature 068;
   `NDEBT-032`, resolved-by-design). Investigation showed the premise "mechanize GIP §5.1
   rename-and-diff in `bootstrap.sh`" contradicts **GIP §5.1 point 3**: `bootstrap.sh` injects

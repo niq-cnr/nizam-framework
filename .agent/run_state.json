@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "008-consumer-readiness",
   "current_feature": "069",
-  "status": "in_progress",
-  "updated_at": "2026-07-21T12:50:00Z",
+  "status": "phase_complete",
+  "updated_at": "2026-07-21T13:05:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -917,6 +917,21 @@
       "at": "2026-07-21T12:50:00Z",
       "event": "feature_complete",
       "detail": "Feature 068 (brownfield bootstrap reconciliation) COMPLETE via operator Option A (resolved-by-design). The AH-2 detect-before-fix discipline surfaced that the feature premise did not hold: GIP Section 5.1 point 3 states bootstrap.sh injects ONLY the .nizam/ payload and never writes to a consumer's root CONTEXT.md/AGENTS.md/CI, so it cannot silently overwrite them -- the coexistence safety is guaranteed by construction, and 'mechanizing rename-and-diff of root files in bootstrap.sh' would CONTRADICT GIP 5.1 point 3. Surfaced to the operator, who chose Option A. No bootstrap.sh change; ecosystem/00_ecosystem_bootstrap.md Section 3 + Section 5.1 (v0.4.0) corrected from 'not yet mechanized' to 'covered by construction'; NDEBT-032 moved to Resolved (DEBT.md v0.31.0); CHANGELOG Changed entry. Full sweep 15/15, self-test 51/51. No code change, so no new fabricated mechanization (anti-hallucination honored). Advancing to feature 069 (re-pilot the fixed loop + close phase 008)."
+    },
+    {
+      "at": "2026-07-21T12:55:00Z",
+      "event": "operator_gate_decision",
+      "detail": "H-CONSUMER-UPGRADE EXERCISED (second exercise; first was the phase-007 pilot). Operator (xc9@nenzima.com, controlled session) authorized adopting a scratch/throwaway consumer against the phase-008 fixed framework for the feature-069 re-pilot. Recorded before the re-pilot bootstrap ran, per the NDEBT-018 rule. Recurring gate."
+    },
+    {
+      "at": "2026-07-21T13:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 069 (re-pilot the fixed loop + close phase 008) COMPLETE. Re-ran the ecosystem loop against a real, freshly bootstrapped scratch consumer using the FIXED tools (065-068): Preflight = PASS_WITH_EXCEPTIONS with a single injected_governance_payload exception (finding A resolved, no hard FAIL, no hand-applied workaround); baseline framework_references = the injected pin and repository_references = the consumer HEAD (finding B resolved); provenance.json carries resolved_sha and --verify-only --expected-sha holds (067). Evidence committed under .agent/evidence/pilot-069/. Residual: NDEBT-029 (audit/compare tools not in a released tag) stays open until the next release; a real non-scratch consumer pilot remains the open production-maturity criterion (carried to phase 009)."
+    },
+    {
+      "at": "2026-07-21T13:05:00Z",
+      "event": "phase_complete",
+      "detail": "Phase 008 (0-n Project Spectrum, Stage 1: Consumer-Readiness) COMPLETE. Realized NIP-0002 Stage 1: ADR-004 governance-root resolution (065, NDEBT-027) + provenance-pin anchoring (066, NDEBT-028) made the single-project case genuinely consumer-ready; bootstrap commit-SHA pinning (067, NDEBT-033) hardened the pin against a moved tag; brownfield coexistence resolved-by-design (068, NDEBT-032, operator Option A -- no code, the .nizam/-only inject already satisfies GIP 5.1 by construction); the re-pilot (069) proved findings A/B resolved against a real bootstrapped consumer with no workaround. Landed on main via PR #44 (activation + 065 + 066); 067/068/069 on the phase-008 branch for a second PR. manifest phase-008 -> complete. NIP-0002 Stages 2-4 (0-case genesis, n-case multi-repo tooling + membership registry, 04/05 protocols) remain the phase-009 candidate scope, evidence-validated by this re-pilot. Awaiting operator: the 067-069 PR, and phase-009 planning (a fresh H-PHASE-009 cycle)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1119,6 +1134,13 @@
         "actual": 35,
         "flag": "UNDER",
         "note": "RESOLVED-BY-DESIGN (operator Option A): no bootstrap.sh change -- the premise contradicted GIP Sec 5.1 point 3 (bootstrap injects only .nizam/, never root files). Doc-only: ecosystem/00 Sec 3+5.1 (v0.4.0) corrected, DEBT.md NDEBT-032 -> Resolved (v0.31.0), CHANGELOG. git numstat ins+del = 35 vs 210 estimated (well UNDER because the estimated bash mechanization was correctly NOT built -- detect-before-fix)."
+      },
+      {
+        "id": "069",
+        "estimated": 210,
+        "actual": 0,
+        "flag": null,
+        "note": "Re-pilot + phase close. Committed evidence .agent/evidence/pilot-069/ (preflight PASS_WITH_EXCEPTIONS, pin-anchored baseline, provenance with resolved_sha, README) + close-out ledger edits (run_state, manifest phase-008->complete, feature_list_008 statuses, operator_gates H-CONSUMER-UPGRADE 2nd exercise, ROADMAP phase-008 complete + phase-009 validated, CHANGELOG). git numstat ins+del = 0 vs 210 estimated."
       }
     ]
   },
