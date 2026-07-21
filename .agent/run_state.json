@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "007-consumer-adoption",
-  "current_feature": "063",
-  "status": "in_progress",
-  "updated_at": "2026-07-20T00:00:00Z",
+  "current_feature": "064",
+  "status": "phase_complete",
+  "updated_at": "2026-07-21T05:50:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -867,6 +867,26 @@
       "at": "2026-07-20T00:00:00Z",
       "event": "phase_paused",
       "detail": "Phase 007 PAUSED after the two framework-internal features (060, 061). The next feature is the first external-consumer pilot (063; the conditional 062 is inserted before it only if a real consumer with pre-existing root files surfaces the need), which requires operator-authorized access to a consumer repository. The canonical target nizamiq/nizamiq-strategy is a different organization outside this session's scope; the pilot is blocked pending consumer-repo sourcing (add_repo for the canonical target subject to org authorization, another operator-provided repo, or a scratch consumer). H-CONSUMER-UPGRADE is DEFINED (feature 061) and awaits its first exercise here."
+    },
+    {
+      "at": "2026-07-21T05:24:00Z",
+      "event": "operator_gate_decision",
+      "detail": "H-CONSUMER-UPGRADE EXERCISED (first exercise of the gate defined by feature 061). Operator (xc9@nenzima.com, controlled session) authorized adopting a scratch/throwaway consumer against the released immutable framework tag v0.8.0 for the phase-007 pilot (option c). Recorded BEFORE the bootstrap ran, per the NDEBT-018 gate-decision-before-gated-execution rule; the pilot's preflight artifact independently records the same operator_approval (authorization: 'scratch-consumer pilot (option c), H-CONSUMER-UPGRADE'). Gate status in .agent/product_spec_007.md Section 5 moves OUTSTANDING -> EXERCISED. The pipeline recorded but did not self-execute the adoption."
+    },
+    {
+      "at": "2026-07-21T05:29:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 063 (first scratch-consumer pilot) COMPLETE. First run of the ecosystem cycle against a real, non-self repository (fresh git repo, src/calc.py + README, bootstrapped from v0.8.0; ephemeral, never pushed). ADOPTION PATH HELD: bootstrap.sh clone->inject->--verify-only PASS; tools/validate.sh --payload green (11/11) inside the consumer (Track-4 CWD-independence assertion holds against foreign content). LOOP-MECHANICS FRICTION surfaced and recorded (evidence .agent/evidence/pilot-063/): (A) Preflight is a hard FAIL against a real bootstrapped consumer - REQUIRED_REFERENCE_PATHS resolve at repo-root not .nizam/, injected .nizam/ flagged untracked [NDEBT-027]; (B) Baseline anchors framework_references to consumer HEAD not the v0.8.0 provenance pin [NDEBT-028]; (C) v0.8.0 payload predates the audit/compare tools [NDEBT-029]. Downstream Audit and Compare are artifact-based and ran cleanly once the layout gap was bridged (schema-valid delta: 1 resolved, 1 persisting) - confirming only Preflight/Baseline carry the self-fixture assumptions. Decisions captured in ADR-004 (Accepted); 0-n spectrum gaps D/E/F recorded NDEBT-030/031/032 and framed by NIP-0002. Conditional feature 062 (bootstrap.sh GIP \u00a75.1 rename-and-diff) NOT executed - the scratch consumer had no colliding root files to force it [NDEBT-032]."
+    },
+    {
+      "at": "2026-07-21T05:45:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 064 (plan next tranche + close phase 007) COMPLETE. From the recorded pilot friction (NDEBT-027..032), authored the phase-008 candidate scope in docs/planning/ROADMAP.md, evidence-prioritized around NIP-0002 + ADR-004: (i) make Preflight/Baseline consumer-ready (fix A/B, ADR-004) - the prerequisite for any real adoption; (ii) the 0 greenfield-genesis capability; (iii) the n multi-repo tool extension + promote registry/scope_definition_patterns.md to a required ecosystem-membership artifact; (iv) the deferred 04/05 n-coordination protocols. Recorded honestly that a scratch consumer exercises loop MECHANICS, not real product maturity, so the real-consumer / production-proven acceptance criterion remains open for a future non-scratch pilot. Framework-internal, no external repo."
+    },
+    {
+      "at": "2026-07-21T05:50:00Z",
+      "event": "phase_complete",
+      "detail": "Phase 007 (Consumer-Adoption Enablement & First External Pilot) COMPLETE. Shipped: ecosystem/00_ecosystem_bootstrap.md (feature 060, amended to v0.2.0 for the operator's 0-n project-spectrum design requirement), H-CONSUMER-UPGRADE gate defined (061) and first-exercised (063 pilot), the first non-self ecosystem-cycle pilot (063) proving adoption holds and surfacing consumer-readiness friction (NDEBT-027..032), and the evidence-prioritized phase-008 scope (064). Two governed docs capture the decisions: NIP-0002 (0-n spectrum, Proposed - awaiting operator H-NIP) and ADR-004 (consumer-readiness, Accepted). Conditional feature 062 intentionally not run (no brownfield collision to force it; carried as NDEBT-032). Full sweep 15/15, self-test green, e2e bootstrap PASS. manifest.json phase-007 -> complete. Awaiting operator: PR for the phase-007 branch, and the H-NIP decision on NIP-0002 that would activate phase 008."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1055,6 +1075,20 @@
         "actual": 32,
         "flag": null,
         "note": "1 file (git numstat ins+del): docs/planning/operator_gates.md 20+12=32 (0.1.0->0.2.0; H-CONSUMER-UPGRADE moved reserved->defined in Sec 1 with scope/trigger/disposition, Sec 2 reduced five->four, References + Sec 1 title updated) vs 90 estimated (UNDER). Cumulative 240/1131 ceiling (21.2%)."
+      },
+      {
+        "id": "063",
+        "estimated": 260,
+        "actual": 0,
+        "flag": null,
+        "note": "Pilot executed against an EPHEMERAL scratch consumer (created under the session scratchpad, never pushed); the consumer's artifacts are not committed to the framework. Framework-side output is the committed evidence snapshot .agent/evidence/pilot-063/ (7 files: preflight FAIL + workaround, mis-anchored baseline, provenance pin, audit report, delta, README) + the six NDEBT rows (027-032). Counted as 0 deliverable *framework source* lines by design - the pilot's product is recorded friction/evidence, not framework code (the fixes are phase-008 scope per ADR-004). Cumulative framework source 240/1131."
+      },
+      {
+        "id": "064",
+        "estimated": 140,
+        "actual": 0,
+        "flag": null,
+        "note": "Plan-and-close feature: phase-008 candidate scope authored in docs/planning/ROADMAP.md + phase-close ledger updates (this file, manifest.json, product_spec_007 amendment, ecosystem/00 v0.2.0 amendment, NIP-0002, ADR-004, DEBT rows). These are planning/governance-record edits spread across the phase-close commit rather than a single feature deliverable file; line count folded into the phase-close change as a whole. Cumulative framework source 240/1131 (27.6% of the 870 estimate; well under ceiling - phase 007 was deliberately a prove-then-build phase, not a large authoring phase)."
       }
     ]
   },
@@ -1349,8 +1383,6 @@
     ]
   },
   "blocked_features": [
-    "062",
-    "063",
-    "064"
+    "062"
   ]
 }

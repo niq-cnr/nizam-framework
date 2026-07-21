@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-07-21"
+    summary: "Phase-007 feature 063: H-CONSUMER-UPGRADE disposition rolled DEFINED/OUTSTANDING -> EXERCISED. First exercise 2026-07-21 — the operator authorized adopting a scratch/throwaway consumer against released tag v0.8.0 for the first pilot; recorded in .agent/run_state.json (event operator_gate_decision) before the bootstrap ran, per the NDEBT-018 rule. The gate is recurring, so it is outstanding again at the next adoption/upgrade."
   - version: "0.2.0"
     date: "2026-07-20"
     summary: "Phase-007 feature 061: H-CONSUMER-UPGRADE is DEFINED and moved from the reserved table (Section 2) into the decided-and-active table (Section 1) with scope, trigger, and disposition semantics — it approves a consumer repository's adoption of, or upgrade to, a newly released immutable framework tag at the Bootstrap stage (ecosystem/00_ecosystem_bootstrap.md), record-but-never-self-execute. Status DEFINED/OUTSTANDING, awaiting its first exercise at the first external-consumer pilot (feature 063). The four sibling gates (H-PLANNING-AUTHORITY, H-TRAIN-ENTRY, H-CONSOLIDATION, H-GA) stay reserved. Section 1 retitled to 'Decided and active gates' since it now carries a defined-but-not-yet-exercised gate."
@@ -66,7 +69,7 @@ their most recent disposition, not a claim that they never fire again.
 | `H-PAYLOAD-CONTRACT` | Decide the injected-payload / methodology contract (which directories the bootstrap payload carries). | `.agent/product_spec_006.md` gates (F-051) | SATISFIED in phase 006 (feature 051). |
 | `H-CONSTITUTIONAL` | The mechanize-or-descope decision for the constitutional-policy surface (per document: mechanize into a validator check, or mark consumer-aspirational). | `.agent/product_spec_006.md` gates (F-058); `docs/planning/ROADMAP.md` Track 3 | RESOLVED 2026-07-20 — two surfaces mechanized (validate.sh C14/C15), seven marked consumer-aspirational. |
 | `H-FRAMEWORK-RELEASE` | Approve the semantic version, changelog, migration notes, and tag creation for a framework release (recurring, per release). | `.agent/product_spec_005.md` Sec 8; `methodology/06_release_train.md` | EXECUTED 2026-07-18 (v0.7.0) and 2026-07-20 (v0.8.0, phase 006 feature 059) — operator-signed tags. |
-| `H-CONSUMER-UPGRADE` | Approve a consumer repository's adoption of, or upgrade to, a newly released **immutable framework tag** at the Bootstrap stage — the pinned tag the consumer will inherit and run the cycle under. The pipeline records the adoption decision; it never adopts on a human's behalf (recurring, per adoption/upgrade). | `.agent/product_spec_007.md`; `ecosystem/00_ecosystem_bootstrap.md` Sec 2 | DEFINED 2026-07-20 (phase 007, feature 061). OUTSTANDING — awaiting its first exercise at the first external-consumer pilot (feature 063). |
+| `H-CONSUMER-UPGRADE` | Approve a consumer repository's adoption of, or upgrade to, a newly released **immutable framework tag** at the Bootstrap stage — the pinned tag the consumer will inherit and run the cycle under. The pipeline records the adoption decision; it never adopts on a human's behalf (recurring, per adoption/upgrade). | `.agent/product_spec_007.md`; `ecosystem/00_ecosystem_bootstrap.md` Sec 2 | DEFINED 2026-07-20 (phase 007, feature 061). EXERCISED 2026-07-21 (phase 007, feature 063) — first exercise: the operator authorized adopting a scratch/throwaway consumer against released tag `v0.8.0` for the pilot; recorded in `.agent/run_state.json` (event `operator_gate_decision`) before the bootstrap ran, per the NDEBT-018 rule. Recurring: outstanding again at the next adoption/upgrade. |
 
 ## 2. Reserved gates (deferred to the successor consumer-adoption phase)
 

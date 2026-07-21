@@ -9,6 +9,23 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`docs/nips/NIP-0002-zero-to-n-project-spectrum.md`** — a framework-capability
+  proposal (status **Proposed**, awaiting operator gate H-NIP) that the Ecosystem
+  Engineering Cycle explicitly span an ecosystem of **0 to n projects**: 0 (greenfield
+  genesis — a new project from nothing), 1 (a single project, greenfield or brownfield),
+  and n (many associated repositories). Defines the ecosystem-membership/scope registry
+  (reusing `registry/scope_definition_patterns.md`'s `in_scope`/`incubating` partitions)
+  as the artifact that sets `n`, refines NIP-0001's "multi-repository" framing to be
+  explicit about project count, and lays out a staged, evidence-led realization. On
+  acceptance it becomes the plan of record for phase 008. Authored on the operator's
+  2026-07-21 design requirement and the phase-007 pilot evidence.
+- **`docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md`** — the two narrower,
+  pilot-proven architecture decisions NIP-0002 spawns (status **Accepted**, implementation
+  sequenced into phase 008): the ecosystem tools must (1) resolve a **governance-root** so
+  they locate the injected `.nizam/` payload rather than assuming the framework-root
+  layout, and (2) anchor a Baseline's `framework_references` to the injected **provenance
+  pin** (`.nizam/provenance.json`), not the consumer's HEAD. Records the phase-007
+  scratch-consumer pilot findings A and B.
 - **`ecosystem/00_ecosystem_bootstrap.md`** — the Bootstrap-stage protocol (phase 007
   feature 060), the lifecycle's entry stage, which had no protocol document until now.
   It wraps (does not restate) `standard/GIP.md` and `bootstrap.sh`: the
@@ -72,6 +89,22 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   indexed in `schema/README.md`, and covered by `tools/fixtures_self_test.sh`.
   Completes the four core ecosystem-cycle schemas
   (baseline / preflight-verdict / engineering-finding / audit-delta).
+
+### Changed
+
+- **`ecosystem/00_ecosystem_bootstrap.md` → v0.2.0** — made the **0-to-n project
+  spectrum** first-class (new Section 3), on the operator's 2026-07-21 design
+  requirement: the Bootstrap stage now names and scopes the 0 (greenfield genesis),
+  1-greenfield, 1-brownfield, and n (multi-repository) cases and states honestly which
+  are mechanized today versus delegated to the GIP tiers, the scope-membership registry,
+  or the deferred `04`/`05` coordination protocols. Cross-references NIP-0002 (the
+  capability framing) and ADR-004 (the single-project consumer-readiness fixes).
+- **`docs/planning/DEBT.md` → v0.29.0** — recorded the phase-007 scratch-consumer pilot
+  friction and the 0-to-n gaps as `NDEBT-027`…`NDEBT-032`: preflight governance-root
+  assumption (A), baseline framework-pin mis-anchoring (B), audit/compare not yet in a
+  released tag (C), the absent 0-case (D), single-`--repo-root` tools versus multi-repo
+  prose (E), and `bootstrap.sh` lacking GIP §5.1 brownfield reconciliation (F). Each
+  cross-references ADR-004 or NIP-0002 and is sequenced into phase 008.
 
 ### Fixed
 

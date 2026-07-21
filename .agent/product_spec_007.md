@@ -6,11 +6,14 @@ tags: [spec, ecosystem-cycle, consumer-adoption, bootstrap, pilot, phase-007, pr
 status: active
 last_audited: "2026-07-20"
 authoritative_source: NA
-version: 1.1.0
+version: 1.2.0
 spec_version: "1.0.0"
 created_at: "2026-07-20T00:00:00Z"
-updated_at: "2026-07-20T00:00:00Z"
+updated_at: "2026-07-21T00:00:00Z"
 change_log:
+  - version: "1.2.0"
+    date: "2026-07-21T00:00:00Z"
+    summary: "Phase-close amendment: records the operator's 2026-07-21 design requirement that the system span an ecosystem of 0-to-n projects, and cross-references the two governed docs authored to capture it — docs/nips/NIP-0002-zero-to-n-project-spectrum.md (the capability proposal, status Proposed, whose acceptance would make it phase 008's plan of record) and docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md (the pilot-proven single-project fixes, Accepted). No scope change to phase 007's shipped features 060-064; the pilot (063) executed against a scratch consumer (operator option c) and its friction is recorded as NDEBT-027..032. Section 3's consumer-repo question was resolved as the scratch-consumer path."
   - version: "1.1.0"
     date: "2026-07-20T00:00:00Z"
     summary: "Phase activated: frontmatter status draft -> active on operator authorization 2026-07-20 (verbatim: 'Authorized to activate now', gate H-PHASE-007, recorded in .agent/run_state.json event phase_activated before any feature execution per the NDEBT-018 rule). current_phase advanced 006-enforcement-closure -> 007-consumer-adoption; scope budget reset (870 est, phase-006 final archived). Body Status banner updated to ACTIVE plan of record; no scope change. The draft status was the designed proposal state, flipped only now that the decision lifecycle reached activation (the 005 lesson applied as intended)."
@@ -31,6 +34,19 @@ Planner-produced spec and DAG-validated feature list (`.agent/feature_list_007.j
 existed at proposal; the operator authorization completed the activation triad.
 Execution begins with the ungated DAG root feature 060; the pilot features 063–064
 remain deferred pending operator-authorized consumer-repo access (Section 3).
+
+**0–n design requirement (operator, 2026-07-21).** During execution the operator set a
+first-class requirement that the system handle an ecosystem of **0 to n projects** — 0
+(bootstrapping a new project from nothing / greenfield genesis), 1 (a single project,
+greenfield or brownfield), and n (many associated projects forming a complex ecosystem).
+This phase does **not** build the greenfield-genesis or multi-repo tooling speculatively
+(no claim beyond evidence); it (a) makes the spectrum first-class in the Bootstrap
+protocol (`ecosystem/00_ecosystem_bootstrap.md` §3, v0.2.0) and (b) captures the decisions
+formally: `docs/nips/NIP-0002-zero-to-n-project-spectrum.md` (the capability proposal that
+becomes phase 008's plan of record on operator acceptance, gate H-NIP) and
+`docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md` (the two pilot-proven
+single-project fixes, Accepted). The 0–n build is the evidence-prioritized candidate scope
+for phase 008 (`docs/planning/ROADMAP.md`).
 
 ## 1. Purpose
 
