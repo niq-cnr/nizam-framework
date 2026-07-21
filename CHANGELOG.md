@@ -9,6 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`ecosystem_preflight.py` baseline provenance-pin anchoring** (phase 008 feature 066;
+  ADR-004 decision 2, `NDEBT-028`). A Baseline's `framework_references` now anchors to the
+  **injected framework pin** recorded in the governance-root's `provenance.json` (its `tag` /
+  `framework_version`) rather than the consumer's own git HEAD, so a real bootstrapped
+  consumer's baseline names *which framework* it ran under; `repository_references` continues
+  to anchor to the consumer HEAD (*which consumer revision*). When there is no distinct injected
+  payload (`--self-fixture` / framework-root layout, or no readable pin) it falls back to the
+  historical HEAD-anchored self-referential default, unchanged. Closes phase-007 pilot finding B;
+  guarded by a `tools/fixtures_self_test.sh` probe asserting the framework pin (`v0.8.0`) and the
+  consumer HEAD are distinct and each correct.
 - **`ecosystem_preflight.py` governance-root resolution** (phase 008 feature 065; ADR-004
   decision 1, `NDEBT-027`). The Preflight tool now resolves its required schema references
   against a **governance-root** distinct from the repository root, so a real bootstrapped

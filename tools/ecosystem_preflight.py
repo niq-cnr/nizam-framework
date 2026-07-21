@@ -491,12 +491,52 @@ def load_ci_reference(path: str) -> dict[str, object]:
     return reference
 
 
+def resolve_framework_pin(governance_root: str, repo_root: str) -> dict[str, str] | None:
+    """Return the injected framework pin from ``<governance_root>/provenance.json``.
+
+    Feature 066 (ADR-004 decision 2; NDEBT-028): in a real bootstrapped consumer
+    the framework the cycle runs UNDER is the *injected* pin recorded in the
+    governance-root's ``provenance.json`` (its ``tag`` / ``framework_version``),
+    not the consumer's own git HEAD. This returns a ``{revision, name}`` pair to
+    anchor ``framework_references`` to that pin.
+
+    Returns ``None`` -- so the caller keeps the historical HEAD-anchored
+    self-referential default -- when there is no distinct injected payload to read
+    (``governance_root == repo_root``, i.e. the ``--self-fixture``/framework-root
+    layout where the framework IS the repository under inspection) or when
+    ``provenance.json`` is absent, unreadable, malformed, or carries no usable pin.
+    Never raises: a missing/invalid provenance file degrades to the default, since
+    a governance-root/clean-state finding will already have surfaced any real
+    payload problem.
+    """
+    if governance_root == repo_root:
+        return None
+    provenance_path = os.path.join(governance_root, "provenance.json")
+    try:
+        with open(provenance_path, "r", encoding="utf-8") as handle:
+            provenance = json.load(handle)
+    except (OSError, json.JSONDecodeError):
+        return None
+    if not isinstance(provenance, dict):
+        return None
+    tag = provenance.get("tag")
+    framework_version = provenance.get("framework_version")
+    revision = tag if isinstance(tag, str) and tag else framework_version
+    if not (isinstance(revision, str) and revision):
+        return None
+    return {
+        "revision": revision,
+        "name": f"injected framework pin (provenance.json): {revision}",
+    }
+
+
 def build_baseline_document(
     execution_id: str,
     repo_root: str,
     output_dir: str,
     captured_at: str,
     ci_reference: dict[str, object] | None = None,
+    governance_root: str | None = None,
 ) -> dict[str, object]:
     """Synthesize a schema-valid baseline document anchored to real, observed state.
 
@@ -505,10 +545,18 @@ def build_baseline_document(
     independently-observable ``revision`` and the run's own ``timestamp`` --
     never a fabricated or unlabelled value:
 
-    - ``framework_references`` / ``repository_references`` both anchor to
-      ``repo_root``'s own ``git rev-parse HEAD`` (the minimum-viable default:
-      in self-fixture/single-repository mode the framework IS the repository
-      under inspection).
+    - ``framework_references`` anchors to the *injected framework pin* recorded in
+      the governance-root's ``provenance.json`` (its ``tag`` / ``framework_version``)
+      when a ``governance_root`` distinct from ``repo_root`` carries one (feature
+      066, ADR-004 decision 2; NDEBT-028) -- so a real bootstrapped consumer's
+      baseline names which framework it ran under, not the consumer's own HEAD.
+      When there is no distinct injected payload (``--self-fixture``/framework-root
+      layout, or no readable pin) it falls back to ``repo_root``'s own
+      ``git rev-parse HEAD`` (the minimum-viable self-referential default, where
+      the framework IS the repository under inspection) -- unchanged.
+    - ``repository_references`` always anchors to ``repo_root``'s own HEAD (the
+      consumer revision under inspection), so the two reference categories record
+      two distinct, correct facts: which framework, and which consumer revision.
     - ``dependency_references`` anchors to this CLI's own Python runtime
       version, the one real, inspectable tooling dependency the deterministic
       collection itself relies on.
@@ -533,6 +581,27 @@ def build_baseline_document(
     repository_name = os.path.basename(os.path.abspath(repo_root))
     evidence_log_path = os.path.join(output_dir, "collection-log.txt")
 
+    # framework_references anchors to the injected framework pin when a distinct
+    # governance-root carries one (feature 066); otherwise to the repo HEAD
+    # (self-fixture/framework-root default). repository_references always uses HEAD.
+    framework_pin = (
+        resolve_framework_pin(governance_root, repo_root)
+        if governance_root is not None
+        else None
+    )
+    if framework_pin is not None:
+        framework_reference: dict[str, object] = {
+            "revision": framework_pin["revision"],
+            "timestamp": captured_at,
+            "name": framework_pin["name"],
+        }
+    else:
+        framework_reference = {
+            "revision": head_revision,
+            "timestamp": captured_at,
+            "name": f"{repository_name} working tree (self-referential minimum-viable default)",
+        }
+
     if ci_reference is not None:
         ci_entry: dict[str, object] = dict(ci_reference)
         ci_entry.setdefault("source", "caller-supplied (--ci-run-file)")
@@ -551,13 +620,7 @@ def build_baseline_document(
     document: dict[str, object] = {
         "execution_id": execution_id,
         "captured_at": captured_at,
-        "framework_references": [
-            {
-                "revision": head_revision,
-                "timestamp": captured_at,
-                "name": f"{repository_name} working tree (self-referential minimum-viable default)",
-            }
-        ],
+        "framework_references": [framework_reference],
         "repository_references": [
             {"revision": head_revision, "timestamp": captured_at, "repository": repository_name}
         ],
@@ -849,7 +912,8 @@ def main(argv: Sequence[str]) -> int:
         write_json_document(
             os.path.join(args.output_dir, "baseline.json"),
             build_baseline_document(
-                args.execution_id, repo_root, args.output_dir, captured_at, ci_reference
+                args.execution_id, repo_root, args.output_dir, captured_at, ci_reference,
+                governance_root=governance_root,
             ),
         )
         print("PREFLIGHT VERDICT: PASS_WITH_EXCEPTIONS (approved)")
@@ -862,7 +926,8 @@ def main(argv: Sequence[str]) -> int:
     write_json_document(
         os.path.join(args.output_dir, "baseline.json"),
         build_baseline_document(
-            args.execution_id, repo_root, args.output_dir, captured_at, ci_reference
+            args.execution_id, repo_root, args.output_dir, captured_at, ci_reference,
+            governance_root=governance_root,
         ),
     )
     print("PREFLIGHT VERDICT: PASS")

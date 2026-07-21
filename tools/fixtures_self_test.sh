@@ -465,8 +465,12 @@ _preflight_governance_root_probes() (
   printf '{}' > "${sb}/.nizam/schema/preflight_verdict.schema.json"
   printf '{}' > "${sb}/.nizam/schema/ecosystem_baseline.schema.json"
   printf '{}' > "${sb}/.nizam/NIZAM.json"
+  printf '{"framework_version":"0.8.0","tag":"v0.8.0","source_url":"file:///fw","installed_at":"t"}' \
+    > "${sb}/.nizam/provenance.json"
   git -C "${sb}" add src
   git -C "${sb}" commit -qm init   # .nizam/ left untracked (the injected payload)
+  local consumer_head
+  consumer_head=$(git -C "${sb}" rev-parse HEAD)
   # (d) discovery: refs resolve under the discovered .nizam/ and the injected
   #     payload is an expected exception -> PASS_WITH_EXCEPTIONS pending (2), not FAIL(1).
   python3 tools/ecosystem_preflight.py --execution-id g --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
@@ -479,6 +483,20 @@ PY
   # (e) an explicit --governance-root at the payload behaves the same.
   python3 tools/ecosystem_preflight.py --execution-id g --output-dir "${out}" --repo-root "${sb}" --governance-root "${sb}/.nizam" >/dev/null 2>&1
   rc=$?; [ "${rc}" -eq 2 ] || { echo "  explicit gov-root: expected exit 2, got ${rc}"; return 1; }
+  # (f) feature 066: an operator-approved run captures a baseline whose
+  #     framework_references names the INJECTED PIN (provenance.json tag), while
+  #     repository_references names the consumer HEAD -- two distinct correct facts.
+  python3 tools/ecosystem_preflight.py --execution-id g --output-dir "${out}" --repo-root "${sb}" \
+    --operator-approver t@example.invalid --operator-authorization "self-test 066" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 3 ] || { echo "  baseline pin (approved): expected exit 3, got ${rc}"; return 1; }
+  CONSUMER_HEAD="${consumer_head}" python3 - "${out}/baseline.json" <<'PY' || { echo "  baseline framework-pin anchoring wrong"; return 1; }
+import json, os, sys
+d = json.load(open(sys.argv[1]))
+fr = d["framework_references"][0]["revision"]
+rr = d["repository_references"][0]["revision"]
+ok = fr == "v0.8.0" and rr == os.environ["CONSUMER_HEAD"] and fr != rr
+raise SystemExit(0 if ok else 1)
+PY
   return 0
 )
 if _preflight_governance_root_probes; then
