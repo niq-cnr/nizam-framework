@@ -9,6 +9,35 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`docs/nips/NIP-0002-zero-to-n-project-spectrum.md`** — a framework-capability
+  proposal (status **Proposed**, awaiting operator gate H-NIP) that the Ecosystem
+  Engineering Cycle explicitly span an ecosystem of **0 to n projects**: 0 (greenfield
+  genesis — a new project from nothing), 1 (a single project, greenfield or brownfield),
+  and n (many associated repositories). Defines the ecosystem-membership/scope registry
+  (reusing `registry/scope_definition_patterns.md`'s `in_scope`/`incubating` partitions)
+  as the artifact that sets `n`, refines NIP-0001's "multi-repository" framing to be
+  explicit about project count, and lays out a staged, evidence-led realization. On
+  acceptance it becomes the plan of record for phase 008. Authored on the operator's
+  2026-07-21 design requirement and the phase-007 pilot evidence.
+- **`docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md`** — the two narrower,
+  pilot-proven architecture decisions NIP-0002 spawns (status **Accepted**, implementation
+  sequenced into phase 008): the ecosystem tools must (1) resolve a **governance-root** so
+  they locate the injected `.nizam/` payload rather than assuming the framework-root
+  layout, and (2) anchor a Baseline's `framework_references` to the injected **provenance
+  pin** (`.nizam/provenance.json`), not the consumer's HEAD. Records the phase-007
+  scratch-consumer pilot findings A and B.
+- **`ecosystem/00_ecosystem_bootstrap.md`** — the Bootstrap-stage protocol (phase 007
+  feature 060), the lifecycle's entry stage, which had no protocol document until now.
+  It wraps (does not restate) `standard/GIP.md` and `bootstrap.sh`: the
+  pinned-immutable-tag precondition (floating refs refused), the injected six-module
+  payload + `NIZAM.json`, verification and provenance/drift, coexistence with a
+  non-empty consumer (GIP §5 rename-and-diff + adoption tiers), the consumer-supplied
+  inputs each ecosystem must provide, and the entry condition into Preflight. The
+  `ecosystem/README.md` Module Navigation status for `00` is flipped Planned→Shipped
+  (five of nine protocols now shipped); the capability is registered in `tools/skill.json`
+  and `NIZAM.json`. Authored under the operator-activated phase 007 (gate H-PHASE-007);
+  the still-Planned `04/05/06/08` protocols remain deferred until real consumer-pilot
+  evidence prioritises them.
 - **`tools/compare_ecosystem_baselines.py`** + **`tools/validate_evidence_freshness.py`**
   — the deterministic Compare stage (the two NIP-0001-named tools), making Compare
   tool-driven (previously prose-only). `compare_ecosystem_baselines.py` classifies
@@ -60,6 +89,32 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   indexed in `schema/README.md`, and covered by `tools/fixtures_self_test.sh`.
   Completes the four core ecosystem-cycle schemas
   (baseline / preflight-verdict / engineering-finding / audit-delta).
+
+### Changed
+
+- **`NIP-0002` accepted (gate H-NIP) → phase 008 selected.** The operator accepted
+  `docs/nips/NIP-0002-zero-to-n-project-spectrum.md` (status proposed → **accepted**, v0.2.0),
+  selecting **phase 008 (The 0–n Project Spectrum)** as its realization — the way NIP-0001's
+  acceptance selected phase 005. Selection is not activation: phase 008 still needs its own
+  `product_spec_008` + `feature_list_008` + `H-PHASE-008`. Recorded in `.agent/run_state.json`
+  (`operator_gate_decision`), `docs/planning/operator_gates.md` (H-NIP second exercise,
+  v0.4.0), and `docs/planning/ROADMAP.md` (phase-008 section rolled candidate → authorized,
+  v0.14.0).
+- **`ecosystem/00_ecosystem_bootstrap.md` → v0.2.0** — made the **0-to-n project
+  spectrum** first-class (new Section 3), on the operator's 2026-07-21 design
+  requirement: the Bootstrap stage now names and scopes the 0 (greenfield genesis),
+  1-greenfield, 1-brownfield, and n (multi-repository) cases and states honestly which
+  are mechanized today versus delegated to the GIP tiers, the scope-membership registry,
+  or the deferred `04`/`05` coordination protocols. Cross-references NIP-0002 (the
+  capability framing) and ADR-004 (the single-project consumer-readiness fixes).
+- **`docs/planning/DEBT.md` → v0.30.0** — recorded the phase-007 scratch-consumer pilot
+  friction and the 0-to-n gaps as `NDEBT-027`…`NDEBT-032`: preflight governance-root
+  assumption (A), baseline framework-pin mis-anchoring (B), audit/compare not yet in a
+  released tag (C), the absent 0-case (D), single-`--repo-root` tools versus multi-repo
+  prose (E), and `bootstrap.sh` lacking GIP §5.1 brownfield reconciliation (F). Each
+  cross-references ADR-004 or NIP-0002 and is sequenced into phase 008. Plus `NDEBT-033`
+  (from the PR #42 review): bootstrap provenance pins the tag name but not its resolved
+  commit SHA — hardening deferred to phase 008.
 
 ### Fixed
 

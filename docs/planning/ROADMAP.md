@@ -2,10 +2,25 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.10.0
+version: 0.15.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.15.0"
+    date: "2026-07-21"
+    summary: "PR #42 review corrections: fixed two stale 'NIP-0002 (Proposed — awaiting H-NIP)' references (completion banner + Current Position) to Accepted/phase-008-selected; corrected the open-debt count from 'seven' to 'six' phase-007 pilot rows (NDEBT-027..032); and added NDEBT-033 (bootstrap provenance pins tag name not resolved commit SHA, deferred to phase 008) to the open-debt roll. No plan-of-record change."
+  - version: "0.14.0"
+    date: "2026-07-21"
+    summary: "NIP-0002 (The 0–n Project Spectrum) ACCEPTED by the operator via gate H-NIP (verbatim 'NIP-0002 is accepted'), selecting phase 008 as its realization. The 'Proposed Next Phase — Phase 008 (Candidate)' section rolled to 'Next Phase — Phase 008 (Authorized)', recording the acceptance and that selection is not activation (phase 008 still needs product_spec_008 + feature_list_008 + H-PHASE-008, the next planning cycle). Recorded alongside .agent/run_state.json (operator_gate_decision) and docs/planning/operator_gates.md (H-NIP second exercise, v0.4.0)."
+  - version: "0.13.0"
+    date: "2026-07-21"
+    summary: "Phase-007 completion refresh + phase-008 candidate scope. Phase 007 (Consumer-Adoption Enablement & First External Pilot, features 060-064) marked COMPLETE 2026-07-21: the phase-007 Plan-of-Record banner carries the completion record; Current Position rolled to 2026-07-21 (phases 001-007 complete); Track 4 marked EXERCISED against a scratch consumer (feature 063 — adoption held, friction NDEBT-027..032, ADR-004 + NIP-0002), with a real-consumer pilot still open. Added the Proposed Next Phase — Phase 008 (Candidate): The 0-n Project Spectrum section, awaiting operator acceptance of NIP-0002 (gate H-NIP): an evidence-prioritized staged plan (consumer-readiness ADR-004 fixes first, then the 0 greenfield-genesis capability, the n multi-repo tooling + membership registry, then the deferred 04/05 coordination protocols). Open-debt roll updated with NDEBT-027..032. (Also corrected the frontmatter version field, which had drifted behind its own change_log at 0.10.0 vs 0.12.0.)"
+  - version: "0.12.0"
+    date: "2026-07-20"
+    summary: "Phase 007 activated (operator verbatim: 'Authorized to activate now', gate H-PHASE-007, 2026-07-20): the Proposed Next Phase section becomes the Plan of Record banner. current_phase advanced 006-enforcement-closure -> 007-consumer-adoption in manifest + run_state (event phase_activated); product_spec_007 flipped draft -> active (1.1.0); scope budget reset to 870 (phase-006 final archived). Execution begins with the framework-internal features 060 (author ecosystem/00_ecosystem_bootstrap.md) then 061 (define H-CONSUMER-UPGRADE); the pilot (063-064) stays deferred pending operator-authorized consumer-repo access."
+  - version: "0.11.0"
+    date: "2026-07-20"
+    summary: "Added the Proposed Next Phase section — phase 007 (Consumer-Adoption Enablement & First External Pilot, features 060-064, est 870 lines) PROPOSED and awaiting operator authorization (gate H-PHASE-007). Scope: author the missing Bootstrap-stage protocol (ecosystem/00_ecosystem_bootstrap.md) + define the reserved gate H-CONSUMER-UPGRADE, then run the first REAL external-consumer pilot (Track 4 / handover F-016..F-020) and prioritise the deferred protocols from real friction — NOT speculative authoring of 04/05/06/08. Planner artifacts .agent/product_spec_007.md (status draft) + .agent/feature_list_007.json (DAG-validated acyclic) exist; current_phase stays 006-enforcement-closure until activation. The pilot (features 063-064) additionally requires operator-authorized access to a consumer repository — the canonical target nizamiq/nizamiq-strategy is outside this session's scope."
   - version: "0.10.0"
     date: "2026-07-20"
     summary: "Phase-006 completion refresh: phase 006 (Enforcement Closure & Hardening, features 049-059) COMPLETE and v0.8.0 released 2026-07-20 (operator sign-off via the PR #38 merge + operator-pushed annotated tag v0.8.0 at 183e468; release.yml published the GitHub Release page from the [0.8.0] CHANGELOG section, run 29717579479 success). The Plan of Record banner is marked complete and Current Position rolled to 2026-07-20 (phases 001-006 complete, validator 15/15 C1-C15, payload 11/11, self-test 47/47). The enforcement-closure debt backlog (NDEBT-004/005/007-024) is fully Resolved; one new Low item NDEBT-026 (validator C15 is coverage-only, not a mapping-direction validator) was surfaced in the PR #38 review and registered."
@@ -39,6 +54,91 @@ change_log:
 ---
 
 # Forward Roadmap
+
+## Next Phase — Phase 008 (Authorized): The 0–n Project Spectrum
+
+**`NIP-0002` ACCEPTED 2026-07-21 (gate H-NIP) — phase 008 selected.** The phase-007 pilot
+proved adoption holds but that even the single-project case is not yet consumer-ready, and
+the operator (2026-07-21) set a first-class design requirement that the system span an
+ecosystem of **0 to n projects**. `docs/nips/NIP-0002-zero-to-n-project-spectrum.md`
+(status **Accepted**) is the capability proposal; the operator accepted it (verbatim
+*"NIP-0002 is accepted"*, gate **H-NIP**, the way NIP-0001 selected phase 005), making the
+staged plan below phase 008's authorized scope. **Selection is not activation:** phase 008
+still needs its own Planner artifacts (`product_spec_008` + `feature_list_008`) and an
+activation gate (`H-PHASE-008`) before feature work begins — that authoring is the next
+planning cycle. Scope is **evidence-prioritized** — driven by the recorded pilot friction
+(`NDEBT-027`…`NDEBT-032`), not authored speculatively:
+
+1. **Consumer-readiness (prerequisite) — realize `ADR-004`.** Governance-root resolution
+   so the tools locate the injected `.nizam/` payload (`NDEBT-027`), and anchor a
+   Baseline's `framework_references` to the injected provenance pin, not the consumer
+   HEAD (`NDEBT-028`). This is the prerequisite for *any* real adoption at any point on
+   the spectrum, so it comes first.
+2. **The 0-case — greenfield genesis (`NDEBT-030`).** A capability to create-and-scaffold
+   a *new* project and bootstrap the framework into it, with the scope registry's
+   `incubating` partition modelling the count-0→1 transition.
+3. **The n-case — multi-repo tooling (`NDEBT-031`).** Extend the ecosystem tools to
+   iterate the ecosystem-membership registry (a set of repo-roots) instead of one
+   `--repo-root`, and promote `registry/scope_definition_patterns.md` from draft patterns
+   to a required, validated membership artifact that sets `n`.
+4. **n-coordination protocols.** Author the deferred `04_dependency_reconciliation.md`
+   and `05_release_train_coordination.md` (with companion schemas) — where cross-repo
+   ordering and release-train entry genuinely live.
+
+The 1-brownfield reconciliation (`bootstrap.sh` GIP §5.1, `NDEBT-032`, conditional
+feature 062) and the next-release tag that carries the audit/compare tools (`NDEBT-029`)
+fold into this phase. A **real, non-scratch consumer pilot** remains an open acceptance
+criterion (the scratch pilot exercised loop *mechanics*, not product maturity).
+
+## Plan of Record (2026-07-20) — Phase 007 Activated: Consumer-Adoption Enablement & First External Pilot — **COMPLETE 2026-07-21**
+
+Phase `007-consumer-adoption` is **COMPLETE** (2026-07-21). It shipped the Bootstrap-stage
+protocol (feature 060, amended to v0.2.0 to make the 0–n spectrum first-class), defined and
+first-exercised the `H-CONSUMER-UPGRADE` gate (061, 063), ran the first non-self
+ecosystem-cycle pilot against a scratch consumer (063 — adoption held: bootstrap + verify +
+`validate.sh --payload` 11/11; friction recorded as `NDEBT-027`…`NDEBT-032`), and authored
+the evidence-prioritized phase-008 candidate scope (064, above). The decisions were captured
+formally as `NIP-0002` (Accepted 2026-07-21, gate H-NIP — selecting phase 008) and `ADR-004`
+(Accepted). The conditional feature 062 was
+intentionally not run (the scratch consumer had no colliding root files; carried as
+`NDEBT-032`). On 2026-07-20 the operator authorized activation (verbatim: **"Authorized to
+activate now"**, satisfying gate **H-PHASE-007**; recorded in `.agent/run_state.json` event
+`phase_activated` before any feature execution). `docs/planning/manifest.json` carries
+`current_phase: 007-consumer-adoption` with the phase-007 entry `status: in_progress`;
+`.agent/product_spec_007.md` is active (1.1.0); the scope budget was reset to 870
+(phase-006 final archived). The planner artifacts (`.agent/feature_list_007.json` —
+5 features 060-064, DAG-validated acyclic, `original_estimate_lines` 870) are the plan
+of record. Execution begins with the framework-internal features **060** (author the
+Bootstrap-stage protocol) then **061** (define `H-CONSUMER-UPGRADE`); the pilot
+(063-064) stays deferred pending operator-authorized consumer-repo access (below).
+
+**Why now.** The core ecosystem loop (Preflight → Baseline → Audit → Compare) is
+shipped, dogfooded, and released (v0.8.0). Two gaps remain: the lifecycle's **Bootstrap**
+entry stage has no protocol document (`00_ecosystem_bootstrap.md`, still *Planned*
+under `ecosystem/`) and its gate `H-CONSUMER-UPGRADE` is an undefined reserved name; and all
+adoption evidence is still self-referential (Track 4, below). Phase 007 closes the
+Bootstrap gap with the minimum authoring needed, then runs the first real pilot and
+lets that evidence prioritise the remaining deferred protocols — it does **not** author
+`04/05/06/08` speculatively (the framework's "no claim beyond evidence" rule).
+
+**Scope (features 060-064).** 060 — author the Bootstrap-stage protocol
+`00_ecosystem_bootstrap.md` (under `ecosystem/`, wrapping `standard/GIP.md` +
+`bootstrap.sh`; flip its `ecosystem/README.md` status row Planned→Shipped); 061 — define the reserved gate `H-CONSUMER-UPGRADE` in
+`docs/planning/operator_gates.md`; 062 (conditional) — implement GIP §5.1
+rename-and-diff in `bootstrap.sh` for a consumer with pre-existing root files; 063 —
+first external-consumer pilot (handover F-016/F-019: bootstrap a released tag into a
+real consumer, run `tools/validate.sh --payload`, drive the core loop, record friction
+as `NDEBT-*`); 064 — plan the next automation tranche from that friction (handover
+F-020) and close the phase.
+
+**Precondition for the pilot.** Features 060-062 are framework-internal and executable
+immediately on activation. The pilot (063-064) additionally **requires
+operator-authorized access to a consumer repository.** The canonical target
+`nizamiq/nizamiq-strategy` is a different organization outside this session's GitHub
+scope; activation must resolve which consumer repo the pilot runs against (the
+canonical target via `add_repo` subject to org authorization, another operator-provided
+repo, or a scratch consumer to exercise loop mechanics). This directly executes Track 4
+below.
 
 ## Plan of Record (2026-07-19) — Phase 006 Activated: Enforcement Closure & Hardening
 
@@ -111,12 +211,20 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-07-20)
+## Current Position (2026-07-21)
 
-- Phases 001–006 are complete. Phase 006 (Enforcement Closure & Hardening) landed
-  on `main` via eleven sequential PRs #28–#38 (features 049–059); the validator runs
+- Phases 001–007 are complete. **Phase 007 (Consumer-Adoption Enablement & First
+  External Pilot, features 060–064) is COMPLETE** (2026-07-21, on the phase-007 branch,
+  not yet released): the Bootstrap-stage protocol shipped (feature 060; amended to
+  v0.2.0 for the 0–n project spectrum), the `H-CONSUMER-UPGRADE` gate is defined (061)
+  and first-exercised (063), the first non-self ecosystem-cycle pilot ran against a
+  scratch consumer (063 — adoption held; friction recorded as `NDEBT-027`…`NDEBT-032`),
+  and the evidence-prioritized phase-008 candidate scope is authored (064). Two governed
+  docs capture the decisions: `NIP-0002` (0–n spectrum, Accepted 2026-07-21 via H-NIP — phase 008 selected) and
+  `ADR-004` (consumer-readiness, Accepted). Phase 006 (features 049–059) landed
+  on `main` via eleven sequential PRs #28–#38; the validator runs
   green at `SUMMARY: 15 passed, 0 failed` (C1–C15), payload mode at `11 passed, 0
-  failed`, the fixtures self-test at 47/47, and the hermetic e2e bootstrap harness
+  failed`, the fixtures self-test green, and the hermetic e2e bootstrap harness
   passes in CI.
 - Latest released tag: v0.8.0 — the annotated tag was pushed by the operator
   2026-07-20 at the phase merge commit 183e468, executing H-FRAMEWORK-RELEASE after
@@ -124,11 +232,16 @@ successor, leaving open debt deferred to unscoped "future phases").
   the `[0.8.0]` CHANGELOG section (run 29717579479, success). A MINOR release per
   `methodology/06_release_train.md` §3.2. The successor consumer-adoption phase
   (handover F-016..F-020) remains unblocked.
-- Open debt: NDEBT-026 (Low) only — phase 006 resolved the entire enforcement-closure
-  backlog it inherited (NDEBT-004, -005, -007 through -024; NDEBT-001/002/003/006/025
-  were already Resolved). NDEBT-026 — validator check C15 is a coverage check, not a
-  mapping-direction validator (surfaced in the PR #38 review; the C15 docs were
-  corrected in that PR) — is the sole Open row; see `docs/planning/DEBT.md`.
+- Open debt: NDEBT-026 (Low, pre-existing) plus the six phase-007 pilot rows
+  `NDEBT-027`…`NDEBT-032` — the consumer-readiness and 0–n-spectrum gaps the scratch
+  pilot surfaced (governance-root assumption, framework-pin mis-anchoring, audit/compare
+  not yet in a released tag, the absent 0-case, single-`--repo-root` tools, and the
+  brownfield `bootstrap.sh` gap), each cross-referencing `ADR-004`/`NIP-0002` and
+  sequenced into the phase-008 candidate scope above; plus `NDEBT-033` (Medium) — bootstrap
+  provenance pins the tag name but not its resolved commit SHA (surfaced in the PR #42
+  review), also deferred to phase 008. Phase 006 resolved the entire
+  enforcement-closure backlog it inherited (NDEBT-004, -005, -007 through -024;
+  NDEBT-001/002/003/006/025 were already Resolved). See `docs/planning/DEBT.md`.
 
 ## Track 1 — Outstanding Human Gates (no planning required)
 
@@ -225,7 +338,7 @@ The next planning cycle MUST resolve, per constitutional document, one of:
 Either resolution also requires refreshing `docs/guide/index.html`, which still
 narrates the phase-003 world and does not mention the constitutional layer at all.
 
-## Track 4 — First External Consumer Pilot
+## Track 4 — First External Consumer Pilot — **EXERCISED (scratch consumer) 2026-07-21**
 
 All bootstrap evidence to date is self-referential: the e2e harness bootstraps the
 framework into a scratch copy of itself. Before the constitutional layer grows
@@ -233,6 +346,17 @@ further, bootstrap a real second repository against a released tag, run
 `tools/validate.sh --payload` in it, and feed every friction point back as debt.
 This directly tests the NDEBT-004 and NDEBT-008 concerns in the environment they
 actually describe, and produces the first non-self-referential adoption evidence.
+
+**Exercised in phase 007 (feature 063) against a scratch/throwaway consumer** — a fresh
+`git init` repo with genuinely foreign content (`src/calc.py` + `README`), bootstrapped
+from the released `v0.8.0` tag (the first time the ecosystem tools ran against non-self
+content). Adoption held: bootstrap clone→inject→verify PASS and `tools/validate.sh
+--payload` green (11/11) inside the consumer. The core loop (Preflight → Baseline →
+Audit → Compare) then surfaced real friction, recorded as `NDEBT-027`…`NDEBT-032`
+(evidence `.agent/evidence/pilot-063/`) and captured as `ADR-004` + `NIP-0002`. **Still
+open:** a **real, non-scratch consumer pilot** — a scratch repo exercises loop
+*mechanics*, not a real project's engineering maturity, so the production-proven adoption
+criterion carries forward to a future real-repo pilot (phase 008 candidate scope above).
 
 ## Sequencing Recommendation
 

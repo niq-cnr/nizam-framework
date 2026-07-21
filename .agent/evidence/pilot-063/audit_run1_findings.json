@@ -1,0 +1,34 @@
+[
+  {
+    "id": "F-cons-01",
+    "severity": "low",
+    "confidence": "Confirmed",
+    "maturity": "Implemented",
+    "evidence": [
+      {
+        "path": ".agent/evidence/pilot-1/no-tests.txt",
+        "revision": "81054aac5ea55e3c32c45c957783b6ffddf314e1"
+      }
+    ],
+    "impact": "src/calc.py ships with no accompanying test suite; regressions would go uncaught.",
+    "owner": "scratch-consumer",
+    "status": "open",
+    "closure_criteria": "A test for src/calc.py exists and runs in CI."
+  },
+  {
+    "id": "F-cons-02",
+    "severity": "low",
+    "confidence": "Confirmed",
+    "maturity": "Authored",
+    "evidence": [
+      {
+        "path": ".agent/evidence/pilot-1/no-ci.txt",
+        "revision": "81054aac5ea55e3c32c45c957783b6ffddf314e1"
+      }
+    ],
+    "impact": "No CI configuration present; nothing enforces build/test on change.",
+    "owner": "scratch-consumer",
+    "status": "open",
+    "closure_criteria": "A CI workflow runs the test suite on every push."
+  }
+]
