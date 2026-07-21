@@ -96,11 +96,15 @@ to prove it. Features (evidence-prioritized from the pilot debt `NDEBT-027/028/0
    `framework_references` names the injected pin, not the consumer HEAD.
 3. **067 — Bootstrap commit-SHA pinning** (`NDEBT-033`) — provenance records tag + resolved
    SHA; `--verify-only` rejects a moved tag.
-4. **068 — Brownfield bootstrap reconciliation** (GIP §5.1, `NDEBT-032`) — `bootstrap.sh`
-   preserves colliding pre-existing root files; completes the 1-brownfield point.
-5. **069 — Re-pilot, prove, prioritize + phase close** — run the *fixed* loop against a real
-   bootstrapped scratch consumer (clean Preflight PASS, correctly-anchored baseline, no
-   workaround), then author the phase-009 candidate scope below and close the phase.
+4. **068 — Brownfield coexistence** (GIP §5.1, `NDEBT-032`) — *resolved by design* (operator
+   Option A, no `bootstrap.sh` change): the atomic inject writes only `.nizam/` and never
+   touches a consumer's root files, so coexistence is safe by construction; reconciling a
+   consumer's own root files remains a consumer-side manual step (proposal-time "preserve
+   colliding root files in `bootstrap.sh`" wording superseded).
+5. **069 — Re-pilot, prove, prioritize + phase close** — run the *fixed* loop against a
+   freshly bootstrapped scratch/throwaway consumer (Preflight `PASS_WITH_EXCEPTIONS` whose
+   only exception is the injected `.nizam/`, correctly-anchored baseline, no workaround),
+   then author the phase-009 candidate scope below and close the phase.
 
 **Deferred → Phase-009 candidate scope (NIP-0002 Stages 2–4).** Held until Stage 1 is *proven*,
 because each builds on single-project tools that must work first:

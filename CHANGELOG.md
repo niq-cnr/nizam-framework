@@ -52,9 +52,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   provenance-pin anchoring (`NDEBT-028`), bootstrap commit-SHA pinning (`NDEBT-033`), GIP §5.1
   brownfield reconciliation (`NDEBT-032`), then a re-pilot proving the fixed single-project
   loop. NIP-0002 Stages 2–4 (0-case greenfield genesis, n-case multi-repo tooling + membership
-  registry, `04`/`05` protocols) are carried as phase-009 candidate scope. `docs/planning/ROADMAP.md`
-  and `docs/planning/manifest.json` record the proposal (pending/proposed); it awaits activation
-  gate `H-PHASE-008` and is not yet active.
+  registry, `04`/`05` protocols) are carried as phase-009 candidate scope. **Historical
+  proposal-time state:** this entry recorded the proposal at status draft (pending/proposed,
+  awaiting gate `H-PHASE-008`); phase 008 was **subsequently activated (H-PHASE-008) and
+  completed** — see the "Phase 008 … complete" entry under Changed below for the current
+  lifecycle state.
 - **`docs/nips/NIP-0002-zero-to-n-project-spectrum.md`** — a framework-capability
   proposal (added at status Proposed; subsequently **Accepted** via gate H-NIP — see
   the Changed entry below) that the Ecosystem Engineering Cycle explicitly span an
