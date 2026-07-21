@@ -1,7 +1,7 @@
 {
   "repository": "nizam-framework",
   "current_phase": "007-consumer-adoption",
-  "current_feature": "060",
+  "current_feature": "063",
   "status": "in_progress",
   "updated_at": "2026-07-20T00:00:00Z",
   "circuit_breaker": {
@@ -852,6 +852,21 @@
       "at": "2026-07-20T00:00:00Z",
       "event": "phase_activated",
       "detail": "Phase 007-consumer-adoption ACTIVATED on operator authorization. Verbatim: 'Authorized to activate now' (operator-controlled session, 2026-07-20, given after the phase-007 proposal was authored and pushed at commit d703230), satisfying gate H-PHASE-007 and making phase 007 (Consumer-Adoption Enablement & First External Pilot) the plan of record. current_phase advanced 006-enforcement-closure -> 007-consumer-adoption; product_spec_007 flipped draft -> active (1.1.0) at the same roll; manifest current_phase advanced and the phase-007 entry set in_progress/active. Scope budget reset (870-line estimate; phase-006 final archived in phase_006_scope_budget_final). Execution begins with the ungated DAG root feature 060 (author ecosystem/00_ecosystem_bootstrap.md); feature 061 (define H-CONSUMER-UPGRADE) follows. The pilot features 063-064 remain deferred pending operator-authorized consumer-repo access (canonical target nizamiq/nizamiq-strategy is outside this session's scope). Recorded before any feature execution per the NDEBT-018 rule."
+    },
+    {
+      "at": "2026-07-20T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 060 (author ecosystem/00_ecosystem_bootstrap.md) COMPLETE on the phase-007 branch. Framework-internal, no external repo. Full sweep 15/15, self-test 51/51, e2e bootstrap PASS (now injects+verifies ecosystem/00)."
+    },
+    {
+      "at": "2026-07-20T00:00:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 061 (define operator gate H-CONSUMER-UPGRADE) COMPLETE on the phase-007 branch. Framework-internal, no external repo. Full sweep 15/15, self-test 51/51, e2e bootstrap PASS (now injects+verifies ecosystem/00)."
+    },
+    {
+      "at": "2026-07-20T00:00:00Z",
+      "event": "phase_paused",
+      "detail": "Phase 007 PAUSED after the two framework-internal features (060, 061). The next feature is the first external-consumer pilot (063; the conditional 062 is inserted before it only if a real consumer with pre-existing root files surfaces the need), which requires operator-authorized access to a consumer repository. The canonical target nizamiq/nizamiq-strategy is a different organization outside this session's scope; the pilot is blocked pending consumer-repo sourcing (add_repo for the canonical target subject to org authorization, another operator-provided repo, or a scratch consumer). H-CONSUMER-UPGRADE is DEFINED (feature 061) and awaits its first exercise here."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1025,8 +1040,23 @@
   },
   "scope_budget": {
     "original_estimate_lines": 870,
-    "total_lines_changed": 0,
-    "per_feature": []
+    "total_lines_changed": 240,
+    "per_feature": [
+      {
+        "id": "060",
+        "estimated": 280,
+        "actual": 208,
+        "flag": null,
+        "note": "5 files (git numstat ins+del, deliverable commit): ecosystem/00_ecosystem_bootstrap.md 170 (new), ecosystem/README.md 11+9=20 (00 row Planned->Shipped + prose), CHANGELOG.md 12, tools/skill.json 5 (ecosystem_bootstrap capability), NIZAM.json 1 (ecosystem module file entry) = 208 vs 280 estimated (UNDER, no flag). The Bootstrap protocol wraps GIP + bootstrap.sh rather than restating them, so it landed leaner than estimated. First feature of phase 007; 3x-rolling-average check not computable. Cumulative 208/1131 ceiling (130% of 870)."
+      },
+      {
+        "id": "061",
+        "estimated": 90,
+        "actual": 32,
+        "flag": null,
+        "note": "1 file (git numstat ins+del): docs/planning/operator_gates.md 20+12=32 (0.1.0->0.2.0; H-CONSUMER-UPGRADE moved reserved->defined in Sec 1 with scope/trigger/disposition, Sec 2 reduced five->four, References + Sec 1 title updated) vs 90 estimated (UNDER). Cumulative 240/1131 ceiling (21.2%)."
+      }
+    ]
   },
   "phase_004_scope_budget_final": {
     "original_estimate_lines": 1550,
@@ -1317,5 +1347,10 @@
         "reason": "Operator authorized 'Rebase line to fit the objective. You are approved to proceed.' to run the phase's final feature 059 (v0.8.0 release preparation + phase close) without cramping it against the cumulative ceiling. Phase 006 (Enforcement Closure & Hardening) legitimately outgrew even its already-rebaselined 2300-line estimate through real mechanization: at 2771/2990 (92.7%) through F-058, only ~219 lines of headroom remained. Raising original_estimate_lines 2300 -> 2600 (new 130% ceiling 3380) records the phase's realized size honestly and gives F-059 (est ~110) comfortable room; the phase is projected to close near 2880/3380 (~85%). Per methodology/00_planning.md Section 9 (human-authorized, orchestrator-recorded, structural {from,to,authorized_by,at,reason}) and Section 6."
       }
     ]
-  }
+  },
+  "blocked_features": [
+    "062",
+    "063",
+    "064"
+  ]
 }
