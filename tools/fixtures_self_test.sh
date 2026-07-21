@@ -449,6 +449,88 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# (5) ecosystem_audit.py CLI behavior probes (Tier-1 audit tool)
+# ---------------------------------------------------------------------------
+# tools/ecosystem_audit.py is NOT covered by validate.sh (only its OUTPUT
+# schema is, via C12's engineering_finding family), so these standing probes
+# are its permanent regression guard. They assert the load-bearing polarity:
+# a valid audit is ASSEMBLED (exit 0, findings.json + report.md written); a
+# resolved finding with no closure evidence is INVALID (exit 1, no artifact);
+# a FAIL preflight verdict is REFUSED at the Sec 2 entry gate (exit 2). Inputs
+# are built inline in a mktemp -d scratch dir, cleaned via an EXIT-trap rm -rf
+# on the scratch dir only. Behavior probes, not fixtures -- they add nothing to
+# the completeness manifest.
+echo "== ecosystem_audit CLI behavior probes =="
+_audit_cli_probes() (
+  local d rc
+  d=$(mktemp -d) || return 1
+  trap 'rm -rf -- "${d}"' EXIT
+  printf '{"verdict":"PASS","execution_id":"e1","generated_at":"t"}' > "${d}/preflight.json"
+  printf '{"execution_id":"e1"}' > "${d}/baseline.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/e1/x.txt","revision":"abc123"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findings.json"
+  # (a) a valid audit -> ASSEMBLED (exit 0), both artifacts written
+  python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/out" --findings-input "${d}/findings.json" --preflight "${d}/preflight.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  valid audit: expected exit 0, got ${rc}"; return 1; }
+  [ -f "${d}/out/findings.json" ] && [ -f "${d}/out/report.md" ] || { echo "  valid audit: expected findings.json + report.md"; return 1; }
+  # (b) a resolved finding with no closure evidence -> FINDINGS_INVALID (exit 1)
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/e1/x.txt","revision":"abc123"}],"impact":"i","owner":"o","status":"resolved","closure_criteria":"c"}]' > "${d}/bad.json"
+  python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/o2" --findings-input "${d}/bad.json" --preflight "${d}/preflight.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  resolved-without-closure: expected exit 1, got ${rc}"; return 1; }
+  # (c) a FAIL preflight verdict -> ENTRY_CONDITION_UNMET (exit 2)
+  printf '{"verdict":"FAIL","execution_id":"e1","generated_at":"t","blocking_findings":["x"]}' > "${d}/pf-fail.json"
+  python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/o3" --findings-input "${d}/findings.json" --preflight "${d}/pf-fail.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  fail-preflight: expected exit 2, got ${rc}"; return 1; }
+  return 0
+)
+if _audit_cli_probes; then
+  echo "OK   audit       valid -> ASSEMBLED(0); resolved-without-closure -> INVALID(1); FAIL preflight -> refused(2)"
+else
+  echo "FAIL audit       a CLI behavior probe did not hold"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
+# (6) compare_ecosystem_baselines.py + validate_evidence_freshness.py probes
+# ---------------------------------------------------------------------------
+# The Compare-stage tools' OUTPUT (delta.json) is C12-covered via the
+# audit_delta family, but their CLI behavior is not, so these standing probes
+# guard it. They assert: a valid comparison emits a delta (exit 0); an
+# earlier-open finding gone from the later audit with no closure evidence is
+# UNCLASSIFIABLE (exit 1, Sec 4); freshness reports STALE (exit 1) for old
+# evidence and FRESH (exit 0) for evidence at the later anchor revision.
+echo "== compare + freshness CLI behavior probes =="
+_compare_cli_probes() (
+  local d rc
+  d=$(mktemp -d) || return 1
+  trap 'rm -rf -- "${d}"' EXIT
+  printf '{"execution_id":"eA","captured_at":"2026-07-01T00:00:00Z","repository_references":[{"revision":"aaa","timestamp":"t","repository":"r"}]}' > "${d}/baseA.json"
+  printf '{"execution_id":"eB","captured_at":"2026-07-20T00:00:00Z","repository_references":[{"revision":"bbb","timestamp":"t","repository":"r"}]}' > "${d}/baseB.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eA/x.txt","revision":"aaa"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findA.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eB/x.txt","revision":"bbb"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findB.json"
+  printf '[]' > "${d}/findEmpty.json"
+  # (a) a valid comparison -> delta emitted (exit 0), delta.json present
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/out" --earlier-findings "${d}/findA.json" --later-findings "${d}/findB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  valid compare: expected exit 0, got ${rc}"; return 1; }
+  [ -f "${d}/out/delta.json" ] || { echo "  valid compare: expected delta.json"; return 1; }
+  # (b) earlier-open finding gone from later, no closure -> UNCLASSIFIABLE (exit 1)
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/o2" --earlier-findings "${d}/findA.json" --later-findings "${d}/findEmpty.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  gone-without-closure: expected exit 1, got ${rc}"; return 1; }
+  # (c) freshness: old evidence (rev aaa) vs later anchor bbb -> STALE (exit 1)
+  python3 tools/validate_evidence_freshness.py --findings "${d}/findA.json" --anchor-revision bbb --anchor-timestamp "2026-07-20T00:00:00Z" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  stale evidence: expected exit 1, got ${rc}"; return 1; }
+  # (d) freshness: evidence at the anchor revision bbb -> FRESH (exit 0)
+  python3 tools/validate_evidence_freshness.py --findings "${d}/findB.json" --anchor-revision bbb --anchor-timestamp "2026-07-20T00:00:00Z" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  fresh evidence: expected exit 0, got ${rc}"; return 1; }
+  return 0
+)
+if _compare_cli_probes; then
+  echo "OK   compare     valid -> delta(0); gone-without-closure -> INVALID(1); freshness stale(1)/fresh(0)"
+else
+  echo "FAIL compare     a CLI behavior probe did not hold"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
 # COMPLETENESS GUARD: every file under tools/fixtures/ must be accounted for
 # by exactly one row above; an unlisted fixture (a newly-added dormant
 # negative) or a manifest row naming an absent fixture is a FAIL.
