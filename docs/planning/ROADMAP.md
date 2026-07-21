@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.15.0
+version: 0.16.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.16.0"
+    date: "2026-07-21"
+    summary: "Phase 008 PROPOSED (operator 'open phase 008'). The phase-008 section rolls from Authorized-candidate to a proposal-authored banner: the Planner artifacts .agent/product_spec_008.md (status draft) and .agent/feature_list_008.json (features 065-069, DAG-validated acyclic, est 1010) now exist, awaiting activation gate H-PHASE-008. Scope narrowed to NIP-0002 Stage 1 (consumer-readiness — the prerequisite for every larger project count): ADR-004's governance-root resolution (NDEBT-027) + provenance-pin anchoring (NDEBT-028), bootstrap commit-SHA pinning (NDEBT-033), GIP Sec 5.1 brownfield reconciliation (NDEBT-032), then a re-pilot to prove the fixed single-project loop. NIP-0002 Stages 2-4 (0-case greenfield genesis NDEBT-030, n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols, NDEBT-029) are carried as phase-009 candidate scope, evidence-gated on the phase-008 re-pilot. manifest.json gains the phase-008 entry (pending/proposed); current_phase stays 007-consumer-adoption until activation."
   - version: "0.15.0"
     date: "2026-07-21"
     summary: "PR #42 review corrections: fixed two stale 'NIP-0002 (Proposed — awaiting H-NIP)' references (completion banner + Current Position) to Accepted/phase-008-selected; corrected the open-debt count from 'seven' to 'six' phase-007 pilot rows (NDEBT-027..032); and added NDEBT-033 (bootstrap provenance pins tag name not resolved commit SHA, deferred to phase 008) to the open-debt roll. No plan-of-record change."
@@ -55,40 +58,49 @@ change_log:
 
 # Forward Roadmap
 
-## Next Phase — Phase 008 (Authorized): The 0–n Project Spectrum
+## Proposed Next Phase — Phase 008 (PROPOSED): 0–n Project Spectrum, Stage 1 — Consumer-Readiness
 
-**`NIP-0002` ACCEPTED 2026-07-21 (gate H-NIP) — phase 008 selected.** The phase-007 pilot
-proved adoption holds but that even the single-project case is not yet consumer-ready, and
-the operator (2026-07-21) set a first-class design requirement that the system span an
-ecosystem of **0 to n projects**. `docs/nips/NIP-0002-zero-to-n-project-spectrum.md`
-(status **Accepted**) is the capability proposal; the operator accepted it (verbatim
-*"NIP-0002 is accepted"*, gate **H-NIP**, the way NIP-0001 selected phase 005), making the
-staged plan below phase 008's authorized scope. **Selection is not activation:** phase 008
-still needs its own Planner artifacts (`product_spec_008` + `feature_list_008`) and an
-activation gate (`H-PHASE-008`) before feature work begins — that authoring is the next
-planning cycle. Scope is **evidence-prioritized** — driven by the recorded pilot friction
-(`NDEBT-027`…`NDEBT-032`), not authored speculatively:
+**Proposal authored 2026-07-21; awaiting activation (gate `H-PHASE-008`).** `NIP-0002` was
+accepted (gate H-NIP, verbatim *"NIP-0002 is accepted"*), *selecting* phase 008 as its
+realization; the Planner artifacts now exist — `.agent/product_spec_008.md` (status **draft**)
+and `.agent/feature_list_008.json` (features 065–069, DAG-validated acyclic, roots {065, 068},
+`original_estimate_lines` 1010). **Selection is not activation:** no feature enters contract
+negotiation until the operator authorizes `H-PHASE-008`; `current_phase` stays
+`007-consumer-adoption` (complete) until then.
 
-1. **Consumer-readiness (prerequisite) — realize `ADR-004`.** Governance-root resolution
-   so the tools locate the injected `.nizam/` payload (`NDEBT-027`), and anchor a
-   Baseline's `framework_references` to the injected provenance pin, not the consumer
-   HEAD (`NDEBT-028`). This is the prerequisite for *any* real adoption at any point on
-   the spectrum, so it comes first.
-2. **The 0-case — greenfield genesis (`NDEBT-030`).** A capability to create-and-scaffold
-   a *new* project and bootstrap the framework into it, with the scope registry's
-   `incubating` partition modelling the count-0→1 transition.
-3. **The n-case — multi-repo tooling (`NDEBT-031`).** Extend the ecosystem tools to
-   iterate the ecosystem-membership registry (a set of repo-roots) instead of one
-   `--repo-root`, and promote `registry/scope_definition_patterns.md` from draft patterns
-   to a required, validated membership artifact that sets `n`.
-4. **n-coordination protocols.** Author the deferred `04_dependency_reconciliation.md`
-   and `05_release_train_coordination.md` (with companion schemas) — where cross-repo
-   ordering and release-train entry genuinely live.
+**Scope — NIP-0002 Stage 1 only (prove-then-build).** NIP-0002's Staged Realization is
+explicitly *evidence-led — no stage claimed working until proven against real evidence* — and
+its **Stage 1 (consumer-readiness) is the prerequisite for every larger project count**. The
+phase-007 pilot proved even the single-project (count-1) case is not consumer-ready, so phase
+008 makes that case genuinely work and completes the "1" point of the spectrum, then re-pilots
+to prove it. Features (evidence-prioritized from the pilot debt `NDEBT-027/028/032/033`):
 
-The 1-brownfield reconciliation (`bootstrap.sh` GIP §5.1, `NDEBT-032`, conditional
-feature 062) and the next-release tag that carries the audit/compare tools (`NDEBT-029`)
-fold into this phase. A **real, non-scratch consumer pilot** remains an open acceptance
-criterion (the scratch pilot exercised loop *mechanics*, not product maturity).
+1. **065 — Governance-root resolution** (`ADR-004` decision 1, `NDEBT-027`) — tools locate the
+   injected `.nizam/` payload instead of assuming the framework-root layout.
+2. **066 — Provenance-pin anchoring** (`ADR-004` decision 2, `NDEBT-028`) — a Baseline's
+   `framework_references` names the injected pin, not the consumer HEAD.
+3. **067 — Bootstrap commit-SHA pinning** (`NDEBT-033`) — provenance records tag + resolved
+   SHA; `--verify-only` rejects a moved tag.
+4. **068 — Brownfield bootstrap reconciliation** (GIP §5.1, `NDEBT-032`) — `bootstrap.sh`
+   preserves colliding pre-existing root files; completes the 1-brownfield point.
+5. **069 — Re-pilot, prove, prioritize + phase close** — run the *fixed* loop against a real
+   bootstrapped scratch consumer (clean Preflight PASS, correctly-anchored baseline, no
+   workaround), then author the phase-009 candidate scope below and close the phase.
+
+**Deferred → Phase-009 candidate scope (NIP-0002 Stages 2–4).** Held until Stage 1 is *proven*,
+because each builds on single-project tools that must work first:
+- **The 0-case — greenfield genesis** (`NDEBT-030`): create-and-scaffold a *new* project and
+  bootstrap into it; the scope registry's `incubating` partition models the count-0→1 transition.
+- **The n-case — multi-repo tooling** (`NDEBT-031`): iterate an ecosystem-membership registry
+  (a set of repo-roots) instead of one `--repo-root`; promote
+  `registry/scope_definition_patterns.md` to a required, validated membership artifact that sets `n`.
+- **n-coordination protocols**: author `04_dependency_reconciliation.md` and
+  `05_release_train_coordination.md` with companion schemas — where cross-repo ordering and
+  release-train entry live.
+- Cut a framework release carrying the audit/compare tools (`NDEBT-029`) — a release-train action.
+
+A **real, non-scratch consumer pilot** remains an open acceptance criterion across the whole
+0–n programme (the scratch pilot exercises loop *mechanics*, not product maturity).
 
 ## Plan of Record (2026-07-20) — Phase 007 Activated: Consumer-Adoption Enablement & First External Pilot — **COMPLETE 2026-07-21**
 
