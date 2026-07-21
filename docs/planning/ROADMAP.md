@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.16.0
+version: 0.17.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.17.0"
+    date: "2026-07-21"
+    summary: "Phase 008 ACTIVATED (operator verbatim: 'Approved. Please proceed', gate H-PHASE-008, 2026-07-21): the Proposed Next Phase — Phase 008 section becomes the Plan of Record banner. current_phase advanced 007-consumer-adoption -> 008-consumer-readiness in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_008 flipped draft -> active (1.1.0); scope budget reset to 1010 (phase-007 final archived). operator_gates.md records H-PHASE-008 SATISFIED. Execution begins with the ungated DAG root feature 065 (governance-root resolution in tools/ecosystem_preflight.py; ADR-004 decision 1 / NDEBT-027) — the first real code change of the 0-n programme."
   - version: "0.16.0"
     date: "2026-07-21"
     summary: "Phase 008 PROPOSED (operator 'open phase 008'). The phase-008 section rolls from Authorized-candidate to a proposal-authored banner: the Planner artifacts .agent/product_spec_008.md (status draft) and .agent/feature_list_008.json (features 065-069, DAG-validated acyclic, est 1010) now exist, awaiting activation gate H-PHASE-008. Scope narrowed to NIP-0002 Stage 1 (consumer-readiness — the prerequisite for every larger project count): ADR-004's governance-root resolution (NDEBT-027) + provenance-pin anchoring (NDEBT-028), bootstrap commit-SHA pinning (NDEBT-033), GIP Sec 5.1 brownfield reconciliation (NDEBT-032), then a re-pilot to prove the fixed single-project loop. NIP-0002 Stages 2-4 (0-case greenfield genesis NDEBT-030, n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols, NDEBT-029) are carried as phase-009 candidate scope, evidence-gated on the phase-008 re-pilot. manifest.json gains the phase-008 entry (pending/proposed); current_phase stays 007-consumer-adoption until activation."
@@ -58,15 +61,18 @@ change_log:
 
 # Forward Roadmap
 
-## Proposed Next Phase — Phase 008 (PROPOSED): 0–n Project Spectrum, Stage 1 — Consumer-Readiness
+## Plan of Record (2026-07-21) — Phase 008 Activated: 0–n Project Spectrum, Stage 1 — Consumer-Readiness
 
-**Proposal authored 2026-07-21; awaiting activation (gate `H-PHASE-008`).** `NIP-0002` was
-accepted (gate H-NIP, verbatim *"NIP-0002 is accepted"*), *selecting* phase 008 as its
-realization; the Planner artifacts now exist — `.agent/product_spec_008.md` (status **draft**)
-and `.agent/feature_list_008.json` (features 065–069, DAG-validated acyclic, roots {065, 068},
-`original_estimate_lines` 1010). **Selection is not activation:** no feature enters contract
-negotiation until the operator authorizes `H-PHASE-008`; `current_phase` stays
-`007-consumer-adoption` (complete) until then.
+**Phase `008-consumer-readiness` is ACTIVE — plan of record.** On 2026-07-21 the operator
+authorized activation (verbatim: **"Approved. Please proceed"**, satisfying gate
+**H-PHASE-008**; recorded in `.agent/run_state.json` event `phase_activated` before any
+feature execution, per the NDEBT-018 rule). It realizes `NIP-0002` (accepted via gate H-NIP).
+`docs/planning/manifest.json` carries `current_phase: 008-consumer-readiness` with the
+phase-008 entry `status: in_progress`; `.agent/product_spec_008.md` is active (1.1.0); the
+scope budget was reset to 1010 (phase-007 final archived). The planner artifacts
+(`.agent/feature_list_008.json` — features 065–069, DAG-validated acyclic, roots {065, 068})
+are the plan of record. Execution begins with the ungated DAG root feature **065**
+(governance-root resolution) — the first real *code* change of the 0–n programme.
 
 **Scope — NIP-0002 Stage 1 only (prove-then-build).** NIP-0002's Staged Realization is
 explicitly *evidence-led — no stage claimed working until proven against real evidence* — and

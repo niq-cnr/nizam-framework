@@ -3,14 +3,17 @@ id: nizam-product-spec-008
 title: "Nizam Framework — Phase 008 Spec (0–n Project Spectrum, Stage 1: Consumer-Readiness) — PROPOSAL"
 description: "Phase-008 proposal: realize NIP-0002 (The 0–n Project Spectrum) Stage 1 — make the single-project (count-1) case genuinely consumer-ready. Implements ADR-004 (governance-root resolution + provenance-pin anchoring, NDEBT-027/028), hardens bootstrap provenance to a resolved commit SHA (NDEBT-033), mechanizes GIP §5.1 brownfield reconciliation (NDEBT-032), then re-pilots to PROVE the fixed single-project loop against a real bootstrapped consumer and prioritises the 0-case/n-case/04-05 stages from that evidence. PROPOSED, not activated: execution requires operator authorization (gate H-PHASE-008). The 0-case (greenfield genesis, NDEBT-030), the n-case (multi-repo tooling + membership registry, NDEBT-031), and the 04/05 coordination protocols are explicitly OUT OF SCOPE — carried as phase-009 candidate scope. Extends product_spec.md..product_spec_007.md; replaces none."
 tags: [spec, ecosystem-cycle, consumer-readiness, zero-to-n, bootstrap, provenance, phase-008, proposal]
-status: draft
+status: active
 last_audited: "2026-07-21"
 authoritative_source: NA
-version: 1.0.1
+version: 1.1.0
 spec_version: "1.0.0"
 created_at: "2026-07-21T00:00:00Z"
-updated_at: "2026-07-21T00:00:00Z"
+updated_at: "2026-07-21T11:00:00Z"
 change_log:
+  - version: "1.1.0"
+    date: "2026-07-21T11:00:00Z"
+    summary: "Phase activated: frontmatter status draft -> active on operator authorization 2026-07-21 (verbatim: 'Approved. Please proceed', gate H-PHASE-008, recorded in .agent/run_state.json event phase_activated before any feature execution per the NDEBT-018 rule). current_phase advanced 007-consumer-adoption -> 008-consumer-readiness; scope budget reset (1010 est, phase-007 final archived). Body Status banner updated PROPOSED -> ACTIVE plan of record; no scope change. The draft status was the designed proposal state, flipped only now that the decision lifecycle reached activation (the 005 lesson applied as intended)."
   - version: "1.0.1"
     date: "2026-07-21T00:00:00Z"
     summary: "PR #43 review corrections (proposal still draft, no scope change): F-069 and the Sequencing section reworded from 'author the phase-009 candidate scope' to 'refine/validate' the candidate scope this proposal already wrote into docs/planning/ROADMAP.md; the F-068 brownfield contract sharpened to distinguish file preservation (intact original + deterministic collision-safe renamed copy, per GIP Sec 5.1) from CI merging (added, never replaced); and the FR table header spelling normalised to 'Realized by' to match the document's American 'realize/realization' prose. The mirrored feature_list_008.json acceptance criteria and CHANGELOG NIP-0002 entry were reconciled in the same change."
@@ -21,14 +24,16 @@ change_log:
 
 # Nizam Framework — Phase 008 Spec (0–n Project Spectrum, Stage 1: Consumer-Readiness)
 
-**Status: PROPOSED — not activated.** Phase `008-consumer-readiness` is authored here as
-the realization of **NIP-0002 (The 0–n Project Spectrum)**, which the operator accepted on
-2026-07-21 (gate **H-NIP**, verbatim *"NIP-0002 is accepted"*). Acceptance *selected* phase
-008; **this proposal awaits its own activation gate H-PHASE-008** before any feature enters
-contract negotiation. Per `methodology/00_planning.md`, the Planner-produced spec and the
-DAG-validated feature list (`.agent/feature_list_008.json`) exist at proposal;
-`current_phase` remains `007-consumer-adoption` (complete) and `docs/planning/manifest.json`
-carries the phase-008 entry as `pending`/`proposed` until the operator authorizes activation.
+**Status: ACTIVE — plan of record.** Phase `008-consumer-readiness` was authorized for
+activation by the operator on 2026-07-21 (verbatim: **"Approved. Please proceed"**,
+satisfying gate **H-PHASE-008**; recorded in `.agent/run_state.json` event `phase_activated`
+before any feature execution, per the NDEBT-018 rule). It realizes **NIP-0002 (The 0–n
+Project Spectrum)**, which the operator accepted on 2026-07-21 (gate **H-NIP**). Per
+`methodology/00_planning.md`, the Planner-produced spec and the DAG-validated feature list
+(`.agent/feature_list_008.json`) existed at proposal; the operator authorization completed the
+activation triad. `docs/planning/manifest.json` carries `current_phase: 008-consumer-readiness`
+with the phase-008 entry `status: in_progress`. Execution begins with the ungated DAG root
+feature 065 (governance-root resolution).
 
 ## 1. Purpose
 
