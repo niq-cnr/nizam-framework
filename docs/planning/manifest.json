@@ -2,7 +2,7 @@
   "schema_version": "2.0.0",
   "updated_at": "2026-07-20",
   "forward_planning": "docs/planning/ROADMAP.md",
-  "current_phase": "006-enforcement-closure",
+  "current_phase": "007-consumer-adoption",
   "phases": [
     {
       "id": "001-framework-genesis",
@@ -55,9 +55,9 @@
       "id": "007-consumer-adoption",
       "title": "Consumer-Adoption Enablement & First External Pilot \u2014 Bootstrap-Stage Protocol, H-CONSUMER-UPGRADE Gate & First Non-Self Ecosystem Pilot",
       "feature_list": ".agent/feature_list_007.json",
-      "status": "pending",
-      "activation_state": "proposed",
-      "note": "Lifecycle: PROPOSED 2026-07-20 by the post-Tier-0/Tier-1 planning session (spec .agent/product_spec_007.md status draft; feature_list_007.json: 5 features 060-064, DAG validated acyclic \u2014 roots {060}, 060->061->063->064, 060->062 conditional \u2014 original_estimate_lines 870). NOT ACTIVATED: per methodology/00_planning.md a phase becomes real only on operator authorization (gate H-PHASE-007); current_phase remains 006-enforcement-closure (complete) until that authorization is recorded in run_state (event phase_activated), and no feature may enter contract negotiation before it. The manifest.schema status enum has no 'proposed' value, so status='pending' + activation_state='proposed' carry the decision-lifecycle, matching the phase 002-005 house pattern. Scope: author the missing Bootstrap-stage protocol (ecosystem/00_ecosystem_bootstrap.md) + define the reserved gate H-CONSUMER-UPGRADE (framework-internal, executable on activation), then run the first REAL external-consumer pilot (ROADMAP Track 4 / handover F-016..F-020) and prioritise the deferred protocols (04/05/06/08) from real friction rather than speculation. Pilot precondition: features 063-064 require operator-authorized access to a consumer repository \u2014 the canonical target nizamiq/nizamiq-strategy is a different organization outside this session's scope; activation must resolve consumer-repo sourcing. Forward planning: docs/planning/ROADMAP.md."
+      "status": "in_progress",
+      "activation_state": "active",
+      "note": "Lifecycle: PROPOSED 2026-07-20 by the post-Tier-0/Tier-1 planning session (spec .agent/product_spec_007.md status draft; feature_list_007.json: 5 features 060-064, DAG validated acyclic \u2014 roots {060}, 060->061->063->064, 060->062 conditional \u2014 original_estimate_lines 870). -> ACTIVATED 2026-07-20 on operator authorization (verbatim: 'Authorized to activate now', gate H-PHASE-007; run_state event phase_activated, committed before any feature execution per the NDEBT-018 rule). current_phase advanced 006-enforcement-closure -> 007-consumer-adoption; product_spec_007 flipped draft -> active (1.1.0) at the same roll; scope budget reset (870 est, phase-006 final archived in run_state.phase_006_scope_budget_final). The manifest.schema status enum has no 'active' value, so status='in_progress' + activation_state='active' carry the decision-lifecycle, matching the phase 002-006 house pattern. Scope: author the missing Bootstrap-stage protocol (ecosystem/00_ecosystem_bootstrap.md) + define the reserved gate H-CONSUMER-UPGRADE (framework-internal, executable now \u2014 the ungated DAG root feature 060 then 061), then run the first REAL external-consumer pilot (ROADMAP Track 4 / handover F-016..F-020) and prioritise the deferred protocols (04/05/06/08) from real friction rather than speculation. Pilot precondition (features 063-064): operator-authorized access to a consumer repository \u2014 the canonical target nizamiq/nizamiq-strategy is a different organization outside this session's scope; the pilot is deferred until consumer-repo sourcing is resolved. Forward planning: docs/planning/ROADMAP.md."
     }
   ]
 }

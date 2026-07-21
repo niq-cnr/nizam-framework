@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "006-enforcement-closure",
-  "current_feature": "059",
+  "current_phase": "007-consumer-adoption",
+  "current_feature": "060",
   "status": "in_progress",
-  "updated_at": "2026-07-20T04:52:26Z",
+  "updated_at": "2026-07-20T00:00:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -847,6 +847,11 @@
       "at": "2026-07-20T04:52:26Z",
       "event": "phase_complete",
       "detail": "Phase 006 (Enforcement Closure & Hardening) COMPLETE. All 11 features 049-059 landed on main via eleven sequential PRs #28-#38. H-FRAMEWORK-RELEASE executed 2026-07-20: operator sign-off recorded via the PR #38 merge (183e468) + operator-pushed annotated tag v0.8.0 at 183e468 (release.yml run 29717579479 success, GitHub Release page published from the [0.8.0] CHANGELOG section). Release tier MINOR (06_release_train.md Sec 3.2). Scope: re-baselined 1720 -> 2300 -> 2600 (both operator-authorized, Section 9); phase closed at 2833/3380 cumulative (83.8%). Debt: the inherited enforcement-closure backlog (NDEBT-004/005/007-024) is fully Resolved; one new Low item NDEBT-026 (validator C15 is a coverage check, not a mapping-direction validator) was surfaced in the PR #38 CodeRabbit review and registered Open as a future-phase enhancement candidate (the C15 docs were corrected honest in that PR). Post-release refresh (this commit): ROADMAP Plan-of-Record banner marked complete + Current Position rolled to 2026-07-20; manifest phase-006 status -> complete. No successor phase is activated; current_phase remains 006-enforcement-closure until a future operator authorization, per methodology/00_planning.md."
+    },
+    {
+      "at": "2026-07-20T00:00:00Z",
+      "event": "phase_activated",
+      "detail": "Phase 007-consumer-adoption ACTIVATED on operator authorization. Verbatim: 'Authorized to activate now' (operator-controlled session, 2026-07-20, given after the phase-007 proposal was authored and pushed at commit d703230), satisfying gate H-PHASE-007 and making phase 007 (Consumer-Adoption Enablement & First External Pilot) the plan of record. current_phase advanced 006-enforcement-closure -> 007-consumer-adoption; product_spec_007 flipped draft -> active (1.1.0) at the same roll; manifest current_phase advanced and the phase-007 entry set in_progress/active. Scope budget reset (870-line estimate; phase-006 final archived in phase_006_scope_budget_final). Execution begins with the ungated DAG root feature 060 (author ecosystem/00_ecosystem_bootstrap.md); feature 061 (define H-CONSUMER-UPGRADE) follows. The pilot features 063-064 remain deferred pending operator-authorized consumer-repo access (canonical target nizamiq/nizamiq-strategy is outside this session's scope). Recorded before any feature execution per the NDEBT-018 rule."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1019,103 +1024,9 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 2600,
-    "total_lines_changed": 2833,
-    "per_feature": [
-      {
-        "id": "049",
-        "estimated": 120,
-        "actual": 164,
-        "flag": "scope_over_estimate -- ACKNOWLEDGED by operator 2026-07-19 ('Scope acknowledged'); flag, not halt; no re-baseline at 164/2236 = 7.3%",
-        "note": "6 files (git numstat ins+del, deliverable commit 5193973): tools/validate.sh 103+2=105, tools/fixtures/skill_index_neg_dangling_module.json 18 (new), tools/README.md 7+3=10, NIZAM.json 1+1=2, CHANGELOG.md 25+0=25, docs/planning/DEBT.md 2+2=4 -- total 164 vs 120 estimated (+37%). [AH-3 CORRECTION, PR #28 review: the original close-out note's per-file figures (validate.sh 108, README 11, CHANGELOG 27) summed to 170, not the stated 164; corrected here to the real `git show 5193973 --numstat` values -- the 164 total was always right, the breakdown was mis-transcribed.] First feature of the phase-006 ledger: the 3x-rolling-average check is not computable (031 precedent); flagged against its own estimate instead. The overage is documentation weight (the C13 help/description block and the C4 masking explanation), not code sprawl. Cumulative 164/2236 ceiling (7.3%)."
-      },
-      {
-        "id": "050",
-        "estimated": 140,
-        "actual": 194,
-        "flag": "scope_over_estimate -- operator acknowledgment requested (flag, not halt); the +39% is the co-resolved NDEBT-004 C9 carve-out + the e2e CWD-independence assertion, neither in the CWD-only estimate",
-        "note": "4 files (git numstat ins+del, deliverable commit 47bd61d): tools/validate.sh 79+15=94, tools/e2e_bootstrap_test.sh 71+2=73, CHANGELOG.md 21+0=21, docs/planning/DEBT.md 3+3=6 -- total 194 vs 140 estimated (+39%). The estimate scoped only NDEBT-012 (CWD anchoring); reproducing issue #18 forced co-resolving NDEBT-004 (the C9 payload carve-out) to meet the 'both forms green' acceptance test, plus the e2e assertion that closes the regression class -- that additional, unestimated scope is the overage, not sprawl within the CWD fix. Rolling 3x-average check not yet computable (only 049 precedes; 049=164, 050=194). Cumulative 358/2236 ceiling (16.0%). CI GREEN-UP FOLLOW-UP (disclosed): CI's e2e_bootstrap job failed on the first run because the new assert_payload_validate_cwd_independent runs `tools/validate.sh --payload`, which fails closed on a missing jsonschema/yaml module -- and that job never installed them (pre-F-050 the e2e exercised only bootstrap.sh, which needs neither). A follow-up commit adds `pip install jsonschema pyyaml` to the e2e_bootstrap job in .github/workflows/compliance.yml (~9 lines), bringing the feature footprint to ~203 lines across 5 files (cumulative ~367/2236, 16.4%); the deliverable-confinement evidence E12 remains accurate for the deliverable commit 47bd61d (4 files), with compliance.yml landing as the separate green-up commit."
-      },
-      {
-        "id": "051",
-        "estimated": 200,
-        "actual": 155,
-        "flag": null,
-        "note": "7 files (git numstat ins+del, deliverable commit 68832c9): tools/validate.sh + standard/GIP.md + bootstrap.sh + tools/e2e_bootstrap_test.sh + CONTEXT.md + CHANGELOG.md + docs/planning/DEBT.md = 102+53 = 155 vs 200 estimated (UNDER; no flag). The H-PAYLOAD-CONTRACT injection (methodology/ + ecosystem/ into the bootstrap payload) landed leaner than estimated -- it is mostly enumeration edits + carve-out narrowing, not new code. Rolling 3x-average last 3 (049=164, 050=194, 051=155) = 171, 3x=513; 155 < 513, no per-feature flag. Cumulative 513/2236 ceiling (22.9%)."
-      },
-      {
-        "id": "052",
-        "estimated": 180,
-        "actual": 678,
-        "flag": "scope_over_estimate_3x -- LARGE: 678 vs 180 (~3.8x) EXCEEDS 3x the rolling average (049=164, 050=194, 051=155; avg 171, 3x=513). Operator acknowledgment requested (flag, not halt). Inherent to acceptance test 1 ('every shipped negative fixture'), not scope creep. Cumulative 1191/2236 = 53.3%, under the 130% halt.",
-        "note": "6 files (git numstat ins+del, deliverable commit 86a67ab): tools/validate.sh 224+67=291, tools/fixtures_self_test.sh 297 (new), tools/README.md 25+5=30, .github/workflows/compliance.yml 22 (new job), CHANGELOG.md 30, docs/planning/DEBT.md 4+4=8 -- total 602+76=678 vs 180 estimated (+276%). The overage is inherent to acceptance test 1 ('every shipped negative fixture'): the harness alone is ~297 lines to cover all 41 fixtures (29 --target rows + 5 verify_lib primitives incl. 2 git-scratch + a C13 substitution + a completeness guard), and validate.sh carries the NDEBT-015 routing + NDEBT-016 conformance + help sync + the in-scope F-051-drift correction (~291). Not code sprawl. Rolling 3x-average (049=164, 050=194, 051=155) = 171, 3x=513; 678 > 513, so the per-feature 3x flag trips -- surfaced for operator acknowledgment. Cumulative 513+678 = 1191/2236 ceiling (53.3%)."
-      },
-      {
-        "id": "053",
-        "estimated": 260,
-        "actual": 221,
-        "flag": null,
-        "note": "12 files (git numstat ins+del, deliverable commit b848aac): standard/AGF.md + methodology/{00,01,02,06} + standard/README.md + tools/verify_lib.sh + tools/fixtures_self_test.sh + tools/fixtures/word_present_{pass,fail}.md + CHANGELOG.md + docs/planning/DEBT.md = 190+31 = 221 vs 260 estimated (UNDER; no flag). A foundational-but-additive AGF standards change plus methodology-doc codification came in leaner than estimated -- mostly prose + one small primitive. Rolling 3x-average (050=194, 051=155, 052=678) is inflated by 052; 221 is well under it and under its own estimate. Cumulative 1191+221 = 1412/2236 ceiling (63.1%)."
-      },
-      {
-        "id": "055",
-        "estimated": 160,
-        "actual": 282,
-        "flag": "scope_over_estimate -- 282 vs 160 (+76%); flag, not halt, and NOT the 3x-rolling flag (last-3 avg 051=155/052=678/053=221 = 351, 3x=1054; 282 well under). Operator acknowledgment requested. The weight is verify_lib.sh's two heavily-documented primitives; documentation density, not sprawl. Cumulative 1694/2236 = 75.8%, under the 130% halt.",
-        "note": "7 files (git numstat ins+del, deliverable commit f2c109a): tools/verify_lib.sh 164+7=171, tools/fixtures_self_test.sh 61 (new wiring), tools/fixtures/enum_index.json 12 (new), tools/fixtures/bare_ref_fail.md 10 (new), tools/fixtures/bare_ref_pass.md 8 (new), CHANGELOG.md 16, docs/planning/DEBT.md 2+2=4 -- total 273+9=282 vs 160 estimated (+76%). The two new verify_lib primitives (vlib_enumeration_complete + vlib_bare_ref_resolves) carry ~40-line doc headers each matching the library's existing style, plus python bodies -- that is the bulk (171). Rolling 3x-average (051=155, 052=678, 053=221) = 351, 3x=1054; 282 < 1054, no 3x flag. Cumulative 1412+282 = 1694/2236 ceiling (75.8%)."
-      },
-      {
-        "id": "054",
-        "estimated": 40,
-        "actual": 74,
-        "flag": "scope_over_estimate -- 73 vs 40 (+83%) after the PR #34 review round; small absolute. Flag, not halt, and NOT the 3x-rolling flag (last-3 avg 052=678/053=221/055=282 = 394, 3x=1181; 73 far under). Cumulative 1767/2236 = 79.0%.",
-        "note": "6 files (git numstat ins+del, base 15a30e1..HEAD after the PR #34 review round): tools/fixtures_self_test.sh 32 (the template-schema conformance guard), templates/README.md 10+2=12, CHANGELOG.md 13, schema/README.md 5+2=7, templates/work-packet.template.json 1+4=5, docs/planning/DEBT.md 2+2=4 -- total 74 vs 40 estimated (a +1 stale-comment reword landed in the PR #34 review's follow-on fix). Option A (schema-valid template) chosen so the mechanical assertion is non-vacuous; the three enum/integer dispatch fields are OMITTED (PR #34 review) rather than shipped as literal defaults. Cumulative 1694+73 = 1767/2236 ceiling (79.0%)."
-      },
-      {
-        "id": "057",
-        "estimated": 80,
-        "actual": 101,
-        "flag": null,
-        "note": "3 files (git numstat ins+del, deliverable commit a7679de, base 964fe48..HEAD non-.agent): ecosystem/07_progress_comparison.md 62+9=71 (the persisting class + 3.1/3.2/6.1 + four->five + frontmatter), CHANGELOG.md 15, docs/planning/DEBT.md 2+2=4 -- total 101 vs 80 estimated (grew from 90 in the PR #35 review: new/reopened disambiguation) (+12.5%, ~on estimate, no flag). Rolling 3x-average (053=221, 055=282, 054=74) = 192, 3x=577; 90 << 577. Cumulative 1768+101 = 1869 / 2990 re-baselined ceiling (62.1%)."
-      },
-      {
-        "id": "056",
-        "estimated": 260,
-        "actual": 534,
-        "flag": "scope_over_estimate_3x -- 534 vs 260 (+105%) EXCEEDS 3x the rolling average of the last three (055=282, 054=74, 057=101; avg 152.3, 3x=457). Flag, NOT halt (Section 6): requires explicit human acknowledgment recorded before feature 058 begins. Weight is inherent to a five-NDEBT hardening bundle centered on the not-CI-covered tools/ecosystem_preflight.py (274 ins/40 del, ~50 of which are the build_baseline_document full-function rewrite re-inserting unchanged lines) plus the standing self-test CLI probes acceptance test 1 requires; not silent creep. Operator pre-authorized the FULL bundle ('Approved, please proceed') after scope-down/pause was offered.",
-        "note": "9 non-.agent files (git numstat ins+del, deliverable commit 50f3d11, base a5d741d..HEAD): tools/ecosystem_preflight.py 274+40=314, tools/validate.sh 51, tools/fixtures_self_test.sh 46, ecosystem/01_clean_state_preflight.md 26+1=27, CHANGELOG.md 26, tools/fixtures/ecosystem_baseline_neg_inconsistent_revisions.json 24, schema/preflight_verdict.schema.json 21+1=22, docs/planning/DEBT.md 7+8=15, tools/fixtures/preflight_verdict_fail.json 4+5=9 -- total 534 vs 260 estimated. Cumulative 1869+534 = 2403 / 2990 re-baselined ceiling (80.4%), under the 130% halt."
-      },
-      {
-        "id": "058",
-        "estimated": 180,
-        "actual": 368,
-        "flag": "scope_over_estimate -- 368 vs 180 (+104%); NOT the 3x-rolling flag (last-3 avg 054=74/057=101/056=534 = 236.3, 3x=709; 368 well under). Weight is the two heavily-documented verify_lib primitives (161 ins) + nine per-document markings + the guide/ROADMAP/CHANGELOG refresh; not sprawl. Cumulative 2771/2990 (92.7%): ~219 lines of headroom remain for the final feature 059 before the 130% cumulative halt.",
-        "note": "16 non-.agent files (git numstat ins+del, deliverable commit 8f5f29c, base 756a158..HEAD): tools/verify_lib.sh 161 (2 primitives), tools/validate.sh 38 (C14/C15), tools/fixtures_self_test.sh 38 (2 primitive tests), CHANGELOG.md 18, docs/guide/index.html 14+1=15, docs/planning/ROADMAP.md 14+1=15, the 9 constitutional docs 8+1=9 each = 81, tools/SKILL.md 1+1=2 -- total 368 vs 180 estimated. Cumulative 2403+368 = 2771 / 2990 re-baselined ceiling (92.7%), under the 130% halt."
-      },
-      {
-        "id": "059",
-        "estimated": 110,
-        "actual": 62,
-        "flag": null,
-        "note": "7 non-.agent files (git numstat ins+del, deliverable commit b79b263, base 707a3f5..HEAD): CHANGELOG.md 15, tools/README.md 22, README.md 8, CONTEXT.md 5, NIZAM.json 4, docs/guide/index.html 4, tools/validate.sh 4 -- total 62 vs 110 estimated (-44%, UNDER). Prepare-only release package + honest check-count sync; no sprawl. Rolling 3x-average check: last-3 completed (057=101, 056=534, 058=368; avg 334.3, 3x=1003) -- 62 far under, no per-feature flag. Cumulative 2833/3380 re-baselined ceiling (83.8%), under the 130% cumulative halt: the operator-authorized re-baseline (2300->2600) recorded in coordination 67a0be3 resolved the tight-headroom watch F-058 flagged for this feature."
-      }
-    ],
-    "rebaselines": [
-      {
-        "from": 1720,
-        "to": 2300,
-        "authorized_by": "operator",
-        "at": "2026-07-19T00:00:00Z",
-        "reason": "Phase 006 (Enforcement Closure & Hardening) legitimately exceeded its initial 1720-line estimate through real mechanization work (052 fixtures self-test 678, 055 recurrence-guard primitives 282, 053 Orchestrator/codification 221, etc.). At 1768/2236 (79.1% of the old 130% ceiling) with four features remaining (056 ~260, 057 ~80, gated 058 ~180, 059 phase-close ~150; ~670 at estimate plus the phase's typical overrun), the tail would breach the 130% cumulative ceiling mid-phase. Operator authorized raising original_estimate_lines 1720 -> 2300 (new 130% ceiling 2990) to run 056->059 without a mid-phase halt, per methodology/00_planning.md Section 9 (human-authorized, orchestrator-recorded, structural) and Section 6."
-      },
-      {
-        "from": 2300,
-        "to": 2600,
-        "authorized_by": "operator",
-        "at": "2026-07-20T03:11:21Z",
-        "reason": "Operator authorized 'Rebase line to fit the objective. You are approved to proceed.' to run the phase's final feature 059 (v0.8.0 release preparation + phase close) without cramping it against the cumulative ceiling. Phase 006 (Enforcement Closure & Hardening) legitimately outgrew even its already-rebaselined 2300-line estimate through real mechanization: at 2771/2990 (92.7%) through F-058, only ~219 lines of headroom remained. Raising original_estimate_lines 2300 -> 2600 (new 130% ceiling 3380) records the phase's realized size honestly and gives F-059 (est ~110) comfortable room; the phase is projected to close near 2880/3380 (~85%). Per methodology/00_planning.md Section 9 (human-authorized, orchestrator-recorded, structural {from,to,authorized_by,at,reason}) and Section 6."
-      }
-    ]
+    "original_estimate_lines": 870,
+    "total_lines_changed": 0,
+    "per_feature": []
   },
   "phase_004_scope_budget_final": {
     "original_estimate_lines": 1550,
@@ -1307,5 +1218,104 @@
       "at": "2026-07-17T00:00:00Z",
       "reason": "Operator authorization (verbatim): 'approved, re-baseline original_estimate_lines from 2,300 to 3,500 and finish the phase' -- given at the pre-042 scope-budget gate the orchestrator raised when cumulative actuals reached 2868/2990 (96% of the old 130% ceiling; remaining features 042-045 projected ~149% of the old estimate). Overage analysis presented to the operator: 031 plan-of-record artifacts 1046 vs 260 and 041 CLI 501 vs 220 (Mode B code review confirmed documentation/type-hint/house-style inflation, no scope creep); features 032-040 collectively on estimate; feature count and scope boundaries unchanged. Mirrors the phase-004 F-028 'Re-baseline & finish' precedent (1250 -> 1550)."
     }
+  },
+  "phase_006_scope_budget_final": {
+    "original_estimate_lines": 2600,
+    "total_lines_changed": 2833,
+    "per_feature": [
+      {
+        "id": "049",
+        "estimated": 120,
+        "actual": 164,
+        "flag": "scope_over_estimate -- ACKNOWLEDGED by operator 2026-07-19 ('Scope acknowledged'); flag, not halt; no re-baseline at 164/2236 = 7.3%",
+        "note": "6 files (git numstat ins+del, deliverable commit 5193973): tools/validate.sh 103+2=105, tools/fixtures/skill_index_neg_dangling_module.json 18 (new), tools/README.md 7+3=10, NIZAM.json 1+1=2, CHANGELOG.md 25+0=25, docs/planning/DEBT.md 2+2=4 -- total 164 vs 120 estimated (+37%). [AH-3 CORRECTION, PR #28 review: the original close-out note's per-file figures (validate.sh 108, README 11, CHANGELOG 27) summed to 170, not the stated 164; corrected here to the real `git show 5193973 --numstat` values -- the 164 total was always right, the breakdown was mis-transcribed.] First feature of the phase-006 ledger: the 3x-rolling-average check is not computable (031 precedent); flagged against its own estimate instead. The overage is documentation weight (the C13 help/description block and the C4 masking explanation), not code sprawl. Cumulative 164/2236 ceiling (7.3%)."
+      },
+      {
+        "id": "050",
+        "estimated": 140,
+        "actual": 194,
+        "flag": "scope_over_estimate -- operator acknowledgment requested (flag, not halt); the +39% is the co-resolved NDEBT-004 C9 carve-out + the e2e CWD-independence assertion, neither in the CWD-only estimate",
+        "note": "4 files (git numstat ins+del, deliverable commit 47bd61d): tools/validate.sh 79+15=94, tools/e2e_bootstrap_test.sh 71+2=73, CHANGELOG.md 21+0=21, docs/planning/DEBT.md 3+3=6 -- total 194 vs 140 estimated (+39%). The estimate scoped only NDEBT-012 (CWD anchoring); reproducing issue #18 forced co-resolving NDEBT-004 (the C9 payload carve-out) to meet the 'both forms green' acceptance test, plus the e2e assertion that closes the regression class -- that additional, unestimated scope is the overage, not sprawl within the CWD fix. Rolling 3x-average check not yet computable (only 049 precedes; 049=164, 050=194). Cumulative 358/2236 ceiling (16.0%). CI GREEN-UP FOLLOW-UP (disclosed): CI's e2e_bootstrap job failed on the first run because the new assert_payload_validate_cwd_independent runs `tools/validate.sh --payload`, which fails closed on a missing jsonschema/yaml module -- and that job never installed them (pre-F-050 the e2e exercised only bootstrap.sh, which needs neither). A follow-up commit adds `pip install jsonschema pyyaml` to the e2e_bootstrap job in .github/workflows/compliance.yml (~9 lines), bringing the feature footprint to ~203 lines across 5 files (cumulative ~367/2236, 16.4%); the deliverable-confinement evidence E12 remains accurate for the deliverable commit 47bd61d (4 files), with compliance.yml landing as the separate green-up commit."
+      },
+      {
+        "id": "051",
+        "estimated": 200,
+        "actual": 155,
+        "flag": null,
+        "note": "7 files (git numstat ins+del, deliverable commit 68832c9): tools/validate.sh + standard/GIP.md + bootstrap.sh + tools/e2e_bootstrap_test.sh + CONTEXT.md + CHANGELOG.md + docs/planning/DEBT.md = 102+53 = 155 vs 200 estimated (UNDER; no flag). The H-PAYLOAD-CONTRACT injection (methodology/ + ecosystem/ into the bootstrap payload) landed leaner than estimated -- it is mostly enumeration edits + carve-out narrowing, not new code. Rolling 3x-average last 3 (049=164, 050=194, 051=155) = 171, 3x=513; 155 < 513, no per-feature flag. Cumulative 513/2236 ceiling (22.9%)."
+      },
+      {
+        "id": "052",
+        "estimated": 180,
+        "actual": 678,
+        "flag": "scope_over_estimate_3x -- LARGE: 678 vs 180 (~3.8x) EXCEEDS 3x the rolling average (049=164, 050=194, 051=155; avg 171, 3x=513). Operator acknowledgment requested (flag, not halt). Inherent to acceptance test 1 ('every shipped negative fixture'), not scope creep. Cumulative 1191/2236 = 53.3%, under the 130% halt.",
+        "note": "6 files (git numstat ins+del, deliverable commit 86a67ab): tools/validate.sh 224+67=291, tools/fixtures_self_test.sh 297 (new), tools/README.md 25+5=30, .github/workflows/compliance.yml 22 (new job), CHANGELOG.md 30, docs/planning/DEBT.md 4+4=8 -- total 602+76=678 vs 180 estimated (+276%). The overage is inherent to acceptance test 1 ('every shipped negative fixture'): the harness alone is ~297 lines to cover all 41 fixtures (29 --target rows + 5 verify_lib primitives incl. 2 git-scratch + a C13 substitution + a completeness guard), and validate.sh carries the NDEBT-015 routing + NDEBT-016 conformance + help sync + the in-scope F-051-drift correction (~291). Not code sprawl. Rolling 3x-average (049=164, 050=194, 051=155) = 171, 3x=513; 678 > 513, so the per-feature 3x flag trips -- surfaced for operator acknowledgment. Cumulative 513+678 = 1191/2236 ceiling (53.3%)."
+      },
+      {
+        "id": "053",
+        "estimated": 260,
+        "actual": 221,
+        "flag": null,
+        "note": "12 files (git numstat ins+del, deliverable commit b848aac): standard/AGF.md + methodology/{00,01,02,06} + standard/README.md + tools/verify_lib.sh + tools/fixtures_self_test.sh + tools/fixtures/word_present_{pass,fail}.md + CHANGELOG.md + docs/planning/DEBT.md = 190+31 = 221 vs 260 estimated (UNDER; no flag). A foundational-but-additive AGF standards change plus methodology-doc codification came in leaner than estimated -- mostly prose + one small primitive. Rolling 3x-average (050=194, 051=155, 052=678) is inflated by 052; 221 is well under it and under its own estimate. Cumulative 1191+221 = 1412/2236 ceiling (63.1%)."
+      },
+      {
+        "id": "055",
+        "estimated": 160,
+        "actual": 282,
+        "flag": "scope_over_estimate -- 282 vs 160 (+76%); flag, not halt, and NOT the 3x-rolling flag (last-3 avg 051=155/052=678/053=221 = 351, 3x=1054; 282 well under). Operator acknowledgment requested. The weight is verify_lib.sh's two heavily-documented primitives; documentation density, not sprawl. Cumulative 1694/2236 = 75.8%, under the 130% halt.",
+        "note": "7 files (git numstat ins+del, deliverable commit f2c109a): tools/verify_lib.sh 164+7=171, tools/fixtures_self_test.sh 61 (new wiring), tools/fixtures/enum_index.json 12 (new), tools/fixtures/bare_ref_fail.md 10 (new), tools/fixtures/bare_ref_pass.md 8 (new), CHANGELOG.md 16, docs/planning/DEBT.md 2+2=4 -- total 273+9=282 vs 160 estimated (+76%). The two new verify_lib primitives (vlib_enumeration_complete + vlib_bare_ref_resolves) carry ~40-line doc headers each matching the library's existing style, plus python bodies -- that is the bulk (171). Rolling 3x-average (051=155, 052=678, 053=221) = 351, 3x=1054; 282 < 1054, no 3x flag. Cumulative 1412+282 = 1694/2236 ceiling (75.8%)."
+      },
+      {
+        "id": "054",
+        "estimated": 40,
+        "actual": 74,
+        "flag": "scope_over_estimate -- 73 vs 40 (+83%) after the PR #34 review round; small absolute. Flag, not halt, and NOT the 3x-rolling flag (last-3 avg 052=678/053=221/055=282 = 394, 3x=1181; 73 far under). Cumulative 1767/2236 = 79.0%.",
+        "note": "6 files (git numstat ins+del, base 15a30e1..HEAD after the PR #34 review round): tools/fixtures_self_test.sh 32 (the template-schema conformance guard), templates/README.md 10+2=12, CHANGELOG.md 13, schema/README.md 5+2=7, templates/work-packet.template.json 1+4=5, docs/planning/DEBT.md 2+2=4 -- total 74 vs 40 estimated (a +1 stale-comment reword landed in the PR #34 review's follow-on fix). Option A (schema-valid template) chosen so the mechanical assertion is non-vacuous; the three enum/integer dispatch fields are OMITTED (PR #34 review) rather than shipped as literal defaults. Cumulative 1694+73 = 1767/2236 ceiling (79.0%)."
+      },
+      {
+        "id": "057",
+        "estimated": 80,
+        "actual": 101,
+        "flag": null,
+        "note": "3 files (git numstat ins+del, deliverable commit a7679de, base 964fe48..HEAD non-.agent): ecosystem/07_progress_comparison.md 62+9=71 (the persisting class + 3.1/3.2/6.1 + four->five + frontmatter), CHANGELOG.md 15, docs/planning/DEBT.md 2+2=4 -- total 101 vs 80 estimated (grew from 90 in the PR #35 review: new/reopened disambiguation) (+12.5%, ~on estimate, no flag). Rolling 3x-average (053=221, 055=282, 054=74) = 192, 3x=577; 90 << 577. Cumulative 1768+101 = 1869 / 2990 re-baselined ceiling (62.1%)."
+      },
+      {
+        "id": "056",
+        "estimated": 260,
+        "actual": 534,
+        "flag": "scope_over_estimate_3x -- 534 vs 260 (+105%) EXCEEDS 3x the rolling average of the last three (055=282, 054=74, 057=101; avg 152.3, 3x=457). Flag, NOT halt (Section 6): requires explicit human acknowledgment recorded before feature 058 begins. Weight is inherent to a five-NDEBT hardening bundle centered on the not-CI-covered tools/ecosystem_preflight.py (274 ins/40 del, ~50 of which are the build_baseline_document full-function rewrite re-inserting unchanged lines) plus the standing self-test CLI probes acceptance test 1 requires; not silent creep. Operator pre-authorized the FULL bundle ('Approved, please proceed') after scope-down/pause was offered.",
+        "note": "9 non-.agent files (git numstat ins+del, deliverable commit 50f3d11, base a5d741d..HEAD): tools/ecosystem_preflight.py 274+40=314, tools/validate.sh 51, tools/fixtures_self_test.sh 46, ecosystem/01_clean_state_preflight.md 26+1=27, CHANGELOG.md 26, tools/fixtures/ecosystem_baseline_neg_inconsistent_revisions.json 24, schema/preflight_verdict.schema.json 21+1=22, docs/planning/DEBT.md 7+8=15, tools/fixtures/preflight_verdict_fail.json 4+5=9 -- total 534 vs 260 estimated. Cumulative 1869+534 = 2403 / 2990 re-baselined ceiling (80.4%), under the 130% halt."
+      },
+      {
+        "id": "058",
+        "estimated": 180,
+        "actual": 368,
+        "flag": "scope_over_estimate -- 368 vs 180 (+104%); NOT the 3x-rolling flag (last-3 avg 054=74/057=101/056=534 = 236.3, 3x=709; 368 well under). Weight is the two heavily-documented verify_lib primitives (161 ins) + nine per-document markings + the guide/ROADMAP/CHANGELOG refresh; not sprawl. Cumulative 2771/2990 (92.7%): ~219 lines of headroom remain for the final feature 059 before the 130% cumulative halt.",
+        "note": "16 non-.agent files (git numstat ins+del, deliverable commit 8f5f29c, base 756a158..HEAD): tools/verify_lib.sh 161 (2 primitives), tools/validate.sh 38 (C14/C15), tools/fixtures_self_test.sh 38 (2 primitive tests), CHANGELOG.md 18, docs/guide/index.html 14+1=15, docs/planning/ROADMAP.md 14+1=15, the 9 constitutional docs 8+1=9 each = 81, tools/SKILL.md 1+1=2 -- total 368 vs 180 estimated. Cumulative 2403+368 = 2771 / 2990 re-baselined ceiling (92.7%), under the 130% halt."
+      },
+      {
+        "id": "059",
+        "estimated": 110,
+        "actual": 62,
+        "flag": null,
+        "note": "7 non-.agent files (git numstat ins+del, deliverable commit b79b263, base 707a3f5..HEAD): CHANGELOG.md 15, tools/README.md 22, README.md 8, CONTEXT.md 5, NIZAM.json 4, docs/guide/index.html 4, tools/validate.sh 4 -- total 62 vs 110 estimated (-44%, UNDER). Prepare-only release package + honest check-count sync; no sprawl. Rolling 3x-average check: last-3 completed (057=101, 056=534, 058=368; avg 334.3, 3x=1003) -- 62 far under, no per-feature flag. Cumulative 2833/3380 re-baselined ceiling (83.8%), under the 130% cumulative halt: the operator-authorized re-baseline (2300->2600) recorded in coordination 67a0be3 resolved the tight-headroom watch F-058 flagged for this feature."
+      }
+    ],
+    "rebaselines": [
+      {
+        "from": 1720,
+        "to": 2300,
+        "authorized_by": "operator",
+        "at": "2026-07-19T00:00:00Z",
+        "reason": "Phase 006 (Enforcement Closure & Hardening) legitimately exceeded its initial 1720-line estimate through real mechanization work (052 fixtures self-test 678, 055 recurrence-guard primitives 282, 053 Orchestrator/codification 221, etc.). At 1768/2236 (79.1% of the old 130% ceiling) with four features remaining (056 ~260, 057 ~80, gated 058 ~180, 059 phase-close ~150; ~670 at estimate plus the phase's typical overrun), the tail would breach the 130% cumulative ceiling mid-phase. Operator authorized raising original_estimate_lines 1720 -> 2300 (new 130% ceiling 2990) to run 056->059 without a mid-phase halt, per methodology/00_planning.md Section 9 (human-authorized, orchestrator-recorded, structural) and Section 6."
+      },
+      {
+        "from": 2300,
+        "to": 2600,
+        "authorized_by": "operator",
+        "at": "2026-07-20T03:11:21Z",
+        "reason": "Operator authorized 'Rebase line to fit the objective. You are approved to proceed.' to run the phase's final feature 059 (v0.8.0 release preparation + phase close) without cramping it against the cumulative ceiling. Phase 006 (Enforcement Closure & Hardening) legitimately outgrew even its already-rebaselined 2300-line estimate through real mechanization: at 2771/2990 (92.7%) through F-058, only ~219 lines of headroom remained. Raising original_estimate_lines 2300 -> 2600 (new 130% ceiling 3380) records the phase's realized size honestly and gives F-059 (est ~110) comfortable room; the phase is projected to close near 2880/3380 (~85%). Per methodology/00_planning.md Section 9 (human-authorized, orchestrator-recorded, structural {from,to,authorized_by,at,reason}) and Section 6."
+      }
+    ]
   }
 }

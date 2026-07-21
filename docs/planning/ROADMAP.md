@@ -6,6 +6,9 @@ version: 0.10.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.12.0"
+    date: "2026-07-20"
+    summary: "Phase 007 activated (operator verbatim: 'Authorized to activate now', gate H-PHASE-007, 2026-07-20): the Proposed Next Phase section becomes the Plan of Record banner. current_phase advanced 006-enforcement-closure -> 007-consumer-adoption in manifest + run_state (event phase_activated); product_spec_007 flipped draft -> active (1.1.0); scope budget reset to 870 (phase-006 final archived). Execution begins with the framework-internal features 060 (author ecosystem/00_ecosystem_bootstrap.md) then 061 (define H-CONSUMER-UPGRADE); the pilot (063-064) stays deferred pending operator-authorized consumer-repo access."
   - version: "0.11.0"
     date: "2026-07-20"
     summary: "Added the Proposed Next Phase section — phase 007 (Consumer-Adoption Enablement & First External Pilot, features 060-064, est 870 lines) PROPOSED and awaiting operator authorization (gate H-PHASE-007). Scope: author the missing Bootstrap-stage protocol (ecosystem/00_ecosystem_bootstrap.md) + define the reserved gate H-CONSUMER-UPGRADE, then run the first REAL external-consumer pilot (Track 4 / handover F-016..F-020) and prioritise the deferred protocols from real friction — NOT speculative authoring of 04/05/06/08. Planner artifacts .agent/product_spec_007.md (status draft) + .agent/feature_list_007.json (DAG-validated acyclic) exist; current_phase stays 006-enforcement-closure until activation. The pilot (features 063-064) additionally requires operator-authorized access to a consumer repository — the canonical target nizamiq/nizamiq-strategy is outside this session's scope."
@@ -43,16 +46,19 @@ change_log:
 
 # Forward Roadmap
 
-## Proposed Next Phase (2026-07-20) — Phase 007: Consumer-Adoption Enablement & First External Pilot
+## Plan of Record (2026-07-20) — Phase 007 Activated: Consumer-Adoption Enablement & First External Pilot
 
-Phase `007-consumer-adoption` is **PROPOSED — awaiting operator authorization**
-(gate **H-PHASE-007**). It is not activated: `docs/planning/manifest.json` keeps
-`current_phase: 006-enforcement-closure` (complete) and carries phase 007 as
-`status: pending` until the authorization is recorded in `.agent/run_state.json`
-(event `phase_activated`), per `methodology/00_planning.md`. The planner artifacts
-exist: `.agent/product_spec_007.md` (status `draft`) and
-`.agent/feature_list_007.json` (5 features 060-064, DAG-validated acyclic,
-`original_estimate_lines` 870).
+Phase `007-consumer-adoption` is **ACTIVE — plan of record**. On 2026-07-20 the operator
+authorized activation (verbatim: **"Authorized to activate now"**, satisfying gate
+**H-PHASE-007**; recorded in `.agent/run_state.json` event `phase_activated` before any
+feature execution). `docs/planning/manifest.json` carries
+`current_phase: 007-consumer-adoption` with the phase-007 entry `status: in_progress`;
+`.agent/product_spec_007.md` is active (1.1.0); the scope budget was reset to 870
+(phase-006 final archived). The planner artifacts (`.agent/feature_list_007.json` —
+5 features 060-064, DAG-validated acyclic, `original_estimate_lines` 870) are the plan
+of record. Execution begins with the framework-internal features **060** (author the
+Bootstrap-stage protocol) then **061** (define `H-CONSUMER-UPGRADE`); the pilot
+(063-064) stays deferred pending operator-authorized consumer-repo access (below).
 
 **Why now.** The core ecosystem loop (Preflight → Baseline → Audit → Compare) is
 shipped, dogfooded, and released (v0.8.0). Two gaps remain: the lifecycle's **Bootstrap**

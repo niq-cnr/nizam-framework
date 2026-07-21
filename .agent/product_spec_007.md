@@ -3,14 +3,17 @@ id: nizam-product-spec-007
 title: "Nizam Framework — Phase 007 Spec (Consumer-Adoption Enablement & First External Pilot) — PROPOSAL"
 description: "Phase-007 proposal: close the one foundational gap the shipped ecosystem loop leaves — the Bootstrap stage has no protocol document and its gate H-CONSUMER-UPGRADE is an undefined reserved name — then run the first REAL external-consumer pilot (handover F-016..F-020) to generate non-self-referential friction, and let that evidence prioritise the remaining deferred protocols. PROPOSED, not activated: execution requires operator authorization (gate H-PHASE-007) and, for the pilot, access to a consumer repository. Extends product_spec.md..product_spec_006.md; replaces none."
 tags: [spec, ecosystem-cycle, consumer-adoption, bootstrap, pilot, phase-007, proposal]
-status: draft
+status: active
 last_audited: "2026-07-20"
 authoritative_source: NA
-version: 1.0.0
+version: 1.1.0
 spec_version: "1.0.0"
 created_at: "2026-07-20T00:00:00Z"
 updated_at: "2026-07-20T00:00:00Z"
 change_log:
+  - version: "1.1.0"
+    date: "2026-07-20T00:00:00Z"
+    summary: "Phase activated: frontmatter status draft -> active on operator authorization 2026-07-20 (verbatim: 'Authorized to activate now', gate H-PHASE-007, recorded in .agent/run_state.json event phase_activated before any feature execution per the NDEBT-018 rule). current_phase advanced 006-enforcement-closure -> 007-consumer-adoption; scope budget reset (870 est, phase-006 final archived). Body Status banner updated to ACTIVE plan of record; no scope change. The draft status was the designed proposal state, flipped only now that the decision lifecycle reached activation (the 005 lesson applied as intended)."
   - version: "1.0.0"
     date: "2026-07-20T00:00:00Z"
     summary: "Initial phase-007 proposal, authored after the Tier-0/Tier-1 ecosystem completion merged (schema/audit_delta.schema.json + tools/ecosystem_audit.py + tools/compare_ecosystem_baselines.py + tools/validate_evidence_freshness.py). Scope sourced from ROADMAP Track 4 (First External Consumer Pilot) and the NIP-0001 successor consumer-adoption programme (handover F-016..F-020). Frontmatter status stays draft until operator activation (gate H-PHASE-007) — the 005 lesson: status must track the decision lifecycle, not anticipate it. No feature may enter contract negotiation before that authorization; current_phase remains 006-enforcement-closure (complete) until then."
@@ -18,15 +21,16 @@ change_log:
 
 # Nizam Framework — Phase 007 Spec (Consumer-Adoption Enablement & First External Pilot)
 
-**Status: PROPOSED — awaiting operator authorization.** Phase `007-consumer-adoption`
-is NOT activated. Per `methodology/00_planning.md` a phase becomes real only on
-operator authorization (gate **H-PHASE-007**); `docs/planning/manifest.json` keeps
-`current_phase: 006-enforcement-closure` (complete) and carries this phase as
-`status: pending` until that authorization is recorded in `.agent/run_state.json`
-(event `phase_activated`), committed before any feature execution per the NDEBT-018
-rule. The Planner-produced spec and DAG-validated feature list
-(`.agent/feature_list_007.json`) exist at proposal; operator authorization completes
-the activation triad.
+**Status: ACTIVE — plan of record.** Phase `007-consumer-adoption` was authorized for
+activation by the operator on 2026-07-20 (verbatim: **"Authorized to activate now"**,
+satisfying gate **H-PHASE-007**; recorded in `.agent/run_state.json` event
+`phase_activated` before any feature execution, per the NDEBT-018 rule).
+`docs/planning/manifest.json` carries `current_phase: 007-consumer-adoption` with the
+phase-007 entry `status: in_progress`. Per `methodology/00_planning.md`, the
+Planner-produced spec and DAG-validated feature list (`.agent/feature_list_007.json`)
+existed at proposal; the operator authorization completed the activation triad.
+Execution begins with the ungated DAG root feature 060; the pilot features 063–064
+remain deferred pending operator-authorized consumer-repo access (Section 3).
 
 ## 1. Purpose
 
