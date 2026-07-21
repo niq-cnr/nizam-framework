@@ -7,29 +7,6 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Changed
-
-- **Phase 008 (0–n Project Spectrum, Stage 1: Consumer-Readiness) complete** (feature 069).
-  The fixed loop (065–068) was re-piloted against a real, freshly bootstrapped scratch
-  consumer and proved the phase-007 pilot findings resolved **with no hand-applied
-  workaround**: Preflight = `PASS_WITH_EXCEPTIONS` (the injected `.nizam/` is a single expected
-  exception, not a hard FAIL — finding A); the baseline `framework_references` names the
-  injected pin while `repository_references` names the consumer HEAD (finding B); provenance
-  carries `resolved_sha` and `--verify-only --expected-sha` holds (067). Evidence under
-  `.agent/evidence/pilot-069/`; `docs/planning/manifest.json` phase-008 → complete;
-  `H-CONSUMER-UPGRADE` exercised a second time. NIP-0002 Stages 2–4 remain the phase-009
-  candidate scope, validated by this re-pilot.
-
-- **Brownfield coexistence clarified as covered-by-construction** (phase 008 feature 068;
-  `NDEBT-032`, resolved-by-design). Investigation showed the premise "mechanize GIP §5.1
-  rename-and-diff in `bootstrap.sh`" contradicts **GIP §5.1 point 3**: `bootstrap.sh` injects
-  only the `.nizam/` payload and never writes to a consumer's root `CONTEXT.md`/`AGENTS.md`/CI,
-  so it *cannot* silently overwrite them — the coexistence safety is guaranteed by construction,
-  and reconciling a consumer's own root files against `.nizam/templates/` is inherently a
-  consumer-side manual step. `ecosystem/00_ecosystem_bootstrap.md` §3 + §5.1 (v0.4.0) corrected
-  from "not yet mechanized" to "covered by construction"; `NDEBT-032` moved to Resolved
-  (`docs/planning/DEBT.md` v0.31.0). No `bootstrap.sh` change.
-
 ### Added
 
 - **`bootstrap.sh` commit-SHA pinning** (phase 008 feature 067; `NDEBT-033`). The Bootstrap
@@ -161,6 +138,30 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (baseline / preflight-verdict / engineering-finding / audit-delta).
 
 ### Changed
+
+- **Phase 008 (0–n Project Spectrum, Stage 1: Consumer-Readiness) complete** (feature 069).
+  The fixed loop (065–068) was re-piloted against a freshly bootstrapped **scratch/throwaway**
+  consumer (a loop-mechanics proof, not a real production project) and proved the phase-007
+  pilot findings resolved **with no hand-applied workaround**: Preflight =
+  `PASS_WITH_EXCEPTIONS` (the injected `.nizam/` is a single expected exception, not a hard
+  FAIL — finding A); the baseline `framework_references` names the injected pin while
+  `repository_references` names the consumer HEAD (finding B); provenance carries
+  `resolved_sha` and `--verify-only --expected-sha` holds (067). Evidence under
+  `.agent/evidence/pilot-069/`; `docs/planning/manifest.json` phase-008 → complete;
+  `H-CONSUMER-UPGRADE` exercised a second time (a pre-release/branch pilot — a released-tag
+  adoption of the fixed framework stays outstanding until the next release). NIP-0002 Stages
+  2–4 remain the phase-009 candidate scope, validated by this re-pilot; a real, non-scratch
+  consumer pilot remains the open production-maturity criterion.
+
+- **Brownfield coexistence clarified as covered-by-construction** (phase 008 feature 068;
+  `NDEBT-032`, resolved-by-design). Investigation showed the premise "mechanize GIP §5.1
+  rename-and-diff in `bootstrap.sh`" contradicts **GIP §5.1 point 3**: `bootstrap.sh` injects
+  only the `.nizam/` payload and never writes to a consumer's root `CONTEXT.md`/`AGENTS.md`/CI,
+  so it *cannot* silently overwrite them — the coexistence safety is guaranteed by construction,
+  and reconciling a consumer's own root files against `.nizam/templates/` is inherently a
+  consumer-side manual step. `ecosystem/00_ecosystem_bootstrap.md` §3 + §5.1 (v0.4.0) corrected
+  from "not yet mechanized" to "covered by construction"; `NDEBT-032` moved to Resolved
+  (`docs/planning/DEBT.md` v0.31.0). No `bootstrap.sh` change.
 
 - **`NIP-0002` accepted (gate H-NIP) → phase 008 selected.** The operator accepted
   `docs/nips/NIP-0002-zero-to-n-project-spectrum.md` (status proposed → **accepted**, v0.2.0),

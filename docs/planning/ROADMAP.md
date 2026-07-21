@@ -2,13 +2,16 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.18.0
+version: 0.19.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.19.0"
+    date: "2026-07-21"
+    summary: "PR #45 review corrections (phase-close accuracy): the feature-069 re-pilot is described honestly as a SCRATCH/THROWAWAY consumer (a loop-mechanics proof), not a 'real' consumer — a real non-scratch consumer pilot stays the open production-maturity criterion. The open-debt roll is reconciled to the phase-008 close: NDEBT-027/028 (ADR-004, features 065/066) + NDEBT-032 (068) + NDEBT-033 (067) moved to RESOLVED; only NDEBT-026 + NDEBT-029/030/031 remain open (carried into phase-009 scope). No plan-of-record change."
   - version: "0.18.0"
     date: "2026-07-21"
-    summary: "Phase 008 (0-n Project Spectrum, Stage 1: Consumer-Readiness, features 065-069) COMPLETE. The phase-008 Plan-of-Record banner carries the completion record (065/066 ADR-004 findings A/B; 067 SHA pin; 068 resolved-by-design Option A; 069 re-pilot proved A/B resolved against a real bootstrapped consumer, evidence .agent/evidence/pilot-069/). Current Position rolled to phases 001-008 complete. The phase-009 candidate scope (NIP-0002 Stages 2-4: 0-case genesis, n-case multi-repo tooling + membership registry, 04/05 protocols) is validated by the re-pilot and carried forward; a real non-scratch consumer pilot remains the open production-maturity criterion. Awaiting operator: the 067-069 PR + phase-009 planning."
+    summary: "Phase 008 (0-n Project Spectrum, Stage 1: Consumer-Readiness, features 065-069) COMPLETE. The phase-008 Plan-of-Record banner carries the completion record (065/066 ADR-004 findings A/B; 067 SHA pin; 068 resolved-by-design Option A; 069 re-pilot proved A/B resolved against a freshly bootstrapped scratch consumer, evidence .agent/evidence/pilot-069/). Current Position rolled to phases 001-008 complete. The phase-009 candidate scope (NIP-0002 Stages 2-4: 0-case genesis, n-case multi-repo tooling + membership registry, 04/05 protocols) is validated by the re-pilot and carried forward; a real non-scratch consumer pilot remains the open production-maturity criterion. Awaiting operator: the 067-069 PR + phase-009 planning."
   - version: "0.17.0"
     date: "2026-07-21"
     summary: "Phase 008 ACTIVATED (operator verbatim: 'Approved. Please proceed', gate H-PHASE-008, 2026-07-21): the Proposed Next Phase — Phase 008 section becomes the Plan of Record banner. current_phase advanced 007-consumer-adoption -> 008-consumer-readiness in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_008 flipped draft -> active (1.1.0); scope budget reset to 1010 (phase-007 final archived). operator_gates.md records H-PHASE-008 SATISFIED. Execution begins with the ungated DAG root feature 065 (governance-root resolution in tools/ecosystem_preflight.py; ADR-004 decision 1 / NDEBT-027) — the first real code change of the 0-n programme."
@@ -72,8 +75,10 @@ change_log:
 bootstrap commit-SHA pinning (`NDEBT-033`) hardened the pin against a moved tag; **068**
 brownfield coexistence was resolved-by-design (operator Option A — no code; the `.nizam/`-only
 inject already satisfies GIP §5.1 by construction); **069** re-piloted the fixed loop against a
-real bootstrapped consumer and proved findings A/B resolved with no hand-applied workaround
-(evidence `.agent/evidence/pilot-069/`). Activation was on 2026-07-21 (operator verbatim
+freshly bootstrapped **scratch/throwaway** consumer (a loop-mechanics proof, not a real
+production project) and proved findings A/B resolved with no hand-applied workaround
+(evidence `.agent/evidence/pilot-069/`). A real, non-scratch consumer pilot remains the open
+production-maturity criterion (carried into the phase-009 candidate scope). Activation was on 2026-07-21 (operator verbatim
 **"Approved. Please proceed"**, gate **H-PHASE-008**, recorded before feature execution per
 NDEBT-018). 065/066 landed on `main` via PR #44; 067–069 are on the phase-008 branch for a
 second PR. `manifest.json` carries phase-008 `status: complete`.
@@ -238,11 +243,13 @@ successor, leaving open debt deferred to unscoped "future phases").
 - Phases 001–008 are complete. **Phase 008 (0–n Project Spectrum, Stage 1:
   Consumer-Readiness, features 065–069) is COMPLETE** (2026-07-21): the ecosystem loop is
   now genuinely consumer-ready — `ecosystem_preflight.py` resolves a governance-root (065)
-  and anchors a baseline to the injected framework pin (066), so a real bootstrapped
-  consumer gets a clean Preflight + honest baseline (ADR-004, pilot findings A/B);
-  `bootstrap.sh` records a commit-SHA pin (067, `NDEBT-033`); brownfield coexistence was
-  resolved-by-design (068); and a re-pilot proved findings A/B resolved against a real
-  consumer with no workaround (069, evidence `.agent/evidence/pilot-069/`). 065/066 are on
+  and anchors a baseline to the injected framework pin (066), so a freshly bootstrapped
+  scratch/throwaway consumer gets a clean Preflight + honest baseline (ADR-004, pilot findings
+  A/B); `bootstrap.sh` records a commit-SHA pin (067, `NDEBT-033`); brownfield coexistence was
+  resolved-by-design (068); and a re-pilot proved findings A/B resolved against a
+  scratch/throwaway consumer with no workaround (069, evidence `.agent/evidence/pilot-069/`) —
+  a loop-mechanics proof; a real, non-scratch consumer pilot stays outstanding for
+  production maturity. 065/066 are on
   `main` (PR #44); 067–069 are on the phase-008 branch (second PR pending). **Phase 007**
   (Consumer-Adoption Enablement & First External Pilot, features 060–064) is on `main`: the
   Bootstrap-stage protocol, the `H-CONSUMER-UPGRADE` gate, the first scratch-consumer pilot,
@@ -255,14 +262,14 @@ successor, leaving open debt deferred to unscoped "future phases").
   the `[0.8.0]` CHANGELOG section (run 29717579479, success). A MINOR release per
   `methodology/06_release_train.md` §3.2. The successor consumer-adoption phase
   (handover F-016..F-020) remains unblocked.
-- Open debt: NDEBT-026 (Low, pre-existing) plus the six phase-007 pilot rows
-  `NDEBT-027`…`NDEBT-032` — the consumer-readiness and 0–n-spectrum gaps the scratch
-  pilot surfaced (governance-root assumption, framework-pin mis-anchoring, audit/compare
-  not yet in a released tag, the absent 0-case, single-`--repo-root` tools, and the
-  brownfield `bootstrap.sh` gap), each cross-referencing `ADR-004`/`NIP-0002` and
-  sequenced into the phase-008 candidate scope above; plus `NDEBT-033` (Medium) — bootstrap
-  provenance pins the tag name but not its resolved commit SHA (surfaced in the PR #42
-  review), also deferred to phase 008. Phase 006 resolved the entire
+- Open debt: NDEBT-026 (Low, pre-existing) plus three of the phase-007 pilot rows that
+  phase 008 did **not** close — `NDEBT-029` (audit/compare not yet in a released tag),
+  `NDEBT-030` (the absent 0-case), and `NDEBT-031` (single-`--repo-root` tools vs multi-repo
+  prose) — each cross-referencing `NIP-0002` and carried into the phase-009 candidate scope
+  above. Phase 008 **resolved** the consumer-readiness rows: `NDEBT-027` (governance-root,
+  feature 065) and `NDEBT-028` (framework-pin anchoring, feature 066) via ADR-004; `NDEBT-032`
+  (brownfield) resolved-by-design (feature 068); and `NDEBT-033` (bootstrap commit-SHA pin,
+  surfaced in the PR #42 review) via feature 067. Phase 006 resolved the entire
   enforcement-closure backlog it inherited (NDEBT-004, -005, -007 through -024;
   NDEBT-001/002/003/006/025 were already Resolved). See `docs/planning/DEBT.md`.
 

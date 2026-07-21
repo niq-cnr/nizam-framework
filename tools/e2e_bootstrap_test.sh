@@ -250,12 +250,16 @@ run_bootstrap_verify_only() {
 # Feature 067 (NDEBT-033): install records the tag's resolved commit SHA in
 # provenance.json, and --verify-only with --expected-sha asserts it -- so a moved
 # tag replaying a different commit is rejected even when the tag name matches.
-# Proves: (a) a non-empty resolved_sha was recorded; (b) --verify-only with the
-# correct --expected-sha PASSES; (c) with a wrong --expected-sha it FAILS.
+# Proves: (a) a non-empty resolved_sha was recorded; (a2) the recorded SHA equals
+# the tag's AUTHORITATIVE commit (`git rev-parse <tag>^{commit}`), so the check is
+# not self-referential -- it confirms bootstrap resolved and recorded the right
+# commit, not merely some SHA the verify step then echoes back; (b) --verify-only
+# with the correct --expected-sha PASSES; (c) with a wrong --expected-sha it FAILS.
+# The harness tags HEAD in this repo, so the tag's commit is authoritative here.
 #
-# Returns 0 if all three hold; non-zero otherwise.
+# Returns 0 if all four hold; non-zero otherwise.
 assert_provenance_sha_pin() {
-  local tag="$1" target="$2" recorded_sha rc
+  local tag="$1" target="$2" recorded_sha true_sha rc
   recorded_sha="$(python3 -c '
 import json, sys
 with open(sys.argv[1], "r", encoding="utf-8") as handle:
@@ -263,6 +267,17 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
 ' "${target}/provenance.json")" || { echo "assert_provenance_sha_pin: FAIL -- provenance.json unreadable under ${target}"; return 1; }
   if [ -z "${recorded_sha}" ]; then
     echo "assert_provenance_sha_pin: FAIL -- bootstrap recorded no resolved_sha in provenance.json (feature 067 regression)"
+    return 1
+  fi
+  # (a2) the recorded SHA must equal the tag's true commit -- an independent,
+  # non-self-referential anchor (bootstrap resolved it inside its own clone; this
+  # resolves it here from the tag directly).
+  if ! true_sha="$(git rev-parse "${tag}^{commit}" 2>/dev/null)"; then
+    echo "assert_provenance_sha_pin: FAIL -- cannot resolve tag '${tag}' to a commit for the cross-check"
+    return 1
+  fi
+  if [ "${recorded_sha}" != "${true_sha}" ]; then
+    echo "assert_provenance_sha_pin: FAIL -- recorded resolved_sha (${recorded_sha}) != the tag's authoritative commit (${true_sha})"
     return 1
   fi
   # (b) correct expected SHA -> PASS (exit 0)
@@ -276,7 +291,7 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
     echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted a WRONG expected SHA (moved-tag drift not detected)"
     return 1
   fi
-  echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}); --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected)."
+  echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}) == tag's true commit; --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected)."
   return 0
 }
 

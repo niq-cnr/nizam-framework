@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.6.0
+version: 0.7.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-07-21"
+    summary: "H-CONSUMER-UPGRADE disposition corrected (PR #45 review): exercise (2), the phase-008 feature-069 re-pilot, is reclassified as a PRE-RELEASE pilot, not a released-tag adoption — it bootstrapped an ephemeral tag on the phase-008 branch HEAD (the fixed 065–068 tools are unreleased), so it exercised the gate's decision mechanics ahead of a release but does not match the gate's defined scope (adoption of a released immutable tag). Only exercise (1), the phase-007 pilot against released tag v0.8.0, is the canonical released-tag case; a released-tag adoption of the fixed framework stays outstanding until the next H-FRAMEWORK-RELEASE."
   - version: "0.6.0"
     date: "2026-07-21"
     summary: "H-CONSUMER-UPGRADE exercised a second time (phase 008 feature 069 re-pilot adoption of the fixed framework, proving pilot findings A/B resolved). The disposition cell now records both exercises (phase-007 pilot v0.8.0; phase-008 re-pilot)."
@@ -78,7 +81,7 @@ their most recent disposition, not a claim that they never fire again.
 | `H-PAYLOAD-CONTRACT` | Decide the injected-payload / methodology contract (which directories the bootstrap payload carries). | `.agent/product_spec_006.md` gates (F-051) | SATISFIED in phase 006 (feature 051). |
 | `H-CONSTITUTIONAL` | The mechanize-or-descope decision for the constitutional-policy surface (per document: mechanize into a validator check, or mark consumer-aspirational). | `.agent/product_spec_006.md` gates (F-058); `docs/planning/ROADMAP.md` Track 3 | RESOLVED 2026-07-20 — two surfaces mechanized (validate.sh C14/C15), seven marked consumer-aspirational. |
 | `H-FRAMEWORK-RELEASE` | Approve the semantic version, changelog, migration notes, and tag creation for a framework release (recurring, per release). | `.agent/product_spec_005.md` Sec 8; `methodology/06_release_train.md` | EXECUTED 2026-07-18 (v0.7.0) and 2026-07-20 (v0.8.0, phase 006 feature 059) — operator-signed tags. |
-| `H-CONSUMER-UPGRADE` | Approve a consumer repository's adoption of, or upgrade to, a newly released **immutable framework tag** at the Bootstrap stage — the pinned tag the consumer will inherit and run the cycle under. The pipeline records the adoption decision; it never adopts on a human's behalf (recurring, per adoption/upgrade). | `.agent/product_spec_007.md`; `ecosystem/00_ecosystem_bootstrap.md` Sec 2 | DEFINED 2026-07-20 (phase 007, feature 061). EXERCISED twice: (1) 2026-07-21 (phase 007, feature 063) — the scratch/throwaway consumer pilot against released tag `v0.8.0`; (2) 2026-07-21 (phase 008, feature 069) — the re-pilot adoption of the fixed framework proving findings A/B resolved. Each recorded in `.agent/run_state.json` (event `operator_gate_decision`) before the bootstrap ran, per the NDEBT-018 rule. Recurring: outstanding again at the next adoption/upgrade. |
+| `H-CONSUMER-UPGRADE` | Approve a consumer repository's adoption of, or upgrade to, a newly released **immutable framework tag** at the Bootstrap stage — the pinned tag the consumer will inherit and run the cycle under. The pipeline records the adoption decision; it never adopts on a human's behalf (recurring, per adoption/upgrade). | `.agent/product_spec_007.md`; `ecosystem/00_ecosystem_bootstrap.md` Sec 2 | DEFINED 2026-07-20 (phase 007, feature 061). EXERCISED once against a released tag and once as a pre-release pilot: (1) 2026-07-21 (phase 007, feature 063) — the **canonical case** matching this gate's defined scope: a scratch/throwaway consumer adopting the **released immutable tag** `v0.8.0`; (2) 2026-07-21 (phase 008, feature 069) — a **pre-release pilot, NOT a released-tag adoption**: the re-pilot bootstrapped an *ephemeral tag on the phase-008 branch HEAD* (the fixed 065–068 tools are unreleased), exercising the same operator-decision mechanics ahead of a release to prove findings A/B resolved. A released-tag adoption of the *fixed* framework remains outstanding until the next `H-FRAMEWORK-RELEASE` cuts a tag carrying the fixes. Each recorded in `.agent/run_state.json` (event `operator_gate_decision`) before the bootstrap ran, per the NDEBT-018 rule. Recurring: outstanding again at the next adoption/upgrade. |
 
 ## 2. Reserved gates (deferred to the successor consumer-adoption phase)
 
