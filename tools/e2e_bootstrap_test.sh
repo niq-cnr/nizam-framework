@@ -245,6 +245,41 @@ run_bootstrap_verify_only() {
   return 0
 }
 
+# assert_provenance_sha_pin <tag> <target>
+# --------------------------------------------------------------------------
+# Feature 067 (NDEBT-033): install records the tag's resolved commit SHA in
+# provenance.json, and --verify-only with --expected-sha asserts it -- so a moved
+# tag replaying a different commit is rejected even when the tag name matches.
+# Proves: (a) a non-empty resolved_sha was recorded; (b) --verify-only with the
+# correct --expected-sha PASSES; (c) with a wrong --expected-sha it FAILS.
+#
+# Returns 0 if all three hold; non-zero otherwise.
+assert_provenance_sha_pin() {
+  local tag="$1" target="$2" recorded_sha rc
+  recorded_sha="$(python3 -c '
+import json, sys
+with open(sys.argv[1], "r", encoding="utf-8") as handle:
+    print(json.load(handle).get("resolved_sha", ""))
+' "${target}/provenance.json")" || { echo "assert_provenance_sha_pin: FAIL -- provenance.json unreadable under ${target}"; return 1; }
+  if [ -z "${recorded_sha}" ]; then
+    echo "assert_provenance_sha_pin: FAIL -- bootstrap recorded no resolved_sha in provenance.json (feature 067 regression)"
+    return 1
+  fi
+  # (b) correct expected SHA -> PASS (exit 0)
+  if ! bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" --expected-sha "${recorded_sha}" >/dev/null 2>&1; then
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only rejected the correct recorded SHA (${recorded_sha})"
+    return 1
+  fi
+  # (c) wrong expected SHA -> drift FAIL (non-zero)
+  if bash bootstrap.sh --verify-only --tag "${tag}" --target "${target}" \
+      --expected-sha "0000000000000000000000000000000000000000" >/dev/null 2>&1; then
+    echo "assert_provenance_sha_pin: FAIL -- --verify-only accepted a WRONG expected SHA (moved-tag drift not detected)"
+    return 1
+  fi
+  echo "assert_provenance_sha_pin: OK -- resolved_sha recorded (${recorded_sha}); --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected)."
+  return 0
+}
+
 # assert_payload_validate_cwd_independent <target>
 #
 # Feature 050 (NDEBT-012 / issue #18): proves the injected validator's
@@ -402,6 +437,7 @@ main() {
 
   assert_discovery_path "${target}"
   run_bootstrap_verify_only "${EPHEMERAL_TAG}" "${target}"
+  assert_provenance_sha_pin "${EPHEMERAL_TAG}" "${target}"
   assert_payload_validate_cwd_independent "${target}"
   assert_preflight_governance_root "${SCRATCH_DIR}"
 

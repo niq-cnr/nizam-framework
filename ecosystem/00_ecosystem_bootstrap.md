@@ -2,10 +2,13 @@
 id: nizam-ecosystem-bootstrap
 title: "Ecosystem Bootstrap Protocol"
 description: "The reusable protocol for the ecosystem cycle's entry stage: how a consumer repository adopts the framework from a pinned, immutable released tag via the Governance Inheritance Protocol, verifies the injected payload, records its provenance pin, and reaches the clean, known state a Preflight run requires before any later stage may begin -- explicit about the 0-to-n project spectrum the stage must serve."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: ecosystem/00_ecosystem_bootstrap.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-07-21"
+    summary: "Phase-008 feature 067 (NDEBT-033): Section 7 (Bootstrap Artifact) now documents the provenance.json resolved_sha field — the exact commit the pinned tag resolved to at install — as part of the recorded pin. Describes that the resolved commit makes the pin immutable (a tag name alone can be moved to replay a different payload) and that bootstrap.sh --verify-only requires the recorded commit present and, with a caller-supplied --expected-sha, rejects a differing commit. Kept in lockstep with bootstrap.sh and standard/GIP.md Section 4."
   - version: "0.2.0"
     date: "2026-07-21"
     summary: "Made the 0-to-n project spectrum first-class (new Section 3), on the operator's 2026-07-21 design requirement that the system span an ecosystem of 0 to n projects: names and scopes the 0 (greenfield genesis), 1-greenfield, 1-brownfield, and n (multi-repository) cases, states honestly which are mechanized today versus delegated to the GIP tiers, the scope-membership registry, or the deferred 04/05 coordination protocols, and cross-references docs/nips/NIP-0002-zero-to-n-project-spectrum.md as the capability framing and docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md as the pilot-proven single-project fixes. Renumbered the subsequent sections (former 3-7 become 4-8). PR #42 review correction: the Section 2 determinism statement is scoped to the injected payload and framework pin only — the provenance install timestamp (Section 7) may differ between runs and is explicitly excluded, rather than claiming reruns reproduce identical recorded provenance."
@@ -175,14 +178,19 @@ of the injected payload:
 ```
 
 where `<target>` is the consumer's declared payload location (conventionally
-`.nizam/`). The artifact records at least the inherited framework version (the pinned
-tag), the source the payload was cloned from, and when it was installed, so that later
-drift detection (`standard/GIP.md` Section 4) and every stage's `framework_references`
-have a baseline to compare against. `bootstrap.sh` writes this artifact as part of its
-verified install; a consumer MUST NOT synthesize it by hand, since a hand-authored pin
-that does not match the injected payload is precisely the drift the artifact exists to
-detect. The framework pin recorded here -- not the consumer's own HEAD -- is what a
-Baseline's `framework_references` must anchor to
+`.nizam/`). The artifact records at least the inherited framework version, the pinned
+`tag`, the **`resolved_sha`** (the exact commit that tag resolved to at install time),
+the source the payload was cloned from, and when it was installed, so that later drift
+detection (`standard/GIP.md` Section 4) and every stage's `framework_references` have a
+baseline to compare against. The `resolved_sha` makes the pin an **immutable commit**,
+not merely a tag *name*: a tag can be moved on the remote to replay a different payload,
+so `bootstrap.sh --verify-only` requires the recorded commit to be present and, given a
+caller-supplied expected SHA (`--expected-sha`, resolved out-of-band from the authentic
+tag), rejects a recorded commit that differs (`NDEBT-033`). `bootstrap.sh` writes this
+artifact as part of its verified install; a consumer MUST NOT synthesize it by hand,
+since a hand-authored pin that does not match the injected payload is precisely the
+drift the artifact exists to detect. The framework pin recorded here -- not the
+consumer's own HEAD -- is what a Baseline's `framework_references` must anchor to
 (`docs/architecture/ADR-004-ecosystem-tool-consumer-readiness.md`).
 
 Evidence backing a Bootstrap run (the clone/inject/verify tool output) is externalised

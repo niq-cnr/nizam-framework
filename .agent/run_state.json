@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "008-consumer-readiness",
-  "current_feature": "067",
+  "current_feature": "068",
   "status": "in_progress",
-  "updated_at": "2026-07-21T11:50:00Z",
+  "updated_at": "2026-07-21T12:30:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -907,6 +907,11 @@
       "at": "2026-07-21T11:50:00Z",
       "event": "feature_complete",
       "detail": "Feature 066 (baseline provenance-pin anchoring in tools/ecosystem_preflight.py) COMPLETE. ADR-004 decision 2 / NDEBT-028: build_baseline_document now anchors framework_references to the injected framework pin read from the governance-root's provenance.json (tag preferred, else framework_version) via a new resolve_framework_pin helper, while repository_references still anchors to the consumer HEAD -- the two categories record two distinct correct facts (which framework vs which consumer revision). Falls back to the historical HEAD-anchored self-referential default when governance_root == repo_root (self-fixture/framework-root) or no readable pin, so self-fixture is unchanged. Phase-007 pilot finding B resolved (verified: a bootstrapped consumer's baseline names v0.8.0 for the framework and the consumer HEAD for the repo, baseline schema-valid). New self-test probe (f) asserts framework-pin != consumer-HEAD and each correct. Full sweep 15/15, self-test 51/51, e2e PASS. Framework-internal. Advancing to feature 067 (bootstrap commit-SHA pinning, NDEBT-033)."
+    },
+    {
+      "at": "2026-07-21T12:30:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 067 (bootstrap commit-SHA pinning) COMPLETE. NDEBT-033: bootstrap.sh resolves the pinned tag to its commit SHA at clone (git rev-parse HEAD^{commit}) and records it as provenance.json resolved_sha, making the pin an immutable commit rather than a movable tag name. check_provenance_tag renamed check_provenance_pin: requires resolved_sha present (a pre-067 payload is rejected as drift) and, with a caller-supplied --expected-sha, rejects a differing recorded commit (a moved remote tag replaying a different payload); --verify-only stays network-free. New --expected-sha option (+ EXPECTED_SHA env) and usage docs. Kept in lockstep: ecosystem/00 Section 7 (v0.3.0) + standard/GIP.md Section 4 (v0.5.0, new point 5 'Detecting a moved tag'). New e2e assert_provenance_sha_pin case (record + correct/wrong --expected-sha). Verified: install records SHA; verify-only PASSES on match, FAILS on mismatch and on a missing resolved_sha. Full sweep 15/15, self-test 51/51, e2e PASS. Advancing to feature 068 (brownfield bootstrap reconciliation, NDEBT-032)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1080,7 +1085,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1010,
-    "total_lines_changed": 375,
+    "total_lines_changed": 549,
     "per_feature": [
       {
         "id": "065",
@@ -1095,6 +1100,13 @@
         "actual": 119,
         "flag": null,
         "note": "tools/ecosystem_preflight.py (resolve_framework_pin helper + build_baseline_document governance_root param + framework_reference anchoring + 2 call sites + docstring), tools/fixtures_self_test.sh (probe f: baseline framework-pin != consumer-HEAD), CHANGELOG. git numstat ins+del vs the 065 commit = 119 vs 150 estimated."
+      },
+      {
+        "id": "067",
+        "estimated": 200,
+        "actual": 174,
+        "flag": null,
+        "note": "bootstrap.sh (resolve+record resolved_sha, check_provenance_pin with --expected-sha, --expected-sha arg + usage), ecosystem/00_ecosystem_bootstrap.md Sec 7 (v0.3.0), standard/GIP.md Sec 4 (v0.5.0), tools/e2e_bootstrap_test.sh (assert_provenance_sha_pin), CHANGELOG. git numstat ins+del = 174 vs 200 estimated."
       }
     ]
   },

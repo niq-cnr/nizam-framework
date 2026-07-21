@@ -9,6 +9,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`bootstrap.sh` commit-SHA pinning** (phase 008 feature 067; `NDEBT-033`). The Bootstrap
+  provenance now records the **resolved commit SHA** the pinned tag pointed at (`resolved_sha`
+  in `provenance.json`), making the pin an immutable commit rather than just a tag *name* — a
+  tag can be moved on the remote to replay a different payload. `bootstrap.sh --verify-only`
+  requires the recorded commit to be present (a payload predating this feature is rejected as
+  drift) and, given a caller-supplied `--expected-sha` (resolved out-of-band from the authentic
+  tag), rejects a recorded commit that differs — catching a moved tag even when the tag string
+  matches. `--verify-only` stays network-free (it never re-resolves the tag). Documented in
+  lockstep in `ecosystem/00_ecosystem_bootstrap.md` §7 and `standard/GIP.md` §4; covered by a
+  new `tools/e2e_bootstrap_test.sh` `assert_provenance_sha_pin` case (record + correct/wrong
+  `--expected-sha`).
+
 - **`ecosystem_preflight.py` baseline provenance-pin anchoring** (phase 008 feature 066;
   ADR-004 decision 2, `NDEBT-028`). A Baseline's `framework_references` now anchors to the
   **injected framework pin** recorded in the governance-root's `provenance.json` (its `tag` /
