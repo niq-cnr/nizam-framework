@@ -343,11 +343,12 @@ file(s)/detail(s) printed on the following indented line(s)):
 
   C12 Ecosystem schema-family fixture validation (are the ecosystem schema
       families' fixtures actually load-bearing, or merely present?). For
-      each of the seven families -- the three shipped in features 037-039
+      each of the eight families -- the three shipped in features 037-039
       (baseline, preflight-verdict, engineering-finding), plus audit_delta
       (feature 057), ecosystem_membership (feature 075), the
-      membership-run aggregate membership_result (feature 077), and the
-      reconciliation_plan (feature 080; NIP-0002 Stage 4) --
+      membership-run aggregate membership_result (feature 077), the
+      reconciliation_plan (feature 080; NIP-0002 Stage 4), and the
+      release_train_manifest (feature 081; NIP-0002 Stage 4) --
       validates every matching
       `tools/fixtures/<family>_*.json` fixture, via python3 + jsonschema,
       against its shipped schema (`schema/ecosystem_baseline.schema.json`,
@@ -355,8 +356,9 @@ file(s)/detail(s) printed on the following indented line(s)):
       `schema/engineering_finding.schema.json`,
       `schema/audit_delta.schema.json`,
       `schema/ecosystem_membership.schema.json`,
-      `schema/ecosystem_membership_result.schema.json`, and
-      `schema/reconciliation_plan.schema.json`). A fixture is
+      `schema/ecosystem_membership_result.schema.json`,
+      `schema/reconciliation_plan.schema.json`, and
+      `schema/release_train_manifest.schema.json`). A fixture is
       NEGATIVE (MUST fail validation) iff its filename carries the canonical
       delimited-lowercase token `_neg_` or `_invalid_`; every other
       conforming fixture is POSITIVE and MUST validate. A positive fixture
@@ -1492,7 +1494,7 @@ check_c11_dogfood_payload_skip() {
 
 # check_c12_ecosystem_fixtures
 #
-# For each of the seven families, validates every matching
+# For each of the eight families, validates every matching
 # tools/fixtures/<family>_*.json fixture against its shipped schema. A
 # fixture is NEGATIVE (MUST fail schema validation) iff its filename
 # contains the canonical delimited token '_neg_' or '_invalid_' -- checked as
@@ -1536,7 +1538,28 @@ FAMILIES = {
     "ecosystem_membership": "schema/ecosystem_membership.schema.json",
     "membership_result": "schema/ecosystem_membership_result.schema.json",
     "reconciliation_plan": "schema/reconciliation_plan.schema.json",
+    "release_train_manifest": "schema/release_train_manifest.schema.json",
 }
+
+
+def release_train_manifest_orphans(doc):
+    """The trace-to-plan invariant (ecosystem/05_release_train_coordination.md
+    Section 4): every admitted packet MUST trace to a plan packet -- each
+    admitted_packets[].id MUST appear in plan_packets. An admitted id with no plan
+    origin is an orphan, and an orphan forces train_verdict FAIL. This spans the
+    admitted-packet array against the plan_packets set and is not expressible in
+    JSON Schema, so C12 enforces it in code (mirroring reconciliation_plan_cycles
+    and membership_multilist_entries): returns the sorted admitted ids not present
+    in plan_packets."""
+    plan_packets = doc.get("plan_packets", [])
+    plan_ids = {p for p in plan_packets if isinstance(p, str)} if isinstance(plan_packets, list) else set()
+    admitted = doc.get("admitted_packets", [])
+    orphans = set()
+    if isinstance(admitted, list):
+        for item in admitted:
+            if isinstance(item, dict) and isinstance(item.get("id"), str) and item["id"] not in plan_ids:
+                orphans.add(item["id"])
+    return sorted(orphans)
 
 
 def reconciliation_plan_cycles(doc):
@@ -1719,6 +1742,12 @@ for family, schema_path in FAMILIES.items():
         # cyclic negative fixture is caught by polarity rather than validating.
         if is_valid and family == "reconciliation_plan" and reconciliation_plan_cycles(data) and data.get("plan_verdict") == "PASS":
             is_valid = False
+        # NDEBT-035: a schema-valid release_train_manifest that admits a packet with
+        # no plan origin (an orphan) cannot be a PASS train; the code-level check
+        # completes the schema's coverage so the orphan negative fixture is caught
+        # by polarity rather than validating.
+        if is_valid and family == "release_train_manifest" and release_train_manifest_orphans(data) and data.get("train_verdict") == "PASS":
+            is_valid = False
         if is_negative and is_valid:
             failures.append(f"{path}: negative fixture unexpectedly VALIDATED against {schema_path}")
         elif not is_negative and not is_valid:
@@ -1743,7 +1772,7 @@ PY
 #
 # NDEBT-015 (feature 052): single-fixture ecosystem-schema validation for the
 # `--target` dispatcher. The full-sweep check_c12_ecosystem_fixtures validates
-# EVERY fixture of all seven families with a polarity/dormancy guard; this
+# EVERY fixture of all eight families with a polarity/dormancy guard; this
 # variant validates exactly ONE `--target` file against the schema of the
 # family the router (check_c11_or_c4_target) identified, emitting a
 # discriminating [C12] verdict -- a valid fixture PASSes, a negative fixture
@@ -1773,6 +1802,7 @@ schema_paths = {
     "ecosystem_membership": "schema/ecosystem_membership.schema.json",
     "membership_result": "schema/ecosystem_membership_result.schema.json",
     "reconciliation_plan": "schema/reconciliation_plan.schema.json",
+    "release_train_manifest": "schema/release_train_manifest.schema.json",
 }
 schema_path = schema_paths[family]
 
@@ -1881,6 +1911,20 @@ if family == "reconciliation_plan":
     has_cycle = any(colour[node] == WHITE and _has_back_edge(node) for node in graph)
     if has_cycle and doc.get("plan_verdict") == "PASS":
         print(f"{path}: cyclic dependency set claimed PASS ({family}): no valid topological order (NDEBT-035, ecosystem/04 Section 4)")
+        sys.exit(1)
+
+# NDEBT-035: the trace-to-plan invariant -- every admitted packet MUST trace to a
+# plan packet (its id in plan_packets); an orphan admission cannot be a PASS train.
+# The check spans admitted_packets against plan_packets and is not expressible in
+# JSON Schema, so mirror the full-sweep release_train_manifest_orphans check here
+# for --target too.
+if family == "release_train_manifest":
+    plan_packets = doc.get("plan_packets", [])
+    plan_ids = {p for p in plan_packets if isinstance(p, str)} if isinstance(plan_packets, list) else set()
+    admitted = doc.get("admitted_packets", [])
+    orphans = sorted({item["id"] for item in admitted if isinstance(item, dict) and isinstance(item.get("id"), str) and item["id"] not in plan_ids}) if isinstance(admitted, list) else []
+    if orphans and doc.get("train_verdict") == "PASS":
+        print(f"{path}: orphan admission claimed PASS ({family}): {orphans} trace to no plan packet (NDEBT-035, ecosystem/05 Section 4)")
         sys.exit(1)
 
 sys.exit(0)
@@ -2104,6 +2148,14 @@ elif "plan_verdict" in doc or "cycle_findings" in doc:
     # still routes here for a clear error. Checked BEFORE the generic single-key
     # routes so a plan carrying an extension key never misroutes.
     print("ecosystem:reconciliation_plan")
+elif "train_verdict" in doc or "admitted_packets" in doc:
+    # NDEBT-035: the release-train MANIFEST (ecosystem/05 Promote stage). Either
+    # `train_verdict` or `admitted_packets` is the discriminator (each is unique to
+    # this family -- the plan uses `plan_verdict`, the aggregate `ecosystem_verdict`),
+    # so a manifest malformed by OMITTING one still routes here for a clear error.
+    # Checked BEFORE the generic single-key routes so a manifest carrying an
+    # extension key never misroutes.
+    print("ecosystem:release_train_manifest")
 elif "review" in doc:
     print("contract_review")
 elif "verdict" in doc and "execution_id" in doc:

@@ -21,7 +21,7 @@
       "id": "081",
       "name": "Release-train coordination protocol (ecosystem/05) + companion schema",
       "description": "Author ecosystem/05_release_train_coordination.md -- the lifecycle's Promote stage (NDEBT-035): the entry conditions under which reconciled work packets (080) are admitted into a cross-repository release train, the train-manifest shape, and the record-but-never-self-execute promotion rule (the pipeline records but never self-executes a promotion, per ecosystem/README.md's Promote stage). House structure matching the sibling protocols. Author a companion JSON schema (schema/release_train_manifest.schema.json) for a release-train-manifest INSTANCE: the admitted-packet set, per-repo train membership, the entry-gate reference (H-TRAIN-ENTRY), and the invariant that every admitted packet traces to a reconciliation-plan packet. Define the reserved H-TRAIN-ENTRY gate (move it from operator_gates.md Section 2 into Section 1 with scope/trigger/disposition semantics). Register the schema in NIZAM.json + schema/README.md; flip the ecosystem/README.md '05 ... Planned' -> 'Shipped' row and re-sync the Shipped/Planned prose. Add covering positive/negative fixtures (including an admitted packet with no reconciliation-plan origin, which must FAIL).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "080"
       ],

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "011-coordination-protocols",
-  "current_feature": "081",
+  "current_feature": "082",
   "status": "in_progress",
-  "updated_at": "2026-07-22T10:15:00Z",
+  "updated_at": "2026-07-22T10:45:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1023,6 +1023,12 @@
       "event": "feature_complete",
       "feature": "080",
       "detail": "Feature 080 COMPLETE (phase 011, NIP-0002 Stage 4, NDEBT-035): the Plan-stage protocol. Authored ecosystem/04_dependency_reconciliation.md (v0.1.0) -- approved audit findings + the phase-010 ecosystem-level membership-run aggregate become typed, dependency-ordered cross-repository work packets under the topological-order invariant (a cyclic depends_on set forces a non-PASS plan_verdict). Authored schema/reconciliation_plan.schema.json (shape + an in-schema if/then: non-empty cycle_findings -> plan_verdict FAIL); the cycle-detection relational invariant is enforced in code by validate.sh C12 as the SEVENTH ecosystem family at both entry points (full-sweep + --target, discriminated by plan_verdict/cycle_findings), with one positive + two negative fixtures (schema-invalid missing-verdict + cyclic-but-PASS). Defined the reserved gate H-PLANNING-AUTHORITY (operator_gates.md v0.12.0: moved Section 2 -> Section 1 with scope/trigger/disposition, OUTSTANDING until first exercised at the F-084 pilot). Registered the schema in NIZAM.json + schema/README.md (v0.11.0); registered the protocol as a capability in NIZAM.json + tools/skill.json; flipped ecosystem/README.md (v0.2.2) module-nav '04' Planned -> Shipped (six documents Shipped, three still-Planned). Full sweep validate.sh 15/15; fixtures_self_test 60/60."
+    },
+    {
+      "at": "2026-07-22T10:45:00Z",
+      "event": "feature_complete",
+      "feature": "081",
+      "detail": "Feature 081 COMPLETE (phase 011, NIP-0002 Stage 4, NDEBT-035): the Promote-stage protocol. Authored ecosystem/05_release_train_coordination.md (v0.1.0) -- an operator-authorized reconciliation plan's (ecosystem/04) work packets are admitted into a cross-repository release train under the trace-to-plan invariant (every admitted packet traces to a plan packet; an orphan admission is a recorded finding forcing a non-PASS train_verdict). Authored schema/release_train_manifest.schema.json (shape + an in-schema if/then: a PASS train requires entry_gate_recorded true); the trace-to-plan invariant is enforced in code by validate.sh C12 as the EIGHTH ecosystem family at both entry points (discriminated by train_verdict/admitted_packets), with one positive + two negative fixtures (schema-invalid ungated-PASS + orphan-but-PASS). Defined the reserved gate H-TRAIN-ENTRY (operator_gates.md v0.13.0: moved Section 2 -> Section 1, record-but-never-self-execute; OUTSTANDING until first exercised at the F-084 pilot; Section 2 now two reserved gates H-CONSOLIDATION/H-GA). Registered in NIZAM.json + schema/README.md (v0.12.0) + tools/skill.json; flipped ecosystem/README.md (v0.2.3) module-nav '05' Planned -> Shipped (seven Shipped). With 04+05 both shipped, NIP-0002 Stage 4's coordination protocols are complete (the tooling that drives them is features 082/083). Full sweep validate.sh 15/15; fixtures_self_test 63/63."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1196,7 +1202,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1330,
-    "total_lines_changed": 480,
+    "total_lines_changed": 879,
     "per_feature": [
       {
         "id": "080",
@@ -1204,6 +1210,13 @@
         "actual": 480,
         "flag": "OVER",
         "note": "Plan-stage protocol + schema + gate definition + all registrations. git numstat added = 480 vs 320 -- OVER, inflated by the deliverable artifacts: the 174-line protocol doc (ecosystem/04, house structure matching 03) + the 87-line schema (reconciliation_plan) + 57 lines of C12 fixtures (1 positive, 2 negative). The tooling-side churn (validate.sh C12 family wiring: FAMILIES x2, reconciliation_plan_cycles code check x2, discriminator route, docstrings) was ~95 added. Registrations (NIZAM.json, schema/README.md, skill.json, ecosystem/README.md, operator_gates.md, CHANGELOG) the remainder. validate.sh 15/15, self-test 60/60."
+      },
+      {
+        "id": "081",
+        "estimated": 300,
+        "actual": 399,
+        "flag": "OVER",
+        "note": "Promote-stage protocol + schema + gate definition + all registrations, structurally parallel to F-080. git numstat added = 399 vs 300 -- OVER, inflated by the deliverable artifacts: the ~150-line protocol doc (ecosystem/05) + the ~95-line schema (release_train_manifest) + ~45 lines of C12 fixtures (1 positive, 2 negative). The C12 wiring (release_train_manifest_orphans code check x2, FAMILIES x2, discriminator route, docstrings) + registrations the remainder. Less over than 080 (the pattern was established). validate.sh 15/15, self-test 63/63."
       }
     ]
   },

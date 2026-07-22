@@ -156,6 +156,16 @@ assert_target reconciliation_plan_valid.json                       C12 PASS
 assert_target reconciliation_plan_neg_missing_verdict.json         C12 FAIL
 assert_target reconciliation_plan_neg_cycle.json                   C12 FAIL
 
+# release_train_manifest (F-081, NDEBT-035; NIP-0002 Stage 4): the Promote-stage
+# artifact. The positive traces every admitted packet to a plan packet with the
+# admission gate recorded and validates; the if/then-violating (train_verdict=PASS
+# but entry_gate_recorded=false) and the trace-to-plan-violating (an orphan admitted
+# packet claimed PASS) negatives both FAIL -- proving both the shape/gate invariant
+# and the relational trace-to-plan invariant bite.
+assert_target release_train_manifest_valid.json                    C12 PASS
+assert_target release_train_manifest_neg_ungated_pass.json         C12 FAIL
+assert_target release_train_manifest_neg_orphan.json               C12 FAIL
+
 # ---------------------------------------------------------------------------
 # (2) verify_lib primitive fixtures
 # ---------------------------------------------------------------------------

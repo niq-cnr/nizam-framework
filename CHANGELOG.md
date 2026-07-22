@@ -9,6 +9,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`ecosystem/05_release_train_coordination.md` + `schema/release_train_manifest.schema.json` — the
+  Promote stage** (phase 011 feature 081; `NDEBT-035`; NIP-0002 Stage 4). Authored the lifecycle's
+  Promote-stage protocol: an operator-authorized reconciliation plan's work packets are admitted into a
+  **cross-repository release train**, under the **trace-to-plan invariant** — every admitted packet
+  traces to a plan packet, and an orphan admission is a first-class recorded finding forcing a
+  non-`PASS` `train_verdict`. The companion schema validates the manifest shape (`source_plan` + its
+  `plan_packets`, `admitted_packets`, `train_members`, the `entry_gate_recorded` flag, the verdict)
+  with one in-schema `if/then` (a `PASS` train requires the admission recorded); the trace-to-plan
+  invariant is enforced in code by `validate.sh` C12 as the **eighth** ecosystem schema family (both
+  entry points, discriminated by `train_verdict`/`admitted_packets`), with one positive and two negative
+  fixtures (schema-invalid ungated-`PASS` + a trace-to-plan-violating orphan). The reserved gate
+  **`H-TRAIN-ENTRY`** is now **defined** (moved `operator_gates.md` Section 2 → Section 1; v0.13.0).
+  Registered in `NIZAM.json`, `schema/README.md` (v0.12.0), `tools/skill.json`; the `ecosystem/README.md`
+  (v0.2.3) module-nav `05` row flips Planned → Shipped (seven documents Shipped; with `04` + `05` both
+  shipped, NIP-0002 Stage 4's coordination protocols are complete). `self-test` 63/63.
 - **`ecosystem/04_dependency_reconciliation.md` + `schema/reconciliation_plan.schema.json` — the Plan
   stage** (phase 011 feature 080; `NDEBT-035`; NIP-0002 Stage 4). Authored the lifecycle's Plan-stage
   protocol: approved engineering-audit findings plus the phase-010 ecosystem-level membership-run

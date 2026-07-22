@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:release_train_manifest.schema.json",
+  "title": "Nizam Release-Train Manifest Schema",
+  "description": "Validates a release-train-manifest INSTANCE -- the Promote-stage artifact that ecosystem/05_release_train_coordination.md requires (NIP-0002 Stage 4; NDEBT-035). A manifest records a coordinated cross-repository promotion: it names the reconciliation plan it was built from (schema/reconciliation_plan.schema.json), carries that plan's packet ids as provenance, admits a subset of them into the train (each naming its target repository), records per-repository train membership, and captures whether the operator's admission decision (H-TRAIN-ENTRY) is recorded. This schema enforces the SHAPE (a source plan + its packet-id set, admitted packets with a per-repo target, train members, a recorded-admission flag, a PASS/FAIL train verdict). Two relational invariants -- the trace-to-plan invariant (every admitted packet id MUST appear in plan_packets; an orphan forces FAIL) and its interplay with the verdict -- span the admitted-packet array against plan_packets and are enforced in code by validate.sh C12, mirroring the ecosystem_membership exactly-one-list rule (NDEBT-031) and the reconciliation_plan cycle rule (NDEBT-035). One in-schema if/then (a PASS train requires the admission decision recorded) is schema-checkable. Permits additionalProperties so consumers can enrich the manifest (train cadence, versions, note) without breaking validation, per schema/README.md's house convention.",
+  "type": "object",
+  "$defs": {
+    "admitted_packet": {
+      "type": "object",
+      "description": "One work packet admitted into the train, drawn from the reconciliation plan. Its id MUST trace to a plan packet id (plan_packets); it names the repository it targets.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The admitted packet's id -- MUST appear in plan_packets (the trace-to-plan invariant). An admitted id with no plan origin is an orphan.",
+          "minLength": 1
+        },
+        "repo": {
+          "type": "string",
+          "description": "The repository this admitted packet targets.",
+          "minLength": 1
+        }
+      },
+      "required": ["id", "repo"],
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "The semantic version of the manifest shape this instance conforms to. Required.",
+      "minLength": 1
+    },
+    "source_plan": {
+      "type": "string",
+      "description": "Path to the reconciliation plan (schema/reconciliation_plan.schema.json) this train was built from. Required as the train's provenance.",
+      "minLength": 1
+    },
+    "plan_packets": {
+      "type": "array",
+      "description": "The reconciliation plan's packet ids, carried as provenance so each admitted packet can be checked to trace to one. Required.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "train_verdict": {
+      "type": "string",
+      "enum": ["PASS", "FAIL"],
+      "description": "The single train verdict: PASS iff every admitted packet traces to a plan packet AND the H-TRAIN-ENTRY admission decision is recorded; FAIL iff at least one admitted packet is an orphan (recorded in orphan_findings) or the admission decision is not recorded."
+    },
+    "entry_gate_recorded": {
+      "type": "boolean",
+      "description": "True iff the operator's H-TRAIN-ENTRY admission decision has been recorded (ecosystem/05 Section 5). A PASS train requires this true; a tool MUST refuse to emit a PASS manifest without it."
+    },
+    "admitted_packets": {
+      "type": "array",
+      "description": "The work packets admitted into this train (Section: admitted_packet).",
+      "items": { "$ref": "#/$defs/admitted_packet" }
+    },
+    "train_members": {
+      "type": "array",
+      "description": "The repositories participating in this train's departure -- per-repository train membership.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "orphan_findings": {
+      "type": "array",
+      "description": "Recorded orphan admissions (admitted packet ids with no plan origin). Empty when every admitted packet traces to a plan packet; non-empty forces train_verdict FAIL.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["schema_version", "source_plan", "plan_packets", "train_verdict", "entry_gate_recorded", "admitted_packets"],
+  "allOf": [
+    {
+      "description": "A PASS train requires the admission decision recorded: if train_verdict is PASS, entry_gate_recorded MUST be true. (The trace-to-plan invariant -- an orphan admission forcing FAIL -- spans admitted_packets against plan_packets and is enforced in code by validate.sh C12.)",
+      "if": {
+        "properties": { "train_verdict": { "const": "PASS" } },
+        "required": ["train_verdict"]
+      },
+      "then": {
+        "properties": { "entry_gate_recorded": { "const": true } },
+        "required": ["entry_gate_recorded"]
+      }
+    }
+  ],
+  "additionalProperties": true
+}
