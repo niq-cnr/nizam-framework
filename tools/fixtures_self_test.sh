@@ -238,6 +238,52 @@ else
   fail=1
 fi
 
+# incubating -> in_scope transition (F-072, NDEBT-030): a genesis'd project starts
+# in the scope registry's `incubating` partition (the count-0->1 state) and is
+# promoted to `in_scope`, and the promotion MOVES the entry rather than copying it
+# (registry/scope_definition_patterns.md Section 2.1/2.3 exactly-one-list invariant).
+# Built in a scratch dir (Section 11 probe isolation), so no committed fixture is
+# needed and the fixture tally is unchanged.
+_incubating_promotion_scratch() (
+  local d; d=$(mktemp -d) || return 1
+  trap 'rm -rf -- "${d}"' EXIT
+  printf '{ "schema_version": "1.0.0", "in_scope": [], "incubating": [ {"name": "demo"} ], "reference_archive": [], "out_of_scope": [] }\n' > "${d}/before.json"
+  printf '{ "schema_version": "1.0.0", "in_scope": [ {"name": "demo"} ], "incubating": [], "reference_archive": [], "out_of_scope": [] }\n' > "${d}/after.json"
+  printf '{ "schema_version": "1.0.0", "in_scope": [ {"name": "demo"} ], "incubating": [ {"name": "demo"} ], "reference_archive": [], "out_of_scope": [] }\n' > "${d}/both.json"
+  python3 - "${d}/before.json" "${d}/after.json" "${d}/both.json" <<'PY'
+import json, sys
+
+LISTS = ("in_scope", "incubating", "reference_archive", "out_of_scope")
+
+def lists_of(reg, name):
+    return [L for L in LISTS if any(e.get("name") == name for e in reg.get(L, []))]
+
+def load(p):
+    with open(p, encoding="utf-8") as fh:
+        return json.load(fh)
+
+before, after, both = (load(p) for p in sys.argv[1:4])
+
+# The genesis'd project starts in exactly `incubating`, and after promotion is in
+# exactly `in_scope` -- the promotion MOVED it (exactly-one-list invariant holds).
+if lists_of(before, "demo") != ["incubating"]:
+    sys.exit(f"before: demo should be in exactly [incubating], got {lists_of(before, 'demo')}")
+if lists_of(after, "demo") != ["in_scope"]:
+    sys.exit(f"after: demo should be in exactly [in_scope], got {lists_of(after, 'demo')}")
+
+# NEGATIVE: an entry left in both lists (copied, not moved) violates the invariant
+# and MUST be detectable, or the shape check is vacuous.
+if len(lists_of(both, "demo")) < 2:
+    sys.exit("invariant check failed to detect a two-list (copied-not-moved) entry")
+PY
+)
+if _incubating_promotion_scratch; then
+  echo "OK   transition  incubating -> in_scope (count-0->1): promotion moves the entry; two-list violation detected"
+else
+  echo "FAIL transition  incubating -> in_scope: a scratch assertion did not hold"
+  fail=1
+fi
+
 # vlib_profiles_cover_roles (F-058, C15): the real capability_profiles.md + AGF.md
 # pair passes; a scratch profiles doc omitting a profile identifier fails.
 _profiles_roles_scratch() (

@@ -9,6 +9,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`incubating → in_scope` promotion — the count-0→1 transition** (phase 009 feature 072;
+  `NDEBT-030`; NIP-0002 Stage 2). `registry/scope_definition_patterns.md` → v0.2.0 gains
+  **Section 2.3** modelling the scope registry's `incubating` partition as the count-0→1 state: a
+  greenfield-genesis project (`bootstrap.sh --genesis`) enters the registry in `incubating` and is
+  promoted to `in_scope` once it clears its first clean Preflight/Baseline, as an explicit recorded
+  edit that **moves** the entry (preserving the Section 2.1 exactly-one-list invariant); demotion
+  is symmetric. Scoped to the single-project count-0→1 case only — promoting the registry to a
+  required, validated ecosystem-membership artifact the tools iterate to set `n` (count-1→n) stays
+  `NDEBT-031`/phase 010. A `tools/fixtures_self_test.sh` scratch probe asserts the transition shape
+  (promotion moves the entry; a two-list "copied-not-moved" entry is detected).
+
 - **`bootstrap.sh --genesis` — greenfield-genesis capability** (phase 009 feature 071;
   `NDEBT-030`; NIP-0002 Stage 2). Mechanizes standing up a *new* project from nothing (the
   0-case): `bootstrap.sh --genesis --project-root DIR [--project-name NAME]` `git init`s an empty

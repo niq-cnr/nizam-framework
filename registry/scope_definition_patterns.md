@@ -2,9 +2,16 @@
 id: nizam-registry-scope-patterns
 title: "Ecosystem Registry & Scope-Definition Patterns"
 description: "Generalised patterns for a consumer repository that maintains its own ecosystem-level registry of repositories, services, or modules on top of the Nizam framework: the scope-list shape, dependency-map conventions, phase-progress tracking, and drift rules."
-version: 0.1.0
+version: 0.2.0
 status: draft
 authoritative_source: registry/scope_definition_patterns.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-22"
+    summary: "Phase-009 feature 072 (NDEBT-030; NIP-0002 Stage 2): new Section 2.3 models the incubating -> in_scope promotion as the count-0->1 transition of the 0-to-n spectrum. A greenfield-genesis project (ecosystem/00 Section 8; bootstrap.sh --genesis) enters the registry in `incubating` and is promoted to `in_scope` once it clears its first clean Preflight/Baseline, as an explicit recorded edit that MOVES the entry (preserving the Section 2.1 exactly-one-list invariant); demotion is symmetric. Scoped to the single-project count-0->1 case only -- promoting the registry to a required, validated ecosystem-membership artifact the tools iterate to set n (count-1->n) stays NDEBT-031 / NIP-0002 Stage 3, deferred to phase 010. Status stays draft. A tools/fixtures_self_test.sh scratch probe asserts the transition shape (promotion moves the entry; a two-list entry is detected)."
+  - version: "0.1.0"
+    date: "2026-07-20"
+    summary: "Initial ecosystem registry & scope-definition patterns (the list-partition shape, entry shape, dependency-map conventions, phase-progress tracking, and drift rules). Consumer-level pattern doc; ships no project-specific data."
 ---
 
 # Ecosystem Registry & Scope-Definition Patterns
@@ -84,6 +91,38 @@ commonly carries:
 Optional enrichment fields (a maturity or health score, a tier/grouping label, a
 superseding-entity pointer) may be layered on top without changing the base shape,
 provided they do not replace the required identifying and scope-list fields above.
+
+### 2.3 The `incubating -> in_scope` promotion (the count-0->1 transition)
+
+The `incubating` partition is where a project lives while it is *tracked but not yet a full
+member* -- the **count-0->1 state** of the 0-to-n spectrum
+(`ecosystem/00_ecosystem_bootstrap.md` Section 3). A project created by greenfield genesis
+(`ecosystem/00_ecosystem_bootstrap.md` Section 8; `bootstrap.sh --genesis`) enters the registry
+here: it exists and is bootstrapped, but has not yet earned `in_scope` governance, resourcing, or
+dependency guarantees.
+
+Promotion `incubating -> in_scope` is an explicit, recorded registry edit, never an implicit side
+effect:
+
+- **Entry.** A genesis'd project is added to `incubating` at creation, carrying at least its
+  identifying key and a `note` recording that it is a freshly stood-up project awaiting its first
+  clean cycle run.
+- **Promotion criterion.** It is promoted to `in_scope` once it has cleared its first clean
+  Preflight and Baseline (`ecosystem/01_clean_state_preflight.md`,
+  `ecosystem/02_evidence_baseline.md`) at the pinned framework tag -- i.e. it is demonstrably a
+  working cycle participant, not merely a scaffolded shell.
+- **The move preserves the exactly-one-list invariant** (Section 2.1): promotion *moves* the
+  entry from `incubating` to `in_scope` in the same edit; an entry must never appear in both.
+  Leaving a promoted project in `incubating`, or copying rather than moving it, is drift
+  (Section 5, rule 4).
+- **Demotion is symmetric.** A project that regresses (stops sustaining a clean cycle) moves back
+  to `incubating`, or to `reference_archive`/`out_of_scope` with a `reason`, by the same
+  explicit-edit rule -- never by silent deletion (Section 5, rule 3).
+
+This subsection scopes only the count-0->1 transition for a single genesis'd project. Making the
+registry a *required, validated* ecosystem-membership artifact that the tools iterate to set `n`
+(the count-1->n work) is a separate, larger change (`NDEBT-031`, NIP-0002 Stage 3), deliberately
+not undertaken here.
 
 ## 3. Dependency-Map Conventions
 
