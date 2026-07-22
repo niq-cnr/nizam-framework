@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "last_updated": "2026-07-22",
+  "authoritative_source": "registry/ecosystem_membership.json",
+  "in_scope": [
+    { "name": "strategy-repo", "role": "The ecosystem masterplan repository.", "status": "active", "depends_on": [] },
+    { "name": "service-a", "role": "A first in-scope service.", "status": "active", "depends_on": ["strategy-repo"] }
+  ],
+  "incubating": [
+    { "name": "greenfield-demo", "note": "Freshly stood up via bootstrap.sh --genesis; awaiting its first clean Preflight/Baseline before promotion to in_scope." }
+  ],
+  "reference_archive": [
+    { "name": "service-a-legacy", "note": "Predecessor implementation retained as a migration reference for service-a." }
+  ],
+  "out_of_scope": [
+    { "name": "vendor-fork", "reason": "Third-party fork; governed by its upstream, deliberately excluded." }
+  ]
+}

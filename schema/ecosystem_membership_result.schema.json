@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:ecosystem_membership_result.schema.json",
+  "title": "Nizam Ecosystem Membership Run Result Schema",
+  "description": "Validates the aggregate, ecosystem-LEVEL result that tools/ecosystem_membership_run.py emits after iterating a membership registry's in_scope set (NIP-0002 Stage 3; NDEBT-031). Where each member's Preflight is a single-repository verdict, this artifact rolls the per-member verdicts up into ONE ecosystem verdict and records the cross-repository CONSISTENCY the shipped single-repo tools only guarded as a 'future extension': every in_scope member MUST have run under the same framework pin (the resolved_sha recorded in each member's provenance). A divergent or missing pin is a first-class recorded consistency finding, not a silent mismatch. The relational invariant 'a pin-inconsistent ecosystem cannot be PASS' is expressed as an if/then constraint here (schema-checkable), mirroring how the tool computes the verdict.",
+  "type": "object",
+  "$defs": {
+    "member_result": {
+      "type": "object",
+      "description": "One in_scope member's per-repository outcome within the run.",
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "description": "The member's identifying key (from the membership registry)." },
+        "repo_root": { "type": "string", "description": "The resolved repo-root the stage ran against." },
+        "preflight_exit": { "type": ["integer", "null"], "description": "The stage tool's exit code for this member (null when the member's repo-root was missing/unrunnable)." },
+        "verdict": { "type": "string", "description": "The human-legible Preflight verdict (PASS / PASS_WITH_EXCEPTIONS / FAIL / exit_N)." },
+        "status": { "type": "string", "enum": ["acceptable", "fail", "missing_repo_root"], "description": "Whether this member's outcome is acceptable (PASS / PASS_WITH_EXCEPTIONS), a hard fail, or a missing repo-root." },
+        "framework_pin": { "type": ["string", "null"], "description": "The framework pin (provenance resolved_sha) this member ran under; null when no pin could be read." }
+      },
+      "required": ["name", "status"],
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "schema_version": { "type": "string", "minLength": 1, "description": "The semantic version of this result shape." },
+    "membership_registry": { "type": "string", "description": "Path to the membership registry that was iterated." },
+    "ecosystem_verdict": {
+      "type": "string",
+      "enum": ["PASS", "FAIL"],
+      "description": "The single ecosystem-level verdict: PASS iff every in_scope member returned an acceptable Preflight verdict AND all members ran under the same framework pin; FAIL otherwise."
+    },
+    "framework_pin_consistent": {
+      "type": "boolean",
+      "description": "True iff every in_scope member ran under the same, non-null framework pin (resolved_sha)."
+    },
+    "framework_pin": {
+      "type": ["string", "null"],
+      "description": "The common framework pin when consistent; null when members diverge or a pin is missing."
+    },
+    "member_count": { "type": "integer", "minimum": 0, "description": "The number of in_scope members iterated." },
+    "members": {
+      "type": "array",
+      "description": "The per-member results (Section: member_result).",
+      "items": { "$ref": "#/$defs/member_result" }
+    },
+    "consistency_findings": {
+      "type": "array",
+      "description": "Recorded cross-repository consistency findings (e.g. a member on a divergent or missing pin). Empty when the ecosystem is pin-consistent.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["schema_version", "membership_registry", "ecosystem_verdict", "framework_pin_consistent", "member_count", "members"],
+  "allOf": [
+    {
+      "description": "A pin-inconsistent ecosystem cannot be PASS: if framework_pin_consistent is false, ecosystem_verdict MUST be FAIL.",
+      "if": {
+        "properties": { "framework_pin_consistent": { "const": false } },
+        "required": ["framework_pin_consistent"]
+      },
+      "then": {
+        "properties": { "ecosystem_verdict": { "const": "FAIL" } }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

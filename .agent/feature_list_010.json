@@ -1,0 +1,85 @@
+{
+  "phase": "010-multi-repo",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 1160,
+  "planning_note": "DAG-validated acyclic: root {075}; 075 -> 076 -> 077; 078 dep {076, 077}; 079 dep {075, 076, 077, 078}. Deps all resolve, no cycles, topological order exists (075, 076, 077, 078, 079). Realizes NIP-0002 Stage 3 (the n-case -- many associated repositories forming one ecosystem) + completes the 'n' point of the 0-n spectrum, then pilots to PROVE it. Features 075-078 are framework-internal (schema + tooling + registry promotion + tests) and executable without any external repo; feature 079 pilots against a scratch/throwaway multi-repo ecosystem stood up from nothing by bootstrap.sh --genesis (phase 009) and declared in a scratch membership registry, and needs no external repo access. Authored as a PROPOSAL -- no feature enters contract negotiation before gate H-PHASE-010. NIP-0002 Stage 4 (the 04/05 dependency-reconciliation / release-train coordination protocols + companion schemas, activating the reserved H-PLANNING-AUTHORITY / H-TRAIN-ENTRY gates), the release cut carrying the whole loop (NDEBT-029), and a real, non-scratch multi-repo pilot are OUT OF SCOPE, deferred to phase 011 and evidence-gated on feature 079's pilot. A real, non-scratch multi-repo ecosystem remains a standing production-maturity criterion across the whole programme. Per-feature scope ledger recorded in run_state at activation.",
+  "features": [
+    {
+      "id": "075",
+      "name": "Ecosystem-membership registry schema (NIP-0002 Stage 3)",
+      "description": "Author a JSON schema for a membership-registry INSTANCE (NDEBT-031): the list-partition shape (in_scope / incubating / reference_archive / out_of_scope), the entry shape (identifying key + scope-list membership + optional enrichment), and the exactly-one-list invariant of registry/scope_definition_patterns.md Section 2 (an entry must appear in exactly one list). Promote scope_definition_patterns.md from a draft pattern to a required, schema-backed artifact that sets n: reference the schema, flip status draft -> active, and keep the count-0->1 incubating->in_scope transition (Section 2.3) coherent with the schema. Add a validator mechanism (a tools/validate.sh check and/or a fixtures_self_test.sh dogfood check) validating a membership registry against the schema, with covering positive/negative fixtures (including a two-list-entry negative that must FAIL). Register the schema in NIZAM.json + schema/README.md (C10/C13 consistent).",
+      "status": "complete",
+      "dependencies": [],
+      "acceptance_tests": [
+        "A JSON schema for a membership-registry instance exists and encodes the list-partition shape, the entry shape, and the exactly-one-list invariant; a valid registry passes and a two-list-entry (copied-not-moved) registry FAILS.",
+        "registry/scope_definition_patterns.md is promoted from draft to a required, schema-backed artifact (status active, references the schema) and stays coherent with its Section 2.3 incubating->in_scope transition.",
+        "The schema is registered in NIZAM.json + schema/README.md; covering positive/negative fixtures are added to tools/fixtures_self_test.sh; bash tools/validate.sh is green."
+      ],
+      "estimated_lines": 280
+    },
+    {
+      "id": "076",
+      "name": "Multi-repo iteration",
+      "description": "Extend the ecosystem tooling to read a membership registry and iterate its in_scope set of repo-roots (NDEBT-031), running the per-repository stage across the set instead of assuming a single --repo-root -- as a new mode on an existing tool (e.g. a --membership-registry option) or a companion orchestrator, decided at contract time. The single-repository consistency guard that tools/ecosystem_preflight.py annotates a 'defensive invariant for a future multi-repository extension' is the seam this feature realizes. The existing single-`--repo-root` path is byte-for-byte unchanged (regression-guarded); a single-member registry is the degenerate count-1 case. Mirror the tools' documented exit-code table + stdlib-only style.",
+      "status": "complete",
+      "dependencies": [
+        "075"
+      ],
+      "acceptance_tests": [
+        "The tooling reads a membership registry and iterates its in_scope set of repo-roots, running the per-repository stage across the set and collecting a result per member.",
+        "The existing single-`--repo-root` invocation is byte-for-byte unchanged (regression-guarded); a single-member registry reproduces the count-1 behaviour.",
+        "bash tools/validate.sh green; the multi-repo usage is documented in lockstep with the tools' exit-code table."
+      ],
+      "estimated_lines": 280
+    },
+    {
+      "id": "077",
+      "name": "Cross-repo aggregation + consistency",
+      "description": "Mechanize the multi-repository aggregation + consistency the shipped tools guard only as a 'future extension' (NDEBT-031): aggregate the per-repository verdicts (076) into one ecosystem-level result (a schema-valid aggregate artifact), and enforce cross-repo consistency -- e.g. every in_scope member ran under the SAME framework pin (provenance tag/resolved_sha), a divergent member being a first-class flagged finding, not a silent mismatch. What is a hand-aggregation today becomes a produced artifact. Add a companion schema for the ecosystem-level aggregate if one is warranted (registered in NIZAM.json + schema/README.md).",
+      "status": "complete",
+      "dependencies": [
+        "076"
+      ],
+      "acceptance_tests": [
+        "Per-repository verdicts are aggregated into one schema-valid ecosystem-level result; a divergent framework pin across members surfaces as a flagged consistency finding, not a silent mismatch.",
+        "The aggregate is a produced artifact (not a hand-rollup); any new companion schema is registered in NIZAM.json + schema/README.md and covered by a fixture.",
+        "bash tools/validate.sh green 15/15 (or grows by the aggregate/membership checks); fixtures_self_test.sh passes."
+      ],
+      "estimated_lines": 220
+    },
+    {
+      "id": "078",
+      "name": "n-case coverage",
+      "description": "Add hermetic e2e + self-test coverage for the n-case (NDEBT-031): stand up a scratch MULTI-repo ecosystem (two or more projects created from nothing by bootstrap.sh --genesis, phase 009), author a membership registry over them, and prove the iteration (076) + aggregation (077) run across the set producing a schema-valid ecosystem-level result. Reuse the existing hermetic harness scaffolding (ephemeral tag, SCRATCH_DIR, file:// clone, the assert_genesis pattern). The single-repo e2e + self-test paths stay green (regression-guarded); each exit captured via an if so set -e does not abort before a diagnostic.",
+      "status": "complete",
+      "dependencies": [
+        "076",
+        "077"
+      ],
+      "acceptance_tests": [
+        "A hermetic case stands up a scratch multi-repo ecosystem (>=2 genesis'd repos), authors a membership registry, and proves the iteration + aggregation run across the set producing a schema-valid ecosystem-level result.",
+        "The existing single-repo bootstrap/genesis e2e + self-test paths stay green (regression-guarded).",
+        "bash tools/e2e_bootstrap_test.sh passes; bash tools/validate.sh green; bash tools/fixtures_self_test.sh passes."
+      ],
+      "estimated_lines": 140
+    },
+    {
+      "id": "079",
+      "name": "Pilot the n-case, prove it, prioritise phase 011 + phase close",
+      "description": "Run the ecosystem loop across a scratch/throwaway MULTI-repo ecosystem stood up from nothing (>=2 genesis'd repos, operator option c; needs no external repo) using the fixed tooling (075-078), and prove the n-case end-to-end with no hand-applied workaround: a schema-validated membership registry declares the set, the tooling iterates the in_scope repo-roots, and a correct schema-valid aggregate ecosystem-level result is produced with cross-repo consistency enforced. Record the H-CONSUMER-UPGRADE gate exercise per member before each genesis bootstrap (NDEBT-018). Capture any residual friction as new NDEBT-* rows with evidence under .agent/evidence/<execution-id>/. Then REFINE AND VALIDATE the already-authored phase-011 candidate scope in docs/planning/ROADMAP.md (NIP-0002 Stage 4: 04/05 coordination protocols + companion schemas, NDEBT-029 release cut, the real multi-repo pilot) against the pilot evidence -- confirming or re-ordering it, not authoring it from scratch. Close phase 010 so run_state and manifest reflect phase-010 completion.",
+      "status": "complete",
+      "dependencies": [
+        "075",
+        "076",
+        "077",
+        "078"
+      ],
+      "acceptance_tests": [
+        "The n-case runs end-to-end across a scratch multi-repo ecosystem (>=2 genesis'd repos): a schema-validated membership registry declares the set, the tooling iterates the in_scope repo-roots, and a schema-valid aggregate ecosystem-level result is produced with cross-repo consistency enforced and NO hand-applied workaround.",
+        "The H-CONSUMER-UPGRADE gate is recorded per member in run_state before each genesis bootstrap; any residual friction is an NDEBT-* row with externalised evidence.",
+        "docs/planning/ROADMAP.md's existing phase-011 candidate scope (NIP-0002 Stage 4 + NDEBT-029 + the real pilot) is refined/validated against the pilot evidence (confirmed or re-ordered), not re-authored; run_state and manifest reflect phase-010 completion; bash tools/validate.sh green."
+      ],
+      "estimated_lines": 240
+    }
+  ]
+}

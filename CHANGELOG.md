@@ -9,6 +9,98 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Phase 010 (0–n Project Spectrum, Stage 3: The n-case) complete** (feature 079; `NDEBT-031`).
+  The n-case was piloted end-to-end against a scratch **3-member** ecosystem stood up **from
+  nothing** by `bootstrap.sh --genesis` at one shared pin, using the fixed tooling (075–078): a
+  schema-validated membership registry declared the set, `ecosystem_membership_run.py` iterated the
+  `in_scope` repo-roots, and a correct schema-valid aggregate ecosystem-level result was produced
+  (`ecosystem_verdict` PASS, `framework_pin_consistent` true, `member_count` 3) — with **no
+  hand-applied workaround**. A divergent-pin negative correctly flipped the ecosystem to FAIL with a
+  first-class `consistency_findings` entry, proving cross-repo consistency is *enforced*, not silent.
+  Evidence under `.agent/evidence/pilot-079/`; `H-CONSUMER-UPGRADE` exercised a fourth time (a
+  pre-release/branch pilot, recorded before the genesis bootstraps per NDEBT-018). `NDEBT-031` is
+  **resolved**; its Stage-4 coordination residue is carved into `NDEBT-035` (phase-011 candidate)
+  and the pilot's per-member clone-cost friction into `NDEBT-034`. The phase-011 candidate scope
+  (NIP-0002 Stage 4 `04`/`05` protocols + `NDEBT-029` release + a real, non-scratch multi-repo
+  pilot) is refined and **validated** against the pilot evidence — confirmed, not re-ordered.
+  `manifest.json` → phase-010 `complete`; a real, non-scratch multi-repo pilot remains the open
+  production-maturity criterion.
+
+- **Hermetic n-case e2e coverage** (phase 010 feature 078; `NDEBT-031`; NIP-0002 Stage 3).
+  `tools/e2e_bootstrap_test.sh` gains `assert_multirepo`: it stands up a scratch **multi-repo**
+  ecosystem — two projects created *from nothing* by `bootstrap.sh --genesis` at one shared
+  ephemeral tag (so they share a framework pin) — authors a membership registry over them,
+  validates that registry (`validate.sh --target`, C12), runs `ecosystem_membership_run.py`
+  across the `in_scope` set, and proves the produced `membership_run.json` is a schema-valid
+  ecosystem-level result (`ecosystem_verdict` PASS, `framework_pin_consistent` true,
+  `member_count` 2). This exercises the iteration (076) + aggregation (077) at *runtime* across
+  genuinely genesis'd repos, generalising the single-member `assert_genesis` to the n-case; the
+  single-repo bootstrap/genesis paths stay green (each tool exit captured via an `if` so `set -e`
+  never aborts before a diagnostic). `ecosystem_membership_run.py` also gains docstrings on its
+  `main`/`die_usage` entry points.
+
+- **`schema/ecosystem_membership_result.schema.json` + cross-repo aggregation & consistency**
+  (phase 010 feature 077; `NDEBT-031`; NIP-0002 Stage 3). Mechanizes the multi-repository
+  aggregation the shipped tools guarded only as a "future extension": `tools/ecosystem_membership_run.py`
+  now rolls the per-member verdicts (feature 076) into one **schema-valid ecosystem-level result**
+  — `ecosystem_verdict` (`PASS`/`FAIL`), `framework_pin_consistent`, `member_count`, and the
+  per-member `members[]` — and **enforces cross-repo consistency**: it reads each member's
+  `.nizam/provenance.json` `resolved_sha` and flags a divergent framework pin as a first-class
+  `consistency_finding`, not a silent mismatch. The new companion schema encodes an `allOf`
+  invariant (if `framework_pin_consistent` is `false` the `ecosystem_verdict` MUST be `FAIL`),
+  registered in `NIZAM.json` + `schema/README.md` (v0.10.0) and validated by `tools/validate.sh`
+  **C12** as a sixth ecosystem schema-family (`membership_result`), with positive, missing-verdict,
+  and inconsistent-`PASS` fixtures. The membership schema's `schema_version`/`last_updated` metadata
+  is hardened (required, pattern-checked), and the tool refuses a registry whose entry name appears
+  in more than one scope list (the exactly-one-list invariant, checked in-tool before iteration).
+  Hermetic n-case coverage is feature 078.
+
+- **`tools/ecosystem_membership_run.py` — multi-repo iteration** (phase 010 feature 076;
+  `NDEBT-031`; NIP-0002 Stage 3). Where the shipped ecosystem tools take a single `--repo-root`,
+  this reads the membership registry that sets `n` (feature 075) and runs the Preflight stage once
+  per `in_scope` member — resolving each member's repo-root (an explicit `repo_root` entry field,
+  else `<repo-roots-base>/<name>`), invoking `ecosystem_preflight.py` unchanged per member, and
+  collecting a per-member result index at `<output-dir>/membership_run.json`. The tool's own exit
+  is an ecosystem rollup — 0 when every `in_scope` member returned an acceptable verdict
+  (`PASS`/`PASS_WITH_EXCEPTIONS`), 1 when any member hard-FAILed or its repo-root was missing, 64
+  on usage error — while each member's raw per-member stage exit is preserved per-entry in the
+  `membership_run.json` index. The count-1 case is a single-member registry, and
+  `ecosystem_preflight.py` is byte-for-byte unchanged (regression-guarded). Cross-repo *aggregation*
+  into one schema-valid ecosystem-level result and the common-framework-pin *consistency* check are
+  feature 077; standing hermetic multi-repo coverage is feature 078.
+
+- **`schema/ecosystem_membership.schema.json` — the required, validated membership registry**
+  (phase 010 feature 075; `NDEBT-031`; NIP-0002 Stage 3). The artifact that sets `n` for the 0–n
+  spectrum: a JSON schema validating a consumer's ecosystem-membership registry — the four scope
+  lists (`in_scope`/`incubating`/`reference_archive`/`out_of_scope`) as arrays of entries, every
+  entry with an identifying `name`, and `out_of_scope` entries recording a `reason`. The
+  **exactly-one-list invariant** (no `name` in two lists) is a relational cross-array constraint
+  JSON Schema cannot express, so `tools/validate.sh` **C12** enforces it in code (mirroring the
+  `ecosystem_baseline` same-repo-revision split), wired at both entry points (full-sweep +
+  `--target` router, discriminated by ≥2 of the four scope-list keys) with a positive fixture, a
+  schema-invalid negative, and a schema-valid-but-multilist negative caught by the code check.
+  `registry/scope_definition_patterns.md` → v0.3.0 is **promoted from a draft pattern to a
+  required, schema-backed active artifact**; the schema is registered in `NIZAM.json` and
+  `schema/README.md` (v0.9.0). The multi-repo *tooling* that iterates this registry is features
+  076–077.
+
+- **Phase 010 proposed, then activated** — `.agent/product_spec_010.md` (authored draft,
+  subsequently flipped to `status: active` on activation) and
+  `.agent/feature_list_010.json` (features 075–079, DAG-validated acyclic, root {075}, est 1160
+  lines) propose **0–n Project Spectrum, Stage 3: The n-case (Multi-Repo Tooling)**, the
+  realization of `NIP-0002` Stage 3. Scope: a JSON schema for an ecosystem-membership registry
+  promoting `registry/scope_definition_patterns.md` from a draft pattern to a required, validated
+  artifact that sets `n` (`NDEBT-031`); multi-repo iteration over the `in_scope` set of repo-roots;
+  cross-repo aggregation + a common-framework-pin consistency check; hermetic n-case coverage; then
+  a pilot proving the n-case against a scratch multi-repo ecosystem. NIP-0002 Stage 4 (the `04`/`05`
+  coordination protocols, activating the reserved `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates),
+  the release cut carrying the whole loop (`NDEBT-029`), and a real non-scratch multi-repo pilot are
+  carried as phase-011 candidate scope. `docs/planning/ROADMAP.md` (v0.23.0) and
+  `docs/planning/manifest.json` recorded the proposal (pending/proposed); the operator then
+  authorized activation (gate `H-PHASE-010` SATISFIED, 2026-07-22), recorded in
+  `.agent/run_state.json` (event `phase_activated`) before any feature execution, advancing
+  `current_phase` to `010-multi-repo` and the phase-010 manifest entry to `in_progress`.
+
 - **Phase 009 (0–n Project Spectrum, Stage 2: Greenfield Genesis) complete** (feature 074;
   `NDEBT-030`). The 0-case was piloted end-to-end against a scratch greenfield project stood up
   **from nothing** by `bootstrap.sh --genesis` using the fixed tools (070–073): genesis created
