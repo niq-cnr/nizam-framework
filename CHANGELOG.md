@@ -9,6 +9,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Phase 010 proposed** — `.agent/product_spec_010.md` (status draft) and
+  `.agent/feature_list_010.json` (features 075–079, DAG-validated acyclic, root {075}, est 1160
+  lines) propose **0–n Project Spectrum, Stage 3: The n-case (Multi-Repo Tooling)**, the
+  realization of `NIP-0002` Stage 3. Scope: a JSON schema for an ecosystem-membership registry
+  promoting `registry/scope_definition_patterns.md` from a draft pattern to a required, validated
+  artifact that sets `n` (`NDEBT-031`); multi-repo iteration over the `in_scope` set of repo-roots;
+  cross-repo aggregation + a common-framework-pin consistency check; hermetic n-case coverage; then
+  a pilot proving the n-case against a scratch multi-repo ecosystem. NIP-0002 Stage 4 (the `04`/`05`
+  coordination protocols, activating the reserved `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates),
+  the release cut carrying the whole loop (`NDEBT-029`), and a real non-scratch multi-repo pilot are
+  carried as phase-011 candidate scope. `docs/planning/ROADMAP.md` (v0.23.0) and
+  `docs/planning/manifest.json` record the proposal (pending/proposed); it awaits activation gate
+  `H-PHASE-010` and is not yet active (`.agent/run_state.json` untouched).
+
 - **Phase 009 (0–n Project Spectrum, Stage 2: Greenfield Genesis) complete** (feature 074;
   `NDEBT-030`). The 0-case was piloted end-to-end against a scratch greenfield project stood up
   **from nothing** by `bootstrap.sh --genesis` using the fixed tools (070–073): genesis created
