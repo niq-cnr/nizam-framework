@@ -1,7 +1,7 @@
 ---
 id: nizam-product-spec-009
 title: "Nizam Framework — Phase 009 Spec (0–n Project Spectrum, Stage 2: Greenfield Genesis) — PROPOSAL"
-description: "Phase-009 proposal: realize NIP-0002 (The 0–n Project Spectrum) Stage 2 — the 0-case (greenfield genesis). Stands up a NEW project from nothing and bootstraps the framework into it (NDEBT-030): authors the greenfield-genesis protocol, mechanizes a create-and-scaffold capability, models the incubating→in_scope (count-0→1) transition on the scope registry, adds hermetic e2e coverage, then pilots the 0-case against a scratch greenfield project to PROVE it and prioritise the n-case/04-05 stages from that evidence. PROPOSED, not activated: execution requires operator authorization (gate H-PHASE-009). The n-case (multi-repo tooling + membership registry, NDEBT-031), the 04/05 coordination protocols, and the release cut carrying audit/compare (NDEBT-029) are explicitly OUT OF SCOPE — carried as phase-010 candidate scope. Extends product_spec.md..product_spec_008.md; replaces none."
+description: "Phase-009 proposal: realize NIP-0002 (The 0–n Project Spectrum) Stage 2 — the 0-case (greenfield genesis). Stands up a NEW project from nothing and bootstraps the framework into it (NDEBT-030): authors the greenfield-genesis protocol, mechanizes a create-and-scaffold capability, models the incubating→in_scope (count-0→1) transition on the scope registry, adds hermetic e2e coverage, then pilots the 0-case against a scratch greenfield project to PROVE it and prioritise the n-case/04-05 stages from that evidence. Authored as a proposal, then ACTIVATED 2026-07-22 via gate H-PHASE-009 (run_state records phase_activated before any feature execution). The n-case (multi-repo tooling + membership registry, NDEBT-031), the 04/05 coordination protocols, and the release cut carrying audit/compare (NDEBT-029) are explicitly OUT OF SCOPE — carried as phase-010 candidate scope. Extends product_spec.md..product_spec_008.md; replaces none."
 tags: [spec, ecosystem-cycle, zero-to-n, greenfield-genesis, bootstrap, scaffold, phase-009, proposal]
 status: active
 last_audited: "2026-07-22"
@@ -124,8 +124,9 @@ standing production-maturity criterion, carried across the programme.
 Recorded per `docs/planning/operator_gates.md`. The pipeline records but never self-executes
 a human gate.
 
-1. **H-PHASE-009 — OUTSTANDING.** Authorize activation of this proposal (required before any
-   feature enters contract negotiation). Its acceptance advances NIP-0002 to Stage 2.
+1. **H-PHASE-009 — SATISFIED 2026-07-22.** The operator authorized activation of this proposal
+   (verbatim "Activate phase 009"), advancing NIP-0002 to Stage 2; recorded in
+   `.agent/run_state.json` (`phase_activated`) before any feature entered contract negotiation.
 2. **H-CONSUMER-UPGRADE — recurring, exercised again at F-074.** Approve the genesis'd project's
    adoption of the framework tag before the Bootstrap stage proceeds; recorded in `run_state`
    before the bootstrap runs (the NDEBT-018 rule), as in phases 007/008.

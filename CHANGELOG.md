@@ -9,6 +9,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Greenfield-genesis protocol** (phase 009 feature 070; `NDEBT-030`; NIP-0002 Stage 2). The
+  0-case of the 0–n spectrum — standing up a *new* project from nothing — becomes a first-class
+  protocol: `ecosystem/00_ecosystem_bootstrap.md` → v0.5.0 gains **Section 8 (Greenfield
+  Genesis)** defining the create-and-scaffold entry path (create the repository → scaffold a
+  minimal deterministic skeleton + the consumer-supplied inputs of Section 6 → the normal inject
+  + verify of Section 5 recording provenance (Section 7) → register the project `incubating` for
+  promotion `incubating → in_scope`, the count-0→1 transition). Establishes "genesis"/"scaffold"
+  vocabulary for a new *consumer* project, distinct from the framework's own phase-001 genesis.
+  The Section 3 spectrum table's 0-case row and the "two honest limits" prose are corrected from
+  "no protocol or tooling yet" to "protocol defined (Section 8); create-and-scaffold capability +
+  `incubating→in_scope` transition mechanized in NIP-0002 Stage 2". References renumbered to
+  Section 9; Sections 4–7 (and every cross-reference to the Section 7 provenance shape) unchanged.
+
 - **Phase 009 proposed** — `.agent/product_spec_009.md` (status draft) and
   `.agent/feature_list_009.json` (features 070–074, DAG-validated acyclic, root {070}, est 1000
   lines) propose **0–n Project Spectrum, Stage 2: Greenfield Genesis**, the realization of
@@ -17,9 +30,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   on the scope registry, hermetic e2e coverage, then a pilot proving the 0-case. NIP-0002
   Stages 3–4 (n-case multi-repo tooling + membership registry `NDEBT-031`, `04`/`05` protocols)
   and the release cut carrying audit/compare (`NDEBT-029`) are carried as phase-010 candidate
-  scope. `docs/planning/ROADMAP.md` (v0.20.0) and `docs/planning/manifest.json` record the
-  proposal (pending/proposed); it awaits activation gate `H-PHASE-009` and is not yet active
-  (`.agent/run_state.json` untouched).
+  scope. `docs/planning/ROADMAP.md` and `docs/planning/manifest.json` recorded the proposal
+  (pending/proposed). **Subsequently activated 2026-07-22** (gate `H-PHASE-009`, operator
+  "Activate phase 009"): `.agent/run_state.json` records `phase_activated`, `current_phase` →
+  `009-greenfield-genesis`, `product_spec_009` → active, scope budget reset (phase-008 archived);
+  ROADMAP → v0.21.0 (Plan of Record banner) and `operator_gates.md` → v0.8.0 record the
+  disposition.
 - **`bootstrap.sh` commit-SHA pinning** (phase 008 feature 067; `NDEBT-033`). The Bootstrap
   provenance now records the **resolved commit SHA** the pinned tag pointed at (`resolved_sha`
   in `provenance.json`), making the pin an immutable commit rather than just a tag *name* — a
