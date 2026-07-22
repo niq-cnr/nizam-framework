@@ -9,6 +9,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`schema/ecosystem_membership.schema.json` — the required, validated membership registry**
+  (phase 010 feature 075; `NDEBT-031`; NIP-0002 Stage 3). The artifact that sets `n` for the 0–n
+  spectrum: a JSON schema validating a consumer's ecosystem-membership registry — the four scope
+  lists (`in_scope`/`incubating`/`reference_archive`/`out_of_scope`) as arrays of entries, every
+  entry with an identifying `name`, and `out_of_scope` entries recording a `reason`. The
+  **exactly-one-list invariant** (no `name` in two lists) is a relational cross-array constraint
+  JSON Schema cannot express, so `tools/validate.sh` **C12** enforces it in code (mirroring the
+  `ecosystem_baseline` same-repo-revision split), wired at both entry points (full-sweep +
+  `--target` router, discriminated by ≥2 of the four scope-list keys) with a positive fixture, a
+  schema-invalid negative, and a schema-valid-but-multilist negative caught by the code check.
+  `registry/scope_definition_patterns.md` → v0.3.0 is **promoted from a draft pattern to a
+  required, schema-backed active artifact**; the schema is registered in `NIZAM.json` and
+  `schema/README.md` (v0.9.0). The multi-repo *tooling* that iterates this registry is features
+  076–077.
+
 - **Phase 010 proposed** — `.agent/product_spec_010.md` (status draft) and
   `.agent/feature_list_010.json` (features 075–079, DAG-validated acyclic, root {075}, est 1160
   lines) propose **0–n Project Spectrum, Stage 3: The n-case (Multi-Repo Tooling)**, the

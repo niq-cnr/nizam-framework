@@ -977,6 +977,11 @@
       "at": "2026-07-22T02:15:00Z",
       "event": "phase_activated",
       "detail": "Phase 010-multi-repo ACTIVATED on operator authorization. Verbatim: 'Approved. Proceed with the phase-010 proposal + activation' (operator-controlled session, 2026-07-22, given after PR #46 merged phase 009 to main at 56a1aec), satisfying gate H-PHASE-010 and making phase 010 (0-n Project Spectrum, Stage 3: The n-case -- Multi-Repo Tooling) the plan of record. This advances NIP-0002 to Stage 3 (the n-case). current_phase advanced 009-greenfield-genesis -> 010-multi-repo; current_feature set to 075 (the ungated DAG root); status in_progress. Scope budget reset (1160 est; phase-009 final archived in run_state.phase_009_scope_budget_final). Recorded BEFORE any feature execution, per the NDEBT-018 gate-decision-before-execution rule (mirrors every prior phase_activated). The proposal (product_spec_010 + feature_list_010) was authored and pushed at commit 4b81107, then activated in this same cycle per the operator's 'proposal + activation' instruction. Execution begins with feature 075 (the ecosystem-membership registry schema; NDEBT-031) -- promoting registry/scope_definition_patterns.md from a draft pattern to a required, schema-validated artifact that sets n. NIP-0002 Stage 4 (04/05 coordination protocols), the release cut carrying the whole loop (NDEBT-029), and a real non-scratch multi-repo pilot stay OUT OF SCOPE as phase-011 candidate scope."
+    },
+    {
+      "at": "2026-07-22T02:45:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 075 (ecosystem-membership registry schema) COMPLETE. NDEBT-031 / NIP-0002 Stage 3: the artifact that sets n for the 0-n spectrum is now a required, validated schema. schema/ecosystem_membership.schema.json validates a consumer's membership registry -- the four scope lists (in_scope/incubating/reference_archive/out_of_scope) as arrays of entries, every entry with an identifying name, out_of_scope entries recording a reason. The exactly-one-list invariant (no name in two lists) is a relational cross-array constraint not expressible in JSON Schema, so tools/validate.sh C12 enforces it in code (new membership_multilist_entries, mirroring repository_revision_inconsistencies / audit_delta_duplicate_ids) at BOTH entry points -- the full-sweep family loop and the --target router (discriminated by >=2 of the four scope-list keys, so a registry malformed by omitting a list still routes to a clear membership error instead of misrouting to C4). Three fixtures: a positive, a schema-invalid missing-list negative, and a schema-valid multilist negative caught by the code check (self-test 51->54, all assert_target green). registry/scope_definition_patterns.md -> v0.3.0 promoted from draft pattern to a required, schema-backed ACTIVE artifact (references the schema; Section 2 gains the schema/validator cross-reference). Schema registered in NIZAM.json (module key_documents + top-level schemas) + schema/README.md (v0.9.0, the fifth ecosystem family). validate.sh 'four families' comments corrected to five. git numstat ins+del = 224 vs 280 estimated -- UNDER (the C12 machinery was extended, not rebuilt; the code check mirrors the existing relational-check pattern). First feature of phase 010, so no rolling-average baseline per methodology/00_planning.md. Full sweep 15/15, self-test 54/54, e2e PASS. Advancing to feature 076 (multi-repo iteration)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1150,8 +1155,16 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1160,
-    "total_lines_changed": 0,
-    "per_feature": []
+    "total_lines_changed": 224,
+    "per_feature": [
+      {
+        "id": "075",
+        "estimated": 280,
+        "actual": 224,
+        "flag": "UNDER",
+        "note": "schema/ecosystem_membership.schema.json (86, new) + tools/validate.sh (54+4=58: membership_multilist_entries + the ecosystem_membership family in the full-sweep FAMILIES + the loop code check + the --target schema_paths + the --target code check + the router >=2-scope-list-keys discriminator + 'four families'->'five' comment corrections) + 3 fixtures (valid 18 + neg_missing_list 6 + neg_multilist 7 = 31) + tools/fixtures_self_test.sh (8: three assert_target probes + a comment) + registry/scope_definition_patterns.md (16: v0.3.0 draft->active promotion + Section 2 schema/validator cross-reference) + schema/README.md (6: v0.9.0 + Validates row) + NIZAM.json (4: schema registered in module key_documents + top-level schemas) + CHANGELOG (15). git numstat ins+del = 224 vs 280 estimated -- UNDER because C12 is EXTENDED (a fifth family + a code check mirroring the existing repository_revision_inconsistencies pattern), not rebuilt. First feature of phase 010, no rolling baseline. Full sweep 15/15, self-test 54/54, e2e PASS."
+      }
+    ]
   },
   "phase_009_scope_budget_final": {
     "original_estimate_lines": 1000,

@@ -2,10 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.8.0
+version: 0.9.0
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.9.0"
+    date: "2026-07-22"
+    summary: "Added schema/ecosystem_membership.schema.json (phase-010 feature 075, NDEBT-031; NIP-0002 Stage 3): validates a consumer's ecosystem-membership registry -- the required artifact that sets n for the 0-to-n spectrum (registry/scope_definition_patterns.md, promoted to a schema-backed active artifact in the same feature). The schema enforces the shape (the four scope lists in_scope/incubating/reference_archive/out_of_scope exist as arrays of entries, every entry has an identifying name, out_of_scope entries record a reason); the exactly-one-list invariant (no name in two lists) is a relational cross-array constraint enforced in code by tools/validate.sh C12, mirroring the ecosystem_baseline same-repo-revision split (NDEBT-023). Wired into C12 as the fifth ecosystem family at both entry points (full-sweep + --target router, discriminated by >=2 of the four scope-list keys) with one positive and two negative fixtures (a schema-invalid missing-list and a schema-valid multilist caught by the code check), and registered in NIZAM.json."
   - version: "0.8.0"
     date: "2026-07-20"
     summary: "Added schema/audit_delta.schema.json: validates the ecosystem progress-comparison delta artifact (ecosystem/07_progress_comparison.md Sec 7) -- the two revision/timestamp-anchored reference points (earlier/later) and the closed five-class transition taxonomy (new/resolved/reopened/persisting/stale, all five buckets present, no sixth class), enforcing the closure-only-with-evidence rule (Sec 4) at the schema layer by requiring a non-empty closure_evidence on every resolved and pre-window-resolved finding. Wired into tools/validate.sh C12 as the fourth ecosystem family at both entry points (full-sweep + --target router, discriminated by a top-level `transitions` object) with one positive and two negative fixtures, and registered in NIZAM.json. Completes the four core ecosystem-cycle schemas and retires the last deferred 'schema not yet present' note in 07_progress_comparison.md."
@@ -65,6 +68,7 @@ Every schema in this module:
 | `ecosystem_baseline.schema.json` | Validates the ecosystem immutable-baseline artifact: the six baseline reference categories (framework/repository/dependency/CI/planning/evidence) and the per-item revision/timestamp anchoring rule (a baseline MUST NOT mix evidence from unspecified revisions). | `.agent/reconciliation/<execution-id>/baseline.json` |
 | `engineering_finding.schema.json` | Validates a single engineering finding: severity, confidence (`Confirmed`/`Probable`/`Suspected`), path-referenced revision-pinned evidence, impact, owner, closure_criteria, and a structured, non-empty closure_evidence requirement whenever a finding's status is `resolved`. | `.agent/audits/<audit-id>/findings.json` |
 | `audit_delta.schema.json` | Validates the ecosystem progress-comparison delta artifact: the two revision/timestamp-anchored reference points (`earlier`/`later`) and the closed five-class transition taxonomy (`new`/`resolved`/`reopened`/`persisting`/`stale` — all five buckets present, no sixth class admitted), with a non-empty `closure_evidence` required on every `resolved` and pre-window-resolved finding (the closure-only-with-evidence rule of `ecosystem/07_progress_comparison.md` Sec 4). | `.agent/audits/<audit-id>/delta.json` |
+| `ecosystem_membership.schema.json` | Validates a consumer's ecosystem-membership registry — the required artifact that sets `n` for the 0-to-n spectrum (`registry/scope_definition_patterns.md`): the four scope lists (`in_scope`/`incubating`/`reference_archive`/`out_of_scope`) exist as arrays of entries, every entry has an identifying `name`, and `out_of_scope` entries record a `reason`. The **exactly-one-list invariant** (no `name` in two lists) is a relational cross-array constraint enforced in code by `tools/validate.sh` C12, not by the schema — the same split as the `ecosystem_baseline` same-repo-revision rule. | A consumer's own membership registry (conventionally an `ecosystem_membership.json` in the consumer repository) |
 
 ## DD-3 — Evidence Externalisation
 

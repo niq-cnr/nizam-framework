@@ -343,8 +343,9 @@ file(s)/detail(s) printed on the following indented line(s)):
 
   C12 Ecosystem schema-family fixture validation (are the ecosystem schema
       families' fixtures actually load-bearing, or merely present?). For
-      each of the four families -- the three shipped in features 037-039
-      (baseline, preflight-verdict, engineering-finding) plus audit_delta --
+      each of the five families -- the three shipped in features 037-039
+      (baseline, preflight-verdict, engineering-finding), plus audit_delta
+      (feature 057) and ecosystem_membership (feature 075) --
       validates every matching
       `tools/fixtures/<family>_*.json` fixture, via python3 + jsonschema,
       against its shipped schema (`schema/ecosystem_baseline.schema.json`,
@@ -1486,7 +1487,7 @@ check_c11_dogfood_payload_skip() {
 
 # check_c12_ecosystem_fixtures
 #
-# For each of the four families, validates every matching
+# For each of the five families, validates every matching
 # tools/fixtures/<family>_*.json fixture against its shipped schema. A
 # fixture is NEGATIVE (MUST fail schema validation) iff its filename
 # contains the canonical delimited token '_neg_' or '_invalid_' -- checked as
@@ -1527,7 +1528,25 @@ FAMILIES = {
     "preflight_verdict": "schema/preflight_verdict.schema.json",
     "engineering_finding": "schema/engineering_finding.schema.json",
     "audit_delta": "schema/audit_delta.schema.json",
+    "ecosystem_membership": "schema/ecosystem_membership.schema.json",
 }
+
+
+def membership_multilist_entries(doc):
+    """The exactly-one-list invariant (registry/scope_definition_patterns.md
+    Section 2.1 / 2.3): an entry (by `name`) MUST appear in exactly one scope
+    list. A name in two lists is drift (Section 5 rule 4) -- a project copied,
+    not moved, on promotion. The constraint spans sibling arrays and is not
+    expressible in JSON Schema, so C12 enforces it in code, mirroring
+    repository_revision_inconsistencies and audit_delta_duplicate_ids."""
+    counts = {}
+    for scope_list in ("in_scope", "incubating", "reference_archive", "out_of_scope"):
+        items = doc.get(scope_list, [])
+        if isinstance(items, list):
+            for item in items:
+                if isinstance(item, dict) and isinstance(item.get("name"), str):
+                    counts[item["name"]] = counts.get(item["name"], 0) + 1
+    return sorted(name for name, n in counts.items() if n > 1)
 
 
 def repository_revision_inconsistencies(doc):
@@ -1643,6 +1662,12 @@ for family, schema_path in FAMILIES.items():
         # code-level check completes the schema's coverage.
         if is_valid and family == "audit_delta" and audit_delta_duplicate_ids(data):
             is_valid = False
+        # NDEBT-031: a schema-valid membership registry that lists the same entry
+        # in two scope lists violates the exactly-one-list invariant; the
+        # code-level check completes the schema's coverage so the multilist
+        # negative fixture is caught by polarity rather than validating.
+        if is_valid and family == "ecosystem_membership" and membership_multilist_entries(data):
+            is_valid = False
         if is_negative and is_valid:
             failures.append(f"{path}: negative fixture unexpectedly VALIDATED against {schema_path}")
         elif not is_negative and not is_valid:
@@ -1667,7 +1692,7 @@ PY
 #
 # NDEBT-015 (feature 052): single-fixture ecosystem-schema validation for the
 # `--target` dispatcher. The full-sweep check_c12_ecosystem_fixtures validates
-# EVERY fixture of all four families with a polarity/dormancy guard; this
+# EVERY fixture of all five families with a polarity/dormancy guard; this
 # variant validates exactly ONE `--target` file against the schema of the
 # family the router (check_c11_or_c4_target) identified, emitting a
 # discriminating [C12] verdict -- a valid fixture PASSes, a negative fixture
@@ -1694,6 +1719,7 @@ schema_paths = {
     "preflight_verdict": "schema/preflight_verdict.schema.json",
     "engineering_finding": "schema/engineering_finding.schema.json",
     "audit_delta": "schema/audit_delta.schema.json",
+    "ecosystem_membership": "schema/ecosystem_membership.schema.json",
 }
 schema_path = schema_paths[family]
 
@@ -1754,6 +1780,22 @@ if family == "audit_delta":
     duplicates = sorted(fid for fid, n in counts.items() if n > 1)
     if duplicates:
         print(f"{path}: finding id in more than one transition class ({family}): {duplicates} (Sec 3)")
+        sys.exit(1)
+
+# NDEBT-031: the exactly-one-list invariant (an entry MUST appear in exactly one
+# scope list) spans sibling arrays and is not expressible in JSON Schema, so mirror
+# the full-sweep membership_multilist_entries check here for --target too.
+if family == "ecosystem_membership":
+    counts = {}
+    for scope_list in ("in_scope", "incubating", "reference_archive", "out_of_scope"):
+        items = doc.get(scope_list, [])
+        if isinstance(items, list):
+            for item in items:
+                if isinstance(item, dict) and isinstance(item.get("name"), str):
+                    counts[item["name"]] = counts.get(item["name"], 0) + 1
+    multilist = sorted(name for name, n in counts.items() if n > 1)
+    if multilist:
+        print(f"{path}: entry in more than one scope list ({family}): {multilist} (NDEBT-031, exactly-one-list invariant)")
         sys.exit(1)
 
 sys.exit(0)
@@ -1963,6 +2005,14 @@ elif "circuit_breaker" in doc or "scope_budget" in doc:
     print("run_state")
 elif ECOSYSTEM_BASELINE_KEYS.issubset(doc):
     print("ecosystem:ecosystem_baseline")
+elif len({"in_scope", "incubating", "reference_archive", "out_of_scope"} & doc.keys()) >= 2:
+    # NDEBT-031: the four scope-list keys are the membership-registry
+    # discriminator. Two or more of them (not all four) is the trigger, so a
+    # registry that is malformed by OMITTING a required list still routes here
+    # and gets a clear membership schema error instead of misrouting to C4's
+    # index check; no other family's artifact carries these keys, so this never
+    # steals their fixtures.
+    print("ecosystem:ecosystem_membership")
 elif "closure_criteria" in doc:
     print("ecosystem:engineering_finding")
 else:

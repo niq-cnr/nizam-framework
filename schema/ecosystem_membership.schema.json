@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:ecosystem_membership.schema.json",
+  "title": "Nizam Ecosystem Membership Registry Schema",
+  "description": "Validates a consumer's ecosystem-membership registry INSTANCE -- the required, machine-readable artifact that sets `n` for the 0-to-n project spectrum (NIP-0002 Stage 3; NDEBT-031), authored per the list-partition pattern of registry/scope_definition_patterns.md Section 2. Every tracked project appears as an entry in exactly one of four scope lists (in_scope / incubating / reference_archive / out_of_scope); an entry's list membership -- not a status string -- is the authoritative signal for whether it currently receives ecosystem-level governance. This schema enforces the SHAPE (the four lists exist, each is an array of entries, every entry has an identifying `name`, and out_of_scope entries record a `reason`). The exactly-one-list invariant (no `name` appears in two lists) is a relational constraint spanning sibling arrays that JSON Schema cannot express; it is enforced in code by validate.sh C12, mirroring the ecosystem_baseline same-repo-revision rule (NDEBT-023). Permits additionalProperties on entries so consumers can extend an entry (role, status, depends_on, exposes, note, last_audited, enrichment fields) without breaking validation, per schema/README.md's house convention.",
+  "type": "object",
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "description": "One tracked project/service/module. A minimal entry needs only an identifying `name`; a fuller entry (typical of in_scope) carries a link, a role/description, an operational status kept distinct from the list it lives in, a depends_on array, an exposes array, a dated note, and a last_audited timestamp (registry/scope_definition_patterns.md Section 2.2). Descriptive fields are open extension points.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The identifying key for this entry, unique across the whole registry (it must appear in exactly one scope list). Required on every entry; never inferred.",
+          "minLength": 1
+        }
+      },
+      "required": ["name"],
+      "additionalProperties": true
+    },
+    "out_of_scope_entry": {
+      "type": "object",
+      "description": "An entry explicitly excluded from the ecosystem. Beyond the identifying `name`, it MUST record a `reason` so the exclusion is a recorded decision rather than an omission (registry/scope_definition_patterns.md Section 2.1 / Section 5 rule 3).",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The identifying key for this excluded entry.",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "description": "Why this entry is out of scope -- a recorded decision, never a bare omission.",
+          "minLength": 1
+        }
+      },
+      "required": ["name", "reason"],
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "The semantic version of the registry shape this instance conforms to.",
+      "minLength": 1
+    },
+    "last_updated": {
+      "type": "string",
+      "description": "The point-in-time the registry as a whole was last updated (registry/scope_definition_patterns.md Section 2)."
+    },
+    "authoritative_source": {
+      "type": "string",
+      "description": "The repository-relative path to the authoritative copy of this registry."
+    },
+    "dependency_map": {
+      "type": "string",
+      "description": "An optional link or path to a separately-maintained human-readable dependency document (registry/scope_definition_patterns.md Section 3)."
+    },
+    "phase_progress": {
+      "type": "object",
+      "description": "An optional ecosystem-wide phase/workstream progress block, distinct from any one entry's own status (registry/scope_definition_patterns.md Section 4).",
+      "additionalProperties": true
+    },
+    "in_scope": {
+      "type": "array",
+      "description": "Actively maintained and part of the current masterplan or roadmap (registry/scope_definition_patterns.md Section 2.1). The members that set `n`.",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "incubating": {
+      "type": "array",
+      "description": "Tracked but not yet a full member -- the count-0->1 state (registry/scope_definition_patterns.md Section 2.3): governance not yet bootstrapped, concept-stage, or a freshly genesis'd project awaiting its first clean Preflight/Baseline before promotion to in_scope.",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "reference_archive": {
+      "type": "array",
+      "description": "No longer independently maintained, retained as a reference for one or more in_scope entries (registry/scope_definition_patterns.md Section 2.1).",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "out_of_scope": {
+      "type": "array",
+      "description": "Explicitly excluded, each with a recorded `reason` (registry/scope_definition_patterns.md Section 2.1).",
+      "items": { "$ref": "#/$defs/out_of_scope_entry" }
+    }
+  },
+  "required": ["schema_version", "in_scope", "incubating", "reference_archive", "out_of_scope"],
+  "additionalProperties": true
+}
