@@ -9,6 +9,79 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Phase 009 (0–n Project Spectrum, Stage 2: Greenfield Genesis) complete** (feature 074;
+  `NDEBT-030`). The 0-case was piloted end-to-end against a scratch greenfield project stood up
+  **from nothing** by `bootstrap.sh --genesis` using the fixed tools (070–073): genesis created
+  the project (`git init` + deterministic scaffold + injected `.nizam/` with `tag` + `resolved_sha`
+  provenance), and Preflight returned `PASS_WITH_EXCEPTIONS` with the injected `.nizam/` the single
+  expected exception — the same clean outcome ADR-004 gave the count-1 case, with no hand-applied
+  workaround. Evidence under `.agent/evidence/pilot-074/`; `H-CONSUMER-UPGRADE` exercised a third
+  time (a pre-release/branch pilot). `manifest.json` phase-009 → complete. The phase-010 candidate
+  scope (NIP-0002 Stages 3–4) is validated by the pilot (the n-case `NDEBT-031` builds on the
+  `incubating` partition this phase populated). A real, non-scratch greenfield pilot and a released
+  tag carrying the genesis capability (`NDEBT-029`) remain outstanding.
+
+- **Genesis e2e coverage** (phase 009 feature 073; `NDEBT-030`; NIP-0002 Stage 2).
+  `tools/e2e_bootstrap_test.sh` gains `assert_genesis`: a hermetic case proving the 0-case
+  end-to-end — `bootstrap.sh --genesis` stands up a new project from nothing, the deterministic
+  scaffold (README + CONTEXT + `src/` placeholder) and a `resolved_sha`-pinned provenance are
+  present, the committed project passes Preflight as `PASS_WITH_EXCEPTIONS` (the injected `.nizam/`
+  the only exception), and a non-empty `--project-root` is refused. The existing
+  inject-into-an-existing-repo path stays green (regression-guarded).
+
+- **`incubating → in_scope` promotion — the count-0→1 transition** (phase 009 feature 072;
+  `NDEBT-030`; NIP-0002 Stage 2). `registry/scope_definition_patterns.md` → v0.2.0 gains
+  **Section 2.3** modelling the scope registry's `incubating` partition as the count-0→1 state: a
+  greenfield-genesis project (`bootstrap.sh --genesis`) enters the registry in `incubating` and is
+  promoted to `in_scope` once it clears its first clean Preflight/Baseline, as an explicit recorded
+  edit that **moves** the entry (preserving the Section 2.1 exactly-one-list invariant); demotion
+  is symmetric. Scoped to the single-project count-0→1 case only — promoting the registry to a
+  required, validated ecosystem-membership artifact the tools iterate to set `n` (count-1→n) stays
+  `NDEBT-031`/phase 010. A `tools/fixtures_self_test.sh` scratch probe asserts the transition shape
+  (promotion moves the entry; a two-list "copied-not-moved" entry is detected).
+
+- **`bootstrap.sh --genesis` — greenfield-genesis capability** (phase 009 feature 071;
+  `NDEBT-030`; NIP-0002 Stage 2). Mechanizes standing up a *new* project from nothing (the
+  0-case): `bootstrap.sh --genesis --project-root DIR [--project-name NAME]` `git init`s an empty
+  project root, scaffolds a minimal deterministic skeleton (a `README`, a `CONTEXT.md`
+  consumer-inputs stub naming the `ecosystem/00` §6 inputs, and a `src/` source placeholder),
+  then reuses the normal clone → inject → verify → provenance install (recording `tag` +
+  `resolved_sha`) into `<project-root>/.nizam`. It **refuses a non-empty `--project-root`** (a
+  brownfield adoption, not a genesis), and a genesis that fails partway removes a project root it
+  created (nothing half-built is left behind). The existing inject-into-an-existing-repo path and
+  `--verify-only` are unchanged (regression-guarded). `ecosystem/00_ecosystem_bootstrap.md` →
+  v0.6.0: §8's mechanization note now names `bootstrap.sh --genesis`, the §3 spectrum table's
+  0-case row rolls to "Covered (Section 8 + `bootstrap.sh --genesis`)", and the "two honest
+  limits" prose to "protocol + capability exist but not yet in a released tag" (the `NDEBT-029`
+  release gap).
+
+- **Greenfield-genesis protocol** (phase 009 feature 070; `NDEBT-030`; NIP-0002 Stage 2). The
+  0-case of the 0–n spectrum — standing up a *new* project from nothing — becomes a first-class
+  protocol: `ecosystem/00_ecosystem_bootstrap.md` → v0.5.0 gains **Section 8 (Greenfield
+  Genesis)** defining the create-and-scaffold entry path (create the repository → scaffold a
+  minimal deterministic skeleton + the consumer-supplied inputs of Section 6 → the normal inject
+  + verify of Section 5 recording provenance (Section 7) → register the project `incubating` for
+  promotion `incubating → in_scope`, the count-0→1 transition). Establishes "genesis"/"scaffold"
+  vocabulary for a new *consumer* project, distinct from the framework's own phase-001 genesis.
+  The Section 3 spectrum table's 0-case row and the "two honest limits" prose are corrected from
+  "no protocol or tooling yet" to "protocol defined (Section 8); create-and-scaffold capability +
+  `incubating→in_scope` transition mechanized in NIP-0002 Stage 2". References renumbered to
+  Section 9; Sections 4–7 (and every cross-reference to the Section 7 provenance shape) unchanged.
+
+- **Phase 009 proposed** — `.agent/product_spec_009.md` (status draft) and
+  `.agent/feature_list_009.json` (features 070–074, DAG-validated acyclic, root {070}, est 1000
+  lines) propose **0–n Project Spectrum, Stage 2: Greenfield Genesis**, the realization of
+  `NIP-0002` Stage 2 (the 0-case). Scope: the greenfield-genesis protocol (`NDEBT-030`), a
+  create-and-scaffold-from-nothing capability, the `incubating→in_scope` (count-0→1) transition
+  on the scope registry, hermetic e2e coverage, then a pilot proving the 0-case. NIP-0002
+  Stages 3–4 (n-case multi-repo tooling + membership registry `NDEBT-031`, `04`/`05` protocols)
+  and the release cut carrying audit/compare (`NDEBT-029`) are carried as phase-010 candidate
+  scope. `docs/planning/ROADMAP.md` and `docs/planning/manifest.json` recorded the proposal
+  (pending/proposed). **Subsequently activated 2026-07-22** (gate `H-PHASE-009`, operator
+  "Activate phase 009"): `.agent/run_state.json` records `phase_activated`, `current_phase` →
+  `009-greenfield-genesis`, `product_spec_009` → active, scope budget reset (phase-008 archived);
+  ROADMAP → v0.21.0 (Plan of Record banner) and `operator_gates.md` → v0.8.0 record the
+  disposition.
 - **`bootstrap.sh` commit-SHA pinning** (phase 008 feature 067; `NDEBT-033`). The Bootstrap
   provenance now records the **resolved commit SHA** the pinned tag pointed at (`resolved_sha`
   in `provenance.json`), making the pin an immutable commit rather than just a tag *name* — a
