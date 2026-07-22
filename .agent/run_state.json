@@ -3,7 +3,7 @@
   "current_phase": "011-coordination-protocols",
   "current_feature": "084",
   "status": "in_progress",
-  "updated_at": "2026-07-22T11:40:00Z",
+  "updated_at": "2026-07-22T12:20:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1041,6 +1041,27 @@
       "event": "feature_complete",
       "feature": "083",
       "detail": "Feature 083 COMPLETE (phase 011, NIP-0002 Stage 4, NDEBT-035): the Promote-stage tool + Stage-4 e2e. Authored tools/ecosystem_release_train.py (stdlib-only) -- reads a reconciliation plan (F-082) and PRODUCES a schema-valid release-train manifest at <output-dir>/manifest.json (schema/release_train_manifest.schema.json, F-081), admitting the plan's packets into a cross-repo release train. H-TRAIN-ENTRY is load-bearing: the tool REFUSES to emit a PASS train without the recorded admission decision (--entry-gate-recorded) and never itself promotes (record-but-never-self-execute); an orphan admission forces train_verdict FAIL; a non-PASS source plan is a usage error. Exit table 0/1/64. Extended tools/e2e_bootstrap_test.sh with assert_stage4, chained onto the phase-010 assert_multirepo aggregate (NO fresh genesis clone -- the per-member cost is NDEBT-034): runs the aggregate -> reconciliation -> release-train chain across the 2-member set, asserting a PASS plan + a PASS train manifest (both C12-valid) and that an ungated admission is refused a PASS (FAIL). Smoke-tested all 4 tool paths (gated PASS / ungated FAIL / orphan FAIL / non-PASS-plan usage); produced manifest validates C12. Full hermetic e2e PASS (assert_genesis + assert_multirepo + assert_stage4 all OK, exit 0). validate.sh 15/15; fixtures_self_test 63/63. With 080-083 done, NIP-0002 Stage 4 is mechanized end-to-end; feature 084 pilots + closes the phase."
+    },
+    {
+      "at": "2026-07-22T12:05:00Z",
+      "event": "operator_gate_decision",
+      "detail": "H-PLANNING-AUTHORITY EXERCISED (first exercise; defined in feature 080). Recorded BEFORE the feature-084 pilot's reconciliation act (the NDEBT-018 rule). Authorizes the planning authority the pilot's reconciliation plan asserts across the scratch 2-member ecosystem (which repos change, in which dependency order, to close which findings) before the plan is admitted downstream. This is a PRE-RELEASE / branch-HEAD pilot exercising the gate's decision MECHANICS against a SCRATCH plan (the phase-011 tooling is unreleased; the members are throwaway genesis'd projects), not a real cross-repository planning decision. A real, non-scratch reconciliation at a released tag remains the standing production-maturity criterion (NDEBT-029). Evidence: .agent/evidence/pilot-084/plan.json (plan_verdict PASS, C12-valid) + the cyclic negative (plan_cycle.json, FAIL) proving the invariant is enforced."
+    },
+    {
+      "at": "2026-07-22T12:10:00Z",
+      "event": "operator_gate_decision",
+      "detail": "H-TRAIN-ENTRY EXERCISED (first exercise; defined in feature 081). Recorded BEFORE the feature-084 pilot's release-train act (the NDEBT-018 rule). Admits the pilot's reconciled packets into a cross-repository release train (the --entry-gate-recorded assertion the tool requires to emit a PASS train); record-but-never-self-execute (the tool never promotes or departs the train). PRE-RELEASE / branch-HEAD pilot exercising the gate MECHANICS against a SCRATCH train, not a real release. The ungated negative (manifest_ungated.json, train_verdict FAIL) proves the gate is load-bearing: without this recorded decision, no PASS train is emitted. A real, non-scratch release train at a released tag remains the standing production-maturity criterion (NDEBT-029). Evidence: .agent/evidence/pilot-084/manifest.json (train_verdict PASS, C12-valid) + manifest_ungated.json (FAIL)."
+    },
+    {
+      "at": "2026-07-22T12:15:00Z",
+      "event": "feature_complete",
+      "feature": "084",
+      "detail": "Feature 084 COMPLETE (phase 011, NIP-0002 Stage 4, NDEBT-035): piloted the coordination layer end-to-end + closed the phase. A scratch 2-member ecosystem stood up from nothing by bootstrap.sh --genesis at one shared pin; the phase-010 aggregate (ecosystem_verdict PASS) fed ecosystem_reconcile.py -> a PASS, topologically-ordered reconciliation plan (order [pkt-beta, pkt-alpha]; C12-valid), which fed ecosystem_release_train.py --entry-gate-recorded -> a PASS release-train manifest (C12-valid), with no hand-applied workaround. Both Stage-4 gates (H-PLANNING-AUTHORITY, H-TRAIN-ENTRY) exercised and recorded before their acts (NDEBT-018). Both invariants proven load-bearing by negatives: a cyclic packet set -> reconcile FAIL (exit 1, cycle_findings), and an ungated admission -> release-train FAIL (exit 1). Evidence at .agent/evidence/pilot-084/ (README + membership.json + membership_run.json + plan.json + manifest.json + plan_cycle.json + manifest_ungated.json + run/validate .txt logs). NDEBT-035 moved Open->Resolved. Phase-012 candidate scope (NDEBT-029 release + real pilot + 06/08 protocols) refined/validated against the pilot evidence. Full sweep validate.sh 15/15, self-test 63/63, e2e PASS."
+    },
+    {
+      "at": "2026-07-22T12:20:00Z",
+      "event": "phase_complete",
+      "detail": "Phase 011 (0-n Project Spectrum, Stage 4: n-Coordination Protocols) COMPLETE -- and with it, NIP-0002's STAGED PLAN IS COMPLETE (Stages 1/2/3/4 = phases 008/009/010/011). The coordination layer is first-class and mechanized: 080 authored ecosystem/04 (Plan) + schema/reconciliation_plan.schema.json (topological-order invariant, validate.sh C12) + defined H-PLANNING-AUTHORITY; 081 authored ecosystem/05 (Promote) + schema/release_train_manifest.schema.json (trace-to-plan invariant, C12) + defined H-TRAIN-ENTRY; 082 added tools/ecosystem_reconcile.py (aggregate+findings -> schema-valid dependency-ordered plan; cycle -> FAIL); 083 added tools/ecosystem_release_train.py (plan -> schema-valid train manifest, refusing a PASS without the recorded H-TRAIN-ENTRY decision) + hermetic assert_stage4 e2e; 084 piloted end-to-end across a scratch 2-member ecosystem (PASS aggregate -> PASS plan -> PASS train, all C12-valid; cyclic->FAIL, ungated->FAIL; evidence .agent/evidence/pilot-084/). NDEBT-035 RESOLVED. manifest phase-011 -> complete; ROADMAP Current Position rolled to phases 001-011 complete (v0.29.0). The two remaining reserved gates (H-CONSOLIDATION/H-GA map to 06/08 Repeat/GA) stay reserved -- phase 011 defined H-PLANNING-AUTHORITY/H-TRAIN-ENTRY only. Phase-012 candidate scope: the NDEBT-029 release cut carrying the whole 0-n loop (the natural next step), a real non-scratch multi-repo pilot at that released tag, and the 06/08 protocols. Full sweep 15/15, self-test 63/63, e2e PASS. Awaiting operator: the phase-011 PR + phase-012 planning."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1214,7 +1235,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1330,
-    "total_lines_changed": 1401,
+    "total_lines_changed": 1699,
     "per_feature": [
       {
         "id": "080",
@@ -1243,6 +1264,13 @@
         "actual": 251,
         "flag": "ON",
         "note": "Promote-stage tool + Stage-4 hermetic e2e. git numstat added = 251 vs 260 -- ON (slightly UNDER). The stdlib-only tool (~150 lines incl. docstring) + the ~90-line assert_stage4 e2e function (chained onto assert_multirepo, reusing its aggregate -- no extra genesis clone per NDEBT-034) + CHANGELOG. No schema/validate churn (the C12 release_train_manifest family shipped in F-081). Full hermetic e2e PASS (assert_genesis + assert_multirepo + assert_stage4), validate.sh 15/15, self-test 63/63."
+      },
+      {
+        "id": "084",
+        "estimated": 200,
+        "actual": 298,
+        "flag": "OVER",
+        "note": "Pilot + phase close. git numstat added = 298 vs 200 -- OVER, inflated by the committed pilot EVIDENCE artifacts (~232 lines: .agent/evidence/pilot-084/ README + membership/aggregate/plan/manifest jsons + the negatives + run/validate .txt logs -- the produced proof record). The framework-side close churn (DEBT NDEBT-035 Open->Resolved v0.34.0, ROADMAP phase-011 COMPLETE + Current Position roll + phase-012 validated v0.29.0, manifest phase-011 complete, feature_list 084 complete, CHANGELOG, run_state gates+close) the remainder. The pilot ran the coordination layer across a scratch 2-member ecosystem: PASS aggregate -> PASS plan -> PASS train (all C12-valid), cyclic->FAIL, ungated->FAIL, no hand-applied workaround. validate.sh 15/15, self-test 63/63, e2e PASS."
       }
     ]
   },
@@ -1700,5 +1728,47 @@
         "note": "schema/ecosystem_membership.schema.json (86, new) + tools/validate.sh (54+4=58: membership_multilist_entries + the ecosystem_membership family in the full-sweep FAMILIES + the loop code check + the --target schema_paths + the --target code check + the router >=2-scope-list-keys discriminator + 'four families'->'five' comment corrections) + 3 fixtures (valid 18 + neg_missing_list 6 + neg_multilist 7 = 31) + tools/fixtures_self_test.sh (8: three assert_target probes + a comment) + registry/scope_definition_patterns.md (16: v0.3.0 draft->active promotion + Section 2 schema/validator cross-reference) + schema/README.md (6: v0.9.0 + Validates row) + NIZAM.json (4: schema registered in module key_documents + top-level schemas) + CHANGELOG (15). git numstat ins+del = 224 vs 280 estimated -- UNDER because C12 is EXTENDED (a fifth family + a code check mirroring the existing repository_revision_inconsistencies pattern), not rebuilt. First feature of phase 010, no rolling baseline. Full sweep 15/15, self-test 54/54, e2e PASS."
       }
     ]
+  },
+  "phase_011_scope_budget_final": {
+    "original_estimate_lines": 1330,
+    "total_lines_changed": 1699,
+    "per_feature": [
+      {
+        "id": "080",
+        "estimated": 320,
+        "actual": 480,
+        "flag": "OVER",
+        "note": "Plan-stage protocol + schema + gate definition + all registrations. git numstat added = 480 vs 320 -- OVER, inflated by the deliverable artifacts: the 174-line protocol doc (ecosystem/04, house structure matching 03) + the 87-line schema (reconciliation_plan) + 57 lines of C12 fixtures (1 positive, 2 negative). The tooling-side churn (validate.sh C12 family wiring: FAMILIES x2, reconciliation_plan_cycles code check x2, discriminator route, docstrings) was ~95 added. Registrations (NIZAM.json, schema/README.md, skill.json, ecosystem/README.md, operator_gates.md, CHANGELOG) the remainder. validate.sh 15/15, self-test 60/60."
+      },
+      {
+        "id": "081",
+        "estimated": 300,
+        "actual": 399,
+        "flag": "OVER",
+        "note": "Promote-stage protocol + schema + gate definition + all registrations, structurally parallel to F-080. git numstat added = 399 vs 300 -- OVER, inflated by the deliverable artifacts: the ~150-line protocol doc (ecosystem/05) + the ~95-line schema (release_train_manifest) + ~45 lines of C12 fixtures (1 positive, 2 negative). The C12 wiring (release_train_manifest_orphans code check x2, FAMILIES x2, discriminator route, docstrings) + registrations the remainder. Less over than 080 (the pattern was established). validate.sh 15/15, self-test 63/63."
+      },
+      {
+        "id": "082",
+        "estimated": 250,
+        "actual": 271,
+        "flag": "ON",
+        "note": "Plan-stage tool + self-test CLI probe. git numstat added = 271 vs 250 -- ON (within ~10%). The stdlib-only tool (~210 lines incl. docstring + Kahn topological sort + input validation) + the ~40-line self-test probe + CHANGELOG. No schema/validate churn (the C12 reconciliation_plan family shipped in F-080). Smoke-tested acyclic PASS / cyclic FAIL / unknown-repo usage; produced plan validates C12. validate.sh 15/15, self-test 63/63."
+      },
+      {
+        "id": "083",
+        "estimated": 260,
+        "actual": 251,
+        "flag": "ON",
+        "note": "Promote-stage tool + Stage-4 hermetic e2e. git numstat added = 251 vs 260 -- ON (slightly UNDER). The stdlib-only tool (~150 lines incl. docstring) + the ~90-line assert_stage4 e2e function (chained onto assert_multirepo, reusing its aggregate -- no extra genesis clone per NDEBT-034) + CHANGELOG. No schema/validate churn (the C12 release_train_manifest family shipped in F-081). Full hermetic e2e PASS (assert_genesis + assert_multirepo + assert_stage4), validate.sh 15/15, self-test 63/63."
+      },
+      {
+        "id": "084",
+        "estimated": 200,
+        "actual": 298,
+        "flag": "OVER",
+        "note": "Pilot + phase close. git numstat added = 298 vs 200 -- OVER, inflated by the committed pilot EVIDENCE artifacts (~232 lines: .agent/evidence/pilot-084/ README + membership/aggregate/plan/manifest jsons + the negatives + run/validate .txt logs -- the produced proof record). The framework-side close churn (DEBT NDEBT-035 Open->Resolved v0.34.0, ROADMAP phase-011 COMPLETE + Current Position roll + phase-012 validated v0.29.0, manifest phase-011 complete, feature_list 084 complete, CHANGELOG, run_state gates+close) the remainder. The pilot ran the coordination layer across a scratch 2-member ecosystem: PASS aggregate -> PASS plan -> PASS train (all C12-valid), cyclic->FAIL, ungated->FAIL, no hand-applied workaround. validate.sh 15/15, self-test 63/63, e2e PASS."
+      }
+    ],
+    "note": "Phase 011 (features 080-084) final scope ledger. Estimate 1330; actual 1699 total lines changed (git numstat added). Over the estimate, driven by the two protocol docs + two schemas + the C12 family wiring (080/081), and by the committed pilot evidence artifacts (084). Per-feature: 080 480/320 OVER, 081 399/300 OVER, 082 271/250 ON, 083 251/260 ON, 084 298/200 OVER."
   }
 }

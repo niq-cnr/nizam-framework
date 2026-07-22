@@ -9,6 +9,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Phase 011 (0–n Project Spectrum, Stage 4: n-Coordination Protocols) complete — NIP-0002's staged
+  plan is complete** (feature 084; `NDEBT-035`). Piloted the coordination layer end-to-end against a
+  scratch **2-member** ecosystem stood up **from nothing** at one shared pin, using the fixed tooling
+  (080–083): a schema-validated membership registry → a **PASS** aggregate → a **PASS** reconciliation
+  plan (topologically ordered) → a **PASS** release-train manifest — all C12-valid — with both
+  Stage-4 gates exercised and recorded before the acts they govern (`H-PLANNING-AUTHORITY` before the
+  plan, `H-TRAIN-ENTRY` before the train; NDEBT-018), and both invariants proven load-bearing by
+  negatives (a cyclic plan → `FAIL`, an ungated train → `FAIL`) — with no hand-applied workaround
+  (evidence `.agent/evidence/pilot-084/`). `NDEBT-035` resolved; `manifest.json` + `run_state` reflect
+  phase-011 completion; ROADMAP (v0.29.0) rolls Current Position to phases 001–011 complete and validates
+  the phase-012 candidate scope (the `NDEBT-029` release cut carrying the whole 0–n loop, a real
+  non-scratch multi-repo pilot, and the remaining `06`/`08` Repeat/GA protocols). A real, non-scratch
+  multi-repo pilot at a released tag remains the open production-maturity criterion.
 - **`tools/ecosystem_release_train.py` + Stage-4 e2e coverage** (phase 011 feature 083; `NDEBT-035`;
   NIP-0002 Stage 4). A stdlib-only Promote-stage tool that reads a reconciliation plan (feature 082) and
   **produces** a schema-valid release-train manifest at `<output-dir>/manifest.json`

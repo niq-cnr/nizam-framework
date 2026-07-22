@@ -1,0 +1,13 @@
+== pilot-084: n-case Stage-4 coordination pilot ==
+tag=pilot084-1784718656-32555 resolved_sha=9ca14c43d89aa2914688431e4d57daf860ef3e18
+genesis member-alpha: OK (pin 9ca14c43d89aa2914688431e4d57daf860ef3e18)
+genesis member-beta: OK (pin 9ca14c43d89aa2914688431e4d57daf860ef3e18)
+registry validate.sh --target: PASS (C12)
+aggregate ecosystem_membership_run.py exit=0 (expect 0=PASS)
+reconcile ecosystem_reconcile.py exit=0 (expect 0=PASS plan)
+plan validate.sh --target: PASS (C12)
+release-train ecosystem_release_train.py exit=0 (expect 0=PASS train)
+manifest validate.sh --target: PASS (C12)
+cyclic reconcile exit=1 (expect 1=FAIL)
+ungated release-train exit=1 (expect 1=FAIL, gate not recorded)
+== pilot-084 complete ==

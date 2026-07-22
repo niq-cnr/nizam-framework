@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "source_result": "/home/user/nizam-framework/.agent/evidence/pilot-084/membership_run.json",
+  "plan_verdict": "PASS",
+  "packets": [
+    {
+      "id": "pkt-alpha",
+      "repo": "member-alpha",
+      "closes_findings": [
+        "FIND-A1"
+      ],
+      "depends_on": [
+        "pkt-beta"
+      ]
+    },
+    {
+      "id": "pkt-beta",
+      "repo": "member-beta",
+      "closes_findings": [
+        "FIND-B1"
+      ],
+      "depends_on": []
+    }
+  ],
+  "order": [
+    "pkt-beta",
+    "pkt-alpha"
+  ],
+  "cycle_findings": [],
+  "membership_registry": "/home/user/nizam-framework/.agent/evidence/pilot-084/membership.json"
+}
