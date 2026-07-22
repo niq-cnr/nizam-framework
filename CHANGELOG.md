@@ -9,6 +9,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`tools/ecosystem_release_train.py` + Stage-4 e2e coverage** (phase 011 feature 083; `NDEBT-035`;
+  NIP-0002 Stage 4). A stdlib-only Promote-stage tool that reads a reconciliation plan (feature 082) and
+  **produces** a schema-valid release-train manifest at `<output-dir>/manifest.json`
+  (`schema/release_train_manifest.schema.json`), admitting the plan's packets into a cross-repository
+  release train. The **`H-TRAIN-ENTRY`** gate is load-bearing: the tool **refuses to emit a `PASS` train**
+  without the recorded admission decision (`--entry-gate-recorded`), and it never itself promotes — a
+  record-but-never-self-execute Promote. An orphan admission (an `--admit` id with no plan origin) is a
+  recorded finding forcing `train_verdict` `FAIL`; a non-`PASS` source plan is a usage error. Exit table
+  `0`/`1`/`64`. Extended `tools/e2e_bootstrap_test.sh` with **`assert_stage4`**, chained onto the
+  phase-010 `assert_multirepo` aggregate (no fresh genesis clone — the per-member cost is `NDEBT-034`):
+  it runs the **aggregate → reconciliation → release-train** chain across the 2-member set, asserting a
+  `PASS` plan + a `PASS` train manifest (both C12-valid) and that an **ungated** admission is correctly
+  refused a `PASS`. The single-repo + n-case paths stay green.
 - **`tools/ecosystem_reconcile.py` — the Plan-stage tool** (phase 011 feature 082; `NDEBT-035`;
   NIP-0002 Stage 4). A stdlib-only tool that reads the phase-010 ecosystem-level membership-run
   aggregate (`schema/ecosystem_membership_result.schema.json`) for the authoritative `in_scope` set plus

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "011-coordination-protocols",
-  "current_feature": "083",
+  "current_feature": "084",
   "status": "in_progress",
-  "updated_at": "2026-07-22T11:10:00Z",
+  "updated_at": "2026-07-22T11:40:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1035,6 +1035,12 @@
       "event": "feature_complete",
       "feature": "082",
       "detail": "Feature 082 COMPLETE (phase 011, NIP-0002 Stage 4, NDEBT-035): the Plan-stage tool. Authored tools/ecosystem_reconcile.py (stdlib-only) -- reads the phase-010 ecosystem-level membership-run aggregate (schema/ecosystem_membership_result.schema.json) for the authoritative in_scope set + a packets-input file, and PRODUCES a schema-valid, dependency-ordered reconciliation plan at <output-dir>/plan.json (schema/reconciliation_plan.schema.json, F-080). Computes the topological order via Kahn's algorithm (deterministic, ready nodes sorted by id); a cyclic cross-repo dependency set is a first-class recorded cycle_finding forcing plan_verdict FAIL + non-zero exit, never a silent mis-order. Exit table mirrors ecosystem_membership_run.py: 0 PASS plan, 1 FAIL plan (cycle), 64 usage (unknown target repo / dangling edge / malformed input). Added a standing fixtures_self_test.sh CLI behavior probe (the 7th probe group): acyclic -> PASS(0) + a C12-valid produced plan; cyclic -> FAIL(1); unknown repo -> usage(64). Smoke-tested: order ['p-beta','p-alpha'] for alpha-depends-on-beta, produced plan validates C12 PASS. Full sweep validate.sh 15/15; fixtures_self_test 63/63."
+    },
+    {
+      "at": "2026-07-22T11:40:00Z",
+      "event": "feature_complete",
+      "feature": "083",
+      "detail": "Feature 083 COMPLETE (phase 011, NIP-0002 Stage 4, NDEBT-035): the Promote-stage tool + Stage-4 e2e. Authored tools/ecosystem_release_train.py (stdlib-only) -- reads a reconciliation plan (F-082) and PRODUCES a schema-valid release-train manifest at <output-dir>/manifest.json (schema/release_train_manifest.schema.json, F-081), admitting the plan's packets into a cross-repo release train. H-TRAIN-ENTRY is load-bearing: the tool REFUSES to emit a PASS train without the recorded admission decision (--entry-gate-recorded) and never itself promotes (record-but-never-self-execute); an orphan admission forces train_verdict FAIL; a non-PASS source plan is a usage error. Exit table 0/1/64. Extended tools/e2e_bootstrap_test.sh with assert_stage4, chained onto the phase-010 assert_multirepo aggregate (NO fresh genesis clone -- the per-member cost is NDEBT-034): runs the aggregate -> reconciliation -> release-train chain across the 2-member set, asserting a PASS plan + a PASS train manifest (both C12-valid) and that an ungated admission is refused a PASS (FAIL). Smoke-tested all 4 tool paths (gated PASS / ungated FAIL / orphan FAIL / non-PASS-plan usage); produced manifest validates C12. Full hermetic e2e PASS (assert_genesis + assert_multirepo + assert_stage4 all OK, exit 0). validate.sh 15/15; fixtures_self_test 63/63. With 080-083 done, NIP-0002 Stage 4 is mechanized end-to-end; feature 084 pilots + closes the phase."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1208,7 +1214,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1330,
-    "total_lines_changed": 1150,
+    "total_lines_changed": 1401,
     "per_feature": [
       {
         "id": "080",
@@ -1230,6 +1236,13 @@
         "actual": 271,
         "flag": "ON",
         "note": "Plan-stage tool + self-test CLI probe. git numstat added = 271 vs 250 -- ON (within ~10%). The stdlib-only tool (~210 lines incl. docstring + Kahn topological sort + input validation) + the ~40-line self-test probe + CHANGELOG. No schema/validate churn (the C12 reconciliation_plan family shipped in F-080). Smoke-tested acyclic PASS / cyclic FAIL / unknown-repo usage; produced plan validates C12. validate.sh 15/15, self-test 63/63."
+      },
+      {
+        "id": "083",
+        "estimated": 260,
+        "actual": 251,
+        "flag": "ON",
+        "note": "Promote-stage tool + Stage-4 hermetic e2e. git numstat added = 251 vs 260 -- ON (slightly UNDER). The stdlib-only tool (~150 lines incl. docstring) + the ~90-line assert_stage4 e2e function (chained onto assert_multirepo, reusing its aggregate -- no extra genesis clone per NDEBT-034) + CHANGELOG. No schema/validate churn (the C12 release_train_manifest family shipped in F-081). Full hermetic e2e PASS (assert_genesis + assert_multirepo + assert_stage4), validate.sh 15/15, self-test 63/63."
       }
     ]
   },

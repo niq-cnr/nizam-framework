@@ -457,6 +457,7 @@ main() {
   assert_preflight_governance_root "${SCRATCH_DIR}"
   assert_genesis "${EPHEMERAL_TAG}"
   assert_multirepo "${EPHEMERAL_TAG}"
+  assert_stage4
 
   echo "e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag ${EPHEMERAL_TAG}, target ${target})."
 }
@@ -710,6 +711,87 @@ print(d.get("member_count", -1))
   fi
 
   echo "assert_multirepo: OK -- a scratch 2-member ecosystem (both genesis'd from nothing at one pin) iterates + aggregates to a schema-valid ecosystem-level result (ecosystem_verdict PASS, framework_pin_consistent true, member_count 2)."
+  return 0
+}
+
+# assert_stage4
+#
+# The NIP-0002 Stage 4 (n-coordination) hermetic case, chained onto the aggregate
+# assert_multirepo produced (${SCRATCH_DIR}/multirepo/out/membership_run.json) --
+# no fresh genesis clone (the per-member clone cost is NDEBT-034). It runs the
+# aggregate -> reconciliation -> release-train chain across the 2-member set and
+# asserts each stage produces a schema-valid artifact with the correct verdict:
+#   (a) ecosystem_reconcile.py turns a packets input (over the aggregate's in_scope
+#       members, with a cross-repo depends_on edge) into a PASS reconciliation plan
+#       (exit 0) that validates against schema/reconciliation_plan.schema.json (C12);
+#   (b) ecosystem_release_train.py admits that plan into a release train WITH the
+#       H-TRAIN-ENTRY decision recorded -> a PASS manifest (exit 0) that validates
+#       against schema/release_train_manifest.schema.json (C12);
+#   (c) the same admission WITHOUT --entry-gate-recorded is refused a PASS -> FAIL
+#       (exit 1), proving the gate is load-bearing, not cosmetic.
+assert_stage4() {
+  local eco="${SCRATCH_DIR}/multirepo"
+  local agg="${eco}/out/membership_run.json"
+  local pk="${eco}/packets.json"
+  local plan_dir="${eco}/plan" train_dir="${eco}/train" ungated_dir="${eco}/train_ungated"
+  local rc verdict
+
+  if [ ! -s "${agg}" ]; then
+    echo "assert_stage4: FAIL -- no aggregate at ${agg} (assert_multirepo must run first)."
+    return 1
+  fi
+
+  # A packets input over the aggregate's members, with a cross-repo depends_on edge
+  # (member-a's packet depends on member-b's) so the topological order is non-trivial.
+  cat > "${pk}" <<'PY'
+{
+  "packets": [
+    {"id": "pkt-a", "repo": "member-a", "closes_findings": ["F-A1"], "depends_on": ["pkt-b"]},
+    {"id": "pkt-b", "repo": "member-b", "closes_findings": ["F-B1"], "depends_on": []}
+  ]
+}
+PY
+
+  # (a) reconcile -> a PASS plan that validates as reconciliation_plan (C12).
+  if python3 tools/ecosystem_reconcile.py --source-result "${agg}" --packets "${pk}" \
+      --output-dir "${plan_dir}" >/dev/null 2>&1; then rc=0; else rc=$?; fi
+  if [ "${rc}" -ne 0 ]; then
+    echo "assert_stage4: FAIL -- reconcile over the 2-member aggregate expected exit 0 (PASS plan), got ${rc}."
+    return 1
+  fi
+  if ! bash tools/validate.sh --target "${plan_dir}/plan.json" >/dev/null 2>&1; then
+    echo "assert_stage4: FAIL -- the produced plan.json did not validate as a reconciliation_plan (validate.sh --target, C12)."
+    return 1
+  fi
+
+  # (b) release-train WITH the H-TRAIN-ENTRY decision recorded -> a PASS manifest
+  # that validates as release_train_manifest (C12).
+  if python3 tools/ecosystem_release_train.py --plan "${plan_dir}/plan.json" \
+      --output-dir "${train_dir}" --entry-gate-recorded >/dev/null 2>&1; then rc=0; else rc=$?; fi
+  if [ "${rc}" -ne 0 ]; then
+    echo "assert_stage4: FAIL -- gated release-train expected exit 0 (PASS train), got ${rc}."
+    return 1
+  fi
+  if ! bash tools/validate.sh --target "${train_dir}/manifest.json" >/dev/null 2>&1; then
+    echo "assert_stage4: FAIL -- the produced manifest.json did not validate as a release_train_manifest (validate.sh --target, C12)."
+    return 1
+  fi
+  verdict="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1])).get("train_verdict",""))' "${train_dir}/manifest.json")"
+  if [ "${verdict}" != "PASS" ]; then
+    echo "assert_stage4: FAIL -- gated train manifest expected train_verdict PASS, got ${verdict}."
+    return 1
+  fi
+
+  # (c) the SAME admission WITHOUT --entry-gate-recorded is refused a PASS (exit 1),
+  # proving the gate is load-bearing.
+  if python3 tools/ecosystem_release_train.py --plan "${plan_dir}/plan.json" \
+      --output-dir "${ungated_dir}" >/dev/null 2>&1; then rc=0; else rc=$?; fi
+  if [ "${rc}" -ne 1 ]; then
+    echo "assert_stage4: FAIL -- ungated release-train expected exit 1 (FAIL, H-TRAIN-ENTRY not recorded), got ${rc}."
+    return 1
+  fi
+
+  echo "assert_stage4: OK -- the aggregate -> reconciliation -> release-train chain runs across the 2-member set: a PASS plan + a PASS train manifest (both C12-valid), and an ungated admission is correctly refused a PASS (FAIL)."
   return 0
 }
 
