@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.29.0
+version: 0.30.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.30.0"
+    date: "2026-07-22"
+    summary: "Release-in-preparation: v0.9.0 (MINOR), the first release since v0.8.0, carrying phases 007-011 (consumer-adoption enablement + the full NIP-0002 0-n realization + the audit/compare tooling). Current Position gains a 'Release in preparation: v0.9.0 -- awaiting H-FRAMEWORK-RELEASE' entry recording the prepared release surface (CHANGELOG [0.9.0] section, version bumps in C10 lockstep across NIZAM.json/docs/guide/CONTEXT.md/README.md, readiness checklist .agent/evidence/release-readiness-v0.9.0.md) on the release base 1dd4971 (phase-011 merge, PR #49). The pipeline never self-tags: the operator signs off + pushes the annotated v0.9.0 tag, release.yml publishes. NDEBT-029 (audit/compare not in a released tag) stays Open until the tag exists carrying the whole 0-n loop; on the tag it resolves and the standing real non-scratch multi-repo pilot becomes runnable. v0.8.0 remains the latest RELEASED tag until then."
   - version: "0.29.0"
     date: "2026-07-22"
     summary: "Phase 011 (0-n Project Spectrum, Stage 4: n-Coordination Protocols, features 080-084) COMPLETE -- so NIP-0002's staged plan is now complete. The phase-011 Plan-of-Record banner carries the completion record (080 ecosystem/04 Plan stage + reconciliation_plan schema + H-PLANNING-AUTHORITY defined; 081 ecosystem/05 Promote stage + release_train_manifest schema + H-TRAIN-ENTRY defined; 082 ecosystem_reconcile.py; 083 ecosystem_release_train.py + assert_stage4 e2e; 084 pilot proved the layer end-to-end across a scratch 2-member ecosystem -- PASS aggregate -> PASS plan -> PASS train, both negatives enforced (cyclic -> FAIL, ungated -> FAIL), evidence .agent/evidence/pilot-084/). NDEBT-035 resolved. Current Position rolled to phases 001-011 complete. The phase-012 candidate scope (NDEBT-029 release cut carrying the whole 0-n loop + a real non-scratch multi-repo pilot + the remaining 06/08 Repeat/GA protocols with H-CONSOLIDATION/H-GA) is refined and validated against the pilot evidence -- confirmed, not re-ordered (the release cut is the natural next step). manifest + run_state reflect phase-011 completion. A real, non-scratch multi-repo pilot at a released tag remains the open production-maturity criterion."
@@ -513,6 +516,16 @@ successor, leaving open debt deferred to unscoped "future phases").
   the `[0.8.0]` CHANGELOG section (run 29717579479, success). A MINOR release per
   `methodology/06_release_train.md` §3.2. The successor consumer-adoption phase
   (handover F-016..F-020) remains unblocked.
+- **Release in preparation: v0.9.0 (MINOR) — awaiting `H-FRAMEWORK-RELEASE`.** The first
+  release since v0.8.0, carrying phases 007–011 (consumer-adoption enablement + the full
+  NIP-0002 0–n realization + the audit/compare tooling), cutting a tag that finally carries
+  the whole 0–n loop into a consumable pin (`NDEBT-029`). Prepared on the release base
+  `1dd4971` (phase-011 merge, PR #49): the `CHANGELOG [0.9.0]` section, version bumps in
+  C10 lockstep (`NIZAM.json` / `docs/guide/index.html` / `CONTEXT.md` / `README.md`), and
+  the readiness checklist `.agent/evidence/release-readiness-v0.9.0.md`. The pipeline never
+  self-tags: the operator signs off and pushes the annotated `v0.9.0` tag, then `release.yml`
+  publishes the Release page from the `[0.9.0]` section. On the tag, `NDEBT-029` resolves and
+  the standing **real, non-scratch multi-repo pilot** becomes runnable at the released tag.
 - Open debt: NDEBT-026 (Low, pre-existing) plus three of the phase-007 pilot rows that
   phase 008 did **not** close — `NDEBT-029` (audit/compare not yet in a released tag),
   `NDEBT-030` (the absent 0-case), and `NDEBT-031` (single-`--repo-root` tools vs multi-repo

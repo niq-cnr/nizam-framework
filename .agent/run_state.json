@@ -3,7 +3,7 @@
   "current_phase": "011-coordination-protocols",
   "current_feature": "084",
   "status": "in_progress",
-  "updated_at": "2026-07-22T12:20:00Z",
+  "updated_at": "2026-07-22T15:30:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1062,6 +1062,11 @@
       "at": "2026-07-22T12:20:00Z",
       "event": "phase_complete",
       "detail": "Phase 011 (0-n Project Spectrum, Stage 4: n-Coordination Protocols) COMPLETE -- and with it, NIP-0002's STAGED PLAN IS COMPLETE (Stages 1/2/3/4 = phases 008/009/010/011). The coordination layer is first-class and mechanized: 080 authored ecosystem/04 (Plan) + schema/reconciliation_plan.schema.json (topological-order invariant, validate.sh C12) + defined H-PLANNING-AUTHORITY; 081 authored ecosystem/05 (Promote) + schema/release_train_manifest.schema.json (trace-to-plan invariant, C12) + defined H-TRAIN-ENTRY; 082 added tools/ecosystem_reconcile.py (aggregate+findings -> schema-valid dependency-ordered plan; cycle -> FAIL); 083 added tools/ecosystem_release_train.py (plan -> schema-valid train manifest, refusing a PASS without the recorded H-TRAIN-ENTRY decision) + hermetic assert_stage4 e2e; 084 piloted end-to-end across a scratch 2-member ecosystem (PASS aggregate -> PASS plan -> PASS train, all C12-valid; cyclic->FAIL, ungated->FAIL; evidence .agent/evidence/pilot-084/). NDEBT-035 RESOLVED. manifest phase-011 -> complete; ROADMAP Current Position rolled to phases 001-011 complete (v0.29.0). The two remaining reserved gates (H-CONSOLIDATION/H-GA map to 06/08 Repeat/GA) stay reserved -- phase 011 defined H-PLANNING-AUTHORITY/H-TRAIN-ENTRY only. Phase-012 candidate scope: the NDEBT-029 release cut carrying the whole 0-n loop (the natural next step), a real non-scratch multi-repo pilot at that released tag, and the 06/08 protocols. Full sweep 15/15, self-test 63/63, e2e PASS. Awaiting operator: the phase-011 PR + phase-012 planning."
+    },
+    {
+      "at": "2026-07-22T15:30:00Z",
+      "event": "release_prepared",
+      "detail": "v0.9.0 release PREPARED (operator direction: 'Let's move to the NDEBT-029 release cut'; version selected v0.9.0 MINOR on operator authorization). The first release since v0.8.0, carrying phases 007-011: consumer-adoption enablement (ecosystem/00 Bootstrap protocol + H-CONSUMER-UPGRADE) and the full NIP-0002 realization (0-n Project Spectrum: consumer-readiness ADR-004, greenfield genesis, the n-case membership registry + multi-repo tooling, the Stage-4 04/05 coordination protocols), plus the audit/compare + reconciliation/release-train tooling now shipped in the tag (resolving NDEBT-029 on the tag push). Release base 1dd4971 (phase-011 merge, PR #49). Prepared surface: CHANGELOG [0.9.0] - 2026-07-22 MINOR section (methodology/06_release_train.md 3.2; new schemas validate NEW artifact types, no previously-shipped schema narrowed) + a fresh empty [Unreleased]; version bumps 0.8.0 -> 0.9.0 in C10 lockstep (NIZAM.json framework.version, docs/guide/index.html meta+footer, CONTEXT.md frontmatter+change_log); README.md re-pinned to v0.9.0; readiness checklist .agent/evidence/release-readiness-v0.9.0.md. Full validation green: validate.sh 15/15, fixtures_self_test 65/65, e2e_bootstrap PASS. H-FRAMEWORK-RELEASE is the PENDING operator gate: the pipeline never self-tags -- the operator signs off + pushes the annotated v0.9.0 tag (as with v0.7.0/v0.8.0), then release.yml publishes the GitHub Release page from the [0.9.0] section. current_phase stays 011-coordination-protocols; status stays in_progress (the programme continues). On the tag: NDEBT-029 -> Resolved, and the standing real non-scratch multi-repo pilot becomes runnable at the released tag (the production-maturity criterion this release unblocks)."
     }
   ],
   "phase_001_scope_budget_final": {

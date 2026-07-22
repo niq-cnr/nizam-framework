@@ -2,13 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 0.8.0
+version: 0.9.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
-  - version: "0.8.0"
-    date: "2026-07-20"
-    summary: "Bump version for the v0.8.0 MINOR release closing phase 006 (Enforcement Closure & Hardening). No Module Map change: phase 006 added enforcement surface (validator checks C13/C14/C15, tools/verify_lib.sh primitives, tools/ecosystem_preflight.py hardening) and documentation-honesty markings, not new injected modules."
+  - version: "0.9.0"
+    date: "2026-07-22"
+    summary: "Bump version for the v0.9.0 MINOR release, the first since v0.8.0, carrying phases 007-011: consumer-adoption enablement (ecosystem/00 Bootstrap protocol + H-CONSUMER-UPGRADE) and the full NIP-0002 realization (0-n Project Spectrum: consumer-readiness, greenfield genesis, the n-case membership registry + multi-repo tooling, and the Stage-4 04/05 coordination protocols), plus the audit/compare tooling now shipped in the tag (NDEBT-029). Module Map gains the ecosystem coordination protocols (04/05) and the reconciliation/release-train tools; all additive, no removal or narrowing. A real non-scratch multi-repo pilot at this tag stays the standing production-maturity criterion."
   - version: "0.7.0"
     date: "2026-07-19"
     summary: "H-PAYLOAD-CONTRACT (phase-006 feature 051): the bootstrap payload sentence now names the SIX injected governance directories (standard/, templates/, schema/, tools/, methodology/, ecosystem/) plus NIZAM.json -- methodology/ and ecosystem/ joined the injected payload, resolving NDEBT-008; registry/ and docs/ remain framework-envelope and are not injected."
