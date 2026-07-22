@@ -1123,6 +1123,13 @@
         "actual": 95,
         "flag": "UNDER",
         "note": "ecosystem/00_ecosystem_bootstrap.md v0.5.0 (new Section 8 Greenfield Genesis + Section 3 table/prose correction + References renumber + frontmatter/change_log = 69 ins + 11 del = 80) + CHANGELOG feature-070 Added entry (~15). git numstat ins+del ~= 95 vs 200 estimated -- UNDER because Section 8 composes the existing inject/verify (Section 5), consumer-inputs (Section 6), and provenance (Section 7) mechanics rather than restating them (the protocol wraps, does not re-define). First feature of phase 009, so no rolling-average baseline per methodology/00_planning.md; no over-budget flag possible. Doc-only; the create-and-scaffold tooling (071) and registry transition (072) carry the mechanization lines."
+      },
+      {
+        "id": "071",
+        "estimated": 260,
+        "actual": 213,
+        "flag": "UNDER",
+        "note": "bootstrap.sh --genesis mode (167 ins + 2 del = 169: run_genesis + scaffold_project functions, --genesis/--project-root/--project-name args, TARGET_EXPLICIT + CREATED_PROJECT_ROOT tracking, cleanup of a half-built project, usage/header docs) + ecosystem/00 v0.6.0 (21 ins + 13 del = 34: Section 8 mechanization paragraph now names bootstrap.sh --genesis, Section 3 0-case row -> Covered, two-honest-limits prose) + CHANGELOG feature-071 Added entry (~10). git numstat ins+del ~= 213 vs 260 estimated -- UNDER because the genesis path is a thin create-and-scaffold wrapper that reuses run_install (clone/inject/verify/provenance) unchanged rather than duplicating it. Rolling avg (070=95) 3x=285; 213 under, no flag beyond UNDER. Manually verified hermetically (scratchpad): genesis stands up a new project (git init + README/CONTEXT/src scaffold + injected .nizam with tag+resolved_sha provenance), --verify-only PASSES against it, and a non-empty --project-root is refused; the existing inject-into-existing-repo e2e path stays green (51/51 self-test, e2e PASS). Standing hermetic genesis e2e coverage is feature 073. Advancing to feature 072 (incubating->in_scope transition)."
       }
     ]
   },

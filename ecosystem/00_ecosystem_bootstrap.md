@@ -2,10 +2,13 @@
 id: nizam-ecosystem-bootstrap
 title: "Ecosystem Bootstrap Protocol"
 description: "The reusable protocol for the ecosystem cycle's entry stage: how a consumer repository adopts the framework from a pinned, immutable released tag via the Governance Inheritance Protocol, verifies the injected payload, records its provenance pin, and reaches the clean, known state a Preflight run requires before any later stage may begin -- explicit about the 0-to-n project spectrum the stage must serve."
-version: 0.5.0
+version: 0.6.0
 status: active
 authoritative_source: ecosystem/00_ecosystem_bootstrap.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-07-22"
+    summary: "Phase-009 feature 071 (NDEBT-030; NIP-0002 Stage 2): the greenfield-genesis create-and-scaffold capability is now mechanized as bootstrap.sh --genesis. Section 8's closing paragraph is updated from 'delivered alongside this protocol ... until that capability is released, the protocol is the authoritative definition' to name bootstrap.sh --genesis as the mechanization of steps 1-3 (git init an empty --project-root, scaffold the deterministic skeleton, reuse the normal inject + verify + provenance install into <project-root>/.nizam, refusing a non-empty target). The Section 3 spectrum table's 0-case row rolls from 'Protocol defined (Section 8)' to 'Covered (Section 8 + bootstrap.sh --genesis)', and the 'two honest limits' prose from 'tooling being mechanized' to 'protocol + capability exist but are not yet in a released tag' (the same released-tag gap as NDEBT-029). No Section 4-7 renumbering; genesis reuses the Section 5 inject/verify and Section 7 provenance mechanics unchanged."
   - version: "0.5.0"
     date: "2026-07-22"
     summary: "Phase-009 feature 070 (NDEBT-030; NIP-0002 Stage 2): the 0-case (greenfield genesis) becomes a first-class protocol. New Section 8 (Greenfield Genesis: Standing Up a New Project From Nothing) defines the create-and-scaffold entry path — create the repository, scaffold a minimal deterministic skeleton + the consumer-supplied inputs (Section 6), perform the normal inject + verify (Section 5) recording provenance (Section 7), and register the project as incubating (the count-0->1 state) for promotion incubating -> in_scope. Establishes 'genesis'/'scaffold' vocabulary for standing up a NEW consumer project, distinct from the framework's own phase-001 genesis. The Section 3 spectrum table's 0-case row and the 'two honest limits' prose are corrected from 'no protocol or tooling yet' to 'protocol defined (Section 8); create-and-scaffold capability + incubating->in_scope transition mechanized in NIP-0002 Stage 2'. References (former Section 8) renumbered to Section 9; Sections 4-7 (and every cross-reference to the Section 7 provenance shape) are unchanged."
@@ -87,18 +90,19 @@ what the Bootstrap stage covers today and what it delegates.
 
 | Point | What it is | Bootstrap-stage coverage today |
 |-------|-----------|--------------------------------|
-| **0** -- greenfield genesis | Standing up a *new* project from nothing and bootstrapping the framework into it, distinct from adopting into a repository that already exists | **Protocol defined (Section 8).** Section 8 (Greenfield Genesis) makes the create-and-scaffold entry path first-class: create the repository, scaffold the minimal deterministic skeleton + consumer-supplied inputs (Section 6), then perform the normal inject + verify (Section 5) recording provenance (Section 7). A genesis'd project is tracked in the scope registry's `incubating` partition (`registry/scope_definition_patterns.md`) -- the count-0->1 state -- and promoted `incubating -> in_scope`. The create-and-scaffold *capability* and that registry transition are mechanized in NIP-0002 Stage 2 (phase 009). |
+| **0** -- greenfield genesis | Standing up a *new* project from nothing and bootstrapping the framework into it, distinct from adopting into a repository that already exists | **Covered (Section 8 + `bootstrap.sh --genesis`).** Section 8 (Greenfield Genesis) makes the create-and-scaffold entry path first-class, and `bootstrap.sh --genesis` mechanizes it: `git init` an empty `--project-root`, scaffold the minimal deterministic skeleton + consumer-supplied inputs stub (Section 6), then perform the normal inject + verify (Section 5) recording provenance (Section 7). A genesis'd project is tracked in the scope registry's `incubating` partition (`registry/scope_definition_patterns.md`) -- the count-0->1 state -- and promoted `incubating -> in_scope`. |
 | **1 -- greenfield** | A single repository that is new/empty | Covered as the degenerate, collision-free case of Section 5.1: with nothing pre-existing to reconcile, an inject + verify is the whole Bootstrap. |
 | **1 -- brownfield** | A single repository with existing content | **Covered.** `bootstrap.sh` injects only the `.nizam/` payload directory and never writes to a consumer's root-level `CONTEXT.md`/`AGENTS.md`/CI (`standard/GIP.md` Section 5.1 point 3), so it *cannot* silently overwrite pre-existing content -- the coexistence safety is guaranteed by construction. Reconciling a consumer's own root files against the shipped `.nizam/templates/` is, by that same protocol, an inherently consumer-side manual (rename-and-diff) step, not a bootstrap.sh operation; adoption tiers (`standard/GIP.md` Section 5.2) govern how much is adopted. Section 5.1 below is the stage-level rule. |
 | **n -- multi-repository** | Many associated repositories forming one ecosystem | **Partially covered.** Each repository bootstraps individually by this protocol; the *set* is declared by the consumer's ecosystem-membership registry (`registry/scope_definition_patterns.md`, the `in_scope` partition), which sets `n`. The shipped ecosystem tools take a single `--repo-root` and do not yet iterate that set; genuine cross-repository coordination lives in the deferred `04_dependency_reconciliation.md` and `05_release_train_coordination.md` protocols. |
 
 Two honest limits follow from the table and are recorded as debt rather than papered
-over. First, **the 0-case now has a protocol (Section 8) but its create-and-scaffold
-tooling and `incubating -> in_scope` transition are being mechanized in NIP-0002 Stage 2**
-(phase 009): the vocabulary is now unambiguous -- "genesis" and "scaffold" here mean
-standing up a *new consumer project*, kept distinct from the framework building *itself*
-(phase 001) -- but the single-command capability that performs the create-and-scaffold is
-Stage-2 tool work, not yet a released capability. Second, **the shipped tools are
+over. First, **the 0-case has a protocol (Section 8) and a create-and-scaffold capability
+(`bootstrap.sh --genesis`), but neither is yet in a *released* framework tag**: the
+vocabulary is unambiguous -- "genesis" and "scaffold" here mean standing up a *new consumer
+project*, kept distinct from the framework building *itself* (phase 001) -- and the
+single-command capability works today on the framework's own branch, but a consumer on a
+released pin gets it only once the next release cuts a tag carrying it (the same released-tag
+gap tracked for the audit/compare tools, `NDEBT-029`). Second, **the shipped tools are
 single-repo**: `tools/ecosystem_preflight.py` derives one `repository_name`, and its
 multi-repository consistency guard is annotated a defensive invariant for a future
 extension. A consumer running the cycle over more than one repository today runs it once
@@ -257,11 +261,15 @@ a brownfield adoption (Section 5.1), not a genesis, and a genesis capability MUS
 scaffold over existing content rather than overwrite it -- the same coexistence safety Section
 5.1 guarantees, enforced at creation time.
 
-The create-and-scaffold capability that mechanizes steps 1-2, and the `incubating -> in_scope`
-registry transition of step 4, are framework tooling delivered alongside this protocol in
-NIP-0002 Stage 2; the inject + verify of step 3 and the provenance artifact of step 4 are the
-existing `bootstrap.sh` mechanics this protocol already owns. Until that capability is released,
-the protocol above is the authoritative definition of what a conforming genesis must produce.
+Steps 1-3 (create, scaffold, inject + verify) are mechanized by **`bootstrap.sh --genesis`**: it
+`git init`s an empty `--project-root`, writes the deterministic skeleton (a `README`, a
+`CONTEXT.md` consumer-inputs stub naming the Section 6 inputs, and a `src/` source placeholder),
+then reuses the normal clone -> inject -> verify -> provenance install (Section 5, Section 7)
+into `<project-root>/.nizam` -- refusing a non-empty `--project-root`, which is a brownfield
+adoption (Section 5.1), not a genesis. Genesis defines no second inheritance mechanism; step 3 is
+exactly the install this protocol already owns. The `incubating -> in_scope` registry transition
+of step 4 is modelled on the ecosystem-membership registry
+(`registry/scope_definition_patterns.md`)'s `incubating` partition.
 
 ## 9. References
 

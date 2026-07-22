@@ -9,6 +9,21 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`bootstrap.sh --genesis` — greenfield-genesis capability** (phase 009 feature 071;
+  `NDEBT-030`; NIP-0002 Stage 2). Mechanizes standing up a *new* project from nothing (the
+  0-case): `bootstrap.sh --genesis --project-root DIR [--project-name NAME]` `git init`s an empty
+  project root, scaffolds a minimal deterministic skeleton (a `README`, a `CONTEXT.md`
+  consumer-inputs stub naming the `ecosystem/00` §6 inputs, and a `src/` source placeholder),
+  then reuses the normal clone → inject → verify → provenance install (recording `tag` +
+  `resolved_sha`) into `<project-root>/.nizam`. It **refuses a non-empty `--project-root`** (a
+  brownfield adoption, not a genesis), and a genesis that fails partway removes a project root it
+  created (nothing half-built is left behind). The existing inject-into-an-existing-repo path and
+  `--verify-only` are unchanged (regression-guarded). `ecosystem/00_ecosystem_bootstrap.md` →
+  v0.6.0: §8's mechanization note now names `bootstrap.sh --genesis`, the §3 spectrum table's
+  0-case row rolls to "Covered (Section 8 + `bootstrap.sh --genesis`)", and the "two honest
+  limits" prose to "protocol + capability exist but not yet in a released tag" (the `NDEBT-029`
+  release gap).
+
 - **Greenfield-genesis protocol** (phase 009 feature 070; `NDEBT-030`; NIP-0002 Stage 2). The
   0-case of the 0–n spectrum — standing up a *new* project from nothing — becomes a first-class
   protocol: `ecosystem/00_ecosystem_bootstrap.md` → v0.5.0 gains **Section 8 (Greenfield

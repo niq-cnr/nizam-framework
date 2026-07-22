@@ -18,7 +18,16 @@
 # Usage:
 #   ./bootstrap.sh [--repo-url URL] [--tag TAG] [--target DIR]
 #   ./bootstrap.sh --verify-only [--tag TAG] [--target DIR]
+#   ./bootstrap.sh --genesis --project-root DIR [--project-name NAME] [--tag TAG]
 #   ./bootstrap.sh --help
+#
+# The --genesis mode stands up a NEW project from nothing (the 0-case of the
+# 0-to-n project spectrum, ecosystem/00_ecosystem_bootstrap.md Section 8): it
+# git-inits an empty --project-root, scaffolds a minimal deterministic skeleton
+# (README, a CONTEXT.md consumer-inputs stub, a source placeholder), then runs
+# the normal clone -> inject -> verify -> provenance install into
+# <project-root>/.nizam. It refuses a non-empty --project-root (that is a
+# brownfield adoption, not a genesis).
 #
 # Configuration (environment variable, overridable by the matching CLI flag):
 #   GOVERNANCE_REPO_URL   Source git repository of the governance payload.
@@ -71,7 +80,15 @@ readonly REQUIRED_MODULE_DIRS=(
 GOVERNANCE_REPO_URL="${GOVERNANCE_REPO_URL:-${DEFAULT_GOVERNANCE_REPO_URL}}"
 GOVERNANCE_TAG="${GOVERNANCE_TAG:-}"
 TARGET_DIR="${NIZAM_TARGET_DIR:-${DEFAULT_TARGET_DIR}}"
+# Set to 1 by --target/--target= so --genesis knows whether the caller pinned an
+# explicit payload location or wants the default <project-root>/.nizam.
+TARGET_EXPLICIT=0
 VERIFY_ONLY=0
+# Greenfield-genesis mode (feature 071, NDEBT-030; ecosystem/00 Section 8): create
+# and scaffold a NEW project at --project-root, then inject the payload into it.
+GENESIS=0
+PROJECT_ROOT=""
+PROJECT_NAME=""
 # Optional caller-supplied expected commit SHA (feature 067, NDEBT-033). When set,
 # --verify-only asserts the recorded provenance resolved_sha equals it, so a moved
 # remote tag replaying a different commit under the same tag name is rejected.
@@ -83,6 +100,11 @@ EXPECTED_SHA="${EXPECTED_SHA:-}"
 CLONE_DIR=""
 STAGE_DIR=""
 REPLACED_OLD_DIR=""
+# A --project-root this run created (genesis mode). Removed by cleanup if a
+# genesis fails partway, so a failed genesis never leaves a half-built project
+# behind; cleared on success once the project owns itself. A pre-existing empty
+# --project-root is never tracked here (we did not create it, so we never delete it).
+CREATED_PROJECT_ROOT=""
 
 print_usage() {
   cat <<'USAGE'
@@ -104,6 +126,14 @@ Modes:
                      pinned tag, and its recorded commit SHA is present (and,
                      with --expected-sha, matches). Performs no clone and no
                      write, and never re-resolves the tag itself.
+  --genesis          Greenfield genesis (the 0-case, ecosystem/00 Section 8):
+                     stand up a NEW project from nothing. git-inits an empty
+                     --project-root, scaffolds a minimal deterministic skeleton
+                     (README, a CONTEXT.md consumer-inputs stub, a source
+                     placeholder), then performs the normal install into
+                     <project-root>/.nizam. Refuses a non-empty --project-root
+                     (a brownfield adoption, not a genesis). Requires
+                     --project-root; mutually exclusive with --verify-only.
   --help, -h         Print this usage text and exit 0. Network-free.
 
 Options:
@@ -111,7 +141,12 @@ Options:
   --tag TAG          Override GOVERNANCE_TAG for this invocation. Must be a
                      pinned tag -- "", "main", "master", "HEAD", and any
                      "refs/heads/*" reference are all refused.
-  --target DIR       Override the injection target directory (default: .nizam).
+  --target DIR       Override the injection target directory (default: .nizam,
+                     or <project-root>/.nizam in --genesis mode).
+  --project-root DIR (--genesis only) The new project's root to create and
+                     scaffold. Must not already exist as a non-empty directory.
+  --project-name NAME (--genesis only) Name used in the scaffold (default: the
+                     basename of --project-root).
   --expected-sha SHA The commit SHA the pinned tag must resolve to. Install
                      records the tag's resolved commit in provenance.json
                      (resolved_sha); --verify-only with --expected-sha asserts
@@ -164,6 +199,12 @@ cleanup() {
       rm -rf -- "${REPLACED_OLD_DIR}"
     fi
   fi
+  if [ -n "${CREATED_PROJECT_ROOT}" ] && [ -d "${CREATED_PROJECT_ROOT}" ]; then
+    # A genesis created this project root and then failed before completing:
+    # remove it so a failed genesis leaves nothing half-built. Only ever set
+    # for a root THIS run created (never a pre-existing directory).
+    rm -rf -- "${CREATED_PROJECT_ROOT}"
+  fi
   return "${exit_code}"
 }
 
@@ -197,6 +238,28 @@ parse_args() {
         VERIFY_ONLY=1
         shift
         ;;
+      --genesis)
+        GENESIS=1
+        shift
+        ;;
+      --project-root)
+        [ "$#" -ge 2 ] || die "--project-root requires an argument."
+        PROJECT_ROOT="$2"
+        shift 2
+        ;;
+      --project-root=*)
+        PROJECT_ROOT="${1#--project-root=}"
+        shift
+        ;;
+      --project-name)
+        [ "$#" -ge 2 ] || die "--project-name requires an argument."
+        PROJECT_NAME="$2"
+        shift 2
+        ;;
+      --project-name=*)
+        PROJECT_NAME="${1#--project-name=}"
+        shift
+        ;;
       --repo-url)
         [ "$#" -ge 2 ] || die "--repo-url requires an argument."
         GOVERNANCE_REPO_URL="$2"
@@ -218,10 +281,12 @@ parse_args() {
       --target)
         [ "$#" -ge 2 ] || die "--target requires an argument."
         TARGET_DIR="$2"
+        TARGET_EXPLICIT=1
         shift 2
         ;;
       --target=*)
         TARGET_DIR="${1#--target=}"
+        TARGET_EXPLICIT=1
         shift
         ;;
       --expected-sha)
@@ -469,9 +534,109 @@ with open(path, "w", encoding="utf-8") as handle:
   log "install complete. Governance payload version ${framework_version} (tag ${GOVERNANCE_TAG}) is now at '${TARGET_DIR}'."
 }
 
+# Writes the minimal, deterministic project skeleton a greenfield genesis stands
+# up (ecosystem/00_ecosystem_bootstrap.md Section 8, step 2): a project README, a
+# CONTEXT.md stub enumerating the consumer-supplied inputs the later stages consume
+# (that protocol's Section 6), and a source placeholder the Audit stage can measure.
+# Deterministic: only the project name varies, so the same genesis inputs reproduce
+# the same scaffold. The title lines are written with printf (name interpolation);
+# the bodies come from quoted heredocs so their literal backticked paths are never
+# evaluated as command substitutions.
+scaffold_project() {
+  local root="$1"
+  local name="$2"
+  log "genesis: scaffolding a minimal deterministic skeleton under '${root}'..."
+  mkdir -p -- "${root}/src"
+
+  {
+    printf '# %s\n\n' "${name}"
+    cat <<'EOF'
+A project bootstrapped into the Nizam ecosystem via greenfield genesis
+(`.nizam/ecosystem/00_ecosystem_bootstrap.md` Section 8). The governance payload
+is injected under `.nizam/`; enter the ecosystem cycle at Preflight
+(`.nizam/ecosystem/01_clean_state_preflight.md`).
+EOF
+  } > "${root}/README.md"
+
+  {
+    printf '# %s -- Ecosystem Context\n\n' "${name}"
+    cat <<'EOF'
+This project participates in the Nizam Ecosystem Engineering Cycle. Before running
+the full cycle, supply the consumer-specific inputs the later stages consume
+(`.nizam/ecosystem/00_ecosystem_bootstrap.md` Section 6):
+
+- **In-scope repositories** (the ecosystem-membership registry that sets `n`): TODO
+- **Scope boundaries**: TODO
+- **Scoring thresholds**: TODO
+- **Finding owners**: TODO
+- **Operator gates**: TODO
+
+Until these are supplied this is a valid `docs-standard-only`/`templates` tier
+adoption (`.nizam/standard/GIP.md` Section 5.2), not yet a full-loop consumer. This
+project is tracked `incubating` (the count-0->1 state) until it clears its first
+clean Preflight/Baseline and is promoted `in_scope`.
+EOF
+  } > "${root}/CONTEXT.md"
+
+  {
+    printf '# %s -- source placeholder\n\n' "${name}"
+    cat <<'EOF'
+Replace this with the project's first real source. It exists so the Audit stage
+(`.nizam/ecosystem/03_engineering_audit.md`) has a real tree to measure from the
+project's first cycle run.
+EOF
+  } > "${root}/src/PLACEHOLDER.md"
+}
+
+# --genesis: stand up a NEW project from nothing (the 0-case, ecosystem/00
+# Section 8). Creates and git-inits an empty --project-root, scaffolds the minimal
+# skeleton, then reuses run_install unchanged to clone -> inject -> verify ->
+# provenance the payload into <project-root>/.nizam. Refuses a non-empty
+# --project-root (a brownfield adoption, not a genesis).
+run_genesis() {
+  require_pinned_tag "${GOVERNANCE_TAG}"
+  require_command git
+  require_command python3
+  [ -n "${PROJECT_ROOT}" ] || die "--genesis requires --project-root DIR (the new project's root to create and scaffold)."
+
+  if [ -e "${PROJECT_ROOT}" ]; then
+    [ -d "${PROJECT_ROOT}" ] || die "--project-root '${PROJECT_ROOT}' exists and is not a directory."
+    if [ -n "$(ls -A -- "${PROJECT_ROOT}" 2>/dev/null)" ]; then
+      die "--genesis refuses a non-empty --project-root '${PROJECT_ROOT}': standing up a new project over existing content is a brownfield adoption (ecosystem/00_ecosystem_bootstrap.md Section 5.1), not a greenfield genesis. Bootstrap into it directly (default mode) instead."
+    fi
+  else
+    mkdir -p -- "${PROJECT_ROOT}" || die "unable to create --project-root '${PROJECT_ROOT}'."
+    CREATED_PROJECT_ROOT="${PROJECT_ROOT}"
+  fi
+
+  local project_name="${PROJECT_NAME:-$(basename -- "${PROJECT_ROOT}")}"
+
+  log "genesis: initializing a new project at '${PROJECT_ROOT}' (name: ${project_name})..."
+  git init -q -- "${PROJECT_ROOT}" || die "git init failed for '${PROJECT_ROOT}'."
+
+  scaffold_project "${PROJECT_ROOT}" "${project_name}"
+
+  # Default the payload location to <project-root>/.nizam unless the caller pinned
+  # an explicit --target. Then reuse the normal install (clone -> inject -> verify
+  # -> provenance) unchanged -- genesis defines no second inheritance mechanism.
+  if [ "${TARGET_EXPLICIT}" -eq 0 ]; then
+    TARGET_DIR="${PROJECT_ROOT}/${DEFAULT_TARGET_DIR}"
+  fi
+  log "genesis: injecting the governance payload into '${TARGET_DIR}'..."
+  run_install
+
+  # The project stood up successfully and now owns itself: clear the created-root
+  # tracker so cleanup never removes it.
+  CREATED_PROJECT_ROOT=""
+  log "genesis complete: new project '${project_name}' created at '${PROJECT_ROOT}'; governance payload at '${TARGET_DIR}'. Enter the cycle at Preflight (${TARGET_DIR}/ecosystem/01_clean_state_preflight.md)."
+}
+
 main() {
   parse_args "$@"
-  if [ "${VERIFY_ONLY}" -eq 1 ]; then
+  if [ "${GENESIS}" -eq 1 ]; then
+    [ "${VERIFY_ONLY}" -eq 0 ] || die "--genesis and --verify-only are mutually exclusive."
+    run_genesis
+  elif [ "${VERIFY_ONLY}" -eq 1 ]; then
     run_verify_only
   else
     run_install
