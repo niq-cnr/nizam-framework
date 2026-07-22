@@ -3,14 +3,17 @@ id: nizam-product-spec-009
 title: "Nizam Framework — Phase 009 Spec (0–n Project Spectrum, Stage 2: Greenfield Genesis) — PROPOSAL"
 description: "Phase-009 proposal: realize NIP-0002 (The 0–n Project Spectrum) Stage 2 — the 0-case (greenfield genesis). Stands up a NEW project from nothing and bootstraps the framework into it (NDEBT-030): authors the greenfield-genesis protocol, mechanizes a create-and-scaffold capability, models the incubating→in_scope (count-0→1) transition on the scope registry, adds hermetic e2e coverage, then pilots the 0-case against a scratch greenfield project to PROVE it and prioritise the n-case/04-05 stages from that evidence. PROPOSED, not activated: execution requires operator authorization (gate H-PHASE-009). The n-case (multi-repo tooling + membership registry, NDEBT-031), the 04/05 coordination protocols, and the release cut carrying audit/compare (NDEBT-029) are explicitly OUT OF SCOPE — carried as phase-010 candidate scope. Extends product_spec.md..product_spec_008.md; replaces none."
 tags: [spec, ecosystem-cycle, zero-to-n, greenfield-genesis, bootstrap, scaffold, phase-009, proposal]
-status: draft
+status: active
 last_audited: "2026-07-22"
 authoritative_source: NA
-version: 1.0.0
+version: 1.1.0
 spec_version: "1.0.0"
 created_at: "2026-07-22T00:00:00Z"
-updated_at: "2026-07-22T00:00:00Z"
+updated_at: "2026-07-22T00:10:00Z"
 change_log:
+  - version: "1.1.0"
+    date: "2026-07-22T00:10:00Z"
+    summary: "Phase activated: frontmatter status draft -> active on operator authorization 2026-07-22 (verbatim: 'Activate phase 009', gate H-PHASE-009, recorded in .agent/run_state.json event phase_activated before any feature execution per the NDEBT-018 rule). current_phase advanced 008-consumer-readiness -> 009-greenfield-genesis; scope budget reset (1000 est, phase-008 final archived). Body Status banner updated PROPOSED -> ACTIVE plan of record; no scope change. The draft status was the designed proposal state, flipped only now that the decision lifecycle reached activation (the 005 lesson applied as intended)."
   - version: "1.0.0"
     date: "2026-07-22T00:00:00Z"
     summary: "Initial phase-009 proposal, authored after PR #45 merged phase 008 (NIP-0002 Stage 1, Consumer-Readiness) to main. Scope sourced from NIP-0002's Staged Realization Stage 2 (the 0-case — greenfield genesis) + the phase-008 re-pilot evidence + the open debt row NDEBT-030. The operator directed taking Stage 2 next, one stage at a time (as phase 008 took Stage 1). Frontmatter status stays draft until operator activation (gate H-PHASE-009) — the 005 lesson: status tracks the decision lifecycle, not anticipates it. No feature may enter contract negotiation before that authorization; current_phase remains 008-consumer-readiness (complete) until then. NIP-0002 Stages 3–4 (n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols) plus the release cut carrying the audit/compare tools (NDEBT-029) are deferred to phase 010, evidence-gated on this phase's 0-case pilot."
@@ -18,14 +21,15 @@ change_log:
 
 # Nizam Framework — Phase 009 Spec (0–n Project Spectrum, Stage 2: Greenfield Genesis)
 
-**Status: PROPOSED.** Phase `009-greenfield-genesis` is a Planner proposal awaiting operator
-authorization (gate **H-PHASE-009**). Per `methodology/00_planning.md`, the Planner-produced
-spec and the DAG-validated feature list (`.agent/feature_list_009.json`) exist now; the phase
-becomes real only on operator activation, recorded in `.agent/run_state.json`
-(`phase_activated`) before any feature execution (the NDEBT-018 rule). Until then
-`docs/planning/manifest.json` keeps `current_phase: 008-consumer-readiness` (complete) and the
-phase-009 entry `status: pending` / `activation_state: proposed`; no feature enters contract
-negotiation.
+**Status: ACTIVE — plan of record.** Phase `009-greenfield-genesis` was authorized for
+activation by the operator on 2026-07-22 (verbatim: **"Activate phase 009"**, satisfying gate
+**H-PHASE-009**; recorded in `.agent/run_state.json` event `phase_activated` before any feature
+execution, per the NDEBT-018 rule). It advances **NIP-0002 (The 0–n Project Spectrum)** to
+Stage 2 (the 0-case). Per `methodology/00_planning.md`, the Planner-produced spec and the
+DAG-validated feature list (`.agent/feature_list_009.json`) existed at proposal; the operator
+authorization completed the activation triad. `docs/planning/manifest.json` carries
+`current_phase: 009-greenfield-genesis` with the phase-009 entry `status: in_progress`.
+Execution begins with the ungated DAG root feature 070 (the greenfield-genesis protocol).
 
 ## 1. Purpose
 

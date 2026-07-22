@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "008-consumer-readiness",
-  "current_feature": "069",
-  "status": "phase_complete",
-  "updated_at": "2026-07-21T13:05:00Z",
+  "current_phase": "009-greenfield-genesis",
+  "current_feature": "070",
+  "status": "in_progress",
+  "updated_at": "2026-07-22T00:00:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -932,6 +932,11 @@
       "at": "2026-07-21T13:05:00Z",
       "event": "phase_complete",
       "detail": "Phase 008 (0-n Project Spectrum, Stage 1: Consumer-Readiness) COMPLETE. Realized NIP-0002 Stage 1: ADR-004 governance-root resolution (065, NDEBT-027) + provenance-pin anchoring (066, NDEBT-028) made the single-project case genuinely consumer-ready; bootstrap commit-SHA pinning (067, NDEBT-033) hardened the pin against a moved tag; brownfield coexistence resolved-by-design (068, NDEBT-032, operator Option A -- no code, the .nizam/-only inject already satisfies GIP 5.1 by construction); the re-pilot (069) proved findings A/B resolved against a real bootstrapped consumer with no workaround. Landed on main via PR #44 (activation + 065 + 066); 067/068/069 on the phase-008 branch for a second PR. manifest phase-008 -> complete. NIP-0002 Stages 2-4 (0-case genesis, n-case multi-repo tooling + membership registry, 04/05 protocols) remain the phase-009 candidate scope, evidence-validated by this re-pilot. Awaiting operator: the 067-069 PR, and phase-009 planning (a fresh H-PHASE-009 cycle)."
+    },
+    {
+      "at": "2026-07-22T00:00:00Z",
+      "event": "phase_activated",
+      "detail": "Phase 009-greenfield-genesis ACTIVATED on operator authorization. Verbatim: 'Activate phase 009' (operator-controlled session, 2026-07-22, given after the phase-009 proposal was authored and pushed at commit 78e7f53), satisfying gate H-PHASE-009 and making phase 009 (0-n Project Spectrum, Stage 2: Greenfield Genesis) the plan of record. This advances NIP-0002 to Stage 2 (the 0-case). current_phase advanced 008-consumer-readiness -> 009-greenfield-genesis; current_feature set to 070 (the ungated DAG root); status in_progress. Scope budget reset (1000 est; phase-008 final archived in run_state.phase_008_scope_budget_final). Recorded BEFORE any feature execution, per the NDEBT-018 gate-decision-before-execution rule (mirrors every prior phase_activated). Execution begins with feature 070 (the greenfield-genesis protocol; NDEBT-030) -- naming and scoping the 0-case (standing up a NEW project from nothing and bootstrapping into it), distinct from the framework's own phase-001 genesis. NIP-0002 Stages 3-4 (n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols) plus the release cut carrying audit/compare (NDEBT-029) stay OUT OF SCOPE as phase-010 candidate scope."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1104,6 +1109,11 @@
     ]
   },
   "scope_budget": {
+    "original_estimate_lines": 1000,
+    "total_lines_changed": 0,
+    "per_feature": []
+  },
+  "phase_008_scope_budget_final": {
     "original_estimate_lines": 1010,
     "total_lines_changed": 823,
     "per_feature": [

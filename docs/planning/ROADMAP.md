@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.20.0
+version: 0.21.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.21.0"
+    date: "2026-07-22"
+    summary: "Phase 009 ACTIVATED (operator verbatim: 'Activate phase 009', gate H-PHASE-009, 2026-07-22): the 'Proposed Next Phase — Phase 009' banner becomes the Plan of Record banner (Activated). current_phase advanced 008-consumer-readiness -> 009-greenfield-genesis in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_009 flipped draft -> active (1.1.0); scope budget reset to 1000 (phase-008 final archived). operator_gates.md records H-PHASE-009 SATISFIED. Execution begins with the ungated DAG root feature 070 (the greenfield-genesis protocol; NDEBT-030) — the first code change of the 0-case."
   - version: "0.20.0"
     date: "2026-07-22"
     summary: "Phase 009 PROPOSED (operator 'Go', taking NIP-0002 Stage 2 next — one stage at a time as phase 008 took Stage 1). A new 'Proposed Next Phase — Phase 009' banner tops the roadmap: the 0-case (greenfield genesis, NDEBT-030), features 070-074 (DAG root {070}, est 1000), realized by the Planner artifacts .agent/product_spec_009.md (status draft) + .agent/feature_list_009.json, awaiting activation gate H-PHASE-009. The former 'Deferred -> Phase-009 candidate scope' subsection in the phase-008 banner is annotated as now-authored; NIP-0002 Stages 3-4 (n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols, NDEBT-029 release cut) are carried forward as phase-010 candidate scope. current_phase stays 008-consumer-readiness until activation; run_state untouched (a proposal is not an activation)."
@@ -70,15 +73,16 @@ change_log:
 
 # Forward Roadmap
 
-## Proposed Next Phase (2026-07-22) — Phase 009: 0–n Project Spectrum, Stage 2 — Greenfield Genesis — **PROPOSAL, awaiting H-PHASE-009**
+## Plan of Record (2026-07-22) — Phase 009 Activated: 0–n Project Spectrum, Stage 2 — Greenfield Genesis
 
-**Phase `009-greenfield-genesis` is a PROPOSAL** (2026-07-22), awaiting operator activation
-(gate **H-PHASE-009**). The Planner artifacts exist — `.agent/product_spec_009.md` (status
-draft) and `.agent/feature_list_009.json` (features 070–074, DAG-validated acyclic, root {070},
-est 1000) — but no feature enters contract negotiation until activation, and `current_phase`
-stays `008-consumer-readiness` (complete). It realizes **NIP-0002 Stage 2 — the 0-case
-(greenfield genesis)**, taken one stage at a time as phase 008 took Stage 1 (operator direction,
-2026-07-22).
+**Phase `009-greenfield-genesis` is ACTIVE** (2026-07-22) — the plan of record. The operator
+authorized activation (verbatim: **"Activate phase 009"**, satisfying gate **H-PHASE-009**;
+recorded in `.agent/run_state.json` event `phase_activated` before any feature execution, per
+the NDEBT-018 rule). `product_spec_009.md` flipped draft → active (v1.1.0); `current_phase`
+advanced `008-consumer-readiness` → `009-greenfield-genesis`; the scope budget was reset (1000
+est; phase-008 final archived). Execution begins with the ungated DAG root feature 070 (the
+greenfield-genesis protocol). It realizes **NIP-0002 Stage 2 — the 0-case (greenfield
+genesis)**, taken one stage at a time as phase 008 took Stage 1.
 
 **Scope — NIP-0002 Stage 2 only (prove-then-build).** Phase 008 proved the "1" point (a single,
 already-existing consumer). The **"0" point remains absent**: standing up a *new* project from
