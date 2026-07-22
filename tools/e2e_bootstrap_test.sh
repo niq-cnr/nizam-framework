@@ -455,6 +455,7 @@ main() {
   assert_provenance_sha_pin "${EPHEMERAL_TAG}" "${target}"
   assert_payload_validate_cwd_independent "${target}"
   assert_preflight_governance_root "${SCRATCH_DIR}"
+  assert_genesis "${EPHEMERAL_TAG}"
 
   echo "e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag ${EPHEMERAL_TAG}, target ${target})."
 }
@@ -506,6 +507,84 @@ assert_preflight_governance_root() {
     return 1
   fi
   echo "assert_preflight_governance_root: OK -- ecosystem_preflight.py discovered the injected .nizam/ governance-root (exit ${rc}: PASS_WITH_EXCEPTIONS; the injected payload is an expected exception, required references resolve under .nizam/)."
+  return 0
+}
+
+# assert_genesis <tag>
+# --------------------------------------------------------------------------
+# Feature 073 (NDEBT-030; NIP-0002 Stage 2): proves the 0-case end-to-end --
+# `bootstrap.sh --genesis` stands up a NEW project FROM NOTHING (git init +
+# the deterministic scaffold of ecosystem/00 Section 8), injects the payload,
+# and the result is a clean cycle participant that Preflight accepts as
+# PASS_WITH_EXCEPTIONS (the injected, untracked .nizam/ the only exception).
+# Also proves genesis REFUSES a non-empty --project-root (a brownfield adoption,
+# not a genesis). Hermetic: clones file://$(pwd) at the ephemeral tag; everything
+# lives under SCRATCH_DIR so cleanup removes it. Each bootstrap/preflight exit is
+# captured via an `if` so main()'s `set -e` never aborts before a diagnostic.
+#
+# Returns 0 if genesis stands up a scaffolded, provenance-pinned, Preflight-clean
+# project AND refuses a non-empty target; non-zero (with a diagnostic) otherwise.
+assert_genesis() {
+  local tag="$1"
+  local proj="${SCRATCH_DIR}/genesis-proj"
+  local nonempty="${SCRATCH_DIR}/genesis-nonempty"
+  local out rc recorded_sha f
+
+  # (a) genesis-from-nothing: create + scaffold + inject in one command.
+  if ! bash bootstrap.sh --genesis --project-root "${proj}" --project-name e2e-demo \
+      --tag "${tag}" --repo-url "file://$(pwd)" >/dev/null 2>&1; then
+    echo "assert_genesis: FAIL -- bootstrap.sh --genesis did not stand up a new project at '${proj}'."
+    return 1
+  fi
+
+  # (b) the deterministic scaffold is present and non-empty.
+  for f in README.md CONTEXT.md src/PLACEHOLDER.md; do
+    if [ ! -s "${proj}/${f}" ]; then
+      echo "assert_genesis: FAIL -- expected scaffold file missing or empty: ${f}"
+      return 1
+    fi
+  done
+
+  # (c) the injected payload carries provenance with a recorded resolved_sha.
+  recorded_sha="$(python3 -c '
+import json, sys
+with open(sys.argv[1], "r", encoding="utf-8") as handle:
+    print(json.load(handle).get("resolved_sha", ""))
+' "${proj}/.nizam/provenance.json")" || { echo "assert_genesis: FAIL -- genesis payload provenance.json unreadable under '${proj}/.nizam'."; return 1; }
+  if [ -z "${recorded_sha}" ]; then
+    echo "assert_genesis: FAIL -- genesis payload recorded no resolved_sha (feature 067/071 regression)."
+    return 1
+  fi
+
+  # (d) commit the scaffold so the working tree is clean except the injected,
+  # untracked .nizam/; Preflight must then accept it as PASS_WITH_EXCEPTIONS.
+  git -C "${proj}" config user.email t@example.invalid
+  git -C "${proj}" config user.name tester
+  git -C "${proj}" add README.md CONTEXT.md src
+  git -C "${proj}" commit -qm "genesis scaffold"
+  out="$(mktemp -d)"
+  if python3 tools/ecosystem_preflight.py --execution-id e2e-genesis \
+      --output-dir "${out}" --repo-root "${proj}" >/dev/null 2>&1; then
+    rc=0
+  else
+    rc=$?
+  fi
+  rm -rf -- "${out}"
+  if [ "${rc}" -ne 2 ] && [ "${rc}" -ne 3 ]; then
+    echo "assert_genesis: FAIL -- Preflight against the genesis'd project expected exit 2/3 (PASS_WITH_EXCEPTIONS), got ${rc}."
+    return 1
+  fi
+
+  # (e) genesis refuses a non-empty --project-root (a brownfield adoption).
+  mkdir -p "${nonempty}"
+  printf 'existing\n' > "${nonempty}/existing.txt"
+  if bash bootstrap.sh --genesis --project-root "${nonempty}" \
+      --tag "${tag}" --repo-url "file://$(pwd)" >/dev/null 2>&1; then
+    echo "assert_genesis: FAIL -- genesis did NOT refuse a non-empty --project-root '${nonempty}'."
+    return 1
+  fi
+
+  echo "assert_genesis: OK -- genesis stood up a new project from nothing (scaffold present; provenance resolved_sha=${recorded_sha}); Preflight accepts it (exit ${rc}: PASS_WITH_EXCEPTIONS); a non-empty --project-root is refused."
   return 0
 }
 

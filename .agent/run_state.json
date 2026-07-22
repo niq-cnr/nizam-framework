@@ -1137,6 +1137,13 @@
         "actual": 95,
         "flag": "UNDER",
         "note": "registry/scope_definition_patterns.md v0.2.0 (40 ins + 1 del = 41: new Section 2.3 incubating->in_scope promotion as the count-0->1 transition -- entry/promotion-criterion/move-preserves-invariant/symmetric-demotion -- plus the frontmatter change_log the version bump requires) + tools/fixtures_self_test.sh scratch probe (46 ins: _incubating_promotion_scratch asserts the promotion MOVES the entry and a two-list copied-not-moved entry is detected; built in a mktemp dir per Section 11 probe isolation, no committed fixture so the 51/51 tally is unchanged) + CHANGELOG feature-072 Added entry (~8). git numstat ins+del ~= 95 vs 180 estimated -- UNDER: the registry already modelled the incubating partition (Section 2.1), so 072 adds the transition SEMANTICS + a mechanical probe, not a new registry. Scoped to count-0->1 only; the count-1->n membership-registry promotion stays NDEBT-031/phase-010. Rolling avg (070=95,071=213)=154, 3x=462; 95 under. Full sweep 15/15, self-test 51/51 (new transition probe green), e2e PASS. Advancing to feature 073 (genesis e2e coverage)."
+      },
+      {
+        "id": "073",
+        "estimated": 120,
+        "actual": 82,
+        "flag": "UNDER",
+        "note": "tools/e2e_bootstrap_test.sh assert_genesis (79 ins + 1 call = ~80): hermetic 0-case case -- bootstrap.sh --genesis stands up a project from nothing under SCRATCH_DIR, asserts (a) the command succeeds, (b) the deterministic scaffold README/CONTEXT/src/PLACEHOLDER present, (c) provenance carries a resolved_sha, (d) after committing the scaffold, ecosystem_preflight.py --repo-root <proj> exits 2/3 (PASS_WITH_EXCEPTIONS, the injected untracked .nizam/ the only exception), (e) a non-empty --project-root is refused. Each bootstrap/preflight exit captured via an if so main()'s set -e never aborts before a diagnostic. + CHANGELOG feature-073 Added entry (~8). git numstat ins+del ~= 82 vs 120 estimated -- UNDER: reuses the existing harness's ephemeral-tag + SCRATCH_DIR + file:// clone scaffolding and the assert_preflight_governance_root exit-2/3 idiom. Verified: e2e PASS with the genesis case green (project stood up, Preflight PASS_WITH_EXCEPTIONS exit 2, non-empty refused); the existing inject-into-existing-repo path stays green. Rolling avg (070=95,071=213,072=95)=134, 3x=402; 82 under. Full sweep 15/15, self-test 51/51, e2e PASS. Advancing to feature 074 (pilot the 0-case + phase close)."
       }
     ]
   },

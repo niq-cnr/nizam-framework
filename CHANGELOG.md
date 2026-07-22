@@ -9,6 +9,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Genesis e2e coverage** (phase 009 feature 073; `NDEBT-030`; NIP-0002 Stage 2).
+  `tools/e2e_bootstrap_test.sh` gains `assert_genesis`: a hermetic case proving the 0-case
+  end-to-end — `bootstrap.sh --genesis` stands up a new project from nothing, the deterministic
+  scaffold (README + CONTEXT + `src/` placeholder) and a `resolved_sha`-pinned provenance are
+  present, the committed project passes Preflight as `PASS_WITH_EXCEPTIONS` (the injected `.nizam/`
+  the only exception), and a non-empty `--project-root` is refused. The existing
+  inject-into-an-existing-repo path stays green (regression-guarded).
+
 - **`incubating → in_scope` promotion — the count-0→1 transition** (phase 009 feature 072;
   `NDEBT-030`; NIP-0002 Stage 2). `registry/scope_definition_patterns.md` → v0.2.0 gains
   **Section 2.3** modelling the scope registry's `incubating` partition as the count-0→1 state: a
