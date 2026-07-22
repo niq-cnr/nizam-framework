@@ -9,6 +9,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Phase 011 proposal (0–n Project Spectrum, Stage 4: n-Coordination Protocols)** (`NDEBT-035`;
+  NIP-0002 Stage 4 — the **final** stage). Authored the Planner artifacts `.agent/product_spec_011.md`
+  (status `draft`) and `.agent/feature_list_011.json` (features 080–084, DAG-validated acyclic, root
+  `{080}`, est 1330) for the deferred n-repo **coordination** layer: `ecosystem/04_dependency_reconciliation.md`
+  (Plan) and `ecosystem/05_release_train_coordination.md` (Promote), with companion schemas, the
+  reserved `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates defined, tooling that consumes the phase-010
+  ecosystem-level aggregate, and a proving multi-repo pilot. `docs/planning/ROADMAP.md` (v0.27.0) tops
+  with a phase-011 proposal banner and carries the release cut (`NDEBT-029`), a real non-scratch pilot,
+  and the `06`/`08` Repeat/GA protocols forward as phase-012 candidate scope; `docs/planning/manifest.json`
+  gains the phase-011 entry (`pending`/`proposed`). Awaiting activation gate `H-PHASE-011`; `current_phase`
+  stays `010-multi-repo` and `run_state` is untouched (a proposal is not an activation).
 - **Phase 010 (0–n Project Spectrum, Stage 3: The n-case) complete** (feature 079; `NDEBT-031`).
   The n-case was piloted end-to-end against a scratch **3-member** ecosystem stood up **from
   nothing** by `bootstrap.sh --genesis` at one shared pin, using the fixed tooling (075–078): a

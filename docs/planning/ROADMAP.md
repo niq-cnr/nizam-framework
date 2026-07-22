@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.26.0
+version: 0.27.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.27.0"
+    date: "2026-07-22"
+    summary: "Phase 011 PROPOSED (authored after PR #47 merged phase 010). A new 'Proposed Next Phase — Phase 011' banner tops the roadmap: NIP-0002 Stage 4 — the n-coordination protocols (ecosystem/04_dependency_reconciliation + ecosystem/05_release_train_coordination, with companion schemas, where cross-repo ordering and release-train entry genuinely live; NDEBT-035), the FINAL stage of the 0-n staged plan (completing it completes NIP-0002). Features 080-084 (DAG root {080}, est 1330), realized by the Planner artifacts .agent/product_spec_011.md (status draft) + .agent/feature_list_011.json, awaiting activation gate H-PHASE-011. Scoped to NIP-0002 Stage 4 only (one stage at a time, as phases 008/009/010 took Stages 1/2/3): 080 the reconciliation protocol + schema + defining the reserved H-PLANNING-AUTHORITY gate; 081 the release-train protocol + schema + defining the reserved H-TRAIN-ENTRY gate; 082 the reconciliation tool (consuming the phase-010 aggregate); 083 the release-train tool + Stage-4 e2e coverage; 084 the pilot + phase close. The former phase-010 banner's 'Deferred -> Phase-011 candidate scope' subsection is annotated as now-authored; the release cut carrying the whole loop (NDEBT-029), a real non-scratch multi-repo pilot, and the remaining Repeat/GA protocols (06_simplification_review / 08_ga_gate with the reserved H-CONSOLIDATION / H-GA gates) are carried forward as phase-012 candidate scope. current_phase stays 010-multi-repo until activation; run_state untouched (a proposal is not an activation)."
   - version: "0.26.0"
     date: "2026-07-22"
     summary: "Phase 010 (0-n Project Spectrum, Stage 3: the n-case, features 075-079) COMPLETE. The phase-010 Plan-of-Record banner carries the completion record (075 required+validated membership registry; 076 ecosystem_membership_run.py iteration; 077 cross-repo aggregation + common-pin consistency into a schema-valid ecosystem-level result; 078 assert_multirepo hermetic n-case e2e; 079 pilot proved the n-case end-to-end across a scratch 3-member ecosystem, PASS aggregate + divergent-pin FAIL, evidence .agent/evidence/pilot-079/). NDEBT-031 resolved; Stage-4 coordination residue carved into NDEBT-035 (phase-011 candidate), per-member clone-cost friction into NDEBT-034. The phase-011 candidate scope (NIP-0002 Stage 4 + NDEBT-029 release + real pilot) is refined and VALIDATED against the pilot evidence -- confirmed, not re-ordered (the aggregate is the 04-reconciliation substrate). manifest + run_state reflect phase-010 completion. A real, non-scratch multi-repo pilot remains the open production-maturity criterion."
@@ -88,6 +91,56 @@ change_log:
 
 # Forward Roadmap
 
+## Proposed Next Phase — Phase 011: 0–n Project Spectrum, Stage 4 — n-Coordination Protocols (Dependency Reconciliation & Release-Train Coordination) — **PROPOSED, awaiting `H-PHASE-011`**
+
+**Phase `011-coordination-protocols` is PROPOSED** (2026-07-22), awaiting operator activation
+(gate **H-PHASE-011**). It realizes **NIP-0002 Stage 4 — the n-coordination protocols**, the
+**final** stage of the 0–n staged plan: completing it completes NIP-0002. Taken one stage at a
+time, as phases 008/009/010 took Stages 1/2/3. The Planner artifacts
+`.agent/product_spec_011.md` (status `draft`) and `.agent/feature_list_011.json` (features
+080–084, DAG-validated acyclic, root `{080}`, est 1330) exist; per `methodology/00_planning.md` a
+phase becomes the plan of record only on operator authorization, so `current_phase` stays
+`010-multi-repo` (complete) and `.agent/run_state.json` is untouched until activation (a proposal
+is not an activation).
+
+**Scope — NIP-0002 Stage 4 only (prove-then-build).** Phases 008/009/010 delivered the "1", "0",
+and "n" points; the membership set is enumerated and its verdicts aggregated. What remains is the
+**coordination** layer — with `n` members now visible, the cycle can *see* the ecosystem but
+cannot yet **coordinate work across it**. NIP-0002 places the genuine n-repo coordination in two
+deferred protocols (still `Planned` in `ecosystem/README.md`) — the lifecycle's **Plan** and
+**Promote** stages — and reserves the two gates that govern them (`NDEBT-035`). Phase 011 authors
+and mechanizes them, then pilots the layer. Features:
+
+1. **080 — Dependency-reconciliation protocol (`ecosystem/04`) + companion schema** (`NDEBT-035`) —
+   author the Plan stage (approved findings + the phase-010 aggregate → typed, dependency-ordered
+   cross-repo work packets), a reconciliation-plan schema (topological-order invariant), and
+   **define** the reserved `H-PLANNING-AUTHORITY` gate.
+2. **081 — Release-train coordination protocol (`ecosystem/05`) + companion schema** (`NDEBT-035`) —
+   author the Promote stage (admitting reconciled packets into a cross-repo release train, entry
+   conditions, record-but-never-self-execute), a release-train-manifest schema, and **define** the
+   reserved `H-TRAIN-ENTRY` gate.
+3. **082 — Reconciliation tooling** (`NDEBT-035`) — a stdlib-only tool consuming the phase-010
+   aggregate + approved findings → a schema-valid, dependency-ordered reconciliation plan; a cyclic
+   dependency set is a flagged finding forcing a non-PASS verdict.
+4. **083 — Release-train tooling + Stage-4 coverage** (`NDEBT-035`) — a stdlib-only tool consuming a
+   reconciliation plan → a schema-valid release-train manifest gated on `H-TRAIN-ENTRY`; hermetic
+   e2e over the aggregate → reconciliation → train chain (reusing `assert_multirepo`); prior paths
+   regression-guarded.
+5. **084 — Pilot, prove, prioritize + phase close** — run the coordination layer across a scratch
+   multi-repo ecosystem, exercise the two Stage-4 gates before the acts they govern, then
+   refine/validate the phase-012 candidate scope below and close the phase (**completing NIP-0002**).
+
+**Deferred → Phase-012 candidate scope (release + real pilot + Repeat/GA protocols).** Held until
+the coordination layer is *proven* by the feature-084 pilot; these are the production-maturity and
+Repeat/GA neighbours outside NIP-0002's 0–n staged plan:
+- Cut a framework release carrying the whole loop — genesis + audit/compare + n-case tooling + the
+  new coordination layer (`NDEBT-029`) — a release-train action, and a prerequisite for the real pilot.
+- A **real, non-scratch multi-repo ecosystem pilot** — the standing production-maturity criterion
+  across the whole 0–n programme.
+- The remaining lifecycle protocols `ecosystem/06_simplification_review.md` (Repeat) and
+  `ecosystem/08_ga_gate.md` (Promote/GA), with the reserved `H-CONSOLIDATION` / `H-GA` gates —
+  prioritised separately from real evidence rather than authored speculatively.
+
 ## Plan of Record (2026-07-22) — Phase 010: 0–n Project Spectrum, Stage 3 — The n-case (Multi-Repo Tooling) — **COMPLETE 2026-07-22**
 
 **Phase `010-multi-repo` is COMPLETE** (2026-07-22). It realized **NIP-0002 Stage 3 — the n-case
@@ -124,21 +177,25 @@ the n-case first-class, then pilots it. Features:
 5. **079 — Pilot, prove, prioritize + phase close** — run the loop across a scratch multi-repo
    ecosystem, then refine/validate the phase-011 candidate scope below and close the phase.
 
-**Deferred → Phase-011 candidate scope (NIP-0002 Stage 4 + release + real pilot).** *(Refined and
+**Deferred → Phase-011 candidate scope (NIP-0002 Stage 4 + release + real pilot).** *(Now authored
+as a proposal — see the "Proposed Next Phase — Phase 011" banner at the top: NIP-0002 Stage 4 (the
+`04`/`05` coordination protocols) is phase 011, and the release cut, real pilot, and the remaining
+`06`/`08` Repeat/GA protocols are carried forward as phase-012 candidate scope. Refined and
 validated against the feature-079 pilot evidence, `.agent/evidence/pilot-079/`: the pilot confirmed
 the ordering — the aggregate ecosystem-level result already records per-member verdicts + a
 common-pin consistency finding, exactly the substrate a `04` reconciliation pass consumes — so the
-candidate below is **confirmed, not re-ordered**. `NDEBT-031` is resolved; its Stage-4 residue is
+candidate is **confirmed, not re-ordered**. `NDEBT-031` is resolved; its Stage-4 residue is
 carved into `NDEBT-035`, and the pilot's per-member clone-cost friction into `NDEBT-034`.)* Held
 until the n-case is *proven* — now it is:
 - **n-coordination protocols** (Stage 4, `NDEBT-035`): author `ecosystem/04_dependency_reconciliation.md`
   and `ecosystem/05_release_train_coordination.md` with companion schemas — cross-repo *ordering*
   and release-train *entry* — activating the reserved `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates.
-  The feature-079 aggregate is their input substrate.
+  The feature-079 aggregate is their input substrate. **→ phase-011 proposal scope (features 080–084).**
 - Cut a framework release carrying the whole loop — genesis + audit/compare + n-case tooling
-  (`NDEBT-029`).
+  (`NDEBT-029`). **→ phase-012 candidate scope.**
 - A **real, non-scratch multi-repo ecosystem pilot** — the standing production-maturity criterion
-  (the feature-079 pilot exercised mechanics against scratch members, not real multi-project maturity).
+  (the feature-079 pilot exercised mechanics against scratch members, not real multi-project
+  maturity). **→ phase-012 candidate scope.**
 - *(Optional, `NDEBT-034`)* a throughput optimisation for repeated genesis (shared clone cache /
   lighter re-inject) if a larger pilot makes the per-member clone cost load-bearing.
 
