@@ -982,6 +982,11 @@
       "at": "2026-07-22T02:45:00Z",
       "event": "feature_complete",
       "detail": "Feature 075 (ecosystem-membership registry schema) COMPLETE. NDEBT-031 / NIP-0002 Stage 3: the artifact that sets n for the 0-n spectrum is now a required, validated schema. schema/ecosystem_membership.schema.json validates a consumer's membership registry -- the four scope lists (in_scope/incubating/reference_archive/out_of_scope) as arrays of entries, every entry with an identifying name, out_of_scope entries recording a reason. The exactly-one-list invariant (no name in two lists) is a relational cross-array constraint not expressible in JSON Schema, so tools/validate.sh C12 enforces it in code (new membership_multilist_entries, mirroring repository_revision_inconsistencies / audit_delta_duplicate_ids) at BOTH entry points -- the full-sweep family loop and the --target router (discriminated by >=2 of the four scope-list keys, so a registry malformed by omitting a list still routes to a clear membership error instead of misrouting to C4). Three fixtures: a positive, a schema-invalid missing-list negative, and a schema-valid multilist negative caught by the code check (self-test 51->54, all assert_target green). registry/scope_definition_patterns.md -> v0.3.0 promoted from draft pattern to a required, schema-backed ACTIVE artifact (references the schema; Section 2 gains the schema/validator cross-reference). Schema registered in NIZAM.json (module key_documents + top-level schemas) + schema/README.md (v0.9.0, the fifth ecosystem family). validate.sh 'four families' comments corrected to five. git numstat ins+del = 224 vs 280 estimated -- UNDER (the C12 machinery was extended, not rebuilt; the code check mirrors the existing relational-check pattern). First feature of phase 010, so no rolling-average baseline per methodology/00_planning.md. Full sweep 15/15, self-test 54/54, e2e PASS. Advancing to feature 076 (multi-repo iteration)."
+    },
+    {
+      "at": "2026-07-22T03:10:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 076 (multi-repo iteration) COMPLETE. NDEBT-031 / NIP-0002 Stage 3: tools/ecosystem_membership_run.py reads a membership registry (feature 075) and runs the Preflight stage once per in_scope member -- resolving each member's repo-root (an explicit repo_root entry field, else <repo-roots-base>/<name>), invoking ecosystem_preflight.py UNCHANGED per member, and collecting a per-member result index at <output-dir>/membership_run.json. This realizes the seam ecosystem_preflight.py annotated a 'defensive invariant for a future multi-repository extension'. Exit codes mirror the stage tool's table (0 = every in_scope member returned an acceptable verdict PASS/PASS_WITH_EXCEPTIONS; 1 = a member hard-FAILed or its repo-root was missing; 64 = usage). stdlib-only, self-documenting (--help + docstring exit table), like the sibling ecosystem tools (no skill.json entry needed). Verified hermetically: genesis'd two scratch member repos (repo-a, repo-b) via bootstrap.sh --genesis, authored a 2-member registry (C12 --target PASS), ran the tool -> both members Preflight PASS_WITH_EXCEPTIONS, index written, exit 0; a 1-member registry (the count-1 degenerate case) also iterates cleanly. ecosystem_preflight.py is byte-for-byte unchanged (git diff empty). Cross-repo AGGREGATION + the common-framework-pin CONSISTENCY check are feature 077; standing hermetic multi-repo e2e is feature 078. git numstat ins+del = 168 vs 280 estimated -- UNDER (a focused orchestrator that reuses the stage tool rather than reimplementing Preflight). Rolling avg (075=224) 3x=672; 168 under. Full sweep 15/15, self-test 54/54, e2e PASS. Advancing to feature 077 (cross-repo aggregation + consistency)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1155,8 +1160,15 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1160,
-    "total_lines_changed": 224,
+    "total_lines_changed": 392,
     "per_feature": [
+      {
+        "id": "076",
+        "estimated": 280,
+        "actual": 168,
+        "flag": "UNDER",
+        "note": "tools/ecosystem_membership_run.py (156, new: reads a membership registry, iterates the in_scope set resolving each member's repo-root, runs ecosystem_preflight.py per member, writes membership_run.json index; exit codes mirror the stage tool 0/1/64; stdlib-only, self-documenting) + CHANGELOG (12). git numstat ins+del = 168 vs 280 estimated -- UNDER (a focused orchestrator reusing the stage tool, not a reimplementation). Verified hermetically over two genesis'd scratch member repos (both Preflight PASS_WITH_EXCEPTIONS, exit 0) + a 1-member count-1 case; ecosystem_preflight.py byte-for-byte unchanged. Aggregation + consistency is 077; standing e2e is 078. Full sweep 15/15, self-test 54/54, e2e PASS."
+      },
       {
         "id": "075",
         "estimated": 280,

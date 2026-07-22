@@ -9,6 +9,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`tools/ecosystem_membership_run.py` — multi-repo iteration** (phase 010 feature 076;
+  `NDEBT-031`; NIP-0002 Stage 3). Where the shipped ecosystem tools take a single `--repo-root`,
+  this reads the membership registry that sets `n` (feature 075) and runs the Preflight stage once
+  per `in_scope` member — resolving each member's repo-root (an explicit `repo_root` entry field,
+  else `<repo-roots-base>/<name>`), invoking `ecosystem_preflight.py` unchanged per member, and
+  collecting a per-member result index at `<output-dir>/membership_run.json`. Exit codes mirror
+  the stage tool's table (0 = every member returned an acceptable verdict; 1 = a member hard-FAILed
+  or its repo-root was missing; 64 = usage). The count-1 case is a single-member registry, and
+  `ecosystem_preflight.py` is byte-for-byte unchanged (regression-guarded). Cross-repo *aggregation*
+  into one schema-valid ecosystem-level result and the common-framework-pin *consistency* check are
+  feature 077; standing hermetic multi-repo coverage is feature 078.
+
 - **`schema/ecosystem_membership.schema.json` — the required, validated membership registry**
   (phase 010 feature 075; `NDEBT-031`; NIP-0002 Stage 3). The artifact that sets `n` for the 0–n
   spectrum: a JSON schema validating a consumer's ecosystem-membership registry — the four scope
