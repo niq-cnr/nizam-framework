@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:reconciliation_plan.schema.json",
+  "title": "Nizam Dependency Reconciliation Plan Schema",
+  "description": "Validates a reconciliation-plan INSTANCE -- the Plan-stage artifact that ecosystem/04_dependency_reconciliation.md requires (NIP-0002 Stage 4; NDEBT-035). A plan turns approved engineering-audit findings plus the ecosystem-level membership-run aggregate (schema/ecosystem_membership_result.schema.json) into typed, dependency-ordered cross-repository work packets. Each packet targets exactly one repository and names the approved findings it closes; typed `depends_on` edges between packets express cross-repository ordering; `order` is the emitted topological sort of the packet ids. This schema enforces the SHAPE (packets exist with a per-repo target + the findings they close, edges reference packet ids, an order sequence exists, and the plan carries a PASS/FAIL verdict). The topological-order invariant -- that `order` is a valid topological sort of an acyclic `depends_on` set, so a cyclic dependency set forces plan_verdict FAIL -- is a relational constraint over the packet graph that JSON Schema cannot express; it is enforced in code by validate.sh C12, mirroring the ecosystem_membership exactly-one-list rule (NDEBT-031) and the ecosystem_baseline same-repo-revision rule (NDEBT-023). Permits additionalProperties so consumers can enrich a packet (owner, size, category, note) without breaking validation, per schema/README.md's house convention.",
+  "type": "object",
+  "$defs": {
+    "packet": {
+      "type": "object",
+      "description": "One cross-repository work packet. It targets exactly one repository, names the approved audit findings it closes, and (optionally) declares the packet ids it depends on. Descriptive fields (owner, size, category, note) are open extension points.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The identifying key for this packet, unique across the plan (dependency edges and the emitted order reference it). Required; never inferred.",
+          "minLength": 1
+        },
+        "repo": {
+          "type": "string",
+          "description": "The single repository this packet targets, drawn from the aggregate's in_scope set. A packet never spans two repositories -- cross-repo coupling is a dependency edge, not a shared packet.",
+          "minLength": 1
+        },
+        "closes_findings": {
+          "type": "array",
+          "description": "The approved engineering-audit finding ids this packet closes. A packet that closes no finding is not recorded (ecosystem/04 Section 2).",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "depends_on": {
+          "type": "array",
+          "description": "The packet ids that MUST complete before this packet may begin -- typed cross-repository ordering edges. Every entry MUST be the id of another packet in this plan.",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "required": ["id", "repo", "closes_findings"],
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "The semantic version of the plan shape this instance conforms to. Required.",
+      "minLength": 1
+    },
+    "source_result": {
+      "type": "string",
+      "description": "Path to the ecosystem-level membership-run aggregate (schema/ecosystem_membership_result.schema.json) this plan was reconciled from -- the enumerated in_scope set and pin-consistency input. Required as the plan's provenance.",
+      "minLength": 1
+    },
+    "membership_registry": {
+      "type": "string",
+      "description": "Optional path to the membership registry the source aggregate iterated, carried for traceability."
+    },
+    "plan_verdict": {
+      "type": "string",
+      "enum": ["PASS", "FAIL"],
+      "description": "The single plan verdict: PASS iff every packet closes an approved finding AND the emitted order is a valid topological sort of an acyclic depends_on set; FAIL iff the dependency set contains at least one cycle (recorded in cycle_findings), so no valid order exists."
+    },
+    "packets": {
+      "type": "array",
+      "description": "The cross-repository work packets (Section: packet).",
+      "items": { "$ref": "#/$defs/packet" }
+    },
+    "order": {
+      "type": "array",
+      "description": "The emitted topological order: an explicit sequence of every packet id such that for every edge A depends_on B, B precedes A. Empty is permitted only for a zero-packet plan.",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "cycle_findings": {
+      "type": "array",
+      "description": "Recorded cyclic dependency findings (the packet ids forming each cycle). Empty when the dependency set is acyclic; non-empty forces plan_verdict FAIL.",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["schema_version", "source_result", "plan_verdict", "packets", "order"],
+  "allOf": [
+    {
+      "description": "A cyclic plan cannot be PASS: if cycle_findings is a non-empty array, plan_verdict MUST be FAIL. (The converse -- detecting a cycle the plan failed to record -- spans the packet graph and is enforced in code by validate.sh C12.)",
+      "if": {
+        "properties": { "cycle_findings": { "type": "array", "minItems": 1 } },
+        "required": ["cycle_findings"]
+      },
+      "then": {
+        "properties": { "plan_verdict": { "const": "FAIL" } }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

@@ -147,6 +147,15 @@ assert_target membership_result_valid.json                         C12 PASS
 assert_target membership_result_neg_missing_verdict.json           C12 FAIL
 assert_target membership_result_neg_inconsistent_pass.json         C12 FAIL
 
+# reconciliation_plan (F-080, NDEBT-035; NIP-0002 Stage 4): the Plan-stage
+# artifact. The positive acyclic PASS plan validates; the schema-invalid (missing
+# plan_verdict) and the topological-order-violating (a cyclic depends_on set
+# claimed PASS) negatives both FAIL -- proving both the shape and the relational
+# cycle invariant bite.
+assert_target reconciliation_plan_valid.json                       C12 PASS
+assert_target reconciliation_plan_neg_missing_verdict.json         C12 FAIL
+assert_target reconciliation_plan_neg_cycle.json                   C12 FAIL
+
 # ---------------------------------------------------------------------------
 # (2) verify_lib primitive fixtures
 # ---------------------------------------------------------------------------

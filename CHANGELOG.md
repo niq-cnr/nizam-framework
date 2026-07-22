@@ -9,6 +9,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`ecosystem/04_dependency_reconciliation.md` + `schema/reconciliation_plan.schema.json` — the Plan
+  stage** (phase 011 feature 080; `NDEBT-035`; NIP-0002 Stage 4). Authored the lifecycle's Plan-stage
+  protocol: approved engineering-audit findings plus the phase-010 ecosystem-level membership-run
+  aggregate become **typed, dependency-ordered cross-repository work packets**, under the
+  topological-order invariant — a cyclic `depends_on` set is a first-class recorded finding forcing a
+  non-`PASS` `plan_verdict`, never a silent mis-order. The companion schema validates the plan shape
+  (per-repo packets, typed edges, the emitted order, the verdict); the cycle invariant is enforced in
+  code by `validate.sh` C12 as the **seventh** ecosystem schema family (both entry points, discriminated
+  by `plan_verdict`/`cycle_findings`), with one positive and two negative fixtures (schema-invalid
+  missing-verdict + a cyclic-but-`PASS`). The reserved gate **`H-PLANNING-AUTHORITY`** is now **defined**
+  (moved `docs/planning/operator_gates.md` Section 2 → Section 1). Registered in `NIZAM.json`,
+  `schema/README.md` (v0.11.0), and `tools/skill.json`; the `ecosystem/README.md` (v0.2.2) module-nav
+  `04` row flips Planned → Shipped (six documents now Shipped). `self-test` 60/60.
 - **Phase 011 proposal (0–n Project Spectrum, Stage 4: n-Coordination Protocols)** (`NDEBT-035`;
   NIP-0002 Stage 4 — the **final** stage). Authored the Planner artifacts `.agent/product_spec_011.md`
   (status `draft`) and `.agent/feature_list_011.json` (features 080–084, DAG-validated acyclic, root

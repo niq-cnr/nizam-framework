@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.11.0
+version: 0.12.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.12.0"
+    date: "2026-07-22"
+    summary: "Phase-011 feature 080: H-PLANNING-AUTHORITY is DEFINED and moved from the reserved table (Section 2) into the decided-and-active table (Section 1) with scope, trigger, and disposition semantics — it approves the planning authority a reconciliation plan asserts across repositories (which repositories change, in which dependency order, to close which approved findings) before the plan is admitted into a release train, at the Plan stage (ecosystem/04_dependency_reconciliation.md Section 5), record-but-never-self-execute. Status DEFINED/OUTSTANDING, awaiting its first exercise at the phase-011 Stage-4 pilot (feature 084). Section 2 retitled 'deferred to later phases' and reduced to three reserved gates; H-TRAIN-ENTRY is annotated as to-be-defined in phase 011 feature 081; H-CONSOLIDATION / H-GA stay reserved. Mirrors the phase-007 feature-061 pattern that defined H-CONSUMER-UPGRADE."
   - version: "0.11.0"
     date: "2026-07-22"
     summary: "H-PHASE-NNN SATISFIED again for phase 011 — operator authorized activation of phase 011 (0-n Project Spectrum, Stage 4: n-Coordination Protocols — Dependency Reconciliation & Release-Train Coordination) with 'Approved. Please proceed' (gate H-PHASE-011, 2026-07-22, given after PR #48 merged the phase-011 proposal to main at 44a91fc), advancing NIP-0002 to Stage 4 — the FINAL stage (completing it completes NIP-0002). The recurring per-phase-activation row's Introduced range extended to product_spec_011 and the 011 disposition recorded (run_state event phase_activated before any feature execution, per NDEBT-018). No new gate defined at activation; the reserved H-PLANNING-AUTHORITY / H-TRAIN-ENTRY gates stay reserved until they are DEFINED during feature execution (F-080 / F-081, moved reserved -> decided as phase 007 did for H-CONSUMER-UPGRADE) and first exercised at the F-084 pilot. H-CONSOLIDATION / H-GA (06/08 Repeat/GA) stay reserved."
@@ -94,12 +97,14 @@ their most recent disposition, not a claim that they never fire again.
 | `H-CONSTITUTIONAL` | The mechanize-or-descope decision for the constitutional-policy surface (per document: mechanize into a validator check, or mark consumer-aspirational). | `.agent/product_spec_006.md` gates (F-058); `docs/planning/ROADMAP.md` Track 3 | RESOLVED 2026-07-20 — two surfaces mechanized (validate.sh C14/C15), seven marked consumer-aspirational. |
 | `H-FRAMEWORK-RELEASE` | Approve the semantic version, changelog, migration notes, and tag creation for a framework release (recurring, per release). | `.agent/product_spec_005.md` Sec 8; `methodology/06_release_train.md` | EXECUTED 2026-07-18 (v0.7.0) and 2026-07-20 (v0.8.0, phase 006 feature 059) — operator-signed tags. |
 | `H-CONSUMER-UPGRADE` | Approve a consumer repository's adoption of, or upgrade to, a newly released **immutable framework tag** at the Bootstrap stage — the pinned tag the consumer will inherit and run the cycle under. The pipeline records the adoption decision; it never adopts on a human's behalf (recurring, per adoption/upgrade). | `.agent/product_spec_007.md`; `ecosystem/00_ecosystem_bootstrap.md` Sec 2 | DEFINED 2026-07-20 (phase 007, feature 061). EXERCISED once against a released tag and twice as a pre-release pilot: (1) 2026-07-21 (phase 007, feature 063) — the **canonical case** matching this gate's defined scope: a scratch/throwaway consumer adopting the **released immutable tag** `v0.8.0`; (2) 2026-07-21 (phase 008, feature 069) — a **pre-release pilot, NOT a released-tag adoption**: the re-pilot bootstrapped an *ephemeral tag on the phase-008 branch HEAD* (the fixed 065–068 tools are unreleased), exercising the same operator-decision mechanics ahead of a release to prove findings A/B resolved; (3) 2026-07-22 (phase 009, feature 074) — another **pre-release pilot**: the genesis pilot stood up a scratch greenfield project via `bootstrap.sh --genesis` against the phase-009 branch HEAD (the 070–073 tools are unreleased), proving the 0-case (a clean Preflight PASS_WITH_EXCEPTIONS). A released-tag adoption of the *fixed*/genesis-capable framework remains outstanding until the next `H-FRAMEWORK-RELEASE` cuts a tag carrying them (`NDEBT-029`). Each recorded in `.agent/run_state.json` (event `operator_gate_decision`) before the bootstrap ran, per the NDEBT-018 rule. Recurring: outstanding again at the next adoption/upgrade. |
+| `H-PLANNING-AUTHORITY` | Approve the **planning authority** a reconciliation plan asserts across repositories — which repositories change, in which dependency order, to close which approved audit findings — before the plan is admitted into a release train. The pipeline produces and validates the plan but **records, never self-executes**, the authorization (recurring, per reconciliation plan). | `.agent/product_spec_011.md`; `ecosystem/04_dependency_reconciliation.md` Sec 5 | DEFINED 2026-07-22 (phase 011, feature 080) — moved from the reserved table (Section 2) into this decided table with scope/trigger/disposition, as phase 007 did for `H-CONSUMER-UPGRADE`. Status OUTSTANDING, awaiting its first exercise at the phase-011 Stage-4 pilot (feature 084), where it is recorded in `.agent/run_state.json` (event `operator_gate_decision`) before the pilot's plan is admitted downstream, per the NDEBT-018 rule. Recurring: outstanding again at the next reconciliation plan. |
 
-## 2. Reserved gates (deferred to the successor consumer-adoption phase)
+## 2. Reserved gates (deferred to later phases)
 
-The four gates below are named in `.agent/product_spec_005.md` Sec 8 as belonging
-to the successor consumer-adoption programme phase (a fifth, `H-CONSUMER-UPGRADE`,
-was defined in phase 007 and now lives in Section 1). They are **reserved names
+The three gates below are named in `.agent/product_spec_005.md` Sec 8 as belonging
+to later programme phases (two siblings, `H-CONSUMER-UPGRADE` and, in phase 011,
+`H-PLANNING-AUTHORITY`, were since defined and now live in Section 1;
+`H-TRAIN-ENTRY` is defined in phase 011 feature 081). They are **reserved names
 only**: their scope, trigger, and disposition are a later phase's to define, and
 this registry deliberately records no invented semantics for them. Each is paired
 below with the lifecycle stage (`ecosystem/README.md`) it is expected to guard,
@@ -107,8 +112,7 @@ purely to orient the reader — not as a definition.
 
 | Gate | Expected lifecycle stage | Status |
 |------|--------------------------|--------|
-| `H-PLANNING-AUTHORITY` | Plan (stage 04) — reconciling planning authority across repositories. | RESERVED — definition deferred to the successor consumer-adoption phase. |
-| `H-TRAIN-ENTRY` | Promote (stage 05) — admitting work into a cross-repository release train. | RESERVED — definition deferred to the successor consumer-adoption phase. |
+| `H-TRAIN-ENTRY` | Promote (stage 05) — admitting work into a cross-repository release train. | RESERVED — to be defined in phase 011 feature 081 (the release-train coordination protocol). |
 | `H-CONSOLIDATION` | Repeat (stage 06) — authorizing an actual simplification/consolidation (the simplification review never consolidates automatically). | RESERVED — definition deferred to the successor consumer-adoption phase. |
 | `H-GA` | Promote (stage 08) — declaring general availability; the framework must never auto-declare GA. | RESERVED — definition deferred to the successor consumer-adoption phase. |
 

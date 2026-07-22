@@ -343,18 +343,20 @@ file(s)/detail(s) printed on the following indented line(s)):
 
   C12 Ecosystem schema-family fixture validation (are the ecosystem schema
       families' fixtures actually load-bearing, or merely present?). For
-      each of the six families -- the three shipped in features 037-039
+      each of the seven families -- the three shipped in features 037-039
       (baseline, preflight-verdict, engineering-finding), plus audit_delta
-      (feature 057), ecosystem_membership (feature 075), and the
-      membership-run aggregate membership_result (feature 077) --
+      (feature 057), ecosystem_membership (feature 075), the
+      membership-run aggregate membership_result (feature 077), and the
+      reconciliation_plan (feature 080; NIP-0002 Stage 4) --
       validates every matching
       `tools/fixtures/<family>_*.json` fixture, via python3 + jsonschema,
       against its shipped schema (`schema/ecosystem_baseline.schema.json`,
       `schema/preflight_verdict.schema.json`,
       `schema/engineering_finding.schema.json`,
       `schema/audit_delta.schema.json`,
-      `schema/ecosystem_membership.schema.json`, and
-      `schema/ecosystem_membership_result.schema.json`). A fixture is
+      `schema/ecosystem_membership.schema.json`,
+      `schema/ecosystem_membership_result.schema.json`, and
+      `schema/reconciliation_plan.schema.json`). A fixture is
       NEGATIVE (MUST fail validation) iff its filename carries the canonical
       delimited-lowercase token `_neg_` or `_invalid_`; every other
       conforming fixture is POSITIVE and MUST validate. A positive fixture
@@ -1490,7 +1492,7 @@ check_c11_dogfood_payload_skip() {
 
 # check_c12_ecosystem_fixtures
 #
-# For each of the six families, validates every matching
+# For each of the seven families, validates every matching
 # tools/fixtures/<family>_*.json fixture against its shipped schema. A
 # fixture is NEGATIVE (MUST fail schema validation) iff its filename
 # contains the canonical delimited token '_neg_' or '_invalid_' -- checked as
@@ -1533,7 +1535,46 @@ FAMILIES = {
     "audit_delta": "schema/audit_delta.schema.json",
     "ecosystem_membership": "schema/ecosystem_membership.schema.json",
     "membership_result": "schema/ecosystem_membership_result.schema.json",
+    "reconciliation_plan": "schema/reconciliation_plan.schema.json",
 }
+
+
+def reconciliation_plan_cycles(doc):
+    """The topological-order invariant (ecosystem/04_dependency_reconciliation.md
+    Section 4): a reconciliation plan's `order` MUST be a valid topological sort of
+    an acyclic `depends_on` edge set -- a cyclic dependency set has no valid order
+    and forces plan_verdict FAIL. Cycle detection spans the packet graph and is not
+    expressible in JSON Schema, so C12 enforces it in code (mirroring
+    membership_multilist_entries and repository_revision_inconsistencies): returns
+    True iff the packets' depends_on edges contain at least one cycle. Only edges
+    referencing a declared packet id participate (a dangling edge is a shape concern,
+    not a cycle)."""
+    packets = doc.get("packets", [])
+    if not isinstance(packets, list):
+        return False
+    ids = {p["id"] for p in packets if isinstance(p, dict) and isinstance(p.get("id"), str)}
+    graph = {}
+    for p in packets:
+        if not isinstance(p, dict) or not isinstance(p.get("id"), str):
+            continue
+        deps = p.get("depends_on", [])
+        graph[p["id"]] = [d for d in deps if isinstance(d, str) and d in ids] if isinstance(deps, list) else []
+    # DFS with a colour marker: WHITE(unseen)/GREY(on stack)/BLACK(done); a GREY
+    # revisit is a back edge -> cycle.
+    WHITE, GREY, BLACK = 0, 1, 2
+    colour = {node: WHITE for node in graph}
+
+    def has_back_edge(node):
+        colour[node] = GREY
+        for nxt in graph.get(node, []):
+            if colour.get(nxt, BLACK) == GREY:
+                return True
+            if colour.get(nxt, BLACK) == WHITE and has_back_edge(nxt):
+                return True
+        colour[node] = BLACK
+        return False
+
+    return any(colour[node] == WHITE and has_back_edge(node) for node in graph)
 
 
 def membership_multilist_entries(doc):
@@ -1672,6 +1713,12 @@ for family, schema_path in FAMILIES.items():
         # negative fixture is caught by polarity rather than validating.
         if is_valid and family == "ecosystem_membership" and membership_multilist_entries(data):
             is_valid = False
+        # NDEBT-035: a schema-valid reconciliation_plan whose depends_on graph
+        # contains a cycle cannot be a PASS plan (no valid topological order
+        # exists); the code-level check completes the schema's coverage so the
+        # cyclic negative fixture is caught by polarity rather than validating.
+        if is_valid and family == "reconciliation_plan" and reconciliation_plan_cycles(data) and data.get("plan_verdict") == "PASS":
+            is_valid = False
         if is_negative and is_valid:
             failures.append(f"{path}: negative fixture unexpectedly VALIDATED against {schema_path}")
         elif not is_negative and not is_valid:
@@ -1696,7 +1743,7 @@ PY
 #
 # NDEBT-015 (feature 052): single-fixture ecosystem-schema validation for the
 # `--target` dispatcher. The full-sweep check_c12_ecosystem_fixtures validates
-# EVERY fixture of all six families with a polarity/dormancy guard; this
+# EVERY fixture of all seven families with a polarity/dormancy guard; this
 # variant validates exactly ONE `--target` file against the schema of the
 # family the router (check_c11_or_c4_target) identified, emitting a
 # discriminating [C12] verdict -- a valid fixture PASSes, a negative fixture
@@ -1725,6 +1772,7 @@ schema_paths = {
     "audit_delta": "schema/audit_delta.schema.json",
     "ecosystem_membership": "schema/ecosystem_membership.schema.json",
     "membership_result": "schema/ecosystem_membership_result.schema.json",
+    "reconciliation_plan": "schema/reconciliation_plan.schema.json",
 }
 schema_path = schema_paths[family]
 
@@ -1801,6 +1849,38 @@ if family == "ecosystem_membership":
     multilist = sorted(name for name, n in counts.items() if n > 1)
     if multilist:
         print(f"{path}: entry in more than one scope list ({family}): {multilist} (NDEBT-031, exactly-one-list invariant)")
+        sys.exit(1)
+
+# NDEBT-035: the topological-order invariant -- a reconciliation plan whose
+# depends_on graph contains a cycle has no valid order and cannot be a PASS plan;
+# cycle detection spans the packet graph and is not expressible in JSON Schema, so
+# mirror the full-sweep reconciliation_plan_cycles check here for --target too.
+if family == "reconciliation_plan":
+    packets = doc.get("packets", [])
+    ids = {p["id"] for p in packets if isinstance(p, dict) and isinstance(p.get("id"), str)} if isinstance(packets, list) else set()
+    graph = {}
+    if isinstance(packets, list):
+        for p in packets:
+            if isinstance(p, dict) and isinstance(p.get("id"), str):
+                deps = p.get("depends_on", [])
+                graph[p["id"]] = [d for d in deps if isinstance(d, str) and d in ids] if isinstance(deps, list) else []
+    WHITE, GREY, BLACK = 0, 1, 2
+    colour = {node: WHITE for node in graph}
+    stack = []
+
+    def _has_back_edge(node):
+        colour[node] = GREY
+        for nxt in graph.get(node, []):
+            if colour.get(nxt, BLACK) == GREY:
+                return True
+            if colour.get(nxt, BLACK) == WHITE and _has_back_edge(nxt):
+                return True
+        colour[node] = BLACK
+        return False
+
+    has_cycle = any(colour[node] == WHITE and _has_back_edge(node) for node in graph)
+    if has_cycle and doc.get("plan_verdict") == "PASS":
+        print(f"{path}: cyclic dependency set claimed PASS ({family}): no valid topological order (NDEBT-035, ecosystem/04 Section 4)")
         sys.exit(1)
 
 sys.exit(0)
@@ -2016,6 +2096,14 @@ elif {"in_scope", "incubating", "reference_archive", "out_of_scope"} & doc.keys(
     # reach C12 rather than being diverted. No other family's artifact carries
     # these scope-list keys, so this never steals their fixtures.
     print("ecosystem:ecosystem_membership")
+elif "plan_verdict" in doc or "cycle_findings" in doc:
+    # NDEBT-035: the reconciliation PLAN (ecosystem/04 Plan stage). Either
+    # `plan_verdict` or `cycle_findings` is the discriminator (each is unique to
+    # this family -- the per-repo preflight_verdict uses `verdict`+`execution_id`,
+    # the aggregate uses `ecosystem_verdict`), so a plan malformed by OMITTING one
+    # still routes here for a clear error. Checked BEFORE the generic single-key
+    # routes so a plan carrying an extension key never misroutes.
+    print("ecosystem:reconciliation_plan")
 elif "review" in doc:
     print("contract_review")
 elif "verdict" in doc and "execution_id" in doc:

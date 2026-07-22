@@ -2,10 +2,13 @@
 id: nizam-ecosystem-module
 title: "Ecosystem Engineering Cycle"
 description: "Reusable governance lifecycle for reconciling, auditing, planning, executing, and improving multi-repository software ecosystems."
-version: 0.2.1
+version: 0.2.2
 status: active
 authoritative_source: ecosystem/README.md
 change_log:
+  - version: "0.2.2"
+    date: "2026-07-22"
+    summary: "Phase-011 feature 080 (NIP-0002 Stage 4, NDEBT-035): the Plan-stage protocol 04_dependency_reconciliation.md shipped, so the module-navigation row flips '04 ... Planned' -> 'Shipped' and the Shipped/Planned prose re-syncs -- six documents are now Shipped (00-04 + 07), and the still-Planned set narrows to three (05_release_train_coordination.md, 06_simplification_review.md, 08_ga_gate.md). 05 lands next in phase-011 feature 081; 06/08 remain deferrable, prioritised from real evidence."
   - version: "0.2.1"
     date: "2026-07-18"
     summary: "Feature 048 (operator PR #21 review, finding 1): the module-navigation paragraph no longer calls 02/03/07 'Planned' — the four core protocols shipped at features 033-036; the five Planned documents (00/04/05/06/08) are the deferrable set. Prose re-synced with the table the 034-036 row-flips had left contradicting it."
@@ -73,25 +76,29 @@ as later features land their protocol document.
 | 01 | `01_clean_state_preflight.md` | Preflight | Shipped |
 | 02 | `02_evidence_baseline.md` | Baseline | Shipped |
 | 03 | `03_engineering_audit.md` | Audit | Shipped |
-| 04 | `04_dependency_reconciliation.md` | Plan (typed dependencies) | Planned |
+| 04 | `04_dependency_reconciliation.md` | Plan (typed dependencies) | Shipped |
 | 05 | `05_release_train_coordination.md` | Promote (release-train coordination) | Planned |
 | 06 | `06_simplification_review.md` | Repeat (recurring simplification) | Planned |
 | 07 | `07_progress_comparison.md` | Compare | Shipped |
 | 08 | `08_ga_gate.md` | Promote (GA gate) | Planned |
 
 "Shipped" means the document already exists in this repository's `ecosystem/`
-directory; "Planned" means it does not yet exist here. Five documents are Shipped.
+directory; "Planned" means it does not yet exist here. Six documents are Shipped.
 The mandatory first-release surface's four core protocols
 (preflight/baseline/audit/comparison, product_spec_005.md Sec 2.3) landed in phase
 005-ecosystem-cycle: `01_clean_state_preflight.md` (feature 033), then
 `02_evidence_baseline.md`, `03_engineering_audit.md`, and `07_progress_comparison.md`
 (features 034-036). The Bootstrap-stage protocol `00_ecosystem_bootstrap.md` (the
 lifecycle's entry stage) landed in phase 007-consumer-adoption (feature 060), wrapping
-the Governance Inheritance Protocol (`standard/GIP.md`) and `bootstrap.sh`. The four
-still-Planned documents — `04_dependency_reconciliation.md`,
-`05_release_train_coordination.md`, `06_simplification_review.md`, and `08_ga_gate.md`
-— are deferrable (product_spec_005.md Sec 2.3) and are prioritised from real
-consumer-pilot evidence (phase 007) rather than authored speculatively.
+the Governance Inheritance Protocol (`standard/GIP.md`) and `bootstrap.sh`. The
+Plan-stage protocol `04_dependency_reconciliation.md` — where cross-repository
+dependency ordering lives (NIP-0002 Stage 4) — landed in phase
+011-coordination-protocols (feature 080), consuming the ecosystem-level
+membership-run aggregate. The three still-Planned documents —
+`05_release_train_coordination.md` (the Promote-stage sibling, landing next in phase
+011 feature 081), `06_simplification_review.md`, and `08_ga_gate.md` — are deferrable
+(product_spec_005.md Sec 2.3) and are prioritised from real evidence rather than
+authored speculatively.
 
 ## Capability Routing
 

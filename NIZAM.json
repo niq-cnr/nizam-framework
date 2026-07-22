@@ -83,6 +83,7 @@
         "schema/audit_delta.schema.json",
         "schema/ecosystem_membership.schema.json",
         "schema/ecosystem_membership_result.schema.json",
+        "schema/reconciliation_plan.schema.json",
         "schema/README.md"
       ]
     },
@@ -116,6 +117,7 @@
         "ecosystem/01_clean_state_preflight.md",
         "ecosystem/02_evidence_baseline.md",
         "ecosystem/03_engineering_audit.md",
+        "ecosystem/04_dependency_reconciliation.md",
         "ecosystem/07_progress_comparison.md"
       ]
     }
@@ -257,6 +259,11 @@
       "authoritative_source": "ecosystem/03_engineering_audit.md"
     },
     {
+      "id": "nizam-ecosystem-dependency-reconciliation",
+      "summary": "The Plan-stage protocol turning approved audit findings plus the ecosystem-level membership-run aggregate into typed, dependency-ordered cross-repository work packets under the topological-order invariant; gated by H-PLANNING-AUTHORITY.",
+      "authoritative_source": "ecosystem/04_dependency_reconciliation.md"
+    },
+    {
       "id": "nizam-ecosystem-progress-comparison",
       "summary": "The protocol for comparing two approved baselines or audits, classifying new/resolved/reopened/stale findings with every score movement traceable to evidence.",
       "authoritative_source": "ecosystem/07_progress_comparison.md"
@@ -279,7 +286,8 @@
     "schema/engineering_finding.schema.json",
     "schema/audit_delta.schema.json",
     "schema/ecosystem_membership.schema.json",
-    "schema/ecosystem_membership_result.schema.json"
+    "schema/ecosystem_membership_result.schema.json",
+    "schema/reconciliation_plan.schema.json"
   ],
   "templates": [
     "templates/CONTEXT.md",
