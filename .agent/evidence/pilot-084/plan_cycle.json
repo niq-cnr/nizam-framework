@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "source_result": "/home/user/nizam-framework/.agent/evidence/pilot-084/membership_run.json",
+  "plan_verdict": "FAIL",
+  "packets": [
+    {
+      "id": "pkt-a",
+      "repo": "member-alpha",
+      "closes_findings": [
+        "FIND-A1"
+      ],
+      "depends_on": [
+        "pkt-b"
+      ]
+    },
+    {
+      "id": "pkt-b",
+      "repo": "member-beta",
+      "closes_findings": [
+        "FIND-B1"
+      ],
+      "depends_on": [
+        "pkt-a"
+      ]
+    }
+  ],
+  "order": [],
+  "cycle_findings": [
+    "cyclic cross-repo dependency set -- no valid topological order exists; unresolved packets (forming or feeding the cycle): ['pkt-a', 'pkt-b']"
+  ]
+}

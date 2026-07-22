@@ -2,10 +2,16 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.27.0
+version: 0.29.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.29.0"
+    date: "2026-07-22"
+    summary: "Phase 011 (0-n Project Spectrum, Stage 4: n-Coordination Protocols, features 080-084) COMPLETE -- so NIP-0002's staged plan is now complete. The phase-011 Plan-of-Record banner carries the completion record (080 ecosystem/04 Plan stage + reconciliation_plan schema + H-PLANNING-AUTHORITY defined; 081 ecosystem/05 Promote stage + release_train_manifest schema + H-TRAIN-ENTRY defined; 082 ecosystem_reconcile.py; 083 ecosystem_release_train.py + assert_stage4 e2e; 084 pilot proved the layer end-to-end across a scratch 2-member ecosystem -- PASS aggregate -> PASS plan -> PASS train, both negatives enforced (cyclic -> FAIL, ungated -> FAIL), evidence .agent/evidence/pilot-084/). NDEBT-035 resolved. Current Position rolled to phases 001-011 complete. The phase-012 candidate scope (NDEBT-029 release cut carrying the whole 0-n loop + a real non-scratch multi-repo pilot + the remaining 06/08 Repeat/GA protocols with H-CONSOLIDATION/H-GA) is refined and validated against the pilot evidence -- confirmed, not re-ordered (the release cut is the natural next step). manifest + run_state reflect phase-011 completion. A real, non-scratch multi-repo pilot at a released tag remains the open production-maturity criterion."
+  - version: "0.28.0"
+    date: "2026-07-22"
+    summary: "Phase 011 ACTIVATED (operator verbatim: 'Approved. Please proceed', gate H-PHASE-011, 2026-07-22, given after PR #48 merged the phase-011 proposal to main at 44a91fc): the 'Proposed Next Phase — Phase 011' banner becomes the Plan of Record banner. current_phase advanced 010-multi-repo -> 011-coordination-protocols in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_011 flipped draft -> active (1.1.0); scope budget reset to 1330 (phase-010 final already archived at phase-010 close). Execution begins with the ungated DAG root feature 080 (author ecosystem/04_dependency_reconciliation.md + schema/reconciliation_plan.schema.json + define the reserved H-PLANNING-AUTHORITY gate; NDEBT-035). The reserved gates H-PLANNING-AUTHORITY / H-TRAIN-ENTRY are DEFINED at features 080/081 and first exercised at the 084 pilot; H-CONSOLIDATION / H-GA (06/08 Repeat/GA) stay reserved. The release cut carrying the whole loop (NDEBT-029), a real non-scratch multi-repo pilot, and the 06/08 protocols stay phase-012 candidate scope."
   - version: "0.27.0"
     date: "2026-07-22"
     summary: "Phase 011 PROPOSED (authored after PR #47 merged phase 010). A new 'Proposed Next Phase — Phase 011' banner tops the roadmap: NIP-0002 Stage 4 — the n-coordination protocols (ecosystem/04_dependency_reconciliation + ecosystem/05_release_train_coordination, with companion schemas, where cross-repo ordering and release-train entry genuinely live; NDEBT-035), the FINAL stage of the 0-n staged plan (completing it completes NIP-0002). Features 080-084 (DAG root {080}, est 1330), realized by the Planner artifacts .agent/product_spec_011.md (status draft) + .agent/feature_list_011.json, awaiting activation gate H-PHASE-011. Scoped to NIP-0002 Stage 4 only (one stage at a time, as phases 008/009/010 took Stages 1/2/3): 080 the reconciliation protocol + schema + defining the reserved H-PLANNING-AUTHORITY gate; 081 the release-train protocol + schema + defining the reserved H-TRAIN-ENTRY gate; 082 the reconciliation tool (consuming the phase-010 aggregate); 083 the release-train tool + Stage-4 e2e coverage; 084 the pilot + phase close. The former phase-010 banner's 'Deferred -> Phase-011 candidate scope' subsection is annotated as now-authored; the release cut carrying the whole loop (NDEBT-029), a real non-scratch multi-repo pilot, and the remaining Repeat/GA protocols (06_simplification_review / 08_ga_gate with the reserved H-CONSOLIDATION / H-GA gates) are carried forward as phase-012 candidate scope. current_phase stays 010-multi-repo until activation; run_state untouched (a proposal is not an activation)."
@@ -91,25 +97,35 @@ change_log:
 
 # Forward Roadmap
 
-## Proposed Next Phase — Phase 011: 0–n Project Spectrum, Stage 4 — n-Coordination Protocols (Dependency Reconciliation & Release-Train Coordination) — **PROPOSED, awaiting `H-PHASE-011`**
+## Plan of Record (2026-07-22) — Phase 011: 0–n Project Spectrum, Stage 4 — n-Coordination Protocols (Dependency Reconciliation & Release-Train Coordination) — **COMPLETE 2026-07-22**
 
-**Phase `011-coordination-protocols` is PROPOSED** (2026-07-22), awaiting operator activation
-(gate **H-PHASE-011**). It realizes **NIP-0002 Stage 4 — the n-coordination protocols**, the
-**final** stage of the 0–n staged plan: completing it completes NIP-0002. Taken one stage at a
-time, as phases 008/009/010 took Stages 1/2/3. The Planner artifacts
-`.agent/product_spec_011.md` (status `draft`) and `.agent/feature_list_011.json` (features
-080–084, DAG-validated acyclic, root `{080}`, est 1330) exist; per `methodology/00_planning.md` a
-phase becomes the plan of record only on operator authorization, so `current_phase` stays
-`010-multi-repo` (complete) and `.agent/run_state.json` is untouched until activation (a proposal
-is not an activation).
+**Phase `011-coordination-protocols` is COMPLETE** (2026-07-22). It realized **NIP-0002 Stage 4 —
+the n-coordination protocols**, the **final** stage of the 0–n staged plan — **so NIP-0002's staged
+plan is now complete**. Activation was on 2026-07-22 (operator verbatim **"Approved. Please
+proceed"**, gate **H-PHASE-011**, given after PR #48 merged the phase-011 proposal to `main` at
+`44a91fc`; recorded in `.agent/run_state.json` event `phase_activated` before any feature execution,
+per the NDEBT-018 rule). **080** authored `ecosystem/04` (the Plan stage) + `reconciliation_plan`
+schema (topological-order invariant, C12) and defined `H-PLANNING-AUTHORITY`; **081** authored
+`ecosystem/05` (the Promote stage) + `release_train_manifest` schema (trace-to-plan invariant, C12)
+and defined `H-TRAIN-ENTRY`; **082** added `tools/ecosystem_reconcile.py` (aggregate + findings → a
+schema-valid dependency-ordered plan; a cycle forces FAIL); **083** added
+`tools/ecosystem_release_train.py` (plan → a schema-valid train manifest, refusing a PASS without
+the recorded `H-TRAIN-ENTRY` decision) + hermetic `assert_stage4` e2e; **084** piloted the layer
+end-to-end across a scratch 2-member ecosystem — validated registry, PASS aggregate → PASS plan →
+PASS train (all C12-valid), and both negatives enforced (a cyclic plan → FAIL, an ungated train →
+FAIL) — with no hand-applied workaround (evidence `.agent/evidence/pilot-084/`; `NDEBT-035`
+resolved). `manifest.json` carries phase-011 `status: complete`; both Stage-4 gates were exercised
+in the pilot, recorded before the acts they govern (NDEBT-018). A **real, non-scratch multi-repo
+ecosystem at a released tag** remains the standing production-maturity criterion (carried to phase
+012, `NDEBT-029`).
 
 **Scope — NIP-0002 Stage 4 only (prove-then-build).** Phases 008/009/010 delivered the "1", "0",
-and "n" points; the membership set is enumerated and its verdicts aggregated. What remains is the
-**coordination** layer — with `n` members now visible, the cycle can *see* the ecosystem but
-cannot yet **coordinate work across it**. NIP-0002 places the genuine n-repo coordination in two
-deferred protocols (still `Planned` in `ecosystem/README.md`) — the lifecycle's **Plan** and
-**Promote** stages — and reserves the two gates that govern them (`NDEBT-035`). Phase 011 authors
-and mechanizes them, then pilots the layer. Features:
+and "n" points; the membership set is enumerated and its verdicts aggregated. What remained was the
+**coordination** layer — with `n` members visible, the cycle could *see* the ecosystem but could
+not yet **coordinate work across it**. NIP-0002 placed the genuine n-repo coordination in two
+protocols that were `Planned` (now Shipped in `ecosystem/README.md`) — the lifecycle's **Plan** and
+**Promote** stages — and reserved the two gates that govern them (`NDEBT-035`). Phase 011 authored
+and mechanized them, then piloted the layer. Features:
 
 1. **080 — Dependency-reconciliation protocol (`ecosystem/04`) + companion schema** (`NDEBT-035`) —
    author the Plan stage (approved findings + the phase-010 aggregate → typed, dependency-ordered
@@ -130,9 +146,13 @@ and mechanizes them, then pilots the layer. Features:
    multi-repo ecosystem, exercise the two Stage-4 gates before the acts they govern, then
    refine/validate the phase-012 candidate scope below and close the phase (**completing NIP-0002**).
 
-**Deferred → Phase-012 candidate scope (release + real pilot + Repeat/GA protocols).** Held until
-the coordination layer is *proven* by the feature-084 pilot; these are the production-maturity and
-Repeat/GA neighbours outside NIP-0002's 0–n staged plan:
+**Deferred → Phase-012 candidate scope (release + real pilot + Repeat/GA protocols).** *(Refined and
+validated against the feature-084 pilot evidence, `.agent/evidence/pilot-084/`: the pilot proved the
+coordination layer runs end-to-end with both gates enforced, so the candidate below is **confirmed,
+not re-ordered**. With NIP-0002's staged plan now complete, the release cut is the natural next step
+— it carries the whole 0–n loop into a tag a real consumer can adopt, which the standing real
+multi-repo pilot then requires.)* The production-maturity and Repeat/GA neighbours, outside
+NIP-0002's 0–n staged plan:
 - Cut a framework release carrying the whole loop — genesis + audit/compare + n-case tooling + the
   new coordination layer (`NDEBT-029`) — a release-train action, and a prerequisite for the real pilot.
 - A **real, non-scratch multi-repo ecosystem pilot** — the standing production-maturity criterion
@@ -436,8 +456,22 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-07-22)
 
-- Phases 001–010 are complete. **Phase 010 (0–n Project Spectrum, Stage 3: The n-case —
-  Multi-Repo Tooling, features 075–079) is COMPLETE** (2026-07-22): the n-case is now first-class
+- Phases 001–011 are complete. **Phase 011 (0–n Project Spectrum, Stage 4: n-Coordination
+  Protocols, features 080–084) is COMPLETE** (2026-07-22) — **so NIP-0002's staged plan is now
+  complete**: the coordination layer is first-class and mechanized. `ecosystem/04` is the Plan stage
+  (080, `schema/reconciliation_plan.schema.json` + `validate.sh` C12's topological-order invariant;
+  `H-PLANNING-AUTHORITY` defined), `ecosystem/05` is the Promote stage (081,
+  `schema/release_train_manifest.schema.json` + C12's trace-to-plan invariant; `H-TRAIN-ENTRY`
+  defined), `tools/ecosystem_reconcile.py` turns the phase-010 aggregate + findings into a
+  schema-valid dependency-ordered plan (082, a cycle forces FAIL), `tools/ecosystem_release_train.py`
+  admits a plan into a release train refusing a PASS without the recorded gate (083), with
+  `assert_stage4` hermetic e2e; a scratch 2-member pilot proved the layer end-to-end — PASS aggregate
+  → PASS plan → PASS train (all C12-valid) + both negatives enforced (cyclic → FAIL, ungated → FAIL) —
+  with no workaround (084, evidence `.agent/evidence/pilot-084/`; `NDEBT-035` resolved). A real,
+  non-scratch multi-repo pilot at a released tag stays outstanding for production maturity
+  (`NDEBT-029`); the release cut carrying the whole 0–n loop, that real pilot, and the remaining
+  `06`/`08` Repeat/GA protocols are phase-012 candidate scope. **Phase 010 (0–n Project Spectrum,
+  Stage 3: The n-case — Multi-Repo Tooling, features 075–079) is COMPLETE** (2026-07-22): the n-case is now first-class
   and mechanized — `scope_definition_patterns.md` is a required, schema-validated membership
   registry that sets `n` (075, `schema/ecosystem_membership.schema.json` + `validate.sh` C12),
   `ecosystem_membership_run.py` iterates the `in_scope` set instead of one `--repo-root` (076),

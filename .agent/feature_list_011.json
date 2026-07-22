@@ -8,7 +8,7 @@
       "id": "080",
       "name": "Dependency-reconciliation protocol (ecosystem/04) + companion schema (NIP-0002 Stage 4)",
       "description": "Author ecosystem/04_dependency_reconciliation.md -- the lifecycle's Plan stage (NDEBT-035): how approved audit findings and the phase-010 ecosystem-level aggregate (ecosystem_membership_run.py's membership_run.json -- per-member verdicts + the common-pin consistency finding) are turned into typed, dependency-ordered cross-repository work packets. House structure matching ecosystem/00-03/07 (UDS frontmatter, canonical-lifecycle framing, consumer-convention evidence paths). Author a companion JSON schema (schema/reconciliation_plan.schema.json) for a reconciliation-plan INSTANCE: the work-packet shape (per-repo target + the findings it closes), the typed cross-repo dependency edges, and the topological-order invariant (the ordered packet sequence must be a valid topological sort of the edge set). Define the reserved H-PLANNING-AUTHORITY gate: move it from operator_gates.md Section 2 (reserved) into Section 1 (decided/active) with scope/trigger/disposition semantics, record-but-never-self-execute, as phase 007 did for H-CONSUMER-UPGRADE. Register the schema in NIZAM.json + schema/README.md (C10/C13 consistent); flip the ecosystem/README.md module-navigation row '04 ... Planned' -> 'Shipped' and re-sync the prose that counts Shipped/Planned documents. Add covering positive/negative fixtures.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [],
       "acceptance_tests": [
         "ecosystem/04_dependency_reconciliation.md exists in house structure, authors the Plan stage (approved findings + the phase-010 aggregate -> typed dependency-ordered cross-repo work packets), and references the companion schema + the phase-010 aggregate as its input substrate.",
@@ -21,7 +21,7 @@
       "id": "081",
       "name": "Release-train coordination protocol (ecosystem/05) + companion schema",
       "description": "Author ecosystem/05_release_train_coordination.md -- the lifecycle's Promote stage (NDEBT-035): the entry conditions under which reconciled work packets (080) are admitted into a cross-repository release train, the train-manifest shape, and the record-but-never-self-execute promotion rule (the pipeline records but never self-executes a promotion, per ecosystem/README.md's Promote stage). House structure matching the sibling protocols. Author a companion JSON schema (schema/release_train_manifest.schema.json) for a release-train-manifest INSTANCE: the admitted-packet set, per-repo train membership, the entry-gate reference (H-TRAIN-ENTRY), and the invariant that every admitted packet traces to a reconciliation-plan packet. Define the reserved H-TRAIN-ENTRY gate (move it from operator_gates.md Section 2 into Section 1 with scope/trigger/disposition semantics). Register the schema in NIZAM.json + schema/README.md; flip the ecosystem/README.md '05 ... Planned' -> 'Shipped' row and re-sync the Shipped/Planned prose. Add covering positive/negative fixtures (including an admitted packet with no reconciliation-plan origin, which must FAIL).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "080"
       ],
@@ -36,7 +36,7 @@
       "id": "082",
       "name": "Reconciliation tooling",
       "description": "Mechanize the Plan stage (NDEBT-035): a stdlib-only tools/ script that reads the phase-010 ecosystem-level aggregate (ecosystem_membership_run.py's membership_run.json, validated against schema/ecosystem_membership_result.schema.json) plus a set of approved findings, and PRODUCES a schema-valid, dependency-ordered reconciliation plan (schema/reconciliation_plan.schema.json, 080) -- a produced artifact, not a hand-rollup. Enforce the topological-order invariant: a cyclic cross-repo dependency set is a first-class flagged finding forcing a non-PASS verdict (exit != 0), never a silent mis-order. Mirror the documented exit-code table + stdlib-only style of tools/ecosystem_membership_run.py (0=PASS, 1=FAIL, 64=usage). The phase-010 single-/multi-repo paths are unchanged (regression-guarded).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "080"
       ],
@@ -51,7 +51,7 @@
       "id": "083",
       "name": "Release-train tooling + Stage-4 coverage",
       "description": "Mechanize the Promote-entry check (NDEBT-035): a stdlib-only tools/ script that reads a reconciliation plan (082) and PRODUCES a schema-valid release-train manifest (schema/release_train_manifest.schema.json, 081), gated on H-TRAIN-ENTRY (recorded, never self-executed -- the tool refuses to emit a manifest without the recorded gate decision, and never itself promotes). Add hermetic e2e + self-test coverage: extend tools/e2e_bootstrap_test.sh with a Stage-4 case chained onto the phase-010 assert_multirepo scaffolding -- stand up a scratch multi-repo ecosystem, run the aggregate -> reconciliation -> train chain across it, and assert each stage produces a schema-valid artifact + the correct verdicts. The single-repo + phase-010 n-case e2e/self-test paths stay green (regression-guarded); each tool exit captured via an if so set -e does not abort before a diagnostic.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "081",
         "082"
@@ -67,7 +67,7 @@
       "id": "084",
       "name": "Pilot Stage 4, prove it, prioritise phase 012 + phase close",
       "description": "Run the coordination layer across a scratch/throwaway MULTI-repo ecosystem stood up from nothing (>=2 genesis'd repos, operator option c; needs no external repo) using the fixed tooling (080-083), and prove Stage 4 end-to-end with no hand-applied workaround: the phase-010 aggregate feeds a produced, schema-valid reconciliation plan (082), which feeds a produced, schema-valid release-train manifest (083), with the topological-order + train-entry invariants enforced (including a negative: a cyclic dependency set correctly forcing a non-PASS reconciliation verdict, and an ungated train-entry correctly refused). Record the H-PLANNING-AUTHORITY and H-TRAIN-ENTRY gate exercises in run_state before the acts they govern (NDEBT-018). Capture any residual friction as new NDEBT-* rows with evidence under .agent/evidence/<execution-id>/. Then REFINE AND VALIDATE the already-authored phase-012 candidate scope in docs/planning/ROADMAP.md (NDEBT-029 release cut carrying the whole loop, the real non-scratch multi-repo pilot, the remaining 06_simplification_review / 08_ga_gate protocols) against the pilot evidence -- confirming or re-ordering it, not authoring it from scratch. Close phase 011 so run_state and manifest reflect phase-011 completion -- and with it, NIP-0002's staged plan complete.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "080",
         "081",

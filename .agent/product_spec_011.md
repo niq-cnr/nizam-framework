@@ -3,14 +3,20 @@ id: nizam-product-spec-011
 title: "Nizam Framework — Phase 011 Spec (0–n Project Spectrum, Stage 4: n-Coordination Protocols — Dependency Reconciliation & Release-Train Coordination) — PROPOSAL"
 description: "Phase-011 proposal: realize NIP-0002 (The 0–n Project Spectrum) Stage 4 — the n-coordination protocols, the final stage of the staged plan. Authors the two deferred ecosystem protocols where cross-repo ordering and release-train entry genuinely live — ecosystem/04_dependency_reconciliation.md (the Plan stage) and ecosystem/05_release_train_coordination.md (the Promote stage) — with their companion schemas, defines the reserved H-PLANNING-AUTHORITY and H-TRAIN-ENTRY gates that map to them, mechanizes each as a stdlib-only tool that consumes the phase-010 ecosystem-level aggregate (schema/ecosystem_membership_result.schema.json / tools/ecosystem_membership_run.py) as its input substrate, adds hermetic Stage-4 coverage, then pilots the coordination layer against a scratch multi-repo ecosystem to PROVE it and prioritise the remaining production-maturity work from that evidence (NDEBT-035). The release cut carrying the whole loop (NDEBT-029), a real non-scratch multi-repo pilot, and the remaining Repeat/GA protocols (06_simplification_review / 08_ga_gate with H-CONSOLIDATION / H-GA) are explicitly OUT OF SCOPE — carried as phase-012 candidate scope. Extends product_spec.md..product_spec_010.md; replaces none. Frontmatter status stays draft until operator activation (gate H-PHASE-011) — the 005 lesson: status tracks the decision lifecycle, not anticipates it."
 tags: [spec, ecosystem-cycle, zero-to-n, multi-repo, coordination, dependency-reconciliation, release-train, phase-011, proposal]
-status: draft
+status: active
 last_audited: "2026-07-22"
 authoritative_source: NA
-version: 1.0.0
+version: 1.2.0
 spec_version: "1.0.0"
 created_at: "2026-07-22T05:00:00Z"
-updated_at: "2026-07-22T05:00:00Z"
+updated_at: "2026-07-22T12:45:00Z"
 change_log:
+  - version: "1.2.0"
+    date: "2026-07-22T12:45:00Z"
+    summary: "Records-sync from the PR #49 CodeRabbit review (phase complete): §5 Human Gates re-synced to the post-pilot state -- H-PHASE-011 OUTSTANDING -> SATISFIED (2026-07-22, activation), and H-PLANNING-AUTHORITY / H-TRAIN-ENTRY 'first exercised at F-084' -> EXERCISED (2026-07-22, recorded in run_state operator_gate_decision before their acts per NDEBT-018), both marked recurring. The body Status banner's stale activation-time claims were also corrected -- the manifest phase-011 entry now reads status: complete (not in_progress), and 'Execution begins with feature 080' -> 'Execution ran from 080 through the 084 pilot that closed the phase'. No scope change; this only advances the lifecycle language the completed feature-084 pilot moved past."
+  - version: "1.1.0"
+    date: "2026-07-22T09:45:00Z"
+    summary: "Phase activated: frontmatter status draft -> active on operator authorization 2026-07-22 (verbatim: 'Approved. Please proceed', gate H-PHASE-011, given after PR #48 merged the phase-011 proposal to main at 44a91fc), recorded in .agent/run_state.json event phase_activated before any feature execution per the NDEBT-018 rule. current_phase advanced 010-multi-repo -> 011-coordination-protocols; current_feature set to 080 (the ungated DAG root); scope budget reset (1330 est, phase-010 final already archived at phase-010 close). Body Status banner updated PROPOSED -> ACTIVE plan of record; no scope change. Unlike phase 010's single 'proposal + activation' cycle, this proposal was merged (PR #48) then activated in a separate operator cycle. The reserved gates H-PLANNING-AUTHORITY / H-TRAIN-ENTRY are DEFINED during feature execution (080/081) and first exercised at the 084 pilot -- not at this activation; H-CONSOLIDATION / H-GA stay reserved. The draft status was the designed proposal state, flipped as the decision lifecycle reached activation (the 005 lesson applied as intended)."
   - version: "1.0.0"
     date: "2026-07-22T05:00:00Z"
     summary: "Initial phase-011 proposal, authored after PR #47 merged phase 010 (NIP-0002 Stage 3, the n-case — Multi-Repo Tooling) to main. Scope sourced from NIP-0002's Staged Realization Stage 4 (the n-coordination protocols — 04_dependency_reconciliation + 05_release_train_coordination, with companion schemas, where cross-repo ordering and release-train entry genuinely live) + the phase-010 pilot evidence (feature 079, .agent/evidence/pilot-079/, which validated the ordering: the ecosystem-level aggregate result already records per-member verdicts + a common-pin consistency finding — exactly the substrate a 04 reconciliation pass consumes) + the open debt row NDEBT-035. This is the FINAL stage of NIP-0002, taken one stage at a time as phases 008/009/010 took Stages 1/2/3. Frontmatter status stays draft until operator activation (gate H-PHASE-011) — the 005 lesson: status tracks the decision lifecycle, not anticipates it. No feature may enter contract negotiation before that authorization; current_phase remains 010-multi-repo (complete) until then. The release cut carrying the whole loop (NDEBT-029), a real non-scratch multi-repo pilot, and the remaining Repeat/GA protocols (06/08 with the reserved H-CONSOLIDATION / H-GA gates) are deferred to phase 012, evidence-gated on this phase's Stage-4 pilot."
@@ -18,15 +24,19 @@ change_log:
 
 # Nizam Framework — Phase 011 Spec (0–n Project Spectrum, Stage 4: n-Coordination Protocols)
 
-**Status: PROPOSED — awaiting operator activation (gate H-PHASE-011).** This spec and the
-DAG-validated feature list (`.agent/feature_list_011.json`) are Planner artifacts; per
-`methodology/00_planning.md` a phase becomes the plan of record only on operator authorization
-(gate **H-PHASE-011**). Until then `current_phase` remains `010-multi-repo` (complete), `status`
-stays `draft` (the 005 lesson — frontmatter tracks the decision lifecycle, it does not anticipate
-it), and **no feature enters contract negotiation**. `.agent/run_state.json` is untouched (a
-proposal is not an activation). It advances **NIP-0002 (The 0–n Project Spectrum)** to Stage 4 —
-the **final** stage of the staged plan. On activation, execution begins with the ungated DAG root
-feature 080 (the dependency-reconciliation protocol + its companion schema).
+**Status: ACTIVE — plan of record.** Phase `011-coordination-protocols` was authorized for
+activation by the operator on 2026-07-22 (verbatim: **"Approved. Please proceed"**, satisfying gate
+**H-PHASE-011**, given after PR #48 merged the phase-011 proposal to `main` at `44a91fc`; recorded
+in `.agent/run_state.json` event `phase_activated` before any feature execution, per the NDEBT-018
+rule). It advances **NIP-0002 (The 0–n Project Spectrum)** to Stage 4 — the **final** stage of the
+staged plan; **completing it completes NIP-0002**. Per `methodology/00_planning.md`, the
+Planner-produced spec and the DAG-validated feature list (`.agent/feature_list_011.json`) existed at
+proposal (merged via PR #48); the operator authorization completed the activation triad.
+`docs/planning/manifest.json` carries `current_phase: 011-coordination-protocols` with the phase-011
+entry `status: complete` (the phase closed 2026-07-22, event `phase_complete`). Execution ran from
+the ungated DAG root feature 080 (the dependency-reconciliation protocol + its companion schema +
+defining the reserved `H-PLANNING-AUTHORITY` gate) through feature 084 (the pilot that proved the
+coordination layer and closed the phase).
 
 ## 1. Purpose
 
@@ -143,18 +153,20 @@ the programme.
 Recorded per `docs/planning/operator_gates.md`. The pipeline records but never self-executes
 a human gate.
 
-1. **H-PHASE-011 — OUTSTANDING.** Authorizes activation of this proposal (required before any
-   feature enters contract negotiation); its acceptance advances NIP-0002 to Stage 4 and will be
-   recorded in `.agent/run_state.json` (event `phase_activated`) before any feature runs, per the
+1. **H-PHASE-011 — SATISFIED (2026-07-22).** Authorized activation of this proposal (required
+   before any feature entered contract negotiation); its acceptance advanced NIP-0002 to Stage 4 and
+   is recorded in `.agent/run_state.json` (event `phase_activated`) before any feature ran, per the
    NDEBT-018 rule.
-2. **H-PLANNING-AUTHORITY — defined at F-080, first exercised at F-084.** Approves the planning
-   authority a reconciliation plan asserts across repositories before it is admitted downstream;
-   record-but-never-self-execute. Moved from the reserved table into the decided table at F-080
-   (as phase 007 did for `H-CONSUMER-UPGRADE`); recorded in `run_state` before the pilot's plan is
-   promoted (the NDEBT-018 rule).
-3. **H-TRAIN-ENTRY — defined at F-081, first exercised at F-084.** Admits reconciled work into a
-   cross-repository release train; record-but-never-self-execute. Recorded in `run_state` before
-   the pilot's train manifest is produced.
+2. **H-PLANNING-AUTHORITY — defined at F-080, EXERCISED at F-084 (2026-07-22).** Approves the
+   planning authority a reconciliation plan asserts across repositories before it is admitted
+   downstream; record-but-never-self-execute. Moved from the reserved table into the decided table at
+   F-080 (as phase 007 did for `H-CONSUMER-UPGRADE`); recorded in `run_state` (event
+   `operator_gate_decision`) before the pilot's plan was produced (the NDEBT-018 rule). Recurring:
+   outstanding again at the next reconciliation plan.
+3. **H-TRAIN-ENTRY — defined at F-081, EXERCISED at F-084 (2026-07-22).** Admits reconciled work
+   into a cross-repository release train; record-but-never-self-execute. Recorded in `run_state`
+   (event `operator_gate_decision`) before the pilot's train manifest was produced. Recurring:
+   outstanding again at the next release train.
 
 The reserved gates `H-CONSOLIDATION` (Repeat/stage 06) and `H-GA` (Promote/stage 08) map to the
 `06`/`08` protocols and **stay reserved** — those protocols are phase-012 candidate scope, outside

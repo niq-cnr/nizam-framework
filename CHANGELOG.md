@@ -9,6 +9,73 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Phase 011 (0–n Project Spectrum, Stage 4: n-Coordination Protocols) complete — NIP-0002's staged
+  plan is complete** (feature 084; `NDEBT-035`). Piloted the coordination layer end-to-end against a
+  scratch **2-member** ecosystem stood up **from nothing** at one shared pin, using the fixed tooling
+  (080–083): a schema-validated membership registry → a **PASS** aggregate → a **PASS** reconciliation
+  plan (topologically ordered) → a **PASS** release-train manifest — all C12-valid — with both
+  Stage-4 gates exercised and recorded before the acts they govern (`H-PLANNING-AUTHORITY` before the
+  plan, `H-TRAIN-ENTRY` before the train; NDEBT-018), and both invariants proven load-bearing by
+  negatives (a cyclic plan → `FAIL`, an ungated train → `FAIL`) — with no hand-applied workaround
+  (evidence `.agent/evidence/pilot-084/`). `NDEBT-035` resolved; `manifest.json` + `run_state` reflect
+  phase-011 completion; ROADMAP (v0.29.0) rolls Current Position to phases 001–011 complete and validates
+  the phase-012 candidate scope (the `NDEBT-029` release cut carrying the whole 0–n loop, a real
+  non-scratch multi-repo pilot, and the remaining `06`/`08` Repeat/GA protocols). A real, non-scratch
+  multi-repo pilot at a released tag remains the open production-maturity criterion.
+- **`tools/ecosystem_release_train.py` + Stage-4 e2e coverage** (phase 011 feature 083; `NDEBT-035`;
+  NIP-0002 Stage 4). A stdlib-only Promote-stage tool that reads a reconciliation plan (feature 082) and
+  **produces** a schema-valid release-train manifest at `<output-dir>/manifest.json`
+  (`schema/release_train_manifest.schema.json`), admitting the plan's packets into a cross-repository
+  release train. The **`H-TRAIN-ENTRY`** gate is load-bearing: the tool **refuses to emit a `PASS` train**
+  without the recorded admission decision (`--entry-gate-recorded`), and it never itself promotes — a
+  record-but-never-self-execute Promote. An orphan admission (an `--admit` id with no plan origin) is a
+  recorded finding forcing `train_verdict` `FAIL`; a non-`PASS` source plan is a usage error. Exit table
+  `0`/`1`/`64`. Extended `tools/e2e_bootstrap_test.sh` with **`assert_stage4`**, chained onto the
+  phase-010 `assert_multirepo` aggregate (no fresh genesis clone — the per-member cost is `NDEBT-034`):
+  it runs the **aggregate → reconciliation → release-train** chain across the 2-member set, asserting a
+  `PASS` plan + a `PASS` train manifest (both C12-valid) and that an **ungated** admission is correctly
+  refused a `PASS`. The single-repo + n-case paths stay green.
+- **`tools/ecosystem_reconcile.py` — the Plan-stage tool** (phase 011 feature 082; `NDEBT-035`;
+  NIP-0002 Stage 4). A stdlib-only tool that reads the phase-010 ecosystem-level membership-run
+  aggregate (`schema/ecosystem_membership_result.schema.json`) for the authoritative `in_scope` set plus
+  a packets-input file, and **produces** a schema-valid, dependency-ordered reconciliation plan at
+  `<output-dir>/plan.json` — the hand-aggregation made a produced artifact. It computes the topological
+  order via Kahn's algorithm; a **cyclic** cross-repo dependency set is a first-class recorded finding
+  (`cycle_findings`) forcing `plan_verdict` `FAIL` and a non-zero exit, never a silent mis-order. Exit
+  table mirrors the sibling tools: `0` PASS plan, `1` FAIL plan (cycle), `64` usage error (unknown target
+  repo, dangling edge, malformed input). A standing `fixtures_self_test.sh` CLI probe guards the polarity
+  (acyclic → PASS + a C12-valid plan; cyclic → FAIL(1); unknown repo → usage(64)). `self-test` 63/63 + 7 probe groups.
+- **`ecosystem/05_release_train_coordination.md` + `schema/release_train_manifest.schema.json` — the
+  Promote stage** (phase 011 feature 081; `NDEBT-035`; NIP-0002 Stage 4). Authored the lifecycle's
+  Promote-stage protocol: an operator-authorized reconciliation plan's work packets are admitted into a
+  **cross-repository release train**, under the **trace-to-plan invariant** — every admitted packet
+  traces to a plan packet, and an orphan admission is a first-class recorded finding forcing a
+  non-`PASS` `train_verdict`. The companion schema validates the manifest shape (`source_plan` + its
+  `plan_packets`, `admitted_packets`, `train_members`, the `entry_gate_recorded` flag, the verdict)
+  with one in-schema `if/then` (a `PASS` train requires the admission recorded); the trace-to-plan
+  invariant is enforced in code by `validate.sh` C12 as the **eighth** ecosystem schema family (both
+  entry points, discriminated by `train_verdict`/`admitted_packets`), with one positive and two negative
+  fixtures (schema-invalid ungated-`PASS` + a trace-to-plan-violating orphan + a repo-mismatch; the
+  manifest's `plan_packets` carries the plan's `(id, repo)` mapping so the trace-to-plan check binds
+  both fields). The reserved gate
+  **`H-TRAIN-ENTRY`** is now **defined** (moved `operator_gates.md` Section 2 → Section 1; v0.13.0).
+  Registered in `NIZAM.json`, `schema/README.md` (v0.12.0), `tools/skill.json`; the `ecosystem/README.md`
+  (v0.2.3) module-nav `05` row flips Planned → Shipped (seven documents Shipped; with `04` + `05` both
+  shipped, NIP-0002 Stage 4's coordination protocols are complete). `self-test` 63/63.
+- **`ecosystem/04_dependency_reconciliation.md` + `schema/reconciliation_plan.schema.json` — the Plan
+  stage** (phase 011 feature 080; `NDEBT-035`; NIP-0002 Stage 4). Authored the lifecycle's Plan-stage
+  protocol: approved engineering-audit findings plus the phase-010 ecosystem-level membership-run
+  aggregate become **typed, dependency-ordered cross-repository work packets**, under the
+  topological-order invariant — a cyclic `depends_on` set is a first-class recorded finding forcing a
+  non-`PASS` `plan_verdict`, never a silent mis-order. The companion schema validates the plan shape
+  (per-repo packets, typed edges, the emitted order, the verdict); the cycle invariant is enforced in
+  code by `validate.sh` C12 as the **seventh** ecosystem schema family (both entry points, discriminated
+  by `plan_verdict`/`cycle_findings`), with one positive and two negative fixtures (schema-invalid
+  missing-verdict + a cyclic-but-`PASS` + a bad-`order`-but-`PASS`; C12 verifies `order` is a full
+  topological permutation of the packet ids, not merely acyclic). The reserved gate **`H-PLANNING-AUTHORITY`** is now **defined**
+  (moved `docs/planning/operator_gates.md` Section 2 → Section 1). Registered in `NIZAM.json`,
+  `schema/README.md` (v0.11.0), and `tools/skill.json`; the `ecosystem/README.md` (v0.2.2) module-nav
+  `04` row flips Planned → Shipped (six documents now Shipped). `self-test` 60/60.
 - **Phase 011 proposal (0–n Project Spectrum, Stage 4: n-Coordination Protocols)** (`NDEBT-035`;
   NIP-0002 Stage 4 — the **final** stage). Authored the Planner artifacts `.agent/product_spec_011.md`
   (status `draft`) and `.agent/feature_list_011.json` (features 080–084, DAG-validated acyclic, root
