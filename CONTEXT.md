@@ -2,13 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 0.8.0
+version: 0.9.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
-  - version: "0.8.0"
-    date: "2026-07-20"
-    summary: "Bump version for the v0.8.0 MINOR release closing phase 006 (Enforcement Closure & Hardening). No Module Map change: phase 006 added enforcement surface (validator checks C13/C14/C15, tools/verify_lib.sh primitives, tools/ecosystem_preflight.py hardening) and documentation-honesty markings, not new injected modules."
+  - version: "0.9.0"
+    date: "2026-07-22"
+    summary: "Bump version for the v0.9.0 MINOR release, the first since v0.8.0, carrying phases 007-011: consumer-adoption enablement (ecosystem/00 Bootstrap protocol + H-CONSUMER-UPGRADE) and the full NIP-0002 realization (0-n Project Spectrum: consumer-readiness, greenfield genesis, the n-case membership registry + multi-repo tooling, and the Stage-4 04/05 coordination protocols), plus the audit/compare tooling now shipped in the tag (NDEBT-029). Module Map's ecosystem/ entry now enumerates the Bootstrap (00) and Stage-4 coordination (04/05) protocols and drops the stale 'framework-side only so far' (consumers now bootstrap and run the full 0–n lifecycle from the injected tools/); all additive, no removal or narrowing. A real non-scratch multi-repo pilot at this tag stays the standing production-maturity criterion."
   - version: "0.7.0"
     date: "2026-07-19"
     summary: "H-PAYLOAD-CONTRACT (phase-006 feature 051): the bootstrap payload sentence now names the SIX injected governance directories (standard/, templates/, schema/, tools/, methodology/, ecosystem/) plus NIZAM.json -- methodology/ and ecosystem/ joined the injected payload, resolving NDEBT-008; registry/ and docs/ remain framework-envelope and are not injected."
@@ -50,7 +50,7 @@ infrastructure, and not a runtime service.
 - `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md`.
 - `registry/` — The `NIZAM.json` index schema and scope-definition patterns.
 - `docs/` — Architecture Decision Records (`docs/architecture/`) and the self-contained HTML user guide (`docs/guide/index.html`).
-- `ecosystem/` — The reusable, schema-governed Ecosystem Engineering Cycle protocols (clean-state preflight, evidence baseline, engineering audit, progress comparison), framework-side only so far.
+- `ecosystem/` — The reusable, schema-governed Ecosystem Engineering Cycle protocols: Bootstrap (`00`), clean-state preflight (`01`), evidence baseline (`02`), engineering audit (`03`), dependency reconciliation (`04`, the Plan stage), release-train coordination (`05`, the Promote stage), and progress comparison (`07`) — now consumer-adoptable (a consumer bootstraps the framework and runs the full 0–n lifecycle), not framework-side only.
 
 Compliance surfaces, added in phase 002-self-compliance, keep the shipped payload honest:
 `tools/validate.sh` (the repo-local compliance validator), `.github/workflows/compliance.yml`
