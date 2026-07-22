@@ -9,6 +9,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Phase 009 proposed** — `.agent/product_spec_009.md` (status draft) and
+  `.agent/feature_list_009.json` (features 070–074, DAG-validated acyclic, root {070}, est 1000
+  lines) propose **0–n Project Spectrum, Stage 2: Greenfield Genesis**, the realization of
+  `NIP-0002` Stage 2 (the 0-case). Scope: the greenfield-genesis protocol (`NDEBT-030`), a
+  create-and-scaffold-from-nothing capability, the `incubating→in_scope` (count-0→1) transition
+  on the scope registry, hermetic e2e coverage, then a pilot proving the 0-case. NIP-0002
+  Stages 3–4 (n-case multi-repo tooling + membership registry `NDEBT-031`, `04`/`05` protocols)
+  and the release cut carrying audit/compare (`NDEBT-029`) are carried as phase-010 candidate
+  scope. `docs/planning/ROADMAP.md` (v0.20.0) and `docs/planning/manifest.json` record the
+  proposal (pending/proposed); it awaits activation gate `H-PHASE-009` and is not yet active
+  (`.agent/run_state.json` untouched).
 - **`bootstrap.sh` commit-SHA pinning** (phase 008 feature 067; `NDEBT-033`). The Bootstrap
   provenance now records the **resolved commit SHA** the pinned tag pointed at (`resolved_sha`
   in `provenance.json`), making the pin an immutable commit rather than just a tag *name* — a
