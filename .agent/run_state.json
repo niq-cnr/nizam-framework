@@ -3,7 +3,7 @@
   "current_phase": "010-multi-repo",
   "current_feature": "079",
   "status": "in_progress",
-  "updated_at": "2026-07-22T03:55:00Z",
+  "updated_at": "2026-07-22T04:20:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -997,6 +997,21 @@
       "at": "2026-07-22T03:55:00Z",
       "event": "feature_complete",
       "detail": "Feature 078 (n-case hermetic coverage) COMPLETE. NDEBT-031 / NIP-0002 Stage 3: the n-case is now proven end-to-end at RUNTIME, not just by schema fixtures. tools/e2e_bootstrap_test.sh gains assert_multirepo, the multi-member generalisation of assert_genesis: it stands up a scratch MULTI-repo ecosystem -- two projects (member-a, member-b) created FROM NOTHING by bootstrap.sh --genesis at ONE shared ephemeral tag (so both record the same resolved_sha framework pin) -- commits each scaffold clean, authors a 2-member membership registry over them, validates that registry (validate.sh --target, C12), runs ecosystem_membership_run.py across the in_scope set, and proves the produced membership_run.json is a schema-valid ecosystem-level result (ecosystem_verdict PASS, framework_pin_consistent true, member_count 2). This exercises the iteration (076) + aggregation (077) across genuinely genesis'd repos; each tool exit is captured via an `if` so main()'s set -e never aborts before a diagnostic. Self-test n-case schema coverage already exists (ecosystem_membership_valid.json is a >=2-member positive; membership_result_valid.json the aggregate), so 078's gap was the runtime proof, now filled; the single-repo bootstrap/genesis paths stay green (regression-guarded). Also folded the PR #47 pre-merge docstring-coverage warning: ecosystem_membership_run.py's main/die_usage gained docstrings (75%->>=80%). git numstat = 157 vs 140 estimated -- ON (a focused harness function reusing the genesis + validate + aggregate seams). Rolling avg (075=224,076=168,077=322) 3x=2142; 157 well under. Full sweep 15/15, self-test 57/57, e2e PASS (assert_multirepo green). Advancing to feature 079 (pilot the n-case, prove it, prioritise phase 011 + phase close)."
+    },
+    {
+      "at": "2026-07-22T04:05:00Z",
+      "event": "operator_gate_decision",
+      "detail": "H-CONSUMER-UPGRADE EXERCISED (fourth exercise; first was the phase-007 pilot against released v0.8.0, second the phase-008 re-pilot, third the phase-009 feature-074 greenfield-genesis pilot). Recorded BEFORE the feature-079 n-case pilot's genesis bootstraps (the NDEBT-018 rule). The operator authorized proceeding through the phase-010 feature-079 pilot (verbatim: 'continue through 077 -> 079 to close the phase'). Each pilot member (member-alpha/beta/gamma) is a scratch/throwaway project stood up from nothing by bootstrap.sh --genesis at the current branch HEAD via an EPHEMERAL tag -- so this is honestly a PRE-RELEASE / BRANCH pilot (the genesis capability is not yet in a released tag; NDEBT-029), exercising the adoption MECHANICS at the pinned commit, not a released-tag adoption. This gate authorizes those scratch genesis adoptions collectively for the pilot; a real, non-scratch multi-repo ecosystem adoption at a released tag remains the standing production-maturity criterion carried across the 0-n programme."
+    },
+    {
+      "at": "2026-07-22T04:15:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 079 (pilot the n-case, prove it, prioritise phase 011 + phase close) COMPLETE. NDEBT-031 / NIP-0002 Stage 3. Ran the ecosystem loop across a scratch/throwaway MULTI-repo ecosystem stood up FROM NOTHING (3 members -- member-alpha/beta/gamma -- each genesis'd by bootstrap.sh --genesis at one shared ephemeral tag, so all record the same resolved_sha pin) using the fixed tooling (075-078), and proved the n-case end-to-end with NO hand-applied workaround: a schema-validated membership registry declared the set (validate.sh --target C12 PASS), ecosystem_membership_run.py iterated the in_scope repo-roots, and a correct schema-valid aggregate ecosystem-level result was produced (ecosystem_verdict PASS, framework_pin_consistent true, member_count 3, C12 PASS). A divergent-pin NEGATIVE (one member's provenance tampered) correctly flipped the ecosystem to FAIL (exit 1) with a first-class consistency_findings entry -- proving cross-repo consistency is ENFORCED, not silent. Evidence under .agent/evidence/pilot-079/. H-CONSUMER-UPGRADE was recorded before the genesis bootstraps (fourth exercise; NDEBT-018), a pre-release/branch pilot. Residual friction externalised: NDEBT-034 (per-member full-clone cost scales linearly -- the 3-member inline run exceeded a 2-min budget, backgrounded cleanly; a throughput optimisation, not a correctness gap). Phase-011 candidate scope (NIP-0002 Stage 4 04/05 + NDEBT-029 release + real pilot) REFINED AND VALIDATED against the pilot evidence -- confirmed not re-ordered (the aggregate is the 04-reconciliation substrate); the Stage-4 residue of NDEBT-031 carved into NDEBT-035. git numstat = 284 vs 240 -- OVER (committed pilot evidence artifacts). Full sweep 15/15, self-test 57/57, e2e PASS."
+    },
+    {
+      "at": "2026-07-22T04:20:00Z",
+      "event": "phase_complete",
+      "detail": "Phase 010 (0-n Project Spectrum, Stage 3: The n-case -- Multi-Repo Tooling) COMPLETE. Realized NIP-0002 Stage 3 -- the n-case (many associated repositories forming one ecosystem) is now first-class and mechanized, completing the 'n' point of the 0-n spectrum. 075 made scope_definition_patterns.md a required, schema-validated membership registry that sets n (schema/ecosystem_membership.schema.json + validate.sh C12, exactly-one-list invariant); 076 added tools/ecosystem_membership_run.py iterating the in_scope set (ecosystem_preflight.py unchanged); 077 mechanized cross-repo aggregation + a common-framework-pin consistency check into a schema-valid ecosystem-level result (schema/ecosystem_membership_result.schema.json); 078 added assert_multirepo hermetic n-case e2e; 079 piloted it end-to-end across a scratch 3-member ecosystem (PASS aggregate + divergent-pin FAIL, evidence .agent/evidence/pilot-079/). NDEBT-031 RESOLVED; Stage-4 coordination residue -> NDEBT-035, per-member clone cost -> NDEBT-034 (both phase-011/enhancement candidates). Phase-011 candidate scope (NIP-0002 Stage 4 04/05 protocols + NDEBT-029 release cut + a real non-scratch multi-repo pilot) refined and validated against the pilot evidence. manifest phase-010 -> complete; ROADMAP Current Position rolled to phases 001-010 complete. The four reserved gates (H-PLANNING-AUTHORITY/H-TRAIN-ENTRY map to Stage 4; H-CONSOLIDATION/H-GA to 06/08) stay reserved -- phase 010 activated none. A real, non-scratch multi-repo ecosystem pilot at a released tag remains the standing production-maturity criterion (NDEBT-029). Full sweep 15/15, self-test 57/57, e2e PASS. Awaiting operator: PR #47 merge + phase-011 planning."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1170,8 +1185,15 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1160,
-    "total_lines_changed": 871,
+    "total_lines_changed": 1155,
     "per_feature": [
+      {
+        "id": "079",
+        "estimated": 240,
+        "actual": 284,
+        "flag": "OVER",
+        "note": "Pilot + phase close: .agent/evidence/pilot-079/ (README + membership.json + membership_run.json + membership_run_divergent.json + 4 run/validate logs -- the produced pilot artifacts) + docs/planning/DEBT.md (NDEBT-031 Open->Resolved, new NDEBT-034/035, v0.33.0) + ROADMAP.md (phase-010 banner COMPLETE + Current Position roll to 001-010 + phase-011 candidate validated, v0.26.0) + manifest.json (phase-010 complete) + feature_list_010.json (079 complete) + CHANGELOG (phase-010 complete entry). git numstat = 284 vs 240 -- OVER, inflated by the committed pilot EVIDENCE artifacts (the jsons/logs the pilot produced, kept as the proof record). The pilot ran the ecosystem loop across a scratch 3-member ecosystem stood up from nothing: PASS aggregate (C12-valid), divergent-pin FAIL (consistency enforced), no hand-applied workaround. Full sweep 15/15, self-test 57/57, e2e PASS."
+      },
       {
         "id": "078",
         "estimated": 140,
@@ -1613,6 +1635,47 @@
         "actual": 0,
         "flag": null,
         "note": "Plan-and-close feature: phase-008 candidate scope in docs/planning/ROADMAP.md + phase-close ledger updates (run_state, manifest, product_spec_007 amendment, ecosystem/00 v0.2.0, NIP-0002, ADR-004, DEBT rows). Planning/governance-record edits folded into the phase-close change. Estimate 110 per the feature_list plan."
+      }
+    ]
+  },
+  "phase_010_scope_budget_final": {
+    "original_estimate_lines": 1160,
+    "total_lines_changed": 1155,
+    "per_feature": [
+      {
+        "id": "079",
+        "estimated": 240,
+        "actual": 284,
+        "flag": "OVER",
+        "note": "Pilot + phase close: .agent/evidence/pilot-079/ (README + membership.json + membership_run.json + membership_run_divergent.json + 4 run/validate logs -- the produced pilot artifacts) + docs/planning/DEBT.md (NDEBT-031 Open->Resolved, new NDEBT-034/035, v0.33.0) + ROADMAP.md (phase-010 banner COMPLETE + Current Position roll to 001-010 + phase-011 candidate validated, v0.26.0) + manifest.json (phase-010 complete) + feature_list_010.json (079 complete) + CHANGELOG (phase-010 complete entry). git numstat = 284 vs 240 -- OVER, inflated by the committed pilot EVIDENCE artifacts (the jsons/logs the pilot produced, kept as the proof record). The pilot ran the ecosystem loop across a scratch 3-member ecosystem stood up from nothing: PASS aggregate (C12-valid), divergent-pin FAIL (consistency enforced), no hand-applied workaround. Full sweep 15/15, self-test 57/57, e2e PASS."
+      },
+      {
+        "id": "078",
+        "estimated": 140,
+        "actual": 157,
+        "flag": "ON",
+        "note": "tools/e2e_bootstrap_test.sh (125, new assert_multirepo: genesis 2 members at one tag + commit + author registry + validate.sh --target C12 + ecosystem_membership_run.py across the set + assert schema-valid PASS/consistent/count-2 aggregate; wired into main() after assert_genesis) + tools/ecosystem_membership_run.py (15: docstrings on main/die_usage, folding the PR #47 pre-merge docstring-coverage warning 75%->>=80%) + CHANGELOG (13) + feature_list_010.json (2/2 status). git numstat = 157 vs 140 -- ON. The n-case schema self-test coverage pre-existed (075/077 fixtures); 078 adds the RUNTIME e2e proof. Full sweep 15/15, self-test 57/57, e2e PASS."
+      },
+      {
+        "id": "077",
+        "estimated": 220,
+        "actual": 322,
+        "flag": "OVER",
+        "note": "schema/ecosystem_membership_result.schema.json (65, new: aggregate shape + allOf pin/verdict invariant) + tools/ecosystem_membership_run.py (95 ins/32 del: aggregate rollup + read_framework_pin reading each member's .nizam/provenance.json resolved_sha + consistency_finding + in-tool duplicate/multilist guard) + tools/validate.sh (29/14: membership_result family in the full-sweep FAMILIES + --target schema_paths + router restructure so extension-key registries reach C12 + 'six families' docstring) + 3 membership_result fixtures (valid 13 + neg_missing_verdict 8 + neg_inconsistent_pass 13 = 34) + schema/ecosystem_membership.schema.json (5/4: schema_version/last_updated hardened required+pattern) + neg_multilist fixture (1: last_updated added so it stays schema-valid for the code check) + fixtures_self_test.sh (8: three membership_result assert_target probes) + NIZAM.json (3/1) + schema/README.md (5/1, v0.10.0) + feature_list_010.json (3/3 statuses) + CHANGELOG 077 entry (~19). git numstat feature portion = 322 vs 220 -- OVER because findings 8-11 (schema metadata hardening, in-tool duplicate guard, docstring, router precedence) from the PR #47 review were folded into this feature's code. A separate 62 lines re-synced records (findings 1-7). Full sweep 15/15, self-test 57/57, e2e PASS."
+      },
+      {
+        "id": "076",
+        "estimated": 280,
+        "actual": 168,
+        "flag": "UNDER",
+        "note": "tools/ecosystem_membership_run.py (156, new: reads a membership registry, iterates the in_scope set resolving each member's repo-root, runs ecosystem_preflight.py per member, writes membership_run.json index; exit codes mirror the stage tool 0/1/64; stdlib-only, self-documenting) + CHANGELOG (12). git numstat ins+del = 168 vs 280 estimated -- UNDER (a focused orchestrator reusing the stage tool, not a reimplementation). Verified hermetically over two genesis'd scratch member repos (both Preflight PASS_WITH_EXCEPTIONS, exit 0) + a 1-member count-1 case; ecosystem_preflight.py byte-for-byte unchanged. Aggregation + consistency is 077; standing e2e is 078. Full sweep 15/15, self-test 54/54, e2e PASS."
+      },
+      {
+        "id": "075",
+        "estimated": 280,
+        "actual": 224,
+        "flag": "UNDER",
+        "note": "schema/ecosystem_membership.schema.json (86, new) + tools/validate.sh (54+4=58: membership_multilist_entries + the ecosystem_membership family in the full-sweep FAMILIES + the loop code check + the --target schema_paths + the --target code check + the router >=2-scope-list-keys discriminator + 'four families'->'five' comment corrections) + 3 fixtures (valid 18 + neg_missing_list 6 + neg_multilist 7 = 31) + tools/fixtures_self_test.sh (8: three assert_target probes + a comment) + registry/scope_definition_patterns.md (16: v0.3.0 draft->active promotion + Section 2 schema/validator cross-reference) + schema/README.md (6: v0.9.0 + Validates row) + NIZAM.json (4: schema registered in module key_documents + top-level schemas) + CHANGELOG (15). git numstat ins+del = 224 vs 280 estimated -- UNDER because C12 is EXTENDED (a fifth family + a code check mirroring the existing repository_revision_inconsistencies pattern), not rebuilt. First feature of phase 010, no rolling baseline. Full sweep 15/15, self-test 54/54, e2e PASS."
       }
     ]
   }

@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.25.0
+version: 0.26.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.26.0"
+    date: "2026-07-22"
+    summary: "Phase 010 (0-n Project Spectrum, Stage 3: the n-case, features 075-079) COMPLETE. The phase-010 Plan-of-Record banner carries the completion record (075 required+validated membership registry; 076 ecosystem_membership_run.py iteration; 077 cross-repo aggregation + common-pin consistency into a schema-valid ecosystem-level result; 078 assert_multirepo hermetic n-case e2e; 079 pilot proved the n-case end-to-end across a scratch 3-member ecosystem, PASS aggregate + divergent-pin FAIL, evidence .agent/evidence/pilot-079/). NDEBT-031 resolved; Stage-4 coordination residue carved into NDEBT-035 (phase-011 candidate), per-member clone-cost friction into NDEBT-034. The phase-011 candidate scope (NIP-0002 Stage 4 + NDEBT-029 release + real pilot) is refined and VALIDATED against the pilot evidence -- confirmed, not re-ordered (the aggregate is the 04-reconciliation substrate). manifest + run_state reflect phase-010 completion. A real, non-scratch multi-repo pilot remains the open production-maturity criterion."
   - version: "0.25.0"
     date: "2026-07-22"
     summary: "Records-sync from the PR #47 CodeRabbit review: two prior deferred-scope annotations pointed readers to a 'Proposed Next Phase' banner at the top, but those banners have since become Plan-of-Record banners (phase 010 activated, phase 009 complete). Re-pointed the phase-009 banner's Phase-010 candidate-scope note to the 'Plan of Record — Phase 010 Activated' banner, and the phase-008 banner's Phase-009 candidate-scope note to the phase-009 'Plan of Record … COMPLETE' banner. No plan-of-record change; annotation truth-roll only."
@@ -85,17 +88,22 @@ change_log:
 
 # Forward Roadmap
 
-## Plan of Record (2026-07-22) — Phase 010 Activated: 0–n Project Spectrum, Stage 3 — The n-case (Multi-Repo Tooling)
+## Plan of Record (2026-07-22) — Phase 010: 0–n Project Spectrum, Stage 3 — The n-case (Multi-Repo Tooling) — **COMPLETE 2026-07-22**
 
-**Phase `010-multi-repo` is ACTIVE** (2026-07-22) — the plan of record. The operator authorized
-activation (verbatim: **"Approved. Proceed with the phase-010 proposal + activation"**, satisfying
-gate **H-PHASE-010**; recorded in `.agent/run_state.json` event `phase_activated` before any
-feature execution, per the NDEBT-018 rule). `product_spec_010.md` flipped draft → active (v1.1.0);
-`current_phase` advanced `009-greenfield-genesis` → `010-multi-repo`; the scope budget was reset
-(1160 est; phase-009 final archived). Execution begins with the ungated DAG root feature 075 (the
-ecosystem-membership registry schema). It realizes **NIP-0002 Stage 3 — the n-case (many
-associated repositories forming one ecosystem)**, taken one stage at a time as phases 008/009 took
-Stages 1/2.
+**Phase `010-multi-repo` is COMPLETE** (2026-07-22). It realized **NIP-0002 Stage 3 — the n-case
+(many associated repositories forming one ecosystem)**, taken one stage at a time as phases
+008/009 took Stages 1/2. Activation was on 2026-07-22 (operator verbatim: **"Approved. Proceed
+with the phase-010 proposal + activation"**, gate **H-PHASE-010**, recorded in
+`.agent/run_state.json` event `phase_activated` before any feature execution, per the NDEBT-018
+rule). **075** made the membership registry a required, schema-validated artifact that sets `n`;
+**076** added `ecosystem_membership_run.py` iterating the `in_scope` set (the stage tool
+unchanged); **077** mechanized the cross-repo aggregation + a common-framework-pin consistency
+check into a schema-valid ecosystem-level result; **078** added hermetic n-case e2e coverage
+(`assert_multirepo`); **079** piloted the n-case end-to-end across a scratch 3-member ecosystem
+stood up from nothing — validated registry, PASS aggregate, and a divergent-pin negative correctly
+flipping to FAIL — with no hand-applied workaround (evidence `.agent/evidence/pilot-079/`;
+`NDEBT-031` resolved). `manifest.json` carries phase-010 `status: complete`; features 075–078
+landed with the phase-010 branch PR, 079 closes it.
 
 **Scope — NIP-0002 Stage 3 only (prove-then-build).** Phases 008/009 delivered the "1" and "0"
 points. The **"n" point remains**: the shipped tools take a single `--repo-root`, their
@@ -116,14 +124,23 @@ the n-case first-class, then pilots it. Features:
 5. **079 — Pilot, prove, prioritize + phase close** — run the loop across a scratch multi-repo
    ecosystem, then refine/validate the phase-011 candidate scope below and close the phase.
 
-**Deferred → Phase-011 candidate scope (NIP-0002 Stage 4 + release + real pilot).** Held until
-the n-case is *proven*:
-- **n-coordination protocols** (Stage 4): author `ecosystem/04_dependency_reconciliation.md` and
-  `ecosystem/05_release_train_coordination.md` with companion schemas — cross-repo *ordering* and
-  release-train *entry* — activating the reserved `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates.
+**Deferred → Phase-011 candidate scope (NIP-0002 Stage 4 + release + real pilot).** *(Refined and
+validated against the feature-079 pilot evidence, `.agent/evidence/pilot-079/`: the pilot confirmed
+the ordering — the aggregate ecosystem-level result already records per-member verdicts + a
+common-pin consistency finding, exactly the substrate a `04` reconciliation pass consumes — so the
+candidate below is **confirmed, not re-ordered**. `NDEBT-031` is resolved; its Stage-4 residue is
+carved into `NDEBT-035`, and the pilot's per-member clone-cost friction into `NDEBT-034`.)* Held
+until the n-case is *proven* — now it is:
+- **n-coordination protocols** (Stage 4, `NDEBT-035`): author `ecosystem/04_dependency_reconciliation.md`
+  and `ecosystem/05_release_train_coordination.md` with companion schemas — cross-repo *ordering*
+  and release-train *entry* — activating the reserved `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates.
+  The feature-079 aggregate is their input substrate.
 - Cut a framework release carrying the whole loop — genesis + audit/compare + n-case tooling
   (`NDEBT-029`).
-- A **real, non-scratch multi-repo ecosystem pilot** — the standing production-maturity criterion.
+- A **real, non-scratch multi-repo ecosystem pilot** — the standing production-maturity criterion
+  (the feature-079 pilot exercised mechanics against scratch members, not real multi-project maturity).
+- *(Optional, `NDEBT-034`)* a throughput optimisation for repeated genesis (shared clone cache /
+  lighter re-inject) if a larger pilot makes the per-member clone cost load-bearing.
 
 ## Plan of Record (2026-07-22) — Phase 009: 0–n Project Spectrum, Stage 2 — Greenfield Genesis — **COMPLETE 2026-07-22**
 
@@ -362,8 +379,20 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-07-22)
 
-- Phases 001–009 are complete. **Phase 009 (0–n Project Spectrum, Stage 2: Greenfield
-  Genesis, features 070–074) is COMPLETE** (2026-07-22): the 0-case is now first-class and
+- Phases 001–010 are complete. **Phase 010 (0–n Project Spectrum, Stage 3: The n-case —
+  Multi-Repo Tooling, features 075–079) is COMPLETE** (2026-07-22): the n-case is now first-class
+  and mechanized — `scope_definition_patterns.md` is a required, schema-validated membership
+  registry that sets `n` (075, `schema/ecosystem_membership.schema.json` + `validate.sh` C12),
+  `ecosystem_membership_run.py` iterates the `in_scope` set instead of one `--repo-root` (076),
+  the per-member verdicts aggregate into a schema-valid ecosystem-level result with a
+  common-framework-pin consistency check (077, `schema/ecosystem_membership_result.schema.json`),
+  `assert_multirepo` gives hermetic n-case e2e coverage (078), and a scratch 3-member pilot proved
+  the n-case end-to-end — validated registry, PASS aggregate, divergent-pin FAIL — with no
+  workaround (079, evidence `.agent/evidence/pilot-079/`; `NDEBT-031` resolved). A real,
+  non-scratch multi-repo pilot stays outstanding for production maturity (`NDEBT-029`: the loop is
+  not yet in a released tag); Stage-4 coordination (`04`/`05`) is phase-011 candidate scope
+  (`NDEBT-035`). Landing on the phase-010 branch (PR #47). **Phase 009 (0–n Project Spectrum,
+  Stage 2: Greenfield Genesis, features 070–074) is COMPLETE** (2026-07-22): the 0-case is now first-class and
   mechanized — `ecosystem/00` §8 defines the greenfield-genesis protocol (070), `bootstrap.sh
   --genesis` stands up a new project from nothing (`git init` + deterministic scaffold + inject,
   071), `scope_definition_patterns.md` §2.3 models the `incubating→in_scope` count-0→1 transition
@@ -385,8 +414,8 @@ successor, leaving open debt deferred to unscoped "future phases").
   (Consumer-Adoption Enablement & First External Pilot, features 060–064) is on `main`: the
   Bootstrap-stage protocol, the `H-CONSUMER-UPGRADE` gate, the first scratch-consumer pilot,
   and `NIP-0002` (0–n spectrum, Accepted via H-NIP) + `ADR-004` (Accepted). The validator
-  runs green at `SUMMARY: 15 passed, 0 failed` (C1–C15), the fixtures self-test at 51/51,
-  and the hermetic e2e bootstrap harness passes in CI.
+  runs green at `SUMMARY: 15 passed, 0 failed` (C1–C15), the fixtures self-test at 57/57,
+  and the hermetic e2e bootstrap harness passes in CI (now including the n-case `assert_multirepo`).
 - Latest released tag: v0.8.0 — the annotated tag was pushed by the operator
   2026-07-20 at the phase merge commit 183e468, executing H-FRAMEWORK-RELEASE after
   the recorded sign-off; `release.yml` auto-published the GitHub Release page from

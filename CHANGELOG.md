@@ -9,6 +9,23 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Phase 010 (0–n Project Spectrum, Stage 3: The n-case) complete** (feature 079; `NDEBT-031`).
+  The n-case was piloted end-to-end against a scratch **3-member** ecosystem stood up **from
+  nothing** by `bootstrap.sh --genesis` at one shared pin, using the fixed tooling (075–078): a
+  schema-validated membership registry declared the set, `ecosystem_membership_run.py` iterated the
+  `in_scope` repo-roots, and a correct schema-valid aggregate ecosystem-level result was produced
+  (`ecosystem_verdict` PASS, `framework_pin_consistent` true, `member_count` 3) — with **no
+  hand-applied workaround**. A divergent-pin negative correctly flipped the ecosystem to FAIL with a
+  first-class `consistency_findings` entry, proving cross-repo consistency is *enforced*, not silent.
+  Evidence under `.agent/evidence/pilot-079/`; `H-CONSUMER-UPGRADE` exercised a fourth time (a
+  pre-release/branch pilot, recorded before the genesis bootstraps per NDEBT-018). `NDEBT-031` is
+  **resolved**; its Stage-4 coordination residue is carved into `NDEBT-035` (phase-011 candidate)
+  and the pilot's per-member clone-cost friction into `NDEBT-034`. The phase-011 candidate scope
+  (NIP-0002 Stage 4 `04`/`05` protocols + `NDEBT-029` release + a real, non-scratch multi-repo
+  pilot) is refined and **validated** against the pilot evidence — confirmed, not re-ordered.
+  `manifest.json` → phase-010 `complete`; a real, non-scratch multi-repo pilot remains the open
+  production-maturity criterion.
+
 - **Hermetic n-case e2e coverage** (phase 010 feature 078; `NDEBT-031`; NIP-0002 Stage 3).
   `tools/e2e_bootstrap_test.sh` gains `assert_multirepo`: it stands up a scratch **multi-repo**
   ecosystem — two projects created *from nothing* by `bootstrap.sh --genesis` at one shared
