@@ -677,6 +677,47 @@ else
 fi
 
 # ---------------------------------------------------------------------------
+# (7) ecosystem_reconcile.py CLI behavior probes (Plan-stage tool, F-082)
+# ---------------------------------------------------------------------------
+# tools/ecosystem_reconcile.py is NOT covered by validate.sh (only its OUTPUT
+# schema is, via C12's reconciliation_plan family), so these standing probes are
+# its permanent regression guard. They assert the load-bearing polarity: an
+# acyclic packet set over an in_scope aggregate is a PASS plan (exit 0, a
+# schema-valid plan.json whose order is a topological sort); a cyclic set is a
+# FAIL plan (exit 1, plan_verdict FAIL + cycle_findings); a packet targeting a
+# repo not in the aggregate is a usage error (exit 64). Behavior probes, not
+# fixtures -- they add nothing to the completeness manifest.
+echo "== ecosystem_reconcile CLI behavior probes =="
+_reconcile_cli_probes() (
+  local d rc
+  d=$(mktemp -d) || return 1
+  trap 'rm -rf -- "${d}"' EXIT
+  printf '{"schema_version":"1.0.0","membership_registry":"m.json","ecosystem_verdict":"PASS","framework_pin_consistent":true,"framework_pin":"abc","member_count":2,"members":[{"name":"member-alpha","status":"acceptable"},{"name":"member-beta","status":"acceptable"}]}' > "${d}/agg.json"
+  # (a) an acyclic packet set -> PASS plan (exit 0), a schema-valid plan.json
+  printf '{"packets":[{"id":"p-alpha","repo":"member-alpha","closes_findings":["F-1"],"depends_on":["p-beta"]},{"id":"p-beta","repo":"member-beta","closes_findings":["F-2"],"depends_on":[]}]}' > "${d}/pk_ok.json"
+  python3 tools/ecosystem_reconcile.py --source-result "${d}/agg.json" --packets "${d}/pk_ok.json" --output-dir "${d}/out" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  acyclic plan: expected exit 0, got ${rc}"; return 1; }
+  [ -f "${d}/out/plan.json" ] || { echo "  acyclic plan: expected plan.json"; return 1; }
+  bash tools/validate.sh --target "${d}/out/plan.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  produced plan: expected C12 PASS, got ${rc}"; return 1; }
+  # (b) a cyclic packet set -> FAIL plan (exit 1)
+  printf '{"packets":[{"id":"p-a","repo":"member-alpha","closes_findings":["F-1"],"depends_on":["p-b"]},{"id":"p-b","repo":"member-beta","closes_findings":["F-2"],"depends_on":["p-a"]}]}' > "${d}/pk_cyc.json"
+  python3 tools/ecosystem_reconcile.py --source-result "${d}/agg.json" --packets "${d}/pk_cyc.json" --output-dir "${d}/o2" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  cyclic plan: expected exit 1, got ${rc}"; return 1; }
+  # (c) a packet targeting a non-member repo -> usage error (exit 64)
+  printf '{"packets":[{"id":"p-x","repo":"ghost","closes_findings":["F-1"],"depends_on":[]}]}' > "${d}/pk_bad.json"
+  python3 tools/ecosystem_reconcile.py --source-result "${d}/agg.json" --packets "${d}/pk_bad.json" --output-dir "${d}/o3" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 64 ] || { echo "  unknown repo: expected exit 64, got ${rc}"; return 1; }
+  return 0
+)
+if _reconcile_cli_probes; then
+  echo "OK   reconcile   acyclic -> PASS plan(0) C12-valid; cyclic -> FAIL(1); unknown repo -> usage(64)"
+else
+  echo "FAIL reconcile   a CLI behavior probe did not hold"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
 # COMPLETENESS GUARD: every file under tools/fixtures/ must be accounted for
 # by exactly one row above; an unlisted fixture (a newly-added dormant
 # negative) or a manifest row naming an absent fixture is a FAIL.

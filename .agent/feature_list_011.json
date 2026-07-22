@@ -36,7 +36,7 @@
       "id": "082",
       "name": "Reconciliation tooling",
       "description": "Mechanize the Plan stage (NDEBT-035): a stdlib-only tools/ script that reads the phase-010 ecosystem-level aggregate (ecosystem_membership_run.py's membership_run.json, validated against schema/ecosystem_membership_result.schema.json) plus a set of approved findings, and PRODUCES a schema-valid, dependency-ordered reconciliation plan (schema/reconciliation_plan.schema.json, 080) -- a produced artifact, not a hand-rollup. Enforce the topological-order invariant: a cyclic cross-repo dependency set is a first-class flagged finding forcing a non-PASS verdict (exit != 0), never a silent mis-order. Mirror the documented exit-code table + stdlib-only style of tools/ecosystem_membership_run.py (0=PASS, 1=FAIL, 64=usage). The phase-010 single-/multi-repo paths are unchanged (regression-guarded).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "080"
       ],

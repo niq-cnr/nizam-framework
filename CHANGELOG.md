@@ -9,6 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`tools/ecosystem_reconcile.py` — the Plan-stage tool** (phase 011 feature 082; `NDEBT-035`;
+  NIP-0002 Stage 4). A stdlib-only tool that reads the phase-010 ecosystem-level membership-run
+  aggregate (`schema/ecosystem_membership_result.schema.json`) for the authoritative `in_scope` set plus
+  a packets-input file, and **produces** a schema-valid, dependency-ordered reconciliation plan at
+  `<output-dir>/plan.json` — the hand-aggregation made a produced artifact. It computes the topological
+  order via Kahn's algorithm; a **cyclic** cross-repo dependency set is a first-class recorded finding
+  (`cycle_findings`) forcing `plan_verdict` `FAIL` and a non-zero exit, never a silent mis-order. Exit
+  table mirrors the sibling tools: `0` PASS plan, `1` FAIL plan (cycle), `64` usage error (unknown target
+  repo, dangling edge, malformed input). A standing `fixtures_self_test.sh` CLI probe guards the polarity
+  (acyclic → PASS + a C12-valid plan; cyclic → FAIL(1); unknown repo → usage(64)). `self-test` 63/63 + 7 probe groups.
 - **`ecosystem/05_release_train_coordination.md` + `schema/release_train_manifest.schema.json` — the
   Promote stage** (phase 011 feature 081; `NDEBT-035`; NIP-0002 Stage 4). Authored the lifecycle's
   Promote-stage protocol: an operator-authorized reconciliation plan's work packets are admitted into a
