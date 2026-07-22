@@ -3,7 +3,7 @@
   "current_phase": "011-coordination-protocols",
   "current_feature": "084",
   "status": "in_progress",
-  "updated_at": "2026-07-22T15:30:00Z",
+  "updated_at": "2026-07-22T16:30:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1067,6 +1067,11 @@
       "at": "2026-07-22T15:30:00Z",
       "event": "release_prepared",
       "detail": "v0.9.0 release PREPARED (operator direction: 'Let's move to the NDEBT-029 release cut'; version selected v0.9.0 MINOR on operator authorization). The first release since v0.8.0, carrying phases 007-011: consumer-adoption enablement (ecosystem/00 Bootstrap protocol + H-CONSUMER-UPGRADE) and the full NIP-0002 realization (0-n Project Spectrum: consumer-readiness ADR-004, greenfield genesis, the n-case membership registry + multi-repo tooling, the Stage-4 04/05 coordination protocols), plus the audit/compare + reconciliation/release-train tooling carried on the release base and shipping with the operator-pushed annotated v0.9.0 tag (at which point NDEBT-029 resolves; no v0.9.0 tag exists yet). Release base 1dd4971 (phase-011 merge, PR #49). Prepared surface: CHANGELOG [0.9.0] - 2026-07-22 MINOR section (methodology/06_release_train.md 3.2; new schemas validate NEW artifact types, no previously-shipped schema narrowed) + a fresh empty [Unreleased]; version bumps 0.8.0 -> 0.9.0 in C10 lockstep (NIZAM.json framework.version, docs/guide/index.html meta+footer, CONTEXT.md frontmatter+change_log); README.md re-pinned to v0.9.0; readiness checklist .agent/evidence/release-readiness-v0.9.0.md. Full validation green: validate.sh 15/15, fixtures_self_test 65/65, e2e_bootstrap PASS. H-FRAMEWORK-RELEASE is the PENDING operator gate: the pipeline never self-tags -- the operator signs off + pushes the annotated v0.9.0 tag (as with v0.7.0/v0.8.0), then release.yml publishes the GitHub Release page from the [0.9.0] section. current_phase stays 011-coordination-protocols; status stays in_progress (the programme continues). On the tag: NDEBT-029 -> Resolved, and the standing real non-scratch multi-repo pilot becomes runnable at the released tag (the production-maturity criterion this release unblocks)."
+    },
+    {
+      "at": "2026-07-22T16:30:00Z",
+      "event": "release_executed",
+      "detail": "v0.9.0 RELEASED -- gate H-FRAMEWORK-RELEASE executed (the third framework release, after v0.7.0/v0.8.0). The operator signed off release-readiness, merged the release-prep PR #50 to main (merge commit 5b19b85), then pushed the annotated tag v0.9.0 at 5b19b85 (the pipeline never self-tags). release.yml auto-published the GitHub Release page (release 358158218, github-actions[bot], published 2026-07-22T16:21:08Z) from the [0.9.0] CHANGELOG section, title 'Nizam v0.9.0 -- the whole 0-n loop (NIP-0002 realized end-to-end)'. The first release since v0.8.0, carrying phases 007-011: consumer-adoption enablement + the full NIP-0002 0-n realization (consumer-readiness, greenfield genesis, the n-case membership registry + multi-repo tooling, the Stage-4 04/05 coordination protocols) + the audit/compare + reconciliation/release-train tooling. MINOR per methodology/06_release_train.md 3.2. NDEBT-029 RESOLVED: the tag now carries the whole 0-n loop in its injected .nizam/tools/, so a consumer on the v0.9.0 pin can run Preflight->Baseline->Audit->Plan->Promote->Compare without the framework working tree. Post-release refresh (this change): DEBT.md v0.37.0 (NDEBT-029 Open->Resolved), ROADMAP v0.32.0 (Latest released tag -> v0.9.0, open-debt down to two Low rows), operator_gates.md v0.15.0 (H-FRAMEWORK-RELEASE executed x3), readiness checklist items 7-8 DONE. current_phase stays 011-coordination-protocols; status stays in_progress (programme continues). The standing real, non-scratch multi-repo pilot at the released tag is now RUNNABLE -- the production-maturity criterion this release unblocks, and the last open milestone of the 0-n programme."
     }
   ],
   "phase_001_scope_budget_final": {

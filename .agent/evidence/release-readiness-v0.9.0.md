@@ -36,8 +36,8 @@ tip carrying phases 007–011. MINOR release per `methodology/06_release_train.m
    Low/Medium enhancement candidates (`NDEBT-026` C15 mapping-direction; `NDEBT-034`
    per-member clone cost) plus `NDEBT-029` (resolved *by* this release, on the tag push).
    No High/blocking item.
-7. **Human sign-off complete:** PENDING -- human-gated (H-FRAMEWORK-RELEASE).
-8. **Immutable tag published:** PENDING -- human-gated (H-FRAMEWORK-RELEASE).
+7. **Human sign-off complete:** DONE 2026-07-22 -- the operator signed off release-readiness and merged PR #50 (`H-FRAMEWORK-RELEASE`).
+8. **Immutable tag published:** DONE 2026-07-22 -- the operator pushed the annotated tag `v0.9.0` at merge commit `5b19b85`; `release.yml` auto-published the GitHub Release page from the `[0.9.0]` CHANGELOG section (<https://github.com/niq-cnr/nizam-framework/releases/tag/v0.9.0>). `NDEBT-029` resolved.
 
 Items 7–8 are the operator's, executed after PR review per the recorded two-part gate —
 the v0.7.0 / v0.8.0 precedent was operator sign-off followed by the operator-pushed
