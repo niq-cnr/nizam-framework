@@ -6,11 +6,14 @@ tags: [spec, ecosystem-cycle, zero-to-n, multi-repo, coordination, dependency-re
 status: active
 last_audited: "2026-07-22"
 authoritative_source: NA
-version: 1.1.0
+version: 1.2.0
 spec_version: "1.0.0"
 created_at: "2026-07-22T05:00:00Z"
-updated_at: "2026-07-22T09:45:00Z"
+updated_at: "2026-07-22T12:45:00Z"
 change_log:
+  - version: "1.2.0"
+    date: "2026-07-22T12:45:00Z"
+    summary: "Records-sync from the PR #49 CodeRabbit review (phase complete): §5 Human Gates re-synced to the post-pilot state -- H-PHASE-011 OUTSTANDING -> SATISFIED (2026-07-22, activation), and H-PLANNING-AUTHORITY / H-TRAIN-ENTRY 'first exercised at F-084' -> EXERCISED (2026-07-22, recorded in run_state operator_gate_decision before their acts per NDEBT-018), both marked recurring. No scope change; this only advances the gate-lifecycle language the completed feature-084 pilot moved past."
   - version: "1.1.0"
     date: "2026-07-22T09:45:00Z"
     summary: "Phase activated: frontmatter status draft -> active on operator authorization 2026-07-22 (verbatim: 'Approved. Please proceed', gate H-PHASE-011, given after PR #48 merged the phase-011 proposal to main at 44a91fc), recorded in .agent/run_state.json event phase_activated before any feature execution per the NDEBT-018 rule. current_phase advanced 010-multi-repo -> 011-coordination-protocols; current_feature set to 080 (the ungated DAG root); scope budget reset (1330 est, phase-010 final already archived at phase-010 close). Body Status banner updated PROPOSED -> ACTIVE plan of record; no scope change. Unlike phase 010's single 'proposal + activation' cycle, this proposal was merged (PR #48) then activated in a separate operator cycle. The reserved gates H-PLANNING-AUTHORITY / H-TRAIN-ENTRY are DEFINED during feature execution (080/081) and first exercised at the 084 pilot -- not at this activation; H-CONSOLIDATION / H-GA stay reserved. The draft status was the designed proposal state, flipped as the decision lifecycle reached activation (the 005 lesson applied as intended)."
@@ -149,18 +152,20 @@ the programme.
 Recorded per `docs/planning/operator_gates.md`. The pipeline records but never self-executes
 a human gate.
 
-1. **H-PHASE-011 — OUTSTANDING.** Authorizes activation of this proposal (required before any
-   feature enters contract negotiation); its acceptance advances NIP-0002 to Stage 4 and will be
-   recorded in `.agent/run_state.json` (event `phase_activated`) before any feature runs, per the
+1. **H-PHASE-011 — SATISFIED (2026-07-22).** Authorized activation of this proposal (required
+   before any feature entered contract negotiation); its acceptance advanced NIP-0002 to Stage 4 and
+   is recorded in `.agent/run_state.json` (event `phase_activated`) before any feature ran, per the
    NDEBT-018 rule.
-2. **H-PLANNING-AUTHORITY — defined at F-080, first exercised at F-084.** Approves the planning
-   authority a reconciliation plan asserts across repositories before it is admitted downstream;
-   record-but-never-self-execute. Moved from the reserved table into the decided table at F-080
-   (as phase 007 did for `H-CONSUMER-UPGRADE`); recorded in `run_state` before the pilot's plan is
-   promoted (the NDEBT-018 rule).
-3. **H-TRAIN-ENTRY — defined at F-081, first exercised at F-084.** Admits reconciled work into a
-   cross-repository release train; record-but-never-self-execute. Recorded in `run_state` before
-   the pilot's train manifest is produced.
+2. **H-PLANNING-AUTHORITY — defined at F-080, EXERCISED at F-084 (2026-07-22).** Approves the
+   planning authority a reconciliation plan asserts across repositories before it is admitted
+   downstream; record-but-never-self-execute. Moved from the reserved table into the decided table at
+   F-080 (as phase 007 did for `H-CONSUMER-UPGRADE`); recorded in `run_state` (event
+   `operator_gate_decision`) before the pilot's plan was produced (the NDEBT-018 rule). Recurring:
+   outstanding again at the next reconciliation plan.
+3. **H-TRAIN-ENTRY — defined at F-081, EXERCISED at F-084 (2026-07-22).** Admits reconciled work
+   into a cross-repository release train; record-but-never-self-execute. Recorded in `run_state`
+   (event `operator_gate_decision`) before the pilot's train manifest was produced. Recurring:
+   outstanding again at the next release train.
 
 The reserved gates `H-CONSOLIDATION` (Repeat/stage 06) and `H-GA` (Promote/stage 08) map to the
 `06`/`08` protocols and **stay reserved** — those protocols are phase-012 candidate scope, outside

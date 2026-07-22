@@ -5,18 +5,28 @@
   "description": "Validates a release-train-manifest INSTANCE -- the Promote-stage artifact that ecosystem/05_release_train_coordination.md requires (NIP-0002 Stage 4; NDEBT-035). A manifest records a coordinated cross-repository promotion: it names the reconciliation plan it was built from (schema/reconciliation_plan.schema.json), carries that plan's packet ids as provenance, admits a subset of them into the train (each naming its target repository), records per-repository train membership, and captures whether the operator's admission decision (H-TRAIN-ENTRY) is recorded. This schema enforces the SHAPE (a source plan + its packet-id set, admitted packets with a per-repo target, train members, a recorded-admission flag, a PASS/FAIL train verdict). Two relational invariants -- the trace-to-plan invariant (every admitted packet id MUST appear in plan_packets; an orphan forces FAIL) and its interplay with the verdict -- span the admitted-packet array against plan_packets and are enforced in code by validate.sh C12, mirroring the ecosystem_membership exactly-one-list rule (NDEBT-031) and the reconciliation_plan cycle rule (NDEBT-035). One in-schema if/then (a PASS train requires the admission decision recorded) is schema-checkable. Permits additionalProperties so consumers can enrich the manifest (train cadence, versions, note) without breaking validation, per schema/README.md's house convention.",
   "type": "object",
   "$defs": {
+    "plan_packet_ref": {
+      "type": "object",
+      "description": "One reconciliation-plan packet carried as provenance: its id AND its target repository. The (id, repo) pair is what an admitted packet must trace to -- carrying the repo, not just the id, lets the trace-to-plan check reject an admission that reuses a real id under the wrong repository.",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "description": "The plan packet's id." },
+        "repo": { "type": "string", "minLength": 1, "description": "The repository the plan assigned this packet to." }
+      },
+      "required": ["id", "repo"],
+      "additionalProperties": true
+    },
     "admitted_packet": {
       "type": "object",
-      "description": "One work packet admitted into the train, drawn from the reconciliation plan. Its id MUST trace to a plan packet id (plan_packets); it names the repository it targets.",
+      "description": "One work packet admitted into the train, drawn from the reconciliation plan. Its (id, repo) pair MUST trace to a plan_packets entry; it names the repository it targets.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "The admitted packet's id -- MUST appear in plan_packets (the trace-to-plan invariant). An admitted id with no plan origin is an orphan.",
+          "description": "The admitted packet's id -- MUST appear in plan_packets (the trace-to-plan invariant). An admitted id with no plan origin, or under a repo differing from the plan's, is an orphan.",
           "minLength": 1
         },
         "repo": {
           "type": "string",
-          "description": "The repository this admitted packet targets.",
+          "description": "The repository this admitted packet targets -- MUST match the repo the plan assigned this packet id.",
           "minLength": 1
         }
       },
@@ -37,8 +47,8 @@
     },
     "plan_packets": {
       "type": "array",
-      "description": "The reconciliation plan's packet ids, carried as provenance so each admitted packet can be checked to trace to one. Required.",
-      "items": { "type": "string", "minLength": 1 }
+      "description": "The reconciliation plan's packets (id + target repo), carried as provenance so each admitted packet can be checked to trace to one on BOTH fields. Required.",
+      "items": { "$ref": "#/$defs/plan_packet_ref" }
     },
     "train_verdict": {
       "type": "string",
@@ -56,16 +66,16 @@
     },
     "train_members": {
       "type": "array",
-      "description": "The repositories participating in this train's departure -- per-repository train membership.",
+      "description": "The repositories participating in this train's departure -- per-repository train membership. The Promote protocol (ecosystem/05 Section 3) requires every manifest to record it, so it is mandatory.",
       "items": { "type": "string", "minLength": 1 }
     },
     "orphan_findings": {
       "type": "array",
-      "description": "Recorded orphan admissions (admitted packet ids with no plan origin). Empty when every admitted packet traces to a plan packet; non-empty forces train_verdict FAIL.",
+      "description": "Recorded orphan admissions (an admitted packet whose (id, repo) traces to no plan_packets entry). Empty when every admitted packet traces to a plan packet on both fields; non-empty forces train_verdict FAIL.",
       "items": { "type": "string" }
     }
   },
-  "required": ["schema_version", "source_plan", "plan_packets", "train_verdict", "entry_gate_recorded", "admitted_packets"],
+  "required": ["schema_version", "source_plan", "plan_packets", "train_verdict", "entry_gate_recorded", "admitted_packets", "train_members"],
   "allOf": [
     {
       "description": "A PASS train requires the admission decision recorded: if train_verdict is PASS, entry_gate_recorded MUST be true. (The trace-to-plan invariant -- an orphan admission forcing FAIL -- spans admitted_packets against plan_packets and is enforced in code by validate.sh C12.)",

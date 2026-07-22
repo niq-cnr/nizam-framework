@@ -1544,22 +1544,60 @@ FAMILIES = {
 
 def release_train_manifest_orphans(doc):
     """The trace-to-plan invariant (ecosystem/05_release_train_coordination.md
-    Section 4): every admitted packet MUST trace to a plan packet -- each
-    admitted_packets[].id MUST appear in plan_packets. An admitted id with no plan
-    origin is an orphan, and an orphan forces train_verdict FAIL. This spans the
-    admitted-packet array against the plan_packets set and is not expressible in
-    JSON Schema, so C12 enforces it in code (mirroring reconciliation_plan_cycles
-    and membership_multilist_entries): returns the sorted admitted ids not present
-    in plan_packets."""
+    Section 4): every admitted packet MUST trace to a plan packet on BOTH id and
+    repo -- each admitted_packets[] (id, repo) pair MUST match a plan_packets entry.
+    An admitted id with no plan origin, OR a real id admitted under a repo differing
+    from the plan's, is an orphan, and an orphan forces train_verdict FAIL. This
+    spans the admitted-packet array against the plan_packets map and is not
+    expressible in JSON Schema, so C12 enforces it in code (mirroring
+    reconciliation_plan_cycles and membership_multilist_entries): returns the sorted
+    admitted ids that trace to no matching plan_packets entry."""
     plan_packets = doc.get("plan_packets", [])
-    plan_ids = {p for p in plan_packets if isinstance(p, str)} if isinstance(plan_packets, list) else set()
+    plan_map = {}
+    if isinstance(plan_packets, list):
+        for p in plan_packets:
+            if isinstance(p, dict) and isinstance(p.get("id"), str):
+                plan_map[p["id"]] = p.get("repo")
     admitted = doc.get("admitted_packets", [])
     orphans = set()
     if isinstance(admitted, list):
         for item in admitted:
-            if isinstance(item, dict) and isinstance(item.get("id"), str) and item["id"] not in plan_ids:
-                orphans.add(item["id"])
+            if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+                continue
+            pid = item["id"]
+            if pid not in plan_map or item.get("repo") != plan_map[pid]:
+                orphans.add(pid)
     return sorted(orphans)
+
+
+def reconciliation_plan_order_defect(doc):
+    """The topological-order invariant, completed (ecosystem/04 Section 4): for a
+    PASS plan, `order` MUST be a permutation of every packet id (each exactly once)
+    and MUST respect every edge -- for A depends_on B, B precedes A. Returns True iff
+    the plan claims PASS but its order is not a valid topological linearization. A
+    FAIL/cyclic plan legitimately emits an empty order, so this only bites at PASS.
+    Complements reconciliation_plan_cycles (which catches a cyclic graph claimed
+    PASS); together they enforce the full invariant, not just acyclicity."""
+    packets = doc.get("packets", [])
+    if not isinstance(packets, list):
+        return False
+    ids = [p["id"] for p in packets if isinstance(p, dict) and isinstance(p.get("id"), str)]
+    order = doc.get("order", [])
+    if not isinstance(order, list):
+        return True
+    # permutation: covers every packet id exactly once (no missing, no extra, no dup).
+    if sorted(order) != sorted(ids) or len(set(order)) != len(order):
+        return True
+    pos = {pid: i for i, pid in enumerate(order)}
+    for p in packets:
+        if not isinstance(p, dict) or not isinstance(p.get("id"), str):
+            continue
+        deps = p.get("depends_on", [])
+        if isinstance(deps, list):
+            for dep in deps:
+                if isinstance(dep, str) and dep in pos and pos[dep] > pos[p["id"]]:
+                    return True  # a dependency appears AFTER its dependent
+    return False
 
 
 def reconciliation_plan_cycles(doc):
@@ -1736,11 +1774,12 @@ for family, schema_path in FAMILIES.items():
         # negative fixture is caught by polarity rather than validating.
         if is_valid and family == "ecosystem_membership" and membership_multilist_entries(data):
             is_valid = False
-        # NDEBT-035: a schema-valid reconciliation_plan whose depends_on graph
-        # contains a cycle cannot be a PASS plan (no valid topological order
-        # exists); the code-level check completes the schema's coverage so the
-        # cyclic negative fixture is caught by polarity rather than validating.
-        if is_valid and family == "reconciliation_plan" and reconciliation_plan_cycles(data) and data.get("plan_verdict") == "PASS":
+        # NDEBT-035: a schema-valid reconciliation_plan that claims PASS but whose
+        # depends_on graph contains a cycle, OR whose `order` is not a valid
+        # topological permutation of the packet ids, is not a valid plan; the
+        # code-level checks complete the schema's coverage so both negatives (a
+        # cyclic-but-PASS and a bad-order-but-PASS) are caught by polarity.
+        if is_valid and family == "reconciliation_plan" and data.get("plan_verdict") == "PASS" and (reconciliation_plan_cycles(data) or reconciliation_plan_order_defect(data)):
             is_valid = False
         # NDEBT-035: a schema-valid release_train_manifest that admits a packet with
         # no plan origin (an orphan) cannot be a PASS train; the code-level check
@@ -1909,22 +1948,38 @@ if family == "reconciliation_plan":
         return False
 
     has_cycle = any(colour[node] == WHITE and _has_back_edge(node) for node in graph)
+    order = doc.get("order", [])
+    order_defect = False
+    if doc.get("plan_verdict") == "PASS":
+        # order MUST be a permutation of the packet ids and respect every edge.
+        id_list = [p["id"] for p in packets if isinstance(p, dict) and isinstance(p.get("id"), str)] if isinstance(packets, list) else []
+        if not isinstance(order, list) or sorted(order) != sorted(id_list) or len(set(order)) != len(order):
+            order_defect = True
+        else:
+            pos = {pid: i for i, pid in enumerate(order)}
+            for node, deps in graph.items():
+                for dep in deps:
+                    if dep in pos and pos[dep] > pos.get(node, -1):
+                        order_defect = True
     if has_cycle and doc.get("plan_verdict") == "PASS":
         print(f"{path}: cyclic dependency set claimed PASS ({family}): no valid topological order (NDEBT-035, ecosystem/04 Section 4)")
         sys.exit(1)
+    if order_defect:
+        print(f"{path}: PASS plan with an invalid order ({family}): `order` is not a topological permutation of the packet ids (NDEBT-035, ecosystem/04 Section 4)")
+        sys.exit(1)
 
 # NDEBT-035: the trace-to-plan invariant -- every admitted packet MUST trace to a
-# plan packet (its id in plan_packets); an orphan admission cannot be a PASS train.
-# The check spans admitted_packets against plan_packets and is not expressible in
-# JSON Schema, so mirror the full-sweep release_train_manifest_orphans check here
-# for --target too.
+# plan packet on BOTH id and repo; an orphan admission (unknown id, or a real id
+# under the wrong repo) cannot be a PASS train. The check spans admitted_packets
+# against the plan_packets map and is not expressible in JSON Schema, so mirror the
+# full-sweep release_train_manifest_orphans check here for --target too.
 if family == "release_train_manifest":
     plan_packets = doc.get("plan_packets", [])
-    plan_ids = {p for p in plan_packets if isinstance(p, str)} if isinstance(plan_packets, list) else set()
+    plan_map = {p["id"]: p.get("repo") for p in plan_packets if isinstance(p, dict) and isinstance(p.get("id"), str)} if isinstance(plan_packets, list) else {}
     admitted = doc.get("admitted_packets", [])
-    orphans = sorted({item["id"] for item in admitted if isinstance(item, dict) and isinstance(item.get("id"), str) and item["id"] not in plan_ids}) if isinstance(admitted, list) else []
+    orphans = sorted({item["id"] for item in admitted if isinstance(item, dict) and isinstance(item.get("id"), str) and (item["id"] not in plan_map or item.get("repo") != plan_map[item["id"]])}) if isinstance(admitted, list) else []
     if orphans and doc.get("train_verdict") == "PASS":
-        print(f"{path}: orphan admission claimed PASS ({family}): {orphans} trace to no plan packet (NDEBT-035, ecosystem/05 Section 4)")
+        print(f"{path}: orphan admission claimed PASS ({family}): {orphans} trace to no matching plan packet (id+repo) (NDEBT-035, ecosystem/05 Section 4)")
         sys.exit(1)
 
 sys.exit(0)

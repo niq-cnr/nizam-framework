@@ -55,7 +55,9 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   with one in-schema `if/then` (a `PASS` train requires the admission recorded); the trace-to-plan
   invariant is enforced in code by `validate.sh` C12 as the **eighth** ecosystem schema family (both
   entry points, discriminated by `train_verdict`/`admitted_packets`), with one positive and two negative
-  fixtures (schema-invalid ungated-`PASS` + a trace-to-plan-violating orphan). The reserved gate
+  fixtures (schema-invalid ungated-`PASS` + a trace-to-plan-violating orphan + a repo-mismatch; the
+  manifest's `plan_packets` carries the plan's `(id, repo)` mapping so the trace-to-plan check binds
+  both fields). The reserved gate
   **`H-TRAIN-ENTRY`** is now **defined** (moved `operator_gates.md` Section 2 → Section 1; v0.13.0).
   Registered in `NIZAM.json`, `schema/README.md` (v0.12.0), `tools/skill.json`; the `ecosystem/README.md`
   (v0.2.3) module-nav `05` row flips Planned → Shipped (seven documents Shipped; with `04` + `05` both
@@ -69,7 +71,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (per-repo packets, typed edges, the emitted order, the verdict); the cycle invariant is enforced in
   code by `validate.sh` C12 as the **seventh** ecosystem schema family (both entry points, discriminated
   by `plan_verdict`/`cycle_findings`), with one positive and two negative fixtures (schema-invalid
-  missing-verdict + a cyclic-but-`PASS`). The reserved gate **`H-PLANNING-AUTHORITY`** is now **defined**
+  missing-verdict + a cyclic-but-`PASS` + a bad-`order`-but-`PASS`; C12 verifies `order` is a full
+  topological permutation of the packet ids, not merely acyclic). The reserved gate **`H-PLANNING-AUTHORITY`** is now **defined**
   (moved `docs/planning/operator_gates.md` Section 2 → Section 1). Registered in `NIZAM.json`,
   `schema/README.md` (v0.11.0), and `tools/skill.json`; the `ecosystem/README.md` (v0.2.2) module-nav
   `04` row flips Planned → Shipped (six documents now Shipped). `self-test` 60/60.

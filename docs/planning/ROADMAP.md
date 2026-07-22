@@ -120,12 +120,12 @@ ecosystem at a released tag** remains the standing production-maturity criterion
 012, `NDEBT-029`).
 
 **Scope — NIP-0002 Stage 4 only (prove-then-build).** Phases 008/009/010 delivered the "1", "0",
-and "n" points; the membership set is enumerated and its verdicts aggregated. What remains is the
-**coordination** layer — with `n` members now visible, the cycle can *see* the ecosystem but
-cannot yet **coordinate work across it**. NIP-0002 places the genuine n-repo coordination in two
-deferred protocols (still `Planned` in `ecosystem/README.md`) — the lifecycle's **Plan** and
-**Promote** stages — and reserves the two gates that govern them (`NDEBT-035`). Phase 011 authors
-and mechanizes them, then pilots the layer. Features:
+and "n" points; the membership set is enumerated and its verdicts aggregated. What remained was the
+**coordination** layer — with `n` members visible, the cycle could *see* the ecosystem but could
+not yet **coordinate work across it**. NIP-0002 placed the genuine n-repo coordination in two
+protocols that were `Planned` (now Shipped in `ecosystem/README.md`) — the lifecycle's **Plan** and
+**Promote** stages — and reserved the two gates that govern them (`NDEBT-035`). Phase 011 authored
+and mechanized them, then piloted the layer. Features:
 
 1. **080 — Dependency-reconciliation protocol (`ecosystem/04`) + companion schema** (`NDEBT-035`) —
    author the Plan stage (approved findings + the phase-010 aggregate → typed, dependency-ordered

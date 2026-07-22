@@ -124,10 +124,16 @@ def main(argv=None):
     entry_gate_recorded = bool(args.entry_gate_recorded)
     train_pass = (not orphan_findings) and entry_gate_recorded
 
+    # plan_packets carries the plan's (id, repo) mapping as provenance, so the
+    # trace-to-plan invariant can be checked on BOTH fields (ecosystem/05 Section 4)
+    # -- an admission that reuses a real id under the wrong repo is caught, not just
+    # a wholly-unknown id.
+    plan_packets_out = [{"id": pid, "repo": packets_by_id[pid].get("repo", "")} for pid in plan_packet_ids]
+
     manifest = {
         "schema_version": "1.0.0",
         "source_plan": args.plan,
-        "plan_packets": list(plan_packet_ids),
+        "plan_packets": plan_packets_out,
         "train_verdict": "PASS" if train_pass else "FAIL",
         "entry_gate_recorded": entry_gate_recorded,
         "admitted_packets": admitted_packets,

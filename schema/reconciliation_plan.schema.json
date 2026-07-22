@@ -21,7 +21,8 @@
         },
         "closes_findings": {
           "type": "array",
-          "description": "The approved engineering-audit finding ids this packet closes. A packet that closes no finding is not recorded (ecosystem/04 Section 2).",
+          "minItems": 1,
+          "description": "The approved engineering-audit finding ids this packet closes. A packet that closes no finding is not recorded (ecosystem/04 Section 2), so at least one id is required.",
           "items": { "type": "string", "minLength": 1 }
         },
         "depends_on": {
@@ -61,7 +62,7 @@
     },
     "order": {
       "type": "array",
-      "description": "The emitted topological order: an explicit sequence of every packet id such that for every edge A depends_on B, B precedes A. Empty is permitted only for a zero-packet plan.",
+      "description": "The emitted topological order. For a PASS plan it is an explicit permutation of every packet id such that for every edge A depends_on B, B precedes A (validate.sh C12 enforces this permutation-and-edge invariant, not just acyclicity). It is empty in two cases: a zero-packet plan, and a FAIL (cyclic) plan -- where no valid topological order exists, so the tool emits [] and records the cycle in cycle_findings.",
       "items": { "type": "string", "minLength": 1 }
     },
     "cycle_findings": {
