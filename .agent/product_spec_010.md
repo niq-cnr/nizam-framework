@@ -1,16 +1,19 @@
 ---
 id: nizam-product-spec-010
 title: "Nizam Framework — Phase 010 Spec (0–n Project Spectrum, Stage 3: The n-case — Multi-Repo Tooling) — PROPOSAL"
-description: "Phase-010 proposal: realize NIP-0002 (The 0–n Project Spectrum) Stage 3 — the n-case (many associated repositories forming one ecosystem). Promotes registry/scope_definition_patterns.md from a draft pattern to a required, schema-validated ecosystem-membership artifact that sets n (NDEBT-031), extends the ecosystem tooling to iterate that membership set of repo-roots instead of one --repo-root, mechanizes the cross-repository aggregation + consistency the shipped tools guard only as a 'future extension', adds hermetic n-case coverage, then pilots the n-case against a scratch multi-repo ecosystem to PROVE it and prioritise the Stage-4 coordination protocols from that evidence. PROPOSED, not activated: execution requires operator authorization (gate H-PHASE-010). Stage 4 (the 04/05 dependency-reconciliation / release-train coordination protocols + companion schemas, activating the reserved H-PLANNING-AUTHORITY / H-TRAIN-ENTRY gates), the release cut carrying the whole loop (NDEBT-029), and a real, non-scratch multi-repo pilot are explicitly OUT OF SCOPE — carried as phase-011 candidate scope. Extends product_spec.md..product_spec_009.md; replaces none."
+description: "Phase-010 proposal: realize NIP-0002 (The 0–n Project Spectrum) Stage 3 — the n-case (many associated repositories forming one ecosystem). Promotes registry/scope_definition_patterns.md from a draft pattern to a required, schema-validated ecosystem-membership artifact that sets n (NDEBT-031), extends the ecosystem tooling to iterate that membership set of repo-roots instead of one --repo-root, mechanizes the cross-repository aggregation + consistency the shipped tools guard only as a 'future extension', adds hermetic n-case coverage, then pilots the n-case against a scratch multi-repo ecosystem to PROVE it and prioritise the Stage-4 coordination protocols from that evidence. ACTIVATED on operator authorization 2026-07-22 (gate H-PHASE-010 SATISFIED, recorded in .agent/run_state.json event phase_activated before any feature execution). Stage 4 (the 04/05 dependency-reconciliation / release-train coordination protocols + companion schemas, activating the reserved H-PLANNING-AUTHORITY / H-TRAIN-ENTRY gates), the release cut carrying the whole loop (NDEBT-029), and a real, non-scratch multi-repo pilot are explicitly OUT OF SCOPE — carried as phase-011 candidate scope. Extends product_spec.md..product_spec_009.md; replaces none."
 tags: [spec, ecosystem-cycle, zero-to-n, multi-repo, membership-registry, phase-010, proposal]
 status: active
 last_audited: "2026-07-22"
 authoritative_source: NA
-version: 1.1.0
+version: 1.2.0
 spec_version: "1.0.0"
 created_at: "2026-07-22T02:00:00Z"
-updated_at: "2026-07-22T02:15:00Z"
+updated_at: "2026-07-22T03:35:00Z"
 change_log:
+  - version: "1.2.0"
+    date: "2026-07-22T03:35:00Z"
+    summary: "Records-sync from the PR #47 CodeRabbit review: the description's stale 'PROPOSED, not activated' clause and §5 gate-1 'H-PHASE-010 — OUTSTANDING' both still read as proposal-time after the phase was activated at v1.1.0. Aligned both to the activated state (H-PHASE-010 SATISFIED 2026-07-22, recorded in run_state event phase_activated before any feature execution). No scope change; this only re-syncs the lifecycle language the activation edit missed."
   - version: "1.1.0"
     date: "2026-07-22T02:15:00Z"
     summary: "Phase activated: frontmatter status draft -> active on operator authorization 2026-07-22 (verbatim: 'Approved. Proceed with the phase-010 proposal + activation', gate H-PHASE-010, recorded in .agent/run_state.json event phase_activated before any feature execution per the NDEBT-018 rule). current_phase advanced 009-greenfield-genesis -> 010-multi-repo; scope budget reset (1160 est, phase-009 final archived). Body Status banner updated PROPOSED -> ACTIVE plan of record; no scope change. The proposal and activation were done in the same cycle per the operator's instruction; the draft status was the designed proposal state, flipped as the decision lifecycle reached activation (the 005 lesson applied as intended)."
@@ -122,8 +125,9 @@ criterion, carried across the programme.
 Recorded per `docs/planning/operator_gates.md`. The pipeline records but never self-executes
 a human gate.
 
-1. **H-PHASE-010 — OUTSTANDING.** Authorize activation of this proposal (required before any
-   feature enters contract negotiation). Its acceptance advances NIP-0002 to Stage 3.
+1. **H-PHASE-010 — SATISFIED (2026-07-22).** Authorized activation of this proposal (required
+   before any feature enters contract negotiation); its acceptance advanced NIP-0002 to Stage 3
+   and is recorded in `.agent/run_state.json` (event `phase_activated`) before any feature ran.
 2. **H-CONSUMER-UPGRADE — recurring, exercised per member at F-079.** Approve each genesis'd
    member's adoption of the framework tag before its Bootstrap proceeds; recorded in `run_state`
    before each bootstrap runs (the NDEBT-018 rule), as in phases 007–009.

@@ -2,13 +2,16 @@
 id: nizam-registry-scope-patterns
 title: "Ecosystem Registry & Scope-Definition Patterns"
 description: "Generalised patterns for a consumer repository that maintains its own ecosystem-level registry of repositories, services, or modules on top of the Nizam framework: the scope-list shape, dependency-map conventions, phase-progress tracking, and drift rules."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: registry/scope_definition_patterns.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-07-22"
+    summary: "Records-sync from the PR #47 CodeRabbit review: Section 2.3's closing paragraph still said making the registry a required, validated artifact was 'deliberately not undertaken here', which contradicted the v0.3.0 promotion (feature 075 did exactly that). Aligned it -- the schema-backing is done (075); what remains is the count-1->n multi-repo TOOLING that iterates the validated registry (features 076-077). Also clarified the v0.3.0 change_log's forward reference to name what 076 (iteration) and 077 (aggregation + consistency) each contribute, and that n-case coverage/pilot are 078-079. No shape change."
   - version: "0.3.0"
     date: "2026-07-22"
-    summary: "Phase-010 feature 075 (NDEBT-031; NIP-0002 Stage 3): promoted from a draft pattern to a required, SCHEMA-BACKED artifact -- status draft -> active. A membership-registry instance now validates against schema/ecosystem_membership.schema.json (registered in NIZAM.json + schema/README.md), which enforces the Section 2 shape (the four scope lists exist as arrays of entries, every entry has an identifying name, out_of_scope entries record a reason). The exactly-one-list invariant (Section 2.1: no name appears in two lists) is a relational cross-array constraint JSON Schema cannot express, so it is enforced in code by validate.sh C12 (mirroring the ecosystem_baseline same-repo-revision rule, NDEBT-023), with positive + schema-invalid + multilist negative fixtures. Section 2 gains the schema/validator cross-reference. This is the artifact that sets n for the 0-to-n spectrum; the multi-repo TOOLING that iterates it is features 076-077."
+    summary: "Phase-010 feature 075 (NDEBT-031; NIP-0002 Stage 3): promoted from a draft pattern to a required, SCHEMA-BACKED artifact -- status draft -> active. A membership-registry instance now validates against schema/ecosystem_membership.schema.json (registered in NIZAM.json + schema/README.md), which enforces the Section 2 shape (the four scope lists exist as arrays of entries, every entry has an identifying name, out_of_scope entries record a reason). The exactly-one-list invariant (Section 2.1: no name appears in two lists) is a relational cross-array constraint JSON Schema cannot express, so it is enforced in code by validate.sh C12 (mirroring the ecosystem_baseline same-repo-revision rule, NDEBT-023), with positive + schema-invalid + multilist negative fixtures. Section 2 gains the schema/validator cross-reference. This is the artifact that sets n for the 0-to-n spectrum; the multi-repo TOOLING that iterates it is feature 076 (iteration over the in_scope set) then 077 (cross-repo aggregation + a common-framework-pin consistency check), with hermetic n-case coverage and the pilot in 078-079."
   - version: "0.2.0"
     date: "2026-07-22"
     summary: "Phase-009 feature 072 (NDEBT-030; NIP-0002 Stage 2): new Section 2.3 models the incubating -> in_scope promotion as the count-0->1 transition of the 0-to-n spectrum. A greenfield-genesis project (ecosystem/00 Section 8; bootstrap.sh --genesis) enters the registry in `incubating` and is promoted to `in_scope` once it clears its first clean Preflight/Baseline, as an explicit recorded edit that MOVES the entry (preserving the Section 2.1 exactly-one-list invariant); demotion is symmetric. Scoped to the single-project count-0->1 case only -- promoting the registry to a required, validated ecosystem-membership artifact the tools iterate to set n (count-1->n) stays NDEBT-031 / NIP-0002 Stage 3, deferred to phase 010. Status stays draft. A tools/fixtures_self_test.sh scratch probe asserts the transition shape (promotion moves the entry; a two-list entry is detected)."
@@ -132,9 +135,12 @@ effect:
   explicit-edit rule -- never by silent deletion (Section 5, rule 3).
 
 This subsection scopes only the count-0->1 transition for a single genesis'd project. Making the
-registry a *required, validated* ecosystem-membership artifact that the tools iterate to set `n`
-(the count-1->n work) is a separate, larger change (`NDEBT-031`, NIP-0002 Stage 3), deliberately
-not undertaken here.
+registry a *required, schema-validated* ecosystem-membership artifact **has since been done** —
+feature 075 (v0.3.0 above; `schema/ecosystem_membership.schema.json` + `validate.sh` C12), the
+change that sets `n`. What remains beyond this single-project transition is the count-1->n
+*tooling* that iterates that validated registry across a set of repo-roots and aggregates the
+result (`NDEBT-031`, NIP-0002 Stage 3): features 076-077. Those are multi-repo tooling concerns,
+not part of this single-project promotion rung.
 
 ## 3. Dependency-Map Conventions
 

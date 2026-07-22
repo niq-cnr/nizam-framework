@@ -343,15 +343,18 @@ file(s)/detail(s) printed on the following indented line(s)):
 
   C12 Ecosystem schema-family fixture validation (are the ecosystem schema
       families' fixtures actually load-bearing, or merely present?). For
-      each of the five families -- the three shipped in features 037-039
+      each of the six families -- the three shipped in features 037-039
       (baseline, preflight-verdict, engineering-finding), plus audit_delta
-      (feature 057) and ecosystem_membership (feature 075) --
+      (feature 057), ecosystem_membership (feature 075), and the
+      membership-run aggregate membership_result (feature 077) --
       validates every matching
       `tools/fixtures/<family>_*.json` fixture, via python3 + jsonschema,
       against its shipped schema (`schema/ecosystem_baseline.schema.json`,
       `schema/preflight_verdict.schema.json`,
-      `schema/engineering_finding.schema.json`, and
-      `schema/audit_delta.schema.json`). A fixture is
+      `schema/engineering_finding.schema.json`,
+      `schema/audit_delta.schema.json`,
+      `schema/ecosystem_membership.schema.json`, and
+      `schema/ecosystem_membership_result.schema.json`). A fixture is
       NEGATIVE (MUST fail validation) iff its filename carries the canonical
       delimited-lowercase token `_neg_` or `_invalid_`; every other
       conforming fixture is POSITIVE and MUST validate. A positive fixture
@@ -1487,7 +1490,7 @@ check_c11_dogfood_payload_skip() {
 
 # check_c12_ecosystem_fixtures
 #
-# For each of the five families, validates every matching
+# For each of the six families, validates every matching
 # tools/fixtures/<family>_*.json fixture against its shipped schema. A
 # fixture is NEGATIVE (MUST fail schema validation) iff its filename
 # contains the canonical delimited token '_neg_' or '_invalid_' -- checked as
@@ -1529,6 +1532,7 @@ FAMILIES = {
     "engineering_finding": "schema/engineering_finding.schema.json",
     "audit_delta": "schema/audit_delta.schema.json",
     "ecosystem_membership": "schema/ecosystem_membership.schema.json",
+    "membership_result": "schema/ecosystem_membership_result.schema.json",
 }
 
 
@@ -1692,7 +1696,7 @@ PY
 #
 # NDEBT-015 (feature 052): single-fixture ecosystem-schema validation for the
 # `--target` dispatcher. The full-sweep check_c12_ecosystem_fixtures validates
-# EVERY fixture of all five families with a polarity/dormancy guard; this
+# EVERY fixture of all six families with a polarity/dormancy guard; this
 # variant validates exactly ONE `--target` file against the schema of the
 # family the router (check_c11_or_c4_target) identified, emitting a
 # discriminating [C12] verdict -- a valid fixture PASSes, a negative fixture
@@ -1720,6 +1724,7 @@ schema_paths = {
     "engineering_finding": "schema/engineering_finding.schema.json",
     "audit_delta": "schema/audit_delta.schema.json",
     "ecosystem_membership": "schema/ecosystem_membership.schema.json",
+    "membership_result": "schema/ecosystem_membership_result.schema.json",
 }
 schema_path = schema_paths[family]
 
@@ -1993,6 +1998,24 @@ if {"earlier", "later", "transitions"} <= doc.keys() and isinstance(doc.get("tra
     # artifact carries all three of these keys, so this never steals their
     # fixtures.
     print("ecosystem:audit_delta")
+elif "ecosystem_verdict" in doc or "framework_pin_consistent" in doc:
+    # NDEBT-031: the membership-run AGGREGATE. Either `ecosystem_verdict` or
+    # `framework_pin_consistent` is the discriminator (each is unique to this
+    # family -- the per-repo preflight_verdict uses `verdict`+`execution_id`,
+    # never `ecosystem_verdict`), so an aggregate malformed by OMITTING one still
+    # routes here for a clear error. Checked BEFORE the generic single-key routes
+    # so an aggregate carrying an extension key never misroutes.
+    print("ecosystem:membership_result")
+elif {"in_scope", "incubating", "reference_archive", "out_of_scope"} & doc.keys():
+    # NDEBT-031: the four scope-list keys are the membership-registry
+    # discriminator; ANY one of them triggers it (so a registry malformed by
+    # omitting lists still routes here for a clear membership error, not a C4
+    # misroute). Checked BEFORE the generic review/verdict/contract_id/run-state
+    # routes: the membership schema permits additionalProperties, so a valid
+    # registry carrying an extension key (`review`, `verdict`, ...) must still
+    # reach C12 rather than being diverted. No other family's artifact carries
+    # these scope-list keys, so this never steals their fixtures.
+    print("ecosystem:ecosystem_membership")
 elif "review" in doc:
     print("contract_review")
 elif "verdict" in doc and "execution_id" in doc:
@@ -2005,14 +2028,6 @@ elif "circuit_breaker" in doc or "scope_budget" in doc:
     print("run_state")
 elif ECOSYSTEM_BASELINE_KEYS.issubset(doc):
     print("ecosystem:ecosystem_baseline")
-elif len({"in_scope", "incubating", "reference_archive", "out_of_scope"} & doc.keys()) >= 2:
-    # NDEBT-031: the four scope-list keys are the membership-registry
-    # discriminator. Two or more of them (not all four) is the trigger, so a
-    # registry that is malformed by OMITTING a required list still routes here
-    # and gets a clear membership schema error instead of misrouting to C4's
-    # index check; no other family's artifact carries these keys, so this never
-    # steals their fixtures.
-    print("ecosystem:ecosystem_membership")
 elif "closure_criteria" in doc:
     print("ecosystem:engineering_finding")
 else:

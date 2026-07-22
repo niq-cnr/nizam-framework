@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.24.0
+version: 0.25.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.25.0"
+    date: "2026-07-22"
+    summary: "Records-sync from the PR #47 CodeRabbit review: two prior deferred-scope annotations pointed readers to a 'Proposed Next Phase' banner at the top, but those banners have since become Plan-of-Record banners (phase 010 activated, phase 009 complete). Re-pointed the phase-009 banner's Phase-010 candidate-scope note to the 'Plan of Record — Phase 010 Activated' banner, and the phase-008 banner's Phase-009 candidate-scope note to the phase-009 'Plan of Record … COMPLETE' banner. No plan-of-record change; annotation truth-roll only."
   - version: "0.24.0"
     date: "2026-07-22"
     summary: "Phase 010 ACTIVATED (operator verbatim: 'Approved. Proceed with the phase-010 proposal + activation', gate H-PHASE-010, 2026-07-22): the 'Proposed Next Phase — Phase 010' banner becomes the Plan of Record banner (Activated). current_phase advanced 009-greenfield-genesis -> 010-multi-repo in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_010 flipped draft -> active (1.1.0); scope budget reset to 1160 (phase-009 final archived). operator_gates.md records H-PHASE-010 SATISFIED. Execution begins with the ungated DAG root feature 075 (the ecosystem-membership registry schema; NDEBT-031) — the first change of the n-case."
@@ -158,9 +161,10 @@ Phase 009 makes the 0-case first-class and mechanized, then pilots it. Features:
    project stood up from nothing (no workaround), then refine/validate the phase-010 candidate
    scope below and close the phase.
 
-**Deferred → Phase-010 candidate scope (NIP-0002 Stages 3–4).** *(Now authored as the phase-010
-proposal — see the "Proposed Next Phase" banner at the top: Stage 3 (the n-case) is phase 010;
-Stage 4 (the 04/05 coordination protocols) is carried forward as phase-011 candidate scope.
+**Deferred → Phase-010 candidate scope (NIP-0002 Stages 3–4).** *(Now realized as phase 010,
+authored as a proposal and since activated — see the "Plan of Record — Phase 010 Activated"
+banner at the top: Stage 3 (the n-case) is phase 010; Stage 4 (the 04/05 coordination protocols)
+is carried forward as phase-011 candidate scope.
 Validated by the feature-074 0-case pilot: the n-case membership-registry work (`NDEBT-031`)
 builds directly on the `incubating` partition this phase populated, so the ordering is confirmed,
 not re-ordered.)* Held
@@ -218,9 +222,9 @@ to prove it. Features (evidence-prioritized from the pilot debt `NDEBT-027/028/0
    only exception is the injected `.nizam/`, correctly-anchored baseline, no workaround),
    then author the phase-009 candidate scope below and close the phase.
 
-**Deferred → Phase-009 candidate scope (NIP-0002 Stages 2–4).** *(Now authored as the phase-009
-proposal — see the "Proposed Next Phase" banner at the top: Stage 2 (the 0-case) is phase 009;
-Stages 3–4 are carried forward as phase-010 candidate scope.)* Held until Stage 1 is *proven*,
+**Deferred → Phase-009 candidate scope (NIP-0002 Stages 2–4).** *(Now realized as phase 009
+(complete) — see its "Plan of Record … COMPLETE" banner above: Stage 2 (the 0-case) was phase 009;
+Stages 3–4 are carried forward, Stage 3 now realized as the activated phase 010.)* Held until Stage 1 is *proven*,
 because each builds on single-project tools that must work first:
 - **The 0-case — greenfield genesis** (`NDEBT-030`): create-and-scaffold a *new* project and
   bootstrap into it; the scope registry's `incubating` partition models the count-0→1 transition.

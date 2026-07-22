@@ -139,6 +139,14 @@ assert_target ecosystem_membership_valid.json                      C12 PASS
 assert_target ecosystem_membership_neg_missing_list.json           C12 FAIL
 assert_target ecosystem_membership_neg_multilist.json              C12 FAIL
 
+# membership_result (F-077, NDEBT-031): the aggregate ecosystem-level result. The
+# positive validates; the schema-invalid (missing ecosystem_verdict) and the
+# if/then-violating (framework_pin_consistent=false but ecosystem_verdict=PASS)
+# negatives both FAIL -- proving both the shape and the relational invariant bite.
+assert_target membership_result_valid.json                         C12 PASS
+assert_target membership_result_neg_missing_verdict.json           C12 FAIL
+assert_target membership_result_neg_inconsistent_pass.json         C12 FAIL
+
 # ---------------------------------------------------------------------------
 # (2) verify_lib primitive fixtures
 # ---------------------------------------------------------------------------

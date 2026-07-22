@@ -9,14 +9,32 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **`schema/ecosystem_membership_result.schema.json` + cross-repo aggregation & consistency**
+  (phase 010 feature 077; `NDEBT-031`; NIP-0002 Stage 3). Mechanizes the multi-repository
+  aggregation the shipped tools guarded only as a "future extension": `tools/ecosystem_membership_run.py`
+  now rolls the per-member verdicts (feature 076) into one **schema-valid ecosystem-level result**
+  — `ecosystem_verdict` (`PASS`/`FAIL`), `framework_pin_consistent`, `member_count`, and the
+  per-member `members[]` — and **enforces cross-repo consistency**: it reads each member's
+  `.nizam/provenance.json` `resolved_sha` and flags a divergent framework pin as a first-class
+  `consistency_finding`, not a silent mismatch. The new companion schema encodes an `allOf`
+  invariant (if `framework_pin_consistent` is `false` the `ecosystem_verdict` MUST be `FAIL`),
+  registered in `NIZAM.json` + `schema/README.md` (v0.10.0) and validated by `tools/validate.sh`
+  **C12** as a sixth ecosystem schema-family (`membership_result`), with positive, missing-verdict,
+  and inconsistent-`PASS` fixtures. The membership schema's `schema_version`/`last_updated` metadata
+  is hardened (required, pattern-checked), and the tool refuses a registry whose entry name appears
+  in more than one scope list (the exactly-one-list invariant, checked in-tool before iteration).
+  Hermetic n-case coverage is feature 078.
+
 - **`tools/ecosystem_membership_run.py` — multi-repo iteration** (phase 010 feature 076;
   `NDEBT-031`; NIP-0002 Stage 3). Where the shipped ecosystem tools take a single `--repo-root`,
   this reads the membership registry that sets `n` (feature 075) and runs the Preflight stage once
   per `in_scope` member — resolving each member's repo-root (an explicit `repo_root` entry field,
   else `<repo-roots-base>/<name>`), invoking `ecosystem_preflight.py` unchanged per member, and
-  collecting a per-member result index at `<output-dir>/membership_run.json`. Exit codes mirror
-  the stage tool's table (0 = every member returned an acceptable verdict; 1 = a member hard-FAILed
-  or its repo-root was missing; 64 = usage). The count-1 case is a single-member registry, and
+  collecting a per-member result index at `<output-dir>/membership_run.json`. The tool's own exit
+  is an ecosystem rollup — 0 when every `in_scope` member returned an acceptable verdict
+  (`PASS`/`PASS_WITH_EXCEPTIONS`), 1 when any member hard-FAILed or its repo-root was missing, 64
+  on usage error — while each member's raw per-member stage exit is preserved per-entry in the
+  `membership_run.json` index. The count-1 case is a single-member registry, and
   `ecosystem_preflight.py` is byte-for-byte unchanged (regression-guarded). Cross-repo *aggregation*
   into one schema-valid ecosystem-level result and the common-framework-pin *consistency* check are
   feature 077; standing hermetic multi-repo coverage is feature 078.
@@ -36,7 +54,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `schema/README.md` (v0.9.0). The multi-repo *tooling* that iterates this registry is features
   076–077.
 
-- **Phase 010 proposed** — `.agent/product_spec_010.md` (status draft) and
+- **Phase 010 proposed, then activated** — `.agent/product_spec_010.md` (authored draft,
+  subsequently flipped to `status: active` on activation) and
   `.agent/feature_list_010.json` (features 075–079, DAG-validated acyclic, root {075}, est 1160
   lines) propose **0–n Project Spectrum, Stage 3: The n-case (Multi-Repo Tooling)**, the
   realization of `NIP-0002` Stage 3. Scope: a JSON schema for an ecosystem-membership registry
@@ -47,8 +66,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   coordination protocols, activating the reserved `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates),
   the release cut carrying the whole loop (`NDEBT-029`), and a real non-scratch multi-repo pilot are
   carried as phase-011 candidate scope. `docs/planning/ROADMAP.md` (v0.23.0) and
-  `docs/planning/manifest.json` record the proposal (pending/proposed); it awaits activation gate
-  `H-PHASE-010` and is not yet active (`.agent/run_state.json` untouched).
+  `docs/planning/manifest.json` recorded the proposal (pending/proposed); the operator then
+  authorized activation (gate `H-PHASE-010` SATISFIED, 2026-07-22), recorded in
+  `.agent/run_state.json` (event `phase_activated`) before any feature execution, advancing
+  `current_phase` to `010-multi-repo` and the phase-010 manifest entry to `in_progress`.
 
 - **Phase 009 (0–n Project Spectrum, Stage 2: Greenfield Genesis) complete** (feature 074;
   `NDEBT-030`). The 0-case was piloted end-to-end against a scratch greenfield project stood up
