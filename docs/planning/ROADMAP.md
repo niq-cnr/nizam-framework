@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.23.0
+version: 0.24.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.24.0"
+    date: "2026-07-22"
+    summary: "Phase 010 ACTIVATED (operator verbatim: 'Approved. Proceed with the phase-010 proposal + activation', gate H-PHASE-010, 2026-07-22): the 'Proposed Next Phase — Phase 010' banner becomes the Plan of Record banner (Activated). current_phase advanced 009-greenfield-genesis -> 010-multi-repo in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_010 flipped draft -> active (1.1.0); scope budget reset to 1160 (phase-009 final archived). operator_gates.md records H-PHASE-010 SATISFIED. Execution begins with the ungated DAG root feature 075 (the ecosystem-membership registry schema; NDEBT-031) — the first change of the n-case."
   - version: "0.23.0"
     date: "2026-07-22"
     summary: "Phase 010 PROPOSED (operator 'Approved. Proceed with the phase-010 proposal + activation'). A new 'Proposed Next Phase — Phase 010' banner tops the roadmap: the n-case (multi-repo tooling + the required, schema-validated ecosystem-membership registry, NDEBT-031), features 075-079 (DAG root {075}, est 1160), realized by the Planner artifacts .agent/product_spec_010.md (status draft) + .agent/feature_list_010.json, awaiting activation gate H-PHASE-010. Scoped to NIP-0002 Stage 3 only (one stage at a time, as phases 008/009 took Stages 1/2). The former phase-009 banner's 'Deferred -> Phase-010 candidate scope (Stages 3-4)' subsection is annotated as now-authored; NIP-0002 Stage 4 (04/05 coordination protocols, activating the reserved H-PLANNING-AUTHORITY / H-TRAIN-ENTRY gates), the release cut carrying the whole loop (NDEBT-029), and a real non-scratch multi-repo pilot are carried forward as phase-011 candidate scope. current_phase stays 009-greenfield-genesis until activation; run_state untouched (a proposal is not an activation)."
@@ -79,15 +82,17 @@ change_log:
 
 # Forward Roadmap
 
-## Proposed Next Phase (2026-07-22) — Phase 010: 0–n Project Spectrum, Stage 3 — The n-case (Multi-Repo Tooling) — **PROPOSAL, awaiting H-PHASE-010**
+## Plan of Record (2026-07-22) — Phase 010 Activated: 0–n Project Spectrum, Stage 3 — The n-case (Multi-Repo Tooling)
 
-**Phase `010-multi-repo` is a PROPOSAL** (2026-07-22), awaiting operator activation (gate
-**H-PHASE-010**). The Planner artifacts exist — `.agent/product_spec_010.md` (status draft) and
-`.agent/feature_list_010.json` (features 075–079, DAG-validated acyclic, root {075}, est 1160) —
-but no feature enters contract negotiation until activation, and `current_phase` stays
-`009-greenfield-genesis` (complete). It realizes **NIP-0002 Stage 3 — the n-case (many associated
-repositories forming one ecosystem)**, taken one stage at a time as phases 008/009 took Stages
-1/2.
+**Phase `010-multi-repo` is ACTIVE** (2026-07-22) — the plan of record. The operator authorized
+activation (verbatim: **"Approved. Proceed with the phase-010 proposal + activation"**, satisfying
+gate **H-PHASE-010**; recorded in `.agent/run_state.json` event `phase_activated` before any
+feature execution, per the NDEBT-018 rule). `product_spec_010.md` flipped draft → active (v1.1.0);
+`current_phase` advanced `009-greenfield-genesis` → `010-multi-repo`; the scope budget was reset
+(1160 est; phase-009 final archived). Execution begins with the ungated DAG root feature 075 (the
+ecosystem-membership registry schema). It realizes **NIP-0002 Stage 3 — the n-case (many
+associated repositories forming one ecosystem)**, taken one stage at a time as phases 008/009 took
+Stages 1/2.
 
 **Scope — NIP-0002 Stage 3 only (prove-then-build).** Phases 008/009 delivered the "1" and "0"
 points. The **"n" point remains**: the shipped tools take a single `--repo-root`, their

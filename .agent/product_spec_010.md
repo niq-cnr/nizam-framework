@@ -3,14 +3,17 @@ id: nizam-product-spec-010
 title: "Nizam Framework — Phase 010 Spec (0–n Project Spectrum, Stage 3: The n-case — Multi-Repo Tooling) — PROPOSAL"
 description: "Phase-010 proposal: realize NIP-0002 (The 0–n Project Spectrum) Stage 3 — the n-case (many associated repositories forming one ecosystem). Promotes registry/scope_definition_patterns.md from a draft pattern to a required, schema-validated ecosystem-membership artifact that sets n (NDEBT-031), extends the ecosystem tooling to iterate that membership set of repo-roots instead of one --repo-root, mechanizes the cross-repository aggregation + consistency the shipped tools guard only as a 'future extension', adds hermetic n-case coverage, then pilots the n-case against a scratch multi-repo ecosystem to PROVE it and prioritise the Stage-4 coordination protocols from that evidence. PROPOSED, not activated: execution requires operator authorization (gate H-PHASE-010). Stage 4 (the 04/05 dependency-reconciliation / release-train coordination protocols + companion schemas, activating the reserved H-PLANNING-AUTHORITY / H-TRAIN-ENTRY gates), the release cut carrying the whole loop (NDEBT-029), and a real, non-scratch multi-repo pilot are explicitly OUT OF SCOPE — carried as phase-011 candidate scope. Extends product_spec.md..product_spec_009.md; replaces none."
 tags: [spec, ecosystem-cycle, zero-to-n, multi-repo, membership-registry, phase-010, proposal]
-status: draft
+status: active
 last_audited: "2026-07-22"
 authoritative_source: NA
-version: 1.0.0
+version: 1.1.0
 spec_version: "1.0.0"
 created_at: "2026-07-22T02:00:00Z"
-updated_at: "2026-07-22T02:00:00Z"
+updated_at: "2026-07-22T02:15:00Z"
 change_log:
+  - version: "1.1.0"
+    date: "2026-07-22T02:15:00Z"
+    summary: "Phase activated: frontmatter status draft -> active on operator authorization 2026-07-22 (verbatim: 'Approved. Proceed with the phase-010 proposal + activation', gate H-PHASE-010, recorded in .agent/run_state.json event phase_activated before any feature execution per the NDEBT-018 rule). current_phase advanced 009-greenfield-genesis -> 010-multi-repo; scope budget reset (1160 est, phase-009 final archived). Body Status banner updated PROPOSED -> ACTIVE plan of record; no scope change. The proposal and activation were done in the same cycle per the operator's instruction; the draft status was the designed proposal state, flipped as the decision lifecycle reached activation (the 005 lesson applied as intended)."
   - version: "1.0.0"
     date: "2026-07-22T02:00:00Z"
     summary: "Initial phase-010 proposal, authored after PR #46 merged phase 009 (NIP-0002 Stage 2, Greenfield Genesis) to main. Scope sourced from NIP-0002's Staged Realization Stage 3 (the n-case — multi-repo tooling + the required membership registry) + the phase-009 pilot evidence (which validated the ordering: the n-case builds on the incubating partition phase 009 populated) + the open debt row NDEBT-031. Taken one stage at a time, as phases 008/009 took Stages 1/2. Frontmatter status stays draft until operator activation (gate H-PHASE-010) — the 005 lesson: status tracks the decision lifecycle, not anticipates it. No feature may enter contract negotiation before that authorization; current_phase remains 009-greenfield-genesis (complete) until then. Stage 4 (04/05 coordination protocols) plus the release cut carrying the whole loop (NDEBT-029) and a real, non-scratch multi-repo pilot are deferred to phase 011, evidence-gated on this phase's n-case pilot."
@@ -18,14 +21,15 @@ change_log:
 
 # Nizam Framework — Phase 010 Spec (0–n Project Spectrum, Stage 3: The n-case — Multi-Repo Tooling)
 
-**Status: PROPOSED.** Phase `010-multi-repo` is a Planner proposal awaiting operator
-authorization (gate **H-PHASE-010**). Per `methodology/00_planning.md`, the Planner-produced
-spec and the DAG-validated feature list (`.agent/feature_list_010.json`) exist now; the phase
-becomes real only on operator activation, recorded in `.agent/run_state.json`
-(`phase_activated`) before any feature execution (the NDEBT-018 rule). Until then
-`docs/planning/manifest.json` keeps `current_phase: 009-greenfield-genesis` (complete) and the
-phase-010 entry `status: pending` / `activation_state: proposed`; no feature enters contract
-negotiation.
+**Status: ACTIVE — plan of record.** Phase `010-multi-repo` was authorized for activation by the
+operator on 2026-07-22 (verbatim: **"Approved. Proceed with the phase-010 proposal + activation"**,
+satisfying gate **H-PHASE-010**; recorded in `.agent/run_state.json` event `phase_activated`
+before any feature execution, per the NDEBT-018 rule). It advances **NIP-0002 (The 0–n Project
+Spectrum)** to Stage 3 (the n-case). Per `methodology/00_planning.md`, the Planner-produced spec
+and the DAG-validated feature list (`.agent/feature_list_010.json`) existed at proposal; the
+operator authorization completed the activation triad. `docs/planning/manifest.json` carries
+`current_phase: 010-multi-repo` with the phase-010 entry `status: in_progress`. Execution begins
+with the ungated DAG root feature 075 (the ecosystem-membership registry schema).
 
 ## 1. Purpose
 
