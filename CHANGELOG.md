@@ -23,14 +23,19 @@ tag that finally carries the **whole 0–n loop** into a consumable pin (`NDEBT-
   iteration/aggregation), and the Stage-4 coordination protocols (`ecosystem/04`
   dependency reconciliation + `ecosystem/05` release-train coordination, with the
   `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates).
-- **The audit/compare tooling** (`tools/ecosystem_audit.py`,
-  `tools/compare_ecosystem_baselines.py`, `tools/validate_evidence_freshness.py`) and
-  the new validator family **C12** — all now shipped in the tag, so a consumer on the
+- **The ecosystem tooling** — `tools/ecosystem_audit.py`,
+  `tools/compare_ecosystem_baselines.py`, `tools/validate_evidence_freshness.py`,
+  `tools/ecosystem_membership_run.py`, `tools/ecosystem_reconcile.py`, and
+  `tools/ecosystem_release_train.py` — all now shipped in the tag, so a consumer on the
   released pin can run the full lifecycle without pointing at the framework working tree.
+  The existing **C12** validator check (which predates v0.9.0) gained four new schema
+  families — `ecosystem_membership`, `ecosystem_membership_result`, `reconciliation_plan`,
+  and `release_train_manifest` — guarding the new artifact types.
 
 Additive by construction: the new schemas validate *new* artifact types (they do not
-narrow any previously-shipped schema), and the new validator checks guard *new* fixture
-families. A consumer upgrades by re-running `bootstrap.sh` against `v0.9.0`
+narrow any previously-shipped schema), and the new C12 families guard *new* fixture
+families (the C1–C15 check set is unchanged). A consumer upgrades by re-running
+`bootstrap.sh` against `v0.9.0`
 (`methodology/06_release_train.md` §5). A **real, non-scratch multi-repo pilot** at this
 released tag remains the standing production-maturity criterion — this release *enables*
 it rather than declaring it.

@@ -19,10 +19,13 @@ tip carrying phases 007–011. MINOR release per `methodology/06_release_train.m
 4. **CHANGELOG rolled up to a dated `[0.9.0] - 2026-07-22` MINOR section** with a
    release lead classifying the change as MINOR (`methodology/06_release_train.md` §3.2):
    the new schemas validate *new* artifact types (no previously-shipped schema narrowed),
-   the new C12 validator family guards *new* fixture families, and the payload additions
-   (`ecosystem/00`, `04`, `05`; the reconciliation/release-train/audit/compare tools) are
-   new-optional capability. A fresh empty `[Unreleased]` sits on top. `release.yml` will
-   find the matching `## [0.9.0]` section at tag-publish time.
+   the existing C12 check (which predates v0.9.0) gains four new schema families
+   (`ecosystem_membership`, `ecosystem_membership_result`, `reconciliation_plan`,
+   `release_train_manifest`) guarding those new types — the C1–C15 check set is unchanged —
+   and the payload additions (`ecosystem/00`, `04`, `05`; the
+   membership/reconciliation/release-train + audit/compare tools) are new-optional capability.
+   A fresh empty `[Unreleased]` sits on top. `release.yml` will find the matching
+   `## [0.9.0]` section at tag-publish time.
 5. **The whole 0–n loop is in the tag** (`NDEBT-029`): `tools/ecosystem_audit.py`,
    `tools/compare_ecosystem_baselines.py`, `tools/validate_evidence_freshness.py`,
    `tools/ecosystem_membership_run.py`, `tools/ecosystem_reconcile.py`, and
@@ -33,8 +36,8 @@ tip carrying phases 007–011. MINOR release per `methodology/06_release_train.m
    Low/Medium enhancement candidates (`NDEBT-026` C15 mapping-direction; `NDEBT-034`
    per-member clone cost) plus `NDEBT-029` (resolved *by* this release, on the tag push).
    No High/blocking item.
-7. **Human sign-off complete:** PENDING — human-gated (H-FRAMEWORK-RELEASE).
-8. **Immutable tag published:** PENDING — human-gated (H-FRAMEWORK-RELEASE).
+7. **Human sign-off complete:** PENDING -- human-gated (H-FRAMEWORK-RELEASE).
+8. **Immutable tag published:** PENDING -- human-gated (H-FRAMEWORK-RELEASE).
 
 Items 7–8 are the operator's, executed after PR review per the recorded two-part gate —
 the v0.7.0 / v0.8.0 precedent was operator sign-off followed by the operator-pushed

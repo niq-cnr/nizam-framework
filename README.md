@@ -35,6 +35,8 @@ atomically installs it under `.nizam/` (the default target). What you get:
 ├── templates/
 ├── schema/
 ├── tools/
+├── methodology/
+├── ecosystem/
 ├── NIZAM.json
 └── provenance.json
 ```

@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.30.0
+version: 0.31.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.31.0"
+    date: "2026-07-22"
+    summary: "PR #50 review (release-ledger reconciliation): the Current Position 'Open debt' summary was phase-008-era stale -- it still listed NDEBT-030 (the 0-case, resolved by phase 009) and NDEBT-031 (the n-case, resolved by phase 010) as open. Rewritten to the real current Open set (only NDEBT-029 release-timing + NDEBT-026 + NDEBT-034, none blocking) and to list the 0-n scope rows all Resolved (027/028/032/033 phase 008, 030 phase 009, 031 phase 010, 035 phase 011). Paired with docs/planning/DEBT.md v0.36.0, which moves NDEBT-030 Open -> Resolved (it was left stale in Open at phase-009 close). No plan-of-record change."
   - version: "0.30.0"
     date: "2026-07-22"
     summary: "Release-in-preparation: v0.9.0 (MINOR), the first release since v0.8.0, carrying phases 007-011 (consumer-adoption enablement + the full NIP-0002 0-n realization + the audit/compare tooling). Current Position gains a 'Release in preparation: v0.9.0 -- awaiting H-FRAMEWORK-RELEASE' entry recording the prepared release surface (CHANGELOG [0.9.0] section, version bumps in C10 lockstep across NIZAM.json/docs/guide/CONTEXT.md/README.md, readiness checklist .agent/evidence/release-readiness-v0.9.0.md) on the release base 1dd4971 (phase-011 merge, PR #49). The pipeline never self-tags: the operator signs off + pushes the annotated v0.9.0 tag, release.yml publishes. NDEBT-029 (audit/compare not in a released tag) stays Open until the tag exists carrying the whole 0-n loop; on the tag it resolves and the standing real non-scratch multi-repo pilot becomes runnable. v0.8.0 remains the latest RELEASED tag until then."
@@ -526,16 +529,17 @@ successor, leaving open debt deferred to unscoped "future phases").
   self-tags: the operator signs off and pushes the annotated `v0.9.0` tag, then `release.yml`
   publishes the Release page from the `[0.9.0]` section. On the tag, `NDEBT-029` resolves and
   the standing **real, non-scratch multi-repo pilot** becomes runnable at the released tag.
-- Open debt: NDEBT-026 (Low, pre-existing) plus three of the phase-007 pilot rows that
-  phase 008 did **not** close — `NDEBT-029` (audit/compare not yet in a released tag),
-  `NDEBT-030` (the absent 0-case), and `NDEBT-031` (single-`--repo-root` tools vs multi-repo
-  prose) — each cross-referencing `NIP-0002` and carried into the phase-009 candidate scope
-  above. Phase 008 **resolved** the consumer-readiness rows: `NDEBT-027` (governance-root,
-  feature 065) and `NDEBT-028` (framework-pin anchoring, feature 066) via ADR-004; `NDEBT-032`
-  (brownfield) resolved-by-design (feature 068); and `NDEBT-033` (bootstrap commit-SHA pin,
-  surfaced in the PR #42 review) via feature 067. Phase 006 resolved the entire
-  enforcement-closure backlog it inherited (NDEBT-004, -005, -007 through -024;
-  NDEBT-001/002/003/006/025 were already Resolved). See `docs/planning/DEBT.md`.
+- Open debt (current, at DEBT.md v0.36.0): only three rows remain Open, none blocking —
+  `NDEBT-029` (Medium, release-timing: the audit/compare tools are not yet in a released tag;
+  **resolves on the operator-pushed `v0.9.0` tag** this release prepares), `NDEBT-026` (Low,
+  pre-existing: C15 is a coverage check, not a mapping-direction validator), and `NDEBT-034`
+  (Low: the n-case pilot's per-member clone cost, a throughput enhancement). The 0–n programme's
+  scope rows are all **Resolved**: `NDEBT-027`/`NDEBT-028` (consumer-readiness, phase 008),
+  `NDEBT-032`/`NDEBT-033` (brownfield + bootstrap SHA pin, phase 008), `NDEBT-030` (the 0-case,
+  phase 009), `NDEBT-031` (the n-case, phase 010), and `NDEBT-035` (the Stage-4 coordination
+  protocols, phase 011). Phase 006 resolved the entire enforcement-closure backlog it inherited
+  (NDEBT-004, -005, -007 through -024; NDEBT-001/002/003/006/025 were already Resolved). See
+  `docs/planning/DEBT.md`.
 
 ## Track 1 — Outstanding Human Gates (no planning required)
 
