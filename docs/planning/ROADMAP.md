@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.31.0
+version: 0.32.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.32.0"
+    date: "2026-07-22"
+    summary: "Post-release refresh: v0.9.0 RELEASED (H-FRAMEWORK-RELEASE executed) -- the operator pushed the annotated tag v0.9.0 at merge commit 5b19b85 (PR #50) after the recorded readiness sign-off, and release.yml auto-published the GitHub Release page from the [0.9.0] CHANGELOG section. Current Position rolled: 'Latest released tag' v0.8.0 -> v0.9.0 (with v0.8.0 as prior); the 'Release in preparation' entry becomes the released record. NDEBT-029 (audit/compare not in a released tag) moved Open -> Resolved (DEBT.md v0.37.0) -- the tag now carries the whole 0-n loop in its injected .nizam/tools/, so the open-debt summary drops to two Low rows (NDEBT-026, NDEBT-034). The standing real, non-scratch multi-repo pilot at the released tag is now runnable -- the production-maturity criterion this release unblocks. Also updated operator_gates.md (H-FRAMEWORK-RELEASE executed v0.9.0) + run_state (release_executed) + the readiness checklist items 7-8."
   - version: "0.31.0"
     date: "2026-07-22"
     summary: "PR #50 review (release-ledger reconciliation): the Current Position 'Open debt' summary was phase-008-era stale -- it still listed NDEBT-030 (the 0-case, resolved by phase 009) and NDEBT-031 (the n-case, resolved by phase 010) as open. Rewritten to the real current Open set (only NDEBT-029 release-timing + NDEBT-026 + NDEBT-034, none blocking) and to list the 0-n scope rows all Resolved (027/028/032/033 phase 008, 030 phase 009, 031 phase 010, 035 phase 011). Paired with docs/planning/DEBT.md v0.36.0, which moves NDEBT-030 Open -> Resolved (it was left stale in Open at phase-009 close). No plan-of-record change."
@@ -513,31 +516,29 @@ successor, leaving open debt deferred to unscoped "future phases").
   and `NIP-0002` (0–n spectrum, Accepted via H-NIP) + `ADR-004` (Accepted). The validator
   runs green at `SUMMARY: 15 passed, 0 failed` (C1–C15), the fixtures self-test at 57/57,
   and the hermetic e2e bootstrap harness passes in CI (now including the n-case `assert_multirepo`).
-- Latest released tag: v0.8.0 — the annotated tag was pushed by the operator
-  2026-07-20 at the phase merge commit 183e468, executing H-FRAMEWORK-RELEASE after
-  the recorded sign-off; `release.yml` auto-published the GitHub Release page from
-  the `[0.8.0]` CHANGELOG section (run 29717579479, success). A MINOR release per
-  `methodology/06_release_train.md` §3.2. The successor consumer-adoption phase
-  (handover F-016..F-020) remains unblocked.
-- **Release in preparation: v0.9.0 (MINOR) — awaiting `H-FRAMEWORK-RELEASE`.** The first
-  release since v0.8.0, carrying phases 007–011 (consumer-adoption enablement + the full
-  NIP-0002 0–n realization + the audit/compare tooling), cutting a tag that finally carries
-  the whole 0–n loop into a consumable pin (`NDEBT-029`). Prepared on the release base
-  `1dd4971` (phase-011 merge, PR #49): the `CHANGELOG [0.9.0]` section, version bumps in
-  C10 lockstep (`NIZAM.json` / `docs/guide/index.html` / `CONTEXT.md` / `README.md`), and
-  the readiness checklist `.agent/evidence/release-readiness-v0.9.0.md`. The pipeline never
-  self-tags: the operator signs off and pushes the annotated `v0.9.0` tag, then `release.yml`
-  publishes the Release page from the `[0.9.0]` section. On the tag, `NDEBT-029` resolves and
-  the standing **real, non-scratch multi-repo pilot** becomes runnable at the released tag.
-- Open debt (current, at DEBT.md v0.36.0): only three rows remain Open, none blocking —
-  `NDEBT-029` (Medium, release-timing: the audit/compare tools are not yet in a released tag;
-  **resolves on the operator-pushed `v0.9.0` tag** this release prepares), `NDEBT-026` (Low,
-  pre-existing: C15 is a coverage check, not a mapping-direction validator), and `NDEBT-034`
-  (Low: the n-case pilot's per-member clone cost, a throughput enhancement). The 0–n programme's
-  scope rows are all **Resolved**: `NDEBT-027`/`NDEBT-028` (consumer-readiness, phase 008),
-  `NDEBT-032`/`NDEBT-033` (brownfield + bootstrap SHA pin, phase 008), `NDEBT-030` (the 0-case,
-  phase 009), `NDEBT-031` (the n-case, phase 010), and `NDEBT-035` (the Stage-4 coordination
-  protocols, phase 011). Phase 006 resolved the entire enforcement-closure backlog it inherited
+- **Latest released tag: v0.9.0 (MINOR) — RELEASED 2026-07-22.** The operator executed
+  `H-FRAMEWORK-RELEASE` — the annotated tag `v0.9.0` was pushed at the merge commit `5b19b85`
+  (PR #50) after the recorded release-readiness sign-off, and `release.yml` auto-published the
+  GitHub Release page from the `[0.9.0]` CHANGELOG section
+  (<https://github.com/niq-cnr/nizam-framework/releases/tag/v0.9.0>). The first release since
+  v0.8.0, carrying phases 007–011 (consumer-adoption enablement + the full NIP-0002 0–n
+  realization + the audit/compare + reconciliation/release-train tooling). A MINOR release per
+  `methodology/06_release_train.md` §3.2. **`NDEBT-029` resolved**: the tag now carries the whole
+  0–n loop in its injected `.nizam/tools/`, so a consumer on the `v0.9.0` pin can run
+  Preflight → Baseline → Audit → Plan → Promote → Compare without the framework working tree. The
+  standing **real, non-scratch multi-repo pilot** at this released tag is now runnable — the open
+  production-maturity criterion this release unblocks.
+- Prior released tag: v0.8.0 — pushed by the operator 2026-07-20 at merge commit 183e468
+  (phase 006 close); `release.yml` published from the `[0.8.0]` section (run 29717579479).
+- Open debt (current, at DEBT.md v0.37.0): only two rows remain Open, both **Low**, neither
+  blocking — `NDEBT-026` (pre-existing: C15 is a coverage check, not a mapping-direction
+  validator) and `NDEBT-034` (the n-case pilot's per-member clone cost, a throughput
+  enhancement). `NDEBT-029` (audit/compare not in a released tag) is now **Resolved** by the
+  v0.9.0 release. The 0–n programme's scope rows are all **Resolved**: `NDEBT-027`/`NDEBT-028`
+  (consumer-readiness, phase 008), `NDEBT-032`/`NDEBT-033` (brownfield + bootstrap SHA pin,
+  phase 008), `NDEBT-030` (the 0-case, phase 009), `NDEBT-031` (the n-case, phase 010), and
+  `NDEBT-035` (the Stage-4 coordination protocols, phase 011). Phase 006 resolved the entire
+  enforcement-closure backlog it inherited
   (NDEBT-004, -005, -007 through -024; NDEBT-001/002/003/006/025 were already Resolved). See
   `docs/planning/DEBT.md`.
 
