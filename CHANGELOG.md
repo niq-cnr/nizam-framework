@@ -9,6 +9,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Hermetic n-case e2e coverage** (phase 010 feature 078; `NDEBT-031`; NIP-0002 Stage 3).
+  `tools/e2e_bootstrap_test.sh` gains `assert_multirepo`: it stands up a scratch **multi-repo**
+  ecosystem — two projects created *from nothing* by `bootstrap.sh --genesis` at one shared
+  ephemeral tag (so they share a framework pin) — authors a membership registry over them,
+  validates that registry (`validate.sh --target`, C12), runs `ecosystem_membership_run.py`
+  across the `in_scope` set, and proves the produced `membership_run.json` is a schema-valid
+  ecosystem-level result (`ecosystem_verdict` PASS, `framework_pin_consistent` true,
+  `member_count` 2). This exercises the iteration (076) + aggregation (077) at *runtime* across
+  genuinely genesis'd repos, generalising the single-member `assert_genesis` to the n-case; the
+  single-repo bootstrap/genesis paths stay green (each tool exit captured via an `if` so `set -e`
+  never aborts before a diagnostic). `ecosystem_membership_run.py` also gains docstrings on its
+  `main`/`die_usage` entry points.
+
 - **`schema/ecosystem_membership_result.schema.json` + cross-repo aggregation & consistency**
   (phase 010 feature 077; `NDEBT-031`; NIP-0002 Stage 3). Mechanizes the multi-repository
   aggregation the shipped tools guarded only as a "future extension": `tools/ecosystem_membership_run.py`

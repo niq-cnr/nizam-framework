@@ -53,6 +53,12 @@ SCOPE_LISTS = ("in_scope", "incubating", "reference_archive", "out_of_scope")
 
 
 def die_usage(message):
+    """Print a usage-error diagnostic to stderr and exit EXIT_USAGE_ERROR (64).
+
+    The single exit point for every unrecoverable input problem (bad arguments, an
+    unreadable or structurally-invalid registry), mirroring the stage tool's usage
+    exit so a caller can distinguish a caller mistake (64) from an ecosystem FAIL (1).
+    """
     print(f"ecosystem_membership_run.py: usage error: {message}", file=sys.stderr)
     sys.exit(EXIT_USAGE_ERROR)
 
@@ -126,6 +132,15 @@ def read_framework_pin(repo_root):
 
 
 def main(argv=None):
+    """Iterate the membership registry, aggregate the per-member verdicts, and return the exit code.
+
+    Reads the registry (``load_registry``), runs the stage tool once per ``in_scope``
+    member into ``<output-dir>/<name>/``, then rolls the per-member verdicts into one
+    ecosystem-level result written to ``<output-dir>/membership_run.json`` and enforces
+    the cross-repo framework-pin consistency check. Returns ``EXIT_CLEAN`` (0) when every
+    member is acceptable AND all pins agree, else ``EXIT_NOT_CLEAN`` (1); usage errors
+    exit ``EXIT_USAGE_ERROR`` (64) via ``die_usage``.
+    """
     parser = argparse.ArgumentParser(
         description="Iterate an ecosystem-membership registry, running the Preflight stage per in_scope member (NIP-0002 Stage 3)."
     )

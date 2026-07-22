@@ -456,6 +456,7 @@ main() {
   assert_payload_validate_cwd_independent "${target}"
   assert_preflight_governance_root "${SCRATCH_DIR}"
   assert_genesis "${EPHEMERAL_TAG}"
+  assert_multirepo "${EPHEMERAL_TAG}"
 
   echo "e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag ${EPHEMERAL_TAG}, target ${target})."
 }
@@ -585,6 +586,130 @@ with open(sys.argv[1], "r", encoding="utf-8") as handle:
   fi
 
   echo "assert_genesis: OK -- genesis stood up a new project from nothing (scaffold present; provenance resolved_sha=${recorded_sha}); Preflight accepts it (exit ${rc}: PASS_WITH_EXCEPTIONS); a non-empty --project-root is refused."
+  return 0
+}
+
+# assert_multirepo <tag>
+# --------------------------------------------------------------------------
+# Feature 078 (NDEBT-031; NIP-0002 Stage 3): proves the n-case end-to-end --
+# stand up a scratch MULTI-repo ecosystem (>=2 projects created FROM NOTHING by
+# bootstrap.sh --genesis, phase 009), author a membership registry over them,
+# and prove the iteration (feature 076) + aggregation (feature 077) run across
+# the set producing a schema-valid ecosystem-level result. This is the multi-
+# member generalisation of assert_genesis's single count-1 project: two members
+# genesis'd at the SAME ephemeral tag share one framework pin, so a correct
+# ecosystem run is PASS with framework_pin_consistent true. Hermetic: everything
+# lives under SCRATCH_DIR (cleanup removes it); the ephemeral tag is the same one
+# main() already created. Each tool exit is captured via an `if` so main()'s
+# `set -e` never aborts before a diagnostic is printed.
+#
+# Asserts, in order:
+#   (a) two projects genesis from nothing (member-a, member-b), each scaffolded +
+#       provenance-pinned, and each is committed so its working tree is clean
+#       except the injected untracked .nizam/;
+#   (b) the authored membership registry validates against
+#       schema/ecosystem_membership.schema.json via `validate.sh --target` (C12);
+#   (c) ecosystem_membership_run.py iterates the in_scope set and returns
+#       ecosystem PASS (exit 0) -- both members Preflight-acceptable, pins agree;
+#   (d) the produced <out>/membership_run.json is a schema-valid ecosystem-level
+#       result (validate.sh --target, C12) with ecosystem_verdict PASS,
+#       framework_pin_consistent true, and member_count 2.
+#
+# Returns 0 if all four hold; non-zero (with a diagnostic) otherwise.
+assert_multirepo() {
+  local tag="$1"
+  local eco="${SCRATCH_DIR}/multirepo"
+  local registry="${eco}/membership.json"
+  local out="${eco}/out"
+  local member rc verdict consistent count
+  local -a members=("member-a" "member-b")
+
+  mkdir -p "${eco}"
+
+  # (a) genesis each member FROM NOTHING at the shared ephemeral tag, then commit
+  # its scaffold so only the injected untracked .nizam/ remains (Preflight-clean).
+  for member in "${members[@]}"; do
+    if ! bash bootstrap.sh --genesis --project-root "${eco}/${member}" --project-name "${member}" \
+        --tag "${tag}" --repo-url "file://$(pwd)" >/dev/null 2>&1; then
+      echo "assert_multirepo: FAIL -- bootstrap.sh --genesis did not stand up member '${member}'."
+      return 1
+    fi
+    git -C "${eco}/${member}" config user.email t@example.invalid
+    git -C "${eco}/${member}" config user.name tester
+    git -C "${eco}/${member}" add README.md CONTEXT.md src
+    git -C "${eco}/${member}" commit -qm "genesis scaffold" >/dev/null 2>&1
+  done
+
+  # Author a membership registry over the two members (absolute repo_root each).
+  python3 - "${registry}" "${eco}/member-a" "${eco}/member-b" <<'PY'
+import json, sys
+registry, a, b = sys.argv[1], sys.argv[2], sys.argv[3]
+doc = {
+    "schema_version": "1.0.0",
+    "last_updated": "2026-07-22",
+    "in_scope": [
+        {"name": "member-a", "repo_root": a, "note": "scratch genesis'd member (e2e n-case)"},
+        {"name": "member-b", "repo_root": b, "note": "scratch genesis'd member (e2e n-case)"},
+    ],
+    "incubating": [],
+    "reference_archive": [],
+    "out_of_scope": [],
+}
+with open(registry, "w", encoding="utf-8") as handle:
+    json.dump(doc, handle, indent=2)
+    handle.write("\n")
+PY
+
+  # (b) the registry validates against its schema (C12 --target router).
+  if ! bash tools/validate.sh --target "${registry}" >/dev/null 2>&1; then
+    echo "assert_multirepo: FAIL -- the authored membership registry did not validate (validate.sh --target, C12)."
+    return 1
+  fi
+
+  # (c) iterate + aggregate across the set; a pin-consistent, all-acceptable
+  # ecosystem is PASS (exit 0).
+  if python3 tools/ecosystem_membership_run.py --membership-registry "${registry}" \
+      --output-dir "${out}" --repo-roots-base "${eco}" >/dev/null 2>&1; then
+    rc=0
+  else
+    rc=$?
+  fi
+  if [ "${rc}" -ne 0 ]; then
+    echo "assert_multirepo: FAIL -- ecosystem run over the 2-member set expected exit 0 (PASS), got ${rc}."
+    return 1
+  fi
+  if [ ! -s "${out}/membership_run.json" ]; then
+    echo "assert_multirepo: FAIL -- no aggregate result written at ${out}/membership_run.json."
+    return 1
+  fi
+
+  # (d) the produced aggregate is a schema-valid ecosystem-level result (C12) and
+  # records the expected PASS / pin-consistent / 2-member verdict.
+  if ! bash tools/validate.sh --target "${out}/membership_run.json" >/dev/null 2>&1; then
+    echo "assert_multirepo: FAIL -- the produced membership_run.json did not validate as an ecosystem-level result (validate.sh --target, C12)."
+    return 1
+  fi
+  verdict="$(python3 -c '
+import json, sys
+d = json.load(open(sys.argv[1]))
+print(d.get("ecosystem_verdict", ""))
+' "${out}/membership_run.json")"
+  consistent="$(python3 -c '
+import json, sys
+d = json.load(open(sys.argv[1]))
+print("true" if d.get("framework_pin_consistent") is True else "false")
+' "${out}/membership_run.json")"
+  count="$(python3 -c '
+import json, sys
+d = json.load(open(sys.argv[1]))
+print(d.get("member_count", -1))
+' "${out}/membership_run.json")"
+  if [ "${verdict}" != "PASS" ] || [ "${consistent}" != "true" ] || [ "${count}" != "2" ]; then
+    echo "assert_multirepo: FAIL -- aggregate result mismatch: ecosystem_verdict=${verdict} (expect PASS), framework_pin_consistent=${consistent} (expect true), member_count=${count} (expect 2)."
+    return 1
+  fi
+
+  echo "assert_multirepo: OK -- a scratch 2-member ecosystem (both genesis'd from nothing at one pin) iterates + aggregates to a schema-valid ecosystem-level result (ecosystem_verdict PASS, framework_pin_consistent true, member_count 2)."
   return 0
 }
 

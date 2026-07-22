@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "010-multi-repo",
-  "current_feature": "078",
+  "current_feature": "079",
   "status": "in_progress",
-  "updated_at": "2026-07-22T03:35:00Z",
+  "updated_at": "2026-07-22T03:55:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -992,6 +992,11 @@
       "at": "2026-07-22T03:35:00Z",
       "event": "feature_complete",
       "detail": "Feature 077 (cross-repo aggregation + consistency) COMPLETE. NDEBT-031 / NIP-0002 Stage 3: the multi-repository aggregation + consistency the shipped tools guarded only as a 'future extension' is now mechanized. tools/ecosystem_membership_run.py rolls the per-member Preflight verdicts (feature 076) into one SCHEMA-VALID ecosystem-level result -- ecosystem_verdict (PASS/FAIL), framework_pin_consistent, member_count, members[] -- and enforces cross-repo consistency: it reads each in_scope member's .nizam/provenance.json resolved_sha and flags a divergent framework pin as a first-class consistency_finding, not a silent mismatch. New companion schema schema/ecosystem_membership_result.schema.json encodes an allOf invariant (if framework_pin_consistent is false then ecosystem_verdict MUST be FAIL), registered in NIZAM.json + schema/README.md (v0.10.0) and validated by validate.sh C12 as a SIXTH ecosystem schema-family (membership_result), with positive / missing-verdict / inconsistent-PASS fixtures (self-test 54->57). Verified hermetically: two genesis'd scratch members with matching pins -> ecosystem PASS exit 0; divergent pins -> framework_pin_consistent false + FAIL exit 1; a duplicate-name registry is refused (exactly-one-list invariant checked in-tool before iteration). This commit also folds the PR #47 CodeRabbit review: findings 8-11 hardened the code (schema metadata required+pattern-checked, in-tool duplicate/multilist guard, validate.sh 'six families' docstring, router precedence so extension-key registries reach C12), and findings 1-7 re-synced the records (product_spec_010 activation language, CHANGELOG exit-semantics + proposed->activated, ROADMAP stale banner refs, scope_definition_patterns Section 2.3 vs the v0.3.0 promotion). git numstat feature portion = 322 vs 220 estimated -- OVER, driven by the folded schema/tool/validate hardening (findings 8-11); a further 62 lines are PR #47 records-corrections folded into the same commit (not new feature scope). Rolling avg (075=224, 076=168) 3x=1176; 322+62 under. Full sweep 15/15, self-test 57/57, e2e PASS. Advancing to feature 078 (n-case hermetic coverage)."
+    },
+    {
+      "at": "2026-07-22T03:55:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 078 (n-case hermetic coverage) COMPLETE. NDEBT-031 / NIP-0002 Stage 3: the n-case is now proven end-to-end at RUNTIME, not just by schema fixtures. tools/e2e_bootstrap_test.sh gains assert_multirepo, the multi-member generalisation of assert_genesis: it stands up a scratch MULTI-repo ecosystem -- two projects (member-a, member-b) created FROM NOTHING by bootstrap.sh --genesis at ONE shared ephemeral tag (so both record the same resolved_sha framework pin) -- commits each scaffold clean, authors a 2-member membership registry over them, validates that registry (validate.sh --target, C12), runs ecosystem_membership_run.py across the in_scope set, and proves the produced membership_run.json is a schema-valid ecosystem-level result (ecosystem_verdict PASS, framework_pin_consistent true, member_count 2). This exercises the iteration (076) + aggregation (077) across genuinely genesis'd repos; each tool exit is captured via an `if` so main()'s set -e never aborts before a diagnostic. Self-test n-case schema coverage already exists (ecosystem_membership_valid.json is a >=2-member positive; membership_result_valid.json the aggregate), so 078's gap was the runtime proof, now filled; the single-repo bootstrap/genesis paths stay green (regression-guarded). Also folded the PR #47 pre-merge docstring-coverage warning: ecosystem_membership_run.py's main/die_usage gained docstrings (75%->>=80%). git numstat = 157 vs 140 estimated -- ON (a focused harness function reusing the genesis + validate + aggregate seams). Rolling avg (075=224,076=168,077=322) 3x=2142; 157 well under. Full sweep 15/15, self-test 57/57, e2e PASS (assert_multirepo green). Advancing to feature 079 (pilot the n-case, prove it, prioritise phase 011 + phase close)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1165,8 +1170,15 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1160,
-    "total_lines_changed": 714,
+    "total_lines_changed": 871,
     "per_feature": [
+      {
+        "id": "078",
+        "estimated": 140,
+        "actual": 157,
+        "flag": "ON",
+        "note": "tools/e2e_bootstrap_test.sh (125, new assert_multirepo: genesis 2 members at one tag + commit + author registry + validate.sh --target C12 + ecosystem_membership_run.py across the set + assert schema-valid PASS/consistent/count-2 aggregate; wired into main() after assert_genesis) + tools/ecosystem_membership_run.py (15: docstrings on main/die_usage, folding the PR #47 pre-merge docstring-coverage warning 75%->>=80%) + CHANGELOG (13) + feature_list_010.json (2/2 status). git numstat = 157 vs 140 -- ON. The n-case schema self-test coverage pre-existed (075/077 fixtures); 078 adds the RUNTIME e2e proof. Full sweep 15/15, self-test 57/57, e2e PASS."
+      },
       {
         "id": "077",
         "estimated": 220,
