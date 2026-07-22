@@ -2,13 +2,13 @@
   "phase": "009-greenfield-genesis",
   "spec_version": "1.0.0",
   "original_estimate_lines": 1000,
-  "planning_note": "DAG-validated acyclic: root {070}; 070 -> 071, 070 -> 072; 073 dep {071, 072}; 074 dep {070, 071, 072, 073}. Deps all resolve, no cycles, topological order exists (070, 071, 072, 073, 074). Realizes NIP-0002 Stage 2 (the 0-case, greenfield genesis) + completes the '0' point of the 0-n spectrum, then pilots to PROVE it. Features 070-073 are framework-internal (protocol/doc + bootstrap/tool code + scope registry + tests) and executable without any external repo; feature 074 pilots against a scratch/throwaway greenfield project stood up from nothing by the genesis capability itself (operator option c, as in phases 007/008) and needs no external repo access. Authored as a PROPOSAL -- no feature entered contract negotiation before gate H-PHASE-009 (activated 2026-07-22). NIP-0002 Stages 3-4 (n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols) plus the release cut carrying audit/compare (NDEBT-029) are OUT OF SCOPE, deferred to phase 010 and evidence-gated on feature 074's pilot. A real, non-scratch greenfield project remains a standing production-maturity criterion across the whole programme. Per-feature scope ledger recorded in run_state at activation.",
+  "planning_note": "DAG-validated acyclic: root {070}; 070 -> 071, 070 -> 072; 073 dep {071, 072}; 074 dep {070, 071, 072, 073}. Deps all resolve, no cycles, topological order exists (070, 071, 072, 073, 074). Realizes NIP-0002 Stage 2 (the 0-case, greenfield genesis) + completes the '0' point of the 0-n spectrum, then pilots to PROVE it. Features 070-073 are framework-internal (protocol/doc + bootstrap/tool code + scope registry + tests) and executable without any external repo; feature 074 pilots against a scratch/throwaway greenfield project stood up from nothing by the genesis capability itself (operator option c, as in phases 007/008) and needs no external repo access. Authored as a PROPOSAL -- no feature entered contract negotiation before gate H-PHASE-009 (activated 2026-07-22). NIP-0002 Stages 3-4 (n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols) plus the release cut carrying audit/compare (NDEBT-029) are OUT OF SCOPE, deferred to phase 010 and evidence-gated on feature 074's pilot. A real, non-scratch greenfield project remains a standing production-maturity criterion across the whole programme. Per-feature scope ledger recorded in run_state. CLOSED 2026-07-22 (phase 009 complete): all features 070-074 complete -- 070 protocol (ecosystem/00 Section 8) + 071 bootstrap.sh --genesis + 072 incubating->in_scope (scope_definition_patterns.md Section 2.3) + 073 assert_genesis e2e + 074 pilot proved the 0-case (PASS_WITH_EXCEPTIONS, evidence .agent/evidence/pilot-074/).",
   "features": [
     {
       "id": "070",
       "name": "Greenfield-genesis protocol (NIP-0002 Stage 2)",
       "description": "Author the greenfield-genesis stage as a first-class protocol (NDEBT-030): the precondition (no repo, or an empty project), the create-and-scaffold steps, the minimal project skeleton, the consumer-supplied inputs each new ecosystem must provide (ecosystem/00_ecosystem_bootstrap.md Section 5 -- its own registry/scope/thresholds/owners/gates), and the entry condition into the Bootstrap stage then Preflight (ecosystem/01). Establish 'genesis'/'scaffold' vocabulary distinct from the framework's own phase-001 genesis (which builds the framework itself). Authored as an ecosystem/00_ecosystem_bootstrap.md amendment or a dedicated sub-protocol (decided at contract time), house structure matching ecosystem/00/01 (Overview / When / Rules / Artifact / References) with UDS frontmatter. Flip any status table (ecosystem/README.md) and register a capability (tools/skill.json / NIZAM.json) if a new one is warranted, keeping C10/C13 consistent.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [],
       "acceptance_tests": [
         "A greenfield-genesis protocol document exists (an ecosystem/00 amendment or a dedicated sub-protocol) that names and scopes the 0-case: precondition (no/empty repo), create-and-scaffold steps, the minimal skeleton + consumer-supplied inputs (ecosystem/00 Section 5), and the entry into Bootstrap -> Preflight.",
@@ -21,7 +21,7 @@
       "id": "071",
       "name": "Genesis scaffold capability",
       "description": "Mechanize standing up a new project from nothing (NDEBT-030): git init a fresh project, write a minimal deterministic skeleton (a README, a source placeholder, and the consumer-supplied inputs ecosystem/00 Section 5 names), then inject the pinned .nizam/ payload -- as a --genesis mode on bootstrap.sh or a companion tools/ script (decided at contract time). Reuse the existing pinned-immutable-tag clone + inject + provenance (resolved_sha) path unchanged; the genesis path is the create-and-scaffold wrapper around it. The existing inject-into-an-existing-repo path is unchanged (regression-guarded). Mirror bootstrap.sh's documented usage/exit conventions.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "070"
       ],
@@ -36,7 +36,7 @@
       "id": "072",
       "name": "Incubating->in_scope transition (count-0->1)",
       "description": "Model the scope registry's incubating partition as the tracked count-0->1 state (NDEBT-030): a genesis'd project starts incubating (tracked but not yet a full member) and can be promoted incubating -> in_scope. A scoped slice of registry/scope_definition_patterns.md covering the incubating case only -- NOT the full membership-registry promotion to a required, validated artifact (that is NIP-0002 Stage 3 / NDEBT-031, deferred to phase 010). Add a fixtures_self_test.sh probe asserting the incubating->in_scope transition shape. Keep registry/scope_definition_patterns.md coherent (version bump + change_log if it is a governed doc).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "070"
       ],
@@ -51,7 +51,7 @@
       "id": "073",
       "name": "Genesis e2e coverage",
       "description": "Extend tools/e2e_bootstrap_test.sh (or a companion hermetic test) to prove the 0-case end-to-end (NDEBT-030): the genesis capability creates a new project from nothing, writes the scaffold, injects the payload, and yields a clean Preflight (PASS, or an operator-approved PASS_WITH_EXCEPTIONS whose only exception is the injected .nizam/ payload). Assert the scaffolded skeleton + provenance (tag + resolved_sha) are present. The existing inject-into-an-existing-repo path stays green (regression-guarded). Hermetic and offline (local file:// clone, as the existing harness), captured via an if so main()'s set -e does not abort before a diagnostic prints.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "071",
         "072"
@@ -67,7 +67,7 @@
       "id": "074",
       "name": "Pilot the 0-case, prove it, prioritise phase 010 + phase close",
       "description": "Stand up a scratch/throwaway greenfield project FROM NOTHING via the genesis capability (operator option c, as in phases 007/008; needs no external repo), run the full ecosystem loop against it using the fixed tools, and prove the 0-case end-to-end with no hand-applied workaround: genesis + scaffold + inject, then a clean Preflight, a correctly provenance-anchored baseline, and the incubating registry entry. Record the H-CONSUMER-UPGRADE gate exercise before the genesis adoption (NDEBT-018). Capture any residual friction as new NDEBT-* rows with evidence under .agent/evidence/<execution-id>/. Then REFINE AND VALIDATE the already-authored phase-010 candidate scope in docs/planning/ROADMAP.md (NIP-0002 Stages 3-4: n-case multi-repo tooling + required membership registry, 04/05 coordination protocols, NDEBT-029 release cut) against the pilot evidence -- confirming or re-ordering it, not authoring it from scratch. Close phase 009 so run_state and manifest reflect phase-009 completion (the established phase-close mechanism, negotiated in the feature's execution contract).",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "070",
         "071",

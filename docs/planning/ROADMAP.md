@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.21.0
+version: 0.22.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.22.0"
+    date: "2026-07-22"
+    summary: "Phase 009 (0-n Project Spectrum, Stage 2: Greenfield Genesis, features 070-074) COMPLETE. The phase-009 Plan-of-Record banner carries the completion record (070 protocol ecosystem/00 Section 8; 071 bootstrap.sh --genesis; 072 incubating->in_scope count-0->1 in scope_definition_patterns.md Section 2.3; 073 assert_genesis e2e; 074 pilot proved the 0-case, PASS_WITH_EXCEPTIONS, evidence .agent/evidence/pilot-074/). Current Position rolled to phases 001-009 complete. The phase-010 candidate scope (NIP-0002 Stages 3-4: n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols, NDEBT-029 release cut) is validated by the pilot (ordering confirmed -- the n-case builds on the incubating partition this phase populated) and carried forward; a real non-scratch greenfield pilot remains the open production-maturity criterion, and the genesis capability is not yet in a released tag (NDEBT-029). Awaiting operator: PR #46 merge + phase-010 planning."
   - version: "0.21.0"
     date: "2026-07-22"
     summary: "Phase 009 ACTIVATED (operator verbatim: 'Activate phase 009', gate H-PHASE-009, 2026-07-22): the 'Proposed Next Phase — Phase 009' banner becomes the Plan of Record banner (Activated). current_phase advanced 008-consumer-readiness -> 009-greenfield-genesis in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_009 flipped draft -> active (1.1.0); scope budget reset to 1000 (phase-008 final archived). operator_gates.md records H-PHASE-009 SATISFIED. Execution begins with the ungated DAG root feature 070 (the greenfield-genesis protocol; NDEBT-030) — the first code change of the 0-case."
@@ -73,16 +76,20 @@ change_log:
 
 # Forward Roadmap
 
-## Plan of Record (2026-07-22) — Phase 009 Activated: 0–n Project Spectrum, Stage 2 — Greenfield Genesis
+## Plan of Record (2026-07-22) — Phase 009: 0–n Project Spectrum, Stage 2 — Greenfield Genesis — **COMPLETE 2026-07-22**
 
-**Phase `009-greenfield-genesis` is ACTIVE** (2026-07-22) — the plan of record. The operator
-authorized activation (verbatim: **"Activate phase 009"**, satisfying gate **H-PHASE-009**;
-recorded in `.agent/run_state.json` event `phase_activated` before any feature execution, per
-the NDEBT-018 rule). `product_spec_009.md` flipped draft → active (v1.1.0); `current_phase`
-advanced `008-consumer-readiness` → `009-greenfield-genesis`; the scope budget was reset (1000
-est; phase-008 final archived). Execution begins with the ungated DAG root feature 070 (the
-greenfield-genesis protocol). It realizes **NIP-0002 Stage 2 — the 0-case (greenfield
-genesis)**, taken one stage at a time as phase 008 took Stage 1.
+**Phase `009-greenfield-genesis` is COMPLETE** (2026-07-22). It realized **NIP-0002 Stage 2 —
+the 0-case (greenfield genesis)**: standing up a *new* project from nothing is now first-class
+and mechanized. **070** authored the greenfield-genesis protocol (`ecosystem/00` §8); **071**
+mechanized it as `bootstrap.sh --genesis` (`git init` + deterministic scaffold + reuse of the
+inject/verify/provenance install); **072** modelled the `incubating→in_scope` count-0→1
+transition on the scope registry (`scope_definition_patterns.md` §2.3); **073** added hermetic
+genesis e2e coverage (`assert_genesis`); **074** piloted the 0-case against a scratch greenfield
+project and proved it (a clean Preflight `PASS_WITH_EXCEPTIONS`, evidence
+`.agent/evidence/pilot-074/`). Activation was on 2026-07-22 (operator verbatim **"Activate phase
+009"**, gate **H-PHASE-009**, recorded before feature execution per NDEBT-018). Landing on `main`
+via PR #46; `manifest.json` carries phase-009 `status: complete`. A **real, non-scratch
+greenfield project** remains the open production-maturity criterion (carried to phase 010).
 
 **Scope — NIP-0002 Stage 2 only (prove-then-build).** Phase 008 proved the "1" point (a single,
 already-existing consumer). The **"0" point remains absent**: standing up a *new* project from
@@ -105,8 +112,11 @@ Phase 009 makes the 0-case first-class and mechanized, then pilots it. Features:
    project stood up from nothing (no workaround), then refine/validate the phase-010 candidate
    scope below and close the phase.
 
-**Deferred → Phase-010 candidate scope (NIP-0002 Stages 3–4).** Held until the 0-case is
-*proven*, because each builds on a membership registry the 0-case only begins to populate:
+**Deferred → Phase-010 candidate scope (NIP-0002 Stages 3–4).** *(Validated by the feature-074
+0-case pilot: the n-case membership-registry work (`NDEBT-031`) builds directly on the
+`incubating` partition this phase populated, so the ordering is confirmed, not re-ordered.)* Held
+until the 0-case is *proven*, because each builds on a membership registry the 0-case only begins
+to populate:
 - **The n-case — multi-repo tooling** (`NDEBT-031`): iterate an ecosystem-membership registry
   (a set of repo-roots) instead of one `--repo-root`; promote
   `registry/scope_definition_patterns.md` to a required, validated membership artifact that sets `n`.
@@ -297,9 +307,18 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-07-21)
+## Current Position (2026-07-22)
 
-- Phases 001–008 are complete. **Phase 008 (0–n Project Spectrum, Stage 1:
+- Phases 001–009 are complete. **Phase 009 (0–n Project Spectrum, Stage 2: Greenfield
+  Genesis, features 070–074) is COMPLETE** (2026-07-22): the 0-case is now first-class and
+  mechanized — `ecosystem/00` §8 defines the greenfield-genesis protocol (070), `bootstrap.sh
+  --genesis` stands up a new project from nothing (`git init` + deterministic scaffold + inject,
+  071), `scope_definition_patterns.md` §2.3 models the `incubating→in_scope` count-0→1 transition
+  (072), `assert_genesis` gives hermetic e2e coverage (073), and a scratch-greenfield pilot proved
+  the 0-case end-to-end (074, Preflight `PASS_WITH_EXCEPTIONS`, evidence
+  `.agent/evidence/pilot-074/`) — a loop-mechanics proof; a real, non-scratch greenfield pilot
+  stays outstanding for production maturity, and the genesis capability is not yet in a released
+  tag (`NDEBT-029`). Landing on `main` via PR #46. **Phase 008 (0–n Project Spectrum, Stage 1:
   Consumer-Readiness, features 065–069) is COMPLETE** (2026-07-21): the ecosystem loop is
   now genuinely consumer-ready — `ecosystem_preflight.py` resolves a governance-root (065)
   and anchors a baseline to the injected framework pin (066), so a freshly bootstrapped

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "009-greenfield-genesis",
-  "current_feature": "070",
-  "status": "in_progress",
-  "updated_at": "2026-07-22T00:00:00Z",
+  "current_feature": "074",
+  "status": "phase_complete",
+  "updated_at": "2026-07-22T01:30:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -942,6 +942,36 @@
       "at": "2026-07-22T00:40:00Z",
       "event": "feature_complete",
       "detail": "Feature 070 (greenfield-genesis protocol) COMPLETE. NDEBT-030 / NIP-0002 Stage 2: the 0-case (standing up a NEW project from nothing) becomes a first-class protocol. ecosystem/00_ecosystem_bootstrap.md -> v0.5.0 gains Section 8 (Greenfield Genesis) defining the create-and-scaffold entry path in four ordered steps -- create the repository (git init), scaffold a minimal deterministic skeleton + the consumer-supplied inputs (Section 6), perform the normal inject + verify (Section 5) recording provenance (Section 7), and register the project incubating for promotion incubating -> in_scope (the count-0->1 transition) -- with genesis bounded by refusal on a non-empty target (a brownfield adoption, not a genesis). Establishes 'genesis'/'scaffold' vocabulary for a NEW consumer project, distinct from the framework's own phase-001 genesis. The Section 3 spectrum table 0-case row and the 'two honest limits' prose corrected from 'no protocol or tooling yet' to 'protocol defined (Section 8); create-and-scaffold capability + incubating->in_scope transition mechanized in NIP-0002 Stage 2'. References renumbered Section 8 -> Section 9; Sections 4-7 and every cross-reference to the Section 7 provenance shape are unchanged (the renumbering hazard was checked and avoided). Framework-internal, doc-only, no external repo; the create-and-scaffold capability is feature 071 and the registry transition feature 072. Full sweep 15/15. This same commit also reconciled the phase-009 activation records surfaced by the PR #46 review (product_spec_009 description + Human Gates Section 5, feature_list_009 planning_note, CHANGELOG proposal entry -- proposal-time wording aligned to the 2026-07-22 activation) and trimmed feature 074's granular phase-close mechanics to a completion-signal requirement. Advancing to feature 071 (genesis scaffold capability)."
+    },
+    {
+      "at": "2026-07-22T00:55:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 071 (genesis scaffold capability) COMPLETE. NDEBT-030: bootstrap.sh gains a --genesis mode (--project-root DIR [--project-name NAME]) that git-inits an empty project root, scaffolds a minimal deterministic skeleton (README + a CONTEXT.md consumer-inputs stub naming the ecosystem/00 Section 6 inputs + a src/ source placeholder), then reuses the existing clone -> inject -> verify -> provenance install (tag + resolved_sha) into <project-root>/.nizam. Refuses a non-empty --project-root (a brownfield adoption, not a genesis) and removes a project root it created if genesis fails partway. The existing inject-into-existing-repo path and --verify-only are unchanged (regression-guarded); genesis defines no second inheritance mechanism, it wraps run_install. ecosystem/00 -> v0.6.0 (Section 8 mechanization note names bootstrap.sh --genesis; Section 3 0-case row -> Covered; two-honest-limits prose -> protocol+capability exist but not yet released). Verified hermetically (project stood up, valid provenance, --verify-only PASS, non-empty refused). Full sweep 15/15, self-test 51/51, e2e PASS, bash -n clean. Also reconciled the phase-009 activation records surfaced by the PR #46 review. Advancing to feature 072 (incubating->in_scope transition)."
+    },
+    {
+      "at": "2026-07-22T01:05:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 072 (incubating->in_scope transition, count-0->1) COMPLETE. NDEBT-030: registry/scope_definition_patterns.md -> v0.2.0 gains Section 2.3 modelling the incubating partition as the count-0->1 state -- a genesis'd project (bootstrap.sh --genesis) enters the registry in incubating and is promoted to in_scope once it clears its first clean Preflight/Baseline, as an explicit recorded edit that MOVES the entry (preserving the Section 2.1 exactly-one-list invariant); demotion is symmetric. Scoped to the single-project count-0->1 case only -- promoting the registry to a required, validated ecosystem-membership artifact that sets n (count-1->n) stays NDEBT-031 / NIP-0002 Stage 3, deferred to phase 010. A tools/fixtures_self_test.sh scratch probe asserts the transition shape (promotion moves the entry; a two-list copied-not-moved entry is detected), built in a mktemp dir so the 51/51 fixture tally is unchanged. Full sweep 15/15, self-test 51/51, e2e PASS. Advancing to feature 073 (genesis e2e coverage)."
+    },
+    {
+      "at": "2026-07-22T01:15:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 073 (genesis e2e coverage) COMPLETE. NDEBT-030: tools/e2e_bootstrap_test.sh gains assert_genesis, a hermetic 0-case case -- bootstrap.sh --genesis stands up a project from nothing under SCRATCH_DIR; asserts (a) the command succeeds, (b) the deterministic scaffold README/CONTEXT/src/PLACEHOLDER present, (c) provenance carries a resolved_sha, (d) after committing the scaffold, ecosystem_preflight.py --repo-root <proj> exits 2/3 (PASS_WITH_EXCEPTIONS, the injected untracked .nizam/ the only exception), (e) a non-empty --project-root is refused. Each bootstrap/preflight exit captured via an if so main()'s set -e never aborts before a diagnostic. e2e PASS with the genesis case green; the existing inject-into-existing-repo path stays green. Full sweep 15/15, self-test 51/51. Advancing to feature 074 (pilot the 0-case + phase close)."
+    },
+    {
+      "at": "2026-07-22T01:20:00Z",
+      "event": "operator_gate_decision",
+      "detail": "H-CONSUMER-UPGRADE EXERCISED (third exercise; first was the phase-007 pilot against released v0.8.0, second the phase-008 re-pilot). Operator authorized proceeding through the phase-009 feature-074 pilot (verbatim: 'continue straight through 072 -> 074 to close phase 009', controlled session, 2026-07-22), which stands up and adopts a scratch/throwaway greenfield project via bootstrap.sh --genesis against the phase-009 branch-HEAD (fixed 070-073) framework. Recorded before the genesis bootstrap ran, per the NDEBT-018 rule. Like the phase-008 re-pilot this is a PRE-RELEASE / branch-HEAD pilot exercising the gate's decision mechanics, NOT a released-immutable-tag adoption (the gate's defined scope) -- a released-tag genesis stays outstanding until the next H-FRAMEWORK-RELEASE cuts a tag carrying the genesis capability (NDEBT-029). Recurring gate."
+    },
+    {
+      "at": "2026-07-22T01:25:00Z",
+      "event": "feature_complete",
+      "detail": "Feature 074 (pilot the 0-case, prove it, prioritise phase 010 + phase close) COMPLETE. Stood up a scratch greenfield project (greenfield-demo) FROM NOTHING via bootstrap.sh --genesis using the fixed tools (070-073), and proved the 0-case end-to-end with no hand-applied workaround: genesis created the project (git init + README/CONTEXT/src scaffold + injected .nizam/ with tag+resolved_sha provenance), and ecosystem_preflight.py against the committed project returned PASS_WITH_EXCEPTIONS with a single injected_governance_payload exception (.nizam/) -- the same clean outcome ADR-004 gave the count-1 case. Evidence committed under .agent/evidence/pilot-074/ (README, preflight PASS_WITH_EXCEPTIONS, provenance with resolved_sha, scaffold listing, incubating registry sample). The phase-010 candidate scope (NIP-0002 Stages 3-4) in docs/planning/ROADMAP.md was validated against the pilot evidence (confirmed, not re-ordered): the n-case membership-registry work NDEBT-031 builds directly on the incubating partition this phase populated. Residual: NDEBT-029 (genesis + audit/compare not in a released tag) stays open until the next release; a real non-scratch greenfield project remains the open production-maturity criterion (carried to phase 010)."
+    },
+    {
+      "at": "2026-07-22T01:30:00Z",
+      "event": "phase_complete",
+      "detail": "Phase 009 (0-n Project Spectrum, Stage 2: Greenfield Genesis) COMPLETE. Realized NIP-0002 Stage 2 -- the 0-case: standing up a NEW project from nothing is now first-class and mechanized. 070 authored the greenfield-genesis protocol (ecosystem/00 Section 8); 071 mechanized it as bootstrap.sh --genesis (git init + deterministic scaffold + reuse of the inject/verify/provenance install); 072 modelled the incubating->in_scope count-0->1 transition on the scope registry (scope_definition_patterns.md Section 2.3); 073 added hermetic genesis e2e coverage (assert_genesis); 074 piloted the 0-case against a scratch greenfield project and proved it (PASS_WITH_EXCEPTIONS, evidence .agent/evidence/pilot-074/). Landing on main via PR #46 (proposal + activation + 070-074). manifest phase-009 -> complete. NIP-0002 Stages 3-4 (n-case multi-repo tooling + required membership registry NDEBT-031, 04/05 coordination protocols) plus the release cut carrying genesis + audit/compare (NDEBT-029) remain the phase-010 candidate scope, validated by this pilot. Awaiting operator: PR #46 merge, and phase-010 planning (a fresh H-PHASE-010 cycle)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1115,7 +1145,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 1000,
-    "total_lines_changed": 95,
+    "total_lines_changed": 641,
     "per_feature": [
       {
         "id": "070",
@@ -1144,6 +1174,13 @@
         "actual": 82,
         "flag": "UNDER",
         "note": "tools/e2e_bootstrap_test.sh assert_genesis (79 ins + 1 call = ~80): hermetic 0-case case -- bootstrap.sh --genesis stands up a project from nothing under SCRATCH_DIR, asserts (a) the command succeeds, (b) the deterministic scaffold README/CONTEXT/src/PLACEHOLDER present, (c) provenance carries a resolved_sha, (d) after committing the scaffold, ecosystem_preflight.py --repo-root <proj> exits 2/3 (PASS_WITH_EXCEPTIONS, the injected untracked .nizam/ the only exception), (e) a non-empty --project-root is refused. Each bootstrap/preflight exit captured via an if so main()'s set -e never aborts before a diagnostic. + CHANGELOG feature-073 Added entry (~8). git numstat ins+del ~= 82 vs 120 estimated -- UNDER: reuses the existing harness's ephemeral-tag + SCRATCH_DIR + file:// clone scaffolding and the assert_preflight_governance_root exit-2/3 idiom. Verified: e2e PASS with the genesis case green (project stood up, Preflight PASS_WITH_EXCEPTIONS exit 2, non-empty refused); the existing inject-into-existing-repo path stays green. Rolling avg (070=95,071=213,072=95)=134, 3x=402; 82 under. Full sweep 15/15, self-test 51/51, e2e PASS. Advancing to feature 074 (pilot the 0-case + phase close)."
+      },
+      {
+        "id": "074",
+        "estimated": 240,
+        "actual": 156,
+        "flag": "UNDER",
+        "note": "Pilot + phase close. Committed evidence .agent/evidence/pilot-074/ (README + preflight PASS_WITH_EXCEPTIONS + provenance with resolved_sha + scaffold listing + incubating registry sample = 80 ins) + close-out ledger edits (manifest phase-009->complete, ROADMAP v0.22.0 banner COMPLETE + Current Position 001-009 + phase-010 scope validated, operator_gates v0.9.0 H-CONSUMER-UPGRADE 3rd exercise, CHANGELOG phase-009-complete). git numstat ins+del = 156 (evidence + docs) measured at the landing commit; the run_state history/ledger churn is not re-counted (immutable-record discipline). Rolling avg (071=213,072=95,073=82)=130, 3x=390; 156 under. Phase-009 total 641/1000 est (64%), well within budget. Pilot proved the 0-case end-to-end (genesis-from-nothing -> clean Preflight PASS_WITH_EXCEPTIONS) with no workaround. Phase 009 CLOSED."
       }
     ]
   },

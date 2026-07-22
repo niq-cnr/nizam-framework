@@ -9,6 +9,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- **Phase 009 (0–n Project Spectrum, Stage 2: Greenfield Genesis) complete** (feature 074;
+  `NDEBT-030`). The 0-case was piloted end-to-end against a scratch greenfield project stood up
+  **from nothing** by `bootstrap.sh --genesis` using the fixed tools (070–073): genesis created
+  the project (`git init` + deterministic scaffold + injected `.nizam/` with `tag` + `resolved_sha`
+  provenance), and Preflight returned `PASS_WITH_EXCEPTIONS` with the injected `.nizam/` the single
+  expected exception — the same clean outcome ADR-004 gave the count-1 case, with no hand-applied
+  workaround. Evidence under `.agent/evidence/pilot-074/`; `H-CONSUMER-UPGRADE` exercised a third
+  time (a pre-release/branch pilot). `manifest.json` phase-009 → complete. The phase-010 candidate
+  scope (NIP-0002 Stages 3–4) is validated by the pilot (the n-case `NDEBT-031` builds on the
+  `incubating` partition this phase populated). A real, non-scratch greenfield pilot and a released
+  tag carrying the genesis capability (`NDEBT-029`) remain outstanding.
+
 - **Genesis e2e coverage** (phase 009 feature 073; `NDEBT-030`; NIP-0002 Stage 2).
   `tools/e2e_bootstrap_test.sh` gains `assert_genesis`: a hermetic case proving the 0-case
   end-to-end — `bootstrap.sh --genesis` stands up a new project from nothing, the deterministic
