@@ -19,9 +19,9 @@ the two inputs plus the prior delta):
   the scan simply not looking. Such a finding is reported as UNCLASSIFIABLE
   (exit 1), so the auditor must carry a resolved-with-evidence entry rather than
   let the tool guess.
-- ``reopened`` -- previously classified ``resolved`` (via ``--prior-delta``),
-  present and open again. Necessarily empty on a first comparison (Sec 3.2,
-  when ``--prior-delta`` is omitted).
+- ``reopened`` -- resolved in the earlier audit, or previously classified
+  ``resolved`` via ``--prior-delta``, and present/open again. The emitted item
+  preserves the later audit's evidence.
 - ``persisting`` -- open on both sides with CURRENT evidence, freshly
   re-confirmed at or after the later anchor (delegated to
   ``validate_evidence_freshness.finding_is_fresh``).
@@ -213,30 +213,38 @@ def classify(
         l = later.get(finding_id)
         e_status = e.get("status") if e else None
 
-        if l is not None:
-            if l.get("status") == "resolved":
-                closure = _nonempty_closure(l)
-                if closure is None:
-                    problems.append(
-                        f"finding '{finding_id}': recorded resolved in the later audit "
-                        "with no closure_evidence (closure-only-with-evidence, Sec 4)"
-                    )
-                    continue
-                item = {"id": finding_id, "closure_evidence": closure}
-                if e is not None and e_status == "open":
-                    resolved_b.append(item)          # in-window resolution (Sec 3)
+        if l is not None and l.get("status") == "resolved":
+            closure = _nonempty_closure(l)
+            if closure is None:
+                problems.append(
+                    f"finding '{finding_id}': recorded resolved in the later audit "
+                    "with no closure_evidence (closure-only-with-evidence, Sec 4)"
+                )
+                continue
+            item = {"id": finding_id, "closure_evidence": closure}
+            if e is not None and e_status == "open":
+                resolved_b.append(item)          # in-window resolution (Sec 3)
+            else:
+                pre_window.append(item)          # resolved outside the window (Sec 3.1)
+        elif l is not None:  # open in the later audit
+            reopened_item = {
+                "id": finding_id,
+                "evidence": l.get("evidence", []),
+            }
+            if e is not None and e_status == "resolved":
+                # The earlier audit itself proves the prior resolution. Test
+                # this before freshness: a reappeared condition is reopened,
+                # never persisting/stale merely because its new evidence is fresh.
+                reopened_b.append(reopened_item)
+            elif e is not None:
+                if finding_is_fresh(l, later_ref["revision"], later_ref["timestamp"]):
+                    persisting_b.append({"id": finding_id, "evidence": l.get("evidence", [])})
                 else:
-                    pre_window.append(item)          # resolved outside the window (Sec 3.1)
-            else:  # open in the later audit
-                if e is not None:
-                    if finding_is_fresh(l, later_ref["revision"], later_ref["timestamp"]):
-                        persisting_b.append({"id": finding_id, "evidence": l.get("evidence", [])})
-                    else:
-                        stale_b.append({"id": finding_id})
-                elif finding_id in prior_resolved:
-                    reopened_b.append({"id": finding_id})
-                else:
-                    new_b.append({"id": finding_id})
+                    stale_b.append({"id": finding_id})
+            elif finding_id in prior_resolved:
+                reopened_b.append(reopened_item)
+            else:
+                new_b.append({"id": finding_id})
         else:  # absent from the later audit
             if e_status == "resolved":
                 closure = _nonempty_closure(e)

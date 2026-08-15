@@ -18,6 +18,20 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   contracts and therefore require the clean-break steps in
   `docs/migration-v1.0.0.md`.
 
+### Fixed
+
+- **Compare reopened classification (phase 012, feature 087; issue #52).** A
+  finding that was resolved in the earlier audit and is open again in the later
+  audit is now emitted only as `reopened`, with its later evidence preserved,
+  rather than being misrouted to `persisting` or `stale`.
+
+### Changed
+
+- **Fixture scratch isolation (phase 012, feature 087; issue #52).** The fixture
+  harness now creates and cleans exact temporary roots through one guarded helper;
+  all eleven scratch probes reject repository paths and retain their existing
+  behavior.
+
 ## [0.9.0] - 2026-07-22
 
 **Minor release** (`methodology/06_release_train.md` §3.2): the first release since

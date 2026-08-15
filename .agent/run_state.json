@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "012-v1-consumer-safety",
-  "current_feature": "087",
+  "current_feature": "088",
   "status": "in_progress",
-  "updated_at": "2026-08-15T18:22:25Z",
+  "updated_at": "2026-08-15T18:29:40Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1097,6 +1097,12 @@
       "event": "feature_complete",
       "feature": "086",
       "detail": "Feature 086 COMPLETE: repaired all six schema surfaces reported by issue #52. Evidence paths must name content below .agent/evidence/; membership schema_version is canonical SemVer 2.0.0; successful preflight verdicts reject blocking_findings; pin-consistent membership results require a non-empty common framework_pin; FAIL reconciliation plans require non-empty cycle_findings plus empty order. All eleven feature-085 negatives now emit C12 FAIL, an advanced SemVer positive passes, and validate.sh is 15/15. Added docs/migration-v1.0.0.md with exact clean-break repairs and registered it in NIZAM.json. QA approved; advancing to 087."
+    },
+    {
+      "at": "2026-08-15T18:29:40Z",
+      "event": "feature_complete",
+      "feature": "087",
+      "detail": "Feature 087 COMPLETE: compare_ecosystem_baselines.py now tests earlier-resolved/later-open before freshness, emits the finding only under reopened, and preserves later evidence. The CLI harness also verifies new/resolved/persisting/stale/pre-window classifications. fixtures_self_test.sh now routes all eleven scratch probe subshells through one guarded scratch_dirs helper with ownership-checked exact cleanup; repository roots are rejected and post-EXIT removal is proven. Python/Bash syntax green, self-test 77/77, validator 15/15. QA approved; advancing to 088."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1270,7 +1276,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2400,
-    "total_lines_changed": 723,
+    "total_lines_changed": 1037,
     "per_feature": [
       {
         "id": "085",
@@ -1282,9 +1288,16 @@
       {
         "id": "086",
         "estimated": 430,
-        "actual": 250,
+        "actual": 264,
         "flag": "UNDER",
-        "note": "Six schema invariant repairs, one advanced SemVer positive, clean-break migration guide, schema index/NIZAM/CHANGELOG registration, QA, and evidence. Pre-close measured churn was 211 lines; close-out QA/state accounting brings the feature estimate to 250, well under 430."
+        "note": "AH-3 corrected to the landed commit's git numstat: 264 lines (245 insertions + 19 deletions). Six schema invariant repairs, one advanced SemVer positive, clean-break migration guide, schema index/NIZAM/CHANGELOG registration, QA, and evidence. Well under the 430 estimate."
+      },
+      {
+        "id": "087",
+        "estimated": 270,
+        "actual": 300,
+        "flag": "ON",
+        "note": "Compare reopened-precedence fix + later-evidence preservation; full taxonomy regression corpus; centralized scratch_dirs allocation/cleanup across eleven probes with ownership and repository-root guards; CHANGELOG, QA, and evidence. Pre-close measured churn was 241 lines; close-out accounting estimates 300, near plan."
       }
     ]
   },
