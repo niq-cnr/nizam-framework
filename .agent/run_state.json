@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "012-v1-consumer-safety",
   "current_feature": "091",
-  "status": "in_progress",
-  "updated_at": "2026-08-15T19:11:40Z",
+  "status": "complete",
+  "updated_at": "2026-08-15T19:21:14Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1143,6 +1143,12 @@
       "event": "draft_pr_opened",
       "feature": "091",
       "detail": "Draft PR #53 opened for phase/012-v1-consumer-safety without an issue-closing keyword, so issue #52 remains open until release publication. At certified head c508f6a GitHub reports CLEAN/MERGEABLE; validate, fixtures_self_test, and e2e_bootstrap all completed SUCCESS; reviews and comments collections are empty, so unresolved blocking automated-review findings = 0. H-FRAMEWORK-RELEASE sign-off and v1.0.0 tag remain pending."
+    },
+    {
+      "at": "2026-08-15T19:21:14Z",
+      "event": "release_executed",
+      "feature": "091",
+      "detail": "Phase 012 (v1.0.0 Consumer-Safety Remediation) COMPLETE and v1.0.0 RELEASED. PR #53 merged at 9453b3c (final head ddfa1bc; validate, fixtures_self_test, and e2e_bootstrap all SUCCESS; zero review comments). The operator executed H-FRAMEWORK-RELEASE and pushed the annotated v1.0.0 tag at that reviewed merge commit, then confirmed 'tags applied.' The tag is an annotated object and peels to 9453b3c. release.yml run 31903527120 completed SUCCESS and github-actions[bot] published GitHub Release 371135794 at 2026-08-15T19:18:19Z from the [1.0.0] CHANGELOG section, titled 'Nizam v1.0.0 — Consumer-Safety Remediation'. Canonical docs/planning/phase_012.yaml and manifest phase 012 are complete; this derived run state is reconciled afterward. NDEBT-036 RESOLVED: all 30 issue-52 findings are remediated, evidence-mapped, and shipped with the clean-break migration guide. ROADMAP v0.35.0 records v1.0.0 as latest; operator_gates.md v0.18.0 records the gate; readiness is DONE. The prior real non-scratch pilot and lifecycle-06/08 candidate scope rolls forward unchanged. No successor phase is activated; future work begins with a fresh planning/activation cycle."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1493,5 +1499,61 @@
       }
     ],
     "note": "Phase 011 (features 080-084) final scope ledger. Estimate 1330; actual 1699 total lines changed (git numstat added). Over the estimate, driven by the two protocol docs + two schemas + the C12 family wiring (080/081), and by the committed pilot evidence artifacts (084). Per-feature: 080 480/320 OVER, 081 399/300 OVER, 082 271/250 ON, 083 251/260 ON, 084 298/200 OVER."
+  },
+  "phase_012_scope_budget_final": {
+    "original_estimate_lines": 2400,
+    "total_lines_changed": 2965,
+    "per_feature": [
+      {
+        "id": "085",
+        "estimated": 360,
+        "actual": 473,
+        "flag": "OVER",
+        "note": "AH-3 corrected to the landed commit's git numstat: 473 lines (466 insertions + 7 deletions), not the pre-close 430 estimate. Red TDD intake: 30-row issue matrix, 11 discriminating schema fixtures, one compare CLI probe, contract/review/QA, and captured red evidence. The +31% is evidence/process weight, not added remediation scope. First phase feature, so no prior-three rolling baseline exists."
+      },
+      {
+        "id": "086",
+        "estimated": 430,
+        "actual": 264,
+        "flag": "UNDER",
+        "note": "AH-3 corrected to the landed commit's git numstat: 264 lines (245 insertions + 19 deletions). Six schema invariant repairs, one advanced SemVer positive, clean-break migration guide, schema index/NIZAM/CHANGELOG registration, QA, and evidence. Well under the 430 estimate."
+      },
+      {
+        "id": "087",
+        "estimated": 270,
+        "actual": 295,
+        "flag": "ON",
+        "note": "AH-3 corrected to the landed commit's git numstat: 295 lines (231 insertions + 64 deletions). Compare reopened precedence + evidence preservation, full taxonomy corpus, centralized guarded scratch allocation/cleanup, CHANGELOG, QA, and evidence. Near the 270 estimate."
+      },
+      {
+        "id": "088",
+        "estimated": 520,
+        "actual": 501,
+        "flag": "ON",
+        "note": "AH-3 corrected to the landed commit's git numstat: 501 lines (401 insertions + 100 deletions). Eight methodology docs + module index + skill role correction, canonical phase-012 YAML/manifest/spec linkage, static verifier, command/output/EXIT evidence, CHANGELOG and QA. On plan."
+      },
+      {
+        "id": "089",
+        "estimated": 350,
+        "actual": 507,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 507 lines (483 insertions + 24 deletions). The 165-line source-document and changelog reconciliation stayed focused; the overage is predominantly the 276-line replayable command/output evidence and 130-line finding-by-finding static verifier, plus QA and lifecycle state. It is below the prior-three 3x rolling ceiling (086-088 average 353.3; ceiling 1060). Cumulative 2040/3120 phase ceiling."
+      },
+      {
+        "id": "090",
+        "estimated": 260,
+        "actual": 315,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 315 lines (308 insertions + 7 deletions). The implementation is the 167-line disposable rehearsal; 78 additional evidence-output lines, the preserved failed-attempt record, QA, and lifecycle state account for the remainder. It is below the prior-three 3x rolling ceiling (087-089 average 434.3; ceiling 1303). Cumulative 2355/3120 phase ceiling."
+      },
+      {
+        "id": "091",
+        "estimated": 210,
+        "actual": 610,
+        "flag": "OVER",
+        "note": "Feature-091's three landed commits total 610 lines (554 insertions + 56 deletions): synchronized version/release surfaces, 30-row readiness mapping, replayable release verifier, final committed-candidate and external PR/CI evidence, QA, and lifecycle state. The overage is evidence/readiness weight rather than expanded release behavior and remains below the prior-three 3x rolling ceiling (088-090 average 441; ceiling 1323). Cumulative 2965/3120 phase ceiling."
+      }
+    ],
+    "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   }
 }
