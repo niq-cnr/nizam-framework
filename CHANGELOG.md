@@ -7,6 +7,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Breaking
+
+- **v1.0.0 schema invariant repair (phase 012, feature 086; issue #52).** Evidence
+  paths now name an artifact below `.agent/evidence/`; membership registry versions
+  use canonical SemVer 2.0.0; successful preflight verdicts reject
+  `blocking_findings`; pin-consistent membership results require a non-empty common
+  `framework_pin`; and failed reconciliation plans require non-empty
+  `cycle_findings` with an empty `order`. These intentionally narrow v0.9.0
+  contracts and therefore require the clean-break steps in
+  `docs/migration-v1.0.0.md`.
+
 ## [0.9.0] - 2026-07-22
 
 **Minor release** (`methodology/06_release_train.md` §3.2): the first release since

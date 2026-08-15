@@ -147,6 +147,7 @@ assert_target audit_delta_valid.json                               C12 PASS
 # (an entry copied into two lists, caught by the exactly-one-list code check)
 # negatives both FAIL -- proving both the schema and the code-level invariant bite.
 assert_target ecosystem_membership_valid.json                      C12 PASS
+assert_target ecosystem_membership_valid_semver_prerelease_build.json C12 PASS
 assert_target ecosystem_membership_neg_missing_list.json           C12 FAIL
 assert_target ecosystem_membership_neg_multilist.json              C12 FAIL
 

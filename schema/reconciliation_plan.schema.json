@@ -82,6 +82,20 @@
       "then": {
         "properties": { "plan_verdict": { "const": "FAIL" } }
       }
+    },
+    {
+      "description": "A FAIL plan has no valid topological order and records at least one cycle finding: cycle_findings is required and non-empty, while order is present (by the base shape) but empty.",
+      "if": {
+        "properties": { "plan_verdict": { "const": "FAIL" } },
+        "required": ["plan_verdict"]
+      },
+      "then": {
+        "required": ["cycle_findings"],
+        "properties": {
+          "cycle_findings": { "type": "array", "minItems": 1 },
+          "order": { "type": "array", "maxItems": 0 }
+        }
+      }
     }
   ],
   "additionalProperties": true
