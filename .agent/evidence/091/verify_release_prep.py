@@ -91,11 +91,9 @@ for finding_id in finding_ids:
     require(f"readiness maps {finding_id}", f"| {finding_id} | READY |" in readiness)
 
 feature_list = json.loads(read(".agent/feature_list_012.json"))
-statuses = {feature["id"]: feature["status"] for feature in feature_list["features"]}
 require(
-    "release preparation is the sole active feature",
-    all(statuses[feature_id] == "complete" for feature_id in statuses if feature_id != "091")
-    and statuses["091"] == "in_progress",
+    "all phase-012 features implementation-complete",
+    all(feature["status"] == "complete" for feature in feature_list["features"]),
 )
 
 tag_probe = subprocess.run(

@@ -3,7 +3,7 @@
   "current_phase": "012-v1-consumer-safety",
   "current_feature": "091",
   "status": "in_progress",
-  "updated_at": "2026-08-15T18:55:48Z",
+  "updated_at": "2026-08-15T19:06:48Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -148,6 +148,11 @@
       "attempts": 2,
       "limit": 3,
       "note": "Attempt 1 stopped in the rehearsal assertion because the provenance field is `tag`, not `governance_tag`; guarded cleanup removed only its owned scratch root. Attempt 2 corrected the test assertion and passed the complete migration matrix. Evidence: .agent/evidence/090/attempt-1.txt and migration-rehearsal.txt."
+    },
+    "091-implementation": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Attempt 1 was rejected by the structured release verifier after a broad status patch inverted the 085/091 lifecycle values; explicit feature-id patches corrected the state. Attempt 2 and the committed-candidate final suite passed. Evidence: .agent/evidence/091/attempt-1.txt and release-prep.txt."
     }
   },
   "history": [
@@ -1126,6 +1131,12 @@
       "event": "feature_complete",
       "feature": "090",
       "detail": "Feature 090 COMPLETE: full validator 15/15, fixture self-test 77/77, bootstrap/genesis/multi-repo/coordination e2e PASS, seven tools Python files compiled, and five shipped shell files passed bash syntax. A disposable consumer installed the actual v0.9.0 payload, re-bootstrapped to a scratch-only v1 contract candidate at the branch commit, verified the expected commit pin, retained byte-identical root CONTEXT.md/AGENTS.md/CI files, and passed payload validation 11/11. All eleven intentionally incompatible artifacts were proven v0.9-valid, v1-invalid, and v1-valid after guide-prescribed repair. Attempt 1's test-field error and exact-root cleanup are preserved; attempt 2 passed. Advancing to release preparation 091; H-FRAMEWORK-RELEASE remains pending and no real tag exists."
+    },
+    {
+      "at": "2026-08-15T19:06:48Z",
+      "event": "feature_prepared_awaiting_gate",
+      "feature": "091",
+      "detail": "Feature 091 implementation COMPLETE / release PREPARED: framework, CONTEXT, HTML guide, README quickstart, migration guide, and dated [1.0.0] CHANGELOG surfaces are synchronized for a MAJOR clean break. The readiness record maps all 30 issue-52 findings to evidence. Against committed metadata candidate 92c6f18, validator 15/15, self-test 77/77, e2e, syntax, and v0.9.0-to-v1 migration 11/11 are green; candidate provenance records framework_version 1.0.0 at the expected tag commit. NDEBT-036 and phase status remain open/in_progress because H-FRAMEWORK-RELEASE sign-off and the operator-pushed annotated v1.0.0 tag are still pending. No real v1.0.0 tag exists; the pipeline does not self-sign or self-tag."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1299,7 +1310,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2400,
-    "total_lines_changed": 2355,
+    "total_lines_changed": 2928,
     "per_feature": [
       {
         "id": "085",
@@ -1342,6 +1353,13 @@
         "actual": 315,
         "flag": "OVER",
         "note": "Landed commit git numstat: 315 lines (308 insertions + 7 deletions). The implementation is the 167-line disposable rehearsal; 78 additional evidence-output lines, the preserved failed-attempt record, QA, and lifecycle state account for the remainder. It is below the prior-three 3x rolling ceiling (087-089 average 434.3; ceiling 1303). Cumulative 2355/3120 phase ceiling."
+      },
+      {
+        "id": "091",
+        "estimated": 210,
+        "actual": 573,
+        "flag": "OVER",
+        "note": "Feature-091's two landed commits total 573 lines (524 insertions + 49 deletions): synchronized version/release surfaces, 30-row readiness mapping, replayable release verifier, final committed-candidate test evidence, QA, and lifecycle state. The overage is evidence/readiness weight rather than expanded release behavior and remains below the prior-three 3x rolling ceiling (088-090 average 441; ceiling 1323). Cumulative 2928/3120 phase ceiling."
       }
     ]
   },

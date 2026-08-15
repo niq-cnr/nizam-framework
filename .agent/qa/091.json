@@ -1,0 +1,36 @@
+{
+  "feature_id": "091",
+  "qa_pass": true,
+  "checks_run": 7,
+  "checks_passed": 7,
+  "adversarial": {
+    "performed": true,
+    "description": "The release verifier independently checks every version/pin/changelog/migration/gate surface, maps all 30 unique issue-matrix IDs to evidence, and asserts the real repository has no v1.0.0 tag. The final integration suite then bootstraps the committed 1.0.0 payload at commit 92c6f18, including provenance version/tag/SHA checks and all eleven legacy migration transitions.",
+    "result": "PASS — release metadata and 30/30 finding map pass; validator 15/15, self-test 77/77, e2e PASS, migration 11/11, syntax PASS; tag absent and human gate pending.",
+    "evidence": ".agent/evidence/release-readiness-v1.0.0.md"
+  },
+  "evidence_files": [
+    ".agent/evidence/release-readiness-v1.0.0.md",
+    ".agent/evidence/091/final-release-prep.txt",
+    ".agent/evidence/091/final-validator.txt",
+    ".agent/evidence/091/final-selftest.txt",
+    ".agent/evidence/091/final-e2e.txt",
+    ".agent/evidence/091/final-migration.txt",
+    ".agent/evidence/091/final-syntax.txt",
+    ".agent/evidence/091/verify_release_prep.py"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "acceptance_reconciliation": {
+    "versioning": "NIZAM, CONTEXT, guide, README, CHANGELOG, and migration surfaces identify v1.0.0 consistently",
+    "issue_map": "all 30 unique issue-52 finding IDs map to primary evidence",
+    "pretag_validation": "committed v1 payload passes validator, self-test, e2e, syntax, and real v0.9 migration rehearsal",
+    "human_boundary": "NDEBT-036 and phase remain open/in_progress; H-FRAMEWORK-RELEASE, tag, and publication are explicitly pending"
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 091 APPROVED as a prepare-only release package. v1.0.0 is ready for draft-PR review and the operator gate; it has not been released or tagged."
+  }
+}

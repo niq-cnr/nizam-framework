@@ -69,6 +69,18 @@ bash "${framework_root}/bootstrap.sh" \
   --tag "${candidate_tag}" \
   --expected-sha "${candidate_sha}" \
   --target "${consumer_root}/.nizam"
+python3 - "${consumer_root}/.nizam/provenance.json" "${candidate_tag}" "${candidate_sha}" <<'PY'
+import json
+import sys
+
+path, expected_tag, expected_sha = sys.argv[1:4]
+with open(path, encoding="utf-8") as handle:
+    provenance = json.load(handle)
+assert provenance["framework_version"] == "1.0.0", provenance
+assert provenance["tag"] == expected_tag, provenance
+assert provenance["resolved_sha"] == expected_sha, provenance
+print("PASS candidate provenance records framework_version 1.0.0 and the expected tag commit")
+PY
 
 after_hashes="$(sha256sum \
   "${consumer_root}/CONTEXT.md" \

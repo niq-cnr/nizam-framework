@@ -1,0 +1,20 @@
+COMMAND: set -o pipefail; bash .agent/evidence/090/rehearse_migration.sh 2>&1 | grep -E '^(PASS|SUMMARY \(payload mode\)|MIGRATION REHEARSAL)'
+PASS installed real v0.9.0 payload and recorded its provenance pin
+PASS candidate provenance records framework_version 1.0.0 and the expected tag commit
+PASS v0.9.0 -> local v1 contract candidate re-bootstrap verified
+PASS consumer-owned CONTEXT.md, AGENTS.md, and CI configuration preserved
+SUMMARY (payload mode): 11 passed, 0 failed
+PASS legacy-accepted -> v1-rejected -> guide-repaired: audit_delta_neg_bare_evidence_path.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: engineering_finding_neg_bare_evidence_path.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: ecosystem_membership_neg_semver_trailing_dot.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: ecosystem_membership_neg_semver_empty_build.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: ecosystem_membership_neg_semver_dot_suffix.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: preflight_verdict_invalid_pass_blocking.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: preflight_verdict_invalid_pass_with_exceptions_blocking.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: membership_result_neg_consistent_missing_pin.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: membership_result_neg_consistent_null_pin.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: reconciliation_plan_neg_fail_missing_cycles.json
+PASS legacy-accepted -> v1-rejected -> guide-repaired: reconciliation_plan_neg_fail_nonempty_order.json
+PASS migration matrix: 11/11 legacy artifacts repaired
+MIGRATION REHEARSAL PASS
+EXIT: 0

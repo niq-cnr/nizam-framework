@@ -7,17 +7,17 @@ pushed, or approved `v1.0.0`.
 
 ## Automated readiness
 
-1. Framework validator: **15/15 PASS** (`.agent/evidence/090/validator.txt`).
-2. Fixture and CLI self-test: **77/77 PASS** (`.agent/evidence/090/selftest.txt`).
+1. Framework validator: **15/15 PASS** (`.agent/evidence/091/final-validator.txt`).
+2. Fixture and CLI self-test: **77/77 PASS** (`.agent/evidence/091/final-selftest.txt`).
 3. Hermetic bootstrap/genesis/n-case/coordination e2e: **PASS**
-   (`.agent/evidence/090/e2e.txt`).
+   (`.agent/evidence/091/final-e2e.txt`).
 4. Seven Python tools compile and five shipped shell files pass syntax:
-   **PASS** (`.agent/evidence/090/syntax.txt`).
+   **PASS** (`.agent/evidence/091/final-syntax.txt`).
 5. Actual v0.9.0 payload → local v1 contract-candidate re-bootstrap: **PASS**;
    consumer root/CI files preserved; payload validator 11/11; all 11 legacy
    artifacts v0.9-valid → v1-invalid → v1-valid after guide repair
-   (`.agent/evidence/090/migration-rehearsal.txt`).
-6. Release metadata verification: **PASS** (`.agent/evidence/091/release-prep.txt`).
+   (`.agent/evidence/091/final-migration.txt`).
+6. Release metadata verification: **PASS** (`.agent/evidence/091/final-release-prep.txt`).
 
 ## Issue #52 finding-to-evidence map
 
