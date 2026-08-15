@@ -1,0 +1,37 @@
+{
+  "feature_id": "085",
+  "qa_pass": true,
+  "checks_run": 5,
+  "checks_passed": 5,
+  "adversarial": {
+    "performed": true,
+    "description": "The evaluator inspected the actual red output rather than accepting a non-zero exit alone: all eleven new schema negatives unexpectedly produced the named [C12] PASS signal, while their existing paired positives remained PASS and older negatives remained FAIL. The resolved-to-open probe reached a successful compare invocation, then failed only because F1 was not present solely in reopened with the later evidence. This distinguishes the reported defects from setup, routing, syntax, or blanket-schema failure.",
+    "result": "PASS — twelve intended defects reproduced; no unrelated fixture or existing behavior failed.",
+    "evidence": ".agent/evidence/085/red-suite.txt",
+    "process_note": "Single-session collapsed-role QA, disclosed in contract 085. The red state is the approved deliverable for this feature and is immediately consumed by dependent features 086/087 before branch publication."
+  },
+  "evidence_files": [
+    ".agent/evidence/085/issue-matrix.json",
+    ".agent/evidence/085/red-suite.txt",
+    ".agent/evidence/085/verify-01.txt",
+    ".agent/evidence/085/verify-02.txt",
+    ".agent/evidence/085/verify-03.txt",
+    ".agent/evidence/085/verify-04.txt",
+    ".agent/evidence/085/verify-05.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "evidence_bundle_check": {
+    "red_exit": 1,
+    "schema_regressions": 11,
+    "cli_regressions": 1,
+    "issue_matrix_rows": 30,
+    "production_sources_unchanged_from": "98e043ed80dbee737c8de73c55d9108cbe767886"
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 085 APPROVED. The 30-row issue #52 matrix is complete and assigns every atomic finding to features 086-089. Eleven schema negatives and one resolved-to-open CLI probe fail against the v0.9.0 implementation for their intended reasons, with exit code 1 and full output captured. Existing paired positives and pre-existing negatives remain correctly classified. No production remediation landed in this red TDD feature."
+  }
+}

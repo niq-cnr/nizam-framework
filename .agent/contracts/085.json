@@ -1,0 +1,76 @@
+{
+  "contract_id": "085",
+  "feature_id": "085",
+  "name": "Issue #52 intake matrix and failing regression suite",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_012.md",
+  "design_notes": {
+    "base_revision": "98e043ed80dbee737c8de73c55d9108cbe767886",
+    "source_issue": "https://github.com/niq-cnr/nizam-framework/issues/52",
+    "what_this_feature_is": "The red step for phase 012. It records every atomic issue #52 finding and adds schema/CLI regressions that fail for the reported v0.9.0 behavior before any production schema, tool, methodology, or documentation fix lands.",
+    "red_commit_policy": "A failing fixture commit is intentional and temporary. It is not pushed as a standalone integration branch; dependent features 086 and 087 turn the same tests green before the release-preparation PR is offered for review.",
+    "classification": "The issue contains 30 atomic findings: 6 schema, 1 compare-tool, 3 role propagation, 9 methodology safety/correctness, 6 ecosystem protocol, 3 consumer-copy, and 2 tools/documentation findings. Grouped issue bullets with multiple independent claims are split so partial fixes cannot close the parent bullet."
+  },
+  "scope": {
+    "files_create": [
+      {"path": ".agent/evidence/085/issue-matrix.json", "purpose": "Thirty-row atomic issue #52 finding matrix with owning feature and regression/evidence target."},
+      {"path": ".agent/evidence/085/red-suite.txt", "purpose": "Captured pre-fix self-test output and exit code proving the new regressions fail on the intended v0.9.0 behavior."},
+      {"path": "tools/fixtures/audit_delta_neg_bare_evidence_path.json", "purpose": "Reject the bare .agent/evidence/ directory as an audit-delta evidence item."},
+      {"path": "tools/fixtures/engineering_finding_neg_bare_evidence_path.json", "purpose": "Reject the bare .agent/evidence/ directory as finding evidence."},
+      {"path": "tools/fixtures/ecosystem_membership_neg_semver_trailing_dot.json", "purpose": "Reject schema_version 1.2.3."},
+      {"path": "tools/fixtures/ecosystem_membership_neg_semver_empty_build.json", "purpose": "Reject schema_version 1.2.3+."},
+      {"path": "tools/fixtures/ecosystem_membership_neg_semver_dot_suffix.json", "purpose": "Reject schema_version 1.2.3.foo."},
+      {"path": "tools/fixtures/preflight_verdict_invalid_pass_blocking.json", "purpose": "Reject blocking_findings on PASS."},
+      {"path": "tools/fixtures/preflight_verdict_invalid_pass_with_exceptions_blocking.json", "purpose": "Reject blocking_findings on PASS_WITH_EXCEPTIONS."},
+      {"path": "tools/fixtures/membership_result_neg_consistent_missing_pin.json", "purpose": "Reject a pin-consistent aggregate that omits framework_pin."},
+      {"path": "tools/fixtures/membership_result_neg_consistent_null_pin.json", "purpose": "Reject a pin-consistent aggregate whose framework_pin is null."},
+      {"path": "tools/fixtures/reconciliation_plan_neg_fail_missing_cycles.json", "purpose": "Reject FAIL without a non-empty cycle_findings array."},
+      {"path": "tools/fixtures/reconciliation_plan_neg_fail_nonempty_order.json", "purpose": "Reject FAIL with a populated topological order."}
+    ],
+    "files_modify": [
+      {"path": "tools/fixtures_self_test.sh", "purpose": "Register all new negative fixtures and add a resolved-to-open compare probe that expects only reopened."},
+      {"path": ".agent/feature_list_012.json", "purpose": "Advance feature 085 through in_progress to complete after red evidence and QA exist."},
+      {"path": ".agent/run_state.json", "purpose": "Record feature 085 lifecycle and its red-suite evidence without changing framework behavior."}
+    ]
+  },
+  "non_goals": [
+    "No production schema change; feature 086 owns all schema corrections.",
+    "No compare implementation change or fixture-harness refactor; feature 087 owns both.",
+    "No methodology, ecosystem, standard, release, or version edit.",
+    "No weakening of an existing positive fixture to manufacture a failure.",
+    "No standalone push of a deliberately failing branch state."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "The contract and phase planner artifacts are schema-valid, and the feature DAG has one root with no dangling dependency or cycle.",
+      "command": "python3 - <<'PY'\nimport json\nfrom pathlib import Path\nimport jsonschema\nfor data_path, schema_path in [('.agent/contracts/085.json','schema/contract.schema.json'),('.agent/feature_list_012.json','schema/feature_list.schema.json'),('.agent/run_state.json','schema/run_state.schema.json')]:\n    jsonschema.validate(json.loads(Path(data_path).read_text()), json.loads(Path(schema_path).read_text()))\nf=json.loads(Path('.agent/feature_list_012.json').read_text())['features']; by={x['id']:x for x in f}; assert len(by)==len(f)\nfor x in f: assert set(x['dependencies']) <= set(by)\nvisiting=set(); done=set()\ndef visit(i):\n    assert i not in visiting\n    if i in done: return\n    visiting.add(i)\n    for d in by[i]['dependencies']: visit(d)\n    visiting.remove(i); done.add(i)\nfor i in by: visit(i)\nassert [x['id'] for x in f if not x['dependencies']]==['085']\nprint('PASS schemas + seven-node DAG')\nPY"
+    },
+    {
+      "acceptance_test": "The issue matrix contains exactly 30 unique atomic findings, covers every issue category, assigns each to features 086-089, and carries a concrete regression or static-evidence target.",
+      "command": "python3 - <<'PY'\nimport json\nm=json.load(open('.agent/evidence/085/issue-matrix.json'))\nrows=m['findings']; assert len(rows)==30; assert len({r['id'] for r in rows})==30\nassert {r['category'] for r in rows}=={'schema','tool','role-model','methodology','ecosystem','consumer-copy','docs'}\nassert {r['remediation_feature'] for r in rows} <= {'086','087','088','089'}\nassert all(r.get('target') and r.get('reproduction') for r in rows)\nprint('PASS issue matrix: 30 unique atomic findings')\nPY"
+    },
+    {
+      "acceptance_test": "The shell harness remains syntactically valid and every new fixture is registered in its completeness manifest.",
+      "command": "bash -n tools/fixtures_self_test.sh && python3 - <<'PY'\nfrom pathlib import Path\ns=Path('tools/fixtures_self_test.sh').read_text()\nexpected=[p.name for p in Path('tools/fixtures').glob('*bare_evidence_path.json')]+[p.name for p in Path('tools/fixtures').glob('*semver_*.json')]+[p.name for p in Path('tools/fixtures').glob('*blocking.json')]+[p.name for p in Path('tools/fixtures').glob('membership_result_neg_consistent_*.json')]+[p.name for p in Path('tools/fixtures').glob('reconciliation_plan_neg_fail_*.json')]\nassert len(expected)==11, expected\nassert all(name in s for name in expected)\nprint('PASS shell syntax + 11 registered fixtures')\nPY"
+    },
+    {
+      "acceptance_test": "The new suite is red on the pre-fix implementation for all eleven schema cases and the resolved-to-open compare case, while existing paired positives remain green; the real exit code and named failures are captured.",
+      "command": "python3 - <<'PY'\nfrom pathlib import Path\ne=Path('.agent/evidence/085/red-suite.txt').read_text()\nassert 'EXIT_CODE=1' in e\nfor token in ('audit_delta_neg_bare_evidence_path','engineering_finding_neg_bare_evidence_path','ecosystem_membership_neg_semver_trailing_dot','ecosystem_membership_neg_semver_empty_build','ecosystem_membership_neg_semver_dot_suffix','preflight_verdict_invalid_pass_blocking','preflight_verdict_invalid_pass_with_exceptions_blocking','membership_result_neg_consistent_missing_pin','membership_result_neg_consistent_null_pin','reconciliation_plan_neg_fail_missing_cycles','reconciliation_plan_neg_fail_nonempty_order','resolved-to-open: expected reopened only'):\n    assert token in e, token\nassert 'SELF-TEST FAILED' in e\nprint('PASS captured 12 intended red signals')\nPY"
+    },
+    {
+      "acceptance_test": "The production source surfaces reported by issue #52 are byte-identical to the approved main base in this feature.",
+      "command": "set -e\nfor p in schema/audit_delta.schema.json schema/engineering_finding.schema.json schema/ecosystem_membership.schema.json schema/preflight_verdict.schema.json schema/ecosystem_membership_result.schema.json schema/reconciliation_plan.schema.json tools/compare_ecosystem_baselines.py methodology ecosystem standard tools/README.md tools/skill.json; do\n  git diff --quiet 98e043ed80dbee737c8de73c55d9108cbe767886 -- \"$p\" || { echo \"unexpected production change: $p\"; exit 1; }\ndone\necho 'PASS no production remediation in red feature'"
+    }
+  ],
+  "estimated_lines": 360,
+  "evidence_dir": ".agent/evidence/085/",
+  "evidence_convention": "issue-matrix.json is the durable 30-row closure map; red-suite.txt captures the full fixtures_self_test output plus EXIT_CODE=1 before production fixes; final feature QA re-runs all five contract checks and records that the red state is intentional.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-08-15T18:03:31Z",
+    "revisions": 0,
+    "single_session_execution": true,
+    "process_note": "Collapsed-role execution is disclosed. Mode A schema/scope review and an adversarial testability review were completed before fixture edits; the durable review is .agent/qa/085-contract-review.json."
+  }
+}

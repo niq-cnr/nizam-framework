@@ -119,6 +119,17 @@ assert_target preflight_verdict_invalid_verdict.json               C12 FAIL
 assert_target audit_delta_neg_resolved_without_closure_evidence.json C12 FAIL
 assert_target audit_delta_neg_missing_transition_class.json        C12 FAIL
 assert_target audit_delta_neg_duplicate_id_across_buckets.json     C12 FAIL
+assert_target audit_delta_neg_bare_evidence_path.json              C12 FAIL
+assert_target engineering_finding_neg_bare_evidence_path.json      C12 FAIL
+assert_target ecosystem_membership_neg_semver_trailing_dot.json    C12 FAIL
+assert_target ecosystem_membership_neg_semver_empty_build.json     C12 FAIL
+assert_target ecosystem_membership_neg_semver_dot_suffix.json      C12 FAIL
+assert_target preflight_verdict_invalid_pass_blocking.json         C12 FAIL
+assert_target preflight_verdict_invalid_pass_with_exceptions_blocking.json C12 FAIL
+assert_target membership_result_neg_consistent_missing_pin.json    C12 FAIL
+assert_target membership_result_neg_consistent_null_pin.json       C12 FAIL
+assert_target reconciliation_plan_neg_fail_missing_cycles.json     C12 FAIL
+assert_target reconciliation_plan_neg_fail_nonempty_order.json     C12 FAIL
 
 # Positives: the targeted check MUST PASS (proves the negative's signal is
 # discriminating, not a check that fails on everything).
@@ -656,6 +667,7 @@ _compare_cli_probes() (
   printf '{"execution_id":"eB","captured_at":"2026-07-20T00:00:00Z","repository_references":[{"revision":"bbb","timestamp":"t","repository":"r"}]}' > "${d}/baseB.json"
   printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eA/x.txt","revision":"aaa"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findA.json"
   printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eB/x.txt","revision":"bbb"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findB.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eA/resolved.txt","revision":"aaa"}],"impact":"i","owner":"o","status":"resolved","closure_criteria":"c","closure_evidence":[{"path":".agent/evidence/eA/closure.txt","revision":"aaa"}]}]' > "${d}/findResolved.json"
   printf '[]' > "${d}/findEmpty.json"
   # (a) a valid comparison -> delta emitted (exit 0), delta.json present
   python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/out" --earlier-findings "${d}/findA.json" --later-findings "${d}/findB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
@@ -670,10 +682,28 @@ _compare_cli_probes() (
   # (d) freshness: evidence at the anchor revision bbb -> FRESH (exit 0)
   python3 tools/validate_evidence_freshness.py --findings "${d}/findB.json" --anchor-revision bbb --anchor-timestamp "2026-07-20T00:00:00Z" >/dev/null 2>&1
   rc=$?; [ "${rc}" -eq 0 ] || { echo "  fresh evidence: expected exit 0, got ${rc}"; return 1; }
+  # (e) an earlier-resolved finding that is open again is REOPENED, regardless
+  #     of whether its later evidence is fresh; it is never persisting/stale.
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/o3" --earlier-findings "${d}/findResolved.json" --later-findings "${d}/findB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  resolved-to-open: expected compare exit 0, got ${rc}"; return 1; }
+  python3 - "${d}/o3/delta.json" <<'PY' || { echo "  resolved-to-open: expected reopened only, with later evidence"; return 1; }
+import json
+import sys
+
+delta = json.load(open(sys.argv[1], encoding="utf-8"))
+transitions = delta["transitions"]
+reopened = transitions["reopened"]
+if [item.get("id") for item in reopened] != ["F1"]:
+    raise SystemExit(1)
+if reopened[0].get("evidence") != [{"path": ".agent/evidence/eB/x.txt", "revision": "bbb"}]:
+    raise SystemExit(1)
+if any(item.get("id") == "F1" for bucket in ("persisting", "stale") for item in transitions[bucket]):
+    raise SystemExit(1)
+PY
   return 0
 )
 if _compare_cli_probes; then
-  echo "OK   compare     valid -> delta(0); gone-without-closure -> INVALID(1); freshness stale(1)/fresh(0)"
+  echo "OK   compare     valid -> delta(0); gone-without-closure -> INVALID(1); freshness stale(1)/fresh(0); resolved-to-open -> reopened"
 else
   echo "FAIL compare     a CLI behavior probe did not hold"
   fail=1

@@ -1,0 +1,112 @@
+feature=085
+base_revision=98e043ed80dbee737c8de73c55d9108cbe767886
+command=bash tools/fixtures_self_test.sh
+EXIT_CODE=1
+
+== check-level fixtures (validate.sh --target) ==
+OK   target      bad_authoritative_source.md -> [C2] FAIL
+OK   target      bad_discovery_order.md -> [C10] FAIL
+OK   target      untagged_fence.md -> [C3] FAIL
+OK   target      unresolved_path.md -> [C9] FAIL
+OK   target      stale_payload.md -> [C10] FAIL
+OK   target      stale_payload_cosentence.md -> [C10] FAIL
+OK   target      stale_payload_longwrap.md -> [C10] FAIL
+OK   target      stale_payload_semicolon.md -> [C10] FAIL
+OK   target      stale_payload_html.html -> [C10] FAIL
+OK   target      version_drift.html -> [C10] FAIL
+OK   target      broken_index.json -> [C4] FAIL
+OK   target      invalid_contract.json -> [C11] FAIL
+OK   target      invalid_qa_verdict.json -> [C11] FAIL
+OK   target      invalid_run_state.json -> [C11] FAIL
+OK   target      ecosystem_baseline_neg_missing_revision.json -> [C12] FAIL
+OK   target      ecosystem_baseline_neg_mixed_timestamps.json -> [C12] FAIL
+OK   target      ecosystem_baseline_neg_inconsistent_revisions.json -> [C12] FAIL
+OK   target      engineering_finding_neg_closure_evidence_incomplete.json -> [C12] FAIL
+OK   target      engineering_finding_neg_missing_owner.json -> [C12] FAIL
+OK   target      engineering_finding_neg_resolved_without_closure_evidence.json -> [C12] FAIL
+OK   target      preflight_verdict_invalid_approval_incomplete.json -> [C12] FAIL
+OK   target      preflight_verdict_invalid_exceptions.json -> [C12] FAIL
+OK   target      preflight_verdict_invalid_verdict.json -> [C12] FAIL
+OK   target      audit_delta_neg_resolved_without_closure_evidence.json -> [C12] FAIL
+OK   target      audit_delta_neg_missing_transition_class.json -> [C12] FAIL
+OK   target      audit_delta_neg_duplicate_id_across_buckets.json -> [C12] FAIL
+FAIL target      audit_delta_neg_bare_evidence_path.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: audit_delta
+FAIL target      engineering_finding_neg_bare_evidence_path.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: engineering_finding
+FAIL target      ecosystem_membership_neg_semver_trailing_dot.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: ecosystem_membership
+FAIL target      ecosystem_membership_neg_semver_empty_build.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: ecosystem_membership
+FAIL target      ecosystem_membership_neg_semver_dot_suffix.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: ecosystem_membership
+FAIL target      preflight_verdict_invalid_pass_blocking.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: preflight_verdict
+FAIL target      preflight_verdict_invalid_pass_with_exceptions_blocking.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: preflight_verdict
+FAIL target      membership_result_neg_consistent_missing_pin.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: membership_result
+FAIL target      membership_result_neg_consistent_null_pin.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: membership_result
+FAIL target      reconciliation_plan_neg_fail_missing_cycles.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: reconciliation_plan
+FAIL target      reconciliation_plan_neg_fail_nonempty_order.json -> expected [C12] FAIL, got:
+       [C12] PASS ecosystem-fixtures --target routed: reconciliation_plan
+OK   target      exempt_paths.md -> [C9] PASS
+OK   target      ecosystem_baseline_valid.json -> [C12] PASS
+OK   target      engineering_finding_valid.json -> [C12] PASS
+OK   target      engineering_finding_valid_resolved.json -> [C12] PASS
+OK   target      preflight_verdict_pass.json -> [C12] PASS
+OK   target      preflight_verdict_pass_with_exceptions.json -> [C12] PASS
+OK   target      preflight_verdict_fail.json -> [C12] PASS
+OK   target      audit_delta_valid.json -> [C12] PASS
+OK   target      ecosystem_membership_valid.json -> [C12] PASS
+OK   target      ecosystem_membership_neg_missing_list.json -> [C12] FAIL
+OK   target      ecosystem_membership_neg_multilist.json -> [C12] FAIL
+OK   target      membership_result_valid.json -> [C12] PASS
+OK   target      membership_result_neg_missing_verdict.json -> [C12] FAIL
+OK   target      membership_result_neg_inconsistent_pass.json -> [C12] FAIL
+OK   target      reconciliation_plan_valid.json -> [C12] PASS
+OK   target      reconciliation_plan_neg_missing_verdict.json -> [C12] FAIL
+OK   target      reconciliation_plan_neg_cycle.json -> [C12] FAIL
+OK   target      reconciliation_plan_neg_bad_order.json -> [C12] FAIL
+OK   target      release_train_manifest_valid.json -> [C12] PASS
+OK   target      release_train_manifest_neg_ungated_pass.json -> [C12] FAIL
+OK   target      release_train_manifest_neg_orphan.json -> [C12] FAIL
+OK   target      release_train_manifest_neg_repo_mismatch.json -> [C12] FAIL
+== primitive fixtures (verify_lib) ==
+OK   primitive   vlib_no_stale_payload pass (rc=0)
+OK   primitive   vlib_no_stale_payload fail (rc=1)
+OK   primitive   vlib_section_grep pass (rc=0)
+OK   primitive   vlib_section_grep fail (rc=1)
+OK   primitive   vlib_word_present pass (rc=0)
+OK   primitive   vlib_word_present fail (rc=1)
+OK   primitive   vlib_bare_ref_resolves pass (rc=0)
+OK   primitive   vlib_bare_ref_resolves fail (rc=1)
+OK   primitive   vlib_enumeration_complete (complete pass / seeded-omission fail)
+OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk)
+OK   guard       vlib_bare_ref_resolves real-tree (methodology/ + standard/ clean)
+OK   primitive   vlib_workflows_sha_pinned (tag fail / sha+local pass / real-tree pass)
+OK   transition  incubating -> in_scope (count-0->1): promotion moves the entry; two-list violation detected
+OK   primitive   vlib_profiles_cover_roles (real pair pass / missing-profile fail)
+OK   primitive   vlib_path_resolves pass (all tokens resolve/exempt)
+OK   primitive   vlib_path_resolves fail (token does not resolve)
+OK   primitive   vlib_version_increased (pass / equal-fail / decrease-fail)
+OK   primitive   vlib_scope_guard (allowed pass / out-of-scope fail)
+== C13 skill-index negative fixture (substitution) ==
+OK   c13-substitute skill_index_neg_dangling_module.json -> [C13] FAIL
+== template-schema conformance (F-054) ==
+OK   guard       work-packet.template.json validates end-to-end against work-packet.schema.json
+== preflight CLI behavior probes (F-056) ==
+OK   preflight   gov-root: injected .nizam/ discovered -> refs resolve + expected exception -> pending(2), not FAIL
+OK   preflight   clean framework-root -> PASS(0); untracked-not-tolerated -> FAIL(1); exact + prefix tolerate -> pending(2)
+== ecosystem_audit CLI behavior probes ==
+OK   audit       valid -> ASSEMBLED(0); resolved-without-closure -> INVALID(1); FAIL preflight -> refused(2)
+== compare + freshness CLI behavior probes ==
+  resolved-to-open: expected reopened only, with later evidence
+FAIL compare     a CLI behavior probe did not hold
+== ecosystem_reconcile CLI behavior probes ==
+OK   reconcile   acyclic -> PASS plan(0) C12-valid; cyclic -> FAIL(1); unknown repo -> usage(64)
+== completeness guard ==
+---
+SELF-TEST FAILED: 76/76 fixtures accounted for (see FAIL lines above)

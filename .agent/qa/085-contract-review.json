@@ -1,0 +1,20 @@
+{
+  "review": "contract-testability",
+  "feature": "085",
+  "contract_id": "085",
+  "revision_reviewed": 0,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "The red-suite criterion is intentionally historical: red-suite.txt is captured before features 086/087 repair production behavior, so later green runs do not erase the proof that each regression discriminated against the v0.9.0 implementation.",
+    "The eleven schema negatives are paired with existing valid fixtures in the same C12 families. The compare probe adds its own resolved-to-open input and asserts membership in reopened plus absence from persisting/stale, preventing a bare-exit-code or empty-output false pass.",
+    "The matrix splits grouped GitHub bullets into 30 atomic rows, so independent subclaims such as the two consumer-copy wording defects and the three circuit-breaker defects cannot be closed as a bundle without individual targets.",
+    "The no-production-change command anchors to main revision 98e043e and explicitly covers every schema, compare source, methodology/ecosystem/standard tree, skill index, and tools README named by issue #52; planning, contracts, fixtures, harness registration, and evidence are the only intended changes."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "085",
+    "summary": "APPROVED at revision 0. The contract is bounded to the red TDD step, covers all 30 atomic issue #52 findings, names eleven schema regressions plus one compare-behavior regression, requires exact named failure evidence with the real exit code, guards existing positive polarity, and forbids production remediation. The checks are discriminating and non-vacuous; implementation may proceed."
+  }
+}

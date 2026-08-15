@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "012-v1-consumer-safety",
-  "current_feature": "085",
+  "current_feature": "086",
   "status": "in_progress",
-  "updated_at": "2026-08-15T18:03:31Z",
+  "updated_at": "2026-08-15T18:17:08Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -133,6 +133,14 @@
       "note": "Single negotiation attempt (no gate rejection). Entry 6's own assertion was rebuilt in-session after failing live at first execution on two NDEBT-014-catalogued authoring classes (4: bare substring; then 3: line-wrap vs line-based grep) -- disclosed in contract 048 amendments[0]; deliverable content unchanged across both rounds."
     },
     "049-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "085-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "085-implementation": {
       "attempts": 1,
       "limit": 3
     }
@@ -1077,6 +1085,12 @@
       "at": "2026-08-15T18:03:31Z",
       "event": "phase_activated",
       "detail": "Phase 012-v1-consumer-safety ACTIVATED on operator authorization (verbatim: 'approved. please proceed.'). The operator selected the full GitHub issue #52 batch as one v1.0.0 major release, a clean schema break with migration guidance, and isolated-worktree failure recovery. Planner artifacts .agent/product_spec_012.md and .agent/feature_list_012.json define features 085-091 (DAG root 085, original estimate 2400). NDEBT-036 records the Critical consumer-safety intake. This phase supersedes the former phase-012 candidate; its real non-scratch pilot and lifecycle 06/08 work roll forward unchanged. H-FRAMEWORK-RELEASE remains outstanding and the pipeline never self-tags. Execution begins with feature 085: issue matrix and failing regressions."
+    },
+    {
+      "at": "2026-08-15T18:17:08Z",
+      "event": "feature_complete",
+      "feature": "085",
+      "detail": "Feature 085 COMPLETE (red TDD intake): contract 085 approved first pass; issue #52 decomposed into 30 atomic findings across seven categories and assigned to remediation features 086-089. Added eleven C12 negative fixtures plus a resolved-to-open Compare probe. Against the unchanged v0.9.0 production implementation all eleven invalid schema shapes unexpectedly PASS and the compare output fails the reopened-only assertion, while existing paired positives/negatives stay correct; the full rc=1 output is captured in .agent/evidence/085/red-suite.txt. QA 5/5 approved the deliberately red deliverable. No production schema/tool/methodology/docs remediation landed. Advancing to 086; the red state will not be published standalone."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1250,8 +1264,16 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2400,
-    "total_lines_changed": 0,
-    "per_feature": []
+    "total_lines_changed": 430,
+    "per_feature": [
+      {
+        "id": "085",
+        "estimated": 360,
+        "actual": 430,
+        "flag": "OVER",
+        "note": "Red TDD intake: 30-row issue matrix, 11 discriminating schema fixtures, one compare CLI probe, contract/review/QA, and captured red evidence. Pre-close measured churn was 402 lines; ~28 close-out ledger/QA lines bring the feature-accounting estimate to 430. The +19% is evidence/process weight, not added remediation scope. First phase feature, so no prior-three rolling baseline exists."
+      }
+    ]
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
