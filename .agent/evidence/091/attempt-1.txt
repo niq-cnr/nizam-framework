@@ -1,0 +1,10 @@
+COMMAND: python3 .agent/evidence/091/verify_release_prep.py
+ATTEMPT: 1 of 3
+PASS issue matrix has 30 unique findings
+PASS readiness maps D02
+Traceback (most recent call last):
+  File ".agent/evidence/091/verify_release_prep.py", line 95, in <module>
+AssertionError: release preparation is the sole active feature
+EXIT: 1
+DIAGNOSIS: A broad status patch changed feature 085 to in_progress and feature 091 to complete instead of the intended inverse. The structured verifier detected the lifecycle mismatch.
+RECOVERY: Corrected the two explicit feature-id blocks with apply_patch. No reset, clean, or scratch deletion was performed.

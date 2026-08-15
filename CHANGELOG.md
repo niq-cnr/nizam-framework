@@ -7,6 +7,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-15
+
+**Major release** (`methodology/06_release_train.md` §3.1): phase 012 resolves the
+complete consumer-safety audit in issue #52. This release deliberately tightens
+previously shipped schema contracts, so consumers must re-bootstrap from the immutable
+`v1.0.0` tag and repair consumer-owned artifacts with
+[`docs/migration-v1.0.0.md`](docs/migration-v1.0.0.md). There is no compatibility mode.
+
+Release preparation is complete, but publication remains gated by
+`H-FRAMEWORK-RELEASE`; the pipeline does not create or push the tag.
+
 ### Breaking
 
 - **v1.0.0 schema invariant repair (phase 012, feature 086; issue #52).** Evidence

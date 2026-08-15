@@ -2,12 +2,15 @@
 id: nizam-migration-v1-0-0
 title: "Migrating from Nizam v0.9.0 to v1.0.0"
 description: "Clean-break consumer migration guide for the schema invariants tightened in Nizam v1.0.0."
-version: 1.0.0
+version: 1.1.0
 status: active
 authoritative_source: docs/migration-v1.0.0.md
 last_audited: "2026-08-15"
 tags: [migration, v1, breaking-change, consumer]
 change_log:
+  - version: "1.1.0"
+    date: "2026-08-15"
+    summary: "Release-preparation refresh: distinguish disposable pre-release rehearsal from production adoption of the released immutable v1.0.0 tag, which remains subject to H-CONSUMER-UPGRADE."
   - version: "1.0.0"
     date: "2026-08-15"
     summary: "Initial clean-break guide covering every v0.9.0 artifact shape rejected by the v1.0.0 schema invariants."
@@ -21,9 +24,9 @@ or dual-validation window.
 
 Do not hand-edit the injected `.nizam/` payload. Update the consumer's pinned
 tag to `v1.0.0`, re-run `bootstrap.sh`, then repair the consumer-owned artifacts
-reported by validation. Until the release gate is executed, use the release
-candidate's local path only in a disposable rehearsal; production consumers
-remain pinned to `v0.9.0`.
+reported by validation. A pre-release candidate may be used only in a disposable
+rehearsal. Production adoption requires the released immutable `v1.0.0` tag and
+the consumer's recorded `H-CONSUMER-UPGRADE` decision.
 
 ## Evidence paths must identify an artifact
 

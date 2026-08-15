@@ -19,12 +19,12 @@ as your instructions payload — do not bulk-read the governance directories.
 Fetch `bootstrap.sh` pinned to the latest released tag and run it against your repo:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v0.9.0/bootstrap.sh -o bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.0.0/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v0.9.0 ./bootstrap.sh --tag v0.9.0
+GOVERNANCE_TAG=v1.0.0 ./bootstrap.sh --tag v1.0.0
 ```
 
-`--tag v0.9.0` (equivalently `GOVERNANCE_TAG=v0.9.0`) pins the inheritance to a real
+`--tag v1.0.0` (equivalently `GOVERNANCE_TAG=v1.0.0`) pins the inheritance to a real
 released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). This
 clones the pinned tag, stages the governance payload, verifies it landed correctly, and
 atomically installs it under `.nizam/` (the default target). What you get:
@@ -41,8 +41,9 @@ atomically installs it under `.nizam/` (the default target). What you get:
 └── provenance.json
 ```
 
-See the [v0.9.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v0.9.0)
-for release notes, and run `tools/validate.sh` (the same repo-local compliance check that
+See the [v1.0.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.0.0)
+and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
+`tools/validate.sh` (the same repo-local compliance check that
 `.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the
 `docs/architecture/` ADRs) to confirm a bootstrapped target stays compliant.
 
@@ -67,7 +68,8 @@ for release notes, and run `tools/validate.sh` (the same repo-local compliance c
 | `templates/` | Consumer-repo document and manifest templates. |
 | `tools/` | The single runtime-agnostic skill payload. |
 | `registry/` | The `NIZAM.json` index schema and scope-definition patterns. |
-| `docs/` | Architecture Decision Records and the self-contained HTML user guide. |
+| `ecosystem/` | The reusable Bootstrap → Preflight → Baseline → Audit → Plan → Execute → Verify → Promote → Compare lifecycle for one or many repositories. |
+| `docs/` | Architecture Decision Records, versioned migration guidance, and the self-contained HTML user guide. |
 
 ## Versioning
 
