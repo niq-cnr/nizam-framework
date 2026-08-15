@@ -78,9 +78,13 @@ after the documented repair.
 
 ## External review and human gate
 
-- Draft PR: **PENDING** at initial preparation; update after push.
-- Unresolved blocking automated-review findings: **0 known** at initial preparation;
-  recheck the draft PR before sign-off.
+- Draft PR: **OPEN, DRAFT, CLEAN, MERGEABLE** —
+  [#53](https://github.com/niq-cnr/nizam-framework/pull/53).
+- GitHub Actions at certified candidate `c508f6a`: **validate SUCCESS,
+  fixtures_self_test SUCCESS, e2e_bootstrap SUCCESS**.
+- Unresolved blocking automated-review findings: **0** at 2026-08-15T19:11:40Z;
+  GitHub reported empty latest-reviews and comments collections
+  (`.agent/evidence/091/pr-status.txt`). Recheck before sign-off if new feedback lands.
 - Human release-readiness sign-off: **PENDING — `H-FRAMEWORK-RELEASE`**.
 - Immutable annotated tag `v1.0.0`: **PENDING — operator action**.
 - GitHub Release publication: **PENDING — `release.yml` after tag push**.

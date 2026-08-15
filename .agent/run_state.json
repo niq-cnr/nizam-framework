@@ -3,7 +3,7 @@
   "current_phase": "012-v1-consumer-safety",
   "current_feature": "091",
   "status": "in_progress",
-  "updated_at": "2026-08-15T19:06:48Z",
+  "updated_at": "2026-08-15T19:11:40Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1137,6 +1137,12 @@
       "event": "feature_prepared_awaiting_gate",
       "feature": "091",
       "detail": "Feature 091 implementation COMPLETE / release PREPARED: framework, CONTEXT, HTML guide, README quickstart, migration guide, and dated [1.0.0] CHANGELOG surfaces are synchronized for a MAJOR clean break. The readiness record maps all 30 issue-52 findings to evidence. Against committed metadata candidate 92c6f18, validator 15/15, self-test 77/77, e2e, syntax, and v0.9.0-to-v1 migration 11/11 are green; candidate provenance records framework_version 1.0.0 at the expected tag commit. NDEBT-036 and phase status remain open/in_progress because H-FRAMEWORK-RELEASE sign-off and the operator-pushed annotated v1.0.0 tag are still pending. No real v1.0.0 tag exists; the pipeline does not self-sign or self-tag."
+    },
+    {
+      "at": "2026-08-15T19:11:40Z",
+      "event": "draft_pr_opened",
+      "feature": "091",
+      "detail": "Draft PR #53 opened for phase/012-v1-consumer-safety without an issue-closing keyword, so issue #52 remains open until release publication. At certified head c508f6a GitHub reports CLEAN/MERGEABLE; validate, fixtures_self_test, and e2e_bootstrap all completed SUCCESS; reviews and comments collections are empty, so unresolved blocking automated-review findings = 0. H-FRAMEWORK-RELEASE sign-off and v1.0.0 tag remain pending."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1310,7 +1316,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2400,
-    "total_lines_changed": 2928,
+    "total_lines_changed": 2965,
     "per_feature": [
       {
         "id": "085",
@@ -1357,9 +1363,9 @@
       {
         "id": "091",
         "estimated": 210,
-        "actual": 573,
+        "actual": 610,
         "flag": "OVER",
-        "note": "Feature-091's two landed commits total 573 lines (524 insertions + 49 deletions): synchronized version/release surfaces, 30-row readiness mapping, replayable release verifier, final committed-candidate test evidence, QA, and lifecycle state. The overage is evidence/readiness weight rather than expanded release behavior and remains below the prior-three 3x rolling ceiling (088-090 average 441; ceiling 1323). Cumulative 2928/3120 phase ceiling."
+        "note": "Feature-091's three landed commits total 610 lines (554 insertions + 56 deletions): synchronized version/release surfaces, 30-row readiness mapping, replayable release verifier, final committed-candidate and external PR/CI evidence, QA, and lifecycle state. The overage is evidence/readiness weight rather than expanded release behavior and remains below the prior-three 3x rolling ceiling (088-090 average 441; ceiling 1323). Cumulative 2965/3120 phase ceiling."
       }
     ]
   },
