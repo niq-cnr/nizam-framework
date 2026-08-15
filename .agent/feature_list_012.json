@@ -78,7 +78,7 @@
       "id": "090",
       "name": "Integrated validation and disposable consumer migration rehearsal",
       "description": "Run the complete validator/self-test/e2e surface, validate syntax, rehearse v0.9.0-to-v1.0.0 re-bootstrap in a disposable consumer, and prove both conforming and intentionally incompatible legacy artifacts behave as documented.",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": ["086", "087", "088", "089"],
       "acceptance_tests": [
         "bash tools/validate.sh, bash tools/fixtures_self_test.sh, and bash tools/e2e_bootstrap_test.sh each exit 0 with captured output.",
@@ -92,7 +92,7 @@
       "id": "091",
       "name": "v1.0.0 release preparation — H-FRAMEWORK-RELEASE",
       "description": "Prepare the breaking v1.0.0 release metadata, changelog, migration links, version anchors, readiness evidence, and PR mapping. The pipeline does not create or push the tag; that remains the final operator gate.",
-      "status": "pending",
+      "status": "in_progress",
       "dependencies": ["090"],
       "operator_gate": true,
       "acceptance_tests": [

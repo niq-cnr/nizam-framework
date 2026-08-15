@@ -1,0 +1,35 @@
+{
+  "feature_id": "090",
+  "qa_pass": true,
+  "checks_run": 6,
+  "checks_passed": 6,
+  "adversarial": {
+    "performed": true,
+    "description": "The rehearsal starts with the actual v0.9.0 tag, upgrades a disposable consumer through a scratch-only candidate tag at the branch commit, verifies the immutable pin, and hashes consumer-owned root/CI files before and after. Each of the eleven legacy fixtures is first proven v0.9-valid, then v1-invalid, then v1-valid after the migration guide's exact repair. The first test-harness failure is preserved with guarded cleanup evidence; attempt two passed.",
+    "result": "PASS — migration matrix 11/11, payload 11/11, validator 15/15, self-test 77/77, e2e PASS, Python and Bash syntax PASS.",
+    "evidence": ".agent/evidence/090/migration-rehearsal.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/090/attempt-1.txt",
+    ".agent/evidence/090/migration-rehearsal.txt",
+    ".agent/evidence/090/rehearse_migration.sh",
+    ".agent/evidence/090/validator.txt",
+    ".agent/evidence/090/selftest.txt",
+    ".agent/evidence/090/e2e.txt",
+    ".agent/evidence/090/syntax.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "acceptance_reconciliation": {
+    "integrated": "framework validator 15/15, fixture self-test 77/77, hermetic bootstrap/genesis/multi-repo/coordination e2e green",
+    "syntax": "seven tools Python files compile and five shipped shell files pass bash -n",
+    "consumer_upgrade": "actual v0.9.0 payload replaced by local v1 contract candidate and verify-only passes at the expected commit while consumer root/CI files are byte-identical",
+    "breaking_migration": "all eleven v0.9-accepted negative artifacts are rejected under v1 and validate after the guide-prescribed transformation"
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 090 APPROVED. The complete automated surface and disposable v0.9.0-to-v1 contract migration are green with exact, replayable evidence."
+  }
+}

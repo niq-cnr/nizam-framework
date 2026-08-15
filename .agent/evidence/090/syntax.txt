@@ -1,0 +1,16 @@
+COMMAND:
+set -euo pipefail
+python3 - <<'PY'
+from pathlib import Path
+files = sorted(Path('tools').glob('*.py'))
+for path in files:
+    compile(path.read_text(encoding='utf-8'), str(path), 'exec')
+print(f'PASS python compile: {len(files)} tools/*.py files')
+PY
+mapfile -t shell_files < <(git ls-files 'bootstrap.sh' 'tools/*.sh')
+for script in "${shell_files[@]}"; do bash -n "${script}"; done
+echo "PASS bash syntax: ${#shell_files[@]} shipped shell files"
+OUTPUT:
+PASS python compile: 7 tools/*.py files
+PASS bash syntax: 5 shipped shell files
+EXIT: 0

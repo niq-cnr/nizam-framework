@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "012-v1-consumer-safety",
-  "current_feature": "090",
+  "current_feature": "091",
   "status": "in_progress",
-  "updated_at": "2026-08-15T18:47:27Z",
+  "updated_at": "2026-08-15T18:55:48Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -143,6 +143,11 @@
     "085-implementation": {
       "attempts": 1,
       "limit": 3
+    },
+    "090-implementation": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Attempt 1 stopped in the rehearsal assertion because the provenance field is `tag`, not `governance_tag`; guarded cleanup removed only its owned scratch root. Attempt 2 corrected the test assertion and passed the complete migration matrix. Evidence: .agent/evidence/090/attempt-1.txt and migration-rehearsal.txt."
     }
   },
   "history": [
@@ -1115,6 +1120,12 @@
       "event": "feature_complete",
       "feature": "089",
       "detail": "Feature 089 COMPLETE: reconciled every issue-52 ecosystem, consumer-copy, and documentation finding. Bootstrap now distinguishes the shipped scaffold-and-inject command from consumer-owned Section-6 decisions, incubating enrollment, and clean Preflight/Baseline; n-case iteration and coordination are correctly marked shipped. Finalized preflight artifacts, in-scope plan membership, revision-and-timestamp Baseline anchors, all five Compare states, C14/C15 execution-evidence boundaries, brownfield reconciliation ownership, and all eight C12 families now match the implementation. The progress protocol also matches the resolved-to-open comparator repair. Static checker green, validator 15/15, self-test 77/77. Advancing to 090."
+    },
+    {
+      "at": "2026-08-15T18:55:48Z",
+      "event": "feature_complete",
+      "feature": "090",
+      "detail": "Feature 090 COMPLETE: full validator 15/15, fixture self-test 77/77, bootstrap/genesis/multi-repo/coordination e2e PASS, seven tools Python files compiled, and five shipped shell files passed bash syntax. A disposable consumer installed the actual v0.9.0 payload, re-bootstrapped to a scratch-only v1 contract candidate at the branch commit, verified the expected commit pin, retained byte-identical root CONTEXT.md/AGENTS.md/CI files, and passed payload validation 11/11. All eleven intentionally incompatible artifacts were proven v0.9-valid, v1-invalid, and v1-valid after guide-prescribed repair. Attempt 1's test-field error and exact-root cleanup are preserved; attempt 2 passed. Advancing to release preparation 091; H-FRAMEWORK-RELEASE remains pending and no real tag exists."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1288,7 +1299,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2400,
-    "total_lines_changed": 2040,
+    "total_lines_changed": 2355,
     "per_feature": [
       {
         "id": "085",
@@ -1324,6 +1335,13 @@
         "actual": 507,
         "flag": "OVER",
         "note": "Landed commit git numstat: 507 lines (483 insertions + 24 deletions). The 165-line source-document and changelog reconciliation stayed focused; the overage is predominantly the 276-line replayable command/output evidence and 130-line finding-by-finding static verifier, plus QA and lifecycle state. It is below the prior-three 3x rolling ceiling (086-088 average 353.3; ceiling 1060). Cumulative 2040/3120 phase ceiling."
+      },
+      {
+        "id": "090",
+        "estimated": 260,
+        "actual": 315,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 315 lines (308 insertions + 7 deletions). The implementation is the 167-line disposable rehearsal; 78 additional evidence-output lines, the preserved failed-attempt record, QA, and lifecycle state account for the remainder. It is below the prior-three 3x rolling ceiling (087-089 average 434.3; ceiling 1303). Cumulative 2355/3120 phase ceiling."
       }
     ]
   },
