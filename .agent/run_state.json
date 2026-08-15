@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "012-v1-consumer-safety",
-  "current_feature": "089",
+  "current_feature": "090",
   "status": "in_progress",
-  "updated_at": "2026-08-15T18:37:56Z",
+  "updated_at": "2026-08-15T18:47:27Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1109,6 +1109,12 @@
       "event": "feature_complete",
       "feature": "088",
       "detail": "Feature 088 COMPLETE: repaired every issue-52 role/methodology finding. The five-role model includes Orchestrator in skill, handoff, and eval surfaces; breaker attempts run in isolated worktrees/snapshots and clean only exact attempt-owned roots after evidence; docs/planning/phase_012.yaml is canonical lifecycle state and run_state is idempotently repaired derived state; escalation points to step 4. Scope baselines exclude the current feature, completion requires external evidence, release preparation passes normal loops, degraded evals consume the three-attempt breaker, durable repinning is gated, and Orchestrator routes rather than authors upstream deltas. Static checker green, validator 15/15, self-test 77/77. Advancing to 089."
+    },
+    {
+      "at": "2026-08-15T18:47:27Z",
+      "event": "feature_complete",
+      "feature": "089",
+      "detail": "Feature 089 COMPLETE: reconciled every issue-52 ecosystem, consumer-copy, and documentation finding. Bootstrap now distinguishes the shipped scaffold-and-inject command from consumer-owned Section-6 decisions, incubating enrollment, and clean Preflight/Baseline; n-case iteration and coordination are correctly marked shipped. Finalized preflight artifacts, in-scope plan membership, revision-and-timestamp Baseline anchors, all five Compare states, C14/C15 execution-evidence boundaries, brownfield reconciliation ownership, and all eight C12 families now match the implementation. The progress protocol also matches the resolved-to-open comparator repair. Static checker green, validator 15/15, self-test 77/77. Advancing to 090."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1282,7 +1288,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2400,
-    "total_lines_changed": 1542,
+    "total_lines_changed": 2040,
     "per_feature": [
       {
         "id": "085",
@@ -1308,9 +1314,16 @@
       {
         "id": "088",
         "estimated": 520,
-        "actual": 510,
+        "actual": 501,
         "flag": "ON",
-        "note": "Eight methodology docs + module index + skill role correction, canonical phase-012 YAML/manifest/spec linkage, static verifier, command/output/EXIT evidence, CHANGELOG and QA. Pre-close measured churn 439; close-out estimate 510, on plan."
+        "note": "AH-3 corrected to the landed commit's git numstat: 501 lines (401 insertions + 100 deletions). Eight methodology docs + module index + skill role correction, canonical phase-012 YAML/manifest/spec linkage, static verifier, command/output/EXIT evidence, CHANGELOG and QA. On plan."
+      },
+      {
+        "id": "089",
+        "estimated": 350,
+        "actual": 507,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 507 lines (483 insertions + 24 deletions). The 165-line source-document and changelog reconciliation stayed focused; the overage is predominantly the 276-line replayable command/output evidence and 130-line finding-by-finding static verifier, plus QA and lifecycle state. It is below the prior-three 3x rolling ceiling (086-088 average 353.3; ceiling 1060). Cumulative 2040/3120 phase ceiling."
       }
     ]
   },

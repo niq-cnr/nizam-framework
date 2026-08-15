@@ -2,11 +2,14 @@
 id: nizam-provenance-policy
 title: "Supply-Chain Provenance Policy"
 description: "Rules for ensuring every artifact, prompt, model, tool call, and release is attestable and auditable."
-version: 0.2.0
+version: 0.3.0
 status: active
 enforcement: partially-enforced
 authoritative_source: standard/provenance_policy.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-08-15"
+    summary: "Phase-012 feature 089 (issue #52): state C14 as a supplied validator capability when executed, rather than evidence that an arbitrary consumer executed the check."
   - version: "0.2.0"
     date: "2026-07-20"
     summary: "Feature 058 (Track 3, gate H-CONSTITUTIONAL): marked partially-enforced -- the SHA-pinned-Actions requirement is now mechanized as validate.sh check C14 (vlib_workflows_sha_pinned over the workflows directory), while the attestation, agent-audit-envelope, and SLSA-pipeline requirements are consumer-aspirational."
@@ -14,7 +17,12 @@ change_log:
 
 # Supply-Chain Provenance Policy
 
-> **Partially enforced.** The SHA-pinned-Actions requirement IS verified on this repository's own workflows by `tools/validate.sh` (check C14). The artifact-attestation, agent-audit-envelope, and SLSA-pipeline requirements are consumer-aspirational — a consuming repository enforces them in its own build and release pipeline. Recorded per the Track 3 decision (feature 058).
+> **Partially enforced.** When a checkout runs `tools/validate.sh`, check C14 verifies
+> SHA-pinned Actions in that checkout's workflows. This supplied validator capability
+> is not evidence that a consumer executed it; consumers record their own execution
+> evidence. The artifact-attestation, agent-audit-envelope, and SLSA-pipeline
+> requirements are consumer-aspirational — a consuming repository enforces them in
+> its own build and release pipeline. Recorded per the Track 3 decision (feature 058).
 
 ## 1. Overview
 

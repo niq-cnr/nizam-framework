@@ -2,10 +2,13 @@
 id: nizam-ecosystem-module
 title: "Ecosystem Engineering Cycle"
 description: "Reusable governance lifecycle for reconciling, auditing, planning, executing, and improving multi-repository software ecosystems."
-version: 0.2.3
+version: 0.3.0
 status: active
 authoritative_source: ecosystem/README.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-08-15"
+    summary: "Phase-012 feature 089 (issue #52): require both revision and timestamp anchors in the Baseline lifecycle summary and restore persisting to the Compare transition list."
   - version: "0.2.3"
     date: "2026-07-22"
     summary: "Phase-011 feature 081 (NIP-0002 Stage 4, NDEBT-035): the Promote-stage protocol 05_release_train_coordination.md shipped, so the module-navigation row flips '05 ... Planned' -> 'Shipped' and the Shipped/Planned prose re-syncs -- seven documents are now Shipped (00-05 + 07), and the still-Planned set narrows to two (06_simplification_review.md, 08_ga_gate.md). With 04 (Plan) + 05 (Promote) both shipped, NIP-0002 Stage 4's coordination protocols are complete; 06/08 remain deferrable, prioritised from real evidence."
@@ -48,7 +51,7 @@ Bootstrap -> Preflight -> Baseline -> Audit -> Plan -> Execute -> Verify -> Prom
   rule for the PASS_WITH_EXCEPTIONS case.
 - **Baseline** -- capture a point-in-time, immutable snapshot over framework,
   repository, dependency, CI, planning, and evidence references, every fact anchored to
-  a stated revision or timestamp.
+  both a stated revision and timestamp.
 - **Audit** -- an evidence-first engineering assessment against a maturity model, never
   promoting a claim beyond the evidence that backs it.
 - **Plan** -- turn approved audit findings into dependency-ordered, cross-repository
@@ -60,8 +63,8 @@ Bootstrap -> Preflight -> Baseline -> Audit -> Plan -> Execute -> Verify -> Prom
 - **Promote** -- a human-gated release step; the pipeline records but never
   self-executes a promotion or GA decision.
 - **Compare** -- measure a new baseline or audit against the prior one, distinguishing
-  new, resolved, reopened, and stale findings, with every score movement traceable to
-  evidence.
+  new, resolved, reopened, persisting, and stale findings, with every score movement
+  traceable to evidence.
 - **Repeat** -- the cycle begins again from Preflight, so engineering progress is a
   continuous, evidence-backed loop rather than a one-time exercise.
 

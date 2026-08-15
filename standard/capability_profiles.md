@@ -2,11 +2,14 @@
 id: nizam-capability-profiles
 title: "Capability Profile Model"
 description: "Binds agent roles to task types, latency budgets, cost budgets, and safety classes rather than to specific models, enabling eval-gated promotion and fallback."
-version: 0.2.0
+version: 0.3.0
 status: active
 enforcement: partially-enforced
 authoritative_source: standard/capability_profiles.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-08-15"
+    summary: "Phase-012 feature 089 (issue #52): state C15 as a supplied validator capability when executed, rather than evidence that an arbitrary consumer executed the check."
   - version: "0.2.0"
     date: "2026-07-20"
     summary: "Feature 058 (Track 3, gate H-CONSTITUTIONAL): marked partially-enforced -- the five-profile to five-AGF-role correspondence is now mechanized as validate.sh check C15 (vlib_profiles_cover_roles), while the no-hard-coded-models, eval-gated-promotion, and cross-provider-fallback requirements are consumer-aspirational."
@@ -14,7 +17,13 @@ change_log:
 
 # Capability Profile Model
 
-> **Partially enforced.** The five-profile ↔ five-AGF-role correspondence IS verified by `tools/validate.sh` (check C15). The no-hard-coded-model-names, eval-gated-promotion, and cross-provider-fallback requirements are consumer-aspirational — a consuming repository binds and gates models in its own runtime. Recorded per the Track 3 decision (feature 058).
+> **Partially enforced.** When a checkout runs `tools/validate.sh`, check C15 verifies
+> the five-profile ↔ five-AGF-role correspondence in that checkout. This supplied
+> validator capability is not evidence that a consumer executed it; consumers record
+> their own execution evidence. The no-hard-coded-model-names, eval-gated-promotion,
+> and cross-provider-fallback requirements are consumer-aspirational — a consuming
+> repository binds and gates models in its own runtime. Recorded per the Track 3
+> decision (feature 058).
 
 ## 1. Overview
 

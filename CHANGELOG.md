@@ -27,6 +27,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Consumer-facing protocol truth (phase 012, feature 089; issue #52).** Genesis
+  is explicitly scaffold-and-inject automation, with consumer decisions, registry
+  enrollment, and Preflight/Baseline still required; ecosystem lifecycle summaries,
+  reconciliation membership invariants, reopened semantics, validator enforcement
+  claims, brownfield responsibility, and all eight C12 fixture families now match the
+  shipped schemas and tools.
 - **Fixture scratch isolation (phase 012, feature 087; issue #52).** The fixture
   harness now creates and cleans exact temporary roots through one guarded helper;
   all eleven scratch probes reject repository paths and retain their existing
