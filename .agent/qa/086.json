@@ -1,0 +1,26 @@
+{
+  "feature_id": "086",
+  "qa_pass": true,
+  "checks_run": 4,
+  "checks_passed": 4,
+  "adversarial": {
+    "performed": true,
+    "description": "Each of the eleven red fixtures was invoked independently through the content-routed C12 target path and required both a non-zero exit and the named [C12] FAIL verdict. A canonical prerelease+build SemVer positive was added to guard against over-tightening. The full validator and migration-guide coverage checks were then run separately.",
+    "result": "PASS — invalid v0.9.0 shapes fail, a valid advanced SemVer passes, and the repository sweep remains 15/15.",
+    "evidence": ".agent/evidence/086/schema-green.txt"
+  },
+  "evidence_files": [".agent/evidence/086/schema-green.txt"],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "acceptance_reconciliation": {
+    "schema_polarity": "eleven issue-52 negative fixtures now emit [C12] FAIL; existing positives plus the new 1.2.3-rc.1+build.20260815 fixture emit PASS",
+    "migration": "docs/migration-v1.0.0.md provides before/after repair instructions for every newly rejected shape",
+    "regression": "tools/validate.sh SUMMARY: 15 passed, 0 failed"
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 086 APPROVED. All six affected schema files enforce their issue #52 invariants, eleven red negatives turned green as expected-fail tests, canonical SemVer prerelease/build syntax remains accepted, the clean-break migration guide covers each invalidated v0.9.0 shape, and the full validator is green."
+  }
+}

@@ -2,10 +2,13 @@
 id: nizam-ecosystem-progress-comparison
 title: "Progress Comparison Protocol"
 description: "The reusable protocol for comparing two approved baselines or audits: distinguishing new, resolved, reopened, persisting, and stale findings, recording pre-window-resolved findings without miscounting them, closing a resolved finding only with closure evidence, refusing to silently reuse stale evidence, counting open findings (not all recorded findings) in the score, and making every score movement traceable to evidence."
-version: 0.2.1
+version: 0.3.0
 status: active
 authoritative_source: ecosystem/07_progress_comparison.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-08-15"
+    summary: "Phase-012 feature 089 (issue #52): synchronize reopened semantics with the comparator repair. A later-open finding is reopened when the earlier input records it resolved, or when it is absent earlier and prior delta history records it resolved; later evidence is retained. A first comparison may therefore contain reopened findings when its earlier input has resolved records."
   - version: "0.2.1"
     date: "2026-07-20"
     summary: "Tier-0 schema completion: schema/audit_delta.schema.json has landed, so Section 7 and the References entry retire the 'optional / deferrable / not yet present' language and the bare-filename convention (adopted only to avoid a dangling reference while the file was absent) in favour of the directory-qualified `schema/audit_delta.schema.json`, matching the sibling protocols 01/02/03. The protocol's semantics are unchanged; only the schema's presence status is updated. The schema encodes this protocol's required shape -- the two anchored reference points, the closed five-class transition taxonomy, and the closure-only-with-evidence rule for resolved and pre-window-resolved findings -- and is enforced by tools/validate.sh C12 as the fourth ecosystem family."
@@ -74,11 +77,12 @@ recording rule of Section 3.1):
   by a closure that occurred WITHIN the comparison window -- Section 3.1
   distinguishes this in-window closure from a resolution that predates the
   window.
-- `reopened` -- absent from the earlier execution and previously classified
-  `resolved` in an earlier comparison, now present again in the later
-  execution's findings. This is the sole class for a previously-resolved
-  finding that reappears; the `new` class explicitly excludes it, so the two
-  never overlap.
+- `reopened` -- present and resolved in the earlier input but present and open in
+  the later input; or absent from the earlier input, previously classified
+  `resolved` in an earlier comparison, and present again in the later input. The
+  later open record's evidence is retained. This is the sole class for a
+  previously-resolved finding that reappears; the `new` class explicitly excludes
+  it, so the two never overlap.
 - `persisting` -- present in both executions and still open, with evidence
   that is CURRENT: freshly re-confirmed at or after the later execution's own
   revision and timestamp anchors (`ecosystem/02_evidence_baseline.md` Section
@@ -112,12 +116,11 @@ resolution that had already happened before the window opened.
 ### 3.2 First-Comparison Rule
 
 On the framework's (or a consumer's) first-ever comparison there is no prior
-comparison to have classified any finding `resolved`, so the `reopened` class
-is necessarily empty: `reopened` requires a prior comparison's `resolved`
-classification to reopen against, and a first comparison has none. A first
-comparison derives every classification solely from its two inputs, and an
-empty `reopened` bucket on a first comparison is a correct result, not a gap
-to be explained away.
+delta history, but the earlier input can itself contain a resolved finding. If
+that finding is open in the later input, it is `reopened`; otherwise, without
+either an earlier resolved record or prior delta history, the `reopened` bucket
+is empty. A first comparison derives its classifications solely from its two
+inputs, including their finding statuses and evidence.
 
 ## 4. Closure-Only-With-Evidence Rule
 

@@ -3,10 +3,13 @@ id: nizam-ecosystem-dependency-reconciliation
 title: "Dependency Reconciliation Protocol"
 description: "The reusable Plan-stage protocol: consumes the current execution's approved engineering-audit findings and the ecosystem-level membership-run aggregate, turns them into typed, dependency-ordered cross-repository work packets, and enforces that the ordered packet sequence is a valid topological sort of the packet dependency edges -- a cyclic dependency set is a first-class recorded finding forcing a non-PASS plan verdict, never a silent mis-order. The operator gate H-PLANNING-AUTHORITY authorizes the planning authority the plan asserts across repositories before it is admitted downstream; the pipeline records but never self-executes that authorization."
 tags: [ecosystem-cycle, plan, dependency-reconciliation, cross-repo, topological-order, phase-011]
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: ecosystem/04_dependency_reconciliation.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-08-15"
+    summary: "Phase-012 feature 089 (issue #52): make aggregate membership an explicit PASS invariant: every work packet's repository must belong to the source aggregate's in_scope set."
   - version: "0.1.0"
     date: "2026-07-22"
     summary: "Initial authoring (phase 011 feature 080; NIP-0002 Stage 4, the n-coordination protocols; NDEBT-035). Defines the ecosystem lifecycle's Plan stage -- turning approved audit findings plus the phase-010 ecosystem-level membership-run aggregate into typed, dependency-ordered cross-repository work packets, under the topological-order invariant. Names schema/reconciliation_plan.schema.json as the machine-readable plan shape and the operator gate H-PLANNING-AUTHORITY (defined in this feature in docs/planning/operator_gates.md). House structure mirrors ecosystem/03_engineering_audit.md; the release-train Promote stage that consumes this plan is ecosystem/05_release_train_coordination.md (feature 081)."
@@ -107,8 +110,9 @@ emitted as `PASS`. This mirrors the audit's no-promotion-beyond-evidence rule
 planner who wants a `PASS` plan must break the cycle, not silently pick an
 order that violates one of its edges. The plan verdict is exactly one of:
 
-- `PASS` -- every packet closes an approved finding, and the emitted order is a
-  valid topological sort of an acyclic dependency set.
+- `PASS` -- every packet closes an approved finding, every packet repository belongs
+  to the source aggregate's `in_scope` set, and the emitted order is a valid
+  topological sort of an acyclic dependency set.
 - `FAIL` -- the dependency set contains at least one cycle (recorded in
   `cycle_findings`), so no valid order exists.
 

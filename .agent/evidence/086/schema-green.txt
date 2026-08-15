@@ -1,0 +1,19 @@
+feature=086
+command=schema invariant regression suite + full validator + migration coverage
+EXIT_CODE=0
+
+PASS negative audit_delta_neg_bare_evidence_path.json
+PASS negative engineering_finding_neg_bare_evidence_path.json
+PASS negative ecosystem_membership_neg_semver_trailing_dot.json
+PASS negative ecosystem_membership_neg_semver_empty_build.json
+PASS negative ecosystem_membership_neg_semver_dot_suffix.json
+PASS negative preflight_verdict_invalid_pass_blocking.json
+PASS negative preflight_verdict_invalid_pass_with_exceptions_blocking.json
+PASS negative membership_result_neg_consistent_missing_pin.json
+PASS negative membership_result_neg_consistent_null_pin.json
+PASS negative reconciliation_plan_neg_fail_missing_cycles.json
+PASS negative reconciliation_plan_neg_fail_nonempty_order.json
+PASS positive ecosystem_membership_valid_semver_prerelease_build.json
+SUMMARY: 15 passed, 0 failed
+PASS full validator 15/15
+PASS migration guide covers every narrowed v0.9.0 shape

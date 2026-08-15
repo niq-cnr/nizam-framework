@@ -59,6 +59,17 @@
       "then": {
         "properties": { "ecosystem_verdict": { "const": "FAIL" } }
       }
+    },
+    {
+      "description": "A pin-consistent ecosystem records the non-empty common framework pin it claims every in_scope member used. Consistency true with a missing, null, or empty common pin is contradictory and invalid.",
+      "if": {
+        "properties": { "framework_pin_consistent": { "const": true } },
+        "required": ["framework_pin_consistent"]
+      },
+      "then": {
+        "required": ["framework_pin"],
+        "properties": { "framework_pin": { "type": "string", "minLength": 1 } }
+      }
     }
   ],
   "additionalProperties": true

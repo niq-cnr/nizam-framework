@@ -2,11 +2,14 @@
 id: nizam-eval-and-trace
 title: "Eval and Trace Infrastructure"
 description: "The verification hierarchy, trace capture requirements, and role-specific eval suites that guarantee quality as models and prompts change."
-version: 0.2.0
+version: 0.3.0
 status: active
 enforcement: consumer-aspirational
 authoritative_source: methodology/05_eval_and_trace.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-08-15"
+    summary: "Phase-012 issue-52 correction: adds the Orchestrator to the role-specific eval suite and makes the model/prompt promotion gate explicitly cover all five AGF roles."
   - version: "0.2.0"
     date: "2026-07-20"
     summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
@@ -58,11 +61,14 @@ Eval suites measure whether the agentic system still meets quality targets. Each
 
 | Role | Eval Focus |
 |------|-----------|
+| Orchestrator | Routing correctness, gate ordering, durable-state consistency, and authorship-boundary compliance |
 | Planner | Spec completeness, acceptance criteria testability, contract delta accuracy |
 | Generator | Implementation correctness, test passage, contract conformance |
 | Validator | Defect detection rate, false-positive rate |
 | Evaluator | Bug catch rate, scope creep detection, false-fail rate (calibrated via seed cases) |
 
-Model or prompt changes are **blocked** until they pass the role-specific eval thresholds.
+Model or prompt changes for any of the five roles — Orchestrator, Planner,
+Generator, Validator, or Evaluator — are **blocked** until they pass that role's
+eval thresholds.
 
 *Attribution: The verification hierarchy, trace capture rules, and eval suite definitions are ported from the Vibe Coding Manifesto (v2.0), Section V.*

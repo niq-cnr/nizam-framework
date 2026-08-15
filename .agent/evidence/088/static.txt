@@ -1,0 +1,31 @@
+python3 .agent/evidence/088/verify_static.py
+PASS R01 skill names Orchestrator
+PASS R01 skill names Planner
+PASS R01 skill names Generator
+PASS R01 skill names Validator
+PASS R01 skill names Evaluator
+PASS R02 handoff Orchestrator to Planner
+PASS R02 handoff Planner to Generator
+PASS R02 handoff Generator to Validator
+PASS R02 handoff Validator to Evaluator
+PASS R02 handoff Evaluator back to Orchestrator
+PASS R03 Orchestrator eval row
+PASS R03 five-role eval gate
+PASS M01 no shared reset
+PASS M01 no repository clean
+PASS M01 isolated worktree recovery
+PASS M02 canonical phase state
+PASS M02 derived run state
+PASS M02 no cross-file atomic claim
+PASS M03 corrected escalation reference
+PASS M04 durable release prep is gated
+PASS M04 only tag act is outside another contract
+PASS M05 eval uses third-attempt trip
+PASS M06 durable repin stays gated
+PASS M07 Orchestrator routes but does not author
+PASS M08 current feature excluded from baseline
+PASS M09 explicit evidence gate
+PASS M09 missing evidence blocks completion
+PASS M02 phase-012 canonical document validates
+PASS M02 manifest registers canonical phase document
+EXIT:0

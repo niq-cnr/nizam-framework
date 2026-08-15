@@ -2,10 +2,13 @@
 id: governance-inheritance-protocol
 title: "Governance Inheritance Protocol (GIP)"
 description: "The runtime-agnostic protocol by which a consumer repository inherits, verifies, and keeps in sync with the Nizam governance framework, via pinned-tag cloning and drift detection."
-version: 0.5.0
+version: 0.6.0
 status: active
 authoritative_source: standard/GIP.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-08-15"
+    summary: "Phase-012 feature 089 (issue #52): make the consumer/bootstrap boundary explicit for brownfield adoption. The consumer reconciliation process preserves, diffs, and merges root CONTEXT.md/AGENTS.md content and adds CI checks; bootstrap.sh writes only the .nizam governance payload."
   - version: "0.5.0"
     date: "2026-07-21"
     summary: "Phase-008 feature 067 (NDEBT-033): Section 4 (Drift Detection) now treats the resolved commit SHA — not the tag name alone — as the immutable pin. Point 1 (Baseline) records the resolved_sha; a new point 5 (Detecting a moved tag) describes that bootstrap.sh --verify-only requires the recorded commit present and, with --expected-sha, rejects a differing commit (a moved remote tag replaying a different payload); the remediation point renumbers 5 -> 6. Kept in lockstep with bootstrap.sh and ecosystem/00_ecosystem_bootstrap.md Section 7."
@@ -151,14 +154,18 @@ If a consumer repository already has its own `CONTEXT.md`, `AGENTS.md`, or CI
 (continuous integration) configuration before it bootstraps this framework, the
 bootstrap operation MUST NOT silently overwrite that pre-existing content. Instead:
 
-- **Rename-and-diff, never silent overwrite.** Before injection, any pre-existing file
-  that collides by name or purpose with a bootstrap-injected artifact (for example, the
-  consumer's own `CONTEXT.md` or `AGENTS.md`) MUST be preserved under a renamed path
-  (e.g. `CONTEXT.md.pre-nizam`) so a human or agent can diff the pre-existing content
-  against the framework's `templates/` version and reconcile the two by hand, rather
-  than losing either version.
-- **CI configuration is reconciled, not replaced.** A consumer's pre-existing CI
-  configuration is not part of the injected governance payload (`standard/`,
+The **consumer's reconciliation process**, not `bootstrap.sh`, performs the
+preserve/diff/merge work and adds recommended CI checks. `bootstrap.sh` writes only
+the governance payload under the declared target (conventionally `.nizam/`); it does
+not mutate the consumer's root documents or CI configuration.
+
+- **Preserve-and-diff, never silently overwrite.** As part of consumer reconciliation,
+  the consumer's root `CONTEXT.md` and `AGENTS.md` remain in place. The consumer diffs
+  them against the corresponding injected `.nizam/templates/` documents and merges
+  the applicable obligations by hand; it MAY preserve an additional pre-reconciliation
+  copy (for example `CONTEXT.md.pre-nizam`) for auditability.
+- **CI configuration is reconciled, not replaced.** The consumer reconciliation process
+  preserves the existing CI configuration. It is not part of the injected governance payload (`standard/`,
   `templates/`, `schema/`, `tools/`, `methodology/`, `ecosystem/`, `NIZAM.json` — Section 2, point 2) and MUST NOT be
   deleted or overwritten by bootstrapping. Where this protocol recommends CI-driven
   compliance checks (Section 3), those checks are added to the consumer's existing CI

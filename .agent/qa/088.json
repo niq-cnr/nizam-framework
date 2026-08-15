@@ -1,0 +1,32 @@
+{
+  "feature_id": "088",
+  "qa_pass": true,
+  "checks_run": 4,
+  "checks_passed": 4,
+  "adversarial": {
+    "performed": true,
+    "description": "A replayable static checker asserts every role edge and every atomic methodology finding, including negative absence checks for shared-tree reset/clean guidance and positive checks for canonical/derived state, prior-only scope baselines, the evidence completion gate, third-attempt eval escalation, gated repinning, and non-authoring Orchestrator routing. The canonical phase YAML is schema-validated and manifest-linked. Independent full validator and fixture runs remain green.",
+    "result": "PASS — all issue-52 methodology/role assertions pass; validator 15/15 and self-test 77/77.",
+    "evidence": ".agent/evidence/088/static.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/088/static.txt",
+    ".agent/evidence/088/validator.txt",
+    ".agent/evidence/088/selftest.txt",
+    ".agent/evidence/088/verify_static.py"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "acceptance_reconciliation": {
+    "roles": "tools/skill plus handoff/eval docs now carry the five-role model",
+    "retry_safety": "attempt-scoped worktrees/snapshots, evidence-before-exact-root removal, no shared reset/clean",
+    "state": "docs/planning/phase_012.yaml is canonical and manifest-linked; run_state is separately repaired derived coordination state",
+    "gates": "prior-only scope baseline, evidence-before-complete, validator-gated release prep, three-attempt eval, gated repin, Orchestrator non-authorship"
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 088 APPROVED. All twelve role/methodology matrix groups are corrected and mechanically asserted. The phase now dogfoods the canonical structured phase document it prescribes, while run_state remains derived. Evidence files follow the new command/output/EXIT convention, and the repository regressions remain green."
+  }
+}

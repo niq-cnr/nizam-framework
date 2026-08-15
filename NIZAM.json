@@ -1,7 +1,7 @@
 {
   "framework": {
     "name": "nizam-framework",
-    "version": "0.9.0",
+    "version": "1.0.0",
     "description": "A generalised, AI-legible, versioned governance framework distilling documentation standards, planning and execution protocols, adversarial TDD, contract-first harness loops, durable agent state, and governance inheritance into a single portable payload any AI agent or engineering team can consume in any runtime, for any project."
   },
   "modules": [
@@ -101,11 +101,12 @@
     },
     {
       "path": "docs",
-      "purpose": "Shipped framework documentation: Architecture Decision Records and the self-contained HTML user guide, distributed with the repository and rendered on GitHub or GitHub Pages (not part of the consumer-injected bootstrap payload).",
+      "purpose": "Shipped framework documentation: Architecture Decision Records, versioned migration guidance, and the self-contained HTML user guide, distributed with the repository and rendered on GitHub or GitHub Pages (not part of the consumer-injected bootstrap payload).",
       "key_documents": [
         "docs/architecture/ADR-001-ci-compliance-enforcement.md",
         "docs/architecture/ADR-002-html-user-guide.md",
         "docs/architecture/ADR-003-vibe-coding-manifesto-hybrid.md",
+        "docs/migration-v1.0.0.md",
         "docs/guide/index.html"
       ]
     },
@@ -272,7 +273,7 @@
     },
     {
       "id": "nizam-ecosystem-progress-comparison",
-      "summary": "The protocol for comparing two approved baselines or audits, classifying new/resolved/reopened/stale findings with every score movement traceable to evidence.",
+      "summary": "The protocol for comparing two approved baselines or audits, classifying new/resolved/reopened/persisting/stale findings with every score movement traceable to evidence.",
       "authoritative_source": "ecosystem/07_progress_comparison.md"
     }
   ],
@@ -307,7 +308,7 @@
     "templates/manifest.template.json",
     "templates/README.md"
   ],
-  "consumption_guidance": "Query this index first. Locate the module, capability, schema, or template path that matches the task at hand, then read only that one file. Do not bulk-read an entire governance directory (standard/, methodology/, templates/, schema/, or tools/) for a single task; that is context exhaustion, the failure DD-1 remediates (see methodology/04_tool_driven_state.md). Use the 'capabilities' array to resolve a named concern to its single authoritative_source, the 'modules' array to find a module's key_documents, and the 'schemas'/'templates' arrays to resolve a machine-artifact path directly.",
+  "consumption_guidance": "Query this index first. Locate the module, capability, schema, or template path that matches the task at hand, then read only that one file. Do not bulk-read an entire governance directory (standard/, methodology/, templates/, schema/, tools/, or ecosystem/) for a single task; that is context exhaustion, the failure DD-1 remediates (see methodology/04_tool_driven_state.md). Use the 'capabilities' array to resolve a named concern to its single authoritative_source, the 'modules' array to find a module's key_documents, and the 'schemas'/'templates' arrays to resolve a machine-artifact path directly.",
   "index_schema": {
     "path": "registry/nizam-index.schema.json",
     "description": "The JSON Schema (draft 2020-12) this document, NIZAM.json, must validate against."

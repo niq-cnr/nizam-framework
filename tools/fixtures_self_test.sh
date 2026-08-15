@@ -44,6 +44,7 @@ source tools/verify_lib.sh
 fail=0
 COVERED=()
 SKILL_BAK=""
+declare -A SCRATCH_OWNED=()
 
 # Backstop: if a C13 substitution is interrupted, restore the real skill.json.
 cleanup() {
@@ -55,6 +56,85 @@ cleanup() {
 trap cleanup EXIT
 
 note_covered() { COVERED+=("$1"); }
+
+# scratch_dirs <output-var> [<output-var> ...]
+#
+# Creates one isolated directory per named caller variable and installs a single
+# EXIT trap for those exact directories. Every target is resolved below the
+# configured temporary root and rejected if it is /, the repository, or below
+# the repository. Probe bodies call this directly (never through command
+# substitution), so printf -v assigns their local variables in the caller.
+# Cleanup receives only paths returned by mktemp in this invocation; no glob or
+# unresolved environment variable is accepted as a removal target.
+cleanup_scratch_dirs() {
+  local d resolved
+  for d in "$@"; do
+    [ -n "${d}" ] || return 1
+    [ -d "${d}" ] || continue
+    resolved=$(cd -- "${d}" && pwd -P) || return 1
+    [[ "${SCRATCH_OWNED["${resolved}"]:-}" == "1" ]] || return 1
+    case "${resolved}" in
+      "/"|"${REPO}"|"${REPO}"/*) return 1 ;;
+    esac
+    rm -rf -- "${resolved}"
+  done
+}
+
+scratch_dirs() {
+  local name made resolved quoted cleanup="cleanup_scratch_dirs" temp_root
+  local -a created=()
+  temp_root=$(cd -- "${TMPDIR:-/tmp}" && pwd -P) || return 1
+  case "${temp_root}" in
+    "/"|"${REPO}"|"${REPO}"/*) return 1 ;;
+  esac
+  for name in "$@"; do
+    [[ "${name}" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] || {
+      cleanup_scratch_dirs "${created[@]}"
+      return 1
+    }
+    made=$(mktemp -d) || {
+      cleanup_scratch_dirs "${created[@]}"
+      return 1
+    }
+    resolved=$(cd -- "${made}" && pwd -P) || {
+      cleanup_scratch_dirs "${created[@]}" "${made}"
+      return 1
+    }
+    case "${resolved}" in
+      "${temp_root}"/*) ;;
+      *) cleanup_scratch_dirs "${created[@]}" "${resolved}"; return 1 ;;
+    esac
+    case "${resolved}" in
+      "/"|"${REPO}"|"${REPO}"/*) cleanup_scratch_dirs "${created[@]}" "${resolved}"; return 1 ;;
+    esac
+    SCRATCH_OWNED["${resolved}"]=1
+    printf -v "${name}" '%s' "${resolved}"
+    created+=("${resolved}")
+    printf -v quoted '%q' "${resolved}"
+    cleanup+=" ${quoted}"
+  done
+  trap "${cleanup}" EXIT
+}
+
+if TMPDIR="${REPO}" scratch_dirs should_not_exist; then
+  echo "FAIL scratch      helper accepted the repository as its temporary root"
+  fail=1
+else
+  echo "OK   scratch      helper rejects the repository as its temporary root"
+fi
+
+_scratch_cleanup_probe() (
+  local d
+  scratch_dirs d || return 1
+  printf '%s\n' "${d}"
+)
+scratch_cleanup_path=$(_scratch_cleanup_probe)
+if [ -n "${scratch_cleanup_path}" ] && [ ! -e "${scratch_cleanup_path}" ]; then
+  echo "OK   scratch      helper removes only its recorded temporary root"
+else
+  echo "FAIL scratch      helper did not remove its recorded temporary root"
+  fail=1
+fi
 
 # assert_target <fixture-basename> <check-tag> <PASS|FAIL>
 # Runs `validate.sh --target tools/fixtures/<fixture>` and asserts the named
@@ -119,6 +199,17 @@ assert_target preflight_verdict_invalid_verdict.json               C12 FAIL
 assert_target audit_delta_neg_resolved_without_closure_evidence.json C12 FAIL
 assert_target audit_delta_neg_missing_transition_class.json        C12 FAIL
 assert_target audit_delta_neg_duplicate_id_across_buckets.json     C12 FAIL
+assert_target audit_delta_neg_bare_evidence_path.json              C12 FAIL
+assert_target engineering_finding_neg_bare_evidence_path.json      C12 FAIL
+assert_target ecosystem_membership_neg_semver_trailing_dot.json    C12 FAIL
+assert_target ecosystem_membership_neg_semver_empty_build.json     C12 FAIL
+assert_target ecosystem_membership_neg_semver_dot_suffix.json      C12 FAIL
+assert_target preflight_verdict_invalid_pass_blocking.json         C12 FAIL
+assert_target preflight_verdict_invalid_pass_with_exceptions_blocking.json C12 FAIL
+assert_target membership_result_neg_consistent_missing_pin.json    C12 FAIL
+assert_target membership_result_neg_consistent_null_pin.json       C12 FAIL
+assert_target reconciliation_plan_neg_fail_missing_cycles.json     C12 FAIL
+assert_target reconciliation_plan_neg_fail_nonempty_order.json     C12 FAIL
 
 # Positives: the targeted check MUST PASS (proves the negative's signal is
 # discriminating, not a check that fails on everything).
@@ -136,6 +227,7 @@ assert_target audit_delta_valid.json                               C12 PASS
 # (an entry copied into two lists, caught by the exactly-one-list code check)
 # negatives both FAIL -- proving both the schema and the code-level invariant bite.
 assert_target ecosystem_membership_valid.json                      C12 PASS
+assert_target ecosystem_membership_valid_semver_prerelease_build.json C12 PASS
 assert_target ecosystem_membership_neg_missing_list.json           C12 FAIL
 assert_target ecosystem_membership_neg_multilist.json              C12 FAIL
 
@@ -205,13 +297,12 @@ assert_rc "primitive   vlib_bare_ref_resolves pass" 0 vlib_bare_ref_resolves too
 assert_rc "primitive   vlib_bare_ref_resolves fail" 1 vlib_bare_ref_resolves tools/fixtures/bare_ref_fail.md tools/fixtures/enum_index.json
 
 # vlib_enumeration_complete (F-055, NDEBT-005a): the guard enumerates a
-# DIRECTORY, so its seeded omission is built in a scratch dir (mktemp + EXIT
-# trap -- Section 11 probe isolation), the same git-scratch pattern the two
-# primitives below use. A dir whose files are all enumerated by enum_index.json
+# DIRECTORY, so its seeded omission is built through scratch_dirs (Section 11
+# probe isolation), the same guarded pattern the two primitives below use. A
+# dir whose files are all enumerated by enum_index.json
 # passes; adding one on-disk file the index omits must fail.
 _enumeration_complete_scratch() (
-  local d; d=$(mktemp -d) || return 1
-  trap 'rm -rf "${d}"' EXIT
+  local d; scratch_dirs d || return 1
   mkdir -p "${d}/m1"
   : > "${d}/m1/00_alpha.md"
   : > "${d}/m1/01_beta.md"
@@ -258,10 +349,9 @@ _f055_real_tree
 # vlib_workflows_sha_pinned (F-058, C14): a scratch workflow dir with a
 # tag-pinned ref fails; a SHA-pinned ref (+ an exempt local ./ action) passes;
 # and this repo's real .github/workflows passes (all refs pinned). Scratch via
-# mktemp + trap (Section 11 probe isolation), like the git-scratch primitives.
+# scratch_dirs (Section 11 probe isolation), like the git-scratch primitives.
 _workflow_pins_scratch() (
-  local d; d=$(mktemp -d) || return 1
-  trap 'rm -rf -- "${d}"' EXIT
+  local d; scratch_dirs d || return 1
   mkdir -p "${d}/wf"
   printf 'jobs:\n  x:\n    steps:\n      - uses: actions/checkout@v4\n' > "${d}/wf/bad.yml"
   vlib_workflows_sha_pinned "${d}/wf" >/dev/null 2>&1 && return 1   # tag ref must fail
@@ -283,8 +373,7 @@ fi
 # Built in a scratch dir (Section 11 probe isolation), so no committed fixture is
 # needed and the fixture tally is unchanged.
 _incubating_promotion_scratch() (
-  local d; d=$(mktemp -d) || return 1
-  trap 'rm -rf -- "${d}"' EXIT
+  local d; scratch_dirs d || return 1
   printf '{ "schema_version": "1.0.0", "in_scope": [], "incubating": [ {"name": "demo"} ], "reference_archive": [], "out_of_scope": [] }\n' > "${d}/before.json"
   printf '{ "schema_version": "1.0.0", "in_scope": [ {"name": "demo"} ], "incubating": [], "reference_archive": [], "out_of_scope": [] }\n' > "${d}/after.json"
   printf '{ "schema_version": "1.0.0", "in_scope": [ {"name": "demo"} ], "incubating": [ {"name": "demo"} ], "reference_archive": [], "out_of_scope": [] }\n' > "${d}/both.json"
@@ -325,8 +414,7 @@ fi
 # vlib_profiles_cover_roles (F-058, C15): the real capability_profiles.md + AGF.md
 # pair passes; a scratch profiles doc omitting a profile identifier fails.
 _profiles_roles_scratch() (
-  local d; d=$(mktemp -d) || return 1
-  trap 'rm -rf -- "${d}"' EXIT
+  local d; scratch_dirs d || return 1
   printf 'orchestrator-primary planner-creative generator-deterministic validator-structural\n' > "${d}/prof.md"
   cp -- standard/AGF.md "${d}/agf.md"
   vlib_profiles_cover_roles "${d}/prof.md" "${d}/agf.md" >/dev/null 2>&1 && return 1   # missing profile must fail
@@ -378,8 +466,7 @@ test_version_increased() {
   fi
 }
 _version_increased_scratch() (
-  local d; d=$(mktemp -d) || return 1
-  trap 'rm -rf "${d}"' EXIT
+  local d; scratch_dirs d || return 1
   cd -- "${d}" || return 1
   git init -q . || return 1
   git config user.email self-test@nizam.local
@@ -408,8 +495,7 @@ test_scope_guard() {
   fi
 }
 _scope_guard_scratch() (
-  local d; d=$(mktemp -d) || return 1
-  trap 'rm -rf "${d}"' EXIT
+  local d; scratch_dirs d || return 1
   local allow=()
   local a
   while IFS= read -r a || [ -n "${a}" ]; do
@@ -496,15 +582,13 @@ fi
 # untracked-not-tolerated file FAILs (exit 1); the exact --tolerate-untracked
 # and the additive --tolerate-untracked-prefix each downgrade it to a pending
 # PASS_WITH_EXCEPTIONS (exit 2). Probe isolation per methodology/02 Sec 11: a
-# mktemp -d scratch repo, cleaned via a trap with rm -rf -- on the scratch dirs
+# scratch repo allocated and cleaned by scratch_dirs for exact temporary roots
 # only (never a real path). These are behavior probes, not fixtures, so they add
 # nothing to the completeness manifest.
 echo "== preflight CLI behavior probes (F-056) =="
 _preflight_cli_probes() (
   local sb out rc
-  sb=$(mktemp -d) || return 1
-  out=$(mktemp -d) || { rm -rf -- "${sb}"; return 1; }
-  trap 'rm -rf -- "${sb}" "${out}"' EXIT
+  scratch_dirs sb out || return 1
   git -C "${sb}" init -q
   git -C "${sb}" config user.email t@example.invalid
   git -C "${sb}" config user.name tester
@@ -538,9 +622,7 @@ _preflight_cli_probes() (
 # pre-065 hard FAIL(1) on missing references + the untracked .nizam/.
 _preflight_governance_root_probes() (
   local sb out rc
-  sb=$(mktemp -d) || return 1
-  out=$(mktemp -d) || { rm -rf -- "${sb}"; return 1; }
-  trap 'rm -rf -- "${sb}" "${out}"' EXIT
+  scratch_dirs sb out || return 1
   git -C "${sb}" init -q
   git -C "${sb}" config user.email t@example.invalid
   git -C "${sb}" config user.name tester
@@ -606,14 +688,13 @@ fi
 # a valid audit is ASSEMBLED (exit 0, findings.json + report.md written); a
 # resolved finding with no closure evidence is INVALID (exit 1, no artifact);
 # a FAIL preflight verdict is REFUSED at the Sec 2 entry gate (exit 2). Inputs
-# are built inline in a mktemp -d scratch dir, cleaned via an EXIT-trap rm -rf
-# on the scratch dir only. Behavior probes, not fixtures -- they add nothing to
+# are built inline in an exact temporary root managed by scratch_dirs. Behavior
+# probes, not fixtures -- they add nothing to
 # the completeness manifest.
 echo "== ecosystem_audit CLI behavior probes =="
 _audit_cli_probes() (
   local d rc
-  d=$(mktemp -d) || return 1
-  trap 'rm -rf -- "${d}"' EXIT
+  scratch_dirs d || return 1
   printf '{"verdict":"PASS","execution_id":"e1","generated_at":"t"}' > "${d}/preflight.json"
   printf '{"execution_id":"e1"}' > "${d}/baseline.json"
   printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/e1/x.txt","revision":"abc123"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findings.json"
@@ -650,12 +731,14 @@ fi
 echo "== compare + freshness CLI behavior probes =="
 _compare_cli_probes() (
   local d rc
-  d=$(mktemp -d) || return 1
-  trap 'rm -rf -- "${d}"' EXIT
+  scratch_dirs d || return 1
   printf '{"execution_id":"eA","captured_at":"2026-07-01T00:00:00Z","repository_references":[{"revision":"aaa","timestamp":"t","repository":"r"}]}' > "${d}/baseA.json"
   printf '{"execution_id":"eB","captured_at":"2026-07-20T00:00:00Z","repository_references":[{"revision":"bbb","timestamp":"t","repository":"r"}]}' > "${d}/baseB.json"
   printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eA/x.txt","revision":"aaa"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findA.json"
   printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eB/x.txt","revision":"bbb"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findB.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eA/resolved.txt","revision":"aaa"}],"impact":"i","owner":"o","status":"resolved","closure_criteria":"c","closure_evidence":[{"path":".agent/evidence/eA/closure.txt","revision":"aaa"}]}]' > "${d}/findResolved.json"
+  printf '[{"id":"F-persist","status":"open","evidence":[{"path":".agent/evidence/eA/persist.txt","revision":"aaa"}]},{"id":"F-stale","status":"open","evidence":[{"path":".agent/evidence/eA/stale.txt","revision":"aaa"}]},{"id":"F-resolved","status":"open","evidence":[{"path":".agent/evidence/eA/resolved.txt","revision":"aaa"}]},{"id":"F-pre","status":"resolved","closure_evidence":[{"path":".agent/evidence/eA/pre-closure.txt","revision":"aaa"}]}]' > "${d}/findManyA.json"
+  printf '[{"id":"F-persist","status":"open","evidence":[{"path":".agent/evidence/eB/persist.txt","revision":"bbb"}]},{"id":"F-stale","status":"open","evidence":[{"path":".agent/evidence/eA/stale.txt","revision":"aaa"}]},{"id":"F-resolved","status":"resolved","closure_evidence":[{"path":".agent/evidence/eB/resolved-closure.txt","revision":"bbb"}]},{"id":"F-new","status":"open","evidence":[{"path":".agent/evidence/eB/new.txt","revision":"bbb"}]}]' > "${d}/findManyB.json"
   printf '[]' > "${d}/findEmpty.json"
   # (a) a valid comparison -> delta emitted (exit 0), delta.json present
   python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/out" --earlier-findings "${d}/findA.json" --later-findings "${d}/findB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
@@ -670,10 +753,51 @@ _compare_cli_probes() (
   # (d) freshness: evidence at the anchor revision bbb -> FRESH (exit 0)
   python3 tools/validate_evidence_freshness.py --findings "${d}/findB.json" --anchor-revision bbb --anchor-timestamp "2026-07-20T00:00:00Z" >/dev/null 2>&1
   rc=$?; [ "${rc}" -eq 0 ] || { echo "  fresh evidence: expected exit 0, got ${rc}"; return 1; }
+  # (e) an earlier-resolved finding that is open again is REOPENED, regardless
+  #     of whether its later evidence is fresh; it is never persisting/stale.
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/o3" --earlier-findings "${d}/findResolved.json" --later-findings "${d}/findB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  resolved-to-open: expected compare exit 0, got ${rc}"; return 1; }
+  python3 - "${d}/o3/delta.json" <<'PY' || { echo "  resolved-to-open: expected reopened only, with later evidence"; return 1; }
+import json
+import sys
+
+delta = json.load(open(sys.argv[1], encoding="utf-8"))
+transitions = delta["transitions"]
+reopened = transitions["reopened"]
+if [item.get("id") for item in reopened] != ["F1"]:
+    raise SystemExit(1)
+if reopened[0].get("evidence") != [{"path": ".agent/evidence/eB/x.txt", "revision": "bbb"}]:
+    raise SystemExit(1)
+if any(item.get("id") == "F1" for bucket in ("persisting", "stale") for item in transitions[bucket]):
+    raise SystemExit(1)
+PY
+  # (f) regression corpus: every non-reopened class plus the pre-window list
+  #     remains stable while the resolved-to-open branch changes above.
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/o4" --earlier-findings "${d}/findManyA.json" --later-findings "${d}/findManyB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  full taxonomy: expected compare exit 0, got ${rc}"; return 1; }
+  python3 - "${d}/o4/delta.json" <<'PY' || { echo "  full taxonomy: new/resolved/persisting/stale/pre-window regression"; return 1; }
+import json
+import sys
+
+delta = json.load(open(sys.argv[1], encoding="utf-8"))
+transitions = delta["transitions"]
+expected = {
+    "new": ["F-new"],
+    "resolved": ["F-resolved"],
+    "reopened": [],
+    "persisting": ["F-persist"],
+    "stale": ["F-stale"],
+}
+for bucket, ids in expected.items():
+    if [item["id"] for item in transitions[bucket]] != ids:
+        raise SystemExit(1)
+if [item["id"] for item in delta.get("pre_window_resolved", [])] != ["F-pre"]:
+    raise SystemExit(1)
+PY
   return 0
 )
 if _compare_cli_probes; then
-  echo "OK   compare     valid -> delta(0); gone-without-closure -> INVALID(1); freshness stale(1)/fresh(0)"
+  echo "OK   compare     valid -> delta(0); gone-without-closure -> INVALID(1); freshness stale(1)/fresh(0); resolved-to-open -> reopened"
 else
   echo "FAIL compare     a CLI behavior probe did not hold"
   fail=1
@@ -693,8 +817,7 @@ fi
 echo "== ecosystem_reconcile CLI behavior probes =="
 _reconcile_cli_probes() (
   local d rc
-  d=$(mktemp -d) || return 1
-  trap 'rm -rf -- "${d}"' EXIT
+  scratch_dirs d || return 1
   printf '{"schema_version":"1.0.0","membership_registry":"m.json","ecosystem_verdict":"PASS","framework_pin_consistent":true,"framework_pin":"abc","member_count":2,"members":[{"name":"member-alpha","status":"acceptable"},{"name":"member-beta","status":"acceptable"}]}' > "${d}/agg.json"
   # (a) an acyclic packet set -> PASS plan (exit 0), a schema-valid plan.json
   printf '{"packets":[{"id":"p-alpha","repo":"member-alpha","closes_findings":["F-1"],"depends_on":["p-beta"]},{"id":"p-beta","repo":"member-beta","closes_findings":["F-2"],"depends_on":[]}]}' > "${d}/pk_ok.json"

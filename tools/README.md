@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.6.0
+version: 0.7.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.7.0"
+    date: "2026-08-15"
+    summary: "Phase-012 feature 089 (issue #52): synchronize C12 documentation with all eight ecosystem fixture families currently routed by the validator."
   - version: "0.6.0"
     date: "2026-07-20"
     summary: "Count sync for the v0.8.0 release (phase 006 feature 059): the Compliance Coverage section now documents fifteen checks (C1–C15, SUMMARY: 15 passed) with new rows for C14 (workflow SHA-pinning) and C15 (capability-profile ↔ AGF-role correspondence), both added by feature 058."
@@ -95,7 +98,7 @@ full default sweep reports `SUMMARY: 15 passed, 0 failed`:
 | C9 | Repo-wide path-resolution | Every concrete repo-relative file path named in a shipped doc resolves on disk (placeholder/illustrative paths documented-exempt). |
 | C10 | Single-source-of-truth consistency | Payload-set enumeration, bootstrapped-consumer discovery order, and the framework-version anchor stay consistent across every shipped doc. |
 | C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present, skip-if-absent for a fresh consumer. |
-| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving the fixtures are load-bearing rather than dormant. A `--target` invocation against one of these fixtures now routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). |
+| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding,audit_delta,ecosystem_membership,membership_result,reconciliation_plan,release_train_manifest}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving all eight routed families are load-bearing rather than dormant (`membership_result` fixtures target `ecosystem_membership_result.schema.json`). A `--target` invocation against one of these fixtures routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). |
 | C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. |
 | C14 | Workflow SHA-pinning | Every external (third-party) `uses:` reference in `.github/workflows/` is pinned to a 40-hex commit SHA, not a floating tag or branch; local `./`/`../` actions are exempt (they ship in-repo and need no pin). Feature 058 — mechanizes `standard/provenance_policy.md`'s SHA-pinned-Actions requirement; default sweep only. |
 | C15 | Capability-profile ↔ AGF-role coverage | All five capability-profile identifiers in `standard/capability_profiles.md` are present and each one's corresponding role is defined in `standard/AGF.md` — a 5↔5 coverage check tying the two docs together. It guards against a dropped or renamed profile/role; it does not parse per-profile assignment prose, so a swapped mapping is outside its scope. Feature 058 — mechanizes the five-profile ↔ five-role correspondence; default sweep only. |

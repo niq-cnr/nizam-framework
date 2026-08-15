@@ -2,10 +2,13 @@
 id: nizam-tool-driven-state
 title: "Tool-Driven State Management (DD-1 + DD-3)"
 description: "The query-not-bulk-read discipline for locating governance files via the root capability index, evidence externalisation to .agent/evidence/, and the durable-state artifact families every run maintains."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: methodology/04_tool_driven_state.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-08-15"
+    summary: "Phase-012 issue-52 correction: the durable handoff chain now explicitly includes Orchestrator intake/routing and Evaluator-to-Orchestrator completion, aligning it with AGF's five-role model."
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "Add the Evidence Capture Convention and the Clock-Read Timestamps rule (Section 5)."
@@ -106,9 +109,10 @@ subagents MUST NEVER report a material result via chat prose alone
 | **QA verdicts** | `.agent/qa/NNN.json` | The Evaluator's independently re-derived pass/fail verdict, per-check results, the mandatory adversarial spot-check, and required fixes on failure. `schema/qa_verdict.schema.json`. |
 | **Evidence** | `.agent/evidence/*.txt` | Captured terminal output and diff proof, one file per verification unit, referenced by path from the families above (Section 3). |
 
-A role handing off to the next role in the pipeline (Planner to Generator,
-Generator to Validator, Validator to Evaluator) MUST have its output present in
-the correct family above before considering its turn complete. A result that
+A role handing off to the next role in the five-role pipeline (Orchestrator to
+Planner, Planner to Generator, Generator to Validator, Validator to Evaluator,
+or Evaluator back to Orchestrator for lifecycle advancement) MUST have its
+output present in the correct family above before considering its turn complete. A result that
 exists only as a chat message and was never written to its canonical location
 is treated as not having happened by every downstream role.
 

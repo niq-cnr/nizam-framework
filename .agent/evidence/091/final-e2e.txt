@@ -1,0 +1,12 @@
+COMMAND: set -o pipefail; bash tools/e2e_bootstrap_test.sh 2>&1 | grep -E '^(assert_.*: OK|e2e_bootstrap_test.sh: PASS)'
+assert_payload_present: OK -- standard/, templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json, provenance.json all present under /home/cnross/.tmp/tmp.s1L4e7Knnf/.nizam
+assert_nizam_index_valid: OK -- NIZAM.json parses; 63 indexed path(s) resolve under /home/cnross/.tmp/tmp.s1L4e7Knnf/.nizam.
+assert_discovery_path: OK -- /home/cnross/.tmp/tmp.s1L4e7Knnf/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
+assert_provenance_sha_pin: OK -- resolved_sha recorded (92c6f18f84c775810b245babf8b2d32b9a446b99) == tag's true commit; --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected).
+assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent (both invocation forms green with identical [C*] verdicts under /home/cnross/.tmp/tmp.s1L4e7Knnf/.nizam)
+assert_preflight_governance_root: OK -- ecosystem_preflight.py discovered the injected .nizam/ governance-root (exit 2: PASS_WITH_EXCEPTIONS; the injected payload is an expected exception, required references resolve under .nizam/).
+assert_genesis: OK -- genesis stood up a new project from nothing (scaffold present; provenance resolved_sha=92c6f18f84c775810b245babf8b2d32b9a446b99); Preflight accepts it (exit 2: PASS_WITH_EXCEPTIONS); a non-empty --project-root is refused.
+assert_multirepo: OK -- a scratch 2-member ecosystem (both genesis'd from nothing at one pin) iterates + aggregates to a schema-valid ecosystem-level result (ecosystem_verdict PASS, framework_pin_consistent true, member_count 2).
+assert_stage4: OK -- the aggregate -> reconciliation -> release-train chain runs across the 2-member set: a PASS plan + a PASS train manifest (both C12-valid), and an ungated admission is correctly refused a PASS (FAIL).
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1786820722-537926, target /home/cnross/.tmp/tmp.s1L4e7Knnf/.nizam).
+EXIT: 0

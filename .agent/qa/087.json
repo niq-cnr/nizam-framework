@@ -1,0 +1,27 @@
+{
+  "feature_id": "087",
+  "qa_pass": true,
+  "checks_run": 5,
+  "checks_passed": 5,
+  "adversarial": {
+    "performed": true,
+    "description": "The resolved-to-open case asserts the exact reopened bucket, absence from persisting/stale, and byte-for-structure preservation of the later evidence. A separate corpus verifies new, resolved, persisting, stale, and pre-window-resolved classifications. The scratch helper is exercised by all eleven probe subshells, rejects a repository TMPDIR before allocation, and proves its recorded temporary root is absent after the EXIT trap.",
+    "result": "PASS — compare taxonomy and cleanup-scope guards are discriminating; self-test 77/77 and validator 15/15 pass.",
+    "evidence": ".agent/evidence/087/tool-green.txt"
+  },
+  "evidence_files": [".agent/evidence/087/tool-green.txt"],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "acceptance_reconciliation": {
+    "classification": "earlier-resolved/later-open emits only reopened and carries the later evidence",
+    "regression": "new/resolved/persisting/stale/pre-window corpus plus existing CLI probes all pass",
+    "scratch_safety": "one scratch_dirs helper owns allocation and exact cleanup; repository roots are rejected; repeated mktemp/trap blocks are absent",
+    "syntax": "Python compile and Bash parse pass"
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 087 APPROVED. The compare bug is fixed with reopened precedence before freshness, later evidence is retained, every other transition class remains stable, and fixture scratch allocation/cleanup is centralized behind an ownership-checked exact-root helper. Full self-test and validator are green."
+  }
+}

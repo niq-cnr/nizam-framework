@@ -1,0 +1,107 @@
+{
+  "phase": "012-v1-consumer-safety",
+  "spec_version": "1.1.0",
+  "original_estimate_lines": 2400,
+  "planning_note": "DAG-validated acyclic: root {085}; 086/087/088 depend on 085; 089 depends on 086/087/088; 090 depends on 086/087/088/089; 091 depends on 090. Full GitHub issue #52 scope, clean-break v1.0.0 migration, isolated-worktree failure recovery. Authorized 2026-08-15 by operator: 'approved. please proceed.'.",
+  "features": [
+    {
+      "id": "085",
+      "name": "Issue #52 intake matrix and failing regression suite",
+      "description": "Reproduce every issue #52 finding against v0.9.0/current main, create discriminating schema and CLI regressions before implementation, and record the finding-to-test matrix. Tests must fail for the intended defect rather than for unrelated setup.",
+      "status": "complete",
+      "dependencies": [],
+      "acceptance_tests": [
+        "python3 -c \"import json,jsonschema; jsonschema.validate(json.load(open('.agent/feature_list_012.json')), json.load(open('schema/feature_list.schema.json')))\"",
+        "python3 -c \"import json; f=json.load(open('.agent/feature_list_012.json'))['features']; ids={x['id'] for x in f}; assert len(ids)==len(f); assert all(set(x['dependencies']) <= ids for x in f)\"",
+        "The new schema and compare regressions are demonstrated failing against the pre-implementation base with their tool exit codes captured under .agent/evidence/085-*.",
+        "The issue matrix covers every schema, tool, methodology, ecosystem, consumer-copy, and documentation bullet from issue #52."
+      ],
+      "estimated_lines": 360
+    },
+    {
+      "id": "086",
+      "name": "Breaking schema invariants and migration examples",
+      "description": "Tighten evidence paths, SemVer, preflight verdicts, membership pins, and failed reconciliation plans; add positive/negative fixtures and v1 migration examples. This is the breaking-contract tranche.",
+      "status": "complete",
+      "dependencies": ["085"],
+      "acceptance_tests": [
+        "bash tools/fixtures_self_test.sh exits 0 and the new schema negatives fail only their intended C12 invariant.",
+        "PASS and PASS_WITH_EXCEPTIONS reject blocking_findings while FAIL requires a non-empty blocking_findings array.",
+        "Pin-consistent membership results require a non-empty framework_pin; failed reconciliation plans require cycle_findings and an empty order.",
+        "The v1 migration guide contains a before/after example for every newly rejected v0.9.0 shape."
+      ],
+      "estimated_lines": 430
+    },
+    {
+      "id": "087",
+      "name": "Comparison correctness and fixture-harness cleanup",
+      "description": "Classify earlier-resolved/later-open findings as reopened, preserve the later evidence, apply the else-to-elif cleanup, and centralize repeated scratch-directory setup without broadening cleanup scope.",
+      "status": "complete",
+      "dependencies": ["085"],
+      "acceptance_tests": [
+        "A compare CLI probe proves resolved-to-open is emitted only in reopened, not persisting or stale.",
+        "Existing new/resolved/persisting/stale/pre-window comparison probes remain green.",
+        "All scratch cleanup targets are derived from helper-created temporary roots and no real repository path is accepted.",
+        "python3 -m py_compile tools/compare_ecosystem_baselines.py exits 0 and bash -n tools/fixtures_self_test.sh exits 0."
+      ],
+      "estimated_lines": 270
+    },
+    {
+      "id": "088",
+      "name": "Governance and methodology safety reconciliation",
+      "description": "Adopt isolated worktree recovery, repair the phase/run-state model, align breaker/eval/release/planning/evidence rules, propagate five roles, and restore Orchestrator routing boundaries across every issue #52 methodology surface.",
+      "status": "complete",
+      "dependencies": ["085"],
+      "acceptance_tests": [
+        "No active protocol prescribes git reset --hard, repo-wide git clean, or a cross-file atomic write.",
+        "The breaker uses isolated attempt worktrees, a three-attempt limit, canonical phase state, derived-state repair, and the correct escalation-step reference.",
+        "All role enumerations include Orchestrator plus Planner/Generator/Validator/Evaluator, and Orchestrator routes but does not author contract deltas.",
+        "Planning excludes the current feature from its rolling baseline; QA completion requires external evidence; release changelog/version preparation is validator-gated; eval failure and repinning follow the contract/breaker loop."
+      ],
+      "estimated_lines": 520
+    },
+    {
+      "id": "089",
+      "name": "Ecosystem, inheritance, and tool-documentation truth",
+      "description": "Resolve stale stage status, genesis readiness, finalized preflight artifacts, in-scope plan invariants, baseline/compare summaries, consumer-copy claims, GIP reconciliation ownership, and C12 family enumeration.",
+      "status": "complete",
+      "dependencies": ["086", "087", "088"],
+      "acceptance_tests": [
+        "Ecosystem docs mark stages 04/05 shipped, qualify genesis as scaffold-only until enrollment/input/preflight, and scope preflight.json to finalized runs.",
+        "Dependency reconciliation defines an in_scope target as a PASS invariant; Baseline requires revision and timestamp; Compare names persisting.",
+        "Consumer-copied standards describe validator capabilities rather than per-consumer execution guarantees, and GIP assigns root/CI reconciliation to the consumer process.",
+        "tools/README.md lists all C12 schema families and all edited documents pass frontmatter/version checks."
+      ],
+      "estimated_lines": 350
+    },
+    {
+      "id": "090",
+      "name": "Integrated validation and disposable consumer migration rehearsal",
+      "description": "Run the complete validator/self-test/e2e surface, validate syntax, rehearse v0.9.0-to-v1.0.0 re-bootstrap in a disposable consumer, and prove both conforming and intentionally incompatible legacy artifacts behave as documented.",
+      "status": "complete",
+      "dependencies": ["086", "087", "088", "089"],
+      "acceptance_tests": [
+        "bash tools/validate.sh, bash tools/fixtures_self_test.sh, and bash tools/e2e_bootstrap_test.sh each exit 0 with captured output.",
+        "All tools/*.py compile and all shipped shell scripts pass bash syntax checks.",
+        "A disposable conforming v0.9.0 consumer re-bootstraps to the local v1 candidate and verifies successfully.",
+        "Each intentionally incompatible legacy artifact fails the matching v1 invariant and is repairable using the migration guide."
+      ],
+      "estimated_lines": 260
+    },
+    {
+      "id": "091",
+      "name": "v1.0.0 release preparation — H-FRAMEWORK-RELEASE",
+      "description": "Prepare the breaking v1.0.0 release metadata, changelog, migration links, version anchors, readiness evidence, and PR mapping. The pipeline does not create or push the tag; that remains the final operator gate.",
+      "status": "complete",
+      "dependencies": ["090"],
+      "operator_gate": true,
+      "acceptance_tests": [
+        "Framework version, CONTEXT, guide anchors, README pin, changelog heading, and migration guide all identify v1.0.0 consistently.",
+        "The release readiness record maps every issue #52 bullet to evidence and reports no unresolved blocking automated-review finding.",
+        "H-FRAMEWORK-RELEASE remains explicitly pending until the operator approves and pushes the annotated v1.0.0 tag.",
+        "The final pre-tag validator, self-test, e2e, and consumer rehearsal all exit 0."
+      ],
+      "estimated_lines": 210
+    }
+  ]
+}

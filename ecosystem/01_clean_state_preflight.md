@@ -2,10 +2,13 @@
 id: nizam-ecosystem-clean-state-preflight
 title: "Clean-State Preflight Protocol"
 description: "The reusable preflight protocol that gates entry into the ecosystem engineering cycle: a machine-readable verdict of exactly one of PASS, PASS_WITH_EXCEPTIONS, or FAIL, explicit blocking rules, and the operator-exception rule PASS_WITH_EXCEPTIONS carries before execution continues."
-version: 0.1.3
+version: 0.1.4
 status: active
 authoritative_source: ecosystem/01_clean_state_preflight.md
 change_log:
+  - version: "0.1.4"
+    date: "2026-08-15"
+    summary: "Phase-012 feature 089 (issue #52): qualify the artifact rule as applying to every finalized preflight run, preserving the existing pending-decision behavior that emits preflight.pending.json and withholds preflight.json."
   - version: "0.1.3"
     date: "2026-07-20"
     summary: "Tier-0 doc-truth: Section 7's References entry for schema/preflight_verdict.schema.json retires the stale parenthetical 'added by a later feature in this phase; not yet present at the time this protocol was authored' -- the schema shipped in feature 038 and has been present under schema/ since. No semantic change; the reference now reads as the other sibling protocols' schema references do."
@@ -136,7 +139,7 @@ against which findings.
 
 ## 6. Verdict Artifact
 
-Every preflight run MUST emit a schema-valid, machine-readable verdict
+Every finalized preflight run MUST emit a schema-valid, machine-readable verdict
 artifact at:
 
 ```text

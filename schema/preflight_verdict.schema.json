@@ -91,6 +91,16 @@
           }
         }
       }
+    },
+    {
+      "description": "A successful verdict cannot carry blocking_findings. PASS and PASS_WITH_EXCEPTIONS certify that no blocking condition remains; even an empty property is rejected so the artifact has one unambiguous location for failure-only state.",
+      "if": {
+        "properties": { "verdict": { "enum": ["PASS", "PASS_WITH_EXCEPTIONS"] } },
+        "required": ["verdict"]
+      },
+      "then": {
+        "not": { "required": ["blocking_findings"] }
+      }
     }
   ]
 }

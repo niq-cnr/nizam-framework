@@ -7,6 +7,56 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-08-15
+
+**Major release** (`methodology/06_release_train.md` §3.1): phase 012 resolves the
+complete consumer-safety audit in issue #52. This release deliberately tightens
+previously shipped schema contracts, so consumers must re-bootstrap from the immutable
+`v1.0.0` tag and repair consumer-owned artifacts with
+[`docs/migration-v1.0.0.md`](docs/migration-v1.0.0.md). There is no compatibility mode.
+
+Release preparation is complete, but publication remains gated by
+`H-FRAMEWORK-RELEASE`; the pipeline does not create or push the tag.
+
+### Breaking
+
+- **v1.0.0 schema invariant repair (phase 012, feature 086; issue #52).** Evidence
+  paths now name an artifact below `.agent/evidence/`; membership registry versions
+  use canonical SemVer 2.0.0; successful preflight verdicts reject
+  `blocking_findings`; pin-consistent membership results require a non-empty common
+  `framework_pin`; and failed reconciliation plans require non-empty
+  `cycle_findings` with an empty `order`. These intentionally narrow v0.9.0
+  contracts and therefore require the clean-break steps in
+  `docs/migration-v1.0.0.md`.
+
+### Fixed
+
+- **Compare reopened classification (phase 012, feature 087; issue #52).** A
+  finding that was resolved in the earlier audit and is open again in the later
+  audit is now emitted only as `reopened`, with its later evidence preserved,
+  rather than being misrouted to `persisting` or `stale`.
+
+### Changed
+
+- **Consumer-facing protocol truth (phase 012, feature 089; issue #52).** Genesis
+  is explicitly scaffold-and-inject automation, with consumer decisions, registry
+  enrollment, and Preflight/Baseline still required; ecosystem lifecycle summaries,
+  reconciliation membership invariants, reopened semantics, validator enforcement
+  claims, brownfield responsibility, and all eight C12 fixture families now match the
+  shipped schemas and tools.
+- **Fixture scratch isolation (phase 012, feature 087; issue #52).** The fixture
+  harness now creates and cleans exact temporary roots through one guarded helper;
+  all eleven scratch probes reject repository paths and retain their existing
+  behavior.
+- **Methodology safety reconciliation (phase 012, feature 088; issue #52).**
+  Retry attempts now run in isolated worktrees/snapshots and remove only the
+  exact failed attempt root after evidence capture; canonical phase state is
+  written before idempotently repaired derived run state. The five-role model,
+  prior-only scope baseline, evidence-before-completion gate, release-preparation
+  validation, three-attempt eval behavior, gated fallback repinning, and
+  Orchestrator routing/authorship boundary are now consistent across the shipped
+  methodology.
+
 ## [0.9.0] - 2026-07-22
 
 **Minor release** (`methodology/06_release_train.md` §3.2): the first release since

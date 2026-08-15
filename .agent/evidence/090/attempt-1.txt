@@ -1,0 +1,9 @@
+COMMAND: bash -n .agent/evidence/090/rehearse_migration.sh && bash .agent/evidence/090/rehearse_migration.sh
+ATTEMPT: 1 of 3
+bootstrap.sh: install complete. Governance payload version 0.9.0 (tag v0.9.0) is now at '<owned-scratch-root>/consumer/.nizam'.
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+KeyError: 'governance_tag'
+EXIT: 1
+DIAGNOSIS: The rehearsal asserted a nonexistent provenance field. bootstrap.sh and the shipped provenance artifact use the field `tag`.
+RECOVERY: The ownership-checked EXIT trap removed only the exact `nizam-v1-migration.*` scratch root. The shared worktree was not reset or cleaned.
