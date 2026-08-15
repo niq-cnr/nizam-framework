@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.32.0
+version: 0.33.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.33.0"
+    date: "2026-08-15"
+    summary: "Phase 012 activated as the v1.0.0 Consumer-Safety Remediation on operator authorization ('approved. please proceed.'). Full GitHub issue #52 scope: breaking schema invariant repairs, comparison correctness, isolated-worktree circuit-breaker recovery, five-role/methodology reconciliation, ecosystem and consumer-copy truth, clean-break migration guidance, integrated rehearsal, and human-gated v1.0.0 preparation (features 085-091, estimate 2400). The confirmed Critical consumer-safety intake supersedes the prior phase-012 candidate; its real non-scratch pilot + lifecycle 06/08 scope rolls forward unchanged."
   - version: "0.32.0"
     date: "2026-07-22"
     summary: "Post-release refresh: v0.9.0 RELEASED (H-FRAMEWORK-RELEASE executed) -- the operator pushed the annotated tag v0.9.0 at merge commit 5b19b85 (PR #50) after the recorded readiness sign-off, and release.yml auto-published the GitHub Release page from the [0.9.0] CHANGELOG section. Current Position rolled: 'Latest released tag' v0.8.0 -> v0.9.0 (with v0.8.0 as prior); the 'Release in preparation' entry becomes the released record. NDEBT-029 (audit/compare not in a released tag) moved Open -> Resolved (DEBT.md v0.37.0) -- the tag now carries the whole 0-n loop in its injected .nizam/tools/, so the open-debt summary drops to two Low rows (NDEBT-026, NDEBT-034). The standing real, non-scratch multi-repo pilot at the released tag is now runnable -- the production-maturity criterion this release unblocks. Also updated operator_gates.md (H-FRAMEWORK-RELEASE executed v0.9.0) + run_state (release_executed) + the readiness checklist items 7-8."
@@ -105,6 +108,27 @@ change_log:
 ---
 
 # Forward Roadmap
+
+## Plan of Record (2026-08-15) — Phase 012: v1.0.0 Consumer-Safety Remediation — **ACTIVE**
+
+Phase `012-v1-consumer-safety` is active on operator authorization **"approved. please
+proceed."** (`H-PHASE-012`). The plan resolves the complete GitHub issue #52 batch raised by a
+real v0.9.0 consumer adoption. Confirmed Critical/major findings make this an interrupting safety
+phase: destructive shared-tree breaker cleanup, impossible multi-file atomicity, successful
+preflight verdicts accepting blocking findings, and incorrect reopened-finding classification.
+
+The release target is **v1.0.0**, not v0.9.1, because the framework's own release protocol treats
+any schema tightening as breaking. The operator selected a clean break with a migration guide and
+isolated worktrees as the recovery model. The feature DAG is `085` intake/failing regressions →
+parallel `086` schemas, `087` tools, `088` methodology → `089` documentation truth → `090`
+integrated consumer rehearsal → `091` release preparation. `H-FRAMEWORK-RELEASE` remains a final
+human gate; the pipeline never self-tags.
+
+The prior phase-012 candidate scope — a real non-scratch multi-repo pilot and lifecycle stages
+`06`/`08` with `H-CONSOLIDATION`/`H-GA` — is not cancelled. It rolls forward unchanged to the next
+planning cycle after the consumer-safety release. Bulk consumer upgrades likewise remain separate
+release trains; Phase 012 validates the upgrade path in a disposable consumer but changes only the
+framework.
 
 ## Plan of Record (2026-07-22) — Phase 011: 0–n Project Spectrum, Stage 4 — n-Coordination Protocols (Dependency Reconciliation & Release-Train Coordination) — **COMPLETE 2026-07-22**
 
@@ -463,8 +487,15 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-07-22)
+## Current Position (2026-08-15)
 
+- **Phase 012 is ACTIVE:** v1.0.0 Consumer-Safety Remediation, features 085–091, resolving the
+  complete issue #52 batch from real v0.9.0 consumer adoption (`NDEBT-036`, Critical). The operator
+  authorized activation with "approved. please proceed." on 2026-08-15. The clean-break major
+  release repairs schema invariants, comparison classification, destructive recovery guidance,
+  five-role/methodology drift, and consumer documentation, then rehearses the migration before the
+  final human release gate. The previous phase-012 candidate (real non-scratch pilot + lifecycle
+  stages 06/08) rolls forward unchanged.
 - Phases 001–011 are complete. **Phase 011 (0–n Project Spectrum, Stage 4: n-Coordination
   Protocols, features 080–084) is COMPLETE** (2026-07-22) — **so NIP-0002's staged plan is now
   complete**: the coordination layer is first-class and mechanized. `ecosystem/04` is the Plan stage
@@ -478,8 +509,8 @@ successor, leaving open debt deferred to unscoped "future phases").
   → PASS plan → PASS train (all C12-valid) + both negatives enforced (cyclic → FAIL, ungated → FAIL) —
   with no workaround (084, evidence `.agent/evidence/pilot-084/`; `NDEBT-035` resolved). A real,
   non-scratch multi-repo pilot at a released tag stays outstanding for production maturity
-  (`NDEBT-029`); the release cut carrying the whole 0–n loop, that real pilot, and the remaining
-  `06`/`08` Repeat/GA protocols are phase-012 candidate scope. **Phase 010 (0–n Project Spectrum,
+  (`NDEBT-029`, resolved by v0.9.0); the real pilot and remaining `06`/`08` Repeat/GA protocols
+  are deferred beyond the interrupting phase-012 safety work. **Phase 010 (0–n Project Spectrum,
   Stage 3: The n-case — Multi-Repo Tooling, features 075–079) is COMPLETE** (2026-07-22): the n-case is now first-class
   and mechanized — `scope_definition_patterns.md` is a required, schema-validated membership
   registry that sets `n` (075, `schema/ecosystem_membership.schema.json` + `validate.sh` C12),
