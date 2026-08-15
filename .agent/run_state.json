@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "012-v1-consumer-safety",
-  "current_feature": "088",
+  "current_feature": "089",
   "status": "in_progress",
-  "updated_at": "2026-08-15T18:29:40Z",
+  "updated_at": "2026-08-15T18:37:56Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1103,6 +1103,12 @@
       "event": "feature_complete",
       "feature": "087",
       "detail": "Feature 087 COMPLETE: compare_ecosystem_baselines.py now tests earlier-resolved/later-open before freshness, emits the finding only under reopened, and preserves later evidence. The CLI harness also verifies new/resolved/persisting/stale/pre-window classifications. fixtures_self_test.sh now routes all eleven scratch probe subshells through one guarded scratch_dirs helper with ownership-checked exact cleanup; repository roots are rejected and post-EXIT removal is proven. Python/Bash syntax green, self-test 77/77, validator 15/15. QA approved; advancing to 088."
+    },
+    {
+      "at": "2026-08-15T18:37:56Z",
+      "event": "feature_complete",
+      "feature": "088",
+      "detail": "Feature 088 COMPLETE: repaired every issue-52 role/methodology finding. The five-role model includes Orchestrator in skill, handoff, and eval surfaces; breaker attempts run in isolated worktrees/snapshots and clean only exact attempt-owned roots after evidence; docs/planning/phase_012.yaml is canonical lifecycle state and run_state is idempotently repaired derived state; escalation points to step 4. Scope baselines exclude the current feature, completion requires external evidence, release preparation passes normal loops, degraded evals consume the three-attempt breaker, durable repinning is gated, and Orchestrator routes rather than authors upstream deltas. Static checker green, validator 15/15, self-test 77/77. Advancing to 089."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1276,7 +1282,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2400,
-    "total_lines_changed": 1037,
+    "total_lines_changed": 1542,
     "per_feature": [
       {
         "id": "085",
@@ -1295,9 +1301,16 @@
       {
         "id": "087",
         "estimated": 270,
-        "actual": 300,
+        "actual": 295,
         "flag": "ON",
-        "note": "Compare reopened-precedence fix + later-evidence preservation; full taxonomy regression corpus; centralized scratch_dirs allocation/cleanup across eleven probes with ownership and repository-root guards; CHANGELOG, QA, and evidence. Pre-close measured churn was 241 lines; close-out accounting estimates 300, near plan."
+        "note": "AH-3 corrected to the landed commit's git numstat: 295 lines (231 insertions + 64 deletions). Compare reopened precedence + evidence preservation, full taxonomy corpus, centralized guarded scratch allocation/cleanup, CHANGELOG, QA, and evidence. Near the 270 estimate."
+      },
+      {
+        "id": "088",
+        "estimated": 520,
+        "actual": 510,
+        "flag": "ON",
+        "note": "Eight methodology docs + module index + skill role correction, canonical phase-012 YAML/manifest/spec linkage, static verifier, command/output/EXIT evidence, CHANGELOG and QA. Pre-close measured churn 439; close-out estimate 510, on plan."
       }
     ]
   },

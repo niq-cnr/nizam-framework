@@ -6,11 +6,14 @@ tags: [spec, consumer-safety, remediation, breaking-release, phase-012]
 status: active
 last_audited: "2026-08-15"
 authoritative_source: NA
-version: 1.0.0
-spec_version: "1.0.0"
+version: 1.1.0
+spec_version: "1.1.0"
 created_at: "2026-08-15T18:03:31Z"
-updated_at: "2026-08-15T18:03:31Z"
+updated_at: "2026-08-15T18:35:11Z"
 change_log:
+  - version: "1.1.0"
+    date: "2026-08-15T18:35:11Z"
+    summary: "Names docs/planning/phase_012.yaml as the canonical structured lifecycle document required by the approved phase-state model; run_state remains derived coordination state."
   - version: "1.0.0"
     date: "2026-08-15T18:03:31Z"
     summary: "Initial active phase-012 plan, authorized by the operator with the verbatim instruction 'approved. please proceed.' after approving the full issue-52 major-release boundary, a clean-break migration guide, and isolated-worktree failure recovery."
@@ -77,6 +80,9 @@ The phase document is the canonical lifecycle state. `.agent/run_state.json` is
 derived coordination state updated idempotently after the canonical write. If a
 mismatch is detected, execution halts and rebuilds the derived entry; no protocol
 claims a multi-file atomic write.
+
+For this phase, that canonical structured document is
+`docs/planning/phase_012.yaml`, registered from `docs/planning/manifest.json`.
 
 ## Feature DAG
 

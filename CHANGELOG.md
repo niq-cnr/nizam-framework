@@ -31,6 +31,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   harness now creates and cleans exact temporary roots through one guarded helper;
   all eleven scratch probes reject repository paths and retain their existing
   behavior.
+- **Methodology safety reconciliation (phase 012, feature 088; issue #52).**
+  Retry attempts now run in isolated worktrees/snapshots and remove only the
+  exact failed attempt root after evidence capture; canonical phase state is
+  written before idempotently repaired derived run state. The five-role model,
+  prior-only scope baseline, evidence-before-completion gate, release-preparation
+  validation, three-attempt eval behavior, gated fallback repinning, and
+  Orchestrator routing/authorship boundary are now consistent across the shipped
+  methodology.
 
 ## [0.9.0] - 2026-07-22
 

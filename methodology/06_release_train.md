@@ -2,10 +2,13 @@
 id: nizam-release-train
 title: "Release Train Protocol"
 description: "The framework's own release discipline: semantic-version git-tag cuts, what constitutes a breaking vs minor vs patch change, changelog discipline, and the consumer upgrade path via bootstrap re-run against a new pinned tag."
-version: 0.3.1
+version: 0.4.0
 status: active
 authoritative_source: methodology/06_release_train.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-08-15"
+    summary: "Phase-012 issue-52 correction: changelog roll-up, release date, version anchors, and migration links are durable release preparation and must pass the ordinary contract/validator/evaluator loops. Only creating and pushing the already-approved annotated tag remains an Orchestrator release mechanic outside those file-changing loops."
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "Add Release Mechanics Ownership (Section 6), assigning changelog roll-up, date-stamping, and tag creation to the release-manager/orchestrator role."
@@ -141,26 +144,30 @@ introduce a second, competing upgrade mechanism.
 
 ## 6. Release Mechanics Ownership
 
-Once the Section 2 human sign-off gate is satisfied, three specific
-release-time mechanics belong to the **Orchestrator** — the coordination role
+Release work separates **durable preparation** from the final **tag act**.
+Durable preparation includes the changelog roll-up, release date, framework and
+guide version anchors, migration links, and readiness record. Those are tracked
+repository changes: they MUST be implemented on a release-preparation feature,
+pass Loop 1 and Loop 2 in `01_execution.md`, and merge through a reviewed pull
+request before Section 2's human sign-off.
+
+Once that reviewed preparation is merged and the Section 2 human sign-off gate
+is satisfied, one release-time mechanic belongs to the **Orchestrator** — the coordination role
 `standard/AGF.md` Section 2 defines, which already owns `run_state.json`'s
 run-position and coordination fields. The framework defines no separate
-release-manager role; these mechanics sit with the Orchestrator that owns the
-release-time state they record:
+release-manager role; this mechanic sits with the Orchestrator that owns the
+release-time state it records:
 
-1. **The changelog roll-up** — folding `CHANGELOG.md`'s `[Unreleased]`
-   entries into the new version's dated section heading.
-2. **Stamping the release date** on that section heading.
-3. **Creating and pushing the annotated git tag** (Section 2) once 1 and 2
-   are complete.
+1. **Creating and pushing the annotated git tag** (Section 2) at the reviewed,
+   signed-off merge commit.
 
-These three actions are release **mechanics**, not feature implementation:
-they do not require a Generator contract, and they do not pass through the
-Loop 1 / Loop 2 contract-first harness defined in `01_execution.md`. They
-are nonetheless still subject to the same branch discipline as every other
-change in the repository — they MUST be performed on a dedicated branch
-(for example `chore/release-vX.Y.Z`) and merged via a reviewed pull request,
-never committed directly to the mainline branch.
+The tag act is a release **mechanic**, not feature implementation: it creates no
+tracked file diff and does not require another Generator contract. It MUST NOT
+repair or alter changelog/version content. If any tracked edit is discovered at
+tag time, the Orchestrator stops and routes it back through the normal
+release-preparation feature and reviewed pull request; it never patches mainline
+during tagging. The pipeline records the requested tag but never self-executes
+the human sign-off.
 
 ## 7. References
 

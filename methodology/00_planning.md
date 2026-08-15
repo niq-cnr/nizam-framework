@@ -2,10 +2,13 @@
 id: nizam-planning-enforcer
 title: "Planning Enforcer"
 description: "The mandatory pre-code planning protocol: the spec + feature-DAG artifact pair every phase must produce before implementation begins, the dependency enforcement rule, atomic-step decomposition, and the scope budget protocol."
-version: 0.2.1
+version: 0.3.0
 status: active
 authoritative_source: methodology/00_planning.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-08-15"
+    summary: "Phase-012 issue-52 correction: the per-feature rolling scope baseline is computed from up to three completed features that precede the current feature; the current measurement is appended only after the comparison, preserving the first-feature exception."
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "Add the Plan Amendment Rule (Section 9), covering orchestrator-registrable amendments, Planner-routed re-planning, and scope-budget re-baselines."
@@ -141,17 +144,18 @@ line-count measurement, but `scope_budget` is an Orchestrator-owned coordination
 field — `standard/AGF.md` Section 5 rule 4 — so the Orchestrator is its sole
 writer):
 
-1. **Per-feature check.** If the lines changed for the just-completed feature
-   exceed **3× the rolling average** of the actual lines changed for the last
-   three completed features, the feature is flagged. A flag does not halt the
+1. **Per-feature check.** First take the actual line counts of up to the last
+   three features that completed **before the current feature**. Compute their
+   rolling average, compare the current feature's measurement with 3× that
+   prior-only average, and only then append the current measurement to
+   `scope_budget.per_feature`. The current feature MUST NOT participate in its
+   own baseline. If it exceeds that threshold, the feature is flagged. A flag does not halt the
    pipeline by itself — it requires an explicit human acknowledgment recorded
    before the next feature begins, so that scope creep is visible rather than
-   silently absorbed. When fewer than three features have completed, the
-   rolling average is computed over however many completed features actually
-   exist rather than assumed to be three. The very first completed feature has
-   no rolling baseline at all and cannot be flagged by this check — it is only
-   subject to its own `estimated_lines` figure and to the cumulative check
-   below.
+   silently absorbed. When fewer than three prior features exist, the rolling
+   average uses however many precede the current one. The phase's first feature
+   therefore has no prior baseline and cannot be flagged by this rolling check;
+   it is still compared with its own `estimated_lines` and the cumulative check.
 2. **Cumulative check.** If the running total of lines changed across the whole
    phase exceeds **130% of the phase's `original_estimate_lines`**, the pipeline
    MUST HALT, log the overrun to the technical-debt register, and require

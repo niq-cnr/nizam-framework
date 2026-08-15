@@ -1,10 +1,14 @@
 ---
 id: nizam-contract-first-execution
 title: "Contract-First Harness Loop"
-description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, and the JSON Verdict Parse Rule that gates every stage."
-version: 0.1.1
+description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, the JSON Verdict Parse Rule, and the evidence-capture gate required before completion."
+version: 0.2.0
 status: active
 authoritative_source: methodology/01_execution.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-08-15"
+    summary: "Phase-012 issue-52 correction: a passing QA verdict no longer advances directly to complete. A distinct evidence-capture gate verifies referenced .agent/evidence files exist and record each required command/result before the Orchestrator may update lifecycle state."
 ---
 
 # Contract-First Harness Loop
@@ -17,9 +21,10 @@ complete. Loop 1 aligns on *what* will be built, before any code exists. Loop 2
 verifies *what was built* matches what was aligned on. Neither loop may be
 skipped, collapsed, or reordered.
 
-This protocol governs the interaction between the **Generator**, **Validator**,
-and **Evaluator** roles defined in `standard/AGF.md` Section 2, and is bound by
-the Dual Validator Gate defined in that document's Section 3.
+This protocol is coordinated by the **Orchestrator** and governs the interaction
+between the **Generator**, **Validator**, and **Evaluator** roles defined in
+`standard/AGF.md` Section 2. It is bound by the Dual Validator Gate defined in
+that document's Section 3; the Planner's eligible feature is its input.
 
 ## 2. Loop 1 — Pre-Code Alignment
 
@@ -76,6 +81,16 @@ Evaluator executes the contract's verification commands independently
         |                     (bounded by the circuit breaker, Section 5 below)
        Yes
         v
+Evidence capture gate
+   - every required verification has an externalised evidence file
+   - the QA verdict references those paths and every path exists
+   - command/result and actual exit status are recorded
+        |
+        v
+   Complete?  --No--> Generator/Orchestrator repairs the evidence record
+        |              (bounded by the circuit breaker, Section 5 below)
+       Yes
+        v
 Durable state advances: feature marked complete, next eligible feature selected
 per the Dependency Enforcement Rule (00_planning.md Sec 5).
 ```
@@ -85,6 +100,15 @@ during implementation, the Generator discovers the contract itself needs to
 change (a missed file, an incorrect deliverable), it MUST stop and propose a
 contract revision — re-entering Loop 1 — rather than silently expanding scope
 under cover of "finishing the job."
+
+**Evidence is a completion gate, not post-processing.** A passing QA JSON block
+proves the Evaluator's decision, but the feature remains `in_progress` until the
+Orchestrator verifies that every contracted verification has a corresponding
+externalised file under `.agent/evidence/`, that the QA verdict references those
+paths, and that each referenced path exists and records the command/result plus
+the actual exit status. Missing or unreferenced evidence is a Loop 2 failure and
+uses the same bounded repair loop; it is never filled in after the feature is
+marked complete.
 
 ## 4. The JSON Verdict Parse Rule
 
@@ -124,10 +148,10 @@ this document is forbidden by that document and by extension forbidden here.
 
 ## 6. Handoff Out
 
-When Loop 2 ends with a passing QA verdict, this protocol's responsibility for
-the feature ends. Durable state (`04_tool_driven_state.md`) is updated to
-reflect the feature's completion, and control returns to `00_planning.md`
-Section 5 (the Dependency Enforcement Rule) to select the next eligible feature.
+When Loop 2 has both a passing QA verdict **and** a passing evidence-capture
+gate, the Orchestrator updates durable state (`04_tool_driven_state.md`) to
+reflect completion. Control then returns to `00_planning.md` Section 5 (the
+Dependency Enforcement Rule) to select the next eligible feature.
 
 ## 7. References
 

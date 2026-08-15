@@ -1,10 +1,14 @@
 ---
 id: nizam-circuit-breaker
 title: "Universal Circuit Breaker (DD-2)"
-description: "The single authoritative 3-strike attempt limit embedded by every repeatable execution loop in the framework: the per-attempt strategy table, the forbidden fourth attempt, and the halt/escalation procedure."
-version: 0.1.0
+description: "The single authoritative 3-strike attempt limit embedded by every repeatable execution loop: isolated attempt workspaces, escalating strategies, the forbidden fourth attempt, and canonical-state halt/escalation."
+version: 0.2.0
 status: active
 authoritative_source: methodology/03_circuit_breaker.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-08-15"
+    summary: "Phase-012 issue-52 safety repair: every attempt runs in an isolated worktree/snapshot from the last approved base; failure cleanup removes only that validated attempt root after evidence capture. The phase document is canonical and run_state is repaired idempotently as derived state, replacing the impossible cross-file atomic-write claim; the escalation cross-reference now points to Section 4 step 4."
 ---
 
 # Universal Circuit Breaker (DD-2)
@@ -54,27 +58,39 @@ attempt 1 without first trying the direct fix) is itself a protocol violation �
 the escalating order exists so that cheap, likely fixes are exhausted before
 expensive, uncertain ones are attempted.
 
+### 3.1 Attempt isolation
+
+Every attempt MUST start from the last approved immutable base in its own
+attempt-scoped workspace. In Git, use a detached worktree at a newly-created,
+validated temporary path (conceptually `git worktree add --detach
+<attempt-worktree> <approved-commit>`); a non-Git system uses an equivalent
+copy-on-write snapshot. Never run a retry in the shared developer worktree.
+
+The attempt root and approved base are recorded before edits begin. A failed
+attempt's evidence is captured from that root and then only that exact root is
+removed through the worktree/snapshot manager. A successful attempt's reviewed
+diff or commit is the only material promoted back to the feature branch. The
+shared tree is never recovered with repository-wide reset or clean commands.
+
 ## 4. Attempt 4 Is Forbidden — The Breach Procedure
 
 If a step's third attempt (per Section 3's table) also fails, the circuit
 breaker has tripped. The acting agent MUST, in order:
 
-1. **Discard the failed attempt's working changes.** Where a git working tree
-   is in play, this means `git reset --hard` (or the equivalent clean discard
-   for a non-git artifact) — the third attempt's partial or incorrect state is
-   not left in place for a human to sort through later. This discard MUST
-   also remove any untracked or generated artifacts the failed attempt
-   created (for example a scoped `git clean -fd` limited to the attempt's own
-   paths, or the equivalent clean-discard action for a non-git artifact) —
-   `git reset --hard` alone does not remove untracked files and is
-   insufficient on its own.
-2. **Set the step's status to `BLOCKED`, single-sourced.** The phase
-   document's step-level `status` field, per `schema/phase.schema.json`, is
-   the single source of truth for the `BLOCKED` state wherever a phase
-   document exists for the step. The feature's entry in
-   `.agent/run_state.json` is updated in the SAME atomic write, derived from
-   the phase document's value — eliminating the prior two-write, two-source
-   risk of the two fields disagreeing (Section 5).
+1. **Capture and quarantine the third attempt.** Write its diagnostics, diff,
+   and exact attempt-root/base identifiers under `.agent/evidence/`. Then ask
+   the worktree or snapshot manager to remove **only that validated attempt
+   root**. No shared-worktree reset, repository clean, glob, or broad path is
+   permitted. If the root cannot be proved attempt-owned, leave it in place,
+   record it, and escalate rather than guessing at cleanup.
+2. **Set the canonical step status to `BLOCKED`, then repair derived state.**
+   The phase document's step-level `status` field, per
+   `schema/phase.schema.json`, is the lifecycle source of truth and is written
+   first. `.agent/run_state.json` is coordination state derived from that
+   canonical value and is updated in a separate, idempotent operation. If the
+   files disagree, execution halts; rebuild the derived entry from the phase
+   document and validate both artifacts before continuing. The protocol never
+   claims two files share one atomic filesystem write.
 3. **Log the failure** to the technical-debt register (conventionally
    `docs/planning/DEBT.md`), naming at minimum: the phase, the feature, the
    failure type, and a reference to the last attempt's response or evidence
@@ -105,15 +121,17 @@ step-identifying string (for example `"001-implementation"` or
 }
 ```
 
-An agent beginning any retryable step MUST read this object before attempting
-the step, to determine which attempt number it is about to make, and MUST
-increment the relevant counter after each attempt concludes (success or
-failure). An agent that begins a fourth attempt without having read and
+An agent beginning any retryable step MUST first reconcile this derived object
+with the canonical phase step, then read the counter to determine which attempt
+it is about to make. It MUST increment the relevant counter idempotently after
+each attempt concludes (success or failure). If reconciliation cannot prove the
+derived entry corresponds to the canonical step, the pipeline halts and rebuilds
+it before another attempt. An agent that begins a fourth attempt without having
 respected this counter has violated Section 4 regardless of its outcome.
 
 ## 6. Escalation Protocol
 
-Escalation (Section 4, step 5) means the pipeline halts and a human reviewer is
+Escalation (Section 4, step 4) means the pipeline halts and a human reviewer is
 notified — it does not mean the pipeline silently proceeds to the next feature
 while marking the blocked one aside for "later." A `BLOCKED` feature remains
 blocked until a human either:

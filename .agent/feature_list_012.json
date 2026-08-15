@@ -1,6 +1,6 @@
 {
   "phase": "012-v1-consumer-safety",
-  "spec_version": "1.0.0",
+  "spec_version": "1.1.0",
   "original_estimate_lines": 2400,
   "planning_note": "DAG-validated acyclic: root {085}; 086/087/088 depend on 085; 089 depends on 086/087/088; 090 depends on 086/087/088/089; 091 depends on 090. Full GitHub issue #52 scope, clean-break v1.0.0 migration, isolated-worktree failure recovery. Authorized 2026-08-15 by operator: 'approved. please proceed.'.",
   "features": [
@@ -50,7 +50,7 @@
       "id": "088",
       "name": "Governance and methodology safety reconciliation",
       "description": "Adopt isolated worktree recovery, repair the phase/run-state model, align breaker/eval/release/planning/evidence rules, propagate five roles, and restore Orchestrator routing boundaries across every issue #52 methodology surface.",
-      "status": "in_progress",
+      "status": "complete",
       "dependencies": ["085"],
       "acceptance_tests": [
         "No active protocol prescribes git reset --hard, repo-wide git clean, or a cross-file atomic write.",
@@ -64,7 +64,7 @@
       "id": "089",
       "name": "Ecosystem, inheritance, and tool-documentation truth",
       "description": "Resolve stale stage status, genesis readiness, finalized preflight artifacts, in-scope plan invariants, baseline/compare summaries, consumer-copy claims, GIP reconciliation ownership, and C12 family enumeration.",
-      "status": "pending",
+      "status": "in_progress",
       "dependencies": ["086", "087", "088"],
       "acceptance_tests": [
         "Ecosystem docs mark stages 04/05 shipped, qualify genesis as scaffold-only until enrollment/input/preflight, and scope preflight.json to finalized runs.",

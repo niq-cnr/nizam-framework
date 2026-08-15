@@ -1,0 +1,38 @@
+id: 012-v1-consumer-safety
+title: v1.0.0 Consumer-Safety Remediation
+description: Resolve every issue 52 finding, rehearse the clean-break migration, and prepare the human-gated v1.0.0 release.
+status: in_progress
+steps:
+  - id: "085"
+    description: Record the atomic issue matrix and discriminating red regressions.
+    status: COMPLETED
+    evidence: .agent/evidence/085/red-suite.txt
+    docs_updated: .agent/product_spec_012.md
+    changelog_entry: Issue 52 red regression intake.
+  - id: "086"
+    description: Enforce the breaking schema invariants and document their migration.
+    status: COMPLETED
+    evidence: .agent/evidence/086/schema-green.txt
+    docs_updated: docs/migration-v1.0.0.md
+    changelog_entry: v1 schema invariant repair.
+  - id: "087"
+    description: Correct reopened classification and centralize guarded fixture scratch roots.
+    status: COMPLETED
+    evidence: .agent/evidence/087/tool-green.txt
+    docs_updated: tools/fixtures_self_test.sh
+    changelog_entry: Compare correctness and scratch isolation.
+  - id: "088"
+    description: Reconcile methodology safety, five-role state handoffs, and lifecycle gates.
+    status: COMPLETED
+    evidence: .agent/evidence/088/static.txt
+    docs_updated: methodology/03_circuit_breaker.md
+    changelog_entry: Safe isolated retries and consistent five-role lifecycle gates.
+  - id: "089"
+    description: Reconcile ecosystem, consumer-copy, and tool-documentation truth.
+    status: IN_PROGRESS
+  - id: "090"
+    description: Run integrated validation and a disposable consumer migration rehearsal.
+    status: PENDING
+  - id: "091"
+    description: Prepare v1.0.0 metadata and readiness evidence for the human release gate.
+    status: PENDING
