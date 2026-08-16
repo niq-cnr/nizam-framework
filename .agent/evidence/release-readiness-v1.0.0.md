@@ -2,8 +2,9 @@
 
 Gate: `H-FRAMEWORK-RELEASE` (operator-only). Prepared 2026-08-15 from release-
 preparation base `5d0e688` on `phase/012-v1-consumer-safety`. Target tier: MAJOR,
-because v1 tightens contracts that v0.9.0 accepted. The pipeline has not created,
-pushed, or approved `v1.0.0`.
+because v1 tightens contracts that v0.9.0 accepted. At preparation time the pipeline
+had not created, pushed, or approved `v1.0.0`; the operator subsequently executed
+the gate and published the release as recorded below.
 
 ## Automated readiness
 
@@ -22,8 +23,8 @@ pushed, or approved `v1.0.0`.
 ## Issue #52 finding-to-evidence map
 
 Every row in `.agent/evidence/085/issue-matrix.json` is mapped below. Status
-`READY` means remediated and validated on this branch; publication still depends
-on the release gate.
+`READY` means remediated and validated on the release-preparation branch. The
+complete mapped set is now published in `v1.0.0`.
 
 | Finding | Status | Primary evidence |
 |---|---|---|
@@ -71,24 +72,30 @@ after the documented repair.
   2026-08-15`, classified MAJOR with the clean-break migration link.
 - `docs/migration-v1.0.0.md` covers every newly rejected v0.9.0 shape and requires
   released-tag production adoption through `H-CONSUMER-UPGRADE`.
-- `NDEBT-036` remains Open until the immutable release exists; ROADMAP still names
-  v0.9.0 as the latest released tag and v1.0.0 as release-in-preparation.
-- Local automated checks report no unresolved blocking finding. PR review/check
-  state is recorded below after publication of the draft PR.
+- The immutable `v1.0.0` release now exists; this post-release refresh resolves
+  `NDEBT-036` and records v1.0.0 as the latest released tag.
+- Local automated checks report no unresolved blocking finding. Final PR review,
+  merge, tag, and publication state is recorded below.
 
 ## External review and human gate
 
-- Draft PR: **OPEN, DRAFT, CLEAN, MERGEABLE** —
+- Release-preparation PR: **MERGED** 2026-08-15 at `9453b3c` —
   [#53](https://github.com/niq-cnr/nizam-framework/pull/53).
-- GitHub Actions at certified candidate `c508f6a`: **validate SUCCESS,
+- GitHub Actions at final PR head `ddfa1bc`: **validate SUCCESS,
   fixtures_self_test SUCCESS, e2e_bootstrap SUCCESS**.
-- Unresolved blocking automated-review findings: **0** at 2026-08-15T19:11:40Z;
-  GitHub reported empty latest-reviews and comments collections
-  (`.agent/evidence/091/pr-status.txt`). Recheck before sign-off if new feedback lands.
-- Human release-readiness sign-off: **PENDING — `H-FRAMEWORK-RELEASE`**.
-- Immutable annotated tag `v1.0.0`: **PENDING — operator action**.
-- GitHub Release publication: **PENDING — `release.yml` after tag push**.
+- Unresolved blocking automated-review findings: **0** at the final
+  2026-08-15T19:21:14Z recheck; GitHub reported empty latest-reviews and comments
+  collections, and all three PR checks passed.
+- Human release-readiness sign-off: **DONE 2026-08-15 — `H-FRAMEWORK-RELEASE`**;
+  the operator applied the release tag and confirmed "tags applied."
+- Immutable annotated tag `v1.0.0`: **DONE 2026-08-15** — operator-pushed at
+  reviewed merge commit `9453b3c`.
+- GitHub Release publication: **DONE 2026-08-15** — `release.yml` run
+  [31903527120](https://github.com/niq-cnr/nizam-framework/actions/runs/31903527120)
+  succeeded and published
+  [v1.0.0](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.0.0)
+  from the `[1.0.0]` CHANGELOG section.
 
-The release is prepared, not released. Do not close NDEBT-036, advertise v1.0.0
-as the latest released tag, or run bulk consumer upgrades until the two operator
-actions—sign-off and annotated tag publication—are recorded.
+The release is published. `NDEBT-036` moves to Resolved in the accompanying
+post-release ledger refresh, and v1.0.0 is the latest released tag. Consumer
+adoption remains a separate, per-consumer `H-CONSUMER-UPGRADE` decision.

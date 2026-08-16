@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.34.0
+version: 0.35.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.35.0"
+    date: "2026-08-15"
+    summary: "Post-release refresh: Phase 012 COMPLETE and v1.0.0 MAJOR RELEASED. PR #53 merged at 9453b3c; the operator executed H-FRAMEWORK-RELEASE by pushing the annotated v1.0.0 tag at that reviewed commit; release.yml run 31903527120 succeeded and published GitHub Release 371135794 from [1.0.0]. Current Position now names v1.0.0 as latest and v0.9.0 as prior; NDEBT-036 moves Open -> Resolved, leaving only two Low enhancement rows. The prior real non-scratch pilot plus lifecycle-06/08 candidate scope rolls forward unchanged for the next planning cycle."
   - version: "0.34.0"
     date: "2026-08-15"
     summary: "Phase-012 implementation and v1.0.0 MAJOR release preparation complete: all 30 issue-52 findings are remediated and mapped to evidence, the actual v0.9.0-to-local-v1 consumer rehearsal passed, version surfaces are synchronized, and the dated CHANGELOG + readiness record are prepared. H-FRAMEWORK-RELEASE sign-off/tag remain pending; v0.9.0 remains the latest released tag and NDEBT-036 remains Open until publication."
@@ -112,10 +115,10 @@ change_log:
 
 # Forward Roadmap
 
-## Plan of Record (2026-08-15) — Phase 012: v1.0.0 Consumer-Safety Remediation — **IMPLEMENTATION COMPLETE; AWAITING RELEASE GATE**
+## Plan of Record (2026-08-15) — Phase 012: v1.0.0 Consumer-Safety Remediation — **COMPLETE; RELEASED**
 
-Phase `012-v1-consumer-safety` is active on operator authorization **"approved. please
-proceed."** (`H-PHASE-012`). The plan resolves the complete GitHub issue #52 batch raised by a
+Phase `012-v1-consumer-safety` was activated on operator authorization **"approved. please
+proceed."** (`H-PHASE-012`) and is now complete. The plan resolves the complete GitHub issue #52 batch raised by a
 real v0.9.0 consumer adoption. Confirmed Critical/major findings make this an interrupting safety
 phase: destructive shared-tree breaker cleanup, impossible multi-file atomicity, successful
 preflight verdicts accepting blocking findings, and incorrect reopened-finding classification.
@@ -126,9 +129,10 @@ isolated worktrees as the recovery model. The feature DAG is `085` intake/failin
 parallel `086` schemas, `087` tools, `088` methodology → `089` documentation truth → `090`
 integrated consumer rehearsal → `091` release preparation. All seven features are now
 implementation-complete: the validator reports 15/15, fixture self-test 77/77, hermetic e2e
-PASS, and the disposable v0.9.0-to-local-v1 migration matrix 11/11. The prepared MAJOR release
-is recorded in `.agent/evidence/release-readiness-v1.0.0.md`. `H-FRAMEWORK-RELEASE` remains the
-final human gate; the pipeline never self-tags.
+PASS, and the disposable v0.9.0-to-local-v1 migration matrix 11/11. The MAJOR release is
+recorded in `.agent/evidence/release-readiness-v1.0.0.md`. The operator executed
+`H-FRAMEWORK-RELEASE` after PR #53 merged at `9453b3c`, pushing the annotated `v1.0.0` tag at
+that reviewed commit; `release.yml` published the GitHub Release. The pipeline did not self-tag.
 
 The prior phase-012 candidate scope — a real non-scratch multi-repo pilot and lifecycle stages
 `06`/`08` with `H-CONSOLIDATION`/`H-GA` — is not cancelled. It rolls forward unchanged to the next
@@ -495,16 +499,16 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-08-15)
 
-- **Phase 012 implementation is complete; release gate pending:** v1.0.0 Consumer-Safety
-  Remediation, features 085–091, resolving the
-  complete issue #52 batch from real v0.9.0 consumer adoption (`NDEBT-036`, Critical). The operator
-  authorized activation with "approved. please proceed." on 2026-08-15. The clean-break major
-  release repairs schema invariants, comparison classification, destructive recovery guidance,
-  five-role/methodology drift, and consumer documentation, then rehearses the migration before the
-  final human release gate. All 30 issue rows are mapped to evidence; validator 15/15, self-test
-  77/77, e2e, syntax, and the v0.9.0 migration rehearsal are green. The previous phase-012
-  candidate (real non-scratch pilot + lifecycle stages 06/08) rolls forward unchanged.
-- Phases 001–011 are complete. **Phase 011 (0–n Project Spectrum, Stage 4: n-Coordination
+- **Phase 012 and the v1.0.0 release are complete:** Consumer-Safety Remediation features
+  085–091 resolve the complete issue #52 batch from real v0.9.0 consumer adoption
+  (`NDEBT-036`, Critical). The operator authorized activation with "approved. please proceed."
+  and executed `H-FRAMEWORK-RELEASE` on 2026-08-15 after PR #53 merged at `9453b3c`.
+  The annotated `v1.0.0` tag points at that reviewed commit; release workflow run 31903527120
+  succeeded and published the GitHub Release. All 30 issue rows map to evidence; validator
+  15/15, self-test 77/77, e2e, syntax, and the v0.9.0 migration rehearsal are green.
+  `NDEBT-036` is Resolved. The prior real non-scratch pilot plus lifecycle stages 06/08
+  candidate rolls forward unchanged.
+- Phases 001–012 are complete. **Phase 011 (0–n Project Spectrum, Stage 4: n-Coordination
   Protocols, features 080–084) is COMPLETE** (2026-07-22) — **so NIP-0002's staged plan is now
   complete**: the coordination layer is first-class and mechanized. `ecosystem/04` is the Plan stage
   (080, `schema/reconciliation_plan.schema.json` + `validate.sh` C12's topological-order invariant;
@@ -555,31 +559,20 @@ successor, leaving open debt deferred to unscoped "future phases").
   and `NIP-0002` (0–n spectrum, Accepted via H-NIP) + `ADR-004` (Accepted). The validator
   runs green at `SUMMARY: 15 passed, 0 failed` (C1–C15), the fixtures self-test at 57/57,
   and the hermetic e2e bootstrap harness passes in CI (now including the n-case `assert_multirepo`).
-- **Release in preparation: v1.0.0 (MAJOR) — awaiting `H-FRAMEWORK-RELEASE`.** The
-  breaking issue-52 remediation, migration guide, synchronized version surfaces, dated
-  `[1.0.0]` CHANGELOG section, and readiness record are prepared on the phase-012 branch.
-  The operator must review/merge, sign off, and push the annotated tag; the pipeline has
-  neither created nor published `v1.0.0`. Until then, v0.9.0 remains the latest release and
-  `NDEBT-036` remains Open.
-- **Latest released tag: v0.9.0 (MINOR) — RELEASED 2026-07-22.** The operator executed
-  `H-FRAMEWORK-RELEASE` — the annotated tag `v0.9.0` was pushed at the merge commit `5b19b85`
-  (PR #50) after the recorded release-readiness sign-off, and `release.yml` auto-published the
-  GitHub Release page from the `[0.9.0]` CHANGELOG section
-  (<https://github.com/niq-cnr/nizam-framework/releases/tag/v0.9.0>). The first release since
-  v0.8.0, carrying phases 007–011 (consumer-adoption enablement + the full NIP-0002 0–n
-  realization + the audit/compare + reconciliation/release-train tooling). A MINOR release per
-  `methodology/06_release_train.md` §3.2. **`NDEBT-029` resolved**: the tag now carries the whole
-  0–n loop in its injected `.nizam/tools/`, so a consumer on the `v0.9.0` pin can run
-  Preflight → Baseline → Audit → Plan → Promote → Compare without the framework working tree. The
-  standing **real, non-scratch multi-repo pilot** at this released tag is now runnable — the open
-  production-maturity criterion this release unblocks.
-- Prior released tag: v0.8.0 — pushed by the operator 2026-07-20 at merge commit 183e468
-  (phase 006 close); `release.yml` published from the `[0.8.0]` section (run 29717579479).
-- Open debt (current, at DEBT.md v0.39.0): three rows remain Open. `NDEBT-036` is
-  **Critical but release-gated rather than implementation-blocked**: all remediations and
-  rehearsals are green, but it closes only after the immutable v1.0.0 release exists.
-  `NDEBT-026` (C15 mapping-direction depth) and `NDEBT-034` (per-member clone cost) are Low
-  enhancements outside phase 012. `NDEBT-029` (audit/compare not in a released tag) is now **Resolved** by the
+- **Latest released tag: v1.0.0 (MAJOR) — RELEASED 2026-08-15.** The operator executed
+  `H-FRAMEWORK-RELEASE` after PR #53 merged: the annotated tag `v1.0.0` points at reviewed merge
+  commit `9453b3c`, and `release.yml` run 31903527120 published
+  [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.0.0)
+  from the `[1.0.0]` CHANGELOG section. The clean-break release repairs every issue-52 finding;
+  affected consumers must follow `docs/migration-v1.0.0.md` and obtain their own
+  `H-CONSUMER-UPGRADE` decision before adoption. **`NDEBT-036` resolved.**
+- Prior released tag: v0.9.0 (MINOR) — released 2026-07-22 at merge commit `5b19b85`
+  (PR #50), carrying phases 007–011 and the complete 0–n loop; release workflow run
+  29937596953 succeeded. v0.8.0 is the preceding release.
+- Open debt (current, at DEBT.md v0.40.0): two rows remain Open, both Low enhancements —
+  `NDEBT-026` (C15 mapping-direction depth) and `NDEBT-034` (per-member clone cost).
+  `NDEBT-036` is **Resolved** by Phase 012 and the v1.0.0 release.
+  `NDEBT-029` (audit/compare not in a released tag) is **Resolved** by the
   v0.9.0 release. The 0–n programme's scope rows are all **Resolved**: `NDEBT-027`/`NDEBT-028`
   (consumer-readiness, phase 008), `NDEBT-032`/`NDEBT-033` (brownfield + bootstrap SHA pin,
   phase 008), `NDEBT-030` (the 0-case, phase 009), `NDEBT-031` (the n-case, phase 010), and
@@ -588,10 +581,11 @@ successor, leaving open debt deferred to unscoped "future phases").
   (NDEBT-004, -005, -007 through -024; NDEBT-001/002/003/006/025 were already Resolved). See
   `docs/planning/DEBT.md`.
 
-## Track 1 — Outstanding Human Gates (no planning required)
+## Track 1 — Release Operations Ledger (all listed actions executed)
 
-These are recorded decisions awaiting execution by a human with release authority;
-they need no new phase.
+These are completed human-gated release operations retained as an audit trail. No
+item below is currently outstanding; a future release will open a fresh recurring
+`H-FRAMEWORK-RELEASE` decision.
 
 1. **Cut v0.6.0 — EXECUTED 2026-07-15.** The annotated tag `v0.6.0` was pushed at
    commit 955c1d7 per `methodology/06_release_train.md` (MINOR: additive, no breaking
@@ -610,11 +604,11 @@ they need no new phase.
    one-shot applying the fixed `release.yml` extraction logic; body untouched).
    NDEBT-025 is Resolved: the workflow now derives the title from the genuine tag
    object's real type and fails loudly on a remote/local type disagreement.
-4. **Publish v1.0.0 — PENDING `H-FRAMEWORK-RELEASE`.** Review and merge the phase-012
-   release-preparation PR, sign off `.agent/evidence/release-readiness-v1.0.0.md`, and
-   push the annotated `v1.0.0` tag at the approved merge commit. The tag push lets
-   `release.yml` publish the dated `[1.0.0]` CHANGELOG section. Only then may
-   `NDEBT-036` close and v1.0.0 become the latest released tag.
+4. **Publish v1.0.0 — EXECUTED 2026-08-15.** PR #53 merged at `9453b3c`; the
+   operator executed `H-FRAMEWORK-RELEASE` and pushed the annotated `v1.0.0` tag at
+   that reviewed commit. `release.yml` run 31903527120 succeeded and published the
+   dated `[1.0.0]` CHANGELOG section as GitHub Release 371135794. `NDEBT-036` is
+   Resolved and v1.0.0 is the latest released tag.
 
 ## Track 2 — [SUPERSEDED as the phase-005 selection, 2026-07-17] Candidate Scope: Consumer Reality & Enforcement Closure
 
