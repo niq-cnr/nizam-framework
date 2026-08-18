@@ -3,7 +3,7 @@
   "current_phase": "013-definition-of-done",
   "current_feature": "093",
   "status": "in_progress",
-  "updated_at": "2026-08-18T11:29:23Z",
+  "updated_at": "2026-08-18T12:12:32Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -163,6 +163,22 @@
       "attempts": 1,
       "limit": 3,
       "note": "Mode B round 1 rejected on one major doc-truth finding (verify_lib.sh primitive-count comment: wrote nine/left eight where the verified count is eleven); rework round 1 applied the prescribed three-word fix; Mode B round 2 approved with empty arrays."
+    },
+    "097-contract": {
+      "attempts": 3,
+      "limit": 3,
+      "note": "Contract negotiation for feature 097 (release close-out gate) exhausted the 3-revision limit without Mode A approval. Round 1: scratch-negative unexecutable pre-commit (git archive) + tag-mode read-at-checkout broke the workflow_dispatch republish path + stale citations. Round 2 (after rev1's git-show at-tag redesign): read-set enumerated 5 of 6 anchors, no tag-mode verification, no era-safety rule; the generator's own 14-tag hand-walk then refuted the task premise, exposing genuine historical anchor drift (NIZAM lagging the tag at v0.2.0/v0.5.2/v0.5.3; CONTEXT.md an independent revision counter v0.3.0-v0.7.0). Round 3 (after rev2 era-safe skips + rev3 value-drift non_goal + release.yml comment update): Mode A's own at-tag probes refuted the residual claim - v0.1.0 fails three PRESENT-file groups (CONTEXT.md has no change_log key, README has no version pins, CHANGELOG [0.1.0] has no tier banner - the tier-banner convention starts at v0.8.0), so the republishable set is {v0.8.0, v0.9.0, v1.0.0, future}, the blocked list is eleven tags, and the sub-anchor-absence disposition (file present, anchor key absent) is undefined. Attempt 4 is FORBIDDEN without explicit human authorization (the human_authorized_extension mechanism). Step BLOCKED; escalated to operator; NDEBT-039. EXTENSION: operator authorized a 4th, human-authorized revision at 2026-08-18T11:59:15Z (interactive session), scoped to exactly the two round-3 prescriptions. Feature 097 removed from blocked_features. Round-4 Mode A: prescription 1 fully verified at all four sites; prescription 2 applied at one of the two sites carrying the crash-free claim - one superseded sentence survived in design_notes.tag_mode_additions. The validator recorded that the fix is squarely inside the already-granted authorization scope, so the orchestrator treats the single-sentence completion as finishing the authorized 4th revision (revisions counter stays 4), not a fifth round; recorded here for audit.",
+      "human_authorized_extension": {
+        "at": "2026-08-18T11:59:15Z",
+        "authorized_by": "operator",
+        "verbatim": "Authorize 4th revision (Recommended)",
+        "scope": "One final revision applying exactly the two Mode A round-3 prescriptions: (1) correct the republishable/blocked-tag enumerations in the three contract sites incl. the release.yml dispatch-comment purpose text (republishable = v0.8.0, v0.9.0, v1.0.0, and future tags; v0.1.0 joins the blocked list with its own pre-convention cause); (2) define the sub-anchor-absence disposition (file present at tag, anchor key absent -> named FAIL, never an uncaught exception) and narrow the crash-free claim to what rules (a)/(b) actually cover. Nothing else may change."
+      }
+    },
+    "093-contract": {
+      "attempts": 3,
+      "limit": 3,
+      "note": "Contract negotiation for feature 093 (the Definition of Done standard): Mode A rejected rounds 1 (unsatisfiable NIZAM.json dict-accessor traced upstream to a Planner acceptance test, fixed by the second Section-9 amendment at 818919f; wrong-occurrence guide-card anchor; a semicolon-masked assertion; a vacuous HEAD-anchored guard), 2 (no mechanization of the no-done-state rule + two citation defects), and 3 (the same-line enum-lock heuristic provably missed the table-row shape). Round 4 approved after the structural substring-exemption fix, verified against ten adversarial probes. Approved AT the 3-revision limit without breaching it."
     }
   },
   "history": [
@@ -1194,6 +1210,29 @@
       "event": "amendment_complete",
       "feature": "093",
       "detail": "Second Section-9 plan amendment of phase 013 (Planner-routed factual correction, design intent unchanged): NIZAM.json's modules is a list keyed by path, not a dict, so feature 093's acceptance_tests[2] (d['modules']['standard'][...]) raised TypeError and could never pass — refuted during Mode A round 1 of contract 093. Preventive sweep of all 29 acceptance tests across features 092-098 found exactly one more instance of the same class (feature 095, d['modules']['templates']); both corrected to the next(m for m in d['modules'] if m['path']==...) form with satisfiability proven both ways (EXIT 0 against a mutated post-implementation NIZAM.json; clean AssertionError, not TypeError, against today's tree). No working test rewritten. Spec bumped 1.1.1 -> 1.1.2; feature_list spec_version in lockstep. Contract 093 now routes to Generator revision round 1 (Mode A round-1 findings I1-I5 + U1-U2); contract 097 rev1 is unaffected (its only feature-list verification is a schema self-check, no byte-guard anchored at the pre-amendment revision)."
+    },
+    {
+      "at": "2026-08-18T11:58:12Z",
+      "event": "circuit_breaker_triggered",
+      "feature": "097",
+      "detail": "3-strike circuit breaker triggered on the feature-097 contract-negotiation step (methodology/03_circuit_breaker.md): three revision rounds consumed, Mode A round 3 rejected with one blocker (the verified-republishable-set enumeration is wrong at v0.1.0, which fails three present-file assertion groups, and the error would ship into release.yml's operator-facing dispatch comment) and one major (no defined disposition for the sub-anchor-absence class: file present at the tag but change_log key / README pins / tier banner absent - v0.1.0/v0.2.0 era). Feature 097 marked BLOCKED in blocked_features; features 093-096 remain eligible per the Dependency Enforcement Rule (00_planning.md Section 5 - only 098 depends on 097); pipeline pauses new 097 work pending the operator's decision: human-authorized 4th revision (the findings carry exact prescriptions), keep 097 blocked and proceed with the rest, or descope. Logged as NDEBT-039."
+    },
+    {
+      "at": "2026-08-18T11:59:15Z",
+      "event": "operator_gate_decision",
+      "detail": "Circuit-breaker extension for feature 097 contract negotiation EXERCISED (the human_authorized_extension mechanism). Recorded BEFORE the 4th revision begins (the NDEBT-018 rule). Operator verbatim: 'Authorize 4th revision (Recommended)' (2026-08-18, interactive session, in response to the escalation of the 3-strike halt). Scope: one final revision applying exactly the two Mode A round-3 prescriptions (republishable-set enumeration correction incl. v0.1.0 to the blocked list; sub-anchor-absence disposition defined as named FAIL, never a crash) - nothing else. blocked_features cleared; NDEBT-039 stays Open until the contract approves. Evidence: the Mode A round-3 JSON verdict (blocker I9 + major I10) and the recorded circuit_breaker_triggered event."
+    },
+    {
+      "at": "2026-08-18T12:03:08Z",
+      "event": "contract_approved",
+      "feature": "093",
+      "detail": "Contract 093 (standard/definition_of_done.md + registration) APPROVED after Mode A round 4 (ten adversarial probes of the enum-lock check incl. the table-row falsifier and the shared-line bypass; issues/missing_acceptance_coverage/unsupported_claims all empty) and the independent evaluator contract review (.agent/qa/093-contract-review.json, contract-testability, approved with empty arrays; seven of eighteen commands sanity-run; one novel double-backtick code-span probe correctly rejected). approvals: validator_mode_a=true, evaluator_contract_review=true, revisions=3, approved_at=2026-08-18T12:03:08Z. Loop 2 begins for 093. Feature 097's contract is concurrently in its human-authorized revision 4."
+    },
+    {
+      "at": "2026-08-18T12:04:27Z",
+      "event": "state_field_added",
+      "feature": "093",
+      "detail": "Orchestrator adds the coordination field active_contract_id to .agent/run_state.json (schema permits it via additionalProperties; the generator protocol's Step-0 gate requires it and correctly HALTed on its absence rather than trusting the orchestrator's prose claim - the exact drift the Durable State Rule exists to catch, and a stricter reading than feature 092's generator took when it proceeded on corroboration). Set to '093' (contract approved 2026-08-18T12:03:08Z). Maintenance rule going forward: the orchestrator sets active_contract_id when a feature's contract reaches status approved and Loop 2 begins, and advances it at the next contract approval; it always equals the contract id the Generator is currently authorized to implement."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1558,5 +1597,6 @@
       }
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
-  }
+  },
+  "active_contract_id": "093"
 }
