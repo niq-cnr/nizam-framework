@@ -3,7 +3,7 @@
   "current_phase": "013-definition-of-done",
   "current_feature": "092",
   "status": "in_progress",
-  "updated_at": "2026-08-18T09:52:55Z",
+  "updated_at": "2026-08-18T10:06:17Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1154,6 +1154,12 @@
       "at": "2026-08-18T09:52:55Z",
       "event": "phase_activated",
       "detail": "Phase 013-definition-of-done ACTIVATED on operator authorization (verbatim: 'approved. please proceed.', gate H-PHASE-013, 2026-08-18, interactive session). Planner artifacts .agent/product_spec_013.md and .agent/feature_list_013.json define features 092-098 (DAG roots {092, 097}, original estimate 2150): the Definition of Done consolidation — validator check C16 over .agent/feature_list*.json plus the era-safe complete->contract->QA->evidence lifecycle rule, the canonical standard/definition_of_done.md aggregating the eight done-layers by reference, optional advisory dod_ref keys on five schemas (loosening-only), templates/DoD.md, a pull-request checklist, a release close-out gate in .github/, and v1.1.0 release preparation last (MINOR per methodology/06_release_train.md Section 3.2). The rolled-forward phase-012 candidate scope (real non-scratch multi-repo pilot + ecosystem lifecycle 06/08 with H-CONSOLIDATION/H-GA) moves to phase 014. Scope budget reset to 2150 (phase-012 final already archived at phase_012_scope_budget_final). H-FRAMEWORK-RELEASE remains outstanding and the pipeline never self-tags. Execution begins with the ungated DAG root feature 092: validator check C16."
+    },
+    {
+      "at": "2026-08-18T10:06:17Z",
+      "event": "amendment_complete",
+      "feature": "092",
+      "detail": "Plan amendment per methodology/00_planning.md Section 9 (Planner-routed factual correction, no scope change): the --payload summary baseline is 11 counted checks, not 12, so C16's one counted payload check yields 12, not 13. Refuted during Mode A validation of contract 092 against tools/validate.sh:2383-2394 (exactly 11 passed-counter increments; C6 is an uncounted echo SKIP) and captured evidence .agent/evidence/091/final-migration.txt:6 + .agent/evidence/090/migration-rehearsal.txt:6, corroborated by the NDEBT-012 note at docs/planning/DEBT.md:50. .agent/product_spec_013.md corrected in two places and bumped to 1.1.1; .agent/feature_list_013.json feature-092 acceptance test corrected and spec_version moved to 1.1.1 in lockstep. Design intent unchanged. Contract 092 (rejected by Mode A round 1: two blockers, one major, one minor, three unsupported claims) now routes to Generator revision round 1 of the 3-round limit."
     }
   ],
   "phase_001_scope_budget_final": {

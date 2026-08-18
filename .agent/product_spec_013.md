@@ -6,11 +6,14 @@ tags: [spec, definition-of-done, enforcement, release-train, phase-013]
 status: active
 last_audited: "2026-08-18"
 authoritative_source: NA
-version: 1.1.0
-spec_version: "1.1.0"
+version: 1.1.1
+spec_version: "1.1.1"
 created_at: "2026-08-18T09:42:57Z"
-updated_at: "2026-08-18T09:52:55Z"
+updated_at: "2026-08-18T10:05:00Z"
 change_log:
+  - version: "1.1.1"
+    date: "2026-08-18T10:05:00Z"
+    summary: "PLAN AMENDMENT per methodology/00_planning.md Section 9 (factual correction, no scope change). Corrects the --payload summary baseline figure inherited from exploration: the baseline is 11 counted checks, not 12, so the one counted payload check added by C16 raises the summary to 12, not 13. Refuted during Mode A validation of contract 092 against tools/validate.sh:2383-2394, where exactly 11 `passed=$((passed + 1))` increments run in payload mode (C6 is an uncounted echo SKIP), and against captured evidence .agent/evidence/091/final-migration.txt:6 and .agent/evidence/090/migration-rehearsal.txt:6, both reading `SUMMARY (payload mode): 11 passed, 0 failed`, corroborated by the NDEBT-012 resolution note at docs/planning/DEBT.md:50. Two assertions corrected (Public contract changes; Acceptance). Design intent is unchanged: C16 still adds exactly one counted payload check. .agent/feature_list_013.json spec_version moves to 1.1.1 in lockstep with its 092 acceptance test."
   - version: "1.1.0"
     date: "2026-08-18T09:52:55Z"
     summary: "Phase 013 ACTIVATED on operator authorization (verbatim: 'approved. please proceed.', gate H-PHASE-013, 2026-08-18). Status draft -> active; spec_version 1.0.0 -> 1.1.0 (the activation-bump convention of phases 008-012); the activation is recorded in .agent/run_state.json (phase_activated) before any feature execution per NDEBT-018, current_phase advances 012-v1-consumer-safety -> 013-definition-of-done, and the scope budget resets to 2150. Execution begins with the ungated DAG root feature 092 (validator check C16)."
@@ -86,7 +89,7 @@ negative fixture introduced by feature `092` mechanizes that rule.
 - **New validator check C16**, skip-if-absent: a repository with no
   `.agent/feature_list*.json` passes trivially, so the check cannot break a consumer who
   does not use the artifact. The default summary moves from 15 to 16 checks and the
-  payload summary from 12 to 13.
+  payload summary from 11 to 12.
 - **New framework-envelope surfaces** under `.github/` (a pull-request template, a
   close-out script, and a close-out workflow). These are release-publication machinery,
   not injected consumer payload, so they change no consumer contract.
@@ -140,7 +143,7 @@ Phase-level acceptance is the union of every feature's acceptance tests in
 `.agent/feature_list_013.json` plus the following:
 
 - `bash tools/validate.sh` reports `SUMMARY: 16 passed, 0 failed` with `[C16] PASS`.
-- `bash tools/validate.sh --payload` reports 13 passed with an explicit C16 payload-skip PASS.
+- `bash tools/validate.sh --payload` reports 12 passed with an explicit C16 payload-skip PASS.
 - `bash tools/fixtures_self_test.sh` exits 0, including the enumeration guards that prove
   the new document and template are registered.
 - `bash tools/e2e_bootstrap_test.sh` exits 0 and the injected payload carries the new

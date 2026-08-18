@@ -1,6 +1,6 @@
 {
   "phase": "013-definition-of-done",
-  "spec_version": "1.1.0",
+  "spec_version": "1.1.1",
   "original_estimate_lines": 2150,
   "planning_note": "DAG-validated acyclic: roots {092, 097}; 093 depends on 092; 094/095/096 depend on 093; 098 depends on 092-097. Topological execution order: [092, 097] -> [093] -> [094, 095, 096] -> [098]. Scope is the operator's 2026-08-18 Definition-of-Done selection (Tiers 0+1+2, release-ready v1.1.0 MINOR). PROPOSAL ONLY: awaiting activation gate H-PHASE-013; no feature enters contract negotiation before that authorization.",
   "features": [
@@ -14,7 +14,7 @@
         "bash tools/validate.sh 2>&1 | grep -E '^\\[C16\\] PASS feature-list-lifecycle$'",
         "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'",
         "bash tools/validate.sh --target tools/fixtures/feature_list_neg_bad_status.json; test $? -eq 1",
-        "bash tools/validate.sh --payload 2>&1 | grep -E '^SUMMARY \\(payload mode\\): 13 passed, 0 failed$'",
+        "bash tools/validate.sh --payload 2>&1 | grep -E '^SUMMARY \\(payload mode\\): 12 passed, 0 failed$'",
         "bash tools/fixtures_self_test.sh; test $? -eq 0"
       ],
       "estimated_lines": 450
