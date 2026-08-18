@@ -24,6 +24,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `schema/README.md`'s `feature_list.schema.json` row, which previously
   named no enforcing check.
 
+- **Canonical Definition of Done, `standard/definition_of_done.md` (phase
+  013, feature 093).** The framework's layered Definition of Done: 13
+  numbered sections aggregating the eight done-layers (Step, Handoff, Gate,
+  Feature, Plan, Merge, Release, Ecosystem) by citing each layer's existing
+  authority rather than restating its mechanics. Defines `complete` over
+  the existing five-value `schema/feature_list.schema.json` enum, with no
+  `done` state added anywhere. Feature-Done is verified by check C16;
+  Merge-Done and Release-Done by the phase-013 feature-097 release
+  close-out gate; every other layer is consumer-aspirational. Registered
+  in `NIZAM.json` (capability index and `standard` module key_documents),
+  `standard/README.md` (index row, version 0.2.1 -> 0.3.0), and
+  `docs/guide/index.html`'s `standard/` module card.
+
 ## [1.0.0] - 2026-08-15
 
 **Major release** (`methodology/06_release_train.md` §3.1): phase 012 resolves the

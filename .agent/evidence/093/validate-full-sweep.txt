@@ -1,0 +1,21 @@
+bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'; s1=$?; bash tools/validate.sh >/dev/null 2>&1; s2=$?; test "${s1}" -eq 0 -a "${s2}" -eq 0
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood
+[C12] PASS ecosystem-fixtures
+[C13] PASS skill-index
+[C14] PASS workflow-sha-pins
+[C15] PASS capability-profile-roles
+[C16] PASS feature-list-lifecycle
+SUMMARY: 16 passed, 0 failed
+(grep matched line: SUMMARY: 16 passed, 0 failed)
+(s1=0, s2=0)
+EXIT:0

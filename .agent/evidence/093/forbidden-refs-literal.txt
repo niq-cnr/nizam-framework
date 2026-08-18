@@ -1,0 +1,3 @@
+fail=0; for needle in 'ecosystem/06_' 'ecosystem/08_' 'ecosystem/09_' '08_ga_gate.md' '.github/scripts/release_closeout.py' '.github/workflows/release_closeout.yml'; do grep -Fq "${needle}" standard/definition_of_done.md && { echo "forbidden reference found: ${needle}"; fail=1; }; done; test "${fail}" -eq 0 && echo 'PASS no forbidden bare/reserved/forward-path references'
+PASS no forbidden bare/reserved/forward-path references
+EXIT:0

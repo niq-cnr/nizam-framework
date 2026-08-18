@@ -1,0 +1,173 @@
+=== STEP 1: LITERAL CONTRACT COMMAND (invoked verbatim, from repo root) ===
+set -e; for p in $(git ls-files ".agent/feature_list*.json"); do git diff --quiet 818919f9059d91f53671b0ff66094791831e04fd -- "$p" || { echo "unexpected feature-list content change: $p"; exit 1; }; done; git diff --quiet 818919f9059d91f53671b0ff66094791831e04fd -- .agent/run_state.json || { echo "unexpected run_state.json change"; exit 1; }; echo "PASS no real feature-list/run_state content touched"
+unexpected run_state.json change
+LITERAL_COMMAND_EXIT:1
+
+=== NDEBT-040 ADJUDICATION (docs/planning/DEBT.md row NDEBT-040) ===
+Per the DEBT row's adjudication for contract 093: 'Mode B and the evaluator QA decompose the guard objectively (feature lists byte-identical to the anchor; the run_state delta confined, by parsed-JSON comparison, to the orchestrator-owned coordination keys updated_at/active_contract_id/circuit_breaker/appended history entries; no implementation content), captured as evidence.'
+Reason the literal command fails: the Orchestrator legitimately appended coordination records (097 contract approval, active_contract_id, history entries, updated_at) to .agent/run_state.json between this contract's base_revision (818919f) and QA time -- content unattributable to this feature's implementation.
+
+=== STEP 2: THREE-LIMB OBJECTIVE DECOMPOSITION SCRIPT ===
+import json, subprocess, sys
+
+BASE = "818919f9059d91f53671b0ff66094791831e04fd"
+HEAD = "HEAD"
+
+def sh(cmd):
+    return subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+results = {}
+
+# ---- LIMB (i): every .agent/feature_list*.json byte-identical to BASE ----
+files_out = sh("git ls-files '.agent/feature_list*.json'")
+fl_files = files_out.stdout.strip().splitlines()
+limb1_ok = True
+limb1_detail = []
+for f in fl_files:
+    r = sh(f"git diff --quiet {BASE} -- {f}")
+    if r.returncode != 0:
+        limb1_ok = False
+        limb1_detail.append(f"DIFFERS: {f}")
+    else:
+        limb1_detail.append(f"identical: {f}")
+results['limb1_feature_lists_byte_identical_to_base'] = {"pass": limb1_ok, "files_checked": fl_files, "detail": limb1_detail}
+
+# ---- LIMB (ii): parsed run_state at BASE vs worktree identical after removing
+#      {updated_at, active_contract_id, circuit_breaker} and appended history tail
+#      (BASE history a strict prefix of worktree history) ----
+def load_git_json(ref, path):
+    r = sh(f"git show {ref}:{path}")
+    assert r.returncode == 0, r.stderr
+    return json.loads(r.stdout)
+
+def load_worktree_json(path):
+    return json.load(open(path))
+
+ALLOWED_KEYS = {"updated_at", "active_contract_id", "circuit_breaker"}
+
+def strip_allowed(d):
+    d = dict(d)
+    for k in ALLOWED_KEYS:
+        d.pop(k, None)
+    d.pop("history", None)  # history compared separately as prefix relation
+    return d
+
+base_rs = load_git_json(BASE, ".agent/run_state.json")
+wt_rs = load_worktree_json(".agent/run_state.json")
+
+base_stripped = strip_allowed(base_rs)
+wt_stripped = strip_allowed(wt_rs)
+limb2_body_equal = (base_stripped == wt_stripped)
+
+base_hist = base_rs.get("history", [])
+wt_hist = wt_rs.get("history", [])
+limb2_history_prefix = (wt_hist[:len(base_hist)] == base_hist)
+
+limb2_ok = limb2_body_equal and limb2_history_prefix
+results['limb2_run_state_base_vs_worktree_parse_equal_modulo_allowed_keys'] = {
+    "pass": limb2_ok,
+    "body_equal_after_stripping_allowed_keys": limb2_body_equal,
+    "base_history_len": len(base_hist),
+    "worktree_history_len": len(wt_hist),
+    "history_is_strict_prefix": limb2_history_prefix,
+}
+
+# ---- LIMB (iii): git diff HEAD -- .agent/run_state.json, plus a parse-equal
+#      check confirming the generator wrote nothing (HEAD vs worktree, same
+#      allowed-key removal + history-prefix discipline) ----
+diff_head = sh("git diff HEAD -- .agent/run_state.json")
+head_rs = load_git_json(HEAD, ".agent/run_state.json")
+
+head_stripped = strip_allowed(head_rs)
+wt_stripped_vs_head = strip_allowed(wt_rs)
+limb3_body_equal = (head_stripped == wt_stripped_vs_head)
+
+head_hist = head_rs.get("history", [])
+limb3_history_prefix = (wt_hist[:len(head_hist)] == head_hist)
+
+limb3_ok = limb3_body_equal and limb3_history_prefix
+results['limb3_run_state_head_vs_worktree_parse_equal_modulo_allowed_keys'] = {
+    "pass": limb3_ok,
+    "git_diff_head_nonempty": bool(diff_head.stdout.strip()),
+    "git_diff_head_output": diff_head.stdout,
+    "body_equal_after_stripping_allowed_keys": limb3_body_equal,
+    "head_history_len": len(head_hist),
+    "worktree_history_len": len(wt_hist),
+    "history_is_strict_prefix": limb3_history_prefix,
+}
+
+overall = limb1_ok and limb2_ok and limb3_ok
+
+print(json.dumps(results, indent=2, default=str))
+print()
+print(f"LIMB 1 (feature-lists byte-identical to base {BASE[:7]}): {'PASS' if limb1_ok else 'FAIL'}")
+print(f"LIMB 2 (run_state base-vs-worktree parse-equal modulo allowed keys, history strict prefix): {'PASS' if limb2_ok else 'FAIL'}")
+print(f"LIMB 3 (run_state HEAD-vs-worktree parse-equal modulo allowed keys, history strict prefix -- generator wrote nothing since HEAD): {'PASS' if limb3_ok else 'FAIL'}")
+print(f"OVERALL DECOMPOSITION: {'PASS-BY-DECOMPOSITION' if overall else 'FAIL'}")
+sys.exit(0 if overall else 1)
+
+=== STEP 3: DECOMPOSITION SCRIPT OUTPUT ===
+{
+  "limb1_feature_lists_byte_identical_to_base": {
+    "pass": true,
+    "files_checked": [
+      ".agent/feature_list.json",
+      ".agent/feature_list_002.json",
+      ".agent/feature_list_003.json",
+      ".agent/feature_list_004.json",
+      ".agent/feature_list_005.json",
+      ".agent/feature_list_006.json",
+      ".agent/feature_list_007.json",
+      ".agent/feature_list_008.json",
+      ".agent/feature_list_009.json",
+      ".agent/feature_list_010.json",
+      ".agent/feature_list_011.json",
+      ".agent/feature_list_012.json",
+      ".agent/feature_list_013.json"
+    ],
+    "detail": [
+      "identical: .agent/feature_list.json",
+      "identical: .agent/feature_list_002.json",
+      "identical: .agent/feature_list_003.json",
+      "identical: .agent/feature_list_004.json",
+      "identical: .agent/feature_list_005.json",
+      "identical: .agent/feature_list_006.json",
+      "identical: .agent/feature_list_007.json",
+      "identical: .agent/feature_list_008.json",
+      "identical: .agent/feature_list_009.json",
+      "identical: .agent/feature_list_010.json",
+      "identical: .agent/feature_list_011.json",
+      "identical: .agent/feature_list_012.json",
+      "identical: .agent/feature_list_013.json"
+    ]
+  },
+  "limb2_run_state_base_vs_worktree_parse_equal_modulo_allowed_keys": {
+    "pass": true,
+    "body_equal_after_stripping_allowed_keys": true,
+    "base_history_len": 202,
+    "worktree_history_len": 207,
+    "history_is_strict_prefix": true
+  },
+  "limb3_run_state_head_vs_worktree_parse_equal_modulo_allowed_keys": {
+    "pass": true,
+    "git_diff_head_nonempty": true,
+    "git_diff_head_output": "diff --git a/.agent/run_state.json b/.agent/run_state.json\nindex 7150200..2d08d37 100644\n--- a/.agent/run_state.json\n+++ b/.agent/run_state.json\n@@ -3,7 +3,7 @@\n   \"current_phase\": \"013-definition-of-done\",\n   \"current_feature\": \"093\",\n   \"status\": \"in_progress\",\n-  \"updated_at\": \"2026-08-18T12:12:32Z\",\n+  \"updated_at\": \"2026-08-18T12:26:28Z\",\n   \"circuit_breaker\": {\n     \"000-contract\": {\n       \"attempts\": 1,\n@@ -167,7 +167,7 @@\n     \"097-contract\": {\n       \"attempts\": 3,\n       \"limit\": 3,\n-      \"note\": \"Contract negotiation for feature 097 (release close-out gate) exhausted the 3-revision limit without Mode A approval. Round 1: scratch-negative unexecutable pre-commit (git archive) + tag-mode read-at-checkout broke the workflow_dispatch republish path + stale citations. Round 2 (after rev1's git-show at-tag redesign): read-set enumerated 5 of 6 anchors, no tag-mode verification, no era-safety rule; the generator's own 14-tag hand-walk then refuted the task premise, exposing genuine historical anchor drift (NIZAM lagging the tag at v0.2.0/v0.5.2/v0.5.3; CONTEXT.md an independent revision counter v0.3.0-v0.7.0). Round 3 (after rev2 era-safe skips + rev3 value-drift non_goal + release.yml comment update): Mode A's own at-tag probes refuted the residual claim - v0.1.0 fails three PRESENT-file groups (CONTEXT.md has no change_log key, README has no version pins, CHANGELOG [0.1.0] has no tier banner - the tier-banner convention starts at v0.8.0), so the republishable set is {v0.8.0, v0.9.0, v1.0.0, future}, the blocked list is eleven tags, and the sub-anchor-absence disposition (file present, anchor key absent) is undefined. Attempt 4 is FORBIDDEN without explicit human authorization (the human_authorized_extension mechanism). Step BLOCKED; escalated to operator; NDEBT-039. EXTENSION: operator authorized a 4th, human-authorized revision at 2026-08-18T11:59:15Z (interactive session), scoped to exactly the two round-3 prescriptions. Feature 097 removed from blocked_features. Round-4 Mode A: prescription 1 fully verified at all four sites; prescription 2 applied at one of the two sites carrying the crash-free claim - one superseded sentence survived in design_notes.tag_mode_additions. The validator recorded that the fix is squarely inside the already-granted authorization scope, so the orchestrator treats the single-sentence completion as finishing the authorized 4th revision (revisions counter stays 4), not a fifth round; recorded here for audit.\",\n+      \"note\": \"Contract negotiation for feature 097 (release close-out gate) exhausted the 3-revision limit without Mode A approval. Round 1: scratch-negative unexecutable pre-commit (git archive) + tag-mode read-at-checkout broke the workflow_dispatch republish path + stale citations. Round 2 (after rev1's git-show at-tag redesign): read-set enumerated 5 of 6 anchors, no tag-mode verification, no era-safety rule; the generator's own 14-tag hand-walk then refuted the task premise, exposing genuine historical anchor drift (NIZAM lagging the tag at v0.2.0/v0.5.2/v0.5.3; CONTEXT.md an independent revision counter v0.3.0-v0.7.0). Round 3 (after rev2 era-safe skips + rev3 value-drift non_goal + release.yml comment update): Mode A's own at-tag probes refuted the residual claim - v0.1.0 fails three PRESENT-file groups (CONTEXT.md has no change_log key, README has no version pins, CHANGELOG [0.1.0] has no tier banner - the tier-banner convention starts at v0.8.0), so the republishable set is {v0.8.0, v0.9.0, v1.0.0, future}, the blocked list is eleven tags, and the sub-anchor-absence disposition (file present, anchor key absent) is undefined. Attempt 4 is FORBIDDEN without explicit human authorization (the human_authorized_extension mechanism). Step BLOCKED; escalated to operator; NDEBT-039. EXTENSION: operator authorized a 4th, human-authorized revision at 2026-08-18T11:59:15Z (interactive session), scoped to exactly the two round-3 prescriptions. Feature 097 removed from blocked_features. Round-4 Mode A: prescription 1 fully verified at all four sites; prescription 2 applied at one of the two sites carrying the crash-free claim - one superseded sentence survived in design_notes.tag_mode_additions. The validator recorded that the fix is squarely inside the already-granted authorization scope, so the orchestrator treats the single-sentence completion as finishing the authorized 4th revision (revisions counter stays 4), not a fifth round; recorded here for audit. RESOLVED: Mode A round 5 approved the completed authorized revision (all arrays empty; the residual old-framing occurrence judged an unambiguous disowned quotation-in-contrast) and the evaluator contract review approved (contract-testability, .agent/qa/097-contract-review.json, empty issue arrays; the (a-EXT) named-FAIL disposition recorded as the leading candidate for the Loop-2 adversarial spot-check). Contract approved under the human-authorized extension; NDEBT-039 moved to Resolved.\",\n       \"human_authorized_extension\": {\n         \"at\": \"2026-08-18T11:59:15Z\",\n         \"authorized_by\": \"operator\",\n@@ -1233,6 +1233,12 @@\n       \"event\": \"state_field_added\",\n       \"feature\": \"093\",\n       \"detail\": \"Orchestrator adds the coordination field active_contract_id to .agent/run_state.json (schema permits it via additionalProperties; the generator protocol's Step-0 gate requires it and correctly HALTed on its absence rather than trusting the orchestrator's prose claim - the exact drift the Durable State Rule exists to catch, and a stricter reading than feature 092's generator took when it proceeded on corroboration). Set to '093' (contract approved 2026-08-18T12:03:08Z). Maintenance rule going forward: the orchestrator sets active_contract_id when a feature's contract reaches status approved and Loop 2 begins, and advances it at the next contract approval; it always equals the contract id the Generator is currently authorized to implement.\"\n+    },\n+    {\n+      \"at\": \"2026-08-18T12:26:28Z\",\n+      \"event\": \"contract_approved\",\n+      \"feature\": \"097\",\n+      \"detail\": \"Contract 097 (release close-out gate) APPROVED after the 3-strike circuit breaker and the operator's human-authorized 4th revision: Mode A rounds 1-5 (round 5 approved the completed revision with empty arrays) and the independent evaluator contract review (.agent/qa/097-contract-review.json, approved, empty issue arrays; two non-blocking observations - the (a-EXT) sub-anchor-absence named-FAIL disposition reserved as the leading Loop-2 adversarial-spot-check candidate, and verification[14]'s pre-implementation non-discrimination via the sibling 093 CHANGELOG entry). The negotiation's permanent-record yield: the 14-tag release-anchor archaeology (republishable set v0.8.0/v0.9.0/v1.0.0/future; eleven blocked tags across three cause classes). approvals: validator_mode_a=true, evaluator_contract_review=true, revisions=4, approved_at=2026-08-18T12:26:28Z. Implementation deferred until feature 093's Loop 2 completes (shared CHANGELOG surface; active_contract_id stays 093).\"\n     }\n   ],\n   \"phase_001_scope_budget_final\": {\n",
+    "body_equal_after_stripping_allowed_keys": true,
+    "head_history_len": 206,
+    "worktree_history_len": 207,
+    "history_is_strict_prefix": true
+  }
+}
+
+LIMB 1 (feature-lists byte-identical to base 818919f): PASS
+LIMB 2 (run_state base-vs-worktree parse-equal modulo allowed keys, history strict prefix): PASS
+LIMB 3 (run_state HEAD-vs-worktree parse-equal modulo allowed keys, history strict prefix -- generator wrote nothing since HEAD): PASS
+OVERALL DECOMPOSITION: PASS-BY-DECOMPOSITION
+
+=== ADJUDICATED RESULT ===
+Literal command: FAIL (exit 1) -- expected per NDEBT-040, caused solely by orchestrator coordination-key drift.
+Limb (i) feature-lists byte-identical to base: PASS
+Limb (ii) run_state base-vs-worktree parse-equal modulo {updated_at, active_contract_id, circuit_breaker} + history strict-prefix: PASS
+Limb (iii) git diff HEAD -- .agent/run_state.json + HEAD-vs-worktree parse-equal check confirming the generator wrote nothing since HEAD: PASS
+All three limbs hold -> check recorded as PASS-BY-DECOMPOSITION per the NDEBT-040 adjudication (not a prose override; this is the contracted check's defined adjudication).
+EXIT:0

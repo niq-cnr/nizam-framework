@@ -1,0 +1,2 @@
+python3 -c "import json; d=json.load(open('NIZAM.json')); assert any(c['id']=='nizam-definition-of-done' for c in d['capabilities']); assert 'standard/definition_of_done.md' in next(m for m in d['modules'] if m['path']=='standard')['key_documents']"
+EXIT:0

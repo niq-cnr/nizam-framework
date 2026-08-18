@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "013-definition-of-done",
-  "current_feature": "093",
+  "current_feature": "094",
   "status": "in_progress",
-  "updated_at": "2026-08-18T12:12:32Z",
+  "updated_at": "2026-08-18T12:40:10Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -167,7 +167,7 @@
     "097-contract": {
       "attempts": 3,
       "limit": 3,
-      "note": "Contract negotiation for feature 097 (release close-out gate) exhausted the 3-revision limit without Mode A approval. Round 1: scratch-negative unexecutable pre-commit (git archive) + tag-mode read-at-checkout broke the workflow_dispatch republish path + stale citations. Round 2 (after rev1's git-show at-tag redesign): read-set enumerated 5 of 6 anchors, no tag-mode verification, no era-safety rule; the generator's own 14-tag hand-walk then refuted the task premise, exposing genuine historical anchor drift (NIZAM lagging the tag at v0.2.0/v0.5.2/v0.5.3; CONTEXT.md an independent revision counter v0.3.0-v0.7.0). Round 3 (after rev2 era-safe skips + rev3 value-drift non_goal + release.yml comment update): Mode A's own at-tag probes refuted the residual claim - v0.1.0 fails three PRESENT-file groups (CONTEXT.md has no change_log key, README has no version pins, CHANGELOG [0.1.0] has no tier banner - the tier-banner convention starts at v0.8.0), so the republishable set is {v0.8.0, v0.9.0, v1.0.0, future}, the blocked list is eleven tags, and the sub-anchor-absence disposition (file present, anchor key absent) is undefined. Attempt 4 is FORBIDDEN without explicit human authorization (the human_authorized_extension mechanism). Step BLOCKED; escalated to operator; NDEBT-039. EXTENSION: operator authorized a 4th, human-authorized revision at 2026-08-18T11:59:15Z (interactive session), scoped to exactly the two round-3 prescriptions. Feature 097 removed from blocked_features. Round-4 Mode A: prescription 1 fully verified at all four sites; prescription 2 applied at one of the two sites carrying the crash-free claim - one superseded sentence survived in design_notes.tag_mode_additions. The validator recorded that the fix is squarely inside the already-granted authorization scope, so the orchestrator treats the single-sentence completion as finishing the authorized 4th revision (revisions counter stays 4), not a fifth round; recorded here for audit.",
+      "note": "Contract negotiation for feature 097 (release close-out gate) exhausted the 3-revision limit without Mode A approval. Round 1: scratch-negative unexecutable pre-commit (git archive) + tag-mode read-at-checkout broke the workflow_dispatch republish path + stale citations. Round 2 (after rev1's git-show at-tag redesign): read-set enumerated 5 of 6 anchors, no tag-mode verification, no era-safety rule; the generator's own 14-tag hand-walk then refuted the task premise, exposing genuine historical anchor drift (NIZAM lagging the tag at v0.2.0/v0.5.2/v0.5.3; CONTEXT.md an independent revision counter v0.3.0-v0.7.0). Round 3 (after rev2 era-safe skips + rev3 value-drift non_goal + release.yml comment update): Mode A's own at-tag probes refuted the residual claim - v0.1.0 fails three PRESENT-file groups (CONTEXT.md has no change_log key, README has no version pins, CHANGELOG [0.1.0] has no tier banner - the tier-banner convention starts at v0.8.0), so the republishable set is {v0.8.0, v0.9.0, v1.0.0, future}, the blocked list is eleven tags, and the sub-anchor-absence disposition (file present, anchor key absent) is undefined. Attempt 4 is FORBIDDEN without explicit human authorization (the human_authorized_extension mechanism). Step BLOCKED; escalated to operator; NDEBT-039. EXTENSION: operator authorized a 4th, human-authorized revision at 2026-08-18T11:59:15Z (interactive session), scoped to exactly the two round-3 prescriptions. Feature 097 removed from blocked_features. Round-4 Mode A: prescription 1 fully verified at all four sites; prescription 2 applied at one of the two sites carrying the crash-free claim - one superseded sentence survived in design_notes.tag_mode_additions. The validator recorded that the fix is squarely inside the already-granted authorization scope, so the orchestrator treats the single-sentence completion as finishing the authorized 4th revision (revisions counter stays 4), not a fifth round; recorded here for audit. RESOLVED: Mode A round 5 approved the completed authorized revision (all arrays empty; the residual old-framing occurrence judged an unambiguous disowned quotation-in-contrast) and the evaluator contract review approved (contract-testability, .agent/qa/097-contract-review.json, empty issue arrays; the (a-EXT) named-FAIL disposition recorded as the leading candidate for the Loop-2 adversarial spot-check). Contract approved under the human-authorized extension; NDEBT-039 moved to Resolved.",
       "human_authorized_extension": {
         "at": "2026-08-18T11:59:15Z",
         "authorized_by": "operator",
@@ -179,6 +179,11 @@
       "attempts": 3,
       "limit": 3,
       "note": "Contract negotiation for feature 093 (the Definition of Done standard): Mode A rejected rounds 1 (unsatisfiable NIZAM.json dict-accessor traced upstream to a Planner acceptance test, fixed by the second Section-9 amendment at 818919f; wrong-occurrence guide-card anchor; a semicolon-masked assertion; a vacuous HEAD-anchored guard), 2 (no mechanization of the no-done-state rule + two citation defects), and 3 (the same-line enum-lock heuristic provably missed the table-row shape). Round 4 approved after the structural substring-exemption fix, verified against ten adversarial probes. Approved AT the 3-revision limit without breaching it."
+    },
+    "093-implementation": {
+      "attempts": 1,
+      "limit": 3,
+      "note": "Mode B round 1 rejected on one blocker (Section 11 false enforcement count: exactly-two vs three enumerated, with the 097 gate unlanded) and one minor (bare Section-5 cross-reference); rework 1 applied both prescriptions; Mode B round 2 approved with empty arrays."
     }
   },
   "history": [
@@ -1233,6 +1238,18 @@
       "event": "state_field_added",
       "feature": "093",
       "detail": "Orchestrator adds the coordination field active_contract_id to .agent/run_state.json (schema permits it via additionalProperties; the generator protocol's Step-0 gate requires it and correctly HALTed on its absence rather than trusting the orchestrator's prose claim - the exact drift the Durable State Rule exists to catch, and a stricter reading than feature 092's generator took when it proceeded on corroboration). Set to '093' (contract approved 2026-08-18T12:03:08Z). Maintenance rule going forward: the orchestrator sets active_contract_id when a feature's contract reaches status approved and Loop 2 begins, and advances it at the next contract approval; it always equals the contract id the Generator is currently authorized to implement."
+    },
+    {
+      "at": "2026-08-18T12:26:28Z",
+      "event": "contract_approved",
+      "feature": "097",
+      "detail": "Contract 097 (release close-out gate) APPROVED after the 3-strike circuit breaker and the operator's human-authorized 4th revision: Mode A rounds 1-5 (round 5 approved the completed revision with empty arrays) and the independent evaluator contract review (.agent/qa/097-contract-review.json, approved, empty issue arrays; two non-blocking observations - the (a-EXT) sub-anchor-absence named-FAIL disposition reserved as the leading Loop-2 adversarial-spot-check candidate, and verification[14]'s pre-implementation non-discrimination via the sibling 093 CHANGELOG entry). The negotiation's permanent-record yield: the 14-tag release-anchor archaeology (republishable set v0.8.0/v0.9.0/v1.0.0/future; eleven blocked tags across three cause classes). approvals: validator_mode_a=true, evaluator_contract_review=true, revisions=4, approved_at=2026-08-18T12:26:28Z. Implementation deferred until feature 093's Loop 2 completes (shared CHANGELOG surface; active_contract_id stays 093)."
+    },
+    {
+      "at": "2026-08-18T12:40:10Z",
+      "event": "feature_complete",
+      "feature": "093",
+      "detail": "Feature 093 COMPLETE: standard/definition_of_done.md (269 lines, 13 sections) + registration across NIZAM.json (13th standard key_document + nizam-definition-of-done capability), standard/README.md (0.3.0 + first change_log block), the guide's standard/ card, and CHANGELOG. Loop 1: contract approved at revision 3 after Mode A rounds 1-4 (round 1 traced an unsatisfiable accessor upstream to the Planner acceptance test, fixed by the second Section-9 amendment at 818919f; round 3's table-row falsifier drove the structural substring-exemption enum-lock) plus the evaluator contract review. Loop 2: Mode B round 1 rejected the Section-11 enforcement count (the phase's own doc-truth discipline applied to its own centerpiece), rework 1 fixed it (exactly two layers enforced today: Feature-Done via C16, Merge-Done via compliance.yml; Release-Done hedged on feature 097), Mode B round 2 approved; evaluator QA .agent/qa/093.json 18/18 (17 direct + the SHA-anchored byte-guard PASS-by-decomposition per NDEBT-040's pre-registered three-limb adjudication) with the adversarial quotation-fidelity spot-check (AGF.md Section 4 formula verbatim-faithful) and 19 Section-5 evidence files; orchestrator evidence-capture gate PASS. Canonical-first flips: phase_013.yaml step 093 COMPLETED (written first), feature_list_013 093 complete, this derived run state after. C16 now binds feature 093's chain (contract + QA + evidence all resolve). Next per the Dependency Enforcement Rule: features 094/095/096 all eligible (dep 093 complete); 097's contract is approved and its implementation slot opens (active_contract_id -> 097)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1406,7 +1423,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2150,
-    "total_lines_changed": 819,
+    "total_lines_changed": 2135,
     "per_feature": [
       {
         "id": "092",
@@ -1414,6 +1431,13 @@
         "actual": 819,
         "flag": "OVER",
         "note": "Landed commit git numstat: 819 lines (all staged changes for the feature commit, including contract, QA artifacts, evidence, and lifecycle state). Implementation surface was ~399 lines (355 across 7 modified files + 44 in two new fixtures); the remainder is process weight: the 3-revision contract, two QA artifacts, and 14 Section-5 evidence captures. First phase feature, so no prior-three rolling baseline exists (the 085 precedent). Cumulative remains under the 2795 ceiling."
+      },
+      {
+        "id": "093",
+        "estimated": 450,
+        "actual": 1316,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 1316 lines (implementation ~34 lines across four registration surfaces + the 269-line document, plus the 3-revision contract, two QA artifacts, 19 Section-5 evidence files, and lifecycle state). Prior-three baseline is the single feature 092 (819): 3x ceiling 2457, not exceeded... note: per 00_planning.md Section 6 the rolling average uses up to the last three completed features; with only 092 completed the baseline is 819, threshold 2457, and 1316 is under it, so no flag procedure fires; OVER here records actual>estimated only. Cumulative 2135/2795 ceiling."
       }
     ]
   },
@@ -1598,5 +1622,5 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "093"
+  "active_contract_id": "097"
 }

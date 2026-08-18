@@ -1,0 +1,3 @@
+out=$(bash tools/validate.sh --target standard/definition_of_done.md 2>&1); for c in '\[C1\] PASS' '\[C2\] PASS' '\[C3\] PASS' '\[C9\] PASS' '\[C10\] PASS'; do printf '%s\n' "${out}" | grep -Eq "^${c}" || { echo "missing: ${c}"; exit 1; }; done; echo 'PASS all five per-check lines present'
+PASS all five per-check lines present
+EXIT:0

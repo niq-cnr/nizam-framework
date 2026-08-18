@@ -2,9 +2,13 @@
 id: nizam-standard-readme
 title: "Standard Module — Index"
 description: "Index for the standard/ module: the documentation, governance, security, and architectural standards every consumer repository inherits."
-version: 0.2.1
+version: 0.3.0
 status: active
 authoritative_source: standard/README.md
+change_log:
+  - version: "0.3.0"
+    date: "2026-08-18"
+    summary: "Phase 013, feature 093: add the standard/definition_of_done.md index row -- the canonical, layered Definition of Done."
 ---
 
 # standard/
@@ -27,6 +31,7 @@ consumer repository without modification.
 | [`provenance_policy.md`](provenance_policy.md) | Supply-chain provenance rules: artifact attestations, audit envelopes, and SHA-pinned workflows. |
 | [`permission_classes.md`](permission_classes.md) | Deny-by-default role permission classes and Kubernetes RBAC allocations. |
 | [`cross_repo_governance.md`](cross_repo_governance.md) | The executable truth layer, the cross-repo query protocol, and the seven-tier architecture model. |
+| [`definition_of_done.md`](definition_of_done.md) | The canonical, layered Definition of Done -- aggregates the framework's eight done-layers by citing each layer's existing authority, never restating its mechanics. |
 
 ## Machine Validation
 
