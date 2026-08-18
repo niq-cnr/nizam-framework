@@ -6,11 +6,14 @@ tags: [spec, definition-of-done, enforcement, release-train, phase-013]
 status: active
 last_audited: "2026-08-18"
 authoritative_source: NA
-version: 1.1.1
-spec_version: "1.1.1"
+version: 1.1.2
+spec_version: "1.1.2"
 created_at: "2026-08-18T09:42:57Z"
-updated_at: "2026-08-18T10:05:00Z"
+updated_at: "2026-08-18T11:28:00Z"
 change_log:
+  - version: "1.1.2"
+    date: "2026-08-18T11:28:00Z"
+    summary: "PLAN AMENDMENT per methodology/00_planning.md Section 9 (factual correction of defective acceptance-test commands; design intent unchanged). Mode A validation of contract 093 refuted feature 093's acceptance_tests[2], which read NIZAM.json as `d['modules']['standard']['key_documents']`. NIZAM.json `modules` is a LIST of objects keyed by a `path` field, so that accessor raises `TypeError: list indices must be integers or slices, not str` and the test could never pass. Confirmed live before amending (AH-2). Corrected to `next(m for m in d['modules'] if m['path']=='standard')['key_documents']`, asserting BOTH the key_documents membership and the `nizam-definition-of-done` capability-id membership per the Mode A prescription. A sweep of every acceptance test of all seven features (092-098) found exactly one more instance of the same defect class: feature 095's acceptance_tests[1], corrected identically for the `templates` module and additionally asserting the flat top-level `d['templates']` array, which is a real array and carries the same eight entries as modules.templates.key_documents, so registration in NIZAM.json means both sites. No other accessor mismatches the real artifact shapes: 092's and 098's commands are shell/CLI or use the correct `feature_list['features']` list-of-dicts shape; 094's schema regex and 096's grep counts execute cleanly today; 097's `uses:` SHA-pin pattern and its `release.yml` step-name ordering assertion were both verified against the real .github/workflows/release.yml, where `Create or update the GitHub Release` exists at offset 6021 and the sole `uses:` line is 40-hex pinned. Working tests were not rewritten. `.agent/product_spec_013.md`'s Acceptance section repeats no NIZAM.json accessor and needed no change. `.agent/feature_list_013.json` spec_version moves to 1.1.2 in lockstep."
   - version: "1.1.1"
     date: "2026-08-18T10:05:00Z"
     summary: "PLAN AMENDMENT per methodology/00_planning.md Section 9 (factual correction, no scope change). Corrects the --payload summary baseline figure inherited from exploration: the baseline is 11 counted checks, not 12, so the one counted payload check added by C16 raises the summary to 12, not 13. Refuted during Mode A validation of contract 092 against tools/validate.sh:2383-2394, where exactly 11 `passed=$((passed + 1))` increments run in payload mode (C6 is an uncounted echo SKIP), and against captured evidence .agent/evidence/091/final-migration.txt:6 and .agent/evidence/090/migration-rehearsal.txt:6, both reading `SUMMARY (payload mode): 11 passed, 0 failed`, corroborated by the NDEBT-012 resolution note at docs/planning/DEBT.md:50. Two assertions corrected (Public contract changes; Acceptance). Design intent is unchanged: C16 still adds exactly one counted payload check. .agent/feature_list_013.json spec_version moves to 1.1.1 in lockstep with its 092 acceptance test."

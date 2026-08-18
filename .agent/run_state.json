@@ -3,7 +3,7 @@
   "current_phase": "013-definition-of-done",
   "current_feature": "093",
   "status": "in_progress",
-  "updated_at": "2026-08-18T11:08:00Z",
+  "updated_at": "2026-08-18T11:29:23Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1188,6 +1188,12 @@
       "event": "feature_complete",
       "feature": "092",
       "detail": "Feature 092 COMPLETE: validator check C16 (feature-list lifecycle invariant) + schema/README.md doc-truth fix. Loop 1: contract approved at revision 3 after Mode A rounds 1-4 (round-1 payload-count blocker traced upstream and fixed by the Section-9 amendment at fe571b9) and the independent evaluator contract review. Loop 2: implementation landed 16/16 default + 12-passed payload + 79/79 self-test + e2e green; Mode B round 1 rejected one major doc-truth finding (verify_lib.sh primitive count -> eleven), rework 1 fixed it, Mode B round 2 approved; evaluator QA .agent/qa/092.json independently re-executed all 12 verification commands (12/12 PASS) with the mandatory adversarial spot-check (directory-as-evidence perturbation confirming os.path.isfile semantics, .agent/evidence/092/qa-adversarial.txt) and 14 evidence files; the orchestrator's evidence-capture gate verified every referenced path exists in the Section-5 shape (invocation first line, EXIT:<code> last line). Canonical-first flips: docs/planning/phase_013.yaml step 092 COMPLETED (written first), .agent/feature_list_013.json 092 complete, this derived run state after. C16 is now live and this very completion is the first to be verified by it. Next eligible feature per the Dependency Enforcement Rule: 093 (the Definition of Done standard)."
+    },
+    {
+      "at": "2026-08-18T11:29:23Z",
+      "event": "amendment_complete",
+      "feature": "093",
+      "detail": "Second Section-9 plan amendment of phase 013 (Planner-routed factual correction, design intent unchanged): NIZAM.json's modules is a list keyed by path, not a dict, so feature 093's acceptance_tests[2] (d['modules']['standard'][...]) raised TypeError and could never pass — refuted during Mode A round 1 of contract 093. Preventive sweep of all 29 acceptance tests across features 092-098 found exactly one more instance of the same class (feature 095, d['modules']['templates']); both corrected to the next(m for m in d['modules'] if m['path']==...) form with satisfiability proven both ways (EXIT 0 against a mutated post-implementation NIZAM.json; clean AssertionError, not TypeError, against today's tree). No working test rewritten. Spec bumped 1.1.1 -> 1.1.2; feature_list spec_version in lockstep. Contract 093 now routes to Generator revision round 1 (Mode A round-1 findings I1-I5 + U1-U2); contract 097 rev1 is unaffected (its only feature-list verification is a schema self-check, no byte-guard anchored at the pre-amendment revision)."
     }
   ],
   "phase_001_scope_budget_final": {

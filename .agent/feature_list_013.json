@@ -1,6 +1,6 @@
 {
   "phase": "013-definition-of-done",
-  "spec_version": "1.1.1",
+  "spec_version": "1.1.2",
   "original_estimate_lines": 2150,
   "planning_note": "DAG-validated acyclic: roots {092, 097}; 093 depends on 092; 094/095/096 depend on 093; 098 depends on 092-097. Topological execution order: [092, 097] -> [093] -> [094, 095, 096] -> [098]. Scope is the operator's 2026-08-18 Definition-of-Done selection (Tiers 0+1+2, release-ready v1.1.0 MINOR). PROPOSAL ONLY: awaiting activation gate H-PHASE-013; no feature enters contract negotiation before that authorization.",
   "features": [
@@ -30,7 +30,7 @@
       "acceptance_tests": [
         "bash tools/validate.sh --target standard/definition_of_done.md; test $? -eq 0",
         "sed -n '7p' standard/definition_of_done.md | grep -Fxq 'enforcement: partially-enforced'",
-        "python3 -c \"import json; d=json.load(open('NIZAM.json')); assert any(c['id']=='nizam-definition-of-done' for c in d['capabilities']); assert 'standard/definition_of_done.md' in d['modules']['standard']['key_documents']\"",
+        "python3 -c \"import json; d=json.load(open('NIZAM.json')); assert any(c['id']=='nizam-definition-of-done' for c in d['capabilities']); assert 'standard/definition_of_done.md' in next(m for m in d['modules'] if m['path']=='standard')['key_documents']\"",
         "bash tools/fixtures_self_test.sh; test $? -eq 0",
         "grep -E 'ecosystem/0[689]_|08_ga_gate' standard/definition_of_done.md; test $? -eq 1"
       ],
@@ -63,7 +63,7 @@
       ],
       "acceptance_tests": [
         "bash tools/validate.sh --target templates/DoD.md; test $? -eq 0",
-        "python3 -c \"import json; d=json.load(open('NIZAM.json')); assert 'templates/DoD.md' in d['modules']['templates']['key_documents']\"",
+        "python3 -c \"import json; d=json.load(open('NIZAM.json')); assert 'templates/DoD.md' in next(m for m in d['modules'] if m['path']=='templates')['key_documents']; assert 'templates/DoD.md' in d['templates']\"",
         "test \"$(grep -c '{{' templates/DoD.md)\" -ge 5",
         "bash tools/e2e_bootstrap_test.sh; test $? -eq 0",
         "bash tools/fixtures_self_test.sh; test $? -eq 0"
