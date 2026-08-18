@@ -2,10 +2,16 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.35.0
+version: 0.37.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.37.0"
+    date: "2026-08-18"
+    summary: "Phase 013 ACTIVATED (operator verbatim: 'approved. please proceed.', gate H-PHASE-013, 2026-08-18): the 'Proposed Next Phase — Phase 013' banner becomes the Plan of Record banner. current_phase advanced 012-v1-consumer-safety -> 013-definition-of-done in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_013 flipped draft -> active (1.1.0); scope budget reset to 2150 (phase-012 final already archived at phase-012 close). Execution begins with the ungated DAG root feature 092 (validator check C16); the second root 097 (release close-out gate) has no dependencies and may interleave. The rolled-forward phase-012 candidate scope (real non-scratch multi-repo pilot + lifecycle 06/08 with H-CONSOLIDATION/H-GA) moves to phase 014 per the activation decision. H-FRAMEWORK-RELEASE remains outstanding for the future v1.1.0 tag; the pipeline never self-tags."
+  - version: "0.36.0"
+    date: "2026-08-18"
+    summary: "Phase 013 PROPOSED (Definition of Done). A new 'Proposed Next Phase — Phase 013' banner tops the roadmap: name and consolidate the framework's scattered done-criteria into standard/definition_of_done.md, mechanize the feature-lifecycle invariant as validator check C16 (correcting the false enforcement claim in schema/README.md), project the standard onto templates/DoD.md, a pull-request checklist, optional advisory dod_ref keys on five schemas, and a release close-out gate, then prepare the v1.1.0 MINOR release. Features 092-098 (DAG roots {092, 097}, est 2150), realized by the Planner artifacts .agent/product_spec_013.md (status draft) + .agent/feature_list_013.json, awaiting activation gate H-PHASE-013; the v1.1.0 tag stays behind H-FRAMEWORK-RELEASE. Classified MINOR: the new schema keys are optional-only (a loosening under methodology/06_release_train.md Section 3.2) and C16 is skip-if-absent. Tier 3 (an ecosystem Verify protocol) is out of scope as NIP-class work. The rolled-forward phase-012 candidate scope (a real non-scratch multi-repo pilot + lifecycle 06/08 with H-CONSOLIDATION/H-GA) is not cancelled — it moves to phase 014, and the operator decides the ordering at H-PHASE-013. current_phase stays 012-v1-consumer-safety until activation; run_state untouched (a proposal is not an activation). Current Position's released-tag facts are unchanged."
   - version: "0.35.0"
     date: "2026-08-15"
     summary: "Post-release refresh: Phase 012 COMPLETE and v1.0.0 MAJOR RELEASED. PR #53 merged at 9453b3c; the operator executed H-FRAMEWORK-RELEASE by pushing the annotated v1.0.0 tag at that reviewed commit; release.yml run 31903527120 succeeded and published GitHub Release 371135794 from [1.0.0]. Current Position now names v1.0.0 as latest and v0.9.0 as prior; NDEBT-036 moves Open -> Resolved, leaving only two Low enhancement rows. The prior real non-scratch pilot plus lifecycle-06/08 candidate scope rolls forward unchanged for the next planning cycle."
@@ -114,6 +120,55 @@ change_log:
 ---
 
 # Forward Roadmap
+
+## Plan of Record (2026-08-18) — Phase 013: Definition of Done
+
+**Phase `013-definition-of-done` is ACTIVE** (2026-08-18), authorized by the operator (verbatim:
+`approved. please proceed.`, gate **H-PHASE-013**). The Planner artifacts
+`.agent/product_spec_013.md` (status `active`, 1.1.0) and `.agent/feature_list_013.json` (features
+092–098, DAG-validated acyclic, roots `{092, 097}`, est 2150) are the plan of record, together with
+the canonical phase document `docs/planning/phase_013.yaml` (`in_progress`). The activation is
+recorded in `.agent/run_state.json` (`phase_activated`, before any feature execution per the
+NDEBT-018 rule); `current_phase` advanced `012-v1-consumer-safety` -> `013-definition-of-done`; the
+scope budget reset to 2150. Execution begins with the ungated DAG root feature 092 (validator check
+C16). The v1.1.0 tag stays behind `H-FRAMEWORK-RELEASE`; the pipeline never self-tags.
+
+**What the phase delivers.** The framework's done-criteria are rigorous but unnamed and scattered
+across eight layers in `standard/`, `methodology/`, `schema/`, and CI; the lifecycle invariant that
+a `complete` feature implies an approved contract, a passing QA verdict, and evidence on disk is
+mechanized by nothing, while `schema/README.md` claims otherwise. Phase 013 fixes that in seven
+features: **092** adds validator check C16 (feature lists validate against
+`schema/feature_list.schema.json`, and every `complete` feature that declares a contract must carry
+a QA verdict and on-disk evidence) with positive and negative fixtures, and corrects the false
+enforcement claim in the same pass; **093** authors the canonical
+`standard/definition_of_done.md`, which aggregates the Step/Handoff/Gate/Feature/Plan/Merge/
+Release/Ecosystem layers by citing their existing authorities rather than restating them, defines
+`complete` over the existing five-value enum (**no `done` state exists and none may be added**), and
+classifies each layer honestly as enforced or consumer-aspirational; **094** adds an optional
+advisory `dod_ref` key to five artifact schemas without touching a single `required` array; **095**
+ships `templates/DoD.md` as the copy-and-fill consumer projection; **096** adds a
+`.github/PULL_REQUEST_TEMPLATE.md` merge-layer checklist; **097** adds a release close-out gate that
+mechanizes internal version consistency in pull-request and tag modes and blocks publication in
+`release.yml`; and **098** prepares the **v1.1.0** release last, so a scope-budget halt cannot leave
+version anchors half-bumped.
+
+**Two human gates.** `H-PHASE-013` authorizes activation before any feature enters contract
+negotiation, with the activation recorded in `.agent/run_state.json` before feature execution per
+the NDEBT-018 rule. `H-FRAMEWORK-RELEASE` remains the separate gate for the v1.1.0 annotated tag:
+the phase prepares the package and the readiness record, and the pipeline never self-tags.
+
+**Release classification: MINOR.** Nothing that validated under v1.0.0 is invalidated. The new
+schema keys are optional-only — a *loosening*, and a new *required* key would have been BREAKING
+under `methodology/06_release_train.md` Section 3.1 — and C16 is skip-if-absent, so a repository
+with no `.agent/feature_list*.json` passes it trivially.
+
+**The rolled-forward candidate scope moves to phase 014.** The prior phase-012 candidate — a real
+non-scratch multi-repo pilot and the remaining lifecycle protocols
+`ecosystem/06_simplification_review.md` and `ecosystem/08_ga_gate.md` with the reserved
+`H-CONSOLIDATION` / `H-GA` gates — is **not cancelled**. It rolls forward unchanged to phase 014.
+The operator decides at `H-PHASE-013` whether to take Definition of Done first or re-order that
+scope ahead of it. Tier 3 of the Definition-of-Done analysis (an ecosystem Verify protocol) is
+explicitly out of scope here: it is NIP-class work requiring an accepted proposal.
 
 ## Plan of Record (2026-08-15) — Phase 012: v1.0.0 Consumer-Safety Remediation — **COMPLETE; RELEASED**
 

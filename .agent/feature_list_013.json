@@ -1,0 +1,128 @@
+{
+  "phase": "013-definition-of-done",
+  "spec_version": "1.1.0",
+  "original_estimate_lines": 2150,
+  "planning_note": "DAG-validated acyclic: roots {092, 097}; 093 depends on 092; 094/095/096 depend on 093; 098 depends on 092-097. Topological execution order: [092, 097] -> [093] -> [094, 095, 096] -> [098]. Scope is the operator's 2026-08-18 Definition-of-Done selection (Tiers 0+1+2, release-ready v1.1.0 MINOR). PROPOSAL ONLY: awaiting activation gate H-PHASE-013; no feature enters contract negotiation before that authorization.",
+  "features": [
+    {
+      "id": "092",
+      "name": "Validator check C16 — feature-list lifecycle invariant plus schema doc-truth fix",
+      "description": "Mechanize the feature-lifecycle invariant as validator check C16 (feature lists validate against their schema; every complete feature that declares a contract also carries a QA verdict and on-disk evidence), wire it into default, payload-skip, and --target modes with positive and negative fixtures, and correct the false enforcement claim in schema/README.md.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "bash tools/validate.sh 2>&1 | grep -E '^\\[C16\\] PASS feature-list-lifecycle$'",
+        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'",
+        "bash tools/validate.sh --target tools/fixtures/feature_list_neg_bad_status.json; test $? -eq 1",
+        "bash tools/validate.sh --payload 2>&1 | grep -E '^SUMMARY \\(payload mode\\): 13 passed, 0 failed$'",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "estimated_lines": 450
+    },
+    {
+      "id": "093",
+      "name": "standard/definition_of_done.md — the canonical layered standard plus registration",
+      "description": "Author the canonical Definition of Done document that aggregates the eight done-layers by citing their existing authorities rather than restating them, classifies enforcement honestly, defines complete over the existing feature-list enum with no done state, and register it in NIZAM.json, standard/README.md, and the user guide.",
+      "status": "pending",
+      "dependencies": [
+        "092"
+      ],
+      "acceptance_tests": [
+        "bash tools/validate.sh --target standard/definition_of_done.md; test $? -eq 0",
+        "sed -n '7p' standard/definition_of_done.md | grep -Fxq 'enforcement: partially-enforced'",
+        "python3 -c \"import json; d=json.load(open('NIZAM.json')); assert any(c['id']=='nizam-definition-of-done' for c in d['capabilities']); assert 'standard/definition_of_done.md' in d['modules']['standard']['key_documents']\"",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0",
+        "grep -E 'ecosystem/0[689]_|08_ga_gate' standard/definition_of_done.md; test $? -eq 1"
+      ],
+      "estimated_lines": 450
+    },
+    {
+      "id": "094",
+      "name": "Optional advisory dod_ref key on five schemas",
+      "description": "Add an identically worded optional dod_ref string property to the contract, qa_verdict (both anyOf branches), feature_list, work-packet, and engineering_finding schemas, leaving every required array unchanged so the change is a loosening, and prove the loosening with a positive fixture.",
+      "status": "pending",
+      "dependencies": [
+        "093"
+      ],
+      "acceptance_tests": [
+        "test \"$(grep -o '\\\"dod_ref\\\"' schema/*.schema.json | wc -l)\" -eq 6",
+        "test \"$(grep -l '\\\"dod_ref\\\"' schema/*.schema.json | wc -l)\" -eq 5",
+        "python3 -c \"import glob,re; bad=[p for p in glob.glob('schema/*.schema.json') for r in re.findall(r'\\\"required\\\"\\\\s*:\\\\s*\\\\[[^]]*\\\\]', open(p).read()) if 'dod_ref' in r]; assert not bad, bad\"",
+        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "estimated_lines": 200
+    },
+    {
+      "id": "095",
+      "name": "templates/DoD.md — the copy-and-fill consumer template",
+      "description": "Ship a governed, frontmattered consumer template that projects the canonical standard into a fillable per-project checklist with one block per layer, a project-specific criteria block, a floor-not-guarantee note, and a dod_ref pointer, registered in NIZAM.json and templates/README.md.",
+      "status": "pending",
+      "dependencies": [
+        "093"
+      ],
+      "acceptance_tests": [
+        "bash tools/validate.sh --target templates/DoD.md; test $? -eq 0",
+        "python3 -c \"import json; d=json.load(open('NIZAM.json')); assert 'templates/DoD.md' in d['modules']['templates']['key_documents']\"",
+        "test \"$(grep -c '{{' templates/DoD.md)\" -ge 5",
+        "bash tools/e2e_bootstrap_test.sh; test $? -eq 0",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "estimated_lines": 260
+    },
+    {
+      "id": "096",
+      "name": ".github/PULL_REQUEST_TEMPLATE.md — the merge-layer projection",
+      "description": "Add a plain-markdown pull-request checklist that names standard/definition_of_done.md as the canonical source and projects its merge layer into at least eight actionable boxes covering validation, self-test, e2e, version/change_log pairing, the C16 chain, evidence, changelog, close-out, and no self-merge or self-tag.",
+      "status": "pending",
+      "dependencies": [
+        "093"
+      ],
+      "acceptance_tests": [
+        "test -f .github/PULL_REQUEST_TEMPLATE.md",
+        "test \"$(grep -c '^- \\[ \\]' .github/PULL_REQUEST_TEMPLATE.md)\" -ge 8",
+        "grep -Fq 'standard/definition_of_done.md' .github/PULL_REQUEST_TEMPLATE.md",
+        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'"
+      ],
+      "estimated_lines": 130
+    },
+    {
+      "id": "097",
+      "name": "Release close-out gate — internal version-consistency mechanization",
+      "description": "Add a stdlib-only close-out script under .github/scripts with pull-request and tag modes asserting that every version anchor, README pin, changelog heading, and roadmap release line agrees with NIZAM.json framework.version, wire it as a paths-filtered pull-request workflow and as a blocking pre-publish step in release.yml, and keep it incapable of creating or pushing refs.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "python3 .github/scripts/release_closeout.py --mode pr; test $? -eq 0",
+        "grep -E 'git[ _](tag|push)' .github/scripts/release_closeout.py; test $? -eq 1",
+        "bash tools/validate.sh 2>&1 | grep -E '^\\[C14\\] PASS'",
+        "python3 -c \"import re,sys; s=open('.github/workflows/release_closeout.yml').read(); assert all(re.fullmatch(r'[0-9a-f]{40}', u.split('@')[1].split()[0]) for u in re.findall(r'uses:\\\\s*\\\\S+', s)), 'unpinned action'\"",
+        "python3 -c \"s=open('.github/workflows/release.yml').read(); assert s.index('release_closeout.py') < s.index('Create or update the GitHub Release'), 'close-out must run before publish'\""
+      ],
+      "estimated_lines": 330
+    },
+    {
+      "id": "098",
+      "name": "v1.1.0 release preparation and phase close",
+      "description": "Bump every version anchor to 1.1.0 in C10 lockstep, cut the dated MINOR changelog section with its release-tier banner, write the readiness record and its replayable verification script, and close the phase across the canonical phase document, manifest, roadmap, gates register, debt register, and derived run state without creating a tag.",
+      "status": "pending",
+      "dependencies": [
+        "092",
+        "093",
+        "094",
+        "095",
+        "096",
+        "097"
+      ],
+      "operator_gate": true,
+      "acceptance_tests": [
+        "python3 .agent/evidence/098/verify_release_prep.py; test $? -eq 0",
+        "python3 .github/scripts/release_closeout.py --mode pr; test $? -eq 0",
+        "git rev-parse -q --verify refs/tags/v1.1.0; test $? -ne 0",
+        "python3 -c \"import json; f=json.load(open('.agent/feature_list_013.json'))['features']; assert all(x['status']=='complete' for x in f), [x['id'] for x in f if x['status']!='complete']\"",
+        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'"
+      ],
+      "estimated_lines": 330
+    }
+  ]
+}

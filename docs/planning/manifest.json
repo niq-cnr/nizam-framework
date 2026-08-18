@@ -1,8 +1,8 @@
 {
   "schema_version": "2.0.0",
-  "updated_at": "2026-08-15",
+  "updated_at": "2026-08-18",
   "forward_planning": "docs/planning/ROADMAP.md",
-  "current_phase": "012-v1-consumer-safety",
+  "current_phase": "013-definition-of-done",
   "phases": [
     {
       "id": "001-framework-genesis",
@@ -99,6 +99,15 @@
       "status": "complete",
       "activation_state": "active",
       "note": "PROPOSED + ACTIVATED 2026-08-15 on operator authorization (verbatim: 'approved. please proceed.', gate H-PHASE-012) after the operator selected the full issue-52 major-release boundary, clean-break migration guidance, and isolated-worktree recovery. Planner artifacts: .agent/product_spec_012.md + .agent/feature_list_012.json (features 085-091, DAG root 085, original estimate 2400). The confirmed Critical consumer-safety intake supersedes the former phase-012 candidate (real non-scratch pilot + lifecycle 06/08), which is deferred unchanged to the next planning cycle. Target release v1.0.0 because schema tightening is breaking under methodology/06_release_train.md. All seven features are implementation-complete; the release package and readiness record are prepared and final pre-tag validation is green. -> COMPLETE 2026-08-15: PR #53 merged at 9453b3c; the operator executed H-FRAMEWORK-RELEASE and pushed the annotated v1.0.0 tag at that reviewed merge commit; release.yml run 31903527120 succeeded and published GitHub Release 371135794. NDEBT-036 resolved; the prior real-pilot and lifecycle-06/08 candidate scope rolls forward unchanged."
+    },
+    {
+      "id": "013-definition-of-done",
+      "title": "Definition of Done — layered standard, validator check C16, consumer template and pull-request projection, optional dod_ref schema keys, release close-out gate, and v1.1.0 preparation",
+      "feature_list": ".agent/feature_list_013.json",
+      "phase_definition": "docs/planning/phase_013.yaml",
+      "status": "in_progress",
+      "activation_state": "active",
+      "note": "PROPOSED 2026-08-18 — Definition of Done (Tiers 0+1+2 + v1.1.0 release prep), on the operator's 2026-08-18 scope selection after the accepted analysis at main 114fc8d (tag v1.0.0) found the framework's done-criteria rigorous but unnamed and scattered across eight layers, the feature-lifecycle invariant mechanized by nothing, and schema/README.md claiming an enforcement that does not exist. Planner artifacts: .agent/product_spec_013.md (status draft) + .agent/feature_list_013.json (features 092-098, DAG-validated acyclic, roots {092, 097}, original_estimate_lines 2150). Scope: validator check C16 + the doc-truth fix (092), standard/definition_of_done.md + registration (093), optional advisory dod_ref keys on five schemas (094), templates/DoD.md (095), .github/PULL_REQUEST_TEMPLATE.md (096), the release close-out gate (097), and v1.1.0 MINOR release preparation last so a scope halt cannot strand release surfaces (098). Release tier MINOR: the new schema keys are optional-only, a loosening under methodology/06_release_train.md Section 3.2, and C16 is skip-if-absent. Awaiting operator gate H-PHASE-013; H-FRAMEWORK-RELEASE remains the separate gate for the v1.1.0 tag, which the pipeline never creates. Tier 3 (an ecosystem Verify protocol) is out of scope as NIP-class work. The rolled-forward phase-012 candidate scope (real non-scratch multi-repo pilot + ecosystem lifecycle 06/08 with H-CONSOLIDATION/H-GA) is not cancelled; it rolls to phase 014, with the ordering the operator's decision at H-PHASE-013. The manifest.schema status enum has no 'proposed' value, so status + activation_state carry the decision-lifecycle, matching the phase 002-012 house pattern. A proposal is not an activation: current_phase stays 012-v1-consumer-safety (complete) and .agent/run_state.json is untouched. -> ACTIVATED 2026-08-18 on operator authorization (verbatim: 'approved. please proceed.', gate H-PHASE-013), recorded in .agent/run_state.json (phase_activated) before any feature execution per NDEBT-018; product_spec_013 flipped draft -> active (1.1.0), scope budget reset to 2150, execution begins with DAG root feature 092. The manifest.schema status enum has no 'active' value; the decision lifecycle is carried by activation_state + this note per the house pattern."
     }
   ]
 }
