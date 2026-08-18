@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "013-definition-of-done",
-  "current_feature": "092",
+  "current_feature": "093",
   "status": "in_progress",
-  "updated_at": "2026-08-18T10:06:17Z",
+  "updated_at": "2026-08-18T11:08:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -153,6 +153,16 @@
       "attempts": 2,
       "limit": 3,
       "note": "Attempt 1 was rejected by the structured release verifier after a broad status patch inverted the 085/091 lifecycle values; explicit feature-id patches corrected the state. Attempt 2 and the committed-candidate final suite passed. Evidence: .agent/evidence/091/attempt-1.txt and release-prep.txt."
+    },
+    "092-contract": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Contract negotiation for feature 092: Mode A rejected rounds 1 (payload-count blocker traced upstream to a spec figure, fixed by the Section-9 amendment at fe571b9; plus anchored-grep blocker, Step-7 carve-out gap, misattributed era-safety figures), 2 (byte-identical guard anchored at the pre-amendment revision), and 3 (revision 2's own probe-needle repair mixed regex escapes with grep -F). Rounds 1-2 findings all verified repaired at round 3. Third and final revision authorized: the single prescribed fix is dropping the regex escaping from two assert_target needles in verification entry 8. A fourth revision is FORBIDDEN; a round-4 rejection halts the pipeline as BLOCKED. RESOLVED: round 4 Mode A approved (all arrays empty) and the evaluator contract review approved (contract-testability, .agent/qa/092-contract-review.json); contract approved at the 3-revision limit without breaching it."
+    },
+    "092-implementation": {
+      "attempts": 1,
+      "limit": 3,
+      "note": "Mode B round 1 rejected on one major doc-truth finding (verify_lib.sh primitive-count comment: wrote nine/left eight where the verified count is eleven); rework round 1 applied the prescribed three-word fix; Mode B round 2 approved with empty arrays."
     }
   },
   "history": [
@@ -1160,6 +1170,24 @@
       "event": "amendment_complete",
       "feature": "092",
       "detail": "Plan amendment per methodology/00_planning.md Section 9 (Planner-routed factual correction, no scope change): the --payload summary baseline is 11 counted checks, not 12, so C16's one counted payload check yields 12, not 13. Refuted during Mode A validation of contract 092 against tools/validate.sh:2383-2394 (exactly 11 passed-counter increments; C6 is an uncounted echo SKIP) and captured evidence .agent/evidence/091/final-migration.txt:6 + .agent/evidence/090/migration-rehearsal.txt:6, corroborated by the NDEBT-012 note at docs/planning/DEBT.md:50. .agent/product_spec_013.md corrected in two places and bumped to 1.1.1; .agent/feature_list_013.json feature-092 acceptance test corrected and spec_version moved to 1.1.1 in lockstep. Design intent unchanged. Contract 092 (rejected by Mode A round 1: two blockers, one major, one minor, three unsupported claims) now routes to Generator revision round 1 of the 3-round limit."
+    },
+    {
+      "at": "2026-08-18T10:25:44Z",
+      "event": "contract_revision",
+      "feature": "092",
+      "detail": "Contract 092 Mode A negotiation ledger through round 3: round 1 rejected (2 blockers, 1 major, 1 minor, 3 unsupported claims; the payload-count blocker was traced upstream and fixed by the recorded Section-9 plan amendment, commit fe571b9); revision 1 repaired all seven findings; round 2 confirmed the repairs but rejected on the byte-identical feature-list guard anchored at superseded 5fb8221, plus three minors; revision 2 re-anchored to fe571b9 (guard verified EXIT:0) and fixed the minors, but its own I-4 repair introduced regex-escaped needles under grep -F; round 3 rejected on that single empirically-proven blocker with an exact prescribed fix and verified everything else clean (era-safety 13/99/91/61/0 at fe571b9, payload 11->12, all line cites). Revision 3 of 3 now authorized, scoped to exactly the two needle strings. All verdicts parsed per the JSON Verdict Parse Rule; no prose approval inferred."
+    },
+    {
+      "at": "2026-08-18T10:33:56Z",
+      "event": "contract_approved",
+      "feature": "092",
+      "detail": "Contract 092 (validator check C16 + schema doc-truth fix) APPROVED after Mode A round 4 (approved, issues/missing_acceptance_coverage/unsupported_claims all empty) and the independent evaluator contract review (.agent/qa/092-contract-review.json, contract-testability, approved with empty arrays; three of twelve verification commands sanity-run, era-safety 13/99/91/61/0 independently recomputed, pre-implementation baseline confirmed genuinely failing where it should). approvals: validator_mode_a=true, evaluator_contract_review=true, revisions=3, approved_at=2026-08-18T10:33:56Z. Loop 2 begins: Generator implements the contracted scope only; the feature-092 status flip, phase_013.yaml step flip, and run_state advancement are Step-7 acts after QA and the evidence-capture gate."
+    },
+    {
+      "at": "2026-08-18T11:08:00Z",
+      "event": "feature_complete",
+      "feature": "092",
+      "detail": "Feature 092 COMPLETE: validator check C16 (feature-list lifecycle invariant) + schema/README.md doc-truth fix. Loop 1: contract approved at revision 3 after Mode A rounds 1-4 (round-1 payload-count blocker traced upstream and fixed by the Section-9 amendment at fe571b9) and the independent evaluator contract review. Loop 2: implementation landed 16/16 default + 12-passed payload + 79/79 self-test + e2e green; Mode B round 1 rejected one major doc-truth finding (verify_lib.sh primitive count -> eleven), rework 1 fixed it, Mode B round 2 approved; evaluator QA .agent/qa/092.json independently re-executed all 12 verification commands (12/12 PASS) with the mandatory adversarial spot-check (directory-as-evidence perturbation confirming os.path.isfile semantics, .agent/evidence/092/qa-adversarial.txt) and 14 evidence files; the orchestrator's evidence-capture gate verified every referenced path exists in the Section-5 shape (invocation first line, EXIT:<code> last line). Canonical-first flips: docs/planning/phase_013.yaml step 092 COMPLETED (written first), .agent/feature_list_013.json 092 complete, this derived run state after. C16 is now live and this very completion is the first to be verified by it. Next eligible feature per the Dependency Enforcement Rule: 093 (the Definition of Done standard)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1333,8 +1361,16 @@
   },
   "scope_budget": {
     "original_estimate_lines": 2150,
-    "total_lines_changed": 0,
-    "per_feature": []
+    "total_lines_changed": 819,
+    "per_feature": [
+      {
+        "id": "092",
+        "estimated": 450,
+        "actual": 819,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 819 lines (all staged changes for the feature commit, including contract, QA artifacts, evidence, and lifecycle state). Implementation surface was ~399 lines (355 across 7 modified files + 44 in two new fixtures); the remainder is process weight: the 3-revision contract, two QA artifacts, and 14 Section-5 evidence captures. First phase feature, so no prior-three rolling baseline exists (the 085 precedent). Cumulative remains under the 2795 ceiling."
+      }
+    ]
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {

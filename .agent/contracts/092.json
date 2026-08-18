@@ -1,0 +1,136 @@
+{
+  "contract_id": "092",
+  "feature_id": "092",
+  "name": "Validator check C16 — feature-list lifecycle invariant plus schema doc-truth fix",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_013.md",
+  "design_notes": {
+    "base_revision": "fe571b9405a7f9473bf1d4a44b7a5307af3bcbb2",
+    "plan_ref": "definition-of-done-stateful-kettle.md F-092 (\"C16 design\") -- the sole scope-of-record for this contract's C16 assertions, wiring points, and fixture set.",
+    "what_this_feature_is": "The first feature of phase 013 and a DAG root: mechanizes the feature-lifecycle invariant (\"complete implies approved contract and passing QA verdict and evidence on disk\") as validator check C16, wires it into default/payload-skip/--target modes with positive and negative fixtures, and corrects schema/README.md's line-71 feature_list.schema.json row, which currently omits any enforcement note while every C11/C12-covered row in the same table either names its enforcing check or is silent by contrast -- the doc-truth gap the phase-013 analysis flagged.",
+    "c16_assertions_default_mode": [
+      "(1) No .agent/feature_list*.json present on disk -> trivial PASS. Skip-if-absent, MINOR-safe for a fresh consumer that has not yet run the planning loop.",
+      "(2) Every matching .agent/feature_list*.json MUST validate against schema/feature_list.schema.json (python3+jsonschema heredoc, matching the C11 dogfood style -- no jq). Unconditional whenever a list is present.",
+      "(3) Era-safe referential rule, evaluated per status==\"complete\" feature across every validated list: IF .agent/contracts/<id>.json exists on disk THEN .agent/qa/<id>.json MUST also exist; and if that QA verdict carries a top-level evidence_files array (the evolved verdict shape), every path listed there MUST exist on disk. The rule is if-present-per-artifact, not a magic historical cutoff: a complete feature with no contract file at all (the framework's own pre-contract-first era) is NOT flagged, but every feature from the contract-first loop onward is bound the moment its contract exists. Verdict polarity (pass/fail) is deliberately never judged, and evidence FILE SHAPE (the Sec 5 line-1/EXIT format) is deliberately never opened -- both are out of scope (see non_goals)."
+    ],
+    "era_safety_verification": "Independently re-verified against the current tree at base_revision fe571b9 (not just plan-agent claims) before this revision was written -- re-anchored from 5fb8221 to fe571b9 per the round-2 fix for the byte-identical feature-list guard (verification entry 12): 13 feature_list*.json files, 99 features total, 91 status==complete, 61 of those with a matching .agent/contracts/<id>.json, 0 referential violations. Recomputed fresh at fe571b9 rather than assumed carried-forward from 5fb8221: the figures are unchanged because .agent/feature_list_013.json's only diff between the two revisions is spec_version (1.1.0 -> 1.1.1) and one acceptance-test string (the C16 payload-mode figure corrected from 13 to 12 passed), neither of which touches feature id, status, or dependency fields. (The pre-branch figures at main 114fc8d, before .agent/feature_list_013.json existed, were 12 files / 92 features -- superseded once phase 013's own feature list landed.) Non-vacuous (the with-contract set is neither 0 nor all 91) and era-safe (0 false positives on framework history).",
+    "payload_mode": "check_c16_feature_lifecycle_payload_skip mirrors check_c11_dogfood_payload_skip's precedent exactly: .agent/ is orchestrator/governance state bootstrap.sh never injects into a consumer payload, so C16 has nothing to enforce in payload mode regardless of CWD. This is a COUNTED PASS (not an uncounted SKIP like C6), printed as an explicit '[C16] PASS ... (payload mode: ...)' line. The current baseline is 11 counted payload checks (tools/validate.sh:2383-2394 -- C1, C2, C3, C4, C5, C7, C8, C9, C10, C11, C13 each increment passed/failed; C6 is an uncounted 'echo \"[C6] SKIP ...\"' line, not a counted increment), so C16's one counted payload-skip PASS raises the payload summary from 11 passed to 12 passed.",
+    "target_mode": "check_c11_or_c4_target's python router gains one more discriminator: a top-level object carrying BOTH 'features' AND 'original_estimate_lines' keys (the two feature_list.schema.json top-level keys no other routed family shares) prints route 'feature_list', checked alongside the existing discriminators so a feature-list fixture can never be swallowed by an earlier route and vice versa. The route dispatches (a new case-statement arm, since 'feature_list' does not carry an 'ecosystem:' prefix) to a new check_c16_feature_list_target function that emits '[C16] PASS/FAIL feature-list-lifecycle-target' -- schema validation ONLY. The era-safe referential rule (assertion 3) is deliberately NOT evaluated in --target mode: it is a whole-repo-tree relational property (contract/QA-verdict cross-references), not a property of one isolated file, so a single-file --target invocation cannot evaluate it without silently reading state outside its declared target -- exactly the boundary check_c12_target already respects for the ecosystem families.",
+    "negative_fixture_design": "tools/fixtures/feature_list_neg_bad_status.json fails schema validation (assertion 2) by setting one feature's status to \"done\" -- a value outside the feature_list.schema.json status enum (pending/in_progress/complete/blocked/cancelled). This is deliberately chosen over a referential-rule violation because --target mode only runs assertion 2 (schema-only, per target_mode above), so the --target negative fixture MUST be a schema violation to produce a discriminating [C16] FAIL there; it doubles as the mechanized proof that no 'done' terminal state may ever be added to the enum (the plan's aggregate-don't-restate constraint from 01_execution.md Sec 3+6).",
+    "vlib_primitive": "tools/verify_lib.sh gains vlib_feature_list_lifecycle (no arguments -- it discovers every .agent/feature_list*.json itself, matching vlib_workflows_sha_pinned's directory-discovery style rather than taking a fixed path list), implementing assertions (1)+(2)+(3) above as one python3+jsonschema heredoc. check_c16_feature_list_lifecycle (tools/validate.sh, placed immediately after check_c15_capability_profile_roles per the plan's 'after C15 ~line 2280' placement) is a thin wrapper around it, following every existing Cn wrapper's PASS/FAIL-plus-indented-detail shape (e.g. check_c14_workflow_pins, check_c15_capability_profile_roles).",
+    "doc_truth_fix": "schema/README.md line 71 (the feature_list.schema.json row) is rewritten to name C16 as its enforcing check, matching the parenthetical enforcement note already carried by rows for schemas C11/C12 do cover (e.g. the ecosystem_membership.schema.json row's 'enforced in code by tools/validate.sh C12' sentence) -- before this feature the row carried no such note despite the table's own header implying validated artifacts are checked, which is the false-by-omission claim the phase-013 analysis names. Reconciling this contract's phrasing with the spec's stronger 'claims otherwise' wording (product_spec_013.md's reference to 'schema/README.md Section 4' is a loose pointer at the unnumbered Schemas table, not a literal numbered heading): the row is false BY OMISSION, not by an affirmative false statement -- it lists `.agent/feature_list.json` as the schema's validation target with no enforcement note, silently implying live validation parallel to the C11/C12-covered rows in the same table, when in fact no check consumed the schema before C16. Recording that reconciliation here so feature 093 does not silently inherit the discrepancy between the two documents' characterizations."
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/fixtures/feature_list_valid.json",
+        "purpose": "Positive fixture: a schema-valid, era-safe feature list (small, self-contained DAG) that C16 must PASS in both default-sweep and --target modes -- proves the check does not fail on everything."
+      },
+      {
+        "path": "tools/fixtures/feature_list_neg_bad_status.json",
+        "purpose": "Negative fixture: identical to the valid fixture except one feature's status is set to the out-of-enum value \"done\", mechanizing the no-done-state rule and giving --target mode (schema-only) a discriminating FAIL signal."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/verify_lib.sh",
+        "purpose": "Add vlib_feature_list_lifecycle: discovers every .agent/feature_list*.json, validates each against schema/feature_list.schema.json, and enforces the era-safe complete-feature contract/QA-verdict/evidence-file referential rule (assertions 1-3 in design_notes)."
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "Add check_c16_feature_list_lifecycle (default-mode wrapper around the new primitive, placed after check_c15_capability_profile_roles) and check_c16_feature_lifecycle_payload_skip (C11-payload-skip-pattern counted PASS); wire both into main()'s default and --payload branches; extend check_c11_or_c4_target's python router with the features+original_estimate_lines discriminator and a new case-statement arm dispatching to a new check_c16_feature_list_target (schema-only); bump 'C1-C15' to 'C1-C16' at line 21 (the top-of-file header comment's mode summary) and, separately, inside print_usage() (the function starting at line 55): line 73 is NOT a second header-comment occurrence but print_usage()'s default-mode paragraph -- 'Runs all 15 checks (C1-C15) and prints one PASS/FAIL line per check plus a final summary line.' -- where BOTH the 'C1-C15' token and the 'all 15 checks' numeral are updated together (to 'C1-C16' and 'all 16 checks' respectively) so the printed --help/-h usage text stays internally consistent with the header comment."
+      },
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "Register both new fixtures via two assert_target rows (feature_list_valid.json C16 PASS, feature_list_neg_bad_status.json C16 FAIL) so the completeness guard accounts for them, and add four distinct scratch-dir probes exercising vlib_feature_list_lifecycle directly, each emitting its own 'OK   primitive   ...' line (matching the existing 'OK   <category>   <description>' output shape at line ~148) so the four cases are independently discriminable rather than collapsed into one generic OK line: 'OK   primitive   vlib_feature_list_lifecycle full-chain (contract+QA+evidence present, rc 0)'; 'OK   primitive   vlib_feature_list_lifecycle era-safe complete-without-contract (rc 0)'; 'OK   primitive   vlib_feature_list_lifecycle contract-without-QA (rc 1)'; 'OK   primitive   vlib_feature_list_lifecycle evidence-file-missing (rc 1)'; using the existing scratch_dirs isolation helper (Section 11 pattern, e.g. the vlib_enumeration_complete probe at lines ~304-317; lines ~289-297 are the neighboring vlib_bare_ref_resolves block, not this one)."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Sync the Compliance Coverage section to sixteen checks: heading 'C1-C15' to 'C1-C16', 'fifteen checks' to 'sixteen checks', 'SUMMARY: 15 passed' to 'SUMMARY: 16 passed', a new C16 table row, the C9/C10/C11-provenance sentence extended to name C16 and feature 092, and a frontmatter version bump (0.7.0 to 0.8.0) with a matching change_log entry."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Extend the nizam-compliance-validator capability summary (~line 246) from 'checks C1-C15' to 'checks C1-C16' and append one clause describing the feature-list lifecycle check."
+      },
+      {
+        "path": "schema/README.md",
+        "purpose": "Rewrite the feature_list.schema.json row (line 71) to name C16 as its enforcing check, matching the enforcement-note convention already used by C11/C12-covered rows in the same table; bump frontmatter version (0.13.0 to 0.14.0) with a matching change_log entry."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Append a [Unreleased] entry summarizing the new C16 check and the schema/README.md doc-truth correction."
+      }
+    ]
+  },
+  "non_goals": [
+    "No evidence-file SHAPE validation (the Sec 5 line-1-exact-invocation / verbatim-output / final EXIT:<code> format) -- historical evidence files use variant headers that would fail such a check; this is explicitly deferred as a C17 candidate, to be noted as aspirational residue in the DoD standard (F-093 Sec 11), not opened here.",
+    "No judgment of QA verdict POLARITY (pass vs fail) -- C16 only asserts a QA verdict artifact exists for a contracted complete feature, never that it says PASS.",
+    "No new required key on any schema -- schema/feature_list.schema.json's required array and status enum are read-only inputs to this feature; a new required key is BREAKING per methodology/06_release_train.md Sec 3.1 and out of scope for a MINOR phase.",
+    "No change to schema/phase.schema.json, schema/debt.schema.json, or schema/capability_profile.schema.json -- their additionalProperties: false / DD-3 closed shapes are untouched.",
+    "No dod_ref key on any schema -- that is feature 094's scope, gated on feature 093's standard existing first.",
+    "No edit to the CONTENT of any existing .agent/feature_list*.json as part of this contract's IMPLEMENTATION -- only the two new fixture files are created; no feature status, dependency, or acceptance_test in any real feature list is modified as contracted scope. Carve-out mirroring the run_state.json entry immediately below: feature 092's own status field in .agent/feature_list_013.json is updated by the generator's Step 7 durable-state procedure after this contract's verification passes, per protocol 07B, and is likewise not contracted implementation scope.",
+    "No .agent/run_state.json edit as part of this contract's implementation -- run_state is updated by the generator's Step 7 durable-state procedure after this contract's verification passes, per protocol 07B, not as contracted scope.",
+    "No docs/planning/phase_013.yaml edit as part of this contract's implementation -- phase_013.yaml is flipped canonical-first by the generator's Step 7 durable-state procedure after this contract's verification passes, per protocol 07B, not as contracted scope.",
+    "No implementation of check C17 (evidence-shape validation) or any other new check beyond C16.",
+    "No change to check_c12_target, check_c11_dogfood_target's existing four routes (contract_review/qa_verdict/contract/run_state), or any ecosystem schema family's routing."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "The contract validates against schema/contract.schema.json and the current .agent/feature_list_013.json / .agent/run_state.json remain schema-valid (no incidental corruption from proposing this contract).",
+      "command": "python3 - <<'PY'\nimport json\nfrom pathlib import Path\nimport jsonschema\nfor data_path, schema_path in [('.agent/contracts/092.json', 'schema/contract.schema.json'), ('.agent/feature_list_013.json', 'schema/feature_list.schema.json'), ('.agent/run_state.json', 'schema/run_state.schema.json')]:\n    jsonschema.validate(json.loads(Path(data_path).read_text()), json.loads(Path(schema_path).read_text()))\nprint('PASS contract + feature_list_013 + run_state schema-valid')\nPY"
+    },
+    {
+      "acceptance_test": "bash tools/validate.sh emits the C16 PASS line for the feature-list-lifecycle check (feature 092 acceptance test, verbatim).",
+      "command": "bash tools/validate.sh 2>&1 | grep -E '^\\[C16\\] PASS feature-list-lifecycle$'"
+    },
+    {
+      "acceptance_test": "bash tools/validate.sh's default-mode summary reports sixteen passed and zero failed (feature 092 acceptance test, verbatim).",
+      "command": "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'"
+    },
+    {
+      "acceptance_test": "bash tools/validate.sh exits 0 on the current tree (strengthens the SUMMARY-line check with an actual process exit code assertion).",
+      "command": "bash tools/validate.sh >/dev/null 2>&1; test $? -eq 0"
+    },
+    {
+      "acceptance_test": "--target against the negative fixture (bad status \"done\") fails with exit 1 (feature 092 acceptance test, strengthened to also assert the emitted verdict line names C16 FAIL).",
+      "command": "out=$(bash tools/validate.sh --target tools/fixtures/feature_list_neg_bad_status.json 2>&1); rc=$?; printf '%s\\n' \"${out}\" | grep -Eq '^\\[C16\\] FAIL' ; grep_rc=$?; test \"${rc}\" -eq 1 -a \"${grep_rc}\" -eq 0"
+    },
+    {
+      "acceptance_test": "--target against the positive fixture (valid feature list) passes with exit 0, proving the negative fixture's signal is discriminating and not a check that fails on every JSON file (plan Sec 'Acceptance').",
+      "command": "out=$(bash tools/validate.sh --target tools/fixtures/feature_list_valid.json 2>&1); rc=$?; printf '%s\\n' \"${out}\" | grep -Eq '^\\[C16\\] PASS' ; grep_rc=$?; test \"${rc}\" -eq 0 -a \"${grep_rc}\" -eq 0"
+    },
+    {
+      "acceptance_test": "bash tools/validate.sh --payload reports twelve passed, zero failed (feature 092 acceptance test, verbatim: 'SUMMARY (payload mode): 12 passed, 0 failed' -- the 11-check baseline of tools/validate.sh:2383-2394 plus C16's one counted payload-skip PASS), with an explicit counted C16 payload-skip PASS line (strengthened to also assert the explicit payload-skip line is present).",
+      "command": "out=$(bash tools/validate.sh --payload 2>&1); printf '%s\\n' \"${out}\" | grep -Eq '^SUMMARY \\(payload mode\\): 12 passed, 0 failed$'; s1=$?; printf '%s\\n' \"${out}\" | grep -Eq '^\\[C16\\] PASS .*payload mode'; s2=$?; test \"${s1}\" -eq 0 -a \"${s2}\" -eq 0"
+    },
+    {
+      "acceptance_test": "bash tools/fixtures_self_test.sh exits 0, with both new assert_target rows and all four new scratch-dir primitive probes reporting OK (feature 092 acceptance test, strengthened to name the specific probe lines).",
+      "command": "out=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; for needle in 'feature_list_valid.json -> [C16] PASS' 'feature_list_neg_bad_status.json -> [C16] FAIL' 'OK   primitive   vlib_feature_list_lifecycle full-chain' 'OK   primitive   vlib_feature_list_lifecycle era-safe complete-without-contract' 'OK   primitive   vlib_feature_list_lifecycle contract-without-QA' 'OK   primitive   vlib_feature_list_lifecycle evidence-file-missing'; do printf '%s\\n' \"${out}\" | grep -Fq \"${needle}\" || { echo \"missing: ${needle}\"; exit 1; }; done; test \"${rc}\" -eq 0"
+    },
+    {
+      "acceptance_test": "The e2e bootstrap payload proof shows the consumer-injected payload is untouched by this feature (C16/verify_lib.sh/validate.sh are framework-envelope logic already inside tools/, not new payload surface).",
+      "command": "bash tools/e2e_bootstrap_test.sh"
+    },
+    {
+      "acceptance_test": "schema/README.md's feature_list.schema.json row (formerly line 71) now names C16 as its enforcing check, closing the doc-truth gap (plan Sec 'Acceptance': grep -n \"C16\" schema/README.md shows corrected row).",
+      "command": "grep -n 'feature_list.schema.json' schema/README.md | grep -q 'C16'"
+    },
+    {
+      "acceptance_test": "tools/README.md's Compliance Coverage section, NIZAM.json's nizam-compliance-validator summary, and CHANGELOG.md are all synchronized to the new sixteen-check state. The SUMMARY-line check is an unanchored fixed-string match rather than a line-anchored grep: tools/README.md:86 embeds the summary string mid-sentence inside backticks ('...full default sweep reports `SUMMARY: 15 passed, 0 failed`:'), so a '^SUMMARY' anchor can never match that line. tools/README.md documents no separate --payload summary figure anywhere in the module, so no payload-count assertion is made against it here.",
+      "command": "grep -Fq 'SUMMARY: 16 passed, 0 failed' tools/README.md; s1=$?; grep -q 'C1–C16\\|C1-C16' tools/README.md; s2=$?; python3 -c \"import json; d=json.load(open('NIZAM.json')); s=next(c['summary'] for c in d['capabilities'] if c['id']=='nizam-compliance-validator'); assert 'C1-C16' in s or 'C1\\u2013C16' in s, s\"; s3=$?; grep -q 'C16' CHANGELOG.md; s4=$?; test \"${s1}\" -eq 0 -a \"${s2}\" -eq 0 -a \"${s3}\" -eq 0 -a \"${s4}\" -eq 0"
+    },
+    {
+      "acceptance_test": "No feature-list CONTENT (other than the two new fixtures) was modified by this feature's implementation -- every real .agent/feature_list*.json is byte-identical to this contract's base revision. Evaluated BEFORE the generator's protocol 07B Step 7 durable-state status flip: Step 7 updates feature 092's own status field (and current_feature/active_contract_id) in .agent/feature_list_013.json after this contract's verification passes, which is out-of-band durable-state bookkeeping, not contracted implementation scope -- mirroring the run_state.json carve-out in non_goals below. This guard runs as part of contract verification, prior to that flip.",
+      "command": "set -e; for p in $(git ls-files '.agent/feature_list*.json'); do git diff --quiet fe571b9405a7f9473bf1d4a44b7a5307af3bcbb2 -- \"$p\" || { echo \"unexpected feature-list content change: $p\"; exit 1; }; done; echo 'PASS no real feature-list content touched'"
+    }
+  ],
+  "estimated_lines": 450,
+  "evidence_dir": ".agent/evidence/092/",
+  "evidence_convention": "One captured-output file per verification command listed above (e.g. validate-default-sweep.txt, validate-target-neg.txt, validate-target-pos.txt, validate-payload.txt, fixtures-self-test.txt, e2e-bootstrap.txt), each Sec-5-shaped (line 1 the exact invocation, verbatim captured stdout/stderr, final line 'EXIT:<code>'), replayable from the repo root; final feature QA re-runs all twelve contract checks above (recounted against the verification array after this revision) and records their evidence paths in the QA verdict's evidence_files array.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 3,
+    "approved_at": "2026-08-18T10:33:56Z"
+  }
+}

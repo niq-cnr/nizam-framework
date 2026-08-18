@@ -18,7 +18,7 @@
 # `yaml` (PyYAML) modules importable).
 #
 # Modes:
-#   (default, no args)   Full repo sweep: runs checks C1-C15.
+#   (default, no args)   Full repo sweep: runs checks C1-C16.
 #   --target <file>      Runs only the checks applicable to a single file.
 #   --payload            Validates a consumer-injected .nizam/ payload subset.
 #   --help / -h           Prints usage and exits 0.
@@ -70,7 +70,7 @@ if any is missing): bash, git, grep, find, awk, python3 -- with python3's
 installs or vendors these dependencies itself.
 
 Modes:
-  (no arguments)      Full repo sweep. Runs all 15 checks (C1-C15) and
+  (no arguments)      Full repo sweep. Runs all 16 checks (C1-C16) and
                       prints one PASS/FAIL line per check plus a final
                       summary line. Exits 0 only if every check passed.
 
@@ -2225,6 +2225,11 @@ elif ECOSYSTEM_BASELINE_KEYS.issubset(doc):
     print("ecosystem:ecosystem_baseline")
 elif "closure_criteria" in doc:
     print("ecosystem:engineering_finding")
+elif "features" in doc and "original_estimate_lines" in doc:
+    # F-092 (C16): the two top-level keys unique to feature_list.schema.json
+    # among every routed family -- no other family's artifact carries both,
+    # so this discriminator can never steal an existing family's fixture.
+    print("feature_list")
 else:
     print("none")
 PY
@@ -2236,6 +2241,9 @@ PY
       ;;
     ecosystem:*)
       check_c12_target "${target}" "${route#ecosystem:}"
+      ;;
+    feature_list)
+      check_c16_feature_list_target "${target}"
       ;;
     *)
       check_c11_dogfood_target "${target}" "${route}"
@@ -2275,6 +2283,93 @@ check_c15_capability_profile_roles() {
     return 0
   fi
   echo "[C15] FAIL capability-profile-roles"
+  printf '%s\n' "${out}" | sed 's/^/  /'
+  return 1
+}
+
+# C16 -- feature-list lifecycle invariant (feature 092, `.agent/contracts/092.json`).
+# Mechanizes "complete implies approved contract and passing QA verdict and
+# evidence on disk" over every `.agent/feature_list*.json` via the vetted
+# vlib_feature_list_lifecycle primitive (schema validation plus the era-safe
+# complete -> contract -> QA-verdict -> evidence-file referential rule).
+# Default-mode only: a framework/consumer governance-state invariant, not a
+# --payload-relevant one (see check_c16_feature_lifecycle_payload_skip).
+check_c16_feature_list_lifecycle() {
+  local out
+  if out=$(vlib_feature_list_lifecycle 2>&1); then
+    echo "[C16] PASS feature-list-lifecycle"
+    return 0
+  fi
+  echo "[C16] FAIL feature-list-lifecycle"
+  printf '%s\n' "${out}" | sed 's/^/  /'
+  return 1
+}
+
+# check_c16_feature_lifecycle_payload_skip
+#
+# --payload mode is a DESIGNED, disk-free trivial pass, mirroring
+# check_c11_dogfood_payload_skip's exact precedent: `.agent/` (including
+# `.agent/feature_list*.json`) is orchestrator/governance state that
+# bootstrap.sh NEVER injects into a consumer payload, so C16 has nothing to
+# enforce in payload mode regardless of CWD. This is a COUNTED pass (unlike
+# C6's uncounted SKIP), since C16 genuinely is applicable in concept to
+# payload validation -- it just resolves to a trivial pass by design, not a
+# suppressed check.
+check_c16_feature_lifecycle_payload_skip() {
+  echo "[C16] PASS feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)"
+  return 0
+}
+
+# check_c16_feature_list_target <file>
+#
+# --target dispatcher for a single feature_list-shaped `.json` file (routed
+# by check_c11_or_c4_target's `features`+`original_estimate_lines`
+# discriminator, above). SCHEMA VALIDATION ONLY: the era-safe referential
+# rule (vlib_feature_list_lifecycle assertion 3) is a whole-repo-tree
+# relational property (contract/QA-verdict cross-references), not a property
+# of one isolated file, so a single-file --target invocation cannot evaluate
+# it without silently reading state outside its declared target -- exactly
+# the boundary check_c12_target already respects for the ecosystem families.
+check_c16_feature_list_target() {
+  local target="$1"
+  local out
+
+  if out=$(python3 - "${target}" <<'PY'
+import json
+import sys
+
+import jsonschema
+
+path = sys.argv[1]
+
+try:
+    with open("schema/feature_list.schema.json", "r", encoding="utf-8") as fh:
+        schema = json.load(fh)
+except OSError as exc:
+    print(f"{path}: could not read schema/feature_list.schema.json: {exc}")
+    sys.exit(1)
+
+try:
+    with open(path, "r", encoding="utf-8") as fh:
+        doc = json.load(fh)
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"{path}: not valid JSON: {exc}")
+    sys.exit(1)
+
+try:
+    jsonschema.validate(instance=doc, schema=schema)
+except jsonschema.ValidationError as exc:
+    print(f"{path}: schema violation (feature_list): {exc.message}")
+    sys.exit(1)
+
+sys.exit(0)
+PY
+  ); then
+    echo "[C16] PASS feature-list-lifecycle-target"
+    return 0
+  fi
+
+  echo "[C16] FAIL feature-list-lifecycle-target"
   printf '%s\n' "${out}" | sed 's/^/  /'
   return 1
 }
@@ -2392,6 +2487,7 @@ main() {
     check_c10_consistency "${payload_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c11_dogfood_payload_skip && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c13_skill_index payload && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c16_feature_lifecycle_payload_skip && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY (payload mode): ${passed} passed, ${failed} failed"
   else
@@ -2421,6 +2517,7 @@ main() {
     check_c13_skill_index && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c14_workflow_pins && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c15_capability_profile_roles && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c16_feature_list_lifecycle && passed=$((passed + 1)) || failed=$((failed + 1))
 
     echo "SUMMARY: ${passed} passed, ${failed} failed"
   fi

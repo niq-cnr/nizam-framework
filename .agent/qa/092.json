@@ -1,0 +1,36 @@
+{
+  "feature_id": "092",
+  "qa_pass": true,
+  "checks_run": 12,
+  "checks_passed": 12,
+  "adversarial": {
+    "performed": true,
+    "description": "Not among contract 092's 12 listed verification commands. Perturbed a COPY of the tree in an ephemeral mktemp -d scratch dir (no repo files touched): a synthetic feature list with one status==\"complete\" feature (id ADV1) whose contract file exists, whose QA verdict exists, and whose QA verdict's evidence_files array names a path that DOES exist on disk -- but as a directory, not a regular file. None of the 12 contracted commands construct this shape. Expected value anchored externally per the External Anchor Rule (methodology/02_adversarial_tdd.md Sec 7): contract 092.json's design_notes assertion 3 (\"every path listed there MUST exist on disk\") plus the actual os.path.isfile() call read from tools/verify_lib.sh's vlib_feature_list_lifecycle source -- not derived from the perturbed fixture's own content.",
+    "result": "PASS (adversarial check confirms C16 behaves as designed) -- vlib_feature_list_lifecycle exited 1 and printed: feature 'ADV1': evidence file listed in .agent/qa/ADV1.json does not exist: .agent/evidence/ADV1. This confirms the primitive requires evidence_files entries to be REGULAR FILES (os.path.isfile), not merely present paths -- a directory does not satisfy the era-safe rule. Non-blocking observation for the record: the printed message says 'does not exist' for a path that in fact exists (as a directory), a naming-detail imprecision in the error string, not a functional defect -- the check still correctly FAILs, matching contract 092's design intent that evidence_files must resolve to real evidence, and this exact naming-detail-line behavior is what the task's spot-check briefing anticipated as one of the two possible confirming outcomes.",
+    "evidence": ".agent/evidence/092/qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/092/schema-validate.txt",
+    ".agent/evidence/092/validate-c16-pass-line.txt",
+    ".agent/evidence/092/validate-summary-line.txt",
+    ".agent/evidence/092/validate-exit-code.txt",
+    ".agent/evidence/092/validate-target-neg.txt",
+    ".agent/evidence/092/validate-target-pos.txt",
+    ".agent/evidence/092/validate-payload.txt",
+    ".agent/evidence/092/fixtures-self-test.txt",
+    ".agent/evidence/092/e2e-bootstrap.txt",
+    ".agent/evidence/092/schema-readme-doctruth.txt",
+    ".agent/evidence/092/docs-sync.txt",
+    ".agent/evidence/092/feature-list-untouched.txt",
+    ".agent/evidence/092/qa-adversarial.txt",
+    ".agent/evidence/092/validate-post-qa-write.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 092 APPROVED. All 12 of contract 092.json's verification commands were independently re-executed by the evaluator from repo root (not reused from the generator or Validator Mode B) and each produced the exact contracted outcome: C16 PASS/FAIL lines for default sweep, --target positive and negative fixtures, and --payload mode; SUMMARY: 16 passed, 0 failed on the default sweep with exit 0; SUMMARY (payload mode): 12 passed, 0 failed with the counted C16 payload-skip PASS line; tools/fixtures_self_test.sh exit 0 with both new assert_target rows and all four new scratch-dir vlib_feature_list_lifecycle primitive probes reporting OK; tools/e2e_bootstrap_test.sh PASS; schema/README.md's feature_list.schema.json row now names C16; tools/README.md, NIZAM.json, and CHANGELOG.md are synchronized to sixteen checks; and no real .agent/feature_list*.json content was modified by the implementation (byte-identical to base revision fe571b9). The mandatory adversarial spot-check (directory-shaped evidence_files entry, not among the 12 contracted commands) confirms C16's era-safe referential rule correctly requires a regular file, not mere path existence, matching contract 092's design_notes -- no regressions or false-passes found. Re-running bash tools/validate.sh AFTER writing this verdict and all evidence files still reports SUMMARY: 16 passed, 0 failed, exit 0 (.agent/evidence/092/validate-post-qa-write.txt), confirming this QA round's own artifacts do not destabilize the tree C16 itself now polices. No issues, no unsupported claims, no missing acceptance coverage. Recommend generator proceed to protocol 07B Step 7 durable-state status flip (feature 092 -> complete in .agent/feature_list_013.json, run_state.json, phase_013.yaml) -- explicitly out of this QA round's write scope per contract 092's non_goals."
+  }
+}

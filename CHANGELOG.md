@@ -7,6 +7,23 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Feature-list lifecycle invariant, validator check C16 (phase 013, feature
+  092).** `tools/validate.sh` mechanizes "complete implies approved contract
+  and passing QA verdict and evidence on disk" over every
+  `.agent/feature_list*.json`: schema validation against
+  `schema/feature_list.schema.json`, plus an era-safe referential rule --
+  for every `status: "complete"` feature, IF `.agent/contracts/<id>.json`
+  exists THEN `.agent/qa/<id>.json` must also exist, and any `evidence_files`
+  it lists must resolve on disk. Wired into the default sweep (after C15),
+  `--target` (schema-only, via a new `features`+`original_estimate_lines`
+  route on `check_c11_or_c4_target`), and `--payload` (a counted trivial
+  pass, mirroring C11's precedent) modes, with new positive/negative
+  fixtures and `tools/fixtures_self_test.sh` coverage. Also corrects
+  `schema/README.md`'s `feature_list.schema.json` row, which previously
+  named no enforcing check.
+
 ## [1.0.0] - 2026-08-15
 
 **Major release** (`methodology/06_release_train.md` §3.1): phase 012 resolves the

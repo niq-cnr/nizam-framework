@@ -1,0 +1,3 @@
+grep -Fq 'SUMMARY: 16 passed, 0 failed' tools/README.md; s1=$?; grep -q 'C1–C16\|C1-C16' tools/README.md; s2=$?; python3 -c "import json; d=json.load(open('NIZAM.json')); s=next(c['summary'] for c in d['capabilities'] if c['id']=='nizam-compliance-validator'); assert 'C1-C16' in s or 'C1–C16' in s, s"; s3=$?; grep -q 'C16' CHANGELOG.md; s4=$?; test "${s1}" -eq 0 -a "${s2}" -eq 0 -a "${s3}" -eq 0 -a "${s4}" -eq 0
+
+EXIT:0

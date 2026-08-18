@@ -2,10 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.13.0
+version: 0.14.0
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.14.0"
+    date: "2026-08-18"
+    summary: "Doc-truth fix (phase-013 feature 092): the feature_list.schema.json row named no enforcing check despite the table's implied live-validation convention every C11/C12-covered row follows; it now names validator check C16 (the era-safe complete -> contract -> QA-verdict -> evidence-file referential rule added this feature)."
   - version: "0.13.0"
     date: "2026-08-15"
     summary: "Phase-012 breaking invariant repair for v1.0.0: evidence paths in audit_delta and engineering_finding must name content below .agent/evidence/; ecosystem membership schema_version uses canonical SemVer 2.0.0; successful preflight verdicts reject blocking_findings; a pin-consistent membership result requires a non-empty common framework_pin; and a FAIL reconciliation plan requires non-empty cycle_findings plus an empty order. Eleven discriminating negative fixtures and a prerelease/build SemVer positive guard the clean break; docs/migration-v1.0.0.md supplies exact consumer repairs."
@@ -68,7 +71,7 @@ Every schema in this module:
 | `frontmatter.schema.json` | Validates the YAML frontmatter block required at the top of every governance Markdown file (`standard/`, `methodology/`, `templates/`, `tools/`, and module `README.md` files). Enforces the 6 required keys: `id`, `title`, `description`, `version`, `status` (`draft`\|`active`\|`deprecated`), `authoritative_source`. | Frontmatter on any governed `.md` file. |
 | `manifest.schema.json` | Validates the planning manifest that names the current phase and lists every phase a repository tracks. | `docs/planning/manifest.json` |
 | `phase.schema.json` | Validates a phase definition. Implements **DD-3, Evidence Externalisation** (see below). | Phase definition documents produced from `templates/phase_template.yaml`. |
-| `feature_list.schema.json` | Validates the DAG-validated, acceptance-test-bearing feature breakdown of a phase. | `.agent/feature_list.json` |
+| `feature_list.schema.json` | Validates the DAG-validated, acceptance-test-bearing feature breakdown of a phase. The **era-safe complete-feature lifecycle rule** (a `complete` feature with a contract on disk must also have a QA verdict, and any `evidence_files` it lists must resolve) is enforced in code by `tools/validate.sh` C16. | `.agent/feature_list.json` |
 | `contract.schema.json` | Validates a per-feature contract: scope, non-goals, and verification commands agreed before implementation. | `.agent/contracts/NNN.json` |
 | `qa_verdict.schema.json` | Validates an evaluator's pass/fail verdict for a feature, including per-check exit codes and evidence paths. | `.agent/qa/NNN.json` |
 | `contract_review.schema.json` | Validates the pre-code contract-testability review verdict. | `.agent/qa/NNN-contract-review.json` |

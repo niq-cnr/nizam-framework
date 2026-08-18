@@ -1,0 +1,39 @@
+bash <<'SCRIPT'
+# Evaluator-originated adversarial spot-check (methodology/02_adversarial_tdd.md
+# Sec 6-8), NOT among contract 092's 12 listed verification commands.
+# Reasoning: none of the 12 contracted checks construct a QA verdict whose
+# evidence_files array names a path that exists on disk as a DIRECTORY rather
+# than a regular file. Contract 092's design_notes assertion 3 says "every
+# path listed there MUST exist on disk" -- this probe tests whether C16's
+# primitive (vlib_feature_list_lifecycle in tools/verify_lib.sh) treats mere
+# path existence as sufficient, or requires a regular file (os.path.isfile),
+# by perturbing a COPY of the tree in an ephemeral mktemp -d scratch dir (no
+# repo files touched). External Anchor Rule (Sec 7): the expected result is
+# anchored on contract 092.json's design_notes text and the actual source of
+# tools/verify_lib.sh -- both external to the perturbed fixture itself, not
+# derived from the fixture's own content.
+set -e
+SCRATCH=$(mktemp -d)
+mkdir -p "$SCRATCH/schema" "$SCRATCH/tools" "$SCRATCH/.agent/contracts" "$SCRATCH/.agent/qa" "$SCRATCH/.agent/evidence/ADV1"
+cp schema/feature_list.schema.json "$SCRATCH/schema/feature_list.schema.json"
+cp tools/verify_lib.sh "$SCRATCH/tools/verify_lib.sh"
+cat > "$SCRATCH/.agent/feature_list_test.json" <<'JSON'
+{"phase":"adversarial-test","spec_version":"1.0.0","original_estimate_lines":10,"features":[{"id":"ADV1","name":"Adversarial probe feature","description":"Synthetic complete feature probing C16 evidence-file existence with a directory instead of a regular file.","status":"complete","dependencies":[],"acceptance_tests":["n/a"],"estimated_lines":1}]}
+JSON
+cat > "$SCRATCH/.agent/contracts/ADV1.json" <<'JSON'
+{"contract_id":"ADV1"}
+JSON
+cat > "$SCRATCH/.agent/qa/ADV1.json" <<'JSON'
+{"feature_id":"ADV1","qa_pass":true,"evidence_files":[".agent/evidence/ADV1"]}
+JSON
+echo "placeholder file inside the directory that evidence_files points at" > "$SCRATCH/.agent/evidence/ADV1/placeholder.txt"
+set +e
+( cd "$SCRATCH" && bash -c 'source tools/verify_lib.sh; vlib_feature_list_lifecycle' )
+result_rc=$?
+echo "vlib_feature_list_lifecycle exit code (directory-shaped evidence_files entry): ${result_rc}"
+rm -rf "$SCRATCH"
+exit "$result_rc"
+SCRIPT
+vlib_feature_list_lifecycle: .agent/feature_list_test.json: feature 'ADV1': evidence file listed in .agent/qa/ADV1.json does not exist: .agent/evidence/ADV1
+vlib_feature_list_lifecycle exit code (directory-shaped evidence_files entry): 1
+EXIT:1

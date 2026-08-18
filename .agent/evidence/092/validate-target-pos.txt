@@ -1,0 +1,3 @@
+out=$(bash tools/validate.sh --target tools/fixtures/feature_list_valid.json 2>&1); rc=$?; printf "%s\n" "${out}" | grep -Eq "^\[C16\] PASS" ; grep_rc=$?; test "${rc}" -eq 0 -a "${grep_rc}" -eq 0
+
+EXIT:0

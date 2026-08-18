@@ -9,8 +9,8 @@
 # tools/verify_lib.sh` unconditionally without perturbing its own shell
 # options, output streams, or exit status.
 #
-# Exposes eight vetted, individually fixture-tested primitives that
-# contracts (F-024..F-029, F-053, F-055) and future `tools/validate.sh` checks
+# Exposes eleven vetted, individually fixture-tested primitives that
+# contracts (F-024..F-029, F-053, F-055, F-092) and future `tools/validate.sh` checks
 # should compose their verification from, instead of re-inventing (and
 # re-breaking) the historical anti-patterns this library exists to fix:
 # vacuous whole-file greps, `git diff HEAD` scope guards blind to new
@@ -29,10 +29,10 @@
 # from being sourced -- only when explicitly invoked.
 
 # ---------------------------------------------------------------------------
-# Internal helper (not one of the eight named primitives): strips one or
+# Internal helper (not one of the eleven named primitives): strips one or
 # more trailing sentence-punctuation characters from a token. Used by
 # vlib_path_resolves. Kept private (leading underscore) to keep the
-# library's public surface to exactly the eight documented primitives.
+# library's public surface to exactly the eleven documented primitives.
 # ---------------------------------------------------------------------------
 
 _vlib_strip_trailing_punct() {
@@ -680,6 +680,134 @@ for profile, role in ROLE_BY_PROFILE.items():
 if gaps:
     for gap in gaps:
         print("vlib_profiles_cover_roles: " + gap)
+    sys.exit(1)
+sys.exit(0)
+PY
+}
+
+# ---------------------------------------------------------------------------
+# vlib_feature_list_lifecycle
+#
+# Discovers every `.agent/feature_list*.json` CWD-relative (no argument --
+# matching vlib_workflows_sha_pinned's directory-discovery style, not a
+# fixed path list) and asserts, in one python3+jsonschema pass:
+#   (1) No feature list present on disk -> trivial PASS (a fresh or
+#       ungoverned repo that has not yet run the planning loop).
+#   (2) Every discovered list validates against
+#       `schema/feature_list.schema.json`.
+#   (3) Era-safe referential rule, evaluated per `status == "complete"`
+#       feature across every discovered list: IF `.agent/contracts/<id>.json`
+#       exists on disk THEN `.agent/qa/<id>.json` MUST also exist; and if
+#       that QA verdict carries a top-level `evidence_files` array, every
+#       path it lists MUST exist on disk. A complete feature with NO
+#       contract file at all (the framework's own pre-contract-first
+#       history) is not flagged -- the rule binds only from the moment a
+#       feature's contract exists, never a hardcoded historical cutoff.
+#
+# Mechanizes the feature-lifecycle invariant ("complete implies approved
+# contract and passing QA verdict and evidence on disk") as validator check
+# C16 (`.agent/contracts/092.json`).
+#
+# Args: none.
+#
+# Returns:
+#   0 if no feature list is present, or every discovered list schema-
+#     validates AND every complete feature satisfies the era-safe
+#     referential rule.
+#   1 otherwise (a schema violation, a contracted-but-unverified complete
+#     feature, or a missing evidence file -- each offense printed).
+# ---------------------------------------------------------------------------
+
+vlib_feature_list_lifecycle() {
+  python3 - <<'PY'
+import glob
+import json
+import os
+import sys
+
+import jsonschema
+
+SCHEMA_PATH = "schema/feature_list.schema.json"
+
+
+def load_json(path):
+    with open(path, "r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+lists = sorted(glob.glob(".agent/feature_list*.json"))
+if not lists:
+    sys.exit(0)
+
+errors = []
+
+try:
+    schema = load_json(SCHEMA_PATH)
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"vlib_feature_list_lifecycle: could not read {SCHEMA_PATH}: {exc}")
+    sys.exit(1)
+
+for path in lists:
+    try:
+        doc = load_json(path)
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"{path}: not valid JSON: {exc}")
+        continue
+
+    try:
+        jsonschema.validate(instance=doc, schema=schema)
+    except jsonschema.ValidationError as exc:
+        errors.append(f"{path}: schema violation: {exc.message}")
+
+    if not isinstance(doc, dict):
+        continue
+    features = doc.get("features", [])
+    if not isinstance(features, list):
+        continue
+
+    for feature in features:
+        if not isinstance(feature, dict):
+            continue
+        if feature.get("status") != "complete":
+            continue
+        fid = feature.get("id")
+        if not isinstance(fid, str) or not fid:
+            continue
+
+        contract_path = f".agent/contracts/{fid}.json"
+        if not os.path.isfile(contract_path):
+            # Era-safe: a complete feature with no contract at all predates
+            # the contract-first loop and is not flagged.
+            continue
+
+        qa_path = f".agent/qa/{fid}.json"
+        if not os.path.isfile(qa_path):
+            errors.append(
+                f"{path}: feature '{fid}' is complete with a contract "
+                f"({contract_path}) but no QA verdict ({qa_path})"
+            )
+            continue
+
+        try:
+            qa_doc = load_json(qa_path)
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(
+                f"{path}: feature '{fid}': QA verdict {qa_path} not valid JSON: {exc}"
+            )
+            continue
+
+        evidence_files = qa_doc.get("evidence_files") if isinstance(qa_doc, dict) else None
+        if isinstance(evidence_files, list):
+            for evidence_path in evidence_files:
+                if isinstance(evidence_path, str) and not os.path.isfile(evidence_path):
+                    errors.append(
+                        f"{path}: feature '{fid}': evidence file listed in {qa_path} "
+                        f"does not exist: {evidence_path}"
+                    )
+
+if errors:
+    for error in errors:
+        print("vlib_feature_list_lifecycle: " + error)
     sys.exit(1)
 sys.exit(0)
 PY

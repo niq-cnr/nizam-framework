@@ -1,0 +1,31 @@
+{
+  "phase": "900-fixture-demo",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 200,
+  "features": [
+    {
+      "id": "900",
+      "name": "Example bootstrap feature",
+      "description": "A minimal, schema-valid example feature used only to exercise validator check C16 (feature_list.schema.json) via tools/validate.sh --target. Not consumed by any real planning loop.",
+      "status": "complete",
+      "dependencies": [],
+      "acceptance_tests": [
+        "Example acceptance test passes."
+      ],
+      "estimated_lines": 100
+    },
+    {
+      "id": "901",
+      "name": "Example follow-on feature",
+      "description": "Depends on feature 900; exercises a non-terminal status and the dependencies array so the fixture is a realistic small DAG, not a single-node list.",
+      "status": "pending",
+      "dependencies": [
+        "900"
+      ],
+      "acceptance_tests": [
+        "Example acceptance test passes."
+      ],
+      "estimated_lines": 100
+    }
+  ]
+}

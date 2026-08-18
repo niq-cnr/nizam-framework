@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.7.0
+version: 0.8.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.8.0"
+    date: "2026-08-18"
+    summary: "Phase-013 feature 092: document the new C16 feature-list lifecycle check (`.agent/feature_list*.json` schema validation plus the era-safe complete -> contract -> QA-verdict -> evidence-file referential rule) -- the Compliance Coverage section now documents sixteen checks (C1-C16, SUMMARY: 16 passed)."
   - version: "0.7.0"
     date: "2026-08-15"
     summary: "Phase-012 feature 089 (issue #52): synchronize C12 documentation with all eight ecosystem fixture families currently routed by the validator."
@@ -78,12 +81,12 @@ documents. `skill.json` is validated as plain JSON (`python3 -c
 its own within this module — it is pure data consumed by `SKILL.md` and
 `interface.md`, not a document requiring frontmatter.
 
-## Compliance Coverage — C1–C15
+## Compliance Coverage — C1–C16
 
-`tools/validate.sh`, the repo-local NDS compliance validator, runs fifteen
+`tools/validate.sh`, the repo-local NDS compliance validator, runs sixteen
 checks on every PR and push to `main` (`.github/workflows/compliance.yml`).
-As of phase 006 (features 049's C13 skill-index check and 058's C14/C15), the
-full default sweep reports `SUMMARY: 15 passed, 0 failed`:
+As of phase 013 (feature 092's C16 feature-list lifecycle check), the
+full default sweep reports `SUMMARY: 16 passed, 0 failed`:
 
 | Check | Name | What it enforces |
 |---|---|---|
@@ -102,13 +105,15 @@ full default sweep reports `SUMMARY: 15 passed, 0 failed`:
 | C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. |
 | C14 | Workflow SHA-pinning | Every external (third-party) `uses:` reference in `.github/workflows/` is pinned to a 40-hex commit SHA, not a floating tag or branch; local `./`/`../` actions are exempt (they ship in-repo and need no pin). Feature 058 — mechanizes `standard/provenance_policy.md`'s SHA-pinned-Actions requirement; default sweep only. |
 | C15 | Capability-profile ↔ AGF-role coverage | All five capability-profile identifiers in `standard/capability_profiles.md` are present and each one's corresponding role is defined in `standard/AGF.md` — a 5↔5 coverage check tying the two docs together. It guards against a dropped or renamed profile/role; it does not parse per-profile assignment prose, so a swapped mapping is outside its scope. Feature 058 — mechanizes the five-profile ↔ five-role correspondence; default sweep only. |
+| C16 | Feature-list lifecycle invariant | Every `.agent/feature_list*.json` (when present) validates against `schema/feature_list.schema.json`; and for every feature with `status: "complete"`, IF `.agent/contracts/<id>.json` exists THEN `.agent/qa/<id>.json` MUST also exist, and if that QA verdict carries a top-level `evidence_files` array, every path it lists MUST exist on disk. Era-safe: a complete feature with no contract file at all (the framework's own pre-contract-first history) is not flagged. Feature 092 — mechanizes "complete implies approved contract and passing QA verdict and evidence on disk"; enforce-if-present (trivial PASS with no feature list on disk), and a counted trivial PASS in `--payload` mode (`.agent/` is never part of the bootstrap.sh payload). A `--target` invocation against a feature-list-shaped file routes to schema-only validation (the era-safe referential rule is a whole-repo-tree relational property, not evaluable on one isolated file). |
 
 C9, C10, and C11 were added by phase 004 (`tools/verify_lib.sh` supplies
 their shared, fixture-tested primitives); C12 was added by phase 005
-(feature 042); C13 by phase 006 (feature 049), and C14 (workflow
-SHA-pinning) and C15 (capability-profile ↔ AGF-role) by phase 006
-(feature 058); C1–C8 shipped in earlier phases. Run
-`bash tools/validate.sh --help` for the full per-check description.
+(feature 042); C13 by phase 006 (feature 049), C14 (workflow SHA-pinning)
+and C15 (capability-profile ↔ AGF-role) by phase 006 (feature 058), and
+C16 (feature-list lifecycle invariant) by phase 013 (feature 092); C1–C8
+shipped in earlier phases. Run `bash tools/validate.sh --help` for the
+full per-check description.
 
 ### Fixture self-test (`tools/fixtures_self_test.sh`)
 
