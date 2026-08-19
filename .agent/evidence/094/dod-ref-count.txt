@@ -1,0 +1,3 @@
+$ test "$(grep -o "\"dod_ref\"" schema/*.schema.json | wc -l)" -eq 6 && test "$(grep -l "\"dod_ref\"" schema/*.schema.json | wc -l)" -eq 5 && echo PASS six occurrences across five files
+PASS six occurrences across five files
+EXIT:0

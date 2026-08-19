@@ -101,6 +101,10 @@
       "type": "integer",
       "description": "Optional. The packet's position in its train's merge sequence, honouring the upstream-before-downstream ordering of the cross-repo dependency gate (methodology/08_cross_repo_dependency_gate.md). Lower merges first.",
       "minimum": 0
+    },
+    "dod_ref": {
+      "type": "string",
+      "description": "Optional repo-relative path to the Definition of Done document governing this artifact's completion claims (in this repository `standard/definition_of_done.md`; in a bootstrapped consumer, conventionally `.nizam/standard/definition_of_done.md`). Advisory metadata: never required, and no check fails on its absence."
     }
   },
   "required": ["id", "objective", "scope", "acceptance", "evidence", "non_goals"],

@@ -2,10 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.14.0
+version: 0.15.0
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.15.0"
+    date: "2026-08-19"
+    summary: "Added the optional, advisory `dod_ref` string property, identically worded, to five machine-validated schemas -- contract.schema.json, qa_verdict.schema.json (both anyOf branches), feature_list.schema.json (top level), work-packet.schema.json, and engineering_finding.schema.json (phase-013 feature 094) -- naming standard/definition_of_done.md as the artifact's governing Definition of Done. Touches no `required` array on any schema, a pure loosening per methodology/06_release_train.md Sec 3.2: every previously-valid artifact remains valid. Proved with a positive fixture (tools/fixtures/feature_list_valid.json gains a dod_ref) that still passes the C16 --target sweep, plus the full default validator sweep's existing dogfood coverage (C11 over every .agent/contracts/*.json and .agent/qa/*.json, C16 over every .agent/feature_list*.json)."
   - version: "0.14.0"
     date: "2026-08-18"
     summary: "Doc-truth fix (phase-013 feature 092): the feature_list.schema.json row named no enforcing check despite the table's implied live-validation convention every C11/C12-covered row follows; it now names validator check C16 (the era-safe complete -> contract -> QA-verdict -> evidence-file referential rule added this feature)."
@@ -63,6 +66,10 @@ Every schema in this module:
 - Permits `additionalProperties` on extension points so consumer repositories can extend
   a shape without breaking validation, while still enforcing the required keys and enums
   that make an artifact machine-legible.
+- Where applicable, admits an optional, advisory `dod_ref` string property naming the
+  repo-relative path to the Definition of Done document governing that artifact's
+  completion claims (`standard/definition_of_done.md` in this repository) -- never
+  required, and no check fails on its absence.
 
 ## Schemas
 

@@ -60,6 +60,22 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   CONTEXT.md with no `change_log` key) emits a named FAIL. The script
   never invokes `git tag` or `git push` -- read-only comparison only.
 
+- **Optional advisory `dod_ref` key, five schemas (phase 013, feature
+  094).** Adds an identically worded, optional, advisory `dod_ref` string
+  property to `schema/contract.schema.json`, `schema/qa_verdict.schema.json`
+  (both `anyOf` branches), `schema/feature_list.schema.json` (top level),
+  `schema/work-packet.schema.json`, and
+  `schema/engineering_finding.schema.json`, naming
+  `standard/definition_of_done.md` as the artifact's governing Definition of
+  Done. Touches no `required` array anywhere, a pure loosening per
+  `methodology/06_release_train.md` Sec 3.2: every previously-valid artifact
+  remains valid. Proved with a positive fixture
+  (`tools/fixtures/feature_list_valid.json` gains a `dod_ref`) that still
+  validates and still passes the C16 `--target` sweep, plus the full default
+  `tools/validate.sh` sweep's existing dogfood coverage. Pairs a
+  `schema/README.md` conventions-list sentence and a version bump
+  (0.14.0 -> 0.15.0) with a matching change_log entry.
+
 ## [1.0.0] - 2026-08-15
 
 **Major release** (`methodology/06_release_train.md` §3.1): phase 012 resolves the

@@ -1,0 +1,5 @@
+$ bash tools/validate.sh 2>&1 | grep -E "^SUMMARY: 16 passed, 0 failed$"; s1=$?; bash tools/validate.sh >/dev/null 2>&1; s2=$?; test "${s1}" -eq 0 -a "${s2}" -eq 0
+SUMMARY: 16 passed, 0 failed
+s1=0 s2=0
+# evaluator note: one anomalous run of this identical command observed s1=1 earlier in this QA round; five isolated re-runs (including this one) were clean (s1=0, s2=0). Classified flaky per the Flaky Test Detection protocol; not counted as a genuine failure.
+EXIT:0

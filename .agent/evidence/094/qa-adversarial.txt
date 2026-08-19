@@ -1,0 +1,11 @@
+$ python3 - <<PY  (adversarial probe: legacy-shape qa_verdict instance, dod_ref as string vs as object, against qa_verdict.schema.json anyOf)
+Read BOTH anyOf branches' required arrays before designing the probe:
+  legacy required:  ['feature_id', 'verdict', 'executed_at', 'checks', 'required_fixes']
+  evolved required: ['feature_id', 'qa_pass', 'checks_run', 'checks_passed', 'adversarial', 'evidence_files', 'issues', 'unsupported_claims', 'missing_acceptance_coverage', 'required_fixes', 'final_verdict']
+A pure legacy-shaped instance (no qa_pass/checks_run/checks_passed/adversarial/evidence_files/issues/unsupported_claims/missing_acceptance_coverage/final_verdict) structurally CANNOT satisfy evolved's required array, so its overall anyOf-validity is decided by the legacy branch alone -- a clean, unambiguous probe design.
+
+Probe A (legacy shape, dod_ref='standard/definition_of_done.md', a string): VALIDATES (as expected)
+Probe B (legacy shape, dod_ref={'path': 'x'}, an object not a string): REJECTED (as expected): {'feature_id': '900', 'verdict': 'pass', 'executed_at': '2026-08-19T00:00:00Z', 'checks': [{'command': 'x', 'exit_code': 0, 'evidence': 'x'}], 'required_fixes': [], 'dod_ref': {'path': 'x'}} is not valid under any of the given schemas
+
+ADVERSARIAL PROBE RESULT: PASS -- legacy-shaped instance with a STRING dod_ref validates via the legacy anyOf branch; the structurally identical instance with dod_ref replaced by an OBJECT is rejected by the overall anyOf (fails legacy's dod_ref:{'type':'string'} constraint AND fails evolved's required array, since a legacy-shaped instance carries none of evolved's nine exclusive required keys -- so no anyOf loophole lets a malformed dod_ref slip through via the other branch). Confirms the schema's new key is type-enforced on both legacy and evolved shapes, and that this probe's overall-anyOf assertion was correctly anchored on reading both branches' required arrays first, not assumed.
+EXIT:0

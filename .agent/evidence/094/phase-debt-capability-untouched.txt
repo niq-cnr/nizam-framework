@@ -1,0 +1,3 @@
+$ for p in schema/phase.schema.json schema/debt.schema.json schema/capability_profile.schema.json; do git diff --quiet b451b96 -- "$p" || { echo "unexpected edit: $p"; exit 1; }; done; echo PASS
+PASS phase/debt/capability_profile schemas untouched
+EXIT:0

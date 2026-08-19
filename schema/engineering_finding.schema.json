@@ -76,6 +76,10 @@
       "type": "array",
       "description": "Evidence demonstrating the closure_criteria were met. Required, and non-empty, ONLY when status is 'resolved' (see allOf below); a finding marked resolved with no closure_evidence, or with a closure_evidence array present but containing only structurally-incomplete items (missing path or revision), is not valid.",
       "items": { "$ref": "#/$defs/evidence_item" }
+    },
+    "dod_ref": {
+      "type": "string",
+      "description": "Optional repo-relative path to the Definition of Done document governing this artifact's completion claims (in this repository `standard/definition_of_done.md`; in a bootstrapped consumer, conventionally `.nizam/standard/definition_of_done.md`). Advisory metadata: never required, and no check fails on its absence."
     }
   },
   "required": ["id", "severity", "confidence", "evidence", "impact", "owner", "status", "closure_criteria"],

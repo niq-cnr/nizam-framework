@@ -70,6 +70,10 @@
         "additionalProperties": true
       },
       "minItems": 1
+    },
+    "dod_ref": {
+      "type": "string",
+      "description": "Optional repo-relative path to the Definition of Done document governing this artifact's completion claims (in this repository `standard/definition_of_done.md`; in a bootstrapped consumer, conventionally `.nizam/standard/definition_of_done.md`). Advisory metadata: never required, and no check fails on its absence."
     }
   },
   "required": ["phase", "spec_version", "original_estimate_lines", "features"],
