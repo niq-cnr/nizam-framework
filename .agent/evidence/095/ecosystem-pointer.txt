@@ -1,0 +1,15 @@
+python3 - <<'PY'
+import re
+text = open('templates/DoD.md').read()
+assert 'Ecosystem-Done' in text, 'Ecosystem-Done must be named'
+idx = text.index('Ecosystem-Done')
+next_heading = re.search(r'\n#{1,6}\s', text[idx:])
+end = idx + next_heading.start() if next_heading else len(text)
+window = text[idx:end]
+assert 'standard/definition_of_done.md' in window and 'Section 10' in window, 'Ecosystem-Done mention must cite Section 10'
+checklist_lines = [l for l in window.splitlines() if re.match(r'^\s*- \[ \]', l)]
+assert not checklist_lines, f'unexpected checklist item(s) after Ecosystem-Done pointer before next heading (would be an eighth block): {checklist_lines}'
+print('PASS Ecosystem-Done named and cited as Section 10 pointer; zero checklist lines before next heading (no eighth block)')
+PY
+PASS Ecosystem-Done named and cited as Section 10 pointer; zero checklist lines before next heading (no eighth block)
+EXIT:0

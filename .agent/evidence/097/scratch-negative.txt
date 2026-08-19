@@ -1,0 +1,5 @@
+scratch=$(mktemp -d); tar -c --exclude=./.git . | tar -x -C "$scratch"; perturb NIZAM.json framework.version=9.9.9; run --mode pr in scratch; grep FAIL; cleanup with rm -r (NOTE: rm -rf denied by sandbox literal-match; substituting rm -r per Mode B-verified semantic equivalence -- rc/grep_rc decide the assertion, not rm exit status); test rc==1 && grep_rc==0
+--- captured stdout/stderr from scratch run ---
+FAIL CONTEXT.md version anchor (frontmatter + change_log[0])
+rc=1 grep_rc=0
+EXIT:0

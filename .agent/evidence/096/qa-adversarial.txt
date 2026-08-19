@@ -1,0 +1,172 @@
+MANUAL PROCEDURE: skeptical read of all nine `- [ ]` checkbox lines in
+.github/PULL_REQUEST_TEMPLATE.md against their cited source mechanisms
+(this contract's automated checkbox-exact9-topics.txt keyword-set check was
+proven vacuously satisfiable by a decoy box during contract review and is
+therefore treated as necessary-but-not-sufficient here). Source-read
+commands actually run, in order:
+  sed -n '939,1044p' tools/validate.sh        # C8 pairing rule, verbatim
+  sed -n '2297,2321p' tools/validate.sh       # C16 dispatcher wiring
+  sed -n '689,815p' tools/verify_lib.sh       # vlib_feature_list_lifecycle, C16's actual assertions
+  sed -n '1,166p' methodology/04_tool_driven_state.md   # Section 5 evidence shape, verbatim
+  sed -n '1,232p' standard/definition_of_done.md         # Sections 6, 8, 9, 11 (Feature/Merge/Release-Done, Enforcement)
+  grep -n 'validate\|e2e_bootstrap\|fixtures_self_test' .github/workflows/compliance.yml
+  git ls-files --error-unmatch .github/workflows/release_closeout.yml
+
+BOX-BY-BOX VERDICT (anchor = source mechanism actually read above):
+
+Box 1 -- "tools/validate.sh reports SUMMARY: 16 passed, 0 failed across
+checks C1 through C16 on the branch tip."
+  Anchor: this round's own validate-full-sweep.txt reproduces the literal
+  string "SUMMARY: 16 passed, 0 failed"; compliance.yml's `validate` job
+  runs tools/validate.sh with no flags (full C1-C16 sweep).
+  VERDICT: STANDS. Real, distinct, mechanism-accurate.
+
+Box 2 -- "tools/fixtures_self_test.sh exits 0."
+  Anchor: compliance.yml's `fixtures_self_test` job; this round's
+  fixtures-self-test.txt reproduces "SELF-TEST OK: 79/79 fixtures
+  accounted for, 0 failed" and EXIT:0.
+  VERDICT: STANDS.
+
+Box 3 -- "tools/e2e_bootstrap_test.sh exits 0, if this change touches an
+injected payload surface."
+  Anchor: compliance.yml's `e2e_bootstrap` job; box's own explanatory text
+  correctly classifies .github/, docs/planning/, .agent/ as envelope-only
+  (matches tools/validate.sh's own framework-envelope-paths comment cited
+  by this contract's verification[15]).
+  VERDICT: STANDS.
+
+Box 4 -- "Every governed doc this change touches pairs a version bump
+with a matching change_log entry (check C8's pairing rule)."
+  Anchor: tools/validate.sh:939-1044 (check_c8_version_changelog). The
+  ACTUAL rule passes on EITHER (a) a change_log entry naming the new
+  version, OR (b) root CHANGELOG.md merely mentioning the file's path
+  (line 1019: `if path in changelog_text: sys.exit(0)`). Box 4's prose
+  names only alternative (a); it does not mention the root-CHANGELOG
+  alternative (b).
+  Direction check: this makes the box's stated bar STRICTER than what C8
+  actually requires. A reviewer following only this box would never be
+  led to approve something C8 would in fact reject (no false-green
+  exposure); at worst they ask a PR author to add a change_log entry in a
+  case where a bare CHANGELOG.md mention would have technically already
+  satisfied C8. This is the safe direction Mode B flagged.
+  VERDICT: STANDS AS-IS, no required_fix. Overstating strictness in the
+  safe direction is not a misleading defect for a merge-gate checklist --
+  it cannot cause an unmerged obligation to be waved through.
+
+Box 5 -- "Every feature claimed complete in this change carries the full
+check C16 chain: an approved contract, a passing QA verdict, and evidence
+resolving on disk."
+  Anchor: tools/verify_lib.sh:721-813 (vlib_feature_list_lifecycle). The
+  ACTUAL code checks only FILE EXISTENCE of .agent/contracts/<id>.json (no
+  read of any `status`/`approvals` field inside it) -> then
+  .agent/qa/<id>.json existence -> then each of that QA verdict's
+  evidence_files entries resolves on disk. It never inspects whether the
+  contract JSON's own status is literally "approved".
+  Cross-check: standard/definition_of_done.md Section 11 (Enforcement),
+  read verbatim, uses the IDENTICAL "approved contract, a passing QA
+  verdict, and evidence resolving on disk" phrasing to describe what C16
+  mechanizes -- this is the authority box 5 is citing, and box 5 inherits
+  its wording verbatim rather than inventing a stricter claim.
+  Non-goals of this contract explicitly forbid restating a cited
+  authority's mechanics ("each checklist item names a check or rule ... and
+  points back ... re-explaining HOW C16 ... works is out of scope"), so
+  box 5 correctly defers to, rather than re-derives, Section 11's own
+  characterization.
+  VERDICT: STANDS, no required_fix. The gap is between the DoD document's
+  own prose and its own mechanized check's stricter-in-code-only-by-
+  omission behavior -- an inherited representation gap in the cited
+  authority itself, not a defect this PR-template projection introduced.
+  A reviewer relying on this box in the ordinary contract-first workflow
+  is not practically misled: a contract file only exists on disk today
+  after it passed Mode A/B approval, so "approved contract" and "contract
+  file exists" coincide in this framework's actual practice.
+
+Box 6 -- "Every evidence file this change adds follows the
+methodology/04_tool_driven_state.md Section 5 shape: the exact invocation,
+the captured output, and a final EXIT:<code> line."
+  Anchor: methodology/04_tool_driven_state.md Section 5, read verbatim --
+  three-part shape (exact invocation first line; captured output; final
+  literal EXIT:<code> line) matches box 6's wording exactly, item for item.
+  VERDICT: STANDS. Real, distinct, mechanism-accurate.
+  SEPARATE FINDING (not a defect in this box's wording): the generator's
+  own 15 self-check evidence files under .agent/evidence/096/ (cmd1..cmd15,
+  e.g. cmd1-schema-validate.txt) open with a banner line
+  ("=== CMD1: ... ===") rather than the exact invocation on line 1,
+  violating the very rule box 6 names. This is a defect in the
+  GENERATOR's evidence-writing discipline, not in the template's prose --
+  box 6 states the rule correctly. It is resolved for THIS QA round by
+  the evaluator's independent re-execution and re-capture (this contract's
+  15 convention-named evidence files, all Section-5-shaped), so it is not
+  carried forward as a required_fix against feature 096's own scope. The
+  generator's original cmdN-*.txt files are left in place, unmodified, per
+  this round's write-scope restriction (never delete/overwrite generator
+  records).
+
+Box 7 -- "CHANGELOG.md's [Unreleased] section carries an entry for this
+change, in the file's existing house bullet style."
+  Anchor: CHANGELOG.md's [Unreleased] > Added section, read directly --
+  carries a bullet for "Pull-request checklist,
+  .github/PULL_REQUEST_TEMPLATE.md (phase 013, feature 096)" in the same
+  bold-lead-then-prose bullet style as the 092/093/094 entries immediately
+  above it (this round's changelog-entry.txt independently confirms both
+  the "096" and "PULL_REQUEST_TEMPLATE.md" substrings resolve inside the
+  [Unreleased] span specifically).
+  VERDICT: STANDS.
+
+Box 8 -- "If this change touches a release surface, the release close-out
+gate defined by phase 013, feature 097 (.github/workflows/
+release_closeout.yml) reports green." Plus its explanatory sub-bullet
+naming six release-surface anchors.
+  Anchor: standard/definition_of_done.md Section 9 names the gate by
+  feature id and phase only; this template additionally supplies the
+  pathful form. gate_naming_decision's exemption requires the pathful
+  supplement to be confirmed GIT-TRACKED (not merely present on disk) at
+  verification time: `git ls-files --error-unmatch
+  .github/workflows/release_closeout.yml` returns rc=0 this round (see
+  gate-naming-mechanized.txt), so the supplement is legitimate, not a
+  dangling forward reference.
+  The six release-surface anchors box 8's sub-bullet names (NIZAM.json,
+  CONTEXT.md, README.md, docs/guide/index.html, CHANGELOG.md's top
+  released section, docs/planning/ROADMAP.md's disposition line) match,
+  item for item, the six anchors CHANGELOG.md's own feature-097 entry
+  describes release_closeout.py as comparing.
+  VERDICT: STANDS. Real, distinct, mechanism-accurate, and the conditional
+  pathful reference is legitimately exempted this round.
+
+Box 9 -- "This pull request is not self-merged; the release tag remains
+operator-only, created only via H-FRAMEWORK-RELEASE."
+  Anchor: standard/definition_of_done.md Section 8 ("this framework's own
+  never-self-merge rule") and Section 9 ("only the final tag act belongs
+  to the human-gated release mechanic H-FRAMEWORK-RELEASE, and creates no
+  tracked file diff of its own"), read verbatim.
+  VERDICT: STANDS. Real, distinct, mechanism-accurate.
+
+OVERALL: 9/9 boxes stand as real, distinct, mechanism-accurate obligations
+correctly anchored to their cited source. No box would mislead a reviewer
+following ONLY this template into a false-green merge (box 4's gap is
+strictly safe-direction; box 5's gap is an inherited representation gap in
+the cited authority's own Section 11 prose, not an invention of this
+template, and does not diverge from actual framework practice). No
+required_fix issued against this contract's checklist content. The one
+genuine defect surfaced by this spot-check -- the generator's own
+cmdN-*.txt evidence files violating Section 5's line-1-invocation shape --
+is a generator evidence-discipline finding, independently remedied by this
+QA round's from-scratch re-capture, not a defect in feature 096's
+deliverable (.github/PULL_REQUEST_TEMPLATE.md itself).
+EXIT:0
+
+ADDENDUM -- compliance.yml job-count cross-check (auxiliary, no per-box
+verdict change): grep of .github/workflows/compliance.yml shows exactly
+TWO top-level jobs (`validate`, `fixtures_self_test`); tools/e2e_bootstrap_test.sh
+runs as a STEP inside the `validate` job (line 66), not as its own third
+job, though standard/definition_of_done.md Section 8 prose describes
+"validate ... e2e_bootstrap ... and fixtures_self_test" as if three
+jobs existed. This is a pre-existing wording looseness in Section 8's
+own prose (standard/definition_of_done.md, feature 093's scope), not a
+claim any of this template's nine boxes make -- box 3 names only the
+tool invocation (tools/e2e_bootstrap_test.sh exits 0), never a job-count
+or job-boundary claim, so this discrepancy does not affect box 3's
+verdict (STANDS, unchanged) or any other box. Noted here for the
+record only; out of this contract's scope to fix (non_goals bars
+restating or correcting a cited authority's own mechanics).
+EXIT:0

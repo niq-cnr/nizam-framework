@@ -54,6 +54,10 @@
           "type": "array",
           "description": "Fixes the generator must make before this feature can pass QA. Empty when verdict is 'pass'.",
           "items": { "type": "string" }
+        },
+        "dod_ref": {
+          "type": "string",
+          "description": "Optional repo-relative path to the Definition of Done document governing this artifact's completion claims (in this repository `standard/definition_of_done.md`; in a bootstrapped consumer, conventionally `.nizam/standard/definition_of_done.md`). Advisory metadata: never required, and no check fails on its absence."
         }
       },
       "required": ["feature_id", "verdict", "executed_at", "checks", "required_fixes"],
@@ -127,6 +131,10 @@
           },
           "required": ["approved", "summary"],
           "additionalProperties": true
+        },
+        "dod_ref": {
+          "type": "string",
+          "description": "Optional repo-relative path to the Definition of Done document governing this artifact's completion claims (in this repository `standard/definition_of_done.md`; in a bootstrapped consumer, conventionally `.nizam/standard/definition_of_done.md`). Advisory metadata: never required, and no check fails on its absence."
         }
       },
       "required": [

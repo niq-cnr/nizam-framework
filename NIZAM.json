@@ -1,7 +1,7 @@
 {
   "framework": {
     "name": "nizam-framework",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "A generalised, AI-legible, versioned governance framework distilling documentation standards, planning and execution protocols, adversarial TDD, contract-first harness loops, durable agent state, and governance inheritance into a single portable payload any AI agent or engineering team can consume in any runtime, for any project."
   },
   "modules": [
@@ -20,7 +20,8 @@
         "standard/provenance_policy.md",
         "standard/permission_classes.md",
         "standard/cross_repo_governance.md",
-        "standard/README.md"
+        "standard/README.md",
+        "standard/definition_of_done.md"
       ]
     },
     {
@@ -59,7 +60,8 @@
         "templates/work-packet.template.json",
         "templates/phase_template.yaml",
         "templates/manifest.template.json",
-        "templates/README.md"
+        "templates/README.md",
+        "templates/DoD.md"
       ]
     },
     {
@@ -243,7 +245,7 @@
     },
     {
       "id": "nizam-compliance-validator",
-      "summary": "The repo-local NDS compliance validator (checks C1-C15): frontmatter schema + format, untagged-fence sweep, NIZAM.json index integrity, branding/endpoint leakage, bootstrap.sh sanity, module-README presence, version-bump-vs-changelog (NDS Sec 7), repo-wide path resolution, single-source-of-truth consistency, dogfood schema validation of the .agent/ audit artifacts against the shipped schemas, ecosystem schema-family fixture validation, skill-index integrity (tools/skill.json entry_point + capability module pointers resolve; NDEBT-007 fix), SHA-pinned-Actions enforcement over .github/workflows (C14), and the five capability-profile to AGF-role correspondence (C15).",
+      "summary": "The repo-local NDS compliance validator (checks C1-C16): frontmatter schema + format, untagged-fence sweep, NIZAM.json index integrity, branding/endpoint leakage, bootstrap.sh sanity, module-README presence, version-bump-vs-changelog (NDS Sec 7), repo-wide path resolution, single-source-of-truth consistency, dogfood schema validation of the .agent/ audit artifacts against the shipped schemas, ecosystem schema-family fixture validation, skill-index integrity (tools/skill.json entry_point + capability module pointers resolve; NDEBT-007 fix), SHA-pinned-Actions enforcement over .github/workflows (C14), the five capability-profile to AGF-role correspondence (C15), and the feature-list lifecycle invariant over .agent/feature_list*.json -- complete implies an approved contract, a QA verdict, and evidence on disk (C16).",
       "authoritative_source": "tools/validate.sh"
     },
     {
@@ -275,6 +277,11 @@
       "id": "nizam-ecosystem-progress-comparison",
       "summary": "The protocol for comparing two approved baselines or audits, classifying new/resolved/reopened/persisting/stale findings with every score movement traceable to evidence.",
       "authoritative_source": "ecosystem/07_progress_comparison.md"
+    },
+    {
+      "id": "nizam-definition-of-done",
+      "summary": "The canonical, layered Definition of Done aggregating the framework's eight done-layers (Step, Handoff, Gate, Feature, Plan, Merge, Release, Ecosystem) by citing each layer's existing authority; Feature-Done is mechanized by check C16, Merge/Release-Done by the phase-013 feature-097 release close-out gate.",
+      "authoritative_source": "standard/definition_of_done.md"
     }
   ],
   "schemas": [
@@ -306,7 +313,8 @@
     "templates/work-packet.template.json",
     "templates/phase_template.yaml",
     "templates/manifest.template.json",
-    "templates/README.md"
+    "templates/README.md",
+    "templates/DoD.md"
   ],
   "consumption_guidance": "Query this index first. Locate the module, capability, schema, or template path that matches the task at hand, then read only that one file. Do not bulk-read an entire governance directory (standard/, methodology/, templates/, schema/, tools/, or ecosystem/) for a single task; that is context exhaustion, the failure DD-1 remediates (see methodology/04_tool_driven_state.md). Use the 'capabilities' array to resolve a named concern to its single authoritative_source, the 'modules' array to find a module's key_documents, and the 'schemas'/'templates' arrays to resolve a machine-artifact path directly.",
   "index_schema": {

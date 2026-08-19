@@ -1,0 +1,3 @@
+out=$(bash tools/fixtures_self_test.sh 2>&1); rc=$?; for needle in 'feature_list_valid.json -> [C16] PASS' 'feature_list_neg_bad_status.json -> [C16] FAIL' 'OK   primitive   vlib_feature_list_lifecycle full-chain' 'OK   primitive   vlib_feature_list_lifecycle era-safe complete-without-contract' 'OK   primitive   vlib_feature_list_lifecycle contract-without-QA' 'OK   primitive   vlib_feature_list_lifecycle evidence-file-missing'; do printf '%s\n' "${out}" | grep -Fq "${needle}" || { echo "missing: ${needle}"; exit 1; }; done; test "${rc}" -eq 0
+
+EXIT:0

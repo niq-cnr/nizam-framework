@@ -1,0 +1,147 @@
+python3 - <<'PY'  (adversarial spot-check: NOT among contract 093's 18 listed verification commands)
+# External Anchor Rule (methodology/02_adversarial_tdd.md Sec 7): expected value anchored on the SOURCE
+# file's own text (standard/AGF.md Section 4), not derived from the target document under test.
+# Candidate chosen: verify standard/definition_of_done.md Section 5's quoted four-condition JSON
+# Verdict Parse Rule formula (and its two example phrases) is verbatim-faithful to standard/AGF.md
+# Section 4 -- a textual-fidelity diff none of the 18 contracted checks perform (the contracted
+# checks verify structure, registration, forbidden tokens, and section count/enum-lock, never
+# cross-document quotation fidelity).
+import re
+
+agf_text = open('standard/AGF.md').read()
+dod_text = open('standard/definition_of_done.md').read()
+
+m_agf = re.search(r'^## 4\. The JSON Verdict Parse Rule.*?(?=^## 5\.)', agf_text, re.DOTALL | re.MULTILINE)
+assert m_agf, 'AGF.md Section 4 not found (external anchor source)'
+agf_sec4 = m_agf.group(0)
+
+m_dod = re.search(r'^## 5\. Gate-Done.*?(?=^## 6\.)', dod_text, re.DOTALL | re.MULTILINE)
+assert m_dod, 'DoD Section 5 not found'
+dod_sec5 = m_dod.group(0)
+
+print("=== SOURCE OF TRUTH: standard/AGF.md Section 4 (external anchor) ===")
+print(agf_sec4)
+print()
+print("=== TARGET UNDER TEST: standard/definition_of_done.md Section 5 ===")
+print(dod_sec5)
+print()
+
+# The AGF.md four-condition formula, read directly from its own fenced ```text block
+# (the canonical source), not from the DoD document's paraphrase.
+m_formula = re.search(r'```text\n(.*?)\n```', agf_sec4, re.DOTALL)
+assert m_formula, 'AGF.md formula code block not found'
+agf_formula = m_formula.group(1)
+print("=== AGF.md's own canonical formula block (ground truth) ===")
+print(agf_formula)
+print()
+
+expected_fields_in_order = [
+    'final_verdict.approved',
+    'issues',
+    'missing_acceptance_coverage',
+    'unsupported_claims',
+]
+
+# Verify AGF.md's formula names these four fields in this exact order (ground truth check,
+# anchored on AGF.md's own text, independent of the DoD document).
+positions = [agf_formula.index(f) for f in expected_fields_in_order]
+assert positions == sorted(positions), f"AGF.md formula field order unexpected: {positions}"
+print("PASS: AGF.md's own formula names the four fields in the expected order (ground truth confirmed)")
+
+# Now verify the DoD document's Section 5 prose names the SAME four fields, in the SAME
+# order, and correctly attributes them to `standard/AGF.md` Section 4 -- verbatim-faithful,
+# not merely thematically similar.
+dod_positions = [dod_sec5.index(f) for f in expected_fields_in_order]
+assert dod_positions == sorted(dod_positions), f"DoD Sec 5 field order does not match AGF.md: {dod_positions}"
+print("PASS: DoD Sec 5 names the same four fields in the same order as AGF.md Sec 4")
+
+assert '`standard/AGF.md` Section 4' in dod_sec5, 'DoD Sec 5 must attribute the formula to standard/AGF.md Section 4'
+print("PASS: DoD Sec 5 correctly attributes the formula to `standard/AGF.md` Section 4")
+
+# Verify the two verbatim-quoted example phrases in DoD Sec 5 ("mostly approved", "should
+# be fine") actually appear, verbatim, inside AGF.md's own Section 4 text (the external
+# anchor) -- not merely plausible-sounding phrases invented by the document's author.
+for phrase in ['mostly approved', 'should be fine']:
+    assert phrase in agf_sec4, f'AGF.md Section 4 does not contain the phrase {phrase!r} (external anchor)'
+    assert phrase in dod_sec5, f'DoD Sec 5 does not contain the phrase {phrase!r}'
+print('PASS: both quoted example phrases ("mostly approved", "should be fine") are verbatim-present in AGF.md Sec 4 (the source) AND in DoD Sec 5')
+
+# Verify the "even if approved is true" / "regardless of approved's value" semantic claim
+# in DoD Sec 5 is faithful to AGF.md's own Rule 2 sentence (paraphrase check, not literal
+# substring, since DoD is explicitly an aggregator that must not restate mechanics verbatim
+# as a block-copy -- but the SEMANTIC claim must still be correct).
+assert 'blocks advancement' in dod_sec5 and 'blocks advancement' in agf_sec4, 'DoD Sec 5 "blocks advancement" language must trace to AGF.md Rule 2'
+print('PASS: "blocks advancement" language is present in both DoD Sec 5 and its AGF.md Sec 4 source')
+
+print()
+print("ADVERSARIAL SPOT-CHECK RESULT: PASS -- DoD Section 5's four-condition formula, its field-name")
+print("order, its attribution, and its two verbatim example phrases are all faithful to the external")
+print("anchor (standard/AGF.md Section 4's own text), with no drift, invention, or misattribution found.")
+PY
+
+=== SOURCE OF TRUTH: standard/AGF.md Section 4 (external anchor) ===
+## 4. The JSON Verdict Parse Rule
+
+Every validator and evaluator decision that gates pipeline progression MUST culminate in
+a single, machine-parseable JSON verdict block, in addition to any prose report. The
+orchestrator (or any automated caller) advances to the next pipeline stage **only when
+all four of the following hold simultaneously**:
+
+```text
+final_verdict.approved === true
+AND issues.length === 0
+AND missing_acceptance_coverage.length === 0
+AND unsupported_claims.length === 0
+```
+
+A verdict block satisfying all four conditions above looks like this:
+
+```json
+{"final_verdict": {"approved": true}, "issues": [], "missing_acceptance_coverage": [], "unsupported_claims": []}
+```
+
+Rules for applying this gate:
+
+1. **Parse only the JSON verdict block.** Prose framing — including language like
+   "mostly approved," "approved with minor notes," or "should be fine" — MUST NOT be used
+   to infer approval. If the JSON block does not independently satisfy all four
+   conditions above, the result is a rejection, regardless of surrounding prose tone.
+2. **Empty arrays are load-bearing.** `issues`, `missing_acceptance_coverage`, and
+   `unsupported_claims` are not advisory fields; each is a hard gate. A single non-empty
+   entry in any of the three arrays blocks advancement even if `approved` is `true`.
+3. **No inferred approval.** An orchestrator or calling agent MUST NOT synthesize an
+   `approved: true` verdict on a validator's behalf from an incomplete or malformed
+   response. A missing or malformed verdict block is treated as a rejection and triggers
+   the failure-handling procedure the pipeline defines for malformed subagent output.
+
+
+
+=== TARGET UNDER TEST: standard/definition_of_done.md Section 5 ===
+## 5. Gate-Done
+
+A validator or evaluator gate advances the pipeline only when its JSON
+verdict satisfies all four conditions of the JSON Verdict Parse Rule,
+defined in `standard/AGF.md` Section 4: `final_verdict.approved` is `true`,
+and `issues`, `missing_acceptance_coverage`, and `unsupported_claims` are
+each empty. Prose framing -- "mostly approved," "should be fine" -- never
+substitutes for a satisfied JSON block; a single non-empty entry in any of
+the three arrays blocks advancement regardless of `approved`'s value.
+
+
+
+=== AGF.md's own canonical formula block (ground truth) ===
+final_verdict.approved === true
+AND issues.length === 0
+AND missing_acceptance_coverage.length === 0
+AND unsupported_claims.length === 0
+
+PASS: AGF.md's own formula names the four fields in the expected order (ground truth confirmed)
+PASS: DoD Sec 5 names the same four fields in the same order as AGF.md Sec 4
+PASS: DoD Sec 5 correctly attributes the formula to `standard/AGF.md` Section 4
+PASS: both quoted example phrases ("mostly approved", "should be fine") are verbatim-present in AGF.md Sec 4 (the source) AND in DoD Sec 5
+PASS: "blocks advancement" language is present in both DoD Sec 5 and its AGF.md Sec 4 source
+
+ADVERSARIAL SPOT-CHECK RESULT: PASS -- DoD Section 5's four-condition formula, its field-name
+order, its attribution, and its two verbatim example phrases are all faithful to the external
+anchor (standard/AGF.md Section 4's own text), with no drift, invention, or misattribution found.
+EXIT:

@@ -1,0 +1,47 @@
+id: 013-definition-of-done
+title: Definition of Done
+description: Name and consolidate the layered Definition of Done, mechanize the feature-lifecycle invariant as check C16, project the standard onto template, pull-request, schema, and release surfaces, and prepare the v1.1.0 MINOR release.
+status: complete
+steps:
+  - id: "092"
+    description: Add validator check C16 for the feature-list lifecycle invariant and correct the schema enforcement claim.
+    status: COMPLETED
+    evidence: .agent/evidence/092/validate-summary-line.txt
+    docs_updated: tools/README.md
+    changelog_entry: Validator check C16 mechanizes the feature-list lifecycle invariant (16 checks; payload 12).
+  - id: "093"
+    description: Author standard/definition_of_done.md and register it across the index, module README, and guide.
+    status: COMPLETED
+    evidence: .agent/evidence/093/validate-target-doc.txt
+    docs_updated: standard/README.md
+    changelog_entry: The canonical layered Definition of Done standard, aggregating eight done-layers by reference.
+  - id: "094"
+    description: Add the optional advisory dod_ref key to the five artifact schemas without changing any required array.
+    status: COMPLETED
+    evidence: .agent/evidence/094/dod-ref-count.txt
+    docs_updated: schema/README.md
+    changelog_entry: Optional advisory dod_ref key on the five extensible schemas (loosening-only, MINOR).
+  - id: "095"
+    description: Ship templates/DoD.md as the copy-and-fill consumer projection of the standard.
+    status: COMPLETED
+    evidence: .agent/evidence/095/layer-citations.txt
+    docs_updated: templates/README.md
+    changelog_entry: templates/DoD.md, the copy-and-fill consumer projection of the Definition of Done.
+  - id: "096"
+    description: Add the pull-request template that projects the merge layer of the standard into a checklist.
+    status: COMPLETED
+    evidence: .agent/evidence/096/checkbox-exact9-topics.txt
+    docs_updated: CHANGELOG.md
+    changelog_entry: Pull-request template projecting the merge layer of the Definition of Done.
+  - id: "097"
+    description: Add the release close-out gate script, its pull-request workflow, and the blocking pre-publish step.
+    status: COMPLETED
+    evidence: .agent/evidence/097/mode-pr.txt
+    docs_updated: CHANGELOG.md
+    changelog_entry: Release close-out gate mechanizes internal version consistency in PR and tag modes.
+  - id: "098"
+    description: Prepare the v1.1.0 MINOR release package and close the phase without creating a tag.
+    status: COMPLETED
+    evidence: .agent/evidence/098/mode-pr.txt
+    docs_updated: CHANGELOG.md
+    changelog_entry: v1.1.0 MINOR release package prepared; tag remains behind H-FRAMEWORK-RELEASE.

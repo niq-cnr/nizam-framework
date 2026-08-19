@@ -1,0 +1,3 @@
+python3 -c "import glob,os; text=open('templates/DoD.md').read(); assert 'dod_ref' in text, 'dod_ref pointer note missing'; assert 'feature 094' in text or '094' in text, 'must reference feature 094 by id'; schemas=[p for p in glob.glob('schema/*.schema.json')]; cited=[p for p in schemas if p in text]; assert cited, 'must cite at least one existing schema/*.schema.json path'; assert all(os.path.isfile(p) for p in cited); print(f'PASS dod_ref note present, feature 094 referenced, cited schema paths exist: {cited}')"
+PASS dod_ref note present, feature 094 referenced, cited schema paths exist: ['schema/contract.schema.json']
+EXIT:0

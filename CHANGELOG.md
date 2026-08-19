@@ -7,6 +7,112 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-19
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): phase 013 (Definition
+of Done) delivers six purely additive, new-optional features -- the canonical layered
+Definition of Done (`standard/definition_of_done.md`, feature 093), the feature-list
+lifecycle invariant as validator check C16 (feature 092), the release close-out gate
+(`.github/scripts/release_closeout.py`, feature 097), the optional advisory `dod_ref`
+key on five schemas (feature 094), and its two consumer projections
+(`templates/DoD.md`, feature 095; `.github/PULL_REQUEST_TEMPLATE.md`, feature 096) --
+nothing that validated under v1.0.0 is invalidated.
+
+### Added
+
+- **Feature-list lifecycle invariant, validator check C16 (phase 013, feature
+  092).** `tools/validate.sh` mechanizes "complete implies approved contract
+  and passing QA verdict and evidence on disk" over every
+  `.agent/feature_list*.json`: schema validation against
+  `schema/feature_list.schema.json`, plus an era-safe referential rule --
+  for every `status: "complete"` feature, IF `.agent/contracts/<id>.json`
+  exists THEN `.agent/qa/<id>.json` must also exist, and any `evidence_files`
+  it lists must resolve on disk. Wired into the default sweep (after C15),
+  `--target` (schema-only, via a new `features`+`original_estimate_lines`
+  route on `check_c11_or_c4_target`), and `--payload` (a counted trivial
+  pass, mirroring C11's precedent) modes, with new positive/negative
+  fixtures and `tools/fixtures_self_test.sh` coverage. Also corrects
+  `schema/README.md`'s `feature_list.schema.json` row, which previously
+  named no enforcing check.
+
+- **Canonical Definition of Done, `standard/definition_of_done.md` (phase
+  013, feature 093).** The framework's layered Definition of Done: 13
+  numbered sections aggregating the eight done-layers (Step, Handoff, Gate,
+  Feature, Plan, Merge, Release, Ecosystem) by citing each layer's existing
+  authority rather than restating its mechanics. Defines `complete` over
+  the existing five-value `schema/feature_list.schema.json` enum, with no
+  `done` state added anywhere. Feature-Done is verified by check C16;
+  Merge-Done and Release-Done by the phase-013 feature-097 release
+  close-out gate; every other layer is consumer-aspirational. Registered
+  in `NIZAM.json` (capability index and `standard` module key_documents),
+  `standard/README.md` (index row, version 0.2.1 -> 0.3.0), and
+  `docs/guide/index.html`'s `standard/` module card.
+
+- **Release close-out gate, `.github/scripts/release_closeout.py` (phase
+  013, feature 097).** A stdlib-only, network-free script mechanizing
+  internal version-anchor consistency across the release surface
+  (NIZAM.json's `framework.version` as the single reference, compared
+  against CONTEXT.md frontmatter + `change_log[0]`, `docs/guide/index.html`'s
+  meta/footer spans, README.md's four version pins, CHANGELOG.md's top
+  released section heading + tier banner, and `docs/planning/ROADMAP.md`'s
+  body-scoped disposition line), generalizing the
+  `require(label, condition)` style of
+  `.agent/evidence/091/verify_release_prep.py`. Two modes: `--mode pr`
+  asserts the working tree's anchors against each other, wired as a new
+  paths-filtered pull-request workflow,
+  `.github/workflows/release_closeout.yml`; `--mode tag --tag vX.Y.Z`
+  reads every anchor as it existed AT THE TAG via `git show`, plus three
+  tag-specific checks (tag shape, tag-vs-anchor, CHANGELOG-vs-tag), wired
+  as a new blocking step in `.github/workflows/release.yml` between tag
+  resolution and CHANGELOG extraction so a version-inconsistent tree can
+  never reach GitHub Release publication. Era-safe by construction:
+  file-level anchor absence and pre-convention ROADMAP dispositions SKIP
+  rather than fail or crash, while a present-but-incomplete anchor (e.g.
+  CONTEXT.md with no `change_log` key) emits a named FAIL. The script
+  never invokes `git tag` or `git push` -- read-only comparison only.
+
+- **Optional advisory `dod_ref` key, five schemas (phase 013, feature
+  094).** Adds an identically worded, optional, advisory `dod_ref` string
+  property to `schema/contract.schema.json`, `schema/qa_verdict.schema.json`
+  (both `anyOf` branches), `schema/feature_list.schema.json` (top level),
+  `schema/work-packet.schema.json`, and
+  `schema/engineering_finding.schema.json`, naming
+  `standard/definition_of_done.md` as the artifact's governing Definition of
+  Done. Touches no `required` array anywhere, a pure loosening per
+  `methodology/06_release_train.md` Sec 3.2: every previously-valid artifact
+  remains valid. Proved with a positive fixture
+  (`tools/fixtures/feature_list_valid.json` gains a `dod_ref`) that still
+  validates and still passes the C16 `--target` sweep, plus the full default
+  `tools/validate.sh` sweep's existing dogfood coverage. Pairs a
+  `schema/README.md` conventions-list sentence and a version bump
+  (0.14.0 -> 0.15.0) with a matching change_log entry.
+
+- **Pull-request checklist, `.github/PULL_REQUEST_TEMPLATE.md` (phase 013,
+  feature 096).** A plain-markdown PR template naming
+  `standard/definition_of_done.md` as the canonical Definition of Done and
+  projecting its Merge-Done layer into nine reviewer-facing checkboxes: the
+  full `tools/validate.sh` sweep, `tools/fixtures_self_test.sh`,
+  `tools/e2e_bootstrap_test.sh`, check C8's version/change_log pairing,
+  the check C16 contract-QA-evidence chain, the
+  `methodology/04_tool_driven_state.md` Section 5 evidence shape, a
+  `CHANGELOG.md` `[Unreleased]` entry, the phase-013 feature-097 release
+  close-out gate, and the never-self-merge / operator-only-tag rule. Not a
+  governed doc under NDS.md: carries no frontmatter and rides outside
+  every check's shipped/payload document sweep by design.
+
+- **Consumer Definition of Done checklist, `templates/DoD.md` (phase 013,
+  feature 095).** The copy-and-fill projection of
+  `standard/definition_of_done.md` onto a per-project checklist: seven
+  Section-N-cited checklist blocks (Step through Release), a non-checklist
+  Ecosystem-Done pointer paragraph citing Section 10, a
+  `{{PROJECT_SPECIFIC_DONE_CRITERIA}}` extension block, a floor-not-guarantee
+  closing note citing Section 12, and a `dod_ref` linking note pointing at
+  the optional advisory key phase 013, feature 094 added to several Nizam
+  schemas. Registered in `NIZAM.json` (both the top-level `templates[]`
+  array and `modules[path=="templates"].key_documents`) and
+  `templates/README.md` (new index row, `## Frontmatter Convention`
+  parenthetical, description enumeration, version 0.2.2 -> 0.3.0).
+
 ## [1.0.0] - 2026-08-15
 
 **Major release** (`methodology/06_release_train.md` §3.1): phase 012 resolves the

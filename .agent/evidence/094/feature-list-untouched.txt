@@ -1,0 +1,104 @@
+$ for p in $(git ls-files ".agent/feature_list*.json"); do git diff --quiet b451b96 -- "$p" || { echo "unexpected feature-list content change: $p"; exit 1; }; done; echo "PASS no real feature-list content touched (run_state.json deliberately not guarded, NDEBT-040)"
+--- literal command result ---
+unexpected feature-list content change: .agent/feature_list_013.json
+LITERAL COMMAND FAILS (exit 1) -- attributable to sibling 097's Step-7 status flip on .agent/feature_list_013.json between base_revision b451b96 and this QA round (see below). This is the PRE-REGISTERED, expected outcome per .agent/qa/094-contract-review.json's contract-review-time pre-registration and NDEBT-040 (docs/planning/DEBT.md): the guard's literal byte-comparison is unsatisfiable for reasons unattributable to feature 094's own implementation once a sibling's Step-7 durable-state flip lands on the same file between base_revision and QA time. Proceeding to the pre-registered PASS-by-decomposition adjudication below, exactly as pre-registered (id-set equality; 094's own feature-list object structurally unchanged; every other id's delta confined to the 'status' key only).
+
+--- other 12 tracked .agent/feature_list*.json files (non-013), confirming ONLY feature_list_013.json diverges ---
+identical: .agent/feature_list.json
+identical: .agent/feature_list_002.json
+identical: .agent/feature_list_003.json
+identical: .agent/feature_list_004.json
+identical: .agent/feature_list_005.json
+identical: .agent/feature_list_006.json
+identical: .agent/feature_list_007.json
+identical: .agent/feature_list_008.json
+identical: .agent/feature_list_009.json
+identical: .agent/feature_list_010.json
+identical: .agent/feature_list_011.json
+identical: .agent/feature_list_012.json
+
+--- PRE-REGISTERED DECOMPOSITION SCRIPT (per .agent/qa/094-contract-review.json's GUARD ADJUDICATION note) ---
+import json, subprocess, sys
+
+ANCHOR = "b451b96"
+PATH = ".agent/feature_list_013.json"
+
+def show(rev, path):
+    return subprocess.check_output(["git", "show", f"{rev}:{path}"], text=True)
+
+anchor_raw = show(ANCHOR, PATH)
+head_raw = open(PATH).read()
+
+anchor = json.loads(anchor_raw)
+head = json.loads(head_raw)
+
+anchor_by_id = {f["id"]: f for f in anchor["features"]}
+head_by_id = {f["id"]: f for f in head["features"]}
+
+# (i) id sets equal
+assert set(anchor_by_id.keys()) == set(head_by_id.keys()), (
+    f"ID SET MISMATCH: anchor={sorted(anchor_by_id)} head={sorted(head_by_id)}"
+)
+print(f"PASS (i) id sets equal: {sorted(anchor_by_id.keys())}")
+
+# (ii) 094's own object byte-identical (structural equality) to anchor
+assert anchor_by_id["094"] == head_by_id["094"], (
+    f"094 OBJECT CHANGED:\nANCHOR={anchor_by_id['094']}\nHEAD={head_by_id['094']}"
+)
+print("PASS (ii) 094's own feature-list object is structurally identical to anchor:")
+print(json.dumps(head_by_id["094"], indent=2))
+
+# (iii) every other id's delta confined to 'status' key only
+violations = []
+deltas = []
+for fid in anchor_by_id:
+    if fid == "094":
+        continue
+    a = anchor_by_id[fid]
+    h = head_by_id[fid]
+    if a == h:
+        continue
+    # find differing keys
+    all_keys = set(a.keys()) | set(h.keys())
+    diff_keys = [k for k in all_keys if a.get(k) != h.get(k)]
+    deltas.append((fid, diff_keys, a.get("status"), h.get("status")))
+    if diff_keys != ["status"]:
+        violations.append((fid, diff_keys))
+
+assert not violations, f"NON-STATUS DELTA(S) FOUND: {violations}"
+print(f"PASS (iii) every other id's delta confined to 'status' key only. Deltas observed: {deltas}")
+
+# Also confirm top-level non-features fields unchanged (phase, spec_version, original_estimate_lines)
+for k in ("phase", "spec_version", "original_estimate_lines"):
+    assert anchor.get(k) == head.get(k), f"TOP-LEVEL FIELD CHANGED: {k}: anchor={anchor.get(k)} head={head.get(k)}"
+print("PASS top-level phase/spec_version/original_estimate_lines unchanged")
+
+print("PASS-BY-DECOMPOSITION: verification[12]'s intent (094's own implementation touched no feature-list content) is satisfied. The literal byte-guard's failure is attributable to sibling 097's Step-7 status flip (093/097 -> complete) landing between base_revision and this QA round, confined entirely to the 'status' key of ids other than 094, per the pre-registered method in .agent/qa/094-contract-review.json and NDEBT-040 (docs/planning/DEBT.md).")
+
+--- DECOMPOSITION SCRIPT OUTPUT ---
+PASS (i) id sets equal: ['092', '093', '094', '095', '096', '097', '098']
+PASS (ii) 094's own feature-list object is structurally identical to anchor:
+{
+  "id": "094",
+  "name": "Optional advisory dod_ref key on five schemas",
+  "description": "Add an identically worded optional dod_ref string property to the contract, qa_verdict (both anyOf branches), feature_list, work-packet, and engineering_finding schemas, leaving every required array unchanged so the change is a loosening, and prove the loosening with a positive fixture.",
+  "status": "pending",
+  "dependencies": [
+    "093"
+  ],
+  "acceptance_tests": [
+    "test \"$(grep -o '\\\"dod_ref\\\"' schema/*.schema.json | wc -l)\" -eq 6",
+    "test \"$(grep -l '\\\"dod_ref\\\"' schema/*.schema.json | wc -l)\" -eq 5",
+    "python3 -c \"import glob,re; bad=[p for p in glob.glob('schema/*.schema.json') for r in re.findall(r'\\\"required\\\"\\\\s*:\\\\s*\\\\[[^]]*\\\\]', open(p).read()) if 'dod_ref' in r]; assert not bad, bad\"",
+    "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'",
+    "bash tools/fixtures_self_test.sh; test $? -eq 0"
+  ],
+  "estimated_lines": 200
+}
+PASS (iii) every other id's delta confined to 'status' key only. Deltas observed: [('097', ['status'], 'pending', 'complete')]
+PASS top-level phase/spec_version/original_estimate_lines unchanged
+PASS-BY-DECOMPOSITION: verification[12]'s intent (094's own implementation touched no feature-list content) is satisfied. The literal byte-guard's failure is attributable to sibling 097's Step-7 status flip (093/097 -> complete) landing between base_revision and this QA round, confined entirely to the 'status' key of ids other than 094, per the pre-registered method in .agent/qa/094-contract-review.json and NDEBT-040 (docs/planning/DEBT.md).
+
+decomposition_script_exit=0
+VERDICT: PASS-BY-DECOMPOSITION -- literal byte-guard failed (exit 1) but the pre-registered id-keyed decomposition confirms all three limbs (id-set equality; 094's own object byte-identical to anchor; every other id's delta confined to 'status') and every OTHER tracked feature-list file is byte-identical to anchor. verification[12]'s intent (094's implementation touched no feature-list content) is satisfied. Attributed to sibling 097 per NDEBT-040, not to feature 094.
+EXIT:0

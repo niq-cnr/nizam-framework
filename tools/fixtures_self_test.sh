@@ -261,6 +261,14 @@ assert_target release_train_manifest_neg_ungated_pass.json         C12 FAIL
 assert_target release_train_manifest_neg_orphan.json               C12 FAIL
 assert_target release_train_manifest_neg_repo_mismatch.json        C12 FAIL
 
+# feature_list (F-092, C16): --target is schema-validation-only (the era-safe
+# referential rule is a whole-repo-tree relational property, not evaluated
+# under --target -- see check_c16_feature_list_target). The positive fixture
+# validates; the negative sets one feature's status to the out-of-enum
+# value "done", proving the no-done-state rule is mechanized.
+assert_target feature_list_valid.json                               C16 PASS
+assert_target feature_list_neg_bad_status.json                      C16 FAIL
+
 # ---------------------------------------------------------------------------
 # (2) verify_lib primitive fixtures
 # ---------------------------------------------------------------------------
@@ -424,6 +432,86 @@ if vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md >/d
   echo "OK   primitive   vlib_profiles_cover_roles (real pair pass / missing-profile fail)"
 else
   echo "FAIL primitive   vlib_profiles_cover_roles: a real-pair or scratch assertion did not hold"
+  fail=1
+fi
+
+# vlib_feature_list_lifecycle (F-092, C16): discovers `.agent/feature_list*.json`
+# CWD-relative (no argument), so each probe below cd's into a shared scratch dir
+# (seeded with its own copy of schema/feature_list.schema.json, since the
+# schema path is CWD-relative too) before invoking it. Four cases progressively
+# mutate the same .agent/contracts/900.json + .agent/qa/900.json pair to walk
+# the era-safe referential rule's branches, each emitting its OWN OK/FAIL line
+# (not collapsed into one generic line) so the cases are independently
+# discriminable.
+_feature_list_lifecycle_scratch_setup() {
+  local d="$1"
+  mkdir -p "${d}/.agent/contracts" "${d}/.agent/qa" "${d}/.agent/evidence/900" "${d}/schema"
+  cp -- "${REPO}/schema/feature_list.schema.json" "${d}/schema/feature_list.schema.json"
+  cat > "${d}/.agent/feature_list_900.json" <<'JSON'
+{
+  "phase": "900-scratch",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 10,
+  "features": [
+    {
+      "id": "900",
+      "name": "Scratch feature",
+      "description": "Scratch probe feature for vlib_feature_list_lifecycle.",
+      "status": "complete",
+      "dependencies": [],
+      "acceptance_tests": ["Scratch acceptance test."],
+      "estimated_lines": 10
+    }
+  ]
+}
+JSON
+  printf 'evidence\n' > "${d}/.agent/evidence/900/proof.txt"
+}
+_feature_list_lifecycle_probe() ( cd -- "$1" && vlib_feature_list_lifecycle >/dev/null 2>&1 )
+
+fll_scratch=""
+if scratch_dirs fll_scratch; then
+  _feature_list_lifecycle_scratch_setup "${fll_scratch}"
+
+  # full-chain: contract + QA verdict + the QA verdict's evidence_files entry
+  # all present on disk -> rc 0.
+  printf '{"contract_id":"900"}\n' > "${fll_scratch}/.agent/contracts/900.json"
+  printf '{"verdict":"PASS","evidence_files":[".agent/evidence/900/proof.txt"]}\n' > "${fll_scratch}/.agent/qa/900.json"
+  if _feature_list_lifecycle_probe "${fll_scratch}"; then
+    echo "OK   primitive   vlib_feature_list_lifecycle full-chain (contract+QA+evidence present, rc 0)"
+  else
+    echo "FAIL primitive   vlib_feature_list_lifecycle full-chain: expected rc 0"
+    fail=1
+  fi
+
+  # era-safe: a complete feature with NO contract at all is not flagged -> rc 0.
+  rm -f "${fll_scratch}/.agent/contracts/900.json" "${fll_scratch}/.agent/qa/900.json"
+  if _feature_list_lifecycle_probe "${fll_scratch}"; then
+    echo "OK   primitive   vlib_feature_list_lifecycle era-safe complete-without-contract (rc 0)"
+  else
+    echo "FAIL primitive   vlib_feature_list_lifecycle era-safe complete-without-contract: expected rc 0"
+    fail=1
+  fi
+
+  # contract present, QA verdict absent -> rc 1.
+  printf '{"contract_id":"900"}\n' > "${fll_scratch}/.agent/contracts/900.json"
+  if _feature_list_lifecycle_probe "${fll_scratch}"; then
+    echo "FAIL primitive   vlib_feature_list_lifecycle contract-without-QA: expected rc 1"
+    fail=1
+  else
+    echo "OK   primitive   vlib_feature_list_lifecycle contract-without-QA (rc 1)"
+  fi
+
+  # QA verdict present but its evidence_files entry does not resolve -> rc 1.
+  printf '{"verdict":"PASS","evidence_files":[".agent/evidence/900/missing.txt"]}\n' > "${fll_scratch}/.agent/qa/900.json"
+  if _feature_list_lifecycle_probe "${fll_scratch}"; then
+    echo "FAIL primitive   vlib_feature_list_lifecycle evidence-file-missing: expected rc 1"
+    fail=1
+  else
+    echo "OK   primitive   vlib_feature_list_lifecycle evidence-file-missing (rc 1)"
+  fi
+else
+  echo "FAIL primitive   vlib_feature_list_lifecycle: scratch_dirs setup failed"
   fail=1
 fi
 

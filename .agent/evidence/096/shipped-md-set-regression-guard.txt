@@ -1,0 +1,3 @@
+awk '/^build_shipped_md_set\(\) \{/{f=1} f{print} f && /^\}/{exit}' tools/validate.sh | grep -F '.github' && { echo 'build_shipped_md_set now references .github -- re-open gate_naming_decision'; exit 1; } || echo 'PASS build_shipped_md_set excludes .github'
+PASS build_shipped_md_set excludes .github
+EXIT:0

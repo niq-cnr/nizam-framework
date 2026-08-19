@@ -1,0 +1,3 @@
+$ python3 -c "import json; fl=json.load(open('.agent/feature_list_013.json')); assert all(x['status']=='complete' for x in fl['features']), [x['id'] for x in fl['features'] if x['status']!='complete']; print('PASS all seven phase-013 features complete')"
+PASS all seven phase-013 features complete
+EXIT:0

@@ -1,0 +1,26 @@
+python3 - <<'PY'
+import json, subprocess
+from pathlib import Path
+ANCHOR = "b451b96"
+SIBLING_097_ALLOWLIST = {
+    ".github/workflows/release_closeout.yml",
+    ".github/workflows/release.yml",
+    ".github/scripts/release_closeout.py",
+}
+OWN_FILE = ".github/PULL_REQUEST_TEMPLATE.md"
+contract = json.loads(Path(".agent/contracts/096.json").read_text())
+own_paths = [f["path"] for f in contract["scope"]["files_create"]] + [f["path"] for f in contract["scope"]["files_modify"]]
+workflow_in_own_scope = [p for p in own_paths if p.startswith(".github/workflows/")]
+assert not workflow_in_own_scope, f"096's own contracted scope authors a workflow file: {workflow_in_own_scope}"
+tracked = subprocess.run(["git", "diff", "--name-only", ANCHOR, "--", ".github/"], capture_output=True, text=True, check=True).stdout.split()
+status = subprocess.run(["git", "status", "--porcelain", "-uall", "--", ".github/"], capture_output=True, text=True, check=True).stdout.splitlines()
+untracked = [line[3:] for line in status if line.startswith("??")]
+all_deltas = sorted(set(tracked) | set(untracked))
+unexplained = [p for p in all_deltas if p != OWN_FILE and p not in SIBLING_097_ALLOWLIST]
+assert not unexplained, f"unexplained .github/ delta(s) since anchor, outside 096's own scope and the sibling-097 allowlist: {unexplained}"
+stray_workflow = [p for p in all_deltas if p.startswith(".github/workflows/") and p not in SIBLING_097_ALLOWLIST]
+assert not stray_workflow, f"unexplained workflow delta: {stray_workflow}"
+print(f"PASS .github/ deltas since {ANCHOR} confined to 096's own PR template plus sibling-097-owned paths: {all_deltas}")
+PY
+PASS .github/ deltas since b451b96 confined to 096's own PR template plus sibling-097-owned paths: ['.github/PULL_REQUEST_TEMPLATE.md', '.github/scripts/release_closeout.py', '.github/workflows/release.yml', '.github/workflows/release_closeout.yml']
+EXIT:0

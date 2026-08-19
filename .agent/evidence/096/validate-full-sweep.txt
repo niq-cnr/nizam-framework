@@ -1,0 +1,4 @@
+bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'; s1=$?; bash tools/validate.sh >/dev/null 2>&1; s2=$?; test "${s1}" -eq 0 -a "${s2}" -eq 0 && echo 'PASS validate 16/16 both runs'
+SUMMARY: 16 passed, 0 failed
+PASS validate 16/16 both runs
+EXIT:0

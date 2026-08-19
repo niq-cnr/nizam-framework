@@ -1,0 +1,67 @@
+{
+  "feature_id": "093",
+  "qa_pass": true,
+  "checks_run": 18,
+  "checks_passed": 18,
+  "adversarial": {
+    "performed": true,
+    "description": "Not among contract 093's 18 listed verification commands. External Anchor Rule (methodology/02_adversarial_tdd.md Sec 7): verified that standard/definition_of_done.md Section 5 (Gate-Done)'s quoted four-condition JSON Verdict Parse Rule formula -- and its two verbatim example phrases 'mostly approved' and 'should be fine' -- is textually faithful to the SOURCE authority, standard/AGF.md Section 4, not merely thematically similar. None of the 18 contracted checks diff any cited passage against its source text; they check structure, registration, forbidden tokens, section count, and the enum-lock, never cross-document quotation fidelity. Expected value anchored on AGF.md Section 4's own fenced ```text``` formula block and its Rule 1/Rule 2 prose (the source), not derived from the DoD document's paraphrase.",
+    "result": "PASS -- DoD Sec 5 names the same four fields (final_verdict.approved, issues, missing_acceptance_coverage, unsupported_claims) in the same order as AGF.md Sec 4's own formula block; correctly attributes them to `standard/AGF.md` Section 4; both quoted example phrases are verbatim-present in AGF.md Sec 4 itself (confirming the document did not invent plausible-sounding but unsourced quotes); and the 'blocks advancement ... even if approved is true' semantic claim traces to AGF.md Rule 2's own 'blocks advancement ... even if approved is true' sentence. No drift, invention, or misattribution found.",
+    "evidence": ".agent/evidence/093/qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/093/schema-validate.txt",
+    ".agent/evidence/093/validate-target-doc.txt",
+    ".agent/evidence/093/validate-target-doc-perchecks.txt",
+    ".agent/evidence/093/frontmatter-line7.txt",
+    ".agent/evidence/093/nizam-registration.txt",
+    ".agent/evidence/093/nizam-registration-shape.txt",
+    ".agent/evidence/093/readme-version-changelog.txt",
+    ".agent/evidence/093/fixtures-self-test.txt",
+    ".agent/evidence/093/forbidden-refs.txt",
+    ".agent/evidence/093/forbidden-refs-literal.txt",
+    ".agent/evidence/093/section-count.txt",
+    ".agent/evidence/093/feature-done-enum-lock.txt",
+    ".agent/evidence/093/guide-sentence.txt",
+    ".agent/evidence/093/guide-c10-anchors.txt",
+    ".agent/evidence/093/changelog-entry.txt",
+    ".agent/evidence/093/feature-list-run-state-untouched.txt",
+    ".agent/evidence/093/validate-full-sweep.txt",
+    ".agent/evidence/093/e2e-bootstrap.txt",
+    ".agent/evidence/093/qa-adversarial.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "byte_guard_adjudication": {
+    "check": "feature-list-run-state-untouched (contract verification entry 16 of 18)",
+    "debt_ref": "NDEBT-040",
+    "literal_command_outcome": "FAIL (exit 1) -- 'unexpected run_state.json change'",
+    "adjudication_applied": "NDEBT-040's prescribed three-limb objective decomposition (docs/planning/DEBT.md OPEN row, adjudication text for contract 093), executed independently by the evaluator, not a prose override of the literal result.",
+    "limbs": [
+      {
+        "limb": "i",
+        "assertion": "Every .agent/feature_list*.json is byte-identical to base_revision 818919f9059d91f53671b0ff66094791831e04fd.",
+        "result": "PASS"
+      },
+      {
+        "limb": "ii",
+        "assertion": "Parsed .agent/run_state.json at base_revision 818919f vs the current worktree are identical after removing exactly {updated_at, active_contract_id, circuit_breaker}, with base_revision's history array a strict prefix of the worktree's history array.",
+        "result": "PASS (base history length 202, worktree history length 207, strict prefix confirmed)"
+      },
+      {
+        "limb": "iii",
+        "assertion": "git diff HEAD -- .agent/run_state.json plus a parse-equal check (same allowed-key removal + history strict-prefix discipline, anchored on HEAD 0d21294 instead of base_revision) confirming the generator wrote nothing to run_state.json since HEAD.",
+        "result": "PASS -- the only diff since HEAD is updated_at, the 097-contract circuit_breaker note text (fully inside the exempted circuit_breaker key), and one appended history entry (strict-prefix growth); HEAD history length 206, worktree history length 207."
+      }
+    ],
+    "overall": "PASS-BY-DECOMPOSITION -- all three limbs hold; check counted as passed in checks_passed per NDEBT-040's defined adjudication for this contract.",
+    "evidence": ".agent/evidence/093/feature-list-run-state-untouched.txt"
+  },
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 093 APPROVED. All 18 of contract 093.json's verification commands were independently re-executed by the evaluator from repo root (not reused from the generator or Validator Mode B). 17 of 18 passed on the literal command as written. The 18th (verification entry naming .agent/feature_list*.json and .agent/run_state.json byte-identity against base_revision 818919f) failed its literal form -- expected and pre-registered as NDEBT-040, an unsatisfiable clause under live orchestration since the Orchestrator legitimately appends coordination records (097's contract approval, active_contract_id, history entries, updated_at) to run_state.json between contract approval and QA. Per NDEBT-040's adjudication for this contract, the evaluator independently executed the prescribed three-limb objective decomposition and all three limbs held (feature lists byte-identical to the anchor; run_state delta confined by parsed-JSON comparison to the orchestrator-owned coordination keys plus a strict-prefix history append; the same check re-anchored at HEAD confirms the generator wrote nothing to run_state.json since the last commit) -- recorded as PASS-BY-DECOMPOSITION, counted in checks_passed. Key confirmations: bash tools/validate.sh --target standard/definition_of_done.md exits 0 with C1/C2/C3/C9/C10 individually PASS; frontmatter line 7 reads exactly 'enforcement: partially-enforced'; NIZAM.json's capabilities and modules[standard].key_documents (now 13 entries) both carry the new registration with correct shape; standard/README.md is bumped to 0.3.0 with a paired change_log entry and a new index row; tools/fixtures_self_test.sh reports SELF-TEST OK: 79/79 fixtures accounted for, 0 failed; no forbidden reserved-path or bare GA-gate tokens appear (both regex and literal-substring forms); the document has exactly 13 H2 sections; the structural enum-lock check confirms Sec 6 cites the five-value enum plus schema path and no backticked `done` token appears anywhere outside the doctrinal lock sentence; the docs/guide/index.html card names the document, C16, and the close-out gate without a forward path, and never touches either C10-checked version anchor line; CHANGELOG.md's Unreleased section names feature 093 and the new document; the full default validator sweep reports SUMMARY: 16 passed, 0 failed with exit 0 (re-confirmed by two independent invocations); and tools/e2e_bootstrap_test.sh PASSes end-to-end including the injected-payload NIZAM.json index resolution. The mandatory adversarial spot-check (quotation-fidelity of DoD Sec 5's four-condition formula and example phrases against its source, standard/AGF.md Section 4, an External-Anchor-Rule check none of the 18 contracted commands perform) confirms no textual drift or misattribution. Re-running bash tools/validate.sh AFTER writing this verdict and all evidence files still reports SUMMARY: 16 passed, 0 failed with exit 0, confirming this QA round's own artifacts (all under .agent/evidence/093/ and .agent/qa/093.json, outside the default validator sweep's scanned set) do not destabilize the tree. No issues, no unsupported claims, no missing acceptance coverage. Note: C16's referential feature-status/contract/QA chain requirement does not yet bind to feature 093 -- it triggers only on status=='complete', and 093's status field in .agent/feature_list_013.json remains 'pending' until the generator's protocol 07B Step 7 durable-state flip, which is explicitly out of this QA round's write scope per contract 093's non_goals. Recommend generator proceed to protocol 07B Step 7 durable-state status flip (feature 093 -> complete in .agent/feature_list_013.json, run_state.json, phase_013.yaml)."
+  }
+}

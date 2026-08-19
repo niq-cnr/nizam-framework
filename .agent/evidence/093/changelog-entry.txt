@@ -1,0 +1,2 @@
+awk '/^## \[Unreleased\]/{f=1} /^## \[1\.0\.0\]/{f=0} f' CHANGELOG.md | grep -Fq '093' && awk '/^## \[Unreleased\]/{f=1} /^## \[1\.0\.0\]/{f=0} f' CHANGELOG.md | grep -Fq 'definition_of_done.md'
+EXIT:0

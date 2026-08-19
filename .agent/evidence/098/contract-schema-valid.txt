@@ -1,0 +1,10 @@
+python3 - <<'PY'
+import json
+from pathlib import Path
+import jsonschema
+for data_path, schema_path in [('.agent/contracts/098.json', 'schema/contract.schema.json'), ('.agent/feature_list_013.json', 'schema/feature_list.schema.json'), ('.agent/run_state.json', 'schema/run_state.schema.json')]:
+    jsonschema.validate(json.loads(Path(data_path).read_text()), json.loads(Path(schema_path).read_text()))
+print('PASS contract + feature_list_013 + run_state schema-valid')
+PY
+PASS contract + feature_list_013 + run_state schema-valid
+EXIT:0

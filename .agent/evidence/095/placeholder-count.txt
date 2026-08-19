@@ -1,0 +1,4 @@
+test "$(grep -c '{{' templates/DoD.md)" -ge 5 && echo 'PASS feature-095 acceptance_tests[2] verbatim (grep -c line-count >= 5)' && python3 -c "text=open('templates/DoD.md').read(); assert text.startswith('---\n'); end=text.index('\n---', 3); above, below = text[:end], text[end:]; assert '{{' not in above, 'placeholder token found above closing frontmatter'; count = below.count('{{'); assert count >= 5, count; print(f'PASS {count} occurrence-count placeholders, all below closing frontmatter')"
+PASS feature-095 acceptance_tests[2] verbatim (grep -c line-count >= 5)
+PASS 12 occurrence-count placeholders, all below closing frontmatter
+EXIT:0

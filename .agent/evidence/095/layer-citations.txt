@@ -1,0 +1,33 @@
+python3 - <<'PY'
+import re
+text = open('templates/DoD.md').read()
+pairs = {
+    'Step-Done': 'Section 3',
+    'Handoff-Done': 'Section 4',
+    'Gate-Done': 'Section 5',
+    'Feature-Done': 'Section 6',
+    'Plan-Done': 'Section 7',
+    'Merge-Done': 'Section 8',
+    'Release-Done': 'Section 9',
+}
+missing = []
+for layer, section in pairs.items():
+    heading_re = re.compile(r'^#{1,6}\s.*\b' + re.escape(layer) + r'\b', re.MULTILINE)
+    m = heading_re.search(text)
+    if not m:
+        missing.append(f'{layer}: no heading line found naming this layer')
+        continue
+    start = m.end()
+    next_heading = re.search(r'\n#{1,6}\s', text[start:])
+    end = start + next_heading.start() if next_heading else len(text)
+    block = text[start:end]
+    if 'standard/definition_of_done.md' not in block or section not in block:
+        missing.append(f'{layer}: citation to standard/definition_of_done.md {section} not found before its block\'s next heading')
+assert not missing, missing
+idx12 = text.index('Section 12')
+window12 = text[max(0, idx12 - 200): idx12 + 200]
+assert 'standard/definition_of_done.md' in window12, 'floor-not-guarantee note must cite Section 12'
+print('PASS all seven layer blocks cite their pinned Section N (heading-anchored); Section 12 floor-note present')
+PY
+PASS all seven layer blocks cite their pinned Section N (heading-anchored); Section 12 floor-note present
+EXIT:0

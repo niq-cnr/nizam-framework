@@ -1,0 +1,19 @@
+python3 - <<'PY'
+import re
+text = open('standard/definition_of_done.md').read()
+m = re.search(r'^## 6\..*?(?=^## 7\.)', text, re.DOTALL | re.MULTILINE)
+assert m, 'Section 6 (Feature-Done) not found'
+sec6 = m.group(0)
+assert '`schema/feature_list.schema.json`' in sec6, 'Sec 6 must cite `schema/feature_list.schema.json`'
+for token in ['pending', 'in_progress', 'complete', 'blocked', 'cancelled']:
+    needle = f'`{token}`'
+    assert needle in sec6, f'Sec 6 must enumerate {needle}'
+lock_sentence = 'no `done` state exists and none may be added'
+assert lock_sentence in text, 'doctrinal no-done-state lock sentence missing'
+scan_text = text.replace(lock_sentence, '')
+assert '`done`' not in scan_text, 'backticked `done` token found outside the doctrinal lock sentence (any shape: table row, comma list, standalone proposal, heading)'
+assert '"done"' not in text, 'quoted "done" status token must not appear anywhere'
+print('PASS Sec 6 cites the five-value enum + schema path; no `done` token appears anywhere outside the doctrinal lock sentence; doctrinal lock sentence present')
+PY
+PASS Sec 6 cites the five-value enum + schema path; no `done` token appears anywhere outside the doctrinal lock sentence; doctrinal lock sentence present
+EXIT:0

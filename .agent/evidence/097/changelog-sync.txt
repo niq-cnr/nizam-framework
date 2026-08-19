@@ -1,0 +1,2 @@
+awk '/^## \[Unreleased\]/{f=1;next} /^## \[/{f=0} f' CHANGELOG.md | grep -qi 'close-out\|release_closeout'
+EXIT:0
