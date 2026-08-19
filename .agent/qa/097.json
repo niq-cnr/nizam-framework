@@ -1,0 +1,41 @@
+{
+  "feature_id": "097",
+  "qa_pass": true,
+  "checks_run": 15,
+  "checks_passed": 15,
+  "adversarial": {
+    "performed": true,
+    "description": "Not among contract 097's 15 listed verification commands. External Anchor Rule: probed `--mode tag --tag v0.5.2` (deliberately DIFFERENT from the v0.1.0/v0.3.0 probes Mode B already ran, to stay genuinely evaluator-originated). Expectation was anchored on the SOURCE -- `git show v0.5.2:NIZAM.json` -- read and recorded BEFORE running the script under test, not on the script's own prior claims or the contract's prose. The contract's design_notes.tag_mode_era_safety_design sub-rule (d) predicts a class-(i) NIZAM-lag failure at this exact tag: NIZAM.json framework.version at v0.5.2 reads 0.5.1, one patch behind the tag string, so tag-mode addition (b) ('tag X matches NIZAM.json framework.version at tag') must be the specific assertion that fails, with exit 1, no traceback, and no other FAIL line preceding it (tag-shape and NIZAM.json-readable must both PASS first, since those checks run before the version comparison).",
+    "result": "PASS -- git show v0.5.2:NIZAM.json independently confirms framework.version == 0.5.1 at that tag (captured before script invocation). Running `python3 .github/scripts/release_closeout.py --mode tag --tag v0.5.2` exits 1 and prints exactly: PASS tag shape (vMAJOR.MINOR.PATCH); PASS NIZAM.json readable at v0.5.2 (V reference); FAIL tag v0.5.2 matches NIZAM.json framework.version at tag (0.5.1) -- the precise predicted named-FAIL label, at the precise predicted position, with no Python traceback (no uncaught exception) and no other FAIL line. The script's era-safety and first-failure-exit design behave exactly as the source-anchored prediction required.",
+    "evidence": ".agent/evidence/097/qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/097/mode-pr.txt",
+    ".agent/evidence/097/no-self-tag-grep.txt",
+    ".agent/evidence/097/c14-pass.txt",
+    ".agent/evidence/097/action-pins-check.txt",
+    ".agent/evidence/097/ordering-check.txt",
+    ".agent/evidence/097/contract-schema-valid.txt",
+    ".agent/evidence/097/extended-ordering-check.txt",
+    ".agent/evidence/097/workflow-shape-check.txt",
+    ".agent/evidence/097/scratch-negative.txt",
+    ".agent/evidence/097/tag-mode-v1.0.0.txt",
+    ".agent/evidence/097/tag-mode-v0.9.0.txt",
+    ".agent/evidence/097/tag-mode-v0.8.0-era-skip.txt",
+    ".agent/evidence/097/tag-mode-negative-malformed.txt",
+    ".agent/evidence/097/validate-full-sweep.txt",
+    ".agent/evidence/097/changelog-sync.txt",
+    ".agent/evidence/097/qa-adversarial.txt",
+    ".agent/evidence/097/validate-post-qa-write.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "environment_caveat_note": "Verification entry 9 (scratch-negative) prescribes cleanup via a trailing `rm -rf` on the scratch mktemp directory. This sandbox denies the literal `rm -rf` invocation; the evaluator substituted `rm -r` (recorded in .agent/evidence/097/scratch-negative.txt's own captured invocation and output), per Mode B's prior verification that the assertion's pass/fail semantics are decided entirely by the captured `rc`/`grep_rc` variables, not by `rm`'s own exit status -- confirmed here independently: the scratch directory (containing only regular files and directories, no special files) was removed successfully by `rm -r` and the command line's own `test \"$rc\" -eq 1 -a \"$grep_rc\" -eq 0` exited 0, unaffected by the substitution.",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 097 (release close-out gate) APPROVED. All 15 of contract 097.json's verification commands were independently re-executed by the evaluator from repo root, each producing its own Section-5-shaped evidence file under .agent/evidence/097/ per the contract's evidence_convention (invocation line, verbatim captured output, final EXIT:<code> line). All 15 passed: (1) `--mode pr` exits 0 against the current tree (V=1.0.0, all five assertion groups PASS); (2) no `git tag`/`git push` token anywhere in release_closeout.py; (3) tools/validate.sh's C14 workflow-sha-pin check PASSes, now covering release_closeout.yml; (4) release_closeout.yml's `uses:` lines are all 40-hex-SHA pinned, non-vacuously (>=1 uses: line) and include actions/checkout; (5) the close-out step precedes GitHub Release publication in release.yml; (6) contract 097.json, feature_list_013.json, and run_state.json are all schema-valid; (7) the close-out step sits strictly between the tag-resolution step and the CHANGELOG-extraction step (the stronger three-anchor ordering check); (8) release_closeout.yml triggers on pull_request scoped to exactly the six documented paths with permissions: contents: read; (9) the scratch-copy negative proof (isolated mktemp copy of the CURRENT WORKING TREE, not a git-archive snapshot) with NIZAM.json's version perturbed to 9.9.9 makes `--mode pr` exit 1 and print a FAIL line naming the CONTEXT.md version-anchor group, proving the check discriminates rather than vacuously passing -- cleanup used `rm -r` in place of the contract's literal `rm -rf` because this sandbox denies the literal `rm -rf` invocation; the substitution is recorded in the evidence file itself and does not affect the assertion, which is decided by the captured rc/grep_rc variables, not by rm's exit status; (10)-(13) all four tag-mode probes behave exactly as the contract's 14-tag hand-walk predicts: v1.0.0 and v0.9.0 both exit 0 with zero skips; v0.8.0 exits 0 and its output carries the explicit 'skipped: pre-convention ROADMAP at v0.8.0' era-safety SKIP label, proving the SKIP rule actually executes rather than merely coinciding with an unrelated PASS; a malformed tag ('1.0.0', no leading v) exits 1 with a FAIL line naming the tag-shape assertion specifically; (14) the full bash tools/validate.sh sweep reports SUMMARY: 16 passed, 0 failed; (15) CHANGELOG.md's [Unreleased] section documents the close-out gate (matched via 'close-out'/'release_closeout'). The mandatory adversarial spot-check (`--mode tag --tag v0.5.2`, evaluator-originated, not among the 15 contracted commands, and deliberately different from the v0.1.0/v0.3.0 probes Mode B already ran) anchored its expectation on the SOURCE -- `git show v0.5.2:NIZAM.json`, read independently before invoking the script -- confirming framework.version reads 0.5.1 at that tag, one patch behind the tag string (a genuine, contract-documented class-(i) historical drift). The script failed on exactly the predicted single assertion (tag-mode addition (b), 'tag v0.5.2 matches NIZAM.json framework.version at tag (0.5.1)'), with exit code 1, no other FAIL line, and no Python traceback -- confirming the era-safety and first-failure-exit design hold under an evaluator-chosen probe outside the contract's own enumerated cases. No issues, no unsupported claims, no missing acceptance coverage found. Post-write regression: bash tools/validate.sh was re-run AFTER writing this verdict and all evidence files and still reports SUMMARY: 16 passed, 0 failed with exit 0 (.agent/evidence/097/validate-post-qa-write.txt), confirming this QA round's own artifacts do not destabilize the tree. dod_ref intentionally omitted: feature 094 (the DoD binding work) has not landed as of this QA round."
+  }
+}

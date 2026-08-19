@@ -37,6 +37,29 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `standard/README.md` (index row, version 0.2.1 -> 0.3.0), and
   `docs/guide/index.html`'s `standard/` module card.
 
+- **Release close-out gate, `.github/scripts/release_closeout.py` (phase
+  013, feature 097).** A stdlib-only, network-free script mechanizing
+  internal version-anchor consistency across the release surface
+  (NIZAM.json's `framework.version` as the single reference, compared
+  against CONTEXT.md frontmatter + `change_log[0]`, `docs/guide/index.html`'s
+  meta/footer spans, README.md's four version pins, CHANGELOG.md's top
+  released section heading + tier banner, and `docs/planning/ROADMAP.md`'s
+  body-scoped disposition line), generalizing the
+  `require(label, condition)` style of
+  `.agent/evidence/091/verify_release_prep.py`. Two modes: `--mode pr`
+  asserts the working tree's anchors against each other, wired as a new
+  paths-filtered pull-request workflow,
+  `.github/workflows/release_closeout.yml`; `--mode tag --tag vX.Y.Z`
+  reads every anchor as it existed AT THE TAG via `git show`, plus three
+  tag-specific checks (tag shape, tag-vs-anchor, CHANGELOG-vs-tag), wired
+  as a new blocking step in `.github/workflows/release.yml` between tag
+  resolution and CHANGELOG extraction so a version-inconsistent tree can
+  never reach GitHub Release publication. Era-safe by construction:
+  file-level anchor absence and pre-convention ROADMAP dispositions SKIP
+  rather than fail or crash, while a present-but-incomplete anchor (e.g.
+  CONTEXT.md with no `change_log` key) emits a named FAIL. The script
+  never invokes `git tag` or `git push` -- read-only comparison only.
+
 ## [1.0.0] - 2026-08-15
 
 **Major release** (`methodology/06_release_train.md` §3.1): phase 012 resolves the

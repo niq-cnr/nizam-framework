@@ -90,7 +90,7 @@
       "id": "097",
       "name": "Release close-out gate — internal version-consistency mechanization",
       "description": "Add a stdlib-only close-out script under .github/scripts with pull-request and tag modes asserting that every version anchor, README pin, changelog heading, and roadmap release line agrees with NIZAM.json framework.version, wire it as a paths-filtered pull-request workflow and as a blocking pre-publish step in release.yml, and keep it incapable of creating or pushing refs.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [],
       "acceptance_tests": [
         "python3 .github/scripts/release_closeout.py --mode pr; test $? -eq 0",

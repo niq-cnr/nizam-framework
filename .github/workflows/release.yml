@@ -19,6 +19,16 @@ on:
     tags: ["v[0-9]+.[0-9]+.[0-9]+"]
   # workflow_dispatch exists for tags cut before this workflow landed (e.g.
   # v0.6.0) or for re-publishing corrected notes for an existing tag.
+  # Dispatch republication runs the SAME "Verify release close-out" gate as
+  # a fresh tag push, below -- it does not bypass it. Historical tags
+  # carrying genuine anchor value drift or pre-convention sub-anchor
+  # absence (the eleven pre-v0.8.0-era tags v0.1.0 through v0.7.0 -- see
+  # .agent/contracts/097.json's non_goals for the full per-tag cause list)
+  # correctly FAIL that gate BY DESIGN and cannot be republished through
+  # this workflow. Overriding this for a specific historical tag requires
+  # deliberate, reviewed operator action -- e.g. temporarily removing or
+  # bypassing the close-out step in a human-approved change -- never a
+  # bypass flag or environment variable read by the pipeline itself.
   workflow_dispatch:
     inputs:
       tag:
@@ -98,6 +108,13 @@ jobs:
           [ -n "$TITLE" ] || TITLE="$TAG"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "title=$TITLE" >> "$GITHUB_OUTPUT"
+
+      - name: Verify release close-out (internal version consistency)
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+          python3 .github/scripts/release_closeout.py --mode tag --tag "$TAG"
 
       - name: Extract the tag's CHANGELOG section
         env:

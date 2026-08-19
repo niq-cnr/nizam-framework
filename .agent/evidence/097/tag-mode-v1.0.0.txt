@@ -1,0 +1,12 @@
+python3 .github/scripts/release_closeout.py --mode tag --tag v1.0.0; test $? -eq 0
+PASS tag shape (vMAJOR.MINOR.PATCH)
+PASS NIZAM.json readable at v1.0.0 (V reference)
+PASS tag v1.0.0 matches NIZAM.json framework.version at tag (1.0.0)
+PASS CONTEXT.md version anchor (frontmatter + change_log[0])
+PASS docs/guide/index.html version anchors (meta + footer)
+PASS README.md version pins (curl URL / GOVERNANCE_TAG / --tag / releases-tag)
+PASS CHANGELOG.md top released section (heading + tier banner)
+PASS ROADMAP.md disposition line (Latest released tag / Release in preparation)
+PASS CHANGELOG.md top section matches tag v1.0.0
+Release close-out: tag v1.0.0's anchors are internally consistent (--mode tag).
+EXIT:0

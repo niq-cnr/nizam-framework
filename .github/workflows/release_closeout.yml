@@ -1,0 +1,47 @@
+name: release-closeout
+
+# Mechanizes methodology/06_release_train.md's internal version-consistency
+# invariant as a pull-request gate: every place the framework's version is
+# spelled out (NIZAM.json, CONTEXT.md, docs/guide/index.html, README.md,
+# CHANGELOG.md, docs/planning/ROADMAP.md) must agree with NIZAM.json's own
+# framework.version. Paths-filtered to exactly those six files so it only
+# runs on PRs that could plausibly disturb one of these anchors (and, by
+# construction, on every phase-013+ PR, since every feature's contract
+# touches CHANGELOG.md).
+#
+# --mode pr only: this workflow asserts the CURRENT WORKING TREE's anchors
+# against each other. The tag-vs-CHANGELOG and tag-shape checks
+# (--mode tag) run separately, as a blocking step inside release.yml
+# itself, at tag-resolution time -- see that workflow's "Verify release
+# close-out (internal version consistency)" step.
+#
+# Lives under .github/, not tools/: tools/ is bootstrap-injected consumer
+# payload, and release-surface verification is framework-envelope-only
+# concern, per release.yml's own header doctrine.
+
+on:
+  pull_request:
+    paths:
+      - "CHANGELOG.md"
+      - "NIZAM.json"
+      - "CONTEXT.md"
+      - "README.md"
+      - "docs/guide/**"
+      - "docs/planning/ROADMAP.md"
+
+permissions:
+  contents: read
+
+jobs:
+  closeout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+
+      - run: python3 .github/scripts/release_closeout.py --mode pr

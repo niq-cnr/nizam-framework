@@ -1,0 +1,26 @@
+ADVERSARIAL SPOT-CHECK (evaluator-originated, not among the contract's 15 verification entries).
+External Anchor Rule: source-anchored on 'git show v0.5.2:NIZAM.json' (the SOURCE), not the script under test.
+
+Step 1 -- source anchor (already captured independently before running the script):
+$ git show v0.5.2:NIZAM.json | python3 -c "print(json.load(sys.stdin)[...])"
+0.5.1
+-> NIZAM.json framework.version AT TAG v0.5.2 reads 0.5.1, not 0.5.2.
+
+Prediction (per contract design_notes.tag_mode_era_safety_design sub-rule (d), class (i)):
+  --mode tag --tag v0.5.2 must FAIL, specifically on tag-mode addition (b)
+  ('tag v0.5.2 matches NIZAM.json framework.version at tag (0.5.1)'),
+  with exit code 1, PASS lines only for 'tag shape' and 'NIZAM.json readable',
+  then a single named FAIL line for addition (b), and NO Python traceback.
+
+Step 2 -- invocation under test:
+$ python3 .github/scripts/release_closeout.py --mode tag --tag v0.5.2
+PASS tag shape (vMAJOR.MINOR.PATCH)
+PASS NIZAM.json readable at v0.5.2 (V reference)
+FAIL tag v0.5.2 matches NIZAM.json framework.version at tag (0.5.1)
+EXIT_CODE=1
+
+Step 3 -- adjudication:
+No traceback present.
+Last output line: FAIL tag v0.5.2 matches NIZAM.json framework.version at tag (0.5.1)
+RESULT: PASS -- exit code is 1, and the exact predicted named-FAIL label fired (class (i) NIZAM-lag), with no traceback and no other FAIL line preceding it.
+EXIT:0

@@ -1,0 +1,14 @@
+out=$(python3 .github/scripts/release_closeout.py --mode tag --tag v0.8.0 2>&1); rc=$?; echo captured; printf "%s\n" "$out"; grep skipped-pre-convention-ROADMAP; grep_rc=$?; test rc==0 && grep_rc==0
+--- captured stdout/stderr ---
+PASS tag shape (vMAJOR.MINOR.PATCH)
+PASS NIZAM.json readable at v0.8.0 (V reference)
+PASS tag v0.8.0 matches NIZAM.json framework.version at tag (0.8.0)
+PASS CONTEXT.md version anchor (frontmatter + change_log[0])
+PASS docs/guide/index.html version anchors (meta + footer)
+PASS README.md version pins (curl URL / GOVERNANCE_TAG / --tag / releases-tag)
+PASS CHANGELOG.md top released section (heading + tier banner)
+PASS ROADMAP.md disposition line (Latest released tag / Release in preparation) (skipped: pre-convention ROADMAP at v0.8.0)
+PASS CHANGELOG.md top section matches tag v0.8.0
+Release close-out: tag v0.8.0's anchors are internally consistent (--mode tag).
+rc=0 grep_rc=0
+EXIT:0

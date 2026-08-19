@@ -1,0 +1,5 @@
+out=$(python3 .github/scripts/release_closeout.py --mode tag --tag 1.0.0 2>&1); rc=$?; echo captured; printf "%s\n" "$out"; grep FAIL.*tag-shape; grep_rc=$?; test rc==1 && grep_rc==0
+--- captured stdout/stderr ---
+FAIL tag shape (vMAJOR.MINOR.PATCH)
+rc=1 grep_rc=0
+EXIT:0

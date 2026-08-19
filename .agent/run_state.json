@@ -3,7 +3,7 @@
   "current_phase": "013-definition-of-done",
   "current_feature": "094",
   "status": "in_progress",
-  "updated_at": "2026-08-18T12:40:10Z",
+  "updated_at": "2026-08-19T09:33:36Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1250,6 +1250,17 @@
       "event": "feature_complete",
       "feature": "093",
       "detail": "Feature 093 COMPLETE: standard/definition_of_done.md (269 lines, 13 sections) + registration across NIZAM.json (13th standard key_document + nizam-definition-of-done capability), standard/README.md (0.3.0 + first change_log block), the guide's standard/ card, and CHANGELOG. Loop 1: contract approved at revision 3 after Mode A rounds 1-4 (round 1 traced an unsatisfiable accessor upstream to the Planner acceptance test, fixed by the second Section-9 amendment at 818919f; round 3's table-row falsifier drove the structural substring-exemption enum-lock) plus the evaluator contract review. Loop 2: Mode B round 1 rejected the Section-11 enforcement count (the phase's own doc-truth discipline applied to its own centerpiece), rework 1 fixed it (exactly two layers enforced today: Feature-Done via C16, Merge-Done via compliance.yml; Release-Done hedged on feature 097), Mode B round 2 approved; evaluator QA .agent/qa/093.json 18/18 (17 direct + the SHA-anchored byte-guard PASS-by-decomposition per NDEBT-040's pre-registered three-limb adjudication) with the adversarial quotation-fidelity spot-check (AGF.md Section 4 formula verbatim-faithful) and 19 Section-5 evidence files; orchestrator evidence-capture gate PASS. Canonical-first flips: phase_013.yaml step 093 COMPLETED (written first), feature_list_013 093 complete, this derived run state after. C16 now binds feature 093's chain (contract + QA + evidence all resolve). Next per the Dependency Enforcement Rule: features 094/095/096 all eligible (dep 093 complete); 097's contract is approved and its implementation slot opens (active_contract_id -> 097)."
+    },
+    {
+      "at": "2026-08-19T09:13:51Z",
+      "event": "scope_acknowledged_rebaselined",
+      "detail": "Scope budget re-baselined per 00_planning.md Section 9's human-authorized pattern, recorded structurally in scope_budget.rebaseline: original_estimate_lines 2150 -> 4400 (ceiling 2795 -> 5720), operator verbatim 'Re-baseline to 4400 (Recommended)'. Basis: measured per-feature process weight 1.8-2.9x estimates (092: 819/450, 093: 1316/450); cumulative 2135 at 2/7 features; projection ~5100-5700 total. Execution proceeds: feature 097 implementation (active_contract_id=097) and contract negotiation for the now-eligible features 094/095/096 in parallel."
+    },
+    {
+      "at": "2026-08-19T09:33:36Z",
+      "event": "feature_complete",
+      "feature": "097",
+      "detail": "Feature 097 COMPLETE: the release close-out gate. .github/scripts/release_closeout.py (358 lines; --mode pr internal-consistency across six anchor groups; --mode tag reading all anchors at-tag via git show with era rules (a) file-absence skip, (b) pre-convention ROADMAP skip, (a-EXT) sub-anchor-absence named FAIL; no ref-mutating call), .github/workflows/release_closeout.yml (PR-mode, six-path filter incl. ROADMAP, SHA-pinned), and the blocking tag-mode step in release.yml between tag-verify and publication with the corrected workflow_dispatch comment (eleven drifted historical tags fail by design; republishable set v0.8.0/v0.9.0/v1.0.0/future). Loop 1: 3-strike breaker + operator-authorized 4th revision + Mode A round 5 + evaluator review (NDEBT-039 resolved). Loop 2: Mode B approved round 1 (no rework; the v0.3.0 probe confirmed the class-(ii) taxonomy); evaluator QA .agent/qa/097.json 15/15 with the source-anchored v0.5.2 class-(i) adversarial probe; 17 Section-5 evidence files; evidence-capture gate PASS. This gate is the phase's second mechanization: Release-Done's enforcement clause in standard/definition_of_done.md Section 11 becomes fully live at the v1.1.0 release. Canonical-first flips done (phase_013.yaml first). NDEBT-040 Notes generalized: fixed-anchor byte-guards vs sibling Step-7 flips; decomposition pre-registered for 094/095 QA. Next eligible: 094 (contract approved, evaluator review in flight), 095/096 (contracts in negotiation), then 098 once 092-097 complete."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1422,8 +1433,8 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 2150,
-    "total_lines_changed": 2135,
+    "original_estimate_lines": 4400,
+    "total_lines_changed": 3168,
     "per_feature": [
       {
         "id": "092",
@@ -1438,8 +1449,22 @@
         "actual": 1316,
         "flag": "OVER",
         "note": "Landed commit git numstat: 1316 lines (implementation ~34 lines across four registration surfaces + the 269-line document, plus the 3-revision contract, two QA artifacts, 19 Section-5 evidence files, and lifecycle state). Prior-three baseline is the single feature 092 (819): 3x ceiling 2457, not exceeded... note: per 00_planning.md Section 6 the rolling average uses up to the last three completed features; with only 092 completed the baseline is 819, threshold 2457, and 1316 is under it, so no flag procedure fires; OVER here records actual>estimated only. Cumulative 2135/2795 ceiling."
+      },
+      {
+        "id": "097",
+        "estimated": 330,
+        "actual": 1033,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 1033 lines (implementation 445 across the script/workflow/release.yml/CHANGELOG per Mode B's count, plus the 4-revision negotiated contract, two QA artifacts, 17 Section-5 evidence files, DEBT/NDEBT-040 generalization, and lifecycle state). Prior-three rolling baseline (092, 093): avg 1067.5, 3x ceiling 3202.5 -- 1033 is under it, no flag procedure fires; OVER records actual>estimated (330). Cumulative 3168/5720 re-baselined ceiling."
       }
-    ]
+    ],
+    "rebaseline": {
+      "from": 2150,
+      "to": 4400,
+      "authorized_by": "operator",
+      "at": "2026-08-19T09:13:51Z",
+      "reason": "Measured process weight of the phase-013 contract-first loop exceeds the phase-012 calibration the 2150 estimate was built on (1.23x): features 092/093 landed at 819/1316 actual vs 450/450 estimated (1.8x/2.9x), driven by multi-round negotiated contracts (100-200 lines each), ~20 Section-5 evidence files per feature, and dual QA artifacts. Cumulative 2135 of the old 2795 ceiling after 2 of 7 features; honest projection for the remaining five is ~3000-3500 more. Operator authorized the pre-emptive re-baseline (verbatim: 'Re-baseline to 4400 (Recommended)', 2026-08-18, interactive session, in response to the orchestrator's Section-6/Section-9 escalation) rather than a forced mid-feature halt. New 130% cumulative hard ceiling: 5720."
+    }
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
