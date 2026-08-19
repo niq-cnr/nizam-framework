@@ -1,0 +1,24 @@
+python3 - <<'PY'
+import json, subprocess
+base = json.loads(subprocess.run(['git', 'show', 'd5a5a0a90ebba727ba879470398f6e509908db27:.agent/feature_list_013.json'], capture_output=True, text=True, check=True).stdout)
+cur = json.loads(open('.agent/feature_list_013.json').read())
+for key in base:
+    if key == 'features':
+        continue
+    assert base[key] == cur[key], f'top-level key {key!r} changed'
+base_by_id = {f['id']: f for f in base['features']}
+cur_by_id = {f['id']: f for f in cur['features']}
+assert set(base_by_id) == set(cur_by_id), 'feature id set changed'
+for fid, base_f in base_by_id.items():
+    cur_f = cur_by_id[fid]
+    if fid != '098':
+        assert base_f == cur_f, f'feature {fid} object must be byte-identical to base_revision'
+    else:
+        base_no_status = {k: v for k, v in base_f.items() if k != 'status'}
+        cur_no_status = {k: v for k, v in cur_f.items() if k != 'status'}
+        assert base_no_status == cur_no_status, "feature 098's own object must be identical to base_revision except its status field"
+        assert cur_f['status'] in ('pending', 'in_progress', 'complete'), f"feature 098 status {cur_f['status']!r} is not a legitimate lifecycle value"
+print(f"PASS feature_list_013.json decomposition guard: siblings 092-097 byte-identical, top-level keys identical, feature 098's own object identical except status (currently {cur_by_id['098']['status']!r}) -- satisfiable PRE and POST Step 7")
+PY
+PASS feature_list_013.json decomposition guard: siblings 092-097 byte-identical, top-level keys identical, feature 098's own object identical except status (currently 'pending') -- satisfiable PRE and POST Step 7
+EXIT:0

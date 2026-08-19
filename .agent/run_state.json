@@ -3,7 +3,7 @@
   "current_phase": "013-definition-of-done",
   "current_feature": "098",
   "status": "in_progress",
-  "updated_at": "2026-08-19T10:54:36Z",
+  "updated_at": "2026-08-19T13:47:26Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -204,6 +204,16 @@
       "attempts": 2,
       "limit": 3,
       "note": "Mode B rejected rounds 1 and 2 on the dod_ref carriage-assertion phrasing (non_goals[8]; the round-2 rejection proved the residual defect by grammatical substitution test — the orchestrator's own implementation brief had wrongly suggested present-tense phrasing was acceptable); rework 2 landed the two-sentence restructure (carriage delegated to schema/README.md; the path token in a location-only sentence); Mode B round 3 approved with empty arrays."
+    },
+    "098-contract": {
+      "attempts": 1,
+      "limit": 3,
+      "note": "Mode A round 1 rejected on two blockers (README pin census incomplete at lines 27/44; a module-map assertion slicing frontmatter) plus the two-phase verification formalization; revision 1 fixed all six findings with both-ways dry-runs; Mode A round 2 approved with an end-to-end simulated tree driving the unmodified release close-out gate to exit 0 at V=1.1.0; evaluator review approved with the two-phase PRE/POST-Step-7 QA choreography operationally verified (17 invocations recommended)."
+    },
+    "098-implementation": {
+      "attempts": 1,
+      "limit": 3,
+      "note": "Mode B approved round 1. The QA choreography itself required one live correction: C16 rejected the premature Step-7 flip (verdict-before-complete ordering restored per 01_execution.md Section 6); the verdict then landed with checks_run=15 and the two POST items as close-time evidence."
     }
   },
   "history": [
@@ -1335,6 +1345,40 @@
       "event": "feature_complete",
       "feature": "095",
       "detail": "Feature 095 COMPLETE: templates/DoD.md (147 lines) — the copy-and-fill consumer projection of the Definition of Done: seven Section-N-cited checklist blocks (Step through Release, Sections 3-9, epigraphs byte-verbatim from the standard's Section 2 layer table per the QA adversarial check), the Ecosystem-Done Section-10 prose pointer (no eighth block, by orchestrator-directed design recorded in the plan of record), the project-specific extension block, the Section-12 floor-note, and the dod_ref linking note (carriage delegated to schema/README.md after a two-round Mode B phrasing negotiation resolved by grammatical substitution test — the orchestrator's implementation brief contributed the initial error and is recorded as such). templates/README.md eight-template roll, NIZAM.json dual-site 9/9, CHANGELOG. Loop 1: revisions 2. Loop 2: Mode B rounds 1-3, evaluator QA 14/14 with honest e2e pre-commit scoping. Evidence-capture gate PASS (15 files). All six delivery features (092-097) now complete; the Dependency Enforcement Rule unblocks feature 098 (v1.1.0 release preparation), the phase's final feature. active_contract_id cleared pending 098's contract approval."
+    },
+    {
+      "at": "2026-08-19T12:41:08Z",
+      "event": "scope_acknowledged_rebaselined",
+      "detail": "Second Section-9 scope re-baseline: original_estimate_lines 4400 -> 4800 (ceiling 5720 -> 6240), operator verbatim 'Re-baseline to 4800 (Recommended)', recorded structurally with the prior record preserved in scope_budget.rebaseline_history. Rationale: 6 of 7 features complete at cumulative 5297; feature 098's projected landed weight (600-900) exceeds the 423-line headroom and a mid-release-prep hard halt is the exact stranding the phase ordered 098 last to avoid. Loop 1 for 098 begins."
+    },
+    {
+      "at": "2026-08-19T13:26:30Z",
+      "event": "contract_approved",
+      "feature": "098",
+      "detail": "Contract 098 (v1.1.0 release preparation — the phase's final feature) APPROVED at revision 1: Mode A round 2 (README 7-roll/2-stay census verified; heading-anchored module-map assertion proven both ways; the item-15 decomposition proven PRE and simulated-POST with four violation controls; the simulated post-implementation tree drove release_closeout.py --mode pr to exit 0 at V=1.1.0) + evaluator contract review (six sanity runs; the two-phase QA choreography walked operationally: 14 PRE + 3 POST evidence captures, orchestrator-mediated Step-7 hand-off mid-round, checks_run=17 convention recommended; the operator_gates row-anchoring false-pass risk confirmed real and handed to Mode B). approvals both true, revisions=1, approved_at=2026-08-19T13:26:30Z. Loop 2 begins (active_contract_id -> 098). Release preparation only: the pipeline never creates or pushes the tag; H-FRAMEWORK-RELEASE remains the operator's."
+    },
+    {
+      "at": "2026-08-19T13:40:43Z",
+      "event": "feature_complete",
+      "feature": "098",
+      "detail": "Feature 098 Step-7 flips performed (canonical-first: phase_013.yaml step 098 COMPLETED written first, feature_list_013 098 complete second, this derived record third) after Mode B round-1 approval and the two-phase QA's PRE set landed 14/14 green (.agent/evidence/098/, 14 capture files). The v1.1.0 release package is prepared: all anchors at 1.1.0, the phase's own close-out gate self-piloting green in PR mode, CHANGELOG [1.1.0] rolled with the Minor banner, readiness record + replayable verifier shipped as contracted deliverables, NDEBT-038 resolved at the ROADMAP roll. POST-phase QA (items 1 re-run, 4, 15-POST + the mandatory adversarial spot-check + the verdict) proceeds now; phase close records and the commit follow the POST verdict. The pipeline has created no tag; H-FRAMEWORK-RELEASE remains the operator's."
+    },
+    {
+      "at": "2026-08-19T13:42:13Z",
+      "event": "ordering_corrected",
+      "feature": "098",
+      "detail": "C16 caught the orchestrator's own premature Step-7 flip in real time: feature 098 was marked complete before its QA verdict existed (the two-phase QA choreography's POST-flip items had mis-sequenced the flip ahead of the verdict, against methodology/01_execution.md Section 6's own ordering — complete only with a passing QA verdict AND evidence-capture gate). validate.sh went 15/16 with [C16] FAIL naming exactly the missing .agent/qa/098.json; the flip is REVERTED (feature_list 098 -> in_progress; phase_013.yaml step 098 -> IN_PROGRESS). Corrected choreography: (1) the QA verdict lands first (14 PRE captures + the mandatory adversarial spot-check as its execution set); (2) the orchestrator's evidence-capture gate; (3) the Step-7 flip, now C16-legal; (4) item 4 (all-seven-complete) and the POST decomposition captured as CLOSE-TIME evidence attached to the phase-close records, per the 091 precedent where the all-complete assertion ran at release time — NOT inside the QA verdict. This is the shipped mechanization policing the phase that shipped it, on its first live opportunity; the deviation from contract 098's evidence_convention letter (a 17-invocation verdict) is recorded here honestly with Section 6 as the superior authority."
+    },
+    {
+      "at": "2026-08-19T13:47:26Z",
+      "event": "feature_complete",
+      "feature": "098",
+      "detail": "Feature 098 COMPLETE — and with it every phase-013 feature. The v1.1.0 MINOR release package is prepared: NIZAM.json/CONTEXT/README/guide anchors at 1.1.0 (README 7-roll/2-stay census; CONTEXT's Module Map now names the Definition of Done — the F-093 deferral discharged); CHANGELOG [1.1.0] rolled with the Minor banner and six verbatim bullets; ROADMAP disposition + the NDEBT-038 dated-snapshot repair; operator_gates H-FRAMEWORK-RELEASE row carries the PREPARED/OUTSTANDING disposition row-anchored; the readiness record and replayable verifier shipped as contracted deliverables. Loop 2's close was itself a live demonstration: C16 rejected the orchestrator's premature flip (ordering_corrected), the verdict landed first (15/15 incl. the untagged-tag-mode adversarial probe), the flip followed C16-legally, and the two POST items were captured as close-time evidence (all-features-complete-post.txt; verify-release-prep-post.txt; validate-post-flip.txt — final sweep 16/16 with C16 binding 098's own chain)."
+    },
+    {
+      "at": "2026-08-19T13:47:26Z",
+      "event": "phase_complete",
+      "detail": "Phase 013-definition-of-done COMPLETE (canonical phase_013.yaml written first; manifest second; this derived record third). Seven features, all through the full contract-first loop: 092 validator check C16 (the lifecycle invariant mechanized); 093 standard/definition_of_done.md (the canonical layered standard); 094 optional dod_ref on five schemas; 095 templates/DoD.md; 096 the PR template; 097 the release close-out gate (plus the 14-tag release-anchor archaeology); 098 the v1.1.0 MINOR preparation. Process ledger: two Section-9 plan amendments (payload count; NIZAM accessor shapes), one 3-strike circuit breaker with an operator-authorized 4th revision (097), two operator scope re-baselines (2150->4400->4800), four new debt rows registered (NDEBT-037..040) with two resolved in-phase (039, 038), and the shipped mechanization catching its own phase twice (the byte-guard class generalized at 096's gate; the premature flip rejected at 098's close). The branch is release-ready; the PR to main and H-FRAMEWORK-RELEASE (the v1.1.0 annotated tag) are the operator's. The rolled-forward candidate scope (real multi-repo pilot + ecosystem 06/08 + H-CONSOLIDATION/H-GA) stands for phase 014. run_state.status stays in_progress until the post-release refresh, per the phase-012 precedent."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1507,8 +1551,8 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 4400,
-    "total_lines_changed": 5297,
+    "original_estimate_lines": 4800,
+    "total_lines_changed": 6212,
     "per_feature": [
       {
         "id": "092",
@@ -1551,15 +1595,31 @@
         "actual": 731,
         "flag": "OVER",
         "note": "Landed commit git numstat: 731 lines (implementation ~171: the 147-line template + three registration surfaces; the remainder is the twice-revised contract, two QA artifacts, 15 evidence files, two rework rounds' run_state records, and lifecycle state). Prior-three baseline (097,094,096): avg 810, 3x ceiling 2431 — 731 under it; OVER records actual>estimated (260). Cumulative 5297/5720."
+      },
+      {
+        "id": "098",
+        "estimated": 330,
+        "actual": 915,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 915 lines (implementation 76 across eight release surfaces + the two contracted evidence deliverables; the remainder is the once-revised contract, two QA artifacts, 19 capture files across the corrected two-phase choreography, the phase-close records, and lifecycle state). Prior-three baseline (094,096,095): avg 709.7, 3x ceiling 2129 — 915 under it; OVER records actual>estimated (330). Cumulative 6212/6240 re-baselined ceiling. Phase total across seven features."
       }
     ],
     "rebaseline": {
-      "from": 2150,
-      "to": 4400,
+      "from": 4400,
+      "to": 4800,
       "authorized_by": "operator",
-      "at": "2026-08-19T09:13:51Z",
-      "reason": "Measured process weight of the phase-013 contract-first loop exceeds the phase-012 calibration the 2150 estimate was built on (1.23x): features 092/093 landed at 819/1316 actual vs 450/450 estimated (1.8x/2.9x), driven by multi-round negotiated contracts (100-200 lines each), ~20 Section-5 evidence files per feature, and dual QA artifacts. Cumulative 2135 of the old 2795 ceiling after 2 of 7 features; honest projection for the remaining five is ~3000-3500 more. Operator authorized the pre-emptive re-baseline (verbatim: 'Re-baseline to 4400 (Recommended)', 2026-08-18, interactive session, in response to the orchestrator's Section-6/Section-9 escalation) rather than a forced mid-feature halt. New 130% cumulative hard ceiling: 5720."
-    }
+      "at": "2026-08-19T12:41:08Z",
+      "reason": "Second and final phase-013 re-baseline, authorized before feature 098 (v1.1.0 release preparation) begins: cumulative 5297 of the 5720 ceiling with 423 lines of headroom against a measured-pattern projection of 600-900 for the release-prep feature (ten-plus surfaces + readiness record + verifier script + contract/QA/evidence). Operator verbatim: 'Re-baseline to 4800 (Recommended)' (2026-08-19, interactive session). New 130% ceiling: 6240. The prior re-baseline record (2150->4400) is preserved in rebaseline_history."
+    },
+    "rebaseline_history": [
+      {
+        "from": 2150,
+        "to": 4400,
+        "authorized_by": "operator",
+        "at": "2026-08-19T09:13:51Z",
+        "reason": "Measured process weight of the phase-013 contract-first loop exceeds the phase-012 calibration the 2150 estimate was built on (1.23x): features 092/093 landed at 819/1316 actual vs 450/450 estimated (1.8x/2.9x), driven by multi-round negotiated contracts (100-200 lines each), ~20 Section-5 evidence files per feature, and dual QA artifacts. Cumulative 2135 of the old 2795 ceiling after 2 of 7 features; honest projection for the remaining five is ~3000-3500 more. Operator authorized the pre-emptive re-baseline (verbatim: 'Re-baseline to 4400 (Recommended)', 2026-08-18, interactive session, in response to the orchestrator's Section-6/Section-9 escalation) rather than a forced mid-feature halt. New 130% cumulative hard ceiling: 5720."
+      }
+    ]
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {

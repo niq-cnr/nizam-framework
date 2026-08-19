@@ -7,6 +7,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-19
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): phase 013 (Definition
+of Done) delivers six purely additive, new-optional features -- the canonical layered
+Definition of Done (`standard/definition_of_done.md`, feature 093), the feature-list
+lifecycle invariant as validator check C16 (feature 092), the release close-out gate
+(`.github/scripts/release_closeout.py`, feature 097), the optional advisory `dod_ref`
+key on five schemas (feature 094), and its two consumer projections
+(`templates/DoD.md`, feature 095; `.github/PULL_REQUEST_TEMPLATE.md`, feature 096) --
+nothing that validated under v1.0.0 is invalidated.
+
 ### Added
 
 - **Feature-list lifecycle invariant, validator check C16 (phase 013, feature

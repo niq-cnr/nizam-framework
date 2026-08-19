@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 1.0.0
+version: 1.1.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "1.1.0"
+    date: "2026-08-19"
+    summary: "Prepare the v1.1.0 MINOR release, phase 013 (Definition of Done): the canonical layered Definition of Done (`standard/definition_of_done.md`), the feature-list lifecycle invariant (validator check C16), the release close-out gate (`.github/scripts/release_closeout.py`), the optional advisory `dod_ref` key on five schemas, and its two consumer projections (`templates/DoD.md`, `.github/PULL_REQUEST_TEMPLATE.md`) -- purely additive, new-optional capability; nothing that validated under v1.0.0 is invalidated. Applies the Module Map's `standard/` bullet edit deferred from feature 093 (this same version bump): the bullet now names the layered Definition of Done alongside the existing constitutional-and-standard document enumeration. H-FRAMEWORK-RELEASE remains pending; no tag is created by the pipeline."
   - version: "1.0.0"
     date: "2026-08-15"
     summary: "Prepare the v1.0.0 MAJOR release for phase 012's full issue-52 consumer-safety remediation: breaking schema invariants with a clean migration guide, correct reopened classification, isolated retry recovery, coherent five-role/lifecycle governance, and consumer-facing documentation aligned to shipped behavior. H-FRAMEWORK-RELEASE remains pending; no tag is created by the pipeline."
@@ -47,7 +50,7 @@ infrastructure, and not a runtime service.
 ## Module Map (Hybrid Mono-Repo)
 
 - `schema/` — JSON Schemas for every machine-readable artifact (frontmatter, manifest, phase, feature list, contract, QA verdict, run state).
-- `standard/` — The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), the anti-hallucination constraints, and the constitutional policy set (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance).
+- `standard/` — The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), the anti-hallucination constraints, the constitutional policy set (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance), and the layered Definition of Done.
 - `methodology/` — Planning, execution, adversarial TDD, circuit breaker, tool-driven state, release train protocols.
 - `templates/` — Consumer-repo templates (CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest).
 - `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md`.
