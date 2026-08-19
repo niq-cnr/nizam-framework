@@ -89,6 +89,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   governed doc under NDS.md: carries no frontmatter and rides outside
   every check's shipped/payload document sweep by design.
 
+- **Consumer Definition of Done checklist, `templates/DoD.md` (phase 013,
+  feature 095).** The copy-and-fill projection of
+  `standard/definition_of_done.md` onto a per-project checklist: seven
+  Section-N-cited checklist blocks (Step through Release), a non-checklist
+  Ecosystem-Done pointer paragraph citing Section 10, a
+  `{{PROJECT_SPECIFIC_DONE_CRITERIA}}` extension block, a floor-not-guarantee
+  closing note citing Section 12, and a `dod_ref` linking note pointing at
+  the optional advisory key phase 013, feature 094 added to several Nizam
+  schemas. Registered in `NIZAM.json` (both the top-level `templates[]`
+  array and `modules[path=="templates"].key_documents`) and
+  `templates/README.md` (new index row, `## Frontmatter Convention`
+  parenthetical, description enumeration, version 0.2.2 -> 0.3.0).
+
 ## [1.0.0] - 2026-08-15
 
 **Major release** (`methodology/06_release_train.md` §3.1): phase 012 resolves the

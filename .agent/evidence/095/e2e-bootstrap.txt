@@ -1,0 +1,40 @@
+bash tools/e2e_bootstrap_test.sh; test $? -eq 0
+e2e_bootstrap_test.sh: installing pinned tag 'e2e-1787136638-1572912' from 'file:///home/cnross/workspace02/nizam-framework' into '/home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam' (hermetic -- local file:// clone, no network)...
+bootstrap.sh: cloning file:///home/cnross/workspace02/nizam-framework at pinned tag e2e-1787136638-1572912 (--depth 1)...
+Cloning into '/home/cnross/.tmp/nizam-bootstrap-clone.rWHMYC'...
+Note: switching to '9d9d32325e081225f1dc42cdc6964ca26609337a'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: staging governance payload in /home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam-stage.qBbREb...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 65 indexed path(s) resolve under /home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam-stage.qBbREb.
+bootstrap.sh: recording provenance (framework_version=1.0.0, tag=e2e-1787136638-1572912, resolved_sha=9d9d32325e081225f1dc42cdc6964ca26609337a)...
+bootstrap.sh: install complete. Governance payload version 1.0.0 (tag e2e-1787136638-1572912) is now at '/home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam'.
+assert_payload_present: OK -- standard/, templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json, provenance.json all present under /home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam
+assert_nizam_index_valid: OK -- NIZAM.json parses; 64 indexed path(s) resolve under /home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam.
+assert_discovery_path: OK -- /home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
+bootstrap.sh: verify-only: checking '/home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam' against pinned tag 'e2e-1787136638-1572912' (no clone, no network)...
+NIZAM.json parses; 65 indexed path(s) resolve under /home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam.
+bootstrap.sh: verify-only: PASS -- '/home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam' is present, well-formed, and matches pinned tag 'e2e-1787136638-1572912' (recorded commit pin present; pass --expected-sha to also assert the commit).
+assert_provenance_sha_pin: OK -- resolved_sha recorded (9d9d32325e081225f1dc42cdc6964ca26609337a) == tag's true commit; --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected).
+assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent (both invocation forms green with identical [C*] verdicts under /home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam)
+assert_preflight_governance_root: OK -- ecosystem_preflight.py discovered the injected .nizam/ governance-root (exit 2: PASS_WITH_EXCEPTIONS; the injected payload is an expected exception, required references resolve under .nizam/).
+assert_genesis: OK -- genesis stood up a new project from nothing (scaffold present; provenance resolved_sha=9d9d32325e081225f1dc42cdc6964ca26609337a); Preflight accepts it (exit 2: PASS_WITH_EXCEPTIONS); a non-empty --project-root is refused.
+assert_multirepo: OK -- a scratch 2-member ecosystem (both genesis'd from nothing at one pin) iterates + aggregates to a schema-valid ecosystem-level result (ecosystem_verdict PASS, framework_pin_consistent true, member_count 2).
+assert_stage4: OK -- the aggregate -> reconciliation -> release-train chain runs across the 2-member set: a PASS plan + a PASS train manifest (both C12-valid), and an ungated admission is correctly refused a PASS (FAIL).
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1787136638-1572912, target /home/cnross/.tmp/tmp.zaVMDgFkBJ/.nizam).
+EXIT:0

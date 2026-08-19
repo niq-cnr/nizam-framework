@@ -1,0 +1,111 @@
+python3 - <<'PY'
+# ADVERSARIAL SPOT-CHECK (evaluator-originated, NOT among contract 095's 14 listed
+# verification commands). External Anchor Rule (methodology/02_adversarial_tdd.md
+# Section 7): the expected value is drawn from a source OUTSIDE the artifact under
+# test -- standard/definition_of_done.md Section 2's own layer table -- not from
+# templates/DoD.md's own prose or the contract's design_notes narrative.
+#
+# Candidate chosen: (a) verbatim quote-fidelity of the seven checklist-layer
+# epigraphs against Section 2's layer table (SOURCE rows), character-for-character,
+# not merely "citation present somewhere" (which verification item 7 already
+# mechanizes structurally). This probes something the pipeline has NOT probed:
+# Mode B's own first-occurrence-weakness probe for this file (per the task framing)
+# targeted a different concern; contract verification item 7 checks that a
+# Section-N citation string appears in each heading-delimited block, but never
+# diffs the epigraph's actual QUOTED TEXT against the source table's One-Liner
+# column. A generator could satisfy item 7 while silently paraphrasing, truncating,
+# or drifting the quoted sentence -- this check closes that gap.
+import re
+
+source = open('standard/definition_of_done.md').read()
+template = open('templates/DoD.md').read()
+
+table_start = source.index('## 2. The Layered Model')
+table_end = source.index('## 3. Step-Done')
+table_block = source[table_start:table_end]
+
+rows = {}
+for line in table_block.splitlines():
+    line = line.strip()
+    if not line.startswith('|') or 'Layer' in line or '---' in line:
+        continue
+    parts = [p.strip() for p in line.strip('|').split('|')]
+    if len(parts) != 3:
+        continue
+    layer, one_liner, authority = parts
+    rows[layer] = (one_liner, authority)
+
+epigraph_re = re.compile(r'_"([^"]*)"_\s*\n?\(`standard/definition_of_done\.md`\s+(Section \d+)\)', re.MULTILINE)
+matches = []
+for m in epigraph_re.finditer(template):
+    quote = re.sub(r'\s+', ' ', m.group(1)).strip()
+    section = m.group(2)
+    matches.append((quote, section))
+
+check_layers = ['Step-Done', 'Handoff-Done', 'Gate-Done', 'Feature-Done', 'Plan-Done', 'Merge-Done', 'Release-Done']
+assert len(matches) == 7, f"expected 7 epigraph blocks, found {len(matches)}"
+
+mismatches = []
+for (layer, (source_quote, source_section)), (template_quote, template_section) in zip(rows.items(), matches):
+    if layer not in check_layers:
+        continue
+    ok_text = (source_quote == template_quote)
+    ok_section = source_section == template_section
+    status = 'MATCH' if (ok_text and ok_section) else 'MISMATCH'
+    print(f"[{status}] {layer}")
+    print(f"  SOURCE   : {source_quote!r}  ({source_section})")
+    print(f"  TEMPLATE : {template_quote!r}  ({template_section})")
+    if status == 'MISMATCH':
+        mismatches.append(layer)
+
+if mismatches:
+    print(f"\nFAIL -- {len(mismatches)} mismatching row(s): {mismatches}")
+else:
+    print("\nPASS -- all 7 checklist-layer epigraphs are byte-for-byte verbatim against "
+          "standard/definition_of_done.md Section 2's layer table (quoted text AND cited "
+          "Section N), for all 7 rows (task floor was 3; all 7 checked for completeness).")
+PY
+Extracted 8 source table rows from standard/definition_of_done.md Section 2:
+  Step-Done: ('A single agent action is complete only with captured, externalised evidence.', 'Section 3')
+  Handoff-Done: ("A role's output is durable only once written to its canonical file family, never carried in chat.", 'Section 4')
+  Gate-Done: ('A validator or evaluator gate advances only on a fully-satisfied JSON verdict.', 'Section 5')
+  Feature-Done: ('A feature reaches `complete` only with an approved contract, a passing QA verdict, and evidence on disk.', 'Section 6')
+  Plan-Done: ("A phase's features are planned only with atomic acceptance tests inside an enforced scope budget.", 'Section 7')
+  Merge-Done: ('A change is mergeable only when every CI job and the human-review gate pass together.', 'Section 8')
+  Release-Done: ('A version is released only after changelog roll-up, human sign-off, and a tag cut at the signed-off commit.', 'Section 9')
+  Ecosystem-Done: ('A multi-repository engineering claim is closed only with path-referenced closure evidence, never absence alone.', 'Section 10')
+
+Extracted 7 epigraph quotes from templates/DoD.md:
+  [Section 3] A single agent action is complete only with captured, externalised evidence.
+  [Section 4] A role's output is durable only once written to its canonical file family, never carried in chat.
+  [Section 5] A validator or evaluator gate advances only on a fully-satisfied JSON verdict.
+  [Section 6] A feature reaches `complete` only with an approved contract, a passing QA verdict, and evidence on disk.
+  [Section 7] A phase's features are planned only with atomic acceptance tests inside an enforced scope budget.
+  [Section 8] A change is mergeable only when every CI job and the human-review gate pass together.
+  [Section 9] A version is released only after changelog roll-up, human sign-off, and a tag cut at the signed-off commit.
+
+--- Character-for-character verbatim comparison (all 7 rows checked) ---
+[MATCH] Step-Done
+  SOURCE   : 'A single agent action is complete only with captured, externalised evidence.'  (Section 3)
+  TEMPLATE : 'A single agent action is complete only with captured, externalised evidence.'  (Section 3)
+[MATCH] Handoff-Done
+  SOURCE   : "A role's output is durable only once written to its canonical file family, never carried in chat."  (Section 4)
+  TEMPLATE : "A role's output is durable only once written to its canonical file family, never carried in chat."  (Section 4)
+[MATCH] Gate-Done
+  SOURCE   : 'A validator or evaluator gate advances only on a fully-satisfied JSON verdict.'  (Section 5)
+  TEMPLATE : 'A validator or evaluator gate advances only on a fully-satisfied JSON verdict.'  (Section 5)
+[MATCH] Feature-Done
+  SOURCE   : 'A feature reaches `complete` only with an approved contract, a passing QA verdict, and evidence on disk.'  (Section 6)
+  TEMPLATE : 'A feature reaches `complete` only with an approved contract, a passing QA verdict, and evidence on disk.'  (Section 6)
+[MATCH] Plan-Done
+  SOURCE   : "A phase's features are planned only with atomic acceptance tests inside an enforced scope budget."  (Section 7)
+  TEMPLATE : "A phase's features are planned only with atomic acceptance tests inside an enforced scope budget."  (Section 7)
+[MATCH] Merge-Done
+  SOURCE   : 'A change is mergeable only when every CI job and the human-review gate pass together.'  (Section 8)
+  TEMPLATE : 'A change is mergeable only when every CI job and the human-review gate pass together.'  (Section 8)
+[MATCH] Release-Done
+  SOURCE   : 'A version is released only after changelog roll-up, human sign-off, and a tag cut at the signed-off commit.'  (Section 9)
+  TEMPLATE : 'A version is released only after changelog roll-up, human sign-off, and a tag cut at the signed-off commit.'  (Section 9)
+
+PASS -- all 7 checklist-layer epigraphs are byte-for-byte verbatim against standard/definition_of_done.md Section 2's layer table (text AND cited Section N), for all 7 rows checked (contract's own adversarial-check floor was 3; all 7 were checked).
+EXIT:0

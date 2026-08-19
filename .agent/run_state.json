@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "013-definition-of-done",
-  "current_feature": "095",
+  "current_feature": "098",
   "status": "in_progress",
-  "updated_at": "2026-08-19T10:19:17Z",
+  "updated_at": "2026-08-19T10:54:36Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -199,6 +199,11 @@
       "attempts": 1,
       "limit": 3,
       "note": "Mode B approved round 1 (boundary writes ruled harmless and normalized); one QA carry-forward (generator evidence shape) resolved by evaluator re-capture."
+    },
+    "095-implementation": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Mode B rejected rounds 1 and 2 on the dod_ref carriage-assertion phrasing (non_goals[8]; the round-2 rejection proved the residual defect by grammatical substitution test — the orchestrator's own implementation brief had wrongly suggested present-tense phrasing was acceptable); rework 2 landed the two-sentence restructure (carriage delegated to schema/README.md; the path token in a location-only sentence); Mode B round 3 approved with empty arrays."
     }
   },
   "history": [
@@ -1318,6 +1323,18 @@
       "event": "feature_complete",
       "feature": "096",
       "detail": "Feature 096 COMPLETE: .github/PULL_REQUEST_TEMPLATE.md (85 lines) — the Definition of Done's merge-layer projection: nine substantive reviewer-facing checkboxes (validate 16/16; fixtures self-test; e2e-when-payload-touched; C8 pairing; the C16 chain; Section-5 evidence shape; CHANGELOG entry; the release close-out gate with the git-tracked pathful supplement legitimately earned; no-self-merge/operator-only tag) plus the CHANGELOG entry. Loop 1: contract approved at revision 1 (the Mode A round-1 rejection generalized NDEBT-040 to fixed-anchor guards under parallel execution; the flip-tolerant decomposition guards were then proven against sibling 097's real mid-review landing). Loop 2: Mode B approved round 1 (the generator's out-of-instruction run_state/evidence writes ruled truthful+harmless, orchestrator-normalized on the record); evaluator QA 15/15 with the reserved MANUAL nine-box adversarial read (9/9 stand; the automated keyword check had been proven vacuously satisfiable) and full Section-5 re-capture (the generator's banner-first files not relied upon). The evaluator's auxiliary compliance.yml-jobs finding was checked by the orchestrator and found mistaken (three jobs confirmed declared) — no doc fix needed. Evidence-capture gate PASS. Canonical-first flips done. Next: 095 implementation (contract approved; active_contract_id -> 095); then 098."
+    },
+    {
+      "at": "2026-08-19T10:45:37Z",
+      "event": "generator_rework",
+      "feature": "095",
+      "detail": "Generator applied Loop 2 rework round 2 of 3 for contract 095 (templates/DoD.md) in response to validator Mode B round-2 rejection of the Linking This Checklist (dod_ref) paragraph: the prior phrasing (\"several Nizam schemas (see schema/README.md) that live under schema/ (for example schema/contract.schema.json)\") was proven by a substitution test to assert schema/contract.schema.json as a carrier of dod_ref via its RECIPIENT noun-phrase parenthetical -- substituting a non-carrier schema (schema/manifest.schema.json) made the sentence false. Fix applied per prescribed shape: split into a carrier-naming sentence (\"...several Nizam schemas (see schema/README.md for which artifact schemas define it), naming the path to the Definition of Done document...\") followed by a SEPARATE location-only sentence (\"Nizam schema files live under schema/, such as schema/contract.schema.json.\") whose truth does not depend on which schemas carry dod_ref -- substituting schema/manifest.schema.json into the location sentence remains true and non-misleading. Single-hunk edit confined to templates/DoD.md lines 140-144 (verified via diff against a pre-edit backup); nothing else in the file changed. Re-verified: contract verification[8] command PASS (dod_ref present, feature 094 referenced by id, cited schema path schema/contract.schema.json exists on disk); tools/validate.sh --target templates/DoD.md exits 0 with C1/C2/C3/C9/C10 each individually PASS; full default sweep SUMMARY: 16 passed, 0 failed. No placeholder tokens altered, no eighth per-layer checklist block introduced (still exactly seven Step..Release-Done blocks plus Ecosystem-Done pointer, Project-Specific, Floor-not-Guarantee, and Linking sections). Coordination fields (status, active_contract_id, current_feature) intentionally left untouched per this run's own precedent (2026-08-19T10:04:37Z state_normalized entry: coordination namespace is orchestrator-owned) -- Mode B has not yet re-reviewed this round's edit. Next: validator Mode B round-2-repair review of contract 095's reworked implementation."
+    },
+    {
+      "at": "2026-08-19T10:54:36Z",
+      "event": "feature_complete",
+      "feature": "095",
+      "detail": "Feature 095 COMPLETE: templates/DoD.md (147 lines) — the copy-and-fill consumer projection of the Definition of Done: seven Section-N-cited checklist blocks (Step through Release, Sections 3-9, epigraphs byte-verbatim from the standard's Section 2 layer table per the QA adversarial check), the Ecosystem-Done Section-10 prose pointer (no eighth block, by orchestrator-directed design recorded in the plan of record), the project-specific extension block, the Section-12 floor-note, and the dod_ref linking note (carriage delegated to schema/README.md after a two-round Mode B phrasing negotiation resolved by grammatical substitution test — the orchestrator's implementation brief contributed the initial error and is recorded as such). templates/README.md eight-template roll, NIZAM.json dual-site 9/9, CHANGELOG. Loop 1: revisions 2. Loop 2: Mode B rounds 1-3, evaluator QA 14/14 with honest e2e pre-commit scoping. Evidence-capture gate PASS (15 files). All six delivery features (092-097) now complete; the Dependency Enforcement Rule unblocks feature 098 (v1.1.0 release preparation), the phase's final feature. active_contract_id cleared pending 098's contract approval."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1491,7 +1508,7 @@
   },
   "scope_budget": {
     "original_estimate_lines": 4400,
-    "total_lines_changed": 4566,
+    "total_lines_changed": 5297,
     "per_feature": [
       {
         "id": "092",
@@ -1527,6 +1544,13 @@
         "actual": 846,
         "flag": "OVER",
         "note": "Landed commit git numstat: 846 lines (implementation 98: the 85-line template + CHANGELOG; the remainder is the contract, two QA artifacts, the generator's 15 self-check records PLUS the evaluator's 17 Section-5 re-captures — double evidence this once, per the Mode B carry-forward — and lifecycle state). Prior-three baseline (093,097,094): avg 967, 3x ceiling 2901 — 846 under it; OVER records actual>estimated (130). Cumulative 4566/5720."
+      },
+      {
+        "id": "095",
+        "estimated": 260,
+        "actual": 731,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 731 lines (implementation ~171: the 147-line template + three registration surfaces; the remainder is the twice-revised contract, two QA artifacts, 15 evidence files, two rework rounds' run_state records, and lifecycle state). Prior-three baseline (097,094,096): avg 810, 3x ceiling 2431 — 731 under it; OVER records actual>estimated (260). Cumulative 5297/5720."
       }
     ],
     "rebaseline": {
@@ -1718,5 +1742,5 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "095"
+  "active_contract_id": null
 }

@@ -1,0 +1,41 @@
+{
+  "feature_id": "095",
+  "qa_pass": true,
+  "checks_run": 14,
+  "checks_passed": 14,
+  "adversarial": {
+    "performed": true,
+    "description": "Not among contract 095's 14 listed verification commands. Mandatory adversarial spot-check per methodology/02_adversarial_tdd.md Sec 6-8, obeying the External Anchor Rule (Sec 7): the expected value is drawn from a source OUTSIDE the artifact under test. Chosen candidate (a): verbatim quote-fidelity of all seven checklist-layer epigraphs in templates/DoD.md against standard/definition_of_done.md Section 2's own layer table (the SOURCE One-Liner column), character-for-character -- not merely 'a Section N citation string appears somewhere in the block,' which contract verification item 7 already mechanizes structurally without ever diffing the quoted TEXT itself. This targets a gap the pipeline had not probed: a generator could satisfy item 7's heading-anchored citation-presence check while silently paraphrasing, truncating, or drifting the quoted sentence, and item 7 alone would not catch it. Deliberately NOT candidate (c) (extending the substitution test to all 14 non-carrier schemas), since that reprises the same substitution-test technique Mode B already applied to this file's dod_ref phrasing per the task framing, and NOT a repeat of the planted-eighth-block/first-occurrence-weakness hunt, since Mode B already probed that class of weakness for this file as shipped.",
+    "result": "PASS -- all 7 of 7 checklist-layer epigraphs (Step-Done, Handoff-Done, Gate-Done, Feature-Done, Plan-Done, Merge-Done, Release-Done) are byte-for-byte verbatim against standard/definition_of_done.md Section 2's layer table, both the quoted One-Liner text and the cited Section N (Sections 3-9 respectively). The task's own floor was a 3-row sample; all 7 rows were checked for completeness, and all 7 matched with zero deviation -- no paraphrase, truncation, punctuation drift, or off-by-one Section citation found in any row. Independently re-extracted both sides programmatically (the source table parsed from standard/definition_of_done.md's own Markdown table rows, the template's epigraphs parsed from templates/DoD.md's own `_\"...\"_ (\\`standard/definition_of_done.md\\` Section N)` blocks) rather than eyeballing either file, so the comparison is mechanical, not impressionistic. No required_fix.",
+    "evidence": ".agent/evidence/095/qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/095/schema-validate.txt",
+    ".agent/evidence/095/validate-target-dod.txt",
+    ".agent/evidence/095/validate-target-dod-perchecks.txt",
+    ".agent/evidence/095/nizam-dual-registration.txt",
+    ".agent/evidence/095/readme-version-changelog-wording.txt",
+    ".agent/evidence/095/placeholder-count.txt",
+    ".agent/evidence/095/layer-citations.txt",
+    ".agent/evidence/095/ecosystem-pointer.txt",
+    ".agent/evidence/095/dod-ref-pointer.txt",
+    ".agent/evidence/095/fixtures-self-test.txt",
+    ".agent/evidence/095/e2e-bootstrap.txt",
+    ".agent/evidence/095/feature-list-untouched.txt",
+    ".agent/evidence/095/validate-full-sweep.txt",
+    ".agent/evidence/095/changelog-entry.txt",
+    ".agent/evidence/095/qa-adversarial.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "coverage_warning": null,
+  "e2e_bootstrap_note": "tools/e2e_bootstrap_test.sh tags and clones HEAD (commit 9d9d32325e081225f1dc42cdc6964ca26609337a), which does NOT yet contain this feature's implementation (templates/DoD.md and its NIZAM.json/templates/README.md/CHANGELOG.md edits are all uncommitted at QA time). The run therefore exercised the pre-existing 8-entry templates[] payload -- assert_payload_present and assert_nizam_index_valid both passed against that 8-entry shape (64-65 indexed paths resolving), NOT against the 9-entry shape this feature's implementation produces. This is the Mode B round-1 ruling recorded in the contract and design_notes: acceptable pre-commit, because the 9-entry payload is exercised at the feature commit's own CI once this uncommitted work is committed. Recorded honestly here rather than claimed as payload-exercised: the new template was NOT payload-exercised by this QA round's e2e run.",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Feature 095 (templates/DoD.md, the copy-and-fill consumer Definition-of-Done checklist) APPROVED. All 14 of contract 095.json's verification commands were independently re-executed by the evaluator from repo root and each produced its own Section-5-shaped evidence file (exact invocation on line 1, verbatim captured output, literal EXIT:<code> on the final line) under .agent/evidence/095/, named per the contract's evidence_convention. All 14 passed: (1) contract 095.json, .agent/feature_list_013.json, and .agent/run_state.json all schema-validate; (2) bash tools/validate.sh --target templates/DoD.md exits 0; (3) that run names [C1] PASS, [C2] PASS, [C3] PASS, [C9] PASS, and [C10] PASS individually; (4) NIZAM.json carries templates/DoD.md at both registration sites, each grown from 8 to exactly 9 entries; (5) templates/README.md is version-bumped to 0.3.0 with a matching new change_log[0] entry, its description numeral reads 'eight' (not 'seven') with DoD named in the same description's enumeration, and its '## Frontmatter Convention' parenthetical names DoD.md; (6) templates/DoD.md carries >=5 `{{` line-count occurrences (12 total occurrence-count) with none above the closing frontmatter '---'; (7) all seven per-layer checklist blocks (Step through Release-Done) cite their pinned Section N, heading-anchored to that block specifically, and the floor-not-guarantee note cites Section 12; (8) the Ecosystem-Done mention cites Section 10 as prose with zero '- [ ] ' checklist lines before the next heading, confirming no eighth full checklist block shipped; (9) the dod_ref pointer note references feature 094 generically by id and cites an existing schema/*.schema.json path (schema/contract.schema.json) that resolves on disk; (10) bash tools/fixtures_self_test.sh exits 0 (SELF-TEST OK: 79/79 fixtures accounted for, 0 failed); (11) bash tools/e2e_bootstrap_test.sh exits 0 -- honestly recorded per e2e_bootstrap_note above: this run tagged and cloned HEAD, which lacks this feature's uncommitted implementation, so it exercised the pre-existing 8-entry templates[] payload, not the 9-entry shape this feature produces; the new template was NOT payload-exercised by this run, consistent with the Mode B round-1 ruling that this is acceptable pre-commit behavior, to be exercised at the feature commit's own CI; (12) the id-keyed feature-list decomposition guard confirms feature 095's own object is byte-identical to anchor e50414e, every other feature's delta is confined to its status key, and all prior-phase feature-list files remain byte-identical to that anchor; (13) the full default validator sweep reports SUMMARY: 16 passed, 0 failed on both required runs, exit 0 both times; (14) CHANGELOG.md's [Unreleased] section names both '095' and 'templates/DoD.md' in the house bullet style matching the feature-092/093/094/096/097 entries above it. The mandatory adversarial spot-check (verbatim, source-anchored, character-for-character comparison of all seven checklist-layer epigraphs against standard/definition_of_done.md Section 2's own layer table, External Anchor Rule satisfied by anchoring on the SOURCE table rather than the template's own prose) found all 7 rows byte-for-byte verbatim, quoted text and cited Section N both -- no drift, paraphrase, or off-by-one citation found in any row. No issues, no unsupported claims, no missing acceptance coverage found.",
+    "post_write_validate": "SUMMARY: 16 passed, 0 failed (exit 0), captured after writing this verdict via `bash tools/validate.sh`"
+  },
+  "dod_ref": "standard/definition_of_done.md"
+}

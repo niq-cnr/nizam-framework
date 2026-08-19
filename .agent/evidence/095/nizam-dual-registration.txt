@@ -1,0 +1,3 @@
+python3 -c "import json; d=json.load(open('NIZAM.json')); m=next(x for x in d['modules'] if x['path']=='templates'); assert len(m['key_documents'])==9, len(m['key_documents']); assert 'templates/DoD.md' in m['key_documents'], m['key_documents']; assert len(d['templates'])==9, len(d['templates']); assert 'templates/DoD.md' in d['templates'], d['templates']; print('PASS NIZAM.json dual-site registration shape')"
+PASS NIZAM.json dual-site registration shape
+EXIT:0
