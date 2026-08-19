@@ -76,6 +76,19 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `schema/README.md` conventions-list sentence and a version bump
   (0.14.0 -> 0.15.0) with a matching change_log entry.
 
+- **Pull-request checklist, `.github/PULL_REQUEST_TEMPLATE.md` (phase 013,
+  feature 096).** A plain-markdown PR template naming
+  `standard/definition_of_done.md` as the canonical Definition of Done and
+  projecting its Merge-Done layer into nine reviewer-facing checkboxes: the
+  full `tools/validate.sh` sweep, `tools/fixtures_self_test.sh`,
+  `tools/e2e_bootstrap_test.sh`, check C8's version/change_log pairing,
+  the check C16 contract-QA-evidence chain, the
+  `methodology/04_tool_driven_state.md` Section 5 evidence shape, a
+  `CHANGELOG.md` `[Unreleased]` entry, the phase-013 feature-097 release
+  close-out gate, and the never-self-merge / operator-only-tag rule. Not a
+  governed doc under NDS.md: carries no frontmatter and rides outside
+  every check's shipped/payload document sweep by design.
+
 ## [1.0.0] - 2026-08-15
 
 **Major release** (`methodology/06_release_train.md` §3.1): phase 012 resolves the

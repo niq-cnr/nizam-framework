@@ -1,0 +1,12 @@
+python3 - <<'PY'
+import re, subprocess
+text = open('.github/PULL_REQUEST_TEMPLATE.md').read()
+assert 'feature 097' in text or 'feature-097' in text, 'generic close-out-gate reference to feature 097 missing'
+for m in re.finditer(r'\.github/workflows/[A-Za-z0-9_.-]+', text):
+    token = m.group(0)
+    tracked = subprocess.run(['git', 'ls-files', '--error-unmatch', token], capture_output=True).returncode == 0
+    assert tracked, f'dangling forward path reference (not git-tracked): {token}'
+print('PASS generic gate reference present; any pathful supplement (if present) resolves to a git-tracked file')
+PY
+PASS generic gate reference present; any pathful supplement (if present) resolves to a git-tracked file
+EXIT:0

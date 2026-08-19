@@ -1,0 +1,27 @@
+python3 - <<'PY'
+import re
+text = open('.github/PULL_REQUEST_TEMPLATE.md').read()
+boxes = [l for l in text.splitlines() if l.startswith('- [ ]')]
+assert len(boxes) == 9, f'expected exactly 9 checkbox lines, found {len(boxes)}'
+low = [b.lower() for b in boxes]
+
+def any_line_has(*keywords):
+    return any(all(k.lower() in line for k in keywords) for line in low)
+
+checks = [
+    ('validate.sh 16/16', any_line_has('validate.sh', '16')),
+    ('fixtures_self_test', any_line_has('fixtures_self_test')),
+    ('e2e', any_line_has('e2e')),
+    ('C8 version/change_log pairing', any_line_has('version') and any('change_log' in line or 'changelog' in line for line in low)),
+    ('C16 chain', any_line_has('contract') and any(('qa' in line or 'verdict' in line) and 'evidence' in line for line in low)),
+    ('evidence Section 5 shape', any_line_has('evidence') and any('04_tool_driven_state.md' in line or 'section 5' in line for line in low)),
+    ('CHANGELOG Unreleased entry', any_line_has('changelog') and any('unreleased' in line for line in low)),
+    ('close-out gate', any_line_has('close-out', 'gate')),
+    ('no self-merge / operator-only tag', any('self-merge' in line for line in low) and any('tag' in line and 'operator' in line for line in low)),
+]
+missing = [name for name, ok in checks if not ok]
+assert not missing, f'missing checklist topics: {missing}'
+print('PASS exactly 9 checkboxes, all 9 required topics present')
+PY
+PASS exactly 9 checkboxes, all 9 required topics present
+EXIT:0

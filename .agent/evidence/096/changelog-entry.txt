@@ -1,0 +1,3 @@
+awk '/^## \[Unreleased\]/{f=1} /^## \[1\.0\.0\]/{f=0} f' CHANGELOG.md | grep -Fq '096' && awk '/^## \[Unreleased\]/{f=1} /^## \[1\.0\.0\]/{f=0} f' CHANGELOG.md | grep -Fq 'PULL_REQUEST_TEMPLATE.md' && echo 'PASS CHANGELOG entry present'
+PASS CHANGELOG entry present
+EXIT:0
