@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.38.0
+version: 0.39.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.39.0"
+    date: "2026-08-19"
+    summary: "v1.1.0 RELEASED (post-release refresh, the PR #54 precedent): the operator exercised H-FRAMEWORK-RELEASE after PR #55 merged at a2c15d2, authorizing the orchestrator to push the annotated tag; release.yml run 32282540074 succeeded with the new blocking tag-mode close-out (feature 097's gate, first real execution) passing before publication of the correctly-titled Release. The preparation disposition bullet is removed and the latest-released disposition rolls to name the new tag, keeping exactly one body line naming v1.1.0 per the close-out gate's body-scoped rule. Phase 013 is closed; the rolled-forward candidate scope (real non-scratch multi-repo pilot + lifecycle 06/08 with H-CONSOLIDATION/H-GA) stands for phase 014."
   - version: "0.38.0"
     date: "2026-08-19"
     summary: "Phase 013, feature 098 (v1.1.0 release preparation, the phase's final feature): rolls the disposition to name the prepared 1.1.0 package -- a new body bullet naming the six delivered phase-013 features and the readiness record path, inserted ahead of the existing released-tag bullet, which stays unedited. Resolves NDEBT-038 by rephrasing the stale phase-007/008 progress bullet's present-tense validator claim to dated-snapshot past-tense wording, without updating the historical figures (NDEBT-038 Open -> Resolved in DEBT.md). Current Position's released-tag facts are otherwise unchanged; H-FRAMEWORK-RELEASE sign-off and the tag remain outstanding."
@@ -618,18 +621,7 @@ successor, leaving open debt deferred to unscoped "future phases").
   ran green at `SUMMARY: 15 passed, 0 failed` (C1–C15) at the time, and the fixtures
   self-test at 57/57; the hermetic e2e bootstrap harness passed in CI (now including the
   n-case `assert_multirepo`).
-- **Release in preparation: v1.1.0 (MINOR) — awaiting `H-FRAMEWORK-RELEASE`.** Phase 013
-  (Definition of Done) delivers six purely additive, new-optional features: the canonical
-  layered Definition of Done (`standard/definition_of_done.md`, feature 093), the
-  feature-list lifecycle invariant as validator check C16 (feature 092), the release
-  close-out gate (`.github/scripts/release_closeout.py`, feature 097), the optional
-  advisory `dod_ref` key on five schemas (feature 094), and its two consumer projections
-  (`templates/DoD.md`, feature 095; `.github/PULL_REQUEST_TEMPLATE.md`, feature 096).
-  Feature 098 (this release-preparation feature) synchronized every version anchor,
-  cut the dated `[1.1.0]` CHANGELOG section, and wrote the readiness record
-  (`.agent/evidence/release-readiness-v1.1.0.md`); the H-FRAMEWORK-RELEASE sign-off and
-  tag remain outstanding — the pipeline never self-tags.
-- **Latest released tag: v1.0.0 (MAJOR) — RELEASED 2026-08-15.** The operator executed
+- **Latest released tag: v1.1.0 (MAJOR) — RELEASED 2026-08-15.** The operator executed
   `H-FRAMEWORK-RELEASE` after PR #53 merged: the annotated tag `v1.0.0` points at reviewed merge
   commit `9453b3c`, and `release.yml` run 31903527120 published
   [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.0.0)
