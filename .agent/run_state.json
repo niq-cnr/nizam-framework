@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "013-definition-of-done",
   "current_feature": "098",
-  "status": "in_progress",
-  "updated_at": "2026-08-19T13:47:26Z",
+  "status": "complete",
+  "updated_at": "2026-08-19T17:37:35Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1379,6 +1379,22 @@
       "at": "2026-08-19T13:47:26Z",
       "event": "phase_complete",
       "detail": "Phase 013-definition-of-done COMPLETE (canonical phase_013.yaml written first; manifest second; this derived record third). Seven features, all through the full contract-first loop: 092 validator check C16 (the lifecycle invariant mechanized); 093 standard/definition_of_done.md (the canonical layered standard); 094 optional dod_ref on five schemas; 095 templates/DoD.md; 096 the PR template; 097 the release close-out gate (plus the 14-tag release-anchor archaeology); 098 the v1.1.0 MINOR preparation. Process ledger: two Section-9 plan amendments (payload count; NIZAM accessor shapes), one 3-strike circuit breaker with an operator-authorized 4th revision (097), two operator scope re-baselines (2150->4400->4800), four new debt rows registered (NDEBT-037..040) with two resolved in-phase (039, 038), and the shipped mechanization catching its own phase twice (the byte-guard class generalized at 096's gate; the premature flip rejected at 098's close). The branch is release-ready; the PR to main and H-FRAMEWORK-RELEASE (the v1.1.0 annotated tag) are the operator's. The rolled-forward candidate scope (real multi-repo pilot + ecosystem 06/08 + H-CONSOLIDATION/H-GA) stands for phase 014. run_state.status stays in_progress until the post-release refresh, per the phase-012 precedent."
+    },
+    {
+      "at": "2026-08-19T13:49:38Z",
+      "event": "pr_opened",
+      "detail": "PR #55 opened: 'Phase 013 — Definition of Done + v1.1.0 release preparation (MINOR)', phase/013-definition-of-done -> main, head 8005037. CI expectation: compliance.yml three jobs green (validate 16/16, e2e, self-test) plus the new release_closeout PR-mode workflow (self-triggering — the PR touches every release surface). Never self-merged. After the operator merges: H-FRAMEWORK-RELEASE — the operator pushes the annotated v1.1.0 tag at the reviewed merge commit; release.yml runs the new blocking tag-mode close-out before publishing. This derived record rides uncommitted into the post-release records refresh, per the phase-012 'reconciled afterward' precedent."
+    },
+    {
+      "at": "2026-08-19T17:36:05Z",
+      "event": "operator_gate_decision",
+      "detail": "H-FRAMEWORK-RELEASE EXERCISED for v1.1.0. Recorded BEFORE the tag act (the NDEBT-018 rule). Operator verbatim: 'The pR #55 is merged. you are authorized to tag the release.' (2026-08-19, interactive session). PR #55 merged to main at a2c15d280c2cfe0d965608c0dc290ef28cc69597 (mergedAt 2026-08-19T17:33:57Z); verified at that commit before tagging: NIZAM.json framework.version == 1.1.0, CHANGELOG carries '## [1.1.0] - 2026-08-19' with the Minor-release banner citing Section 3.2, and no v1.1.0 ref exists locally or on origin. The operator's authorization delegates the one Orchestrator-owned release mechanic (06_release_train.md Section 6): create and push the annotated v1.1.0 tag at the reviewed merge commit. release.yml will then run the new blocking tag-mode close-out (this phase's own feature 097) before publishing the Release from the [1.1.0] section."
+    },
+    {
+      "at": "2026-08-19T17:37:35Z",
+      "event": "release_executed",
+      "feature": "098",
+      "detail": "Phase 013 (Definition of Done) COMPLETE and v1.1.0 RELEASED. PR #55 merged to main at a2c15d2 (all four CI checks green: validate 16/16, e2e, fixtures self-test, and the new release_closeout PR-mode workflow). The operator exercised H-FRAMEWORK-RELEASE (verbatim: 'The pR #55 is merged. you are authorized to tag the release.'), delegating the tag act; the orchestrator created and pushed annotated tag v1.1.0 at a2c15d2 (git cat-file -t: tag). release.yml run 32282540074 completed SUCCESS: tag verified, the NEW blocking tag-mode close-out step (feature 097's gate, its first real release execution) PASSED, and the GitHub Release published from the [1.1.0] CHANGELOG section, correctly titled 'Nizam v1.1.0 — Definition of Done (MINOR)' at 2026-08-19T17:36:18Z. Canonical phase_013.yaml and manifest phase 013 were complete at merge; this derived run state is reconciled in the post-release refresh, per the phase-012 precedent. The rolled-forward candidate scope (real non-scratch multi-repo pilot + ecosystem 06/08 with H-CONSOLIDATION/H-GA) stands for phase 014; no successor phase is activated — future work begins with a fresh planning/activation cycle."
     }
   ],
   "phase_001_scope_budget_final": {
