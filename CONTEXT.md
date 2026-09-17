@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 1.1.0
+version: 1.2.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "1.2.0"
+    date: "2026-09-17"
+    summary: "Prepare the v1.2.0 MINOR release: the Convergent Automated Code Review standard (`standard/convergent_code_review.md`, PR #57), its five closed review schemas (`schema/review_packet.schema.json`, `review_trial`, `review_ledger`, `review_suppression`, `review_replay`), the `templates/convergent-review-prompt.md` trial prompt, and the dependency-free `tools/convergent_review.py` CLI with its Linux sandbox adapter and permanent unittest suite -- purely additive, new-optional capability; nothing that validated under v1.1.0 is invalidated. H-FRAMEWORK-RELEASE remains pending; no tag is created by the pipeline."
   - version: "1.1.0"
     date: "2026-08-19"
     summary: "Prepare the v1.1.0 MINOR release, phase 013 (Definition of Done): the canonical layered Definition of Done (`standard/definition_of_done.md`), the feature-list lifecycle invariant (validator check C16), the release close-out gate (`.github/scripts/release_closeout.py`), the optional advisory `dod_ref` key on five schemas, and its two consumer projections (`templates/DoD.md`, `.github/PULL_REQUEST_TEMPLATE.md`) -- purely additive, new-optional capability; nothing that validated under v1.0.0 is invalidated. Applies the Module Map's `standard/` bullet edit deferred from feature 093 (this same version bump): the bullet now names the layered Definition of Done alongside the existing constitutional-and-standard document enumeration. H-FRAMEWORK-RELEASE remains pending; no tag is created by the pipeline."
