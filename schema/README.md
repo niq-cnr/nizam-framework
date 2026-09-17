@@ -2,10 +2,19 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.15.0
+version: 0.18.0
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.18.0"
+    date: "2026-09-17"
+    summary: "Reconcile review and Git modes with runtime Git, sandbox, no-follow I/O, replay and publication guarantees, plus standalone-ledger initial-head and exact evidence-attribution relations."
+  - version: "0.17.0"
+    date: "2026-09-17"
+    summary: "Define review-packet validity as mandatory JSON-Schema plus relational validation; add old-content and authenticated full-tree commitment fields; align all review identity grammars on backslash and C1 rejection."
+  - version: "0.16.0"
+    date: "2026-09-17"
+    summary: "Add the closed Draft 2020-12 convergent-review schema family: packet, trial, ledger, suppression, and content-addressed replay."
   - version: "0.15.0"
     date: "2026-08-19"
     summary: "Added the optional, advisory `dod_ref` string property, identically worded, to five machine-validated schemas -- contract.schema.json, qa_verdict.schema.json (both anyOf branches), feature_list.schema.json (top level), work-packet.schema.json, and engineering_finding.schema.json (phase-013 feature 094) -- naming standard/definition_of_done.md as the artifact's governing Definition of Done. Touches no `required` array on any schema, a pure loosening per methodology/06_release_train.md Sec 3.2: every previously-valid artifact remains valid. Proved with a positive fixture (tools/fixtures/feature_list_valid.json gains a dod_ref) that still passes the C16 --target sweep, plus the full default validator sweep's existing dogfood coverage (C11 over every .agent/contracts/*.json and .agent/qa/*.json, C16 over every .agent/feature_list*.json)."
@@ -63,9 +72,9 @@ Every schema in this module:
 - Declares `"$schema": "https://json-schema.org/draft/2020-12/schema"` (JSON Schema draft
   2020-12).
 - Declares a `$id`, `title`, and `description`.
-- Permits `additionalProperties` on extension points so consumer repositories can extend
-  a shape without breaking validation, while still enforcing the required keys and enums
-  that make an artifact machine-legible.
+- Declares each object's extension policy explicitly. The convergent-review family is
+  fully closed with `additionalProperties: false`; older artifact families retain their
+  documented extension points where compatibility requires them.
 - Where applicable, admits an optional, advisory `dod_ref` string property naming the
   repo-relative path to the Definition of Done document governing that artifact's
   completion claims (`standard/definition_of_done.md` in this repository) -- never
@@ -94,6 +103,13 @@ Every schema in this module:
 | `ecosystem_membership_result.schema.json` | Validates the aggregate result emitted by `tools/ecosystem_membership_run.py`: a pin-inconsistent ecosystem cannot be `PASS`, while `framework_pin_consistent: true` requires the non-empty common `framework_pin`. | `<output-dir>/membership_run.json` produced by the membership runner |
 | `reconciliation_plan.schema.json` | Validates typed, dependency-ordered cross-repository work packets. A `FAIL` plan requires non-empty `cycle_findings` and an empty `order`; C12 additionally verifies graph/order relationships for `PASS`. | `.agent/reconciliation/<execution-id>/plan.json` |
 | `release_train_manifest.schema.json` | Validates the Promote-stage artifact `ecosystem/05_release_train_coordination.md` requires — an authorized reconciliation plan's work packets admitted into a cross-repository release train: `source_plan` + its `plan_packets` (each an `(id, repo)` provenance pair), `admitted_packets` each targeting one `repo`, `train_members` (required), an `entry_gate_recorded` flag, and a `PASS`/`FAIL` `train_verdict`. One in-schema `if/then` (a `PASS` train requires `entry_gate_recorded` true). The **trace-to-plan invariant** (every admitted packet's `(id, repo)` must match a `plan_packets` entry; an orphan or repo-mismatch admission forces `train_verdict` `FAIL`) is a relational constraint enforced in code by `tools/validate.sh` C12, not by the schema — the same split as the `reconciliation_plan` cycle/order rule. | `.agent/trains/<train-id>/manifest.json` |
+| `review_packet.schema.json` | Structural stage of the closed packet contract: required review `mode`, base/head, authenticated old/current bytes, nullable `old_mode`/`new_mode`, and the mode-dependent full-audit Git commit/tree manifest. Equal content digests may represent a mode-only change when the Git modes differ. Packet validity additionally and mandatorily requires `validate_packet_relations`; Draft 2020-12 alone cannot compare sibling digest/mode pairs or project path uniqueness. | Input to `tools/convergent_review.py converge` after both validation stages. |
+| `review_trial.schema.json` | Closed observation-only output from one of exactly three independent trials; it binds the exact packet digest and therefore intentionally carries no independent mode field, model verdict, count, lifecycle, suppression, or trusted identifier. | One raw trial input to `tools/convergent_review.py converge`. |
+| `review_ledger.schema.json` | Closed deterministic finding ledger that copies the authenticated packet review `mode` and records semantic fingerprints, `new`/`persisting`/`resolved`/`reopened`/`suppressed` lifecycle, current-review evidence, consensus, counts, and verdict. Draft 2020-12 validates its local shape; `validate_ledger` additionally requires initial finding heads to equal `head_sha` and evidence trial attribution to equal the corresponding current consensus exactly. | Canonical `ledger.json` emitted by the convergent-review CLI. |
+| `review_suppression.schema.json` | Closed human authorization record for suppressing one deterministic finding while preserving authorizer, reference, timestamp, reason, and record digest provenance. | Optional suppression input to the convergent-review CLI. |
+| `review_replay.schema.json` | Closed content-addressed manifest retaining the raw packet, all three raw trials, optional prior/suppression inputs, and deterministic output digests. It intentionally has no separate mode field: replay revalidates the retained packet mode and requires exact reproduction of the mode-bearing ledger. | Canonical `replay.json` emitted and checked by `verify-replay`. |
+
+The five schemas define closed artifact shapes, not the complete runtime trust boundary. `validate_packet_relations` additionally authenticates content and mode relationships, full-tree completeness, Git blob IDs, and the commit header tree binding. `validate_ledger` additionally enforces cross-object equality and projected-trial-set relations that Draft 2020-12 cannot express here. Because ledger schema version 1.0.0 has no evidence-origin head or source-ledger field, later ledgers use the stricter safe representation: historical evidence remains in the digest-bound retained prior ledger, while current `evidence` and `resolution_evidence` contain only trial numbers exactly matching current consensus. The trusted builder separately controls the Git environment, disables replace refs, and distinguishes an absent path from an object-read error. The evaluator and replay verifier separately enforce non-executable trial roots, exclusive no-follow output I/O, and no-follow ancestor walks. Atomic no-replace publication and the `PublicationResult.visible`/`durable` transition are also runtime obligations; none can be proven by Draft 2020-12 validation alone.
 
 ## DD-3 — Evidence Externalisation
 

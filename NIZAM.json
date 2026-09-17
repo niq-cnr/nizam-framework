@@ -21,7 +21,8 @@
         "standard/permission_classes.md",
         "standard/cross_repo_governance.md",
         "standard/README.md",
-        "standard/definition_of_done.md"
+        "standard/definition_of_done.md",
+        "standard/convergent_code_review.md"
       ]
     },
     {
@@ -61,7 +62,8 @@
         "templates/phase_template.yaml",
         "templates/manifest.template.json",
         "templates/README.md",
-        "templates/DoD.md"
+        "templates/DoD.md",
+        "templates/convergent-review-prompt.md"
       ]
     },
     {
@@ -87,7 +89,12 @@
         "schema/ecosystem_membership_result.schema.json",
         "schema/reconciliation_plan.schema.json",
         "schema/release_train_manifest.schema.json",
-        "schema/README.md"
+        "schema/README.md",
+        "schema/review_packet.schema.json",
+        "schema/review_trial.schema.json",
+        "schema/review_ledger.schema.json",
+        "schema/review_suppression.schema.json",
+        "schema/review_replay.schema.json"
       ]
     },
     {
@@ -98,7 +105,13 @@
         "tools/SKILL.md",
         "tools/interface.md",
         "tools/README.md",
-        "tools/validate.sh"
+        "tools/validate.sh",
+        "tools/convergent_review.py",
+        "tools/evaluate_convergent_review_prompt.py",
+        "tools/linux_trial_sandbox.sh",
+        "tools/isolated_trial_adapter.py",
+        "tools/test_convergent_review.py",
+        "tools/fixtures/convergent_review/manifest.json"
       ]
     },
     {
@@ -282,6 +295,11 @@
       "id": "nizam-definition-of-done",
       "summary": "The canonical, layered Definition of Done aggregating the framework's eight done-layers (Step, Handoff, Gate, Feature, Plan, Merge, Release, Ecosystem) by citing each layer's existing authority; Feature-Done is mechanized by check C16, Merge/Release-Done by the phase-013 feature-097 release close-out gate.",
       "authoritative_source": "standard/definition_of_done.md"
+    },
+    {
+      "id": "nizam-convergent-code-review",
+      "summary": "Prior-ledger-first automated review using exactly three observation-only trials, deterministic semantic fingerprints and lifecycle, fail-closed carrying, human-authorized suppression, and content-addressed replay.",
+      "authoritative_source": "standard/convergent_code_review.md"
     }
   ],
   "schemas": [
@@ -303,7 +321,12 @@
     "schema/ecosystem_membership.schema.json",
     "schema/ecosystem_membership_result.schema.json",
     "schema/reconciliation_plan.schema.json",
-    "schema/release_train_manifest.schema.json"
+    "schema/release_train_manifest.schema.json",
+    "schema/review_packet.schema.json",
+    "schema/review_trial.schema.json",
+    "schema/review_ledger.schema.json",
+    "schema/review_suppression.schema.json",
+    "schema/review_replay.schema.json"
   ],
   "templates": [
     "templates/CONTEXT.md",
@@ -314,7 +337,8 @@
     "templates/phase_template.yaml",
     "templates/manifest.template.json",
     "templates/README.md",
-    "templates/DoD.md"
+    "templates/DoD.md",
+    "templates/convergent-review-prompt.md"
   ],
   "consumption_guidance": "Query this index first. Locate the module, capability, schema, or template path that matches the task at hand, then read only that one file. Do not bulk-read an entire governance directory (standard/, methodology/, templates/, schema/, tools/, or ecosystem/) for a single task; that is context exhaustion, the failure DD-1 remediates (see methodology/04_tool_driven_state.md). Use the 'capabilities' array to resolve a named concern to its single authoritative_source, the 'modules' array to find a module's key_documents, and the 'schemas'/'templates' arrays to resolve a machine-artifact path directly.",
   "index_schema": {

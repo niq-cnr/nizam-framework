@@ -1,0 +1,368 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:review_packet.schema.json",
+  "title": "Nizam Convergent Review Packet",
+  "description": "Closed packet. Validity requires both this structural schema and the mandatory relational validator in tools/convergent_review.py; pure JSON Schema cannot compare sibling digests or project path uniqueness across objects.",
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "not": {
+        "const": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*\\\\)(?!\\.{1,2}(?:/|$))(?!.*//)(?!.*\\/\\.{1,2}(?:/|$))(?!.*[\\u0000-\\u001F\\u007F-\\u009F]).+$"
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512,
+      "pattern": "^(?=.+/.+)(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*\\\\)(?!\\.{1,2}(?:/|$))(?!.*//)(?!.*\\/\\.{1,2}(?:/|$))(?!.*[\\u0000-\\u001F\\u007F-\\u009F]).+$"
+    },
+    "tree_entry": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "mode": {
+          "enum": [
+            "100644",
+            "100755",
+            "120000"
+          ]
+        },
+        "object_id": {
+          "$ref": "#/$defs/sha"
+        }
+      },
+      "required": [
+        "path",
+        "mode",
+        "object_id"
+      ],
+      "additionalProperties": false
+    },
+    "scope_commitment": {
+      "type": "object",
+      "properties": {
+        "object_format": {
+          "const": "git-sha1"
+        },
+        "commit_content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000000
+        },
+        "root_tree": {
+          "$ref": "#/$defs/sha"
+        },
+        "manifest_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 100000,
+          "items": {
+            "$ref": "#/$defs/tree_entry"
+          }
+        }
+      },
+      "required": [
+        "object_format",
+        "commit_content",
+        "root_tree",
+        "manifest_digest",
+        "entries"
+      ],
+      "additionalProperties": false
+    },
+    "review_file": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "content_digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "content": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 10000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "content_digest",
+        "content"
+      ],
+      "additionalProperties": false
+    },
+    "delta_entry": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "old_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "old_content": {
+          "oneOf": [
+            {
+              "type": "string",
+              "maxLength": 10000000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "new_digest": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "old_mode": {
+          "oneOf": [
+            {
+              "enum": [
+                "100644",
+                "100755",
+                "120000"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "new_mode": {
+          "oneOf": [
+            {
+              "enum": [
+                "100644",
+                "100755",
+                "120000"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "path",
+        "old_digest",
+        "old_content",
+        "old_mode",
+        "new_digest",
+        "new_mode"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "old_digest": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "old_digest"
+            ]
+          },
+          "then": {
+            "properties": {
+              "old_content": {
+                "type": "null"
+              },
+              "old_mode": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "old_content": {
+                "type": "string"
+              },
+              "old_mode": {
+                "enum": [
+                  "100644",
+                  "100755",
+                  "120000"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "new_digest": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "new_digest"
+            ]
+          },
+          "then": {
+            "properties": {
+              "new_mode": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "new_mode": {
+                "enum": [
+                  "100644",
+                  "100755",
+                  "120000"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "not": {
+            "properties": {
+              "old_digest": {
+                "type": "null"
+              },
+              "new_digest": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "old_digest",
+              "new_digest"
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "review_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "mode": {
+      "enum": [
+        "ordinary",
+        "full_audit"
+      ]
+    },
+    "base_sha": {
+      "$ref": "#/$defs/sha"
+    },
+    "head_sha": {
+      "$ref": "#/$defs/sha"
+    },
+    "scope_commitment": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/scope_commitment"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "delta": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/delta_entry"
+      }
+    },
+    "review_files": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "$ref": "#/$defs/review_file"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "review_id",
+    "repository",
+    "mode",
+    "base_sha",
+    "head_sha",
+    "scope_commitment",
+    "delta",
+    "review_files"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "mode": {
+            "const": "full_audit"
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "scope_commitment": {
+            "$ref": "#/$defs/scope_commitment"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "scope_commitment": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ]
+}
