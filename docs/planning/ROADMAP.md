@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.39.0
+version: 0.40.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.40.0"
+    date: "2026-09-17"
+    summary: "v1.2.0 (MINOR) release-in-preparation disposition: a new Current Position bullet names the prepared 1.2.0 package -- the Convergent Automated Code Review capability that landed on main via PR #57 (c0e0d04) outside a numbered phase (standard, five closed review schemas, deterministic CLI + evaluator + Linux sandbox adapter + stdlib test suite, trial prompt template, SKILL.md Section 9 routing) -- and the readiness record path, inserted ahead of the released-tag bullet so exactly one body line names v1.2.0 per the close-out gate's body-scoped rule. Corrects the latest-released bullet, which the v0.39.0 refresh rolled by version only: it now describes v1.1.0 truthfully (MINOR, released 2026-08-19 at a2c15d2 after PR #55, release.yml run 32282540074) and the v1.0.0 MAJOR facts move to the prior-released bullet alongside v0.9.0. H-FRAMEWORK-RELEASE sign-off and the tag remain outstanding; the pipeline never self-tags."
   - version: "0.39.0"
     date: "2026-08-19"
     summary: "v1.1.0 RELEASED (post-release refresh, the PR #54 precedent): the operator exercised H-FRAMEWORK-RELEASE after PR #55 merged at a2c15d2, authorizing the orchestrator to push the annotated tag; release.yml run 32282540074 succeeded with the new blocking tag-mode close-out (feature 097's gate, first real execution) passing before publication of the correctly-titled Release. The preparation disposition bullet is removed and the latest-released disposition rolls to name the new tag, keeping exactly one body line naming v1.1.0 per the close-out gate's body-scoped rule. Phase 013 is closed; the rolled-forward candidate scope (real non-scratch multi-repo pilot + lifecycle 06/08 with H-CONSOLIDATION/H-GA) stands for phase 014."
@@ -621,16 +624,35 @@ successor, leaving open debt deferred to unscoped "future phases").
   ran green at `SUMMARY: 15 passed, 0 failed` (C1–C15) at the time, and the fixtures
   self-test at 57/57; the hermetic e2e bootstrap harness passed in CI (now including the
   n-case `assert_multirepo`).
-- **Latest released tag: v1.1.0 (MAJOR) — RELEASED 2026-08-15.** The operator executed
-  `H-FRAMEWORK-RELEASE` after PR #53 merged: the annotated tag `v1.0.0` points at reviewed merge
-  commit `9453b3c`, and `release.yml` run 31903527120 published
-  [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.0.0)
-  from the `[1.0.0]` CHANGELOG section. The clean-break release repairs every issue-52 finding;
-  affected consumers must follow `docs/migration-v1.0.0.md` and obtain their own
-  `H-CONSUMER-UPGRADE` decision before adoption. **`NDEBT-036` resolved.**
-- Prior released tag: v0.9.0 (MINOR) — released 2026-07-22 at merge commit `5b19b85`
-  (PR #50), carrying phases 007–011 and the complete 0–n loop; release workflow run
-  29937596953 succeeded. v0.8.0 is the preceding release.
+- **Release in preparation: v1.2.0 (MINOR) — awaiting `H-FRAMEWORK-RELEASE`.** The
+  Convergent Automated Code Review capability landed on `main` via PR #57 (`c0e0d04`,
+  2026-09-17) outside a numbered phase — no phase specification, feature list, contract,
+  or QA verdict accompanies it, so check C16 has nothing to police for it and its
+  verification rests on the shipped `tools/test_convergent_review.py` suite (54 tests
+  over the frozen twelve-case corpus) plus the ordinary CI sweep. It delivers purely
+  additive, new-optional content: the standard (`standard/convergent_code_review.md`),
+  five closed review artifact schemas (packet, trial, ledger, suppression, replay), the
+  deterministic CLI and prompt evaluator with the Linux sandbox adapter under `tools/`,
+  the `templates/convergent-review-prompt.md` trial prompt, and `tools/SKILL.md`
+  Section 9 routing. The release preparation synchronized every version anchor, cut the
+  dated `[1.2.0]` CHANGELOG section, and wrote the readiness record
+  (`.agent/evidence/release-readiness-v1.2.0.md`); the H-FRAMEWORK-RELEASE sign-off and
+  tag remain outstanding — the pipeline never self-tags.
+- **Latest released tag: v1.1.0 (MINOR) — RELEASED 2026-08-19.** The operator exercised
+  `H-FRAMEWORK-RELEASE` after PR #55 merged (verbatim: "The pR #55 is merged. you are
+  authorized to tag the release."): the annotated tag `v1.1.0` points at reviewed merge
+  commit `a2c15d2`, and `release.yml` run 32282540074 — the first real execution of the
+  phase-013 feature-097 blocking tag-mode close-out — published
+  [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.1.0)
+  from the `[1.1.0]` CHANGELOG section. Phase 013 (Definition of Done) ships in it.
+- Prior released tags: v1.0.0 (MAJOR) — released 2026-08-15 at reviewed merge commit
+  `9453b3c` (PR #53); `release.yml` run 31903527120 published the Release from the
+  `[1.0.0]` section. The clean-break release repairs every issue-52 finding; affected
+  consumers must follow `docs/migration-v1.0.0.md` and obtain their own
+  `H-CONSUMER-UPGRADE` decision before adoption (**`NDEBT-036` resolved**). v0.9.0
+  (MINOR) — released 2026-07-22 at merge commit `5b19b85` (PR #50), carrying phases
+  007–011 and the complete 0–n loop; release workflow run 29937596953 succeeded. v0.8.0
+  is the preceding release.
 - Open debt (current, at DEBT.md v0.40.0): two rows remain Open, both Low enhancements —
   `NDEBT-026` (C15 mapping-direction depth) and `NDEBT-034` (per-member clone cost).
   `NDEBT-036` is **Resolved** by Phase 012 and the v1.0.0 release.

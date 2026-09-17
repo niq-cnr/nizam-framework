@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="framework-version" content="1.1.0">
+<meta name="framework-version" content="1.2.0">
 <meta name="description" content="Nizam: a generalised, AI-legible, versioned governance framework. This self-contained guide explains what it is, how to adopt it, and how its contract-first execution loop works.">
 <meta name="color-scheme" content="light dark">
 <title>Nizam User Guide</title>
@@ -535,6 +535,12 @@
         Handoff, Gate, Feature, Plan, Merge, Release, Ecosystem) by citing each layer's existing authority;
         its Feature-Done layer is mechanized by check C16, and its Merge-Done and Release-Done layers by the
         release close-out gate.</p>
+        <p><code>standard/convergent_code_review.md</code> defines prior-ledger-first automated code review:
+        a model is an observation-only sensor across exactly three sandbox-isolated trials, while deterministic
+        code owns semantic fingerprints, the finding lifecycle, counts, the verdict, Markdown rendering, and
+        content-addressed replay verification. Its artifact contracts are the five closed review schemas
+        (packet, trial, ledger, suppression, replay) under <code>schema/</code>, and its normative
+        implementation is <code>tools/convergent_review.py</code>.</p>
       </article>
       <article class="card">
         <h3><code>methodology/</code></h3>
@@ -582,6 +588,12 @@
         interface &mdash; any agent runtime loads to act on the framework.</p>
         <p>Key documents: <code>tools/skill.json</code>, <code>tools/SKILL.md</code>,
         <code>tools/interface.md</code>, <code>tools/validate.sh</code>, <code>tools/README.md</code>.</p>
+        <p><code>tools/convergent_review.py</code> is the dependency-free deterministic review CLI behind
+        <code>standard/convergent_code_review.md</code> (packet construction, fingerprints, convergence,
+        rendering, ledger extraction, replay verification), <code>tools/evaluate_convergent_review_prompt.py</code>
+        drives the three sandboxed trials through <code>tools/linux_trial_sandbox.sh</code> and
+        <code>tools/isolated_trial_adapter.py</code>, and <code>tools/test_convergent_review.py</code> is the
+        permanent stdlib test suite over the frozen fixture corpus.</p>
       </article>
       <article class="card">
         <h3><code>ecosystem/</code></h3>
@@ -666,7 +678,7 @@
 </main>
 
 <footer>
-  <p>Nizam framework version <strong><span id="footer-version">1.1.0</span></strong>.</p>
+  <p>Nizam framework version <strong><span id="footer-version">1.2.0</span></strong>.</p>
   <p><a href="https://github.com/niq-cnr/nizam-framework">github.com/niq-cnr/nizam-framework</a></p>
 </footer>
 

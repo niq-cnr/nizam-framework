@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 1.1.0
+version: 1.2.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "1.2.0"
+    date: "2026-09-17"
+    summary: "Prepare the v1.2.0 MINOR release: the Convergent Automated Code Review standard (`standard/convergent_code_review.md`), its five closed review artifact schemas (packet, trial, ledger, suppression, replay), the deterministic review CLI and prompt evaluator with the Linux sandbox adapter and stdlib test suite under `tools/`, the `templates/convergent-review-prompt.md` trial prompt, and `tools/SKILL.md` Section 9 routing -- all landed on main via PR #57 as purely additive, new-optional capability; no previously shipped schema, file, or protocol id is narrowed, removed, or renamed, so nothing that validated under v1.1.0 is invalidated. The Module Map's `schema/`, `standard/`, and `templates/` bullets now name the review artifact schema family, the Convergent Automated Code Review standard, and the DoD and convergent-review prompt templates. H-FRAMEWORK-RELEASE remains pending; no tag is created by the pipeline."
   - version: "1.1.0"
     date: "2026-08-19"
     summary: "Prepare the v1.1.0 MINOR release, phase 013 (Definition of Done): the canonical layered Definition of Done (`standard/definition_of_done.md`), the feature-list lifecycle invariant (validator check C16), the release close-out gate (`.github/scripts/release_closeout.py`), the optional advisory `dod_ref` key on five schemas, and its two consumer projections (`templates/DoD.md`, `.github/PULL_REQUEST_TEMPLATE.md`) -- purely additive, new-optional capability; nothing that validated under v1.0.0 is invalidated. Applies the Module Map's `standard/` bullet edit deferred from feature 093 (this same version bump): the bullet now names the layered Definition of Done alongside the existing constitutional-and-standard document enumeration. H-FRAMEWORK-RELEASE remains pending; no tag is created by the pipeline."
@@ -49,10 +52,10 @@ infrastructure, and not a runtime service.
 
 ## Module Map (Hybrid Mono-Repo)
 
-- `schema/` — JSON Schemas for every machine-readable artifact (frontmatter, manifest, phase, feature list, contract, QA verdict, run state).
-- `standard/` — The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), the anti-hallucination constraints, the constitutional policy set (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance), and the layered Definition of Done.
+- `schema/` — JSON Schemas for every machine-readable artifact (frontmatter, manifest, phase, feature list, contract, QA verdict, run state, and the convergent-review artifact family: packet, trial, ledger, suppression, replay).
+- `standard/` — The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), the anti-hallucination constraints, the constitutional policy set (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance), the layered Definition of Done, and the Convergent Automated Code Review standard.
 - `methodology/` — Planning, execution, adversarial TDD, circuit breaker, tool-driven state, release train protocols.
-- `templates/` — Consumer-repo templates (CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest).
+- `templates/` — Consumer-repo templates (CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest, DoD, convergent-review prompt).
 - `tools/` — The single runtime-agnostic skill payload (no per-runtime forks), entered via `tools/SKILL.md`.
 - `registry/` — The `NIZAM.json` index schema and scope-definition patterns.
 - `docs/` — Architecture Decision Records (`docs/architecture/`) and the self-contained HTML user guide (`docs/guide/index.html`).

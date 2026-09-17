@@ -1,0 +1,7 @@
+python3 -c "import json;print('NIZAM.json framework.version', json.load(open('NIZAM.json'))['framework']['version'])"; grep -n '^version:' CONTEXT.md; grep -n -m1 '  - version:' CONTEXT.md; grep -n 'framework-version\|footer-version' docs/guide/index.html
+NIZAM.json framework.version 1.2.0
+5:version: 1.2.0
+9:  - version: "1.2.0"
+6:<meta name="framework-version" content="1.2.0">
+681:  <p>Nizam framework version <strong><span id="footer-version">1.2.0</span></strong>.</p>
+EXIT:0

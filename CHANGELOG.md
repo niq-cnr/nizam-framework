@@ -7,6 +7,101 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-17
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): the Convergent
+Automated Code Review capability landed on `main` via PR #57 as purely additive,
+new-optional content -- one new standard, five new schemas that validate only new
+artifact types, new tools, and one new template. No previously shipped schema, file,
+or protocol id is narrowed, removed, or renamed, so nothing that validated under
+v1.1.0 is invalidated. Consumers upgrade by re-bootstrapping against the `v1.2.0`
+tag (Section 5); no migration guide is required.
+
+### Added
+
+- **Convergent Automated Code Review standard,
+  `standard/convergent_code_review.md`.** A twelve-section, runtime-neutral
+  review protocol in which any model or review agent is an observation-only
+  sensor: it may report an active candidate or a resolution observation with
+  evidence, but deterministic code owns input validation, semantic
+  fingerprints (SHA-256 over canonical JSON of repository, path, symbol,
+  category, and rule), the closed `new` / `persisting` / `resolved` /
+  `reopened` / `suppressed` lifecycle, counts, the `approve` /
+  `request_changes` verdict, Markdown rendering, the embedded ledger, and
+  replay verification. Review is prior-ledger-first and fails closed: an
+  unresolved prior finding is carried even when no trial repeats it, a
+  singleton candidate is rejected, resolution needs authentic evidence from at
+  least two of exactly three independent trials, and a rename alone never
+  resolves a finding. Packets are built from immutable Git objects by a trusted
+  builder (ordinary review discovers only on the delta; whole-tree discovery
+  requires an explicit human `full_audit` mode with a commit-to-tree
+  commitment), trials run through an enforceable sandbox adapter, suppression
+  requires a separate human-authorized record, and publication is atomic and
+  no-replace. Registered in `NIZAM.json` (capability
+  `nizam-convergent-code-review` and the `standard` module's key_documents)
+  and `standard/README.md` (0.3.0 -> 0.5.0).
+
+- **Review artifact schema family, five closed Draft 2020-12 schemas.**
+  `schema/review_packet.schema.json` (the authenticated review universe:
+  `review_files` with content digests, the old/new digest-and-mode `delta`,
+  and the mode-dependent full-audit tree commitment),
+  `schema/review_trial.schema.json` (one raw observation-only trial bound to
+  the exact packet digest and head), `schema/review_ledger.schema.json` (the
+  deterministic finding ledger with lifecycle, consensus, evidence, counts,
+  and verdict), `schema/review_suppression.schema.json` (the human
+  authorization record for suppressing one fingerprint), and
+  `schema/review_replay.schema.json` (the content-addressed retention
+  manifest). All five use `additionalProperties: false`; none of the
+  previously shipped schemas is touched, so this is new-artifact-type
+  coverage only, not a narrowing. Registered in `NIZAM.json` (the top-level
+  `schemas[]` array and the `schema` module's key_documents) and documented in
+  `schema/README.md` (0.15.0 -> 0.18.0), which now states that packet
+  validity is a two-stage contract: JSON Schema plus the mandatory relational
+  validation the CLI performs.
+
+- **Deterministic review tooling under `tools/`.** `tools/convergent_review.py`
+  is the dependency-free reference CLI with the six operations the standard
+  requires (`build-packet`, `fingerprint`, `converge`, `render`,
+  `extract-ledger`, `verify-replay`); `tools/evaluate_convergent_review_prompt.py`
+  drives exactly three runner invocations through a trusted sandbox adapter
+  with exclusive, no-follow per-trial I/O and publishes only after replay
+  verification; `tools/linux_trial_sandbox.sh` plus
+  `tools/isolated_trial_adapter.py` is the Linux reference adapter
+  (user/network/IPC/UTS/PID namespaces plus Landlock, trial-root data
+  non-executable); and `tools/test_convergent_review.py` is the permanent
+  stdlib `unittest` suite (54 tests) over the frozen twelve-case corpus under
+  `tools/fixtures/convergent_review/` (indexed by its `manifest.json`, every
+  case retaining its three raw trials) plus adversarial blocker regressions.
+  All registered in `NIZAM.json`'s `tools` module key_documents and documented
+  in `tools/README.md` (0.8.0 -> 0.11.0).
+
+- **Trial prompt template, `templates/convergent-review-prompt.md`.** The
+  runtime-neutral, closed-output prompt for one of the three observation-only
+  trials over an authenticated packet; its placeholders are rendered by the
+  prompt evaluator inside the per-trial sandbox. Registered as the ninth
+  governed template in `NIZAM.json` (both the top-level `templates[]` array and
+  the `templates` module's key_documents) and `templates/README.md`
+  (0.3.0 -> 0.4.0).
+
+- **Skill routing, `tools/SKILL.md` Section 9 (0.4.0 -> 0.5.0).** A new
+  "Convergent Automated Code Review" section routes any automated review to
+  the standard and the CLI before it runs or is consumed, and the References
+  section (now Section 10) names `standard/convergent_code_review.md` among the
+  authoritative documents the skill defers to.
+
+### Changed
+
+- **Release anchors rolled to 1.2.0** in C10 lockstep: `NIZAM.json`
+  `framework.version`, `CONTEXT.md` (frontmatter and `change_log[0]`; its
+  Module Map now also names the review schema family, the Convergent Automated
+  Code Review standard, and the DoD and convergent-review prompt templates),
+  both `docs/guide/index.html` anchors (plus a `standard/` module-card
+  paragraph and a `tools/` module-card paragraph describing the new
+  capability), and README.md's seven rolling version pins (the
+  `docs/migration-v1.0.0.md` link stays pinned to v1.0.0 by design: no new
+  migration guide ships with a MINOR release). README's `standard/` module
+  row now also names the layered Definition of Done and the new standard.
+
 ## [1.1.0] - 2026-08-19
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): phase 013 (Definition

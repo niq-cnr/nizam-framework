@@ -1,0 +1,3 @@
+awk 'BEGIN{d=0} /^---$/{d++; next} d>=2 && /Release in preparation: v1\.2\.0|Latest released tag: v1\.2\.0/{c++} END{print "ROADMAP body lines naming v1.2.0:", c+0}' docs/planning/ROADMAP.md
+ROADMAP body lines naming v1.2.0: 1
+EXIT:0

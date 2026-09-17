@@ -19,12 +19,12 @@ as your instructions payload — do not bulk-read the governance directories.
 Fetch `bootstrap.sh` pinned to the latest released tag and run it against your repo:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.1.0/bootstrap.sh -o bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.2.0/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v1.1.0 ./bootstrap.sh --tag v1.1.0
+GOVERNANCE_TAG=v1.2.0 ./bootstrap.sh --tag v1.2.0
 ```
 
-`--tag v1.1.0` (equivalently `GOVERNANCE_TAG=v1.1.0`) pins the inheritance to a real
+`--tag v1.2.0` (equivalently `GOVERNANCE_TAG=v1.2.0`) pins the inheritance to a real
 released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). This
 clones the pinned tag, stages the governance payload, verifies it landed correctly, and
 atomically installs it under `.nizam/` (the default target). What you get:
@@ -41,7 +41,7 @@ atomically installs it under `.nizam/` (the default target). What you get:
 └── provenance.json
 ```
 
-See the [v1.1.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.1.0)
+See the [v1.2.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.2.0)
 and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 `tools/validate.sh` (the same repo-local compliance check that
 `.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the
@@ -63,7 +63,7 @@ and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 | Module | Purpose |
 |--------|---------|
 | `schema/` | JSON Schemas for every machine-readable framework artifact. |
-| `standard/` | The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), the anti-hallucination constraints, and the constitutional policy set (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance). |
+| `standard/` | The Nizam Documentation Standard (NDS), the Agent Governance Framework (AGF), the Governance Inheritance Protocol (GIP), the anti-hallucination constraints, and the constitutional policy set (capability profiles, CI gates, MCP policy, failure modes, provenance, permission classes, cross-repo governance), the layered Definition of Done, and the Convergent Automated Code Review standard. |
 | `methodology/` | Planning, execution, adversarial TDD, circuit breaker, release train. |
 | `templates/` | Consumer-repo document and manifest templates. |
 | `tools/` | The single runtime-agnostic skill payload. |
