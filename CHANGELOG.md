@@ -7,6 +7,54 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-17
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): the Convergent
+Automated Code Review standard (PR #57) delivers a runtime-neutral, prior-ledger-first,
+authenticated three-trial review protocol as purely additive, new-optional capability --
+nothing that validated under v1.1.0 is invalidated.
+
+### Added
+
+- **Convergent Automated Code Review standard, `standard/convergent_code_review.md`.**
+  Defines a review protocol usable with any model or review agent, without delegating
+  review state or merge authority to that model: a model is an observation-only sensor
+  that MUST NOT assign trusted finding identifiers, lifecycle states, counts,
+  suppressions, or verdicts; deterministic code owns semantic fingerprints, lifecycle
+  transitions, counts, the final verdict, Markdown rendering, the embedded ledger, and
+  replay verification. Covers authenticated, full-tree packet scope built from immutable
+  Git objects, prior-ledger-first ordinary review plus a full-audit mode, sandboxed
+  trial isolation, human suppression, and content-addressed replay.
+
+- **Five closed review schemas.** `schema/review_packet.schema.json` (authenticated
+  old/current bytes, Git mode deltas, and the mode-dependent full-audit commit/tree
+  manifest), `schema/review_trial.schema.json` (one observation-only trial output bound
+  to the packet digest), `schema/review_ledger.schema.json` (the deterministic finding
+  ledger: semantic fingerprints, `new`/`persisting`/`resolved`/`reopened`/`suppressed`
+  lifecycle, consensus, counts, and verdict), `schema/review_suppression.schema.json`
+  (human suppression authorization records), and `schema/review_replay.schema.json`
+  (content-addressed replay manifests). All five are fully closed
+  (`additionalProperties: false`); registered in `schema/README.md`.
+
+- **Convergent-review prompt template, `templates/convergent-review-prompt.md`.** A
+  runtime-neutral, closed-output trial prompt for exactly three independent
+  observation-only reviews over an authenticated packet, rendered by
+  `tools/evaluate_convergent_review_prompt.py` inside the mandatory per-trial sandbox.
+  Registered in `templates/README.md` as the module's ninth governed template.
+
+- **Convergent-review tooling, `tools/`.** `convergent_review.py` (the dependency-free
+  deterministic library and CLI: trusted no-replace Git-object packet construction,
+  authenticated content/mode deltas, structural-plus-relational validation, semantic
+  fingerprints, three-trial convergence, lifecycle and verdicts, canonical JSON and
+  embedded-ledger Markdown, trust-anchored no-follow replay, and atomic no-replace
+  publication), `evaluate_convergent_review_prompt.py` (the prompt evaluator),
+  `linux_trial_sandbox.sh` and `isolated_trial_adapter.py` (the Linux reference sandbox
+  adapter: user/network/IPC/UTS/PID namespaces plus Landlock filesystem confinement,
+  execute permission limited to the trusted runner and runtime), and
+  `test_convergent_review.py` (a permanent stdlib `unittest` suite over a frozen
+  12-case corpus, indexed by `tools/fixtures/convergent_review/manifest.json`, plus
+  adversarial blocker regressions). Registered in `tools/README.md` and `tools/SKILL.md`.
+
 ## [1.1.0] - 2026-08-19
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): phase 013 (Definition
