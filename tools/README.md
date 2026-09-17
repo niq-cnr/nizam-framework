@@ -2,10 +2,19 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.8.0
+version: 0.11.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.11.0"
+    date: "2026-09-17"
+    summary: "Reconcile Git deltas and reads, commit parsing, sandbox and safe I/O, publication semantics, and standalone-ledger initial-head and exact evidence-attribution validation."
+  - version: "0.10.0"
+    date: "2026-09-17"
+    summary: "Document the trusted packet builder, mandatory Linux sandbox adapter, schema-plus-relational packet validation, and expanded seven-blocker regression suite."
+  - version: "0.9.0"
+    date: "2026-09-17"
+    summary: "Index the dependency-free convergent review CLI, frozen 12-case corpus, and permanent stdlib unittest suite."
   - version: "0.8.0"
     date: "2026-08-18"
     summary: "Phase-013 feature 092: document the new C16 feature-list lifecycle check (`.agent/feature_list*.json` schema validation plus the era-safe complete -> contract -> QA-verdict -> evidence-file referential rule) -- the Compliance Coverage section now documents sixteen checks (C1-C16, SUMMARY: 16 passed)."
@@ -43,6 +52,10 @@ agent runtime through the same adapter contract — no per-runtime forks.
 | [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version, its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. |
 | [`SKILL.md`](SKILL.md) | The single instructions payload any agent runtime loads to act on the framework: when to load it, how to consume the framework by querying the root index rather than bulk-reading, a summary of the contract-first execution loop, the circuit-breaker and anti-hallucination obligations every role carries, the durable-state and evidence-by-path obligations, and the verdict JSON formats every gate produces. |
 | [`interface.md`](interface.md) | The runtime-adapter specification: how any agent runtime discovers `skill.json`, loads `SKILL.md` as instructions context, maps the framework's three abstract operations (`read-state`, `write-evidence`, `run-verification`) onto its own native tool primitives, and the numbered Adapter Conformance Checklist an integrator ticks through. |
+| [`convergent_review.py`](convergent_review.py) | Dependency-free deterministic library and CLI for controlled no-replace Git-object packet construction; authenticated content and Git mode deltas; structural-plus-relational validation; semantic fingerprints; three-trial convergence; lifecycle and verdicts; canonical JSON and embedded-ledger Markdown; trust-anchored no-follow replay; and atomic no-replace publication with explicit visible/durable state. |
+| [`evaluate_convergent_review_prompt.py`](evaluate_convergent_review_prompt.py) | Prompt evaluator that requires a trusted sandbox adapter for each of exactly three runner invocations, uses exclusive no-follow per-trial input/output I/O, validates substitutions before convergence, and publishes one complete evaluation directory. |
+| [`linux_trial_sandbox.sh`](linux_trial_sandbox.sh) and [`isolated_trial_adapter.py`](isolated_trial_adapter.py) | Linux reference adapter: user/network/IPC/UTS/PID namespaces plus Landlock filesystem confinement; trial-root data is readable/writable but non-executable, while execute permission is limited to the trusted runner and runtime. |
+| [`test_convergent_review.py`](test_convergent_review.py) | Permanent stdlib `unittest` suite exercising the frozen 12-case corpus and adversarial blocker regressions, including controlled Git reads, absent-versus-error object lookup, mode-only changes, commit-header parsing, sandbox no-execute, evaluator substitution, replay ancestors, and publication visibility/durability. |
 
 ## Design Decision — DD-4: Unified Skill Payload
 
@@ -80,6 +93,17 @@ documents. `skill.json` is validated as plain JSON (`python3 -c
 "import json; json.load(open('tools/skill.json'))"`); it carries no schema of
 its own within this module — it is pure data consumed by `SKILL.md` and
 `interface.md`, not a document requiring frontmatter.
+
+The required convergent review gate runs with `python3 tools/test_convergent_review.py`.
+Its fixtures are the 12 directories indexed by
+`tools/fixtures/convergent_review/manifest.json`; every case retains three raw trials.
+The adversarial cases verify that the builder ignores replace refs and inherited Git
+redirection, only a successful empty tree lookup means path absence, mode-only deltas
+remain authenticated, commit message text cannot forge a tree header, trial-root files
+cannot execute, runner output substitution is rejected, replay rejects symlinked root
+ancestors, standalone ledger validation rejects unrelated initial lifecycle heads and
+non-consensus trial evidence, and a post-rename parent-`fsync` failure remains visible but
+not durable.
 
 ## Compliance Coverage — C1–C16
 

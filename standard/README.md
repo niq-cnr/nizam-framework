@@ -2,10 +2,16 @@
 id: nizam-standard-readme
 title: "Standard Module — Index"
 description: "Index for the standard/ module: the documentation, governance, security, and architectural standards every consumer repository inherits."
-version: 0.3.0
+version: 0.5.0
 status: active
 authoritative_source: standard/README.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-09-17"
+    summary: "Update the convergent-review index for authenticated Git tree scope, old-byte diffs, sandboxed trials, no-follow replay, and atomic no-replace publication."
+  - version: "0.4.0"
+    date: "2026-09-17"
+    summary: "Index the Convergent Automated Code Review standard and its deterministic prior-ledger-first, three-trial, replay-verifiable protocol."
   - version: "0.3.0"
     date: "2026-08-18"
     summary: "Phase 013, feature 093: add the standard/definition_of_done.md index row -- the canonical, layered Definition of Done."
@@ -32,6 +38,7 @@ consumer repository without modification.
 | [`permission_classes.md`](permission_classes.md) | Deny-by-default role permission classes and Kubernetes RBAC allocations. |
 | [`cross_repo_governance.md`](cross_repo_governance.md) | The executable truth layer, the cross-repo query protocol, and the seven-tier architecture model. |
 | [`definition_of_done.md`](definition_of_done.md) | The canonical, layered Definition of Done -- aggregates the framework's eight done-layers by citing each layer's existing authority, never restating its mechanics. |
+| [`convergent_code_review.md`](convergent_code_review.md) | Runtime-neutral, prior-ledger-first automated review with trusted Git-object packet construction, authenticated old/current bytes and full-tree scope, three sandbox-isolated trials, deterministic lifecycle/verdict, human suppression, no-follow replay, and race-free publication. |
 
 ## Machine Validation
 

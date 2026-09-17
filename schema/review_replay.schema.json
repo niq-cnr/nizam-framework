@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:review_replay.schema.json",
+  "title": "Nizam Convergent Review Replay",
+  "description": "Closed content-addressed manifest retaining every raw review input and binding deterministic ledger and Markdown outputs.",
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "not": {
+        "const": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*\\\\)(?!\\.{1,2}(?:/|$))(?!.*//)(?!.*\\/\\.{1,2}(?:/|$))(?!.*[\\u0000-\\u001F\\u007F-\\u009F]).+$"
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512,
+      "pattern": "^(?=.+/.+)(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*\\\\)(?!\\.{1,2}(?:/|$))(?!.*//)(?!.*\\/\\.{1,2}(?:/|$))(?!.*[\\u0000-\\u001F\\u007F-\\u009F]).+$"
+    },
+    "artifact": {
+      "type": "object",
+      "properties": {
+        "role": {
+          "enum": [
+            "packet",
+            "trial",
+            "prior_ledger",
+            "suppression"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000000
+        },
+        "trial_number": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        }
+      },
+      "required": [
+        "role",
+        "path",
+        "digest",
+        "bytes"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "role": {
+                "const": "trial"
+              }
+            },
+            "required": [
+              "role"
+            ]
+          },
+          "then": {
+            "required": [
+              "trial_number"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "trial_number"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "outputs": {
+      "type": "object",
+      "properties": {
+        "ledger": {
+          "$ref": "#/$defs/digest"
+        },
+        "markdown": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "ledger",
+        "markdown"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "review_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 10006,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "role": {
+                "const": "packet"
+              }
+            },
+            "required": [
+              "role"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "role": {
+                "const": "trial"
+              }
+            },
+            "required": [
+              "role"
+            ]
+          },
+          "minContains": 3,
+          "maxContains": 3
+        },
+        {
+          "contains": {
+            "properties": {
+              "role": {
+                "const": "trial"
+              },
+              "trial_number": {
+                "const": 1
+              }
+            },
+            "required": [
+              "role",
+              "trial_number"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "role": {
+                "const": "trial"
+              },
+              "trial_number": {
+                "const": 2
+              }
+            },
+            "required": [
+              "role",
+              "trial_number"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "role": {
+                "const": "trial"
+              },
+              "trial_number": {
+                "const": 3
+              }
+            },
+            "required": [
+              "role",
+              "trial_number"
+            ]
+          },
+          "minContains": 1,
+          "maxContains": 1
+        },
+        {
+          "contains": {
+            "properties": {
+              "role": {
+                "const": "prior_ledger"
+              }
+            },
+            "required": [
+              "role"
+            ]
+          },
+          "minContains": 0,
+          "maxContains": 1
+        }
+      ]
+    },
+    "output_digests": {
+      "$ref": "#/$defs/outputs"
+    }
+  },
+  "required": [
+    "schema_version",
+    "review_id",
+    "repository",
+    "head_sha",
+    "artifacts",
+    "output_digests"
+  ],
+  "additionalProperties": false
+}

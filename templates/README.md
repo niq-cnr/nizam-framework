@@ -1,11 +1,14 @@
 ---
 id: nizam-templates-readme
 title: "Templates Module — Index"
-description: "Index for the templates/ module: the eight consumer-repo document and manifest templates a bootstrapped repository copies and fills in — CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest, and DoD templates."
-version: 0.3.0
+description: "Index for the templates/ module: the nine consumer-repo document, manifest, and prompt templates a bootstrapped repository copies and fills in — CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest, DoD, and convergent-review prompt templates."
+version: 0.4.0
 status: active
 authoritative_source: templates/README.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-09-17"
+    summary: "Register templates/convergent-review-prompt.md as the ninth governed template and include it in the Markdown frontmatter inventory."
   - version: "0.3.0"
     date: "2026-08-19"
     summary: "Phase 013, feature 095: registered templates/DoD.md, the copy-and-fill consumer projection of standard/definition_of_done.md onto a per-project checklist. New index-table row; '## Frontmatter Convention' parenthetical .md-template list gains DoD.md; frontmatter description count-numeral incremented, with its enumeration extended to name the new template."
@@ -34,11 +37,13 @@ templates carry, and contains no filled-in project content of its own.
 | [`phase_template.yaml`](phase_template.yaml) | Phase definition YAML template; validates against `schema/phase.schema.json` and follows DD-3 Evidence Externalisation. |
 | [`manifest.template.json`](manifest.template.json) | Planning manifest JSON template; validates against `schema/manifest.schema.json`. |
 | [`DoD.md`](DoD.md) | Consumer-repo Definition of Done checklist template: Section-N-cited checklist blocks (Step through Release) projecting `standard/definition_of_done.md`, a non-checklist Ecosystem-Done pointer, and a project-specific extension block. |
+| [`convergent-review-prompt.md`](convergent-review-prompt.md) | Runtime-neutral, closed-output trial prompt for exactly three independent observation-only reviews over an authenticated packet; its placeholders are rendered by `tools/evaluate_convergent_review_prompt.py` inside the mandatory per-trial sandbox. |
 
 ## Frontmatter Convention
 
 Every `.md` template in this module (`CONTEXT.md`, `AGENTS.md`, `DEBT.md`,
-`ADR_TEMPLATE.md`, `DoD.md`) carries **real** frontmatter describing the template artifact
+`ADR_TEMPLATE.md`, `DoD.md`, `convergent-review-prompt.md`) carries **real** frontmatter
+describing the template artifact
 itself — its own `id`, `title`, `description`, `version`, `status`, and
 `authoritative_source` per `standard/NDS.md` Sec 2 — not placeholder tokens. `{{...}}`
 placeholder tokens exist only in the document body that follows the closing `---`,
