@@ -2,11 +2,14 @@
 id: nizam-ci-gates
 title: "CI Gating Formula"
 description: "The mandatory 10-gate MERGE_READY formula that ensures no unverified code bypasses the contract-first execution loop."
-version: 0.2.0
+version: 0.2.1
 status: active
 enforcement: consumer-aspirational
 authoritative_source: standard/ci_gates.md
 change_log:
+  - version: "0.2.1"
+    date: "2026-09-19"
+    summary: "Scrubbed the vendor-named example from the AUTOMATED_REVIEW_CLEAN gate description: the conformant-tool example now names the capability (an automated code-review tool declared by the consumer) without naming any specific vendor tool, preserving the normative meaning -- the gate remains mandatory, tool-agnostic, and consumer-declared."
   - version: "0.2.0"
     date: "2026-07-20"
     summary: "Feature 058 (Track 3 mechanize-or-descope decision, gate H-CONSTITUTIONAL): marked consumer-aspirational -- this framework ships the standard as a reference a consumer enforces in its own runtime and CI and does not verify its semantics, so first-contact surfaces stop implying enforcement that does not exist."
@@ -46,7 +49,7 @@ The umbrella terms in the formula map to the 10 required CI gates as follows:
 | `PROVENANCE_EMIT` | `supply-chain-security` ∧ `artifact-attestation` |
 | `HUMAN_APPROVED` | `human-review` |
 
-The `AUTOMATED_REVIEW_CLEAN` factor requires that **a conformant automated code-review tool has run on the latest relevant SHA and reports no unresolved blocking findings**. The framework MANDATES this gate but deliberately does NOT fix the tool: the specific automated code-review tool (CodeRabbit, OpenCodeReview/OCR, or any conformant equivalent) is declared by the consumer — for example in its `NIZAM.json` / governance config — not by this framework. The gate is BLOCKING and deny-by-default: an absent, stale, or failed automated review means the change is NOT `MERGE_READY`.
+The `AUTOMATED_REVIEW_CLEAN` factor requires that **a conformant automated code-review tool has run on the latest relevant SHA and reports no unresolved blocking findings**. The framework MANDATES this gate but deliberately does NOT fix the tool: the specific automated code-review tool (an AI-assisted review service, a purpose-built review agent, or any conformant equivalent) is declared by the consumer — for example in its `NIZAM.json` / governance config — not by this framework. The gate is BLOCKING and deny-by-default: an absent, stale, or failed automated review means the change is NOT `MERGE_READY`.
 
 ## 3. Required CI Gates
 
