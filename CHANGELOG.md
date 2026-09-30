@@ -7,6 +7,48 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-30
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): Review-Gate
+Flake Management delivers the operational doctrine for infrastructure failures
+of convergent review gates as purely additive, new-optional capability --
+nothing that validated under v1.2.0 is invalidated.
+
+### Added
+
+- **Review-Gate Flake Management methodology, `methodology/09_review_gate_flake_management.md`.**
+  Operational doctrine for the failure family where a convergent review gate
+  ends red for infrastructure reasons distinct from any review verdict:
+  five fail-closed principles (fail-closed is correct; red is non-terminal;
+  never fake green; flake is not a verdict; a green claim requires the gate's
+  own output), the open F1–F6 flake-class taxonomy (no-output; hang/timeout;
+  behavior/mis-tie; large-packet zero-write; posting/API failure;
+  provider-degradation windows — new classes require evidence plus a versioned
+  doc revision), the bounded retry ladder (initial attempt with bounded
+  trial-local retry, ONE re-dispatch, then class-exception or honest re-run —
+  never both, never a third dispatch), protected-repository rules (flakes are
+  never merged around; disposition is re-run patience plus the upstream fix),
+  telemetry duties (per-run outcome/class/attempt artifacts, a central ledger
+  rollup, optional synthetic probes), evidence duties (artifact naming,
+  post-merge evidence races, canonical-vs-vendored resync in one wave — drift
+  is a defect class of its own), and KPI targets (flake-rate per run,
+  exception-merges to zero, mean-time-to-green) measured by the ledger.
+  Cross-references `methodology/03_circuit_breaker.md` for attempt counters
+  without duplicating its mechanics. Registered in `NIZAM.json` (capability
+  index and methodology module key_documents), `methodology/README.md`, and
+  `docs/guide/index.html`'s methodology module card.
+
+### Fixed
+
+- **Release-state drift in `docs/planning/ROADMAP.md` and
+  `docs/planning/operator_gates.md`.** The v1.2.0 preparation bullets were
+  stale: v1.2.0 was in fact released (2026-09-17, tag at `7441ffa`, `release.yml`
+  run 35232527341) and a v1.2.1 PATCH tag exists (2026-09-19, `250fdd9`, PR #59)
+  whose `release.yml` run 35456401143 failed the tag-mode close-out
+  (`tag v1.2.1` vs anchors still at `1.2.0`; no `[1.2.1]` CHANGELOG section was
+  cut). Both docs now record the genuine release facts; this v1.3.0 preparation
+  rolls every version anchor forward together, superseding the anomaly.
+
 ## [1.2.0] - 2026-09-17
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): the Convergent

@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.40.0
+version: 0.41.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.41.0"
+    date: "2026-09-30"
+    summary: "v1.3.0 release preparation: the Review-Gate Flake Management methodology (methodology/09_review_gate_flake_management.md) is packaged as the next MINOR release. Current Position rolls: 'Release in preparation' names v1.3.0; the latest-released bullet now records the genuine v1.2.0/v1.2.1 facts (v1.2.0 released 2026-09-17 at 7441ffa; v1.2.1 tagged 2026-09-19 at 250fdd9 with its release.yml run failing the tag-mode close-out because no [1.2.1] CHANGELOG section was cut -- anchors stayed at 1.2.0), correcting the stale 'Release in preparation: v1.2.0' bullet this file carried past both releases."
   - version: "0.40.0"
     date: "2026-09-17"
     summary: "v1.2.0 release preparation: the Convergent Automated Code Review standard (PR #57, already merged to main) is packaged as the next MINOR release. Current Position gains a 'Release in preparation: v1.2.0 -- awaiting H-FRAMEWORK-RELEASE' entry recording the prepared release surface (CHANGELOG [1.2.0] section, version anchors synchronized across NIZAM.json/docs/guide/CONTEXT.md/README.md). While here, corrects the prior 'Latest released tag' bullet, which the v1.1.0 post-release refresh (PR #56) mislabeled: it renamed only the version number to v1.1.0 while leaving every supporting fact (tier, date, PR, commit, CHANGELOG section, Release URL) describing v1.0.0 -- now restated with the genuine v1.1.0 facts (PR #55, merge commit a2c15d2, release.yml run 32282540074, [1.1.0] CHANGELOG section). The 'Prior released tag' line rolls from the stale v0.9.0 to v1.0.0."
@@ -624,27 +627,37 @@ successor, leaving open debt deferred to unscoped "future phases").
   ran green at `SUMMARY: 15 passed, 0 failed` (C1–C15) at the time, and the fixtures
   self-test at 57/57; the hermetic e2e bootstrap harness passed in CI (now including the
   n-case `assert_multirepo`).
-- **Release in preparation: v1.2.0 (MINOR) — awaiting `H-FRAMEWORK-RELEASE`.** PR #57
-  (already merged to `main` at `c0e0d04`, outside the phase-numbered feature ceremony)
-  defines the Convergent Automated Code Review standard
-  (`standard/convergent_code_review.md`): a runtime-neutral, prior-ledger-first,
-  authenticated three-trial review protocol, its five closed schemas
-  (`schema/review_packet.schema.json`, `review_trial`, `review_ledger`,
-  `review_suppression`, `review_replay`), the `templates/convergent-review-prompt.md`
-  trial prompt, and the dependency-free `tools/convergent_review.py` CLI with its Linux
-  sandbox adapter and permanent unittest suite — purely additive, new-optional
-  capability. This release-preparation change synchronizes every C10 version anchor to
-  1.2.0, cuts the dated `[1.2.0]` CHANGELOG section, and writes the readiness record
-  (`.agent/evidence/release-readiness-v1.2.0.md`); the `H-FRAMEWORK-RELEASE` sign-off
-  and tag remain outstanding — the pipeline never self-tags.
-- **Latest released tag: v1.1.0 (MINOR) — RELEASED 2026-08-19.** The operator executed
+- **Release in preparation: v1.3.0 (MINOR) — awaiting `H-FRAMEWORK-RELEASE`.** The
+  Review-Gate Flake Management doctrine
+  (`methodology/09_review_gate_flake_management.md`) — operational doctrine for
+  infrastructure failures of convergent review gates: fail-closed principles,
+  the open F1–F6 flake-class taxonomy, the bounded retry ladder with
+  class-exception duties, protected-repository rules, telemetry, evidence
+  duties, and flake-rate KPI targets — is packaged as the next MINOR release
+  (purely additive, new-optional capability). This release-preparation change
+  synchronizes every C10 version anchor to 1.3.0, cuts the dated `[1.3.0]`
+  CHANGELOG section, and writes the readiness record
+  (`.agent/evidence/release-readiness-v1.3.0.md`); the `H-FRAMEWORK-RELEASE`
+  sign-off and tag remain outstanding — the pipeline never self-tags.
+- **Latest released tag: v1.2.1 (PATCH) — tagged 2026-09-19 at `250fdd9` (PR #59,
+  the ci_gates vendor-name scrub).** Anomaly, recorded honestly: the tag's
+  `release.yml` run 35456401143 FAILED the blocking tag-mode close-out
+  (`FAIL tag v1.2.1 matches NIZAM.json framework.version at tag (1.2.0)` —
+  no `[1.2.1]` CHANGELOG section was cut and the tree anchors stayed at
+  `1.2.0`); the GitHub Release page for v1.2.1 exists (created
+  2026-09-19T16:54:06Z). Preceded by **v1.2.0 (MINOR) — released 2026-09-17**
+  at `7441ffa` (PR #58): `release.yml` run 35232527341 published the Release
+  from the `[1.2.0]` CHANGELOG section, packaging the Convergent Automated
+  Code Review standard (PR #57). The v1.3.0 preparation supersedes the anomaly
+  by rolling every anchor forward together.
+- **Prior released tag: v1.1.0 (MINOR) — released 2026-08-19.** The operator executed
   `H-FRAMEWORK-RELEASE` after PR #55 merged: the annotated tag `v1.1.0` points at reviewed
   merge commit `a2c15d2`, and `release.yml` run 32282540074 published
   [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.1.0)
   from the `[1.1.0]` CHANGELOG section. Phase 013 (Definition of Done) delivered six
   purely additive, new-optional features — nothing that validated under v1.0.0 was
   invalidated.
-- Prior released tag: v1.0.0 (MAJOR) — released 2026-08-15 at merge commit `9453b3c`
+- Earlier released tag: v1.0.0 (MAJOR) — released 2026-08-15 at merge commit `9453b3c`
   (PR #53); `release.yml` run 31903527120 published
   [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.0.0)
   from the `[1.0.0]` CHANGELOG section. The clean-break release repaired every issue-52

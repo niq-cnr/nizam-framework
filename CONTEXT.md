@@ -2,10 +2,13 @@
 id: nizam-context
 title: "Nizam Framework — Context"
 description: "Token-efficient architecture and execution-command summary for agents consuming the Nizam framework."
-version: 1.2.0
+version: 1.3.0
 status: active
 authoritative_source: CONTEXT.md
 change_log:
+  - version: "1.3.0"
+    date: "2026-09-30"
+    summary: "Prepare the v1.3.0 MINOR release: the Review-Gate Flake Management methodology (`methodology/09_review_gate_flake_management.md`) -- operational doctrine for infrastructure failures of convergent review gates (fail-closed principles, the open F1-F6 flake-class taxonomy, the bounded retry ladder, protected-repository rules, telemetry, evidence duties, and KPI targets), registered in `NIZAM.json`, `methodology/README.md`, and the HTML guide -- purely additive, new-optional capability; nothing that validated under v1.2.0 is invalidated. H-FRAMEWORK-RELEASE remains pending; no tag is created by the pipeline."
   - version: "1.2.0"
     date: "2026-09-17"
     summary: "Prepare the v1.2.0 MINOR release: the Convergent Automated Code Review standard (`standard/convergent_code_review.md`, PR #57), its five closed review schemas (`schema/review_packet.schema.json`, `review_trial`, `review_ledger`, `review_suppression`, `review_replay`), the `templates/convergent-review-prompt.md` trial prompt, and the dependency-free `tools/convergent_review.py` CLI with its Linux sandbox adapter and permanent unittest suite -- purely additive, new-optional capability; nothing that validated under v1.1.0 is invalidated. H-FRAMEWORK-RELEASE remains pending; no tag is created by the pipeline."
