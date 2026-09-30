@@ -1,11 +1,14 @@
 ---
 id: nizam-methodology-readme
 title: "Methodology Module — Index"
-description: "Index for the methodology/ module: the protocol documents governing planning, contract-first execution, adversarial TDD, the universal circuit breaker, tool-driven durable state, eval and trace infrastructure, the release train, and cross-repo dependency gates."
-version: 0.3.0
+description: "Index for the methodology/ module: the protocol documents governing planning, contract-first execution, adversarial TDD, the universal circuit breaker, tool-driven durable state, eval and trace infrastructure, the release train, cross-repo dependency gates, and review-gate flake management."
+version: 0.4.0
 status: active
 authoritative_source: methodology/README.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-09-30"
+    summary: "Index the Review-Gate Flake Management protocol (09_review_gate_flake_management.md): operational doctrine for infrastructure failures of a convergent review gate -- fail-closed principles, the open F1-F6 flake-class taxonomy, the bounded retry ladder with class-exception duties, protected-repository rules, telemetry, evidence duties, and flake-rate KPI targets."
   - version: "0.3.0"
     date: "2026-08-15"
     summary: "Phase-012 issue-52 sync: index summaries now expose isolated-attempt recovery, evidence-before-completion, the five-role eval suite, validator-gated release preparation, three-attempt eval promotion, and the Orchestrator routing/non-authorship boundary."
@@ -18,7 +21,8 @@ change_log:
 
 The `methodology/` module owns the execution methodology: planning enforcement,
 the contract-first harness loop, adversarial TDD, the universal circuit
-breaker, tool-driven durable state, and the release train protocol. Every
+breaker, tool-driven durable state, the release train protocol, and
+review-gate flake management. Every
 document in this module is runtime-agnostic and builds on the agent roles and
 gates defined in `standard/AGF.md`.
 
@@ -33,6 +37,7 @@ gates defined in `standard/AGF.md`.
 | [`06_release_train.md`](06_release_train.md) | Release Train Protocol — SemVer classification, validator-gated changelog/version preparation, human sign-off, the final tag act, and consumer re-bootstrap. |
 | [`07_eval_gated_promotion.md`](07_eval_gated_promotion.md) | Eval-Gated Model Promotion Protocol — model/prompt changes use contract-first evals; degraded evals consume the shared three-attempt breaker and durable fallback repins remain gated. |
 | [`08_cross_repo_dependency_gate.md`](08_cross_repo_dependency_gate.md) | Cross-Repo Dependency Gate — the Planner declares dependencies; the Orchestrator routes but does not author upstream deltas, and blocks until owner approval. |
+| [`09_review_gate_flake_management.md`](09_review_gate_flake_management.md) | Review-Gate Flake Management — operational doctrine for infrastructure failures of a convergent review gate: fail-closed principles, the open F1–F6 flake-class taxonomy, the bounded retry ladder with class-exception duties, protected-repository rules, telemetry, evidence duties (post-merge evidence races, canonical-vs-vendored resync waves), and flake-rate KPI targets. |
 
 ## Design Decision Cross-Reference
 

@@ -1,0 +1,61 @@
+# Lane log — methodology-flake-2026-09-30 (nizam-framework, W6)
+
+Mission: add the missing Nizam methodology for managing infrastructure
+failures of convergent review gates (fail-closed gates, bounded retry
+ladders, flake-class taxonomy, evidence duties, protected-repo rules) and
+prepare the v1.3.0 MINOR release surface (preparation only; no tag).
+
+Branch: feat/methodology-review-gate-flake-management (from origin/main at
+250fdd9). Worktree only; anchor clone untouched.
+
+## Deliverable set (10 doc files + this evidence pack)
+
+- methodology/09_review_gate_flake_management.md (new doctrine; v0.1.0)
+- Registration: methodology/README.md (0.4.0), NIZAM.json (capability +
+  key_documents + framework.version 1.3.0), docs/guide/index.html (card +
+  anchors), CHANGELOG.md ([1.3.0] section), README.md (4 pins v1.3.0),
+  CONTEXT.md (1.3.0), docs/planning/ROADMAP.md (0.41.0), 
+  docs/planning/operator_gates.md (0.23.0)
+- Readiness record: .agent/evidence/release-readiness-v1.3.0.md
+- Evidence pack: .agent/evidence/flake-methodology-2026-09-30/ (01-05 + this log)
+
+## Drift corrections discovered during Step 0 (recorded, not silently fixed away)
+
+- ROADMAP.md still carried "Release in preparation: v1.2.0" although v1.2.0
+  was released 2026-09-17 (tag 7441ffa, release.yml run 35232527341) and a
+  v1.2.1 PATCH tag exists (2026-09-19, 250fdd9, PR #59).
+- v1.2.1 anomaly: its release.yml run 35456401143 FAILED the blocking
+  tag-mode close-out (FAIL tag v1.2.1 matches NIZAM.json
+  framework.version at tag (1.2.0)); no [1.2.1] CHANGELOG section was cut;
+  the GitHub Release page exists (created 2026-09-19T16:54:06Z). Recorded
+  honestly in ROADMAP.md + operator_gates.md; the v1.3.0 preparation
+  supersedes it by rolling all anchors forward together.
+
+## Validation (all locally mirrored from .github/workflows/compliance.yml
+before push; raw captures in 01-05)
+
+- tools/validate.sh: 16/16 PASS (C1-C16)
+- tools/fixtures_self_test.sh: 79/79 PASS
+- tools/e2e_bootstrap_test.sh: PASS (hermetic; assert_multirepo,
+  assert_stage4)
+- .github/scripts/release_closeout.py --mode pr: PASS at V=1.3.0 (all five
+  anchor groups)
+- Tag probe: refs/tags/v1.3.0 absent (exit=1)
+- Sanitization: no ESC/CR/control bytes and no escape-text token across the
+  entire changed-file set; no trailing whitespace (git diff --check clean).
+
+## Delegation audit
+
+- Spawn 1 (generator, kimi-code/k3, EXIT 0, ~620s): doctrine doc + 9-file
+  registration/release-prep implementation, authored from a fully-specified
+  dispatch; verified by orchestrator read-back.
+- Spawn 2 (generator, kimi-code/k3, EXIT 0, ~488s): evidence pack captures
+  + readiness-record finalization; verified by orchestrator read-back.
+- Orchestrator carve-outs (trivial single-hunk): ROADMAP v1.0.0 line retitle
+  (one line); this lane log. No multi-file work self-implemented.
+
+## Disposition
+
+PR ready-not-draft against niq-cnr/nizam-framework; H-FRAMEWORK-RELEASE
+sign-off and the v1.3.0 tag remain outstanding (the pipeline never
+self-tags). No self-merge.

@@ -1,0 +1,35 @@
+# git rev-parse -q --verify refs/tags/v1.3.0 ; echo "exit=$?"
+exit=1
+# git status --porcelain
+ M CHANGELOG.md
+ M CONTEXT.md
+ M NIZAM.json
+ M README.md
+ M docs/guide/index.html
+ M docs/planning/ROADMAP.md
+ M docs/planning/operator_gates.md
+ M methodology/README.md
+?? .agent/evidence/release-readiness-v1.3.0.md
+?? methodology/09_review_gate_flake_management.md
+# grep -rEn '<backslash-u-0-0-1-b token pattern>' CHANGELOG.md CONTEXT.md NIZAM.json README.md docs/guide/index.html docs/planning/ROADMAP.md docs/planning/operator_gates.md methodology/README.md .agent/evidence/release-readiness-v1.3.0.md methodology/09_review_gate_flake_management.md ; echo "exit=$?"
+exit=1
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' CHANGELOG.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' CONTEXT.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' NIZAM.json
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' README.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' docs/guide/index.html
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' docs/planning/ROADMAP.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' docs/planning/operator_gates.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' methodology/README.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' .agent/evidence/release-readiness-v1.3.0.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' methodology/09_review_gate_flake_management.md
+0
