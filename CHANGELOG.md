@@ -7,6 +7,32 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- **Phase 014 proposal (GA track — the real multi-repo pilot and the remaining
+  lifecycle protocols)** (the rolled-forward phase-012 candidate scope). Authored the
+  Planner artifacts `.agent/product_spec_014.md` (status `draft`),
+  `.agent/feature_list_014.json` (features 099–102, DAG-validated acyclic, roots
+  `{099, 100}`, est 2200), and the canonical pending `docs/planning/phase_014.yaml`,
+  plus the two lifecycle protocol documents proposal-grade (`status: draft`):
+  `ecosystem/06_simplification_review.md` (Repeat — recurring simplification;
+  consolidations only under the reserved `H-CONSOLIDATION` gate) and
+  `ecosystem/08_ga_gate.md` (Promote/GA — evidence-gated declaration criteria under
+  the reserved `H-GA` gate; benchmark thresholds are acceptance requirements, never
+  claims of achieved results; GA declaration is operator-only — the framework must
+  never auto-declare GA). `docs/planning/ROADMAP.md` (v0.42.0) also rolls the v1.3.0
+  released record (post-release refresh) and tops with the phase-014 proposal banner;
+  `docs/planning/manifest.json` gains the phase-014 entry (`pending`/`proposed`);
+  `docs/planning/operator_gates.md` (v0.24.0) records the executed v1.3.0 release and
+  names phase 014 as the reserved gates' definition site; `ecosystem/README.md`
+  (v0.4.0) flips the `06`/`08` rows to Shipped; `NIZAM.json`'s ecosystem
+  `key_documents` enumerates both documents (the NDEBT-005 disk-to-index
+  completeness guard requires an on-disk `ecosystem/*.md` to be indexed in the
+  same change it lands — the `capabilities` array, `tools/skill.json`, and the
+  guide card stay with phase-014 feature 099). Awaiting activation gate
+  `H-PHASE-014`; `current_phase` stays `013-definition-of-done` and `run_state` is
+  untouched (a proposal is not an activation).
+
 ## [1.3.0] - 2026-09-30
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): Review-Gate

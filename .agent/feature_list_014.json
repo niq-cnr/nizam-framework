@@ -1,0 +1,73 @@
+{
+  "phase": "014-ga-track",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 2200,
+  "planning_note": "DAG-validated acyclic: roots {099, 100}; 101 depends on 100; 102 depends on 099/100/101. Topological execution order: [099, 100] -> [101] -> [102]. Scope is the rolled-forward phase-012 candidate scope (a real non-scratch multi-repo pilot + the remaining lifecycle protocols 06/08 with the reserved H-CONSOLIDATION/H-GA gates), carried through phases 012/013 and authored 2026-09-30 after the v1.3.0 release. PROPOSAL ONLY: awaiting activation gate H-PHASE-014; no feature enters contract negotiation before that authorization.",
+  "features": [
+    {
+      "id": "099",
+      "name": "GA-track activation wave — register ecosystem/06+08 and define the reserved gates",
+      "description": "Flip ecosystem/06_simplification_review.md and ecosystem/08_ga_gate.md status draft -> active (frontmatter version bumps + change_log entries), capability-register both in NIZAM.json's capabilities array (capability ids nizam-ecosystem-simplification-review and nizam-ecosystem-ga-gate; the key_documents enumeration already landed with the proposal per the NDEBT-005 disk-to-index guard) and in tools/skill.json (capabilities; version bump per its own convention), re-sync docs/guide/index.html's ecosystem card key-documents list (also restoring the shipped 00/04/05 the card still omits — pre-existing drift), and move H-CONSOLIDATION + H-GA from the reserved table to the decided table (DEFINED/OUTSTANDING) in docs/planning/operator_gates.md, mirroring features 061/080/081.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'",
+        "python3 -c \"import json; d=json.load(open('NIZAM.json')); m=next(x for x in d['modules'] if x['path']=='ecosystem'); assert 'ecosystem/06_simplification_review.md' in m['key_documents'] and 'ecosystem/08_ga_gate.md' in m['key_documents']\"",
+        "python3 -c \"import json; d=json.load(open('NIZAM.json')); ids=[c['id'] for c in d['capabilities']]; assert 'nizam-ecosystem-simplification-review' in ids and 'nizam-ecosystem-ga-gate' in ids\"",
+        "python3 -c \"import json; s=json.load(open('tools/skill.json')); mods=[c['module'] for c in s['capabilities']]; assert 'ecosystem/06_simplification_review.md' in mods and 'ecosystem/08_ga_gate.md' in mods\"",
+        "awk '/## 1\\. Decided and active gates/,/## 2\\. Reserved/' docs/planning/operator_gates.md | grep -c 'H-CONSOLIDATION\\|H-GA' | grep -qv '^0$'"
+      ],
+      "estimated_lines": 400
+    },
+    {
+      "id": "100",
+      "name": "Real, non-scratch multi-repo ecosystem pilot at the released v1.3.0 tag",
+      "description": "Run the pilot over the operator-designated set of real repositories (the framework hardcodes none; the set is confirmed at H-PHASE-014 or pilot time), each adopted/upgraded to the released immutable tag v1.3.0 under a recorded per-member H-CONSUMER-UPGRADE decision BEFORE its re-bootstrap (NDEBT-018), each worked in its own isolated worktree (never on a member's main branch), then Preflight -> Baseline -> Audit per member and the ecosystem-membership-run aggregate. A real reconciliation plan / release train is built only under recorded H-PLANNING-AUTHORITY / H-TRAIN-ENTRY decisions. Findings are recorded to the members' and the framework's debt registers; evidence is externalised under .agent/evidence/pilot-100/. No scratch-harness fabrication: real repositories and real worktrees only — standing up synthetic members to substitute for real ones is a first-class pilot failure. The NDEBT-034 clone optimization stays deferred (not load-bearing: one bootstrap per member).",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "test -f .agent/evidence/pilot-100/README.md",
+        "python3 -c \"import json,jsonschema; r=json.load(open('.agent/evidence/pilot-100/registry.json')); jsonschema.validate(r, json.load(open('schema/ecosystem_membership.schema.json')))\"",
+        "python3 -c \"import json,jsonschema; a=json.load(open('.agent/evidence/pilot-100/aggregate.json')); jsonschema.validate(a, json.load(open('schema/ecosystem_membership_result.schema.json')))\"",
+        "grep -c 'H-CONSUMER-UPGRADE' .agent/evidence/pilot-100/gates-record.md | grep -qv '^0$'",
+        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'"
+      ],
+      "estimated_lines": 900
+    },
+    {
+      "id": "101",
+      "name": "First real simplification review (Repeat stage) over real ecosystem evidence",
+      "description": "Run the ecosystem/06 protocol over the feature-100 pilot evidence plus the accumulated framework surface (protocols/schemas/tools/standards), recording evidence-backed consolidation candidates (duplication, dead weight, over-mechanization) as findings under .agent/audits/<simplification-review-id>/. No consolidation is applied — any actual simplification is proposed as planned work and reserved behind H-CONSOLIDATION (operator-only); the review also records candidate scope for the next planning cycle.",
+      "status": "pending",
+      "dependencies": [
+        "100"
+      ],
+      "acceptance_tests": [
+        "test -n \"$(find .agent/audits -maxdepth 1 -type d -name '*simplification*' -print -quit)\"",
+        "grep -rl 'H-CONSOLIDATION' .agent/audits/ | grep -q .",
+        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "estimated_lines": 400
+    },
+    {
+      "id": "102",
+      "name": "GA-readiness assessment (no declaration), next-candidate refinement, and phase close",
+      "description": "Assemble the GA-readiness evidence dossier per ecosystem/08 Section 2 preconditions — every benchmark threshold treated strictly as an acceptance requirement carrying a measured, anchored result (never a claim of achieved results); the assessment presents H-GA as OUTSTANDING and declares nothing (GA declaration is the operator's future act alone — the framework never auto-declares GA). Refine and validate the next-candidate scope against the pilot + review evidence; close the phase (canonical phase_014.yaml complete first; manifest second; derived run_state third, per the canonical-first rule).",
+      "status": "pending",
+      "dependencies": [
+        "099",
+        "100",
+        "101"
+      ],
+      "acceptance_tests": [
+        "python3 -c \"import yaml,jsonschema; d=yaml.safe_load(open('docs/planning/phase_014.yaml')); jsonschema.validate(d, json.load(open('schema/phase.schema.json'))); assert d['status']=='complete'\"",
+        "test -f .agent/evidence/102/ga-readiness-dossier.md",
+        "grep -c 'OUTSTANDING' .agent/evidence/102/ga-readiness-dossier.md | grep -qv '^0$'",
+        "git rev-parse -q --verify refs/tags/v1.4.0; test $? -eq 1",
+        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'"
+      ],
+      "estimated_lines": 500
+    }
+  ]
+}
