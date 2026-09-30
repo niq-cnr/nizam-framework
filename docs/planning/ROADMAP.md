@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.41.0
+version: 0.42.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.42.0"
+    date: "2026-09-30"
+    summary: "v1.3.0 RELEASED (post-release refresh, the PR #54/#56 precedent): the operator-authorized annotated tag v1.3.0 points at reviewed merge commit 2e122256 (PR #60); release.yml run 36700976611 succeeded and published GitHub Release 'Nizam v1.3.0 — Review-Gate Flake Management (MINOR)' from the [1.3.0] CHANGELOG section at 2026-09-30T10:12:30Z. Current Position: the 'Release in preparation' bullet is removed and the latest-released disposition rolls to name the new tag — keeping exactly one body line matching the close-out gate's disposition pattern for v1.3.0 — with the prior-released line rolling to the v1.2.1 anomaly record and v1.1.0 becoming the earlier line. ALSO (same PR): Phase 014 (GA track) PROPOSED — a new 'Proposed Next Phase — Phase 014' banner tops the roadmap (features 099-102, DAG roots {099, 100}, est 2200; planner artifacts .agent/product_spec_014.md (status draft) + .agent/feature_list_014.json; canonical docs/planning/phase_014.yaml (pending); the 06/08 lifecycle doctrine authored proposal-grade under ecosystem/). Awaiting operator activation gate H-PHASE-014; a proposal is not an activation — current_phase stays 013-definition-of-done (complete) and run_state is untouched."
   - version: "0.41.0"
     date: "2026-09-30"
     summary: "v1.3.0 release preparation: the Review-Gate Flake Management methodology (methodology/09_review_gate_flake_management.md) is packaged as the next MINOR release. Current Position rolls: 'Release in preparation' names v1.3.0; the latest-released bullet now records the genuine v1.2.0/v1.2.1 facts (v1.2.0 released 2026-09-17 at 7441ffa; v1.2.1 tagged 2026-09-19 at 250fdd9 with its release.yml run failing the tag-mode close-out because no [1.2.1] CHANGELOG section was cut -- anchors stayed at 1.2.0), correcting the stale 'Release in preparation: v1.2.0' bullet this file carried past both releases."
@@ -133,6 +136,70 @@ change_log:
 
 # Forward Roadmap
 
+## Proposed Next Phase — Phase 014: GA Track — the Real Multi-Repo Pilot and the Remaining Lifecycle Protocols (06 Simplification Review, 08 GA Gate) — **PROPOSED, awaiting `H-PHASE-014`**
+
+**Phase `014-ga-track` is PROPOSED** (2026-09-30, authored at v1.3.0 after the release),
+awaiting operator activation (gate **H-PHASE-014**). It realizes the rolled-forward
+phase-012 candidate scope — standing since the phase-011 close (2026-07-22), carried
+unchanged through the phase-012 and phase-013 cycles — now unblocked: v1.3.0 is a
+released immutable tag a real consumer can adopt. The Planner artifacts
+`.agent/product_spec_014.md` (status `draft`), `.agent/feature_list_014.json` (features
+099–102, DAG-validated acyclic, roots `{099, 100}`, est 2200), and the canonical pending
+`docs/planning/phase_014.yaml` exist; per `methodology/00_planning.md` a phase becomes
+the plan of record only on operator authorization, so `current_phase` stays
+`013-definition-of-done` (complete) and `.agent/run_state.json` is untouched until
+activation (a proposal is not an activation).
+
+**Scope — the GA track.** Four numbered features:
+
+1. **099 — the activation wave**: flip `ecosystem/06_simplification_review.md` and
+   `ecosystem/08_ga_gate.md` draft → active and capability-register them (the
+   `NIZAM.json` capabilities array, `tools/skill.json`, and the guide — whose
+   ecosystem card also regains the 00/04/05 entries it still omits; the documents'
+   `key_documents` enumeration already landed with this proposal, the NDEBT-005
+   disk-to-index guard's requirement), and **define** the reserved
+   `H-CONSOLIDATION` / `H-GA` gates (reserved → decided, DEFINED/OUTSTANDING),
+   mirroring features 061/080/081.
+2. **100 — the real, non-scratch multi-repo pilot**: the operator-designated real
+   repositories at the released tag `v1.3.0`, each under a recorded per-member
+   `H-CONSUMER-UPGRADE` decision before its re-bootstrap, each in its own isolated
+   worktree, Preflight → Baseline → Audit → the membership-run aggregate; a real
+   plan/train only under recorded `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY`; **no
+   scratch-harness fabrication** — the standing production-maturity criterion since
+   phase 007. The `NDEBT-034` clone-throughput optimization stays deferred (not
+   load-bearing at pilot scale: one bootstrap per member).
+3. **101 — the first real simplification review** (the Repeat stage, `ecosystem/06`):
+   evidence-backed consolidation candidates over the real pilot evidence and the
+   accumulated framework surface; an actual consolidation is executed only under
+   `H-CONSOLIDATION` — the review never consolidates automatically.
+4. **102 — GA-readiness assessment + phase close**: assemble the evidence dossier per
+   `ecosystem/08`'s preconditions — every benchmark threshold an acceptance requirement
+   carrying a measured, anchored result, never a claim of achieved results — with
+   `H-GA` presented OUTSTANDING: **the phase never declares GA; GA declaration is the
+   operator's act alone (the framework must never auto-declare GA)**. Then refine the
+   next-candidate scope and close the phase.
+
+**Doctrine authored ahead, proposal-grade.** The two lifecycle protocols ship in this
+proposal as `status: draft` documents (`ecosystem/06`, `ecosystem/08`;
+`ecosystem/README.md` rows flipped to Shipped — existence, per the table's own
+semantics, not activation): their activation flip and capability registration land with
+feature 099, mirroring how `04`/`05` shipped at their authoring features. Neither
+document can fire a gate at proposal time: `H-CONSOLIDATION` and `H-GA` stay reserved
+until 099 defines them.
+
+**Gates.** `H-PHASE-014` OUTSTANDING (activation, recorded before any feature execution
+per NDEBT-018); `H-CONSUMER-UPGRADE` recurring per member during 100;
+`H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` only if a real plan/train is built;
+`H-CONSOLIDATION` only for a real consolidation out of 101; `H-GA` never exercised by
+this phase — the declaration remains the operator's future act. `H-FRAMEWORK-RELEASE`
+is not in this phase's scope; the pipeline never self-tags.
+
+**Open debt carried, not prework.** `NDEBT-040`/`037`/`034`/`026` stay open (all Low,
+enhancement candidates); the phase neither requires nor pre-resolves them — they are
+candidate inputs to the 101 simplification review's evidence, and the `NDEBT-034`
+optimization is revisited only if the real pilot proves the per-member clone cost
+load-bearing.
+
 ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
 
 **Phase `013-definition-of-done` is ACTIVE** (2026-08-18), authorized by the operator (verbatim:
@@ -177,7 +244,7 @@ with no `.agent/feature_list*.json` passes it trivially.
 **The rolled-forward candidate scope moves to phase 014.** The prior phase-012 candidate — a real
 non-scratch multi-repo pilot and the remaining lifecycle protocols
 `ecosystem/06_simplification_review.md` and `ecosystem/08_ga_gate.md` with the reserved
-`H-CONSOLIDATION` / `H-GA` gates — is **not cancelled**. It rolls forward unchanged to phase 014.
+`H-CONSOLIDATION` / `H-GA` gates — is **not cancelled**. It rolls forward unchanged to phase 014. **→ now authored as the phase-014 proposal — see the "Proposed Next Phase — Phase 014" banner at the top.**
 The operator decides at `H-PHASE-013` whether to take Definition of Done first or re-order that
 scope ahead of it. Tier 3 of the Definition-of-Done analysis (an ecosystem Verify protocol) is
 explicitly out of scope here: it is NIP-class work requiring an accepted proposal.
@@ -627,30 +694,25 @@ successor, leaving open debt deferred to unscoped "future phases").
   ran green at `SUMMARY: 15 passed, 0 failed` (C1–C15) at the time, and the fixtures
   self-test at 57/57; the hermetic e2e bootstrap harness passed in CI (now including the
   n-case `assert_multirepo`).
-- **Release in preparation: v1.3.0 (MINOR) — awaiting `H-FRAMEWORK-RELEASE`.** The
-  Review-Gate Flake Management doctrine
-  (`methodology/09_review_gate_flake_management.md`) — operational doctrine for
-  infrastructure failures of convergent review gates: fail-closed principles,
-  the open F1–F6 flake-class taxonomy, the bounded retry ladder with
-  class-exception duties, protected-repository rules, telemetry, evidence
-  duties, and flake-rate KPI targets — is packaged as the next MINOR release
-  (purely additive, new-optional capability). This release-preparation change
-  synchronizes every C10 version anchor to 1.3.0, cuts the dated `[1.3.0]`
-  CHANGELOG section, and writes the readiness record
-  (`.agent/evidence/release-readiness-v1.3.0.md`); the `H-FRAMEWORK-RELEASE`
-  sign-off and tag remain outstanding — the pipeline never self-tags.
-- **Latest released tag: v1.2.1 (PATCH) — tagged 2026-09-19 at `250fdd9` (PR #59,
-  the ci_gates vendor-name scrub).** Anomaly, recorded honestly: the tag's
+- **Latest released tag: v1.3.0 (MINOR) — RELEASED 2026-09-30 at `2e122256` (PR #60).**
+  The operator-authorized annotated tag `v1.3.0` (H-FRAMEWORK-RELEASE — the tag is the
+  operator's act alone; the pipeline never self-tags) points at the reviewed merge
+  commit of PR #60 (tagged 2026-09-30T10:12:19Z); `release.yml` run 36700976611
+  succeeded — the blocking tag-mode close-out passed — and published
+  [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.3.0)
+  'Nizam v1.3.0 — Review-Gate Flake Management (MINOR)' from the `[1.3.0]` CHANGELOG
+  section at 2026-09-30T10:12:30Z, packaging
+  `methodology/09_review_gate_flake_management.md` plus its registration. Preceded by
+  **v1.2.1 (PATCH) — tagged 2026-09-19 at `250fdd9` (PR #59)**, the anomaly recorded
+  honestly below, and **v1.2.0 (MINOR) — released 2026-09-17 at `7441ffa` (PR #58, run
+  35232527341)**.
+- **Prior released tag: v1.2.1 (PATCH) — tagged 2026-09-19; the recorded anomaly.** Its
   `release.yml` run 35456401143 FAILED the blocking tag-mode close-out
-  (`FAIL tag v1.2.1 matches NIZAM.json framework.version at tag (1.2.0)` —
-  no `[1.2.1]` CHANGELOG section was cut and the tree anchors stayed at
-  `1.2.0`); the GitHub Release page for v1.2.1 exists (created
-  2026-09-19T16:54:06Z). Preceded by **v1.2.0 (MINOR) — released 2026-09-17**
-  at `7441ffa` (PR #58): `release.yml` run 35232527341 published the Release
-  from the `[1.2.0]` CHANGELOG section, packaging the Convergent Automated
-  Code Review standard (PR #57). The v1.3.0 preparation supersedes the anomaly
-  by rolling every anchor forward together.
-- **Prior released tag: v1.1.0 (MINOR) — released 2026-08-19.** The operator executed
+  (`FAIL tag v1.2.1 matches NIZAM.json framework.version at tag (1.2.0)` — no
+  `[1.2.1]` CHANGELOG section was cut; anchors stayed at `1.2.0`); the GitHub Release
+  page exists (created 2026-09-19T16:54:06Z). Preceded by v1.2.0 (MINOR, 2026-09-17,
+  run 35232527341). **Earlier released tags: v1.1.0 (MINOR) — released 2026-08-19.**
+  The operator executed
   `H-FRAMEWORK-RELEASE` after PR #55 merged: the annotated tag `v1.1.0` points at reviewed
   merge commit `a2c15d2`, and `release.yml` run 32282540074 published
   [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.1.0)

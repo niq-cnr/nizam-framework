@@ -2,10 +2,13 @@
 id: nizam-ecosystem-module
 title: "Ecosystem Engineering Cycle"
 description: "Reusable governance lifecycle for reconciling, auditing, planning, executing, and improving multi-repository software ecosystems."
-version: 0.3.0
+version: 0.4.0
 status: active
 authoritative_source: ecosystem/README.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-09-30"
+    summary: "The phase-014 proposal (GA track, awaiting H-PHASE-014) lands the two still-Planned protocol documents proposal-grade: 06_simplification_review.md (Repeat) and 08_ga_gate.md (Promote/GA) now exist in this directory (status draft), so both module-navigation rows flip 'Planned' -> 'Shipped' and the Shipped/Planned prose re-syncs — nine documents are now Shipped (00-08), none Planned. Mirrors the 0.2.2/0.2.3 precedent (rows flip when the document lands); the row records existence per this table's own stated semantics, not lifecycle activation: their draft -> active flip, capability registration in NIZAM.json + tools/skill.json + the user guide, and the reserved -> decided move for their H-CONSOLIDATION / H-GA gates land with phase-014 execution (feature 099)."
   - version: "0.3.0"
     date: "2026-08-15"
     summary: "Phase-012 feature 089 (issue #52): require both revision and timestamp anchors in the Baseline lifecycle summary and restore persisting to the Compare transition list."
@@ -84,12 +87,13 @@ as later features land their protocol document.
 | 03 | `03_engineering_audit.md` | Audit | Shipped |
 | 04 | `04_dependency_reconciliation.md` | Plan (typed dependencies) | Shipped |
 | 05 | `05_release_train_coordination.md` | Promote (release-train coordination) | Shipped |
-| 06 | `06_simplification_review.md` | Repeat (recurring simplification) | Planned |
+| 06 | `06_simplification_review.md` | Repeat (recurring simplification) | Shipped |
 | 07 | `07_progress_comparison.md` | Compare | Shipped |
-| 08 | `08_ga_gate.md` | Promote (GA gate) | Planned |
+| 08 | `08_ga_gate.md` | Promote (GA gate) | Shipped |
 
 "Shipped" means the document already exists in this repository's `ecosystem/`
-directory; "Planned" means it does not yet exist here. Seven documents are Shipped.
+directory; "Planned" means it does not yet exist here. Nine documents are Shipped
+(00–08); none remain Planned.
 The mandatory first-release surface's four core protocols
 (preflight/baseline/audit/comparison, product_spec_005.md Sec 2.3) landed in phase
 005-ecosystem-cycle: `01_clean_state_preflight.md` (feature 033), then
@@ -102,10 +106,16 @@ n-coordination protocols (NIP-0002 Stage 4) landed in phase
 cross-repository dependency ordering lives (feature 080), consuming the
 ecosystem-level membership-run aggregate — then `05_release_train_coordination.md` —
 the Promote stage, admitting an authorized plan's packets into a cross-repository
-release train (feature 081). The two still-Planned documents —
-`06_simplification_review.md` and `08_ga_gate.md` — are deferrable
-(product_spec_005.md Sec 2.3) and are prioritised from real evidence rather than
-authored speculatively.
+release train (feature 081). The final two documents landed 2026-09-30 with the
+phase-014 proposal (GA track, awaiting activation gate H-PHASE-014):
+`06_simplification_review.md` (feature scope of the phase-014 proposal; the Repeat
+stage — a recurring simplification review whose consolidations are executed only
+under the reserved `H-CONSOLIDATION` gate) and `08_ga_gate.md` (the Promote/GA
+stage — evidence-gated GA declaration criteria under the reserved `H-GA` gate; GA
+declaration is operator-only and the framework never auto-declares GA). Both ship
+proposal-grade (status `draft`): their activation flip and capability registration
+land with phase-014 execution, mirroring how `04`/`05` shipped at their authoring
+features.
 
 ## Capability Routing
 
