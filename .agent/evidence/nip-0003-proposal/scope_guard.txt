@@ -1,0 +1,25 @@
+set -o pipefail; git status --porcelain --untracked-files=all | python3 -c 'import sys,posixpath;A={"CHANGELOG.md","docs/planning/DEBT.md","docs/planning/ROADMAP.md","docs/nips/NIP-0003-live-runtime-sessions.md",".agent/validator/nip-0003-review.json"};P=".agent/evidence/nip-0003-proposal/";L=[l.rstrip("\n") for l in sys.stdin if l.strip()];paths=[posixpath.normpath(q.strip().strip(chr(34))) for l in L for q in l[3:].split(" -> ")];bad=[q for q in paths if q not in A and not q.startswith(P)];missing=sorted(A-set(paths));print("\n".join(L));print("changed paths:",len(paths),"FORBIDDEN:",bad,"EXPECTED-BUT-UNCHANGED:",missing);sys.exit(1 if bad or missing else 0)'
+ M CHANGELOG.md
+ M docs/planning/DEBT.md
+ M docs/planning/ROADMAP.md
+?? .agent/evidence/nip-0003-proposal/control_ndebt043_names_crosscheck.txt
+?? .agent/evidence/nip-0003-proposal/control_ndebt043_unshare_direct.txt
+?? .agent/evidence/nip-0003-proposal/control_nip_frontmatter_negative.txt
+?? .agent/evidence/nip-0003-proposal/control_nip_frontmatter_negative2.txt
+?? .agent/evidence/nip-0003-proposal/control_no_nizamiq_method.txt
+?? .agent/evidence/nip-0003-proposal/control_scope_guard_forbidden_path.txt
+?? .agent/evidence/nip-0003-proposal/control_scope_guard_traversal_and_sibling.txt
+?? .agent/evidence/nip-0003-proposal/control_scope_guard_vacuous_empty.txt
+?? .agent/evidence/nip-0003-proposal/evaluator_verdict.json
+?? .agent/evidence/nip-0003-proposal/fixtures_self_test.txt
+?? .agent/evidence/nip-0003-proposal/ndebt043_convergent_suite.txt
+?? .agent/evidence/nip-0003-proposal/ndebt043_sysctl.txt
+?? .agent/evidence/nip-0003-proposal/nip_frontmatter_schema.txt
+?? .agent/evidence/nip-0003-proposal/no_nizamiq_in_added_lines.txt
+?? .agent/evidence/nip-0003-proposal/release_closeout.txt
+?? .agent/evidence/nip-0003-proposal/scope_guard.txt
+?? .agent/evidence/nip-0003-proposal/validate.txt
+?? .agent/validator/nip-0003-review.json
+?? docs/nips/NIP-0003-live-runtime-sessions.md
+changed paths: 22 FORBIDDEN: [] EXPECTED-BUT-UNCHANGED: []
+EXIT:0

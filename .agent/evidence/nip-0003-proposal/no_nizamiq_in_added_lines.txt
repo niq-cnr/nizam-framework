@@ -1,0 +1,5 @@
+set -o pipefail; N=docs/nips/NIP-0003-live-runtime-sessions.md; AWK="/^diff --git/{h=0;next} /^@@/{h=1;next} h&&/^\\+/{t++; if (\$0 ~ P) n++} END{print n+0, t+0}"; read ADD TOT < <(git diff HEAD -U0 --no-color | awk -v P=nizamiq "$AWK"); NIP=$(awk "/nizamiq/{n++} END{print n+0}" $N); NIPL=$(wc -l < $N); CI=$(( $(git diff HEAD -U0 --no-color | awk -v P=nizamiq -v IGNORECASE=1 "$AWK" | cut -d" " -f1) + $(grep -ci nizamiq $N || true) )); echo "added_lines_scanned=$TOT nip_lines_scanned=$NIPL"; echo "nizamiq in added diff lines=$ADD; in NIP file=$NIP; total=$((ADD+NIP))"; echo "informational case-insensitive total (gawk IGNORECASE)=$CI"; test "$TOT" -gt 0 && test "$NIPL" -gt 0 && test $((ADD+NIP)) -eq 0
+added_lines_scanned=61 nip_lines_scanned=686
+nizamiq in added diff lines=0; in NIP file=0; total=0
+informational case-insensitive total (gawk IGNORECASE)=0
+EXIT:0
