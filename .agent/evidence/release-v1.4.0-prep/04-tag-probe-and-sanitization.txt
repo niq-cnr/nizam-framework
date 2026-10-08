@@ -1,0 +1,155 @@
+# #5a: git rev-parse -q --verify refs/tags/v1.4.0; echo "exit=$?"
+exit=1
+# ASSERT OK   #5a (observed 'exit=1')
+# #5b: git ls-remote --tags origin v1.4.0; echo "exit=$?"
+exit=0
+# ASSERT OK   #5b (empty output AND exit=0, not merely empty) (observed 'exit=0')
+# control for #5b (not in plan): git ls-remote --tags origin v1.3.0 ; echo "exit=$?"  -- proves origin is reachable and returns tags, so the empty #5b is a real negative
+39561f30d760d9fedef095ef1e5358aea80eca0b	refs/tags/v1.3.0
+exit=0
+# ASSERT OK   control: origin returned the v1.3.0 ref with exit=0
+# git tag --list "v1.4.0" "e2e-*"  (local tags; the e2e harness must not leave a tag behind)
+exit=0
+# ASSERT OK   no local v1.4.0 / e2e-* tag (observed 'exit=0')
+# git rev-parse HEAD
+669fb7251bf45a30fea3fa3f520b23640695131b
+# ASSERT OK   HEAD (observed '669fb7251bf45a30fea3fa3f520b23640695131b')
+# git status --porcelain --untracked-files=all   (live, taken while generating this file; 04 was being generated, so it appears below under its temporary name 04-...txt.tmp, which sits under the allowed prep-dir prefix)
+ M CHANGELOG.md
+ M CONTEXT.md
+ M NIZAM.json
+ M README.md
+ M docs/guide/index.html
+ M docs/planning/ROADMAP.md
+ M docs/planning/operator_gates.md
+?? .agent/evidence/release-readiness-v1.4.0.md
+?? .agent/evidence/release-v1.4.0-prep/00-release-prep-plan.md
+?? .agent/evidence/release-v1.4.0-prep/01-validate-sh.txt
+?? .agent/evidence/release-v1.4.0-prep/02-fixtures-self-test.txt
+?? .agent/evidence/release-v1.4.0-prep/03-release-closeout-pr.txt
+?? .agent/evidence/release-v1.4.0-prep/04-tag-probe-and-sanitization.txt.tmp
+?? .agent/evidence/release-v1.4.0-prep/05-e2e-bootstrap.txt
+?? .agent/validator/release-v1.4.0-diff.json
+?? .agent/validator/release-v1.4.0-plan.json
+# --- scope guard, section 3 part B + negative control ---
+# [PRE-WRITE run] executed BEFORE any evaluator file was written. At that time the untracked files were exactly: .agent/evidence/release-v1.4.0-prep/00-release-prep-plan.md, .agent/validator/release-v1.4.0-diff.json, .agent/validator/release-v1.4.0-plan.json (plus 7 x M generator files). Output of plan section 3 part B + its negative control, verbatim from that run:
+scope_guard_exit=0
+positive_exit=0
+UNEXPECTED: ?? methodology/10_live_runtime_sessions.md
+neg_untracked_forbidden_exit=1
+UNEXPECTED: M .agent/run_state.json
+neg_tracked_forbidden_exit=1
+UNEXPECTED: ?? .agent/evidence/release-v1.4.0-prep-x/evil.txt
+neg_sibling_prefix_exit=1
+UNEXPECTED: ?? .agent/validator/release-v1.4.0-../../ecosystem/x.json
+neg_traversal_exit=1
+MISSING: M NIZAM.json
+neg_missing_generator_file_exit=1
+UNEXPECTED: D CONTEXT.md
+MISSING: M CONTEXT.md
+neg_wrong_status_exit=1
+# ASSERT OK   pre-write guard: scope_guard_exit=0, positive_exit=0, 6 x neg_*_exit=1
+# [POST-WRITE run] executed AFTER writing 01,02,03,05 and release-readiness-v1.4.0.md (live, same extracted blocks):
+scope_guard_exit=0
+positive_exit=0
+UNEXPECTED: ?? methodology/10_live_runtime_sessions.md
+neg_untracked_forbidden_exit=1
+UNEXPECTED: M .agent/run_state.json
+neg_tracked_forbidden_exit=1
+UNEXPECTED: ?? .agent/evidence/release-v1.4.0-prep-x/evil.txt
+neg_sibling_prefix_exit=1
+UNEXPECTED: ?? .agent/validator/release-v1.4.0-../../ecosystem/x.json
+neg_traversal_exit=1
+MISSING: M NIZAM.json
+neg_missing_generator_file_exit=1
+UNEXPECTED: D CONTEXT.md
+MISSING: M CONTEXT.md
+neg_wrong_status_exit=1
+# ASSERT OK   post-write guard: scope_guard_exit=0, positive_exit=0, 6 x neg_*_exit=1
+# #11: git diff --name-only 669fb72 -- . ":!.agent/evidence/release-readiness-v1.4.0.md" ":!.agent/evidence/release-v1.4.0-prep/"
+CHANGELOG.md
+CONTEXT.md
+NIZAM.json
+README.md
+docs/guide/index.html
+docs/planning/ROADMAP.md
+docs/planning/operator_gates.md
+# ASSERT OK   #11 exactly 7 generator files (observed 'CHANGELOG.md CONTEXT.md NIZAM.json README.md docs/guide/index.html docs/planning/ROADMAP.md docs/planning/operator_gates.md ')
+# #12
+git diff 669fb72 -- .agent/run_state.json docs/planning/manifest.json docs/planning/DEBT.md docs/nips .agent/product_spec_014.md .agent/feature_list_014.json docs/planning/phase_014.yaml methodology schema tools standard templates ecosystem .github bootstrap.sh | wc -c 
+0
+# ASSERT OK   #12 (observed '0')
+# #13
+test "$(sed -n '8,10p' CHANGELOG.md)" = "$(printf '## [Unreleased]\n\n## [1.4.0] - 2026-10-08')"; echo "exit=$?" 
+exit=0
+# ASSERT OK   #13 (observed 'exit=0')
+# #13 supporting view: sed -n "8,10p" CHANGELOG.md
+## [Unreleased]
+
+## [1.4.0] - 2026-10-08
+# #6: python3 -c "import json;print(json.load(open('NIZAM.json'))['framework']['version'])"
+1.4.0
+# ASSERT OK   #6 (observed '1.4.0')
+# #7: grep -c 'v1\.3\.0' README.md; grep -o 'v1\.4\.0' README.md | wc -l 
+0 7 
+# ASSERT OK   #7 (0 then 7) (observed '0 7 ')
+# #8: (python close-out document_body disposition count; block 05)
+1
+# ASSERT OK   #8 (observed '1')
+# #9: grep -c '^- \*\*Latest released tag: v1.3.0 (MINOR) — RELEASED 2026-09-30 at' docs/planning/ROADMAP.md
+1
+# ASSERT OK   #9 (observed '1')
+# --- control-character sweep (E8 item 5): LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' <file>  (must be 0 for every touched file) ---
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' CHANGELOG.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' NIZAM.json
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' CONTEXT.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' README.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' docs/guide/index.html
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' docs/planning/ROADMAP.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' docs/planning/operator_gates.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' .agent/evidence/release-readiness-v1.4.0.md
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' .agent/evidence/release-v1.4.0-prep/01-validate-sh.txt
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' .agent/evidence/release-v1.4.0-prep/02-fixtures-self-test.txt
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' .agent/evidence/release-v1.4.0-prep/03-release-closeout-pr.txt
+0
+# LC_ALL=C grep -cP '[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]|\r' .agent/evidence/release-v1.4.0-prep/05-e2e-bootstrap.txt
+0
+# (04 itself is swept after it is written; see the evaluator verdict.)
+# --- non-vacuity precondition for #10 (02 section 3.1): swept targets exist and are non-empty: wc -c CHANGELOG.md NIZAM.json README.md CONTEXT.md
+ 99304 CHANGELOG.md
+ 18711 NIZAM.json
+  4113 README.md
+ 10502 CONTEXT.md
+132630 total
+# --- #10: grep -inE 'n[i]zamiq|\.svc|cluster\.local' CHANGELOG.md NIZAM.json README.md CONTEXT.md; echo "exit=$?"
+exit=1
+# ASSERT OK   #10 (no hits, exit=1) (observed 'exit=1')
+# --- #10-control (positive control: same pattern MUST match). The run-time-assembled uppercase brand token in the first match line is redacted below as <TOKEN-UPPERCASE> (sed on the captured output only) so this evidence file does not itself carry the literal. ---
+# printf '%s\n' "x $(printf 'n%szamiq' i | tr a-z A-Z) y" 'host.svc' 'a.cluster.local' | grep -inE 'n[i]zamiq|\.svc|cluster\.local'; echo "exit=$?" 
+1:x <TOKEN-UPPERCASE> y
+2:host.svc
+3:a.cluster.local
+exit=0
+# ASSERT OK   #10-control (3 matches, exit=0) (observed '1:x <TOKEN-UPPERCASE> y|2:host.svc|3:a.cluster.local|exit=0|')
+# --- supplementary sweep over ADDED lines of all 7 touched files (covers guide/ROADMAP/operator_gates, which #10 does not): git diff -U0 669fb72 | grep "^+" | grep -v "^+++" | grep -inE the same pattern ; echo "exit=$?" ---
+exit=1
+# ASSERT OK   added-line sweep (observed 'exit=1')
+# --- per-file hit-line counts, HEAD 669fb72 vs working tree (case-insensitive, same pattern); only ROADMAP has pre-existing hits and they are unchanged ---
+CHANGELOG.md HEAD=0 NOW=0
+NIZAM.json HEAD=0 NOW=0
+README.md HEAD=0 NOW=0
+CONTEXT.md HEAD=0 NOW=0
+docs/guide/index.html HEAD=0 NOW=0
+docs/planning/ROADMAP.md HEAD=4 NOW=4
+docs/planning/operator_gates.md HEAD=0 NOW=0
+EXIT:0

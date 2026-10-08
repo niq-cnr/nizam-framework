@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.43.0
+version: 0.44.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.44.0"
+    date: "2026-10-08"
+    summary: "v1.4.0 release preparation (operator-requested 2026-10-08; H-FRAMEWORK-RELEASE sign-off and tag pending): the two proposal-grade ecosystem lifecycle protocol documents landed with the phase-014 proposal (ecosystem/06_simplification_review.md and ecosystem/08_ga_gate.md, status draft, not yet normative -- activation awaits phase-014 feature 099 under H-PHASE-014) are packaged as the next MINOR release; everything else since v1.3.0 is framework-envelope only. Current Position gains the 'Release in preparation: v1.4.0' bullet ahead of the latest-released bullet, which stays unedited -- v1.3.0 remains the latest released tag until the operator tags v1.4.0, and the close-out gate's body pattern is version-scoped, so the v1.3.0 line does not count at V=1.4.0 (the 0.38.0/0.40.0 precedent). The Phase 014 banner gains a dated release-fact paragraph: once v1.4.0 is tagged, feature 102's no-v1.4.0-tag acceptance test, product_spec_014's zero-v1.4.0-refs criterion, and feature 100's v1.3.0 pilot pin are stale, so a Planner re-baseline of the phase-014 artifacts is required before H-PHASE-014 (no phase-014 artifact is edited here). The NIP-0003 queued-candidate section's expected versions roll from v1.4.0 / v1.5.0 to v1.5.0 / v1.6.0 (the NIP itself is unedited pending H-NIP). run_state, manifest and DEBT.md are untouched."
   - version: "0.43.0"
     date: "2026-10-08"
     summary: "NIP-0003 (Live Runtime Sessions) PROPOSED, awaiting H-NIP: a new 'Queued Candidate — NIP-0003' section sits directly below the unedited Phase 014 proposal banner. It summarizes the proposal (a language-neutral live-runtime-session protocol plus an SBCL reference binding, an optional adapter capability, session schemas under an extended C12, and a reference controller with a live CI conformance job), the four operator decisions of 2026-10-08, and the proposed realization as phases 015 (features 103-107) and 016 (108-113), each releasing as the next MINOR (expected v1.4.0 / v1.5.0), to follow phase 014. Acceptance would select, not activate; phase-015 planning artifacts are authored only after 014 closes. Current Position is unchanged: its single released-tag disposition line is untouched, and its stale open-debt count is left for the next refresh and logged as NDEBT-044(e). run_state, manifest and operator_gates are untouched (a proposal is not an activation)."
@@ -203,6 +206,17 @@ candidate inputs to the 101 simplification review's evidence, and the `NDEBT-034
 optimization is revisited only if the real pilot proves the per-member clone cost
 load-bearing.
 
+**Release fact for re-baseline (2026-10-08, recorded by the v1.4.0 release preparation;
+the banner text above is unedited).** This proposal was authored at v1.3.0, and three of
+its premises go stale once the operator tags `v1.4.0`: feature 102's acceptance test
+`git rev-parse -q --verify refs/tags/v1.4.0; test $? -eq 1`
+(`.agent/feature_list_014.json`) and the phase-level "zero v1.4.0 refs" criterion in
+`.agent/product_spec_014.md` both assert that no v1.4.0 tag exists, and feature 100 pins
+the real pilot to the released tag `v1.3.0` (`.agent/feature_list_014.json`,
+`.agent/product_spec_014.md`, `docs/planning/phase_014.yaml`). A Planner re-baseline of
+the phase-014 artifacts is required before `H-PHASE-014` is presented; the release
+preparation edits none of them.
+
 ## Queued Candidate — NIP-0003: Live Runtime Sessions (proposed phases 015/016, to follow 014) — PROPOSED, awaiting H-NIP
 
 **[NIP-0003](../nips/NIP-0003-live-runtime-sessions.md) is PROPOSED** (2026-10-08,
@@ -222,9 +236,11 @@ cases 1–13.
 tools/, two phases (Recommended)"; Profile "Fold into the SBCL binding (Recommended)".
 
 **Proposed realization, to follow phase 014.** Phase 015 (normative surface, features
-103–107, design estimate 5,400 lines) releases as the next MINOR (expected v1.4.0) and
+103–107, design estimate 5,400 lines) releases as the next MINOR (expected v1.5.0; the
+NIP's own text still says v1.4.0, which the 2026-10-08 release preparation takes) and
 also rolls up phase 014's unreleased changes. Phase 016 (reference controller and live
-conformance, features 108–113) releases as the next MINOR (expected v1.5.0); it requires
+conformance, features 108–113) releases as the next MINOR (expected v1.6.0; the NIP says
+v1.5.0); it requires
 SBCL wherever the Evaluator runs. **Acceptance selects; it does not activate.** The
 phase-015 Planner artifacts are authored only after phase 014 closes, and each phase
 needs its own `H-PHASE-NNN`. Phase 014 is not edited by this proposal, and the findings
@@ -727,6 +743,22 @@ successor, leaving open debt deferred to unscoped "future phases").
   ran green at `SUMMARY: 15 passed, 0 failed` (C1–C15) at the time, and the fixtures
   self-test at 57/57; the hermetic e2e bootstrap harness passed in CI (now including the
   n-case `assert_multirepo`).
+- **Release in preparation: v1.4.0 (MINOR) — awaiting `H-FRAMEWORK-RELEASE`.** Requested
+  by the operator 2026-10-08. The consumer-reaching content since v1.3.0 is exactly the
+  two proposal-grade ecosystem lifecycle protocol documents landed with the phase-014
+  proposal (PR #61) — `ecosystem/06_simplification_review.md` (Repeat) and
+  `ecosystem/08_ga_gate.md` (Promote/GA), both `status: draft` and not yet normative
+  (their activation awaits phase-014 feature 099 under `H-PHASE-014`) — plus their
+  `ecosystem/README.md` rows and `NIZAM.json` ecosystem `key_documents` entries.
+  Everything else since v1.3.0 (the phase-014 Planner artifacts, these planning
+  records, and the NIP-0003 proposal, PR #62) is framework-envelope only. MINOR per
+  `methodology/06_release_train.md` Section 3.2 (new optional protocol documents;
+  nothing that validated under v1.3.0 is invalidated), rounded up per Section 3.4. This
+  release-preparation change synchronizes every C10 version anchor to 1.4.0 and cuts
+  the dated `[1.4.0]` CHANGELOG section; the readiness record
+  (`.agent/evidence/release-readiness-v1.4.0.md`) is written by the Evaluator after
+  independently re-running the checks. The `H-FRAMEWORK-RELEASE` sign-off and tag remain
+  outstanding — the pipeline never self-tags.
 - **Latest released tag: v1.3.0 (MINOR) — RELEASED 2026-09-30 at `2e122256` (PR #60).**
   The operator-authorized annotated tag `v1.3.0` (H-FRAMEWORK-RELEASE — the tag is the
   operator's act alone; the pipeline never self-tags) points at the reviewed merge

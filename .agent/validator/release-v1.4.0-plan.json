@@ -1,0 +1,24 @@
+{
+  "review": "release-v1.4.0-prep-plan",
+  "feature": null,
+  "contract_id": null,
+  "revision_reviewed": 2,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Revision history: plan revision 1 REJECTED (scope guard blind to untracked files; table-escaped pipes in #7/#8/#10/#12 with #10 vacuous; remote tag probe fail-open). All three fixed in revision 2 (circuit breaker: 1 of 3 rounds used). The 18 E1-E7 edit specifications were approved at round 1 and are unchanged.",
+    "Round-1 fixes verified: §3 part B (plan lines 539-618) unions the tracked diff since 669fb72 with git ls-files --others --exclude-standard; requires all 7 generator files as 'M'; fails closed on other status letters, quoted paths, and git diff failure. Fenced commands #5a/#5b/#7/#8/#10/#10-control/#12/#13 parse correctly read literally. #5b requires empty output AND exit=0 (non-zero = inconclusive).",
+    "Validator-verdict allowlist regex admits only untracked .json files directly inside .agent/validator/ with the release-v1.4.0- prefix; no subdirectories or traversal (precedent: .agent/validator/nip-0003-review.json in PR #62).",
+    "Non-blocking: §3 MUST NOT TOUCH prose (plan lines 532-533) not updated to name the .agent/validator/release-v1.4.0-*.json exception; part B is authoritative.",
+    "Non-blocking: part B admits evidence/validator files only as untracked '??' lines; run the guard before the evidence commit (committed files would show as 'A' and fail closed).",
+    "OWED by the @evaluator: every executed §4 check (#1-#13, #10-control, #11b + negative control) run verbatim; confirm e2e output contains a 'resolved_sha=' line, else record git rev-parse HEAD in 05-e2e-bootstrap.txt.",
+    "Planner's .github/scripts/__pycache__ side effect is gitignored (.gitignore:19); harmless.",
+    "Carried: run_state updated_at 2026-08-19 (>72h) stale-state alert is the Orchestrator's to raise; the plan leaves run_state untouched."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": null,
+    "summary": "APPROVED at plan revision 2. All three round-1 issues resolved; the untracked-aware scope guard is sound against its allowlist and six negative cases; every pipe/alternation command is fenced verbatim and #10 is proven non-vacuous; the remote tag probe requires exit=0; the validator-verdict allowlist entry is narrowly scoped. The 18 E1-E7 edit specifications are unchanged and correct. The generator may implement exactly E1-E7; next gates: Mode B (git diff HEAD + guard part B) and the evaluator's §4 runs."
+  }
+}
