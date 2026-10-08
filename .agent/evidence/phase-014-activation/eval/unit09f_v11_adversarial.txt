@@ -1,0 +1,29 @@
+bash .agent/evidence/phase-014-activation/eval/unit09f_v11_adversarial.sh
+== A. exact-equality semantics via --git-status (real status + extra lines)
+OK flag-case: exact verdict path (untracked) rc=0 want=0 :: PASS V11 changed/untracked paths confined to the package (70 paths)
+OK flag-case: exact verdict path with modified flag rc=0 want=0 :: PASS V11 changed/untracked paths confined to the package (70 paths)
+OK flag-case: suffix look-alike .json.bak rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- .agent/validator/phase-014-activation.j
+OK flag-case: prefix look-alike (.json without trailing) rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- .agent/validator/phase-014-activation.j
+OK flag-case: sibling verdict phase-014-other.json rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- .agent/validator/phase-014-other.json
+OK flag-case: verdict path as a directory component rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- .agent/validator/phase-014-activation.j
+OK flag-case: subdirectory path of validator dir rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- .agent/validator/sub/phase-014-activati
+OK flag-case: case-variant verdict path rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- .agent/validator/Phase-014-activation.j
+OK flag-case: payload edit tools/validate.sh rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- tools/validate.sh
+OK flag-case: stray .agent/run_state.json.bak rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- .agent/run_state.json.bak
+OK flag-case: stray outside package: bootstrap.sh rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- bootstrap.sh
+== B. normal invocation (no flag) must still call git status
+OK default run with a planted untracked tools/ file: rc=1 want=1 :: FAIL V11 changed/untracked paths confined to the package (71 paths) -- tools/ZZ_planted_stray.txt
+15:FAIL V11 changed/untracked paths confined to the package (71 paths) -- tools/ZZ_planted_stray.txt
+OK default run after removing the stray: rc=0 want=0 :: PASS V11 changed/untracked paths confined to the package (70 paths)
+== C. source facts
+84:ORCHESTRATOR_OWNED = (".agent/run_state.json", ".agent/validator/phase-014-activation.json")
+316:    orch = [x for x in paths if x in ORCHESTRATOR_OWNED]
+317:    stray = [x for x in paths if x not in ORCHESTRATOR_OWNED and not x.startswith(PACKAGE_PATHS)]
+non-membership (startswith/endswith/in-string) uses of ORCHESTRATOR_OWNED:
+317:    stray = [x for x in paths if x not in ORCHESTRATOR_OWNED and not x.startswith(PACKAGE_PATHS)]
+callers passing --git-status outside the negative-controls tool:
+.agent/evidence/backlog-reconciliation-2026-10-08/tools/dag_negative_controls.py
+.agent/evidence/backlog-reconciliation-2026-10-08/tools/validate_backlog_dag.py
+.agent/evidence/backlog-reconciliation-2026-10-08/dag_recheck.md
+RESULT: all-ok
+EXIT:0

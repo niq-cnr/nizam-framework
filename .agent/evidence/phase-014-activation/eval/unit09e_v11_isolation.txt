@@ -1,0 +1,16 @@
+bash .agent/evidence/phase-014-activation/eval/unit09e_v11_isolation.sh
+--- validate_backlog_dag.py on copy without the validator verdict file
+PASS V11 changed/untracked paths confined to the package (58 paths)
+ready set (all prerequisites met AND the single lane's serialize_after predecessors complete): F099
+SUMMARY: PASS (0 failing checks; 43 packets)
+rc=0
+diff vs committed capture (lines): 4
+15c15
+< PASS V11 changed/untracked paths confined to the package (38 paths)
+---
+> PASS V11 changed/untracked paths confined to the package (58 paths)
+--- dag_negative_controls.py on copy
+NEGATIVE CONTROLS: 10/10 behaved as expected
+rc=0
+diff vs committed capture (lines): 0
+EXIT:0

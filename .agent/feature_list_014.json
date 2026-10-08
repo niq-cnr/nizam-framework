@@ -1,73 +1,340 @@
 {
   "phase": "014-ga-track",
-  "spec_version": "1.0.1",
-  "original_estimate_lines": 2200,
-  "planning_note": "DAG-validated acyclic: roots {099, 100}; 101 depends on 100; 102 depends on 099/100/101. Topological execution order: [099, 100] -> [101] -> [102]. Scope is the rolled-forward phase-012 candidate scope (a real non-scratch multi-repo pilot + the remaining lifecycle protocols 06/08 with the reserved H-CONSOLIDATION/H-GA gates), carried through phases 012/013 and authored 2026-09-30 after the v1.3.0 release. PROPOSAL ONLY: awaiting activation gate H-PHASE-014; no feature enters contract negotiation before that authorization. RE-BASELINED 2026-10-08 (spec 1.0.1) under operator decision D1, recorded in run_state before the act (not H-PHASE-014): the v1.4.0 release moved feature 100's pilot pin from v1.3.0 to v1.4.0 and feature 102's tag-absence assertion to v1.5.0, the next MINOR; scope, dependencies, estimates and statuses unchanged.",
+  "spec_version": "1.1.2",
+  "original_estimate_lines": 6660,
+  "planning_note": "DAG-validated acyclic. ACTIVATED 2026-10-08 under H-PHASE-014 with the approved amendments and the folded maintenance tranche (operator verbatim: '- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.'), recorded in .agent/run_state.json as operator_gate_decision at 2026-10-08T11:21:14Z before the re-planning (NDEBT-018); run_state position written 12:18:31Z (phase_activated). Spec 1.1.2 (validator round-1 corrections to 1.1.0 in 1.1.1; round-2: 102 AT5 reclassified as approved-tranche scope; Planner hardening operator-acknowledged 2026-10-08T13:20:12Z). Approved amendments: edge 101->099; acceptance tests hardened per the recorded list (exit-captured validator gate; per-gate rows for 099; real-member and NDEBT-018 ordering checks for 100; scoped audit checks for 101; 102 `import json`; phase-scoped tag check). Each feature's acceptance_provenance separates approved-amendment tests, approved-tranche coverage (102 AT5), Planner hardening beyond the enumerated amendments (099 AT3/AT6/AT7, 101 AT2, 102 AT2/AT3/AT7; operator-acknowledged 2026-10-08T13:20:12Z, 'acknowledged.') and new maintenance-feature design. Maintenance features 103-109 (NDEBT-043 -> 041, 042, 044 split a/b/c-d-f, 037 folded with 044 c/f, 026), each a dependency of 102. Feature ids 103-109 are allocated from the highest id across all .agent/feature_list*.json (102); NIP-0003's provisional 103-113 therefore shift (provisionally 110-120, confirmed at phase-015 planning). List order is the recommended single-lane order and a topological order: 099, 103, 104, 105, 106, 107, 109, 108, 100, 101, 102. Roots: 099, 103, 105, 106, 107, 109, 100. Estimate: the Planner's activation-time estimate under the approved fold — naive 2890 x 2.3 (the measured process weight cited in NIP-0003:494-495) = 6660 (per-feature, rounded to 10); 130 percent ceiling 8658; APPROVED by the operator, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z). Acceptance infrastructure frozen at activation: .agent/evidence/phase-014-activation/ (baselines + gates/), sha256-pinned by 102 AT7; no feature contract may modify it. Every acceptance test is probed against the pre-implementation tree (.agent/evidence/backlog-reconciliation-2026-10-08/a02_premise_probes.txt). Earlier history: proposal authored 2026-09-30 at v1.3.0; re-baselined 2026-10-08 under D1 (spec 1.0.1: pilot pin v1.4.0, tag test v1.5.0).",
+  "dod_ref": "standard/definition_of_done.md",
   "features": [
     {
       "id": "099",
       "name": "GA-track activation wave — register ecosystem/06+08 and define the reserved gates",
-      "description": "Flip ecosystem/06_simplification_review.md and ecosystem/08_ga_gate.md status draft -> active (frontmatter version bumps + change_log entries), capability-register both in NIZAM.json's capabilities array (capability ids nizam-ecosystem-simplification-review and nizam-ecosystem-ga-gate; the key_documents enumeration already landed with the proposal per the NDEBT-005 disk-to-index guard) and in tools/skill.json (capabilities; version bump per its own convention), re-sync docs/guide/index.html's ecosystem card key-documents list (also restoring the shipped 00/04/05 the card still omits — pre-existing drift), and move H-CONSOLIDATION + H-GA from the reserved table to the decided table (DEFINED/OUTSTANDING) in docs/planning/operator_gates.md, mirroring features 061/080/081.",
+      "description": "Flip ecosystem/06_simplification_review.md and ecosystem/08_ga_gate.md status draft -> active (frontmatter version bumps + change_log entries), capability-register both in NIZAM.json's capabilities array (capability ids nizam-ecosystem-simplification-review and nizam-ecosystem-ga-gate, each with its document as authoritative_source; the key_documents enumeration already landed with the proposal per the NDEBT-005 disk-to-index guard, so AT2 is a regression guard that passes before implementation by design) and in tools/skill.json (capabilities; version bump per its own convention), re-sync the ecosystem card of docs/guide/index.html (the <article class=\"card\"> whose heading is ecosystem/) to every on-disk ecosystem/0*.md (restoring the shipped 00/04/05 the card still omits — pre-existing drift), and move H-CONSOLIDATION + H-GA from the reserved table to the decided table (DEFINED/OUTSTANDING) in docs/planning/operator_gates.md, mirroring features 061/080/081. Neither gate is exercised. AMENDED at H-PHASE-014 (spec 1.1.x): AT1 is the exit-captured validator gate (was a pipeline-swallowed `validate.sh | grep SUMMARY`); AT5 asserts a DEFINED row per gate in Section 1 AND removal from Section 2 (was an OR-grep satisfied by a mere mention). Tests listed under acceptance_provenance.planner_hardening_operator_acknowledged go beyond the operator's enumerated amendment list (run_state operator_gate_decision 2026-10-08T11:21:14Z); they are Planner hardening, operator-acknowledged 2026-10-08T13:20:12Z (verbatim 'acknowledged.'), and are part of the approved acceptance set.",
       "status": "pending",
       "dependencies": [],
       "acceptance_tests": [
-        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
         "python3 -c \"import json; d=json.load(open('NIZAM.json')); m=next(x for x in d['modules'] if x['path']=='ecosystem'); assert 'ecosystem/06_simplification_review.md' in m['key_documents'] and 'ecosystem/08_ga_gate.md' in m['key_documents']\"",
-        "python3 -c \"import json; d=json.load(open('NIZAM.json')); ids=[c['id'] for c in d['capabilities']]; assert 'nizam-ecosystem-simplification-review' in ids and 'nizam-ecosystem-ga-gate' in ids\"",
+        "python3 -c \"import json; c={x['id']:x['authoritative_source'] for x in json.load(open('NIZAM.json'))['capabilities']}; assert c.get('nizam-ecosystem-simplification-review')=='ecosystem/06_simplification_review.md' and c.get('nizam-ecosystem-ga-gate')=='ecosystem/08_ga_gate.md', c\"",
         "python3 -c \"import json; s=json.load(open('tools/skill.json')); mods=[c['module'] for c in s['capabilities']]; assert 'ecosystem/06_simplification_review.md' in mods and 'ecosystem/08_ga_gate.md' in mods\"",
-        "awk '/## 1\\. Decided and active gates/,/## 2\\. Reserved/' docs/planning/operator_gates.md | grep -c 'H-CONSOLIDATION\\|H-GA' | grep -qv '^0$'"
+        "python3 -c \"import re,sys; t=open('docs/planning/operator_gates.md').read(); s1=t.split('## 1. Decided and active gates')[1].split('## 2. Reserved')[0]; s2=t.split('## 2. Reserved')[1].split('## 3. Notes')[0]; row=lambda s,g: re.search(r'^\\| \\x60'+g+r'\\x60 \\|[^\\n]*\\bDEFINED\\b',s,re.M); res=lambda g: re.search(r'^\\| \\x60'+g+r'\\x60 \\|',s2,re.M); sys.exit(0 if all(row(s1,g) and not res(g) for g in ('H-CONSOLIDATION','H-GA')) else 1)\"",
+        "python3 -c \"import yaml; fm=lambda p: yaml.safe_load(open(p).read().split('---')[1]); a=fm('ecosystem/06_simplification_review.md'); b=fm('ecosystem/08_ga_gate.md'); assert (a['status'],b['status'])==('active','active'), (a['status'],b['status']); assert a['version']!='0.1.0' and b['version']!='0.1.0', (a['version'],b['version'])\"",
+        "python3 -c \"import glob; C=[c for c in open('docs/guide/index.html').read().split('<article class=') if '<h3><code>ecosystem/</code></h3>' in c]; assert len(C)==1, len(C); miss=[p for p in sorted(glob.glob('ecosystem/0*.md')) if '<code>'+p+'</code>' not in C[0].split('</article>')[0]]; assert not miss, miss\"",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
       ],
-      "estimated_lines": 400
+      "acceptance_provenance": {
+        "approved_amendment": [
+          1,
+          5
+        ],
+        "planner_hardening_operator_acknowledged": [
+          3,
+          6,
+          7
+        ],
+        "carried_from_1_0_x": [
+          2,
+          4,
+          8
+        ]
+      },
+      "estimated_lines": 920,
+      "naive_lines": 400,
+      "version_impact": "MINOR at the next release (two protocol documents become normative; additive capability entries)."
+    },
+    {
+      "id": "103",
+      "name": "Sandbox prerequisite handling — explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043)",
+      "description": "Maintenance tranche (H-PHASE-014 fold; first, because 104 depends on it). tools/test_convergent_review.py probes the HOST capability directly (`unshare --user --map-root-user true`), independent of tools/linux_trial_sandbox.sh, before the five sandbox-dependent tests. When isolation is unavailable each of those tests is reported with the token UNSUPPORTED on its own result line (an explicit unittest skip whose reason starts 'UNSUPPORTED: user-namespace isolation unavailable'), the run prints a 'CONFORMANCE: NOT FULL' line, and the process exits NON-ZERO (required-conformance mode is the default — the documented 'required gate' command never passes on a host that cannot prove isolation). The new flag --allow-unsupported-isolation (local development only; CI never passes it) turns that same outcome into exit 0 while still printing every UNSUPPORTED line and 'CONFORMANCE: NOT FULL'. On an isolation-capable host the tests execute and the run prints 'CONFORMANCE: FULL'. The flag never masks any other failure. tools/linux_trial_sandbox.sh and tools/isolated_trial_adapter.py are NOT modified (the fail-closed sandbox is never weakened, and the suite never runs a trial unsandboxed). tools/README.md's Machine Validation section documents the flag and both conformance outcomes. CAPABLE-HOST EVIDENCE OBLIGATION: AT1, AT2 and AT4 are host-conditional; the operator workstation restricts user namespaces, so only their restricted-host branches run here. The capable-host branches are discharged in CI by feature 104: 104 AT5/AT6 (the required-mode job prints 'CONFORMANCE: FULL' with no skips = AT1's capable branch) and 104 AT7/AT8 (a throwaway branch applying exactly AT4's sandbox-removal mutation makes the job fail on test_linux_sandbox_blocks_cross_trial_files_and_network = AT4's capable branch). AT2's capable branch is additionally run by the Evaluator wherever isolation is available, and otherwise recorded as not exercised. Polarity note: NIP-0003 sketches the opposite polarity (--require-isolation opt-in) for its own future suite; this feature sets the framework precedent (required by default), recorded for the NIP-0003 pre-acceptance revision in docs/planning/backlog_reconciliation.md.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "python3 -c \"import re,subprocess,sys; cap=subprocess.run(['unshare','--user','--map-root-user','true'],capture_output=True).returncode==0; p=subprocess.run([sys.executable,'tools/test_convergent_review.py'],capture_output=True,text=True); o=p.stdout+p.stderr; T=['test_linux_sandbox_blocks_cross_trial_files_and_network','test_linux_sandbox_blocks_execution_of_runner_generated_trial_file','test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files','test_prompt_evaluator_runs_three_isolated_validated_trials','test_prompt_evaluator_uses_per_trial_packet_copies']; bad=re.findall(r'^(?:FAIL|ERROR): (test_\\w+)',o,re.M); ok=(p.returncode==0 and 'CONFORMANCE: FULL' in o and 'UNSUPPORTED' not in o and 'skipped' not in o) if cap else (p.returncode!=0 and 'CONFORMANCE: NOT FULL' in o and all(re.search(r'^'+t+r'\\b.*\\bUNSUPPORTED\\b',o,re.M) for t in T)); print('isolation available:',cap,'exit:',p.returncode,'FAIL/ERROR:',bad); sys.exit(0 if ok and not bad else 1)\"",
+        "python3 -c \"import re,subprocess,sys; cap=subprocess.run(['unshare','--user','--map-root-user','true'],capture_output=True).returncode==0; p=subprocess.run([sys.executable,'tools/test_convergent_review.py','--allow-unsupported-isolation'],capture_output=True,text=True); o=p.stdout+p.stderr; T=['test_linux_sandbox_blocks_cross_trial_files_and_network','test_linux_sandbox_blocks_execution_of_runner_generated_trial_file','test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files','test_prompt_evaluator_runs_three_isolated_validated_trials','test_prompt_evaluator_uses_per_trial_packet_copies']; bad=re.findall(r'^(?:FAIL|ERROR): (test_\\w+)',o,re.M); ok=(p.returncode==0 and 'CONFORMANCE: FULL' in o and 'UNSUPPORTED' not in o and 'skipped' not in o) if cap else (p.returncode==0 and 'CONFORMANCE: NOT FULL' in o and all(re.search(r'^'+t+r'\\b.*\\bUNSUPPORTED\\b',o,re.M) for t in T)); print('isolation available:',cap,'exit:',p.returncode,'FAIL/ERROR:',bad); sys.exit(0 if ok and not bad else 1)\"",
+        "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace tools/fixtures/convergent_review/manifest.json '\"cases\"' '\"cases_tampered\"' --expect-rc nonzero --expect '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))' -- python3 tools/test_convergent_review.py --allow-unsupported-isolation",
+        "python3 -c \"import subprocess,sys; cap=subprocess.run(['unshare','--user','--map-root-user','true'],capture_output=True).returncode==0; a=['python3','.agent/evidence/phase-014-activation/gates/scratch_run.py','--replace','tools/linux_trial_sandbox.sh','exec unshare --user --map-root-user --net --ipc --uts --pid --fork --mount-proc','exec','--expect-rc','nonzero']+(['--expect','^(FAIL|ERROR): test_linux_sandbox_blocks_cross_trial_files_and_network'] if cap else ['--expect','^test_linux_sandbox_blocks_cross_trial_files_and_network.*UNSUPPORTED'])+['--','python3','tools/test_convergent_review.py']; sys.exit(subprocess.run(a).returncode)\"",
+        "git diff --exit-code 02b02c6 -- tools/linux_trial_sandbox.sh tools/isolated_trial_adapter.py",
+        "python3 -c \"s=open('tools/README.md').read().split('## Machine Validation')[1].split('\\n## ')[0]; miss=[k for k in ('--allow-unsupported-isolation','CONFORMANCE: NOT FULL','CONFORMANCE: FULL','UNSUPPORTED') if k not in s]; assert not miss, miss\"",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "acceptance_provenance": {
+        "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
+      },
+      "estimated_lines": 280,
+      "naive_lines": 120,
+      "debt_refs": [
+        "NDEBT-043"
+      ],
+      "version_impact": "MINOR at the next release (shipped tools/ suite gains an optional flag; nothing that passed before starts failing; rounded up per methodology/06_release_train.md Section 3.4)."
+    },
+    {
+      "id": "104",
+      "name": "Convergent-review suite enforced in CI, and the review schema family's validator stated (NDEBT-041)",
+      "description": "Maintenance tranche, after 103 (NDEBT-043 first, else the job fails on hosted runners that restrict user namespaces). Add ONE job to .github/workflows/compliance.yml that runs `python3 tools/test_convergent_review.py` in required-conformance mode (never with --allow-unsupported-isolation), reusing the already-pinned action SHAs (C14 stays PASS) and preceded by a GUARDED step that enables unprivileged user namespaces only where the sysctl key exists. This is the ONLY phase-014 feature permitted to modify .github/ (the spec lifts the workflow non-goal for it alone). Sync every job-count statement to the workflow's actual jobs, derived rather than hard-coded: standard/definition_of_done.md Section 8 (names every job; 'all three' / 'three-job') and Section 11 ('three jobs'); tools/README.md's Machine Validation section names the new job. State explicitly, in the '## Schemas' section of schema/README.md, that tools/test_convergent_review.py is the sole validator of the review schema family (review_packet, review_ledger, review_trial, review_replay, review_suppression); extending C12 to that family is left to the 101 simplification review / H-CONSOLIDATION. CI EVIDENCE CONTRACT (exact commands, each captured in the 04 Section 5 shape): (positive) on branch phase/014-ga-track at a commit that is an ancestor of the feature's HEAD — .agent/evidence/104/ci-positive-run.txt from `gh run view <run-id> --json headSha,headBranch,conclusion,jobs` and .agent/evidence/104/ci-positive-log.txt from `gh run view --job <job-id> --log`, where <job-id> is the databaseId of the new job in that run; (negative control) on a throwaway branch named throwaway/104-<slug> whose only change is 103 AT4's sandbox-removal mutation of tools/linux_trial_sandbox.sh — .agent/evidence/104/ci-negative-run.txt and ci-negative-log.txt by the same two commands, showing the new job failing on test_linux_sandbox_blocks_cross_trial_files_and_network; the throwaway branch is deleted afterwards. The negative control also discharges 103 AT4's capable-host branch, and the positive run 103 AT1's. The new job must not set a `name:` other than its key unless the tests' name binding (job key or explicit name, read from compliance.yml) still holds. RISK: if the guarded step cannot enable namespaces on hosted runners, the required-mode job fails by design — escalate (do not weaken the mode). NIP-0003 feature 109 (renumbered 116) then adds a further job, so its 'four jobs' text becomes 'five'.",
+      "status": "pending",
+      "dependencies": [
+        "103"
+      ],
+      "acceptance_tests": [
+        "python3 -c \"import yaml; J=yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs']; hits=[k for k,j in J.items() if any('python3 tools/test_convergent_review.py' in (s.get('run') or '') and '--allow-unsupported-isolation' not in (s.get('run') or '') for s in j['steps'])]; assert len(hits)==1, hits\"",
+        "python3 -c \"import re,yaml; J=list(yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs']); W={3:'three',4:'four',5:'five',6:'six'}[len(J)]; d=open('standard/definition_of_done.md').read(); s=d.split('## 8. Merge-Done')[1].split('## 9.')[0]+d.split('## 11. Enforcement')[1].split('## 12.')[0]; assert all('\\x60'+j+'\\x60' in d.split('## 8. Merge-Done')[1].split('## 9.')[0] for j in J), J; words=re.findall(r'\\b(?:all (two|three|four|five|six)\\b|(two|three|four|five|six)(?:-job| jobs\\b))',s); found={a or b for a,b in words}; assert found=={W}, (found,W)\"",
+        "python3 -c \"s=open('schema/README.md').read().split('## Schemas')[1].split('\\n## ')[0]; L=[l for l in s.splitlines() if 'test_convergent_review.py' in l and 'sole validator' in l]; assert L, 'no sole-validator statement in the Schemas section'\"",
+        "python3 -c \"import yaml; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; m=open('tools/README.md').read().split('## Machine Validation')[1].split('\\n## ')[0]; assert len(J)==1 and ('\\x60'+J[0][0]+'\\x60') in m, J\"",
+        "python3 -c \"import json,re,subprocess,yaml; t=open('.agent/evidence/104/ci-positive-run.txt').read().splitlines(); assert re.fullmatch(r'gh run view [0-9]+ --json headSha,headBranch,conclusion,jobs',t[0]), t[0]; R=json.loads('\\n'.join(t[1:-1])); J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; assert len(J)==1, J; jb=[j for j in R['jobs'] if j['name']==J[0][1]]; assert R['conclusion']=='success' and R['headBranch']=='phase/014-ga-track' and subprocess.run(['git','merge-base','--is-ancestor',R['headSha'],'HEAD']).returncode==0 and len(jb)==1 and jb[0]['conclusion']=='success' and t[-1]=='EXIT:0', (R['conclusion'],R['headBranch'],R['headSha'],jb,t[-1])\"",
+        "python3 -c \"import json,re,yaml; R=json.loads('\\n'.join(open('.agent/evidence/104/ci-positive-run.txt').read().splitlines()[1:-1])); t=open('.agent/evidence/104/ci-positive-log.txt').read().splitlines(); m=re.fullmatch(r'gh run view --job ([0-9]+) --log',t[0]); assert m, t[0]; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; jb=[j for j in R['jobs'] if str(j.get('databaseId'))==m.group(1)]; assert len(J)==1 and len(jb)==1 and jb[0]['name']==J[0][1], (J,jb); b='\\n'.join(t); assert t[-1]=='EXIT:0' and 'CONFORMANCE: FULL' in b and 'UNSUPPORTED' not in b and 'skipped' not in b and not re.search(r'\\b(FAIL|ERROR): test_',b), t[-1]\"",
+        "python3 -c \"import json,re,subprocess,yaml; t=open('.agent/evidence/104/ci-negative-run.txt').read().splitlines(); assert re.fullmatch(r'gh run view [0-9]+ --json headSha,headBranch,conclusion,jobs',t[0]), t[0]; R=json.loads('\\n'.join(t[1:-1])); J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; assert len(J)==1, J; jb=[j for j in R['jobs'] if j['name']==J[0][1]]; assert R['conclusion']=='failure' and R['headBranch'].startswith('throwaway/104-') and len(jb)==1 and jb[0]['conclusion']=='failure', (R['conclusion'],R['headBranch'],R['headSha'],jb,t[-1])\"",
+        "python3 -c \"import json,re,yaml; R=json.loads('\\n'.join(open('.agent/evidence/104/ci-negative-run.txt').read().splitlines()[1:-1])); t=open('.agent/evidence/104/ci-negative-log.txt').read().splitlines(); m=re.fullmatch(r'gh run view --job ([0-9]+) --log',t[0]); assert m, t[0]; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; jb=[j for j in R['jobs'] if str(j.get('databaseId'))==m.group(1)]; assert len(J)==1 and len(jb)==1 and jb[0]['name']==J[0][1], (J,jb); b='\\n'.join(t); assert re.search(r'\\b(FAIL|ERROR): test_linux_sandbox_blocks_cross_trial_files_and_network\\b',b), t[-1]\"",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "acceptance_provenance": {
+        "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
+      },
+      "estimated_lines": 230,
+      "naive_lines": 100,
+      "debt_refs": [
+        "NDEBT-041"
+      ],
+      "version_impact": "MINOR at the next release via standard/definition_of_done.md (additive job statement, the NIP-0003 Compatibility-table precedent); .github/ is not injected into consumers."
+    },
+    {
+      "id": "105",
+      "name": "Nested-fixture ownership — the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042)",
+      "description": "Maintenance tranche. REUSES, does not reinvent, the NIP-0003 design (docs/nips/NIP-0003-live-runtime-sessions.md, Reference tooling, feature 109): a fixture-subdirectory claim map inside tools/fixtures_self_test.sh in which every subdirectory of tools/fixtures/ is claimed by exactly one owning suite. Disposition (recorded in DEBT.md and docs/planning/backlog_reconciliation.md): the claim map is PULLED FORWARD into phase 014; NIP-0003's feature 109 (provisionally renumbered 116) registers its tools/fixtures/runtime_session/ claim in this same map instead of authoring one — there is no second registry. The completeness guard then accounts for every file under tools/fixtures/ at any depth (top-level files through their existing rows; files under a claimed subdirectory through its claim), and FAILS on an unclaimed subdirectory, a doubly-claimed subdirectory, or a claim naming a suite file that does not exist. The self-test demonstrates those three negative cases itself, in a guarded scratch area, printing the exact lines 'OK   claim-map   unclaimed subdirectory -> FAIL', 'OK   claim-map   doubly-claimed subdirectory -> FAIL' and 'OK   claim-map   claim naming a missing suite -> FAIL'. A claim proves ownership, not execution (104 proves the suite runs). The '### Fixture self-test' section of tools/README.md describes the claim map (its completeness sentence already claims 'any file under tools/fixtures/'). No fixture is moved.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "python3 -c \"import os,re,subprocess; p=subprocess.run(['bash','tools/fixtures_self_test.sh'],capture_output=True,text=True); o=p.stdout+p.stderr; n=sum(len(f) for _,_,f in os.walk('tools/fixtures')); m=re.search(r'^SELF-TEST OK: (\\d+)/(\\d+) fixtures accounted for, 0 failed',o,re.M); assert p.returncode==0 and m and int(m.group(1))==int(m.group(2))==n, (p.returncode, m and m.groups(), n)\"",
+        "python3 -c \"import subprocess; p=subprocess.run(['bash','tools/fixtures_self_test.sh'],capture_output=True,text=True); L=p.stdout.splitlines(); W=['OK   claim-map   unclaimed subdirectory -> FAIL','OK   claim-map   doubly-claimed subdirectory -> FAIL','OK   claim-map   claim naming a missing suite -> FAIL']; assert p.returncode==0 and all(w in L for w in W), [w for w in W if w not in L]\"",
+        "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --write tools/fixtures/zz_unclaimed_probe/probe.json '{}' --expect-rc 1 --expect 'zz_unclaimed_probe' --expect '^SELF-TEST FAILED' -- bash tools/fixtures_self_test.sh",
+        "python3 -c \"s=open('tools/README.md').read().split('### Fixture self-test')[1].split('\\n## ')[0].split('\\n### ')[0]; assert 'claim map' in s, 'Fixture self-test section does not describe the claim map'\"",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py"
+      ],
+      "acceptance_provenance": {
+        "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
+      },
+      "estimated_lines": 250,
+      "naive_lines": 110,
+      "debt_refs": [
+        "NDEBT-042"
+      ],
+      "version_impact": "PATCH (the framework self-test is brought in line with its documented claim; no consumer-facing contract changes shape)."
+    },
+    {
+      "id": "106",
+      "name": "Capability-index parity — skill.json is a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a)",
+      "description": "Maintenance tranche, NDEBT-044 concern (a). DECISION FIRST (made in .agent/product_spec_014.md Section 'Maintenance tranche', before anything is asserted): parity means an INTENTIONAL SUBSET, not equality. tools/skill.json's capabilities are the protocols the runtime skill routes an agent to and loads on demand; NIZAM.json's capabilities also index non-routable artifacts (tools/validate.sh, tools/skill.json itself, tools/SKILL.md, tools/interface.md, standards such as ci_gates/mcp_policy) — equality would be semantically wrong. The rule: every tools/skill.json capabilities[].module MUST be the authoritative_source of some NIZAM.json capability; NIZAM.json-only entries are allowed. Re-verified at 02b02c6 the rule is VIOLATED today by ecosystem/00_ecosystem_bootstrap.md (a skill.json capability since feature 060 with no NIZAM.json capability entry), so this feature adds that NIZAM.json capability (id nizam-ecosystem-bootstrap). Enforcement EXTENDS C13 (skill-index integrity; runs in the full sweep and in --payload, where NIZAM.json is injected) — no new check number (C17 is earmarked by NIP-0003; AT5 is a regression guard that passes before implementation by design). Negative fixture tools/fixtures/skill_index_neg_unindexed_capability.json exercised by tools/fixtures_self_test.sh's C13 substitution, printing 'OK   c13-substitute skill_index_neg_unindexed_capability.json -> [C13] FAIL'. The decision is recorded in the tools/README.md skill.json row (the words 'intentional subset' and 'NIZAM.json') and in the C13 --help paragraph.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "python3 -c \"L=[l for l in open('tools/README.md') if l.startswith('| [\\x60skill.json\\x60]')]; assert len(L)==1 and 'intentional subset' in L[0] and 'NIZAM.json' in L[0], L\"",
+        "python3 -c \"import json; n={c['authoritative_source'] for c in json.load(open('NIZAM.json'))['capabilities']}; s={c['module'] for c in json.load(open('tools/skill.json'))['capabilities']}; assert s<=n, sorted(s-n)\"",
+        "python3 -c \"import subprocess; p=subprocess.run(['bash','tools/fixtures_self_test.sh'],capture_output=True,text=True); assert p.returncode==0 and 'OK   c13-substitute skill_index_neg_unindexed_capability.json -> [C13] FAIL' in p.stdout.splitlines()\"",
+        "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace NIZAM.json '\"authoritative_source\": \"methodology/00_planning.md\"' '\"authoritative_source\": \"methodology/00_planning_moved.md\"' --expect-rc 1 --expect '^\\[C13\\] FAIL' -- bash tools/validate.sh",
+        "python3 -c \"import re,subprocess; o=subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True).stdout; assert not re.search(r'^\\[C1[7-9]\\]',o,re.M)\"",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py --payload",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "acceptance_provenance": {
+        "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
+      },
+      "estimated_lines": 370,
+      "naive_lines": 160,
+      "debt_refs": [
+        "NDEBT-044"
+      ],
+      "version_impact": "MINOR at the next release (C13 tightened and an additive NIZAM.json capability; the inputs C13 reads ship together in the payload, so no consumer sees a new failure; rounded up per Section 3.4)."
+    },
+    {
+      "id": "107",
+      "name": "NIP frontmatter under C1/C2 and NIP-0002's status corrected (NDEBT-044 b)",
+      "description": "Maintenance tranche, NDEBT-044 concern (b). Correct docs/nips/NIP-0002-zero-to-n-project-spectrum.md frontmatter status 'accepted' -> 'active' (the schema enum's value for an accepted NIP, the NIP-0001 precedent), with a version bump and change_log entry. Bring every docs/nips/*.md under C1 (frontmatter schema) and C2 (format: authoritative_source equals the file's own path, status and version shapes) in the default sweep. DESIGN CONSTRAINT: docs/nips/ must NOT join build_shipped_md_set, because C9 and C10 sweep that same set and proposals legitimately cite paths that do not exist yet (NIP-0001 and NIP-0003 fail C9 under --target at 02b02c6); add the NIP files to the C1/C2 inputs only. AT2 proves C1 coverage (a bad status) and AT3 proves C2 coverage independently (an authoritative_source mismatch, which C1's schema accepts). Update the --help C1 and C2 paragraphs and the tools/README.md C1 row to name docs/nips/. docs/nips/ is framework-envelope (never injected), but the default-mode sweep scope of a shipped tool changes, so the impact is rounded up.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "python3 -c \"import json,yaml,jsonschema; fm=yaml.safe_load(open('docs/nips/NIP-0002-zero-to-n-project-spectrum.md').read().split('---')[1]); jsonschema.validate(fm, json.load(open('schema/frontmatter.schema.json'))); assert fm['status']=='active', fm['status']\"",
+        "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace docs/nips/NIP-0001-ecosystem-engineering-cycle.md 'status: active' 'status: accepted' --expect-rc 1 --expect '^\\[C1\\] FAIL' --expect 'NIP-0001-ecosystem-engineering-cycle\\.md' -- bash tools/validate.sh",
+        "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace docs/nips/NIP-0001-ecosystem-engineering-cycle.md 'authoritative_source: docs/nips/NIP-0001-ecosystem-engineering-cycle.md' 'authoritative_source: docs/nips/NIP-0001-moved.md' --expect-rc 1 --expect '^\\[C2\\] FAIL' --expect 'NIP-0001-ecosystem-engineering-cycle\\.md' --forbid '^\\[C1\\] FAIL' -- bash tools/validate.sh",
+        "python3 -c \"import subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; c1=h.split('  C1 ')[1].split('  C2 ')[0]; c2=h.split('  C2 ')[1].split('  C3 ')[0]; r=[l for l in open('tools/README.md') if l.startswith('| C1 ')]; assert 'docs/nips/' in c1 and 'docs/nips/' in c2 and len(r)==1 and 'docs/nips/' in r[0], (c1[:120],c2[:120],r)\"",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "acceptance_provenance": {
+        "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
+      },
+      "estimated_lines": 120,
+      "naive_lines": 50,
+      "debt_refs": [
+        "NDEBT-044"
+      ],
+      "version_impact": "MINOR at the next release (default-mode sweep scope of shipped tools/validate.sh widens; consumers validate with --payload, which is unchanged; rounded up per Section 3.4). NIP-0002's own edit is framework-envelope."
+    },
+    {
+      "id": "109",
+      "name": "C15 mapping direction — an explicit Role column parsed by a new primitive; a swapped profile->role mapping fails (NDEBT-026)",
+      "description": "Maintenance tranche. NDEBT-026 tightens accepted behavior, so the design is compatibility-first. Re-verified at 02b02c6: standard/capability_profiles.md Section 2's table has NO role column — the profile->role assignment is implicit in each profile's stem — so there is nothing for C15 to parse yet. (1) Add an explicit 'Role' column to that table (additive change to a shipped standard; version bump + change_log). (2) Add a NEW primitive vlib_profiles_map_roles <profiles_doc> <agf_doc> to tools/verify_lib.sh that parses the Section 2 table and fails (return 1) unless each of the five profile rows names its own role (the existing ROLE_BY_PROFILE correspondence) and that role is defined in the AGF doc; every failure line it prints starts 'vlib_profiles_map_roles: ', and a table without a Role column yields a line naming 'Role'. (3) C15 calls BOTH primitives. (4) The existing vlib_profiles_cover_roles is NOT changed: a consumer or fork that calls it directly on a role-less profiles doc keeps passing (tightening it in place would be a MAJOR-class narrowing under methodology/06_release_train.md Section 3.1; AT3 is a compatibility guard that passes before implementation by design). C15 is default-mode only, so --payload validation is unaffected. Update the C15 --help text and the tools/README.md C15 row, which today state that a swapped mapping is out of scope. AT2's mutation needs the Role column, so before implementation it stops at its mutation precondition (exit 3) — correctly inapplicable.",
+      "status": "pending",
+      "dependencies": [],
+      "acceptance_tests": [
+        "python3 -c \"t=open('standard/capability_profiles.md').read().split('## 2.')[1].split('## 3.')[0]; h=[l for l in t.splitlines() if l.startswith('| Capability Profile')]; assert len(h)==1 and '| Role |' in h[0], h\"",
+        "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --py-mutate \"p=root/'standard/capability_profiles.md'; L=p.read_text().split('\\n'); h=next(i for i,l in enumerate(L) if l.startswith('| Capability Profile')); c=[x.strip() for x in L[h].split('|')].index('Role'); r=[i for i,l in enumerate(L) if l.startswith('| \\x60planner-creative\\x60') or l.startswith('| \\x60generator-deterministic\\x60')]; assert len(r)==2; a,b=[L[i].split('|') for i in r]; a[c],b[c]=b[c],a[c]; L[r[0]],L[r[1]]='|'.join(a),'|'.join(b); p.write_text('\\n'.join(L))\" --expect-rc 1 --expect '^\\[C15\\] FAIL' -- bash tools/validate.sh",
+        "T=$(mktemp) && git show 02b02c6:standard/capability_profiles.md > \"$T\" && bash -c 'source tools/verify_lib.sh && vlib_profiles_cover_roles \"$1\" standard/AGF.md' _ \"$T\"; r=$?; rm -f \"$T\"; test $r -eq 0",
+        "bash -c 'source tools/verify_lib.sh && declare -F vlib_profiles_map_roles >/dev/null' && T=$(mktemp) && git show 02b02c6:standard/capability_profiles.md > \"$T\" && { bash -c 'source tools/verify_lib.sh && vlib_profiles_map_roles \"$1\" standard/AGF.md' _ \"$T\" > \"$T.out\" 2>&1; r=$?; grep -Eq '^vlib_profiles_map_roles: .*Role' \"$T.out\"; g=$?; rm -f \"$T\" \"$T.out\"; test $r -eq 1 -a $g -eq 0; }",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "acceptance_provenance": {
+        "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
+      },
+      "estimated_lines": 210,
+      "naive_lines": 90,
+      "debt_refs": [
+        "NDEBT-026"
+      ],
+      "version_impact": "MINOR at the next release (additive table column in a shipped standard and an additive verify_lib primitive; the existing primitive is unchanged; C15 is default-mode only). Not MAJOR: nothing a consumer validates in --payload mode narrows."
+    },
+    {
+      "id": "108",
+      "name": "Validator help and adapter-reference truth — C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f)",
+      "description": "Maintenance tranche; one concern — shipped reference text that states facts about the implementation must match it. Runs AFTER 106, 107 and 109 so it documents the final C1/C13/C15 semantics. (NDEBT-037) tools/validate.sh --help gains a per-check paragraph for C14, C15 and C16 (derived: every check id the validator prints has a paragraph). (NDEBT-044 c) the C5 paragraph says 'case-insensitive' but the sweep is `grep -InE` without -i; correct the TEXT to case-sensitive (the behavior is intended: capitalised brand prose is allowed, the lowercase token is not). (NDEBT-044 f) the 'Payload-doc set' paragraph omits methodology/ and ecosystem/, which build_payload_md_set sweeps since feature 051. (NDEBT-044 d) tools/interface.md Section 5 item 10 cites '(Section 2, Item 4)' for the no-fabrication rule; the rule is Item 5 (Failure behavior) — a PATCH correction to a consumer-shipped doc with a version bump; Section 5 stays at 10 items. OUT OF SCOPE (logged as NDEBT-045, not widened into this feature): the separate --payload option paragraph (tools/validate.sh lines 128-148 at 02b02c6), which also still calls methodology/ and ecosystem/ non-injected and lists 'C1-C5, C7-C11'. NDEBT-044 (e), the ROADMAP open-debt count, is folded into feature 102's phase-close refresh, because the Open set changes as this tranche lands.",
+      "status": "pending",
+      "dependencies": [
+        "106",
+        "107",
+        "109"
+      ],
+      "acceptance_tests": [
+        "python3 -c \"import re,subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; ids=set(re.findall(r'^\\[(C\\d+)\\]',subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True).stdout,re.M)); miss=[i for i in sorted(ids) if not re.search(r'^  '+i+r'\\s+\\S',h,re.M)]; assert ids and not miss, miss\"",
+        "python3 -c \"import re,subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; c5=h.split('  C5 ')[1].split('  C6 ')[0]; body=open('tools/validate.sh').read().split('check_c5_branding() {')[1].split('\\n}\\n')[0]; g=re.search(r'grep -(\\w+) ',body).group(1); ci='i' in g; assert ('case-insensitive' in c5)==ci and ('case-sensitive' in c5)!=ci, (g,c5[:160])\"",
+        "python3 -c \"import re,subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; p=h.split('Payload-doc set')[1].split('\\n\\n')[0]; src=open('tools/validate.sh').read().split('build_payload_md_set() {')[1]; dirs=re.search(r'for d in ([a-z ]+); do',src).group(1).split(); miss=[d for d in dirs if d+'/' not in p]; assert not miss and not re.search(r'methodology/[^.]*excluded',p), (miss,p[:300])\"",
+        "python3 -c \"import re; t=open('tools/interface.md').read(); n=re.search(r'^(\\d+)\\. \\*\\*Failure behavior\\.\\*\\*',t.split('## 2. Discovery')[1].split('## 3.')[0],re.M).group(1); i10=' '.join(re.search(r'^10\\. (.*?)(?:\\n\\n|\\n## )',t.split('## 5.')[1],re.S|re.M).group(1).split()); assert '(Section 2, Item '+n+')' in i10, (n,i10)\"",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py --payload",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
+      ],
+      "acceptance_provenance": {
+        "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
+      },
+      "estimated_lines": 140,
+      "naive_lines": 60,
+      "debt_refs": [
+        "NDEBT-037",
+        "NDEBT-044"
+      ],
+      "version_impact": "PATCH (documentation corrections; tools/interface.md Section 5 keeps 10 items, so every adapter stays conformant)."
     },
     {
       "id": "100",
       "name": "Real, non-scratch multi-repo ecosystem pilot at the released v1.4.0 tag",
-      "description": "Run the pilot over the operator-designated set of real repositories (the framework hardcodes none; the set is confirmed at H-PHASE-014 or pilot time), each adopted/upgraded to the released immutable tag v1.4.0 under a recorded per-member H-CONSUMER-UPGRADE decision BEFORE its re-bootstrap (NDEBT-018), each worked in its own isolated worktree (never on a member's main branch), then Preflight -> Baseline -> Audit per member and the ecosystem-membership-run aggregate. A real reconciliation plan / release train is built only under recorded H-PLANNING-AUTHORITY / H-TRAIN-ENTRY decisions. Findings are recorded to the members' and the framework's debt registers; evidence is externalised under .agent/evidence/pilot-100/. No scratch-harness fabrication: real repositories and real worktrees only — standing up synthetic members to substitute for real ones is a first-class pilot failure. The NDEBT-034 clone optimization stays deferred (not load-bearing: one bootstrap per member).",
+      "description": "Run the pilot over the operator-designated set of real repositories (the framework hardcodes none; the MEMBER SET IS AN OPERATOR DECISION NOT YET MADE — H-PHASE-014 does not designate members), each adopted/upgraded to the released immutable tag v1.4.0 under a recorded per-member H-CONSUMER-UPGRADE decision BEFORE its re-bootstrap (NDEBT-018), each worked in its own isolated worktree (never on a member's main branch), then Preflight -> Baseline -> Audit per member and the ecosystem-membership-run aggregate. A real reconciliation plan / release train is built only under recorded H-PLANNING-AUTHORITY / H-TRAIN-ENTRY decisions. Findings are recorded to the members' and the framework's debt registers; evidence is externalised under .agent/evidence/pilot-100/. No scratch-harness fabrication: real repositories and real worktrees only — standing up synthetic members to substitute for real ones is a first-class pilot failure. The NDEBT-034 clone optimization stays deferred (not load-bearing: one bootstrap per member). EVIDENCE CONTRACT (fixed here so the tests are executable): registry.json (schema/ecosystem_membership.schema.json, >= 2 in_scope members); aggregate.json (schema/ecosystem_membership_result.schema.json); members.json — a list of {name, origin_url, branch, head_sha} per member (origin_url is the member's real remote, never file:// or a local path; branch is the isolated worktree's branch, never main/master); gates-record.json — a list of {member, gate: 'H-CONSUMER-UPGRADE', verbatim, decided_at, bootstrapped_at} with ISO-8601 Z timestamps, each decided_at equal to the `at` of a run_state operator_gate_decision event that names H-CONSUMER-UPGRADE and the member. PIN SEMANTICS: aggregate.framework_pin is the PEELED COMMIT, not the tag object — tools/ecosystem_membership_run.py read_framework_pin returns each member's provenance resolved_sha, which bootstrap.sh records as the commit (for v1.4.0: 9edd5d0e0d9e0489c961407d306ae30541c27dd5, never the annotated tag object bb32064); AT2 therefore compares against `git rev-parse v1.4.0^{commit}`. AMENDED at H-PHASE-014 (spec 1.1.x): existence and broad-grep tests replaced by real-member, pin and per-member ordering assertions with negative controls. Tests listed under acceptance_provenance.planner_hardening_operator_acknowledged go beyond the operator's enumerated amendment list (run_state operator_gate_decision 2026-10-08T11:21:14Z); they are Planner hardening, operator-acknowledged 2026-10-08T13:20:12Z (verbatim 'acknowledged.'), and are part of the approved acceptance set.",
       "status": "pending",
       "dependencies": [],
       "acceptance_tests": [
-        "test -f .agent/evidence/pilot-100/README.md",
-        "python3 -c \"import json,jsonschema; r=json.load(open('.agent/evidence/pilot-100/registry.json')); jsonschema.validate(r, json.load(open('schema/ecosystem_membership.schema.json')))\"",
-        "python3 -c \"import json,jsonschema; a=json.load(open('.agent/evidence/pilot-100/aggregate.json')); jsonschema.validate(a, json.load(open('schema/ecosystem_membership_result.schema.json')))\"",
-        "grep -c 'H-CONSUMER-UPGRADE' .agent/evidence/pilot-100/gates-record.md | grep -qv '^0$'",
-        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'"
+        "python3 -c \"import json,jsonschema; r=json.load(open('.agent/evidence/pilot-100/registry.json')); jsonschema.validate(r, json.load(open('schema/ecosystem_membership.schema.json'))); assert len(r['in_scope'])>=2, len(r['in_scope'])\"",
+        "python3 -c \"import json,jsonschema,subprocess; P='.agent/evidence/pilot-100'; R=json.load(open(P+'/registry.json')); A=json.load(open(P+'/aggregate.json')); jsonschema.validate(A, json.load(open('schema/ecosystem_membership_result.schema.json'))); pin=subprocess.run(['git','rev-parse','v1.4.0^{commit}'],capture_output=True,text=True,check=True).stdout.strip(); assert A['framework_pin_consistent'] is True and A['framework_pin']==pin, ('framework_pin must be the peeled v1.4.0 commit',A.get('framework_pin'),pin); assert A['member_count']==len(R['in_scope']) and sorted(m['name'] for m in A['members'])==sorted(m['name'] for m in R['in_scope'])\"",
+        "python3 -c \"import json,os,re; P='.agent/evidence/pilot-100'; A=json.load(open(P+'/aggregate.json')); M={m['name']:m for m in json.load(open(P+'/members.json'))}; scr=re.compile(r'(^/tmp/|^/var/tmp/|/[.]tmp/|scratch)',re.I); bad=[a['name'] for a in A['members'] if scr.search(os.path.realpath(a['repo_root'])) or a['name'] not in M or re.match(r'^(file:|/|[.])',M[a['name']].get('origin_url','/')) or M[a['name']].get('branch') in (None,'','main','master') or not re.fullmatch(r'[0-9a-f]{40}',M[a['name']].get('head_sha',''))]; assert A['members'] and not bad, bad\"",
+        "python3 -c \"import json; P='.agent/evidence/pilot-100'; N={m['name'] for m in json.load(open(P+'/registry.json'))['in_scope']}; G=[g for g in json.load(open(P+'/gates-record.json')) if g.get('gate')=='H-CONSUMER-UPGRADE']; H=[e for e in json.load(open('.agent/run_state.json'))['history'] if e.get('event')=='operator_gate_decision' and 'H-CONSUMER-UPGRADE' in e.get('detail','')]; per={n:[g for g in G if g.get('member')==n] for n in N}; ok=all(len(v)==1 and v[0].get('verbatim','').strip() and v[0]['decided_at']<v[0]['bootstrapped_at'] and any(e['at']==v[0]['decided_at'] and n in e['detail'] for e in H) for n,v in per.items()); assert N and ok, per\"",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py"
       ],
-      "estimated_lines": 900
+      "acceptance_provenance": {
+        "approved_amendment": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "estimated_lines": 2070,
+      "naive_lines": 900,
+      "version_impact": "None (evidence only)."
     },
     {
       "id": "101",
       "name": "First real simplification review (Repeat stage) over real ecosystem evidence",
-      "description": "Run the ecosystem/06 protocol over the feature-100 pilot evidence plus the accumulated framework surface (protocols/schemas/tools/standards), recording evidence-backed consolidation candidates (duplication, dead weight, over-mechanization) as findings under .agent/audits/<simplification-review-id>/. No consolidation is applied — any actual simplification is proposed as planned work and reserved behind H-CONSOLIDATION (operator-only); the review also records candidate scope for the next planning cycle.",
+      "description": "Run the ecosystem/06 protocol over the feature-100 pilot evidence plus the accumulated framework surface (protocols/schemas/tools/standards, including the surfaces the maintenance tranche 103-109 just changed), recording evidence-backed consolidation candidates (duplication, dead weight, over-mechanization) under .agent/audits/<simplification-review-id>/ (ecosystem/06 Section 6). No consolidation is applied — any actual simplification is proposed as planned work and reserved behind H-CONSOLIDATION (operator-only); the review also records candidate scope for the next planning cycle and is a mandatory input to NIP-0003's phase-015 planning and to the Workflow Assurance NIP outline (docs/planning/backlog_reconciliation.md). ARTIFACT CONTRACT (fixed here so the tests are executable): exactly one new .agent/audits/ directory relative to the activation listing, its name containing 'simplification', holding findings.json (a JSON list; every item validates against schema/engineering_finding.schema.json; an EMPTY list is accepted only with a non-empty review.json zero_findings_justification), review.json ({revision: a 40-hex commit, timestamp: ISO-8601 Z, inputs: existing paths that include .agent/evidence/pilot-100/aggregate.json, optional zero_findings_justification}) and report.md (a '## ...Consolidation...' section that states the H-CONSOLIDATION reservation). AMENDED at H-PHASE-014 (spec 1.1.x): now depends on 099 (which activates ecosystem/06 and defines H-CONSOLIDATION); existence and repo-wide grep tests replaced by scoped assertions against the activation baseline. Tests listed under acceptance_provenance.planner_hardening_operator_acknowledged go beyond the operator's enumerated amendment list (run_state operator_gate_decision 2026-10-08T11:21:14Z); they are Planner hardening, operator-acknowledged 2026-10-08T13:20:12Z (verbatim 'acknowledged.'), and are part of the approved acceptance set.",
       "status": "pending",
       "dependencies": [
+        "099",
         "100"
       ],
       "acceptance_tests": [
-        "test -n \"$(find .agent/audits -maxdepth 1 -type d -name '*simplification*' -print -quit)\"",
-        "grep -rl 'H-CONSOLIDATION' .agent/audits/ | grep -q .",
-        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'",
+        "python3 -c \"import json,os,jsonschema; A='.agent/audits'; base=set(open('.agent/evidence/phase-014-activation/audits-baseline.txt').read().splitlines()[1:-1]); new=[d for d in sorted(os.listdir(A)) if os.path.isdir(os.path.join(A,d)) and d not in base]; assert len(new)==1 and 'simplification' in new[0], new; D=os.path.join(A,new[0]); S=jsonschema.Draft202012Validator(json.load(open('schema/engineering_finding.schema.json'))); F=json.load(open(os.path.join(D,'findings.json'))); R=json.load(open(os.path.join(D,'review.json'))); assert isinstance(F,list) and all(not list(S.iter_errors(f)) for f in F); assert F or str(R.get('zero_findings_justification','')).strip(), 'empty findings.json without a zero_findings_justification'\"",
+        "python3 -c \"import json,os,re,subprocess; A='.agent/audits'; base=set(open('.agent/evidence/phase-014-activation/audits-baseline.txt').read().splitlines()[1:-1]); D=[os.path.join(A,d) for d in sorted(os.listdir(A)) if os.path.isdir(os.path.join(A,d)) and d not in base][0]; R=json.load(open(D+'/review.json')); assert re.fullmatch(r'[0-9a-f]{40}',R['revision']) and subprocess.run(['git','cat-file','-e',R['revision']+'^{commit}']).returncode==0, R['revision']; assert re.match(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z',R['timestamp']), R['timestamp']; assert '.agent/evidence/pilot-100/aggregate.json' in R['inputs'] and all(os.path.exists(p) for p in R['inputs']), R['inputs']\"",
+        "D=$(python3 -c \"import os; A='.agent/audits'; b=set(open('.agent/evidence/phase-014-activation/audits-baseline.txt').read().splitlines()[1:-1]); print([os.path.join(A,d) for d in sorted(os.listdir(A)) if os.path.isdir(os.path.join(A,d)) and d not in b][0])\") && bash -c 'source tools/verify_lib.sh && vlib_section_grep \"$1/report.md\" \"^## .*[Cc]onsolidation\" \"H-CONSOLIDATION\"' _ \"$D\"",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
         "bash tools/fixtures_self_test.sh; test $? -eq 0"
       ],
-      "estimated_lines": 400
+      "acceptance_provenance": {
+        "approved_amendment": [
+          1,
+          3
+        ],
+        "planner_hardening_operator_acknowledged": [
+          2
+        ],
+        "carried_from_1_0_x": [
+          4,
+          5
+        ]
+      },
+      "estimated_lines": 920,
+      "naive_lines": 400,
+      "version_impact": "None (findings only; any consolidation is separate planned work under H-CONSOLIDATION)."
     },
     {
       "id": "102",
       "name": "GA-readiness assessment (no declaration), next-candidate refinement, and phase close",
-      "description": "Assemble the GA-readiness evidence dossier per ecosystem/08 Section 2 preconditions — every benchmark threshold treated strictly as an acceptance requirement carrying a measured, anchored result (never a claim of achieved results); the assessment presents H-GA as OUTSTANDING and declares nothing (GA declaration is the operator's future act alone — the framework never auto-declares GA). Refine and validate the next-candidate scope against the pilot + review evidence; close the phase (canonical phase_014.yaml complete first; manifest second; derived run_state third, per the canonical-first rule).",
+      "description": "Assemble the GA-readiness evidence dossier per ecosystem/08 Sections 2-3 — every benchmark threshold treated strictly as an acceptance requirement carrying a measured, anchored result (never a claim of achieved results); the assessment presents H-GA as OUTSTANDING and declares nothing (GA declaration is the operator's future act alone — the framework never auto-declares GA). GA-readiness requires enforcement integrity, so this feature depends on every maintenance feature (103-109) as well as 099-101. Refine and validate the next-candidate scope against the pilot + review evidence; roll the ROADMAP Current Position open-debt bullet to the live DEBT.md Open set (NDEBT-044 e: the bullet names exactly the Open ids, and the first occurrence of the word 'Resolved' precedes every resolved-row id it mentions); close the phase canonical-first (phase_014.yaml complete first; manifest second; derived run_state third, by the Orchestrator). No release is prepared and no tag is created. APPROVED AMENDMENTS (operator, run_state 2026-10-08T11:21:14Z): AT1 gains the missing `import json`; the fixed-version tag-absence test is replaced by the phase-scoped tag check (AT4; tags are fetched from origin first, because an unfetched remote tag is invisible). APPROVED TRANCHE SCOPE (the same 11:21:14Z decision): AT5, the NDEBT-044 (e) open-debt roll, implements the approved maintenance fold ('NDEBT-044, split by concern'). PLANNER HARDENING, OPERATOR-ACKNOWLEDGED 2026-10-08T13:20:12Z (verbatim 'acknowledged.'; the 11:21:14Z decision enumerates only the AT1 and AT4 items for 102): the machine-readable dossier contract AT2 — .agent/evidence/102/ga-readiness.json = {h_ga: 'OUTSTANDING', ga_declared: false, preconditions: {real_production_pilot, stable_release_history, recorded_consumer_adoptions, no_open_critical_high_debt, benchmark_thresholds} each {status: met|not_met|insufficient_evidence, evidence: [existing files], revision: 40-hex commit, timestamp: ISO-8601 Z}} — and its external DEBT.md cross-check AT3; and AT7, the sha256 pin of the frozen acceptance infrastructure (.agent/evidence/phase-014-activation/: three gate scripts and four baselines, hashed at activation), which fails if any of it was modified during the phase.",
       "status": "pending",
       "dependencies": [
         "099",
         "100",
-        "101"
+        "101",
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "108",
+        "109"
       ],
       "acceptance_tests": [
-        "python3 -c \"import yaml,jsonschema; d=yaml.safe_load(open('docs/planning/phase_014.yaml')); jsonschema.validate(d, json.load(open('schema/phase.schema.json'))); assert d['status']=='complete'\"",
-        "test -f .agent/evidence/102/ga-readiness-dossier.md",
-        "grep -c 'OUTSTANDING' .agent/evidence/102/ga-readiness-dossier.md | grep -qv '^0$'",
-        "git rev-parse -q --verify refs/tags/v1.5.0; test $? -eq 1",
-        "bash tools/validate.sh 2>&1 | grep -E '^SUMMARY: 16 passed, 0 failed$'"
+        "python3 -c \"import json,os,yaml,jsonschema; d=yaml.safe_load(open('docs/planning/phase_014.yaml')); jsonschema.validate(d, json.load(open('schema/phase.schema.json'))); assert d['status']=='complete', d['status']; assert d['steps'] and all(s['status']=='COMPLETED' for s in d['steps']), [s['status'] for s in d['steps']]; assert all(os.path.isfile(s['evidence']) for s in d['steps']), [s['evidence'] for s in d['steps'] if not os.path.isfile(s['evidence'])]\"",
+        "python3 -c \"import json,os,re,subprocess; D=json.load(open('.agent/evidence/102/ga-readiness.json')); K={'real_production_pilot','stable_release_history','recorded_consumer_adoptions','no_open_critical_high_debt','benchmark_thresholds'}; P=D['preconditions']; assert set(P)==K, sorted(P); assert D['h_ga']=='OUTSTANDING' and D['ga_declared'] is False; bad=[k for k,v in P.items() if v['status'] not in ('met','not_met','insufficient_evidence') or not v['evidence'] or not all(os.path.isfile(e) for e in v['evidence']) or not re.fullmatch(r'[0-9a-f]{40}',v['revision']) or subprocess.run(['git','cat-file','-e',v['revision']+'^{commit}']).returncode!=0 or not re.match(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z',v['timestamp'])]; assert not bad, bad\"",
+        "python3 -c \"import json,re; P=json.load(open('.agent/evidence/102/ga-readiness.json'))['preconditions']; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; sev=re.findall(r'^[|] NDEBT-[0-9]+ [|] [^|]+ [|] (\\w+) [|]',t,re.M); truth='not_met' if any(s in ('Critical','High') for s in sev) else 'met'; assert P['no_open_critical_high_debt']['status']==truth, (P['no_open_critical_high_debt']['status'],truth,sev); assert '.agent/evidence/pilot-100/aggregate.json' in P['real_production_pilot']['evidence']\"",
+        "git fetch --tags --quiet origin && python3 .agent/evidence/phase-014-activation/gates/phase_tag_check.py",
+        "python3 -c \"import re; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; want=set(re.findall(r'^[|] (NDEBT-[0-9]+) [|]',t,re.M)); r=open('docs/planning/ROADMAP.md').read().split('## Current Position')[1].split('\\n## ')[0]; L=[x for x in r.split('\\n- ') if x.startswith('Open debt (current')]; assert len(L)==1, len(L); got=set(re.findall(r'NDEBT-[0-9]+',L[0].split('Resolved')[0])); assert got==want, (sorted(got),sorted(want))\"",
+        "python3 -c \"import json; f=json.load(open('.agent/feature_list_014.json'))['features']; bad=[x['id'] for x in f if x['id']!='102' and x['status'] not in ('complete','cancelled')]; assert not bad, bad\"",
+        "python3 -c \"import hashlib; P={'.agent/evidence/phase-014-activation/gates/phase_tag_check.py':'72f8df85c9e64bec711c909ce38cc27ae518715e1a8644fa9774af5a72a91b3b','.agent/evidence/phase-014-activation/gates/scratch_run.py':'7135e7a41a924a98aad1076b68e3df9fd9b06ce4406abb83f19cab2ff7460451','.agent/evidence/phase-014-activation/gates/validator_gate.py':'d343318c23a74473dc6365ae7f9d1dc48708c2ebba209a5d4a0373e9c7881166','.agent/evidence/phase-014-activation/audits-baseline.txt':'4eaec75056d0d926836ad45c439dd936ac5169d717f640b231c0f73172143174','.agent/evidence/phase-014-activation/tag-baseline.txt':'d548ed02934b39a286ccc61c279d88728c2af76a8fbfffb230013e49188b8b14','.agent/evidence/phase-014-activation/validate.txt':'35aaee4c2ff8288ed7757e7ec135f913b49ffeae77be1f6db32baba22032ec22','.agent/evidence/phase-014-activation/validate_payload.txt':'16cae6f76d8ddc81f54b7400881dd5fdd344de1f58e8ecec0de26b584cf4e680'}; bad=[p for p,h in P.items() if hashlib.sha256(open(p,'rb').read()).hexdigest()!=h]; assert not bad, ('frozen acceptance infrastructure modified',bad)\"",
+        "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+        "python3 .github/scripts/release_closeout.py --mode pr; test $? -eq 0",
+        "bash tools/fixtures_self_test.sh; test $? -eq 0"
       ],
-      "estimated_lines": 500
+      "acceptance_provenance": {
+        "approved_amendment": [
+          1,
+          4
+        ],
+        "approved_tranche_scope": [
+          5
+        ],
+        "planner_hardening_operator_acknowledged": [
+          2,
+          3,
+          7
+        ],
+        "carried_from_1_0_x": [
+          6,
+          8,
+          9,
+          10
+        ]
+      },
+      "estimated_lines": 1150,
+      "naive_lines": 500,
+      "version_impact": "None (phase 014 prepares no release; the next release, at least MINOR, is a separate H-FRAMEWORK-RELEASE)."
     }
   ]
 }

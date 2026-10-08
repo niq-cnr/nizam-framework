@@ -1,0 +1,33 @@
+python3 .agent/evidence/phase-014-activation/eval/unit07_08_state_lifecycle.py
+== UNIT 7 history integrity ==
+PASS HEAD history length is 231 :: 231
+PASS current history length >= HEAD :: 237 vs 231
+PASS first 231 entries deep-equal to HEAD :: []
+PASS first entries byte-identical under canonical serialization
+PASS negative control: perturbed entry detected
+PASS appended entries are chronologically >= HEAD last :: head last=2026-10-08T10:30:34Z new=['2026-10-08T11:21:14Z', '2026-10-08T12:18:31Z', '2026-10-08T12:29:26Z', '2026-10-08T12:50:31Z', '2026-10-08T13:19:01Z', '2026-10-08T13:20:12Z']
+appended events: [('2026-10-08T11:21:14Z', 'operator_gate_decision'), ('2026-10-08T12:18:31Z', 'phase_activated'), ('2026-10-08T12:29:26Z', 'operator_instruction'), ('2026-10-08T12:50:31Z', 'operator_gate_decision'), ('2026-10-08T13:19:01Z', 'history_correction'), ('2026-10-08T13:20:12Z', 'operator_gate_decision')]
+PASS phase_013_scope_budget_final == HEAD scope_budget
+PASS HEAD scope_budget non-trivial (not vacuous)
+PASS current_phase == 014-ga-track :: 014-ga-track
+PASS current_feature == 099 :: '099'
+PASS status == in_progress :: in_progress
+PASS scope_budget.original_estimate_lines == 6660
+== UNIT 8 lifecycle consistency ==
+PASS phase_014.yaml status == in_progress :: in_progress
+PASS manifest current_phase == 014-ga-track
+PASS exactly one phase-014 manifest entry
+PASS manifest phase 014 status == in_progress
+PASS manifest phase 014 activation_state == active
+PASS no other phase in_progress :: []
+PASS feature 099 status pending :: pending
+PASS feature 099 dependencies empty :: []
+eligible pending features (deps satisfied): ['099', '103', '105', '106', '107', '109', '100']
+PASS 099 in eligible set (and is the current_feature)
+PASS all dependency ids reference existing features
+phase steps: [('099', 'PENDING'), ('103', 'PENDING'), ('104', 'PENDING'), ('105', 'PENDING'), ('106', 'PENDING'), ('107', 'PENDING'), ('109', 'PENDING'), ('108', 'PENDING'), ('100', 'PENDING'), ('101', 'PENDING'), ('102', 'PENDING')]
+PASS feature_list spec_version == spec frontmatter spec_version :: 1.1.2 vs 1.1.2
+PASS spec frontmatter version == 1.1.2
+PASS feature list phase == run_state current_phase
+RESULT: 0 failures
+EXIT:0

@@ -1,0 +1,17 @@
+python3 .agent/evidence/backlog-reconciliation-2026-10-08/tools/dag_negative_controls.py
+OK   unmutated copy passes                                        rc=0 want=0 fails=[]
+OK   V11 accepts Validator verdict + later eval/ file + run_state rc=0 want=0 fails=[]
+OK   V11 rejects another .agent/validator/*.json                  rc=1 want=1 fails=['FAIL V11 changed/untracked paths confined to the package (68 paths)']
+OK   V11 rejects a prefix look-alike of the verdict path          rc=1 want=1 fails=['FAIL V11 changed/untracked paths confined to the package (67 paths)']
+OK   V11 rejects a payload edit (M tools/validate.sh)             rc=1 want=1 fails=['FAIL V11 changed/untracked paths confined to the package (67 paths)']
+OK   cycle F099 -> ... -> F102 -> F099                            rc=1 want=1 fails=['FAIL V6 acyclic (depends_on + serialize_after)']
+OK   dangling dependency F999                                     rc=1 want=1 fails=['FAIL V5a no dangling references', 'FAIL V7 canonical mirror of .agent/feature_list_014.json (11 features; provisional ids above 109)']
+OK   canonical edge 101->099 dropped from the mirror              rc=1 want=1 fails=['FAIL V7 canonical mirror of .agent/feature_list_014.json (11 features; provisional ids above 109)']
+OK   canonical feature 105 missing from the DAG                   rc=1 want=1 fails=['FAIL V7 canonical mirror of .agent/feature_list_014.json (11 features; provisional ids above 109)', 'FAIL V8b T01-T19 + NIP cases 1-13 mapped (owners exist; honest statuses with evidence)', 'FAIL V9 shared-file writers are totally ordered']
+OK   spec drift (dag says 1.0.1)                                  rc=1 want=1 fails=['FAIL V13 spec_version lockstep (1.1.2) and estimate reconciliation (6660)']
+OK   shared-file writers left unordered                           rc=1 want=1 fails=['FAIL V9 shared-file writers are totally ordered']
+OK   alias A07 unmapped                                           rc=1 want=1 fails=['FAIL V8a every alias A00-A16 mapped to a packet and a disposition']
+OK   provisional id collides with allocated 103                   rc=1 want=1 fails=['FAIL V7 canonical mirror of .agent/feature_list_014.json (11 features; provisional ids above 109)']
+OK   T09 claimed satisfied with non-existent evidence             rc=1 want=1 fails=['FAIL V8b T01-T19 + NIP cases 1-13 mapped (owners exist; honest statuses with evidence)']
+NEGATIVE CONTROLS: 14/14 behaved as expected
+EXIT:0

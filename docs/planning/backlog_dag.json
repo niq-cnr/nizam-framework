@@ -1,0 +1,4248 @@
+{
+  "plan_status": "candidate",
+  "plan_status_note": "CANDIDATE plan for post-014 work. The phase-014 packets (F099-F109, ACT-014) MIRROR the activated canonical plan (.agent/feature_list_014.json, spec 1.1.2, docs/planning/phase_014.yaml); on any conflict the canonical files win and this file is corrected. Nothing here changes a feature list, phase YAML, manifest or run_state. Post-014 packets are candidates until their own H-NIP / H-PHASE-NNN gates.",
+  "generated_at": "2026-10-08T13:23:34Z",
+  "base_commit": "02b02c63e639237f8cfd2d7dccb1571e96753742",
+  "base_commit_note": "origin/main after PR #64 (merged 2026-10-08T11:16:42Z). Line citations are at 02b02c6 unless stated. The phase-014 amendment and activation records in this package are uncommitted on branch phase/014-ga-track at generation time (spec 1.1.2, validator rounds 1-2).",
+  "packet_schema": "schema/work-packet.schema.json",
+  "authoritative_human_view": "docs/planning/backlog_reconciliation.md",
+  "activated_phase": {
+    "phase_id": "014-ga-track",
+    "feature_list": ".agent/feature_list_014.json",
+    "spec_version": "1.1.2",
+    "original_estimate_lines": 6660,
+    "ceiling_130pct": 8658,
+    "budget_basis": "Planner activation-time estimate: naive 2890 x the measured 2.3 process weight (docs/nips/NIP-0003-live-runtime-sessions.md:494-495)",
+    "budget_approval": "operator, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z)",
+    "run_state_position": "landed 2026-10-08T12:18:31Z (phase_activated): current_phase 014-ga-track, current_feature 099, status in_progress"
+  },
+  "estimate_weighting": {
+    "low": 2.3,
+    "high": 2.89,
+    "basis": "low = the measured x2.3 process weight NIP-0003 applies (docs/nips/NIP-0003-live-runtime-sessions.md:494-495: 2330 naive -> 5400); high = phase-013 realized 6212 lines over 2150 naive (.agent/run_state.json scope_budget). Phase-014 packets carry the canonical x2.3 figure; post-014 packets carry a [x2.3, x2.9] range."
+  },
+  "lanes": {
+    "single-writer": "The one implementation lane: any packet that modifies a tracked file or a shared ledger. Executed strictly one at a time (scalar run_state; standard/AGF.md:129-136).",
+    "parallel-safe-new-files": "Writes only new files under its own unique paths; may run beside the single-writer lane.",
+    "read-only": "Investigation; writes evidence only."
+  },
+  "lane_rank_semantics": "Declared tie-break among simultaneously eligible packets in the recommended order; lower first. Advisory: it never overrides a dependency, gate or the 00_planning.md Section 5 eligibility rule.",
+  "serialize_after_semantics": "Ordering-only edge for shared-file serialization or recommended lane order. NOT a feature dependency; never copied into a feature list's dependencies array.",
+  "crosswalk_dispositions": {
+    "A00": "already satisfied (re-verified at 02b02c6)",
+    "A01": "satisfied by this package",
+    "A02": "satisfied: release truth + D1 by PR #64; amendment applied at H-PHASE-014 by this package (A02-AMEND)",
+    "A03": "new gap, split: NIP-0003 pre-acceptance revision (A03-RT) + separate Workflow Assurance NIP (outline only; final after 101)",
+    "A04": "extend existing (partial: 01_execution already has Loop-1 Evaluator review) -> A04a text fix + A04b in the WA NIP",
+    "A05": "scheduled: phase 014 feature 103 (NDEBT-043)",
+    "A06": "scheduled: phase 014 feature 104 (NDEBT-041)",
+    "A07": "scheduled: phase 014 feature 105 (NDEBT-042; NIP-0003 109 claim map pulled forward)",
+    "A08": "scheduled: phase 014 features 106 (044a), 107 (044b), 108 (037 + 044c/d/f), 109 (026); 044e folded into 102",
+    "A09": "new gap (+ NDEBT-040 annotated as WA NIP candidate)",
+    "A10": "new gap (WA NIP)",
+    "A11": "new gap (WA NIP)",
+    "A12": "extend existing (NIP-0003 phase 015, provisional 110-114)",
+    "A13": "extend existing (NIP-0003 phase 016, provisional 115-120)",
+    "A14": "new gap (WA NIP; blocked on A03 + NIP 110)",
+    "A15": "deferred (after trusted gates; WA NIP)",
+    "A16": "extend existing (102, NIP3-114, NIP3-120, A16-WA)"
+  },
+  "applied_canonical_edge_changes": [
+    {
+      "feature": "101",
+      "add_feature_deps": [
+        "099"
+      ],
+      "status": "APPLIED 2026-10-08 at H-PHASE-014 (spec 1.1.0)",
+      "reason": "101 runs ecosystem/06 and reserves findings behind H-CONSOLIDATION; 099 activates 06 and defines H-CONSOLIDATION."
+    },
+    {
+      "feature": "102",
+      "add_feature_deps": [
+        "103",
+        "104",
+        "105",
+        "106",
+        "107",
+        "108",
+        "109"
+      ],
+      "status": "APPLIED 2026-10-08 (maintenance fold)",
+      "reason": "GA readiness requires enforcement integrity."
+    },
+    {
+      "feature": "104",
+      "add_feature_deps": [
+        "103"
+      ],
+      "status": "APPLIED (new feature)",
+      "reason": "NDEBT-043 before NDEBT-041."
+    },
+    {
+      "feature": "108",
+      "add_feature_deps": [
+        "106",
+        "107",
+        "109"
+      ],
+      "status": "APPLIED (new feature)",
+      "reason": "help text documents the final C1/C13/C15 semantics."
+    }
+  ],
+  "proposed_canonical_edge_changes": [],
+  "deferred_debt": {
+    "NDEBT-034": "deferred, off the critical path (product_spec_014 Out of scope); revisit only on measured pilot-100 cost.",
+    "NDEBT-040": "annotated 2026-10-08 as a candidate for the future Workflow Assurance NIP (candidate/contract identity and invalidation); A09."
+  },
+  "verification_matrix": {
+    "T01": {
+      "owning_packets": [
+        "F104",
+        "NIP3-111",
+        "NIP3-113",
+        "A16-WA"
+      ],
+      "proof": "validate.sh --payload + e2e_bootstrap + interface.md Section 5 item count",
+      "status": "partially-evidenced",
+      "evidence": [
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/validate_payload.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/e2e_bootstrap.txt"
+      ]
+    },
+    "T02": {
+      "owning_packets": [
+        "ACT-014",
+        "A10"
+      ],
+      "proof": "lifecycle check: a proposed phase/NIP stays pending/draft; activation recorded before any contract (H-PHASE-014 event precedes every phase-014 contract)",
+      "status": "partially-evidenced",
+      "evidence": [
+        ".agent/run_state.json",
+        "docs/planning/phase_014.yaml",
+        "docs/planning/manifest.json"
+      ]
+    },
+    "T03": {
+      "owning_packets": [
+        "A09",
+        "A10"
+      ],
+      "proof": "invalidation matrix tests",
+      "status": "pending",
+      "evidence": []
+    },
+    "T04": {
+      "owning_packets": [
+        "A09",
+        "A10"
+      ],
+      "proof": "cross-candidate evidence replay rejected",
+      "status": "pending",
+      "evidence": []
+    },
+    "T05": {
+      "owning_packets": [
+        "A09"
+      ],
+      "proof": "parsed-JSON owned-field comparison; NDEBT-040 negative + positive controls (so far one manual positive adjudication in feature 093 QA; no mechanized negative control)",
+      "status": "partially-evidenced",
+      "evidence": [
+        ".agent/qa/093.json",
+        ".agent/evidence/093/feature-list-run-state-untouched.txt"
+      ]
+    },
+    "T06": {
+      "owning_packets": [
+        "A02-AMEND",
+        "A10",
+        "F103"
+      ],
+      "proof": "exit-captured checks; synthetic optimistic-report control",
+      "status": "partially-evidenced",
+      "evidence": [
+        ".agent/evidence/backlog-reconciliation-2026-10-08/a02_premise_probes.txt"
+      ]
+    },
+    "T07": {
+      "owning_packets": [
+        "A04b",
+        "A10"
+      ],
+      "proof": "external-anchor acceptance (02 Section 7) vs stubbed behavior",
+      "status": "pending",
+      "evidence": []
+    },
+    "T08": {
+      "owning_packets": [
+        "F103",
+        "NIP3-116"
+      ],
+      "proof": "unsupported-not-passing on restricted host; executes on available host",
+      "status": "partially-evidenced",
+      "evidence": [
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/convergent_suite.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/recheck-02b02c6/convergent_suite.txt"
+      ]
+    },
+    "T09": {
+      "owning_packets": [
+        "F104",
+        "F105"
+      ],
+      "proof": "CI job + deliberate regression fails it; nested claim map",
+      "status": "pending",
+      "evidence": []
+    },
+    "T10": {
+      "owning_packets": [
+        "A11-D",
+        "A11-CI"
+      ],
+      "proof": "advisory minor stays visible, blockers cannot be outvoted",
+      "status": "pending",
+      "evidence": []
+    },
+    "T11": {
+      "owning_packets": [
+        "A14",
+        "A04b"
+      ],
+      "proof": "route-per-cause tests",
+      "status": "pending",
+      "evidence": []
+    },
+    "T12": {
+      "owning_packets": [
+        "NIP3-110",
+        "NIP3-115",
+        "A14"
+      ],
+      "proof": "attempt continuity across restart/rename/stage (NIP case 9)",
+      "status": "pending",
+      "evidence": []
+    },
+    "T13": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-115"
+      ],
+      "proof": "NIP cases 1, 3, 8, 13 live",
+      "status": "pending",
+      "evidence": []
+    },
+    "T14": {
+      "owning_packets": [
+        "NIP3-115",
+        "NIP3-117"
+      ],
+      "proof": "NIP cases 4, 5, 6 live",
+      "status": "pending",
+      "evidence": []
+    },
+    "T15": {
+      "owning_packets": [
+        "NIP3-118"
+      ],
+      "proof": "NIP cases 7, 11, 12 live + ASDF no-op/failing controls",
+      "status": "pending",
+      "evidence": []
+    },
+    "T16": {
+      "owning_packets": [
+        "A15"
+      ],
+      "proof": "misclassification controls",
+      "status": "pending",
+      "evidence": []
+    },
+    "T17": {
+      "owning_packets": [
+        "A16-WA",
+        "NIP3-119",
+        "F102"
+      ],
+      "proof": "integration on the combined candidate (e2e_bootstrap chain precedent)",
+      "status": "partially-evidenced",
+      "evidence": [
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/e2e_bootstrap.txt"
+      ]
+    },
+    "T18": {
+      "owning_packets": [
+        "F100",
+        "F102",
+        "A02-AMEND"
+      ],
+      "proof": "real-member + per-member gate ordering checks; release vs activation vs GA distinction",
+      "status": "partially-evidenced",
+      "evidence": [
+        ".agent/evidence/backlog-reconciliation-2026-10-08/a02_premise_probes.txt"
+      ]
+    },
+    "T19": {
+      "owning_packets": [
+        "A04b",
+        "A09",
+        "NIP3-118"
+      ],
+      "proof": "frozen acceptance bundle identity vs candidate identity",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-1": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-115"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 1: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-2": {
+      "owning_packets": [
+        "NIP3-115"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 2: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-3": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-115"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 3: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-4": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-117"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 4: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-5": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-115",
+        "NIP3-117"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 5: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-6": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-115",
+        "NIP3-117"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 6: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-7": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-118"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 7: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-8": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-115",
+        "NIP3-116"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 8: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-9": {
+      "owning_packets": [
+        "NIP3-110",
+        "NIP3-115"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 9: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-10": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-115",
+        "NIP3-117"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 10: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-11": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-118"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 11: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-12": {
+      "owning_packets": [
+        "NIP3-118"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 12: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    },
+    "NIP-13": {
+      "owning_packets": [
+        "NIP3-111",
+        "NIP3-115"
+      ],
+      "proof": "NIP-0003 Acceptance Cases row 13: phase-015 schema fixture (where possible) + phase-016 live proof in CI",
+      "status": "pending",
+      "evidence": []
+    }
+  },
+  "packets": [
+    {
+      "id": "A00",
+      "aliases": [
+        "A00"
+      ],
+      "mapped_ids": [],
+      "objective": "Baseline and authority inventory: captured at origin/main 9edd5d0 (v1.4.0 released) and re-verified at 02b02c6 (PR #64 touched planning/evidence files only): validator, payload, fixtures, close-out, e2e, convergent suite.",
+      "scope": {
+        "allowed_paths": [
+          ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/**"
+        ],
+        "forbidden_paths": [
+          "**/*"
+        ]
+      },
+      "acceptance": [
+        "Every baseline command is captured in the 04 Section 5 shape (invocation, output, EXIT:<code>)."
+      ],
+      "evidence": [
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/validate.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/validate_payload.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/fixtures_self_test.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/e2e_bootstrap.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/closeout_pr.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/closeout_tag.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/baseline/convergent_suite.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/dag_recheck.md"
+      ],
+      "non_goals": [
+        "Fixing any failure observed in the baseline."
+      ],
+      "concurrency_lane": "read-only",
+      "status": "complete",
+      "authority_status": "authorized",
+      "owner_role": "Orchestrator",
+      "plan_class": "reconciliation",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "read-only inventory needs no gate"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "captured on this host 2026-10-08"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "baseline files present"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          0,
+          0
+        ],
+        "weighted_lines": [
+          0,
+          0
+        ],
+        "basis": "already done"
+      },
+      "release_impact": "none",
+      "retry_identity": "A00@9edd5d0, re-verified @02b02c6",
+      "rollback": "n/a (read-only)",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [],
+        "consumed_by": [
+          "A01",
+          "R3"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 0
+    },
+    {
+      "id": "A01",
+      "aliases": [
+        "A01"
+      ],
+      "mapped_ids": [],
+      "objective": "Backlog crosswalk and candidate DAG: every brief alias A00-A16, scenario T01-T19 and NIP-0003 case 1-13 mapped to live ids with dispositions, authority and dependencies; validated machine-readable DAG; re-checked after PR #64.",
+      "scope": {
+        "allowed_paths": [
+          "docs/planning/backlog_reconciliation.md",
+          "docs/planning/backlog_dag.json",
+          ".agent/evidence/backlog-reconciliation-2026-10-08/**"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          "docs/nips/**",
+          "methodology/**",
+          "schema/**",
+          "tools/**",
+          "standard/**",
+          "templates/**",
+          "ecosystem/**",
+          "registry/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "python3 .agent/evidence/backlog-reconciliation-2026-10-08/tools/validate_backlog_dag.py exits 0 (schema, unique ids, dangling refs, cycles, canonical mirror of feature_list_014, alias/scenario coverage, tranche path confinement)."
+      ],
+      "evidence": [
+        ".agent/evidence/backlog-reconciliation-2026-10-08/dag_validation.txt"
+      ],
+      "non_goals": [
+        "Editing any payload or docs/nips file.",
+        "Writing .agent/run_state.json (Orchestrator-owned).",
+        "Closing any debt."
+      ],
+      "concurrency_lane": "parallel-safe-new-files",
+      "status": "complete",
+      "authority_status": "authorized",
+      "owner_role": "Planner",
+      "plan_class": "reconciliation",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "A00 complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "Orchestrator-delegated planning work; new files only"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "main working tree, branch phase/014-ga-track (the draft worktree is superseded, not edited)"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "A00 baseline"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          0,
+          0
+        ],
+        "weighted_lines": [
+          0,
+          0
+        ],
+        "basis": "this tranche"
+      },
+      "release_impact": "none (framework-envelope planning files)",
+      "retry_identity": "A01@02b02c6",
+      "rollback": "delete the new files",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A00"
+        ],
+        "consumed_by": [
+          "A03-SCOPE",
+          "A02-AMEND",
+          "A03-RT",
+          "A03-WA-DRAFT"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 10
+    },
+    {
+      "id": "A03-SCOPE",
+      "aliases": [
+        "A03"
+      ],
+      "mapped_ids": [
+        "NIP-0003",
+        "NDEBT-040"
+      ],
+      "objective": "A03 scoping skeleton: which design items extend NIP-0003 and which need a separate Workflow Assurance proposal (outline only).",
+      "scope": {
+        "allowed_paths": [
+          "docs/planning/backlog_reconciliation.md"
+        ],
+        "forbidden_paths": [
+          "docs/nips/**"
+        ]
+      },
+      "acceptance": [
+        "Section 7 of docs/planning/backlog_reconciliation.md assigns every A03-family item (A04, A09, A10, A11, A14, A15, NIP-0003 extensions) to exactly one proposal owner."
+      ],
+      "evidence": [
+        ".agent/evidence/backlog-reconciliation-2026-10-08/dag_validation.txt"
+      ],
+      "non_goals": [
+        "The full design.",
+        "Creating a competing Agent-REPL proposal."
+      ],
+      "concurrency_lane": "parallel-safe-new-files",
+      "status": "complete",
+      "authority_status": "authorized",
+      "owner_role": "Planner",
+      "plan_class": "reconciliation",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "A01"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "outline only"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "NIP-0003 read in full"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          0,
+          0
+        ],
+        "weighted_lines": [
+          0,
+          0
+        ],
+        "basis": "this tranche"
+      },
+      "release_impact": "none",
+      "retry_identity": "A03-SCOPE@02b02c6",
+      "rollback": "n/a",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A01"
+        ],
+        "consumed_by": [
+          "A03-WA-DRAFT"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 20
+    },
+    {
+      "id": "R3",
+      "aliases": [
+        "A02"
+      ],
+      "mapped_ids": [
+        "H-FRAMEWORK-RELEASE v1.4.0",
+        "D1"
+      ],
+      "objective": "v1.4.0 post-release ledger refresh (ROADMAP, operator_gates, manifest, CHANGELOG, run_state) plus the D1 minimal factual re-baseline of PENDING phase 014 (102 tag check v1.4.0->v1.5.0; pilot pin v1.3.0->v1.4.0).",
+      "scope": {
+        "allowed_paths": [
+          "docs/planning/ROADMAP.md",
+          "docs/planning/DEBT.md",
+          "docs/planning/manifest.json",
+          "docs/planning/operator_gates.md",
+          "CHANGELOG.md",
+          ".agent/run_state.json",
+          ".agent/feature_list_014.json",
+          ".agent/product_spec_014.md",
+          "docs/planning/phase_014.yaml"
+        ],
+        "forbidden_paths": [
+          "docs/planning/backlog_reconciliation.md",
+          "docs/planning/backlog_dag.json"
+        ]
+      },
+      "acceptance": [
+        "Owned and verified by the Orchestrator in the main working tree; outside this tranche's write scope."
+      ],
+      "evidence": [
+        "PR #64 merge commit 02b02c63e639237f8cfd2d7dccb1571e96753742",
+        ".agent/evidence/release-v1.4.0-tag/",
+        ".agent/evidence/release-v1.4.0-post-release/"
+      ],
+      "non_goals": [
+        "H-PHASE-014.",
+        "Any acceptance-shape change beyond D1 (that is A02-AMEND)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "complete",
+      "authority_status": "authorized",
+      "owner_role": "Orchestrator",
+      "plan_class": "external-in-flight",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "v1.4.0 tag bb32064 -> 9edd5d0 exists"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-FRAMEWORK-RELEASE v1.4.0 EXECUTED; D1 operator_gate_decision 2026-10-08T10:30:34Z (run_state at 02b02c6); the operator's merge of PR #64 confirms the D1 interpretation"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "main working tree"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "SATISFIED by PR #64 (02b02c6), re-verified: ROADMAP 0.45.0 single 'Latest released tag: v1.4.0' line; operator_gates 0.26.0 v1.4.0 EXECUTED; run_state D1 event 2026-10-08T10:30:34Z; product_spec_014 1.0.1; 100 pin v1.4.0; 102 tag test v1.5.0"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          100,
+          300
+        ],
+        "weighted_lines": [
+          230,
+          870
+        ],
+        "basis": "orchestrator estimate unknown; ledger-refresh precedent"
+      },
+      "release_impact": "none (records)",
+      "retry_identity": "R3 = PR #64",
+      "rollback": "n/a (merged)",
+      "shared_files": [
+        "docs/planning/ROADMAP.md",
+        "docs/planning/DEBT.md",
+        "docs/planning/manifest.json",
+        "docs/planning/operator_gates.md",
+        "CHANGELOG.md",
+        ".agent/run_state.json",
+        "docs/planning/phase_014.yaml",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A00"
+        ],
+        "consumed_by": [
+          "A02-AMEND"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 30
+    },
+    {
+      "id": "A02-AMEND",
+      "aliases": [
+        "A02"
+      ],
+      "mapped_ids": [
+        "099",
+        "100",
+        "101",
+        "102",
+        "NDEBT-041",
+        "NDEBT-042",
+        "NDEBT-043"
+      ],
+      "objective": "Apply the approved phase-014 amendment: 101.dependencies += 099; acceptance-test hardening (exit-captured validator gate, per-gate rows, real-member/pin/ordering checks, scoped audit checks, 102 `import json`, phase-scoped tag check against the activation tag set); run_state clarifying clause; maintenance tranche 103-109 folded ahead of 102 with the workflow non-goal lifted for them only; scope re-baseline (naive 2890 x 2.3 = 6660; ceiling 8658).",
+      "scope": {
+        "allowed_paths": [
+          ".agent/feature_list_014.json",
+          ".agent/product_spec_014.md",
+          "docs/planning/phase_014.yaml",
+          "docs/planning/manifest.json",
+          "docs/planning/operator_gates.md",
+          "docs/planning/ROADMAP.md",
+          "docs/planning/DEBT.md",
+          "CHANGELOG.md",
+          "docs/planning/backlog_reconciliation.md",
+          "docs/planning/backlog_dag.json",
+          ".agent/evidence/backlog-reconciliation-2026-10-08/**",
+          ".agent/evidence/phase-014-activation/**"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          "tools/**",
+          ".github/**",
+          "schema/**"
+        ]
+      },
+      "acceptance": [
+        "feature_list_014 validates against schema/feature_list.schema.json; list order is topological; 101.dependencies == ['099','100']; 102 depends on 103-109.",
+        "Every amended acceptance test passes its recorded negative control (a02_premise_probes.py, 88/88 rows).",
+        "spec_version 1.0.1 -> 1.1.0 in lockstep (product_spec_014 + feature_list_014) with a change_log entry citing the recorded authorization event."
+      ],
+      "evidence": [
+        ".agent/evidence/backlog-reconciliation-2026-10-08/a02_premise_probes.txt",
+        ".agent/evidence/backlog-reconciliation-2026-10-08/dag_validation.txt",
+        ".agent/feature_list_014.json",
+        ".agent/product_spec_014.md"
+      ],
+      "non_goals": [
+        "Writing .agent/run_state.json (the Orchestrator records activation third, canonical-first).",
+        "Editing NIP-0003 (its renumbering is a ROADMAP note; revision is A03-RT)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "complete",
+      "authority_status": "authorized",
+      "owner_role": "Planner",
+      "plan_class": "selected-phase-candidate",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "R3/D1 merged (PR #64); started from product_spec_014 1.0.1"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "main working tree"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "probes 88/88; validator gate and C16 PASS"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          600,
+          900
+        ],
+        "weighted_lines": [
+          600,
+          900
+        ],
+        "basis": "planning-artifact edits + acceptance infrastructure (Planner work; outside the phase scope budget)"
+      },
+      "release_impact": "none (framework-envelope)",
+      "retry_identity": "A02-AMEND@02b02c6",
+      "rollback": "revert the planning commit; the D1-only artifacts at 02b02c6 remain",
+      "shared_files": [
+        "docs/planning/phase_014.yaml",
+        "docs/planning/manifest.json",
+        ".agent/feature_list_014.json",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/DEBT.md",
+        "docs/planning/operator_gates.md",
+        "CHANGELOG.md"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A01",
+          "R3"
+        ],
+        "consumed_by": [
+          "ACT-014"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 50
+    },
+    {
+      "id": "ACT-014",
+      "aliases": [],
+      "mapped_ids": [
+        "H-PHASE-014"
+      ],
+      "objective": "Record H-PHASE-014 activation canonical-first: phase_014.yaml in_progress (1st, Planner) -> manifest current_phase + activation_state active (2nd, Planner) -> run_state current_phase/current_feature/status/scope_budget (3rd, Orchestrator; landed 2026-10-08T12:18:31Z, event phase_activated: 014-ga-track / 099 / in_progress). Scope budget 6660 / ceiling 8658 approved by the operator at 12:50:31Z. Activation baselines (tag set, .agent/audits listing, validator check ids) captured and sha256-pinned under .agent/evidence/phase-014-activation/.",
+      "scope": {
+        "allowed_paths": [
+          "docs/planning/phase_014.yaml",
+          "docs/planning/manifest.json",
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**"
+        ],
+        "forbidden_paths": [
+          "tools/**",
+          "standard/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "run_state history has the H-PHASE-014 operator_gate_decision (2026-10-08T11:21:14Z) before any phase-014 contract exists (none exists).",
+        "phase_014.yaml validates against schema/phase.schema.json at status in_progress; manifest current_phase == 014-ga-track.",
+        "Baselines captured in the 04 Section 5 shape: git tag -l; ls -1 .agent/audits; bash tools/validate.sh; bash tools/validate.sh --payload."
+      ],
+      "evidence": [
+        ".agent/evidence/phase-014-activation/tag-baseline.txt",
+        ".agent/evidence/phase-014-activation/audits-baseline.txt",
+        ".agent/evidence/phase-014-activation/validate.txt",
+        ".agent/evidence/phase-014-activation/validate_payload.txt",
+        ".agent/run_state.json"
+      ],
+      "non_goals": [
+        "Starting any feature contract in the same step."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "complete",
+      "authority_status": "authorized",
+      "owner_role": "Orchestrator",
+      "plan_class": "selected-phase-candidate",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "A02-AMEND complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "run_state position landed 2026-10-08T12:18:31Z (phase_activated: current_phase 014-ga-track, current_feature 099, status in_progress); scope budget approved 12:50:31Z"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          20,
+          60
+        ],
+        "weighted_lines": [
+          50,
+          170
+        ],
+        "basis": "activation records"
+      },
+      "release_impact": "none",
+      "retry_identity": "ACT-014",
+      "rollback": "revert activation records (no feature started)",
+      "shared_files": [
+        "docs/planning/phase_014.yaml",
+        "docs/planning/manifest.json",
+        ".agent/run_state.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A02-AMEND"
+        ],
+        "consumed_by": [
+          "F099",
+          "F100",
+          "F101",
+          "F102",
+          "F103",
+          "F104",
+          "F105",
+          "F106",
+          "F107",
+          "F109",
+          "F108"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 60
+    },
+    {
+      "id": "F099",
+      "aliases": [],
+      "mapped_ids": [
+        "099"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "099",
+      "objective": "GA-track activation wave — register ecosystem/06+08 and define the reserved gates",
+      "scope": {
+        "allowed_paths": [
+          "ecosystem/06_simplification_review.md",
+          "ecosystem/08_ga_gate.md",
+          "NIZAM.json",
+          "tools/skill.json",
+          "docs/guide/index.html",
+          "docs/planning/operator_gates.md",
+          "CHANGELOG.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 8 executable acceptance tests of feature 099 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/099/"
+      ],
+      "non_goals": [
+        "Exercising H-CONSOLIDATION or H-GA."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "all dependencies complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "none"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          400,
+          400
+        ],
+        "weighted_lines": [
+          920,
+          920
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "MINOR at the next release (two protocol documents become normative; additive capability entries).",
+      "retry_identity": "contract 099",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        "NIZAM.json",
+        "tools/skill.json",
+        "docs/planning/operator_gates.md",
+        "CHANGELOG.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014"
+        ],
+        "consumed_by": [
+          "F101",
+          "F102"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 100
+    },
+    {
+      "id": "F103",
+      "aliases": [
+        "A05"
+      ],
+      "mapped_ids": [
+        "103",
+        "NDEBT-043"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "103",
+      "objective": "Sandbox prerequisite handling — explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043)",
+      "scope": {
+        "allowed_paths": [
+          "tools/test_convergent_review.py",
+          "tools/README.md",
+          "CHANGELOG.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 8 executable acceptance tests of feature 103 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/103/"
+      ],
+      "non_goals": [
+        "Changing host security settings.",
+        "Modifying tools/linux_trial_sandbox.sh or tools/isolated_trial_adapter.py.",
+        "Any silent pass."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "all dependencies complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "startable here: its acceptance tests are host-conditional; this host restricts unprivileged user namespaces (kernel.apparmor_restrict_unprivileged_userns=1), so it proves the UNSUPPORTED half, and the FULL half is proven on an isolation-capable host (CI, via 104)"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "debt row re-verified at 02b02c6"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          120,
+          120
+        ],
+        "weighted_lines": [
+          280,
+          280
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "MINOR at the next release (shipped tools/ suite gains an optional flag; nothing that passed before starts failing; rounded up per methodology/06_release_train.md Section 3.4).",
+      "retry_identity": "contract 103",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        "tools/test_convergent_review.py",
+        "tools/README.md",
+        "CHANGELOG.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014"
+        ],
+        "consumed_by": [
+          "F102",
+          "F104"
+        ],
+        "serialize_after": [
+          "F099"
+        ]
+      },
+      "lane_rank": 110
+    },
+    {
+      "id": "F104",
+      "aliases": [
+        "A06"
+      ],
+      "mapped_ids": [
+        "104",
+        "NDEBT-041"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "104",
+      "objective": "Convergent-review suite enforced in CI, and the review schema family's validator stated (NDEBT-041)",
+      "scope": {
+        "allowed_paths": [
+          ".github/workflows/compliance.yml",
+          "standard/definition_of_done.md",
+          "tools/README.md",
+          "schema/README.md",
+          "CHANGELOG.md",
+          ".agent/evidence/104/**"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**"
+        ]
+      },
+      "acceptance": [
+        "The 10 executable acceptance tests of feature 104 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/104/"
+      ],
+      "non_goals": [
+        "C12 coverage of the review schema family (left to 101 / H-CONSOLIDATION).",
+        "NIP-0003's live_session_conformance job.",
+        "Weakening required mode if the runner cannot enable namespaces."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "F103 not complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": false,
+          "reason": "UNVERIFIED: whether hosted ubuntu runners permit the guarded userns sysctl step; a required-mode failure escalates, never weakens"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "debt row re-verified at 02b02c6"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          100,
+          100
+        ],
+        "weighted_lines": [
+          230,
+          230
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "MINOR at the next release via standard/definition_of_done.md (additive job statement, the NIP-0003 Compatibility-table precedent); .github/ is not injected into consumers.",
+      "retry_identity": "contract 104",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        ".github/workflows/compliance.yml",
+        "standard/definition_of_done.md",
+        "tools/README.md",
+        "schema/README.md",
+        "CHANGELOG.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014",
+          "F103"
+        ],
+        "consumed_by": [
+          "F102",
+          "A11-CI",
+          "NIP3-116"
+        ],
+        "serialize_after": [
+          "F103"
+        ]
+      },
+      "lane_rank": 120
+    },
+    {
+      "id": "F105",
+      "aliases": [
+        "A07"
+      ],
+      "mapped_ids": [
+        "105",
+        "NDEBT-042",
+        "NIP-0003 feature 109 claim map (pulled forward)"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "105",
+      "objective": "Nested-fixture ownership — the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042)",
+      "scope": {
+        "allowed_paths": [
+          "tools/fixtures_self_test.sh",
+          "tools/README.md",
+          "CHANGELOG.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 5 executable acceptance tests of feature 105 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/105/"
+      ],
+      "non_goals": [
+        "A second claim registry.",
+        "Moving fixtures."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "all dependencies complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "debt row re-verified at 02b02c6"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          110,
+          110
+        ],
+        "weighted_lines": [
+          250,
+          250
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "PATCH (the framework self-test is brought in line with its documented claim; no consumer-facing contract changes shape).",
+      "retry_identity": "contract 105",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        "tools/fixtures_self_test.sh",
+        "tools/README.md",
+        "CHANGELOG.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014"
+        ],
+        "consumed_by": [
+          "F102",
+          "NIP3-116"
+        ],
+        "serialize_after": [
+          "F104"
+        ]
+      },
+      "lane_rank": 130
+    },
+    {
+      "id": "F106",
+      "aliases": [
+        "A08"
+      ],
+      "mapped_ids": [
+        "106",
+        "NDEBT-044"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "106",
+      "objective": "Capability-index parity — skill.json is a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a)",
+      "scope": {
+        "allowed_paths": [
+          "tools/validate.sh",
+          "NIZAM.json",
+          "tools/README.md",
+          "tools/fixtures_self_test.sh",
+          "tools/fixtures/skill_index_neg_unindexed_capability.json",
+          "CHANGELOG.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 8 executable acceptance tests of feature 106 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/106/"
+      ],
+      "non_goals": [
+        "Equality between the two capability lists.",
+        "A new check number (C17 is earmarked by NIP-0003)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "all dependencies complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "debt row re-verified at 02b02c6"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          160,
+          160
+        ],
+        "weighted_lines": [
+          370,
+          370
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "MINOR at the next release (C13 tightened and an additive NIZAM.json capability; the inputs C13 reads ship together in the payload, so no consumer sees a new failure; rounded up per Section 3.4).",
+      "retry_identity": "contract 106",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        "tools/validate.sh",
+        "NIZAM.json",
+        "tools/README.md",
+        "tools/fixtures_self_test.sh",
+        "CHANGELOG.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014"
+        ],
+        "consumed_by": [
+          "F102",
+          "F108"
+        ],
+        "serialize_after": [
+          "F105"
+        ]
+      },
+      "lane_rank": 140
+    },
+    {
+      "id": "A03-WA-DRAFT",
+      "aliases": [
+        "A03",
+        "A09",
+        "A10",
+        "A11",
+        "A14",
+        "A15"
+      ],
+      "mapped_ids": [
+        "NDEBT-040",
+        "provisional NIP-0004 Workflow Assurance"
+      ],
+      "objective": "Draft a separately identified Workflow Assurance NIP (provisional NIP-0004, status draft): candidate/contract/verification/evidence identity incl. NDEBT-040, deterministic gates, convergent-to-AGF verdict mapping, cause-based routing, risk profiles with a preregistered evaluation.",
+      "scope": {
+        "allowed_paths": [
+          "docs/nips/"
+        ],
+        "forbidden_paths": [
+          "docs/nips/NIP-0003-live-runtime-sessions.md",
+          "methodology/**",
+          "standard/**"
+        ]
+      },
+      "acceptance": [
+        "New NIP file only; frontmatter validates; every changed rule has owner, rationale, transition, acceptance evidence and activation boundary (A03 exit)."
+      ],
+      "evidence": [
+        ".agent/evidence/A03-WA/"
+      ],
+      "non_goals": [
+        "Runtime-session semantics (NIP-0003 owns them).",
+        "Activating any policy."
+      ],
+      "concurrency_lane": "parallel-safe-new-files",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Planner",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "A03-SCOPE outline"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "drafting a proposal; acceptance is H-NIP"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "outline in docs/planning/backlog_reconciliation.md Section 7; Orchestrator review of this package"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          400,
+          900
+        ],
+        "weighted_lines": [
+          920,
+          2610
+        ],
+        "basis": "NIP-0003 size precedent (686 lines)"
+      },
+      "release_impact": "none",
+      "retry_identity": "A03-WA-DRAFT",
+      "rollback": "delete the draft",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A01",
+          "A03-SCOPE"
+        ],
+        "consumed_by": [
+          "A03-WA-FINAL"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 150
+    },
+    {
+      "id": "F107",
+      "aliases": [
+        "A08"
+      ],
+      "mapped_ids": [
+        "107",
+        "NDEBT-044"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "107",
+      "objective": "NIP frontmatter under C1/C2 and NIP-0002's status corrected (NDEBT-044 b)",
+      "scope": {
+        "allowed_paths": [
+          "tools/validate.sh",
+          "tools/README.md",
+          "docs/nips/NIP-0002-zero-to-n-project-spectrum.md",
+          "CHANGELOG.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 6 executable acceptance tests of feature 107 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/107/"
+      ],
+      "non_goals": [
+        "Adding docs/nips/ to build_shipped_md_set (C9/C10 would then fail on proposal-cited future paths).",
+        "Editing NIP-0003."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "all dependencies complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "debt row re-verified at 02b02c6"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          50,
+          50
+        ],
+        "weighted_lines": [
+          120,
+          120
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "MINOR at the next release (default-mode sweep scope of shipped tools/validate.sh widens; consumers validate with --payload, which is unchanged; rounded up per Section 3.4). NIP-0002's own edit is framework-envelope.",
+      "retry_identity": "contract 107",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        "tools/validate.sh",
+        "tools/README.md",
+        "CHANGELOG.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014"
+        ],
+        "consumed_by": [
+          "F102",
+          "F108"
+        ],
+        "serialize_after": [
+          "F106"
+        ]
+      },
+      "lane_rank": 150
+    },
+    {
+      "id": "F109",
+      "aliases": [
+        "A08"
+      ],
+      "mapped_ids": [
+        "109",
+        "NDEBT-026"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "109",
+      "objective": "C15 mapping direction — an explicit Role column parsed by a new primitive; a swapped profile->role mapping fails (NDEBT-026)",
+      "scope": {
+        "allowed_paths": [
+          "standard/capability_profiles.md",
+          "tools/verify_lib.sh",
+          "tools/validate.sh",
+          "tools/README.md",
+          "CHANGELOG.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 6 executable acceptance tests of feature 109 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/109/"
+      ],
+      "non_goals": [
+        "Changing vlib_profiles_cover_roles (direct callers keep its contract).",
+        "Any schema change."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "all dependencies complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "debt row re-verified at 02b02c6"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          90,
+          90
+        ],
+        "weighted_lines": [
+          210,
+          210
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "MINOR at the next release (additive table column in a shipped standard and an additive verify_lib primitive; the existing primitive is unchanged; C15 is default-mode only). Not MAJOR: nothing a consumer validates in --payload mode narrows.",
+      "retry_identity": "contract 109",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        "tools/validate.sh",
+        "tools/verify_lib.sh",
+        "tools/README.md",
+        "CHANGELOG.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014"
+        ],
+        "consumed_by": [
+          "F102",
+          "F108"
+        ],
+        "serialize_after": [
+          "F107"
+        ]
+      },
+      "lane_rank": 160
+    },
+    {
+      "id": "F108",
+      "aliases": [
+        "A08"
+      ],
+      "mapped_ids": [
+        "108",
+        "NDEBT-037",
+        "NDEBT-044"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "108",
+      "objective": "Validator help and adapter-reference truth — C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f)",
+      "scope": {
+        "allowed_paths": [
+          "tools/validate.sh",
+          "tools/interface.md",
+          "CHANGELOG.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 7 executable acceptance tests of feature 108 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/108/"
+      ],
+      "non_goals": [
+        "Changing C5 behavior (the text is corrected, not the sweep).",
+        "Adding a tools/interface.md Section 5 item."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "F106, F107, F109 not complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "debt row re-verified at 02b02c6"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          60,
+          60
+        ],
+        "weighted_lines": [
+          140,
+          140
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "PATCH (documentation corrections; tools/interface.md Section 5 keeps 10 items, so every adapter stays conformant).",
+      "retry_identity": "contract 108",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        "tools/validate.sh",
+        "tools/interface.md",
+        "CHANGELOG.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014",
+          "F106",
+          "F107",
+          "F109"
+        ],
+        "consumed_by": [
+          "F102"
+        ],
+        "serialize_after": [
+          "F109"
+        ]
+      },
+      "lane_rank": 170
+    },
+    {
+      "id": "F100",
+      "aliases": [],
+      "mapped_ids": [
+        "100",
+        "NDEBT-018",
+        "NDEBT-034"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "100",
+      "objective": "Real, non-scratch multi-repo ecosystem pilot at the released v1.4.0 tag",
+      "scope": {
+        "allowed_paths": [
+          ".agent/evidence/pilot-100/**",
+          "docs/planning/DEBT.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 5 executable acceptance tests of feature 100 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/pilot-100/"
+      ],
+      "non_goals": [
+        "NDEBT-034 clone optimization.",
+        "Bulk consumer upgrades.",
+        "Scratch or synthetic members.",
+        "Writing on a member's main branch."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-CONSUMER-UPGRADE",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": true,
+          "reason": "all dependencies complete"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-PHASE-014 satisfied; per-member H-CONSUMER-UPGRADE OUTSTANDING (member set is an operator decision not yet made); H-PLANNING-AUTHORITY / H-TRAIN-ENTRY only if a real plan/train is built"
+        },
+        "environment": {
+          "satisfied": false,
+          "reason": "UNKNOWN: the operator has not designated the real member repositories (and access to them); H-PHASE-014 designates none"
+        },
+        "evidence": {
+          "satisfied": true,
+          "reason": "none"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          900,
+          900
+        ],
+        "weighted_lines": [
+          2070,
+          2070
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "None (evidence only).",
+      "retry_identity": "contract 100",
+      "rollback": "discard member worktrees; members' main branches untouched",
+      "shared_files": [
+        "docs/planning/DEBT.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "ecosystem",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014"
+        ],
+        "consumed_by": [
+          "F101",
+          "F102"
+        ],
+        "serialize_after": [
+          "F108"
+        ]
+      },
+      "lane_rank": 180
+    },
+    {
+      "id": "F101",
+      "aliases": [],
+      "mapped_ids": [
+        "101"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "101",
+      "objective": "First real simplification review (Repeat stage) over real ecosystem evidence",
+      "scope": {
+        "allowed_paths": [
+          ".agent/audits/**",
+          "docs/planning/DEBT.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 5 executable acceptance tests of feature 101 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/audits/"
+      ],
+      "non_goals": [
+        "Applying any consolidation."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "F099, F100 not complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "pilot-100 evidence"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          400,
+          400
+        ],
+        "weighted_lines": [
+          920,
+          920
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "None (findings only; any consolidation is separate planned work under H-CONSOLIDATION).",
+      "retry_identity": "contract 101",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        "docs/planning/DEBT.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014",
+          "F099",
+          "F100"
+        ],
+        "consumed_by": [
+          "F102",
+          "A03-WA-FINAL",
+          "PLAN-NEXT"
+        ],
+        "serialize_after": [
+          "F100"
+        ]
+      },
+      "lane_rank": 190
+    },
+    {
+      "id": "F102",
+      "aliases": [
+        "A16",
+        "A08"
+      ],
+      "mapped_ids": [
+        "102"
+      ],
+      "phase_id": "014-ga-track",
+      "feature_id": "102",
+      "objective": "GA-readiness assessment (no declaration), next-candidate refinement, and phase close",
+      "scope": {
+        "allowed_paths": [
+          ".agent/evidence/102/**",
+          "docs/planning/phase_014.yaml",
+          "docs/planning/manifest.json",
+          "docs/planning/ROADMAP.md",
+          "docs/planning/DEBT.md",
+          "CHANGELOG.md"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          ".agent/evidence/phase-014-activation/**",
+          ".github/**"
+        ]
+      },
+      "acceptance": [
+        "The 10 executable acceptance tests of feature 102 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+      ],
+      "evidence": [
+        ".agent/evidence/102/"
+      ],
+      "non_goals": [
+        "Declaring GA.",
+        "Preparing a release or creating a tag."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Generator",
+      "plan_class": "activated-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "F099, F100, F101, F103, F104, F105, F106, F107, F108, F109 not complete"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "pilot + review evidence"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          500,
+          500
+        ],
+        "weighted_lines": [
+          1150,
+          1150
+        ],
+        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+      },
+      "release_impact": "None (phase 014 prepares no release; the next release, at least MINOR, is a separate H-FRAMEWORK-RELEASE).",
+      "retry_identity": "contract 102",
+      "rollback": "revert the feature commit",
+      "shared_files": [
+        "docs/planning/phase_014.yaml",
+        "docs/planning/manifest.json",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/DEBT.md",
+        "CHANGELOG.md",
+        ".agent/feature_list_014.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "ACT-014",
+          "F099",
+          "F100",
+          "F101",
+          "F103",
+          "F104",
+          "F105",
+          "F106",
+          "F107",
+          "F108",
+          "F109"
+        ],
+        "consumed_by": [
+          "PLAN-NEXT",
+          "PLAN-WA"
+        ],
+        "serialize_after": [
+          "F101"
+        ]
+      },
+      "lane_rank": 200
+    },
+    {
+      "id": "A03-WA-FINAL",
+      "aliases": [
+        "A03"
+      ],
+      "mapped_ids": [
+        "provisional NIP-0004"
+      ],
+      "objective": "Finalize the overlapping Workflow Assurance design against feature 101's findings (and any H-CONSOLIDATION decision) before H-NIP is requested.",
+      "scope": {
+        "allowed_paths": [
+          "docs/nips/"
+        ],
+        "forbidden_paths": [
+          "docs/nips/NIP-0003-live-runtime-sessions.md"
+        ]
+      },
+      "acceptance": [
+        "Every 101 finding touching an A09-A15 surface is cited with a disposition in the NIP."
+      ],
+      "evidence": [
+        ".agent/evidence/A03-WA/"
+      ],
+      "non_goals": [
+        "Implementation."
+      ],
+      "concurrency_lane": "parallel-safe-new-files",
+      "status": "pending",
+      "authority_status": "authorized",
+      "owner_role": "Planner",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "F101 findings"
+        },
+        "authority": {
+          "satisfied": true,
+          "reason": "drafting"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "101 audit artifact"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          100,
+          300
+        ],
+        "weighted_lines": [
+          230,
+          870
+        ],
+        "basis": "planner judgment"
+      },
+      "release_impact": "none",
+      "retry_identity": "A03-WA-FINAL",
+      "rollback": "revert",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A03-WA-DRAFT",
+          "F101"
+        ],
+        "consumed_by": [
+          "PLAN-WA"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 206
+    },
+    {
+      "id": "A03-RT",
+      "aliases": [
+        "A03",
+        "A12"
+      ],
+      "mapped_ids": [
+        "NIP-0003"
+      ],
+      "objective": "Pre-acceptance in-place revision of NIP-0003 (draft 0.1.0), after phase 014 closes: provisional ids 103-113 -> 110-120 (phase 014 allocated 103-109); release expectations 'v1.4.0'/'v1.5.0' -> 'next MINOR' (NIP-0003:504,526); the claim map is reused from phase-014 feature 105, not authored by 109/116; the Merge-Done job count becomes 'five' once feature 104 adds the fourth job; the isolation-flag polarity aligned with feature 103's required-by-default precedent; the stale citation of product_spec_014.md:82-83 and 'Phase 014 is not edited' refreshed (phase 014 now changes workflow and validator surfaces under its maintenance tranche); SBCL now installed on the operator host (contradicts NIP-0003:512-513); attempt-continuity extension in 110.",
+      "scope": {
+        "allowed_paths": [
+          "docs/nips/NIP-0003-live-runtime-sessions.md",
+          "docs/planning/ROADMAP.md"
+        ],
+        "forbidden_paths": [
+          "methodology/**",
+          "schema/**",
+          "tools/**"
+        ]
+      },
+      "acceptance": [
+        "NIP frontmatter still validates (schema/frontmatter.schema.json); no 'expected v1.' release number remains in Staged Realization.",
+        "The 13 acceptance cases and the four operator decisions are byte-identical to 0.1.0 except for the documented id shift."
+      ],
+      "evidence": [
+        ".agent/evidence/A03-RT/"
+      ],
+      "non_goals": [
+        "Accepting the NIP (H-NIP).",
+        "Changing the four recorded operator decisions."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Planner",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "F102 (phase 014 closed: ROADMAP single-writer, and 101 findings available)"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "Orchestrator scheduling of the revision; the operator's 2026-10-08 instruction forbade editing the NIP in this package"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "feature 101 findings"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          150,
+          400
+        ],
+        "weighted_lines": [
+          340,
+          1160
+        ],
+        "basis": "NIP-0003 revision round precedent"
+      },
+      "release_impact": "none (docs/nips is framework-envelope)",
+      "retry_identity": "A03-RT",
+      "rollback": "revert",
+      "shared_files": [
+        "docs/nips/NIP-0003-live-runtime-sessions.md",
+        "docs/planning/ROADMAP.md"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A01"
+        ],
+        "consumed_by": [
+          "PLAN-NEXT"
+        ],
+        "serialize_after": [
+          "F102"
+        ]
+      },
+      "lane_rank": 210
+    },
+    {
+      "id": "PLAN-NEXT",
+      "aliases": [
+        "A12"
+      ],
+      "mapped_ids": [
+        "NIP-0003 phase 015 artifacts"
+      ],
+      "objective": "Post-014 planning: consume 101 findings and any H-CONSOLIDATION decisions; author canonical phase-015 artifacts with ids confirmed from the then-highest allocated id (provisionally 110-114); place residual debt (NDEBT-034, NDEBT-040).",
+      "scope": {
+        "allowed_paths": [
+          ".agent/product_spec_015.md",
+          ".agent/feature_list_015.json",
+          "docs/planning/**"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json",
+          "tools/**"
+        ]
+      },
+      "acceptance": [
+        "feature_list_015 validates and is acyclic; ids start after the highest allocated id at that time (provisionally 110, not 103)."
+      ],
+      "evidence": [
+        ".agent/evidence/plan-015/"
+      ],
+      "non_goals": [
+        "Activating phase 015 (H-PHASE-015)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-NIP",
+      "owner_role": "Planner",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "phase 014 closed (NIP-0003:50, :489-491)"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-NIP for NIP-0003 (selects 015)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "101 findings"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          300,
+          700
+        ],
+        "weighted_lines": [
+          690,
+          2030
+        ],
+        "basis": "phase-proposal precedent"
+      },
+      "release_impact": "none",
+      "retry_identity": "PLAN-NEXT",
+      "rollback": "revert proposal",
+      "shared_files": [
+        "docs/planning/manifest.json",
+        "docs/planning/ROADMAP.md"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "F102",
+          "F101",
+          "A03-RT"
+        ],
+        "consumed_by": [
+          "A04a",
+          "NIP3-110"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 220
+    },
+    {
+      "id": "A04a",
+      "aliases": [
+        "A04"
+      ],
+      "mapped_ids": [],
+      "objective": "Role-text consistency: standard/AGF.md Section 2 Evaluator row (line 40) omits the Loop-1 contract review that methodology/01_execution.md (lines 36-40) requires; delegation template accuracy (no behavior change).",
+      "scope": {
+        "allowed_paths": [
+          "(fixed at PLAN-WA / PLAN-NEXT contract time)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json coordination fields"
+        ]
+      },
+      "acceptance": [
+        "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
+      ],
+      "evidence": [
+        ".agent/evidence/A04a/"
+      ],
+      "non_goals": [
+        "Activating a policy change before its versioned authorization.",
+        "Reducing any active gate (A15)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Generator",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "PLAN-NEXT"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "phase selection at PLAN-NEXT"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "design accepted"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          30,
+          80
+        ],
+        "weighted_lines": [
+          70,
+          230
+        ],
+        "basis": "planner judgment; no prior analogue"
+      },
+      "release_impact": "MINOR or MAJOR depending on required-field changes (assessed in the NIP)",
+      "retry_identity": "A04a",
+      "rollback": "revert",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "PLAN-NEXT"
+        ],
+        "consumed_by": [],
+        "serialize_after": []
+      },
+      "lane_rank": 225
+    },
+    {
+      "id": "NIP3-110",
+      "aliases": [
+        "A12",
+        "A14"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 103 (shifted to 110: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "110",
+      "phase_id_proposed": "015 (provisional)",
+      "objective": "Document 10 + generic amendments (02, 03 incl. attempt definition, permission_classes, convergent_code_review, definition_of_done) + registration",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-015 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/feature_list_014.json",
+          "docs/planning/phase_014.yaml"
+        ]
+      },
+      "acceptance": [
+        "As specified in NIP-0003 Proposed Framework Surface / Acceptance Cases; finalized at PLAN-NEXT."
+      ],
+      "evidence": [
+        ".agent/evidence/110/"
+      ],
+      "non_goals": [
+        "Live runtime claims before phase-016 proof (NIP-0003:485)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-015",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "PLAN-NEXT"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-NIP (NIP-0003) then H-PHASE-015"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none (normative + schema)"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "101 findings reconciled at PLAN-NEXT"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          600,
+          600
+        ],
+        "weighted_lines": [
+          1380,
+          1740
+        ],
+        "basis": "NIP-0003:498-504 naive lines"
+      },
+      "release_impact": "MINOR (NIP-0003 Compatibility table)",
+      "retry_identity": "provisional 110",
+      "rollback": "revert feature commit",
+      "shared_files": [
+        "NIZAM.json",
+        "tools/skill.json",
+        "tools/validate.sh",
+        "tools/interface.md"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "PLAN-NEXT"
+        ],
+        "consumed_by": [
+          "A14",
+          "NIP3-111"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 230
+    },
+    {
+      "id": "NIP3-111",
+      "aliases": [
+        "A12"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 104 (shifted to 111: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "111",
+      "phase_id_proposed": "015 (provisional)",
+      "objective": "Session/operation schemas, 18 fixtures, C12 extension",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-015 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/feature_list_014.json",
+          "docs/planning/phase_014.yaml"
+        ]
+      },
+      "acceptance": [
+        "As specified in NIP-0003 Proposed Framework Surface / Acceptance Cases; finalized at PLAN-NEXT."
+      ],
+      "evidence": [
+        ".agent/evidence/111/"
+      ],
+      "non_goals": [
+        "Live runtime claims before phase-016 proof (NIP-0003:485)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-015",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "NIP3-103"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-NIP (NIP-0003) then H-PHASE-015"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none (normative + schema)"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "101 findings reconciled at PLAN-NEXT"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          850,
+          850
+        ],
+        "weighted_lines": [
+          1950,
+          2460
+        ],
+        "basis": "NIP-0003:498-504 naive lines"
+      },
+      "release_impact": "MINOR (NIP-0003 Compatibility table)",
+      "retry_identity": "provisional 111",
+      "rollback": "revert feature commit",
+      "shared_files": [
+        "NIZAM.json",
+        "tools/skill.json",
+        "tools/validate.sh",
+        "tools/interface.md"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-110"
+        ],
+        "consumed_by": [
+          "NIP3-112"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 240
+    },
+    {
+      "id": "NIP3-112",
+      "aliases": [
+        "A12"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 105 (shifted to 112: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "112",
+      "phase_id_proposed": "015 (provisional)",
+      "objective": "Document 11, SBCL reference binding with folded language profile",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-015 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/feature_list_014.json",
+          "docs/planning/phase_014.yaml"
+        ]
+      },
+      "acceptance": [
+        "As specified in NIP-0003 Proposed Framework Surface / Acceptance Cases; finalized at PLAN-NEXT."
+      ],
+      "evidence": [
+        ".agent/evidence/112/"
+      ],
+      "non_goals": [
+        "Live runtime claims before phase-016 proof (NIP-0003:485)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-015",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "NIP3-104"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-NIP (NIP-0003) then H-PHASE-015"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none (normative + schema)"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "101 findings reconciled at PLAN-NEXT"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          420,
+          420
+        ],
+        "weighted_lines": [
+          970,
+          1220
+        ],
+        "basis": "NIP-0003:498-504 naive lines"
+      },
+      "release_impact": "MINOR (NIP-0003 Compatibility table)",
+      "retry_identity": "provisional 112",
+      "rollback": "revert feature commit",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-111"
+        ],
+        "consumed_by": [
+          "NIP3-113"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 250
+    },
+    {
+      "id": "NIP3-113",
+      "aliases": [
+        "A12",
+        "A08"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 106 (shifted to 113: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "113",
+      "phase_id_proposed": "015 (provisional)",
+      "objective": "Optional adapter capability (interface.md Section 6, skill.json, SKILL.md); the NDEBT-044(d) cross-reference fix moved to phase-014 feature 108",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-015 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/feature_list_014.json",
+          "docs/planning/phase_014.yaml"
+        ]
+      },
+      "acceptance": [
+        "As specified in NIP-0003 Proposed Framework Surface / Acceptance Cases; finalized at PLAN-NEXT."
+      ],
+      "evidence": [
+        ".agent/evidence/113/"
+      ],
+      "non_goals": [
+        "Live runtime claims before phase-016 proof (NIP-0003:485)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-015",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "NIP3-105"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-NIP (NIP-0003) then H-PHASE-015"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none (normative + schema)"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "101 findings reconciled at PLAN-NEXT"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          220,
+          220
+        ],
+        "weighted_lines": [
+          510,
+          640
+        ],
+        "basis": "NIP-0003:498-504 naive lines"
+      },
+      "release_impact": "MINOR (NIP-0003 Compatibility table)",
+      "retry_identity": "provisional 113",
+      "rollback": "revert feature commit",
+      "shared_files": [
+        "NIZAM.json",
+        "tools/skill.json",
+        "tools/validate.sh",
+        "tools/interface.md"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-112"
+        ],
+        "consumed_by": [
+          "NIP3-114"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 260
+    },
+    {
+      "id": "NIP3-114",
+      "aliases": [
+        "A16"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 107 (shifted to 114: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "114",
+      "phase_id_proposed": "015 (provisional)",
+      "objective": "Release preparation for the next MINOR and phase-015 close",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-015 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/feature_list_014.json",
+          "docs/planning/phase_014.yaml"
+        ]
+      },
+      "acceptance": [
+        "As specified in NIP-0003 Proposed Framework Surface / Acceptance Cases; finalized at PLAN-NEXT."
+      ],
+      "evidence": [
+        ".agent/evidence/114/"
+      ],
+      "non_goals": [
+        "Live runtime claims before phase-016 proof (NIP-0003:485)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-015",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "NIP3-106"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-NIP (NIP-0003) then H-PHASE-015"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none (normative + schema)"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "101 findings reconciled at PLAN-NEXT"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          240,
+          240
+        ],
+        "weighted_lines": [
+          550,
+          700
+        ],
+        "basis": "NIP-0003:498-504 naive lines"
+      },
+      "release_impact": "MINOR (NIP-0003 Compatibility table)",
+      "retry_identity": "provisional 114",
+      "rollback": "revert feature commit",
+      "shared_files": [
+        "CHANGELOG.md",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/DEBT.md",
+        "docs/planning/manifest.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-113"
+        ],
+        "consumed_by": [
+          "PLAN-016"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 270
+    },
+    {
+      "id": "PLAN-WA",
+      "aliases": [
+        "A03"
+      ],
+      "mapped_ids": [
+        "provisional NIP-0004"
+      ],
+      "objective": "Plan the Workflow Assurance realization phase(s). Candidate order places WA planning after NIP-0003 phase 015 closes and before phase-016 planning; the relative order of WA implementation and phase 016 remains an open, non-blocking question.",
+      "scope": {
+        "allowed_paths": [
+          "docs/planning/**",
+          ".agent/product_spec_*.md",
+          ".agent/feature_list_*.json"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json"
+        ]
+      },
+      "acceptance": [
+        "Feature list validates, acyclic, ids allocated after the then-highest id."
+      ],
+      "evidence": [
+        ".agent/evidence/plan-wa/"
+      ],
+      "non_goals": [
+        "Activation."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-NIP",
+      "owner_role": "Planner",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "A03-WA-FINAL; phase 014 closed"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-NIP for the Workflow Assurance NIP"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "101 findings"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          200,
+          500
+        ],
+        "weighted_lines": [
+          460,
+          1450
+        ],
+        "basis": "phase-proposal precedent"
+      },
+      "release_impact": "none",
+      "retry_identity": "PLAN-WA",
+      "rollback": "revert",
+      "shared_files": [
+        "docs/planning/manifest.json",
+        "docs/planning/ROADMAP.md"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A03-WA-FINAL",
+          "F102"
+        ],
+        "consumed_by": [
+          "A09",
+          "A04b",
+          "A14"
+        ],
+        "serialize_after": [
+          "NIP3-114"
+        ]
+      },
+      "lane_rank": 280
+    },
+    {
+      "id": "PLAN-016",
+      "aliases": [
+        "A13"
+      ],
+      "mapped_ids": [
+        "NIP-0003 phase 016 artifacts"
+      ],
+      "objective": "Phase-016 planning: re-estimate (NIP-0003:516-517), confirm ids, settle case-8 local-vs-CI proof, SBCL environment record.",
+      "scope": {
+        "allowed_paths": [
+          ".agent/product_spec_016.md",
+          ".agent/feature_list_016.json",
+          "docs/planning/**"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json"
+        ]
+      },
+      "acceptance": [
+        "feature_list_016 validates, acyclic; split if the weighted estimate stays above precedent."
+      ],
+      "evidence": [
+        ".agent/evidence/plan-016/"
+      ],
+      "non_goals": [
+        "Activation."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-NIP",
+      "owner_role": "Planner",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "phase 015 complete incl. 107"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "NIP-0003 accepted (H-NIP)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "SBCL 2.2.9.debian present at /usr/bin/sbcl on the operator host (re-verified 2026-10-08); CI still unverified"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "phase-015 close evidence"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          200,
+          400
+        ],
+        "weighted_lines": [
+          460,
+          1160
+        ],
+        "basis": "phase-proposal precedent"
+      },
+      "release_impact": "none",
+      "retry_identity": "PLAN-016",
+      "rollback": "revert",
+      "shared_files": [
+        "docs/planning/manifest.json",
+        "docs/planning/ROADMAP.md"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-114"
+        ],
+        "consumed_by": [
+          "NIP3-115"
+        ],
+        "serialize_after": [
+          "PLAN-WA"
+        ]
+      },
+      "lane_rank": 290
+    },
+    {
+      "id": "NIP3-115",
+      "aliases": [
+        "A13"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 108 (shifted to 115: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "115",
+      "phase_id_proposed": "016 (provisional)",
+      "objective": "Controller core + language-neutral stub runtime",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-016 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json (controller must not write coordination fields)"
+        ]
+      },
+      "acceptance": [
+        "NIP-0003 Acceptance Cases live proof in required CI mode; skips explicit and failing unless allowed."
+      ],
+      "evidence": [
+        ".agent/evidence/115/"
+      ],
+      "non_goals": [
+        "Multi-lane dispatch.",
+        "Remote/hosted REPL.",
+        "Sandboxed SBCL acceptance."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-016",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "PLAN-016"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-PHASE-016"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "phase-015 schemas landed"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          1440,
+          1440
+        ],
+        "weighted_lines": [
+          3310,
+          4180
+        ],
+        "basis": "NIP-0003:519-526 naive lines"
+      },
+      "release_impact": "MINOR (new shipped tools/ files)",
+      "retry_identity": "provisional 115",
+      "rollback": "revert feature commit",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "PLAN-016"
+        ],
+        "consumed_by": [
+          "NIP3-116"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 300
+    },
+    {
+      "id": "NIP3-116",
+      "aliases": [
+        "A13",
+        "A07"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 109 (shifted to 116: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "116",
+      "phase_id_proposed": "016 (provisional)",
+      "objective": "Operation semantics, live_session_conformance CI job, registration of tools/fixtures/runtime_session/ in feature 105's claim map, DoD job-count change (four -> five)",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-016 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json (controller must not write coordination fields)"
+        ]
+      },
+      "acceptance": [
+        "NIP-0003 Acceptance Cases live proof in required CI mode; skips explicit and failing unless allowed."
+      ],
+      "evidence": [
+        ".agent/evidence/116/"
+      ],
+      "non_goals": [
+        "Multi-lane dispatch.",
+        "Remote/hosted REPL.",
+        "Sandboxed SBCL acceptance."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-016",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "NIP3-115; F105 claim map and F104 job (job count, userns handling) reused"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-PHASE-016"
+        },
+        "environment": {
+          "satisfied": false,
+          "reason": "CI runner userns sysctl step UNVERIFIED (NDEBT-043 note)"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "phase-015 schemas landed"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          890,
+          890
+        ],
+        "weighted_lines": [
+          2050,
+          2580
+        ],
+        "basis": "NIP-0003:519-526 naive lines"
+      },
+      "release_impact": "MINOR (new shipped tools/ files)",
+      "retry_identity": "provisional 116",
+      "rollback": "revert feature commit",
+      "shared_files": [
+        ".github/workflows/compliance.yml",
+        "tools/fixtures_self_test.sh",
+        "standard/definition_of_done.md"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-115",
+          "F105",
+          "F104"
+        ],
+        "consumed_by": [
+          "NIP3-117"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 310
+    },
+    {
+      "id": "NIP3-117",
+      "aliases": [
+        "A13"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 110 (shifted to 117: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "117",
+      "phase_id_proposed": "016 (provisional)",
+      "objective": "SBCL request loop (built-ins only)",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-016 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json (controller must not write coordination fields)"
+        ]
+      },
+      "acceptance": [
+        "NIP-0003 Acceptance Cases live proof in required CI mode; skips explicit and failing unless allowed."
+      ],
+      "evidence": [
+        ".agent/evidence/117/"
+      ],
+      "non_goals": [
+        "Multi-lane dispatch.",
+        "Remote/hosted REPL.",
+        "Sandboxed SBCL acceptance."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-016",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "NIP3-109"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-PHASE-016"
+        },
+        "environment": {
+          "satisfied": false,
+          "reason": "SBCL in CI (apt) and wherever the Evaluator runs; local SBCL present, CI unverified"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "phase-015 schemas landed"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          820,
+          820
+        ],
+        "weighted_lines": [
+          1890,
+          2380
+        ],
+        "basis": "NIP-0003:519-526 naive lines"
+      },
+      "release_impact": "MINOR (new shipped tools/ files)",
+      "retry_identity": "provisional 117",
+      "rollback": "revert feature commit",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-116"
+        ],
+        "consumed_by": [
+          "NIP3-118"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 320
+    },
+    {
+      "id": "NIP3-118",
+      "aliases": [
+        "A13"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 111 (shifted to 118: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "118",
+      "phase_id_proposed": "016 (provisional)",
+      "objective": "Fresh-environment accept runner (+ ASDF no-op and failing-test controls)",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-016 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json (controller must not write coordination fields)"
+        ]
+      },
+      "acceptance": [
+        "NIP-0003 Acceptance Cases live proof in required CI mode; skips explicit and failing unless allowed."
+      ],
+      "evidence": [
+        ".agent/evidence/118/"
+      ],
+      "non_goals": [
+        "Multi-lane dispatch.",
+        "Remote/hosted REPL.",
+        "Sandboxed SBCL acceptance."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-016",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "NIP3-110"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-PHASE-016"
+        },
+        "environment": {
+          "satisfied": false,
+          "reason": "SBCL in CI (apt) and wherever the Evaluator runs; local SBCL present, CI unverified"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "phase-015 schemas landed"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          1025,
+          1025
+        ],
+        "weighted_lines": [
+          2360,
+          2970
+        ],
+        "basis": "NIP-0003:519-526 naive lines"
+      },
+      "release_impact": "MINOR (new shipped tools/ files)",
+      "retry_identity": "provisional 118",
+      "rollback": "revert feature commit",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-117"
+        ],
+        "consumed_by": [
+          "NIP3-119"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 330
+    },
+    {
+      "id": "NIP3-119",
+      "aliases": [
+        "A16"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 112 (shifted to 119: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "119",
+      "phase_id_proposed": "016 (provisional)",
+      "objective": "Docs synced to implementation + C9 .py/.lisp path-token resolver",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-016 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json (controller must not write coordination fields)"
+        ]
+      },
+      "acceptance": [
+        "NIP-0003 Acceptance Cases live proof in required CI mode; skips explicit and failing unless allowed."
+      ],
+      "evidence": [
+        ".agent/evidence/119/"
+      ],
+      "non_goals": [
+        "Multi-lane dispatch.",
+        "Remote/hosted REPL.",
+        "Sandboxed SBCL acceptance."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-016",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "NIP3-111"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-PHASE-016"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "phase-015 schemas landed"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          170,
+          170
+        ],
+        "weighted_lines": [
+          390,
+          490
+        ],
+        "basis": "NIP-0003:519-526 naive lines"
+      },
+      "release_impact": "MINOR (new shipped tools/ files)",
+      "retry_identity": "provisional 119",
+      "rollback": "revert feature commit",
+      "shared_files": [
+        "tools/validate.sh"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-118"
+        ],
+        "consumed_by": [
+          "NIP3-120"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 340
+    },
+    {
+      "id": "NIP3-120",
+      "aliases": [
+        "A16"
+      ],
+      "mapped_ids": [
+        "NIP-0003 provisional 113 (shifted to 120: phase 014 allocated 103-109)"
+      ],
+      "provisional_feature_id": "120",
+      "phase_id_proposed": "016 (provisional)",
+      "objective": "Release preparation for the next MINOR and phase-016 close",
+      "scope": {
+        "allowed_paths": [
+          "(fixed by the phase-016 contract)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json (controller must not write coordination fields)"
+        ]
+      },
+      "acceptance": [
+        "NIP-0003 Acceptance Cases live proof in required CI mode; skips explicit and failing unless allowed."
+      ],
+      "evidence": [
+        ".agent/evidence/120/"
+      ],
+      "non_goals": [
+        "Multi-lane dispatch.",
+        "Remote/hosted REPL.",
+        "Sandboxed SBCL acceptance."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "blocked-on-H-PHASE-016",
+      "owner_role": "Generator",
+      "plan_class": "candidate-phase",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "NIP3-112"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "H-PHASE-016"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "phase-015 schemas landed"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          240,
+          240
+        ],
+        "weighted_lines": [
+          550,
+          700
+        ],
+        "basis": "NIP-0003:519-526 naive lines"
+      },
+      "release_impact": "MINOR (new shipped tools/ files)",
+      "retry_identity": "provisional 120",
+      "rollback": "revert feature commit",
+      "shared_files": [
+        "CHANGELOG.md",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/DEBT.md",
+        "docs/planning/manifest.json"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "NIP3-119"
+        ],
+        "consumed_by": [],
+        "serialize_after": []
+      },
+      "lane_rank": 350
+    },
+    {
+      "id": "A09",
+      "aliases": [
+        "A09"
+      ],
+      "mapped_ids": [
+        "NDEBT-040"
+      ],
+      "objective": "Candidate/contract/verification/policy/environment identity, owned-field (parsed-JSON) comparison for coordination files, explicit invalidation rules, trusted-runner assumptions, non-circular candidate identity. Candidate order: WA implementation follows NIP-0003 phase 016 (the operator sequenced NIP-0003 directly after phase 014); open, non-blocking question.",
+      "scope": {
+        "allowed_paths": [
+          "(fixed at PLAN-WA / PLAN-NEXT contract time)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json coordination fields"
+        ]
+      },
+      "acceptance": [
+        "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
+      ],
+      "evidence": [
+        ".agent/evidence/A09/"
+      ],
+      "non_goals": [
+        "Activating a policy change before its versioned authorization.",
+        "Reducing any active gate (A15)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Generator",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "PLAN-WA"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "design accepted"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          300,
+          700
+        ],
+        "weighted_lines": [
+          690,
+          2030
+        ],
+        "basis": "planner judgment; no prior analogue"
+      },
+      "release_impact": "MINOR or MAJOR depending on required-field changes (assessed in the NIP)",
+      "retry_identity": "A09",
+      "rollback": "revert",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "PLAN-WA"
+        ],
+        "consumed_by": [
+          "A10",
+          "A11-D",
+          "A04b"
+        ],
+        "serialize_after": [
+          "NIP3-120"
+        ]
+      },
+      "lane_rank": 360
+    },
+    {
+      "id": "A11-D",
+      "aliases": [
+        "A11"
+      ],
+      "mapped_ids": [],
+      "objective": "Convergent finding -> AGF verdict mapping (blocking vs advisory minor; empty-array rule preserved) as a documented, tested contract.",
+      "scope": {
+        "allowed_paths": [
+          "(fixed at PLAN-WA / PLAN-NEXT contract time)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json coordination fields"
+        ]
+      },
+      "acceptance": [
+        "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
+      ],
+      "evidence": [
+        ".agent/evidence/A11-D/"
+      ],
+      "non_goals": [
+        "Activating a policy change before its versioned authorization.",
+        "Reducing any active gate (A15)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Generator",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "A09"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "design accepted"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          100,
+          250
+        ],
+        "weighted_lines": [
+          230,
+          720
+        ],
+        "basis": "planner judgment; no prior analogue"
+      },
+      "release_impact": "MINOR or MAJOR depending on required-field changes (assessed in the NIP)",
+      "retry_identity": "A11-D",
+      "rollback": "revert",
+      "shared_files": [
+        "tools/validate.sh"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A09"
+        ],
+        "consumed_by": [
+          "A11-CI"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 370
+    },
+    {
+      "id": "A10",
+      "aliases": [
+        "A10"
+      ],
+      "mapped_ids": [],
+      "objective": "Deterministic gate enforcement + idempotent recovery reusing validate.sh/verify_lib/schemas; no second scheduler.",
+      "scope": {
+        "allowed_paths": [
+          "(fixed at PLAN-WA / PLAN-NEXT contract time)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json coordination fields"
+        ]
+      },
+      "acceptance": [
+        "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
+      ],
+      "evidence": [
+        ".agent/evidence/A10/"
+      ],
+      "non_goals": [
+        "Activating a policy change before its versioned authorization.",
+        "Reducing any active gate (A15)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Generator",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "A09"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "design accepted"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          500,
+          1200
+        ],
+        "weighted_lines": [
+          1150,
+          3480
+        ],
+        "basis": "planner judgment; no prior analogue"
+      },
+      "release_impact": "MINOR or MAJOR depending on required-field changes (assessed in the NIP)",
+      "retry_identity": "A10",
+      "rollback": "revert",
+      "shared_files": [
+        "tools/validate.sh"
+      ],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A09"
+        ],
+        "consumed_by": [
+          "A15",
+          "A16-WA"
+        ],
+        "serialize_after": [
+          "A11-D"
+        ]
+      },
+      "lane_rank": 380
+    },
+    {
+      "id": "A11-CI",
+      "aliases": [
+        "A11"
+      ],
+      "mapped_ids": [
+        "NDEBT-041"
+      ],
+      "objective": "Final CI acceptance of the verdict mapping inside the A06 job.",
+      "scope": {
+        "allowed_paths": [
+          "(fixed at PLAN-WA / PLAN-NEXT contract time)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json coordination fields"
+        ]
+      },
+      "acceptance": [
+        "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
+      ],
+      "evidence": [
+        ".agent/evidence/A11-CI/"
+      ],
+      "non_goals": [
+        "Activating a policy change before its versioned authorization.",
+        "Reducing any active gate (A15)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Generator",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "A11-D, F104"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "design accepted"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          100,
+          250
+        ],
+        "weighted_lines": [
+          230,
+          720
+        ],
+        "basis": "planner judgment; no prior analogue"
+      },
+      "release_impact": "MINOR or MAJOR depending on required-field changes (assessed in the NIP)",
+      "retry_identity": "A11-CI",
+      "rollback": "revert",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A11-D",
+          "F104"
+        ],
+        "consumed_by": [
+          "A15",
+          "A16-WA"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 390
+    },
+    {
+      "id": "A04b",
+      "aliases": [
+        "A04"
+      ],
+      "mapped_ids": [],
+      "objective": "Development vs acceptance test ownership, frozen Evaluator acceptance bundle, bounded handoff records (behavior change; aligns with A09/T19).",
+      "scope": {
+        "allowed_paths": [
+          "(fixed at PLAN-WA / PLAN-NEXT contract time)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json coordination fields"
+        ]
+      },
+      "acceptance": [
+        "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
+      ],
+      "evidence": [
+        ".agent/evidence/A04b/"
+      ],
+      "non_goals": [
+        "Activating a policy change before its versioned authorization.",
+        "Reducing any active gate (A15)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Generator",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "PLAN-WA, A09"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "design accepted"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          150,
+          350
+        ],
+        "weighted_lines": [
+          340,
+          1020
+        ],
+        "basis": "planner judgment; no prior analogue"
+      },
+      "release_impact": "MINOR or MAJOR depending on required-field changes (assessed in the NIP)",
+      "retry_identity": "A04b",
+      "rollback": "revert",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "PLAN-WA",
+          "A09"
+        ],
+        "consumed_by": [
+          "A16-WA"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 400
+    },
+    {
+      "id": "A14",
+      "aliases": [
+        "A14"
+      ],
+      "mapped_ids": [],
+      "objective": "Cause-based diagnostic routing replacing the forced 03 Section 2 strategy ladder (03_circuit_breaker.md:51-57) after authorized activation; continuity tests.",
+      "scope": {
+        "allowed_paths": [
+          "(fixed at PLAN-WA / PLAN-NEXT contract time)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json coordination fields"
+        ]
+      },
+      "acceptance": [
+        "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
+      ],
+      "evidence": [
+        ".agent/evidence/A14/"
+      ],
+      "non_goals": [
+        "Activating a policy change before its versioned authorization.",
+        "Reducing any active gate (A15)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Generator",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "PLAN-WA, NIP3-110"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "design accepted"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          150,
+          400
+        ],
+        "weighted_lines": [
+          340,
+          1160
+        ],
+        "basis": "planner judgment; no prior analogue"
+      },
+      "release_impact": "MINOR or MAJOR depending on required-field changes (assessed in the NIP)",
+      "retry_identity": "A14",
+      "rollback": "revert",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "PLAN-WA",
+          "NIP3-110"
+        ],
+        "consumed_by": [
+          "A16-WA"
+        ],
+        "serialize_after": []
+      },
+      "lane_rank": 410
+    },
+    {
+      "id": "A16-WA",
+      "aliases": [
+        "A16"
+      ],
+      "mapped_ids": [],
+      "objective": "Workflow Assurance dogfood, documentation truth and readiness package for its release.",
+      "scope": {
+        "allowed_paths": [
+          "(fixed at PLAN-WA / PLAN-NEXT contract time)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json coordination fields"
+        ]
+      },
+      "acceptance": [
+        "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
+      ],
+      "evidence": [
+        ".agent/evidence/A16-WA/"
+      ],
+      "non_goals": [
+        "Activating a policy change before its versioned authorization.",
+        "Reducing any active gate (A15)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Generator",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "A10, A11-CI, A14, A04b"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)"
+        },
+        "environment": {
+          "satisfied": true,
+          "reason": "none"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "design accepted"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          200,
+          400
+        ],
+        "weighted_lines": [
+          460,
+          1160
+        ],
+        "basis": "planner judgment; no prior analogue"
+      },
+      "release_impact": "MINOR or MAJOR depending on required-field changes (assessed in the NIP)",
+      "retry_identity": "A16-WA",
+      "rollback": "revert",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A10",
+          "A11-CI",
+          "A14",
+          "A04b"
+        ],
+        "consumed_by": [],
+        "serialize_after": []
+      },
+      "lane_rank": 420
+    },
+    {
+      "id": "A15",
+      "aliases": [
+        "A15"
+      ],
+      "mapped_ids": [],
+      "objective": "Routine/Standard/High-assurance profiles: applicability checks, preregistered shadow comparison, outcome records, promotion recommendation (no activation).",
+      "scope": {
+        "allowed_paths": [
+          "(fixed at PLAN-WA / PLAN-NEXT contract time)"
+        ],
+        "forbidden_paths": [
+          ".agent/run_state.json coordination fields"
+        ]
+      },
+      "acceptance": [
+        "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
+      ],
+      "evidence": [
+        ".agent/evidence/A15/"
+      ],
+      "non_goals": [
+        "Activating a policy change before its versioned authorization.",
+        "Reducing any active gate (A15)."
+      ],
+      "concurrency_lane": "single-writer",
+      "status": "pending",
+      "authority_status": "proposal",
+      "owner_role": "Generator",
+      "plan_class": "deferred-proposal",
+      "prerequisites": {
+        "technical": {
+          "satisfied": false,
+          "reason": "A10, A11-CI"
+        },
+        "authority": {
+          "satisfied": false,
+          "reason": "Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)"
+        },
+        "environment": {
+          "satisfied": false,
+          "reason": "stable measured baseline and comparable budgets for shadow runs"
+        },
+        "evidence": {
+          "satisfied": false,
+          "reason": "design accepted"
+        }
+      },
+      "estimate": {
+        "naive_lines": [
+          400,
+          1000
+        ],
+        "weighted_lines": [
+          920,
+          2900
+        ],
+        "basis": "planner judgment; no prior analogue"
+      },
+      "release_impact": "MINOR or MAJOR depending on required-field changes (assessed in the NIP)",
+      "retry_identity": "A15",
+      "rollback": "revert",
+      "shared_files": [],
+      "repo": "nizam-framework",
+      "tier": "tier-3",
+      "blast_radius": "local",
+      "dod_ref": "standard/definition_of_done.md",
+      "dependency_edges": {
+        "depends_on": [
+          "A10",
+          "A11-CI"
+        ],
+        "consumed_by": [],
+        "serialize_after": [
+          "NIP3-120"
+        ]
+      },
+      "lane_rank": 430
+    }
+  ]
+}

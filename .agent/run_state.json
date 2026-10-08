@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "013-definition-of-done",
-  "current_feature": "098",
-  "status": "complete",
-  "updated_at": "2026-10-08T10:30:34Z",
+  "current_phase": "014-ga-track",
+  "current_feature": "099",
+  "status": "in_progress",
+  "updated_at": "2026-10-08T13:20:12Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1410,6 +1410,36 @@
       "at": "2026-10-08T10:30:34Z",
       "event": "operator_gate_decision",
       "detail": "Decision D1 (post-release re-baseline of the PENDING phase-014 proposal) APPROVED. Recorded BEFORE the re-baseline is applied (the NDEBT-018 rule). Operator verbatim: 'proceed with the logic next steps to complete the backlog.' (2026-10-08, interactive session), given in reply to the orchestrator's report that listed D1 with the recommendation 're-baseline phase 014 in the post-release refresh so 014 stays activation-ready'. Scope authorized: a Planner-routed factual re-baseline of the pending phase-014 artifacts made stale by the v1.4.0 release (feature 102's 'no v1.4.0 tag' assertion; product_spec_014 'zero v1.4.0 refs' criterion; the pilot's released-tag pin), carried in the v1.4.0 post-release refresh PR for review. This is NOT H-PHASE-014: phase 014 stays pending/proposed; current_phase and status unchanged."
+    },
+    {
+      "at": "2026-10-08T11:21:14Z",
+      "event": "operator_gate_decision",
+      "detail": "H-PHASE-014 EXERCISED, with the proposed amendments, AND the maintenance-tranche fold APPROVED. Recorded BEFORE the gated re-planning and activation records (the NDEBT-018 rule). Operator verbatim: '- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.' (2026-10-08, interactive session), given in reply to the orchestrator's decision package after PR #64 merged at 02b02c6. Proposed amendments approved: the missing 101->099 dependency edge; acceptance-test hardening (exit-status-captured validator gates instead of piped summary greps, per-gate row assertions for 099, real-pilot/NDEBT-018-ordering assertions for 100, scoped audit assertions for 101, the feature-102 AT1 missing 'import json' fix, and a phase-scoped tag check replacing the fixed-version tag-absence test); a clarifying clause for the 'run_state untouched until activation' wording. Maintenance tranche approved into phase 014 as GA-readiness enforcement work ahead of feature 102: NDEBT-043 (sandbox prerequisite handling) -> NDEBT-041 (convergent-review suite enforced in CI), NDEBT-042 (nested-fixture ownership, reusing the NIP-0003 feature-109 claim-map design pulled forward), NDEBT-044 (drift bundle, split by concern), NDEBT-037 (validator --help C14-C16), NDEBT-026 (C15 mapping direction). Authorizes: Planner-routed substantive re-planning of the phase-014 artifacts (methodology/00_planning.md re-planning rule) including the scope-budget re-baseline implied by the folded tranche and lifting the phase's workflow-change non-goal for the maintenance features; then phase-014 activation, recorded canonical-first (phase_014.yaml, then manifest, then this run_state). Not authorized by this decision: H-CONSUMER-UPGRADE for any real consumer (feature 100's member selection remains an operator decision), H-NIP, H-CONSOLIDATION, H-GA, any release."
+    },
+    {
+      "at": "2026-10-08T12:18:31Z",
+      "event": "phase_activated",
+      "detail": "Phase 014-ga-track ACTIVATED on operator authorization (verbatim: '- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.', gate H-PHASE-014, recorded 2026-10-08T11:21:14Z before the act). Canonical-first: docs/planning/phase_014.yaml in_progress (first), manifest current_phase 014-ga-track (second), this derived record (third). Amended plan (product_spec_014 1.1.0, feature_list_014): features 099-102 plus maintenance tranche 103 NDEBT-043, 104 NDEBT-041 (after 103), 105 NDEBT-042 (reusing NIP-0003 feature-109 claim-map design), 106 NDEBT-044(a), 107 NDEBT-044(b), 108 NDEBT-037+044(c,d,f), 109 NDEBT-026; 101 depends on 099+100; 102 depends on 099-101 and 103-109; hardened acceptance tests; phase-scoped tag check (baseline .agent/evidence/phase-014-activation/tag-baseline.txt). Single-lane order: 099, 103, 104, 105, 106, 107, 109, 108, 100, 101, 102. current_feature set to 099. Scope budget reset to 6660 (130% ceiling 8658; re-baselined from 2200 under the same decision); phase-013 final archived in phase_013_scope_budget_final. Outstanding: feature 100 real member designation + per-member H-CONSUMER-UPGRADE; NIP-0003 provisional ids shift to 110-120 (NIP unedited, re-confirmed at H-NIP)."
+    },
+    {
+      "at": "2026-10-08T12:29:26Z",
+      "event": "operator_instruction",
+      "detail": "Operator verbatim (2026-10-08, interactive session, given after the reconciliation agent was stopped): 'reuse the partial DAG only after re-checking it.' Recorded retroactively for provenance; the re-check is .agent/evidence/backlog-reconciliation-2026-10-08/dag_recheck.md."
+    },
+    {
+      "at": "2026-10-08T12:50:31Z",
+      "event": "operator_gate_decision",
+      "detail": "Phase-014 scope-budget re-baseline APPROVED (methodology/00_planning.md re-baseline rule). Operator verbatim: 'In approve the increased budget.' (2026-10-08, interactive session), given in reply to the orchestrator's request to confirm original_estimate_lines 2200 -> 6660 (130% ceiling 8658; Planner basis naive 2890 x measured 2.3 process weight)."
+    },
+    {
+      "at": "2026-10-08T13:19:01Z",
+      "event": "history_correction",
+      "detail": "Correction to the phase_activated entry at 2026-10-08T12:18:31Z (append-only; the original text is restored and preserved). Its phrase 're-baselined from 2200 under the same decision' overstated the authority: the H-PHASE-014 decision (11:21:14Z) approved the maintenance-fold SCOPE, not a figure. The 6660 figure was the Planner's activation-time estimate (naive 2890 x measured 2.3 process weight); the operator approved the figure separately at 12:50:31Z ('In approve the increased budget.'). Disclosure: between 12:29:26Z and this correction the Orchestrator had edited that entry in place; the validator (rev 1) flagged it and the edit is reverted here."
+    },
+    {
+      "at": "2026-10-08T13:20:12Z",
+      "event": "operator_gate_decision",
+      "detail": "Planner hardening beyond the enumerated phase-014 amendments ACKNOWLEDGED. Operator verbatim: 'acknowledged.' (2026-10-08, interactive session), given in reply to the orchestrator's request to acknowledge or decline the tests labelled 'pending operator acknowledgment': feature 102 AT2 (machine-readable ga-readiness dossier), AT3 (DEBT cross-check), AT7 (sha256 pin of the frozen activation infrastructure); feature 099 AT3, AT6, AT7; feature 101 AT2. These become part of the approved phase-014 acceptance contract. Feature 102 AT5 (NDEBT-044(e) roll) is approved-tranche coverage under the 11:21:14Z decision, not part of this acknowledgment."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1582,75 +1612,16 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 4800,
-    "total_lines_changed": 6212,
-    "per_feature": [
-      {
-        "id": "092",
-        "estimated": 450,
-        "actual": 819,
-        "flag": "OVER",
-        "note": "Landed commit git numstat: 819 lines (all staged changes for the feature commit, including contract, QA artifacts, evidence, and lifecycle state). Implementation surface was ~399 lines (355 across 7 modified files + 44 in two new fixtures); the remainder is process weight: the 3-revision contract, two QA artifacts, and 14 Section-5 evidence captures. First phase feature, so no prior-three rolling baseline exists (the 085 precedent). Cumulative remains under the 2795 ceiling."
-      },
-      {
-        "id": "093",
-        "estimated": 450,
-        "actual": 1316,
-        "flag": "OVER",
-        "note": "Landed commit git numstat: 1316 lines (implementation ~34 lines across four registration surfaces + the 269-line document, plus the 3-revision contract, two QA artifacts, 19 Section-5 evidence files, and lifecycle state). Prior-three baseline is the single feature 092 (819): 3x ceiling 2457, not exceeded... note: per 00_planning.md Section 6 the rolling average uses up to the last three completed features; with only 092 completed the baseline is 819, threshold 2457, and 1316 is under it, so no flag procedure fires; OVER here records actual>estimated only. Cumulative 2135/2795 ceiling."
-      },
-      {
-        "id": "097",
-        "estimated": 330,
-        "actual": 1033,
-        "flag": "OVER",
-        "note": "Landed commit git numstat: 1033 lines (implementation 445 across the script/workflow/release.yml/CHANGELOG per Mode B's count, plus the 4-revision negotiated contract, two QA artifacts, 17 Section-5 evidence files, DEBT/NDEBT-040 generalization, and lifecycle state). Prior-three rolling baseline (092, 093): avg 1067.5, 3x ceiling 3202.5 -- 1033 is under it, no flag procedure fires; OVER records actual>estimated (330). Cumulative 3168/5720 re-baselined ceiling."
-      },
-      {
-        "id": "094",
-        "estimated": 200,
-        "actual": 552,
-        "flag": "OVER",
-        "note": "Landed commit git numstat: 552 lines (implementation 49 across eight files — the leanest feature; the remainder is the contract, two QA artifacts, 16 evidence files, sibling 095/096 contract-negotiation artifacts swept per the house pattern, and lifecycle state). Prior-three rolling baseline (092,093,097): avg 1056, 3x ceiling 3168 — 552 under it, no flag procedure; OVER records actual>estimated (200). Cumulative 3720/5720 re-baselined ceiling."
-      },
-      {
-        "id": "096",
-        "estimated": 130,
-        "actual": 846,
-        "flag": "OVER",
-        "note": "Landed commit git numstat: 846 lines (implementation 98: the 85-line template + CHANGELOG; the remainder is the contract, two QA artifacts, the generator's 15 self-check records PLUS the evaluator's 17 Section-5 re-captures — double evidence this once, per the Mode B carry-forward — and lifecycle state). Prior-three baseline (093,097,094): avg 967, 3x ceiling 2901 — 846 under it; OVER records actual>estimated (130). Cumulative 4566/5720."
-      },
-      {
-        "id": "095",
-        "estimated": 260,
-        "actual": 731,
-        "flag": "OVER",
-        "note": "Landed commit git numstat: 731 lines (implementation ~171: the 147-line template + three registration surfaces; the remainder is the twice-revised contract, two QA artifacts, 15 evidence files, two rework rounds' run_state records, and lifecycle state). Prior-three baseline (097,094,096): avg 810, 3x ceiling 2431 — 731 under it; OVER records actual>estimated (260). Cumulative 5297/5720."
-      },
-      {
-        "id": "098",
-        "estimated": 330,
-        "actual": 915,
-        "flag": "OVER",
-        "note": "Landed commit git numstat: 915 lines (implementation 76 across eight release surfaces + the two contracted evidence deliverables; the remainder is the once-revised contract, two QA artifacts, 19 capture files across the corrected two-phase choreography, the phase-close records, and lifecycle state). Prior-three baseline (094,096,095): avg 709.7, 3x ceiling 2129 — 915 under it; OVER records actual>estimated (330). Cumulative 6212/6240 re-baselined ceiling. Phase total across seven features."
-      }
-    ],
+    "original_estimate_lines": 6660,
+    "total_lines_changed": 0,
+    "per_feature": [],
+    "ceiling_130pct": 8658,
     "rebaseline": {
-      "from": 4400,
-      "to": 4800,
-      "authorized_by": "operator",
-      "at": "2026-08-19T12:41:08Z",
-      "reason": "Second and final phase-013 re-baseline, authorized before feature 098 (v1.1.0 release preparation) begins: cumulative 5297 of the 5720 ceiling with 423 lines of headroom against a measured-pattern projection of 600-900 for the release-prep feature (ten-plus surfaces + readiness record + verifier script + contract/QA/evidence). Operator verbatim: 'Re-baseline to 4800 (Recommended)' (2026-08-19, interactive session). New 130% ceiling: 6240. The prior re-baseline record (2150->4400) is preserved in rebaseline_history."
-    },
-    "rebaseline_history": [
-      {
-        "from": 2150,
-        "to": 4400,
-        "authorized_by": "operator",
-        "at": "2026-08-19T09:13:51Z",
-        "reason": "Measured process weight of the phase-013 contract-first loop exceeds the phase-012 calibration the 2150 estimate was built on (1.23x): features 092/093 landed at 819/1316 actual vs 450/450 estimated (1.8x/2.9x), driven by multi-round negotiated contracts (100-200 lines each), ~20 Section-5 evidence files per feature, and dual QA artifacts. Cumulative 2135 of the old 2795 ceiling after 2 of 7 features; honest projection for the remaining five is ~3000-3500 more. Operator authorized the pre-emptive re-baseline (verbatim: 'Re-baseline to 4400 (Recommended)', 2026-08-18, interactive session, in response to the orchestrator's Section-6/Section-9 escalation) rather than a forced mid-feature halt. New 130% cumulative hard ceiling: 5720."
-      }
-    ]
+      "from": 2200,
+      "to": 6660,
+      "at": "2026-10-08T11:21:14Z",
+      "authorized_by": "Planner activation-time estimate made under the operator's maintenance-fold authorization (operator_gate_decision 2026-10-08T11:21:14Z approved the SCOPE; the operator stated no figure). Basis: naive 2890 lines x the measured 2.3 process weight (phase-013 measurement, cited in NIP-0003:494-495). Operator APPROVED the figure at 2026-10-08T12:50:31Z (verbatim: 'In approve the increased budget.')."
+    }
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -1833,5 +1804,76 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null
+  "active_contract_id": null,
+  "phase_013_scope_budget_final": {
+    "original_estimate_lines": 4800,
+    "total_lines_changed": 6212,
+    "per_feature": [
+      {
+        "id": "092",
+        "estimated": 450,
+        "actual": 819,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 819 lines (all staged changes for the feature commit, including contract, QA artifacts, evidence, and lifecycle state). Implementation surface was ~399 lines (355 across 7 modified files + 44 in two new fixtures); the remainder is process weight: the 3-revision contract, two QA artifacts, and 14 Section-5 evidence captures. First phase feature, so no prior-three rolling baseline exists (the 085 precedent). Cumulative remains under the 2795 ceiling."
+      },
+      {
+        "id": "093",
+        "estimated": 450,
+        "actual": 1316,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 1316 lines (implementation ~34 lines across four registration surfaces + the 269-line document, plus the 3-revision contract, two QA artifacts, 19 Section-5 evidence files, and lifecycle state). Prior-three baseline is the single feature 092 (819): 3x ceiling 2457, not exceeded... note: per 00_planning.md Section 6 the rolling average uses up to the last three completed features; with only 092 completed the baseline is 819, threshold 2457, and 1316 is under it, so no flag procedure fires; OVER here records actual>estimated only. Cumulative 2135/2795 ceiling."
+      },
+      {
+        "id": "097",
+        "estimated": 330,
+        "actual": 1033,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 1033 lines (implementation 445 across the script/workflow/release.yml/CHANGELOG per Mode B's count, plus the 4-revision negotiated contract, two QA artifacts, 17 Section-5 evidence files, DEBT/NDEBT-040 generalization, and lifecycle state). Prior-three rolling baseline (092, 093): avg 1067.5, 3x ceiling 3202.5 -- 1033 is under it, no flag procedure fires; OVER records actual>estimated (330). Cumulative 3168/5720 re-baselined ceiling."
+      },
+      {
+        "id": "094",
+        "estimated": 200,
+        "actual": 552,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 552 lines (implementation 49 across eight files — the leanest feature; the remainder is the contract, two QA artifacts, 16 evidence files, sibling 095/096 contract-negotiation artifacts swept per the house pattern, and lifecycle state). Prior-three rolling baseline (092,093,097): avg 1056, 3x ceiling 3168 — 552 under it, no flag procedure; OVER records actual>estimated (200). Cumulative 3720/5720 re-baselined ceiling."
+      },
+      {
+        "id": "096",
+        "estimated": 130,
+        "actual": 846,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 846 lines (implementation 98: the 85-line template + CHANGELOG; the remainder is the contract, two QA artifacts, the generator's 15 self-check records PLUS the evaluator's 17 Section-5 re-captures — double evidence this once, per the Mode B carry-forward — and lifecycle state). Prior-three baseline (093,097,094): avg 967, 3x ceiling 2901 — 846 under it; OVER records actual>estimated (130). Cumulative 4566/5720."
+      },
+      {
+        "id": "095",
+        "estimated": 260,
+        "actual": 731,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 731 lines (implementation ~171: the 147-line template + three registration surfaces; the remainder is the twice-revised contract, two QA artifacts, 15 evidence files, two rework rounds' run_state records, and lifecycle state). Prior-three baseline (097,094,096): avg 810, 3x ceiling 2431 — 731 under it; OVER records actual>estimated (260). Cumulative 5297/5720."
+      },
+      {
+        "id": "098",
+        "estimated": 330,
+        "actual": 915,
+        "flag": "OVER",
+        "note": "Landed commit git numstat: 915 lines (implementation 76 across eight release surfaces + the two contracted evidence deliverables; the remainder is the once-revised contract, two QA artifacts, 19 capture files across the corrected two-phase choreography, the phase-close records, and lifecycle state). Prior-three baseline (094,096,095): avg 709.7, 3x ceiling 2129 — 915 under it; OVER records actual>estimated (330). Cumulative 6212/6240 re-baselined ceiling. Phase total across seven features."
+      }
+    ],
+    "rebaseline": {
+      "from": 4400,
+      "to": 4800,
+      "authorized_by": "operator",
+      "at": "2026-08-19T12:41:08Z",
+      "reason": "Second and final phase-013 re-baseline, authorized before feature 098 (v1.1.0 release preparation) begins: cumulative 5297 of the 5720 ceiling with 423 lines of headroom against a measured-pattern projection of 600-900 for the release-prep feature (ten-plus surfaces + readiness record + verifier script + contract/QA/evidence). Operator verbatim: 'Re-baseline to 4800 (Recommended)' (2026-08-19, interactive session). New 130% ceiling: 6240. The prior re-baseline record (2150->4400) is preserved in rebaseline_history."
+    },
+    "rebaseline_history": [
+      {
+        "from": 2150,
+        "to": 4400,
+        "authorized_by": "operator",
+        "at": "2026-08-19T09:13:51Z",
+        "reason": "Measured process weight of the phase-013 contract-first loop exceeds the phase-012 calibration the 2150 estimate was built on (1.23x): features 092/093 landed at 819/1316 actual vs 450/450 estimated (1.8x/2.9x), driven by multi-round negotiated contracts (100-200 lines each), ~20 Section-5 evidence files per feature, and dual QA artifacts. Cumulative 2135 of the old 2795 ceiling after 2 of 7 features; honest projection for the remaining five is ~3000-3500 more. Operator authorized the pre-emptive re-baseline (verbatim: 'Re-baseline to 4400 (Recommended)', 2026-08-18, interactive session, in response to the orchestrator's Section-6/Section-9 escalation) rather than a forced mid-feature halt. New 130% cumulative hard ceiling: 5720."
+      }
+    ]
+  }
 }

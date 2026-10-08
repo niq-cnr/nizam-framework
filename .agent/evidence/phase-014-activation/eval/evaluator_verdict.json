@@ -1,0 +1,373 @@
+{
+  "review": "phase-014-activation",
+  "verdict": "pass",
+  "units": [
+    {
+      "id": "1",
+      "file": ".agent/evidence/phase-014-activation/eval/unit01_validate.txt",
+      "expected": "exit 0; SUMMARY: 16 passed, 0 failed",
+      "observed": "exit 0; SUMMARY: 16 passed, 0 failed",
+      "matches_expectation": true
+    },
+    {
+      "id": "2",
+      "file": ".agent/evidence/phase-014-activation/eval/unit02_validate_payload.txt",
+      "expected": "exit 0; 12 passed, 0 failed",
+      "observed": "exit 0; SUMMARY (payload mode): 12 passed, 0 failed",
+      "matches_expectation": true
+    },
+    {
+      "id": "3",
+      "file": ".agent/evidence/phase-014-activation/eval/unit03_fixtures_self_test.txt",
+      "expected": "exit 0; SELF-TEST OK: 79/79",
+      "observed": "exit 0; SELF-TEST OK: 79/79 fixtures accounted for, 0 failed (run alone, after units 1-2; tools/ clean vs HEAD afterwards)",
+      "matches_expectation": true
+    },
+    {
+      "id": "4",
+      "file": ".agent/evidence/phase-014-activation/eval/unit04_release_closeout.txt",
+      "expected": "exit 0 at V=1.4.0",
+      "observed": "exit 0; all internal version anchors agree with V=1.4.0 (--mode pr)",
+      "matches_expectation": true
+    },
+    {
+      "id": "5",
+      "file": [
+        ".agent/evidence/phase-014-activation/eval/unit05a_validator_gate.txt",
+        ".agent/evidence/phase-014-activation/eval/unit05b_validator_gate_payload.txt"
+      ],
+      "expected": "each exit 0, GATE: PASS",
+      "observed": "default: GATE: PASS (16 checks, baseline 16), exit 0; --payload: GATE: PASS (12 checks, baseline 12), exit 0",
+      "matches_expectation": true
+    },
+    {
+      "id": "6",
+      "file": ".agent/evidence/phase-014-activation/eval/unit06_schemas.txt",
+      "expected": "all four valid",
+      "observed": "all four VALID; each schema has required keys and a negative control (dropping a required key) was rejected",
+      "matches_expectation": true
+    },
+    {
+      "id": "7",
+      "file": ".agent/evidence/phase-014-activation/eval/unit07_08_state_lifecycle.txt",
+      "expected": "first 231 history entries identical to HEAD; phase_013_scope_budget_final == HEAD scope_budget; 014-ga-track/099/in_progress/6660",
+      "observed": "all hold; history 237 = 231 identical + 6 appended entries (all chronologically after HEAD's last); perturbation control detected",
+      "matches_expectation": true
+    },
+    {
+      "id": "8",
+      "file": ".agent/evidence/phase-014-activation/eval/unit07_08_state_lifecycle.txt",
+      "expected": "phase yaml in_progress; manifest current_phase 014-ga-track with in_progress/active; 099 pending, no deps, eligible; spec_version 1.1.2 == frontmatter",
+      "observed": "all hold; eligible set {099,103,105,106,107,109,100}; 099 is current_feature",
+      "matches_expectation": true
+    },
+    {
+      "id": "9a",
+      "file": ".agent/evidence/phase-014-activation/eval/unit09a_at_compile_check.txt",
+      "expected": "78 tests, 0 problems; matches committed capture",
+      "observed": "78 acceptance tests, 46 embedded Python bodies, 0 problems; byte-identical to at_compile_check.txt",
+      "matches_expectation": true
+    },
+    {
+      "id": "9b",
+      "file": [
+        ".agent/evidence/phase-014-activation/eval/unit09b_rerun.txt"
+      ],
+      "expected": "V1-V13 PASS, ready {F099}, matches committed dag_validation.txt",
+      "observed": "Rerun at validate_backlog_dag.py rev 2.1: SUMMARY: PASS (0 failing checks; 43 packets), PASS V11, ready {F099}, exit 0. Diff vs recaptured dag_validation.txt: one line, the V11 path count (67 vs 66), caused by the Evaluator's own newly written eval/ files.",
+      "matches_expectation": true,
+      "superseded_result": "rev 1: V11 FAIL, exit 1 (see history)"
+    },
+    {
+      "id": "9c",
+      "file": [
+        ".agent/evidence/phase-014-activation/eval/unit09c_rerun.txt"
+      ],
+      "expected": "14/14, exit 0",
+      "observed": "Rerun: NEGATIVE CONTROLS: 14/14 behaved as expected, exit 0. Diff vs recaptured dag_negative_controls.txt: only the V11 path counts in the 3 V11-reject lines (+1 or +2), from the Evaluator's own eval/ files.",
+      "matches_expectation": true,
+      "superseded_result": "rev 1: 9/10, exit 1 (see history)"
+    },
+    {
+      "id": "9d",
+      "file": ".agent/evidence/phase-014-activation/eval/unit09d_a02_premise_probes.txt",
+      "expected": "255/255",
+      "observed": "PROBES: 255/255 rows matched expectation; output byte-identical to a02_premise_probes.txt; exit 0",
+      "matches_expectation": true
+    },
+    {
+      "id": "10",
+      "file": ".agent/evidence/phase-014-activation/eval/unit10_sha_pins.txt",
+      "expected": "102 AT7 pins match disk",
+      "observed": "7 pins extracted (3 gate scripts + 4 baselines), all 7 MATCH; AT7 verbatim command rc 0; zeroing one pin makes it rc 1; the 7 files on disk are exactly the 7 pinned (no unpinned file)",
+      "matches_expectation": true
+    },
+    {
+      "id": "11",
+      "file": ".agent/evidence/phase-014-activation/eval/unit11_pin_semantics.txt",
+      "expected": "read_framework_pin returns the peeled commit, not the tag object",
+      "observed": "Qualified match. read_framework_pin (tools/ecosystem_membership_run.py:119-131) does not peel: it returns provenance.json resolved_sha verbatim (a tag-object sha is also passed through unchanged). The peel is at write time, bootstrap.sh:464 (git rev-parse HEAD^{commit}). v1.4.0 is an annotated tag: tag object bb32064, peeled commit 9edd5d0. Effective behaviour (recorded pin == peeled commit) confirmed; feature 100 AT2 compares against v1.4.0^{commit}, so a tag-object pin fails.",
+      "matches_expectation": true
+    },
+    {
+      "id": "12",
+      "file": ".agent/evidence/phase-014-activation/eval/unit12_frontmatter.txt",
+      "expected": "5 docs schema-valid, change_log[0].version == version",
+      "observed": "5/5 schema-valid (0 errors), change_log[0].version == version in each; versions 1.1.2, 0.1.2 (new), 0.27.0, 0.46.0, 0.48.0, each bumped vs HEAD; negative controls fire",
+      "matches_expectation": true
+    },
+    {
+      "id": "13",
+      "file": ".agent/evidence/phase-014-activation/eval/unit13_records.txt",
+      "expected": "one ROADMAP 'Latest released tag: v1.4.0' body line; CHANGELOG n[i]zamiq == 0; operator quotes verbatim",
+      "observed": "ROADMAP body: exactly 1 (line 825); CHANGELOG token count 0 (planted-token control detects; 'Nizam' occurs 7 times, so the file is not vacuous); all 4 quotes in run_state appear verbatim in the planning records, no paraphrase variant of any quote found",
+      "matches_expectation": true
+    },
+    {
+      "id": "14",
+      "file": ".agent/evidence/phase-014-activation/eval/unit14_15_scope_shape.txt",
+      "expected": "only .agent/, docs/planning/, CHANGELOG.md",
+      "observed": "66 paths: 58 under .agent/, 7 under docs/planning/, CHANGELOG.md; no forbidden path, no deletion, nothing staged",
+      "matches_expectation": true
+    },
+    {
+      "id": "15",
+      "file": ".agent/evidence/phase-014-activation/eval/unit14_15_scope_shape.txt",
+      "expected": "every *.txt has repo-relative first line and EXIT:<code> last line",
+      "observed": "37 *.txt files under the two new evidence dirs inspected (excluding the in-flight capture of this script, checked separately: first and last line well-formed); 0 exceptions",
+      "matches_expectation": true
+    },
+    {
+      "id": "9f",
+      "file": ".agent/evidence/phase-014-activation/eval/unit09f_v11_adversarial.txt",
+      "expected": "V11 membership is exact equality; --git-status cannot bypass a real run; a normal invocation still calls git status",
+      "observed": "Source: ORCHESTRATOR_OWNED is a 2-tuple of exact paths (line 84), used only via 'in' / 'not in' (lines 316-317); no prefix test on it. 11 flag cases: exact path accepted (untracked and modified flag); .json.bak, truncated name, sibling verdict, path-as-directory, subdirectory, case variant, run_state.json.bak, tools/validate.sh and bootstrap.sh all FAIL V11. Normal invocation with a planted untracked tools/ file: V11 FAIL, rc 1; after removal PASS, rc 0 (git status is genuinely called when the flag is absent). The flag substitutes the V11 input only, takes effect only when present on argv, and nothing outside dag_negative_controls.py (and the docs) passes it; the recorded captures invoke without it.",
+      "matches_expectation": true
+    },
+    {
+      "id": "R1",
+      "file": ".agent/evidence/phase-014-activation/eval/unit01_rerun.txt",
+      "expected": "unit 1 still holds",
+      "observed": "exit 0, SUMMARY: 16 passed, 0 failed",
+      "matches_expectation": true
+    },
+    {
+      "id": "R3",
+      "file": ".agent/evidence/phase-014-activation/eval/unit03_rerun.txt",
+      "expected": "unit 3 still holds",
+      "observed": "exit 0, SELF-TEST OK: 79/79 (run alone, after R1)",
+      "matches_expectation": true
+    },
+    {
+      "id": "R10",
+      "file": ".agent/evidence/phase-014-activation/eval/unit10_rerun.txt",
+      "expected": "unit 10 still holds",
+      "observed": "7/7 pins MATCH, AT7 verbatim rc 0, zeroed-pin control rc 1",
+      "matches_expectation": true
+    },
+    {
+      "id": "R12",
+      "file": ".agent/evidence/phase-014-activation/eval/unit12_rerun.txt",
+      "expected": "backlog_reconciliation.md at 0.1.3 still validates",
+      "observed": "5/5 schema-valid; backlog_reconciliation.md version 0.1.3 == change_log[0]; 'four kinds' present, 'three kinds' absent (nit 2 resolved)",
+      "matches_expectation": true
+    },
+    {
+      "id": "R9a",
+      "file": ".agent/evidence/phase-014-activation/eval/unit09a_rerun.txt",
+      "expected": "78 tests, 0 problems",
+      "observed": "78 acceptance tests, 46 Python bodies, 0 problems, exit 0",
+      "matches_expectation": true
+    },
+    {
+      "id": "R14",
+      "file": ".agent/evidence/phase-014-activation/eval/unit14_15_rerun.txt",
+      "expected": "scope guard and evidence shape still hold",
+      "observed": "78 paths, all under .agent/, docs/planning/ or CHANGELOG.md; no forbidden path, none deleted or staged; evidence-shape exceptions 0; tools/ identical to HEAD",
+      "matches_expectation": true
+    }
+  ],
+  "adversarial_notes": [
+    "U1-U3, U5: a validator can pass vacuously (grep pipelines hide the exit status). Mitigation: exit status taken from the process itself and printed as EXIT:; the gate additionally enforces G1-G5 (PASS-line count equals SUMMARY, no FAIL line, no baseline check dropped). U1-U3 were run one at a time; tools/ is unchanged vs HEAD afterwards.",
+    "U4: closeout passes at V=1.4.0 by comparing anchors to one another; it would pass vacuously if every anchor were stale together. Cross-checked: ROADMAP line 825 and the git tag v1.4.0 (annotated, peeled 9edd5d0) agree.",
+    "U6: schema validity is vacuous if the schema has no required keys. Each schema has required keys (4, 4, 4, 8) and dropping the first required key was rejected (negative control).",
+    "U7: 'identical to HEAD' is vacuous if both sides are empty or compared by length. Compared 231 entries deeply and under canonical serialization; a perturbed copy is detected; HEAD scope_budget is non-empty and differs from the new one.",
+    "U8: lifecycle fields can agree while the dependency graph is wrong. Also checked: all dependency ids resolve, no other phase is in_progress, 099 is in the computed eligible set, feature_list phase equals run_state current_phase.",
+    "U9: the committed *.txt captures could be stale. Tools were re-executed in this context and diffed. 9a and 9d are byte-identical. 9b and 9c diverge only through V11, whose package-confinement set does not list .agent/validator/phase-014-activation.json (created after the captures). Isolation proof: on a copy of the repo without that file, 9b PASSes (only the V11 path count differs, 38 vs 58, the Evaluator's own eval/ files) and 9c is 10/10 and identical to the capture. The negative-control tool also guards against vacuity: it requires the unmutated copy to pass AND every mutation to fail, so a V11 false positive is exactly what it reports as BAD.",
+    "U10: re-hashing from a table the checker itself extracts could be circular. The table is extracted from the feature list, the file set on disk is enumerated independently (7 = 7, none unpinned), the AT7 command is run verbatim, and a zeroed pin makes it fail.",
+    "U11: reading the function alone does not show peeling; shown empirically that it passes through whatever is recorded, and that the peel is bootstrap.sh:464. The claim as worded holds only transitively; the evidence says so rather than overclaiming.",
+    "U12/U13: 'acknowledged.' is a very short quote; finding it verbatim somewhere is weak evidence on its own. It is anchored by its run_state timestamp, and the check also scans for near-miss paraphrases of each quote stem, finding none. The CHANGELOG regex check has a planted-token control.",
+    "U14: the Evaluator's own eval/ directory sits under .agent/evidence/phase-014-activation/, the directory the spec calls frozen. AT7 pins only the 7 listed files, so the pins are unaffected, and the eval/ files are inside the allowed .agent/ scope. Note the 7 files on disk outside eval/ were counted for unit 10 with eval/ excluded.",
+    "U15: the check inspects only *.txt; .json/.md evidence is out of its scope. The in-flight capture of unit14_15 cannot check itself; verified by head/tail after the run.",
+    "Extra: gh run view --json jobs does expose databaseId (run 37769000595: validate/e2e_bootstrap/fixtures_self_test, all success; unit16_gh_jobs_databaseid.txt), the item the validator listed as owed. Unit 11 and unit 09e created a few small mktemp directories under /tmp (pin-sem-*), outside the repo; removal was blocked by the permission system, harmless. Coverage warning not applicable (docs/planning change). Circuit breaker: first evaluation of this review, no strike history.",
+    "Rev 2, V11: the allowlist is an exact-equality tuple, so a look-alike or a sibling verdict file cannot ride it. The 4 new controls use the REAL git status text plus injected lines, so they cannot pass on an empty status; the unmutated control uses no flag at all and so exercises the real git status call. A V11 weakness that predates this fix and is not part of it: PACKAGE_PATHS entries without a trailing slash (docs/planning/backlog_dag.json, CHANGELOG.md, docs/planning/ROADMAP.md and so on) are matched with startswith, so a look-alike such as CHANGELOG.md.bak would be admitted (read from source line 317, not exercised). Not blocking, since such paths remain inside unit 14's scope guard, but worth hardening to exact-or-directory matching.",
+    "Rev 2: my unit 9f grep for non-membership uses of ORCHESTRATOR_OWNED matched line 317 only because that line also calls startswith on PACKAGE_PATHS, a different tuple; no prefix test applies to ORCHESTRATOR_OWNED.",
+    "Rev 2: the recaptured .txt files differ from my reruns only in V11 path counts, which grow with my own eval/ evidence files."
+  ],
+  "required_fixes": [
+    "None blocking. Optional hardening: PACKAGE_PATHS prefix matching (see adversarial_notes)."
+  ],
+  "revision": 2,
+  "revision_notes": "Revision 2 (re-evaluation after the Planner's fix of required fix 1 (V11 allowlist, validate_backlog_dag.py rev 2.1, 14 negative controls) and nit 2 (backlog_reconciliation.md 0.1.3, 'four kinds')). Units 9b and 9c re-run sequentially in the Evaluator's own context and now match; the V11 change was reviewed adversarially (unit 9f); units 1, 3, 9a, 10, 12, 14 and 15 re-run and still hold. The rev-1 failing results are preserved under history[0].",
+  "history": [
+    {
+      "revision": 1,
+      "verdict": "fail",
+      "units": [
+        {
+          "id": "1",
+          "file": ".agent/evidence/phase-014-activation/eval/unit01_validate.txt",
+          "expected": "exit 0; SUMMARY: 16 passed, 0 failed",
+          "observed": "exit 0; SUMMARY: 16 passed, 0 failed",
+          "matches_expectation": true
+        },
+        {
+          "id": "2",
+          "file": ".agent/evidence/phase-014-activation/eval/unit02_validate_payload.txt",
+          "expected": "exit 0; 12 passed, 0 failed",
+          "observed": "exit 0; SUMMARY (payload mode): 12 passed, 0 failed",
+          "matches_expectation": true
+        },
+        {
+          "id": "3",
+          "file": ".agent/evidence/phase-014-activation/eval/unit03_fixtures_self_test.txt",
+          "expected": "exit 0; SELF-TEST OK: 79/79",
+          "observed": "exit 0; SELF-TEST OK: 79/79 fixtures accounted for, 0 failed (run alone, after units 1-2; tools/ clean vs HEAD afterwards)",
+          "matches_expectation": true
+        },
+        {
+          "id": "4",
+          "file": ".agent/evidence/phase-014-activation/eval/unit04_release_closeout.txt",
+          "expected": "exit 0 at V=1.4.0",
+          "observed": "exit 0; all internal version anchors agree with V=1.4.0 (--mode pr)",
+          "matches_expectation": true
+        },
+        {
+          "id": "5",
+          "file": [
+            ".agent/evidence/phase-014-activation/eval/unit05a_validator_gate.txt",
+            ".agent/evidence/phase-014-activation/eval/unit05b_validator_gate_payload.txt"
+          ],
+          "expected": "each exit 0, GATE: PASS",
+          "observed": "default: GATE: PASS (16 checks, baseline 16), exit 0; --payload: GATE: PASS (12 checks, baseline 12), exit 0",
+          "matches_expectation": true
+        },
+        {
+          "id": "6",
+          "file": ".agent/evidence/phase-014-activation/eval/unit06_schemas.txt",
+          "expected": "all four valid",
+          "observed": "all four VALID; each schema has required keys and a negative control (dropping a required key) was rejected",
+          "matches_expectation": true
+        },
+        {
+          "id": "7",
+          "file": ".agent/evidence/phase-014-activation/eval/unit07_08_state_lifecycle.txt",
+          "expected": "first 231 history entries identical to HEAD; phase_013_scope_budget_final == HEAD scope_budget; 014-ga-track/099/in_progress/6660",
+          "observed": "all hold; history 237 = 231 identical + 6 appended entries (all chronologically after HEAD's last); perturbation control detected",
+          "matches_expectation": true
+        },
+        {
+          "id": "8",
+          "file": ".agent/evidence/phase-014-activation/eval/unit07_08_state_lifecycle.txt",
+          "expected": "phase yaml in_progress; manifest current_phase 014-ga-track with in_progress/active; 099 pending, no deps, eligible; spec_version 1.1.2 == frontmatter",
+          "observed": "all hold; eligible set {099,103,105,106,107,109,100}; 099 is current_feature",
+          "matches_expectation": true
+        },
+        {
+          "id": "9a",
+          "file": ".agent/evidence/phase-014-activation/eval/unit09a_at_compile_check.txt",
+          "expected": "78 tests, 0 problems; matches committed capture",
+          "observed": "78 acceptance tests, 46 embedded Python bodies, 0 problems; byte-identical to at_compile_check.txt",
+          "matches_expectation": true
+        },
+        {
+          "id": "9b",
+          "file": [
+            ".agent/evidence/phase-014-activation/eval/unit09b_validate_backlog_dag.txt",
+            ".agent/evidence/phase-014-activation/eval/unit09e_v11_isolation.txt"
+          ],
+          "expected": "V1-V13 PASS, ready {F099}, matches committed dag_validation.txt",
+          "observed": "V1-V10, V12, V13 PASS and ready {F099}, but V11 FAIL (stray path .agent/validator/phase-014-activation.json), SUMMARY: FAIL, exit 1. On a copy without that file: SUMMARY PASS, exit 0, only the V11 path count differs (38 vs 58, which is the Evaluator's own eval/ files).",
+          "matches_expectation": false
+        },
+        {
+          "id": "9c",
+          "file": [
+            ".agent/evidence/phase-014-activation/eval/unit09c_dag_negative_controls.txt",
+            ".agent/evidence/phase-014-activation/eval/unit09e_v11_isolation.txt"
+          ],
+          "expected": "10/10",
+          "observed": "9/10, exit 1: 'unmutated copy passes' is BAD (V11 fails on the same stray file; every mutated case also lists V11). On a copy without the file: 10/10, exit 0, output identical to the committed capture.",
+          "matches_expectation": false
+        },
+        {
+          "id": "9d",
+          "file": ".agent/evidence/phase-014-activation/eval/unit09d_a02_premise_probes.txt",
+          "expected": "255/255",
+          "observed": "PROBES: 255/255 rows matched expectation; output byte-identical to a02_premise_probes.txt; exit 0",
+          "matches_expectation": true
+        },
+        {
+          "id": "10",
+          "file": ".agent/evidence/phase-014-activation/eval/unit10_sha_pins.txt",
+          "expected": "102 AT7 pins match disk",
+          "observed": "7 pins extracted (3 gate scripts + 4 baselines), all 7 MATCH; AT7 verbatim command rc 0; zeroing one pin makes it rc 1; the 7 files on disk are exactly the 7 pinned (no unpinned file)",
+          "matches_expectation": true
+        },
+        {
+          "id": "11",
+          "file": ".agent/evidence/phase-014-activation/eval/unit11_pin_semantics.txt",
+          "expected": "read_framework_pin returns the peeled commit, not the tag object",
+          "observed": "Qualified match. read_framework_pin (tools/ecosystem_membership_run.py:119-131) does not peel: it returns provenance.json resolved_sha verbatim (a tag-object sha is also passed through unchanged). The peel is at write time, bootstrap.sh:464 (git rev-parse HEAD^{commit}). v1.4.0 is an annotated tag: tag object bb32064, peeled commit 9edd5d0. Effective behaviour (recorded pin == peeled commit) confirmed; feature 100 AT2 compares against v1.4.0^{commit}, so a tag-object pin fails.",
+          "matches_expectation": true
+        },
+        {
+          "id": "12",
+          "file": ".agent/evidence/phase-014-activation/eval/unit12_frontmatter.txt",
+          "expected": "5 docs schema-valid, change_log[0].version == version",
+          "observed": "5/5 schema-valid (0 errors), change_log[0].version == version in each; versions 1.1.2, 0.1.2 (new), 0.27.0, 0.46.0, 0.48.0, each bumped vs HEAD; negative controls fire",
+          "matches_expectation": true
+        },
+        {
+          "id": "13",
+          "file": ".agent/evidence/phase-014-activation/eval/unit13_records.txt",
+          "expected": "one ROADMAP 'Latest released tag: v1.4.0' body line; CHANGELOG n[i]zamiq == 0; operator quotes verbatim",
+          "observed": "ROADMAP body: exactly 1 (line 825); CHANGELOG token count 0 (planted-token control detects; 'Nizam' occurs 7 times, so the file is not vacuous); all 4 quotes in run_state appear verbatim in the planning records, no paraphrase variant of any quote found",
+          "matches_expectation": true
+        },
+        {
+          "id": "14",
+          "file": ".agent/evidence/phase-014-activation/eval/unit14_15_scope_shape.txt",
+          "expected": "only .agent/, docs/planning/, CHANGELOG.md",
+          "observed": "66 paths: 58 under .agent/, 7 under docs/planning/, CHANGELOG.md; no forbidden path, no deletion, nothing staged",
+          "matches_expectation": true
+        },
+        {
+          "id": "15",
+          "file": ".agent/evidence/phase-014-activation/eval/unit14_15_scope_shape.txt",
+          "expected": "every *.txt has repo-relative first line and EXIT:<code> last line",
+          "observed": "37 *.txt files under the two new evidence dirs inspected (excluding the in-flight capture of this script, checked separately: first and last line well-formed); 0 exceptions",
+          "matches_expectation": true
+        }
+      ],
+      "adversarial_notes": [
+        "U1-U3, U5: a validator can pass vacuously (grep pipelines hide the exit status). Mitigation: exit status taken from the process itself and printed as EXIT:; the gate additionally enforces G1-G5 (PASS-line count equals SUMMARY, no FAIL line, no baseline check dropped). U1-U3 were run one at a time; tools/ is unchanged vs HEAD afterwards.",
+        "U4: closeout passes at V=1.4.0 by comparing anchors to one another; it would pass vacuously if every anchor were stale together. Cross-checked: ROADMAP line 825 and the git tag v1.4.0 (annotated, peeled 9edd5d0) agree.",
+        "U6: schema validity is vacuous if the schema has no required keys. Each schema has required keys (4, 4, 4, 8) and dropping the first required key was rejected (negative control).",
+        "U7: 'identical to HEAD' is vacuous if both sides are empty or compared by length. Compared 231 entries deeply and under canonical serialization; a perturbed copy is detected; HEAD scope_budget is non-empty and differs from the new one.",
+        "U8: lifecycle fields can agree while the dependency graph is wrong. Also checked: all dependency ids resolve, no other phase is in_progress, 099 is in the computed eligible set, feature_list phase equals run_state current_phase.",
+        "U9: the committed *.txt captures could be stale. Tools were re-executed in this context and diffed. 9a and 9d are byte-identical. 9b and 9c diverge only through V11, whose package-confinement set does not list .agent/validator/phase-014-activation.json (created after the captures). Isolation proof: on a copy of the repo without that file, 9b PASSes (only the V11 path count differs, 38 vs 58, the Evaluator's own eval/ files) and 9c is 10/10 and identical to the capture. The negative-control tool also guards against vacuity: it requires the unmutated copy to pass AND every mutation to fail, so a V11 false positive is exactly what it reports as BAD.",
+        "U10: re-hashing from a table the checker itself extracts could be circular. The table is extracted from the feature list, the file set on disk is enumerated independently (7 = 7, none unpinned), the AT7 command is run verbatim, and a zeroed pin makes it fail.",
+        "U11: reading the function alone does not show peeling; shown empirically that it passes through whatever is recorded, and that the peel is bootstrap.sh:464. The claim as worded holds only transitively; the evidence says so rather than overclaiming.",
+        "U12/U13: 'acknowledged.' is a very short quote; finding it verbatim somewhere is weak evidence on its own. It is anchored by its run_state timestamp, and the check also scans for near-miss paraphrases of each quote stem, finding none. The CHANGELOG regex check has a planted-token control.",
+        "U14: the Evaluator's own eval/ directory sits under .agent/evidence/phase-014-activation/, the directory the spec calls frozen. AT7 pins only the 7 listed files, so the pins are unaffected, and the eval/ files are inside the allowed .agent/ scope. Note the 7 files on disk outside eval/ were counted for unit 10 with eval/ excluded.",
+        "U15: the check inspects only *.txt; .json/.md evidence is out of its scope. The in-flight capture of unit14_15 cannot check itself; verified by head/tail after the run.",
+        "Extra: gh run view --json jobs does expose databaseId (run 37769000595: validate/e2e_bootstrap/fixtures_self_test, all success; unit16_gh_jobs_databaseid.txt), the item the validator listed as owed. Unit 11 and unit 09e created a few small mktemp directories under /tmp (pin-sem-*), outside the repo; removal was blocked by the permission system, harmless. Coverage warning not applicable (docs/planning change). Circuit breaker: first evaluation of this review, no strike history."
+      ],
+      "required_fixes": [
+        "Make the DAG package tools accept the validator verdict artifact: add .agent/validator/phase-014-activation.json (or the .agent/validator/ prefix) to PACKAGE_PATHS, or to ORCHESTRATOR_OWNED, in .agent/evidence/backlog-reconciliation-2026-10-08/tools/validate_backlog_dag.py, then recapture dag_validation.txt and dag_negative_controls.txt so they read SUMMARY: PASS, EXIT:0 and 10/10, EXIT:0 at the delivered tree. dag_negative_controls.py reuses V11, so one fix clears both 9b and 9c. Neither tool is among the 7 AT7-pinned files. The Evaluator did not modify these tools. Alternatively the Orchestrator may explicitly accept the divergence as a stale check scope (the isolation run shows no other defect).",
+        "Nit, not blocking: backlog_reconciliation.md:92 says 'three kinds of test' but lists four (carried from the validator's observations; not re-verified by a unit)."
+      ]
+    }
+  ]
+}

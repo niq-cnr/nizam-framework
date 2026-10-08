@@ -1,0 +1,25 @@
+{
+  "review": "phase-014-activation",
+  "feature": null,
+  "contract_id": null,
+  "revision_reviewed": 2,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Revision history: rev 0 REJECTED (1 major: probe coverage overclaimed; 10 minor); rev 1 REJECTED (3 minor: in-place run_state history rewrite, 102 AT5 mislabelled with undefined decline fallback, garbled/stale text + unverifiable brief claim); rev 2 APPROVED. Circuit breaker: 2 of 3 rounds used.",
+    "Rev-1 A resolved: phase_activated 12:18:31Z restored; history_correction 13:19:01Z discloses edit and revert; append-only after HEAD's last entry; phase_013_scope_budget_final intact.",
+    "Rev-1 B resolved: 102 provenance approved_amendment [1,4], approved_tranche_scope [5], planner_hardening_operator_acknowledged [2,3,7]; operator_gate_decision 13:20:12Z 'acknowledged.' covers exactly 102 AT2/AT3/AT7, 099 AT3/AT6/AT7, 101 AT2.",
+    "Rev-1 C resolved: spec:106-116 repaired; brief claim removed; version references 1.1.2.",
+    "Verbatim quotes accurate against run_state: H-PHASE-014 (11:21:14Z), 'In approve the increased budget.' (12:50:31Z), 'acknowledged.' (13:20:12Z), 'reuse the partial DAG only after re-checking it.' (12:29:26Z, retroactive).",
+    "No forbidden path touched.",
+    "Nit: backlog_reconciliation.md:92 says 'three kinds of test' but lists four. Nit: 102 AT8 labelled carried_from_1_0_x vs 099 AT1 approved_amendment for the same gate; no authority impact.",
+    "Run validate.sh and fixtures_self_test.sh sequentially (self-test C13 substitution of tools/skill.json races).",
+    "Owed by @evaluator: probes (255), at_compile_check (78), validate_backlog_dag (V1-V13), dag_negative_controls (10/10); validator_gate default/--payload; fixtures_self_test; release_closeout --mode pr; schemas incl. run_state and C16; byte-identity of first 231 run_state history entries vs HEAD; 102 AT7 sha256 vs disk; read_framework_pin peeled-commit; gh run view --json jobs databaseId."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": null,
+    "summary": "APPROVED at revision 2: history restored and correction disclosed append-only; provenance reclassified and backed by the operator's acknowledgment; text and version defects fixed; quotes verbatim; scope clean."
+  }
+}

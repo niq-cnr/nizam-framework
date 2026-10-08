@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.45.0
+version: 0.46.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.46.0"
+    date: "2026-10-08"
+    summary: "Phase 014 ACTIVATED (gate H-PHASE-014, operator verbatim: '- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.', 2026-10-08, recorded in run_state as operator_gate_decision at 2026-10-08T11:21:14Z before the re-planning per NDEBT-018): the 'Proposed Next Phase — Phase 014' banner becomes the Plan of Record banner (the proposal-era paragraphs below it are preserved unedited as history). Activation is canonical-first: phase_014.yaml in_progress, then manifest current_phase 014-ga-track; the run_state position is the Orchestrator's third write. Approved amendments applied by the Planner (product_spec_014 1.1.0): edge 101->099, hardened acceptance tests, the phase-scoped tag check, the run_state clarifying clause; the maintenance tranche folded in as features 103-109 ahead of 102; scope re-baselined 2200 -> 6660, the Planner's activation-time estimate (naive 2890 x the measured 2.3 process weight, NIP-0003:494-495; ceiling 8658), approved by the operator 2026-10-08, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z). Validator rounds 1-2 (spec 1.1.2): 102's machine-readable dossier, debt cross-check and hash pin, with 099 AT3/AT6/AT7 and 101 AT2, are Planner hardening, operator-acknowledged 2026-10-08T13:20:12Z ('acknowledged.'); 102 AT5 (the NDEBT-044 e open-debt roll) is approved-tranche coverage under the 11:21:14Z decision; every acceptance test probed pre-implementation. New pointer to the backlog reconciliation package (docs/planning/backlog_reconciliation.md + backlog_dag.json). NIP-0003 queued section: a note that its provisional feature ids shift (103-113 -> provisionally 110-120) and that several of its phase-014 premises went stale; the NIP itself is not edited. Current Position's released-tag disposition line is untouched."
   - version: "0.45.0"
     date: "2026-10-08"
     summary: "v1.4.0 RELEASED (post-release refresh, the 0.39.0/0.42.0 precedent) + the phase-014 re-baseline under operator decision D1. Release: after PR #63 merged at 9edd5d0, the operator authorized the tag act verbatim ('merged — authorized to tag v1.4.0', recorded in run_state before the act per NDEBT-018); the Orchestrator pushed annotated tag v1.4.0 (tag object bb32064) at that reviewed commit; release.yml run 37763448754 succeeded with the blocking tag-mode close-out passing and published GitHub Release 'Nizam v1.4.0 — Simplification Review & GA Gate protocols, draft (MINOR)' from the [1.4.0] CHANGELOG section at 2026-10-08T10:26:22Z. Current Position: the release-preparation bullet is removed and the latest-released disposition rolls to name v1.4.0 -- keeping exactly one body line matching the close-out gate's V-scoped disposition pattern at V=1.4.0 -- with the v1.3.0 bullet relabelled 'Prior released tag' and the v1.2.1 anomaly bullet relabelled 'Earlier released tag' (both bodies unedited). Phase 014: under D1 (operator verbatim 'proceed with the logic next steps to complete the backlog.', 2026-10-08, recorded in run_state before the act; not H-PHASE-014) the factual re-baseline that the 0.44.0 release-fact paragraph called for is APPLIED in this change -- feature 100's pilot pin v1.3.0 -> v1.4.0 and feature 102's tag-absence assertion v1.4.0 -> v1.5.0 (product_spec_014 1.0.1, feature_list_014, phase_014.yaml, the manifest phase-014 note) -- recorded in a dated paragraph below the unedited banner; phase 014 stays pending/proposed, awaiting H-PHASE-014. The NIP-0003 section's release wording moves to past tense (expected v1.5.0 / v1.6.0 unchanged; the NIP is unedited pending H-NIP). DEBT.md is untouched; the stale Current Position open-debt count (NDEBT-044(e)) is not rolled here."
@@ -145,7 +148,50 @@ change_log:
 
 # Forward Roadmap
 
-## Proposed Next Phase — Phase 014: GA Track — the Real Multi-Repo Pilot and the Remaining Lifecycle Protocols (06 Simplification Review, 08 GA Gate) — **PROPOSED, awaiting `H-PHASE-014`**
+## Plan of Record (2026-10-08) — Phase 014: GA Track — the Real Multi-Repo Pilot and the Remaining Lifecycle Protocols (06 Simplification Review, 08 GA Gate) — **ACTIVATED 2026-10-08 (`H-PHASE-014`)**
+
+**Phase `014-ga-track` is ACTIVE** (2026-10-08), authorized by the operator with the proposed amendments and the
+maintenance-tranche fold (verbatim:
+"- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.",
+gate **H-PHASE-014**), recorded in `.agent/run_state.json` as an `operator_gate_decision` at 2026-10-08T11:21:14Z
+before the re-planning (NDEBT-018). The Planner artifacts `.agent/product_spec_014.md` (status `active`, 1.1.2) and
+`.agent/feature_list_014.json` (features 099–109, DAG-validated, list order topological, est 6660) are the plan of
+record, together with the canonical phase document `docs/planning/phase_014.yaml` (`in_progress`) and the manifest
+(`current_phase: 014-ga-track`); the derived run_state position, the Orchestrator's third, canonical-first write,
+landed at 2026-10-08T12:18:31Z (`current_phase` `014-ga-track`, `current_feature` `099`, `in_progress`).
+
+**Approved amendments (applied).** The missing edge 101→099 (099 activates `ecosystem/06` and defines
+`H-CONSOLIDATION`, which 101 uses); acceptance tests hardened — an exit-captured validator gate replaces every
+`validate.sh | grep SUMMARY` pipeline, 099 asserts a DEFINED row per gate, 100 asserts real members, the `v1.4.0`
+pin and per-member `H-CONSUMER-UPGRADE` ordering against run_state, 101 asserts a scoped review artifact
+against the activation listing, 102 gains the missing `import json`; the fixed-version tag-absence test
+becomes a phase-scoped check against the tag set recorded at activation; and the spec clarifies that "run_state
+untouched until activation" never forbade recording gate decisions before their acts. **Planner hardening beyond
+the enumerated amendments, operator-acknowledged 2026-10-08T13:20:12Z ("acknowledged.")**
+(`acceptance_provenance` on each feature, spec 1.1.2): 102's machine-readable GA-readiness dossier contract, its
+`DEBT.md` cross-check and the sha256 pin of the frozen acceptance infrastructure; 099's capability binding,
+status-flip and guide-card tests; and 101's anchored `review.json`. 102's NDEBT-044 (e) open-debt roll is
+approved-tranche coverage under the 11:21:14Z decision.
+
+**Maintenance tranche (folded in ahead of 102, which depends on all of it).** 103 sandbox prerequisite handling
+(`NDEBT-043`) → 104 the convergent-review suite enforced in CI (`NDEBT-041`); 105 nested-fixture ownership,
+reusing NIP-0003's feature-109 claim map (`NDEBT-042`); 106 capability-index parity as a documented intentional
+subset (`NDEBT-044` a); 107 NIP frontmatter under C1/C2 (`NDEBT-044` b); 109 C15 mapping direction (`NDEBT-026`);
+108 validator-help and adapter-reference truth (`NDEBT-037`, `NDEBT-044` c/d/f); `NDEBT-044` (e) folds into 102's
+close. The workflow-change non-goal is lifted for these features only (only 104 touches `.github/`).
+`NDEBT-034` stays deferred; `NDEBT-040` is annotated as a Workflow Assurance NIP candidate.
+
+**Order and budget.** Recommended single lane: 099 → 103 → 104 → 105 → 106 → 107 → 109 → 108 → 100 → 101 → 102;
+the first eligible feature is 099. `original_estimate_lines` 6660, 130 percent ceiling 8658 (was 2200): the
+Planner's activation-time estimate, naive 2890 × the measured 2.3 process weight (NIP-0003:494-495), approved by the operator 2026-10-08, verbatim "In approve the increased budget." (run_state operator_gate_decision 2026-10-08T12:50:31Z). **Outstanding:** the real member set for feature 100 and each member's
+`H-CONSUMER-UPGRADE` — `H-PHASE-014` designates no member.
+
+**Backlog reconciliation.** The crosswalk of the 2026-10-08 maintainer brief (aliases A00–A16, scenarios T01–T19,
+NIP-0003 cases 1–13), the decision record, the candidate DAG view and the Workflow Assurance NIP outline are in
+[`backlog_reconciliation.md`](backlog_reconciliation.md); the machine-readable candidate DAG is
+[`backlog_dag.json`](backlog_dag.json).
+
+*The paragraphs below are the proposal-era record (2026-09-30, re-baselined under D1), preserved unedited.*
 
 **Phase `014-ga-track` is PROPOSED** (2026-09-30, authored at v1.3.0 after the release),
 awaiting operator activation (gate **H-PHASE-014**). It realizes the rolled-forward
@@ -271,6 +317,17 @@ of its feature 101 (the simplification review) are an input to phase-015 plannin
 `docs/planning/operator_gates.md` are untouched (a proposal is not an activation). New
 debt surfaced by the validation is logged as `NDEBT-041`..`NDEBT-044`.
 
+**Note (2026-10-08, phase-014 activation; the NIP is not edited).** Phase 014 allocated feature ids 103–109 to its
+maintenance tranche, so NIP-0003's provisional ids 103–113 shift — provisionally to 110–120 (phase 015: 110–114;
+phase 016: 115–120), confirmed only when phase 015 is planned. Further premises of the NIP went stale and are queued
+for its pre-acceptance revision (`A03-RT` in `backlog_dag.json`), not applied here: its feature 109's
+fixture-subdirectory claim map is pulled forward into phase-014 feature 105, which 109 will reuse; phase-014 feature
+104 adds a fourth `compliance.yml` job, so the NIP's "four jobs" becomes five; phase-014 feature 103 sets a
+required-by-default isolation precedent where the NIP sketches a `--require-isolation` opt-in; and its statement
+that phase 014 excludes schema and workflow changes (citing `.agent/product_spec_014.md:82-83`) no longer holds for
+the maintenance features. The `NDEBT-044` (d) cross-reference fix the NIP leaves to its feature 106 lands in
+phase-014 feature 108.
+
 ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
 
 **Phase `013-definition-of-done` is ACTIVE** (2026-08-18), authorized by the operator (verbatim:
@@ -315,7 +372,7 @@ with no `.agent/feature_list*.json` passes it trivially.
 **The rolled-forward candidate scope moves to phase 014.** The prior phase-012 candidate — a real
 non-scratch multi-repo pilot and the remaining lifecycle protocols
 `ecosystem/06_simplification_review.md` and `ecosystem/08_ga_gate.md` with the reserved
-`H-CONSOLIDATION` / `H-GA` gates — is **not cancelled**. It rolls forward unchanged to phase 014. **→ now authored as the phase-014 proposal — see the "Proposed Next Phase — Phase 014" banner at the top.**
+`H-CONSOLIDATION` / `H-GA` gates — is **not cancelled**. It rolls forward unchanged to phase 014. **→ now authored as the phase-014 proposal — see the "Proposed Next Phase — Phase 014" banner at the top** (since 2026-10-08 the "Plan of Record (2026-10-08) — Phase 014" banner).
 The operator decides at `H-PHASE-013` whether to take Definition of Done first or re-order that
 scope ahead of it. Tier 3 of the Definition-of-Done analysis (an ecosystem Verify protocol) is
 explicitly out of scope here: it is NIP-class work requiring an accepted proposal.
