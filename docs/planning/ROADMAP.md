@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.42.0
+version: 0.43.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.43.0"
+    date: "2026-10-08"
+    summary: "NIP-0003 (Live Runtime Sessions) PROPOSED, awaiting H-NIP: a new 'Queued Candidate — NIP-0003' section sits directly below the unedited Phase 014 proposal banner. It summarizes the proposal (a language-neutral live-runtime-session protocol plus an SBCL reference binding, an optional adapter capability, session schemas under an extended C12, and a reference controller with a live CI conformance job), the four operator decisions of 2026-10-08, and the proposed realization as phases 015 (features 103-107) and 016 (108-113), each releasing as the next MINOR (expected v1.4.0 / v1.5.0), to follow phase 014. Acceptance would select, not activate; phase-015 planning artifacts are authored only after 014 closes. Current Position is unchanged: its single released-tag disposition line is untouched, and its stale open-debt count is left for the next refresh and logged as NDEBT-044(e). run_state, manifest and operator_gates are untouched (a proposal is not an activation)."
   - version: "0.42.0"
     date: "2026-09-30"
     summary: "v1.3.0 RELEASED (post-release refresh, the PR #54/#56 precedent): the operator-authorized annotated tag v1.3.0 points at reviewed merge commit 2e122256 (PR #60); release.yml run 36700976611 succeeded and published GitHub Release 'Nizam v1.3.0 — Review-Gate Flake Management (MINOR)' from the [1.3.0] CHANGELOG section at 2026-09-30T10:12:30Z. Current Position: the 'Release in preparation' bullet is removed and the latest-released disposition rolls to name the new tag — keeping exactly one body line matching the close-out gate's disposition pattern for v1.3.0 — with the prior-released line rolling to the v1.2.1 anomaly record and v1.1.0 becoming the earlier line. ALSO (same PR): Phase 014 (GA track) PROPOSED — a new 'Proposed Next Phase — Phase 014' banner tops the roadmap (features 099-102, DAG roots {099, 100}, est 2200; planner artifacts .agent/product_spec_014.md (status draft) + .agent/feature_list_014.json; canonical docs/planning/phase_014.yaml (pending); the 06/08 lifecycle doctrine authored proposal-grade under ecosystem/). Awaiting operator activation gate H-PHASE-014; a proposal is not an activation — current_phase stays 013-definition-of-done (complete) and run_state is untouched."
@@ -199,6 +202,36 @@ enhancement candidates); the phase neither requires nor pre-resolves them — th
 candidate inputs to the 101 simplification review's evidence, and the `NDEBT-034`
 optimization is revisited only if the real pilot proves the per-member clone cost
 load-bearing.
+
+## Queued Candidate — NIP-0003: Live Runtime Sessions (proposed phases 015/016, to follow 014) — PROPOSED, awaiting H-NIP
+
+**[NIP-0003](../nips/NIP-0003-live-runtime-sessions.md) is PROPOSED** (2026-10-08,
+frontmatter `draft`), awaiting operator acceptance (gate **H-NIP**). It records the
+read-only validation of a third-party Agent–REPL Execution Protocol for interactive
+SBCL development (verdict: adopt with corrections) and proposes a **language-neutral
+live-runtime-session protocol** (`methodology/10_`) with an **SBCL reference binding**
+(`methodology/11_`, the missing language profile folded in). It also proposes generic
+amendments that define "attempt" (`03` §3.2) and "own execution context" (`02` §2), an
+**optional** adapter capability (`tools/interface.md` §6; §5 stays at 10 items, so the
+release is MINOR), two session schemas under an extended C12 (C17 stays free), and a
+reference controller in `tools/` with a live CI conformance job proving acceptance
+cases 1–13.
+
+**Operator decisions (2026-10-08, verbatim selected options):** Shape "Neutral protocol
++ SBCL binding (Recommended)"; Sequencing "After Phase 014"; Controller "Framework
+tools/, two phases (Recommended)"; Profile "Fold into the SBCL binding (Recommended)".
+
+**Proposed realization, to follow phase 014.** Phase 015 (normative surface, features
+103–107, design estimate 5,400 lines) releases as the next MINOR (expected v1.4.0) and
+also rolls up phase 014's unreleased changes. Phase 016 (reference controller and live
+conformance, features 108–113) releases as the next MINOR (expected v1.5.0); it requires
+SBCL wherever the Evaluator runs. **Acceptance selects; it does not activate.** The
+phase-015 Planner artifacts are authored only after phase 014 closes, and each phase
+needs its own `H-PHASE-NNN`. Phase 014 is not edited by this proposal, and the findings
+of its feature 101 (the simplification review) are an input to phase-015 planning.
+`.agent/run_state.json`, `docs/planning/manifest.json` and
+`docs/planning/operator_gates.md` are untouched (a proposal is not an activation). New
+debt surfaced by the validation is logged as `NDEBT-041`..`NDEBT-044`.
 
 ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
 

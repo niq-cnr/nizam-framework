@@ -1,0 +1,6 @@
+set -o pipefail; F=.agent/evidence/nip-0003-proposal/ndebt043_convergent_suite.txt; diff <(grep -E "^FAIL: " $F | sed -E "s/^FAIL: ([A-Za-z0-9_]+) .*/\1/" | sort) <(grep -E "^\| NDEBT-043 " docs/planning/DEBT.md | grep -oE "test_[a-z_]+" | grep -vx test_convergent_review | sort -u) && echo "NAMES MATCH: failing tests == tests named in NDEBT-043"; echo "FAIL lines: $(grep -cE "^FAIL: " $F)"; echo "ERROR lines: $(grep -cE "^ERROR: " $F)"; echo "skip lines: $(grep -ciE "skipped|\.\.\. skip" $F)"
+NAMES MATCH: failing tests == tests named in NDEBT-043
+FAIL lines: 5
+ERROR lines: 0
+skip lines: 0
+EXIT:0

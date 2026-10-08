@@ -1,0 +1,4 @@
+printf '' | python3 -c 'import sys,posixpath;A={"CHANGELOG.md","docs/planning/DEBT.md","docs/planning/ROADMAP.md","docs/nips/NIP-0003-live-runtime-sessions.md",".agent/validator/nip-0003-review.json"};P=".agent/evidence/nip-0003-proposal/";L=[l.rstrip("\n") for l in sys.stdin if l.strip()];paths=[posixpath.normpath(q.strip().strip(chr(34))) for l in L for q in l[3:].split(" -> ")];bad=[q for q in paths if q not in A and not q.startswith(P)];missing=sorted(A-set(paths));print("\n".join(L));print("changed paths:",len(paths),"FORBIDDEN:",bad,"EXPECTED-BUT-UNCHANGED:",missing);sys.exit(1 if bad or missing else 0)'
+
+changed paths: 0 FORBIDDEN: [] EXPECTED-BUT-UNCHANGED: ['.agent/validator/nip-0003-review.json', 'CHANGELOG.md', 'docs/nips/NIP-0003-live-runtime-sessions.md', 'docs/planning/DEBT.md', 'docs/planning/ROADMAP.md']
+EXIT:1

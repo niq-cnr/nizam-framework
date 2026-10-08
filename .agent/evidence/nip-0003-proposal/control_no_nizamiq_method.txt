@@ -1,0 +1,10 @@
+echo "numstat added lines (must equal added_lines_scanned=61):"; git diff HEAD --numstat | awk "{s+=\$1} END{print s}"; echo "independent grep -ci nizamiq over raw added lines:"; git diff HEAD -U0 --no-color | grep -E "^\+" | grep -vE "^\+\+\+ " | grep -ci nizamiq; echo "positive control: nizamiq lines in HEAD:docs/planning/DEBT.md (pre-existing, must be > 0):"; git show HEAD:docs/planning/DEBT.md | awk "/nizamiq/{n++} END{print n+0}"; echo "positive control: same awk method on a synthetic added line"; printf "diff --git a/x b/x\n@@ -0,0 +1 @@\n+hello nizamiq\n" | awk -v P=nizamiq "/^diff --git/{h=0;next} /^@@/{h=1;next} h&&/^\\+/{t++; if (\$0 ~ P) n++} END{print n+0, t+0}"
+numstat added lines (must equal added_lines_scanned=61):
+61
+independent grep -ci nizamiq over raw added lines:
+0
+positive control: nizamiq lines in HEAD:docs/planning/DEBT.md (pre-existing, must be > 0):
+2
+positive control: same awk method on a synthetic added line
+1 1
+EXIT:0

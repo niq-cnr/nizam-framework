@@ -1,0 +1,15 @@
+python3 -c 'import json,yaml,jsonschema;p="docs/nips/NIP-0003-live-runtime-sessions.md";L=open(p,encoding="utf-8").read().replace("\nstatus: draft\n","\nstatus: accepted\n").split("\n");assert L[0]=="---","no opening fence";e=L[1:].index("---")+1;fm=yaml.safe_load("\n".join(L[1:e]));s=json.load(open("schema/frontmatter.schema.json"));jsonschema.Draft202012Validator.check_schema(s);jsonschema.validate(fm,s,cls=jsonschema.Draft202012Validator);assert fm["status"]=="draft",fm["status"];assert fm["version"]=="0.1.0",fm["version"];assert fm["id"]=="nip-0003-live-runtime-sessions",fm["id"];assert fm["authoritative_source"]==p,fm["authoritative_source"];print("FRONTMATTER OK: closing fence at line",e+1,"keys",sorted(fm))'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.local/lib/python3.12/site-packages/jsonschema/validators.py", line 1332, in validate
+    raise error
+jsonschema.exceptions.ValidationError: 'accepted' is not one of ['draft', 'active', 'deprecated']
+
+Failed validating 'enum' in schema['properties']['status']:
+    {'type': 'string',
+     'description': 'The current lifecycle state of the document.',
+     'enum': ['draft', 'active', 'deprecated']}
+
+On instance['status']:
+    'accepted'
+EXIT:1

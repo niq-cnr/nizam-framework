@@ -1,0 +1,129 @@
+python3 -c 'import json,yaml,jsonschema;p="docs/nips/NIP-0003-live-runtime-sessions.md";L=open(p,encoding="utf-8").read().replace("\nversion: 0.1.0\n","\n").split("\n");assert L[0]=="---","no opening fence";e=L[1:].index("---")+1;fm=yaml.safe_load("\n".join(L[1:e]));s=json.load(open("schema/frontmatter.schema.json"));jsonschema.Draft202012Validator.check_schema(s);jsonschema.validate(fm,s,cls=jsonschema.Draft202012Validator);assert fm["status"]=="draft",fm["status"];assert fm["version"]=="0.1.0",fm["version"];assert fm["id"]=="nip-0003-live-runtime-sessions",fm["id"];assert fm["authoritative_source"]==p,fm["authoritative_source"];print("FRONTMATTER OK: closing fence at line",e+1,"keys",sorted(fm))'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.local/lib/python3.12/site-packages/jsonschema/validators.py", line 1332, in validate
+    raise error
+jsonschema.exceptions.ValidationError: 'version' is a required property
+
+Failed validating 'required' in schema:
+    {'$schema': 'https://json-schema.org/draft/2020-12/schema',
+     '$id': 'urn:nizam-framework:schema:frontmatter.schema.json',
+     'title': 'Nizam Frontmatter Schema',
+     'description': 'Validates the YAML frontmatter block required at the '
+                    'top of every governance Markdown file shipped by the '
+                    'Nizam framework (standard/, methodology/, templates/, '
+                    'tools/, and their module README files). Declares the '
+                    '6 required keys named in product_spec.md Sec 6.1. '
+                    'Additional keys beyond the 6 required ones are '
+                    'permitted so individual modules may extend '
+                    'frontmatter with module-specific metadata (for '
+                    "example the 'change_log' array observed on planning "
+                    'documents).',
+     'type': 'object',
+     'properties': {'id': {'type': 'string',
+                           'description': 'A unique, kebab-case identifier '
+                                          'for the document.',
+                           'pattern': '^[a-z0-9]+(?:-[a-z0-9]+)*$'},
+                    'title': {'type': 'string',
+                              'description': 'The human-readable title of '
+                                             'the document.',
+                              'minLength': 1},
+                    'description': {'type': 'string',
+                                    'description': 'A concise summary of '
+                                                   "the document's "
+                                                   'purpose.',
+                                    'minLength': 1},
+                    'version': {'type': 'string',
+                                'description': 'The semantic version of '
+                                               'the document '
+                                               '(MAJOR.MINOR.PATCH).',
+                                'pattern': '^\\d+\\.\\d+\\.\\d+$'},
+                    'status': {'type': 'string',
+                               'description': 'The current lifecycle state '
+                                              'of the document.',
+                               'enum': ['draft', 'active', 'deprecated']},
+                    'authoritative_source': {'type': 'string',
+                                             'description': 'The '
+                                                            'repository-relative '
+                                                            'path to the '
+                                                            'artifact this '
+                                                            'document '
+                                                            'describes, or '
+                                                            "'NA' for "
+                                                            'documents '
+                                                            'with no '
+                                                            'single source '
+                                                            'artifact.',
+                                             'minLength': 1},
+                    'change_log': {'type': 'array',
+                                   'description': 'Optional change history '
+                                                  'entries for documents '
+                                                  'that track their own '
+                                                  'revision log.',
+                                   'items': {'type': 'object',
+                                             'properties': {'version': {'type': 'string'},
+                                                            'date': {'type': 'string'},
+                                                            'summary': {'type': 'string'}},
+                                             'required': ['version',
+                                                          'date',
+                                                          'summary']}}},
+     'required': ['id',
+                  'title',
+                  'description',
+                  'version',
+                  'status',
+                  'authoritative_source'],
+     'additionalProperties': True}
+
+On instance:
+    {'id': 'nip-0003-live-runtime-sessions',
+     'title': 'NIP-0003: Live Runtime Sessions',
+     'description': 'Proposal to add a language-neutral '
+                    'live-runtime-session protocol (ownership, process '
+                    'generation, serialised operations, attempt '
+                    'continuity, fresh-environment acceptance) with an '
+                    'SBCL reference binding, an optional adapter '
+                    'capability, schema-governed session records, and a '
+                    'reference controller — realized as phases 015 and '
+                    '016, after phase 014.',
+     'status': 'draft',
+     'authoritative_source': 'docs/nips/NIP-0003-live-runtime-sessions.md',
+     'last_audited': '2026-10-08',
+     'tags': ['nip',
+              'methodology',
+              'runtime-session',
+              'execution',
+              'evaluator-independence',
+              'circuit-breaker',
+              'adapter',
+              'sbcl'],
+     'change_log': [{'version': '0.1.0',
+                     'date': '2026-10-08',
+                     'summary': 'Initial proposal, status PROPOSED — '
+                                'awaiting operator acceptance (gate '
+                                'H-NIP). Records the read-only validation '
+                                'of a third-party Agent–REPL Execution '
+                                'Protocol (against main at 3094223, '
+                                'framework v1.3.0) and the four operator '
+                                'decisions of 2026-10-08 (neutral protocol '
+                                'plus SBCL binding; after phase 014; '
+                                'controller in framework tools/ across two '
+                                'phases; the missing language profile '
+                                'folded into the binding). On acceptance '
+                                'it selects phase 015 (normative surface) '
+                                'to follow phase 014, plus follow-on phase '
+                                '016 (reference controller and live '
+                                'conformance); selection is not '
+                                'activation. Revised in place before '
+                                'acceptance (validator revision round 1: '
+                                'C12 described as a schema-family fixture '
+                                'sweep, not enforce-if-present; the C12 '
+                                'eight-to-ten families wording; the '
+                                'tools/SKILL.md §10/§11 renumbering made '
+                                'explicit; the selection-is-not-activation '
+                                'precedent attributed to NIP-0002; Goal 7 '
+                                'aligned with the live-proof rule); the '
+                                'version stays 0.1.0, as neither NIP-0001 '
+                                'nor NIP-0002 versioned pre-acceptance '
+                                'revisions.'}]}
+EXIT:1

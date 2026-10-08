@@ -1,0 +1,19 @@
+{
+  "review": "nip-0003-proposal",
+  "feature": null,
+  "contract_id": null,
+  "revision_reviewed": 1,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Revision history: rev 0 REJECTED for 1 major + 4 minor text-accuracy defects (C12 mischaracterized as enforce-if-present; 'ten families' prose that did not exist; ambiguous tools/SKILL.md §10; NIP-0001 misattributed as the selection-is-not-activation precedent; Goal 7 inconsistent with the live-proof rule). All five fixed in rev 1 by @planner (circuit breaker: 1 of 3 revision rounds used).",
+    "OWED BY @evaluator (not executed here; validator Bash allowlist is git diff/status/log only): bash tools/validate.sh -> expect 'SUMMARY: 16 passed, 0 failed'; bash tools/fixtures_self_test.sh -> expect 'SELF-TEST OK: 79/79 fixtures accounted for, 0 failed'; python3 .github/scripts/release_closeout.py --mode pr -> expect exit 0 at v1.3.0; Python jsonschema check of the NIP frontmatter against schema/frontmatter.schema.json (no --target on the NIP).",
+    "Rev-0 fixes verified against HEAD: C12 row (NIP:544) matches tools/validate.sh:370-377; '037-039 were C12's first families' matches validate.sh:346-347 and the schema/README.md change_log 0.5.0-0.7.0; the 'eight families' prose exists at validate.sh:346 and tools/README.md:128; SKILL.md §10 is 'References' at HEAD, so the stated §10->§11 renumbering is accurate; selection-is-not-activation is in NIP-0002:27-31 and operator_gates.md:127; Goal 7 now matches NIP:485 and the Acceptance Criteria.",
+    "Nuance, not an error: the C12 check itself was added by feature 042 (tools/README.md:136). The NIP's wording, that the 037-039 schemas were C12's first families, is accurate as phrased.",
+    "No other NIP changes: deltas are confined to lines 13, 159-161, 345-348, 358-359, 544, 636-641 and 659-662 (681 -> 686 lines). Frontmatter stays valid (version 0.1.0, status draft).",
+    "Scope: git status shows the four allowed paths plus the Orchestrator-written .agent/validator/nip-0003-review.json. The CHANGELOG, DEBT and ROADMAP diffs are byte-identical to rev 0 (blob ids 77cbb5f, 7ab63e2, c07a180).",
+    "Rev-0 non-blocking observations still stand: NDEBT-043 runtime facts to be re-run by the evaluator; plan-unspecified design elaborations for the operator to confirm at H-NIP; the schema field list reads as exhaustive while case 4/7 fixtures imply extra fields (settle in the feature-104 contract); the 'Channel' cell names a vendor tool (cosmetic, docs/ is not injected)."
+  ],
+  "final_verdict": {"approved": true, "feature": null, "summary": "APPROVED at revision 1. All five rev-0 defects are corrected accurately against HEAD: C12 is now described as a fixture sweep (validate.sh:370-377), with the 037-039 first-families claim verified; the eight-to-ten prose; the SKILL.md §10->§11 renumbering; the selection-is-not-activation attribution to NIP-0002 and operator_gates; and Goal 7 aligned with the live-proof rule. No other NIP content changed, no new inaccuracies were introduced, and scope is limited to the four allowed paths plus the Orchestrator's review record. The executed checks (validate.sh, fixtures self-test, release_closeout, jsonschema) remain owed by the @evaluator."}
+}

@@ -32,6 +32,24 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   guide card stay with phase-014 feature 099). Awaiting activation gate
   `H-PHASE-014`; `current_phase` stays `013-definition-of-done` and `run_state` is
   untouched (a proposal is not an activation).
+- **NIP-0003 proposal (Live Runtime Sessions)** —
+  `docs/nips/NIP-0003-live-runtime-sessions.md` (v0.1.0, `draft`; PROPOSED, awaiting
+  `H-NIP`). Records the read-only validation of a third-party Agent–REPL Execution
+  Protocol (adopt with corrections) and the operator's four decisions of 2026-10-08,
+  and proposes a language-neutral live-runtime-session protocol with an SBCL reference
+  binding, generic definitions of "attempt" and "own execution context", an optional
+  adapter capability (`tools/interface.md` §5 stays at 10 items), session schemas
+  under an extended C12, and a reference controller with a live CI conformance job —
+  realized as phases 015 (features 103–107) and 016 (108–113) to follow phase 014,
+  each releasing as the next MINOR (expected v1.4.0 / v1.5.0). Acceptance would
+  select, not activate. `docs/planning/DEBT.md` (v0.47.0) logs four re-verified Open
+  rows: `NDEBT-041` (the convergent review suite runs in no CI job), `NDEBT-042` (the
+  fixtures completeness guard skips subdirectories), `NDEBT-043` (sandbox tests fail
+  instead of skipping when user namespaces are restricted) and `NDEBT-044` (index and
+  documentation drift). `docs/planning/ROADMAP.md` (v0.43.0) gains a "Queued
+  Candidate — NIP-0003" section below the unedited phase-014 banner. `run_state`,
+  `docs/planning/manifest.json` and `docs/planning/operator_gates.md` are untouched
+  (a proposal is not an activation).
 
 ## [1.3.0] - 2026-09-30
 
