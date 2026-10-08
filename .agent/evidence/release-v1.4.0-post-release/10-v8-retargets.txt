@@ -1,0 +1,11 @@
+PYTHONDONTWRITEBYTECODE=1 bash -c "$(python3 -c 'import re,sys;t=open(".agent/evidence/release-v1.4.0-post-release/00-refresh-plan.md").read();print("\n".join(re.search(r"\*\*#"+re.escape(i)+r"\*\*.*?\n```sh\n(.*?)\n```",t,re.S).group(1) for i in sys.argv[1:]))' V8 || echo "echo EXTRACT-FAILED; exit 99")"
+.agent/feature_list_014.json:0
+.agent/product_spec_014.md:0
+docs/planning/phase_014.yaml:0
+docs/planning/manifest.json:0
+102_retarget True
+100_pin True
+yaml_pin True
+spec_pin True
+retargeted_102_test_exit=0
+EXIT:0

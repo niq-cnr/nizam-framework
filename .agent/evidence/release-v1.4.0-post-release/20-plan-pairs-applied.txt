@@ -1,0 +1,26 @@
+PYTHONDONTWRITEBYTECODE=1 python3 -c 'import re,sys;t=open(".agent/evidence/release-v1.4.0-post-release/00-refresh-plan.md").read();M=re.findall(r"#### (\w+) \S+ `([^`]+)`[^\n]*\nCurrent:\n~~~text\n(.*?)\n~~~\nNew:\n~~~text\n(.*?)\n~~~",t,re.S);X={p:open(p).read() for i,p,c,n in M};R=[(i,p,X[p].count(n),X[p].count(c),X[p].count(n)==1 and (c in n or X[p].count(c)==0)) for i,p,c,n in M];[print(i,p,"new_count="+str(a),"cur_count="+str(b),"OK" if o else "BAD") for i,p,a,b,o in R];bad=sum(not r[4] for r in R);print("pairs",len(M),"files",len(X),"bad",bad);sys.exit(1 if bad or len(M)!=23 or len(X)!=7 else 0)'
+R1 docs/planning/ROADMAP.md new_count=1 cur_count=0 OK
+R2 docs/planning/ROADMAP.md new_count=1 cur_count=0 OK
+R4 docs/planning/ROADMAP.md new_count=1 cur_count=1 OK
+R7 docs/planning/ROADMAP.md new_count=1 cur_count=0 OK
+R5 docs/planning/ROADMAP.md new_count=1 cur_count=0 OK
+R6 docs/planning/ROADMAP.md new_count=1 cur_count=0 OK
+G1 docs/planning/operator_gates.md new_count=1 cur_count=0 OK
+G2 docs/planning/operator_gates.md new_count=1 cur_count=0 OK
+G3 docs/planning/operator_gates.md new_count=1 cur_count=0 OK
+C1 CHANGELOG.md new_count=1 cur_count=0 OK
+S1 .agent/product_spec_014.md new_count=1 cur_count=0 OK
+S2 .agent/product_spec_014.md new_count=1 cur_count=0 OK
+S3 .agent/product_spec_014.md new_count=1 cur_count=0 OK
+S4 .agent/product_spec_014.md new_count=1 cur_count=0 OK
+F1 .agent/feature_list_014.json new_count=1 cur_count=0 OK
+F2 .agent/feature_list_014.json new_count=1 cur_count=0 OK
+F3 .agent/feature_list_014.json new_count=1 cur_count=0 OK
+F4 .agent/feature_list_014.json new_count=1 cur_count=0 OK
+F5 .agent/feature_list_014.json new_count=1 cur_count=0 OK
+Y1 docs/planning/phase_014.yaml new_count=1 cur_count=0 OK
+Y2 docs/planning/phase_014.yaml new_count=1 cur_count=0 OK
+M1 docs/planning/manifest.json new_count=1 cur_count=0 OK
+M2 docs/planning/manifest.json new_count=1 cur_count=0 OK
+pairs 23 files 7 bad 0
+EXIT:0

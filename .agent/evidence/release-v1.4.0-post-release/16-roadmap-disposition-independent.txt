@@ -1,0 +1,4 @@
+B=$(awk '/^---$/ && n<2 {n++; next} n>=2' docs/planning/ROADMAP.md); L=$(printf '%s\n' "$B" | grep -c 'Latest released tag: v1\.4\.0'); P=$(printf '%s\n' "$B" | grep -c 'Release in preparation:'); PI=$(printf '%s\n' "$B" | grep -ci 'release in preparation'); LA=$(printf '%s\n' "$B" | grep -c 'Latest released tag:'); SYN=$(printf 'x\n---\nid: a\n---\nLatest released tag: v1.4.0\n' | awk '/^---$/ && n<2 {n++; next} n>=2' | grep -c 'Latest released tag: v1\.4\.0'); echo "body_first_line=$(printf '%s\n' "$B" | head -1 | cut -c1-60)"; echo "latest_v1.4.0=$L release_in_preparation=$P release_in_preparation_ci=$PI latest_any_version=$LA awk_selfcheck_expected_1=$SYN"; [ "$L" -eq 1 ] && [ "$P" -eq 0 ] && [ "$PI" -eq 0 ] && [ "$LA" -eq 1 ] && [ "$SYN" -eq 1 ]
+body_first_line=
+latest_v1.4.0=1 release_in_preparation=0 release_in_preparation_ci=0 latest_any_version=1 awk_selfcheck_expected_1=1
+EXIT:0

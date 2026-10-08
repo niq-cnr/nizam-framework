@@ -3,7 +3,7 @@
   "current_phase": "013-definition-of-done",
   "current_feature": "098",
   "status": "complete",
-  "updated_at": "2026-08-19T17:37:35Z",
+  "updated_at": "2026-10-08T10:30:34Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1395,6 +1395,21 @@
       "event": "release_executed",
       "feature": "098",
       "detail": "Phase 013 (Definition of Done) COMPLETE and v1.1.0 RELEASED. PR #55 merged to main at a2c15d2 (all four CI checks green: validate 16/16, e2e, fixtures self-test, and the new release_closeout PR-mode workflow). The operator exercised H-FRAMEWORK-RELEASE (verbatim: 'The pR #55 is merged. you are authorized to tag the release.'), delegating the tag act; the orchestrator created and pushed annotated tag v1.1.0 at a2c15d2 (git cat-file -t: tag). release.yml run 32282540074 completed SUCCESS: tag verified, the NEW blocking tag-mode close-out step (feature 097's gate, its first real release execution) PASSED, and the GitHub Release published from the [1.1.0] CHANGELOG section, correctly titled 'Nizam v1.1.0 — Definition of Done (MINOR)' at 2026-08-19T17:36:18Z. Canonical phase_013.yaml and manifest phase 013 were complete at merge; this derived run state is reconciled in the post-release refresh, per the phase-012 precedent. The rolled-forward candidate scope (real non-scratch multi-repo pilot + ecosystem 06/08 with H-CONSOLIDATION/H-GA) stands for phase 014; no successor phase is activated — future work begins with a fresh planning/activation cycle."
+    },
+    {
+      "at": "2026-10-08T10:25:50Z",
+      "event": "operator_gate_decision",
+      "detail": "H-FRAMEWORK-RELEASE EXERCISED for v1.4.0. Recorded BEFORE the tag act (the NDEBT-018 rule). Operator verbatim: 'merged — authorized to tag v1.4.0' (2026-10-08, interactive session), following the release request 'PR #62 has been merged, cut a new release pin/tag it.' (recorded as the Section 2 sign-off for cutting the preparation). PR #63 merged to main at 9edd5d0e0d9e0489c961407d306ae30541c27dd5 (mergedAt 2026-10-08T10:24:45Z); verified at that commit before tagging: NIZAM.json framework.version == 1.4.0, CHANGELOG carries '## [1.4.0] - 2026-10-08' with the Minor-release banner citing Section 3.2, release_closeout.py --mode pr PASS at V=1.4.0, and no v1.4.0 ref exists locally or on origin (ls-remote exit 0, empty). The operator's authorization delegates the one Orchestrator-owned release mechanic (06_release_train.md Section 6): creating and pushing the annotated tag v1.4.0 at the reviewed merge commit. Out-of-phase release (no numbered feature; v1.2.0/v1.3.0 precedent); current_phase and status unchanged."
+    },
+    {
+      "at": "2026-10-08T10:27:41Z",
+      "event": "release_executed",
+      "detail": "v1.4.0 RELEASED (MINOR; out-of-phase, v1.2.0/v1.3.0 precedent). PR #63 merged to main at 9edd5d0 (CI green: validate 16/16, e2e, fixtures self-test, release_closeout PR-mode; post-merge compliance run 37763295868 success, pages success). Under the operator's explicit authorization ('merged — authorized to tag v1.4.0', recorded before the act) the orchestrator created annotated tag v1.4.0 (tag object bb32064) at 9edd5d0, verified it locally with release_closeout.py --mode tag (9/9 PASS), and pushed it. release.yml run 37763448754 SUCCESS (tag verified, blocking tag-mode close-out PASSED, CHANGELOG [1.4.0] section extracted) and published GitHub Release 'Nizam v1.4.0 — Simplification Review & GA Gate protocols, draft (MINOR)' at 2026-10-08T10:26:22Z. Consumer-pin smoke: the README quick-start replayed at v1.4.0 in a fresh repo installed framework_version 1.4.0 (resolved_sha 9edd5d0; 82 indexed paths resolve; ecosystem/06 and 08 present, status draft). Evidence: .agent/evidence/release-v1.4.0-tag/01-06. Follow-ups: post-release refresh PR (ROADMAP 'Latest released tag: v1.4.0', operator_gates EXECUTED); phase-014 feature 102 'no v1.4.0 tag' assertion now stale (planner re-baseline before H-PHASE-014 is an operator decision); NIP-0003 expected versions shift to v1.5.0/v1.6.0."
+    },
+    {
+      "at": "2026-10-08T10:30:34Z",
+      "event": "operator_gate_decision",
+      "detail": "Decision D1 (post-release re-baseline of the PENDING phase-014 proposal) APPROVED. Recorded BEFORE the re-baseline is applied (the NDEBT-018 rule). Operator verbatim: 'proceed with the logic next steps to complete the backlog.' (2026-10-08, interactive session), given in reply to the orchestrator's report that listed D1 with the recommendation 're-baseline phase 014 in the post-release refresh so 014 stays activation-ready'. Scope authorized: a Planner-routed factual re-baseline of the pending phase-014 artifacts made stale by the v1.4.0 release (feature 102's 'no v1.4.0 tag' assertion; product_spec_014 'zero v1.4.0 refs' criterion; the pilot's released-tag pin), carried in the v1.4.0 post-release refresh PR for review. This is NOT H-PHASE-014: phase 014 stays pending/proposed; current_phase and status unchanged."
     }
   ],
   "phase_001_scope_budget_final": {

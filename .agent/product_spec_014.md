@@ -4,13 +4,16 @@ title: "Nizam Framework — Phase 014 Spec: GA Track — the Real Multi-Repo Pil
 description: "Proposal-grade spec for the rolled-forward phase-012 candidate scope — the real non-scratch multi-repo pilot plus the Repeat/GA lifecycle protocols with their reserved gates, authored 2026-09-30 after the v1.3.0 release; awaiting activation gate H-PHASE-014."
 tags: [spec, ecosystem-cycle, ga, pilot, phase-014]
 status: draft
-last_audited: "2026-09-30"
+last_audited: "2026-10-08"
 authoritative_source: NA
-version: 1.0.0
-spec_version: "1.0.0"
+version: 1.0.1
+spec_version: "1.0.1"
 created_at: "2026-09-30T10:24:00Z"
-updated_at: "2026-09-30T10:24:00Z"
+updated_at: "2026-10-08T10:33:25Z"
 change_log:
+  - version: "1.0.1"
+    date: "2026-10-08T10:33:25Z"
+    summary: "PLAN AMENDMENT per methodology/00_planning.md Section 9 (factual re-baseline; design intent unchanged), routed through the Planner and applied in the v1.4.0 post-release refresh under operator decision D1 (verbatim 'proceed with the logic next steps to complete the backlog.', 2026-10-08), the authorization event recorded in .agent/run_state.json history (operator_gate_decision at 2026-10-08T10:30:34Z) before the act per NDEBT-018 -- not H-PHASE-014. The operator-authorized out-of-phase v1.4.0 release (tag object bb32064 at 9edd5d0) falsified two premises authored at v1.3.0: (1) the pilot pin -- feature 100 now targets the released immutable tag v1.4.0, the latest, which also carries the draft ecosystem/06 and 08 documents that feature 099 activates; (2) the tag-absence acceptance criterion -- retargeted to v1.5.0, the next MINOR, preserving its meaning (phase 014 cuts no release; the pipeline never self-tags). Scope, features, dependencies, estimates (2200) and status (draft) are unchanged; the 'no release is prepared by phase 014' gate text stays, still true. PATCH per the product_spec_013 1.1.2 precedent (factual correction of acceptance-test commands, design intent unchanged); .agent/feature_list_014.json spec_version moves to 1.0.1 in lockstep."
   - version: "1.0.0"
     date: "2026-09-30T10:24:00Z"
     summary: "Initial phase-014 proposal, authored at v1.3.0 (main 2e122256, tag v1.3.0) realizing the rolled-forward phase-012 candidate scope that stood through phases 012 and 013 (a real non-scratch multi-repo pilot + the remaining lifecycle protocols 06/08 with the reserved H-CONSOLIDATION/H-GA gates). The two protocol documents are authored ahead of activation, proposal-grade (status draft): ecosystem/06_simplification_review.md and ecosystem/08_ga_gate.md. Features 099-102, DAG roots {099, 100}, original_estimate_lines 2200. No feature may enter contract negotiation before activation; current_phase remains 013-definition-of-done (complete) and .agent/run_state.json is untouched until then."
@@ -55,7 +58,7 @@ Phase 014 delivers four features:
    by moving them reserved → decided (DEFINED/OUTSTANDING) in
    `docs/planning/operator_gates.md`, mirroring features 061/080/081.
 2. **100 — the real, non-scratch multi-repo ecosystem pilot at the released immutable
-   tag v1.3.0.** The operator-designated real repositories — the framework hardcodes
+   tag v1.4.0.** The operator-designated real repositories — the framework hardcodes
    none; each member adopted/upgraded under a recorded per-member `H-CONSUMER-UPGRADE`
    decision BEFORE its re-bootstrap, per `NDEBT-018`; each member operates in its own
    isolated worktree, never on a member's main branch; Preflight → Baseline → Audit
@@ -105,7 +108,7 @@ each member's own governance state, not framework state.
 ## Feature DAG
 
 - **099** — the activation wave (06/08 active + registration + gate definitions). Root.
-- **100** — the real, non-scratch multi-repo pilot at tag v1.3.0. Root.
+- **100** — the real, non-scratch multi-repo pilot at tag v1.4.0. Root.
 - **101** — the first real simplification review. Depends on 100.
 - **102** — GA-readiness assessment (no declaration), next-candidate refinement, and
   phase close. Depends on 099, 100, 101.
@@ -126,9 +129,10 @@ Phase-level acceptance is the union of every feature's acceptance tests in
 - The phase-014 feature DAG validates acyclic.
 - `docs/planning/phase_014.yaml` validates against `schema/phase.schema.json` at
   status `pending`.
-- At proposal time exactly zero v1.4.0 refs exist (no tag, no release prep — the
-  pipeline never self-tags): `git rev-parse -q --verify refs/tags/v1.4.0` returns
-  non-zero.
+- At proposal time exactly zero v1.5.0 refs exist (no tag, no release prep — the
+  pipeline never self-tags): `git rev-parse -q --verify refs/tags/v1.5.0` returns
+  non-zero. (Re-baselined 2026-10-08 under D1 from the next-MINOR target of the
+  v1.3.0 era, which the operator-authorized out-of-phase v1.4.0 release made false.)
 
 ## Out of scope
 
