@@ -1,0 +1,13 @@
+PYTHONDONTWRITEBYTECODE=1 python3 -c 'import re,sys;P=["CHANGELOG.md","docs/planning/ROADMAP.md","docs/planning/operator_gates.md","docs/planning/manifest.json","docs/planning/phase_014.yaml",".agent/feature_list_014.json",".agent/product_spec_014.md",".agent/run_state.json"];c=chr;R=re.compile("[\x00-\x08\x0b\x0c\x0e-\x1f\x7f\x80-\x9f"+c(0x200b)+"-"+c(0x200f)+c(0x202a)+"-"+c(0x202e)+c(0x2060)+"-"+c(0x2064)+c(0xfeff)+"]");rows=[(p,open(p,"rb").read().decode("utf-8")) for p in P];[print(p,"ctrl="+str(len(R.findall(t))),"CR="+str(t.count("\r")),"TAB="+str(t.count("\t")),"NUL="+str(t.count("\x00"))) for p,t in rows];tot=sum(len(R.findall(t)) for p,t in rows);print("files_checked",len(rows));print("selfcheck_synthetic_expected_3",len(R.findall("a\x07b"+c(0x202e)+"c"+c(0x200b))));print("TOTAL_ctrl",tot);sys.exit(1 if tot else 0)'
+CHANGELOG.md ctrl=0 CR=0 TAB=0 NUL=0
+docs/planning/ROADMAP.md ctrl=0 CR=0 TAB=0 NUL=0
+docs/planning/operator_gates.md ctrl=0 CR=0 TAB=0 NUL=0
+docs/planning/manifest.json ctrl=0 CR=0 TAB=0 NUL=0
+docs/planning/phase_014.yaml ctrl=0 CR=0 TAB=0 NUL=0
+.agent/feature_list_014.json ctrl=0 CR=0 TAB=0 NUL=0
+.agent/product_spec_014.md ctrl=0 CR=0 TAB=0 NUL=0
+.agent/run_state.json ctrl=0 CR=0 TAB=0 NUL=0
+files_checked 8
+selfcheck_synthetic_expected_3 3
+TOTAL_ctrl 0
+EXIT:0

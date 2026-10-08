@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.44.0
+version: 0.45.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.45.0"
+    date: "2026-10-08"
+    summary: "v1.4.0 RELEASED (post-release refresh, the 0.39.0/0.42.0 precedent) + the phase-014 re-baseline under operator decision D1. Release: after PR #63 merged at 9edd5d0, the operator authorized the tag act verbatim ('merged — authorized to tag v1.4.0', recorded in run_state before the act per NDEBT-018); the Orchestrator pushed annotated tag v1.4.0 (tag object bb32064) at that reviewed commit; release.yml run 37763448754 succeeded with the blocking tag-mode close-out passing and published GitHub Release 'Nizam v1.4.0 — Simplification Review & GA Gate protocols, draft (MINOR)' from the [1.4.0] CHANGELOG section at 2026-10-08T10:26:22Z. Current Position: the release-preparation bullet is removed and the latest-released disposition rolls to name v1.4.0 -- keeping exactly one body line matching the close-out gate's V-scoped disposition pattern at V=1.4.0 -- with the v1.3.0 bullet relabelled 'Prior released tag' and the v1.2.1 anomaly bullet relabelled 'Earlier released tag' (both bodies unedited). Phase 014: under D1 (operator verbatim 'proceed with the logic next steps to complete the backlog.', 2026-10-08, recorded in run_state before the act; not H-PHASE-014) the factual re-baseline that the 0.44.0 release-fact paragraph called for is APPLIED in this change -- feature 100's pilot pin v1.3.0 -> v1.4.0 and feature 102's tag-absence assertion v1.4.0 -> v1.5.0 (product_spec_014 1.0.1, feature_list_014, phase_014.yaml, the manifest phase-014 note) -- recorded in a dated paragraph below the unedited banner; phase 014 stays pending/proposed, awaiting H-PHASE-014. The NIP-0003 section's release wording moves to past tense (expected v1.5.0 / v1.6.0 unchanged; the NIP is unedited pending H-NIP). DEBT.md is untouched; the stale Current Position open-debt count (NDEBT-044(e)) is not rolled here."
   - version: "0.44.0"
     date: "2026-10-08"
     summary: "v1.4.0 release preparation (operator-requested 2026-10-08; H-FRAMEWORK-RELEASE sign-off and tag pending): the two proposal-grade ecosystem lifecycle protocol documents landed with the phase-014 proposal (ecosystem/06_simplification_review.md and ecosystem/08_ga_gate.md, status draft, not yet normative -- activation awaits phase-014 feature 099 under H-PHASE-014) are packaged as the next MINOR release; everything else since v1.3.0 is framework-envelope only. Current Position gains the 'Release in preparation: v1.4.0' bullet ahead of the latest-released bullet, which stays unedited -- v1.3.0 remains the latest released tag until the operator tags v1.4.0, and the close-out gate's body pattern is version-scoped, so the v1.3.0 line does not count at V=1.4.0 (the 0.38.0/0.40.0 precedent). The Phase 014 banner gains a dated release-fact paragraph: once v1.4.0 is tagged, feature 102's no-v1.4.0-tag acceptance test, product_spec_014's zero-v1.4.0-refs criterion, and feature 100's v1.3.0 pilot pin are stale, so a Planner re-baseline of the phase-014 artifacts is required before H-PHASE-014 (no phase-014 artifact is edited here). The NIP-0003 queued-candidate section's expected versions roll from v1.4.0 / v1.5.0 to v1.5.0 / v1.6.0 (the NIP itself is unedited pending H-NIP). run_state, manifest and DEBT.md are untouched."
@@ -217,6 +220,25 @@ the real pilot to the released tag `v1.3.0` (`.agent/feature_list_014.json`,
 the phase-014 artifacts is required before `H-PHASE-014` is presented; the release
 preparation edits none of them.
 
+**Re-baseline APPLIED (2026-10-08, v1.4.0 post-release refresh; the paragraphs above
+are unedited).** `v1.4.0` is released (annotated tag object `bb32064` at `9edd5d0`;
+`release.yml` run 37763448754 SUCCESS), so the premises named above became actually
+false: feature 102's tag-absence acceptance test fails once the `v1.4.0` ref exists.
+Under operator decision D1, given 2026-10-08 with the verbatim words
+"proceed with the logic next steps to complete the backlog."
+and recorded in `.agent/run_state.json` as an `operator_gate_decision` before the act per
+NDEBT-018 (D1 is not `H-PHASE-014`), this change applies the factual re-baseline.
+Feature 100's pilot pin moves from `v1.3.0` to `v1.4.0`, the latest released immutable
+tag, which also carries the draft `ecosystem/06`/`08` documents that feature 099
+activates; this supersedes the `v1.3.0` in item 2 of the scope list above. Feature 102's
+tag-absence assertion and the spec's matching criterion move from `v1.4.0` to `v1.5.0`,
+the next MINOR, keeping their meaning: phase 014 cuts no release, and the pipeline never
+self-tags. Edited: `.agent/product_spec_014.md` (1.0.0 → 1.0.1),
+`.agent/feature_list_014.json` (`spec_version` in lockstep),
+`docs/planning/phase_014.yaml`, and the manifest's phase-014 note. Scope, dependencies,
+estimates (2200) and every status are unchanged. Phase 014 stays `pending` / `proposed`
+and is activation-ready, awaiting `H-PHASE-014`.
+
 ## Queued Candidate — NIP-0003: Live Runtime Sessions (proposed phases 015/016, to follow 014) — PROPOSED, awaiting H-NIP
 
 **[NIP-0003](../nips/NIP-0003-live-runtime-sessions.md) is PROPOSED** (2026-10-08,
@@ -237,7 +259,7 @@ tools/, two phases (Recommended)"; Profile "Fold into the SBCL binding (Recommen
 
 **Proposed realization, to follow phase 014.** Phase 015 (normative surface, features
 103–107, design estimate 5,400 lines) releases as the next MINOR (expected v1.5.0; the
-NIP's own text still says v1.4.0, which the 2026-10-08 release preparation takes) and
+NIP's own text still says v1.4.0, which the 2026-10-08 v1.4.0 release took) and
 also rolls up phase 014's unreleased changes. Phase 016 (reference controller and live
 conformance, features 108–113) releases as the next MINOR (expected v1.6.0; the NIP says
 v1.5.0); it requires
@@ -743,23 +765,22 @@ successor, leaving open debt deferred to unscoped "future phases").
   ran green at `SUMMARY: 15 passed, 0 failed` (C1–C15) at the time, and the fixtures
   self-test at 57/57; the hermetic e2e bootstrap harness passed in CI (now including the
   n-case `assert_multirepo`).
-- **Release in preparation: v1.4.0 (MINOR) — awaiting `H-FRAMEWORK-RELEASE`.** Requested
-  by the operator 2026-10-08. The consumer-reaching content since v1.3.0 is exactly the
-  two proposal-grade ecosystem lifecycle protocol documents landed with the phase-014
-  proposal (PR #61) — `ecosystem/06_simplification_review.md` (Repeat) and
-  `ecosystem/08_ga_gate.md` (Promote/GA), both `status: draft` and not yet normative
-  (their activation awaits phase-014 feature 099 under `H-PHASE-014`) — plus their
-  `ecosystem/README.md` rows and `NIZAM.json` ecosystem `key_documents` entries.
-  Everything else since v1.3.0 (the phase-014 Planner artifacts, these planning
-  records, and the NIP-0003 proposal, PR #62) is framework-envelope only. MINOR per
-  `methodology/06_release_train.md` Section 3.2 (new optional protocol documents;
-  nothing that validated under v1.3.0 is invalidated), rounded up per Section 3.4. This
-  release-preparation change synchronizes every C10 version anchor to 1.4.0 and cuts
-  the dated `[1.4.0]` CHANGELOG section; the readiness record
-  (`.agent/evidence/release-readiness-v1.4.0.md`) is written by the Evaluator after
-  independently re-running the checks. The `H-FRAMEWORK-RELEASE` sign-off and tag remain
-  outstanding — the pipeline never self-tags.
-- **Latest released tag: v1.3.0 (MINOR) — RELEASED 2026-09-30 at `2e122256` (PR #60).**
+- **Latest released tag: v1.4.0 (MINOR) — RELEASED 2026-10-08 at `9edd5d0` (PR #63).**
+  After PR #63 merged, the operator authorized the tag act with the verbatim words
+  "merged — authorized to tag v1.4.0"
+  (recorded in `.agent/run_state.json` before the act per NDEBT-018). Under that
+  authorization the Orchestrator pushed the annotated tag `v1.4.0` (tag object `bb32064`,
+  tagged 2026-10-08T10:26:01Z) at the reviewed merge commit; the pipeline never
+  self-tags. `release.yml` run 37763448754 succeeded — the blocking tag-mode close-out
+  passed — and published
+  [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.4.0)
+  'Nizam v1.4.0 — Simplification Review & GA Gate protocols, draft (MINOR)' from the
+  `[1.4.0]` CHANGELOG section at 2026-10-08T10:26:22Z. It packages the proposal-grade
+  `ecosystem/06_simplification_review.md` and `ecosystem/08_ga_gate.md` (both
+  `status: draft`, not yet normative; activation awaits phase-014 feature 099 under
+  `H-PHASE-014`). The README quick-start replayed at `v1.4.0` installed framework
+  version 1.4.0 (`.agent/evidence/release-v1.4.0-tag/06-consumer-quickstart.txt`).
+- **Prior released tag: v1.3.0 (MINOR) — RELEASED 2026-09-30 at `2e122256` (PR #60).**
   The operator-authorized annotated tag `v1.3.0` (H-FRAMEWORK-RELEASE — the tag is the
   operator's act alone; the pipeline never self-tags) points at the reviewed merge
   commit of PR #60 (tagged 2026-09-30T10:12:19Z); `release.yml` run 36700976611
@@ -771,7 +792,7 @@ successor, leaving open debt deferred to unscoped "future phases").
   **v1.2.1 (PATCH) — tagged 2026-09-19 at `250fdd9` (PR #59)**, the anomaly recorded
   honestly below, and **v1.2.0 (MINOR) — released 2026-09-17 at `7441ffa` (PR #58, run
   35232527341)**.
-- **Prior released tag: v1.2.1 (PATCH) — tagged 2026-09-19; the recorded anomaly.** Its
+- **Earlier released tag: v1.2.1 (PATCH) — tagged 2026-09-19; the recorded anomaly.** Its
   `release.yml` run 35456401143 FAILED the blocking tag-mode close-out
   (`FAIL tag v1.2.1 matches NIZAM.json framework.version at tag (1.2.0)` — no
   `[1.2.1]` CHANGELOG section was cut; anchors stayed at `1.2.0`); the GitHub Release

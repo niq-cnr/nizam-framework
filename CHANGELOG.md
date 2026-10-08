@@ -7,6 +7,22 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **v1.4.0 post-release refresh and phase-014 re-baseline** (planning records only;
+  nothing `bootstrap.sh` injects changes). `docs/planning/ROADMAP.md` (v0.45.0) rolls
+  Current Position to name `v1.4.0` as the latest released tag (annotated tag object
+  `bb32064` at `9edd5d0`, PR #63; `release.yml` run 37763448754 succeeded with the
+  blocking tag-mode close-out passing; Release published 2026-10-08T10:26:22Z) and
+  removes the preparation bullet; `docs/planning/operator_gates.md` (v0.26.0) records
+  `H-FRAMEWORK-RELEASE` EXECUTED for v1.4.0 on the existing row. Under operator decision
+  D1 (recorded in `run_state` before the act; not `H-PHASE-014`), the pending phase-014
+  proposal is re-baselined for the facts v1.4.0 made stale: feature 100's pilot pin moves
+  from `v1.3.0` to `v1.4.0`, and feature 102's tag-absence assertion moves from `v1.4.0`
+  to `v1.5.0`, the next MINOR (`.agent/product_spec_014.md` 1.0.1,
+  `.agent/feature_list_014.json`, `docs/planning/phase_014.yaml`, and the manifest's
+  phase-014 note). Phase 014 stays `pending` / `proposed`, awaiting `H-PHASE-014`.
+
 ## [1.4.0] - 2026-10-08
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): consumers receive two

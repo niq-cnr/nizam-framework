@@ -1,0 +1,6 @@
+PYTHONDONTWRITEBYTECODE=1 python3 -c 'import json,yaml,jsonschema as j,copy,sys;L=lambda p:json.load(open(p));fs,ps=L("schema/feature_list.schema.json"),L("schema/phase.schema.json");f=L(".agent/feature_list_014.json");y=yaml.safe_load(open("docs/planning/phase_014.yaml"));j.Draft202012Validator.check_schema(fs);j.Draft202012Validator.check_schema(ps) if "2020-12" in ps.get("$schema","") else j.validators.validator_for(ps).check_schema(ps);j.validate(f,fs);print("feature_list_014 VALID against schema/feature_list.schema.json");j.validate(y,ps);print("phase_014.yaml VALID against schema/phase.schema.json");bf=copy.deepcopy(f);bf["features"][0].pop("status",None);bf["bogus_key"]=1;by=copy.deepcopy(y);by["bogus_key"]=1;e=[];[e.append(n) for n,d,s in (("feature_list_neg",bf,fs),("phase_neg",by,ps)) if not j.Draft202012Validator(s).is_valid(d)];print("negative_controls_rejected",e);print("features",len(f["features"]),"steps",len(y["steps"]),"spec_version",f["spec_version"],"phase_status",y["status"]);sys.exit(0 if len(e)==2 else 1)'
+feature_list_014 VALID against schema/feature_list.schema.json
+phase_014.yaml VALID against schema/phase.schema.json
+negative_controls_rejected ['feature_list_neg', 'phase_neg']
+features 4 steps 4 spec_version 1.0.1 phase_status pending
+EXIT:0

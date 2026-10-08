@@ -1,0 +1,29 @@
+PYTHONDONTWRITEBYTECODE=1 bash -c "$(python3 -c 'import re,sys;t=open(".agent/evidence/release-v1.4.0-post-release/00-refresh-plan.md").read();print("\n".join(re.search(r"\*\*#"+re.escape(i)+r"\*\*.*?\n```sh\n(.*?)\n```",t,re.S).group(1) for i in sys.argv[1:]))' V12 V12-control || echo "echo EXTRACT-FAILED; exit 99")"
+scope_guard_exit=0
+positive_exit=0
+UNEXPECTED: ?? docs/nips/NIP-0004-x.md
+neg_untracked_forbidden_exit=1
+UNEXPECTED: M README.md
+neg_tracked_forbidden_exit=1
+UNEXPECTED: M docs/planning/DEBT.md
+neg_debt_exit=1
+UNEXPECTED: M .agent/product_spec_013.md
+neg_other_agent_file_exit=1
+UNEXPECTED: ?? .agent/evidence/release-v1.4.0-post-release-x/evil.txt
+neg_sibling_prefix_exit=1
+UNEXPECTED: ?? .agent/evidence/release-v1.4.0-post-release/sub/evil.txt
+neg_subdir_exit=1
+UNEXPECTED: ?? .agent/evidence/release-v1.4.0-tag/07-extra.txt
+neg_tag_dir_extra_exit=1
+UNEXPECTED: ?? .agent/validator/release-v1.4.0-refresh-../../ecosystem/x.json
+neg_traversal_exit=1
+UNEXPECTED: ?? .agent/validator/release-v1.4.0-plan2.json
+neg_validator_name_exit=1
+MISSING: M docs/planning/phase_014.yaml
+neg_missing_file_exit=1
+MISSING: M .agent/run_state.json
+neg_missing_run_state_exit=1
+UNEXPECTED: D .agent/product_spec_014.md
+MISSING: M .agent/product_spec_014.md
+neg_wrong_status_exit=1
+EXIT:0

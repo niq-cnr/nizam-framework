@@ -1,0 +1,186 @@
+{
+  "review": "release-v1.4.0-refresh",
+  "verdict": "pass",
+  "units": [
+    {
+      "id": "V12-start",
+      "file": ".agent/evidence/release-v1.4.0-post-release/01-v12-scope-guard-start.txt",
+      "expected": "no UNEXPECTED/MISSING lines; scope_guard_exit=0 (run before any evaluator write)",
+      "observed": "no UNEXPECTED/MISSING lines; scope_guard_exit=0; EXIT:0",
+      "matches_expectation": true
+    },
+    {
+      "id": "V1",
+      "file": ".agent/evidence/release-v1.4.0-post-release/02-v1-validate.txt",
+      "expected": "SUMMARY: 16 passed, 0 failed; exit=0 (PIPESTATUS[0])",
+      "observed": "SUMMARY: 16 passed, 0 failed; exit=0",
+      "matches_expectation": true
+    },
+    {
+      "id": "V2",
+      "file": ".agent/evidence/release-v1.4.0-post-release/03-v2-fixtures-self-test.txt",
+      "expected": "SELF-TEST OK: 79/79 fixtures accounted for, 0 failed; exit=0",
+      "observed": "SELF-TEST OK: 79/79 fixtures accounted for, 0 failed; exit=0",
+      "matches_expectation": true
+    },
+    {
+      "id": "V3",
+      "file": ".agent/evidence/release-v1.4.0-post-release/04-v3-closeout-pr.txt",
+      "expected": "5 PASS lines, 'all internal version anchors agree with V=1.4.0 (--mode pr).', exit=0",
+      "observed": "5 PASS lines, agree with V=1.4.0 (--mode pr), exit=0",
+      "matches_expectation": true
+    },
+    {
+      "id": "V4",
+      "file": ".agent/evidence/release-v1.4.0-post-release/05-v4-closeout-tag.txt",
+      "expected": "9 then exit=0 (PIPESTATUS[0])",
+      "observed": "9; exit=0",
+      "matches_expectation": true
+    },
+    {
+      "id": "V5",
+      "file": ".agent/evidence/release-v1.4.0-post-release/06-v5-roadmap-counts.txt",
+      "expected": "1 0 0 1 1 1 0",
+      "observed": "1 0 0 1 1 1 0",
+      "matches_expectation": true
+    },
+    {
+      "id": "V6",
+      "file": ".agent/evidence/release-v1.4.0-post-release/07-v6-brand-token.txt",
+      "expected": "0 (grep exit 1 expected on zero matches)",
+      "observed": "0; EXIT:1 (grep -ic on zero matches)",
+      "matches_expectation": true
+    },
+    {
+      "id": "V6-control",
+      "file": ".agent/evidence/release-v1.4.0-post-release/08-v6-control.txt",
+      "expected": "2",
+      "observed": "2",
+      "matches_expectation": true
+    },
+    {
+      "id": "V7",
+      "file": ".agent/evidence/release-v1.4.0-post-release/09-v7-schemas.txt",
+      "expected": "schemas OK; exit=0",
+      "observed": "schemas OK; exit=0",
+      "matches_expectation": true
+    },
+    {
+      "id": "V8",
+      "file": ".agent/evidence/release-v1.4.0-post-release/10-v8-retargets.txt",
+      "expected": "4 grep counts all :0; 102_retarget/100_pin/yaml_pin/spec_pin True; retargeted_102_test_exit=0 with no SHA",
+      "observed": "4 counts :0; all four True; retargeted_102_test_exit=0; no SHA printed",
+      "matches_expectation": true
+    },
+    {
+      "id": "V9",
+      "file": ".agent/evidence/release-v1.4.0-post-release/11-v9-invariants.txt",
+      "expected": "five lines each ending True",
+      "observed": "features_invariant, phase_yaml_invariant, manifest_invariant, spec_status_invariant, drift_gate_lockstep all True",
+      "matches_expectation": true
+    },
+    {
+      "id": "V10",
+      "file": ".agent/evidence/release-v1.4.0-post-release/12-v10-frontmatter.txt",
+      "expected": "roadmap_fm 0.45.0 0.45.0; gates_fm 0.26.0 0.26.0; gates_row True x5; changelog True True",
+      "observed": "identical to expected",
+      "matches_expectation": true
+    },
+    {
+      "id": "V11",
+      "file": ".agent/evidence/release-v1.4.0-post-release/13-v11-forbidden-paths.txt",
+      "expected": "0",
+      "observed": "0",
+      "matches_expectation": true
+    },
+    {
+      "id": "V12-control",
+      "file": ".agent/evidence/release-v1.4.0-post-release/14-v12-control.txt",
+      "expected": "positive_exit=0; every neg_*_exit=1 with matching UNEXPECTED:/MISSING: line (plan prose says 13 negatives)",
+      "observed": "positive_exit=0; all 12 neg_*_exit=1 each with UNEXPECTED:/MISSING: line; the block defines 12 negatives, not 13 (plan prose miscount, non-blocking, see adversarial_notes)",
+      "matches_expectation": true
+    },
+    {
+      "id": "A-controlchars",
+      "file": ".agent/evidence/release-v1.4.0-post-release/15-control-chars.txt",
+      "expected": "0 control characters in each of the 7 generator files and run_state.json",
+      "observed": "ctrl=0, CR=0, TAB=0, NUL=0 in all 8 files; synthetic self-check detected 3/3; TOTAL_ctrl 0",
+      "matches_expectation": true
+    },
+    {
+      "id": "B-roadmap-independent",
+      "file": ".agent/evidence/release-v1.4.0-post-release/16-roadmap-disposition-independent.txt",
+      "expected": "exactly one 'Latest released tag: v1.4.0' body line and zero 'Release in preparation:' lines",
+      "observed": "awk-based body split (independent of release_closeout.document_body): latest_v1.4.0=1, release_in_preparation=0 (also 0 case-insensitive), latest_any_version=1, awk self-check 1; EXIT:0",
+      "matches_expectation": true
+    },
+    {
+      "id": "C-closeout-tag",
+      "file": ".agent/evidence/release-v1.4.0-post-release/17-closeout-tag-full.txt",
+      "expected": "release_closeout.py --mode tag --tag v1.4.0 passes 9/9",
+      "observed": "9 PASS lines, no FAIL, 'tag v1.4.0's anchors are internally consistent'; EXIT:0",
+      "matches_expectation": true
+    },
+    {
+      "id": "D-schema-feature-phase",
+      "file": ".agent/evidence/release-v1.4.0-post-release/18-schema-feature-list-phase.txt",
+      "expected": "feature_list_014.json valid vs feature_list.schema.json; phase_014.yaml valid vs phase.schema.json",
+      "observed": "both VALID; negative controls (dropped status + bogus key / bogus key) both rejected; EXIT:0",
+      "matches_expectation": true
+    },
+    {
+      "id": "E-schema-run-state",
+      "file": ".agent/evidence/release-v1.4.0-post-release/19-schema-run-state.txt",
+      "expected": "run_state.json valid vs run_state.schema.json",
+      "observed": "VALID (Draft202012Validator); negative control rejected; EXIT:0",
+      "matches_expectation": true
+    },
+    {
+      "id": "X-plan-pairs",
+      "file": ".agent/evidence/release-v1.4.0-post-release/20-plan-pairs-applied.txt",
+      "expected": "(extra) all 23 planned New blocks present exactly once in 7 files, Current blocks gone",
+      "observed": "pairs 23 files 7 bad 0; EXIT:0",
+      "matches_expectation": true
+    },
+    {
+      "id": "X-diff-tag-state",
+      "file": ".agent/evidence/release-v1.4.0-post-release/21-diff-numstat-tag-state.txt",
+      "expected": "(extra) 7 generator files + run_state only; tag v1.4.0 intact at 9edd5d0; no v1.5.0 ref",
+      "observed": "numstat 8 tracked paths (generator 84+/40-, run_state 16/1); tag^{commit}=9edd5d0, type tag; v1.5.0 refs 0 remote/0 local; EXIT:0",
+      "matches_expectation": true
+    },
+    {
+      "id": "X-validate-full",
+      "file": ".agent/evidence/release-v1.4.0-post-release/22-validate-full.txt",
+      "expected": "(extra) untailed validate.sh shows C1-C16 PASS",
+      "observed": "C1-C16 all PASS, SUMMARY 16 passed, 0 failed; EXIT:0",
+      "matches_expectation": true
+    },
+    {
+      "id": "X-fixtures-full",
+      "file": ".agent/evidence/release-v1.4.0-post-release/23-fixtures-self-test-full.txt",
+      "expected": "(extra) untailed self-test, no failing line",
+      "observed": "93 OK lines, 0 FAIL/ERROR prefixed lines, SELF-TEST OK 79/79; EXIT:0",
+      "matches_expectation": true
+    },
+    {
+      "id": "V12-end",
+      "file": ".agent/evidence/release-v1.4.0-post-release/24-v12-scope-guard-end.txt",
+      "expected": "no UNEXPECTED/MISSING lines; scope_guard_exit=0",
+      "observed": "no UNEXPECTED/MISSING lines; scope_guard_exit=0; EXIT:0",
+      "matches_expectation": true
+    }
+  ],
+  "adversarial_notes": [
+    "V6 non-vacuity: V6-control feeds a synthetic added line with the assembled brand token, a .svc host, a '+++' header and a context line through the identical grep tail and yields 2 (brand + .svc counted, header and context excluded), so the 0 on the real diff is not a dead pipeline. V6 EXIT:1 is the grep no-match status, as the plan declares.",
+    "V12 negatives: all 12 negatives in the block (untracked forbidden path, tracked README, DEBT.md, other .agent file, sibling-prefix dir, sub-directory, extra tag-dir file 07, '..' traversal, wrong validator filename, missing phase_014.yaml, missing run_state, wrong status D) exit 1 with the matching UNEXPECTED:/MISSING: line; positive input exits 0. Plan prose says 13 negatives but the fenced block defines 12; this is a documentation miscount, not an execution gap.",
+    "V12 ordering: first run happened before any evaluator write to the repo (my scratch work lives in the session scratchpad); the end run happened after all evidence files 01-23 existed, so those names were proven to be allowlisted. The verdict JSON name also matches the allowlist regex [A-Za-z0-9._-]+ and was re-checked after being written (see the final sanity run in the transcript).",
+    "Tail/grep hiding: V1/V2 use tail -1, V4 uses grep -c; PIPESTATUS[0] reports the producer status, and I additionally ran validate.sh and fixtures_self_test.sh untailed (files 22, 23) with their own exit status and checked for FAIL lines. V4 was supplemented by file 17 (full tag-mode output, own exit). V8's git ls-remote is wrapped only in my extra check 21 via wc -l (a network failure would show 0); V8's own assertion is the local ref test, and a local for-each-ref check agrees.",
+    "Harness-failure vacuity found and fixed in my own tooling: my first extractor regex failed on V9 because its label spans two lines, and the failed command substitution would have produced an empty script with EXIT:0 (a vacuous pass). I fixed the regex and made the invocation print EXTRACT-FAILED and exit 99 on any extraction failure; all evidence 02-14 and 24 were regenerated with the fixed invocation and outputs for V1-V8, V10-V12 were byte-identical to the first run (01 is the pre-write run with the original extractor, which matched V12 correctly).",
+    "EXIT markers: for blocks that end in an echo trailer (V1, V2, V4, V7, V8, V12 family) the EXIT line is the status of the final echo (0) and so is not informative alone; the real inner statuses are in the output (exit=, scope_guard_exit=) and independently confirmed by the untailed direct runs (files 17, 22, 23).",
+    "Control-char check (a) covers C0 except LF, DEL, C1, zero-width/bidi/BOM code points; counts for CR/TAB/NUL were also 0. The check regex was itself exercised on a synthetic string (3/3 detected). Note the tool layer converts \\uXXXX escapes in my commands to literal characters, so the regex is built from chr() in ASCII-only source.",
+    "Independence: check (b) uses awk, not release_closeout.document_body; check X-plan-pairs re-derives all 23 pairs from the plan text and asserts New count == 1 and Current absent (R4's Current is a prefix of its New and remains once, as designed). Mode B's counts (84+/40- generator, 16/1 run_state) were re-observed by numstat.",
+    "Not covered and not claimed: no commit was made; no tracked file modified by the evaluator (git status identical before and after); no e2e run (the plan declares none, since no payload file changes, V11 = 0). Coverage warning not applicable (documentation/planning repo, no coverage tool). Flaky/regression baseline: a single deterministic run each; all outputs reproduced identically across two runs where repeated."
+  ],
+  "required_fixes": []
+}

@@ -1,0 +1,33 @@
+set -euo pipefail; d=$(mktemp -d); cd "$d"; git init -q; curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.4.0/bootstrap.sh -o bootstrap.sh; chmod +x bootstrap.sh; GOVERNANCE_TAG=v1.4.0 ./bootstrap.sh --tag v1.4.0; echo "--- post-install assertions"; python3 -c "import json;v=json.load(open(\".nizam/NIZAM.json\"))[\"framework\"][\"version\"];print(\"installed framework.version =\",v);assert v==\"1.4.0\""; for p in ecosystem/06_simplification_review.md ecosystem/08_ga_gate.md methodology/README.md tools/SKILL.md; do test -s ".nizam/$p" && echo "present: .nizam/$p"; done; grep -m1 "^status:" .nizam/ecosystem/06_simplification_review.md
+bootstrap.sh: cloning https://github.com/niq-cnr/nizam-framework.git at pinned tag v1.4.0 (--depth 1)...
+Cloning into '/home/cnross/.tmp/claude-1000/-home-cnross-workspace02-nizam-framework/b87ce099-80d9-4a17-8331-ff678f08d08a/scratchpad/nizam-bootstrap-clone.CIcWuS'...
+Note: switching to '9edd5d0e0d9e0489c961407d306ae30541c27dd5'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: staging governance payload in ./.nizam-stage.ISrwiB...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 82 indexed path(s) resolve under ./.nizam-stage.ISrwiB.
+bootstrap.sh: recording provenance (framework_version=1.4.0, tag=v1.4.0, resolved_sha=9edd5d0e0d9e0489c961407d306ae30541c27dd5)...
+bootstrap.sh: install complete. Governance payload version 1.4.0 (tag v1.4.0) is now at '.nizam'.
+--- post-install assertions
+installed framework.version = 1.4.0
+present: .nizam/ecosystem/06_simplification_review.md
+present: .nizam/ecosystem/08_ga_gate.md
+present: .nizam/methodology/README.md
+present: .nizam/tools/SKILL.md
+status: draft
+EXIT:0

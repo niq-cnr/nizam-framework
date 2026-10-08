@@ -1,0 +1,11 @@
+gh run view 37763448754 --json conclusion,event,headBranch,headSha,url,jobs --jq '"conclusion="+.conclusion+" event="+.event+" ref="+.headBranch+" sha="+.headSha+" url="+.url, (.jobs[].steps[]|"  step: "+.name+" = "+(.conclusion//"-"))'
+conclusion=success event=push ref=v1.4.0 sha=9edd5d0e0d9e0489c961407d306ae30541c27dd5 url=https://github.com/niq-cnr/nizam-framework/actions/runs/37763448754
+  step: Set up job = success
+  step: Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 = success
+  step: Resolve and verify the tag = success
+  step: Verify release close-out (internal version consistency) = success
+  step: Extract the tag's CHANGELOG section = success
+  step: Create or update the GitHub Release = success
+  step: Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 = success
+  step: Complete job = success
+EXIT:0

@@ -1,0 +1,5 @@
+PYTHONDONTWRITEBYTECODE=1 python3 -c 'import json,jsonschema as j,copy,sys;L=lambda p:json.load(open(p));s=L("schema/run_state.schema.json");r=L(".agent/run_state.json");V=j.validators.validator_for(s);V.check_schema(s);V(s).validate(r);print("run_state.json VALID against schema/run_state.schema.json (",V.__name__,")");b=copy.deepcopy(r);b.pop("status",None);b["bogus_key"]=1;neg=not V(s).is_valid(b);print("negative_control_rejected",neg);print("status",r["status"],"current_phase",r["current_phase"],"updated_at",r["updated_at"],"history_len",len(r["history"]));sys.exit(0 if neg else 1)'
+run_state.json VALID against schema/run_state.schema.json ( Draft202012Validator )
+negative_control_rejected True
+status complete current_phase 013-definition-of-done updated_at 2026-10-08T10:30:34Z history_len 231
+EXIT:0

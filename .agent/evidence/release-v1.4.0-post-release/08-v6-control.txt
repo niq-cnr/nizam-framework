@@ -1,0 +1,3 @@
+PYTHONDONTWRITEBYTECODE=1 bash -c "$(python3 -c 'import re,sys;t=open(".agent/evidence/release-v1.4.0-post-release/00-refresh-plan.md").read();print("\n".join(re.search(r"\*\*#"+re.escape(i)+r"\*\*.*?\n```sh\n(.*?)\n```",t,re.S).group(1) for i in sys.argv[1:]))' V6-control || echo "echo EXTRACT-FAILED; exit 99")"
+2
+EXIT:0
