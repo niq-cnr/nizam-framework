@@ -7,6 +7,24 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-08
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): consumers receive two
+new ecosystem lifecycle protocol documents, `ecosystem/06_simplification_review.md`
+(Repeat: recurring simplification review) and `ecosystem/08_ga_gate.md` (Promote/GA:
+evidence-gated GA declaration criteria), together with their `ecosystem/README.md` rows
+and `NIZAM.json` ecosystem `key_documents` entries. Both documents ship proposal-grade
+(`status: draft`) and are **not yet normative**: their activation (the draft → active
+flip, capability registration, and the definition of the reserved `H-CONSOLIDATION` /
+`H-GA` gates) awaits phase-014 feature 099 under the operator gate `H-PHASE-014`. This is
+purely additive, new-optional surface -- nothing that validated under v1.3.0 is
+invalidated. Everything else in this release is framework-envelope only (planning
+records, the phase-014 Planner artifacts, and the NIP-0003 proposal), none of which
+`bootstrap.sh` injects. The NIP-0003 entry below quotes that proposal's own expectation
+of v1.4.0 / v1.5.0 for its phases 015/016; because this release takes v1.4.0, those
+phases would now release as v1.5.0 / v1.6.0 (the NIP itself stays unedited pending
+`H-NIP`).
+
 ### Added
 
 - **Phase 014 proposal (GA track — the real multi-repo pilot and the remaining

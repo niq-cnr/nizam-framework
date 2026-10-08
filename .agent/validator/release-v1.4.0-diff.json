@@ -1,0 +1,20 @@
+{
+  "review": "release-v1.4.0-prep-diff",
+  "feature": null,
+  "contract_id": null,
+  "revision_reviewed": 1,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "git diff HEAD (HEAD=669fb72, nothing committed): exactly 7 files changed, 69 insertions(+), 13 deletions(-). Per-file insertions: CHANGELOG 18, CONTEXT 4, NIZAM 1, README 4, guide 2, ROADMAP 35, operator_gates 5. Per-file deletions: CONTEXT 1, NIZAM 1, README 4, guide 2, ROADMAP 3, operator_gates 2. Matches the planned E1-E7 shapes exactly.",
+    "All 18 hunks compared line-by-line with the approved plan's new-text blocks: E1 CHANGELOG.md@7; E2 NIZAM.json:4; E3a/b CONTEXT.md:5,8; E4a-d README.md:22,24,27,44 (line 45 migration link unchanged); E5a/b docs/guide/index.html:6,670; E6a/b/d/e/c ROADMAP.md:5,8,203,224,730 (the 'Latest released tag: v1.3.0' bullet byte-unchanged in context); E7a/b/c operator_gates.md:5,8,134 (row replaced in place, prefix identical through '10:12:30Z.'). Visual diff comparison; per-file control-character counts (E8 item 5) are owed by the @evaluator.",
+    "Guard part B on `git status --porcelain --untracked-files=all`: 7 x M on the generator files; '?? .agent/evidence/release-v1.4.0-prep/00-release-prep-plan.md' (allowed); '?? .agent/validator/release-v1.4.0-plan.json' (allowed); nothing else -> scope_guard_exit=0. No forbidden path touched (run_state.json, manifest.json, DEBT.md, docs/nips, phase-014 artifacts, methodology/, schema/, tools/, standard/, templates/, ecosystem/, registry/, .github/, bootstrap.sh).",
+    "Close-out by inspection at V=1.4.0 (release_closeout.py:158-284): groups 1-5 satisfied; tag mode at v1.4.0 will see the same anchors at the merge commit.",
+    "C5: no lowercase brand token, '.svc' or 'cluster.local' in any added line of CHANGELOG.md, NIZAM.json, README.md or CONTEXT.md.",
+    "OWED by the @evaluator (executed): validate.sh 16/16; fixtures_self_test 79/79; release_closeout --mode pr at V=1.4.0; e2e_bootstrap_test.sh (exercises HEAD 669fb72, record the SHA); #5a exit=1; #5b empty and exit=0; #6-#10 and #10-control; #11 and #11b with the 6-case negative control; #12 = 0; #13 exit=0; control-character and case-insensitive brand sweeps; then release-readiness-v1.4.0.md and files 01-05.",
+    "Carried (non-blocking): run guard part B before the evidence and verdict files are committed (committed files show as 'A' and the guard fails closed). The plan's §3 MUST NOT TOUCH prose does not name the .agent/validator/release-v1.4.0-*.json exception; part B is authoritative.",
+    "Orchestrator note: no numbered contract exists for this out-of-phase release preparation (run_state active_contract_id is null); the Mode-A-approved plan served as the contract, matching the v1.2.0/v1.3.0 out-of-phase release precedents."
+  ],
+  "final_verdict": {"approved": true, "feature": null, "summary": "APPROVED (Mode B). git diff HEAD contains exactly the 18 planned E1-E7 edits across the 7 approved files (69+/13-), verbatim against the approved plan, with no hunk outside E1-E7. Guard part B passes on the current tree; no forbidden path touched. Close-out groups 1-5 satisfied at V=1.4.0 by inspection. The operator_gates row is appended in place with the verbatim quote and 'tag authorization and the tag remain OUTSTANDING'. No brand token added to the C5-swept files. Next: the @evaluator runs plan §4 verbatim and writes the readiness record and files 01-05."}
+}
