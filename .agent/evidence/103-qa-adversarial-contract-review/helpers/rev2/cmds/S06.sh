@@ -1,0 +1,20 @@
+python3 - <<'PY'
+import json, re, subprocess, sys
+BASE = '64444289ad3e183dab60f3307da1c8d70a68ebd0'
+P = json.load(open('.agent/contracts/103.json'))['design_notes']['pinned_texts']
+run = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout
+norm = lambda x: ' '.join(x.split())
+old, new = run('git', 'show', BASE + ':CHANGELOG.md'), open('CHANGELOG.md').read()
+bullet = norm(P['changelog_bullet'])
+bad = []
+n = norm(new)
+if n.count(bullet) != 1: bad.append('the pinned bullet does not occur exactly once')
+if norm(n.replace(bullet, '', 1)) != norm(old): bad.append('CHANGELOG.md differs from base by more than the pinned bullet')
+unreleased = new.split('## [Unreleased]')[1].split('\n## [')[0]
+if bullet not in norm(unreleased): bad.append('the pinned bullet is not under [Unreleased]')
+if re.findall(r'^## \[[^\]]+\].*$', new, re.M) != re.findall(r'^## \[[^\]]+\].*$', old, re.M): bad.append('a version heading was added, removed or altered')
+if json.load(open('NIZAM.json'))['framework']['version'] != '1.4.0': bad.append('framework.version moved from 1.4.0')
+if subprocess.run(['git', 'diff', '--quiet', BASE, '--', 'NIZAM.json', 'tools/skill.json']).returncode != 0: bad.append('NIZAM.json or tools/skill.json changed')
+print('problems:', bad)
+sys.exit(1 if bad else 0)
+PY

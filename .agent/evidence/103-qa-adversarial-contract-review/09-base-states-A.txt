@@ -1,0 +1,116 @@
+NIZAM_EVAL_SCRATCH=<scratchpad>/work bash .agent/evidence/103-qa-adversarial-contract-review/helpers/rev2/09-base-states-A.sh
+== tree: HEAD=64444289ad3e183dab60f3307da1c8d70a68ebd0 ; status:  M .agent/contracts/103.json 
+suite rc=1
+Ran 54 tests in 4.557s
+FAILED (failures=5)
+FAIL result lines: 5
+skipped lines: 0
+== AT4 base detail (amended AT4: both mutations must be applied, mutated suite fails with 40 != 0, no UNSUPPORTED line):
+### AT4 rc=1 (5.5s)
+      | FAIL: test_linux_sandbox_blocks_cross_trial_files_and_network (__main__.SemanticMutationTests.test_linux_sandbox_blocks_cross_trial_files_and_network)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-v4u5vbjz/repo/tools/test_convergent_review.py", line 786, in test_linux_sandbox_blocks_cross_trial_files_and_network
+      |     self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+      | AssertionError: 40 != 0 : 
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 5.241s
+      | 
+      | FAILED (failures=1)
+    PASS exit status is non-zero
+    FAIL output matches '^test_linux_sandbox_blocks_cross_trial_files_and_network.*UNSUPPORTED'
+    scratch_run: EXPECTATION FAILED; scratch removed: True
+== all checks:
+### AT1 rc=1 (4.6s)
+    isolation available: False exit: 1 FAIL/ERROR: ['test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'te
+### AT2 rc=1 (0.1s)
+    isolation available: False exit: 2 FAIL/ERROR: []
+### AT3 rc=1 (0.3s)
+      |                                  [tests ...]
+      | test_convergent_review.py: error: unrecognized arguments: --allow-unsupported-isolation
+    PASS exit status is non-zero
+    FAIL output matches '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))'
+    scratch_run: EXPECTATION FAILED; scratch removed: True
+### AT4 rc=1 (5.3s)
+      | 
+      | FAILED (failures=1)
+    PASS exit status is non-zero
+    FAIL output matches '^test_linux_sandbox_blocks_cross_trial_files_and_network.*UNSUPPORTED'
+    scratch_run: EXPECTATION FAILED; scratch removed: True
+### AT5 rc=0 (0.0s)
+### AT6 rc=1 (0.1s)
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+    AssertionError: ['--allow-unsupported-isolation', 'CONFORMANCE: NOT FULL', 'CONFORMANCE: FULL', 'UNSUPPORTED']
+### AT7 rc=0 (11.0s)
+    PASS G2 exactly one SUMMARY line reporting 0 failed
+    PASS G3 SUMMARY passed-count equals [Cn] PASS lines
+    PASS G4 no [Cn] FAIL line
+    PASS G5 every baseline-passing check still passes
+    GATE: PASS (16 checks passing; baseline 16)
+### AT8 rc=0 (25.1s)
+    == ecosystem_reconcile CLI behavior probes ==
+    OK   reconcile   acyclic -> PASS plan(0) C12-valid; cyclic -> FAIL(1); unknown repo -> usage(64)
+    == completeness guard ==
+    ---
+    SELF-TEST OK: 79/79 fixtures accounted for, 0 failed
+### S01 rc=0 (0.2s)
+    verification entries: 26 acceptance tests: 8 supplementary: 18 files_create: 27 files_modify: 4
+    problems: []
+### S02 rc=1 (0.0s)
+    changed: 1 extra: [] modify paths not changed: ['CHANGELOG.md', 'docs/planning/phase_014.yaml', 'tools/README.md', 'tools/test_convergent_review.py'] feature_list violations: []
+### S03 rc=1 (0.1s)
+    step 103 keys: ['description', 'id', 'status'] problems: ['step 103 must gain exactly docs_updated, changelog_entry and evidence, gained []', 'docs_updated != tools/README.md', 'changelog_entry is not the pinned text', 'evidence != .agent/evidence/103/at1-requ
+### S04 rc=1 (0.0s)
+    0.11.0 -> 0.11.0 problems: ['version != 0.12.0', 'change_log head summary is not the pinned text', 'prior change_log entries altered']
+### S05 rc=1 (0.0s)
+    paragraph occurrences in section: 0 problems: ['the pinned paragraph does not occur exactly once inside the Machine Validation section', 'the pinned paragraph does not occur exactly once in the document']
+### S06 rc=1 (0.0s)
+    problems: ['the pinned bullet does not occur exactly once', 'the pinned bullet is not under [Unreleased]']
+### S07 rc=0 (0.1s)
+    guarded files: 14 guarded trees: 4 tracked files under trees at base: 222 problems: []
+### S08 rc=1 (0.1s)
+    tests old/new: 54 54 decorated: 0 problems: ["SemanticMutationTests.test_prompt_evaluator_runs_three_isolated_validated_trials: decorators [] != ['requires_user_namespace_isolation']", "SemanticMutationTests.test_prompt_evaluator_uses_per_trial_packet_copies: 
+### S09 rc=1 (5.1s)
+    required rc=1 probe calls: ['--user --map-root-user --net --ipc --uts --pid --fork --mount-proc /home/cnross/.tmp/claude-1000/-home-cnross-workspace02-nizam-framework/b87ce099-80d9-4a17-8331-ff678f08d08a/scratchpad/work/basecheck/tools/isolated_trial_adapter.p
+    allow rc=2 probe calls: []
+    problems: ['required: not reported UNSUPPORTED on its own line: test_linux_sandbox_blocks_cross_trial_files_and_network, test_linux_sandbox_blocks_execution_of_runner_generated_trial_file, test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_
+### S10 rc=1 (4.9s)
+    rc=1 FAIL lines: ['test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'test_prompt_evaluator_runs_three
+    problems: ['exact run-unsuccessful NOT FULL line missing', "the five tests did not each invoke the sandbox after a successful probe: ['--user --map-root-user --net --ipc --uts --pid --fork --mount-proc /home/cnross/.tmp/claude-1000/-home-cnross-workspace02-niz
+### S11 rc=1 (0.3s)
+    required rc=1
+    allow rc=2
+    Traceback (most recent call last):
+      File "<stdin>", line 38, in <module>
+    AttributeError: module 'ncr_under_test' has no attribute 'probe_user_namespace_isolation'
+### S12 rc=1 (0.5s)
+    problems: ['--help must exit 0 and name the flag (rc=0)', 'unittest pass-through (-k) of a non-isolation test must run 1 test, exit 0 and print FULL (rc=0)', 'selecting one isolation-dependent test must probe once and exit non-zero (rc=1)']
+### S13 rc=1 (0.3s)
+    FAIL output matches '^test_linux_sandbox_blocks_cross_trial_files_and_network\\b.*UNSUPPORTED'
+    FAIL output matches '^CONFORMANCE: NOT FULL \\(UNSUPPORTED isolation-dependent tests: 5; run unsuccessful\\)$'
+    scratch_run: EXPECTATION FAILED; scratch removed: True
+    
+    problems: ['scratch_run expectations did not hold (rc=1)', "unexpected unshare calls: ''"]
+### S14 rc=1 (0.2s)
+    Traceback (most recent call last):
+      File "<stdin>", line 30, in <module>
+    KeyError: 'ISOLATION_PROBE_COMMAND'
+### S15 rc=1 (0.1s)
+    Traceback (most recent call last):
+      File "<stdin>", line 5, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/103/attempt-base.txt'
+### S16 rc=1 (0.1s)
+    kernel.apparmor_restrict_unprivileged_userns: 1
+    branch exercised for AT1/AT2/AT4: restricted-host only; the capable-host branches are discharged by feature 104 AT5-AT8 (AT2 capable branch is recorded as not exercised unless the Evaluator ran it on a capable host)
+    Traceback (most recent call last):
+      File "<stdin>", line 10, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/103/at1-required-mode.txt'
+### S17 rc=1 (0.1s)
+    rc=2 FAIL lines: [] unshare calls: 0
+    problems: ['FAIL lines are not exactly the five isolation-dependent tests: []', 'exact run-unsuccessful NOT FULL line missing', 'the five tests did not each invoke the sandbox after a successful probe: []']
+### S18 rc=1 (4.5s)
+    rc=0 ordinary skipped: ['test_all_review_schemas_reject_backslash_and_c1_identities', 'test_closed_schemas_reject_additive_mutations', 'test_ledger_schema_and_runtime_reject_duplicate_trial_digests', 'test_packet_schema_plus_relational_validator_contract', 'te
+    problems: ['the bare CONFORMANCE: FULL line is missing', "shim log does not show the probe followed by sandbox invocations: ['--user --map-root-user --net --ipc --uts --pid --fork --mount-proc /home/cnross/.tmp/claude-1000/-home-cnross-workspace02-nizam-framew
+EXIT:0
