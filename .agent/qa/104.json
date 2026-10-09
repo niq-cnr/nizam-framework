@@ -1,0 +1,46 @@
+{
+  "feature_id": "104",
+  "qa_pass": true,
+  "checks_run": 20,
+  "checks_passed": 20,
+  "adversarial": {
+    "performed": true,
+    "description": "Evaluator-originated live-run audit (methodology/02 Sec 8; not among the contract's 21 verification items or the 113 contract-review mutants), run by the replayable helper .agent/evidence/104-qa-adversarial-helpers/live_run_audit.py. Trusting only the two run ids on line 1 of the ci-*-run.txt captures, it re-resolves both runs and both job logs LIVE (read-only gh run view) and derives: (P1) the five ISOLATION_DEPENDENT_TESTS, derived by AST from tools/test_convergent_review.py at the positive run's headSha (a278fcd), all executed on the hosted runner and reported 'ok' (live log: 'Ran 54 tests', plain 'OK' with no skipped= suffix, 'CONFORMANCE: FULL', no UNSUPPORTED/skipped text anywhere), and the live log's 54 test lines equal the 54 test functions in the source; (N1) the negative run's convergent_review failure has exactly one FAIL block, test_linux_sandbox_blocks_cross_trial_files_and_network, verdict 'FAILED (failures=1)' over all 54 tests, 'AssertionError: 40 != 0', 'CONFORMANCE: NOT FULL (run unsuccessful)'; (N2) the positive and negative runs ran the identical 54-test set and the only per-test status difference is that one test (ok -> FAIL), the other four isolation-dependent tests are 'ok' on the negative run (so the mutation did not break them and nothing else regressed), and the other three jobs (e2e_bootstrap, fixtures_self_test, validate) succeeded on the negative run.",
+    "result": "PASS (exit 0, problems: []). Positive run 37980556248 (phase/014-104-sandbox-ci @ a278fcdf, job 113989678654) and negative run 37980776642 (throwaway/104-isolation-removal @ e9b7e7b0, job 113990412340) re-derived live; all P1/N1/N2 conditions held. This goes beyond AT6/AT8 (which only grep for presence/absence of markers) and S10/S11 (which compare capture to live and check the mutation diff) by proving per-test execution of the five isolation-dependent tests and single-test attribution of the failure.",
+    "evidence": ".agent/evidence/104-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/104/qa/at1-single-job.txt",
+    ".agent/evidence/104/qa/at2-job-counts.txt",
+    ".agent/evidence/104/qa/at3-sole-validator.txt",
+    ".agent/evidence/104/qa/at4-readme-names-job.txt",
+    ".agent/evidence/104/qa/at5-ci-positive-run.txt",
+    ".agent/evidence/104/qa/at6-ci-positive-log.txt",
+    ".agent/evidence/104/qa/at7-ci-negative-run.txt",
+    ".agent/evidence/104/qa/at8-ci-negative-log.txt",
+    ".agent/evidence/104/qa/at9-validator-gate.txt",
+    ".agent/evidence/104/qa/at10-fixtures-self-test.txt",
+    ".agent/evidence/104/qa/s01-contract-valid-and-verbatim.txt",
+    ".agent/evidence/104/qa/s03-scope-boundary.txt",
+    ".agent/evidence/104/qa/s04-workflow-structure.txt",
+    ".agent/evidence/104/qa/s05-guarded-step-stub.txt",
+    ".agent/evidence/104/qa/s06-docs-pinned.txt",
+    ".agent/evidence/104/qa/s07-changelog-phase-yaml.txt",
+    ".agent/evidence/104/qa/s08-shallow-clone-suite.txt",
+    ".agent/evidence/104/qa/s09-validate-c14.txt",
+    ".agent/evidence/104/qa/s10-ci-evidence-integrity.txt",
+    ".agent/evidence/104/qa/s11-negative-control-integrity.txt",
+    ".agent/evidence/104/qa/validate-final.txt",
+    ".agent/evidence/104-qa-adversarial.txt",
+    ".agent/evidence/104-qa-adversarial-helpers/live_run_audit.py"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. The Evaluator independently re-ran 20 contract verification commands (AT1-AT10 and S01, S03-S11, extracted programmatically from .agent/contracts/104.json rev 3, run strictly one at a time from the repo root against HEAD 58f4d1d with PYTHONDONTWRITEBYTECODE=1 and GH_NO_UPDATE_NOTIFIER=1) and every one exited 0; captures are in .agent/evidence/104/qa/ in the 04 Sec 5 shape (S02 is an attempt-root check and was not re-run). AT5-AT8 and S10/S11 re-fetched the CI runs live via read-only gh. Plus the live-run adversarial audit (PASS). DISCHARGED: feature 104 AT1-AT10; 103 AT1 capable-host branch (positive run 37980556248: required mode, no --allow-unsupported-isolation, hosted runner, CONFORMANCE: FULL, 54 tests OK, zero skips, all five isolation-dependent tests ok); 103 AT4 capable-host branch (negative run 37980776642: isolation-removal mutation makes test_linux_sandbox_blocks_cross_trial_files_and_network fail with 'AssertionError: 40 != 0', and only that test). NOT CLAIMED: NDEBT-041/043/046 closure (Orchestrator's act); this host (AppArmor key 1) is still restricted, so the local run exercised only the guarded-step stub (S05) and not a local capable-host pass; hosted-runner capability is evidenced solely by the live CI logs (guarded step logged 'kernel.apparmor_restrict_unprivileged_userns = 0'). No tracked file was modified by the Evaluator; .agent/run_state.json is Orchestrator-owned. The final bash tools/validate.sh result is recorded in .agent/evidence/104/qa/validate-final.txt."
+  },
+  "dod_ref": "standard/definition_of_done.md"
+}

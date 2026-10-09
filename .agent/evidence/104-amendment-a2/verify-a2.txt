@@ -1,0 +1,28 @@
+python3 .agent/evidence/104-amendment-a2/verify_a2.py --base b8ea889
+PASS at5-single-literal: base AT5 808 chars, new AT5 814 chars; base.replace('phase/014-ga-track', 'phase/014-104-sandbox-ci') == new: True
+    differing span: base[580:588] -> new[580:594]
+    - ... R['conclusion']=='success' and R['headBranch']=='phase/014-[ga-track]' and subprocess.run(['git','merge-base','--is-ancestor',R['...
+    + ... R['conclusion']=='success' and R['headBranch']=='phase/014-[104-sandbox-ci]' and subprocess.run(['git','merge-base','--is-ancestor',R['...
+PASS other-acceptance-tests-unchanged: changed (feature, AT) = [('104', 5)]; per-feature AT counts equal: True
+PASS feature-104-field-scope: changed keys = ['acceptance_provenance', 'acceptance_tests', 'description']; description only the positive-run clause: True; provenance only + operator_approved_amendment_1_1_5=[5]: True
+    differing span: base[1264:1289] -> new[1264:1354]
+    - ...ction 5 shape): (positive) on [branch phase/014-ga-track] at a commit that is an ancest...
+    + ...ction 5 shape): (positive) on [the feature branch phase/014-104-sandbox-ci (a pull_request run; amendment A2, spec 1.1.5)] at a commit that is an ancest...
+PASS other-features-unchanged: other features differing: []; id order identical: True
+PASS top-level-scope: changed top-level keys = ['planning_note', 'spec_version']; spec_version 1.1.4 -> 1.1.5; planning_note append-only: True
+PASS feature-list-schema: 0 error(s) against schema/feature_list.schema.json
+PASS spec-frontmatter-schema: 0 error(s) against schema/frontmatter.schema.json
+PASS spec-versioning-fields: spec_version=1.1.5 version=1.1.5 newest=1.1.5@2026-10-09T18:22:14Z updated_at=2026-10-09T18:22:14Z previous=1.1.4 quotes 'B. Amend AT5': True names A2: True
+PASS spec-version-lockstep: feature_list=1.1.5 spec=1.1.5
+PASS dag: missing=[] out_of_order=[] (list order topological => acyclic)
+PASS no-stale-branch-in-feature-list-tests-or-description: remaining AT/description occurrences of the old branch: 0 (planning_note mentions it once, as the amendment record: 2 occurrence(s))
+PASS frozen-activation-infrastructure-unchanged: git status --porcelain entries: 0; git diff --quiet HEAD rc=0
+PASS at5-simulation: scratch clone at HEAD b8ea889 + simulated convergent_review job
+    OK  amended AT5, well-formed run on phase/014-104-sandbox-ci: rc=0 want=0
+    OK  amended AT5, run on phase/014-ga-track: rc=1 want=nonzero
+    OK  amended AT5, run on main: rc=1 want=nonzero
+    OK  amended AT5, headSha not an ancestor of HEAD: rc=1 want=nonzero
+    OK  amended AT5, run conclusion failure: rc=1 want=nonzero
+    OK  base AT5, well-formed run on phase/014-104-sandbox-ci: rc=1 want=nonzero
+SUMMARY: 13 passed, 0 failed
+EXIT:0

@@ -1,0 +1,1 @@
+python3 -c "import yaml; J=yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs']; hits=[k for k,j in J.items() if any('python3 tools/test_convergent_review.py' in (s.get('run') or '') and '--allow-unsupported-isolation' not in (s.get('run') or '') for s in j['steps'])]; assert len(hits)==1, hits"

@@ -1,0 +1,93 @@
+bash .agent/evidence/104-qa-adversarial-contract-review/helpers/03-positive-control.sh
+== sysctl before: 1
+== (a) pinned texts applied in the scratch clone
+### AT1 rc=0 (0.0s)
+### AT2 rc=0 (0.0s)
+### AT3 rc=0 (0.0s)
+### AT4 rc=0 (0.0s)
+### AT9 rc=0 (10.4s)
+    GATE: PASS (16 checks passing; baseline 16)
+### AT10 rc=0 (23.7s)
+    SELF-TEST OK: 79/79 fixtures accounted for, 0 failed
+### S01 rc=0 (0.1s)
+    verification: 21 acceptance tests: 10 supplementary: 11 files_create: 16 files_modify: 6 orchestrator_owned: 7 problems: []
+### S03 rc=0 (0.0s)
+    changed: 8 problems: []
+### S04 rc=0 (0.0s)
+    jobs: ['validate', 'e2e_bootstrap', 'fixtures_self_test', 'convergent_review'] problems: []
+### S05 rc=0 (0.0s)
+    absent: (0, '') present: (0, 'sysctl -w kernel.apparmor_restrict_unprivileged_userns=0\n') present+write-fails: (1, 'sysctl -w kernel.apparmor_restrict_unprivileged_userns=0\n') problems: []
+### S06 rc=0 (0.1s)
+    problems: []
+### S07 rc=0 (0.1s)
+    problems: []
+### S08 rc=0 (8.5s)
+    depth: 1 working tree (rc, tests, fail/error line, OK): (0, 54, False, True) shallow clone: (0, 54, False, True) problems: []
+### S09 rc=0 (10.5s)
+    exit: 0 PASS lines: 16 FAIL lines: [] SUMMARY: [('16', '0')] C14: True
+SUMMARY: AT1=0 AT2=0 AT3=0 AT4=0 AT9=0 AT10=0 S01=0 S03=0 S04=0 S05=0 S06=0 S07=0 S08=0 S09=0
+== (b) Generator-attempt simulation
+implemented in /home/cnross/.tmp/claude-1000/-home-cnross-workspace02-nizam-framework/b87ce099-80d9-4a17-8331-ff678f08d08a/scratchpad/gen/att
+AT1 rc 0
+AT2 rc 0
+AT3 rc 0
+AT4 rc 0
+AT9 rc 0
+AT10 rc 0
+S01 rc 0
+S03 rc 0
+S04 rc 0
+S05 rc 0
+S06 rc 0
+S07 rc 0
+S08 rc 0
+S09 rc 0
+S02 pre-commit rc 0 B = dd0aa2456b2d commits past B: 0 delta since B: 21 problems: []
+attempt commit 58b6e8a B dd0aa2456b2d porcelain lines 0
+== (b') after the attempt commit: AT1-AT4 AT9 AT10 S01 S02 S03-S09 (sequential)
+### AT1 rc=0 (0.0s)
+### AT2 rc=0 (0.0s)
+### AT3 rc=0 (0.0s)
+### AT4 rc=0 (0.0s)
+### AT9 rc=0 (10.6s)
+    GATE: PASS (16 checks passing; baseline 16)
+### AT10 rc=0 (23.9s)
+    SELF-TEST OK: 79/79 fixtures accounted for, 0 failed
+### S01 rc=0 (0.1s)
+    verification: 21 acceptance tests: 10 supplementary: 11 files_create: 16 files_modify: 6 orchestrator_owned: 7 problems: []
+### S02 rc=0 (0.1s)
+    B = dd0aa2456b2d commits past B: 1 delta since B: 22 problems: []
+### S03 rc=0 (0.0s)
+    changed: 24 problems: []
+### S04 rc=0 (0.0s)
+    jobs: ['validate', 'e2e_bootstrap', 'fixtures_self_test', 'convergent_review'] problems: []
+### S05 rc=0 (0.0s)
+    absent: (0, '') present: (0, 'sysctl -w kernel.apparmor_restrict_unprivileged_userns=0\n') present+write-fails: (1, 'sysctl -w kernel.apparmor_restrict_unprivileged_userns=0\n') problems: []
+### S06 rc=0 (0.1s)
+    problems: []
+### S07 rc=0 (0.1s)
+    problems: []
+### S08 rc=0 (8.8s)
+    Turn off this advice by setting config variable advice.detachedHead to false
+### S09 rc=0 (10.9s)
+    exit: 0 PASS lines: 16 FAIL lines: [] SUMMARY: [('16', '0')] C14: True
+SUMMARY: AT1=0 AT2=0 AT3=0 AT4=0 AT9=0 AT10=0 S01=0 S02=0 S03=0 S04=0 S05=0 S06=0 S07=0 S08=0 S09=0
+== evidence-shape check of the 16 captured Generator files (line 1 = invocation, last line EXIT:<code>)
+at10-fixtures-self-test.txt: line1=[bash tools/fixtures_self_test.sh; test $? -eq 0] last=[EXIT:0]
+at1-single-job.txt: line1=[python3 -c "import yaml; J=yaml.safe_load(open('] last=[EXIT:0]
+at2-job-counts.txt: line1=[python3 -c "import re,yaml; J=list(yaml.safe_loa] last=[EXIT:0]
+at3-sole-validator.txt: line1=[python3 -c "s=open('schema/README.md').read().sp] last=[EXIT:0]
+at4-readme-names-job.txt: line1=[python3 -c "import yaml; J=[(k,j.get('name') or ] last=[EXIT:0]
+at9-validator-gate.txt: line1=[python3 .agent/evidence/phase-014-activation/gat] last=[EXIT:0]
+attempt-base.txt: line1=[git rev-parse HEAD] last=[EXIT:0]
+s01-contract-valid-and-verbatim.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s02-attempt-root-delta.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s03-scope-boundary.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s04-workflow-structure.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s05-guarded-step-stub.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s06-docs-pinned.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s07-changelog-phase-yaml.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s08-shallow-clone-suite.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s09-validate-c14.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+== sysctl after: 1
+EXIT:0

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "014-ga-track",
-  "current_feature": "104",
+  "current_feature": "105",
   "status": "in_progress",
-  "updated_at": "2026-10-09T17:59:00Z",
+  "updated_at": "2026-10-09T19:43:42Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -228,6 +228,20 @@
       "limit": 3
     },
     "103-implementation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "104-contract": {
+      "attempts": 3,
+      "limit": 3,
+      "human_authorized_extension": {
+        "at": "2026-10-09T19:16:01Z",
+        "authorized_by": "operator",
+        "verbatim": "authoirized.",
+        "scope": "Contingent: ONE further contract revision (attempt 4) ONLY if the evaluator contract review of rev 3 rejects, limited to the evaluator's prescribed blocking fixes; nothing else may change. Interpretation of the operator's reply (to the orchestrator's note that an evaluator rejection could not be fixed without operator authorization, 097 precedent) disclosed to the operator. Unused if the evaluator approves."
+      }
+    },
+    "104-implementation": {
       "attempts": 1,
       "limit": 3
     }
@@ -1603,6 +1617,118 @@
       "at": "2026-10-09T17:59:00Z",
       "event": "operator_gate_decision",
       "detail": "Operator verbatim (2026-10-09, interactive session): 'option 1 confirmed.' — the reply to the orchestrator's request to confirm (1) the 8600 budget / 11180 ceiling, (2) the 103 overrun acknowledgment, (3) the PR #67 merge. Recorded effect: option 1 (phase-014 counting rule + re-baseline, spec 1.1.4) is CONFIRMED, resolving the earlier truncated message. The orchestrator reads the confirmation as covering the re-baseline as presented (8600 / ceiling 11180) and the 103 overrun acknowledgment; neither was restated separately, and this interpretation is disclosed to the operator for correction. PR #67 is still OPEN (not merged)."
+    },
+    {
+      "at": "2026-10-09T18:02:21Z",
+      "event": "feature_started",
+      "feature": "104",
+      "detail": "Operator: 'PR #67 has been merged.' (merge b8ea889). Dependency gate: 104 deps [103=complete] satisfied. Branch phase/014-104-sandbox-ci from b8ea889. 104 range for the scope budget starts at 7bc65a5 (rebaseline) - effectively b8ea889 on main. Dispatching @generator to propose contract 104 (104-contract attempt 1/3)."
+    },
+    {
+      "at": "2026-10-09T18:18:12Z",
+      "event": "contract_proposed",
+      "feature": "104",
+      "detail": "Generator proposed .agent/contracts/104.json (rev 0, attempt 1/3; schema-valid; validate 16/16). Orchestrator verified the AT5 blocker independently: AT5 asserts R['headBranch']=='phase/014-ga-track', but compliance.yml triggers only on pull_request and push-to-main, and origin/phase/014-ga-track is the stale head c061b31 of merged PR #65 (not an ancestor of b8ea889's lineage). AT5 is unsatisfiable without either (A) a force-push over that ref or (B) an operator-approved amendment of AT5's branch clause. Orchestrator decisions on generator Q3/Q4: CI evidence capture + its commit are Orchestrator-owned; ordering = Mode B on the code diff BEFORE any push, then push/CI, then a delta Mode B on the evidence commit, then QA. Mode A NOT dispatched (would burn a contract round on a known-unsatisfiable AT). HALTED pending operator: Q1 (A vs B) and Q2 (authorization for the throwaway/104-* push, never-merged draft PR, and branch deletion)."
+    },
+    {
+      "at": "2026-10-09T18:19:35Z",
+      "event": "operator_gate_decision",
+      "feature": "104",
+      "detail": "Recorded BEFORE the amendment act (NDEBT-018). Operator verbatim (2026-10-09, interactive session): 'B. Amend AT5' — selecting option B: amend 104 AT5's branch clause so the positive CI run is on the feature branch phase/014-104-sandbox-ci (headSha an ancestor of the feature HEAD); everything else in AT5 unchanged. Spec amendment A2 -> 1.1.5. Decision 2 (throwaway/104-* push, never-merged draft PR, branch deletion) was NOT addressed and remains UNAUTHORIZED; it is required only at implementation time and will be re-asked before any push."
+    },
+    {
+      "at": "2026-10-09T18:20:09Z",
+      "event": "operator_gate_decision",
+      "feature": "104",
+      "detail": "Operator verbatim (2026-10-09, interactive session): '1. Push a throwaway branch throwaway/104-<slug> with the sandbox deliberately removed.' — quoting step 1 of the orchestrator's 4-step negative-control list. Recorded effect: AUTHORIZED = pushing throwaway/104-<slug> (only change: 103 AT4's isolation-removal mutation), to be executed by the Orchestrator at implementation time after Mode B of the code diff. NOT addressed (still unauthorized): step 2 the never-merged draft PR from that branch (required for CI to run, since compliance.yml triggers only on pull_request / push-to-main) and step 4 closing the PR and deleting the branch. Those will be re-asked before the act."
+    },
+    {
+      "at": "2026-10-09T18:20:44Z",
+      "event": "operator_gate_decision",
+      "feature": "104",
+      "detail": "Operator verbatim (2026-10-09, interactive session): 'approved, please proceed.' — the reply to the orchestrator's request for steps 2 and 4 of the negative control. Recorded effect: AUTHORIZED = (2) opening a never-merged draft PR from throwaway/104-<slug> so compliance.yml runs, and (4) closing that PR and deleting the branch after the evidence is captured. With step 1 (18:20:09Z), the full negative-control sequence is now authorized, executed by the Orchestrator only, after Mode B of the code diff."
+    },
+    {
+      "at": "2026-10-09T18:26:41Z",
+      "event": "amendment_applied",
+      "feature": "104",
+      "detail": "Amendment A2 (spec 1.1.5) applied by the Planner and verified (verify_a2.py 13/13; validate 16/16; frozen tree unchanged; AT5 changed in exactly one literal 'phase/014-ga-track' -> 'phase/014-104-sandbox-ci'). Orchestrator caught one stale sentence (change_log claimed decision 2 unauthorized; it had been authorized at 18:20:09Z/18:20:44Z) and had the Planner correct it before commit. Evidence .agent/evidence/104-amendment-a2/. Next: Generator revises contract 104 to rev 1 (copy amended AT5 verbatim) BEFORE any Mode A review — still 104-contract attempt 1/3, since rev 0 was never reviewed."
+    },
+    {
+      "at": "2026-10-09T18:38:43Z",
+      "event": "contract_rejected",
+      "feature": "104",
+      "detail": "Validator Mode A REJECTED contract 104 rev 1 (.agent/validator/104-mode-a.json): 2 major (CI-failure triage misroutes capability failures into implementation repair; S11 does not bind the negative control to the positive headSha/job) + 2 minor (logs/mutation diff not live-verified, stderr unspecified; flag non-goal contradicts S08) + 1 unsupported claim. 104-contract attempt 2/3: Generator revises to rev 2 with the prescribed fixes."
+    },
+    {
+      "at": "2026-10-09T18:44:16Z",
+      "event": "contract_rejected",
+      "feature": "104",
+      "detail": "Validator Mode A round 2 REJECTED contract 104 rev 2 on ONE minor issue (stderr-empty capture rule over-applied to every capture; one-sentence fix prescribed). All round-1 issues verified resolved. 104-contract attempt 3/3 (LAST): Generator applies exactly the prescribed sentence and nothing else. A rejection of rev 3 halts the step as BLOCKED and escalates."
+    },
+    {
+      "at": "2026-10-09T18:46:44Z",
+      "event": "contract_validated",
+      "feature": "104",
+      "detail": "Validator Mode A APPROVED contract 104 rev 3 (round 3; .agent/validator/104-mode-a.json, prior rounds preserved). Next: evaluator contract review. 104-contract is at 3/3; an evaluator rejection cannot be absorbed by a further revision without operator authorization (097 human_authorized_extension precedent)."
+    },
+    {
+      "at": "2026-10-09T19:16:01Z",
+      "event": "operator_gate_decision",
+      "feature": "104",
+      "detail": "Operator verbatim (2026-10-09, interactive session): 'authoirized.' — reply to the orchestrator's note that 104-contract is at 3/3 and an evaluator rejection could not be absorbed without operator authorization (097 human_authorized_extension precedent). Recorded as a CONTINGENT human_authorized_extension: one 4th revision, scoped to the evaluator's prescribed blocking fixes, only if the evaluator rejects rev 3. Limit stays 3 unless used."
+    },
+    {
+      "at": "2026-10-09T19:16:06Z",
+      "event": "operator_gate_decision",
+      "feature": "104",
+      "detail": "Operator verbatim (2026-10-09, interactive session): 'authorized, please proceed.' — restates the contingent 4th-revision authorization recorded at the preceding event and directs the pipeline to continue. No change to scope: the extension is used only if the evaluator rejects rev 3, limited to its prescribed blocking fixes."
+    },
+    {
+      "at": "2026-10-09T19:21:42Z",
+      "event": "contract_approved",
+      "feature": "104",
+      "detail": "Evaluator contract review APPROVED contract 104 rev 3 (.agent/qa/104-contract-review.json; 113 mutants, 109 caught, 4 survivors all non-blocking: w35-w37 semantic-neutral controls, c27 an unproducible mixed negative log already routed to HALT by step-8 triage; evidence .agent/evidence/104-qa-adversarial-contract-review/ 01-08 all EXIT:0, 04 s5-shaped). Both gates approved at attempt 3/3; the contingent 4th-revision extension was NOT used. Canonical-first: phase_014.yaml 104 AWAITING_IMPLEMENTATION, contract status approved, run_state active_contract_id 104. Non-blocking carry-forwards: run-id lookup via gh run list --branch --event pull_request (AT5/S10 fail closed); PULL_REQUEST_TEMPLATE DoD drift -> 102 open-debt roll. Operator directed (2026-10-09, verbatim 'use the new streamline agent workflow for yourself.') that the orchestrator drive subagents via the Workflow tool; gates unchanged."
+    },
+    {
+      "at": "2026-10-09T19:22:01Z",
+      "event": "attempt_started",
+      "feature": "104",
+      "detail": "104-implementation attempt 1/3: attempt base <B>=9f329e13f0d030b895595760ed3d2d4f5d793879; detached worktree /home/cnross/workspace02/nizam-wt-104-attempt1 created at <B>. Feature branch NOT pushed (the first push opens the positive-run PR, after Mode B)."
+    },
+    {
+      "at": "2026-10-09T19:27:22Z",
+      "event": "implementation_promoted",
+      "feature": "104",
+      "detail": "Workflow wf_2b6334eb-16b: Generator attempt 1 commit 6f4f357 (parent <B> 9f329e1; AT1-AT4, AT9, AT10, S01-S09 all exit 0; product +56/-10 across 6 files; 16 evidence files) and Validator Mode B APPROVED (empty arrays; .agent/validator/104-mode-b.json; mode_b_obligations checked; two disclosed non-material deviations). Orchestrator verified scope and cherry-picked as 8320ac9; worktree removed. NOT pushed: the operator's clarification about the 'agreed streamlined agent workflow' is pending, and the first push opens the positive-run PR (AT5)."
+    },
+    {
+      "at": "2026-10-09T19:28:39Z",
+      "event": "operator_gate_decision",
+      "detail": "Operator clarified (2026-10-09, interactive session) that 'the new streamlined agent workflow that was agreed for this project' is the NIZAM FRAMEWORK MAINTAINER EXECUTION PROMPT (2026-10-08), re-pasted verbatim. Orchestrator's application, which changes NO active gate: (a) the per-feature sequence is section 6's 11 steps (Generator contract -> Validator Mode A -> Evaluator contract review -> implement -> identified candidate -> Mode B -> Evaluator acceptance incl. the one adversarial check -> Orchestrator evidence gate), already followed for 099/103/104; (b) the phase plan is reused across features, and the Planner is invoked only for substantive requirement/architecture/dependency/acceptance-shape changes, not per feature; (c) repeated manual checks are mechanized (Workflow-tool sequencing of agent stages; deterministic scripted evidence/scope gates), with verdicts bound to commit SHAs; (d) section 11 'mechanically streamlined workflow with unchanged gates' only: reduced review, combined/parallel gate execution, or replacing an agent gate with a deterministic one are PROPOSED policy changes (A15) and are NOT applied. Push of the 104 feature branch, paused pending this clarification, now resumes per contract step 5."
+    },
+    {
+      "at": "2026-10-09T19:31:20Z",
+      "event": "ci_evidence",
+      "feature": "104",
+      "detail": "Pushed phase/014-104-sandbox-ci (a278fcd) and opened PR #68. Positive run 37980556248: conclusion success; jobs validate/fixtures_self_test/e2e_bootstrap/convergent_review all success; convergent_review (job 113989678654) log: 'Ran 54 tests', 'OK', 'CONFORMANCE: FULL', zero skips -> hosted runner provides userns+Landlock; R1 did NOT manifest; triage: no CAPABILITY/DEFECT. Captured ci-positive-run.txt / ci-positive-log.txt (stderr empty); AT5/AT6 self-check exit 0. Negative control (operator-authorized): worktree /home/cnross/workspace02/nizam-wt-104-throwaway at a278fcd, exactly AT4's two replacements, commit e9b7e7b pushed as throwaway/104-isolation-removal, draft PR #69 'DO NOT MERGE'; awaiting its run."
+    },
+    {
+      "at": "2026-10-09T19:33:00Z",
+      "event": "ci_evidence",
+      "feature": "104",
+      "detail": "Negative run 37980776642 on throwaway/104-isolation-removal (e9b7e7b, parent = positive headSha a278fcd): conclusion failure; convergent_review (job 113990412340) failure with exactly one FAIL: test_linux_sandbox_blocks_cross_trial_files_and_network, 'AssertionError: 40 != 0', 'Ran 54 tests', 'CONFORMANCE: NOT FULL (run unsuccessful)', no UNSUPPORTED; other three jobs success. Draft PR #69 closed WITHOUT merge (state CLOSED, mergedAt null); remote branch deleted (ls-remote empty); throwaway worktree removed. All seven ci-*.txt captured with empty stderr. Self-check: AT5-AT8, S10, S11 exit 0. Discharges (to be confirmed by delta Mode B + QA): 103 AT1 capable branch (positive CONFORMANCE: FULL + success) and 103 AT4 capable branch (40 != 0). NDEBT-043/041 closure deferred to after QA."
+    },
+    {
+      "at": "2026-10-09T19:39:27Z",
+      "event": "feature_complete",
+      "feature": "104",
+      "detail": "Feature 104 COMPLETE (NDEBT-041: convergent_review CI job in required-conformance mode). Contract rev 3 (attempt 3/3; Mode A rounds 1-2 rejected, round 3 approved; evaluator contract review approved, 113 mutants/0 blocking survivors; contingent 4th-revision extension unused). Amendment A2 (spec 1.1.5). Implementation attempt 1 (6f4f357 -> 8320ac9) via Workflow wf_2b6334eb-16b; Mode B approved. CI: positive run 37980556248 success, CONFORMANCE: FULL (hosted runner provides userns+Landlock; R1 did not manifest); negative control 37980776642 failure with AssertionError: 40 != 0 (draft PR #69 closed unmerged, branch deleted). Delta Mode B approved (.agent/validator/104-mode-b-delta.json); QA pass .agent/qa/104.json (20 checks re-run incl. live gh cross-checks; adversarial live-run audit; validate 16/16) via Workflow wf_c145d52d-2d0. Evidence gate passed (23 files). Discharged: 104 AT1-AT10; 103 AT1 and AT4 capable-host branches. Canonical-first: phase_014.yaml 104 COMPLETED, feature_list_014 104 complete, run_state. Budget: 104 991 budget-counted lines vs estimate 710 (evidence 3018); phase total 2764 / 8600. Next: NDEBT-043/041 closure record, then 105."
+    },
+    {
+      "at": "2026-10-09T19:43:42Z",
+      "event": "debt_resolved",
+      "detail": "Planner moved NDEBT-043 (Low) and NDEBT-041 (Medium) to Resolved in docs/planning/DEBT.md 0.50.0, citing the 104 CI evidence (runs 37980556248 / 37980776642), .agent/qa/103.json and .agent/qa/104.json. 103 AT2's capable branch remains not exercised (recorded in the row as residual risk; not a closure condition). C12 extension to the review family stays deferred to 101 / H-CONSOLIDATION. Open debt now 8 (all Low): NDEBT-046/045/044/042/040/037/034/026."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1777,9 +1903,9 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 1773,
-    "evidence_lines_total": 7219,
-    "excluded_lines_total": 186,
+    "total_lines_changed": 2764,
+    "evidence_lines_total": 10237,
+    "excluded_lines_total": 390,
     "counting_rule": {
       "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.4)",
       "script": ".agent/evidence/scope-budget-014/measure.py",
@@ -1812,6 +1938,15 @@
         "previous_actual_all_paths": 6770,
         "flag": "scope_budget_flag 2026-10-09T17:39:44Z raised under the old all-paths count (6770 vs 280). Under the phase-014 rule 885 < 3 x 596 = 1788 and would not flag. Acknowledged per the Orchestrator's record (operator_gate_decision 2026-10-09T17:42:10Z), confirmed by the operator's 'option 1 confirmed.' reply (2026-10-09T17:59:00Z).",
         "note": "Phase-014 rule (spec 1.1.4): product 103 + contract 519 + verdict 200 + planning 63 = 885. estimated 280 is the historical all-paths estimate (mixed basis, disclosed)."
+      },
+      {
+        "id": "104",
+        "estimated": 710,
+        "actual": 991,
+        "evidence_lines": 3018,
+        "excluded_lines": 204,
+        "range": "7bc65a5..(completion working tree)",
+        "note": "Phase-014 rule (measure.py). Includes amendment A2 planning lines (A1-in-103 precedent) and the 3-round contract. Rolling threshold for 104 was 3 x mean(596,885) = 2221.5."
       }
     ],
     "phase_level_items": [
@@ -2096,9 +2231,10 @@
       }
     ]
   },
-  "last_action": "Option 1 confirmed by operator; awaiting PR #67 merge before feature 104",
+  "last_action": "Feature 104 complete; next 105",
   "completed_contract_ids": [
     "099",
-    "103"
+    "103",
+    "104"
   ]
 }

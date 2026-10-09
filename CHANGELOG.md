@@ -59,6 +59,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `tools/linux_trial_sandbox.sh` and `tools/isolated_trial_adapter.py` are unchanged (still fail
   closed) and `tools/README.md` (0.12.0) documents both outcomes. NDEBT-043; the capable-host
   evidence is to be provided by feature 104 (not exercised by this feature).
+- **Phase 014 feature 104: Convergent-review suite enforced in CI** (additive; MINOR at the next release,
+  `methodology/06_release_train.md` Section 3.2; no release is prepared and no tag is created).
+  `.github/workflows/compliance.yml` gains one job, `convergent_review`, that runs
+  `tools/test_convergent_review.py` in required-conformance mode (never with
+  `--allow-unsupported-isolation`) after a guarded step that enables unprivileged user namespaces
+  only where the kernel exposes the AppArmor restriction key; the already-pinned action SHAs are
+  reused, so C14 stays PASS. `standard/definition_of_done.md` (0.2.0) Sections 8 and 11 now name four
+  jobs, `tools/README.md` (0.13.0) names the job in Machine Validation, and `schema/README.md`
+  (0.19.0) states that the suite is the sole validator of the review schema family (C12 coverage
+  of that family is left to the phase-014 simplification review). NDEBT-041; the CI evidence, a
+  green run and a throwaway-branch negative control that also supplies the capable-host evidence
+  for feature 103, is recorded under `.agent/evidence/104/`.
 
 ## [1.4.0] - 2026-10-08
 

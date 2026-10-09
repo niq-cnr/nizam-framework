@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.12.0
+version: 0.13.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.13.0"
+    date: "2026-10-09"
+    summary: "Name the `convergent_review` CI job in Machine Validation: the convergent review suite runs in required-conformance mode in `.github/workflows/compliance.yml`, behind a guarded user-namespace step (NDEBT-041)."
   - version: "0.12.0"
     date: "2026-10-09"
     summary: "Document required-conformance mode for the convergent review suite: the UNSUPPORTED outcome and the CONFORMANCE: NOT FULL line with a non-zero exit when user-namespace isolation is unavailable, the local-only --allow-unsupported-isolation flag, and the CONFORMANCE: FULL outcome on a capable host (NDEBT-043)."
@@ -109,6 +112,8 @@ non-consensus trial evidence, and a post-rename parent-`fsync` failure remains v
 not durable.
 
 On a host that cannot prove user-namespace isolation (for example one whose kernel refuses `unshare --user --map-root-user true`, as with `kernel.apparmor_restrict_unprivileged_userns = 1`), the five sandbox-dependent tests are not run. Each is reported on its own result line as `UNSUPPORTED` (an explicit skip whose reason begins `UNSUPPORTED: user-namespace isolation unavailable`), the run prints `CONFORMANCE: NOT FULL`, and the command exits non-zero: the required gate never passes on a host that cannot prove isolation. `--allow-unsupported-isolation` is for local development only and CI never passes it; it turns that same outcome into exit 0 while still printing every `UNSUPPORTED` line and `CONFORMANCE: NOT FULL`, and it never masks any other failure. On an isolation-capable host the sandbox tests execute and the run prints `CONFORMANCE: FULL`. `linux_trial_sandbox.sh` and `isolated_trial_adapter.py` are not relaxed by this mode and still fail closed; the suite never runs a trial outside the sandbox.
+
+CI runs this suite as the `convergent_review` job of `.github/workflows/compliance.yml`, in required-conformance mode and never with `--allow-unsupported-isolation`. The job first runs a guarded step that enables unprivileged user namespaces only on runners whose kernel exposes the AppArmor user-namespace restriction key, and it installs `jsonschema` so that no ordinary test is skipped. A runner that still cannot provide isolation therefore fails the job instead of passing it, and the job log must show `CONFORMANCE: FULL`.
 
 ## Compliance Coverage — C1–C16
 

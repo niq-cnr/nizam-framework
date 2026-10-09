@@ -1,0 +1,565 @@
+{
+  "contract_id": "104",
+  "feature_id": "104",
+  "name": "Convergent-review suite enforced in CI, and the review schema family's validator stated (NDEBT-041)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_014.md",
+  "design_notes": {
+    "revision": "Revision 3 (104-contract attempt 3/3, the last: Mode A rejected revision 2 on one minor issue, see .agent/validator/104-mode-a.json). Branch phase/014-104-sandbox-ci was cut from main b8ea889 (PR #67 merged: 103 complete); <A> is now the A2 commit f3b6dcb (spec 1.1.5).",
+    "base_revision": "<A> = f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef (Orchestrator commit of amendment A2 / spec 1.1.5 on top of b8ea889 = main after feature 103). A2 changes only planning and review records (feature list AT5 literal, spec 1.1.5, its evidence directory, run_state); no file under tools/, schema/, .github/ or standard/ differs from b8ea889. See attempt_isolation.",
+    "revision_history": [
+      {
+        "revision": 0,
+        "summary": "initial proposal; never reviewed by Mode A",
+        "at": "2026-10-09"
+      },
+      {
+        "revision": 1,
+        "summary": "Operator Q1 option B: AT5 re-copied verbatim from the amended feature list (branch literal phase/014-104-sandbox-ci); <A> moved to f3b6dcb; AT5 UNRESOLVED gating and open questions Q1-Q4 removed (Q2 authorization and Q3/Q4 decisions recorded); sequence reordered per Q4 (Mode B on the code diff before any push, delta Mode B on the evidence commit); force-push option removed; scope budget note for A2.",
+        "at": "2026-10-09"
+      },
+      {
+        "revision": 2,
+        "summary": "Mode A rev-1 rejection applied exactly: (1) CAPABILITY / DEFECT / contract-revision / unclassifiable triage with the real test and adapter signals, unsupported Landlock-report claim removed, setup-python toolcache vs Landlock allowlist named under R1; (2) S11 binds the negative control to the positive headSha and to the deliverable job at base, negative headSha and HEAD; (3) S10 re-fetches each job log and S11 re-runs git diff, live comparison without normalization (determinism measured), stderr captured separately and empty else abort; (4) flag prohibition scoped to workflow, ci-*.txt and the throwaway change, S08 the sole local use. Observations adopted: delta Mode B wording, no gh run rerun, concrete throwaway worktree path, DEBT.md/scope-budget writes after QA, Mode B machine-checks step status and 04 s5 shape.",
+        "at": "2026-10-09"
+      },
+      {
+        "revision": 3,
+        "summary": "Mode A rev-2 rejection (one minor issue) applied exactly: in evidence_convention the stdout-only / stderr-empty-else-abort rule is scoped to the seven Orchestrator ci-*.txt captures; every other capture records stdout and stderr verbatim (04 s5). No other change.",
+        "at": "2026-10-09"
+      }
+    ],
+    "ah_premises_at_base": [
+      "AT1-AT4 at <A>: exit 1, 0, 1, 1 (AT2 vacuously true at base); AT5-AT8 exit 1 (evidence files absent; the only acceptance-test change between b8ea889 and <A> is AT5's branch literal); AT9 and `bash tools/validate.sh` exit 0 with 16 passed, 0 failed and [C14] PASS.",
+      "compliance.yml has exactly three jobs (validate, e2e_bootstrap, fixtures_self_test), all on ubuntu-latest, two SHA-pinned action refs reused everywhere; `on:` is pull_request + push to main.",
+      "definition_of_done.md §8 says 'all three' and 'three-job' and lists the three jobs in backticks; §11 says 'three jobs'. tools/README.md is 0.12.0 (feature 103); schema/README.md 0.18.0, DoD 0.1.0; the schema README has no sole-validator statement.",
+      "The unmodified suite runs 54 tests in ~4 s and passes in a depth-1 clone with no git identity (flag used locally only: this host's AppArmor key reads 1, so the 5 sandbox tests are UNSUPPORTED here). The capable-host branches cannot be exercised locally; only CI can.",
+      "The three existing jobs' CI logs (run 37970429143 on main) contain neither `skipped` nor `UNSUPPORTED`; `gh run view --json` emits compact one-line JSON when piped. gh is authenticated (niq-cnr).",
+      "Carry-forwards from the 103 Mode B/QA: full suite (no -k, no flag), jsonschema installed so no ordinary skip masks anything, Landlock must be available or the job fails, 'CONFORMANCE: FULL' must appear in the log, NDEBT-046 stays open."
+    ],
+    "amendment_a2": {
+      "resolution": "RESOLVED by operator decision (option B), amendment A2, spec 1.1.5, committed as <A> = f3b6dcb on this branch (evidence .agent/evidence/104-amendment-a2/): AT5's branch literal is now `R['headBranch']=='phase/014-104-sandbox-ci'`; the ancestry clause (`git merge-base --is-ancestor R['headSha'] HEAD`) is unchanged. Verbatim copy: verification AT5 equals the committed feature list, and S01 enforces it. The earlier finding stands as the reason: phase/014-ga-track is the stale merged head of PR #65 (c061b31, not an ancestor of this branch) and compliance.yml triggers on pull_request and push-to-main only; no force-push and no ref other than the feature branch is used.",
+      "positive_run_definition": "The positive run is the `pull_request` run of the feature PR (head phase/014-104-sandbox-ci) at the pushed tip that contains the unchanged convergent_review job. Do not amend, rebase or force-push after that push; headSha must remain an ancestor of the final HEAD.",
+      "post_merge_note": "AT5's ancestry clause is a completion-time gate: main squash-merges, so after the PR lands the positive run's headSha is not an ancestor of main and AT5 would fail if replayed there. No later phase-014 gate replays 104's evidence (every `evidence/104` mention in the feature list is in 104's own acceptance tests); recorded so no later gate does so silently."
+    },
+    "ci_evidence_sequence": [
+      "1. Loop 1: validator Mode A and the evaluator's contract review approve this contract. The Orchestrator commits it (with its own run_state and verdict files) on phase/014-104-sandbox-ci: that commit is the attempt base <B>.",
+      "2. Orchestrator: `git worktree add --detach /home/cnross/workspace02/nizam-wt-104-attempt<N> <B>`. Generator: records attempt-base.txt first, edits and verifies only inside that root (AT1-AT4, AT9, AT10, S01-S09; AT5-AT8, S10, S11 are reported NOT EXERCISED), and makes ONE commit of the deliverable plus its evidence. The Generator runs no git push, no gh command and no sysctl.",
+      "3. Orchestrator: `git cherry-pick <attempt-commit>` onto the feature branch; `git worktree remove` of that exact root.",
+      "4. Validator Mode B on the code diff, BEFORE any push (operator/Orchestrator decision Q4). Nothing has been pushed at this point.",
+      "5. Orchestrator (outward): `git push -u origin phase/014-104-sandbox-ci` and open the feature PR to main; its `pull_request` run is the positive run (hazard 1). Poll `gh run view` until completed. DO NOT push this ref again before the positive evidence is captured: the workflow's concurrency group has cancel-in-progress, and a later push cancels the in-flight run (hazard 2).",
+      "6. Positive-run triage, from the run's job conclusions and logs. CAPABILITY (HALT, escalate to the operator, consume NO attempt; never weaken): ANY ONE OF (a) a convergent_review failure whose log shows `UNSUPPORTED`, `CONFORMANCE: NOT FULL` or `REQUIRED CONFORMANCE NOT MET` (real signals: tools/test_convergent_review.py L95-98 probe detail, L110 skipTest UNSUPPORTED, L1241-1253 the CONFORMANCE and REQUIRED lines); (b) a failure of the guarded sysctl step; (c) a FAIL or ERROR line for any of the five sandbox-dependent tests (the names in ISOLATION_DEPENDENT_TESTS), including the OSError traceback when Landlock is missing (tools/isolated_trial_adapter.py L54-60 `syscall` raises OSError, L75 the first Landlock call). DEFECT (a repair attempt N+1, evidence copied to .agent/evidence/104/failed-attempt<N>/, new B = current branch tip, one commit, S02 holds, Mode B re-run before the repair is pushed): ONLY a failure attributable to the Generator's non-job files, for example the validate job's C8/C9 on the edited documents or fixtures_self_test/e2e_bootstrap failing because of them. A non-capability fault in the PINNED JOB itself (invalid workflow file, a failing checkout/setup-python/pip step, a step error) is NOT an implementation attempt: it is a 104-contract revision (the job is pinned). A failing test outside ISOLATION_DEPENDENT_TESTS in the suite is not Generator-attributable either. Anything not classifiable by these rules: HALT and escalate. In every case: never add --allow-unsupported-isolation, never filter with -k, never edit the suite/adapter/sandbox script, never use `gh run rerun` or a job re-run to obtain a green.",
+      "7. Orchestrator captures, one command per file, the exit status read from the command itself; stderr is captured SEPARATELY (never merged into the capture file) and must be empty, otherwise ABORT that capture and do not commit it (04 Section 5): ci-positive-run.txt = `gh run view <run-id> --json headSha,headBranch,conclusion,jobs` (wait for status completed first; never --exit-status); ci-positive-log.txt = `gh run view --job <job-id> --log` with <job-id> the databaseId of the convergent_review job in that run's jobs.",
+      "8. Negative control, Orchestrator (outward; authorized by the operator at 2026-10-09T18:20:09Z and 18:20:44Z). In a detached worktree at /home/cnross/workspace02/nizam-wt-104-throwaway (outside the shared tree, `git worktree add --detach` at the positive run's headSha, the 099/103 attempt-worktree precedent) apply exactly AT4's two replacements (design_notes.pinned_texts.mutation_replacements; each source string must occur exactly once, else stop), commit as the only change with a message stating DO NOT MERGE, and `git push origin HEAD:refs/heads/throwaway/104-<slug>` with <slug> a short fixed word such as isolation-removal. Open a DRAFT PR to main titled DO NOT MERGE (needed to trigger the workflow). Poll to completion. Capture ci-negative-mutation.txt (`git diff --no-color <base-sha> <neg-sha>`, taken BEFORE deletion; <base-sha> MUST equal the positive run's headSha), ci-negative-run.txt and ci-negative-log.txt by the same two gh commands. The triage of step 6 applies to the POSITIVE run only: here a FAIL in test_linux_sandbox_blocks_cross_trial_files_and_network is the expected result. If instead the negative log shows `UNSUPPORTED`, `CONFORMANCE: NOT FULL` or `REQUIRED CONFORMANCE NOT MET`, or lacks `AssertionError: 40 != 0`, HALT and escalate (capability or finding). The job must conclude `failure` with `FAIL: test_linux_sandbox_blocks_cross_trial_files_and_network` and `AssertionError: 40 != 0` in its log. If it passes, or fails differently, that is a finding about the deliverable or the runner: escalate, do not edit the mutation or the assertions to make it fit.",
+      "9. Orchestrator (outward): close the draft PR WITHOUT merging, delete the remote branch (`git push origin --delete throwaway/104-<slug>`), `git worktree remove` that exact throwaway path, then capture ci-negative-pr-state.txt (`gh pr view <n> --json state,mergedAt,headRefName,baseRefName`) and ci-negative-branch-absent.txt (`git ls-remote --heads origin throwaway/104-<slug>`, no result lines). Run captures precede deletion; run data survives branch deletion.",
+      "10. Orchestrator: run AT5-AT8, S10, S11 as a self-check and commit the seven ci-*.txt files as one evidence commit on the feature branch (pushed afterwards by the Orchestrator).",
+      "11. Delta validator Mode B on the evidence commit; then the evaluator re-runs everything it can (AT1-AT10, S01, S03-S11; S02 is attempt-root only) into .agent/evidence/104/qa/ and may cross-check the runs live through read-only gh."
+    ],
+    "outward_facing_acts": {
+      "rule": "Every act that writes to the remote or to GitHub belongs to the ORCHESTRATOR, never the Generator. Validators and the Evaluator use read-only gh only.",
+      "acts": [
+        {
+          "act": "push the feature branch",
+          "command": "git push -u origin phase/014-104-sandbox-ci",
+          "role": "Orchestrator",
+          "when": "after cherry-pick and Mode B on the code diff (sequence step 5)"
+        },
+        {
+          "act": "open the feature PR (trigger for the positive run)",
+          "command": "gh pr create --base main --head phase/014-104-sandbox-ci",
+          "role": "Orchestrator",
+          "when": "step 5; its pull_request run is the positive run"
+        },
+        {
+          "act": "push the throwaway branch",
+          "command": "git push origin HEAD:refs/heads/throwaway/104-<slug>",
+          "role": "Orchestrator",
+          "when": "step 8, after the positive evidence is captured; operator-authorized 18:20:09Z/18:20:44Z"
+        },
+        {
+          "act": "open the throwaway draft PR (trigger for the negative run; never merged)",
+          "command": "gh pr create --draft --base main --head throwaway/104-<slug>",
+          "role": "Orchestrator",
+          "when": "step 8"
+        },
+        {
+          "act": "close the throwaway PR unmerged",
+          "command": "gh pr close <n>",
+          "role": "Orchestrator",
+          "when": "step 9"
+        },
+        {
+          "act": "delete the throwaway remote branch",
+          "command": "git push origin --delete throwaway/104-<slug>",
+          "role": "Orchestrator",
+          "when": "step 9, after all negative-run captures"
+        },
+        {
+          "act": "push the CI-evidence commit",
+          "command": "git push origin phase/014-104-sandbox-ci",
+          "role": "Orchestrator",
+          "when": "after the evidence commit (step 10); the delta Mode B (step 11) reviews that commit"
+        }
+      ],
+      "never": "No act uses --no-verify, force-pushes main or any shared ref, merges the throwaway branch, or merges the feature PR (the Orchestrator never self-merges; the human merges); and it never uses `gh run rerun` or a job re-run to obtain a green run."
+    },
+    "runner_capability_failure": "If hosted runners lack user-namespace or Landlock support even with the guarded step, the required-mode job fails by design: ESCALATE per the CAPABILITY rule of ci_evidence_sequence step 6 and never weaken. Capability failures are not Generator failures and consume no attempt; the operator decides the remedy (for example a different runner image or a spec amendment), recorded before any act. `--allow-unsupported-isolation` is never used in the workflow, in any ci-*.txt capture, or in the throwaway change. The ONLY sanctioned local use is supplementary check S08 (a flagged local run on this restricted workstation, never an evidence command for CI).",
+    "discharges": {
+      "what": "The positive run discharges feature 103 AT1's capable-host branch; the negative control discharges 103 AT4's capable-host branch ('AssertionError: 40 != 0'). 103 AT2's capable branch is not discharged by CI (the workflow never passes the flag) and stays with the Evaluator where isolation exists, else recorded not-exercised.",
+      "how_recorded": "No new artifact is invented. (1) 104 AT5/AT6 and AT7/AT8, run by the Evaluator into .agent/evidence/104/qa/, are the proof: AT6 asserts the log-observable part of 103 AT1's capable condition ('CONFORMANCE: FULL', no UNSUPPORTED, no skipped, no FAIL/ERROR line; the exit status is carried by the job's success conclusion that AT5 asserts), and AT8 asserts the FAIL line and 'AssertionError: 40 != 0' (103 AT4's capable condition). (2) The Evaluator's .agent/qa/104.json states the two discharges explicitly in its summary, citing those evidence paths; the delta Mode B (on the evidence commit) does likewise. (3) The Orchestrator records them in the run_state/phase notes it owns.",
+      "debt_md": "docs/planning/DEBT.md is NOT in this feature's scope: neither the feature text, the spec's 104 section nor its files list names it. Closing NDEBT-043 (after this evidence exists) and NDEBT-041 (its CI half; the C12 half is an explicit statement per the remedy, with C12 coverage left to 101/H-CONSOLIDATION), and keeping NDEBT-046 open, are planning-record updates owned by the Orchestrator and the 102 open-debt roll, exactly as contract 103 recorded. S03 fails the attempt if DEBT.md changes. NDEBT-043 must not be reported closed before the evidence is verified."
+    },
+    "mode_b_obligations": "Mode B (and the delta Mode B on the evidence commit) must machine-check what S02/S03/S07 deliberately do not: (a) the step-104 `status` in docs/planning/phase_014.yaml (S07 excludes it; it must not be BLOCKED and COMPLETED requires docs_updated and changelog_entry), and (b) the 04 Section 5 shape of every Generator evidence file (invocation on line 1, EXIT:<code> last, the code read from the process).",
+    "pinned_texts": {
+      "workflow_job_yaml": "convergent_review:\n  runs-on: ubuntu-latest\n  steps:\n    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2\n      with:\n        persist-credentials: false\n    - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0\n      with:\n        python-version: \"3.x\"\n    - run: pip install jsonschema\n    - name: Enable unprivileged user namespaces where the kernel restricts them\n      run: |\n        if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then\n          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0\n        fi\n    - run: python3 tools/test_convergent_review.py\n",
+      "workflow_job_notes": "Append at the end of the jobs: mapping, after fixtures_self_test, indented two spaces like its siblings. Code comments are allowed and encouraged (why the guard exists, why jsonschema is installed, that the mode is deliberately required and the flag is deliberately absent) but YAML comments never reach the run log, so they cannot trip the AT6 word checks; the run: text and the step name may not contain any word listed in S04. The AppArmor key path in the guard is tested with [ -e ] (no PATH dependence, and exactly 'only where the sysctl key exists'); the write goes through sudo, which hosted runners provide passwordless. No fetch-depth override (S08 shows a depth-1 checkout is enough). No pyyaml: the suite imports only jsonschema (grep-verified at base).",
+      "dod_replacements": [
+        [
+          "`e2e_bootstrap`, and `fixtures_self_test` -- passes",
+          "`e2e_bootstrap`, `fixtures_self_test`, and `convergent_review` (the convergent review suite in required-conformance mode) -- passes"
+        ],
+        [
+          "all three, plus a human reviewer's approval",
+          "all four, plus a human reviewer's approval"
+        ],
+        [
+          "own three-job workflow mechanizes",
+          "own four-job workflow mechanizes"
+        ],
+        [
+          "three jobs `.github/workflows/compliance.yml` declares",
+          "four jobs `.github/workflows/compliance.yml` declares"
+        ]
+      ],
+      "dod_change_log_summary": "Merge-Done (Section 8) and Enforcement (Section 11) now name four compliance.yml jobs: `convergent_review`, the convergent review suite in required-conformance mode, joins `validate`, `e2e_bootstrap` and `fixtures_self_test` (NDEBT-041).",
+      "readme_paragraph": "CI runs this suite as the `convergent_review` job of `.github/workflows/compliance.yml`, in required-conformance mode and never with `--allow-unsupported-isolation`. The job first runs a guarded step that enables unprivileged user namespaces only on runners whose kernel exposes the AppArmor user-namespace restriction key, and it installs `jsonschema` so that no ordinary test is skipped. A runner that still cannot provide isolation therefore fails the job instead of passing it, and the job log must show `CONFORMANCE: FULL`.",
+      "readme_insertion_point": "A new paragraph, blank-line separated, immediately after the feature-103 paragraph (the one ending 'it never runs a trial outside the sandbox.') and before the '## Compliance Coverage' heading, so it lies inside Machine Validation. It may be hard-wrapped; S06 compares whitespace-normalised.",
+      "readme_change_log_summary": "Name the `convergent_review` CI job in Machine Validation: the convergent review suite runs in required-conformance mode in `.github/workflows/compliance.yml`, behind a guarded user-namespace step (NDEBT-041).",
+      "schema_readme_line": "`tools/test_convergent_review.py` is the sole validator of the review schema family (`review_packet`, `review_trial`, `review_ledger`, `review_suppression`, `review_replay`): `tools/validate.sh` check C12 does not cover this family, and extending C12 to it is left to the phase-014 simplification review and `H-CONSOLIDATION`.",
+      "schema_readme_form": "ONE physical line (AT3 inspects splitlines() for a single line holding both 'test_convergent_review.py' and 'sole validator'; hard-wrapping it fails AT3). It is its own paragraph, blank-line separated, appended as the LAST paragraph of the ## Schemas section, after the paragraph that begins 'The five schemas define closed artifact shapes' and before '## DD-3'.",
+      "schema_change_log_summary": "State that `tools/test_convergent_review.py` is the sole validator of the review schema family; extending C12 to that family is left to the phase-014 simplification review (NDEBT-041).",
+      "changelog_bullet": "- **Phase 014 feature 104: Convergent-review suite enforced in CI** (additive; MINOR at the next release,\n  `methodology/06_release_train.md` Section 3.2; no release is prepared and no tag is created).\n  `.github/workflows/compliance.yml` gains one job, `convergent_review`, that runs\n  `tools/test_convergent_review.py` in required-conformance mode (never with\n  `--allow-unsupported-isolation`) after a guarded step that enables unprivileged user namespaces\n  only where the kernel exposes the AppArmor restriction key; the already-pinned action SHAs are\n  reused, so C14 stays PASS. `standard/definition_of_done.md` (0.2.0) Sections 8 and 11 now name four\n  jobs, `tools/README.md` (0.13.0) names the job in Machine Validation, and `schema/README.md`\n  (0.19.0) states that the suite is the sole validator of the review schema family (C12 coverage\n  of that family is left to the phase-014 simplification review). NDEBT-041; the CI evidence, a\n  green run and a throwaway-branch negative control that also supplies the capable-host evidence\n  for feature 103, is recorded under `.agent/evidence/104/`.",
+      "changelog_insertion_point": "Appended as the last bullet of the [Unreleased] '### Changed' list, immediately after the feature-103 bullet and before the '## [1.4.0] - 2026-10-08' heading.",
+      "phase_yaml_docs_updated": "standard/definition_of_done.md",
+      "phase_yaml_changelog_entry": "Convergent-review suite enforced in CI: one required-conformance compliance.yml job (convergent_review) behind a guarded user-namespace step; Definition of Done job counts synced to four; schema/README.md states the suite is the review schema family's sole validator (NDEBT-041).",
+      "phase_yaml_evidence": ".agent/evidence/104/at1-single-job.txt",
+      "phase_yaml_form": "docs_updated, changelog_entry (a double-quoted scalar; it contains ': ' so an unquoted scalar is invalid YAML) and evidence on step 104, matching the 103 form.",
+      "mutation_replacements": {
+        "tools/linux_trial_sandbox.sh": [
+          "exec unshare --user --map-root-user --net --ipc --uts --pid --fork --mount-proc",
+          "exec"
+        ],
+        "tools/isolated_trial_adapter.py": [
+          "syscall(SYS_LANDLOCK_RESTRICT_SELF, ruleset_fd, 0)",
+          "pass"
+        ]
+      }
+    },
+    "hazards": [
+      "1. TRIGGERS. on: is `pull_request` plus `push` to `main`; the file's `on:` is not edited. A run on the feature branch or a throwaway branch therefore exists only through a PR. Do not add workflow_dispatch or any trigger: the feature text is 'ONE job', and a trigger change widens CI beyond the spec.",
+      "2. CONCURRENCY. The group is workflow+ref with cancel-in-progress: true. A second push to the same ref cancels an in-flight run, and a cancelled run fails AT5 (conclusion). Capture the completed run before the next push; S10 rejects cancelled runs.",
+      "3. LOG WORDS. AT6 requires the whole job log to contain no `UNSUPPORTED` and no `skipped`; the log echoes every run: script and step name. Neither may contain UNSUPPORTED, skipped, `FAIL: test_`, `ERROR: test_`, or the flag text (S04 enforces). Baseline logs of the three existing jobs (run 37970429143) contain neither word, so the runner boilerplate is clean. `skipped` also appears in unittest's summary if ANY test skips: jsonschema must be installed (pip step) and isolation must really be available. `CONFORMANCE: FULL` is not a substring of `CONFORMANCE: NOT FULL`.",
+      "4. AT3 is line-based: the sole-validator statement must be ONE physical line containing both `test_convergent_review.py` and `sole validator`.",
+      "5. AT2 counts words: after the edit §8 and §11 may contain only the word four in a count role (`all four`, `four-job`, `four jobs`); no other `two|three|four|five|six` followed by `jobs`/`-job` and no `all <n>` may remain. AT2 is non-discriminating at base; S06 is the discriminating check.",
+      "6. NAME BINDING. The job has no `name:`, so every AT binds on the key `convergent_review`; the DoD §8 and the tools/README Machine Validation text must contain that key in backticks (AT2 requires every job key in §8; AT4 requires the job key in the section).",
+      "7. THIS WORKSTATION. kernel.apparmor_restrict_unprivileged_userns reads 1 here and the guarded step would write it. The Generator must NEVER execute the real step or any sysctl -w; S05 uses shims only. The sysctl write is confined to the ephemeral hosted runner.",
+      "8. RUNNER CAPABILITY (risk the spec names). If hosted ubuntu-latest cannot provide user namespaces or Landlock even after the guarded step, the required-mode job fails BY DESIGN and the failure is a CAPABILITY failure (step 6): escalate; never add the flag, -k filtering, continue-on-error, a self-skipping job, `gh run rerun`, or an edit to the suite/adapter/sandbox script. Missing Landlock shows as an OSError traceback from the adapter (L54-60, L75), i.e. a FAIL/ERROR in a sandbox-dependent test, not as an 'unavailable' report. Unverified for hosted runners until the first run.",
+      "9. C8, C9, C14. Three shipped docs change, so each needs a version bump plus a head change_log entry (C8). Backticked tokens in new prose must resolve if path-like (C9): only existing paths are cited; the AppArmor key is described in words, not as a backticked dotted token. The new job reuses the exact pinned SHAs (C14). AT9 and S09 catch violations; if a pinned text trips a check, propose a contract revision, do not edit the pinned text unilaterally.",
+      "10. EVIDENCE SHAPE (lesson from 103). Every .txt file, adversarial ones included, has the invocation on line 1 and `EXIT:<code>` as the last line, the code read from the process, never from a pipeline (no `| tee`/`| grep` swallowing it). `gh` must not be given --exit-status; a failed run still exits 0. JSON captures contain stdout only (no stderr) so json.loads of lines 2..-2 succeeds.",
+      "11. FULL SUITE. The CI step is exactly `python3 tools/test_convergent_review.py`: no -k, no pattern, no flag, no env switch (S04). The suite and the sandbox files are byte-unchanged (S03). Positive-run proof is the AT6 log: `CONFORMANCE: FULL`.",
+      "12. AT numbering/amendment A1. AT8 was amended (spec 1.1.3): the mutation removes both halves and the log must show `AssertionError: 40 != 0`. Removing only the namespace half is detected by no test (NDEBT-046, open, out of scope); the negative control must use both replacements.",
+      "13. PR RUNS ARE MERGE-REF CHECKOUTS. A pull_request run checks out refs/pull/<n>/merge, not the head commit, while headSha reports the PR head. Keep main unmoved between the positive and negative PRs if practical; the mutation diff (S11) is relative to the pushed base, which is what the evidence records.",
+      "14. TWO PUSHES, ONE RUN. The final evidence-commit push triggers another compliance run whose result is not part of the evidence; AT5 refers only to the captured run, whose headSha is an ancestor of the later HEAD."
+    ],
+    "attempt_isolation": {
+      "authority": "methodology/03_circuit_breaker.md Sec 3.1 and Sec 4, following approved contracts 099 and 103.",
+      "attempt_base": "<A> = f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef (the Orchestrator's amendment-A2 commit on top of b8ea889 = main after feature 103; the branch tip when this revision was written) is the pre-feature base and the diff anchor of S03, S04, S06 and S07. <B>, the Orchestrator's commit of the approved contract, is the attempt base and the anchor of S02 only. For a repair attempt after a promoted attempt failed in CI, <B> is the branch tip at that time.",
+      "worktree_creation": "The ORCHESTRATOR creates each attempt worktree: `git worktree add --detach /home/cnross/workspace02/nizam-wt-104-attempt<N> <B>` (N = 1..3) and passes the path in. The Generator's first action is `git rev-parse HEAD` inside it, captured to attempt-base.txt. If worktree creation fails: HALT and escalate; never fall back to the shared tree.",
+      "promotion": "One Generator commit (deliverable plus evidence) in the root; the Orchestrator `git cherry-pick`s it onto phase/014-104-sandbox-ci and only then `git worktree remove`s the root. Mode B reviews the promoted diff against the contract.",
+      "failure": "Evidence stays in the root; the Orchestrator copies the root's .agent/evidence/104/ to .agent/evidence/104/failed-attempt<N>/ in the shared tree, then removes only that exact root. No `git reset --hard`, no repository-wide reset or clean, ever. On the third failure (attempt 4 forbidden): quarantine, BLOCKED canonical-first in docs/planning/phase_014.yaml, Orchestrator repairs run_state, logs docs/planning/DEBT.md, escalates, terminates."
+    },
+    "version_and_compatibility_impact": "MINOR at the next release (spec: 'MINOR (a definition_of_done.md job statement)'; additive job statement, the NIP-0003 Compatibility-table precedent). .github/ is not injected into consumers; standard/definition_of_done.md, tools/README.md and schema/README.md are governed docs. framework.version stays 1.4.0, nothing is released or tagged. NIP-0003 feature 109 (renumbered 116) later makes the DoD text 'five' (recorded in backlog_reconciliation D-14); that is NOT edited here.",
+    "scope_budget": "estimated_lines 710 is the feature-list figure on the spec-1.1.4 budget-counted basis (range 520-900; product + contract + verdict + planning; evidence and run_state excluded). Rough allocation: product ~95 changed lines (workflow ~25, DoD ~14, tools/README ~14, schema/README ~6, CHANGELOG ~13, versions/change_logs ~15, phase yaml ~4); this contract ~300; verdicts ~200 (Mode A, contract review, Mode B, QA, plus a revision round); planning ~15. The realized figure is measured by .agent/evidence/scope-budget-014/measure.py from the attempt-base-excluded range and recorded by the Orchestrator; the Generator writes no scope_budget field. Amendment A2 (spec 1.1.5) falls in 104's measured range, like A1 in 103's (its planning lines are charged to 104; see .agent/evidence/104-amendment-a2/scope-budget.txt). Evidence is deliberately lean: 16 generator files and 7 captures, all in the Section-5 shape.",
+    "rollback": "All Generator changes are text files on phase/014-104-sandbox-ci and reach the shared tree only by the Orchestrator's cherry-pick of one commit, so a failed attempt is rolled back by evidence capture and `git worktree remove` of that exact root. After promotion: `git revert` of the cherry-picked commit(s) on the feature branch. Residual uncommitted shared-tree state is restored only by the explicit list `git checkout <B> -- .github/workflows/compliance.yml standard/definition_of_done.md tools/README.md schema/README.md CHANGELOG.md docs/planning/phase_014.yaml` plus removal of the Generator-owned evidence files by explicit path (never the .agent/evidence/104/ directory wholesale: qa/, failed-attempt*/ and the ci-*.txt files belong to others) and never .agent/run_state.json. Outward state: the throwaway PR is closed and its branch deleted by the Orchestrator (sequence step 9); a pushed feature branch is reverted by `git revert`, never by deleting history. Nothing is released, tagged, merged, or registered externally. No `git reset --hard`.",
+    "retry_identity_note": "Step keys 104-contract (Loop 1, limit 3 revisions; this is attempt 3/3, now revision 3) and 104-implementation (Loop 2, limit 3). Counters live in the Orchestrator-owned run_state.circuit_breaker; the Generator does not write them.",
+    "open_risks": [
+      "R1 (hosted-runner capability risk): Landlock/userns on ubuntu-latest is unverified until the first run. Known specific hazard: actions/setup-python puts an interpreter under /opt/hostedtoolcache first on PATH, but the adapter's Landlock filesystem allowlist is only /usr, /lib and /lib64 (tools/isolated_trial_adapter.py L91) and the trial runners the tests write rely on `#!/usr/bin/env python3` (tools/test_convergent_review.py L825, L944, L967; PATH is passed through, tools/evaluate_convergent_review_prompt.py L107), so sandboxed trials may not be able to execute that interpreter. If this manifests it is a CAPABILITY failure (step 6): escalate, no attempt consumed, no workaround inside this contract (for example moving the job to the system python3 would be a pinned-job change, i.e. a 104-contract revision decided by the operator/Orchestrator). A failure escalates; no pre-approved fallback exists in the spec. Recorded Orchestrator decisions: Q3 CI evidence capture and its commit are the Orchestrator's; Q4 ordering is sequence steps 1-11 (Mode B before any push, delta Mode B on the evidence commit)."
+    ]
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/evidence/104/attempt-base.txt",
+        "purpose": "The attempt base B, recorded as the Generator's first action in its attempt root: line 1 `git rev-parse HEAD`, line 2 the 40-hex sha, line 3 `EXIT:0`. Input to S02."
+      },
+      {
+        "path": ".agent/evidence/104/at1-single-job.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/at2-job-counts.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/at3-sole-validator.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/at4-readme-names-job.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/at9-validator-gate.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/at10-fixtures-self-test.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/s01-contract-valid-and-verbatim.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/s02-attempt-root-delta.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/s03-scope-boundary.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/s04-workflow-structure.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/s05-guarded-step-stub.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/s06-docs-pinned.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/s07-changelog-phase-yaml.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/s08-shallow-clone-suite.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/104/s09-validate-c14.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it: line 1 the exact invocation (for a heredoc script, the first line of the command), then the verbatim stdout/stderr, final line EXIT:<code> read from the process itself, never from a pipeline."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "The deliverable. Adds exactly ONE job, convergent_review (design_notes.pinned_texts.workflow_job_yaml). The only phase-014 feature the spec permits to modify .github/. Nothing else in the file changes."
+      },
+      {
+        "path": "standard/definition_of_done.md",
+        "purpose": "Section 8 names all four jobs and 'all four'/'four-job'; Section 11 says 'four jobs' (four pinned replacements); version 0.1.0 -> 0.2.0 with a head change_log entry (C8). The doc referenced by the step's docs_updated."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "One pinned paragraph in Machine Validation naming the job; version 0.12.0 -> 0.13.0 with a head change_log entry (C8). Nothing else changes."
+      },
+      {
+        "path": "schema/README.md",
+        "purpose": "One pinned physical line at the end of ## Schemas stating that tools/test_convergent_review.py is the sole validator of the review schema family; version 0.18.0 -> 0.19.0 with a head change_log entry (C8). Nothing else changes."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Exactly one pinned bullet under [Unreleased] ### Changed, after the feature-103 bullet."
+      },
+      {
+        "path": "docs/planning/phase_014.yaml",
+        "purpose": "Step 104 only: ADD docs_updated, changelog_entry and evidence. Status is the Orchestrator's."
+      }
+    ],
+    "orchestrator_owned_create": [
+      {
+        "path": ".agent/evidence/104/ci-positive-run.txt",
+        "purpose": "AT5 input. Line 1 `gh run view <run-id> --json headSha,headBranch,conclusion,jobs`; the JSON; `EXIT:<code>`.",
+        "owner": "orchestrator"
+      },
+      {
+        "path": ".agent/evidence/104/ci-positive-log.txt",
+        "purpose": "AT6 input. Line 1 `gh run view --job <job-id> --log` where <job-id> is the databaseId of the convergent_review job; the log; `EXIT:<code>`.",
+        "owner": "orchestrator"
+      },
+      {
+        "path": ".agent/evidence/104/ci-negative-run.txt",
+        "purpose": "AT7 input, same shape as ci-positive-run.txt, for the throwaway/104-<slug> run.",
+        "owner": "orchestrator"
+      },
+      {
+        "path": ".agent/evidence/104/ci-negative-log.txt",
+        "purpose": "AT8 input, same shape as ci-positive-log.txt, for the throwaway run's convergent_review job.",
+        "owner": "orchestrator"
+      },
+      {
+        "path": ".agent/evidence/104/ci-negative-mutation.txt",
+        "purpose": "Line 1 `git diff --no-color <base-sha> <negative-headSha>`: the throwaway branch's only change; `EXIT:0` last. Input to S11.",
+        "owner": "orchestrator"
+      },
+      {
+        "path": ".agent/evidence/104/ci-negative-pr-state.txt",
+        "purpose": "Line 1 `gh pr view <n> --json state,mergedAt,headRefName,baseRefName`: the throwaway PR is CLOSED and unmerged; `EXIT:<code>` last.",
+        "owner": "orchestrator"
+      },
+      {
+        "path": ".agent/evidence/104/ci-negative-branch-absent.txt",
+        "purpose": "Line 1 `git ls-remote --heads origin throwaway/104-<slug>`; no result lines; `EXIT:0` last: the remote branch is deleted.",
+        "owner": "orchestrator"
+      }
+    ]
+  },
+  "non_goals": [
+    "Exactly ONE new job. No other edit to .github/ : no other workflow (pages.yml, release.yml, release_closeout.yml), no PR template, no `on:`, permissions, concurrency or existing job edit, no new trigger (workflow_dispatch included), no new action or new SHA, no matrix, no continue-on-error, no job name.",
+    "The required mode is never weakened: --allow-unsupported-isolation appears in no workflow, no ci-*.txt capture and no throwaway change (the sole sanctioned local use is S08, a flagged local run on this restricted workstation); no -k or test filtering; no env switch; no skip step. A runner without isolation fails the job.",
+    "tools/test_convergent_review.py, tools/linux_trial_sandbox.sh, tools/isolated_trial_adapter.py, tools/convergent_review.py, tools/validate.sh, tools/fixtures_self_test.sh, every schema JSON and every fixture are untouched (S03). No C12 extension (left to 101/H-CONSOLIDATION), no new validate.sh check, no NDEBT-046 work (namespace-only removal stays undetected).",
+    "No edit to docs/planning/DEBT.md, ROADMAP.md, manifest.json, operator_gates.md, backlog_reconciliation.md, any NIP (NIP-0003's 'four jobs' text becomes 'five' at its own pre-acceptance revision), CONTEXT.md, the spec or the feature list. NDEBT-043 and NDEBT-041 closure is the Orchestrator's planning update after the evidence is verified.",
+    "The Generator performs no push, no gh command, no remote or PR act of any kind, no branch deletion, and does not run the real guarded step or any sysctl write on this workstation. Every outward act is the Orchestrator's (design_notes.outward_facing_acts). The throwaway branch is never merged.",
+    "The Generator writes no .agent/run_state.json field, no circuit_breaker counter, no scope_budget; those are Orchestrator-owned (contract 099 and 103 precedent).",
+    "No release, tag or framework.version bump (stays 1.4.0); no consumer migration; no change to the frozen acceptance infrastructure under .agent/evidence/phase-014-activation/.",
+    "No work belonging to features 100-102 or 105-109, and no NIP acceptance."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "python3 -c \"import yaml; J=yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs']; hits=[k for k,j in J.items() if any('python3 tools/test_convergent_review.py' in (s.get('run') or '') and '--allow-unsupported-isolation' not in (s.get('run') or '') for s in j['steps'])]; assert len(hits)==1, hits\"",
+      "command": "python3 -c \"import yaml; J=yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs']; hits=[k for k,j in J.items() if any('python3 tools/test_convergent_review.py' in (s.get('run') or '') and '--allow-unsupported-isolation' not in (s.get('run') or '') for s in j['steps'])]; assert len(hits)==1, hits\"",
+      "acceptance_test_index": 1,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[0]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1): AssertionError: [] (no job runs the suite).",
+      "expected_outcome": "Exit 0 inside the attempt root.",
+      "evidence_file": ".agent/evidence/104/at1-single-job.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import re,yaml; J=list(yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs']); W={3:'three',4:'four',5:'five',6:'six'}[len(J)]; d=open('standard/definition_of_done.md').read(); s=d.split('## 8. Merge-Done')[1].split('## 9.')[0]+d.split('## 11. Enforcement')[1].split('## 12.')[0]; assert all('\\x60'+j+'\\x60' in d.split('## 8. Merge-Done')[1].split('## 9.')[0] for j in J), J; words=re.findall(r'\\b(?:all (two|three|four|five|six)\\b|(two|three|four|five|six)(?:-job| jobs\\b))',s); found={a or b for a,b in words}; assert found=={W}, (found,W)\"",
+      "command": "python3 -c \"import re,yaml; J=list(yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs']); W={3:'three',4:'four',5:'five',6:'six'}[len(J)]; d=open('standard/definition_of_done.md').read(); s=d.split('## 8. Merge-Done')[1].split('## 9.')[0]+d.split('## 11. Enforcement')[1].split('## 12.')[0]; assert all('\\x60'+j+'\\x60' in d.split('## 8. Merge-Done')[1].split('## 9.')[0] for j in J), J; words=re.findall(r'\\b(?:all (two|three|four|five|six)\\b|(two|three|four|five|six)(?:-job| jobs\\b))',s); found={a or b for a,b in words}; assert found=={W}, (found,W)\"",
+      "acceptance_test_index": 2,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[1]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "PASS at A (exit 0), non-discriminating at base: three jobs and the word three agree. It turns red the moment the job is added without the document edit; S06 is the discriminating check.",
+      "expected_outcome": "Exit 0 after both the job and the document edit exist.",
+      "evidence_file": ".agent/evidence/104/at2-job-counts.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"s=open('schema/README.md').read().split('## Schemas')[1].split('\\n## ')[0]; L=[l for l in s.splitlines() if 'test_convergent_review.py' in l and 'sole validator' in l]; assert L, 'no sole-validator statement in the Schemas section'\"",
+      "command": "python3 -c \"s=open('schema/README.md').read().split('## Schemas')[1].split('\\n## ')[0]; L=[l for l in s.splitlines() if 'test_convergent_review.py' in l and 'sole validator' in l]; assert L, 'no sole-validator statement in the Schemas section'\"",
+      "acceptance_test_index": 3,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[2]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1): AssertionError: no sole-validator statement in the Schemas section.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/at3-sole-validator.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import yaml; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; m=open('tools/README.md').read().split('## Machine Validation')[1].split('\\n## ')[0]; assert len(J)==1 and ('\\x60'+J[0][0]+'\\x60') in m, J\"",
+      "command": "python3 -c \"import yaml; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; m=open('tools/README.md').read().split('## Machine Validation')[1].split('\\n## ')[0]; assert len(J)==1 and ('\\x60'+J[0][0]+'\\x60') in m, J\"",
+      "acceptance_test_index": 4,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[3]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1): AssertionError: [] (no job runs the suite, so none can be named).",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/at4-readme-names-job.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import json,re,subprocess,yaml; t=open('.agent/evidence/104/ci-positive-run.txt').read().splitlines(); assert re.fullmatch(r'gh run view [0-9]+ --json headSha,headBranch,conclusion,jobs',t[0]), t[0]; R=json.loads('\\n'.join(t[1:-1])); J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; assert len(J)==1, J; jb=[j for j in R['jobs'] if j['name']==J[0][1]]; assert R['conclusion']=='success' and R['headBranch']=='phase/014-104-sandbox-ci' and subprocess.run(['git','merge-base','--is-ancestor',R['headSha'],'HEAD']).returncode==0 and len(jb)==1 and jb[0]['conclusion']=='success' and t[-1]=='EXIT:0', (R['conclusion'],R['headBranch'],R['headSha'],jb,t[-1])\"",
+      "command": "python3 -c \"import json,re,subprocess,yaml; t=open('.agent/evidence/104/ci-positive-run.txt').read().splitlines(); assert re.fullmatch(r'gh run view [0-9]+ --json headSha,headBranch,conclusion,jobs',t[0]), t[0]; R=json.loads('\\n'.join(t[1:-1])); J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; assert len(J)==1, J; jb=[j for j in R['jobs'] if j['name']==J[0][1]]; assert R['conclusion']=='success' and R['headBranch']=='phase/014-104-sandbox-ci' and subprocess.run(['git','merge-base','--is-ancestor',R['headSha'],'HEAD']).returncode==0 and len(jb)==1 and jb[0]['conclusion']=='success' and t[-1]=='EXIT:0', (R['conclusion'],R['headBranch'],R['headSha'],jb,t[-1])\"",
+      "acceptance_test_index": 5,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[4]",
+      "provenance": "operator_approved_amendment_1_1_5",
+      "owner": "evaluator",
+      "state_at_base_A": "FAIL (exit 1): FileNotFoundError ci-positive-run.txt.",
+      "expected_outcome": "Exit 0 once the Orchestrator has captured the evidence; the branch literal is phase/014-104-sandbox-ci (amendment A2).",
+      "evidence_file": ".agent/evidence/104/qa/at5-ci-positive-run.txt",
+      "run_by": "Not run by the Generator. Run by the Orchestrator as a pre-handoff self-check after the CI evidence is captured, then re-run by the Evaluator into .agent/evidence/104/qa/. Inside the attempt root this fails with FileNotFoundError (exit 1) by design."
+    },
+    {
+      "acceptance_test": "python3 -c \"import json,re,yaml; R=json.loads('\\n'.join(open('.agent/evidence/104/ci-positive-run.txt').read().splitlines()[1:-1])); t=open('.agent/evidence/104/ci-positive-log.txt').read().splitlines(); m=re.fullmatch(r'gh run view --job ([0-9]+) --log',t[0]); assert m, t[0]; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; jb=[j for j in R['jobs'] if str(j.get('databaseId'))==m.group(1)]; assert len(J)==1 and len(jb)==1 and jb[0]['name']==J[0][1], (J,jb); b='\\n'.join(t); assert t[-1]=='EXIT:0' and 'CONFORMANCE: FULL' in b and 'UNSUPPORTED' not in b and 'skipped' not in b and not re.search(r'\\b(FAIL|ERROR): test_',b), t[-1]\"",
+      "command": "python3 -c \"import json,re,yaml; R=json.loads('\\n'.join(open('.agent/evidence/104/ci-positive-run.txt').read().splitlines()[1:-1])); t=open('.agent/evidence/104/ci-positive-log.txt').read().splitlines(); m=re.fullmatch(r'gh run view --job ([0-9]+) --log',t[0]); assert m, t[0]; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; jb=[j for j in R['jobs'] if str(j.get('databaseId'))==m.group(1)]; assert len(J)==1 and len(jb)==1 and jb[0]['name']==J[0][1], (J,jb); b='\\n'.join(t); assert t[-1]=='EXIT:0' and 'CONFORMANCE: FULL' in b and 'UNSUPPORTED' not in b and 'skipped' not in b and not re.search(r'\\b(FAIL|ERROR): test_',b), t[-1]\"",
+      "acceptance_test_index": 6,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[5]",
+      "provenance": "new_feature_design",
+      "owner": "evaluator",
+      "state_at_base_A": "FAIL (exit 1): FileNotFoundError ci-positive-run.txt.",
+      "expected_outcome": "Exit 0 once the Orchestrator has captured the evidence.",
+      "evidence_file": ".agent/evidence/104/qa/at6-ci-positive-log.txt",
+      "run_by": "Not run by the Generator. Run by the Orchestrator as a pre-handoff self-check after the CI evidence is captured, then re-run by the Evaluator into .agent/evidence/104/qa/. Inside the attempt root this fails with FileNotFoundError (exit 1) by design."
+    },
+    {
+      "acceptance_test": "python3 -c \"import json,re,subprocess,yaml; t=open('.agent/evidence/104/ci-negative-run.txt').read().splitlines(); assert re.fullmatch(r'gh run view [0-9]+ --json headSha,headBranch,conclusion,jobs',t[0]), t[0]; R=json.loads('\\n'.join(t[1:-1])); J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; assert len(J)==1, J; jb=[j for j in R['jobs'] if j['name']==J[0][1]]; assert R['conclusion']=='failure' and R['headBranch'].startswith('throwaway/104-') and len(jb)==1 and jb[0]['conclusion']=='failure', (R['conclusion'],R['headBranch'],R['headSha'],jb,t[-1])\"",
+      "command": "python3 -c \"import json,re,subprocess,yaml; t=open('.agent/evidence/104/ci-negative-run.txt').read().splitlines(); assert re.fullmatch(r'gh run view [0-9]+ --json headSha,headBranch,conclusion,jobs',t[0]), t[0]; R=json.loads('\\n'.join(t[1:-1])); J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; assert len(J)==1, J; jb=[j for j in R['jobs'] if j['name']==J[0][1]]; assert R['conclusion']=='failure' and R['headBranch'].startswith('throwaway/104-') and len(jb)==1 and jb[0]['conclusion']=='failure', (R['conclusion'],R['headBranch'],R['headSha'],jb,t[-1])\"",
+      "acceptance_test_index": 7,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[6]",
+      "provenance": "new_feature_design",
+      "owner": "evaluator",
+      "state_at_base_A": "FAIL (exit 1): FileNotFoundError ci-negative-run.txt.",
+      "expected_outcome": "Exit 0 once the Orchestrator has captured the evidence.",
+      "evidence_file": ".agent/evidence/104/qa/at7-ci-negative-run.txt",
+      "run_by": "Not run by the Generator. Run by the Orchestrator as a pre-handoff self-check after the CI evidence is captured, then re-run by the Evaluator into .agent/evidence/104/qa/. Inside the attempt root this fails with FileNotFoundError (exit 1) by design."
+    },
+    {
+      "acceptance_test": "python3 -c \"import json,re,yaml; R=json.loads('\\n'.join(open('.agent/evidence/104/ci-negative-run.txt').read().splitlines()[1:-1])); t=open('.agent/evidence/104/ci-negative-log.txt').read().splitlines(); m=re.fullmatch(r'gh run view --job ([0-9]+) --log',t[0]); assert m, t[0]; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; jb=[j for j in R['jobs'] if str(j.get('databaseId'))==m.group(1)]; assert len(J)==1 and len(jb)==1 and jb[0]['name']==J[0][1], (J,jb); b='\\n'.join(t); assert re.search(r'\\b(FAIL|ERROR): test_linux_sandbox_blocks_cross_trial_files_and_network\\b',b) and re.search(r'\\bAssertionError: 40 != 0\\b',b), t[-1]\"",
+      "command": "python3 -c \"import json,re,yaml; R=json.loads('\\n'.join(open('.agent/evidence/104/ci-negative-run.txt').read().splitlines()[1:-1])); t=open('.agent/evidence/104/ci-negative-log.txt').read().splitlines(); m=re.fullmatch(r'gh run view --job ([0-9]+) --log',t[0]); assert m, t[0]; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; jb=[j for j in R['jobs'] if str(j.get('databaseId'))==m.group(1)]; assert len(J)==1 and len(jb)==1 and jb[0]['name']==J[0][1], (J,jb); b='\\n'.join(t); assert re.search(r'\\b(FAIL|ERROR): test_linux_sandbox_blocks_cross_trial_files_and_network\\b',b) and re.search(r'\\bAssertionError: 40 != 0\\b',b), t[-1]\"",
+      "acceptance_test_index": 8,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[7]",
+      "provenance": "operator_approved_amendment_1_1_3",
+      "owner": "evaluator",
+      "state_at_base_A": "FAIL (exit 1): FileNotFoundError ci-negative-run.txt.",
+      "expected_outcome": "Exit 0 once the Orchestrator has captured the evidence.",
+      "evidence_file": ".agent/evidence/104/qa/at8-ci-negative-log.txt",
+      "run_by": "Not run by the Generator. Run by the Orchestrator as a pre-handoff self-check after the CI evidence is captured, then re-run by the Evaluator into .agent/evidence/104/qa/. Inside the attempt root this fails with FileNotFoundError (exit 1) by design."
+    },
+    {
+      "acceptance_test": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+      "command": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+      "acceptance_test_index": 9,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[8]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "PASS at A (exit 0): 16 passed, 0 failed.",
+      "expected_outcome": "Exit 0 (G1-G5 hold; C8, C9 and C14 pass with the new text and job).",
+      "evidence_file": ".agent/evidence/104/at9-validator-gate.txt"
+    },
+    {
+      "acceptance_test": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+      "command": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+      "acceptance_test_index": 10,
+      "source": ".agent/feature_list_014.json features[104].acceptance_tests[9]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "PASS at A (exit 0).",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/at10-fixtures-self-test.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S01: this contract validates against schema/contract.schema.json; contract_id and feature_id are '104'; its ten non-supplementary entries are, in order, byte-identical (acceptance_test and command) to the ten acceptance_tests of feature 104 in the working-tree feature list (amendment A2 is already committed there; the AT5 literal is phase/014-104-sandbox-ci); exactly eleven supplementary entries, each with expected_outcome, state_at_base_A and an owner; evidence files are unique, under .agent/evidence/104/, generator-owned ones are in files_create and evaluator-owned ones are under .agent/evidence/104/qa/; every files_modify path exists at <A> and no create path does; the run_state, feature list, spec, DEBT.md, tools code and frozen infrastructure are in no scope list; estimated_lines equals the feature list's; version_impact starts with MINOR; retry identity is 104-contract / 104-implementation / limit 3.",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys, yaml\nA = 'f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef'\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nnorm = lambda x: ' '.join(x.split())\nbad = []\nimport jsonschema\nc = json.load(open('.agent/contracts/104.json'))\njsonschema.validate(c, json.load(open('schema/contract.schema.json')))\nf = next(x for x in json.load(open('.agent/feature_list_014.json'))['features'] if x['id'] == '104')\nif (c['contract_id'], c['feature_id']) != ('104', '104'): bad.append('ids')\nif c['spec_ref'] != '.agent/product_spec_014.md': bad.append('spec_ref')\nif c['status'] not in ('proposed', 'approved', 'implemented', 'complete'): bad.append('status ' + c['status'])\nats = [v for v in c['verification'] if not v.get('supplementary')]\nsup = [v for v in c['verification'] if v.get('supplementary')]\nif [v['acceptance_test'] for v in ats] != f['acceptance_tests'] or [v['command'] for v in ats] != f['acceptance_tests']: bad.append('acceptance tests are not verbatim and in order against the feature list')\nif len(ats) != 10 or len(sup) != 11: bad.append('expected 10 acceptance tests and 11 supplementary checks, got %d/%d' % (len(ats), len(sup)))\nif any(not v.get('expected_outcome') or not v.get('state_at_base_A') or v.get('owner') not in ('generator', 'evaluator') for v in c['verification']): bad.append('entry without expected_outcome/state_at_base_A/owner')\nev = [v['evidence_file'] for v in c['verification']]\ncreate = [x['path'] for x in c['scope']['files_create']]\nmodify = [x['path'] for x in c['scope']['files_modify']]\norch = [x['path'] for x in c['scope']['orchestrator_owned_create']]\nif len(set(ev)) != len(ev) or any(not e.startswith('.agent/evidence/104/') for e in ev): bad.append('evidence files not unique under .agent/evidence/104/')\nif not {v['evidence_file'] for v in c['verification'] if v['owner'] == 'generator'} <= set(create): bad.append('a generator evidence file is missing from files_create')\nif any(not v['evidence_file'].startswith('.agent/evidence/104/qa/') for v in c['verification'] if v['owner'] == 'evaluator'): bad.append('evaluator evidence must be under .agent/evidence/104/qa/')\nif set(create) & set(orch): bad.append('files_create and orchestrator_owned_create overlap')\nfor p in modify:\n    if sh('git', 'cat-file', '-e', A + ':' + p).returncode != 0: bad.append('files_modify path absent at base: ' + p)\nfor p in create + orch:\n    if sh('git', 'cat-file', '-e', A + ':' + p).returncode == 0: bad.append('create path already exists at base: ' + p)\nforbidden = ('.agent/run_state.json', '.agent/feature_list_014.json', '.agent/product_spec_014.md', 'docs/planning/DEBT.md')\nif any(p in forbidden or p.startswith(('tools/linux_', 'tools/isolated_', 'tools/test_', 'tools/convergent_', 'tools/validate', 'tools/fixtures', '.agent/evidence/phase-014-activation')) for p in create + modify + orch): bad.append('a forbidden path is in scope')\nif c['estimated_lines'] != f['estimated_lines']: bad.append('estimated_lines differs from the feature list')\nif not c['version_impact'].startswith('MINOR'): bad.append('version_impact must start with MINOR')\nr = c['retry_identity']\nif (r['contract_step_key'], r['implementation_step_key'], r['limit']) != ('104-contract', '104-implementation', 3): bad.append('retry identity')\nprint('verification:', len(c['verification']), 'acceptance tests:', len(ats), 'supplementary:', len(sup), 'files_create:', len(create), 'files_modify:', len(modify), 'orchestrator_owned:', len(orch), 'problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "PASS at A once this file is present (a guard, not a red test).",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/s01-contract-valid-and-verbatim.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S02: ATTEMPT-ROOT CHECK (Generator, inside its attempt root, before its single commit, HEAD == B). attempt-base.txt is the three-line captured form; B is a commit, <A> is its ancestor, B is an ancestor-or-equal of HEAD with at most one commit between, and the contract at B is approved; the delta since B (git diff --name-only -z B union git status --porcelain --untracked-files=all -z, rename-aware) is a subset of scope.files_create + files_modify, which proves the Generator touched no run_state, feature list, spec, DEBT.md or Orchestrator-owned CI evidence file. Mode B re-derives the same from git show --name-only of the attempt commit.",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys, yaml\nA = 'f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef'\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nnorm = lambda x: ' '.join(x.split())\nbad = []\nlines = open('.agent/evidence/104/attempt-base.txt').read().splitlines()\nif len(lines) != 3 or lines[0] != 'git rev-parse HEAD' or lines[2] != 'EXIT:0' or re.fullmatch(r'[0-9a-f]{40}', lines[1]) is None: bad.append('attempt-base.txt is not the three-line captured form: ' + repr(lines))\nB = lines[1] if len(lines) > 1 else ''\nc = json.load(open('.agent/contracts/104.json'))\nscope = {f['path'] for k in ('files_create', 'files_modify') for f in c['scope'][k]}\nif sh('git', 'cat-file', '-t', B).stdout.strip() != 'commit': bad.append('B is not a commit')\nif sh('git', 'merge-base', '--is-ancestor', A, B).returncode != 0: bad.append('A is not an ancestor of B')\nif sh('git', 'merge-base', '--is-ancestor', B, 'HEAD').returncode != 0: bad.append('B is not an ancestor-or-equal of HEAD')\nn = int(sh('git', 'rev-list', '--count', B + '..HEAD').stdout.strip() or 99)\nif n not in (0, 1): bad.append('HEAD is %d commits past B (an attempt is exactly one commit)' % n)\nbc = sh('git', 'show', B + ':.agent/contracts/104.json')\nif bc.returncode != 0 or json.loads(bc.stdout).get('status') != 'approved': bad.append('the contract at B is not approved')\ndelta = set(run('git', 'diff', '--name-only', '-z', B).split('\\0')) - {''}\nfields = run('git', 'status', '--porcelain', '--untracked-files=all', '-z').split('\\0')\ni = 0\nwhile i < len(fields):\n    entry = fields[i]; i += 1\n    if not entry: continue\n    delta.add(entry[3:])\n    if entry[0] in 'RC' or entry[1] in 'RC':\n        if i < len(fields): delta.add(fields[i]); i += 1\nextra = sorted(delta - scope)\nif extra: bad.append('paths changed since B outside the contract scope (this includes .agent/run_state.json, .agent/feature_list_014.json and every Orchestrator-owned CI evidence file): ' + repr(extra))\nprint('B =', B[:12], 'commits past B:', n, 'delta since B:', len(delta), 'problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at A (exit 1): attempt-base.txt does not exist before the attempt starts.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/s02-attempt-root-delta.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S03: FINAL-TREE SCOPE BOUNDARY (Evaluator; the Generator also runs it once all deliverables exist). Every path changed against <A> (tracked diff union untracked, rename-aware) is in scope (files_create, files_modify, orchestrator_owned_create) or on the allowlist (contracts/104.json, run_state, the feature list, .agent/validator/104*, .agent/qa/104*, .agent/evidence/104/qa/, failed-attempt dirs, .agent/evidence/104-qa-*); every files_modify path IS changed; the feature list differs from <A> only by the 104 status flip. DEBT.md, the spec and all tools code are therefore unchanged (<A> already contains the A2 feature-list change). The Orchestrator's DEBT.md closures and scope-budget writes happen AFTER Evaluator QA, so S03 holds when the Evaluator runs it.",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys, yaml\nA = 'f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef'\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nnorm = lambda x: ' '.join(x.split())\nbad = []\nc = json.load(open('.agent/contracts/104.json'))\nscope = {f['path'] for k in ('files_create', 'files_modify') for f in c['scope'][k]}\norch = {f['path'] for f in c['scope']['orchestrator_owned_create']}\nmodify = {f['path'] for f in c['scope']['files_modify']}\nowned = {'.agent/contracts/104.json', '.agent/run_state.json', '.agent/feature_list_014.json'}\nprefixes = ('.agent/validator/104', '.agent/qa/104', '.agent/evidence/104/qa/', '.agent/evidence/104/failed-attempt', '.agent/evidence/104-qa-')\nchanged = set(run('git', 'diff', '--name-only', '-z', A).split('\\0')) - {''}\nfields = run('git', 'status', '--porcelain', '--untracked-files=all', '-z').split('\\0')\ni = 0\nwhile i < len(fields):\n    entry = fields[i]; i += 1\n    if not entry: continue\n    changed.add(entry[3:])\n    if entry[0] in 'RC' or entry[1] in 'RC':\n        if i < len(fields): changed.add(fields[i]); i += 1\nextra = sorted(p for p in changed if p not in scope and p not in orch and p not in owned and not p.startswith(prefixes))\nmissing = sorted(modify - changed)\nif extra: bad.append('paths outside scope and allowlist: ' + repr(extra))\nif missing: bad.append('files_modify paths not changed (non-vacuity): ' + repr(missing))\nif '.agent/feature_list_014.json' in changed:\n    old = json.loads(run('git', 'show', A + ':.agent/feature_list_014.json')); new = json.load(open('.agent/feature_list_014.json'))\n    if {k: v for k, v in old.items() if k != 'features'} != {k: v for k, v in new.items() if k != 'features'}: bad.append('feature list: a non-features key changed')\n    if [x['id'] for x in old['features']] != [x['id'] for x in new['features']]: bad.append('feature list: id order changed')\n    else:\n        for o, n in zip(old['features'], new['features']):\n            if {k: v for k, v in o.items() if k != 'status'} != {k: v for k, v in n.items() if k != 'status'}: bad.append(o['id'] + ': non-status key changed')\n            if o['id'] != '104' and o.get('status') != n.get('status'): bad.append(o['id'] + ': status changed')\nprint('changed:', len(changed), 'problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at A plus the contract (exit 1): the six files_modify paths are not changed yet; no extra paths.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/s03-scope-boundary.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S04: WORKFLOW STRUCTURE against <A>. Top-level keys (name, on, permissions, concurrency) are unchanged; the three existing jobs are parsed-identical and keep their order; exactly one job, convergent_review, is added and equals the pinned job (design_notes.pinned_texts.workflow_job_yaml); its uses: refs are all already present in the workflow (C14); the job has no name:, no step-level if:, no continue-on-error, none of UNSUPPORTED, skipped, allow-unsupported, ' -k ', 'FAIL: test_', 'ERROR: test_' anywhere in it (those strings would corrupt the AT6/AT8 log checks, see hazard 3); jsonschema is installed and the guarded step precedes the bare suite step; the suite step has only the run key.",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys, yaml\nA = 'f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef'\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nnorm = lambda x: ' '.join(x.split())\nbad = []\nP = json.load(open('.agent/contracts/104.json'))['design_notes']['pinned_texts']\nold = yaml.safe_load(run('git', 'show', A + ':.github/workflows/compliance.yml')); new = yaml.safe_load(open('.github/workflows/compliance.yml'))\nif {k: v for k, v in old.items() if k != 'jobs'} != {k: v for k, v in new.items() if k != 'jobs'}: bad.append('a top-level key (name/on/permissions/concurrency) changed')\noj, nj = old['jobs'], new['jobs']\nadded = [k for k in nj if k not in oj]\nif added != ['convergent_review'] or list(nj)[:len(oj)] != list(oj) or any(nj[k] != oj[k] for k in oj): bad.append('not exactly one added job after three byte-identical jobs: added=%r' % added)\npinned = yaml.safe_load(P['workflow_job_yaml'])\nif nj.get('convergent_review') != pinned['convergent_review']: bad.append('the job differs from the pinned job')\nj = nj.get('convergent_review') or {}\nrefs = {s['uses'] for b in oj.values() for s in b['steps'] if 'uses' in s}\nif not {s['uses'] for s in j.get('steps', []) if 'uses' in s} <= refs: bad.append('a uses: ref is not already pinned elsewhere in the workflow')\ntext = json.dumps(j)\nfor w in ('UNSUPPORTED', 'skipped', 'allow-unsupported', 'continue-on-error', ' -k ', 'FAIL: test_', 'ERROR: test_'):\n    if w in text: bad.append('forbidden text in the job: ' + w)\nif any('if' in s for s in j.get('steps', [])) or 'name' in j: bad.append('a step-level if or a job-level name is present')\nsteps = [s.get('run') or '' for s in j.get('steps', [])]\nsuite = [i for i, r in enumerate(steps) if 'tools/test_convergent_review.py' in r]\nguard = [i for i, r in enumerate(steps) if 'sysctl' in r]\npip = [i for i, r in enumerate(steps) if 'pip install' in r and 'jsonschema' in r]\nif len(suite) != 1 or steps[suite[0]].strip() != 'python3 tools/test_convergent_review.py' or set(j['steps'][suite[0]]) != {'run'}: bad.append('the suite step is not the bare pinned command')\nif len(guard) != 1 or len(pip) != 1 or not (pip[0] < suite[0] and guard[0] < suite[0]): bad.append('pip/guard/suite order or count')\nprint('jobs:', list(nj), 'problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at A (exit 1): the job does not exist.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/s04-workflow-structure.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S05: GUARDED STEP, host-independent and without touching this host. The step's run text is extracted from the workflow and run under bash -e with PATH shims for sudo and sysctl, with the /proc key path substituted: (a) key absent: no sudo call, exit 0; (b) key present: exactly one shimmed call, 'sysctl -w kernel.apparmor_restrict_unprivileged_userns=0', exit 0; (c) key present and the write fails: the step fails (nothing swallows it). The shims never exec anything, so no sysctl write ever reaches the host. The real step is never run on this workstation (hazard 7).",
+      "command": "python3 - <<'PY'\nimport os, subprocess, sys, tempfile, yaml\nbad = []\nJ = yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].get('convergent_review') or {}\nfound = [s for s in J.get('steps', []) if 'sysctl' in (s.get('run') or '')]\nscript = found[0]['run'] if len(found) == 1 else ''\nif len(found) != 1: bad.append('expected exactly one guarded sysctl step, got %d' % len(found))\nKEY = '/proc/sys/kernel/apparmor_restrict_unprivileged_userns'\nif script.count(KEY) != 1 or script.count('sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0') != 1: bad.append('the guard path and the single sudo sysctl write are not each present exactly once')\nwith tempfile.TemporaryDirectory() as t:\n    shim = os.path.join(t, 'shim'); os.mkdir(shim); log = os.path.join(t, 'calls.log')\n    for name, body in (('sudo', '#!/bin/sh\\necho \"$*\" >> \"$SHIM_LOG\"\\nexit \"${SHIM_SUDO_RC:-0}\"\\n'), ('sysctl', '#!/bin/sh\\necho REAL-SYSCTL-REACHED >> \"$SHIM_LOG\"\\nexit 99\\n')):\n        open(os.path.join(shim, name), 'w').write(body); os.chmod(os.path.join(shim, name), 0o755)\n    present = os.path.join(t, 'present'); open(present, 'w').close()\n    def case(keypath, sudo_rc):\n        if os.path.exists(log): os.remove(log)\n        env = {'PATH': shim + ':/usr/bin:/bin', 'SHIM_LOG': log, 'SHIM_SUDO_RC': str(sudo_rc), 'HOME': t}\n        r = subprocess.run(['bash', '-e', '-c', script.replace(KEY, keypath)], capture_output=True, text=True, env=env)\n        return r.returncode, (open(log).read() if os.path.exists(log) else '')\n    a, b, c = case(os.path.join(t, 'absent'), 0), case(present, 0), case(present, 1)\nif a != (0, ''): bad.append('absent key must be a silent no-op, got %r' % (a,))\nif b != (0, 'sysctl -w kernel.apparmor_restrict_unprivileged_userns=0\\n'): bad.append('present key must run exactly the one shimmed sudo write, got %r' % (b,))\nif c[0] == 0: bad.append('a failed write must fail the step, got %r' % (c,))\nprint('absent:', a, 'present:', b, 'present+write-fails:', c, 'problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at A (exit 1): no guarded step exists.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/s05-guarded-step-stub.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S06: DOCUMENT EDITS against <A>. standard/definition_of_done.md 0.1.0 -> 0.2.0, tools/README.md 0.12.0 -> 0.13.0, schema/README.md 0.18.0 -> 0.19.0, each with a new head change_log entry whose summary equals the pinned summary (any YYYY-MM-DD date), older entries and other frontmatter keys untouched (C8). DoD body equals base after exactly the four pinned replacements (whitespace-normalised); the tools/README.md body equals base plus the one pinned paragraph inside Machine Validation; the schema/README.md body equals base plus the one pinned physical line inside ## Schemas.",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys, yaml\nA = 'f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef'\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nnorm = lambda x: ' '.join(x.split())\nbad = []\nP = json.load(open('.agent/contracts/104.json'))['design_notes']['pinned_texts']\nbody = lambda t: t.split('---', 2)[2]\nfm = lambda t: yaml.safe_load(t.split('---', 2)[1])\ndef load(path, old_v, new_v, summary):\n    old, new = run('git', 'show', A + ':' + path), open(path).read()\n    fo, fn = fm(old), fm(new)\n    if (fo['version'], fn['version']) != (old_v, new_v): bad.append('%s: version %s -> %s, expected %s -> %s' % (path, fo['version'], fn['version'], old_v, new_v))\n    h = fn['change_log'][0]\n    if h['version'] != new_v or h['summary'] != summary or re.fullmatch(r'\\d{4}-\\d\\d-\\d\\d', str(h['date'])) is None: bad.append(path + ': change_log head entry')\n    if fn['change_log'][1:] != fo['change_log']: bad.append(path + ': older change_log entries altered')\n    if {k: v for k, v in fn.items() if k not in ('version', 'change_log')} != {k: v for k, v in fo.items() if k not in ('version', 'change_log')}: bad.append(path + ': another frontmatter key changed')\n    return old, new, norm(body(old)), norm(body(new))\n_, _, o, n = load('standard/definition_of_done.md', '0.1.0', '0.2.0', P['dod_change_log_summary'])\nfor a, b in P['dod_replacements']:\n    if o.count(norm(a)) != 1: bad.append('DoD: replacement source not found exactly once: ' + a)\n    o = o.replace(norm(a), norm(b), 1)\nif o != n: bad.append('DoD: the body differs from base by more than the four pinned replacements')\nold, new, o, n = load('tools/README.md', '0.12.0', '0.13.0', P['readme_change_log_summary'])\npara = norm(P['readme_paragraph'])\nsec = norm(new.split('## Machine Validation')[1].split('\\n## ')[0])\nif sec.count(para) != 1 or n.count(para) != 1: bad.append('tools/README.md: the pinned paragraph is not exactly once inside Machine Validation')\nif norm(n.replace(para, '', 1)) != o: bad.append('tools/README.md: the body differs from base by more than the pinned paragraph')\nold, new, o, n = load('schema/README.md', '0.18.0', '0.19.0', P['schema_change_log_summary'])\nline = P['schema_readme_line'].strip()\nsecs = new.split('## Schemas')[1].split('\\n## ')[0]\nif [l.strip() for l in secs.splitlines()].count(line) != 1: bad.append('schema/README.md: the pinned statement is not exactly one physical line inside ## Schemas')\nif norm(n.replace(norm(line), '', 1)) != o: bad.append('schema/README.md: the body differs from base by more than the pinned line')\nprint('problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at A (exit 1): versions unchanged and the pinned text is absent.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/s06-docs-pinned.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S07: CHANGELOG AND PHASE YAML against <A>. CHANGELOG.md differs from base by exactly the one pinned bullet, inside [Unreleased] and before [1.4.0]. docs/planning/phase_014.yaml validates against schema/phase.schema.json; every top-level key and every step other than 104 is identical; step 104 gains exactly docs_updated, changelog_entry and evidence with the pinned values (its status is the Orchestrator's and is not asserted, except that it must not be BLOCKED).",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys, yaml\nA = 'f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef'\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nnorm = lambda x: ' '.join(x.split())\nbad = []\nimport jsonschema\nP = json.load(open('.agent/contracts/104.json'))['design_notes']['pinned_texts']\nold, new = run('git', 'show', A + ':CHANGELOG.md'), open('CHANGELOG.md').read()\nbullet = norm(P['changelog_bullet'])\nnn = norm(new)\nif nn.count(bullet) != 1: bad.append('CHANGELOG: the pinned bullet does not occur exactly once')\nelif norm(nn.replace(bullet, '', 1)) != norm(old): bad.append('CHANGELOG: differs from base by more than the one pinned bullet')\nif not (nn.index('## [Unreleased]') < (nn.index(bullet) if bullet in nn else -1) < nn.index('## [1.4.0]')): bad.append('CHANGELOG: bullet not inside [Unreleased]')\no = yaml.safe_load(run('git', 'show', A + ':docs/planning/phase_014.yaml')); n = yaml.safe_load(open('docs/planning/phase_014.yaml'))\njsonschema.validate(n, json.load(open('schema/phase.schema.json')))\nif {k: v for k, v in n.items() if k != 'steps'} != {k: v for k, v in o.items() if k != 'steps'}: bad.append('phase yaml: top-level keys changed')\nif [x['id'] for x in o['steps']] != [x['id'] for x in n['steps']]: bad.append('phase yaml: step set/order changed')\nos_, ns = {x['id']: x for x in o['steps']}, {x['id']: x for x in n['steps']}\nfor i in os_:\n    if i != '104' and os_[i] != ns.get(i): bad.append('phase yaml: step ' + i + ' changed')\na, b = os_['104'], ns['104']\nif {k: v for k, v in b.items() if k not in ('docs_updated', 'changelog_entry', 'evidence', 'status')} != {k: v for k, v in a.items() if k != 'status'}: bad.append('phase yaml: step 104 changed beyond the three keys')\nif (b.get('docs_updated'), b.get('changelog_entry'), b.get('evidence')) != (P['phase_yaml_docs_updated'], P['phase_yaml_changelog_entry'], P['phase_yaml_evidence']): bad.append('phase yaml: step 104 values differ from the pinned values')\nif b.get('status') == 'BLOCKED': bad.append('phase yaml: step 104 is BLOCKED')\nprint('problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at A (exit 1): the pinned bullet is absent.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/s07-changelog-phase-yaml.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S08: HOSTED-CHECKOUT SHAPE. The unmodified suite passes in a depth-1 clone of the repository with HOME pointing at an empty directory and no global or system git configuration, which is how a hosted runner checks out and runs it: same 'Ran N tests' count as the working tree, no FAIL or ERROR line, and OK. The local-development flag is used here only because this workstation restricts user namespaces (the AppArmor key reads 1); it is never in the workflow. This proves nothing about isolation, which only the CI run can.",
+      "command": "python3 - <<'PY'\nimport os, re, subprocess, sys, tempfile\nbad = []\nenv0 = dict(os.environ)\ndef suite(cwd, env):\n    p = subprocess.run([sys.executable, 'tools/test_convergent_review.py', '--allow-unsupported-isolation'], cwd=cwd, env=env, capture_output=True, text=True)\n    o = p.stdout + p.stderr\n    m = re.search(r'^Ran (\\d+) tests', o, re.M)\n    return p.returncode, (int(m.group(1)) if m else None), bool(re.search(r'^(FAIL|ERROR): test_', o, re.M)), re.search(r'^OK\\b', o, re.M) is not None\nroot = suite(os.getcwd(), env0)\nwith tempfile.TemporaryDirectory() as t:\n    dest = os.path.join(t, 'clone')\n    subprocess.run(['git', 'clone', '-q', '--depth', '1', 'file://' + os.getcwd(), dest], check=True)\n    depth = int(subprocess.run(['git', '-C', dest, 'rev-list', '--count', 'HEAD'], capture_output=True, text=True, check=True).stdout)\n    env = {k: v for k, v in env0.items() if not k.startswith('GIT_')}\n    env.update({'HOME': t, 'GIT_CONFIG_GLOBAL': os.devnull, 'GIT_CONFIG_NOSYSTEM': '1'})\n    clone = suite(dest, env)\nif depth != 1: bad.append('clone is not depth 1')\nif root[0] != 0 or root[2] or not root[3] or root[1] is None: bad.append('working-tree run (flag used for LOCAL development only): %r' % (root,))\nif clone != root: bad.append('shallow identity-less clone differs from the working-tree run: %r vs %r' % (clone, root))\nprint('depth:', depth, 'working tree (rc, tests, fail/error line, OK):', root, 'shallow clone:', clone, 'problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "PASS at A (exit 0): measured 2026-10-09 on 54 tests, OK (skipped=5, all UNSUPPORTED).",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/s08-shallow-clone-suite.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S09: EXPLICIT VALIDATOR RESULT. bash tools/validate.sh run with its exit status captured: exit 0, no [Cn] FAIL line, exactly 16 [Cn] PASS lines, 'SUMMARY: 16 passed, 0 failed', and '[C14] PASS workflow-sha-pins'. The count 16 is pinned here because 104 adds no validate.sh check (AT9 itself derives it).",
+      "command": "python3 - <<'PY'\nimport re, subprocess, sys\np = subprocess.run(['bash', 'tools/validate.sh'], capture_output=True, text=True)\no = p.stdout + p.stderr\npasses = re.findall(r'^\\[C(\\d+)\\] PASS', o, re.M)\nfails = re.findall(r'^\\[C(\\d+)\\] FAIL', o, re.M)\ns = re.findall(r'^SUMMARY: (\\d+) passed, (\\d+) failed$', o, re.M)\nok = p.returncode == 0 and not fails and s == [('16', '0')] and len(passes) == 16 and '[C14] PASS workflow-sha-pins' in o\nprint('exit:', p.returncode, 'PASS lines:', len(passes), 'FAIL lines:', fails, 'SUMMARY:', s, 'C14:', '[C14] PASS workflow-sha-pins' in o)\nsys.exit(0 if ok else 1)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "PASS at A (exit 0): 16 passed, 0 failed, C14 PASS (measured 2026-10-09).",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/104/s09-validate-c14.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S10: CI EVIDENCE INTEGRITY AND TRUTH. The seven Orchestrator-captured .txt files each have the invocation on line 1 and EXIT:<code> last; the positive and negative run captures equal the LIVE runs (headSha, headBranch, conclusion, per-job id/name/conclusion; read-only gh, stderr empty); each log capture is `gh run view --job <id> --log` for the convergent_review job of its run and equals lines 2..-2 the LIVE re-fetched job log line for line (no normalization: GitHub logs of a completed run are byte-identical across fetches, measured 2026-10-09 on three logs of run 37970429143 fetched about an hour apart; a mismatch means tampered or incomplete evidence; if the log has expired after the 90-day retention the check fails and the evidence must be re-captured); neither run is cancelled (concurrency cancel-in-progress, hazard 2); every job of the positive run succeeded; both runs ran the same job set; the convergent_review job at the positive headSha equals the job at HEAD, so the run exercised the deliverable.",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys, yaml\nA = 'f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef'\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nnorm = lambda x: ' '.join(x.split())\nbad = []\nD = '.agent/evidence/104/'\nnames = ['ci-positive-run', 'ci-positive-log', 'ci-negative-run', 'ci-negative-log', 'ci-negative-mutation', 'ci-negative-pr-state', 'ci-negative-branch-absent']\nT = {}\nfor n in names:\n    T[n] = open(D + n + '.txt').read().splitlines()\n    if len(T[n]) < 2 or re.fullmatch(r'EXIT:[0-9]+', T[n][-1]) is None or not T[n][0].strip() or T[n][0].startswith('EXIT:'): bad.append(n + ': not in the Section-5 shape (invocation on line 1, EXIT:<code> last)')\ndef cap(n):\n    m = re.fullmatch(r'gh run view ([0-9]+) --json headSha,headBranch,conclusion,jobs', T[n][0])\n    return (m.group(1), json.loads('\\n'.join(T[n][1:-1]))) if m else (None, None)\nkey = lambda r: (r['headSha'], r['headBranch'], r['conclusion'], sorted((j['databaseId'], j['name'], j['conclusion']) for j in r['jobs']))\nruns = {}\nfor k in ('positive', 'negative'):\n    rid, r = cap('ci-%s-run' % k)\n    if rid is None: bad.append(k + ': line 1 is not the pinned gh run view invocation'); continue\n    runs[k] = r\n    live = sh('gh', 'run', 'view', rid, '--json', 'headSha,headBranch,conclusion,jobs')\n    if live.returncode != 0 or live.stderr.strip() or key(json.loads(live.stdout)) != key(r): bad.append(k + ': the captured run does not match the live run (evidence is not truthful)')\n    if r['conclusion'] == 'cancelled' or any(j['conclusion'] == 'cancelled' for j in r['jobs']): bad.append(k + ': a cancelled run or job (concurrency cancel-in-progress)')\n    lg = T['ci-%s-log' % k]\n    ml = re.fullmatch(r'gh run view --job ([0-9]+) --log', lg[0])\n    jb = [j for j in r['jobs'] if ml and str(j['databaseId']) == ml.group(1)]\n    if not ml or len(jb) != 1 or jb[0]['name'] != 'convergent_review': bad.append(k + ': the log capture is not for the convergent_review job of that run'); continue\n    liv = sh('gh', 'run', 'view', '--job', ml.group(1), '--log')\n    if liv.returncode != 0 or liv.stderr.strip(): bad.append(k + ': the live job log could not be re-fetched cleanly (log retention is 90 days; stderr must be empty)')\n    elif liv.stdout.splitlines() != lg[1:-1]: bad.append(k + ': the captured job log differs from the live job log (tampered or incomplete)')\nneg_other = None\nif len(runs) == 2:\n    if {j['name'] for j in runs['positive']['jobs']} != {j['name'] for j in runs['negative']['jobs']}: bad.append('positive and negative runs ran different job sets')\n    if any(j['conclusion'] != 'success' for j in runs['positive']['jobs']): bad.append('positive: every job must succeed')\n    neg_other = [(j['name'], j['conclusion']) for j in runs['negative']['jobs'] if j['name'] != 'convergent_review']\n    wf = yaml.safe_load(run('git', 'show', runs['positive']['headSha'] + ':.github/workflows/compliance.yml'))['jobs']\n    cur = yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs']\n    if wf.get('convergent_review') != cur.get('convergent_review'): bad.append('the job at the positive headSha differs from the job at HEAD (the run did not exercise the deliverable)')\nprint('positive', runs.get('positive', {}).get('headBranch'), runs.get('positive', {}).get('headSha'), 'negative', runs.get('negative', {}).get('headBranch'), 'other jobs on negative (informational):', neg_other, 'problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "evaluator",
+      "state_at_base_A": "FAIL at A (exit 1): FileNotFoundError.",
+      "expected_outcome": "Exit 0 after capture.",
+      "evidence_file": ".agent/evidence/104/qa/s10-ci-evidence-integrity.txt",
+      "run_by": "Not run by the Generator. Run by the Orchestrator as a pre-handoff self-check after the CI evidence is captured, then re-run by the Evaluator into .agent/evidence/104/qa/. Inside the attempt root this fails with FileNotFoundError (exit 1) by design."
+    },
+    {
+      "acceptance_test": "Supplementary S11: NEGATIVE-CONTROL INTEGRITY AND CLEANUP. ci-negative-mutation.txt is 'git diff --no-color <base> <negative headSha>'; <base> EQUALS the positive run's headSha (parsed from ci-positive-run.txt) and is an ancestor of HEAD; the convergent_review job definition (parsed YAML) at <base> AND at the negative headSha equals the job at HEAD (objects fetched from refs/pull/<n>/head if the branch is deleted), so the control mutates exactly the deliverable that passed; the diff target is the negative run's headSha; the live `git diff --no-color <base> <neg>` equals the capture line for line; the diff shows exactly two files, tools/linux_trial_sandbox.sh and tools/isolated_trial_adapter.py, each with exactly one removed and one added line, the added line being the removed line with exactly AT4's one replacement. The throwaway PR is CLOSED, unmerged, on a throwaway/104-* branch equal to the run's headBranch, and the remote branch is gone (live ls-remote empty).",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys, yaml\nA = 'f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef'\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nnorm = lambda x: ' '.join(x.split())\nbad = []\nD = '.agent/evidence/104/'\nP = json.load(open('.agent/contracts/104.json'))['design_notes']['pinned_texts']\nmut = open(D + 'ci-negative-mutation.txt').read().splitlines()\nm = re.fullmatch(r'git diff --no-color ([0-9a-f]{40}) ([0-9a-f]{40})', mut[0])\nif not m or mut[-1] != 'EXIT:0': bad.append('ci-negative-mutation.txt: line 1 / EXIT trailer')\npos = json.loads('\\n'.join(open(D + 'ci-positive-run.txt').read().splitlines()[1:-1]))\nneg = json.loads('\\n'.join(open(D + 'ci-negative-run.txt').read().splitlines()[1:-1]))\npr = open(D + 'ci-negative-pr-state.txt').read().splitlines()\nmp = re.fullmatch(r'gh pr view ([0-9]+) --json state,mergedAt,headRefName,baseRefName', pr[0])\nif m:\n    base, negsha = m.groups()\n    if base != pos['headSha']: bad.append('the mutation base is not the positive run headSha')\n    if negsha != neg['headSha']: bad.append('the mutation diff target is not the negative run headSha')\n    if sh('git', 'merge-base', '--is-ancestor', base, 'HEAD').returncode != 0: bad.append('the mutation base is not an ancestor of HEAD')\n    for sha in (base, negsha):\n        if sh('git', 'cat-file', '-e', sha + '^{commit}').returncode != 0 and mp: sh('git', 'fetch', '-q', 'origin', 'refs/pull/%s/head' % mp.group(1))\n    cur = yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].get('convergent_review')\n    if cur is None: bad.append('HEAD has no convergent_review job')\n    for sha in (base, negsha):\n        g = sh('git', 'show', sha + ':.github/workflows/compliance.yml')\n        j = yaml.safe_load(g.stdout)['jobs'].get('convergent_review') if g.returncode == 0 else None\n        if j is None or j != cur: bad.append('the convergent_review job at %s is absent or differs from the job at HEAD' % sha[:12])\n    d = sh('git', 'diff', '--no-color', base, negsha)\n    if d.returncode != 0 or d.stdout.splitlines() != mut[1:-1]: bad.append('the live git diff of the mutation differs from the capture (or an object is unavailable)')\nfiles, cur_f = {}, None\nfor l in mut[1:-1]:\n    if l.startswith('diff --git '): cur_f = l.split(' b/')[-1]; files[cur_f] = ([], [])\n    elif cur_f and l.startswith('-') and not l.startswith('---'): files[cur_f][0].append(l[1:])\n    elif cur_f and l.startswith('+') and not l.startswith('+++'): files[cur_f][1].append(l[1:])\nexp = P['mutation_replacements']\nif set(files) != set(exp): bad.append('the mutation touches %r, expected exactly %r' % (sorted(files), sorted(exp)))\nfor f, (a, b) in exp.items():\n    r, p = files.get(f, ([], []))\n    if len(r) != 1 or len(p) != 1 or r[0].count(a) != 1 or r[0].replace(a, b, 1) != p[0]: bad.append(f + ': not exactly the one AT4 replacement ' + repr(a) + ' -> ' + repr(b))\nif not mp: bad.append('ci-negative-pr-state.txt: line 1')\nelse:\n    s = json.loads('\\n'.join(pr[1:-1]))\n    live = sh('gh', 'pr', 'view', mp.group(1), '--json', 'state,mergedAt,headRefName,baseRefName')\n    if s.get('state') != 'CLOSED' or s.get('mergedAt') or s.get('headRefName') != neg['headBranch'] or not s['headRefName'].startswith('throwaway/104-'): bad.append('negative PR is not closed-unmerged on the throwaway branch: %r' % (s,))\n    if live.returncode != 0 or json.loads(live.stdout) != s: bad.append('negative PR state is not live-true')\nbr = open(D + 'ci-negative-branch-absent.txt').read().splitlines()\nif br[0] != 'git ls-remote --heads origin ' + neg['headBranch'] or br[1:] != ['EXIT:0']: bad.append('ci-negative-branch-absent.txt must record an empty ls-remote result')\nlive = sh('git', 'ls-remote', '--heads', 'origin', neg['headBranch'])\nif live.returncode != 0 or live.stdout.strip(): bad.append('the throwaway branch still exists on the remote')\nprint('negative branch:', neg['headBranch'], 'problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "evaluator",
+      "state_at_base_A": "FAIL at A (exit 1): FileNotFoundError.",
+      "expected_outcome": "Exit 0 after capture and cleanup.",
+      "evidence_file": ".agent/evidence/104/qa/s11-negative-control-integrity.txt",
+      "run_by": "Not run by the Generator. Run by the Orchestrator as a pre-handoff self-check after the CI evidence is captured, then re-run by the Evaluator into .agent/evidence/104/qa/. Inside the attempt root this fails with FileNotFoundError (exit 1) by design."
+    }
+  ],
+  "estimated_lines": 710,
+  "evidence_dir": ".agent/evidence/104/",
+  "evidence_convention": "One captured-output file per verification entry, named as in its evidence_file, each in the 04 Section-5 shape: line 1 the exact invocation (for a heredoc script its first line), then the verbatim stdout/stderr, final line EXIT:<code> read from the process, never from a pipeline. Capture order inside the attempt root: attempt-base.txt first (before any edit); then AT1-AT4, AT9, AT10; then, only after every deliverable file exists and is final, S01-S09 in numeric order (a later edit invalidates and requires recapturing everything after it). Never run AT9, AT10, S08 or S09 concurrently with one another. The Generator reports AT5-AT8, S10 and S11 as NOT EXERCISED, never passed. The stdout-only rule (stderr captured separately and required empty, else the capture is aborted) applies only to the seven Orchestrator ci-*.txt captures (ci_evidence_sequence step 7); every other capture records stdout and stderr verbatim (04 Section 5). The seven ci-*.txt files are Orchestrator captures (scope.orchestrator_owned_create); the Evaluator re-runs everything it can into .agent/evidence/104/qa/ (and may use .agent/evidence/104-qa-adversarial*). Failed-attempt evidence goes to .agent/evidence/104/failed-attempt<N>/. Frozen infrastructure under .agent/evidence/phase-014-activation/ is read-only.",
+  "approvals": {
+    "revisions": 3,
+    "validator_mode_a": true,
+    "evaluator_contract_review": true
+  },
+  "version_impact": "MINOR at the next release via standard/definition_of_done.md (an additive job statement; the NIP-0003 Compatibility-table precedent; rounded up per methodology/06_release_train.md Section 3.4). Not MAJOR, not PATCH. Nothing is released in phase 014; the change lands under CHANGELOG.md [Unreleased]. .github/ is not injected into consumers.",
+  "retry_identity": {
+    "contract_step_key": "104-contract",
+    "implementation_step_key": "104-implementation",
+    "limit": 3,
+    "attempt_worktree": "/home/cnross/workspace02/nizam-wt-104-attempt<N>, created by the Orchestrator from <B>; see design_notes.attempt_isolation",
+    "failed_attempt_evidence": ".agent/evidence/104/failed-attempt<N>/ in the shared tree",
+    "attempt_strategy": "per methodology/03_circuit_breaker.md: attempt 1 direct fix, 2 type/interface analysis, 3 architectural review, 4+ forbidden (capture and quarantine, remove only the validated attempt root, BLOCKED canonical-first in the phase document, DEBT.md, escalate, terminate). A hosted-runner capability failure is an escalation, not an attempt."
+  },
+  "rollback": "See design_notes.rollback and design_notes.attempt_isolation. Summary: attempts are isolated in Orchestrator-created detached worktrees and promoted by one cherry-pick; failed attempts are evidence-captured and their own root removed; after promotion `git revert`; the throwaway PR/branch are closed and deleted by the Orchestrator; no reset --hard, no repository-wide clean, no run_state edit by the Generator."
+}

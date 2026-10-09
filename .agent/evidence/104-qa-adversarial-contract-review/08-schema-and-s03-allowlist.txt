@@ -1,0 +1,27 @@
+bash .agent/evidence/104-qa-adversarial-contract-review/helpers/08-schema-and-s03-allowlist.sh
+contract_review schema: VALID; approved = True ; revision_reviewed = 3 ; issues/missing/unsupported = 0 0 0
+schema rc=0
+changed: 48 problems: ["files_modify paths not changed (non-vacuity): ['.github/workflows/compliance.yml', 'CHANGELOG.md', 'docs/planning/phase_014.yaml', 'schema/README.md', 'standard/definition_of_done.md', 'tools/README.md']"]
+S03 (shared tree) rc=1
+== evidence shape: every .txt in this directory (helpers/ excluded): command on line 1, EXIT:<code> last
+01-at-byte-identity.txt: line1=ok last=[EXIT:0] ok
+02-base-states.txt: line1=ok last=[EXIT:0] ok
+03-positive-control.txt: line1=ok last=[EXIT:0] ok
+04-mutants-docs-workflow.txt: line1=ok last=[EXIT:0] ok
+05-ci-synthetic.txt: line1=ok last=[EXIT:0] ok
+06-executability.txt: line1=ok last=[EXIT:0] ok
+07-testability.txt: line1=ok last=[EXIT:0] ok
+08-schema-and-s03-allowlist.txt: (this file, being written)
+== git status (tracked-file changes other than run_state.json must be none)
+ M .agent/run_state.json
+?? .agent/contracts/104.json
+?? .agent/evidence/104-qa-adversarial-contract-review/
+?? .agent/qa/104-contract-review.json
+?? .agent/validator/104-mode-a.json
+.agent/run_state.json
+== contract unchanged
+c0ed9fc1b71c3329a4a46992ba4ee057fbd1dbf27cbda59c5cf786be04f60a38  .agent/contracts/104.json
+== validate.sh on a scratch clone of HEAD + the untracked/new review files
+validate rc=0
+SUMMARY: 16 passed, 0 failed
+EXIT:0

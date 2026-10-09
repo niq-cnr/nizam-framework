@@ -1,0 +1,77 @@
+bash .agent/evidence/104-qa-adversarial-contract-review/helpers/04-mutants-docs-workflow.sh
+w01   CAUGHT   suite step gains -k filter :: caught by S04
+w02   CAUGHT   suite step gains --allow-unsupported-isolation :: caught by AT1,S04
+w03   CAUGHT   suite step gains an env var :: caught by S04
+w04   CAUGHT   job-level env var :: caught by S04
+w05   CAUGHT   sysctl write masked with || true :: caught by S04,S05
+w06   CAUGHT   guard removed (unconditional sudo sysctl write) :: caught by S04,S05
+w06b  CAUGHT   guard kept but the whole step masked: || true after fi :: caught by S04
+w07   CAUGHT   job-level continue-on-error: true :: caught by S04
+w08   CAUGHT   suite step continue-on-error: true :: caught by S04
+w09   CAUGHT   pip install jsonschema removed :: caught by S04
+w10   CAUGHT   checkout SHA changed (in the new job only) :: caught by S04
+w11   CAUGHT   setup-python SHA changed (new job only) :: caught by S04
+w11b  CAUGHT   setup-python unpinned tag @v5 (new job only) :: caught by S04
+w12   CAUGHT   second job added (copy) :: caught by AT1,AT2,AT4,S04
+w12b  CAUGHT   second trivial job added :: caught by AT2,S04
+w13   CAUGHT   permissions contents: write :: caught by S04
+w13b  CAUGHT   job-level permissions added :: caught by S04
+w14   CAUGHT   suite step guarded by if: false :: caught by S04
+w15   CAUGHT   job gains a name :: caught by S04
+w16   CAUGHT   suite step moved before pip and guard :: caught by S04
+w17   CAUGHT   suite step masked with || true :: caught by S04
+w18   CAUGHT   suite step piped through tee (no pipefail) :: caught by S04
+w19   CAUGHT   persist-credentials removed from the new job :: caught by S04
+w20   CAUGHT   workflow_dispatch trigger added :: caught by S04
+w21   CAUGHT   concurrency cancel-in-progress changed :: caught by S04
+w22   CAUGHT   existing validate job step neutered :: caught by S04
+w23   CAUGHT   suite step replaced by echo (job exists but never runs the suite) :: caught by S04
+w24   CAUGHT   runs-on self-hosted :: caught by S04
+w25   CAUGHT   python-version pinned 3.9 (new job) :: caught by S04
+w26   CAUGHT   timeout-minutes: 1 added to the new job :: caught by S04
+w27   CAUGHT   guard condition inverted-to-vacuous: -e -> -d :: caught by S04,S05
+w28   CAUGHT   sysctl value 1 instead of 0 :: caught by S04,S05
+w29   CAUGHT   guard step gains continue-on-error :: caught by S04
+w30   CAUGHT   new job step name contains UNSUPPORTED (AT6 word) :: caught by S04
+w31   CAUGHT   pull_request trigger removed (on: push only) :: caught by S04
+w32   CAUGHT   extra third-party action step in the new job :: caught by S04
+w33   CAUGHT   matrix strategy added to the new job :: caught by S04
+w34   CAUGHT   guard step gets shell: bash {0} (drops -e) :: caught by S04
+w35   SURVIVED trailing YAML comment mentioning the flag in the new job (no semantic change) :: caught by -
+w36   SURVIVED whole new job appended with CRLF-free extra trailing blank lines (no semantic change; control for false-fail) :: caught by -
+w37   SURVIVED comment-only edit inside the new job (allowed by workflow_job_notes; control for false-fail) :: caught by -
+w38   CAUGHT   comment inside the guard script mentioning the word skipped (allowed? YAML comment inside run: block reaches the log) :: caught by S04
+o01   CAUGHT   suite edited: required mode weakened (main returns 0) :: caught by S03
+o02   CAUGHT   sandbox script edited :: caught by S03
+o03   CAUGHT   pages.yml edited :: caught by S03
+o04   CAUGHT   DEBT.md edited :: caught by S03
+o05   CAUGHT   validate.sh edited :: caught by S03
+d01   CAUGHT   DoD: "all three" left unsynced :: caught by AT2,S06
+d02   CAUGHT   DoD: "three-job" left unsynced :: caught by AT2,S06
+d03   CAUGHT   DoD Section 11: "three jobs" left unsynced :: caught by AT2,S06
+d04   CAUGHT   DoD Section 8: job list does not name convergent_review :: caught by AT2,S06
+d05   CAUGHT   DoD: version not bumped :: caught by S06
+d06   CAUGHT   DoD: counts say five :: caught by AT2,S06
+d07   CAUGHT   DoD: change_log head entry missing :: caught by S06
+d08   CAUGHT   tools/README paragraph removed :: caught by AT4,S06
+d09   CAUGHT   tools/README paragraph moved below the Compliance Coverage heading (outside Machine Validation) :: caught by AT4,S06
+d10   CAUGHT   tools/README paragraph names the job without backticks :: caught by AT4,S06
+d11   CAUGHT   tools/README paragraph says the flag is used in CI (meaning flipped) :: caught by S06
+d12   CAUGHT   tools/README version not bumped :: caught by S06
+d13   CAUGHT   schema README sole-validator line hard-wrapped across two lines :: caught by S06
+d14   CAUGHT   schema README sole-validator line wrapped so that file name and "sole validator" split :: caught by AT3,S06
+d15   CAUGHT   schema README sole-validator line missing :: caught by AT3,S06
+d16   CAUGHT   schema README line moved after DD-3 heading (outside ## Schemas) :: caught by AT3,S06
+d17   CAUGHT   schema README line says "a validator" (sole dropped) :: caught by AT3,S06
+d18   CAUGHT   schema README line names a different file :: caught by AT3,S06
+d19   CAUGHT   schema README version not bumped :: caught by S06
+d20   CAUGHT   schema README older change_log entry altered :: caught by S06
+d21   CAUGHT   CHANGELOG bullet missing :: caught by S03,S07
+d22   CAUGHT   CHANGELOG bullet altered :: caught by S07
+d23   CAUGHT   phase yaml: evidence key missing :: caught by S07
+d24   CAUGHT   phase yaml: step 104 marked BLOCKED :: caught by S07
+d25   CAUGHT   phase yaml: extra key on step 104 :: caught by S07
+d26   CAUGHT   phase yaml: a different step edited :: caught by S07
+d27   CAUGHT   feature list: another feature status flipped :: caught by S03
+TALLY {'caught': 71, 'survived': 3}
+EXIT:0

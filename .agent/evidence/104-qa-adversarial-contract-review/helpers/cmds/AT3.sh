@@ -1,0 +1,1 @@
+python3 -c "s=open('schema/README.md').read().split('## Schemas')[1].split('\n## ')[0]; L=[l for l in s.splitlines() if 'test_convergent_review.py' in l and 'sole validator' in l]; assert L, 'no sole-validator statement in the Schemas section'"

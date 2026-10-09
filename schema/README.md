@@ -2,10 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.18.0
+version: 0.19.0
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.19.0"
+    date: "2026-10-09"
+    summary: "State that `tools/test_convergent_review.py` is the sole validator of the review schema family; extending C12 to that family is left to the phase-014 simplification review (NDEBT-041)."
   - version: "0.18.0"
     date: "2026-09-17"
     summary: "Reconcile review and Git modes with runtime Git, sandbox, no-follow I/O, replay and publication guarantees, plus standalone-ledger initial-head and exact evidence-attribution relations."
@@ -110,6 +113,8 @@ Every schema in this module:
 | `review_replay.schema.json` | Closed content-addressed manifest retaining the raw packet, all three raw trials, optional prior/suppression inputs, and deterministic output digests. It intentionally has no separate mode field: replay revalidates the retained packet mode and requires exact reproduction of the mode-bearing ledger. | Canonical `replay.json` emitted and checked by `verify-replay`. |
 
 The five schemas define closed artifact shapes, not the complete runtime trust boundary. `validate_packet_relations` additionally authenticates content and mode relationships, full-tree completeness, Git blob IDs, and the commit header tree binding. `validate_ledger` additionally enforces cross-object equality and projected-trial-set relations that Draft 2020-12 cannot express here. Because ledger schema version 1.0.0 has no evidence-origin head or source-ledger field, later ledgers use the stricter safe representation: historical evidence remains in the digest-bound retained prior ledger, while current `evidence` and `resolution_evidence` contain only trial numbers exactly matching current consensus. The trusted builder separately controls the Git environment, disables replace refs, and distinguishes an absent path from an object-read error. The evaluator and replay verifier separately enforce non-executable trial roots, exclusive no-follow output I/O, and no-follow ancestor walks. Atomic no-replace publication and the `PublicationResult.visible`/`durable` transition are also runtime obligations; none can be proven by Draft 2020-12 validation alone.
+
+`tools/test_convergent_review.py` is the sole validator of the review schema family (`review_packet`, `review_trial`, `review_ledger`, `review_suppression`, `review_replay`): `tools/validate.sh` check C12 does not cover this family, and extending C12 to it is left to the phase-014 simplification review and `H-CONSOLIDATION`.
 
 ## DD-3 — Evidence Externalisation
 

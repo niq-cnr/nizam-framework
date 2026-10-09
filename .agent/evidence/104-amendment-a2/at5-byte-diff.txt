@@ -1,0 +1,19 @@
+git diff --no-color -U0 --word-diff=porcelain --word-diff-regex='[^ ]+' b8ea889 -- .agent/feature_list_014.json | grep -E '^(@@|-[^-]|\+[^+])' | cut -c1-400
+@@ -3 +3 @@
+-"1.1.4",
++"1.1.5",
+@@ -5 +5 @@
+-them.",
++them. SPEC 1.1.5 (2026-10-09T18:21:51Z) -- AMENDMENT A2, 104 AT5's branch clause only: operator decision recorded in run_state as operator_gate_decision 2026-10-09T18:19:35Z before this change (NDEBT-018), verbatim 'B. Amend AT5'. AT5's literal R['headBranch']=='phase/014-ga-track' becomes R['headBranch']=='phase/014-104-sandbox-ci'; every other character of AT5, and every other acceptance test, 
+@@ -76 +76 @@
++the feature
+-phase/014-ga-track
++phase/014-104-sandbox-ci (a pull_request run; amendment A2, spec 1.1.5)
+@@ -86 +86 @@
+-R['headBranch']=='phase/014-ga-track'
++R['headBranch']=='phase/014-104-sandbox-ci'
+@@ -96,0 +97,3 @@
++],
++        "operator_approved_amendment_1_1_5": [
++          5
+EXIT:0

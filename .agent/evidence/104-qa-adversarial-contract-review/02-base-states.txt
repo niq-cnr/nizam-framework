@@ -1,0 +1,60 @@
+bash .agent/evidence/104-qa-adversarial-contract-review/helpers/02-base-states.sh
+implemented in /home/cnross/.tmp/claude-1000/-home-cnross-workspace02-nizam-framework/b87ce099-80d9-4a17-8331-ff678f08d08a/scratchpad/work/impl
+f3b6dcb3a2e9c8a465e8ccb1be2e67fce721deef
+ M .github/workflows/compliance.yml
+== declared: AT1=1 AT2=0 AT3=1 AT4=1 AT5-AT8=1 AT9=0 AT10=0 S01=0 S02=1 S03=1 S04=1 S05=1 S06=1 S07=1 S08=0 S09=0 S10=1 S11=1
+### AT1 rc=1 (0.1s)
+      File "<string>", line 1, in <module>
+    AssertionError: []
+### AT2 rc=0 (0.0s)
+### AT3 rc=1 (0.1s)
+      File "<string>", line 1, in <module>
+    AssertionError: no sole-validator statement in the Schemas section
+### AT4 rc=1 (0.1s)
+      File "<string>", line 1, in <module>
+    AssertionError: []
+### AT5 rc=1 (0.1s)
+      File "<string>", line 1, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/104/ci-positive-run.txt'
+### AT6 rc=1 (0.1s)
+      File "<string>", line 1, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/104/ci-positive-run.txt'
+### AT7 rc=1 (0.1s)
+      File "<string>", line 1, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/104/ci-negative-run.txt'
+### AT8 rc=1 (0.1s)
+      File "<string>", line 1, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/104/ci-negative-run.txt'
+### AT9 rc=0 (10.5s)
+    PASS G5 every baseline-passing check still passes
+    GATE: PASS (16 checks passing; baseline 16)
+### AT10 rc=0 (23.7s)
+    ---
+    SELF-TEST OK: 79/79 fixtures accounted for, 0 failed
+### S01 rc=0 (0.1s)
+    verification: 21 acceptance tests: 10 supplementary: 11 files_create: 16 files_modify: 6 orchestrator_owned: 7 problems: []
+### S02 rc=1 (0.1s)
+      File "<stdin>", line 7, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/104/attempt-base.txt'
+### S03 rc=1 (0.1s)
+    changed: 2 problems: ["files_modify paths not changed (non-vacuity): ['.github/workflows/compliance.yml', 'CHANGELOG.md', 'docs/planning/phase_014.yaml', 'schema/README.md', 'standard/definition_of_done.md'
+### S04 rc=1 (0.0s)
+    jobs: ['validate', 'e2e_bootstrap', 'fixtures_self_test'] problems: ['not exactly one added job after three byte-identical jobs: added=[]', 'the job differs from the pinned job', 'the suite step is not the 
+### S05 rc=1 (0.0s)
+    absent: (0, '') present: (0, '') present+write-fails: (0, '') problems: ['expected exactly one guarded sysctl step, got 0', 'the guard path and the single sudo sysctl write are not each present exactly once
+### S06 rc=1 (0.1s)
+    problems: ['standard/definition_of_done.md: version 0.1.0 -> 0.1.0, expected 0.1.0 -> 0.2.0', 'standard/definition_of_done.md: change_log head entry', 'standard/definition_of_done.md: older change_log entri
+### S07 rc=1 (0.1s)
+    problems: ['CHANGELOG: the pinned bullet does not occur exactly once', 'CHANGELOG: bullet not inside [Unreleased]', 'phase yaml: step 104 values differ from the pinned values']
+### S08 rc=0 (8.5s)
+    depth: 1 working tree (rc, tests, fail/error line, OK): (0, 54, False, True) shallow clone: (0, 54, False, True) problems: []
+### S09 rc=0 (10.5s)
+    exit: 0 PASS lines: 16 FAIL lines: [] SUMMARY: [('16', '0')] C14: True
+### S10 rc=1 (0.1s)
+      File "<stdin>", line 11, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/104/ci-positive-run.txt'
+### S11 rc=1 (0.1s)
+      File "<stdin>", line 9, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/104/ci-negative-mutation.txt'
+SUMMARY: AT1=1 AT2=0 AT3=1 AT4=1 AT5=1 AT6=1 AT7=1 AT8=1 AT9=0 AT10=0 S01=0 S02=1 S03=1 S04=1 S05=1 S06=1 S07=1 S08=0 S09=0 S10=1 S11=1
+EXIT:0

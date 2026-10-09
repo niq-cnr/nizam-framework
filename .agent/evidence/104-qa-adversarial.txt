@@ -1,0 +1,20 @@
+python3 .agent/evidence/104-qa-adversarial-helpers/live_run_audit.py
+positive run 37980556248 phase/014-104-sandbox-ci a278fcdf4dc4d97de35e9692b3cbe5ff2e3309e6 success job 113989678654 success
+negative run 37980776642 throwaway/104-isolation-removal e9b7e7b0ff9de31654e1e7501ac93ad3cb4aa360 failure job 113990412340 failure
+suite at positive headSha: 54 tests, isolation-dependent (AST): ['test_prompt_evaluator_runs_three_isolated_validated_trials', 'test_prompt_evaluator_uses_per_trial_packet_copies', 'test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files']
+positive summary: {'ran': ['54'], 'verdict': ['OK'], 'conformance': ['CONFORMANCE: FULL'], 'fail_blocks': [], 'assertion': [], 'unsupported': 0}
+negative summary: {'ran': ['54'], 'verdict': ['FAILED (failures=1)'], 'conformance': ['CONFORMANCE: NOT FULL (run unsuccessful)'], 'fail_blocks': [('FAIL', 'test_linux_sandbox_blocks_cross_trial_files_and_network')], 'assertion': ['AssertionError: 40 != 0 : '], 'unsupported': 0}
+  isolation-dependent test_prompt_evaluator_runs_three_isolated_validated_trials                  positive status: ok
+  isolation-dependent test_prompt_evaluator_uses_per_trial_packet_copies                          positive status: ok
+  isolation-dependent test_linux_sandbox_blocks_cross_trial_files_and_network                     positive status: ok
+  isolation-dependent test_linux_sandbox_blocks_execution_of_runner_generated_trial_file          positive status: ok
+  isolation-dependent test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files positive status: ok
+positive tests whose verbose line carries no trailing status (output interleaving; their outcome is covered by the plain 'OK' summary with no skipped= suffix): []
+per-test status differences positive -> negative: {'test_linux_sandbox_blocks_cross_trial_files_and_network': ('ok', 'FAIL')}
+  other isolation-dependent test_prompt_evaluator_runs_three_isolated_validated_trials          negative status: ok
+  other isolation-dependent test_prompt_evaluator_uses_per_trial_packet_copies                  negative status: ok
+  other isolation-dependent test_linux_sandbox_blocks_execution_of_runner_generated_trial_file  negative status: ok
+  other isolation-dependent test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files negative status: ok
+other jobs on the negative run: [('e2e_bootstrap', 'success'), ('fixtures_self_test', 'success'), ('validate', 'success')]
+problems: []
+EXIT:0

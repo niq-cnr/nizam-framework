@@ -6,11 +6,14 @@ tags: [spec, ecosystem-cycle, ga, pilot, maintenance, phase-014]
 status: active
 last_audited: "2026-10-09"
 authoritative_source: NA
-version: 1.1.4
-spec_version: "1.1.4"
+version: 1.1.5
+spec_version: "1.1.5"
 created_at: "2026-09-30T10:24:00Z"
-updated_at: "2026-10-09T17:51:07Z"
+updated_at: "2026-10-09T18:22:14Z"
 change_log:
+  - version: "1.1.5"
+    date: "2026-10-09T18:22:14Z"
+    summary: "PATCH (no scope, feature, dependency or design change; a factual correction of one acceptance-test literal, the product_spec_013 1.1.2 / 014 1.0.1 / 1.1.3 precedent): AMENDMENT A2 to feature 104 AT5, routed through the Planner per methodology/00_planning.md Section 9 under the operator decision recorded in .agent/run_state.json as operator_gate_decision at 2026-10-09T18:19:35Z, before this change (NDEBT-018). Operator verbatim: 'B. Amend AT5'. Cause: contract 104 rev 0 (branch_name_resolution) found AT5 unsatisfiable. AT5 asserted R['headBranch']=='phase/014-ga-track', but compliance.yml triggers only on pull_request and on push to main, and origin/phase/014-ga-track is c061b31, the stale head of merged PR #65 and not an ancestor of the feature lineage; satisfying it would have needed a force-push over that ref (option A, not chosen). Applied: in 104 AT5 the single literal 'phase/014-ga-track' becomes 'phase/014-104-sandbox-ci' (the feature branch); every other character of AT5, and every other acceptance test, is byte-identical. 104's description and this spec's 104 bullet name the feature branch; 104's acceptance_provenance gains operator_approved_amendment_1_1_5 [5] and the provenance section lists it. AT5's ancestry clause (git merge-base --is-ancestor headSha HEAD) is a completion-time gate: it holds on the feature branch at completion, but main squash-merges, so it is not expected to hold if replayed on main (as 103's pinned range end 1c06720 is not an ancestor of main); no later phase-014 acceptance test replays 104's evidence. A2's planning lines fall in 104's range (104's own contract review caused it, the A1-in-103 precedent); estimates unchanged. Decision 2 is not part of this amendment; the operator authorized the negative-control acts separately (run_state operator_gate_decision 2026-10-09T18:20:09Z and 18:20:44Z), executed by the Orchestrator only. feature_list_014 spec_version moves to 1.1.5 in lockstep."
   - version: "1.1.4"
     date: "2026-10-09T17:51:07Z"
     summary: "PATCH (no feature, acceptance-test, dependency or design change; a phase-014 measurement rule plus the scope re-baseline it implies), routed through the Planner per methodology/00_planning.md Sections 6 and 9 under the operator's scope-budget decision recorded in .agent/run_state.json as operator_gate_decision at 2026-10-09T17:42:10Z, before this change (NDEBT-018). Operator verbatim: '1. Change what counts, then re-baseline (' -- the message appears TRUNCATED after the opening parenthesis; it is applied as the selection of option 1 as the Orchestrator recorded it (count product, contract, planning and verdict lines; track raw evidence captures and verification helpers separately as an evidence total; re-baseline from the 099/103 actuals), and nothing is inferred from the missing text. Applied: new section 'Scope budget measurement (phase-014 rule)': ordered path classes over git diff --numstat --no-renames plus untracked files, with .agent/run_state.json excluded as coordination churn; the replayable script .agent/evidence/scope-budget-014/measure.py (fail-closed on an unclassified path, exit 3); 099 re-measured at 596 budget-counted / 847 evidence (483f016..88959c9) and 103 at 885 / 5807 (88959c9..1c06720), capture .agent/evidence/scope-budget-014/measure-099-103.txt; the nine pending features re-estimated on the budget-counted basis (6780, range 4840-8670); the re-baseline itself recorded as a phase-level line item (counted cumulatively, outside the per-feature rolling baseline; 104's range starts after it); original_estimate_lines 6660 -> 8600 (1481 measured + 300 re-baseline planning + 6780 estimated = 8561, rounded up), 130 percent ceiling 11180; a non-binding evidence projection. The figure is the Planner's estimate; the operator chose the rule and the re-baseline but stated no figure. The 103 overrun flag is recorded as acknowledged per the Orchestrator's record, pending operator confirmation. methodology/00_planning.md is unchanged (phase-014 rule only). feature_list_014 spec_version moves to 1.1.4 in lockstep, with pending estimated_lines restated on the new basis."
@@ -158,7 +161,9 @@ before it was scheduled (AH-2).
   the workflow (`standard/definition_of_done.md` §8 and §11, and `tools/README.md`).
   `schema/README.md` states that the suite is the review schema family's **sole
   validator**; C12 coverage of that family is left to 101 / `H-CONSOLIDATION`. CI
-  evidence is a green run plus a throwaway-branch negative control. The throwaway
+  evidence is a green run plus a throwaway-branch negative control. The green run is a
+  `pull_request` run on the feature branch `phase/014-104-sandbox-ci`, whose `headSha`
+  is an ancestor of the feature's HEAD (AT5; amendment A2, spec 1.1.5). The throwaway
   branch is never merged; its only change is 103 AT4's isolation-removal mutation
   (both halves removed), and the job must fail on
   `test_linux_sandbox_blocks_cross_trial_files_and_network` with
@@ -166,6 +171,11 @@ before it was scheduled (AH-2).
 
   If hosted runners cannot enable namespaces, the required-mode job fails by design.
   The Generator escalates; it never weakens the mode.
+
+  AT5's ancestry clause is a completion-time gate. It holds on the feature branch when
+  104 completes. `main` squash-merges, so the run's `headSha` is not an ancestor of
+  `main` afterwards, and AT5 is not expected to hold if replayed there. No later
+  phase-014 acceptance test replays 104's evidence.
 - **105 (NDEBT-042): reuse, not reinvention.** This is NIP-0003's feature-109 design
   (a fixture-subdirectory claim map in `tools/fixtures_self_test.sh`, each
   subdirectory claimed by exactly one owning suite), **pulled forward** into phase
@@ -408,6 +418,8 @@ rule wins:
     contract review caused it. This re-baseline is caused by the budget rule, not
     by 104. Charging it to 104 would put 104 above the top of its own range on
     planning lines alone.
+  - **Amendment A2 (spec 1.1.5) falls in 104's range,** like A1 in 103's: 104's own
+    contract review caused it.
 
 ### The script
 
@@ -615,6 +627,10 @@ record, which separates four kinds of test:
 - **operator_approved_amendment_1_1_3** — 103 AT4 and 104 AT8, rewritten after the
   Evaluator refuted their capable-host premise (`.agent/qa/103-contract-review.json`
   issue 1); operator decision 2026-10-09T15:51:52Z. Planner design in origin.
+- **operator_approved_amendment_1_1_5** — 104 AT5 (amendment A2). Its branch literal
+  `phase/014-ga-track` became `phase/014-104-sandbox-ci` after contract 104 rev 0 found
+  the clause unsatisfiable; operator decision 2026-10-09T18:19:35Z ("B. Amend AT5").
+  Planner design in origin.
 
 The remaining 099/101/102 tests are carried from 1.0.x.
 
