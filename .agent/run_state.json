@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "104",
   "status": "in_progress",
-  "updated_at": "2026-10-09T17:39:44Z",
+  "updated_at": "2026-10-09T17:54:03Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1588,6 +1588,16 @@
       "event": "scope_budget_flag",
       "feature": "103",
       "detail": "Scope Budget Protocol flag: feature 103 actual 6770 lines vs estimate 280 (> 3x the rolling average; breakdown: 3811 evaluator contract-review evidence+mutant helpers, 1154 QA evidence, 915 generator evidence, 519 contract, 224 verdicts/state, 93 tools product, 63 planning, 10 CHANGELOG). Phase cumulative 8274 / 6660 (124%; 130% ceiling 8658). Human acknowledgment required; feature 104 NOT started pending the operator's budget decision."
+    },
+    {
+      "at": "2026-10-09T17:42:10Z",
+      "event": "operator_gate_decision",
+      "detail": "Scope-budget decision. Recorded BEFORE the re-baseline (NDEBT-018). Operator verbatim (message appears truncated): '1. Change what counts, then re-baseline (' (2026-10-09, interactive session), selecting option 1 of the orchestrator's budget question: phase-014 scope budget counts product, contract, planning and verdict lines; raw evidence captures and verification helpers are tracked separately as an evidence total; then re-baseline from the 099/103 actuals. The orchestrator treats proceeding as acknowledgment of the 103 overrun flag (scope_budget_flag) and has asked the operator to confirm. Applied as a PHASE-014 rule in product_spec_014/run_state; methodology/00_planning.md (shipped payload) is not changed."
+    },
+    {
+      "at": "2026-10-09T17:54:03Z",
+      "event": "scope_budget_rebaselined",
+      "detail": "Applied operator option 1 (phase-014 counting rule, spec 1.1.4, commit 7bc65a5). Orchestrator re-ran measure.py independently: 099 596, 103 885 (combined 1481; evidence 6654; excluded 186) — matches the Planner. Re-baseline commit measured 292 budget / 565 evidence (phase-level item). total_lines_changed 1773 / 8600 (ceiling 11180). Prior rebaseline (2200->6660) moved to prior_rebaselines verbatim. Pending operator confirmation of 8600/11180 and of the 103 overrun acknowledgment; feature 104 not started. 104 rolling threshold: 3 x mean(596, 885) = 2221.5."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1760,29 +1770,73 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 6660,
-    "total_lines_changed": 8274,
+    "original_estimate_lines": 8600,
+    "ceiling_130pct": 11180,
+    "total_lines_changed": 1773,
+    "evidence_lines_total": 7219,
+    "excluded_lines_total": 186,
+    "counting_rule": {
+      "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.4)",
+      "script": ".agent/evidence/scope-budget-014/measure.py",
+      "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
+      "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
+      "evidence_total": ".agent/evidence/** including verification helpers; tracked separately, never gated",
+      "excluded": ".agent/run_state.json (coordination churn)",
+      "unclassified": "fail closed: listed, measure.py exits 3"
+    },
     "per_feature": [
       {
         "id": "099",
         "estimated": 920,
-        "actual": 1504,
-        "note": "git diff --numstat 483f016 (tracked, incl. contract/verdicts/QA/evidence/state) + untracked QA files at completion"
+        "actual": 596,
+        "evidence_lines": 847,
+        "excluded_lines": 83,
+        "all_paths_lines": 1526,
+        "range": "483f016..88959c9",
+        "previous_actual_all_paths": 1504,
+        "note": "Phase-014 rule (spec 1.1.4): product 77 + contract 354 + verdict 133 + planning 32 = 596. estimated 920 is the historical all-paths estimate (mixed basis, disclosed). Capture .agent/evidence/scope-budget-014/measure-099-103.txt."
       },
       {
         "id": "103",
         "estimated": 280,
-        "actual": 6770,
-        "note": "git diff --numstat 88959c9 (tracked: amendment A1, contract, verdicts, QA, evidence, state) + untracked QA files at completion"
+        "actual": 885,
+        "evidence_lines": 5807,
+        "excluded_lines": 103,
+        "all_paths_lines": 6795,
+        "range": "88959c9..1c06720",
+        "previous_actual_all_paths": 6770,
+        "flag": "scope_budget_flag 2026-10-09T17:39:44Z raised under the old all-paths count (6770 vs 280). Under the phase-014 rule 885 < 3 x 596 = 1788 and would not flag. Acknowledged per the Orchestrator's record (operator_gate_decision 2026-10-09T17:42:10Z), PENDING explicit operator confirmation.",
+        "note": "Phase-014 rule (spec 1.1.4): product 103 + contract 519 + verdict 200 + planning 63 = 885. estimated 280 is the historical all-paths estimate (mixed basis, disclosed)."
       }
     ],
-    "ceiling_130pct": 8658,
+    "phase_level_items": [
+      {
+        "id": "rebaseline-1.1.4",
+        "range": "1c06720..7bc65a5",
+        "actual": 292,
+        "evidence_lines": 565,
+        "note": "Phase-level planning (spec 1.1.4 + feature list + scope-budget-014 evidence); counts toward total_lines_changed only, not per_feature or the rolling baseline; 104's range starts at 7bc65a5. Allowance in the estimate: 300."
+      }
+    ],
     "rebaseline": {
-      "from": 2200,
-      "to": 6660,
-      "at": "2026-10-08T11:21:14Z",
-      "authorized_by": "Planner activation-time estimate made under the operator's maintenance-fold authorization (operator_gate_decision 2026-10-08T11:21:14Z approved the SCOPE; the operator stated no figure). Basis: naive 2890 lines x the measured 2.3 process weight (phase-013 measurement, cited in NIP-0003:494-495). Operator APPROVED the figure at 2026-10-08T12:50:31Z (verbatim: 'In approve the increased budget.')."
-    }
+      "from": 6660,
+      "to": 8600,
+      "ceiling_from": 8658,
+      "ceiling_to": 11180,
+      "at": "2026-10-09T17:42:10Z",
+      "authorized_by": "Operator (operator_gate_decision 2026-10-09T17:42:10Z), verbatim '1. Change what counts, then re-baseline (' (message appears truncated), selecting option 1. The figure 8600 is the Planner's estimate (spec 1.1.4); the operator stated no figure, so confirmation of 8600/11180 is PENDING.",
+      "reason": "Measured 099 596 + 103 885 = 1481, + 300 re-baseline allowance, + 6780 pending estimate (range 4840-8670; per-feature overhead 500-800 measured) = 8561, rounded up to 8600. Ceiling 11180 covers the high end 10451.",
+      "spec_version": "1.1.4",
+      "evidence": ".agent/evidence/scope-budget-014/measure-099-103.txt"
+    },
+    "prior_rebaselines": [
+      {
+        "from": 2200,
+        "to": 6660,
+        "at": "2026-10-08T11:21:14Z",
+        "authorized_by": "Planner activation-time estimate made under the operator's maintenance-fold authorization (operator_gate_decision 2026-10-08T11:21:14Z approved the SCOPE; the operator stated no figure). Basis: naive 2890 lines x the measured 2.3 process weight (phase-013 measurement, cited in NIP-0003:494-495). Operator APPROVED the figure at 2026-10-08T12:50:31Z (verbatim: 'In approve the increased budget.')."
+      }
+    ]
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -2037,7 +2091,7 @@
       }
     ]
   },
-  "last_action": "Feature 103 complete; 104 paused pending scope-budget decision",
+  "last_action": "Scope budget re-baselined (spec 1.1.4); awaiting operator confirmation of 8600/11180 and PR #67 merge",
   "completed_contract_ids": [
     "099",
     "103"
