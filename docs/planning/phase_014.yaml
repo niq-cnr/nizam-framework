@@ -11,7 +11,10 @@ steps:
     changelog_entry: Ecosystem protocols 06 and 08 activated and capability-registered; H-CONSOLIDATION and H-GA defined (DEFINED/OUTSTANDING, not exercised).
   - id: "103"
     description: Sandbox prerequisite handling — explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043).
-    status: PENDING
+    status: COMPLETED
+    docs_updated: tools/README.md
+    changelog_entry: "Convergent-review suite reports the five sandbox-dependent tests UNSUPPORTED with CONFORMANCE: NOT FULL and a non-zero exit when user-namespace isolation is unavailable; --allow-unsupported-isolation is the local-only override; a capable host prints CONFORMANCE: FULL (NDEBT-043)."
+    evidence: .agent/evidence/103/at1-required-mode.txt
   - id: "104"
     description: Convergent-review suite enforced in CI, and the review schema family's validator stated (NDEBT-041); depends on 103.
     status: PENDING

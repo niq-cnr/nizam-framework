@@ -1,0 +1,22 @@
+{
+  "review": "103-mode-b",
+  "feature": "103",
+  "contract_id": "103",
+  "revision_reviewed": 0,
+  "mode": "B",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "31 in-scope paths (27 evidence + 4 deliverables); S15 fact re-derived from git show --name-only baed81c (no run_state/feature_list); sandbox script, adapter, tools code, schema, .github, frozen infra untouched.",
+    "Pinned texts exact; README 0.12.0; phase-YAML restriction holds; test bodies unchanged (5 decorated).",
+    "Hand review: no disguised env access/dynamic import/string-built names; single fixed-argv probe spawn; probe runs no repo code; only the explicit flag relaxes required mode.",
+    "All 26 checks pass; only restricted-host branches exercised; capable branches stay with 104 AT5-AT8.",
+    "For 104: CI job must run the full suite (no -k), without the flag, install jsonschema, and support Landlock. NDEBT-046 open."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "103",
+    "summary": "APPROVED (Mode B): 361b667 matches contract 103 rev 2 exactly; hand review clean."
+  }
+}

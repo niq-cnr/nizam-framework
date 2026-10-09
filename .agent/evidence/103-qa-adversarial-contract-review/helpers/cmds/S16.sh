@@ -1,0 +1,15 @@
+python3 - <<'PY'
+import json, os, pathlib, re, subprocess, sys, tempfile
+cap = subprocess.run(['unshare', '--user', '--map-root-user', 'true'], capture_output=True).returncode == 0
+try: value = open('/proc/sys/kernel/apparmor_restrict_unprivileged_userns').read().strip()
+except OSError: value = 'absent'
+print('isolation available:', cap)
+print('kernel.apparmor_restrict_unprivileged_userns:', value)
+print('branch exercised for AT1/AT2/AT4:', 'capable-host' if cap else 'restricted-host only; the capable-host branches are discharged by feature 104 AT5-AT8 (AT2 capable branch is recorded as not exercised unless the Evaluator ran it on a capable host)')
+bad = []
+for name in ('at1-required-mode.txt', 'at2-allow-flag.txt'):
+    text = open('.agent/evidence/103/' + name).read()
+    if 'isolation available: ' + str(cap) not in text: bad.append(name + ' does not record the same host capability as this probe')
+print('problems:', bad)
+sys.exit(1 if bad else 0)
+PY

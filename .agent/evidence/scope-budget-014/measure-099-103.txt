@@ -1,0 +1,88 @@
+python3 .agent/evidence/scope-budget-014/measure.py --range 099=483f016..88959c9 --range 103=88959c9..1c06720 --files
+== 099: 483f016..88959c9
+   resolved 483f016edb90282f19eb26ac197e317273a4012a..88959c92729a42469774ad52725dd1a1a4c0bc36
+   paths=64 binary_paths=0
+   class                       files   lines
+   budget/product                  7      77
+   budget/product-ext              0       0
+   budget/contract                 1     354
+   budget/verdict                  4     133
+   budget/audit-deliverable        0       0
+   budget/planning                 3      32
+   evidence                       48     847
+   excluded/run_state              1      83
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                   9  CHANGELOG.md
+   budget/product                  10  NIZAM.json
+   budget/product                   7  docs/guide/index.html
+   budget/product                  10  ecosystem/06_simplification_review.md
+   budget/product                  10  ecosystem/08_ga_gate.md
+   budget/product                  19  ecosystem/README.md
+   budget/product                  12  tools/skill.json
+   budget/contract                354  .agent/contracts/099.json
+   budget/verdict                  32  .agent/qa/099-contract-review.json
+   budget/verdict                  45  .agent/qa/099.json
+   budget/verdict                  33  .agent/validator/099-mode-a.json
+   budget/verdict                  23  .agent/validator/099-mode-b.json
+   budget/planning                  2  .agent/feature_list_014.json
+   budget/planning                 25  docs/planning/operator_gates.md
+   budget/planning                  5  docs/planning/phase_014.yaml
+   excluded/run_state              83  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                        5     166  .agent/evidence/099-qa-adversarial-contract-review/
+   evidence                        1      28  .agent/evidence/099-qa-adversarial.txt
+   evidence                       42     653  .agent/evidence/099/
+   PRODUCT_LINES=77
+   PROCESS_OVERHEAD_LINES=519  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=596
+   EVIDENCE_LINES=847
+   EXCLUDED_LINES=83
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=1526  (= budget 596 + evidence 847 + excluded 83 + unclassified 0)
+== 103: 88959c9..1c06720
+   resolved 88959c92729a42469774ad52725dd1a1a4c0bc36..1c067203c846550b9fcc26b98be335a2e91a041b
+   paths=158 binary_paths=0
+   class                       files   lines
+   budget/product                  3     103
+   budget/product-ext              0       0
+   budget/contract                 1     519
+   budget/verdict                  4     200
+   budget/audit-deliverable        0       0
+   budget/planning                 4      63
+   evidence                      145    5807
+   excluded/run_state              1     103
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                  10  CHANGELOG.md
+   budget/product                   7  tools/README.md
+   budget/product                  86  tools/test_convergent_review.py
+   budget/contract                519  .agent/contracts/103.json
+   budget/verdict                  93  .agent/qa/103-contract-review.json
+   budget/verdict                  51  .agent/qa/103.json
+   budget/verdict                  34  .agent/validator/103-mode-a.json
+   budget/verdict                  22  .agent/validator/103-mode-b.json
+   budget/planning                 24  .agent/feature_list_014.json
+   budget/planning                 28  .agent/product_spec_014.md
+   budget/planning                  6  docs/planning/DEBT.md
+   budget/planning                  5  docs/planning/phase_014.yaml
+   excluded/run_state             103  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                       90    3811  .agent/evidence/103-qa-adversarial-contract-review/
+   evidence                        1     121  .agent/evidence/103-qa-adversarial-helpers/
+   evidence                        1      65  .agent/evidence/103-qa-adversarial.txt
+   evidence                       53    1810  .agent/evidence/103/
+   PRODUCT_LINES=103
+   PROCESS_OVERHEAD_LINES=782  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=885
+   EVIDENCE_LINES=5807
+   EXCLUDED_LINES=103
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=6795  (= budget 885 + evidence 5807 + excluded 103 + unclassified 0)
+== combined
+   BUDGET_COUNTED_LINES=1481
+   EVIDENCE_LINES=6654
+   EXCLUDED_LINES=186
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=8321
+EXIT:0

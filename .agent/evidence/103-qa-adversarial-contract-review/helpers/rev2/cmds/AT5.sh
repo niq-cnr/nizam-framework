@@ -1,0 +1,1 @@
+git diff --exit-code 02b02c6 -- tools/linux_trial_sandbox.sh tools/isolated_trial_adapter.py

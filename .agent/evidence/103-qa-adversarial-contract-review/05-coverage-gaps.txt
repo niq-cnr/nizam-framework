@@ -1,0 +1,56 @@
+NIZAM_EVAL_SCRATCH=<scratchpad>/work bash .agent/evidence/103-qa-adversarial-contract-review/helpers/05-coverage-gaps.sh
+### F1  AT4 capable-host branch, simulated: PATH shim makes the probe succeed (so AT4's own 'cap' is True); the mutation removes unshare from the sandbox script, so the shim is never consulted
+scratch_run: replaced 1 occurrence in tools/linux_trial_sandbox.sh
+scratch_run: command python3 tools/test_convergent_review.py -> exit 0
+  | 
+  | ----------------------------------------------------------------------
+  | Ran 54 tests in 5.029s
+  | 
+  | OK
+  | CONFORMANCE: FULL
+FAIL exit status is non-zero
+FAIL output matches '^(FAIL|ERROR): test_linux_sandbox_blocks_cross_trial_files_and_network'
+scratch_run: EXPECTATION FAILED; scratch removed: True
+AT4 (capable branch, simulated) rc=1
+
+### F1b control: AT1 and AT2 capable branches (CONFORMANCE: FULL, no UNSUPPORTED, no skipped) with the same shim
+isolation available: True exit: 0 FAIL/ERROR: []
+AT1 (capable, simulated) rc=0
+isolation available: True exit: 0 FAIL/ERROR: []
+AT2 (capable, simulated) rc=0
+
+### F1c a mutation the cross-trial test DOES detect (Landlock restriction disabled in the adapter), same capable shim
+scratch_run: replaced 1 occurrence in tools/isolated_trial_adapter.py
+scratch_run: command python3 tools/test_convergent_review.py -> exit 1
+PASS exit status is non-zero
+PASS output matches '^(FAIL|ERROR): test_linux_sandbox_blocks_cross_trial_files_and_network'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+rc=0
+
+### F2  S10 shim: probe passes, full sandbox refused; count of unshare calls (1 probe + one sandbox call per test)
+rc=1 FAIL lines: ['test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'test_prompt_evaluator_runs_three_isolated_validated_trials', 'test_prompt_evaluator_uses_per_trial_packet_copies'] unshare calls: 6
+problems: []
+S10 rc=0
+
+### F3  --allow-unsupported-isolation + partial capability (probe ok, sandbox refused): the flag must not convert the five FAILs
+positive control:
+scenario: flag_with_partial_capability rc=1
+FAIL lines: 5 UNSUPPORTED result lines: 0 other skipped lines: 0
+CONFORMANCE lines: ['CONFORMANCE: NOT FULL (run unsuccessful)']
+mutant m05c (flag masks sandbox-test failures when the probe passed):
+scenario: flag_with_partial_capability rc=0
+FAIL lines: 0 UNSUPPORTED result lines: 4 other skipped lines: 0
+CONFORMANCE lines: ['CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5)']
+all 24 checks on m05c: see 04-negative-controls.txt (every one exits 0)
+
+### F4  ordinary (jsonschema-ImportError) skips on a capable host must not count as UNSUPPORTED
+positive control:
+scenario: ordinary_skip_on_capable_host rc=0
+FAIL lines: 0 UNSUPPORTED result lines: 0 other skipped lines: 5
+CONFORMANCE lines: ['CONFORMANCE: FULL']
+mutant m18 (every skip counted as UNSUPPORTED):
+scenario: ordinary_skip_on_capable_host rc=1
+FAIL lines: 0 UNSUPPORTED result lines: 0 other skipped lines: 5
+CONFORMANCE lines: ['CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5)']
+all 24 checks on m18: see 04-negative-controls.txt (every one exits 0)
+EXIT:0

@@ -4,13 +4,19 @@ title: "Nizam Framework — Phase 014 Spec: GA Track — the Real Multi-Repo Pil
 description: "Plan-of-record spec for phase 014, activated 2026-10-08 under H-PHASE-014 with the approved amendments: the real non-scratch multi-repo pilot, the Repeat/GA lifecycle protocols with their reserved gates, and the folded enforcement-integrity maintenance tranche (features 103-109) ahead of the GA-readiness assessment."
 tags: [spec, ecosystem-cycle, ga, pilot, maintenance, phase-014]
 status: active
-last_audited: "2026-10-08"
+last_audited: "2026-10-09"
 authoritative_source: NA
-version: 1.1.2
-spec_version: "1.1.2"
+version: 1.1.4
+spec_version: "1.1.4"
 created_at: "2026-09-30T10:24:00Z"
-updated_at: "2026-10-08T13:22:24Z"
+updated_at: "2026-10-09T17:51:07Z"
 change_log:
+  - version: "1.1.4"
+    date: "2026-10-09T17:51:07Z"
+    summary: "PATCH (no feature, acceptance-test, dependency or design change; a phase-014 measurement rule plus the scope re-baseline it implies), routed through the Planner per methodology/00_planning.md Sections 6 and 9 under the operator's scope-budget decision recorded in .agent/run_state.json as operator_gate_decision at 2026-10-09T17:42:10Z, before this change (NDEBT-018). Operator verbatim: '1. Change what counts, then re-baseline (' -- the message appears TRUNCATED after the opening parenthesis; it is applied as the selection of option 1 as the Orchestrator recorded it (count product, contract, planning and verdict lines; track raw evidence captures and verification helpers separately as an evidence total; re-baseline from the 099/103 actuals), and nothing is inferred from the missing text. Applied: new section 'Scope budget measurement (phase-014 rule)': ordered path classes over git diff --numstat --no-renames plus untracked files, with .agent/run_state.json excluded as coordination churn; the replayable script .agent/evidence/scope-budget-014/measure.py (fail-closed on an unclassified path, exit 3); 099 re-measured at 596 budget-counted / 847 evidence (483f016..88959c9) and 103 at 885 / 5807 (88959c9..1c06720), capture .agent/evidence/scope-budget-014/measure-099-103.txt; the nine pending features re-estimated on the budget-counted basis (6780, range 4840-8670); the re-baseline itself recorded as a phase-level line item (counted cumulatively, outside the per-feature rolling baseline; 104's range starts after it); original_estimate_lines 6660 -> 8600 (1481 measured + 300 re-baseline planning + 6780 estimated = 8561, rounded up), 130 percent ceiling 11180; a non-binding evidence projection. The figure is the Planner's estimate; the operator chose the rule and the re-baseline but stated no figure. The 103 overrun flag is recorded as acknowledged per the Orchestrator's record, pending operator confirmation. methodology/00_planning.md is unchanged (phase-014 rule only). feature_list_014 spec_version moves to 1.1.4 in lockstep, with pending estimated_lines restated on the new basis."
+  - version: "1.1.3"
+    date: "2026-10-09T15:52:32Z"
+    summary: "PATCH (no scope change; design intent unchanged; product_spec_013 1.1.2 / 014 1.0.1 precedent: factual correction of acceptance-test commands), routed through the Planner per methodology/00_planning.md Section 9 under operator decision 2026-10-09T15:51:52Z (run_state operator_gate_decision, recorded before this change per NDEBT-018); operator verbatim: 'Approve amendment A1 to the phase-014 acceptance tests (spec 1.1.3): 103 AT4 removes both isolation halves (namespaces and Landlock) and its capable branch requires 'AssertionError: 40 != 0'; 104 AT8 requires the same signature; the 103/104 descriptions and spec bullets are updated as proposed; NDEBT-046 is logged. Approved.' The Evaluator's contract-103 review (.agent/qa/103-contract-review.json issue 1; evidence 05-coverage-gaps.txt F1/F1c) refuted, by execution, the premise that removing the unshare namespaces from tools/linux_trial_sandbox.sh turns test_linux_sandbox_blocks_cross_trial_files_and_network red on a capable host: Landlock alone enforces the file leg and the network leg accepts any OSError, so the suite stays 'Ran 54 tests / OK / CONFORMANCE: FULL'. Applied: 103 AT4's mutation now removes both isolation halves (adds the fail-closed replacement of the adapter's Landlock restrict-self call) and its capable branch also requires 'AssertionError: 40 != 0'; 104 AT8 requires the same breach signature; the 103 and 104 descriptions and this spec's 103/104 bullets name the isolation-removal mutation; the namespace-coverage gap and the vacuous execution test are logged as NDEBT-046 (not in phase-014 scope). Proven in scratch (.agent/evidence/103-qa-adversarial-contract-review/amendment-proposal.md Section 6): red at base on the restricted host, green under a contract-faithful implementation on both branches, and red for each injected defect in the branch that can observe it. feature_list_014 spec_version moves to 1.1.3 in lockstep."
   - version: "1.1.2"
     date: "2026-10-08T13:22:24Z"
     summary: "PATCH (no scope change): Validator round-2 corrections. (B) Feature 102 AT5, the NDEBT-044 (e) open-debt roll, is reclassified from Planner hardening to approved-tranche coverage under the 11:21:14Z decision ('NDEBT-044, split by concern'). The remaining Planner hardening (099 AT3/AT6/AT7, 101 AT2, 102 AT2/AT3/AT7) was ACKNOWLEDGED by the operator, verbatim 'acknowledged.' (run_state operator_gate_decision 2026-10-08T13:20:12Z), so nothing is pending and no decline fallback is defined; the earlier 'revert to the 1.0.1 forms' language is removed. (C) The garbled 102 bullet is repaired, and the unverifiable statement about the Orchestrator's brief is removed. feature_list_014 spec_version moves to 1.1.2 in lockstep."
@@ -135,6 +141,14 @@ before it was scheduled (AH-2).
   `CONFORMANCE: FULL`. The capability probe is the host's `unshare`, independent of
   the sandbox script. The sandbox script and the trial adapter are not modified.
 
+  Capable-host proof (103 AT4's capable branch, discharged in CI by 104's negative
+  control): with *both* isolation halves removed in a scratch copy — the `unshare`
+  namespace line of the sandbox script and the adapter's Landlock restrict-self call —
+  the run fails on `test_linux_sandbox_blocks_cross_trial_files_and_network` with
+  `AssertionError: 40 != 0` (the cross-trial secret was read). Removing the namespaces
+  alone is detected by no test in the suite: Landlock still enforces the file leg and
+  the network leg accepts any `OSError`. That gap is `NDEBT-046`, outside 103's scope.
+
   This is the opposite polarity to the `--require-isolation` opt-in that NIP-0003
   sketches for its own future suite. The divergence is recorded for the NIP's
   pre-acceptance revision.
@@ -144,7 +158,11 @@ before it was scheduled (AH-2).
   the workflow (`standard/definition_of_done.md` §8 and §11, and `tools/README.md`).
   `schema/README.md` states that the suite is the review schema family's **sole
   validator**; C12 coverage of that family is left to 101 / `H-CONSOLIDATION`. CI
-  evidence is a green run plus a throwaway-branch negative control.
+  evidence is a green run plus a throwaway-branch negative control. The throwaway
+  branch is never merged; its only change is 103 AT4's isolation-removal mutation
+  (both halves removed), and the job must fail on
+  `test_linux_sandbox_blocks_cross_trial_files_and_network` with
+  `AssertionError: 40 != 0`.
 
   If hosted runners cannot enable namespaces, the required-mode job fails by design.
   The Generator escalates; it never weakens the mode.
@@ -279,6 +297,10 @@ The critical path is 100 → 101 → 102.
 
 ## Scope budget re-baseline
 
+**Superseded by spec 1.1.4.** This section is kept as the record of the 1.1.0
+activation-time estimate. The current counting rule, estimate and ceiling are in
+"Scope budget measurement (phase-014 rule)" below.
+
 The 1.0.x estimates (2200) were naive implementation lines, as was phase 013's 2150,
 which realized 6212 (2.89×). **The figure below is the Planner's activation-time
 estimate under the approved fold. The operator APPROVED it on 2026-10-08, verbatim
@@ -312,6 +334,243 @@ covers multi-round contracts, two QA artifacts and the per-feature §5 evidence.
   2026-10-08T11:21:14Z.
   - `authorized_by` names the Planner's estimate, made under the operator's fold
     authorization. The operator approved the figure at 2026-10-08T12:50:31Z.
+
+## Scope budget measurement (phase-014 rule)
+
+**Authority.** The operator's decision was recorded in `.agent/run_state.json` as an
+`operator_gate_decision` at 2026-10-09T17:42:10Z, before this change (`NDEBT-018`).
+The operator's words, verbatim:
+
+> 1. Change what counts, then re-baseline (
+
+The message appears **truncated** after the opening parenthesis. It is applied as the
+selection of option 1, as the Orchestrator recorded it: the phase-014 scope budget
+counts product, contract, planning and verdict lines; raw evidence captures and
+verification helpers are tracked separately as an evidence total; the budget is then
+re-baselined from the 099 and 103 actuals. Nothing is inferred from the missing text.
+
+**Scope of the rule.** It applies to phase 014 only. `methodology/00_planning.md`
+Section 6 and every other shipped payload file are unchanged. The two checks of that
+section (the per-feature 3× rolling check and the 130 percent cumulative halt) keep
+their thresholds; for phase 014 they operate on budget-counted lines.
+
+### The counting rule
+
+A feature's lines are `insertions + deletions` over its commit range, from
+`git diff --numstat --no-renames BASE HEAD`. A range that ends in the working tree
+(`BASE..`) also adds untracked, non-ignored files at their line counts. Binary files
+count 0 and are reported. Each path falls into exactly one class; the first matching
+rule wins:
+
+| Order | Path | Class | Counted in |
+|------:|------|-------|------------|
+| 1 | `.agent/run_state.json` | excluded | neither total |
+| 2 | `.agent/evidence/**`, including verification helpers | evidence | evidence total |
+| 3 | `.agent/contracts/**` | contract | budget |
+| 4 | `.agent/qa/*.json`, `.agent/validator/*.json` | verdict | budget |
+| 5 | `.agent/audits/**` | audit deliverable (Planner extension) | budget |
+| 6 | `.agent/product_spec*.md`, `.agent/feature_list*.json`, `docs/planning/**`, `AGENTS.md`, `DEBT.md` | planning | budget |
+| 7 | `tools/`, `ecosystem/`, `standard/`, `methodology/`, `schema/`, `templates/`, `docs/guide/`, `NIZAM.json`, `CHANGELOG.md` | product | budget |
+| 8 | `.github/`, `registry/`, the rest of `docs/`, `README.md`, `CONTEXT.md`, `LICENSE`, `bootstrap.sh`, `.gitignore` | product (Planner extension) | budget |
+| 9 | anything else | unclassified | listed; the script exits 3 |
+
+- **Why `run_state.json` is excluded.** It is the Orchestrator's coordination ledger.
+  It grows with every gate event (contract attempts, verdict receipts, flags, operator
+  decisions), whatever the size of the feature. It also records the measurement
+  itself, so counting it would make the total move when the total is written. In 099
+  and 103 it was 83 and 103 lines. It is still versioned and auditable, and the script
+  reports it as `EXCLUDED_LINES`; it is just not budget.
+- **Planner extensions.** Rows 5 and 8 are not in the operator's option text. They
+  exist so that no line goes unclassified:
+  - row 8 holds the rest of the tracked repository payload. 104 edits
+    `.github/workflows/compliance.yml`, and 107 edits `docs/nips/`.
+  - row 5 holds 101's deliverable. That deliverable is the review under
+    `.agent/audits/<id>/` (`ecosystem/06` Section 6), not a raw capture.
+- **Consequence for 100 and 102.** The rule is by path. 100's pilot record
+  (`.agent/evidence/pilot-100/`) and 102's dossier (`.agent/evidence/102/ga-readiness.json`)
+  are therefore in the evidence total. The budget does not bound them.
+- **Fail closed.** An unclassified path is listed, and the script exits 3. A new path
+  class is a spec amendment, not a silent default.
+- **Attribution.** A feature's range runs from its start commit to its own completion
+  commit. The start commit is normally the previous feature's completion commit. This
+  re-baseline is the exception.
+  - **It is a phase-level line item, not a feature.** It is the commit that adds
+    this section, the feature-list update and `.agent/evidence/scope-budget-014/`.
+    Its range is `1c06720..<re-baseline commit>`. Its budget-counted lines count
+    toward the cumulative total, but not toward any feature's per-feature figure or
+    the rolling baseline.
+  - **It was measured before commit.** The working-tree measurement before this
+    final edit was 275 budget-counted (all planning: spec 233 + feature list 42),
+    563 evidence and 7 excluded. The Orchestrator records the exact figure from
+    `measure.py` at the commit.
+  - **104 starts after it.** 104's range is `<re-baseline commit>..<104 completion>`.
+  - **Why it differs from A1.** Amendment A1 fell in 103's range because 103's own
+    contract review caused it. This re-baseline is caused by the budget rule, not
+    by 104. Charging it to 104 would put 104 above the top of its own range on
+    planning lines alone.
+
+### The script
+
+`.agent/evidence/scope-budget-014/measure.py` (stdlib only, run from the repo root):
+
+```bash
+python3 .agent/evidence/scope-budget-014/measure.py \
+  --range 099=483f016..88959c9 --range 103=88959c9..1c06720 --files
+```
+
+- It prints, for each range: lines and files per class; `PRODUCT_LINES`;
+  `PROCESS_OVERHEAD_LINES` (contract + verdict + audit + planning);
+  `BUDGET_COUNTED_LINES`; `EVIDENCE_LINES`; `EXCLUDED_LINES`; and
+  `UNCLASSIFIED_LINES`.
+- It asserts that budget + evidence + excluded + unclassified equals the all-paths
+  total.
+- The capture, in the `04` §5 shape, is
+  `.agent/evidence/scope-budget-014/measure-099-103.txt` (`EXIT:0`).
+- It is outside the frozen `.agent/evidence/phase-014-activation/` tree, which 102 AT7
+  pins.
+- Exit codes: 0 = measured with every path classified; 2 = usage or git error;
+  3 = measured with at least one unclassified path.
+
+### Recomputed 099 and 103
+
+- 099's range is `483f016..88959c9`. `88959c9` is the squash merge of PR #66, with a
+  single parent, `483f016`.
+- 103's range is `88959c9..1c06720`. `1c06720` was this branch's HEAD at the
+  re-baseline, pinned so that the capture replays.
+
+| Class | 099 | 103 | Both |
+|-------|----:|----:|-----:|
+| product | 77 | 103 | 180 |
+| contract | 354 | 519 | 873 |
+| verdict | 133 | 200 | 333 |
+| planning | 32 | 63 | 95 |
+| **budget-counted** | **596** | **885** | **1481** |
+| evidence | 847 | 5807 | 6654 |
+| excluded (`run_state.json`) | 83 | 103 | 186 |
+| all paths | 1526 | 6795 | 8321 |
+
+The arithmetic:
+
+- **099**
+  - product: CHANGELOG 9 + NIZAM 10 + guide 7 + ecosystem 10 + 10 + 19 + skill.json 12 = 77;
+  - verdict: 32 + 45 + 33 + 23 = 133;
+  - planning: 2 + 25 + 5 = 32;
+  - budget-counted: 77 + 354 + 133 + 32 = 596;
+  - all paths: 596 + 847 + 83 = 1526.
+- **103**
+  - product: CHANGELOG 10 + tools/README 7 + test_convergent_review.py 86 = 103;
+  - verdict: 93 + 51 + 34 + 22 = 200;
+  - planning: 24 + 28 + 6 + 5 = 63;
+  - budget-counted: 103 + 519 + 200 + 63 = 885;
+  - evidence: 1810 + 3811 + 121 + 65 = 5807;
+  - all paths: 885 + 5807 + 103 = 6795.
+
+**The recorded figures differ slightly.** run_state recorded 1504 and 6770; the full
+closed ranges re-measure at 1526 (+22) and 6795 (+25). The recorded figures were
+taken at completion, before the last state writes. Taking the non-run_state lines as
+fixed, the differences are exactly what run_state would hold:
+
+- 099: 1504 − (1526 − 83) = 61 run_state lines at measurement, against 83 final;
+- 103: 6770 − (6795 − 103) = 78, against 103 final.
+
+That is consistent with the scope-budget and flag records having been written after
+the measurement. It is not otherwise proven, and it does not matter under this rule,
+because `run_state.json` is excluded.
+
+**Under the new rule, 103 would not have been flagged.** Its prior-only rolling
+baseline is 099's 596, so the threshold is 3 × 596 = 1788, and 885 is under it. The
+flag raised under the old count (`scope_budget_flag`, 2026-10-09T17:39:44Z) stays on
+record. It is **acknowledged per the Orchestrator's record** (the operator gate
+decision at 17:42:10Z treats proceeding as acknowledgment), **pending operator
+confirmation**. This spec does not upgrade that acknowledgment.
+
+### Re-baseline
+
+**What the measurements show.** Process overhead does not scale with product size:
+
+- 099: 77 product lines against 519 overhead;
+- 103: 103 product lines against 782 overhead.
+
+Both features used all three contract rounds. Product against the naive estimate was
+77/400 = 0.19 for 099 and 103/120 = 0.86 for 103. With two data points, every
+estimate below is a range.
+
+**The estimating rule:**
+
+- **overhead:** 500–800 per feature (519 and 782, rounded outward to 100). Phase
+  013's contract + QA files ran 177–242 lines per feature, but phase 014 adds
+  validator verdict files and has run three-round contracts, so that lower figure is
+  not used.
+- **product, features 104–109 and 101:** 0.2–1.0 × naive, rounded to 10. The low end
+  is 099's 0.19. The high end widens 103's 0.86 to 1.0. 101's deliverable is
+  budget-counted (row 5), so the same rule applies to it.
+- **product, features 100 and 102:** a stated judgment, because their naive figures
+  were mostly deliverables that row 2 now puts in the evidence total.
+  - 100: 50–200 (framework debt rows, CHANGELOG and planning). The precedent is the
+    scratch pilot 084: its framework-side churn was about 66 lines (298 total, less
+    about 232 of pilot evidence, per its run_state note), and that figure included
+    run_state and a phase close.
+  - 102: 100–300 (the canonical-first phase close: ROADMAP, DEBT, phase YAML,
+    manifest, spec, feature list and CHANGELOG).
+- **point estimate:** product midpoint + 650 (the overhead midpoint), rounded to 10.
+
+| Feature | Naive | Product range | Budget range | `estimated_lines` (new) | Was |
+|---------|------:|--------------:|-------------:|------------------------:|----:|
+| 104 | 100 | 20–100 | 520–900 | 710 | 230 |
+| 105 | 110 | 20–110 | 520–910 | 720 | 250 |
+| 106 | 160 | 30–160 | 530–960 | 750 | 370 |
+| 107 | 50 | 10–50 | 510–850 | 680 | 120 |
+| 109 | 90 | 20–90 | 520–890 | 710 | 210 |
+| 108 | 60 | 10–60 | 510–860 | 690 | 140 |
+| 100 | 900 | 50–200 (judgment) | 550–1000 | 780 | 2070 |
+| 101 | 400 | 80–400 | 580–1200 | 890 | 920 |
+| 102 | 500 | 100–300 (judgment) | 600–1100 | 850 | 1150 |
+| **Remaining** | | | **4840–8670** | **6780** | 5460 |
+
+**The new baseline:**
+
+- `original_estimate_lines` is **8600**. It is built from three parts: 1481 measured
+  (099 + 103), 300 for this re-baseline's planning (275 measured before commit,
+  rounded up to 100 to absorb review-round edits) and 6780 estimated. That is 8561,
+  rounded up to 100.
+- The 130 percent cumulative ceiling is **11180**.
+- The high end of the range, 1481 + 300 + 8670 = 10451, is under the ceiling. The low
+  end is 1481 + 300 + 4840 = 6621.
+- The cumulative position after 103 is 1481 / 11180, about 13.2 percent of the
+  ceiling.
+- The figure is the **Planner's estimate**. The operator chose the rule and the act of
+  re-baselining but stated no figure; the Orchestrator should obtain the operator's
+  confirmation of 8600 / 11180, as it did for 6660 (12:50:31Z). Even before that
+  confirmation, no gate trips: about 1781 is under both 8658 and 11180.
+- **Mixed basis, disclosed.** 099 and 103 keep their historical `estimated_lines`
+  (920 and 280, made on the old all-paths basis). Their actuals are on the new basis.
+  Their estimate-to-actual comparison is therefore not like-for-like. The rolling
+  check compares actuals only, which share one basis. The per-feature
+  `estimated_lines` sum to 1200 + 6780 = 7980. `original_estimate_lines` is built from
+  measured actuals instead: 8600 = 1481 + 300 + 6780 + 39 rounding headroom.
+- The Orchestrator records the re-baseline structurally in `scope_budget`
+  (`methodology/00_planning.md` Section 9): from 6660, to 8600, at
+  2026-10-09T17:42:10Z, with `authorized_by` naming the operator's decision and the
+  Planner's figure. The 2200 → 6660 record is kept as a prior re-baseline.
+
+**Evidence volume: a non-binding projection, not gated.** The measured evidence per
+feature was 847 (099) and 5807 (103). 103's figure includes a 3811-line adversarial
+contract review, with mutant captures. Projecting nine remaining features across that
+measured span gives 9 × 850–5800, about 7,600–52,000 more lines. With 6654 measured
+and this re-baseline's 563, the phase total would be about 15,000–59,000. The width is the honest statement: two data points
+6.9× apart. The real pilot's record (`.agent/evidence/pilot-100/`) and 102's dossier
+fall in this total. The Orchestrator tracks it in `scope_budget` as the evidence total;
+no threshold applies to it.
+
+**Stale figures elsewhere, not edited here.** The following still cite 6660 / 8658:
+
+- `docs/planning/ROADMAP.md` (lines 158 and 185);
+- `docs/planning/backlog_dag.json` (lines 13–14);
+- `docs/planning/backlog_reconciliation.md` (lines 84–85 and 298–301).
+
+This change is scoped to this spec and the feature list, so they are not edited here.
+The `CHANGELOG.md` entry for the activation is a correct historical record. Refresh
+these at the next planning-record touch, or at the latest in 102's close.
 
 ## Acceptance
 
@@ -353,6 +612,9 @@ record, which separates four kinds of test:
   - 102 AT2/AT3/AT7.
 - **new_feature_design** — all tests of 103–109 (the fold was approved; their tests are
   Planner design).
+- **operator_approved_amendment_1_1_3** — 103 AT4 and 104 AT8, rewritten after the
+  Evaluator refuted their capable-host premise (`.agent/qa/103-contract-review.json`
+  issue 1); operator decision 2026-10-09T15:51:52Z. Planner design in origin.
 
 The remaining 099/101/102 tests are carried from 1.0.x.
 

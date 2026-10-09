@@ -3,13 +3,17 @@
 
 from __future__ import annotations
 
+import argparse
 import copy
+import dataclasses
+import functools
 import hashlib
 import importlib.util
 import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -58,6 +62,55 @@ def command_for(case: Path, output: Path) -> list[str]:
 
 def run_case(case: Path, output: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(command_for(case, output), cwd=ROOT, text=True, capture_output=True, check=False)
+
+
+UNSUPPORTED_REASON_PREFIX = "UNSUPPORTED: user-namespace isolation unavailable"
+ISOLATION_PROBE_COMMAND = ("unshare", "--user", "--map-root-user", "true")
+ISOLATION_PROBE_TIMEOUT_SECONDS = 20
+ISOLATION_DEPENDENT_TESTS: list[str] = []
+_PROBE_CACHE: list["IsolationProbeResult"] = []
+
+
+@dataclasses.dataclass(frozen=True)
+class IsolationProbeResult:
+    """Outcome of the host user-namespace capability probe."""
+
+    available: bool
+    detail: str
+
+
+def probe_user_namespace_isolation() -> IsolationProbeResult:
+    """Ask the host whether `unshare --user --map-root-user true` works; never raises."""
+    try:
+        completed = subprocess.run(
+            list(ISOLATION_PROBE_COMMAND), stdin=subprocess.DEVNULL, capture_output=True,
+            text=True, timeout=ISOLATION_PROBE_TIMEOUT_SECONDS, check=False,
+        )
+    except FileNotFoundError:
+        return IsolationProbeResult(False, "unshare executable not found on PATH")
+    except subprocess.TimeoutExpired:
+        return IsolationProbeResult(False, f"probe timed out after {ISOLATION_PROBE_TIMEOUT_SECONDS}s")
+    except OSError as exc:
+        return IsolationProbeResult(False, f"probe could not run: {exc}")
+    if completed.returncode == 0:
+        return IsolationProbeResult(True, "")
+    lines = completed.stderr.strip().splitlines()
+    return IsolationProbeResult(False, lines[0] if lines else f"probe exited {completed.returncode}")
+
+
+def requires_user_namespace_isolation(test_function):
+    """Report the test UNSUPPORTED (a skip) when the host cannot prove isolation."""
+    ISOLATION_DEPENDENT_TESTS.append(test_function.__name__)
+
+    @functools.wraps(test_function)
+    def wrapper(self, *args, **kwargs):
+        if not _PROBE_CACHE:
+            _PROBE_CACHE.append(probe_user_namespace_isolation())
+        if not _PROBE_CACHE[0].available:
+            self.skipTest(f"{UNSUPPORTED_REASON_PREFIX} ({_PROBE_CACHE[0].detail})")
+        return test_function(self, *args, **kwargs)
+
+    return wrapper
 
 
 class FixtureCorpusTests(unittest.TestCase):
@@ -332,6 +385,7 @@ class SemanticMutationTests(unittest.TestCase):
         with self.assertRaisesRegex(cr.ReviewError, "one packet and trials"):
             cr.validate_replay(replay)
 
+    @requires_user_namespace_isolation
     def test_prompt_evaluator_runs_three_isolated_validated_trials(self) -> None:
         output = self.temp / "prompt-eval"
         result = subprocess.run(
@@ -533,6 +587,7 @@ class SemanticMutationTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("canonical UTF-8 JSON", result.stderr)
 
+    @requires_user_namespace_isolation
     def test_prompt_evaluator_uses_per_trial_packet_copies(self) -> None:
         output = self.temp / "isolated"
         result = subprocess.run(
@@ -761,6 +816,7 @@ class SemanticMutationTests(unittest.TestCase):
         self.assertEqual(codes, [0, 2])
         self.assertIn((destination / "winner").read_text(encoding="utf-8"), {"left", "right"})
 
+    @requires_user_namespace_isolation
     def test_linux_sandbox_blocks_cross_trial_files_and_network(self) -> None:
         probe = self.temp / "isolation-probe.py"
         sentinel = self.temp / "sibling-secret"
@@ -881,6 +937,7 @@ class SemanticMutationTests(unittest.TestCase):
         with self.assertRaisesRegex(cr.ReviewError, "exactly one valid root tree"):
             cr.validate_packet(fabricated)
 
+    @requires_user_namespace_isolation
     def test_linux_sandbox_blocks_execution_of_runner_generated_trial_file(self) -> None:
         probe = self.temp / "execution-probe.py"
         probe.write_text(
@@ -903,6 +960,7 @@ class SemanticMutationTests(unittest.TestCase):
         ], cwd=trial_root, text=True, capture_output=True, check=False)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
+    @requires_user_namespace_isolation
     def test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files(self) -> None:
         runner = self.temp / "symlink-runner.py"
         runner.write_text(
@@ -1172,5 +1230,31 @@ class SemanticMutationTests(unittest.TestCase):
                 visit(load(ROOT / "schema" / schema_name), schema_name)
 
 
+def main(argv: list[str] | None = None) -> int:
+    """Run the suite in required-conformance mode; --allow-unsupported-isolation is local development only."""
+    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__, epilog="All other arguments are passed to unittest.")
+    parser.add_argument("--allow-unsupported-isolation", action="store_true",
+                        help="local development only, CI never passes it: do not fail the run for UNSUPPORTED isolation-dependent tests")
+    arguments, remaining = parser.parse_known_args(sys.argv[1:] if argv is None else argv)
+    program = unittest.main(argv=[sys.argv[0], *remaining], verbosity=2, exit=False)
+    result = program.result
+    unsupported = sum(1 for _, reason in result.skipped if reason.startswith(UNSUPPORTED_REASON_PREFIX))
+    successful = result.wasSuccessful()
+    if successful and not unsupported:
+        line = "CONFORMANCE: FULL"
+    elif unsupported and successful:
+        line = f"CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: {unsupported})"
+    elif unsupported:
+        line = f"CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: {unsupported}; run unsuccessful)"
+    else:
+        line = "CONFORMANCE: NOT FULL (run unsuccessful)"
+    print(line, file=sys.stderr)
+    if unsupported and not arguments.allow_unsupported_isolation:
+        print("REQUIRED CONFORMANCE NOT MET: user-namespace isolation is unavailable on this host; exiting non-zero. Local development may pass --allow-unsupported-isolation (CI must not).", file=sys.stderr)
+    elif unsupported:
+        print("--allow-unsupported-isolation given: the UNSUPPORTED outcome does not fail this run (local development only; CI must not pass this flag).", file=sys.stderr)
+    return 0 if successful and (not unsupported or arguments.allow_unsupported_isolation) else 1
+
+
 if __name__ == "__main__":
-    unittest.main(verbosity=2)
+    raise SystemExit(main())

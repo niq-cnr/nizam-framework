@@ -1,0 +1,34 @@
+{
+  "review": "103-contract",
+  "feature": "103",
+  "contract_id": "103",
+  "revision_reviewed": 2,
+  "mode": "A",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Amendment A1 authorized (operator_gate_decision 15:51:52Z precedes <A>=6444428).",
+    "Evaluator HIGH (AT4) resolved per A1; m05c killed by S17; m18 killed by S18; m08b/m08c killed by hardened S14.",
+    "No regression; anchors re-based to <A>.",
+    "S18 Landlock dependence accepted (works on this host; not run in CI).",
+    "Carry forward: Mode B hand-review for disguised env/spawn constructs; 104 CI must install jsonschema and support Landlock; NDEBT-046 open."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "103",
+    "summary": "APPROVED (Mode A rev 2, 103-contract 3/3)."
+  },
+  "history": [
+    {
+      "revision_reviewed": 0,
+      "approved": false,
+      "summary": "REJECTED (Mode A rev 0, 103-contract 1/3) on two minor issues: CHANGELOG bullet form/tense; S14 env-var guarantee unverified. Design otherwise approved."
+    },
+    {
+      "revision_reviewed": 1,
+      "approved": true,
+      "summary": "APPROVED (Mode A rev 1, 103-contract 2/3)."
+    }
+  ]
+}

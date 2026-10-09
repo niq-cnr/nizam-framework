@@ -1,0 +1,65 @@
+python3 -I .agent/evidence/103-qa-adversarial-helpers/probe.py <scratch>   # scratch = any empty directory outside the repo; builds a clean git archive HEAD copy there
+ADVERSARIAL QUESTION (feature 103, HEAD 361b667): can the suite pass, or the flag mask a failure, while an isolation-dependent test ran unsandboxed or user-namespace isolation was unavailable?
+Host: apparmor_restrict_unprivileged_userns=1
+PART 1 hostile unshare shims, unmutated code
+  B shim dies by SIGKILL, required mode: exit 1, UNSUPPORTED lines 5, FAIL/ERROR [], ['CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5)']
+  EXPECTED: B: exit 1, 5 UNSUPPORTED, no FAIL, NOT FULL
+  C shim prints success text but exits 1, WITH flag: exit 0, UNSUPPORTED lines 5, FAIL/ERROR [], ['CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5)']
+  EXPECTED: C: exit 0, 5 UNSUPPORTED, no FAIL, NOT FULL
+PART 2 single-point mutations of tools/test_convergent_review.py (contract commands replayed in the mutated scratch copy)
+  CONTROL (unmutated):
+    AT1 exit 0
+  EXPECTED: control AT1 exit 0
+    AT2 exit 0
+  EXPECTED: control AT2 exit 0
+    AT3 exit 0
+  EXPECTED: control AT3 exit 0
+    S11 exit 0
+  EXPECTED: control S11 exit 0
+    S13 exit 0
+  EXPECTED: control S13 exit 0
+    S17 exit 0
+  EXPECTED: control S17 exit 0
+  M1 decorator runs the test body when the probe says unavailable (skipTest removed)
+    AT1 on mutant: exit 1 (detected)
+    AT2 on mutant: exit 1 (detected)
+    AT3 on mutant: exit 0
+    S11 on mutant: exit 1 (detected)
+    S13 on mutant: exit 1 (detected)
+    S17 on mutant: exit 0
+  EXPECTED: M1 detected by at least one of ['at1', 'at2'] detected by ['at1', 'at2', 's11', 's13']
+  M2 probe ignores the unshare exit status
+    AT1 on mutant: exit 1 (detected)
+    AT2 on mutant: exit 1 (detected)
+    AT3 on mutant: exit 0
+    S11 on mutant: exit 0
+    S13 on mutant: exit 1 (detected)
+    S17 on mutant: exit 0
+  EXPECTED: M2 detected by at least one of ['at1', 'at2'] detected by ['at1', 'at2', 's13']
+  M3 process exit status ignores UNSUPPORTED
+    AT1 on mutant: exit 1 (detected)
+    AT2 on mutant: exit 0
+    AT3 on mutant: exit 0
+    S11 on mutant: exit 1 (detected)
+    S13 on mutant: exit 0
+    S17 on mutant: exit 0
+  EXPECTED: M3 detected by at least one of ['at1'] detected by ['at1', 's11']
+  M4 flag also forgives real failures
+    AT1 on mutant: exit 0
+    AT2 on mutant: exit 0
+    AT3 on mutant: exit 1 (detected)
+    S11 on mutant: exit 0
+    S13 on mutant: exit 1 (detected)
+    S17 on mutant: exit 1 (detected)
+  EXPECTED: M4 detected by at least one of ['at3', 's13', 's17'] detected by ['at3', 's13', 's17']
+  M5 FileNotFoundError from the probe treated as available
+    AT1 on mutant: exit 0
+    AT2 on mutant: exit 0
+    AT3 on mutant: exit 0
+    S11 on mutant: exit 1 (detected)
+    S13 on mutant: exit 0
+    S17 on mutant: exit 0
+  EXPECTED: M5 detected by at least one of ['s11'] detected by ['s11']
+CONCLUSION: every expectation held; no way found to run an isolation-dependent test unsandboxed or to mask a failure with the flag (restricted host only; capable-host behaviour is feature 104 AT5-AT8)
+Repository working tree was not touched by the probes (scratch copy only).
+EXIT:0

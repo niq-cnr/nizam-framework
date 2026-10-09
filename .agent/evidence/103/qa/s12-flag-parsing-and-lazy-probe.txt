@@ -1,0 +1,42 @@
+python3 - <<'PY'
+import json, os, pathlib, re, subprocess, sys, tempfile
+FIVE = ['test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'test_prompt_evaluator_runs_three_isolated_validated_trials', 'test_prompt_evaluator_uses_per_trial_packet_copies']
+PROBE_ARGS = '--user --map-root-user true'
+L = json.load(open('.agent/contracts/103.json'))['design_notes']['output_contract']['lines']
+def make_shim(directory, body):
+    directory = pathlib.Path(directory); (directory / 'bin').mkdir(parents=True)
+    log = directory / 'calls.log'; log.write_text('')
+    shim = directory / 'bin' / 'unshare'
+    shim.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "' + str(log) + '"\n' + body)
+    shim.chmod(0o755)
+    return directory / 'bin', log
+def run_suite(shim_dir, *args, path=None):
+    env = dict(os.environ)
+    env['PATH'] = path if path is not None else str(shim_dir) + os.pathsep + os.environ['PATH']
+    p = subprocess.run([sys.executable, 'tools/test_convergent_review.py', *args], env=env, capture_output=True, text=True)
+    return p.returncode, p.stdout + p.stderr
+def unsupported_lines(out):
+    return {t: bool(re.search(r"^" + t + r"\b.*skipped 'UNSUPPORTED: user-namespace isolation unavailable", out, re.M)) for t in FIVE}
+def has_line(out, line):
+    return re.search(r'^' + re.escape(line) + r'$', out, re.M) is not None
+bad = []
+with tempfile.TemporaryDirectory() as d:
+    shim_dir, log = make_shim(d, 'exit 1\n')
+    rc, out = run_suite(shim_dir, '--help')
+    if rc != 0 or '--allow-unsupported-isolation' not in out: bad.append('--help must exit 0 and name the flag (rc=%d)' % rc)
+    for typo in ('--allow-unsupported', '--allow-unsupported-isolatio', '--allow-unsupported-isolation=1'):
+        log.write_text('')
+        rc, out = run_suite(shim_dir, typo)
+        if rc == 0 or 'CONFORMANCE: FULL' in out or L['allow_note'] in out: bad.append('a mistyped/abbreviated flag %r was accepted as the opt-out (rc=%d)' % (typo, rc))
+    log.write_text('')
+    rc, out = run_suite(shim_dir, '-k', 'test_manifest_is_frozen_twelve_case_corpus')
+    if rc != 0 or 'Ran 1 test' not in out or not has_line(out, L['full']): bad.append('unittest pass-through (-k) of a non-isolation test must run 1 test, exit 0 and print FULL (rc=%d)' % rc)
+    if log.read_text().strip(): bad.append('the probe ran although no isolation-dependent test was selected (probe must be lazy): ' + repr(log.read_text()))
+    log.write_text('')
+    rc, out = run_suite(shim_dir, '-k', FIVE[0])
+    if rc == 0 or log.read_text().splitlines() != [PROBE_ARGS]: bad.append('selecting one isolation-dependent test must probe once and exit non-zero (rc=%d)' % rc)
+print('problems:', bad)
+sys.exit(1 if bad else 0)
+PY
+problems: []
+EXIT:0
