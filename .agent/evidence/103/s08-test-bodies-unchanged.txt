@@ -1,0 +1,54 @@
+python3 - <<'PY'
+import ast, subprocess, sys
+BASE = '64444289ad3e183dab60f3307da1c8d70a68ebd0'
+PATH = 'tools/test_convergent_review.py'
+FIVE = {'test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'test_prompt_evaluator_runs_three_isolated_validated_trials', 'test_prompt_evaluator_uses_per_trial_packet_copies'}
+DECORATOR = 'requires_user_namespace_isolation'
+old = ast.parse(subprocess.run(['git', 'show', BASE + ':' + PATH], capture_output=True, text=True, check=True).stdout)
+new = ast.parse(open(PATH).read())
+is_main_guard = lambda n: isinstance(n, ast.If) and ast.unparse(n.test).replace('"', "'") == "__name__ == '__main__'"
+bad = []
+fn_sig = lambda f: ast.dump(ast.Module(body=[ast.FunctionDef(name=f.name, args=f.args, body=f.body, decorator_list=[], returns=f.returns, type_comment=None, type_params=[])], type_ignores=[]))
+old_classes = {n.name: n for n in old.body if isinstance(n, ast.ClassDef)}
+new_classes = {n.name: n for n in new.body if isinstance(n, ast.ClassDef)}
+if list(old_classes) != [n for n in new_classes if n in old_classes]: bad.append('a base class was removed or reordered')
+tests_old = tests_new = decorated = 0
+for name, oc in old_classes.items():
+    nc = new_classes.get(name)
+    if nc is None: continue
+    ofn = {f.name: f for f in oc.body if isinstance(f, ast.FunctionDef)}
+    nfn = {f.name: f for f in nc.body if isinstance(f, ast.FunctionDef)}
+    if list(ofn) != list(nfn): bad.append(name + ': method set/order changed')
+    if [ast.dump(x) for x in oc.body if not isinstance(x, ast.FunctionDef)] != [ast.dump(x) for x in nc.body if not isinstance(x, ast.FunctionDef)]: bad.append(name + ': non-method class members changed')
+    if [ast.dump(b) for b in oc.bases] != [ast.dump(b) for b in nc.bases] or oc.decorator_list or nc.decorator_list: bad.append(name + ': bases/decorators changed')
+    for fname, of in ofn.items():
+        nf = nfn.get(fname)
+        if nf is None: continue
+        if fn_sig(of) != fn_sig(nf): bad.append(name + '.' + fname + ': signature or body changed')
+        decs = [ast.unparse(d) for d in nf.decorator_list]
+        want = [DECORATOR] if fname in FIVE else []
+        if of.decorator_list: bad.append(name + '.' + fname + ': base had decorators')
+        if decs != want: bad.append(name + '.' + fname + ': decorators ' + str(decs) + ' != ' + str(want))
+        if fname.startswith('test_'):
+            tests_old += 1
+            tests_new += 1
+            decorated += 1 if decs == [DECORATOR] else 0
+if (tests_old, tests_new) != (54, 54): bad.append('test method count is not 54/54: %d/%d' % (tests_old, tests_new))
+if decorated != 5: bad.append('decorated tests != 5: %d' % decorated)
+old_top = [n for n in old.body if not is_main_guard(n) and not isinstance(n, (ast.Import, ast.ImportFrom, ast.ClassDef))]
+new_top = [n for n in new.body if not is_main_guard(n) and not isinstance(n, (ast.Import, ast.ImportFrom, ast.ClassDef))]
+dumps = [ast.dump(n) for n in new_top]
+pos = -1
+for n in old_top:
+    d = ast.dump(n)
+    if d not in dumps[pos + 1:]: bad.append('base top-level statement missing or reordered: ' + ast.unparse(n)[:60]); break
+    pos = dumps.index(d, pos + 1)
+old_imports = {ast.dump(n) for n in old.body if isinstance(n, (ast.Import, ast.ImportFrom))}
+new_imports = {ast.dump(n) for n in new.body if isinstance(n, (ast.Import, ast.ImportFrom))}
+if not old_imports <= new_imports: bad.append('a base import was removed')
+if sum(1 for n in new.body if is_main_guard(n)) != 1: bad.append('expected exactly one __main__ guard')
+print('tests old/new:', tests_old, tests_new, 'decorated:', decorated, 'problems:', bad)
+sys.exit(1 if bad else 0)
+PY
+tests old/new: 54 54 decorated: 5 problems: []
+EXIT:0

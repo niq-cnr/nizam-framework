@@ -49,6 +49,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   gates `H-CONSOLIDATION` and `H-GA` are defined in `docs/planning/operator_gates.md`
   (0.28.0) as DEFINED and OUTSTANDING: neither is exercised, no operator decision is
   recorded for either, and GA is not declared.
+- **Phase 014 feature 103: Sandbox prerequisite handling** (additive; MINOR at the next release,
+  `methodology/06_release_train.md` Section 3.2; no release is prepared and no tag is created).
+  `tools/test_convergent_review.py` now probes the host's user-namespace capability directly. When
+  isolation is unavailable it reports each of the five sandbox-dependent tests as `UNSUPPORTED`,
+  prints `CONFORMANCE: NOT FULL` and exits non-zero (required-conformance mode is the default);
+  the new local-development flag `--allow-unsupported-isolation` turns that same outcome into
+  exit 0 without masking any other failure, and a capable host prints `CONFORMANCE: FULL`.
+  `tools/linux_trial_sandbox.sh` and `tools/isolated_trial_adapter.py` are unchanged (still fail
+  closed) and `tools/README.md` (0.12.0) documents both outcomes. NDEBT-043; the capable-host
+  evidence is to be provided by feature 104 (not exercised by this feature).
 
 ## [1.4.0] - 2026-10-08
 
