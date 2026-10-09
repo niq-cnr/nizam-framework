@@ -1,0 +1,2 @@
+python3 -c "import glob; C=[c for c in open('docs/guide/index.html').read().split('<article class=') if '<h3><code>ecosystem/</code></h3>' in c]; assert len(C)==1, len(C); miss=[p for p in sorted(glob.glob('ecosystem/0*.md')) if '<code>'+p+'</code>' not in C[0].split('</article>')[0]]; assert not miss, miss"
+EXIT:0

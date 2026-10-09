@@ -1,0 +1,11 @@
+python3 - <<'PY'
+import json, subprocess, sys
+old = json.loads(subprocess.run(['git', 'show', '483f016:tools/skill.json'], capture_output=True, text=True, check=True).stdout)
+new = json.load(open('tools/skill.json'))
+rest = lambda d: {k: v for k, v in d.items() if k not in ('version', 'capabilities')}
+ok = (old['version'], new['version']) == ('0.3.0', '0.4.0') and len(new['capabilities']) == len(old['capabilities']) + 2 and all(c in new['capabilities'] for c in old['capabilities']) and {c['module'] for c in new['capabilities']} - {c['module'] for c in old['capabilities']} == {'ecosystem/06_simplification_review.md', 'ecosystem/08_ga_gate.md'} and rest(old) == rest(new)
+print(old['version'], '->', new['version'], len(old['capabilities']), '->', len(new['capabilities']), 'ok=', ok)
+sys.exit(0 if ok else 1)
+PY
+0.3.0 -> 0.4.0 18 -> 20 ok= True
+EXIT:0

@@ -3,10 +3,13 @@ id: nizam-ecosystem-simplification-review
 title: "Simplification Review Protocol"
 description: "The reusable Repeat-stage protocol: a recurring, evidence-first simplification review over the ecosystem's accumulated governance surface (protocols, schemas, tooling, standards), recording consolidation candidates with evidence and never applying one automatically — an actual simplification or consolidation is executed only under the operator gate H-CONSOLIDATION, which the pipeline records but never self-executes."
 tags: [ecosystem-cycle, repeat, simplification, consolidation, phase-014]
-version: 0.1.0
-status: draft
+version: 0.2.0
+status: active
 authoritative_source: ecosystem/06_simplification_review.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-09"
+    summary: "Activated by phase-014 feature 099: status draft -> active and capability registered (NIZAM.json, tools/skill.json, the user guide). The pre-activation clause in the Section 5 gate parenthetical is removed; no other normative text changes."
   - version: "0.1.0"
     date: "2026-09-30"
     summary: "Initial authoring, PROPOSAL-GRADE (phase-014 proposal, GA track, awaiting activation gate H-PHASE-014): authored ahead of activation as the rolled-forward phase-012 candidate scope's Repeat stage. Status draft until phase-014 execution (feature 099) flips it active and registers the capability (NIZAM.json, tools/skill.json, the user guide) — mirroring how the 04/05 protocols shipped at their authoring features (the 0.2.2/0.2.3 ecosystem/README.md precedent). Defines the ecosystem lifecycle's Repeat stage: the recurring simplification review, its evidence duties, and the operator gate H-CONSOLIDATION (reserved; defined during phase-014 execution). House structure mirrors ecosystem/03_engineering_audit.md and ecosystem/07_progress_comparison.md."
@@ -86,8 +89,7 @@ the surface is now simple.
 
 Authorizing an actual simplification or consolidation is an operator decision,
 not a pipeline one. The gate **H-CONSOLIDATION**
-(`docs/planning/operator_gates.md`; reserved until phase-014 execution defines
-it) authorizes the act. The pipeline **records but never self-executes**: a
+(`docs/planning/operator_gates.md`) authorizes the act. The pipeline **records but never self-executes**: a
 consolidation runs only after the recorded operator decision, and the decision
 is recorded BEFORE the act per the framework's gate-decision-before-execution
 rule (`NDEBT-018`). Each consolidation is itself planned work under

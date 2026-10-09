@@ -1,0 +1,37 @@
+python3 - <<'PY'
+import re, subprocess, sys
+BASE = '483f016'
+norm = lambda x: ' '.join(x.split())
+bad = []
+t = open('docs/planning/operator_gates.md').read()
+s1 = t.split('## 1. Decided and active gates')[1].split('## 2. Reserved')[0]
+for g in ('H-CONSOLIDATION', 'H-GA'):
+    m = re.search(r'^\| `' + g + r'` \|[^\n]*$', s1, re.M)
+    if not m: bad.append(g + ': no Section-1 row'); continue
+    row = m.group(0)
+    if 'DEFINED' not in row or 'OUTSTANDING' not in row: bad.append(g + ': row lacks DEFINED/OUTSTANDING')
+    disp = row.rsplit('|', 2)[-2]
+    if re.search(r'EXERCISED|SATISFIED', re.sub(r'(?i)not exercised', '', disp)): bad.append(g + ': row claims exercise')
+sec2 = t.split('## 2. Reserved')[1].split('## 3. Notes')[0]
+head, _, body2 = sec2.partition('\n')
+if head != ' gates (deferred to later phases)': bad.append('Section 2 heading not verbatim: ' + repr(head))
+if any(l.startswith('|') for l in sec2.splitlines()): bad.append('Section 2 has a table line')
+if re.search(r'RESERVED', sec2): bad.append('Section 2 has a RESERVED row')
+PIN = 'No gate is currently reserved. `H-CONSOLIDATION` and `H-GA`, reserved by `.agent/product_spec_005.md` Sec 8, were defined by phase 014 feature 099 and now live in Section 1.'
+if norm(body2) != PIN: bad.append('Section 2 body is not exactly the pinned paragraph: ' + repr(norm(body2)[:160]))
+PH = '; reserved until phase-014 execution defines it'
+for p in ('ecosystem/06_simplification_review.md', 'ecosystem/08_ga_gate.md'):
+    base = subprocess.run(['git', 'show', BASE + ':' + p], capture_output=True, text=True, check=True).stdout
+    cur = open(p).read()
+    bb = norm(base.split('\n---\n', 1)[1]); cb = norm(cur.split('\n---\n', 1)[1])
+    # the phrase may have wrapped across a line break at base; normalised text removes that
+    if bb.count(norm(PH)) != 1: bad.append(p + ': pinned phrase not exactly once at base')
+    elif cb != bb.replace(norm(PH), ''): bad.append(p + ': body differs from base beyond deleting the pinned phrase')
+    import yaml
+    head_summary = yaml.safe_load(cur.split('---')[1])['change_log'][0]['summary']
+    if re.search(r'(?i)defined|outstanding|reserved|exercised|satisfied', head_summary): bad.append(p + ': change_log head summary carries a disposition word')
+print('problems:', bad)
+sys.exit(1 if bad else 0)
+PY
+problems: []
+EXIT:0

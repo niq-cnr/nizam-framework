@@ -1,0 +1,28 @@
+python3 -I <scratch>/adv.py <scratch>   # mutation probes in a scratch copy (outside the repo): copies NIZAM.json, tools/skill.json, operator_gates.md, docs/guide/index.html and ecosystem/0*.md; replays the contract AT3-AT7 commands verbatim (cwd = scratch copy) before and after each single mutation
+ADVERSARIAL QUESTION: can acceptance pass while the feature intent (06/08 registered in both capability surfaces, active, gates DEFINED not reserved, guide card complete) fails? Each mutation below reverts exactly one piece of intent; the matching AT must flip from exit 0 to non-zero.
+PROBE revert NIZAM.json capability registration of nizam-ecosystem-ga-gate
+  AT3 on unmodified scratch copy: exit 0
+  AT3 after mutation: exit 1 ["AssertionError: {'nizam-documentation-standard': 'standard/NDS.md', 'governance-inheritance-protocol': 'standard/GIP.md', 'agent-governance-framework': 'standard/AGF.md', 'nizam-capability-profiles': 'standard/capability_profiles.md', 'nizam-ci-gates': 'standard/ci_gates.md', 'nizam-mcp-policy': 'standard/mcp_policy.md', 'nizam-failure-modes': 'standard/failure_modes.md', 'nizam-provenance-policy': 'standard/provenance_policy.md', 'nizam-permission-classes': 'standard/permission_classes.md', 'nizam-cross-repo-governance': 'standard/cross_repo_governance.md', 'anti-hallucination-constraints': 'standard/anti_hallucination.md', 'nizam-planning-enforcer': 'methodology/00_planning.md', 'nizam-contract-first-execution': 'methodology/01_execution.md', 'nizam-adversarial-tdd': 'methodology/02_adversarial_tdd.md', 'nizam-circuit-breaker': 'methodology/03_circuit_breaker.md', 'nizam-tool-driven-state': 'methodology/04_tool_driven_state.md', 'nizam-eval-and-trace': 'methodology/05_eval_and_trace.md', 'nizam-release-train': 'methodology/06_release_train.md', 'nizam-eval-gated-promotion': 'methodology/07_eval_gated_promotion.md', 'nizam-cross-repo-dependency-gate': 'methodology/08_cross_repo_dependency_gate.md', 'nizam-review-gate-flake-management': 'methodology/09_review_gate_flake_management.md', 'nizam-governance-skill-manifest': 'tools/skill.json', 'nizam-tools-skill': 'tools/SKILL.md', 'nizam-tools-interface': 'tools/interface.md', 'nizam-compliance-validator': 'tools/validate.sh', 'nizam-ecosystem-preflight': 'ecosystem/01_clean_state_preflight.md', 'nizam-ecosystem-baseline': 'ecosystem/02_evidence_baseline.md', 'nizam-ecosystem-audit': 'ecosystem/03_engineering_audit.md', 'nizam-ecosystem-dependency-reconciliation': 'ecosystem/04_dependency_reconciliation.md', 'nizam-ecosystem-release-train-coordination': 'ecosystem/05_release_train_coordination.md', 'nizam-ecosystem-progress-comparison': 'ecosystem/07_progress_comparison.md', 'nizam-ecosystem-simplification-review': 'ecosystem/06_simplification_review.md', 'nizam-definition-of-done': 'standard/definition_of_done.md', 'nizam-convergent-code-review': 'standard/convergent_code_review.md'}"]
+  => DETECTED (AT fails as required)
+PROBE revert tools/skill.json registration of ecosystem/06_simplification_review.md
+  AT4 on unmodified scratch copy: exit 0
+  AT4 after mutation: exit 1 ['AssertionError']
+  => DETECTED (AT fails as required)
+PROBE re-add a reserved-gate row for H-GA in Section 2
+  AT5 on unmodified scratch copy: exit 0
+  AT5 after mutation: exit 1 []
+  => DETECTED (AT fails as required)
+PROBE flip the H-CONSOLIDATION Section-1 row away from DEFINED (to a non-DEFINED word)
+  AT5 on unmodified scratch copy: exit 0
+  AT5 after mutation: exit 1 []
+  => DETECTED (AT fails as required)
+PROBE revert ecosystem/08 frontmatter status to draft
+  AT6 on unmodified scratch copy: exit 0
+  AT6 after mutation: exit 1 ["AssertionError: ('active', 'draft')"]
+  => DETECTED (AT fails as required)
+PROBE remove ecosystem/08 link from the guide ecosystem card
+  AT7 on unmodified scratch copy: exit 0
+  AT7 after mutation: exit 1 ["AssertionError: ['ecosystem/08_ga_gate.md']"]
+  => DETECTED (AT fails as required)
+Repo working tree was not touched by the probes (scratch copy only).
+EXIT:0

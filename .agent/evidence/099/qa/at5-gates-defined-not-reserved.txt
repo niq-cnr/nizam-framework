@@ -1,0 +1,2 @@
+python3 -c "import re,sys; t=open('docs/planning/operator_gates.md').read(); s1=t.split('## 1. Decided and active gates')[1].split('## 2. Reserved')[0]; s2=t.split('## 2. Reserved')[1].split('## 3. Notes')[0]; row=lambda s,g: re.search(r'^\| \x60'+g+r'\x60 \|[^\n]*\bDEFINED\b',s,re.M); res=lambda g: re.search(r'^\| \x60'+g+r'\x60 \|',s2,re.M); sys.exit(0 if all(row(s1,g) and not res(g) for g in ('H-CONSOLIDATION','H-GA')) else 1)"
+EXIT:0

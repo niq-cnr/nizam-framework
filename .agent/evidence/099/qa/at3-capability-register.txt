@@ -1,0 +1,2 @@
+python3 -c "import json; c={x['id']:x['authoritative_source'] for x in json.load(open('NIZAM.json'))['capabilities']}; assert c.get('nizam-ecosystem-simplification-review')=='ecosystem/06_simplification_review.md' and c.get('nizam-ecosystem-ga-gate')=='ecosystem/08_ga_gate.md', c"
+EXIT:0

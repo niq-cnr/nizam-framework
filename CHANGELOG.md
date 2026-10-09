@@ -40,6 +40,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `docs/planning/DEBT.md` (v0.48.0) record the activation. Two new files,
   `docs/planning/backlog_reconciliation.md` and `docs/planning/backlog_dag.json`, map the
   maintainer brief to existing ids and give the candidate DAG for the work after phase 014.
+- **Phase 014 feature 099: GA-track activation wave** (additive; MINOR at the next release,
+  `methodology/06_release_train.md` Section 3.2; no release is prepared and no tag is
+  created). `ecosystem/06_simplification_review.md` (Repeat) and `ecosystem/08_ga_gate.md`
+  (Promote/GA) move from `draft` to `active` (0.2.0 each) and are registered as capabilities
+  in `NIZAM.json` and `tools/skill.json` (0.4.0); the ecosystem card in the user guide lists
+  every ecosystem document (00-08); `ecosystem/README.md` (0.5.0) is re-synced. The operator
+  gates `H-CONSOLIDATION` and `H-GA` are defined in `docs/planning/operator_gates.md`
+  (0.28.0) as DEFINED and OUTSTANDING: neither is exercised, no operator decision is
+  recorded for either, and GA is not declared.
 
 ## [1.4.0] - 2026-10-08
 

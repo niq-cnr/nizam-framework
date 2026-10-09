@@ -3,10 +3,13 @@ id: nizam-ecosystem-ga-gate
 title: "GA Gate Protocol"
 description: "The reusable Promote-stage protocol for declaring general availability: explicit, evidence-gated GA declaration criteria (a real production pilot, a stable release history at immutable tags, recorded consumer adoptions, no open Critical/High debt, and benchmark thresholds treated strictly as acceptance requirements for the evidence dossier — never as claims of achieved results), the gate ceremony, and the operator decision record. GA declaration is an operator-only act under gate H-GA: the framework must never auto-declare GA, and no tool may emit or imply a GA state on the pipeline's own authority."
 tags: [ecosystem-cycle, promote, ga, general-availability, phase-014]
-version: 0.1.0
-status: draft
+version: 0.2.0
+status: active
 authoritative_source: ecosystem/08_ga_gate.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-09"
+    summary: "Activated by phase-014 feature 099: status draft -> active and capability registered (NIZAM.json, tools/skill.json, the user guide). The pre-activation clause in the Section 5 gate parenthetical is removed; no other normative text changes."
   - version: "0.1.0"
     date: "2026-09-30"
     summary: "Initial authoring, PROPOSAL-GRADE (phase-014 proposal, GA track, awaiting activation gate H-PHASE-014): authored ahead of activation as the rolled-forward phase-012 candidate scope's Promote/GA stage. Status draft until phase-014 execution (feature 099) flips it active and registers the capability (NIZAM.json, tools/skill.json, the user guide) — mirroring how the 04/05 protocols shipped at their authoring features (the 0.2.2/0.2.3 ecosystem/README.md precedent). Defines the GA declaration's evidence-gated preconditions, the gate ceremony, and the operator gate H-GA (reserved; defined during phase-014 execution): GA declaration is operator-only and the framework must never auto-declare GA. House structure mirrors ecosystem/03_engineering_audit.md and ecosystem/05_release_train_coordination.md."
@@ -86,8 +89,7 @@ The ceremony assigns each role its act:
 ## 5. Operator Gate — H-GA
 
 GA declaration is operator-only. The gate **H-GA**
-(`docs/planning/operator_gates.md`; reserved until phase-014 execution defines
-it) authorizes the declaration. The framework must never auto-declare GA -- this
+(`docs/planning/operator_gates.md`) authorizes the declaration. The framework must never auto-declare GA -- this
 is a fail-closed rule, not guidance: absent the recorded operator decision, every
 surface continues to present GA as undeclared, whatever the dossier shows. The
 pipeline records but never self-executes, and the decision is recorded BEFORE

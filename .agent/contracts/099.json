@@ -1,0 +1,354 @@
+{
+  "contract_id": "099",
+  "feature_id": "099",
+  "name": "GA-track activation wave -- register ecosystem/06+08 and define the reserved gates",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_014.md",
+  "design_notes": {
+    "base_revision": "483f016edb90282f19eb26ac197e317273a4012a (main; branch phase/014-099-ga-activation-wave, working tree clean at proposal time)",
+    "plan_ref": ".agent/product_spec_014.md 1.1.2 (Scope table order 1, the 099 bullet, 'Public contract changes' and the estimate table) and .agent/feature_list_014.json feature 099. The eight acceptance tests are fixed and operator-approved (approved_amendment AT1/AT5; planner_hardening_operator_acknowledged AT3/AT6/AT7, acknowledged verbatim 'acknowledged.' at run_state operator_gate_decision 2026-10-08T13:20:12Z; carried_from_1_0_x AT2/AT4/AT8). This contract adds nothing to and removes nothing from them.",
+    "ah1_paths_verified_at_base": "Every path in scope.files_modify exists at the base commit (verified by reading each file): ecosystem/06_simplification_review.md (status draft, version 0.1.0), ecosystem/08_ga_gate.md (status draft, version 0.1.0), NIZAM.json (33 capabilities; ecosystem key_documents already lists 06 and 08), tools/skill.json (version 0.3.0, 18 capabilities), docs/guide/index.html (ecosystem card at lines 587-598, Key documents list at 593-597 names README plus 01/02/03/07 only), docs/planning/operator_gates.md (v0.27.0; Section 1 table, Section 2 reserved table with the two rows at lines 163-164), ecosystem/README.md (v0.4.0), CHANGELOG.md, docs/planning/phase_014.yaml (step 099 PENDING). .agent/run_state.json is deliberately not a scope path (Orchestrator-owned). .agent/evidence/099/ does not exist yet (created by the implementation).",
+    "ah2_premises_at_base": "Cited evidence: .agent/evidence/backlog-reconciliation-2026-10-08/a02_premise_probes.txt (revision 3, Part A lines 4-11) records the declared base outcomes for 099 AT1-AT8 on the pre-implementation tree: AT1 gate rc=0 (GATE: PASS, 16 checks, baseline 16); AT2 guard rc=0; AT3 fail rc=1; AT4 fail rc=1; AT5 fail rc=1; AT6 fail rc=1 (('draft','draft')); AT7 fail rc=1 (missing 00, 04, 05, 06, 08); AT8 gate rc=0 (SELF-TEST OK: 79/79 fixtures accounted for, 0 failed). The Generator independently re-ran AT1-AT7 on base 483f016 while drafting this contract (AT8 not re-run; the cited probe stands) and got the same exit codes. The problem 099 fixes therefore still exists for AT3-AT7; AT1, AT2 and AT8 are regression guards. The implementation re-confirms each base outcome in its own evidence before editing (AH-2).",
+    "hazards": [
+      "AT5 splits operator_gates.md on the literal strings '## 1. Decided and active gates', '## 2. Reserved' and '## 3. Notes' and indexes [1]/[0]. Any earlier occurrence of those literals (e.g. in the new frontmatter change_log summary) silently changes the slices and can make the test pass or fail for the wrong reason. The change_log entry therefore refers to 'Section 1/2/3' only, never the literal heading text. Section 2's heading is kept verbatim and precedes the Notes heading.",
+      "AT5 row regex is line-anchored: '^\\| `H-X` \\|' and requires \\bDEFINED\\b on the same line, so each gate's Section-1 row must be a single physical line; and the Section 2 slice must contain no line beginning with those row prefixes. The pinned Section 2 paragraph begins 'No gate is currently reserved.' and S7 further forbids any line beginning with a pipe in Section 2.",
+      "AT6 parses frontmatter by splitting the file on '---' and taking element [1]; the new change_log summaries must not contain a bare '---' line or the literal '---' sequence.",
+      "AT7 requires exactly one article chunk containing the exact heading string '<h3><code>ecosystem/</code></h3>' and, within that chunk up to the first '</article>', the exact token '<code>ecosystem/0N_name.md</code>' for each of the nine on-disk 00-08 files. The card must keep its single-article shape and must not nest another '<article class=' inside it.",
+      "tools/validate.sh C8 compares each swept document's version against HEAD and demands a change_log entry for any edit; every edited governed markdown (06, 08, ecosystem/README.md, operator_gates.md) is therefore version-bumped with a matching head change_log entry. C13 resolves every tools/skill.json module path; C4 resolves NIZAM.json authoritative_source paths and checks index-vs-disk parity; C9 resolves backticked paths in swept documents. All three are covered by AT1, which is why AT1 is the first evidence file captured and is re-run last.",
+      "The only body edit permitted in ecosystem/06 and 08 is deleting '; reserved until phase-014 execution defines it' from the Section 5 parenthetical (the text wraps across a line break at base, so the paragraph is reflowed). The protocol documents must not carry point-in-time dispositions; the gate registry (operator_gates.md) is the single place that records DEFINED/OUTSTANDING. S7 asserts the body equals the base body minus exactly that phrase."
+    ],
+    "document_version_decisions": {
+      "ecosystem/06_simplification_review.md": "0.1.0 -> 0.2.0 (AT6 requires version != 0.1.0; MINOR within the pre-1.0 document line because status moves draft -> active and one body sentence changes; matches how 04 moved 0.1.0 -> 0.2.0 on its first substantive revision).",
+      "ecosystem/08_ga_gate.md": "0.1.0 -> 0.2.0 (same reasoning).",
+      "ecosystem/README.md": "0.4.0 -> 0.5.0 (module prose made true; C8 requires the bump).",
+      "docs/planning/operator_gates.md": "0.27.0 -> 0.28.0 (two gates defined and Section 2 emptied; C8 requires the bump and a head change_log entry; the registry has recorded the earlier definitions of H-CONSUMER-UPGRADE, H-PLANNING-AUTHORITY and H-TRAIN-ENTRY as MINOR registry versions).",
+      "tools/skill.json": "0.3.0 -> 0.4.0. The bump itself is required by the feature description ('version bump per its own convention'). Precedent accuracy: c0e0d04 bumped 0.2.0 -> 0.3.0 for one added capability; 4833322 bumped 0.1.1 -> 0.2.0 for four added; but 8b9e3ad (ecosystem_bootstrap) and 1dd4971 (04/05 capabilities) added capabilities WITHOUT bumping the version, so the history is not a uniform convention. MINOR (0.4.0) is chosen because the change is additive; this contract does not claim a uniform convention."
+    },
+    "version_and_compatibility_impact": {
+      "classification": "MINOR at the next release (matches feature_list_014 version_impact and product_spec_014 Public contract changes table row 099).",
+      "basis": "methodology/06_release_train.md Section 3.2: the change adds new optional capability without invalidating anything that validated before (a protocol document gains normative status; two additive capability entries; additive registry rows; a re-synced guide card). It is not MAJOR (Section 3.1): no schema narrows, no required key is added/changed, no shipped file, module or protocol id is removed or renamed (the two document paths and their frontmatter ids are unchanged; only status and version move). It is not PATCH (Section 3.3) because two documents become normative and the capability surface grows. Section 3.4 (round up) is satisfied by classifying at MINOR, not PATCH.",
+      "consumer_effect": "A consumer pinned to v1.4.0 already received 06/08 as status draft; upgrading to the next release shows them as active and registered. Nothing that passed fails: no validator check, schema, template or required key changes, and 099 edits no tool, so no consumer-visible failure mode appears. ecosystem/ ships in the bootstrap payload, so the two documents' frontmatter/status change is visible to consumers as additive content only.",
+      "release_posture": "No release is prepared in this phase unless the operator separately authorizes one (product_spec_014: 'Phase 014 prepares no release'). The change lands under CHANGELOG.md [Unreleased] only; framework.version stays 1.4.0; no tag is created."
+    },
+    "definition_of_the_gate_rows": "Each new Section-1 row states: what the operator decides (H-CONSOLIDATION: authorize an actual simplification or consolidation chosen from a simplification review's recorded candidates; H-GA: declare general availability against an assembled dossier, operator-only, once), the trigger and ordering rule (decision recorded in run_state operator_gate_decision BEFORE the act, per NDEBT-018), the record-but-never-self-execute rule, the source (ecosystem/06 Sec 5 / ecosystem/08 Sec 5 and product_spec_014), and the disposition: DEFINED <implementation date> (phase 014, feature 099) -- OUTSTANDING; NOT EXERCISED. The semantics are taken verbatim from the two protocol documents' Section 5; the contract invents no new gate semantics.",
+    "attempt_isolation": {
+      "authority": "methodology/03_circuit_breaker.md Sec 3.1 (attempt isolation) and Sec 4 (breach procedure); the mechanics below were decided by the Orchestrator and are recorded here so Loop 2 is executable.",
+      "attempt_base": "After Loop 1 approval the Orchestrator commits the approved contract on branch phase/014-099-ga-activation-wave together with its own run_state and verdict files. That commit, <B>, is the attempt base, so the contract that S1 and S3 read exists in every attempt root. All diff anchors in S3, S4 and S8-S12 stay at 483f016 (the pre-feature base) so they still compare the deliverable against the original tree.",
+      "worktree_creation": "The ORCHESTRATOR (not the Generator) creates each attempt worktree: `git worktree add --detach /home/cnross/workspace02/nizam-wt-099-attempt<N> <B>` (N = 1..3), a validated path outside the shared tree, and passes the path to the Generator. The attempt root and <B> are recorded before any edit. The Generator edits, runs AT1-AT8 and runs S1-S12 ONLY inside that root, capturing evidence inside the root under .agent/evidence/099/. If `git worktree add` fails, HALT and escalate to the human; never fall back to the shared worktree.",
+      "promotion": "The Generator commits the deliverable plus its evidence in the attempt root as a single commit. The Orchestrator then runs `git cherry-pick <attempt-commit>` onto phase/014-099-ga-activation-wave in the shared tree and only after that removes the attempt root with `git worktree remove`. Validator Mode B reviews `git diff <B>..HEAD` plus untracked files in the shared tree. The Evaluator re-runs AT1-AT8 and S1-S12 in its own execution context against the promoted tree and writes its evidence under .agent/evidence/099/qa/ (covered by the S3 allowlist).",
+      "failure": "Capture evidence in the root; copy the root's .agent/evidence/099/ directory to .agent/evidence/099/failed-attempt<N>/ in the shared tree; then remove only that exact root with `git worktree remove`. If the root cannot be proved attempt-owned, leave it, record it and escalate. No repository-wide reset or clean is ever used. On exhaustion (third failed attempt; attempt 4 forbidden): per Sec 4 -- quarantine the third attempt's evidence, set step 099 BLOCKED in docs/planning/phase_014.yaml FIRST, the Orchestrator then repairs the derived run_state in a separate idempotent operation, log to docs/planning/DEBT.md (phase, feature, failure type, evidence reference), escalate to a human and terminate."
+    },
+    "rollback": "All changes are confined to text/JSON files on the feature branch phase/014-099-ga-activation-wave. See design_notes.attempt_isolation for the attempt-isolation, promotion and failure mechanics; they are the rollback mechanism for Loop 2 because nothing reaches the shared tree until the Orchestrator cherry-picks a successful single attempt commit, so a failed attempt is rolled back by evidence capture followed by `git worktree remove` of that exact root, with no change to undo in the shared tree. After promotion, rollback is `git revert` of the cherry-picked 099 commit on the feature branch. Any residual uncommitted state in the shared tree is restored with this explicit path list only, which EXCLUDES .agent/run_state.json and every other Orchestrator-owned file: `git checkout <B> -- ecosystem/06_simplification_review.md ecosystem/08_ga_gate.md NIZAM.json tools/skill.json docs/guide/index.html docs/planning/operator_gates.md ecosystem/README.md CHANGELOG.md docs/planning/phase_014.yaml`, plus removal of the untracked .agent/evidence/099/ by its explicit path. Nothing is released, tagged, pushed to a consumer, migrated or externally registered, so no external state needs undoing. Exhaustion follows methodology/03_circuit_breaker.md Sec 4 as written in design_notes.attempt_isolation.failure.",
+    "retry_identity_note": "Circuit-breaker step keys are 099-contract (Loop 1 contract negotiation, limit 3 revisions) and 099-implementation (Loop 2 implementation/repair, limit 3). Attempt counters live in the Orchestrator-owned run_state.circuit_breaker; the Generator does not write them. This document is 099-contract attempt 3/3 (revision 2, the final permitted attempt) after the validator Mode A rejections of revisions 0 and 1 recorded in .agent/validator/099-mode-a.json.",
+    "line_estimate_breakdown": "estimated_lines 920 = the approved feature_list_014 figure (naive 400 x measured 2.3 process weight). Rough allocation: product edits ~190 changed lines (operator_gates rows and Section 2 rewrite ~70, ecosystem README ~25, guide card ~20, NIZAM.json ~12, skill.json ~12, 06/08 ~30, CHANGELOG ~22, phase YAML ~4); ~110 for the evidence README and the Section-5 captured outputs; the remainder is the process weight covering contract revision rounds, two QA artifacts (validator Mode B, evaluator) and the per-feature evidence set. The count that is tracked in scope_budget is the realized diff, not this figure.",
+    "validator_rulings_applied_rev1": [
+      "Q1: docs/planning/phase_014.yaml stays in files_modify, restricted to ADDING docs_updated, changelog_entry and evidence on step 099 (S11 compares against 483f016).",
+      "Q2: docs_updated = ecosystem/README.md.",
+      "Q3: operator_gates.md Section 2 keeps the heading '## 2. Reserved gates (deferred to later phases)' verbatim, the table and old intro are deleted, and the body is the pinned paragraph 'No gate is currently reserved. `H-CONSOLIDATION` and `H-GA`, reserved by `.agent/product_spec_005.md` Sec 8, were defined by phase 014 feature 099 and now live in Section 1.' with no line beginning with a pipe (S7)."
+    ]
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/evidence/099/at1-validator-gate.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/at2-key-documents-guard.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/at3-capability-register.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/at4-skill-json-register.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/at5-gates-defined-not-reserved.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/at6-frontmatter-active.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/at7-guide-ecosystem-card.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/at8-fixtures-self-test.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s01-contract-schema-valid.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s02-validator-gate-payload.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s03-scope-boundary.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s04-frozen-infra-and-workflows-untouched.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s05-no-tag-created.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s06-release-closeout-pr.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s07-gates-defined-not-exercised.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s08-ecosystem-readme-and-versions.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s09-skill-json-version-and-count.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s10-nizam-capabilities-additive.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s11-phase-yaml-step-record.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/s12-guide-scope-ecosystem-key-documents-only.txt",
+        "purpose": "Section-5-shaped captured-output evidence for the verification entry that names it (line 1 the exact invocation, verbatim stdout/stderr, final line EXIT:<code>)."
+      },
+      {
+        "path": ".agent/evidence/099/README.txt",
+        "purpose": "One-screen index mapping each evidence file to AT1-AT8 / S1-S12 and recording the capture wrapper used (pure index; no raw output beyond the mapping)."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "ecosystem/06_simplification_review.md",
+        "purpose": "Frontmatter: status draft -> active; version 0.1.0 -> 0.2.0; prepend a change_log entry 0.2.0 whose summary records only the activation by phase-014 feature 099 (status draft -> active) and the removal of the pre-activation clause, with no disposition words. Body: delete ONLY the text '; reserved until phase-014 execution defines it' from the Section 5 parenthetical (base lines 88-90; the text wraps across a line break, so the paragraph is reflowed), leaving '(`docs/planning/operator_gates.md`) authorizes the act'. The shipped protocol carries no point-in-time disposition (no 'defined', 'outstanding', 'reserved', 'exercised' wording is added). No other body text changes (S7 asserts body == base body minus that phrase)."
+      },
+      {
+        "path": "ecosystem/08_ga_gate.md",
+        "purpose": "Frontmatter: status draft -> active; version 0.1.0 -> 0.2.0; prepend a change_log entry 0.2.0 recording only the activation by feature 099 and the removal of the pre-activation clause, no disposition words. Body: delete ONLY the text '; reserved until phase-014 execution defines it' from the Section 5 parenthetical (base lines 88-90, reflowed), leaving '(`docs/planning/operator_gates.md`) authorizes the declaration'. No other body text changes (S7)."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Append two entries to the top-level capabilities array (after nizam-ecosystem-progress-comparison, before nizam-definition-of-done, preserving the ecosystem grouping): {id: nizam-ecosystem-simplification-review, summary, authoritative_source: ecosystem/06_simplification_review.md} and {id: nizam-ecosystem-ga-gate, summary, authoritative_source: ecosystem/08_ga_gate.md}. The ids equal the documents' frontmatter ids. modules[ecosystem].key_documents is NOT edited (06 and 08 are already enumerated; AT2 is a regression guard). framework.version stays 1.4.0 (S10)."
+      },
+      {
+        "path": "tools/skill.json",
+        "purpose": "Bump version 0.3.0 -> 0.4.0 (required by the feature description: 'version bump per its own convention'; MINOR step chosen because the change is additive) and append two capabilities objects {name, description, module}: ecosystem_simplification_review -> ecosystem/06_simplification_review.md and ecosystem_ga_gate -> ecosystem/08_ga_gate.md, placed in the ecosystem group. entry_point and all other keys unchanged (S9)."
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "Edit ONLY the 'Key documents' paragraph of the single <article class=\"card\"> whose heading is <h3><code>ecosystem/</code></h3>: it lists <code>ecosystem/README.md</code> and <code>ecosystem/0N_*.md</code> for every on-disk ecosystem/0*.md (00-08), restoring the shipped 00/04/05 the card omitted (pre-existing drift) and adding 06/08. The card's descriptive sentence (base lines 589-592) is left verbatim, as are all other cards and sections and the version anchor (S12 asserts nothing outside that paragraph changes)."
+      },
+      {
+        "path": "docs/planning/operator_gates.md",
+        "purpose": "Frontmatter version 0.27.0 -> 0.28.0 with a new head change_log entry (that entry MUST NOT contain the literal strings used to split the file in AT5: '## 1. Decided and active gates', '## 2. Reserved', '## 3. Notes'). Section 1: add one DEFINED/OUTSTANDING row each for H-CONSOLIDATION and H-GA, each a single physical line (scope, trigger, source document and section, 'record-but-never-self-execute', decision recorded before the act per NDEBT-018, Introduced = product_spec_014 + ecosystem/06 Sec 5 / ecosystem/08 Sec 5), mirroring the 061/080/081 rows; neither row claims EXERCISED or SATISFIED. Section 2: keep the heading '## 2. Reserved gates (deferred to later phases)' verbatim, delete the whole table AND the existing intro prose, and replace the section body with exactly this paragraph (pinned verbatim, whitespace aside): No gate is currently reserved. `H-CONSOLIDATION` and `H-GA`, reserved by `.agent/product_spec_005.md` Sec 8, were defined by phase 014 feature 099 and now live in Section 1. No line in Section 2 may begin with a pipe. Sections 3 (Notes) and 4 (References) are unchanged. This is the file the validator's Q3 ruling pins."
+      },
+      {
+        "path": "ecosystem/README.md",
+        "purpose": "Frontmatter version 0.4.0 -> 0.5.0 with a head change_log entry. Body: the closing 'final two documents landed 2026-09-30 ... proposal-grade (status `draft`) ... activation flip and capability registration land with phase-014 execution' paragraph is made true (06 and 08 are active and capability-registered), and neither 'reserved `H-CONSOLIDATION`' nor 'reserved `H-GA`' phrase remains (the gates are referred to as defined in docs/planning/operator_gates.md). The module-navigation table rows (06 and 08 already 'Shipped') and the Shipped/Planned counts are unchanged. This is the file named by the phase-YAML docs_updated field (validator Q2 ruling)."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Append one [Unreleased] entry in the house bullet style (phase 014, feature 099): two ecosystem protocols activated draft -> active and capability-registered, ecosystem guide card Key-documents list re-synced, H-CONSOLIDATION and H-GA defined. Under '### Changed' (alongside the existing phase-014 activation entries). No release heading is created or rolled."
+      },
+      {
+        "path": "docs/planning/phase_014.yaml",
+        "purpose": "Step 099 ONLY, and ONLY by ADDING the keys docs_updated (value: ecosystem/README.md), changelog_entry (the one-line CHANGELOG summary) and evidence (.agent/evidence/099/at1-validator-gate.txt). The Generator does not set the step's `status` (the COMPLETED flip, and any BLOCKED flip, is Orchestrator-owned, written canonical-first before run_state); S11 excludes `status` from its comparison. Steps 100-109 and all top-level keys are byte-identical (S11, compared against 483f016, validator Q1 ruling)."
+      }
+    ]
+  },
+  "non_goals": [
+    "No release is prepared and no tag is created or pushed: no version heading in CHANGELOG.md, no framework.version bump in NIZAM.json (stays 1.4.0), no release-readiness record, no .github/scripts/release_closeout.py run in tag mode. The next release is a separate H-FRAMEWORK-RELEASE act (at least MINOR, v1.5.0 at the earliest). S5 and S10 enforce this.",
+    "Neither H-CONSOLIDATION nor H-GA is exercised, satisfied, or recorded as decided: 099 only DEFINES them (reserved -> DEFINED/OUTSTANDING). No operator_gate_decision is written for either gate; GA is never declared, implied or flagged by any surface (S7).",
+    "No simplification review is run and no consolidation is performed (feature 101 and the H-CONSOLIDATION gate own that); no GA-readiness dossier is written (feature 102 owns that).",
+    "No change to the normative mechanics of ecosystem/06 or ecosystem/08: input contract, finding discipline, no-auto-consolidation rule, five GA preconditions, thresholds-as-acceptance-requirements rule, gate ceremony and operator-record rule are untouched. Only frontmatter and the one reserved-until sentence per document change.",
+    "No schema is created or modified (schema/, registry/nizam-index.schema.json) and no required key anywhere is added, removed or renamed, so nothing narrows (methodology/06_release_train.md Sec 3.1 does not apply).",
+    "No edit to .github/ of any kind (the 1.0.x no-workflow-changes non-goal binds 099-102) and no edit to tools/validate.sh, tools/*.sh or any other tool. The frozen acceptance infrastructure .agent/evidence/phase-014-activation/ is not modified (S4; feature 102 AT7 pins its sha256).",
+    "No edit to tests or acceptance tests: the eight acceptance tests are executed verbatim from the approved feature list and never altered to force a pass; .agent/feature_list_014.json is not modified by the Generator (only the Orchestrator's feature-099 status flip is tolerated, S3) and .agent/product_spec_014.md is not modified.",
+    "No edit to ecosystem/00-05 or 07, to NIZAM.json modules[].key_documents (already complete; AT2 is a guard), to the 00_ecosystem_bootstrap omission in NIZAM.json capabilities (pre-existing, out of 099's scope; it is a candidate for 101's findings), or to docs/guide sections other than the single ecosystem card.",
+    "No edit to docs/planning/ROADMAP.md, docs/planning/DEBT.md, docs/planning/manifest.json or CONTEXT.md: their phase-014 records are Orchestrator-owned and refreshed canonical-first at phase close (feature 102); any residual statement there that 06/08 are 'draft' or the gates 'reserved' is a known follow-up for 102's refresh, flagged here rather than silently edited. The validator may direct a revision if it judges one of them part of 099's truth surface.",
+    "The Generator writes no .agent/run_state.json field of any kind: not the Step-7 field set, not circuit_breaker counters, not scope_budget. run_state is Orchestrator-owned coordination state derived from the canonical phase document (standard/AGF.md Sec 5 rule 4; methodology/03_circuit_breaker.md Sec 4 step 2; contract 093's non-goal at its line 64 is the precedent). .agent/run_state.json is therefore NOT in files_modify; S3 allowlists it only as an Orchestrator-owned path, not as a deliverable. The Generator reports its results (evidence paths, diffstat) and the Orchestrator records them.",
+    "No change to tools/SKILL.md Sec 8 'Ecosystem Engineering Cycle Routing', which routes only 01/02/03/07 (a closed set with an exact-text-pinned preamble and four bullets from feature 040). Routing 06/08 there is a candidate finding for feature 101 (first simplification review), outside 099's contracted scope and outside the 099 acceptance tests.",
+    "No bulk consumer upgrade, no H-CONSUMER-UPGRADE, no pilot member action, no NIP acceptance, and no work belonging to maintenance features 103-109."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+      "command": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+      "acceptance_test_index": 1,
+      "source": ".agent/feature_list_014.json feature 099 acceptance_tests[1] (1-based AT1), copied verbatim; acceptance_test and command are byte-identical by construction",
+      "provenance": "approved_amendment",
+      "state_at_base_483f016": "PASS at base (GATE: PASS, 16 checks, baseline 16): a regression gate that must still pass after every edit; it is the exit-captured replacement for the pipeline-swallowed validate.sh|grep SUMMARY.",
+      "evidence_file": ".agent/evidence/099/at1-validator-gate.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import json; d=json.load(open('NIZAM.json')); m=next(x for x in d['modules'] if x['path']=='ecosystem'); assert 'ecosystem/06_simplification_review.md' in m['key_documents'] and 'ecosystem/08_ga_gate.md' in m['key_documents']\"",
+      "command": "python3 -c \"import json; d=json.load(open('NIZAM.json')); m=next(x for x in d['modules'] if x['path']=='ecosystem'); assert 'ecosystem/06_simplification_review.md' in m['key_documents'] and 'ecosystem/08_ga_gate.md' in m['key_documents']\"",
+      "acceptance_test_index": 2,
+      "source": ".agent/feature_list_014.json feature 099 acceptance_tests[2] (1-based AT2), copied verbatim; acceptance_test and command are byte-identical by construction",
+      "provenance": "carried_from_1_0_x",
+      "state_at_base_483f016": "PASS at base BY DESIGN (the key_documents enumeration landed with the proposal per the NDEBT-005 disk-to-index guard): a regression guard, not a red test. Must stay green.",
+      "evidence_file": ".agent/evidence/099/at2-key-documents-guard.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import json; c={x['id']:x['authoritative_source'] for x in json.load(open('NIZAM.json'))['capabilities']}; assert c.get('nizam-ecosystem-simplification-review')=='ecosystem/06_simplification_review.md' and c.get('nizam-ecosystem-ga-gate')=='ecosystem/08_ga_gate.md', c\"",
+      "command": "python3 -c \"import json; c={x['id']:x['authoritative_source'] for x in json.load(open('NIZAM.json'))['capabilities']}; assert c.get('nizam-ecosystem-simplification-review')=='ecosystem/06_simplification_review.md' and c.get('nizam-ecosystem-ga-gate')=='ecosystem/08_ga_gate.md', c\"",
+      "acceptance_test_index": 3,
+      "source": ".agent/feature_list_014.json feature 099 acceptance_tests[3] (1-based AT3), copied verbatim; acceptance_test and command are byte-identical by construction",
+      "provenance": "planner_hardening_operator_acknowledged",
+      "state_at_base_483f016": "FAIL at base (AssertionError listing the 33 current capability ids; neither new id present).",
+      "evidence_file": ".agent/evidence/099/at3-capability-register.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import json; s=json.load(open('tools/skill.json')); mods=[c['module'] for c in s['capabilities']]; assert 'ecosystem/06_simplification_review.md' in mods and 'ecosystem/08_ga_gate.md' in mods\"",
+      "command": "python3 -c \"import json; s=json.load(open('tools/skill.json')); mods=[c['module'] for c in s['capabilities']]; assert 'ecosystem/06_simplification_review.md' in mods and 'ecosystem/08_ga_gate.md' in mods\"",
+      "acceptance_test_index": 4,
+      "source": ".agent/feature_list_014.json feature 099 acceptance_tests[4] (1-based AT4), copied verbatim; acceptance_test and command are byte-identical by construction",
+      "provenance": "carried_from_1_0_x",
+      "state_at_base_483f016": "FAIL at base (AssertionError; neither module in tools/skill.json capabilities).",
+      "evidence_file": ".agent/evidence/099/at4-skill-json-register.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import re,sys; t=open('docs/planning/operator_gates.md').read(); s1=t.split('## 1. Decided and active gates')[1].split('## 2. Reserved')[0]; s2=t.split('## 2. Reserved')[1].split('## 3. Notes')[0]; row=lambda s,g: re.search(r'^\\| \\x60'+g+r'\\x60 \\|[^\\n]*\\bDEFINED\\b',s,re.M); res=lambda g: re.search(r'^\\| \\x60'+g+r'\\x60 \\|',s2,re.M); sys.exit(0 if all(row(s1,g) and not res(g) for g in ('H-CONSOLIDATION','H-GA')) else 1)\"",
+      "command": "python3 -c \"import re,sys; t=open('docs/planning/operator_gates.md').read(); s1=t.split('## 1. Decided and active gates')[1].split('## 2. Reserved')[0]; s2=t.split('## 2. Reserved')[1].split('## 3. Notes')[0]; row=lambda s,g: re.search(r'^\\| \\x60'+g+r'\\x60 \\|[^\\n]*\\bDEFINED\\b',s,re.M); res=lambda g: re.search(r'^\\| \\x60'+g+r'\\x60 \\|',s2,re.M); sys.exit(0 if all(row(s1,g) and not res(g) for g in ('H-CONSOLIDATION','H-GA')) else 1)\"",
+      "acceptance_test_index": 5,
+      "source": ".agent/feature_list_014.json feature 099 acceptance_tests[5] (1-based AT5), copied verbatim; acceptance_test and command are byte-identical by construction",
+      "provenance": "approved_amendment",
+      "state_at_base_483f016": "FAIL at base (exit 1: no DEFINED row for either gate in Section 1; both still have reserved rows in Section 2).",
+      "evidence_file": ".agent/evidence/099/at5-gates-defined-not-reserved.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import yaml; fm=lambda p: yaml.safe_load(open(p).read().split('---')[1]); a=fm('ecosystem/06_simplification_review.md'); b=fm('ecosystem/08_ga_gate.md'); assert (a['status'],b['status'])==('active','active'), (a['status'],b['status']); assert a['version']!='0.1.0' and b['version']!='0.1.0', (a['version'],b['version'])\"",
+      "command": "python3 -c \"import yaml; fm=lambda p: yaml.safe_load(open(p).read().split('---')[1]); a=fm('ecosystem/06_simplification_review.md'); b=fm('ecosystem/08_ga_gate.md'); assert (a['status'],b['status'])==('active','active'), (a['status'],b['status']); assert a['version']!='0.1.0' and b['version']!='0.1.0', (a['version'],b['version'])\"",
+      "acceptance_test_index": 6,
+      "source": ".agent/feature_list_014.json feature 099 acceptance_tests[6] (1-based AT6), copied verbatim; acceptance_test and command are byte-identical by construction",
+      "provenance": "planner_hardening_operator_acknowledged",
+      "state_at_base_483f016": "FAIL at base (AssertionError: ('draft', 'draft')).",
+      "evidence_file": ".agent/evidence/099/at6-frontmatter-active.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import glob; C=[c for c in open('docs/guide/index.html').read().split('<article class=') if '<h3><code>ecosystem/</code></h3>' in c]; assert len(C)==1, len(C); miss=[p for p in sorted(glob.glob('ecosystem/0*.md')) if '<code>'+p+'</code>' not in C[0].split('</article>')[0]]; assert not miss, miss\"",
+      "command": "python3 -c \"import glob; C=[c for c in open('docs/guide/index.html').read().split('<article class=') if '<h3><code>ecosystem/</code></h3>' in c]; assert len(C)==1, len(C); miss=[p for p in sorted(glob.glob('ecosystem/0*.md')) if '<code>'+p+'</code>' not in C[0].split('</article>')[0]]; assert not miss, miss\"",
+      "acceptance_test_index": 7,
+      "source": ".agent/feature_list_014.json feature 099 acceptance_tests[7] (1-based AT7), copied verbatim; acceptance_test and command are byte-identical by construction",
+      "provenance": "planner_hardening_operator_acknowledged",
+      "state_at_base_483f016": "FAIL at base (AssertionError listing the five missing documents 00, 04, 05, 06, 08).",
+      "evidence_file": ".agent/evidence/099/at7-guide-ecosystem-card.txt"
+    },
+    {
+      "acceptance_test": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+      "command": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+      "acceptance_test_index": 8,
+      "source": ".agent/feature_list_014.json feature 099 acceptance_tests[8] (1-based AT8), copied verbatim; acceptance_test and command are byte-identical by construction",
+      "provenance": "carried_from_1_0_x",
+      "state_at_base_483f016": "Not executed during contract proposal (long-running); expected PASS at base and must stay PASS (exit status only, no fixture count).",
+      "evidence_file": ".agent/evidence/099/at8-fixtures-self-test.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S1 (not an acceptance test): this contract, feature_list_014.json and run_state.json validate against their schemas.",
+      "command": "python3 - <<'PY'\nimport json\nfrom pathlib import Path\nimport jsonschema\nfor data_path, schema_path in [('.agent/contracts/099.json', 'schema/contract.schema.json'), ('.agent/feature_list_014.json', 'schema/feature_list.schema.json'), ('.agent/run_state.json', 'schema/run_state.schema.json'), ('NIZAM.json', 'registry/nizam-index.schema.json')]:\n    jsonschema.validate(json.loads(Path(data_path).read_text()), json.loads(Path(schema_path).read_text()))\nprint('PASS contract + feature_list_014 + run_state + NIZAM.json schema-valid')\nPY",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s01-contract-schema-valid.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S2 (phase-level acceptance): the frozen gate's --payload form still passes.",
+      "command": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py --payload",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s02-validator-gate-payload.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S3: every path changed relative to the pre-feature base 483f016 (union of `git diff --name-only 483f016` and `git status --porcelain --untracked-files=all`, so it is not vacuous after a commit and sees untracked files; the anchor stays 483f016 even though the attempt worktree is created at the Orchestrator's commit <B>) is either in the contract's scope (files_create + files_modify) or on the Orchestrator/Validator/Evaluator-owned allowlist: .agent/contracts/099.json, .agent/run_state.json, .agent/feature_list_014.json, .agent/validator/099*, .agent/qa/099*, .agent/evidence/099-qa-adversarial*, and the Evaluator's evidence family .agent/evidence/099/qa/ plus the Orchestrator's .agent/evidence/099/failed-attempt*/ quarantine copies. Allowlisted paths are NOT Generator deliverables. For .agent/feature_list_014.json (tolerated only for the Orchestrator's feature-099 status flip) the check also asserts, against 483f016: every non-`features` key equals base; the ordered list of feature ids equals base; no feature has a non-status key changed; no feature other than 099 has its status changed; and 099's status, if changed, is in the schema enum. Fails on any other path or violation.",
+      "command": "python3 - <<'PY'\nimport json, subprocess, sys\nBASE = '483f016'\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nc = json.load(open('.agent/contracts/099.json'))\nscope = {f['path'] for k in ('files_create', 'files_modify') for f in c['scope'][k]}\norchestrator_owned = {'.agent/contracts/099.json', '.agent/run_state.json', '.agent/feature_list_014.json'}\nowned_prefixes = ('.agent/validator/099', '.agent/qa/099', '.agent/evidence/099-qa-adversarial', '.agent/evidence/099/qa/', '.agent/evidence/099/failed-attempt')\nchanged = set(run('git', 'diff', '--name-only', BASE).split()) | {l[3:].strip() for l in run('git', 'status', '--porcelain', '--untracked-files=all').splitlines()}\nextra = sorted(p for p in changed if p not in scope and p not in orchestrator_owned and not p.startswith(owned_prefixes))\nbad_fl = []\nif '.agent/feature_list_014.json' in changed:\n    old = json.loads(run('git', 'show', BASE + ':.agent/feature_list_014.json'))\n    new = json.load(open('.agent/feature_list_014.json'))\n    enum = json.load(open('schema/feature_list.schema.json'))['properties']['features']['items']['properties']['status']['enum']\n    if {k: v for k, v in old.items() if k != 'features'} != {k: v for k, v in new.items() if k != 'features'}: bad_fl.append('a non-features key changed')\n    if [f['id'] for f in old['features']] != [f['id'] for f in new['features']]: bad_fl.append('ordered feature id list changed')\n    else:\n        for o, n in zip(old['features'], new['features']):\n            if {k: v for k, v in o.items() if k != 'status'} != {k: v for k, v in n.items() if k != 'status'}: bad_fl.append(o['id'] + ': non-status key changed')\n            if o['id'] != '099' and o.get('status') != n.get('status'): bad_fl.append(o['id'] + ': status changed')\n            if o['id'] == '099' and n.get('status') not in enum: bad_fl.append('099: status not in schema enum')\nprint('changed:', len(changed), 'extra:', extra, 'feature_list violations:', bad_fl)\nsys.exit(1 if (extra or bad_fl) else 0)\nPY",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s03-scope-boundary.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S4: the frozen activation infrastructure and .github/ are byte-identical to the base commit (099-102 keep the no-workflow-change non-goal).",
+      "command": "git diff --exit-code 483f016 -- .agent/evidence/phase-014-activation .github",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s04-frozen-infra-and-workflows-untouched.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S5 (phase-level acceptance): no tag exists beyond the activation-time tag set; the pipeline never self-tags.",
+      "command": "git fetch --tags --quiet origin && python3 .agent/evidence/phase-014-activation/gates/phase_tag_check.py",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s05-no-tag-created.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S6 (phase-level acceptance): the PR-mode release close-out still exits 0.",
+      "command": "python3 .github/scripts/release_closeout.py --mode pr",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s06-release-closeout-pr.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S7: (a) both gate rows are DEFINED and OUTSTANDING in operator_gates.md Section 1 and neither claims EXERCISED or SATISFIED; (b) Section 2 keeps the verbatim heading '## 2. Reserved gates (deferred to later phases)', contains no table line (no line beginning with a pipe) and no RESERVED row, and consists of exactly the pinned paragraph 'No gate is currently reserved. `H-CONSOLIDATION` and `H-GA`, reserved by `.agent/product_spec_005.md` Sec 8, were defined by phase 014 feature 099 and now live in Section 1.' (whitespace-normalised); (c) in each of ecosystem/06 and ecosystem/08 the body (everything after the frontmatter) equals the base-commit body with ONLY the text '; reserved until phase-014 execution defines it' removed (whitespace-normalised), so no body line is added at all; and the new change_log head summary of each carries no disposition word (defined, outstanding, reserved, exercised, satisfied).",
+      "command": "python3 - <<'PY'\nimport re, subprocess, sys\nBASE = '483f016'\nnorm = lambda x: ' '.join(x.split())\nbad = []\nt = open('docs/planning/operator_gates.md').read()\ns1 = t.split('## 1. Decided and active gates')[1].split('## 2. Reserved')[0]\nfor g in ('H-CONSOLIDATION', 'H-GA'):\n    m = re.search(r'^\\| `' + g + r'` \\|[^\\n]*$', s1, re.M)\n    if not m: bad.append(g + ': no Section-1 row'); continue\n    row = m.group(0)\n    if 'DEFINED' not in row or 'OUTSTANDING' not in row: bad.append(g + ': row lacks DEFINED/OUTSTANDING')\n    disp = row.rsplit('|', 2)[-2]\n    if re.search(r'EXERCISED|SATISFIED', re.sub(r'(?i)not exercised', '', disp)): bad.append(g + ': row claims exercise')\nsec2 = t.split('## 2. Reserved')[1].split('## 3. Notes')[0]\nhead, _, body2 = sec2.partition('\\n')\nif head != ' gates (deferred to later phases)': bad.append('Section 2 heading not verbatim: ' + repr(head))\nif any(l.startswith('|') for l in sec2.splitlines()): bad.append('Section 2 has a table line')\nif re.search(r'RESERVED', sec2): bad.append('Section 2 has a RESERVED row')\nPIN = 'No gate is currently reserved. `H-CONSOLIDATION` and `H-GA`, reserved by `.agent/product_spec_005.md` Sec 8, were defined by phase 014 feature 099 and now live in Section 1.'\nif norm(body2) != PIN: bad.append('Section 2 body is not exactly the pinned paragraph: ' + repr(norm(body2)[:160]))\nPH = '; reserved until phase-014 execution defines it'\nfor p in ('ecosystem/06_simplification_review.md', 'ecosystem/08_ga_gate.md'):\n    base = subprocess.run(['git', 'show', BASE + ':' + p], capture_output=True, text=True, check=True).stdout\n    cur = open(p).read()\n    bb = norm(base.split('\\n---\\n', 1)[1]); cb = norm(cur.split('\\n---\\n', 1)[1])\n    # the phrase may have wrapped across a line break at base; normalised text removes that\n    if bb.count(norm(PH)) != 1: bad.append(p + ': pinned phrase not exactly once at base')\n    elif cb != bb.replace(norm(PH), ''): bad.append(p + ': body differs from base beyond deleting the pinned phrase')\n    import yaml\n    head_summary = yaml.safe_load(cur.split('---')[1])['change_log'][0]['summary']\n    if re.search(r'(?i)defined|outstanding|reserved|exercised|satisfied', head_summary): bad.append(p + ': change_log head summary carries a disposition word')\nprint('problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s07-gates-defined-not-exercised.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S8: each edited governed document (ecosystem/06, ecosystem/08, ecosystem/README.md, docs/planning/operator_gates.md) has a version strictly above its BASE-commit (483f016) version and a change_log head entry equal to its new version (the C8 rule, asserted directly against the base); and ecosystem/README.md carries neither the phrase 'proposal-grade (status `draft`)' nor either 'reserved `H-CONSOLIDATION`' / 'reserved `H-GA`' phrase (whitespace-normalised).",
+      "command": "python3 - <<'PY'\nimport subprocess, sys, yaml\nBASE = '483f016'\nbad = []\nfm = lambda text: yaml.safe_load(text.split('---')[1])\nver = lambda v: tuple(int(x) for x in str(v).split('.'))\nfor p in ('ecosystem/06_simplification_review.md', 'ecosystem/08_ga_gate.md', 'ecosystem/README.md', 'docs/planning/operator_gates.md'):\n    old = fm(subprocess.run(['git', 'show', BASE + ':' + p], capture_output=True, text=True, check=True).stdout)\n    new = fm(open(p).read())\n    if not ver(new['version']) > ver(old['version']): bad.append(p + ': version not bumped over base')\n    if str(new['change_log'][0]['version']) != str(new['version']): bad.append(p + ': change_log head != version')\nr = ' '.join(open('ecosystem/README.md').read().split())\nfor phrase in ('proposal-grade (status `draft`)', 'reserved `H-CONSOLIDATION`', 'reserved `H-GA`'):\n    if phrase in r: bad.append('ecosystem/README.md still contains: ' + phrase)\nprint('problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s08-ecosystem-readme-and-versions.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S9: relative to the BASE commit 483f016, tools/skill.json version goes 0.3.0 -> 0.4.0, exactly two capabilities are added (18 -> 20) with exactly the modules ecosystem/06_simplification_review.md and ecosystem/08_ga_gate.md, none removed or altered, and every other top-level key is unchanged.",
+      "command": "python3 - <<'PY'\nimport json, subprocess, sys\nold = json.loads(subprocess.run(['git', 'show', '483f016:tools/skill.json'], capture_output=True, text=True, check=True).stdout)\nnew = json.load(open('tools/skill.json'))\nrest = lambda d: {k: v for k, v in d.items() if k not in ('version', 'capabilities')}\nok = (old['version'], new['version']) == ('0.3.0', '0.4.0') and len(new['capabilities']) == len(old['capabilities']) + 2 and all(c in new['capabilities'] for c in old['capabilities']) and {c['module'] for c in new['capabilities']} - {c['module'] for c in old['capabilities']} == {'ecosystem/06_simplification_review.md', 'ecosystem/08_ga_gate.md'} and rest(old) == rest(new)\nprint(old['version'], '->', new['version'], len(old['capabilities']), '->', len(new['capabilities']), 'ok=', ok)\nsys.exit(0 if ok else 1)\nPY",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s09-skill-json-version-and-count.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S10: relative to the BASE commit 483f016, NIZAM.json capabilities grew by exactly the two new entries (33 -> 35, each with id, non-empty summary and authoritative_source), nothing else in NIZAM.json changed (including modules[].key_documents), and framework.version stays 1.4.0 (no release is prepared).",
+      "command": "python3 - <<'PY'\nimport json, subprocess, sys\nold = json.loads(subprocess.run(['git', 'show', '483f016:NIZAM.json'], capture_output=True, text=True, check=True).stdout)\nnew = json.load(open('NIZAM.json'))\nadded = [c for c in new['capabilities'] if c not in old['capabilities']]\nrest_same = {k: v for k, v in new.items() if k != 'capabilities'} == {k: v for k, v in old.items() if k != 'capabilities'}\nok = len(old['capabilities']) == 33 and len(new['capabilities']) == 35 and all(c in new['capabilities'] for c in old['capabilities']) and sorted(c['id'] for c in added) == ['nizam-ecosystem-ga-gate', 'nizam-ecosystem-simplification-review'] and all(set(c) >= {'id', 'summary', 'authoritative_source'} and c['summary'] for c in added) and rest_same and new['framework']['version'] == '1.4.0'\nprint(len(old['capabilities']), '->', len(new['capabilities']), 'added:', [c['id'] for c in added], 'rest_same=', rest_same, 'ok=', ok)\nsys.exit(0 if ok else 1)\nPY",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s10-nizam-capabilities-additive.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S11: docs/planning/phase_014.yaml validates against schema/phase.schema.json; compared with 483f016:docs/planning/phase_014.yaml every step other than 099 and every top-level key are identical, and step 099 differs ONLY by the added keys docs_updated (equal to ecosystem/README.md), changelog_entry and evidence (a path under .agent/evidence/), and by its `status`, which is excluded from the comparison because the status flip is Orchestrator-owned (the check only asserts that status is not BLOCKED).",
+      "command": "python3 - <<'PY'\nimport json, subprocess, sys, yaml, jsonschema\nold = yaml.safe_load(subprocess.run(['git', 'show', '483f016:docs/planning/phase_014.yaml'], capture_output=True, text=True, check=True).stdout)\nnew = yaml.safe_load(open('docs/planning/phase_014.yaml'))\njsonschema.validate(new, json.load(open('schema/phase.schema.json')))\nbad = []\nif {k: v for k, v in new.items() if k != 'steps'} != {k: v for k, v in old.items() if k != 'steps'}: bad.append('top-level keys changed')\nos_ = {x['id']: x for x in old['steps']}; ns = {x['id']: x for x in new['steps']}\nif [x['id'] for x in old['steps']] != [x['id'] for x in new['steps']]: bad.append('step set/order changed')\nfor i in os_:\n    if i != '099' and os_[i] != ns.get(i): bad.append('step ' + i + ' changed')\no, n = os_['099'], ns['099']\nif {k: v for k, v in n.items() if k not in ('docs_updated', 'changelog_entry', 'evidence', 'status')} != {k: v for k, v in o.items() if k != 'status'}: bad.append('step 099 changed beyond docs_updated/changelog_entry/evidence (status excluded)')\nif n.get('status') == 'BLOCKED': bad.append('step 099 is BLOCKED')\nif n.get('docs_updated') != 'ecosystem/README.md': bad.append('docs_updated != ecosystem/README.md')\nif not n.get('changelog_entry'): bad.append('changelog_entry empty')\nif not str(n.get('evidence', '')).startswith('.agent/evidence/'): bad.append('evidence path missing')\nprint('problems:', bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s11-phase-yaml-step-record.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S12: relative to 483f016:docs/guide/index.html the ONLY change is inside the ecosystem card's 'Key documents' paragraph: with that one <p>Key documents: ...</p> paragraph blanked in both files the remaining text is byte-identical (so the descriptive sentence at base lines 589-592 and every other card/section are untouched).",
+      "command": "python3 - <<'PY'\nimport re, subprocess, sys\nbase = subprocess.run(['git', 'show', '483f016:docs/guide/index.html'], capture_output=True, text=True, check=True).stdout\ncur = open('docs/guide/index.html').read()\ndef blank(text):\n    head, sep, tail = text.partition('<h3><code>ecosystem/</code></h3>')\n    assert sep and sep not in tail, 'ecosystem card heading must occur exactly once'\n    card, end, rest = tail.partition('</article>')\n    new_card, n = re.subn(r'<p>Key documents:.*?</p>', '<p>@@KEYDOCS@@</p>', card, count=1, flags=re.S)\n    assert n == 1, 'Key documents paragraph not found in the ecosystem card'\n    return head + sep + new_card + end + rest\nok = blank(base) == blank(cur) and base != cur\nprint('only-key-documents-paragraph-changed=', ok)\nsys.exit(0 if ok else 1)\nPY",
+      "supplementary": true,
+      "evidence_file": ".agent/evidence/099/s12-guide-scope-ecosystem-key-documents-only.txt"
+    }
+  ],
+  "estimated_lines": 920,
+  "evidence_dir": ".agent/evidence/099/",
+  "evidence_convention": "One captured-output file per verification entry (AT1-AT8 then S1-S12), named as in each entry's evidence_file, each 04 Section-5 shaped like the frozen activation baselines: line 1 the exact invocation, then the verbatim captured stdout/stderr, final line 'EXIT:<code>' read from the process (never from a pipeline; no `| grep` swallows an exit status). Each command is replayable from the repo root. AT1 is captured first (pre-edit baseline re-confirmation is the existing PASS) and again last, after every edit; the AT-level evidence files are the final-state captures. The phase-YAML evidence field points at .agent/evidence/099/at1-validator-gate.txt. Frozen acceptance infrastructure under .agent/evidence/phase-014-activation/ is read-only. CAPTURE LOCATION: the Generator captures all of this evidence INSIDE its attempt root (the Orchestrator-created detached worktree at <B>) under .agent/evidence/099/, and commits it with the deliverable in the single attempt commit that the Orchestrator cherry-picks. The Evaluator re-runs AT1-AT8 and S1-S12 in its own execution context against the promoted tree and writes its evidence under .agent/evidence/099/qa/ (its adversarial spot-check per methodology/02 Sec 8 may also use .agent/evidence/099-qa-adversarial.txt); a failed attempt's evidence is copied to .agent/evidence/099/failed-attempt<N>/. All three families are allowlisted in S3 and are not Generator deliverables. Diff anchors in S3, S4 and S8-S12 stay at 483f016, independent of the attempt base <B>.",
+  "version_impact": "MINOR at the next release (additive: two documents become normative, two capability entries, two gate definitions). Not MAJOR, not PATCH. No release prepared in phase 014; changes land under CHANGELOG.md [Unreleased]; framework.version stays 1.4.0. Basis: methodology/06_release_train.md Sec 3.2.",
+  "retry_identity": {
+    "contract_step_key": "099-contract",
+    "implementation_step_key": "099-implementation",
+    "limit": 3,
+    "attempt_worktree": "/home/cnross/workspace02/nizam-wt-099-attempt<N>, created by the Orchestrator from <B> (the Orchestrator commit of the approved contract); see design_notes.attempt_isolation",
+    "failed_attempt_evidence": ".agent/evidence/099/failed-attempt<N>/ in the shared tree",
+    "attempt_strategy": "per methodology/03_circuit_breaker.md: attempt 1 direct fix, 2 type/interface analysis, 3 architectural review, 4+ forbidden (capture and quarantine the third attempt, remove only its validated attempt root, BLOCKED canonical-first in the phase document, DEBT.md, escalate, terminate)"
+  },
+  "rollback": "See design_notes.attempt_isolation (mechanics) and design_notes.rollback (procedure). Summary: the Orchestrator creates each attempt worktree at the approved-contract commit <B> (git worktree add --detach /home/cnross/workspace02/nizam-wt-099-attempt<N> <B>); the Generator works and verifies only inside it; the Orchestrator cherry-picks the single attempt commit onto the feature branch and then removes the root with git worktree remove; a failed attempt is evidence-captured (copied to .agent/evidence/099/failed-attempt<N>/) and only its own root is removed; a worktree-creation failure halts and escalates (no shared-tree fallback). Exhaustion (Sec 4): BLOCKED canonical-first in phase_014.yaml, Orchestrator repairs derived run_state, DEBT.md, escalate, terminate. No repository-wide reset or clean is ever used.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 2
+  }
+}

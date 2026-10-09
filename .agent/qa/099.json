@@ -1,0 +1,45 @@
+{
+  "feature_id": "099",
+  "qa_pass": true,
+  "checks_run": 21,
+  "checks_passed": 21,
+  "adversarial": {
+    "performed": true,
+    "description": "Evaluator-originated mutation probe (methodology/02 Sec 8; not among the contract's 20 verification items): in a scratch copy outside the repo, replayed the contract's AT3-AT7 commands verbatim before and after six single-point reversions of the feature intent: delete the nizam-ecosystem-ga-gate capability from NIZAM.json; delete the ecosystem/06 capability from tools/skill.json; re-add a reserved H-GA row to operator_gates Section 2; change the H-CONSOLIDATION Section-1 row from DEFINED to a non-DEFINED word; revert ecosystem/08 status to draft; unlink ecosystem/08 from the guide ecosystem card.",
+    "result": "PASS: each unmodified scratch copy gave exit 0 and each mutated copy made the matching AT exit 1 with a named assertion or non-zero status (6/6 DETECTED). No way found for the ATs to pass while the intent regressed; the repo working tree was untouched.",
+    "evidence": ".agent/evidence/099-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/099/qa/at1-validator-gate.txt",
+    ".agent/evidence/099/qa/at2-key-documents-guard.txt",
+    ".agent/evidence/099/qa/at3-capability-register.txt",
+    ".agent/evidence/099/qa/at4-skill-json-register.txt",
+    ".agent/evidence/099/qa/at5-gates-defined-not-reserved.txt",
+    ".agent/evidence/099/qa/at6-frontmatter-active.txt",
+    ".agent/evidence/099/qa/at7-guide-ecosystem-card.txt",
+    ".agent/evidence/099/qa/at8-fixtures-self-test.txt",
+    ".agent/evidence/099/qa/s01-contract-schema-valid.txt",
+    ".agent/evidence/099/qa/s02-validator-gate-payload.txt",
+    ".agent/evidence/099/qa/s03-scope-boundary.txt",
+    ".agent/evidence/099/qa/s04-frozen-infra-and-workflows-untouched.txt",
+    ".agent/evidence/099/qa/s05-no-tag-created.txt",
+    ".agent/evidence/099/qa/s06-release-closeout-pr.txt",
+    ".agent/evidence/099/qa/s07-gates-defined-not-exercised.txt",
+    ".agent/evidence/099/qa/s08-ecosystem-readme-and-versions.txt",
+    ".agent/evidence/099/qa/s09-skill-json-version-and-count.txt",
+    ".agent/evidence/099/qa/s10-nizam-capabilities-additive.txt",
+    ".agent/evidence/099/qa/s11-phase-yaml-step-record.txt",
+    ".agent/evidence/099/qa/s12-guide-scope-ecosystem-key-documents-only.txt",
+    ".agent/evidence/099-qa-adversarial.txt",
+    ".agent/evidence/099/qa/validate-final.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. The Evaluator independently re-ran AT1-AT8 and S1-S12 (all 20 contract verification commands, extracted programmatically from .agent/contracts/099.json and run one at a time, sequentially, from the repo root against promoted HEAD 2314d2a with PYTHONDONTWRITEBYTECODE=1) and every one exited 0; captures are in .agent/evidence/099/qa/ in the 04 Sec 5 shape. Plus the adversarial mutation probe (6/6 detected). checks_run=21, checks_passed=21. The Mode B observation about the generator's S3 capture timing (changed 29 vs final 39) is superseded by this re-run: S3 against the final tree reports extra: [] and feature_list violations: []. .agent/run_state.json and the other Orchestrator-owned paths are allowlisted by S3 and were not modified by the Evaluator; no tracked file was edited. Final bash tools/validate.sh result is recorded in .agent/evidence/099/qa/validate-final.txt."
+  },
+  "dod_ref": "standard/definition_of_done.md"
+}
