@@ -1,0 +1,48 @@
+bash .agent/evidence/104-qa-adversarial-contract-review/helpers/05-ci-synthetic.sh
+C1 (positive headSha) = b77b4b56a433 N1 (throwaway) = ff7c05535279
+control  CONTROL all rc=0? True {'AT5': 0, 'AT6': 0, 'AT7': 0, 'AT8': 0, 'S10': 0, 'S11': 0}
+c01      CAUGHT   mutation base != positive headSha (diff taken against an older commit) :: caught by S11  
+c01b     CAUGHT   mutation diff target != negative run headSha :: caught by S11  
+c02      CAUGHT   job at the positive headSha is WEAKENED (-k), HEAD has the pinned job :: caught by S10,S11  
+c03      CAUGHT   positive log tampered: an UNSUPPORTED line removed from the capture (live log still has it) :: caught by S10  
+c03b     CAUGHT   positive log tampered: capture has extra FULL line not in live :: caught by S10  
+c04      CAUGHT   positive run cancelled (concurrency cancel-in-progress) :: caught by AT5,S10  
+c04b     CAUGHT   positive run success but one sibling job cancelled :: caught by S10  
+c04c     CAUGHT   positive run success but convergent_review job conclusion skipped :: caught by AT5,S10  
+c05      CAUGHT   positive headBranch is phase/014-ga-track (stale merged head) :: caught by AT5  
+c05b     CAUGHT   positive headBranch is main :: caught by AT5  
+c06      CAUGHT   negative log lacks AssertionError: 40 != 0 :: caught by AT8  
+c06b     CAUGHT   negative log has AssertionError: 41 != 0 :: caught by AT8  
+c07      CAUGHT   negative log fails a DIFFERENT test (no cross-trial FAIL line) :: caught by AT8  
+c08      CAUGHT   negative run headBranch not throwaway/104- :: caught by AT7,S11  
+c09      CAUGHT   negative job conclusion success :: caught by AT7  
+c10      CAUGHT   negative PR merged :: caught by S11  
+c10b     CAUGHT   negative PR still OPEN :: caught by S11  
+c11      CAUGHT   throwaway remote branch still exists :: caught by S11  
+c12      CAUGHT   mutation touches only the sandbox script (namespace-only, NDEBT-046 shape) :: caught by S11  
+c12b     CAUGHT   mutation touches only the adapter (Landlock-only) :: caught by S11  
+c13      CAUGHT   mutation also edits the test suite (extra file) :: caught by S11  
+c13b     CAUGHT   mutation also edits the workflow job on the throwaway branch :: caught by S11  
+c14      CAUGHT   positive log is the log of another job (validate, id 2002) not convergent_review :: caught by AT6,S10  
+c15      CAUGHT   positive run capture differs from live (capture says success, live says failure) :: caught by S10  
+c16      CAUGHT   negative run capture differs from live (job ids shuffled) :: caught by S10  
+c17      CAUGHT   positive run has no convergent_review job :: caught by AT5,AT6,S10  
+c18      CAUGHT   positive EXIT trailer EXIT:1 :: caught by AT5  
+c19      CAUGHT   positive headSha is not an ancestor of HEAD :: caught by AT5,S11  
+c20      CAUGHT   positive log lacks CONFORMANCE: FULL :: caught by AT6  
+c21      CAUGHT   positive log contains skipped :: caught by AT6  
+c22      CAUGHT   positive log shows CONFORMANCE: NOT FULL only (substring trap) :: caught by AT6  
+c23      CAUGHT   run view invocation line carries --exit-status :: caught by AT5,S10  
+c24      CAUGHT   negative run uses a different job set than positive :: caught by S10  
+c25      CAUGHT   positive log truncated in the capture (live has more lines) :: caught by S10  
+c26      CAUGHT   FAIL line present in the POSITIVE log :: caught by AT6  
+c27      SURVIVED negative log contains UNSUPPORTED besides the FAIL and 40 != 0 lines (capability + finding) :: caught by -  
+c28      CAUGHT   negative mutation capture altered (live git diff differs) :: caught by S11  
+c29      CAUGHT   negative branch-absent capture records a result line (branch exists) with EXIT:0 :: caught by S11  
+c30      CAUGHT   negative PR is for a non-throwaway headRefName :: caught by S11  
+TALLY {'caught': 38, 'survived': 1}
+== real gh-shape control
+C1 (positive headSha) = 1d869299d9e7 N1 (throwaway) = bdecd7b89748
+real     CONTROL all rc=0? True {'AT5': 0, 'AT6': 0, 'AT7': 0, 'AT8': 0, 'S10': 0, 'S11': 0}
+TALLY {'caught': 0, 'survived': 0}
+EXIT:0

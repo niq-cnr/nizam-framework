@@ -1,0 +1,1 @@
+python3 -c "import yaml; J=[(k,j.get('name') or k) for k,j in yaml.safe_load(open('.github/workflows/compliance.yml'))['jobs'].items() if any('tools/test_convergent_review.py' in (s.get('run') or '') for s in j['steps'])]; m=open('tools/README.md').read().split('## Machine Validation')[1].split('\n## ')[0]; assert len(J)==1 and ('\x60'+J[0][0]+'\x60') in m, J"

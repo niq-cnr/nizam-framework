@@ -1,0 +1,108 @@
+{
+  "review": "104-mode-a",
+  "feature": "104",
+  "contract_id": "104",
+  "revision_reviewed": 3,
+  "mode": "A",
+  "risk_level": "high",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Round-2 issue resolved: evidence_convention carries the required sentence exactly; stdout-only/stderr-empty rule now limited to the seven ci-*.txt captures.",
+    "Rev 3 differs from rev 2 only in revision labels, revision_history[3], retry_identity_note, evidence_convention and approvals.revisions.",
+    "ATs verbatim; <A>=f3b6dcb in every anchored check.",
+    "Carried, non-blocking: S10 no-normalization premise cites no evidence file (fails closed); R1 hosted-runner userns/Landlock/toolcache risk routes to CAPABILITY/escalate.",
+    "Mode B must honour mode_b_obligations (step-104 status; 04 s5 shape of Generator evidence)."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "104",
+    "summary": "APPROVED (Mode A rev 3, 104-contract attempt 3/3): zero issues, zero missing coverage, zero unsupported claims."
+  },
+  "prior_rounds": [
+    {
+      "review": "104-mode-a",
+      "feature": "104",
+      "contract_id": "104",
+      "revision_reviewed": 1,
+      "mode": "A",
+      "risk_level": "high",
+      "issues": [
+        {
+          "id": 1,
+          "severity": "major",
+          "location": "design_notes.ci_evidence_sequence[5]; runner_capability_failure; hazards[7]",
+          "problem": "CI-failure triage limits CAPABILITY to the uid_map string or an unsupported 'Landlock unavailable' report; other probe failures, missing Landlock (OSError), refused sysctl, and the setup-python toolcache vs Landlock allowlist would be misrouted to implementation repair that cannot change the pinned job (pressure to weaken).",
+          "required_fix": "CAPABILITY (HALT, escalate, no attempt) = convergent_review failure whose log shows UNSUPPORTED / CONFORMANCE: NOT FULL / REQUIRED CONFORMANCE NOT MET, a guarded-step failure, or FAIL/ERROR in a sandbox-dependent test; DEFECT = only failures attributable to Generator non-job files; non-capability fault in the pinned job = 104-contract revision; unclassifiable -> HALT and escalate."
+        },
+        {
+          "id": 2,
+          "severity": "major",
+          "location": "verification[20] (S11); ci_evidence_sequence[7]",
+          "problem": "Negative control not bound to the positive run's headSha or the deliverable job.",
+          "required_fix": "S11 asserts mutation base == positive-run headSha AND the convergent_review job at base and at the negative headSha equals the job at HEAD."
+        },
+        {
+          "id": 3,
+          "severity": "minor",
+          "location": "S10, S11; ci_evidence_sequence[6]",
+          "problem": "Log and mutation-diff captures not compared with live sources; stderr handling unspecified vs 04 s5.",
+          "required_fix": "S10 re-fetches each job log and compares with lines 2..-2; S11 re-runs git diff and compares; stderr captured separately and must be empty, else abort."
+        },
+        {
+          "id": 4,
+          "severity": "minor",
+          "location": "non_goals[1]; runner_capability_failure; S08",
+          "problem": "Flag prohibition 'in no evidence command' contradicts S08's use of --allow-unsupported-isolation.",
+          "required_fix": "Scope the prohibition to the workflow, ci-*.txt captures and the throwaway change; name S08 as the sole sanctioned local use."
+        }
+      ],
+      "missing_acceptance_coverage": [],
+      "unsupported_claims": [
+        "ci_evidence_sequence[5]: 'the adapter reports Landlock unavailable' — isolated_trial_adapter.py emits no such report; missing Landlock is an OSError traceback."
+      ],
+      "observations": [
+        "ATs verbatim by inspection (S01 enforces mechanically); AT2 non-discriminating at A, S06 discriminates.",
+        "Workflow safety holds (one job, SHAs reused, unmasked guard, bare suite step, jsonschema, no pull_request_target, permissions unchanged).",
+        "'the Mode B verdict does likewise' should read 'the delta Mode B'.",
+        "Recommend: never 'gh run rerun' to obtain a green; concrete negative-control worktree path.",
+        "S03: Orchestrator DEBT.md / scope-budget writes must come after QA.",
+        "S07 excludes step-104 status; S02/S03 don't machine-check 04 s5 shape of Generator evidence — Mode B should."
+      ],
+      "final_verdict": {
+        "approved": false,
+        "feature": "104",
+        "summary": "REJECTED (Mode A rev 1): triage misroutes capability failures; S11 not bound to positive headSha/job; logs not live-verified; flag non-goal contradicts S08."
+      }
+    },
+    {
+      "review": "104-mode-a",
+      "feature": "104",
+      "contract_id": "104",
+      "revision_reviewed": 2,
+      "mode": "A",
+      "risk_level": "high",
+      "issues": [
+        {
+          "id": 1,
+          "severity": "minor",
+          "location": "evidence_convention: 'Every capture records stdout only; stderr is captured separately and must be empty, else the capture is aborted (04 Section 5).'",
+          "problem": "Regression from round-1 fix 3: the stderr-empty-else-abort rule, required only for the gh/git ci-*.txt captures, now governs every capture, contradicting the contract's own wording and 04 s5; red/adversarial captures would be unrecordable.",
+          "required_fix": "Replace that one sentence with: 'The stdout-only rule (stderr captured separately and required empty, else the capture is aborted) applies only to the seven Orchestrator ci-*.txt captures (ci_evidence_sequence step 7); every other capture records stdout and stderr verbatim (04 Section 5).' No other change."
+        }
+      ],
+      "missing_acceptance_coverage": [],
+      "unsupported_claims": [],
+      "observations": [
+        "All four round-1 issues and adopted observations verified applied in text; no regression elsewhere; ATs verbatim; <A>=f3b6dcb.",
+        "Non-blocking: the no-normalization premise cites no evidence file (fails closed); optionally GH_NO_UPDATE_NOTIFIER=1 for live gh calls."
+      ],
+      "final_verdict": {
+        "approved": false,
+        "feature": "104",
+        "summary": "REJECTED (Mode A rev 2): one-sentence stderr-rule over-application; everything else resolved."
+      }
+    }
+  ]
+}

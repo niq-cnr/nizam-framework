@@ -1,0 +1,54 @@
+bash .agent/evidence/104-qa-adversarial-contract-review/helpers/06-executability.sh
+== (1) gh run view <id> --json headSha,headBranch,conclusion,jobs : shape, stderr empty, compact one-line JSON when piped (run 37967901131 = the 103 feature PR's pull_request run)
+rc=0 stderr_bytes=0 lines=1
+keys ['conclusion', 'headBranch', 'headSha', 'jobs'] | headBranch phase/014-103-sandbox-prereq | conclusion success
+job keys ['completedAt', 'conclusion', 'databaseId', 'name', 'startedAt', 'status', 'steps', 'url']
+jobs [('fixtures_self_test', 113946790599, 'success'), ('e2e_bootstrap', 113946790906, 'success'), ('validate', 113946790999, 'success')]
+job name == workflow key for a job with no name: (validate/e2e_bootstrap/fixtures_self_test) -> ['e2e_bootstrap', 'fixtures_self_test', 'validate']
+== (2) gh run view --job <databaseId> --log (no run id): works, stderr empty, DETERMINISTIC across two fetches (S10's no-normalization premise), no 'skipped'/'UNSUPPORTED' in the three existing jobs' logs
+fetch 1 rc=0 stderr_bytes=0 lines=287
+fetch 2 rc=0 stderr_bytes=0 lines=287
+two log fetches byte-identical
+job 113955338795: skipped/UNSUPPORTED matches = 0
+job 113955339001: skipped/UNSUPPORTED matches = 0
+job 113955339005: skipped/UNSUPPORTED matches = 0
+== (3) completed FAILED/CANCELLED pull_request runs exist and have the same JSON shape (conclusion failure / cancelled)
+[{"conclusion":"failure","databaseId":29673584026,"event":"pull_request","headBranch":"phase/006-enforcement-closure"}]
+[{"conclusion":"cancelled","databaseId":29680470507,"event":"pull_request","headBranch":"phase/006-enforcement-closure"}]
+== (4) gh pr view <n> --json state,mergedAt,headRefName,baseRefName on a CLOSED-unmerged PR (#21): mergedAt is JSON null, so S11's s.get('mergedAt') is falsy
+{"baseRefName":"agent/ecosystem-cycle-pr-f1","headRefName":"agent/ecosystem-cycle-pr-f2","mergedAt":null,"state":"CLOSED"}
+rc=0 stderr_bytes=0
+== (5) refs/pull/<n>/head survives for a closed unmerged PR (S11's fallback fetch) and is fetchable into a FRESH repo
+17408d942cb09acced7c0874cd4bd363dce3bfc5	refs/pull/21/head
+fetch rc=0 type=commit
+== (6) git ls-remote --heads origin <absent branch>: rc 0 and EMPTY output (the ci-negative-branch-absent.txt shape)
+rc=0
+== (7) preconditions: no remote phase/014-104* or throwaway/* branch, no PR for the feature branch, attempt/throwaway worktree paths free
+ls-remote rc=0
+PRs for head phase/014-104-sandbox-ci: []
+free   /home/cnross/workspace02/nizam-wt-104-attempt1
+free   /home/cnross/workspace02/nizam-wt-104-attempt2
+free   /home/cnross/workspace02/nizam-wt-104-attempt3
+free   /home/cnross/workspace02/nizam-wt-104-throwaway
+== (8) compliance.yml triggers: pull_request (all types incl. draft) + push to main; concurrency group is per ref so the feature PR and the throwaway PR do not cancel each other
+name: compliance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+== (9) the contract's two mutation_replacements each occur exactly once in the sources at <A>
+1
+1
+== (10) host: AppArmor key unchanged (this workstation is restricted, so no capable-host branch can be exercised locally)
+1
+EXIT:0
