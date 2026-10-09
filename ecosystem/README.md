@@ -2,10 +2,13 @@
 id: nizam-ecosystem-module
 title: "Ecosystem Engineering Cycle"
 description: "Reusable governance lifecycle for reconciling, auditing, planning, executing, and improving multi-repository software ecosystems."
-version: 0.4.0
+version: 0.5.0
 status: active
 authoritative_source: ecosystem/README.md
 change_log:
+  - version: "0.5.0"
+    date: "2026-10-09"
+    summary: "Phase-014 feature 099 (GA-track activation wave): 06_simplification_review.md and 08_ga_gate.md are now active and registered as capabilities (NIZAM.json, tools/skill.json, the user guide), and the operator gates H-CONSOLIDATION and H-GA are defined in docs/planning/operator_gates.md. The closing module-navigation paragraph is re-synced to say so. The module-navigation rows and the Shipped/Planned counts are unchanged."
   - version: "0.4.0"
     date: "2026-09-30"
     summary: "The phase-014 proposal (GA track, awaiting H-PHASE-014) lands the two still-Planned protocol documents proposal-grade: 06_simplification_review.md (Repeat) and 08_ga_gate.md (Promote/GA) now exist in this directory (status draft), so both module-navigation rows flip 'Planned' -> 'Shipped' and the Shipped/Planned prose re-syncs — nine documents are now Shipped (00-08), none Planned. Mirrors the 0.2.2/0.2.3 precedent (rows flip when the document lands); the row records existence per this table's own stated semantics, not lifecycle activation: their draft -> active flip, capability registration in NIZAM.json + tools/skill.json + the user guide, and the reserved -> decided move for their H-CONSOLIDATION / H-GA gates land with phase-014 execution (feature 099)."
@@ -107,15 +110,15 @@ cross-repository dependency ordering lives (feature 080), consuming the
 ecosystem-level membership-run aggregate — then `05_release_train_coordination.md` —
 the Promote stage, admitting an authorized plan's packets into a cross-repository
 release train (feature 081). The final two documents landed 2026-09-30 with the
-phase-014 proposal (GA track, awaiting activation gate H-PHASE-014):
+phase-014 proposal (GA track) and were activated by phase-014 execution (feature 099):
 `06_simplification_review.md` (feature scope of the phase-014 proposal; the Repeat
 stage — a recurring simplification review whose consolidations are executed only
-under the reserved `H-CONSOLIDATION` gate) and `08_ga_gate.md` (the Promote/GA
-stage — evidence-gated GA declaration criteria under the reserved `H-GA` gate; GA
-declaration is operator-only and the framework never auto-declares GA). Both ship
-proposal-grade (status `draft`): their activation flip and capability registration
-land with phase-014 execution, mirroring how `04`/`05` shipped at their authoring
-features.
+under the operator gate `H-CONSOLIDATION`) and `08_ga_gate.md` (the Promote/GA
+stage — evidence-gated GA declaration criteria under the operator gate `H-GA`; GA
+declaration is operator-only and the framework never auto-declares GA). Both are
+active and registered as capabilities (NIZAM.json, tools/skill.json, the user guide),
+mirroring how `04`/`05` shipped at their authoring features; both gates are defined
+in `docs/planning/operator_gates.md`.
 
 ## Capability Routing
 
