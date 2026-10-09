@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "104",
   "status": "in_progress",
-  "updated_at": "2026-10-09T17:54:03Z",
+  "updated_at": "2026-10-09T17:59:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1598,6 +1598,11 @@
       "at": "2026-10-09T17:54:03Z",
       "event": "scope_budget_rebaselined",
       "detail": "Applied operator option 1 (phase-014 counting rule, spec 1.1.4, commit 7bc65a5). Orchestrator re-ran measure.py independently: 099 596, 103 885 (combined 1481; evidence 6654; excluded 186) — matches the Planner. Re-baseline commit measured 292 budget / 565 evidence (phase-level item). total_lines_changed 1773 / 8600 (ceiling 11180). Prior rebaseline (2200->6660) moved to prior_rebaselines verbatim. Pending operator confirmation of 8600/11180 and of the 103 overrun acknowledgment; feature 104 not started. 104 rolling threshold: 3 x mean(596, 885) = 2221.5."
+    },
+    {
+      "at": "2026-10-09T17:59:00Z",
+      "event": "operator_gate_decision",
+      "detail": "Operator verbatim (2026-10-09, interactive session): 'option 1 confirmed.' — the reply to the orchestrator's request to confirm (1) the 8600 budget / 11180 ceiling, (2) the 103 overrun acknowledgment, (3) the PR #67 merge. Recorded effect: option 1 (phase-014 counting rule + re-baseline, spec 1.1.4) is CONFIRMED, resolving the earlier truncated message. The orchestrator reads the confirmation as covering the re-baseline as presented (8600 / ceiling 11180) and the 103 overrun acknowledgment; neither was restated separately, and this interpretation is disclosed to the operator for correction. PR #67 is still OPEN (not merged)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1805,7 +1810,7 @@
         "all_paths_lines": 6795,
         "range": "88959c9..1c06720",
         "previous_actual_all_paths": 6770,
-        "flag": "scope_budget_flag 2026-10-09T17:39:44Z raised under the old all-paths count (6770 vs 280). Under the phase-014 rule 885 < 3 x 596 = 1788 and would not flag. Acknowledged per the Orchestrator's record (operator_gate_decision 2026-10-09T17:42:10Z), PENDING explicit operator confirmation.",
+        "flag": "scope_budget_flag 2026-10-09T17:39:44Z raised under the old all-paths count (6770 vs 280). Under the phase-014 rule 885 < 3 x 596 = 1788 and would not flag. Acknowledged per the Orchestrator's record (operator_gate_decision 2026-10-09T17:42:10Z), confirmed by the operator's 'option 1 confirmed.' reply (2026-10-09T17:59:00Z).",
         "note": "Phase-014 rule (spec 1.1.4): product 103 + contract 519 + verdict 200 + planning 63 = 885. estimated 280 is the historical all-paths estimate (mixed basis, disclosed)."
       }
     ],
@@ -1824,7 +1829,7 @@
       "ceiling_from": 8658,
       "ceiling_to": 11180,
       "at": "2026-10-09T17:42:10Z",
-      "authorized_by": "Operator (operator_gate_decision 2026-10-09T17:42:10Z), verbatim '1. Change what counts, then re-baseline (' (message appears truncated), selecting option 1. The figure 8600 is the Planner's estimate (spec 1.1.4); the operator stated no figure, so confirmation of 8600/11180 is PENDING.",
+      "authorized_by": "Operator (operator_gate_decision 2026-10-09T17:42:10Z), verbatim '1. Change what counts, then re-baseline (' (message appears truncated), selecting option 1. The figure 8600 is the Planner's estimate (spec 1.1.4); the operator stated no figure, so confirmation of 8600/11180 is PENDING. CONFIRMED 2026-10-09T17:59:00Z: operator 'option 1 confirmed.' (reply to the confirmation request for 8600/11180; interpretation disclosed).",
       "reason": "Measured 099 596 + 103 885 = 1481, + 300 re-baseline allowance, + 6780 pending estimate (range 4840-8670; per-feature overhead 500-800 measured) = 8561, rounded up to 8600. Ceiling 11180 covers the high end 10451.",
       "spec_version": "1.1.4",
       "evidence": ".agent/evidence/scope-budget-014/measure-099-103.txt"
@@ -2091,7 +2096,7 @@
       }
     ]
   },
-  "last_action": "Scope budget re-baselined (spec 1.1.4); awaiting operator confirmation of 8600/11180 and PR #67 merge",
+  "last_action": "Option 1 confirmed by operator; awaiting PR #67 merge before feature 104",
   "completed_contract_ids": [
     "099",
     "103"
