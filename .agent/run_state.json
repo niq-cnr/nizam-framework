@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "014-ga-track",
-  "current_feature": "105",
+  "current_feature": "106",
   "status": "in_progress",
-  "updated_at": "2026-10-09T22:04:34Z",
+  "updated_at": "2026-10-09T22:49:44Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -247,6 +247,10 @@
     },
     "105-contract": {
       "attempts": 3,
+      "limit": 3
+    },
+    "105-implementation": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -1751,6 +1755,36 @@
       "event": "contract_approved",
       "feature": "105",
       "detail": "Loop 1 workflow wf_eda56733-21c (resumed once after the Generator's open questions were routed to Mode A). Mode A round 1 REJECTED rev 0 (2 major: NIP-0003 108/109 misattribution of who creates tools/fixtures/runtime_session/; demonstration labels not bound to their own failure modes; +1 missing coverage, 2 unsupported claims). Round 2 REJECTED rev 1 (3 minor: revision-state self-contradiction, stale R1 fallback, two premises mismatched at <A>). Round 3 APPROVED rev 2 (empty arrays) and ruled the Generator's 4th failure mode (claim naming an absent subdirectory) IN SCOPE as an extension of the existing guard's absent-fixture rule. Evaluator contract review APPROVED (.agent/qa/105-contract-review.json; 92 mutants, 81 caught, 11 non-blocking survivors; S05/S06 load-bearing). 105-contract reconciled to attempts 3/3 (three Mode A rounds). Canonical-first: phase_014.yaml 105 AWAITING_IMPLEMENTATION, contract approved, active_contract_id 105. Orchestrator follow-ups carried from the contract: NIP-0003 108/109 runtime_session registration tension -> Planner at NIP pre-acceptance; fixtures_self_test C13-probe skill.json swap-on-interrupt defect -> log in DEBT.md after QA."
+    },
+    {
+      "at": "2026-10-09T22:04:54Z",
+      "event": "attempt_started",
+      "feature": "105",
+      "detail": "105-implementation attempt 1/3: attempt base <B>=8f91d12abc4ca1af068785f7810b314b6e7a59ed; detached worktree /home/cnross/workspace02/nizam-wt-105-attempt1. Workflow: Generator implement -> Validator Mode B on the attempt commit."
+    },
+    {
+      "at": "2026-10-09T22:05:32Z",
+      "event": "orchestrator_error_disclosed",
+      "feature": "105",
+      "detail": "Orchestrator mistakenly launched the feature-104 implementation workflow script (hard-coded to the removed 104 worktree and base 9f329e1) instead of a 105 one (run wf_069e2d22-e19). It was stopped seconds after launch with TaskStop; its generator had only started. Verified: no /home/cnross/workspace02/nizam-wt-104-attempt1 exists; the shared tree is unchanged apart from the expected run_state edit; the 105 attempt worktree is clean at <B> 8f91d12. Not counted as a 105 attempt. Re-launched with a parameterized script (feature-implement-and-mode-b, run wf_8dc39cd7-ebe, args feature=105)."
+    },
+    {
+      "at": "2026-10-09T22:18:49Z",
+      "event": "implementation_promoted",
+      "feature": "105",
+      "detail": "Workflow wf_8dc39cd7-ebe: Generator attempt 1 commit cc8c4e5 (parent <B> 8f91d12; AT1-AT5 and S01-S09 all exit 0; self-test now 146/146; S05 17/17 cases). Mode B round 1 found everything passing except one BLOCKER MB-1, classified by the validator as a process/authorization gap, not a Generator DEFECT (no attempt consumed). Mode B obligation (c), re-running S05/S06 on the PROMOTED tree, cannot be executed by the validator role. Resolution per the validator's own required_fix option 2: the Orchestrator verified scope, cherry-picked to d0b387a, removed the worktree, and ran S05 then S06 verbatim and serially on the promoted tree (no concurrent validate/self-test). Both exit 0 (S05 'cases: 17 problems: []'; S06 'static ok: True problems: []'), captured to .agent/validator/105-mode-b-rerun/. Workflow wf_ed548747-ab3 runs: Mode B round 2 on those captures, then Evaluator QA."
+    },
+    {
+      "at": "2026-10-09T22:36:25Z",
+      "event": "feature_complete",
+      "feature": "105",
+      "detail": "Feature 105 COMPLETE (NDEBT-042: FIXTURE_CLAIMS claim map in tools/fixtures_self_test.sh, reusing NIP-0003 feature 109's design; completeness at any depth 146/146; four demonstrated FAIL cases). Mode B round 2 APPROVED (.agent/validator/105-mode-b.json, round 1 kept in prior_rounds) on the Orchestrator's serial S05/S06 re-run captures. QA pass .agent/qa/105.json (13/13; adversarial hostile-subdirectory-name probe: 8 names incl. '*', '@', 'a]b', '$(echo hi)', all caught; validate 16/16) via Workflow wf_ed548747-ab3. Evidence gate passed (17 QA evidence files + generator + re-run captures, all EXIT:0). Canonical-first: phase_014.yaml 105 COMPLETED, feature_list_014 105 complete (written by the same Orchestrator script, which then stopped on measure.py's unclassified-path check before writing run_state; resumed here). Budget: 105 = 907 budget-counted (evidence 1561 incl. 23 disclosed reclassified lines); phase total 3671 / 8600. Next: DEBT record (close NDEBT-042; log the fixtures_self_test skill.json swap-on-interrupt defect), then 106."
+    },
+    {
+      "at": "2026-10-09T22:49:44Z",
+      "event": "planning_record",
+      "feature": "105",
+      "detail": "Planner post-105 record: DEBT.md 0.51.0 (NDEBT-042 RESOLVED with QA evidence; NEW NDEBT-047 Low: fixtures_self_test C13 probe swaps tools/skill.json with no EXIT backstop after scratch_dirs replaces the trap; interrupt demonstrated in a private export, recovery git checkout -- tools/skill.json); spec 1.1.6 PATCH adding budget-rule row 4a (non-JSON under .agent/validator/ = evidence), Orchestrator-reported operational fix, no operator gate (moves only previously unclassified lines into the never-gated evidence total; no recorded figure moves; 099/103 replay byte-identical); measure.py updated; backlog_reconciliation 0.1.4 (A07 delivered; NIP-0003 108/109 runtime_session registration tension recorded in s5.3 for the NIP pre-acceptance revision). Orchestrator attributes the record's lines to 105's range (A1/A2 precedent): 105 now 950 budget-counted, 1751 evidence, 0 unclassified; phase total 3714 / 8600. Noted, not acted on: A05/A06 backlog rows still 'Scheduled' (refresh at the next planning touch / 102 roll); pre-existing validate_backlog_dag V7/V13 failures; 104 re-measure 1000 vs recorded 991 (pre-existing gap, left as recorded)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1925,15 +1959,15 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 2764,
-    "evidence_lines_total": 10237,
-    "excluded_lines_total": 390,
+    "total_lines_changed": 3714,
+    "evidence_lines_total": 11988,
+    "excluded_lines_total": 464,
     "counting_rule": {
-      "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.4)",
+      "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.6)",
       "script": ".agent/evidence/scope-budget-014/measure.py",
       "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
       "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
-      "evidence_total": ".agent/evidence/** including verification helpers; tracked separately, never gated",
+      "evidence_total": ".agent/evidence/** including verification helpers, plus any non-JSON file under .agent/validator/ (row 4a, spec 1.1.6); tracked separately, never gated",
       "excluded": ".agent/run_state.json (coordination churn)",
       "unclassified": "fail closed: listed, measure.py exits 3"
     },
@@ -1969,6 +2003,15 @@
         "excluded_lines": 204,
         "range": "7bc65a5..(completion working tree)",
         "note": "Phase-014 rule (measure.py). Includes amendment A2 planning lines (A1-in-103 precedent) and the 3-round contract. Rolling threshold for 104 was 3 x mean(596,885) = 2221.5."
+      },
+      {
+        "id": "105",
+        "estimated": 720,
+        "actual": 950,
+        "evidence_lines": 1751,
+        "excluded_lines": 74,
+        "range": "2a53764..(completion working tree)",
+        "note": "Phase-014 rule (measure.py, spec 1.1.6 incl. row 4a: non-JSON files under .agent/validator/ are evidence). Includes the post-105 planning record (DEBT 0.51.0, spec 1.1.6, backlog_reconciliation 0.1.4) per the A1/A2-in-feature-range precedent. Superseded interim figures (907, 1561, 50) (taken before row 4a and before the planning record). Rolling threshold 3 x mean(596,885,991) = 2472."
       }
     ],
     "phase_level_items": [
@@ -2181,7 +2224,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "105",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -2253,10 +2296,11 @@
       }
     ]
   },
-  "last_action": "Contract 105 approved; preparing attempt base",
+  "last_action": "Feature 105 complete; DEBT record next",
   "completed_contract_ids": [
     "099",
     "103",
-    "104"
+    "104",
+    "105"
   ]
 }

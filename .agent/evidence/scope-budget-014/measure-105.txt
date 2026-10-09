@@ -1,0 +1,43 @@
+python3 .agent/evidence/scope-budget-014/measure.py --range 105=2a53764.. --files
+== 105: 2a53764..WORKTREE
+   resolved 2a537644dc93cc71786e6468c8f4295079d1c973..WORKTREE+untracked
+   paths=90 binary_paths=0
+   class                       files   lines
+   budget/product                  3     145
+   budget/product-ext              0       0
+   budget/contract                 1     442
+   budget/verdict                  4     313
+   budget/audit-deliverable        0       0
+   budget/planning                 2       7
+   evidence                       79    1709
+   excluded/run_state              1      74
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                  10  CHANGELOG.md
+   budget/product                   7  tools/README.md
+   budget/product                 128  tools/fixtures_self_test.sh
+   budget/contract                442  .agent/contracts/105.json
+   budget/verdict                  62  .agent/qa/105-contract-review.json
+   budget/verdict                  40  .agent/qa/105.json
+   budget/verdict                 136  .agent/validator/105-mode-a.json
+   budget/verdict                  75  .agent/validator/105-mode-b.json
+   budget/planning                  2  .agent/feature_list_014.json
+   budget/planning                  5  docs/planning/phase_014.yaml
+   excluded/run_state              74  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                       41    1199  .agent/evidence/105-qa-adversarial-contract-review/
+   evidence                        1      61  .agent/evidence/105-qa-adversarial-helpers/
+   evidence                        1      12  .agent/evidence/105-qa-adversarial.txt
+   evidence                        1      33  .agent/evidence/105-qa-helpers/
+   evidence                       29     233  .agent/evidence/105/
+   evidence                        2     134  .agent/evidence/debt-0.51.0/
+   evidence                        2      14  .agent/evidence/scope-budget-014/
+   evidence                        2      23  .agent/validator/105-mode-b-rerun/
+   PRODUCT_LINES=145
+   PROCESS_OVERHEAD_LINES=762  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=907
+   EVIDENCE_LINES=1709
+   EXCLUDED_LINES=74
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=2690  (= budget 907 + evidence 1709 + excluded 74 + unclassified 0)
+EXIT:0

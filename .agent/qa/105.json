@@ -1,0 +1,40 @@
+{
+  "feature_id": "105",
+  "qa_pass": true,
+  "checks_run": 13,
+  "checks_passed": 13,
+  "adversarial": {
+    "performed": true,
+    "description": "Evaluator-originated name-driven bypass probe (methodology/02 Sec 8; not among the contract's 14 verification items or the 92 contract-review mutants, which use only ordinary directory names), run by the replayable helper .agent/evidence/105-qa-adversarial-helpers/special_name_probe.py. The claim map is bash keyed by directory name (claim_count[\"${entry}\"], claimed_dir[\"${f%%/*}\"]); in bash the subscripts '@' and '*' are special even for associative arrays (they expand to all values), so a directory literally named '@' or '*' could have been read as claimed whenever any real claim exists. For each hostile name the helper copies the repository (symlinks preserved) into a private directory outside the repository, creates tools/fixtures/<name>/probe.json, runs bash tools/fixtures_self_test.sh there, and requires exit 1, a 'SELF-TEST FAILED' line and the name reported as an unclaimed subdirectory. Names: an ordinary control, a hidden dot directory, a space, a leading dash, '*', '@', 'a]b' and '$(echo hi)'; an unmodified copy is the positive control (exit 0, 'SELF-TEST OK: 146/146').",
+    "result": "PASS (exit 0, problems: []). The positive control passed (146/146) and all eight hostile or control names made the guard exit 1 with 'SELF-TEST FAILED' and the name reported as an unclaimed subdirectory; no name evaded the claim map. Scratch copies were removed and the real tree was not written.",
+    "evidence": ".agent/evidence/105-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/105/qa/at1-completeness-any-depth.txt",
+    ".agent/evidence/105/qa/at2-claim-map-demonstrations.txt",
+    ".agent/evidence/105/qa/at3-unclaimed-probe.txt",
+    ".agent/evidence/105/qa/at4-readme-claim-map.txt",
+    ".agent/evidence/105/qa/at5-validator-gate.txt",
+    ".agent/evidence/105/qa/s01-contract-valid-and-verbatim.txt",
+    ".agent/evidence/105/qa/s03-scope-boundary.txt",
+    ".agent/evidence/105/qa/s04-claim-map-and-tree.txt",
+    ".agent/evidence/105/qa/s05-discriminating-matrix.txt",
+    ".agent/evidence/105/qa/s06-containment.txt",
+    ".agent/evidence/105/qa/s07-readme-pinned.txt",
+    ".agent/evidence/105/qa/s08-changelog-phase-yaml.txt",
+    ".agent/evidence/105/qa/s09-validator-payload-count.txt",
+    ".agent/evidence/105/qa/validate-final.txt",
+    ".agent/evidence/105-qa-adversarial.txt",
+    ".agent/evidence/105-qa-adversarial-helpers/special_name_probe.py",
+    ".agent/evidence/105-qa-helpers/qa_run.py"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. The Evaluator independently re-ran 13 contract verification commands (AT1-AT5 taken from feature 105 in .agent/feature_list_014.json and asserted byte-identical to the contract's entries; S01 and S03-S09 extracted programmatically from .agent/contracts/105.json; S02 is an attempt-root check and was not re-run), strictly one at a time from the repo root at HEAD d0b387a with PYTHONDONTWRITEBYTECODE=1, and every one exited 0 (the serial guard never refused). Captures are in .agent/evidence/105/qa/ in the 04 Sec 5 shape. Key observations: AT1 and AT2 pass (self-test accounts for every file at any depth; the three pinned claim-map demonstration lines print); AT3 shows the unclaimed-subdirectory probe makes the self-test exit 1 naming zz_unclaimed_probe with SELF-TEST FAILED; AT4 shows the README Fixture self-test section describes the claim map; AT5 and S09 show the validator gate at 16 passing checks against a baseline of 16 with payload gate rc 0; S04 shows 146 files, one claimed subdirectory (convergent_review) and one claim row; S05 shows all 17 discriminating-matrix cases PASS (including both always-pass and always-fail claim_map_check controls and four label ablations); S06 containment holds; S03 shows 73 changed paths all within scope or allowlist. Plus the name-driven bypass adversarial probe (PASS). DISCHARGED: feature 105 AT1-AT5 and the nine supplementary checks (S02 excepted). NOT CLAIMED: NDEBT-042 closure, the DEBT.md and backlog_reconciliation.md updates and the scope-budget record (Orchestrator's act); a claim proves ownership, not execution (104 proves the owning suite runs in CI). No tracked file was modified by the Evaluator; .agent/run_state.json is Orchestrator-owned. The final bash tools/validate.sh result is recorded in .agent/evidence/105/qa/validate-final.txt."
+  },
+  "dod_ref": "standard/definition_of_done.md"
+}

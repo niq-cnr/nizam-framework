@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Phase-014 scope-budget measurement (spec 1.1.4, "Scope budget measurement").
+"""Phase-014 scope-budget measurement (spec 1.1.4, "Scope budget measurement";
+rule row 4a added in spec 1.1.6).
 
 Replayable from the repository root. For each feature commit range it
 classifies every changed path into exactly one path class and prints two
@@ -9,7 +10,11 @@ totals:
   planning lines. This is the figure the Scope Budget Protocol's per-feature
   and cumulative checks use in phase 014.
 * EVIDENCE_LINES -- raw evidence captures and verification helpers under
-  ``.agent/evidence/``. Tracked separately and never gated.
+  ``.agent/evidence/``, plus (spec 1.1.6, row 4a) every file under
+  ``.agent/validator/`` whose name does not end in ``.json`` (raw captures such
+  as Mode B re-run captures; verdicts are JSON). Tracked separately and never
+  gated. A ``.json`` file in a subdirectory of ``.agent/validator/`` still
+  matches no rule and stays UNCLASSIFIED (fail closed).
 
 ``.agent/run_state.json`` is EXCLUDED (coordination churn: the Orchestrator's
 own ledger, which grows with every gate event independent of feature scope,
@@ -55,6 +60,10 @@ RULES: List[Tuple[str, str, str]] = [
     (EVIDENCE, "prefix", ".agent/evidence/"),
     ("budget/contract", "prefix", ".agent/contracts/"),
     ("budget/verdict", "regex", r"\.agent/(qa|validator)/[^/]+\.json"),
+    # Spec 1.1.6 row 4a: non-JSON files at any depth under .agent/validator/
+    # are raw evidence captures (verdicts are JSON). Disjoint from the verdict
+    # rule above, so the order between the two does not matter.
+    (EVIDENCE, "regex", r"\.agent/validator/.+(?<!\.json)"),
     ("budget/audit-deliverable", "prefix", ".agent/audits/"),
     ("budget/planning", "regex", r"\.agent/product_spec[^/]*\.md"),
     ("budget/planning", "regex", r"\.agent/feature_list[^/]*\.json"),

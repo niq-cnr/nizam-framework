@@ -1,0 +1,43 @@
+bash .agent/evidence/debt-0.51.0/c13_interrupt_probe.sh HEAD
+== exported d0b387a05477b99be2ed232981953ac2dc55043d to a private copy (outside the repository)
+== 1. clean run
+OK   claim-map   unclaimed subdirectory -> FAIL
+OK   claim-map   doubly-claimed subdirectory -> FAIL
+OK   claim-map   claim naming a missing suite -> FAIL
+OK   claim-map   claim naming an absent subdirectory -> FAIL
+SELF-TEST OK: 146/146 fixtures accounted for, 0 failed
+rc=0
+PASS clean self-test exits 0
+PASS four claim-map demonstrations print OK
+PASS SELF-TEST OK N/N equals the any-depth file count
+== 2. EXIT trap active inside test_c13
+56:trap cleanup EXIT
+116:  trap "${cleanup}" EXIT
+473:if scratch_dirs fll_scratch; then
+614:test_c13() {
+629:test_c13
+PROBE-TRAP: trap -- 'cleanup_scratch_dirs $TMPDIR/tmp.Rn2nZjX7kZ' EXIT
+PASS the active EXIT trap is cleanup_scratch_dirs, not cleanup
+== 3. interrupt during the C13 swap window
+sent SIGTERM to process group 4093390 during the swap
+self-test rc=143
+-- last lines of the interrupted run
+OK   primitive   vlib_scope_guard (allowed pass / out-of-scope fail)
+== C13 skill-index negative fixture (substitution) ==
+-- git status --short
+ M tools/skill.json
+PASS the swap window was observed
+PASS tools/skill.json is left as the dangling-module fixture
+leaked backup files under TMPDIR: 1
+PASS the C13 backup (SKILL_BAK) is leaked
+[C13] FAIL skill-index
+SUMMARY: 15 passed, 1 failed
+validate rc=1
+PASS validate.sh C13 fails while swapped
+== 4. recovery: git checkout -- tools/skill.json
+[C13] PASS skill-index
+SUMMARY: 16 passed, 0 failed
+validate rc=0
+PASS validate.sh passes after recovery
+RESULT: all expectations hold
+EXIT:0
