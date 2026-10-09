@@ -1,0 +1,21 @@
+python3 - <<'PY'
+import subprocess, sys
+BASE = '64444289ad3e183dab60f3307da1c8d70a68ebd0'
+files = ['tools/linux_trial_sandbox.sh', 'tools/isolated_trial_adapter.py', 'tools/evaluate_convergent_review_prompt.py', 'tools/convergent_review.py', 'tools/validate.sh', 'tools/fixtures_self_test.sh', 'tools/skill.json', 'tools/SKILL.md', 'tools/interface.md', 'NIZAM.json', 'standard/convergent_code_review.md', 'standard/definition_of_done.md', 'CONTEXT.md', '.agent/product_spec_014.md']
+trees = ['schema', '.github', 'tools/fixtures', '.agent/evidence/phase-014-activation']
+run = lambda *a: subprocess.run(a, capture_output=True, text=True)
+bad = []
+for p in files + trees:
+    if run('git', 'cat-file', '-e', BASE + ':' + p).returncode != 0: bad.append('not tracked at base (vacuous guard): ' + p)
+tracked = int(run('git', 'ls-tree', '-r', '--name-only', BASE, '--', *trees).stdout.count('\n'))
+if tracked < 80: bad.append('suspiciously few tracked files under the guarded trees: %d' % tracked)
+d = run('git', 'diff', '--name-only', BASE, '--', *files, *trees).stdout.split()
+if d: bad.append('changed since base: ' + ', '.join(d))
+u = run('git', 'status', '--porcelain', '--untracked-files=all', '--', *trees).stdout.split('\n')
+u = [l for l in u if l.strip()]
+if u: bad.append('untracked or modified under guarded trees: ' + '; '.join(u))
+print('guarded files:', len(files), 'guarded trees:', len(trees), 'tracked files under trees at base:', tracked, 'problems:', bad)
+sys.exit(1 if bad else 0)
+PY
+guarded files: 14 guarded trees: 4 tracked files under trees at base: 222 problems: []
+EXIT:0

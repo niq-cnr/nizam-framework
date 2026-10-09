@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "014-ga-track",
-  "current_feature": "103",
+  "current_feature": "104",
   "status": "in_progress",
-  "updated_at": "2026-10-09T17:18:09Z",
+  "updated_at": "2026-10-09T17:39:44Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -225,6 +225,10 @@
     },
     "103-contract": {
       "attempts": 3,
+      "limit": 3
+    },
+    "103-implementation": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -1554,6 +1558,36 @@
       "event": "contract_approved",
       "feature": "103",
       "detail": "Contract 103 APPROVED at rev 2 (final, 3/3): validator Mode A + evaluator contract re-review (.agent/qa/103-contract-review.json; positive control 26/26 on <A>; 51/53 mutants caught, survivors m04b (regex-invisible env read, assigned to Mode B) and m14 (cosmetic) documented). Canonical-first: phase_014.yaml step 103 AWAITING_IMPLEMENTATION, contract approved, active_contract_id 103."
+    },
+    {
+      "at": "2026-10-09T17:18:20Z",
+      "event": "implementation_attempt_started",
+      "feature": "103",
+      "detail": "103-implementation attempt 1/3: attempt base <B>=9289b1b; detached worktree /home/cnross/workspace02/nizam-wt-103-attempt1."
+    },
+    {
+      "at": "2026-10-09T17:21:44Z",
+      "event": "implementation_promoted",
+      "feature": "103",
+      "detail": "103-implementation attempt 1: generator commit baed81c (parent <B>=9289b1b; AT1-AT8 + S01-S18 all exit 0 on the restricted host; product +104/-2; 27 evidence files) verified in-scope (no sandbox/adapter/run_state/feature_list/DEBT change) and cherry-picked as 361b667; worktree removed. Next: Mode B on git diff 9289b1b..HEAD."
+    },
+    {
+      "at": "2026-10-09T17:23:26Z",
+      "event": "implementation_validated",
+      "feature": "103",
+      "detail": "Validator Mode B APPROVED feature 103 at 361b667 (.agent/validator/103-mode-b.json), including the hand review for disguised env/spawn constructs. Next: evaluator QA."
+    },
+    {
+      "at": "2026-10-09T17:39:09Z",
+      "event": "feature_complete",
+      "feature": "103",
+      "detail": "Feature 103 COMPLETE (NDEBT-043 sandbox prerequisite handling: lazy fail-safe isolation probe; UNSUPPORTED nonpassing in required mode; explicit --allow-unsupported-isolation only; no unsandboxed fallback). Contract approved rev 2 (3/3) after operator-approved amendment A1; implementation attempt 1 (baed81c -> 361b667); Mode B approved incl. hand review; QA pass .agent/qa/103.json (25 checks + adversarial 5/5 via a replayable helper; validate 16/16). Evidence gate: first run rejected the narrative adversarial file (not 04 s5-shaped); evaluator re-captured it; gate then passed. Restricted-host branches only; capable-host proof belongs to 104 AT5-AT8; NDEBT-043 stays OPEN until then. Canonical-first: phase_014.yaml 103 COMPLETED, feature_list_014 103 complete, run_state. Lines 6770 vs estimate 280. Next: 104."
+    },
+    {
+      "at": "2026-10-09T17:39:44Z",
+      "event": "scope_budget_flag",
+      "feature": "103",
+      "detail": "Scope Budget Protocol flag: feature 103 actual 6770 lines vs estimate 280 (> 3x the rolling average; breakdown: 3811 evaluator contract-review evidence+mutant helpers, 1154 QA evidence, 915 generator evidence, 519 contract, 224 verdicts/state, 93 tools product, 63 planning, 10 CHANGELOG). Phase cumulative 8274 / 6660 (124%; 130% ceiling 8658). Human acknowledgment required; feature 104 NOT started pending the operator's budget decision."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1727,13 +1761,19 @@
   },
   "scope_budget": {
     "original_estimate_lines": 6660,
-    "total_lines_changed": 1504,
+    "total_lines_changed": 8274,
     "per_feature": [
       {
         "id": "099",
         "estimated": 920,
         "actual": 1504,
         "note": "git diff --numstat 483f016 (tracked, incl. contract/verdicts/QA/evidence/state) + untracked QA files at completion"
+      },
+      {
+        "id": "103",
+        "estimated": 280,
+        "actual": 6770,
+        "note": "git diff --numstat 88959c9 (tracked: amendment A1, contract, verdicts, QA, evidence, state) + untracked QA files at completion"
       }
     ],
     "ceiling_130pct": 8658,
@@ -1925,7 +1965,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "103",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -1997,8 +2037,9 @@
       }
     ]
   },
-  "last_action": "Contract 103 approved; awaiting implementation in isolated attempt worktree",
+  "last_action": "Feature 103 complete; 104 paused pending scope-budget decision",
   "completed_contract_ids": [
-    "099"
+    "099",
+    "103"
   ]
 }

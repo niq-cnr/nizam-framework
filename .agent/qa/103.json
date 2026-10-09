@@ -1,0 +1,51 @@
+{
+  "feature_id": "103",
+  "qa_pass": true,
+  "checks_run": 26,
+  "checks_passed": 26,
+  "adversarial": {
+    "performed": true,
+    "description": "Evaluator-originated probe (methodology/02 Sec 8; not among the contract's 26 verification items or the contract-review mutants), run by the replayable helper .agent/evidence/103-qa-adversarial-helpers/probe.py in scratch copies of HEAD outside the repo, replaying the contract's own AT1/AT2/AT3/S11/S13/S17 commands: (a) hostile unshare shims on PATH -- killed by SIGKILL, and one that prints success text but exits 1 (with the flag); (b) five single-point mutations of tools/test_convergent_review.py: M1 decorator runs the test body instead of skipping, M2 probe ignores the unshare exit status, M3 exit status ignores UNSUPPORTED, M4 the flag also forgives real failures, M5 probe treats unshare-absent as available.",
+    "result": "PASS: both shim scenarios were handled correctly (UNSUPPORTED, never available; flag converts only UNSUPPORTED). 5/5 mutants detected by at least one contract check (M1, M2 by AT1/AT2; M3 by AT1; M4 by AT3, S13, S17; M5 by S11). M4 and M5 survive AT1/AT2 alone and are caught only by the targeted checks, so those are load-bearing. M1 shows a regressed decorator makes the five tests FAIL (the unchanged sandbox fails closed), never pass unsandboxed. The replayable helper dropped the earlier inconclusive non-executable-shim scenario; its full check-by-mutant matrix additionally shows M1 also caught by S11/S13, M2 by S13, M3 by S11. Restricted host only.",
+    "evidence": ".agent/evidence/103-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/103/qa/at1-required-mode.txt",
+    ".agent/evidence/103/qa/at2-allow-flag.txt",
+    ".agent/evidence/103/qa/at3-flag-does-not-mask-failures.txt",
+    ".agent/evidence/103/qa/at4-sandbox-removal-mutation.txt",
+    ".agent/evidence/103/qa/at5-sandbox-adapter-unmodified.txt",
+    ".agent/evidence/103/qa/at6-readme-machine-validation.txt",
+    ".agent/evidence/103/qa/at7-validator-gate.txt",
+    ".agent/evidence/103/qa/at8-fixtures-self-test.txt",
+    ".agent/evidence/103/qa/s01-contract-valid-and-verbatim.txt",
+    ".agent/evidence/103/qa/s02-scope-boundary.txt",
+    ".agent/evidence/103/qa/s03-phase-yaml-step-record.txt",
+    ".agent/evidence/103/qa/s04-readme-version-and-changelog.txt",
+    ".agent/evidence/103/qa/s05-readme-paragraph-pinned.txt",
+    ".agent/evidence/103/qa/s06-changelog-pinned.txt",
+    ".agent/evidence/103/qa/s07-unchanged-surfaces.txt",
+    ".agent/evidence/103/qa/s08-test-bodies-unchanged.txt",
+    ".agent/evidence/103/qa/s09-simulated-unavailable-required-and-allow.txt",
+    ".agent/evidence/103/qa/s10-simulated-partial-capability-fails-loud.txt",
+    ".agent/evidence/103/qa/s11-missing-unshare-and-probe-timeout.txt",
+    ".agent/evidence/103/qa/s12-flag-parsing-and-lazy-probe.txt",
+    ".agent/evidence/103/qa/s13-flag-does-not-mask-under-unavailability.txt",
+    ".agent/evidence/103/qa/s14-no-unsandboxed-fallback-static.txt",
+    ".agent/evidence/103/qa/s16-host-capability-record.txt",
+    ".agent/evidence/103/qa/s17-flag-does-not-mask-partial-capability.txt",
+    ".agent/evidence/103/qa/s18-capable-shim-ordinary-skips.txt",
+    ".agent/evidence/103-qa-adversarial.txt",
+    ".agent/evidence/103-qa-adversarial-helpers/probe.py",
+    ".agent/evidence/103/qa/validate-final.txt"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS on the restricted host only. The Evaluator independently re-ran AT1-AT8 and S01-S14, S16-S18 (25 contract verification commands, extracted programmatically from .agent/contracts/103.json rev 2 and run one at a time from the repo root against promoted HEAD 361b667 with PYTHONDONTWRITEBYTECODE=1) and every one exited 0; captures are in .agent/evidence/103/qa/ in the 04 Sec 5 shape. S15 is an attempt-root check and was not re-run (re-derived by Mode B). Plus the adversarial probe (5/5 mutants detected). Host: kernel.apparmor_restrict_unprivileged_userns=1, isolation available: False, so AT1/AT2/AT4 exercised only their restricted-host branches (five isolation-dependent tests reported UNSUPPORTED, required mode exit 1, flagged run exit 0, CONFORMANCE: NOT FULL). NO capable-host pass is claimed: the capable branches (including AT2's capable branch and AT4's '40 != 0' side) are not exercised here and belong to feature 104 AT5-AT8. NDEBT-043 stays OPEN per the contract; NDEBT-046 remains open. No tracked file was modified by the Evaluator; .agent/run_state.json is Orchestrator-owned. The final bash tools/validate.sh result is recorded in .agent/evidence/103/qa/validate-final.txt."
+  },
+  "dod_ref": "standard/definition_of_done.md"
+}

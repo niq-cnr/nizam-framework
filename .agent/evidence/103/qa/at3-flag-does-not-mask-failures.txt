@@ -1,0 +1,47 @@
+python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace tools/fixtures/convergent_review/manifest.json '"cases"' '"cases_tampered"' --expect-rc nonzero --expect '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))' -- python3 tools/test_convergent_review.py --allow-unsupported-isolation
+scratch_run: replaced 1 occurrence in tools/fixtures/convergent_review/manifest.json
+scratch_run: command python3 tools/test_convergent_review.py --allow-unsupported-isolation -> exit 1
+  | test_replay_rejects_manifest_ledger_and_markdown_symlinks (__main__.SemanticMutationTests.test_replay_rejects_manifest_ledger_and_markdown_symlinks) ... ok
+  | test_replay_rejects_multiple_prior_ledgers (__main__.SemanticMutationTests.test_replay_rejects_multiple_prior_ledgers) ... ok
+  | test_replay_rejects_symlinked_root_ancestor (__main__.SemanticMutationTests.test_replay_rejects_symlinked_root_ancestor) ... ok
+  | test_replay_schema_and_runtime_reject_duplicate_trial_numbers (__main__.SemanticMutationTests.test_replay_schema_and_runtime_reject_duplicate_trial_numbers) ... ok
+  | test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths (__main__.SemanticMutationTests.test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths) ... ok
+  | test_semantic_mutation_changes_fingerprint_but_line_shift_does_not (__main__.SemanticMutationTests.test_semantic_mutation_changes_fingerprint_but_line_shift_does_not) ... ok
+  | test_severity_disagreement_uses_most_severe_distinct_trial (__main__.SemanticMutationTests.test_severity_disagreement_uses_most_severe_distinct_trial) ... ok
+  | test_stale_trial_head_rejected (__main__.SemanticMutationTests.test_stale_trial_head_rejected) ... ok
+  | test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations (__main__.SemanticMutationTests.test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations) ... ok
+  | test_symbol_case_is_semantically_distinct (__main__.SemanticMutationTests.test_symbol_case_is_semantically_distinct) ... ok
+  | test_trial_evidence_must_match_packet_digest_excerpt_and_range (__main__.SemanticMutationTests.test_trial_evidence_must_match_packet_digest_excerpt_and_range) ... ok
+  | test_trial_rejects_model_owned_fields (__main__.SemanticMutationTests.test_trial_rejects_model_owned_fields) ... ok
+  | test_true_full_revert_is_representable_with_absence_tombstone (__main__.SemanticMutationTests.test_true_full_revert_is_representable_with_absence_tombstone) ... ok
+  | test_trusted_builder_binds_full_tree_and_old_bytes (__main__.SemanticMutationTests.test_trusted_builder_binds_full_tree_and_old_bytes) ... ok
+  | test_unauthorized_or_unknown_suppression_rejected (__main__.SemanticMutationTests.test_unauthorized_or_unknown_suppression_rejected) ... ok
+  | 
+  | ======================================================================
+  | ERROR: test_all_fixture_cases_and_replay_retention (__main__.FixtureCorpusTests.test_all_fixture_cases_and_replay_retention)
+  | ----------------------------------------------------------------------
+  | Traceback (most recent call last):
+  |   File "/home/cnross/.tmp/nizam-scratch-run-wice3x8_/repo/tools/test_convergent_review.py", line 136, in test_all_fixture_cases_and_replay_retention
+  |     for item in manifest["cases"]:
+  |                 ~~~~~~~~^^^^^^^^^
+  | KeyError: 'cases'
+  | 
+  | ======================================================================
+  | ERROR: test_manifest_is_frozen_twelve_case_corpus (__main__.FixtureCorpusTests.test_manifest_is_frozen_twelve_case_corpus)
+  | ----------------------------------------------------------------------
+  | Traceback (most recent call last):
+  |   File "/home/cnross/.tmp/nizam-scratch-run-wice3x8_/repo/tools/test_convergent_review.py", line 122, in test_manifest_is_frozen_twelve_case_corpus
+  |     self.assertEqual(len(manifest["cases"]), 12)
+  |                          ~~~~~~~~^^^^^^^^^
+  | KeyError: 'cases'
+  | 
+  | ----------------------------------------------------------------------
+  | Ran 54 tests in 4.260s
+  | 
+  | FAILED (errors=2, skipped=5)
+  | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5; run unsuccessful)
+  | --allow-unsupported-isolation given: the UNSUPPORTED outcome does not fail this run (local development only; CI must not pass this flag).
+PASS exit status is non-zero
+PASS output matches '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0
