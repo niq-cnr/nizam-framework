@@ -1,0 +1,10 @@
+python3 .agent/evidence/scope-budget-014/verify_rebaseline.py
+PASS feature-list-schema: 0 error(s) against schema/feature_list.schema.json
+PASS spec-frontmatter-schema: 0 error(s) against schema/frontmatter.schema.json
+PASS spec-versioning-fields: spec_version=1.1.4 version=1.1.4 newest=1.1.4@2026-10-09T17:51:07Z updated_at=2026-10-09T17:51:07Z
+PASS spec-version-lockstep: feature_list=1.1.4 spec=1.1.4
+PASS dag: missing=[] out_of_order=[] (list order topological => acyclic)
+PASS estimate-arithmetic: pending_sum=6780 range=4840-8670 original=8600 expected=ceil100(1481+300+6780)=8600 ceiling=11180 high_end=10451
+PASS frozen-activation-infrastructure-unchanged: git status --porcelain entries: 0
+SUMMARY: 7 passed, 0 failed
+EXIT:0
