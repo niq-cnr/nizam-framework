@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "103",
   "status": "in_progress",
-  "updated_at": "2026-10-09T08:08:13Z",
+  "updated_at": "2026-10-09T15:51:52Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -221,6 +221,10 @@
     },
     "099-implementation": {
       "attempts": 1,
+      "limit": 3
+    },
+    "103-contract": {
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -1502,6 +1506,36 @@
       "event": "feature_complete",
       "feature": "099",
       "detail": "Feature 099 COMPLETE (GA-track activation wave: ecosystem/06+08 active and registered; H-CONSOLIDATION and H-GA DEFINED/OUTSTANDING, not exercised). Contract 099 approved (Mode A rev 2, 3/3) + evaluator contract review; implementation attempt 1 (4a4d3f7 -> 2314d2a); Mode B approved; QA pass .agent/qa/099.json (20 checks + adversarial 6/6; validate 16/16); evidence gate verified (22 files, all EXIT:0). Canonical-first: phase_014.yaml step 099 COMPLETED, feature_list_014 099 complete, run_state. Lines 1504 vs estimate 920. Next eligible in lane: 103."
+    },
+    {
+      "at": "2026-10-09T14:30:07Z",
+      "event": "contract_proposed",
+      "feature": "103",
+      "detail": "Contract 103 (NDEBT-043 sandbox prerequisite handling) proposed: 8 ATs verbatim + 16 supplementary; 099 isolation/ownership/anchoring lessons built in; prototype in scratch passes AT1-AT8 and S01-S16 on the restricted host with mutation controls. NDEBT-043 stays OPEN until capable-host proof (104). 103-contract attempt 1/3."
+    },
+    {
+      "at": "2026-10-09T14:33:52Z",
+      "event": "contract_rejected",
+      "feature": "103",
+      "detail": "Validator Mode A REJECTED contract 103 rev 0 on two minor issues (CHANGELOG bullet house form/tense; S14 env-var/getenv guarantee). 103-contract attempt 2/3 begins."
+    },
+    {
+      "at": "2026-10-09T14:37:55Z",
+      "event": "contract_validated",
+      "feature": "103",
+      "detail": "Validator Mode A APPROVED contract 103 at revision 1 (103-contract 2/3). Next: evaluator contract review."
+    },
+    {
+      "at": "2026-10-09T15:28:25Z",
+      "event": "contract_rejected",
+      "feature": "103",
+      "detail": "Evaluator contract review REJECTED contract 103 rev 1 (.agent/qa/103-contract-review.json): HIGH - operator-approved AT4's capable-host branch is unsatisfiable (removing the namespace sandbox stays undetectable because Landlock still enforces the file leg and the network leg passes on any OSError), and the same refuted premise underlies 104 AT7/AT8; MEDIUM - flag-masking of sandbox failures and ordinary-skip-vs-UNSUPPORTED uncovered; LOW - S14 spawn net holes. 32/38 mutants caught; positive control 24/24. 103-contract 2/3 consumed. Feature 103 PAUSED before the final revision: the AT4 / 103-description / 104 AT7-AT8 defect is in operator-approved acceptance tests and requires a Planner amendment plus operator approval (methodology/00_planning.md re-planning rule) before revision 2."
+    },
+    {
+      "at": "2026-10-09T15:51:52Z",
+      "event": "operator_gate_decision",
+      "feature": "103",
+      "detail": "Phase-014 acceptance-test amendment A1 APPROVED (methodology/00_planning.md re-planning rule). Recorded BEFORE the amendment is applied (NDEBT-018). Operator verbatim: \"Approve amendment A1 to the phase-014 acceptance tests (spec 1.1.3): 103 AT4 removes both isolation halves (namespaces and Landlock) and its capable branch requires 'AssertionError: 40 != 0'; 104 AT8 requires the same signature; the 103/104 descriptions and spec bullets are updated as proposed; NDEBT-046 is logged. Approved.\" (2026-10-09, interactive session). Proposal: .agent/evidence/103-qa-adversarial-contract-review/amendment-proposal.md. 103-contract counter unchanged (2/3 consumed)."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1945,7 +1979,7 @@
       }
     ]
   },
-  "last_action": "Feature 099 complete; next 103",
+  "last_action": "Feature 103 paused: acceptance-test amendment (AT4, 104 AT7/AT8) needed before final contract revision",
   "completed_contract_ids": [
     "099"
   ]

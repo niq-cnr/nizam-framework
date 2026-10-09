@@ -1,0 +1,46 @@
+python3 - <<'PY'
+import json, os, pathlib, re, subprocess, sys, tempfile
+FIVE = ['test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'test_prompt_evaluator_runs_three_isolated_validated_trials', 'test_prompt_evaluator_uses_per_trial_packet_copies']
+PROBE_ARGS = '--user --map-root-user true'
+L = json.load(open('.agent/contracts/103.json'))['design_notes']['output_contract']['lines']
+def make_shim(directory, body):
+    directory = pathlib.Path(directory); (directory / 'bin').mkdir(parents=True)
+    log = directory / 'calls.log'; log.write_text('')
+    shim = directory / 'bin' / 'unshare'
+    shim.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "' + str(log) + '"\n' + body)
+    shim.chmod(0o755)
+    return directory / 'bin', log
+def run_suite(shim_dir, *args, path=None):
+    env = dict(os.environ)
+    env['PATH'] = path if path is not None else str(shim_dir) + os.pathsep + os.environ['PATH']
+    p = subprocess.run([sys.executable, 'tools/test_convergent_review.py', *args], env=env, capture_output=True, text=True)
+    return p.returncode, p.stdout + p.stderr
+def unsupported_lines(out):
+    return {t: bool(re.search(r"^" + t + r"\b.*skipped 'UNSUPPORTED: user-namespace isolation unavailable", out, re.M)) for t in FIVE}
+def has_line(out, line):
+    return re.search(r'^' + re.escape(line) + r'$', out, re.M) is not None
+bad = []
+with tempfile.TemporaryDirectory() as d:
+    shim_dir, log = make_shim(d, 'exit 1\n')
+    for label, extra in (('required', []), ('allow', ['--allow-unsupported-isolation'])):
+        log.write_text('')
+        rc, out = run_suite(shim_dir, *extra)
+        calls = log.read_text().splitlines()
+        if 'Ran 54 tests' not in out: bad.append(label + ': did not run 54 tests')
+        missing = [t for t, ok in unsupported_lines(out).items() if not ok]
+        if missing: bad.append(label + ': not reported UNSUPPORTED on its own line: ' + ', '.join(missing))
+        if len(re.findall(r"^test_\w+ .* skipped 'UNSUPPORTED:", out, re.M)) != 5: bad.append(label + ': UNSUPPORTED line count != 5')
+        if re.search(r'^(FAIL|ERROR): test_', out, re.M): bad.append(label + ': unexpected FAIL/ERROR')
+        if not has_line(out, L['not_full_unsupported'].replace('<N>', '5')): bad.append(label + ': exact NOT FULL line missing')
+        if has_line(out, L['full']) or 'CONFORMANCE: FULL' in out: bad.append(label + ': FULL printed on an unsupported host')
+        if calls != [PROBE_ARGS]: bad.append(label + ': unshare invoked other than exactly one probe: ' + repr(calls))
+        if label == 'required':
+            if rc == 0: bad.append('required mode exited 0 although isolation is unavailable')
+            if not has_line(out, L['required_note']) or L['allow_note'] in out: bad.append('required: note lines wrong')
+        else:
+            if rc != 0: bad.append('--allow-unsupported-isolation did not exit 0 (rc=%d)' % rc)
+            if not has_line(out, L['allow_note']) or L['required_note'] in out: bad.append('allow: note lines wrong')
+        print(label, 'rc=%d' % rc, 'probe calls:', calls)
+print('problems:', bad)
+sys.exit(1 if bad else 0)
+PY

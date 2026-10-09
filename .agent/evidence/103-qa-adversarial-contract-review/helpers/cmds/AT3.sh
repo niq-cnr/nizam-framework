@@ -1,0 +1,1 @@
+python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace tools/fixtures/convergent_review/manifest.json '"cases"' '"cases_tampered"' --expect-rc nonzero --expect '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))' -- python3 tools/test_convergent_review.py --allow-unsupported-isolation

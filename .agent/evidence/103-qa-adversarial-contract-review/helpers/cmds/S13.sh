@@ -1,0 +1,33 @@
+python3 - <<'PY'
+import json, os, pathlib, re, subprocess, sys, tempfile
+FIVE = ['test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'test_prompt_evaluator_runs_three_isolated_validated_trials', 'test_prompt_evaluator_uses_per_trial_packet_copies']
+PROBE_ARGS = '--user --map-root-user true'
+L = json.load(open('.agent/contracts/103.json'))['design_notes']['output_contract']['lines']
+def make_shim(directory, body):
+    directory = pathlib.Path(directory); (directory / 'bin').mkdir(parents=True)
+    log = directory / 'calls.log'; log.write_text('')
+    shim = directory / 'bin' / 'unshare'
+    shim.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "' + str(log) + '"\n' + body)
+    shim.chmod(0o755)
+    return directory / 'bin', log
+def run_suite(shim_dir, *args, path=None):
+    env = dict(os.environ)
+    env['PATH'] = path if path is not None else str(shim_dir) + os.pathsep + os.environ['PATH']
+    p = subprocess.run([sys.executable, 'tools/test_convergent_review.py', *args], env=env, capture_output=True, text=True)
+    return p.returncode, p.stdout + p.stderr
+def unsupported_lines(out):
+    return {t: bool(re.search(r"^" + t + r"\b.*skipped 'UNSUPPORTED: user-namespace isolation unavailable", out, re.M)) for t in FIVE}
+def has_line(out, line):
+    return re.search(r'^' + re.escape(line) + r'$', out, re.M) is not None
+bad = []
+with tempfile.TemporaryDirectory() as d:
+    shim_dir, log = make_shim(d, 'exit 1\n')
+    env = dict(os.environ); env['PATH'] = str(shim_dir) + os.pathsep + env['PATH']
+    p = subprocess.run([sys.executable, '.agent/evidence/phase-014-activation/gates/scratch_run.py', '--replace', 'tools/fixtures/convergent_review/manifest.json', '"cases"', '"cases_tampered"', '--expect-rc', 'nonzero', '--expect', r'^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))', '--expect', r"^test_linux_sandbox_blocks_cross_trial_files_and_network\b.*UNSUPPORTED", '--expect', r'^CONFORMANCE: NOT FULL \(UNSUPPORTED isolation-dependent tests: 5; run unsuccessful\)$', '--', 'python3', 'tools/test_convergent_review.py', '--allow-unsupported-isolation'], env=env, capture_output=True, text=True)
+    out = p.stdout + p.stderr
+    print(out[-1500:])
+    if p.returncode != 0: bad.append('scratch_run expectations did not hold (rc=%d)' % p.returncode)
+    if log.read_text().splitlines() != [PROBE_ARGS]: bad.append('unexpected unshare calls: ' + repr(log.read_text()))
+print('problems:', bad)
+sys.exit(1 if bad else 0)
+PY

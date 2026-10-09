@@ -4,13 +4,16 @@ title: "Nizam Framework — Phase 014 Spec: GA Track — the Real Multi-Repo Pil
 description: "Plan-of-record spec for phase 014, activated 2026-10-08 under H-PHASE-014 with the approved amendments: the real non-scratch multi-repo pilot, the Repeat/GA lifecycle protocols with their reserved gates, and the folded enforcement-integrity maintenance tranche (features 103-109) ahead of the GA-readiness assessment."
 tags: [spec, ecosystem-cycle, ga, pilot, maintenance, phase-014]
 status: active
-last_audited: "2026-10-08"
+last_audited: "2026-10-09"
 authoritative_source: NA
-version: 1.1.2
-spec_version: "1.1.2"
+version: 1.1.3
+spec_version: "1.1.3"
 created_at: "2026-09-30T10:24:00Z"
-updated_at: "2026-10-08T13:22:24Z"
+updated_at: "2026-10-09T15:52:32Z"
 change_log:
+  - version: "1.1.3"
+    date: "2026-10-09T15:52:32Z"
+    summary: "PATCH (no scope change; design intent unchanged; product_spec_013 1.1.2 / 014 1.0.1 precedent: factual correction of acceptance-test commands), routed through the Planner per methodology/00_planning.md Section 9 under operator decision 2026-10-09T15:51:52Z (run_state operator_gate_decision, recorded before this change per NDEBT-018); operator verbatim: 'Approve amendment A1 to the phase-014 acceptance tests (spec 1.1.3): 103 AT4 removes both isolation halves (namespaces and Landlock) and its capable branch requires 'AssertionError: 40 != 0'; 104 AT8 requires the same signature; the 103/104 descriptions and spec bullets are updated as proposed; NDEBT-046 is logged. Approved.' The Evaluator's contract-103 review (.agent/qa/103-contract-review.json issue 1; evidence 05-coverage-gaps.txt F1/F1c) refuted, by execution, the premise that removing the unshare namespaces from tools/linux_trial_sandbox.sh turns test_linux_sandbox_blocks_cross_trial_files_and_network red on a capable host: Landlock alone enforces the file leg and the network leg accepts any OSError, so the suite stays 'Ran 54 tests / OK / CONFORMANCE: FULL'. Applied: 103 AT4's mutation now removes both isolation halves (adds the fail-closed replacement of the adapter's Landlock restrict-self call) and its capable branch also requires 'AssertionError: 40 != 0'; 104 AT8 requires the same breach signature; the 103 and 104 descriptions and this spec's 103/104 bullets name the isolation-removal mutation; the namespace-coverage gap and the vacuous execution test are logged as NDEBT-046 (not in phase-014 scope). Proven in scratch (.agent/evidence/103-qa-adversarial-contract-review/amendment-proposal.md Section 6): red at base on the restricted host, green under a contract-faithful implementation on both branches, and red for each injected defect in the branch that can observe it. feature_list_014 spec_version moves to 1.1.3 in lockstep."
   - version: "1.1.2"
     date: "2026-10-08T13:22:24Z"
     summary: "PATCH (no scope change): Validator round-2 corrections. (B) Feature 102 AT5, the NDEBT-044 (e) open-debt roll, is reclassified from Planner hardening to approved-tranche coverage under the 11:21:14Z decision ('NDEBT-044, split by concern'). The remaining Planner hardening (099 AT3/AT6/AT7, 101 AT2, 102 AT2/AT3/AT7) was ACKNOWLEDGED by the operator, verbatim 'acknowledged.' (run_state operator_gate_decision 2026-10-08T13:20:12Z), so nothing is pending and no decline fallback is defined; the earlier 'revert to the 1.0.1 forms' language is removed. (C) The garbled 102 bullet is repaired, and the unverifiable statement about the Orchestrator's brief is removed. feature_list_014 spec_version moves to 1.1.2 in lockstep."
@@ -135,6 +138,14 @@ before it was scheduled (AH-2).
   `CONFORMANCE: FULL`. The capability probe is the host's `unshare`, independent of
   the sandbox script. The sandbox script and the trial adapter are not modified.
 
+  Capable-host proof (103 AT4's capable branch, discharged in CI by 104's negative
+  control): with *both* isolation halves removed in a scratch copy — the `unshare`
+  namespace line of the sandbox script and the adapter's Landlock restrict-self call —
+  the run fails on `test_linux_sandbox_blocks_cross_trial_files_and_network` with
+  `AssertionError: 40 != 0` (the cross-trial secret was read). Removing the namespaces
+  alone is detected by no test in the suite: Landlock still enforces the file leg and
+  the network leg accepts any `OSError`. That gap is `NDEBT-046`, outside 103's scope.
+
   This is the opposite polarity to the `--require-isolation` opt-in that NIP-0003
   sketches for its own future suite. The divergence is recorded for the NIP's
   pre-acceptance revision.
@@ -144,7 +155,11 @@ before it was scheduled (AH-2).
   the workflow (`standard/definition_of_done.md` §8 and §11, and `tools/README.md`).
   `schema/README.md` states that the suite is the review schema family's **sole
   validator**; C12 coverage of that family is left to 101 / `H-CONSOLIDATION`. CI
-  evidence is a green run plus a throwaway-branch negative control.
+  evidence is a green run plus a throwaway-branch negative control. The throwaway
+  branch is never merged; its only change is 103 AT4's isolation-removal mutation
+  (both halves removed), and the job must fail on
+  `test_linux_sandbox_blocks_cross_trial_files_and_network` with
+  `AssertionError: 40 != 0`.
 
   If hosted runners cannot enable namespaces, the required-mode job fails by design.
   The Generator escalates; it never weakens the mode.
@@ -353,6 +368,9 @@ record, which separates four kinds of test:
   - 102 AT2/AT3/AT7.
 - **new_feature_design** — all tests of 103–109 (the fold was approved; their tests are
   Planner design).
+- **operator_approved_amendment_1_1_3** — 103 AT4 and 104 AT8, rewritten after the
+  Evaluator refuted their capable-host premise (`.agent/qa/103-contract-review.json`
+  issue 1); operator decision 2026-10-09T15:51:52Z. Planner design in origin.
 
 The remaining 099/101/102 tests are carried from 1.0.x.
 

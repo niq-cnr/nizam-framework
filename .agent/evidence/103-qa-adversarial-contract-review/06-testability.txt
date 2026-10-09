@@ -1,0 +1,452 @@
+NIZAM_EVAL_SCRATCH=<scratchpad>/work bash .agent/evidence/103-qa-adversarial-contract-review/helpers/06-testability.sh
+### static scan of the 24 commands (pipeline-swallowed exits, || true, network, wall clock, absolute paths, chdir, bare except-pass)
+AT1   exit-signalled=True findings=- bare-except-pass=0 len=983
+AT2   exit-signalled=True findings=- bare-except-pass=0 len=1015
+AT3   exit-signalled=True findings=- bare-except-pass=0 len=340
+AT4   exit-signalled=True findings=- bare-except-pass=0 len=642
+AT5   exit-signalled=True findings=- bare-except-pass=0 len=92
+AT6   exit-signalled=True findings=- bare-except-pass=0 len=245
+AT7   exit-signalled=True findings=- bare-except-pass=0 len=68
+AT8   exit-signalled=True findings=- bare-except-pass=0 len=47
+S01   exit-signalled=True findings=- bare-except-pass=0 len=2930
+S02   exit-signalled=True findings=- bare-except-pass=0 len=2422
+S03   exit-signalled=True findings=- bare-except-pass=0 len=1832
+S04   exit-signalled=True findings=- bare-except-pass=0 len=1282
+S05   exit-signalled=True findings=- bare-except-pass=0 len=994
+S06   exit-signalled=True findings=- bare-except-pass=0 len=1269
+S07   exit-signalled=True findings=- bare-except-pass=0 len=1466
+S08   exit-signalled=True findings=- bare-except-pass=0 len=3763
+S09   exit-signalled=True findings=- bare-except-pass=0 len=3259
+S10   exit-signalled=True findings=- bare-except-pass=0 len=2705
+S11   exit-signalled=True findings=- bare-except-pass=0 len=3595
+S12   exit-signalled=True findings=- bare-except-pass=0 len=2849
+S13   exit-signalled=True findings=- bare-except-pass=0 len=2631
+S14   exit-signalled=True findings=- bare-except-pass=0 len=3119
+S15   exit-signalled=True findings=- bare-except-pass=0 len=2236
+S16   exit-signalled=True findings=- bare-except-pass=0 len=965
+
+### attempt worktree facts: .git is a FILE -> gitdir: /home/cnross/.tmp/claude-1000/-home-cnross-workspace02-nizam-framework/b87ce099-80d9-4a17-8331-ff678f08d08a/scratchpad/work/base/.git/worktrees/att
+
+### determinism pass 1 (AT1-AT4, S09-S13 in the attempt worktree)
+### AT1 rc=0 (5.4s)
+    isolation available: False exit: 1 FAIL/ERROR: []
+### AT2 rc=0 (4.2s)
+    isolation available: False exit: 0 FAIL/ERROR: []
+### AT3 rc=0 (3.4s)
+    scratch_run: replaced 1 occurrence in tools/fixtures/convergent_review/manifest.json
+    scratch_run: command python3 tools/test_convergent_review.py --allow-unsupported-isolation -> exit 1
+      | test_replay_rejects_manifest_ledger_and_markdown_symlinks (__main__.SemanticMutationTests.test_replay_rejects_manifest_ledger_and_markdown_symlinks) ... ok
+      | test_replay_rejects_multiple_prior_ledgers (__main__.SemanticMutationTests.test_replay_rejects_multiple_prior_ledgers) ... ok
+      | test_replay_rejects_symlinked_root_ancestor (__main__.SemanticMutationTests.test_replay_rejects_symlinked_root_ancestor) ... ok
+      | test_replay_schema_and_runtime_reject_duplicate_trial_numbers (__main__.SemanticMutationTests.test_replay_schema_and_runtime_reject_duplicate_trial_numbers) ... ok
+      | test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths (__main__.SemanticMutationTests.test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths) ... ok
+      | test_semantic_mutation_changes_fingerprint_but_line_shift_does_not (__main__.SemanticMutationTests.test_semantic_mutation_changes_fingerprint_but_line_shift_does_not) ... ok
+      | test_severity_disagreement_uses_most_severe_distinct_trial (__main__.SemanticMutationTests.test_severity_disagreement_uses_most_severe_distinct_trial) ... ok
+      | test_stale_trial_head_rejected (__main__.SemanticMutationTests.test_stale_trial_head_rejected) ... ok
+      | test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations (__main__.SemanticMutationTests.test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations) ... ok
+      | test_symbol_case_is_semantically_distinct (__main__.SemanticMutationTests.test_symbol_case_is_semantically_distinct) ... ok
+      | test_trial_evidence_must_match_packet_digest_excerpt_and_range (__main__.SemanticMutationTests.test_trial_evidence_must_match_packet_digest_excerpt_and_range) ... ok
+      | test_trial_rejects_model_owned_fields (__main__.SemanticMutationTests.test_trial_rejects_model_owned_fields) ... ok
+      | test_true_full_revert_is_representable_with_absence_tombstone (__main__.SemanticMutationTests.test_true_full_revert_is_representable_with_absence_tombstone) ... ok
+      | test_trusted_builder_binds_full_tree_and_old_bytes (__main__.SemanticMutationTests.test_trusted_builder_binds_full_tree_and_old_bytes) ... ok
+      | test_unauthorized_or_unknown_suppression_rejected (__main__.SemanticMutationTests.test_unauthorized_or_unknown_suppression_rejected) ... ok
+      | 
+      | ======================================================================
+      | ERROR: test_all_fixture_cases_and_replay_retention (__main__.FixtureCorpusTests.test_all_fixture_cases_and_replay_retention)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-oz0243w8/repo/tools/test_convergent_review.py", line 136, in test_all_fixture_cases_and_replay_retention
+      |     for item in manifest["cases"]:
+      |                 ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ======================================================================
+      | ERROR: test_manifest_is_frozen_twelve_case_corpus (__main__.FixtureCorpusTests.test_manifest_is_frozen_twelve_case_corpus)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-oz0243w8/repo/tools/test_convergent_review.py", line 122, in test_manifest_is_frozen_twelve_case_corpus
+      |     self.assertEqual(len(manifest["cases"]), 12)
+      |                          ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 3.086s
+      | 
+      | FAILED (errors=2, skipped=5)
+      | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5; run unsuccessful)
+      | --allow-unsupported-isolation given: the UNSUPPORTED outcome does not fail this run (local development only; CI must not pass this flag).
+    PASS exit status is non-zero
+    PASS output matches '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+### AT4 rc=0 (4.7s)
+    scratch_run: replaced 1 occurrence in tools/linux_trial_sandbox.sh
+    scratch_run: command python3 tools/test_convergent_review.py -> exit 1
+      | test_initial_trial_three_extra_evidence_rejected_by_validator_and_renderer (__main__.SemanticMutationTests.test_initial_trial_three_extra_evidence_rejected_by_validator_and_renderer) ... ok
+      | test_later_review_can_add_genuinely_new_finding (__main__.SemanticMutationTests.test_later_review_can_add_genuinely_new_finding) ... ok
+      | test_ledger_count_mutation_is_rejected (__main__.SemanticMutationTests.test_ledger_count_mutation_is_rejected) ... ok
+      | test_ledger_schema_and_runtime_reject_duplicate_trial_digests (__main__.SemanticMutationTests.test_ledger_schema_and_runtime_reject_duplicate_trial_digests) ... ok
+      | test_linux_sandbox_blocks_cross_trial_files_and_network (__main__.SemanticMutationTests.test_linux_sandbox_blocks_cross_trial_files_and_network) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /proc/self/uid_map: Opera
+      | test_linux_sandbox_blocks_execution_of_runner_generated_trial_file (__main__.SemanticMutationTests.test_linux_sandbox_blocks_execution_of_runner_generated_trial_file) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /pr
+      | test_mode_only_delta_is_authenticated_in_ordinary_and_full_audit_packets (__main__.SemanticMutationTests.test_mode_only_delta_is_authenticated_in_ordinary_and_full_audit_packets) ... ok
+      | test_noncanonical_inputs_are_rejected (__main__.SemanticMutationTests.test_noncanonical_inputs_are_rejected) ... ok
+      | test_ordinary_packet_authenticates_old_and_new_bytes (__main__.SemanticMutationTests.test_ordinary_packet_authenticates_old_and_new_bytes) ... ok
+      | test_packet_schema_plus_relational_validator_contract (__main__.SemanticMutationTests.test_packet_schema_plus_relational_validator_contract) ... ok
+      | test_post_visibility_parent_fsync_failure_returns_committed_state (__main__.SemanticMutationTests.test_post_visibility_parent_fsync_failure_returns_committed_state) ... ok
+      | test_prior_head_must_equal_packet_base (__main__.SemanticMutationTests.test_prior_head_must_equal_packet_base) ... ok
+      | test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files (__main__.SemanticMutationTests.test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unsha
+      | test_prompt_evaluator_runs_three_isolated_validated_trials (__main__.SemanticMutationTests.test_prompt_evaluator_runs_three_isolated_validated_trials) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /proc/self/uid_map:
+      | test_prompt_evaluator_uses_per_trial_packet_copies (__main__.SemanticMutationTests.test_prompt_evaluator_uses_per_trial_packet_copies) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /proc/self/uid_map: Operation not p
+      | test_rename_alone_never_resolves (__main__.SemanticMutationTests.test_rename_alone_never_resolves) ... ok
+      | test_reopened_finding_adopts_more_severe_current_consensus (__main__.SemanticMutationTests.test_reopened_finding_adopts_more_severe_current_consensus) ... ok
+      | test_replay_reauthenticates_retained_packet_and_trial_together (__main__.SemanticMutationTests.test_replay_reauthenticates_retained_packet_and_trial_together) ... ok
+      | test_replay_rejects_manifest_ledger_and_markdown_symlinks (__main__.SemanticMutationTests.test_replay_rejects_manifest_ledger_and_markdown_symlinks) ... ok
+      | test_replay_rejects_multiple_prior_ledgers (__main__.SemanticMutationTests.test_replay_rejects_multiple_prior_ledgers) ... ok
+      | test_replay_rejects_symlinked_root_ancestor (__main__.SemanticMutationTests.test_replay_rejects_symlinked_root_ancestor) ... ok
+      | test_replay_schema_and_runtime_reject_duplicate_trial_numbers (__main__.SemanticMutationTests.test_replay_schema_and_runtime_reject_duplicate_trial_numbers) ... ok
+      | test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths (__main__.SemanticMutationTests.test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths) ... ok
+      | test_semantic_mutation_changes_fingerprint_but_line_shift_does_not (__main__.SemanticMutationTests.test_semantic_mutation_changes_fingerprint_but_line_shift_does_not) ... ok
+      | test_severity_disagreement_uses_most_severe_distinct_trial (__main__.SemanticMutationTests.test_severity_disagreement_uses_most_severe_distinct_trial) ... ok
+      | test_stale_trial_head_rejected (__main__.SemanticMutationTests.test_stale_trial_head_rejected) ... ok
+      | test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations (__main__.SemanticMutationTests.test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations) ... ok
+      | test_symbol_case_is_semantically_distinct (__main__.SemanticMutationTests.test_symbol_case_is_semantically_distinct) ... ok
+      | test_trial_evidence_must_match_packet_digest_excerpt_and_range (__main__.SemanticMutationTests.test_trial_evidence_must_match_packet_digest_excerpt_and_range) ... ok
+      | test_trial_rejects_model_owned_fields (__main__.SemanticMutationTests.test_trial_rejects_model_owned_fields) ... ok
+      | test_true_full_revert_is_representable_with_absence_tombstone (__main__.SemanticMutationTests.test_true_full_revert_is_representable_with_absence_tombstone) ... ok
+      | test_trusted_builder_binds_full_tree_and_old_bytes (__main__.SemanticMutationTests.test_trusted_builder_binds_full_tree_and_old_bytes) ... ok
+      | test_unauthorized_or_unknown_suppression_rejected (__main__.SemanticMutationTests.test_unauthorized_or_unknown_suppression_rejected) ... ok
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 4.366s
+      | 
+      | OK (skipped=5)
+      | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5)
+      | REQUIRED CONFORMANCE NOT MET: user-namespace isolation is unavailable on this host; exiting non-zero. Local development may pass --allow-unsupported-isolation (CI must not).
+    PASS exit status is non-zero
+    PASS output matches '^test_linux_sandbox_blocks_cross_trial_files_and_network.*UNSUPPORTED'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+### S09 rc=0 (8.7s)
+    required rc=1 probe calls: ['--user --map-root-user true']
+    allow rc=0 probe calls: ['--user --map-root-user true']
+    problems: []
+### S10 rc=0 (4.4s)
+    rc=1 FAIL lines: ['test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'test_prompt_evaluator_runs_three
+    problems: []
+### S11 rc=0 (1.2s)
+    required rc=1
+    allow rc=0
+    timeout probe: IsolationProbeResult(available=False, detail='probe timed out after 1s') success probe: IsolationProbeResult(available=True, detail='') registry: True
+    problems: []
+### S12 rc=0 (0.4s)
+    problems: []
+### S13 rc=0 (3.2s)
+    _fixture_cases_and_replay_retention
+      |     for item in manifest["cases"]:
+      |                 ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ======================================================================
+      | ERROR: test_manifest_is_frozen_twelve_case_corpus (__main__.FixtureCorpusTests.test_manifest_is_frozen_twelve_case_corpus)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-j3cvjwcr/repo/tools/test_convergent_review.py", line 122, in test_manifest_is_frozen_twelve_case_corpus
+      |     self.assertEqual(len(manifest["cases"]), 12)
+      |                          ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 2.924s
+      | 
+      | FAILED (errors=2, skipped=5)
+      | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5; run unsuccessful)
+      | --allow-unsupported-isolation given: the UNSUPPORTED outcome does not fail this run (local development only; CI must not pass this flag).
+    PASS exit status is non-zero
+    PASS output matches '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))'
+    PASS output matches '^test_linux_sandbox_blocks_cross_trial_files_and_network\\b.*UNSUPPORTED'
+    PASS output matches '^CONFORMANCE: NOT FULL \\(UNSUPPORTED isolation-dependent tests: 5; run unsuccessful\\)$'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+    
+    problems: []
+### determinism pass 2 (AT1-AT4, S09-S13 in the attempt worktree)
+### AT1 rc=0 (4.2s)
+    isolation available: False exit: 1 FAIL/ERROR: []
+### AT2 rc=0 (4.2s)
+    isolation available: False exit: 0 FAIL/ERROR: []
+### AT3 rc=0 (3.3s)
+    scratch_run: replaced 1 occurrence in tools/fixtures/convergent_review/manifest.json
+    scratch_run: command python3 tools/test_convergent_review.py --allow-unsupported-isolation -> exit 1
+      | test_replay_rejects_manifest_ledger_and_markdown_symlinks (__main__.SemanticMutationTests.test_replay_rejects_manifest_ledger_and_markdown_symlinks) ... ok
+      | test_replay_rejects_multiple_prior_ledgers (__main__.SemanticMutationTests.test_replay_rejects_multiple_prior_ledgers) ... ok
+      | test_replay_rejects_symlinked_root_ancestor (__main__.SemanticMutationTests.test_replay_rejects_symlinked_root_ancestor) ... ok
+      | test_replay_schema_and_runtime_reject_duplicate_trial_numbers (__main__.SemanticMutationTests.test_replay_schema_and_runtime_reject_duplicate_trial_numbers) ... ok
+      | test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths (__main__.SemanticMutationTests.test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths) ... ok
+      | test_semantic_mutation_changes_fingerprint_but_line_shift_does_not (__main__.SemanticMutationTests.test_semantic_mutation_changes_fingerprint_but_line_shift_does_not) ... ok
+      | test_severity_disagreement_uses_most_severe_distinct_trial (__main__.SemanticMutationTests.test_severity_disagreement_uses_most_severe_distinct_trial) ... ok
+      | test_stale_trial_head_rejected (__main__.SemanticMutationTests.test_stale_trial_head_rejected) ... ok
+      | test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations (__main__.SemanticMutationTests.test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations) ... ok
+      | test_symbol_case_is_semantically_distinct (__main__.SemanticMutationTests.test_symbol_case_is_semantically_distinct) ... ok
+      | test_trial_evidence_must_match_packet_digest_excerpt_and_range (__main__.SemanticMutationTests.test_trial_evidence_must_match_packet_digest_excerpt_and_range) ... ok
+      | test_trial_rejects_model_owned_fields (__main__.SemanticMutationTests.test_trial_rejects_model_owned_fields) ... ok
+      | test_true_full_revert_is_representable_with_absence_tombstone (__main__.SemanticMutationTests.test_true_full_revert_is_representable_with_absence_tombstone) ... ok
+      | test_trusted_builder_binds_full_tree_and_old_bytes (__main__.SemanticMutationTests.test_trusted_builder_binds_full_tree_and_old_bytes) ... ok
+      | test_unauthorized_or_unknown_suppression_rejected (__main__.SemanticMutationTests.test_unauthorized_or_unknown_suppression_rejected) ... ok
+      | 
+      | ======================================================================
+      | ERROR: test_all_fixture_cases_and_replay_retention (__main__.FixtureCorpusTests.test_all_fixture_cases_and_replay_retention)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-kuvfi3e7/repo/tools/test_convergent_review.py", line 136, in test_all_fixture_cases_and_replay_retention
+      |     for item in manifest["cases"]:
+      |                 ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ======================================================================
+      | ERROR: test_manifest_is_frozen_twelve_case_corpus (__main__.FixtureCorpusTests.test_manifest_is_frozen_twelve_case_corpus)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-kuvfi3e7/repo/tools/test_convergent_review.py", line 122, in test_manifest_is_frozen_twelve_case_corpus
+      |     self.assertEqual(len(manifest["cases"]), 12)
+      |                          ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 2.986s
+      | 
+      | FAILED (errors=2, skipped=5)
+      | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5; run unsuccessful)
+      | --allow-unsupported-isolation given: the UNSUPPORTED outcome does not fail this run (local development only; CI must not pass this flag).
+    PASS exit status is non-zero
+    PASS output matches '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+### AT4 rc=0 (4.5s)
+    scratch_run: replaced 1 occurrence in tools/linux_trial_sandbox.sh
+    scratch_run: command python3 tools/test_convergent_review.py -> exit 1
+      | test_initial_trial_three_extra_evidence_rejected_by_validator_and_renderer (__main__.SemanticMutationTests.test_initial_trial_three_extra_evidence_rejected_by_validator_and_renderer) ... ok
+      | test_later_review_can_add_genuinely_new_finding (__main__.SemanticMutationTests.test_later_review_can_add_genuinely_new_finding) ... ok
+      | test_ledger_count_mutation_is_rejected (__main__.SemanticMutationTests.test_ledger_count_mutation_is_rejected) ... ok
+      | test_ledger_schema_and_runtime_reject_duplicate_trial_digests (__main__.SemanticMutationTests.test_ledger_schema_and_runtime_reject_duplicate_trial_digests) ... ok
+      | test_linux_sandbox_blocks_cross_trial_files_and_network (__main__.SemanticMutationTests.test_linux_sandbox_blocks_cross_trial_files_and_network) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /proc/self/uid_map: Opera
+      | test_linux_sandbox_blocks_execution_of_runner_generated_trial_file (__main__.SemanticMutationTests.test_linux_sandbox_blocks_execution_of_runner_generated_trial_file) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /pr
+      | test_mode_only_delta_is_authenticated_in_ordinary_and_full_audit_packets (__main__.SemanticMutationTests.test_mode_only_delta_is_authenticated_in_ordinary_and_full_audit_packets) ... ok
+      | test_noncanonical_inputs_are_rejected (__main__.SemanticMutationTests.test_noncanonical_inputs_are_rejected) ... ok
+      | test_ordinary_packet_authenticates_old_and_new_bytes (__main__.SemanticMutationTests.test_ordinary_packet_authenticates_old_and_new_bytes) ... ok
+      | test_packet_schema_plus_relational_validator_contract (__main__.SemanticMutationTests.test_packet_schema_plus_relational_validator_contract) ... ok
+      | test_post_visibility_parent_fsync_failure_returns_committed_state (__main__.SemanticMutationTests.test_post_visibility_parent_fsync_failure_returns_committed_state) ... ok
+      | test_prior_head_must_equal_packet_base (__main__.SemanticMutationTests.test_prior_head_must_equal_packet_base) ... ok
+      | test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files (__main__.SemanticMutationTests.test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unsha
+      | test_prompt_evaluator_runs_three_isolated_validated_trials (__main__.SemanticMutationTests.test_prompt_evaluator_runs_three_isolated_validated_trials) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /proc/self/uid_map:
+      | test_prompt_evaluator_uses_per_trial_packet_copies (__main__.SemanticMutationTests.test_prompt_evaluator_uses_per_trial_packet_copies) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /proc/self/uid_map: Operation not p
+      | test_rename_alone_never_resolves (__main__.SemanticMutationTests.test_rename_alone_never_resolves) ... ok
+      | test_reopened_finding_adopts_more_severe_current_consensus (__main__.SemanticMutationTests.test_reopened_finding_adopts_more_severe_current_consensus) ... ok
+      | test_replay_reauthenticates_retained_packet_and_trial_together (__main__.SemanticMutationTests.test_replay_reauthenticates_retained_packet_and_trial_together) ... ok
+      | test_replay_rejects_manifest_ledger_and_markdown_symlinks (__main__.SemanticMutationTests.test_replay_rejects_manifest_ledger_and_markdown_symlinks) ... ok
+      | test_replay_rejects_multiple_prior_ledgers (__main__.SemanticMutationTests.test_replay_rejects_multiple_prior_ledgers) ... ok
+      | test_replay_rejects_symlinked_root_ancestor (__main__.SemanticMutationTests.test_replay_rejects_symlinked_root_ancestor) ... ok
+      | test_replay_schema_and_runtime_reject_duplicate_trial_numbers (__main__.SemanticMutationTests.test_replay_schema_and_runtime_reject_duplicate_trial_numbers) ... ok
+      | test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths (__main__.SemanticMutationTests.test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths) ... ok
+      | test_semantic_mutation_changes_fingerprint_but_line_shift_does_not (__main__.SemanticMutationTests.test_semantic_mutation_changes_fingerprint_but_line_shift_does_not) ... ok
+      | test_severity_disagreement_uses_most_severe_distinct_trial (__main__.SemanticMutationTests.test_severity_disagreement_uses_most_severe_distinct_trial) ... ok
+      | test_stale_trial_head_rejected (__main__.SemanticMutationTests.test_stale_trial_head_rejected) ... ok
+      | test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations (__main__.SemanticMutationTests.test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations) ... ok
+      | test_symbol_case_is_semantically_distinct (__main__.SemanticMutationTests.test_symbol_case_is_semantically_distinct) ... ok
+      | test_trial_evidence_must_match_packet_digest_excerpt_and_range (__main__.SemanticMutationTests.test_trial_evidence_must_match_packet_digest_excerpt_and_range) ... ok
+      | test_trial_rejects_model_owned_fields (__main__.SemanticMutationTests.test_trial_rejects_model_owned_fields) ... ok
+      | test_true_full_revert_is_representable_with_absence_tombstone (__main__.SemanticMutationTests.test_true_full_revert_is_representable_with_absence_tombstone) ... ok
+      | test_trusted_builder_binds_full_tree_and_old_bytes (__main__.SemanticMutationTests.test_trusted_builder_binds_full_tree_and_old_bytes) ... ok
+      | test_unauthorized_or_unknown_suppression_rejected (__main__.SemanticMutationTests.test_unauthorized_or_unknown_suppression_rejected) ... ok
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 4.176s
+      | 
+      | OK (skipped=5)
+      | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5)
+      | REQUIRED CONFORMANCE NOT MET: user-namespace isolation is unavailable on this host; exiting non-zero. Local development may pass --allow-unsupported-isolation (CI must not).
+    PASS exit status is non-zero
+    PASS output matches '^test_linux_sandbox_blocks_cross_trial_files_and_network.*UNSUPPORTED'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+### S09 rc=0 (8.5s)
+    required rc=1 probe calls: ['--user --map-root-user true']
+    allow rc=0 probe calls: ['--user --map-root-user true']
+    problems: []
+### S10 rc=0 (4.5s)
+    rc=1 FAIL lines: ['test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'test_prompt_evaluator_runs_three
+    problems: []
+### S11 rc=0 (1.2s)
+    required rc=1
+    allow rc=0
+    timeout probe: IsolationProbeResult(available=False, detail='probe timed out after 1s') success probe: IsolationProbeResult(available=True, detail='') registry: True
+    problems: []
+### S12 rc=0 (0.4s)
+    problems: []
+### S13 rc=0 (3.3s)
+    _fixture_cases_and_replay_retention
+      |     for item in manifest["cases"]:
+      |                 ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ======================================================================
+      | ERROR: test_manifest_is_frozen_twelve_case_corpus (__main__.FixtureCorpusTests.test_manifest_is_frozen_twelve_case_corpus)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-en1nmjcq/repo/tools/test_convergent_review.py", line 122, in test_manifest_is_frozen_twelve_case_corpus
+      |     self.assertEqual(len(manifest["cases"]), 12)
+      |                          ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 3.028s
+      | 
+      | FAILED (errors=2, skipped=5)
+      | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5; run unsuccessful)
+      | --allow-unsupported-isolation given: the UNSUPPORTED outcome does not fail this run (local development only; CI must not pass this flag).
+    PASS exit status is non-zero
+    PASS output matches '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))'
+    PASS output matches '^test_linux_sandbox_blocks_cross_trial_files_and_network\\b.*UNSUPPORTED'
+    PASS output matches '^CONFORMANCE: NOT FULL \\(UNSUPPORTED isolation-dependent tests: 5; run unsuccessful\\)$'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+    
+    problems: []
+### determinism pass 3 (AT1-AT4, S09-S13 in the attempt worktree)
+### AT1 rc=0 (4.4s)
+    isolation available: False exit: 1 FAIL/ERROR: []
+### AT2 rc=0 (4.3s)
+    isolation available: False exit: 0 FAIL/ERROR: []
+### AT3 rc=0 (3.2s)
+    scratch_run: replaced 1 occurrence in tools/fixtures/convergent_review/manifest.json
+    scratch_run: command python3 tools/test_convergent_review.py --allow-unsupported-isolation -> exit 1
+      | test_replay_rejects_manifest_ledger_and_markdown_symlinks (__main__.SemanticMutationTests.test_replay_rejects_manifest_ledger_and_markdown_symlinks) ... ok
+      | test_replay_rejects_multiple_prior_ledgers (__main__.SemanticMutationTests.test_replay_rejects_multiple_prior_ledgers) ... ok
+      | test_replay_rejects_symlinked_root_ancestor (__main__.SemanticMutationTests.test_replay_rejects_symlinked_root_ancestor) ... ok
+      | test_replay_schema_and_runtime_reject_duplicate_trial_numbers (__main__.SemanticMutationTests.test_replay_schema_and_runtime_reject_duplicate_trial_numbers) ... ok
+      | test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths (__main__.SemanticMutationTests.test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths) ... ok
+      | test_semantic_mutation_changes_fingerprint_but_line_shift_does_not (__main__.SemanticMutationTests.test_semantic_mutation_changes_fingerprint_but_line_shift_does_not) ... ok
+      | test_severity_disagreement_uses_most_severe_distinct_trial (__main__.SemanticMutationTests.test_severity_disagreement_uses_most_severe_distinct_trial) ... ok
+      | test_stale_trial_head_rejected (__main__.SemanticMutationTests.test_stale_trial_head_rejected) ... ok
+      | test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations (__main__.SemanticMutationTests.test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations) ... ok
+      | test_symbol_case_is_semantically_distinct (__main__.SemanticMutationTests.test_symbol_case_is_semantically_distinct) ... ok
+      | test_trial_evidence_must_match_packet_digest_excerpt_and_range (__main__.SemanticMutationTests.test_trial_evidence_must_match_packet_digest_excerpt_and_range) ... ok
+      | test_trial_rejects_model_owned_fields (__main__.SemanticMutationTests.test_trial_rejects_model_owned_fields) ... ok
+      | test_true_full_revert_is_representable_with_absence_tombstone (__main__.SemanticMutationTests.test_true_full_revert_is_representable_with_absence_tombstone) ... ok
+      | test_trusted_builder_binds_full_tree_and_old_bytes (__main__.SemanticMutationTests.test_trusted_builder_binds_full_tree_and_old_bytes) ... ok
+      | test_unauthorized_or_unknown_suppression_rejected (__main__.SemanticMutationTests.test_unauthorized_or_unknown_suppression_rejected) ... ok
+      | 
+      | ======================================================================
+      | ERROR: test_all_fixture_cases_and_replay_retention (__main__.FixtureCorpusTests.test_all_fixture_cases_and_replay_retention)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-t5oe4s98/repo/tools/test_convergent_review.py", line 136, in test_all_fixture_cases_and_replay_retention
+      |     for item in manifest["cases"]:
+      |                 ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ======================================================================
+      | ERROR: test_manifest_is_frozen_twelve_case_corpus (__main__.FixtureCorpusTests.test_manifest_is_frozen_twelve_case_corpus)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-t5oe4s98/repo/tools/test_convergent_review.py", line 122, in test_manifest_is_frozen_twelve_case_corpus
+      |     self.assertEqual(len(manifest["cases"]), 12)
+      |                          ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 2.949s
+      | 
+      | FAILED (errors=2, skipped=5)
+      | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5; run unsuccessful)
+      | --allow-unsupported-isolation given: the UNSUPPORTED outcome does not fail this run (local development only; CI must not pass this flag).
+    PASS exit status is non-zero
+    PASS output matches '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+### AT4 rc=0 (4.5s)
+    scratch_run: replaced 1 occurrence in tools/linux_trial_sandbox.sh
+    scratch_run: command python3 tools/test_convergent_review.py -> exit 1
+      | test_initial_trial_three_extra_evidence_rejected_by_validator_and_renderer (__main__.SemanticMutationTests.test_initial_trial_three_extra_evidence_rejected_by_validator_and_renderer) ... ok
+      | test_later_review_can_add_genuinely_new_finding (__main__.SemanticMutationTests.test_later_review_can_add_genuinely_new_finding) ... ok
+      | test_ledger_count_mutation_is_rejected (__main__.SemanticMutationTests.test_ledger_count_mutation_is_rejected) ... ok
+      | test_ledger_schema_and_runtime_reject_duplicate_trial_digests (__main__.SemanticMutationTests.test_ledger_schema_and_runtime_reject_duplicate_trial_digests) ... ok
+      | test_linux_sandbox_blocks_cross_trial_files_and_network (__main__.SemanticMutationTests.test_linux_sandbox_blocks_cross_trial_files_and_network) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /proc/self/uid_map: Opera
+      | test_linux_sandbox_blocks_execution_of_runner_generated_trial_file (__main__.SemanticMutationTests.test_linux_sandbox_blocks_execution_of_runner_generated_trial_file) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /pr
+      | test_mode_only_delta_is_authenticated_in_ordinary_and_full_audit_packets (__main__.SemanticMutationTests.test_mode_only_delta_is_authenticated_in_ordinary_and_full_audit_packets) ... ok
+      | test_noncanonical_inputs_are_rejected (__main__.SemanticMutationTests.test_noncanonical_inputs_are_rejected) ... ok
+      | test_ordinary_packet_authenticates_old_and_new_bytes (__main__.SemanticMutationTests.test_ordinary_packet_authenticates_old_and_new_bytes) ... ok
+      | test_packet_schema_plus_relational_validator_contract (__main__.SemanticMutationTests.test_packet_schema_plus_relational_validator_contract) ... ok
+      | test_post_visibility_parent_fsync_failure_returns_committed_state (__main__.SemanticMutationTests.test_post_visibility_parent_fsync_failure_returns_committed_state) ... ok
+      | test_prior_head_must_equal_packet_base (__main__.SemanticMutationTests.test_prior_head_must_equal_packet_base) ... ok
+      | test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files (__main__.SemanticMutationTests.test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unsha
+      | test_prompt_evaluator_runs_three_isolated_validated_trials (__main__.SemanticMutationTests.test_prompt_evaluator_runs_three_isolated_validated_trials) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /proc/self/uid_map:
+      | test_prompt_evaluator_uses_per_trial_packet_copies (__main__.SemanticMutationTests.test_prompt_evaluator_uses_per_trial_packet_copies) ... skipped 'UNSUPPORTED: user-namespace isolation unavailable (unshare: write failed /proc/self/uid_map: Operation not p
+      | test_rename_alone_never_resolves (__main__.SemanticMutationTests.test_rename_alone_never_resolves) ... ok
+      | test_reopened_finding_adopts_more_severe_current_consensus (__main__.SemanticMutationTests.test_reopened_finding_adopts_more_severe_current_consensus) ... ok
+      | test_replay_reauthenticates_retained_packet_and_trial_together (__main__.SemanticMutationTests.test_replay_reauthenticates_retained_packet_and_trial_together) ... ok
+      | test_replay_rejects_manifest_ledger_and_markdown_symlinks (__main__.SemanticMutationTests.test_replay_rejects_manifest_ledger_and_markdown_symlinks) ... ok
+      | test_replay_rejects_multiple_prior_ledgers (__main__.SemanticMutationTests.test_replay_rejects_multiple_prior_ledgers) ... ok
+      | test_replay_rejects_symlinked_root_ancestor (__main__.SemanticMutationTests.test_replay_rejects_symlinked_root_ancestor) ... ok
+      | test_replay_schema_and_runtime_reject_duplicate_trial_numbers (__main__.SemanticMutationTests.test_replay_schema_and_runtime_reject_duplicate_trial_numbers) ... ok
+      | test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths (__main__.SemanticMutationTests.test_repository_and_path_grammars_accept_legal_names_and_reject_unsafe_paths) ... ok
+      | test_semantic_mutation_changes_fingerprint_but_line_shift_does_not (__main__.SemanticMutationTests.test_semantic_mutation_changes_fingerprint_but_line_shift_does_not) ... ok
+      | test_severity_disagreement_uses_most_severe_distinct_trial (__main__.SemanticMutationTests.test_severity_disagreement_uses_most_severe_distinct_trial) ... ok
+      | test_stale_trial_head_rejected (__main__.SemanticMutationTests.test_stale_trial_head_rejected) ... ok
+      | test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations (__main__.SemanticMutationTests.test_standalone_ledger_enforces_lifecycle_consensus_and_evidence_relations) ... ok
+      | test_symbol_case_is_semantically_distinct (__main__.SemanticMutationTests.test_symbol_case_is_semantically_distinct) ... ok
+      | test_trial_evidence_must_match_packet_digest_excerpt_and_range (__main__.SemanticMutationTests.test_trial_evidence_must_match_packet_digest_excerpt_and_range) ... ok
+      | test_trial_rejects_model_owned_fields (__main__.SemanticMutationTests.test_trial_rejects_model_owned_fields) ... ok
+      | test_true_full_revert_is_representable_with_absence_tombstone (__main__.SemanticMutationTests.test_true_full_revert_is_representable_with_absence_tombstone) ... ok
+      | test_trusted_builder_binds_full_tree_and_old_bytes (__main__.SemanticMutationTests.test_trusted_builder_binds_full_tree_and_old_bytes) ... ok
+      | test_unauthorized_or_unknown_suppression_rejected (__main__.SemanticMutationTests.test_unauthorized_or_unknown_suppression_rejected) ... ok
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 4.170s
+      | 
+      | OK (skipped=5)
+      | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5)
+      | REQUIRED CONFORMANCE NOT MET: user-namespace isolation is unavailable on this host; exiting non-zero. Local development may pass --allow-unsupported-isolation (CI must not).
+    PASS exit status is non-zero
+    PASS output matches '^test_linux_sandbox_blocks_cross_trial_files_and_network.*UNSUPPORTED'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+### S09 rc=0 (8.8s)
+    required rc=1 probe calls: ['--user --map-root-user true']
+    allow rc=0 probe calls: ['--user --map-root-user true']
+    problems: []
+### S10 rc=0 (4.6s)
+    rc=1 FAIL lines: ['test_linux_sandbox_blocks_cross_trial_files_and_network', 'test_linux_sandbox_blocks_execution_of_runner_generated_trial_file', 'test_prompt_evaluator_rejects_runner_symlink_substitution_for_post_run_files', 'test_prompt_evaluator_runs_three
+    problems: []
+### S11 rc=0 (1.2s)
+    required rc=1
+    allow rc=0
+    timeout probe: IsolationProbeResult(available=False, detail='probe timed out after 1s') success probe: IsolationProbeResult(available=True, detail='') registry: True
+    problems: []
+### S12 rc=0 (0.4s)
+    problems: []
+### S13 rc=0 (3.3s)
+    _fixture_cases_and_replay_retention
+      |     for item in manifest["cases"]:
+      |                 ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ======================================================================
+      | ERROR: test_manifest_is_frozen_twelve_case_corpus (__main__.FixtureCorpusTests.test_manifest_is_frozen_twelve_case_corpus)
+      | ----------------------------------------------------------------------
+      | Traceback (most recent call last):
+      |   File "/home/cnross/.tmp/nizam-scratch-run-9bqcar8p/repo/tools/test_convergent_review.py", line 122, in test_manifest_is_frozen_twelve_case_corpus
+      |     self.assertEqual(len(manifest["cases"]), 12)
+      |                          ~~~~~~~~^^^^^^^^^
+      | KeyError: 'cases'
+      | 
+      | ----------------------------------------------------------------------
+      | Ran 54 tests in 3.048s
+      | 
+      | FAILED (errors=2, skipped=5)
+      | CONFORMANCE: NOT FULL (UNSUPPORTED isolation-dependent tests: 5; run unsuccessful)
+      | --allow-unsupported-isolation given: the UNSUPPORTED outcome does not fail this run (local development only; CI must not pass this flag).
+    PASS exit status is non-zero
+    PASS output matches '^(FAIL|ERROR): test_(?!linux_sandbox|prompt_evaluator_(rejects|runs_three|uses_per))'
+    PASS output matches '^test_linux_sandbox_blocks_cross_trial_files_and_network\\b.*UNSUPPORTED'
+    PASS output matches '^CONFORMANCE: NOT FULL \\(UNSUPPORTED isolation-dependent tests: 5; run unsuccessful\\)$'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+    
+    problems: []
+
+### cwd dependence: AT6 and S04 run from a directory that is NOT the repo root (expected to fail: commands are root-relative, as the contract's evidence_convention states)
+FileNotFoundError: [Errno 2] No such file or directory: 'tools/README.md'
+AT6 from non-root rc=1
+AT6 from attempt-worktree root rc=0
+EXIT:0
