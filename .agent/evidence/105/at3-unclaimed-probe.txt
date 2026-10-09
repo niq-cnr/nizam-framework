@@ -1,0 +1,48 @@
+python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --write tools/fixtures/zz_unclaimed_probe/probe.json '{}' --expect-rc 1 --expect 'zz_unclaimed_probe' --expect '^SELF-TEST FAILED' -- bash tools/fixtures_self_test.sh
+scratch_run: wrote new file tools/fixtures/zz_unclaimed_probe/probe.json
+scratch_run: command bash tools/fixtures_self_test.sh -> exit 1
+  | OK   primitive   vlib_bare_ref_resolves pass (rc=0)
+  | OK   primitive   vlib_bare_ref_resolves fail (rc=1)
+  | OK   primitive   vlib_enumeration_complete (complete pass / seeded-omission fail)
+  | OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk)
+  | OK   guard       vlib_bare_ref_resolves real-tree (methodology/ + standard/ clean)
+  | OK   primitive   vlib_workflows_sha_pinned (tag fail / sha+local pass / real-tree pass)
+  | OK   transition  incubating -> in_scope (count-0->1): promotion moves the entry; two-list violation detected
+  | OK   primitive   vlib_profiles_cover_roles (real pair pass / missing-profile fail)
+  | OK   primitive   vlib_feature_list_lifecycle full-chain (contract+QA+evidence present, rc 0)
+  | OK   primitive   vlib_feature_list_lifecycle era-safe complete-without-contract (rc 0)
+  | OK   primitive   vlib_feature_list_lifecycle contract-without-QA (rc 1)
+  | OK   primitive   vlib_feature_list_lifecycle evidence-file-missing (rc 1)
+  | OK   primitive   vlib_path_resolves pass (all tokens resolve/exempt)
+  | OK   primitive   vlib_path_resolves fail (token does not resolve)
+  | OK   primitive   vlib_version_increased (pass / equal-fail / decrease-fail)
+  | OK   primitive   vlib_scope_guard (allowed pass / out-of-scope fail)
+  | == C13 skill-index negative fixture (substitution) ==
+  | OK   c13-substitute skill_index_neg_dangling_module.json -> [C13] FAIL
+  | == template-schema conformance (F-054) ==
+  | OK   guard       work-packet.template.json validates end-to-end against work-packet.schema.json
+  | == preflight CLI behavior probes (F-056) ==
+  | OK   preflight   gov-root: injected .nizam/ discovered -> refs resolve + expected exception -> pending(2), not FAIL
+  | OK   preflight   clean framework-root -> PASS(0); untracked-not-tolerated -> FAIL(1); exact + prefix tolerate -> pending(2)
+  | == ecosystem_audit CLI behavior probes ==
+  | OK   audit       valid -> ASSEMBLED(0); resolved-without-closure -> INVALID(1); FAIL preflight -> refused(2)
+  | == compare + freshness CLI behavior probes ==
+  | OK   compare     valid -> delta(0); gone-without-closure -> INVALID(1); freshness stale(1)/fresh(0); resolved-to-open -> reopened
+  | == ecosystem_reconcile CLI behavior probes ==
+  | OK   reconcile   acyclic -> PASS plan(0) C12-valid; cyclic -> FAIL(1); unknown repo -> usage(64)
+  | == claim map demonstrations (guarded scratch area) ==
+  | OK   claim-map   unclaimed subdirectory -> FAIL
+  | OK   claim-map   doubly-claimed subdirectory -> FAIL
+  | OK   claim-map   claim naming a missing suite -> FAIL
+  | OK   claim-map   claim naming an absent subdirectory -> FAIL
+  | == completeness guard ==
+  | FAIL claim-map: unclaimed subdirectory: zz_unclaimed_probe
+  | FAIL completeness: fixture(s) below an unclaimed subdirectory (dormant):
+  |        zz_unclaimed_probe/probe.json
+  | ---
+  | SELF-TEST FAILED: 146/147 fixtures accounted for (see FAIL lines above)
+PASS exit status == 1
+PASS output matches 'zz_unclaimed_probe'
+PASS output matches '^SELF-TEST FAILED'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0

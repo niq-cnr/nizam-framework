@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.13.0
+version: 0.14.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.14.0"
+    date: "2026-10-09"
+    summary: "Describe the fixtures self-test claim map: every subdirectory of `tools/fixtures/` is claimed by exactly one owning suite, the completeness guard accounts for files at any depth, and the self-test demonstrates its failure cases in a private scratch area (NDEBT-042)."
   - version: "0.13.0"
     date: "2026-10-09"
     summary: "Name the `convergent_review` CI job in Machine Validation: the convergent review suite runs in required-conformance mode in `.github/workflows/compliance.yml`, behind a guarded user-namespace step (NDEBT-041)."
@@ -164,3 +167,5 @@ to what they test, so an exit-code-only test would pass vacuously). A
 accounted for, so a newly-added fixture cannot silently go dormant. It runs
 as its own CI job (`fixtures_self_test`) alongside `validate` and
 `e2e_bootstrap`.
+
+The completeness guard also consults a **claim map**, the `FIXTURE_CLAIMS` array in the script: every subdirectory of `tools/fixtures/` is claimed by exactly one owning suite, as one `<subdirectory>|<suite file>` row, and a file below a claimed subdirectory, at any depth, is accounted for by that claim. The guard fails on an unclaimed subdirectory, on a doubly-claimed subdirectory, on a claim naming a suite file that does not exist, and on a claim naming a subdirectory that is not on disk. The self-test demonstrates those four cases itself, in a private scratch area that the scratch helper confines outside the repository, and prints one `OK   claim-map` line for each. A claim proves ownership, not execution: that the owning suite runs is proven by its own CI job (`tools/test_convergent_review.py` owns the `convergent_review` subdirectory and runs as the `convergent_review` job). A future suite that adds a fixture subdirectory registers its row in this same map; there is no second registry.

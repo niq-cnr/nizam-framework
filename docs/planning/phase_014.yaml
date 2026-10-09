@@ -24,6 +24,9 @@ steps:
   - id: "105"
     description: Nested-fixture ownership — the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042).
     status: AWAITING_IMPLEMENTATION
+    docs_updated: tools/README.md
+    changelog_entry: "Fixtures self-test claim map: every tools/fixtures/ subdirectory is claimed by exactly one owning suite, the completeness guard accounts for files at any depth and fails on an unclaimed subdirectory, a doubly-claimed subdirectory, a claim naming a missing suite or a claim naming an absent subdirectory, and the self-test demonstrates those cases in a private scratch area (NDEBT-042)."
+    evidence: .agent/evidence/105/at1-completeness-any-depth.txt
   - id: "106"
     description: Capability-index parity — tools/skill.json a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a).
     status: PENDING
