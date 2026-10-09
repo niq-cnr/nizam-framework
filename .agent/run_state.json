@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "014-ga-track",
-  "current_feature": "104",
+  "current_feature": "105",
   "status": "in_progress",
-  "updated_at": "2026-10-09T19:33:00Z",
+  "updated_at": "2026-10-09T19:43:42Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1718,6 +1718,17 @@
       "event": "ci_evidence",
       "feature": "104",
       "detail": "Negative run 37980776642 on throwaway/104-isolation-removal (e9b7e7b, parent = positive headSha a278fcd): conclusion failure; convergent_review (job 113990412340) failure with exactly one FAIL: test_linux_sandbox_blocks_cross_trial_files_and_network, 'AssertionError: 40 != 0', 'Ran 54 tests', 'CONFORMANCE: NOT FULL (run unsuccessful)', no UNSUPPORTED; other three jobs success. Draft PR #69 closed WITHOUT merge (state CLOSED, mergedAt null); remote branch deleted (ls-remote empty); throwaway worktree removed. All seven ci-*.txt captured with empty stderr. Self-check: AT5-AT8, S10, S11 exit 0. Discharges (to be confirmed by delta Mode B + QA): 103 AT1 capable branch (positive CONFORMANCE: FULL + success) and 103 AT4 capable branch (40 != 0). NDEBT-043/041 closure deferred to after QA."
+    },
+    {
+      "at": "2026-10-09T19:39:27Z",
+      "event": "feature_complete",
+      "feature": "104",
+      "detail": "Feature 104 COMPLETE (NDEBT-041: convergent_review CI job in required-conformance mode). Contract rev 3 (attempt 3/3; Mode A rounds 1-2 rejected, round 3 approved; evaluator contract review approved, 113 mutants/0 blocking survivors; contingent 4th-revision extension unused). Amendment A2 (spec 1.1.5). Implementation attempt 1 (6f4f357 -> 8320ac9) via Workflow wf_2b6334eb-16b; Mode B approved. CI: positive run 37980556248 success, CONFORMANCE: FULL (hosted runner provides userns+Landlock; R1 did not manifest); negative control 37980776642 failure with AssertionError: 40 != 0 (draft PR #69 closed unmerged, branch deleted). Delta Mode B approved (.agent/validator/104-mode-b-delta.json); QA pass .agent/qa/104.json (20 checks re-run incl. live gh cross-checks; adversarial live-run audit; validate 16/16) via Workflow wf_c145d52d-2d0. Evidence gate passed (23 files). Discharged: 104 AT1-AT10; 103 AT1 and AT4 capable-host branches. Canonical-first: phase_014.yaml 104 COMPLETED, feature_list_014 104 complete, run_state. Budget: 104 991 budget-counted lines vs estimate 710 (evidence 3018); phase total 2764 / 8600. Next: NDEBT-043/041 closure record, then 105."
+    },
+    {
+      "at": "2026-10-09T19:43:42Z",
+      "event": "debt_resolved",
+      "detail": "Planner moved NDEBT-043 (Low) and NDEBT-041 (Medium) to Resolved in docs/planning/DEBT.md 0.50.0, citing the 104 CI evidence (runs 37980556248 / 37980776642), .agent/qa/103.json and .agent/qa/104.json. 103 AT2's capable branch remains not exercised (recorded in the row as residual risk; not a closure condition). C12 extension to the review family stays deferred to 101 / H-CONSOLIDATION. Open debt now 8 (all Low): NDEBT-046/045/044/042/040/037/034/026."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1892,9 +1903,9 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 1773,
-    "evidence_lines_total": 7219,
-    "excluded_lines_total": 186,
+    "total_lines_changed": 2764,
+    "evidence_lines_total": 10237,
+    "excluded_lines_total": 390,
     "counting_rule": {
       "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.4)",
       "script": ".agent/evidence/scope-budget-014/measure.py",
@@ -1927,6 +1938,15 @@
         "previous_actual_all_paths": 6770,
         "flag": "scope_budget_flag 2026-10-09T17:39:44Z raised under the old all-paths count (6770 vs 280). Under the phase-014 rule 885 < 3 x 596 = 1788 and would not flag. Acknowledged per the Orchestrator's record (operator_gate_decision 2026-10-09T17:42:10Z), confirmed by the operator's 'option 1 confirmed.' reply (2026-10-09T17:59:00Z).",
         "note": "Phase-014 rule (spec 1.1.4): product 103 + contract 519 + verdict 200 + planning 63 = 885. estimated 280 is the historical all-paths estimate (mixed basis, disclosed)."
+      },
+      {
+        "id": "104",
+        "estimated": 710,
+        "actual": 991,
+        "evidence_lines": 3018,
+        "excluded_lines": 204,
+        "range": "7bc65a5..(completion working tree)",
+        "note": "Phase-014 rule (measure.py). Includes amendment A2 planning lines (A1-in-103 precedent) and the 3-round contract. Rolling threshold for 104 was 3 x mean(596,885) = 2221.5."
       }
     ],
     "phase_level_items": [
@@ -2139,7 +2159,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "104",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -2211,9 +2231,10 @@
       }
     ]
   },
-  "last_action": "104 CI evidence captured; committing evidence; delta Mode B + QA next",
+  "last_action": "Feature 104 complete; next 105",
   "completed_contract_ids": [
     "099",
-    "103"
+    "103",
+    "104"
   ]
 }

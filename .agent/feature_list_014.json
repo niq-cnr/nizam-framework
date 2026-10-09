@@ -74,7 +74,7 @@
       "id": "104",
       "name": "Convergent-review suite enforced in CI, and the review schema family's validator stated (NDEBT-041)",
       "description": "Maintenance tranche, after 103 (NDEBT-043 first, else the job fails on hosted runners that restrict user namespaces). Add ONE job to .github/workflows/compliance.yml that runs `python3 tools/test_convergent_review.py` in required-conformance mode (never with --allow-unsupported-isolation), reusing the already-pinned action SHAs (C14 stays PASS) and preceded by a GUARDED step that enables unprivileged user namespaces only where the sysctl key exists. This is the ONLY phase-014 feature permitted to modify .github/ (the spec lifts the workflow non-goal for it alone). Sync every job-count statement to the workflow's actual jobs, derived rather than hard-coded: standard/definition_of_done.md Section 8 (names every job; 'all three' / 'three-job') and Section 11 ('three jobs'); tools/README.md's Machine Validation section names the new job. State explicitly, in the '## Schemas' section of schema/README.md, that tools/test_convergent_review.py is the sole validator of the review schema family (review_packet, review_ledger, review_trial, review_replay, review_suppression); extending C12 to that family is left to the 101 simplification review / H-CONSOLIDATION. CI EVIDENCE CONTRACT (exact commands, each captured in the 04 Section 5 shape): (positive) on the feature branch phase/014-104-sandbox-ci (a pull_request run; amendment A2, spec 1.1.5) at a commit that is an ancestor of the feature's HEAD — .agent/evidence/104/ci-positive-run.txt from `gh run view <run-id> --json headSha,headBranch,conclusion,jobs` and .agent/evidence/104/ci-positive-log.txt from `gh run view --job <job-id> --log`, where <job-id> is the databaseId of the new job in that run; (negative control) on a throwaway branch named throwaway/104-<slug>, never merged, whose only change is 103 AT4's isolation-removal mutation (exactly AT4's two --replace operations: the unshare namespace line of tools/linux_trial_sandbox.sh becomes `exec`, and the Landlock restrict-self call of tools/isolated_trial_adapter.py becomes `pass`) — .agent/evidence/104/ci-negative-run.txt and ci-negative-log.txt by the same two commands, showing the new job failing on test_linux_sandbox_blocks_cross_trial_files_and_network with 'AssertionError: 40 != 0' (the cross-trial secret was read); the throwaway branch is deleted afterwards. The negative control also discharges 103 AT4's capable-host branch, and the positive run 103 AT1's. The new job must not set a `name:` other than its key unless the tests' name binding (job key or explicit name, read from compliance.yml) still holds. RISK: if the guarded step cannot enable namespaces on hosted runners, the required-mode job fails by design — escalate (do not weaken the mode). NIP-0003 feature 109 (renumbered 116) then adds a further job, so its 'four jobs' text becomes 'five'.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "103"
       ],
@@ -100,7 +100,10 @@
         ]
       },
       "estimated_lines": 710,
-      "estimated_lines_range": [520, 900],
+      "estimated_lines_range": [
+        520,
+        900
+      ],
       "estimate_basis": "spec 1.1.4 phase-014 rule: budget-counted lines (product + contract + verdict + audit + planning; evidence and run_state excluded); was 230 on the 1.1.0 all-paths basis",
       "naive_lines": 100,
       "debt_refs": [
@@ -125,7 +128,10 @@
         "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
       },
       "estimated_lines": 720,
-      "estimated_lines_range": [520, 910],
+      "estimated_lines_range": [
+        520,
+        910
+      ],
       "estimate_basis": "spec 1.1.4 phase-014 rule: budget-counted lines (product + contract + verdict + audit + planning; evidence and run_state excluded); was 250 on the 1.1.0 all-paths basis",
       "naive_lines": 110,
       "debt_refs": [
@@ -153,7 +159,10 @@
         "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
       },
       "estimated_lines": 750,
-      "estimated_lines_range": [530, 960],
+      "estimated_lines_range": [
+        530,
+        960
+      ],
       "estimate_basis": "spec 1.1.4 phase-014 rule: budget-counted lines (product + contract + verdict + audit + planning; evidence and run_state excluded); was 370 on the 1.1.0 all-paths basis",
       "naive_lines": 160,
       "debt_refs": [
@@ -179,7 +188,10 @@
         "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
       },
       "estimated_lines": 680,
-      "estimated_lines_range": [510, 850],
+      "estimated_lines_range": [
+        510,
+        850
+      ],
       "estimate_basis": "spec 1.1.4 phase-014 rule: budget-counted lines (product + contract + verdict + audit + planning; evidence and run_state excluded); was 120 on the 1.1.0 all-paths basis",
       "naive_lines": 50,
       "debt_refs": [
@@ -205,7 +217,10 @@
         "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
       },
       "estimated_lines": 710,
-      "estimated_lines_range": [520, 890],
+      "estimated_lines_range": [
+        520,
+        890
+      ],
       "estimate_basis": "spec 1.1.4 phase-014 rule: budget-counted lines (product + contract + verdict + audit + planning; evidence and run_state excluded); was 210 on the 1.1.0 all-paths basis",
       "naive_lines": 90,
       "debt_refs": [
@@ -236,7 +251,10 @@
         "new_feature_design": "all (maintenance fold approved; tests are Planner design)"
       },
       "estimated_lines": 690,
-      "estimated_lines_range": [510, 860],
+      "estimated_lines_range": [
+        510,
+        860
+      ],
       "estimate_basis": "spec 1.1.4 phase-014 rule: budget-counted lines (product + contract + verdict + audit + planning; evidence and run_state excluded); was 140 on the 1.1.0 all-paths basis",
       "naive_lines": 60,
       "debt_refs": [
@@ -268,7 +286,10 @@
         ]
       },
       "estimated_lines": 780,
-      "estimated_lines_range": [550, 1000],
+      "estimated_lines_range": [
+        550,
+        1000
+      ],
       "estimate_basis": "spec 1.1.4 phase-014 rule: budget-counted lines (product + contract + verdict + audit + planning; evidence and run_state excluded); was 2070 on the 1.1.0 all-paths basis",
       "naive_lines": 900,
       "version_impact": "None (evidence only)."
@@ -303,7 +324,10 @@
         ]
       },
       "estimated_lines": 890,
-      "estimated_lines_range": [580, 1200],
+      "estimated_lines_range": [
+        580,
+        1200
+      ],
       "estimate_basis": "spec 1.1.4 phase-014 rule: budget-counted lines (product + contract + verdict + audit + planning; evidence and run_state excluded); was 920 on the 1.1.0 all-paths basis",
       "naive_lines": 400,
       "version_impact": "None (findings only; any consolidation is separate planned work under H-CONSOLIDATION)."
@@ -358,7 +382,10 @@
         ]
       },
       "estimated_lines": 850,
-      "estimated_lines_range": [600, 1100],
+      "estimated_lines_range": [
+        600,
+        1100
+      ],
       "estimate_basis": "spec 1.1.4 phase-014 rule: budget-counted lines (product + contract + verdict + audit + planning; evidence and run_state excluded); was 1150 on the 1.1.0 all-paths basis",
       "naive_lines": 500,
       "version_impact": "None (phase 014 prepares no release; the next release, at least MINOR, is a separate H-FRAMEWORK-RELEASE)."
