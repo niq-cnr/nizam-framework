@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "104",
   "status": "in_progress",
-  "updated_at": "2026-10-09T19:28:39Z",
+  "updated_at": "2026-10-09T19:33:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1706,6 +1706,18 @@
       "at": "2026-10-09T19:28:39Z",
       "event": "operator_gate_decision",
       "detail": "Operator clarified (2026-10-09, interactive session) that 'the new streamlined agent workflow that was agreed for this project' is the NIZAM FRAMEWORK MAINTAINER EXECUTION PROMPT (2026-10-08), re-pasted verbatim. Orchestrator's application, which changes NO active gate: (a) the per-feature sequence is section 6's 11 steps (Generator contract -> Validator Mode A -> Evaluator contract review -> implement -> identified candidate -> Mode B -> Evaluator acceptance incl. the one adversarial check -> Orchestrator evidence gate), already followed for 099/103/104; (b) the phase plan is reused across features, and the Planner is invoked only for substantive requirement/architecture/dependency/acceptance-shape changes, not per feature; (c) repeated manual checks are mechanized (Workflow-tool sequencing of agent stages; deterministic scripted evidence/scope gates), with verdicts bound to commit SHAs; (d) section 11 'mechanically streamlined workflow with unchanged gates' only: reduced review, combined/parallel gate execution, or replacing an agent gate with a deterministic one are PROPOSED policy changes (A15) and are NOT applied. Push of the 104 feature branch, paused pending this clarification, now resumes per contract step 5."
+    },
+    {
+      "at": "2026-10-09T19:31:20Z",
+      "event": "ci_evidence",
+      "feature": "104",
+      "detail": "Pushed phase/014-104-sandbox-ci (a278fcd) and opened PR #68. Positive run 37980556248: conclusion success; jobs validate/fixtures_self_test/e2e_bootstrap/convergent_review all success; convergent_review (job 113989678654) log: 'Ran 54 tests', 'OK', 'CONFORMANCE: FULL', zero skips -> hosted runner provides userns+Landlock; R1 did NOT manifest; triage: no CAPABILITY/DEFECT. Captured ci-positive-run.txt / ci-positive-log.txt (stderr empty); AT5/AT6 self-check exit 0. Negative control (operator-authorized): worktree /home/cnross/workspace02/nizam-wt-104-throwaway at a278fcd, exactly AT4's two replacements, commit e9b7e7b pushed as throwaway/104-isolation-removal, draft PR #69 'DO NOT MERGE'; awaiting its run."
+    },
+    {
+      "at": "2026-10-09T19:33:00Z",
+      "event": "ci_evidence",
+      "feature": "104",
+      "detail": "Negative run 37980776642 on throwaway/104-isolation-removal (e9b7e7b, parent = positive headSha a278fcd): conclusion failure; convergent_review (job 113990412340) failure with exactly one FAIL: test_linux_sandbox_blocks_cross_trial_files_and_network, 'AssertionError: 40 != 0', 'Ran 54 tests', 'CONFORMANCE: NOT FULL (run unsuccessful)', no UNSUPPORTED; other three jobs success. Draft PR #69 closed WITHOUT merge (state CLOSED, mergedAt null); remote branch deleted (ls-remote empty); throwaway worktree removed. All seven ci-*.txt captured with empty stderr. Self-check: AT5-AT8, S10, S11 exit 0. Discharges (to be confirmed by delta Mode B + QA): 103 AT1 capable branch (positive CONFORMANCE: FULL + success) and 103 AT4 capable branch (40 != 0). NDEBT-043/041 closure deferred to after QA."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2199,7 +2211,7 @@
       }
     ]
   },
-  "last_action": "Operator workflow clarified; pushing feature branch for the positive run",
+  "last_action": "104 CI evidence captured; committing evidence; delta Mode B + QA next",
   "completed_contract_ids": [
     "099",
     "103"

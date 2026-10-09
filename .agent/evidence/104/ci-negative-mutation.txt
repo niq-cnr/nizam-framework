@@ -1,0 +1,26 @@
+git diff --no-color a278fcdf4dc4d97de35e9692b3cbe5ff2e3309e6 e9b7e7b0ff9de31654e1e7501ac93ad3cb4aa360
+diff --git a/tools/isolated_trial_adapter.py b/tools/isolated_trial_adapter.py
+index 3fa6540..e8b15b5 100755
+--- a/tools/isolated_trial_adapter.py
++++ b/tools/isolated_trial_adapter.py
+@@ -98,7 +98,7 @@ def restrict_filesystem(root: Path, runner: Path) -> int:
+         if libc.prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) != 0:
+             error = ctypes.get_errno()
+             raise OSError(error, os.strerror(error))
+-        syscall(SYS_LANDLOCK_RESTRICT_SELF, ruleset_fd, 0)
++        pass
+     finally:
+         os.close(ruleset_fd)
+     return abi
+diff --git a/tools/linux_trial_sandbox.sh b/tools/linux_trial_sandbox.sh
+index eef9d2b..27bbdc4 100755
+--- a/tools/linux_trial_sandbox.sh
++++ b/tools/linux_trial_sandbox.sh
+@@ -16,5 +16,5 @@ done
+   exit 2
+ }
+ SELF_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
+-exec unshare --user --map-root-user --net --ipc --uts --pid --fork --mount-proc \
++exec \
+   "$SELF_DIR/isolated_trial_adapter.py" --root "$ROOT" --runner "$RUNNER" -- "$@"
+EXIT:0
