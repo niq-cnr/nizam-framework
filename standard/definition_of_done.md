@@ -2,11 +2,14 @@
 id: nizam-definition-of-done
 title: "Definition of Done"
 description: "Aggregates the framework's eight done-layers -- Step, Handoff, Gate, Feature, Plan, Merge, Release, and Ecosystem -- by citing each layer's existing authority rather than restating its mechanics."
-version: 0.1.0
+version: 0.2.0
 status: active
 enforcement: partially-enforced
 authoritative_source: standard/definition_of_done.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-09"
+    summary: "Merge-Done (Section 8) and Enforcement (Section 11) now name four compliance.yml jobs: `convergent_review`, the convergent review suite in required-conformance mode, joins `validate`, `e2e_bootstrap` and `fixtures_self_test` (NDEBT-041)."
   - version: "0.1.0"
     date: "2026-08-18"
     summary: "Phase 013, feature 093: initial authoring of the layered Definition of Done, aggregating the framework's eight done-layers by citation and defining `complete` over the existing five-value feature-status enum."
@@ -149,15 +152,16 @@ before a human must re-authorize the plan.
 ## 8. Merge-Done
 
 A change is mergeable only when every job `.github/workflows/compliance.yml`
-declares -- `validate` (checks C1 through C16), `e2e_bootstrap`, and
-`fixtures_self_test` -- passes on the latest relevant commit, together with
-human review and this framework's own never-self-merge rule. No single
-green job is sufficient on its own; all three, plus a human reviewer's
-approval, MUST hold simultaneously before a pull request lands.
+declares -- `validate` (checks C1 through C16), `e2e_bootstrap`,
+`fixtures_self_test`, and `convergent_review` (the convergent review suite
+in required-conformance mode) -- passes on the latest relevant commit,
+together with human review and this framework's own never-self-merge rule.
+No single green job is sufficient on its own; all four, plus a human
+reviewer's approval, MUST hold simultaneously before a pull request lands.
 
 `standard/ci_gates.md` Section 2's `MERGE_READY` formula is the
 consumer-aspirational superset this layer generalises to: this framework's
-own three-job workflow mechanizes one concrete instantiation of that
+own four-job workflow mechanizes one concrete instantiation of that
 formula's `CI_GREEN` and `HUMAN_APPROVED` factors; a consuming repository's
 own CI enforces the formula's remaining factors in its own runtime.
 
@@ -208,7 +212,7 @@ tooling today. Feature-Done (Section 6) is verified by `tools/validate.sh`
 check C16, mechanizing the era-safe referential rule that every `complete`
 feature has a corresponding approved contract, a passing QA verdict, and
 evidence resolving on disk. Merge-Done (Section 8) is verified by the
-three jobs `.github/workflows/compliance.yml` declares, which already run
+four jobs `.github/workflows/compliance.yml` declares, which already run
 on this repository today. Release-Done (Section 9) additionally requires
 the release close-out gate defined by phase 013, feature 097, once that
 feature lands.
