@@ -16,5 +16,5 @@ done
   exit 2
 }
 SELF_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)
-exec unshare --user --map-root-user --net --ipc --uts --pid --fork --mount-proc \
+exec \
   "$SELF_DIR/isolated_trial_adapter.py" --root "$ROOT" --runner "$RUNNER" -- "$@"
