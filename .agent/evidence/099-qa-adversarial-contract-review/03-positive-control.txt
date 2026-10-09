@@ -1,0 +1,57 @@
+(cd <scratch-pos|worktree-B> && python3 runver.py <root> <outdir> at1..at8,s01..s12)  # all 20 verification entries; every EXIT line below is the process exit read by runver
+== POSITIVE CONTROL: scratch copy of 483f016 with the contract's pinned edits applied minimally (apply_pos.py + apply_pos2.py) ==
+at1-validator-gate                                      EXIT:0
+at2-key-documents-guard                                 EXIT:0
+at3-capability-register                                 EXIT:0
+at4-skill-json-register                                 EXIT:0
+at5-gates-defined-not-reserved                          EXIT:0
+at6-frontmatter-active                                  EXIT:0
+at7-guide-ecosystem-card                                EXIT:0
+at8-fixtures-self-test                                  EXIT:0
+s01-contract-schema-valid                               EXIT:0
+s02-validator-gate-payload                              EXIT:0
+s03-scope-boundary                                      EXIT:0
+s04-frozen-infra-and-workflows-untouched                EXIT:0
+s05-no-tag-created                                      EXIT:0
+s06-release-closeout-pr                                 EXIT:0
+s07-gates-defined-not-exercised                         EXIT:0
+s08-ecosystem-readme-and-versions                       EXIT:0
+s09-skill-json-version-and-count                        EXIT:0
+s10-nizam-capabilities-additive                         EXIT:0
+s11-phase-yaml-step-record                              EXIT:0
+s12-guide-scope-ecosystem-key-documents-only            EXIT:0
+
+== POSITIVE CONTROL AS A DETACHED WORKTREE at <B>=base+contract+validator commit, pre-commit of attempt (HEAD != 483f016) ==
+at1-validator-gate                                      EXIT:0
+at2-key-documents-guard                                 EXIT:0
+at3-capability-register                                 EXIT:0
+at4-skill-json-register                                 EXIT:0
+at5-gates-defined-not-reserved                          EXIT:0
+at6-frontmatter-active                                  EXIT:0
+at7-guide-ecosystem-card                                EXIT:0
+s01-contract-schema-valid                               EXIT:0
+s02-validator-gate-payload                              EXIT:0
+s03-scope-boundary                                      EXIT:0
+s04-frozen-infra-and-workflows-untouched                EXIT:0
+s05-no-tag-created                                      EXIT:0
+s06-release-closeout-pr                                 EXIT:0
+s07-gates-defined-not-exercised                         EXIT:0
+s08-ecosystem-readme-and-versions                       EXIT:0
+s09-skill-json-version-and-count                        EXIT:0
+s10-nizam-capabilities-additive                         EXIT:0
+s11-phase-yaml-step-record                              EXIT:0
+s12-guide-scope-ecosystem-key-documents-only            EXIT:0
+
+== SAME WORKTREE AFTER the attempt commit (deliverable + evidence committed; S3/S7-S12 anchors stay 483f016; AT1 and AT8 re-run) ==
+at1-validator-gate                                      EXIT:0
+at8-fixtures-self-test                                  EXIT:0
+s01-contract-schema-valid                               EXIT:0
+s03-scope-boundary                                      EXIT:0
+s04-frozen-infra-and-workflows-untouched                EXIT:0
+s07-gates-defined-not-exercised                         EXIT:0
+s08-ecosystem-readme-and-versions                       EXIT:0
+s09-skill-json-version-and-count                        EXIT:0
+s10-nizam-capabilities-additive                         EXIT:0
+s11-phase-yaml-step-record                              EXIT:0
+s12-guide-scope-ecosystem-key-documents-only            EXIT:0
+EXIT:0

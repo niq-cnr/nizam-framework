@@ -1,0 +1,33 @@
+{
+  "review": "099-contract",
+  "feature": "099",
+  "contract_id": "099",
+  "revision_reviewed": 2,
+  "mode": "A",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Rev-1 A resolved: attempt isolation executable (base <B> = Orchestrator commit of approved contract; Orchestrator-created worktree /home/cnross/workspace02/nizam-wt-099-attempt<N>; halt on creation failure; in-root capture + single commit; cherry-pick then worktree remove; Mode B git diff <B>..HEAD + untracked; Evaluator evidence .agent/evidence/099/qa/; failed-attempt quarantine; 03 s4 exhaustion).",
+    "Rev-1 B resolved: S3 feature_list check fully constrained against 483f016. Rev-1 C resolved: S11 excludes status, asserts not BLOCKED.",
+    "No regression: AT1-AT8 character-identical; schema-valid; no reset --hard.",
+    "Orchestrator notes: revert promoted commit before a rework cherry-pick; everything committed in <B> must be on the S3 allowlist; authorize 'git diff <B>..HEAD' for Mode B; S7-S12 controls to be run by the Evaluator contract review."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "099",
+    "summary": "APPROVED (Mode A rev 2, 099-contract attempt 3/3)."
+  },
+  "history": [
+    {
+      "revision_reviewed": 0,
+      "approved": false,
+      "summary": "REJECTED (Mode A rev 0): 3 blockers (shared-worktree reset; run_state-destroying rollback; Generator writing run_state coordination fields), 3 major, 3 minor. Acceptance coverage complete."
+    },
+    {
+      "revision_reviewed": 1,
+      "approved": false,
+      "summary": "REJECTED (Mode A rev 1): MAJOR A attempt isolation not executable; MINOR B S3 feature_list allowlist under-constrained; MINOR C S11 asserts Orchestrator-owned status. Revision 2 is the final permitted attempt."
+    }
+  ]
+}

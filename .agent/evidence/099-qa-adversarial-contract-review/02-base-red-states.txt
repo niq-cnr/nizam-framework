@@ -1,0 +1,18 @@
+(cd <scratch-clone@483f016> && python3 runver.py <clone> out_base at2,at3,at4,at5,at6,at7,s01,s03,s04,s07,s08,s09,s10,s11,s12)  # runver runs each contract verification[].command via bash -c in the clone root
+== BASE 483f016 (+contract file only), scratch clone: expected AT3-AT7 and S7-S12 red; AT2/S1/S3/S4 green ==
+at2-key-documents-guard                                 EXIT:0
+at3-capability-register                                 EXIT:1
+at4-skill-json-register                                 EXIT:1
+at5-gates-defined-not-reserved                          EXIT:1
+at6-frontmatter-active                                  EXIT:1
+at7-guide-ecosystem-card                                EXIT:1
+s01-contract-schema-valid                               EXIT:0
+s03-scope-boundary                                      EXIT:0
+s04-frozen-infra-and-workflows-untouched                EXIT:0
+s07-gates-defined-not-exercised                         EXIT:1
+s08-ecosystem-readme-and-versions                       EXIT:1
+s09-skill-json-version-and-count                        EXIT:1
+s10-nizam-capabilities-additive                         EXIT:1
+s11-phase-yaml-step-record                              EXIT:1
+s12-guide-scope-ecosystem-key-documents-only            EXIT:1
+EXIT:0

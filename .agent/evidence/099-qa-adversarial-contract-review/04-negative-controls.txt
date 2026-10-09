@@ -1,0 +1,76 @@
+(cd <scratchpad> && python3 neg.py && python3 neg2.py <extra-mutations>)  # each mutation = fresh cp of the positive-control tree, one defect injected, relevant checks re-run
+== run 1 ==
+sec2_row_readded at5 1 s07 1  
+sec2_row_readded_consol_only at5 1 s07 1  
+only_GA_defined at5 1 s07 1  
+only_CONSOLIDATION_defined at5 1 s07 1  
+sec1_rows_say_RESERVED_not_DEFINED at5 1 s07 1  
+gate_claims_EXERCISED s07 1  
+sec2_paragraph_not_pinned s07 1  
+sec2_extra_prose s07 1  
+sec2_heading_changed s07 1  
+06_body_edit s07 1  
+06_phrase_not_removed s07 1  
+08_synonym_edit s07 0  
+06_changelog_disposition_word s07 1  
+guide_second_paragraph_edit s12 1  
+guide_other_card_edit s12 1  
+guide_card_missing_08 at7 1 s12 0  
+guide_card_nested_article at7 1  
+guide_unchanged at7 1 s12 1  
+fl_other_feature_status_flip s03 1  
+fl_toplevel_edit s03 1  
+fl_099_acceptance_edit s03 1  
+fl_099_status_flip_legit s03 0  
+fl_099_status_invalid s03 1  
+fl_feature_reorder s03 1  
+extra_file s03 1  
+docs_roadmap_edit s03 1  
+changelog_bump_missing_06 at1 0 s08 1  
+changelog_head_mismatch_opgates at1 0 s08 1  
+readme_not_bumped at1 0 s08 1  
+readme_phrase_remains s08 1  
+readme_reserved_H-GA_remains s08 1  
+06_not_active at6 1  
+08_version_still_010 at6 1 s08 1  
+skill_only_one_cap at4 1 s09 1  
+skill_version_unbumped s09 1  
+skill_extra_key_changed s09 1  
+nizam_only_one_cap at3 1 s10 1  
+nizam_framework_version_bumped s10 1  
+nizam_wrong_source at3 1  
+nizam_keydocs_edit s10 1  
+phase_step100_edit s11 1  
+phase_099_missing_docs_updated s11 1  
+phase_099_blocked s11 1  
+phase_099_status_completed_legit s11 0  
+frozen_infra_edit s04 1  
+github_edit s04 1  
+contract_schema_break s01 1  
+
+== run 2 ==
+08_body_edit_real s07 1  
+08_body_word_swap s07 1  
+opgates_literal_in_changelog at5 1 s07 1  
+opgates_literal1_in_changelog at5 1 s07 1  
+fm_triple_dash_in_changelog at6 1 s07 1  
+
+== S8 hazard probe ==
+s8h(S8 whole-file hazard: new README change_log summary containing the literal reserved `H-GA`) s08 -> EXIT 1 (false-fail direction; Generator must avoid the three literals in the new summary)
+
+EXPECTATIONS (mutation -> check -> expected -> observed):
+  sec2_row_readded, sec2_row_readded_consol_only, only_GA_defined, only_CONSOLIDATION_defined, sec1_rows_say_RESERVED_not_DEFINED -> AT5 and S7 -> 1 -> 1 (all)
+  gate_claims_EXERCISED, sec2_paragraph_not_pinned, sec2_extra_prose, sec2_heading_changed -> S7 -> 1 -> 1 (all)
+  06_body_edit, 06_phrase_not_removed, 08_body_edit_real, 08_body_word_swap, 06_changelog_disposition_word -> S7 -> 1 -> 1 (all)
+  08_synonym_edit -> S7 -> OBSERVED 0: the mutation hit the FRONTMATTER description (same words), not the body; S7(c) is body-scoped by design. Re-run as 08_body_edit_real / 08_body_word_swap -> 1. Not a gap.
+  guide_second_paragraph_edit, guide_other_card_edit -> S12 -> 1 -> 1 ; guide_card_missing_08 -> AT7 -> 1 -> 1 (S12 -> 0 by design: S12 is a scope check, AT7 is the content check) ; guide_card_nested_article, guide_unchanged -> AT7 -> 1
+  fl_other_feature_status_flip, fl_toplevel_edit, fl_099_acceptance_edit, fl_099_status_invalid, fl_feature_reorder, extra_file, docs_roadmap_edit -> S3 -> 1 -> 1 (all) ; fl_099_status_flip_legit -> S3 -> 0 -> 0 (control)
+  changelog_bump_missing_06, changelog_head_mismatch_opgates, readme_not_bumped, 08_version_still_010 -> S8 -> 1 -> 1 (all) ; AT1 -> 0 on these (C8 also accepts a root-CHANGELOG.md line naming the path, which the entry supplies), so S8 is the sole discriminator ; 08_version_still_010 and 06_not_active also red on AT6
+  readme_phrase_remains, readme_reserved_H-GA_remains -> S8 -> 1 -> 1
+  skill_only_one_cap -> AT4 and S9 -> 1 ; skill_version_unbumped, skill_extra_key_changed -> S9 -> 1
+  nizam_only_one_cap -> AT3 and S10 -> 1 ; nizam_framework_version_bumped, nizam_keydocs_edit -> S10 -> 1 ; nizam_wrong_source -> AT3 -> 1
+  phase_step100_edit, phase_099_missing_docs_updated, phase_099_blocked -> S11 -> 1 -> 1 ; phase_099_status_completed_legit -> S11 -> 0 -> 0 (control)
+  frozen_infra_edit, github_edit -> S4 -> 1 ; contract_schema_break -> S1 -> 1
+  opgates_literal_in_changelog / opgates_literal1_in_changelog (hazard: AT5 split literals in the new change_log) -> AT5 and S7 -> 1 (fail closed, as the contract's hazard note intends)
+  fm_triple_dash_in_changelog (hazard: '---' in a summary) -> AT6 -> 1
+EXIT:0

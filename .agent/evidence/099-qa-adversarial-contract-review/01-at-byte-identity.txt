@@ -1,0 +1,11 @@
+python3 -I -c "import json; c=json.load(open('.agent/contracts/099.json')); f=next(x for x in json.load(open('.agent/feature_list_014.json'))['features'] if x['id']=='099'); v=[x for x in c['verification'] if 'acceptance_test_index' in x]; assert len(v)==len(f['acceptance_tests'])==8; [print('AT%d'%(i+1), 'acceptance_test==feature_list:', v[i]['acceptance_test']==f['acceptance_tests'][i], 'command==feature_list:', v[i]['command']==f['acceptance_tests'][i], 'index_ok:', v[i]['acceptance_test_index']==i+1) for i in range(8)]; assert all(v[i]['acceptance_test']==f['acceptance_tests'][i]==v[i]['command'] for i in range(8)); print('ALL 8 BYTE-IDENTICAL')"
+AT1 acceptance_test==feature_list: True command==feature_list: True index_ok: True
+AT2 acceptance_test==feature_list: True command==feature_list: True index_ok: True
+AT3 acceptance_test==feature_list: True command==feature_list: True index_ok: True
+AT4 acceptance_test==feature_list: True command==feature_list: True index_ok: True
+AT5 acceptance_test==feature_list: True command==feature_list: True index_ok: True
+AT6 acceptance_test==feature_list: True command==feature_list: True index_ok: True
+AT7 acceptance_test==feature_list: True command==feature_list: True index_ok: True
+AT8 acceptance_test==feature_list: True command==feature_list: True index_ok: True
+ALL 8 BYTE-IDENTICAL
+EXIT:0
