@@ -1,0 +1,2 @@
+python3 -c "import yaml; fm=lambda p: yaml.safe_load(open(p).read().split('---')[1]); a=fm('ecosystem/06_simplification_review.md'); b=fm('ecosystem/08_ga_gate.md'); assert (a['status'],b['status'])==('active','active'), (a['status'],b['status']); assert a['version']!='0.1.0' and b['version']!='0.1.0', (a['version'],b['version'])"
+EXIT:0

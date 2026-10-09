@@ -1,0 +1,12 @@
+python3 - <<'PY'
+import json, subprocess, sys
+old = json.loads(subprocess.run(['git', 'show', '483f016:NIZAM.json'], capture_output=True, text=True, check=True).stdout)
+new = json.load(open('NIZAM.json'))
+added = [c for c in new['capabilities'] if c not in old['capabilities']]
+rest_same = {k: v for k, v in new.items() if k != 'capabilities'} == {k: v for k, v in old.items() if k != 'capabilities'}
+ok = len(old['capabilities']) == 33 and len(new['capabilities']) == 35 and all(c in new['capabilities'] for c in old['capabilities']) and sorted(c['id'] for c in added) == ['nizam-ecosystem-ga-gate', 'nizam-ecosystem-simplification-review'] and all(set(c) >= {'id', 'summary', 'authoritative_source'} and c['summary'] for c in added) and rest_same and new['framework']['version'] == '1.4.0'
+print(len(old['capabilities']), '->', len(new['capabilities']), 'added:', [c['id'] for c in added], 'rest_same=', rest_same, 'ok=', ok)
+sys.exit(0 if ok else 1)
+PY
+33 -> 35 added: ['nizam-ecosystem-simplification-review', 'nizam-ecosystem-ga-gate'] rest_same= True ok= True
+EXIT:0

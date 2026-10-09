@@ -1,0 +1,17 @@
+python3 - <<'PY'
+import re, subprocess, sys
+base = subprocess.run(['git', 'show', '483f016:docs/guide/index.html'], capture_output=True, text=True, check=True).stdout
+cur = open('docs/guide/index.html').read()
+def blank(text):
+    head, sep, tail = text.partition('<h3><code>ecosystem/</code></h3>')
+    assert sep and sep not in tail, 'ecosystem card heading must occur exactly once'
+    card, end, rest = tail.partition('</article>')
+    new_card, n = re.subn(r'<p>Key documents:.*?</p>', '<p>@@KEYDOCS@@</p>', card, count=1, flags=re.S)
+    assert n == 1, 'Key documents paragraph not found in the ecosystem card'
+    return head + sep + new_card + end + rest
+ok = blank(base) == blank(cur) and base != cur
+print('only-key-documents-paragraph-changed=', ok)
+sys.exit(0 if ok else 1)
+PY
+only-key-documents-paragraph-changed= True
+EXIT:0
