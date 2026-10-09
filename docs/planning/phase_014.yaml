@@ -1,17 +1,38 @@
 id: 014-ga-track
 title: GA Track — the Real Multi-Repo Pilot and the Remaining Lifecycle Protocols
-description: Run the real non-scratch multi-repo pilot at the released v1.4.0 tag, activate and register the authored Repeat/GA lifecycle protocols with their reserved gates, run the first real simplification review, and assemble the GA-readiness dossier without declaring GA.
-status: pending
+description: Run the real non-scratch multi-repo pilot at the released v1.4.0 tag, activate and register the authored Repeat/GA lifecycle protocols with their reserved gates, run the first real simplification review, and assemble the GA-readiness dossier without declaring GA — with the enforcement-integrity maintenance tranche (NDEBT-043, 041, 042, 044, 037, 026; features 103-109) folded in ahead of the GA-readiness assessment. ACTIVATED 2026-10-08 under H-PHASE-014 (spec 1.1.0); steps are listed in the canonical single-lane order of .agent/feature_list_014.json.
+status: in_progress
 steps:
   - id: "099"
     description: GA-track activation wave — register ecosystem/06+08 and define the reserved gates.
     status: PENDING
+  - id: "103"
+    description: Sandbox prerequisite handling — explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043).
+    status: PENDING
+  - id: "104"
+    description: Convergent-review suite enforced in CI, and the review schema family's validator stated (NDEBT-041); depends on 103.
+    status: PENDING
+  - id: "105"
+    description: Nested-fixture ownership — the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042).
+    status: PENDING
+  - id: "106"
+    description: Capability-index parity — tools/skill.json a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a).
+    status: PENDING
+  - id: "107"
+    description: NIP frontmatter under C1/C2 and NIP-0002's status corrected (NDEBT-044 b).
+    status: PENDING
+  - id: "109"
+    description: C15 mapping direction — an explicit Role column parsed by a new primitive; a swapped profile-to-role mapping fails (NDEBT-026).
+    status: PENDING
+  - id: "108"
+    description: Validator help and adapter-reference truth — C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f); depends on 106, 107, 109.
+    status: PENDING
   - id: "100"
-    description: Real, non-scratch multi-repo ecosystem pilot at the released v1.4.0 tag.
+    description: Real, non-scratch multi-repo ecosystem pilot at the released v1.4.0 tag (member set and per-member H-CONSUMER-UPGRADE decisions outstanding).
     status: PENDING
   - id: "101"
-    description: First real simplification review (Repeat stage) over real ecosystem evidence.
+    description: First real simplification review (Repeat stage) over real ecosystem evidence; depends on 099 and 100.
     status: PENDING
   - id: "102"
-    description: GA-readiness assessment (no declaration), next-candidate refinement, and phase close.
+    description: GA-readiness assessment (no declaration), next-candidate refinement, and phase close; depends on 099-101 and 103-109.
     status: PENDING

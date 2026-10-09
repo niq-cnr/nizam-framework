@@ -22,6 +22,24 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   to `v1.5.0`, the next MINOR (`.agent/product_spec_014.md` 1.0.1,
   `.agent/feature_list_014.json`, `docs/planning/phase_014.yaml`, and the manifest's
   phase-014 note). Phase 014 stays `pending` / `proposed`, awaiting `H-PHASE-014`.
+- **Phase 014 activated, with its maintenance tranche, and the backlog reconciled**
+  (planning records only; nothing `bootstrap.sh` injects changes). The operator exercised
+  `H-PHASE-014` with the proposed amendments and folded in the maintenance tranche; the
+  decision was recorded in `run_state` before the re-planning.
+  `.agent/product_spec_014.md` moves to 1.1.2, `active`, with
+  `.agent/feature_list_014.json` in lockstep. Feature 101 now depends on 099. Every
+  acceptance test captures exit status and is probed against the pre-implementation tree,
+  and a phase-scoped tag check replaces the fixed-version test; tests beyond the operator's
+  enumerated amendment list are Planner hardening, which the operator acknowledged. Features 103–109 schedule
+  `NDEBT-043`, then `NDEBT-041`, plus `NDEBT-042`, `NDEBT-044` (split by concern),
+  `NDEBT-037` and `NDEBT-026`, all ahead of feature 102. The scope is re-baselined from
+  2200 to 6660 lines, with a ceiling of 8658: the Planner's estimate (naive 2890 × the
+  measured 2.3 process weight), which the operator approved. `docs/planning/phase_014.yaml` is
+  `in_progress` and the manifest's `current_phase` is `014-ga-track`;
+  `docs/planning/operator_gates.md` (v0.27.0), `docs/planning/ROADMAP.md` (v0.46.0) and
+  `docs/planning/DEBT.md` (v0.48.0) record the activation. Two new files,
+  `docs/planning/backlog_reconciliation.md` and `docs/planning/backlog_dag.json`, map the
+  maintainer brief to existing ids and give the candidate DAG for the work after phase 014.
 
 ## [1.4.0] - 2026-10-08
 

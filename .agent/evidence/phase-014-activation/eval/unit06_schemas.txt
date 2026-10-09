@@ -1,0 +1,7 @@
+python3 .agent/evidence/phase-014-activation/eval/unit06_schemas.py
+VALID    .agent/feature_list_014.json             vs schema/feature_list.schema.json        required=4 top-level-keys=6 negative-control=rejects-missing-phase
+VALID    docs/planning/phase_014.yaml             vs schema/phase.schema.json               required=4 top-level-keys=5 negative-control=rejects-missing-id
+VALID    docs/planning/manifest.json              vs schema/manifest.schema.json            required=4 top-level-keys=5 negative-control=rejects-missing-schema_version
+VALID    .agent/run_state.json                    vs schema/run_state.schema.json           required=8 top-level-keys=18 negative-control=rejects-missing-repository
+RESULT: 0 of 4 invalid/vacuous
+EXIT:0
