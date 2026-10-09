@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "104",
   "status": "in_progress",
-  "updated_at": "2026-10-09T17:59:00Z",
+  "updated_at": "2026-10-09T18:26:41Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -228,6 +228,10 @@
       "limit": 3
     },
     "103-implementation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "104-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -1603,6 +1607,42 @@
       "at": "2026-10-09T17:59:00Z",
       "event": "operator_gate_decision",
       "detail": "Operator verbatim (2026-10-09, interactive session): 'option 1 confirmed.' — the reply to the orchestrator's request to confirm (1) the 8600 budget / 11180 ceiling, (2) the 103 overrun acknowledgment, (3) the PR #67 merge. Recorded effect: option 1 (phase-014 counting rule + re-baseline, spec 1.1.4) is CONFIRMED, resolving the earlier truncated message. The orchestrator reads the confirmation as covering the re-baseline as presented (8600 / ceiling 11180) and the 103 overrun acknowledgment; neither was restated separately, and this interpretation is disclosed to the operator for correction. PR #67 is still OPEN (not merged)."
+    },
+    {
+      "at": "2026-10-09T18:02:21Z",
+      "event": "feature_started",
+      "feature": "104",
+      "detail": "Operator: 'PR #67 has been merged.' (merge b8ea889). Dependency gate: 104 deps [103=complete] satisfied. Branch phase/014-104-sandbox-ci from b8ea889. 104 range for the scope budget starts at 7bc65a5 (rebaseline) - effectively b8ea889 on main. Dispatching @generator to propose contract 104 (104-contract attempt 1/3)."
+    },
+    {
+      "at": "2026-10-09T18:18:12Z",
+      "event": "contract_proposed",
+      "feature": "104",
+      "detail": "Generator proposed .agent/contracts/104.json (rev 0, attempt 1/3; schema-valid; validate 16/16). Orchestrator verified the AT5 blocker independently: AT5 asserts R['headBranch']=='phase/014-ga-track', but compliance.yml triggers only on pull_request and push-to-main, and origin/phase/014-ga-track is the stale head c061b31 of merged PR #65 (not an ancestor of b8ea889's lineage). AT5 is unsatisfiable without either (A) a force-push over that ref or (B) an operator-approved amendment of AT5's branch clause. Orchestrator decisions on generator Q3/Q4: CI evidence capture + its commit are Orchestrator-owned; ordering = Mode B on the code diff BEFORE any push, then push/CI, then a delta Mode B on the evidence commit, then QA. Mode A NOT dispatched (would burn a contract round on a known-unsatisfiable AT). HALTED pending operator: Q1 (A vs B) and Q2 (authorization for the throwaway/104-* push, never-merged draft PR, and branch deletion)."
+    },
+    {
+      "at": "2026-10-09T18:19:35Z",
+      "event": "operator_gate_decision",
+      "feature": "104",
+      "detail": "Recorded BEFORE the amendment act (NDEBT-018). Operator verbatim (2026-10-09, interactive session): 'B. Amend AT5' — selecting option B: amend 104 AT5's branch clause so the positive CI run is on the feature branch phase/014-104-sandbox-ci (headSha an ancestor of the feature HEAD); everything else in AT5 unchanged. Spec amendment A2 -> 1.1.5. Decision 2 (throwaway/104-* push, never-merged draft PR, branch deletion) was NOT addressed and remains UNAUTHORIZED; it is required only at implementation time and will be re-asked before any push."
+    },
+    {
+      "at": "2026-10-09T18:20:09Z",
+      "event": "operator_gate_decision",
+      "feature": "104",
+      "detail": "Operator verbatim (2026-10-09, interactive session): '1. Push a throwaway branch throwaway/104-<slug> with the sandbox deliberately removed.' — quoting step 1 of the orchestrator's 4-step negative-control list. Recorded effect: AUTHORIZED = pushing throwaway/104-<slug> (only change: 103 AT4's isolation-removal mutation), to be executed by the Orchestrator at implementation time after Mode B of the code diff. NOT addressed (still unauthorized): step 2 the never-merged draft PR from that branch (required for CI to run, since compliance.yml triggers only on pull_request / push-to-main) and step 4 closing the PR and deleting the branch. Those will be re-asked before the act."
+    },
+    {
+      "at": "2026-10-09T18:20:44Z",
+      "event": "operator_gate_decision",
+      "feature": "104",
+      "detail": "Operator verbatim (2026-10-09, interactive session): 'approved, please proceed.' — the reply to the orchestrator's request for steps 2 and 4 of the negative control. Recorded effect: AUTHORIZED = (2) opening a never-merged draft PR from throwaway/104-<slug> so compliance.yml runs, and (4) closing that PR and deleting the branch after the evidence is captured. With step 1 (18:20:09Z), the full negative-control sequence is now authorized, executed by the Orchestrator only, after Mode B of the code diff."
+    },
+    {
+      "at": "2026-10-09T18:26:41Z",
+      "event": "amendment_applied",
+      "feature": "104",
+      "detail": "Amendment A2 (spec 1.1.5) applied by the Planner and verified (verify_a2.py 13/13; validate 16/16; frozen tree unchanged; AT5 changed in exactly one literal 'phase/014-ga-track' -> 'phase/014-104-sandbox-ci'). Orchestrator caught one stale sentence (change_log claimed decision 2 unauthorized; it had been authorized at 18:20:09Z/18:20:44Z) and had the Planner correct it before commit. Evidence .agent/evidence/104-amendment-a2/. Next: Generator revises contract 104 to rev 1 (copy amended AT5 verbatim) BEFORE any Mode A review — still 104-contract attempt 1/3, since rev 0 was never reviewed."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2096,7 +2136,7 @@
       }
     ]
   },
-  "last_action": "Option 1 confirmed by operator; awaiting PR #67 merge before feature 104",
+  "last_action": "Amendment A2 committed; contract 104 rev 1 revision dispatched",
   "completed_contract_ids": [
     "099",
     "103"

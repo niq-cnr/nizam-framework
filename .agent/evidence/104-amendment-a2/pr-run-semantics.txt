@@ -1,0 +1,5 @@
+gh run view 37967901131 --json headSha,headBranch,event,conclusion && git merge-base --is-ancestor 1c067203c846550b9fcc26b98be335a2e91a041b phase/014-103-sandbox-prereq && echo 'headSha 1c06720 IS an ancestor of the 103 feature branch' && { git merge-base --is-ancestor 1c067203c846550b9fcc26b98be335a2e91a041b b8ea889 && echo 'UNEXPECTED: ancestor of main' || echo 'headSha 1c06720 is NOT an ancestor of main b8ea889 (squash-merge)'; }
+{"conclusion":"success","event":"pull_request","headBranch":"phase/014-103-sandbox-prereq","headSha":"1c067203c846550b9fcc26b98be335a2e91a041b"}
+headSha 1c06720 IS an ancestor of the 103 feature branch
+headSha 1c06720 is NOT an ancestor of main b8ea889 (squash-merge)
+EXIT:0
