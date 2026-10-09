@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "104",
   "status": "in_progress",
-  "updated_at": "2026-10-09T19:21:42Z",
+  "updated_at": "2026-10-09T19:28:39Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -240,6 +240,10 @@
         "verbatim": "authoirized.",
         "scope": "Contingent: ONE further contract revision (attempt 4) ONLY if the evaluator contract review of rev 3 rejects, limited to the evaluator's prescribed blocking fixes; nothing else may change. Interpretation of the operator's reply (to the orchestrator's note that an evaluator rejection could not be fixed without operator authorization, 097 precedent) disclosed to the operator. Unused if the evaluator approves."
       }
+    },
+    "104-implementation": {
+      "attempts": 1,
+      "limit": 3
     }
   },
   "history": [
@@ -1685,6 +1689,23 @@
       "event": "contract_approved",
       "feature": "104",
       "detail": "Evaluator contract review APPROVED contract 104 rev 3 (.agent/qa/104-contract-review.json; 113 mutants, 109 caught, 4 survivors all non-blocking: w35-w37 semantic-neutral controls, c27 an unproducible mixed negative log already routed to HALT by step-8 triage; evidence .agent/evidence/104-qa-adversarial-contract-review/ 01-08 all EXIT:0, 04 s5-shaped). Both gates approved at attempt 3/3; the contingent 4th-revision extension was NOT used. Canonical-first: phase_014.yaml 104 AWAITING_IMPLEMENTATION, contract status approved, run_state active_contract_id 104. Non-blocking carry-forwards: run-id lookup via gh run list --branch --event pull_request (AT5/S10 fail closed); PULL_REQUEST_TEMPLATE DoD drift -> 102 open-debt roll. Operator directed (2026-10-09, verbatim 'use the new streamline agent workflow for yourself.') that the orchestrator drive subagents via the Workflow tool; gates unchanged."
+    },
+    {
+      "at": "2026-10-09T19:22:01Z",
+      "event": "attempt_started",
+      "feature": "104",
+      "detail": "104-implementation attempt 1/3: attempt base <B>=9f329e13f0d030b895595760ed3d2d4f5d793879; detached worktree /home/cnross/workspace02/nizam-wt-104-attempt1 created at <B>. Feature branch NOT pushed (the first push opens the positive-run PR, after Mode B)."
+    },
+    {
+      "at": "2026-10-09T19:27:22Z",
+      "event": "implementation_promoted",
+      "feature": "104",
+      "detail": "Workflow wf_2b6334eb-16b: Generator attempt 1 commit 6f4f357 (parent <B> 9f329e1; AT1-AT4, AT9, AT10, S01-S09 all exit 0; product +56/-10 across 6 files; 16 evidence files) and Validator Mode B APPROVED (empty arrays; .agent/validator/104-mode-b.json; mode_b_obligations checked; two disclosed non-material deviations). Orchestrator verified scope and cherry-picked as 8320ac9; worktree removed. NOT pushed: the operator's clarification about the 'agreed streamlined agent workflow' is pending, and the first push opens the positive-run PR (AT5)."
+    },
+    {
+      "at": "2026-10-09T19:28:39Z",
+      "event": "operator_gate_decision",
+      "detail": "Operator clarified (2026-10-09, interactive session) that 'the new streamlined agent workflow that was agreed for this project' is the NIZAM FRAMEWORK MAINTAINER EXECUTION PROMPT (2026-10-08), re-pasted verbatim. Orchestrator's application, which changes NO active gate: (a) the per-feature sequence is section 6's 11 steps (Generator contract -> Validator Mode A -> Evaluator contract review -> implement -> identified candidate -> Mode B -> Evaluator acceptance incl. the one adversarial check -> Orchestrator evidence gate), already followed for 099/103/104; (b) the phase plan is reused across features, and the Planner is invoked only for substantive requirement/architecture/dependency/acceptance-shape changes, not per feature; (c) repeated manual checks are mechanized (Workflow-tool sequencing of agent stages; deterministic scripted evidence/scope gates), with verdicts bound to commit SHAs; (d) section 11 'mechanically streamlined workflow with unchanged gates' only: reduced review, combined/parallel gate execution, or replacing an agent gate with a deterministic one are PROPOSED policy changes (A15) and are NOT applied. Push of the 104 feature branch, paused pending this clarification, now resumes per contract step 5."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2178,7 +2199,7 @@
       }
     ]
   },
-  "last_action": "Contract 104 approved; preparing attempt base and Loop 2 via Workflow",
+  "last_action": "Operator workflow clarified; pushing feature branch for the positive run",
   "completed_contract_ids": [
     "099",
     "103"
