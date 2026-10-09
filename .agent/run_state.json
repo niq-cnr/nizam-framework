@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "105",
   "status": "in_progress",
-  "updated_at": "2026-10-09T19:43:42Z",
+  "updated_at": "2026-10-09T22:04:34Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -243,6 +243,10 @@
     },
     "104-implementation": {
       "attempts": 1,
+      "limit": 3
+    },
+    "105-contract": {
+      "attempts": 3,
       "limit": 3
     }
   },
@@ -1729,6 +1733,24 @@
       "at": "2026-10-09T19:43:42Z",
       "event": "debt_resolved",
       "detail": "Planner moved NDEBT-043 (Low) and NDEBT-041 (Medium) to Resolved in docs/planning/DEBT.md 0.50.0, citing the 104 CI evidence (runs 37980556248 / 37980776642), .agent/qa/103.json and .agent/qa/104.json. 103 AT2's capable branch remains not exercised (recorded in the row as residual risk; not a closure condition). C12 extension to the review family stays deferred to 101 / H-CONSOLIDATION. Open debt now 8 (all Low): NDEBT-046/045/044/042/040/037/034/026."
+    },
+    {
+      "at": "2026-10-09T19:49:19Z",
+      "event": "feature_started",
+      "feature": "105",
+      "detail": "Operator: 'merged' (PR #68 merged at 2a53764). Dependency gate: 105 has no dependencies. Branch phase/014-105-nested-fixture-ownership from 2a53764. Loop 1 runs as one Workflow script (agreed streamlined workflow, gates unchanged): Generator proposes contract 105 -> Validator Mode A -> on rejection the Generator revises (each Mode A round = one 105-contract attempt, hard ceiling 3; the counter is pre-set to attempt 1 here and reconciled from the workflow's returned round history before any further act) -> Evaluator contract review if Mode A approves. No outward act in Loop 1."
+    },
+    {
+      "at": "2026-10-09T20:28:06Z",
+      "event": "contract_proposed",
+      "feature": "105",
+      "detail": "Generator proposed .agent/contracts/105.json rev 0 (schema-valid; S01 pass; validate 16/16; AT1-AT4 red at base, AT5 guard green). It raised two open questions. Q1: a proposed FOURTH guard failure (a claim naming an absent subdirectory, plus a fourth printed line) beyond the spec's three. The Orchestrator neither approves nor vetoes it, and routes it to Validator Mode A to rule on spec scope; if out of scope, the required fix removes it as a unit. Q2: budget allocation ~755-805 vs estimate 720, noted and within the per-feature threshold (3 x mean(596,885,991) = 2472). Workflow resumed (generator call cached) into Mode A."
+    },
+    {
+      "at": "2026-10-09T22:04:34Z",
+      "event": "contract_approved",
+      "feature": "105",
+      "detail": "Loop 1 workflow wf_eda56733-21c (resumed once after the Generator's open questions were routed to Mode A). Mode A round 1 REJECTED rev 0 (2 major: NIP-0003 108/109 misattribution of who creates tools/fixtures/runtime_session/; demonstration labels not bound to their own failure modes; +1 missing coverage, 2 unsupported claims). Round 2 REJECTED rev 1 (3 minor: revision-state self-contradiction, stale R1 fallback, two premises mismatched at <A>). Round 3 APPROVED rev 2 (empty arrays) and ruled the Generator's 4th failure mode (claim naming an absent subdirectory) IN SCOPE as an extension of the existing guard's absent-fixture rule. Evaluator contract review APPROVED (.agent/qa/105-contract-review.json; 92 mutants, 81 caught, 11 non-blocking survivors; S05/S06 load-bearing). 105-contract reconciled to attempts 3/3 (three Mode A rounds). Canonical-first: phase_014.yaml 105 AWAITING_IMPLEMENTATION, contract approved, active_contract_id 105. Orchestrator follow-ups carried from the contract: NIP-0003 108/109 runtime_session registration tension -> Planner at NIP pre-acceptance; fixtures_self_test C13-probe skill.json swap-on-interrupt defect -> log in DEBT.md after QA."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2159,7 +2181,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "105",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -2231,7 +2253,7 @@
       }
     ]
   },
-  "last_action": "Feature 104 complete; next 105",
+  "last_action": "Contract 105 approved; preparing attempt base",
   "completed_contract_ids": [
     "099",
     "103",

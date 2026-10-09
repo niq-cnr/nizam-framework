@@ -1,0 +1,30 @@
+bash .agent/evidence/105-qa-adversarial-contract-review/helpers/07-testability.sh
+AT1 bytes=391 hazards=[]
+AT2 bytes=391 hazards=[]
+AT3 bytes=233 hazards=[]
+AT4 bytes=203 hazards=[]
+AT5 bytes=69 hazards=[]
+S01 bytes=3951 hazards=[]
+S02 bytes=2214 hazards=[]
+S03 bytes=2417 hazards=[]
+S04 bytes=5534 hazards=[49:|tee ]
+S05 bytes=7815 hazards=[42:gh  ]
+S06 bytes=6219 hazards=[34:|tee ]
+S07 bytes=2491 hazards=[]
+S08 bytes=2383 hazards=[]
+S09 bytes=2561 hazards=[]
+-- serial-guard presence (S05 S06 S09 must hold the flock)
+S05.sh:1
+S06.sh:1
+S09.sh:1
+-- python compile of every heredoc payload
+S01 compiles
+S02 compiles
+S03 compiles
+S04 compiles
+S05 compiles
+S06 compiles
+S07 compiles
+S08 compiles
+S09 compiles
+EXIT:0

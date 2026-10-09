@@ -1,0 +1,24 @@
+python3 .agent/evidence/105-qa-adversarial-contract-review/helpers/05-tally.py
+first run rows: 92  corrected rerun rows: 6  superseded ids: ['d01', 'd10', 'e02', 'e03', 'e04', 'e09']
+merged mutants: 92 caught: 81 survived: 11
+  group a   mutants=8 caught=8
+  group b   mutants=13 caught=12
+  group c   mutants=14 caught=9
+  group d   mutants=13 caught=9
+  group e   mutants=9 caught=8
+  group g   mutants=21 caught=21
+  group t   mutants=14 caught=14
+survivors:
+  b08  suite existence test -f -> -e (a directory counts as a suite)
+  c12  on-disk enumeration -type f (symlinks not counted)
+  c13  accounted := total (count cosmetic: accounted always equals total)
+  c16  phantom COVERED row check removed
+  c6   on-disk enumeration limited to -maxdepth 6 (path components)
+  c8   on-disk enumeration limited to -maxdepth 8 (path components)
+  d06  positive control removed from _claim_map_case
+  d07  negative assertion: exactly-one-line test removed
+  d08  negative assertion: defect-name test removed
+  d09  negative assertion: rc test -eq 1 weakened to -ne 99
+  e06  leak: write into the real tree in the demonstration loop (outside the function), cleaned up
+first catching check -> count: {'AT1': 32, 'AT4': 2, 'S03': 5, 'S04': 8, 'S05': 18, 'S06': 2, 'S07': 7, 'S08': 7}
+EXIT:0
