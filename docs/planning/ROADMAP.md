@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.50.0
+version: 0.51.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.51.0"
+    date: "2026-10-10"
+    summary: "Post-release refresh: v1.5.0 GA is published and pinned at reviewed PR78 merge f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852 (annotated tag object 08dbe12a38c7cd8d8fb8d52757cd096551bbc779); release workflow38072142688 passed, actual public-tag bootstrap and payload12/12 passed, published guide matches tag source. Replace preparation with released facts; completed phase assertions remain historical evidence. No next phase is activated."
   - version: "0.50.0"
     date: "2026-10-10"
     summary: "General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: real_production_pilot is not_met; recorded_consumer_adoptions is insufficient_evidence. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. v1.5.0 release preparation (operator-requested 2026-10-10; H-FRAMEWORK-RELEASE Section 2 sign-off given, and this time the tag authorization is INCLUDED in the same sentence): phase 014 (GA track) and its maintenance tranche are packaged as the next MINOR release. Current Position gains the 'Release in preparation: v1.5.0' bullet ahead of the latest-released bullet, which stays unedited -- v1.4.0 remains the latest released tag until the authorized tag act is executed after this PR merges, and the close-out gate's body pattern is version-scoped, so the v1.4.0 line does not count at V=1.5.0 (the 0.38.0/0.44.0 precedent). Release fact for the post-release refresh: once v1.5.0 is tagged, the post-release refresh records tag execution and retains the completed phase-014 tag-absence assertions as assessment-time evidence; the historical dossier and frozen acceptance infrastructure remain unchanged. run_state, manifest and DEBT.md are untouched."
@@ -782,7 +785,7 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-10)
 
-- **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. `main` carries the changes since `v1.4.0`; the release preparation and tag act are authorized under `H-FRAMEWORK-RELEASE`, with the tag executed after this PR merges. The handover record is [`HANDOVER.md`](HANDOVER.md).
+- **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. No next phase is activated. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
   statements are superseded at 2026-10-10: feature 099 has activated `ecosystem/06_simplification_review.md` and
   `ecosystem/08_ga_gate.md` (the release bullet's "activation awaits phase-014 feature 099" predates it), and
@@ -848,38 +851,17 @@ successor, leaving open debt deferred to unscoped "future phases").
   ran green at `SUMMARY: 15 passed, 0 failed` (C1–C15) at the time, and the fixtures
   self-test at 57/57; the hermetic e2e bootstrap harness passed in CI (now including the
   n-case `assert_multirepo`).
-- **Release in preparation: v1.5.0 (MINOR) — PREPARED 2026-10-10; tag act AUTHORIZED, awaits merge.**
-  General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved.
-  Requested by the operator 2026-10-10, verbatim: "ensure the that
-  documentation and change notes is updated and ready for relase. You are authorized
-  to manage, triage as necessary, your PR's and once clean merge as appropriate. you
-  are authorized to tag and pin the release." — the `H-FRAMEWORK-RELEASE` Section 2
-  human sign-off, and, unlike v1.4.0, the tag authorization is included in the same
-  sentence ("you are authorized to tag and pin the release"), so no separate
-  post-merge tag authorization is awaited. Per `methodology/06_release_train.md`
-  Section 6 this change is the durable preparation only; the tag act remains the
-  separate Orchestrator mechanic, executed after this PR merges — the pipeline never
-  self-tags. The consumer-reaching content since v1.4.0 is exactly the phase-014
-  (GA track) surface and its maintenance tranche (PRs #64–#77): the ecosystem
-  lifecycle protocols flip `draft` -> `active` and are registered (`NIZAM.json`,
-  `tools/skill.json`), the operator gates `H-CONSOLIDATION` / `H-GA` are defined (H-CONSOLIDATION
-  OUTSTANDING; H-GA EXECUTED by the operator 2026-10-10), the convergent-review suite ships required-conformance mode with its
-  CI job, `standard/capability_profiles.md` gains the C15-enforced `Role` column, the
-  default sweep widens (docs/nips under C1/C2 and the C15 mapping), C13 enforces
-  the skill-index subset rule in both full sweep and `--payload`,
-  and `tools/interface.md` plus the validator help texts are corrected. Everything
-  else (the GA-readiness dossier, amendments, planning records, backlog
-  reconciliation) is framework-envelope only. MINOR per
-  `methodology/06_release_train.md` Section 3.2, rounded up per Section 3.4. This
-  release-preparation change synchronizes every version anchor to 1.5.0 and cuts the
-  dated `[1.5.0]` CHANGELOG section; the readiness record
-  (`.agent/evidence/release-readiness-v1.5.0.md`) is written by the Evaluator after
-  independently re-running the checks. Post-release fact: once the authorized tag is
-  pushed, the post-release refresh rolls this bullet to the released
-  record with the tag object id. Completed phase-014 tag-absence assertions remain
-  assessment-time evidence; the historical dossier and frozen acceptance infrastructure
-  remain unchanged.
-- **Latest released tag: v1.4.0 (MINOR) — RELEASED 2026-10-08 at `9edd5d0` (PR #63).**
+- **Latest released tag: v1.5.0 (MINOR, General Availability) — RELEASED 2026-10-10 at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852` (PR #78).**
+  Annotated tag object `08dbe12a38c7cd8d8fb8d52757cd096551bbc779`; `release.yml` run 38072142688 passed and published
+  the release at `2026-10-10T17:32:24Z`. GitHub Latest and README bootstrap pins name
+  `v1.5.0`. A real bootstrap from the public tag verified the recorded commit and
+  both active ecosystem lifecycle protocols; consumer payload validation passed 12/12.
+  The published guide matches the tag source. The operator declared GA under the
+  recorded `H-GA` decision; its historical evidence exceptions remain unchanged.
+  Completed phase-014 tag-absence assertions remain assessment-time evidence.
+  NIP-0003 remains queued under `H-NIP`; its historical version expectations need
+  revision before acceptance after this release. No next phase is activated.
+- **Prior released tag: v1.4.0 (MINOR) — RELEASED 2026-10-08 at `9edd5d0` (PR #63).**
   After PR #63 merged, the operator authorized the tag act with the verbatim words
   "merged — authorized to tag v1.4.0"
   (recorded in `.agent/run_state.json` before the act per NDEBT-018). Under that
