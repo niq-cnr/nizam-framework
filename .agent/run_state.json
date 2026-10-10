@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "109",
   "status": "in_progress",
-  "updated_at": "2026-10-10T13:12:54Z",
+  "updated_at": "2026-10-10T13:13:12Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1972,6 +1972,12 @@
       "event": "contract_approved",
       "feature": "108",
       "detail": "108-contract attempt 2/3 approved at revision 0 after the S01 contract_defect revision. Mode A round 2 .agent/validator/108-mode-a.json (prior_rounds[0] preserves round 1) and evaluator contract review round 2 .agent/qa/108-contract-review.json both approved with empty issue arrays; the revised S01 was re-executed against a six-variant flag-state matrix (round-2 captures 28-30 under .agent/evidence/108-qa-adversarial-contract-review/) and the round-1 defect was reproduced verbatim against <B> 764144a as confirmation. This commit is the new attempt base <B>. Implementation has not restarted."
+    },
+    {
+      "at": "2026-10-10T13:13:12Z",
+      "event": "implementation_started",
+      "feature": "108",
+      "detail": "108-implementation attempt 1/3 restarted on the new attempt base. The halted attempt's worktree was discarded (its S01 capture was against the pre-revision contract); a fresh worktree /home/cnross/workspace02/nizam-wt-108-attempt1 is detached at the new <B> ddcf0db84832bc1e9f7c3f66881eeb5c422e94df (S01 fix approved at 108-contract attempt 2/3). The CONTRACT_DEFECT did not consume an implementation attempt. Dispatching Generator to re-apply the pinned scope (tools/validate.sh print_usage, tools/interface.md item-10) and re-capture AT1-AT7, S01-S05, S02, S03 against the revised contract."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2526,7 +2532,7 @@
       }
     ]
   },
-  "last_action": "Contract 108 approved at revision 0 (attempt 2/3, S01 fix)",
+  "last_action": "Feature 108 implementation attempt 1 restarted (new base)",
   "completed_contract_ids": [
     "099",
     "103",
