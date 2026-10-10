@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
-version: 0.3.0
+version: 0.3.1
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.3.1"
+    date: "2026-10-10"
+    summary: "PATCH correction (phase-014 feature 108, NDEBT-044 d): Section 5 item 10's no-fabrication rule cites Section 2, Item 5 (Failure behavior), not Item 4 (Manifest resolution). A one-token citation fix; the checklist stays at 10 items."
   - version: "0.2.0"
     date: "2026-07-08"
     summary: "H4: reordered Section 2 Discovery so bootstrapped-consumer .nizam/tools/skill.json discovery runs first, matching bootstrap.sh's .nizam default install layout, with the repository-root tools/skill.json path retained as an explicitly labeled framework-checkout fallback."
@@ -163,7 +166,7 @@ MUST be satisfied.
 9. The adapter surfaces every operation's error conditions to the acting
    agent rather than suppressing them (Sections 4.1-4.3).
 10. The adapter does not fabricate governance behavior when no
-    `tools/skill.json` can be discovered (Section 2, Item 4).
+    `tools/skill.json` can be discovered (Section 2, Item 5).
 
 ## 6. References
 
