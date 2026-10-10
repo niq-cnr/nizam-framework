@@ -1,0 +1,181 @@
+python3 .agent/evidence/106-qa-adversarial-contract-review/helpers/rev1_s03_probe.py
+cwd /home/cnross/workspace02/nizam-framework
+validate.sh invoked False
+fixtures_self_test.sh invoked False
+A 2a22ecdfda6ff3895792a1d974489d091e11e696
+B 55c428a35f11259f8b3d3b57cc57626329786bbf
+HEAD c1053fd089f71cf0dbb9b7673165abca29f264b5
+real_diff_count 15
+real_diff .agent/contracts/106.json
+real_diff .agent/evidence/106-qa-adversarial-contract-review/01-static.txt
+real_diff .agent/evidence/106-qa-adversarial-contract-review/02-base-at4.txt
+real_diff .agent/evidence/106-qa-adversarial-contract-review/03-positive.txt
+real_diff .agent/evidence/106-qa-adversarial-contract-review/04-mutant-no-subset.txt
+real_diff .agent/evidence/106-qa-adversarial-contract-review/05-s04-no-subset.txt
+real_diff .agent/evidence/106-qa-adversarial-contract-review/helpers/base_at4.py
+real_diff .agent/evidence/106-qa-adversarial-contract-review/helpers/lib.py
+real_diff .agent/evidence/106-qa-adversarial-contract-review/helpers/mutant_no_subset.py
+real_diff .agent/evidence/106-qa-adversarial-contract-review/helpers/positive_probe.py
+real_diff .agent/evidence/106-qa-adversarial-contract-review/helpers/s04_no_subset.py
+real_diff .agent/evidence/106-qa-adversarial-contract-review/helpers/static_probe.py
+real_diff .agent/qa/106-contract-review.json
+real_diff .agent/run_state.json
+real_diff .agent/validator/106-mode-a.json
+PASS real git diff --name-only A 55c428a contains .agent/run_state.json
+run_state_numstat 9	3	.agent/run_state.json
+run_state_diff_begin
+diff --git a/.agent/run_state.json b/.agent/run_state.json
+index 8165e8a..d1533d4 100644
+--- a/.agent/run_state.json
++++ b/.agent/run_state.json
+@@ -3,7 +3,7 @@
+   "current_phase": "014-ga-track",
+   "current_feature": "106",
+   "status": "in_progress",
+-  "updated_at": "2026-10-10T03:46:46Z",
++  "updated_at": "2026-10-10T04:39:56Z",
+   "circuit_breaker": {
+     "000-contract": {
+       "attempts": 1,
+@@ -1815,6 +1815,12 @@
+       "event": "feature_started",
+       "feature": "106",
+       "detail": "Dependency gate: 106 dependencies [] satisfied. Branch phase/014-106-c13-intentional-subset from main 183eed1. 106-contract attempt 1/3. Dispatching Generator to propose .agent/contracts/106.json. No outward act in Loop 1."
++    },
++    {
++      "at": "2026-10-10T04:39:56Z",
++      "event": "contract_approved",
++      "feature": "106",
++      "detail": "106-contract attempt 1/3 approved at revision 0. Mode A: .agent/validator/106-mode-a.json final_verdict.approved true, issues/missing_acceptance_coverage/unsupported_claims empty. Evaluator contract review: .agent/qa/106-contract-review.json same empty arrays, approved true. Evidence: .agent/evidence/106-qa-adversarial-contract-review/. No revision was required. This commit is the attempt base <B>. Implementation has not started."
+     }
+   ],
+   "phase_001_scope_budget_final": {
+@@ -2261,7 +2267,7 @@
+     ],
+     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
+   },
+-  "active_contract_id": null,
++  "active_contract_id": "106",
+   "phase_013_scope_budget_final": {
+     "original_estimate_lines": 4800,
+     "total_lines_changed": 6212,
+@@ -2333,7 +2339,7 @@
+       }
+     ]
+   },
+-  "last_action": "Feature 106 started; handover range pinned at e2a50ed..183eed1",
++  "last_action": "Contract 106 approved (revision 0); attempt base pending commit",
+   "completed_contract_ids": [
+     "099",
+     "103",
+run_state_diff_end
+PASS run_state diff is the contract_approved bookkeeping edit
+real_ancestor_A_of_B 0
+real_shared_tree_commits_past_B 2
+note: S02's rev-list count is simulated as 1, the attempt-root condition. The shared branch is not the attempt worktree.
+PASS contract status is proposed
+PASS approvals not yet set
+PASS revision 0 blob at 55c428a is approved
+json_paths_changed 16
+json_path approvals.approved_at
+json_path approvals.evaluator_contract_review
+json_path approvals.revisions
+json_path approvals.validator_mode_a
+json_path design_notes.retry_identity_note
+json_path design_notes.revision
+json_path design_notes.revision_history[0].at
+json_path design_notes.revision_history[0].revision
+json_path design_notes.revision_history[0].summary
+json_path design_notes.revision_history[1].at
+json_path design_notes.revision_history[1].revision
+json_path design_notes.revision_history[1].summary
+json_path status
+json_path verification[10].acceptance_test
+json_path verification[10].command
+json_path verification[10].expected_outcome
+PASS only the revision envelope and S03 text differ from 55c428a
+PASS S02 command byte-identical to 55c428a and HEAD
+feature_dependencies []
+PASS eight acceptance commands byte-identical to feature_list_014.json
+S03 command unified diff against 55c428a
+--- 55c428a S03
++++ worktree S03
+@@ -29,7 +29,7 @@
+     bad.append("files_modify paths not changed: " + repr(missing))
+ if ".agent/feature_list_014.json" in changed:
+     bad.append("feature list changed inside the attempt; status flips are Orchestrator-owned")
+-if "docs/planning/phase_014.yaml" in changed or "docs/planning/DEBT.md" in changed or ".agent/run_state.json" in changed:
++if "docs/planning/phase_014.yaml" in changed or "docs/planning/DEBT.md" in changed:
+     bad.append("orchestrator-owned file changed inside the attempt")
+ print("changed", len(changed), "problems:", bad)
+ sys.exit(1 if bad else 0)
+S03 acceptance_test unified diff
+--- 
++++ 
+@@ -1 +1 @@
+-Supplementary S03: every path changed against <A> is in scope or on the allowlist (.agent/contracts/106.json, run_state, the feature list, validator/QA/failed-attempt prefixes). Every files_modify path is changed. The feature list, phase YAML, DEBT.md, and run_state are not changed by the Generator.
++Supplementary S03: every path changed against <A> is in scope or on the allowlist (.agent/contracts/106.json, run_state, the feature list, validator/QA/failed-attempt prefixes). Every files_modify path is changed. The feature list, phase YAML, and DEBT.md are hard-failed when changed. run_state stays on the allowlist and is not in that hard-fail.
+S03 expected_outcome unified diff
+--- 
++++ 
+@@ -1 +1 @@
+-Exit 0 in the attempt root after the deliverables exist. Orchestrator-owned files are unchanged inside the attempt.
++Exit 0 in the attempt root after the deliverables exist. Phase YAML, DEBT.md, and the feature list are unchanged against <A>. A run_state difference versus <A> is allowlisted, not a hard-fail.
+PASS revision 0 hard-fail names run_state
+PASS revision 1 command omits the run_state hard-fail
+PASS revision 1 owned set still names run_state
+PASS revision 1 hard-fail still names phase YAML and DEBT.md
+PASS revision 1 still hard-fails a feature-list change
+files_modify ['NIZAM.json', 'tools/validate.sh', 'tools/fixtures_self_test.sh', 'tools/README.md', 'CHANGELOG.md']
+PASS run_state is not in S02 scope
+PASS phase YAML is not in S02 scope
+PASS S02 command computes scope from files_create and files_modify and subtracts it from delta
+faithful_changed_count 20
+CASE S03 real A..B paths only (run_state present, deliverables absent)
+injected_contains_run_state True
+changed 15 problems: ["files_modify paths not changed: ['CHANGELOG.md', 'NIZAM.json', 'tools/README.md', 'tools/fixtures_self_test.sh', 'tools/validate.sh']"]
+rc 1
+PASS S03 real A..B paths only (run_state present, deliverables absent) rc
+PASS S03 real A..B paths only (run_state present, deliverables absent) problems
+CASE S03 real A..B paths plus files_modify (run_state present)
+injected_contains_run_state True
+changed 20 problems: []
+rc 0
+PASS S03 real A..B paths plus files_modify (run_state present) rc
+PASS S03 real A..B paths plus files_modify (run_state present) problems
+CASE S03 same set plus docs/planning/phase_014.yaml
+injected_contains_run_state True
+changed 21 problems: ["paths outside scope and allowlist: ['docs/planning/phase_014.yaml']", 'orchestrator-owned file changed inside the attempt']
+rc 1
+PASS S03 same set plus docs/planning/phase_014.yaml rc
+PASS S03 same set plus docs/planning/phase_014.yaml problems
+CASE S03 same set plus docs/planning/DEBT.md
+injected_contains_run_state True
+changed 21 problems: ["paths outside scope and allowlist: ['docs/planning/DEBT.md']", 'orchestrator-owned file changed inside the attempt']
+rc 1
+PASS S03 same set plus docs/planning/DEBT.md rc
+PASS S03 same set plus docs/planning/DEBT.md problems
+CASE S03 same set plus .agent/feature_list_014.json
+injected_contains_run_state True
+changed 21 problems: ['feature list changed inside the attempt; status flips are Orchestrator-owned']
+rc 1
+PASS S03 same set plus .agent/feature_list_014.json rc
+PASS S03 same set plus .agent/feature_list_014.json problems
+CASE revision 0 S03 on the faithful set still hard-fails run_state
+injected_contains_run_state True
+changed 20 problems: ['orchestrator-owned file changed inside the attempt']
+rc 1
+PASS revision 0 S03 on the faithful set still hard-fails run_state rc
+PASS revision 0 S03 on the faithful set still hard-fails run_state problems
+CASE S02 delta is only .agent/run_state.json
+B 55c428a35f11 commits past B 1 delta 1 problems: ["paths changed since B outside scope: ['.agent/run_state.json']"]
+rc 1
+PASS S02 delta is only .agent/run_state.json rc
+PASS S02 delta is only .agent/run_state.json problems
+CASE S02 delta is only NIZAM.json
+B 55c428a35f11 commits past B 1 delta 1 problems: []
+rc 0
+PASS S02 delta is only NIZAM.json rc
+PASS S02 delta is only NIZAM.json problems
+failures []
+EXIT:0

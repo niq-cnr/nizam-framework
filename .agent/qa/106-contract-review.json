@@ -2,31 +2,62 @@
   "review": "contract-testability",
   "feature": "106",
   "contract_id": "106",
-  "revision_reviewed": 0,
+  "revision_reviewed": 1,
   "issues": [],
   "missing_acceptance_coverage": [],
   "unsupported_claims": [],
   "observations": [
-    "Mode A (.agent/validator/106-mode-a.json) was re-read: final_verdict.approved is true and issues, missing_acceptance_coverage, and unsupported_claims are empty. This review did not rely on that prose. Contract status is still proposed, revision 0, approvals false. The eight non-supplementary acceptance_test and command strings are byte-identical and in order to feature_list_014.json feature 106. S01 on the real tree exits 0 (01-static.txt).",
-    "AT4 at <A> does not pass on the C4 failure alone. scratch_run applies the planning-source replace (count 1) and validate.sh exits 1 with [C4] FAIL naming methodology/00_planning_moved.md and [C13] PASS. The expectation ^[C13] FAIL fails. methodology/00_planning.md is not in that output. Evidence: 02-base-at4.txt EXIT:1. The regex methodology/00_planning\\.md does not match methodology/00_planning_moved.md (01-static.txt).",
-    "A private scratch with the pinned insertions (help addition, subset block before the single for-problem loop, test_c13, nizam-ecosystem-bootstrap, fixture, two README rows, 0.15.0 change_log entry, CHANGELOG bullet) passes the contract commands: S01, S04, AT1, AT2, AT5, AT4, AT6 (GATE PASS 16/16), AT7 (GATE PASS 12/12), S02 and S03 both before and after one implementation commit, S05 (7/7), AT3, and AT8 (SELF-TEST OK 147/147, both C13 OK lines). Evidence: 03-positive.txt EXIT:0. No contracted path in the real tree was created or edited.",
-    "AT4 on that scratch exits 0 while validate.sh exits 1 with both failures: [C4] FAIL for methodology/00_planning_moved.md and [C13] FAIL skill-index with the single detail line 'capabilities[0] (planning) -> methodology/00_planning.md is not the authoritative_source of any NIZAM.json capability'. SUMMARY: 14 passed, 2 failed. AT4 does not forbid the C4 line, and the accompanying [C4] FAIL is not a defect.",
-    "S05 case 4's ablation is executable on the pinned block. The fragment line is the only problems.append hit and is indented eight spaces; replacing it with eight-space pass compiles. Full validate.sh then prints [C13] PASS and [C4] FAIL, the fragment is gone, and methodology/00_planning.md occurs zero times while methodology/00_planning_moved.md remains only on the C4 line. Before ablation that module string occurs once, on the C13 detail line, so the separate case-3 regexes are the same line, not a vacuous cross-line match. Official S05 case 3 and case 4 both PASS.",
-    "Without the subset block, and with every other pin applied, the checks do not pass. AT4 stays C13 PASS / C4 FAIL (rc 1). S05 rc 1: cases 1 and 2 exit 0 with [C13] PASS (ecosystem/00_ecosystem_bootstrap.md is not in the output); case 3 matches only the C4 lines; case 4 and case 7 die in the mutation precondition (AssertionError: [] because the fragment line is absent); case 5 stays [C13] PASS. Case 6 still passes, because it tests note_covered rather than the subset rule. S04 rc 1: validate.sh is not base plus the two insertions, and the fragment count is not 1. Evidence: 04-mutant-no-subset.txt EXIT:1 and 05-s04-no-subset.txt EXIT:1.",
-    "Non-blocking. The dangling fixture's second subset detail is locked by the S04 byte pin (the subset loop does not skip an unresolved module) rather than by a grep of both lines; its OK line still keys only on the [C13] FAIL banner, as the contract says. Case 6 can pass with the subset rule absent; cases 1-5 and 7 cannot. NDEBT-047 is unchanged. validate.sh and fixtures_self_test.sh were never run in the shared tree and never overlapped inside one scratch."
+    "Scope is the S03 change only (106-contract attempt 2/3). Mode A .agent/validator/106-mode-a.json was re-read: revision_reviewed 1, final_verdict.approved true, and issues, missing_acceptance_coverage, and unsupported_claims are empty. This review did not treat that prose as proof. The working-tree contract status is proposed; approvals.revisions is 1 and validator_mode_a and evaluator_contract_review are false. HEAD and 55c428a have the same contract blob 3a4a8136bd79a3a9205259eb641adaed882af2a0 (status approved). A leaf compare against 55c428a finds 16 JSON paths: the revision envelope (status, approvals including removal of approved_at, design_notes.revision, the new revision_history, retry_identity_note) and verification[10] acceptance_test, command, and expected_outcome. Evidence: .agent/evidence/106-qa-adversarial-contract-review/07-rev1-s03-s02-predicate.txt lines 76-96. Feature 106 dependencies are [] and the eight non-supplementary acceptance commands stay byte-identical to feature_list_014.json (lines 98-99).",
+    "The executable S03 change is one substring. The unified diff of verification[10].command against 55c428a (07 lines 100-111) deletes ' or \".agent/run_state.json\" in changed' from the hard-fail. The owned set still contains .agent/run_state.json. The hard-fail if \".agent/feature_list_014.json\" in changed remains. The hard-fail if \"docs/planning/phase_014.yaml\" in changed or \"docs/planning/DEBT.md\" in changed remains (contract lines 335-337). S02's command is byte-identical to 55c428a and to HEAD (07 line 97).",
+    "Outcome 1. git diff --name-only 2a22ecd 55c428a exits 0 and lists 15 paths, including .agent/run_state.json (06-rev1-diff-name-only.txt lines 1-17; 07 lines 8-24). The run_state diff is 9 insertions and 3 deletions of Orchestrator contract_approved bookkeeping (updated_at, the history event, active_contract_id, last_action), not a product edit (07 lines 25-72). The unmodified revision-1 S03 command was executed with git diff and git status substituted. changed = those 15 paths plus the five files_modify paths exits 0 with problems [] (07 lines 140-145). Those 15 paths alone, still including run_state, exit 1 only because the files_modify paths are absent; run_state is not named in problems (07 lines 134-139). Revision 0's S03 command on the 20-path set exits 1 with exactly 'orchestrator-owned file changed inside the attempt' (07 lines 164-169).",
+    "Outcome 2. Adding docs/planning/phase_014.yaml to that 20-path set makes the same revision-1 command exit 1. problems are \"paths outside scope and allowlist: ['docs/planning/phase_014.yaml']\" and 'orchestrator-owned file changed inside the attempt' (07 lines 146-151). docs/planning/DEBT.md fails the same way (lines 152-157). .agent/feature_list_014.json stays in owned, so it is not an extra path, and the separate hard-fail still rejects it (lines 158-163).",
+    "Outcome 3. S02 still builds scope from files_create and files_modify and sets extra = sorted(delta - scope). .agent/run_state.json is not in that scope (07 lines 129-132). The unmodified S02 command, with a substituted three-line attempt-base whose B is 55c428a35f11259f8b3d3b57cc57626329786bbf, exits 1 when the delta since B is only .agent/run_state.json: \"paths changed since B outside scope: ['.agent/run_state.json']\" (07 lines 170-174). The same command exits 0 when the delta is only NIZAM.json, which is in files_modify (lines 175-179). Real git merge-base --is-ancestor A 55c428a exits 0 (line 73). rev-list was simulated as 1 because this shared branch is 2 commits past B (line 74) and is not the attempt worktree.",
+    "Non-blocking. Git diff and status were substituted, so the shared tree's untracked .nizam/ directory and these new evidence files did not enter changed. tools/validate.sh and tools/fixtures_self_test.sh were not run. Revision-0 captures 01-static.txt through 05-s04-no-subset.txt and their helpers were not deleted. The contract, .agent/run_state.json, and product files were not edited. S02 ancestry and the attempt-root rev-list count were supplied at the subprocess boundary; the outside-scope decision is the command's own extra = sorted(delta - scope)."
   ],
   "next_state": "advance_to_loop_2",
   "evidence_artifacts": [
-    ".agent/evidence/106-qa-adversarial-contract-review/01-static.txt",
-    ".agent/evidence/106-qa-adversarial-contract-review/02-base-at4.txt",
-    ".agent/evidence/106-qa-adversarial-contract-review/03-positive.txt",
-    ".agent/evidence/106-qa-adversarial-contract-review/04-mutant-no-subset.txt",
-    ".agent/evidence/106-qa-adversarial-contract-review/05-s04-no-subset.txt"
+    ".agent/evidence/106-qa-adversarial-contract-review/06-rev1-diff-name-only.txt",
+    ".agent/evidence/106-qa-adversarial-contract-review/07-rev1-s03-s02-predicate.txt",
+    ".agent/evidence/106-qa-adversarial-contract-review/helpers/rev1_s03_probe.py"
   ],
   "final_verdict": {
     "approved": true,
     "feature": "106",
     "verdict": "pass",
-    "summary": "APPROVED at contract revision 0. AT4 requires exit 1 and ^[C13] FAIL and does not forbid the concurrent [C4] FAIL on methodology/00_planning_moved.md. On the pinned implementation that line is present and AT4 passes; deleting the one subset problems.append line removes [C13] FAIL and the methodology/00_planning.md detail while [C4] FAIL remains, and official S05 cases 3 and 4 both pass. The same AT4, S04, and S05 commands fail when the subset block is absent (C13 stays PASS; the ablation precondition finds no fragment line). S01-S05 and AT1-AT8 pass on a private faithful scratch, including gates 16/16 and 12/12. No verification command passes without the subset rule or fails on the intended implementation."
-  }
+    "summary": "APPROVED at contract revision 1 (106-contract attempt 2/3). The S03 command differs from approved revision 0 only by deleting ' or \".agent/run_state.json\" in changed'. git diff --name-only 2a22ecd 55c428a contains .agent/run_state.json among 15 paths. With that set plus the five files_modify paths, revised S03 exits 0; revision 0's command on the same set exits 1 on the run_state hard-fail. Adding docs/planning/phase_014.yaml makes revised S03 exit 1 (outside scope and the orchestrator-owned hard-fail). DEBT.md and the feature list still hard-fail. S02 is byte-identical to revision 0 and exits 1 when the delta since B is only .agent/run_state.json; it exits 0 when the delta is only NIZAM.json. issues, missing_acceptance_coverage, and unsupported_claims are empty."
+  },
+  "prior_rounds": [
+    {
+      "review": "contract-testability",
+      "feature": "106",
+      "contract_id": "106",
+      "revision_reviewed": 0,
+      "issues": [],
+      "missing_acceptance_coverage": [],
+      "unsupported_claims": [],
+      "observations": [
+        "Mode A (.agent/validator/106-mode-a.json) was re-read: final_verdict.approved is true and issues, missing_acceptance_coverage, and unsupported_claims are empty. This review did not rely on that prose. Contract status is still proposed, revision 0, approvals false. The eight non-supplementary acceptance_test and command strings are byte-identical and in order to feature_list_014.json feature 106. S01 on the real tree exits 0 (01-static.txt).",
+        "AT4 at <A> does not pass on the C4 failure alone. scratch_run applies the planning-source replace (count 1) and validate.sh exits 1 with [C4] FAIL naming methodology/00_planning_moved.md and [C13] PASS. The expectation ^[C13] FAIL fails. methodology/00_planning.md is not in that output. Evidence: 02-base-at4.txt EXIT:1. The regex methodology/00_planning\\.md does not match methodology/00_planning_moved.md (01-static.txt).",
+        "A private scratch with the pinned insertions (help addition, subset block before the single for-problem loop, test_c13, nizam-ecosystem-bootstrap, fixture, two README rows, 0.15.0 change_log entry, CHANGELOG bullet) passes the contract commands: S01, S04, AT1, AT2, AT5, AT4, AT6 (GATE PASS 16/16), AT7 (GATE PASS 12/12), S02 and S03 both before and after one implementation commit, S05 (7/7), AT3, and AT8 (SELF-TEST OK 147/147, both C13 OK lines). Evidence: 03-positive.txt EXIT:0. No contracted path in the real tree was created or edited.",
+        "AT4 on that scratch exits 0 while validate.sh exits 1 with both failures: [C4] FAIL for methodology/00_planning_moved.md and [C13] FAIL skill-index with the single detail line 'capabilities[0] (planning) -> methodology/00_planning.md is not the authoritative_source of any NIZAM.json capability'. SUMMARY: 14 passed, 2 failed. AT4 does not forbid the C4 line, and the accompanying [C4] FAIL is not a defect.",
+        "S05 case 4's ablation is executable on the pinned block. The fragment line is the only problems.append hit and is indented eight spaces; replacing it with eight-space pass compiles. Full validate.sh then prints [C13] PASS and [C4] FAIL, the fragment is gone, and methodology/00_planning.md occurs zero times while methodology/00_planning_moved.md remains only on the C4 line. Before ablation that module string occurs once, on the C13 detail line, so the separate case-3 regexes are the same line, not a vacuous cross-line match. Official S05 case 3 and case 4 both PASS.",
+        "Without the subset block, and with every other pin applied, the checks do not pass. AT4 stays C13 PASS / C4 FAIL (rc 1). S05 rc 1: cases 1 and 2 exit 0 with [C13] PASS (ecosystem/00_ecosystem_bootstrap.md is not in the output); case 3 matches only the C4 lines; case 4 and case 7 die in the mutation precondition (AssertionError: [] because the fragment line is absent); case 5 stays [C13] PASS. Case 6 still passes, because it tests note_covered rather than the subset rule. S04 rc 1: validate.sh is not base plus the two insertions, and the fragment count is not 1. Evidence: 04-mutant-no-subset.txt EXIT:1 and 05-s04-no-subset.txt EXIT:1.",
+        "Non-blocking. The dangling fixture's second subset detail is locked by the S04 byte pin (the subset loop does not skip an unresolved module) rather than by a grep of both lines; its OK line still keys only on the [C13] FAIL banner, as the contract says. Case 6 can pass with the subset rule absent; cases 1-5 and 7 cannot. NDEBT-047 is unchanged. validate.sh and fixtures_self_test.sh were never run in the shared tree and never overlapped inside one scratch."
+      ],
+      "next_state": "advance_to_loop_2",
+      "evidence_artifacts": [
+        ".agent/evidence/106-qa-adversarial-contract-review/01-static.txt",
+        ".agent/evidence/106-qa-adversarial-contract-review/02-base-at4.txt",
+        ".agent/evidence/106-qa-adversarial-contract-review/03-positive.txt",
+        ".agent/evidence/106-qa-adversarial-contract-review/04-mutant-no-subset.txt",
+        ".agent/evidence/106-qa-adversarial-contract-review/05-s04-no-subset.txt"
+      ],
+      "final_verdict": {
+        "approved": true,
+        "feature": "106",
+        "verdict": "pass",
+        "summary": "APPROVED at contract revision 0. AT4 requires exit 1 and ^[C13] FAIL and does not forbid the concurrent [C4] FAIL on methodology/00_planning_moved.md. On the pinned implementation that line is present and AT4 passes; deleting the one subset problems.append line removes [C13] FAIL and the methodology/00_planning.md detail while [C4] FAIL remains, and official S05 cases 3 and 4 both pass. The same AT4, S04, and S05 commands fail when the subset block is absent (C13 stays PASS; the ablation precondition finds no fragment line). S01-S05 and AT1-AT8 pass on a private faithful scratch, including gates 16/16 and 12/12. No verification command passes without the subset rule or fails on the intended implementation."
+      }
+    }
+  ]
 }
