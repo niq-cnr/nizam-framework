@@ -1,0 +1,2 @@
+bash -c 'source tools/verify_lib.sh && declare -F vlib_profiles_map_roles >/dev/null' && T=$(mktemp) && git show 02b02c6:standard/capability_profiles.md > "$T" && { bash -c 'source tools/verify_lib.sh && vlib_profiles_map_roles "$1" standard/AGF.md' _ "$T" > "$T.out" 2>&1; r=$?; grep -Eq '^vlib_profiles_map_roles: .*Role' "$T.out"; g=$?; rm -f "$T" "$T.out"; test $r -eq 1 -a $g -eq 0; }
+EXIT:1

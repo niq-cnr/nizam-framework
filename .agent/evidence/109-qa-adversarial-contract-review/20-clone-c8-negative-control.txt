@@ -1,0 +1,40 @@
+OWN PROBE C8 control: scratch-delete the new 0.4.0 change_log head entry (CHANGELOG.md untouched); expect rc 1 and [C8] FAIL
+scratch_run: applied --py-mutate
+scratch_run: command bash tools/validate.sh -> exit 1
+  | [C1] FAIL frontmatter-schema
+  |   standard/capability_profiles.md: frontmatter is not valid YAML: while parsing a block mapping
+  |   in "<unicode string>", line 1, column 1:
+  |     id: nizam-capability-profiles
+  |     ^
+  | expected <block end>, but found '<block sequence start>'
+  |   in "<unicode string>", line 11, column 3:
+  |       - version: "0.3.0"
+  |       ^
+  | [C2] FAIL format
+  |   standard/capability_profiles.md: frontmatter is not valid YAML: while parsing a block mapping
+  |   in "<unicode string>", line 1, column 1:
+  |     id: nizam-capability-profiles
+  |     ^
+  | expected <block end>, but found '<block sequence start>'
+  |   in "<unicode string>", line 11, column 3:
+  |       - version: "0.3.0"
+  |       ^
+  | [C3] PASS untagged-fence-sweep
+  | [C4] PASS index-integrity
+  | [C5] PASS branding-leakage
+  | [C6] PASS bootstrap-sanity
+  | [C7] PASS module-readme-presence
+  | [C8] PASS version-bump-vs-changelog
+  | [C9] PASS path-resolution
+  | [C10] PASS consistency
+  | [C11] PASS dogfood
+  | [C12] PASS ecosystem-fixtures
+  | [C13] PASS skill-index
+  | [C14] PASS workflow-sha-pins
+  | [C15] PASS capability-profile-roles
+  | [C16] PASS feature-list-lifecycle
+  | SUMMARY: 14 passed, 2 failed
+PASS exit status == 1
+FAIL output matches '^\\[C8\\] FAIL'
+scratch_run: EXPECTATION FAILED; scratch removed: True
+EXIT:1

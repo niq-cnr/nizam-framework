@@ -1,0 +1,8 @@
+S05 verbatim in clone: serial guard + 5 cases (swap pins, ablation, all-Orchestrator, --payload, legacy split)
+PASS AT2 mutation: the swapped planner<->generator mapping fails C15 via the new primitive
+PASS silencing the new primitive's failure path removes the C15 FAIL; the old primitive still passes
+PASS every row mapped to Orchestrator (an AGF-defined role) still fails: correspondence, not membership
+PASS --payload is unaffected by the swapped mapping
+PASS the role-less 02b02c6 doc passes vlib_profiles_cover_roles and fails vlib_profiles_map_roles naming Role
+cases: 5 problems: []
+EXIT:0
