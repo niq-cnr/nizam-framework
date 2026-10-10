@@ -1,0 +1,47 @@
+{
+  "review": "107-mode-b",
+  "feature": "107",
+  "contract_id": "107",
+  "feature_id": "107",
+  "mode": "B",
+  "revision_reviewed": 0,
+  "risk_level": "medium",
+  "status": "APPROVED",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "observations": [
+    "[STATE: Phase 014 | STEP: VALIDATION | DEPS: OK] Mode B on implementation commit c67421b90bd6dc46ff393bd2f3da9135f11537b8. Parent is attempt base <B> d4dcc493206f0a79dd12cd6111db8a7e2070aad8. Reviewed git diff <B> c67421b, not the feature-branch tip. Worktree path given: /home/cnross/workspace02/nizam-wt-107-attempt1. Verification commands were not executed.",
+    "Contract at <B> is status approved, approvals.revisions 0, validator_mode_a true, evaluator_contract_review true, approved_at 2026-10-10T07:49:08Z. Blob cbc91886a6e4726615faf212795eb00128cd6760 equals the workspace .agent/contracts/107.json. The implementation commit does not modify the contract. source=.agent/contracts/107.json status line 4 and approvals lines 349-354.",
+    "B1/B3: git diff --name-status <B> c67421b is exactly 12 added evidence paths (scope.files_create) and 3 modified product paths (scope.files_modify: docs/nips/NIP-0002-zero-to-n-project-spectrum.md, tools/validate.sh, tools/README.md). 15 files, 236 insertions, 6 deletions. No CHANGELOG.md, .agent/run_state.json, feature list, phase YAML, DEBT.md, NIZAM.json, NIP-0001, or NIP-0003 path is in that diff.",
+    "B2: tools/validate.sh at c67421b equals <A> 7972e4f2d46abf6b8e0f02e8c11e94ac0f7aa0f4 plus the three pinned replacements (c1_help, c2_help, call_old -> call_new). The C1 and C2 fail echoes and banners each occur once. [C17], [C18], [C19], check_c17, check_c18, and check_c19 are absent. build_shipped_md_set and build_payload_md_set are byte-identical to <A> and do not mention docs/nips. The four unchanged_regions are byte-identical. No function was added or removed. NIP-0002 equals <A> plus version 0.2.0 -> 0.2.1, status accepted -> active, and the pinned change_log entry; the body after the closing --- is byte-identical and status: active occurs once. tools/README.md is 0.15.0 -> 0.16.0; change_log head is 0.16.0 / 2026-10-10 / the pinned summary; the body differs only by the pinned C1 row; the C2 row is unchanged. framework.version stays 1.4.0 at <A>, <B>, and c67421b (NIZAM.json framework.version, line 4). The pinned unchanged_files list is byte-identical to <A>.",
+    "B4: all 11 verification evidence files plus attempt-base.txt are in the commit. Each starts with an invocation (attempt-base line 1 is git rev-parse HEAD; AT1-AT6 line 1 is the acceptance command; S01-S05 line 1 is python3 - <<'PY') and the last line is EXIT:0 with a single trailing newline and no extra blank line. attempt-base.txt records <B> d4dcc493206f0a79dd12cd6111db8a7e2070aad8. at2 shows [C1] FAIL frontmatter-schema, the schema detail for status accepted, [C2] FAIL format, and EXPECTATIONS HELD. at3 shows [C1] PASS, [C2] FAIL format with the authoritative_source detail, the forbid held, and EXPECTATIONS HELD. at5 is GATE: PASS (16 checks passing; baseline 16). at6 is SELF-TEST OK: 147/147. s01 reports verification 11 problems: []. s04 reports problems: []. s05 lists all seven cases PASS and problems: [].",
+    "S02 was captured before the implementation commit, which the contract order allows: commits past B 0, delta 13 (three files_modify plus attempt-base, AT1-AT6, S01, S04, and S05; s02 and s03 were not on disk yet). S03 reports changed 68 problems: []. That count is the 54 paths in git diff <A>..<B>, all on the S03 allowlist (contract, run_state, .agent/validator/107-mode-a.json, .agent/qa/107-contract-review.json, and .agent/evidence/107-qa-adversarial-contract-review/), plus the 14 in-scope working-tree paths present once s02 existed. The implementation commit itself does not contain those allowlisted files and does not edit run_state.",
+    "B5/B6/B7/B8: no new import, package, function, check id, or route. The diff has no TODO, FIXME, skip, or future-work text. The help text, c1_c2_md list, NIP-0002 frontmatter, and README C1 row are the pinned edits, not stubs. NDEBT-047 is not touched. --payload builders and --target are not edited.",
+    "Not executed by this Mode B, and not claimed as executed: the contract verification commands (the AT1 python assert, scratch_run, validator_gate, fixtures_self_test.sh, and S01-S05). The evidence above is the Generator's captures inside commit c67421b, checked for shape and for agreement with the pinned texts. orchestrator_sequence step 3 and evidence_convention still assign the Evaluator re-run to .agent/evidence/107/qa/ after promotion. That re-run has not happened and must still be done on the promoted tree. This verdict does not substitute for it."
+  ],
+  "checks": {
+    "B1_deliverable_existence": "pass",
+    "B2_interface_fidelity": "pass",
+    "B3_scope_adherence": "pass",
+    "B4_test_existence": "pass",
+    "B5_dependency_fidelity": "pass",
+    "B6_anti_scope_creep": "pass",
+    "B7_anti_gaming": "pass",
+    "B8_completeness": "pass"
+  },
+  "final_verdict": {
+    "approved": true,
+    "mode": "B",
+    "contract_id": "107",
+    "feature_id": "107",
+    "revision_reviewed": 0,
+    "risk_level": "medium",
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "required_fixes": [],
+    "summary": "Mode B APPROVED for contract 107 revision 0. Implementation commit c67421b (parent <B> d4dcc49) changes exactly the 12 files_create paths and the 3 files_modify paths. NIP-0002 body is byte-identical aside from the pinned frontmatter edits (status active, version 0.2.1, one change_log entry). validate.sh is <A> plus the pinned C1/C2 help text and the default-sweep c1_c2_md list. build_shipped_md_set and build_payload_md_set are unchanged. README is 0.16.0 with only the pinned C1 row in the body. framework.version stays 1.4.0. No CHANGELOG.md edit, no run_state edit, and no new check id in the implementation commit. All 12 evidence files start with an invocation and end with EXIT:0. B1-B8 pass. Verification commands were not re-run here; the Evaluator re-run on the promoted tree is still outstanding and is not claimed."
+  }
+}

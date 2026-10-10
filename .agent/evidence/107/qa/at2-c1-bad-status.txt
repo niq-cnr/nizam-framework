@@ -1,0 +1,27 @@
+python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace docs/nips/NIP-0001-ecosystem-engineering-cycle.md 'status: active' 'status: accepted' --expect-rc 1 --expect '^\[C1\] FAIL' --expect 'NIP-0001-ecosystem-engineering-cycle\.md' -- bash tools/validate.sh
+scratch_run: replaced 1 occurrence in docs/nips/NIP-0001-ecosystem-engineering-cycle.md
+scratch_run: command bash tools/validate.sh -> exit 1
+  | [C1] FAIL frontmatter-schema
+  |   docs/nips/NIP-0001-ecosystem-engineering-cycle.md: frontmatter schema violation: 'accepted' is not one of ['draft', 'active', 'deprecated']
+  | [C2] FAIL format
+  |   docs/nips/NIP-0001-ecosystem-engineering-cycle.md: status 'accepted' is not one of draft/active/deprecated
+  | [C3] PASS untagged-fence-sweep
+  | [C4] PASS index-integrity
+  | [C5] PASS branding-leakage
+  | [C6] PASS bootstrap-sanity
+  | [C7] PASS module-readme-presence
+  | [C8] PASS version-bump-vs-changelog
+  | [C9] PASS path-resolution
+  | [C10] PASS consistency
+  | [C11] PASS dogfood
+  | [C12] PASS ecosystem-fixtures
+  | [C13] PASS skill-index
+  | [C14] PASS workflow-sha-pins
+  | [C15] PASS capability-profile-roles
+  | [C16] PASS feature-list-lifecycle
+  | SUMMARY: 14 passed, 2 failed
+PASS exit status == 1
+PASS output matches '^\\[C1\\] FAIL'
+PASS output matches 'NIP-0001-ecosystem-engineering-cycle\\.md'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0

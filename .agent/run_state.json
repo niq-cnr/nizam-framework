@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "014-ga-track",
-  "current_feature": "107",
+  "current_feature": "109",
   "status": "in_progress",
-  "updated_at": "2026-10-10T07:49:08Z",
+  "updated_at": "2026-10-10T08:05:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1902,6 +1902,12 @@
       "event": "contract_approved",
       "feature": "107",
       "detail": "107-contract attempt 2/3 approved. S01 now accepts an approved revision 0 with both flags true. Mode A and the S01 predicate review passed with empty issue arrays. This commit is the new attempt base <B>."
+    },
+    {
+      "at": "2026-10-10T08:05:00Z",
+      "event": "feature_complete",
+      "feature": "107",
+      "detail": "Feature 107 COMPLETE (NDEBT-044 b: NIP-0002 status active; default-mode C1 and C2 include docs/nips/*.md; shipped-doc set unchanged). Contract attempt 2/3 after S01 was repaired so an approved revision 0 keeps its approval flags. Implementation c67421b parent d4dcc49. Mode B approved (.agent/validator/107-mode-b.json). QA pass .agent/qa/107.json (11/11; adversarial: NIP-0003 status accepted fails C1, status active does not). Canonical-first: phase_014.yaml 107 COMPLETED, feature_list 107 complete, then this run_state. Budget: 107 = 713 (evidence 2195); phase total 6112 / 8600. Next: 109. NDEBT-044 stays Open."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2076,9 +2082,9 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 5399,
-    "evidence_lines_total": 15787,
-    "excluded_lines_total": 560,
+    "total_lines_changed": 6112,
+    "evidence_lines_total": 17982,
+    "excluded_lines_total": 621,
     "counting_rule": {
       "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.6)",
       "script": ".agent/evidence/scope-budget-014/measure.py",
@@ -2138,6 +2144,15 @@
         "excluded_lines": 82,
         "range": "183eed1..ca889db",
         "note": "Phase-014 rule. measure.py --range 106=183eed1..ca889db: BUDGET_COUNTED_LINES=686 (product 106, contract 382, verdict 191, planning 7), EVIDENCE_LINES=2113, EXCLUDED_LINES=82, unclassified 0. Rolling threshold was 3 x mean(885,991,950)=2826. 686 is under the estimate 750."
+      },
+      {
+        "id": "107",
+        "estimated": 680,
+        "actual": 713,
+        "evidence_lines": 2195,
+        "excluded_lines": 61,
+        "range": "fdc076f..107-completion",
+        "note": "Phase-014 rule. measure.py --range 107=fdc076f.. before this run_state append: BUDGET_COUNTED_LINES=713 (product 38, contract 365, verdict 303, planning 7), EVIDENCE_LINES=2195, EXCLUDED_LINES=61. Above the 680 estimate. Rolling threshold 3 x mean(950,686, and the prior feature) stays well above 713; no scope flag."
       }
     ],
     "phase_level_items": [
@@ -2365,7 +2380,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "107",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -2437,12 +2452,13 @@
       }
     ]
   },
-  "last_action": "Contract 107 S01 fix approved",
+  "last_action": "Feature 107 complete; next is 109",
   "completed_contract_ids": [
     "099",
     "103",
     "104",
     "105",
-    "106"
+    "106",
+    "107"
   ]
 }

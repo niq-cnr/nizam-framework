@@ -1,0 +1,26 @@
+python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --expect-rc 0 --expect '^ACCEPTED C1 FAIL$' --expect '^  docs/nips/NIP-0003-live-runtime-sessions\.md: frontmatter schema violation: '"'"'accepted'"'"' is not one of \['"'"'draft'"'"', '"'"'active'"'"', '"'"'deprecated'"'"'\]$' --expect '^status-now: active$' --expect '^valid-c1-fail: absent$' --expect '^\[C1\] PASS frontmatter-schema$' --expect '^VALID STATUS C1 PASS$' --forbid '^valid-c1-fail: present$' -- bash .agent/evidence/107/qa/adversarial_nip0003_status_probe.sh
+scratch_run: command bash .agent/evidence/107/qa/adversarial_nip0003_status_probe.sh -> exit 0
+  | [C1] FAIL frontmatter-schema
+  |   docs/nips/NIP-0003-live-runtime-sessions.md: frontmatter schema violation: 'accepted' is not one of ['draft', 'active', 'deprecated']
+  | [C2] FAIL format
+  |   docs/nips/NIP-0003-live-runtime-sessions.md: status 'accepted' is not one of draft/active/deprecated
+  | SUMMARY: 14 passed, 2 failed
+  | ACCEPTED_RC:1
+  | ACCEPTED C1 FAIL
+  | status-now: active
+  | [C1] PASS frontmatter-schema
+  | [C2] PASS format
+  | SUMMARY: 16 passed, 0 failed
+  | valid-c1-fail: absent
+  | VALID_RC:0
+  | VALID STATUS C1 PASS
+PASS exit status == 0
+PASS output matches '^ACCEPTED C1 FAIL$'
+PASS output matches "^  docs/nips/NIP-0003-live-runtime-sessions\\.md: frontmatter schema violation: 'accepted' is not one of \\['draft', 'active', 'deprecated'\\]$"
+PASS output matches '^status-now: active$'
+PASS output matches '^valid-c1-fail: absent$'
+PASS output matches '^\\[C1\\] PASS frontmatter-schema$'
+PASS output matches '^VALID STATUS C1 PASS$'
+PASS output does not match '^valid-c1-fail: present$'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0
