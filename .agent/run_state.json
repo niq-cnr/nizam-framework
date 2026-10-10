@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "109",
   "status": "in_progress",
-  "updated_at": "2026-10-10T08:05:00Z",
+  "updated_at": "2026-10-10T08:18:38Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -266,6 +266,10 @@
       "limit": 3
     },
     "107-implementation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "109-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -1908,6 +1912,12 @@
       "event": "feature_complete",
       "feature": "107",
       "detail": "Feature 107 COMPLETE (NDEBT-044 b: NIP-0002 status active; default-mode C1 and C2 include docs/nips/*.md; shipped-doc set unchanged). Contract attempt 2/3 after S01 was repaired so an approved revision 0 keeps its approval flags. Implementation c67421b parent d4dcc49. Mode B approved (.agent/validator/107-mode-b.json). QA pass .agent/qa/107.json (11/11; adversarial: NIP-0003 status accepted fails C1, status active does not). Canonical-first: phase_014.yaml 107 COMPLETED, feature_list 107 complete, then this run_state. Budget: 107 = 713 (evidence 2195); phase total 6112 / 8600. Next: 109. NDEBT-044 stays Open."
+    },
+    {
+      "at": "2026-10-10T08:18:38Z",
+      "event": "feature_started",
+      "feature": "109",
+      "detail": "Operator: 'great work, continue with the logical next steps.' Dependency gate: 109 dependencies [] satisfied. 107 is complete (PR #74, c43ae9e). Branch phase/014-109-c15-role-column from c43ae9e. 109-contract attempt 1/3. 109 measurement range starts at c43ae9e. Next after 109 is 108, then 102. Dispatching Generator to propose .agent/contracts/109.json."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2452,7 +2462,7 @@
       }
     ]
   },
-  "last_action": "Feature 107 complete; next is 109",
+  "last_action": "Feature 109 started",
   "completed_contract_ids": [
     "099",
     "103",
