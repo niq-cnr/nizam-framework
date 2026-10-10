@@ -1,0 +1,254 @@
+COMMAND: gh api repos/niq-cnr/nizam-framework/actions/jobs/114285695176/logs
+﻿2026-10-10T18:43:14.4153881Z Current runner version: '2.337.0'
+2026-10-10T18:43:14.4178211Z ##[group]Runner Image Provisioner
+2026-10-10T18:43:14.4179168Z Hosted Compute Agent
+2026-10-10T18:43:14.4179777Z Version: 20261002.596
+2026-10-10T18:43:14.4180400Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-10T18:43:14.4181195Z Build Date: 2026-10-02T22:28:27Z
+2026-10-10T18:43:14.4181884Z Worker ID: {e3f0bb6e-8f90-46c0-ac49-d28710a3cad4}
+2026-10-10T18:43:14.4182617Z Region: northcentralus
+2026-10-10T18:43:14.4183260Z Cloud: Azure
+2026-10-10T18:43:14.4183791Z ##[endgroup]
+2026-10-10T18:43:14.4185315Z ##[group]Operating System
+2026-10-10T18:43:14.4186256Z Ubuntu
+2026-10-10T18:43:14.4186814Z 24.04.5
+2026-10-10T18:43:14.4187398Z LTS
+2026-10-10T18:43:14.4187952Z ##[endgroup]
+2026-10-10T18:43:14.4188534Z ##[group]Runner Image
+2026-10-10T18:43:14.4189224Z Image: ubuntu-24.04
+2026-10-10T18:43:14.4189829Z Version: 20261004.327.1
+2026-10-10T18:43:14.4191159Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-10T18:43:14.4192771Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-10T18:43:14.4193773Z ##[endgroup]
+2026-10-10T18:43:14.4194935Z ##[group]GITHUB_TOKEN Permissions
+2026-10-10T18:43:14.4197074Z Contents: read
+2026-10-10T18:43:14.4197683Z Metadata: read
+2026-10-10T18:43:14.4198335Z ##[endgroup]
+2026-10-10T18:43:14.4200402Z Secret source: Actions
+2026-10-10T18:43:14.4201403Z Cache mode: write
+2026-10-10T18:43:14.4202085Z Prepare workflow directory
+2026-10-10T18:43:14.4637822Z Prepare all required actions
+2026-10-10T18:43:14.4708242Z Getting action download info
+2026-10-10T18:43:14.7050384Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2026-10-10T18:43:14.8205602Z Download action repository 'actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b' (SHA:0b93645e9fea7318ecaed2b359559ac225c90a2b)
+2026-10-10T18:43:15.1291918Z Complete job name: validate
+2026-10-10T18:43:15.2049741Z ##[group]Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+2026-10-10T18:43:15.2050805Z with:
+2026-10-10T18:43:15.2051229Z   fetch-depth: 0
+2026-10-10T18:43:15.2051701Z   persist-credentials: false
+2026-10-10T18:43:15.2052236Z   repository: niq-cnr/nizam-framework
+2026-10-10T18:43:15.2056478Z   token: ***
+2026-10-10T18:43:15.2056917Z   ssh-strict: true
+2026-10-10T18:43:15.2057345Z   ssh-user: git
+2026-10-10T18:43:15.2057771Z   clean: true
+2026-10-10T18:43:15.2058213Z   sparse-checkout-cone-mode: true
+2026-10-10T18:43:15.2058738Z   fetch-tags: false
+2026-10-10T18:43:15.2059179Z   show-progress: true
+2026-10-10T18:43:15.2059625Z   lfs: false
+2026-10-10T18:43:15.2060030Z   submodules: false
+2026-10-10T18:43:15.2060475Z   set-safe-directory: true
+2026-10-10T18:43:15.2061205Z ##[endgroup]
+2026-10-10T18:43:15.3061528Z Syncing repository: niq-cnr/nizam-framework
+2026-10-10T18:43:15.3064385Z ##[group]Getting Git version info
+2026-10-10T18:43:15.3066177Z Working directory is '/home/runner/work/nizam-framework/nizam-framework'
+2026-10-10T18:43:15.3068575Z [command]/usr/bin/git version
+2026-10-10T18:43:15.3136003Z git version 2.55.0
+2026-10-10T18:43:15.3167944Z ##[endgroup]
+2026-10-10T18:43:15.3176407Z Temporarily overriding HOME='/home/runner/work/_temp/47d1fa95-ae44-49ec-8ee3-de0f8d7c03d4' before making global git config changes
+2026-10-10T18:43:15.3179319Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T18:43:15.3182773Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/nizam-framework/nizam-framework
+2026-10-10T18:43:15.3231112Z Deleting the contents of '/home/runner/work/nizam-framework/nizam-framework'
+2026-10-10T18:43:15.3234825Z ##[group]Initializing the repository
+2026-10-10T18:43:15.3239885Z [command]/usr/bin/git init /home/runner/work/nizam-framework/nizam-framework
+2026-10-10T18:43:15.3353089Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-10T18:43:15.3354848Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-10T18:43:15.3356587Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-10T18:43:15.3357809Z hint: call:
+2026-10-10T18:43:15.3358472Z hint:
+2026-10-10T18:43:15.3359434Z hint: 	git config --global init.defaultBranch <name>
+2026-10-10T18:43:15.3360459Z hint:
+2026-10-10T18:43:15.3361426Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-10T18:43:15.3363055Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-10T18:43:15.3364362Z hint:
+2026-10-10T18:43:15.3365029Z hint: 	git branch -m <name>
+2026-10-10T18:43:15.3365818Z hint:
+2026-10-10T18:43:15.3367058Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-10T18:43:15.3368628Z Initialized empty Git repository in /home/runner/work/nizam-framework/nizam-framework/.git/
+2026-10-10T18:43:15.3371068Z [command]/usr/bin/git remote add origin https://github.com/niq-cnr/nizam-framework
+2026-10-10T18:43:15.3417555Z ##[endgroup]
+2026-10-10T18:43:15.3418367Z ##[group]Disabling automatic garbage collection
+2026-10-10T18:43:15.3422309Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-10T18:43:15.3456363Z ##[endgroup]
+2026-10-10T18:43:15.3457102Z ##[group]Setting up auth
+2026-10-10T18:43:15.3464816Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T18:43:15.3497570Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T18:43:15.3885933Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T18:43:15.3929174Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T18:43:15.4168935Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-10T18:43:15.4212616Z ##[endgroup]
+2026-10-10T18:43:15.4214061Z ##[group]Fetching the repository
+2026-10-10T18:43:15.4225364Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +ba350a9fe601b35c0df69d628310d21f3f244929:refs/remotes/pull/80/merge
+2026-10-10T18:43:16.3050147Z From https://github.com/niq-cnr/nizam-framework
+2026-10-10T18:43:16.3052443Z  * [new branch]      chore/scrub-coderabbit-example           -> origin/chore/scrub-coderabbit-example
+2026-10-10T18:43:16.3053948Z  * [new branch]      chore/v1.0.0-post-release                -> origin/chore/v1.0.0-post-release
+2026-10-10T18:43:16.3055197Z  * [new branch]      chore/v1.5.0-post-release                -> origin/chore/v1.5.0-post-release
+2026-10-10T18:43:16.3057163Z  * [new branch]      chore/v1.5.0-release-prep                -> origin/chore/v1.5.0-release-prep
+2026-10-10T18:43:16.3058502Z  * [new branch]      chore/v1.5.0-self-commission             -> origin/chore/v1.5.0-self-commission
+2026-10-10T18:43:16.3061258Z  * [new branch]      claude/epic-wozniak-jw1zmo               -> origin/claude/epic-wozniak-jw1zmo
+2026-10-10T18:43:16.3062693Z  * [new branch]      claude/nizam-framework-agent-personas-9lraqo -> origin/claude/nizam-framework-agent-personas-9lraqo
+2026-10-10T18:43:16.3064311Z  * [new branch]      claude/nizam-framework-agent-personas-9lraqo-tier0 -> origin/claude/nizam-framework-agent-personas-9lraqo-tier0
+2026-10-10T18:43:16.3066325Z  * [new branch]      claude/nizam-framework-agent-personas-9lraqo-tier1 -> origin/claude/nizam-framework-agent-personas-9lraqo-tier1
+2026-10-10T18:43:16.3068827Z  * [new branch]      claude/upbeat-cray-4mtqm9                -> origin/claude/upbeat-cray-4mtqm9
+2026-10-10T18:43:16.3070890Z  * [new branch]      feat/methodology-review-gate-flake-management -> origin/feat/methodology-review-gate-flake-management
+2026-10-10T18:43:16.3072552Z  * [new branch]      feat/phase-014-ga-track-proposal         -> origin/feat/phase-014-ga-track-proposal
+2026-10-10T18:43:16.3073541Z  * [new branch]      main                                     -> origin/main
+2026-10-10T18:43:16.3074559Z  * [new branch]      phase/012-v1-consumer-safety             -> origin/phase/012-v1-consumer-safety
+2026-10-10T18:43:16.3075782Z  * [new branch]      phase/013-definition-of-done             -> origin/phase/013-definition-of-done
+2026-10-10T18:43:16.3077778Z  * [new branch]      phase/014-ga-track                       -> origin/phase/014-ga-track
+2026-10-10T18:43:16.3078845Z  * [new tag]         v0.1.0                                   -> v0.1.0
+2026-10-10T18:43:16.3079605Z  * [new tag]         v0.2.0                                   -> v0.2.0
+2026-10-10T18:43:16.3080328Z  * [new tag]         v0.3.0                                   -> v0.3.0
+2026-10-10T18:43:16.3081084Z  * [new tag]         v0.4.0                                   -> v0.4.0
+2026-10-10T18:43:16.3081809Z  * [new tag]         v0.4.1                                   -> v0.4.1
+2026-10-10T18:43:16.3082526Z  * [new tag]         v0.5.0                                   -> v0.5.0
+2026-10-10T18:43:16.3083239Z  * [new tag]         v0.5.1                                   -> v0.5.1
+2026-10-10T18:43:16.3083945Z  * [new tag]         v0.5.2                                   -> v0.5.2
+2026-10-10T18:43:16.3084647Z  * [new tag]         v0.5.3                                   -> v0.5.3
+2026-10-10T18:43:16.3085361Z  * [new tag]         v0.6.0                                   -> v0.6.0
+2026-10-10T18:43:16.3086648Z  * [new tag]         v0.7.0                                   -> v0.7.0
+2026-10-10T18:43:16.3087552Z  * [new tag]         v0.8.0                                   -> v0.8.0
+2026-10-10T18:43:16.3088571Z  * [new tag]         v0.9.0                                   -> v0.9.0
+2026-10-10T18:43:16.3089723Z  * [new tag]         v1.0.0                                   -> v1.0.0
+2026-10-10T18:43:16.3090494Z  * [new tag]         v1.1.0                                   -> v1.1.0
+2026-10-10T18:43:16.3091211Z  * [new tag]         v1.2.0                                   -> v1.2.0
+2026-10-10T18:43:16.3091918Z  * [new tag]         v1.2.1                                   -> v1.2.1
+2026-10-10T18:43:16.3092638Z  * [new tag]         v1.3.0                                   -> v1.3.0
+2026-10-10T18:43:16.3093345Z  * [new tag]         v1.4.0                                   -> v1.4.0
+2026-10-10T18:43:16.3094057Z  * [new tag]         v1.5.0                                   -> v1.5.0
+2026-10-10T18:43:16.3094852Z  * [new ref]         ba350a9fe601b35c0df69d628310d21f3f244929 -> pull/80/merge
+2026-10-10T18:43:16.3096987Z ##[endgroup]
+2026-10-10T18:43:16.3097988Z ##[group]Determining the checkout info
+2026-10-10T18:43:16.3099563Z ##[endgroup]
+2026-10-10T18:43:16.3100405Z [command]/usr/bin/git sparse-checkout disable
+2026-10-10T18:43:16.3147647Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-10T18:43:16.3183993Z ##[group]Checking out the ref
+2026-10-10T18:43:16.3190773Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/80/merge
+2026-10-10T18:43:16.5140901Z Note: switching to 'refs/remotes/pull/80/merge'.
+2026-10-10T18:43:16.5141974Z 
+2026-10-10T18:43:16.5143025Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-10T18:43:16.5144608Z changes and commit them, and you can discard any commits you make in this
+2026-10-10T18:43:16.5146402Z state without impacting any branches by switching back to a branch.
+2026-10-10T18:43:16.5147353Z 
+2026-10-10T18:43:16.5147944Z If you want to create a new branch to retain commits you create, you may
+2026-10-10T18:43:16.5149651Z do so (now or later) by using -c with the switch command. Example:
+2026-10-10T18:43:16.5151074Z 
+2026-10-10T18:43:16.5151738Z   git switch -c <new-branch-name>
+2026-10-10T18:43:16.5152776Z 
+2026-10-10T18:43:16.5153732Z Or undo this operation with:
+2026-10-10T18:43:16.5154561Z 
+2026-10-10T18:43:16.5155170Z   git switch -
+2026-10-10T18:43:16.5156094Z 
+2026-10-10T18:43:16.5157408Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-10T18:43:16.5159244Z 
+2026-10-10T18:43:16.5161252Z HEAD is now at ba350a9 Merge b3045ca6f90f241885173f0973f3741a0cf61a9d into 8253bdeccd828827569f59ad919294f32a04dd9f
+2026-10-10T18:43:16.5167745Z ##[endgroup]
+2026-10-10T18:43:16.5210205Z [command]/usr/bin/git log -1 --format=%H
+2026-10-10T18:43:16.5238629Z ba350a9fe601b35c0df69d628310d21f3f244929
+2026-10-10T18:43:16.5249051Z ##[group]Removing auth
+2026-10-10T18:43:16.5253123Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T18:43:16.5289846Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T18:43:16.5517011Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T18:43:16.5543530Z http.https://github.com/.extraheader
+2026-10-10T18:43:16.5550974Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-10T18:43:16.5588132Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T18:43:16.5806798Z ##[endgroup]
+2026-10-10T18:43:16.6240778Z ##[group]Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+2026-10-10T18:43:16.6242553Z with:
+2026-10-10T18:43:16.6243440Z   python-version: 3.x
+2026-10-10T18:43:16.6244453Z   check-latest: false
+2026-10-10T18:43:16.6255691Z   token: ***
+2026-10-10T18:43:16.6256800Z   update-environment: true
+2026-10-10T18:43:16.6257926Z   allow-prereleases: false
+2026-10-10T18:43:16.6258983Z ##[endgroup]
+2026-10-10T18:43:16.7587422Z ##[group]Installed versions
+2026-10-10T18:43:16.7671611Z (node:2300) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T18:43:16.7676540Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T18:43:16.7679333Z Successfully set up CPython (3.14.8)
+2026-10-10T18:43:16.7682274Z ##[endgroup]
+2026-10-10T18:43:16.7947803Z ##[group]Run pip install jsonschema pyyaml
+2026-10-10T18:43:16.7950074Z [36;1mpip install jsonschema pyyaml[0m
+2026-10-10T18:43:16.8338788Z shell: /usr/bin/bash -e {0}
+2026-10-10T18:43:16.8339923Z env:
+2026-10-10T18:43:16.8341045Z   pythonLocation: /opt/hostedtoolcache/Python/3.14.8/x64
+2026-10-10T18:43:16.8342898Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.14.8/x64/lib/pkgconfig
+2026-10-10T18:43:16.8344714Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.8/x64
+2026-10-10T18:43:16.8346530Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.8/x64
+2026-10-10T18:43:16.8348202Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.8/x64
+2026-10-10T18:43:16.8349917Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.14.8/x64/lib
+2026-10-10T18:43:16.8351329Z ##[endgroup]
+2026-10-10T18:43:19.5876886Z Collecting jsonschema
+2026-10-10T18:43:19.6514511Z   Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+2026-10-10T18:43:19.7057303Z Collecting pyyaml
+2026-10-10T18:43:19.7093364Z   Downloading pyyaml-6.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2026-10-10T18:43:19.7225294Z Collecting attrs>=22.2.0 (from jsonschema)
+2026-10-10T18:43:19.7266286Z   Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+2026-10-10T18:43:19.7388078Z Collecting jsonschema-specifications>=2023.03.6 (from jsonschema)
+2026-10-10T18:43:19.7427241Z   Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+2026-10-10T18:43:19.7613628Z Collecting referencing>=0.28.4 (from jsonschema)
+2026-10-10T18:43:19.7650930Z   Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+2026-10-10T18:43:20.0098538Z Collecting rpds-py>=0.25.0 (from jsonschema)
+2026-10-10T18:43:20.0134694Z   Downloading rpds_py-2026.9.1-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+2026-10-10T18:43:20.0238076Z Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+2026-10-10T18:43:20.0439099Z Downloading pyyaml-6.0.3-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (794 kB)
+2026-10-10T18:43:20.0582010Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 794.2/794.2 kB 85.3 MB/s  0:00:00
+2026-10-10T18:43:20.0615819Z Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+2026-10-10T18:43:20.0675922Z Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+2026-10-10T18:43:20.0725243Z Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+2026-10-10T18:43:20.0777483Z Downloading rpds_py-2026.9.1-cp314-cp314-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (371 kB)
+2026-10-10T18:43:20.2335831Z Installing collected packages: rpds-py, pyyaml, attrs, referencing, jsonschema-specifications, jsonschema
+2026-10-10T18:43:20.4940121Z 
+2026-10-10T18:43:20.4954380Z Successfully installed attrs-26.1.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 pyyaml-6.0.3 referencing-0.37.0 rpds-py-2026.9.1
+2026-10-10T18:43:20.5585124Z ##[group]Run bash tools/validate.sh
+2026-10-10T18:43:20.5585470Z [36;1mbash tools/validate.sh[0m
+2026-10-10T18:43:20.5652022Z shell: /usr/bin/bash -e {0}
+2026-10-10T18:43:20.5652276Z env:
+2026-10-10T18:43:20.5652548Z   pythonLocation: /opt/hostedtoolcache/Python/3.14.8/x64
+2026-10-10T18:43:20.5652987Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.14.8/x64/lib/pkgconfig
+2026-10-10T18:43:20.5653408Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.8/x64
+2026-10-10T18:43:20.5653789Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.8/x64
+2026-10-10T18:43:20.5654160Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.8/x64
+2026-10-10T18:43:20.5654529Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.14.8/x64/lib
+2026-10-10T18:43:20.5654856Z ##[endgroup]
+2026-10-10T18:43:26.6333254Z [C1] PASS frontmatter-schema
+2026-10-10T18:43:32.3030192Z [C2] PASS format
+2026-10-10T18:43:32.3957989Z [C3] PASS untagged-fence-sweep
+2026-10-10T18:43:32.5197382Z [C4] PASS index-integrity
+2026-10-10T18:43:32.5238913Z [C5] PASS branding-leakage
+2026-10-10T18:43:32.5353411Z [C6] PASS bootstrap-sanity
+2026-10-10T18:43:32.5354204Z [C7] PASS module-readme-presence
+2026-10-10T18:43:34.5019293Z [C8] PASS version-bump-vs-changelog
+2026-10-10T18:43:34.9017438Z [C9] PASS path-resolution
+2026-10-10T18:43:36.6314694Z [C10] PASS consistency
+2026-10-10T18:43:39.5335246Z [C11] FAIL dogfood
+2026-10-10T18:43:39.5354208Z   .agent/qa/self-commission-v1.5.0-closeout.json: schema violation: 'feature' is a required property
+2026-10-10T18:43:40.1073663Z [C12] PASS ecosystem-fixtures
+2026-10-10T18:43:40.1318947Z [C13] PASS skill-index
+2026-10-10T18:43:40.1538446Z [C14] PASS workflow-sha-pins
+2026-10-10T18:43:40.1973701Z [C15] PASS capability-profile-roles
+2026-10-10T18:43:40.4109587Z [C16] PASS feature-list-lifecycle
+2026-10-10T18:43:40.4110316Z SUMMARY: 15 passed, 1 failed
+2026-10-10T18:43:40.4126579Z ##[error]Process completed with exit code 1.
+2026-10-10T18:43:40.4272003Z Post job cleanup.
+2026-10-10T18:43:40.5111703Z [command]/usr/bin/git version
+2026-10-10T18:43:40.5156612Z git version 2.55.0
+2026-10-10T18:43:40.5200903Z Temporarily overriding HOME='/home/runner/work/_temp/9ed621bc-fca3-44d0-bcc2-2c2972f4d3c0' before making global git config changes
+2026-10-10T18:43:40.5202214Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T18:43:40.5207906Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/nizam-framework/nizam-framework
+2026-10-10T18:43:40.5248221Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T18:43:40.5282425Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-10T18:43:40.5547919Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T18:43:40.5588239Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-10T18:43:40.6026769Z Cleaning up orphan processes
+2026-10-10T18:43:40.6440054Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683, actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+
+EXIT:0

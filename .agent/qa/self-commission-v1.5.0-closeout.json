@@ -4,7 +4,6 @@
   "checks_run": 2,
   "checks_passed": 2,
   "executed_at": "2026-10-10T18:41:31.730482+00:00",
-  "review": "final-record-supplement",
   "head_sha": "bfd475ff670e582cbbfc8f3187ae988dcf3c8baa",
   "tree_state": "Final commissioned documentation working tree after independent finaldoc ModeB approval",
   "commissioning_candidate_sha": "bfd475ff670e582cbbfc8f3187ae988dcf3c8baa",
@@ -33,7 +32,9 @@
   "evidence_files": [
     ".agent/evidence/self-commission-v1.5.0/finalrecord.txt",
     ".agent/evidence/self-commission-v1.5.0/finalcompliance.txt",
-    ".agent/evidence/self-commission-v1.5.0/self-commission-v1.5.0-qa-adversarial.txt"
+    ".agent/evidence/self-commission-v1.5.0/self-commission-v1.5.0-qa-adversarial.txt",
+    ".agent/evidence/self-commission-v1.5.0/qa-routing-targeted.txt",
+    ".agent/evidence/self-commission-v1.5.0/qa-routing-full.txt"
   ],
   "issues": [],
   "missing_acceptance_coverage": [],
@@ -43,5 +44,15 @@
     "approved": true,
     "summary": "Supplemental final-record2/2 passes: commissioned0.1.1 record binds preserved sourcecandidatebfd475f, genuine9/9QA/CI/preflight/baseline evidence and exact scope; sourcecompliance/releaseanchors remain green. Original commissioningQA and immutablebaseline preserved."
   },
-  "dod_ref": ".nizam/standard/definition_of_done.md"
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "stage": "final-record-supplement",
+  "artifact_routing_correction": {
+    "change": "Renamed review discriminator to stage so C11 dispatches the genuine QA schema.",
+    "results_preserved": true,
+    "verification": [
+      ".agent/evidence/self-commission-v1.5.0/qa-routing-targeted.txt",
+      ".agent/evidence/self-commission-v1.5.0/qa-routing-full.txt"
+    ],
+    "outcome": "Targeted QA validation and full compliance/release closeout pass, exit0."
+  }
 }

@@ -294,8 +294,9 @@
       "note": "Temporary draft rejected for missing structured commission-record coverage; rev1 fixes exact record and candidate/evidence bindings. Both final gates approve exact proposal hash b4e6128a98ea3d3eb2c4f9dc74e6615ebfb15547d02f723a47a2687dad3821dd."
     },
     "self-commission-v1.5.0-implementation": {
-      "attempts": 1,
-      "limit": 3
+      "attempts": 2,
+      "limit": 3,
+      "note": "Final CI C11 revealed supplemental QA review field chooses contract-review route; independent Evaluator corrects its artifact to stage without changing results and verifies target/full compliance. No installed or authored payload changes."
     }
   },
   "history": [
@@ -2166,6 +2167,24 @@
       "ci_run_id": 38075479048,
       "record": "docs/planning/SELF_GOVERNANCE.md",
       "detail": "Independent initial and final Mode B approvals, QA9/9 plus finalrecord2/2 and both evidence-capture gates passed. Commissioned record binds the assessed clean source candidate and immutable archived outputs. Completed phase014 data, prior history and published release tag preserved. PR80 final CI and authorized merge follow feature completion."
+    },
+    {
+      "at": "2026-10-10T18:45:44Z",
+      "event": "implementation_rework",
+      "contract_id": "self-commission-v1.5.0",
+      "attempt": 2,
+      "run_id": 38076891062,
+      "job_id": 114285695176,
+      "detail": "C11 content routing selected contract-review schema from supplemental QA review field; rename to stage preserves results and uses actual QA schema. Corrected artifact requires targeted and full compliance checks."
+    },
+    {
+      "at": "2026-10-10T18:47:12Z",
+      "event": "artifact_repair_completed",
+      "contract_id": "self-commission-v1.5.0",
+      "attempt": 2,
+      "validator": ".agent/validator/self-commission-v1.5.0-artifact-repair.json",
+      "evidence_gate": ".agent/evidence/self-commission-v1.5.0/artifact-repair-gate.txt",
+      "detail": "QA results unchanged; stage field now selects QA schema. Targeted validator and full16/16 plus releasecloseout passed with artifact present; independent repair ModeB and evidence gate approved."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2740,7 +2759,7 @@
       }
     ]
   },
-  "last_action": "self-commission-v1.5.0 complete: authentic installed pin, real clean preflight/CI and independent QA/evidence gates passed; commissioned record ready for clean PR80 merge.",
+  "last_action": "self-commission-v1.5.0 complete after independently approved QA-artifact routing repair; corrected final CI and clean PR80 merge next.",
   "completed_contract_ids": [
     "099",
     "103",
