@@ -2,7 +2,7 @@
  "contract_id": "102",
  "feature_id": "102",
  "name": "GA-readiness dossier (no declaration), NDEBT-044 (e) roll, and canonical-first phase close",
- "status": "proposed",
+ "status": "approved",
  "spec_ref": ".agent/product_spec_014.md",
  "design_notes": {
   "revision": "Revision 0 (102-contract attempt 2/3). Mode A round 1 rejected the attempt-1 contract with one issue (plus two unsupported_claims that were consequences of it): the text claimed the fully dual-state 108-round-2 approvals predicate, but S01's embedded script hard-coded the proposed state (status != 'proposed' rejected; approvals unconditionally both-false with approved_at absent) -- a prose-vs-code mismatch. S01 now implements the exact 108 dual-state form: status must be one of proposed/approved/implemented/complete; when status is approved, revisions is 0, both flags are true and approved_at is present; in any other status, revisions is 0, both flags are false and approved_at is absent. Status is proposed; revisions is 0 and both validator_mode_a and evaluator_contract_review are false; approved_at is absent. S02 diffs from <B> and rejects a Generator edit of run_state. S03 allowlists .agent/run_state.json against <A>, hard-fails the feature list and the product spec, and -- unlike every prior feature -- the four contracted planning files (phase_014.yaml, ROADMAP.md, manifest.json, DEBT.md) are in scope, because the canonical-first phase close is this feature's contracted deliverable; HANDOVER.md and backlog_dag.json stay out of scope (the F102 packet's allowed_paths does not list them). One premise of the feature text is made precise below: AT1's yaml-completeness holds at the implementation commit only because the yaml flip is in this feature's scope; AT6's exemption of 102 is what keeps the suite green there, since the feature-list flip is Orchestrator-owned and lands after.",
@@ -490,8 +490,9 @@
  "evidence_convention": "Line 1 of each evidence file is the replayable invocation from the repo root, the body is the raw combined stdout and stderr, and the last line is EXIT:<code> taken from the process, never from a pipeline. One capture at a time, in the foreground. Never run tools/validate.sh and tools/fixtures_self_test.sh at the same time, in this tree or one scratch copy. Order inside the attempt root: attempt-base.txt first; after the deliverables are final, AT1 through AT10, then S01, S04, S05, S02, S03. A later edit invalidates the captures. The Evaluator re-runs into .agent/evidence/102/qa/. Failed-attempt evidence goes to .agent/evidence/102/failed-attempt<N>/. Frozen files under .agent/evidence/phase-014-activation/ are read-only. AT4's capture includes its leading 'git fetch --tags --quiet origin' verbatim.",
  "approvals": {
   "revisions": 0,
-  "validator_mode_a": false,
-  "evaluator_contract_review": false
+  "validator_mode_a": true,
+  "evaluator_contract_review": true,
+  "approved_at": "2026-10-10T15:20:02Z"
  },
  "version_impact": "None (phase 014 prepares no release; the next release, at least MINOR, is a separate H-FRAMEWORK-RELEASE).",
  "retry_identity": {

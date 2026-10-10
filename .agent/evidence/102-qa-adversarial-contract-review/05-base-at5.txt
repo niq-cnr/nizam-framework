@@ -1,0 +1,5 @@
+python3 -c "import re; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; want=set(re.findall(r'^[|] (NDEBT-[0-9]+) [|]',t,re.M)); r=open('docs/planning/ROADMAP.md').read().split('## Current Position')[1].split('\n## ')[0]; L=[x for x in r.split('\n- ') if x.startswith('Open debt (current')]; assert len(L)==1, len(L); got=set(re.findall(r'NDEBT-[0-9]+',L[0].split('Resolved')[0])); assert got==want, (sorted(got),sorted(want))"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+AssertionError: (['NDEBT-026', 'NDEBT-034', 'NDEBT-037', 'NDEBT-040', 'NDEBT-044', 'NDEBT-045', 'NDEBT-046', 'NDEBT-047'], ['NDEBT-034', 'NDEBT-040', 'NDEBT-044', 'NDEBT-045', 'NDEBT-046', 'NDEBT-047'])
+EXIT:1

@@ -1,0 +1,5 @@
+python3 -c "import json,re; P=json.load(open('.agent/evidence/102/ga-readiness.json'))['preconditions']; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; sev=re.findall(r'^[|] NDEBT-[0-9]+ [|] [^|]+ [|] (\w+) [|]',t,re.M); truth='not_met' if any(s in ('Critical','High') for s in sev) else 'met'; assert P['no_open_critical_high_debt']['status']==truth, (P['no_open_critical_high_debt']['status'],truth,sev); assert P['real_production_pilot']['status']=='not_met' and '.agent/evidence/pilot-100/aggregate.json' not in P['real_production_pilot']['evidence'], P['real_production_pilot']"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/102/ga-readiness.json'
+EXIT:1
