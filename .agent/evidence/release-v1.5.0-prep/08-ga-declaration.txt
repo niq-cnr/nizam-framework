@@ -1,0 +1,34 @@
+COMMAND: python3 - <<'PY'
+import hashlib,json,re,yaml,html
+from pathlib import Path
+state=json.loads(Path('.agent/run_state.json').read_text())
+gate=next(x for x in reversed(state['history']) if x.get('event')=='operator_gate_decision' and x.get('gate')=='H-GA')
+assert gate['decision']=='declared' and gate['verbatim']=='GA is declared.'
+assert gate['declared_version']=='1.5.0' and gate['tag']=='v1.5.0'
+assert gate['evidence_exceptions']=={'real_production_pilot':'not_met','recorded_consumer_adoptions':'insufficient_evidence'}
+assert gate['dossier_path']=='.agent/evidence/102/ga-readiness.json'
+assert hashlib.sha256(Path(gate['dossier_path']).read_bytes()).hexdigest()==gate['dossier_sha256']=='d98ccec0f3c57cda51876db3286b57005143ef771b88b4c92f36748de4c0f590'
+date=gate['at'].split('T')[0];assert date=='2026-10-10'
+def normalized(text):
+ return re.sub(r'\s+',' ',text.replace('`','').replace('**','')).strip()
+def declaration(span):
+ assert f'General Availability declared by the operator on {date}' in normalized(span),span
+ assert not re.search(r'GA (?:is |remains )?(?:undeclared|not declared)|H-GA (?:is |stays |remains )?OUTSTANDING',normalized(span),re.I),span
+def exceptions(span):
+ text=normalized(span)
+ for key,value in gate['evidence_exceptions'].items():
+  assert re.search(r'\b'+re.escape(key)+r'\s+(?:is|remains)\s+'+re.escape(value)+r'\b',text),(key,span)
+ assert not re.search(r'all (?:GA |readiness )?(?:preconditions|prerequisites|criteria) (?:are |were |have been )?(?:met|passed|satisfied)',text,re.I),span
+readme=Path('README.md').read_text().split('## Quickstart',1)[0];declaration(readme);assert '[GA decision](docs/planning/operator_gates.md)' in readme
+hero=re.search(r'<header class="hero"[^>]*>(.*?)</header>',Path('docs/guide/index.html').read_text(),re.S).group(1);declaration(hero);assert 'href="https://github.com/niq-cnr/nizam-framework/blob/v1.5.0/docs/planning/operator_gates.md"' in html.unescape(hero)
+changes=Path('CHANGELOG.md').read_text();current=changes.split('## [1.5.0] - 2026-10-10\n',1)[1].split('## [1.4.0]',1)[0];banner=current.split('### Added',1)[0];declaration(banner);exceptions(banner)
+context=yaml.safe_load(Path('CONTEXT.md').read_text().split('---',2)[1]);entry=context['change_log'][0];assert entry['version']=='1.5.0' and str(entry['date'])==date;declaration(entry['summary']);exceptions(entry['summary'])
+roadmap=Path('docs/planning/ROADMAP.md').read_text().split('## Current Position',1)[1];phase=roadmap.split('- **Phase 014 (GA Track) is complete.**',1)[1].split('\n- ',1)[0];declaration(phase);exceptions(phase)
+rows=Path('docs/planning/operator_gates.md').read_text().splitlines();ga=next(l for l in rows if l.startswith('| `H-GA` |'));assert ga.count('|')==5;disposition=ga.split('|')[4];assert f'EXECUTED {date}' in disposition and gate['verbatim'] in disposition and gate['tag'] in disposition and gate['at'] in disposition and gate['dossier_sha256'] in disposition and gate['dossier_path'] in disposition and '14e632f' in disposition;assert 'OUTSTANDING' not in disposition;exceptions(disposition)
+con=next(l for l in rows if l.startswith('| `H-CONSOLIDATION` |'));assert 'OUTSTANDING' in con.split('|')[4] and 'NOT EXERCISED' in con.split('|')[4]
+print('Current declaration spans, canonical exception pairs, and operator decision identity passed')
+PY
+HEAD: 00ef2ef418dbdce1867c9b528da3e97ff20160db
+Current declaration spans, canonical exception pairs, and operator decision identity passed
+
+EXIT:0

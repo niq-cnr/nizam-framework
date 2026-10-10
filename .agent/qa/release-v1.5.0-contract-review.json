@@ -1,0 +1,38 @@
+{
+  "review": "contract-testability",
+  "feature": "release-v1.5.0",
+  "contract_id": "release-v1.5.0",
+  "revision_reviewed": 1,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence_files": [
+    ".agent/evidence/release-v1.5.0-prep/12-evaluator-contract-probes.txt",
+    ".agent/evidence/release-v1.5.0-prep/15-evaluator-link-ratification.txt",
+    ".agent/evidence/release-v1.5.0-prep/17-evaluator-qa-correction-ratification.txt"
+  ],
+  "observations": [
+    "AT8 now parses actual durable H-GA decision and binds current declaration spans, canonical exception pairs, decision identity and immutable dossier digest. Evaluator-built positive and five scratch negatives independently executed with expected exits.",
+    "AT7 uses coordinator-only base 67ba7646e681a6be6800c766bf0078b2fdc6cfb4, checks tracked and untracked paths, forbids dossier/run_state modification, and admits bounded metadata paths. Earlier 14e632f history/hygiene base is equivalent for product paths because intervening commit changed coordination state only.",
+    "AT4 final acceptance must run after parent commits candidate and match resolved_sha to candidate HEAD; precommit e2e is baseline only. Full validator and fixtures must run serially.",
+    "Exactly one additional evaluator-originated adversarial check will accompany final QA."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Approved revision 1: all nine acceptance checks are bounded and independently testable. Prescribed AT8 gap is closed with anchored current declarations and decision binding; independent scratch probes demonstrate targeted fail-closed behavior."
+  },
+  "amendment_review": {
+    "target": "amendments[0]",
+    "approved": true,
+    "evidence": ".agent/evidence/release-v1.5.0-prep/15-evaluator-link-ratification.txt",
+    "summary": "Ratified deploy-safe pinned GitHub href with exact meta/footer anchors and URL-excluded version count. Independent AT6/AT8 scratch positives pass; relative deployed-site link negative rejects. Scope remains seven product files."
+  },
+  "amendment_review_qa_correction": {
+    "approved": true,
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "evidence": ".agent/evidence/release-v1.5.0-prep/17-evaluator-qa-correction-ratification.txt",
+    "summary": "Ratified HTML entity serialization preserving canonical pinned destination, final QA exact path allowance and bounded coordinator retry metadata. Scratch AT6/7/8 positives pass; historical run_state tampering rejects."
+  }
+}

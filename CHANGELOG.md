@@ -7,6 +7,41 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-10-10
+
+**Minor release** (`methodology/06_release_train.md` Section 3.2): phase 014 (GA track)
+and its maintenance tranche land in the injected payload. The two ecosystem lifecycle
+protocols are now normative -- `ecosystem/06_simplification_review.md` (Repeat) and
+`ecosystem/08_ga_gate.md` (Promote/GA) flip `draft` -> `active` (0.2.0 each) and are
+registered as capabilities in `NIZAM.json` and `tools/skill.json` (0.4.0), with the
+operator gates `H-CONSOLIDATION` and `H-GA` defined in
+`docs/planning/operator_gates.md` -- H-CONSOLIDATION remains OUTSTANDING; H-GA is EXECUTED by the operator
+on 2026-10-10. `standard/capability_profiles.md` (0.4.0) gains an explicit
+`Role` column whose mapping the validator's C15 check now enforces, and the
+convergent-review suite ships a required-conformance mode with its own CI job. This is
+additive protocol surface with validator enforcement changes. C1/C2 docs/nips and
+C15 mapping checks widen the default sweep. C13 enforces the intentional-subset
+rule in both full sweep and `--payload`: every skill capability module must equal
+a NIZAM.json capability authoritative_source, so an existing but unindexed module
+now fails. The shipped manifest/index pair remains compliant; independently added
+modules must be registered. The release tier is rounded up per Section 3.4. Upgrade path:
+consumers re-bootstrap from the `v1.5.0` tag to inherit the payload
+(`methodology/06_release_train.md` Section 5). Everything else in this release is
+framework-envelope only (the phase-014 close and GA-readiness dossier, planning
+records, and the backlog reconciliation), none of which `bootstrap.sh` injects.
+
+General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved.
+
+### Added
+
+- **Phase 014 feature 109: C15 mapping direction** (additive; MINOR,
+  `methodology/06_release_train.md` Section 3.2). `standard/capability_profiles.md`
+  (0.4.0) gains an explicit `Role` column naming each capability profile's AGF role,
+  and `tools/verify_lib.sh` gains the `vlib_profiles_map_roles` primitive parsing it:
+  validator check C15 (default sweep) now calls both the coverage and the mapping
+  primitives, so a swapped profile-to-role mapping fails. Additive and
+  compatibility-first: `vlib_profiles_cover_roles` is unchanged. NDEBT-026.
+
 ### Changed
 
 - **v1.4.0 post-release refresh and phase-014 re-baseline** (planning records only;
@@ -90,6 +125,29 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   gains capability `nizam-ecosystem-bootstrap` (`ecosystem/00_ecosystem_bootstrap.md`).
   The negative fixture `tools/fixtures/skill_index_neg_unindexed_capability.json` is exercised
   by the existing C13 substitution. `tools/README.md` (0.15.0) records the decision. NDEBT-044 (a).
+- **Phase 014 feature 107: docs/nips under C1/C2** (additive; MINOR,
+  `methodology/06_release_train.md` Section 3.2). In the default sweep only,
+  `tools/validate.sh` checks C1 (frontmatter schema) and C2 (format) over every
+  markdown file under `docs/nips/`; those files stay outside the shipped-doc set, so
+  C9/C10 do not scan them and `--payload` is unchanged. NIP-0002's frontmatter status
+  moves `accepted` -> `active` (0.2.1), the schema enum value for an accepted NIP
+  (NDEBT-044 b). `tools/README.md` (0.16.0) names the C1 row change.
+- **Phase 014 feature 108: validator help and adapter-reference truth** (PATCH,
+  `methodology/06_release_train.md` Section 3.3). `tools/validate.sh --help` is
+  corrected: the C14-C16 paragraphs describe the checks as actually implemented (C15
+  now names both primitives; C16 names the vetted feature-list primitive), the C5
+  branding-sweep text matches its implementation, and the payload-doc-set wording
+  matches the shipped file-set builders. `tools/interface.md` (0.3.1) corrects one
+  citation (Section 5 item 10 cites Section 2 item 5, not item 4); the checklist stays
+  at 10 items, so every adapter remains conformant. NDEBT-037, NDEBT-044 (c/d/f).
+- **Phase 014 close and envelope.** Feature 102 assembled the GA-readiness dossier and
+  closed the phase canonical-first; its historical dossier recorded no GA declaration
+  and `real_production_pilot` `not_met` per amendment A3. The operator declaration
+  above is the subsequent decision. Amendments A1/A2
+  (acceptance-test corrections) and A3 (features 100/101 cancelled) are planning
+  records, as are the backlog reconciliation (`docs/planning/backlog_reconciliation.md`,
+  `backlog_dag.json`) and the phase-014 planning artifacts -- nothing `bootstrap.sh`
+  injects changes.
 
 ## [1.4.0] - 2026-10-08
 

@@ -1,0 +1,23 @@
+COMMAND: bash tools/validate.sh
+HEAD: 20cdd9a47a37713cb6bf9b20ee0e1f718494d610
+STARTED: 2026-10-10T17:04:51.345306+00:00
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] PASS bootstrap-sanity
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] FAIL path-resolution
+  docs/guide/index.html: unresolved path reference 'github.com/niq-cnr/nizam-framework/blob/v1.5.0/docs/planning/operator_gates.md'
+[C10] PASS consistency
+[C11] PASS dogfood
+[C12] PASS ecosystem-fixtures
+[C13] PASS skill-index
+[C14] PASS workflow-sha-pins
+[C15] PASS capability-profile-roles
+[C16] PASS feature-list-lifecycle
+SUMMARY: 15 passed, 1 failed
+
+EXIT:1

@@ -1,0 +1,25 @@
+{
+  "review": "contract-testability",
+  "feature": "release-v1.5.0",
+  "contract_id": "release-v1.5.0",
+  "revision_reviewed": 0,
+  "issues": [
+    {
+      "verification_index": 7,
+      "criterion": "AT8 current GA declaration matches operator decision and keeps explicit exceptions visible on each contracted surface",
+      "evidence": ".agent/evidence/release-v1.5.0-prep/10-contract-review-negative.txt",
+      "required_fix": "Replace whole-file date/operator/exception token searches with structurally anchored current declaration checks: README opening and guide hero must contain dated GA declaration and correct gate link; CHANGELOG current 1.5.0 section, CONTEXT current declaration, ROADMAP Current Position bullet and operator_gates H-GA row must bind real_production_pilot to not_met and recorded_consumer_adoptions to insufficient_evidence. Parse the actual run_state H-GA decision and bind its recorded date/verbatim/version/digest to current H-GA disposition. Show isolated negatives rejecting missing declaration and detached/incorrect exception states.",
+      "severity": "high"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "AT7 guard uses fixed post-decision base, checks tracked and untracked paths, forbids dossier/run_state modification, and admits only bounded metadata paths.",
+    "AT4 final acceptance must run after parent commits candidate; precommit e2e is baseline only. Full validator and fixture tests must run serially."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Rejected AT8: scratch probe passes with GA notes absent from README/guide and exception tokens detached from current H-GA record while that record wrongly claims all prerequisites met."
+  }
+}

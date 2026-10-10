@@ -1,0 +1,15 @@
+COMMAND: python3 - <<'PY'
+import subprocess
+for cmd,expected in [(['git','rev-parse','-q','--verify','refs/tags/v1.5.0'],1),(['git','ls-remote','--tags','origin','v1.5.0'],0),(['git','ls-remote','--tags','origin','v1.4.0'],0)]:
+ r=subprocess.run(cmd,text=True,capture_output=True);print(cmd,r.stdout,r.stderr,'EXIT:',r.returncode);assert r.returncode==expected
+ if cmd[-1]=='v1.5.0': assert not r.stdout.strip()
+ if cmd[-1]=='v1.4.0': assert 'refs/tags/v1.4.0' in r.stdout
+PY
+HEAD: 20cdd9a47a37713cb6bf9b20ee0e1f718494d610
+STARTED: 2026-10-10T17:06:00.282262+00:00
+['git', 'rev-parse', '-q', '--verify', 'refs/tags/v1.5.0']   EXIT: 1
+['git', 'ls-remote', '--tags', 'origin', 'v1.5.0']   EXIT: 0
+['git', 'ls-remote', '--tags', 'origin', 'v1.4.0'] bb32064472fb71deaba96e134b888c7e9e590d96	refs/tags/v1.4.0
+  EXIT: 0
+
+EXIT:0

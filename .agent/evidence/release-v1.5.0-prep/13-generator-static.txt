@@ -1,0 +1,97 @@
+COMMAND: python3 - <<'PY'
+import json,re,sys,yaml
+from pathlib import Path
+sys.path.insert(0,'.github/scripts');import release_closeout as r
+assert json.loads(Path('NIZAM.json').read_text())['framework']['version']=='1.5.0'
+a=Path('README.md').read_text();assert 'v1.4.0' not in a and a.count('v1.5.0')==7
+a=Path('docs/guide/index.html').read_text();assert '1.4.0' not in a and a.count('1.5.0')==2
+a=Path('CHANGELOG.md').read_text();assert a.splitlines()[7:10]==['## [Unreleased]','','## [1.5.0] - 2026-10-10'];assert '**Minor release**' in a
+b=r.document_body(Path('docs/planning/ROADMAP.md').read_text());assert sum(bool(re.search(r'Latest released tag: v1\.5\.0\b|Release in preparation: v1\.5\.0\b',l)) for l in b.splitlines())==1
+for p,v in [('CONTEXT.md','1.5.0'),('docs/planning/ROADMAP.md','0.50.0'),('docs/planning/operator_gates.md','0.30.0')]:
+ d=yaml.safe_load(Path(p).read_text().split('---')[1]);assert str(d['version'])==v and d['change_log'][0]['version']==v
+print('All version/pin/disposition assertions passed')
+PY
+All version/pin/disposition assertions passed
+
+
+EXIT:0
+COMMAND: python3 - <<'PY'
+import re,subprocess
+base='67ba7646e681a6be6800c766bf0078b2fdc6cfb4';product=set(['CHANGELOG.md', 'NIZAM.json', 'CONTEXT.md', 'README.md', 'docs/guide/index.html', 'docs/planning/ROADMAP.md', 'docs/planning/operator_gates.md'])
+r=subprocess.run(['git','diff','--name-status',base],check=True,text=True,capture_output=True)
+seen=set()
+def auxiliary(p):
+ return bool(re.fullmatch(r'\.agent/(contracts/release-v1\.5\.0\.json|(?:validator|qa)/release-v1\.5\.0-[A-Za-z0-9_-]+\.json|evidence/release-readiness-v1\.5\.0\.md|evidence/release-v1\.5\.0-prep/[A-Za-z0-9_.-]+)',p)) and '..' not in p
+for l in r.stdout.splitlines():
+ parts=l.split('\t');assert len(parts)==2,l;status,p=parts
+ if p in product: assert status=='M',(status,p);seen.add(p)
+ else: assert auxiliary(p) and status in ('A','M'),(status,p)
+assert seen==product,(seen,product)
+for p in subprocess.run(['git','ls-files','--others','--exclude-standard'],check=True,text=True,capture_output=True).stdout.splitlines(): assert auxiliary(p),p
+print('Scope guard passed: exactly seven modified product files; only authorized metadata/evidence additions')
+PY
+Scope guard passed: exactly seven modified product files; only authorized metadata/evidence additions
+
+
+EXIT:0
+COMMAND: python3 - <<'PY'
+import hashlib,json,re,yaml
+from pathlib import Path
+state=json.loads(Path('.agent/run_state.json').read_text())
+gate=next(x for x in reversed(state['history']) if x.get('event')=='operator_gate_decision' and x.get('gate')=='H-GA')
+assert gate['decision']=='declared' and gate['verbatim']=='GA is declared.'
+assert gate['declared_version']=='1.5.0' and gate['tag']=='v1.5.0'
+assert gate['evidence_exceptions']=={'real_production_pilot':'not_met','recorded_consumer_adoptions':'insufficient_evidence'}
+assert gate['dossier_path']=='.agent/evidence/102/ga-readiness.json'
+assert hashlib.sha256(Path(gate['dossier_path']).read_bytes()).hexdigest()==gate['dossier_sha256']=='d98ccec0f3c57cda51876db3286b57005143ef771b88b4c92f36748de4c0f590'
+date=gate['at'].split('T')[0];assert date=='2026-10-10'
+def normalized(text):
+ return re.sub(r'\s+',' ',text.replace('`','').replace('**','')).strip()
+def declaration(span):
+ assert f'General Availability declared by the operator on {date}' in normalized(span),span
+ assert not re.search(r'GA (?:is |remains )?(?:undeclared|not declared)|H-GA (?:is |stays |remains )?OUTSTANDING',normalized(span),re.I),span
+def exceptions(span):
+ text=normalized(span)
+ for key,value in gate['evidence_exceptions'].items():
+  assert re.search(r'\b'+re.escape(key)+r'\s+(?:is|remains)\s+'+re.escape(value)+r'\b',text),(key,span)
+ assert not re.search(r'all (?:GA |readiness )?(?:preconditions|prerequisites|criteria) (?:are |were |have been )?(?:met|passed|satisfied)',text,re.I),span
+readme=Path('README.md').read_text().split('## Quickstart',1)[0];declaration(readme);assert '[GA decision](docs/planning/operator_gates.md)' in readme
+hero=re.search(r'<header class="hero"[^>]*>(.*?)</header>',Path('docs/guide/index.html').read_text(),re.S).group(1);declaration(hero);assert 'href="../planning/operator_gates.md"' in hero
+changes=Path('CHANGELOG.md').read_text();current=changes.split('## [1.5.0] - 2026-10-10\n',1)[1].split('## [1.4.0]',1)[0];banner=current.split('### Added',1)[0];declaration(banner);exceptions(banner)
+context=yaml.safe_load(Path('CONTEXT.md').read_text().split('---',2)[1]);entry=context['change_log'][0];assert entry['version']=='1.5.0' and str(entry['date'])==date;declaration(entry['summary']);exceptions(entry['summary'])
+roadmap=Path('docs/planning/ROADMAP.md').read_text().split('## Current Position',1)[1];phase=roadmap.split('- **Phase 014 (GA Track) is complete.**',1)[1].split('\n- ',1)[0];declaration(phase);exceptions(phase)
+rows=Path('docs/planning/operator_gates.md').read_text().splitlines();ga=next(l for l in rows if l.startswith('| `H-GA` |'));assert ga.count('|')==5;disposition=ga.split('|')[4];assert f'EXECUTED {date}' in disposition and gate['verbatim'] in disposition and gate['tag'] in disposition and gate['at'] in disposition and gate['dossier_sha256'] in disposition and gate['dossier_path'] in disposition and '14e632f' in disposition;assert 'OUTSTANDING' not in disposition;exceptions(disposition)
+con=next(l for l in rows if l.startswith('| `H-CONSOLIDATION` |'));assert 'OUTSTANDING' in con.split('|')[4] and 'NOT EXERCISED' in con.split('|')[4]
+print('Current declaration spans, canonical exception pairs, and operator decision identity passed')
+PY
+
+Traceback (most recent call last):
+  File "<stdin>", line 23, in <module>
+  File "<stdin>", line 20, in exceptions
+AssertionError: 
+**Minor release** (`methodology/06_release_train.md` Section 3.2): phase 014 (GA track)
+and its maintenance tranche land in the injected payload. The two ecosystem lifecycle
+protocols are now normative -- `ecosystem/06_simplification_review.md` (Repeat) and
+`ecosystem/08_ga_gate.md` (Promote/GA) flip `draft` -> `active` (0.2.0 each) and are
+registered as capabilities in `NIZAM.json` and `tools/skill.json` (0.4.0), with the
+operator gates `H-CONSOLIDATION` and `H-GA` defined in
+`docs/planning/operator_gates.md` -- H-CONSOLIDATION remains OUTSTANDING; H-GA is EXECUTED by the operator
+on 2026-10-10. `standard/capability_profiles.md` (0.4.0) gains an explicit
+`Role` column whose mapping the validator's C15 check now enforces, and the
+convergent-review suite ships a required-conformance mode with its own CI job. This is
+additive protocol surface with validator enforcement changes. C1/C2 docs/nips and
+C15 mapping checks widen the default sweep. C13 enforces the intentional-subset
+rule in both full sweep and `--payload`: every skill capability module must equal
+a NIZAM.json capability authoritative_source, so an existing but unindexed module
+now fails. The shipped manifest/index pair remains compliant; independently added
+modules must be registered. The release tier is rounded up per Section 3.4. Upgrade path:
+consumers re-bootstrap from the `v1.5.0` tag to inherit the payload
+(`methodology/06_release_train.md` Section 5). Everything else in this release is
+framework-envelope only (the phase-014 close and GA-readiness dossier, planning
+records, and the backlog reconciliation), none of which `bootstrap.sh` injects.
+
+General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; this declaration does not assert that all GA prerequisites passed.
+
+
+
+EXIT:1

@@ -1,0 +1,17 @@
+COMMAND: python3 - <<'PY'
+import json,re,sys,yaml
+from pathlib import Path
+sys.path.insert(0,'.github/scripts');import release_closeout as r
+assert json.loads(Path('NIZAM.json').read_text())['framework']['version']=='1.5.0'
+a=Path('README.md').read_text();assert 'v1.4.0' not in a and a.count('v1.5.0')==7
+a=Path('docs/guide/index.html').read_text();assert '<meta name="framework-version" content="1.5.0">' in a and '<span id="footer-version">1.5.0</span>' in a;assert '1.4.0' not in a and a.replace('https://github.com/niq-cnr/nizam-framework/blob/v1.5.0&#47;docs/planning/operator_gates.md','').count('1.5.0')==2
+a=Path('CHANGELOG.md').read_text();assert a.splitlines()[7:10]==['## [Unreleased]','','## [1.5.0] - 2026-10-10'];assert '**Minor release**' in a
+b=r.document_body(Path('docs/planning/ROADMAP.md').read_text());assert sum(bool(re.search(r'Latest released tag: v1\.5\.0\b|Release in preparation: v1\.5\.0\b',l)) for l in b.splitlines())==1
+for p,v in [('CONTEXT.md','1.5.0'),('docs/planning/ROADMAP.md','0.50.0'),('docs/planning/operator_gates.md','0.30.0')]:
+ d=yaml.safe_load(Path(p).read_text().split('---')[1]);assert str(d['version'])==v and d['change_log'][0]['version']==v
+print('All version/pin/disposition assertions passed')
+PY
+HEAD: 00ef2ef418dbdce1867c9b528da3e97ff20160db
+All version/pin/disposition assertions passed
+
+EXIT:0

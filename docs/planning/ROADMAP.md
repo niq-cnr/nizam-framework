@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.49.0
+version: 0.50.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.50.0"
+    date: "2026-10-10"
+    summary: "General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: real_production_pilot is not_met; recorded_consumer_adoptions is insufficient_evidence. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. v1.5.0 release preparation (operator-requested 2026-10-10; H-FRAMEWORK-RELEASE Section 2 sign-off given, and this time the tag authorization is INCLUDED in the same sentence): phase 014 (GA track) and its maintenance tranche are packaged as the next MINOR release. Current Position gains the 'Release in preparation: v1.5.0' bullet ahead of the latest-released bullet, which stays unedited -- v1.4.0 remains the latest released tag until the authorized tag act is executed after this PR merges, and the close-out gate's body pattern is version-scoped, so the v1.4.0 line does not count at V=1.5.0 (the 0.38.0/0.44.0 precedent). Release fact for the post-release refresh: once v1.5.0 is tagged, the post-release refresh records tag execution and retains the completed phase-014 tag-absence assertions as assessment-time evidence; the historical dossier and frozen acceptance infrastructure remain unchanged. run_state, manifest and DEBT.md are untouched."
   - version: "0.49.0"
     date: "2026-10-10"
     summary: "Phase-014 close (feature 102, the final feature). Replaces only the Current Position first bullet and the open-debt bullet; the released-tag disposition bullets are untouched so the release close-out gate's version-scoped disposition line is not disturbed (the 0.46.0/0.47.0 precedent). First bullet: phase 014 is complete — 099 and 103-109 landed via PRs #66-#76 and 102 assembled the GA-readiness dossier (H-GA OUTSTANDING; real_production_pilot not_met per amendment A3; nothing declared) and closed the phase canonical-first; the phase-total sentence states the 7799-of-8600 figure at the 108 close, with 102's own measurement landing at close. Open-debt bullet: rolled to the five Open rows at DEBT.md 0.54.0 (NDEBT-047, 046, 045, 040, 034); NDEBT-044 concern (e) moves to Resolved by feature 102; NDEBT-034's pilot-100 deferral trigger is extinct after A3 and its closure is proposed to the operator at close. No plan-of-record change."
@@ -779,8 +782,7 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-10)
 
-- **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102, the final feature, assembled the GA-readiness dossier (`H-GA` stays OUTSTANDING; `real_production_pilot` is `not_met` — the v1.4.0 pilot was cancelled by amendment A3; nothing is declared), rolled the open-debt bullet (NDEBT-044 concern (e)) and closed the phase canonical-first. At the 108 close the recorded phase total was 7799 of 8600 (ceiling 11180, spec 1.1.4); feature 102's own measurement lands at close. `main` carries unreleased changes since `v1.4.0`; the next release is a separate
-  operator `H-FRAMEWORK-RELEASE`. The handover record is [`HANDOVER.md`](HANDOVER.md).
+- **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. `main` carries the changes since `v1.4.0`; the release preparation and tag act are authorized under `H-FRAMEWORK-RELEASE`, with the tag executed after this PR merges. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
   statements are superseded at 2026-10-10: feature 099 has activated `ecosystem/06_simplification_review.md` and
   `ecosystem/08_ga_gate.md` (the release bullet's "activation awaits phase-014 feature 099" predates it), and
@@ -846,6 +848,37 @@ successor, leaving open debt deferred to unscoped "future phases").
   ran green at `SUMMARY: 15 passed, 0 failed` (C1–C15) at the time, and the fixtures
   self-test at 57/57; the hermetic e2e bootstrap harness passed in CI (now including the
   n-case `assert_multirepo`).
+- **Release in preparation: v1.5.0 (MINOR) — PREPARED 2026-10-10; tag act AUTHORIZED, awaits merge.**
+  General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved.
+  Requested by the operator 2026-10-10, verbatim: "ensure the that
+  documentation and change notes is updated and ready for relase. You are authorized
+  to manage, triage as necessary, your PR's and once clean merge as appropriate. you
+  are authorized to tag and pin the release." — the `H-FRAMEWORK-RELEASE` Section 2
+  human sign-off, and, unlike v1.4.0, the tag authorization is included in the same
+  sentence ("you are authorized to tag and pin the release"), so no separate
+  post-merge tag authorization is awaited. Per `methodology/06_release_train.md`
+  Section 6 this change is the durable preparation only; the tag act remains the
+  separate Orchestrator mechanic, executed after this PR merges — the pipeline never
+  self-tags. The consumer-reaching content since v1.4.0 is exactly the phase-014
+  (GA track) surface and its maintenance tranche (PRs #64–#77): the ecosystem
+  lifecycle protocols flip `draft` -> `active` and are registered (`NIZAM.json`,
+  `tools/skill.json`), the operator gates `H-CONSOLIDATION` / `H-GA` are defined (H-CONSOLIDATION
+  OUTSTANDING; H-GA EXECUTED by the operator 2026-10-10), the convergent-review suite ships required-conformance mode with its
+  CI job, `standard/capability_profiles.md` gains the C15-enforced `Role` column, the
+  default sweep widens (docs/nips under C1/C2 and the C15 mapping), C13 enforces
+  the skill-index subset rule in both full sweep and `--payload`,
+  and `tools/interface.md` plus the validator help texts are corrected. Everything
+  else (the GA-readiness dossier, amendments, planning records, backlog
+  reconciliation) is framework-envelope only. MINOR per
+  `methodology/06_release_train.md` Section 3.2, rounded up per Section 3.4. This
+  release-preparation change synchronizes every version anchor to 1.5.0 and cuts the
+  dated `[1.5.0]` CHANGELOG section; the readiness record
+  (`.agent/evidence/release-readiness-v1.5.0.md`) is written by the Evaluator after
+  independently re-running the checks. Post-release fact: once the authorized tag is
+  pushed, the post-release refresh rolls this bullet to the released
+  record with the tag object id. Completed phase-014 tag-absence assertions remain
+  assessment-time evidence; the historical dossier and frozen acceptance infrastructure
+  remain unchanged.
 - **Latest released tag: v1.4.0 (MINOR) — RELEASED 2026-10-08 at `9edd5d0` (PR #63).**
   After PR #63 merged, the operator authorized the tag act with the verbatim words
   "merged — authorized to tag v1.4.0"

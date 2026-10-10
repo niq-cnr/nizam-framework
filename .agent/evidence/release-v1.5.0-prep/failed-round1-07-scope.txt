@@ -1,0 +1,22 @@
+COMMAND: python3 - <<'PY'
+import re,subprocess
+base='67ba7646e681a6be6800c766bf0078b2fdc6cfb4';product=set(['CHANGELOG.md', 'NIZAM.json', 'CONTEXT.md', 'README.md', 'docs/guide/index.html', 'docs/planning/ROADMAP.md', 'docs/planning/operator_gates.md'])
+r=subprocess.run(['git','diff','--name-status',base],check=True,text=True,capture_output=True)
+seen=set()
+def auxiliary(p):
+ return bool(re.fullmatch(r'\.agent/(contracts/release-v1\.5\.0\.json|(?:validator|qa)/release-v1\.5\.0-[A-Za-z0-9_-]+\.json|evidence/release-readiness-v1\.5\.0\.md|evidence/release-v1\.5\.0-prep/[A-Za-z0-9_.-]+)',p)) and '..' not in p
+for l in r.stdout.splitlines():
+ parts=l.split('\t');assert len(parts)==2,l;status,p=parts
+ if p in product: assert status=='M',(status,p);seen.add(p)
+ else: assert auxiliary(p) and status in ('A','M'),(status,p)
+assert seen==product,(seen,product)
+for p in subprocess.run(['git','ls-files','--others','--exclude-standard'],check=True,text=True,capture_output=True).stdout.splitlines(): assert auxiliary(p),p
+print('Scope guard passed: exactly seven modified product files; only authorized metadata/evidence additions')
+PY
+HEAD: 20cdd9a47a37713cb6bf9b20ee0e1f718494d610
+STARTED: 2026-10-10T17:06:01.877152+00:00
+Traceback (most recent call last):
+  File "<stdin>", line 12, in <module>
+AssertionError: .agent/contracts/release-v1.5.0-closeout.json
+
+EXIT:1

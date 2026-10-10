@@ -14,17 +14,19 @@ for a walkthrough of every design decision, the bootstrap flow, and the executio
 **Agents:** load `tools/SKILL.md` (discovered via the root `NIZAM.json` capability index)
 as your instructions payload — do not bulk-read the governance directories.
 
+General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
+
 ## Quickstart
 
 Fetch `bootstrap.sh` pinned to the latest released tag and run it against your repo:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.4.0/bootstrap.sh -o bootstrap.sh
+curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.5.0/bootstrap.sh -o bootstrap.sh
 chmod +x bootstrap.sh
-GOVERNANCE_TAG=v1.4.0 ./bootstrap.sh --tag v1.4.0
+GOVERNANCE_TAG=v1.5.0 ./bootstrap.sh --tag v1.5.0
 ```
 
-`--tag v1.4.0` (equivalently `GOVERNANCE_TAG=v1.4.0`) pins the inheritance to a real
+`--tag v1.5.0` (equivalently `GOVERNANCE_TAG=v1.5.0`) pins the inheritance to a real
 released tag — never a floating branch (`main`, `master`, `HEAD` are all refused). This
 clones the pinned tag, stages the governance payload, verifies it landed correctly, and
 atomically installs it under `.nizam/` (the default target). What you get:
@@ -41,7 +43,7 @@ atomically installs it under `.nizam/` (the default target). What you get:
 └── provenance.json
 ```
 
-See the [v1.4.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.4.0)
+See the [v1.5.0 release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.5.0)
 and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 `tools/validate.sh` (the same repo-local compliance check that
 `.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the
