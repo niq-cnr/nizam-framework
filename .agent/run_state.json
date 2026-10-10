@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "014-ga-track",
-  "current_feature": "106",
+  "current_feature": "107",
   "status": "in_progress",
-  "updated_at": "2026-10-10T05:01:50Z",
+  "updated_at": "2026-10-10T05:40:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1843,6 +1843,12 @@
       "event": "contract_approved",
       "feature": "106",
       "detail": "106-contract attempt 2/3 approved at revision 1. Mode A .agent/validator/106-mode-a.json revision_reviewed 1, approved, empty arrays, revision 0 in prior_rounds. Evaluator .agent/qa/106-contract-review.json revision_reviewed 1, approved, empty arrays. S03 no longer hard-fails on the Orchestrator run_state edit versus <A>. This commit is the new attempt base <B>. Implementation has not started."
+    },
+    {
+      "at": "2026-10-10T05:40:00Z",
+      "event": "feature_complete",
+      "feature": "106",
+      "detail": "Feature 106 COMPLETE (NDEBT-044 a: C13 intentional subset; capability nizam-ecosystem-bootstrap). Contract revision 1 (attempt 2/3) after S03 was repaired; revision 0 had been approved then found unsatisfiable because <B> already edited run_state. Implementation attempt 1 commit 59ff1df parent d94542c. Mode B approved (.agent/validator/106-mode-b.json, empty arrays) on that commit. QA pass .agent/qa/106.json (13/13; adversarial retarget of anti_hallucination to ecosystem/README.md failed only C13; real tools/skill.json unchanged). An earlier AT8 in QA was killed by a timeout during the NDEBT-047 swap window; skill.json was restored from <B> and the recorded AT8 exited 0. Canonical-first: phase_014.yaml 106 COMPLETED, feature_list_014 106 complete, then this run_state. Budget: 106 = 686 budget-counted (evidence 2113); phase total 5222 / 8600. Next: 107. NDEBT-044 stays Open; only concern (a) is done."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2017,9 +2023,9 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 4536,
-    "evidence_lines_total": 13674,
-    "excluded_lines_total": 464,
+    "total_lines_changed": 5222,
+    "evidence_lines_total": 15787,
+    "excluded_lines_total": 522,
     "counting_rule": {
       "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.6)",
       "script": ".agent/evidence/scope-budget-014/measure.py",
@@ -2070,6 +2076,15 @@
         "excluded_lines": 74,
         "range": "2a53764..(completion working tree)",
         "note": "Phase-014 rule (measure.py, spec 1.1.6 incl. row 4a: non-JSON files under .agent/validator/ are evidence). Includes the post-105 planning record (DEBT 0.51.0, spec 1.1.6, backlog_reconciliation 0.1.4) per the A1/A2-in-feature-range precedent. Superseded interim figures (907, 1561, 50) (taken before row 4a and before the planning record). Rolling threshold 3 x mean(596,885,991) = 2472."
+      },
+      {
+        "id": "106",
+        "estimated": 750,
+        "actual": 686,
+        "evidence_lines": 2113,
+        "excluded_lines": 58,
+        "range": "183eed1..106-completion",
+        "note": "Phase-014 rule. measure.py --range 106=183eed1.. on the completion working tree before this run_state append (run_state excluded). Product 106, contract 382, verdict 191, planning 7. Rolling threshold was 3 x mean(885,991,950)=2826. 686 is under the estimate 750 and under the threshold."
       }
     ],
     "phase_level_items": [
@@ -2289,7 +2304,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "106",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -2361,11 +2376,12 @@
       }
     ]
   },
-  "last_action": "Contract 106 revision 1 approved",
+  "last_action": "Feature 106 complete; next is 107",
   "completed_contract_ids": [
     "099",
     "103",
     "104",
-    "105"
+    "105",
+    "106"
   ]
 }

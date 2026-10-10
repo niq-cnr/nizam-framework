@@ -1,0 +1,22 @@
+python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace tools/skill.json '"module": "standard/anti_hallucination.md"' '"module": "ecosystem/README.md"' --expect-rc 0 --expect '^MUTATED C13 FAIL$' --expect '^RESTORED C13 PASS$' --expect '^dangling-line: absent$' --expect '^mutated-c4: absent$' --expect '^pin-restored: matches HEAD$' --expect 'capabilities\[9\] \(anti_hallucination\) -> ecosystem/README\.md is not the authoritative_source of any NIZAM\.json capability' -- bash .agent/evidence/106/qa/adversarial_restore_probe.sh
+scratch_run: replaced 1 occurrence in tools/skill.json
+scratch_run: command bash .agent/evidence/106/qa/adversarial_restore_probe.sh -> exit 0
+  | [C13] FAIL skill-index
+  |   capabilities[9] (anti_hallucination) -> ecosystem/README.md is not the authoritative_source of any NIZAM.json capability
+  | SUMMARY: 15 passed, 1 failed
+  | dangling-line: absent
+  | mutated-c4: absent
+  | MUTATED C13 FAIL
+  | pin-restored: matches HEAD
+  | [C13] PASS skill-index
+  | SUMMARY: 16 passed, 0 failed
+  | RESTORED C13 PASS
+PASS exit status == 0
+PASS output matches '^MUTATED C13 FAIL$'
+PASS output matches '^RESTORED C13 PASS$'
+PASS output matches '^dangling-line: absent$'
+PASS output matches '^mutated-c4: absent$'
+PASS output matches '^pin-restored: matches HEAD$'
+PASS output matches 'capabilities\\[9\\] \\(anti_hallucination\\) -> ecosystem/README\\.md is not the authoritative_source of any NIZAM\\.json capability'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0

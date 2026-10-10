@@ -1,0 +1,37 @@
+{
+  "review": "106-mode-b",
+  "feature": "106",
+  "contract_id": "106",
+  "feature_id": "106",
+  "mode": "B",
+  "revision_reviewed": 1,
+  "risk_level": "high",
+  "status": "APPROVED",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "observations": [
+    "[STATE: Phase 014 | STEP: VALIDATION | DEPS: OK] Mode B on unpromoted implementation commit 59ff1df7a743d8b078e4e7c06972a8a743eb2147. Parent is attempt base <B> d94542cb224151a0d09b56f5e085eefd8ce7e691 (approve contract revision 1). Worktree /home/cnross/workspace02/nizam-wt-106-attempt1 is detached at that commit and clean. phase/014-106-c13-intentional-subset tip 87de05e differs from <B> only in .agent/run_state.json and was not the tree under review.",
+    "Contract at <B> is status approved, approvals.revisions 1, validator_mode_a true, evaluator_contract_review true, approved_at 2026-10-10T05:01:50Z. The implementation commit does not modify .agent/contracts/106.json. source=.agent/contracts/106.json status and approvals.",
+    "B1/B3: git diff --name-status <B> 59ff1df is exactly 15 added paths (scope.files_create: the fixture plus 14 evidence files) and 5 modified paths (scope.files_modify: NIZAM.json, tools/validate.sh, tools/fixtures_self_test.sh, tools/README.md, CHANGELOG.md). 20 files, 282 insertions, 13 deletions. No run_state, feature list, phase YAML, DEBT.md, tools/skill.json, spec, .github/, or docs/nips/ path is in the implementation diff.",
+    "B2: tools/validate.sh equals <A> 2a22ecd plus the pinned help_addition after help_anchor and the pinned subset_block before problem_anchor. The failure fragment and the [C13] FAIL echo each occur once. [C17], [C18], [C19], and check_c17 are absent from tools/validate.sh. tools/fixtures_self_test.sh equals <A> with only test_c13 replaced by the pin; the pin contains no trap. NIZAM.json equals <A> plus the single pinned object immediately before nizam-ecosystem-preflight. Capability count is 36. id nizam-ecosystem-bootstrap and authoritative_source ecosystem/00_ecosystem_bootstrap.md each occur once. ecosystem/README.md is not indexed. tools/validate.sh remains an authoritative_source. framework.version is 1.4.0 (NIZAM.json line 4). tools/skill.json is byte-identical to <A>. The fixture bytes equal pinned fixture_text. README body differs only by the two pinned rows; version is 0.14.0 -> 0.15.0; change_log head is 0.15.0 / 2026-10-10 / the pinned summary; older change_log entries and other frontmatter keys are unchanged. The CHANGELOG differs from <A> only by the pinned bullet, once, inside [Unreleased], after the feature-105 bullet and before ## [1.4.0].",
+    "B4: all 13 verification evidence files are in the commit. Each starts with the first line of its contract command and ends with EXIT:0. attempt-base.txt is the three-line form: git rev-parse HEAD, d94542cb224151a0d09b56f5e085eefd8ce7e691, EXIT:0. at4 shows [C13] FAIL with the pinned fragment naming methodology/00_planning.md, [C4] FAIL for methodology/00_planning_moved.md, and EXPECTATIONS HELD. at6 is GATE PASS 16/16. at7 is GATE PASS 12/12. at8 prints both C13 OK lines and SELF-TEST OK: 147/147. s05 lists all seven cases PASS and problems: []. s01 reports verification 13 problems: []. s04 reports problems: [].",
+    "S02 was captured before the implementation commit, as the contract order requires: commits past B 0, delta 18 (five files_modify, the fixture, and twelve evidence files; s02 and s03 were not on disk yet). S03 reports changed 37 problems: []. That count is the 18 paths in git diff <A>..<B> (contract, run_state, .agent/validator/106-mode-a.json, .agent/qa/106-contract-review.json, and the .agent/evidence/106-qa-adversarial-contract-review/ tree, all on the S03 allowlist) plus the 19 in-scope working-tree paths present at capture time. The implementation commit itself does not contain those allowlisted files.",
+    "B5/B6/B7/B8: the two product scripts equal the base plus the pins, so no import, function, check id, or capability was added outside the pins. json, os, and sys were already imported in the C13 python block (tools/validate.sh lines 2023-2025). No TODO, FIXME, skip, or future-work text. The subset block and test_c13 are complete, not stubs. NDEBT-047 is not fixed.",
+    "Not executed by this Mode B, and not claimed as executed: the contract verification commands (validate.sh, fixtures_self_test.sh, scratch_run, validator_gate, and S01-S05). The evidence above is the Generator's captures inside commit 59ff1df, checked for shape and for agreement with the pinned texts. The commit has not been cherry-picked onto phase/014-106-c13-intentional-subset. orchestrator_sequence step 3 and evidence_convention still assign the Evaluator re-run to .agent/evidence/106/qa/ after promotion. That re-run has not happened and must still be done on the promoted tree. This verdict does not substitute for it."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "mode": "B",
+    "contract_id": "106",
+    "feature_id": "106",
+    "revision_reviewed": 1,
+    "risk_level": "high",
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "required_fixes": [],
+    "summary": "Mode B APPROVED for contract 106 revision 1. Implementation commit 59ff1df (parent <B> d94542c) changes exactly the 15 files_create paths and the 5 files_modify paths. Pinned C13 text, the single nizam-ecosystem-bootstrap capability, the fixture, test_c13, the two README rows, the 0.15.0 change_log entry, and the CHANGELOG bullet match the contract byte for byte. framework.version stays 1.4.0. No C17, no tools/skill.json edit, no run_state, phase YAML, or feature-list edit in the implementation commit. All 14 evidence files start with the invocation and end with EXIT:0. B1-B8 pass. Verification commands were not re-run here; the Evaluator re-run on the promoted tree is still outstanding and is not claimed."
+  }
+}

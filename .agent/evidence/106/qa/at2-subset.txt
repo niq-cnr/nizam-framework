@@ -1,0 +1,2 @@
+python3 -c "import json; n={c['authoritative_source'] for c in json.load(open('NIZAM.json'))['capabilities']}; s={c['module'] for c in json.load(open('tools/skill.json'))['capabilities']}; assert s<=n, sorted(s-n)"
+EXIT:0
