@@ -1,0 +1,24 @@
+{
+  "_fixture_notice": "INTENTIONAL NEGATIVE FIXTURE (F-028/C11) - carries the contract_id discriminator so it is ROUTED to contract.schema.json, but sets status to the non-enum value 'drafting' (the schema enum is exactly proposed/approved/implemented/complete/rejected). Otherwise a fully-shaped contract object. Used only via tools/validate.sh --target.",
+  "contract_id": "999",
+  "feature_id": "999",
+  "name": "Fixture-only invalid contract (F-028/C11 negative test)",
+  "status": "drafting",
+  "spec_ref": "tools/fixtures/invalid_contract.json",
+  "scope": {
+    "files_create": [],
+    "files_modify": []
+  },
+  "non_goals": [
+    "This is a fixture-only document; it authorizes nothing."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "Fixture placeholder acceptance test.",
+      "command": "true"
+    }
+  ],
+  "estimated_lines": 0,
+  "evidence_dir": ".agent/evidence/",
+  "evidence_convention": "Fixture-only; not a real contract."
+}

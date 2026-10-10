@@ -1,0 +1,135 @@
+{
+  "name": "nizam-governance",
+  "version": "0.4.0",
+  "description": "Unified, runtime-agnostic capability manifest for the Nizam governance framework (DD-4): a single skill payload any agent runtime can load to plan, execute, gate, and durably record contract-first work.",
+  "entry_point": "tools/SKILL.md",
+  "capabilities": [
+    {
+      "name": "planning",
+      "description": "Planning enforcement: the mandatory product_spec.md + feature_list.json artifact pair, the feature list as a validated dependency graph, and the Dependency Enforcement Rule.",
+      "module": "methodology/00_planning.md"
+    },
+    {
+      "name": "contract_first_execution",
+      "description": "The two-loop state machine (pre-code contract alignment, post-code implementation repair) and the JSON Verdict Parse Rule gating every stage.",
+      "module": "methodology/01_execution.md"
+    },
+    {
+      "name": "adversarial_testing",
+      "description": "Evaluator independence rules, false-pass and false-fail hunting patterns, and the mandatory per-round adversarial spot-check.",
+      "module": "methodology/02_adversarial_tdd.md"
+    },
+    {
+      "name": "circuit_breaker",
+      "description": "The universal 3-strike attempt limit embedded by every repeatable execution loop, its per-attempt strategy table, and the forbidden-fourth-attempt halt/escalation procedure.",
+      "module": "methodology/03_circuit_breaker.md"
+    },
+    {
+      "name": "durable_state",
+      "description": "Query-the-index (not bulk-read) discipline for locating governance files, evidence externalisation to file paths, and the durable-state artifact families every run maintains.",
+      "module": "methodology/04_tool_driven_state.md"
+    },
+    {
+      "name": "release_train",
+      "description": "Semantic-version git-tag release gates, changelog discipline, and the consumer upgrade path via re-bootstrap against a new pinned tag.",
+      "module": "methodology/06_release_train.md"
+    },
+    {
+      "name": "documentation_standard",
+      "description": "The required frontmatter keys and file-lifecycle rules every governed document must satisfy.",
+      "module": "standard/NDS.md"
+    },
+    {
+      "name": "governance_inheritance",
+      "description": "How a consumer repository inherits this framework's governance content at bootstrap time.",
+      "module": "standard/GIP.md"
+    },
+    {
+      "name": "agent_governance",
+      "description": "The five agent roles (Orchestrator, Planner, Generator, Validator, Evaluator), the dual validator gate, the JSON verdict parse rule, and the durable-state (no oral tradition) rule.",
+      "module": "standard/AGF.md"
+    },
+    {
+      "name": "anti_hallucination",
+      "description": "The mandatory constraints preventing hallucinated edits, phantom fixes, and unsubstantiated completion claims.",
+      "module": "standard/anti_hallucination.md"
+    },
+    {
+      "name": "convergent_code_review",
+      "description": "Prior-ledger-first code review with exactly three observation-only trials, 2-of-3 discovery and resolution consensus, fail-closed lifecycle carrying, human-authorized suppression, deterministic outputs, and content-addressed replay.",
+      "module": "standard/convergent_code_review.md"
+    },
+    {
+      "name": "ecosystem_bootstrap",
+      "description": "The ecosystem cycle's entry stage: how a consumer repository adopts the framework from a pinned, immutable released tag (via the Governance Inheritance Protocol and bootstrap.sh), verifies the injected payload, and records its provenance pin before any later stage may run.",
+      "module": "ecosystem/00_ecosystem_bootstrap.md"
+    },
+    {
+      "name": "ecosystem_preflight",
+      "description": "Clean-state preflight gating entry into the ecosystem cycle: three-verdict vocabulary and the operator-exception rule for PASS_WITH_EXCEPTIONS.",
+      "module": "ecosystem/01_clean_state_preflight.md"
+    },
+    {
+      "name": "ecosystem_baseline",
+      "description": "Capturing a point-in-time, immutable baseline over framework, repository, dependency, CI, planning, and evidence references, every fact anchored to a stated revision and timestamp.",
+      "module": "ecosystem/02_evidence_baseline.md"
+    },
+    {
+      "name": "ecosystem_audit",
+      "description": "Evidence-first engineering audit against the ten-state maturity model and finding-confidence vocabulary, excluding commercial readiness from generic engineering scoring.",
+      "module": "ecosystem/03_engineering_audit.md"
+    },
+    {
+      "name": "ecosystem_dependency_reconciliation",
+      "description": "The Plan stage: turning approved audit findings plus the ecosystem-level membership-run aggregate into typed, dependency-ordered cross-repository work packets under the topological-order invariant (a cyclic set forces a non-PASS plan), gated by the H-PLANNING-AUTHORITY operator decision.",
+      "module": "ecosystem/04_dependency_reconciliation.md"
+    },
+    {
+      "name": "ecosystem_release_train_coordination",
+      "description": "The Promote stage: admitting an authorized reconciliation plan's work packets into a cross-repository release train under the trace-to-plan invariant (an orphan admission forces a non-PASS train), gated by the H-TRAIN-ENTRY operator decision -- record-but-never-self-execute.",
+      "module": "ecosystem/05_release_train_coordination.md"
+    },
+    {
+      "name": "ecosystem_progress_comparison",
+      "description": "Comparing two approved baselines or audits, classifying new/resolved/reopened/stale findings with every score movement traceable to evidence.",
+      "module": "ecosystem/07_progress_comparison.md"
+    },
+    {
+      "name": "ecosystem_simplification_review",
+      "description": "The Repeat stage: a recurring, evidence-first simplification review over the governed surface that records consolidation candidates and never consolidates automatically; an actual consolidation requires the operator gate H-CONSOLIDATION.",
+      "module": "ecosystem/06_simplification_review.md"
+    },
+    {
+      "name": "ecosystem_ga_gate",
+      "description": "The Promote-stage GA declaration protocol: evidence-gated preconditions, thresholds as acceptance requirements only, the gate ceremony, and an operator-only declaration under the operator gate H-GA; the framework never auto-declares GA.",
+      "module": "ecosystem/08_ga_gate.md"
+    }
+  ],
+  "runtime_requirements": {
+    "file_read_write": {
+      "required": true,
+      "description": "The host environment must be able to read and write files in the consumer repository, including a durable-state directory (conventionally .agent/)."
+    },
+    "shell_execution": {
+      "required": true,
+      "description": "The host environment must be able to run verification commands (tests, checks, schema validation) and capture their exit codes and output."
+    },
+    "structured_data_parsing": {
+      "required": true,
+      "description": "The host environment must be able to parse and emit JSON, and parse YAML frontmatter blocks and YAML phase/template documents."
+    }
+  },
+  "state_interface": {
+    "root_index": {
+      "path": "NIZAM.json",
+      "description": "The compact root capability index and context router an agent queries first (DD-1) to locate the minimal set of governance files a task requires."
+    },
+    "artifact_families": {
+      "run_state": ".agent/run_state.json",
+      "feature_list": ".agent/feature_list.json",
+      "contracts": ".agent/contracts/NNN.json",
+      "qa_verdicts": ".agent/qa/NNN.json",
+      "evidence": ".agent/evidence/*.txt"
+    }
+  }
+}

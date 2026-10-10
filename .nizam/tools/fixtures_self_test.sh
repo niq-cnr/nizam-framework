@@ -1,0 +1,1086 @@
+#!/usr/bin/env bash
+# tools/fixtures_self_test.sh -- Fixture dormancy self-test (NDEBT-009,
+# phase-006 feature 052).
+#
+# Closes the dormancy gap flagged by NDEBT-009: the negative fixtures under
+# tools/fixtures/ are substantive and discriminating, but no CI job ran them,
+# so a validator check that regressed to a vacuous pass would not be caught.
+# This harness runs EVERY shipped fixture through its TARGETED surface and
+# asserts the discriminating verdict, then proves -- via a COMPLETENESS GUARD
+# -- that every file under tools/fixtures/ is accounted for, so a newly-added
+# fixture cannot silently go dormant.
+#
+# NON-VACUOUS BY CONSTRUCTION: it asserts the SPECIFIC verdict of the targeted
+# check ([C2]/[C9]/[C10]/... or a verify_lib primitive return), never a bare
+# non-zero exit. Most .md fixtures already exit non-zero from incidental
+# C1/C2 frontmatter failures unrelated to what they test (e.g.
+# stale_payload_pass.md exits 1 but its targeted check, C10, correctly
+# PASSES), so an exit-code-only self-test would pass vacuously on the wrong
+# check -- exactly the failure mode NDEBT-009 exists to prevent.
+#
+# Three surfaces exercise the fixtures:
+#   (1) validate.sh --target   -- check-level fixtures (.md/.html/.json); the
+#                                 ecosystem families route via NDEBT-015.
+#   (2) verify_lib primitives  -- primitive-level fixtures (source + invoke),
+#                                 including two git-scratch primitives.
+#   (3) C13 skill-index        -- via tools/skill.json substitution.
+#
+# Framework-internal (reads tools/fixtures/, which is a development/QA
+# concern); run in CI as its own job alongside validate + e2e_bootstrap.
+# Exits 0 only if every assertion passed AND every fixture is accounted for.
+
+set -uo pipefail
+
+REPO="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)" || {
+  echo "fixtures_self_test: cannot resolve repo root" >&2
+  exit 2
+}
+cd -- "${REPO}" || exit 2
+
+[ -f tools/verify_lib.sh ] || { echo "fixtures_self_test: tools/verify_lib.sh not found" >&2; exit 2; }
+# shellcheck source=tools/verify_lib.sh
+source tools/verify_lib.sh
+
+fail=0
+COVERED=()
+SKILL_BAK=""
+declare -A SCRATCH_OWNED=()
+
+# Backstop: if a C13 substitution is interrupted, restore the real skill.json.
+cleanup() {
+  if [ -n "${SKILL_BAK}" ] && [ -f "${SKILL_BAK}" ]; then
+    cp -- "${SKILL_BAK}" tools/skill.json
+    rm -f -- "${SKILL_BAK}"
+  fi
+}
+trap cleanup EXIT
+
+note_covered() { COVERED+=("$1"); }
+
+# scratch_dirs <output-var> [<output-var> ...]
+#
+# Creates one isolated directory per named caller variable and installs a single
+# EXIT trap for those exact directories. Every target is resolved below the
+# configured temporary root and rejected if it is /, the repository, or below
+# the repository. Probe bodies call this directly (never through command
+# substitution), so printf -v assigns their local variables in the caller.
+# Cleanup receives only paths returned by mktemp in this invocation; no glob or
+# unresolved environment variable is accepted as a removal target.
+cleanup_scratch_dirs() {
+  local d resolved
+  for d in "$@"; do
+    [ -n "${d}" ] || return 1
+    [ -d "${d}" ] || continue
+    resolved=$(cd -- "${d}" && pwd -P) || return 1
+    [[ "${SCRATCH_OWNED["${resolved}"]:-}" == "1" ]] || return 1
+    case "${resolved}" in
+      "/"|"${REPO}"|"${REPO}"/*) return 1 ;;
+    esac
+    rm -rf -- "${resolved}"
+  done
+}
+
+scratch_dirs() {
+  local name made resolved quoted cleanup="cleanup_scratch_dirs" temp_root
+  local -a created=()
+  temp_root=$(cd -- "${TMPDIR:-/tmp}" && pwd -P) || return 1
+  case "${temp_root}" in
+    "/"|"${REPO}"|"${REPO}"/*) return 1 ;;
+  esac
+  for name in "$@"; do
+    [[ "${name}" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] || {
+      cleanup_scratch_dirs "${created[@]}"
+      return 1
+    }
+    made=$(mktemp -d) || {
+      cleanup_scratch_dirs "${created[@]}"
+      return 1
+    }
+    resolved=$(cd -- "${made}" && pwd -P) || {
+      cleanup_scratch_dirs "${created[@]}" "${made}"
+      return 1
+    }
+    case "${resolved}" in
+      "${temp_root}"/*) ;;
+      *) cleanup_scratch_dirs "${created[@]}" "${resolved}"; return 1 ;;
+    esac
+    case "${resolved}" in
+      "/"|"${REPO}"|"${REPO}"/*) cleanup_scratch_dirs "${created[@]}" "${resolved}"; return 1 ;;
+    esac
+    SCRATCH_OWNED["${resolved}"]=1
+    printf -v "${name}" '%s' "${resolved}"
+    created+=("${resolved}")
+    printf -v quoted '%q' "${resolved}"
+    cleanup+=" ${quoted}"
+  done
+  trap "${cleanup}" EXIT
+}
+
+if TMPDIR="${REPO}" scratch_dirs should_not_exist; then
+  echo "FAIL scratch      helper accepted the repository as its temporary root"
+  fail=1
+else
+  echo "OK   scratch      helper rejects the repository as its temporary root"
+fi
+
+_scratch_cleanup_probe() (
+  local d
+  scratch_dirs d || return 1
+  printf '%s\n' "${d}"
+)
+scratch_cleanup_path=$(_scratch_cleanup_probe)
+if [ -n "${scratch_cleanup_path}" ] && [ ! -e "${scratch_cleanup_path}" ]; then
+  echo "OK   scratch      helper removes only its recorded temporary root"
+else
+  echo "FAIL scratch      helper did not remove its recorded temporary root"
+  fail=1
+fi
+
+# assert_target <fixture-basename> <check-tag> <PASS|FAIL>
+# Runs `validate.sh --target tools/fixtures/<fixture>` and asserts the named
+# check emitted the expected verdict line. The fixture is marked covered.
+assert_target() {
+  local fx="$1" tag="$2" pol="$3"
+  note_covered "${fx}"
+  local out
+  out=$(bash tools/validate.sh --target "tools/fixtures/${fx}" 2>&1)
+  if printf '%s\n' "${out}" | grep -Eq "^\[${tag}\] ${pol}( |\$)"; then
+    echo "OK   target      ${fx} -> [${tag}] ${pol}"
+  else
+    echo "FAIL target      ${fx} -> expected [${tag}] ${pol}, got:"
+    printf '%s\n' "${out}" | grep -E '^\[C[0-9]+\] ' | sed 's/^/       /'
+    fail=1
+  fi
+}
+
+# assert_rc <label> <expected-rc> <command...>
+# Runs the command, captures its return, asserts it equals <expected-rc>.
+assert_rc() {
+  local label="$1" want="$2"; shift 2
+  "$@" >/dev/null 2>&1
+  local got=$?
+  if [ "${got}" -eq "${want}" ]; then
+    echo "OK   ${label} (rc=${got})"
+  else
+    echo "FAIL ${label}: expected rc=${want}, got rc=${got}"
+    fail=1
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# (1) validate.sh --target check-level fixtures
+# ---------------------------------------------------------------------------
+echo "== check-level fixtures (validate.sh --target) =="
+
+# Negatives: the targeted check MUST FAIL.
+assert_target bad_authoritative_source.md                          C2  FAIL
+assert_target bad_discovery_order.md                               C10 FAIL
+assert_target untagged_fence.md                                    C3  FAIL
+assert_target unresolved_path.md                                   C9  FAIL
+assert_target stale_payload.md                                     C10 FAIL
+assert_target stale_payload_cosentence.md                          C10 FAIL
+assert_target stale_payload_longwrap.md                            C10 FAIL
+assert_target stale_payload_semicolon.md                           C10 FAIL
+assert_target stale_payload_html.html                              C10 FAIL
+assert_target version_drift.html                                   C10 FAIL
+assert_target broken_index.json                                    C4  FAIL
+assert_target invalid_contract.json                                C11 FAIL
+assert_target invalid_qa_verdict.json                              C11 FAIL
+assert_target invalid_run_state.json                               C11 FAIL
+assert_target ecosystem_baseline_neg_missing_revision.json         C12 FAIL
+assert_target ecosystem_baseline_neg_mixed_timestamps.json         C12 FAIL
+assert_target ecosystem_baseline_neg_inconsistent_revisions.json   C12 FAIL
+assert_target engineering_finding_neg_closure_evidence_incomplete.json C12 FAIL
+assert_target engineering_finding_neg_missing_owner.json           C12 FAIL
+assert_target engineering_finding_neg_resolved_without_closure_evidence.json C12 FAIL
+assert_target preflight_verdict_invalid_approval_incomplete.json   C12 FAIL
+assert_target preflight_verdict_invalid_exceptions.json            C12 FAIL
+assert_target preflight_verdict_invalid_verdict.json               C12 FAIL
+assert_target audit_delta_neg_resolved_without_closure_evidence.json C12 FAIL
+assert_target audit_delta_neg_missing_transition_class.json        C12 FAIL
+assert_target audit_delta_neg_duplicate_id_across_buckets.json     C12 FAIL
+assert_target audit_delta_neg_bare_evidence_path.json              C12 FAIL
+assert_target engineering_finding_neg_bare_evidence_path.json      C12 FAIL
+assert_target ecosystem_membership_neg_semver_trailing_dot.json    C12 FAIL
+assert_target ecosystem_membership_neg_semver_empty_build.json     C12 FAIL
+assert_target ecosystem_membership_neg_semver_dot_suffix.json      C12 FAIL
+assert_target preflight_verdict_invalid_pass_blocking.json         C12 FAIL
+assert_target preflight_verdict_invalid_pass_with_exceptions_blocking.json C12 FAIL
+assert_target membership_result_neg_consistent_missing_pin.json    C12 FAIL
+assert_target membership_result_neg_consistent_null_pin.json       C12 FAIL
+assert_target reconciliation_plan_neg_fail_missing_cycles.json     C12 FAIL
+assert_target reconciliation_plan_neg_fail_nonempty_order.json     C12 FAIL
+
+# Positives: the targeted check MUST PASS (proves the negative's signal is
+# discriminating, not a check that fails on everything).
+assert_target exempt_paths.md                                      C9  PASS
+assert_target ecosystem_baseline_valid.json                        C12 PASS
+assert_target engineering_finding_valid.json                       C12 PASS
+assert_target engineering_finding_valid_resolved.json              C12 PASS
+assert_target preflight_verdict_pass.json                          C12 PASS
+assert_target preflight_verdict_pass_with_exceptions.json          C12 PASS
+assert_target preflight_verdict_fail.json                          C12 PASS
+assert_target audit_delta_valid.json                               C12 PASS
+
+# ecosystem_membership (F-075, NDEBT-031): the positive registry validates; the
+# schema-invalid (missing a required scope list) and the schema-valid-but-multilist
+# (an entry copied into two lists, caught by the exactly-one-list code check)
+# negatives both FAIL -- proving both the schema and the code-level invariant bite.
+assert_target ecosystem_membership_valid.json                      C12 PASS
+assert_target ecosystem_membership_valid_semver_prerelease_build.json C12 PASS
+assert_target ecosystem_membership_neg_missing_list.json           C12 FAIL
+assert_target ecosystem_membership_neg_multilist.json              C12 FAIL
+
+# membership_result (F-077, NDEBT-031): the aggregate ecosystem-level result. The
+# positive validates; the schema-invalid (missing ecosystem_verdict) and the
+# if/then-violating (framework_pin_consistent=false but ecosystem_verdict=PASS)
+# negatives both FAIL -- proving both the shape and the relational invariant bite.
+assert_target membership_result_valid.json                         C12 PASS
+assert_target membership_result_neg_missing_verdict.json           C12 FAIL
+assert_target membership_result_neg_inconsistent_pass.json         C12 FAIL
+
+# reconciliation_plan (F-080, NDEBT-035; NIP-0002 Stage 4): the Plan-stage
+# artifact. The positive acyclic PASS plan validates; three negatives FAIL --
+# schema-invalid (missing plan_verdict), a cyclic depends_on set claimed PASS, and
+# a PASS plan whose `order` violates an edge (bad_order) -- proving the shape, the
+# cycle invariant, AND the full permutation-and-edge order invariant bite.
+assert_target reconciliation_plan_valid.json                       C12 PASS
+assert_target reconciliation_plan_neg_missing_verdict.json         C12 FAIL
+assert_target reconciliation_plan_neg_cycle.json                   C12 FAIL
+assert_target reconciliation_plan_neg_bad_order.json               C12 FAIL
+
+# release_train_manifest (F-081, NDEBT-035; NIP-0002 Stage 4): the Promote-stage
+# artifact. The positive traces every admitted packet to a plan packet (id+repo)
+# with the admission gate recorded and validates; three negatives FAIL -- the
+# if/then-violating (train_verdict=PASS but entry_gate_recorded=false), an orphan
+# admitted id claimed PASS, and a real id admitted under the WRONG repo (repo_mismatch)
+# claimed PASS -- proving the shape/gate invariant AND the full (id+repo)
+# trace-to-plan invariant bite.
+assert_target release_train_manifest_valid.json                    C12 PASS
+assert_target release_train_manifest_neg_ungated_pass.json         C12 FAIL
+assert_target release_train_manifest_neg_orphan.json               C12 FAIL
+assert_target release_train_manifest_neg_repo_mismatch.json        C12 FAIL
+
+# feature_list (F-092, C16): --target is schema-validation-only (the era-safe
+# referential rule is a whole-repo-tree relational property, not evaluated
+# under --target -- see check_c16_feature_list_target). The positive fixture
+# validates; the negative sets one feature's status to the out-of-enum
+# value "done", proving the no-done-state rule is mechanized.
+assert_target feature_list_valid.json                               C16 PASS
+assert_target feature_list_neg_bad_status.json                      C16 FAIL
+
+# ---------------------------------------------------------------------------
+# (2) verify_lib primitive fixtures
+# ---------------------------------------------------------------------------
+echo "== primitive fixtures (verify_lib) =="
+
+# vlib_no_stale_payload: pass fixture returns 0, fail fixture returns 1.
+note_covered stale_payload_pass.md
+note_covered stale_payload_fail.md
+assert_rc "primitive   vlib_no_stale_payload pass" 0 vlib_no_stale_payload tools/fixtures/stale_payload_pass.md
+assert_rc "primitive   vlib_no_stale_payload fail" 1 vlib_no_stale_payload tools/fixtures/stale_payload_fail.md
+
+# vlib_section_grep: marker in the target section returns 0; marker only in a
+# non-target section returns 1 (a vacuous whole-file grep would false-pass).
+note_covered section_grep_pass.md
+note_covered section_grep_fail.md
+assert_rc "primitive   vlib_section_grep pass" 0 vlib_section_grep tools/fixtures/section_grep_pass.md '^## Target Section' 'SECTION_GREP_MARKER'
+assert_rc "primitive   vlib_section_grep fail" 1 vlib_section_grep tools/fixtures/section_grep_fail.md '^## Target Section' 'SECTION_GREP_MARKER'
+
+# vlib_word_present (F-053): the whole word "new" is a delimited token in the
+# pass fixture; in the fail fixture it appears only inside "renewed".
+note_covered word_present_pass.md
+note_covered word_present_fail.md
+assert_rc "primitive   vlib_word_present pass" 0 vlib_word_present tools/fixtures/word_present_pass.md new
+assert_rc "primitive   vlib_word_present fail" 1 vlib_word_present tools/fixtures/word_present_fail.md new
+
+# vlib_bare_ref_resolves (F-055, NDEBT-005b): bare '05_gamma.md' in the fail
+# fixture is enumerated by no key_document in the canonical index enum_index.json;
+# every bare ref in the pass fixture resolves. Sourced from the canonical index,
+# not a duplicated list.
+note_covered enum_index.json
+note_covered bare_ref_pass.md
+note_covered bare_ref_fail.md
+assert_rc "primitive   vlib_bare_ref_resolves pass" 0 vlib_bare_ref_resolves tools/fixtures/bare_ref_pass.md tools/fixtures/enum_index.json
+assert_rc "primitive   vlib_bare_ref_resolves fail" 1 vlib_bare_ref_resolves tools/fixtures/bare_ref_fail.md tools/fixtures/enum_index.json
+
+# vlib_enumeration_complete (F-055, NDEBT-005a): the guard enumerates a
+# DIRECTORY, so its seeded omission is built through scratch_dirs (Section 11
+# probe isolation), the same guarded pattern the two primitives below use. A
+# dir whose files are all enumerated by enum_index.json
+# passes; adding one on-disk file the index omits must fail.
+_enumeration_complete_scratch() (
+  local d; scratch_dirs d || return 1
+  mkdir -p "${d}/m1"
+  : > "${d}/m1/00_alpha.md"
+  : > "${d}/m1/01_beta.md"
+  vlib_enumeration_complete tools/fixtures/enum_index.json m1 "${d}/m1" '*.md' >/dev/null 2>&1 || return 1
+  : > "${d}/m1/02_gamma.md"   # seeded omission: on disk, absent from the index
+  vlib_enumeration_complete tools/fixtures/enum_index.json m1 "${d}/m1" '*.md' >/dev/null 2>&1 && return 1
+  return 0
+)
+if _enumeration_complete_scratch; then
+  echo "OK   primitive   vlib_enumeration_complete (complete pass / seeded-omission fail)"
+else
+  echo "FAIL primitive   vlib_enumeration_complete: a scratch assertion did not hold"
+  fail=1
+fi
+
+# Real-tree recurrence guards (the actual NDEBT-005 mechanization, not just
+# fixture discrimination): the canonical index NIZAM.json must enumerate every
+# on-disk governed doc, and no methodology/ or standard/ doc may carry an
+# unresolved bare NN_name.md reference. ecosystem/, registers, and NIPs are
+# out of the bare-ref sweep by design -- they legitimately carry forward-refs
+# to planned-but-unshipped stages and quoted historical defects, the exact
+# false-positive risk NDEBT-005 was deferred over; methodology/ + standard/ are
+# the stable, fully-shipped modules where NDEBT-003b actually occurred.
+_f055_real_tree() {
+  local m f bad=0
+  for m in standard methodology registry ecosystem; do
+    vlib_enumeration_complete NIZAM.json "${m}" "${m}" '*.md' >/dev/null 2>&1 \
+      || { echo "FAIL guard       enumeration real-tree: NIZAM.json omits an on-disk ${m}/ doc"; bad=1; }
+  done
+  [ "${bad}" -eq 0 ] \
+    && echo "OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk)" \
+    || fail=1
+  bad=0
+  for f in methodology/*.md standard/*.md; do
+    vlib_bare_ref_resolves "${f}" NIZAM.json >/dev/null 2>&1 \
+      || { echo "FAIL guard       bare-ref real-tree: ${f} carries an unresolved bare reference"; bad=1; }
+  done
+  [ "${bad}" -eq 0 ] \
+    && echo "OK   guard       vlib_bare_ref_resolves real-tree (methodology/ + standard/ clean)" \
+    || fail=1
+}
+_f055_real_tree
+
+# vlib_workflows_sha_pinned (F-058, C14): a scratch workflow dir with a
+# tag-pinned ref fails; a SHA-pinned ref (+ an exempt local ./ action) passes;
+# and this repo's real .github/workflows passes (all refs pinned). Scratch via
+# scratch_dirs (Section 11 probe isolation), like the git-scratch primitives.
+_workflow_pins_scratch() (
+  local d; scratch_dirs d || return 1
+  mkdir -p "${d}/wf"
+  printf 'jobs:\n  x:\n    steps:\n      - uses: actions/checkout@v4\n' > "${d}/wf/bad.yml"
+  vlib_workflows_sha_pinned "${d}/wf" >/dev/null 2>&1 && return 1   # tag ref must fail
+  printf 'jobs:\n  x:\n    steps:\n      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683\n      - uses: ./.github/actions/local\n' > "${d}/wf/bad.yml"
+  vlib_workflows_sha_pinned "${d}/wf" >/dev/null 2>&1 || return 1   # sha + local must pass
+  return 0
+)
+if _workflow_pins_scratch && vlib_workflows_sha_pinned .github/workflows >/dev/null 2>&1; then
+  echo "OK   primitive   vlib_workflows_sha_pinned (tag fail / sha+local pass / real-tree pass)"
+else
+  echo "FAIL primitive   vlib_workflows_sha_pinned: a scratch or real-tree assertion did not hold"
+  fail=1
+fi
+
+# incubating -> in_scope transition (F-072, NDEBT-030): a genesis'd project starts
+# in the scope registry's `incubating` partition (the count-0->1 state) and is
+# promoted to `in_scope`, and the promotion MOVES the entry rather than copying it
+# (registry/scope_definition_patterns.md Section 2.1/2.3 exactly-one-list invariant).
+# Built in a scratch dir (Section 11 probe isolation), so no committed fixture is
+# needed and the fixture tally is unchanged.
+_incubating_promotion_scratch() (
+  local d; scratch_dirs d || return 1
+  printf '{ "schema_version": "1.0.0", "in_scope": [], "incubating": [ {"name": "demo"} ], "reference_archive": [], "out_of_scope": [] }\n' > "${d}/before.json"
+  printf '{ "schema_version": "1.0.0", "in_scope": [ {"name": "demo"} ], "incubating": [], "reference_archive": [], "out_of_scope": [] }\n' > "${d}/after.json"
+  printf '{ "schema_version": "1.0.0", "in_scope": [ {"name": "demo"} ], "incubating": [ {"name": "demo"} ], "reference_archive": [], "out_of_scope": [] }\n' > "${d}/both.json"
+  python3 - "${d}/before.json" "${d}/after.json" "${d}/both.json" <<'PY'
+import json, sys
+
+LISTS = ("in_scope", "incubating", "reference_archive", "out_of_scope")
+
+def lists_of(reg, name):
+    return [L for L in LISTS if any(e.get("name") == name for e in reg.get(L, []))]
+
+def load(p):
+    with open(p, encoding="utf-8") as fh:
+        return json.load(fh)
+
+before, after, both = (load(p) for p in sys.argv[1:4])
+
+# The genesis'd project starts in exactly `incubating`, and after promotion is in
+# exactly `in_scope` -- the promotion MOVED it (exactly-one-list invariant holds).
+if lists_of(before, "demo") != ["incubating"]:
+    sys.exit(f"before: demo should be in exactly [incubating], got {lists_of(before, 'demo')}")
+if lists_of(after, "demo") != ["in_scope"]:
+    sys.exit(f"after: demo should be in exactly [in_scope], got {lists_of(after, 'demo')}")
+
+# NEGATIVE: an entry left in both lists (copied, not moved) violates the invariant
+# and MUST be detectable, or the shape check is vacuous.
+if len(lists_of(both, "demo")) < 2:
+    sys.exit("invariant check failed to detect a two-list (copied-not-moved) entry")
+PY
+)
+if _incubating_promotion_scratch; then
+  echo "OK   transition  incubating -> in_scope (count-0->1): promotion moves the entry; two-list violation detected"
+else
+  echo "FAIL transition  incubating -> in_scope: a scratch assertion did not hold"
+  fail=1
+fi
+
+# vlib_profiles_cover_roles (F-058, C15): the real capability_profiles.md + AGF.md
+# pair passes; a scratch profiles doc omitting a profile identifier fails.
+_profiles_roles_scratch() (
+  local d; scratch_dirs d || return 1
+  printf 'orchestrator-primary planner-creative generator-deterministic validator-structural\n' > "${d}/prof.md"
+  cp -- standard/AGF.md "${d}/agf.md"
+  vlib_profiles_cover_roles "${d}/prof.md" "${d}/agf.md" >/dev/null 2>&1 && return 1   # missing profile must fail
+  return 0
+)
+if vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md >/dev/null 2>&1 && _profiles_roles_scratch; then
+  echo "OK   primitive   vlib_profiles_cover_roles (real pair pass / missing-profile fail)"
+else
+  echo "FAIL primitive   vlib_profiles_cover_roles: a real-pair or scratch assertion did not hold"
+  fail=1
+fi
+
+# vlib_feature_list_lifecycle (F-092, C16): discovers `.agent/feature_list*.json`
+# CWD-relative (no argument), so each probe below cd's into a shared scratch dir
+# (seeded with its own copy of schema/feature_list.schema.json, since the
+# schema path is CWD-relative too) before invoking it. Four cases progressively
+# mutate the same .agent/contracts/900.json + .agent/qa/900.json pair to walk
+# the era-safe referential rule's branches, each emitting its OWN OK/FAIL line
+# (not collapsed into one generic line) so the cases are independently
+# discriminable.
+_feature_list_lifecycle_scratch_setup() {
+  local d="$1"
+  mkdir -p "${d}/.agent/contracts" "${d}/.agent/qa" "${d}/.agent/evidence/900" "${d}/schema"
+  cp -- "${REPO}/schema/feature_list.schema.json" "${d}/schema/feature_list.schema.json"
+  cat > "${d}/.agent/feature_list_900.json" <<'JSON'
+{
+  "phase": "900-scratch",
+  "spec_version": "1.0.0",
+  "original_estimate_lines": 10,
+  "features": [
+    {
+      "id": "900",
+      "name": "Scratch feature",
+      "description": "Scratch probe feature for vlib_feature_list_lifecycle.",
+      "status": "complete",
+      "dependencies": [],
+      "acceptance_tests": ["Scratch acceptance test."],
+      "estimated_lines": 10
+    }
+  ]
+}
+JSON
+  printf 'evidence\n' > "${d}/.agent/evidence/900/proof.txt"
+}
+_feature_list_lifecycle_probe() ( cd -- "$1" && vlib_feature_list_lifecycle >/dev/null 2>&1 )
+
+fll_scratch=""
+if scratch_dirs fll_scratch; then
+  _feature_list_lifecycle_scratch_setup "${fll_scratch}"
+
+  # full-chain: contract + QA verdict + the QA verdict's evidence_files entry
+  # all present on disk -> rc 0.
+  printf '{"contract_id":"900"}\n' > "${fll_scratch}/.agent/contracts/900.json"
+  printf '{"verdict":"PASS","evidence_files":[".agent/evidence/900/proof.txt"]}\n' > "${fll_scratch}/.agent/qa/900.json"
+  if _feature_list_lifecycle_probe "${fll_scratch}"; then
+    echo "OK   primitive   vlib_feature_list_lifecycle full-chain (contract+QA+evidence present, rc 0)"
+  else
+    echo "FAIL primitive   vlib_feature_list_lifecycle full-chain: expected rc 0"
+    fail=1
+  fi
+
+  # era-safe: a complete feature with NO contract at all is not flagged -> rc 0.
+  rm -f "${fll_scratch}/.agent/contracts/900.json" "${fll_scratch}/.agent/qa/900.json"
+  if _feature_list_lifecycle_probe "${fll_scratch}"; then
+    echo "OK   primitive   vlib_feature_list_lifecycle era-safe complete-without-contract (rc 0)"
+  else
+    echo "FAIL primitive   vlib_feature_list_lifecycle era-safe complete-without-contract: expected rc 0"
+    fail=1
+  fi
+
+  # contract present, QA verdict absent -> rc 1.
+  printf '{"contract_id":"900"}\n' > "${fll_scratch}/.agent/contracts/900.json"
+  if _feature_list_lifecycle_probe "${fll_scratch}"; then
+    echo "FAIL primitive   vlib_feature_list_lifecycle contract-without-QA: expected rc 1"
+    fail=1
+  else
+    echo "OK   primitive   vlib_feature_list_lifecycle contract-without-QA (rc 1)"
+  fi
+
+  # QA verdict present but its evidence_files entry does not resolve -> rc 1.
+  printf '{"verdict":"PASS","evidence_files":[".agent/evidence/900/missing.txt"]}\n' > "${fll_scratch}/.agent/qa/900.json"
+  if _feature_list_lifecycle_probe "${fll_scratch}"; then
+    echo "FAIL primitive   vlib_feature_list_lifecycle evidence-file-missing: expected rc 1"
+    fail=1
+  else
+    echo "OK   primitive   vlib_feature_list_lifecycle evidence-file-missing (rc 1)"
+  fi
+else
+  echo "FAIL primitive   vlib_feature_list_lifecycle: scratch_dirs setup failed"
+  fail=1
+fi
+
+# vlib_path_resolves: every token line in the pass fixture resolves/exempts
+# (rc 0); the fail fixture's token does not (rc 1). Tokens resolve relative to
+# the repo root (this script's CWD).
+test_path_resolves() {
+  note_covered path_resolves_pass.txt
+  note_covered path_resolves_fail.txt
+  local line ok=1
+  while IFS= read -r line || [ -n "${line}" ]; do
+    [ -z "${line}" ] && continue
+    vlib_path_resolves "${line}" >/dev/null 2>&1 || ok=0
+  done < tools/fixtures/path_resolves_pass.txt
+  if [ "${ok}" -eq 1 ]; then echo "OK   primitive   vlib_path_resolves pass (all tokens resolve/exempt)"
+  else echo "FAIL primitive   vlib_path_resolves pass: a token failed to resolve"; fail=1; fi
+  ok=1
+  while IFS= read -r line || [ -n "${line}" ]; do
+    [ -z "${line}" ] && continue
+    vlib_path_resolves "${line}" >/dev/null 2>&1 && ok=0
+  done < tools/fixtures/path_resolves_fail.txt
+  if [ "${ok}" -eq 1 ]; then echo "OK   primitive   vlib_path_resolves fail (token does not resolve)"
+  else echo "FAIL primitive   vlib_path_resolves fail: a token unexpectedly resolved"; fail=1; fi
+}
+test_path_resolves
+
+# vlib_version_increased (git-scratch): old.md is the HEAD baseline (0.1.0);
+# new_pass (0.2.0) is a strict increase (rc 0); new_fail (0.1.0, equal) and
+# new_fail_decrease (0.0.9, lower) are not (rc 1).
+test_version_increased() {
+  note_covered version_increased_old.md
+  note_covered version_increased_new_pass.md
+  note_covered version_increased_new_fail.md
+  note_covered version_increased_new_fail_decrease.md
+  if _version_increased_scratch; then
+    echo "OK   primitive   vlib_version_increased (pass / equal-fail / decrease-fail)"
+  else
+    echo "FAIL primitive   vlib_version_increased: a scratch assertion did not hold"
+    fail=1
+  fi
+}
+_version_increased_scratch() (
+  local d; scratch_dirs d || return 1
+  cd -- "${d}" || return 1
+  git init -q . || return 1
+  git config user.email self-test@nizam.local
+  git config user.name fixtures-self-test
+  cp -- "${REPO}/tools/fixtures/version_increased_old.md" f.md
+  git add f.md && git commit -qm baseline || return 1
+  cp -- "${REPO}/tools/fixtures/version_increased_new_pass.md" f.md
+  vlib_version_increased f.md >/dev/null 2>&1 || return 1
+  cp -- "${REPO}/tools/fixtures/version_increased_new_fail.md" f.md
+  vlib_version_increased f.md >/dev/null 2>&1 && return 1
+  cp -- "${REPO}/tools/fixtures/version_increased_new_fail_decrease.md" f.md
+  vlib_version_increased f.md >/dev/null 2>&1 && return 1
+  return 0
+)
+test_version_increased
+
+# vlib_scope_guard (git-scratch): a change to an allow-listed path passes; an
+# out-of-scope change fails. The allow-list is the fixture's contents.
+test_scope_guard() {
+  note_covered scope_guard_allowlist.txt
+  if _scope_guard_scratch; then
+    echo "OK   primitive   vlib_scope_guard (allowed pass / out-of-scope fail)"
+  else
+    echo "FAIL primitive   vlib_scope_guard: a scratch assertion did not hold"
+    fail=1
+  fi
+}
+_scope_guard_scratch() (
+  local d; scratch_dirs d || return 1
+  local allow=()
+  local a
+  while IFS= read -r a || [ -n "${a}" ]; do
+    [ -z "${a}" ] && continue
+    allow+=("${a}")
+  done < "${REPO}/tools/fixtures/scope_guard_allowlist.txt"
+  cd -- "${d}" || return 1
+  git init -q . || return 1
+  git config user.email self-test@nizam.local
+  git config user.name fixtures-self-test
+  mkdir -p tools/fixtures
+  printf 'seed\n' > tools/verify_lib.sh
+  git add -A && git commit -qm baseline || return 1
+  # Allowed change only (tools/verify_lib.sh is in the allow-list): passes.
+  printf 'change\n' >> tools/verify_lib.sh
+  vlib_scope_guard "${allow[@]}" >/dev/null 2>&1 || return 1
+  # Add an out-of-scope path (README.md is not allow-listed): fails.
+  printf 'oops\n' > README.md
+  vlib_scope_guard "${allow[@]}" >/dev/null 2>&1 && return 1
+  return 0
+)
+test_scope_guard
+
+# ---------------------------------------------------------------------------
+# (3) C13 skill-index negative fixture (substitution)
+# ---------------------------------------------------------------------------
+echo "== C13 skill-index negative fixture (substitution) =="
+test_c13() {
+  note_covered skill_index_neg_dangling_module.json
+  note_covered skill_index_neg_unindexed_capability.json
+  SKILL_BAK=$(mktemp)
+  cp -- tools/skill.json "${SKILL_BAK}"
+  _c13_substitute_one() {
+    local fixture_basename="$1"
+    local required_detail="$2"
+    local validator_output
+    cp -- "tools/fixtures/${fixture_basename}" tools/skill.json
+    validator_output=$(bash tools/validate.sh 2>&1)
+    cp -- "${SKILL_BAK}" tools/skill.json
+    if printf '%s\n' "${validator_output}" | grep -Eq "^\[C13\] FAIL" \
+      && { [ -z "${required_detail}" ] || printf '%s\n' "${validator_output}" | grep -Fq -- "${required_detail}"; }; then
+      echo "OK   c13-substitute ${fixture_basename} -> [C13] FAIL"
+    else
+      echo "FAIL c13-substitute: substituting ${fixture_basename} did not yield [C13] FAIL"
+      fail=1
+    fi
+  }
+  _c13_substitute_one skill_index_neg_dangling_module.json ""
+  _c13_substitute_one skill_index_neg_unindexed_capability.json "is not the authoritative_source of any NIZAM.json capability"
+  rm -f -- "${SKILL_BAK}"
+  SKILL_BAK=""
+}
+test_c13
+
+# ---------------------------------------------------------------------------
+# TEMPLATE-SCHEMA CONFORMANCE (F-054, NDEBT-011): the shipped
+# templates/work-packet.template.json must validate end-to-end against
+# schema/work-packet.schema.json. The schema's own `description` claims it
+# validates the template; F-054 made that claim true by omitting the three
+# optional enum/integer dispatch fields (tier/blast_radius/merge_order), which
+# cannot hold a {{...}} placeholder, from the starter template, and this guard
+# keeps it true so the template can never silently drift back to non-conformance
+# -- the mechanical assertion of the template's contract NDEBT-011 required.
+# ---------------------------------------------------------------------------
+echo "== template-schema conformance (F-054) =="
+if python3 - <<'PY'
+import json
+import sys
+
+import jsonschema
+
+template = json.load(open("templates/work-packet.template.json"))
+schema = json.load(open("schema/work-packet.schema.json"))
+try:
+    jsonschema.validate(instance=template, schema=schema)
+except jsonschema.ValidationError as exc:
+    print(f"work-packet.template.json does not validate: {exc.message}")
+    sys.exit(1)
+sys.exit(0)
+PY
+then
+  echo "OK   guard       work-packet.template.json validates end-to-end against work-packet.schema.json"
+else
+  echo "FAIL guard       work-packet.template.json does NOT validate against schema/work-packet.schema.json"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
+# (4) ecosystem_preflight.py CLI behavior probes (F-056, NDEBT-021.5/-018.1)
+# ---------------------------------------------------------------------------
+# tools/ecosystem_preflight.py is NOT covered by validate.sh (only its OUTPUT
+# schemas are, via C12), so these standing git-scratch probes are its permanent
+# regression guard. They assert the load-bearing clean-state polarity: an
+# untracked-not-tolerated file FAILs (exit 1); the exact --tolerate-untracked
+# and the additive --tolerate-untracked-prefix each downgrade it to a pending
+# PASS_WITH_EXCEPTIONS (exit 2). Probe isolation per methodology/02 Sec 11: a
+# scratch repo allocated and cleaned by scratch_dirs for exact temporary roots
+# only (never a real path). These are behavior probes, not fixtures, so they add
+# nothing to the completeness manifest.
+echo "== preflight CLI behavior probes (F-056) =="
+_preflight_cli_probes() (
+  local sb out rc
+  scratch_dirs sb out || return 1
+  git -C "${sb}" init -q
+  git -C "${sb}" config user.email t@example.invalid
+  git -C "${sb}" config user.name tester
+  mkdir -p "${sb}/schema"
+  printf '{}' > "${sb}/schema/preflight_verdict.schema.json"
+  printf '{}' > "${sb}/schema/ecosystem_baseline.schema.json"
+  git -C "${sb}" add -A
+  git -C "${sb}" commit -qm init
+  # (a0) a clean framework-root-layout tree (schema/ at the repo root, no .nizam/)
+  #      -> PASS (exit 0): governance-root discovery falls back to the repo-root and
+  #      the required references resolve there, unchanged by feature 065.
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  clean framework-root: expected exit 0, got ${rc}"; return 1; }
+  printf x > "${sb}/dirty.txt"
+  # (a) an untracked-not-tolerated file -> FAIL (exit 1) [the NDEBT-021.5 probe]
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  untracked-not-tolerated: expected exit 1, got ${rc}"; return 1; }
+  # (b) exact --tolerate-untracked downgrades it to pending PASS_WITH_EXCEPTIONS (exit 2)
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" --tolerate-untracked dirty.txt >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  exact tolerate: expected exit 2, got ${rc}"; return 1; }
+  # (c) additive --tolerate-untracked-prefix also downgrades it (exit 2) [NDEBT-018.1]
+  python3 tools/ecosystem_preflight.py --execution-id p --output-dir "${out}" --repo-root "${sb}" --tolerate-untracked-prefix dirty >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  prefix tolerate: expected exit 2, got ${rc}"; return 1; }
+  return 0
+)
+# feature 065 (ADR-004 decision 1; NDEBT-027): a bootstrapped-consumer layout has
+# the governance payload under .nizam/, NOT at the repo root. The tool must (i)
+# resolve the required references against that governance-root and (ii) treat the
+# injected .nizam/ as an expected 'injected_governance_payload' exception, so a
+# clean Preflight against a real consumer is a PASS_WITH_EXCEPTIONS, never the
+# pre-065 hard FAIL(1) on missing references + the untracked .nizam/.
+_preflight_governance_root_probes() (
+  local sb out rc
+  scratch_dirs sb out || return 1
+  git -C "${sb}" init -q
+  git -C "${sb}" config user.email t@example.invalid
+  git -C "${sb}" config user.name tester
+  mkdir -p "${sb}/src" "${sb}/.nizam/schema"
+  printf 'x' > "${sb}/src/app.txt"
+  printf '{}' > "${sb}/.nizam/schema/preflight_verdict.schema.json"
+  printf '{}' > "${sb}/.nizam/schema/ecosystem_baseline.schema.json"
+  printf '{}' > "${sb}/.nizam/NIZAM.json"
+  printf '{"framework_version":"0.8.0","tag":"v0.8.0","source_url":"file:///fw","installed_at":"t"}' \
+    > "${sb}/.nizam/provenance.json"
+  git -C "${sb}" add src
+  git -C "${sb}" commit -qm init   # .nizam/ left untracked (the injected payload)
+  local consumer_head
+  consumer_head=$(git -C "${sb}" rev-parse HEAD)
+  # (d) discovery: refs resolve under the discovered .nizam/ and the injected
+  #     payload is an expected exception -> PASS_WITH_EXCEPTIONS pending (2), not FAIL(1).
+  python3 tools/ecosystem_preflight.py --execution-id g --output-dir "${out}" --repo-root "${sb}" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  gov-root discovery: expected exit 2 (not FAIL), got ${rc}"; return 1; }
+  python3 - "${out}/preflight.pending.json" <<'PY' || { echo "  gov-root exception kind wrong"; return 1; }
+import json, sys
+kinds = [e.get("kind") for e in json.load(open(sys.argv[1])).get("exceptions", [])]
+raise SystemExit(0 if kinds == ["injected_governance_payload"] else 1)
+PY
+  # (e) an explicit --governance-root at the payload behaves the same.
+  python3 tools/ecosystem_preflight.py --execution-id g --output-dir "${out}" --repo-root "${sb}" --governance-root "${sb}/.nizam" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  explicit gov-root: expected exit 2, got ${rc}"; return 1; }
+  # (f) feature 066: an operator-approved run captures a baseline whose
+  #     framework_references names the INJECTED PIN (provenance.json tag), while
+  #     repository_references names the consumer HEAD -- two distinct correct facts.
+  python3 tools/ecosystem_preflight.py --execution-id g --output-dir "${out}" --repo-root "${sb}" \
+    --operator-approver t@example.invalid --operator-authorization "self-test 066" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 3 ] || { echo "  baseline pin (approved): expected exit 3, got ${rc}"; return 1; }
+  CONSUMER_HEAD="${consumer_head}" python3 - "${out}/baseline.json" <<'PY' || { echo "  baseline framework-pin anchoring wrong"; return 1; }
+import json, os, sys
+d = json.load(open(sys.argv[1]))
+fr = d["framework_references"][0]["revision"]
+rr = d["repository_references"][0]["revision"]
+ok = fr == "v0.8.0" and rr == os.environ["CONSUMER_HEAD"] and fr != rr
+raise SystemExit(0 if ok else 1)
+PY
+  return 0
+)
+if _preflight_governance_root_probes; then
+  echo "OK   preflight   gov-root: injected .nizam/ discovered -> refs resolve + expected exception -> pending(2), not FAIL"
+else
+  echo "FAIL preflight   a governance-root behavior probe did not hold"
+  fail=1
+fi
+
+if _preflight_cli_probes; then
+  echo "OK   preflight   clean framework-root -> PASS(0); untracked-not-tolerated -> FAIL(1); exact + prefix tolerate -> pending(2)"
+else
+  echo "FAIL preflight   a CLI behavior probe did not hold"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
+# (5) ecosystem_audit.py CLI behavior probes (Tier-1 audit tool)
+# ---------------------------------------------------------------------------
+# tools/ecosystem_audit.py is NOT covered by validate.sh (only its OUTPUT
+# schema is, via C12's engineering_finding family), so these standing probes
+# are its permanent regression guard. They assert the load-bearing polarity:
+# a valid audit is ASSEMBLED (exit 0, findings.json + report.md written); a
+# resolved finding with no closure evidence is INVALID (exit 1, no artifact);
+# a FAIL preflight verdict is REFUSED at the Sec 2 entry gate (exit 2). Inputs
+# are built inline in an exact temporary root managed by scratch_dirs. Behavior
+# probes, not fixtures -- they add nothing to
+# the completeness manifest.
+echo "== ecosystem_audit CLI behavior probes =="
+_audit_cli_probes() (
+  local d rc
+  scratch_dirs d || return 1
+  printf '{"verdict":"PASS","execution_id":"e1","generated_at":"t"}' > "${d}/preflight.json"
+  printf '{"execution_id":"e1"}' > "${d}/baseline.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/e1/x.txt","revision":"abc123"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findings.json"
+  # (a) a valid audit -> ASSEMBLED (exit 0), both artifacts written
+  python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/out" --findings-input "${d}/findings.json" --preflight "${d}/preflight.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  valid audit: expected exit 0, got ${rc}"; return 1; }
+  [ -f "${d}/out/findings.json" ] && [ -f "${d}/out/report.md" ] || { echo "  valid audit: expected findings.json + report.md"; return 1; }
+  # (b) a resolved finding with no closure evidence -> FINDINGS_INVALID (exit 1)
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/e1/x.txt","revision":"abc123"}],"impact":"i","owner":"o","status":"resolved","closure_criteria":"c"}]' > "${d}/bad.json"
+  python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/o2" --findings-input "${d}/bad.json" --preflight "${d}/preflight.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  resolved-without-closure: expected exit 1, got ${rc}"; return 1; }
+  # (c) a FAIL preflight verdict -> ENTRY_CONDITION_UNMET (exit 2)
+  printf '{"verdict":"FAIL","execution_id":"e1","generated_at":"t","blocking_findings":["x"]}' > "${d}/pf-fail.json"
+  python3 tools/ecosystem_audit.py --audit-id a --output-dir "${d}/o3" --findings-input "${d}/findings.json" --preflight "${d}/pf-fail.json" --baseline "${d}/baseline.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 2 ] || { echo "  fail-preflight: expected exit 2, got ${rc}"; return 1; }
+  return 0
+)
+if _audit_cli_probes; then
+  echo "OK   audit       valid -> ASSEMBLED(0); resolved-without-closure -> INVALID(1); FAIL preflight -> refused(2)"
+else
+  echo "FAIL audit       a CLI behavior probe did not hold"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
+# (6) compare_ecosystem_baselines.py + validate_evidence_freshness.py probes
+# ---------------------------------------------------------------------------
+# The Compare-stage tools' OUTPUT (delta.json) is C12-covered via the
+# audit_delta family, but their CLI behavior is not, so these standing probes
+# guard it. They assert: a valid comparison emits a delta (exit 0); an
+# earlier-open finding gone from the later audit with no closure evidence is
+# UNCLASSIFIABLE (exit 1, Sec 4); freshness reports STALE (exit 1) for old
+# evidence and FRESH (exit 0) for evidence at the later anchor revision.
+echo "== compare + freshness CLI behavior probes =="
+_compare_cli_probes() (
+  local d rc
+  scratch_dirs d || return 1
+  printf '{"execution_id":"eA","captured_at":"2026-07-01T00:00:00Z","repository_references":[{"revision":"aaa","timestamp":"t","repository":"r"}]}' > "${d}/baseA.json"
+  printf '{"execution_id":"eB","captured_at":"2026-07-20T00:00:00Z","repository_references":[{"revision":"bbb","timestamp":"t","repository":"r"}]}' > "${d}/baseB.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eA/x.txt","revision":"aaa"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findA.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eB/x.txt","revision":"bbb"}],"impact":"i","owner":"o","status":"open","closure_criteria":"c"}]' > "${d}/findB.json"
+  printf '[{"id":"F1","severity":"low","confidence":"Confirmed","evidence":[{"path":".agent/evidence/eA/resolved.txt","revision":"aaa"}],"impact":"i","owner":"o","status":"resolved","closure_criteria":"c","closure_evidence":[{"path":".agent/evidence/eA/closure.txt","revision":"aaa"}]}]' > "${d}/findResolved.json"
+  printf '[{"id":"F-persist","status":"open","evidence":[{"path":".agent/evidence/eA/persist.txt","revision":"aaa"}]},{"id":"F-stale","status":"open","evidence":[{"path":".agent/evidence/eA/stale.txt","revision":"aaa"}]},{"id":"F-resolved","status":"open","evidence":[{"path":".agent/evidence/eA/resolved.txt","revision":"aaa"}]},{"id":"F-pre","status":"resolved","closure_evidence":[{"path":".agent/evidence/eA/pre-closure.txt","revision":"aaa"}]}]' > "${d}/findManyA.json"
+  printf '[{"id":"F-persist","status":"open","evidence":[{"path":".agent/evidence/eB/persist.txt","revision":"bbb"}]},{"id":"F-stale","status":"open","evidence":[{"path":".agent/evidence/eA/stale.txt","revision":"aaa"}]},{"id":"F-resolved","status":"resolved","closure_evidence":[{"path":".agent/evidence/eB/resolved-closure.txt","revision":"bbb"}]},{"id":"F-new","status":"open","evidence":[{"path":".agent/evidence/eB/new.txt","revision":"bbb"}]}]' > "${d}/findManyB.json"
+  printf '[]' > "${d}/findEmpty.json"
+  # (a) a valid comparison -> delta emitted (exit 0), delta.json present
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/out" --earlier-findings "${d}/findA.json" --later-findings "${d}/findB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  valid compare: expected exit 0, got ${rc}"; return 1; }
+  [ -f "${d}/out/delta.json" ] || { echo "  valid compare: expected delta.json"; return 1; }
+  # (b) earlier-open finding gone from later, no closure -> UNCLASSIFIABLE (exit 1)
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/o2" --earlier-findings "${d}/findA.json" --later-findings "${d}/findEmpty.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  gone-without-closure: expected exit 1, got ${rc}"; return 1; }
+  # (c) freshness: old evidence (rev aaa) vs later anchor bbb -> STALE (exit 1)
+  python3 tools/validate_evidence_freshness.py --findings "${d}/findA.json" --anchor-revision bbb --anchor-timestamp "2026-07-20T00:00:00Z" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  stale evidence: expected exit 1, got ${rc}"; return 1; }
+  # (d) freshness: evidence at the anchor revision bbb -> FRESH (exit 0)
+  python3 tools/validate_evidence_freshness.py --findings "${d}/findB.json" --anchor-revision bbb --anchor-timestamp "2026-07-20T00:00:00Z" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  fresh evidence: expected exit 0, got ${rc}"; return 1; }
+  # (e) an earlier-resolved finding that is open again is REOPENED, regardless
+  #     of whether its later evidence is fresh; it is never persisting/stale.
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/o3" --earlier-findings "${d}/findResolved.json" --later-findings "${d}/findB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  resolved-to-open: expected compare exit 0, got ${rc}"; return 1; }
+  python3 - "${d}/o3/delta.json" <<'PY' || { echo "  resolved-to-open: expected reopened only, with later evidence"; return 1; }
+import json
+import sys
+
+delta = json.load(open(sys.argv[1], encoding="utf-8"))
+transitions = delta["transitions"]
+reopened = transitions["reopened"]
+if [item.get("id") for item in reopened] != ["F1"]:
+    raise SystemExit(1)
+if reopened[0].get("evidence") != [{"path": ".agent/evidence/eB/x.txt", "revision": "bbb"}]:
+    raise SystemExit(1)
+if any(item.get("id") == "F1" for bucket in ("persisting", "stale") for item in transitions[bucket]):
+    raise SystemExit(1)
+PY
+  # (f) regression corpus: every non-reopened class plus the pre-window list
+  #     remains stable while the resolved-to-open branch changes above.
+  python3 tools/compare_ecosystem_baselines.py --audit-id c --output-dir "${d}/o4" --earlier-findings "${d}/findManyA.json" --later-findings "${d}/findManyB.json" --earlier-baseline "${d}/baseA.json" --later-baseline "${d}/baseB.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  full taxonomy: expected compare exit 0, got ${rc}"; return 1; }
+  python3 - "${d}/o4/delta.json" <<'PY' || { echo "  full taxonomy: new/resolved/persisting/stale/pre-window regression"; return 1; }
+import json
+import sys
+
+delta = json.load(open(sys.argv[1], encoding="utf-8"))
+transitions = delta["transitions"]
+expected = {
+    "new": ["F-new"],
+    "resolved": ["F-resolved"],
+    "reopened": [],
+    "persisting": ["F-persist"],
+    "stale": ["F-stale"],
+}
+for bucket, ids in expected.items():
+    if [item["id"] for item in transitions[bucket]] != ids:
+        raise SystemExit(1)
+if [item["id"] for item in delta.get("pre_window_resolved", [])] != ["F-pre"]:
+    raise SystemExit(1)
+PY
+  return 0
+)
+if _compare_cli_probes; then
+  echo "OK   compare     valid -> delta(0); gone-without-closure -> INVALID(1); freshness stale(1)/fresh(0); resolved-to-open -> reopened"
+else
+  echo "FAIL compare     a CLI behavior probe did not hold"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
+# (7) ecosystem_reconcile.py CLI behavior probes (Plan-stage tool, F-082)
+# ---------------------------------------------------------------------------
+# tools/ecosystem_reconcile.py is NOT covered by validate.sh (only its OUTPUT
+# schema is, via C12's reconciliation_plan family), so these standing probes are
+# its permanent regression guard. They assert the load-bearing polarity: an
+# acyclic packet set over an in_scope aggregate is a PASS plan (exit 0, a
+# schema-valid plan.json whose order is a topological sort); a cyclic set is a
+# FAIL plan (exit 1, plan_verdict FAIL + cycle_findings); a packet targeting a
+# repo not in the aggregate is a usage error (exit 64). Behavior probes, not
+# fixtures -- they add nothing to the completeness manifest.
+echo "== ecosystem_reconcile CLI behavior probes =="
+_reconcile_cli_probes() (
+  local d rc
+  scratch_dirs d || return 1
+  printf '{"schema_version":"1.0.0","membership_registry":"m.json","ecosystem_verdict":"PASS","framework_pin_consistent":true,"framework_pin":"abc","member_count":2,"members":[{"name":"member-alpha","status":"acceptable"},{"name":"member-beta","status":"acceptable"}]}' > "${d}/agg.json"
+  # (a) an acyclic packet set -> PASS plan (exit 0), a schema-valid plan.json
+  printf '{"packets":[{"id":"p-alpha","repo":"member-alpha","closes_findings":["F-1"],"depends_on":["p-beta"]},{"id":"p-beta","repo":"member-beta","closes_findings":["F-2"],"depends_on":[]}]}' > "${d}/pk_ok.json"
+  python3 tools/ecosystem_reconcile.py --source-result "${d}/agg.json" --packets "${d}/pk_ok.json" --output-dir "${d}/out" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  acyclic plan: expected exit 0, got ${rc}"; return 1; }
+  [ -f "${d}/out/plan.json" ] || { echo "  acyclic plan: expected plan.json"; return 1; }
+  bash tools/validate.sh --target "${d}/out/plan.json" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 0 ] || { echo "  produced plan: expected C12 PASS, got ${rc}"; return 1; }
+  # (b) a cyclic packet set -> FAIL plan (exit 1)
+  printf '{"packets":[{"id":"p-a","repo":"member-alpha","closes_findings":["F-1"],"depends_on":["p-b"]},{"id":"p-b","repo":"member-beta","closes_findings":["F-2"],"depends_on":["p-a"]}]}' > "${d}/pk_cyc.json"
+  python3 tools/ecosystem_reconcile.py --source-result "${d}/agg.json" --packets "${d}/pk_cyc.json" --output-dir "${d}/o2" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 1 ] || { echo "  cyclic plan: expected exit 1, got ${rc}"; return 1; }
+  # (c) a packet targeting a non-member repo -> usage error (exit 64)
+  printf '{"packets":[{"id":"p-x","repo":"ghost","closes_findings":["F-1"],"depends_on":[]}]}' > "${d}/pk_bad.json"
+  python3 tools/ecosystem_reconcile.py --source-result "${d}/agg.json" --packets "${d}/pk_bad.json" --output-dir "${d}/o3" >/dev/null 2>&1
+  rc=$?; [ "${rc}" -eq 64 ] || { echo "  unknown repo: expected exit 64, got ${rc}"; return 1; }
+  return 0
+)
+if _reconcile_cli_probes; then
+  echo "OK   reconcile   acyclic -> PASS plan(0) C12-valid; cyclic -> FAIL(1); unknown repo -> usage(64)"
+else
+  echo "FAIL reconcile   a CLI behavior probe did not hold"
+  fail=1
+fi
+
+# ---------------------------------------------------------------------------
+# FIXTURE-SUBDIRECTORY CLAIM MAP (NDEBT-042, phase-014 feature 105; the design
+# is NIP-0003 feature 109's, pulled forward -- there is no second registry).
+# Every subdirectory of tools/fixtures/ is claimed by exactly one owning suite:
+# one "<subdirectory>|<suite file>" row. A claim proves OWNERSHIP, not
+# execution: that the owning suite runs is proven by its own CI job.
+# NIP-0003's runtime_session fixtures register their row here, in the same
+# change that creates that subdirectory, as:
+#   "runtime_session|tools/test_runtime_session.py"
+# ---------------------------------------------------------------------------
+FIXTURE_CLAIMS=(
+  "convergent_review|tools/test_convergent_review.py"
+)
+
+# claim_map_check <fixtures-root> <repo-root> <claim-row>...
+#
+# Prints one "FAIL claim-map: ..." line per violation and returns 1 if there
+# was any (0 otherwise). Violations: a malformed row; a subdirectory under
+# <fixtures-root> claimed by no row; one claimed by two or more rows; a row
+# naming a suite file that is not a regular file under <repo-root>; a row
+# naming a subdirectory that is not on disk. Pure read: it writes nothing.
+claim_map_check() {
+  local fixtures_root="$1" repo_root="$2" row key suite entry bad=0
+  shift 2
+  local -A claim_count=()
+  for row in "$@"; do
+    key="${row%%|*}"; suite="${row#*|}"
+    if [[ "${row}" != *"|"* || -z "${key}" || -z "${suite}" || "${key}" == */* ]]; then
+      echo "FAIL claim-map: malformed claim row: ${row}"; bad=1; continue
+    fi
+    claim_count["${key}"]=$(( ${claim_count["${key}"]:-0} + 1 ))
+    [ -f "${repo_root}/${suite}" ] || { echo "FAIL claim-map: claim for ${key} names a suite file that does not exist: ${suite}"; bad=1; }
+    [ -d "${fixtures_root}/${key}" ] || { echo "FAIL claim-map: claim names a subdirectory that is not on disk: ${key}"; bad=1; }
+  done
+  for key in "${!claim_count[@]}"; do
+    [ "${claim_count[${key}]}" -le 1 ] || { echo "FAIL claim-map: doubly-claimed subdirectory: ${key}"; bad=1; }
+  done
+  while IFS= read -r entry; do
+    [ -n "${claim_count["${entry}"]:-}" ] || { echo "FAIL claim-map: unclaimed subdirectory: ${entry}"; bad=1; }
+  done < <(cd "${fixtures_root}" && find . -mindepth 1 -maxdepth 1 -type d | sed 's#^\./##' | LC_ALL=C sort)
+  return "${bad}"
+}
+
+# _claim_map_case <case>: builds a private scratch tree (never under the
+# repository: scratch_dirs refuses any path in or below it), proves that a
+# complete claim map PASSES there (the positive control: a check that always
+# fails would otherwise satisfy every negative), then breaks it in exactly one
+# way and requires claim_map_check to FAIL with exactly one line naming that
+# violation. Reads and writes only below ${d}.
+_claim_map_case() (
+  local case_name="$1" d out rc want
+  local -a rows=("owned|suites/a.py")
+  scratch_dirs d || return 1
+  mkdir -p "${d}/fixtures/owned" "${d}/suites" || return 1
+  : > "${d}/fixtures/owned/case.json"; : > "${d}/suites/a.py"; : > "${d}/suites/b.py"
+  out=$(claim_map_check "${d}/fixtures" "${d}" "${rows[@]}"); rc=$?
+  [ "${rc}" -eq 0 ] && [ -z "${out}" ] || { echo "  control: a complete claim map must pass (rc=${rc}): ${out}"; return 1; }
+  case "${case_name}" in
+    unclaimed)     mkdir "${d}/fixtures/zz_unclaimed"; want="unclaimed subdirectory: zz_unclaimed" ;;
+    doubly)        rows+=("owned|suites/b.py"); want="doubly-claimed subdirectory: owned" ;;
+    missing-suite) rows=("owned|suites/missing.py"); want="a suite file that does not exist: suites/missing.py" ;;
+    absent-subdir) rows+=("ghost|suites/a.py"); want="a subdirectory that is not on disk: ghost" ;;
+    *) return 1 ;;
+  esac
+  out=$(claim_map_check "${d}/fixtures" "${d}" "${rows[@]}"); rc=$?
+  [ "${rc}" -eq 1 ] && [ "$(printf '%s\n' "${out}" | wc -l)" -eq 1 ] && [[ "${out}" == *"${want}"* ]] \
+    || { echo "  ${case_name}: rc=${rc}: ${out}"; return 1; }
+)
+
+echo "== claim map demonstrations (guarded scratch area) =="
+for _case in "unclaimed|unclaimed subdirectory" "doubly|doubly-claimed subdirectory" \
+             "missing-suite|claim naming a missing suite" "absent-subdir|claim naming an absent subdirectory"; do
+  if _claim_map_case "${_case%%|*}"; then
+    echo "OK   claim-map   ${_case#*|} -> FAIL"
+  else
+    echo "FAIL claim-map   ${_case#*|}: the guard did not behave as claimed"
+    fail=1
+  fi
+done
+
+# ---------------------------------------------------------------------------
+# COMPLETENESS GUARD: every non-directory entry under tools/fixtures/, at ANY
+# depth, must be accounted for: a top-level file by exactly one row above, a
+# file below a subdirectory by that subdirectory's claim (FIXTURE_CLAIMS). An
+# unlisted top-level file, an unclaimed or doubly-claimed subdirectory, a row
+# naming an absent fixture or subdirectory, or a claim naming a missing suite
+# is a FAIL.
+# ---------------------------------------------------------------------------
+echo "== completeness guard =="
+ondisk=()
+# find, not a glob: a glob skips dot-prefixed entries and expands a
+# subdirectory to its CONTENTS (PR #31 review). -mindepth 1 ! -type d lists
+# every file at every depth, dotfiles and symlinks included; the leading './'
+# is stripped so top-level names match the bare basenames in COVERED. (No
+# -printf: portable to non-GNU find.)
+while IFS= read -r f; do ondisk+=("${f}"); done \
+  < <(cd tools/fixtures && find . -mindepth 1 ! -type d | sed 's#^\./##' | LC_ALL=C sort)
+
+claim_out=$(claim_map_check tools/fixtures "${REPO}" "${FIXTURE_CLAIMS[@]}") || {
+  printf '%s\n' "${claim_out}"
+  fail=1
+}
+declare -A claimed_dir=()
+for _row in "${FIXTURE_CLAIMS[@]}"; do claimed_dir["${_row%%|*}"]=1; done
+toplevel=(); nested_claimed=0; nested_unclaimed=()
+for f in "${ondisk[@]}"; do
+  case "${f}" in
+    */*) if [ -n "${claimed_dir["${f%%/*}"]:-}" ]; then nested_claimed=$((nested_claimed + 1)); else nested_unclaimed+=("${f}"); fi ;;
+    *)   toplevel+=("${f}") ;;
+  esac
+done
+covered_sorted=()
+while IFS= read -r f; do covered_sorted+=("${f}"); done \
+  < <(printf '%s\n' "${COVERED[@]}" | LC_ALL=C sort -u)
+
+unaccounted=$(comm -23 <(printf '%s\n' "${toplevel[@]}") <(printf '%s\n' "${covered_sorted[@]}"))
+phantom=$(comm -13 <(printf '%s\n' "${toplevel[@]}") <(printf '%s\n' "${covered_sorted[@]}"))
+
+if [ -n "${unaccounted}" ]; then
+  echo "FAIL completeness: fixture(s) on disk not accounted for by any manifest row (dormant):"
+  printf '%s\n' "${unaccounted}" | sed 's/^/       /'
+  fail=1
+fi
+if [ "${#nested_unclaimed[@]}" -gt 0 ]; then
+  echo "FAIL completeness: fixture(s) below an unclaimed subdirectory (dormant):"
+  printf '%s\n' "${nested_unclaimed[@]}" | sed 's/^/       /'
+  fail=1
+fi
+if [ -n "${phantom}" ]; then
+  echo "FAIL completeness: manifest row(s) name a fixture that is not on disk:"
+  printf '%s\n' "${phantom}" | sed 's/^/       /'
+  fail=1
+fi
+
+total=${#ondisk[@]}
+accounted=$(( ${#toplevel[@]} - $(printf '%s\n' "${unaccounted}" | grep -c .) + nested_claimed ))
+echo "---"
+if [ "${fail}" -eq 0 ]; then
+  echo "SELF-TEST OK: ${accounted}/${total} fixtures accounted for, 0 failed"
+  exit 0
+fi
+echo "SELF-TEST FAILED: ${accounted}/${total} fixtures accounted for (see FAIL lines above)"
+exit 1

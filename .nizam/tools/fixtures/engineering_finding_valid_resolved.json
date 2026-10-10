@@ -1,0 +1,21 @@
+{
+  "id": "F-audit-001-02",
+  "severity": "low",
+  "confidence": "Confirmed",
+  "evidence": [
+    {
+      "path": ".agent/evidence/audit-001/verify-02.txt",
+      "revision": "4b01290"
+    }
+  ],
+  "impact": "schema/README.md's Schemas table previously omitted a shipped schema, risking undiscoverable validation coverage.",
+  "owner": "platform-team",
+  "status": "resolved",
+  "closure_criteria": "schema/README.md's Schemas table names every shipped schema/*.json file.",
+  "closure_evidence": [
+    {
+      "path": ".agent/evidence/audit-001/closure-01.txt",
+      "revision": "d87d88f"
+    }
+  ]
+}

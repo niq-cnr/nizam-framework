@@ -1,0 +1,13 @@
+{
+  "_fixture_notice": "INTENTIONAL NEGATIVE FIXTURE (F-008/038, rev1 per .agent/qa/038-contract-review.json HIGH finding) -- PASS_WITH_EXCEPTIONS carries the 'operator_approval' key, but it is an EMPTY object: zero approver identity, timestamp, or authorization recorded. Distinct from preflight_verdict_invalid_exceptions.json (which omits the key entirely): this fixture proves the schema rejects a present-but-substantively-empty approval, not merely a missing one, per ecosystem/01_clean_state_preflight.md Sec 5's Operator-Exception Rule (identity, timestamp, and the accepted exceptions must actually be recorded).",
+  "verdict": "PASS_WITH_EXCEPTIONS",
+  "execution_id": "exec-2026-07-17-006",
+  "generated_at": "2026-07-17T00:25:00Z",
+  "exceptions": [
+    {
+      "finding": "non-blocking dependency-freshness warning",
+      "blocking": false
+    }
+  ],
+  "operator_approval": {}
+}

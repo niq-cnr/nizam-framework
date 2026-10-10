@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "source_result": ".agent/reconciliation/exec-recon-080/membership_run.json",
+  "plan_verdict": "PASS",
+  "packets": [
+    {
+      "id": "packet-beta-1",
+      "repo": "member-beta",
+      "closes_findings": ["FIND-B1"],
+      "depends_on": []
+    },
+    {
+      "id": "packet-alpha-1",
+      "repo": "member-alpha",
+      "closes_findings": ["FIND-A1"],
+      "depends_on": ["packet-beta-1"]
+    }
+  ],
+  "order": ["packet-alpha-1", "packet-beta-1"],
+  "cycle_findings": []
+}

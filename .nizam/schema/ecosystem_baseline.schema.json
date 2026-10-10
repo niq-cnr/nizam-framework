@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:ecosystem_baseline.schema.json",
+  "title": "Nizam Ecosystem Baseline Artifact Schema",
+  "description": "Validates the point-in-time, immutable baseline artifact a baseline capture emits at .agent/reconciliation/<execution-id>/baseline.json, per ecosystem/02_evidence_baseline.md Sec 6 (Baseline Artifact). Encodes the six baseline field categories of Sec 3 (framework, repository, dependency, CI, planning, and evidence references) and the per-item revision/timestamp anchoring rule of Sec 4: a baseline MUST NOT mix evidence from unspecified revisions, so every reference item in every category is required to declare its own revision and timestamp; an item with no declared revision, or no timestamp, is not a valid baseline entry.",
+  "type": "object",
+  "$defs": {
+    "reference_item": {
+      "type": "object",
+      "description": "One anchored reference entry within a baseline field category (protocol Sec 3). Every item states the specific revision (a commit SHA or equivalent immutable revision identifier) and timestamp it was captured at (protocol Sec 4). Descriptive identification fields (e.g. repository, name, path, url) are open extension points, per schema/README.md's house convention ('Permits additionalProperties on extension points so consumer repositories can extend a shape without breaking validation, while still enforcing the required keys and enums that make an artifact machine-legible').",
+      "properties": {
+        "revision": {
+          "type": "string",
+          "description": "The declared, immutable revision identifier (commit SHA or equivalent) this reference item is anchored to (protocol Sec 4). Required on every item; never inferred or left implicit.",
+          "minLength": 1
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The declared point-in-time timestamp this reference item was captured at (protocol Sec 4). Required on every item alongside revision.",
+          "minLength": 1
+        }
+      },
+      "required": ["revision", "timestamp"],
+      "additionalProperties": true
+    }
+  },
+  "properties": {
+    "execution_id": {
+      "type": "string",
+      "description": "The ecosystem-cycle execution identifier this baseline belongs to, matching the <execution-id> path segment of the artifact's own location (protocol Sec 6)."
+    },
+    "captured_at": {
+      "type": "string",
+      "description": "Date or date-time the baseline capture produced this artifact."
+    },
+    "framework_references": {
+      "type": "array",
+      "description": "The released framework version or tag the ecosystem cycle is currently governed by (protocol Sec 3).",
+      "items": { "$ref": "#/$defs/reference_item" },
+      "minItems": 1
+    },
+    "repository_references": {
+      "type": "array",
+      "description": "Every in-scope repository, each pinned to a specific revision (protocol Sec 3).",
+      "items": { "$ref": "#/$defs/reference_item" },
+      "minItems": 1
+    },
+    "dependency_references": {
+      "type": "array",
+      "description": "The cross-repository dependencies the execution is reconciling against (protocol Sec 3).",
+      "items": { "$ref": "#/$defs/reference_item" },
+      "minItems": 1
+    },
+    "ci_references": {
+      "type": "array",
+      "description": "The CI run(s) whose results back any claim in the baseline; a claim with no CI reference is not CI-verified (protocol Sec 3).",
+      "items": { "$ref": "#/$defs/reference_item" },
+      "minItems": 1
+    },
+    "planning_references": {
+      "type": "array",
+      "description": "The planning documents (roadmaps, manifests, debt registers) current at the moment of capture (protocol Sec 3).",
+      "items": { "$ref": "#/$defs/reference_item" },
+      "minItems": 1
+    },
+    "evidence_references": {
+      "type": "array",
+      "description": "Externalised evidence paths (never inline terminal output) backing every other field, per the framework's Evidence Capture Convention (protocol Sec 3).",
+      "items": { "$ref": "#/$defs/reference_item" },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "framework_references",
+    "repository_references",
+    "dependency_references",
+    "ci_references",
+    "planning_references",
+    "evidence_references"
+  ],
+  "additionalProperties": true
+}

@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:review_trial.schema.json",
+  "title": "Nizam Convergent Review Trial",
+  "description": "Closed observation-only output from one of exactly three independent review trials; evidence authenticity is checked against the bound packet at runtime.",
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "not": {
+        "const": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024,
+      "pattern": "^(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*\\\\)(?!\\.{1,2}(?:/|$))(?!.*//)(?!.*\\/\\.{1,2}(?:/|$))(?!.*[\\u0000-\\u001F\\u007F-\\u009F]).+$"
+    },
+    "finding": {
+      "type": "object",
+      "properties": {
+        "severity": {
+          "enum": [
+            "blocker",
+            "important",
+            "minor"
+          ]
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+        },
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "symbol": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "rule": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20000
+        }
+      },
+      "required": [
+        "severity",
+        "category",
+        "path",
+        "symbol",
+        "rule",
+        "title",
+        "description"
+      ],
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "start_line": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        },
+        "end_line": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 4000
+        },
+        "content_digest": {
+          "$ref": "#/$defs/digest"
+        }
+      },
+      "required": [
+        "path",
+        "start_line",
+        "end_line",
+        "excerpt",
+        "content_digest"
+      ],
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "enum": [
+            "active",
+            "resolved"
+          ]
+        },
+        "finding": {
+          "$ref": "#/$defs/finding"
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/evidence"
+          }
+        }
+      },
+      "required": [
+        "action",
+        "finding",
+        "evidence"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "review_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "trial_number": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "packet_digest": {
+      "$ref": "#/$defs/digest"
+    },
+    "head_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "observations": {
+      "type": "array",
+      "maxItems": 10000,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/observation"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "review_id",
+    "trial_number",
+    "packet_digest",
+    "head_sha",
+    "observations"
+  ],
+  "additionalProperties": false
+}
