@@ -1,0 +1,24 @@
+COMMAND: python3 - <<'PY'
+import json
+from pathlib import Path
+paths=['.agent/validator/self-commission-v1.5.0-closeout.json','.agent/qa/self-commission-v1.5.0-closeout.json']
+for path in paths:
+ v=json.loads(Path(path).read_text())
+ assert v['final_verdict']['approved'] and all(v[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims'])
+ print('PASS final independent gate',path)
+q=json.loads(Path(paths[1]).read_text())
+assert q['qa_pass'] and q['checks_run']==q['checks_passed']==2
+for check in q['checks']:
+ p=Path(check['evidence']);s=p.read_text()
+ assert check['exit_code']==0 and s.startswith('COMMAND: '+check['command']+'\n') and s.rstrip().endswith('EXIT:0')
+ assert str(p) in q['evidence_files']
+ print('PASS final command evidence',p)
+print('FINAL EVIDENCE GATE PASS')
+PY
+PASS final independent gate .agent/validator/self-commission-v1.5.0-closeout.json
+PASS final independent gate .agent/qa/self-commission-v1.5.0-closeout.json
+PASS final command evidence .agent/evidence/self-commission-v1.5.0/finalrecord.txt
+PASS final command evidence .agent/evidence/self-commission-v1.5.0/finalcompliance.txt
+FINAL EVIDENCE GATE PASS
+
+EXIT:0

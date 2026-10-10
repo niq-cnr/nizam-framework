@@ -1,0 +1,141 @@
+---
+id: nizam-schema-readme
+title: "Schema Module — Index"
+description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
+version: 0.19.0
+status: draft
+authoritative_source: schema/README.md
+change_log:
+  - version: "0.19.0"
+    date: "2026-10-09"
+    summary: "State that `tools/test_convergent_review.py` is the sole validator of the review schema family; extending C12 to that family is left to the phase-014 simplification review (NDEBT-041)."
+  - version: "0.18.0"
+    date: "2026-09-17"
+    summary: "Reconcile review and Git modes with runtime Git, sandbox, no-follow I/O, replay and publication guarantees, plus standalone-ledger initial-head and exact evidence-attribution relations."
+  - version: "0.17.0"
+    date: "2026-09-17"
+    summary: "Define review-packet validity as mandatory JSON-Schema plus relational validation; add old-content and authenticated full-tree commitment fields; align all review identity grammars on backslash and C1 rejection."
+  - version: "0.16.0"
+    date: "2026-09-17"
+    summary: "Add the closed Draft 2020-12 convergent-review schema family: packet, trial, ledger, suppression, and content-addressed replay."
+  - version: "0.15.0"
+    date: "2026-08-19"
+    summary: "Added the optional, advisory `dod_ref` string property, identically worded, to five machine-validated schemas -- contract.schema.json, qa_verdict.schema.json (both anyOf branches), feature_list.schema.json (top level), work-packet.schema.json, and engineering_finding.schema.json (phase-013 feature 094) -- naming standard/definition_of_done.md as the artifact's governing Definition of Done. Touches no `required` array on any schema, a pure loosening per methodology/06_release_train.md Sec 3.2: every previously-valid artifact remains valid. Proved with a positive fixture (tools/fixtures/feature_list_valid.json gains a dod_ref) that still passes the C16 --target sweep, plus the full default validator sweep's existing dogfood coverage (C11 over every .agent/contracts/*.json and .agent/qa/*.json, C16 over every .agent/feature_list*.json)."
+  - version: "0.14.0"
+    date: "2026-08-18"
+    summary: "Doc-truth fix (phase-013 feature 092): the feature_list.schema.json row named no enforcing check despite the table's implied live-validation convention every C11/C12-covered row follows; it now names validator check C16 (the era-safe complete -> contract -> QA-verdict -> evidence-file referential rule added this feature)."
+  - version: "0.13.0"
+    date: "2026-08-15"
+    summary: "Phase-012 breaking invariant repair for v1.0.0: evidence paths in audit_delta and engineering_finding must name content below .agent/evidence/; ecosystem membership schema_version uses canonical SemVer 2.0.0; successful preflight verdicts reject blocking_findings; a pin-consistent membership result requires a non-empty common framework_pin; and a FAIL reconciliation plan requires non-empty cycle_findings plus an empty order. Eleven discriminating negative fixtures and a prerelease/build SemVer positive guard the clean break; docs/migration-v1.0.0.md supplies exact consumer repairs."
+  - version: "0.12.0"
+    date: "2026-07-22"
+    summary: "Added schema/release_train_manifest.schema.json (phase-011 feature 081, NDEBT-035; NIP-0002 Stage 4): validates the Promote-stage artifact ecosystem/05_release_train_coordination.md requires -- admitting an authorized reconciliation plan's (schema/reconciliation_plan.schema.json) work packets into a cross-repository release train. The schema enforces the shape (a source plan + its packet-id set plan_packets, admitted_packets with a per-repo target, train_members, an entry_gate_recorded flag, a PASS/FAIL train_verdict); one in-schema if/then (a PASS train requires entry_gate_recorded true). The trace-to-plan invariant (every admitted packet id MUST appear in plan_packets; an orphan admission forces train_verdict FAIL) is a relational constraint spanning admitted_packets against plan_packets, enforced in code by validate.sh C12, mirroring the reconciliation_plan cycle rule (NDEBT-035). Wired into C12 as the eighth ecosystem family at both entry points (full-sweep + --target router, discriminated by train_verdict/admitted_packets) with one positive and two negative fixtures (a schema-invalid ungated-PASS and a trace-to-plan-violating orphan-but-PASS). Registered in NIZAM.json."
+  - version: "0.11.0"
+    date: "2026-07-22"
+    summary: "Added schema/reconciliation_plan.schema.json (phase-011 feature 080, NDEBT-035; NIP-0002 Stage 4): validates the Plan-stage artifact ecosystem/04_dependency_reconciliation.md requires -- turning approved engineering-audit findings plus the phase-010 ecosystem-level membership-run aggregate into typed, dependency-ordered cross-repository work packets. The schema enforces the shape (packets with a per-repo target + the findings they close, typed depends_on edges over packet ids, an emitted order sequence, a PASS/FAIL plan_verdict); the topological-order invariant (a cyclic depends_on set has no valid order and forces plan_verdict FAIL) is a relational graph constraint enforced in code by validate.sh C12, mirroring the ecosystem_membership exactly-one-list split (NDEBT-031). One in-schema if/then (a non-empty cycle_findings forces plan_verdict FAIL) plus the code-level cycle detection at both C12 entry points. Wired into C12 as the seventh ecosystem family at both entry points (full-sweep + --target router, discriminated by plan_verdict/cycle_findings) with one positive and two negative fixtures (a schema-invalid missing-verdict and a topological-order-violating cyclic-but-PASS). Registered in NIZAM.json."
+  - version: "0.10.0"
+    date: "2026-07-22"
+    summary: "Added schema/ecosystem_membership_result.schema.json (phase-010 feature 077, NDEBT-031; NIP-0002 Stage 3): validates the aggregate ecosystem-level result tools/ecosystem_membership_run.py emits after iterating a membership registry -- the single ecosystem_verdict, the per-member roll-up, and the cross-repository consistency record (framework_pin_consistent + consistency_findings: every in_scope member must run under the same framework pin). A relational invariant is expressed in-schema (if framework_pin_consistent is false, ecosystem_verdict MUST be FAIL). Wired into validate.sh C12 as the sixth ecosystem family at both entry points (full-sweep + --target router, discriminated by ecosystem_verdict/framework_pin_consistent) with one positive and two negative fixtures (a schema-invalid missing-verdict and an if/then-violating inconsistent-but-PASS). Also hardened schema/ecosystem_membership.schema.json (feature 075): schema_version + last_updated are now required and pattern-constrained (semver / ISO-8601 date-prefix), enforced without a jsonschema FormatChecker. Both registered in NIZAM.json."
+  - version: "0.9.0"
+    date: "2026-07-22"
+    summary: "Added schema/ecosystem_membership.schema.json (phase-010 feature 075, NDEBT-031; NIP-0002 Stage 3): validates a consumer's ecosystem-membership registry -- the required artifact that sets n for the 0-to-n spectrum (registry/scope_definition_patterns.md, promoted to a schema-backed active artifact in the same feature). The schema enforces the shape (the four scope lists in_scope/incubating/reference_archive/out_of_scope exist as arrays of entries, every entry has an identifying name, out_of_scope entries record a reason); the exactly-one-list invariant (no name in two lists) is a relational cross-array constraint enforced in code by tools/validate.sh C12, mirroring the ecosystem_baseline same-repo-revision split (NDEBT-023). Wired into C12 as the fifth ecosystem family at both entry points (full-sweep + --target router, discriminated by >=2 of the four scope-list keys) with one positive and two negative fixtures (a schema-invalid missing-list and a schema-valid multilist caught by the code check), and registered in NIZAM.json."
+  - version: "0.8.0"
+    date: "2026-07-20"
+    summary: "Added schema/audit_delta.schema.json: validates the ecosystem progress-comparison delta artifact (ecosystem/07_progress_comparison.md Sec 7) -- the two revision/timestamp-anchored reference points (earlier/later) and the closed five-class transition taxonomy (new/resolved/reopened/persisting/stale, all five buckets present, no sixth class), enforcing the closure-only-with-evidence rule (Sec 4) at the schema layer by requiring a non-empty closure_evidence on every resolved and pre-window-resolved finding. Wired into tools/validate.sh C12 as the fourth ecosystem family at both entry points (full-sweep + --target router, discriminated by a top-level `transitions` object) with one positive and two negative fixtures, and registered in NIZAM.json. Completes the four core ecosystem-cycle schemas and retires the last deferred 'schema not yet present' note in 07_progress_comparison.md."
+  - version: "0.7.1"
+    date: "2026-07-19"
+    summary: "Documentation-truth reconciliation (F-054/NDEBT-011): the work-packet.schema.json row's parse-validity-only caveat for its template is retired -- templates/work-packet.template.json now validates end-to-end against the schema. Its three optional enum/integer dispatch fields (tier/blast_radius/merge_order) cannot hold a {{...}} placeholder, so they are omitted from the starter template rather than shipped as literal defaults a copied packet could silently carry; consumers add them from this schema when a packet needs cross-repo dispatch. Mechanically asserted by a tools/fixtures_self_test.sh guard."
+  - version: "0.7.0"
+    date: "2026-07-17"
+    summary: "Added schema/engineering_finding.schema.json (feature 039, handover F-009): validates a single engineering finding -- severity, confidence (the protocol's fixed Confirmed/Probable/Suspected vocabulary), path-referenced revision-pinned evidence, impact, owner, and closure_criteria, plus a structured, non-empty closure_evidence requirement whenever a finding's status is resolved."
+  - version: "0.6.0"
+    date: "2026-07-17"
+    summary: "Added schema/ecosystem_baseline.schema.json (feature 037, handover F-007): validates the ecosystem immutable-baseline artifact -- the six baseline reference categories (framework/repository/dependency/CI/planning/evidence) and the per-item revision/timestamp anchoring rule a baseline MUST NOT mix unspecified revisions under."
+  - version: "0.5.0"
+    date: "2026-07-17"
+    summary: "Added schema/preflight_verdict.schema.json (feature 038, handover F-008): validates the ecosystem clean-state preflight run's machine-readable verdict artifact -- the exact three-verdict enum (PASS / PASS_WITH_EXCEPTIONS / FAIL) and the structured operator-approval state PASS_WITH_EXCEPTIONS requires."
+  - version: "0.4.0"
+    date: "2026-07-12"
+    summary: "Enumeration-completeness cleanup: added the missing work-packet.schema.json row to the Schemas table (the schema shipped in v0.5.0 but was never indexed here), including the parse-validity-only caveat for its template documented in templates/README.md."
+  - version: 0.3.0
+    date: "2026-07-08"
+    summary: "R4a schema reconciliation (resolves NDEBT-002 part a): added schema/contract_review.schema.json (validates the pre-code contract-testability review verdict) and reconciled qa_verdict.schema.json to an anyOf union of the legacy and evolved feature-QA-verdict shapes actually produced across .agent/qa/*.json."
+---
+
+# schema/
+
+The `schema/` module is a **leaf module** (see `product_spec.md` Sec 2.2): it owns the
+machine-verifiable contracts every other artifact in the framework — and every consumer
+repository that adopts the framework — validates against. It depends on nothing and
+contains no prose narrative, only JSON Schema documents.
+
+Every schema in this module:
+
+- Is valid JSON.
+- Declares `"$schema": "https://json-schema.org/draft/2020-12/schema"` (JSON Schema draft
+  2020-12).
+- Declares a `$id`, `title`, and `description`.
+- Declares each object's extension policy explicitly. The convergent-review family is
+  fully closed with `additionalProperties: false`; older artifact families retain their
+  documented extension points where compatibility requires them.
+- Where applicable, admits an optional, advisory `dod_ref` string property naming the
+  repo-relative path to the Definition of Done document governing that artifact's
+  completion claims (`standard/definition_of_done.md` in this repository) -- never
+  required, and no check fails on its absence.
+
+## Schemas
+
+| Schema | Purpose | Validates |
+|--------|---------|-----------|
+| `frontmatter.schema.json` | Validates the YAML frontmatter block required at the top of every governance Markdown file (`standard/`, `methodology/`, `templates/`, `tools/`, and module `README.md` files). Enforces the 6 required keys: `id`, `title`, `description`, `version`, `status` (`draft`\|`active`\|`deprecated`), `authoritative_source`. | Frontmatter on any governed `.md` file. |
+| `manifest.schema.json` | Validates the planning manifest that names the current phase and lists every phase a repository tracks. | `docs/planning/manifest.json` |
+| `phase.schema.json` | Validates a phase definition. Implements **DD-3, Evidence Externalisation** (see below). | Phase definition documents produced from `templates/phase_template.yaml`. |
+| `feature_list.schema.json` | Validates the DAG-validated, acceptance-test-bearing feature breakdown of a phase. The **era-safe complete-feature lifecycle rule** (a `complete` feature with a contract on disk must also have a QA verdict, and any `evidence_files` it lists must resolve) is enforced in code by `tools/validate.sh` C16. | `.agent/feature_list.json` |
+| `contract.schema.json` | Validates a per-feature contract: scope, non-goals, and verification commands agreed before implementation. | `.agent/contracts/NNN.json` |
+| `qa_verdict.schema.json` | Validates an evaluator's pass/fail verdict for a feature, including per-check exit codes and evidence paths. | `.agent/qa/NNN.json` |
+| `contract_review.schema.json` | Validates the pre-code contract-testability review verdict. | `.agent/qa/NNN-contract-review.json` |
+| `run_state.schema.json` | Validates the durable run state an execution engine reads and writes across a session. | `.agent/run_state.json` |
+| `work-packet.schema.json` | Validates a work-packet artifact: the minimal packet core (`id`, `objective`, `scope`, `acceptance`, `evidence`, `non_goals`) plus the optional cross-repo dispatch and linking fields (`tier`, `blast_radius`, `concurrency_lane`, `dependency_edges`, `merge_order`, and the `contract_id`/`phase_id`/`feature_id`/`train_id` foreign keys). | Work packets authored from `templates/work-packet.template.json` (the shipped template now validates end-to-end against this schema — F-054/NDEBT-011 — with the optional enum/integer dispatch fields `tier`/`blast_radius`/`merge_order` omitted from the template rather than shipped as literal defaults a copied packet could silently carry; consumers add them from this schema when a packet needs cross-repo dispatch). |
+| `debt.schema.json` | Validates the circuit-breaker debt log: timestamp, feature, failed step, attempt count, failure mode, and human resolution. | `.agent/debt.json` |
+| `capability_profile.schema.json` | Validates capability-profile bindings that map agent roles to primary/fallback models, allowed tools, and safety classes. | Capability-profile blocks in `AGENTS.md` or standalone `.agent/capability_profile.json` |
+| `preflight_verdict.schema.json` | Validates the ecosystem clean-state preflight run's machine-readable verdict artifact: the exact three-verdict enum (`PASS` / `PASS_WITH_EXCEPTIONS` / `FAIL`), rejects `blocking_findings` on either successful verdict, requires non-empty `blocking_findings` on `FAIL`, and requires structured operator approval for `PASS_WITH_EXCEPTIONS`. | `.agent/reconciliation/<execution-id>/preflight.json` |
+| `ecosystem_baseline.schema.json` | Validates the ecosystem immutable-baseline artifact: the six baseline reference categories (framework/repository/dependency/CI/planning/evidence) and the per-item revision/timestamp anchoring rule (a baseline MUST NOT mix evidence from unspecified revisions). | `.agent/reconciliation/<execution-id>/baseline.json` |
+| `engineering_finding.schema.json` | Validates a single engineering finding: severity, confidence (`Confirmed`/`Probable`/`Suspected`), revision-pinned evidence paths that name content below `.agent/evidence/`, impact, owner, closure_criteria, and a structured, non-empty closure_evidence requirement whenever a finding's status is `resolved`. | `.agent/audits/<audit-id>/findings.json` |
+| `audit_delta.schema.json` | Validates the ecosystem progress-comparison delta artifact: the two revision/timestamp-anchored reference points (`earlier`/`later`) and the closed five-class transition taxonomy (`new`/`resolved`/`reopened`/`persisting`/`stale` — all five buckets present, no sixth class admitted), with evidence paths naming content below `.agent/evidence/` and non-empty `closure_evidence` on every `resolved` and pre-window-resolved finding. | `.agent/audits/<audit-id>/delta.json` |
+| `ecosystem_membership.schema.json` | Validates a consumer's ecosystem-membership registry — including a canonical SemVer 2.0.0 `schema_version` — and the four scope lists (`in_scope`/`incubating`/`reference_archive`/`out_of_scope`). The **exactly-one-list invariant** is enforced in code by `tools/validate.sh` C12. | A consumer's own membership registry (conventionally an `ecosystem_membership.json` in the consumer repository) |
+| `ecosystem_membership_result.schema.json` | Validates the aggregate result emitted by `tools/ecosystem_membership_run.py`: a pin-inconsistent ecosystem cannot be `PASS`, while `framework_pin_consistent: true` requires the non-empty common `framework_pin`. | `<output-dir>/membership_run.json` produced by the membership runner |
+| `reconciliation_plan.schema.json` | Validates typed, dependency-ordered cross-repository work packets. A `FAIL` plan requires non-empty `cycle_findings` and an empty `order`; C12 additionally verifies graph/order relationships for `PASS`. | `.agent/reconciliation/<execution-id>/plan.json` |
+| `release_train_manifest.schema.json` | Validates the Promote-stage artifact `ecosystem/05_release_train_coordination.md` requires — an authorized reconciliation plan's work packets admitted into a cross-repository release train: `source_plan` + its `plan_packets` (each an `(id, repo)` provenance pair), `admitted_packets` each targeting one `repo`, `train_members` (required), an `entry_gate_recorded` flag, and a `PASS`/`FAIL` `train_verdict`. One in-schema `if/then` (a `PASS` train requires `entry_gate_recorded` true). The **trace-to-plan invariant** (every admitted packet's `(id, repo)` must match a `plan_packets` entry; an orphan or repo-mismatch admission forces `train_verdict` `FAIL`) is a relational constraint enforced in code by `tools/validate.sh` C12, not by the schema — the same split as the `reconciliation_plan` cycle/order rule. | `.agent/trains/<train-id>/manifest.json` |
+| `review_packet.schema.json` | Structural stage of the closed packet contract: required review `mode`, base/head, authenticated old/current bytes, nullable `old_mode`/`new_mode`, and the mode-dependent full-audit Git commit/tree manifest. Equal content digests may represent a mode-only change when the Git modes differ. Packet validity additionally and mandatorily requires `validate_packet_relations`; Draft 2020-12 alone cannot compare sibling digest/mode pairs or project path uniqueness. | Input to `tools/convergent_review.py converge` after both validation stages. |
+| `review_trial.schema.json` | Closed observation-only output from one of exactly three independent trials; it binds the exact packet digest and therefore intentionally carries no independent mode field, model verdict, count, lifecycle, suppression, or trusted identifier. | One raw trial input to `tools/convergent_review.py converge`. |
+| `review_ledger.schema.json` | Closed deterministic finding ledger that copies the authenticated packet review `mode` and records semantic fingerprints, `new`/`persisting`/`resolved`/`reopened`/`suppressed` lifecycle, current-review evidence, consensus, counts, and verdict. Draft 2020-12 validates its local shape; `validate_ledger` additionally requires initial finding heads to equal `head_sha` and evidence trial attribution to equal the corresponding current consensus exactly. | Canonical `ledger.json` emitted by the convergent-review CLI. |
+| `review_suppression.schema.json` | Closed human authorization record for suppressing one deterministic finding while preserving authorizer, reference, timestamp, reason, and record digest provenance. | Optional suppression input to the convergent-review CLI. |
+| `review_replay.schema.json` | Closed content-addressed manifest retaining the raw packet, all three raw trials, optional prior/suppression inputs, and deterministic output digests. It intentionally has no separate mode field: replay revalidates the retained packet mode and requires exact reproduction of the mode-bearing ledger. | Canonical `replay.json` emitted and checked by `verify-replay`. |
+
+The five schemas define closed artifact shapes, not the complete runtime trust boundary. `validate_packet_relations` additionally authenticates content and mode relationships, full-tree completeness, Git blob IDs, and the commit header tree binding. `validate_ledger` additionally enforces cross-object equality and projected-trial-set relations that Draft 2020-12 cannot express here. Because ledger schema version 1.0.0 has no evidence-origin head or source-ledger field, later ledgers use the stricter safe representation: historical evidence remains in the digest-bound retained prior ledger, while current `evidence` and `resolution_evidence` contain only trial numbers exactly matching current consensus. The trusted builder separately controls the Git environment, disables replace refs, and distinguishes an absent path from an object-read error. The evaluator and replay verifier separately enforce non-executable trial roots, exclusive no-follow output I/O, and no-follow ancestor walks. Atomic no-replace publication and the `PublicationResult.visible`/`durable` transition are also runtime obligations; none can be proven by Draft 2020-12 validation alone.
+
+`tools/test_convergent_review.py` is the sole validator of the review schema family (`review_packet`, `review_trial`, `review_ledger`, `review_suppression`, `review_replay`): `tools/validate.sh` check C12 does not cover this family, and extending C12 to it is left to the phase-014 simplification review and `H-CONSOLIDATION`.
+
+## DD-3 — Evidence Externalisation
+
+`phase.schema.json` implements Design Decision 3: phase and step evidence MUST be written
+to a file (for example `.agent/evidence/step-01.txt`) and referenced *by path* from the
+phase definition. Raw terminal output MUST NEVER be pasted directly into a YAML or JSON
+string field.
+
+The schema enforces this structurally, not just by convention:
+
+1. A step whose `status` is `COMPLETED` declares an `evidence` property whose value
+   MUST match the pattern `^\.agent/evidence/` — a path, not a payload. Steps with
+   any other status omit this property.
+2. Both the phase object and the step object declare `"additionalProperties": false`
+   over an explicit, closed property set. That set intentionally omits any inline
+   free-text output field (`proof`, `raw_output`, `terminal_output`, `console_output`,
+   `stdout`, `output`). Because unknown properties are rejected outright, a phase document
+   cannot smuggle pasted-in terminal output into an unrecognised key and have it silently
+   tolerated as a harmless extension property.
+
+This closes the gap that caused the YAML brittleness this framework's predecessors suffered: a schema that only
+checked for the *presence* of an evidence field, without also forbidding inline-output
+fields, would still validate a document that carried both a legitimate evidence path and
+a giant pasted console dump sitting right next to it.

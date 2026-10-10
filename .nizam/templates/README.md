@@ -1,0 +1,67 @@
+---
+id: nizam-templates-readme
+title: "Templates Module — Index"
+description: "Index for the templates/ module: the nine consumer-repo document, manifest, and prompt templates a bootstrapped repository copies and fills in — CONTEXT, AGENTS, DEBT, ADR, work-packet, phase, manifest, DoD, and convergent-review prompt templates."
+version: 0.4.0
+status: active
+authoritative_source: templates/README.md
+change_log:
+  - version: "0.4.0"
+    date: "2026-09-17"
+    summary: "Register templates/convergent-review-prompt.md as the ninth governed template and include it in the Markdown frontmatter inventory."
+  - version: "0.3.0"
+    date: "2026-08-19"
+    summary: "Phase 013, feature 095: registered templates/DoD.md, the copy-and-fill consumer projection of standard/definition_of_done.md onto a per-project checklist. New index-table row; '## Frontmatter Convention' parenthetical .md-template list gains DoD.md; frontmatter description count-numeral incremented, with its enumeration extended to name the new template."
+  - version: "0.2.2"
+    date: "2026-07-19"
+    summary: "Documentation-truth reconciliation (F-054/NDEBT-011): work-packet.template.json now validates end-to-end against schema/work-packet.schema.json. Its three optional enum/integer dispatch fields (tier/blast_radius/merge_order) cannot hold a {{...}} placeholder, so rather than ship literal defaults a copied packet could silently carry and misclassify on, they are omitted from the starter template (documented in the schema for consumers that need cross-repo dispatch); the Validate step no longer describes the template as JSON parse-validity only, and a tools/fixtures_self_test.sh guard mechanically asserts the conformance."
+  - version: "0.2.1"
+    date: "2026-07-08"
+    summary: "H6 de-leak: rephrased the internal .agent-directory spec citation to cite standard/NDS.md directly, a source a fresh consumer repository actually has."
+---
+
+# templates/
+
+The `templates/` module owns the templates a consumer repository copies after
+bootstrap and fills in with its own content. It depends on `standard/` (see
+`standard/NDS.md`) for the frontmatter and documentation conventions its `.md`
+templates carry, and contains no filled-in project content of its own.
+
+| File | Purpose |
+|---|---|
+| [`CONTEXT.md`](CONTEXT.md) | Consumer-repo `CONTEXT.md` template: architecture summary, module map, execution commands, and the mandatory `## Out of Scope` boundary section. |
+| [`AGENTS.md`](AGENTS.md) | Consumer-repo `AGENTS.md` template: current session objective, active phase, delegation-matrix reference, and scope-check reminder. |
+| [`DEBT.md`](DEBT.md) | Technical-debt register template: the empty ID/Date/Feature ID/Failed Step/Attempt Count/Failure Mode/Human Resolution table skeleton. |
+| [`ADR_TEMPLATE.md`](ADR_TEMPLATE.md) | Architecture Decision Record template: Status/Context/Decision/Consequences skeleton, copied once per decision. |
+| [`work-packet.template.json`](work-packet.template.json) | Scoped work-packet JSON template: id, objective, allowed/forbidden scope paths, acceptance criteria, and evidence file paths. |
+| [`phase_template.yaml`](phase_template.yaml) | Phase definition YAML template; validates against `schema/phase.schema.json` and follows DD-3 Evidence Externalisation. |
+| [`manifest.template.json`](manifest.template.json) | Planning manifest JSON template; validates against `schema/manifest.schema.json`. |
+| [`DoD.md`](DoD.md) | Consumer-repo Definition of Done checklist template: Section-N-cited checklist blocks (Step through Release) projecting `standard/definition_of_done.md`, a non-checklist Ecosystem-Done pointer, and a project-specific extension block. |
+| [`convergent-review-prompt.md`](convergent-review-prompt.md) | Runtime-neutral, closed-output trial prompt for exactly three independent observation-only reviews over an authenticated packet; its placeholders are rendered by `tools/evaluate_convergent_review_prompt.py` inside the mandatory per-trial sandbox. |
+
+## Frontmatter Convention
+
+Every `.md` template in this module (`CONTEXT.md`, `AGENTS.md`, `DEBT.md`,
+`ADR_TEMPLATE.md`, `DoD.md`, `convergent-review-prompt.md`) carries **real** frontmatter
+describing the template artifact
+itself — its own `id`, `title`, `description`, `version`, `status`, and
+`authoritative_source` per `standard/NDS.md` Sec 2 — not placeholder tokens. `{{...}}`
+placeholder tokens exist only in the document body that follows the closing `---`,
+where a consumer repository fills them in with real, repo-specific content after
+copying the file.
+
+## Usage
+
+1. Copy the desired template to its target path in the consumer repository (see each
+   template's purpose above for its conventional destination).
+2. Replace every `{{PLACEHOLDER}}` token in the body with real content. Leave the
+   frontmatter block of the `.md` templates as-is, or update `version`/`status` only if
+   the consumer repository intends to version its own copy independently.
+3. Validate: `.md` templates against `schema/frontmatter.schema.json`; `phase_template.yaml`
+   against `schema/phase.schema.json`; `manifest.template.json` against
+   `schema/manifest.schema.json`; `work-packet.template.json` against
+   `schema/work-packet.schema.json` (it validates end-to-end — the optional
+   enum/integer dispatch fields `tier`/`blast_radius`/`merge_order` are omitted
+   from the starter template rather than shipped as literal defaults a copied
+   packet could silently carry, and are documented in the schema for consumers
+   that add cross-repo dispatch).

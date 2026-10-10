@@ -1,0 +1,24 @@
+{
+  "_fixture_notice": "INTENTIONAL NEGATIVE FIXTURE (feature 056, NDEBT-023) -- a baseline that is SCHEMA-VALID on its own (all six reference categories present; every item carries both revision and timestamp) but VIOLATES the same-repository revision-consistency rule of ecosystem/02_evidence_baseline.md Sec 4: repository_references records TWO fully-anchored facts about the SAME repository (nizam-framework) at two DIFFERENT revisions. schema/ecosystem_baseline.schema.json cannot express this relational cross-item constraint, so it is caught by tools/validate.sh's C12 code-level same-repo revision-consistency check (mirrored in tools/ecosystem_preflight.py's find_repository_revision_inconsistencies), NOT by schema validation. This is the distinct sub-case ecosystem_baseline_neg_mixed_timestamps.json does NOT cover (that one is caught by the missing-timestamp schema rule).",
+  "execution_id": "exec-2026-07-18-201",
+  "captured_at": "2026-07-18T01:00:00Z",
+  "framework_references": [
+    { "revision": "v0.7.0", "timestamp": "2026-07-18T00:00:00Z", "name": "nizam-framework release tag" }
+  ],
+  "repository_references": [
+    { "revision": "1111111111111111111111111111111111111111", "timestamp": "2026-07-18T00:30:00Z", "repository": "nizam-framework" },
+    { "revision": "2222222222222222222222222222222222222222", "timestamp": "2026-07-18T00:35:00Z", "repository": "nizam-framework" }
+  ],
+  "dependency_references": [
+    { "revision": "1.4.2", "timestamp": "2026-07-18T00:40:00Z", "dependency": "nizam-schema-tooling" }
+  ],
+  "ci_references": [
+    { "revision": "ci-run-90001", "timestamp": "2026-07-18T00:45:00Z", "system": "github-actions", "conclusion": "success" }
+  ],
+  "planning_references": [
+    { "revision": "1111111111111111111111111111111111111111", "timestamp": "2026-07-18T00:50:00Z", "path": "docs/planning/manifest.json" }
+  ],
+  "evidence_references": [
+    { "revision": "1111111111111111111111111111111111111111", "timestamp": "2026-07-18T00:55:00Z", "path": ".agent/evidence/056-baseline-capture.txt" }
+  ]
+}

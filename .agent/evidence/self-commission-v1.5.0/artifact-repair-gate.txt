@@ -1,0 +1,19 @@
+COMMAND: python3 - <<'PY'
+import json
+from pathlib import Path
+v=json.loads(Path('.agent/validator/self-commission-v1.5.0-artifact-repair.json').read_text())
+q=json.loads(Path('.agent/qa/self-commission-v1.5.0-closeout.json').read_text())
+for obj in [v,q]:
+ assert obj['final_verdict']['approved'] and all(obj[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims'])
+assert 'review' not in q and q['stage']=='final-record-supplement' and q['qa_pass']
+for name in ['qa-routing-targeted.txt','qa-routing-full.txt']:
+ p=Path('.agent/evidence/self-commission-v1.5.0')/name
+ assert str(p) in q['evidence_files'] and p.read_text().rstrip().endswith('EXIT:0')
+ print('PASS corrected artifact verification evidence',p)
+print('ARTIFACT REPAIR GATE PASS: independent approval and targeted/full compliance captured')
+PY
+PASS corrected artifact verification evidence .agent/evidence/self-commission-v1.5.0/qa-routing-targeted.txt
+PASS corrected artifact verification evidence .agent/evidence/self-commission-v1.5.0/qa-routing-full.txt
+ARTIFACT REPAIR GATE PASS: independent approval and targeted/full compliance captured
+
+EXIT:0

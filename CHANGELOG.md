@@ -9,6 +9,17 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Local self-governance adoption** (framework-envelope only). This repository
+  installs the public `v1.5.0` payload under `.nizam/` with genuine pinned provenance.
+  Root `AGENTS.md` routes local work through the installed index and skill;
+  `docs/planning/SELF_GOVERNANCE.md` (0.1.1) records completed commissioning at
+  source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa`: actual successful CI
+  `38075479048`, clean installed preflight PASS, an immutable framework/candidate
+  baseline, independent 9/9 QA and the evidence-capture gate passed.
+  A standing CI job checks complete file-set/byte/Git-mode fidelity, adversarial
+  drift failures and installed payload compliance. Authored payload sources,
+  released version anchors and historical phase-014 evidence remain unchanged.
+
 - **v1.5.0 post-release records and handover refresh** (framework-envelope only).
   `docs/planning/ROADMAP.md` (0.51.0) records the published GA release at reviewed
   PR #78 merge `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`, its annotated tag and green release workflow;

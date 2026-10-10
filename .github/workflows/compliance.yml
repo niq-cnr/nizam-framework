@@ -103,3 +103,21 @@ jobs:
             sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           fi
       - run: python3 tools/test_convergent_review.py
+
+  self_governance:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # Exact fidelity reads blobs at the installed immutable release commit.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+      - run: pip install jsonschema pyyaml
+      - run: python3 .github/scripts/verify_self_governance.py
+      - run: python3 .github/scripts/test_self_governance.py
+      - run: bash .nizam/tools/validate.sh --payload

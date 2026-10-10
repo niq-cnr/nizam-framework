@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-10T17:35:27Z",
+  "updated_at": "2026-10-10T17:56:56Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -287,6 +287,16 @@
       "attempts": 3,
       "limit": 3,
       "note": "Temporary draft quoting correction; independent pre-code reviews before five-file editorial implementation."
+    },
+    "self-commission-v1.5.0-contract": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Temporary draft rejected for missing structured commission-record coverage; rev1 fixes exact record and candidate/evidence bindings. Both final gates approve exact proposal hash b4e6128a98ea3d3eb2c4f9dc74e6615ebfb15547d02f723a47a2687dad3821dd."
+    },
+    "self-commission-v1.5.0-implementation": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Final CI C11 revealed supplemental QA review field chooses contract-review route; independent Evaluator corrects its artifact to stage without changing results and verifies target/full compliance. No installed or authored payload changes."
     }
   },
   "history": [
@@ -2108,6 +2118,73 @@
       "event": "contract_revision",
       "contract_id": "release-v1.5.0-closeout",
       "detail": "Post-release editorial refresh draft attempt2/3: initial temporary proposal had literal newline quoting defect in verification[2], corrected before canonical proposal; Validator reviewed corrected syntax and scope. No historical source/tests/dossier or payload changes authorized."
+    },
+    {
+      "at": "2026-10-10T17:56:56Z",
+      "event": "operator_gate_decision",
+      "gate": "H-CONSUMER-UPGRADE",
+      "decision": "authorized",
+      "consumer_repo": "niq-cnr/nizam-framework",
+      "framework_repo": "niq-cnr/nizam-framework",
+      "tag": "v1.5.0",
+      "expected_sha": "f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852",
+      "verbatim": "This the niq-cnr/nizam-framework project must itself install and comission v1.5.0 of the nizam-framework itself.",
+      "detail": "Operator explicitly authorizes this framework repository to install its published v1.5.0 payload under .nizam and commission local agent entrypoints, provenance/drift checks and CI. This is local self-governance scope, not an external organization membership change. Authored framework payload sources, historical phase014 artifacts and immutable release tag remain unchanged. The decision is recorded and committed before actual bootstrap/commission execution."
+    },
+    {
+      "at": "2026-10-10T18:12:23Z",
+      "event": "contract_approved",
+      "contract_id": "self-commission-v1.5.0",
+      "base_revision": "481a58a17194438bb63b67acbfb85a84da740897",
+      "proposal_sha256": "b4e6128a98ea3d3eb2c4f9dc74e6615ebfb15547d02f723a47a2687dad3821dd",
+      "detail": "Both independent Mode A and contract review approved with empty blocking arrays. Generator implements immutable public-tag local self-adoption. Phase014 remains complete; its coordination status/budget and all prior history unchanged. No final commission claim before actual CI, clean installed preflight and independent QA/evidence gate."
+    },
+    {
+      "at": "2026-10-10T18:21:46Z",
+      "event": "implementation_approved",
+      "contract_id": "self-commission-v1.5.0",
+      "stage": "initial-installed-source",
+      "verdict": ".agent/validator/self-commission-v1.5.0-mode-b.json",
+      "detail": "Initial installed-source Mode B passed with empty gate arrays. Actual candidate CI, real clean preflight/baseline and independent QA/evidence remain required before commission declaration."
+    },
+    {
+      "at": "2026-10-10T18:30:29Z",
+      "event": "qa_and_evidence_approved",
+      "contract_id": "self-commission-v1.5.0",
+      "candidate_sha": "bfd475ff670e582cbbfc8f3187ae988dcf3c8baa",
+      "ci_run_id": 38075479048,
+      "qa": ".agent/qa/self-commission-v1.5.0.json",
+      "evidence_gate": ".agent/evidence/self-commission-v1.5.0/evidence-gate.txt",
+      "detail": "Independent evaluator executed all nine contract checks successfully. Real installed preflight ran first on actual clean committed candidate; PASS baseline, actual successful CI, immutable archived artifact copies and command/result/EXIT0 coverage are verified. Final commissioned record remains planned completion stage."
+    },
+    {
+      "at": "2026-10-10T18:42:27Z",
+      "event": "contract_completed",
+      "contract_id": "self-commission-v1.5.0",
+      "candidate_sha": "bfd475ff670e582cbbfc8f3187ae988dcf3c8baa",
+      "framework_tag": "v1.5.0",
+      "framework_sha": "f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852",
+      "ci_run_id": 38075479048,
+      "record": "docs/planning/SELF_GOVERNANCE.md",
+      "detail": "Independent initial and final Mode B approvals, QA9/9 plus finalrecord2/2 and both evidence-capture gates passed. Commissioned record binds the assessed clean source candidate and immutable archived outputs. Completed phase014 data, prior history and published release tag preserved. PR80 final CI and authorized merge follow feature completion."
+    },
+    {
+      "at": "2026-10-10T18:45:44Z",
+      "event": "implementation_rework",
+      "contract_id": "self-commission-v1.5.0",
+      "attempt": 2,
+      "run_id": 38076891062,
+      "job_id": 114285695176,
+      "detail": "C11 content routing selected contract-review schema from supplemental QA review field; rename to stage preserves results and uses actual QA schema. Corrected artifact requires targeted and full compliance checks."
+    },
+    {
+      "at": "2026-10-10T18:47:12Z",
+      "event": "artifact_repair_completed",
+      "contract_id": "self-commission-v1.5.0",
+      "attempt": 2,
+      "validator": ".agent/validator/self-commission-v1.5.0-artifact-repair.json",
+      "evidence_gate": ".agent/evidence/self-commission-v1.5.0/artifact-repair-gate.txt",
+      "detail": "QA results unchanged; stage field now selects QA schema. Targeted validator and full16/16 plus releasecloseout passed with artifact present; independent repair ModeB and evidence gate approved."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2682,7 +2759,7 @@
       }
     ]
   },
-  "last_action": "v1.5.0 GA release published and pinned at f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852; final release-ledger and handover refresh next.",
+  "last_action": "self-commission-v1.5.0 complete after independently approved QA-artifact routing repair; corrected final CI and clean PR80 merge next.",
   "completed_contract_ids": [
     "099",
     "103",

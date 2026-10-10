@@ -1,0 +1,16 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 - "$COMMISSION_RUN_ROOT/ci.json" <<'PY'
+import json,subprocess,sys,yaml
+from pathlib import Path
+j=yaml.safe_load(Path('.github/workflows/compliance.yml').read_text())['jobs']['self_governance'];steps=j['steps']
+co=next(s for s in steps if s.get('uses','').startswith('actions/checkout@'));py=next(s for s in steps if s.get('uses','').startswith('actions/setup-python@'))
+assert co['uses']=='actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' and co['with']['fetch-depth']==0 and co['with']['persist-credentials'] is False
+assert py['uses']=='actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b'
+runs='\n'.join(s.get('run','') for s in steps)
+for cmd in ['python3 .github/scripts/verify_self_governance.py','python3 .github/scripts/test_self_governance.py','bash .nizam/tools/validate.sh --payload']:assert cmd in runs,cmd
+ci=json.loads(Path(sys.argv[1]).read_text());identity=json.loads(Path(sys.argv[1]).with_name('identity.json').read_text());candidate=identity['candidate_sha'];assert ci['revision']==ci['headSha']==candidate and ci['conclusion']=='success';assert ci['url'].startswith('https://github.com/niq-cnr/nizam-framework/actions/runs/') and ci['timestamp']
+print('Pinned CI job and independently captured successful candidate run verified')
+PY
+HEAD: bfd475ff670e582cbbfc8f3187ae988dcf3c8baa
+Pinned CI job and independently captured successful candidate run verified
+
+EXIT:0

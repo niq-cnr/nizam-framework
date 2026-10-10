@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:review_suppression.schema.json",
+  "title": "Nizam Convergent Review Suppression",
+  "description": "Closed human authorization record for suppressing one deterministic finding fingerprint while retaining provenance.",
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "not": {
+        "const": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 512,
+      "pattern": "^(?=.+/.+)(?![A-Za-z]:[\\\\/])(?![\\\\/])(?!.*\\\\)(?!\\.{1,2}(?:/|$))(?!.*//)(?!.*\\/\\.{1,2}(?:/|$))(?!.*[\\u0000-\\u001F\\u007F-\\u009F]).+$"
+    }
+  },
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "fingerprint": {
+      "$ref": "#/$defs/digest"
+    },
+    "authorized_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "authorization_ref": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1024
+    },
+    "authorized_at": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    }
+  },
+  "required": [
+    "schema_version",
+    "repository",
+    "fingerprint",
+    "authorized_by",
+    "authorization_ref",
+    "authorized_at",
+    "reason"
+  ],
+  "additionalProperties": false
+}

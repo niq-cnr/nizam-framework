@@ -1,0 +1,29 @@
+COMMAND: python3 - <<'PY'
+import json
+from pathlib import Path
+c=json.loads(Path('.agent/contracts/self-commission-v1.5.0.json').read_text())
+q=json.loads(Path('.agent/qa/self-commission-v1.5.0.json').read_text())
+assert q['final_verdict']['approved'] and q['qa_pass']
+assert all(q[k]==[] for k in ['issues','missing_acceptance_coverage','unsupported_claims'])
+assert q['checks_run']==q['checks_passed']==len(c['verification'])==9
+for v,check in zip(c['verification'],q['checks']):
+ assert check['command']==v['command'] and check['acceptance_test']==v['acceptance_test'] and check['exit_code']==0
+ p=Path(check['evidence']);s=p.read_text()
+ assert s.startswith('COMMAND: '+v['command']+'\n') and s.rstrip().endswith('EXIT:0'),str(p)
+ assert str(p) in q['evidence_files']
+ print('PASS',p)
+for p in q['evidence_files']:assert Path(p).is_file(),p
+print('EVIDENCE GATE PASS: all nine required commands, results and actual exit statuses are captured and referenced')
+PY
+PASS .agent/evidence/self-commission-v1.5.0/01-bootstrap.txt
+PASS .agent/evidence/self-commission-v1.5.0/02-drift.txt
+PASS .agent/evidence/self-commission-v1.5.0/03-drift-negatives.txt
+PASS .agent/evidence/self-commission-v1.5.0/04-payload.txt
+PASS .agent/evidence/self-commission-v1.5.0/05-source-compliance.txt
+PASS .agent/evidence/self-commission-v1.5.0/06-ci.txt
+PASS .agent/evidence/self-commission-v1.5.0/07-scope-and-routing.txt
+PASS .agent/evidence/self-commission-v1.5.0/08-preflight.txt
+PASS .agent/evidence/self-commission-v1.5.0/10-artifacts-and-closeout.txt
+EVIDENCE GATE PASS: all nine required commands, results and actual exit statuses are captured and referenced
+
+EXIT:0

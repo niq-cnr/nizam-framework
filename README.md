@@ -11,8 +11,8 @@ find exactly the rule it needs, without reading everything.
 
 **Humans start here:** read this README, then the full [HTML user guide](docs/guide/index.html)
 for a walkthrough of every design decision, the bootstrap flow, and the execution loop.
-**Agents:** load `tools/SKILL.md` (discovered via the root `NIZAM.json` capability index)
-as your instructions payload — do not bulk-read the governance directories.
+**Agents working on this repository:** start with [AGENTS.md](AGENTS.md), then query
+`.nizam/NIZAM.json` and load `.nizam/tools/SKILL.md` from the installed release.
 
 General Availability declared by the operator on 2026-10-10. See the [GA decision](docs/planning/operator_gates.md) for the operator record and explicit evidence exceptions.
 
@@ -48,6 +48,15 @@ and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 `tools/validate.sh` (the same repo-local compliance check that
 `.github/workflows/compliance.yml` runs in CI, and that its rationale is recorded in the
 `docs/architecture/` ADRs) to confirm a bootstrapped target stays compliant.
+
+## Local governance
+
+This repository has installed its public `v1.5.0` governance under `.nizam/`.
+Commissioning passed at assessed source candidate `bfd475f`: actual successful
+CI, clean installed preflight/baseline and independent QA are recorded.
+The [self-governance record](docs/planning/SELF_GOVERNANCE.md) records the exact pin,
+operator authorization and current stage. Root framework modules remain the
+authored product; local agent work follows the installed governance.
 
 ## Design Decisions
 

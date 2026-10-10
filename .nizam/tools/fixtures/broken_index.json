@@ -1,0 +1,33 @@
+{
+  "_fixture_notice": "INTENTIONAL NEGATIVE FIXTURE - broken indexed path, used only via tools/validate.sh --target",
+  "framework": {
+    "name": "nizam-framework-fixture",
+    "version": "0.1.0",
+    "description": "Minimal schema-valid index fixture with one indexed path that does not resolve on disk, used only via tools/validate.sh --target."
+  },
+  "modules": [
+    {
+      "path": "standard",
+      "purpose": "Fixture module entry, structurally valid.",
+      "key_documents": ["standard/NDS.md"]
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "fixture-broken-path-capability",
+      "summary": "Intentional negative fixture capability whose authoritative_source does not exist on disk.",
+      "authoritative_source": "tools/fixtures/does-not-exist.md"
+    }
+  ],
+  "schemas": ["schema/frontmatter.schema.json"],
+  "templates": ["templates/README.md"],
+  "consumption_guidance": "Fixture-only index; not a real consumption guide.",
+  "index_schema": {
+    "path": "registry/nizam-index.schema.json",
+    "description": "Fixture self-reference to the real index schema."
+  },
+  "self_reference": {
+    "path": "tools/fixtures/broken_index.json",
+    "description": "This fixture file."
+  }
+}
