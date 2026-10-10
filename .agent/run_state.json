@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-10T17:35:27Z",
+  "updated_at": "2026-10-10T17:56:56Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2108,6 +2108,18 @@
       "event": "contract_revision",
       "contract_id": "release-v1.5.0-closeout",
       "detail": "Post-release editorial refresh draft attempt2/3: initial temporary proposal had literal newline quoting defect in verification[2], corrected before canonical proposal; Validator reviewed corrected syntax and scope. No historical source/tests/dossier or payload changes authorized."
+    },
+    {
+      "at": "2026-10-10T17:56:56Z",
+      "event": "operator_gate_decision",
+      "gate": "H-CONSUMER-UPGRADE",
+      "decision": "authorized",
+      "consumer_repo": "niq-cnr/nizam-framework",
+      "framework_repo": "niq-cnr/nizam-framework",
+      "tag": "v1.5.0",
+      "expected_sha": "f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852",
+      "verbatim": "This the niq-cnr/nizam-framework project must itself install and comission v1.5.0 of the nizam-framework itself.",
+      "detail": "Operator explicitly authorizes this framework repository to install its published v1.5.0 payload under .nizam and commission local agent entrypoints, provenance/drift checks and CI. This is local self-governance scope, not an external organization membership change. Authored framework payload sources, historical phase014 artifacts and immutable release tag remain unchanged. The decision is recorded and committed before actual bootstrap/commission execution."
     }
   ],
   "phase_001_scope_budget_final": {
