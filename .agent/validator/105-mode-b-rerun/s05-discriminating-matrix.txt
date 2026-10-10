@@ -1,0 +1,20 @@
+python3 - <<'PY'
+PASS control: unmutated tree passes with 146/146 and the four OK lines
+PASS any depth: a dotfile 6 path components deep (4 directories below the claimed subdirectory) is counted (147/147)
+PASS any depth: an unclaimed subdirectory whose only file is 6 path components deep is named and its file counted
+PASS top-level behaviour kept: an unlisted top-level file fails through its row set, not the claim map
+PASS exact-name claim: convergent_review_x/ is not covered by the convergent_review claim
+PASS an EMPTY unclaimed subdirectory fails (the check enumerates directories, not only files)
+PASS the map is CONSULTED: deleting the real claim row makes the real subdirectory unclaimed
+PASS a claim naming a missing suite file fails (and is not also reported unclaimed)
+PASS a doubly-claimed subdirectory fails even when both suites exist
+PASS a claim naming a subdirectory that is not on disk fails
+PASS a malformed claim row fails
+PASS demonstrations are real: a claim_map_check that always passes cannot print the OK lines
+PASS demonstrations are real: a claim_map_check that always fails cannot print the OK lines (the positive control is load-bearing)
+PASS ablation: disabling only the unclaimed subdirectory detection line removes only its own OK line (the label tests its own mode)
+PASS ablation: disabling only the doubly-claimed subdirectory detection line removes only its own OK line (the label tests its own mode)
+PASS ablation: disabling only the claim naming a missing suite detection line removes only its own OK line (the label tests its own mode)
+PASS ablation: disabling only the claim naming an absent subdirectory detection line removes only its own OK line (the label tests its own mode)
+cases: 17 problems: []
+EXIT:0

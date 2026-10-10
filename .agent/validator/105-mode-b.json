@@ -1,0 +1,75 @@
+{
+  "review": "105-mode-b",
+  "feature": "105",
+  "contract_id": "105",
+  "mode": "B",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "[STATE: Phase 014 | STEP: VALIDATION | DEPS: OK] Mode B round 2 on promoted commit d0b387a (branch phase/014-105-nested-fixture-ownership). Contract /home/cnross/workspace02/nizam-framework/.agent/contracts/105.json status=approved.",
+    "MB-1 RESOLVED (obligation c): /home/cnross/workspace02/nizam-framework/.agent/validator/105-mode-b-rerun/s05-discriminating-matrix.txt line 1 'python3 - <<'PY'' (= first line of contract verification[8].command), 17 PASS case lines 2-18 naming every case (control, two any-depth, top-level, exact-name, empty-subdir, map-consulted, missing-suite, doubly, absent-subdir, malformed, always-pass, always-fail, four ablations), line 19 'cases: 17 problems: []', line 20 'EXIT:0'. Line-for-line identical to the Generator's .agent/evidence/105/s05-discriminating-matrix.txt.",
+    "MB-1 RESOLVED (obligation c): /home/cnross/workspace02/nizam-framework/.agent/validator/105-mode-b-rerun/s06-containment.txt line 1 'python3 - <<'PY'' (= first line of contract verification[9].command), line 2 'static ok: True problems: []', line 3 'EXIT:0'; identical to the Generator's s06 capture. The verbatim S06 command prints no separate dynamic A/B/C lines; each dynamic failure appends to the problems list (source=.agent/contracts/105.json verification[9].command), so 'problems: []' with EXIT:0 is the machine evidence that dynamic A, B and C all held.",
+    "Promotion fidelity: git diff cc8c4e5 d0b387a is empty (0 lines); both commits have parent 8f91d12abc4ca1af068785f7810b314b6e7a59ed (<B>); git show --stat identical (19 files, 243 insertions, 15 deletions). Every round-1 observation made on cc8c4e5 therefore holds on d0b387a byte-for-byte.",
+    "B1/B3 (git diff --name-status 8f91d12 d0b387a): exactly 15 added .agent/evidence/105/* files (= scope.files_create) plus 4 modified files (= scope.files_modify: tools/fixtures_self_test.sh, tools/README.md, CHANGELOG.md, docs/planning/phase_014.yaml). No path under tools/fixtures/, tools/skill.json, DEBT.md, NIPs, spec, feature list or .github/.",
+    "B2: headers 'claim_map_check() {' and '_claim_map_case() (' exact; FIXTURE_CLAIMS holds the single pinned row; runtime_session appears only as the pinned slot comment line; each of the four detection lines carries its fragment and bad=1 (detection_line_rule).",
+    "Prefix invariance: the first hunk of tools/fixtures_self_test.sh begins after the unchanged separator line at line 934 of <B>; all changes are confined to the claim-map block and the rewritten completeness guard. No fixture-count literal in the new code.",
+    "Obligation (d): the four 'OK   claim-map   <label> -> FAIL' lines are emitted only inside the unmodified 'if _claim_map_case \"${_case%%|*}\"; then' loop; the AT3 capture shows all four printed in the real run.",
+    "Pinned texts: README paragraph appended as the last paragraph of '### Fixture self-test', version 0.13.0 -> 0.14.0 with a head change_log entry whose summary equals the pinned summary; the CHANGELOG bullet equals pinned_texts.changelog_bullet, after the feature-104 bullet and before [1.4.0].",
+    "Obligation (a): docs/planning/phase_014.yaml step 105 gains exactly docs_updated, changelog_entry and evidence with the pinned values; status is AWAITING_IMPLEMENTATION (not BLOCKED; not COMPLETED, so the COMPLETED preconditions do not yet apply).",
+    "Obligation (b): all 15 Generator evidence files have the invocation on line 1 and 'EXIT:0' on the last line. attempt-base.txt is the three-line form with sha 8f91d12...; AT1-AT5 and S01-S09 all report EXIT:0 and 'problems: []' where applicable; S09 reports 16/16 against baseline 16.",
+    "B5/B6/B7/B8: no new tools or imports beyond bash builtins plus find, sed, sort and comm, which the script already used; the only new functions are claim_map_check and _claim_map_case (both pinned); no TODO, skip or placeholder in the diff; the implementation is complete.",
+    "Shared-tree state: git diff HEAD shows only .agent/run_state.json (Orchestrator-owned, allowlisted in S03 'owned'); its new history entry records the cherry-pick and the serial S05/S06 rerun. Untracked .agent/validator/105-mode-b-rerun/* falls under the S03 allowlist prefix '.agent/validator/105'.",
+    "Residual limitation (non-blocking, accepted under round-1 required_fix option 2): the validator role cannot run S05/S06 itself, and the rerun captures' provenance (fresh run on the promoted tree rather than a copy) rests on the Orchestrator's attestation in run_state. Identical content is expected because both runs are deterministic; the captures satisfy the shape and content criteria set for this resolution.",
+    "Risk level: medium (several files; a framework-internal self-test; no public API or consumer contract change; PATCH)."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "105",
+    "summary": "Mode B round 2 APPROVED. MB-1 (obligation c) is resolved: the Orchestrator's serial reruns on promoted commit d0b387a have the required shape (line 1 = the contract's first command line, last line EXIT:0) and report S05 'cases: 17 problems: []' with all 17 cases listed and S06 'static ok: True problems: []' (dynamic A/B/C encoded in the empty problems list). Both match the Generator's captures. d0b387a is a tree-identical cherry-pick of cc8c4e5 on <B> 8f91d12, so all round-1 results hold: B1-B8 pass; scope is exactly 15 files_create plus 4 files_modify; prefix invariance, pinned interfaces, pinned texts and evidence shape hold; the phase-yaml step 105 status is not BLOCKED; the OK lines come from the unmodified if-_claim_map_case loop. Zero issues, zero missing coverage, zero unsupported claims."
+  },
+  "prior_rounds": [
+    {
+      "review": "105-mode-b",
+      "feature": "105",
+      "contract_id": "105",
+      "mode": "B",
+      "revision_reviewed": 2,
+      "risk_level": "medium",
+      "issues": [
+        {
+          "id": "MB-1",
+          "severity": "blocker",
+          "classification": "process/authorization gap, not a Generator DEFECT. No implementation change is required and this should not count as a 105-implementation attempt.",
+          "location": ".agent/contracts/105.json design_notes.mode_b_obligations item (c)",
+          "source_evidence": "source=.agent/contracts/105.json section=design_notes.mode_b_obligations line=167 ('(c) by re-running S05 and S06 on the promoted tree, serially, that the discriminating matrix and the containment proof still hold'); source=.agent/contracts/105.json section=orchestrator_sequence[2] line=158 ('cherry-pick, remove the root, run Mode B on the promoted diff')",
+          "issue": "Mode B obligation (c) could not be machine-checked in this invocation. S05 and S06 need python3, scratch_run.py and bash tools/fixtures_self_test.sh, but this invocation only allows git diff/show/log/status plus Read, and the validator protocol forbids any other bash command. The tree under review is also the unpromoted detached attempt root (cc8c4e5). It is not the promoted tree on phase/014-105-nested-fixture-ownership that obligation (c) and orchestrator_sequence step 3 name. The only S05/S06 results available are the Generator's own captures (s05-discriminating-matrix.txt with 17/17 PASS, s06-containment.txt with problems: []). The task says to verify those and not trust them, and the contract requires an independent re-run.",
+          "why_this_fails": "A contract obligation assigned specifically to Mode B is unmet. Approving on the Generator's self-reported captures would be approval by trust, not by evidence.",
+          "required_fix": "Orchestrator: cherry-pick cc8c4e5 onto phase/014-105-nested-fixture-ownership as the contract requires. Then either (1) re-invoke Mode B with authority to run S05 and then S06, verbatim from the contract, one at a time in the foreground on the promoted tree, or (2) run them that way yourself, capture them in the 04 Section 5 shape to Orchestrator- or QA-owned paths, and invoke a delta Mode B to check those captures against the promoted diff. Do not edit the Generator's files."
+        }
+      ],
+      "missing_acceptance_coverage": [],
+      "unsupported_claims": [],
+      "observations": [
+        "The attempt commit's parent is B. `git log --format='%H %P'` gives cc8c4e5024c146830c230665582544e68c767db7 with parent 8f91d12abc4ca1af068785f7810b314b6e7a59ed. The worktree is detached and clean.",
+        "B1/B3 (scope) pass. `git diff --stat B cc8c4e5` lists 19 files: the 4 files in files_modify (tools/fixtures_self_test.sh, tools/README.md, CHANGELOG.md, docs/planning/phase_014.yaml) and exactly the 15 Generator evidence files in files_create. Nothing else changed.",
+        "No protected path changed. `git diff --stat A cc8c4e5` over tools/fixtures, tools/skill.json, tools/validate.sh, tools/verify_lib.sh, tools/test_convergent_review.py, .github, schema, standard, docs/nips, DEBT.md, run_state, feature_list_014, product_spec_014 and the contract shows only the contract and run_state, and both of those changes come from B (`git diff --stat A B`). The attempt commit does not touch them.",
+        "B2 (interfaces) passes. FIXTURE_CLAIMS has exactly the one row `convergent_review|tools/test_convergent_review.py`. The runtime_session slot is a comment only (lines 940-942). Both pinned function headers are present: `claim_map_check() {` and the subshell form `_claim_map_case() (`. Each of the four detection lines holds its own message fragment and its own bad=1, and the four messages follow the pinned grammar. The code from the COMPLETENESS GUARD separator onward matches the contract's reference_implementation text.",
+        "Prefix invariance holds. The script has only two diff hunks, both at or after line 932 (the separator). Everything before the separator is unchanged from A.",
+        "Pinned texts are exact. The README paragraph, the README 0.14.0 change_log summary (dated 2026-10-09, version 0.13.0 -> 0.14.0), the CHANGELOG bullet (the last [Unreleased] ### Changed bullet, after the feature-104 bullet and before [1.4.0]) and the phase_014.yaml values (docs_updated, the quoted changelog_entry, evidence) all match pinned_texts.",
+        "Obligation (a) passes. Step 105 in phase_014.yaml gained only docs_updated, changelog_entry and evidence. Its status stays AWAITING_IMPLEMENTATION, the Orchestrator's value from B; it is not BLOCKED and not COMPLETED.",
+        "Obligation (b) passes. All 15 evidence files have the invocation on line 1 (the first line of the command for heredocs) and EXIT:0 as the last line. attempt-base.txt is the three-line form and records B. The outputs agree with exit 0 (scratch_run 'EXPECTATIONS HELD'; the S-checks print 'problems: []'). One thing cannot be checked statically: that each exit code was read from the process. The Generator's capture helper is outside the worktree and was not reviewed.",
+        "Obligation (d) passes. A `git grep` of tools/fixtures_self_test.sh finds `OK   claim-map` only at line 1007, inside `if _claim_map_case \"${_case%%|*}\"; then`. There is no literal echo of an OK line anywhere else.",
+        "B5/B6/B7/B8 pass. No new dependency or import. No functions beyond the contracted claim_map_check and _claim_map_case. No skipped tests, no TODO or future-work text, no stubs.",
+        "Hand review found nothing that weakens enforcement. The script runs `set -uo pipefail` without -e, so `grep -c .` returning 1 on empty input is harmless. Pass or fail is decided only by the `fail` flag; the accounted/total figures are reporting only. A malformed or doubly-claimed real row sets fail through claim_map_check even though claimed_dir is filled from the same array. _claim_map_case runs a positive control first, needs rc 1 with exactly one output line containing the expected text, and fails closed if scratch_dirs fails. Its writes all go under ${d} inside a subshell, so the scratch EXIT trap cannot leak into the main shell. claim_map_check has no write verbs or redirections that touch files.",
+        "Concurrency: by the Generator's own report the captures were serial and in contract order. AT3's output shows the C13 substitution probe and no stray failure. Mode B did not run validate.sh or the self-test, so it added no race.",
+        "Deviation from orchestrator_sequence step 3: this Mode B was invoked on the unpromoted attempt root, not on the cherry-picked branch tip. The content is the same (parent == B) but the step order is not."
+      ],
+      "final_verdict": {
+        "approved": false,
+        "feature": "105",
+        "summary": "REJECTED on one blocker. The attempt commit cc8c4e5 checks out on everything this invocation's git and Read authority could check: its parent is B, it changes exactly the 19 contracted files, interfaces and pinned texts are exact, the code before the separator is unchanged, the step-105 status is unchanged, the evidence files have the required shape, and the OK lines come from the if _claim_map_case loop. Contract obligation (c) is unmet: Mode B must re-run S05 and S06 serially on the promoted tree, and this invocation could not run them (git and Read only) and was pointed at the unpromoted attempt root. This is a process and authorization gap, not a Generator defect, and the implementation needs no change. Orchestrator fix: promote the commit, then have S05 and S06 re-run serially on the promoted tree and checked in a delta Mode B, either by granting Mode B authority to run them or by supplying captures in the Section 5 shape."
+      }
+    }
+  ]
+}

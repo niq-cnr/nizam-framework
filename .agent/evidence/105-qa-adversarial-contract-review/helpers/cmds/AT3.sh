@@ -1,0 +1,1 @@
+python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --write tools/fixtures/zz_unclaimed_probe/probe.json '{}' --expect-rc 1 --expect 'zz_unclaimed_probe' --expect '^SELF-TEST FAILED' -- bash tools/fixtures_self_test.sh

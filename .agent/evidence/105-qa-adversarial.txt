@@ -1,0 +1,12 @@
+python3 .agent/evidence/105-qa-adversarial-helpers/special_name_probe.py
+positive control: unmodified copy        rc=0 last='SELF-TEST OK: 146/146 fixtures accounted for, 0 failed' PASS
+control: ordinary name                   name='zz_unclaimed_probe' rc=1 SELF-TEST FAILED=True flagged-unclaimed=True name-reported=True -> GUARD HELD
+hidden directory                         name='.zz_hidden' rc=1 SELF-TEST FAILED=True flagged-unclaimed=True name-reported=True -> GUARD HELD
+name with a space                        name='zz probe dir' rc=1 SELF-TEST FAILED=True flagged-unclaimed=True name-reported=True -> GUARD HELD
+leading dash                             name='-zz' rc=1 SELF-TEST FAILED=True flagged-unclaimed=True name-reported=True -> GUARD HELD
+glob star                                name='*' rc=1 SELF-TEST FAILED=True flagged-unclaimed=True name-reported=True -> GUARD HELD
+subscript at-sign                        name='@' rc=1 SELF-TEST FAILED=True flagged-unclaimed=True name-reported=True -> GUARD HELD
+subscript at-sign inside brackets        name='a]b' rc=1 SELF-TEST FAILED=True flagged-unclaimed=True name-reported=True -> GUARD HELD
+arithmetic-looking                       name='$(echo hi)' rc=1 SELF-TEST FAILED=True flagged-unclaimed=True name-reported=True -> GUARD HELD
+problems: []
+EXIT:0

@@ -6,11 +6,14 @@ tags: [spec, ecosystem-cycle, ga, pilot, maintenance, phase-014]
 status: active
 last_audited: "2026-10-09"
 authoritative_source: NA
-version: 1.1.5
-spec_version: "1.1.5"
+version: 1.1.6
+spec_version: "1.1.6"
 created_at: "2026-09-30T10:24:00Z"
-updated_at: "2026-10-09T18:22:14Z"
+updated_at: "2026-10-09T22:45:42Z"
 change_log:
+  - version: "1.1.6"
+    date: "2026-10-09T22:45:42Z"
+    summary: "PATCH (no feature, acceptance-test, dependency, design, estimate or budget change; one measurement-rule path pattern). ORCHESTRATOR-REPORTED OPERATIONAL FIX, NOT AN OPERATOR DECISION: the Orchestrator recorded in .agent/run_state.json (scope_budget.per_feature 105 note; feature_complete 2026-10-09T22:36:25Z) that measure.py failed closed (exit 3) on feature 105 because the 1.1.4 rule classes only *.json under .agent/validator/ (row 4), leaving its two Mode B obligation-(c) re-run captures (.agent/validator/105-mode-b-rerun/s05-discriminating-matrix.txt and s06-containment.txt, 23 lines) unclassified; the Orchestrator counted them as evidence and disclosed it. Applied: new row 4a in 'The counting rule': every file at any depth under .agent/validator/ whose name does not end in .json is evidence (evidence total, never gated); a .json file in a subdirectory of .agent/validator/ still matches no rule and stays unclassified (fail closed); .agent/qa/ is unchanged. .agent/evidence/scope-budget-014/measure.py gains the same rule. No operator gate is needed: the change moves only lines that were previously UNCLASSIFIED (in neither total) into the evidence total, which the operator's option-1 decision (2026-10-09T17:42:10Z) already defines as raw evidence captures tracked separately and never gated, so it neither adds nor removes a budget-counted line, changes no threshold, estimate or ceiling, and cannot reclassify a verdict (verdicts are JSON; row 4 is untouched); it is the same kind of Planner extension as rows 5 and 8. Re-measured: measure.py --range 105=2a53764.. -> BUDGET_COUNTED_LINES=907 (unchanged), UNCLASSIFIED_LINES=0, EXIT:0 (.agent/evidence/scope-budget-014/measure-105.txt, taken before the 1.1.6 planning edits, so the range holds only 105's lines plus evidence); the 099/103 replay is byte-identical to measure-099-103.txt; no non-JSON path under .agent/validator/ or .agent/qa/ exists in any earlier commit (git log --all), so no recorded figure moves. feature_list_014 spec_version moves to 1.1.6 in lockstep. The run_state scope_budget.counting_rule copy (spec_ref 1.1.4, verdict = *.json only) is Orchestrator-owned and is not edited here."
   - version: "1.1.5"
     date: "2026-10-09T18:22:14Z"
     summary: "PATCH (no scope, feature, dependency or design change; a factual correction of one acceptance-test literal, the product_spec_013 1.1.2 / 014 1.0.1 / 1.1.3 precedent): AMENDMENT A2 to feature 104 AT5, routed through the Planner per methodology/00_planning.md Section 9 under the operator decision recorded in .agent/run_state.json as operator_gate_decision at 2026-10-09T18:19:35Z, before this change (NDEBT-018). Operator verbatim: 'B. Amend AT5'. Cause: contract 104 rev 0 (branch_name_resolution) found AT5 unsatisfiable. AT5 asserted R['headBranch']=='phase/014-ga-track', but compliance.yml triggers only on pull_request and on push to main, and origin/phase/014-ga-track is c061b31, the stale head of merged PR #65 and not an ancestor of the feature lineage; satisfying it would have needed a force-push over that ref (option A, not chosen). Applied: in 104 AT5 the single literal 'phase/014-ga-track' becomes 'phase/014-104-sandbox-ci' (the feature branch); every other character of AT5, and every other acceptance test, is byte-identical. 104's description and this spec's 104 bullet name the feature branch; 104's acceptance_provenance gains operator_approved_amendment_1_1_5 [5] and the provenance section lists it. AT5's ancestry clause (git merge-base --is-ancestor headSha HEAD) is a completion-time gate: it holds on the feature branch at completion, but main squash-merges, so it is not expected to hold if replayed on main (as 103's pinned range end 1c06720 is not an ancestor of main); no later phase-014 acceptance test replays 104's evidence. A2's planning lines fall in 104's range (104's own contract review caused it, the A1-in-103 precedent); estimates unchanged. Decision 2 is not part of this amendment; the operator authorized the negative-control acts separately (run_state operator_gate_decision 2026-10-09T18:20:09Z and 18:20:44Z), executed by the Orchestrator only. feature_list_014 spec_version moves to 1.1.5 in lockstep."
@@ -378,6 +381,7 @@ rule wins:
 | 2 | `.agent/evidence/**`, including verification helpers | evidence | evidence total |
 | 3 | `.agent/contracts/**` | contract | budget |
 | 4 | `.agent/qa/*.json`, `.agent/validator/*.json` | verdict | budget |
+| 4a | any other file under `.agent/validator/` whose name does not end in `.json`, at any depth (spec 1.1.6) | evidence (Orchestrator-reported fix) | evidence total |
 | 5 | `.agent/audits/**` | audit deliverable (Planner extension) | budget |
 | 6 | `.agent/product_spec*.md`, `.agent/feature_list*.json`, `docs/planning/**`, `AGENTS.md`, `DEBT.md` | planning | budget |
 | 7 | `tools/`, `ecosystem/`, `standard/`, `methodology/`, `schema/`, `templates/`, `docs/guide/`, `NIZAM.json`, `CHANGELOG.md` | product | budget |
@@ -396,6 +400,17 @@ rule wins:
     `.github/workflows/compliance.yml`, and 107 edits `docs/nips/`.
   - row 5 holds 101's deliverable. That deliverable is the review under
     `.agent/audits/<id>/` (`ecosystem/06` Section 6), not a raw capture.
+- **Row 4a (spec 1.1.6, an Orchestrator-reported fix).** Feature 105's Mode B
+  obligation (c) put two raw captures under `.agent/validator/105-mode-b-rerun/`
+  (`.txt`, 23 lines). Row 4 matched only `*.json`, so `measure.py` failed closed.
+  Row 4a classes such non-JSON files as evidence, because they are raw captures in
+  the `04` §5 shape and verdicts are JSON. It is disjoint from row 4, so their order
+  does not matter. A `.json` file in a subdirectory of `.agent/validator/` still
+  matches no rule and fails closed. `.agent/qa/` is unchanged. The row only moves
+  previously unclassified lines into the never-gated evidence total, so no
+  budget-counted line, threshold or estimate changes, and no operator gate is
+  needed. With it, 105 measures 907 budget-counted and 0 unclassified
+  (`.agent/evidence/scope-budget-014/measure-105.txt`).
 - **Consequence for 100 and 102.** The rule is by path. 100's pilot record
   (`.agent/evidence/pilot-100/`) and 102's dossier (`.agent/evidence/102/ga-readiness.json`)
   are therefore in the evidence total. The budget does not bound them.

@@ -1,0 +1,1 @@
+python3 -c "s=open('tools/README.md').read().split('### Fixture self-test')[1].split('\n## ')[0].split('\n### ')[0]; assert 'claim map' in s, 'Fixture self-test section does not describe the claim map'"

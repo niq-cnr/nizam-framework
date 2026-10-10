@@ -1,0 +1,47 @@
+bash .agent/evidence/105-qa-adversarial-contract-review/helpers/02-base-states.sh
+### AT1 rc=1 (23.7s)
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+    AssertionError: (0, ('79', '79'), 146)
+### AT2 rc=1 (23.7s)
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+    AssertionError: ['OK   claim-map   unclaimed subdirectory -> FAIL', 'OK   claim-map   doubly-claimed subdirectory -> FAIL', 'OK   claim-map   claim naming a missing suite -> FAIL']
+### AT3 rc=1 (24.0s)
+    FAIL output matches 'zz_unclaimed_probe'
+    FAIL output matches '^SELF-TEST FAILED'
+    scratch_run: EXPECTATION FAILED; scratch removed: True
+### AT4 rc=1 (0.1s)
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+    AssertionError: Fixture self-test section does not describe the claim map
+### AT5 rc=0 (10.5s)
+    PASS G4 no [Cn] FAIL line
+    PASS G5 every baseline-passing check still passes
+    GATE: PASS (16 checks passing; baseline 16)
+### S01 rc=0 (0.1s)
+    verification: 14 acceptance tests: 5 supplementary: 9 files_create: 15 files_modify: 4 problems: []
+### S02 rc=1 (0.1s)
+    Traceback (most recent call last):
+      File "<stdin>", line 7, in <module>
+    FileNotFoundError: [Errno 2] No such file or directory: '.agent/evidence/105/attempt-base.txt'
+### S03 rc=1 (0.1s)
+    changed: 1 problems: ["files_modify paths not changed (non-vacuity): ['CHANGELOG.md', 'docs/planning/phase_014.yaml', 'tools/README.md', 'tools/fixtures_self_test.sh']"]
+### S04 rc=1 (0.1s)
+      File "/usr/lib/python3.12/subprocess.py", line 571, in run
+        raise CalledProcessError(retcode, process.args,
+    subprocess.CalledProcessError: Command '('git', 'grep', '-l', '--untracked', '-e', 'FIXTURE_CLAIMS', '--', '.', ':!.agent')' returned non-zero exit status 1.
+### S05 rc=1 (51.6s)
+    FAIL ablation: disabling only the claim naming an absent subdirectory detection line removes only its own OK line (the label tests its own mode) (scratch_run exit 3)
+        scratch_run: MUTATION PRECONDITION FAILED: --py-mutate raised AssertionError: 
+    cases: 17 problems: ['control: unmutated tree passes with 146/146 and the four OK lines', 'any depth: a dotfile 6 path components deep (4 directories below the claimed subdirectory) is counted (147/147)', 'any depth: an unclaimed subdirectory whose only file is 6 path components deep is named and it
+### S06 rc=1 (0.0s)
+    problems: ["_claim_map_case does not exist"]
+### S07 rc=1 (0.0s)
+    problems: ['version 0.13.0 -> 0.13.0, expected 0.13.0 -> 0.14.0', 'change_log head entry', 'older change_log entries altered', 'the pinned paragraph does not occur exactly once, inside the Fixture self-test section', 'AT4 predicate is not discriminating (false at base, true after)']
+### S08 rc=1 (0.1s)
+    problems: ['CHANGELOG: the pinned bullet does not occur exactly once', 'CHANGELOG: bullet not inside [Unreleased]', 'phase yaml: step 105 values differ from the pinned values']
+### S09 rc=0 (21.0s)
+    validate.sh summary: [('16', '0')] PASS lines: 16 baseline: 16 payload gate rc: 0 problems: []
+SUMMARY: AT1=1 AT2=1 AT3=1 AT4=1 AT5=0 S01=0 S02=1 S03=1 S04=1 S05=1 S06=1 S07=1 S08=1 S09=0
+EXIT:1

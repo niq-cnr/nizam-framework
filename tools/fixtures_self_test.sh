@@ -932,31 +932,131 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# COMPLETENESS GUARD: every file under tools/fixtures/ must be accounted for
-# by exactly one row above; an unlisted fixture (a newly-added dormant
-# negative) or a manifest row naming an absent fixture is a FAIL.
+# FIXTURE-SUBDIRECTORY CLAIM MAP (NDEBT-042, phase-014 feature 105; the design
+# is NIP-0003 feature 109's, pulled forward -- there is no second registry).
+# Every subdirectory of tools/fixtures/ is claimed by exactly one owning suite:
+# one "<subdirectory>|<suite file>" row. A claim proves OWNERSHIP, not
+# execution: that the owning suite runs is proven by its own CI job.
+# NIP-0003's runtime_session fixtures register their row here, in the same
+# change that creates that subdirectory, as:
+#   "runtime_session|tools/test_runtime_session.py"
+# ---------------------------------------------------------------------------
+FIXTURE_CLAIMS=(
+  "convergent_review|tools/test_convergent_review.py"
+)
+
+# claim_map_check <fixtures-root> <repo-root> <claim-row>...
+#
+# Prints one "FAIL claim-map: ..." line per violation and returns 1 if there
+# was any (0 otherwise). Violations: a malformed row; a subdirectory under
+# <fixtures-root> claimed by no row; one claimed by two or more rows; a row
+# naming a suite file that is not a regular file under <repo-root>; a row
+# naming a subdirectory that is not on disk. Pure read: it writes nothing.
+claim_map_check() {
+  local fixtures_root="$1" repo_root="$2" row key suite entry bad=0
+  shift 2
+  local -A claim_count=()
+  for row in "$@"; do
+    key="${row%%|*}"; suite="${row#*|}"
+    if [[ "${row}" != *"|"* || -z "${key}" || -z "${suite}" || "${key}" == */* ]]; then
+      echo "FAIL claim-map: malformed claim row: ${row}"; bad=1; continue
+    fi
+    claim_count["${key}"]=$(( ${claim_count["${key}"]:-0} + 1 ))
+    [ -f "${repo_root}/${suite}" ] || { echo "FAIL claim-map: claim for ${key} names a suite file that does not exist: ${suite}"; bad=1; }
+    [ -d "${fixtures_root}/${key}" ] || { echo "FAIL claim-map: claim names a subdirectory that is not on disk: ${key}"; bad=1; }
+  done
+  for key in "${!claim_count[@]}"; do
+    [ "${claim_count[${key}]}" -le 1 ] || { echo "FAIL claim-map: doubly-claimed subdirectory: ${key}"; bad=1; }
+  done
+  while IFS= read -r entry; do
+    [ -n "${claim_count["${entry}"]:-}" ] || { echo "FAIL claim-map: unclaimed subdirectory: ${entry}"; bad=1; }
+  done < <(cd "${fixtures_root}" && find . -mindepth 1 -maxdepth 1 -type d | sed 's#^\./##' | LC_ALL=C sort)
+  return "${bad}"
+}
+
+# _claim_map_case <case>: builds a private scratch tree (never under the
+# repository: scratch_dirs refuses any path in or below it), proves that a
+# complete claim map PASSES there (the positive control: a check that always
+# fails would otherwise satisfy every negative), then breaks it in exactly one
+# way and requires claim_map_check to FAIL with exactly one line naming that
+# violation. Reads and writes only below ${d}.
+_claim_map_case() (
+  local case_name="$1" d out rc want
+  local -a rows=("owned|suites/a.py")
+  scratch_dirs d || return 1
+  mkdir -p "${d}/fixtures/owned" "${d}/suites" || return 1
+  : > "${d}/fixtures/owned/case.json"; : > "${d}/suites/a.py"; : > "${d}/suites/b.py"
+  out=$(claim_map_check "${d}/fixtures" "${d}" "${rows[@]}"); rc=$?
+  [ "${rc}" -eq 0 ] && [ -z "${out}" ] || { echo "  control: a complete claim map must pass (rc=${rc}): ${out}"; return 1; }
+  case "${case_name}" in
+    unclaimed)     mkdir "${d}/fixtures/zz_unclaimed"; want="unclaimed subdirectory: zz_unclaimed" ;;
+    doubly)        rows+=("owned|suites/b.py"); want="doubly-claimed subdirectory: owned" ;;
+    missing-suite) rows=("owned|suites/missing.py"); want="a suite file that does not exist: suites/missing.py" ;;
+    absent-subdir) rows+=("ghost|suites/a.py"); want="a subdirectory that is not on disk: ghost" ;;
+    *) return 1 ;;
+  esac
+  out=$(claim_map_check "${d}/fixtures" "${d}" "${rows[@]}"); rc=$?
+  [ "${rc}" -eq 1 ] && [ "$(printf '%s\n' "${out}" | wc -l)" -eq 1 ] && [[ "${out}" == *"${want}"* ]] \
+    || { echo "  ${case_name}: rc=${rc}: ${out}"; return 1; }
+)
+
+echo "== claim map demonstrations (guarded scratch area) =="
+for _case in "unclaimed|unclaimed subdirectory" "doubly|doubly-claimed subdirectory" \
+             "missing-suite|claim naming a missing suite" "absent-subdir|claim naming an absent subdirectory"; do
+  if _claim_map_case "${_case%%|*}"; then
+    echo "OK   claim-map   ${_case#*|} -> FAIL"
+  else
+    echo "FAIL claim-map   ${_case#*|}: the guard did not behave as claimed"
+    fail=1
+  fi
+done
+
+# ---------------------------------------------------------------------------
+# COMPLETENESS GUARD: every non-directory entry under tools/fixtures/, at ANY
+# depth, must be accounted for: a top-level file by exactly one row above, a
+# file below a subdirectory by that subdirectory's claim (FIXTURE_CLAIMS). An
+# unlisted top-level file, an unclaimed or doubly-claimed subdirectory, a row
+# naming an absent fixture or subdirectory, or a claim naming a missing suite
+# is a FAIL.
 # ---------------------------------------------------------------------------
 echo "== completeness guard =="
 ondisk=()
-# find (not `ls -1 -- *`): a glob skips dot-prefixed entries and, if a
-# subdirectory ever appears under tools/fixtures/, expands to that dir's
-# CONTENTS -- either would let a fixture escape the on-disk set and defeat the
-# guard's sole purpose (PR #31 review). -maxdepth 1 -type f lists only the
-# immediate regular files, dotfiles included; the leading './' is stripped so
-# the names match the bare basenames in COVERED. (No -printf: portable to
-# non-GNU find.)
+# find, not a glob: a glob skips dot-prefixed entries and expands a
+# subdirectory to its CONTENTS (PR #31 review). -mindepth 1 ! -type d lists
+# every file at every depth, dotfiles and symlinks included; the leading './'
+# is stripped so top-level names match the bare basenames in COVERED. (No
+# -printf: portable to non-GNU find.)
 while IFS= read -r f; do ondisk+=("${f}"); done \
-  < <(cd tools/fixtures && find . -maxdepth 1 -type f | sed 's#^\./##' | LC_ALL=C sort)
+  < <(cd tools/fixtures && find . -mindepth 1 ! -type d | sed 's#^\./##' | LC_ALL=C sort)
+
+claim_out=$(claim_map_check tools/fixtures "${REPO}" "${FIXTURE_CLAIMS[@]}") || {
+  printf '%s\n' "${claim_out}"
+  fail=1
+}
+declare -A claimed_dir=()
+for _row in "${FIXTURE_CLAIMS[@]}"; do claimed_dir["${_row%%|*}"]=1; done
+toplevel=(); nested_claimed=0; nested_unclaimed=()
+for f in "${ondisk[@]}"; do
+  case "${f}" in
+    */*) if [ -n "${claimed_dir["${f%%/*}"]:-}" ]; then nested_claimed=$((nested_claimed + 1)); else nested_unclaimed+=("${f}"); fi ;;
+    *)   toplevel+=("${f}") ;;
+  esac
+done
 covered_sorted=()
 while IFS= read -r f; do covered_sorted+=("${f}"); done \
   < <(printf '%s\n' "${COVERED[@]}" | LC_ALL=C sort -u)
 
-unaccounted=$(comm -23 <(printf '%s\n' "${ondisk[@]}") <(printf '%s\n' "${covered_sorted[@]}"))
-phantom=$(comm -13 <(printf '%s\n' "${ondisk[@]}") <(printf '%s\n' "${covered_sorted[@]}"))
+unaccounted=$(comm -23 <(printf '%s\n' "${toplevel[@]}") <(printf '%s\n' "${covered_sorted[@]}"))
+phantom=$(comm -13 <(printf '%s\n' "${toplevel[@]}") <(printf '%s\n' "${covered_sorted[@]}"))
 
 if [ -n "${unaccounted}" ]; then
   echo "FAIL completeness: fixture(s) on disk not accounted for by any manifest row (dormant):"
   printf '%s\n' "${unaccounted}" | sed 's/^/       /'
+  fail=1
+fi
+if [ "${#nested_unclaimed[@]}" -gt 0 ]; then
+  echo "FAIL completeness: fixture(s) below an unclaimed subdirectory (dormant):"
+  printf '%s\n' "${nested_unclaimed[@]}" | sed 's/^/       /'
   fail=1
 fi
 if [ -n "${phantom}" ]; then
@@ -966,7 +1066,7 @@ if [ -n "${phantom}" ]; then
 fi
 
 total=${#ondisk[@]}
-accounted=${#covered_sorted[@]}
+accounted=$(( ${#toplevel[@]} - $(printf '%s\n' "${unaccounted}" | grep -c .) + nested_claimed ))
 echo "---"
 if [ "${fail}" -eq 0 ]; then
   echo "SELF-TEST OK: ${accounted}/${total} fixtures accounted for, 0 failed"

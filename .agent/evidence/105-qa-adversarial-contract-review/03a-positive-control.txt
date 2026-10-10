@@ -1,0 +1,35 @@
+bash .agent/evidence/105-qa-adversarial-contract-review/helpers/03a-positive-control.sh
+== sysctl key: 1
+ CHANGELOG.md                 |  10 ++++
+ docs/planning/phase_014.yaml |   3 +
+ tools/README.md              |   7 ++-
+ tools/fixtures_self_test.sh  | 128 ++++++++++++++++++++++++++++++++++++++-----
+ 4 files changed, 133 insertions(+), 15 deletions(-)
+### AT1 rc=0 (25.0s)
+### AT2 rc=0 (24.9s)
+### AT3 rc=0 (24.5s)
+    PASS output matches '^SELF-TEST FAILED'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+### AT4 rc=0 (0.0s)
+### AT5 rc=0 (11.6s)
+    PASS G5 every baseline-passing check still passes
+    GATE: PASS (16 checks passing; baseline 16)
+### S01 rc=0 (0.1s)
+    verification: 14 acceptance tests: 5 supplementary: 9 files_create: 15 files_modify: 4 problems: []
+### S03 rc=0 (0.1s)
+    changed: 5 problems: []
+### S04 rc=0 (0.0s)
+    files: 146 top-level: 79 subdirectories: ['convergent_review'] claim rows: ['"convergent_review|tools/test_convergent_review.py"'] problems: []
+### S05 rc=0 (134.0s)
+    PASS ablation: disabling only the claim naming an absent subdirectory detection line removes only its own OK line (the label tests its own mode)
+    cases: 17 problems: []
+### S06 rc=0 (73.0s)
+    static ok: True problems: []
+### S07 rc=0 (0.0s)
+    problems: []
+### S08 rc=0 (0.1s)
+    problems: []
+### S09 rc=0 (20.3s)
+    validate.sh summary: [('16', '0')] PASS lines: 16 baseline: 16 payload gate rc: 0 problems: []
+SUMMARY: AT1=0 AT2=0 AT3=0 AT4=0 AT5=0 S01=0 S03=0 S04=0 S05=0 S06=0 S07=0 S08=0 S09=0
+EXIT:0

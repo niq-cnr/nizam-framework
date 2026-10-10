@@ -1,0 +1,59 @@
+bash .agent/evidence/105-qa-adversarial-contract-review/helpers/03b-generator-attempt.sh
+implemented in /home/cnross/.tmp/claude-1000/-home-cnross-workspace02-nizam-framework/b87ce099-80d9-4a17-8331-ff678f08d08a/scratchpad/gen/att
+AT1 rc 0
+AT2 rc 0
+AT3 rc 0
+AT4 rc 0
+AT5 rc 0
+S01 rc 0
+S04 rc 0
+S05 rc 0
+S06 rc 0
+S07 rc 0
+S08 rc 0
+S09 rc 0
+S02 pre-commit rc 0 B = 19ce24df67fd commits past B: 0 delta since B: 17 problems: []
+S03 pre-commit rc 0 changed: 19 problems: []
+attempt commit 34424ce B 19ce24df67fd porcelain lines 0
+== after the attempt commit: AT1 AT3 AT4 AT5 S01 S02 S03 S04 S07 S08 S09 (S05/S06 already proven in 03a on the identical tree)
+### AT1 rc=0 (56.8s)
+### AT2 rc=0 (57.3s)
+### AT3 rc=0 (42.9s)
+    PASS output matches '^SELF-TEST FAILED'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+### AT4 rc=0 (0.0s)
+### AT5 rc=0 (12.0s)
+    PASS G5 every baseline-passing check still passes
+    GATE: PASS (16 checks passing; baseline 16)
+### S01 rc=0 (0.1s)
+    verification: 14 acceptance tests: 5 supplementary: 9 files_create: 15 files_modify: 4 problems: []
+### S02 rc=0 (0.1s)
+    B = 19ce24df67fd commits past B: 1 delta since B: 19 problems: []
+### S03 rc=0 (0.0s)
+    changed: 20 problems: []
+### S04 rc=0 (0.0s)
+    files: 146 top-level: 79 subdirectories: ['convergent_review'] claim rows: ['"convergent_review|tools/test_convergent_review.py"'] problems: []
+### S07 rc=0 (0.0s)
+    problems: []
+### S08 rc=0 (0.1s)
+    problems: []
+### S09 rc=0 (23.1s)
+    validate.sh summary: [('16', '0')] PASS lines: 16 baseline: 16 payload gate rc: 0 problems: []
+SUMMARY: AT1=0 AT2=0 AT3=0 AT4=0 AT5=0 S01=0 S02=0 S03=0 S04=0 S07=0 S08=0 S09=0
+== evidence-shape check of the captured Generator files (line 1 = invocation, last line EXIT:<code>)
+at1-completeness-any-depth.txt: line1=[python3 -c "import os,re,subprocess; p=s] last=[EXIT:0]
+at2-claim-map-demonstrations.txt: line1=[python3 -c "import subprocess; p=subproc] last=[EXIT:0]
+at3-unclaimed-probe.txt: line1=[python3 .agent/evidence/phase-014-activa] last=[EXIT:0]
+at4-readme-claim-map.txt: line1=[python3 -c "s=open('tools/README.md').re] last=[EXIT:0]
+at5-validator-gate.txt: line1=[python3 .agent/evidence/phase-014-activa] last=[EXIT:0]
+attempt-base.txt: line1=[git rev-parse HEAD] last=[EXIT:0]
+s01-contract-valid-and-verbatim.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s02-attempt-root-delta.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s03-scope-boundary.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s04-claim-map-and-tree.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s05-discriminating-matrix.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s06-containment.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s07-readme-pinned.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s08-changelog-phase-yaml.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+s09-validator-payload-count.txt: line1=[python3 - <<'PY'] last=[EXIT:0]
+EXIT:0

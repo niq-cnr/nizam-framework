@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.3
+version: 0.1.4
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
-last_audited: "2026-10-08"
+last_audited: "2026-10-09"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.4"
+    date: "2026-10-09"
+    summary: "Planner record after feature 105 completed (.agent/qa/105.json pass; .agent/validator/105-mode-b.json approved). Section 5.1: the A07 row is marked delivered by F105, and its next action becomes none. NDEBT-042 is resolved in DEBT.md 0.51.0. Section 5.3 gains one note recording the open NIP3-115/NIP3-116 runtime_session registration question, carried from contract 105 design_notes.orchestrator_followups[2], for the NIP-0003 pre-acceptance revision. No other row changes; the A05 and A06 rows are not updated here."
   - version: "0.1.3"
     date: "2026-10-08"
     summary: "Evaluator follow-up. V11 of the DAG validator now admits exactly .agent/validator/phase-014-activation.json (the Validator's verdict on this package; an exact path, not a .agent/validator/ prefix) beside .agent/run_state.json. The Evaluator's .agent/evidence/phase-014-activation/eval/ files already fall under the package path. dag_negative_controls.py gains four V11 controls (accept the verdict, a later eval/ file and run_state; reject another .agent/validator/*.json, a prefix look-alike, and a payload edit): 14/14. Nit fixed: 'four kinds of test'."
@@ -168,7 +171,7 @@ kinds of test:
 | `A04` | Role/test ownership, Evaluator acceptance bundle | `A04a` (text), `A04b` (behavior) | Extend existing (01_execution already has Loop-1 Evaluator review) | A04a: phase selection; A04b: WA H-NIP + H-PHASE-NNN | `PLAN-NEXT`; `PLAN-WA` + `A09` | Generator | none until selected |
 | `A05` | Sandbox prerequisites | `F103` (NDEBT-043) | Scheduled, phase 014 | H-PHASE-014 (satisfied) | `ACT-014` | Generator | Contract after 099 |
 | `A06` | Convergent suite enforced in CI | `F104` (NDEBT-041) | Scheduled, phase 014 | H-PHASE-014 (satisfied) | `F103` | Generator | Contract after 103 |
-| `A07` | Nested fixture ownership | `F105` (NDEBT-042; NIP-0003 109 claim map pulled forward) | Scheduled, phase 014 | H-PHASE-014 (satisfied) | `ACT-014` | Generator | Contract after 104 |
+| `A07` | Nested fixture ownership | `F105` (NDEBT-042; NIP-0003 109 claim map pulled forward) | Delivered (105), phase 014; NDEBT-042 resolved (DEBT.md 0.51.0) | H-PHASE-014 (satisfied) | `ACT-014` | Generator | none |
 | `A08` | Drift bundle | `F106` (044a), `F107` (044b), `F108` (037 + 044c/d/f), `F109` (026), `F102` (044e) | Scheduled, phase 014, split by concern | H-PHASE-014 (satisfied) | 108 after 106, 107, 109 | Generator | Contracts in lane order |
 | `A09` | Candidate/contract/verification identity (+ NDEBT-040) | `A09` | New gap (WA NIP) | WA H-NIP + H-PHASE-NNN | `PLAN-WA` | Generator | Outline only (§7) |
 | `A10` | Deterministic gate enforcement, idempotent recovery | `A10` | New gap (WA NIP) | WA H-NIP + H-PHASE-NNN | `A09` | Generator | Outline only |
@@ -216,6 +219,7 @@ Notes on individual features:
 
 - **NIP3-113** (was 106) no longer carries the NDEBT-044 (d) fix; that moves to F108.
 - **NIP3-116** (was 109) reuses F105's claim map and F104's CI job.
+- **NIP3-115 / NIP3-116 registration (open; for the NIP-0003 pre-acceptance revision).** The runtime_session fixture subdirectory first appears in NIP3-115 (was 108), but the spec has NIP3-116 (was 109) register it in F105's claim map; because an unclaimed subdirectory fails the self-test, the revision must put the registration row in the same change that creates the directory (contract 105 `design_notes.orchestrator_followups[2]`).
 
 NIP-0003 acceptance cases 1–13 map to these packets in §8.
 

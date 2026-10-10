@@ -1,0 +1,94 @@
+bash .agent/evidence/105-qa-adversarial-contract-review/helpers/04-mutants.sh
+a01     CAUGHT   real guard no longer calls claim_map_check (map not consulted for claim violations) S05 340s
+a02     CAUGHT   real guard calls claim_map_check but never sets fail=1 on its result   S05 340s
+a03     CAUGHT   real guard calls claim_map_check but swallows its output (fail=1 only) S05 341s
+a04     CAUGHT   map not consulted at all: no call AND claimed_dir hard-coded to convergent_review S05 340s
+a05     CAUGHT   claimed_dir built from the nested subdirectories on disk (every subdir counts as claimed), call kept S05 256s
+a06     CAUGHT   claim_map_check called with no rows (the real array is ignored)        AT1 28s
+a07     CAUGHT   claim_map_check body is a stub returning 0 (map exists, demonstrations and guard see no violations) AT1 28s
+a08     CAUGHT   accounting ignores the claim: every nested file counted as claimed     S05 257s
+b-unclaimed CAUGHT   claim_map_check: the unclaimed detection removed                       AT1,S04 28s
+b-doubly CAUGHT   claim_map_check: the doubly detection removed                          AT1,S04 27s
+b-missing CAUGHT   claim_map_check: the missing detection removed                         AT1,S04 28s
+b-absent CAUGHT   claim_map_check: the absent detection removed                          AT1,S04 28s
+b05     CAUGHT   doubly-claimed threshold -le 1 -> -le 2 (two rows tolerated)           AT1 37s
+b06     CAUGHT   doubly-claimed: duplicates deduplicated before counting (claim_count set to 1) AT1 37s
+b07     CAUGHT   malformed-row detection removed (row without | accepted)               S04 38s
+b08     SURVIVED suite existence test -f -> -e (a directory counts as a suite)          - 415s
+b09     CAUGHT   suite existence resolved against the fixtures root instead of the repo root AT1 37s
+b10     CAUGHT   unclaimed-subdirectory enumeration: prefix match (convergent_review_x/ covered by the convergent_review claim) S05 258s
+b11     CAUGHT   subdirectory enumeration lists only subdirectories that contain files (empty unclaimed dir invisible) AT1 30s
+b12     CAUGHT   subdirectory enumeration is recursive (every nested case directory must be claimed): false-fail control AT1 30s
+b13     CAUGHT   subdirectory enumeration finds nothing (find limited to maxdepth 0)    AT1 38s
+c1      CAUGHT   on-disk enumeration limited to -maxdepth 1 (path components)           AT1 39s
+c2      CAUGHT   on-disk enumeration limited to -maxdepth 2 (path components)           AT1 36s
+c3      CAUGHT   on-disk enumeration limited to -maxdepth 3 (path components)           S05 270s
+c5      CAUGHT   on-disk enumeration limited to -maxdepth 5 (path components)           S05 264s
+c6      SURVIVED on-disk enumeration limited to -maxdepth 6 (path components)           - 439s
+c8      SURVIVED on-disk enumeration limited to -maxdepth 8 (path components)           - 421s
+c10     CAUGHT   on-disk enumeration uses the OLD form: find . -maxdepth 1 -type f      AT1 30s
+c11     CAUGHT   on-disk enumeration skips dot-files                                    S05 288s
+c12     SURVIVED on-disk enumeration -type f (symlinks not counted)                     - 412s
+c13     SURVIVED accounted := total (count cosmetic: accounted always equals total)     - 403s
+c14     CAUGHT   total hard-coded to 146                                                S04 28s
+c15     CAUGHT   unlisted top-level fixture check removed (unaccounted never reported)  S05 279s
+c16     SURVIVED phantom COVERED row check removed                                      - 404s
+c17     CAUGHT   files below an unclaimed subdirectory not reported / not failing (nested_unclaimed branch off) S05 278s
+d01     CAUGHT   _claim_map_case stub: returns 0 immediately after the scratch is built (OK lines printed without testing) AT1,S04 30s
+d02     CAUGHT   _claim_map_case stub: returns 0 as its first statement                 S05 266s
+d03     CAUGHT   loop: if _claim_map_case ... || true (OK printed regardless)           S05 282s
+d04     CAUGHT   loop: failing case branch removed (never sets fail=1)                  S05 283s
+d05     CAUGHT   the four OK lines emitted as literal echoes, _claim_map_case never invoked S04 32s
+d06     SURVIVED positive control removed from _claim_map_case                          - 451s
+d07     SURVIVED negative assertion: exactly-one-line test removed                      - 411s
+d08     SURVIVED negative assertion: defect-name test removed                           - 398s
+d09     SURVIVED negative assertion: rc test -eq 1 weakened to -ne 99                   - 397s
+d10     SURVIVED negative result not applied: second check runs on the unmodified positive tree (defect applied after the check) - 374s
+d11     CAUGHT   fourth demonstration dropped from the loop (three OK lines only)       S04 30s
+d12     CAUGHT   OK label of the second demonstration swapped with the third (label bound to the wrong mode) S05 256s
+d13     CAUGHT   the demonstration case "doubly" really tests the unclaimed mode (case body swapped) S05 254s
+e01     CAUGHT   leak: demonstration scratch root := ${REPO}/tools/fixtures/zz_trip (S06 own mutant) AT1,S03,S04 30s
+e02     CAUGHT   leak: extra write into the real tree inside _claim_map_case, no cleanup (relative path) AT1,S04 30s
+e03     CAUGHT   leak: write into the real tree inside _claim_map_case, cleaned up afterwards (relative path) S04 34s
+e04     CAUGHT   leak: obfuscated path write (no literal tools/fixtures, no REPO) inside _claim_map_case, cleaned up S04 36s
+e05     CAUGHT   leak: write into the real tree in the demonstration loop (outside the function), no cleanup AT1,S03,S04 36s
+e06     SURVIVED leak: write into the real tree in the demonstration loop (outside the function), cleaned up - 336s
+e07     CAUGHT   leak: _claim_map_case is a plain function (not a subshell) so the scratch trap replaces the global one S04 27s
+e08     CAUGHT   leak: claim_map_check writes (touch) into the fixtures root it inspects S04 27s
+e09     CAUGHT   scratch root = repo-relative ./zz_scratch (scratch_dirs bypassed) inside the case, in the repository root AT1,S04 27s
+t01     CAUGHT   state: unclaimed subdirectory tools/fixtures/zz_new/ with one file     AT1,S03,S04 29s
+t02     CAUGHT   state: EMPTY unclaimed subdirectory tools/fixtures/zz_empty/           AT1,S04 29s
+t03     CAUGHT   state: unclaimed subdirectory whose only file is 6 components deep     AT1,S03,S04 30s
+t04     CAUGHT   state: doubly-claimed row (both suites exist)                          AT1,S04 30s
+t05     CAUGHT   state: claim naming a nonexistent suite                                AT1,S04 30s
+t06     CAUGHT   state: extra claim naming an absent subdirectory                       AT1,S04 30s
+t07     CAUGHT   state: the real claim row deleted                                      AT1,S04 30s
+t08     CAUGHT   state: claim key mistyped (convergent_reviw)                           AT1,S04 31s
+t09     CAUGHT   state: owning suite file deleted                                       AT1,S03,S04,S07 30s
+t10     CAUGHT   state: fixture moved - a nested file moved up one level inside the claimed subdirectory S03,S04 30s
+t11     CAUGHT   state: fixture moved - a top-level fixture moved into the claimed subdirectory AT1,S03,S04 30s
+t12     CAUGHT   state: fixture moved - a top-level fixture moved into a new unclaimed subdirectory AT1,S03,S04 29s
+t13     CAUGHT   state: unlisted top-level fixture added                                AT1,S03,S04 28s
+t14     CAUGHT   state: dotfile 6 components deep inside the claimed subdirectory (guard must count it, pass 147/147) S03,S04 27s
+g01     CAUGHT   README version not bumped (0.13.0 kept)                                S07 1s
+g02     CAUGHT   README head change_log entry missing                                   S07 1s
+g03     CAUGHT   README head change_log summary altered (one word)                      S07 1s
+g04     CAUGHT   README paragraph removed                                               AT4,S07 1s
+g05     CAUGHT   README paragraph says "three" cases (code has four)                    S07 1s
+g06     CAUGHT   README wording "claim map" -> "claim table" everywhere in the paragraph AT4,S07 1s
+g07     CAUGHT   README paragraph moved to the top of the Fixture self-test section (not last paragraph) S07 1s
+g08     CAUGHT   README paragraph cites a nonexistent backticked path (C9)              S07 1s
+g09     CAUGHT   README completeness-guard sentence edited                              S07 1s
+g10     CAUGHT   CHANGELOG bullet missing                                               S08 1s
+g11     CAUGHT   CHANGELOG bullet placed before the feature-104 bullet                  S08 1s
+g12     CAUGHT   CHANGELOG bullet says "three" cases                                    S08 1s
+g13     CAUGHT   phase yaml: changelog_entry missing                                    S08 1s
+g14     CAUGHT   phase yaml: step 105 BLOCKED                                           S08 1s
+g15     CAUGHT   phase yaml: evidence path wrong                                        S08 1s
+g16     CAUGHT   phase yaml: docs_updated names the wrong doc                           S08 1s
+g17     CAUGHT   extra stray file: tools/FIXTURE_CLAIMS.md (second registry)            S03,S04 1s
+g18     CAUGHT   out-of-scope edit: tools/validate.sh touched                           S03,S04 1s
+g19     CAUGHT   prefix invariance broken: a pre-separator probe comment edited         S04 1s
+g20     CAUGHT   runtime_session row registered (claim naming an absent subdirectory) instead of the comment S04 1s
+g21     CAUGHT   runtime_session directory created                                      S03,S04 1s
+EXIT:0

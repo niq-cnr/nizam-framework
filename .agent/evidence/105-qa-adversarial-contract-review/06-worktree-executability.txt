@@ -1,0 +1,34 @@
+bash .agent/evidence/105-qa-adversarial-contract-review/helpers/06-worktree-executability.sh
+Preparing worktree (detached HEAD 34424ce)
+HEAD is now at 34424ce Attempt: feature 105
+.git in worktree is a file: yes
+### AT1 rc=0 (23.9s)
+### AT2 rc=0 (23.7s)
+### AT3 rc=0 (24.0s)
+    PASS output matches '^SELF-TEST FAILED'
+    scratch_run: EXPECTATIONS HELD; scratch removed: True
+### AT4 rc=0 (0.0s)
+### AT5 rc=0 (10.5s)
+    PASS G5 every baseline-passing check still passes
+    GATE: PASS (16 checks passing; baseline 16)
+### S01 rc=0 (0.1s)
+    verification: 14 acceptance tests: 5 supplementary: 9 files_create: 15 files_modify: 4 problems: []
+### S02 rc=0 (0.1s)
+    B = 19ce24df67fd commits past B: 1 delta since B: 19 problems: []
+### S03 rc=0 (0.0s)
+    changed: 20 problems: []
+### S04 rc=0 (0.0s)
+    files: 146 top-level: 79 subdirectories: ['convergent_review'] claim rows: ['"convergent_review|tools/test_convergent_review.py"'] problems: []
+### S05 rc=0 (128.9s)
+    PASS ablation: disabling only the claim naming an absent subdirectory detection line removes only its own OK line (the label tests its own mode)
+    cases: 17 problems: []
+### S06 rc=0 (72.3s)
+    static ok: True problems: []
+### S07 rc=0 (0.0s)
+    problems: []
+### S08 rc=0 (0.1s)
+    problems: []
+### S09 rc=0 (20.3s)
+    validate.sh summary: [('16', '0')] PASS lines: 16 baseline: 16 payload gate rc: 0 problems: []
+SUMMARY: AT1=0 AT2=0 AT3=0 AT4=0 AT5=0 S01=0 S02=0 S03=0 S04=0 S05=0 S06=0 S07=0 S08=0 S09=0
+EXIT:0

@@ -71,6 +71,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   of that family is left to the phase-014 simplification review). NDEBT-041; the CI evidence, a
   green run and a throwaway-branch negative control that also supplies the capable-host evidence
   for feature 103, is recorded under `.agent/evidence/104/`.
+- **Phase 014 feature 105: Nested-fixture ownership** (framework-internal; PATCH at the next release,
+  `methodology/06_release_train.md` Section 3.3; no release is prepared and no tag is created).
+  `tools/fixtures_self_test.sh` gains a fixture-subdirectory claim map (the NIP-0003 feature-109
+  design, pulled forward): every subdirectory of `tools/fixtures/` is claimed by exactly one owning
+  suite, and the completeness guard now accounts for every file at any depth, where it previously
+  accounted for the top-level files only and was blind to the 67 files below
+  `tools/fixtures/convergent_review/`. It fails on an unclaimed subdirectory, a doubly-claimed one,
+  a claim naming a suite file that does not exist and a claim naming an absent subdirectory, and the
+  self-test demonstrates those cases itself in a private scratch area. A claim proves ownership, not
+  execution. `tools/README.md` (0.14.0) describes the claim map. No fixture moves. NDEBT-042.
 
 ## [1.4.0] - 2026-10-08
 
