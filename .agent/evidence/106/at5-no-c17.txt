@@ -1,0 +1,2 @@
+python3 -c "import re,subprocess; o=subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True).stdout; assert not re.search(r'^\[C1[7-9]\]',o,re.M)"
+EXIT:0

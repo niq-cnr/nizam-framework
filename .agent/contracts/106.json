@@ -1,0 +1,382 @@
+{
+  "contract_id": "106",
+  "feature_id": "106",
+  "name": "Capability-index parity — skill.json is a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_014.md",
+  "design_notes": {
+    "revision": "Revision 1 (106-contract attempt 2/3). CONTRACT_DEFECT repair of S03 only. Drop .agent/run_state.json from the hard-fail against <A> and keep it in the allowlist (owned). The approved attempt base <B> 55c428a already contains the Orchestrator's contract_approved edit of that file versus <A> 2a22ecd, so a faithful implementation whose parent is <B> cannot pass revision 0's S03, and the Generator is forbidden to edit run_state. Phase YAML, DEBT.md, and the feature list stay hard-failed. S02 still diffs from <B> and rejects a Generator edit of run_state. No feature-list acceptance test string changes. Status is proposed. Revision 0 was approved at 2026-10-10T04:39:56Z after Mode A and the evaluator contract review both approved it with empty issue arrays; implementation attempt 1 halted before any product edit. Branch phase/014-106-c13-intentional-subset at <A> = 2a22ecd (main is 183eed1; the phase-014 measurement range for 106 starts at 183eed1 and already includes the run_state commit 2a22ecd).",
+    "base_revision": "<A> = 2a22ecdfda6ff3895792a1d974489d091e11e696. It is the pre-feature tree and the diff anchor for S03 and S04. <B>, the Orchestrator's commit of this contract once approved, is the attempt base and the anchor of S02 only.",
+    "revision_history": [
+      {
+        "revision": 0,
+        "summary": "Initial proposal. Mode A and the evaluator contract review approved it at 2026-10-10T04:39:56Z with empty issue arrays. Implementation then halted before any product edit: S03 diffs <A> 2a22ecd and hard-fails when .agent/run_state.json is in that diff, but the approved attempt base <B> 55c428a already contains the Orchestrator's contract_approved edit of run_state.",
+        "at": "2026-10-10"
+      },
+      {
+        "revision": 1,
+        "summary": "106-contract attempt 2/3. Drop .agent/run_state.json from S03's orchestrator-owned hard-fail against <A> and keep it in the allowlist (owned), because <B> already differs from <A> in that file and the Generator must not edit run_state to erase the difference. Keep the hard-fail for docs/planning/phase_014.yaml, docs/planning/DEBT.md, and .agent/feature_list_014.json. S02 still diffs from <B> and rejects a Generator edit of run_state. No feature-list acceptance test string changes. Status is proposed; validator_mode_a and evaluator_contract_review are false.",
+        "at": "2026-10-10"
+      }
+    ],
+    "plan_ref": ".agent/product_spec_014.md (Scope table order 5; Maintenance tranche, the 106 bullet; Public contract changes: 106 is MINOR and extends C13; Execution Order; Scope budget measurement, 106 = 750, range 530-960; Human gates) and .agent/feature_list_014.json feature 106 (eight acceptance tests). Debt: NDEBT-044 (a) only. NDEBT-047 is a named hazard, not a fix.",
+    "ah_premises_at_base": [
+      "Measured 2026-10-10 at <A>, serially (validate.sh and fixtures_self_test.sh were never overlapped). AT1 exit 1 (skill.json row lacks both required words). AT2 exit 1 (only missing module: ecosystem/00_ecosystem_bootstrap.md). AT3 exit 1 (self-test exit 0, dangling OK line present, new OK line absent, 146/146). AT4 exit 1 (replace applied; validate.sh exit 1 from [C4] FAIL on methodology/00_planning_moved.md; [C13] PASS; the [C13] FAIL expectation failed). AT5 exit 0 (no [C17]-[C19]; SUMMARY 16 passed, 0 failed). AT6 exit 0 (GATE PASS, 16/16). AT7 exit 0 (GATE PASS, 12/12). AT8 exit 0 (SELF-TEST OK 146/146).",
+      "tools/skill.json capabilities[].module has 20 paths. NIZAM.json capabilities has 35 objects, 35 distinct authoritative_source values, and no id nizam-ecosystem-bootstrap. ecosystem/00_ecosystem_bootstrap.md is already a key_document of the ecosystem module and the authoritative_source of its own frontmatter. ecosystem/README.md exists and is not an authoritative_source. The string \"authoritative_source\": \"methodology/00_planning.md\" occurs once in NIZAM.json.",
+      "check_c13_skill_index resolves entry_point and capabilities[].module. It does not read NIZAM.json. The [C13] FAIL banner is the single line `  echo \"[C13] FAIL skill-index\"`. There is no check_c17. C17 is earmarked by NIP-0003 (docs/nips/NIP-0003-live-runtime-sessions.md, Validator: 'C17 stays free'). The --payload option paragraph (from `  --payload           Consumer-payload mode.` through the blank line before `  --help, -h`) is NDEBT-045 and is not edited. The C5 paragraph and the Payload-doc set paragraph are NDEBT-044 (c) and (f), owned by feature 108.",
+      "test_c13 (tools/fixtures_self_test.sh, brace function, called once) note_covered's skill_index_neg_dangling_module.json, copies it over tools/skill.json, runs validate.sh, restores on the straight-line path, and prints the dangling OK line when grep finds ^\\[C13\\] FAIL. The completeness guard accounts for top-level fixture basenames only through COVERED / note_covered. A new top-level fixture that is not note_covered fails that guard.",
+      "NDEBT-047, re-read at <A>: trap cleanup EXIT is at line 56; scratch_dirs replaces it (line 116); the top-level `if scratch_dirs fll_scratch; then` at line 473 runs in the main shell; test_c13 (lines 614-629) therefore has no EXIT backstop. An interrupt during the swap can leave tools/skill.json equal to the dangling fixture. This contract does not fix that.",
+      "tools/README.md is 0.14.0. The skill.json table row is one line and does not contain 'intentional subset' or 'NIZAM.json'. The C13 compliance row describes resolution only. framework.version in NIZAM.json is 1.4.0. No release is in scope."
+    ],
+    "design_decisions": {
+      "intentional_subset": "Parity is not equality. Every tools/skill.json capabilities[].module must be the authoritative_source of some NIZAM.json capability. NIZAM.json-only entries are allowed and must not fail the check. Equality would be wrong: NIZAM.json indexes non-routable artifacts (tools/validate.sh, tools/skill.json, tools/SKILL.md, tools/interface.md, standard/ci_gates.md, standard/mcp_policy.md, and others).",
+      "one_new_capability": "The only new NIZAM.json capability is id nizam-ecosystem-bootstrap, authoritative_source ecosystem/00_ecosystem_bootstrap.md, inserted immediately before nizam-ecosystem-preflight. No other capability is added or rewritten. tools/skill.json already points at that module and is not edited.",
+      "extend_c13": "The rule is added inside check_c13_skill_index, which already runs in the default sweep and in --payload. There is no new check function and no new [C17] (or C18 or C19) line. The banner stays exactly [C13] FAIL skill-index / [C13] PASS skill-index.",
+      "exact_membership": "Membership is exact string equality between the module and authoritative_source, the same comparison as acceptance test 2. Paths are not normalized for this comparison. The existing resolution and payload carve-out stay as they are. The subset test still applies to a module the carve-out skipped, because NIZAM.json is injected and index membership is not file presence.",
+      "both_defects": "A module that does not resolve and is also unindexed produces both the existing resolution line and the new subset line. The dangling fixture therefore gains a subset line for methodology/99_retired.md. Its OK line still depends only on the [C13] FAIL banner.",
+      "failure_text": "The new detail line is `capabilities[<index>] (<name>) -> <module> is not the authoritative_source of any NIZAM.json capability`. The fragment `is not the authoritative_source of any NIZAM.json capability` occurs once in tools/validate.sh, on the single problems.append line. A later change cannot satisfy acceptance test 4 or the new OK line by printing [C17] FAIL or by failing only C4: S05 case 4 deletes that one line and requires [C13] FAIL to disappear while [C4] FAIL remains.",
+      "fixture": "tools/fixtures/skill_index_neg_unindexed_capability.json is a skill.json document. Both modules resolve. methodology/00_planning.md is indexed, so it is the control. ecosystem/README.md is not indexed, and this feature must not index it. The pinned test_c13 function note_covered's the basename and substitutes the file. The new OK line is printed only when validate.sh output matches ^[C13] FAIL and contains the fragment. C12 does not see the file: its glob is tools/fixtures/<family>_*.json.",
+      "readme_and_help": "Acceptance test 1 reads only the skill.json table row, so that row carries the words 'intentional subset' and 'NIZAM.json'. The C13 --help paragraph (the block that starts `  C13 Skill-index integrity`, not the --payload option paragraph) records the same decision and names the new fixture. The C13 row of the compliance table is also updated, because it states what C13 enforces and feature 108 does not own that row. Feature 108 owns the C14-C16 help paragraphs, the C5 paragraph, the Payload-doc set paragraph, and NDEBT-044 (d) in tools/interface.md.",
+      "changelog": "tools/README.md moves 0.14.0 to 0.15.0 with a head change_log entry. That entry alone satisfies C8. This contract still requires one [Unreleased] CHANGELOG bullet, after the feature-105 bullet, because the phase records shipped-doc bumps there and the bullet is the MINOR record. No framework.version bump and no tag.",
+      "phase_yaml": "docs/planning/phase_014.yaml is not in the Generator's scope. The dispatch's allowed-path list does not include it. The Orchestrator writes step 106's docs_updated, changelog_entry, and evidence, using the pinned strings, when it sets status. The Generator does not set status."
+    },
+    "pinned_interface": {
+      "failure_fragment": "is not the authoritative_source of any NIZAM.json capability",
+      "failure_line_grammar": "capabilities[<index>] (<name>) -> <module> is not the authoritative_source of any NIZAM.json capability",
+      "fail_echo": "  echo \"[C13] FAIL skill-index\"\n",
+      "pass_lines_unchanged": [
+        "      echo \"[C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)\"",
+        "      echo \"[C13] PASS skill-index\""
+      ],
+      "help_anchor": "      which substitutes it for tools/skill.json and asserts the `[C13] FAIL`.\n",
+      "help_addition": "      Parity with NIZAM.json is an intentional subset, not equality\n      (phase-014 feature 106, NDEBT-044 a): every capabilities[].module\n      must be the authoritative_source of some NIZAM.json capability, in\n      the full sweep and under --payload; NIZAM.json-only entries are\n      allowed. A module that is not indexed is a [C13] FAIL even when the\n      file exists. Negative fixture:\n      `tools/fixtures/skill_index_neg_unindexed_capability.json`, exercised\n      by the same substitution in `tools/fixtures_self_test.sh`.\n",
+      "problem_anchor": "for problem in problems:\n",
+      "subset_block": "# Intentional subset, not equality (phase-014 feature 106, NDEBT-044 a).\n# Every capabilities[].module string must be exactly the authoritative_source\n# of some NIZAM.json capability (the same strings acceptance test 2 compares).\n# NIZAM.json-only capabilities are allowed. The comparison is not normalized\n# and it runs in every mode, including a module the payload resolution\n# carve-out skipped. A module that already failed to resolve is still\n# reported here when it is also unindexed.\ntry:\n    with open(\"NIZAM.json\", encoding=\"utf-8\") as index_file:\n        capability_index = json.load(index_file)\nexcept (OSError, json.JSONDecodeError) as exc:\n    print(f\"NIZAM.json unreadable or not valid JSON: {exc}\")\n    sys.exit(1)\nindexed_sources = set()\nindex_capabilities = capability_index.get(\"capabilities\") if isinstance(capability_index, dict) else None\nif isinstance(index_capabilities, list):\n    for index_capability in index_capabilities:\n        authoritative_source = index_capability.get(\"authoritative_source\") if isinstance(index_capability, dict) else None\n        if isinstance(authoritative_source, str) and authoritative_source:\n            indexed_sources.add(authoritative_source)\nfor index, capability in enumerate(capabilities):\n    module = capability.get(\"module\") if isinstance(capability, dict) else None\n    if not isinstance(module, str) or not module:\n        continue\n    if module not in indexed_sources:\n        label = f\"capabilities[{index}] ({capability.get('name', '?') if isinstance(capability, dict) else '?'})\"\n        problems.append(f\"{label} -> {module} is not the authoritative_source of any NIZAM.json capability\")\n",
+      "unchanged_regions": [
+        [
+          "  --payload           Consumer-payload mode.",
+          "\n\n  --help, -h"
+        ],
+        [
+          "Payload-doc set (the --payload mode file set",
+          "\n\nExit code:"
+        ],
+        [
+          "  C5  Branding/endpoint leakage.",
+          "\n\n  C6  "
+        ]
+      ],
+      "nizam_insert": "    {\n      \"id\": \"nizam-ecosystem-bootstrap\",\n      \"summary\": \"The ecosystem cycle's entry stage: a consumer adopts the framework from a pinned, immutable released tag, verifies the injected payload, and records its provenance pin before any later stage may run.\",\n      \"authoritative_source\": \"ecosystem/00_ecosystem_bootstrap.md\"\n    },\n",
+      "nizam_needle": "    {\n      \"id\": \"nizam-ecosystem-preflight\",",
+      "capability_id": "nizam-ecosystem-bootstrap",
+      "capability_authoritative_source": "ecosystem/00_ecosystem_bootstrap.md",
+      "test_c13": "test_c13() {\n  note_covered skill_index_neg_dangling_module.json\n  note_covered skill_index_neg_unindexed_capability.json\n  SKILL_BAK=$(mktemp)\n  cp -- tools/skill.json \"${SKILL_BAK}\"\n  _c13_substitute_one() {\n    local fixture_basename=\"$1\"\n    local required_detail=\"$2\"\n    local validator_output\n    cp -- \"tools/fixtures/${fixture_basename}\" tools/skill.json\n    validator_output=$(bash tools/validate.sh 2>&1)\n    cp -- \"${SKILL_BAK}\" tools/skill.json\n    if printf '%s\\n' \"${validator_output}\" | grep -Eq \"^\\[C13\\] FAIL\" \\\n      && { [ -z \"${required_detail}\" ] || printf '%s\\n' \"${validator_output}\" | grep -Fq -- \"${required_detail}\"; }; then\n      echo \"OK   c13-substitute ${fixture_basename} -> [C13] FAIL\"\n    else\n      echo \"FAIL c13-substitute: substituting ${fixture_basename} did not yield [C13] FAIL\"\n      fail=1\n    fi\n  }\n  _c13_substitute_one skill_index_neg_dangling_module.json \"\"\n  _c13_substitute_one skill_index_neg_unindexed_capability.json \"is not the authoritative_source of any NIZAM.json capability\"\n  rm -f -- \"${SKILL_BAK}\"\n  SKILL_BAK=\"\"\n}\n",
+      "ok_line_new": "OK   c13-substitute skill_index_neg_unindexed_capability.json -> [C13] FAIL",
+      "ok_line_dangling": "OK   c13-substitute skill_index_neg_dangling_module.json -> [C13] FAIL",
+      "fixture_path": "tools/fixtures/skill_index_neg_unindexed_capability.json",
+      "fixture_text": "{\n  \"name\": \"nizam-skill-index-negative-fixture-unindexed\",\n  \"version\": \"0.0.1\",\n  \"description\": \"Negative fixture for validator check C13 (phase-014 feature 106, NDEBT-044 a). Every capabilities[].module resolves to an existing file. The planning entry is the authoritative_source of a NIZAM.json capability, so it is not the failure. The unindexed-capability entry points at ecosystem/README.md, which is absent from the NIZAM.json capability index. Substituting this file for tools/skill.json must make the full sweep print [C13] FAIL because that module is unindexed, not because a pointer dangles. The filename carries the canonical _neg_ token and no C12 family prefix, so C12 ignores it.\",\n  \"entry_point\": \"tools/SKILL.md\",\n  \"capabilities\": [\n    {\n      \"name\": \"planning\",\n      \"description\": \"Indexed control. methodology/00_planning.md is a NIZAM.json authoritative_source.\",\n      \"module\": \"methodology/00_planning.md\"\n    },\n    {\n      \"name\": \"unindexed-capability\",\n      \"description\": \"Resolves on disk, but ecosystem/README.md is not a NIZAM.json capability authoritative_source.\",\n      \"module\": \"ecosystem/README.md\"\n    }\n  ]\n}\n",
+      "unindexed_module": "ecosystem/README.md",
+      "indexed_control_module": "methodology/00_planning.md",
+      "skill_row_old": "| [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version, its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. |",
+      "skill_row_new": "| [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version, its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. Its capabilities are an intentional subset of NIZAM.json, not an equal list: every module is the authoritative_source of some NIZAM.json capability, and NIZAM.json-only entries are allowed. |",
+      "c13_row_old": "| C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. |",
+      "c13_row_new": "| C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. Every module must also be the authoritative_source of some NIZAM.json capability (an intentional subset, not equality; NIZAM.json-only entries are allowed). |",
+      "readme_summary": "Record the intentional-subset rule: every tools/skill.json module is the authoritative_source of some NIZAM.json capability, C13 enforces it, and NIZAM.json gains nizam-ecosystem-bootstrap (NDEBT-044 a).",
+      "readme_version": "0.14.0 -> 0.15.0",
+      "changelog_bullet": "- **Phase 014 feature 106: Capability-index parity** (MINOR at the next release,\n  `methodology/06_release_train.md` Section 3.2; no release is prepared and no tag is created).\n  Parity between `tools/skill.json` and `NIZAM.json` is an intentional subset, not equality:\n  every skill-module path must be the authoritative_source of some NIZAM.json capability, and\n  NIZAM.json-only entries stay allowed. C13 enforces that rule in the full sweep and under\n  `--payload`. No new check number is added (C17 stays earmarked by NIP-0003). `NIZAM.json`\n  gains capability `nizam-ecosystem-bootstrap` (`ecosystem/00_ecosystem_bootstrap.md`).\n  The negative fixture `tools/fixtures/skill_index_neg_unindexed_capability.json` is exercised\n  by the existing C13 substitution. `tools/README.md` (0.15.0) records the decision. NDEBT-044 (a).",
+      "phase_yaml_docs_updated": "tools/README.md",
+      "phase_yaml_changelog_entry": "C13 enforces an intentional subset: every tools/skill.json module is the authoritative_source of a NIZAM.json capability, NIZAM.json gains nizam-ecosystem-bootstrap, and the unindexed-capability fixture fails C13 (NDEBT-044 a).",
+      "phase_yaml_evidence": ".agent/evidence/106/at4-planning-moved.txt"
+    },
+    "serialization": "Do not run tools/validate.sh and tools/fixtures_self_test.sh at the same time, in this tree or in one scratch copy. The self-test copies a fixture over tools/skill.json. S05 starts with a /proc refusal (exit 4) and then runs its seven scratch cases one at a time. scratch_run copies the tree and does not write the real tree. Do not take a scratch copy while either script is running in the source tree.",
+    "hazards": [
+      "1. NDEBT-047, not fixed. test_c13 still restores tools/skill.json only on the straight-line path. The function is not allowed to install a trap, and cleanup, scratch_dirs, and the line-473 call stay byte-identical (they sit outside the replaced function). The second substitution lengthens the window: an interrupt during either validate.sh can leave tools/skill.json swapped. Restore only with `git checkout <B> -- tools/skill.json` inside the attempt root. Do not 'fix' the trap while implementing 106.",
+      "2. AT4's [C4] FAIL is expected after implementation as well as before. methodology/00_planning_moved.md does not exist, so C4 fails. C13 must additionally fail because methodology/00_planning.md is no longer an authoritative_source. Do not suppress C4, and do not make C13 fail merely because a NIZAM.json path is missing. S05 case 4 is the control: with the subset line deleted, [C13] FAIL is gone and [C4] FAIL remains.",
+      "3. The negative fixture stays negative only while ecosystem/README.md is not an authoritative_source. This feature adds no other capability. Indexing that README would make the fixture pass C13.",
+      "4. Acceptance test 5 forbids a new check id in validator stdout. Adding C17 would not, by itself, fail the validator_gate baseline subset test. Do not add a check.",
+      "5. Evidence files: line 1 is the invocation, the body is raw output, the last line is EXIT:<code> from the process. No `| tee` and no `| grep` on a capture.",
+      "6. The untracked .nizam/ directory in the shared tree is not part of this feature. git worktree add does not copy it. Do not add it, and do not run S03 in a tree where it is untracked.",
+      "7. C9 extracts slash-qualified path tokens from tools/README.md. The pinned rows add no new token. The help addition is in tools/validate.sh, which C9 does not scan. The CHANGELOG bullet's paths exist once the fixture exists."
+    ],
+    "failure_triage": {
+      "DEFECT": "An acceptance or S failure caused by the Generator's files. Repair inside the attempt budget: attempt 1 direct fix, attempt 2 type or interface analysis, attempt 3 architectural review. Attempt 4 is forbidden.",
+      "CONTRACT_DEFECT": "A pin or an S check that a correct implementation cannot satisfy. Halt, report, and propose a revision of this contract. Do not edit an acceptance test.",
+      "ENVIRONMENT": "A missing interpreter, a TMPDIR inside the repository, or a failure to create the attempt worktree. Halt and escalate. Do not consume an attempt.",
+      "UNCLASSIFIABLE": "Halt and escalate."
+    },
+    "attempt_isolation": "The Orchestrator creates the attempt worktree from <B> and passes the path. Suggested path: /home/cnross/workspace02/nizam-wt-106-attempt<N> (N = 1..3). The Generator's first action there is attempt-base.txt. One commit, then the Orchestrator cherry-picks it onto phase/014-106-c13-intentional-subset. On failure, evidence stays in the root; the Orchestrator copies it to .agent/evidence/106/failed-attempt<N>/ and removes only that root. No git reset --hard.",
+    "orchestrator_sequence": [
+      "1. Mode A and the evaluator's contract review approve this contract. The Orchestrator commits it on the feature branch. That commit is <B>. The Orchestrator sets status to approved. The Generator does not.",
+      "2. The Orchestrator creates the attempt worktree from <B>. The Generator records attempt-base.txt, makes the edits, runs AT1-AT8, S01, S04, S05, S02, S03 one at a time, and makes one commit. No push, no gh, no remote.",
+      "3. The Orchestrator cherry-picks, removes the root, runs Mode B, then the Evaluator. Captures go to .agent/evidence/106/qa/.",
+      "4. After QA the Orchestrator writes step 106 in docs/planning/phase_014.yaml (docs_updated, changelog_entry, evidence, status), the scope-budget measurement from 183eed1, and any DEBT.md note. The Generator does not."
+    ],
+    "orchestrator_followups": [
+      "docs/planning/phase_014.yaml step 106 only: docs_updated = tools/README.md; changelog_entry = the pinned phase_yaml_changelog_entry (quote it; it contains ': '); evidence = .agent/evidence/106/at4-planning-moved.txt. Status is the Orchestrator's. Do not edit any other step.",
+      "docs/planning/DEBT.md: do not close NDEBT-044. Concern (a) is this feature; (b), (c), (d), (e), and (f) stay open. A note that (a) is implemented may be added only after QA, by the Orchestrator. Do not close NDEBT-047 and do not edit NDEBT-045.",
+      "Scope budget: measure 106 from 183eed1 (the range start), not from <A>. The commit 2a22ecd is already inside that range. The Generator writes no scope_budget field."
+    ],
+    "scope_budget": "estimated_lines 750 is the feature-list figure on the phase-014 budget-counted basis (product + contract + verdict + planning; evidence and run_state excluded; range 530-960; product range 30-160). Expected product is about 130 lines: the NIZAM.json object, the validate.sh help addition and subset block, the replaced test_c13 function, the fixture, two README rows plus the 0.15.0 change_log entry, and the CHANGELOG bullet. This contract is the larger share. The realized figure is measured by the Orchestrator. The Generator writes no scope_budget field.",
+    "version_and_compatibility_impact": "MINOR at the next release (methodology/06_release_train.md Section 3.2). C13 is tightened, and the NIZAM.json capability that makes the real tree pass ships in the same change, including in the payload C13 reads under --payload. No consumer on an older tag runs this validator. framework.version stays 1.4.0. Nothing is tagged. Not MAJOR: the new failure mode cannot be seen without the matching index entry, and the entry is added here.",
+    "rollback": "The Generator's commit is text on the feature branch, promoted by one cherry-pick. Before promotion, a failed attempt is evidence plus removal of that worktree. After promotion, git revert of that commit. A swapped tools/skill.json is restored with git checkout of that one path. No git reset --hard and no edit of run_state by the Generator.",
+    "retry_identity_note": "Step keys 106-contract (Loop 1, revision limit 3) and 106-implementation (Loop 2, attempt limit 3). This document is revision 1, attempt 2/3 of 106-contract (design_notes.revision and approvals.revisions). The counters live in run_state.circuit_breaker, which the Generator does not write.",
+    "open_risks": [
+      "R1. Acceptance test 4 still passes if [C4] FAIL and [C13] FAIL both appear. S05, not acceptance test 4, proves the [C13] line is the subset failure. A review that treats the accompanying [C4] FAIL as a defect would be wrong.",
+      "R2. The budget point estimate is 750. A long contract plus verdicts can land above it and still inside 530-960. The Orchestrator measures. The Generator does not expand scope to 'use the budget'.",
+      "R3. NDEBT-047's window grows by one validate.sh invocation inside test_c13. Accepted. The fix is out of scope."
+    ]
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/fixtures/skill_index_neg_unindexed_capability.json",
+        "purpose": "Negative skill.json fixture. Both modules resolve; ecosystem/README.md is not a NIZAM.json authoritative_source. Registered by note_covered inside the same change."
+      },
+      {
+        "path": ".agent/evidence/106/attempt-base.txt",
+        "purpose": "The attempt base B, the Generator's first action in the attempt root. Line 1 is `git rev-parse HEAD`, line 2 is the 40-hex sha, line 3 is EXIT:0."
+      },
+      {
+        "path": ".agent/evidence/106/at1-readme-skill-row.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/at2-subset.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/at3-c13-substitute.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/at4-planning-moved.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/at5-no-c17.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/at6-validator-gate.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/at7-validator-gate-payload.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/at8-fixtures-self-test.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/s01-contract-valid.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/s02-attempt-root-delta.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/s03-scope-boundary.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/s04-pinned-structure.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/106/s05-discriminating.txt",
+        "purpose": "Section-5 evidence for the verification entry that names this path. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "NIZAM.json",
+        "purpose": "Insert only the pinned nizam-ecosystem-bootstrap capability immediately before nizam-ecosystem-preflight. framework.version stays 1.4.0. No other capability changes."
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "Extend check_c13_skill_index with the pinned subset block, and append the pinned decision sentences to the C13 --help paragraph. No new check. The --payload option paragraph, the C5 paragraph, and the Payload-doc set paragraph stay byte-identical."
+      },
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "Replace only test_c13 with the pinned function: note_covered the new fixture, substitute it, require the [C13] FAIL banner and the pinned fragment, and print the exact OK line. No trap and no other edit (NDEBT-047 stays)."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Version 0.14.0 to 0.15.0 with the pinned change_log summary. Replace the skill.json row and the C13 compliance row with the pinned lines. Nothing else."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "One pinned bullet under [Unreleased] ### Changed, after the feature-105 bullet and before ## [1.4.0]. C8 does not require it (the README change_log entry is enough); this contract does."
+      }
+    ]
+  },
+  "non_goals": [
+    "Equality of the two capability lists. A NIZAM.json capability whose authoritative_source is not a skill.json module is allowed and must keep passing. Do not fail on the count difference.",
+    "A new check id, function, or help paragraph. C17, C18, and C19 are not introduced. C17 stays earmarked by NIP-0003. Acceptance test 5 is the regression guard and already passes.",
+    "Fixing NDEBT-047. Do not install a trap in test_c13, do not re-install cleanup after scratch_dirs, and do not change the line-473 call. The missing EXIT backstop is a hazard of the second substitution, not a deliverable.",
+    "NDEBT-045, and feature 108's text: the --payload option paragraph, the C5 paragraph, the Payload-doc set paragraph, C14-C16 help paragraphs, and tools/interface.md.",
+    "Feature 107, 108, and 109 work: no docs/nips edit, no C1/C2 sweep change, no standard/capability_profiles.md edit, no tools/verify_lib.sh edit, no .github edit.",
+    "A release, a tag, or a framework.version bump. framework.version stays 1.4.0.",
+    "Editing tools/skill.json. The ecosystem/00 module pointer is already there.",
+    "Any NIZAM.json capability other than nizam-ecosystem-bootstrap, including a capability for ecosystem/README.md, and any edit to the nizam-compliance-validator summary.",
+    "Editing ecosystem/00_ecosystem_bootstrap.md, the guide, DEBT.md, the spec, the feature list, run_state, or the phase YAML. The Orchestrator owns the phase-YAML completion fields and any debt note.",
+    "Editing tests or frozen gates under .agent/evidence/phase-014-activation/ to force a pass.",
+    "Closing NDEBT-044 as a whole. Only concern (a) is implemented here."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "python3 -c \"L=[l for l in open('tools/README.md') if l.startswith('| [\\x60skill.json\\x60]')]; assert len(L)==1 and 'intentional subset' in L[0] and 'NIZAM.json' in L[0], L\"",
+      "command": "python3 -c \"L=[l for l in open('tools/README.md') if l.startswith('| [\\x60skill.json\\x60]')]; assert len(L)==1 and 'intentional subset' in L[0] and 'NIZAM.json' in L[0], L\"",
+      "acceptance_test_index": 1,
+      "source": ".agent/feature_list_014.json features[106].acceptance_tests[0]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1) at <A> = 2a22ecd, measured 2026-10-10. AssertionError whose payload is the single current skill.json row. That row contains neither 'intentional subset' nor 'NIZAM.json'.",
+      "expected_outcome": "Exit 0. Exactly one README line starts with '| [`skill.json`]' and that line is the pinned row.",
+      "evidence_file": ".agent/evidence/106/at1-readme-skill-row.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import json; n={c['authoritative_source'] for c in json.load(open('NIZAM.json'))['capabilities']}; s={c['module'] for c in json.load(open('tools/skill.json'))['capabilities']}; assert s<=n, sorted(s-n)\"",
+      "command": "python3 -c \"import json; n={c['authoritative_source'] for c in json.load(open('NIZAM.json'))['capabilities']}; s={c['module'] for c in json.load(open('tools/skill.json'))['capabilities']}; assert s<=n, sorted(s-n)\"",
+      "acceptance_test_index": 2,
+      "source": ".agent/feature_list_014.json features[106].acceptance_tests[1]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. AssertionError: ['ecosystem/00_ecosystem_bootstrap.md']. NIZAM.json has 35 capabilities and 35 distinct authoritative_source values; tools/skill.json has 20 modules. That path is the only skill module absent from the index. Sixteen NIZAM.json sources are not skill modules, so NIZAM-only entries already exist.",
+      "expected_outcome": "Exit 0. The new capability is the only addition, and every skill module is an authoritative_source. NIZAM-only entries remain (tools/validate.sh at least).",
+      "evidence_file": ".agent/evidence/106/at2-subset.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import subprocess; p=subprocess.run(['bash','tools/fixtures_self_test.sh'],capture_output=True,text=True); assert p.returncode==0 and 'OK   c13-substitute skill_index_neg_unindexed_capability.json -> [C13] FAIL' in p.stdout.splitlines()\"",
+      "command": "python3 -c \"import subprocess; p=subprocess.run(['bash','tools/fixtures_self_test.sh'],capture_output=True,text=True); assert p.returncode==0 and 'OK   c13-substitute skill_index_neg_unindexed_capability.json -> [C13] FAIL' in p.stdout.splitlines()\"",
+      "acceptance_test_index": 3,
+      "source": ".agent/feature_list_014.json features[106].acceptance_tests[2]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. AssertionError: (0, ['OK   c13-substitute skill_index_neg_dangling_module.json -> [C13] FAIL', 'SELF-TEST OK: 146/146 fixtures accounted for, 0 failed']). The self-test itself exits 0. The required line is absent. The dangling-module OK line is present.",
+      "expected_outcome": "Exit 0. stdout contains the exact new OK line as a whole line, and the dangling-module OK line is still present. The self-test still exits 0.",
+      "evidence_file": ".agent/evidence/106/at3-c13-substitute.txt"
+    },
+    {
+      "acceptance_test": "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace NIZAM.json '\"authoritative_source\": \"methodology/00_planning.md\"' '\"authoritative_source\": \"methodology/00_planning_moved.md\"' --expect-rc 1 --expect '^\\[C13\\] FAIL' -- bash tools/validate.sh",
+      "command": "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace NIZAM.json '\"authoritative_source\": \"methodology/00_planning.md\"' '\"authoritative_source\": \"methodology/00_planning_moved.md\"' --expect-rc 1 --expect '^\\[C13\\] FAIL' -- bash tools/validate.sh",
+      "acceptance_test_index": 4,
+      "source": ".agent/feature_list_014.json features[106].acceptance_tests[3]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. scratch_run applied the replace (the old string occurs once) and validate.sh in the copy exited 1, but with [C4] FAIL index-integrity (methodology/00_planning_moved.md does not resolve) and [C13] PASS skill-index. SUMMARY: 15 passed, 1 failed. scratch_run then failed the expectation '^\\[C13\\] FAIL' (EXPECTATION FAILED). Red because C13 does not yet enforce the subset. The mutation precondition held.",
+      "expected_outcome": "Exit 0 (scratch_run: EXPECTATIONS HELD). The copied validate.sh exits 1 and a line matches ^\\[C13\\] FAIL. [C4] FAIL for the moved path is still expected and is not forbidden by this acceptance test. S05 requires the C13 detail to name methodology/00_planning.md via the pinned fragment.",
+      "evidence_file": ".agent/evidence/106/at4-planning-moved.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import re,subprocess; o=subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True).stdout; assert not re.search(r'^\\[C1[7-9]\\]',o,re.M)\"",
+      "command": "python3 -c \"import re,subprocess; o=subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True).stdout; assert not re.search(r'^\\[C1[7-9]\\]',o,re.M)\"",
+      "acceptance_test_index": 5,
+      "source": ".agent/feature_list_014.json features[106].acceptance_tests[4]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10. Green guard, and it passes before implementation by design. The default sweep prints [C13] PASS skill-index through [C16] PASS feature-list-lifecycle and SUMMARY: 16 passed, 0 failed. No line matches ^\\[C1[7-9]\\].",
+      "expected_outcome": "Exit 0. Still no [C17], [C18], or [C19] line. The sweep stays 16 checks.",
+      "evidence_file": ".agent/evidence/106/at5-no-c17.txt"
+    },
+    {
+      "acceptance_test": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+      "command": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+      "acceptance_test_index": 6,
+      "source": ".agent/feature_list_014.json features[106].acceptance_tests[5]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10. GATE: PASS (16 checks passing; baseline 16). A green guard, not a red test.",
+      "expected_outcome": "Exit 0. GATE: PASS with 16 checks, not 17.",
+      "evidence_file": ".agent/evidence/106/at6-validator-gate.txt"
+    },
+    {
+      "acceptance_test": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py --payload",
+      "command": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py --payload",
+      "acceptance_test_index": 7,
+      "source": ".agent/feature_list_014.json features[106].acceptance_tests[6]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10. GATE: PASS (12 checks passing; baseline 12). A green guard. Payload mode already runs C13.",
+      "expected_outcome": "Exit 0. Payload mode stays 12 checks and C13 still passes on the real tree, including the subset rule.",
+      "evidence_file": ".agent/evidence/106/at7-validator-gate-payload.txt"
+    },
+    {
+      "acceptance_test": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+      "command": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+      "acceptance_test_index": 8,
+      "source": ".agent/feature_list_014.json features[106].acceptance_tests[7]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10. SELF-TEST OK: 146/146 fixtures accounted for, 0 failed. A green guard. It goes red if the new fixture is added without note_covered.",
+      "expected_outcome": "Exit 0. The accounted total rises by the one new file (the test asserts the exit status only, not a count). Both C13 OK lines are printed.",
+      "evidence_file": ".agent/evidence/106/at8-fixtures-self-test.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S01: the contract validates against schema/contract.schema.json; its eight acceptance entries are verbatim and in order; files_modify is exactly the five sanctioned paths; the new fixture is a create; no forbidden path is in scope; estimated_lines is 750; version_impact starts with MINOR.",
+      "command": "python3 - <<'PY'\nimport json, subprocess, sys\nimport jsonschema\nA = \"2a22ecdfda6ff3895792a1d974489d091e11e696\"\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nbad = []\ncontract = json.load(open(\".agent/contracts/106.json\"))\njsonschema.validate(contract, json.load(open(\"schema/contract.schema.json\")))\nfeature = next(item for item in json.load(open(\".agent/feature_list_014.json\"))[\"features\"] if item[\"id\"] == \"106\")\nif (contract[\"contract_id\"], contract[\"feature_id\"], contract[\"spec_ref\"]) != (\"106\", \"106\", \".agent/product_spec_014.md\"):\n    bad.append(\"ids or spec_ref\")\nif contract[\"status\"] not in (\"proposed\", \"approved\", \"implemented\", \"complete\"):\n    bad.append(\"status \" + contract[\"status\"])\nif contract[\"estimated_lines\"] != 750 or contract[\"estimated_lines\"] != feature[\"estimated_lines\"]:\n    bad.append(\"estimated_lines\")\nif not contract[\"version_impact\"].startswith(\"MINOR\"):\n    bad.append(\"version_impact\")\ntests = [item for item in contract[\"verification\"] if not item.get(\"supplementary\")]\nextras = [item for item in contract[\"verification\"] if item.get(\"supplementary\")]\nif [item[\"acceptance_test\"] for item in tests] != feature[\"acceptance_tests\"]:\n    bad.append(\"acceptance_test text is not verbatim and in order\")\nif [item[\"command\"] for item in tests] != feature[\"acceptance_tests\"]:\n    bad.append(\"command is not the verbatim acceptance test\")\nif len(tests) != 8 or len(extras) != 5:\n    bad.append(\"expected 8 acceptance tests and 5 supplementary checks\")\nif any(not item.get(\"expected_outcome\") or not item.get(\"state_at_base_A\") or item.get(\"owner\") != \"generator\" for item in contract[\"verification\"]):\n    bad.append(\"entry missing expected_outcome, state_at_base_A, or generator owner\")\nevidence = [item[\"evidence_file\"] for item in contract[\"verification\"]]\ncreated = [item[\"path\"] for item in contract[\"scope\"][\"files_create\"]]\nmodified = [item[\"path\"] for item in contract[\"scope\"][\"files_modify\"]]\nif len(set(evidence)) != len(evidence) or any(not path.startswith(\".agent/evidence/106/\") for path in evidence):\n    bad.append(\"evidence files are not unique under .agent/evidence/106/\")\nif not set(evidence) <= set(created):\n    bad.append(\"an evidence file is missing from files_create\")\nif \"attempt-base.txt\" not in \" \".join(created):\n    bad.append(\"attempt-base.txt missing\")\nwant_modify = [\"NIZAM.json\", \"tools/validate.sh\", \"tools/fixtures_self_test.sh\", \"tools/README.md\", \"CHANGELOG.md\"]\nif modified != want_modify:\n    bad.append(\"files_modify is not the sanctioned list: \" + repr(modified))\nif \"tools/fixtures/skill_index_neg_unindexed_capability.json\" not in created:\n    bad.append(\"the negative fixture is not in files_create\")\nfor path in modified:\n    if sh(\"git\", \"cat-file\", \"-e\", A + \":\" + path).returncode != 0:\n        bad.append(\"files_modify path absent at base: \" + path)\nfor path in created:\n    if sh(\"git\", \"cat-file\", \"-e\", A + \":\" + path).returncode == 0:\n        bad.append(\"create path already exists at base: \" + path)\nforbidden_exact = {\".agent/run_state.json\", \"standard/capability_profiles.md\", \"tools/verify_lib.sh\", \"tools/skill.json\", \"docs/planning/phase_014.yaml\", \"docs/planning/DEBT.md\", \".agent/feature_list_014.json\", \".agent/product_spec_014.md\"}\nfor path in created + modified:\n    if path in forbidden_exact or path.startswith((\".github/\", \"docs/nips/\", \".agent/evidence/phase-014-activation\")):\n        bad.append(\"forbidden path in scope: \" + path)\nidentity = contract[\"retry_identity\"]\nif (identity[\"contract_step_key\"], identity[\"implementation_step_key\"], identity[\"limit\"]) != (\"106-contract\", \"106-implementation\", 3):\n    bad.append(\"retry identity\")\nprint(\"verification\", len(contract[\"verification\"]), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "Not a red test. It passes once this contract is the file under test and the working tree matches it.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/106/s01-contract-valid.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S02: attempt-base.txt is the three-line form; B is the approved-contract commit; the diff since B is inside scope. Proves the implementation commit does not touch run_state, the feature list, the phase YAML, DEBT.md, or tools/skill.json.",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys\nA = \"2a22ecdfda6ff3895792a1d974489d091e11e696\"\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nbad = []\nlines = open(\".agent/evidence/106/attempt-base.txt\").read().splitlines()\nif len(lines) != 3 or lines[0] != \"git rev-parse HEAD\" or lines[2] != \"EXIT:0\" or re.fullmatch(r\"[0-9a-f]{40}\", lines[1]) is None:\n    bad.append(\"attempt-base.txt is not the three-line captured form\")\nB = lines[1] if len(lines) > 1 else \"\"\ncontract = json.load(open(\".agent/contracts/106.json\"))\nscope = {item[\"path\"] for key in (\"files_create\", \"files_modify\") for item in contract[\"scope\"][key]}\nif sh(\"git\", \"cat-file\", \"-t\", B).stdout.strip() != \"commit\":\n    bad.append(\"B is not a commit\")\nif sh(\"git\", \"merge-base\", \"--is-ancestor\", A, B).returncode != 0:\n    bad.append(\"A is not an ancestor of B\")\nif sh(\"git\", \"merge-base\", \"--is-ancestor\", B, \"HEAD\").returncode != 0:\n    bad.append(\"B is not an ancestor-or-equal of HEAD\")\ncount = int(sh(\"git\", \"rev-list\", \"--count\", B + \"..HEAD\").stdout.strip() or \"99\")\nif count not in (0, 1):\n    bad.append(\"HEAD is %d commits past B\" % count)\nshown = sh(\"git\", \"show\", B + \":.agent/contracts/106.json\")\nif shown.returncode != 0 or json.loads(shown.stdout).get(\"status\") != \"approved\":\n    bad.append(\"the contract at B is not approved\")\ndelta = set(run(\"git\", \"diff\", \"--name-only\", \"-z\", B).split(\"\\0\")) - {\"\"}\nfields = run(\"git\", \"status\", \"--porcelain\", \"--untracked-files=all\", \"-z\").split(\"\\0\")\nindex = 0\nwhile index < len(fields):\n    entry = fields[index]\n    index += 1\n    if not entry:\n        continue\n    delta.add(entry[3:])\n    if entry[0] in \"RC\" or entry[1] in \"RC\":\n        if index < len(fields):\n            delta.add(fields[index])\n            index += 1\nextra = sorted(delta - scope)\nif extra:\n    bad.append(\"paths changed since B outside scope: \" + repr(extra))\nprint(\"B\", B[:12], \"commits past B\", count, \"delta\", len(delta), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at <A> (exit 1): attempt-base.txt does not exist yet.",
+      "expected_outcome": "Exit 0 inside the attempt root, before the single implementation commit (HEAD equals B, or one commit past B only when re-run after that commit).",
+      "evidence_file": ".agent/evidence/106/s02-attempt-root-delta.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S03: every path changed against <A> is in scope or on the allowlist (.agent/contracts/106.json, run_state, the feature list, validator/QA/failed-attempt prefixes). Every files_modify path is changed. The feature list, phase YAML, and DEBT.md are hard-failed when changed. run_state stays on the allowlist and is not in that hard-fail.",
+      "command": "python3 - <<'PY'\nimport json, subprocess, sys\nA = \"2a22ecdfda6ff3895792a1d974489d091e11e696\"\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nbad = []\ncontract = json.load(open(\".agent/contracts/106.json\"))\nscope = {item[\"path\"] for key in (\"files_create\", \"files_modify\") for item in contract[\"scope\"][key]}\nmodified = {item[\"path\"] for item in contract[\"scope\"][\"files_modify\"]}\nowned = {\".agent/contracts/106.json\", \".agent/run_state.json\", \".agent/feature_list_014.json\"}\nprefixes = (\".agent/validator/106\", \".agent/qa/106\", \".agent/evidence/106/qa/\", \".agent/evidence/106/failed-attempt\", \".agent/evidence/106-qa-\")\nchanged = set(run(\"git\", \"diff\", \"--name-only\", \"-z\", A).split(\"\\0\")) - {\"\"}\nfields = run(\"git\", \"status\", \"--porcelain\", \"--untracked-files=all\", \"-z\").split(\"\\0\")\nindex = 0\nwhile index < len(fields):\n    entry = fields[index]\n    index += 1\n    if not entry:\n        continue\n    changed.add(entry[3:])\n    if entry[0] in \"RC\" or entry[1] in \"RC\":\n        if index < len(fields):\n            changed.add(fields[index])\n            index += 1\nextra = sorted(path for path in changed if path not in scope and path not in owned and not path.startswith(prefixes))\nmissing = sorted(modified - changed)\nif extra:\n    bad.append(\"paths outside scope and allowlist: \" + repr(extra))\nif missing:\n    bad.append(\"files_modify paths not changed: \" + repr(missing))\nif \".agent/feature_list_014.json\" in changed:\n    bad.append(\"feature list changed inside the attempt; status flips are Orchestrator-owned\")\nif \"docs/planning/phase_014.yaml\" in changed or \"docs/planning/DEBT.md\" in changed:\n    bad.append(\"orchestrator-owned file changed inside the attempt\")\nprint(\"changed\", len(changed), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at <A> plus this contract (exit 1): the five files_modify paths are not yet changed relative to an attempt that also contains the contract. At <A> itself the contract file is absent.",
+      "expected_outcome": "Exit 0 in the attempt root after the deliverables exist. Phase YAML, DEBT.md, and the feature list are unchanged against <A>. A run_state difference versus <A> is allowlisted, not a hard-fail.",
+      "evidence_file": ".agent/evidence/106/s03-scope-boundary.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S04: validate.sh, fixtures_self_test.sh, and NIZAM.json differ from <A> only by the pinned insertions; the forbidden help regions are byte-identical; the fixture and the two README rows match the pins; CHANGELOG gains only the pinned bullet; tools/skill.json and framework.version are unchanged; the failure fragment occurs once and no C17 text exists.",
+      "command": "python3 - <<'PY'\nimport json, os, re, subprocess, sys\nimport yaml\nA = \"2a22ecdfda6ff3895792a1d974489d091e11e696\"\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nbad = []\npins = json.load(open(\".agent/contracts/106.json\"))[\"design_notes\"][\"pinned_interface\"]\nnorm = lambda text: \" \".join(text.split())\n\ndef show(path):\n    return run(\"git\", \"show\", A + \":\" + path)\n\ndef between(text, start, end):\n    i = text.index(start)\n    j = text.index(end, i)\n    return text[i:j]\n\n# validate.sh is base plus the help addition and the subset block, nowhere else.\nbase_v = show(\"tools/validate.sh\")\nnew_v = open(\"tools/validate.sh\").read()\nexpect_v = base_v.replace(pins[\"help_anchor\"], pins[\"help_anchor\"] + pins[\"help_addition\"], 1)\nexpect_v = expect_v.replace(pins[\"problem_anchor\"], pins[\"subset_block\"] + pins[\"problem_anchor\"], 1)\nif new_v != expect_v:\n    bad.append(\"tools/validate.sh is not base plus the two pinned insertions\")\nif new_v.count(pins[\"failure_fragment\"]) != 1:\n    bad.append(\"the C13 failure fragment does not occur exactly once in tools/validate.sh\")\nif new_v.count(pins[\"fail_echo\"]) != 1:\n    bad.append(\"the [C13] FAIL echo is not exactly once\")\nfor token in (\"[C17]\", \"[C18]\", \"[C19]\", \"check_c17\"):\n    if token in new_v:\n        bad.append(\"new check text present: \" + token)\nfor start, end in pins[\"unchanged_regions\"]:\n    if between(new_v, start, end) != between(base_v, start, end):\n        bad.append(\"forbidden region changed: \" + start[:40])\n\n# fixtures self-test: only the pinned test_c13 function changes.\nbase_s = show(\"tools/fixtures_self_test.sh\")\nnew_s = open(\"tools/fixtures_self_test.sh\").read()\ni = base_s.index(\"test_c13() {\\n\")\nj = base_s.index(\"\\ntest_c13\\n\", i)\nexpect_s = base_s[:i] + pins[\"test_c13\"] + base_s[j + 1:]\nif new_s != expect_s:\n    bad.append(\"tools/fixtures_self_test.sh is not base with the pinned test_c13 function\")\nif \"trap\" in pins[\"test_c13\"]:\n    bad.append(\"test_c13 installs a trap (that would be a NDEBT-047 fix)\")\n\n# NIZAM.json: only the pinned capability object, inserted before preflight.\nbase_n = show(\"NIZAM.json\")\nnew_n = open(\"NIZAM.json\").read()\nneedle = pins[\"nizam_needle\"]\nif base_n.count(needle) != 1 or new_n != base_n.replace(needle, pins[\"nizam_insert\"] + needle, 1):\n    bad.append(\"NIZAM.json is not base plus the single pinned capability\")\nnew_doc = json.loads(new_n)\nif new_doc[\"framework\"][\"version\"] != \"1.4.0\":\n    bad.append(\"framework.version moved\")\nsources = [item[\"authoritative_source\"] for item in new_doc[\"capabilities\"]]\nif sources.count(\"ecosystem/00_ecosystem_bootstrap.md\") != 1:\n    bad.append(\"bootstrap authoritative_source is not exactly once\")\nif \"ecosystem/README.md\" in sources:\n    bad.append(\"ecosystem/README.md was indexed (the negative fixture would go vacuous)\")\nids = [item[\"id\"] for item in new_doc[\"capabilities\"]]\nif ids.count(\"nizam-ecosystem-bootstrap\") != 1:\n    bad.append(\"capability id is not exactly once\")\nif \"tools/validate.sh\" not in sources:\n    bad.append(\"NIZAM-only control tools/validate.sh disappeared\")\n\n# skill.json is untouched, and the fixture file is the pinned document.\nif open(\"tools/skill.json\").read() != show(\"tools/skill.json\"):\n    bad.append(\"tools/skill.json changed\")\nif open(pins[\"fixture_path\"]).read() != pins[\"fixture_text\"]:\n    bad.append(\"negative fixture bytes differ from the pin\")\nmodules = {item[\"module\"] for item in json.loads(pins[\"fixture_text\"])[\"capabilities\"]}\nif modules != {\"methodology/00_planning.md\", \"ecosystem/README.md\"}:\n    bad.append(\"fixture modules drifted\")\nfor module in modules:\n    if not os.path.isfile(module):\n        bad.append(\"fixture module does not exist: \" + module)\n\n# README: version, change_log head, and exactly two body lines.\ndef frontmatter(text):\n    return yaml.safe_load(text.split(\"---\", 2)[1])\ndef body(text):\n    return text.split(\"---\", 2)[2]\nold_r, new_r = show(\"tools/README.md\"), open(\"tools/README.md\").read()\nold_fm, new_fm = frontmatter(old_r), frontmatter(new_r)\nif (str(old_fm[\"version\"]), str(new_fm[\"version\"])) != (\"0.14.0\", \"0.15.0\"):\n    bad.append(\"README version is not 0.14.0 -> 0.15.0\")\nhead = new_fm[\"change_log\"][0]\nif head[\"version\"] != \"0.15.0\" or head[\"summary\"] != pins[\"readme_summary\"] or re.fullmatch(r\"\\d{4}-\\d\\d-\\d\\d\", str(head[\"date\"])) is None:\n    bad.append(\"README change_log head\")\nif new_fm[\"change_log\"][1:] != old_fm[\"change_log\"]:\n    bad.append(\"older README change_log entries changed\")\nif {k: v for k, v in new_fm.items() if k not in (\"version\", \"change_log\")} != {k: v for k, v in old_fm.items() if k not in (\"version\", \"change_log\")}:\n    bad.append(\"another README frontmatter key changed\")\nold_lines, new_lines = body(old_r).splitlines(), body(new_r).splitlines()\ndiffs = [(a, b) for a, b in zip(old_lines, new_lines) if a != b]\nif len(old_lines) != len(new_lines) or diffs != [(pins[\"skill_row_old\"], pins[\"skill_row_new\"]), (pins[\"c13_row_old\"], pins[\"c13_row_new\"])]:\n    bad.append(\"README body differs by more than the two pinned rows\")\nskill_lines = [line for line in new_r.splitlines() if line.startswith(\"| [`skill.json`]\")]\nif skill_lines != [pins[\"skill_row_new\"]]:\n    bad.append(\"AT1 row is not exactly the pinned line\")\n\n# CHANGELOG: exactly the pinned bullet inside [Unreleased], after feature 105.\nold_c, new_c = show(\"CHANGELOG.md\"), open(\"CHANGELOG.md\").read()\nbullet = norm(pins[\"changelog_bullet\"])\nfolded = norm(new_c)\nif folded.count(bullet) != 1:\n    bad.append(\"CHANGELOG bullet does not occur exactly once\")\nelif norm(folded.replace(bullet, \"\", 1)) != norm(old_c):\n    bad.append(\"CHANGELOG differs by more than the pinned bullet\")\nmarker_105 = \"- **Phase 014 feature 105: Nested-fixture ownership**\"\nif not (folded.index(\"## [Unreleased]\") < folded.index(bullet) < folded.index(\"## [1.4.0]\")):\n    bad.append(\"CHANGELOG bullet is not inside [Unreleased]\")\nif bullet in folded and folded.index(bullet) < folded.index(norm(marker_105)):\n    bad.append(\"CHANGELOG bullet is not after the feature-105 bullet\")\nprint(\"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at <A> (exit 1): the pinned insertions, the new capability, the fixture, and the README words are absent.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/106/s04-pinned-structure.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S05: seven scratch cases. Dropping the new capability fails C13 (default and --payload) on ecosystem/00_ecosystem_bootstrap.md and does not fail C4. The AT4 mutation fails C13 naming methodology/00_planning.md and also fails C4 on the moved path. Replacing the one subset line with pass removes [C13] FAIL from that mutation and removes the new OK line from the self-test while the dangling OK line remains. The negative fixture fails C13 with the pinned fragment and ecosystem/README.md, and does not say 'does not resolve'. Deleting the note_covered line fails the completeness guard.",
+      "command": "python3 - <<'PY'\nimport json, os, subprocess, sys\nbad = []\n\ndef serial_guard():\n    ancestors, pid = set(), os.getpid()\n    while pid > 1:\n        ancestors.add(pid)\n        try:\n            pid = int(open(\"/proc/%d/stat\" % pid).read().rsplit(\")\", 1)[1].split()[1])\n        except (OSError, ValueError, IndexError):\n            break\n    for name in filter(str.isdigit, os.listdir(\"/proc\")):\n        if int(name) in ancestors:\n            continue\n        try:\n            argv = [part.decode() for part in open(\"/proc/%s/cmdline\" % name, \"rb\").read().split(b\"\\0\") if part]\n            cwd = os.readlink(\"/proc/%s/cwd\" % name)\n        except OSError:\n            continue\n        if cwd == os.getcwd() and len(argv) > 1 and os.path.basename(argv[0]) in (\"bash\", \"sh\") and argv[1].endswith((\"tools/fixtures_self_test.sh\", \"tools/validate.sh\")):\n            print(\"REFUSED (exit 4): process %s is already running %s in this tree\" % (name, argv[1]))\n            sys.exit(4)\n\nserial_guard()\npins = json.load(open(\".agent/contracts/106.json\"))[\"design_notes\"][\"pinned_interface\"]\nfragment = pins[\"failure_fragment\"]\ndrop = \"p = root / 'NIZAM.json'\\nt = p.read_text()\\nins = %r\\nassert t.count(ins) == 1, t.count(ins)\\np.write_text(t.replace(ins, '', 1))\\n\" % pins[\"nizam_insert\"]\nablate = (\n    \"p = root / 'tools/validate.sh'\\n\"\n    \"t = p.read_text()\\n\"\n    \"frag = %r\\n\"\n    \"lines = t.splitlines()\\n\"\n    \"hits = [i for i, line in enumerate(lines) if frag in line]\\n\"\n    \"assert len(hits) == 1, hits\\n\"\n    \"assert lines[hits[0]].lstrip().startswith('problems.append(')\\n\"\n    \"lines[hits[0]] = '        pass'\\n\"\n    \"p.write_text('\\\\n'.join(lines) + ('\\\\n' if t.endswith('\\\\n') else ''))\\n\"\n) % fragment\nsubstitute = (\n    \"src = root / %r\\n\"\n    \"dst = root / 'tools/skill.json'\\n\"\n    \"dst.write_text(src.read_text())\\n\"\n) % pins[\"fixture_path\"]\nunregister = (\n    \"p = root / 'tools/fixtures_self_test.sh'\\n\"\n    \"t = p.read_text()\\n\"\n    \"line = '  note_covered skill_index_neg_unindexed_capability.json\\\\n'\\n\"\n    \"assert t.count(line) == 1\\n\"\n    \"p.write_text(t.replace(line, '', 1))\\n\"\n)\nold = '\"authoritative_source\": \"methodology/00_planning.md\"'\nnew = '\"authoritative_source\": \"methodology/00_planning_moved.md\"'\nSR = [sys.executable, \".agent/evidence/phase-014-activation/gates/scratch_run.py\"]\nVALIDATE = [\"bash\", \"tools/validate.sh\"]\nSELFTEST = [\"bash\", \"tools/fixtures_self_test.sh\"]\nCASES = [\n    (\"drop the new capability: default C13 fails on ecosystem/00 and C4 does not\",\n     [\"--py-mutate\", drop], 1,\n     [r\"^\\[C13\\] FAIL\", fragment, r\"ecosystem/00_ecosystem_bootstrap\\.md\"],\n     [r\"^\\[C4\\] FAIL\", r\"^\\[C1[7-9]\\]\"], VALIDATE),\n    (\"drop the new capability: payload mode C13 fails the same way\",\n     [\"--py-mutate\", drop], 1,\n     [r\"^\\[C13\\] FAIL\", fragment, r\"ecosystem/00_ecosystem_bootstrap\\.md\"],\n     [r\"^\\[C4\\] FAIL\", r\"^\\[C1[7-9]\\]\"], VALIDATE + [\"--payload\"]),\n    (\"AT4 mutation: C13 names methodology/00_planning.md; C4 names the moved path\",\n     [\"--replace\", \"NIZAM.json\", old, new], 1,\n     [r\"^\\[C13\\] FAIL\", fragment, r\"methodology/00_planning\\.md\", r\"^\\[C4\\] FAIL\", r\"methodology/00_planning_moved\\.md\"],\n     [r\"^\\[C17\\]\"], VALIDATE),\n    (\"ablating the one subset line removes [C13] FAIL from the AT4 mutation; C4 remains\",\n     [\"--replace\", \"NIZAM.json\", old, new, \"--py-mutate\", ablate], 1,\n     [r\"^\\[C4\\] FAIL\", r\"methodology/00_planning_moved\\.md\"],\n     [r\"^\\[C13\\] FAIL\"], VALIDATE),\n    (\"the negative fixture fails C13 for the subset reason, not a dangling pointer\",\n     [\"--py-mutate\", substitute], 1,\n     [r\"^\\[C13\\] FAIL\", fragment, r\"ecosystem/README\\.md\"],\n     [\"does not resolve\", r\"^\\[C4\\] FAIL\", r\"^\\[C17\\]\"], VALIDATE),\n    (\"removing note_covered makes the completeness guard fail the new fixture\",\n     [\"--py-mutate\", unregister], 1,\n     [r\"^FAIL completeness: fixture\\(s\\) on disk not accounted for\", r\"skill_index_neg_unindexed_capability\\.json\"],\n     [], SELFTEST),\n    (\"ablating the subset line removes only the new OK line; the dangling OK line remains\",\n     [\"--py-mutate\", ablate], 1,\n     [r\"^OK   c13-substitute skill_index_neg_dangling_module\\.json -> \\[C13\\] FAIL$\"],\n     [r\"^OK   c13-substitute skill_index_neg_unindexed_capability\\.json -> \\[C13\\] FAIL$\"], SELFTEST),\n]\n\ndef one(case):\n    name, mutations, rc, expects, forbids, command = case\n    argv = SR + mutations + [\"--expect-rc\", str(rc)]\n    for pattern in expects:\n        argv += [\"--expect\", pattern]\n    for pattern in forbids:\n        argv += [\"--forbid\", pattern]\n    argv += [\"--\"] + command\n    proc = subprocess.run(argv, capture_output=True, text=True)\n    print((\"PASS \" if proc.returncode == 0 else \"FAIL \") + name)\n    if proc.returncode != 0:\n        print(\"\\n\".join(\"    \" + line for line in (proc.stdout + proc.stderr).splitlines()[-25:]))\n        bad.append(name)\n\nfor case in CASES:\n    one(case)\nprint(\"cases:\", len(CASES), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at <A> (exit 1): the drop-capability mutation's precondition fails because nizam-ecosystem-bootstrap does not exist, and the unindexed fixture does not exist.",
+      "expected_outcome": "Exit 0. All seven cases PASS, run one at a time.",
+      "evidence_file": ".agent/evidence/106/s05-discriminating.txt"
+    }
+  ],
+  "estimated_lines": 750,
+  "evidence_dir": ".agent/evidence/106/",
+  "evidence_convention": "Line 1 of each evidence file is the replayable invocation from the repo root, the body is the raw combined stdout and stderr, and the last line is EXIT:<code> taken from the process, never from a pipeline. One capture at a time, in the foreground. Never run tools/validate.sh and tools/fixtures_self_test.sh at the same time. Order inside the attempt root: attempt-base.txt first; after the deliverables are final, AT1 through AT8, then S01, S04, S05, S02, S03. A later edit invalidates the captures. The Evaluator re-runs into .agent/evidence/106/qa/. Failed-attempt evidence goes to .agent/evidence/106/failed-attempt<N>/. Frozen files under .agent/evidence/phase-014-activation/ are read-only.",
+  "approvals": {
+    "revisions": 1,
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-10-10T05:01:50Z"
+  },
+  "version_impact": "MINOR at the next release (C13 tightened, but its inputs ship together; methodology/06_release_train.md Section 3.2; spec: \"MINOR (C13 tightened, but its inputs ship together)\"). No release is prepared and no tag is created. framework.version stays 1.4.0.",
+  "retry_identity": {
+    "contract_step_key": "106-contract",
+    "implementation_step_key": "106-implementation",
+    "limit": 3,
+    "attempt_worktree": "Created by the Orchestrator from <B>. Suggested path /home/cnross/workspace02/nizam-wt-106-attempt<N>.",
+    "failed_attempt_evidence": ".agent/evidence/106/failed-attempt<N>/",
+    "attempt_strategy": "methodology/03_circuit_breaker.md: attempt 1 direct fix, 2 type/interface analysis, 3 architectural review, 4+ forbidden. ENVIRONMENT and CONTRACT_DEFECT escalate and do not consume an attempt."
+  },
+  "rollback": "See design_notes.rollback. No git reset --hard. The Generator does not edit .agent/run_state.json."
+}

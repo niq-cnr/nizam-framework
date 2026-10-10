@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "014-ga-track",
-  "current_feature": "106",
+  "current_feature": "107",
   "status": "in_progress",
-  "updated_at": "2026-10-10T02:55:43Z",
+  "updated_at": "2026-10-10T05:40:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -251,6 +251,14 @@
     },
     "105-implementation": {
       "attempts": 1,
+      "limit": 3
+    },
+    "106-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "106-implementation": {
+      "attempts": 0,
       "limit": 3
     }
   },
@@ -1795,6 +1803,52 @@
       "at": "2026-10-10T02:55:43Z",
       "event": "handover_prepared",
       "detail": "Handover workflow wf_4e451d13-f61 (relaunched after the prior session ended mid-draft). Planner wrote docs/planning/HANDOVER.md 1.0.0 and refreshed ROADMAP 0.47.0, backlog_reconciliation 0.1.5 and backlog_dag.json. Validator accuracy review: round 1 rejected (11 issues / 7 unsupported / 3 missing), round 2 rejected (3/3/0), round 3 APPROVED with all arrays empty. Evaluator replayed all 45 commands the handover tells a reader to run (mutating ones only in scratch): PASS, no failures; captures under .agent/evidence/handover-2026-10/. Orchestrator recorded the handover as phase-level item handover-2026-10 (822 budget-counted, 1686 evidence) per HANDOVER (b); phase total now 4536 / 8600. Phase stays in_progress at current_feature 106; no feature started. HANDOVER (b) describes this treatment as 'not yet recorded': it is now recorded here, and run_state governs."
+    },
+    {
+      "at": "2026-10-10T03:46:46Z",
+      "event": "operator_gate_decision",
+      "detail": "Recorded BEFORE any merge under this authorization (NDEBT-018). Operator verbatim (2026-10-10, plan approval): 'You are authorized to manage, triage as necessary, your PR's and once clean merge as appropriate.' Also: 'continue with the development of this project. Think carefully about the optimal execution DAG and then you are approved to proceed. Expedite.' Effect: the Orchestrator may merge a phase-014 feature PR only when CI is green (validate, e2e_bootstrap, fixtures_self_test, convergent_review) and review is clean. No tag, no GA declaration, no H-CONSOLIDATION, no feature-100 member adoption. Interpretation disclosed."
+    },
+    {
+      "at": "2026-10-10T03:46:46Z",
+      "event": "scope_budget_remeasured",
+      "detail": "handover-2026-10 re-measured with python3 .agent/evidence/scope-budget-014/measure.py --range handover=e2a50ed..183eed1. BUDGET_COUNTED_LINES=822 (planning 4 files), EVIDENCE_LINES=1686, EXCLUDED_LINES=25, unclassified 0. Matches the recorded actual. Range placeholder replaced with e2a50ed..183eed1. total_lines_changed stays 4536. 106 range starts at 183eed1."
+    },
+    {
+      "at": "2026-10-10T03:46:46Z",
+      "event": "feature_started",
+      "feature": "106",
+      "detail": "Dependency gate: 106 dependencies [] satisfied. Branch phase/014-106-c13-intentional-subset from main 183eed1. 106-contract attempt 1/3. Dispatching Generator to propose .agent/contracts/106.json. No outward act in Loop 1."
+    },
+    {
+      "at": "2026-10-10T04:39:56Z",
+      "event": "contract_approved",
+      "feature": "106",
+      "detail": "106-contract attempt 1/3 approved at revision 0. Mode A: .agent/validator/106-mode-a.json final_verdict.approved true, issues/missing_acceptance_coverage/unsupported_claims empty. Evaluator contract review: .agent/qa/106-contract-review.json same empty arrays, approved true. Evidence: .agent/evidence/106-qa-adversarial-contract-review/. No revision was required. This commit is the attempt base <B>. Implementation has not started."
+    },
+    {
+      "at": "2026-10-10T04:41:00Z",
+      "event": "implementation_attempt_started",
+      "feature": "106",
+      "detail": "106-implementation attempt 1/3. Attempt base <B>=55c428a35f11259f8b3d3b57cc57626329786bbf (approved contract revision 0). Detached worktree /home/cnross/workspace02/nizam-wt-106-attempt1. Generator makes exactly one commit inside that worktree. No run_state edit in the worktree."
+    },
+    {
+      "at": "2026-10-10T04:45:00Z",
+      "event": "contract_defect",
+      "feature": "106",
+      "detail": "Implementation attempt was not started. The Generator halted before any edit or commit in nizam-wt-106-attempt1 (removed). S03 diffs <A>..HEAD and hard-fails if .agent/run_state.json is in that set. <B> 55c428a already contains the Orchestrator's contract_approved run_state edit versus <A> 2a22ecd, so a faithful implementation cannot pass S03. 106-implementation attempts reset from the premature 1 to 0 (no implementation commit). 106-contract advances to attempt 2/3. Required fix: drop run_state from S03's orchestrator-owned hard-fail; keep it in the allowlist so the <B> edit is in scope. S02 still diffs from <B> and rejects a Generator edit of run_state. No acceptance test changes."
+    },
+    {
+      "at": "2026-10-10T05:01:50Z",
+      "event": "contract_approved",
+      "feature": "106",
+      "detail": "106-contract attempt 2/3 approved at revision 1. Mode A .agent/validator/106-mode-a.json revision_reviewed 1, approved, empty arrays, revision 0 in prior_rounds. Evaluator .agent/qa/106-contract-review.json revision_reviewed 1, approved, empty arrays. S03 no longer hard-fails on the Orchestrator run_state edit versus <A>. This commit is the new attempt base <B>. Implementation has not started."
+    },
+    {
+      "at": "2026-10-10T05:40:00Z",
+      "event": "feature_complete",
+      "feature": "106",
+      "detail": "Feature 106 COMPLETE (NDEBT-044 a: C13 intentional subset; capability nizam-ecosystem-bootstrap). Contract revision 1 (attempt 2/3) after S03 was repaired; revision 0 had been approved then found unsatisfiable because <B> already edited run_state. Implementation attempt 1 commit 59ff1df parent d94542c. Mode B approved (.agent/validator/106-mode-b.json, empty arrays) on that commit. QA pass .agent/qa/106.json (13/13; adversarial retarget of anti_hallucination to ecosystem/README.md failed only C13; real tools/skill.json unchanged). An earlier AT8 in QA was killed by a timeout during the NDEBT-047 swap window; skill.json was restored from <B> and the recorded AT8 exited 0. Canonical-first: phase_014.yaml 106 COMPLETED, feature_list_014 106 complete, then this run_state. Budget: 106 = 686 budget-counted (evidence 2113); phase total 5222 / 8600. Next: 107. NDEBT-044 stays Open; only concern (a) is done."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1969,9 +2023,9 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 4536,
-    "evidence_lines_total": 13674,
-    "excluded_lines_total": 464,
+    "total_lines_changed": 5222,
+    "evidence_lines_total": 15787,
+    "excluded_lines_total": 546,
     "counting_rule": {
       "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.6)",
       "script": ".agent/evidence/scope-budget-014/measure.py",
@@ -2022,6 +2076,15 @@
         "excluded_lines": 74,
         "range": "2a53764..(completion working tree)",
         "note": "Phase-014 rule (measure.py, spec 1.1.6 incl. row 4a: non-JSON files under .agent/validator/ are evidence). Includes the post-105 planning record (DEBT 0.51.0, spec 1.1.6, backlog_reconciliation 0.1.4) per the A1/A2-in-feature-range precedent. Superseded interim figures (907, 1561, 50) (taken before row 4a and before the planning record). Rolling threshold 3 x mean(596,885,991) = 2472."
+      },
+      {
+        "id": "106",
+        "estimated": 750,
+        "actual": 686,
+        "evidence_lines": 2113,
+        "excluded_lines": 82,
+        "range": "183eed1..ca889db",
+        "note": "Phase-014 rule. measure.py --range 106=183eed1..ca889db: BUDGET_COUNTED_LINES=686 (product 106, contract 382, verdict 191, planning 7), EVIDENCE_LINES=2113, EXCLUDED_LINES=82, unclassified 0. Rolling threshold was 3 x mean(885,991,950)=2826. 686 is under the estimate 750."
       }
     ],
     "phase_level_items": [
@@ -2034,10 +2097,10 @@
       },
       {
         "id": "handover-2026-10",
-        "range": "e2a50ed..(handover PR head; re-measure at its merge commit)",
+        "range": "e2a50ed..183eed1",
         "actual": 822,
         "evidence_lines": 1686,
-        "note": "Developer handover package (docs/planning/HANDOVER.md + ROADMAP 0.47.0, backlog_reconciliation 0.1.5, backlog_dag.json refresh). Orchestrator treatment: second phase-level item (rebaseline-1.1.4 precedent): caused by the operator's handover request (2026-10-10T02:11:41Z), not by feature 106; counts toward total_lines_changed only, not per_feature or the rolling baseline. 106's measurement range starts at the commit that merges this PR. No estimate allowance existed; it consumes headroom."
+        "note": "Developer handover package (docs/planning/HANDOVER.md + ROADMAP 0.47.0, backlog_reconciliation 0.1.5, backlog_dag.json refresh). Orchestrator treatment: second phase-level item (rebaseline-1.1.4 precedent): caused by the operator's handover request (2026-10-10T02:11:41Z), not by feature 106; counts toward total_lines_changed only, not per_feature or the rolling baseline. Re-measured at the merge commit 183eed1 (PR #71) on 2026-10-10T03:46:46Z: BUDGET_COUNTED_LINES=822, EVIDENCE_LINES=1686, EXCLUDED_LINES=25, unclassified 0. 106's measurement range starts at 183eed1."
       }
     ],
     "rebaseline": {
@@ -2313,11 +2376,12 @@
       }
     ]
   },
-  "last_action": "Handover package ready (PR pending operator merge)",
+  "last_action": "Feature 106 complete; next is 107",
   "completed_contract_ids": [
     "099",
     "103",
     "104",
-    "105"
+    "105",
+    "106"
   ]
 }

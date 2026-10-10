@@ -613,18 +613,28 @@ test_scope_guard
 echo "== C13 skill-index negative fixture (substitution) =="
 test_c13() {
   note_covered skill_index_neg_dangling_module.json
+  note_covered skill_index_neg_unindexed_capability.json
   SKILL_BAK=$(mktemp)
   cp -- tools/skill.json "${SKILL_BAK}"
-  cp -- tools/fixtures/skill_index_neg_dangling_module.json tools/skill.json
-  local out; out=$(bash tools/validate.sh 2>&1)
-  cp -- "${SKILL_BAK}" tools/skill.json
-  rm -f -- "${SKILL_BAK}"; SKILL_BAK=""
-  if printf '%s\n' "${out}" | grep -Eq "^\[C13\] FAIL"; then
-    echo "OK   c13-substitute skill_index_neg_dangling_module.json -> [C13] FAIL"
-  else
-    echo "FAIL c13-substitute: substituting the dangling-module fixture did not yield [C13] FAIL"
-    fail=1
-  fi
+  _c13_substitute_one() {
+    local fixture_basename="$1"
+    local required_detail="$2"
+    local validator_output
+    cp -- "tools/fixtures/${fixture_basename}" tools/skill.json
+    validator_output=$(bash tools/validate.sh 2>&1)
+    cp -- "${SKILL_BAK}" tools/skill.json
+    if printf '%s\n' "${validator_output}" | grep -Eq "^\[C13\] FAIL" \
+      && { [ -z "${required_detail}" ] || printf '%s\n' "${validator_output}" | grep -Fq -- "${required_detail}"; }; then
+      echo "OK   c13-substitute ${fixture_basename} -> [C13] FAIL"
+    else
+      echo "FAIL c13-substitute: substituting ${fixture_basename} did not yield [C13] FAIL"
+      fail=1
+    fi
+  }
+  _c13_substitute_one skill_index_neg_dangling_module.json ""
+  _c13_substitute_one skill_index_neg_unindexed_capability.json "is not the authoritative_source of any NIZAM.json capability"
+  rm -f -- "${SKILL_BAK}"
+  SKILL_BAK=""
 }
 test_c13
 

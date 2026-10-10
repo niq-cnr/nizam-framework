@@ -398,6 +398,14 @@ file(s)/detail(s) printed on the following indented line(s)):
       `tools/fixtures/skill_index_neg_dangling_module.json`, exercised as a
       standing test by `tools/fixtures_self_test.sh` (feature 052 / NDEBT-009),
       which substitutes it for tools/skill.json and asserts the `[C13] FAIL`.
+      Parity with NIZAM.json is an intentional subset, not equality
+      (phase-014 feature 106, NDEBT-044 a): every capabilities[].module
+      must be the authoritative_source of some NIZAM.json capability, in
+      the full sweep and under --payload; NIZAM.json-only entries are
+      allowed. A module that is not indexed is a [C13] FAIL even when the
+      file exists. Negative fixture:
+      `tools/fixtures/skill_index_neg_unindexed_capability.json`, exercised
+      by the same substitution in `tools/fixtures_self_test.sh`.
 
 Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,
 consistently): CONTEXT.md; every .md under docs/architecture/; every .md
@@ -2094,6 +2102,33 @@ for label, path in paths:
     if not os.path.isfile(norm):
         problems.append(f"{label} -> {path} does not resolve to a file")
 
+# Intentional subset, not equality (phase-014 feature 106, NDEBT-044 a).
+# Every capabilities[].module string must be exactly the authoritative_source
+# of some NIZAM.json capability (the same strings acceptance test 2 compares).
+# NIZAM.json-only capabilities are allowed. The comparison is not normalized
+# and it runs in every mode, including a module the payload resolution
+# carve-out skipped. A module that already failed to resolve is still
+# reported here when it is also unindexed.
+try:
+    with open("NIZAM.json", encoding="utf-8") as index_file:
+        capability_index = json.load(index_file)
+except (OSError, json.JSONDecodeError) as exc:
+    print(f"NIZAM.json unreadable or not valid JSON: {exc}")
+    sys.exit(1)
+indexed_sources = set()
+index_capabilities = capability_index.get("capabilities") if isinstance(capability_index, dict) else None
+if isinstance(index_capabilities, list):
+    for index_capability in index_capabilities:
+        authoritative_source = index_capability.get("authoritative_source") if isinstance(index_capability, dict) else None
+        if isinstance(authoritative_source, str) and authoritative_source:
+            indexed_sources.add(authoritative_source)
+for index, capability in enumerate(capabilities):
+    module = capability.get("module") if isinstance(capability, dict) else None
+    if not isinstance(module, str) or not module:
+        continue
+    if module not in indexed_sources:
+        label = f"capabilities[{index}] ({capability.get('name', '?') if isinstance(capability, dict) else '?'})"
+        problems.append(f"{label} -> {module} is not the authoritative_source of any NIZAM.json capability")
 for problem in problems:
     print(problem)
 sys.exit(1 if problems else 0)

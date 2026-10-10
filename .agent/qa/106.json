@@ -1,0 +1,38 @@
+{
+  "feature_id": "106",
+  "qa_pass": true,
+  "checks_run": 13,
+  "checks_passed": 13,
+  "adversarial": {
+    "performed": true,
+    "description": "Evaluator-originated live-index probe (not one of the contract's 13 verification commands and not S05's whole-file fixture substitution). In a scratch copy only, scratch_run replaces the single tools/skill.json module pin \"standard/anti_hallucination.md\" (capabilities[9], name anti_hallucination) with \"ecosystem/README.md\", a file that exists and is not an authoritative_source. The copy must fail the full sweep with exactly the C13 subset detail, no 'does not resolve' line, and no [C4] FAIL. The probe then writes the original module string back, requires git diff --quiet against HEAD for tools/skill.json, and requires a second validate.sh to exit 0 with [C13] PASS and no [C13] FAIL. The real worktree's tools/skill.json is never written. Helper: .agent/evidence/106/qa/adversarial_restore_probe.sh, invoked only as the scratch_run command.",
+    "result": "PASS (exit 0, EXPECTATIONS HELD). Mutated copy: [C13] FAIL skill-index, detail 'capabilities[9] (anti_hallucination) -> ecosystem/README.md is not the authoritative_source of any NIZAM.json capability', SUMMARY 15 passed, 1 failed, dangling-line absent, mutated-c4 absent. After restore: pin matches HEAD, [C13] PASS skill-index, SUMMARY 16 passed, 0 failed. Real tools/skill.json blob stayed 2a688249c76e80736a451d34a45758d8d8f20680.",
+    "evidence": ".agent/evidence/106/qa/adversarial-unindexed-module.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/106/qa/at1-readme-skill-row.txt",
+    ".agent/evidence/106/qa/at2-subset.txt",
+    ".agent/evidence/106/qa/at3-c13-substitute.txt",
+    ".agent/evidence/106/qa/at4-planning-moved.txt",
+    ".agent/evidence/106/qa/at5-no-c17.txt",
+    ".agent/evidence/106/qa/at6-validator-gate.txt",
+    ".agent/evidence/106/qa/at7-validator-gate-payload.txt",
+    ".agent/evidence/106/qa/at8-fixtures-self-test.txt",
+    ".agent/evidence/106/qa/s01-contract-valid.txt",
+    ".agent/evidence/106/qa/s02-attempt-root-delta.txt",
+    ".agent/evidence/106/qa/s03-scope-boundary.txt",
+    ".agent/evidence/106/qa/s04-pinned-structure.txt",
+    ".agent/evidence/106/qa/s05-discriminating.txt",
+    ".agent/evidence/106/qa/adversarial-unindexed-module.txt",
+    ".agent/evidence/106/qa/adversarial_restore_probe.sh"
+  ],
+  "issues": [],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "PASS. The Evaluator independently re-ran the 13 contract verification commands (AT1-AT8 and S01-S05 from .agent/contracts/106.json; AT1-AT8 byte-identical to feature 106 in .agent/feature_list_014.json) strictly one at a time from the repo root at HEAD 59ff1df7a743d8b078e4e7c06972a8a743eb2147 with PYTHONDONTWRITEBYTECODE=1. tools/validate.sh and tools/fixtures_self_test.sh never overlapped. Every recorded command exited 0. Captures are in .agent/evidence/106/qa/ (line 1 invocation, raw output, EXIT:<code>). AT1 exit 0 (skill.json README row). AT2 exit 0 (every skill module is an authoritative_source). AT3 exit 0 (unindexed-capability OK line present). AT4 EXPECTATIONS HELD: scratch validate.sh exit 1, [C13] FAIL naming methodology/00_planning.md, [C4] FAIL on methodology/00_planning_moved.md, SUMMARY 14 passed, 2 failed. AT5 exit 0 (no [C17]-[C19]). AT6 GATE PASS (16 checks; baseline 16). AT7 GATE PASS (12 checks; baseline 12). AT8 exit 0 (SELF-TEST OK 147/147, both C13 OK lines). S01: verification 13 problems []. S02: B d94542cb2241, 1 commit past B, delta 20, problems []. S03: changed 38, problems [] (phase YAML, DEBT.md, and the feature list not hard-failed). S04: problems []. S05: 7/7 cases PASS. Adversarial probe PASS (scratch only): retargeting capabilities[9] anti_hallucination to ecosystem/README.md made C13 the only failure (SUMMARY 15 passed, 1 failed; no dangling-resolve line; no [C4] FAIL); restoring that module so tools/skill.json matched HEAD made the sweep exit 0 ([C13] PASS, SUMMARY 16 passed, 0 failed). The real tools/skill.json blob stayed 2a688249c76e80736a451d34a45758d8d8f20680. DISCHARGED: feature 106 AT1-AT8 and S01-S05. NOT CLAIMED: docs/planning/phase_014.yaml step 106 completion fields, DEBT.md, NDEBT-044 closure, and the scope-budget measurement (Orchestrator-owned). .agent/run_state.json was not modified. A first AT8 attempt was killed by the evaluator command timeout during test_c13's dangling-fixture substitution, which is NDEBT-047's known straight-line-only restore; tools/skill.json was restored from B (same blob as HEAD) before the recorded AT8, which exited 0 and left the tree clean. That interruption is not a product defect."
+  },
+  "dod_ref": "standard/definition_of_done.md"
+}
