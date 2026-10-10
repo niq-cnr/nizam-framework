@@ -4,13 +4,16 @@ title: "Nizam Framework — Phase 014 Spec: GA Track — the Real Multi-Repo Pil
 description: "Plan-of-record spec for phase 014, activated 2026-10-08 under H-PHASE-014 with the approved amendments: the real non-scratch multi-repo pilot, the Repeat/GA lifecycle protocols with their reserved gates, and the folded enforcement-integrity maintenance tranche (features 103-109) ahead of the GA-readiness assessment."
 tags: [spec, ecosystem-cycle, ga, pilot, maintenance, phase-014]
 status: active
-last_audited: "2026-10-09"
+last_audited: "2026-10-10"
 authoritative_source: NA
-version: 1.1.6
-spec_version: "1.1.6"
+version: 1.1.7
+spec_version: "1.1.7"
 created_at: "2026-09-30T10:24:00Z"
-updated_at: "2026-10-09T22:45:42Z"
+updated_at: "2026-10-10T06:11:19Z"
 change_log:
+  - version: "1.1.7"
+    date: "2026-10-10T06:11:19Z"
+    summary: "PATCH (no re-baseline). AMENDMENT A3 under methodology/00_planning.md Section 9. Operator verbatim: 'The multi-repo pilot at v1.4.0 is no longer needed.' Recorded in .agent/run_state.json as operator_gate_decision at 2026-10-10T06:05:42Z before this change (NDEBT-018). Applied: features 100 and 101 are cancelled (the objects and their acceptance tests stay and will not run); feature 102 drops dependencies 100 and 101 and keeps 099, 103, 104, 105, 106, 107, 108, 109; 102's DEBT cross-check (acceptance-test index 2) requires real_production_pilot not_met and excludes .agent/evidence/pilot-100/aggregate.json from that evidence list, and still asserts the Critical/High open-debt rule; the dossier records that precondition as not_met because the pilot was cancelled, and H-GA stays outstanding. phase_014.yaml steps 100 and 101 are removed (the step schema has no cancelled value); 107, 109, 108 and 102 stay PENDING; phase status stays in_progress. Remaining lane: 106 complete, then 107 → 109 → 108 → 102. H-CONSUMER-UPGRADE is not outstanding for phase 014; the gate stays defined and recurring. original_estimate_lines stays 8600 and the ceiling stays 11180. Cancelled features 100 and 101 will not consume their estimates (780 and 890). feature_list_014 spec_version moves to 1.1.7 in lockstep. backlog_dag.json packet status was not set to cancelled: schema/work-packet.schema.json has no status enum."
   - version: "1.1.6"
     date: "2026-10-09T22:45:42Z"
     summary: "PATCH (no feature, acceptance-test, dependency, design, estimate or budget change; one measurement-rule path pattern). ORCHESTRATOR-REPORTED OPERATIONAL FIX, NOT AN OPERATOR DECISION: the Orchestrator recorded in .agent/run_state.json (scope_budget.per_feature 105 note; feature_complete 2026-10-09T22:36:25Z) that measure.py failed closed (exit 3) on feature 105 because the 1.1.4 rule classes only *.json under .agent/validator/ (row 4), leaving its two Mode B obligation-(c) re-run captures (.agent/validator/105-mode-b-rerun/s05-discriminating-matrix.txt and s06-containment.txt, 23 lines) unclassified; the Orchestrator counted them as evidence and disclosed it. Applied: new row 4a in 'The counting rule': every file at any depth under .agent/validator/ whose name does not end in .json is evidence (evidence total, never gated); a .json file in a subdirectory of .agent/validator/ still matches no rule and stays unclassified (fail closed); .agent/qa/ is unchanged. .agent/evidence/scope-budget-014/measure.py gains the same rule. No operator gate is needed: the change moves only lines that were previously UNCLASSIFIED (in neither total) into the evidence total, which the operator's option-1 decision (2026-10-09T17:42:10Z) already defines as raw evidence captures tracked separately and never gated, so it neither adds nor removes a budget-counted line, changes no threshold, estimate or ceiling, and cannot reclassify a verdict (verdicts are JSON; row 4 is untouched); it is the same kind of Planner extension as rows 5 and 8. Re-measured: measure.py --range 105=2a53764.. -> BUDGET_COUNTED_LINES=907 (unchanged), UNCLASSIFIED_LINES=0, EXIT:0 (.agent/evidence/scope-budget-014/measure-105.txt, taken before the 1.1.6 planning edits, so the range holds only 105's lines plus evidence); the 099/103 replay is byte-identical to measure-099-103.txt; no non-JSON path under .agent/validator/ or .agent/qa/ exists in any earlier commit (git log --all), so no recorded figure moves. feature_list_014 spec_version moves to 1.1.6 in lockstep. The run_state scope_budget.counting_rule copy (spec_ref 1.1.4, verdict = *.json only) is Orchestrator-owned and is not edited here."
@@ -91,11 +94,11 @@ which is also the order of `.agent/feature_list_014.json`.
 | 6 | **107** | NIP frontmatter under C1/C2; NIP-0002's status corrected | NDEBT-044 (b) | — |
 | 7 | **109** | C15 mapping direction: an explicit Role column and a new primitive | NDEBT-026 | — |
 | 8 | **108** | Validator help and adapter-reference truth | NDEBT-037; NDEBT-044 (c, d, f) | 106, 107, 109 |
-| 9 | **100** | Real, non-scratch multi-repo pilot at the released tag v1.4.0 | — | — |
-| 10 | **101** | First real simplification review | — | 099, 100 |
-| 11 | **102** | GA-readiness dossier (no declaration), next-candidate refinement, phase close; NDEBT-044 (e) | NDEBT-044 (e) | 099, 100, 101, 103–109 |
+| 9 | **100** | CANCELLED 2026-10-10 — the v1.4.0 multi-repo pilot is no longer needed; the object and its tests stay and will not run | — | — |
+| 10 | **101** | CANCELLED 2026-10-10 — simplification review; every test needs the pilot evidence and there is no other input | — | was 099, 100; will not run |
+| 11 | **102** | GA-readiness dossier (no declaration); `real_production_pilot` is `not_met`; H-GA stays outstanding; NDEBT-044 (e) | NDEBT-044 (e) | 099, 103–109 |
 
-Features 099–102 keep the scope of spec 1.0.1:
+Feature 099 keeps the scope of spec 1.0.1. Features 100 and 101 are cancelled by amendment A3 (2026-10-10). Feature 102 keeps the dossier, with the pilot precondition recorded `not_met`:
 
 - **099 — the activation wave.** Flip `ecosystem/06` and `ecosystem/08` draft → active.
   Register them in `NIZAM.json` (ecosystem `key_documents` plus `capabilities`),
@@ -103,22 +106,21 @@ Features 099–102 keep the scope of spec 1.0.1:
   re-synced to every on-disk `ecosystem/0*.md`. **Define** `H-CONSOLIDATION` and `H-GA`
   (reserved → DEFINED/OUTSTANDING in `docs/planning/operator_gates.md`), mirroring
   features 061/080/081.
-- **100 — the real pilot at the released immutable tag v1.4.0.** The members are
-  operator-designated real repositories. **H-PHASE-014 designates none: the member set
-  is an operator decision not yet made.** Each member is adopted under its own
-  `H-CONSUMER-UPGRADE`, recorded before its re-bootstrap (`NDEBT-018`). Each runs in an
-  isolated worktree, never on its main branch. The stages are Preflight → Baseline →
-  Audit → the membership-run aggregate. A plan or train is built only under recorded
-  `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY`. There is no scratch-harness fabrication.
-  The evidence contract is fixed in the feature list.
-- **101 — the first real simplification review.** It runs `ecosystem/06` over the
-  pilot evidence and the accumulated surface, including what 103–109 changed.
-  Candidates are evidence-backed findings, and every consolidation is reserved behind
-  `H-CONSOLIDATION`. It now depends on 099, which activates 06 and defines that gate.
-- **102 — the GA-readiness dossier.** It is organised by the five `ecosystem/08`
-  Section 2 preconditions. `H-GA` stays OUTSTANDING and nothing is declared. The
-  approved amendments for 102 are the `import json` fix (AT1) and the phase-scoped tag
-  check (AT4).
+- **100 — cancelled 2026-10-10.** The operator said the v1.4.0 multi-repo pilot is no
+  longer needed. The feature object and its acceptance tests stay in the feature list
+  and will not run. It will not consume its estimate. No member set is designated and
+  phase 014 records no per-member `H-CONSUMER-UPGRADE`.
+- **101 — cancelled 2026-10-10** for the same reason. Every acceptance test requires
+  `.agent/evidence/pilot-100/` and the feature has no other input. The object and its
+  tests stay and will not run. It will not consume its estimate. It produces no
+  consolidation candidates.
+- **102 — the GA-readiness dossier.** It no longer depends on 100 or 101. It depends
+  on 099 and 103–109. The dossier records `real_production_pilot` as `not_met` because
+  the pilot was cancelled, and `.agent/evidence/pilot-100/aggregate.json` is not in
+  that precondition's evidence list. `H-GA` stays OUTSTANDING and nothing is declared.
+  The approved amendments for 102 are the `import json` fix (AT1) and the phase-scoped tag
+  check (AT4). Amendment A3 retargets the pilot half of the DEBT cross-check (AT3);
+  the Critical/High debt assertion is unchanged.
   - **Approved-tranche coverage** (the same 11:21:14Z decision, "NDEBT-044, split by
     concern"): the NDEBT-044 (e) open-debt roll (AT5).
   - **Planner hardening, operator-acknowledged 2026-10-08T13:20:12Z
@@ -260,9 +262,9 @@ before it was scheduled (AH-2).
   first, the manifest second, and the derived run_state third, written by the
   Orchestrator.
 - **No `H-GA` act, no `H-CONSOLIDATION` act, no release and no tag.**
-- The pilot's per-member adoption decisions are per-consumer `H-CONSUMER-UPGRADE`
-  records, kept in each member's own governance state. 100's evidence must also tie
-  each of them to a framework run_state event.
+- The pilot's per-member adoption decisions would have been per-consumer
+  `H-CONSUMER-UPGRADE` records. Amendment A3 cancels feature 100, so phase 014 does
+  not record those decisions and does not exercise the gate.
 - **Acceptance infrastructure is frozen at activation**, under
   `.agent/evidence/phase-014-activation/`:
   - the baselines: `validate.txt`, `validate_payload.txt`, `tag-baseline.txt` and
@@ -280,33 +282,29 @@ before it was scheduled (AH-2).
 
 ## Feature DAG
 
-The DAG is acyclic. Its roots are 099, 103, 105, 106, 107, 109 and 100. Its edges are
-104 → 103; 108 → 106, 107, 109; 101 → 099, 100; and 102 → 099, 100, 101, 103–109.
+The DAG is acyclic. Amendment A3 (2026-10-10) cancels 100 and 101, so they are not
+edges of the remaining path. Completed features are 099, 103, 104, 105 and 106.
+Remaining edges: 104 → 103 (already satisfied); 108 → 106, 107, 109 (106 already
+satisfied); 102 → 099, 103, 104, 105, 106, 107, 108, 109.
 
 ## Execution Order
 
-```text
-Parallel Group 1: 099, 103, 105, 106, 107, 109, 100 (no dependencies)
-Parallel Group 2: 104 (depends on 103), 108 (depends on 106, 107, 109), 101 (depends on 099, 100)
-Sequential:       102 (depends on 099, 100, 101, 103-109)
-```
+106 complete, then 107 → 109 → 108 → 102.
 
-**Recommended single lane** (the canonical list order; the Dependency Enforcement Rule
-picks the first pending feature whose dependencies are satisfied):
+**Remaining lane** (the Dependency Enforcement Rule picks the first pending feature
+whose dependencies are satisfied; cancelled counts as satisfied):
 
-`099 → 103 → 104 → 105 → 106 → 107 → 109 → 108 → 100 → 101 → 102`.
+`106 complete, then 107 → 109 → 108 → 102`.
 
-- **The first eligible feature is 099.**
-- **The pilot comes late on purpose.** 100 depends on operator decisions that have not
-  been made (the member set and each member's `H-CONSUMER-UPGRADE`). Work that is
-  ready now goes first, so the lane is not stalled while those decisions are
-  outstanding.
-- **101 reviews the maintained surface.** It reviews the surface after the tranche
-  changes it, not before.
-- **Moving the pilot up is possible.** If the operator designates the members earlier,
-  100 may be moved up by a recorded amendment. Its dependencies allow that.
+- **The next feature is 107.** 099, 103, 104, 105 and 106 are complete. 100 and 101
+  are cancelled and will not run.
+- **There is no pilot on this lane.** The operator said the v1.4.0 multi-repo pilot
+  is no longer needed, so no member set and no per-member `H-CONSUMER-UPGRADE` is
+  outstanding for phase 014.
+- **102 closes without pilot evidence.** It records `real_production_pilot` as
+  `not_met`. `H-GA` stays outstanding.
 
-The critical path is 100 → 101 → 102.
+The critical path is 107 → 109 → 108 → 102. It is not 100 → 101 → 102.
 
 ## Scope budget re-baseline
 
@@ -561,6 +559,9 @@ estimate below is a range.
   rounded up to 100 to absorb review-round edits) and 6780 estimated. That is 8561,
   rounded up to 100.
 - The 130 percent cumulative ceiling is **11180**.
+- Features 100 and 101 are cancelled under amendment A3 (2026-10-10) and will not
+  consume their estimates (780 and 890). `original_estimate_lines` stays **8600** and
+  the ceiling stays **11180**. This amendment does not re-baseline.
 - The high end of the range, 1481 + 300 + 8670 = 10451, is under the ceiling. The low
   end is 1481 + 300 + 4840 = 6621.
 - The cumulative position after 103 is 1481 / 11180, about 13.2 percent of the
@@ -681,12 +682,14 @@ are deferred to implementation; Part A of the probes names them. They are 103 AT
 ## Human gates
 
 - `H-PHASE-014`: **SATISFIED 2026-10-08** (verbatim above; run_state 11:21:14Z).
-- `H-CONSUMER-UPGRADE`: **OUTSTANDING**, recurring, once per real member of feature
-  100, before that member's re-bootstrap. The member set itself is still to be
-  designated by the operator.
-- `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY`: only if 100 builds a real plan or train,
-  recorded before each act.
-- `H-CONSOLIDATION`: defined by 099, and exercised only for an actual consolidation
-  chosen from 101's candidates.
-- `H-GA`: defined by 099 and never exercised by this phase.
+- `H-CONSUMER-UPGRADE`: **not outstanding for phase 014.** Feature 100 is cancelled
+  (operator 2026-10-10: the v1.4.0 multi-repo pilot is no longer needed), so this
+  phase will not exercise the gate. The gate stays defined and recurring for a future
+  adoption.
+- `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY`: not outstanding for phase 014. Feature 100
+  is cancelled and will not build a plan or a train.
+- `H-CONSOLIDATION`: defined by 099. It stays outstanding and unexercised. Feature 101
+  is cancelled, so this phase records no consolidation candidates.
+- `H-GA`: defined by 099, stays outstanding, and is never exercised by this phase.
+  Feature 102 records `real_production_pilot` as `not_met` and declares nothing.
 - `H-FRAMEWORK-RELEASE`: not in scope. No release is prepared by phase 014.

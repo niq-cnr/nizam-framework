@@ -1,6 +1,6 @@
 {
   "plan_status": "candidate",
-  "plan_status_note": "CANDIDATE plan for post-014 work. The phase-014 packets (F099-F109, ACT-014) MIRROR the activated canonical plan (.agent/feature_list_014.json, spec 1.1.6 since the 2026-10-10 handover refresh (was spec 1.1.2 at activation), docs/planning/phase_014.yaml); on any conflict the canonical files win and this file is corrected. The 2026-10-10 refresh mirrored only the budget (activated_phase) and the packet estimates; the F099, F103, F104 and F105 packet statuses still read pending against canonical complete (validate_backlog_dag.py V7), left for the Orchestrator or feature 102's close. Nothing here changes a feature list, phase YAML, manifest or run_state. Post-014 packets are candidates until their own H-NIP / H-PHASE-NNN gates.",
+  "plan_status_note": "CANDIDATE plan for post-014 work. The phase-014 packets (F099-F109, ACT-014) MIRROR the activated canonical plan (.agent/feature_list_014.json, spec 1.1.6 since the 2026-10-10 handover refresh (was spec 1.1.2 at activation), docs/planning/phase_014.yaml); on any conflict the canonical files win and this file is corrected. The 2026-10-10 refresh mirrored only the budget (activated_phase) and the packet estimates; the F099, F103, F104 and F105 packet statuses still read pending against canonical complete (validate_backlog_dag.py V7), left for the Orchestrator or feature 102's close. Nothing here changes a feature list, phase YAML, manifest or run_state. Post-014 packets are candidates until their own H-NIP / H-PHASE-NNN gates. Amendment A3 (2026-10-10, canonical spec 1.1.7): features 100 and 101 are cancelled and F102 depends_on no longer lists F100 or F101 (serialize_after is F108). F100 and F101 packet status stays pending because validate_backlog_dag.py STATUSES is only complete, in_progress, pending, so V7 still mismatches those two statuses. Canonical status is the feature list.",
   "generated_at": "2026-10-08T13:23:34Z",
   "base_commit": "02b02c63e639237f8cfd2d7dccb1571e96753742",
   "base_commit_note": "origin/main after PR #64 (merged 2026-10-08T11:16:42Z). Line citations are at 02b02c6 unless stated. The phase-014 amendment and activation records in this package are uncommitted on branch phase/014-ga-track at generation time (spec 1.1.2, validator rounds 1-2).",
@@ -9,12 +9,12 @@
   "activated_phase": {
     "phase_id": "014-ga-track",
     "feature_list": ".agent/feature_list_014.json",
-    "spec_version": "1.1.6",
+    "spec_version": "1.1.7",
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
     "budget_basis": "SUPERSEDED 2026-10-09 by spec 1.1.4 (refreshed here 2026-10-10, handover): the phase-014 counting rule (.agent/evidence/scope-budget-014/measure.py; budget-counted = product + contract + verdict + audit + planning; evidence tracked, never gated; run_state excluded) re-baselined original_estimate_lines 6660 -> 8600 and the ceiling 8658 -> 11180. Was: Planner activation-time estimate, naive 2890 x the measured 2.3 process weight (docs/nips/NIP-0003-live-runtime-sessions.md:494-495).",
     "budget_approval": "8600/11180: operator 'option 1 confirmed.' (run_state 2026-10-09T17:59:00Z; decision operator_gate_decision 2026-10-09T17:42:10Z). Was 6660/8658: operator, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z).",
-    "run_state_position": "landed 2026-10-08T12:18:31Z (phase_activated): current_phase 014-ga-track, current_feature 099, status in_progress"
+    "run_state_position": "landed 2026-10-08T12:18:31Z (phase_activated): current_phase 014-ga-track, current_feature 099, status in_progress. Amendment A3 (2026-10-10T06:05:42Z): run_state is current_feature 107, status in_progress, after 106 completed (PR #72, f53c499); features 100 and 101 are cancelled in the feature list."
   },
   "estimate_weighting": {
     "low": 2.3,
@@ -2094,7 +2094,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "pilot + review evidence"
+          "reason": "GA dossier not yet assembled; the v1.4.0 pilot was cancelled (amendment A3)"
         }
       },
       "estimate": {
@@ -2127,8 +2127,6 @@
         "depends_on": [
           "ACT-014",
           "F099",
-          "F100",
-          "F101",
           "F103",
           "F104",
           "F105",
@@ -2142,7 +2140,7 @@
           "PLAN-WA"
         ],
         "serialize_after": [
-          "F101"
+          "F108"
         ]
       },
       "lane_rank": 200

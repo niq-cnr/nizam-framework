@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "107",
   "status": "in_progress",
-  "updated_at": "2026-10-10T05:40:00Z",
+  "updated_at": "2026-10-10T06:20:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1849,6 +1849,16 @@
       "event": "feature_complete",
       "feature": "106",
       "detail": "Feature 106 COMPLETE (NDEBT-044 a: C13 intentional subset; capability nizam-ecosystem-bootstrap). Contract revision 1 (attempt 2/3) after S03 was repaired; revision 0 had been approved then found unsatisfiable because <B> already edited run_state. Implementation attempt 1 commit 59ff1df parent d94542c. Mode B approved (.agent/validator/106-mode-b.json, empty arrays) on that commit. QA pass .agent/qa/106.json (13/13; adversarial retarget of anti_hallucination to ecosystem/README.md failed only C13; real tools/skill.json unchanged). An earlier AT8 in QA was killed by a timeout during the NDEBT-047 swap window; skill.json was restored from <B> and the recorded AT8 exited 0. Canonical-first: phase_014.yaml 106 COMPLETED, feature_list_014 106 complete, then this run_state. Budget: 106 = 686 budget-counted (evidence 2113); phase total 5222 / 8600. Next: 107. NDEBT-044 stays Open; only concern (a) is done."
+    },
+    {
+      "at": "2026-10-10T06:05:42Z",
+      "event": "operator_gate_decision",
+      "detail": "Recorded BEFORE the plan amendment (NDEBT-018). Operator verbatim (2026-10-10, interactive session): 'The multi-repo pilot at v1.4.0 is no longer needed.' Interpretation disclosed: cancel feature 100. Cancel feature 101 because its acceptance tests require .agent/evidence/pilot-100/ evidence and it has no other input. Amend feature 102 so it no longer depends on 100 or 101 and records real_production_pilot as not_met, without requiring that pilot aggregate. Remove phase_014.yaml steps 100 and 101 (the phase schema has no cancelled status; 102 AT1 requires every remaining step to be COMPLETED). Features 107, 109, and 108 stay, in that order, then 102. H-CONSUMER-UPGRADE stays defined for future adoptions; no per-member decision is outstanding for this phase. H-GA and H-CONSOLIDATION stay outstanding and unexercised. No tag. The 8600/11180 budget is not rebaselined. current_feature stays 107."
+    },
+    {
+      "at": "2026-10-10T06:20:00Z",
+      "event": "planning_record",
+      "detail": "Amendment A3 applied on chore/014-descope-v140-pilot after the 2026-10-10T06:05:42Z operator_gate_decision. Spec 1.1.7. Features 100 and 101 cancelled. Feature 102 dependencies are 099, 103, 104, 105, 106, 107, 108, 109. 102 acceptance-test index 2 requires real_production_pilot not_met and excludes pilot-100 aggregate. phase_014.yaml steps 100 and 101 removed. Lane is 107 → 109 → 108 → 102. Budget 8600/11180 unchanged. current_feature stays 107."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2376,7 +2386,7 @@
       }
     ]
   },
-  "last_action": "Feature 106 complete; next is 107",
+  "last_action": "Amendment A3 applied: features 100 and 101 cancelled; next is 107",
   "completed_contract_ids": [
     "099",
     "103",
