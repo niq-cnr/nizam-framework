@@ -81,6 +81,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   a claim naming a suite file that does not exist and a claim naming an absent subdirectory, and the
   self-test demonstrates those cases itself in a private scratch area. A claim proves ownership, not
   execution. `tools/README.md` (0.14.0) describes the claim map. No fixture moves. NDEBT-042.
+- **Phase 014 feature 106: Capability-index parity** (MINOR at the next release,
+  `methodology/06_release_train.md` Section 3.2; no release is prepared and no tag is created).
+  Parity between `tools/skill.json` and `NIZAM.json` is an intentional subset, not equality:
+  every skill-module path must be the authoritative_source of some NIZAM.json capability, and
+  NIZAM.json-only entries stay allowed. C13 enforces that rule in the full sweep and under
+  `--payload`. No new check number is added (C17 stays earmarked by NIP-0003). `NIZAM.json`
+  gains capability `nizam-ecosystem-bootstrap` (`ecosystem/00_ecosystem_bootstrap.md`).
+  The negative fixture `tools/fixtures/skill_index_neg_unindexed_capability.json` is exercised
+  by the existing C13 substitution. `tools/README.md` (0.15.0) records the decision. NDEBT-044 (a).
 
 ## [1.4.0] - 2026-10-08
 

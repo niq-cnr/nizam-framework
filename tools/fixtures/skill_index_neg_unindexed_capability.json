@@ -1,0 +1,18 @@
+{
+  "name": "nizam-skill-index-negative-fixture-unindexed",
+  "version": "0.0.1",
+  "description": "Negative fixture for validator check C13 (phase-014 feature 106, NDEBT-044 a). Every capabilities[].module resolves to an existing file. The planning entry is the authoritative_source of a NIZAM.json capability, so it is not the failure. The unindexed-capability entry points at ecosystem/README.md, which is absent from the NIZAM.json capability index. Substituting this file for tools/skill.json must make the full sweep print [C13] FAIL because that module is unindexed, not because a pointer dangles. The filename carries the canonical _neg_ token and no C12 family prefix, so C12 ignores it.",
+  "entry_point": "tools/SKILL.md",
+  "capabilities": [
+    {
+      "name": "planning",
+      "description": "Indexed control. methodology/00_planning.md is a NIZAM.json authoritative_source.",
+      "module": "methodology/00_planning.md"
+    },
+    {
+      "name": "unindexed-capability",
+      "description": "Resolves on disk, but ecosystem/README.md is not a NIZAM.json capability authoritative_source.",
+      "module": "ecosystem/README.md"
+    }
+  ]
+}
