@@ -1,0 +1,4 @@
+T=$(mktemp -d) && git archive HEAD | tar -x -C "$T" && <revert C5 paragraph to old text in $T> && bash $T/tools/validate.sh (from repo root) + AT2 against $T
+SWEEP GREEN 16/16 WITH [C5] PASS ON REVERTED TEXT
+AT2 FAILS ON REVERTED TEXT (direction confirmed: text follows code, not vice versa)
+EXIT:0

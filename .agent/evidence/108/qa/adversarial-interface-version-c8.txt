@@ -1,0 +1,22 @@
+sed -n '1,12p' tools/interface.md; [C8] line from fresh qa/at5-validator-gate.txt capture; version/base comparison
+--- frontmatter (HEAD) ---
+---
+id: nizam-tools-interface
+title: "Runtime-Adapter Interface"
+description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
+version: 0.3.1
+status: active
+authoritative_source: tools/interface.md
+change_log:
+  - version: "0.3.1"
+    date: "2026-10-10"
+    summary: "PATCH correction (phase-014 feature 108, NDEBT-044 d): Section 5 item 10's no-fabrication rule cites Section 2, Item 5 (Failure behavior), not Item 4 (Manifest resolution). A one-token citation fix; the checklist stays at 10 items."
+  - version: "0.2.0"
+    date: "2026-07-08"
+    summary: "H4: reordered Section 2 Discovery so bootstrapped-consumer .nizam/tools/skill.json discovery runs first, matching bootstrap.sh's .nizam default install layout, with the repository-root tools/skill.json path retained as an explicitly labeled framework-checkout fallback."
+--- base (A) version line ---
+5:version: 0.3.0
+--- current version line count (expect 1) ---
+1
+--- [C8] line from fresh QA AT5 capture ---
+EXIT:0

@@ -1,0 +1,85 @@
+diff <(git show ddcf0db:tools/validate.sh | bash /dev/stdin --help) <(bash tools/validate.sh --help)
+149,154c149,157
+<   C5  Branding/endpoint leakage. Zero case-insensitive occurrences of
+<       `nizamiq`, `.svc`, or `cluster.local` anywhere in shipped content:
+<       the shipped-doc set, plus NIZAM.json, CHANGELOG.md, root README.md,
+<       and bootstrap.sh. Repo-wide only; does not run under --target. In
+<       --payload mode the extra targets are swept only when present; missing
+<       envelope files do not cause a failure.
+---
+>   C5  Branding/endpoint leakage. The sweep is case-sensitive: zero
+>       occurrences of the lowercase tokens `nizamiq`, `.svc`, or
+>       `cluster.local` anywhere in shipped content -- the shipped-doc set,
+>       plus NIZAM.json, CHANGELOG.md, root README.md, and bootstrap.sh.
+>       Capitalised brand prose (for example `NizamIQ` in running text) is
+>       allowed; only the lowercase token fails the sweep. Repo-wide only;
+>       does not run under --target. In --payload mode the extra targets are
+>       swept only when present; missing envelope files do not cause a
+>       failure.
+361a365,398
+>   C14 Workflow SHA-pin integrity. Every third-party GitHub Actions `uses:`
+>       ref in .github/workflows/ MUST be pinned to a full 40-hex commit
+>       SHA, not a mutable tag or branch (local ./ and ../ action paths are
+>       exempt). Mechanizes the SHA-pinning rule of
+>       standard/provenance_policy.md via the vetted vlib_workflows_sha_pinned
+>       primitive, which fails a vanished or empty workflow directory so the
+>       check cannot go vacuous. Default-mode only: .github/ is
+>       framework-envelope, never part of a bootstrap-injected consumer
+>       payload. (Feature 058.)
+> 
+>   C15 Capability-profile <-> AGF-role correspondence. Each of the five
+>       capability profiles (standard/capability_profiles.md) maps to a role
+>       defined in standard/AGF.md, and C15 enforces that mapping through
+>       BOTH vetted primitives from tools/verify_lib.sh:
+>       vlib_profiles_cover_roles guards the 5<->5 coverage (a dropped
+>       profile or role fails C15), and vlib_profiles_map_roles parses each
+>       profile row's explicit Role column, failing unless every row names
+>       its own role -- a swapped profile-to-role mapping fails C15.
+>       Default-mode only: a framework-authoring invariant the consumer
+>       inherits already-verified. (Feature 058 mechanized the coverage;
+>       phase-014 feature 109, NDEBT-026, added the Role column and the
+>       mapping primitive.)
+> 
+>   C16 Feature-list lifecycle invariant. Every .agent/feature_list*.json
+>       must validate against schema/feature_list.schema.json, and every
+>       feature whose status is "complete" must have an approved contract,
+>       a passing QA verdict, and evidence on disk; the era-safe rule does
+>       not flag a pre-contract-first complete feature with no contract
+>       file. Enforced via the vetted vlib_feature_list_lifecycle primitive.
+>       Default-mode only: --payload passes trivially by design (.agent/
+>       governance state is never part of the bootstrap.sh payload), and a
+>       --target feature-list-shaped file gets schema-only validation.
+>       (Feature 092.)
+> 
+372,375c409,415
+< C8): every .md under standard/, templates/, and tools/ EXCLUDING
+< tools/fixtures/; and schema/README.md. CONTEXT.md, docs/architecture/,
+< methodology/, and registry/ are intentionally excluded because they are not
+< injected into consumer repositories by bootstrap.sh.
+---
+> C8): every .md under standard/, templates/, methodology/, and ecosystem/,
+> plus every .md under tools/ EXCLUDING tools/fixtures/; and
+> schema/README.md. methodology/ and ecosystem/ joined the injected payload
+> in feature 051 (NDEBT-008), so their .md files are swept by the payload
+> mode's C1, C2, C3, C5, C8, C9, and C10. CONTEXT.md, docs/architecture/,
+> and registry/ are intentionally excluded because they are not injected
+> into consumer repositories by bootstrap.sh.
+help diff exit: 1 (1 = differences shown above)
+--- hunk headers ---
+149,154c149,157
+361a365,398
+372,375c409,415
+--- region spot checks (expect 1 occurrence each, identical across both) ---
+  C1                                     B:1 HEAD:1
+  C13                                    B:1 HEAD:1
+grep: unrecognized option '--payload mode file set'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+grep: unrecognized option '--payload mode file set'
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Try 'grep --help' for more information.
+--payload mode file set                  B: HEAD:
+Payload-doc set (the --payload option    B:0 HEAD:0
+Shipped-doc set (the file set            B:1 HEAD:1
+Exit code:                               B:1 HEAD:1
+EXIT:0

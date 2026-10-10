@@ -1,0 +1,12 @@
+python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace tools/validate.sh '<C16 misdescription>' -- python3 -c "<driver: AT1 + sweep + S04 byte-pin>"
+scratch_run: replaced 1 occurrence in tools/validate.sh
+scratch_run: command python3 -c import subprocess,sys,json; A='bd782393cb37d21e57dae61879f65681694a6d9b'; AT1="import re,subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; ids=set(re.findall(r'^\\[(C\\d+)\\]',subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True).stdout,re.M)); miss=[i for i in sorted(ids) if not re.search(r'^  '+i+r'\\s+\\S',h,re.M)]; assert ids and not miss, miss"; rc=subprocess.run([sys.executable,'-c',AT1]).returncode; assert rc==0, rc; print('AT1 PASSES ON MISDESCRIBED C16'); p=subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True); assert p.returncode==0 and 'SUMMARY: 16 passed, 0 failed' in p.stdout, p.stdout[-300:]; print('SWEEP GREEN 16/16 WITH MISDESCRIBED C16'); pins=json.load(open('.agent/contracts/108.json'))['design_notes']['pinned_interface']; base=subprocess.run(['git','show',A+':tools/validate.sh'],capture_output=True,text=True,check=True).stdout; expect=base.replace(pins['c5_help_old'],pins['c5_help_new'],1).replace(pins['payload_help_old'],pins['payload_help_new'],1).replace(pins['insert_anchor_old'],pins['insert_anchor_new'],1); mutated=open('tools/validate.sh').read(); assert mutated!=expect; print('S04 BYTE-PIN FIRES (file != base+pins); nothing else catches this class') -> exit 0
+  | AT1 PASSES ON MISDESCRIBED C16
+  | SWEEP GREEN 16/16 WITH MISDESCRIBED C16
+  | S04 BYTE-PIN FIRES (file != base+pins); nothing else catches this class
+PASS exit status == 0
+PASS output matches '^AT1 PASSES ON MISDESCRIBED C16$'
+PASS output matches '^SWEEP GREEN 16/16 WITH MISDESCRIBED C16$'
+PASS output matches '^S04 BYTE-PIN FIRES'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0
