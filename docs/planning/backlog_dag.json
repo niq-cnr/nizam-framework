@@ -1,6 +1,6 @@
 {
   "plan_status": "candidate",
-  "plan_status_note": "CANDIDATE plan for post-014 work. The phase-014 packets (F099-F109, ACT-014) MIRROR the activated canonical plan (.agent/feature_list_014.json, spec 1.1.2, docs/planning/phase_014.yaml); on any conflict the canonical files win and this file is corrected. Nothing here changes a feature list, phase YAML, manifest or run_state. Post-014 packets are candidates until their own H-NIP / H-PHASE-NNN gates.",
+  "plan_status_note": "CANDIDATE plan for post-014 work. The phase-014 packets (F099-F109, ACT-014) MIRROR the activated canonical plan (.agent/feature_list_014.json, spec 1.1.6 since the 2026-10-10 handover refresh (was spec 1.1.2 at activation), docs/planning/phase_014.yaml); on any conflict the canonical files win and this file is corrected. The 2026-10-10 refresh mirrored only the budget (activated_phase) and the packet estimates; the F099, F103, F104 and F105 packet statuses still read pending against canonical complete (validate_backlog_dag.py V7), left for the Orchestrator or feature 102's close. Nothing here changes a feature list, phase YAML, manifest or run_state. Post-014 packets are candidates until their own H-NIP / H-PHASE-NNN gates.",
   "generated_at": "2026-10-08T13:23:34Z",
   "base_commit": "02b02c63e639237f8cfd2d7dccb1571e96753742",
   "base_commit_note": "origin/main after PR #64 (merged 2026-10-08T11:16:42Z). Line citations are at 02b02c6 unless stated. The phase-014 amendment and activation records in this package are uncommitted on branch phase/014-ga-track at generation time (spec 1.1.2, validator rounds 1-2).",
@@ -9,17 +9,17 @@
   "activated_phase": {
     "phase_id": "014-ga-track",
     "feature_list": ".agent/feature_list_014.json",
-    "spec_version": "1.1.2",
-    "original_estimate_lines": 6660,
-    "ceiling_130pct": 8658,
-    "budget_basis": "Planner activation-time estimate: naive 2890 x the measured 2.3 process weight (docs/nips/NIP-0003-live-runtime-sessions.md:494-495)",
-    "budget_approval": "operator, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z)",
+    "spec_version": "1.1.6",
+    "original_estimate_lines": 8600,
+    "ceiling_130pct": 11180,
+    "budget_basis": "SUPERSEDED 2026-10-09 by spec 1.1.4 (refreshed here 2026-10-10, handover): the phase-014 counting rule (.agent/evidence/scope-budget-014/measure.py; budget-counted = product + contract + verdict + audit + planning; evidence tracked, never gated; run_state excluded) re-baselined original_estimate_lines 6660 -> 8600 and the ceiling 8658 -> 11180. Was: Planner activation-time estimate, naive 2890 x the measured 2.3 process weight (docs/nips/NIP-0003-live-runtime-sessions.md:494-495).",
+    "budget_approval": "8600/11180: operator 'option 1 confirmed.' (run_state 2026-10-09T17:59:00Z; decision operator_gate_decision 2026-10-09T17:42:10Z). Was 6660/8658: operator, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z).",
     "run_state_position": "landed 2026-10-08T12:18:31Z (phase_activated): current_phase 014-ga-track, current_feature 099, status in_progress"
   },
   "estimate_weighting": {
     "low": 2.3,
     "high": 2.89,
-    "basis": "low = the measured x2.3 process weight NIP-0003 applies (docs/nips/NIP-0003-live-runtime-sessions.md:494-495: 2330 naive -> 5400); high = phase-013 realized 6212 lines over 2150 naive (.agent/run_state.json scope_budget). Phase-014 packets carry the canonical x2.3 figure; post-014 packets carry a [x2.3, x2.9] range."
+    "basis": "low = the measured x2.3 process weight NIP-0003 applies (docs/nips/NIP-0003-live-runtime-sessions.md:494-495: 2330 naive -> 5400); high = phase-013 realized 6212 lines over 2150 naive (.agent/run_state.json scope_budget). Post-014 packets carry a [x2.3, x2.9] range. Phase-014 packets carried the canonical x2.3 figure until spec 1.1.4; since the 2026-10-10 handover refresh they carry the canonical feature_list_014.json estimated_lines on the spec 1.1.4 budget-counted basis (F099 and F103 keep their historical all-paths figures 920 and 280, as the canonical list does)."
   },
   "lanes": {
     "single-writer": "The one implementation lane: any packet that modifies a tracked file or a shared ledger. Executed strictly one at a time (scalar run_state; standard/AGF.md:129-136).",
@@ -1240,10 +1240,10 @@
           100
         ],
         "weighted_lines": [
-          230,
-          230
+          710,
+          710
         ],
-        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+        "basis": "feature_list_014.json estimated_lines (spec 1.1.4 budget-counted basis; was 230 on the 1.1.0 naive x 2.3 all-paths basis)"
       },
       "release_impact": "MINOR at the next release via standard/definition_of_done.md (additive job statement, the NIP-0003 Compatibility-table precedent); .github/ is not injected into consumers.",
       "retry_identity": "contract 104",
@@ -1340,10 +1340,10 @@
           110
         ],
         "weighted_lines": [
-          250,
-          250
+          720,
+          720
         ],
-        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+        "basis": "feature_list_014.json estimated_lines (spec 1.1.4 budget-counted basis; was 250 on the 1.1.0 naive x 2.3 all-paths basis)"
       },
       "release_impact": "PATCH (the framework self-test is brought in line with its documented claim; no consumer-facing contract changes shape).",
       "retry_identity": "contract 105",
@@ -1438,10 +1438,10 @@
           160
         ],
         "weighted_lines": [
-          370,
-          370
+          750,
+          750
         ],
-        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+        "basis": "feature_list_014.json estimated_lines (spec 1.1.4 budget-counted basis; was 370 on the 1.1.0 naive x 2.3 all-paths basis)"
       },
       "release_impact": "MINOR at the next release (C13 tightened and an additive NIZAM.json capability; the inputs C13 reads ship together in the payload, so no consumer sees a new failure; rounded up per Section 3.4).",
       "retry_identity": "contract 106",
@@ -1625,10 +1625,10 @@
           50
         ],
         "weighted_lines": [
-          120,
-          120
+          680,
+          680
         ],
-        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+        "basis": "feature_list_014.json estimated_lines (spec 1.1.4 budget-counted basis; was 120 on the 1.1.0 naive x 2.3 all-paths basis)"
       },
       "release_impact": "MINOR at the next release (default-mode sweep scope of shipped tools/validate.sh widens; consumers validate with --payload, which is unchanged; rounded up per Section 3.4). NIP-0002's own edit is framework-envelope.",
       "retry_identity": "contract 107",
@@ -1722,10 +1722,10 @@
           90
         ],
         "weighted_lines": [
-          210,
-          210
+          710,
+          710
         ],
-        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+        "basis": "feature_list_014.json estimated_lines (spec 1.1.4 budget-counted basis; was 210 on the 1.1.0 naive x 2.3 all-paths basis)"
       },
       "release_impact": "MINOR at the next release (additive table column in a shipped standard and an additive verify_lib primitive; the existing primitive is unchanged; C15 is default-mode only). Not MAJOR: nothing a consumer validates in --payload mode narrows.",
       "retry_identity": "contract 109",
@@ -1819,10 +1819,10 @@
           60
         ],
         "weighted_lines": [
-          140,
-          140
+          690,
+          690
         ],
-        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+        "basis": "feature_list_014.json estimated_lines (spec 1.1.4 budget-counted basis; was 140 on the 1.1.0 naive x 2.3 all-paths basis)"
       },
       "release_impact": "PATCH (documentation corrections; tools/interface.md Section 5 keeps 10 items, so every adapter stays conformant).",
       "retry_identity": "contract 108",
@@ -1916,10 +1916,10 @@
           900
         ],
         "weighted_lines": [
-          2070,
-          2070
+          780,
+          780
         ],
-        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+        "basis": "feature_list_014.json estimated_lines (spec 1.1.4 budget-counted basis; was 2070 on the 1.1.0 naive x 2.3 all-paths basis)"
       },
       "release_impact": "None (evidence only).",
       "retry_identity": "contract 100",
@@ -2004,10 +2004,10 @@
           400
         ],
         "weighted_lines": [
-          920,
-          920
+          890,
+          890
         ],
-        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+        "basis": "feature_list_014.json estimated_lines (spec 1.1.4 budget-counted basis; was 920 on the 1.1.0 naive x 2.3 all-paths basis)"
       },
       "release_impact": "None (findings only; any consolidation is separate planned work under H-CONSOLIDATION).",
       "retry_identity": "contract 101",
@@ -2103,10 +2103,10 @@
           500
         ],
         "weighted_lines": [
-          1150,
-          1150
+          850,
+          850
         ],
-        "basis": "feature_list_014.json estimated_lines (naive x 2.3, rounded to 10)"
+        "basis": "feature_list_014.json estimated_lines (spec 1.1.4 budget-counted basis; was 1150 on the 1.1.0 naive x 2.3 all-paths basis)"
       },
       "release_impact": "None (phase 014 prepares no release; the next release, at least MINOR, is a separate H-FRAMEWORK-RELEASE).",
       "retry_identity": "contract 102",

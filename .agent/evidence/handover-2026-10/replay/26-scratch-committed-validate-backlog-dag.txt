@@ -1,0 +1,80 @@
+python3 .agent/evidence/backlog-reconciliation-2026-10-08/tools/validate_backlog_dag.py
+PASS V1 wrapper (plan_status=candidate, base_commit, activated_phase, packets)
+PASS V2 43 packets validate against schema/work-packet.schema.json
+PASS V3 reconciliation fields (authority, prerequisites x4, status, lane, owner, estimates)
+PASS V4 unique packet ids (43)
+PASS V5a no dangling references
+PASS V5b consumed_by is the exact inverse of depends_on
+PASS V6 acyclic (depends_on + serialize_after)
+     topological order: A00 -> A01 -> A03-SCOPE -> R3 -> A02-AMEND -> ACT-014 -> F099 -> F103 -> F104 -> F105 -> F106 -> A03-WA-DRAFT -> F107 -> F109 -> F108 -> F100 -> F101 -> F102 -> A03-WA-FINAL -> A03-RT -> PLAN-NEXT -> A04a -> NIP3-110 -> NIP3-111 -> NIP3-112 -> NIP3-113 -> NIP3-114 -> PLAN-WA -> PLAN-016 -> NIP3-115 -> NIP3-116 -> NIP3-117 -> NIP3-118 -> NIP3-119 -> NIP3-120 -> A09 -> A11-D -> A10 -> A11-CI -> A04b -> A14 -> A16-WA -> A15
+FAIL V7 canonical mirror of .agent/feature_list_014.json (11 features; provisional ids above 109) -- 099: status pending != canonical complete; 103: status pending != canonical complete; 104: status pending != canonical complete; 105: status pending != canonical complete
+PASS V8a every alias A00-A16 mapped to a packet and a disposition
+PASS V8b T01-T19 + NIP cases 1-13 mapped (owners exist; honest statuses with evidence)
+PASS V9 shared-file writers are totally ordered
+PASS V10a reconciliation .md frontmatter validates (authoritative_source = own path; change_log present)
+PASS V10b .md names every packet id, alias and scenario
+PASS V11 changed/untracked paths confined to the package (0 paths)
+PASS V12 canonical plan: feature list + docs/planning/phase_014.yaml + manifest
+FAIL V13 spec_version lockstep (1.1.6) and estimate reconciliation (7980) -- estimates sum 7980 != original_estimate_lines 8600 (dag 8600)
+
+== REPORT (derived from the JSON) ==
+in progress: (none)
+ready set (all prerequisites met AND the single lane's serialize_after predecessors complete): F099
+dependency-eligible, waiting only on lane order (serialize_after): F103, F105, F106, F107, F109
+near-ready (authorized; waiting only on in-flight technical/evidence events):
+  A03-WA-DRAFT: evidence: outline in docs/planning/backlog_reconciliation.md Section 7; Orchestrator review of this package
+  F108: technical: F106, F107, F109 not complete
+  F101: technical: F099, F100 not complete | evidence: pilot-100 evidence
+  F102: technical: F099, F100, F101, F103, F104, F105, F106, F107, F108, F109 not complete | evidence: pilot + review evidence
+  A03-WA-FINAL: technical: F101 findings | evidence: 101 audit artifact
+blocked (authority or environment):
+  F104 [authorized]: environment: UNVERIFIED: whether hosted ubuntu runners permit the guarded userns sysctl step; a required-mode failure escalates, never weakens
+  F100 [blocked-on-H-CONSUMER-UPGRADE]: authority: H-PHASE-014 satisfied; per-member H-CONSUMER-UPGRADE OUTSTANDING (member set is an operator decision not yet made); H-PLANNING-AUTHORITY / H-TRAIN-ENTRY only if a real plan/train is built; environment: UNKNOWN: the operator has not designated the real member repositories (and access to them); H-PHASE-014 designates none
+  A03-RT [proposal]: authority: Orchestrator scheduling of the revision; the operator's 2026-10-08 instruction forbade editing the NIP in this package
+  PLAN-NEXT [blocked-on-H-NIP]: authority: H-NIP for NIP-0003 (selects 015)
+  A04a [proposal]: authority: phase selection at PLAN-NEXT
+  NIP3-110 [blocked-on-H-PHASE-015]: authority: H-NIP (NIP-0003) then H-PHASE-015
+  NIP3-111 [blocked-on-H-PHASE-015]: authority: H-NIP (NIP-0003) then H-PHASE-015
+  NIP3-112 [blocked-on-H-PHASE-015]: authority: H-NIP (NIP-0003) then H-PHASE-015
+  NIP3-113 [blocked-on-H-PHASE-015]: authority: H-NIP (NIP-0003) then H-PHASE-015
+  NIP3-114 [blocked-on-H-PHASE-015]: authority: H-NIP (NIP-0003) then H-PHASE-015
+  PLAN-WA [blocked-on-H-NIP]: authority: H-NIP for the Workflow Assurance NIP
+  PLAN-016 [blocked-on-H-NIP]: authority: NIP-0003 accepted (H-NIP)
+  NIP3-115 [blocked-on-H-PHASE-016]: authority: H-PHASE-016
+  NIP3-116 [blocked-on-H-PHASE-016]: authority: H-PHASE-016; environment: CI runner userns sysctl step UNVERIFIED (NDEBT-043 note)
+  NIP3-117 [blocked-on-H-PHASE-016]: authority: H-PHASE-016; environment: SBCL in CI (apt) and wherever the Evaluator runs; local SBCL present, CI unverified
+  NIP3-118 [blocked-on-H-PHASE-016]: authority: H-PHASE-016; environment: SBCL in CI (apt) and wherever the Evaluator runs; local SBCL present, CI unverified
+  NIP3-119 [blocked-on-H-PHASE-016]: authority: H-PHASE-016
+  NIP3-120 [blocked-on-H-PHASE-016]: authority: H-PHASE-016
+  A09 [proposal]: authority: Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)
+  A11-D [proposal]: authority: Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)
+  A10 [proposal]: authority: Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)
+  A11-CI [proposal]: authority: Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)
+  A04b [proposal]: authority: Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)
+  A14 [proposal]: authority: Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)
+  A16-WA [proposal]: authority: Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN)
+  A15 [proposal]: authority: Workflow Assurance NIP acceptance (H-NIP) + phase activation (H-PHASE-NNN); environment: stable measured baseline and comparable budgets for shadow runs
+technical critical path (depends_on only; weighted-line midpoint; gate turnaround EXCLUDED, unknown):
+  A00 -> A01 -> A02-AMEND -> ACT-014 -> F099 -> F101 -> F102 -> PLAN-NEXT -> NIP3-110 -> NIP3-111 -> NIP3-112 -> NIP3-113 -> NIP3-114 -> PLAN-016 -> NIP3-115 -> NIP3-116 -> NIP3-117 -> NIP3-118 -> NIP3-119 -> NIP3-120  [weighted lines 19720-25910]
+phase 014-ga-track single-lane order (canonical list order): F099 -> F103 -> F104 -> F105 -> F106 -> F107 -> F109 -> F108 -> F100 -> F101 -> F102
+phase-014 critical path (canonical dependencies): ACT-014 -> F099 -> F101 -> F102
+single-writer execution order (one implementation lane; beyond F102 candidate):
+  F099 -> F103 -> F104 -> F105 -> F106 -> F107 -> F109 -> F108 -> F100 -> F101 -> F102 -> A03-RT -> PLAN-NEXT -> A04a -> NIP3-110 -> NIP3-111 -> NIP3-112 -> NIP3-113 -> NIP3-114 -> PLAN-WA -> PLAN-016 -> NIP3-115 -> NIP3-116 -> NIP3-117 -> NIP3-118 -> NIP3-119 -> NIP3-120 -> A09 -> A11-D -> A10 -> A11-CI -> A04b -> A14 -> A16-WA -> A15
+parallel-safe (read-only / new-files-only) work: A03-WA-DRAFT, A03-WA-FINAL
+shared-file serialization (writers in order):
+  NIZAM.json: F099 -> F106 -> NIP3-110 -> NIP3-111 -> NIP3-113
+  tools/skill.json: F099 -> NIP3-110 -> NIP3-111 -> NIP3-113
+  tools/validate.sh: F106 -> F107 -> F109 -> F108 -> NIP3-110 -> NIP3-111 -> NIP3-113 -> NIP3-119 -> A11-D -> A10
+  .github/workflows/compliance.yml: F104 -> NIP3-116
+  tools/fixtures_self_test.sh: F105 -> F106 -> NIP3-116
+  tools/README.md: F103 -> F104 -> F105 -> F106 -> F107 -> F109
+  tools/interface.md: F108 -> NIP3-110 -> NIP3-111 -> NIP3-113
+  standard/definition_of_done.md: F104 -> NIP3-116
+  CHANGELOG.md: F099 -> F103 -> F104 -> F105 -> F106 -> F107 -> F109 -> F108 -> F102 -> NIP3-114 -> NIP3-120
+  .agent/feature_list_014.json: F099 -> F103 -> F104 -> F105 -> F106 -> F107 -> F109 -> F108 -> F100 -> F101 -> F102
+  docs/planning/DEBT.md: F100 -> F101 -> F102 -> NIP3-114 -> NIP3-120
+  docs/planning/ROADMAP.md: F102 -> A03-RT -> PLAN-NEXT -> NIP3-114 -> PLAN-WA -> PLAN-016 -> NIP3-120
+  docs/planning/manifest.json: F102 -> PLAN-NEXT -> NIP3-114 -> PLAN-WA -> PLAN-016 -> NIP3-120
+
+SUMMARY: FAIL (2 failing checks; 43 packets)
+EXIT:1

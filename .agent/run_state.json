@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "106",
   "status": "in_progress",
-  "updated_at": "2026-10-09T22:49:44Z",
+  "updated_at": "2026-10-10T02:55:43Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1785,6 +1785,16 @@
       "event": "planning_record",
       "feature": "105",
       "detail": "Planner post-105 record: DEBT.md 0.51.0 (NDEBT-042 RESOLVED with QA evidence; NEW NDEBT-047 Low: fixtures_self_test C13 probe swaps tools/skill.json with no EXIT backstop after scratch_dirs replaces the trap; interrupt demonstrated in a private export, recovery git checkout -- tools/skill.json); spec 1.1.6 PATCH adding budget-rule row 4a (non-JSON under .agent/validator/ = evidence), Orchestrator-reported operational fix, no operator gate (moves only previously unclassified lines into the never-gated evidence total; no recorded figure moves; 099/103 replay byte-identical); measure.py updated; backlog_reconciliation 0.1.4 (A07 delivered; NIP-0003 108/109 runtime_session registration tension recorded in s5.3 for the NIP pre-acceptance revision). Orchestrator attributes the record's lines to 105's range (A1/A2 precedent): 105 now 950 budget-counted, 1751 evidence, 0 unclassified; phase total 3714 / 8600. Noted, not acted on: A05/A06 backlog rows still 'Scheduled' (refresh at the next planning touch / 102 roll); pre-existing validate_backlog_dag V7/V13 failures; 104 re-measure 1000 vs recorded 991 (pre-existing gap, left as recorded)."
+    },
+    {
+      "at": "2026-10-10T02:11:41Z",
+      "event": "operator_gate_decision",
+      "detail": "Operator verbatim (2026-10-10, interactive session): 'prepare the project for handover to a new developer who will work in the remainging backlog. the PR #70 has been merged.' PR #70 merged at e2a50ed (105 on main; compliance green on main). Phase 014 stays in_progress at current_feature 106 (no feature started). Orchestrator action: planning-only handover branch chore/handover-2026-10. Planner writes docs/planning/HANDOVER.md and refreshes stale planning records; Validator reviews accuracy; Evaluator replays the handover's commands; then the operator merges the PR. No feature work, no release, no remote branch deletion."
+    },
+    {
+      "at": "2026-10-10T02:55:43Z",
+      "event": "handover_prepared",
+      "detail": "Handover workflow wf_4e451d13-f61 (relaunched after the prior session ended mid-draft). Planner wrote docs/planning/HANDOVER.md 1.0.0 and refreshed ROADMAP 0.47.0, backlog_reconciliation 0.1.5 and backlog_dag.json. Validator accuracy review: round 1 rejected (11 issues / 7 unsupported / 3 missing), round 2 rejected (3/3/0), round 3 APPROVED with all arrays empty. Evaluator replayed all 45 commands the handover tells a reader to run (mutating ones only in scratch): PASS, no failures; captures under .agent/evidence/handover-2026-10/. Orchestrator recorded the handover as phase-level item handover-2026-10 (822 budget-counted, 1686 evidence) per HANDOVER (b); phase total now 4536 / 8600. Phase stays in_progress at current_feature 106; no feature started. HANDOVER (b) describes this treatment as 'not yet recorded': it is now recorded here, and run_state governs."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -1959,8 +1969,8 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 3714,
-    "evidence_lines_total": 11988,
+    "total_lines_changed": 4536,
+    "evidence_lines_total": 13674,
     "excluded_lines_total": 464,
     "counting_rule": {
       "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.6)",
@@ -2021,6 +2031,13 @@
         "actual": 292,
         "evidence_lines": 565,
         "note": "Phase-level planning (spec 1.1.4 + feature list + scope-budget-014 evidence); counts toward total_lines_changed only, not per_feature or the rolling baseline; 104's range starts at 7bc65a5. Allowance in the estimate: 300."
+      },
+      {
+        "id": "handover-2026-10",
+        "range": "e2a50ed..(handover PR head; re-measure at its merge commit)",
+        "actual": 822,
+        "evidence_lines": 1686,
+        "note": "Developer handover package (docs/planning/HANDOVER.md + ROADMAP 0.47.0, backlog_reconciliation 0.1.5, backlog_dag.json refresh). Orchestrator treatment: second phase-level item (rebaseline-1.1.4 precedent): caused by the operator's handover request (2026-10-10T02:11:41Z), not by feature 106; counts toward total_lines_changed only, not per_feature or the rolling baseline. 106's measurement range starts at the commit that merges this PR. No estimate allowance existed; it consumes headroom."
       }
     ],
     "rebaseline": {
@@ -2296,7 +2313,7 @@
       }
     ]
   },
-  "last_action": "Feature 105 complete; DEBT record next",
+  "last_action": "Handover package ready (PR pending operator merge)",
   "completed_contract_ids": [
     "099",
     "103",

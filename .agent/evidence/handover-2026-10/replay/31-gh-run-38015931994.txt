@@ -1,0 +1,3 @@
+gh run view 38015931994 --json databaseId,workflowName,event,headBranch,headSha,conclusion,jobs --jq '{id:.databaseId,wf:.workflowName,ev:.event,br:.headBranch,sha:.headSha[0:7],c:.conclusion,jobs:[.jobs[]|{n:.name,c:.conclusion}]}'
+{"br":"main","c":"success","ev":"push","id":38015931994,"jobs":[{"c":"success","n":"e2e_bootstrap"},{"c":"success","n":"fixtures_self_test"},{"c":"success","n":"convergent_review"},{"c":"success","n":"validate"}],"sha":"e2a50ed","wf":"compliance"}
+EXIT:0

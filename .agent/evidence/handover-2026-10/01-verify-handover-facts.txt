@@ -1,0 +1,42 @@
+python3 .agent/evidence/handover-2026-10/verify_handover_facts.py facts
+PASS run_state position 014-ga-track / 106 / in_progress
+PASS run_state active_contract_id is null
+PASS completed_contract_ids == 099,103,104,105
+PASS budget 8600 / ceiling 11180
+PASS per-feature 596/885/991/950 + phase item 292
+PASS total budget-counted 3714 = sum
+PASS evidence lines recorded 11988
+PASS re-baseline confirmation 'option 1 confirmed.' at 2026-10-09T17:59:00Z
+PASS 106 rolling threshold 3 x mean(885,991,950) = 2826
+PASS 104-contract carries a human_authorized_extension; 099/103/104/105 contracts each 3 attempts
+PASS handover request recorded (operator_gate_decision 2026-10-10T02:11:41Z)
+PASS maintainer-brief application recorded (2026-10-09T19:28:39Z)
+PASS feature list order = single lane
+PASS feature statuses
+PASS pending-feature dependencies
+PASS pending estimates and ranges
+PASS remaining 5350; projection 9064 < 11180
+PASS feature-list estimates sum 7980 (V13 gap)
+PASS spec_version lockstep 1.1.6 (no drift)
+PASS phase_014.yaml statuses
+PASS manifest current_phase 014-ga-track
+PASS DEBT.md version 0.51.0
+PASS DEBT Open set = 047,046,045,044,040,037,034,026, all Low
+PASS ROADMAP open-debt bullet == DEBT Open set (feature 102 AT5 assertion)
+PASS v1.4.0 = annotated tag bb32064 on 9edd5d0
+PASS v1.4.0 is the latest tag
+PASS 88959c9 is on this lineage with subject (#66)
+PASS b8ea889 is on this lineage with subject (#67)
+PASS 2a53764 is on this lineage with subject (#68)
+PASS e2a50ed is on this lineage with subject (#70)
+PASS 483f016 is on this lineage with subject (#65)
+PASS 02b02c6 is on this lineage with subject (#64)
+PASS 9edd5d0 is on this lineage with subject (#63)
+PASS compliance.yml jobs = validate, e2e_bootstrap, fixtures_self_test, convergent_review
+PASS compliance.yml concurrency cancel-in-progress: true
+PASS 104 positive run 37980556248 with CONFORMANCE: FULL
+PASS 104 negative control 37980776642 with AssertionError: 40 != 0
+PASS tools/test_convergent_review.py has --allow-unsupported-isolation
+PASS every repository path / ref HANDOVER.md cites exists
+SUMMARY: PASS (0 failing)
+EXIT:0

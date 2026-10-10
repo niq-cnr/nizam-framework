@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.4
+version: 0.1.5
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
-last_audited: "2026-10-09"
+last_audited: "2026-10-10"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.5"
+    date: "2026-10-10"
+    summary: "Handover refresh (branch chore/handover-2026-10 from main e2a50ed; Planner). Section 5.1: the A05 and A06 rows, noted stale in the post-105 planning record, are marked delivered. A05 was delivered by F103 (PR #67, b8ea889; NDEBT-043 resolved). A06 was delivered by F104 (PR #68, 2a53764; NDEBT-041 resolved; positive CI run 37980556248, negative control 37980776642). The next action for both becomes none. Sections 2 and 6 gain a note beside the superseded 6660/8658 budget: spec 1.1.4 re-baselined it to 8600 with a ceiling of 11180, operator-confirmed ('option 1 confirmed.'). The activation-time text is kept as history. Machine-readable source (docs/planning/backlog_dag.json, which has no change_log of its own; recorded here): activated_phase original_estimate_lines 6660 -> 8600, ceiling_130pct 8658 -> 11180, budget_basis and budget_approval restated with the superseded text kept, and spec_version 1.1.2 -> 1.1.6; plan_status_note and estimate_weighting.basis restated to match; the weighted_lines of packets F104, F105, F106, F107, F109, F108, F100, F101 and F102 now mirror feature_list_014.json estimated_lines on the spec 1.1.4 basis (was naive x 2.3). Packet statuses are not changed (F099, F103, F104 and F105 still read pending; validate_backlog_dag.py V7). Section 6 gains a dated note: with those weights and the stale pending statuses, the DAG's derived critical paths now run through F099 (weighted 920, its historical all-paths estimate) instead of F100; once the four completed packets read complete, they run through F100 again (19,580-25,770 weighted lines; replay: verify_handover_facts.py dagpath). Section 1: the statement that the phase-014 packets mirror the feature list now reads spec 1.1.6 (1.1.2 at activation), with a dated note, so it agrees with the refreshed DAG. No other row changes. Pointer added to docs/planning/HANDOVER.md. Revised after Validator round 1 (section reference, DAG change record, Section 6 note) and round 2 (Section 1 spec version)."
   - version: "0.1.4"
     date: "2026-10-09"
     summary: "Planner record after feature 105 completed (.agent/qa/105.json pass; .agent/validator/105-mode-b.json approved). Section 5.1: the A07 row is marked delivered by F105, and its next action becomes none. NDEBT-042 is resolved in DEBT.md 0.51.0. Section 5.3 gains one note recording the open NIP3-115/NIP3-116 runtime_session registration question, carried from contract 105 design_notes.orchestrator_followups[2], for the NIP-0003 pre-acceptance revision. No other row changes; the A05 and A06 rows are not updated here."
@@ -44,7 +47,9 @@ machine-readable view, and the two must agree; the DAG validator checks that thi
 names every packet, alias and scenario.
 
 **Canonical plans win.** The phase-014 packets mirror `.agent/feature_list_014.json`
-(spec 1.1.2) and `docs/planning/phase_014.yaml`. Everything after phase 014 is a
+(spec 1.1.6; 1.1.2 at activation) and `docs/planning/phase_014.yaml`.
+*Updated 2026-10-10 (handover refresh):* `backlog_dag.json`
+`activated_phase.spec_version` now reads 1.1.6, matching the feature list. Everything after phase 014 is a
 **candidate** until its own `H-NIP` / `H-PHASE-NNN` gate.
 
 ## 2. Current state (base `02b02c6`, plus this package)
@@ -89,6 +94,10 @@ close-out and the e2e run, both passing.
   measured 2.3 process weight (NIP-0003:494-495). The operator approved it verbatim,
   "In approve the increased budget.", recorded as `operator_gate_decision` at
   2026-10-08T12:50:31Z.
+  *Superseded 2026-10-09 by spec 1.1.4:* under the phase-014 counting rule
+  (`.agent/evidence/scope-budget-014/measure.py`), `original_estimate_lines` became 8600
+  and the ceiling 11180, operator-confirmed ("option 1 confirmed."). At handover
+  (2026-10-10), 3714 lines are budget-counted; see [`HANDOVER.md`](HANDOVER.md).
 
 **Acceptance infrastructure is frozen** at `.agent/evidence/phase-014-activation/`. It
 holds the baselines (tag set, `.agent/audits` listing, validator check ids) and the
@@ -169,8 +178,8 @@ kinds of test:
 | `A02` | Release truth + phase-014 amendment | `R3` (PR #64, D1), `A02-AMEND` | Satisfied | H-FRAMEWORK-RELEASE (executed), D1, H-PHASE-014 | `A01`, `R3` | Orchestrator / Planner | none |
 | `A03` | Design split: NIP-0003 extension vs separate proposal | `A03-SCOPE`, `A03-RT`, `A03-WA-DRAFT`, `A03-WA-FINAL`, `PLAN-WA` | New gap, split (§7) | Planner drafting; H-NIP to accept | `A01`; F101 for the final | Planner | Draft the WA NIP (parallel-safe); revise NIP-0003 after F102 |
 | `A04` | Role/test ownership, Evaluator acceptance bundle | `A04a` (text), `A04b` (behavior) | Extend existing (01_execution already has Loop-1 Evaluator review) | A04a: phase selection; A04b: WA H-NIP + H-PHASE-NNN | `PLAN-NEXT`; `PLAN-WA` + `A09` | Generator | none until selected |
-| `A05` | Sandbox prerequisites | `F103` (NDEBT-043) | Scheduled, phase 014 | H-PHASE-014 (satisfied) | `ACT-014` | Generator | Contract after 099 |
-| `A06` | Convergent suite enforced in CI | `F104` (NDEBT-041) | Scheduled, phase 014 | H-PHASE-014 (satisfied) | `F103` | Generator | Contract after 103 |
+| `A05` | Sandbox prerequisites | `F103` (NDEBT-043) | Delivered (103, PR #67), phase 014; NDEBT-043 resolved | H-PHASE-014 (satisfied) | `ACT-014` | Generator | none |
+| `A06` | Convergent suite enforced in CI | `F104` (NDEBT-041) | Delivered (104, PR #68; CI runs 37980556248 / 37980776642), phase 014; NDEBT-041 resolved | H-PHASE-014 (satisfied) | `F103` | Generator | none |
 | `A07` | Nested fixture ownership | `F105` (NDEBT-042; NIP-0003 109 claim map pulled forward) | Delivered (105), phase 014; NDEBT-042 resolved (DEBT.md 0.51.0) | H-PHASE-014 (satisfied) | `ACT-014` | Generator | none |
 | `A08` | Drift bundle | `F106` (044a), `F107` (044b), `F108` (037 + 044c/d/f), `F109` (026), `F102` (044e) | Scheduled, phase 014, split by concern | H-PHASE-014 (satisfied) | 108 after 106, 107, 109 | Generator | Contracts in lane order |
 | `A09` | Candidate/contract/verification identity (+ NDEBT-040) | `A09` | New gap (WA NIP) | WA H-NIP + H-PHASE-NNN | `PLAN-WA` | Generator | Outline only (§7) |
@@ -282,6 +291,17 @@ and it heads the single lane.
   `F102` → `PLAN-NEXT` → `NIP3-110` → … → `NIP3-114` → `PLAN-016` → `NIP3-115` → … →
   `NIP3-120`. That is about 21,250–27,560 weighted lines.
 
+*Refreshed DAG, 2026-10-10 (handover; activation-time paths above kept as history).* The
+packet weights now mirror the spec 1.1.4 estimates (F100 780, was 2070), but the
+completed packets `F099`, `F103`, `F104` and `F105` still read `pending` (V7). The
+validator weights a pending packet at its estimate, and `F099` carries 920, its
+historical all-paths figure. So the derived paths currently read `ACT-014` → `F099` →
+`F101` → `F102` (phase 014) and `A00` → `A01` → `A02-AMEND` → `ACT-014` → `F099` →
+`F101` → `F102` → … → `NIP3-120` (about 19,720–25,910 weighted lines). That is an
+artifact of the stale statuses, not a planning change. With the four packets marked
+`complete` (weight 0), both paths run through `F100` again, at about 19,580–25,770
+weighted lines. Replay: `python3 .agent/evidence/handover-2026-10/verify_handover_facts.py dagpath`.
+
 **Phase-014 single-lane order** (the canonical list order, and the Dependency
 Enforcement Rule's selection order): `F099` → `F103` → `F104` → `F105` → `F106` →
 `F107` → `F109` → `F108` → `F100` → `F101` → `F102`. **The first eligible feature is
@@ -303,6 +323,7 @@ Enforcement Rule's selection order): `F099` → `F103` → `F104` → `F105` →
 - approved by the operator, verbatim "In approve the increased budget."
   (`operator_gate_decision` 2026-10-08T12:50:31Z);
 - 130 percent ceiling **8658**;
+- *superseded 2026-10-09 by spec 1.1.4: 8600, ceiling 11180 (operator-confirmed);*
 - at phase 013's realized 2.89× the projection is about 8352, under the ceiling.
 
 ### 6.1 Ordering comparison
