@@ -1,0 +1,115 @@
+python3 - <<'PY'
+import json, subprocess, sys
+import yaml
+A = "5ffd27395cdfde4322f7fba2056af1a35c3874f3"
+run = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout
+bad = []
+pins = json.load(open(".agent/contracts/109.json"))["design_notes"]["pinned_interface"]
+
+def show(path):
+    return run("git", "show", A + ":" + path)
+
+def between(text, start, end):
+    i = text.index(start)
+    j = text.index(end, i)
+    return text[i:j]
+
+def apply_pins(base, pin_list):
+    expect = base
+    for old, new in pin_list:
+        if base.count(old) != 1:
+            bad.append("pin old string occurs %d times at base: %r" % (base.count(old), old[:60]))
+        expect = expect.replace(old, new, 1)
+    return expect
+
+# --- standard/capability_profiles.md: version, change_log entry, table pins ---
+base_p = show("standard/capability_profiles.md")
+new_p = open("standard/capability_profiles.md").read()
+table_pins = [[row["old"], row["new"]] for row in pins["table_pins"]]
+expect_p = base_p.replace(pins["profiles_version_old"], pins["profiles_version_new"], 1)
+expect_p = expect_p.replace("change_log:\n", "change_log:\n" + pins["profiles_changelog_entry"], 1)
+expect_p = apply_pins(expect_p, table_pins)
+if base_p.count(pins["profiles_version_old"]) != 1 or "change_log:\n" not in base_p:
+    bad.append("profiles doc anchors not unique at base")
+if new_p != expect_p:
+    bad.append("standard/capability_profiles.md is not base plus the pinned edits")
+
+# --- tools/verify_lib.sh: base + inserted pinned block; old region byte-identical ---
+base_l = show("tools/verify_lib.sh")
+new_l = open("tools/verify_lib.sh").read()
+anchor = pins["insert_anchor"]
+block = pins["new_primitive_block"]
+if base_l.count(anchor) != 1:
+    bad.append("verify_lib insertion anchor is not unique at base")
+expect_l = base_l.replace(anchor, block + anchor, 1)
+if new_l != expect_l:
+    bad.append("tools/verify_lib.sh is not base plus the pinned primitive block")
+COV = "# vlib_profiles_cover_roles <profiles-doc> <agf-doc>"
+MAP = "# vlib_profiles_map_roles <profiles-doc> <agf-doc>"
+LIFE = "# vlib_feature_list_lifecycle"
+old_region = base_l[base_l.index(COV):base_l.index(LIFE)]
+new_region = new_l[new_l.index(COV):new_l.index(MAP)]
+if old_region != new_region:
+    bad.append("vlib_profiles_cover_roles region is not byte-identical")
+if new_l.count(MAP) != 1 or new_l.count("vlib_profiles_map_roles() {") != 1:
+    bad.append("new primitive banner or function is not exactly once")
+for token in ("[C17]", "check_c17", "check_c18", "check_c19"):
+    if token in new_l:
+        bad.append("new check text present in verify_lib: " + token)
+
+# --- tools/validate.sh: comment + call-site pins; --help region byte-identical ---
+base_v = show("tools/validate.sh")
+new_v = open("tools/validate.sh").read()
+expect_v = base_v.replace(pins["c15_comment_old"], pins["c15_comment_new"], 1)
+expect_v = expect_v.replace(pins["c15_call_old"], pins["c15_call_new"], 1)
+if base_v.count(pins["c15_comment_old"]) != 1 or base_v.count(pins["c15_call_old"]) != 1:
+    bad.append("validate.sh C15 anchors are not unique at base")
+if new_v != expect_v:
+    bad.append("tools/validate.sh is not base plus the two pinned C15 edits")
+for start, end in pins["validate_help_region"]:
+    if between(new_v, start, end) != between(base_v, start, end):
+        bad.append("forbidden region changed (the --help text must stay byte-identical): " + start)
+if new_v.count('vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md') != 1:
+    bad.append("the C15 coverage call is not exactly once")
+if new_v.count('vlib_profiles_map_roles standard/capability_profiles.md standard/AGF.md') != 1:
+    bad.append("the C15 mapping call is not exactly once")
+c15_banner_pass = new_v.count('echo "[C15] PASS capability-profile-roles"')
+c15_banner_fail = new_v.count('echo "[C15] FAIL capability-profile-roles"')
+if (c15_banner_pass, c15_banner_fail) != (1, 1):
+    bad.append("the C15 PASS/FAIL banners are not exactly once each")
+
+# --- tools/README.md: 0.16.0 -> 0.17.0, pinned head entry, one C15 row swap ---
+old_r, new_r = show("tools/README.md"), open("tools/README.md").read()
+
+def frontmatter(text):
+    return yaml.safe_load(text.split("---", 2)[1])
+
+def body(text):
+    return text.split("---", 2)[2]
+
+old_fm, new_fm = frontmatter(old_r), frontmatter(new_r)
+if (str(old_fm["version"]), str(new_fm["version"])) != ("0.16.0", "0.17.0"):
+    bad.append("README version is not 0.16.0 -> 0.17.0")
+head = new_fm["change_log"][0]
+if head["version"] != "0.17.0" or head["summary"] != pins["readme_summary"] or str(head["date"]) != pins["readme_date"]:
+    bad.append("README change_log head")
+if new_fm["change_log"][1:] != old_fm["change_log"]:
+    bad.append("older README change_log entries changed")
+if {k: v for k, v in new_fm.items() if k not in ("version", "change_log")} != {k: v for k, v in old_fm.items() if k not in ("version", "change_log")}:
+    bad.append("another README frontmatter key changed")
+old_lines, new_lines = body(old_r).splitlines(), body(new_r).splitlines()
+diffs = [(a, b) for a, b in zip(old_lines, new_lines) if a != b]
+if len(old_lines) != len(new_lines) or diffs != [(pins["c15_row_old"], pins["c15_row_new"])]:
+    bad.append("README body differs by more than the pinned C15 row")
+c15_lines = [line for line in new_r.splitlines() if line.startswith("| C15 ")]
+if c15_lines != [pins["c15_row_new"]] or "swapped mapping is outside its scope" in new_r:
+    bad.append("the C15 README row is not exactly the pinned line, or the old out-of-scope claim survived")
+
+for path in pins["unchanged_files"]:
+    if open(path).read() != show(path):
+        bad.append("file that must stay byte-identical changed: " + path)
+print("problems:", bad)
+sys.exit(1 if bad else 0)
+PY
+problems: []
+EXIT:0
