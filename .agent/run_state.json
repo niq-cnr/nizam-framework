@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "109",
   "status": "in_progress",
-  "updated_at": "2026-10-10T13:52:05Z",
+  "updated_at": "2026-10-10T14:46:31Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1996,6 +1996,12 @@
       "event": "feature_started",
       "feature": "102",
       "detail": "Dependency gate: 102 dependencies [099, 103, 104, 105, 106, 107, 108, 109] all satisfied (complete; PRs #66-#76). Branch phase/014-102-ga-dossier from main a5d6506. 102-contract attempt 1/3. 102 measurement range starts at a5d6506. 102 is the final phase-014 feature: GA-readiness dossier per ecosystem/08 Sections 2-3 (no GA declaration; H-GA stays outstanding; real_production_pilot not_met per A3), next-candidate refinement, ROADMAP/DEBT roll (NDEBT-044 e), and canonical-first phase close (phase_014.yaml, manifest.json, run_state). No release, no tag. Dispatching Generator to propose .agent/contracts/102.json."
+    },
+    {
+      "at": "2026-10-10T14:46:31Z",
+      "event": "contract_revision",
+      "feature": "102",
+      "detail": "102-contract attempt 1/3 REJECTED by Mode A round 1 with exactly one issue: S01's embedded script hard-coded the proposed state (status != proposed; approvals unconditionally both-false and approved_at absent), contradicting the contract's own claim of the dual-state 108-round-2 predicate - a prose-vs-code mismatch. The Generator revised at attempt 2/3 (still revision 0): S01 is now the exact 108 dual-state form (four-state status enum; approved requires revisions 0 + both flags true + approved_at truthy; otherwise revisions 0 + both false + absent), verified by a six-variant matrix; S01 texts corrected to describe the actual predicate; design_notes.revision/revision_history/retry_identity_note record the rejection. Everything else re-verified clean by the validator. One contract attempt remains."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2560,7 +2566,7 @@
       }
     ]
   },
-  "last_action": "Feature 102 started",
+  "last_action": "Contract 102 sent back for S01 (Mode A round 1 rejection)",
   "completed_contract_ids": [
     "099",
     "103",
