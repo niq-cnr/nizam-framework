@@ -1,0 +1,17 @@
+COMMAND: python3 - <<'PY'
+import re,subprocess
+from pathlib import Path
+paths=['CHANGELOG.md', 'NIZAM.json', 'CONTEXT.md', 'README.md', 'docs/guide/index.html', 'docs/planning/ROADMAP.md', 'docs/planning/operator_gates.md']
+d=subprocess.run(['git','diff','14e632fa04242aaf56eedc15eab377c03ba87511','--',*paths],check=True,text=True,capture_output=True).stdout
+added='\n'.join(l[1:] for l in d.splitlines() if l.startswith('+') and not l.startswith('+++'));assert not re.search(r'n[i]zamiq|\.svc|cluster\.local',added,re.I)
+assert re.search(r'n[i]zamiq|\.svc|cluster\.local','host.svc',re.I)
+for p in paths: assert not any(ord(c)<32 and c not in '\n\t\r' for c in Path(p).read_text()),p
+old=subprocess.run(['git','show','14e632fa04242aaf56eedc15eab377c03ba87511:CHANGELOG.md'],check=True,text=True,capture_output=True).stdout;new=Path('CHANGELOG.md').read_text();assert old[old.index('## [1.4.0]'):]==new[new.index('## [1.4.0]'):]
+line=next(l for l in subprocess.run(['git','show','14e632fa04242aaf56eedc15eab377c03ba87511:docs/planning/ROADMAP.md'],check=True,text=True,capture_output=True).stdout.splitlines() if l.startswith('- **Latest released tag: v1.4.0'));assert line in Path('docs/planning/ROADMAP.md').read_text()
+print('Added-line hygiene and historical release records passed')
+PY
+HEAD: 20cdd9a47a37713cb6bf9b20ee0e1f718494d610
+STARTED: 2026-10-10T17:06:01.999857+00:00
+Added-line hygiene and historical release records passed
+
+EXIT:0

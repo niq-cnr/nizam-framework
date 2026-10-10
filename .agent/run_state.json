@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-10T16:45:37Z",
+  "updated_at": "2026-10-10T17:20:32Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -277,6 +277,11 @@
       "attempts": 2,
       "limit": 3,
       "note": "Independent evaluator rejected attempt 1 AT8 stale-text false-pass before implementation. Attempt 2 strengthens current declaration anchors and decision binding; no product changes yet."
+    },
+    "release-v1.5.0-implementation": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Attempt1 QA detected C9 misreading external markdown URL and temporarily present unrelated draft contract. Attempt2 uses independently ratified HTML slash encoding and restores exact scope; no tools/payload change."
     }
   },
   "history": [
@@ -2063,6 +2068,12 @@
       "event": "contract_revision",
       "contract_id": "release-v1.5.0",
       "detail": "Attempt 2/3: evaluator rejected AT8 stale-token false-pass; Generator revises current GA spans and operator-decision binding in isolation before re-running both pre-code gates."
+    },
+    {
+      "at": "2026-10-10T17:20:32Z",
+      "event": "implementation_retry",
+      "contract_id": "release-v1.5.0",
+      "detail": "Attempt2/3 begins after both independent reviews ratified bounded QA repair: browser-equivalent HTML slash encoding, explicit final QA artifact allowance and coordinator retry state. Unrelated closeout draft moved outside delivery tree; failed QA retained with original captures."
     }
   ],
   "phase_001_scope_budget_final": {

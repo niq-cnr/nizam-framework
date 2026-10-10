@@ -1,0 +1,114 @@
+{
+  "feature_id": "release-v1.5.0",
+  "qa_pass": false,
+  "checks_run": 9,
+  "checks_passed": 7,
+  "executed_at": "2026-10-10T17:06:33.541922+00:00",
+  "candidate_sha": "20cdd9a47a37713cb6bf9b20ee0e1f718494d610",
+  "checks": [
+    {
+      "index": 1,
+      "acceptance_test": "AT1: Full compliance passes, including schema-valid contract and version/changelog consistency.",
+      "command": "bash tools/validate.sh",
+      "exit_code": 1,
+      "evidence": ".agent/evidence/release-v1.5.0-prep/01-validate-sh.txt"
+    },
+    {
+      "index": 2,
+      "acceptance_test": "AT2: Standing fixture regressions pass; no product tests are added.",
+      "command": "bash tools/fixtures_self_test.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v1.5.0-prep/02-fixtures-self-test.txt"
+    },
+    {
+      "index": 3,
+      "acceptance_test": "AT3: All five release anchor groups agree with V=1.5.0.",
+      "command": "python3 .github/scripts/release_closeout.py --mode pr",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v1.5.0-prep/03-release-closeout-pr.txt"
+    },
+    {
+      "index": 4,
+      "acceptance_test": "AT4: Bootstrap e2e passes against a committed candidate.",
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v1.5.0-prep/04-e2e-bootstrap.txt"
+    },
+    {
+      "index": 5,
+      "acceptance_test": "AT5: The tag does not exist before merge; remote absence requires successful remote lookup and positive origin control.",
+      "command": "python3 - <<'PY'\nimport subprocess\nfor cmd,expected in [(['git','rev-parse','-q','--verify','refs/tags/v1.5.0'],1),(['git','ls-remote','--tags','origin','v1.5.0'],0),(['git','ls-remote','--tags','origin','v1.4.0'],0)]:\n r=subprocess.run(cmd,text=True,capture_output=True);print(cmd,r.stdout,r.stderr,'EXIT:',r.returncode);assert r.returncode==expected\n if cmd[-1]=='v1.5.0': assert not r.stdout.strip()\n if cmd[-1]=='v1.4.0': assert 'refs/tags/v1.4.0' in r.stdout\nPY",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v1.5.0-prep/05-tag-probe-and-sanitization.txt"
+    },
+    {
+      "index": 6,
+      "acceptance_test": "AT6: Pin counts, changelog empty Unreleased heading/date/tier, frontmatter versions and one ROADMAP v1.5.0 disposition agree.",
+      "command": "python3 - <<'PY'\nimport json,re,sys,yaml\nfrom pathlib import Path\nsys.path.insert(0,'.github/scripts');import release_closeout as r\nassert json.loads(Path('NIZAM.json').read_text())['framework']['version']=='1.5.0'\na=Path('README.md').read_text();assert 'v1.4.0' not in a and a.count('v1.5.0')==7\na=Path('docs/guide/index.html').read_text();assert '<meta name=\"framework-version\" content=\"1.5.0\">' in a and '<span id=\"footer-version\">1.5.0</span>' in a;assert '1.4.0' not in a and a.replace('https://github.com/niq-cnr/nizam-framework/blob/v1.5.0/docs/planning/operator_gates.md','').count('1.5.0')==2\na=Path('CHANGELOG.md').read_text();assert a.splitlines()[7:10]==['## [Unreleased]','','## [1.5.0] - 2026-10-10'];assert '**Minor release**' in a\nb=r.document_body(Path('docs/planning/ROADMAP.md').read_text());assert sum(bool(re.search(r'Latest released tag: v1\\.5\\.0\\b|Release in preparation: v1\\.5\\.0\\b',l)) for l in b.splitlines())==1\nfor p,v in [('CONTEXT.md','1.5.0'),('docs/planning/ROADMAP.md','0.50.0'),('docs/planning/operator_gates.md','0.30.0')]:\n d=yaml.safe_load(Path(p).read_text().split('---')[1]);assert str(d['version'])==v and d['change_log'][0]['version']==v\nprint('All version/pin/disposition assertions passed')\nPY",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v1.5.0-prep/06-guide-anchors.txt"
+    },
+    {
+      "index": 7,
+      "acceptance_test": "AT7: Exactly seven product files change; frozen phase artifacts, run_state, tools/schemas/workflows and unrelated files remain identical to post-decision base; untracked paths fail closed.",
+      "command": "python3 - <<'PY'\nimport re,subprocess\nbase='67ba7646e681a6be6800c766bf0078b2fdc6cfb4';product=set(['CHANGELOG.md', 'NIZAM.json', 'CONTEXT.md', 'README.md', 'docs/guide/index.html', 'docs/planning/ROADMAP.md', 'docs/planning/operator_gates.md'])\nr=subprocess.run(['git','diff','--name-status',base],check=True,text=True,capture_output=True)\nseen=set()\ndef auxiliary(p):\n return bool(re.fullmatch(r'\\.agent/(contracts/release-v1\\.5\\.0\\.json|(?:validator|qa)/release-v1\\.5\\.0-[A-Za-z0-9_-]+\\.json|evidence/release-readiness-v1\\.5\\.0\\.md|evidence/release-v1\\.5\\.0-prep/[A-Za-z0-9_.-]+)',p)) and '..' not in p\nfor l in r.stdout.splitlines():\n parts=l.split('\\t');assert len(parts)==2,l;status,p=parts\n if p in product: assert status=='M',(status,p);seen.add(p)\n else: assert auxiliary(p) and status in ('A','M'),(status,p)\nassert seen==product,(seen,product)\nfor p in subprocess.run(['git','ls-files','--others','--exclude-standard'],check=True,text=True,capture_output=True).stdout.splitlines(): assert auxiliary(p),p\nprint('Scope guard passed: exactly seven modified product files; only authorized metadata/evidence additions')\nPY",
+      "exit_code": 1,
+      "evidence": ".agent/evidence/release-v1.5.0-prep/07-scope.txt"
+    },
+    {
+      "index": 8,
+      "acceptance_test": "AT8: GA declaration matches recorded operator decision, exceptions remain visible and H-CONSOLIDATION stays outstanding.",
+      "command": "python3 - <<'PY'\nimport hashlib,json,re,yaml\nfrom pathlib import Path\nstate=json.loads(Path('.agent/run_state.json').read_text())\ngate=next(x for x in reversed(state['history']) if x.get('event')=='operator_gate_decision' and x.get('gate')=='H-GA')\nassert gate['decision']=='declared' and gate['verbatim']=='GA is declared.'\nassert gate['declared_version']=='1.5.0' and gate['tag']=='v1.5.0'\nassert gate['evidence_exceptions']=={'real_production_pilot':'not_met','recorded_consumer_adoptions':'insufficient_evidence'}\nassert gate['dossier_path']=='.agent/evidence/102/ga-readiness.json'\nassert hashlib.sha256(Path(gate['dossier_path']).read_bytes()).hexdigest()==gate['dossier_sha256']=='d98ccec0f3c57cda51876db3286b57005143ef771b88b4c92f36748de4c0f590'\ndate=gate['at'].split('T')[0];assert date=='2026-10-10'\ndef normalized(text):\n return re.sub(r'\\s+',' ',text.replace('`','').replace('**','')).strip()\ndef declaration(span):\n assert f'General Availability declared by the operator on {date}' in normalized(span),span\n assert not re.search(r'GA (?:is |remains )?(?:undeclared|not declared)|H-GA (?:is |stays |remains )?OUTSTANDING',normalized(span),re.I),span\ndef exceptions(span):\n text=normalized(span)\n for key,value in gate['evidence_exceptions'].items():\n  assert re.search(r'\\b'+re.escape(key)+r'\\s+(?:is|remains)\\s+'+re.escape(value)+r'\\b',text),(key,span)\n assert not re.search(r'all (?:GA |readiness )?(?:preconditions|prerequisites|criteria) (?:are |were |have been )?(?:met|passed|satisfied)',text,re.I),span\nreadme=Path('README.md').read_text().split('## Quickstart',1)[0];declaration(readme);assert '[GA decision](docs/planning/operator_gates.md)' in readme\nhero=re.search(r'<header class=\"hero\"[^>]*>(.*?)</header>',Path('docs/guide/index.html').read_text(),re.S).group(1);declaration(hero);assert 'href=\"https://github.com/niq-cnr/nizam-framework/blob/v1.5.0/docs/planning/operator_gates.md\"' in hero\nchanges=Path('CHANGELOG.md').read_text();current=changes.split('## [1.5.0] - 2026-10-10\\n',1)[1].split('## [1.4.0]',1)[0];banner=current.split('### Added',1)[0];declaration(banner);exceptions(banner)\ncontext=yaml.safe_load(Path('CONTEXT.md').read_text().split('---',2)[1]);entry=context['change_log'][0];assert entry['version']=='1.5.0' and str(entry['date'])==date;declaration(entry['summary']);exceptions(entry['summary'])\nroadmap=Path('docs/planning/ROADMAP.md').read_text().split('## Current Position',1)[1];phase=roadmap.split('- **Phase 014 (GA Track) is complete.**',1)[1].split('\\n- ',1)[0];declaration(phase);exceptions(phase)\nrows=Path('docs/planning/operator_gates.md').read_text().splitlines();ga=next(l for l in rows if l.startswith('| `H-GA` |'));assert ga.count('|')==5;disposition=ga.split('|')[4];assert f'EXECUTED {date}' in disposition and gate['verbatim'] in disposition and gate['tag'] in disposition and gate['at'] in disposition and gate['dossier_sha256'] in disposition and gate['dossier_path'] in disposition and '14e632f' in disposition;assert 'OUTSTANDING' not in disposition;exceptions(disposition)\ncon=next(l for l in rows if l.startswith('| `H-CONSOLIDATION` |'));assert 'OUTSTANDING' in con.split('|')[4] and 'NOT EXERCISED' in con.split('|')[4]\nprint('Current declaration spans, canonical exception pairs, and operator decision identity passed')\nPY",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v1.5.0-prep/08-ga-declaration.txt"
+    },
+    {
+      "index": 9,
+      "acceptance_test": "AT9: New product lines introduce no branding/internal endpoints or control characters; historical material remains intact.",
+      "command": "python3 - <<'PY'\nimport re,subprocess\nfrom pathlib import Path\npaths=['CHANGELOG.md', 'NIZAM.json', 'CONTEXT.md', 'README.md', 'docs/guide/index.html', 'docs/planning/ROADMAP.md', 'docs/planning/operator_gates.md']\nd=subprocess.run(['git','diff','14e632fa04242aaf56eedc15eab377c03ba87511','--',*paths],check=True,text=True,capture_output=True).stdout\nadded='\\n'.join(l[1:] for l in d.splitlines() if l.startswith('+') and not l.startswith('+++'));assert not re.search(r'n[i]zamiq|\\.svc|cluster\\.local',added,re.I)\nassert re.search(r'n[i]zamiq|\\.svc|cluster\\.local','host.svc',re.I)\nfor p in paths: assert not any(ord(c)<32 and c not in '\\n\\t\\r' for c in Path(p).read_text()),p\nold=subprocess.run(['git','show','14e632fa04242aaf56eedc15eab377c03ba87511:CHANGELOG.md'],check=True,text=True,capture_output=True).stdout;new=Path('CHANGELOG.md').read_text();assert old[old.index('## [1.4.0]'):]==new[new.index('## [1.4.0]'):]\nline=next(l for l in subprocess.run(['git','show','14e632fa04242aaf56eedc15eab377c03ba87511:docs/planning/ROADMAP.md'],check=True,text=True,capture_output=True).stdout.splitlines() if l.startswith('- **Latest released tag: v1.4.0'));assert line in Path('docs/planning/ROADMAP.md').read_text()\nprint('Added-line hygiene and historical release records passed')\nPY",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/release-v1.5.0-prep/09-hygiene-and-history.txt"
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Independent isolated clone positive followed by forbidden untracked tools/unplanned-release-probe.txt scope-negative",
+    "result": "pass",
+    "evidence": ".agent/evidence/release-v1.5.0-prep/release-v1.5.0-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/release-v1.5.0-prep/01-validate-sh.txt",
+    ".agent/evidence/release-v1.5.0-prep/02-fixtures-self-test.txt",
+    ".agent/evidence/release-v1.5.0-prep/03-release-closeout-pr.txt",
+    ".agent/evidence/release-v1.5.0-prep/04-e2e-bootstrap.txt",
+    ".agent/evidence/release-v1.5.0-prep/05-tag-probe-and-sanitization.txt",
+    ".agent/evidence/release-v1.5.0-prep/06-guide-anchors.txt",
+    ".agent/evidence/release-v1.5.0-prep/07-scope.txt",
+    ".agent/evidence/release-v1.5.0-prep/08-ga-declaration.txt",
+    ".agent/evidence/release-v1.5.0-prep/09-hygiene-and-history.txt",
+    ".agent/evidence/release-v1.5.0-prep/release-v1.5.0-qa-adversarial.txt"
+  ],
+  "issues": [
+    {
+      "acceptance_test": "AT1",
+      "evidence": ".agent/evidence/release-v1.5.0-prep/01-validate-sh.txt",
+      "description": "C9 scans the pinned GitHub href as an unresolved local path."
+    },
+    {
+      "acceptance_test": "AT7",
+      "evidence": ".agent/evidence/release-v1.5.0-prep/07-scope.txt",
+      "description": "Concurrent closeout contract untracked .agent/contracts/release-v1.5.0-closeout.json is outside approved preparation scope."
+    }
+  ],
+  "unsupported_claims": [],
+  "missing_acceptance_coverage": [],
+  "required_fixes": [
+    "Preserve pinned deployed GA destination while rendering href in a form C9 does not mistake for a local path; narrowly amend affected href verification assertions and ratify independently.",
+    "Move unrelated closeout-contract draft outside delivery tree until preparation scope verification completes."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "7 of 9 checks pass. C9 URL-token failure and unrelated untracked closeout contract block release readiness. E2E resolves committed candidate and isolated scope negative rejects correctly."
+  },
+  "dod_ref": "standard/definition_of_done.md"
+}
