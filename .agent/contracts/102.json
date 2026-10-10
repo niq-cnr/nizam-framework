@@ -1,0 +1,507 @@
+{
+ "contract_id": "102",
+ "feature_id": "102",
+ "name": "GA-readiness dossier (no declaration), NDEBT-044 (e) roll, and canonical-first phase close",
+ "status": "approved",
+ "spec_ref": ".agent/product_spec_014.md",
+ "design_notes": {
+  "revision": "Revision 0 (102-contract attempt 2/3). Mode A round 1 rejected the attempt-1 contract with one issue (plus two unsupported_claims that were consequences of it): the text claimed the fully dual-state 108-round-2 approvals predicate, but S01's embedded script hard-coded the proposed state (status != 'proposed' rejected; approvals unconditionally both-false with approved_at absent) -- a prose-vs-code mismatch. S01 now implements the exact 108 dual-state form: status must be one of proposed/approved/implemented/complete; when status is approved, revisions is 0, both flags are true and approved_at is present; in any other status, revisions is 0, both flags are false and approved_at is absent. Status is proposed; revisions is 0 and both validator_mode_a and evaluator_contract_review are false; approved_at is absent. S02 diffs from <B> and rejects a Generator edit of run_state. S03 allowlists .agent/run_state.json against <A>, hard-fails the feature list and the product spec, and -- unlike every prior feature -- the four contracted planning files (phase_014.yaml, ROADMAP.md, manifest.json, DEBT.md) are in scope, because the canonical-first phase close is this feature's contracted deliverable; HANDOVER.md and backlog_dag.json stay out of scope (the F102 packet's allowed_paths does not list them). One premise of the feature text is made precise below: AT1's yaml-completeness holds at the implementation commit only because the yaml flip is in this feature's scope; AT6's exemption of 102 is what keeps the suite green there, since the feature-list flip is Orchestrator-owned and lands after.",
+  "base_revision": "<A> = 217351cd429b167f975bc186d6d890fe497a67a8, branch phase/014-102-ga-dossier, HEAD 'Phase 014 · Feature 102 — start' (run_state-only; the tree equals main a5d6506 except .agent/run_state.json). It is the pre-contract tree and the diff anchor for S03 and S04. The phase-014 scope-budget measurement range for 102 starts at a5d6506, not at <A>. <B>, the Orchestrator's commit of this contract once approved, is the attempt base and the anchor of S02 only.",
+  "revision_history": [
+   "2026-10-10, 102-contract attempt 2/3 (revision still 0): Mode A round 1 rejected with one issue -- S01's embedded approvals/status predicate hard-coded the proposed state while the contract text claimed the fully dual-state 108-round-2 predicate (two unsupported_claims were consequences of it). Fixed: S01 accepts status in (proposed, approved, implemented, complete) and applies the exact 108 dual-state approvals predicate in both branches; S01's acceptance_test, state_at_base_A and expected_outcome re-worded to describe this contract's predicate. Envelope unchanged: proposed, revisions 0, both flags false, approved_at absent. No other part of the contract changed."
+  ],
+  "plan_ref": ".agent/product_list_014.json n/a; .agent/product_spec_014.md (1.1.7) — the 102 bullet, the GA-gate/human-gates sections, the Safety and state model (canonical-first close; frozen acceptance infrastructure), and 'Scope budget measurement' (102 = 850, range 600-1100); ecosystem/08_ga_gate.md Sections 2-3 (the dossier's authoritative precondition semantics); docs/planning/backlog_dag.json packet F102 (allowed_paths: .agent/evidence/102/**, phase_014.yaml, manifest.json, ROADMAP.md, DEBT.md, CHANGELOG.md — CHANGELOG is excluded by this contract's non_goals, matching the 107/108/109 precedent).",
+  "ah_premises_at_base": [
+   "Measured 2026-10-10 at <A>, serially (validate.sh and fixtures_self_test.sh were never overlapped). AT1 exit 1 (AssertionError: in_progress — the phase status is still in_progress and step 102 is PENDING; the schema validation itself passes). AT2 exit 1 (FileNotFoundError: the dossier .agent/evidence/102/ga-readiness.json does not exist). AT3 exit 1 (FileNotFoundError: no dossier). AT4 exit 0 (a real 'git fetch --tags --quiet origin' then the frozen gate: 'phase_tag_check: baseline 19 tags; current 19; new since activation: []'). AT5 exit 1 (AssertionError: the stale v0.51.0-era bullet's pre-'Resolved' id set is the eight ids NDEBT-026/034/037/040/044/045/046/047 against the live six-row Open set 034/040/044/045/046/047 — the resolved rows 026/037 are named before the word 'Resolved'). AT6 exit 0 (every feature except 102 is complete or cancelled). AT7 exit 0 (all seven frozen sha256 pins match). AT8 exit 0 (GATE: PASS, 16 checks passing, baseline 16). AT9 exit 0 (all five version-anchor groups agree with V=1.4.0). AT10 exit 0 (SELF-TEST OK: 147/147).",
+   "Verified while drafting (all with real git commands): the dossier revisions resolve — fdc076ff6b4665d7b40a5a74a9dae5562dd568bf (amendment A3, PR #73; also the last commit touching operator_gates.md), 9edd5d0e0d9e0489c961407d306ae30541c27dd5 (v1.4.0^{commit}), a5d65060c625381e34f5ae8e72a9c34345f10d03 (main, 108's merge; DEBT.md 0.53.0), 483f016edb90282f19eb26ac197e317273a4012a (phase-014 activation, PR #65; the first commit touching .agent/evidence/phase-014-activation/). Timestamps are the commits' committer dates converted to UTC Z. Every dossier evidence path exists at <A> (product_spec_014.md, phase_014.yaml, operator_gates.md, CHANGELOG.md, ROADMAP.md, DEBT.md, and the two frozen activation baselines).",
+   "Measured: the live DEBT.md Open set at <A> is six rows — NDEBT-047, NDEBT-046, NDEBT-045, NDEBT-044, NDEBT-040, NDEBT-034 — all Low, so AT3's truth is 'met'. The 0.53.0 change_log records Open 7 -> 6, Resolved 40 -> 41, so after this feature's roll: Open 6 -> 5, Resolved 41 -> 42.",
+   "Measured: the phase total at the 108 close is 7799 of 8600 (ceiling 11180) per the run_state scope_budget_measured record at 2026-10-10T13:47:52Z (capture .agent/evidence/scope-budget-014/measure-108.txt); 102's own measurement lands at close and the ROADMAP bullet is pinned to state the 108-close figure only."
+  ],
+  "design_decisions": [
+   "DOSSIER DISPOSITIONS (the pinned ga-readiness.json content, truthful per ecosystem/08 Sections 2-3). real_production_pilot = not_met: amendment A3 cancelled the v1.4.0 pilot (operator verbatim 'The multi-repo pilot at v1.4.0 is no longer needed.', run_state 2026-10-10T06:05:42Z); evidence = the spec's A3 summary (.agent/product_spec_014.md), the phase yaml's A3 description, and the operator-gates 0.29.0 addendum (docs/planning/operator_gates.md); revision fdc076f (A3, PR #73). .agent/evidence/pilot-100/aggregate.json is necessarily absent from the evidence — the directory does not exist. stable_release_history = met: consecutive operator-signed annotated tags v1.0.0 through v1.4.0, each with a dated CHANGELOG section and a green (or honestly recorded-anomaly) release workflow — the v1.2.1 anomaly is recorded in ROADMAP and operator_gates 0.23.0, satisfying Section 2's 'anomaly honestly recorded' clause; evidence = CHANGELOG.md, ROADMAP.md (Track 1 ledger), and the activation tag baseline; revision 9edd5d0 (v1.4.0). recorded_consumer_adoptions = insufficient_evidence: exactly one released-tag adoption under a recorded H-CONSUMER-UPGRADE decision exists (the phase-007 scratch/throwaway consumer at v0.8.0), which proves the gate's mechanics, not production maturity (the Section 2 pilot-analogy); the real v0.9.0 consumer adoption behind issue #52 (NDEBT-036) carries no per-adoption recorded decision, and phase 014 records none (A3); evidence = operator_gates.md + DEBT.md (NDEBT-036 row); revision fdc076f. no_open_critical_high_debt = met: the pinned DEBT.md Open table carries no Critical/High row; evidence = DEBT.md; revision a5d6506 (the 0.53.0 tree). benchmark_thresholds = met under Section 2's thresholds-as-acceptance-requirements rule: every enforcement threshold defined for the phase carries a measured, anchored result in the frozen activation evidence (validator sweep and payload sweep captures); passing asserts the measurement exists and is anchored — the operator judges the result; evidence = validate.txt + validate_payload.txt; revision 483f016 (activation). h_ga = OUTSTANDING and ga_declared = false: the assessment recommends, it never concludes (Section 4).",
+   "PHASE_014.YAML CLOSE (first canonical write): the implementation commit flips the phase status to complete and fills step 102 COMPLETED with evidence (.agent/evidence/102/at1-phase-close.txt — captured with EXIT:0 before the commit), docs_updated (docs/planning/DEBT.md) and a changelog_entry string (recorded in the yaml only, the 107/108/109 precedent — CHANGELOG.md itself is untouched). The description's 'The only remaining pending step is 102.' sentence is pinned to a completion sentence. This is the load-bearing inversion versus every prior feature: AT1 asserting yaml-completeness passes at the implementation commit because the flip is this feature's scope, while AT6's exemption of 102 keeps the suite green there.",
+   "ROADMAP REFRESH: only the Current Position first bullet and the open-debt bullet change (0.48.0 -> 0.49.0 + change_log per NDS Sec 4). The first bullet records completion at the 108-close figures — 'At the 108 close the recorded phase total was 7799 of 8600 ...; feature 102's own measurement lands at close' — so no figure can go stale. The open-debt bullet rolls to the five-row Open set at DEBT.md 0.54.0 with the AT5 ordering rule engineered in: the text before the first occurrence of the word 'Resolved' names exactly NDEBT-047/046/045/040/034 (verified with AT5's own slicing logic against the pinned DEBT.md before pinning); every resolved-row id (044, 043, 041, 042, 037, 026, 036, 029, ...) appears only after it; and the text deliberately avoids the bare word 'Resolved' in the Open-set half ('closure proposed to the operator', not 'Resolved by'). The released-tag disposition bullets are byte-untouched so AT9's 'Latest released tag: v1.4.0' disposition count stays exactly one (the 0.46.0/0.47.0 precedent), and no new text contains the literal disposition phrases.",
+   "DEBT.md 0.54.0: the NDEBT-044 row moves Open -> Resolved with its Description cell preserved and a Resolution cell appended (the Resolved-table convention; full Open Notes text stays in git history at a5d6506). Logic verified against the row's own scheduling text: '(a) phase 014 feature 106 — ...; (b) feature 107 — ...; (c), (d), (f) feature 108 ...; (e) feature 102's phase-close Current Position refresh' — with (a)/(b)/(c)(d)(f) already Resolved at 0.53.0, (e)'s closure by this feature resolves the whole bundle. Counts: Open 6 -> 5; Resolved 41 -> 42. NDEBT-034 stays Open: the description assigns only (e), the minimal-scope rule forbids unilateral closure, and the row's own 'revisit only on measured pilot-100 cost' trigger is extinct (A3) — so 102 records an operator-decision followup proposing its closure (deferral trigger extinct; the clone-cost optimization remains a recorded possibility) rather than closing it.",
+   "MANIFEST COMPLETION RECORD (second canonical write): the phase-014 object flips status to complete, updated_at moves to 2026-10-10, and the note gains a '-> COMPLETE 2026-10-10:' record in the house style. current_phase stays '014-ga-track' (no next phase is activated). schema_version stays 2.0.0 — a content-only change. The note cites only paths that exist at the implementation commit (C9: no .agent/qa/102.json reference).",
+   "HANDOVER.md AND BACKLOG_DAG.json: OUT of scope. The F102 packet's allowed_paths lists neither; the minimal-scope rule governs; and the stale packet statuses (F099/F103-107 pending; F100/F101 not cancellable — schema/work-packet.schema.json has no cancelled value) plus the pre-102 HANDOVER are honestly carried to the Orchestrator followups (a separate handover/maintenance PR, the feature-107 PR #71 precedent). The S03 hard-fail list enforces the decision. Next-candidate refinement itself is delivered through the dossier (the merged features' QA verdicts and the A3 record are its evidence) plus the ROADMAP/manifest completion records; a forward candidate-scope paragraph is deliberately NOT authored here (that is the next planning cycle's act under H-PHASE-015, and the spec's next-candidate wording is satisfied by refining the scope against the pilot + review evidence recorded in the dossier).",
+   "EVIDENCE HONESTY: not_met and insufficient_evidence are recorded because they are the truthful statuses, not to force a verdict — Section 4's 'recommends, never concludes' and Section 2's strict threshold-as-requirement treatment are the binding semantics. Any Mode A / contract-review demand to upgrade them is CONTRACT_DEFECT.",
+   "SCOPE BUDGET: 850 (feature-list figure, phase-014 budget-counted basis), range 600-1100; the dossier and every capture under .agent/evidence/102/ are evidence-class (never budget-gated per spec 'Consequence for 100 and 102'). The four planning files are the budget-counted deliverable; the contract's own lines are process overhead counted by the Orchestrator's measurement."
+  ],
+  "pinned_interface": {
+   "yaml_status": {
+    "path": "docs/planning/phase_014.yaml",
+    "old": "status: in_progress",
+    "new": "status: complete"
+   },
+   "yaml_description": {
+    "path": "docs/planning/phase_014.yaml",
+    "old": "The only remaining pending step is 102.",
+    "new": "Feature 102, the final step, assembled the GA-readiness dossier (H-GA stays OUTSTANDING; nothing declared) and closed the phase canonical-first (this file complete first, the manifest second, and the derived run_state third by the Orchestrator)."
+   },
+   "yaml_step_102": {
+    "path": "docs/planning/phase_014.yaml",
+    "old": "    status: PENDING",
+    "new": "    status: COMPLETED\n    docs_updated: docs/planning/DEBT.md\n    changelog_entry: \"GA-readiness dossier presented with H-GA OUTSTANDING and real_production_pilot not_met (no GA declaration); ROADMAP Current Position open-debt bullet rolled to the live Open set (NDEBT-044 concern (e) resolved); phase 014 closed canonical-first.\"\n    evidence: .agent/evidence/102/at1-phase-close.txt"
+   },
+   "roadmap_version": {
+    "path": "docs/planning/ROADMAP.md",
+    "old": "version: 0.48.0",
+    "new": "version: 0.49.0"
+   },
+   "roadmap_changelog_entry": {
+    "path": "docs/planning/ROADMAP.md",
+    "old": "change_log:\n  - version: \"0.48.0\"",
+    "new": "change_log:\n  - version: \"0.49.0\"\n    date: \"2026-10-10\"\n    summary: \"Phase-014 close (feature 102, the final feature). Replaces only the Current Position first bullet and the open-debt bullet; the released-tag disposition bullets are untouched so the release close-out gate's version-scoped disposition line is not disturbed (the 0.46.0/0.47.0 precedent). First bullet: phase 014 is complete — 099 and 103-109 landed via PRs #66-#76 and 102 assembled the GA-readiness dossier (H-GA OUTSTANDING; real_production_pilot not_met per amendment A3; nothing declared) and closed the phase canonical-first; the phase-total sentence states the 7799-of-8600 figure at the 108 close, with 102's own measurement landing at close. Open-debt bullet: rolled to the five Open rows at DEBT.md 0.54.0 (NDEBT-047, 046, 045, 040, 034); NDEBT-044 concern (e) moves to Resolved by feature 102; NDEBT-034's pilot-100 deferral trigger is extinct after A3 and its closure is proposed to the operator at close. No plan-of-record change.\"\n  - version: \"0.48.0\""
+   },
+   "roadmap_first_bullet": {
+    "path": "docs/planning/ROADMAP.md",
+    "old": "**Phase 014 (GA Track) is in progress.** Feature 106 is complete (PR #72, `f53c499`). Features 100 and 101 are cancelled. The lane is 107 → 109 → 108 → 102, and the next feature is 107. After feature 106 the recorded phase total is 5222 of 8600 (ceiling 11180, spec 1.1.4); amendment A3 does not re-baseline those figures.",
+    "new": "**Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102, the final feature, assembled the GA-readiness dossier (`H-GA` stays OUTSTANDING; `real_production_pilot` is `not_met` — the v1.4.0 pilot was cancelled by amendment A3; nothing is declared), rolled the open-debt bullet (NDEBT-044 concern (e)) and closed the phase canonical-first. At the 108 close the recorded phase total was 7799 of 8600 (ceiling 11180, spec 1.1.4); feature 102's own measurement lands at close."
+   },
+   "roadmap_open_debt_bullet": {
+    "path": "docs/planning/ROADMAP.md",
+    "old": "- Open debt (current, at DEBT.md v0.51.0): eight rows remain Open, all Low —\n  `NDEBT-047` (self-test C13 swap without an EXIT backstop), `NDEBT-046` (sandbox-test namespace\n  discrimination), `NDEBT-045` (`--payload` help paragraph), `NDEBT-044` (index and documentation\n  drift bundle; features 106, 107, 108 and 102), `NDEBT-040` (SHA-anchored run_state byte-guards),\n  `NDEBT-037` (`--help` stops at C13; feature 108), `NDEBT-034` (per-member clone cost) and\n  `NDEBT-026` (C15 mapping direction; feature 109). Phase 014 has **Resolved** `NDEBT-043`,\n  `NDEBT-041` and `NDEBT-042` (features 103, 104, 105).\n  ",
+    "new": "- Open debt (current, at DEBT.md v0.54.0): five rows remain Open, all Low —\n  `NDEBT-047` (self-test C13 swap without an EXIT backstop), `NDEBT-046` (sandbox-test namespace\n  discrimination), `NDEBT-045` (`--payload` help paragraph), `NDEBT-040` (SHA-anchored run_state\n  byte-guards) and `NDEBT-034` (per-member clone cost; its pilot-100 deferral trigger is extinct\n  after amendment A3 — closure proposed to the operator at the phase close). Phase 014 has\n  **Resolved** `NDEBT-044` (index and documentation drift bundle; concern (e) rolled by feature\n  102's phase-close refresh), `NDEBT-043`,\n  `NDEBT-041` and `NDEBT-042` (features 103, 104, 105).\n  "
+   },
+   "debt_version": {
+    "path": "docs/planning/DEBT.md",
+    "old": "version: 0.53.0",
+    "new": "version: 0.54.0"
+   },
+   "debt_changelog_entry": {
+    "path": "docs/planning/DEBT.md",
+    "old": "change_log:\n  - version: \"0.53.0\"",
+    "new": "change_log:\n  - version: \"0.54.0\"\n    date: \"2026-10-10\"\n    summary: \"Phase-014 closure record for feature 102 (the GA-readiness dossier and the canonical-first phase close), re-verified against the attempt tree before writing (AH-2). NDEBT-044 (Low) moves from Open to Resolved: concern (e), the ROADMAP Current Position open-debt roll, is remedied by feature 102 — the bullet names exactly the live Open-set ids and the first occurrence of the word 'Resolved' precedes every resolved-row id it mentions; with (a) resolved by 106, (b) by 107 and (c)(d)(f) by 108, (e)'s closure resolves the whole bundle. The Open Notes cell is replaced by the Resolution cell (the Resolved-table convention); its full text stays in git history at a5d6506. The resolved row is inserted at the top of Resolved, highest id first. Counts: Open 6 -> 5; Resolved 41 -> 42. NDEBT-034 stays Open: its pilot-100 deferral trigger is extinct (amendment A3 cancelled feature 100), and feature 102 records an operator-decision followup proposing its closure rather than closing it unilaterally. No other row changes.\"\n  - version: \"0.53.0\""
+   },
+   "debt_open_row_remove": {
+    "path": "docs/planning/DEBT.md",
+    "old": "| NDEBT-044 | 2026-10-08 | Low | **Index and documentation drift bundle (surfaced by the NIP-0003 validation).** Each item re-verified at `3094223`: (a) `NIZAM.json` `capabilities` has 33 entries against 18 in `tools/skill.json` `capabilities`, and no check compares the two; (b) `docs/nips/NIP-0002-zero-to-n-project-spectrum.md` frontmatter carries `status: accepted` (line 6), outside the `schema/frontmatter.schema.json` enum (`draft`/`active`/`deprecated`), undetected because `tools/validate.sh` sweeps no file under `docs/nips/` (the shipped-doc set covers only `docs/architecture/`); (c) the `tools/validate.sh` help text for C5 says \"Zero case-insensitive occurrences\" (line 197), but the C5 sweep is `grep -InE` with no `-i` (line 867), so it is case-sensitive; (d) `tools/interface.md` §5 item 10 cites \"(Section 2, Item 4)\" for the no-fabrication rule, but §2 Item 4 is Manifest resolution and the rule is Item 5 (Failure behavior); (e) `docs/planning/ROADMAP.md` \"Current Position\" says \"Open debt (current, at DEBT.md v0.40.0): two rows remain Open\", but four rows (`NDEBT-040`/`037`/`034`/`026`) were Open before this change and eight are after it; (f) found during re-verification: the `tools/validate.sh` help text's payload-doc set paragraph (around lines 411-415) omits `methodology/` and `ecosystem/` and says `methodology/` is excluded \"because [it is] not injected\", while `build_payload_md_set` (around lines 467-470) sweeps both, since feature 051 injected them. | OPEN — documentation and index hygiene; none is blocking. Remedies: (a) a parity check (or a documented intentional subset) between the two capability lists; (b) correct NIP-0002 to `active` and bring `docs/nips/` under C1; (c) and (f) correct the help text; (d) correct the cross-reference to Item 5 — note `tools/interface.md` ships to consumers, and NIP-0003 feature 106 bumps it anyway; (e) roll the count at the next ROADMAP Current Position refresh (left unedited here because the stale fact sits inside a multi-sentence bullet). Candidate inputs to phase-014 feature 101 (simplification review). **Scheduled 2026-10-08, split by concern:** (a) phase 014 feature 106 — decided as a documented INTENTIONAL SUBSET (every `tools/skill.json` capability module is the `authoritative_source` of a `NIZAM.json` capability), enforced by C13; re-verified at `02b02c6` the rule is violated by `ecosystem/00_ecosystem_bootstrap.md`, which 106 indexes; (b) feature 107 — NIP-0002 status + `docs/nips/` under C1/C2 only (never C9, which would fail on proposals' future paths); (c), (d), (f) feature 108 (with `NDEBT-037`); (e) feature 102's phase-close Current Position refresh. **Updated 2026-10-10:** (a) RESOLVED by feature 106 (PR #72, f53c499); (b) RESOLVED by feature 107 (PR #74, c43ae9e); (c), (d), (f) RESOLVED by feature 108 (branch phase/014-108-validator-help-truth, implementation commit 9473058, cherry-pick of attempt-1 commit a046ccb, after one contract revision at 108-contract attempt 2/3): the C5 --help text now says case-sensitive matching the grep -InE sweep, tools/interface.md 0.3.0 -> 0.3.1 cites Section 2, Item 5, and the Payload-doc set paragraph names methodology/ and ecosystem/; C14-C16 gained --help paragraphs (NDEBT-037 resolves in the same PR). (e) remains open for feature 102; this row stays Open until then. |\n",
+    "new": ""
+   },
+   "debt_resolved_row_insert": {
+    "path": "docs/planning/DEBT.md",
+    "old": "## Resolved\n\n| ID | Date | Severity | Description | Resolution |\n|----|------|----------|-------------|------------|\n",
+    "new": "## Resolved\n\n| ID | Date | Severity | Description | Resolution |\n|----|------|----------|-------------|------------|\n| NDEBT-044 | 2026-10-08 | Low | **Index and documentation drift bundle (surfaced by the NIP-0003 validation).** Each item re-verified at `3094223`: (a) `NIZAM.json` `capabilities` has 33 entries against 18 in `tools/skill.json` `capabilities`, and no check compares the two; (b) `docs/nips/NIP-0002-zero-to-n-project-spectrum.md` frontmatter carries `status: accepted` (line 6), outside the `schema/frontmatter.schema.json` enum (`draft`/`active`/`deprecated`), undetected because `tools/validate.sh` sweeps no file under `docs/nips/` (the shipped-doc set covers only `docs/architecture/`); (c) the `tools/validate.sh` help text for C5 says \"Zero case-insensitive occurrences\" (line 197), but the C5 sweep is `grep -InE` with no `-i` (line 867), so it is case-sensitive; (d) `tools/interface.md` §5 item 10 cites \"(Section 2, Item 4)\" for the no-fabrication rule, but §2 Item 4 is Manifest resolution and the rule is Item 5 (Failure behavior); (e) `docs/planning/ROADMAP.md` \"Current Position\" says \"Open debt (current, at DEBT.md v0.40.0): two rows remain Open\", but four rows (`NDEBT-040`/`037`/`034`/`026`) were Open before this change and eight are after it; (f) found during re-verification: the `tools/validate.sh` help text's payload-doc set paragraph (around lines 411-415) omits `methodology/` and `ecosystem/` and says `methodology/` is excluded \"because [it is] not injected\", while `build_payload_md_set` (around lines 467-470) sweeps both, since feature 051 injected them. | RESOLVED 2026-10-10 by phase 014, feature 102 (the phase-close ROADMAP Current Position refresh). Remedy as scheduled: the open-debt bullet names exactly the live Open-set ids (NDEBT-047/046/045/040/034 at DEBT.md 0.54.0) and the first occurrence of the word 'Resolved' precedes every resolved-row id the bullet mentions (feature 102 AT5). Evidence: contract 102 (.agent/contracts/102.json); the GA-readiness dossier .agent/evidence/102/ga-readiness.json; AT5 capture .agent/evidence/102/at5-open-debt-roll.txt. |\n"
+   },
+   "manifest_updated_at": {
+    "path": "docs/planning/manifest.json",
+    "old": "\"updated_at\": \"2026-10-08\"",
+    "new": "\"updated_at\": \"2026-10-10\""
+   },
+   "manifest_status": {
+    "path": "docs/planning/manifest.json",
+    "old": "\"status\": \"in_progress\"",
+    "new": "\"status\": \"complete\""
+   },
+   "manifest_note_append": {
+    "path": "docs/planning/manifest.json",
+    "old": "Reconciliation package: docs/planning/backlog_reconciliation.md + docs/planning/backlog_dag.json.",
+    "new": "Reconciliation package: docs/planning/backlog_reconciliation.md + docs/planning/backlog_dag.json. -> COMPLETE 2026-10-10: feature 102, the final feature, assembled the GA-readiness dossier (.agent/evidence/102/ga-readiness.json; H-GA OUTSTANDING, ga_declared false, real_production_pilot not_met per amendment A3), rolled the ROADMAP Current Position open-debt bullet (NDEBT-044 concern (e) Resolved at DEBT.md 0.54.0) and closed the phase canonical-first: docs/planning/phase_014.yaml complete first, this manifest second; the derived run_state records (phase completion and the scope-budget total) are the Orchestrator's third write. H-GA remains OUTSTANDING; no release is prepared and no tag is created."
+   },
+   "dossier_content": {
+    "path": ".agent/evidence/102/ga-readiness.json",
+    "content": "{\n  \"h_ga\": \"OUTSTANDING\",\n  \"ga_declared\": false,\n  \"preconditions\": {\n    \"real_production_pilot\": {\n      \"status\": \"not_met\",\n      \"evidence\": [\n        \".agent/product_spec_014.md\",\n        \"docs/planning/phase_014.yaml\",\n        \"docs/planning/operator_gates.md\"\n      ],\n      \"revision\": \"fdc076ff6b4665d7b40a5a74a9dae5562dd568bf\",\n      \"timestamp\": \"2026-10-10T06:17:07Z\"\n    },\n    \"stable_release_history\": {\n      \"status\": \"met\",\n      \"evidence\": [\n        \"CHANGELOG.md\",\n        \"docs/planning/ROADMAP.md\",\n        \".agent/evidence/phase-014-activation/tag-baseline.txt\"\n      ],\n      \"revision\": \"9edd5d0e0d9e0489c961407d306ae30541c27dd5\",\n      \"timestamp\": \"2026-10-08T10:24:45Z\"\n    },\n    \"recorded_consumer_adoptions\": {\n      \"status\": \"insufficient_evidence\",\n      \"evidence\": [\n        \"docs/planning/operator_gates.md\",\n        \"docs/planning/DEBT.md\"\n      ],\n      \"revision\": \"fdc076ff6b4665d7b40a5a74a9dae5562dd568bf\",\n      \"timestamp\": \"2026-10-10T06:17:07Z\"\n    },\n    \"no_open_critical_high_debt\": {\n      \"status\": \"met\",\n      \"evidence\": [\n        \"docs/planning/DEBT.md\"\n      ],\n      \"revision\": \"a5d65060c625381e34f5ae8e72a9c34345f10d03\",\n      \"timestamp\": \"2026-10-10T13:49:49Z\"\n    },\n    \"benchmark_thresholds\": {\n      \"status\": \"met\",\n      \"evidence\": [\n        \".agent/evidence/phase-014-activation/validate.txt\",\n        \".agent/evidence/phase-014-activation/validate_payload.txt\"\n      ],\n      \"revision\": \"483f016edb90282f19eb26ac197e317273a4012a\",\n      \"timestamp\": \"2026-10-09T05:24:31Z\"\n    }\n  }\n}\n"
+   },
+   "apply_order": {
+    "docs/planning/phase_014.yaml": [
+     "yaml_status",
+     "yaml_description",
+     "yaml_step_102"
+    ],
+    "docs/planning/ROADMAP.md": [
+     "roadmap_version",
+     "roadmap_changelog_entry",
+     "roadmap_first_bullet",
+     "roadmap_open_debt_bullet"
+    ],
+    "docs/planning/DEBT.md": [
+     "debt_version",
+     "debt_changelog_entry",
+     "debt_open_row_remove",
+     "debt_resolved_row_insert"
+    ],
+    "docs/planning/manifest.json": [
+     "manifest_updated_at",
+     "manifest_status",
+     "manifest_note_append"
+    ]
+   },
+   "unchanged_regions": [
+    [
+     "docs/planning/ROADMAP.md",
+     "**Latest released tag: v1.4.0 (MINOR)",
+     "## Track 1 — Release Operations Ledger"
+    ],
+    [
+     "docs/planning/DEBT.md",
+     "| NDEBT-034 |",
+     "\n\n## Resolved"
+    ],
+    [
+     "docs/planning/phase_014.yaml",
+     "  - id: \"099\"",
+     "  - id: \"102\""
+    ],
+    [
+     "docs/planning/manifest.json",
+     "\"id\": \"001-framework-genesis\"",
+     "\"id\": \"014-ga-track\""
+    ]
+   ],
+   "unchanged_files": [
+    "CHANGELOG.md",
+    "NIZAM.json",
+    "tools/skill.json",
+    "tools/validate.sh",
+    "tools/verify_lib.sh",
+    "tools/README.md",
+    "tools/interface.md",
+    "tools/fixtures_self_test.sh",
+    "standard/AGF.md",
+    "standard/NDS.md",
+    "standard/capability_profiles.md",
+    "standard/definition_of_done.md",
+    "schema/contract.schema.json",
+    "schema/phase.schema.json",
+    ".agent/feature_list_014.json",
+    ".agent/product_spec_014.md",
+    "ecosystem/08_ga_gate.md",
+    "ecosystem/06_simplification_review.md",
+    "docs/planning/operator_gates.md",
+    "docs/planning/HANDOVER.md",
+    "docs/planning/backlog_dag.json",
+    ".github/workflows/compliance.yml",
+    ".agent/evidence/phase-014-activation/gates/phase_tag_check.py",
+    ".agent/evidence/phase-014-activation/gates/scratch_run.py",
+    ".agent/evidence/phase-014-activation/gates/validator_gate.py",
+    ".agent/evidence/phase-014-activation/audits-baseline.txt",
+    ".agent/evidence/phase-014-activation/tag-baseline.txt",
+    ".agent/evidence/phase-014-activation/validate.txt",
+    ".agent/evidence/phase-014-activation/validate_payload.txt",
+    "docs/guide/index.html",
+    "README.md",
+    "CONTEXT.md"
+   ]
+  },
+  "serialization": "Do not run tools/validate.sh and tools/fixtures_self_test.sh at the same time, in this tree or in one scratch copy. AT8 (validator gate) runs validate.sh; AT10 is the fixtures self-test; S05's case 8 chains them strictly serially in scratch behind a /proc refusal. The ten ATs and five S-checks run one at a time, in the foreground, in the order given in evidence_convention. AT4 begins with a real 'git fetch --tags --quiet origin' (a network read of the remote; it mutates no refs) and is captured verbatim including it.",
+  "hazards": [
+   "The root tree carries an untracked .nizam/ directory: S03 fails closed in such a tree, scratch_run copies it into the scratch copy, and C9 exempts it. It is never in scope. Run the S-checks and captures in the attempt worktree (clean) or move .nizam/ away.",
+   "AT4 performs a real 'git fetch --tags --quiet origin' — a network read of the remote, expected by the amended AT. A network failure is ENVIRONMENT (retry), not DEFECT, and does not consume an implementation attempt.",
+   "AT5's 'Resolved'-ordering trap: the open-debt bullet must name exactly the live Open-set ids before the first occurrence of the word 'Resolved', and no resolved-row id may appear before it. The pinned new bullet was verified with AT5's own slicing logic against the pinned DEBT.md before pinning; S05 case 4 proves the trap is load-bearing by restoring the stale bullet.",
+   "AT9's version-scoped disposition: the only ROADMAP edits are the two pinned bullets; the released-tag bullets and the 'Latest released tag: v1.4.0' disposition line are untouched, and the new text never contains 'Latest released tag: v1.4.0' or 'Release in preparation: v1.4.0'. S04 re-runs the closeout's body-scoped disposition regex on the pinned file (count stays exactly one).",
+   "run_state and the feature list are Orchestrator-owned and land AFTER the implementation commit: AT1's yaml-completeness (in scope for 102) and AT6's exemption of 102 must both hold at the implementation commit; Mode B and QA see the Orchestrator deltas (run_state, feature list) on the promoted tree and treat them as owned, the 108 precedent.",
+   "C9 path-resolution: no new text may cite a path that does not exist at the implementation commit. The DEBT Resolution cell and the manifest note therefore cite only .agent/contracts/102.json, .agent/evidence/102/ga-readiness.json, .agent/evidence/102/at5-open-debt-roll.txt, docs/planning/phase_014.yaml — never .agent/qa/102.json (which exists only after QA).",
+   "The frozen acceptance infrastructure is read-only; AT7's pins fail the phase if any of the seven files drifted. S05 case 6 proves the pin is load-bearing.",
+   "Evidence honesty is a hazard in both directions: the dossier must not inflate thin evidence (recorded_consumer_adoptions is insufficient_evidence, not met) and must not soften met facts (stable_release_history, no_open_critical_high_debt, benchmark_thresholds are met with anchored measurements)."
+  ],
+  "failure_triage": {
+   "DEFECT": "the implementation delivers something other than the pinned dossier/pins, or an AT/S-check fails on the pinned tree. Consumes the attempt; fix and re-capture everything (a later edit invalidates the captures).",
+   "CONTRACT_DEFECT": "a pinned string is not exactly-once in the base, an AT is unsatisfiable as written, or a gate demands something the contract's measured record contradicts (e.g. upgrading the honest dossier statuses, or moving HANDOVER/backlog_dag into scope without a revision). Halt before the implementation commit; escalate; does not consume an attempt (methodology/03_circuit_breaker.md).",
+   "ENVIRONMENT": "AT4's git fetch fails on the network, or a python/yaml/jsonschema dependency is missing. Retry; does not consume an attempt."
+  },
+  "attempt_isolation": "The Orchestrator creates the attempt worktree from <B> and passes the path. Suggested path: /home/cnross/workspace02/nizam-wt-102-attempt<N> (N = 1..3). The Generator's first action there is attempt-base.txt. One commit, then the Orchestrator cherry-picks it onto phase/014-102-ga-dossier. On failure, evidence stays in the attempt root; the Orchestrator copies it to .agent/evidence/102/failed-attempt<N>/. The Generator never edits .agent/run_state.json and never touches the feature list.",
+  "orchestrator_sequence": [
+   "1. Mode A and the evaluator's contract review approve this contract. The Orchestrator commits it on the feature branch. That commit is <B>. The Orchestrator sets status to approved. The Generator does not.",
+   "2. The Orchestrator creates the attempt worktree from <B>. The Generator records attempt-base.txt, writes the dossier and captures, applies the four pinned planning-doc edits, runs AT1-AT10, S01, S04, S05, S02, S03 one at a time, and makes one commit carrying everything except the feature-list flip and run_state. No push, no gh, no remote (AT4's fetch excepted, as the AT itself requires).",
+   "3. The Orchestrator cherry-picks, removes the root, runs Mode B (the run_state/feature-list deltas against <A> are its own later records, allowlisted as in 108), then the Evaluator. Captures go to .agent/evidence/102/qa/. Because the yaml flip is in the implementation commit, AT1 and AT6 both hold there and on the promoted tree.",
+   "4. Close-out commit (Orchestrator-owned): Step-7 feature-list flip (102 -> complete); run_state derived records (feature_complete, phase complete, current position); the scope-budget measurement over a5d6506..HEAD plus the phase total (7799 + 102's measured lines, of 8600, ceiling 11180); then the PR. The Generator does not perform any of these."
+  ],
+  "orchestrator_followups": [
+   ".agent/feature_list_014.json Step-7 flip: feature 102 status pending -> complete, in the close-out commit. The Generator never edits the feature list.",
+   ".agent/run_state.json derived records: feature_completed, phase-014 completion records, and the scope-budget measurement (102 from a5d6506) plus the phase total. run_state is excluded from the budget by the spec 1.1.4 rule.",
+   "NDEBT-034 operator-decision note: its pilot-100 deferral trigger is extinct (amendment A3 cancelled feature 100; the cost concern is never to be measured). Propose recording it Resolved (the clone-cost optimization remains a possibility recorded in history) — the operator decides; the Generator does not close it, and this contract leaves the row Open.",
+   "docs/planning/HANDOVER.md phase-close refresh (final-state handover for the next phase) and docs/planning/backlog_dag.json packet-status roll (F099/F103-F109 complete; F100/F101 stay pending-with-note — schema/work-packet.schema.json has no cancelled value) in a separate handover/maintenance PR, the feature-107 handover PR #71 precedent. Both are outside the F102 packet's allowed_paths, which is why they are followups and not 102 scope.",
+   "Evaluator QA (.agent/qa/102.json, fresh independent captures under .agent/evidence/102/qa/) and the Mode B delta verdict, per the standard loop."
+  ],
+  "scope_budget": "estimated_lines 850 is the feature-list figure on the phase-014 budget-counted basis (product + contract + verdict + planning; evidence and run_state excluded; range 600-1100; spec 1.1.4). The budget-counted deliverable is the four planning files (planning class); the contract's own lines are process overhead; the dossier and all captures under .agent/evidence/102/ are evidence-class and never budget-gated (the spec's 'Consequence for 100 and 102'). The Orchestrator measures 102 from a5d6506 (the recorded range start) over the implementation commit with .agent/evidence/scope-budget-014/measure.py; the phase total lands at close: 7799 (at the 108 close) + 102's measured lines, against 8600 (ceiling 11180). The ROADMAP bullet is pinned to the 108-close figure so no stale total is published.",
+  "version_and_compatibility_impact": "None. No release is prepared, no tag is created, framework.version stays 1.4.0 (NIZAM.json untouched), and CHANGELOG.md is byte-identical. DEBT.md 0.53.0 -> 0.54.0 and ROADMAP.md 0.48.0 -> 0.49.0 carry change_log entries per NDS Sec 4, satisfying C8 (version bump with a change record); the manifest schema_version stays 2.0.0 (content-only note change). The yaml/manifest/DEBT/ROADMAP edits are framework-envelope planning records, not shipped payload; --payload validation is unaffected (AT7's frozen pins and AT8/AT9/AT10 prove the payload surfaces untouched). H-GA remains OUTSTANDING; the pipeline never publishes, tags, announces or flips any GA state.",
+  "rollback": "Revert the single implementation commit on the feature branch (or drop the cherry-pick before promotion). Each planning file is base-plus-pinned-edits, so a revert restores byte-identical base files; the dossier and captures are evidence-class and may simply be discarded. No git reset --hard. The Generator does not edit .agent/run_state.json; the Orchestrator's close-out commit is a separate, independently revertible unit.",
+  "retry_identity_note": "retry_identity.contract_step_key '102-contract' and implementation_step_key '102-implementation' bind every contract revision and implementation attempt to this feature; limit 3 per methodology/03_circuit_breaker.md. This is attempt 2/3 of 102-contract (Mode A round 1 caught the S01 prose-vs-code mismatch; CONTRACT_DEFECT, no implementation attempt consumed). A CONTRACT_DEFECT halt (e.g. a pin that is not exactly-once, or a gate demanding the honest dossier statuses be upgraded) does not consume an attempt. On approval the Orchestrator sets status approved and revisions stays 0; S01's dual-state predicate then requires both flags true and approved_at present.",
+  "open_risks": [
+   "R1. recorded_consumer_adoptions judged insufficient_evidence (one scratch/throwaway v0.8.0 adoption recorded; the real v0.9.0 adoption behind issue #52 has no per-adoption H-CONSUMER-UPGRADE record; phase 014 records none per A3). If a gate reads 'met' into the dossier, that is CONTRACT_DEFECT — the pinned contract fixes the honest statuses, per ecosystem/08's strict semantics.",
+   "R2. AT4 performs a real git fetch against origin; a network or permission failure is ENVIRONMENT (retry), not DEFECT, and consumes no attempt.",
+   "R3. AT9's ROADMAP disposition line is sensitive: any edit outside the two pinned bullets risks disturbing the v1.4.0 disposition count. S04 pins the bullets byte-exactly and re-runs the closeout's body-scoped regex (count stays one); S05 case 8 runs the closeout for real.",
+   "R4. The 850 point estimate sits in a 600-1100 range; the contract is large (10 ATs + 5 S-checks) but the four planning files are the only budget-counted deliverable and are small. The Orchestrator measures; the Generator writes no scope_budget field.",
+   "R5. HANDOVER.md and backlog_dag.json staleness is carried openly to the Orchestrator followups; if the operator wants them inside 102's scope instead, that is a contract revision (a scope change against the F102 packet), not an implementation-time expansion — S03 hard-fails any such edit at this revision.",
+   "R6. The phase total in the ROADMAP bullet is pinned as the 108-close figure (7799 of 8600); 102's own measurement lands only at close. If the Orchestrator's measurement surprises (>1100), the 3x rolling-baseline protocol in methodology/00_planning.md Section 6 applies at the close-out record, not here."
+  ]
+ },
+ "scope": {
+  "files_create": [
+   {
+    "path": ".agent/evidence/102/attempt-base.txt",
+    "purpose": "The attempt base B, the Generator's first action in the attempt root. Line 1 is `git rev-parse HEAD`, line 2 is the 40-hex sha, line 3 is EXIT:0."
+   },
+   {
+    "path": ".agent/evidence/102/ga-readiness.json",
+    "purpose": "The AT2 dossier deliverable (evidence class, never budget-gated): h_ga OUTSTANDING, ga_declared false, and the five preconditions each {status, evidence[existing files], revision (verified 40-hex), timestamp (ISO Z)}. Content is pinned in design_notes.pinned_interface.dossier_content."
+   },
+   {
+    "path": ".agent/evidence/102/at1-phase-close.txt",
+    "purpose": "AT1 capture (at1-phase-close). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/at2-dossier-contract.txt",
+    "purpose": "AT2 capture (at2-dossier-contract). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/at3-debt-cross-check.txt",
+    "purpose": "AT3 capture (at3-debt-cross-check). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/at4-phase-tag-check.txt",
+    "purpose": "AT4 capture (at4-phase-tag-check). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/at5-open-debt-roll.txt",
+    "purpose": "AT5 capture (at5-open-debt-roll). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/at6-feature-statuses.txt",
+    "purpose": "AT6 capture (at6-feature-statuses). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/at7-frozen-pins.txt",
+    "purpose": "AT7 capture (at7-frozen-pins). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/at8-validator-gate.txt",
+    "purpose": "AT8 capture (at8-validator-gate). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/at9-release-closeout.txt",
+    "purpose": "AT9 capture (at9-release-closeout). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/at10-fixtures-self-test.txt",
+    "purpose": "AT10 capture (at10-fixtures-self-test). Line 1 is the replayable invocation from the repo root; the body is the raw combined stdout and stderr; the last line is EXIT:<code> from the process."
+   },
+   {
+    "path": ".agent/evidence/102/s01-contract-valid.txt",
+    "purpose": "S01 capture. Same evidence convention; run serially, never overlapping tools/validate.sh and tools/fixtures_self_test.sh."
+   },
+   {
+    "path": ".agent/evidence/102/s02-attempt-root-delta.txt",
+    "purpose": "S02 capture. Same evidence convention; run serially, never overlapping tools/validate.sh and tools/fixtures_self_test.sh."
+   },
+   {
+    "path": ".agent/evidence/102/s03-scope-boundary.txt",
+    "purpose": "S03 capture. Same evidence convention; run serially, never overlapping tools/validate.sh and tools/fixtures_self_test.sh."
+   },
+   {
+    "path": ".agent/evidence/102/s04-pinned-structure.txt",
+    "purpose": "S04 capture. Same evidence convention; run serially, never overlapping tools/validate.sh and tools/fixtures_self_test.sh."
+   },
+   {
+    "path": ".agent/evidence/102/s05-discriminating.txt",
+    "purpose": "S05 capture. Same evidence convention; run serially, never overlapping tools/validate.sh and tools/fixtures_self_test.sh."
+   }
+  ],
+  "files_modify": [
+   {
+    "path": "docs/planning/phase_014.yaml",
+    "purpose": "The canonical-first close, first write: phase status in_progress -> complete, the description sentence, and step 102 filled COMPLETED with evidence (.agent/evidence/102/at1-phase-close.txt), docs_updated (docs/planning/DEBT.md) and changelog_entry. AT1 asserts this file complete at the implementation commit -- the flip is this feature's contracted scope, not an Orchestrator pre-edit."
+   },
+   {
+    "path": "docs/planning/ROADMAP.md",
+    "purpose": "Current Position refresh, 0.48.0 -> 0.49.0 with a change_log entry (NDS Sec 4, satisfying C8): the first bullet records the phase-014 completion at the 108-close figures (7799 of 8600, ceiling 11180, spec 1.1.4; 102's own measurement lands at close), and the open-debt bullet rolls to the live five-row Open set with the first 'Resolved' after every Open id. The released-tag disposition bullets are untouched so AT9's v1.4.0 disposition line is not disturbed."
+   },
+   {
+    "path": "docs/planning/manifest.json",
+    "purpose": "The canonical second write: the phase-014 record flips status in_progress -> complete, updated_at -> 2026-10-10, and the note gains the completion record (dossier, NDEBT-044 (e) roll, canonical-first close, H-GA OUTSTANDING, no release)."
+   },
+   {
+    "path": "docs/planning/DEBT.md",
+    "purpose": "0.53.0 -> 0.54.0 with a change_log entry (NDS Sec 4, satisfying C8): the NDEBT-044 row moves Open -> Resolved (concern (e) rolled by this feature; with (a) 106, (b) 107 and (c)(d)(f) 108 already resolved, the bundle is then fully resolved). The row keeps its Description cell and gains the Resolution cell; the resolved row goes to the top of Resolved, highest id first. NDEBT-034 stays Open (operator-decision followup); no other row changes."
+   }
+  ]
+ },
+ "non_goals": [
+  "No GA declaration: the dossier presents H-GA as OUTSTANDING with ga_declared false; the framework never auto-declares GA and no surface, tag, badge or announcement is created or implied.",
+  "No release, no tag, no CHANGELOG.md edit: phase 014 prepares no release (version_impact 'None ...'); CHANGELOG.md stays byte-identical, matching the 107/108/109 precedent -- their changelog_entry strings live in phase_014.yaml only, and the [Unreleased] roll-up is the next release-preparation feature's act.",
+  ".agent/feature_list_014.json and .agent/run_state.json are Orchestrator-owned: the Step-7 status flip (102 -> complete) and the derived run_state records (feature_complete, phase completion, scope-budget measurement) land in the Orchestrator's close-out commit after this feature's implementation commit. The Generator never edits either file; S02 rejects a Generator run_state edit and S03 allowlists run_state only against <A>.",
+  "docs/planning/HANDOVER.md and docs/planning/backlog_dag.json are out of scope: the F102 packet's allowed_paths does not list them, and the minimal-scope rule governs. Their refresh (a phase-close handover recording the final state for the next phase, and the packet-status roll; the work-packet schema has no 'cancelled' value, so F100/F101 stay pending-with-note) is an Orchestrator followup under the feature-107 handover PR #71 precedent. S03 hard-fails any change to them inside the attempt.",
+  "docs/planning/operator_gates.md is out of scope: H-GA stays DEFINED/OUTSTANDING; no gate registry edit is needed to present it (the dossier cites the registry as evidence).",
+  "No new debt rows and no unilateral closures beyond NDEBT-044: NDEBT-034 stays Open (its pilot-100 deferral trigger is extinct after amendment A3; closure is proposed to the operator as a followup), as do NDEBT-045, NDEBT-046, NDEBT-047 and NDEBT-040.",
+  "The frozen acceptance infrastructure under .agent/evidence/phase-014-activation/ is read-only (AT7 pins all seven files).",
+  "NIZAM.json, tools/skill.json, tools/validate.sh, tools/verify_lib.sh, tools/fixtures_self_test.sh, tools/README.md, tools/interface.md, standard/*, schema/*, ecosystem/* (including ecosystem/08 itself), .github/* (release_closeout runs read-only as AT9), docs/nips/*, docs/guide/index.html, README.md and CONTEXT.md are untouched.",
+  "No spec or feature-list amendment: the ten acceptance tests are used verbatim; AT1's yaml-completeness is satisfied by this feature's own implementation commit (the canonical-first close makes the planning docs this contract scopes), not by an Orchestrator pre-edit.",
+  "No pilot evidence is created: .agent/evidence/pilot-100/ stays absent, and the dossier's real_production_pilot is not_met precisely because amendment A3 cancelled the pilot."
+ ],
+ "verification": [
+  {
+   "acceptance_test": "python3 -c \"import json,os,yaml,jsonschema; d=yaml.safe_load(open('docs/planning/phase_014.yaml')); jsonschema.validate(d, json.load(open('schema/phase.schema.json'))); assert d['status']=='complete', d['status']; assert d['steps'] and all(s['status']=='COMPLETED' for s in d['steps']), [s['status'] for s in d['steps']]; assert all(os.path.isfile(s['evidence']) for s in d['steps']), [s['evidence'] for s in d['steps'] if not os.path.isfile(s['evidence'])]\"",
+   "command": "python3 -c \"import json,os,yaml,jsonschema; d=yaml.safe_load(open('docs/planning/phase_014.yaml')); jsonschema.validate(d, json.load(open('schema/phase.schema.json'))); assert d['status']=='complete', d['status']; assert d['steps'] and all(s['status']=='COMPLETED' for s in d['steps']), [s['status'] for s in d['steps']]; assert all(os.path.isfile(s['evidence']) for s in d['steps']), [s['evidence'] for s in d['steps'] if not os.path.isfile(s['evidence'])]\"",
+   "acceptance_test_index": 1,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[0]",
+   "provenance": "approved_amendment (operator, run_state operator_gate_decision 2026-10-08T11:21:14Z: AT1 gains the missing `import json`)",
+   "owner": "generator",
+   "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. AssertionError: in_progress -- the phase status is still in_progress and step 102 is PENDING. The schema validation itself passes.",
+   "expected_outcome": "Exit 0 at the implementation commit (the yaml close is this feature's contracted scope, so the flip lands in the implementation commit, before the Orchestrator's Step-7 feature-list flip): phase_014.yaml schema-validates, status is 'complete', every step is COMPLETED, and every step's evidence file exists. The Orchestrator-owned feature list is not asserted here.",
+   "evidence_file": ".agent/evidence/102/at1-phase-close.txt"
+  },
+  {
+   "acceptance_test": "python3 -c \"import json,os,re,subprocess; D=json.load(open('.agent/evidence/102/ga-readiness.json')); K={'real_production_pilot','stable_release_history','recorded_consumer_adoptions','no_open_critical_high_debt','benchmark_thresholds'}; P=D['preconditions']; assert set(P)==K, sorted(P); assert D['h_ga']=='OUTSTANDING' and D['ga_declared'] is False; bad=[k for k,v in P.items() if v['status'] not in ('met','not_met','insufficient_evidence') or not v['evidence'] or not all(os.path.isfile(e) for e in v['evidence']) or not re.fullmatch(r'[0-9a-f]{40}',v['revision']) or subprocess.run(['git','cat-file','-e',v['revision']+'^{commit}']).returncode!=0 or not re.match(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z',v['timestamp'])]; assert not bad, bad\"",
+   "command": "python3 -c \"import json,os,re,subprocess; D=json.load(open('.agent/evidence/102/ga-readiness.json')); K={'real_production_pilot','stable_release_history','recorded_consumer_adoptions','no_open_critical_high_debt','benchmark_thresholds'}; P=D['preconditions']; assert set(P)==K, sorted(P); assert D['h_ga']=='OUTSTANDING' and D['ga_declared'] is False; bad=[k for k,v in P.items() if v['status'] not in ('met','not_met','insufficient_evidence') or not v['evidence'] or not all(os.path.isfile(e) for e in v['evidence']) or not re.fullmatch(r'[0-9a-f]{40}',v['revision']) or subprocess.run(['git','cat-file','-e',v['revision']+'^{commit}']).returncode!=0 or not re.match(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z',v['timestamp'])]; assert not bad, bad\"",
+   "acceptance_test_index": 2,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[1]",
+   "provenance": "planner_hardening_operator_acknowledged (operator verbatim 'acknowledged.', run_state 2026-10-08T13:20:12Z: the machine-readable dossier contract)",
+   "owner": "generator",
+   "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. FileNotFoundError: '.agent/evidence/102/ga-readiness.json' -- the dossier does not exist yet.",
+   "expected_outcome": "Exit 0: .agent/evidence/102/ga-readiness.json carries exactly the five-precondition key set, h_ga 'OUTSTANDING', ga_declared false, and each precondition {status in the enum, a non-empty evidence array of existing files, a 40-hex revision resolving to a real commit, an ISO-8601 Z timestamp}.",
+   "evidence_file": ".agent/evidence/102/at2-dossier-contract.txt"
+  },
+  {
+   "acceptance_test": "python3 -c \"import json,re; P=json.load(open('.agent/evidence/102/ga-readiness.json'))['preconditions']; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; sev=re.findall(r'^[|] NDEBT-[0-9]+ [|] [^|]+ [|] (\\w+) [|]',t,re.M); truth='not_met' if any(s in ('Critical','High') for s in sev) else 'met'; assert P['no_open_critical_high_debt']['status']==truth, (P['no_open_critical_high_debt']['status'],truth,sev); assert P['real_production_pilot']['status']=='not_met' and '.agent/evidence/pilot-100/aggregate.json' not in P['real_production_pilot']['evidence'], P['real_production_pilot']\"",
+   "command": "python3 -c \"import json,re; P=json.load(open('.agent/evidence/102/ga-readiness.json'))['preconditions']; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; sev=re.findall(r'^[|] NDEBT-[0-9]+ [|] [^|]+ [|] (\\w+) [|]',t,re.M); truth='not_met' if any(s in ('Critical','High') for s in sev) else 'met'; assert P['no_open_critical_high_debt']['status']==truth, (P['no_open_critical_high_debt']['status'],truth,sev); assert P['real_production_pilot']['status']=='not_met' and '.agent/evidence/pilot-100/aggregate.json' not in P['real_production_pilot']['evidence'], P['real_production_pilot']\"",
+   "acceptance_test_index": 3,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[2]",
+   "provenance": "planner_hardening_operator_acknowledged (same 13:20:12Z record; amendment A3 (2026-10-10, spec 1.1.7) retargets the pilot half: not_met and no pilot-100/aggregate.json)",
+   "owner": "generator",
+   "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. FileNotFoundError: '.agent/evidence/102/ga-readiness.json' -- the cross-check has no dossier to read.",
+   "expected_outcome": "Exit 0: the dossier's no_open_critical_high_debt equals the severity truth sliced from the pinned DEBT.md Open table (all Low -> 'met'), and real_production_pilot is 'not_met' with .agent/evidence/pilot-100/aggregate.json absent from its evidence (amendment A3).",
+   "evidence_file": ".agent/evidence/102/at3-debt-cross-check.txt"
+  },
+  {
+   "acceptance_test": "git fetch --tags --quiet origin && python3 .agent/evidence/phase-014-activation/gates/phase_tag_check.py",
+   "command": "git fetch --tags --quiet origin && python3 .agent/evidence/phase-014-activation/gates/phase_tag_check.py",
+   "acceptance_test_index": 4,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[3]",
+   "provenance": "approved_amendment (same 11:21:14Z decision: the fixed-version tag-absence test replaced by the phase-scoped tag check; tags fetched from origin first)",
+   "owner": "generator",
+   "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10, including the real 'git fetch --tags --quiet origin' against the remote. Output: 'phase_tag_check: baseline 19 tags; current 19; new since activation: []'. No v1.5.0-style tag exists during the phase.",
+   "expected_outcome": "Exit 0: after fetching tags from origin, the phase-scoped tag check reports no new tag since the activation baseline (19 tags).",
+   "evidence_file": ".agent/evidence/102/at4-phase-tag-check.txt"
+  },
+  {
+   "acceptance_test": "python3 -c \"import re; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; want=set(re.findall(r'^[|] (NDEBT-[0-9]+) [|]',t,re.M)); r=open('docs/planning/ROADMAP.md').read().split('## Current Position')[1].split('\\n## ')[0]; L=[x for x in r.split('\\n- ') if x.startswith('Open debt (current')]; assert len(L)==1, len(L); got=set(re.findall(r'NDEBT-[0-9]+',L[0].split('Resolved')[0])); assert got==want, (sorted(got),sorted(want))\"",
+   "command": "python3 -c \"import re; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; want=set(re.findall(r'^[|] (NDEBT-[0-9]+) [|]',t,re.M)); r=open('docs/planning/ROADMAP.md').read().split('## Current Position')[1].split('\\n## ')[0]; L=[x for x in r.split('\\n- ') if x.startswith('Open debt (current')]; assert len(L)==1, len(L); got=set(re.findall(r'NDEBT-[0-9]+',L[0].split('Resolved')[0])); assert got==want, (sorted(got),sorted(want))\"",
+   "acceptance_test_index": 5,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[4]",
+   "provenance": "approved_tranche_scope (same 11:21:14Z decision, 'NDEBT-044, split by concern': concern (e) is this feature's ROADMAP roll)",
+   "owner": "generator",
+   "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. AssertionError: (['NDEBT-026', 'NDEBT-034', 'NDEBT-037', 'NDEBT-040', 'NDEBT-044', 'NDEBT-045', 'NDEBT-046', 'NDEBT-047'], ['NDEBT-034', 'NDEBT-040', 'NDEBT-044', 'NDEBT-045', 'NDEBT-046', 'NDEBT-047']) -- the stale v0.51.0-era bullet names the resolved rows NDEBT-026 and NDEBT-037 before the first occurrence of the word 'Resolved', so the pre-'Resolved' id set (eight ids) cannot equal the live six-row Open set.",
+   "expected_outcome": "Exit 0: the rewritten open-debt bullet's pre-'Resolved' id set equals the live DEBT.md Open set exactly ({NDEBT-034, NDEBT-040, NDEBT-045, NDEBT-046, NDEBT-047} after NDEBT-044 moves to Resolved at 0.54.0), and the first occurrence of the word 'Resolved' precedes every resolved-row id the bullet mentions.",
+   "evidence_file": ".agent/evidence/102/at5-open-debt-roll.txt"
+  },
+  {
+   "acceptance_test": "python3 -c \"import json; f=json.load(open('.agent/feature_list_014.json'))['features']; bad=[x['id'] for x in f if x['id']!='102' and x['status'] not in ('complete','cancelled')]; assert not bad, bad\"",
+   "command": "python3 -c \"import json; f=json.load(open('.agent/feature_list_014.json'))['features']; bad=[x['id'] for x in f if x['id']!='102' and x['status'] not in ('complete','cancelled')]; assert not bad, bad\"",
+   "acceptance_test_index": 6,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[5]",
+   "provenance": "carried_from_1_0_x",
+   "owner": "generator",
+   "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10 -- every feature except 102 is already complete (099, 103-109) or cancelled (100, 101).",
+   "expected_outcome": "Exit 0 both at the implementation commit (102 still pending in the feature list -- exempted) and after the Orchestrator's Step-7 flip (every feature complete or cancelled).",
+   "evidence_file": ".agent/evidence/102/at6-feature-statuses.txt"
+  },
+  {
+   "acceptance_test": "python3 -c \"import hashlib; P={'.agent/evidence/phase-014-activation/gates/phase_tag_check.py':'72f8df85c9e64bec711c909ce38cc27ae518715e1a8644fa9774af5a72a91b3b','.agent/evidence/phase-014-activation/gates/scratch_run.py':'7135e7a41a924a98aad1076b68e3df9fd9b06ce4406abb83f19cab2ff7460451','.agent/evidence/phase-014-activation/gates/validator_gate.py':'d343318c23a74473dc6365ae7f9d1dc48708c2ebba209a5d4a0373e9c7881166','.agent/evidence/phase-014-activation/audits-baseline.txt':'4eaec75056d0d926836ad45c439dd936ac5169d717f640b231c0f73172143174','.agent/evidence/phase-014-activation/tag-baseline.txt':'d548ed02934b39a286ccc61c279d88728c2af76a8fbfffb230013e49188b8b14','.agent/evidence/phase-014-activation/validate.txt':'35aaee4c2ff8288ed7757e7ec135f913b49ffeae77be1f6db32baba22032ec22','.agent/evidence/phase-014-activation/validate_payload.txt':'16cae6f76d8ddc81f54b7400881dd5fdd344de1f58e8ecec0de26b584cf4e680'}; bad=[p for p,h in P.items() if hashlib.sha256(open(p,'rb').read()).hexdigest()!=h]; assert not bad, ('frozen acceptance infrastructure modified',bad)\"",
+   "command": "python3 -c \"import hashlib; P={'.agent/evidence/phase-014-activation/gates/phase_tag_check.py':'72f8df85c9e64bec711c909ce38cc27ae518715e1a8644fa9774af5a72a91b3b','.agent/evidence/phase-014-activation/gates/scratch_run.py':'7135e7a41a924a98aad1076b68e3df9fd9b06ce4406abb83f19cab2ff7460451','.agent/evidence/phase-014-activation/gates/validator_gate.py':'d343318c23a74473dc6365ae7f9d1dc48708c2ebba209a5d4a0373e9c7881166','.agent/evidence/phase-014-activation/audits-baseline.txt':'4eaec75056d0d926836ad45c439dd936ac5169d717f640b231c0f73172143174','.agent/evidence/phase-014-activation/tag-baseline.txt':'d548ed02934b39a286ccc61c279d88728c2af76a8fbfffb230013e49188b8b14','.agent/evidence/phase-014-activation/validate.txt':'35aaee4c2ff8288ed7757e7ec135f913b49ffeae77be1f6db32baba22032ec22','.agent/evidence/phase-014-activation/validate_payload.txt':'16cae6f76d8ddc81f54b7400881dd5fdd344de1f58e8ecec0de26b584cf4e680'}; bad=[p for p,h in P.items() if hashlib.sha256(open(p,'rb').read()).hexdigest()!=h]; assert not bad, ('frozen acceptance infrastructure modified',bad)\"",
+   "acceptance_test_index": 7,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[6]",
+   "provenance": "planner_hardening_operator_acknowledged (same 13:20:12Z record: the sha256 pin of the frozen acceptance infrastructure)",
+   "owner": "generator",
+   "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10 -- all seven sha256 pins of the frozen acceptance infrastructure (three gate scripts, four baselines) match; nothing under .agent/evidence/phase-014-activation/ was modified during the phase.",
+   "expected_outcome": "Exit 0: the seven frozen files' sha256 digests still match the activation pins.",
+   "evidence_file": ".agent/evidence/102/at7-frozen-pins.txt"
+  },
+  {
+   "acceptance_test": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+   "command": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+   "acceptance_test_index": 8,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[7]",
+   "provenance": "carried_from_1_0_x",
+   "owner": "generator",
+   "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10: 'GATE: PASS (16 checks passing; baseline 16)' -- G1-G5 all pass on the green tree.",
+   "expected_outcome": "Exit 0: validator gate G1-G5 PASS on the pinned tree (16 checks, baseline 16).",
+   "evidence_file": ".agent/evidence/102/at8-validator-gate.txt"
+  },
+  {
+   "acceptance_test": "python3 .github/scripts/release_closeout.py --mode pr; test $? -eq 0",
+   "command": "python3 .github/scripts/release_closeout.py --mode pr; test $? -eq 0",
+   "acceptance_test_index": 9,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[8]",
+   "provenance": "carried_from_1_0_x",
+   "owner": "generator",
+   "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10: all five internal version-anchor groups agree with V=1.4.0 in --mode pr, including the ROADMAP disposition line.",
+   "expected_outcome": "Exit 0: release close-out --mode pr stays green at V=1.4.0 on the pinned tree -- the two pinned ROADMAP bullets do not touch the released-tag disposition line and cite no nonexistent path (C9).",
+   "evidence_file": ".agent/evidence/102/at9-release-closeout.txt"
+  },
+  {
+   "acceptance_test": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+   "command": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+   "acceptance_test_index": 10,
+   "source": ".agent/feature_list_014.json features[102].acceptance_tests[9]",
+   "provenance": "carried_from_1_0_x",
+   "owner": "generator",
+   "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10: 'SELF-TEST OK: 147/147 fixtures accounted for, 0 failed'.",
+   "expected_outcome": "Exit 0: the fixtures self-test stays at 147/147 on the pinned tree.",
+   "evidence_file": ".agent/evidence/102/at10-fixtures-self-test.txt"
+  },
+  {
+   "acceptance_test": "Supplementary S01: the contract validates against schema/contract.schema.json; its ten acceptance entries are verbatim and in order; files_modify is exactly the four sanctioned planning paths (the contracted canonical-first close scope); no forbidden path is in scope; estimated_lines is 850; version_impact starts with 'None'; evidence files are unique under .agent/evidence/102/; every files_create path is absent at <A> and every files_modify path exists at <A>; the retry identity is 102-contract/102-implementation/3; design_notes.revision is revision 0; the pinned dossier content meets the AT2 contract; the status/approvals predicate is fully dual-state: status must be one of proposed/approved/implemented/complete; when status is approved, revisions is 0, validator_mode_a and evaluator_contract_review are both true, and approved_at is present; in any other status, revisions is 0, both flags are false, and approved_at is absent; and every pinned old string occurs exactly once in the base files.",
+   "command": "python3 - <<'PY'\nimport json, subprocess, sys\nimport jsonschema\nA = \"217351cd429b167f975bc186d6d890fe497a67a8\"\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nbad = []\ncontract = json.load(open(\".agent/contracts/102.json\"))\njsonschema.validate(contract, json.load(open(\"schema/contract.schema.json\")))\nfeature = next(f for f in json.load(open(\".agent/feature_list_014.json\"))[\"features\"] if f[\"id\"] == \"102\")\nif (contract[\"contract_id\"], contract[\"feature_id\"], contract[\"spec_ref\"]) != (\"102\", \"102\", \".agent/product_spec_014.md\"):\n    bad.append(\"ids or spec_ref\")\nif contract[\"status\"] not in (\"proposed\", \"approved\", \"implemented\", \"complete\"):\n    bad.append(\"status \" + contract[\"status\"])\nif contract[\"estimated_lines\"] != 850 or contract[\"estimated_lines\"] != feature[\"estimated_lines\"]:\n    bad.append(\"estimated_lines\")\nif not contract[\"version_impact\"].startswith(\"None\"):\n    bad.append(\"version_impact\")\ntests = [v for v in contract[\"verification\"] if not v.get(\"supplementary\")]\nextras = [v for v in contract[\"verification\"] if v.get(\"supplementary\")]\nif [v[\"acceptance_test\"] for v in tests] != feature[\"acceptance_tests\"]:\n    bad.append(\"acceptance_test text is not verbatim and in order\")\nif [v[\"command\"] for v in tests] != feature[\"acceptance_tests\"]:\n    bad.append(\"command is not the verbatim acceptance test\")\nif len(tests) != 10 or len(extras) != 5:\n    bad.append(\"expected 10 acceptance tests and 5 supplementary checks\")\nif any(not v.get(\"expected_outcome\") or not v.get(\"state_at_base_A\") or v.get(\"owner\") != \"generator\" for v in contract[\"verification\"]):\n    bad.append(\"entry missing expected_outcome, state_at_base_A, or generator owner\")\nevidence = [v[\"evidence_file\"] for v in contract[\"verification\"]]\ncreated = [i[\"path\"] for i in contract[\"scope\"][\"files_create\"]]\nmodified = [i[\"path\"] for i in contract[\"scope\"][\"files_modify\"]]\nif len(set(evidence)) != len(evidence) or any(not p.startswith(\".agent/evidence/102/\") for p in evidence):\n    bad.append(\"evidence files are not unique under .agent/evidence/102/\")\nif not set(evidence) <= set(created):\n    bad.append(\"an evidence file is missing from files_create\")\nif not any(p.endswith(\"attempt-base.txt\") for p in created):\n    bad.append(\"attempt-base.txt missing\")\nwant_modify = [\n    \"docs/planning/phase_014.yaml\",\n    \"docs/planning/ROADMAP.md\",\n    \"docs/planning/manifest.json\",\n    \"docs/planning/DEBT.md\",\n]\nif modified != want_modify:\n    bad.append(\"files_modify is not the sanctioned list: \" + repr(modified))\nfor path in modified:\n    if sh(\"git\", \"cat-file\", \"-e\", A + \":\" + path).returncode != 0:\n        bad.append(\"files_modify path absent at base: \" + path)\nfor path in created:\n    if sh(\"git\", \"cat-file\", \"-e\", A + \":\" + path).returncode == 0:\n        bad.append(\"create path already exists at base: \" + path)\nforbidden_exact = {\n    \".agent/run_state.json\",\n    \".agent/feature_list_014.json\",\n    \".agent/product_spec_014.md\",\n    \"CHANGELOG.md\",\n    \"NIZAM.json\",\n    \"tools/skill.json\",\n    \"tools/README.md\",\n    \"tools/validate.sh\",\n    \"tools/verify_lib.sh\",\n    \"tools/fixtures_self_test.sh\",\n    \"docs/planning/HANDOVER.md\",\n    \"docs/planning/backlog_dag.json\",\n    \"docs/planning/operator_gates.md\",\n    \"standard/AGF.md\",\n    \"standard/NDS.md\",\n    \"bootstrap.sh\",\n}\nforbidden_prefix = (\".github/\", \"docs/nips/\", \".agent/evidence/phase-014-activation\", \"standard/\", \"schema/\", \"ecosystem/\", \"tools/fixtures/\")\nfor path in created + modified:\n    if path in forbidden_exact or any(path.startswith(x) for x in forbidden_prefix):\n        bad.append(\"forbidden path in scope: \" + path)\nidentity = contract[\"retry_identity\"]\nif (identity[\"contract_step_key\"], identity[\"implementation_step_key\"], identity[\"limit\"]) != (\"102-contract\", \"102-implementation\", 3):\n    bad.append(\"retry identity\")\nif contract[\"design_notes\"][\"revision\"].split()[1] != \"0\":\n    bad.append(\"design_notes.revision is not revision 0\")\napprovals = contract[\"approvals\"]\nif contract[\"status\"] == \"approved\":\n    if approvals.get(\"revisions\") != 0 or approvals.get(\"validator_mode_a\") is not True or approvals.get(\"evaluator_contract_review\") is not True or not approvals.get(\"approved_at\"):\n        bad.append(\"approved revision 0 does not have both approval flags true and an approved_at\")\nelse:\n    if approvals.get(\"revisions\") != 0 or approvals.get(\"validator_mode_a\") is not False or approvals.get(\"evaluator_contract_review\") is not False:\n        bad.append(\"approvals are not false at revision 0\")\n    if \"approved_at\" in approvals:\n        bad.append(\"approved_at present at a non-approved revision 0\")\npins = contract[\"design_notes\"][\"pinned_interface\"]\ndossier = json.loads(pins[\"dossier_content\"][\"content\"])\nK = {\"real_production_pilot\", \"stable_release_history\", \"recorded_consumer_adoptions\", \"no_open_critical_high_debt\", \"benchmark_thresholds\"}\nif dossier.get(\"h_ga\") != \"OUTSTANDING\" or dossier.get(\"ga_declared\") is not False or set(dossier.get(\"preconditions\", {})) != K:\n    bad.append(\"pinned dossier content does not meet the AT2 contract\")\ndef show(path):\n    return sh(\"git\", \"show\", A + \":\" + path).stdout\nfor key, val in pins.items():\n    if isinstance(val, dict) and \"old\" in val and \"new\" in val:\n        if show(val[\"path\"]).count(val[\"old\"]) != 1:\n            bad.append(\"pin \" + key + \" is not exactly once in base \" + val[\"path\"])\nprint(\"verification\", len(contract[\"verification\"]), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+   "supplementary": true,
+   "owner": "generator",
+   "state_at_base_A": "Not a red test. It passes once this contract is the file under test. At <A> the contract file is absent, so it fails by missing file. The predicate is verified in its proposed-state branch against the working-tree contract at 102-contract attempt 2/3 (exit 0), and its approved-state branch is exercised when the Orchestrator approves and commits the contract at <B> (the 108 precedent: approved with both flags true and approved_at present exits 0; approved without approved_at exits 1; a false flag in either state exits 1; proposed with approved_at present exits 1). The pin-uniqueness half was measured 2026-10-10 while drafting: every pinned old string occurs exactly once in its base file (asserted in the generator before this contract was written).",
+   "expected_outcome": "Exit 0. The contract validates; the ten ATs and commands are byte-identical to the feature list in order; files_modify is exactly the four planning paths; no forbidden path is in scope; the status/approvals predicate holds in whichever branch the contract's status is in: approved implies revisions 0, both flags true and approved_at present (exercised at <B>); any other status implies revisions 0, both flags false and approved_at absent (verified now, in the proposed branch).",
+   "evidence_file": ".agent/evidence/102/s01-contract-valid.txt"
+  },
+  {
+   "acceptance_test": "Supplementary S02: attempt-base.txt is the three-line form; B is the approved-contract commit; the diff since B is inside scope. Proves the implementation commit does not touch run_state, the feature list, the spec, CHANGELOG.md, HANDOVER.md, backlog_dag.json, operator_gates.md, or any file outside the contracted scope. A Generator edit of run_state since B fails here.",
+   "command": "python3 - <<'PY'\nimport json, re, subprocess, sys\nA = \"217351cd429b167f975bc186d6d890fe497a67a8\"\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nbad = []\nlines = open(\".agent/evidence/102/attempt-base.txt\").read().splitlines()\nif len(lines) != 3 or lines[0] != \"git rev-parse HEAD\" or lines[2] != \"EXIT:0\" or re.fullmatch(r\"[0-9a-f]{40}\", lines[1]) is None:\n    bad.append(\"attempt-base.txt is not the three-line captured form\")\nB = lines[1] if len(lines) > 1 else \"\"\ncontract = json.load(open(\".agent/contracts/102.json\"))\nscope = {i[\"path\"] for k in (\"files_create\", \"files_modify\") for i in contract[\"scope\"][k]}\nif sh(\"git\", \"cat-file\", \"-t\", B).stdout.strip() != \"commit\":\n    bad.append(\"B is not a commit\")\nif sh(\"git\", \"merge-base\", \"--is-ancestor\", A, B).returncode != 0:\n    bad.append(\"A is not an ancestor of B\")\nif sh(\"git\", \"merge-base\", \"--is-ancestor\", B, \"HEAD\").returncode != 0:\n    bad.append(\"B is not an ancestor-or-equal of HEAD\")\ncount = int(sh(\"git\", \"rev-list\", \"--count\", B + \"..HEAD\").stdout.strip() or \"99\")\nif count not in (0, 1):\n    bad.append(\"HEAD is %d commits past B\" % count)\nshown = sh(\"git\", \"show\", B + \":.agent/contracts/102.json\")\nif shown.returncode != 0 or json.loads(shown.stdout).get(\"status\") != \"approved\":\n    bad.append(\"the contract at B is not approved\")\ndelta = set(run(\"git\", \"diff\", \"--name-only\", \"-z\", B).split(\"\\0\")) - {\"\"}\nfields = run(\"git\", \"status\", \"--porcelain\", \"--untracked-files=all\", \"-z\").split(\"\\0\")\nindex = 0\nwhile index < len(fields):\n    entry = fields[index]\n    index += 1\n    if not entry:\n        continue\n    delta.add(entry[3:])\n    if entry[0] in \"RC\" or entry[1] in \"RC\":\n        if index < len(fields):\n            delta.add(fields[index])\n            index += 1\nif \".agent/run_state.json\" in delta:\n    bad.append(\"Generator edit of .agent/run_state.json since B (S02 rejects it; S03 allowlists it)\")\nextra = sorted(delta - scope)\nif extra:\n    bad.append(\"paths changed since B outside scope: \" + repr(extra))\nprint(\"B\", B[:12], \"commits past B\", count, \"delta\", len(delta), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+   "supplementary": true,
+   "owner": "generator",
+   "state_at_base_A": "FAIL at <A> (exit 1): attempt-base.txt does not exist yet.",
+   "expected_outcome": "Exit 0 inside the attempt root, before the single implementation commit (HEAD equals B, or one commit past B only when re-run after that commit). The single implementation commit carries exactly the four files_modify changes plus the .agent/evidence/102/ creates; the run_state and feature-list deltas exist only in the Orchestrator's later close-out commit.",
+   "evidence_file": ".agent/evidence/102/s02-attempt-root-delta.txt"
+  },
+  {
+   "acceptance_test": "Supplementary S03: every path changed against <A> is in scope or on the allowlist (.agent/contracts/102.json, run_state, validator/QA/failed-attempt prefixes). Every files_modify path is changed. The feature list and the product spec are hard-failed when changed; HANDOVER.md, backlog_dag.json, operator_gates.md, CHANGELOG.md, NIZAM.json and the frozen activation tree are hard-failed when changed (they are outside this feature's contracted scope). run_state stays on the allowlist and is not hard-failed. Running S03 in a tree with an untracked .nizam/ directory fails closed.",
+   "command": "python3 - <<'PY'\nimport json, os, subprocess, sys\nA = \"217351cd429b167f975bc186d6d890fe497a67a8\"\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nbad = []\nif os.path.isdir(\".nizam\") and not run(\"git\", \"ls-files\", \"--\", \".nizam\").strip():\n    bad.append(\"this tree carries an untracked .nizam/ directory; S03 refuses to run in it (move it away or use the attempt worktree)\")\ncontract = json.load(open(\".agent/contracts/102.json\"))\nscope = {i[\"path\"] for k in (\"files_create\", \"files_modify\") for i in contract[\"scope\"][k]}\nmodified = {i[\"path\"] for i in contract[\"scope\"][\"files_modify\"]}\nowned = {\".agent/contracts/102.json\", \".agent/run_state.json\"}\nprefixes = (\".agent/validator/102\", \".agent/qa/102\", \".agent/evidence/102/qa/\", \".agent/evidence/102/failed-attempt\", \".agent/evidence/102-qa-\")\nchanged = set(run(\"git\", \"diff\", \"--name-only\", \"-z\", A).split(\"\\0\")) - {\"\"}\nfields = run(\"git\", \"status\", \"--porcelain\", \"--untracked-files=all\", \"-z\").split(\"\\0\")\nindex = 0\nwhile index < len(fields):\n    entry = fields[index]\n    index += 1\n    if not entry:\n        continue\n    changed.add(entry[3:])\n    if entry[0] in \"RC\" or entry[1] in \"RC\":\n        if index < len(fields):\n            changed.add(fields[index])\n            index += 1\nextra = sorted(p for p in changed if p not in scope and p not in owned and not p.startswith(prefixes))\nmissing = sorted(modified - changed)\nif extra:\n    bad.append(\"paths outside scope and allowlist: \" + repr(extra))\nif missing:\n    bad.append(\"files_modify paths not changed: \" + repr(missing))\nif \".agent/feature_list_014.json\" in changed:\n    bad.append(\"feature list changed inside the attempt; status flips are Orchestrator-owned\")\nif \".agent/product_spec_014.md\" in changed:\n    bad.append(\"product spec changed inside the attempt\")\nfor path in (\"docs/planning/HANDOVER.md\", \"docs/planning/backlog_dag.json\", \"docs/planning/operator_gates.md\", \"CHANGELOG.md\", \"NIZAM.json\", \".agent/evidence/phase-014-activation\"):\n    if any(p == path or p.startswith(path + \"/\") for p in changed):\n        bad.append(\"file outside the contracted phase-close scope changed inside the attempt: \" + path)\nprint(\"changed\", len(changed), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+   "supplementary": true,
+   "owner": "generator",
+   "state_at_base_A": "FAIL at <A> plus this contract (exit 1): the four files_modify paths are not yet changed. At <A> itself the contract file is absent. It also refuses to run in a tree with an untracked .nizam/ directory (the root tree carries one; the attempt worktree does not).",
+   "expected_outcome": "Exit 0 in the attempt root after the deliverables exist. The phase-close planning files (phase_014.yaml, ROADMAP.md, manifest.json, DEBT.md) are changed against <A> as contracted; the feature list, the spec, run_state (allowlisted), HANDOVER.md and backlog_dag.json are not.",
+   "evidence_file": ".agent/evidence/102/s03-scope-boundary.txt"
+  },
+  {
+   "acceptance_test": "Supplementary S04: pinned structure. Each modified file differs from <A> only by its pinned edits; the pinned yaml re-validates against schema/phase.schema.json and passes AT1's completeness slicing; the pinned DEBT Open set is exactly {047, 046, 045, 040, 034} with no Critical/High row and the NDEBT-044 resolved row at the top of Resolved; the pinned ROADMAP keeps exactly one v1.4.0 disposition line (AT9's regex) and its open-debt bullet satisfies AT5's slicing against the pinned DEBT Open set; the pinned manifest parses and marks phase 014 complete; the dossier on disk equals the pinned dossier content, meets AT2's full contract, cites only existing evidence files whose revisions resolve to real commits, and is consistent with the pinned DEBT severities; unchanged_files are byte-identical.",
+   "command": "python3 - <<'PY'\nimport json, os, re, subprocess, sys\nimport jsonschema\nimport yaml\nA = \"217351cd429b167f975bc186d6d890fe497a67a8\"\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nbad = []\npins = json.load(open(\".agent/contracts/102.json\"))[\"design_notes\"][\"pinned_interface\"]\n\ndef show(path):\n    return run(\"git\", \"show\", A + \":\" + path)\n\ndef apply_pins(base, keys):\n    text = base\n    for key in keys:\n        pin = pins[key]\n        if text.count(pin[\"old\"]) != 1:\n            bad.append(\"pin \" + key + \" is not exactly once while rebuilding\")\n            return None\n        text = text.replace(pin[\"old\"], pin[\"new\"], 1)\n    return text\n\nbase_y = show(\"docs/planning/phase_014.yaml\")\nnew_y = open(\"docs/planning/phase_014.yaml\").read()\nexpect_y = apply_pins(base_y, [\"yaml_status\", \"yaml_description\", \"yaml_step_102\"])\nif new_y != expect_y:\n    bad.append(\"phase_014.yaml is not base plus the three pinned edits\")\nelse:\n    d = yaml.safe_load(new_y)\n    jsonschema.validate(d, json.load(open(\"schema/phase.schema.json\")))\n    if d[\"status\"] != \"complete\" or not all(s[\"status\"] == \"COMPLETED\" for s in d[\"steps\"]):\n        bad.append(\"pinned yaml fails AT1's completeness slicing\")\n    if not all(os.path.isfile(s[\"evidence\"]) for s in d[\"steps\"]):\n        bad.append(\"a pinned yaml step evidence file is missing\")\n\nbase_r = show(\"docs/planning/ROADMAP.md\")\nnew_r = open(\"docs/planning/ROADMAP.md\").read()\nexpect_r = apply_pins(base_r, [\"roadmap_version\", \"roadmap_changelog_entry\", \"roadmap_first_bullet\", \"roadmap_open_debt_bullet\"])\nif new_r != expect_r:\n    bad.append(\"ROADMAP.md is not base plus the four pinned edits\")\nelse:\n    body = new_r.split(\"---\", 2)[2]\n    pat = re.compile(r\"Latest released tag: v1\\.4\\.0\\b|Release in preparation: v1\\.4\\.0\\b\")\n    if sum(1 for line in body.splitlines() if pat.search(line)) != 1:\n        bad.append(\"AT9's v1.4.0 disposition line count is not exactly one on the pinned ROADMAP\")\n\nbase_d = show(\"docs/planning/DEBT.md\")\nnew_d = open(\"docs/planning/DEBT.md\").read()\nexpect_d = apply_pins(base_d, [\"debt_version\", \"debt_changelog_entry\", \"debt_open_row_remove\", \"debt_resolved_row_insert\"])\nif new_d != expect_d:\n    bad.append(\"DEBT.md is not base plus the four pinned edits\")\nopen_set = set(re.findall(r\"^[|] (NDEBT-[0-9]+) [|]\", new_d.split(\"## Open\")[1].split(\"## Resolved\")[0], re.M))\nif open_set != {\"NDEBT-047\", \"NDEBT-046\", \"NDEBT-045\", \"NDEBT-040\", \"NDEBT-034\"}:\n    bad.append(\"pinned DEBT Open set is wrong: \" + repr(sorted(open_set)))\nrows = [l for l in new_d.split(\"## Resolved\")[1].splitlines() if l.startswith(\"| NDEBT-\")]\nif not rows or not rows[0].startswith(\"| NDEBT-044 |\"):\n    bad.append(\"the NDEBT-044 resolved row is not at the top of Resolved\")\nsev = re.findall(r\"^[|] NDEBT-[0-9]+ [|] [^|]+ [|] (\\w+) [|]\", new_d.split(\"## Open\")[1].split(\"## Resolved\")[0], re.M)\nif any(s in (\"Critical\", \"High\") for s in sev):\n    bad.append(\"a Critical/High row is Open after the roll\")\n\nbase_m = show(\"docs/planning/manifest.json\")\nnew_m = open(\"docs/planning/manifest.json\").read()\nexpect_m = apply_pins(base_m, [\"manifest_updated_at\", \"manifest_status\", \"manifest_note_append\"])\nif new_m != expect_m:\n    bad.append(\"manifest.json is not base plus the three pinned edits\")\nelse:\n    m = json.loads(new_m)\n    p14 = [p for p in m[\"phases\"] if p[\"id\"] == \"014-ga-track\"][0]\n    if p14[\"status\"] != \"complete\":\n        bad.append(\"the pinned manifest does not mark phase 014 complete\")\n\nD = json.load(open(\".agent/evidence/102/ga-readiness.json\"))\nif D != json.loads(pins[\"dossier_content\"][\"content\"]):\n    bad.append(\"the dossier on disk is not the pinned dossier content\")\nK = {\"real_production_pilot\", \"stable_release_history\", \"recorded_consumer_adoptions\", \"no_open_critical_high_debt\", \"benchmark_thresholds\"}\nP = D[\"preconditions\"]\nif set(P) != K or D[\"h_ga\"] != \"OUTSTANDING\" or D[\"ga_declared\"] is not False:\n    bad.append(\"dossier key contract broken\")\nfor k, v in P.items():\n    if v[\"status\"] not in (\"met\", \"not_met\", \"insufficient_evidence\") or not v[\"evidence\"]:\n        bad.append(\"dossier \" + k + \" status/evidence invalid\")\n    for e in v[\"evidence\"]:\n        if not os.path.isfile(e):\n            bad.append(\"dossier \" + k + \" cites a missing evidence file: \" + e)\n    if not re.fullmatch(r\"[0-9a-f]{40}\", v[\"revision\"]) or sh(\"git\", \"cat-file\", \"-e\", v[\"revision\"] + \"^{commit}\").returncode != 0:\n        bad.append(\"dossier \" + k + \" revision does not resolve to a commit\")\n    if not re.match(r\"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z\", v[\"timestamp\"]):\n        bad.append(\"dossier \" + k + \" timestamp is not ISO Z\")\ntruth = \"not_met\" if any(s in (\"Critical\", \"High\") for s in sev) else \"met\"\nif P[\"no_open_critical_high_debt\"][\"status\"] != truth:\n    bad.append(\"dossier no_open_critical_high_debt disagrees with the pinned DEBT Open table\")\nif P[\"real_production_pilot\"][\"status\"] != \"not_met\" or \".agent/evidence/pilot-100/aggregate.json\" in P[\"real_production_pilot\"][\"evidence\"]:\n    bad.append(\"dossier real_production_pilot violates the A3 retarget\")\nL = [x for x in new_r.split(\"## Current Position\")[1].split(\"\\n## \")[0].split(\"\\n- \") if x.startswith(\"Open debt (current\")]\ngot = set(re.findall(r\"NDEBT-[0-9]+\", L[0].split(\"Resolved\")[0])) if len(L) == 1 else set()\nif got != open_set:\n    bad.append(\"AT5 slicing on the pinned ROADMAP disagrees with the pinned DEBT Open set: \" + repr(sorted(got)))\n\nfor path in pins[\"unchanged_files\"]:\n    if open(path, \"rb\").read() != show(path).encode():\n        bad.append(\"file that must stay byte-identical changed: \" + path)\nprint(\"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+   "supplementary": true,
+   "owner": "generator",
+   "state_at_base_A": "FAIL at <A> (exit 1): the dossier is absent and none of the pinned edits are applied.",
+   "expected_outcome": "Exit 0. Each of the four planning files is byte-equal to <A> plus exactly its pinned edits; the dossier is the pinned content and every dossier fact is truthful (paths exist, revisions resolve, timestamps are ISO Z, statuses match the pinned DEBT truth); every unchanged_files entry is byte-identical.",
+   "evidence_file": ".agent/evidence/102/s04-pinned-structure.txt"
+  },
+  {
+   "acceptance_test": "Supplementary S05: eight discriminating scratch cases, run one at a time behind a /proc refusal that forbids overlapping tools/validate.sh and tools/fixtures_self_test.sh. (1) A dossier with h_ga 'MET' fails AT2. (2) A dossier with ga_declared true fails AT2 -- the framework never auto-declares GA. (3) A dossier precondition citing a nonexistent evidence file fails AT2 (and S04). (4) The AT5 trap: restoring the stale open-debt bullet, which names the resolved rows NDEBT-026/037 (and the no-longer-Open NDEBT-044) before the word 'Resolved', fails AT5. (5) Reverting the yaml phase status to in_progress fails AT1. (6) Touching one frozen activation file in scratch fails AT7's sha256 pin. (7) A fake Critical row in the DEBT Open table flips AT3's truth against the dossier. (8) Green guards on the pinned tree in scratch, strictly serial: validator gate 16/16, release close-out green at V=1.4.0, fixtures self-test 147/147. scratch_run copies the tree (including .git) and never writes the real tree.",
+   "command": "python3 - <<'PY'\nimport json, os, subprocess, sys\nbad = []\n\ndef serial_guard():\n    ancestors, pid = set(), os.getpid()\n    while pid > 1:\n        ancestors.add(pid)\n        try:\n            pid = int(open(\"/proc/%d/stat\" % pid).read().rsplit(\")\", 1)[1].split()[1])\n        except (OSError, ValueError, IndexError):\n            break\n    for name in filter(str.isdigit, os.listdir(\"/proc\")):\n        if int(name) in ancestors:\n            continue\n        try:\n            argv = [part.decode() for part in open(\"/proc/%s/cmdline\" % name, \"rb\").read().split(b\"\\0\") if part]\n            cwd = os.readlink(\"/proc/%s/cwd\" % name)\n        except OSError:\n            continue\n        if cwd == os.getcwd() and len(argv) > 1 and os.path.basename(argv[0]) in (\"bash\", \"sh\") and argv[1].endswith((\"tools/fixtures_self_test.sh\", \"tools/validate.sh\")):\n            print(\"REFUSED (exit 4): process %s is already running %s in this tree\" % (name, argv[1]))\n            sys.exit(4)\n\nserial_guard()\ncontract = json.load(open(\".agent/contracts/102.json\"))\nAT = {i + 1: v[\"command\"] for i, v in enumerate(contract[\"verification\"][:10])}\npins = contract[\"design_notes\"][\"pinned_interface\"]\nSR = [sys.executable, \".agent/evidence/phase-014-activation/gates/scratch_run.py\"]\n\ndef one(name, args, expect_rc, expects, forbids, command):\n    argv = SR + args + [\"--expect-rc\", str(expect_rc)]\n    for pattern in expects:\n        argv += [\"--expect\", pattern]\n    for pattern in forbids:\n        argv += [\"--forbid\", pattern]\n    argv += [\"--\"] + command\n    proc = subprocess.run(argv, capture_output=True, text=True)\n    print((\"PASS \" if proc.returncode == 0 else \"FAIL \") + name)\n    if proc.returncode != 0:\n        print(\"\\n\".join(\"    \" + line for line in (proc.stdout + proc.stderr).splitlines()[-25:]))\n        bad.append(name)\n\nD = \".agent/evidence/102/ga-readiness.json\"\n# Case 1: the dossier must present H-GA as OUTSTANDING; 'MET' fails AT2.\none(\"dossier h_ga corrupted to 'MET': AT2 fails\",\n    [\"--replace\", D, '\"h_ga\": \"OUTSTANDING\"', '\"h_ga\": \"MET\"'],\n    \"nonzero\", [r\"AssertionError\"], [], [\"bash\", \"-c\", AT[2]])\n\n# Case 2: ga_declared true fails AT2 (the framework never auto-declares GA).\none(\"dossier ga_declared flipped to true: AT2 fails\",\n    [\"--replace\", D, '\"ga_declared\": false', '\"ga_declared\": true'],\n    \"nonzero\", [r\"AssertionError\"], [], [\"bash\", \"-c\", AT[2]])\n\n# Case 3: a precondition citing a nonexistent evidence file fails AT2 (and S04).\none(\"dossier benchmark evidence path made nonexistent: AT2 fails\",\n    [\"--replace\", D, \".agent/evidence/phase-014-activation/validate.txt\",\n     \".agent/evidence/phase-014-activation/no-such-file.txt\"],\n    \"nonzero\", [r\"AssertionError\"], [], [\"bash\", \"-c\", AT[2]])\n\n# Case 4: the AT5 trap -- restoring the stale bullet (resolved ids NDEBT-026/037\n# before the word 'Resolved', and the no-longer-Open NDEBT-044) fails AT5.\none(\"stale open-debt bullet restored (resolved ids before 'Resolved'): AT5 fails\",\n    [\"--replace\", \"docs/planning/ROADMAP.md\",\n     pins[\"roadmap_open_debt_bullet\"][\"new\"], pins[\"roadmap_open_debt_bullet\"][\"old\"]],\n    \"nonzero\", [r\"AssertionError\"], [], [\"bash\", \"-c\", AT[5]])\n\n# Case 5: reverting the yaml phase status to in_progress fails AT1.\none(\"phase_014.yaml status reverted to in_progress: AT1 fails\",\n    [\"--replace\", \"docs/planning/phase_014.yaml\", \"status: complete\", \"status: in_progress\"],\n    \"nonzero\", [r\"AssertionError\"], [], [\"bash\", \"-c\", AT[1]])\n\n# Case 6: touching one frozen activation file fails AT7's sha256 pin.\nTOUCH_FROZEN = (\"p = root / '.agent/evidence/phase-014-activation/gates/phase_tag_check.py'\\n\"\n                \"p.write_bytes(p.read_bytes() + b'# touched\\\\n')\\n\")\none(\"one frozen activation file touched in scratch: AT7 fails\",\n    [\"--py-mutate\", TOUCH_FROZEN], \"nonzero\", [r\"frozen acceptance infrastructure modified\"], [],\n    [\"bash\", \"-c\", AT[7]])\n\n# Case 7: a fake Critical row in the DEBT Open table flips AT3's truth to\n# not_met while the dossier says met -- the cross-check catches the drift.\nFAKE_CRITICAL = (\"p = root / 'docs/planning/DEBT.md'\\n\"\n                 \"t = p.read_text()\\n\"\n                 \"assert t.count('| NDEBT-047 |') == 1\\n\"\n                 \"row = '| NDEBT-999 | 2026-10-10 | High | **Fake row for the discriminating case.** | OPEN. |\\\\n'\\n\"\n                 \"p.write_text(t.replace('| NDEBT-047 |', row + '| NDEBT-047 |', 1))\\n\")\none(\"fake Critical row added to the DEBT Open table: AT3 fails\",\n    [\"--py-mutate\", FAKE_CRITICAL], \"nonzero\", [r\"AssertionError\"], [],\n    [\"bash\", \"-c\", AT[3]])\n\n# Case 8: green guards on the pinned tree in scratch, strictly serial:\n# validator gate (runs validate.sh), release close-out --mode pr, fixtures self-test.\none(\"pinned tree: validator gate 16/16, close-out green at V=1.4.0, fixtures 147/147\",\n    [], 0, [r\"^GATE: PASS \\(16 checks passing; baseline 16\\)$\",\n            r\"^Release close-out: all internal version anchors agree with V=1\\.4\\.0 \\(--mode pr\\)\\.$\",\n            r\"^SELF-TEST OK: 147/147 fixtures accounted for, 0 failed$\"],\n    [r\"^\\[C\\d+\\] FAIL\"],\n    [\"bash\", \"-c\", \"python3 .agent/evidence/phase-014-activation/gates/validator_gate.py && python3 .github/scripts/release_closeout.py --mode pr && bash tools/fixtures_self_test.sh\"])\n\nprint(\"cases: 8 problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+   "supplementary": true,
+   "owner": "generator",
+   "state_at_base_A": "FAIL at <A> (exit 1): the dossier, the pinned bullet and the pinned yaml status are all absent at base, so every mutation's precondition fails (scratch_run exits 3, never 0), and the green-guard case has no pinned tree to run on.",
+   "expected_outcome": "Exit 0. All eight scratch cases PASS: the dossier tests are discriminating (truthful statuses only), the AT5 'Resolved'-ordering trap is load-bearing, the frozen infrastructure pin is load-bearing, the DEBT cross-check catches severity drift, and the pinned tree keeps all three green guards green.",
+   "evidence_file": ".agent/evidence/102/s05-discriminating.txt"
+  }
+ ],
+ "estimated_lines": 850,
+ "evidence_dir": ".agent/evidence/102/",
+ "evidence_convention": "Line 1 of each evidence file is the replayable invocation from the repo root, the body is the raw combined stdout and stderr, and the last line is EXIT:<code> taken from the process, never from a pipeline. One capture at a time, in the foreground. Never run tools/validate.sh and tools/fixtures_self_test.sh at the same time, in this tree or one scratch copy. Order inside the attempt root: attempt-base.txt first; after the deliverables are final, AT1 through AT10, then S01, S04, S05, S02, S03. A later edit invalidates the captures. The Evaluator re-runs into .agent/evidence/102/qa/. Failed-attempt evidence goes to .agent/evidence/102/failed-attempt<N>/. Frozen files under .agent/evidence/phase-014-activation/ are read-only. AT4's capture includes its leading 'git fetch --tags --quiet origin' verbatim.",
+ "approvals": {
+  "revisions": 0,
+  "validator_mode_a": true,
+  "evaluator_contract_review": true,
+  "approved_at": "2026-10-10T15:20:02Z"
+ },
+ "version_impact": "None (phase 014 prepares no release; the next release, at least MINOR, is a separate H-FRAMEWORK-RELEASE).",
+ "retry_identity": {
+  "contract_step_key": "102-contract",
+  "implementation_step_key": "102-implementation",
+  "limit": 3,
+  "attempt_worktree": "Created by the Orchestrator from <B>. Suggested path /home/cnross/workspace02/nizam-wt-102-attempt<N>.",
+  "failed_attempt_evidence": ".agent/evidence/102/failed-attempt<N>/",
+  "attempt_strategy": "methodology/03_circuit_breaker.md: attempt 1 direct fix, 2 type/interface analysis, 3 architectural review, 4+ forbidden. ENVIRONMENT and CONTRACT_DEFECT escalate and do not consume an attempt."
+ },
+ "rollback": "See design_notes.rollback. No git reset --hard. The Generator does not edit .agent/run_state.json."
+}

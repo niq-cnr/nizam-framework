@@ -1,0 +1,10 @@
+python3 matrix.py (S01 six/seven-variant matrix on temp clone copies, contract restored after)
+approved+approved_at+both-true -> 0 | verification 15 problems: []
+approved WITHOUT approved_at -> 1 | verification 15 problems: ['approved revision 0 does not have both approval flags true and an approved_at']
+approved + evaluator flag false -> 1 | verification 15 problems: ['approved revision 0 does not have both approval flags true and an approved_at']
+approved + validator flag false -> 1 | verification 15 problems: ['approved revision 0 does not have both approval flags true and an approved_at']
+proposed + approved_at present -> 1 | verification 15 problems: ['approved_at present at a non-approved revision 0']
+proposed + one flag true -> 1 | verification 15 problems: ['approvals are not false at revision 0']
+proposed clean -> 0 | verification 15 problems: []
+restored: True
+EXIT:0

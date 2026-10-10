@@ -1,0 +1,26 @@
+PROBE c3: yaml step 102 missing evidence field -> AT1 expected fail
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.local/lib/python3.12/site-packages/jsonschema/validators.py", line 1332, in validate
+    raise error
+jsonschema.exceptions.ValidationError: 'evidence' is a required property
+
+Failed validating 'required' in schema['properties']['steps']['items']['then']:
+    {'required': ['evidence']}
+
+On instance['steps'][8]:
+    {'id': '102',
+     'description': 'GA-readiness assessment (no declaration), '
+                    'next-candidate refinement, and phase close; depends '
+                    'on 099 and 103-109. Steps 100 and 101 were removed on '
+                    '2026-10-10. The dossier records real_production_pilot '
+                    'as not_met and H-GA stays outstanding.',
+     'status': 'COMPLETED',
+     'docs_updated': 'docs/planning/DEBT.md',
+     'changelog_entry': 'GA-readiness dossier presented with H-GA '
+                        'OUTSTANDING and real_production_pilot not_met (no '
+                        'GA declaration); ROADMAP Current Position '
+                        'open-debt bullet rolled to the live Open set '
+                        '(NDEBT-044 concern (e) resolved); phase 014 '
+                        'closed canonical-first.'}
+EXIT:1

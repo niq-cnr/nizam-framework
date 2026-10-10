@@ -1,0 +1,108 @@
+python3 - <<'PY'
+import json, os, re, subprocess, sys
+import jsonschema
+import yaml
+A = "217351cd429b167f975bc186d6d890fe497a67a8"
+run = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout
+sh = lambda *a: subprocess.run(a, capture_output=True, text=True)
+bad = []
+pins = json.load(open(".agent/contracts/102.json"))["design_notes"]["pinned_interface"]
+
+def show(path):
+    return run("git", "show", A + ":" + path)
+
+def apply_pins(base, keys):
+    text = base
+    for key in keys:
+        pin = pins[key]
+        if text.count(pin["old"]) != 1:
+            bad.append("pin " + key + " is not exactly once while rebuilding")
+            return None
+        text = text.replace(pin["old"], pin["new"], 1)
+    return text
+
+base_y = show("docs/planning/phase_014.yaml")
+new_y = open("docs/planning/phase_014.yaml").read()
+expect_y = apply_pins(base_y, ["yaml_status", "yaml_description", "yaml_step_102"])
+if new_y != expect_y:
+    bad.append("phase_014.yaml is not base plus the three pinned edits")
+else:
+    d = yaml.safe_load(new_y)
+    jsonschema.validate(d, json.load(open("schema/phase.schema.json")))
+    if d["status"] != "complete" or not all(s["status"] == "COMPLETED" for s in d["steps"]):
+        bad.append("pinned yaml fails AT1's completeness slicing")
+    if not all(os.path.isfile(s["evidence"]) for s in d["steps"]):
+        bad.append("a pinned yaml step evidence file is missing")
+
+base_r = show("docs/planning/ROADMAP.md")
+new_r = open("docs/planning/ROADMAP.md").read()
+expect_r = apply_pins(base_r, ["roadmap_version", "roadmap_changelog_entry", "roadmap_first_bullet", "roadmap_open_debt_bullet"])
+if new_r != expect_r:
+    bad.append("ROADMAP.md is not base plus the four pinned edits")
+else:
+    body = new_r.split("---", 2)[2]
+    pat = re.compile(r"Latest released tag: v1\.4\.0\b|Release in preparation: v1\.4\.0\b")
+    if sum(1 for line in body.splitlines() if pat.search(line)) != 1:
+        bad.append("AT9's v1.4.0 disposition line count is not exactly one on the pinned ROADMAP")
+
+base_d = show("docs/planning/DEBT.md")
+new_d = open("docs/planning/DEBT.md").read()
+expect_d = apply_pins(base_d, ["debt_version", "debt_changelog_entry", "debt_open_row_remove", "debt_resolved_row_insert"])
+if new_d != expect_d:
+    bad.append("DEBT.md is not base plus the four pinned edits")
+open_set = set(re.findall(r"^[|] (NDEBT-[0-9]+) [|]", new_d.split("## Open")[1].split("## Resolved")[0], re.M))
+if open_set != {"NDEBT-047", "NDEBT-046", "NDEBT-045", "NDEBT-040", "NDEBT-034"}:
+    bad.append("pinned DEBT Open set is wrong: " + repr(sorted(open_set)))
+rows = [l for l in new_d.split("## Resolved")[1].splitlines() if l.startswith("| NDEBT-")]
+if not rows or not rows[0].startswith("| NDEBT-044 |"):
+    bad.append("the NDEBT-044 resolved row is not at the top of Resolved")
+sev = re.findall(r"^[|] NDEBT-[0-9]+ [|] [^|]+ [|] (\w+) [|]", new_d.split("## Open")[1].split("## Resolved")[0], re.M)
+if any(s in ("Critical", "High") for s in sev):
+    bad.append("a Critical/High row is Open after the roll")
+
+base_m = show("docs/planning/manifest.json")
+new_m = open("docs/planning/manifest.json").read()
+expect_m = apply_pins(base_m, ["manifest_updated_at", "manifest_status", "manifest_note_append"])
+if new_m != expect_m:
+    bad.append("manifest.json is not base plus the three pinned edits")
+else:
+    m = json.loads(new_m)
+    p14 = [p for p in m["phases"] if p["id"] == "014-ga-track"][0]
+    if p14["status"] != "complete":
+        bad.append("the pinned manifest does not mark phase 014 complete")
+
+D = json.load(open(".agent/evidence/102/ga-readiness.json"))
+if D != json.loads(pins["dossier_content"]["content"]):
+    bad.append("the dossier on disk is not the pinned dossier content")
+K = {"real_production_pilot", "stable_release_history", "recorded_consumer_adoptions", "no_open_critical_high_debt", "benchmark_thresholds"}
+P = D["preconditions"]
+if set(P) != K or D["h_ga"] != "OUTSTANDING" or D["ga_declared"] is not False:
+    bad.append("dossier key contract broken")
+for k, v in P.items():
+    if v["status"] not in ("met", "not_met", "insufficient_evidence") or not v["evidence"]:
+        bad.append("dossier " + k + " status/evidence invalid")
+    for e in v["evidence"]:
+        if not os.path.isfile(e):
+            bad.append("dossier " + k + " cites a missing evidence file: " + e)
+    if not re.fullmatch(r"[0-9a-f]{40}", v["revision"]) or sh("git", "cat-file", "-e", v["revision"] + "^{commit}").returncode != 0:
+        bad.append("dossier " + k + " revision does not resolve to a commit")
+    if not re.match(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z", v["timestamp"]):
+        bad.append("dossier " + k + " timestamp is not ISO Z")
+truth = "not_met" if any(s in ("Critical", "High") for s in sev) else "met"
+if P["no_open_critical_high_debt"]["status"] != truth:
+    bad.append("dossier no_open_critical_high_debt disagrees with the pinned DEBT Open table")
+if P["real_production_pilot"]["status"] != "not_met" or ".agent/evidence/pilot-100/aggregate.json" in P["real_production_pilot"]["evidence"]:
+    bad.append("dossier real_production_pilot violates the A3 retarget")
+L = [x for x in new_r.split("## Current Position")[1].split("\n## ")[0].split("\n- ") if x.startswith("Open debt (current")]
+got = set(re.findall(r"NDEBT-[0-9]+", L[0].split("Resolved")[0])) if len(L) == 1 else set()
+if got != open_set:
+    bad.append("AT5 slicing on the pinned ROADMAP disagrees with the pinned DEBT Open set: " + repr(sorted(got)))
+
+for path in pins["unchanged_files"]:
+    if open(path, "rb").read() != show(path).encode():
+        bad.append("file that must stay byte-identical changed: " + path)
+print("problems:", bad)
+sys.exit(1 if bad else 0)
+PY
+problems: []
+EXIT:0

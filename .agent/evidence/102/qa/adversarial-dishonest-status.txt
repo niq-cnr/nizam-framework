@@ -1,0 +1,24 @@
+$ --replace .agent/evidence/102/ga-readiness.json --replace <dossier> '"status": "insufficient_evidence"' '"status": "met"' ... -- bash -c python3 -c "import json,os,re,subprocess; D=json.load(open('.agent/evidence/102/ga-readiness.json')); K={'real_production_pilot','stable_release_history','recorded_consumer_adoptions','no_open_critical_high_debt','benchmark_thresholds'}; P=D['preconditions']; assert set(P)==K, sorted(P); assert D['h_ga']=='OUTSTANDING' and D['ga_declared'] is False; bad=[k for k,v in P.items() if v['status'] not in ('met','not_met','insufficient_evidence') or not v['evidence'] or not all(os.path.isfile(e) for e in v['evidence']) or not re.fullmatch(r'[0-9a-f]{40}',v['revision']) or subprocess.run(['git','cat-file','-e',v['revision']+'^{commit}']).returncode!=0 or not re.match(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z',v['timestamp'])]; assert not bad, bad"
+scratch_run: replaced 1 occurrence in .agent/evidence/102/ga-readiness.json
+scratch_run: command bash -c python3 -c "import json,os,re,subprocess; D=json.load(open('.agent/evidence/102/ga-readiness.json')); K={'real_production_pilot','stable_release_history','recorded_consumer_adoptions','no_open_critical_high_debt','benchmark_thresholds'}; P=D['preconditions']; assert set(P)==K, sorted(P); assert D['h_ga']=='OUTSTANDING' and D['ga_declared'] is False; bad=[k for k,v in P.items() if v['status'] not in ('met','not_met','insufficient_evidence') or not v['evidence'] or not all(os.path.isfile(e) for e in v['evidence']) or not re.fullmatch(r'[0-9a-f]{40}',v['revision']) or subprocess.run(['git','cat-file','-e',v['revision']+'^{commit}']).returncode!=0 or not re.match(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9:]{8}Z',v['timestamp'])]; assert not bad, bad" -> exit 0
+
+PASS exit status == 0
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0
+
+$ --replace .agent/evidence/102/ga-readiness.json --replace <dossier> '"status": "insufficient_evidence"' '"status": "met"' ... -- bash -c python3 -c "import json,re; P=json.load(open('.agent/evidence/102/ga-readiness.json'))['preconditions']; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; sev=re.findall(r'^[|] NDEBT-[0-9]+ [|] [^|]+ [|] (\w+) [|]',t,re.M); truth='not_met' if any(s in ('Critical','High') for s in sev) else 'met'; assert P['no_open_critical_high_debt']['status']==truth, (P['no_open_critical_high_debt']['status'],truth,sev); assert P['real_production_pilot']['status']=='not_met' and '.agent/evidence/pilot-100/aggregate.json' not in P['real_production_pilot']['evidence'], P['real_production_pilot']"
+scratch_run: replaced 1 occurrence in .agent/evidence/102/ga-readiness.json
+scratch_run: command bash -c python3 -c "import json,re; P=json.load(open('.agent/evidence/102/ga-readiness.json'))['preconditions']; t=open('docs/planning/DEBT.md').read().split('## Open')[1].split('## Resolved')[0]; sev=re.findall(r'^[|] NDEBT-[0-9]+ [|] [^|]+ [|] (\w+) [|]',t,re.M); truth='not_met' if any(s in ('Critical','High') for s in sev) else 'met'; assert P['no_open_critical_high_debt']['status']==truth, (P['no_open_critical_high_debt']['status'],truth,sev); assert P['real_production_pilot']['status']=='not_met' and '.agent/evidence/pilot-100/aggregate.json' not in P['real_production_pilot']['evidence'], P['real_production_pilot']" -> exit 0
+
+PASS exit status == 0
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0
+
+$ --replace .agent/evidence/102/ga-readiness.json --replace <dossier> '"status": "insufficient_evidence"' '"status": "met"' ... -- python3 /tmp/s04_body.py
+scratch_run: replaced 1 occurrence in .agent/evidence/102/ga-readiness.json
+scratch_run: command python3 /tmp/s04_body.py -> exit 1
+  | problems: ['the dossier on disk is not the pinned dossier content']
+PASS exit status == 1
+PASS output matches 'the dossier on disk is not the pinned dossier content'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0

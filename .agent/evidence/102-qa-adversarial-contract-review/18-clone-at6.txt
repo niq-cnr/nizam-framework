@@ -1,0 +1,2 @@
+python3 -c "import json; f=json.load(open('.agent/feature_list_014.json'))['features']; bad=[x['id'] for x in f if x['id']!='102' and x['status'] not in ('complete','cancelled')]; assert not bad, bad"
+EXIT:0

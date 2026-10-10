@@ -1,0 +1,112 @@
+python3 - <<'PY'
+import json, os, subprocess, sys
+bad = []
+
+def serial_guard():
+    ancestors, pid = set(), os.getpid()
+    while pid > 1:
+        ancestors.add(pid)
+        try:
+            pid = int(open("/proc/%d/stat" % pid).read().rsplit(")", 1)[1].split()[1])
+        except (OSError, ValueError, IndexError):
+            break
+    for name in filter(str.isdigit, os.listdir("/proc")):
+        if int(name) in ancestors:
+            continue
+        try:
+            argv = [part.decode() for part in open("/proc/%s/cmdline" % name, "rb").read().split(b"\0") if part]
+            cwd = os.readlink("/proc/%s/cwd" % name)
+        except OSError:
+            continue
+        if cwd == os.getcwd() and len(argv) > 1 and os.path.basename(argv[0]) in ("bash", "sh") and argv[1].endswith(("tools/fixtures_self_test.sh", "tools/validate.sh")):
+            print("REFUSED (exit 4): process %s is already running %s in this tree" % (name, argv[1]))
+            sys.exit(4)
+
+serial_guard()
+contract = json.load(open(".agent/contracts/102.json"))
+AT = {i + 1: v["command"] for i, v in enumerate(contract["verification"][:10])}
+pins = contract["design_notes"]["pinned_interface"]
+SR = [sys.executable, ".agent/evidence/phase-014-activation/gates/scratch_run.py"]
+
+def one(name, args, expect_rc, expects, forbids, command):
+    argv = SR + args + ["--expect-rc", str(expect_rc)]
+    for pattern in expects:
+        argv += ["--expect", pattern]
+    for pattern in forbids:
+        argv += ["--forbid", pattern]
+    argv += ["--"] + command
+    proc = subprocess.run(argv, capture_output=True, text=True)
+    print(("PASS " if proc.returncode == 0 else "FAIL ") + name)
+    if proc.returncode != 0:
+        print("\n".join("    " + line for line in (proc.stdout + proc.stderr).splitlines()[-25:]))
+        bad.append(name)
+
+D = ".agent/evidence/102/ga-readiness.json"
+# Case 1: the dossier must present H-GA as OUTSTANDING; 'MET' fails AT2.
+one("dossier h_ga corrupted to 'MET': AT2 fails",
+    ["--replace", D, '"h_ga": "OUTSTANDING"', '"h_ga": "MET"'],
+    "nonzero", [r"AssertionError"], [], ["bash", "-c", AT[2]])
+
+# Case 2: ga_declared true fails AT2 (the framework never auto-declares GA).
+one("dossier ga_declared flipped to true: AT2 fails",
+    ["--replace", D, '"ga_declared": false', '"ga_declared": true'],
+    "nonzero", [r"AssertionError"], [], ["bash", "-c", AT[2]])
+
+# Case 3: a precondition citing a nonexistent evidence file fails AT2 (and S04).
+one("dossier benchmark evidence path made nonexistent: AT2 fails",
+    ["--replace", D, ".agent/evidence/phase-014-activation/validate.txt",
+     ".agent/evidence/phase-014-activation/no-such-file.txt"],
+    "nonzero", [r"AssertionError"], [], ["bash", "-c", AT[2]])
+
+# Case 4: the AT5 trap -- restoring the stale bullet (resolved ids NDEBT-026/037
+# before the word 'Resolved', and the no-longer-Open NDEBT-044) fails AT5.
+one("stale open-debt bullet restored (resolved ids before 'Resolved'): AT5 fails",
+    ["--replace", "docs/planning/ROADMAP.md",
+     pins["roadmap_open_debt_bullet"]["new"], pins["roadmap_open_debt_bullet"]["old"]],
+    "nonzero", [r"AssertionError"], [], ["bash", "-c", AT[5]])
+
+# Case 5: reverting the yaml phase status to in_progress fails AT1.
+one("phase_014.yaml status reverted to in_progress: AT1 fails",
+    ["--replace", "docs/planning/phase_014.yaml", "status: complete", "status: in_progress"],
+    "nonzero", [r"AssertionError"], [], ["bash", "-c", AT[1]])
+
+# Case 6: touching one frozen activation file fails AT7's sha256 pin.
+TOUCH_FROZEN = ("p = root / '.agent/evidence/phase-014-activation/gates/phase_tag_check.py'\n"
+                "p.write_bytes(p.read_bytes() + b'# touched\\n')\n")
+one("one frozen activation file touched in scratch: AT7 fails",
+    ["--py-mutate", TOUCH_FROZEN], "nonzero", [r"frozen acceptance infrastructure modified"], [],
+    ["bash", "-c", AT[7]])
+
+# Case 7: a fake Critical row in the DEBT Open table flips AT3's truth to
+# not_met while the dossier says met -- the cross-check catches the drift.
+FAKE_CRITICAL = ("p = root / 'docs/planning/DEBT.md'\n"
+                 "t = p.read_text()\n"
+                 "assert t.count('| NDEBT-047 |') == 1\n"
+                 "row = '| NDEBT-999 | 2026-10-10 | High | **Fake row for the discriminating case.** | OPEN. |\\n'\n"
+                 "p.write_text(t.replace('| NDEBT-047 |', row + '| NDEBT-047 |', 1))\n")
+one("fake Critical row added to the DEBT Open table: AT3 fails",
+    ["--py-mutate", FAKE_CRITICAL], "nonzero", [r"AssertionError"], [],
+    ["bash", "-c", AT[3]])
+
+# Case 8: green guards on the pinned tree in scratch, strictly serial:
+# validator gate (runs validate.sh), release close-out --mode pr, fixtures self-test.
+one("pinned tree: validator gate 16/16, close-out green at V=1.4.0, fixtures 147/147",
+    [], 0, [r"^GATE: PASS \(16 checks passing; baseline 16\)$",
+            r"^Release close-out: all internal version anchors agree with V=1\.4\.0 \(--mode pr\)\.$",
+            r"^SELF-TEST OK: 147/147 fixtures accounted for, 0 failed$"],
+    [r"^\[C\d+\] FAIL"],
+    ["bash", "-c", "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py && python3 .github/scripts/release_closeout.py --mode pr && bash tools/fixtures_self_test.sh"])
+
+print("cases: 8 problems:", bad)
+sys.exit(1 if bad else 0)
+PY
+PASS dossier h_ga corrupted to 'MET': AT2 fails
+PASS dossier ga_declared flipped to true: AT2 fails
+PASS dossier benchmark evidence path made nonexistent: AT2 fails
+PASS stale open-debt bullet restored (resolved ids before 'Resolved'): AT5 fails
+PASS phase_014.yaml status reverted to in_progress: AT1 fails
+PASS one frozen activation file touched in scratch: AT7 fails
+PASS fake Critical row added to the DEBT Open table: AT3 fails
+PASS pinned tree: validator gate 16/16, close-out green at V=1.4.0, fixtures 147/147
+cases: 8 problems: []
+EXIT:0

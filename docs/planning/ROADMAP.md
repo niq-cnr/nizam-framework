@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.48.0
+version: 0.49.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.49.0"
+    date: "2026-10-10"
+    summary: "Phase-014 close (feature 102, the final feature). Replaces only the Current Position first bullet and the open-debt bullet; the released-tag disposition bullets are untouched so the release close-out gate's version-scoped disposition line is not disturbed (the 0.46.0/0.47.0 precedent). First bullet: phase 014 is complete — 099 and 103-109 landed via PRs #66-#76 and 102 assembled the GA-readiness dossier (H-GA OUTSTANDING; real_production_pilot not_met per amendment A3; nothing declared) and closed the phase canonical-first; the phase-total sentence states the 7799-of-8600 figure at the 108 close, with 102's own measurement landing at close. Open-debt bullet: rolled to the five Open rows at DEBT.md 0.54.0 (NDEBT-047, 046, 045, 040, 034); NDEBT-044 concern (e) moves to Resolved by feature 102; NDEBT-034's pilot-100 deferral trigger is extinct after A3 and its closure is proposed to the operator at close. No plan-of-record change."
   - version: "0.48.0"
     date: "2026-10-10"
     summary: "Amendment A3 (methodology/00_planning.md Section 9; operator verbatim 'The multi-repo pilot at v1.4.0 is no longer needed.', run_state operator_gate_decision 2026-10-10T06:05:42Z). Replaces only the first Current Position bullet: feature 106 is complete (PR #72, f53c499), features 100 and 101 are cancelled, the lane is 107 → 109 → 108 → 102, and the next feature is 107. The open-debt bullet is not edited. The 8600/11180 budget is not re-baselined."
@@ -776,7 +779,7 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-10)
 
-- **Phase 014 (GA Track) is in progress.** Feature 106 is complete (PR #72, `f53c499`). Features 100 and 101 are cancelled. The lane is 107 → 109 → 108 → 102, and the next feature is 107. After feature 106 the recorded phase total is 5222 of 8600 (ceiling 11180, spec 1.1.4); amendment A3 does not re-baseline those figures. `main` carries unreleased changes since `v1.4.0`; the next release is a separate
+- **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102, the final feature, assembled the GA-readiness dossier (`H-GA` stays OUTSTANDING; `real_production_pilot` is `not_met` — the v1.4.0 pilot was cancelled by amendment A3; nothing is declared), rolled the open-debt bullet (NDEBT-044 concern (e)) and closed the phase canonical-first. At the 108 close the recorded phase total was 7799 of 8600 (ceiling 11180, spec 1.1.4); feature 102's own measurement lands at close. `main` carries unreleased changes since `v1.4.0`; the next release is a separate
   operator `H-FRAMEWORK-RELEASE`. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
   statements are superseded at 2026-10-10: feature 099 has activated `ecosystem/06_simplification_review.md` and
@@ -890,12 +893,13 @@ successor, leaving open debt deferred to unscoped "future phases").
   finding; affected consumers must follow `docs/migration-v1.0.0.md` and obtain their
   own `H-CONSUMER-UPGRADE` decision before adoption. **`NDEBT-036` resolved.** v0.9.0
   (released 2026-07-22 at merge commit `5b19b85`, PR #50) is the preceding release.
-- Open debt (current, at DEBT.md v0.51.0): eight rows remain Open, all Low —
+- Open debt (current, at DEBT.md v0.54.0): five rows remain Open, all Low —
   `NDEBT-047` (self-test C13 swap without an EXIT backstop), `NDEBT-046` (sandbox-test namespace
-  discrimination), `NDEBT-045` (`--payload` help paragraph), `NDEBT-044` (index and documentation
-  drift bundle; features 106, 107, 108 and 102), `NDEBT-040` (SHA-anchored run_state byte-guards),
-  `NDEBT-037` (`--help` stops at C13; feature 108), `NDEBT-034` (per-member clone cost) and
-  `NDEBT-026` (C15 mapping direction; feature 109). Phase 014 has **Resolved** `NDEBT-043`,
+  discrimination), `NDEBT-045` (`--payload` help paragraph), `NDEBT-040` (SHA-anchored run_state
+  byte-guards) and `NDEBT-034` (per-member clone cost; its pilot-100 deferral trigger is extinct
+  after amendment A3 — closure proposed to the operator at the phase close). Phase 014 has
+  **Resolved** `NDEBT-044` (index and documentation drift bundle; concern (e) rolled by feature
+  102's phase-close refresh), `NDEBT-043`,
   `NDEBT-041` and `NDEBT-042` (features 103, 104, 105).
   `NDEBT-036` is Resolved by Phase 012 and the v1.0.0 release.
   `NDEBT-029` (audit/compare not in a released tag) is **Resolved** by the

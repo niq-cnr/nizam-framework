@@ -1,0 +1,72 @@
+=== CHANGELOG v1.2.1 section (anomaly recording) ===
+
+=== tag list v1.0.0..v1.4.0 (annotated, operator-signed) ===
+v1.0.0
+v1.1.0
+v1.2.0
+v1.2.1
+v1.3.0
+v1.4.0
+v1.0.0: tag tagger='NizamIQ Agent'
+v1.1.0: tag tagger='NizamIQ Agent'
+v1.2.0: tag tagger='Christopher'
+v1.2.1: commit tagger=''
+v1.3.0: tag tagger='NizamIQ Agent'
+v1.4.0: tag tagger='NizamIQ Agent'
+
+=== activation tag baseline (19 tags) ===
+git tag -l
+v0.1.0
+v0.2.0
+v0.3.0
+v0.4.0
+
+=== benchmark thresholds: activation evidence summary lines ===
+18:SUMMARY: 16 passed, 0 failed
+19:EXIT:0
+16:SUMMARY (payload mode): 12 passed, 0 failed
+17:EXIT:0
+=== CHANGELOG section headings around v1.2.x ===
+8:## [Unreleased]
+94:## [1.4.0] - 2026-10-08
+156:## [1.3.0] - 2026-09-30
+198:## [1.2.0] - 2026-09-17
+246:## [1.1.0] - 2026-08-19
+352:## [1.0.0] - 2026-08-15
+402:## [0.9.0] - 2026-07-22
+871:## [0.8.0] - 2026-07-20
+1103:## [0.7.0] - 2026-07-17
+1167:## [0.6.0] - 2026-07-13
+1265:## [0.5.3] - 2026-07-09
+1275:## [0.5.2] - 2026-07-09
+1289:## [0.5.1] - 2026-07-09
+1306:## [0.5.0] - 2026-07-09
+1349:## [0.4.1] - 2026-07-08
+1363:## [0.4.0] - 2026-07-08
+1387:## [0.3.0] - 2026-07-08
+1423:## [0.2.0] - 2026-07-08
+1460:## [0.1.0] - 2026-07-08
+
+=== ROADMAP Track 1 ledger: v1.2.1 mentions ===
+20:    summary: "v1.4.0 RELEASED (post-release refresh, the 0.39.0/0.42.0 precedent) + the phase-014 re-baseline under operator decision D1. Release: after PR #63 merged at 9edd5d0, the operator authorized the tag act verbatim ('merged — authorized to tag v1.4.0', recorded in run_state before the act per NDEBT-018); the Orchestrator pushed annotated tag v1.4.0 (tag object bb32064) at that reviewed commit; release.yml run 37763448754 succeeded with the blocking tag-mode close-out passing and published GitHub Release 'Nizam v1.4.0 — Simplification Review & GA Gate protocols, draft (MINOR)' from the [1.4.0] CHANGELOG section at 2026-10-08T10:26:22Z. Current Position: the release-preparation bullet is removed and the latest-released disposition rolls to name v1.4.0 -- keeping exactly one body line matching the close-out gate's V-scoped disposition pattern at V=1.4.0 -- with the v1.3.0 bullet relabelled 'Prior released tag' and the v1.2.1 anomaly bullet relabelled 'Earlier released tag' (both bodies unedited). Phase 014: under D1 (operator verbatim 'proceed with the logic next steps to complete the backlog.', 2026-10-08, recorded in run_state before the act; not H-PHASE-014) the factual re-baseline that the 0.44.0 release-fact paragraph called for is APPLIED in this change -- feature 100's pilot pin v1.3.0 -> v1.4.0 and feature 102's tag-absence assertion v1.4.0 -> v1.5.0 (product_spec_014 1.0.1, feature_list_014, phase_014.yaml, the manifest phase-014 note) -- recorded in a dated paragraph below the unedited banner; phase 014 stays pending/proposed, awaiting H-PHASE-014. The NIP-0003 section's release wording moves to past tense (expected v1.5.0 / v1.6.0 unchanged; the NIP is unedited pending H-NIP). DEBT.md is untouched; the stale Current Position open-debt count (NDEBT-044(e)) is not rolled here."
+29:    summary: "v1.3.0 RELEASED (post-release refresh, the PR #54/#56 precedent): the operator-authorized annotated tag v1.3.0 points at reviewed merge commit 2e122256 (PR #60); release.yml run 36700976611 succeeded and published GitHub Release 'Nizam v1.3.0 — Review-Gate Flake Management (MINOR)' from the [1.3.0] CHANGELOG section at 2026-09-30T10:12:30Z. Current Position: the 'Release in preparation' bullet is removed and the latest-released disposition rolls to name the new tag — keeping exactly one body line matching the close-out gate's disposition pattern for v1.3.0 — with the prior-released line rolling to the v1.2.1 anomaly record and v1.1.0 becoming the earlier line. ALSO (same PR): Phase 014 (GA track) PROPOSED — a new 'Proposed Next Phase — Phase 014' banner tops the roadmap (features 099-102, DAG roots {099, 100}, est 2200; planner artifacts .agent/product_spec_014.md (status draft) + .agent/feature_list_014.json; canonical docs/planning/phase_014.yaml (pending); the 06/08 lifecycle doctrine authored proposal-grade under ecosystem/). Awaiting operator activation gate H-PHASE-014; a proposal is not an activation — current_phase stays 013-definition-of-done (complete) and run_state is untouched."
+32:    summary: "v1.3.0 release preparation: the Review-Gate Flake Management methodology (methodology/09_review_gate_flake_management.md) is packaged as the next MINOR release. Current Position rolls: 'Release in preparation' names v1.3.0; the latest-released bullet now records the genuine v1.2.0/v1.2.1 facts (v1.2.0 released 2026-09-17 at 7441ffa; v1.2.1 tagged 2026-09-19 at 250fdd9 with its release.yml run failing the tag-mode close-out because no [1.2.1] CHANGELOG section was cut -- anchors stayed at 1.2.0), correcting the stale 'Release in preparation: v1.2.0' bullet this file carried past both releases."
+870:  **v1.2.1 (PATCH) — tagged 2026-09-19 at `250fdd9` (PR #59)**, the anomaly recorded
+873:- **Earlier released tag: v1.2.1 (PATCH) — tagged 2026-09-19; the recorded anomaly.** Its
+875:  (`FAIL tag v1.2.1 matches NIZAM.json framework.version at tag (1.2.0)` — no
+876:  `[1.2.1]` CHANGELOG section was cut; anchors stayed at `1.2.0`); the GitHub Release
+
+=== operator_gates 0.23.0 entry (v1.2.1 anomaly record) ===
+23:    summary: "H-FRAMEWORK-RELEASE row's Disposition cell gains v1.4.0 PREPARED/OUTSTANDING language: the two proposal-grade ecosystem lifecycle protocol documents (ecosystem/06_simplification_review.md, ecosystem/08_ga_gate.md; status draft, not yet normative -- activation awaits phase-014 feature 099 under H-PHASE-014) are packaged as the next MINOR, everything else since v1.3.0 being envelope-only; this release-preparation change bumped CHANGELOG, the C10 version anchors, and the readiness record (`.agent/evidence/release-readiness-v1.4.0.md`) to complete; tag authorization and the tag remain OUTSTANDING. The operator requested this release verbatim ('PR #62 has been merged, cut a new release pin/tag it.', 2026-10-08), recorded here as the Section 2 human sign-off gate for cutting the release preparation; the tag act itself remains the separate Orchestrator mechanic per Section 6 and awaits explicit post-merge authorization, recorded in run_state before the act (the v1.1.0 / NDEBT-018 precedent). Appended to the existing recurring row, not a new row, matching the v0.22.0/v0.23.0 precedent."
+27:  - version: "0.23.0"
+
+=== activation validate.txt provenance (head) ===
+bash tools/validate.sh
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+=== activation validate_payload.txt provenance (head) ===
+bash tools/validate.sh --payload
+MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)
+[C1] PASS frontmatter-schema
+[C2] PASS format

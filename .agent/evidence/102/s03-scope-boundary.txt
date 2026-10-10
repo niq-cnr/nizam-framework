@@ -1,0 +1,43 @@
+python3 - <<'PY'
+import json, os, subprocess, sys
+A = "217351cd429b167f975bc186d6d890fe497a67a8"
+run = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout
+bad = []
+if os.path.isdir(".nizam") and not run("git", "ls-files", "--", ".nizam").strip():
+    bad.append("this tree carries an untracked .nizam/ directory; S03 refuses to run in it (move it away or use the attempt worktree)")
+contract = json.load(open(".agent/contracts/102.json"))
+scope = {i["path"] for k in ("files_create", "files_modify") for i in contract["scope"][k]}
+modified = {i["path"] for i in contract["scope"]["files_modify"]}
+owned = {".agent/contracts/102.json", ".agent/run_state.json"}
+prefixes = (".agent/validator/102", ".agent/qa/102", ".agent/evidence/102/qa/", ".agent/evidence/102/failed-attempt", ".agent/evidence/102-qa-")
+changed = set(run("git", "diff", "--name-only", "-z", A).split("\0")) - {""}
+fields = run("git", "status", "--porcelain", "--untracked-files=all", "-z").split("\0")
+index = 0
+while index < len(fields):
+    entry = fields[index]
+    index += 1
+    if not entry:
+        continue
+    changed.add(entry[3:])
+    if entry[0] in "RC" or entry[1] in "RC":
+        if index < len(fields):
+            changed.add(fields[index])
+            index += 1
+extra = sorted(p for p in changed if p not in scope and p not in owned and not p.startswith(prefixes))
+missing = sorted(modified - changed)
+if extra:
+    bad.append("paths outside scope and allowlist: " + repr(extra))
+if missing:
+    bad.append("files_modify paths not changed: " + repr(missing))
+if ".agent/feature_list_014.json" in changed:
+    bad.append("feature list changed inside the attempt; status flips are Orchestrator-owned")
+if ".agent/product_spec_014.md" in changed:
+    bad.append("product spec changed inside the attempt")
+for path in ("docs/planning/HANDOVER.md", "docs/planning/backlog_dag.json", "docs/planning/operator_gates.md", "CHANGELOG.md", "NIZAM.json", ".agent/evidence/phase-014-activation"):
+    if any(p == path or p.startswith(path + "/") for p in changed):
+        bad.append("file outside the contracted phase-close scope changed inside the attempt: " + path)
+print("changed", len(changed), "problems:", bad)
+sys.exit(1 if bad else 0)
+PY
+changed 70 problems: []
+EXIT:0

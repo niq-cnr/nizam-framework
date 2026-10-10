@@ -1,0 +1,8 @@
+PROBE f: all dossier statuses 'met' incl. real_production_pilot -> AT2 shape, AT3 truth, S04 byte-pin
+AT2_EXIT:0
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+AssertionError: {'status': 'met', 'evidence': ['.agent/product_spec_014.md', 'docs/planning/phase_014.yaml', 'docs/planning/operator_gates.md'], 'revision': 'fdc076ff6b4665d7b40a5a74a9dae5562dd568bf', 'timestamp': '2026-10-10T06:17:07Z'}
+AT3_EXIT:1
+problems: ['the dossier on disk is not the pinned dossier content', 'dossier real_production_pilot violates the A3 retarget']
+S04_EXIT:1

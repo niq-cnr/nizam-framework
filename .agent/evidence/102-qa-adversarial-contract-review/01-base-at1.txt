@@ -1,0 +1,5 @@
+python3 -c "import json,os,yaml,jsonschema; d=yaml.safe_load(open('docs/planning/phase_014.yaml')); jsonschema.validate(d, json.load(open('schema/phase.schema.json'))); assert d['status']=='complete', d['status']; assert d['steps'] and all(s['status']=='COMPLETED' for s in d['steps']), [s['status'] for s in d['steps']]; assert all(os.path.isfile(s['evidence']) for s in d['steps']), [s['evidence'] for s in d['steps'] if not os.path.isfile(s['evidence'])]"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+AssertionError: in_progress
+EXIT:1

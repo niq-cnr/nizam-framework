@@ -1,0 +1,21 @@
+# (b) phase-close truth end, independently confirmed 2026-10-10 at HEAD 9d856e8
+$ python3 -c "yaml status/schema + step 102 fields"
+yaml status: complete
+step 102: COMPLETED | evidence: .agent/evidence/102/at1-phase-close.txt | docs_updated: docs/planning/DEBT.md
+all steps COMPLETED: True
+EXIT:0
+
+$ DEBT.md Open/Resolved row counts and Resolved head
+Open count: 5 ['NDEBT-034', 'NDEBT-040', 'NDEBT-045', 'NDEBT-046', 'NDEBT-047']
+Resolved count: 42 head: NDEBT-044
+version line: version: 0.54.0
+EXIT:0
+
+$ ROADMAP.md open-debt bullet first-Resolved slice vs live Open set
+bullet count: 1 | pre-Resolved ids == live Open set: True ['NDEBT-034', 'NDEBT-040', 'NDEBT-045', 'NDEBT-046', 'NDEBT-047']
+ROADMAP version: version: 0.49.0
+EXIT:0
+
+$ dossier h_ga / ga_declared / real_production_pilot
+h_ga: OUTSTANDING | ga_declared: False | real_production_pilot: not_met
+EXIT:0
