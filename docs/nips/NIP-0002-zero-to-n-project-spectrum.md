@@ -2,12 +2,15 @@
 id: nip-0002-zero-to-n-project-spectrum
 title: "NIP-0002: The 0–n Project Spectrum"
 description: "Proposal that the Ecosystem Engineering Cycle explicitly span an ecosystem of 0 to n projects — 0 (bootstrapping a new project from nothing / greenfield genesis), 1 (a single project, greenfield or brownfield), and n (many associated projects forming a complex ecosystem) — with a scope/membership registry that sets n and a staged, evidence-led realization."
-version: 0.2.0
-status: accepted
+version: 0.2.1
+status: active
 authoritative_source: docs/nips/NIP-0002-zero-to-n-project-spectrum.md
 last_audited: "2026-07-21"
 tags: [nip, ecosystem, governance, bootstrap, multi-repo, greenfield, brownfield]
 change_log:
+  - version: "0.2.1"
+    date: "2026-10-10"
+    summary: "PATCH correction (phase-014 feature 107, NDEBT-044 b). The frontmatter status field was the non-enum value accepted; it is now active, the schema enum value for an accepted NIP, matching NIP-0001. schema/frontmatter.schema.json allows draft, active, and deprecated. The decision-lifecycle state in the body Status section is unchanged."
   - version: "0.2.0"
     date: "2026-07-21"
     summary: "ACCEPTED by the ecosystem operator via gate H-NIP on 2026-07-21 (operator verbatim: 'NIP-0002 is accepted'). Status proposed -> accepted (the UDS frontmatter status field moves draft -> accepted; 'Proposed' is this document's narrative label for the draft state, per the 0.1.0 entry and the Proposal Record). Acceptance SELECTS phase 008 as this NIP's realization — the same way NIP-0001's acceptance selected phase 005 — but does not itself author or activate it: phase-008 planning (a product_spec_008 + feature_list_008 + operator activation gate H-PHASE-008) remains the next planning cycle. Recorded in .agent/run_state.json (event operator_gate_decision) and docs/planning/operator_gates.md (H-NIP second exercise); docs/planning/ROADMAP.md's phase-008 section rolled from candidate to authorized."

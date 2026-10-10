@@ -167,11 +167,19 @@ file(s)/detail(s) printed on the following indented line(s)):
       begins with a YAML frontmatter block (first content in the file,
       opened and closed by a bare `---` line) that schema-validates via
       python3 + jsonschema against schema/frontmatter.schema.json.
+      In the default sweep only, every docs/nips/ markdown file is checked
+      the same way. Those files are not added to the shipped-doc set, so
+      the default sweep's C3, C5, C8, C9, and C10 do not scan them, and
+      --payload does not check docs/nips/. A --target invocation is
+      unchanged.
 
   C2  Format (belt-and-braces beyond schema). For the same shipped-doc
       set: `authoritative_source` equals the file's own repository-relative
       path exactly, or the literal string `NA`; `status` is one of
       draft/active/deprecated; `version` matches semver MAJOR.MINOR.PATCH.
+      In the default sweep only, the same three rules also cover every
+      docs/nips/ markdown file. Those files are not part of the shipped-doc
+      set, and --payload does not apply C2 to docs/nips/.
 
   C3  Untagged fence sweep (NDS Sec 6.2). For the same shipped-doc set:
       zero fenced code blocks opened with a bare ``` (no language tag).
@@ -2532,8 +2540,20 @@ main() {
       shipped_md+=("${f}")
     done < <(build_shipped_md_set)
 
-    check_c1_frontmatter_schema "${shipped_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
-    check_c2_format "${shipped_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    # Default sweep only (phase-014 feature 107, NDEBT-044 b): C1 and C2 also
+    # read every docs/nips/*.md (this directory only, not nested). Those files
+    # stay out of the shipped-doc set, so C3, C5, C8, C9, and C10 keep the
+    # shipped_md list, and --payload never reaches this branch. --target is
+    # unchanged.
+    local c1_c2_md=("${shipped_md[@]}")
+    if [ -d docs/nips ]; then
+      while IFS= read -r f; do
+        c1_c2_md+=("${f}")
+      done < <(find docs/nips -maxdepth 1 -type f -name '*.md' | LC_ALL=C sort)
+    fi
+
+    check_c1_frontmatter_schema "${c1_c2_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
+    check_c2_format "${c1_c2_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c3_fences "${shipped_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c4_index "NIZAM.json" && passed=$((passed + 1)) || failed=$((failed + 1))
     check_c5_branding "${shipped_md[@]}" && passed=$((passed + 1)) || failed=$((failed + 1))
