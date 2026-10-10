@@ -1,10 +1,9 @@
 COMMAND: bash tools/e2e_bootstrap_test.sh
-HEAD: 20cdd9a47a37713cb6bf9b20ee0e1f718494d610
-STARTED: 2026-10-10T17:05:39.741800+00:00
-e2e_bootstrap_test.sh: installing pinned tag 'e2e-1791651939-3383289' from 'file:///home/cnross/workspace02/nizam-framework' into '/home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam' (hermetic -- local file:// clone, no network)...
-bootstrap.sh: cloning file:///home/cnross/workspace02/nizam-framework at pinned tag e2e-1791651939-3383289 (--depth 1)...
-Cloning into '/home/cnross/.tmp/nizam-bootstrap-clone.LEz0Re'...
-Note: switching to '20cdd9a47a37713cb6bf9b20ee0e1f718494d610'.
+HEAD: 00ef2ef418dbdce1867c9b528da3e97ff20160db
+e2e_bootstrap_test.sh: installing pinned tag 'e2e-1791653038-3404679' from 'file:///home/cnross/workspace02/nizam-framework' into '/home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam' (hermetic -- local file:// clone, no network)...
+bootstrap.sh: cloning file:///home/cnross/workspace02/nizam-framework at pinned tag e2e-1791653038-3404679 (--depth 1)...
+Cloning into '/home/cnross/.tmp/nizam-bootstrap-clone.zBFq55'...
+Note: switching to '00ef2ef418dbdce1867c9b528da3e97ff20160db'.
 
 You are in 'detached HEAD' state. You can look around, make experimental
 changes and commit them, and you can discard any commits you make in this
@@ -21,23 +20,23 @@ Or undo this operation with:
 
 Turn off this advice by setting config variable advice.detachedHead to false
 
-bootstrap.sh: staging governance payload in /home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam-stage.ZOvQPG...
+bootstrap.sh: staging governance payload in /home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam-stage.vrz0oM...
 bootstrap.sh: verifying staged injection before declaring success...
-NIZAM.json parses; 82 indexed path(s) resolve under /home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam-stage.ZOvQPG.
-bootstrap.sh: recording provenance (framework_version=1.5.0, tag=e2e-1791651939-3383289, resolved_sha=20cdd9a47a37713cb6bf9b20ee0e1f718494d610)...
-bootstrap.sh: install complete. Governance payload version 1.5.0 (tag e2e-1791651939-3383289) is now at '/home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam'.
-assert_payload_present: OK -- standard/, templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json, provenance.json all present under /home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam
-assert_nizam_index_valid: OK -- NIZAM.json parses; 81 indexed path(s) resolve under /home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam.
-assert_discovery_path: OK -- /home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
-bootstrap.sh: verify-only: checking '/home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam' against pinned tag 'e2e-1791651939-3383289' (no clone, no network)...
-NIZAM.json parses; 82 indexed path(s) resolve under /home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam.
-bootstrap.sh: verify-only: PASS -- '/home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam' is present, well-formed, and matches pinned tag 'e2e-1791651939-3383289' (recorded commit pin present; pass --expected-sha to also assert the commit).
-assert_provenance_sha_pin: OK -- resolved_sha recorded (20cdd9a47a37713cb6bf9b20ee0e1f718494d610) == tag's true commit; --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected).
-assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent (both invocation forms green with identical [C*] verdicts under /home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam)
+NIZAM.json parses; 82 indexed path(s) resolve under /home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam-stage.vrz0oM.
+bootstrap.sh: recording provenance (framework_version=1.5.0, tag=e2e-1791653038-3404679, resolved_sha=00ef2ef418dbdce1867c9b528da3e97ff20160db)...
+bootstrap.sh: install complete. Governance payload version 1.5.0 (tag e2e-1791653038-3404679) is now at '/home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam'.
+assert_payload_present: OK -- standard/, templates/, schema/, tools/, methodology/, ecosystem/, NIZAM.json, provenance.json all present under /home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam
+assert_nizam_index_valid: OK -- NIZAM.json parses; 81 indexed path(s) resolve under /home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam.
+assert_discovery_path: OK -- /home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam/tools/skill.json resolves (H4 regression guard satisfied)
+bootstrap.sh: verify-only: checking '/home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam' against pinned tag 'e2e-1791653038-3404679' (no clone, no network)...
+NIZAM.json parses; 82 indexed path(s) resolve under /home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam.
+bootstrap.sh: verify-only: PASS -- '/home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam' is present, well-formed, and matches pinned tag 'e2e-1791653038-3404679' (recorded commit pin present; pass --expected-sha to also assert the commit).
+assert_provenance_sha_pin: OK -- resolved_sha recorded (00ef2ef418dbdce1867c9b528da3e97ff20160db) == tag's true commit; --expected-sha PASSES on match, FAILS on mismatch (moved-tag drift detected).
+assert_payload_validate_cwd_independent: OK -- --payload is CWD-independent (both invocation forms green with identical [C*] verdicts under /home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam)
 assert_preflight_governance_root: OK -- ecosystem_preflight.py discovered the injected .nizam/ governance-root (exit 2: PASS_WITH_EXCEPTIONS; the injected payload is an expected exception, required references resolve under .nizam/).
-assert_genesis: OK -- genesis stood up a new project from nothing (scaffold present; provenance resolved_sha=20cdd9a47a37713cb6bf9b20ee0e1f718494d610); Preflight accepts it (exit 2: PASS_WITH_EXCEPTIONS); a non-empty --project-root is refused.
+assert_genesis: OK -- genesis stood up a new project from nothing (scaffold present; provenance resolved_sha=00ef2ef418dbdce1867c9b528da3e97ff20160db); Preflight accepts it (exit 2: PASS_WITH_EXCEPTIONS); a non-empty --project-root is refused.
 assert_multirepo: OK -- a scratch 2-member ecosystem (both genesis'd from nothing at one pin) iterates + aggregates to a schema-valid ecosystem-level result (ecosystem_verdict PASS, framework_pin_consistent true, member_count 2).
 assert_stage4: OK -- the aggregate -> reconciliation -> release-train chain runs across the 2-member set: a PASS plan + a PASS train manifest (both C12-valid), and an ungated admission is correctly refused a PASS (FAIL).
-e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1791651939-3383289, target /home/cnross/.tmp/tmp.J5lTsqwO4k/.nizam).
+e2e_bootstrap_test.sh: PASS -- hermetic bootstrap inject-then-verify cycle succeeded (tag e2e-1791653038-3404679, target /home/cnross/.tmp/tmp.5dpZ5sqaXg/.nizam).
 
 EXIT:0

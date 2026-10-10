@@ -1,10 +1,6 @@
 {
-  "feature_id": "release-v1.5.0",
-  "qa_pass": true,
-  "checks_run": 9,
-  "checks_passed": 9,
-  "executed_at": "2026-10-10T17:25:00.623288+00:00",
   "candidate_sha": "00ef2ef418dbdce1867c9b528da3e97ff20160db",
+  "prior_sha": "20cdd9a47a37713cb6bf9b20ee0e1f718494d610",
   "checks": [
     {
       "index": 1,
@@ -82,35 +78,5 @@
       "source_sha": "20cdd9a47a37713cb6bf9b20ee0e1f718494d610",
       "carried_forward": true
     }
-  ],
-  "repaired_candidate_checks_run": 5,
-  "carried_checks_source_sha": "20cdd9a47a37713cb6bf9b20ee0e1f718494d610",
-  "carry_forward_rationale": "AT2 fixtures, AT3 release anchors, AT5 tag absence and AT9 hygiene/history passed independently before the repair. The repair changes only HTML serialization preserving decoded href, contract verification metadata and coordinator retry state; affected AT1/4/6/7/8 reran at corrected committed candidate. Each carried entry names its actual source SHA.",
-  "adversarial": {
-    "performed": true,
-    "description": "Independent isolated final candidate clone scope positive followed by forbidden untracked tools/unplanned-release-probe.txt",
-    "result": "pass",
-    "evidence": ".agent/evidence/release-v1.5.0-prep/release-v1.5.0-qa-adversarial.txt"
-  },
-  "evidence_files": [
-    ".agent/evidence/release-v1.5.0-prep/01-validate-sh.txt",
-    ".agent/evidence/release-v1.5.0-prep/02-fixtures-self-test.txt",
-    ".agent/evidence/release-v1.5.0-prep/03-release-closeout-pr.txt",
-    ".agent/evidence/release-v1.5.0-prep/04-e2e-bootstrap.txt",
-    ".agent/evidence/release-v1.5.0-prep/05-tag-probe-and-sanitization.txt",
-    ".agent/evidence/release-v1.5.0-prep/06-guide-anchors.txt",
-    ".agent/evidence/release-v1.5.0-prep/07-scope.txt",
-    ".agent/evidence/release-v1.5.0-prep/08-ga-declaration.txt",
-    ".agent/evidence/release-v1.5.0-prep/09-hygiene-and-history.txt",
-    ".agent/evidence/release-v1.5.0-prep/release-v1.5.0-qa-adversarial.txt"
-  ],
-  "issues": [],
-  "unsupported_claims": [],
-  "missing_acceptance_coverage": [],
-  "required_fixes": [],
-  "final_verdict": {
-    "approved": true,
-    "summary": "Nine independently verified acceptance results pass; five affected checks reran at repaired candidate00ef2ef, four unchanged checks carry their original20cdd9a provenance. E2E resolves repaired candidate, all evidence captures record actual exit0, and isolated untracked scope negative rejects."
-  },
-  "dod_ref": "standard/definition_of_done.md"
+  ]
 }
