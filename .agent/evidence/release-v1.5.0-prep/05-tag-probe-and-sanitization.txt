@@ -1,0 +1,25 @@
+$ git rev-parse -q --verify refs/tags/v1.5.0
+EXIT:1
+$ git ls-remote --tags origin v1.5.0
+EXIT:0
+$ git status --porcelain
+?? .agent/evidence/release-v1.5.0-prep/
+?? .nizam/
+EXIT:0
+$ git log -1 --format=%H
+312257b65573330c5ba6fd5ffb4a3b5a23b3c800
+EXIT:0
+# tag-object id of last release v1.4.0:
+bb32064472fb71deaba96e134b888c7e9e590d96
+EXIT:0
+v1.4.0 tagged-commit: 9edd5d0e0d9e0489c961407d306ae30541c27dd5
+# .nizam/ pre-existing untracked sandbox (not created by this prep):
+ecosystem
+methodology
+NIZAM.json
+provenance.json
+schema
+standard
+templates
+tools
+EXIT:0

@@ -1,0 +1,145 @@
+{
+  "contract_id": "release-v1.5.0",
+  "feature_id": "release-v1.5.0",
+  "name": "Prepare operator-declared GA v1.5.0 MINOR release documentation and pins",
+  "status": "approved",
+  "spec_ref": ".agent/evidence/release-v1.5.0-prep/00-release-prep-plan.md",
+  "base_revision": "67ba7646e681a6be6800c766bf0078b2fdc6cfb4",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/evidence/release-readiness-v1.5.0.md",
+        "purpose": "Evaluator independent readiness report with command evidence and current GA decision/explicit exceptions"
+      },
+      {
+        "path": ".agent/evidence/release-v1.5.0-prep/<NN-name>.txt",
+        "purpose": "Generator/Evaluator externalized command output including invocation, actual exit code and SHA"
+      },
+      {
+        "path": ".agent/validator/release-v1.5.0-<name>.json",
+        "purpose": "Independent Mode A/B gate records"
+      },
+      {
+        "path": ".agent/qa/release-v1.5.0-<name>.json",
+        "purpose": "Independent contract-review/QA records"
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "E1 dated section, accurate C13 both-mode note, phase changes and operator-declared GA with evidence exceptions; preserve rolled bullets and older releases"
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "E2 framework.version to 1.5.0 only"
+      },
+      {
+        "path": "CONTEXT.md",
+        "purpose": "E3 version/change_log top to 1.5.0; accurate payload/GA status and exceptions"
+      },
+      {
+        "path": "README.md",
+        "purpose": "E4 seven release pins plus concise operator GA declaration note linking operator_gates; no extra numeric version occurrence"
+      },
+      {
+        "path": "docs/guide/index.html",
+        "purpose": "E5 exactly two 1.5.0 anchors plus concise GA note dated 2026-10-10 linking operator_gates; no extra numeric version occurrence"
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "E6 0.50.0/change_log plus preparation disposition; current phase bullet distinguishes historical dossier from current operator GA and final budget 8705/8600; preserve historical release lines"
+      },
+      {
+        "path": "docs/planning/operator_gates.md",
+        "purpose": "E7 0.30.0/change_log plus release authorization row append and H-GA existing-row EXECUTED declaration with verbatim decision, base SHA, digest and exceptions; H-CONSOLIDATION remains outstanding"
+      }
+    ]
+  },
+  "non_goals": [
+    "Do not modify source tools, schemas, workflows, bootstrap, templates, methodology, ecosystem or registry.",
+    "Do not alter frozen phase-014 acceptance tests, dossier, specs, manifest, debt, handover or historical evidence.",
+    "Generator must not alter .agent/run_state.json; post-decision base already records authorized operator actions.",
+    "Do not imply GA prerequisites all passed: real_production_pilot not_met and recorded_consumer_adoptions insufficient_evidence are explicit operator-declaration exceptions.",
+    "No tag creation, push, release publishing or merge within this contract; parent Orchestrator executes already-authorized mechanics after clean PR merge.",
+    "Do not promise unchanged --payload behavior; C13 subset rule is now enforced in both modes; shipped manifest/index pair remains compliant."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "AT1: Full compliance passes, including schema-valid contract and version/changelog consistency.",
+      "command": "bash tools/validate.sh",
+      "evidence": "01-validate-sh.txt",
+      "expected": "Exit 0; SUMMARY: 16 passed, 0 failed"
+    },
+    {
+      "acceptance_test": "AT2: Standing fixture regressions pass; no product tests are added.",
+      "command": "bash tools/fixtures_self_test.sh",
+      "evidence": "02-fixtures-self-test.txt",
+      "expected": "Exit 0; SELF-TEST OK: 147/147 fixtures accounted for, 0 failed"
+    },
+    {
+      "acceptance_test": "AT3: All five release anchor groups agree with V=1.5.0.",
+      "command": "python3 .github/scripts/release_closeout.py --mode pr",
+      "evidence": "03-release-closeout-pr.txt",
+      "expected": "Exit 0; five PASS groups and final V=1.5.0 summary"
+    },
+    {
+      "acceptance_test": "AT4: Bootstrap e2e passes against a committed candidate.",
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "evidence": "04-e2e-bootstrap.txt",
+      "expected": "Exit 0; e2e_bootstrap_test.sh: PASS; record resolved_sha and compare to actual committed candidate HEAD. A precommit run exercises old HEAD and is baseline only."
+    },
+    {
+      "acceptance_test": "AT5: The tag does not exist before merge; remote absence requires successful remote lookup and positive origin control.",
+      "command": "python3 - <<'PY'\nimport subprocess\nfor cmd,expected in [(['git','rev-parse','-q','--verify','refs/tags/v1.5.0'],1),(['git','ls-remote','--tags','origin','v1.5.0'],0),(['git','ls-remote','--tags','origin','v1.4.0'],0)]:\n r=subprocess.run(cmd,text=True,capture_output=True);print(cmd,r.stdout,r.stderr,'EXIT:',r.returncode);assert r.returncode==expected\n if cmd[-1]=='v1.5.0': assert not r.stdout.strip()\n if cmd[-1]=='v1.4.0': assert 'refs/tags/v1.4.0' in r.stdout\nPY",
+      "evidence": "05-tag-probe-and-sanitization.txt",
+      "expected": "Exit 0; no local/remote v1.5.0 and positive v1.4.0 origin response"
+    },
+    {
+      "acceptance_test": "AT6: Pin counts, changelog empty Unreleased heading/date/tier, frontmatter versions and one ROADMAP v1.5.0 disposition agree.",
+      "command": "python3 - <<'PY'\nimport json,re,sys,yaml\nfrom pathlib import Path\nsys.path.insert(0,'.github/scripts');import release_closeout as r\nassert json.loads(Path('NIZAM.json').read_text())['framework']['version']=='1.5.0'\na=Path('README.md').read_text();assert 'v1.4.0' not in a and a.count('v1.5.0')==7\na=Path('docs/guide/index.html').read_text();assert '1.4.0' not in a and a.count('1.5.0')==2\na=Path('CHANGELOG.md').read_text();assert a.splitlines()[7:10]==['## [Unreleased]','','## [1.5.0] - 2026-10-10'];assert '**Minor release**' in a\nb=r.document_body(Path('docs/planning/ROADMAP.md').read_text());assert sum(bool(re.search(r'Latest released tag: v1\\.5\\.0\\b|Release in preparation: v1\\.5\\.0\\b',l)) for l in b.splitlines())==1\nfor p,v in [('CONTEXT.md','1.5.0'),('docs/planning/ROADMAP.md','0.50.0'),('docs/planning/operator_gates.md','0.30.0')]:\n d=yaml.safe_load(Path(p).read_text().split('---')[1]);assert str(d['version'])==v and d['change_log'][0]['version']==v\nprint('All version/pin/disposition assertions passed')\nPY",
+      "evidence": "06-guide-anchors.txt",
+      "expected": "Exit 0; README seven v1.5.0 strings, guide two 1.5.0 anchors (GA note uses words without numeric version)"
+    },
+    {
+      "acceptance_test": "AT7: Exactly seven product files change; frozen phase artifacts, run_state, tools/schemas/workflows and unrelated files remain identical to post-decision base; untracked paths fail closed.",
+      "command": "python3 - <<'PY'\nimport re,subprocess\nbase='67ba7646e681a6be6800c766bf0078b2fdc6cfb4';product=set(['CHANGELOG.md', 'NIZAM.json', 'CONTEXT.md', 'README.md', 'docs/guide/index.html', 'docs/planning/ROADMAP.md', 'docs/planning/operator_gates.md'])\nr=subprocess.run(['git','diff','--name-status',base],check=True,text=True,capture_output=True)\nseen=set()\ndef auxiliary(p):\n return bool(re.fullmatch(r'\\.agent/(contracts/release-v1\\.5\\.0\\.json|(?:validator|qa)/release-v1\\.5\\.0-[A-Za-z0-9_-]+\\.json|evidence/release-readiness-v1\\.5\\.0\\.md|evidence/release-v1\\.5\\.0-prep/[A-Za-z0-9_.-]+)',p)) and '..' not in p\nfor l in r.stdout.splitlines():\n parts=l.split('\\t');assert len(parts)==2,l;status,p=parts\n if p in product: assert status=='M',(status,p);seen.add(p)\n else: assert auxiliary(p) and status in ('A','M'),(status,p)\nassert seen==product,(seen,product)\nfor p in subprocess.run(['git','ls-files','--others','--exclude-standard'],check=True,text=True,capture_output=True).stdout.splitlines(): assert auxiliary(p),p\nprint('Scope guard passed: exactly seven modified product files; only authorized metadata/evidence additions')\nPY",
+      "evidence": "07-scope.txt",
+      "expected": "Exit 0; exact seven product paths plus only authorized release contract/verdict/evidence paths"
+    },
+    {
+      "acceptance_test": "AT8: GA declaration matches recorded operator decision, exceptions remain visible and H-CONSOLIDATION stays outstanding.",
+      "command": "python3 - <<'PY'\nimport hashlib,json,re,yaml\nfrom pathlib import Path\nstate=json.loads(Path('.agent/run_state.json').read_text())\ngate=next(x for x in reversed(state['history']) if x.get('event')=='operator_gate_decision' and x.get('gate')=='H-GA')\nassert gate['decision']=='declared' and gate['verbatim']=='GA is declared.'\nassert gate['declared_version']=='1.5.0' and gate['tag']=='v1.5.0'\nassert gate['evidence_exceptions']=={'real_production_pilot':'not_met','recorded_consumer_adoptions':'insufficient_evidence'}\nassert gate['dossier_path']=='.agent/evidence/102/ga-readiness.json'\nassert hashlib.sha256(Path(gate['dossier_path']).read_bytes()).hexdigest()==gate['dossier_sha256']=='d98ccec0f3c57cda51876db3286b57005143ef771b88b4c92f36748de4c0f590'\ndate=gate['at'].split('T')[0];assert date=='2026-10-10'\ndef normalized(text):\n return re.sub(r'\\s+',' ',text.replace('`','').replace('**','')).strip()\ndef declaration(span):\n assert f'General Availability declared by the operator on {date}' in normalized(span),span\n assert not re.search(r'GA (?:is |remains )?(?:undeclared|not declared)|H-GA (?:is |stays |remains )?OUTSTANDING',normalized(span),re.I),span\ndef exceptions(span):\n text=normalized(span)\n for key,value in gate['evidence_exceptions'].items():\n  assert re.search(r'\\b'+re.escape(key)+r'\\s+(?:is|remains)\\s+'+re.escape(value)+r'\\b',text),(key,span)\n assert not re.search(r'all (?:GA |readiness )?(?:preconditions|prerequisites|criteria) (?:are |were |have been )?(?:met|passed|satisfied)',text,re.I),span\nreadme=Path('README.md').read_text().split('## Quickstart',1)[0];declaration(readme);assert '[GA decision](docs/planning/operator_gates.md)' in readme\nhero=re.search(r'<header class=\"hero\"[^>]*>(.*?)</header>',Path('docs/guide/index.html').read_text(),re.S).group(1);declaration(hero);assert 'href=\"../planning/operator_gates.md\"' in hero\nchanges=Path('CHANGELOG.md').read_text();current=changes.split('## [1.5.0] - 2026-10-10\\n',1)[1].split('## [1.4.0]',1)[0];banner=current.split('### Added',1)[0];declaration(banner);exceptions(banner)\ncontext=yaml.safe_load(Path('CONTEXT.md').read_text().split('---',2)[1]);entry=context['change_log'][0];assert entry['version']=='1.5.0' and str(entry['date'])==date;declaration(entry['summary']);exceptions(entry['summary'])\nroadmap=Path('docs/planning/ROADMAP.md').read_text().split('## Current Position',1)[1];phase=roadmap.split('- **Phase 014 (GA Track) is complete.**',1)[1].split('\\n- ',1)[0];declaration(phase);exceptions(phase)\nrows=Path('docs/planning/operator_gates.md').read_text().splitlines();ga=next(l for l in rows if l.startswith('| `H-GA` |'));assert ga.count('|')==5;disposition=ga.split('|')[4];assert f'EXECUTED {date}' in disposition and gate['verbatim'] in disposition and gate['tag'] in disposition and gate['at'] in disposition and gate['dossier_sha256'] in disposition and gate['dossier_path'] in disposition and '14e632f' in disposition;assert 'OUTSTANDING' not in disposition;exceptions(disposition)\ncon=next(l for l in rows if l.startswith('| `H-CONSOLIDATION` |'));assert 'OUTSTANDING' in con.split('|')[4] and 'NOT EXERCISED' in con.split('|')[4]\nprint('Current declaration spans, canonical exception pairs, and operator decision identity passed')\nPY",
+      "evidence": "08-ga-declaration.txt",
+      "expected": "Exit 0; structurally current declaration notes and exception pairs match parsed latest H-GA decision, dossier digest, version/date/verbatim/time; missing/current incorrect or detached historical claims fail."
+    },
+    {
+      "acceptance_test": "AT9: New product lines introduce no branding/internal endpoints or control characters; historical material remains intact.",
+      "command": "python3 - <<'PY'\nimport re,subprocess\nfrom pathlib import Path\npaths=['CHANGELOG.md', 'NIZAM.json', 'CONTEXT.md', 'README.md', 'docs/guide/index.html', 'docs/planning/ROADMAP.md', 'docs/planning/operator_gates.md']\nd=subprocess.run(['git','diff','14e632fa04242aaf56eedc15eab377c03ba87511','--',*paths],check=True,text=True,capture_output=True).stdout\nadded='\\n'.join(l[1:] for l in d.splitlines() if l.startswith('+') and not l.startswith('+++'));assert not re.search(r'n[i]zamiq|\\.svc|cluster\\.local',added,re.I)\nassert re.search(r'n[i]zamiq|\\.svc|cluster\\.local','host.svc',re.I)\nfor p in paths: assert not any(ord(c)<32 and c not in '\\n\\t\\r' for c in Path(p).read_text()),p\nold=subprocess.run(['git','show','14e632fa04242aaf56eedc15eab377c03ba87511:CHANGELOG.md'],check=True,text=True,capture_output=True).stdout;new=Path('CHANGELOG.md').read_text();assert old[old.index('## [1.4.0]'):]==new[new.index('## [1.4.0]'):]\nline=next(l for l in subprocess.run(['git','show','14e632fa04242aaf56eedc15eab377c03ba87511:docs/planning/ROADMAP.md'],check=True,text=True,capture_output=True).stdout.splitlines() if l.startswith('- **Latest released tag: v1.4.0'));assert line in Path('docs/planning/ROADMAP.md').read_text()\nprint('Added-line hygiene and historical release records passed')\nPY",
+      "evidence": "09-hygiene-and-history.txt",
+      "expected": "Exit 0; new-line check plus positive control; older changelog sections and released tag line preserved"
+    }
+  ],
+  "estimated_lines": 400,
+  "evidence_dir": ".agent/evidence/release-v1.5.0-prep/",
+  "evidence_convention": "NN-name.txt captures invocation, output, actual EXIT and applicable HEAD/resolved_sha; evaluator reruns independently and references all evidence in QA/readiness. Existing baseline 01-06 captures may be replaced by independent candidate captures; plan historical simulation remains labeled baseline.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1,
+    "approved_at": "2026-10-10T16:51:23Z"
+  },
+  "dod_ref": "standard/definition_of_done.md",
+  "design_notes": {
+    "plan_authority": "Plan E1-E7 plus latest user steering GA is declared. and GA amendment in plan; only New proposal text is superseded, historical Current blocks retain their original facts.",
+    "operator_decision": "2026-10-10T16:32:48Z, run_state history[-1], committed BEFORE downstream documentation at 14e632f.",
+    "implementation_gate": "Status stays proposed until independent Mode A and evaluator contract-review verdicts both approve with all issue arrays empty.",
+    "verification_order": "Full validator and fixture tests run serially; e2e final acceptance reruns after parent commits candidate; Mode B/QA evidence must capture candidate SHA. Contract metadata may be committed alongside product, allowed by AT7.",
+    "revision_attempt": {
+      "attempt": 2,
+      "limit": 3,
+      "workspace": "/tmp/nizam-release-contract-attempt2-ZIiXPN",
+      "approved_base": "67ba7646e681a6be6800c766bf0078b2fdc6cfb4",
+      "prescription": "AT8 current-span binding only; new scope base is coordinator circuit-counter commit, product tree unchanged."
+    }
+  }
+}
