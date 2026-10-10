@@ -1,0 +1,5 @@
+python3 -c "t=open('standard/capability_profiles.md').read().split('## 2.')[1].split('## 3.')[0]; h=[l for l in t.splitlines() if l.startswith('| Capability Profile')]; assert len(h)==1 and '| Role |' in h[0], h"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+AssertionError: ['| Capability Profile | Task Type | Latency Budget | Cost Budget | Safety Class |']
+EXIT:1

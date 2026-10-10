@@ -1,0 +1,2 @@
+T=$(mktemp) && git show 02b02c6:standard/capability_profiles.md > "$T" && bash -c 'source tools/verify_lib.sh && vlib_profiles_cover_roles "$1" standard/AGF.md' _ "$T"; r=$?; rm -f "$T"; test $r -eq 0
+EXIT:0

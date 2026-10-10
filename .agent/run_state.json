@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "109",
   "status": "in_progress",
-  "updated_at": "2026-10-10T08:05:00Z",
+  "updated_at": "2026-10-10T11:15:40Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -266,6 +266,10 @@
       "limit": 3
     },
     "107-implementation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "109-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -1908,6 +1912,36 @@
       "event": "feature_complete",
       "feature": "107",
       "detail": "Feature 107 COMPLETE (NDEBT-044 b: NIP-0002 status active; default-mode C1 and C2 include docs/nips/*.md; shipped-doc set unchanged). Contract attempt 2/3 after S01 was repaired so an approved revision 0 keeps its approval flags. Implementation c67421b parent d4dcc49. Mode B approved (.agent/validator/107-mode-b.json). QA pass .agent/qa/107.json (11/11; adversarial: NIP-0003 status accepted fails C1, status active does not). Canonical-first: phase_014.yaml 107 COMPLETED, feature_list 107 complete, then this run_state. Budget: 107 = 713 (evidence 2195); phase total 6112 / 8600. Next: 109. NDEBT-044 stays Open."
+    },
+    {
+      "at": "2026-10-10T08:18:38Z",
+      "event": "feature_started",
+      "feature": "109",
+      "detail": "Operator: 'great work, continue with the logical next steps.' Dependency gate: 109 dependencies [] satisfied. 107 is complete (PR #74, c43ae9e). Branch phase/014-109-c15-role-column from c43ae9e. 109-contract attempt 1/3. 109 measurement range starts at c43ae9e. Next after 109 is 108, then 102. Dispatching Generator to propose .agent/contracts/109.json."
+    },
+    {
+      "at": "2026-10-10T10:32:48Z",
+      "event": "contract_approved",
+      "feature": "109",
+      "detail": "109-contract attempt 1/3 approved at revision 0 on the first proposal. Mode A .agent/validator/109-mode-a.json approved (risk high, empty issue arrays); evaluator contract review .agent/qa/109-contract-review.json approved with all six base ATs and S01 re-executed, adversarial probes in a private clone (rotation mutation, banner-stub, change_log deletion) all caught or non-blocking, contract sha256 stable. This commit is attempt base <B>. Implementation has not started."
+    },
+    {
+      "at": "2026-10-10T10:33:31Z",
+      "event": "implementation_started",
+      "feature": "109",
+      "detail": "109-implementation attempt 1/3. Attempt worktree /home/cnross/workspace02/nizam-wt-109-attempt1 detached at <B> 737a2778434f97203dc21218de549dee6e169bc1. Contract 109 revision 0 approved. Dispatching Generator to implement the pinned scope: standard/capability_profiles.md Role column (0.3.0 -> 0.4.0), tools/verify_lib.sh vlib_profiles_map_roles, tools/validate.sh C15 dual-primitive call, tools/README.md 0.16.0 -> 0.17.0. Serial captures to .agent/evidence/109/ per the contract's evidence_convention."
+    },
+    {
+      "at": "2026-10-10T11:12:02Z",
+      "event": "feature_completed",
+      "feature": "109",
+      "detail": "109-implementation attempt 1/3 passed on the first attempt. Validator Mode B .agent/validator/109-mode-b.json approved (diff <B>..HEAD exactly the 4 files_modify + 12 evidence creates + Orchestrator run_state commit; S01/S04/S05/S03 re-run green; S02 attempt-root-shaped, satisfied in isolation). Evaluator QA .agent/qa/109.json pass 11/11 with fresh captures under .agent/evidence/109/qa/ plus adversarial probes (own-design mutations, ablation, legacy-doc split, --payload 12/12). Evidence-capture gate satisfied. Step-7 status flip landed; docs/planning/phase_014.yaml step 109 completed; NDEBT-026 resolved in DEBT.md v0.52.0. Next feature per the Dependency Enforcement Rule: 108."
+    },
+    {
+      "at": "2026-10-10T11:15:40Z",
+      "event": "scope_budget_measured",
+      "feature": "109",
+      "detail": "Phase-014 rule (spec 1.1.4) over c43ae9e..afbeeec: BUDGET_COUNTED_LINES=836 (product 153, contract 369, verdict 298, planning 16), within the 520-890 range, 126 over the 710 point estimate; EVIDENCE_LINES=1424, EXCLUDED_LINES=38 (run_state), UNCLASSIFIED=0, ALL_PATHS=2298. Phase total 6112 + 836 = 6948 of 8600 (ceiling 11180). Capture .agent/evidence/scope-budget-014/measure-109.txt."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2082,9 +2116,9 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 6112,
-    "evidence_lines_total": 17982,
-    "excluded_lines_total": 641,
+    "total_lines_changed": 6948,
+    "evidence_lines_total": 19406,
+    "excluded_lines_total": 679,
     "counting_rule": {
       "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.6)",
       "script": ".agent/evidence/scope-budget-014/measure.py",
@@ -2153,6 +2187,16 @@
         "excluded_lines": 81,
         "range": "fdc076f..984a9b3",
         "note": "Phase-014 rule. measure.py --range 107=fdc076f..984a9b3: BUDGET_COUNTED_LINES=713 (product 38, contract 365, verdict 303, planning 7), EVIDENCE_LINES=2195, EXCLUDED_LINES=81, unclassified 0. Above the 680 estimate and under the rolling 3x threshold. No scope flag."
+      },
+      {
+        "id": "109",
+        "estimated": 710,
+        "actual": 836,
+        "evidence_lines": 1424,
+        "excluded_lines": 38,
+        "all_paths_lines": 2298,
+        "range": "c43ae9e..afbeeec",
+        "note": "Phase-014 rule (spec 1.1.4): product 153 + contract 369 + verdict 298 + planning 16 = 836. Within the 520-890 range; 126 over the 710 point estimate (a long contract plus verdicts, the predicted composition). Capture .agent/evidence/scope-budget-014/measure-109.txt."
       }
     ],
     "phase_level_items": [
@@ -2452,13 +2496,14 @@
       }
     ]
   },
-  "last_action": "Feature 107 complete; next is 109",
+  "last_action": "Feature 109 line range pinned: 836 budget-counted from c43ae9e to afbeeec",
   "completed_contract_ids": [
     "099",
     "103",
     "104",
     "105",
     "106",
-    "107"
+    "107",
+    "109"
   ]
 }

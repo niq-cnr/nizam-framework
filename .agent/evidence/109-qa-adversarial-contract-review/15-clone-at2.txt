@@ -1,0 +1,27 @@
+AT2 (pinned tree): scratch swap planner<->generator Role cells; expect validate rc 1, ^[C15] FAIL
+scratch_run: applied --py-mutate
+scratch_run: command bash tools/validate.sh -> exit 1
+  | [C1] PASS frontmatter-schema
+  | [C2] PASS format
+  | [C3] PASS untagged-fence-sweep
+  | [C4] PASS index-integrity
+  | [C5] PASS branding-leakage
+  | [C6] PASS bootstrap-sanity
+  | [C7] PASS module-readme-presence
+  | [C8] PASS version-bump-vs-changelog
+  | [C9] PASS path-resolution
+  | [C10] PASS consistency
+  | [C11] PASS dogfood
+  | [C12] PASS ecosystem-fixtures
+  | [C13] PASS skill-index
+  | [C14] PASS workflow-sha-pins
+  | [C15] FAIL capability-profile-roles
+  |   
+  |   vlib_profiles_map_roles: profile 'planner-creative' row names role 'Generator', expected its own role 'Planner'
+  |   vlib_profiles_map_roles: profile 'generator-deterministic' row names role 'Planner', expected its own role 'Generator'
+  | [C16] PASS feature-list-lifecycle
+  | SUMMARY: 15 passed, 1 failed
+PASS exit status == 1
+PASS output matches '^\\[C15\\] FAIL'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0

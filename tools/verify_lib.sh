@@ -686,6 +686,121 @@ PY
 }
 
 # ---------------------------------------------------------------------------
+# vlib_profiles_map_roles <profiles-doc> <agf-doc>
+#
+# Phase-014 feature 109 (NDEBT-026): the mapping-direction primitive behind
+# validate.sh check C15. Parses the profiles doc's Section 2 table (the table
+# headed '| Capability Profile') and fails (return 1) unless each of the five
+# profile rows names its own role in an explicit 'Role' column AND that role
+# is defined in the AGF doc. A table without a 'Role' column fails with a
+# line naming 'Role'. Every failure line this primitive prints starts with
+# 'vlib_profiles_map_roles: '. The token-presence primitive
+# vlib_profiles_cover_roles is deliberately NOT tightened in place: a direct
+# caller on a role-less profiles doc keeps passing (that compatibility guard
+# is feature 109 acceptance test 3, green at base by design).
+#
+# Args:
+#   profiles-doc: standard/capability_profiles.md (the 5 profiles + Role col).
+#   agf-doc:      standard/AGF.md (where the 5 roles are defined).
+#
+# Returns:
+#   0 if every profile row names its own role and each role is AGF-defined.
+#   1 otherwise (each gap is printed, prefixed 'vlib_profiles_map_roles: ').
+# ---------------------------------------------------------------------------
+
+vlib_profiles_map_roles() {
+  local profiles_doc="$1"
+  local agf_doc="$2"
+
+  [ -f "${profiles_doc}" ] || { echo "vlib_profiles_map_roles: profiles doc not found: ${profiles_doc}"; return 1; }
+  [ -f "${agf_doc}" ] || { echo "vlib_profiles_map_roles: AGF doc not found: ${agf_doc}"; return 1; }
+
+  python3 - "${profiles_doc}" "${agf_doc}" <<'PY'
+import re
+import sys
+
+profiles_path, agf_path = sys.argv[1], sys.argv[2]
+
+# The same five-profile -> five-role correspondence vlib_profiles_cover_roles
+# guards by token presence; this primitive instead parses the Section 2
+# table's explicit Role column, so a swapped mapping fails here even though
+# every named role is AGF-defined.
+ROLE_BY_PROFILE = {
+    "orchestrator-primary": "Orchestrator",
+    "planner-creative": "Planner",
+    "generator-deterministic": "Generator",
+    "validator-structural": "Validator",
+    "evaluator-adversarial": "Evaluator",
+}
+
+
+def fail(message):
+    print("vlib_profiles_map_roles: " + message)
+
+
+def read(path):
+    with open(path, encoding="utf-8") as fh:
+        return fh.read()
+
+
+def has_word(text, word):
+    return re.search(r"\b" + re.escape(word) + r"\b", text) is not None
+
+
+try:
+    profiles_text = read(profiles_path)
+    agf_text = read(agf_path)
+except OSError as exc:
+    fail(f"cannot read: {exc}")
+    sys.exit(1)
+
+sectioned = profiles_text.split("## 2.", 1)
+if len(sectioned) != 2:
+    fail(f"profiles doc {profiles_path} has no '## 2.' section")
+    sys.exit(1)
+lines = [ln for ln in sectioned[1].split("## 3.", 1)[0].splitlines() if ln.startswith("|")]
+header = next((ln for ln in lines if ln.startswith("| Capability Profile")), None)
+if header is None:
+    fail(f"profiles doc {profiles_path} Section 2 has no table headed '| Capability Profile'")
+    sys.exit(1)
+columns = [cell.strip() for cell in header.split("|")]
+if "Role" not in columns:
+    fail(f"profiles doc {profiles_path} Section 2 table has no 'Role' column")
+    sys.exit(1)
+role_col = columns.index("Role")
+
+rows = {}
+for ln in lines[1:]:
+    cells = [cell.strip() for cell in ln.split("|")]
+    name = cells[1] if len(cells) > 2 else ""
+    if name.startswith("`") and name.endswith("`"):
+        rows[name.strip("`")] = cells
+
+gaps = []
+for profile, role in ROLE_BY_PROFILE.items():
+    cells = rows.get(profile)
+    if cells is None:
+        gaps.append(f"profiles doc {profiles_path} Section 2 table has no row for profile '{profile}'")
+        continue
+    found = cells[role_col] if role_col < len(cells) else ""
+    if found != role:
+        gaps.append(
+            f"profile '{profile}' row names role '{found}', expected its own role '{role}'"
+        )
+    elif not has_word(agf_text, role):
+        gaps.append(
+            f"AGF doc {agf_path} does not define role '{role}' that profile '{profile}' maps to"
+        )
+
+if gaps:
+    for gap in gaps:
+        fail(gap)
+    sys.exit(1)
+sys.exit(0)
+PY
+}
+
+# ---------------------------------------------------------------------------
 # vlib_feature_list_lifecycle
 #
 # Discovers every `.agent/feature_list*.json` CWD-relative (no argument --

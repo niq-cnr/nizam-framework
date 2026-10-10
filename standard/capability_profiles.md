@@ -2,11 +2,14 @@
 id: nizam-capability-profiles
 title: "Capability Profile Model"
 description: "Binds agent roles to task types, latency budgets, cost budgets, and safety classes rather than to specific models, enabling eval-gated promotion and fallback."
-version: 0.3.0
+version: 0.4.0
 status: active
 enforcement: partially-enforced
 authoritative_source: standard/capability_profiles.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-10"
+    summary: "Phase-014 feature 109 (NDEBT-026): the Section 2 table gains an explicit 'Role' column naming each profile's AGF role, parsed by the new vlib_profiles_map_roles primitive (tools/verify_lib.sh); validate.sh check C15 now calls both the coverage and the mapping primitives, so a swapped profile-to-role mapping fails. Additive and compatibility-first: vlib_profiles_cover_roles is unchanged."
   - version: "0.3.0"
     date: "2026-08-15"
     summary: "Phase-012 feature 089 (issue #52): state C15 as a supplied validator capability when executed, rather than evidence that an arbitrary consumer executed the check."
@@ -35,13 +38,13 @@ The Nizam Framework solves this by introducing the **Capability Profile Model**,
 
 Every role defined in `standard/AGF.md` maps to one of the following capability profiles:
 
-| Capability Profile | Task Type | Latency Budget | Cost Budget | Safety Class |
+| Capability Profile | Task Type | Role | Latency Budget | Cost Budget | Safety Class |
 |---|---|---|---|---|
-| `orchestrator-primary` | Topology selection, delegation, evidence collection | Interactive | Medium | High |
-| `planner-creative` | Spec authorship, architecture analysis | Batch-tolerant | Medium | Medium |
-| `generator-deterministic` | Code implementation, test authorship | Interactive | Low | High |
-| `validator-structural` | Schema/contract verification | Interactive | Low | Medium |
-| `evaluator-adversarial` | QA execution, regression detection | Batch-tolerant | Medium | High |
+| `orchestrator-primary` | Topology selection, delegation, evidence collection | Orchestrator | Interactive | Medium | High |
+| `planner-creative` | Spec authorship, architecture analysis | Planner | Batch-tolerant | Medium | Medium |
+| `generator-deterministic` | Code implementation, test authorship | Generator | Interactive | Low | High |
+| `validator-structural` | Schema/contract verification | Validator | Interactive | Low | Medium |
+| `evaluator-adversarial` | QA execution, regression detection | Evaluator | Batch-tolerant | Medium | High |
 
 ## 3. Model-Routing Rules
 

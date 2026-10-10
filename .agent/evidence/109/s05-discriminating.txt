@@ -1,0 +1,105 @@
+python3 - <<'PY'
+import json, os, subprocess, sys
+bad = []
+
+def serial_guard():
+    ancestors, pid = set(), os.getpid()
+    while pid > 1:
+        ancestors.add(pid)
+        try:
+            pid = int(open("/proc/%d/stat" % pid).read().rsplit(")", 1)[1].split()[1])
+        except (OSError, ValueError, IndexError):
+            break
+    for name in filter(str.isdigit, os.listdir("/proc")):
+        if int(name) in ancestors:
+            continue
+        try:
+            argv = [part.decode() for part in open("/proc/%s/cmdline" % name, "rb").read().split(b"\0") if part]
+            cwd = os.readlink("/proc/%s/cwd" % name)
+        except OSError:
+            continue
+        if cwd == os.getcwd() and len(argv) > 1 and os.path.basename(argv[0]) in ("bash", "sh") and argv[1].endswith(("tools/fixtures_self_test.sh", "tools/validate.sh")):
+            print("REFUSED (exit 4): process %s is already running %s in this tree" % (name, argv[1]))
+            sys.exit(4)
+
+serial_guard()
+pins = json.load(open(".agent/contracts/109.json"))["design_notes"]["pinned_interface"]
+
+SWAP = pins["swap_mutate"]
+ALL_ORCH = pins["all_orchestrator_mutate"]
+ABLATION_MUTATE = (
+    "p=root/'tools/verify_lib.sh'; t=p.read_text(); "
+    "old=" + repr(pins["ablation_old"]) + "; new=" + repr(pins["ablation_new"]) + "; "
+    "assert t.count(old)==1, t.count(old); "
+    "p.write_text(t.replace(old,new,1))"
+)
+SR = [sys.executable, ".agent/evidence/phase-014-activation/gates/scratch_run.py"]
+VAL = ["bash", "tools/validate.sh"]
+CASES = [
+    ("AT2 mutation: the swapped planner<->generator mapping fails C15 via the new primitive",
+     ["--py-mutate", SWAP], 1,
+     [r"^\[C15\] FAIL capability-profile-roles$",
+      r"^  vlib_profiles_map_roles: profile 'planner-creative' row names role 'Generator', expected its own role 'Planner'$",
+      r"^  vlib_profiles_map_roles: profile 'generator-deterministic' row names role 'Planner', expected its own role 'Generator'$"],
+     [r"^\[C15\] PASS", r"^  vlib_profiles_cover_roles:"], VAL),
+    ("silencing the new primitive's failure path removes the C15 FAIL; the old primitive still passes",
+     ["--py-mutate", SWAP, "--py-mutate", ABLATION_MUTATE], 0,
+     [r"^SUMMARY: 16 passed, 0 failed$", r"^\[C15\] PASS capability-profile-roles$"],
+     [r"^\[C15\] FAIL", r"^  vlib_profiles_map_roles:"], VAL),
+    ("every row mapped to Orchestrator (an AGF-defined role) still fails: correspondence, not membership",
+     ["--py-mutate", ALL_ORCH], 1,
+     [r"^\[C15\] FAIL capability-profile-roles$",
+      r"^  vlib_profiles_map_roles: profile 'evaluator-adversarial' row names role 'Orchestrator', expected its own role 'Evaluator'$",
+      r"^  vlib_profiles_map_roles: profile 'planner-creative' row names role 'Orchestrator', expected its own role 'Planner'$"],
+     [r"^\[C15\] PASS"], VAL),
+    ("--payload is unaffected by the swapped mapping",
+     ["--py-mutate", SWAP], 0,
+     [r"^SUMMARY \(payload mode\): 12 passed, 0 failed$"],
+     [r"^\[C15\] FAIL", r"^  vlib_profiles_map_roles:"], VAL + ["--payload"]),
+]
+
+def one(case):
+    name, mutations, rc, expects, forbids, command = case
+    argv = SR + mutations + ["--expect-rc", str(rc)]
+    for pattern in expects:
+        argv += ["--expect", pattern]
+    for pattern in forbids:
+        argv += ["--forbid", pattern]
+    argv += ["--"] + command
+    proc = subprocess.run(argv, capture_output=True, text=True)
+    print(("PASS " if proc.returncode == 0 else "FAIL ") + name)
+    if proc.returncode != 0:
+        print("\n".join("    " + line for line in (proc.stdout + proc.stderr).splitlines()[-25:]))
+        bad.append(name)
+
+for case in CASES:
+    one(case)
+
+# case 5 (no scratch copy): the role-less 02b02c6 doc still passes the
+# unchanged coverage primitive and fails the new mapping primitive with a
+# line naming Role -- the AT3 compatibility guard against the MODIFIED
+# verify_lib.sh.
+doc = subprocess.run(["git", "show", "02b02c6:standard/capability_profiles.md"], capture_output=True, text=True, check=True).stdout
+import tempfile
+tmp = tempfile.NamedTemporaryFile("w", suffix=".md", delete=False)
+tmp.write(doc)
+tmp.close()
+cover = subprocess.run(["bash", "-c", 'source tools/verify_lib.sh && vlib_profiles_cover_roles "$1" standard/AGF.md', "_", tmp.name], capture_output=True, text=True)
+mapping = subprocess.run(["bash", "-c", 'source tools/verify_lib.sh && vlib_profiles_map_roles "$1" standard/AGF.md', "_", tmp.name], capture_output=True, text=True)
+os.unlink(tmp.name)
+ok = cover.returncode == 0 and mapping.returncode == 1 and any(ln.startswith("vlib_profiles_map_roles: ") and "Role" in ln for ln in mapping.stdout.splitlines())
+print(("PASS " if ok else "FAIL ") + "the role-less 02b02c6 doc passes vlib_profiles_cover_roles and fails vlib_profiles_map_roles naming Role")
+if not ok:
+    print("    cover rc=%d %r" % (cover.returncode, cover.stdout + cover.stderr))
+    print("    map rc=%d %r" % (mapping.returncode, mapping.stdout + mapping.stderr))
+    bad.append("legacy-doc primitive split")
+print("cases:", len(CASES) + 1, "problems:", bad)
+sys.exit(1 if bad else 0)
+PY
+PASS AT2 mutation: the swapped planner<->generator mapping fails C15 via the new primitive
+PASS silencing the new primitive's failure path removes the C15 FAIL; the old primitive still passes
+PASS every row mapped to Orchestrator (an AGF-defined role) still fails: correspondence, not membership
+PASS --payload is unaffected by the swapped mapping
+PASS the role-less 02b02c6 doc passes vlib_profiles_cover_roles and fails vlib_profiles_map_roles naming Role
+cases: 5 problems: []
+EXIT:0

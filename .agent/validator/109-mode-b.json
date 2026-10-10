@@ -1,0 +1,48 @@
+{
+  "review": "109-mode-b",
+  "feature": "109",
+  "contract_id": "109",
+  "feature_id": "109",
+  "mode": "B",
+  "revision_reviewed": 0,
+  "risk_level": "high",
+  "status": "APPROVED",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "observations": [
+    "[STATE: Phase 014 | STEP: VALIDATION | DEPS: OK] Mode B on the promoted feature branch phase/014-109-c15-role-column at HEAD 366da07, two commits past <B> = 737a2778434f97203dc21218de549dee6e169bc1. The intermediate commit e728cfa ('start implementation attempt 1') touches only .agent/run_state.json (+9/-2) and is Orchestrator-owned per the contract's orchestrator_sequence (status flip / circuit-breaker); the implementation was cherry-picked from attempt worktree commit 5ab7d38 as 366da07. The contract blob is unchanged <B>..HEAD (git diff 737a277..HEAD -- .agent/contracts/109.json is empty); at <B> it is status approved, approvals.revisions 0, validator_mode_a true, evaluator_contract_review true, approved_at 2026-10-10T10:32:48Z.",
+    "Duty 1 (diff <B>..HEAD): git diff --name-status 737a277..HEAD is exactly the 4 files_modify (standard/capability_profiles.md, tools/verify_lib.sh, tools/validate.sh, tools/README.md; 696 insertions, 16 deletions), the 12 contracted files_create under .agent/evidence/109/ (attempt-base.txt, at1-at6, s01-s05), and .agent/run_state.json (the Orchestrator-owned e728cfa only). No other path. attempt-base.txt is the three-line form pinning <B> = 737a2778434f97203dc21218de549dee6e169bc1. All 12 contracted evidence files exist. No scope creep. The working tree carries the pre-existing untracked .nizam/ dogfood payload (~238 files, stale v1.4.0), untouched by this feature and never in scope.",
+    "Duty 2 (S-checks re-executed serially, validate.sh and fixtures_self_test.sh never overlapped; captures in .agent/evidence/109/mode-b-rerun/): S01 contract-valid re-run EXIT:0 ('verification 11 problems: []'). S04 pinned-structure re-run EXIT:0 ('problems: []') -- all four modified files equal <A> plus exactly the pinned edits, the vlib_profiles_cover_roles region byte-identical, the print_usage/--help region byte-identical, C15 banners and both primitive calls exactly once, README 0.16.0 -> 0.17.0 with only the pinned C15 row swap, and every unchanged_files entry byte-identical to <A>. S05 discriminating re-run EXIT:0 -- all five cases PASS, including case 1 reproducing the two pinned swapped-role detail lines verbatim and case 3 proving correspondence-not-membership.",
+    "Duty 2 S02: re-run in the real tree hard-fails EXIT:1 with exactly three flagged items: 'HEAD is 2 commits past B', the run_state delta, and untracked .nizam/* plus this reviewer's own mode-b-rerun captures as out-of-scope paths. Judgment: the contract's S02 predicate is written for the attempt root (its own expected_outcome says 'Exit 0 inside the attempt root ... HEAD equals B, or one commit past B'), and the hard-fail is the guard working as designed when run outside that context -- every flagged item is attributable to the Orchestrator-owned run_state-only commit e728cfa, the pre-existing untracked .nizam/ that the contract's hazard 2 says invalidates untracked-set scans in this tree, or Validator-owned rerun captures. The Generator's cherry-picked commit in isolation (git diff --name-status e728cfa..366da07, captured in mode-b-rerun/s02-generator-commit-delta.txt) touches exactly the 16 in-scope paths and zero run_state. The S02 substance therefore holds; no DEFECT and no CONTRACT_DEFECT.",
+    "Duty 2 S03: the real tree has an untracked .nizam/, which the contract's S03 text forbids (git status --untracked-files=all would flag every .nizam/ path). Re-ran S03 in a private clone (git clone to mktemp, checkout 366da07, verified .nizam-free): EXIT:0 ('changed 45 problems: []') -- every changed path vs <A> = 5ffd27395cdfde4322f7fba2056af1a35c3874f3 is in scope or on the allowlist, all four files_modify changed, run_state allowlisted (not hard-failed), and phase YAML / DEBT.md / feature list hard-fails absent.",
+    "Duty 3 (evidence convention): spot-checked at1, at2, at3, at4, at5, at6, and s02 -- line 1 is the replayable invocation, the body is raw combined output, the last line is EXIT:<code>, no tee/grep filtering on a capture (at4's grep is inside the invoked command itself). at2's body shows the [C15] FAIL, both pinned vlib_profiles_map_roles detail lines, no vlib_profiles_cover_roles failure line, and EXPECTATIONS HELD. The Generator's s02 capture was correctly taken in the attempt root (commits past B 0, delta 14 in-scope paths). Replays: AT1 replay EXIT:0 (mode-b-rerun/at1-replay.txt); AT4 replay EXIT:0 with the primitive exiting 1 and the no-Role-column line 'vlib_profiles_map_roles: profiles doc ... Section 2 table has no 'Role' column' (mode-b-rerun/at4-replay.txt). Recorded results reproduced.",
+    "Duty 4 (independent deliverable sanity, mode-b-rerun/deliverable-sanity.txt): the five Section 2 rows name their own AGF roles (orchestrator-primary -> Orchestrator, planner-creative -> Planner, generator-deterministic -> Generator, validator-structural -> Validator, evaluator-adversarial -> Evaluator); the vlib_profiles_cover_roles region of tools/verify_lib.sh is byte-identical to <A> (independent python region diff, confirming S04); bash tools/validate.sh --help output is identical to <A>'s; framework.version in NIZAM.json is still 1.4.0; and CHANGELOG.md, .agent/feature_list_014.json, .agent/product_spec_014.md, docs/planning/phase_014.yaml, docs/planning/DEBT.md, standard/AGF.md, tools/fixtures_self_test.sh, tools/interface.md, tools/skill.json, and NIZAM.json are all unchanged vs <A>.",
+    "Duty 5 (high risk, C15 in the shipped default sweep): negative paths still bite. The Mode B S05 re-run case 1 reproduced the AT2 swapped planner<->generator mutation failing C15 with exactly the two pinned detail lines and no output from the old primitive. Independently of the scratch_run harness, a manual probe (git archive HEAD to mktemp, swap the two Role cells with python, run bash tools/validate.sh; mode-b-rerun/scratch-manual-swapped-roles.txt) reproduced [C15] FAIL capability-profile-roles with both pinned vlib_profiles_map_roles detail lines, SUMMARY: 15 passed, 1 failed, validate.sh exit 1 (the capture's trailing EXIT:0 is the compound probe wrapper's exit; the load-bearing 'validate.sh exit: 1' is recorded in the body). AT6 fixtures self-test re-run serially: SELF-TEST OK: 147/147, EXIT:0 (mode-b-rerun/at6-fixtures-self-test.txt).",
+    "B1-B8: all pass. No new check id, no schema change, no --help edit, no CHANGELOG bullet, no run_state/feature-list/phase-YAML/DEBT.md edit by the implementation commit, no new dependency. The default sweep stays at 16 checks and --payload at 12 (S05 cases 2 and 4 re-proved). One measured premise correction stands verified: validate.sh --help never had a C15 paragraph, and none was invented; the README row and C15 comment block carry the swapped-mapping claim, pinned byte-exact by S04."
+  ],
+  "checks": {
+    "B1_deliverable_existence": "pass",
+    "B2_interface_fidelity": "pass",
+    "B3_scope_adherence": "pass",
+    "B4_test_existence": "pass",
+    "B5_dependency_fidelity": "pass",
+    "B6_anti_scope_creep": "pass",
+    "B7_anti_gaming": "pass",
+    "B8_completeness": "pass"
+  },
+  "final_verdict": {
+    "approved": true,
+    "mode": "B",
+    "contract_id": "109",
+    "feature_id": "109",
+    "revision_reviewed": 0,
+    "risk_level": "high",
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "required_fixes": [],
+    "summary": "Mode B APPROVED for contract 109 revision 0 at HEAD 366da07. The diff <B>..HEAD is exactly the 4 files_modify, the 12 contracted files_create under .agent/evidence/109/, and the Orchestrator-owned run_state-only commit e728cfa; the Generator's cherry-picked commit touches exactly the 16 in-scope paths and no run_state. Mode B re-ran S01 (EXIT:0), S04 (EXIT:0), S05 (EXIT:0, all five discriminating cases PASS), and S03 in a .nizam/-free private clone (EXIT:0). S02 re-run in the real tree hard-fails only on the Orchestrator-owned run_state commit between <B> and HEAD, the untracked .nizam/ the contract itself forbids in such scans, and this reviewer's own rerun captures -- the guard working as designed outside its attempt-root context; the Generator commit in isolation satisfies the S02 substance. Independently of the Generator's captures: the AT2 swapped mutation fails C15 via vlib_profiles_map_roles with both pinned detail lines (reproduced via scratch_run case 1 and via a manual no-harness scratch probe), AT1/AT4 replays reproduce, AT6 re-runs 147/147, the five table rows name their own AGF roles, the old primitive and --help are byte-identical to <A>, framework.version stays 1.4.0, and CHANGELOG.md, feature list, spec, phase YAML, and DEBT.md are untouched. No defect found."
+  }
+}

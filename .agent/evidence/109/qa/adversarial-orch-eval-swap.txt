@@ -1,0 +1,30 @@
+python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --py-mutate "p=root/'standard/capability_profiles.md'; L=p.read_text().split('\n'); h=next(i for i,l in enumerate(L) if l.startswith('| Capability Profile')); c=[x.strip() for x in L[h].split('|')].index('Role'); r=[i for i,l in enumerate(L) if l.startswith('| \x60orchestrator-primary\x60') or l.startswith('| \x60evaluator-adversarial\x60')]; assert len(r)==2; a,b=[L[i].split('|') for i in r]; a[c],b[c]=b[c],a[c]; L[r[0]],L[r[1]]='|'.join(a),'|'.join(b); p.write_text('\n'.join(L))" --expect-rc 1 --expect '^\[C15\] FAIL' --expect "profile 'orchestrator-primary' row names role 'Evaluator'" --expect "profile 'evaluator-adversarial' row names role 'Orchestrator'" --forbid '^  vlib_profiles_cover_roles:' -- bash tools/validate.sh
+scratch_run: applied --py-mutate
+scratch_run: command bash tools/validate.sh -> exit 1
+  | [C1] PASS frontmatter-schema
+  | [C2] PASS format
+  | [C3] PASS untagged-fence-sweep
+  | [C4] PASS index-integrity
+  | [C5] PASS branding-leakage
+  | [C6] PASS bootstrap-sanity
+  | [C7] PASS module-readme-presence
+  | [C8] PASS version-bump-vs-changelog
+  | [C9] PASS path-resolution
+  | [C10] PASS consistency
+  | [C11] PASS dogfood
+  | [C12] PASS ecosystem-fixtures
+  | [C13] PASS skill-index
+  | [C14] PASS workflow-sha-pins
+  | [C15] FAIL capability-profile-roles
+  |   
+  |   vlib_profiles_map_roles: profile 'orchestrator-primary' row names role 'Evaluator', expected its own role 'Orchestrator'
+  |   vlib_profiles_map_roles: profile 'evaluator-adversarial' row names role 'Orchestrator', expected its own role 'Evaluator'
+  | [C16] PASS feature-list-lifecycle
+  | SUMMARY: 15 passed, 1 failed
+PASS exit status == 1
+PASS output matches '^\\[C15\\] FAIL'
+PASS output matches "profile 'orchestrator-primary' row names role 'Evaluator'"
+PASS output matches "profile 'evaluator-adversarial' row names role 'Orchestrator'"
+PASS output does not match '^  vlib_profiles_cover_roles:'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0

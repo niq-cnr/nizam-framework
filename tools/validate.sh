@@ -2313,20 +2313,24 @@ check_c14_workflow_pins() {
 }
 
 # C15 -- capability-profile <-> AGF-role correspondence (feature 058, Track 3
-# capability-profile mechanize). Each of the five capability profiles
+# capability-profile mechanize; phase-014 feature 109, NDEBT-026, adds the
+# mapping direction). Each of the five capability profiles
 # (standard/capability_profiles.md) maps to a role defined in standard/AGF.md;
 # the vetted vlib_profiles_cover_roles primitive guards the 5<->5 correspondence
 # feature 053 made true (NDEBT-010) against drift (a dropped profile or role
-# fails it). Default-mode only: a framework-authoring invariant the consumer
+# fails it), and the vlib_profiles_map_roles primitive fails unless each
+# profile row's explicit Role column names its own role -- a swapped mapping
+# fails C15. Default-mode only: a framework-authoring invariant the consumer
 # inherits already-verified.
 check_c15_capability_profile_roles() {
-  local out
-  if out=$(vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md 2>&1); then
+  local out out2
+  if out=$(vlib_profiles_cover_roles standard/capability_profiles.md standard/AGF.md 2>&1) \
+    && out2=$(vlib_profiles_map_roles standard/capability_profiles.md standard/AGF.md 2>&1); then
     echo "[C15] PASS capability-profile-roles"
     return 0
   fi
   echo "[C15] FAIL capability-profile-roles"
-  printf '%s\n' "${out}" | sed 's/^/  /'
+  printf '%s\n' "${out}" "${out2:-}" | sed 's/^/  /'
   return 1
 }
 
