@@ -1,0 +1,30 @@
+python3 .agent/evidence/scope-budget-014/measure.py --range 106=e2a50ed.. --files
+== 106: e2a50ed..WORKTREE
+   resolved e2a50ed417e5396faa2e5593896ea84a2a128a3f..WORKTREE+untracked
+   paths=33 binary_paths=0
+   class                       files   lines
+   budget/product                  0       0
+   budget/product-ext              0       0
+   budget/contract                 0       0
+   budget/verdict                  0       0
+   budget/audit-deliverable        0       0
+   budget/planning                 4     822
+   evidence                       28    1035
+   excluded/run_state              1       9
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/planning                681  docs/planning/HANDOVER.md
+   budget/planning                 42  docs/planning/ROADMAP.md
+   budget/planning                 68  docs/planning/backlog_dag.json
+   budget/planning                 31  docs/planning/backlog_reconciliation.md
+   excluded/run_state               9  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                       28    1035  .agent/evidence/handover-2026-10/
+   PRODUCT_LINES=0
+   PROCESS_OVERHEAD_LINES=822  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=822
+   EVIDENCE_LINES=1035
+   EXCLUDED_LINES=9
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=1866  (= budget 822 + evidence 1035 + excluded 9 + unclassified 0)
+EXIT:0

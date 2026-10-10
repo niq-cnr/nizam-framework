@@ -1,0 +1,3 @@
+gh run view 37980556248 --json databaseId,workflowName,event,headBranch,headSha,conclusion,jobs --jq '{id:.databaseId,wf:.workflowName,ev:.event,br:.headBranch,sha:.headSha[0:7],c:.conclusion,jobs:[.jobs[]|{n:.name,c:.conclusion}]}'
+{"br":"phase/014-104-sandbox-ci","c":"success","ev":"pull_request","id":37980556248,"jobs":[{"c":"success","n":"validate"},{"c":"success","n":"fixtures_self_test"},{"c":"success","n":"e2e_bootstrap"},{"c":"success","n":"convergent_review"}],"sha":"a278fcd","wf":"compliance"}
+EXIT:0

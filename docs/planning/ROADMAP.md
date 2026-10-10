@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.46.0
+version: 0.47.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.47.0"
+    date: "2026-10-10"
+    summary: "Handover refresh (planning records only, branch chore/handover-2026-10 from main e2a50ed; operator request recorded in run_state as operator_gate_decision 2026-10-10T02:11:41Z). The Current Position heading date moves from 2026-08-15 to 2026-10-10. A new first bullet records phase-014 progress: 099, 103, 104 and 105 are complete (PRs #66, #67, #68, #70), the position is current_feature 106, and the budget stands at 3714 of 8600 (ceiling 11180). The open-debt bullet is rolled to the eight Open rows at DEBT.md 0.51.0 (NDEBT-047, 046, 045, 044, 040, 037, 034, 026), as NDEBT-044 (e) asks; feature 102 AT5 still re-rolls it at phase close. The phase-014 Plan of Record banner gains a progress paragraph, a pointer to docs/planning/HANDOVER.md, and re-baseline notes beside the superseded 6660/8658 figures (spec 1.1.4: 8600/11180, operator 'option 1 confirmed.'). The activation-era text is otherwise unedited, and no feature status or acceptance test changes. The older Current Position bullets are deliberately unedited history, so that the release close-out gate's version-scoped disposition line is not disturbed; the new first bullet carries an italic note naming the two statements in them that are superseded at 2026-10-10 (ecosystem/06 and 08 were activated by feature 099; phases 001-013, not 001-012, are complete). Revised after Validator round 1 (that note)."
   - version: "0.46.0"
     date: "2026-10-08"
     summary: "Phase 014 ACTIVATED (gate H-PHASE-014, operator verbatim: '- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.', 2026-10-08, recorded in run_state as operator_gate_decision at 2026-10-08T11:21:14Z before the re-planning per NDEBT-018): the 'Proposed Next Phase — Phase 014' banner becomes the Plan of Record banner (the proposal-era paragraphs below it are preserved unedited as history). Activation is canonical-first: phase_014.yaml in_progress, then manifest current_phase 014-ga-track; the run_state position is the Orchestrator's third write. Approved amendments applied by the Planner (product_spec_014 1.1.0): edge 101->099, hardened acceptance tests, the phase-scoped tag check, the run_state clarifying clause; the maintenance tranche folded in as features 103-109 ahead of 102; scope re-baselined 2200 -> 6660, the Planner's activation-time estimate (naive 2890 x the measured 2.3 process weight, NIP-0003:494-495; ceiling 8658), approved by the operator 2026-10-08, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z). Validator rounds 1-2 (spec 1.1.2): 102's machine-readable dossier, debt cross-check and hash pin, with 099 AT3/AT6/AT7 and 101 AT2, are Planner hardening, operator-acknowledged 2026-10-08T13:20:12Z ('acknowledged.'); 102 AT5 (the NDEBT-044 e open-debt roll) is approved-tranche coverage under the 11:21:14Z decision; every acceptance test probed pre-implementation. New pointer to the backlog reconciliation package (docs/planning/backlog_reconciliation.md + backlog_dag.json). NIP-0003 queued section: a note that its provisional feature ids shift (103-113 -> provisionally 110-120) and that several of its phase-014 premises went stale; the NIP itself is not edited. Current Position's released-tag disposition line is untouched."
@@ -155,7 +158,7 @@ maintenance-tranche fold (verbatim:
 "- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.",
 gate **H-PHASE-014**), recorded in `.agent/run_state.json` as an `operator_gate_decision` at 2026-10-08T11:21:14Z
 before the re-planning (NDEBT-018). The Planner artifacts `.agent/product_spec_014.md` (status `active`, 1.1.2) and
-`.agent/feature_list_014.json` (features 099–109, DAG-validated, list order topological, est 6660) are the plan of
+`.agent/feature_list_014.json` (features 099–109, DAG-validated, list order topological, est 6660, re-baselined to 8600 by spec 1.1.4) are the plan of
 record, together with the canonical phase document `docs/planning/phase_014.yaml` (`in_progress`) and the manifest
 (`current_phase: 014-ga-track`); the derived run_state position, the Orchestrator's third, canonical-first write,
 landed at 2026-10-08T12:18:31Z (`current_phase` `014-ga-track`, `current_feature` `099`, `in_progress`).
@@ -184,7 +187,16 @@ close. The workflow-change non-goal is lifted for these features only (only 104 
 **Order and budget.** Recommended single lane: 099 → 103 → 104 → 105 → 106 → 107 → 109 → 108 → 100 → 101 → 102;
 the first eligible feature is 099. `original_estimate_lines` 6660, 130 percent ceiling 8658 (was 2200): the
 Planner's activation-time estimate, naive 2890 × the measured 2.3 process weight (NIP-0003:494-495), approved by the operator 2026-10-08, verbatim "In approve the increased budget." (run_state operator_gate_decision 2026-10-08T12:50:31Z). **Outstanding:** the real member set for feature 100 and each member's
-`H-CONSUMER-UPGRADE` — `H-PHASE-014` designates no member.
+`H-CONSUMER-UPGRADE` — `H-PHASE-014` designates no member. *Re-baselined 2026-10-09 (spec 1.1.4, the phase-014
+counting rule, `.agent/evidence/scope-budget-014/measure.py`): `original_estimate_lines` 8600, ceiling 11180,
+operator-confirmed ("option 1 confirmed.", run_state 2026-10-09T17:59:00Z); the 6660/8658 figures above are
+superseded.*
+
+**Progress (2026-10-10).** Features 099 (PR #66, `88959c9`), 103 (PR #67, `b8ea889`), 104 (PR #68, `2a53764`) and
+105 (PR #70, `e2a50ed`) are complete; the run_state position is `current_feature` `106` with no active contract.
+Budget-counted lines: 3714 of 8600 (ceiling 11180). Remaining lane: 106 → 107 → 109 → 108 → 100 → 101 → 102;
+feature 100 still awaits the operator's member set and per-member `H-CONSUMER-UPGRADE`. **New developers start at
+[`HANDOVER.md`](HANDOVER.md).**
 
 **Backlog reconciliation.** The crosswalk of the 2026-10-08 maintainer brief (aliases A00–A16, scenarios T01–T19,
 NIP-0003 cases 1–13), the decision record, the candidate DAG view and the Workflow Assurance NIP outline are in
@@ -759,8 +771,17 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-08-15)
+## Current Position (2026-10-10)
 
+- **Phase 014 (GA Track) is in progress.** Features 099, 103, 104 and 105 are complete and merged (PRs #66, #67,
+  #68, #70; `main` at `e2a50ed`), resolving `NDEBT-043`, `NDEBT-041` and `NDEBT-042`; the next feature is 106, and
+  the remaining lane is 106 → 107 → 109 → 108 → 100 → 101 → 102. Budget-counted lines stand at 3714 of 8600
+  (ceiling 11180, spec 1.1.4). `main` carries unreleased changes since `v1.4.0`; the next release is a separate
+  operator `H-FRAMEWORK-RELEASE`. The handover record is [`HANDOVER.md`](HANDOVER.md).
+  *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
+  statements are superseded at 2026-10-10: feature 099 has activated `ecosystem/06_simplification_review.md` and
+  `ecosystem/08_ga_gate.md` (the release bullet's "activation awaits phase-014 feature 099" predates it), and
+  phases 001–013 are complete (the "Phases 001–012" bullet predates phase 013's close).*
 - **Phase 012 and the v1.0.0 release are complete:** Consumer-Safety Remediation features
   085–091 resolve the complete issue #52 batch from real v0.9.0 consumer adoption
   (`NDEBT-036`, Critical). The operator authorized activation with "approved. please proceed."
@@ -869,9 +890,14 @@ successor, leaving open debt deferred to unscoped "future phases").
   finding; affected consumers must follow `docs/migration-v1.0.0.md` and obtain their
   own `H-CONSUMER-UPGRADE` decision before adoption. **`NDEBT-036` resolved.** v0.9.0
   (released 2026-07-22 at merge commit `5b19b85`, PR #50) is the preceding release.
-- Open debt (current, at DEBT.md v0.40.0): two rows remain Open, both Low enhancements —
-  `NDEBT-026` (C15 mapping-direction depth) and `NDEBT-034` (per-member clone cost).
-  `NDEBT-036` is **Resolved** by Phase 012 and the v1.0.0 release.
+- Open debt (current, at DEBT.md v0.51.0): eight rows remain Open, all Low —
+  `NDEBT-047` (self-test C13 swap without an EXIT backstop), `NDEBT-046` (sandbox-test namespace
+  discrimination), `NDEBT-045` (`--payload` help paragraph), `NDEBT-044` (index and documentation
+  drift bundle; features 106, 107, 108 and 102), `NDEBT-040` (SHA-anchored run_state byte-guards),
+  `NDEBT-037` (`--help` stops at C13; feature 108), `NDEBT-034` (per-member clone cost) and
+  `NDEBT-026` (C15 mapping direction; feature 109). Phase 014 has **Resolved** `NDEBT-043`,
+  `NDEBT-041` and `NDEBT-042` (features 103, 104, 105).
+  `NDEBT-036` is Resolved by Phase 012 and the v1.0.0 release.
   `NDEBT-029` (audit/compare not in a released tag) is **Resolved** by the
   v0.9.0 release. The 0–n programme's scope rows are all **Resolved**: `NDEBT-027`/`NDEBT-028`
   (consumer-readiness, phase 008), `NDEBT-032`/`NDEBT-033` (brownfield + bootstrap SHA pin,
