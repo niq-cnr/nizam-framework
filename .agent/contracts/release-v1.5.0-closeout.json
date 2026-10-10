@@ -1,0 +1,66 @@
+{
+  "contract_id": "release-v1.5.0-closeout",
+  "feature_id": "release-v1.5.0-closeout",
+  "name": "Record published v1.5.0 GA release and refresh handover entry point",
+  "status": "complete",
+  "spec_ref": "methodology/06_release_train.md",
+  "scope": {
+    "files_create": [],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Add one Unreleased post-release ledger/handover refresh entry without rewriting released notes."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Bump document version/change_log, remove v1.5.0 preparation bullet, roll latest/prior release records using observed tag/commit/workflow facts; preserve completed phase and current GA facts."
+      },
+      {
+        "path": "docs/planning/operator_gates.md",
+        "purpose": "Bump version/change_log, append observed v1.5.0 release EXECUTED facts to recurring H-FRAMEWORK-RELEASE row; retain H-GA decision and exceptions."
+      },
+      {
+        "path": "docs/planning/HANDOVER.md",
+        "purpose": "Bump 1.0.0 to1.0.1 with matching change_log and add prominent dated Current status note: phase014 complete, 100/101 cancelled, v1.5.0 released and operator-declared GA, old contents historical, live canonical files govern next work."
+      },
+      {
+        "path": "docs/planning/manifest.json",
+        "purpose": "Append observed post-phase v1.5.0 release/GA fact to phase014 completion note; phase/current_phase/status/steps unchanged."
+      }
+    ]
+  },
+  "non_goals": [
+    "No changes to injected payload, bootstrap, workflows, release version anchors, released CHANGELOG section, historical dossier, phase spec/feature-list/YAML, frozen acceptance scripts, debt register or backlog DAG.",
+    "No invented evidence, retrospective prerequisite satisfaction, consumer repo upgrades, additional GA decisions or next phase activation.",
+    "Tag act and run_state release execution coordination remain Orchestrator mechanics. Fresh tag/workflow/bootstrap evidence and approval/QA artifacts are framework-only evidence, outside product edits."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "All mechanical governance checks remain green after editorial ledger changes.",
+      "command": "bash tools/validate.sh"
+    },
+    {
+      "acceptance_test": "Release anchor closeout remains consistent at current tree and immutable published tag.",
+      "command": "python3 .github/scripts/release_closeout.py --mode pr && python3 .github/scripts/release_closeout.py --mode tag --tag v1.5.0"
+    },
+    {
+      "acceptance_test": "Bounded publication facts, handover notice, historical immutability and version records are verified against actual GitHub/tag evidence.",
+      "command": "python3 - <<'CHECK'\nimport json,re,subprocess,hashlib\nfrom pathlib import Path\nr=json.loads(Path('.agent/run_state.json').read_text()); e=[x for x in r['history'] if x.get('event')=='release_executed' and x.get('tag')=='v1.5.0'][-1]\nsha=subprocess.check_output(['git','rev-parse','v1.5.0^{commit}'],text=True).strip(); assert e['commit']==sha\nassert hashlib.sha256(Path('.agent/evidence/102/ga-readiness.json').read_bytes()).hexdigest()=='d98ccec0f3c57cda51876db3286b57005143ef771b88b4c92f36748de4c0f590'\nroad=Path('docs/planning/ROADMAP.md').read_text().split('\\n---\\n',1)[1]; current=road.split('## Current Position',1)[1].split('\\n## ',1)[0]; assert current.count('Latest released tag: v1.5.0')==1 and 'Release in preparation: v1.5.0' not in current; assert sha in current\nh=Path('docs/planning/HANDOVER.md').read_text(); note=h.split('## Current status — 2026-10-10',1)[1].split('\\n## ',1)[0]; assert 'Phase 014 is complete.' in note; assert 'Features 100 and 101 were cancelled' in note; assert 'General Availability' in note and 'v1.5.0' in note and 'historical' in note\ng=Path('docs/planning/operator_gates.md').read_text(); line=[x for x in g.splitlines() if x.startswith('| `H-FRAMEWORK-RELEASE`')][0]; assert all(x in line for x in ['v1.5.0','EXECUTED',sha]); ga=[x for x in g.splitlines() if x.startswith('| `H-GA`')][0]; assert all(x in ga for x in ['EXECUTED','not_met','insufficient_evidence'])\nrelease=json.loads(subprocess.check_output(['gh','release','view','v1.5.0','--json','tagName,isDraft,isPrerelease,publishedAt,url'],text=True)); assert release['tagName']=='v1.5.0' and not release['isDraft'] and not release['isPrerelease'] and release['publishedAt']\nbase=subprocess.check_output(['git','show','v1.5.0:CHANGELOG.md'],text=True); c=Path('CHANGELOG.md').read_text(); assert c[c.index('## [1.5.0]'):]==base[base.index('## [1.5.0]'):]\nbaseline=json.loads(subprocess.check_output(['git','show','v1.5.0:docs/planning/manifest.json'],text=True)); manifest=json.loads(Path('docs/planning/manifest.json').read_text()); phase=next(x for x in manifest['phases'] if x['id']=='014-ga-track'); original=next(x for x in baseline['phases'] if x['id']=='014-ga-track'); assert phase['note'].startswith(original['note']); assert 'Post-phase release: v1.5.0' in phase['note'][len(original['note']):] and sha in phase['note'][len(original['note']):]; phase['note']=original['note']; assert manifest==baseline\nprint('PASS published release facts, current planning/handover, GA exceptions and immutable released notes')\nCHECK"
+    },
+    {
+      "acceptance_test": "Only the five bounded editorial files plus framework-only closeout artifacts and Orchestrator run_state changed relative to v1.5.0.",
+      "command": "python3 - <<'CHECK'\nimport subprocess\nallow={'CHANGELOG.md','docs/planning/ROADMAP.md','docs/planning/operator_gates.md','docs/planning/HANDOVER.md','docs/planning/manifest.json','.agent/run_state.json','.agent/contracts/release-v1.5.0-closeout.json','.agent/validator/release-v1.5.0-closeout-mode-a.json','.agent/validator/release-v1.5.0-closeout-mode-b.json','.agent/qa/release-v1.5.0-closeout-contract-review.json','.agent/qa/release-v1.5.0-closeout.json'}\nprefix='.agent/evidence/release-v1.5.0-tag/'\nchanged=set(subprocess.check_output(['git','diff','--name-only','v1.5.0'],text=True).splitlines()); changed.update(subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines()); bad=[p for p in changed if p not in allow and not p.startswith(prefix)]; assert not bad,bad\nprint('PASS five-file editorial scope + allowed closeout artifacts')\nCHECK"
+    }
+  ],
+  "estimated_lines": 200,
+  "evidence_dir": ".agent/evidence/release-v1.5.0-tag/",
+  "evidence_convention": "Fresh captures: exact invocation first, raw output, EXIT:<code> last. Tag/publication/bootstrap artifacts are recorded only after actual external results. QA references every command capture.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 2,
+    "approved_at": "2026-10-10T17:37:39Z"
+  },
+  "runtime_role_disclosure": "Parent temporarily embodies Generator for this bounded post-release editorial refresh; independent Validator Mode A and B plus Evaluator contract review/QA remain mandatory. It resumes Orchestrator for coordination, commits/PRs/merge and tag/release mechanics. Temporary pre-code drafts corrected command quoting and exact current-fact/manifest-note assertions before implementation; contract attempt3/3.",
+  "precondition": "Implement only after first release PR merged, annotated tag v1.5.0 pushed at its reviewed merge commit, release workflow succeeded, release pinned latest, and real tag bootstrap verified. Observed tag/commit/workflow facts supply the concrete ledger values."
+}

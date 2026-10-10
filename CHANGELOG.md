@@ -7,6 +7,18 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **v1.5.0 post-release records and handover refresh** (framework-envelope only).
+  `docs/planning/ROADMAP.md` (0.51.0) records the published GA release at reviewed
+  PR #78 merge `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`, its annotated tag and green release workflow;
+  `docs/planning/operator_gates.md` (0.31.0) records release execution, and
+  `docs/planning/HANDOVER.md` (1.0.1) adds current status above its historical snapshot.
+  The manifest completion note records the post-phase release. GitHub Latest and
+  consumer pins select `v1.5.0`; real public-tag bootstrap and payload12/12 passed.
+  The operator's GA decision and explicit historical evidence exceptions remain
+  unchanged. No injected payload or completed phase acceptance infrastructure changes.
+
 ## [1.5.0] - 2026-10-10
 
 **Minor release** (`methodology/06_release_train.md` Section 3.2): phase 014 (GA track)

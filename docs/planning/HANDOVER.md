@@ -1,19 +1,41 @@
 ---
 id: nizam-handover-2026-10
-title: "Developer Handover — nizam-framework, Phase 014 Remaining Backlog (2026-10)"
-description: "Onboarding and handover record for an engineer taking over the remaining phase-014 backlog (features 106, 107, 109, 108, 100, 101, 102): reading order, verified state at main e2a50ed, the working method as practised, the remaining features with their gates and hazards, operator authority, environment gotchas, housekeeping inventory, and open tensions."
-version: 1.0.0
+title: "Developer Handover — Release Status and Phase 014 Snapshot"
+description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
+version: 1.0.1
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-10"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.1"
+    date: "2026-10-10"
+    summary: "Add current release status after phase014 completed and v1.5.0 GA published: features100/101 cancelled; real tag/bootstrap evidence recorded. Retain the original e2a50ed handover as a labelled historical snapshot and point to current canonical planning records; no historical acceptance tests or dossier rewritten."
   - version: "1.0.0"
     date: "2026-10-10"
     summary: "Initial handover record, authored by the Planner on branch chore/handover-2026-10 cut from main e2a50ed (PR #70 merged), after the operator asked for the project to be prepared for a new developer (run_state operator_gate_decision 2026-10-10T02:11:41Z). Every figure was re-verified against the repository; the replayable checks are in .agent/evidence/handover-2026-10/. Revised after Validator round 1, before merge: (b) states how this package's own budget-counted lines are treated (the Planner's phase-level-item interpretation, effective only when the Orchestrator records it), 106's measurement base and measure.py commands, and the budget figures both pre-handover and including the handover; (c) quotes the 19:28:39Z record's 11-step summary of the brief and presents the 12 steps as practised, adds that an Evaluator contract-review rejection also uses up a contract attempt (103 precedent), separates the evidence gate's EXIT:<code> rule from the practised all-EXIT:0 convention, cites the human_authorized_extension as recorded practice under 03 Section 6, and separates routine pushes and PRs from operator-authorized outward acts; (f) adds the local acceptance-gate helpers, the fixture self-test and the four CI jobs; (g) states both V13 conditions and the DAG critical-path artifact; (h) ties the expected v1.5.0 roll-up to H-NIP and H-PHASE-015; (a) item 12 names the Orchestrator and the four execution roles. Revised after Validator round 2, before merge: (c) states that the Validator runs only read-only git commands and file reads and cannot run verification commands (105-mode-b.json prior_rounds[0] MB-1); step 5 states that attempt-base.txt has been used since 103 (099's base only in run_state); steps 7-8 state that 104 and 105 ran Mode B round 1 on the unpromoted attempt commit, and that a post-promotion Mode B round is still needed when the contract has Mode B obligations on the promoted tree (105 MB-1)."
 ---
 
-# Developer Handover — Phase 014 Remaining Backlog
+# Developer Handover — Release Status and Phase 014 Snapshot
+
+## Current status — 2026-10-10
+
+Phase 014 is complete. Features 100 and 101 were cancelled by operator amendment A3;
+features 099 and 102–109 completed. Nizam `v1.5.0` is released at commit
+`f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852` (PR #78), and GitHub marks it Latest.
+General Availability was declared by the operator on 2026-10-10 under `H-GA`.
+The historical dossier still records the production pilot as `not_met` and recorded
+consumer-adoption evidence as `insufficient_evidence`; those findings are unchanged.
+Public-tag bootstrap, provenance verification and payload validation (12/12) passed.
+
+The original handover below is a historical snapshot at `e2a50ed`, including its
+then-remaining backlog and commands. For current work, read [ROADMAP.md](ROADMAP.md),
+[operator_gates.md](operator_gates.md), [manifest.json](manifest.json) and
+[DEBT.md](DEBT.md). NIP-0003 remains queued under `H-NIP`; no next phase is activated.
+Completed phase-014 assertions should be interpreted at their recorded assessment
+revision. Tag and publication evidence: `.agent/evidence/release-v1.5.0-tag/`.
+
+## Historical handover snapshot
 
 This record is for a competent engineer who is new to this repository. It states
 what is true at `main` `e2a50ed` (PR #70, merged 2026-10-10), how the work has been

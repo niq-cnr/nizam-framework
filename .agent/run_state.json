@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-10T17:20:32Z",
+  "updated_at": "2026-10-10T17:35:27Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -282,6 +282,11 @@
       "attempts": 2,
       "limit": 3,
       "note": "Attempt1 QA detected C9 misreading external markdown URL and temporarily present unrelated draft contract. Attempt2 uses independently ratified HTML slash encoding and restores exact scope; no tools/payload change."
+    },
+    "release-v1.5.0-closeout-contract": {
+      "attempts": 3,
+      "limit": 3,
+      "note": "Temporary draft quoting correction; independent pre-code reviews before five-file editorial implementation."
     }
   },
   "history": [
@@ -2074,6 +2079,35 @@
       "event": "implementation_retry",
       "contract_id": "release-v1.5.0",
       "detail": "Attempt2/3 begins after both independent reviews ratified bounded QA repair: browser-equivalent HTML slash encoding, explicit final QA artifact allowance and coordinator retry state. Unrelated closeout draft moved outside delivery tree; failed QA retained with original captures."
+    },
+    {
+      "at": "2026-10-10T17:35:27Z",
+      "event": "release_executed",
+      "tag": "v1.5.0",
+      "version": "1.5.0",
+      "commit": "f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852",
+      "tag_object_sha": "08dbe12a38c7cd8d8fb8d52757cd096551bbc779",
+      "release_url": "https://github.com/niq-cnr/nizam-framework/releases/tag/v1.5.0",
+      "published_at": "2026-10-10T17:32:24Z",
+      "workflow_run": 38072142688,
+      "ga_declared": true,
+      "detail": "Operator-authorized release completed after PR78 merged with all five CI checks green. Annotated tag is pinned at the reviewed merge commit; tag-mode closeout and release workflow passed, GitHub Latest is v1.5.0. Real public-tag bootstrap/provenance verification and consumer payload validation12/12 pass. Published guide matches tag source byte-for-byte. Historical readiness dossier and explicit H-GA evidence exceptions remain unchanged.",
+      "evidence": [
+        ".agent/evidence/release-v1.5.0-tag/01-tag-object.txt",
+        ".agent/evidence/release-v1.5.0-tag/02-closeout-tag-mode.txt",
+        ".agent/evidence/release-v1.5.0-tag/03-remote-tag.txt",
+        ".agent/evidence/release-v1.5.0-tag/04-release-workflow-run.txt",
+        ".agent/evidence/release-v1.5.0-tag/05-github-release.txt",
+        ".agent/evidence/release-v1.5.0-tag/06-consumer-quickstart.txt",
+        ".agent/evidence/release-v1.5.0-tag/07-merged-release-pr.txt",
+        ".agent/evidence/release-v1.5.0-tag/08-published-guide.txt"
+      ]
+    },
+    {
+      "at": "2026-10-10T17:35:27Z",
+      "event": "contract_revision",
+      "contract_id": "release-v1.5.0-closeout",
+      "detail": "Post-release editorial refresh draft attempt2/3: initial temporary proposal had literal newline quoting defect in verification[2], corrected before canonical proposal; Validator reviewed corrected syntax and scope. No historical source/tests/dossier or payload changes authorized."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2648,7 +2682,7 @@
       }
     ]
   },
-  "last_action": "Operator authorized v1.5.0 preparation, clean merge and tag/pin, and declared GA; independent release preparation gates next.",
+  "last_action": "v1.5.0 GA release published and pinned at f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852; final release-ledger and handover refresh next.",
   "completed_contract_ids": [
     "099",
     "103",
