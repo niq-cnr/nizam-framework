@@ -1,0 +1,32 @@
+python3 .agent/evidence/107-qa-adversarial-contract-review/helpers/mutant_shipped.py
+scratch_run: applied --py-mutate
+scratch_run: command bash tools/validate.sh -> exit 1
+  | [C1] PASS frontmatter-schema
+  | [C2] PASS format
+  | [C3] FAIL untagged-fence-sweep
+  |   docs/nips/NIP-0001-ecosystem-engineering-cycle.md:285
+  | [C4] PASS index-integrity
+  | [C5] FAIL branding-leakage
+  |   docs/nips/NIP-0001-ecosystem-engineering-cycle.md:34:| Operator | Ecosystem operator (`rosscn@nizamiq.com`) |
+  | [C6] PASS bootstrap-sanity
+  | [C7] PASS module-readme-presence
+  | [C8] PASS version-bump-vs-changelog
+  | [C9] FAIL path-resolution
+  |   docs/nips/NIP-0001-ecosystem-engineering-cycle.md: unresolved path reference 'docs/nips/DOES-NOT-EXIST.md'
+  |   docs/nips/NIP-0001-ecosystem-engineering-cycle.md: unresolved path reference 'schema/dependency_graph.schema.json'
+  |   docs/nips/NIP-0001-ecosystem-engineering-cycle.md: unresolved path reference 'schema/ecosystem_complexity.schema.json'
+  |   docs/nips/NIP-0001-ecosystem-engineering-cycle.md: unresolved path reference 'schema/ga_evidence_index.schema.json'
+  | [C10] PASS consistency
+  | [C11] PASS dogfood
+  | [C12] PASS ecosystem-fixtures
+  | [C13] PASS skill-index
+  | [C14] PASS workflow-sha-pins
+  | [C15] PASS capability-profile-roles
+  | [C16] PASS feature-list-lifecycle
+  | SUMMARY: 13 passed, 3 failed
+PASS exit status == 1
+PASS output matches '^\\[C3\\] FAIL'
+PASS output matches '^\\[C9\\] FAIL'
+PASS output matches 'DOES-NOT-EXIST'
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+EXIT:0

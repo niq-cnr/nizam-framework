@@ -1,0 +1,4 @@
+import subprocess, sys
+code = 'p = root / "tools/README.md"\nt = p.read_text()\nentry = (\n    "  - version: \\"0.16.0\\"\\n"\n    "    date: \\"2026-10-10\\"\\n"\n    "    summary: \\"Name docs/nips/ on the C1 row: the default sweep checks every NIP markdown file under C1 and C2 only, and those files are not part of the shipped-doc set (NDEBT-044 b).\\"\\n"\n)\nassert t.count(entry) == 1, t.count(entry)\nassert "version: 0.16.0\\n" in t\np.write_text(t.replace(entry, "", 1))'
+argv = [sys.executable, '.agent/evidence/phase-014-activation/gates/scratch_run.py', '--py-mutate', code, '--expect-rc', '1', '--expect', r'^\[C8\] FAIL version-bump-vs-changelog$', '--expect', 'tools/README.md: version bumped 0.15.0 -> 0.16.0', '--forbid', r'^\[C1\] FAIL', '--', 'bash', 'tools/validate.sh']
+sys.exit(subprocess.run(argv).returncode)
