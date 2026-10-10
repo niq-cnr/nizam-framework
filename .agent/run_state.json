@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-10T15:55:40Z",
+  "updated_at": "2026-10-10T16:32:48Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2026,6 +2026,32 @@
       "event": "scope_budget_measured",
       "feature": "102",
       "detail": "Phase-014 rule (spec 1.1.4) over a5d6506..b377c2b: BUDGET_COUNTED_LINES=906 (product 0, contract 380, verdict 509, planning 17), within the 600-1100 range, 56 over the 850 point estimate; EVIDENCE_LINES=1811, EXCLUDED_LINES=41, UNCLASSIFIED=0, ALL_PATHS=2758. PHASE 014 FINAL: 8705 of 8600 (105 over, 101.2%), within the authorized 11180 ceiling. Capture .agent/evidence/scope-budget-014/measure-102.txt."
+    },
+    {
+      "at": "2026-10-10T16:32:48Z",
+      "event": "operator_gate_decision",
+      "gate": "H-FRAMEWORK-RELEASE",
+      "decision": "authorized",
+      "verbatim": "ensure the that documentation and change notes is updated and ready for relase. You are authorized to manage, triage as necessary, your PR's and once clean merge as appropriate. you are authorized to tag and pin the release.",
+      "declared_version": "1.5.0",
+      "tag": "v1.5.0",
+      "detail": "Operator authorizes documentation/release preparation, clean PR triage and merge, and annotated tag/pin after reviewed preparation merges. The preparation follows the independent contract and implementation gates; the tag is a separate post-merge mechanic."
+    },
+    {
+      "at": "2026-10-10T16:32:48Z",
+      "event": "operator_gate_decision",
+      "gate": "H-GA",
+      "decision": "declared",
+      "verbatim": "GA is declared.",
+      "declared_version": "1.5.0",
+      "tag": "v1.5.0",
+      "dossier_path": ".agent/evidence/102/ga-readiness.json",
+      "dossier_sha256": "d98ccec0f3c57cda51876db3286b57005143ef771b88b4c92f36748de4c0f590",
+      "evidence_exceptions": {
+        "real_production_pilot": "not_met",
+        "recorded_consumer_adoptions": "insufficient_evidence"
+      },
+      "detail": "Operator explicitly declares GA for the release in preparation. This direct instruction supersedes the local GA-precondition restriction for this declaration; the historical readiness assessment and its measured gaps remain unchanged. The decision precedes downstream declaration notes and publication. H-CONSOLIDATION remains outstanding."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2600,7 +2626,7 @@
       }
     ]
   },
-  "last_action": "Phase 014 final budget pinned: 8705 of 8600 (ceiling 11180); phase complete",
+  "last_action": "Operator authorized v1.5.0 preparation, clean merge and tag/pin, and declared GA; independent release preparation gates next.",
   "completed_contract_ids": [
     "099",
     "103",
