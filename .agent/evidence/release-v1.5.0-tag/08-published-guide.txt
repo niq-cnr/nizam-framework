@@ -1,0 +1,4 @@
+python3 -c 'import urllib.request,hashlib,html;from pathlib import Path;data=urllib.request.urlopen('"'"'https://niq-cnr.github.io/nizam-framework/'"'"').read();assert data==Path('"'"'docs/guide/index.html'"'"').read_bytes();assert '"'"'https://github.com/niq-cnr/nizam-framework/blob/v1.5.0/docs/planning/operator_gates.md'"'"' in html.unescape(data.decode());print('"'"'PASS published guide matches reviewed v1.5.0 source, SHA256='"'"'+hashlib.sha256(data).hexdigest())'
+PASS published guide matches reviewed v1.5.0 source, SHA256=7cdf93d611f048711d1c797a7ed65f0583ea95b1d5005d57f4d2e106c158b39a
+
+EXIT:0

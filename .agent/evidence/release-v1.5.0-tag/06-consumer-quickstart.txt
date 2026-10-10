@@ -1,0 +1,55 @@
+python3 (scratch consumer): curl pinned v1.5.0/bootstrap.sh; git init; GOVERNANCE_TAG=v1.5.0 bash bootstrap.sh --tag v1.5.0; assert framework/provenance SHA and active lifecycle protocols; bash bootstrap.sh --verify-only --tag v1.5.0 --expected-sha f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852; bash .nizam/tools/validate.sh --payload
+$ git init -q
+
+$ curl -fsSL https://raw.githubusercontent.com/niq-cnr/nizam-framework/v1.5.0/bootstrap.sh -o bootstrap.sh
+
+$ bash bootstrap.sh --tag v1.5.0
+bootstrap.sh: cloning https://github.com/niq-cnr/nizam-framework.git at pinned tag v1.5.0 (--depth 1)...
+Cloning into '/home/cnross/.tmp/nizam-bootstrap-clone.u3v0Wp'...
+Note: switching to 'f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+bootstrap.sh: staging governance payload in ./.nizam-stage.2YyC3I...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 82 indexed path(s) resolve under ./.nizam-stage.2YyC3I.
+bootstrap.sh: recording provenance (framework_version=1.5.0, tag=v1.5.0, resolved_sha=f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852)...
+bootstrap.sh: install complete. Governance payload version 1.5.0 (tag v1.5.0) is now at '.nizam'.
+
+PASS installed framework1.5.0, actual tag commit f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852, both ecosystem protocols active
+$ bash bootstrap.sh --verify-only --tag v1.5.0 --expected-sha f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852
+bootstrap.sh: verify-only: checking '.nizam' against pinned tag 'v1.5.0' (no clone, no network)...
+NIZAM.json parses; 82 indexed path(s) resolve under .nizam.
+bootstrap.sh: verify-only: PASS -- '.nizam' is present, well-formed, and matches pinned tag 'v1.5.0' at commit 'f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852'.
+
+$ bash .nizam/tools/validate.sh --payload
+MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] SKIP bootstrap-sanity (payload mode)
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+[C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)
+[C16] PASS feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+SUMMARY (payload mode): 12 passed, 0 failed
+
+EXIT:0
