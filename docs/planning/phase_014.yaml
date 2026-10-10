@@ -1,7 +1,7 @@
 id: 014-ga-track
 title: GA Track — the Real Multi-Repo Pilot and the Remaining Lifecycle Protocols
-description: Run the real non-scratch multi-repo pilot at the released v1.4.0 tag, activate and register the authored Repeat/GA lifecycle protocols with their reserved gates, run the first real simplification review, and assemble the GA-readiness dossier without declaring GA — with the enforcement-integrity maintenance tranche (NDEBT-043, 041, 042, 044, 037, 026; features 103-109) folded in ahead of the GA-readiness assessment. ACTIVATED 2026-10-08 under H-PHASE-014 (spec 1.1.0); steps are listed in the canonical single-lane order of .agent/feature_list_014.json. Amendment A3 (2026-10-10, spec 1.1.7) removes steps 100 and 101 because the operator said the v1.4.0 multi-repo pilot is no longer needed. Those features are cancelled in the feature list. This schema has no cancelled status. The only remaining pending step is 102.
-status: in_progress
+description: Run the real non-scratch multi-repo pilot at the released v1.4.0 tag, activate and register the authored Repeat/GA lifecycle protocols with their reserved gates, run the first real simplification review, and assemble the GA-readiness dossier without declaring GA — with the enforcement-integrity maintenance tranche (NDEBT-043, 041, 042, 044, 037, 026; features 103-109) folded in ahead of the GA-readiness assessment. ACTIVATED 2026-10-08 under H-PHASE-014 (spec 1.1.0); steps are listed in the canonical single-lane order of .agent/feature_list_014.json. Amendment A3 (2026-10-10, spec 1.1.7) removes steps 100 and 101 because the operator said the v1.4.0 multi-repo pilot is no longer needed. Those features are cancelled in the feature list. This schema has no cancelled status. Feature 102, the final step, assembled the GA-readiness dossier (H-GA stays OUTSTANDING; nothing declared) and closed the phase canonical-first (this file complete first, the manifest second, and the derived run_state third by the Orchestrator).
+status: complete
 steps:
   - id: "099"
     description: GA-track activation wave — register ecosystem/06+08 and define the reserved gates.
@@ -53,4 +53,7 @@ steps:
     evidence: .agent/evidence/108/at1-help-paragraphs.txt
   - id: "102"
     description: GA-readiness assessment (no declaration), next-candidate refinement, and phase close; depends on 099 and 103-109. Steps 100 and 101 were removed on 2026-10-10. The dossier records real_production_pilot as not_met and H-GA stays outstanding.
-    status: PENDING
+    status: COMPLETED
+    docs_updated: docs/planning/DEBT.md
+    changelog_entry: "GA-readiness dossier presented with H-GA OUTSTANDING and real_production_pilot not_met (no GA declaration); ROADMAP Current Position open-debt bullet rolled to the live Open set (NDEBT-044 concern (e) resolved); phase 014 closed canonical-first."
+    evidence: .agent/evidence/102/at1-phase-close.txt

@@ -1,0 +1,102 @@
+python3 - <<'PY'
+import json, subprocess, sys
+import jsonschema
+A = "217351cd429b167f975bc186d6d890fe497a67a8"
+sh = lambda *a: subprocess.run(a, capture_output=True, text=True)
+bad = []
+contract = json.load(open(".agent/contracts/102.json"))
+jsonschema.validate(contract, json.load(open("schema/contract.schema.json")))
+feature = next(f for f in json.load(open(".agent/feature_list_014.json"))["features"] if f["id"] == "102")
+if (contract["contract_id"], contract["feature_id"], contract["spec_ref"]) != ("102", "102", ".agent/product_spec_014.md"):
+    bad.append("ids or spec_ref")
+if contract["status"] not in ("proposed", "approved", "implemented", "complete"):
+    bad.append("status " + contract["status"])
+if contract["estimated_lines"] != 850 or contract["estimated_lines"] != feature["estimated_lines"]:
+    bad.append("estimated_lines")
+if not contract["version_impact"].startswith("None"):
+    bad.append("version_impact")
+tests = [v for v in contract["verification"] if not v.get("supplementary")]
+extras = [v for v in contract["verification"] if v.get("supplementary")]
+if [v["acceptance_test"] for v in tests] != feature["acceptance_tests"]:
+    bad.append("acceptance_test text is not verbatim and in order")
+if [v["command"] for v in tests] != feature["acceptance_tests"]:
+    bad.append("command is not the verbatim acceptance test")
+if len(tests) != 10 or len(extras) != 5:
+    bad.append("expected 10 acceptance tests and 5 supplementary checks")
+if any(not v.get("expected_outcome") or not v.get("state_at_base_A") or v.get("owner") != "generator" for v in contract["verification"]):
+    bad.append("entry missing expected_outcome, state_at_base_A, or generator owner")
+evidence = [v["evidence_file"] for v in contract["verification"]]
+created = [i["path"] for i in contract["scope"]["files_create"]]
+modified = [i["path"] for i in contract["scope"]["files_modify"]]
+if len(set(evidence)) != len(evidence) or any(not p.startswith(".agent/evidence/102/") for p in evidence):
+    bad.append("evidence files are not unique under .agent/evidence/102/")
+if not set(evidence) <= set(created):
+    bad.append("an evidence file is missing from files_create")
+if not any(p.endswith("attempt-base.txt") for p in created):
+    bad.append("attempt-base.txt missing")
+want_modify = [
+    "docs/planning/phase_014.yaml",
+    "docs/planning/ROADMAP.md",
+    "docs/planning/manifest.json",
+    "docs/planning/DEBT.md",
+]
+if modified != want_modify:
+    bad.append("files_modify is not the sanctioned list: " + repr(modified))
+for path in modified:
+    if sh("git", "cat-file", "-e", A + ":" + path).returncode != 0:
+        bad.append("files_modify path absent at base: " + path)
+for path in created:
+    if sh("git", "cat-file", "-e", A + ":" + path).returncode == 0:
+        bad.append("create path already exists at base: " + path)
+forbidden_exact = {
+    ".agent/run_state.json",
+    ".agent/feature_list_014.json",
+    ".agent/product_spec_014.md",
+    "CHANGELOG.md",
+    "NIZAM.json",
+    "tools/skill.json",
+    "tools/README.md",
+    "tools/validate.sh",
+    "tools/verify_lib.sh",
+    "tools/fixtures_self_test.sh",
+    "docs/planning/HANDOVER.md",
+    "docs/planning/backlog_dag.json",
+    "docs/planning/operator_gates.md",
+    "standard/AGF.md",
+    "standard/NDS.md",
+    "bootstrap.sh",
+}
+forbidden_prefix = (".github/", "docs/nips/", ".agent/evidence/phase-014-activation", "standard/", "schema/", "ecosystem/", "tools/fixtures/")
+for path in created + modified:
+    if path in forbidden_exact or any(path.startswith(x) for x in forbidden_prefix):
+        bad.append("forbidden path in scope: " + path)
+identity = contract["retry_identity"]
+if (identity["contract_step_key"], identity["implementation_step_key"], identity["limit"]) != ("102-contract", "102-implementation", 3):
+    bad.append("retry identity")
+if contract["design_notes"]["revision"].split()[1] != "0":
+    bad.append("design_notes.revision is not revision 0")
+approvals = contract["approvals"]
+if contract["status"] == "approved":
+    if approvals.get("revisions") != 0 or approvals.get("validator_mode_a") is not True or approvals.get("evaluator_contract_review") is not True or not approvals.get("approved_at"):
+        bad.append("approved revision 0 does not have both approval flags true and an approved_at")
+else:
+    if approvals.get("revisions") != 0 or approvals.get("validator_mode_a") is not False or approvals.get("evaluator_contract_review") is not False:
+        bad.append("approvals are not false at revision 0")
+    if "approved_at" in approvals:
+        bad.append("approved_at present at a non-approved revision 0")
+pins = contract["design_notes"]["pinned_interface"]
+dossier = json.loads(pins["dossier_content"]["content"])
+K = {"real_production_pilot", "stable_release_history", "recorded_consumer_adoptions", "no_open_critical_high_debt", "benchmark_thresholds"}
+if dossier.get("h_ga") != "OUTSTANDING" or dossier.get("ga_declared") is not False or set(dossier.get("preconditions", {})) != K:
+    bad.append("pinned dossier content does not meet the AT2 contract")
+def show(path):
+    return sh("git", "show", A + ":" + path).stdout
+for key, val in pins.items():
+    if isinstance(val, dict) and "old" in val and "new" in val:
+        if show(val["path"]).count(val["old"]) != 1:
+            bad.append("pin " + key + " is not exactly once in base " + val["path"])
+print("verification", len(contract["verification"]), "problems:", bad)
+sys.exit(1 if bad else 0)
+PY
+verification 15 problems: []
+EXIT:0
