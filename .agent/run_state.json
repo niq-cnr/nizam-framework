@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "014-ga-track",
-  "current_feature": "107",
+  "current_feature": "109",
   "status": "in_progress",
-  "updated_at": "2026-10-10T06:20:00Z",
+  "updated_at": "2026-10-10T08:05:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -259,6 +259,14 @@
     },
     "106-implementation": {
       "attempts": 0,
+      "limit": 3
+    },
+    "107-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "107-implementation": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -1859,6 +1867,47 @@
       "at": "2026-10-10T06:20:00Z",
       "event": "planning_record",
       "detail": "Amendment A3 applied on chore/014-descope-v140-pilot after the 2026-10-10T06:05:42Z operator_gate_decision. Spec 1.1.7. Features 100 and 101 cancelled. Feature 102 dependencies are 099, 103, 104, 105, 106, 107, 108, 109. 102 acceptance-test index 2 requires real_production_pilot not_met and excludes pilot-100 aggregate. phase_014.yaml steps 100 and 101 removed. Lane is 107 → 109 → 108 → 102. Budget 8600/11180 unchanged. current_feature stays 107."
+    },
+    {
+      "at": "2026-10-10T06:40:52Z",
+      "event": "operator_gate_decision",
+      "detail": "Recorded BEFORE any merge under this authorization (NDEBT-018). Operator verbatim (2026-10-10, interactive session): 'Think carefully about the optimal execution DAG and then you are approved to proceed. Expedite. Before proceeding ask bullet point questions if you need more information or further clarification. You are authorized to manage, triage as necessary, your PR's and once clean merge as appropriate.' Effect: no clarifying question was required. The lane is 107 → 109 → 108 → 102, one feature at a time, because 107, 109 and 108 share tools/validate.sh and 108 must document the finished checks. The Orchestrator may merge a phase-014 PR only when CI is green (validate, e2e_bootstrap, fixtures_self_test, convergent_review) and review is clean. No tag, no GA declaration, no H-CONSOLIDATION."
+    },
+    {
+      "at": "2026-10-10T06:40:52Z",
+      "event": "feature_started",
+      "feature": "107",
+      "detail": "Dependency gate: 107 dependencies [] satisfied. Branch phase/014-107-nip-frontmatter from main fdc076f. Amendment A3 recorded as phase-level item (177 budget-counted). Phase total 5399 / 8600. 107-contract attempt 1/3. 107 measurement range starts at fdc076f. Dispatching Generator to propose .agent/contracts/107.json."
+    },
+    {
+      "at": "2026-10-10T07:26:37Z",
+      "event": "contract_approved",
+      "feature": "107",
+      "detail": "107-contract attempt 1/3 approved at revision 0. Mode A .agent/validator/107-mode-a.json and evaluator .agent/qa/107-contract-review.json both approved with empty issue arrays. This commit is attempt base <B>. Implementation has not started."
+    },
+    {
+      "at": "2026-10-10T07:26:37Z",
+      "event": "implementation_attempt_started",
+      "feature": "107",
+      "detail": "107-implementation attempt 1/3. Attempt base <B>=839c52aef6a7a1cb0c21de1101d570718ffb2136. Detached worktree /home/cnross/workspace02/nizam-wt-107-attempt1. One Generator commit. No run_state edit in the worktree."
+    },
+    {
+      "at": "2026-10-10T07:40:00Z",
+      "event": "contract_defect",
+      "feature": "107",
+      "detail": "Implementation attempt was not committed. The Generator applied the pins in nizam-wt-107-attempt1; AT1-AT6, S02, S03, S04 and S05 exited 0, and S01 exited 1 because it requires approvals.validator_mode_a and evaluator_contract_review to be false at revision 0, while the approved contract at <B> 839c52a sets both true. The product diff is saved. 107-implementation attempts reset to 0. 107-contract advances to attempt 2/3. Required fix: S01 accepts an approved revision 0 whose approval flags are true, and still accepts a proposed revision 0 whose flags are false. No acceptance-test string changes."
+    },
+    {
+      "at": "2026-10-10T07:49:08Z",
+      "event": "contract_approved",
+      "feature": "107",
+      "detail": "107-contract attempt 2/3 approved. S01 now accepts an approved revision 0 with both flags true. Mode A and the S01 predicate review passed with empty issue arrays. This commit is the new attempt base <B>."
+    },
+    {
+      "at": "2026-10-10T08:05:00Z",
+      "event": "feature_complete",
+      "feature": "107",
+      "detail": "Feature 107 COMPLETE (NDEBT-044 b: NIP-0002 status active; default-mode C1 and C2 include docs/nips/*.md; shipped-doc set unchanged). Contract attempt 2/3 after S01 was repaired so an approved revision 0 keeps its approval flags. Implementation c67421b parent d4dcc49. Mode B approved (.agent/validator/107-mode-b.json). QA pass .agent/qa/107.json (11/11; adversarial: NIP-0003 status accepted fails C1, status active does not). Canonical-first: phase_014.yaml 107 COMPLETED, feature_list 107 complete, then this run_state. Budget: 107 = 713 (evidence 2195); phase total 6112 / 8600. Next: 109. NDEBT-044 stays Open."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2033,9 +2082,9 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 5222,
-    "evidence_lines_total": 15787,
-    "excluded_lines_total": 546,
+    "total_lines_changed": 6112,
+    "evidence_lines_total": 17982,
+    "excluded_lines_total": 641,
     "counting_rule": {
       "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.6)",
       "script": ".agent/evidence/scope-budget-014/measure.py",
@@ -2095,6 +2144,15 @@
         "excluded_lines": 82,
         "range": "183eed1..ca889db",
         "note": "Phase-014 rule. measure.py --range 106=183eed1..ca889db: BUDGET_COUNTED_LINES=686 (product 106, contract 382, verdict 191, planning 7), EVIDENCE_LINES=2113, EXCLUDED_LINES=82, unclassified 0. Rolling threshold was 3 x mean(885,991,950)=2826. 686 is under the estimate 750."
+      },
+      {
+        "id": "107",
+        "estimated": 680,
+        "actual": 713,
+        "evidence_lines": 2195,
+        "excluded_lines": 81,
+        "range": "fdc076f..984a9b3",
+        "note": "Phase-014 rule. measure.py --range 107=fdc076f..984a9b3: BUDGET_COUNTED_LINES=713 (product 38, contract 365, verdict 303, planning 7), EVIDENCE_LINES=2195, EXCLUDED_LINES=81, unclassified 0. Above the 680 estimate and under the rolling 3x threshold. No scope flag."
       }
     ],
     "phase_level_items": [
@@ -2111,6 +2169,14 @@
         "actual": 822,
         "evidence_lines": 1686,
         "note": "Developer handover package (docs/planning/HANDOVER.md + ROADMAP 0.47.0, backlog_reconciliation 0.1.5, backlog_dag.json refresh). Orchestrator treatment: second phase-level item (rebaseline-1.1.4 precedent): caused by the operator's handover request (2026-10-10T02:11:41Z), not by feature 106; counts toward total_lines_changed only, not per_feature or the rolling baseline. Re-measured at the merge commit 183eed1 (PR #71) on 2026-10-10T03:46:46Z: BUDGET_COUNTED_LINES=822, EVIDENCE_LINES=1686, EXCLUDED_LINES=25, unclassified 0. 106's measurement range starts at 183eed1."
+      },
+      {
+        "id": "amendment-a3",
+        "range": "f53c499..fdc076f",
+        "actual": 177,
+        "evidence_lines": 0,
+        "excluded_lines": 14,
+        "note": "Amendment A3 (cancel features 100 and 101). Operator-requested planning, not feature 107. measure.py --range a3=f53c499..fdc076f: BUDGET_COUNTED_LINES=177, EVIDENCE_LINES=0, EXCLUDED_LINES=14, unclassified 0. 107's range starts at fdc076f."
       }
     ],
     "rebaseline": {
@@ -2386,12 +2452,13 @@
       }
     ]
   },
-  "last_action": "Amendment A3 applied: features 100 and 101 cancelled; next is 107",
+  "last_action": "Feature 107 complete; next is 109",
   "completed_contract_ids": [
     "099",
     "103",
     "104",
     "105",
-    "106"
+    "106",
+    "107"
   ]
 }

@@ -1,0 +1,2 @@
+python3 -c "import json,yaml,jsonschema; fm=yaml.safe_load(open('docs/nips/NIP-0002-zero-to-n-project-spectrum.md').read().split('---')[1]); jsonschema.validate(fm, json.load(open('schema/frontmatter.schema.json'))); assert fm['status']=='active', fm['status']"
+EXIT:0

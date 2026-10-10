@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.15.0
+version: 0.16.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.16.0"
+    date: "2026-10-10"
+    summary: "Name docs/nips/ on the C1 row: the default sweep checks every NIP markdown file under C1 and C2 only, and those files are not part of the shipped-doc set (NDEBT-044 b)."
   - version: "0.15.0"
     date: "2026-10-10"
     summary: "Record the intentional-subset rule: every tools/skill.json module is the authoritative_source of some NIZAM.json capability, C13 enforces it, and NIZAM.json gains nizam-ecosystem-bootstrap (NDEBT-044 a)."
@@ -130,7 +133,7 @@ full default sweep reports `SUMMARY: 16 passed, 0 failed`:
 
 | Check | Name | What it enforces |
 |---|---|---|
-| C1 | Frontmatter schema | Every shipped `.md`'s frontmatter validates against `schema/frontmatter.schema.json`. |
+| C1 | Frontmatter schema | Every shipped `.md`'s frontmatter validates against `schema/frontmatter.schema.json`. The default sweep also checks every markdown file under `docs/nips/`; those files are not in the shipped-doc set, so C9 and C10 do not scan them, and `--payload` does not check them. |
 | C2 | Format | Frontmatter fields (`version`, `status`, etc.) match their required format. |
 | C3 | Untagged-fence sweep | No fenced code block in a shipped `.md` is missing a language tag. |
 | C4 | `NIZAM.json` index integrity | Every path `NIZAM.json` indexes resolves on disk. |

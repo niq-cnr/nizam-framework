@@ -174,7 +174,7 @@
       "id": "107",
       "name": "NIP frontmatter under C1/C2 and NIP-0002's status corrected (NDEBT-044 b)",
       "description": "Maintenance tranche, NDEBT-044 concern (b). Correct docs/nips/NIP-0002-zero-to-n-project-spectrum.md frontmatter status 'accepted' -> 'active' (the schema enum's value for an accepted NIP, the NIP-0001 precedent), with a version bump and change_log entry. Bring every docs/nips/*.md under C1 (frontmatter schema) and C2 (format: authoritative_source equals the file's own path, status and version shapes) in the default sweep. DESIGN CONSTRAINT: docs/nips/ must NOT join build_shipped_md_set, because C9 and C10 sweep that same set and proposals legitimately cite paths that do not exist yet (NIP-0001 and NIP-0003 fail C9 under --target at 02b02c6); add the NIP files to the C1/C2 inputs only. AT2 proves C1 coverage (a bad status) and AT3 proves C2 coverage independently (an authoritative_source mismatch, which C1's schema accepts). Update the --help C1 and C2 paragraphs and the tools/README.md C1 row to name docs/nips/. docs/nips/ is framework-envelope (never injected), but the default-mode sweep scope of a shipped tool changes, so the impact is rounded up.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [],
       "acceptance_tests": [
         "python3 -c \"import json,yaml,jsonschema; fm=yaml.safe_load(open('docs/nips/NIP-0002-zero-to-n-project-spectrum.md').read().split('---')[1]); jsonschema.validate(fm, json.load(open('schema/frontmatter.schema.json'))); assert fm['status']=='active', fm['status']\"",

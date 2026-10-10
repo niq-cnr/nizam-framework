@@ -1,0 +1,365 @@
+{
+  "contract_id": "107",
+  "feature_id": "107",
+  "name": "NIP frontmatter under C1/C2 and NIP-0002's status corrected (NDEBT-044 b)",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_014.md",
+  "design_notes": {
+    "revision": "Revision 0 (107-contract attempt 2/3). S01 accepts both flag states: when status is approved, revisions is 0 and both validator_mode_a and evaluator_contract_review are true; otherwise revisions is 0 and both flags are false. Status is proposed. validator_mode_a and evaluator_contract_review are false. S03 allowlists .agent/run_state.json and does not hard-fail when it differs from <A>. S02 diffs from <B> and rejects a Generator edit of run_state. Feature 106 revision 0 failed that way; this contract does not repeat it. No feature-list acceptance test string changes.",
+    "base_revision": "<A> = 7972e4f2d46abf6b8e0f02e8c11e94ac0f7aa0f4. It is the pre-feature tree on branch phase/014-107-nip-frontmatter and the diff anchor for S03 and S04. main is fdc076ff6b4665d7b40a5a74a9dae5562dd568bf. The product tree at <A> equals fdc076f (git diff fdc076f 7972e4f is only .agent/run_state.json). <B>, the Orchestrator's commit of this contract once approved, is the attempt base and the anchor of S02 only. The phase-014 budget range for 107 starts at fdc076f, not at <A>.",
+    "revision_history": [
+      {
+        "revision": 0,
+        "summary": "Initial proposal. NIP-0002 status accepted becomes active at 0.2.1. Every docs/nips/*.md joins C1 and C2 in the default sweep only, via a list copied from the shipped-doc set plus a find of docs/nips. build_shipped_md_set and build_payload_md_set stay byte-identical. S02 rejects a Generator edit of run_state since <B>. S03 allowlists run_state versus <A> and does not hard-fail it. The C1 and C2 fail echos stay [C1] FAIL frontmatter-schema and [C2] FAIL format, and S05 proves AT2 and AT3 are those echos.",
+        "at": "2026-10-10"
+      },
+      {
+        "revision": 0,
+        "summary": "107-contract attempt 2/3, still revision 0. S01 accepts both flag states: when status is approved, revisions is 0 and both validator_mode_a and evaluator_contract_review are true; otherwise revisions is 0 and both flags are false. Revision 0 was approved at 2026-10-10T07:26:37Z and <B> 839c52aef6a7a1cb0c21de1101d570718ffb2136 sets both flags true, so the check that required them false cannot pass during implementation. S02 and S03 are unchanged. No feature-list acceptance test string changes. Status is proposed; both flags are false; approved_at is removed.",
+        "at": "2026-10-10"
+      }
+    ],
+    "plan_ref": ".agent/product_spec_014.md (Scope table order 6; Maintenance tranche, the 107 bullet, C1/C2 only; Public contract changes: 107 is MINOR and changes a sweep, no schema change; Execution Order; Scope budget measurement, 107 = 680, range 510-850; Human gates) and .agent/feature_list_014.json feature 107 (six acceptance tests). Debt: NDEBT-044 (b) only. NDEBT-045 is the --payload option paragraph and is not edited. NDEBT-047 is a named hazard, not a fix.",
+    "ah_premises_at_base": [
+      "Measured 2026-10-10 at <A>, serially (validate.sh and fixtures_self_test.sh were never overlapped). AT1 exit 1 (ValidationError: 'accepted' is not one of ['draft', 'active', 'deprecated'], jsonschema 4.26.0). AT2 exit 1 (replace applied; validate.sh exit 0; SUMMARY 16 passed, 0 failed; no [C1] FAIL; the filename is absent). AT3 exit 1 (replace applied; validate.sh exit 0; SUMMARY 16 passed, 0 failed; [C2] PASS; the forbid ^[C1] FAIL held). AT4 exit 1 (docs/nips/ absent from the C1 help slice, the C2 help slice, and the single C1 row). AT5 exit 0 (GATE PASS, 16/16). AT6 exit 0 (SELF-TEST OK 147/147).",
+      "NIP-0001 frontmatter: status active, version string 1.0.0, authoritative_source is its own path. Schema PASS, format PASS, zero bare opening fences. The string 'status: active' occurs once. The authoritative_source line occurs once. --target exits 1: C1 PASS, C2 PASS, C3 PASS, C9 FAIL (schema/dependency_graph.schema.json, schema/ecosystem_complexity.schema.json, schema/ga_evidence_index.schema.json), C10 PASS.",
+      "NIP-0002 frontmatter: status accepted, version string 0.2.0, authoritative_source is its own path. Schema FAIL on the status enum. Format FAIL on the same status. C9 PASS and C10 PASS under --target. Zero bare opening fences. 'status: accepted' occurs once. 'status: active' occurs zero times. --target detail lines, measured: '[C1] FAIL frontmatter-schema' then '  docs/nips/NIP-0002-zero-to-n-project-spectrum.md: frontmatter schema violation: 'accepted' is not one of ['draft', 'active', 'deprecated']' and '[C2] FAIL format' then '  docs/nips/NIP-0002-zero-to-n-project-spectrum.md: status 'accepted' is not one of draft/active/deprecated'.",
+      "NIP-0003 frontmatter: status draft, version string 0.1.0, authoritative_source is its own path. Schema PASS, format PASS, zero bare opening fences. --target exits 1: C1 PASS, C2 PASS, C3 PASS, C9 FAIL (methodology/10_live_runtime_sessions.md, methodology/11_sbcl_runtime_binding.md, schema/runtime_operation.schema.json, schema/runtime_session.schema.json), C10 PASS. Its body says NIP-0002's value accepted is outside the enum and is not a precedent.",
+      "check_c1_frontmatter_schema and check_c2_format already accept a file list. The default branch passes only the shipped-doc set. The payload branch passes only build_payload_md_set. --target on a .md file already runs C1, C2, C3, C9, and C10 on that one file. The fail echos each occur once: '  echo \"[C1] FAIL frontmatter-schema\"' and '  echo \"[C2] FAIL format\"'. There is no check_c17. The pass lines are '[C1] PASS frontmatter-schema' and '[C2] PASS format'.",
+      "tools/README.md is 0.15.0. The C1 compliance row is one line and does not contain docs/nips/. The C2 row does not name a file set. framework.version in NIZAM.json is 1.4.0. No release is in scope. The fixture self-test accounts for 147 files; this feature adds none.",
+      "bash is 5.2.21. The default-branch array c1_c2_md is initialized from shipped_md, which is non-empty (it always contains CONTEXT.md), so the expansion is safe under set -u even when docs/nips is absent."
+    ],
+    "design_decisions": {
+      "status_correction": "NIP-0002's frontmatter status moves from accepted to active. active is the schema enum value for an accepted NIP, the NIP-0001 precedent (NIP-0001's change_log says the decision-lifecycle state Accepted stays in the body). The body Status section stays Accepted. This is not an NDS backward skip: accepted was never a schema status. Version 0.2.0 -> 0.2.1 (NDS Section 4 PATCH: a correction that does not change the document's meaning). One new change_log entry, newest first. The three edits are the unquoted version line, the status line, and the inserted entry. The body after the closing --- is byte-identical, including the en dash in the title and the em dashes in the prose.",
+      "c1_c2_inputs_only": "In the default branch only, c1_c2_md is a copy of shipped_md plus every file from 'find docs/nips -maxdepth 1 -type f -name '*.md' | LC_ALL=C sort'. That is the spec glob docs/nips/*.md: this directory only, not a nested file. The three files at <A> are all direct children. check_c1_frontmatter_schema and check_c2_format receive c1_c2_md. C3, C5, C8, C9, and C10 keep shipped_md. build_shipped_md_set and build_payload_md_set are not edited. --payload does not reach this branch. --target is not edited: a NIP passed as --target still gets C9 and C10, and NIP-0001 and NIP-0003 still fail C9 that way.",
+      "why_not_the_shipped_set": "C9 and C10 sweep the shipped-doc set. At <A>, --target C9 fails NIP-0001 on three schema paths that do not exist yet and NIP-0003 on four methodology and schema paths that do not exist yet. Putting docs/nips/ into build_shipped_md_set would turn the default sweep red on C9, and it would also hand the files to C3, C5, and C8. docs/nips/ is framework-envelope. --payload behavior is unchanged.",
+      "banners": "The failure banners stay exactly [C1] FAIL frontmatter-schema and [C2] FAIL format. AT2's regex ^[C1] FAIL would also match a different check that printed [C1] FAIL. S04 requires each echo line once, so the implementation cannot rename the banner. S05 case 2 replaces that one C1 echo with a pass and return 0: [C1] FAIL disappears and [C2] FAIL format remains, so AT2's C1 line is not C2 wearing another id. S05 case 4 does the same for the C2 echo on the AT3 mutation: [C2] FAIL disappears and [C1] FAIL stays absent, so AT3 is not C1 wearing C2's id. A bad status fails both checks. AT2 does not forbid [C2] FAIL. AT3 forbids [C1] FAIL because the schema accepts any non-empty authoritative_source string. Do not tighten the schema.",
+      "nip_0001_and_0003": "Measured at <A>, both pass the frontmatter schema and the C2 format rules (status enum, authoritative_source equals the file's own path, version string MAJOR.MINOR.PATCH). They are not in files_modify. Do not rewrite their bodies and do not add them to the shipped-doc set. If the new sweep reports a C1 or C2 failure on either unchanged file, that contradicts this measurement: halt as CONTRACT_DEFECT and revise. A revision may then allow only the minimum frontmatter fix (status enum, authoritative_source equals the file's own path, version shape) and still must not rewrite the body.",
+      "readme_and_help": "Acceptance test 4 reads the C1 help slice, the C2 help slice, and the single line that starts '| C1 '. Those three gain the text docs/nips/. The C2 compliance row is not edited: it does not name a file set, so it does not become false, and AT4 does not read it. The Shipped-doc set paragraph, the C5 paragraph, the Payload-doc set paragraph, and the --payload option paragraph stay byte-identical. The new help sentences say the default sweep's C3, C5, C8, C9, and C10 do not scan docs/nips/, --payload does not check them, and --target is unchanged. They do not claim a NIP is never subject to C9.",
+      "readme_version": "tools/README.md moves 0.15.0 to 0.16.0 with a head change_log entry dated 2026-10-10 (pinned). That entry alone satisfies NDS Section 4 and C8. The phase-014 tools/README track has advanced the minor component once per feature that edits the file (0.12.0 through 0.15.0); this contract stays on that track rather than using 0.15.1. The C1 row adds no new C9 token: docs/nips/ has no shipped extension, and schema/frontmatter.schema.json is already in the old row and exists.",
+      "changelog": "CHANGELOG.md is not modified. C8 does not require it when the README change_log entry matches 0.16.0. No release is cut, so methodology/06_release_train.md Section 4's released-version rule is not triggered. S04 requires CHANGELOG.md to be byte-identical to <A>.",
+      "no_new_check": "No new check function, id, or help paragraph. The sweep stays 16 checks in the default mode and 12 in --payload. C17 stays earmarked by NIP-0003.",
+      "phase_yaml": "docs/planning/phase_014.yaml is not in the Generator's scope. The Orchestrator writes step 107's docs_updated, changelog_entry, and evidence, using the pinned strings, when it sets status. The Generator does not set status."
+    },
+    "pinned_interface": {
+      "c1_fail_echo": "  echo \"[C1] FAIL frontmatter-schema\"\n",
+      "c2_fail_echo": "  echo \"[C2] FAIL format\"\n",
+      "c1_fail_ablation": "  echo \"[C1] PASS frontmatter-schema\"\n  return 0\n",
+      "c2_fail_ablation": "  echo \"[C2] PASS format\"\n  return 0\n",
+      "c1_banner": "[C1] FAIL frontmatter-schema",
+      "c2_banner": "[C2] FAIL format",
+      "c1_help_old": "  C1  Frontmatter schema. Every file in the \"shipped-doc set\" (see below)\n      begins with a YAML frontmatter block (first content in the file,\n      opened and closed by a bare `---` line) that schema-validates via\n      python3 + jsonschema against schema/frontmatter.schema.json.\n\n",
+      "c1_help_new": "  C1  Frontmatter schema. Every file in the \"shipped-doc set\" (see below)\n      begins with a YAML frontmatter block (first content in the file,\n      opened and closed by a bare `---` line) that schema-validates via\n      python3 + jsonschema against schema/frontmatter.schema.json.\n      In the default sweep only, every docs/nips/ markdown file is checked\n      the same way. Those files are not added to the shipped-doc set, so\n      the default sweep's C3, C5, C8, C9, and C10 do not scan them, and\n      --payload does not check docs/nips/. A --target invocation is\n      unchanged.\n\n",
+      "c2_help_old": "  C2  Format (belt-and-braces beyond schema). For the same shipped-doc\n      set: `authoritative_source` equals the file's own repository-relative\n      path exactly, or the literal string `NA`; `status` is one of\n      draft/active/deprecated; `version` matches semver MAJOR.MINOR.PATCH.\n\n",
+      "c2_help_new": "  C2  Format (belt-and-braces beyond schema). For the same shipped-doc\n      set: `authoritative_source` equals the file's own repository-relative\n      path exactly, or the literal string `NA`; `status` is one of\n      draft/active/deprecated; `version` matches semver MAJOR.MINOR.PATCH.\n      In the default sweep only, the same three rules also cover every\n      docs/nips/ markdown file. Those files are not part of the shipped-doc\n      set, and --payload does not apply C2 to docs/nips/.\n\n",
+      "call_old": "    check_c1_frontmatter_schema \"${shipped_md[@]}\" && passed=$((passed + 1)) || failed=$((failed + 1))\n    check_c2_format \"${shipped_md[@]}\" && passed=$((passed + 1)) || failed=$((failed + 1))\n",
+      "call_new": "    # Default sweep only (phase-014 feature 107, NDEBT-044 b): C1 and C2 also\n    # read every docs/nips/*.md (this directory only, not nested). Those files\n    # stay out of the shipped-doc set, so C3, C5, C8, C9, and C10 keep the\n    # shipped_md list, and --payload never reaches this branch. --target is\n    # unchanged.\n    local c1_c2_md=(\"${shipped_md[@]}\")\n    if [ -d docs/nips ]; then\n      while IFS= read -r f; do\n        c1_c2_md+=(\"${f}\")\n      done < <(find docs/nips -maxdepth 1 -type f -name '*.md' | LC_ALL=C sort)\n    fi\n\n    check_c1_frontmatter_schema \"${c1_c2_md[@]}\" && passed=$((passed + 1)) || failed=$((failed + 1))\n    check_c2_format \"${c1_c2_md[@]}\" && passed=$((passed + 1)) || failed=$((failed + 1))\n",
+      "nip_append_line": "        c1_c2_md+=(\"${f}\")\n",
+      "c1_row_old": "| C1 | Frontmatter schema | Every shipped `.md`'s frontmatter validates against `schema/frontmatter.schema.json`. |",
+      "c1_row_new": "| C1 | Frontmatter schema | Every shipped `.md`'s frontmatter validates against `schema/frontmatter.schema.json`. The default sweep also checks every markdown file under `docs/nips/`; those files are not in the shipped-doc set, so C9 and C10 do not scan them, and `--payload` does not check them. |",
+      "readme_summary": "Name docs/nips/ on the C1 row: the default sweep checks every NIP markdown file under C1 and C2 only, and those files are not part of the shipped-doc set (NDEBT-044 b).",
+      "readme_version": "0.15.0 -> 0.16.0",
+      "readme_date": "2026-10-10",
+      "nip2": "docs/nips/NIP-0002-zero-to-n-project-spectrum.md",
+      "nip1": "docs/nips/NIP-0001-ecosystem-engineering-cycle.md",
+      "nip3": "docs/nips/NIP-0003-live-runtime-sessions.md",
+      "nip2_version_old": "0.2.0",
+      "nip2_version_new": "0.2.1",
+      "nip2_changelog_entry": "  - version: \"0.2.1\"\n    date: \"2026-10-10\"\n    summary: \"PATCH correction (phase-014 feature 107, NDEBT-044 b). The frontmatter status field was the non-enum value accepted; it is now active, the schema enum value for an accepted NIP, matching NIP-0001. schema/frontmatter.schema.json allows draft, active, and deprecated. The decision-lifecycle state in the body Status section is unchanged.\"\n",
+      "c1_schema_detail": "^  docs/nips/NIP-0001-ecosystem-engineering-cycle\\.md: frontmatter schema violation: 'accepted' is not one of \\['draft', 'active', 'deprecated'\\]$",
+      "c2_status_detail": "^  docs/nips/NIP-0001-ecosystem-engineering-cycle\\.md: status 'accepted' is not one of draft/active/deprecated$",
+      "c2_source_detail": "^  docs/nips/NIP-0001-ecosystem-engineering-cycle\\.md: authoritative_source 'docs/nips/NIP-0001-moved\\.md' != own path 'docs/nips/NIP-0001-ecosystem-engineering-cycle\\.md' and != 'NA'$",
+      "poison_suffix": "\n\n```\nuntagged probe\n```\n\nSee docs/nips/DOES-NOT-EXIST.md for the probe.\n",
+      "unchanged_regions": [
+        [
+          "  --payload           Consumer-payload mode.",
+          "\n\n  --help, -h"
+        ],
+        [
+          "Payload-doc set (the --payload mode file set",
+          "\n\nExit code:"
+        ],
+        [
+          "  C5  Branding/endpoint leakage.",
+          "\n\n  C6  "
+        ],
+        [
+          "Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,",
+          "\n\nPayload-doc set"
+        ]
+      ],
+      "unchanged_files": [
+        "CHANGELOG.md",
+        "docs/nips/NIP-0001-ecosystem-engineering-cycle.md",
+        "docs/nips/NIP-0003-live-runtime-sessions.md",
+        "tools/fixtures_self_test.sh",
+        "tools/verify_lib.sh",
+        "tools/interface.md",
+        "standard/capability_profiles.md",
+        "NIZAM.json",
+        "tools/skill.json",
+        "docs/planning/phase_014.yaml",
+        "docs/planning/DEBT.md",
+        ".agent/feature_list_014.json"
+      ],
+      "phase_yaml_docs_updated": "tools/README.md",
+      "phase_yaml_changelog_entry": "NIP-0002 frontmatter status corrected to active (0.2.1); default-sweep C1 and C2 also check docs/nips/, which stays out of the shipped-doc set (NDEBT-044 b).",
+      "phase_yaml_evidence": ".agent/evidence/107/at2-c1-bad-status.txt"
+    },
+    "serialization": "Do not run tools/validate.sh and tools/fixtures_self_test.sh at the same time, in this tree or in one scratch copy. S05 starts with a /proc refusal (exit 4) and then runs its seven scratch cases one at a time. scratch_run copies the tree and does not write the real tree. Do not take a scratch copy while either script is running in the source tree. AT2 and AT3 are themselves scratch_run invocations of validate.sh; do not overlap them with AT5, AT6, or S05.",
+    "hazards": [
+      "1. NDEBT-047, not fixed and not touched. tools/fixtures_self_test.sh stays byte-identical. Do not install a trap and do not add a fixture. The self-test still swaps tools/skill.json inside test_c13 with no EXIT backstop. This feature does not call that swap except by running the existing self-test as AT6, one process, not overlapped with validate.sh.",
+      "2. AT2's [C2] FAIL is expected after implementation. status accepted fails the schema (C1) and C2's own enum test. Do not suppress C2. S05 case 2 is the control: with the C1 echo silenced, [C1] FAIL is gone and [C2] FAIL remains.",
+      "3. AT3 goes vacuous if the schema is tightened to reject a foreign authoritative_source, or if C1 is made to fail whenever C2 fails. The schema is not edited. S05 case 4 is the control: with the C2 echo silenced, the AT3 mutation exits 0.",
+      "4. Adding docs/nips/ to build_shipped_md_set or build_payload_md_set fails S04 and, for the shipped set, would fail the default sweep on C9 (NIP-0001's three missing schema paths and NIP-0003's four missing paths). Do not 'fix' those bodies. Proposals cite paths that do not exist yet.",
+      "5. --target is unchanged. Do not special-case a NIP to skip C9. The feature widens only the default sweep's C1 and C2 inputs.",
+      "6. The string 'status: active' must occur once in NIP-0002 after the edit, and the change_log summary must not contain that substring. S05 case 5 replaces that one occurrence back to accepted. NIP-0001's one 'status: active' is the AT2 needle and that file is not edited.",
+      "7. Evidence files: line 1 is the invocation, the body is raw output, the last line is EXIT:<code> from the process. No '| tee' and no '| grep' on a capture.",
+      "8. The untracked .nizam/ directory in the shared tree is not part of this feature. git worktree add does not copy it. Do not add it, and do not run S03 in a tree where it is untracked. S03 would treat it as a path outside scope.",
+      "9. C9 extracts slash-qualified path tokens that end in md, json, sh, html, or yml. The pinned README row and the help additions do not add a new one. The NIP-0002 change_log summary names schema/frontmatter.schema.json, which exists, and C9 does not scan docs/nips/ in the default sweep anyway.",
+      "10. Do not edit the C5 paragraph, the Payload-doc set paragraph, or the --payload option paragraph (NDEBT-045). Feature 108 owns the C5 text and the Payload-doc set paragraph. Do not edit the Shipped-doc set paragraph either: it must keep describing the set those other checks use, and docs/nips/ is not in that set."
+    ],
+    "failure_triage": {
+      "DEFECT": "An acceptance or S failure caused by the Generator's files. Repair inside the attempt budget: attempt 1 direct fix, attempt 2 type or interface analysis, attempt 3 architectural review. Attempt 4 is forbidden.",
+      "CONTRACT_DEFECT": "A pin or an S check that a correct implementation cannot satisfy, including a C1 or C2 failure on unchanged NIP-0001 or NIP-0003. Halt, report, and propose a revision of this contract. Do not edit an acceptance test. Do not edit those NIP bodies to force a pass.",
+      "ENVIRONMENT": "A missing interpreter, a jsonschema enum message that no longer matches the pinned 4.26.0 text, a TMPDIR inside the repository, or a failure to create the attempt worktree. Halt and escalate. Do not consume an attempt.",
+      "UNCLASSIFIABLE": "Halt and escalate."
+    },
+    "attempt_isolation": "The Orchestrator creates the attempt worktree from <B> and passes the path. Suggested path: /home/cnross/workspace02/nizam-wt-107-attempt<N> (N = 1..3). The Generator's first action there is attempt-base.txt. One commit, then the Orchestrator cherry-picks it onto phase/014-107-nip-frontmatter. On failure, evidence stays in the root; the Orchestrator copies it to .agent/evidence/107/failed-attempt<N>/ and removes only that root. No git reset --hard.",
+    "orchestrator_sequence": [
+      "1. Mode A and the evaluator's contract review approve this contract. The Orchestrator commits it on the feature branch. That commit is <B>. The Orchestrator sets status to approved. The Generator does not.",
+      "2. The Orchestrator creates the attempt worktree from <B>. The Generator records attempt-base.txt, makes the edits, runs AT1-AT6, S01, S04, S05, S02, S03 one at a time, and makes one commit. No push, no gh, no remote.",
+      "3. The Orchestrator cherry-picks, removes the root, runs Mode B, then the Evaluator. Captures go to .agent/evidence/107/qa/.",
+      "4. After QA the Orchestrator writes step 107 in docs/planning/phase_014.yaml (docs_updated, changelog_entry, evidence, status), the scope-budget measurement from fdc076f, and any DEBT.md note. The Generator does not."
+    ],
+    "orchestrator_followups": [
+      "docs/planning/phase_014.yaml step 107 only: docs_updated = tools/README.md; changelog_entry = the pinned phase_yaml_changelog_entry (quote it; it contains ': '); evidence = .agent/evidence/107/at2-c1-bad-status.txt. Status is the Orchestrator's. Do not edit any other step.",
+      "docs/planning/DEBT.md: do not close NDEBT-044. Concern (b) is this feature; (c), (d), (e), and (f) stay open. Concern (a) is feature 106. A note that (b) is implemented may be added only after QA, by the Orchestrator. Do not close NDEBT-047 and do not edit NDEBT-045.",
+      "Scope budget: measure 107 from fdc076f (the range start), not from <A>. The commit 7972e4f is already inside that range and is run_state only, which the phase-014 rule excludes. The Generator writes no scope_budget field."
+    ],
+    "scope_budget": "estimated_lines 680 is the feature-list figure on the phase-014 budget-counted basis (product + contract + verdict + planning; evidence and run_state excluded; range 510-850; product range 10-50). Expected product is about 40 lines: the NIP-0002 change_log entry and two frontmatter lines, the validate.sh help additions and the default-sweep list, and the README C1 row plus the 0.16.0 change_log entry. This contract is the larger share. The realized figure is measured by the Orchestrator. The Generator writes no scope_budget field.",
+    "version_and_compatibility_impact": "MINOR at the next release (methodology/06_release_train.md Section 3.2, rounded up per Section 3.4). The default-mode sweep of shipped tools/validate.sh gains docs/nips/ on C1 and C2 only. --payload is unchanged, and that is the mode consumers run. NIP-0002's edit is framework-envelope and is not injected. framework.version stays 1.4.0. Nothing is tagged. Not MAJOR: a consumer payload does not contain docs/nips/ and does not take the new input list.",
+    "rollback": "The Generator's commit is text on the feature branch, promoted by one cherry-pick. Before promotion, a failed attempt is evidence plus removal of that worktree. After promotion, git revert of that commit. No git reset --hard and no edit of run_state by the Generator.",
+    "retry_identity_note": "Step keys 107-contract (Loop 1, revision limit 3) and 107-implementation (Loop 2, attempt limit 3). This document is revision 0, attempt 2/3 of 107-contract (design_notes.revision and approvals.revisions). S01 accepts both flag states. The counters live in run_state.circuit_breaker, which the Generator does not write.",
+    "open_risks": [
+      "R1. Acceptance test 2 still passes if [C1] FAIL and [C2] FAIL both appear. Both are expected for a bad status. S05, not acceptance test 2, proves the [C1] line is the schema banner. A review that treats the accompanying [C2] FAIL as a defect would be wrong.",
+      "R2. The budget point estimate is 680. A long contract plus verdicts can land above it and still inside 510-850. The Orchestrator measures. The Generator does not expand scope to use the budget.",
+      "R3. S05 pins jsonschema 4.26.0's enum message, including the bracketed list. A different jsonschema that words the same violation differently fails S05 case 1 while the product is still right. That is ENVIRONMENT or CONTRACT_DEFECT, not a reason to change the echo.",
+      "R4. CHANGELOG.md has no [Unreleased] bullet for this feature. The README change_log entry is the NDS Section 4 record. A reviewer who wants the phase's usual bullet needs a contract revision; the implementation must not add it.",
+      "R5. tools/README.md goes to 0.16.0, not 0.15.1. NDS would allow either. The pin is 0.16.0 so the phase's per-feature minor track stays intact."
+    ]
+  },
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/evidence/107/attempt-base.txt",
+        "purpose": "The attempt base B, the Generator's first action in the attempt root. Line 1 is `git rev-parse HEAD`, line 2 is the 40-hex sha, line 3 is EXIT:0."
+      },
+      {
+        "path": ".agent/evidence/107/at1-nip-0002-status.txt",
+        "purpose": "AT1, NIP-0002 frontmatter status active and schema-valid. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/at2-c1-bad-status.txt",
+        "purpose": "AT2, a bad NIP-0001 status fails C1 and names the file. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/at3-c2-authoritative-source.txt",
+        "purpose": "AT3, an authoritative_source mismatch fails C2, names the file, and does not fail C1. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/at4-help-and-readme.txt",
+        "purpose": "AT4, the C1 and C2 help paragraphs and the C1 README row name docs/nips/. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/at5-validator-gate.txt",
+        "purpose": "AT5, the default validator gate stays 16 passing checks. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/at6-fixtures-self-test.txt",
+        "purpose": "AT6, the fixture self-test still exits 0. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/s01-contract-valid.txt",
+        "purpose": "S01, this contract matches the schema, the six acceptance tests, and the sanctioned path list. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/s02-attempt-root-delta.txt",
+        "purpose": "S02, the diff since B stays inside scope and does not include a Generator edit of run_state. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/s03-scope-boundary.txt",
+        "purpose": "S03, the diff since A is in scope or on the allowlist. run_state is allowlisted and is not a hard-fail. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/s04-pinned-structure.txt",
+        "purpose": "S04, validate.sh, NIP-0002, and tools/README.md differ from A only by the pinned edits. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      },
+      {
+        "path": ".agent/evidence/107/s05-discriminating.txt",
+        "purpose": "S05, the seven scratch cases that pin the C1 and C2 banners and the sweep boundary. Line 1 is the replayable invocation from the repo root. The body is the raw stdout and stderr. The last line is EXIT:<code> taken from the process, never from a pipeline."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "docs/nips/NIP-0002-zero-to-n-project-spectrum.md",
+        "purpose": "Frontmatter only: status accepted -> active, version 0.2.0 -> 0.2.1, and one change_log entry. The body is byte-identical."
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "Add every docs/nips/*.md to the C1 and C2 inputs in the default sweep only, and say so in the C1 and C2 --help paragraphs. Do not edit the set builders, the C5 paragraph, the Payload-doc set paragraph, the --payload option paragraph, or the failure banners."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Version 0.15.0 to 0.16.0 with the pinned change_log summary. Replace only the C1 compliance row with the pinned line. The C2 row stays."
+      }
+    ]
+  },
+  "non_goals": [
+    "Adding docs/nips/ to build_shipped_md_set or build_payload_md_set, or making C3, C5, C8, C9, or C10 scan those files in the default sweep.",
+    "Changing --payload. docs/nips/ is framework-envelope. The --payload option paragraph (NDEBT-045) is not edited.",
+    "Changing --target. A NIP passed as --target still runs C1, C2, C3, C9, and C10. NIP-0001 and NIP-0003 keep failing C9 that way. Their missing future paths are not created.",
+    "Editing NIP-0001 or NIP-0003. Measured at <A>, both already pass C1 and C2. A failure of that premise is a contract revision, not an in-attempt body edit.",
+    "A new check id, function, or help paragraph. C17, C18, and C19 are not introduced. C17 stays earmarked by NIP-0003. The default sweep stays 16 checks.",
+    "Feature 108's text: the C5 paragraph, the Payload-doc set paragraph, C14-C16 help paragraphs, and tools/interface.md. The C2 README row is also unchanged.",
+    "Feature 109 and feature 102. No edit of standard/capability_profiles.md, tools/verify_lib.sh, or .github/.",
+    "Equality of the capability indexes, and any edit of NIZAM.json or tools/skill.json. That was feature 106.",
+    "Fixing NDEBT-047. tools/fixtures_self_test.sh is not edited.",
+    "A release, a tag, or a framework.version bump. framework.version stays 1.4.0. CHANGELOG.md is not edited.",
+    "Closing NDEBT-044 as a whole. Only concern (b) is implemented here.",
+    "Editing tests or frozen gates under .agent/evidence/phase-014-activation/ to force a pass.",
+    "Editing .agent/run_state.json, docs/planning/phase_014.yaml, docs/planning/DEBT.md, the feature list, or the spec. The Orchestrator owns the phase-YAML completion fields and any debt note. S02 rejects a Generator edit of run_state since <B>."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "python3 -c \"import json,yaml,jsonschema; fm=yaml.safe_load(open('docs/nips/NIP-0002-zero-to-n-project-spectrum.md').read().split('---')[1]); jsonschema.validate(fm, json.load(open('schema/frontmatter.schema.json'))); assert fm['status']=='active', fm['status']\"",
+      "command": "python3 -c \"import json,yaml,jsonschema; fm=yaml.safe_load(open('docs/nips/NIP-0002-zero-to-n-project-spectrum.md').read().split('---')[1]); jsonschema.validate(fm, json.load(open('schema/frontmatter.schema.json'))); assert fm['status']=='active', fm['status']\"",
+      "acceptance_test_index": 1,
+      "source": ".agent/feature_list_014.json features[107].acceptance_tests[0]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1) at <A> = 7972e4f, measured 2026-10-10. jsonschema.ValidationError: 'accepted' is not one of ['draft', 'active', 'deprecated'] (jsonschema 4.26.0). The status assert is not reached. NIP-0002 frontmatter version loads as the string 0.2.0 and authoritative_source is already the file's own path.",
+      "expected_outcome": "Exit 0. The frontmatter validates and status is active. Version is 0.2.1. The body below the closing --- is unchanged.",
+      "evidence_file": ".agent/evidence/107/at1-nip-0002-status.txt"
+    },
+    {
+      "acceptance_test": "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace docs/nips/NIP-0001-ecosystem-engineering-cycle.md 'status: active' 'status: accepted' --expect-rc 1 --expect '^\\[C1\\] FAIL' --expect 'NIP-0001-ecosystem-engineering-cycle\\.md' -- bash tools/validate.sh",
+      "command": "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace docs/nips/NIP-0001-ecosystem-engineering-cycle.md 'status: active' 'status: accepted' --expect-rc 1 --expect '^\\[C1\\] FAIL' --expect 'NIP-0001-ecosystem-engineering-cycle\\.md' -- bash tools/validate.sh",
+      "acceptance_test_index": 2,
+      "source": ".agent/feature_list_014.json features[107].acceptance_tests[1]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. scratch_run applied the replace (the old string occurs once; a precondition failure would have been exit 3) and validate.sh in the copy exited 0. SUMMARY: 16 passed, 0 failed, with [C1] PASS frontmatter-schema. The expectations '^[C1] FAIL' and the filename both failed. Red because the default sweep does not read docs/nips/.",
+      "expected_outcome": "Exit 0 (scratch_run: EXPECTATIONS HELD). The copied validate.sh exits 1, a line matches ^[C1] FAIL, and the output names NIP-0001-ecosystem-engineering-cycle.md. [C2] FAIL format is also expected, because status accepted is outside C2's enum too, and AT2 does not forbid it. S05 requires the C1 line to be exactly [C1] FAIL frontmatter-schema and the schema detail to name 'accepted'.",
+      "evidence_file": ".agent/evidence/107/at2-c1-bad-status.txt"
+    },
+    {
+      "acceptance_test": "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace docs/nips/NIP-0001-ecosystem-engineering-cycle.md 'authoritative_source: docs/nips/NIP-0001-ecosystem-engineering-cycle.md' 'authoritative_source: docs/nips/NIP-0001-moved.md' --expect-rc 1 --expect '^\\[C2\\] FAIL' --expect 'NIP-0001-ecosystem-engineering-cycle\\.md' --forbid '^\\[C1\\] FAIL' -- bash tools/validate.sh",
+      "command": "python3 .agent/evidence/phase-014-activation/gates/scratch_run.py --replace docs/nips/NIP-0001-ecosystem-engineering-cycle.md 'authoritative_source: docs/nips/NIP-0001-ecosystem-engineering-cycle.md' 'authoritative_source: docs/nips/NIP-0001-moved.md' --expect-rc 1 --expect '^\\[C2\\] FAIL' --expect 'NIP-0001-ecosystem-engineering-cycle\\.md' --forbid '^\\[C1\\] FAIL' -- bash tools/validate.sh",
+      "acceptance_test_index": 3,
+      "source": ".agent/feature_list_014.json features[107].acceptance_tests[2]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. scratch_run replaced the one authoritative_source line and validate.sh in the copy exited 0. SUMMARY: 16 passed, 0 failed, with [C2] PASS format. The forbid '^[C1] FAIL' held. The positive expectations failed. Red because C2 does not read docs/nips/. The mutation precondition held.",
+      "expected_outcome": "Exit 0 (scratch_run: EXPECTATIONS HELD). The copied validate.sh exits 1, a line matches ^[C2] FAIL, the output names the file, and no line matches ^[C1] FAIL. S05 requires the C2 line to be exactly [C2] FAIL format and the detail to be the authoritative_source mismatch. The frontmatter schema accepts the replacement string, so C1 must stay PASS.",
+      "evidence_file": ".agent/evidence/107/at3-c2-authoritative-source.txt"
+    },
+    {
+      "acceptance_test": "python3 -c \"import subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; c1=h.split('  C1 ')[1].split('  C2 ')[0]; c2=h.split('  C2 ')[1].split('  C3 ')[0]; r=[l for l in open('tools/README.md') if l.startswith('| C1 ')]; assert 'docs/nips/' in c1 and 'docs/nips/' in c2 and len(r)==1 and 'docs/nips/' in r[0], (c1[:120],c2[:120],r)\"",
+      "command": "python3 -c \"import subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; c1=h.split('  C1 ')[1].split('  C2 ')[0]; c2=h.split('  C2 ')[1].split('  C3 ')[0]; r=[l for l in open('tools/README.md') if l.startswith('| C1 ')]; assert 'docs/nips/' in c1 and 'docs/nips/' in c2 and len(r)==1 and 'docs/nips/' in r[0], (c1[:120],c2[:120],r)\"",
+      "acceptance_test_index": 4,
+      "source": ".agent/feature_list_014.json features[107].acceptance_tests[3]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "FAIL (exit 1) at <A>, measured 2026-10-10. AssertionError whose payload is the current C1 help slice (it starts ' Frontmatter schema. Every file in the \"shipped-doc set\"'), the current C2 help slice, and the one C1 row. None of the three contains docs/nips/. The C1 row is a single line.",
+      "expected_outcome": "Exit 0. The help slice between '  C1 ' and '  C2 ' contains docs/nips/, the slice between '  C2 ' and '  C3 ' contains docs/nips/, and exactly one README line starts with '| C1 ' and that line is the pinned row.",
+      "evidence_file": ".agent/evidence/107/at4-help-and-readme.txt"
+    },
+    {
+      "acceptance_test": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+      "command": "python3 .agent/evidence/phase-014-activation/gates/validator_gate.py",
+      "acceptance_test_index": 5,
+      "source": ".agent/feature_list_014.json features[107].acceptance_tests[4]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10. GATE: PASS (16 checks passing; baseline 16). A green guard, not a red test.",
+      "expected_outcome": "Exit 0. GATE: PASS with 16 checks, not 17. NIP-0002's corrected frontmatter does not add a check.",
+      "evidence_file": ".agent/evidence/107/at5-validator-gate.txt"
+    },
+    {
+      "acceptance_test": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+      "command": "bash tools/fixtures_self_test.sh; test $? -eq 0",
+      "acceptance_test_index": 6,
+      "source": ".agent/feature_list_014.json features[107].acceptance_tests[5]",
+      "provenance": "new_feature_design",
+      "owner": "generator",
+      "state_at_base_A": "PASS (exit 0) at <A>, measured 2026-10-10. SELF-TEST OK: 147/147 fixtures accounted for, 0 failed. A green guard. This feature adds no fixture.",
+      "expected_outcome": "Exit 0. The self-test still exits 0. The accounted total stays 147 because no fixture is added.",
+      "evidence_file": ".agent/evidence/107/at6-fixtures-self-test.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S01: the contract validates against schema/contract.schema.json; its six acceptance entries are verbatim and in order; files_modify is exactly the three sanctioned paths; no forbidden path is in scope; estimated_lines is 680; version_impact starts with MINOR; when status is approved, revisions is 0 and both validator_mode_a and evaluator_contract_review are true, otherwise revisions is 0 and both flags are false; design_notes.revision is revision 0.",
+      "command": "python3 - <<'PY'\nimport json, subprocess, sys\nimport jsonschema\nA = \"7972e4f2d46abf6b8e0f02e8c11e94ac0f7aa0f4\"\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nbad = []\ncontract = json.load(open(\".agent/contracts/107.json\"))\njsonschema.validate(contract, json.load(open(\"schema/contract.schema.json\")))\nfeature = next(item for item in json.load(open(\".agent/feature_list_014.json\"))[\"features\"] if item[\"id\"] == \"107\")\nif (contract[\"contract_id\"], contract[\"feature_id\"], contract[\"spec_ref\"]) != (\"107\", \"107\", \".agent/product_spec_014.md\"):\n    bad.append(\"ids or spec_ref\")\nif contract[\"status\"] not in (\"proposed\", \"approved\", \"implemented\", \"complete\"):\n    bad.append(\"status \" + contract[\"status\"])\nif contract[\"estimated_lines\"] != 680 or contract[\"estimated_lines\"] != feature[\"estimated_lines\"]:\n    bad.append(\"estimated_lines\")\nif not contract[\"version_impact\"].startswith(\"MINOR\"):\n    bad.append(\"version_impact\")\ntests = [item for item in contract[\"verification\"] if not item.get(\"supplementary\")]\nextras = [item for item in contract[\"verification\"] if item.get(\"supplementary\")]\nif [item[\"acceptance_test\"] for item in tests] != feature[\"acceptance_tests\"]:\n    bad.append(\"acceptance_test text is not verbatim and in order\")\nif [item[\"command\"] for item in tests] != feature[\"acceptance_tests\"]:\n    bad.append(\"command is not the verbatim acceptance test\")\nif len(tests) != 6 or len(extras) != 5:\n    bad.append(\"expected 6 acceptance tests and 5 supplementary checks\")\nif any(not item.get(\"expected_outcome\") or not item.get(\"state_at_base_A\") or item.get(\"owner\") != \"generator\" for item in contract[\"verification\"]):\n    bad.append(\"entry missing expected_outcome, state_at_base_A, or generator owner\")\nevidence = [item[\"evidence_file\"] for item in contract[\"verification\"]]\ncreated = [item[\"path\"] for item in contract[\"scope\"][\"files_create\"]]\nmodified = [item[\"path\"] for item in contract[\"scope\"][\"files_modify\"]]\nif len(set(evidence)) != len(evidence) or any(not path.startswith(\".agent/evidence/107/\") for path in evidence):\n    bad.append(\"evidence files are not unique under .agent/evidence/107/\")\nif not set(evidence) <= set(created):\n    bad.append(\"an evidence file is missing from files_create\")\nif \"attempt-base.txt\" not in \" \".join(created):\n    bad.append(\"attempt-base.txt missing\")\nwant_modify = [\n    \"docs/nips/NIP-0002-zero-to-n-project-spectrum.md\",\n    \"tools/validate.sh\",\n    \"tools/README.md\",\n]\nif modified != want_modify:\n    bad.append(\"files_modify is not the sanctioned list: \" + repr(modified))\nfor path in modified:\n    if sh(\"git\", \"cat-file\", \"-e\", A + \":\" + path).returncode != 0:\n        bad.append(\"files_modify path absent at base: \" + path)\nfor path in created:\n    if sh(\"git\", \"cat-file\", \"-e\", A + \":\" + path).returncode == 0:\n        bad.append(\"create path already exists at base: \" + path)\nforbidden_exact = {\n    \".agent/run_state.json\",\n    \"standard/capability_profiles.md\",\n    \"tools/verify_lib.sh\",\n    \"tools/interface.md\",\n    \"tools/fixtures_self_test.sh\",\n    \"docs/planning/phase_014.yaml\",\n    \"docs/planning/DEBT.md\",\n    \".agent/feature_list_014.json\",\n    \".agent/product_spec_014.md\",\n    \"CHANGELOG.md\",\n    \"NIZAM.json\",\n    \"tools/skill.json\",\n    \"docs/nips/NIP-0001-ecosystem-engineering-cycle.md\",\n    \"docs/nips/NIP-0003-live-runtime-sessions.md\",\n}\nfor path in created + modified:\n    if path in forbidden_exact or path.startswith((\".github/\", \".agent/evidence/phase-014-activation\")):\n        bad.append(\"forbidden path in scope: \" + path)\nidentity = contract[\"retry_identity\"]\nif (identity[\"contract_step_key\"], identity[\"implementation_step_key\"], identity[\"limit\"]) != (\"107-contract\", \"107-implementation\", 3):\n    bad.append(\"retry identity\")\nif contract[\"design_notes\"][\"revision\"].split()[1] != \"0\":\n    bad.append(\"design_notes.revision is not revision 0\")\napprovals = contract[\"approvals\"]\nif contract[\"status\"] == \"approved\":\n    if approvals.get(\"revisions\") != 0 or approvals.get(\"validator_mode_a\") is not True or approvals.get(\"evaluator_contract_review\") is not True:\n        bad.append(\"approved revision 0 does not have both approval flags true\")\nelse:\n    if approvals.get(\"revisions\") != 0 or approvals.get(\"validator_mode_a\") is not False or approvals.get(\"evaluator_contract_review\") is not False:\n        bad.append(\"approvals are not false at revision 0\")\nprint(\"verification\", len(contract[\"verification\"]), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "Not a red test. It passes once this contract is the file under test and the working tree matches it.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/107/s01-contract-valid.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S02: attempt-base.txt is the three-line form; B is the approved-contract commit; the diff since B is inside scope. Proves the implementation commit does not touch run_state, the feature list, the phase YAML, DEBT.md, NIP-0001, NIP-0003, or CHANGELOG.md. A Generator edit of run_state since B fails here.",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys\nA = \"7972e4f2d46abf6b8e0f02e8c11e94ac0f7aa0f4\"\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nsh = lambda *a: subprocess.run(a, capture_output=True, text=True)\nbad = []\nlines = open(\".agent/evidence/107/attempt-base.txt\").read().splitlines()\nif len(lines) != 3 or lines[0] != \"git rev-parse HEAD\" or lines[2] != \"EXIT:0\" or re.fullmatch(r\"[0-9a-f]{40}\", lines[1]) is None:\n    bad.append(\"attempt-base.txt is not the three-line captured form\")\nB = lines[1] if len(lines) > 1 else \"\"\ncontract = json.load(open(\".agent/contracts/107.json\"))\nscope = {item[\"path\"] for key in (\"files_create\", \"files_modify\") for item in contract[\"scope\"][key]}\nif sh(\"git\", \"cat-file\", \"-t\", B).stdout.strip() != \"commit\":\n    bad.append(\"B is not a commit\")\nif sh(\"git\", \"merge-base\", \"--is-ancestor\", A, B).returncode != 0:\n    bad.append(\"A is not an ancestor of B\")\nif sh(\"git\", \"merge-base\", \"--is-ancestor\", B, \"HEAD\").returncode != 0:\n    bad.append(\"B is not an ancestor-or-equal of HEAD\")\ncount = int(sh(\"git\", \"rev-list\", \"--count\", B + \"..HEAD\").stdout.strip() or \"99\")\nif count not in (0, 1):\n    bad.append(\"HEAD is %d commits past B\" % count)\nshown = sh(\"git\", \"show\", B + \":.agent/contracts/107.json\")\nif shown.returncode != 0 or json.loads(shown.stdout).get(\"status\") != \"approved\":\n    bad.append(\"the contract at B is not approved\")\ndelta = set(run(\"git\", \"diff\", \"--name-only\", \"-z\", B).split(\"\\0\")) - {\"\"}\nfields = run(\"git\", \"status\", \"--porcelain\", \"--untracked-files=all\", \"-z\").split(\"\\0\")\nindex = 0\nwhile index < len(fields):\n    entry = fields[index]\n    index += 1\n    if not entry:\n        continue\n    delta.add(entry[3:])\n    if entry[0] in \"RC\" or entry[1] in \"RC\":\n        if index < len(fields):\n            delta.add(fields[index])\n            index += 1\nif \".agent/run_state.json\" in delta:\n    bad.append(\"Generator edit of .agent/run_state.json since B (S02 rejects it; S03 does not)\")\nextra = sorted(delta - scope)\nif extra:\n    bad.append(\"paths changed since B outside scope: \" + repr(extra))\nprint(\"B\", B[:12], \"commits past B\", count, \"delta\", len(delta), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at <A> (exit 1): attempt-base.txt does not exist yet.",
+      "expected_outcome": "Exit 0 inside the attempt root, before the single implementation commit (HEAD equals B, or one commit past B only when re-run after that commit).",
+      "evidence_file": ".agent/evidence/107/s02-attempt-root-delta.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S03: every path changed against <A> is in scope or on the allowlist (.agent/contracts/107.json, run_state, the feature list, validator/QA/failed-attempt prefixes). Every files_modify path is changed. The feature list, phase YAML, and DEBT.md are hard-failed when changed. run_state stays on the allowlist and is not in that hard-fail.",
+      "command": "python3 - <<'PY'\nimport json, subprocess, sys\nA = \"7972e4f2d46abf6b8e0f02e8c11e94ac0f7aa0f4\"\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nbad = []\ncontract = json.load(open(\".agent/contracts/107.json\"))\nscope = {item[\"path\"] for key in (\"files_create\", \"files_modify\") for item in contract[\"scope\"][key]}\nmodified = {item[\"path\"] for item in contract[\"scope\"][\"files_modify\"]}\nowned = {\".agent/contracts/107.json\", \".agent/run_state.json\", \".agent/feature_list_014.json\"}\nprefixes = (\".agent/validator/107\", \".agent/qa/107\", \".agent/evidence/107/qa/\", \".agent/evidence/107/failed-attempt\", \".agent/evidence/107-qa-\")\nchanged = set(run(\"git\", \"diff\", \"--name-only\", \"-z\", A).split(\"\\0\")) - {\"\"}\nfields = run(\"git\", \"status\", \"--porcelain\", \"--untracked-files=all\", \"-z\").split(\"\\0\")\nindex = 0\nwhile index < len(fields):\n    entry = fields[index]\n    index += 1\n    if not entry:\n        continue\n    changed.add(entry[3:])\n    if entry[0] in \"RC\" or entry[1] in \"RC\":\n        if index < len(fields):\n            changed.add(fields[index])\n            index += 1\nextra = sorted(path for path in changed if path not in scope and path not in owned and not path.startswith(prefixes))\nmissing = sorted(modified - changed)\nif extra:\n    bad.append(\"paths outside scope and allowlist: \" + repr(extra))\nif missing:\n    bad.append(\"files_modify paths not changed: \" + repr(missing))\nif \".agent/feature_list_014.json\" in changed:\n    bad.append(\"feature list changed inside the attempt; status flips are Orchestrator-owned\")\nif \"docs/planning/phase_014.yaml\" in changed or \"docs/planning/DEBT.md\" in changed:\n    bad.append(\"orchestrator-owned file changed inside the attempt\")\nprint(\"changed\", len(changed), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at <A> plus this contract (exit 1): the three files_modify paths are not yet changed relative to an attempt that also contains the contract. At <A> itself the contract file is absent.",
+      "expected_outcome": "Exit 0 in the attempt root after the deliverables exist. Phase YAML, DEBT.md, and the feature list are unchanged against <A>. A run_state difference versus <A> is allowlisted, not a hard-fail. This is the 106 revision-0 lesson: <B> already contains the Orchestrator's contract-approval edit of run_state, and the Generator must not edit run_state to erase it.",
+      "evidence_file": ".agent/evidence/107/s03-scope-boundary.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S04: validate.sh differs from <A> only by the two help paragraphs and the default-sweep C1/C2 input list; the C1 and C2 fail echos stay the single pinned lines; build_shipped_md_set and build_payload_md_set are byte-identical and do not mention docs/nips; the forbidden help regions are byte-identical; NIP-0002 differs only by the version, the status, and one change_log entry, and its body is byte-identical; tools/README.md is 0.16.0 with the pinned C1 row and an unchanged C2 row; the unchanged-file list is byte-identical to <A>.",
+      "command": "python3 - <<'PY'\nimport json, re, subprocess, sys\nimport yaml\nA = \"7972e4f2d46abf6b8e0f02e8c11e94ac0f7aa0f4\"\nrun = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout\nbad = []\npins = json.load(open(\".agent/contracts/107.json\"))[\"design_notes\"][\"pinned_interface\"]\n\ndef show(path):\n    return run(\"git\", \"show\", A + \":\" + path)\n\ndef between(text, start, end):\n    i = text.index(start)\n    j = text.index(end, i)\n    return text[i:j]\n\nbase_v = show(\"tools/validate.sh\")\nnew_v = open(\"tools/validate.sh\").read()\nexpect_v = base_v.replace(pins[\"c1_help_old\"], pins[\"c1_help_new\"], 1)\nexpect_v = expect_v.replace(pins[\"c2_help_old\"], pins[\"c2_help_new\"], 1)\nexpect_v = expect_v.replace(pins[\"call_old\"], pins[\"call_new\"], 1)\nif new_v != expect_v:\n    bad.append(\"tools/validate.sh is not base plus the three pinned edits\")\nif new_v.count(pins[\"c1_fail_echo\"]) != 1 or new_v.count(pins[\"c2_fail_echo\"]) != 1:\n    bad.append(\"the C1 or C2 fail echo is not exactly once\")\nif new_v.count(pins[\"c1_banner\"]) != 1 or new_v.count(pins[\"c2_banner\"]) != 1:\n    bad.append(\"the C1 or C2 failure banner text is not exactly once\")\nfor token in (\"[C17]\", \"[C18]\", \"[C19]\", \"check_c17\", \"check_c18\", \"check_c19\"):\n    if token in new_v:\n        bad.append(\"new check text present: \" + token)\nfor start, end in pins[\"unchanged_regions\"]:\n    if between(new_v, start, end) != between(base_v, start, end):\n        bad.append(\"forbidden region changed: \" + start[:48])\nshipped_fn = between(new_v, \"build_shipped_md_set() {\", \"build_payload_md_set() {\")\npayload_fn = between(new_v, \"build_payload_md_set() {\", \"# Shared frontmatter parser\")\nif shipped_fn != between(base_v, \"build_shipped_md_set() {\", \"build_payload_md_set() {\"):\n    bad.append(\"build_shipped_md_set changed\")\nif payload_fn != between(base_v, \"build_payload_md_set() {\", \"# Shared frontmatter parser\"):\n    bad.append(\"build_payload_md_set changed\")\nif \"docs/nips\" in shipped_fn or \"docs/nips\" in payload_fn:\n    bad.append(\"a set builder mentions docs/nips\")\nc1 = new_v.split(\"  C1 \")[1].split(\"  C2 \")[0]\nc2 = new_v.split(\"  C2 \")[1].split(\"  C3 \")[0]\nif \"docs/nips/\" not in c1 or \"docs/nips/\" not in c2:\n    bad.append(\"help C1 or C2 paragraph lost docs/nips/\")\nif new_v.count(pins[\"nip_append_line\"]) != 1:\n    bad.append(\"the NIP append line is not exactly once\")\n\nbase_n = show(pins[\"nip2\"])\nnew_n = open(pins[\"nip2\"]).read()\nexpect_n = base_n.replace(\"version: 0.2.0\\n\", \"version: 0.2.1\\n\", 1)\nexpect_n = expect_n.replace(\"status: accepted\\n\", \"status: active\\n\", 1)\nexpect_n = expect_n.replace(\"change_log:\\n\", \"change_log:\\n\" + pins[\"nip2_changelog_entry\"], 1)\nif base_n.count(\"version: 0.2.0\\n\") != 1 or base_n.count(\"status: accepted\\n\") != 1:\n    bad.append(\"NIP-0002 anchors are not unique at base\")\nif new_n != expect_n:\n    bad.append(\"NIP-0002 is not base plus the three frontmatter edits\")\nif new_n.count(\"status: active\\n\") != 1:\n    bad.append(\"status: active is not exactly once in NIP-0002\")\nif new_n.split(\"---\", 2)[2] != base_n.split(\"---\", 2)[2]:\n    bad.append(\"NIP-0002 body changed\")\nfront = yaml.safe_load(new_n.split(\"---\", 2)[1])\nif front.get(\"status\") != \"active\" or front.get(\"version\") != \"0.2.1\":\n    bad.append(\"NIP-0002 frontmatter status or version\")\nif front.get(\"authoritative_source\") != pins[\"nip2\"]:\n    bad.append(\"NIP-0002 authoritative_source\")\n\ndef frontmatter(text):\n    return yaml.safe_load(text.split(\"---\", 2)[1])\n\ndef body(text):\n    return text.split(\"---\", 2)[2]\n\nold_r, new_r = show(\"tools/README.md\"), open(\"tools/README.md\").read()\nold_fm, new_fm = frontmatter(old_r), frontmatter(new_r)\nif (str(old_fm[\"version\"]), str(new_fm[\"version\"])) != (\"0.15.0\", \"0.16.0\"):\n    bad.append(\"README version is not 0.15.0 -> 0.16.0\")\nhead = new_fm[\"change_log\"][0]\nif head[\"version\"] != \"0.16.0\" or head[\"summary\"] != pins[\"readme_summary\"] or str(head[\"date\"]) != pins[\"readme_date\"]:\n    bad.append(\"README change_log head\")\nif new_fm[\"change_log\"][1:] != old_fm[\"change_log\"]:\n    bad.append(\"older README change_log entries changed\")\nif {k: v for k, v in new_fm.items() if k not in (\"version\", \"change_log\")} != {k: v for k, v in old_fm.items() if k not in (\"version\", \"change_log\")}:\n    bad.append(\"another README frontmatter key changed\")\nold_lines, new_lines = body(old_r).splitlines(), body(new_r).splitlines()\ndiffs = [(a, b) for a, b in zip(old_lines, new_lines) if a != b]\nif len(old_lines) != len(new_lines) or diffs != [(pins[\"c1_row_old\"], pins[\"c1_row_new\"])]:\n    bad.append(\"README body differs by more than the pinned C1 row\")\nc1_lines = [line for line in new_r.splitlines() if line.startswith(\"| C1 \")]\nif c1_lines != [pins[\"c1_row_new\"]] or \"docs/nips/\" not in pins[\"c1_row_new\"]:\n    bad.append(\"AT4 C1 row is not exactly the pinned line\")\nc2_old = [line for line in old_r.splitlines() if line.startswith(\"| C2 \")]\nc2_new = [line for line in new_r.splitlines() if line.startswith(\"| C2 \")]\nif c2_old != c2_new or len(c2_new) != 1:\n    bad.append(\"C2 README row changed\")\n\nfor path in pins[\"unchanged_files\"]:\n    if open(path).read() != show(path):\n        bad.append(\"file that must stay byte-identical changed: \" + path)\nprint(\"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at <A> (exit 1): the help text does not name docs/nips/, NIP-0002 status is accepted, and the README C1 row does not name docs/nips/.",
+      "expected_outcome": "Exit 0.",
+      "evidence_file": ".agent/evidence/107/s04-pinned-structure.txt"
+    },
+    {
+      "acceptance_test": "Supplementary S05: seven scratch cases. The AT2 mutation prints exactly [C1] FAIL frontmatter-schema with the schema detail for status accepted, and also [C2] FAIL format. Replacing the one C1 fail echo with a pass and return 0 removes [C1] FAIL and leaves the C2 banner. The AT3 mutation prints exactly [C2] FAIL format with the authoritative_source detail and does not print [C1] FAIL. Replacing the one C2 fail echo removes [C2] FAIL and the sweep passes. Payload mode with NIP-0002 status set back to accepted still passes 12 checks. A bare fence and docs/nips/DOES-NOT-EXIST.md appended to NIP-0001 do not fail C3, C9, or C10. Replacing the one c1_c2_md append with ':' makes the AT2 mutation pass C1 and C2.",
+      "command": "python3 - <<'PY'\nimport json, os, subprocess, sys\nbad = []\n\ndef serial_guard():\n    ancestors, pid = set(), os.getpid()\n    while pid > 1:\n        ancestors.add(pid)\n        try:\n            pid = int(open(\"/proc/%d/stat\" % pid).read().rsplit(\")\", 1)[1].split()[1])\n        except (OSError, ValueError, IndexError):\n            break\n    for name in filter(str.isdigit, os.listdir(\"/proc\")):\n        if int(name) in ancestors:\n            continue\n        try:\n            argv = [part.decode() for part in open(\"/proc/%s/cmdline\" % name, \"rb\").read().split(b\"\\0\") if part]\n            cwd = os.readlink(\"/proc/%s/cwd\" % name)\n        except OSError:\n            continue\n        if cwd == os.getcwd() and len(argv) > 1 and os.path.basename(argv[0]) in (\"bash\", \"sh\") and argv[1].endswith((\"tools/fixtures_self_test.sh\", \"tools/validate.sh\")):\n            print(\"REFUSED (exit 4): process %s is already running %s in this tree\" % (name, argv[1]))\n            sys.exit(4)\n\nserial_guard()\npins = json.load(open(\".agent/contracts/107.json\"))[\"design_notes\"][\"pinned_interface\"]\n\ndef mutate(rel, old, new):\n    return (\n        \"p = root / {rel!r}\\n\"\n        \"t = p.read_text()\\n\"\n        \"old = {old!r}\\n\"\n        \"new = {new!r}\\n\"\n        \"assert t.count(old) == 1, t.count(old)\\n\"\n        \"p.write_text(t.replace(old, new, 1))\\n\"\n    ).format(rel=rel, old=old, new=new)\n\ndef append_suffix(rel, suffix):\n    return (\n        \"p = root / {rel!r}\\n\"\n        \"t = p.read_text()\\n\"\n        \"suffix = {suffix!r}\\n\"\n        \"assert suffix not in t\\n\"\n        \"p.write_text(t + suffix)\\n\"\n    ).format(rel=rel, suffix=suffix)\n\nNIP1 = pins[\"nip1\"]\nNIP2 = pins[\"nip2\"]\nablate_c1 = mutate(\"tools/validate.sh\", pins[\"c1_fail_echo\"], pins[\"c1_fail_ablation\"])\nablate_c2 = mutate(\"tools/validate.sh\", pins[\"c2_fail_echo\"], pins[\"c2_fail_ablation\"])\ndrop_join = mutate(\"tools/validate.sh\", pins[\"nip_append_line\"], \"        :\\n\")\npoison = append_suffix(NIP1, pins[\"poison_suffix\"])\nSR = [sys.executable, \".agent/evidence/phase-014-activation/gates/scratch_run.py\"]\nVAL = [\"bash\", \"tools/validate.sh\"]\nCASES = [\n    (\"AT2 mutation: exact C1 schema banner and detail; C2 status banner also fires\",\n     [\"--replace\", NIP1, \"status: active\", \"status: accepted\"], 1,\n     [r\"^\\[C1\\] FAIL frontmatter-schema$\", pins[\"c1_schema_detail\"], r\"^\\[C2\\] FAIL format$\", pins[\"c2_status_detail\"]],\n     [r\"^\\[C1[7-9]\\]\"], VAL),\n    (\"silencing the C1 fail echo removes [C1] FAIL; the C2 status banner remains\",\n     [\"--replace\", NIP1, \"status: active\", \"status: accepted\", \"--py-mutate\", ablate_c1], 1,\n     [r\"^\\[C2\\] FAIL format$\", pins[\"c2_status_detail\"]],\n     [r\"^\\[C1\\] FAIL\"], VAL),\n    (\"AT3 mutation: exact C2 format banner and authoritative_source detail; no C1 fail\",\n     [\"--replace\", NIP1, \"authoritative_source: docs/nips/NIP-0001-ecosystem-engineering-cycle.md\", \"authoritative_source: docs/nips/NIP-0001-moved.md\"], 1,\n     [r\"^\\[C2\\] FAIL format$\", pins[\"c2_source_detail\"], r\"^\\[C1\\] PASS frontmatter-schema$\"],\n     [r\"^\\[C1\\] FAIL\"], VAL),\n    (\"silencing the C2 fail echo removes [C2] FAIL from the AT3 mutation; C1 stays passing\",\n     [\"--replace\", NIP1, \"authoritative_source: docs/nips/NIP-0001-ecosystem-engineering-cycle.md\", \"authoritative_source: docs/nips/NIP-0001-moved.md\", \"--py-mutate\", ablate_c2], 0,\n     [r\"^\\[C1\\] PASS frontmatter-schema$\", r\"^\\[C2\\] PASS format$\", r\"^SUMMARY: 16 passed, 0 failed$\"],\n     [r\"^\\[C1\\] FAIL\", r\"^\\[C2\\] FAIL\"], VAL),\n    (\"payload mode ignores a NIP status of accepted\",\n     [\"--replace\", NIP2, \"status: active\", \"status: accepted\"], 0,\n     [r\"^SUMMARY \\(payload mode\\): 12 passed, 0 failed$\", r\"^\\[C1\\] PASS frontmatter-schema$\"],\n     [r\"^\\[C1\\] FAIL\", r\"^\\[C2\\] FAIL\"], VAL + [\"--payload\"]),\n    (\"a bare fence and a missing path in a NIP body do not fail C3, C9, or C10\",\n     [\"--py-mutate\", poison], 0,\n     [r\"^SUMMARY: 16 passed, 0 failed$\", r\"^\\[C1\\] PASS frontmatter-schema$\", r\"^\\[C3\\] PASS untagged-fence-sweep$\", r\"^\\[C9\\] PASS path-resolution$\", r\"^\\[C10\\] PASS consistency$\"],\n     [r\"^\\[C3\\] FAIL\", r\"^\\[C9\\] FAIL\", r\"^\\[C10\\] FAIL\", \"DOES-NOT-EXIST\"], VAL),\n    (\"dropping the NIP append makes the AT2 mutation invisible to C1 and C2\",\n     [\"--replace\", NIP1, \"status: active\", \"status: accepted\", \"--py-mutate\", drop_join], 0,\n     [r\"^\\[C1\\] PASS frontmatter-schema$\", r\"^\\[C2\\] PASS format$\", r\"^SUMMARY: 16 passed, 0 failed$\"],\n     [r\"^\\[C1\\] FAIL\", r\"^\\[C2\\] FAIL\"], VAL),\n]\n\ndef one(case):\n    name, mutations, rc, expects, forbids, command = case\n    argv = SR + mutations + [\"--expect-rc\", str(rc)]\n    for pattern in expects:\n        argv += [\"--expect\", pattern]\n    for pattern in forbids:\n        argv += [\"--forbid\", pattern]\n    argv += [\"--\"] + command\n    proc = subprocess.run(argv, capture_output=True, text=True)\n    print((\"PASS \" if proc.returncode == 0 else \"FAIL \") + name)\n    if proc.returncode != 0:\n        print(\"\\n\".join(\"    \" + line for line in (proc.stdout + proc.stderr).splitlines()[-25:]))\n        bad.append(name)\n\nfor case in CASES:\n    one(case)\nprint(\"cases:\", len(CASES), \"problems:\", bad)\nsys.exit(1 if bad else 0)\nPY",
+      "supplementary": true,
+      "owner": "generator",
+      "state_at_base_A": "FAIL at <A> (exit 1): the AT2 mutation does not fail C1, because the default sweep does not read docs/nips/, and the append line the ablation looks for does not exist yet.",
+      "expected_outcome": "Exit 0. All seven cases PASS, run one at a time. A later edit cannot satisfy AT2 or AT3 by printing a different check id: the banners are the single echo lines, and silencing each echo removes only that banner.",
+      "evidence_file": ".agent/evidence/107/s05-discriminating.txt"
+    }
+  ],
+  "estimated_lines": 680,
+  "evidence_dir": ".agent/evidence/107/",
+  "evidence_convention": "Line 1 of each evidence file is the replayable invocation from the repo root, the body is the raw combined stdout and stderr, and the last line is EXIT:<code> taken from the process, never from a pipeline. One capture at a time, in the foreground. Never run tools/validate.sh and tools/fixtures_self_test.sh at the same time. Order inside the attempt root: attempt-base.txt first; after the deliverables are final, AT1 through AT6, then S01, S04, S05, S02, S03. A later edit invalidates the captures. The Evaluator re-runs into .agent/evidence/107/qa/. Failed-attempt evidence goes to .agent/evidence/107/failed-attempt<N>/. Frozen files under .agent/evidence/phase-014-activation/ are read-only.",
+  "approvals": {
+    "revisions": 0,
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "approved_at": "2026-10-10T07:49:08Z"
+  },
+  "version_impact": "MINOR at the next release (the default-mode sweep scope of shipped tools/validate.sh widens; consumers validate with --payload, which is unchanged; methodology/06_release_train.md Section 3.4 rounds up; spec: \"MINOR (the default-mode sweep scope widens)\"). NIP-0002's own edit is framework-envelope. No release is prepared and no tag is created. framework.version stays 1.4.0.",
+  "retry_identity": {
+    "contract_step_key": "107-contract",
+    "implementation_step_key": "107-implementation",
+    "limit": 3,
+    "attempt_worktree": "Created by the Orchestrator from <B>. Suggested path /home/cnross/workspace02/nizam-wt-107-attempt<N>.",
+    "failed_attempt_evidence": ".agent/evidence/107/failed-attempt<N>/",
+    "attempt_strategy": "methodology/03_circuit_breaker.md: attempt 1 direct fix, 2 type/interface analysis, 3 architectural review, 4+ forbidden. ENVIRONMENT and CONTRACT_DEFECT escalate and do not consume an attempt."
+  },
+  "rollback": "See design_notes.rollback. No git reset --hard. The Generator does not edit .agent/run_state.json."
+}

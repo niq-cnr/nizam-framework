@@ -1,0 +1,79 @@
+python3 - <<'PY'
+import json, subprocess, sys
+import jsonschema
+A = "7972e4f2d46abf6b8e0f02e8c11e94ac0f7aa0f4"
+sh = lambda *a: subprocess.run(a, capture_output=True, text=True)
+bad = []
+contract = json.load(open(".agent/contracts/107.json"))
+jsonschema.validate(contract, json.load(open("schema/contract.schema.json")))
+feature = next(item for item in json.load(open(".agent/feature_list_014.json"))["features"] if item["id"] == "107")
+if (contract["contract_id"], contract["feature_id"], contract["spec_ref"]) != ("107", "107", ".agent/product_spec_014.md"):
+    bad.append("ids or spec_ref")
+if contract["status"] not in ("proposed", "approved", "implemented", "complete"):
+    bad.append("status " + contract["status"])
+if contract["estimated_lines"] != 680 or contract["estimated_lines"] != feature["estimated_lines"]:
+    bad.append("estimated_lines")
+if not contract["version_impact"].startswith("MINOR"):
+    bad.append("version_impact")
+tests = [item for item in contract["verification"] if not item.get("supplementary")]
+extras = [item for item in contract["verification"] if item.get("supplementary")]
+if [item["acceptance_test"] for item in tests] != feature["acceptance_tests"]:
+    bad.append("acceptance_test text is not verbatim and in order")
+if [item["command"] for item in tests] != feature["acceptance_tests"]:
+    bad.append("command is not the verbatim acceptance test")
+if len(tests) != 6 or len(extras) != 5:
+    bad.append("expected 6 acceptance tests and 5 supplementary checks")
+if any(not item.get("expected_outcome") or not item.get("state_at_base_A") or item.get("owner") != "generator" for item in contract["verification"]):
+    bad.append("entry missing expected_outcome, state_at_base_A, or generator owner")
+evidence = [item["evidence_file"] for item in contract["verification"]]
+created = [item["path"] for item in contract["scope"]["files_create"]]
+modified = [item["path"] for item in contract["scope"]["files_modify"]]
+if len(set(evidence)) != len(evidence) or any(not path.startswith(".agent/evidence/107/") for path in evidence):
+    bad.append("evidence files are not unique under .agent/evidence/107/")
+if not set(evidence) <= set(created):
+    bad.append("an evidence file is missing from files_create")
+if "attempt-base.txt" not in " ".join(created):
+    bad.append("attempt-base.txt missing")
+want_modify = [
+    "docs/nips/NIP-0002-zero-to-n-project-spectrum.md",
+    "tools/validate.sh",
+    "tools/README.md",
+]
+if modified != want_modify:
+    bad.append("files_modify is not the sanctioned list: " + repr(modified))
+for path in modified:
+    if sh("git", "cat-file", "-e", A + ":" + path).returncode != 0:
+        bad.append("files_modify path absent at base: " + path)
+for path in created:
+    if sh("git", "cat-file", "-e", A + ":" + path).returncode == 0:
+        bad.append("create path already exists at base: " + path)
+forbidden_exact = {
+    ".agent/run_state.json",
+    "standard/capability_profiles.md",
+    "tools/verify_lib.sh",
+    "tools/interface.md",
+    "tools/fixtures_self_test.sh",
+    "docs/planning/phase_014.yaml",
+    "docs/planning/DEBT.md",
+    ".agent/feature_list_014.json",
+    ".agent/product_spec_014.md",
+    "CHANGELOG.md",
+    "NIZAM.json",
+    "tools/skill.json",
+    "docs/nips/NIP-0001-ecosystem-engineering-cycle.md",
+    "docs/nips/NIP-0003-live-runtime-sessions.md",
+}
+for path in created + modified:
+    if path in forbidden_exact or path.startswith((".github/", ".agent/evidence/phase-014-activation")):
+        bad.append("forbidden path in scope: " + path)
+identity = contract["retry_identity"]
+if (identity["contract_step_key"], identity["implementation_step_key"], identity["limit"]) != ("107-contract", "107-implementation", 3):
+    bad.append("retry identity")
+if contract["design_notes"]["revision"].split()[1] != "0":
+    bad.append("design_notes.revision is not revision 0")
+approvals = contract["approvals"]
+if approvals.get("revisions") != 0 or approvals.get("validator_mode_a") is not False or approvals.get("evaluator_contract_review") is not False:
+    bad.append("approvals are not false at revision 0")
+print("verification", len(contract["verification"]), "problems:", bad)
+sys.exit(1 if bad else 0)
+PY

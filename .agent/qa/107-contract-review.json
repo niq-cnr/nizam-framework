@@ -1,0 +1,80 @@
+{
+  "review": "contract-testability",
+  "feature": "107",
+  "contract_id": "107",
+  "revision_reviewed": 0,
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Scope is the S01 change only (107-contract attempt 2/3). Mode A .agent/validator/107-mode-a.json was re-read: revision_reviewed 0, final_verdict.approved true, and issues, missing_acceptance_coverage, and unsupported_claims are empty (lines 4-10 and 18-28). This review did not treat that prose as proof. The working-tree contract status is proposed (line 5). approvals.revisions is 0, validator_mode_a is false, evaluator_contract_review is false, and approved_at is absent (lines 349-353). design_notes.revision starts with Revision 0 (line 8). The probe printed that state and the S01 acceptance sentence (.agent/evidence/107-qa-adversarial-contract-review/16-s01-flag-states.txt lines 2-3).",
+    "The contract's own S01 command was executed, not a rewritten predicate. On the real file (proposed, revisions 0, both flags false) it exits 0 with 'verification 11 problems: []' (lines 6-7). The same command body, pointed at a temp copy with status approved, revisions 0, and both flags true, exits 0 with problems [] (lines 10-11). status approved with both flags false exits 1 and the only problem is 'approved revision 0 does not have both approval flags true' (lines 12-13). status proposed with both flags true exits 1 and the only problem is 'approvals are not false at revision 0' (lines 14-15). A redirected copy of the real file matches the unmodified stdout (line 28). sha256 of .agent/contracts/107.json stayed c3a7e8305efdcaf95f40b5ae840c51ab0d53baff5e212b30c4241445c84d71bf (lines 42-44).",
+    "The same command rejects a single true flag and revisions other than 0. approved with only validator_mode_a true, and approved with only evaluator_contract_review true, each exit 1 with the approved-branch message (lines 16-19). proposed with only one of those flags true each exit 1 with the else-branch message (lines 20-23). approved with revisions 1 and both flags true exits 1 (lines 24-25). proposed with revisions 1 and both flags false exits 1 (lines 26-27). The capture's last line is EXIT:0 (line 46) and PROBLEMS is [] (line 45).",
+    "Against 839c52aef6a7a1cb0c21de1101d570718ffb2136 the working tree differs in 9 JSON paths (lines 29-38): approvals.approved_at removed, approvals.evaluator_contract_review, approvals.validator_mode_a, design_notes.retry_identity_note, design_notes.revision, design_notes.revision_history length 1 to 2, status, verification[6].acceptance_test, and verification[6].command. verification[6].expected_outcome is unchanged (line 39). The only changed verification object is index 6; indexes 0-5 and 7-10 are unchanged, so S02 (index 7) and S03 (index 8) are byte-identical to that commit (lines 40-41). This round did not re-run S02, S03, tools/validate.sh, or tools/fixtures_self_test.sh. prior_rounds[0] is the attempt-1 review that executed those commands.",
+    "Non-blocking. .agent/evidence/107-qa-adversarial-contract-review/helpers/s01.sh lines 74-76 still require both flags false for every status. That file was not executed. The command that ran is verification[6].command (contract line 302), which branches on status == 'approved'. Older captures in that evidence directory were not deleted. git status --short did not list .agent/run_state.json. The probe's before and after bytes of the contract matched, so the pre-existing working-tree contract modification was not rewritten. Temp copies lived in a TemporaryDirectory and the process exited 0."
+  ],
+  "next_state": "advance_to_loop_2",
+  "evidence_artifacts": [
+    ".agent/evidence/107-qa-adversarial-contract-review/16-s01-flag-states.txt",
+    ".agent/evidence/107-qa-adversarial-contract-review/helpers/s01_flag_states.py"
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "107",
+    "verdict": "pass",
+    "issues": [],
+    "missing_acceptance_coverage": [],
+    "unsupported_claims": [],
+    "summary": "APPROVED at contract revision 0 (107-contract attempt 2/3). The working-tree S01 command, status proposed and both flags false, exits 0 with problems []. The same command on a temp copy with status approved and both flags true exits 0. status approved with both flags false exits 1, and status proposed with both flags true exits 1. One flag true, or revisions 1, also exits 1. Against 839c52a the only verification object that changed is verification[6], and only its acceptance_test and command. The real contract bytes were unchanged by the probe. issues, missing_acceptance_coverage, and unsupported_claims are empty."
+  },
+  "prior_rounds": [
+    {
+      "review": "contract-testability",
+      "feature": "107",
+      "contract_id": "107",
+      "revision_reviewed": 0,
+      "issues": [],
+      "missing_acceptance_coverage": [],
+      "unsupported_claims": [],
+      "observations": [
+        "Mode A (.agent/validator/107-mode-a.json) was re-read: revision_reviewed 0, final_verdict.approved true, and issues, missing_acceptance_coverage, and unsupported_claims are empty. This review did not treat that prose as proof. The working-tree contract status is proposed, design_notes.revision is revision 0, and approvals.revisions, validator_mode_a, and evaluator_contract_review are 0/false. S01 on the real tree exits 0 with 'verification 11 problems: []' (.agent/evidence/107-qa-adversarial-contract-review/02-s01.txt). git diff --name-only fdc076ff6b4665d7b40a5a74a9dae5562dd568bf HEAD and the same diff against 7972e4f2d46abf6b8e0f02e8c11e94ac0f7aa0f4 each list only .agent/run_state.json (02-git-diff-fdc076f-head.txt, 02-git-diff-fdc076f-a.txt).",
+        "At <A>, in a private clone with no untracked .nizam/, AT2 and AT3 are red for the stated reason. scratch_run replaces the one status line and the one authoritative_source line. validate.sh exits 0 with SUMMARY: 16 passed, 0 failed and [C1] PASS / [C2] PASS. The positive expectations fail. AT3's forbid ^[C1] FAIL holds. Both scratch_run processes exit 1, not 3 (03-base-at2.txt, 04-base-at3.txt). --target on the real tree matches the premises: NIP-0002 fails C1 and C2 with the pinned enum text; NIP-0001 and NIP-0003 pass C1 and C2 and fail C9 on the seven named missing paths (01-target-nip1.txt, 01-target-nip2.txt, 01-target-nip3.txt). jsonschema 4.26.0 accepts authoritative_source docs/nips/NIP-0001-moved.md and rejects status accepted with message 'accepted' is not one of ['draft', 'active', 'deprecated']. The three pinned detail regexes match that shape.",
+        "The pinned edits were applied in that clone by the same three replacements S04 performs. S04 exits 0 with problems []. AT1 and AT4 exit 0. bash tools/validate.sh exits 0: [C1] PASS, [C2] PASS, [C8] PASS, [C9] PASS, SUMMARY: 16 passed, 0 failed (06-positive-validate.txt). --payload exits 0 with SUMMARY (payload mode): 12 passed, 0 failed (06-positive-validate-payload.txt). AT5 exits 0, GATE: PASS (16 checks passing; baseline 16) (07-positive-at5.txt). AT2 exits 0: validate.sh exits 1, [C1] FAIL frontmatter-schema, the schema detail naming 'accepted', and [C2] FAIL format with the status detail (08-positive-at2.txt). AT3 exits 0: [C2] FAIL format, the authoritative_source detail, [C1] PASS, and no [C1] FAIL (09-positive-at3.txt). S05 exits 0, seven cases, problems [] (10-positive-s05.txt).",
+        "AT2's ^[C1] FAIL is banner-loose, and S05 closes it. On the pinned tree, replacing the one C1 fail echo with '  echo \"[C1] FAIL other-banner\"' still satisfies AT2 (LOOSE_AT2_EXIT 0) and fails '^\\[C1\\] FAIL frontmatter-schema$' (EXACT_BANNER_EXIT 1) (13-mutant-banner-at2-vs-exact.txt). S05 case 1 requires that exact echo plus the schema detail and the C2 status detail, and it passed. S05 case 2 passed: silencing that one echo removes [C1] FAIL and leaves [C2] FAIL format. S05 case 3 and case 4 passed: the AT3 mutation prints [C2] FAIL format and [C1] PASS, and silencing the one C2 echo makes the sweep exit 0 with SUMMARY: 16 passed, 0 failed. The accompanying [C2] FAIL on AT2 is expected and is not a defect.",
+        "The sweep boundary is discriminating. S05 case 7 passed, so replacing the one 'c1_c2_md+=(\"${f}\")' line with ':' makes the AT2 status mutation invisible to C1 and C2. S05 case 5 passed: payload mode with NIP-0002 set back to accepted still prints SUMMARY (payload mode): 12 passed, 0 failed. S05 case 6 passed on the pinned tree: a bare fence and docs/nips/DOES-NOT-EXIST.md appended to NIP-0001 do not fail C3, C9, or C10. The same poison plus inserting NIP-0001 into build_shipped_md_set fails the sweep: [C3] FAIL, [C5] FAIL (the body names nizamiq.com), and [C9] FAIL on DOES-NOT-EXIST.md and NIP-0001's three missing schema paths (12-mutant-shipped-set-poison.txt EXIT:0, expectations held). S04's byte lock on both set builders is what forbids that edit. Case 6 does not mention C5; the byte lock and the C3/C9 failure are enough.",
+        "CHANGELOG.md is omitted and C8 does not fail. On the pinned tree [C8] PASS is printed while S04, which byte-locks CHANGELOG.md to <A>, exits 0. A separate scratch that deletes only the new tools/README.md 0.16.0 change_log entry still exits 0 with [C8] PASS and SUMMARY: 16 passed, 0 failed (11-mutant-c8-no-changelog-entry.txt). C8's fallback accepts any existing CHANGELOG.md line naming the path, and CHANGELOG.md already contains tools/README.md (lines 60, 69, 83, 92, 244, and 986). S04, not C8, requires the new change_log entry. A missing [Unreleased] bullet is not a C8 failure.",
+        "S02/S03 predicate, real git, private clone only. Commit 91f08eade837c52a7c789ac8accb94cbd0d74d96 is an approved-status copy of this contract plus one updated_at change in .agent/run_state.json. git diff --name-only 7972e4f that commit lists .agent/contracts/107.json and .agent/run_state.json (14a-git-diff-name-only-a.txt). Unmodified S03 then exits 1 with only 'files_modify paths not changed' for the three sanctioned paths. It does not hard-fail run_state (14a-s03-run-state-without-deliverables.txt). After those three files and an in-scope attempt-base.txt, git diff --name-only 7972e4f lists run_state, the contract, and the three files (14c-git-diff-name-only-a.txt) and S03 exits 0 with problems [] (14b and 14i). S02 exits 0: commits past B 0, delta 4, problems [] (14d-s02-in-scope-delta.txt). git diff --name-only B lists only the three files_modify paths (14d-git-diff-name-only-b.txt); attempt-base.txt is untracked and in scope. A further working-tree edit of run_state makes unmodified S02 exit 1 with 'Generator edit of .agent/run_state.json since B (S02 rejects it; S03 does not)' and 'paths changed since B outside scope: ['.agent/run_state.json']' (14e-s02-generator-run-state.txt). docs/planning/phase_014.yaml and docs/planning/DEBT.md each make S03 exit 1 for outside scope and the orchestrator-owned hard-fail (14f, 14g). .agent/feature_list_014.json makes S03 exit 1 on the feature-list hard-fail (14h).",
+        "AT6 was executed in this checkout, not in the clone: tools/fixtures_self_test.sh cds to its own repository root. It was not overlapped with validate.sh. It printed SELF-TEST OK: 147/147 fixtures accounted for, 0 failed, and the capture's last line is EXIT:0 (15-at6-self-test.txt). After it returned, git hash-object tools/skill.json equalled git rev-parse HEAD:tools/skill.json (2a688249c76e80736a451d34a45758d8d8f20680) and git diff --stat of this worktree was empty. The NDEBT-047 swap was restored by the script. No contracted product path was left modified.",
+        "Non-blocking. design_notes.orchestrator_followups says to quote phase_yaml_changelog_entry because it contains ': '. The pinned string contains no colon. Quoting it is still valid YAML, and the Generator does not write docs/planning/phase_014.yaml. The first harness process exited 1 before any S02/S03 command because the run_state timestamp occurs three times; the predicate above replaced only the unique updated_at line and is the result that counts. The contract, product files, and .agent/run_state.json in this worktree were not edited."
+      ],
+      "next_state": "advance_to_loop_2",
+      "evidence_artifacts": [
+        ".agent/evidence/107-qa-adversarial-contract-review/02-s01.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/02-git-diff-fdc076f-head.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/03-base-at2.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/04-base-at3.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/05-positive-s04.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/06-positive-validate.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/06-positive-validate-payload.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/07-positive-at5.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/08-positive-at2.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/09-positive-at3.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/10-positive-s05.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/11-mutant-c8-no-changelog-entry.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/12-mutant-shipped-set-poison.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/13-mutant-banner-at2-vs-exact.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/14a-s03-run-state-without-deliverables.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/14b-s03-with-run-state-and-deliverables.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/14d-s02-in-scope-delta.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/14e-s02-generator-run-state.txt",
+        ".agent/evidence/107-qa-adversarial-contract-review/15-at6-self-test.txt"
+      ],
+      "final_verdict": {
+        "approved": true,
+        "feature": "107",
+        "verdict": "pass",
+        "summary": "APPROVED at contract revision 0 (107-contract attempt 1/3). On a private clone of 7972e4f the pinned edits pass S04, AT1, AT4, validate.sh 16/16 with [C8] PASS, payload 12/12, AT5, AT2, AT3, and S05 7/7. Base AT2 and AT3 stay red because the default sweep does not read docs/nips/. Renaming the C1 echo still satisfies loose AT2 and fails S05's exact banner; silencing each fail echo removes only that banner. Putting NIP-0001 in the shipped set fails C3, C5, and C9, while S05 case 6 passes on the pin. CHANGELOG.md stays byte-identical and C8 still passes. S03 exits 0 when the diff against 7972e4f includes .agent/run_state.json and exits 1 only for missing deliverables when that is the sole product delta; S02 exits 1 when run_state changes after B. issues, missing_acceptance_coverage, and unsupported_claims are empty."
+      }
+    }
+  ]
+}

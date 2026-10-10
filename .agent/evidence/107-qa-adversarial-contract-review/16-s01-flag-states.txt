@@ -1,0 +1,46 @@
+python3 .agent/evidence/107-qa-adversarial-contract-review/helpers/s01_flag_states.py
+REAL status=proposed revisions=0 validator_mode_a=False evaluator_contract_review=False approved_at=False
+ACCEPTANCE Supplementary S01: the contract validates against schema/contract.schema.json; its six acceptance entries are verbatim and in order; files_modify is exactly the three sanctioned paths; no forbidden path is in scope; estimated_lines is 680; version_impact starts with MINOR; when status is approved, revisions is 0 and both validator_mode_a and evaluator_contract_review are true, otherwise revisions is 0 and both flags are false; design_notes.revision is revision 0.
+PREDICATE_HAS_APPROVED_BRANCH True
+PREDICATE_HAS_ELSE_FALSE_FLAGS True
+--- UNMODIFIED_S01 proposed_both_false rc=0
+verification 11 problems: []
+--- REDIRECT_CONTROL status=proposed revisions=0 validator=False evaluator=False expect_rc=0 rc=0
+verification 11 problems: []
+--- APPROVED_BOTH_TRUE status=approved revisions=0 validator=True evaluator=True expect_rc=0 rc=0
+verification 11 problems: []
+--- APPROVED_BOTH_FALSE status=approved revisions=0 validator=False evaluator=False expect_rc=1 rc=1
+verification 11 problems: ['approved revision 0 does not have both approval flags true']
+--- PROPOSED_BOTH_TRUE status=proposed revisions=0 validator=True evaluator=True expect_rc=1 rc=1
+verification 11 problems: ['approvals are not false at revision 0']
+--- APPROVED_VALIDATOR_ONLY status=approved revisions=0 validator=True evaluator=False expect_rc=1 rc=1
+verification 11 problems: ['approved revision 0 does not have both approval flags true']
+--- APPROVED_EVALUATOR_ONLY status=approved revisions=0 validator=False evaluator=True expect_rc=1 rc=1
+verification 11 problems: ['approved revision 0 does not have both approval flags true']
+--- PROPOSED_VALIDATOR_ONLY status=proposed revisions=0 validator=True evaluator=False expect_rc=1 rc=1
+verification 11 problems: ['approvals are not false at revision 0']
+--- PROPOSED_EVALUATOR_ONLY status=proposed revisions=0 validator=False evaluator=True expect_rc=1 rc=1
+verification 11 problems: ['approvals are not false at revision 0']
+--- APPROVED_REV1_BOTH_TRUE status=approved revisions=1 validator=True evaluator=True expect_rc=1 rc=1
+verification 11 problems: ['approved revision 0 does not have both approval flags true']
+--- PROPOSED_REV1_BOTH_FALSE status=proposed revisions=1 validator=False evaluator=False expect_rc=1 rc=1
+verification 11 problems: ['approvals are not false at revision 0']
+--- REDIRECT_EQUALS_UNMODIFIED True
+DIFF_PATHS_VS_B 9
+PATH approvals.approved_at REMOVED
+PATH approvals.evaluator_contract_review
+PATH approvals.validator_mode_a
+PATH design_notes.retry_identity_note
+PATH design_notes.revision
+PATH design_notes.revision_history LEN 1 -> 2
+PATH status
+PATH verification[6].acceptance_test
+PATH verification[6].command
+VERIFICATION_CHANGED 6 command True acceptance_test True expected_outcome False
+VERIFICATION_UNCHANGED_INDEXES [0, 1, 2, 3, 4, 5, 7, 8, 9, 10]
+VERIFICATION_OBJECT_CHANGED_INDEXES [6]
+SHA256_BEFORE c3a7e8305efdcaf95f40b5ae840c51ab0d53baff5e212b30c4241445c84d71bf
+SHA256_AFTER c3a7e8305efdcaf95f40b5ae840c51ab0d53baff5e212b30c4241445c84d71bf
+BYTES_UNCHANGED True
+PROBLEMS []
+EXIT:0

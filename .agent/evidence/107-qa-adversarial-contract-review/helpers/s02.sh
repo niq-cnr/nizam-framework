@@ -1,0 +1,45 @@
+python3 - <<'PY'
+import json, re, subprocess, sys
+A = "7972e4f2d46abf6b8e0f02e8c11e94ac0f7aa0f4"
+run = lambda *a: subprocess.run(a, capture_output=True, text=True, check=True).stdout
+sh = lambda *a: subprocess.run(a, capture_output=True, text=True)
+bad = []
+lines = open(".agent/evidence/107/attempt-base.txt").read().splitlines()
+if len(lines) != 3 or lines[0] != "git rev-parse HEAD" or lines[2] != "EXIT:0" or re.fullmatch(r"[0-9a-f]{40}", lines[1]) is None:
+    bad.append("attempt-base.txt is not the three-line captured form")
+B = lines[1] if len(lines) > 1 else ""
+contract = json.load(open(".agent/contracts/107.json"))
+scope = {item["path"] for key in ("files_create", "files_modify") for item in contract["scope"][key]}
+if sh("git", "cat-file", "-t", B).stdout.strip() != "commit":
+    bad.append("B is not a commit")
+if sh("git", "merge-base", "--is-ancestor", A, B).returncode != 0:
+    bad.append("A is not an ancestor of B")
+if sh("git", "merge-base", "--is-ancestor", B, "HEAD").returncode != 0:
+    bad.append("B is not an ancestor-or-equal of HEAD")
+count = int(sh("git", "rev-list", "--count", B + "..HEAD").stdout.strip() or "99")
+if count not in (0, 1):
+    bad.append("HEAD is %d commits past B" % count)
+shown = sh("git", "show", B + ":.agent/contracts/107.json")
+if shown.returncode != 0 or json.loads(shown.stdout).get("status") != "approved":
+    bad.append("the contract at B is not approved")
+delta = set(run("git", "diff", "--name-only", "-z", B).split("\0")) - {""}
+fields = run("git", "status", "--porcelain", "--untracked-files=all", "-z").split("\0")
+index = 0
+while index < len(fields):
+    entry = fields[index]
+    index += 1
+    if not entry:
+        continue
+    delta.add(entry[3:])
+    if entry[0] in "RC" or entry[1] in "RC":
+        if index < len(fields):
+            delta.add(fields[index])
+            index += 1
+if ".agent/run_state.json" in delta:
+    bad.append("Generator edit of .agent/run_state.json since B (S02 rejects it; S03 does not)")
+extra = sorted(delta - scope)
+if extra:
+    bad.append("paths changed since B outside scope: " + repr(extra))
+print("B", B[:12], "commits past B", count, "delta", len(delta), "problems:", bad)
+sys.exit(1 if bad else 0)
+PY

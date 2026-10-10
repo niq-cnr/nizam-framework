@@ -1,0 +1,10 @@
+bash .agent/evidence/107-qa-adversarial-contract-review/helpers/s05.sh
+PASS AT2 mutation: exact C1 schema banner and detail; C2 status banner also fires
+PASS silencing the C1 fail echo removes [C1] FAIL; the C2 status banner remains
+PASS AT3 mutation: exact C2 format banner and authoritative_source detail; no C1 fail
+PASS silencing the C2 fail echo removes [C2] FAIL from the AT3 mutation; C1 stays passing
+PASS payload mode ignores a NIP status of accepted
+PASS a bare fence and a missing path in a NIP body do not fail C3, C9, or C10
+PASS dropping the NIP append makes the AT2 mutation invisible to C1 and C2
+cases: 7 problems: []
+EXIT:0

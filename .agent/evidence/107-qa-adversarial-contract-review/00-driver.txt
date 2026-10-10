@@ -1,0 +1,29 @@
+python3 .agent/evidence/107-qa-adversarial-contract-review/helpers/run_107_contract_probes.py
+REGEX c1_schema_detail MATCH
+REGEX c2_status_detail MATCH
+REGEX c2_source_detail MATCH
+CAPTURE 02-s01.txt EXIT:0
+CAPTURE 02-git-diff-fdc076f-head.txt EXIT:0
+CAPTURE 02-git-diff-fdc076f-a.txt EXIT:0
+cloning
+Cloning into '/tmp/nizam-107-qa'...
+done.
+
+CAPTURE 03-base-at2.txt EXIT:1
+CAPTURE 04-base-at3.txt EXIT:1
+NIP-0002 status: active count 1
+pins applied
+CAPTURE 05-positive-s04.txt EXIT:0
+CAPTURE 05-positive-at1.txt EXIT:0
+CAPTURE 05-positive-at4.txt EXIT:0
+CAPTURE 06-positive-validate.txt EXIT:0
+CAPTURE 06-positive-validate-payload.txt EXIT:0
+CAPTURE 07-positive-at5.txt EXIT:0
+CAPTURE 08-positive-at2.txt EXIT:0
+CAPTURE 09-positive-at3.txt EXIT:0
+CAPTURE 10-positive-s05.txt EXIT:0
+CAPTURE 11-mutant-c8-no-changelog-entry.txt EXIT:1
+CAPTURE 12-mutant-shipped-set-poison.txt EXIT:0
+CAPTURE 13-mutant-banner-at2-vs-exact.txt EXIT:0
+run_state stamp count 3
+EXIT:1

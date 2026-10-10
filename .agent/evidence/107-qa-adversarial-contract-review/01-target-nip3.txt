@@ -1,0 +1,11 @@
+bash tools/validate.sh --target docs/nips/NIP-0003-live-runtime-sessions.md
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C9] FAIL path-resolution
+  docs/nips/NIP-0003-live-runtime-sessions.md: unresolved path reference 'methodology/10_live_runtime_sessions.md'
+  docs/nips/NIP-0003-live-runtime-sessions.md: unresolved path reference 'methodology/11_sbcl_runtime_binding.md'
+  docs/nips/NIP-0003-live-runtime-sessions.md: unresolved path reference 'schema/runtime_operation.schema.json'
+  docs/nips/NIP-0003-live-runtime-sessions.md: unresolved path reference 'schema/runtime_session.schema.json'
+[C10] PASS consistency
+EXIT:1
