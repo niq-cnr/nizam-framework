@@ -1,0 +1,10 @@
+scratch_run.py --py-mutate swap Planner<->Validator roles in standard/capability_profiles.md; driver asserts [C15] FAIL with map_roles detail; --expect-rc 0
+scratch rc: 0
+scratch_run: applied --py-mutate
+scratch_run: command /usr/bin/python3 -c import subprocess,re; p = subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True); assert p.returncode != 0, 'sweep unexpectedly green on swapped mapping'; assert re.search(r'^\[C15\] FAIL capability-profile-roles$', p.stdout, re.M); assert "planner-creative' row names role 'Validator', expected its own role 'Planner'" in p.stdout; assert "validator-structural' row names role 'Planner', expected its own role 'Validator'" in p.stdout; print('SWAPPED MAPPING: [C15] FAIL with both map_roles detail lines') -> exit 0
+  | SWAPPED MAPPING: [C15] FAIL with both map_roles detail lines
+PASS exit status == 0
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+
+
+EXIT:0

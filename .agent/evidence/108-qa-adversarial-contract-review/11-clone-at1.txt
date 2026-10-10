@@ -1,0 +1,2 @@
+python3 -c "import re,subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; ids=set(re.findall(r'^\[(C\d+)\]',subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True).stdout,re.M)); miss=[i for i in sorted(ids) if not re.search(r'^  '+i+r'\s+\S',h,re.M)]; assert ids and not miss, miss"
+EXIT:0

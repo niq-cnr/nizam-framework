@@ -1,0 +1,10 @@
+OWN PROBE P5: scratch_run --py-mutate renames .github/workflows away; driver asserts [C14] FAIL (the paragraph's 'fails a vanished or empty workflow dir' claim)
+scratch rc: 0
+scratch_run: applied --py-mutate
+scratch_run: command /usr/bin/python3 -c import subprocess,re; p = subprocess.run(['bash','tools/validate.sh'],capture_output=True,text=True); assert p.returncode != 0, 'sweep unexpectedly green with vanished workflows dir'; assert re.search(r'^\[C14\] FAIL workflow-sha-pins$', p.stdout, re.M), p.stdout[-500:]; print('VANISHED WORKFLOWS DIR: [C14] FAIL (not vacuous)') -> exit 0
+  | VANISHED WORKFLOWS DIR: [C14] FAIL (not vacuous)
+PASS exit status == 0
+scratch_run: EXPECTATIONS HELD; scratch removed: True
+
+
+EXIT:0
