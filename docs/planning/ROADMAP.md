@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.47.0
+version: 0.48.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.48.0"
+    date: "2026-10-10"
+    summary: "Amendment A3 (methodology/00_planning.md Section 9; operator verbatim 'The multi-repo pilot at v1.4.0 is no longer needed.', run_state operator_gate_decision 2026-10-10T06:05:42Z). Replaces only the first Current Position bullet: feature 106 is complete (PR #72, f53c499), features 100 and 101 are cancelled, the lane is 107 → 109 → 108 → 102, and the next feature is 107. The open-debt bullet is not edited. The 8600/11180 budget is not re-baselined."
   - version: "0.47.0"
     date: "2026-10-10"
     summary: "Handover refresh (planning records only, branch chore/handover-2026-10 from main e2a50ed; operator request recorded in run_state as operator_gate_decision 2026-10-10T02:11:41Z). The Current Position heading date moves from 2026-08-15 to 2026-10-10. A new first bullet records phase-014 progress: 099, 103, 104 and 105 are complete (PRs #66, #67, #68, #70), the position is current_feature 106, and the budget stands at 3714 of 8600 (ceiling 11180). The open-debt bullet is rolled to the eight Open rows at DEBT.md 0.51.0 (NDEBT-047, 046, 045, 044, 040, 037, 034, 026), as NDEBT-044 (e) asks; feature 102 AT5 still re-rolls it at phase close. The phase-014 Plan of Record banner gains a progress paragraph, a pointer to docs/planning/HANDOVER.md, and re-baseline notes beside the superseded 6660/8658 figures (spec 1.1.4: 8600/11180, operator 'option 1 confirmed.'). The activation-era text is otherwise unedited, and no feature status or acceptance test changes. The older Current Position bullets are deliberately unedited history, so that the release close-out gate's version-scoped disposition line is not disturbed; the new first bullet carries an italic note naming the two statements in them that are superseded at 2026-10-10 (ecosystem/06 and 08 were activated by feature 099; phases 001-013, not 001-012, are complete). Revised after Validator round 1 (that note)."
@@ -773,10 +776,7 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-10)
 
-- **Phase 014 (GA Track) is in progress.** Features 099, 103, 104 and 105 are complete and merged (PRs #66, #67,
-  #68, #70; `main` at `e2a50ed`), resolving `NDEBT-043`, `NDEBT-041` and `NDEBT-042`; the next feature is 106, and
-  the remaining lane is 106 → 107 → 109 → 108 → 100 → 101 → 102. Budget-counted lines stand at 3714 of 8600
-  (ceiling 11180, spec 1.1.4). `main` carries unreleased changes since `v1.4.0`; the next release is a separate
+- **Phase 014 (GA Track) is in progress.** Feature 106 is complete (PR #72, `f53c499`). Features 100 and 101 are cancelled. The lane is 107 → 109 → 108 → 102, and the next feature is 107. After feature 106 the recorded phase total is 5222 of 8600 (ceiling 11180, spec 1.1.4); amendment A3 does not re-baseline those figures. `main` carries unreleased changes since `v1.4.0`; the next release is a separate
   operator `H-FRAMEWORK-RELEASE`. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
   statements are superseded at 2026-10-10: feature 099 has activated `ecosystem/06_simplification_review.md` and

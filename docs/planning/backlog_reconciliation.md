@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.5
+version: 0.1.6
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
 last_audited: "2026-10-10"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.6"
+    date: "2026-10-10"
+    summary: "Amendment A3 note only. Features 100 and 101 are cancelled (operator 2026-10-10: the v1.4.0 multi-repo pilot is no longer needed). The 2026-10-08 narrative is not rewritten. backlog_dag.json packet status was not set to cancelled because schema/work-packet.schema.json has no status enum."
   - version: "0.1.5"
     date: "2026-10-10"
     summary: "Handover refresh (branch chore/handover-2026-10 from main e2a50ed; Planner). Section 5.1: the A05 and A06 rows, noted stale in the post-105 planning record, are marked delivered. A05 was delivered by F103 (PR #67, b8ea889; NDEBT-043 resolved). A06 was delivered by F104 (PR #68, 2a53764; NDEBT-041 resolved; positive CI run 37980556248, negative control 37980776642). The next action for both becomes none. Sections 2 and 6 gain a note beside the superseded 6660/8658 budget: spec 1.1.4 re-baselined it to 8600 with a ceiling of 11180, operator-confirmed ('option 1 confirmed.'). The activation-time text is kept as history. Machine-readable source (docs/planning/backlog_dag.json, which has no change_log of its own; recorded here): activated_phase original_estimate_lines 6660 -> 8600, ceiling_130pct 8658 -> 11180, budget_basis and budget_approval restated with the superseded text kept, and spec_version 1.1.2 -> 1.1.6; plan_status_note and estimate_weighting.basis restated to match; the weighted_lines of packets F104, F105, F106, F107, F109, F108, F100, F101 and F102 now mirror feature_list_014.json estimated_lines on the spec 1.1.4 basis (was naive x 2.3). Packet statuses are not changed (F099, F103, F104 and F105 still read pending; validate_backlog_dag.py V7). Section 6 gains a dated note: with those weights and the stale pending statuses, the DAG's derived critical paths now run through F099 (weighted 920, its historical all-paths estimate) instead of F100; once the four completed packets read complete, they run through F100 again (19,580-25,770 weighted lines; replay: verify_handover_facts.py dagpath). Section 1: the statement that the phase-014 packets mirror the feature list now reads spec 1.1.6 (1.1.2 at activation), with a dated note, so it agrees with the refreshed DAG. No other row changes. Pointer added to docs/planning/HANDOVER.md. Revised after Validator round 1 (section reference, DAG change record, Section 6 note) and round 2 (Section 1 spec version)."
@@ -53,6 +56,8 @@ names every packet, alias and scenario.
 **candidate** until its own `H-NIP` / `H-PHASE-NNN` gate.
 
 ## 2. Current state (base `02b02c6`, plus this package)
+
+*Updated 2026-10-10 (amendment A3):* features 100 and 101 are cancelled. The operator said the v1.4.0 multi-repo pilot is no longer needed (`operator_gate_decision` 2026-10-10T06:05:42Z). The 2026-10-08 narrative below is unchanged.
 
 **The base commit.** `main` is at `02b02c6`; PR #64 merged at 2026-10-08T11:16:42Z.
 It holds the v1.4.0 post-release refresh and the D1 re-baseline of the then-pending

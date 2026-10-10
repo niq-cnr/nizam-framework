@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "107",
   "status": "in_progress",
-  "updated_at": "2026-10-10T06:05:42Z",
+  "updated_at": "2026-10-10T06:20:00Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1854,6 +1854,11 @@
       "at": "2026-10-10T06:05:42Z",
       "event": "operator_gate_decision",
       "detail": "Recorded BEFORE the plan amendment (NDEBT-018). Operator verbatim (2026-10-10, interactive session): 'The multi-repo pilot at v1.4.0 is no longer needed.' Interpretation disclosed: cancel feature 100. Cancel feature 101 because its acceptance tests require .agent/evidence/pilot-100/ evidence and it has no other input. Amend feature 102 so it no longer depends on 100 or 101 and records real_production_pilot as not_met, without requiring that pilot aggregate. Remove phase_014.yaml steps 100 and 101 (the phase schema has no cancelled status; 102 AT1 requires every remaining step to be COMPLETED). Features 107, 109, and 108 stay, in that order, then 102. H-CONSUMER-UPGRADE stays defined for future adoptions; no per-member decision is outstanding for this phase. H-GA and H-CONSOLIDATION stay outstanding and unexercised. No tag. The 8600/11180 budget is not rebaselined. current_feature stays 107."
+    },
+    {
+      "at": "2026-10-10T06:20:00Z",
+      "event": "planning_record",
+      "detail": "Amendment A3 applied on chore/014-descope-v140-pilot after the 2026-10-10T06:05:42Z operator_gate_decision. Spec 1.1.7. Features 100 and 101 cancelled. Feature 102 dependencies are 099, 103, 104, 105, 106, 107, 108, 109. 102 acceptance-test index 2 requires real_production_pilot not_met and excludes pilot-100 aggregate. phase_014.yaml steps 100 and 101 removed. Lane is 107 → 109 → 108 → 102. Budget 8600/11180 unchanged. current_feature stays 107."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2381,7 +2386,7 @@
       }
     ]
   },
-  "last_action": "Operator descoped the v1.4.0 multi-repo pilot; amendment not yet applied",
+  "last_action": "Amendment A3 applied: features 100 and 101 cancelled; next is 107",
   "completed_contract_ids": [
     "099",
     "103",
