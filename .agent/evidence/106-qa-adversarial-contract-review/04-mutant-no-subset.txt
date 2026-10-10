@@ -1,0 +1,139 @@
+python3 .agent/evidence/106-qa-adversarial-contract-review/helpers/mutant_no_subset.py
+### AT4 without subset block rc=1
+scratch_run: replaced 1 occurrence in NIZAM.json
+scratch_run: command bash tools/validate.sh -> exit 1
+  | [C1] PASS frontmatter-schema
+  | [C2] PASS format
+  | [C3] PASS untagged-fence-sweep
+  | [C4] FAIL index-integrity
+  |   NIZAM.json: indexed path(s) do not resolve on disk: ['methodology/00_planning_moved.md']
+  | [C5] PASS branding-leakage
+  | [C6] PASS bootstrap-sanity
+  | [C7] PASS module-readme-presence
+  | [C8] PASS version-bump-vs-changelog
+  | [C9] PASS path-resolution
+  | [C10] PASS consistency
+  | [C11] PASS dogfood
+  | [C12] PASS ecosystem-fixtures
+  | [C13] PASS skill-index
+  | [C14] PASS workflow-sha-pins
+  | [C15] PASS capability-profile-roles
+  | [C16] PASS feature-list-lifecycle
+  | SUMMARY: 15 passed, 1 failed
+PASS exit status == 1
+FAIL output matches '^\\[C13\\] FAIL'
+scratch_run: EXPECTATION FAILED; scratch removed: True
+
+### S05 without subset block rc=1
+FAIL drop the new capability: default C13 fails on ecosystem/00 and C4 does not
+    scratch_run: command bash tools/validate.sh -> exit 0
+      | [C1] PASS frontmatter-schema
+      | [C2] PASS format
+      | [C3] PASS untagged-fence-sweep
+      | [C4] PASS index-integrity
+      | [C5] PASS branding-leakage
+      | [C6] PASS bootstrap-sanity
+      | [C7] PASS module-readme-presence
+      | [C8] PASS version-bump-vs-changelog
+      | [C9] PASS path-resolution
+      | [C10] PASS consistency
+      | [C11] PASS dogfood
+      | [C12] PASS ecosystem-fixtures
+      | [C13] PASS skill-index
+      | [C14] PASS workflow-sha-pins
+      | [C15] PASS capability-profile-roles
+      | [C16] PASS feature-list-lifecycle
+      | SUMMARY: 16 passed, 0 failed
+    FAIL exit status == 1
+    FAIL output matches '^\\[C13\\] FAIL'
+    FAIL output matches 'is not the authoritative_source of any NIZAM.json capability'
+    FAIL output matches 'ecosystem/00_ecosystem_bootstrap\\.md'
+    PASS output does not match '^\\[C4\\] FAIL'
+    PASS output does not match '^\\[C1[7-9]\\]'
+    scratch_run: EXPECTATION FAILED; scratch removed: True
+FAIL drop the new capability: payload mode C13 fails the same way
+    scratch_run: applied --py-mutate
+    scratch_run: command bash tools/validate.sh --payload -> exit 0
+      | MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)
+      | [C1] PASS frontmatter-schema
+      | [C2] PASS format
+      | [C3] PASS untagged-fence-sweep
+      | [C4] PASS index-integrity
+      | [C5] PASS branding-leakage
+      | [C6] SKIP bootstrap-sanity (payload mode)
+      | [C7] PASS module-readme-presence
+      | [C8] PASS version-bump-vs-changelog
+      | [C9] PASS path-resolution
+      | [C10] PASS consistency
+      | [C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+      | [C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)
+      | [C16] PASS feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+      | SUMMARY (payload mode): 12 passed, 0 failed
+    FAIL exit status == 1
+    FAIL output matches '^\\[C13\\] FAIL'
+    FAIL output matches 'is not the authoritative_source of any NIZAM.json capability'
+    FAIL output matches 'ecosystem/00_ecosystem_bootstrap\\.md'
+    PASS output does not match '^\\[C4\\] FAIL'
+    PASS output does not match '^\\[C1[7-9]\\]'
+    scratch_run: EXPECTATION FAILED; scratch removed: True
+FAIL AT4 mutation: C13 names methodology/00_planning.md; C4 names the moved path
+      | [C2] PASS format
+      | [C3] PASS untagged-fence-sweep
+      | [C4] FAIL index-integrity
+      |   NIZAM.json: indexed path(s) do not resolve on disk: ['methodology/00_planning_moved.md']
+      | [C5] PASS branding-leakage
+      | [C6] PASS bootstrap-sanity
+      | [C7] PASS module-readme-presence
+      | [C8] PASS version-bump-vs-changelog
+      | [C9] PASS path-resolution
+      | [C10] PASS consistency
+      | [C11] PASS dogfood
+      | [C12] PASS ecosystem-fixtures
+      | [C13] PASS skill-index
+      | [C14] PASS workflow-sha-pins
+      | [C15] PASS capability-profile-roles
+      | [C16] PASS feature-list-lifecycle
+      | SUMMARY: 15 passed, 1 failed
+    PASS exit status == 1
+    FAIL output matches '^\\[C13\\] FAIL'
+    FAIL output matches 'is not the authoritative_source of any NIZAM.json capability'
+    FAIL output matches 'methodology/00_planning\\.md'
+    PASS output matches '^\\[C4\\] FAIL'
+    PASS output matches 'methodology/00_planning_moved\\.md'
+    PASS output does not match '^\\[C17\\]'
+    scratch_run: EXPECTATION FAILED; scratch removed: True
+FAIL ablating the one subset line removes [C13] FAIL from the AT4 mutation; C4 remains
+    scratch_run: MUTATION PRECONDITION FAILED: --py-mutate raised AssertionError: []
+FAIL the negative fixture fails C13 for the subset reason, not a dangling pointer
+      | [C1] PASS frontmatter-schema
+      | [C2] PASS format
+      | [C3] PASS untagged-fence-sweep
+      | [C4] PASS index-integrity
+      | [C5] PASS branding-leakage
+      | [C6] PASS bootstrap-sanity
+      | [C7] PASS module-readme-presence
+      | [C8] PASS version-bump-vs-changelog
+      | [C9] PASS path-resolution
+      | [C10] PASS consistency
+      | [C11] PASS dogfood
+      | [C12] PASS ecosystem-fixtures
+      | [C13] PASS skill-index
+      | [C14] PASS workflow-sha-pins
+      | [C15] PASS capability-profile-roles
+      | [C16] PASS feature-list-lifecycle
+      | SUMMARY: 16 passed, 0 failed
+    FAIL exit status == 1
+    FAIL output matches '^\\[C13\\] FAIL'
+    FAIL output matches 'is not the authoritative_source of any NIZAM.json capability'
+    FAIL output matches 'ecosystem/README\\.md'
+    PASS output does not match 'does not resolve'
+    PASS output does not match '^\\[C4\\] FAIL'
+    PASS output does not match '^\\[C17\\]'
+    scratch_run: EXPECTATION FAILED; scratch removed: True
+PASS removing note_covered makes the completeness guard fail the new fixture
+FAIL ablating the subset line removes only the new OK line; the dangling OK line remains
+    scratch_run: MUTATION PRECONDITION FAILED: --py-mutate raised AssertionError: []
+cases: 7 problems: ['drop the new capability: default C13 fails on ecosystem/00 and C4 does not', 'drop the new capability: payload mode C13 fails the same way', 'AT4 mutation: C13 names methodology/00_planning.md; C4 names the moved path', 'ablating the one subset line removes [C13] FAIL from the AT4 mutation; C4 remains', 'the negative fixture fails C13 for the subset reason, not a dangling pointer', 'ablating the subset line removes only the new OK line; the dangling OK line remains']
+
+caught: AT4 rc=1 S05 rc=1
+EXIT:1
