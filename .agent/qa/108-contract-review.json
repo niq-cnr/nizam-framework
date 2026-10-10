@@ -1,12 +1,72 @@
 {
-  "review": "contract-testability",
+ "review": "contract-testability",
+ "round": 2,
+ "feature": "108",
+ "contract_id": "108",
+ "revision_reviewed": 0,
+ "issues": [],
+ "missing_acceptance_coverage": [],
+ "unsupported_claims": [],
+ "observations": [
+  "Round 2 context: round 1 approved this contract at revision 0; the Orchestrator committed the approved state as <B> = 764144a76a46f7a51a6e50243f58bae7a3eff923; the implementation attempt halted as CONTRACT_DEFECT because round 1's S01 rejected approved_at unconditionally, which the approval commit legitimately adds. The Generator revised S01 to a fully dual-state predicate and the Orchestrator committed the revision as 19552ea ('Phase 014 \u00b7 Feature 108 \u2014 send contract back for S01'). The working tree at HEAD 19552ea carries the revised contract in the proposed state (status proposed; approvals.revisions 0, both flags false, approved_at absent). Mode A's round-2 verdict (.agent/validator/108-mode-a.json top-level object, round 2) was re-read: approved true, risk high, empty arrays; round 1 is preserved in its prior_rounds[0]. This review did not treat that prose as proof.",
+  "Independent structured diff of the working-tree contract against 764144a (recursive leaf walk, old -> new): exactly 11 changed leaves and nothing else -- $.status (approved -> proposed); $.approvals.validator_mode_a and $.approvals.evaluator_contract_review (true -> false); $.approvals.approved_at ('2026-10-10T12:47:35Z' -> absent); $.design_notes.revision (attempt 1/3 -> 2/3 text); $.design_notes.revision_history (length 1 -> 2, append only); $.design_notes.retry_identity_note; and $.verification[7] (the S01 supplementary entry) with exactly four changed keys: acceptance_test, command, state_at_base_A, expected_outcome. AT1-AT7 and S02-S05 are therefore byte-identical to the round-1-approved text, so every round-1 execution finding still stands unchanged. revision_history[0] verified byte-identical (canonical-JSON compare) to 764144a's entry.",
+  "The defect is real and reproduced: 764144a's own S01 command, run verbatim against 764144a's own contract file (temp copy), exits 1 with problems ['approved_at present at revision 0'] -- the approved envelope the approval commit legitimately writes (30-r2-s01-round1-defect-repro.txt). The halt classification as CONTRACT_DEFECT is correct.",
+  "Revised S01 executed verbatim on the real tree: exit 0, 'verification 12 problems: []' (28-r2-s01-real-tree.txt). Seven-variant matrix on temp copies (the six requested variants plus the second single-flag-false case), all results exact (29-r2-s01-six-variant-matrix.txt): approved + approved_at + both flags true -> 0; approved WITHOUT approved_at -> 1 'approved revision 0 does not have both approval flags true and an approved_at'; approved + approved_at + validator_mode_a false -> 1 (same problem); approved + approved_at + evaluator_contract_review false -> 1 (same problem); proposed + approved_at present -> 1 'approved_at present at a non-approved revision 0'; proposed + one flag true -> 1 'approvals are not false at revision 0'; proposed clean -> 0. The predicate discriminates in both directions with precise, single-problem diagnostics.",
+  "No weakening: comparing predicates, the approved branch gained a requirement (approved_at must be present) that round 1 did not have, and the non-approved branch is character-for-character the round-1 requirement for non-approved states (revisions 0, both flags false, approved_at absent -- round 1's unconditional absence check is now scoped to exactly the branch where it was correct). Every contract state that passed round-1 S01 still passes; the only newly-passing state is the legitimate approved envelope. Interaction sweep: approved_at appears nowhere else in the contract -- not in S02, S03, S04, or S05's embedded scripts (verified programmatically), and the only other mention is revision_history[1].summary itself; schema marks approvals.approved_at optional. The revision_history[1] and retry_identity_note texts accurately record the defect: they cite <B> = 764144a76a46f7a51a6e50243f58bae7a3eff923 (matching git rev-parse), the attempt-1 halt as CONTRACT_DEFECT with AT1-AT7/S04/S05/S02/S03 green, attempt 2/3, and the exact fix (absence check moved into the non-approved branch).",
+  "Round-1 evidence and findings stand: the 27 round-1 artifacts remain in .agent/evidence/108-qa-adversarial-contract-review/ and round 1's full verdict is preserved in prior_rounds[0]. Serialization and evidence conventions honored (line 1 invocation, raw output, last line EXIT:<code>; temp copies in mktemp dirs outside the repo). The contract file was not edited: sha256 of .agent/contracts/108.json is f639de4b72a7774664f24eeb93a36767a3e9c1e869dab98792f4010be4e78b9d both before and after this round (the value differs from round 1's 833c4695... because the contract was legitimately revised and committed at 19552ea between rounds; round-2 stability is what this round certifies). No product file, run_state, feature list, spec, or planning file was modified; git status --porcelain shows only the untracked .nizam/, the modified Mode A verdict file (Orchestrator-owned), and this review's evidence files."
+ ],
+ "next_state": "advance_to_loop_2",
+ "evidence_artifacts": [
+  ".agent/evidence/108-qa-adversarial-contract-review/01-base-at1.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/02-base-at2.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/03-base-at3.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/04-base-at4.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/05-base-at5.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/06-base-at6.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/07-base-at7.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/08-base-s01.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/09-s01-flag-states.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/10-clone-s04-positive.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/11-clone-at1.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/12-clone-at2.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/13-clone-at3.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/14-clone-at4.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/15-clone-at5.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/16-clone-at6.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/17-clone-s05-positive.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/18-clone-at7.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/19-clone-sweep-default.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/20-clone-c15-swapped-mapping.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/21-clone-s04-stub-paragraphs.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/22-clone-s04-c15-missing-maproles.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/23-clone-s04-eleventh-item.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/24-clone-s04-version-no-changelog.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/25-clone-sweep-payload.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/26-clone-c14-vanished-workflows.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/27-clone-s03-nizam-refusal.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/28-r2-s01-real-tree.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/29-r2-s01-six-variant-matrix.txt",
+  ".agent/evidence/108-qa-adversarial-contract-review/30-r2-s01-round1-defect-repro.txt"
+ ],
+ "final_verdict": {
+  "approved": true,
   "feature": "108",
-  "contract_id": "108",
-  "revision_reviewed": 0,
+  "verdict": "pass",
   "issues": [],
   "missing_acceptance_coverage": [],
   "unsupported_claims": [],
-  "observations": [
+  "summary": "APPROVED at contract revision 0, round 2 (108-contract attempt 2/3). The revision is exactly and only the S01 fix: an independent structured diff of the working-tree contract against <B> 764144a finds the 11 changed leaves Mode A reports (envelope status + both flags + approved_at; design_notes.revision; revision_history append with [0] byte-identical; retry_identity_note; verification[7]'s acceptance_test/command/state_at_base_A/expected_outcome) and nothing else -- AT1-AT7 and S02-S05 are byte-identical to the round-1-approved text, so all round-1 execution findings carry over unchanged. The halt is reproduced: round-1 S01 run against 764144a's own approved contract exits 1 'approved_at present at revision 0'. The revised S01 exits 0 verbatim on the real tree, and a seven-variant matrix confirms the new dual-state predicate: approved requires revisions 0 + both flags true + approved_at present; non-approved requires revisions 0 + both flags false + approved_at absent, with precise single-problem diagnostics on every wrong variant. The fix is strictly tightening (the approved branch gained a requirement; the non-approved branch is unchanged from round 1), approved_at interacts with nothing else in the contract (absent from S02-S05 scripts and all other leaves), and revision_history[1]/retry_identity_note accurately cite <B> 764144a, the CONTRACT_DEFECT halt, and attempt 2/3. issues, missing_acceptance_coverage, and unsupported_claims are empty."
+ },
+ "prior_rounds": [
+  {
+   "review": "contract-testability",
+   "feature": "108",
+   "contract_id": "108",
+   "revision_reviewed": 0,
+   "issues": [],
+   "missing_acceptance_coverage": [],
+   "unsupported_claims": [],
+   "observations": [
     "Mode A .agent/validator/108-mode-a.json was re-read: revision_reviewed 0, final_verdict.approved true, risk_level high, issues/missing_acceptance_coverage/unsupported_claims all empty. This review did not treat that prose or the contract's claims as proof. The working-tree contract is status proposed, design_notes.revision is Revision 0 (108-contract attempt 1/3), approvals are revisions 0 / validator_mode_a false / evaluator_contract_review false / approved_at absent. HEAD is bd782393cb37d21e57dae61879f65681694a6d9b on branch phase/014-108-validator-help-truth; git status --porcelain lists only the untracked contract, the Mode A verdict, .nizam/, and this review's evidence directory.",
     "Base execution on the real tree (.nizam/-carrying), serially, tools/validate.sh and tools/fixtures_self_test.sh never overlapped; all commands executed verbatim from the contract's own verification entries (extracted programmatically from .agent/contracts/108.json, not retyped): AT1 exit 1 AssertionError ['C14', 'C15', 'C16'] (01-base-at1.txt); AT2 exit 1 AssertionError ('InE', <C5 help slice>) (02-base-at2.txt); AT3 exit 1 AssertionError (['ecosystem'], <Payload-doc set slice>) (03-base-at3.txt); AT4 exit 1 AssertionError ('5', <item 10 citing '(Section 2, Item 4).'>) (04-base-at4.txt); AT5 exit 0 'GATE: PASS (16 checks passing; baseline 16)' (05-base-at5.txt); AT6 exit 0 'GATE: PASS (12 checks passing; baseline 12)' (06-base-at6.txt); AT7 exit 0 'SELF-TEST OK: 147/147 fixtures accounted for, 0 failed' (07-base-at7.txt). All seven state_at_base_A claims reproduce exactly.",
     "S01 (verification[7]) executed verbatim on the real tree: exit 0, 'verification 12 problems: []' (08-base-s01.txt). Flag-state mutations on temp copies (09-s01-flag-states.txt): approved+revisions 0+both flags true exits 0; approved+both flags false exits 1 naming only 'approved revision 0 does not have both approval flags true'; proposed+both flags true exits 1 naming only 'approvals are not false at revision 0'; approved+revisions 1 exits 1; proposed+approved_at present exits 1. The dual flag-state predicate discriminates correctly in both directions.",
@@ -20,9 +80,9 @@
     "Coverage check (missing_acceptance_coverage): every spec-108 requirement has a verification entry -- NDEBT-037 C14-C16 paragraphs: AT1 + S04 byte-pins + S05 cases 1/4; NDEBT-044 c C5 case-sensitivity text: AT2 + S04 grep-flag pin + S05 case 2 (revert keeps sweep 16/16 with [C5] PASS while AT2 fails); NDEBT-044 f payload-doc set paragraph: AT3 + S04 + S05 case 5; NDEBT-044 d interface.md Item 5 citation: AT4 + S04 sentence/version/change_log pins + S05 case 3; Section 5 keeps exactly 10 items: S04 count check (+ probe P3); --help id coverage: AT1; the 0.3.1 NDS Section 4 record: S04 reconstruction + C8 green + probe P4. Nothing lacks a verification entry.",
     "unsupported_claims: every premise relied on in this review was re-executed today on 2026-10-10 -- all seven base AT states, S01 on the real file plus five flag-state mutations, S04 on this reviewer's own application of the pins, S05 5/5, the seven green guards in the clone, both sweep summaries, the C15 swapped-mapping and C14 vanished-workflows behavior, the S03 .nizam/ refusal, pin exactly-once preconditions during application, and the environment claims (bash 5.2.21(1)-release, python3 jsonschema 4.26.0). None failed to reproduce. Serialization and evidence conventions honored: one capture at a time, line 1 invocation, last line EXIT:<code>, no tee/grep on a capture body, all probes in a private clone outside the repo.",
     "The contract file was not edited: sha256 of .agent/contracts/108.json is 833c4695d827ae97ce1d9f691986fad6d5ac464eb2718a864ecdf90d57af8f4d both before the first probe and after the last. No product file, run_state, feature list, spec, or phase YAML was modified; git status --porcelain at the end shows only untracked files (contract, Mode A verdict, .nizam/, this review's evidence directory). The clone and temp dirs are outside the repo and were removed after the review."
-  ],
-  "next_state": "advance_to_loop_2",
-  "evidence_artifacts": [
+   ],
+   "next_state": "advance_to_loop_2",
+   "evidence_artifacts": [
     ".agent/evidence/108-qa-adversarial-contract-review/01-base-at1.txt",
     ".agent/evidence/108-qa-adversarial-contract-review/02-base-at2.txt",
     ".agent/evidence/108-qa-adversarial-contract-review/03-base-at3.txt",
@@ -50,8 +110,8 @@
     ".agent/evidence/108-qa-adversarial-contract-review/25-clone-sweep-payload.txt",
     ".agent/evidence/108-qa-adversarial-contract-review/26-clone-c14-vanished-workflows.txt",
     ".agent/evidence/108-qa-adversarial-contract-review/27-clone-s03-nizam-refusal.txt"
-  ],
-  "final_verdict": {
+   ],
+   "final_verdict": {
     "approved": true,
     "feature": "108",
     "verdict": "pass",
@@ -59,6 +119,9 @@
     "missing_acceptance_coverage": [],
     "unsupported_claims": [],
     "summary": "APPROVED at contract revision 0 (108-contract attempt 1/3). All seven base acceptance tests re-executed verbatim on the real tree reproduce the contract's state_at_base_A exactly (AT1 exit 1 missing C14/C15/C16 paragraphs; AT2 exit 1 'InE' code vs case-insensitive text; AT3 exit 1 ['ecosystem'] plus methodology/...excluded; AT4 exit 1 Item 4 vs Item 5; AT5 GATE PASS 16/16; AT6 GATE PASS 12/12; AT7 147/147), serially with validate.sh and fixtures_self_test.sh never overlapped. S01 verbatim exits 0 on the real file and its dual flag-state predicate accepts the approved state while rejecting all four wrong states. In a private clone without .nizam/, this reviewer's own application of the six pinned edits passes S04 with problems [], then AT1-AT4, AT5 16/16, AT6 12/12, S05 5/5 (existence-only corruption, C5 revert with green sweep, AT4 citation mutation, paragraph drop, green guards), the direct sweeps 16/16 and 12/12 with [C5]/[C8]/[C14]/[C15]/[C16] PASS, and fixtures_self_test 147/147. Adversarial probes confirm the contract's load-bearing claims: stub C14-C16 paragraphs pass AT1 but fail S04 (the content burden is truly on S04's byte-pins, so vacuous paragraphs cannot pass); a C15 paragraph missing vlib_profiles_map_roles, an 11th Section 5 item, and a version bump without the change_log entry each fail S04 while their adjacent AT stays green; the C15 paragraph's dual-primitive claims are shipped behavior (both primitives called at tools/validate.sh:2366-2368; a Planner<->Validator Role swap fails C15 with both map_roles detail lines); C14's cannot-go-vacuous claim holds (renamed .github/workflows dir fails C14); the AT2/AT3 split anchors and the NDEBT-045 --payload option paragraph survive byte-identically; interface.md is 0.3.1 with the pinned change_log entry and passes C8; S03's untracked-.nizam/ refusal fires as specified. Every spec-108 requirement (NDEBT-037, NDEBT-044 c/d/f, Section 5 keeps 10 items, --help id coverage, the NDS 0.3.1 record) has a verification entry, and every premise relied on was re-executed. The contract sha256 833c4695d827ae97ce1d9f691986fad6d5ac464eb2718a864ecdf90d57af8f4d is unchanged before and after; no contract, product, run_state, or planning file was edited. issues, missing_acceptance_coverage, and unsupported_claims are empty."
-  },
-  "prior_rounds": []
+   },
+   "prior_rounds": [],
+   "round": 1
+  }
+ ]
 }

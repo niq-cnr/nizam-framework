@@ -2,7 +2,7 @@
  "contract_id": "108",
  "feature_id": "108",
  "name": "Validator help and adapter-reference truth -- C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference",
- "status": "proposed",
+ "status": "approved",
  "spec_ref": ".agent/product_spec_014.md",
  "design_notes": {
   "revision": "Revision 0 (108-contract attempt 2/3). S01's approvals predicate is now fully dual-state: when status is approved, revisions is 0, both validator_mode_a and evaluator_contract_review are true, and approved_at is present per the Orchestrator's approval-amendment practice (the 107/109 precedent); otherwise revisions is 0, both flags are false, and approved_at is absent. Attempt 1/3 of 108-implementation halted on this: the approval commit <B> adds status approved, both flags true, and approved_at 2026-10-10T12:47:35Z, which the revision-0 S01 rejected unconditionally -- the 107 lesson in reverse (107's defect was the flag states; 108's is the approved_at field). The implementation itself was green: AT1-AT7, S04, S05, S02 and S03 all passed in the attempt worktree. Status is proposed. validator_mode_a and evaluator_contract_review are false, and approved_at is removed. S03 allowlists .agent/run_state.json and does not hard-fail when it differs from <A>, and it refuses a tree with an untracked .nizam/ directory. S02 diffs from <B> and rejects a Generator edit of run_state. No feature-list acceptance test string changes.",
@@ -363,8 +363,9 @@
  "evidence_convention": "Line 1 of each evidence file is the replayable invocation from the repo root, the body is the raw combined stdout and stderr, and the last line is EXIT:<code> taken from the process, never from a pipeline. One capture at a time, in the foreground. Never run tools/validate.sh and tools/fixtures_self_test.sh at the same time. Order inside the attempt root: attempt-base.txt first; after the deliverables are final, AT1 through AT7, then S01, S04, S05, S02, S03. A later edit invalidates the captures. The Evaluator re-runs into .agent/evidence/108/qa/. Failed-attempt evidence goes to .agent/evidence/108/failed-attempt<N>/. Frozen files under .agent/evidence/phase-014-activation/ are read-only.",
  "approvals": {
   "revisions": 0,
-  "validator_mode_a": false,
-  "evaluator_contract_review": false
+  "validator_mode_a": true,
+  "evaluator_contract_review": true,
+  "approved_at": "2026-10-10T13:12:54Z"
  },
  "version_impact": "PATCH (documentation corrections; tools/interface.md Section 5 keeps 10 items, so every adapter stays conformant).",
  "retry_identity": {
