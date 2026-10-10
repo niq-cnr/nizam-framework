@@ -1,6 +1,6 @@
 id: 014-ga-track
 title: GA Track — the Real Multi-Repo Pilot and the Remaining Lifecycle Protocols
-description: Run the real non-scratch multi-repo pilot at the released v1.4.0 tag, activate and register the authored Repeat/GA lifecycle protocols with their reserved gates, run the first real simplification review, and assemble the GA-readiness dossier without declaring GA — with the enforcement-integrity maintenance tranche (NDEBT-043, 041, 042, 044, 037, 026; features 103-109) folded in ahead of the GA-readiness assessment. ACTIVATED 2026-10-08 under H-PHASE-014 (spec 1.1.0); steps are listed in the canonical single-lane order of .agent/feature_list_014.json. Amendment A3 (2026-10-10, spec 1.1.7) removes steps 100 and 101 because the operator said the v1.4.0 multi-repo pilot is no longer needed. Those features are cancelled in the feature list. This schema has no cancelled status. Remaining pending steps are 107, 109, 108, 102.
+description: Run the real non-scratch multi-repo pilot at the released v1.4.0 tag, activate and register the authored Repeat/GA lifecycle protocols with their reserved gates, run the first real simplification review, and assemble the GA-readiness dossier without declaring GA — with the enforcement-integrity maintenance tranche (NDEBT-043, 041, 042, 044, 037, 026; features 103-109) folded in ahead of the GA-readiness assessment. ACTIVATED 2026-10-08 under H-PHASE-014 (spec 1.1.0); steps are listed in the canonical single-lane order of .agent/feature_list_014.json. Amendment A3 (2026-10-10, spec 1.1.7) removes steps 100 and 101 because the operator said the v1.4.0 multi-repo pilot is no longer needed. Those features are cancelled in the feature list. This schema has no cancelled status. Remaining pending steps are 108 and 102.
 status: in_progress
 steps:
   - id: "099"
@@ -41,7 +41,10 @@ steps:
     evidence: .agent/evidence/107/qa/at1-nip-0002-status.txt
   - id: "109"
     description: C15 mapping direction — an explicit Role column parsed by a new primitive; a swapped profile-to-role mapping fails (NDEBT-026).
-    status: PENDING
+    status: COMPLETED
+    docs_updated: standard/capability_profiles.md, tools/verify_lib.sh, tools/validate.sh, tools/README.md
+    changelog_entry: "C15 calls both vlib_profiles_cover_roles (5<->5 coverage) and the new vlib_profiles_map_roles, which parses the explicit Role column of standard/capability_profiles.md and fails a swapped profile-to-role mapping; capability_profiles.md 0.3.0 -> 0.4.0 (NDEBT-026)."
+    evidence: .agent/evidence/109/qa/at2-swapped-roles.txt
   - id: "108"
     description: Validator help and adapter-reference truth — C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f); depends on 106, 107, 109.
     status: PENDING

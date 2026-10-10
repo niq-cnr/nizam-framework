@@ -1,0 +1,5 @@
+T=$(mktemp) && git show 02b02c6:standard/capability_profiles.md > "$T" && source tools/verify_lib.sh && vlib_profiles_cover_roles "$T" standard/AGF.md; cover_rc=$?; vlib_profiles_map_roles "$T" standard/AGF.md; map_rc=$?; echo "cover_rc=$cover_rc map_rc=$map_rc"; rm -f "$T"; test $cover_rc -eq 0 -a $map_rc -eq 1
+cover_rc=0
+vlib_profiles_map_roles: profiles doc /home/cnross/.tmp/tmp.mUCVkbBGoj Section 2 table has no 'Role' column
+map_rc=1
+EXIT:0

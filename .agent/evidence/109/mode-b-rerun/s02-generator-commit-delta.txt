@@ -1,0 +1,23 @@
+git diff --name-status e728cfa..366da07   # Mode B: S02 substance against the Generator's cherry-picked commit only (e728cfa is the Orchestrator-owned run_state commit)
+A	.agent/evidence/109/at1-role-column.txt
+A	.agent/evidence/109/at2-swapped-roles.txt
+A	.agent/evidence/109/at3-cover-roles-legacy.txt
+A	.agent/evidence/109/at4-map-roles-primitive.txt
+A	.agent/evidence/109/at5-validator-gate.txt
+A	.agent/evidence/109/at6-fixtures-self-test.txt
+A	.agent/evidence/109/attempt-base.txt
+A	.agent/evidence/109/s01-contract-valid.txt
+A	.agent/evidence/109/s02-attempt-root-delta.txt
+A	.agent/evidence/109/s03-scope-boundary.txt
+A	.agent/evidence/109/s04-pinned-structure.txt
+A	.agent/evidence/109/s05-discriminating.txt
+M	standard/capability_profiles.md
+M	tools/README.md
+M	tools/validate.sh
+M	tools/verify_lib.sh
+git diff --name-only e728cfa..366da07 | grep -c '^\.agent/run_state\.json$'  # must be 0
+0
+git log --format='%h %an %s' 737a277..HEAD
+366da07 NizamIQ Agent Phase 014 · Feature 109 — C15 mapping direction: explicit Role column and vlib_profiles_map_roles (NDEBT-026)
+e728cfa NizamIQ Agent Phase 014 · Feature 109 — start implementation attempt 1
+EXIT:0

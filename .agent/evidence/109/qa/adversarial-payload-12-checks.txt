@@ -1,0 +1,17 @@
+bash tools/validate.sh --payload
+MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] SKIP bootstrap-sanity (payload mode)
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+[C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)
+[C16] PASS feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+SUMMARY (payload mode): 12 passed, 0 failed
+EXIT:0
