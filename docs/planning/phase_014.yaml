@@ -1,6 +1,6 @@
 id: 014-ga-track
 title: GA Track — the Real Multi-Repo Pilot and the Remaining Lifecycle Protocols
-description: Run the real non-scratch multi-repo pilot at the released v1.4.0 tag, activate and register the authored Repeat/GA lifecycle protocols with their reserved gates, run the first real simplification review, and assemble the GA-readiness dossier without declaring GA — with the enforcement-integrity maintenance tranche (NDEBT-043, 041, 042, 044, 037, 026; features 103-109) folded in ahead of the GA-readiness assessment. ACTIVATED 2026-10-08 under H-PHASE-014 (spec 1.1.0); steps are listed in the canonical single-lane order of .agent/feature_list_014.json. Amendment A3 (2026-10-10, spec 1.1.7) removes steps 100 and 101 because the operator said the v1.4.0 multi-repo pilot is no longer needed. Those features are cancelled in the feature list. This schema has no cancelled status. Remaining pending steps are 108 and 102.
+description: Run the real non-scratch multi-repo pilot at the released v1.4.0 tag, activate and register the authored Repeat/GA lifecycle protocols with their reserved gates, run the first real simplification review, and assemble the GA-readiness dossier without declaring GA — with the enforcement-integrity maintenance tranche (NDEBT-043, 041, 042, 044, 037, 026; features 103-109) folded in ahead of the GA-readiness assessment. ACTIVATED 2026-10-08 under H-PHASE-014 (spec 1.1.0); steps are listed in the canonical single-lane order of .agent/feature_list_014.json. Amendment A3 (2026-10-10, spec 1.1.7) removes steps 100 and 101 because the operator said the v1.4.0 multi-repo pilot is no longer needed. Those features are cancelled in the feature list. This schema has no cancelled status. The only remaining pending step is 102.
 status: in_progress
 steps:
   - id: "099"
@@ -47,7 +47,10 @@ steps:
     evidence: .agent/evidence/109/qa/at2-swapped-roles.txt
   - id: "108"
     description: Validator help and adapter-reference truth — C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f); depends on 106, 107, 109.
-    status: PENDING
+    status: COMPLETED
+    docs_updated: tools/validate.sh, tools/interface.md
+    changelog_entry: "C14-C16 gain --help paragraphs (NDEBT-037); the C5 help text now says case-sensitive to match the grep -InE sweep, and the Payload-doc set paragraph names methodology/ and ecosystem/ (NDEBT-044 c, f); tools/interface.md 0.3.0 -> 0.3.1 cites Section 2, Item 5 for the Section 5 item 10 no-fabrication rule (NDEBT-044 d)."
+    evidence: .agent/evidence/108/at1-help-paragraphs.txt
   - id: "102"
     description: GA-readiness assessment (no declaration), next-candidate refinement, and phase close; depends on 099 and 103-109. Steps 100 and 101 were removed on 2026-10-10. The dossier records real_production_pilot as not_met and H-GA stays outstanding.
     status: PENDING

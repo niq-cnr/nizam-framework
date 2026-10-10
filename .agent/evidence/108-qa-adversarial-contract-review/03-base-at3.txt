@@ -1,0 +1,5 @@
+python3 -c "import re,subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; p=h.split('Payload-doc set')[1].split('\n\n')[0]; src=open('tools/validate.sh').read().split('build_payload_md_set() {')[1]; dirs=re.search(r'for d in ([a-z ]+); do',src).group(1).split(); miss=[d for d in dirs if d+'/' not in p]; assert not miss and not re.search(r'methodology/[^.]*excluded',p), (miss,p[:300])"
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+AssertionError: (['ecosystem'], ' (the --payload mode file set, used by C1, C2, C3, C5, and\nC8): every .md under standard/, templates/, and tools/ EXCLUDING\ntools/fixtures/; and schema/README.md. CONTEXT.md, docs/architecture/,\nmethodology/, and registry/ are intentionally excluded because they are not\ninjected into consumer reposi')
+EXIT:1

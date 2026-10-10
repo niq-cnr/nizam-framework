@@ -1,0 +1,2 @@
+python3 -c "import re; t=open('tools/interface.md').read(); n=re.search(r'^(\d+)\. \*\*Failure behavior\.\*\*',t.split('## 2. Discovery')[1].split('## 3.')[0],re.M).group(1); i10=' '.join(re.search(r'^10\. (.*?)(?:\n\n|\n## )',t.split('## 5.')[1],re.S|re.M).group(1).split()); assert '(Section 2, Item '+n+')' in i10, (n,i10)"
+EXIT:0

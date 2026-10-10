@@ -1,0 +1,2 @@
+python3 -c "import re,subprocess; h=subprocess.run(['bash','tools/validate.sh','--help'],capture_output=True,text=True).stdout; c5=h.split('  C5 ')[1].split('  C6 ')[0]; body=open('tools/validate.sh').read().split('check_c5_branding() {')[1].split('\n}\n')[0]; g=re.search(r'grep -(\w+) ',body).group(1); ci='i' in g; assert ('case-insensitive' in c5)==ci and ('case-sensitive' in c5)!=ci, (g,c5[:160])"
+EXIT:0

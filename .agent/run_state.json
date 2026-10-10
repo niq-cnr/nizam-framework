@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": "109",
   "status": "in_progress",
-  "updated_at": "2026-10-10T11:15:40Z",
+  "updated_at": "2026-10-10T13:47:52Z",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1942,6 +1942,54 @@
       "event": "scope_budget_measured",
       "feature": "109",
       "detail": "Phase-014 rule (spec 1.1.4) over c43ae9e..afbeeec: BUDGET_COUNTED_LINES=836 (product 153, contract 369, verdict 298, planning 16), within the 520-890 range, 126 over the 710 point estimate; EVIDENCE_LINES=1424, EXCLUDED_LINES=38 (run_state), UNCLASSIFIED=0, ALL_PATHS=2298. Phase total 6112 + 836 = 6948 of 8600 (ceiling 11180). Capture .agent/evidence/scope-budget-014/measure-109.txt."
+    },
+    {
+      "at": "2026-10-10T11:39:48Z",
+      "event": "feature_started",
+      "feature": "108",
+      "detail": "Dependency gate: 108 dependencies [106, 107, 109] satisfied (all complete, PRs #72/#74/#75). Branch phase/014-108-validator-help-truth from main 56d2ef1. 108-contract attempt 1/3. 108 measurement range starts at 56d2ef1. Next after 108 is 102. Dispatching Generator to propose .agent/contracts/108.json."
+    },
+    {
+      "at": "2026-10-10T12:47:35Z",
+      "event": "contract_approved",
+      "feature": "108",
+      "detail": "108-contract attempt 1/3 approved at revision 0 on the first proposal. Mode A .agent/validator/108-mode-a.json approved (risk high, empty issue arrays); evaluator contract review .agent/qa/108-contract-review.json approved with all seven base ATs and S01 re-executed, adversarial probes in a private clone (stub-paragraph vacuity, C15 paragraph content, Section 5 count, change_log entry, swap mutation, C14 vacuity) all caught by S04/S05, contract sha256 stable. This commit is attempt base <B>. Implementation has not started."
+    },
+    {
+      "at": "2026-10-10T12:48:28Z",
+      "event": "implementation_started",
+      "feature": "108",
+      "detail": "108-implementation attempt 1/3. Attempt worktree /home/cnross/workspace02/nizam-wt-108-attempt1 detached at <B> 764144a. Contract 108 revision 0 approved. Dispatching Generator to implement the pinned scope: tools/validate.sh print_usage (C14/C15/C16 paragraphs, C5 case-sensitive text, payload-doc set correction) and tools/interface.md item-10 citation (0.3.0 -> 0.3.1). Serial captures to .agent/evidence/108/ per the contract's evidence_convention."
+    },
+    {
+      "at": "2026-10-10T13:01:46Z",
+      "event": "contract_defect",
+      "feature": "108",
+      "detail": "108-implementation attempt 1/3 halted as CONTRACT_DEFECT before any implementation commit. Defect: the contract's S01 carried an unconditional approved_at-absence check, but the Orchestrator's approval commit <B> 764144a legitimately adds approved_at to the approved contract (the 107/109 amendment practice), so no correct implementation could pass S01. The Generator revised the contract (108-contract attempt 2/3, still revision 0): S01 is now fully dual-state (approved requires revisions 0 + both flags true + approved_at present; otherwise revisions 0 + both flags false + approved_at absent), verified by a six-variant flag-state matrix; envelope back to proposed; revision_history entry appended. AT1-AT7, S02-S05 byte-identical. Implementation evidence from the halted attempt preserved in worktree nizam-wt-108-attempt1 (uncommitted); it will be re-based and re-captured after re-approval. One contract attempt remains."
+    },
+    {
+      "at": "2026-10-10T13:12:54Z",
+      "event": "contract_approved",
+      "feature": "108",
+      "detail": "108-contract attempt 2/3 approved at revision 0 after the S01 contract_defect revision. Mode A round 2 .agent/validator/108-mode-a.json (prior_rounds[0] preserves round 1) and evaluator contract review round 2 .agent/qa/108-contract-review.json both approved with empty issue arrays; the revised S01 was re-executed against a six-variant flag-state matrix (round-2 captures 28-30 under .agent/evidence/108-qa-adversarial-contract-review/) and the round-1 defect was reproduced verbatim against <B> 764144a as confirmation. This commit is the new attempt base <B>. Implementation has not restarted."
+    },
+    {
+      "at": "2026-10-10T13:13:12Z",
+      "event": "implementation_started",
+      "feature": "108",
+      "detail": "108-implementation attempt 1/3 restarted on the new attempt base. The halted attempt's worktree was discarded (its S01 capture was against the pre-revision contract); a fresh worktree /home/cnross/workspace02/nizam-wt-108-attempt1 is detached at the new <B> ddcf0db84832bc1e9f7c3f66881eeb5c422e94df (S01 fix approved at 108-contract attempt 2/3). The CONTRACT_DEFECT did not consume an implementation attempt. Dispatching Generator to re-apply the pinned scope (tools/validate.sh print_usage, tools/interface.md item-10) and re-capture AT1-AT7, S01-S05, S02, S03 against the revised contract."
+    },
+    {
+      "at": "2026-10-10T13:46:52Z",
+      "event": "feature_completed",
+      "feature": "108",
+      "detail": "108-implementation attempt 1/3 passed (after one CONTRACT_DEFECT revision of the contract at 108-contract attempt 2/3; the defect consumed no implementation attempt). Validator Mode B .agent/validator/108-mode-b.json approved (diff <B>..HEAD exactly the 2 files_modify + 13 evidence creates + Orchestrator run_state commit; S01 accepts the approved+approved_at state). Evaluator QA .agent/qa/108.json pass 12/12 with fresh captures under .agent/evidence/108/qa/ plus adversarial probes (C16-content pinned only by S04, C5 text-revert direction, --help byte-regions, interface.md 0.3.1 + C8, --payload 12/12). Evidence-capture gate satisfied. Step-7 status flip landed; docs/planning/phase_014.yaml step 108 completed; DEBT.md v0.53.0 (NDEBT-037 resolved; NDEBT-044 c/d/f recorded resolved, (e) left for 102). Next and final feature: 102."
+    },
+    {
+      "at": "2026-10-10T13:47:52Z",
+      "event": "scope_budget_measured",
+      "feature": "108",
+      "detail": "Phase-014 rule (spec 1.1.4) over 56d2ef1..29355ac: BUDGET_COUNTED_LINES=851 (product 67, contract 374, verdict 343, planning 17), within the 510-860 range, 161 over the 690 point estimate (the S01 contract revision's two-round verdicts); EVIDENCE_LINES=897, EXCLUDED_LINES=49, UNCLASSIFIED=0, ALL_PATHS=1797. Phase total 6948 + 851 = 7799 of 8600 (ceiling 11180). Capture .agent/evidence/scope-budget-014/measure-108.txt."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2116,9 +2164,9 @@
   "scope_budget": {
     "original_estimate_lines": 8600,
     "ceiling_130pct": 11180,
-    "total_lines_changed": 6948,
-    "evidence_lines_total": 19406,
-    "excluded_lines_total": 679,
+    "total_lines_changed": 7799,
+    "evidence_lines_total": 20303,
+    "excluded_lines_total": 728,
     "counting_rule": {
       "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.6)",
       "script": ".agent/evidence/scope-budget-014/measure.py",
@@ -2197,6 +2245,16 @@
         "all_paths_lines": 2298,
         "range": "c43ae9e..afbeeec",
         "note": "Phase-014 rule (spec 1.1.4): product 153 + contract 369 + verdict 298 + planning 16 = 836. Within the 520-890 range; 126 over the 710 point estimate (a long contract plus verdicts, the predicted composition). Capture .agent/evidence/scope-budget-014/measure-109.txt."
+      },
+      {
+        "id": "108",
+        "estimated": 690,
+        "actual": 851,
+        "evidence_lines": 897,
+        "excluded_lines": 49,
+        "all_paths_lines": 1797,
+        "range": "56d2ef1..29355ac",
+        "note": "Phase-014 rule (spec 1.1.4): product 67 + contract 374 + verdict 343 + planning 17 = 851. Within the 510-860 range; 161 over the 690 point estimate (contract + two-round verdicts from the S01 CONTRACT_DEFECT revision, the predicted composition). Capture .agent/evidence/scope-budget-014/measure-108.txt."
       }
     ],
     "phase_level_items": [
@@ -2496,7 +2554,7 @@
       }
     ]
   },
-  "last_action": "Feature 109 line range pinned: 836 budget-counted from c43ae9e to afbeeec",
+  "last_action": "Feature 108 line range pinned: 851 budget-counted from 56d2ef1 to 29355ac",
   "completed_contract_ids": [
     "099",
     "103",
@@ -2504,6 +2562,7 @@
     "105",
     "106",
     "107",
-    "109"
+    "109",
+    "108"
   ]
 }

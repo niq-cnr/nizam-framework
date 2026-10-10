@@ -1,0 +1,10 @@
+six-variant matrix of the revised S01 (verification[7] verbatim) on temp copies; cwd unchanged, only the contract path is redirected
+CASE approved + approved_at + both true             rc=0 (want 0) OK | verification 12 problems: []
+CASE approved WITHOUT approved_at                   rc=1 (want 1) OK | verification 12 problems: ['approved revision 0 does not have both approval flags true and an approved_at']
+CASE approved + approved_at + mode_a false          rc=1 (want 1) OK | verification 12 problems: ['approved revision 0 does not have both approval flags true and an approved_at']
+CASE approved + approved_at + contract_review false rc=1 (want 1) OK | verification 12 problems: ['approved revision 0 does not have both approval flags true and an approved_at']
+CASE proposed + approved_at present                 rc=1 (want 1) OK | verification 12 problems: ['approved_at present at a non-approved revision 0']
+CASE proposed + one flag true                       rc=1 (want 1) OK | verification 12 problems: ['approvals are not false at revision 0']
+CASE proposed clean                                 rc=0 (want 0) OK | verification 12 problems: []
+MATRIX: ALL OK
+EXIT:0

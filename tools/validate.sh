@@ -202,12 +202,15 @@ file(s)/detail(s) printed on the following indented line(s)):
       NORMALIZED path, so a traversal spelling
       (e.g. `docs/../tools/x.md`) cannot ride a skip.
 
-  C5  Branding/endpoint leakage. Zero case-insensitive occurrences of
-      `nizamiq`, `.svc`, or `cluster.local` anywhere in shipped content:
-      the shipped-doc set, plus NIZAM.json, CHANGELOG.md, root README.md,
-      and bootstrap.sh. Repo-wide only; does not run under --target. In
-      --payload mode the extra targets are swept only when present; missing
-      envelope files do not cause a failure.
+  C5  Branding/endpoint leakage. The sweep is case-sensitive: zero
+      occurrences of the lowercase tokens `nizamiq`, `.svc`, or
+      `cluster.local` anywhere in shipped content -- the shipped-doc set,
+      plus NIZAM.json, CHANGELOG.md, root README.md, and bootstrap.sh.
+      Capitalised brand prose (for example `NizamIQ` in running text) is
+      allowed; only the lowercase token fails the sweep. Repo-wide only;
+      does not run under --target. In --payload mode the extra targets are
+      swept only when present; missing envelope files do not cause a
+      failure.
 
   C6  bootstrap.sh sanity. `bash -n ./bootstrap.sh` (syntax check) AND
       `timeout 5 ./bootstrap.sh --help` exits 0. Repo-wide only; does not
@@ -415,6 +418,40 @@ file(s)/detail(s) printed on the following indented line(s)):
       `tools/fixtures/skill_index_neg_unindexed_capability.json`, exercised
       by the same substitution in `tools/fixtures_self_test.sh`.
 
+  C14 Workflow SHA-pin integrity. Every third-party GitHub Actions `uses:`
+      ref in .github/workflows/ MUST be pinned to a full 40-hex commit
+      SHA, not a mutable tag or branch (local ./ and ../ action paths are
+      exempt). Mechanizes the SHA-pinning rule of
+      standard/provenance_policy.md via the vetted vlib_workflows_sha_pinned
+      primitive, which fails a vanished or empty workflow directory so the
+      check cannot go vacuous. Default-mode only: .github/ is
+      framework-envelope, never part of a bootstrap-injected consumer
+      payload. (Feature 058.)
+
+  C15 Capability-profile <-> AGF-role correspondence. Each of the five
+      capability profiles (standard/capability_profiles.md) maps to a role
+      defined in standard/AGF.md, and C15 enforces that mapping through
+      BOTH vetted primitives from tools/verify_lib.sh:
+      vlib_profiles_cover_roles guards the 5<->5 coverage (a dropped
+      profile or role fails C15), and vlib_profiles_map_roles parses each
+      profile row's explicit Role column, failing unless every row names
+      its own role -- a swapped profile-to-role mapping fails C15.
+      Default-mode only: a framework-authoring invariant the consumer
+      inherits already-verified. (Feature 058 mechanized the coverage;
+      phase-014 feature 109, NDEBT-026, added the Role column and the
+      mapping primitive.)
+
+  C16 Feature-list lifecycle invariant. Every .agent/feature_list*.json
+      must validate against schema/feature_list.schema.json, and every
+      feature whose status is "complete" must have an approved contract,
+      a passing QA verdict, and evidence on disk; the era-safe rule does
+      not flag a pre-contract-first complete feature with no contract
+      file. Enforced via the vetted vlib_feature_list_lifecycle primitive.
+      Default-mode only: --payload passes trivially by design (.agent/
+      governance state is never part of the bootstrap.sh payload), and a
+      --target feature-list-shaped file gets schema-only validation.
+      (Feature 092.)
+
 Shipped-doc set (the file set C1, C2, C3, C5, and C8 all operate over,
 consistently): CONTEXT.md; every .md under docs/architecture/; every .md
 under standard/, methodology/, registry/, and templates/; every .md under
@@ -425,10 +462,13 @@ contract and are NOT part of this set (root README.md and bootstrap.sh are
 still covered by C5's separately-listed extra targets).
 
 Payload-doc set (the --payload mode file set, used by C1, C2, C3, C5, and
-C8): every .md under standard/, templates/, and tools/ EXCLUDING
-tools/fixtures/; and schema/README.md. CONTEXT.md, docs/architecture/,
-methodology/, and registry/ are intentionally excluded because they are not
-injected into consumer repositories by bootstrap.sh.
+C8): every .md under standard/, templates/, methodology/, and ecosystem/,
+plus every .md under tools/ EXCLUDING tools/fixtures/; and
+schema/README.md. methodology/ and ecosystem/ joined the injected payload
+in feature 051 (NDEBT-008), so their .md files are swept by the payload
+mode's C1, C2, C3, C5, C8, C9, and C10. CONTEXT.md, docs/architecture/,
+and registry/ are intentionally excluded because they are not injected
+into consumer repositories by bootstrap.sh.
 
 Exit code: 0 only when every check that ran passed (0 failed).
 USAGE

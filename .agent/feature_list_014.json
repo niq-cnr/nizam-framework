@@ -232,7 +232,7 @@
       "id": "108",
       "name": "Validator help and adapter-reference truth — C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f)",
       "description": "Maintenance tranche; one concern — shipped reference text that states facts about the implementation must match it. Runs AFTER 106, 107 and 109 so it documents the final C1/C13/C15 semantics. (NDEBT-037) tools/validate.sh --help gains a per-check paragraph for C14, C15 and C16 (derived: every check id the validator prints has a paragraph). (NDEBT-044 c) the C5 paragraph says 'case-insensitive' but the sweep is `grep -InE` without -i; correct the TEXT to case-sensitive (the behavior is intended: capitalised brand prose is allowed, the lowercase token is not). (NDEBT-044 f) the 'Payload-doc set' paragraph omits methodology/ and ecosystem/, which build_payload_md_set sweeps since feature 051. (NDEBT-044 d) tools/interface.md Section 5 item 10 cites '(Section 2, Item 4)' for the no-fabrication rule; the rule is Item 5 (Failure behavior) — a PATCH correction to a consumer-shipped doc with a version bump; Section 5 stays at 10 items. OUT OF SCOPE (logged as NDEBT-045, not widened into this feature): the separate --payload option paragraph (tools/validate.sh lines 128-148 at 02b02c6), which also still calls methodology/ and ecosystem/ non-injected and lists 'C1-C5, C7-C11'. NDEBT-044 (e), the ROADMAP open-debt count, is folded into feature 102's phase-close refresh, because the Open set changes as this tranche lands.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [
         "106",
         "107",
