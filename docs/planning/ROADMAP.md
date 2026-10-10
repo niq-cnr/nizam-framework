@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.52.0
+version: 0.53.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.53.0"
+    date: "2026-10-10"
+    summary: "Record completed local self-commissioning at fixed source candidate bfd475ff670e582cbbfc8f3187ae988dcf3c8baa: actual successful CI38075479048, real clean installed preflight PASS, immutable framework/candidate baseline and independent9/9 QA/evidence gate. Later documentation HEAD preserves the assessed candidate; historical phases remain unchanged."
   - version: "0.52.0"
     date: "2026-10-10"
     summary: "Record operator-authorized local v1.5.0 self-adoption: authentic public payload installed and agent routing/standing drift checks added; committed-candidate CI and clean installed preflight/baseline commissioning remain pending. No phase or external ecosystem scope changes."
@@ -788,7 +791,7 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-10)
 
-- **Local self-governance is installed; commissioning is pending.** The operator authorized `niq-cnr/nizam-framework` to adopt its public `v1.5.0` pin at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852` under `H-CONSUMER-UPGRADE`, recorded before bootstrap at `481a58a`. The actual `.nizam/` installation has genuine provenance; root `AGENTS.md` routes sessions through the installed index and skill. The [self-governance record](SELF_GOVERNANCE.md) will record committed-candidate CI and real clean preflight/baseline evidence after independent commissioning checks. Authored framework sources and historical phase records remain unchanged.
+- **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
 - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. No next phase is activated. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
   statements are superseded at 2026-10-10: feature 099 has activated `ecosystem/06_simplification_review.md` and

@@ -52,7 +52,8 @@ and the [v0.9.0 → v1.0.0 migration guide](docs/migration-v1.0.0.md), and run
 ## Local governance
 
 This repository has installed its public `v1.5.0` governance under `.nizam/`.
-Committed-candidate CI and clean preflight/baseline commissioning are pending.
+Commissioning passed at assessed source candidate `bfd475f`: actual successful
+CI, clean installed preflight/baseline and independent QA are recorded.
 The [self-governance record](docs/planning/SELF_GOVERNANCE.md) records the exact pin,
 operator authorization and current stage. Root framework modules remain the
 authored product; local agent work follows the installed governance.

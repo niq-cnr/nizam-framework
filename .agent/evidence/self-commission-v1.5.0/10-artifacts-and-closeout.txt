@@ -1,0 +1,15 @@
+COMMAND: python3 - "$COMMISSION_RUN_ROOT" <<'PY'
+import hashlib,json,subprocess,sys
+from pathlib import Path
+import jsonschema
+r=Path(sys.argv[1]);pre=json.loads((r/'preflight/preflight.json').read_text());baseline=json.loads((r/'preflight/baseline.json').read_text())
+for obj,schema in [(pre,'preflight_verdict'),(baseline,'ecosystem_baseline')]:jsonschema.Draft202012Validator(json.loads(Path('.nizam/schema/'+schema+'.schema.json').read_text())).validate(obj)
+assert pre['verdict']=='PASS' and baseline['execution_id']=='self-commission-v1.5.0';identity=json.loads((r/'identity.json').read_text());candidate=identity['candidate_sha'];assert pre['execution_id']==baseline['execution_id'];assert all(x['revision']==candidate for x in baseline['repository_references']);assert any(x['revision']=='v1.5.0' for x in baseline['framework_references'])
+for name in ['preflight.json','baseline.json','collection-log.txt']:
+ source=r/'preflight'/name;archive=Path('.agent/reconciliation/self-commission-v1.5.0')/name;assert source.read_bytes()==archive.read_bytes(),name
+print('Real PASS baseline schemas, immutable candidate/framework pins and exact archived outputs verified')
+PY
+HEAD: bfd475ff670e582cbbfc8f3187ae988dcf3c8baa
+Real PASS baseline schemas, immutable candidate/framework pins and exact archived outputs verified
+
+EXIT:0

@@ -1,202 +1,69 @@
 {
-  "contract_id": "self-commission-v1.5.0",
-  "feature_id": "self-commission-v1.5.0",
-  "name": "Install and commission released Nizam v1.5.0 for niq-cnr/nizam-framework itself",
-  "status": "complete",
-  "spec_ref": ".agent/product_spec_self_governance.md",
-  "planned_repository_spec_ref": ".agent/product_spec_self_governance.md",
-  "base_revision": "481a58a17194438bb63b67acbfb85a84da740897",
-  "base_condition": "Final release-closeout and H-CONSUMER-UPGRADE operator-decision immutable base; user decision already recorded before downstream adoption.",
-  "scope": {
-    "files_create": [
-      {
-        "path": ".nizam/standard/**",
-        "purpose": "Exact bootstrap-generated immutable released payload; provenance records authentic public installation"
-      },
-      {
-        "path": ".nizam/templates/**",
-        "purpose": "Exact bootstrap-generated immutable released payload; provenance records authentic public installation"
-      },
-      {
-        "path": ".nizam/schema/**",
-        "purpose": "Exact bootstrap-generated immutable released payload; provenance records authentic public installation"
-      },
-      {
-        "path": ".nizam/tools/**",
-        "purpose": "Exact bootstrap-generated immutable released payload; provenance records authentic public installation"
-      },
-      {
-        "path": ".nizam/methodology/**",
-        "purpose": "Exact bootstrap-generated immutable released payload; provenance records authentic public installation"
-      },
-      {
-        "path": ".nizam/ecosystem/**",
-        "purpose": "Exact bootstrap-generated immutable released payload; provenance records authentic public installation"
-      },
-      {
-        "path": ".nizam/NIZAM.json",
-        "purpose": "Exact bootstrap-generated immutable released payload; provenance records authentic public installation"
-      },
-      {
-        "path": ".nizam/provenance.json",
-        "purpose": "Exact bootstrap-generated immutable released payload; provenance records authentic public installation"
-      },
-      {
-        "path": "AGENTS.md",
-        "purpose": "Versioned root instructions routing sessions to installed index/skill with explicit repository-local authorized scope"
-      },
-      {
-        "path": "docs/planning/SELF_GOVERNANCE.md",
-        "purpose": "Versioned stage-aware commissioning record with structured commissioning frontmatter: repository, local_scope, tag, resolved_sha, status, candidate_sha, evidence map and actual H-CONSUMER-UPGRADE authorization. Initial 0.1.0 installed; final 0.1.1 commissioned only after QA/evidence gate."
-      },
-      {
-        "path": ".github/scripts/verify_self_governance.py",
-        "purpose": "Exact pinned git-tree inventory/bytes/modes and provenance verifier; configurable payload root for isolated negatives"
-      },
-      {
-        "path": ".github/scripts/test_self_governance.py",
-        "purpose": "Temporary-copy adversarial drift/provenance checks; no mutations of installed original"
-      },
-      {
-        "path": ".agent/reconciliation/self-commission-v1.5.0/<artifact>",
-        "purpose": "Immutable real installed-preflight verdict/baseline/log copies with source/hash mapping"
-      },
-      {
-        "path": ".agent/evidence/self-commission-v1.5.0/<artifact>",
-        "purpose": "Externalized commands, actual exit codes, SHAs, authentic CI run and immutable original artifacts/source mappings"
-      },
-      {
-        "path": ".agent/product_spec_self_governance.md",
-        "purpose": "Durable promoted planning/spec artifact"
-      },
-      {
-        "path": ".agent/contracts/self-commission-v1.5.0.json",
-        "purpose": "Independent-gated contract metadata"
-      },
-      {
-        "path": ".agent/validator/self-commission-v1.5.0-<name>.json",
-        "purpose": "Independent Mode A/B verdicts"
-      },
-      {
-        "path": ".agent/qa/self-commission-v1.5.0-<name>.json",
-        "purpose": "Independent contract review and evaluator QA verdicts"
-      },
-      {
-        "path": ".agent/qa/self-commission-v1.5.0.json",
-        "purpose": "Exact independent final evaluator QA verdict and evidence references before final commissioned record"
-      }
-    ],
-    "files_modify": [
-      {
-        "path": "README.md",
-        "purpose": "Local commissioned-governance entrypoints/link; release links retained"
-      },
-      {
-        "path": "CHANGELOG.md",
-        "purpose": "Unreleased envelope-only self-adoption note; released sections byte-identical"
-      },
-      {
-        "path": "docs/planning/ROADMAP.md",
-        "purpose": "Version/change_log/current adoption/commissioning status; historical phase records unchanged"
-      },
-      {
-        "path": "docs/planning/operator_gates.md",
-        "purpose": "Version/change_log and existing H-CONSUMER-UPGRADE recorded self-adoption authorization/current commissioning disposition; no new gate."
-      },
-      {
-        "path": ".github/workflows/compliance.yml",
-        "purpose": "Add pinned-action full-history self_governance drift/negative/payload CI job; existing jobs unchanged"
-      },
-      {
-        "path": ".agent/run_state.json",
-        "purpose": "Orchestrator only: bounded self-commission contract/lifecycle/attempt counters and appended self-commission history; preserve all phase data and existing history"
-      }
-    ]
-  },
-  "non_goals": [
-    "No modifications of root standard/templates/schema/tools/methodology/ecosystem/NIZAM.json/bootstrap.sh/CONTEXT.md or installed released payload bytes; generated provenance is only installed extra.",
-    "No new release/tag/version, no relocation of existing canonical source, no phase014/historical dossier/acceptance-test rewrites.",
-    "No external organization-scope changes or invented ecosystem membership/scope repository aliases. User self-adoption applies only to niq-cnr/nizam-framework.",
-    "No fake fixture commissioning or audit success without genuine evidence; no automatic GA or commercial-readiness conclusion.",
-    "No blanket tolerance for dirty state; commissioning requires real clean candidate and real successful CI.",
-    "No direct patching of .nizam; any future pin update goes through sanctioned re-bootstrap and reviewed trusted constant update."
-  ],
-  "verification": [
+  "candidate_sha": "bfd475ff670e582cbbfc8f3187ae988dcf3c8baa",
+  "commission_run_root": "/tmp/nizam-self-commission-qa-dYrvd5WR",
+  "checks": [
     {
+      "index": 1,
       "acceptance_test": "AT1: Install uses authentic public immutable released tag and verify-only agrees with trusted full commit.",
       "command": "bash bootstrap.sh --verify-only --tag v1.5.0 --expected-sha f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852 --target .nizam",
-      "evidence": "01-bootstrap.txt"
+      "exit_code": 0,
+      "evidence": ".agent/evidence/self-commission-v1.5.0/01-bootstrap.txt"
     },
     {
+      "index": 2,
       "acceptance_test": "AT2: Exact 238-file released tree plus genuine provenance; bytes/modes/inventory and trust constants agree.",
       "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
-      "evidence": "02-drift.txt"
+      "exit_code": 0,
+      "evidence": ".agent/evidence/self-commission-v1.5.0/02-drift.txt"
     },
     {
+      "index": 3,
       "acceptance_test": "AT3: Real adversarial mutations of isolated payload copies reject byte/mode/file-set/symlink and provenance corruption; original installation unchanged.",
       "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_self_governance.py",
-      "evidence": "03-drift-negatives.txt"
+      "exit_code": 0,
+      "evidence": ".agent/evidence/self-commission-v1.5.0/03-drift-negatives.txt"
     },
     {
+      "index": 4,
       "acceptance_test": "AT4: Installed payload validates in consumer mode from repository root.",
       "command": "PYTHONDONTWRITEBYTECODE=1 bash .nizam/tools/validate.sh --payload",
-      "evidence": "04-payload.txt"
+      "exit_code": 0,
+      "evidence": ".agent/evidence/self-commission-v1.5.0/04-payload.txt"
     },
     {
+      "index": 5,
       "acceptance_test": "AT5: Ordinary framework compliance and release anchors remain green.",
       "command": "bash tools/validate.sh && python3 .github/scripts/release_closeout.py --mode pr",
-      "evidence": "05-source-compliance.txt"
+      "exit_code": 0,
+      "evidence": ".agent/evidence/self-commission-v1.5.0/05-source-compliance.txt"
     },
     {
+      "index": 6,
       "acceptance_test": "AT6: Pinned-action full-history CI job runs exact drift/adversarial/payload commands; independently captured real successful run binds fixed commissioning source candidate, not later documentation HEAD.",
       "command": "PYTHONDONTWRITEBYTECODE=1 python3 - \"$COMMISSION_RUN_ROOT/ci.json\" <<'PY'\nimport json,subprocess,sys,yaml\nfrom pathlib import Path\nj=yaml.safe_load(Path('.github/workflows/compliance.yml').read_text())['jobs']['self_governance'];steps=j['steps']\nco=next(s for s in steps if s.get('uses','').startswith('actions/checkout@'));py=next(s for s in steps if s.get('uses','').startswith('actions/setup-python@'))\nassert co['uses']=='actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' and co['with']['fetch-depth']==0 and co['with']['persist-credentials'] is False\nassert py['uses']=='actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b'\nruns='\\n'.join(s.get('run','') for s in steps)\nfor cmd in ['python3 .github/scripts/verify_self_governance.py','python3 .github/scripts/test_self_governance.py','bash .nizam/tools/validate.sh --payload']:assert cmd in runs,cmd\nci=json.loads(Path(sys.argv[1]).read_text());identity=json.loads(Path(sys.argv[1]).with_name('identity.json').read_text());candidate=identity['candidate_sha'];assert ci['revision']==ci['headSha']==candidate and ci['conclusion']=='success';assert ci['url'].startswith('https://github.com/niq-cnr/nizam-framework/actions/runs/') and ci['timestamp']\nprint('Pinned CI job and independently captured successful candidate run verified')\nPY",
-      "evidence": "06-ci.txt"
+      "exit_code": 0,
+      "evidence": ".agent/evidence/self-commission-v1.5.0/06-ci.txt"
     },
     {
+      "index": 7,
       "acceptance_test": "AT7: Scoped source/metadata diff and bounded self-commission coordination; parsed initial/final record verifies repository-local scope, pin, declared stage and actual candidate/evidence bindings.",
       "command": "python3 - <<'PY'\nimport json,re,subprocess,yaml\nfrom pathlib import Path\nc=json.loads(Path('.agent/contracts/self-commission-v1.5.0.json').read_text());base=c['base_revision'];modified={'README.md','CHANGELOG.md','docs/planning/ROADMAP.md','docs/planning/operator_gates.md','.github/workflows/compliance.yml','.agent/run_state.json'};created={'AGENTS.md','docs/planning/SELF_GOVERNANCE.md','.github/scripts/verify_self_governance.py','.github/scripts/test_self_governance.py'}\ndef allowed(p):\n return p in modified|created or p.startswith('.nizam/') or bool(re.fullmatch(r'\\.agent/(?:product_spec_self_governance\\.md|contracts/self-commission-v1\\.5\\.0\\.json|(?:validator|qa)/self-commission-v1\\.5\\.0(?:-[A-Za-z0-9_-]+)?\\.json|(?:evidence|reconciliation)/self-commission-v1\\.5\\.0/[A-Za-z0-9_.-]+)',p))\nfor l in subprocess.check_output(['git','diff','--name-status',base],text=True).splitlines():\n a=l.split('\\t');assert len(a)==2 and a[0] in ('A','M') and allowed(a[1]),l\nfor p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines():assert allowed(p),p\nassert not subprocess.check_output(['git','diff',base,'--','standard','templates','schema','tools','methodology','ecosystem','NIZAM.json','bootstrap.sh','CONTEXT.md','.agent/feature_list_014.json','.agent/product_spec_014.md','docs/planning/phase_014.yaml','.agent/evidence/102/ga-readiness.json'])\nold=json.loads(subprocess.check_output(['git','show',base+':.agent/run_state.json'],text=True));new=json.loads(Path('.agent/run_state.json').read_text());permitted={'active_contract_id','last_action','history','circuit_breaker'}\nfor k in set(old)|set(new):\n if k not in permitted:assert old.get(k)==new.get(k),k\nassert new.get('active_contract_id') in (old.get('active_contract_id'),None,'self-commission-v1.5.0')\nif new.get('last_action')!=old.get('last_action'):assert 'self-commission' in new['last_action'].lower()\nassert new['history'][:len(old['history'])]==old['history']\nfor event in new['history'][len(old['history']):]:assert event.get('contract_id',event.get('feature'))=='self-commission-v1.5.0',event\nfor k,v in old.get('circuit_breaker',{}).items():\n if not k.startswith('self-commission-v1.5.0-'):assert new.get('circuit_breaker',{}).get(k)==v,k\nfor k,v in new.get('circuit_breaker',{}).items():\n if k not in old.get('circuit_breaker',{}) or v!=old['circuit_breaker'][k]:assert k.startswith('self-commission-v1.5.0-') and v['limit']==3 and 0<=v['attempts']<=3,(k,v)\na=Path('AGENTS.md').read_text();assert '.nizam/NIZAM.json' in a and '.nizam/tools/SKILL.md' in a and 'niq-cnr/nizam-framework' in a\nassert 'docs/planning/SELF_GOVERNANCE.md' in Path('README.md').read_text()\np=Path('docs/planning/SELF_GOVERNANCE.md');fm=yaml.safe_load(p.read_text().split('---',2)[1]);assert fm['id']=='nizam-self-governance' and fm['authoritative_source']==str(p) and fm['status']=='active';assert fm['change_log'][0]['version']==fm['version']\nr=fm['commissioning'];assert r['repository']=='niq-cnr/nizam-framework' and r['local_scope']==['niq-cnr/nizam-framework'];assert r['tag']=='v1.5.0' and r['resolved_sha']=='f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852';assert r['authorization_gate']=='H-CONSUMER-UPGRADE'\nassert r['status'] in ('installed','commissioned')\nif r['status']=='installed':assert fm['version']=='0.1.0' and r.get('candidate_sha') is None and not r.get('evidence'),r\nelse:\n assert fm['version']=='0.1.1';assert re.fullmatch(r'[0-9a-f]{40}',r['candidate_sha']);assert isinstance(r['evidence'],dict)\n for key in ['identity','ci','preflight','baseline','drift','payload','qa']:\n  q=Path(r['evidence'][key]);assert str(q).startswith('.agent/') and q.is_file(),key\n identity=json.loads(Path(r['evidence']['identity']).read_text());assert identity['candidate_sha']==r['candidate_sha']\n ci=json.loads(Path(r['evidence']['ci']).read_text());assert ci['headSha']==ci['revision']==r['candidate_sha'] and ci['conclusion']=='success'\n baseline=json.loads(Path(r['evidence']['baseline']).read_text());assert all(x['revision']==r['candidate_sha'] for x in baseline['repository_references']);assert any(x['revision']=='v1.5.0' for x in baseline['framework_references'])\n assert json.loads(Path(r['evidence']['preflight']).read_text())['verdict']=='PASS'\n assert r['evidence']['qa']=='.agent/qa/self-commission-v1.5.0.json';qa=json.loads(Path(r['evidence']['qa']).read_text());assert qa['final_verdict']['approved'] and not qa['issues'] and not qa['missing_acceptance_coverage'] and not qa['unsupported_claims']\nprint('Exact authorized scope, bounded coordination and stage-aware commissioning record verified')\nPY",
-      "evidence": "07-scope-and-routing.txt"
+      "exit_code": 0,
+      "evidence": ".agent/evidence/self-commission-v1.5.0/07-scope-and-routing.txt"
     },
     {
+      "index": 8,
       "acceptance_test": "AT8: Clean actual committed repository produces PASS and a matching pinned framework/candidate baseline without synthetic fixtures.",
       "command": "PYTHONDONTWRITEBYTECODE=1 python3 .nizam/tools/ecosystem_preflight.py --execution-id self-commission-v1.5.0 --repo-root . --governance-root .nizam --output-dir \"$COMMISSION_RUN_ROOT/preflight\" --ci-run-file \"$COMMISSION_RUN_ROOT/ci.json\"",
-      "evidence": "08-preflight.txt"
+      "exit_code": 0,
+      "evidence": ".agent/evidence/self-commission-v1.5.0/08-preflight.txt"
     },
     {
+      "index": 9,
       "acceptance_test": "AT10: Actual PASS preflight/baseline schema-valid and pinned to captured commissioning candidate independently of ambient final HEAD; archived original artifacts match bytes and references map to copied logs.",
       "command": "python3 - \"$COMMISSION_RUN_ROOT\" <<'PY'\nimport hashlib,json,subprocess,sys\nfrom pathlib import Path\nimport jsonschema\nr=Path(sys.argv[1]);pre=json.loads((r/'preflight/preflight.json').read_text());baseline=json.loads((r/'preflight/baseline.json').read_text())\nfor obj,schema in [(pre,'preflight_verdict'),(baseline,'ecosystem_baseline')]:jsonschema.Draft202012Validator(json.loads(Path('.nizam/schema/'+schema+'.schema.json').read_text())).validate(obj)\nassert pre['verdict']=='PASS' and baseline['execution_id']=='self-commission-v1.5.0';identity=json.loads((r/'identity.json').read_text());candidate=identity['candidate_sha'];assert pre['execution_id']==baseline['execution_id'];assert all(x['revision']==candidate for x in baseline['repository_references']);assert any(x['revision']=='v1.5.0' for x in baseline['framework_references'])\nfor name in ['preflight.json','baseline.json','collection-log.txt']:\n source=r/'preflight'/name;archive=Path('.agent/reconciliation/self-commission-v1.5.0')/name;assert source.read_bytes()==archive.read_bytes(),name\nprint('Real PASS baseline schemas, immutable candidate/framework pins and exact archived outputs verified')\nPY",
-      "evidence": "10-artifacts-and-closeout.txt"
+      "exit_code": 0,
+      "evidence": ".agent/evidence/self-commission-v1.5.0/10-artifacts-and-closeout.txt"
     }
-  ],
-  "estimated_lines": 22900,
-  "maintained_estimate_lines": 430,
-  "mechanical_vendor_lines": 22457,
-  "evidence_dir": ".agent/evidence/self-commission-v1.5.0/",
-  "evidence_convention": "NN-name.txt with invocation/output/actual exit/current candidate SHA; original immutable artifacts and source/hash mappings saved by path; evaluator independent checks and actual CI identity.",
-  "approvals": {
-    "validator_mode_a": true,
-    "evaluator_contract_review": true,
-    "revisions": 1
-  },
-  "dod_ref": ".nizam/standard/definition_of_done.md",
-  "commission_stages": [
-    "approved source installation/routing/drift CI/initial installed record; parent commits candidate",
-    "capture identity and authentic successful CI outside repo; true clean installed preflight/baseline outside repo before ANY new repository evidence writes",
-    "archive immutable evidence; independent evaluator QA and capture gate; then final commissioned0.1.1 record and notices may reference captured source candidate even HEAD advances"
-  ],
-  "proposal_note": "PROPOSAL ONLY until independent gates. Base481a58a already records actual H-CONSUMER-UPGRADE self-adoption authorization. COMMISSION_RUN_ROOT is an absolute validated temporary path outside repo. Prior to any in-repo evidence generation: true clean candidate must be committed, actual successful candidate CI fetched outside repo, identity.json captures candidate_sha from actual HEAD and CI JSON revision/headSha agrees. AT6 and AT10 use this frozen identity, never ambient final-doc HEAD. Archive original output bytes later; final status commissioned requires exact passing QA path and actual evidence. No new adoption gate or fabricated audit. Git modes mean regular-file kind and executable-bit equivalence, not raw POSIX rw permissions; verifier rejects symlinks/special nodes. Set PYTHONDONTWRITEBYTECODE=1 in commissioning commands and self_governance CI steps.",
-  "completion": {
-    "at": "2026-10-10T18:42:27Z",
-    "candidate_sha": "bfd475ff670e582cbbfc8f3187ae988dcf3c8baa",
-    "framework_tag": "v1.5.0",
-    "framework_sha": "f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852",
-    "ci_run_id": 38075479048,
-    "qa": ".agent/qa/self-commission-v1.5.0.json",
-    "final_qa": ".agent/qa/self-commission-v1.5.0-closeout.json",
-    "final_mode_b": ".agent/validator/self-commission-v1.5.0-closeout.json",
-    "evidence_gate": ".agent/evidence/self-commission-v1.5.0/evidence-gate.txt",
-    "final_evidence_gate": ".agent/evidence/self-commission-v1.5.0/final-evidence-gate.txt",
-    "record": "docs/planning/SELF_GOVERNANCE.md",
-    "detail": "Installed immutable public payload, local routing/CI, actual clean preflight/baseline and independent nine-check QA; planned final commissioned record independently reviewed with two passing supplemental checks. Merge remains the subsequent authorized GitHub mechanic."
-  }
+  ]
 }

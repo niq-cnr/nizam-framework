@@ -1,0 +1,42 @@
+COMMAND: python3 - <<'PY'
+import json,re,subprocess,yaml
+from pathlib import Path
+c=json.loads(Path('.agent/contracts/self-commission-v1.5.0.json').read_text());base=c['base_revision'];modified={'README.md','CHANGELOG.md','docs/planning/ROADMAP.md','docs/planning/operator_gates.md','.github/workflows/compliance.yml','.agent/run_state.json'};created={'AGENTS.md','docs/planning/SELF_GOVERNANCE.md','.github/scripts/verify_self_governance.py','.github/scripts/test_self_governance.py'}
+def allowed(p):
+ return p in modified|created or p.startswith('.nizam/') or bool(re.fullmatch(r'\.agent/(?:product_spec_self_governance\.md|contracts/self-commission-v1\.5\.0\.json|(?:validator|qa)/self-commission-v1\.5\.0(?:-[A-Za-z0-9_-]+)?\.json|(?:evidence|reconciliation)/self-commission-v1\.5\.0/[A-Za-z0-9_.-]+)',p))
+for l in subprocess.check_output(['git','diff','--name-status',base],text=True).splitlines():
+ a=l.split('\t');assert len(a)==2 and a[0] in ('A','M') and allowed(a[1]),l
+for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines():assert allowed(p),p
+assert not subprocess.check_output(['git','diff',base,'--','standard','templates','schema','tools','methodology','ecosystem','NIZAM.json','bootstrap.sh','CONTEXT.md','.agent/feature_list_014.json','.agent/product_spec_014.md','docs/planning/phase_014.yaml','.agent/evidence/102/ga-readiness.json'])
+old=json.loads(subprocess.check_output(['git','show',base+':.agent/run_state.json'],text=True));new=json.loads(Path('.agent/run_state.json').read_text());permitted={'active_contract_id','last_action','history','circuit_breaker'}
+for k in set(old)|set(new):
+ if k not in permitted:assert old.get(k)==new.get(k),k
+assert new.get('active_contract_id') in (old.get('active_contract_id'),None,'self-commission-v1.5.0')
+if new.get('last_action')!=old.get('last_action'):assert 'self-commission' in new['last_action'].lower()
+assert new['history'][:len(old['history'])]==old['history']
+for event in new['history'][len(old['history']):]:assert event.get('contract_id',event.get('feature'))=='self-commission-v1.5.0',event
+for k,v in old.get('circuit_breaker',{}).items():
+ if not k.startswith('self-commission-v1.5.0-'):assert new.get('circuit_breaker',{}).get(k)==v,k
+for k,v in new.get('circuit_breaker',{}).items():
+ if k not in old.get('circuit_breaker',{}) or v!=old['circuit_breaker'][k]:assert k.startswith('self-commission-v1.5.0-') and v['limit']==3 and 0<=v['attempts']<=3,(k,v)
+a=Path('AGENTS.md').read_text();assert '.nizam/NIZAM.json' in a and '.nizam/tools/SKILL.md' in a and 'niq-cnr/nizam-framework' in a
+assert 'docs/planning/SELF_GOVERNANCE.md' in Path('README.md').read_text()
+p=Path('docs/planning/SELF_GOVERNANCE.md');fm=yaml.safe_load(p.read_text().split('---',2)[1]);assert fm['id']=='nizam-self-governance' and fm['authoritative_source']==str(p) and fm['status']=='active';assert fm['change_log'][0]['version']==fm['version']
+r=fm['commissioning'];assert r['repository']=='niq-cnr/nizam-framework' and r['local_scope']==['niq-cnr/nizam-framework'];assert r['tag']=='v1.5.0' and r['resolved_sha']=='f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852';assert r['authorization_gate']=='H-CONSUMER-UPGRADE'
+assert r['status'] in ('installed','commissioned')
+if r['status']=='installed':assert fm['version']=='0.1.0' and r.get('candidate_sha') is None and not r.get('evidence'),r
+else:
+ assert fm['version']=='0.1.1';assert re.fullmatch(r'[0-9a-f]{40}',r['candidate_sha']);assert isinstance(r['evidence'],dict)
+ for key in ['identity','ci','preflight','baseline','drift','payload','qa']:
+  q=Path(r['evidence'][key]);assert str(q).startswith('.agent/') and q.is_file(),key
+ identity=json.loads(Path(r['evidence']['identity']).read_text());assert identity['candidate_sha']==r['candidate_sha']
+ ci=json.loads(Path(r['evidence']['ci']).read_text());assert ci['headSha']==ci['revision']==r['candidate_sha'] and ci['conclusion']=='success'
+ baseline=json.loads(Path(r['evidence']['baseline']).read_text());assert all(x['revision']==r['candidate_sha'] for x in baseline['repository_references']);assert any(x['revision']=='v1.5.0' for x in baseline['framework_references'])
+ assert json.loads(Path(r['evidence']['preflight']).read_text())['verdict']=='PASS'
+ assert r['evidence']['qa']=='.agent/qa/self-commission-v1.5.0.json';qa=json.loads(Path(r['evidence']['qa']).read_text());assert qa['final_verdict']['approved'] and not qa['issues'] and not qa['missing_acceptance_coverage'] and not qa['unsupported_claims']
+print('Exact authorized scope, bounded coordination and stage-aware commissioning record verified')
+PY
+HEAD: bfd475ff670e582cbbfc8f3187ae988dcf3c8baa
+Exact authorized scope, bounded coordination and stage-aware commissioning record verified
+
+EXIT:0

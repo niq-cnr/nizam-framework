@@ -1,0 +1,40 @@
+COMMAND: ['git', 'ls-remote', '--tags', 'https://github.com/niq-cnr/nizam-framework.git', 'refs/tags/v1.5.0^{}']
+f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852	refs/tags/v1.5.0^{}
+
+
+EXIT:0
+COMMAND: ['bash', 'bootstrap.sh', '--repo-url', 'https://github.com/niq-cnr/nizam-framework.git', '--tag', 'v1.5.0', '--expected-sha', 'f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852', '--target', '.nizam']
+bootstrap.sh: cloning https://github.com/niq-cnr/nizam-framework.git at pinned tag v1.5.0 (--depth 1)...
+bootstrap.sh: staging governance payload in ./.nizam-stage.Djrufn...
+bootstrap.sh: verifying staged injection before declaring success...
+NIZAM.json parses; 82 indexed path(s) resolve under ./.nizam-stage.Djrufn.
+bootstrap.sh: recording provenance (framework_version=1.5.0, tag=v1.5.0, resolved_sha=f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852)...
+bootstrap.sh: install complete. Governance payload version 1.5.0 (tag v1.5.0) is now at '.nizam'.
+
+Cloning into '/home/cnross/.tmp/nizam-bootstrap-clone.v91acr'...
+Note: switching to 'f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
+
+EXIT:0
+COMMAND: ['bash', 'bootstrap.sh', '--verify-only', '--tag', 'v1.5.0', '--expected-sha', 'f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852', '--target', '.nizam']
+bootstrap.sh: verify-only: checking '.nizam' against pinned tag 'v1.5.0' (no clone, no network)...
+NIZAM.json parses; 82 indexed path(s) resolve under .nizam.
+bootstrap.sh: verify-only: PASS -- '.nizam' is present, well-formed, and matches pinned tag 'v1.5.0' at commit 'f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852'.
+
+
+EXIT:0
