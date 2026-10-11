@@ -9,6 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Current post-GA planning view** (planning envelope only). Canonical completed
+  and cancelled phase014 statuses now match the derived backlog; cancelled100/101
+  are terminal. Future planning inputs use actual historical102/current debt and
+  commissioned local evidence, without inventing simplification findings. A new
+  current-view checker leaves old evidence/checkers unchanged. The operator
+  authorized this planning refresh, then NDEBT-047/046/045 and A04a under a separate
+  maintenance contract after this PR merges; no new phase, NIP acceptance, release
+  or installed-governance upgrade is approved. Current roadmap/handover links are
+  refreshed; historical snapshots and released sections remain unchanged.
+
 - **Local self-governance adoption** (framework-envelope only). This repository
   installs the public `v1.5.0` payload under `.nizam/` with genuine pinned provenance.
   Root `AGENTS.md` routes local work through the installed index and skill;

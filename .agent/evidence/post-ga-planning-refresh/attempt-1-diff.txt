@@ -1,0 +1,1104 @@
+COMMAND: git diff --binary 0de2820c87b154929a854840a7d85b4497afde9c
+diff --git a/.agent/run_state.json b/.agent/run_state.json
+index f608d68..0b8a24c 100644
+--- a/.agent/run_state.json
++++ b/.agent/run_state.json
+@@ -3,7 +3,7 @@
+   "current_phase": "014-ga-track",
+   "current_feature": null,
+   "status": "phase_complete",
+-  "updated_at": "2026-10-11T02:21:53Z",
++  "updated_at": "2026-10-11T02:41:46.054356+00:00",
+   "circuit_breaker": {
+     "000-contract": {
+       "attempts": 1,
+@@ -297,6 +297,17 @@
+       "attempts": 2,
+       "limit": 3,
+       "note": "Final CI C11 revealed supplemental QA review field chooses contract-review route; independent Evaluator corrects its artifact to stage without changing results and verifies target/full compliance. No installed or authored payload changes."
++    },
++    "post-ga-planning-refresh-contract": {
++      "attempts": 1,
++      "limit": 3
++    },
++    "post-ga-planning-refresh-implementation": {
++      "attempts": 2,
++      "limit": 3,
++      "attempt_root": "/home/cnross/.tmp/nizam-planning-attempt2-c8i33qu1",
++      "approved_base": "0de2820c87b154929a854840a7d85b4497afde9c",
++      "note": "ModeB attempt1 rejected stale cancelled-F101 and obsolete NIP prerequisite premises. Attempt2 analyzes current projection interfaces across all live packets in an isolated worktree."
+     }
+   },
+   "history": [
+@@ -2199,6 +2210,21 @@
+         "A04a Evaluator role-text correction"
+       ],
+       "detail": "Approval follows the backlog recommendation in this session. Ordered execution: refresh current derived planning records first, then bounded maintenance. Phase014 remains complete with unchanged canonical history/budget. NIP3 acceptance, phases015/016 activation, Workflow Assurance implementation and an installed-governance upgrade are outside this authorization. Prior authorization to manage and merge clean own PRs persists."
++    },
++    {
++      "at": "2026-10-11T02:30:20.362826+00:00",
++      "event": "contract_approved",
++      "contract_id": "post-ga-planning-refresh",
++      "detail": "Both exact-proposal gates parsed approved with empty arrays; proposal SHA256 4292b19dae3ae0ed36c12417f52a4d0b3ed146239e519db8f981d2175a7506ff. Generator may implement planning refresh only."
++    },
++    {
++      "at": "2026-10-11T02:41:46.054356+00:00",
++      "event": "implementation_rework",
++      "contract_id": "post-ga-planning-refresh",
++      "attempt": 2,
++      "attempt_root": "/home/cnross/.tmp/nizam-planning-attempt2-c8i33qu1",
++      "approved_base": "0de2820c87b154929a854840a7d85b4497afde9c",
++      "detail": "ModeB MB1/MB2 recorded; preserve failed verdict, repair only current planning interface/checker before another independent gate."
+     }
+   ],
+   "phase_001_scope_budget_final": {
+@@ -2701,7 +2727,7 @@
+     ],
+     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
+   },
+-  "active_contract_id": null,
++  "active_contract_id": "post-ga-planning-refresh",
+   "phase_013_scope_budget_final": {
+     "original_estimate_lines": 4800,
+     "total_lines_changed": 6212,
+@@ -2773,7 +2799,7 @@
+       }
+     ]
+   },
+-  "last_action": "User authorized post-GA planning refresh followed by the small maintenance tranche; contract alignment for planning refresh first.",
++  "last_action": "post-ga-planning-refresh: isolated attempt2 repairs current prerequisite projection and checker coverage.",
+   "completed_contract_ids": [
+     "099",
+     "103",
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 82086fb..d1fe03d 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,6 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Changed
+ 
++- **Current post-GA planning view** (planning envelope only). Canonical completed
++  and cancelled phase014 statuses now match the derived backlog; cancelled100/101
++  are terminal. Future planning inputs use actual historical102/current debt and
++  commissioned local evidence, without inventing simplification findings. A new
++  current-view checker leaves old evidence/checkers unchanged. The operator
++  authorized this planning refresh, then NDEBT-047/046/045 and A04a under a separate
++  maintenance contract after this PR merges; no new phase, NIP acceptance, release
++  or installed-governance upgrade is approved. Current roadmap/handover links are
++  refreshed; historical snapshots and released sections remain unchanged.
++
+ - **Local self-governance adoption** (framework-envelope only). This repository
+   installs the public `v1.5.0` payload under `.nizam/` with genuine pinned provenance.
+   Root `AGENTS.md` routes local work through the installed index and skill;
+diff --git a/docs/planning/HANDOVER.md b/docs/planning/HANDOVER.md
+index c2703d7..69ed381 100644
+--- a/docs/planning/HANDOVER.md
++++ b/docs/planning/HANDOVER.md
+@@ -2,12 +2,15 @@
+ id: nizam-handover-2026-10
+ title: "Developer Handover — Release Status and Phase 014 Snapshot"
+ description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
+-version: 1.0.1
++version: 1.0.2
+ status: active
+ authoritative_source: docs/planning/HANDOVER.md
+-last_audited: "2026-10-10"
++last_audited: "2026-10-11"
+ tags: [planning, handover, onboarding, phase-014]
+ change_log:
++  - version: "1.0.2"
++    date: "2026-10-11"
++    summary: "Refresh only current handover pointers: actual merged self-commissioning and root AGENTS route, corrected current backlog status and authorized planning-refresh then separately gated maintenance; preserve the original historical snapshot byte-identically."
+   - version: "1.0.1"
+     date: "2026-10-10"
+     summary: "Add current release status after phase014 completed and v1.5.0 GA published: features100/101 cancelled; real tag/bootstrap evidence recorded. Retain the original e2a50ed handover as a labelled historical snapshot and point to current canonical planning records; no historical acceptance tests or dossier rewritten."
+@@ -18,7 +21,16 @@ change_log:
+ 
+ # Developer Handover — Release Status and Phase 014 Snapshot
+ 
+-## Current status — 2026-10-10
++## Current status — 2026-10-11
++
++Local `v1.5.0` self-governance has been commissioned and merged; begin through
++[AGENTS.md](../../AGENTS.md), the installed `.nizam/NIZAM.json` and installed skill.
++[SELF_GOVERNANCE.md](SELF_GOVERNANCE.md) retains the real sourcecandidate/CI/preflight/QA.
++The [current planning refresh](backlog_reconciliation.md) corrects canonical
++completed/cancelled mirrors and obsolete F101 prerequisites. After this planning
++PR merges, only NDEBT-047/046/045 and A04a proceed under a separate maintenance
++contract with both gates. No NIP3/WA acceptance, phase015 activation or new release
++is approved. This planning PR is pending merge; maintenance source work has not begun.
+ 
+ Phase 014 is complete. Features 100 and 101 were cancelled by operator amendment A3;
+ features 099 and 102–109 completed. Nizam `v1.5.0` is released at commit
+diff --git a/docs/planning/ROADMAP.md b/docs/planning/ROADMAP.md
+index 6fe0d9f..476d05a 100644
+--- a/docs/planning/ROADMAP.md
++++ b/docs/planning/ROADMAP.md
+@@ -2,10 +2,13 @@
+ id: nizam-roadmap
+ title: "Forward Roadmap — nizam-framework"
+ description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
+-version: 0.53.0
++version: 0.54.0
+ status: active
+ authoritative_source: docs/planning/ROADMAP.md
+ change_log:
++  - version: "0.54.0"
++    date: "2026-10-11"
++    summary: "Record current planning refresh and the operator-authorized small maintenance sequence after it merges; completed/cancelled phase mirrors and actual local commissioning evidence replace stale next-planning premises without accepting NIP3 or activating a phase."
+   - version: "0.53.0"
+     date: "2026-10-10"
+     summary: "Record completed local self-commissioning at fixed source candidate bfd475ff670e582cbbfc8f3187ae988dcf3c8baa: actual successful CI38075479048, real clean installed preflight PASS, immutable framework/candidate baseline and independent9/9 QA/evidence gate. Later documentation HEAD preserves the assessed candidate; historical phases remain unchanged."
+@@ -789,8 +792,9 @@ key; this file MUST be updated at each phase close so the repository always stat
+ what comes next (the gap this file closes: phases 001–004 completed with no recorded
+ successor, leaving open debt deferred to unscoped "future phases").
+ 
+-## Current Position (2026-10-10)
++## Current Position (2026-10-11)
+ 
++- **Current planning refresh is authorized; separate maintenance follows after merge.** The [current backlog view](backlog_reconciliation.md) now mirrors all canonical completed/cancelled phase014 statuses, treats F100/F101 as terminal and replaces obsolete F101 planning-input premises with actual historical102/current debt and commissioned local evidence. Only NDEBT-047, NDEBT-046, NDEBT-045 and A04a are authorized for a separately gated maintenance contract after this planning PR merges. No NIP3/WA acceptance, phase015 activation, release or installed-governance upgrade is authorized. The current view and new checker preserve historical phase/evidence records.
+ - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
+ - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. No next phase is activated. The handover record is [`HANDOVER.md`](HANDOVER.md).
+   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
+diff --git a/docs/planning/backlog_dag.json b/docs/planning/backlog_dag.json
+index 1471b15..50c6621 100644
+--- a/docs/planning/backlog_dag.json
++++ b/docs/planning/backlog_dag.json
+@@ -1,9 +1,9 @@
+ {
+   "plan_status": "candidate",
+-  "plan_status_note": "CANDIDATE plan for post-014 work. The phase-014 packets (F099-F109, ACT-014) MIRROR the activated canonical plan (.agent/feature_list_014.json, spec 1.1.6 since the 2026-10-10 handover refresh (was spec 1.1.2 at activation), docs/planning/phase_014.yaml); on any conflict the canonical files win and this file is corrected. The 2026-10-10 refresh mirrored only the budget (activated_phase) and the packet estimates; the F099, F103, F104 and F105 packet statuses still read pending against canonical complete (validate_backlog_dag.py V7), left for the Orchestrator or feature 102's close. Nothing here changes a feature list, phase YAML, manifest or run_state. Post-014 packets are candidates until their own H-NIP / H-PHASE-NNN gates. Amendment A3 (2026-10-10, canonical spec 1.1.7): features 100 and 101 are cancelled and F102 depends_on no longer lists F100 or F101 (serialize_after is F108). F100 and F101 packet status stays pending because validate_backlog_dag.py STATUSES is only complete, in_progress, pending, so V7 still mismatches those two statuses. Canonical status is the feature list.",
+-  "generated_at": "2026-10-08T13:23:34Z",
+-  "base_commit": "02b02c63e639237f8cfd2d7dccb1571e96753742",
+-  "base_commit_note": "origin/main after PR #64 (merged 2026-10-08T11:16:42Z). Line citations are at 02b02c6 unless stated. The phase-014 amendment and activation records in this package are uncommitted on branch phase/014-ga-track at generation time (spec 1.1.2, validator rounds 1-2).",
++  "plan_status_note": "Current derived planning view after phase014 completion, v1.5.0 release and actual local self-commissioning. Canonical phase014 feature/spec/YAML remain immutable; F099/F102-F109 are complete and F100/F101 cancelled terminal records. Future NIP3/Workflow Assurance proposals remain unaccepted/unactivated. Only this planning refresh followed by the separately gated small maintenance notice is authorized.",
++  "generated_at": "2026-10-11",
++  "base_commit": "0de2820c87b154929a854840a7d85b4497afde9c",
++  "base_commit_note": "Current-view baseline after release/self-commission merge and recorded operator authorization for planning refresh then small maintenance; prior reconciliation is retained as dated human history.",
+   "packet_schema": "schema/work-packet.schema.json",
+   "authoritative_human_view": "docs/planning/backlog_reconciliation.md",
+   "activated_phase": {
+@@ -14,7 +14,9 @@
+     "ceiling_130pct": 11180,
+     "budget_basis": "SUPERSEDED 2026-10-09 by spec 1.1.4 (refreshed here 2026-10-10, handover): the phase-014 counting rule (.agent/evidence/scope-budget-014/measure.py; budget-counted = product + contract + verdict + audit + planning; evidence tracked, never gated; run_state excluded) re-baselined original_estimate_lines 6660 -> 8600 and the ceiling 8658 -> 11180. Was: Planner activation-time estimate, naive 2890 x the measured 2.3 process weight (docs/nips/NIP-0003-live-runtime-sessions.md:494-495).",
+     "budget_approval": "8600/11180: operator 'option 1 confirmed.' (run_state 2026-10-09T17:59:00Z; decision operator_gate_decision 2026-10-09T17:42:10Z). Was 6660/8658: operator, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z).",
+-    "run_state_position": "landed 2026-10-08T12:18:31Z (phase_activated): current_phase 014-ga-track, current_feature 099, status in_progress. Amendment A3 (2026-10-10T06:05:42Z): run_state is current_feature 107, status in_progress, after 106 completed (PR #72, f53c499); features 100 and 101 are cancelled in the feature list."
++    "run_state_position": "Phase014 is complete. Nine completed features and two cancelled terminal features; final measured budget8705 of8600 (ceiling11180). Current out-of-phase planning refresh and separately contracted maintenance do not reactivate phase014.",
++    "current_status": "complete",
++    "actual_lines": 8705
+   },
+   "estimate_weighting": {
+     "low": 2.3,
+@@ -32,12 +34,12 @@
+     "A00": "already satisfied (re-verified at 02b02c6)",
+     "A01": "satisfied by this package",
+     "A02": "satisfied: release truth + D1 by PR #64; amendment applied at H-PHASE-014 by this package (A02-AMEND)",
+-    "A03": "new gap, split: NIP-0003 pre-acceptance revision (A03-RT) + separate Workflow Assurance NIP (outline only; final after 101)",
+-    "A04": "extend existing (partial: 01_execution already has Loop-1 Evaluator review) -> A04a text fix + A04b in the WA NIP",
+-    "A05": "scheduled: phase 014 feature 103 (NDEBT-043)",
+-    "A06": "scheduled: phase 014 feature 104 (NDEBT-041)",
+-    "A07": "scheduled: phase 014 feature 105 (NDEBT-042; NIP-0003 109 claim map pulled forward)",
+-    "A08": "scheduled: phase 014 features 106 (044a), 107 (044b), 108 (037 + 044c/d/f), 109 (026); 044e folded into 102",
++    "A03": "Candidate revision/design only; obsolete cancelledF101 premise replaced by actual historical102/debt and local commissioned evidence. NIP3/WA authority remains unsatisfied.",
++    "A04": "A04a standalone role-text maintenance is authorized only after planning refresh merges and separate maintenance contract gates; A04b remains an unaccepted Workflow Assurance proposal.",
++    "A05": "complete: F103 delivered, approved historical QA evidence retained",
++    "A06": "complete: F104 delivered, approved CI/conformance evidence retained",
++    "A07": "complete: F105 delivered, fixture claim-map evidence retained",
++    "A08": "complete: F106/F107/F108/F109 and F102 delivered their split concerns; canonical completed feature QA/evidence is authoritative",
+     "A09": "new gap (+ NDEBT-040 annotated as WA NIP candidate)",
+     "A10": "new gap (WA NIP)",
+     "A11": "new gap (WA NIP)",
+@@ -577,9 +579,9 @@
+           "A00"
+         ],
+         "consumed_by": [
+-          "A03-SCOPE",
+           "A02-AMEND",
+           "A03-RT",
++          "A03-SCOPE",
+           "A03-WA-DRAFT"
+         ],
+         "serialize_after": []
+@@ -977,8 +979,8 @@
+           "F105",
+           "F106",
+           "F107",
+-          "F109",
+-          "F108"
++          "F108",
++          "F109"
+         ],
+         "serialize_after": []
+       },
+@@ -1013,20 +1015,20 @@
+         "The 8 executable acceptance tests of feature 099 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/099/"
++        ".agent/qa/099.json"
+       ],
+       "non_goals": [
+         "Exercising H-CONSOLIDATION or H-GA."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "complete",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+           "satisfied": true,
+-          "reason": "all dependencies complete"
++          "reason": "Completed canonical feature; historical dependencies were satisfied at its assessed revision."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -1034,11 +1036,11 @@
+         },
+         "environment": {
+           "satisfied": true,
+-          "reason": "none"
++          "reason": "Actual completed QA/CI evidence supports the historical feature assessment; no new execution requested."
+         },
+         "evidence": {
+           "satisfied": true,
+-          "reason": "none"
++          "reason": "Existing approved .agent/qa/099.json and its actual evidence_files; completed feature proof retained unchanged."
+         }
+       },
+       "estimate": {
+@@ -1106,7 +1108,7 @@
+         "The 8 executable acceptance tests of feature 103 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/103/"
++        ".agent/qa/103.json"
+       ],
+       "non_goals": [
+         "Changing host security settings.",
+@@ -1114,14 +1116,14 @@
+         "Any silent pass."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "complete",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+           "satisfied": true,
+-          "reason": "all dependencies complete"
++          "reason": "Completed canonical feature; historical dependencies were satisfied at its assessed revision."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -1129,11 +1131,11 @@
+         },
+         "environment": {
+           "satisfied": true,
+-          "reason": "startable here: its acceptance tests are host-conditional; this host restricts unprivileged user namespaces (kernel.apparmor_restrict_unprivileged_userns=1), so it proves the UNSUPPORTED half, and the FULL half is proven on an isolation-capable host (CI, via 104)"
++          "reason": "Actual completed QA/CI evidence supports the historical feature assessment; no new execution requested."
+         },
+         "evidence": {
+           "satisfied": true,
+-          "reason": "debt row re-verified at 02b02c6"
++          "reason": "Existing approved .agent/qa/103.json and its actual evidence_files; completed feature proof retained unchanged."
+         }
+       },
+       "estimate": {
+@@ -1204,7 +1206,7 @@
+         "The 10 executable acceptance tests of feature 104 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/104/"
++        ".agent/qa/104.json"
+       ],
+       "non_goals": [
+         "C12 coverage of the review schema family (left to 101 / H-CONSOLIDATION).",
+@@ -1212,26 +1214,26 @@
+         "Weakening required mode if the runner cannot enable namespaces."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "complete",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+-          "satisfied": false,
+-          "reason": "F103 not complete"
++          "satisfied": true,
++          "reason": "Completed canonical feature; historical dependencies were satisfied at its assessed revision."
+         },
+         "authority": {
+           "satisfied": true,
+           "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+         },
+         "environment": {
+-          "satisfied": false,
+-          "reason": "UNVERIFIED: whether hosted ubuntu runners permit the guarded userns sysctl step; a required-mode failure escalates, never weakens"
++          "satisfied": true,
++          "reason": "Actual completed QA/CI evidence supports the historical feature assessment; no new execution requested."
+         },
+         "evidence": {
+           "satisfied": true,
+-          "reason": "debt row re-verified at 02b02c6"
++          "reason": "Existing approved .agent/qa/104.json and its actual evidence_files; completed feature proof retained unchanged."
+         }
+       },
+       "estimate": {
+@@ -1266,8 +1268,8 @@
+           "F103"
+         ],
+         "consumed_by": [
+-          "F102",
+           "A11-CI",
++          "F102",
+           "NIP3-116"
+         ],
+         "serialize_after": [
+@@ -1305,21 +1307,21 @@
+         "The 5 executable acceptance tests of feature 105 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/105/"
++        ".agent/qa/105.json"
+       ],
+       "non_goals": [
+         "A second claim registry.",
+         "Moving fixtures."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "complete",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+           "satisfied": true,
+-          "reason": "all dependencies complete"
++          "reason": "Completed canonical feature; historical dependencies were satisfied at its assessed revision."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -1327,11 +1329,11 @@
+         },
+         "environment": {
+           "satisfied": true,
+-          "reason": "none"
++          "reason": "Actual completed QA/CI evidence supports the historical feature assessment; no new execution requested."
+         },
+         "evidence": {
+           "satisfied": true,
+-          "reason": "debt row re-verified at 02b02c6"
++          "reason": "Existing approved .agent/qa/105.json and its actual evidence_files; completed feature proof retained unchanged."
+         }
+       },
+       "estimate": {
+@@ -1403,21 +1405,21 @@
+         "The 8 executable acceptance tests of feature 106 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/106/"
++        ".agent/qa/106.json"
+       ],
+       "non_goals": [
+         "Equality between the two capability lists.",
+         "A new check number (C17 is earmarked by NIP-0003)."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "complete",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+           "satisfied": true,
+-          "reason": "all dependencies complete"
++          "reason": "Completed canonical feature; historical dependencies were satisfied at its assessed revision."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -1425,11 +1427,11 @@
+         },
+         "environment": {
+           "satisfied": true,
+-          "reason": "none"
++          "reason": "Actual completed QA/CI evidence supports the historical feature assessment; no new execution requested."
+         },
+         "evidence": {
+           "satisfied": true,
+-          "reason": "debt row re-verified at 02b02c6"
++          "reason": "Existing approved .agent/qa/106.json and its actual evidence_files; completed feature proof retained unchanged."
+         }
+       },
+       "estimate": {
+@@ -1509,7 +1511,7 @@
+       ],
+       "concurrency_lane": "parallel-safe-new-files",
+       "status": "pending",
+-      "authority_status": "authorized",
++      "authority_status": "proposal",
+       "owner_role": "Planner",
+       "plan_class": "deferred-proposal",
+       "prerequisites": {
+@@ -1518,8 +1520,8 @@
+           "reason": "A03-SCOPE outline"
+         },
+         "authority": {
+-          "satisfied": true,
+-          "reason": "drafting a proposal; acceptance is H-NIP"
++          "satisfied": false,
++          "reason": "Current task authorizes planning refresh and listed maintenance only; no Workflow Assurance/NIP4 drafting is authorized."
+         },
+         "environment": {
+           "satisfied": true,
+@@ -1590,21 +1592,21 @@
+         "The 6 executable acceptance tests of feature 107 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/107/"
++        ".agent/qa/107.json"
+       ],
+       "non_goals": [
+         "Adding docs/nips/ to build_shipped_md_set (C9/C10 would then fail on proposal-cited future paths).",
+         "Editing NIP-0003."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "complete",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+           "satisfied": true,
+-          "reason": "all dependencies complete"
++          "reason": "Completed canonical feature; historical dependencies were satisfied at its assessed revision."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -1612,11 +1614,11 @@
+         },
+         "environment": {
+           "satisfied": true,
+-          "reason": "none"
++          "reason": "Actual completed QA/CI evidence supports the historical feature assessment; no new execution requested."
+         },
+         "evidence": {
+           "satisfied": true,
+-          "reason": "debt row re-verified at 02b02c6"
++          "reason": "Existing approved .agent/qa/107.json and its actual evidence_files; completed feature proof retained unchanged."
+         }
+       },
+       "estimate": {
+@@ -1687,21 +1689,21 @@
+         "The 6 executable acceptance tests of feature 109 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/109/"
++        ".agent/qa/109.json"
+       ],
+       "non_goals": [
+         "Changing vlib_profiles_cover_roles (direct callers keep its contract).",
+         "Any schema change."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "complete",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+           "satisfied": true,
+-          "reason": "all dependencies complete"
++          "reason": "Completed canonical feature; historical dependencies were satisfied at its assessed revision."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -1709,11 +1711,11 @@
+         },
+         "environment": {
+           "satisfied": true,
+-          "reason": "none"
++          "reason": "Actual completed QA/CI evidence supports the historical feature assessment; no new execution requested."
+         },
+         "evidence": {
+           "satisfied": true,
+-          "reason": "debt row re-verified at 02b02c6"
++          "reason": "Existing approved .agent/qa/109.json and its actual evidence_files; completed feature proof retained unchanged."
+         }
+       },
+       "estimate": {
+@@ -1784,21 +1786,21 @@
+         "The 7 executable acceptance tests of feature 108 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/108/"
++        ".agent/qa/108.json"
+       ],
+       "non_goals": [
+         "Changing C5 behavior (the text is corrected, not the sweep).",
+         "Adding a tools/interface.md Section 5 item."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "complete",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+-          "satisfied": false,
+-          "reason": "F106, F107, F109 not complete"
++          "satisfied": true,
++          "reason": "Completed canonical feature; historical dependencies were satisfied at its assessed revision."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -1806,11 +1808,11 @@
+         },
+         "environment": {
+           "satisfied": true,
+-          "reason": "none"
++          "reason": "Actual completed QA/CI evidence supports the historical feature assessment; no new execution requested."
+         },
+         "evidence": {
+           "satisfied": true,
+-          "reason": "debt row re-verified at 02b02c6"
++          "reason": "Existing approved .agent/qa/108.json and its actual evidence_files; completed feature proof retained unchanged."
+         }
+       },
+       "estimate": {
+@@ -1879,7 +1881,8 @@
+         "The 5 executable acceptance tests of feature 100 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/pilot-100/"
++        ".agent/feature_list_014.json",
++        ".agent/product_spec_014.md"
+       ],
+       "non_goals": [
+         "NDEBT-034 clone optimization.",
+@@ -1888,14 +1891,14 @@
+         "Writing on a member's main branch."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "cancelled",
+       "authority_status": "blocked-on-H-CONSUMER-UPGRADE",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+-          "satisfied": true,
+-          "reason": "all dependencies complete"
++          "satisfied": false,
++          "reason": "Cancelled by operator amendment A3; terminal historical record excluded from execution."
+         },
+         "authority": {
+           "satisfied": false,
+@@ -1903,11 +1906,11 @@
+         },
+         "environment": {
+           "satisfied": false,
+-          "reason": "UNKNOWN: the operator has not designated the real member repositories (and access to them); H-PHASE-014 designates none"
++          "reason": "Cancelled; no current environment or member selection is requested."
+         },
+         "evidence": {
+-          "satisfied": true,
+-          "reason": "none"
++          "satisfied": false,
++          "reason": "No pilot/review executed; only existing canonical cancellation records are cited."
+         }
+       },
+       "estimate": {
+@@ -1937,8 +1940,7 @@
+           "ACT-014"
+         ],
+         "consumed_by": [
+-          "F101",
+-          "F102"
++          "F101"
+         ],
+         "serialize_after": [
+           "F108"
+@@ -1970,32 +1972,33 @@
+         "The 5 executable acceptance tests of feature 101 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/audits/"
++        ".agent/feature_list_014.json",
++        ".agent/product_spec_014.md"
+       ],
+       "non_goals": [
+         "Applying any consolidation."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "cancelled",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+           "satisfied": false,
+-          "reason": "F099, F100 not complete"
++          "reason": "Cancelled by operator amendment A3; terminal historical record excluded from execution."
+         },
+         "authority": {
+           "satisfied": true,
+           "reason": "H-PHASE-014 EXERCISED 2026-10-08 (run_state operator_gate_decision at 2026-10-08T11:21:14Z, recorded before the re-planning)"
+         },
+         "environment": {
+-          "satisfied": true,
+-          "reason": "none"
++          "satisfied": false,
++          "reason": "Cancelled; no current environment or member selection is requested."
+         },
+         "evidence": {
+           "satisfied": false,
+-          "reason": "pilot-100 evidence"
++          "reason": "No pilot/review executed; only existing canonical cancellation records are cited."
+         }
+       },
+       "estimate": {
+@@ -2026,11 +2029,7 @@
+           "F099",
+           "F100"
+         ],
+-        "consumed_by": [
+-          "F102",
+-          "A03-WA-FINAL",
+-          "PLAN-NEXT"
+-        ],
++        "consumed_by": [],
+         "serialize_after": [
+           "F100"
+         ]
+@@ -2068,21 +2067,21 @@
+         "The 10 executable acceptance tests of feature 102 in .agent/feature_list_014.json (canonical; this packet mirrors it)."
+       ],
+       "evidence": [
+-        ".agent/evidence/102/"
++        ".agent/qa/102.json"
+       ],
+       "non_goals": [
+         "Declaring GA.",
+         "Preparing a release or creating a tag."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
++      "status": "complete",
+       "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "activated-phase",
+       "prerequisites": {
+         "technical": {
+-          "satisfied": false,
+-          "reason": "F099, F100, F101, F103, F104, F105, F106, F107, F108, F109 not complete"
++          "satisfied": true,
++          "reason": "Completed canonical feature; historical dependencies were satisfied at its assessed revision."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -2090,11 +2089,11 @@
+         },
+         "environment": {
+           "satisfied": true,
+-          "reason": "none"
++          "reason": "Actual completed QA/CI evidence supports the historical feature assessment; no new execution requested."
+         },
+         "evidence": {
+-          "satisfied": false,
+-          "reason": "GA dossier not yet assembled; the v1.4.0 pilot was cancelled (amendment A3)"
++          "satisfied": true,
++          "reason": "Existing approved .agent/qa/102.json and its actual evidence_files; completed feature proof retained unchanged."
+         }
+       },
+       "estimate": {
+@@ -2153,7 +2152,7 @@
+       "mapped_ids": [
+         "provisional NIP-0004"
+       ],
+-      "objective": "Finalize the overlapping Workflow Assurance design against feature 101's findings (and any H-CONSOLIDATION decision) before H-NIP is requested.",
++      "objective": "Finalize the overlapping Workflow Assurance design against available historical102/current debt and real commissioning inputs before H-NIP is requested.",
+       "scope": {
+         "allowed_paths": [
+           "docs/nips/"
+@@ -2163,7 +2162,7 @@
+         ]
+       },
+       "acceptance": [
+-        "Every 101 finding touching an A09-A15 surface is cited with a disposition in the NIP."
++        "Any future separately authorized design cites actual available inputs and honest recorded gaps; no invented F101 findings."
+       ],
+       "evidence": [
+         ".agent/evidence/A03-WA/"
+@@ -2173,25 +2172,25 @@
+       ],
+       "concurrency_lane": "parallel-safe-new-files",
+       "status": "pending",
+-      "authority_status": "authorized",
++      "authority_status": "proposal",
+       "owner_role": "Planner",
+       "plan_class": "deferred-proposal",
+       "prerequisites": {
+         "technical": {
+           "satisfied": false,
+-          "reason": "F101 findings"
++          "reason": "A03-WA-DRAFT is absent/pending; no current Workflow Assurance drafting or acceptance is authorized by this task."
+         },
+         "authority": {
+-          "satisfied": true,
+-          "reason": "drafting"
++          "satisfied": false,
++          "reason": "Current approval covers planning refresh and listed maintenance only, not Workflow Assurance drafting/acceptance."
+         },
+         "environment": {
+           "satisfied": true,
+           "reason": "none"
+         },
+         "evidence": {
+-          "satisfied": false,
+-          "reason": "101 audit artifact"
++          "satisfied": true,
++          "reason": "Actual historical102 dossier/current debt and commissioned local baseline/QA are available planning inputs; cancelledF101 produced no simplification findings. Future design artifacts still require their own authorization/work."
+         }
+       },
+       "estimate": {
+@@ -2215,15 +2214,21 @@
+       "dod_ref": "standard/definition_of_done.md",
+       "dependency_edges": {
+         "depends_on": [
+-          "A03-WA-DRAFT",
+-          "F101"
++          "A03-WA-DRAFT"
+         ],
+         "consumed_by": [
+           "PLAN-WA"
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 206
++      "lane_rank": 206,
++      "available_inputs": [
++        ".agent/evidence/102/ga-readiness.json",
++        "docs/planning/DEBT.md",
++        ".agent/evidence/self-commission-v1.5.0/identity.json",
++        ".agent/reconciliation/self-commission-v1.5.0/baseline.json",
++        ".agent/qa/self-commission-v1.5.0.json"
++      ]
+     },
+     {
+       "id": "A03-RT",
+@@ -2264,8 +2269,8 @@
+       "plan_class": "deferred-proposal",
+       "prerequisites": {
+         "technical": {
+-          "satisfied": false,
+-          "reason": "F102 (phase 014 closed: ROADMAP single-writer, and 101 findings available)"
++          "satisfied": true,
++          "reason": "Phase014 is closed; available inputs are actual102/current debt and commissioned local evidence, not cancelled review output."
+         },
+         "authority": {
+           "satisfied": false,
+@@ -2276,8 +2281,8 @@
+           "reason": "none"
+         },
+         "evidence": {
+-          "satisfied": false,
+-          "reason": "feature 101 findings"
++          "satisfied": true,
++          "reason": "Actual historical102 dossier/current debt and commissioned local baseline/QA are available planning inputs; cancelledF101 produced no simplification findings. Future design artifacts still require their own authorization/work."
+         }
+       },
+       "estimate": {
+@@ -2313,7 +2318,14 @@
+           "F102"
+         ]
+       },
+-      "lane_rank": 210
++      "lane_rank": 210,
++      "available_inputs": [
++        ".agent/evidence/102/ga-readiness.json",
++        "docs/planning/DEBT.md",
++        ".agent/evidence/self-commission-v1.5.0/identity.json",
++        ".agent/reconciliation/self-commission-v1.5.0/baseline.json",
++        ".agent/qa/self-commission-v1.5.0.json"
++      ]
+     },
+     {
+       "id": "PLAN-NEXT",
+@@ -2323,7 +2335,7 @@
+       "mapped_ids": [
+         "NIP-0003 phase 015 artifacts"
+       ],
+-      "objective": "Post-014 planning: consume 101 findings and any H-CONSOLIDATION decisions; author canonical phase-015 artifacts with ids confirmed from the then-highest allocated id (provisionally 110-114); place residual debt (NDEBT-034, NDEBT-040).",
++      "objective": "Post-014 planning: consume actual historical102/current debt and real commissioning inputs; no F101 review occurred; author canonical phase-015 artifacts with ids confirmed from the then-highest allocated id (provisionally 110-114); place residual debt (NDEBT-034, NDEBT-040).",
+       "scope": {
+         "allowed_paths": [
+           ".agent/product_spec_015.md",
+@@ -2352,7 +2364,7 @@
+       "prerequisites": {
+         "technical": {
+           "satisfied": false,
+-          "reason": "phase 014 closed (NIP-0003:50, :489-491)"
++          "reason": "F102 is complete; A03-RT revision remains pending. NIP3 planning remains behind its actual H-NIP authorization."
+         },
+         "authority": {
+           "satisfied": false,
+@@ -2363,8 +2375,8 @@
+           "reason": "none"
+         },
+         "evidence": {
+-          "satisfied": false,
+-          "reason": "101 findings"
++          "satisfied": true,
++          "reason": "Actual historical102 dossier/current debt and commissioned local baseline/QA are available planning inputs; cancelledF101 produced no simplification findings. Future design artifacts still require their own authorization/work."
+         }
+       },
+       "estimate": {
+@@ -2392,16 +2404,21 @@
+       "dependency_edges": {
+         "depends_on": [
+           "F102",
+-          "F101",
+           "A03-RT"
+         ],
+         "consumed_by": [
+-          "A04a",
+           "NIP3-110"
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 220
++      "lane_rank": 220,
++      "available_inputs": [
++        ".agent/evidence/102/ga-readiness.json",
++        "docs/planning/DEBT.md",
++        ".agent/evidence/self-commission-v1.5.0/identity.json",
++        ".agent/reconciliation/self-commission-v1.5.0/baseline.json",
++        ".agent/qa/self-commission-v1.5.0.json"
++      ]
+     },
+     {
+       "id": "A04a",
+@@ -2430,17 +2447,17 @@
+       ],
+       "concurrency_lane": "single-writer",
+       "status": "pending",
+-      "authority_status": "proposal",
++      "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "deferred-proposal",
+       "prerequisites": {
+         "technical": {
+           "satisfied": false,
+-          "reason": "PLAN-NEXT"
++          "reason": "Planning refresh PR must merge and separate maintenance contract must pass both pre-code gates before source work."
+         },
+         "authority": {
+-          "satisfied": false,
+-          "reason": "phase selection at PLAN-NEXT"
++          "satisfied": true,
++          "reason": "Operator approved the standalone small-maintenance A04a role-text correction after planning refresh, recorded in run_state before work."
+         },
+         "environment": {
+           "satisfied": true,
+@@ -2448,7 +2465,7 @@
+         },
+         "evidence": {
+           "satisfied": false,
+-          "reason": "design accepted"
++          "reason": "Separate maintenance regression/verification proof not generated yet."
+         }
+       },
+       "estimate": {
+@@ -2471,9 +2488,7 @@
+       "blast_radius": "local",
+       "dod_ref": "standard/definition_of_done.md",
+       "dependency_edges": {
+-        "depends_on": [
+-          "PLAN-NEXT"
+-        ],
++        "depends_on": [],
+         "consumed_by": [],
+         "serialize_after": []
+       },
+@@ -2948,7 +2963,7 @@
+       "prerequisites": {
+         "technical": {
+           "satisfied": false,
+-          "reason": "A03-WA-FINAL; phase 014 closed"
++          "reason": "A03-WA-FINAL remains a pending proposal; Workflow Assurance acceptance/phase activation is not authorized."
+         },
+         "authority": {
+           "satisfied": false,
+@@ -2959,8 +2974,8 @@
+           "reason": "none"
+         },
+         "evidence": {
+-          "satisfied": false,
+-          "reason": "101 findings"
++          "satisfied": true,
++          "reason": "Actual historical102 dossier/current debt and commissioned local baseline/QA are available planning inputs; cancelledF101 produced no simplification findings. Future design artifacts still require their own authorization/work."
+         }
+       },
+       "estimate": {
+@@ -2991,15 +3006,22 @@
+           "F102"
+         ],
+         "consumed_by": [
+-          "A09",
+           "A04b",
++          "A09",
+           "A14"
+         ],
+         "serialize_after": [
+           "NIP3-114"
+         ]
+       },
+-      "lane_rank": 280
++      "lane_rank": 280,
++      "available_inputs": [
++        ".agent/evidence/102/ga-readiness.json",
++        "docs/planning/DEBT.md",
++        ".agent/evidence/self-commission-v1.5.0/identity.json",
++        ".agent/reconciliation/self-commission-v1.5.0/baseline.json",
++        ".agent/qa/self-commission-v1.5.0.json"
++      ]
+     },
+     {
+       "id": "PLAN-016",
+@@ -3671,9 +3693,9 @@
+           "PLAN-WA"
+         ],
+         "consumed_by": [
++          "A04b",
+           "A10",
+-          "A11-D",
+-          "A04b"
++          "A11-D"
+         ],
+         "serialize_after": [
+           "NIP3-120"
+@@ -4242,5 +4264,28 @@
+       },
+       "lane_rank": 430
+     }
+-  ]
++  ],
++  "authorized_follow_up": {
++    "concerns": [
++      "NDEBT-047",
++      "NDEBT-046",
++      "NDEBT-045",
++      "A04a"
++    ],
++    "status": "authorized-pending-separate-contract",
++    "sequence": [
++      "planning-refresh-PR-merge",
++      "independent-maintenance-contract-gates",
++      "maintenance-source-PR"
++    ],
++    "numeric_feature_ids_allocated": false,
++    "authority_evidence": ".agent/run_state.json",
++    "excluded": [
++      "NIP3-acceptance",
++      "phase015-activation",
++      "WA-NIP4-drafting",
++      "new-release",
++      "installed-upgrade"
++    ]
++  }
+ }
+diff --git a/docs/planning/backlog_reconciliation.md b/docs/planning/backlog_reconciliation.md
+index 7b213c3..9d9f331 100644
+--- a/docs/planning/backlog_reconciliation.md
++++ b/docs/planning/backlog_reconciliation.md
+@@ -2,12 +2,15 @@
+ id: nizam-backlog-reconciliation-2026-10-08
+ title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
+ description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
+-version: 0.1.6
++version: 0.1.7
+ status: active
+ authoritative_source: docs/planning/backlog_reconciliation.md
+-last_audited: "2026-10-10"
++last_audited: "2026-10-11"
+ tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
+ change_log:
++  - version: "0.1.7"
++    date: "2026-10-11"
++    summary: "Refresh the current derived DAG after phase014 completion and local self-commissioning: exact complete/cancelled canonical mirrors, factual replacement inputs for obsoleteF101 premises, and authorized planning-refresh then separately gated small maintenance. Historical reconciliation/checker/evidence remain unchanged."
+   - version: "0.1.6"
+     date: "2026-10-10"
+     summary: "Amendment A3 note only. Features 100 and 101 are cancelled (operator 2026-10-10: the v1.4.0 multi-repo pilot is no longer needed). The 2026-10-08 narrative is not rewritten. backlog_dag.json packet status was not set to cancelled because schema/work-packet.schema.json has no status enum."
+@@ -33,6 +36,57 @@ change_log:
+ 
+ # Backlog Reconciliation — 2026-10-08
+ 
++## Current planning view — 2026-10-11
++
++This is the current projection of `backlog_dag.json`; the prior reconciliation
++below is dated history. The immutable phase014 feature list remains authoritative.
++
++| Packet | Status |
++| --- | --- |
++| F099 | complete |
++| F103 | complete |
++| F104 | complete |
++| F105 | complete |
++| F106 | complete |
++| F107 | complete |
++| F109 | complete |
++| F108 | complete |
++| F100 | cancelled |
++| F101 | cancelled |
++| F102 | complete |
++
++All completed canonical features cite their existing approved QA and actual proof;
++F100/F101 are cancelled terminal records and never enter runnable work. The final
++phase budget is 8705 of 8600 (ceiling11180), not a new activation or re-baseline.
++A05/A06/A07/A08 are delivered, while compound T/NIP scenario claims are not promoted
++merely because a contributing feature completed.
++
++PLAN-NEXT and A03-WA-FINAL no longer require cancelledF101 findings. A03-RT and
++PLAN-WA also use actual available planning inputs: the historical102 GA-readiness
++dossier and its measured gaps, current debt, and actual local self-commissioning
++identity/QA/baseline. No F101 simplification review occurred or is invented.
++Future NIP3 and Workflow Assurance design/phase gates remain unsatisfied.
++
++The operator authorized this planning refresh, then only NDEBT-047, NDEBT-046,
++NDEBT-045 and A04a in a separate maintenance contract after the planning refresh
++PR merges. The bounded notice allocates no numeric feature IDs; A04a is standalone
++maintenance, not blocked on NIP3 selection, and has no implementation permission
++until its separate contract passes both independent gates. NIP3 acceptance,
++phase015 activation, WA/NIP4 drafting, releases and installed upgrades are excluded.
++
++Current proof: `.agent/qa/self-commission-v1.5.0.json`,
++`.agent/reconciliation/self-commission-v1.5.0/baseline.json`, and
++`.agent/evidence/102/ga-readiness.json`. Current checker:
++`.agent/evidence/post-ga-planning-refresh/check_current_view.py`.
++The old reconciliation checker/evidence remains a historical assessment snapshot.
++This new checker is the dated stage1 assessment snapshot; it is frozen after this
++planning PR. Stage2 uses new maintenance evidence/checks rather than rewriting
++this checker when A04a completes.
++This planning PR is pending merge; no mergeSHA or completed maintenance is claimed.
++
++## Prior reconciliation history
++
++
+ ## 1. Purpose and authority
+ 
+ On 2026-10-08 the operator gave a maintainer brief. It asked for the backlog to be
+
+EXIT:0
