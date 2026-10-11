@@ -44,23 +44,37 @@ source tools/verify_lib.sh
 fail=0
 COVERED=()
 SKILL_BAK=""
+SKILL_BAK_OWNER=""
 declare -A SCRATCH_OWNED=()
 
-# Backstop: if a C13 substitution is interrupted, restore the real skill.json.
+# One backstop composes restoration and scratch cleanup for this Bash process.
+# Subshells inherit the maps but must never remove or restore parent resources.
 cleanup() {
-  if [ -n "${SKILL_BAK}" ] && [ -f "${SKILL_BAK}" ]; then
-    cp -- "${SKILL_BAK}" tools/skill.json
-    rm -f -- "${SKILL_BAK}"
+  local d status=0
+  local -a owned=()
+  if [ "${SKILL_BAK_OWNER}" = "${BASHPID}" ] && [ -n "${SKILL_BAK}" ] && [ -f "${SKILL_BAK}" ]; then
+    if cp -- "${SKILL_BAK}" tools/skill.json; then
+      rm -f -- "${SKILL_BAK}" || status=1
+    else
+      status=1
+    fi
   fi
+  for d in "${!SCRATCH_OWNED[@]}"; do
+    if [ "${SCRATCH_OWNED["${d}"]}" = "${BASHPID}" ]; then
+      owned+=("${d}")
+    fi
+  done
+  cleanup_scratch_dirs "${owned[@]}" || status=1
+  return "${status}"
 }
-trap cleanup EXIT
+trap 'cleanup || exit 1' EXIT
 
 note_covered() { COVERED+=("$1"); }
 
 # scratch_dirs <output-var> [<output-var> ...]
 #
 # Creates one isolated directory per named caller variable and installs a single
-# EXIT trap for those exact directories. Every target is resolved below the
+# composed EXIT backstop for process-owned directories. Every target is resolved below the
 # configured temporary root and rejected if it is /, the repository, or below
 # the repository. Probe bodies call this directly (never through command
 # substitution), so printf -v assigns their local variables in the caller.
@@ -72,7 +86,7 @@ cleanup_scratch_dirs() {
     [ -n "${d}" ] || return 1
     [ -d "${d}" ] || continue
     resolved=$(cd -- "${d}" && pwd -P) || return 1
-    [[ "${SCRATCH_OWNED["${resolved}"]:-}" == "1" ]] || return 1
+    [[ "${SCRATCH_OWNED["${resolved}"]:-}" == "${BASHPID}" ]] || return 1
     case "${resolved}" in
       "/"|"${REPO}"|"${REPO}"/*) return 1 ;;
     esac
@@ -81,7 +95,7 @@ cleanup_scratch_dirs() {
 }
 
 scratch_dirs() {
-  local name made resolved quoted cleanup="cleanup_scratch_dirs" temp_root
+  local name made resolved temp_root
   local -a created=()
   temp_root=$(cd -- "${TMPDIR:-/tmp}" && pwd -P) || return 1
   case "${temp_root}" in
@@ -107,13 +121,11 @@ scratch_dirs() {
     case "${resolved}" in
       "/"|"${REPO}"|"${REPO}"/*) cleanup_scratch_dirs "${created[@]}" "${resolved}"; return 1 ;;
     esac
-    SCRATCH_OWNED["${resolved}"]=1
+    SCRATCH_OWNED["${resolved}"]="${BASHPID}"
     printf -v "${name}" '%s' "${resolved}"
     created+=("${resolved}")
-    printf -v quoted '%q' "${resolved}"
-    cleanup+=" ${quoted}"
   done
-  trap "${cleanup}" EXIT
+  trap 'cleanup || exit 1' EXIT
 }
 
 if TMPDIR="${REPO}" scratch_dirs should_not_exist; then
@@ -615,6 +627,7 @@ test_c13() {
   note_covered skill_index_neg_dangling_module.json
   note_covered skill_index_neg_unindexed_capability.json
   SKILL_BAK=$(mktemp)
+  SKILL_BAK_OWNER="${BASHPID}"
   cp -- tools/skill.json "${SKILL_BAK}"
   _c13_substitute_one() {
     local fixture_basename="$1"
@@ -635,6 +648,7 @@ test_c13() {
   _c13_substitute_one skill_index_neg_unindexed_capability.json "is not the authoritative_source of any NIZAM.json capability"
   rm -f -- "${SKILL_BAK}"
   SKILL_BAK=""
+  SKILL_BAK_OWNER=""
 }
 test_c13
 

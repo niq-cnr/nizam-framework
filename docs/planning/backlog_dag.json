@@ -2439,21 +2439,25 @@
         "Mapped conformance scenarios in the verification matrix pass with discriminating negative controls."
       ],
       "evidence": [
-        ".agent/evidence/A04a/"
+        ".agent/qa/post-ga-maintenance.json",
+        ".agent/evidence/post-ga-maintenance/04-source-truth.txt",
+        ".agent/evidence/post-ga-maintenance/source-candidate.json",
+        ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json",
+        ".agent/evidence/post-ga-maintenance/evidence-gate.txt"
       ],
       "non_goals": [
         "Activating a policy change before its versioned authorization.",
         "Reducing any active gate (A15)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
+      "status": "complete",
       "authority_status": "authorized",
       "owner_role": "Generator",
       "plan_class": "deferred-proposal",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "Planning refresh PR must merge and separate maintenance contract must pass both pre-code gates before source work."
+          "satisfied": true,
+          "reason": "Planning PR81 merged; maintenance contract passed both gates, and both Evaluator stages are implemented/verified at fixed source candidate 7221cd17a7c2d2188de0094b8ea008e4e192a0c4."
         },
         "authority": {
           "satisfied": true,
@@ -2464,8 +2468,8 @@
           "reason": "none"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Separate maintenance regression/verification proof not generated yet."
+          "satisfied": true,
+          "reason": "Independent maintenance QA6/6 and actual candidate-bound capable CI38108704971 attempt2/evidence gate passed."
         }
       },
       "estimate": {
@@ -4272,7 +4276,7 @@
       "NDEBT-045",
       "A04a"
     ],
-    "status": "authorized-pending-separate-contract",
+    "status": "complete",
     "sequence": [
       "planning-refresh-PR-merge",
       "independent-maintenance-contract-gates",
@@ -4286,6 +4290,13 @@
       "WA-NIP4-drafting",
       "new-release",
       "installed-upgrade"
-    ]
+    ],
+    "planning_refresh_merge": "0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2",
+    "contract": ".agent/contracts/post-ga-maintenance.json",
+    "closure_stage": "final",
+    "source_candidate": ".agent/evidence/post-ga-maintenance/source-candidate.json",
+    "capable_ci_receipt": ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json",
+    "qa": ".agent/qa/post-ga-maintenance.json",
+    "evidence_gate": ".agent/evidence/post-ga-maintenance/evidence-gate.txt"
   }
 }

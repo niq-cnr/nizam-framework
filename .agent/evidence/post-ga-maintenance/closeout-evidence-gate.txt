@@ -1,0 +1,19 @@
+COMMAND: python3 - <<'PY'
+import json,re,hashlib
+from pathlib import Path
+q=json.loads(Path('.agent/qa/post-ga-maintenance-closeout.json').read_text());assert q['qa_pass'] and q['final_verdict']['approved'] is True
+for k in ('issues','missing_acceptance_coverage','unsupported_claims'):assert q[k]==[]
+assert q['checks_run']==q['checks_passed']==3
+for x in q['checks']:
+ assert x['exit_code']==0 and x['evidence'] in q['evidence_files'];p=Path(x['evidence']);t=p.read_text();assert t.startswith('COMMAND: '+x['command']);assert re.search(r'(?m)^EXIT:\s*0\s*$',t),p
+for rel in q['evidence_files']:assert Path(rel).is_file(),rel
+manifest=json.loads(Path('.agent/evidence/post-ga-maintenance/primary-proof-sha256.json').read_text())
+print('Primary manifest keys:',list(manifest)[:4])
+pin=json.loads(Path('.agent/evidence/post-ga-maintenance/source-candidate.json').read_text())
+for p,h in pin['source_sha256'].items():assert hashlib.sha256(Path(p).read_bytes()).hexdigest()==h
+print('CLOSEOUT EVIDENCE GATE PASS: 3/3 supplementary actual commands/exits/paths and unchanged nine-source digests; independent QA verified original primary proof hashes')
+PY
+Primary manifest keys: ['.agent/qa/post-ga-maintenance.json', '.agent/evidence/post-ga-maintenance/01-c13-cleanup.txt', '.agent/evidence/post-ga-maintenance/02-sandbox-boundaries.txt', '.agent/evidence/post-ga-maintenance/03-required-conformance.txt']
+CLOSEOUT EVIDENCE GATE PASS: 3/3 supplementary actual commands/exits/paths and unchanged nine-source digests; independent QA verified original primary proof hashes
+
+EXIT:0

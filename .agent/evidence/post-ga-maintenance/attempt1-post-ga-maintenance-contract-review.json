@@ -1,0 +1,28 @@
+{
+  "review": "contract-testability",
+  "feature": "post-ga-maintenance",
+  "contract_id": "post-ga-maintenance",
+  "revision_reviewed": 0,
+  "contract_sha256": "83af0d02db8ef076dc6f74b12f89c35097ed5afad75158b45445ac04d99e48a8",
+  "base_revision": "0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2",
+  "issues": [
+    {
+      "verification_index": 5,
+      "criterion": "Final closure recognizes actual durable evidence-gate EXIT0 capture without false failure",
+      "evidence": "/tmp/post-ga-maintenance-contract-review-evidence.txt",
+      "required_fix": "Change hash-bound pure gate predicate to accept existing actual EXIT:0 syntax as well as optional whitespace forms; add positive controls for EXIT:0 and EXIT: 0 and negatives for nonzero/missing EXIT. Update proposed predicate hash. Preserve all CI/source/QA binding requirements.",
+      "severity": "medium"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Contract schema valid; actualmergedPR1base and exact red/green/helper/CI/QA/evidence paths are explicit. Source-candidate digest mapping plus per-job synthetic-checkout receipts handle CI identity correctly.",
+    "Executed13 isolated pure synthetic controls only; no helper/source/installed files written and no sandbox or workstation sysctl execution.",
+    "Intake-before-QA and separately required final closure avoid circular evidence; frozen prior evidence/.nizam/source sandbox preservation remains bounded. Evaluator owns acceptance helpers/red design while Generator repairs cleanup/help/role docs; independent Validator gates remain mandatory."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "One concrete gate-marker false-fail in hash-bound closure predicate: it rejects actual EXIT:0 captures. Remaining scope, role ownership, CI identity and staged proof design are sound."
+  }
+}

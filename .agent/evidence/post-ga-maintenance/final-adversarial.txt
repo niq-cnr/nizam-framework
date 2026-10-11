@@ -1,0 +1,7 @@
+COMMAND_ARGV: ["python3", "-c", "import importlib.util,json,copy\nfrom pathlib import Path\np=Path('.agent/evidence/post-ga-maintenance/check_maintenance_view.py')\nspec=importlib.util.spec_from_file_location('maintenance_final_probe',p);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)\nc=json.loads(Path('.agent/contracts/post-ga-maintenance.json').read_text());state,proof=m.load_closure('final',c);m.closure('final',state,proof,c)\nmutations=[('ci-log',lambda p:p['archives'].__setitem__(p['ci']['checks'][0]['evidence'],p['archives'][p['ci']['checks'][0]['evidence']]+b'CORRUPTED')),('red-digest',lambda p:p['archives'].__setitem__(p['red']['evidence'],p['archives'][p['red']['evidence']]+b'CORRUPTED')),('qa-binding',lambda p:p['qa']['checks'][0].update(command='true'))]\nfor expected,mutate in mutations:\n s,p=copy.deepcopy((state,proof));mutate(p)\n try:m.closure('final',s,p,c)\n except ValueError as e:assert str(e)==expected,(expected,str(e));print('ACTUAL PROOF TAMPER REJECTED:',expected)\n else:raise AssertionError('tamper accepted: '+expected)\nprint('FINAL ADVERSARIAL PASS: unchanged actual proof accepted; three independent tamper controls rejected')\n"]
+ACTUAL PROOF TAMPER REJECTED: ci-log
+ACTUAL PROOF TAMPER REJECTED: red-digest
+ACTUAL PROOF TAMPER REJECTED: qa-binding
+FINAL ADVERSARIAL PASS: unchanged actual proof accepted; three independent tamper controls rejected
+
+EXIT: 0

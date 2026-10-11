@@ -2,12 +2,18 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.2
+version: 1.0.4
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.4"
+    date: "2026-10-11"
+    summary: "Record verified bounded maintenance at fixed source candidate 7221cd17a7c2d2188de0094b8ea008e4e192a0c4: fresh capable CI38108704971 attempt2, independent6/6 QA and successful evidence gate. Resolve only NDEBT-047/046/045 and complete A04a; preserve source digests, historical assessments, future gates and installed v1.5.0."
+  - version: "1.0.3"
+    date: "2026-10-11"
+    summary: "Record merged planning PR81 and independently gated maintenance source intake; three debts remain Open and A04a pending until real capable CI and independent QA/evidence closure. Preserve historical assessments and installed v1.5.0."
   - version: "1.0.2"
     date: "2026-10-11"
     summary: "Refresh only current handover pointers: actual merged self-commissioning and root AGENTS route, corrected current backlog status and authorized planning-refresh then separately gated maintenance; preserve the original historical snapshot byte-identically."
@@ -23,14 +29,17 @@ change_log:
 
 ## Current status — 2026-10-11
 
+Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
+
 Local `v1.5.0` self-governance has been commissioned and merged; begin through
 [AGENTS.md](../../AGENTS.md), the installed `.nizam/NIZAM.json` and installed skill.
 [SELF_GOVERNANCE.md](SELF_GOVERNANCE.md) retains the real sourcecandidate/CI/preflight/QA.
-The [current planning refresh](backlog_reconciliation.md) corrects canonical
-completed/cancelled mirrors and obsolete F101 prerequisites. After this planning
-PR merges, only NDEBT-047/046/045 and A04a proceed under a separate maintenance
-contract with both gates. No NIP3/WA acceptance, phase015 activation or new release
-is approved. This planning PR is pending merge; maintenance source work has not begun.
+The [current planning view](backlog_reconciliation.md) mirrors completed/cancelled
+phase records and uses actual historical/current inputs. Maintenance proof is in
+`.agent/qa/post-ga-maintenance.json` and
+`.agent/evidence/post-ga-maintenance/capable-ci-receipt.json`.
+NIP3/WA acceptance, phase015 activation and drafting remain outside this task.
+The original planning assessment/checker and every prior evidence capture are frozen.
 
 Phase 014 is complete. Features 100 and 101 were cancelled by operator amendment A3;
 features 099 and 102–109 completed. Nizam `v1.5.0` is released at commit

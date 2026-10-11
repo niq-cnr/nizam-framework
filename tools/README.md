@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.17.0
+version: 0.18.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.18.0"
+    date: "2026-10-11"
+    summary: "Document the scoped payload help correction and maintenance regression/helper CI commands; capable-host test and closure proof remain pending at source intake."
   - version: "0.17.0"
     date: "2026-10-10"
     summary: "C15 calls both primitives: vlib_profiles_cover_roles (the 5<->5 coverage check) and the new vlib_profiles_map_roles, which parses the explicit Role column of standard/capability_profiles.md and fails a swapped profile-to-role mapping (phase-014 feature 109, NDEBT-026)."
@@ -125,7 +128,7 @@ not durable.
 
 On a host that cannot prove user-namespace isolation (for example one whose kernel refuses `unshare --user --map-root-user true`, as with `kernel.apparmor_restrict_unprivileged_userns = 1`), the five sandbox-dependent tests are not run. Each is reported on its own result line as `UNSUPPORTED` (an explicit skip whose reason begins `UNSUPPORTED: user-namespace isolation unavailable`), the run prints `CONFORMANCE: NOT FULL`, and the command exits non-zero: the required gate never passes on a host that cannot prove isolation. `--allow-unsupported-isolation` is for local development only and CI never passes it; it turns that same outcome into exit 0 while still printing every `UNSUPPORTED` line and `CONFORMANCE: NOT FULL`, and it never masks any other failure. On an isolation-capable host the sandbox tests execute and the run prints `CONFORMANCE: FULL`. `linux_trial_sandbox.sh` and `isolated_trial_adapter.py` are not relaxed by this mode and still fail closed; the suite never runs a trial outside the sandbox.
 
-CI runs this suite as the `convergent_review` job of `.github/workflows/compliance.yml`, in required-conformance mode and never with `--allow-unsupported-isolation`. The job first runs a guarded step that enables unprivileged user namespaces only on runners whose kernel exposes the AppArmor user-namespace restriction key, and it installs `jsonschema` so that no ordinary test is skipped. A runner that still cannot provide isolation therefore fails the job instead of passing it, and the job log must show `CONFORMANCE: FULL`.
+CI runs this suite as the `convergent_review` job of `.github/workflows/compliance.yml`, in required-conformance mode and never with `--allow-unsupported-isolation`. The job first runs a guarded step that enables unprivileged user namespaces only on runners whose kernel exposes the AppArmor user-namespace restriction key, and it installs `jsonschema` and `pyyaml` so that no ordinary test is skipped. A runner that still cannot provide isolation therefore fails the job instead of passing it, and the job log must show `CONFORMANCE: FULL`.
 
 ## Compliance Coverage — C1–C16
 
@@ -178,3 +181,24 @@ as its own CI job (`fixtures_self_test`) alongside `validate` and
 `e2e_bootstrap`.
 
 The completeness guard also consults a **claim map**, the `FIXTURE_CLAIMS` array in the script: every subdirectory of `tools/fixtures/` is claimed by exactly one owning suite, as one `<subdirectory>|<suite file>` row, and a file below a claimed subdirectory, at any depth, is accounted for by that claim. The guard fails on an unclaimed subdirectory, on a doubly-claimed subdirectory, on a claim naming a suite file that does not exist, and on a claim naming a subdirectory that is not on disk. The self-test demonstrates those four cases itself, in a private scratch area that the scratch helper confines outside the repository, and prints one `OK   claim-map` line for each. A claim proves ownership, not execution: that the owning suite runs is proven by its own CI job (`tools/test_convergent_review.py` owns the `convergent_review` subdirectory and runs as the `convergent_review` job). A future suite that adds a fixture subdirectory registers its row in this same map; there is no second registry.
+
+### Post-GA maintenance regression checks
+
+The C13 interruption helper `.github/scripts/test_c13_cleanup.py` exercises the
+actual fixture swap and owned cleanup; its `--source-ref` mode demonstrates the
+unrepaired baseline failure before cleanup repair. The required sandbox helper
+`.github/scripts/test_sandbox_boundaries.py` uses a real outside listener and
+isolated namespace, filesystem and executable-permission omissions. Setup errors
+cannot count as confinement; an incapable host reports `UNSUPPORTED` with exit64.
+
+The standing CI jobs run these helpers and the required suite with these commands:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh
+```
+
+The existing jobs emit checkout SHA and source digest receipts. Actual capable CI
+and independent QA remain prerequisites to debt closure; local unsupported results
+are recorded as limitations. The installed v1.5.0 payload remains unchanged.

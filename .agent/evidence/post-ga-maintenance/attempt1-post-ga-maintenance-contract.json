@@ -1,0 +1,252 @@
+{
+  "contract_id": "post-ga-maintenance",
+  "feature_id": "post-ga-maintenance",
+  "name": "Evaluator-tested C13 cleanup/sandbox adequacy, truthful payload help and Evaluator role-text maintenance",
+  "status": "proposed",
+  "spec_ref": "/tmp/post-ga-maintenance-plan.md",
+  "base_revision": "0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".github/scripts/test_c13_cleanup.py",
+        "purpose": "Evaluator-owned deterministic actual-swap interruption regression/red proof in owned private copy"
+      },
+      {
+        "path": ".github/scripts/test_sandbox_boundaries.py",
+        "purpose": "Evaluator-owned capable-host intact/mutant controls; no production sandbox relaxation"
+      },
+      {
+        "path": ".agent/evidence/post-ga-maintenance/check_maintenance_view.py",
+        "purpose": "New staged source/scope/closure checker; frozen stage1 checker unchanged"
+      },
+      {
+        "path": ".agent/evidence/post-ga-maintenance/<artifact>",
+        "purpose": "New command/red/CI/QA proof only"
+      },
+      {
+        "path": ".agent/product_spec_post_ga_maintenance.md",
+        "purpose": "Promoted durable standalone maintenance spec"
+      },
+      {
+        "path": ".agent/contracts/post-ga-maintenance.json",
+        "purpose": "Dual-gated contract"
+      },
+      {
+        "path": ".agent/validator/post-ga-maintenance[-name].json",
+        "purpose": "Independent ModeA/B verdicts"
+      },
+      {
+        "path": ".agent/qa/post-ga-maintenance[-name].json",
+        "purpose": "Independent contract-review and final QA"
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "Generator-owned safe restoration/owned cleanup composition without weakening fixture guards"
+      },
+      {
+        "path": "tools/test_convergent_review.py",
+        "purpose": "Evaluator-owned discriminating namespace/generated-exec assertions"
+      },
+      {
+        "path": "tools/validate.sh",
+        "purpose": "Generator-owned --payload help paragraph only"
+      },
+      {
+        "path": "standard/AGF.md",
+        "purpose": "Evaluator role-text accurately names Loop1 independent contract review and Loop2 QA"
+      },
+      {
+        "path": "templates/AGENTS.md",
+        "purpose": "Delegation matrix text names both evaluator stages"
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Versioned actual test/cleanup/help proof documentation"
+      },
+      {
+        "path": ".github/workflows/compliance.yml",
+        "purpose": "Existing pinned jobs run evaluator helpers; guarded CI namespace enablement unchanged"
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "Initial scheduling/final evidence-backed closure for047/046/045 only"
+      },
+      {
+        "path": "docs/planning/backlog_dag.json",
+        "purpose": "Stage-aware approved maintenance notice/A04a final status; no feature IDs/NIP activation"
+      },
+      {
+        "path": "docs/planning/backlog_reconciliation.md",
+        "purpose": "Versioned current maintenance facts, old assessment proof frozen"
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Current maintenance status/evidence only"
+      },
+      {
+        "path": "docs/planning/HANDOVER.md",
+        "purpose": "Current notice only, historical snapshot preserved"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased source maintenance notes; released sections unchanged"
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Parent-only bounded task coordination, no phase/budget/history rewrite"
+      }
+    ]
+  },
+  "non_goals": [
+    "No implementation before planning-refresh PR merge and both maintenance contract gates.",
+    "Do not change sandbox/adapter behavior, relax required conformance, change workstation sysctl or treat incapable host skips as proof.",
+    "No .nizam update, source release-version bump/tag, NIP3/WA acceptance/drafting or phase activation/numeric ID allocation.",
+    "Preserve completed phase014 and every existing evidence/QA/checker including stage1 planning refresh; new proof only under new maintenance directory.",
+    "Generator does not author Evaluator-owned acceptance regressions or mutate parent run_state."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "AT1: Evaluator-authored actual C13 interruption test is red on approved-base source, then green on repaired source; original bytes/owned cleanup/sentinel/subshell ownership discriminated.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py",
+      "evidence": ".agent/evidence/post-ga-maintenance/01-c13-cleanup.txt",
+      "red_command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py --source-ref 0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2",
+      "red_expected": {
+        "exit_code": 1,
+        "required_diagnostic": "C13 RESTORATION FAIL",
+        "setup_or_timeout_exit": 2,
+        "proof_stage": "Evaluator records failing original restoration invariant before Generator fixes source; red result is expected proof, not completed QA."
+      },
+      "execution": "Final green command runs as an exact step in fixtures_self_test CI after existing jsonschema/pyyaml dependency install. Red source-ref command runs separately against frozen PR1 merge source before repair; if local execution supported it may be captured locally, otherwise actual CI red job receipt is required."
+    },
+    {
+      "acceptance_test": "AT2: Capable-host blackbox sandbox positives and isolated namespace/Landlock/generated-exec mutants discriminate40/41/42; setup errors never pass.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py",
+      "evidence": ".agent/evidence/post-ga-maintenance/02-sandbox-boundaries.txt",
+      "execution": "Evaluator initiates or independently verifies actual fresh execution of this exact command on the capable convergent_review CI job at the fixed candidate; records run/job/step URL, headSHA, start/completion, actual step conclusion and downloaded command output/exit. Restricted local UNSUPPORTED64 or required-suite failure is recorded honestly and cannot substitute for capableCI proof.",
+      "unsupported_expected": {
+        "exit_code": 64,
+        "diagnostic": "UNSUPPORTED",
+        "may_satisfy_acceptance": false
+      },
+      "expected_codes": {
+        "intact_positive": 0,
+        "Landlock_omitted_namespaces_intact": 40,
+        "namespace_omitted_Landlock_intact": 41,
+        "generated_execution_permitted": 42,
+        "unexpected_OSError_or_setup": "distinct failure, never a confinement pass"
+      }
+    },
+    {
+      "acceptance_test": "AT3: Full required-conformance suite and standing fixtures pass on capableCI, actual CI logs/headSHA captured; restricted local host is explicitly non-full, never substituted for CI proof.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh",
+      "evidence": ".agent/evidence/post-ga-maintenance/03-required-conformance.txt",
+      "execution": "Evaluator initiates or independently verifies actual fresh execution of this exact command on the capable convergent_review CI job at the fixed candidate; records run/job/step URL, headSHA, start/completion, actual step conclusion and downloaded command output/exit. Restricted local UNSUPPORTED64 or required-suite failure is recorded honestly and cannot substitute for capableCI proof."
+    },
+    {
+      "acceptance_test": "AT4: Actual help/doc roles/frontmatter and full compliance/release anchors pass; validator behavior and role mapping unchanged.",
+      "command": "bash tools/validate.sh && python3 .github/scripts/release_closeout.py --mode pr && PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-maintenance/check_maintenance_view.py --source",
+      "evidence": ".agent/evidence/post-ga-maintenance/04-source-truth.txt"
+    },
+    {
+      "acceptance_test": "AT5: Exact source/test/document scope, frozen phase/stage1evidence/installed v1.5.0/sandbox and bounded parent state remain intact.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-maintenance/check_maintenance_view.py --scope && PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "evidence": ".agent/evidence/post-ga-maintenance/05-scope-preservation.txt"
+    },
+    {
+      "acceptance_test": "AT6: Explicit intake stage requires three debts still Open and A04a pending; closure predicate negatives reject missing CI/QA, stale candidate hashes, receipt-head mismatch and terminal-status spoof. Independent final closure is a later required command, never satisfied by intake.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-maintenance/check_maintenance_view.py --stage intake --self-test",
+      "evidence": ".agent/evidence/post-ga-maintenance/06-maintenance-closure.txt",
+      "execution": "Independent QA runs intake command at the committed repaired source candidate. Only after approved QA/evidence gate does parent permit final records; final command below must then pass against the same captured candidate and genuine proof, while HEAD may move."
+    }
+  ],
+  "estimated_lines": 650,
+  "evidence_dir": ".agent/evidence/post-ga-maintenance/",
+  "evidence_convention": "NN-name.txt exact invocation/result/actual EXIT/headSHA; separate red-base and green-candidate captures plus actual capableCIrun/headSHA/logs; preserve prior proof snapshots.",
+  "approvals": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false,
+    "revisions": 0
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "design_notes": {
+    "role_ownership": "Evaluator owns regression tests/helpers and red/mutant design; Generator repairs cleanup/help/role docs; independent Validator gates; Evaluator separately verifies actual candidate/CI.",
+    "staging": "Initial tests/source/scheduling may precede QA; final debt/A04a closure only after real capableCI/approvedQA/evidence gate. No command before QA requires future finalQA path.",
+    "draft_condition": "Final proposed contract based on actual merged PR1 0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2. Both independent pre-code approvals remain required. No implementation authorization inferred.",
+    "capable_ci_exact_steps": {
+      "fixtures_self_test": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py",
+        "bash tools/fixtures_self_test.sh"
+      ],
+      "convergent_review": [
+        "pip install jsonschema pyyaml",
+        "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh"
+      ],
+      "namespace_prerequisite": "Preserve existing guarded CI userns sysctl step; no workstation sysctl change; no allow-unsupported flag on any required step.",
+      "checkout_receipt": "Add a narrow inline Python receipt step in both existing jobs: print git rev-parse HEAD as checkout_sha and SHA256 bytes for exactly the nine assessed paths before acceptance commands; retain actual job log/output for evaluator receipt. This proves executed code identity even under synthetic merge checkout."
+    },
+    "remote_execution_receipt": "AT2/3 require actual candidate-bound capableCI run/job/step identity and fresh exact-command execution, not inferred old green logs or local unsupported pass. Evaluator may use GitHub rerun API on actual candidate job; provenance/actual exit stays explicit.",
+    "closure_checker_stages": "Required --stage intake explicitly asserts debt047/046/045 in Open table and absent Resolved, A04a pending; tests cannot require future QA. Required --stage final asserts all three exclusively Resolved and A04a complete, immutable source-candidate record/digests, actual CI receipt exact AT1-3 bindings, red base proof, QA approved true6/6 with empty blocking arrays and candidate_sha/evidence command equality, and durable evidence-gate EXIT0. No auto-stage/default/intake fallback. Final command capture is distinct 06-final-maintenance-closure.txt and not a member of pre-closeout QA checks, avoiding circular evidence.",
+    "fixed_candidate_protocol": {
+      "record": ".agent/evidence/post-ga-maintenance/source-candidate.json",
+      "schema": {
+        "candidate_sha": "full 40 lowercase hex, actual committed repaired-source CI head",
+        "base_sha": "actual PR1 merge full SHA",
+        "recorded_at": "UTC timestamp",
+        "source_sha256": "mapping of all assessed_source_paths to SHA256 of bytes from git show candidate_sha:path"
+      },
+      "assessed_source_paths": [
+        "tools/fixtures_self_test.sh",
+        "tools/test_convergent_review.py",
+        "tools/validate.sh",
+        "standard/AGF.md",
+        "templates/AGENTS.md",
+        "tools/README.md",
+        ".github/scripts/test_c13_cleanup.py",
+        ".github/scripts/test_sandbox_boundaries.py",
+        ".github/workflows/compliance.yml"
+      ],
+      "binding": "Capture once before final docs; checker rejects differing existing record, source path set mismatch, missing candidate git object, digest mismatch with pinned git tree or current assessed file. Final docs HEAD is never substituted."
+    },
+    "exact_proof_paths": {
+      "candidate": ".agent/evidence/post-ga-maintenance/source-candidate.json",
+      "ci_receipt": ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json",
+      "red_receipt": ".agent/evidence/post-ga-maintenance/red-base-receipt.json",
+      "qa": ".agent/qa/post-ga-maintenance.json",
+      "evidence_gate": ".agent/evidence/post-ga-maintenance/evidence-gate.txt",
+      "final_closure": ".agent/evidence/post-ga-maintenance/06-final-maintenance-closure.txt"
+    },
+    "ci_receipt_schema": {
+      "candidate_sha": "must equal immutable source-candidate.json candidate_sha",
+      "repository": "niq-cnr/nizam-framework",
+      "conclusion": "success",
+      "run_id": "actual GitHub run integer",
+      "run_url": "https://github.com/niq-cnr/nizam-framework/actions/runs/<run_id>",
+      "started_at": "actual UTC time",
+      "completed_at": "actual UTC time",
+      "checks": "exact three records AT1/AT2/AT3 each command byte-equal declared command, exit_code0, conclusion success, candidate_sha equal fixed candidate, run_id/run_url matching actual run, job_id/job_url and step_name, started_at/completed_at, evidence path equal declared evidence and log_sha256 matching archived raw output; downloaded logs must show actual exact-command execution. Evaluator independently verifies GitHub API run headSHA and job/step execution; receipt cannot be inferred from log text alone. Each record additionally includes actual checkout_sha (full40 Git HEAD) and source_sha256 emitted in that executing job; all nine digests equal immutable candidate map.",
+      "checkout_binding": "run.head_sha must equal captured source candidate. Actions default checkout may execute synthetic merge HEAD: each AT1/2/3 record must include actual checkout_sha plus source_sha256 for exactly nine assessed paths, emitted by an explicit receipt step within that same executing job. Digest map must equal candidate record; do not require checkout_sha == candidate_sha. Evaluator independently binds downloaded checkout receipt/output to actual run/job, commands and archive digests."
+    },
+    "red_receipt_schema": {
+      "source_ref": "exact contract base",
+      "command": "exact AT1 red_command",
+      "exit_code": 1,
+      "required_diagnostic": "C13 RESTORATION FAIL",
+      "evidence": ".agent/evidence/post-ga-maintenance/00-c13-red-base.txt",
+      "log_sha256": "SHA256 of original capture",
+      "recorded_before_repair": true,
+      "ordering": "Actual Evaluator capture before Generator repair. Missing object/setup2 is not red. If CI fallback, fetch exact base object in owned execution or use fetch-depth0 checkout; never weaken job to accept setup failure."
+    },
+    "final_closure_command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-maintenance/check_maintenance_view.py --stage final --self-test",
+    "executable_negative_mode": "--self-test runs isolated in-memory/owned-temp mutations through the same closure predicates: candidate SHA disagreement; stale source digest; missing required CI check; mismatched CI head; command mismatch; missing/false QA; wrong QA candidate; missing evidence gate; one debt not resolved; A04a pending at final; final stage supplied intake artifacts. Each must fail specifically; setup errors cannot count as rejection. Intake self-test uses isolated candidate/proof fixtures only for checker controls, clearly marked synthetic and never acceptance proof. Final stage additionally mutates actual parsed captured proofs before validating unmutated final state.",
+    "proposal_predicates": {
+      "path": "/tmp/post-ga-maintenance-closure-predicates.py",
+      "sha256": "9ba71d3a5a0efdd883078c983e0cfe1d9d8bd6ece5fd5c8a30e90dbb41309eb6",
+      "purpose": "Executable pure stage/pin/receipt/QA/red/evidence predicates and 13 synthetic negative controls; reviewed with proposal, incorporated into new task checker after gates. Runtime wrapper reads exact named real repository files, hashes Git tree/current source and actual archive bytes; no synthetic controls can become acceptance evidence."
+    },
+    "scope_semantics": "Compare product paths and new task metadata only to actual PR1 merge base. Parent run_state may change only updated_at, active_contract_id, last_action, append-only task history and post-ga-maintenance-prefixed bounded counters (limit3/attempts0..3); all phase/budget/status fields and prior history/counters remain exact. Freeze all previously existing evidence, including post-ga-planning-refresh. No deletions/renames, no installed or sandbox source changes; tools/validate.sh content outside its --payload help paragraph byte-identical to base. Released CHANGELOG sections and HANDOVER historical snapshot byte-identical to base.",
+    "source_commit_ordering": "All CI acceptance commands and checkout/digest receipt emission are stateless with respect to source-candidate.json, CI receipt, QA and final closure. Parent first commits/pushes repaired source with intake docs; then captures that actual commit SHA outside repository and writes fixed source-candidate metadata later. Evaluator fresh actual CI execution/rerun stays at the same PR source head before evidence metadata commits. Subsequent docs/evidence commits may move HEAD; nine assessed source/test/workflow bytes must remain identical to fixed candidate. Never embed a commit own SHA in the same commit or require future candidate metadata in source CI."
+  }
+}

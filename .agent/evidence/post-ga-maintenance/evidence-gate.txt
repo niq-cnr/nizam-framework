@@ -1,0 +1,22 @@
+COMMAND: python3 - <<'PY'
+import json,re,hashlib,subprocess
+from pathlib import Path
+c=json.loads(Path('.agent/contracts/post-ga-maintenance.json').read_text());q=json.loads(Path('.agent/qa/post-ga-maintenance.json').read_text());pin=json.loads(Path('.agent/evidence/post-ga-maintenance/source-candidate.json').read_text());ci=json.loads(Path('.agent/evidence/post-ga-maintenance/capable-ci-receipt.json').read_text())
+assert q['qa_pass'] and q['final_verdict']['approved'] is True
+for k in ('issues','missing_acceptance_coverage','unsupported_claims'):assert q[k]==[]
+assert q['checks_run']==q['checks_passed']==6 and q['candidate_sha']==pin['candidate_sha']==ci['candidate_sha']=='7221cd17a7c2d2188de0094b8ea008e4e192a0c4'
+assert ci['conclusion']=='success' and ci['run_id']==38108704971 and ci['run_attempt']==2
+for actual,expected in zip(q['checks'],c['verification']):
+ assert actual['command']==expected['command'] and actual['evidence']==expected['evidence'] and actual['exit_code']==0
+ assert actual['evidence'] in q['evidence_files'];t=Path(actual['evidence']).read_text();assert t.startswith('COMMAND: '+expected['command']);assert re.search(r'(?m)^EXIT:\s*0\s*$',t)
+for rel in q['evidence_files']:assert Path(rel).is_file(),rel
+for actual,expected in zip(ci['checks'],c['verification'][:3]):
+ assert actual['command']==expected['command'] and actual['evidence']==expected['evidence'] and actual['exit_code']==0 and actual['conclusion']=='success'
+ assert actual['source_sha256']==pin['source_sha256'];assert hashlib.sha256(Path(actual['evidence']).read_bytes()).hexdigest()==actual['log_sha256']
+for p,h in pin['source_sha256'].items():
+ assert hashlib.sha256(Path(p).read_bytes()).hexdigest()==hashlib.sha256(subprocess.check_output(['git','show',pin['candidate_sha']+':'+p])).hexdigest()==h
+print('EVIDENCE GATE PASS: 6/6 exact commands and actual exits; all QA paths exist; independently rerun capable CI and nine immutable source digests bind to source candidate')
+PY
+EVIDENCE GATE PASS: 6/6 exact commands and actual exits; all QA paths exist; independently rerun capable CI and nine immutable source digests bind to source candidate
+
+EXIT:0

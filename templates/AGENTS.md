@@ -2,9 +2,13 @@
 id: nizam-template-agents
 title: "AGENTS.md Template"
 description: "Consumer-repo AGENTS.md template: the session-objective skeleton a bootstrapped repository copies and completes with its active phase, current objective, and delegation-matrix reference."
-version: 0.1.0
+version: 0.2.0
 status: active
 authoritative_source: templates/AGENTS.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-10-11"
+    summary: "Route Evaluator delegation to both independent contract review and implementation QA (A04a)."
 ---
 
 <!--
@@ -35,7 +39,7 @@ phase work. Treat an unlisted repository as out of scope by default and halt.
 This repository follows the multi-agent delegation matrix defined in
 `methodology/01_execution.md` and `standard/AGF.md`: `@planner` for architecture and
 spec, `@generator` for contracts and implementation, `@validator` for pre-code (Mode A)
-and post-code (Mode B) contract gates, `@evaluator` for QA verdicts. Never skip either
+and post-code (Mode B) contract gates, `@evaluator` for independent Loop 1 contract testability review and Loop 2 implementation QA verdicts. Never skip either
 validator step.
 
 ## Constraints

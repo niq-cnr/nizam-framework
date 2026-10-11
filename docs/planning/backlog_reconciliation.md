@@ -2,12 +2,18 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.7
+version: 0.1.9
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
 last_audited: "2026-10-11"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.9"
+    date: "2026-10-11"
+    summary: "Record verified bounded maintenance at fixed source candidate 7221cd17a7c2d2188de0094b8ea008e4e192a0c4: fresh capable CI38108704971 attempt2, independent6/6 QA and successful evidence gate. Resolve only NDEBT-047/046/045 and complete A04a; preserve source digests, historical assessments, future gates and installed v1.5.0."
+  - version: "0.1.8"
+    date: "2026-10-11"
+    summary: "Record merged planning PR81 and independently gated maintenance source intake; three debts remain Open and A04a pending until real capable CI and independent QA/evidence closure. Preserve historical assessments and installed v1.5.0."
   - version: "0.1.7"
     date: "2026-10-11"
     summary: "Refresh the current derived DAG after phase014 completion and local self-commissioning: exact complete/cancelled canonical mirrors, factual replacement inputs for obsoleteF101 premises, and authorized planning-refresh then separately gated small maintenance. Historical reconciliation/checker/evidence remain unchanged."
@@ -67,12 +73,11 @@ dossier and its measured gaps, current debt, and actual local self-commissioning
 identity/QA/baseline. No F101 simplification review occurred or is invented.
 Future NIP3 and Workflow Assurance design/phase gates remain unsatisfied.
 
-The operator authorized this planning refresh, then only NDEBT-047, NDEBT-046,
-NDEBT-045 and A04a in a separate maintenance contract after the planning refresh
-PR merges. The bounded notice allocates no numeric feature IDs; A04a is standalone
-maintenance, not blocked on NIP3 selection, and has no implementation permission
-until its separate contract passes both independent gates. NIP3 acceptance,
-phase015 activation, WA/NIP4 drafting, releases and installed upgrades are excluded.
+The operator-authorized planning refresh merged in PR81, followed by the separately
+gated NDEBT-047/046/045 and A04a maintenance. The three debts are now Resolved and
+A04a complete after actual source verification; Open debt is limited to040/034.
+No numeric feature IDs were allocated. NIP3 acceptance, phase015 activation,
+WA/NIP4 drafting, releases and installed upgrades remain excluded.
 
 Current proof: `.agent/qa/self-commission-v1.5.0.json`,
 `.agent/reconciliation/self-commission-v1.5.0/baseline.json`, and
@@ -82,7 +87,14 @@ The old reconciliation checker/evidence remains a historical assessment snapshot
 This new checker is the dated stage1 assessment snapshot; it is frozen after this
 planning PR. Stage2 uses new maintenance evidence/checks rather than rewriting
 this checker when A04a completes.
-This planning PR is pending merge; no mergeSHA or completed maintenance is claimed.
+Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
+Actual maintenance proof: `.agent/qa/post-ga-maintenance.json`,
+`.agent/evidence/post-ga-maintenance/source-candidate.json`,
+`.agent/evidence/post-ga-maintenance/capable-ci-receipt.json` and
+`.agent/evidence/post-ga-maintenance/evidence-gate.txt`.
+The stage-aware maintenance checker requires explicit final state/proof binding;
+its intake stage cannot substitute final closure. The stage1 checker remains a
+frozen dated assessment and is not rerun as current maintenance truth.
 
 ## Prior reconciliation history
 
