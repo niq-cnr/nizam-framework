@@ -12,9 +12,9 @@
     "spec_version": "1.0.1",
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "current_status": "blocked",
+    "current_status": "in_progress",
     "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
-    "run_state_position": "Canonical111 BLOCKED after actualQA1 C11 history-schema failure; scoped contract extension pending.110 complete;112-114pending. Historical checker epoch1 remains preserved.",
+    "run_state_position": "Derived from canonical phase/list:110 complete;111 resumed under bounded detail revision4 after both gates, QA1 failedproof retained;112-114pending.",
     "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
   },
   "estimate_weighting": {
@@ -2683,8 +2683,8 @@
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "blocked",
-      "authority_status": "blocked-on-scoped-contract-extension",
+      "status": "in_progress",
+      "authority_status": "approved-contract",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
@@ -2693,8 +2693,8 @@
           "reason": "Canonical110 is complete after independentModeB2/sealed21/21QA/evidencegate;111 still requires its own two pre-code contract gates."
         },
         "authority": {
-          "satisfied": false,
-          "reason": "Existing015 authority remains valid; current111 contract3/3 forbids new history-preservation exception without specific operator extension. No fourth revision attempted."
+          "satisfied": true,
+          "reason": "Operator bounded PR86 repair at55e39; revision4 passed both independent gates. Only exact current402detail and narrow verified comparison normalization; originalhistory/counters/failedQA preserved."
         },
         "environment": {
           "satisfied": true,
@@ -2702,7 +2702,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Independent finalQA1 actual35 failed C11;34passed,36-38 and own extra spot unrun. Failed candidate/proof retained; no evidence gate or completion."
+          "reason": "Currentchecker checkpoint2/renewedModeB/fixedcandidateQA2/evidence remain required; old failedQA1 is immutable historical proof."
         }
       },
       "estimate": {
