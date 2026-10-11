@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-11T04:13:54.848747+00:00",
+  "updated_at": "2026-10-11T04:33:08.182597+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -327,6 +327,10 @@
       "limit": 3,
       "attempt_root": "/home/cnross/.tmp/nizam-maint-closeout1-7ntakgsw",
       "approved_base": "7221cd17a7c2d2188de0094b8ea008e4e192a0c4"
+    },
+    "post-ga-nip-planning-contract": {
+      "attempts": 2,
+      "limit": 3
     }
   },
   "history": [
@@ -2333,6 +2337,23 @@
       "operator_verbatim": "proced with the logical next steps.",
       "base_revision": "4663ab4dc39020f4d3226dc0f7e5016a835b4b04",
       "detail": "Authorize previously stated next steps: revise NIP-0003 for acceptance and scope Workflow Assurance. Drafting and bounded planning synchronization only; H-NIP acceptance and H-PHASE activation await reviewable proposals and their operator decisions. Earlier clean-PR merge authorization persists."
+    },
+    {
+      "at": "2026-10-11T04:27:08.017577+00:00",
+      "event": "contract_revision_required",
+      "contract_id": "post-ga-nip-planning",
+      "attempt": 1,
+      "attempt_root": "/home/cnross/.tmp/nizam-post-ga-nip-planning-review-m488if2m",
+      "detail": "Independent ModeA and contract review rejected frozen proposal31592b88/spec2de17eb3: NDS frontmatter, durable spec_ref, provisional112 vs116 clarification, concrete WA obligation matrix/negative coverage. Preserve failed verdicts; next attempt direct fixes in new snapshot."
+    },
+    {
+      "at": "2026-10-11T04:33:08.182597+00:00",
+      "event": "contract_approved",
+      "contract_id": "post-ga-nip-planning",
+      "attempt": 2,
+      "proposal_contract_sha256": "eb000e67394381b761201ca44cdb1631edaa699a94d552ae3049671ef77348a2",
+      "proposal_spec_sha256": "0c40523d9c9edb40f226ab43d91d2765fdba36252ad839b818a36c6f7c7d51e4",
+      "detail": "Both independent gates approved with empty blocking arrays. Promote exact spec, canonical relative spec_ref and only approved lifecycle metadata; failed proposal/verdicts archived. Next isolated implementation at this committed approved base."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2835,7 +2856,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "post-ga-nip-planning",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -2907,7 +2928,7 @@
       }
     ]
   },
-  "last_action": "post-ga-nip-planning authorized; independent proposal gates pending; phase014 lifecycle and installedv1.5 preserved.",
+  "last_action": "post-ga-nip-planning contract approved; isolated implementation pending.",
   "completed_contract_ids": [
     "099",
     "103",

@@ -1,0 +1,129 @@
+{
+  "contract_id": "post-ga-nip-planning",
+  "feature_id": "post-ga-nip-planning",
+  "name": "Pending NIP3 revision and Workflow Assurance draft with truthful current planning",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_post_ga_nip_planning.md",
+  "base_revision": "4663ab4dc39020f4d3226dc0f7e5016a835b4b04",
+  "scope": {
+    "files_create": [
+      {
+        "path": "docs/nips/NIP-0004-workflow-assurance.md",
+        "purpose": "Proposed WA decisions/acceptance matrix only"
+      },
+      {
+        "path": ".agent/evidence/post-ga-nip-planning/check_nip_planning.py",
+        "purpose": "Evaluator-owned new checker and controls"
+      },
+      {
+        "path": ".agent/evidence/post-ga-nip-planning/<artifact>",
+        "purpose": "New exact-command/runtime/proof artifacts"
+      },
+      {
+        "path": ".agent/product_spec_post_ga_nip_planning.md",
+        "purpose": "Durable task spec"
+      },
+      {
+        "path": ".agent/contracts/post-ga-nip-planning.json",
+        "purpose": "Gated contract"
+      },
+      {
+        "path": ".agent/validator/post-ga-nip-planning[-name].json",
+        "purpose": "Independent A/B gates"
+      },
+      {
+        "path": ".agent/qa/post-ga-nip-planning[-name].json",
+        "purpose": "Independent contract review/QA"
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "docs/nips/NIP-0003-live-runtime-sessions.md",
+        "purpose": "Current proposed NIP/planning truth; preserved history"
+      },
+      {
+        "path": "docs/planning/backlog_dag.json",
+        "purpose": "Current proposed NIP/planning truth; preserved history"
+      },
+      {
+        "path": "docs/planning/backlog_reconciliation.md",
+        "purpose": "Current proposed NIP/planning truth; preserved history"
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Current proposed NIP/planning truth; preserved history"
+      },
+      {
+        "path": "docs/planning/HANDOVER.md",
+        "purpose": "Current proposed NIP/planning truth; preserved history"
+      },
+      {
+        "path": "docs/planning/operator_gates.md",
+        "purpose": "Current proposed NIP/planning truth; preserved history"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Current proposed NIP/planning truth; preserved history"
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Parent-only bounded coordination; immutable historical/phase fields"
+      }
+    ]
+  },
+  "non_goals": [
+    "No product edits before both gates. No runtime implementation, numbered phase features, release or installed upgrade.",
+    "No H-NIP acceptance/H-PHASE activation or policy adoption. Preserve existing WA draft authorization.",
+    "Preserve all existing phase014/manifest/DEBT/source/installed/evidence/QA/checker bytes and historical/released sections."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "AT1: NIP3 current facts match actual source/evidence/runtime/YAML and protected13-case table/four decisions preserve exact permitted normalization.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --nip3",
+      "evidence": ".agent/evidence/post-ga-nip-planning/01-nip3.txt"
+    },
+    {
+      "acceptance_test": "AT2: Proposed WA includes staged decision and acceptance matrix for identity/invalidation/gates/verdict/test ownership/routing/profile/concurrency; acceptance/activation pending. Parse eight explicit rows identity/invalidation/gates/verdict/test-ownership/routing/profiles/concurrency, every required owner/input/check/evidence/blocking-outcome/allowed-transition/gate column and unresolved-choice dependency table; proposed review pass never bypasses H-NIP.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --wa",
+      "evidence": ".agent/evidence/post-ga-nip-planning/02-wa.txt"
+    },
+    {
+      "acceptance_test": "AT3: Only authorized revision/drafting deliveries advance; consistent current inputs/edges/authority; all acceptance, future implementation and phase gates stay pending.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --planning",
+      "evidence": ".agent/evidence/post-ga-nip-planning/03-planning.txt"
+    },
+    {
+      "acceptance_test": "AT4: Exact allowed product/new task artifacts and bounded parent fields; all immutable source/evidence/history/installed/phase records preserved.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --scope",
+      "evidence": ".agent/evidence/post-ga-nip-planning/04-scope.txt"
+    },
+    {
+      "acceptance_test": "AT5: Independent isolated controls reject job-count mismatch, stale provisional IDs/F101 premise/SBCL claim, changed protected case/decision and combined authority/status acceptance spoof. Valid full proposed WA matrix passes; missing-owner, empty-row and pass-bypasses-H-NIP mutants specifically reject without setup-error substitution.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --negative",
+      "evidence": ".agent/evidence/post-ga-nip-planning/05-negative.txt"
+    },
+    {
+      "acceptance_test": "AT6: Full documentation compliance/release closeout and exact commissioned installation remain green.",
+      "command": "bash tools/validate.sh && python3 .github/scripts/release_closeout.py --mode pr && PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "evidence": ".agent/evidence/post-ga-nip-planning/06-compliance-install.txt"
+    }
+  ],
+  "estimated_lines": 500,
+  "evidence_dir": ".agent/evidence/post-ga-nip-planning/",
+  "evidence_convention": "New actual command/exit/revision output captures, plus observed runtime-version evidence; no future QA prerequisites.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1,
+    "approved_at": "2026-10-11T04:33:08.182597+00:00"
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "design_notes": {
+    "authorization_head": "55ad2f4d3f183d296e87055430997fcc07ab8cb5",
+    "immutable_table_and_decisions": "Read baseline NIP table/recorded choices structurally. Preserve four choice texts exact; table equals baseline after whole-word provisional103..113->110..120 normalization only. No universal numeric replacement across current feature facts.",
+    "checker_ownership": "Evaluator authors fresh checker; Generator owns docs after both gates. No frozen checker changes.",
+    "planning_projection": "Baseline packet authority/status preserved except actually authorized A03-RT revision and existing WA draft packets; changes bind operator task event. H-NIP/H-PHASE states remain baseline pending. No terminal-status or combined authority bypass.",
+    "scope_guard": "Exact product allowlist/new task prefix, A/M only, no deletion/rename; frozen Git-tree evidence/history/source/installed compare; runstate owned field semantic guard with append-only history/task-prefix counters limit3.",
+    "runtime_truth": "Capture actual sbcl --version to new runtime evidence; compare NIP current runtime statement with actual output. Count actual YAML five jobs, proposed distinct live_session_conformance wouldsix."
+  }
+}

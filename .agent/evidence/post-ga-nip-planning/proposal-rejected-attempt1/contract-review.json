@@ -1,0 +1,44 @@
+{
+  "feature": "post-ga-nip-planning",
+  "contract_id": "post-ga-nip-planning",
+  "reviewed_contract_sha256": "31592b88c82404d149210f0a10d8791ec3dab79b40e84848a605e0862e24ed02",
+  "reviewed_spec_sha256": "2de17eb3771789b05f93cba05b3bc9e7444b1057550f20eaacc830a0c3e27001",
+  "issues": [
+    {
+      "severity": "major",
+      "code": "spec-frontmatter",
+      "path": "/home/cnross/.tmp/nizam-post-ga-nip-planning-review-m488if2m/.agent/product_spec_post_ga_nip_planning.md",
+      "finding": "The durable task spec starts with a Markdown heading and has no NDS frontmatter. It cannot satisfy repository C1 documentation compliance when promoted.",
+      "required_fix": "Add schema-valid repository-standard frontmatter with correct task identity, version, status and change_log before promotion; rebind the reviewed spec hash."
+    },
+    {
+      "severity": "major",
+      "code": "spec-ref-portability",
+      "path": "/home/cnross/.tmp/nizam-post-ga-nip-planning-review-m488if2m/.agent/contracts/post-ga-nip-planning.json",
+      "finding": "spec_ref is an absolute temporary-directory path. Promoted contract and fresh CI would depend on a workstation-owned temporary file rather than the declared durable repository spec.",
+      "required_fix": "Set spec_ref to .agent/product_spec_post_ga_nip_planning.md; retain temporary review provenance separately if desired."
+    },
+    {
+      "severity": "major",
+      "code": "wa-testability",
+      "path": "/home/cnross/.tmp/nizam-post-ga-nip-planning-review-m488if2m/.agent/contracts/post-ga-nip-planning.json",
+      "finding": "AT2 requires a staged decision/acceptance matrix but does not define independently testable row/column obligations or responsible owners and verdict-to-transition outcomes. AT5 has no malformed-WA control. A topic-marker or empty-matrix check could pass without the requested concrete Workflow Assurance design.",
+      "required_fix": "Specify the minimum structural matrix coverage and fields, including accountable owner, obligation/input/check/evidence, blocking outcome and allowed transition, plus explicit unresolved decision choices/gate dependencies. Require at least one positive control and discriminating malformed-WA controls (e.g. missing owner, empty acceptance row or pass permitting acceptance without H-NIP). These may be implemented in the new Evaluator-owned checker after both gates."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    "Concrete WA row/owner/transition semantics and negative discrimination are not defined by the proposed verification contract."
+  ],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Add schema-valid repository-standard frontmatter with correct task identity, version, status and change_log before promotion; rebind the reviewed spec hash.",
+    "Set spec_ref to .agent/product_spec_post_ga_nip_planning.md; retain temporary review provenance separately if desired.",
+    "Specify the minimum structural matrix coverage and fields, including accountable owner, obligation/input/check/evidence, blocking outcome and allowed transition, plus explicit unresolved decision choices/gate dependencies. Require at least one positive control and discriminating malformed-WA controls (e.g. missing owner, empty acceptance row or pass permitting acceptance without H-NIP). These may be implemented in the new Evaluator-owned checker after both gates."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Rejected for two concrete promotion defects and one independent-testability gap. Six-command structure, immutable baseline preservation and drafting-only authority are otherwise coherent; absence of future checker implementation is not a defect."
+  },
+  "review": "contract-testability",
+  "revision_reviewed": 0
+}
