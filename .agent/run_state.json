@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-11T05:37:51.579095+00:00",
+  "updated_at": "2026-10-11T06:30:20.388684+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -2473,6 +2473,96 @@
       "contract_id": "post-ga-phase015-planning",
       "candidate_sha": "d9ecab3cecb40428baa63013fe8106ed63a2ad6e",
       "detail": "Independent ModeB/6 exact QA checks/18 negative controls/4 private-copy adversarial probes and evidence gate pass. Accepted NIP3/NIP4; PLAN-NEXT delivered,110-114 pending, proposed7200/9360 requires H-PHASE-015. Historical014/source/installed/priorproof unchanged. User-authorized clean-PR merge follows required checks."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_gate_decision",
+      "gate": "H-PHASE-015",
+      "contract_id": "110",
+      "phase": "015-live-runtime-normative",
+      "operator_verbatim": "approved.",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "accepted_plan_sha256": {
+        ".agent/product_spec_015.md": "1b807d73a6041158a1e6dc47a1afaa4b6913a05cca69182145f09f34d9612a5d",
+        ".agent/feature_list_015.json": "365717af00cd1264e972b7ad5e9c8015105f47f72b34167d683e704d2453f36f",
+        "docs/planning/phase_015.yaml": "8a6498cbb1ee04f73d7aa2699e244da44c4b2874baac776218d6f51d3ed487e6"
+      },
+      "original_estimate_lines": 7200,
+      "ceiling_130pct": 9360,
+      "detail": "Operator approved the explicitly requested H-PHASE-015 activation including proposed7200/9360 budget. Five-feature110-114 chain authorized; canonical activation projections recorded under first approved feature contract before execution. No016/WA phase activation, gate reduction, release or installed upgrade inferred."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "candidate-invalidation",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Explicit assessed-input graph covering source/contracts/tests/tools/environment; unknown dependencies invalidate; record-only continuity requires all assessed inputs unchanged.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "acceptance-ownership",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Sealed immutable test bundle and independent author/reviewer sessions with recorded identities; bundle changes require renewed independent review.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "routing-profiles",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Reuse existing role/profile identifiers initially; versioned extensions only for demonstrated permission/ownership gaps with explicit migration.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "shadow-profiles",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Preregister Routine/Standard/High-assurance comparisons after trusted A10/A11; same candidates/full baseline; missed baseline blocker prevents promotion; gate reduction separate operator decision.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "cause-routing",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Evidence-based cause routing within existing three-attempt limit/counter continuity; infrastructure failures remain failures; any additional cause-specific budget requires explicit approval.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "conflict-retry",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Explicit file/state conflict lanes in single existing coordination model; serialize shared ownership, isolate retries, invalidate affected evidence, rollback only owned changes.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "contract_attempt_started",
+      "contract_id": "110",
+      "attempt": 1,
+      "detail": "Dependency enforcement selects110 with no dependencies. Generator proposes bounded neutral-session feature plus authorized activation/WAdecision projections; no product edits before both pre-code approvals."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3047,7 +3137,7 @@
       }
     ]
   },
-  "last_action": "post-ga-phase015-planning complete; accepted NIP scopes and concrete pending015 plan ready for activation review.",
+  "last_action": "110 operator decisions recorded; contract proposal pending.",
   "completed_contract_ids": [
     "099",
     "103",
