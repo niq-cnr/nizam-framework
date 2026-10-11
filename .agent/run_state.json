@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-11T05:12:00.830497+00:00",
+  "updated_at": "2026-10-11T05:20:38.552444+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -337,6 +337,10 @@
       "limit": 3
     },
     "post-ga-nip-planning-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "post-ga-phase015-planning-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -2426,6 +2430,15 @@
       "operator_verbatim": "Approved and accepted, please proceed.",
       "base_revision": "650770d9b48c31748f24b5ac6967b80a6a46c5f7",
       "detail": "Record accepted proposal lifecycles and author canonical pending phase015 plan for activation review. Existing clean-PR merge authorization persists. H-PHASE-015/016/WA activation, runtime implementation, new release and installed upgrade remain separate future acts."
+    },
+    {
+      "at": "2026-10-11T05:20:38.552444+00:00",
+      "event": "contract_approved",
+      "contract_id": "post-ga-phase015-planning",
+      "attempt": 1,
+      "proposal_contract_sha256": "356104f86d22c7fe5620be3688d98c7fc12df241e6c2d25fa967c323f8d8d29a",
+      "proposal_spec_sha256": "f5cd223e1a00875f157775a82eec41b6c40ca4880bdaa160ff3d8633f25a7aad",
+      "detail": "Both independent gates parsed approved/empty. Promote exact spec and only approved lifecycle metadata. Accepted NIP3/NIP4 scopes; concrete phase015 planning authorized, execution/activation and budget approval remain separate."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2928,7 +2941,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "post-ga-phase015-planning",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -3000,7 +3013,7 @@
       }
     ]
   },
-  "last_action": "post-ga-phase015-planning: operator H-NIP acceptance recorded before proposal promotion/planning; phase014 position and budget preserved.",
+  "last_action": "post-ga-phase015-planning contract approved; isolated plan implementation pending.",
   "completed_contract_ids": [
     "099",
     "103",
