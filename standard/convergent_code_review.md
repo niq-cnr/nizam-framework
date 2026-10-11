@@ -2,10 +2,13 @@
 id: convergent-automated-code-review
 title: "Convergent Automated Code Review"
 description: "Defines prior-ledger-first, authenticated three-trial code review whose lifecycle, verdict, rendering, and replay integrity are owned by deterministic code."
-version: 1.3.0
+version: 1.3.1
 status: active
 authoritative_source: standard/convergent_code_review.md
 change_log:
+  - version: "1.3.1"
+    date: "2026-10-11"
+    summary: "Explicitly deny runtime session endpoints to observation-only trials."
   - version: "1.3.0"
     date: "2026-09-17"
     summary: "Reconcile mode-only deltas, controlled Git reads, commit parsing, sandbox and no-follow I/O, publication state, and standalone-ledger initial-head and exact current-consensus evidence guarantees."
@@ -58,6 +61,8 @@ A finding fingerprint is the SHA-256 digest of canonical JSON over `repository`,
 A line shift or rewritten explanation does not create a new finding. Changing the affected symbol, path, category, rule, or repository does. The CLI MUST recalculate every fingerprint. Raw trials contain no trusted identifier or model-owned count.
 
 ## 5. Three Independent Trials
+
+Observation-only trials MUST never receive a session endpoint or any runtime-session permission class.
 
 Every convergence run consumes **exactly three** trial documents, numbered 1, 2, and 3. Each is bound to the exact packet digest and current head. A workspace, `cwd`, or `HOME` change alone is **not isolation**. Each trial MUST run through a trusted sandbox adapter that creates a separate process session and enforces: no network connectivity; a private PID/session boundary; read/write but **no execute** access inside that trial's root; read/execute access only to the pre-resolved trusted runner and required runtime; and no access to sibling trial roots, ambient repository files, or prior-trial artifacts. A runner-generated file remains non-executable even if the runner sets its executable mode bit. The evaluator's adapter protocol is `ADAPTER --root TRIAL_ROOT --runner RUNNER -- RUNNER_ARGUMENTS...`. `tools/linux_trial_sandbox.sh` plus `tools/isolated_trial_adapter.py` is the Linux reference implementation using user/network/IPC/UTS/PID namespaces and Landlock. Other runtimes may supply an equivalent container, VM, seatbelt, or capability sandbox adapter, but fail closed if the boundary cannot be enforced.
 

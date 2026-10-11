@@ -9,6 +9,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Authorized phase015 and neutral runtime protocol (feature110).** Added active
+  consumer-aspirational live-runtime rules, generic fresh acceptance and attempt
+  continuity, narrow session permissions, review denial, durable handoff criteria
+  and same-feature source registrations. H-PHASE-015 approved7200/9360 and six
+  exact WA design selections are recorded from pre-edit operator events. Current
+  lifecycle follows canonical phase/list after independent gates. Future schemas,
+  binding, adapter and controller are deferred; WA/016 remain unallocated, all
+  live proofs pending, active gates unchanged and installed v1.5.0 immutable.
+
 - **Accepted scopes and pending phase015 plan.** Recorded operator H-NIP acceptance
   of reviewed NIP3v0.2.0/NIP4v0.1.0; both now1.0.0/active preserve the reviewed
   scope, NIP3 cases/choices and six unresolved WA options. Canonical phase015

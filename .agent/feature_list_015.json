@@ -1,11 +1,11 @@
 {
   "phase": "015-live-runtime-normative",
-  "spec_version": "0.1.0",
+  "spec_version": "1.0.0",
   "original_estimate_lines": 7200,
   "ceiling_130pct": 9360,
-  "activation_state": "proposed",
-  "phase_status": "pending",
-  "planning_note": "H-NIP accepted NIP3 scope2026-10-11; canonical110-114 allocated after actual max109. H-PHASE-015/budget approval OUTSTANDING. All tests are future-output obligations, not planning-time pass claims. 016115-120 remains provisional/unallocated. Single lane; no runtime implementation.",
+  "activation_state": "active",
+  "phase_status": "in_progress",
+  "planning_note": "H-PHASE-015 authorized2026-10-11 at06c0ae0a273facce80c57506260648c41f566ebb, approved7200/9360 including phase-level costs. Canonical110 under approved independent contract gates;111-114pending. Future-output tests do not claim live runtime proof. WA six design choices selected; WA/016 unallocated.",
   "budget_basis": {
     "counted": [
       "product",
@@ -19,7 +19,7 @@
       "run_state"
     ],
     "unclassified": "fail closed",
-    "proposed_only": true,
+    "proposed_only": false,
     "phase_level_costs": "Included inside per-feature allowances/overall7200, never extra uncapped allowance",
     "selected_comparables": {
       "ids": [
@@ -230,7 +230,7 @@
       "id": "110",
       "name": "Neutral live-runtime protocol and generic definitions",
       "description": "Define ownership/generation/serial operations, handoff and fresh acceptance; attempts/probes/declared outcomes preserve identity across stages. Amend generic02/03/permissions/review/DoD and register source modules in the same feature.",
-      "status": "pending",
+      "status": "complete",
       "dependencies": [],
       "acceptance_tests": [
         "bash tools/validate.sh",
@@ -273,7 +273,14 @@
         "tools/fixtures_self_test.sh",
         "docs/guide/index.html"
       ],
-      "semantic_review_required": "Independent Evaluator reviews normative ownership/serialization/failure/acceptance and probe/outcome/continuity semantics against accepted NIP, with negative misplaced-token/comment-only controls. Structural section checks alone never establish semantic compliance."
+      "semantic_review_required": "Independent Evaluator reviews normative ownership/serialization/failure/acceptance and probe/outcome/continuity semantics against accepted NIP, with negative misplaced-token/comment-only controls. Structural section checks alone never establish semantic compliance.",
+      "passes": true,
+      "completed_at": "2026-10-11T07:16:19.413053+00:00",
+      "qa": ".agent/qa/110.json",
+      "contract_ref": ".agent/contracts/110.json",
+      "evidence": [
+        ".agent/evidence/110/evidence-gate.txt"
+      ]
     },
     {
       "id": "111",

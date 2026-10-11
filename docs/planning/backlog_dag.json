@@ -1,22 +1,21 @@
 {
   "plan_status": "candidate",
-  "plan_status_note": "Accepted NIP3/NIP4 scopes recorded before edits; concrete pending canonical015 plan allocates110-114/proposed7200/9360. PLAN-NEXT planning delivery is complete after actual independent source review EXIT0/hash-bound proof. H-PHASE-015/budget approval and every implementation remain pending. PLAN-WA after114; PLAN-016 after114/PLAN-WA; WAphase and016115-120 unallocated, six WA choices unresolved. Historical014/installedv1.5 and old proof remain frozen.",
+  "plan_status_note": "H-PHASE-015 active under06c0ae0a273facce80c57506260648c41f566ebb; approved7200/9360 including phase-level costs. Canonical feature/list governs lifecycle;111-114pending. Six WA selections recorded, implementation/planning after114 remains pending; WA/016 unallocated. Historical014/installedv1.5 immutable.",
   "generated_at": "2026-10-11",
   "base_commit": "08f97b0e8b1002ac0d8362ed147e7253726a5415",
   "base_commit_note": "Approved docs-only phase015-planning implementation base after exact operator H-NIP events; canonical phase014 records/current position remain unchanged.",
   "packet_schema": "schema/work-packet.schema.json",
   "authoritative_human_view": "docs/planning/backlog_reconciliation.md",
   "activated_phase": {
-    "phase_id": "014-ga-track",
-    "feature_list": ".agent/feature_list_014.json",
-    "spec_version": "1.1.7",
-    "original_estimate_lines": 8600,
-    "ceiling_130pct": 11180,
-    "budget_basis": "SUPERSEDED 2026-10-09 by spec 1.1.4 (refreshed here 2026-10-10, handover): the phase-014 counting rule (.agent/evidence/scope-budget-014/measure.py; budget-counted = product + contract + verdict + audit + planning; evidence tracked, never gated; run_state excluded) re-baselined original_estimate_lines 6660 -> 8600 and the ceiling 8658 -> 11180. Was: Planner activation-time estimate, naive 2890 x the measured 2.3 process weight (docs/nips/NIP-0003-live-runtime-sessions.md:494-495).",
-    "budget_approval": "8600/11180: operator 'option 1 confirmed.' (run_state 2026-10-09T17:59:00Z; decision operator_gate_decision 2026-10-09T17:42:10Z). Was 6660/8658: operator, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z).",
-    "run_state_position": "Phase014 is complete. Nine completed features and two cancelled terminal features; final measured budget8705 of8600 (ceiling11180). Current out-of-phase planning refresh and separately contracted maintenance do not reactivate phase014.",
-    "current_status": "complete",
-    "actual_lines": 8705
+    "phase_id": "015-live-runtime-normative",
+    "feature_list": ".agent/feature_list_015.json",
+    "spec_version": "1.0.0",
+    "original_estimate_lines": 7200,
+    "ceiling_130pct": 9360,
+    "current_status": "in_progress",
+    "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
+    "run_state_position": "Derived by Orchestrator from canonical phase/list;110 approved implementation,111-114pending.",
+    "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
   },
   "estimate_weighting": {
     "low": 2.3,
@@ -2535,7 +2534,7 @@
         "canonical phase015 feature110"
       ],
       "provisional_feature_id": "110",
-      "phase_id_proposed": "015-live-runtime-normative (pending/proposed)",
+      "phase_id_proposed": "015-live-runtime-normative (active)",
       "objective": "Define ownership/generation/serial operations, handoff and fresh acceptance; attempts/probes/declared outcomes preserve identity across stages. Amend generic02/03/permissions/review/DoD and register source modules in the same feature.",
       "scope": {
         "allowed_paths": [
@@ -2558,32 +2557,34 @@
         "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'NIZAM.json'\"'\"').read_text()); assert any(v['\"'\"'authoritative_source'\"'\"']=='\"'\"'methodology/10_live_runtime_sessions.md'\"'\"' for v in d['\"'\"'capabilities'\"'\"'])'"
       ],
       "evidence": [
-        ".agent/evidence/110/"
+        ".agent/evidence/110/",
+        ".agent/qa/110.json",
+        ".agent/evidence/110/evidence-gate.txt"
       ],
       "non_goals": [
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
-      "authority_status": "blocked-on-H-PHASE-015",
+      "status": "complete",
+      "authority_status": "authorized",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
           "satisfied": true,
-          "reason": "PLAN-NEXT concrete pending015 plan source review is complete; H-PHASE-015/budget approval remains outstanding, implementation authority false."
+          "reason": "Canonical lifecycle is read from feature_list_015.json; predecessor completion remains required."
         },
         "authority": {
-          "satisfied": false,
-          "reason": "H-NIP scope accepted; H-PHASE-015 and proposed7200/9360 budget approval OUTSTANDING, then independent per-feature contracts."
+          "satisfied": true,
+          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
         },
         "environment": {
           "satisfied": true,
           "reason": "none (normative + schema)"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Pending015 plan source is available; feature implementation acceptance/QA/evidence is not delivered."
+          "satisfied": true,
+          "reason": "Actual independent sealed-bundle acceptance21/21 at370c877 and Parent evidence gate passed;110 canonical complete."
         }
       },
       "estimate": {
@@ -2595,7 +2596,7 @@
           1600,
           1600
         ],
-        "basis": "Concrete pending015 spec/list0.1.0 proposed counted allowance; phase-level costs inside overall7200, budget approval pending."
+        "basis": "Approved015 spec/list1.0.0 counted allowance including phase-level costs within7200/9360."
       },
       "release_impact": "MINOR (NIP-0003 Compatibility table)",
       "retry_identity": "canonical 110",
@@ -2632,7 +2633,7 @@
         "canonical phase015 feature111"
       ],
       "provisional_feature_id": "111",
-      "phase_id_proposed": "015-live-runtime-normative (pending/proposed)",
+      "phase_id_proposed": "015-live-runtime-normative (active)",
       "objective": "Two closed Draft2020-12 schemas carry phase016 fields from outset; eighteen named fixtures, C12 family/router/relational registration and top-level fixture completeness rows; no nested runtime claim yet.",
       "scope": {
         "allowed_paths": [
@@ -2679,17 +2680,17 @@
       ],
       "concurrency_lane": "single-writer",
       "status": "pending",
-      "authority_status": "blocked-on-H-PHASE-015",
+      "authority_status": "blocked-on-contract-and-predecessor",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "Canonical predecessor110 is pending; no feature implemented."
+          "satisfied": true,
+          "reason": "Canonical110 is complete after independentModeB2/sealed21/21QA/evidencegate;111 still requires its own two pre-code contract gates."
         },
         "authority": {
           "satisfied": false,
-          "reason": "H-NIP scope accepted; H-PHASE-015 and proposed7200/9360 budget approval OUTSTANDING, then independent per-feature contracts."
+          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
         },
         "environment": {
           "satisfied": true,
@@ -2709,7 +2710,7 @@
           2200,
           2200
         ],
-        "basis": "Concrete pending015 spec/list0.1.0 proposed counted allowance; phase-level costs inside overall7200, budget approval pending."
+        "basis": "Approved015 spec/list1.0.0 counted allowance including phase-level costs within7200/9360."
       },
       "release_impact": "MINOR (NIP-0003 Compatibility table)",
       "retry_identity": "canonical 111",
@@ -2745,7 +2746,7 @@
         "canonical phase015 feature112"
       ],
       "provisional_feature_id": "112",
-      "phase_id_proposed": "015-live-runtime-normative (pending/proposed)",
+      "phase_id_proposed": "015-live-runtime-normative (active)",
       "objective": "Toolchain/lock/core provenance; non-atomic load/compile, conditions, drift and thread/cancellation hazards; fresh process/build/hermetic resolution. ASDF forms illustrative until phase016 proof.",
       "scope": {
         "allowed_paths": [
@@ -2773,17 +2774,17 @@
       ],
       "concurrency_lane": "single-writer",
       "status": "pending",
-      "authority_status": "blocked-on-H-PHASE-015",
+      "authority_status": "blocked-on-contract-and-predecessor",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
           "satisfied": false,
-          "reason": "Canonical predecessor111 is pending; no feature implemented."
+          "reason": "Canonical lifecycle is read from feature_list_015.json; predecessor completion remains required."
         },
         "authority": {
           "satisfied": false,
-          "reason": "H-NIP scope accepted; H-PHASE-015 and proposed7200/9360 budget approval OUTSTANDING, then independent per-feature contracts."
+          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
         },
         "environment": {
           "satisfied": true,
@@ -2803,7 +2804,7 @@
           1200,
           1200
         ],
-        "basis": "Concrete pending015 spec/list0.1.0 proposed counted allowance; phase-level costs inside overall7200, budget approval pending."
+        "basis": "Approved015 spec/list1.0.0 counted allowance including phase-level costs within7200/9360."
       },
       "release_impact": "MINOR (NIP-0003 Compatibility table)",
       "retry_identity": "canonical 112",
@@ -2835,7 +2836,7 @@
         "canonical phase015 feature113"
       ],
       "provisional_feature_id": "113",
-      "phase_id_proposed": "015-live-runtime-normative (pending/proposed)",
+      "phase_id_proposed": "015-live-runtime-normative (active)",
       "objective": "Optional live_runtime_session required:false; interface Section5 retains ten items, seven lifecycle/operation calls and conditional S1-S9; index/skill/router crosslinks in same feature. Existing adapters remain compatible.",
       "scope": {
         "allowed_paths": [
@@ -2862,17 +2863,17 @@
       ],
       "concurrency_lane": "single-writer",
       "status": "pending",
-      "authority_status": "blocked-on-H-PHASE-015",
+      "authority_status": "blocked-on-contract-and-predecessor",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
           "satisfied": false,
-          "reason": "Canonical predecessor112 is pending; no feature implemented."
+          "reason": "Canonical lifecycle is read from feature_list_015.json; predecessor completion remains required."
         },
         "authority": {
           "satisfied": false,
-          "reason": "H-NIP scope accepted; H-PHASE-015 and proposed7200/9360 budget approval OUTSTANDING, then independent per-feature contracts."
+          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
         },
         "environment": {
           "satisfied": true,
@@ -2892,7 +2893,7 @@
           1050,
           1050
         ],
-        "basis": "Concrete pending015 spec/list0.1.0 proposed counted allowance; phase-level costs inside overall7200, budget approval pending."
+        "basis": "Approved015 spec/list1.0.0 counted allowance including phase-level costs within7200/9360."
       },
       "release_impact": "MINOR (NIP-0003 Compatibility table)",
       "retry_identity": "canonical 113",
@@ -2928,7 +2929,7 @@
         "canonical phase015 feature114"
       ],
       "provisional_feature_id": "114",
-      "phase_id_proposed": "015-live-runtime-normative (pending/proposed)",
+      "phase_id_proposed": "015-live-runtime-normative (active)",
       "objective": "Candidate-bound readiness/QA/evidence and close; release number decided later, operator release/tag separate. Phase015 fixtures never establish live13-case phase016 conformance.",
       "scope": {
         "allowed_paths": [
@@ -2955,17 +2956,17 @@
       ],
       "concurrency_lane": "single-writer",
       "status": "pending",
-      "authority_status": "blocked-on-H-PHASE-015",
+      "authority_status": "blocked-on-contract-and-predecessor",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
           "satisfied": false,
-          "reason": "Canonical predecessor113 is pending; no feature implemented."
+          "reason": "Canonical lifecycle is read from feature_list_015.json; predecessor completion remains required."
         },
         "authority": {
           "satisfied": false,
-          "reason": "H-NIP scope accepted; H-PHASE-015 and proposed7200/9360 budget approval OUTSTANDING, then independent per-feature contracts."
+          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
         },
         "environment": {
           "satisfied": true,
@@ -2985,7 +2986,7 @@
           1150,
           1150
         ],
-        "basis": "Concrete pending015 spec/list0.1.0 proposed counted allowance; phase-level costs inside overall7200, budget approval pending."
+        "basis": "Approved015 spec/list1.0.0 counted allowance including phase-level costs within7200/9360."
       },
       "release_impact": "MINOR (NIP-0003 Compatibility table)",
       "retry_identity": "canonical 114",
@@ -3060,7 +3061,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Accepted scope/current historical inputs available; canonical114 close and unresolved WA choices are not delivered."
+          "reason": "Six WA design decisions recorded at06c0ae0; canonical114 close remains required before pending planning; no WA/016 allocation."
         }
       },
       "estimate": {
@@ -3159,7 +3160,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Accepted scope/current historical inputs available; canonical114 close and unresolved WA choices are not delivered."
+          "reason": "Six WA design decisions recorded at06c0ae0; canonical114 close remains required before pending planning; no WA/016 allocation."
         }
       },
       "estimate": {
@@ -4382,5 +4383,85 @@
     "capable_ci_receipt": ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json",
     "qa": ".agent/qa/post-ga-maintenance.json",
     "evidence_gate": ".agent/evidence/post-ga-maintenance/evidence-gate.txt"
-  }
+  },
+  "historical_phase014": {
+    "phase_id": "014-ga-track",
+    "feature_list": ".agent/feature_list_014.json",
+    "spec_version": "1.1.7",
+    "original_estimate_lines": 8600,
+    "ceiling_130pct": 11180,
+    "budget_basis": "SUPERSEDED 2026-10-09 by spec 1.1.4 (refreshed here 2026-10-10, handover): the phase-014 counting rule (.agent/evidence/scope-budget-014/measure.py; budget-counted = product + contract + verdict + audit + planning; evidence tracked, never gated; run_state excluded) re-baselined original_estimate_lines 6660 -> 8600 and the ceiling 8658 -> 11180. Was: Planner activation-time estimate, naive 2890 x the measured 2.3 process weight (docs/nips/NIP-0003-live-runtime-sessions.md:494-495).",
+    "budget_approval": "8600/11180: operator 'option 1 confirmed.' (run_state 2026-10-09T17:59:00Z; decision operator_gate_decision 2026-10-09T17:42:10Z). Was 6660/8658: operator, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z).",
+    "run_state_position": "Phase014 is complete. Nine completed features and two cancelled terminal features; final measured budget8705 of8600 (ceiling11180). Current out-of-phase planning refresh and separately contracted maintenance do not reactivate phase014.",
+    "current_status": "complete",
+    "actual_lines": 8705
+  },
+  "wa_design_decisions": [
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "candidate-invalidation",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Explicit assessed-input graph covering source/contracts/tests/tools/environment; unknown dependencies invalidate; record-only continuity requires all assessed inputs unchanged.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "acceptance-ownership",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Sealed immutable test bundle and independent author/reviewer sessions with recorded identities; bundle changes require renewed independent review.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "routing-profiles",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Reuse existing role/profile identifiers initially; versioned extensions only for demonstrated permission/ownership gaps with explicit migration.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "shadow-profiles",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Preregister Routine/Standard/High-assurance comparisons after trusted A10/A11; same candidates/full baseline; missed baseline blocker prevents promotion; gate reduction separate operator decision.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "cause-routing",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Evidence-based cause routing within existing three-attempt limit/counter continuity; infrastructure failures remain failures; any additional cause-specific budget requires explicit approval.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    },
+    {
+      "at": "2026-10-11T06:30:20.388684+00:00",
+      "event": "operator_design_decision",
+      "contract_id": "110",
+      "proposal": "NIP-0004",
+      "choice_id": "conflict-retry",
+      "accepted_source_sha": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+      "operator_verbatim": "approved. plese proceed as reocommeded with all items.",
+      "selected_recommendation": "Explicit file/state conflict lanes in single existing coordination model; serialize shared ownership, isolate retries, invalidate affected evidence, rollback only owned changes.",
+      "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+    }
+  ]
 }
