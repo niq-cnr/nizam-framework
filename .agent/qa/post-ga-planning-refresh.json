@@ -1,10 +1,11 @@
 {
   "feature_id": "post-ga-planning-refresh",
-  "qa_pass": false,
+  "qa_pass": true,
   "checks_run": 6,
   "checks_passed": 6,
-  "executed_at": "2026-10-11T02:49:13.139546+00:00",
-  "candidate_sha": "62773a95b7e9a4c19b71befdcb1dc3756c6ce896",
+  "executed_at": "2026-10-11T03:02:58.680850+00:00",
+  "candidate_sha": "bf911209e408c620e18f9c841ddbe230896a93d3",
+  "implementation_attempt": 3,
   "checks": [
     {
       "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-planning-refresh/check_current_view.py",
@@ -45,9 +46,10 @@
   ],
   "adversarial": {
     "performed": true,
-    "description": "Independent externalDAG mutation marks NIP3-110 authorized with satisfied authority prerequisite without any actual NIP/phase decision",
-    "result": "fail: malformed unauthorized future packet still passes checker exit0",
-    "evidence": ".agent/evidence/post-ga-planning-refresh/post-ga-planning-refresh-qa-adversarial.txt"
+    "description": "Independent externalDAG parameterized combined authorized status/authority satisfaction/in_progress activation across all26 nonterminal nonfeature packets; unchanged actualprojection positivecontrol first",
+    "result": "pass: all26 malformedactivations rejected exit1 by specific unrecordedauthority/status guard; unchanged projection accepted exit0",
+    "evidence": ".agent/evidence/post-ga-planning-refresh/post-ga-planning-refresh-qa-adversarial-r1.txt",
+    "mutations_checked": 26
   },
   "evidence_files": [
     ".agent/evidence/post-ga-planning-refresh/01-current-view.txt",
@@ -56,23 +58,16 @@
     ".agent/evidence/post-ga-planning-refresh/04-scope-and-preservation.txt",
     ".agent/evidence/post-ga-planning-refresh/05-compliance.txt",
     ".agent/evidence/post-ga-planning-refresh/06-installed-governance.txt",
-    ".agent/evidence/post-ga-planning-refresh/post-ga-planning-refresh-qa-adversarial.txt"
+    ".agent/evidence/post-ga-planning-refresh/post-ga-planning-refresh-qa-adversarial-r1.txt"
   ],
-  "issues": [
-    {
-      "acceptance_test": "AT1/AT2 bounded future authority",
-      "evidence": ".agent/evidence/post-ga-planning-refresh/post-ga-planning-refresh-qa-adversarial.txt",
-      "description": "Checker guards future authorization for PLAN-NEXT/PLAN-WA/A03-WA-FINAL only. An unrecorded authorization of NIP3-110 passes when both authority_status and prerequisite authority satisfaction are changed together."
-    }
-  ],
+  "issues": [],
   "missing_acceptance_coverage": [],
   "unsupported_claims": [],
-  "required_fixes": [
-    "Bind future NIP3 packet authority to the actual unchanged outstanding NIP/phase gates: reject unrecorded authorized status and satisfied authority prerequisites across those future packets, preserving any existing permitted drafting authority outside that set. Add targeted negative for simultaneous status/boolean authority mutation."
-  ],
+  "required_fixes": [],
   "final_verdict": {
-    "approved": false,
-    "summary": "Six contracted checks pass at62773a9, but independent spot-check demonstrates unauthorized NIP3-110 authority false-pass. One narrow checker/negative-control correction required; source and historical/installed preservation checks passed."
+    "approved": true,
+    "summary": "All six independent contracted checks pass atbf91120. Global base-anchored authority/status projection closes the observed false-pass; independent26-case combinedactivation probe discriminates every futurepacket. Exact canonical complete/cancelled mirrors, factual prerequisites/current views and frozen source/installed/history/evidence preservation confirmed."
   },
-  "dod_ref": ".nizam/standard/definition_of_done.md"
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "prior_failure": ".agent/qa/post-ga-planning-refresh-attempt2.json"
 }
