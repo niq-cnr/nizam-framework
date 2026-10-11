@@ -1,0 +1,80 @@
+{
+  "feature_id": "post-ga-maintenance",
+  "candidate_sha": "7221cd17a7c2d2188de0094b8ea008e4e192a0c4",
+  "implementation_attempt": 1,
+  "qa_pass": true,
+  "checks_run": 6,
+  "checks_passed": 6,
+  "executed_at": "2026-10-11T03:40:07.789393+00:00",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py",
+      "acceptance_test": "AT1: Evaluator-authored actual C13 interruption test is red on approved-base source, then green on repaired source; original bytes/owned cleanup/sentinel/subshell ownership discriminated.",
+      "evidence": ".agent/evidence/post-ga-maintenance/01-c13-cleanup.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py",
+      "acceptance_test": "AT2: Capable-host blackbox sandbox positives and isolated namespace/Landlock/generated-exec mutants discriminate40/41/42; setup errors never pass.",
+      "evidence": ".agent/evidence/post-ga-maintenance/02-sandbox-boundaries.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh",
+      "acceptance_test": "AT3: Full required-conformance suite and standing fixtures pass on capableCI, actual CI logs/headSHA captured; restricted local host is explicitly non-full, never substituted for CI proof.",
+      "evidence": ".agent/evidence/post-ga-maintenance/03-required-conformance.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/validate.sh && python3 .github/scripts/release_closeout.py --mode pr && PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-maintenance/check_maintenance_view.py --source",
+      "acceptance_test": "AT4: Actual help/doc roles/frontmatter and full compliance/release anchors pass; validator behavior and role mapping unchanged.",
+      "evidence": ".agent/evidence/post-ga-maintenance/04-source-truth.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-maintenance/check_maintenance_view.py --scope && PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "acceptance_test": "AT5: Exact source/test/document scope, frozen phase/stage1evidence/installed v1.5.0/sandbox and bounded parent state remain intact.",
+      "evidence": ".agent/evidence/post-ga-maintenance/05-scope-preservation.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-maintenance/check_maintenance_view.py --stage intake --self-test",
+      "acceptance_test": "AT6: Explicit intake stage requires three debts still Open and A04a pending; closure predicate negatives reject missing CI/QA, stale candidate hashes, receipt-head mismatch and terminal-status spoof. Independent final closure is a later required command, never satisfied by intake.",
+      "evidence": ".agent/evidence/post-ga-maintenance/06-maintenance-closure.txt",
+      "exit_code": 0
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Two actual scratch-only runtime mutants independently omit backup restoration or reject correct scratch ownership; genuine private-copy harness must detect both.",
+    "result": "pass: both mutants reached actual swap barrier and returned exit 1 with C13 RESTORATION FAIL",
+    "evidence": ".agent/evidence/post-ga-maintenance/qa-adversarial.txt",
+    "mutations_checked": 2
+  },
+  "evidence_files": [
+    ".agent/evidence/post-ga-maintenance/01-c13-cleanup.txt",
+    ".agent/evidence/post-ga-maintenance/02-sandbox-boundaries.txt",
+    ".agent/evidence/post-ga-maintenance/03-required-conformance.txt",
+    ".agent/evidence/post-ga-maintenance/04-source-truth.txt",
+    ".agent/evidence/post-ga-maintenance/05-scope-preservation.txt",
+    ".agent/evidence/post-ga-maintenance/06-maintenance-closure.txt",
+    ".agent/evidence/post-ga-maintenance/00-c13-red-base.txt",
+    ".agent/evidence/post-ga-maintenance/red-base-receipt.json",
+    ".agent/evidence/post-ga-maintenance/source-candidate.json",
+    ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json",
+    ".agent/evidence/post-ga-maintenance/fresh-ci-run.json",
+    ".agent/evidence/post-ga-maintenance/fresh-ci-jobs.json",
+    ".agent/evidence/post-ga-maintenance/fresh-ci-fixtures-log.txt",
+    ".agent/evidence/post-ga-maintenance/fresh-ci-convergent-log.txt",
+    ".agent/evidence/post-ga-maintenance/qa-adversarial.txt"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "All six checks passed against fixed source candidate 7221cd17. Evaluator initiated fresh compliance attempt 2; real executing-job receipts match all nine candidate source digests. Actual capable sandbox controls discriminate 40/41/42, missing interpreter is setup code 53, and full required 54-test suite plus all 147 fixtures pass. Local compliance/scope/intake checks pass; historical installed release and evidence preserved. Debt and A04a closure remains separately gated."
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

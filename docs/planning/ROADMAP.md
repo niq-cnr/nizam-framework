@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.55.0
+version: 0.56.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.56.0"
+    date: "2026-10-11"
+    summary: "Record verified bounded maintenance at fixed source candidate 7221cd17a7c2d2188de0094b8ea008e4e192a0c4: fresh capable CI38108704971 attempt2, independent6/6 QA and successful evidence gate. Resolve only NDEBT-047/046/045 and complete A04a; preserve source digests, historical assessments, future gates and installed v1.5.0."
   - version: "0.55.0"
     date: "2026-10-11"
     summary: "Record merged planning PR81 and independently gated maintenance source intake; three debts remain Open and A04a pending until real capable CI and independent QA/evidence closure. Preserve historical assessments and installed v1.5.0."
@@ -797,9 +800,9 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-11)
 
-Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`; the separate maintenance contract is independently approved. NDEBT-047/046/045 remain Open and A04a pending during source intake, with actual capable CI and independent QA/evidence closure required.
+Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
 
-- **Current planning refresh is authorized; separate maintenance follows after merge.** The [current backlog view](backlog_reconciliation.md) now mirrors all canonical completed/cancelled phase014 statuses, treats F100/F101 as terminal and replaces obsolete F101 planning-input premises with actual historical102/current debt and commissioned local evidence. Only NDEBT-047, NDEBT-046, NDEBT-045 and A04a are authorized for a separately gated maintenance contract after this planning PR merges. No NIP3/WA acceptance, phase015 activation, release or installed-governance upgrade is authorized. The current view and new checker preserve historical phase/evidence records.
+- **Current planning refresh merged; bounded maintenance is verified.** The [current backlog view](backlog_reconciliation.md) retains exact complete/cancelled canonical mirrors and factual planning inputs. Resolved NDEBT-047/046/045 and completed A04a cite actual maintenance QA/CI proof; NIP3/WA acceptance, phase015 activation, release and installed-upgrade authority remain excluded. Both prior planning checkers and historical evidence stay frozen.
 - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
 - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. No next phase is activated. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
@@ -924,11 +927,12 @@ Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`; the separate
   finding; affected consumers must follow `docs/migration-v1.0.0.md` and obtain their
   own `H-CONSUMER-UPGRADE` decision before adoption. **`NDEBT-036` resolved.** v0.9.0
   (released 2026-07-22 at merge commit `5b19b85`, PR #50) is the preceding release.
-- Open debt (current, at DEBT.md v0.54.0): five rows remain Open, all Low —
-  `NDEBT-047` (self-test C13 swap without an EXIT backstop), `NDEBT-046` (sandbox-test namespace
-  discrimination), `NDEBT-045` (`--payload` help paragraph), `NDEBT-040` (SHA-anchored run_state
-  byte-guards) and `NDEBT-034` (per-member clone cost; its pilot-100 deferral trigger is extinct
-  after amendment A3 — closure proposed to the operator at the phase close). Phase 014 has
+- Open debt (current, at DEBT.md v0.56.0): two rows remain Open, both Low —
+  `NDEBT-040` (SHA-anchored run_state byte-guards) and `NDEBT-034` (per-member clone
+  cost; its pilot-100 deferral trigger is extinct after amendment A3 — closure
+  proposed to the operator at the phase close). This maintenance has **Resolved**
+  `NDEBT-047` (C13 owned cleanup), `NDEBT-046` (sandbox-test discrimination) and
+  `NDEBT-045` (payload help), with actual candidate-bound CI/QA/evidence proof. Phase 014 has
   **Resolved** `NDEBT-044` (index and documentation drift bundle; concern (e) rolled by feature
   102's phase-close refresh), `NDEBT-043`,
   `NDEBT-041` and `NDEBT-042` (features 103, 104, 105).

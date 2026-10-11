@@ -1,0 +1,51 @@
+{
+  "feature_id": "post-ga-maintenance",
+  "stage": "final-record-supplement",
+  "candidate_sha": "7221cd17a7c2d2188de0094b8ea008e4e192a0c4",
+  "primary_qa": ".agent/qa/post-ga-maintenance.json",
+  "qa_pass": true,
+  "checks_run": 3,
+  "checks_passed": 3,
+  "executed_at": "2026-10-11T03:54:26.247054+00:00",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-maintenance/check_maintenance_view.py --stage final --self-test",
+      "evidence": ".agent/evidence/post-ga-maintenance/06-final-maintenance-closure.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-maintenance/check_maintenance_view.py --scope",
+      "evidence": ".agent/evidence/post-ga-maintenance/final-scope.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/validate.sh && python3 .github/scripts/release_closeout.py --mode pr",
+      "evidence": ".agent/evidence/post-ga-maintenance/final-compliance.txt",
+      "exit_code": 0
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Independent tamper controls on actual parsed final proof: append corrupted bytes to archived CI/red output or substitute a primary QA command.",
+    "result": "pass: actual unmodified proof accepted; all three mutations rejected specifically by ci-log, red-digest and qa-binding",
+    "evidence": ".agent/evidence/post-ga-maintenance/final-adversarial.txt",
+    "mutations_checked": 3
+  },
+  "evidence_files": [
+    ".agent/evidence/post-ga-maintenance/06-final-maintenance-closure.txt",
+    ".agent/evidence/post-ga-maintenance/final-scope.txt",
+    ".agent/evidence/post-ga-maintenance/final-compliance.txt",
+    ".agent/evidence/post-ga-maintenance/final-adversarial.txt",
+    ".agent/evidence/post-ga-maintenance/final-proof-preservation.txt",
+    ".agent/evidence/post-ga-maintenance/primary-proof-sha256.json"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Strict final-stage closure, scope and full compliance/release-closeout all pass. Three independent actual-proof tamper controls reject. All primary QA/proof bytes remain unchanged; final records bind the same nine-source candidate and fresh capable CI attempt, with debts resolved and A04a complete."
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

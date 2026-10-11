@@ -2,7 +2,7 @@
   "contract_id": "post-ga-maintenance",
   "feature_id": "post-ga-maintenance",
   "name": "Evaluator-tested C13 cleanup/sandbox adequacy, truthful payload help and Evaluator role-text maintenance",
-  "status": "approved",
+  "status": "complete",
   "spec_ref": ".agent/product_spec_post_ga_maintenance.md",
   "base_revision": "0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2",
   "scope": {
@@ -248,5 +248,16 @@
     },
     "scope_semantics": "Compare product paths and new task metadata only to actual PR1 merge base. Parent run_state may change only updated_at, active_contract_id, last_action, append-only task history and post-ga-maintenance-prefixed bounded counters (limit3/attempts0..3); all phase/budget/status fields and prior history/counters remain exact. Freeze all previously existing evidence, including post-ga-planning-refresh. No deletions/renames, no installed or sandbox source changes; tools/validate.sh content outside its --payload help paragraph byte-identical to base. Released CHANGELOG sections and HANDOVER historical snapshot byte-identical to base.",
     "source_commit_ordering": "All CI acceptance commands and checkout/digest receipt emission are stateless with respect to source-candidate.json, CI receipt, QA and final closure. Parent first commits/pushes repaired source with intake docs; then captures that actual commit SHA outside repository and writes fixed source-candidate metadata later. Evaluator fresh actual CI execution/rerun stays at the same PR source head before evidence metadata commits. Subsequent docs/evidence commits may move HEAD; nine assessed source/test/workflow bytes must remain identical to fixed candidate. Never embed a commit own SHA in the same commit or require future candidate metadata in source CI."
+  },
+  "completed_at": "2026-10-11T03:55:15.887518+00:00",
+  "completion": {
+    "source_candidate_sha": "7221cd17a7c2d2188de0094b8ea008e4e192a0c4",
+    "qa": ".agent/qa/post-ga-maintenance.json",
+    "evidence_gate": ".agent/evidence/post-ga-maintenance/evidence-gate.txt",
+    "closeout_qa": ".agent/qa/post-ga-maintenance-closeout.json",
+    "closeout_evidence_gate": ".agent/evidence/post-ga-maintenance/closeout-evidence-gate.txt",
+    "final_closure": ".agent/evidence/post-ga-maintenance/06-final-maintenance-closure.txt",
+    "ci_run": 38108704971,
+    "ci_attempt": 2
   }
 }

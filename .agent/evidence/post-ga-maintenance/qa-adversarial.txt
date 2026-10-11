@@ -1,0 +1,21 @@
+COMMAND: independent private-copy cleanup ownership/restoration mutants
+CANDIDATE_SHA: 7221cd17a7c2d2188de0094b8ea008e4e192a0c4
+STARTED_AT: 2026-10-11T03:38:29.155933+00:00
+MUTANT: restoration omitted
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+ACTUAL SWAP BARRIER: exact dangling fixture bytes observed
+C13 RESTORATION FAIL: original skill.json bytes were not restored; owned backup/scratch paths remain: ['/home/cnross/.tmp/nizam-c13-regression-ozr96jax/owned-temporary/tmp.Io5z3sCVHj']; parent-owned backup did not restore original bytes after child cleanup; child/parent scratch ownership not preserved: code 45
+
+
+ACTUAL_MUTANT_EXIT: 1
+DISCRIMINATED: True
+MUTANT: scratch process ownership rejected
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+ACTUAL SWAP BARRIER: exact dangling fixture bytes observed
+C13 RESTORATION FAIL: owned backup/scratch paths remain: ['/home/cnross/.tmp/nizam-c13-regression-jwl3sld9/owned-temporary/tmp.1KfpoQRYHE', '/home/cnross/.tmp/nizam-c13-regression-jwl3sld9/owned-temporary/tmp.QyHoHS3hwV', '/home/cnross/.tmp/nizam-c13-regression-jwl3sld9/owned-temporary/tmp.1h9DUJvBYF', '/home/cnross/.tmp/nizam-c13-regression-jwl3sld9/owned-temporary/tmp.sGlBcvfc42', '/home/cnross/.tmp/nizam-c13-regression-jwl3sld9/owned-temporary/tmp.bdtMco1WNh', '/home/cnross/.tmp/nizam-c13-regression-jwl3sld9/owned-temporary/tmp.cAMwVyrxcL', '/home/cnross/.tmp/nizam-c13-regression-jwl3sld9/owned-temporary/tmp.VSIIWuB9VX', '/home/cnross/.tmp/nizam-c13-regression-jwl3sld9/owned-temporary/tmp.R9fz4cAytU']; child/parent scratch ownership not preserved: code 1
+
+
+ACTUAL_MUTANT_EXIT: 1
+DISCRIMINATED: True
+EXIT: 0
+COMPLETED_AT: 2026-10-11T03:38:37.751755+00:00
