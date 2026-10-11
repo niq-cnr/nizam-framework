@@ -1,0 +1,28 @@
+{
+  "review": "checker-development-failure",
+  "feature": "111",
+  "stage": "third-final-test-author-checkpoint",
+  "attempt_root": "/home/cnross/.tmp/nizam-111-checker3-kyeqri6t",
+  "checker_sha256": "c572b773fc234518a773bfb3cfa74fd00b04661c7414c562626e3f66c66b7678",
+  "actual_exit": 1,
+  "passed_named_controls_before_failure": 34,
+  "evidence": ".agent/evidence/111/checker-development-checkpoint3.txt",
+  "snapshot": ".agent/evidence/111/checker-development-failed3-snapshot.json",
+  "issues": [
+    {
+      "verification_index": "AT34",
+      "criterion": "Discriminating fixture-polarity controls must match the intended invariant failure after architecture-level fault-domain separation.",
+      "evidence": ".agent/evidence/111/checker-development-checkpoint3.txt",
+      "required_fix": "Control expected fixture-target for a repaired negative; direct helper validity now triggers earlier fixture-relation rejection. Third attempt exhausted: repair/re-execution requires human resolution under circuit-breaker halt; no autonomous fourth attempt.",
+      "severity": "medium"
+    }
+  ],
+  "missing_acceptance_coverage": [
+    "Installed/untracked-path and historical110 proof private mutation controls were not reached after the fixture-polarity harness failure."
+  ],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Final checker-development checkpoint EXIT1. The implementation correctly rejected the polarity mutant, but the control harness expected the wrong fault-domain diagnostic. All34 earlier named controls and18fixture/counterfactual checks passed; required remaining controls incomplete. No source defect inferred, no formalQA began, no fourth attempt or repair performed."
+  }
+}

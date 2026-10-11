@@ -1,0 +1,37 @@
+COMMAND: python3 .agent/evidence/scope-budget-014/measure.py --range 111=a15be05d9ede7eadf4a2b848989f9386cfb2f617.. --files
+STAGE: halted in-flight metadata, unpromoted product draft quarantined as evidence
+== 111: a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE
+   resolved a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE+untracked
+   paths=33 binary_paths=2
+   class                       files   lines
+   budget/product                  0       0
+   budget/product-ext              0       0
+   budget/contract                 1     641
+   budget/verdict                  2      61
+   budget/audit-deliverable        0       0
+   budget/planning                 6      54
+   evidence                       23    3132
+   excluded/run_state              1     188
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/contract                641  .agent/contracts/111.json
+   budget/verdict                  25  .agent/qa/111-contract-review.json
+   budget/verdict                  36  .agent/validator/111-mode-a.json
+   budget/planning                  9  .agent/feature_list_015.json
+   budget/planning                  8  .agent/product_spec_015.md
+   budget/planning                  6  docs/planning/DEBT.md
+   budget/planning                 19  docs/planning/backlog_dag.json
+   budget/planning                  4  docs/planning/manifest.json
+   budget/planning                  8  docs/planning/phase_015.yaml
+   excluded/run_state             188  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                       23    3132  .agent/evidence/111/
+   PRODUCT_LINES=0
+   PROCESS_OVERHEAD_LINES=756  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=756
+   EVIDENCE_LINES=3132
+   EXCLUDED_LINES=188
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=4076  (= budget 756 + evidence 3132 + excluded 188 + unclassified 0)
+
+EXIT: 0

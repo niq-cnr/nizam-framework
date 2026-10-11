@@ -9,12 +9,12 @@
   "activated_phase": {
     "phase_id": "015-live-runtime-normative",
     "feature_list": ".agent/feature_list_015.json",
-    "spec_version": "1.0.0",
+    "spec_version": "1.0.1",
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "current_status": "in_progress",
+    "current_status": "blocked",
     "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
-    "run_state_position": "Derived by Orchestrator from canonical phase/list;110 approved implementation,111-114pending.",
+    "run_state_position": "Derived from canonical phase/list:110complete;111BLOCKED after checker-development attempt3;112-114pending. Operator corrected-approach decision required.",
     "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
   },
   "estimate_weighting": {
@@ -2673,13 +2673,14 @@
         "bash tools/validate.sh --payload"
       ],
       "evidence": [
-        ".agent/evidence/111/"
+        ".agent/evidence/111/",
+        ".agent/evidence/111/blocked-checker3/checkpoint3.txt"
       ],
       "non_goals": [
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "in_progress",
+      "status": "blocked",
       "authority_status": "approved-contract",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
@@ -2698,7 +2699,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Pending015 plan source is available; feature implementation acceptance/QA/evidence is not delivered."
+          "reason": "Checker-development third attempt failed; no ModeB/formalQA/evidence approval. Halt proof .agent/evidence/111/blocked-checker3/checkpoint3.txt."
         }
       },
       "estimate": {
