@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
   "current_feature": "111",
-  "status": "blocked",
-  "updated_at": "2026-10-11T08:23:45.131508+00:00",
+  "status": "in_progress",
+  "updated_at": "2026-10-11T08:37:42.311638+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -372,7 +372,7 @@
       "limit": 3
     },
     "111-contract": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3
     },
     "111-generator-validation": {
@@ -384,8 +384,10 @@
       "limit": 3
     },
     "111-checker-development": {
-      "attempts": 3,
-      "limit": 3
+      "attempts": 0,
+      "limit": 3,
+      "recovery_epoch": 1,
+      "human_authorized_restart": ".agent/evidence/111/recovery-authorization.json"
     }
   },
   "history": [
@@ -2863,6 +2865,50 @@
         "limit": 3
       },
       "evidence": ".agent/evidence/111/blocked-checker3/checkpoint3.txt"
+    },
+    {
+      "at": "2026-10-11T08:29:31.825517+00:00",
+      "event": "contract_attempt_started",
+      "contract_id": "111",
+      "attempt": 3,
+      "proposal_path": "/home/cnross/.tmp/nizam-111-contract-recovery-attempt3-3nxft_13/111.json",
+      "proposal_sha256": "745a473556b3b1eb0eb1bd99fd1c4cd5bd2edd1a1dc32b320f9bb0cc6a1e9845",
+      "detail": "Bounded Parent debt/halt/recovery scope reconciliation under operatorconfirmed0bf3; existing checker3/3 preserved until both independent gates. Source/38verification/design/2200estimate unchanged. Original contract step last permitted attempt3; no source or checker edits."
+    },
+    {
+      "at": "2026-10-11T08:34:58.510418+00:00",
+      "event": "validator_mode_a_pass",
+      "contract_id": "111",
+      "attempt": 3,
+      "proposal_sha256": "745a473556b3b1eb0eb1bd99fd1c4cd5bd2edd1a1dc32b320f9bb0cc6a1e9845",
+      "verdict": "/home/cnross/.tmp/nizam-111-contract-recovery-attempt3-3nxft_13/111-mode-a.json",
+      "verdict_sha256": "a2b49fad5b84e90ce48900dc19375ba3a24e03c5421fb5f7e51ae8ed73ddd7e9",
+      "detail": "Actual recovery ModeA3 approved/empty. Second independent contract review pending; canonical111blocked and checker3/3 unchanged until both approvals."
+    },
+    {
+      "at": "2026-10-11T08:37:42.311638+00:00",
+      "event": "contract_approved",
+      "contract_id": "111",
+      "attempt": 3,
+      "proposal_sha256": "745a473556b3b1eb0eb1bd99fd1c4cd5bd2edd1a1dc32b320f9bb0cc6a1e9845",
+      "evidence": [
+        ".agent/validator/111-mode-a-recovery.json",
+        ".agent/qa/111-contract-review-recovery.json"
+      ],
+      "detail": "Actual both recovery gates approved/empty. Old proposal/gates/failures immutable. Canonicalresume first, list/manifest/DAG derived, then state;2200/7200/9360 unchanged."
+    },
+    {
+      "at": "2026-10-11T08:37:42.311638+00:00",
+      "event": "operator_authorized_step_restart",
+      "contract_id": "111",
+      "step_key": "111-checker-development",
+      "recovery_epoch": 1,
+      "prior_attempts": 3,
+      "new_attempts": 0,
+      "limit": 3,
+      "authority_revision": "0bf3bd6617880870c8e9dc8ed9b1b74efaf41931",
+      "evidence": ".agent/evidence/111/recovery-authorization.json",
+      "detail": "Installed03 Section6 exact human confirmed corrected diagnostic approach. No other counters reset; contract revision3 outcome recorded. Preserved prior exhausted epoch and original debt/halt records; no source/QAsuccess inferred."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3337,7 +3383,7 @@
       }
     ]
   },
-  "last_action": "Operator confirmed corrected diagnostic approach and fresh checker step. Prior halt retained; bounded contract scope reconciliation for mandatory debt/authority projections precedes checker restart.",
+  "last_action": "Both recovery pre-code gates approved; canonical111 resumed first, derivedstate repaired; only checker counter reset0/limit3 epoch1 under actualconfirmed0bf3. Fresh isolated approvedbase required before source reconstruction/checker correction.",
   "completed_contract_ids": [
     "099",
     "103",
