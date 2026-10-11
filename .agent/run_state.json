@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "111",
   "status": "in_progress",
-  "updated_at": "2026-10-11T17:41:52.325674+00:00",
+  "updated_at": "2026-10-11T18:11:13.953848+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -394,17 +394,17 @@
       "limit": 3
     },
     "111-checker-development": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
       "recovery_epoch": 1,
       "human_authorized_restart": ".agent/evidence/111/recovery-authorization.json"
     },
     "111-checker-review": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "111-implementation": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "111-qa": {
@@ -3002,6 +3002,27 @@
         ".agent/qa/111-contract-review-detail.json"
       ],
       "detail": "Actual ModeA and independent contract-testability approved/empty for one operator-authorized boundedrevision4. Add only original402.detail=exactcorrected_approach to currentprojection; originalcommitted0bf3/d934/archive bytes preserved. Canonicalresume first, matchingprojections second, derivedstate third. No checker/counterreset, product changes or acceptance inference."
+    },
+    {
+      "at": "2026-10-11T18:01:10.235368+00:00",
+      "event": "checker_detail_checkpoint_pass",
+      "contract_id": "111",
+      "step_key": "111-checker-development",
+      "attempt": 2,
+      "recovery_epoch": 1,
+      "actual_exit": 0,
+      "checker_sha256": "ed6f7313933f7fb64ccf87a669b5cc9c1aea320ab1b6ab14ee79a03a0d4d6178",
+      "evidence": ".agent/evidence/111/recovery-epoch1-development-checkpoint2.json",
+      "checker_review": ".agent/evidence/111/checker-review-detail.json",
+      "detail": "Actual independentreview approved67frozeninputs; exactlyoneauthorized serial8modecheckpoint2 passed allmodes with52normal+13private intendednegativerejections. Countcurrentchecker/review1->2 withoutreset; preserveoriginal244checkpoint1/failedQA1/proofs andallothercounts/limits. No formalacceptance/049closure inferred."
+    },
+    {
+      "at": "2026-10-11T18:11:13.953848+00:00",
+      "event": "implementation_rejected",
+      "contract_id": "111",
+      "attempt": 2,
+      "evidence": ".agent/evidence/111/failed-detail-implementation2/111-mode-b-detail.json",
+      "detail": "ActualModeB2 rejected one outputownership scope mismatch:18canonicalinner receipts mustberecaptured by exactAT7-24 butchecker froze060bytes. Preserve checkpoint2 success/current source andfailedModeB inownedquarantine; sameapprovedcontract permits exactoutputinventory/archives reconciliation. Implementation3/checkpoint3/review3 are finalremaining boundedsteps; no fifthcontract/productredesign/reset."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3487,7 +3508,7 @@
       }
     ]
   },
-  "last_action": "Both boundedrevision4 gates approved exactproposal; sole402detail annotation and canonicalresume recorded. New immutableapprovedbase and isolatedchecker checkpoint2 required; no formalQA or completion yet.",
+  "last_action": "ActualModeB2 rejected18ownedoutputimmutability mismatch; implementation2 preserved, exactoutputinventory repair withinexistingcontract proceeds only innewisolatedattempt3. Checkpoint2 historicalpass retained; no counterreset.",
   "completed_contract_ids": [
     "099",
     "103",
