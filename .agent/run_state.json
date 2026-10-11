@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "014-ga-track",
-  "current_feature": null,
-  "status": "phase_complete",
-  "updated_at": "2026-10-11T06:36:53.368402+00:00",
+  "current_phase": "015-live-runtime-normative",
+  "current_feature": "110",
+  "status": "in_progress",
+  "updated_at": "2026-10-11T07:11:07.322326+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -357,6 +357,15 @@
     "110-contract": {
       "attempts": 1,
       "limit": 3
+    },
+    "110-implementation": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "110-generator-validation": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Generator predeclared development validation: first actualC9 EXIT1 retained; structural browserURL/rootlexer analysis applied existing HTMLslashentity editorial solution; secondactualEXIT0. This is distinct from forthcoming frozen-candidate independent QA; evidence remains preserved."
     }
   },
   "history": [
@@ -2575,6 +2584,57 @@
       "attempt": 1,
       "proposal_contract_sha256": "5aa36ed3d68db085ca17b3bd3d4f74c4d9adde8964e2b141143caac936642050",
       "detail": "Both independent pre-code gates approved/empty; frozen scope21checks includes recorded activation/sixchoices. Estimate1600 within approved7200/9360; no product edits yet."
+    },
+    {
+      "at": "2026-10-11T06:36:53.563762+00:00",
+      "event": "implementation_attempt_started",
+      "contract_id": "110",
+      "attempt": 1,
+      "attempt_root": "/home/cnross/.tmp/nizam-110-implementation1-gt0v36wk",
+      "approved_base": "d1ba9e99f148b3e42d8cf705aef0eb3b12de944c",
+      "detail": "Independent Evaluator owns fresh110checker and red baseline proof before Generator product writes; same implementation attempt and approved frozen scope throughout. Canonical phase activation precedes Parent derived state."
+    },
+    {
+      "at": "2026-10-11T06:47:02.727909+00:00",
+      "event": "implementation_session_handoff",
+      "contract_id": "110",
+      "attempt": 1,
+      "previous_root": "/home/cnross/.tmp/nizam-110-implementation1-gt0v36wk",
+      "attempt_root": "/home/cnross/.tmp/nizam-110-implementation1-handoff-tu36vh0a",
+      "approved_base": "d1ba9e99f148b3e42d8cf705aef0eb3b12de944c",
+      "detail": "Fresh Generator context after stalled drafting; preserve governedattempt1, immutable inputs, counters and independent redproof. Isolate newroot from any delayed oldroot writes; oldroot retained for audit untilreview. Independent testauthor continues separately."
+    },
+    {
+      "at": "2026-10-11T07:02:31.919061+00:00",
+      "event": "implementation_revision_required",
+      "contract_id": "110",
+      "attempt": 1,
+      "attempt_root": "/home/cnross/.tmp/nizam-110-implementation1-handoff-tu36vh0a",
+      "detail": "ActualModeB rejected110-B-01 historicaloperator_gates releasechange-log version0.31.0 overwritten0.36.0. Preservefailedverdict/hashsnapshot/source; nextattempt structural historyrestore only innewapproved-base snapshot. Generatordevelopmentvalidation counter2 retained; no metadata/sourcepromotion."
+    },
+    {
+      "at": "2026-10-11T07:02:32.100400+00:00",
+      "event": "implementation_attempt_started",
+      "contract_id": "110",
+      "attempt": 2,
+      "attempt_root": "/home/cnross/.tmp/nizam-110-implementation2-z0gq7vax",
+      "approved_base": "d1ba9e99f148b3e42d8cf705aef0eb3b12de944c",
+      "detail": "Structural/type-interface analysis of changelog YAML history; reconstruct priorfrozendraft then restoreonly prescribed historicalversion and regenerateindependentaffectedproof. Current110 implementationcounter1 andallothercounters preserved; no newcontractscope."
+    },
+    {
+      "at": "2026-10-11T07:08:49.458644+00:00",
+      "event": "phase_activated",
+      "contract_id": "110",
+      "phase": "015-live-runtime-normative",
+      "attempt": 2,
+      "detail": "Reconstructedcanonical015 active YAML/list/manifestfirst, Parentderivedstate015/110 and approved7200/9360 ledger. Sameactual06c humanapproval, priorrich014archiveexact, attempt1failure andstepcounters retained. No otherphase/release/installupgrade."
+    },
+    {
+      "at": "2026-10-11T07:11:07.322326+00:00",
+      "event": "implementation_approved",
+      "contract_id": "110",
+      "attempt": 2,
+      "detail": "ActualModeB2 approved/empty: solehistoricalversion repaired, independenthistory/COMPLETEDguards fixed and30reviewedhashes bound. Promoteexactreviewedsource/Parentownedstate; preservedattempt1failures andallcounters; distinctacceptanceQA21commands remains."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2747,13 +2807,15 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 8600,
-    "ceiling_130pct": 11180,
-    "total_lines_changed": 8705,
-    "evidence_lines_total": 22114,
-    "excluded_lines_total": 769,
+    "original_estimate_lines": 7200,
+    "ceiling_130pct": 9360,
+    "total_lines_changed": 0,
+    "evidence_lines_total": 0,
+    "excluded_lines_total": 0,
+    "per_feature": [],
+    "phase_level_items": [],
     "counting_rule": {
-      "spec_ref": ".agent/product_spec_014.md 'Scope budget measurement (phase-014 rule)' (spec 1.1.6)",
+      "spec_ref": ".agent/product_spec_015.md 'Scope budget and measurement'; frozen phase014 counting classes reused",
       "script": ".agent/evidence/scope-budget-014/measure.py",
       "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
       "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
@@ -2761,140 +2823,9 @@
       "excluded": ".agent/run_state.json (coordination churn)",
       "unclassified": "fail closed: listed, measure.py exits 3"
     },
-    "per_feature": [
-      {
-        "id": "099",
-        "estimated": 920,
-        "actual": 596,
-        "evidence_lines": 847,
-        "excluded_lines": 83,
-        "all_paths_lines": 1526,
-        "range": "483f016..88959c9",
-        "previous_actual_all_paths": 1504,
-        "note": "Phase-014 rule (spec 1.1.4): product 77 + contract 354 + verdict 133 + planning 32 = 596. estimated 920 is the historical all-paths estimate (mixed basis, disclosed). Capture .agent/evidence/scope-budget-014/measure-099-103.txt."
-      },
-      {
-        "id": "103",
-        "estimated": 280,
-        "actual": 885,
-        "evidence_lines": 5807,
-        "excluded_lines": 103,
-        "all_paths_lines": 6795,
-        "range": "88959c9..1c06720",
-        "previous_actual_all_paths": 6770,
-        "flag": "scope_budget_flag 2026-10-09T17:39:44Z raised under the old all-paths count (6770 vs 280). Under the phase-014 rule 885 < 3 x 596 = 1788 and would not flag. Acknowledged per the Orchestrator's record (operator_gate_decision 2026-10-09T17:42:10Z), confirmed by the operator's 'option 1 confirmed.' reply (2026-10-09T17:59:00Z).",
-        "note": "Phase-014 rule (spec 1.1.4): product 103 + contract 519 + verdict 200 + planning 63 = 885. estimated 280 is the historical all-paths estimate (mixed basis, disclosed)."
-      },
-      {
-        "id": "104",
-        "estimated": 710,
-        "actual": 991,
-        "evidence_lines": 3018,
-        "excluded_lines": 204,
-        "range": "7bc65a5..(completion working tree)",
-        "note": "Phase-014 rule (measure.py). Includes amendment A2 planning lines (A1-in-103 precedent) and the 3-round contract. Rolling threshold for 104 was 3 x mean(596,885) = 2221.5."
-      },
-      {
-        "id": "105",
-        "estimated": 720,
-        "actual": 950,
-        "evidence_lines": 1751,
-        "excluded_lines": 74,
-        "range": "2a53764..(completion working tree)",
-        "note": "Phase-014 rule (measure.py, spec 1.1.6 incl. row 4a: non-JSON files under .agent/validator/ are evidence). Includes the post-105 planning record (DEBT 0.51.0, spec 1.1.6, backlog_reconciliation 0.1.4) per the A1/A2-in-feature-range precedent. Superseded interim figures (907, 1561, 50) (taken before row 4a and before the planning record). Rolling threshold 3 x mean(596,885,991) = 2472."
-      },
-      {
-        "id": "106",
-        "estimated": 750,
-        "actual": 686,
-        "evidence_lines": 2113,
-        "excluded_lines": 82,
-        "range": "183eed1..ca889db",
-        "note": "Phase-014 rule. measure.py --range 106=183eed1..ca889db: BUDGET_COUNTED_LINES=686 (product 106, contract 382, verdict 191, planning 7), EVIDENCE_LINES=2113, EXCLUDED_LINES=82, unclassified 0. Rolling threshold was 3 x mean(885,991,950)=2826. 686 is under the estimate 750."
-      },
-      {
-        "id": "107",
-        "estimated": 680,
-        "actual": 713,
-        "evidence_lines": 2195,
-        "excluded_lines": 81,
-        "range": "fdc076f..984a9b3",
-        "note": "Phase-014 rule. measure.py --range 107=fdc076f..984a9b3: BUDGET_COUNTED_LINES=713 (product 38, contract 365, verdict 303, planning 7), EVIDENCE_LINES=2195, EXCLUDED_LINES=81, unclassified 0. Above the 680 estimate and under the rolling 3x threshold. No scope flag."
-      },
-      {
-        "id": "109",
-        "estimated": 710,
-        "actual": 836,
-        "evidence_lines": 1424,
-        "excluded_lines": 38,
-        "all_paths_lines": 2298,
-        "range": "c43ae9e..afbeeec",
-        "note": "Phase-014 rule (spec 1.1.4): product 153 + contract 369 + verdict 298 + planning 16 = 836. Within the 520-890 range; 126 over the 710 point estimate (a long contract plus verdicts, the predicted composition). Capture .agent/evidence/scope-budget-014/measure-109.txt."
-      },
-      {
-        "id": "108",
-        "estimated": 690,
-        "actual": 851,
-        "evidence_lines": 897,
-        "excluded_lines": 49,
-        "all_paths_lines": 1797,
-        "range": "56d2ef1..29355ac",
-        "note": "Phase-014 rule (spec 1.1.4): product 67 + contract 374 + verdict 343 + planning 17 = 851. Within the 510-860 range; 161 over the 690 point estimate (contract + two-round verdicts from the S01 CONTRACT_DEFECT revision, the predicted composition). Capture .agent/evidence/scope-budget-014/measure-108.txt."
-      },
-      {
-        "id": "102",
-        "estimated": 850,
-        "actual": 906,
-        "evidence_lines": 1811,
-        "excluded_lines": 41,
-        "all_paths_lines": 2758,
-        "range": "a5d6506..b377c2b",
-        "note": "Phase-014 rule (spec 1.1.4): product 0 + contract 380 + verdict 509 + planning 17 = 906. Within the 600-1100 range; 56 over the 850 point estimate. The 100/101 pilot record and this dossier are evidence-classed by path, so the budget does not bound them (spec 1.1.4). Capture .agent/evidence/scope-budget-014/measure-102.txt."
-      }
-    ],
-    "phase_level_items": [
-      {
-        "id": "rebaseline-1.1.4",
-        "range": "1c06720..7bc65a5",
-        "actual": 292,
-        "evidence_lines": 565,
-        "note": "Phase-level planning (spec 1.1.4 + feature list + scope-budget-014 evidence); counts toward total_lines_changed only, not per_feature or the rolling baseline; 104's range starts at 7bc65a5. Allowance in the estimate: 300."
-      },
-      {
-        "id": "handover-2026-10",
-        "range": "e2a50ed..183eed1",
-        "actual": 822,
-        "evidence_lines": 1686,
-        "note": "Developer handover package (docs/planning/HANDOVER.md + ROADMAP 0.47.0, backlog_reconciliation 0.1.5, backlog_dag.json refresh). Orchestrator treatment: second phase-level item (rebaseline-1.1.4 precedent): caused by the operator's handover request (2026-10-10T02:11:41Z), not by feature 106; counts toward total_lines_changed only, not per_feature or the rolling baseline. Re-measured at the merge commit 183eed1 (PR #71) on 2026-10-10T03:46:46Z: BUDGET_COUNTED_LINES=822, EVIDENCE_LINES=1686, EXCLUDED_LINES=25, unclassified 0. 106's measurement range starts at 183eed1."
-      },
-      {
-        "id": "amendment-a3",
-        "range": "f53c499..fdc076f",
-        "actual": 177,
-        "evidence_lines": 0,
-        "excluded_lines": 14,
-        "note": "Amendment A3 (cancel features 100 and 101). Operator-requested planning, not feature 107. measure.py --range a3=f53c499..fdc076f: BUDGET_COUNTED_LINES=177, EVIDENCE_LINES=0, EXCLUDED_LINES=14, unclassified 0. 107's range starts at fdc076f."
-      }
-    ],
-    "rebaseline": {
-      "from": 6660,
-      "to": 8600,
-      "ceiling_from": 8658,
-      "ceiling_to": 11180,
-      "at": "2026-10-09T17:42:10Z",
-      "authorized_by": "Operator (operator_gate_decision 2026-10-09T17:42:10Z), verbatim '1. Change what counts, then re-baseline (' (message appears truncated), selecting option 1. The figure 8600 is the Planner's estimate (spec 1.1.4); the operator stated no figure, so confirmation of 8600/11180 is PENDING. CONFIRMED 2026-10-09T17:59:00Z: operator 'option 1 confirmed.' (reply to the confirmation request for 8600/11180; interpretation disclosed).",
-      "reason": "Measured 099 596 + 103 885 = 1481, + 300 re-baseline allowance, + 6780 pending estimate (range 4840-8670; per-feature overhead 500-800 measured) = 8561, rounded up to 8600. Ceiling 11180 covers the high end 10451.",
-      "spec_version": "1.1.4",
-      "evidence": ".agent/evidence/scope-budget-014/measure-099-103.txt"
-    },
-    "prior_rebaselines": [
-      {
-        "from": 2200,
-        "to": 6660,
-        "at": "2026-10-08T11:21:14Z",
-        "authorized_by": "Planner activation-time estimate made under the operator's maintenance-fold authorization (operator_gate_decision 2026-10-08T11:21:14Z approved the SCOPE; the operator stated no figure). Basis: naive 2890 lines x the measured 2.3 process weight (phase-013 measurement, cited in NIP-0003:494-495). Operator APPROVED the figure at 2026-10-08T12:50:31Z (verbatim: 'In approve the increased budget.')."
-      }
-    ]
+    "phase_base_revision": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+    "authorization_revision": "06c0ae0a273facce80c57506260648c41f566ebb",
+    "phase_level_costs": "Included within approved7200 per-feature allowances; no additional budget."
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -3149,7 +3080,7 @@
       }
     ]
   },
-  "last_action": "110 contract approved; isolated implementation pending.",
+  "last_action": "110 sourceapproved; fixedcandidate/sealedbundle acceptance pending.",
   "completed_contract_ids": [
     "099",
     "103",

@@ -2,12 +2,15 @@
 id: nip-0003-live-runtime-sessions
 title: "NIP-0003: Live Runtime Sessions"
 description: "Proposal to add a language-neutral live-runtime-session protocol (ownership, process generation, serialised operations, attempt continuity, fresh-environment acceptance) with an SBCL reference binding, an optional adapter capability, schema-governed session records, and a reference controller — realized as phases 015 and 016, after phase 014."
-version: 1.0.0
+version: 1.1.0
 status: active
 authoritative_source: docs/nips/NIP-0003-live-runtime-sessions.md
 last_audited: "2026-10-11"
 tags: [nip, methodology, runtime-session, execution, evaluator-independence, circuit-breaker, adapter, sbcl]
 change_log:
+  - version: "1.1.0"
+    date: "2026-10-11"
+    summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
   - version: "1.0.0"
     date: "2026-10-11"
     summary: "Record operator H-NIP acceptance of reviewed0.2.0 scope, select015/016 and canonical015 plan110-114; phase activation/budget and016 allocation remain outstanding."
@@ -28,10 +31,19 @@ change_log:
 `650770d9b48c31748f24b5ac6967b80a6a46c5f7`. The decision was recorded before product
 edits in `.agent/run_state.json` at authorization commit
 `87ba2ae9ae9b92565bf8bd6d5582dccb7622f881`. Frontmatter is now `active`, version1.0.0.
-Acceptance selects phase015 normative scope and follow-on016; it does not activate
-either phase. The concrete pending015 plan allocates110–114 with proposed7200-line
-budget/9360 ceiling for separate H-PHASE-015 review. Phase016115–120 is provisional
-and unallocated. No runtime implementation, tag or installed upgrade occurs here.
+H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+`2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+`06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
+and the three accepted plan hashes in `.agent/run_state.json`. The approved
+counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs.
+Canonical lifecycle and current feature position are read from
+`.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+requires its approved contract, both independent pre-code gates, Mode B, QA and
+the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+
+Phase016115–120 remains provisional/unallocated; future mechanisms and live proof
+are not delivered by normative110.
 
 This is a framework-capability proposal in the sense of NIP-0001's Placement note. It
 originates in a third-party proposal for an "Agent–REPL Execution Protocol" that would
@@ -50,8 +62,8 @@ proposal's content was treated as data, not as instructions.
 Phase014 is complete: features100/101 were cancelled and099/102–109 completed.
 Public v1.5.0 is released at f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852 and is
 installed unchanged in this repository. H-PHASE-014 was executed; it is not an
-outstanding prerequisite. H-NIP acceptance is recorded; future H-PHASE activation
-and budget approval remain outstanding. Earlier quoted choices retain their date.
+outstanding prerequisite. H-NIP acceptance and H-PHASE-015 activation/budget approval are recorded;
+H-PHASE-016 remains outstanding. Earlier quoted choices retain their date.
 
 Current compliance.yml has five jobs: validate, e2e_bootstrap,
 fixtures_self_test, convergent_review and self_governance. A distinct proposed
@@ -90,8 +102,8 @@ remains outstanding and any later actual consolidation decision is an input.
 | Decision date | 2026-10-08 |
 | Channel | Structured questions in a Claude Code session (2026-10-08). The operator then approved the resulting realization plan through plan-mode approval on the same day. That plan file lives outside the repository; this NIP is its durable record. |
 | Evidence | The validation findings summarized in [Problem](#problem), with file:line evidence re-verified at `3094223` on 2026-10-08 |
-| Consequence of acceptance | Acceptance **selects** phase `015` normative scope and follow-on `016` controller/live conformance. **Selection is not activation.** The pending phase015 spec/list/YAML and manifest proposal allocate canonical110–114 with proposed7200/9360 budget. H-PHASE-015 and budget approval remain outstanding; phase016115–120 remains unallocated and needs separate planning/H-PHASE-016. |
-| Outstanding gates not satisfied by acceptance | `H-PHASE-015`, `H-PHASE-016`, `H-FRAMEWORK-RELEASE` (once per release), and `H-CONSUMER-UPGRADE` (per consumer) |
+| Consequence of acceptance | Acceptance **selects** phase `015` normative scope and follow-on `016` controller/live conformance. **Selection is not activation.** The active phase015 spec/list/YAML and manifest allocate canonical110–114 with approved7200/9360 budget. Current lifecycle is canonical in the feature list; phase016115–120 remains unallocated and needs separate planning/H-PHASE-016. |
+| Outstanding gates not satisfied by acceptance | `H-PHASE-016`, `H-FRAMEWORK-RELEASE` (once per release), and `H-CONSUMER-UPGRADE` (per consumer) |
 
 ## Problem
 
@@ -536,15 +548,15 @@ No case is claimed working until its live proof passes in CI.
 ## Staged Realization
 
 The accepted scope selects two follow-on stages after completed phase014. The
-concrete pending015 plan allocates110–114 in `.agent/feature_list_015.json`;
+concrete active015 plan allocates110–114 in `.agent/feature_list_015.json`;
 phase016115–120 remains provisional and unallocated. H-PHASE activation and
 reviewed per-feature contracts remain separate from selection. Existing phase014
 records and budget remain frozen.
 
-**Selected normative stage (phase015), pending activation.** One lane110 →111
+**Authorized normative stage (phase015).** One lane110 →111
 →112 →113 →114. The former design-time5400/7020 forecast is superseded by the
-concrete plan's proposed7200/9360, including counted phase-level costs. This is
-an estimate for operator review, not budget approval or implementation.
+concrete plan's approved7200/9360, including counted phase-level costs. Source
+implementation follows independent feature contracts and canonical lifecycle.
 
 | ID | Feature | Naive lines |
 |----|---------|-------------|
@@ -659,9 +671,9 @@ For acceptance and planning **this NIP**:
   "Approved and accepted, please proceed." NIP version1.0.0/active records this
   decision and selects015/016; the four earlier choices remain unchanged.
 - **Satisfied prerequisite.** Phase014 is closed/released in v1.5.0. Concrete
-  pending015 spec/list/YAML and canonical110–114 are prepared for review.
-- **Outstanding.** H-PHASE-015 and proposed7200/9360 budget approval; phase016
-  planning/allocation and H-PHASE-016. Acceptance never substitutes for activation.
+  active015 spec/list/YAML and canonical110–114 bind the approved plan/budget.
+- **Satisfied activation.** H-PHASE-015 and7200/9360 budget approval are recorded
+  above. Phase016 planning/allocation and H-PHASE-016 remain outstanding.
 
 For **realizing** it (phases 015/016):
 

@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.11
+version: 0.1.12
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
 last_audited: "2026-10-11"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.12"
+    date: "2026-10-11"
+    summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
   - version: "0.1.11"
     date: "2026-10-11"
     summary: "Record H-NIP acceptance of reviewed NIP3/NIP4 scopes and pending canonical015 plan110-114 with proposed7200/9360 budget; activation, WA choices and implementation remain outstanding."
@@ -77,23 +80,34 @@ PLAN-NEXT and A03-WA-FINAL no longer require cancelledF101 findings. A03-RT and
 PLAN-WA also use actual available planning inputs: the historical102 GA-readiness
 dossier and its measured gaps, current debt, and actual local self-commissioning
 identity/QA/baseline. No F101 simplification review occurred or is invented.
-Reviewed NIP3v0.2.0 and NIP4v0.1.0 scopes are now accepted under recorded H-NIP
-decisions (operator "Approved and accepted, please proceed.",2026-10-11,
-authorization commit87ba2ae9ae9b92565bf8bd6d5582dccb7622f881). NIPs1.0.0/active
-record scope acceptance only. NIP4's six options remain pending operator decision;
-no adopted enforcement, gate reduction or WAphase allocation.
+H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+`2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+`06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
+and the three accepted plan hashes in `.agent/run_state.json`. The approved
+counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs.
+Canonical lifecycle and current feature position are read from
+`.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+requires its approved contract, both independent pre-code gates, Mode B, QA and
+the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
-The concrete pending015 spec/list/YAML allocates canonical110–114 after actual
-max109, single chain/all pending, with proposed7200/9360 budget including counted
-phase-level costs. H-PHASE-015/budget approval remains OUTSTANDING; current014
-position/8705-of8600/11180 ledger remains frozen. PLAN-NEXT is complete after actual independent --plan EXIT0 source review, bound
-to the three canonical artifact hashes in plan-source-proof.json and captured in
-plan-source-review.txt. No feature completion follows from planning.
-PLAN-WA stays pending/serialized after114; PLAN-016 depends114 and serializes after
-PLAN-WA. Phase016115–120 remains provisional/unallocated, relative WA implementation
-versus016 open. Eighteen top-level015 fixtures map13 cases to schema evidence;
-all thirteen mandatory live proofs remain unimplemented016 work. Source/installed
-modules and old assessments remain frozen.
+Operator design decisions were recorded at `2026-10-11T06:30:20.388684+00:00` in `.agent/run_state.json`
+before product writes, authorization commit `06c0ae0a273facce80c57506260648c41f566ebb`, assessed
+source `57862f69ba30a36004ea9a17a295fc9c835afc13`. Exact operator text: "approved. plese proceed as reocommeded with all items."
+
+| choice-id | selected_recommendation |
+| --- | --- |
+| candidate-invalidation | Explicit assessed-input graph covering source/contracts/tests/tools/environment; unknown dependencies invalidate; record-only continuity requires all assessed inputs unchanged. |
+| acceptance-ownership | Sealed immutable test bundle and independent author/reviewer sessions with recorded identities; bundle changes require renewed independent review. |
+| routing-profiles | Reuse existing role/profile identifiers initially; versioned extensions only for demonstrated permission/ownership gaps with explicit migration. |
+| shadow-profiles | Preregister Routine/Standard/High-assurance comparisons after trusted A10/A11; same candidates/full baseline; missed baseline blocker prevents promotion; gate reduction separate operator decision. |
+| cause-routing | Evidence-based cause routing within existing three-attempt limit/counter continuity; infrastructure failures remain failures; any additional cause-specific budget requires explicit approval. |
+| conflict-retry | Explicit file/state conflict lanes in single existing coordination model; serialize shared ownership, isolate retries, invalidate affected evidence, rollback only owned changes. |
+
+PLAN-NEXT planning delivery remains complete at its preserved evidence. PLAN-WA
+is pending after114; PLAN-016 depends114 and serializes after PLAN-WA. Relative WA
+implementation versus016 stays open; WAphase/016 IDs remain unallocated. All13
+mandatory live proofs remain future016 work; phase015 does not claim them working.
 
 The dated Section7 outline below is unchanged history, including its then-stale
 F101 premise; current actual inputs supersede it. Scope acceptance does not decide
@@ -103,9 +117,9 @@ The operator-authorized planning refresh merged in PR81, followed by the separat
 gated NDEBT-047/046/045 and A04a maintenance. The three debts are now Resolved and
 A04a complete after actual source verification; Open debt is limited to040/034.
 The previous drafting task allocated no numeric IDs; this separately authorized
-pending015 plan allocates only110–114. NIP scopes are accepted, while phase015
-activation, unresolved WA choices, runtime implementation, release and installed
-upgrade remain outstanding. Current available proof below remains historical
+active015 plan allocates only110–114. Phase015 activation and six WA selections
+are recorded above; runtime enforcement, future release and installed upgrade
+remain outstanding. Current available proof below remains historical
 input, not evidence of future feature acceptance.
 
 Current proof: `.agent/qa/self-commission-v1.5.0.json`,

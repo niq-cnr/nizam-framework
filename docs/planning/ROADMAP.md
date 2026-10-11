@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.58.0
+version: 0.59.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.59.0"
+    date: "2026-10-11"
+    summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
   - version: "0.58.0"
     date: "2026-10-11"
     summary: "Record H-NIP acceptance of reviewed NIP3/NIP4 scopes and pending canonical015 plan110-114 with proposed7200/9360 budget; activation, WA choices and implementation remain outstanding."
@@ -330,7 +333,7 @@ self-tags. Edited: `.agent/product_spec_014.md` (1.0.0 → 1.0.1),
 estimates (2200) and every status are unchanged. Phase 014 stays `pending` / `proposed`
 and is activation-ready, awaiting `H-PHASE-014`.
 
-## Selected NIP-0003 — Phase015 Normative Plan, Pending H-PHASE-015
+## Selected NIP-0003 — Authorized Phase015 Normative Plan
 
 The operator accepted reviewed NIP3v0.2.0 and NIP4v0.1.0 under H-NIP on2026-10-11
 with "Approved and accepted, please proceed." Decisions were recorded before
@@ -338,16 +341,18 @@ product edits at `87ba2ae9ae9b92565bf8bd6d5582dccb7622f881`, against reviewed so
 `650770d9b48c31748f24b5ac6967b80a6a46c5f7`. Both NIPs now1.0.0/active record
 accepted scope. Selection and activation remain separate.
 
-The concrete pending phase015 artifacts are [.agent/product_spec_015.md](../../.agent/product_spec_015.md),
-[feature_list_015.json](../../.agent/feature_list_015.json) and
-[phase_015.yaml](phase_015.yaml). Canonical allocator max109 confirms only110–114
-allocated; single chain110 →111 →112 →113 →114 and every feature pending.
-H-PHASE-015 and proposed budget approval are OUTSTANDING. PLAN-NEXT planning delivery is complete after actual independent source review
-EXIT0, captured in `.agent/evidence/post-ga-phase015-planning/plan-source-review.txt`
-with three-file hash binding. No runtime/module/schema implementation starts
-before activation and per-feature independent contracts.
+H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+`2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+`06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
+and the three accepted plan hashes in `.agent/run_state.json`. The approved
+counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs.
+Canonical lifecycle and current feature position are read from
+`.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+requires its approved contract, both independent pre-code gates, Mode B, QA and
+the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
-| Feature | Scope | Proposed counted lines |
+| Feature | Scope | Approved counted lines |
 | --- | --- | --- |
 | 110 | Neutral document10, generic attempt/acceptance/permission/DoD definitions and same-feature registration | 1600 |
 | 111 | Closed session/operation schemas, eighteen top-level fixtures and C12/claim-map registration | 2200 |
@@ -355,20 +360,28 @@ before activation and per-feature independent contracts.
 | 113 | Optional required:false adapter/routing capability; interface Section5 stays10 items | 1050 |
 | 114 | Next MINOR readiness and normative-stage close, no self-tag | 1150 |
 
-Proposed total7200,130% ceiling9360, including counted phase-level planning/close
-costs inside those allowances. Budget basis product+contract+verdict+audit+planning;
-raw evidence/run_state excluded, unclassified fails closed. Actual comparable014
-features total5933/5110; historical total8705=7414 feature counts+1291 phase-level
-items stays frozen. This proposal does not approve a budget or alter current014
-position/budgets. Former design5400/7020 is superseded for review by this concrete
-plan. Separate future release planning decides the next MINOR version/tag.
+Approved total7200, 130% ceiling9360 includes counted phase-level planning/close
+costs inside the per-feature allowances. Product, contract, verdict, audit and
+planning count; raw evidence/run_state do not. Unclassified changes fail closed.
+Historical014 total8705 and ledgers remain frozen. Future release planning decides
+the next MINOR version/tag independently.
 
-The accepted [NIP-0004 scope](../nips/NIP-0004-workflow-assurance.md) has six explicit
-choices still pending operator decision; no choice is resolved by scope acceptance,
-no policy is implemented and no active gate is reduced. WAphase remains unallocated.
-PLAN-WA stays pending/serialized after114; PLAN-016 also requires114 and serializes
-after PLAN-WA. Relative WA implementation versus016 stays open. Controller IDs
-115–120 remain provisional/unallocated; H-PHASE-016 remains outstanding.
+Operator design decisions were recorded at `2026-10-11T06:30:20.388684+00:00` in `.agent/run_state.json`
+before product writes, authorization commit `06c0ae0a273facce80c57506260648c41f566ebb`, assessed
+source `57862f69ba30a36004ea9a17a295fc9c835afc13`. Exact operator text: "approved. plese proceed as reocommeded with all items."
+
+| choice-id | selected_recommendation |
+| --- | --- |
+| candidate-invalidation | Explicit assessed-input graph covering source/contracts/tests/tools/environment; unknown dependencies invalidate; record-only continuity requires all assessed inputs unchanged. |
+| acceptance-ownership | Sealed immutable test bundle and independent author/reviewer sessions with recorded identities; bundle changes require renewed independent review. |
+| routing-profiles | Reuse existing role/profile identifiers initially; versioned extensions only for demonstrated permission/ownership gaps with explicit migration. |
+| shadow-profiles | Preregister Routine/Standard/High-assurance comparisons after trusted A10/A11; same candidates/full baseline; missed baseline blocker prevents promotion; gate reduction separate operator decision. |
+| cause-routing | Evidence-based cause routing within existing three-attempt limit/counter continuity; infrastructure failures remain failures; any additional cause-specific budget requires explicit approval. |
+| conflict-retry | Explicit file/state conflict lanes in single existing coordination model; serialize shared ownership, isolate retries, invalidate affected evidence, rollback only owned changes. |
+
+PLAN-WA remains pending after114; PLAN-016 depends114 and serializes after PLAN-WA.
+Relative WA implementation versus016 stays open; no WAphase or016 IDs allocated,
+no policy implemented and no active gate reduced. H-PHASE-016 remains outstanding.
 
 Actual inputs remain historical102 (pilot not_met/adoption insufficient_evidence),
 Open debts040/034 and commissioning/maintenance proof. Cancelled F101 has no findings.
@@ -809,16 +822,20 @@ successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-11)
 
-NIP3/NIP4 scopes are accepted under recorded H-NIP decisions. The concrete pending
-phase015 plan allocates110–114 and proposes7200/9360 for separate activation/budget
-review. H-PHASE-015 remains outstanding; all implementation features are pending.
-WA's six choices are unresolved, WAphase and016 IDs remain unallocated.
+H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+`2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+`06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
+and the three accepted plan hashes in `.agent/run_state.json`. The approved
+counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs.
+Canonical lifecycle and current feature position are read from
+`.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+requires its approved contract, both independent pre-code gates, Mode B, QA and
+the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
-Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
-
-- **Current planning refresh merged; bounded maintenance is verified.** The [current backlog view](backlog_reconciliation.md) retains exact complete/cancelled canonical mirrors and factual planning inputs. Resolved NDEBT-047/046/045 and completed A04a cite actual maintenance QA/CI proof; NIP3/WA scopes are now accepted; phase015 activation, release and installed-upgrade authority remain outstanding. Both prior planning checkers and historical evidence stay frozen.
+- **Current planning refresh merged; bounded maintenance is verified.** The [current backlog view](backlog_reconciliation.md) retains exact complete/cancelled canonical mirrors and factual planning inputs. Resolved NDEBT-047/046/045 and completed A04a cite actual maintenance QA/CI proof; NIP3/WA scopes are now accepted; phase015 activation is recorded above; future release and installed-upgrade authority remain outstanding. Both prior planning checkers and historical evidence stay frozen.
 - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
-- **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. No next phase is activated. The handover record is [`HANDOVER.md`](HANDOVER.md).
+- **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. Phase015 activation is recorded in the current overlay. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
   statements are superseded at 2026-10-10: feature 099 has activated `ecosystem/06_simplification_review.md` and
   `ecosystem/08_ga_gate.md` (the release bullet's "activation awaits phase-014 feature 099" predates it), and

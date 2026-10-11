@@ -353,7 +353,7 @@ _f055_real_tree() {
       || { echo "FAIL guard       enumeration real-tree: NIZAM.json omits an on-disk ${m}/ doc"; bad=1; }
   done
   [ "${bad}" -eq 0 ] \
-    && echo "OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk)" \
+    && echo "OK   guard       vlib_enumeration_complete real-tree (NIZAM.json complete vs disk, including methodology10)" \
     || fail=1
   bad=0
   for f in methodology/*.md standard/*.md; do

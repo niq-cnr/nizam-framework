@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.6
+version: 1.0.7
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.7"
+    date: "2026-10-11"
+    summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
   - version: "1.0.6"
     date: "2026-10-11"
     summary: "Record H-NIP acceptance of reviewed NIP3/NIP4 scopes and pending canonical015 plan110-114 with proposed7200/9360 budget; activation, WA choices and implementation remain outstanding."
@@ -44,19 +47,32 @@ The [current planning view](backlog_reconciliation.md) mirrors completed/cancell
 phase records and uses actual historical/current inputs. Maintenance proof is in
 `.agent/qa/post-ga-maintenance.json` and
 `.agent/evidence/post-ga-maintenance/capable-ci-receipt.json`.
-The operator accepted reviewed NIP3v0.2.0 and NIP4v0.1.0 under H-NIP on2026-10-11
-with "Approved and accepted, please proceed." Both NIPs now1.0.0/active record
-accepted scope, preserving NIP3's four choices/thirteen cases and NIP4's six
-unresolved operator choices. Begin the next review with the concrete
-[phase015 specification](../../.agent/product_spec_015.md),
-[feature list](../../.agent/feature_list_015.json) and [phase YAML](phase_015.yaml).
-PLAN-NEXT planning delivery passed actual independent source review EXIT0 with
-three canonical artifact hashes bound in plan-source-proof.json. Only110–114 are
-canonical allocated IDs, all pending. Proposed7200/9360 includes
-phase-level costs and excludes raw evidence/run_state; H-PHASE-015 and budget
-approval remain OUTSTANDING. No runtime implementation or active-gate reduction.
-PLAN-WA remains serialized after114; PLAN-016 depends114/PLAN-WA order. Relative
-WA implementation versus016 stays open; WAphase and016115–120 unallocated.
+H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+`2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+`06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
+and the three accepted plan hashes in `.agent/run_state.json`. The approved
+counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs.
+Canonical lifecycle and current feature position are read from
+`.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+requires its approved contract, both independent pre-code gates, Mode B, QA and
+the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+
+Operator design decisions were recorded at `2026-10-11T06:30:20.388684+00:00` in `.agent/run_state.json`
+before product writes, authorization commit `06c0ae0a273facce80c57506260648c41f566ebb`, assessed
+source `57862f69ba30a36004ea9a17a295fc9c835afc13`. Exact operator text: "approved. plese proceed as reocommeded with all items."
+
+| choice-id | selected_recommendation |
+| --- | --- |
+| candidate-invalidation | Explicit assessed-input graph covering source/contracts/tests/tools/environment; unknown dependencies invalidate; record-only continuity requires all assessed inputs unchanged. |
+| acceptance-ownership | Sealed immutable test bundle and independent author/reviewer sessions with recorded identities; bundle changes require renewed independent review. |
+| routing-profiles | Reuse existing role/profile identifiers initially; versioned extensions only for demonstrated permission/ownership gaps with explicit migration. |
+| shadow-profiles | Preregister Routine/Standard/High-assurance comparisons after trusted A10/A11; same candidates/full baseline; missed baseline blocker prevents promotion; gate reduction separate operator decision. |
+| cause-routing | Evidence-based cause routing within existing three-attempt limit/counter continuity; infrastructure failures remain failures; any additional cause-specific budget requires explicit approval. |
+| conflict-retry | Explicit file/state conflict lanes in single existing coordination model; serialize shared ownership, isolate retries, invalidate affected evidence, rollback only owned changes. |
+
+PLAN-WA remains pending after114; PLAN-016 depends114 and serializes after PLAN-WA.
+Relative WA implementation versus016 stays open; WAphase and016 IDs remain unallocated.
 Actual F105 map/five-job CI/available SBCL remain current inputs; installedv1.5.0
 and historical phase014 position/budgets/evidence remain unchanged.
 The original planning assessment/checker and every prior evidence capture are frozen.
@@ -72,7 +88,7 @@ Public-tag bootstrap, provenance verification and payload validation (12/12) pas
 The original handover below is a historical snapshot at `e2a50ed`, including its
 then-remaining backlog and commands. For current work, read [ROADMAP.md](ROADMAP.md),
 [operator_gates.md](operator_gates.md), [manifest.json](manifest.json) and
-[DEBT.md](DEBT.md). NIP-0003 is selected under satisfied `H-NIP`; no next phase is activated.
+[DEBT.md](DEBT.md). NIP-0003 is selected under satisfied `H-NIP`; phase015 activation is recorded above.
 Completed phase-014 assertions should be interpreted at their recorded assessment
 revision. Tag and publication evidence: `.agent/evidence/release-v1.5.0-tag/`.
 

@@ -2,11 +2,14 @@
 id: nizam-definition-of-done
 title: "Definition of Done"
 description: "Aggregates the framework's eight done-layers -- Step, Handoff, Gate, Feature, Plan, Merge, Release, and Ecosystem -- by citing each layer's existing authority rather than restating its mechanics."
-version: 0.2.0
+version: 0.3.0
 status: active
 enforcement: partially-enforced
 authoritative_source: standard/definition_of_done.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-10-11"
+    summary: "Extend Handoff-Done with reconstructible runtime-session continuity."
   - version: "0.2.0"
     date: "2026-10-09"
     summary: "Merge-Done (Section 8) and Enforcement (Section 11) now name four compliance.yml jobs: `convergent_review`, the convergent review suite in required-conformance mode, joins `validate`, `e2e_bootstrap` and `fixtures_self_test` (NDEBT-041)."
@@ -93,6 +96,13 @@ families -- run state, feature list, contracts, QA verdicts, evidence -- a
 handoff between the Orchestrator, Planner, Generator, Validator, and
 Evaluator roles must have populated before that role's turn is considered
 complete.
+
+For runtime-session handoffs, `methodology/10_live_runtime_sessions.md` Section 8
+requires committed source and replayable commands plus durable owner, lease,
+generation, outstanding-operation and external-resource references. Re-entry
+checks those records against the workspace and reconstructs if continuity cannot
+be established. Session provenance never substitutes for fresh Evaluator
+acceptance or proves that a live heap matches source.
 
 ## 5. Gate-Done
 

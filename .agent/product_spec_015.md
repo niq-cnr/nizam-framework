@@ -1,11 +1,14 @@
 ---
 id: nizam-phase015-product-spec
 title: "Phase 015 — Live Runtime Sessions: Normative Surface"
-description: "Concrete pending plan for the accepted NIP3 normative scope, with five allocated features and bounded proposed budget."
-version: 0.1.0
-status: draft
+description: "Authorized plan for accepted NIP3 normative scope, five allocated features and approved bounded budget."
+version: 1.0.0
+status: active
 authoritative_source: .agent/product_spec_015.md
 change_log:
+  - version: "1.0.0"
+    date: "2026-10-11"
+    summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
   - version: "0.1.0"
     date: "2026-10-11"
     summary: "Allocate110-114 and propose normative-stage plan for separate activation/budget approval; all implementation pending."
@@ -18,19 +21,37 @@ change_log:
 NIP3 revision0.2.0 and NIP4 revision0.1.0 were accepted under H-NIP on2026-10-11,
 operator verbatim "Approved and accepted, please proceed.", recorded before these
 writes at87ba2ae9ae9b92565bf8bd6d5582dccb7622f881. Acceptance selects NIP3 stages015
-and016 and accepts WA scope. This concrete plan is pending activation review:
-H-PHASE-015 is OUTSTANDING and the7200/9360 budget is proposed, not approved.
-No feature may enter implementation before activation plus its two independent
-contract gates. Current phase/run position and historical014 budgets remain014.
-WA choices are pending operator decisions; no WAphase or016 IDs allocated.
+and016 and accepts WA scope. H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+`2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+`06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
+and the three accepted plan hashes in `.agent/run_state.json`. The approved
+counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs.
+Canonical lifecycle and current feature position are read from
+`.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+requires its approved contract, both independent pre-code gates, Mode B, QA and
+the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+
+Operator design decisions were recorded at `2026-10-11T06:30:20.388684+00:00` in `.agent/run_state.json`
+before product writes, authorization commit `06c0ae0a273facce80c57506260648c41f566ebb`, assessed
+source `57862f69ba30a36004ea9a17a295fc9c835afc13`. Exact operator text: "approved. plese proceed as reocommeded with all items."
+
+| choice-id | selected_recommendation |
+| --- | --- |
+| candidate-invalidation | Explicit assessed-input graph covering source/contracts/tests/tools/environment; unknown dependencies invalidate; record-only continuity requires all assessed inputs unchanged. |
+| acceptance-ownership | Sealed immutable test bundle and independent author/reviewer sessions with recorded identities; bundle changes require renewed independent review. |
+| routing-profiles | Reuse existing role/profile identifiers initially; versioned extensions only for demonstrated permission/ownership gaps with explicit migration. |
+| shadow-profiles | Preregister Routine/Standard/High-assurance comparisons after trusted A10/A11; same candidates/full baseline; missed baseline blocker prevents promotion; gate reduction separate operator decision. |
+| cause-routing | Evidence-based cause routing within existing three-attempt limit/counter continuity; infrastructure failures remain failures; any additional cause-specific budget requires explicit approval. |
+| conflict-retry | Explicit file/state conflict lanes in single existing coordination model; serialize shared ownership, isolate retries, invalidate affected evidence, rollback only owned changes. |
 
 Actual allocator scan of .agent/feature_list*.json confirms highest109 before
 this plan, including cancelled100/101. Allocate only110-114. Single chain110->111
-->112->113->114, every feature pending. Stable backlog packet IDs NIP3-110..114
+->112->113->114; current lifecycle follows the canonical feature list. Stable backlog packet IDs NIP3-110..114
 map to these canonical IDs. Phase016115-120 remain provisional. PLAN-WA follows114;
 PLAN-016 also depends114 and serializes after PLAN-WA. Relative WA implementation
-versus016 stays open. No policy/gate reduction, runtime controller or source edits
-are implemented by this plan.
+versus016 stays open. Source implementation is limited to approved feature
+contracts; no WA policy/gate reduction or runtime controller is delivered here.
 
 ## Architecture and feature boundaries
 
@@ -105,9 +126,9 @@ acceptance controls; Validator ModeB precedes independent fixed-candidate QA and
 externalized command/output/actual EXIT/revision receipts plus evidence gate.
 Feature completion waits for all gates, and phase close never authorizes a tag.
 
-## Proposed scope budget and measurement
+## Approved scope budget and measurement
 
-| Feature | NIP naive product lines | Proposed counted allowance |
+| Feature | NIP naive product lines | Approved counted allowance |
 | --- | --- | --- |
 | 110 | 600 | 1600 |
 | 111 | 850 | 2200 |
@@ -116,11 +137,10 @@ Feature completion waits for all gates, and phase close never authorizes a tag.
 | 114 | 240 | 1150 |
 | Total | 2330 | 7200 |
 
-Proposed130% ceiling9360. This includes counted phase-level planning/close costs
+Approved 130% ceiling9360. This includes counted phase-level planning/close costs
 inside the per-feature allowances; no additional uncapped budget. The allowance
 beyond2330 covers contracts, independent verdicts, audit/planning/registrations,
-with111 largest for18 fixtures and relational controls. It is a bounded estimate
-for operator review, not an empirical universal multiplier or approval.
+with111 largest for18 fixtures and relational controls. It is an operator-approved bounded estimate, not an empirical universal multiplier.
 
 Actual comparable014 features104/105/106/107/109/108/102 total5933 counted versus
 5110 estimates (range686-991, mean847.6). Exclude mixed-basis099/103 for calibration.
@@ -132,7 +152,7 @@ captured separately by path. The planning-task changes are outside015 implementa
 measurement. After each future feature, Orchestrator compares only preceding up-to
 three completed actuals to the3x threshold before appending current count; first
 feature has no rolling baseline. Cumulative>9360 halts pending explicit human
-re-baseline; proposal does not alter current run_state budget.
+re-baseline; the Orchestrator derives the active budget from the approved canonical plan.
 
 ## Current inputs and unchanged boundaries
 
@@ -141,8 +161,9 @@ operator GA declaration; cancelled100/101 generated no F101 findings. Only Open
 NDEBT040/034. Actual commissioning identity/baseline/QA and maintenance QA/CI are
 available. Public/installed v1.5.0 remains pinned
 f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852. Protect014 spec/features/YAML/manifest
-entries/budgets, authored modules/root index/runtime/schema/tools, DEBT, installed
-payload and all old evidence/checkers/QA. Any later consolidation is separately
+entries/budgets, DEBT, installed payload and all old evidence/checkers/QA.
+Activated-phase source edits are limited to each approved feature contract;
+source work never changes installed governance automatically. Any later consolidation is separately
 H-CONSOLIDATION-gated.
 
 ## Fixture inventory and proof-stage ownership
@@ -201,9 +222,9 @@ ownership and does not modify those definitions.111 owns schema-level artifacts;
 ## Human gates
 
 H-NIP: satisfied for accepted NIP3/NIP4 scopes only, recorded exact operator text.
-H-PHASE-015: OUTSTANDING; requires concrete plan and bounded budget review.
+H-PHASE-015: EXERCISED; concrete plan and7200/9360 budget approved at the recorded authorization.
 H-PHASE-016: OUTSTANDING after separately scoped/allocated controller plan.
-WA unresolved six choices: pending operator decision; WAphase unallocated.
+WA six selected design choices: recorded above; WAphase remains unallocated after114.
 H-FRAMEWORK-RELEASE/H-CONSUMER-UPGRADE: recurring future decisions, never self-execute.
 
 ## References
