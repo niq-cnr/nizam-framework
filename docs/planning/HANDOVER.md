@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.2
+version: 1.0.3
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.3"
+    date: "2026-10-11"
+    summary: "Record merged planning PR81 and independently gated maintenance source intake; three debts remain Open and A04a pending until real capable CI and independent QA/evidence closure. Preserve historical assessments and installed v1.5.0."
   - version: "1.0.2"
     date: "2026-10-11"
     summary: "Refresh only current handover pointers: actual merged self-commissioning and root AGENTS route, corrected current backlog status and authorized planning-refresh then separately gated maintenance; preserve the original historical snapshot byte-identically."
@@ -22,6 +25,8 @@ change_log:
 # Developer Handover — Release Status and Phase 014 Snapshot
 
 ## Current status — 2026-10-11
+
+Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`; the separate maintenance contract is independently approved. NDEBT-047/046/045 remain Open and A04a pending during source intake, with actual capable CI and independent QA/evidence closure required.
 
 Local `v1.5.0` self-governance has been commissioned and merged; begin through
 [AGENTS.md](../../AGENTS.md), the installed `.nizam/NIZAM.json` and installed skill.

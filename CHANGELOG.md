@@ -9,6 +9,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Bounded maintenance source intake.** After planning PR81 merged, the independently
+  approved maintenance contract covers C13 interruption cleanup, stronger sandbox
+  test discrimination, truthful six-module/12-check payload help and both Evaluator
+  stages in role text. Debt047/046/045 and A04a await actual capable CI and independent
+  QA/evidence closure; installed v1.5.0 and released versions are unchanged.
+
 - **Current post-GA planning view** (planning envelope only). Canonical completed
   and cancelled phase014 statuses now match the derived backlog; cancelled100/101
   are terminal. Future planning inputs use actual historical102/current debt and

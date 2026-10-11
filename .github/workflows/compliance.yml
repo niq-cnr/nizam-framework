@@ -85,6 +85,16 @@ jobs:
       # tools/validate.sh --target, which fails closed without jsonschema/yaml.
       - run: pip install jsonschema pyyaml
 
+
+      - name: Record maintenance checkout source identity
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, subprocess
+          from pathlib import Path
+          paths = ['tools/fixtures_self_test.sh', 'tools/test_convergent_review.py', 'tools/validate.sh', 'standard/AGF.md', 'templates/AGENTS.md', 'tools/README.md', '.github/scripts/test_c13_cleanup.py', '.github/scripts/test_sandbox_boundaries.py', '.github/workflows/compliance.yml']
+          print("MAINTENANCE_CHECKOUT_RECEIPT=" + json.dumps({"checkout_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(), "source_sha256": {p: hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in paths}}, sort_keys=True))
+          PY
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
       - run: bash tools/fixtures_self_test.sh
 
   convergent_review:
@@ -96,13 +106,22 @@ jobs:
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: "3.x"
-      - run: pip install jsonschema
+      - run: pip install jsonschema pyyaml
       - name: Enable unprivileged user namespaces where the kernel restricts them
         run: |
           if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
             sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           fi
-      - run: python3 tools/test_convergent_review.py
+      - name: Record maintenance checkout source identity
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, subprocess
+          from pathlib import Path
+          paths = ['tools/fixtures_self_test.sh', 'tools/test_convergent_review.py', 'tools/validate.sh', 'standard/AGF.md', 'templates/AGENTS.md', 'tools/README.md', '.github/scripts/test_c13_cleanup.py', '.github/scripts/test_sandbox_boundaries.py', '.github/workflows/compliance.yml']
+          print("MAINTENANCE_CHECKOUT_RECEIPT=" + json.dumps({"checkout_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(), "source_sha256": {p: hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in paths}}, sort_keys=True))
+          PY
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh
 
   self_governance:
     runs-on: ubuntu-latest

@@ -125,37 +125,23 @@ Modes:
                       read only under --target and by the default sweep's
                       C12 ecosystem-fixture check.
 
-  --payload           Consumer-payload mode. Validates only the subset of
-                      checks relevant to a `bootstrap.sh`-injected consumer
-                      payload (standard/, templates/, schema/, tools/, and
-                      NIZAM.json). UNLIKE the default/--target modes (which
-                      evaluate the tree at CWD), --payload anchors to its own
-                      payload root -- the parent of the tools/ directory this
-                      script lives in -- so `bash .nizam/tools/validate.sh
-                      --payload` from a consumer repository root behaves
-                      identically to `cd .nizam && bash tools/validate.sh
-                      --payload` (NDEBT-012 / issue #18, feature 050).
-                      Framework-envelope files that are intentionally absent
-                      from consumer payloads (CONTEXT.md, README.md,
-                      CHANGELOG.md, bootstrap.sh, methodology/, registry/,
-                      docs/, ecosystem/) are not required; directory-qualified
-                      cross-references into those non-injected paths are
-                      carved out of C9 in payload mode (NDEBT-004) exactly as
-                      C4 carves them out of the NIZAM.json index.
-                      Runs C1-C5, C7-C11 with payload-appropriate file
-                      sets; C6 is skipped. C9 and C10 both sweep only the
-                      payload-doc set (standard/, templates/, and tools/
-                      excluding tools/fixtures/, plus schema/README.md) --
-                      docs/guide/index.html is never swept in --payload
-                      mode, so C10's version-anchor sub-check finds no
-                      anchor to check there and passes trivially (the
-                      framework-version anchor lives only in the guide,
-                      which bootstrap.sh does not inject). C11 passes
-                      trivially in --payload mode: `.agent/` governance
-                      state is never part of the bootstrap.sh payload, so
-                      C11 does not inspect the filesystem at all in this
-                      mode (see C11 below). Exits 0 only if every
-                      applicable check passed.
+  --payload           Consumer-payload mode. Validates the injected six modules
+                      (standard/, templates/, schema/, tools/, methodology/,
+                      ecosystem/) and NIZAM.json. Anchors to this script's own
+                      payload root, so invocation from a consumer repository
+                      root behaves identically to invocation inside .nizam/.
+                      Framework-envelope files (CONTEXT.md, README.md,
+                      CHANGELOG.md, bootstrap.sh, registry/, docs/) are absent
+                      from the injected payload; C4/C9 carve out references
+                      into non-injected paths. Runs 12 counted checks:
+                      C1-C5, C7-C11, C13 and C16; C6 is skipped. C9 and C10
+                      sweep the payload-doc set, including methodology/ and
+                      ecosystem/, excluding tools/fixtures/ and the guide.
+                      C11 and C16 pass trivially because .agent/ governance
+                      state is not injected. C13 requires each skill module
+                      to match a NIZAM.json authoritative_source in both modes,
+                      including modules whose path resolution is carved out.
+                      Exits 0 only if every applicable check passed.
 
   --help, -h          Prints this usage and exits 0.
 

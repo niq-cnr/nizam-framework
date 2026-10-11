@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.7
+version: 0.1.8
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
 last_audited: "2026-10-11"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.8"
+    date: "2026-10-11"
+    summary: "Record merged planning PR81 and independently gated maintenance source intake; three debts remain Open and A04a pending until real capable CI and independent QA/evidence closure. Preserve historical assessments and installed v1.5.0."
   - version: "0.1.7"
     date: "2026-10-11"
     summary: "Refresh the current derived DAG after phase014 completion and local self-commissioning: exact complete/cancelled canonical mirrors, factual replacement inputs for obsoleteF101 premises, and authorized planning-refresh then separately gated small maintenance. Historical reconciliation/checker/evidence remain unchanged."
@@ -82,7 +85,11 @@ The old reconciliation checker/evidence remains a historical assessment snapshot
 This new checker is the dated stage1 assessment snapshot; it is frozen after this
 planning PR. Stage2 uses new maintenance evidence/checks rather than rewriting
 this checker when A04a completes.
-This planning PR is pending merge; no mergeSHA or completed maintenance is claimed.
+Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. The separate
+`.agent/contracts/post-ga-maintenance.json` passed both independent pre-code gates.
+Source maintenance is in progress; NDEBT-047/046/045 remain Open and A04a pending
+until actual capable CI and independent QA/evidence gate. Its new stage-aware
+checker is `.agent/evidence/post-ga-maintenance/check_maintenance_view.py`.
 
 ## Prior reconciliation history
 

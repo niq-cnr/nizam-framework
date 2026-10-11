@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.54.0
+version: 0.55.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.55.0"
+    date: "2026-10-11"
+    summary: "Record merged planning PR81 and independently gated maintenance source intake; three debts remain Open and A04a pending until real capable CI and independent QA/evidence closure. Preserve historical assessments and installed v1.5.0."
   - version: "0.54.0"
     date: "2026-10-11"
     summary: "Record current planning refresh and the operator-authorized small maintenance sequence after it merges; completed/cancelled phase mirrors and actual local commissioning evidence replace stale next-planning premises without accepting NIP3 or activating a phase."
@@ -793,6 +796,8 @@ what comes next (the gap this file closes: phases 001–004 completed with no re
 successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-11)
+
+Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`; the separate maintenance contract is independently approved. NDEBT-047/046/045 remain Open and A04a pending during source intake, with actual capable CI and independent QA/evidence closure required.
 
 - **Current planning refresh is authorized; separate maintenance follows after merge.** The [current backlog view](backlog_reconciliation.md) now mirrors all canonical completed/cancelled phase014 statuses, treats F100/F101 as terminal and replaces obsolete F101 planning-input premises with actual historical102/current debt and commissioned local evidence. Only NDEBT-047, NDEBT-046, NDEBT-045 and A04a are authorized for a separately gated maintenance contract after this planning PR merges. No NIP3/WA acceptance, phase015 activation, release or installed-governance upgrade is authorized. The current view and new checker preserve historical phase/evidence records.
 - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
