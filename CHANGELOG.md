@@ -9,6 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Accepted scopes and pending phase015 plan.** Recorded operator H-NIP acceptance
+  of reviewed NIP3v0.2.0/NIP4v0.1.0; both now1.0.0/active preserve the reviewed
+  scope, NIP3 cases/choices and six unresolved WA options. Canonical phase015
+  spec/list/YAML allocates110–114 as pending chain, proposed7200/9360 budget
+  including phase-level costs. H-PHASE-015 and budget approval remain outstanding;
+  no runtime/module implementation, WA-choice resolution, active-gate reduction,
+  phase016/WA allocation, release or installed upgrade. Manifest appends pending/
+  proposed015; current phase014, historical ledgers/evidence and installedv1.5.0
+  remain frozen.
+
 - **Pending NIP planning.** NIP-0003 (0.2.0) now uses provisional110–120, actual
   delivered F105 claim-map/required-CI facts, available SBCL2.2.9.debian and current
   historical102/debt/commissioning/maintenance inputs. Its four operator choices

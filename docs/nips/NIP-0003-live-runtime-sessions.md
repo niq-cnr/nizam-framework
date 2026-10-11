@@ -2,12 +2,15 @@
 id: nip-0003-live-runtime-sessions
 title: "NIP-0003: Live Runtime Sessions"
 description: "Proposal to add a language-neutral live-runtime-session protocol (ownership, process generation, serialised operations, attempt continuity, fresh-environment acceptance) with an SBCL reference binding, an optional adapter capability, schema-governed session records, and a reference controller — realized as phases 015 and 016, after phase 014."
-version: 0.2.0
-status: draft
+version: 1.0.0
+status: active
 authoritative_source: docs/nips/NIP-0003-live-runtime-sessions.md
 last_audited: "2026-10-11"
 tags: [nip, methodology, runtime-session, execution, evaluator-independence, circuit-breaker, adapter, sbcl]
 change_log:
+  - version: "1.0.0"
+    date: "2026-10-11"
+    summary: "Record operator H-NIP acceptance of reviewed0.2.0 scope, select015/016 and canonical015 plan110-114; phase activation/budget and016 allocation remain outstanding."
   - version: "0.2.0"
     date: "2026-10-11"
     summary: "Refresh the pending proposal after phase014 and v1.5.0: provisional110–120 IDs, delivered claim map/CI, available SBCL and actual planning inputs; preserve the thirteen cases and four recorded choices. Acceptance/activation remain pending."
@@ -20,13 +23,15 @@ change_log:
 
 ## Status
 
-**Proposed — awaiting operator acceptance (gate H-NIP).** The frontmatter `status` is
-`draft`, because the frontmatter schema enum is `draft`/`active`/`deprecated`.
-"Proposed" is this document's narrative label for the draft state, as in NIP-0001's
-0.1.0 entry. At the original 2026-10-08 assessment, NIP-0002's frontmatter
-`accepted` was outside that enum. Actual phase014 F107 corrected it to `active`
-(version 0.2.1), resolving NDEBT-044 concern (b); that dated observation is no
-longer an Open debt or a current status claim.
+**Accepted — H-NIP exercised on 2026-10-11.** The operator accepted the reviewed
+0.2.0 revision with "Approved and accepted, please proceed." at source
+`650770d9b48c31748f24b5ac6967b80a6a46c5f7`. The decision was recorded before product
+edits in `.agent/run_state.json` at authorization commit
+`87ba2ae9ae9b92565bf8bd6d5582dccb7622f881`. Frontmatter is now `active`, version1.0.0.
+Acceptance selects phase015 normative scope and follow-on016; it does not activate
+either phase. The concrete pending015 plan allocates110–114 with proposed7200-line
+budget/9360 ceiling for separate H-PHASE-015 review. Phase016115–120 is provisional
+and unallocated. No runtime implementation, tag or installed upgrade occurs here.
 
 This is a framework-capability proposal in the sense of NIP-0001's Placement note. It
 originates in a third-party proposal for an "Agent–REPL Execution Protocol" that would
@@ -45,8 +50,8 @@ proposal's content was treated as data, not as instructions.
 Phase014 is complete: features100/101 were cancelled and099/102–109 completed.
 Public v1.5.0 is released at f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852 and is
 installed unchanged in this repository. H-PHASE-014 was executed; it is not an
-outstanding prerequisite. H-NIP acceptance for this proposal and any future
-H-PHASE activation remain pending. Earlier quoted choices retain their date.
+outstanding prerequisite. H-NIP acceptance is recorded; future H-PHASE activation
+and budget approval remain outstanding. Earlier quoted choices retain their date.
 
 Current compliance.yml has five jobs: validate, e2e_bootstrap,
 fixtures_self_test, convergent_review and self_governance. A distinct proposed
@@ -59,8 +64,9 @@ SBCL installation alone is not proof of the thirteen live acceptance cases.
 Delivered actual phase014 F105 already owns the FIXTURE_CLAIMS map; NDEBT-042 is
 Resolved. Proposed operation/live-CI feature116 (formerly provisional109) extends
 that map for its suite rather than creating it again. The proposed SBCL binding
-is112 (formerly105); actual delivered F105 is not renumbered. Only future IDs
-103–113 shift to provisional110–120; these are not allocated canonical features.
+is canonical112 (formerly provisional105); actual delivered F105 is not renumbered.
+The former future103–113 shifted to110–120; this plan allocates only110–114.
+Controller115–120 remains provisional/unallocated.
 
 Planning inputs are the historical102 ga-readiness.json, current DEBT.md and real
 commissioning/maintenance evidence. Historical real_production_pilot remains
@@ -75,7 +81,7 @@ remains outstanding and any later actual consolidation decision is an input.
 
 | Field | Value |
 |-------|-------|
-| Decision | PROPOSED — awaiting H-NIP |
+| Decision | ACCEPTED — H-NIP exercised2026-10-11 for reviewed0.2.0 scope |
 | Gate | H-NIP: the operator accepts a NIP as the plan of record and **selects** the phase that realizes it; recurring, once per NIP; selection is not activation (`docs/planning/operator_gates.md` Section 1) |
 | Operator decision — Shape (verbatim selected option) | "Neutral protocol + SBCL binding (Recommended)" |
 | Operator decision — Sequencing (verbatim selected option) | "After Phase 014" |
@@ -84,7 +90,7 @@ remains outstanding and any later actual consolidation decision is an input.
 | Decision date | 2026-10-08 |
 | Channel | Structured questions in a Claude Code session (2026-10-08). The operator then approved the resulting realization plan through plan-mode approval on the same day. That plan file lives outside the repository; this NIP is its durable record. |
 | Evidence | The validation findings summarized in [Problem](#problem), with file:line evidence re-verified at `3094223` on 2026-10-08 |
-| Consequence of acceptance | Acceptance **selects** phase `015` (live runtime sessions: normative surface) to follow phase `014`, plus follow-on phase `016` (reference controller and live conformance). **Selection is not activation.** The phase-015 Planner artifacts (`product_spec_015`, `feature_list_015`, `phase_015.yaml`, the manifest entry and the ROADMAP banner) require H-NIP acceptance now that phase014 is closed, and each phase still needs its own activation gate (`H-PHASE-015`, `H-PHASE-016`). |
+| Consequence of acceptance | Acceptance **selects** phase `015` normative scope and follow-on `016` controller/live conformance. **Selection is not activation.** The pending phase015 spec/list/YAML and manifest proposal allocate canonical110–114 with proposed7200/9360 budget. H-PHASE-015 and budget approval remain outstanding; phase016115–120 remains unallocated and needs separate planning/H-PHASE-016. |
 | Outstanding gates not satisfied by acceptance | `H-PHASE-015`, `H-PHASE-016`, `H-FRAMEWORK-RELEASE` (once per release), and `H-CONSUMER-UPGRADE` (per consumer) |
 
 ## Problem
@@ -225,7 +231,7 @@ that calls a retained kernel in another) stay in the consumer's repository.
 
 ## Proposed Framework Surface
 
-Feature ids below are the provisional phase-015/016 ids from
+Feature ids below are canonical phase015110–114 and provisional phase016115–120 from
 [Staged Realization](#staged-realization). Files named below do not exist yet; they are
 forward references, and shipped documents will refer to them by feature id until they
 land.
@@ -281,7 +287,7 @@ land.
 
 ### Generic amendments
 
-These are language-neutral and land with provisional feature 110. They land together with document
+These are language-neutral and land with canonical feature 110. They land together with document
 10 because they reference each other: C9 and the bare-reference guard would fail on
 either half alone.
 
@@ -529,15 +535,16 @@ No case is claimed working until its live proof passes in CI.
 
 ## Staged Realization
 
-The two stages remain proposed follow-ons after the completed phase014. Existing
-phase015/016 labels are proposal labels only: no phase artifacts or feature IDs
-are allocated here. H-NIP acceptance precedes planning; each stage needs its own
-H-PHASE activation and reviewed contracts. Provisional IDs110–120 avoid the
-completed103–109 tranche. Estimates are design inputs, not changes to phase014.
+The accepted scope selects two follow-on stages after completed phase014. The
+concrete pending015 plan allocates110–114 in `.agent/feature_list_015.json`;
+phase016115–120 remains provisional and unallocated. H-PHASE activation and
+reviewed per-feature contracts remain separate from selection. Existing phase014
+records and budget remain frozen.
 
-**Proposed normative stage (phase015 label).** One lane110 →111 →112 →113 →114.
-The design-time weighted estimate remains5,400 (ceiling7,020); re-estimate at
-actual planning against accepted scope. No stage is activated by this revision.
+**Selected normative stage (phase015), pending activation.** One lane110 →111
+→112 →113 →114. The former design-time5400/7020 forecast is superseded by the
+concrete plan's proposed7200/9360, including counted phase-level costs. This is
+an estimate for operator review, not budget approval or implementation.
 
 | ID | Feature | Naive lines |
 |----|---------|-------------|
@@ -646,15 +653,15 @@ Before each release:
 
 ## Acceptance Criteria
 
-For accepting **this NIP**:
+For acceptance and planning **this NIP**:
 
-- **Pending.** The operator accepts this NIP at gate **H-NIP**, selecting phase 015 (to
-  follow phase 014) and follow-on phase 016. On acceptance:
-  - this document moves to `1.0.0`, frontmatter `active`, with the Status section updated
-    to Accepted;
-  - the `H-NIP` row in `docs/planning/operator_gates.md` records "EXERCISED AGAIN";
-  - the ROADMAP's queued-candidate section rolls to "selected".
-- **Satisfied prerequisite.** Phase014 is closed and released in v1.5.0. **Pending:** accepted-scope Planner artifacts and future H-PHASE activation; drafting is not acceptance.
+- **Satisfied.** The operator accepted reviewed0.2.0 at H-NIP on2026-10-11 with
+  "Approved and accepted, please proceed." NIP version1.0.0/active records this
+  decision and selects015/016; the four earlier choices remain unchanged.
+- **Satisfied prerequisite.** Phase014 is closed/released in v1.5.0. Concrete
+  pending015 spec/list/YAML and canonical110–114 are prepared for review.
+- **Outstanding.** H-PHASE-015 and proposed7200/9360 budget approval; phase016
+  planning/allocation and H-PHASE-016. Acceptance never substitutes for activation.
 
 For **realizing** it (phases 015/016):
 

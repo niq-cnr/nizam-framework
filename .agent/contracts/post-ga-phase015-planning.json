@@ -1,0 +1,153 @@
+{
+  "contract_id": "post-ga-phase015-planning",
+  "feature_id": "post-ga-phase015-planning",
+  "name": "Record accepted NIP scopes and prepare unactivated phase015 normative plan",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_post_ga_phase015_planning.md",
+  "base_revision": "650770d9b48c31748f24b5ac6967b80a6a46c5f7",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/product_spec_015.md",
+        "purpose": "New candidate015 planning or new task-scoped gate/evidence artifact; no implementation"
+      },
+      {
+        "path": ".agent/feature_list_015.json",
+        "purpose": "New candidate015 planning or new task-scoped gate/evidence artifact; no implementation"
+      },
+      {
+        "path": "docs/planning/phase_015.yaml",
+        "purpose": "New candidate015 planning or new task-scoped gate/evidence artifact; no implementation"
+      },
+      {
+        "path": ".agent/product_spec_post_ga_phase015_planning.md",
+        "purpose": "New candidate015 planning or new task-scoped gate/evidence artifact; no implementation"
+      },
+      {
+        "path": ".agent/contracts/post-ga-phase015-planning.json",
+        "purpose": "New candidate015 planning or new task-scoped gate/evidence artifact; no implementation"
+      },
+      {
+        "path": ".agent/evidence/post-ga-phase015-planning/<artifact>",
+        "purpose": "New candidate015 planning or new task-scoped gate/evidence artifact; no implementation"
+      },
+      {
+        "path": ".agent/validator/post-ga-phase015-planning[-name].json",
+        "purpose": "New candidate015 planning or new task-scoped gate/evidence artifact; no implementation"
+      },
+      {
+        "path": ".agent/qa/post-ga-phase015-planning[-name].json",
+        "purpose": "New candidate015 planning or new task-scoped gate/evidence artifact; no implementation"
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "docs/nips/NIP-0003-live-runtime-sessions.md",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      },
+      {
+        "path": "docs/nips/NIP-0004-workflow-assurance.md",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      },
+      {
+        "path": "docs/planning/backlog_dag.json",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      },
+      {
+        "path": "docs/planning/backlog_reconciliation.md",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      },
+      {
+        "path": "docs/planning/HANDOVER.md",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      },
+      {
+        "path": "docs/planning/operator_gates.md",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      },
+      {
+        "path": "docs/planning/manifest.json",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Acceptance/current planning overlays only; runstate Orchestrator-owned, manifest append only"
+      }
+    ]
+  },
+  "non_goals": [
+    "No product writes before independent ModeA and Evaluator contract review approve.",
+    "No H-PHASE activation, runtime/modules/schema/tool implementation, fixed release forecast, tag or installed upgrade.",
+    "No WA design-choice resolution, policy activation/gate reduction or WA/016 numeric allocation.",
+    "Preserve014/current-position/budgets, old manifest entries, source/index/DEBT/installed and all prior proof/checkers/historical/released sections."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "AT1: Actual recorded NIP acceptance, protected cases/choices and WA scope/choices preserved.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --identity",
+      "evidence": ".agent/evidence/post-ga-phase015-planning/01-identity.txt"
+    },
+    {
+      "acceptance_test": "AT2: Pending canonical015 chain110-114, atomic future acceptance,18-fixture13-case split and consistent budget.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --plan",
+      "evidence": ".agent/evidence/post-ga-phase015-planning/02-plan.txt"
+    },
+    {
+      "acceptance_test": "AT3: Current accepted scopes with H-PHASE outstanding, only015 allocation, WA ordering and014/current-position invariants.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --projection",
+      "evidence": ".agent/evidence/post-ga-phase015-planning/03-projection.txt"
+    },
+    {
+      "acceptance_test": "AT4: Exact allowlist, frozen historical/module/installed/proof files, manifest prior entries and parent-only bounded state.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --scope",
+      "evidence": ".agent/evidence/post-ga-phase015-planning/04-scope.txt"
+    },
+    {
+      "acceptance_test": "AT5: Independent isolated discriminating controls reject authority, choice, allocation, DAG, budget and proof-stage mutants.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --negative",
+      "evidence": ".agent/evidence/post-ga-phase015-planning/05-negative.txt"
+    },
+    {
+      "acceptance_test": "AT6: Full documentation compliance, release closeout and commissioned installation integrity.",
+      "command": "bash tools/validate.sh && python3 .github/scripts/release_closeout.py --mode pr && PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "evidence": ".agent/evidence/post-ga-phase015-planning/06-compliance-install.txt"
+    }
+  ],
+  "estimated_lines": 1100,
+  "evidence_dir": ".agent/evidence/post-ga-phase015-planning/",
+  "evidence_convention": "Capture exact command/output/actual exit and exercised fixed revision; no future-proof assertions or inline raw output.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 0,
+    "approved_at": "2026-10-11T05:20:38.552444+00:00"
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "design_notes": {
+    "roles": "Planner/Generator product docs only after two gates; independent Evaluator checker; Orchestrator lifecycle/operator events/counters",
+    "authority": "Acceptance event SHA/revision snapshots pinned by parent before product edits; H-PHASE-015 remains outstanding",
+    "budget": "Proposed7200/9360 only; concrete operator review before activation; same evidence-excluded disclosed counting basis as014",
+    "preservation": "Exact13cases/fourchoices preserved; NIP4 scope and listed options preserved except accepted lifecycle/planning-gate wording, six choices pending operator decision, not pending NIP acceptance.",
+    "authorization_revision": "87ba2ae9ae9b92565bf8bd6d5582dccb7622f881"
+  },
+  "completed_at": "2026-10-11T05:37:51.579095+00:00",
+  "completion": {
+    "source_candidate_sha": "d9ecab3cecb40428baa63013fe8106ed63a2ad6e",
+    "qa": ".agent/qa/post-ga-phase015-planning.json",
+    "evidence_gate": ".agent/evidence/post-ga-phase015-planning/evidence-gate.txt",
+    "planning_delivery": "PLAN-NEXT",
+    "pending_operator_gates": [
+      "H-PHASE-015 activation and proposed7200/9360 budget",
+      "six Workflow Assurance design choices",
+      "future016/WA allocation and activation"
+    ]
+  }
+}

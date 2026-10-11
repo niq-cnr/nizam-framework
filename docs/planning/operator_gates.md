@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.34.0
+version: 0.35.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.35.0"
+    date: "2026-10-11"
+    summary: "Record H-NIP acceptance of reviewed NIP3/NIP4 scopes and pending canonical015 plan110-114 with proposed7200/9360 budget; activation, WA choices and implementation remain outstanding."
   - version: "0.34.0"
     date: "2026-10-11"
     summary: "Revise pending NIP3 and draft proposed Workflow Assurance against actual post-GA inputs; record authorized drafting delivery without NIP acceptance, phase activation or installed upgrade."
@@ -145,11 +148,12 @@ completion entries. So where this registry and a phase spec disagree on a gate's
 **definition**, the phase spec wins; where they differ on a gate's **status**,
 the later operator record (cited in the Disposition column) is current.
 
-Current informational note (2026-10-11): the authorized NIP3 revision and
-proposed NIP4 Workflow Assurance scope are drafted for review. Neither proposal
-has an H-NIP acceptance decision. Future H-PHASE activation remains pending;
-drafting does not change the gate dispositions recorded below. No new gate,
-release, phase or installed upgrade is authorized by this note.
+Current informational note (2026-10-11): reviewed NIP3v0.2.0/NIP4v0.1.0 scopes
+were accepted under recorded H-NIP decisions before these edits. Pending015
+planning artifacts allocate110–114 with proposed7200/9360 budget. H-PHASE-015 and
+budget approval remain OUTSTANDING; no new phase has activated. WA's six choices
+remain pending explicit operator decisions; scope acceptance does not select their
+options. WAphase/016 IDs remain unallocated and future releases/upgrades separate.
 
 ## 1. Decided and active gates
 
@@ -160,7 +164,7 @@ their most recent disposition, not a claim that they never fire again.
 
 | Gate | Scope — what the operator decides | Introduced | Disposition |
 |------|-----------------------------------|------------|-------------|
-| `H-NIP` | Accept a NIP (handover proposal) as the plan of record and **select** the phase that realizes it (recurring, once per NIP; selection is not activation — the selected phase still needs its own `H-PHASE-NNN`). | `docs/nips/NIP-0001-ecosystem-engineering-cycle.md`; `docs/nips/NIP-0002-zero-to-n-project-spectrum.md`; `.agent/product_spec_005.md` Sec 8 | SATISFIED 2026-07-17 — operator accepted NIP-0001 ("approved. expedite."), selecting phase 005. EXERCISED AGAIN 2026-07-21 — operator accepted NIP-0002 ("NIP-0002 is accepted"), selecting phase 008 (The 0–n Project Spectrum); phase-008 authoring + activation (`H-PHASE-008`) is the next cycle. |
+| `H-NIP` | Accept a NIP (handover proposal) as the plan of record and **select** the phase that realizes it (recurring, once per NIP; selection is not activation — the selected phase still needs its own `H-PHASE-NNN`). | `docs/nips/NIP-0001-ecosystem-engineering-cycle.md`; `docs/nips/NIP-0002-zero-to-n-project-spectrum.md`; `.agent/product_spec_005.md` Sec 8 | SATISFIED 2026-07-17 — operator accepted NIP-0001 ("approved. expedite."), selecting phase 005. EXERCISED AGAIN 2026-07-21 — operator accepted NIP-0002 ("NIP-0002 is accepted"), selecting phase 008 (The 0–n Project Spectrum); phase-008 authoring + activation (`H-PHASE-008`) is the next cycle. EXERCISED AGAIN 2026-10-11 — operator accepted reviewed NIP-0003 revision0.2.0 and NIP-0004 revision0.1.0 with "Approved and accepted, please proceed." at source650770d9b48c31748f24b5ac6967b80a6a46c5f7; exact decisions recorded before edits at87ba2ae9ae9b92565bf8bd6d5582dccb7622f881. NIP3 selects015 normative and follow-on016; NIP4 accepts scope only, with six unresolved choices and no WAphase. Selection is not activation: H-PHASE-015 and concrete proposed7200/9360 budget approval remain OUTSTANDING; H-PHASE-016 separate. |
 | `H-PHASE-NNN` | Authorize activation of a proposed phase before any feature starts (the recurring per-phase activation class; `H-NIP` was phase 005's activation gate). | `.agent/product_spec_006.md`..`product_spec_014.md` gates | SATISFIED per phase: **006** 2026-07-19 ("Approved. Proceed with the logical next steps."); **007** 2026-07-20 ("Authorized to activate now"); **008** 2026-07-21 ("Approved. Please proceed", gate H-PHASE-008 — activates NIP-0002's Stage 1); **009** 2026-07-22 ("Activate phase 009", gate H-PHASE-009 — activates NIP-0002's Stage 2, the 0-case greenfield genesis); **010** 2026-07-22 ("Approved. Proceed with the phase-010 proposal + activation", gate H-PHASE-010 — activates NIP-0002's Stage 3, the n-case multi-repo tooling); **011** 2026-07-22 ("Approved. Please proceed", gate H-PHASE-011 — activates NIP-0002's Stage 4, the final stage); **012** 2026-08-15 ("approved. please proceed.", gate H-PHASE-012 — activates the full issue-52 v1.0.0 consumer-safety remediation after the operator selected the major-release, clean-break migration, and isolated-worktree decisions); **013** 2026-08-18 ("approved. please proceed.", gate H-PHASE-013 — activates the Definition of Done phase: the layered done-criteria consolidated into `standard/definition_of_done.md`, the lifecycle invariant mechanized as check C16 plus a release close-out gate, optional advisory dod_ref keys, consumer template and pull-request checklist, and v1.1.0 release preparation last). **014** 2026-10-08 ("- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.", gate H-PHASE-014 — activates the GA track (the real non-scratch pilot at `v1.4.0`, the 06/08 activation wave with the `H-CONSOLIDATION`/`H-GA` definitions, the first simplification review, the GA-readiness dossier without declaration) WITH the approved amendments (edge 101→099; hardened acceptance tests; the phase-scoped tag check) AND the **maintenance-fold amendment**: features 103–109 (`NDEBT-043` → `NDEBT-041`, `NDEBT-042`, `NDEBT-044` split by concern, `NDEBT-037`, `NDEBT-026`) folded in ahead of feature 102; `.agent/product_spec_014.md` 1.1.0; recorded in `.agent/run_state.json` as `operator_gate_decision` at 2026-10-08T11:21:14Z before the re-planning, the run_state position write following canonical-first after `phase_014.yaml` and the manifest, landed 2026-10-08T12:18:31Z; the re-baselined scope budget, 6660 lines with a 130% ceiling of 8658 — the Planner's activation-time estimate, naive 2890 × the measured 2.3 process weight, NIP-0003:494-495 — was then approved by the operator 2026-10-08, verbatim "In approve the increased budget." (run_state operator_gate_decision 2026-10-08T12:50:31Z); and the Planner hardening of the phase-014 acceptance tests beyond the enumerated amendments (099 AT3/AT6/AT7, 101 AT2, 102 AT2/AT3/AT7) was acknowledged verbatim "acknowledged." (run_state operator_gate_decision 2026-10-08T13:20:12Z)). Each is recorded in `.agent/run_state.json` (`phase_activated`) before feature execution. |
 | `H-FRAMEWORK-SCOPE` | Approve the minimum-viable capability of a release; prevent optional tooling/schemas from expanding the first release. | `.agent/product_spec_005.md` Sec 8 | DISPOSITIONED 2026-07-18 — subsumed by the `H-NIP` activation decision rather than taken separately (recorded plainly in `docs/planning/ROADMAP.md`, not backfilled). |
 | `H-DOGFOOD-EXCEPTION` | Approve a `PASS_WITH_EXCEPTIONS` framework preflight result before execution continues (recurring, per exception). | `.agent/product_spec_005.md` Sec 8; `ecosystem/01_clean_state_preflight.md` Sec 5 | EXERCISED twice in phase 005, both operator-approved. |

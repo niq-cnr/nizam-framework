@@ -1,0 +1,34 @@
+CANDIDATE_SHA: d9ecab3cecb40428baa63013fe8106ed63a2ad6e
+SCRATCH: /home/cnross/.tmp/nizam-phase015-qa-wxcm8k96
+STARTED_AT: 2026-10-11T05:36:32.067880+00:00
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --scope
+CHECK PASS: scope
+
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --scope
+CHECK FAIL: untracked-scope:.nizam/qa-forged.txt
+
+ACTUAL_EXIT: 1
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --scope
+CHECK FAIL: approved-contract-binding:scope
+
+ACTUAL_EXIT: 1
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --scope
+CHECK FAIL: new-gate-smuggling
+
+ACTUAL_EXIT: 1
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --projection
+CHECK FAIL: implementation-not-authorized:NIP3-110
+
+ACTUAL_EXIT: 1
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --scope
+CHECK PASS: scope
+
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-phase015-planning/check_phase015_planning.py --projection
+CHECK PASS: projection
+
+ACTUAL_EXIT: 0
+EXTRA ADVERSARIAL PASS: four real filesystem/authority mutations rejected with named diagnostics; restored positives pass.
+ACTUAL_EXIT: 0
+EXIT: 0
