@@ -2,10 +2,13 @@
 id: nizam-schema-readme
 title: "Schema Module — Index"
 description: "JSON Schemas that validate every machine-readable artifact the Nizam framework and its consumers produce."
-version: 0.19.0
+version: 0.20.0
 status: draft
 authoritative_source: schema/README.md
 change_log:
+  - version: "0.20.0"
+    date: "2026-10-11"
+    summary: "Register two closed runtime provenance schemas and distinguish C12 record validity from future live conformance."
   - version: "0.19.0"
     date: "2026-10-09"
     summary: "State that `tools/test_convergent_review.py` is the sole validator of the review schema family; extending C12 to that family is left to the phase-014 simplification review (NDEBT-041)."
@@ -83,10 +86,18 @@ Every schema in this module:
   completion claims (`standard/definition_of_done.md` in this repository) -- never
   required, and no check fails on its absence.
 
+Runtime session and operation schemas validate declared record shape and
+invariants only. C12 adds relational identity checks; a valid record does not
+prove live ownership, process generation, lease enforcement or source/heap
+identity. All thirteen live conformance cases remain phase016 work. Payload
+validation does not sweep a consumer's session records automatically.
+
 ## Schemas
 
 | Schema | Purpose | Validates |
 |--------|---------|-----------|
+| `runtime_session.schema.json` | Closed session provenance: owner, generation, lease, replayable handoff and declared fresh acceptance isolation. | Explicit session records; C12 fixtures, not live conformance. |
+| `runtime_operation.schema.json` | Closed operation provenance: request/outcome identity, honest rejection, failed-load consistency, wait outcomes and development-only evidence; C12 compares owner/generation/lease. | Explicit operation records; C12 fixtures, not live enforcement. |
 | `frontmatter.schema.json` | Validates the YAML frontmatter block required at the top of every governance Markdown file (`standard/`, `methodology/`, `templates/`, `tools/`, and module `README.md` files). Enforces the 6 required keys: `id`, `title`, `description`, `version`, `status` (`draft`\|`active`\|`deprecated`), `authoritative_source`. | Frontmatter on any governed `.md` file. |
 | `manifest.schema.json` | Validates the planning manifest that names the current phase and lists every phase a repository tracks. | `docs/planning/manifest.json` |
 | `phase.schema.json` | Validates a phase definition. Implements **DD-3, Evidence Externalisation** (see below). | Phase definition documents produced from `templates/phase_template.yaml`. |

@@ -2,11 +2,14 @@
 id: nizam-live-runtime-sessions
 title: "Live Runtime Sessions"
 description: "Language-neutral ownership, operation, evidence and handoff rules for long-lived development runtimes."
-version: 0.1.0
+version: 0.1.1
 status: active
 enforcement: consumer-aspirational
 authoritative_source: methodology/10_live_runtime_sessions.md
 change_log:
+  - version: "0.1.1"
+    date: "2026-10-11"
+    summary: "Record delivered schemas and C12 relational record checks while retaining the future live-enforcement boundary."
   - version: "0.1.0"
     date: "2026-10-11"
     summary: "Define neutral session semantics, fresh acceptance and durable continuity without claiming executable runtime enforcement."
@@ -15,11 +18,12 @@ change_log:
 # Live Runtime Sessions
 
 This normative protocol is **consumer-aspirational**: consumers must enforce its
-session rules in their runtime. The framework publishes definitions and document
-registrations here; it does not yet supply a session controller, session schemas,
-a language binding, an adapter capability or live conformance enforcement.
-Those mechanisms belong to later features 111–113 and 115–120. Document checks
-establish documented compliance only; they cannot prove a live mechanism works.
+session rules in their runtime. The framework publishes definitions, two closed
+runtime provenance schemas and C12 record-relational validation. These checks
+establish record shape and declared invariants only; they cannot prove live
+ownership, generation or lease enforcement, source/heap identity or runtime
+conformance. A session controller, language binding, adapter capability and all
+thirteen live conformance proofs remain pending features 112–113 and 115–120.
 
 A runtime session is a long-lived process and its mutable image used for
 interactive development. An agent session is an agent's conversational or
@@ -211,8 +215,10 @@ output stays in external evidence files, referenced by path.
 The Orchestrator alone owns coordination fields and circuit counters in durable
 run state. Generators record their scoped development work; Evaluators own
 independently captured acceptance evidence and QA verdicts. Implementation agents
-preserve fields they do not own. Schema-governed records and executable relational
-checks are future feature 111 scope; this document does not assert they exist.
+preserve fields they do not own. The two schemas and executable C12 relational
+checks validate session and operation records. They establish declared record
+validity, never live runtime behavior or acceptance of a warm image; controller,
+binding, adapter and live conformance implementation remain pending.
 
 | requirement-id | normative-rule | evidence-boundary |
 | --- | --- | --- |

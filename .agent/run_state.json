@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "111",
   "status": "in_progress",
-  "updated_at": "2026-10-11T08:37:42.311638+00:00",
+  "updated_at": "2026-10-11T09:06:30.456240+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -384,10 +384,18 @@
       "limit": 3
     },
     "111-checker-development": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3,
       "recovery_epoch": 1,
       "human_authorized_restart": ".agent/evidence/111/recovery-authorization.json"
+    },
+    "111-checker-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "111-implementation": {
+      "attempts": 1,
+      "limit": 3
     }
   },
   "history": [
@@ -2909,6 +2917,40 @@
       "authority_revision": "0bf3bd6617880870c8e9dc8ed9b1b74efaf41931",
       "evidence": ".agent/evidence/111/recovery-authorization.json",
       "detail": "Installed03 Section6 exact human confirmed corrected diagnostic approach. No other counters reset; contract revision3 outcome recorded. Preserved prior exhausted epoch and original debt/halt records; no source/QAsuccess inferred."
+    },
+    {
+      "at": "2026-10-11T08:38:19.162393+00:00",
+      "event": "checker_attempt_isolated",
+      "contract_id": "111",
+      "step_key": "111-checker-development",
+      "attempt": 1,
+      "recovery_epoch": 1,
+      "approved_base": "d93496346e1fa699e7c91d4b1b9ce98e71faf970",
+      "attempt_root": "/home/cnross/.tmp/nizam-111-recovery-epoch1-uagbffb4",
+      "detail": "Fresh owned detached exact recovery-approved base before any reconstruction/test edits. Source28 hashes will be restored unchanged from preserved implementation draft; current checker0/3 explicit human restart, prior3/3 immutable. Separate reviewer gate before fresh checker validation."
+    },
+    {
+      "at": "2026-10-11T08:57:11.877506+00:00",
+      "event": "checker_recovery_pass",
+      "contract_id": "111",
+      "step_key": "111-checker-development",
+      "attempt": 1,
+      "recovery_epoch": 1,
+      "actual_exit": 0,
+      "checker_sha256": "244a48f10dd0c905f29e1e6ec37356e095beba25fca05b278c0108f050b599e5",
+      "evidence": ".agent/evidence/111/recovery-epoch1-development.json",
+      "checker_review": ".agent/evidence/111/checker-review.json",
+      "detail": "Actual separate immutable bundle review approved/empty then one genuine fresh8-mode checkpoint passed all original+recovery controls including previously unreached installed/oldproof probes. Old exhausted3/3 and allfailures preserved. No source edits, extra retries or formalQA implied; debt048remedy now verified."
+    },
+    {
+      "at": "2026-10-11T09:06:30.456240+00:00",
+      "event": "implementation_approved",
+      "contract_id": "111",
+      "attempt": 1,
+      "recovery_epoch": 1,
+      "evidence": ".agent/validator/111-mode-b.json",
+      "verdict_sha256": "fd5a7739d8ea773ca2647033e52c4609c1d46a5db9874eb04b76965d4d31c094",
+      "detail": "Actual independent ModeB approved/empty;62hashedinputs/28frozenproducts and historicalinstalledbytes verified, Parent-owned state projection preserved. Same originalsource implementation1 continuity through operator-confirmedcheckerrecovery; no source retries orGenvalidationreset. Promoteonlyexactreviewed files; separate fixedcandidate38QA remainsrequired."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3383,7 +3425,7 @@
       }
     ]
   },
-  "last_action": "Both recovery pre-code gates approved; canonical111 resumed first, derivedstate repaired; only checker counter reset0/limit3 epoch1 under actualconfirmed0bf3. Fresh isolated approvedbase required before source reconstruction/checker correction.",
+  "last_action": "111 actualModeB1 approved/empty; exact62 reviewedbytes promoted. Fixed committedcandidate and distinctfinal38-command acceptance next; no featurecompletion yet.",
   "completed_contract_ids": [
     "099",
     "103",
