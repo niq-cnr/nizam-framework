@@ -1,0 +1,91 @@
+STAGE: independent private AST completion-delta preparation; no full helper/checker/QA
+{
+  "stage": "private-AST-function-preparation-not-final-bundle-or-QA",
+  "reviewer": "/root/checker_reviewer_111",
+  "helper_path": "/home/cnross/.tmp/nizam-111-detail-implementation2-oy7doupc/.agent/evidence/111/evidence_gate.py",
+  "helper_sha256": "013b317d9995fb04c4d0ffa5a1318833e08e13d1945d6e7d8f454933a849bb35",
+  "approved_base": "060d1511f4fa27dde3ccea66a7982b82ff75ef47",
+  "probes": [
+    {
+      "case": "valid-exact049-resolution",
+      "expected_accept": true,
+      "actual_accept": true,
+      "actual_result": "accepted",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "missing049row",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "duplicate049row",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "wrong049resolutiontext",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "changed-original049description",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "changed-otherdebtrow",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "wrongversion",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "wrongnewlog",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "missingnewlog",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "wrongrowposition",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    },
+    {
+      "case": "arbitrary-extra-line",
+      "expected_accept": false,
+      "actual_accept": false,
+      "actual_result": "intentional AssertionError",
+      "isolation": "/home/cnross/.tmp/nizam111-helper-probes-hmj51w0k"
+    }
+  ],
+  "limits": "Only extracted completion_delta exercised on own external scratch debt data; no fullhelper/top-level QA/checker/source edits or repository-path mutation. Real candidate38checks/seal/ModeB not evaluated here. Await frozen TestAuthor handoff for final renewed bundle review."
+}
+
+ACTUAL: 1 expected positive accepted; 10 intended negative AssertionErrors; no real repository mutation.
+EXIT: 0

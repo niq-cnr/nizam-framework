@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """Independent Feature111 schema/record controls; no live conformance assertions."""
-import argparse,ast,copy,hashlib,json,os,re,shutil,subprocess,sys,tempfile
+import argparse,ast,copy,hashlib,json,os,re,shutil,subprocess,sys,tempfile,tarfile
 from pathlib import Path
 import jsonschema,yaml
 BASE='a15be05d9ede7eadf4a2b848989f9386cfb2f617'
 ORIGINAL='290254c16554f515c1e524a7f977d44adc0df8cf'
-APPROVED='d93496346e1fa699e7c91d4b1b9ce98e71faf970'
+RECOVERY_BASE='d93496346e1fa699e7c91d4b1b9ce98e71faf970'
+APPROVED='060d1511f4fa27dde3ccea66a7982b82ff75ef47'
+DETAIL_AUTHORITY='55e39d790588afed9fa59e11b247cad9ce688edb'
+HISTORICAL_CHECKER='244a48f10dd0c905f29e1e6ec37356e095beba25fca05b278c0108f050b599e5'
+HISTORICAL_DETAIL_CHECKER='ed6f7313933f7fb64ccf87a669b5cc9c1aea320ab1b6ab14ee79a03a0d4d6178'
+DETAIL_FAILURE_MANIFEST_SHA='3ad74f75c50e02a9c72138b71df1755cbd52c9dde0b425910e67c7770b343c28'
 AUTHORITY='0bf3bd6617880870c8e9dc8ed9b1b74efaf41931'
 TEST_AUTHOR='/root/release_evaluator'
 CONTRACT='.agent/contracts/111.json'
@@ -151,20 +156,77 @@ def compatibility():
 
 def sha(path):return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 def gate_ok(d):return d.get('final_verdict',{}).get('approved') is True and all(d.get(k)==[] for k in ('issues','missing_acceptance_coverage','unsupported_claims'))
+def history_projection(state):
+    remedy=approved()['implementation_requirements']['history_detail_remedy'];receipt=load(DIR/'history-detail-approved-base.json')
+    need(receipt['approved_base']==APPROVED and receipt['authority_revision']==DETAIL_AUTHORITY and receipt['historical_operator_authority_revision']==AUTHORITY and receipt['historical_recovery_base']==RECOVERY_BASE and receipt['original_implementation_base']==ORIGINAL and receipt['phase_base']==BASE,'history-detail-approved-base')
+    need(receipt['approved_contract_sha256']==hashlib.sha256(git('show',APPROVED+':'+CONTRACT)).hexdigest(),'history-detail-approved-contract')
+    authorization=remedy['authorization_record'];need(remedy['authority_revision']==DETAIL_AUTHORITY and sha(authorization)==remedy['authorization_record_sha256'] and Path(authorization).read_bytes()==git('show',DETAIL_AUTHORITY+':'+authorization),'history-detail-authorization')
+    for path,digest in receipt['approval_evidence_sha256'].items():need(sha(path)==digest and gate_ok(load(path)),'history-detail-precode-gate:'+path)
+    original=json.loads(old('.agent/run_state.json',AUTHORITY))['history'][402];expected=approved()['implementation_requirements']['recovery_reconciliation']['operator_event'];need(original==expected and 'detail' not in original and json.loads(old('.agent/run_state.json',RECOVERY_BASE))['history'][402]==original,'history-original-authority')
+    history=state.get('history',[]);need(len(history)>402 and isinstance(history[402],dict),'history-authority-position-or-count');event=history[402]
+    matches=lambda e:isinstance(e,dict) and e.get('event')=='operator_gate_decision' and e.get('contract_id')=='111' and e.get('gate')=='H-CIRCUIT-111-CHECKER'
+    if not set(original)<=set(event):need(matches(event),'history-authority-position-or-count')
+    need({k:v for k,v in event.items() if k!='detail'}==original,'history-authority-content')
+    need([i for i,e in enumerate(history) if matches(e)]==[402],'history-authority-position-or-count')
+    if 'detail' not in event and any(e.get('detail')==original['corrected_approach'] for e in history if isinstance(e,dict)):raise InvariantError('history-authority-position-or-count')
+    need('detail' in event,'history-detail-required');need(event['detail']==original['corrected_approach']==remedy['current_annotation']['exact_value'],'history-detail-exact')
+    need(set(event)==set(original)|{'detail'} and remedy['current_annotation']['history_index']==402 and remedy['current_annotation']['field']=='detail','history-authority-content')
+    normalized=copy.deepcopy(history);del normalized[402]['detail']
+    for revision in (AUTHORITY,RECOVERY_BASE):
+        before=json.loads(old('.agent/run_state.json',revision))['history'];need(normalized[:len(before)]==before,'operator-history-frozen')
+    before=json.loads(old('.agent/run_state.json',APPROVED))['history'];need(history[:len(before)]==before,'operator-history-frozen')
+    schema_state=load('.nizam/schema/run_state.schema.json');need(not list(jsonschema.Draft202012Validator(schema_state).iter_errors(state)),'current-installed-runstate-schema')
+    return normalized
+
+def history_projection_state():return history_projection(load('.agent/run_state.json'))
+
+def counter_continuity(state):
+    initial=json.loads(old('.agent/run_state.json',APPROVED))['circuit_breaker'];current=state['circuit_breaker']
+    for key,prior in initial.items():
+        value=current.get(key);need(isinstance(value,dict),'recovery-other-counter:'+key)
+        if key in {'111-checker-development','111-checker-review','111-implementation','111-qa'}:
+            need({k:v for k,v in value.items() if k!='attempts'}=={k:v for k,v in prior.items() if k!='attempts'} and max(prior['attempts'],2 if key in {'111-checker-development','111-checker-review','111-implementation'} else prior['attempts'])<=value['attempts']<=prior['limit'],'history-counter-continuity:'+key)
+        else:need(value==prior,'recovery-other-counter:'+key)
+    for key in set(current)-set(initial):need(key.startswith('111-') and current[key].get('limit')==3 and 0<=current[key]['attempts']<=3,'history-new-counter:'+key)
+    need(current['111-contract']['limit']==4 and current['111-contract']['attempts']==4 and current['111-contract']['human_authorized_extension']==initial['111-contract']['human_authorized_extension'],'history-contract-limit')
+
+def mutable_acceptance_outputs():
+    a=approved();inventory=a['implementation_requirements']['fixture_inventory'];need(len(inventory)==18,'mutable-output-inventory')
+    inner=set()
+    for item,verification in zip(inventory,a['verification'][6:24]):
+        expected=str(DIR/(Path(item['path']).name+'.txt'));matches=re.findall(r'>\s*(\.agent/evidence/111/[A-Za-z0-9_.-]+)\s+2>&1',verification['command'])
+        need(matches==[expected] and ('--target '+item['path']+' ') in verification['command'],'mutable-output-command:'+item['path']);inner.add(expected)
+    need(len(inner)==18,'mutable-output-exact18');outer={v['evidence'] for v in a['verification']};need(len(outer)==38,'mutable-output-exact38')
+    archive_path=DIR/'failed-qa-attempt1/preservation.json';need(Path(archive_path).read_bytes()==git('show',APPROVED+':'+str(archive_path)),'mutable-output-archive-manifest');archive=load(archive_path)['snapshot_sha256'];tracked=set(git('ls-tree','-r','--name-only',APPROVED).decode().splitlines())
+    for path in sorted(inner|outer|{'.agent/qa/111.json'}):
+        if path not in tracked:continue
+        saved=str(DIR/'failed-qa-attempt1'/Path(path).name);need(saved in archive and Path(saved).is_file() and sha(saved)==archive[saved]==hashlib.sha256(git('show',APPROVED+':'+path)).hexdigest(),'mutable-output-archive:'+saved)
+    return inner|outer
+
+def historical_checkpoint2():
+    directory=DIR/'failed-detail-implementation2';manifest_path=directory/'preservation.json';need(sha(manifest_path)==DETAIL_FAILURE_MANIFEST_SHA,'historical-checkpoint2-manifest');manifest=load(manifest_path)
+    for path,digest in manifest['snapshot_sha256'].items():need(Path(path).is_file() and sha(path)==digest,'historical-checkpoint2-archive:'+path)
+    for name in ('checker-review-detail.json','recovery-epoch1-development-checkpoint2.json'):
+        need(Path(DIR/name).read_bytes()==Path(directory/name).read_bytes(),'historical-checkpoint2-record:'+name)
+    review=load(DIR/'checker-review-detail.json');proof=load(DIR/'recovery-epoch1-development-checkpoint2.json');need(gate_ok(review) and review['checker_sha256']==proof['checker_sha256']==HISTORICAL_DETAIL_CHECKER and proof['actual_exit']==0 and proof['approved_base']==APPROVED and proof['checks_run']==proof['checks_passed']==8,'historical-checkpoint2-proof')
+    tar_path=directory/'untracked.tar.gz';need(sha(tar_path)==manifest['untracked_tar_sha256'],'historical-checkpoint2-tar')
+    with tarfile.open(tar_path) as archive:
+        for check in proof['checks']:
+            path=check['evidence'];member=archive.extractfile(path);need(member is not None and Path(path).read_bytes()==member.read() and check['actual_exit']==0,'historical-checkpoint2-receipt:'+path)
+
 def recovery():
     a=approved()['implementation_requirements']['recovery_reconciliation'];receipt=load(DIR/'recovery-approved-base.json')
-    need(receipt['approved_base']==APPROVED and receipt['operator_authority_revision']==AUTHORITY and receipt['original_implementation_base']==ORIGINAL and receipt['phase_base']==BASE and receipt['recovery_epoch']==1,'recovery-approved-base')
-    need(receipt['approved_contract_sha256']==hashlib.sha256(git('show',APPROVED+':'+CONTRACT)).hexdigest(),'recovery-approved-contract-hash')
+    need(receipt['approved_base']==RECOVERY_BASE and receipt['operator_authority_revision']==AUTHORITY and receipt['original_implementation_base']==ORIGINAL and receipt['phase_base']==BASE and receipt['recovery_epoch']==1,'recovery-approved-base')
+    need(receipt['approved_contract_sha256']==hashlib.sha256(git('show',RECOVERY_BASE+':'+CONTRACT)).hexdigest(),'recovery-approved-contract-hash')
     need(run(['git','merge-base','--is-ancestor',AUTHORITY,APPROVED]).returncode==0,'recovery-authority-ancestry')
     state=load('.agent/run_state.json');committed=json.loads(old('.agent/run_state.json',AUTHORITY));archive=load(DIR/'recovery-authorization.json');expected=a['operator_event']
-    need(a['operator_authority_revision']==AUTHORITY and expected in committed['history'] and expected in state['history'],'recovery-operator-event')
+    need(a['operator_authority_revision']==AUTHORITY and expected in committed['history'] and expected in history_projection(state),'recovery-operator-event')
     need(archive['operator_authority_revision']==AUTHORITY and archive['operator_event']==expected,'recovery-archive-authority')
     need(archive['prior_exhausted_counter']==committed['circuit_breaker']['111-checker-development']=={'attempts':3,'limit':3} and archive['prior_circuit_breaker']==committed['circuit_breaker'],'recovery-exhausted-counter')
     need(sha(DIR/'blocked-checker3/checkpoint3.txt')==archive['checkpoint3_sha256'] and sha(DIR/'blocked-checker3/quarantine.json')==archive['quarantine_sha256'],'recovery-halt-proof')
     counter=state['circuit_breaker']['111-checker-development'];initial=json.loads(old('.agent/run_state.json',APPROVED))
     need(counter.get('recovery_epoch')==1 and counter.get('human_authorized_restart')==str(DIR/'recovery-authorization.json') and counter['limit']==3 and 0<=counter['attempts']<=3,'recovery-current-counter')
-    for key,prior in initial['circuit_breaker'].items():
-        if key!='111-checker-development':need(state['circuit_breaker'].get(key)==prior,'recovery-other-counter:'+key)
+    counter_continuity(state)
     resets=[e for e in state['history'] if e.get('event')=='operator_authorized_step_restart' and e.get('contract_id')=='111']
     need(len(resets)==1 and resets[0]['step_key']=='111-checker-development' and resets[0]['authority_revision']==AUTHORITY and resets[0]['prior_attempts']==3 and resets[0]['new_attempts']==0 and resets[0]['limit']==3 and resets[0]['recovery_epoch']==1,'recovery-reset-history')
     for path in ('.agent/validator/111-mode-a-recovery.json','.agent/qa/111-contract-review-recovery.json'):
@@ -172,33 +234,50 @@ def recovery():
     inventory=a['frozen_product_inventory'];need(sha(inventory['path'])==inventory['sha256'],'recovery-frozen-inventory')
     products=load(inventory['path'])['products'];need(len(products)==28,'recovery-frozen-count')
     for path,digest in products.items():need(Path(path).is_file() and sha(path)==digest,'recovery-frozen-product:'+path)
-    review_path=DIR/'checker-review.json';review=load(review_path) if review_path.exists() else None
+    review_path=DIR/'checker-review-detail3.json';review=load(review_path) if review_path.exists() else None
     if review is not None:
-        need(review.get('test_author')==TEST_AUTHOR and review.get('checker_reviewer') not in {None,TEST_AUTHOR} and review.get('checker_sha256')==sha(DIR/'check_111.py') and gate_ok(review),'recovery-independent-checker-review')
-    seal_path=DIR/'acceptance-seal.json'
+        need(review.get('test_author')==TEST_AUTHOR and review.get('checker_reviewer') not in {None,TEST_AUTHOR} and review.get('checker_sha256')==sha(DIR/'check_111.py') and review.get('approved_base')==APPROVED and gate_ok(review),'recovery-independent-checker-review')
+    seal_path=DIR/'acceptance-seal-detail.json'
     if seal_path.exists():
         seal=load(seal_path);need(review is not None and seal.get('test_author')==TEST_AUTHOR and seal.get('acceptance_reviewer') not in {None,TEST_AUTHOR,review['checker_reviewer']},'recovery-independent-final-review')
     debt=read('docs/planning/DEBT.md');baseline=old('docs/planning/DEBT.md',APPROVED)
-    other=lambda text:[line for line in text.splitlines() if line.startswith('| NDEBT-') and not line.startswith('| NDEBT-048 |')]
+    other=lambda text:[line for line in text.splitlines() if line.startswith('| NDEBT-') and not line.startswith(('| NDEBT-048 |','| NDEBT-049 |'))]
     need(other(debt)==other(baseline),'recovery-other-debt-frozen')
+    rows49=[line for line in debt.splitlines() if line.startswith('| NDEBT-049 |')];prior49=[line for line in baseline.splitlines() if line.startswith('| NDEBT-049 |')];need(len(rows49)==len(prior49)==1,'history-debt049-row')
+    if rows49!=prior49 or (rows49[0] in debt.split('## Open',1)[1].split('## Resolved',1)[0])!=(prior49[0] in baseline.split('## Open',1)[1].split('## Resolved',1)[0]):
+        need(load('.agent/feature_list_015.json')['features'][1]['status']=='complete' and Path('.agent/qa/111.json').is_file() and (DIR/'evidence-gate.txt').is_file(),'history-premature-debt049-resolution')
+        qa=load('.agent/qa/111.json');need(qa.get('qa_pass') is True and qa.get('checks_run')==qa.get('checks_passed')==38 and gate_ok(qa) and qa.get('required_fixes')==[] and 'PASS' in read(DIR/'evidence-gate.txt'),'history-premature-debt049-resolution')
+        original=prior49[0];cells=original.split('|');need(len(cells)==7,'history-debt049-row')
+        cells[5]=' RESOLVED 2026-10-11: the current history402 detail equals the exact original corrected_approach; original authority, prior history and failedQA1 remain preserved. Independent current checker review, ModeB and fresh38/38 acceptance plus own adversarial spot verified the bounded remedy; evidence gate captured at .agent/evidence/111/evidence-gate.txt and .agent/qa/111.json. No other history annotation, counter reset, source change or live conformance claim. '
+        expected=baseline.replace('version: 0.61.0','version: 0.62.0',1).replace('change_log:\n','change_log:\n  - version: "0.62.0"\n    date: "2026-10-11"\n    summary: "Resolve only NDEBT-049 after fresh independent acceptance and evidence gate; preserve original authorization/history and failedQA1, all prior debt rows and logs."\n',1).replace(original+'\n','',1)
+        anchor='|----|------|----------|-------------|------------|\n';need(expected.count(anchor)==1,'history-debt049-layout');expected=expected.replace(anchor,anchor+'|'.join(cells)+'\n',1);need(debt==expected,'history-debt049-transition')
     row=[line for line in debt.splitlines() if line.startswith('| NDEBT-048 |')];need(len(row)==1,'recovery-debt-row')
     halted=old('docs/planning/DEBT.md',archive['halt_revision']);need(archive['prior_debt_row'] in halted,'recovery-original-halt-row')
     open_section=debt.split('## Open',1)[1].split('## Resolved',1)[0];is_open=row[0] in open_section
     if not is_open:
-        proof_path=DIR/'recovery-epoch1-development.json';need(review is not None and proof_path.exists(),'recovery-premature-debt-resolution');proof=load(proof_path)
-        need(proof.get('approved_base')==APPROVED and proof.get('checker_sha256')==sha(DIR/'check_111.py') and proof.get('test_author')==TEST_AUTHOR and proof.get('actual_exit')==0,'recovery-development-proof')
+        proof_path=DIR/'recovery-epoch1-development.json';need((DIR/'checker-review.json').exists() and proof_path.exists(),'recovery-premature-debt-resolution');proof=load(proof_path)
+        need(proof.get('approved_base')==RECOVERY_BASE and proof.get('checker_sha256')==HISTORICAL_CHECKER and proof.get('test_author')==TEST_AUTHOR and proof.get('actual_exit')==0,'recovery-development-proof')
         checks=proof.get('checks',[]);need(len(checks)==8 and {x.get('mode') for x in checks}=={'schemas','fixtures','routing','registration','compatibility','lifecycle','scope','negative'},'recovery-development-coverage')
         for check in checks:
             path=check.get('evidence','');need(check.get('actual_exit')==0 and Path(path).is_file(),'recovery-development-capture')
-            text=read(path);need(len(re.findall(r'(?m)^EXIT:\s*0\s*$',text))==1 and re.search(r'(?m)^COMMAND: .*--'+check['mode']+r'\s*$',text) and ('APPROVED_BASE: '+APPROVED) in text,'recovery-development-capture')
+            text=read(path);need(len(re.findall(r'(?m)^EXIT:\s*0\s*$',text))==1 and re.search(r'(?m)^COMMAND: .*--'+check['mode']+r'\s*$',text) and ('APPROVED_BASE: '+RECOVERY_BASE) in text,'recovery-development-capture')
         need(proof.get('source_sha256')==products,'recovery-development-source-binding')
+        old_review=load(DIR/'checker-review.json');need(old_review.get('checker_sha256')==HISTORICAL_CHECKER and gate_ok(old_review) and old_review.get('test_author')==TEST_AUTHOR and old_review.get('checker_reviewer')!=TEST_AUTHOR,'historical-checkpoint1-review')
+    current_proof_path=DIR/'recovery-epoch1-development-checkpoint3.json'
+    if current_proof_path.exists():
+        proof=load(current_proof_path);need(review is not None and proof.get('approved_base')==APPROVED and proof.get('checker_sha256')==sha(DIR/'check_111.py') and proof.get('test_author')==TEST_AUTHOR and proof.get('actual_exit')==0 and proof.get('source_sha256')==products,'history-current-checkpoint3-proof')
+        checks=proof.get('checks',[]);need(len(checks)==8 and {x.get('mode') for x in checks}=={'schemas','fixtures','routing','registration','compatibility','lifecycle','scope','negative'},'history-current-checkpoint3-coverage')
+        for check in checks:
+            path=check.get('evidence','');need(check.get('actual_exit')==0 and Path(path).is_file(),'history-current-checkpoint3-capture');text=read(path)
+            need(len(re.findall(r'(?m)^EXIT:\s*0\s*$',text))==1 and re.search(r'(?m)^COMMAND: .*--'+check['mode']+r'\s*$',text) and ('APPROVED_BASE: '+APPROVED) in text and ('CHECKER_SHA256: '+sha(DIR/'check_111.py')) in text,'history-current-checkpoint3-capture')
+    historical_checkpoint2()
     return products
 
 def lifecycle():
     f=load('.agent/feature_list_015.json');base=json.loads(old('.agent/feature_list_015.json'));items=f['features'];need(items[0]==base['features'][0] and items[2:]==base['features'][2:],'other-feature-position-frozen');current=items[1];need(current['acceptance_tests']==feature()['acceptance_tests'],'original26-ac-frozen');need(current['status'] in {'in_progress','complete'},'111-authorized-position')
     p=yaml.safe_load(read('docs/planning/phase_015.yaml'));step=p['steps'][1];state=current['status'];need(step['status']=={'in_progress':'IN_PROGRESS','complete':'COMPLETED'}[state],'canonical111-step-lifecycle');need(p['status']=='in_progress' and f['original_estimate_lines']==7200 and f['ceiling_130pct']==9360,'phase-budget-frozen')
     if state=='complete':
-        need(Path('.agent/qa/111.json').is_file() and (DIR/'evidence-gate.txt').is_file(),'early111-completion-without-proof');q=load('.agent/qa/111.json');need(q['qa_pass'] and q['checks_run']==q['checks_passed']==38 and q['final_verdict']['approved'] and all(q[k]==[] for k in ('issues','missing_acceptance_coverage','unsupported_claims','required_fixes')) and 'PASS' in read(DIR/'evidence-gate.txt'),'early111-completion-without-proof');seal=load(DIR/'acceptance-seal.json');need(seal['test_author']!=seal['acceptance_reviewer'],'independent-acceptance-owner')
+        need(Path('.agent/qa/111.json').is_file() and (DIR/'evidence-gate.txt').is_file(),'early111-completion-without-proof');q=load('.agent/qa/111.json');need(q['qa_pass'] and q['checks_run']==q['checks_passed']==38 and q['final_verdict']['approved'] and all(q[k]==[] for k in ('issues','missing_acceptance_coverage','unsupported_claims','required_fixes')) and 'PASS' in read(DIR/'evidence-gate.txt'),'early111-completion-without-proof');seal=load(DIR/'acceptance-seal-detail.json');need(seal['test_author']!=seal['acceptance_reviewer'],'independent-acceptance-owner')
     source=read('.agent/product_spec_015.md');fm=yaml.safe_load(source.split('---',2)[1]);need(fm['version']==f['spec_version']=='1.0.1','current-spec-version');need(not re.search(r'(?i)(?:features?\s*)?111[–-]114 remain pending',norm(source)) or re.search(r'(?:activation.time|at activation|historical).{0,150}111[–-]114 remain pending',norm(source)),'stale-spec-current-position');need(not re.search(r'111[–-]114.{0,30}(?:remain|are) pending',norm(p['description'])),'stale-phase-current-position')
     dag=load('docs/planning/backlog_dag.json');need(dag['activated_phase']['spec_version']=='1.0.1','dag-spec-version');state=load('.agent/run_state.json');need(state['current_phase']=='015-live-runtime-normative' and str(state['current_feature']) in ({'111','112','None'} if current['status']=='complete' else {'111'}),'derived111-position')
     recovery()
@@ -217,8 +296,7 @@ def scope():
             before=yaml.safe_load(old(path).split('---',2)[1])['change_log'];after=yaml.safe_load(read(path).split('---',2)[1])['change_log'];need(after[-len(before):]==before,'historical-change-log:'+path)
     before=json.loads(old('.agent/run_state.json',APPROVED));after=load('.agent/run_state.json');owned={'current_feature','updated_at','status','active_contract_id','last_action','scope_budget','history','circuit_breaker','completed_contract_ids'};need(all(before.get(k)==after.get(k) for k in (set(before)|set(after))-owned),'unowned-runstate-fields');need(after['history'][:len(before['history'])]==before['history'],'operator-history-frozen')
     for event in after['history'][len(before['history']):]:need(event.get('contract_id',event.get('feature'))=='111' and event.get('event') not in {'operator_gate_decision','operator_design_decision'},'parent-history-owner')
-    for key in set(before['circuit_breaker'])|set(after['circuit_breaker']):
-        if before['circuit_breaker'].get(key)!=after['circuit_breaker'].get(key):need(key.startswith('111-') and after['circuit_breaker'][key]['limit']==3 and 0<=after['circuit_breaker'][key]['attempts']<=3,'bounded111-counter')
+    counter_continuity(after)
     need(after['scope_budget']['original_estimate_lines']==7200 and after['scope_budget']['ceiling_130pct']==9360,'immutable-approved-budget')
     need(after['scope_budget']['per_feature'][:len(before['scope_budget']['per_feature'])]==before['scope_budget']['per_feature'],'prior-phase015-measurements-frozen')
     need(after['completed_contract_ids'][:len(before['completed_contract_ids'])]==before['completed_contract_ids'] and set(after['completed_contract_ids'][len(before['completed_contract_ids']):])<={'111'},'completed-contract-owner')
@@ -238,8 +316,9 @@ def scope():
     f=load('.agent/feature_list_015.json');b=json.loads(old('.agent/feature_list_015.json'));need(all(f['features'][1][k]==b['features'][1][k] for k in set(b['features'][1])-{'status','passes'}),'111-plan-obligations-frozen')
     phase=yaml.safe_load(read('docs/planning/phase_015.yaml'));prior=yaml.safe_load(old('docs/planning/phase_015.yaml'));need(phase['steps'][0]==prior['steps'][0] and phase['steps'][2:]==prior['steps'][2:],'other-phase-steps-frozen')
     path='methodology/10_live_runtime_sessions.md';a_rows=[l for l in old(path).splitlines() if l.startswith('| R')];b_rows=[l for l in read(path).splitlines() if l.startswith('| R')];need(a_rows==b_rows,'neutral-R1-R12-frozen')
+    mutable_outputs=mutable_acceptance_outputs()
     for path in git('ls-tree','-r','--name-only',APPROVED).decode().splitlines():
-        if path.startswith(('.agent/evidence/111/blocked-checker3/','.agent/evidence/111/unpromoted-implementation1/','.agent/evidence/111/failed-contract-attempt1/','.agent/evidence/111/proposal-approved/')) or path in {'.agent/validator/111-mode-a.json','.agent/qa/111-contract-review.json',str(DIR/'recovery-authorization.json'),str(DIR/'recovery-approved-base.json')}:
+        if (path.startswith('.agent/evidence/111/') and path not in {str(DIR/'check_111.py'),str(DIR/'evidence_gate.py')} and path not in mutable_outputs) or path in {'.agent/validator/111-mode-a.json','.agent/qa/111-contract-review.json','.agent/validator/111-mode-b.json'}:
             need(Path(path).is_file() and Path(path).read_bytes()==git('show',APPROVED+':'+path),'recovery-prior-proof:'+path)
     recovery()
 
@@ -282,15 +361,15 @@ def negative():
     state=load('.agent/run_state.json');state['scope_budget']['original_estimate_lines']=7300;rejects('immutable-approved-budget',lambda:override('.agent/run_state.json',json.dumps(state),scope))
     receipt=load(DIR/'recovery-approved-base.json');receipt['approved_base']=ORIGINAL;rejects('recovery-approved-base',lambda:override(DIR/'recovery-approved-base.json',json.dumps(receipt),recovery))
     archive=load(DIR/'recovery-authorization.json');archive['operator_event']['operator_text']='invented';rejects('recovery-archive-authority',lambda:override(DIR/'recovery-authorization.json',json.dumps(archive),recovery))
-    state=load('.agent/run_state.json');state['history']=[e for e in state['history'] if e!=approved()['implementation_requirements']['recovery_reconciliation']['operator_event']];rejects('recovery-operator-event',lambda:override('.agent/run_state.json',json.dumps(state),recovery))
+    state=load('.agent/run_state.json');state['history'].pop(402);rejects('history-authority-position-or-count',lambda:override('.agent/run_state.json',json.dumps(state),recovery))
     archive=load(DIR/'recovery-authorization.json');archive['prior_exhausted_counter']['attempts']=0;rejects('recovery-exhausted-counter',lambda:override(DIR/'recovery-authorization.json',json.dumps(archive),recovery))
     state=load('.agent/run_state.json');state['circuit_breaker']['111-generator-validation']['attempts']=0;rejects('recovery-other-counter:111-generator-validation',lambda:override('.agent/run_state.json',json.dumps(state),recovery))
     state=load('.agent/run_state.json');state['circuit_breaker']['111-checker-development']['limit']=4;rejects('recovery-current-counter',lambda:override('.agent/run_state.json',json.dumps(state),recovery))
     archive=load(DIR/'recovery-authorization.json');archive['operator_authority_revision']=ORIGINAL;rejects('recovery-archive-authority',lambda:override(DIR/'recovery-authorization.json',json.dumps(archive),recovery))
     review={'test_author':TEST_AUTHOR,'checker_reviewer':TEST_AUTHOR,'checker_sha256':sha(DIR/'check_111.py'),'final_verdict':{'approved':True},'issues':[],'missing_acceptance_coverage':[],'unsupported_claims':[]}
     original_exists=Path.exists
-    Path.exists=lambda path:True if str(path)==str(DIR/'checker-review.json') else original_exists(path)
-    try:rejects('recovery-independent-checker-review',lambda:override(DIR/'checker-review.json',json.dumps(review),recovery))
+    Path.exists=lambda path:True if str(path)==str(DIR/'checker-review-detail3.json') else original_exists(path)
+    try:rejects('recovery-independent-checker-review',lambda:override(DIR/'checker-review-detail3.json',json.dumps(review),recovery))
     finally:Path.exists=original_exists
     receipt=load(DIR/'recovery-approved-base.json');receipt['original_implementation_base']=AUTHORITY;rejects('recovery-approved-base',lambda:override(DIR/'recovery-approved-base.json',json.dumps(receipt),recovery))
     c=load(CONTRACT);c['scope']=json.loads(old(CONTRACT,ORIGINAL))['scope'];rejects('approved-contract-binding:scope',lambda:override(CONTRACT,json.dumps(c),scope))
@@ -298,6 +377,23 @@ def negative():
     Path.exists=lambda p:False if str(p)==str(proof_path) else original_exists(p)
     try:rejects('recovery-premature-debt-resolution',lambda:override(path,text,recovery))
     finally:Path.exists=original_exists
+    state=load('.agent/run_state.json');state['history'][402].pop('detail');rejects('history-detail-required',lambda:override('.agent/run_state.json',json.dumps(state),history_projection_state))
+    state=load('.agent/run_state.json');state['history'][402]['detail']+=' ';rejects('history-detail-exact',lambda:override('.agent/run_state.json',json.dumps(state),history_projection_state))
+    state=load('.agent/run_state.json');state['history'][402]['operator_text']='altered';rejects('history-authority-content',lambda:override('.agent/run_state.json',json.dumps(state),history_projection_state))
+    state=load('.agent/run_state.json');state['history'][402]['extra']='unapproved';rejects('history-authority-content',lambda:override('.agent/run_state.json',json.dumps(state),history_projection_state))
+    state=load('.agent/run_state.json');detail=state['history'][402].pop('detail');state['history'][401]['detail']=detail;rejects('history-authority-position-or-count',lambda:override('.agent/run_state.json',json.dumps(state),history_projection_state))
+    state=load('.agent/run_state.json');state['history'][402],state['history'][403]=state['history'][403],state['history'][402];rejects('history-authority-position-or-count',lambda:override('.agent/run_state.json',json.dumps(state),history_projection_state))
+    state=load('.agent/run_state.json');state['history'].append(copy.deepcopy(state['history'][402]));rejects('history-authority-position-or-count',lambda:override('.agent/run_state.json',json.dumps(state),history_projection_state))
+    state=load('.agent/run_state.json');state['history'][0]['detail']+=' rewritten';rejects('operator-history-frozen',lambda:override('.agent/run_state.json',json.dumps(state),history_projection_state))
+    state=load('.agent/run_state.json');state['current_feature']=111;rejects('current-installed-runstate-schema',lambda:override('.agent/run_state.json',json.dumps(state),history_projection_state))
+    state=load('.agent/run_state.json');state['circuit_breaker']['111-checker-development']['attempts']=0;rejects('history-counter-continuity:111-checker-development',lambda:override('.agent/run_state.json',json.dumps(state),recovery))
+    state=load('.agent/run_state.json');state['circuit_breaker']['111-checker-development']['attempts']=1;rejects('history-counter-continuity:111-checker-development',lambda:override('.agent/run_state.json',json.dumps(state),recovery))
+    state=load('.agent/run_state.json');state['circuit_breaker']['111-contract']['limit']=5;rejects('recovery-other-counter:111-contract',lambda:override('.agent/run_state.json',json.dumps(state),recovery))
+    receipt=load(DIR/'history-detail-approved-base.json');receipt['approved_base']=RECOVERY_BASE;rejects('history-detail-approved-base',lambda:override(DIR/'history-detail-approved-base.json',json.dumps(receipt),history_projection_state))
+    receipt=load(DIR/'history-detail-approved-base.json');receipt['authority_revision']=AUTHORITY;rejects('history-detail-approved-base',lambda:override(DIR/'history-detail-approved-base.json',json.dumps(receipt),history_projection_state))
+    review=load(DIR/'checker-review-detail3.json');review['checker_sha256']=HISTORICAL_CHECKER;rejects('recovery-independent-checker-review',lambda:override(DIR/'checker-review-detail3.json',json.dumps(review),recovery))
+    state=load('.agent/run_state.json');before=json.loads(old('.agent/run_state.json',APPROVED));need(state['circuit_breaker']['111-checker-development']['attempts']>=before['circuit_breaker']['111-checker-development']['attempts'],'history-counter-positive')
+    print('HISTORY DETAIL VALID CONTROL: exact402single-field projection, installed schema and monotonic epoch accepted; historical244 checkpoint retained')
     print('RECOVERY VALID CONTROL: immutable authority, archived3/3 and fresh bounded epoch accepted')
     temp,tree=snapshot()
     try:
@@ -317,6 +413,13 @@ def negative():
         prior=tree/'.agent/qa/110.json';original=prior.read_bytes();prior.write_bytes(original+b'\n');checked('scope','scope:M\t.agent/qa/110.json');prior.write_bytes(original)
         path=tree/'schema/runtime_session.schema.json';original=path.read_bytes();path.write_bytes(original+b'\n');checked('scope','recovery-frozen-product:schema/runtime_session.schema.json');path.write_bytes(original)
         path=tree/DIR/'blocked-checker3/checkpoint3.txt';original=path.read_bytes();path.write_bytes(original+b'\n');checked('scope','recovery-prior-proof:'+str(DIR/'blocked-checker3/checkpoint3.txt'));path.write_bytes(original)
+        path=tree/DIR/'history-detail-authorization.json';original=path.read_bytes();path.write_bytes(original+b'\n');checked('lifecycle','history-detail-authorization');path.write_bytes(original)
+        inner=[str(DIR/(Path(item['path']).name+'.txt')) for item in approved()['implementation_requirements']['fixture_inventory']];saved={path:(tree/path).read_bytes() for path in inner};need(len(saved)==18,'recapture-positive-exact18')
+        for path,blob in saved.items():(tree/path).write_bytes(blob+b'\nPRIVATE DEVELOPMENTAL RECAPTURE simulation\n')
+        result=run(['python3',str(DIR/'check_111.py'),'--scope'],tree);need(result.returncode==0 and 'CHECK PASS: scope' in result.stdout,'recaptured-all18-positive:'+result.stdout[-200:]);print('PRIVATE POSITIVE: all18 canonical inner outputs recaptured; exact archived bytes preserved; scope PASS')
+        path=tree/DIR/'blocked-checker3/checkpoint3.txt';original=path.read_bytes();path.write_bytes(original+b'\n');checked('scope','recovery-prior-proof:'+str(DIR/'blocked-checker3/checkpoint3.txt'));path.write_bytes(original)
+        for path,blob in saved.items():(tree/path).write_bytes(blob)
+
     finally:shutil.rmtree(temp)
     print('NEGATIVE CONTROLS PASS: typed/schema/record-relation/truth/lifecycle/scope and actual private-source bypasses reject intentionally; restored positive fixtures valid; no setup-error substitution')
 

@@ -12,9 +12,9 @@ import yaml
 directory = Path('.agent/evidence/111')
 contract = json.loads(Path('.agent/contracts/111.json').read_text())
 qa = json.loads(Path('.agent/qa/111.json').read_text())
-candidate = json.loads((directory / 'source-candidate.json').read_text())
-review = json.loads(Path('.agent/validator/111-mode-b.json').read_text())
-seal = json.loads((directory / 'acceptance-seal.json').read_text())
+candidate = json.loads((directory / 'source-candidate-detail.json').read_text())
+review = json.loads(Path('.agent/validator/111-mode-b-detail.json').read_text())
+seal = json.loads((directory / 'acceptance-seal-detail.json').read_text())
 for verdict in (qa, review):
     assert verdict['final_verdict']['approved'] is True
     for key in ('issues', 'missing_acceptance_coverage', 'unsupported_claims'):
@@ -25,12 +25,33 @@ jsonschema.validate(contract, json.loads(Path('.nizam/schema/contract.schema.jso
 assert qa['checks_run'] == qa['checks_passed'] == len(qa['checks']) == len(contract['verification']) == 38
 assert qa['candidate_sha'] == candidate['candidate_sha'] == seal['candidate_sha']
 assert qa['source_sha256'] == candidate['source_sha256'] == seal['source_sha256']
-assert seal['test_author'] != seal['acceptance_reviewer']
+assert len({seal['test_author'], seal['checker_reviewer'], seal['acceptance_reviewer']}) == 3
+assert hashlib.sha256(Path('.agent/validator/111-mode-b-detail.json').read_bytes()).hexdigest() == seal['mode_b_sha256'] == qa['mode_b_sha256']
+assert review['reviewed_sha256'] == candidate['source_sha256']
 assert qa['acceptance_reviewer'] == seal['acceptance_reviewer']
 assert re.fullmatch(r'[0-9a-f]{40}', candidate['candidate_sha'])
 
 def completion_delta(path, previous_blob):
-    """Allow the three precise post-QA projections; no content changes."""
+    """Allow only precise reviewed lifecycle projections after actual acceptance."""
+    if path == 'docs/planning/DEBT.md':
+        before = previous_blob.decode()
+        after = Path(path).read_text()
+        rows = [line for line in before.splitlines() if line.startswith('| NDEBT-049 |')]
+        assert len(rows) == 1
+        row = rows[0]
+        cells = row.split('|')
+        assert len(cells) == 7
+        cells[5] = ' RESOLVED 2026-10-11: the current history402 detail equals the exact original corrected_approach; original authority, prior history and failedQA1 remain preserved. Independent current checker review, ModeB and fresh38/38 acceptance plus own adversarial spot verified the bounded remedy; evidence gate captured at .agent/evidence/111/evidence-gate.txt and .agent/qa/111.json. No other history annotation, counter reset, source change or live conformance claim. '
+        resolved = '|'.join(cells)
+        assert before.count(row + '\n') == 1
+        expected = before.replace('version: 0.61.0', 'version: 0.62.0', 1)
+        expected = expected.replace('change_log:\n', 'change_log:\n  - version: "0.62.0"\n    date: "2026-10-11"\n    summary: "Resolve only NDEBT-049 after fresh independent acceptance and evidence gate; preserve original authorization/history and failedQA1, all prior debt rows and logs."\n', 1)
+        expected = expected.replace(row + '\n', '', 1)
+        anchor = '|----|------|----------|-------------|------------|\n'
+        assert expected.count(anchor) == 1
+        expected = expected.replace(anchor, anchor + resolved + '\n', 1)
+        assert after == expected, path
+        return
     before = yaml.safe_load(previous_blob) if path.endswith('.yaml') else json.loads(previous_blob)
     after = yaml.safe_load(Path(path).read_text()) if path.endswith('.yaml') else json.loads(Path(path).read_text())
     normalized = copy.deepcopy(after)

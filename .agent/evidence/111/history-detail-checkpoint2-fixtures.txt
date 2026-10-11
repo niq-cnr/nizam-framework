@@ -1,0 +1,28 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --fixtures
+APPROVED_BASE: 060d1511f4fa27dde3ccea66a7982b82ff75ef47
+ROOT: /home/cnross/.tmp/nizam-111-detail-implementation2-oy7doupc
+STAGE: recovery-epoch1-development-checkpoint2; not formalQA
+CHECKER_SHA256: ed6f7313933f7fb64ccf87a669b5cc9c1aea320ab1b6ab14ee79a03a0d4d6178
+SOURCE_INVENTORY_SHA256: e93dbc2e23d1bdab113d4ae6426caa2e88a8b3fcb7e96ddd963a815646e1aded
+
+FIXTURE: runtime_operation_valid_rejected_foreign_stale.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_foreign_executed.json schema_errors=0 relation_exit=1 target_exit=1
+FIXTURE: runtime_operation_neg_stale_generation_executed.json schema_errors=0 relation_exit=1 target_exit=1
+FIXTURE: runtime_operation_valid_partial_load_condition.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_failed_load_consistent.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_operation_valid_running_stopped_waiting.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_valid_rejected_busy.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_timeout_cancelled.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_session_valid_reattach_pending.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_session_result_acceptance.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_operation_valid_trial_rejected.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_trial_executed.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_operation_valid_new_generation_same_attempt.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_session_valid_replayable_handoff.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_session_valid_accept_hermetic.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_session_neg_accept_inherited_cache.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_session_valid_transfer_lease.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_stale_lease_executed.json schema_errors=0 relation_exit=1 target_exit=1
+CHECK PASS: fixtures
+
+EXIT: 0
