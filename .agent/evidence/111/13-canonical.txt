@@ -1,7 +1,5 @@
 COMMAND: bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_rejected_busy.json > .agent/evidence/111/runtime_operation_valid_rejected_busy.json.txt 2>&1; fixture_exit=$?; test "$fixture_exit" -eq 0 && rg -F "[C12] PASS" .agent/evidence/111/runtime_operation_valid_rejected_busy.json.txt'
-CANDIDATE_SHA: 8c6368cf1e9e7a74efe9b17b2745890befe98027
-ROOT: /home/cnross/workspace02/nizam-framework
-ACTOR: /root/acceptance_111
-STARTED_AT: 2026-10-11T09:14:59.035225+00:00
+CANDIDATE_SHA: c112ca873b7811755fa45a21810a2ba6fb46db69
 [C12] PASS ecosystem-fixtures --target routed: runtime_operation
+
 EXIT: 0

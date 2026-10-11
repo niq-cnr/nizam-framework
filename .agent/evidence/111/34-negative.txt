@@ -1,8 +1,5 @@
 COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --negative
-CANDIDATE_SHA: 8c6368cf1e9e7a74efe9b17b2745890befe98027
-ROOT: /home/cnross/workspace02/nizam-framework
-ACTOR: /root/acceptance_111
-STARTED_AT: 2026-10-11T09:16:25.125625+00:00
+CANDIDATE_SHA: c112ca873b7811755fa45a21810a2ba6fb46db69
 FIXTURE: runtime_operation_valid_rejected_foreign_stale.json schema_errors=0 relation_exit=0 target_exit=0
 FIXTURE: runtime_operation_neg_foreign_executed.json schema_errors=0 relation_exit=1 target_exit=1
 FIXTURE: runtime_operation_neg_stale_generation_executed.json schema_errors=0 relation_exit=1 target_exit=1
@@ -51,7 +48,7 @@ NEGATIVE REJECTED: protected-fixture-case-plan
 NEGATIVE REJECTED: immutable-approved-budget
 NEGATIVE REJECTED: recovery-approved-base
 NEGATIVE REJECTED: recovery-archive-authority
-NEGATIVE REJECTED: recovery-operator-event
+NEGATIVE REJECTED: history-authority-position-or-count
 NEGATIVE REJECTED: recovery-exhausted-counter
 NEGATIVE REJECTED: recovery-other-counter:111-generator-validation
 NEGATIVE REJECTED: recovery-current-counter
@@ -60,6 +57,22 @@ NEGATIVE REJECTED: recovery-independent-checker-review
 NEGATIVE REJECTED: recovery-approved-base
 NEGATIVE REJECTED: approved-contract-binding:scope
 NEGATIVE REJECTED: recovery-premature-debt-resolution
+NEGATIVE REJECTED: history-detail-required
+NEGATIVE REJECTED: history-detail-exact
+NEGATIVE REJECTED: history-authority-content
+NEGATIVE REJECTED: history-authority-content
+NEGATIVE REJECTED: history-authority-position-or-count
+NEGATIVE REJECTED: history-authority-position-or-count
+NEGATIVE REJECTED: history-authority-position-or-count
+NEGATIVE REJECTED: operator-history-frozen
+NEGATIVE REJECTED: current-installed-runstate-schema
+NEGATIVE REJECTED: history-counter-continuity:111-checker-development
+NEGATIVE REJECTED: history-counter-continuity:111-checker-development
+NEGATIVE REJECTED: recovery-other-counter:111-contract
+NEGATIVE REJECTED: history-detail-approved-base
+NEGATIVE REJECTED: history-detail-approved-base
+NEGATIVE REJECTED: recovery-independent-checker-review
+HISTORY DETAIL VALID CONTROL: exact402single-field projection, installed schema and monotonic epoch accepted; historical244 checkpoint retained
 RECOVERY VALID CONTROL: immutable authority, archived3/3 and fresh bounded epoch accepted
 PRIVATE NEGATIVE REJECTED: schema-closed:runtime_session
 PRIVATE NEGATIVE REJECTED: fixture-relation:runtime_operation_neg_foreign_executed.json
@@ -73,6 +86,10 @@ PRIVATE NEGATIVE REJECTED: untracked-scope:.nizam/unauthorized-111.txt
 PRIVATE NEGATIVE REJECTED: scope:M	.agent/qa/110.json
 PRIVATE NEGATIVE REJECTED: recovery-frozen-product:schema/runtime_session.schema.json
 PRIVATE NEGATIVE REJECTED: recovery-prior-proof:.agent/evidence/111/blocked-checker3/checkpoint3.txt
+PRIVATE NEGATIVE REJECTED: history-detail-authorization
+PRIVATE POSITIVE: all18 canonical inner outputs recaptured; exact archived bytes preserved; scope PASS
+PRIVATE NEGATIVE REJECTED: recovery-prior-proof:.agent/evidence/111/blocked-checker3/checkpoint3.txt
 NEGATIVE CONTROLS PASS: typed/schema/record-relation/truth/lifecycle/scope and actual private-source bypasses reject intentionally; restored positive fixtures valid; no setup-error substitution
 CHECK PASS: negative
+
 EXIT: 0

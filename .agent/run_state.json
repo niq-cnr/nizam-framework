@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
-  "current_feature": "111",
+  "current_feature": "112",
   "status": "in_progress",
-  "updated_at": "2026-10-11T18:45:01.793190+00:00",
+  "updated_at": "2026-10-11T18:58:58.271536+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -408,7 +408,7 @@
       "limit": 3
     },
     "111-qa": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -3044,6 +3044,25 @@
       "attempt": 3,
       "evidence": ".agent/validator/111-mode-b-detail.json",
       "detail": "ActualindependentModeB3 approved/empty arrays; exact169fixedsource-map paths promoted after everyhashverified. Exact18inner/38outer outputownership repaired with authenticatedfailedQA1 originals; original28products/239installed/oldproofs preserved. Countimplementation2->3 only; separatefixedcandidateQA2/evidence remain mandatory."
+    },
+    {
+      "at": "2026-10-11T18:58:17.244581+00:00",
+      "event": "feature_complete",
+      "contract_id": "111",
+      "qa_attempt": 2,
+      "candidate_sha": "c112ca873b7811755fa45a21810a2ba6fb46db69",
+      "evidence": ".agent/evidence/111/evidence-gate.txt",
+      "detail": "IndependentfreshQA2 actual38/38 plus ownprivate adversarialspot passed; Parentparsedtrueemptyverdict and exact169map thenactualevidencegatePASS beforecanonicalcompletion and NDEBT-049resolution. Alloriginalauthority/history/failedQA1/checkpoints retained, noreset/liveclaim/releaseupgrade. Nexteligible112requiresowncontractgates."
+    },
+    {
+      "at": "2026-10-11T18:58:58.271536+00:00",
+      "event": "scope_budget_recorded",
+      "contract_id": "111",
+      "actual": 3133,
+      "cumulative": 4844,
+      "prior_three_times_threshold": 5133.0,
+      "evidence": ".agent/evidence/111/scope-measurement.txt",
+      "detail": "Finalcompleted111 scope3133 measuredwithfrozenclassifier; original7200/9360 retained. Compareonlyprior110 baseline1711=>5133beforeappend. Cumulative4844 below9360; oldfailedinflight snapshots preserved and notdoublecounted."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3218,9 +3237,9 @@
   "scope_budget": {
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "total_lines_changed": 1711,
-    "evidence_lines_total": 3485,
-    "excluded_lines_total": 337,
+    "total_lines_changed": 4844,
+    "evidence_lines_total": 29982,
+    "excluded_lines_total": 775,
     "per_feature": [
       {
         "id": "110",
@@ -3238,6 +3257,25 @@
           "first_feature_exception": true
         },
         "note": "Product455 + process overhead1256 =1711; 111 over1600 estimate. First phase015 feature has no prior rolling baseline; no3x comparison. Includes phase activation and six selected decisions within the approved7200 allowance; cumulative1711 below9360. No additional authorization inferred."
+      },
+      {
+        "id": "111",
+        "estimated": 2200,
+        "actual": 3133,
+        "evidence_lines": 26497,
+        "excluded_lines": 438,
+        "all_paths_lines": 30068,
+        "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
+        "evidence": ".agent/evidence/111/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "110"
+          ],
+          "rolling_average": 1711.0,
+          "three_times_threshold": 5133.0,
+          "first_feature_exception": false
+        },
+        "note": "Measure only after fresh independent38/38acceptance, ownspot, evidencegate and canonicalcompletion. Product895+overhead2238=3133; exceeds2200 estimate, below prior-only3x threshold5133. No extra budget; historical failed in-flight measurements retained separately, never double-counted."
       }
     ],
     "phase_level_items": [],
@@ -3253,28 +3291,30 @@
     "phase_base_revision": "57862f69ba30a36004ea9a17a295fc9c835afc13",
     "authorization_revision": "06c0ae0a273facce80c57506260648c41f566ebb",
     "phase_level_costs": "Included within approved7200 per-feature allowances; no additional budget.",
-    "last_measured_at": "2026-10-11T07:19:44.320046+00:00",
-    "inflight_measured": {
-      "id": "111",
-      "status": "blocked",
-      "actual": 2274,
-      "evidence_lines": 14093,
-      "excluded_lines": 353,
-      "all_paths_lines": 16720,
-      "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
-      "evidence": ".agent/evidence/111/blocked-qa-scope-measurement.txt",
-      "previous_inflight_measurement": {
+    "last_measured_at": "2026-10-11T18:58:58.271536+00:00",
+    "historical_inflight_measurements": [
+      {
         "id": "111",
         "status": "blocked",
-        "actual": 756,
-        "evidence_lines": 3132,
-        "excluded_lines": 188,
+        "actual": 2274,
+        "evidence_lines": 14093,
+        "excluded_lines": 353,
+        "all_paths_lines": 16720,
         "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
-        "evidence": ".agent/evidence/111/blocked-scope-measurement.txt",
-        "note": "Incomplete feature; not appended to completed-feature rolling baseline. Current completed1711 plus in-flight actual below9360. Unpromoted product draft retained only as raw evidence; actual future implementation measurement must include promoted product if operator resumes."
-      },
-      "note": "Incomplete feature after actual failedQA1; not appended to completed-feature rolling baseline. Frozen product/source promoted and now counted. Completed1711 plus in-flight below9360; contract extension has no extra budget. Preserve old pre-source halt measurement as historical snapshot."
-    }
+        "evidence": ".agent/evidence/111/blocked-qa-scope-measurement.txt",
+        "previous_inflight_measurement": {
+          "id": "111",
+          "status": "blocked",
+          "actual": 756,
+          "evidence_lines": 3132,
+          "excluded_lines": 188,
+          "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
+          "evidence": ".agent/evidence/111/blocked-scope-measurement.txt",
+          "note": "Incomplete feature; not appended to completed-feature rolling baseline. Current completed1711 plus in-flight actual below9360. Unpromoted product draft retained only as raw evidence; actual future implementation measurement must include promoted product if operator resumes."
+        },
+        "note": "Incomplete feature after actual failedQA1; not appended to completed-feature rolling baseline. Frozen product/source promoted and now counted. Completed1711 plus in-flight below9360; contract extension has no extra budget. Preserve old pre-source halt measurement as historical snapshot."
+      }
+    ]
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -3457,7 +3497,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "111",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -3529,7 +3569,7 @@
       }
     ]
   },
-  "last_action": "ActualfinalModeB3 approved169fixedpaths; promote only reviewedcandidate proof/checker/helper. Fresh separateQA2 of all38commands plus ownspot and evidencegate mandatory before111completion/049resolution.",
+  "last_action": "Feature111 complete after actualfinalModeB3, fresh independent38/38sealedcandidateQA2 plus ownadversarialspot and evidencegate. NDEBT-049 resolved;112 remains pendingitsowncontractgates. Installedv1.5.0/oldfailures/history/budgets preserved.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -3540,7 +3580,8 @@
     "109",
     "108",
     "102",
-    "110"
+    "110",
+    "111"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
