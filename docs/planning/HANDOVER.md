@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.5
+version: 1.0.6
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.6"
+    date: "2026-10-11"
+    summary: "Record H-NIP acceptance of reviewed NIP3/NIP4 scopes and pending canonical015 plan110-114 with proposed7200/9360 budget; activation, WA choices and implementation remain outstanding."
   - version: "1.0.5"
     date: "2026-10-11"
     summary: "Revise pending NIP3 and draft proposed Workflow Assurance against actual post-GA inputs; record authorized drafting delivery without NIP acceptance, phase activation or installed upgrade."
@@ -41,15 +44,21 @@ The [current planning view](backlog_reconciliation.md) mirrors completed/cancell
 phase records and uses actual historical/current inputs. Maintenance proof is in
 `.agent/qa/post-ga-maintenance.json` and
 `.agent/evidence/post-ga-maintenance/capable-ci-receipt.json`.
-The authorized NIP3 revision (A03-RT) and proposed NIP4 scope
-(A03-WA-DRAFT/A03-WA-FINAL) are delivered for draft review. Read
-[NIP-0003](../nips/NIP-0003-live-runtime-sessions.md) and
-[NIP-0004](../nips/NIP-0004-workflow-assurance.md) as pending H-NIP proposals;
-acceptance and future H-PHASE activation remain separate outstanding decisions.
-PLAN-NEXT/PLAN-WA and runtime implementation remain pending. Future110–120 IDs
-are provisional; actual F105 claim-map delivery remains F105. SBCL2.2.9.debian is
-available, current CI has five jobs and the proposed live job would make six.
-WA planning follows proposed NIP3-114; WA implementation versus phase016 is open.
+The operator accepted reviewed NIP3v0.2.0 and NIP4v0.1.0 under H-NIP on2026-10-11
+with "Approved and accepted, please proceed." Both NIPs now1.0.0/active record
+accepted scope, preserving NIP3's four choices/thirteen cases and NIP4's six
+unresolved operator choices. Begin the next review with the concrete
+[phase015 specification](../../.agent/product_spec_015.md),
+[feature list](../../.agent/feature_list_015.json) and [phase YAML](phase_015.yaml).
+PLAN-NEXT planning delivery passed actual independent source review EXIT0 with
+three canonical artifact hashes bound in plan-source-proof.json. Only110–114 are
+canonical allocated IDs, all pending. Proposed7200/9360 includes
+phase-level costs and excludes raw evidence/run_state; H-PHASE-015 and budget
+approval remain OUTSTANDING. No runtime implementation or active-gate reduction.
+PLAN-WA remains serialized after114; PLAN-016 depends114/PLAN-WA order. Relative
+WA implementation versus016 stays open; WAphase and016115–120 unallocated.
+Actual F105 map/five-job CI/available SBCL remain current inputs; installedv1.5.0
+and historical phase014 position/budgets/evidence remain unchanged.
 The original planning assessment/checker and every prior evidence capture are frozen.
 
 Phase 014 is complete. Features 100 and 101 were cancelled by operator amendment A3;
@@ -63,7 +72,7 @@ Public-tag bootstrap, provenance verification and payload validation (12/12) pas
 The original handover below is a historical snapshot at `e2a50ed`, including its
 then-remaining backlog and commands. For current work, read [ROADMAP.md](ROADMAP.md),
 [operator_gates.md](operator_gates.md), [manifest.json](manifest.json) and
-[DEBT.md](DEBT.md). NIP-0003 remains queued under `H-NIP`; no next phase is activated.
+[DEBT.md](DEBT.md). NIP-0003 is selected under satisfied `H-NIP`; no next phase is activated.
 Completed phase-014 assertions should be interpreted at their recorded assessment
 revision. Tag and publication evidence: `.agent/evidence/release-v1.5.0-tag/`.
 
