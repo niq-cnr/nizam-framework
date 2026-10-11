@@ -1,0 +1,78 @@
+{
+  "feature_id": "post-ga-planning-refresh",
+  "qa_pass": false,
+  "checks_run": 6,
+  "checks_passed": 6,
+  "executed_at": "2026-10-11T02:49:13.139546+00:00",
+  "candidate_sha": "62773a95b7e9a4c19b71befdcb1dc3756c6ce896",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-planning-refresh/check_current_view.py",
+      "acceptance_test": "AT1: Current-view checker proves exact canonical mirror/topology, terminal cancellations, evidence truth and bounded maintenance authority.",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/post-ga-planning-refresh/01-current-view.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-planning-refresh/check_current_view.py --self-test",
+      "acceptance_test": "AT2: New checker discriminates stale status/reactivation/cancelled dependency/cycle/fake evidence/unauthorized future activation without touching real files.",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/post-ga-planning-refresh/02-negative-controls.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-planning-refresh/check_current_view.py --documents",
+      "acceptance_test": "AT3: Current human views/frontmatter/version logs and handover pointers reflect commissioned state/authorized sequence, with no invented merge/NIP/phase/release claims.",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/post-ga-planning-refresh/03-document-view.txt"
+    },
+    {
+      "command": "python3 - <<'PY'\nimport json,re,subprocess\nfrom pathlib import Path\nc=json.loads(Path('.agent/contracts/post-ga-planning-refresh.json').read_text());base=c['base_revision'];product={'docs/planning/backlog_dag.json','docs/planning/backlog_reconciliation.md','docs/planning/ROADMAP.md','docs/planning/HANDOVER.md','CHANGELOG.md'}\ndef allowed(p):\n return p in product or p=='.agent/run_state.json' or bool(re.fullmatch(r'\\.agent/(?:product_spec_post_ga_planning\\.md|contracts/post-ga-planning-refresh\\.json|(?:validator|qa)/post-ga-planning-refresh(?:-[A-Za-z0-9_-]+)?\\.json|evidence/post-ga-planning-refresh/[A-Za-z0-9_.-]+)',p))\nfor line in subprocess.check_output(['git','diff','--name-status',base],text=True).splitlines():\n parts=line.split('\\t');assert len(parts)==2 and parts[0] in ('A','M') and allowed(parts[1]),line\nfor p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines():assert allowed(p),p\nassert not subprocess.check_output(['git','diff',base,'--','.nizam','standard','templates','schema','tools','methodology','ecosystem','NIZAM.json','CONTEXT.md','docs/guide/index.html','bootstrap.sh','docs/nips','.github','docs/planning/manifest.json','docs/planning/DEBT.md','.agent/feature_list_014.json','.agent/product_spec_014.md','docs/planning/phase_014.yaml'])\nchanged=subprocess.check_output(['git','diff','--name-only',base,'--','.agent/evidence'],text=True).splitlines();assert all(p.startswith('.agent/evidence/post-ga-planning-refresh/') for p in changed),changed\nold=json.loads(subprocess.check_output(['git','show',base+':.agent/run_state.json'],text=True));new=json.loads(Path('.agent/run_state.json').read_text());owned={'updated_at','active_contract_id','last_action','history','circuit_breaker'}\nfor k in set(old)|set(new):\n if k not in owned:assert old.get(k)==new.get(k),k\nassert new['history'][:len(old['history'])]==old['history']\nfor event in new['history'][len(old['history']):]:assert event.get('contract_id',event.get('feature'))=='post-ga-planning-refresh',event\nfor k,v in old.get('circuit_breaker',{}).items():\n if not k.startswith('post-ga-planning-refresh-'):assert new.get('circuit_breaker',{}).get(k)==v,k\nfor k,v in new.get('circuit_breaker',{}).items():\n if k not in old.get('circuit_breaker',{}) or v!=old['circuit_breaker'][k]:assert k.startswith('post-ga-planning-refresh-') and v['limit']==3 and 0<=v['attempts']<=3,(k,v)\nassert new.get('active_contract_id') in (None,old.get('active_contract_id'),'post-ga-planning-refresh');assert new['last_action']==old['last_action'] or 'post-ga-planning' in new['last_action'].lower()\nold_h=subprocess.check_output(['git','show',base+':docs/planning/HANDOVER.md'],text=True);new_h=Path('docs/planning/HANDOVER.md').read_text();marker='## Historical handover snapshot';assert old_h.split(marker,1)[1]==new_h.split(marker,1)[1]\nold_c=subprocess.check_output(['git','show',base+':CHANGELOG.md'],text=True);new_c=Path('CHANGELOG.md').read_text();marker='## [1.5.0]';assert old_c.split(marker,1)[1]==new_c.split(marker,1)[1]\nprint('Scoped planning diff, bounded coordinator state, frozen canonical/history/evidence and released changelog passed')\nPY",
+      "acceptance_test": "AT4: Exact planning/metadata scope and bounded coordinator writes preserve installed/source/phase/history/evidence byte-for-byte.",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/post-ga-planning-refresh/04-scope-and-preservation.txt"
+    },
+    {
+      "command": "bash tools/validate.sh && python3 .github/scripts/release_closeout.py --mode pr",
+      "acceptance_test": "AT5: Repository compliance and release closeout remain green after planning refresh.",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/post-ga-planning-refresh/05-compliance.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py && PYTHONDONTWRITEBYTECODE=1 bash .nizam/tools/validate.sh --payload",
+      "acceptance_test": "AT6: Commissioned installation pin/inventory remains exact and installed consumer validator passes.",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/post-ga-planning-refresh/06-installed-governance.txt"
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Independent externalDAG mutation marks NIP3-110 authorized with satisfied authority prerequisite without any actual NIP/phase decision",
+    "result": "fail: malformed unauthorized future packet still passes checker exit0",
+    "evidence": ".agent/evidence/post-ga-planning-refresh/post-ga-planning-refresh-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/post-ga-planning-refresh/01-current-view.txt",
+    ".agent/evidence/post-ga-planning-refresh/02-negative-controls.txt",
+    ".agent/evidence/post-ga-planning-refresh/03-document-view.txt",
+    ".agent/evidence/post-ga-planning-refresh/04-scope-and-preservation.txt",
+    ".agent/evidence/post-ga-planning-refresh/05-compliance.txt",
+    ".agent/evidence/post-ga-planning-refresh/06-installed-governance.txt",
+    ".agent/evidence/post-ga-planning-refresh/post-ga-planning-refresh-qa-adversarial.txt"
+  ],
+  "issues": [
+    {
+      "acceptance_test": "AT1/AT2 bounded future authority",
+      "evidence": ".agent/evidence/post-ga-planning-refresh/post-ga-planning-refresh-qa-adversarial.txt",
+      "description": "Checker guards future authorization for PLAN-NEXT/PLAN-WA/A03-WA-FINAL only. An unrecorded authorization of NIP3-110 passes when both authority_status and prerequisite authority satisfaction are changed together."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Bind future NIP3 packet authority to the actual unchanged outstanding NIP/phase gates: reject unrecorded authorized status and satisfied authority prerequisites across those future packets, preserving any existing permitted drafting authority outside that set. Add targeted negative for simultaneous status/boolean authority mutation."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Six contracted checks pass at62773a9, but independent spot-check demonstrates unauthorized NIP3-110 authority false-pass. One narrow checker/negative-control correction required; source and historical/installed preservation checks passed."
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

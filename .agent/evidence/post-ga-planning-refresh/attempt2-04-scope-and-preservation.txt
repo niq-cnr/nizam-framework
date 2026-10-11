@@ -1,0 +1,29 @@
+COMMAND: python3 - <<'PY'
+import json,re,subprocess
+from pathlib import Path
+c=json.loads(Path('.agent/contracts/post-ga-planning-refresh.json').read_text());base=c['base_revision'];product={'docs/planning/backlog_dag.json','docs/planning/backlog_reconciliation.md','docs/planning/ROADMAP.md','docs/planning/HANDOVER.md','CHANGELOG.md'}
+def allowed(p):
+ return p in product or p=='.agent/run_state.json' or bool(re.fullmatch(r'\.agent/(?:product_spec_post_ga_planning\.md|contracts/post-ga-planning-refresh\.json|(?:validator|qa)/post-ga-planning-refresh(?:-[A-Za-z0-9_-]+)?\.json|evidence/post-ga-planning-refresh/[A-Za-z0-9_.-]+)',p))
+for line in subprocess.check_output(['git','diff','--name-status',base],text=True).splitlines():
+ parts=line.split('\t');assert len(parts)==2 and parts[0] in ('A','M') and allowed(parts[1]),line
+for p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines():assert allowed(p),p
+assert not subprocess.check_output(['git','diff',base,'--','.nizam','standard','templates','schema','tools','methodology','ecosystem','NIZAM.json','CONTEXT.md','docs/guide/index.html','bootstrap.sh','docs/nips','.github','docs/planning/manifest.json','docs/planning/DEBT.md','.agent/feature_list_014.json','.agent/product_spec_014.md','docs/planning/phase_014.yaml'])
+changed=subprocess.check_output(['git','diff','--name-only',base,'--','.agent/evidence'],text=True).splitlines();assert all(p.startswith('.agent/evidence/post-ga-planning-refresh/') for p in changed),changed
+old=json.loads(subprocess.check_output(['git','show',base+':.agent/run_state.json'],text=True));new=json.loads(Path('.agent/run_state.json').read_text());owned={'updated_at','active_contract_id','last_action','history','circuit_breaker'}
+for k in set(old)|set(new):
+ if k not in owned:assert old.get(k)==new.get(k),k
+assert new['history'][:len(old['history'])]==old['history']
+for event in new['history'][len(old['history']):]:assert event.get('contract_id',event.get('feature'))=='post-ga-planning-refresh',event
+for k,v in old.get('circuit_breaker',{}).items():
+ if not k.startswith('post-ga-planning-refresh-'):assert new.get('circuit_breaker',{}).get(k)==v,k
+for k,v in new.get('circuit_breaker',{}).items():
+ if k not in old.get('circuit_breaker',{}) or v!=old['circuit_breaker'][k]:assert k.startswith('post-ga-planning-refresh-') and v['limit']==3 and 0<=v['attempts']<=3,(k,v)
+assert new.get('active_contract_id') in (None,old.get('active_contract_id'),'post-ga-planning-refresh');assert new['last_action']==old['last_action'] or 'post-ga-planning' in new['last_action'].lower()
+old_h=subprocess.check_output(['git','show',base+':docs/planning/HANDOVER.md'],text=True);new_h=Path('docs/planning/HANDOVER.md').read_text();marker='## Historical handover snapshot';assert old_h.split(marker,1)[1]==new_h.split(marker,1)[1]
+old_c=subprocess.check_output(['git','show',base+':CHANGELOG.md'],text=True);new_c=Path('CHANGELOG.md').read_text();marker='## [1.5.0]';assert old_c.split(marker,1)[1]==new_c.split(marker,1)[1]
+print('Scoped planning diff, bounded coordinator state, frozen canonical/history/evidence and released changelog passed')
+PY
+HEAD: 62773a95b7e9a4c19b71befdcb1dc3756c6ce896
+Scoped planning diff, bounded coordinator state, frozen canonical/history/evidence and released changelog passed
+
+EXIT:0

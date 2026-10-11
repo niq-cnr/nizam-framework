@@ -16,6 +16,7 @@ DAG = Path("docs/planning/backlog_dag.json")
 CANONICAL = Path(".agent/feature_list_014.json")
 CONCERNS = ["NDEBT-047", "NDEBT-046", "NDEBT-045", "A04a"]
 TERMINAL = {"complete", "cancelled"}
+BASE = "0de2820c87b154929a854840a7d85b4497afde9c"
 
 
 def require(condition, message):
@@ -32,6 +33,19 @@ def proof_exists(reference):
 
 def validate(doc):
     packets = doc["packets"]
+    baseline = json.loads(subprocess.check_output(["git", "show", BASE + ":docs/planning/backlog_dag.json"], text=True))
+    base_packets = {p["id"]: p for p in baseline["packets"]}
+    require(set(p["id"] for p in packets) == set(base_packets), "unauthorized packet inventory")
+    for p in packets:
+        original = base_packets[p["id"]]
+        expected = copy.deepcopy(original["prerequisites"]["authority"])
+        authority_status = original["authority_status"]
+        if p["id"] == "A04a":
+            authority_status = "authorized"
+            expected = {"satisfied": True, "reason": "Operator authorized the bounded A04a maintenance scope; execution requires PR1 merge and independent maintenance contract gates."}
+        require(p["authority_status"] == authority_status and p["prerequisites"]["authority"] == expected, "unrecorded packet authority: " + p["id"])
+        if p.get("feature_id") is None:
+            require(p["status"] == original["status"], "unrecorded nonfeature status: " + p["id"])
     by_id = {p["id"]: p for p in packets}
     require(len(by_id) == len(packets), "duplicate packet IDs")
     require(doc["plan_status"] == "candidate", "future plan must remain candidate")
@@ -105,7 +119,7 @@ def validate(doc):
         require(".agent/evidence/102/ga-readiness.json" in inputs and ".agent/qa/self-commission-v1.5.0.json" in inputs, "factual replacement inputs missing")
         require(all(Path(x).is_file() for x in inputs), "fake replacement input")
         require("101 findings" not in p["prerequisites"]["evidence"]["reason"], "obsolete F101 evidence premise")
-    for pid in ("PLAN-NEXT", "PLAN-WA", "A03-WA-FINAL"):
+    for pid in ("PLAN-NEXT", "PLAN-WA"):
         require(not by_id[pid]["prerequisites"]["authority"]["satisfied"], "future NIP/WA activated")
     notice = doc["authorized_follow_up"]
     require(notice["concerns"] == CONCERNS and notice["numeric_feature_ids_allocated"] is False, "unauthorized maintenance scope")
@@ -165,8 +179,25 @@ def controls(doc):
             print("NEGATIVE REJECTED:", kind)
         else:
             raise ValueError("negative unexpectedly passed: " + kind)
-    require(len(cases) == 8, "negative controls incomplete")
-    print("CONTROLS PASS: valid terminal cancellations and eight isolated mutations")
+    future = [p for p in doc["packets"] if p.get("feature_id") is None and p["status"] not in TERMINAL and p["id"] != "A04a"]
+    for original in future:
+        for kind in ("combined-authority", "terminal-status-spoof", "in-progress-status-spoof"):
+            mutant = copy.deepcopy(doc)
+            target = next(p for p in mutant["packets"] if p["id"] == original["id"])
+            if kind == "combined-authority":
+                target["authority_status"] = "authorized" if original["authority_status"] != "authorized" else "proposal"
+                target["prerequisites"]["authority"]["satisfied"] = not original["prerequisites"]["authority"]["satisfied"]
+            else:
+                target["status"] = "complete" if kind == "terminal-status-spoof" else "in_progress"
+            try:
+                validate(mutant)
+            except (ValueError, jsonschema.ValidationError):
+                cases.append(kind + ":" + original["id"])
+                print("NEGATIVE REJECTED:", cases[-1])
+            else:
+                raise ValueError("negative unexpectedly passed: " + kind + ":" + original["id"])
+    require(len(cases) == 8 + 3 * len(future), "negative controls incomplete")
+    print("CONTROLS PASS:", len(cases), "isolated mutations; entire future authority/status projection bound to approved base")
 
 
 def main():
