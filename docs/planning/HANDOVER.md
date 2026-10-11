@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.1
+version: 1.0.2
 status: active
 authoritative_source: docs/planning/HANDOVER.md
-last_audited: "2026-10-10"
+last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.2"
+    date: "2026-10-11"
+    summary: "Refresh only current handover pointers: actual merged self-commissioning and root AGENTS route, corrected current backlog status and authorized planning-refresh then separately gated maintenance; preserve the original historical snapshot byte-identically."
   - version: "1.0.1"
     date: "2026-10-10"
     summary: "Add current release status after phase014 completed and v1.5.0 GA published: features100/101 cancelled; real tag/bootstrap evidence recorded. Retain the original e2a50ed handover as a labelled historical snapshot and point to current canonical planning records; no historical acceptance tests or dossier rewritten."
@@ -18,7 +21,16 @@ change_log:
 
 # Developer Handover — Release Status and Phase 014 Snapshot
 
-## Current status — 2026-10-10
+## Current status — 2026-10-11
+
+Local `v1.5.0` self-governance has been commissioned and merged; begin through
+[AGENTS.md](../../AGENTS.md), the installed `.nizam/NIZAM.json` and installed skill.
+[SELF_GOVERNANCE.md](SELF_GOVERNANCE.md) retains the real sourcecandidate/CI/preflight/QA.
+The [current planning refresh](backlog_reconciliation.md) corrects canonical
+completed/cancelled mirrors and obsolete F101 prerequisites. After this planning
+PR merges, only NDEBT-047/046/045 and A04a proceed under a separate maintenance
+contract with both gates. No NIP3/WA acceptance, phase015 activation or new release
+is approved. This planning PR is pending merge; maintenance source work has not begun.
 
 Phase 014 is complete. Features 100 and 101 were cancelled by operator amendment A3;
 features 099 and 102–109 completed. Nizam `v1.5.0` is released at commit

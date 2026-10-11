@@ -1,0 +1,117 @@
+{
+  "contract_id": "post-ga-planning-refresh",
+  "feature_id": "post-ga-planning-refresh",
+  "name": "Refresh post-GA current planning view before separately gated small maintenance",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_post_ga_planning.md",
+  "planned_repository_spec_ref": ".agent/product_spec_post_ga_planning.md",
+  "base_revision": "0de2820c87b154929a854840a7d85b4497afde9c",
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/evidence/post-ga-planning-refresh/check_current_view.py",
+        "purpose": "New current-derived-view checker with isolated negatives and document mode; never patch historical evidence checker"
+      },
+      {
+        "path": ".agent/evidence/post-ga-planning-refresh/<artifact>",
+        "purpose": "New externalized current-refresh command/QA evidence only"
+      },
+      {
+        "path": ".agent/product_spec_post_ga_planning.md",
+        "purpose": "Durable promoted two-step planning brief"
+      },
+      {
+        "path": ".agent/contracts/post-ga-planning-refresh.json",
+        "purpose": "Independent-gated planning-refresh contract metadata"
+      },
+      {
+        "path": ".agent/validator/post-ga-planning-refresh[-name].json",
+        "purpose": "Independent ModeA/ModeB verdicts"
+      },
+      {
+        "path": ".agent/qa/post-ga-planning-refresh[-name].json",
+        "purpose": "Independent contract review and exact final QA verdict"
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "docs/planning/backlog_dag.json",
+        "purpose": "Current exact canonical phase mirror, cancelled terminal semantics, factual replacement inputs for obsoleteF101 dependencies, bounded authorized-maintenance notice and A04a standalone scheduling"
+      },
+      {
+        "path": "docs/planning/backlog_reconciliation.md",
+        "purpose": "Versioned current human projection of corrected DAG and factual prerequisites; historical context retained"
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Versioned current planning/authorized-sequence notice, no phase activation"
+      },
+      {
+        "path": "docs/planning/HANDOVER.md",
+        "purpose": "Versioned current status/agent/commission/planning pointers; historical body byte-identical"
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Unreleased planning-envelope refresh only; all released sections byte-identical"
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Parent-only bounded updated_at/activecontract/lastaction/taskcounter/history append; frozen phase and prior history untouched"
+      }
+    ]
+  },
+  "non_goals": [
+    "Do not edit canonical completed phase014 feature/spec/YAML, manifest, debt rows, historical checker, existing QA or any existing evidence. New proof is only in the new current-refresh directory.",
+    "No source maintenance implementation in this PR; PR2 starts only after this PR merges and separate maintenance contract is approved.",
+    "No NIP3 acceptance or editing, phase015 activation/numeric-feature allocation, WA/NIP4 drafting, H-CONSOLIDATION execution, new release or installed .nizam upgrade.",
+    "Do not invent F101/simplification-review findings; use actual existing historical102, commissioning and debt facts with truthful unfulfilled prerequisites.",
+    "Generator cannot edit run_state; parent coordinator ownership is explicitly bounded by AT4."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "AT1: Current-view checker proves exact canonical mirror/topology, terminal cancellations, evidence truth and bounded maintenance authority.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-planning-refresh/check_current_view.py",
+      "evidence": ".agent/evidence/post-ga-planning-refresh/01-current-view.txt"
+    },
+    {
+      "acceptance_test": "AT2: New checker discriminates stale status/reactivation/cancelled dependency/cycle/fake evidence/unauthorized future activation without touching real files.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-planning-refresh/check_current_view.py --self-test",
+      "evidence": ".agent/evidence/post-ga-planning-refresh/02-negative-controls.txt"
+    },
+    {
+      "acceptance_test": "AT3: Current human views/frontmatter/version logs and handover pointers reflect commissioned state/authorized sequence, with no invented merge/NIP/phase/release claims.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-planning-refresh/check_current_view.py --documents",
+      "evidence": ".agent/evidence/post-ga-planning-refresh/03-document-view.txt"
+    },
+    {
+      "acceptance_test": "AT4: Exact planning/metadata scope and bounded coordinator writes preserve installed/source/phase/history/evidence byte-for-byte.",
+      "command": "python3 - <<'PY'\nimport json,re,subprocess\nfrom pathlib import Path\nc=json.loads(Path('.agent/contracts/post-ga-planning-refresh.json').read_text());base=c['base_revision'];product={'docs/planning/backlog_dag.json','docs/planning/backlog_reconciliation.md','docs/planning/ROADMAP.md','docs/planning/HANDOVER.md','CHANGELOG.md'}\ndef allowed(p):\n return p in product or p=='.agent/run_state.json' or bool(re.fullmatch(r'\\.agent/(?:product_spec_post_ga_planning\\.md|contracts/post-ga-planning-refresh\\.json|(?:validator|qa)/post-ga-planning-refresh(?:-[A-Za-z0-9_-]+)?\\.json|evidence/post-ga-planning-refresh/[A-Za-z0-9_.-]+)',p))\nfor line in subprocess.check_output(['git','diff','--name-status',base],text=True).splitlines():\n parts=line.split('\\t');assert len(parts)==2 and parts[0] in ('A','M') and allowed(parts[1]),line\nfor p in subprocess.check_output(['git','ls-files','--others','--exclude-standard'],text=True).splitlines():assert allowed(p),p\nassert not subprocess.check_output(['git','diff',base,'--','.nizam','standard','templates','schema','tools','methodology','ecosystem','NIZAM.json','CONTEXT.md','docs/guide/index.html','bootstrap.sh','docs/nips','.github','docs/planning/manifest.json','docs/planning/DEBT.md','.agent/feature_list_014.json','.agent/product_spec_014.md','docs/planning/phase_014.yaml'])\nchanged=subprocess.check_output(['git','diff','--name-only',base,'--','.agent/evidence'],text=True).splitlines();assert all(p.startswith('.agent/evidence/post-ga-planning-refresh/') for p in changed),changed\nold=json.loads(subprocess.check_output(['git','show',base+':.agent/run_state.json'],text=True));new=json.loads(Path('.agent/run_state.json').read_text());owned={'updated_at','active_contract_id','last_action','history','circuit_breaker'}\nfor k in set(old)|set(new):\n if k not in owned:assert old.get(k)==new.get(k),k\nassert new['history'][:len(old['history'])]==old['history']\nfor event in new['history'][len(old['history']):]:assert event.get('contract_id',event.get('feature'))=='post-ga-planning-refresh',event\nfor k,v in old.get('circuit_breaker',{}).items():\n if not k.startswith('post-ga-planning-refresh-'):assert new.get('circuit_breaker',{}).get(k)==v,k\nfor k,v in new.get('circuit_breaker',{}).items():\n if k not in old.get('circuit_breaker',{}) or v!=old['circuit_breaker'][k]:assert k.startswith('post-ga-planning-refresh-') and v['limit']==3 and 0<=v['attempts']<=3,(k,v)\nassert new.get('active_contract_id') in (None,old.get('active_contract_id'),'post-ga-planning-refresh');assert new['last_action']==old['last_action'] or 'post-ga-planning' in new['last_action'].lower()\nold_h=subprocess.check_output(['git','show',base+':docs/planning/HANDOVER.md'],text=True);new_h=Path('docs/planning/HANDOVER.md').read_text();marker='## Historical handover snapshot';assert old_h.split(marker,1)[1]==new_h.split(marker,1)[1]\nold_c=subprocess.check_output(['git','show',base+':CHANGELOG.md'],text=True);new_c=Path('CHANGELOG.md').read_text();marker='## [1.5.0]';assert old_c.split(marker,1)[1]==new_c.split(marker,1)[1]\nprint('Scoped planning diff, bounded coordinator state, frozen canonical/history/evidence and released changelog passed')\nPY",
+      "evidence": ".agent/evidence/post-ga-planning-refresh/04-scope-and-preservation.txt"
+    },
+    {
+      "acceptance_test": "AT5: Repository compliance and release closeout remain green after planning refresh.",
+      "command": "bash tools/validate.sh && python3 .github/scripts/release_closeout.py --mode pr",
+      "evidence": ".agent/evidence/post-ga-planning-refresh/05-compliance.txt"
+    },
+    {
+      "acceptance_test": "AT6: Commissioned installation pin/inventory remains exact and installed consumer validator passes.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py && PYTHONDONTWRITEBYTECODE=1 bash .nizam/tools/validate.sh --payload",
+      "evidence": ".agent/evidence/post-ga-planning-refresh/06-installed-governance.txt"
+    }
+  ],
+  "estimated_lines": 430,
+  "evidence_dir": ".agent/evidence/post-ga-planning-refresh/",
+  "evidence_convention": "NN-name.txt with exact invocation/output/actual EXIT and assessedSHA. Independent evaluator QA references every file; all new paths exist before completion. Preserve prior evidence byte-for-byte.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 0
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "design_notes": {
+    "sequential_prs": "PR1 planning refresh then separately scoped/gated PR2 maintenance-047/046/045 plus A04a; no provisional NIP3 numerical IDs.",
+    "evidence_binding": "Completed canonical packets cite approved existing QA and its actual evidence. Candidate future paths remain planned destinations and do not satisfy evidence prerequisites.",
+    "maintenance_notice": "Exact allowed concerns NDEBT-047,NDEBT-046,NDEBT-045,A04a; notice alone authorizes no source implementation before independent second contract.",
+    "checker_design": "New narrow checker validates all packet schemas/IDs/inverse graph/topology; exact canonical mirrors; terminal cancellation; removedF101 future premises; explicit available vs planned proof; six discriminating negatives and document check. Historical checker captured by immutable base diff."
+  }
+}

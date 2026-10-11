@@ -1,0 +1,34 @@
+{
+  "review": "post-ga-planning-refresh-mode-b",
+  "mode": "B",
+  "contract_id": "post-ga-planning-refresh",
+  "revision_reviewed": 0,
+  "issues": [
+    {
+      "id": "MB-1",
+      "paths": [
+        "docs/planning/backlog_dag.json",
+        ".agent/evidence/post-ga-planning-refresh/check_current_view.py"
+      ],
+      "detail": "NIP3-110 through NIP3-114 retain current evidence prerequisite reason 101 findings reconciled at PLAN-NEXT. F101 is cancelled and produced no such findings. Replace with truthful still-missing future proposal/PLAN-NEXT outputs, keep satisfied false, and extend checker obsolete-required-F101-premise guard across all nonterminal packets. Current four-packet-only guard misses these five."
+    },
+    {
+      "id": "MB-2",
+      "path": "docs/planning/backlog_dag.json",
+      "detail": "Current technical prerequisite reasons in NIP3-111/112/113/114/117 still name old nonexistent NIP3-103/104/105/106/108 predecessors while graph dependencies use shifted current IDs. Align current reasons with actual predecessor IDs; preserve graph and future authority gates."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    "AT1 promises no active future premise requiring cancelled F101; checker limits premise check to four named packets and fails to cover current NIP3-110..114 evidence reasons."
+  ],
+  "unsupported_claims": [],
+  "observations": [
+    "Read newchecker and full currentplanning/docdiff plus actualcurrentDAG packet reasons. Six self-test controls statically inspected; cycle mutation is valid because A04a has no existing consumed_by edges, so no inverse-edge issue. Evidence captures read without running suites.",
+    "Eleven canonical status/dependency/estimate mirrors, terminalcancellations, inverseedges/topology logic, completedQA proof checks and boundedmaintenance notice/A04a standalone appear implemented. A03WA-DRAFT authority correctly remains false. Currenthandover/history/releasesource/installedpin preservation and NDS version/currentcommission pointers reviewed; frozen/sourcepaths have no diff.",
+    "Validator changed only its own verdict. Findings require bounded currentprojection/checker correction, no frozenhistory/source edits or futureproposalactivation."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "ModeB rejected two current-prerequisite truth gaps: obsolete requiredF101 findings and old nonexistent NIP3 predecessor IDs remain in current machine view."
+  }
+}

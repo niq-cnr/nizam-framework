@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.6
+version: 0.1.7
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
-last_audited: "2026-10-10"
+last_audited: "2026-10-11"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.7"
+    date: "2026-10-11"
+    summary: "Refresh the current derived DAG after phase014 completion and local self-commissioning: exact complete/cancelled canonical mirrors, factual replacement inputs for obsoleteF101 premises, and authorized planning-refresh then separately gated small maintenance. Historical reconciliation/checker/evidence remain unchanged."
   - version: "0.1.6"
     date: "2026-10-10"
     summary: "Amendment A3 note only. Features 100 and 101 are cancelled (operator 2026-10-10: the v1.4.0 multi-repo pilot is no longer needed). The 2026-10-08 narrative is not rewritten. backlog_dag.json packet status was not set to cancelled because schema/work-packet.schema.json has no status enum."
@@ -32,6 +35,57 @@ change_log:
 ---
 
 # Backlog Reconciliation — 2026-10-08
+
+## Current planning view — 2026-10-11
+
+This is the current projection of `backlog_dag.json`; the prior reconciliation
+below is dated history. The immutable phase014 feature list remains authoritative.
+
+| Packet | Status |
+| --- | --- |
+| F099 | complete |
+| F103 | complete |
+| F104 | complete |
+| F105 | complete |
+| F106 | complete |
+| F107 | complete |
+| F109 | complete |
+| F108 | complete |
+| F100 | cancelled |
+| F101 | cancelled |
+| F102 | complete |
+
+All completed canonical features cite their existing approved QA and actual proof;
+F100/F101 are cancelled terminal records and never enter runnable work. The final
+phase budget is 8705 of 8600 (ceiling11180), not a new activation or re-baseline.
+A05/A06/A07/A08 are delivered, while compound T/NIP scenario claims are not promoted
+merely because a contributing feature completed.
+
+PLAN-NEXT and A03-WA-FINAL no longer require cancelledF101 findings. A03-RT and
+PLAN-WA also use actual available planning inputs: the historical102 GA-readiness
+dossier and its measured gaps, current debt, and actual local self-commissioning
+identity/QA/baseline. No F101 simplification review occurred or is invented.
+Future NIP3 and Workflow Assurance design/phase gates remain unsatisfied.
+
+The operator authorized this planning refresh, then only NDEBT-047, NDEBT-046,
+NDEBT-045 and A04a in a separate maintenance contract after the planning refresh
+PR merges. The bounded notice allocates no numeric feature IDs; A04a is standalone
+maintenance, not blocked on NIP3 selection, and has no implementation permission
+until its separate contract passes both independent gates. NIP3 acceptance,
+phase015 activation, WA/NIP4 drafting, releases and installed upgrades are excluded.
+
+Current proof: `.agent/qa/self-commission-v1.5.0.json`,
+`.agent/reconciliation/self-commission-v1.5.0/baseline.json`, and
+`.agent/evidence/102/ga-readiness.json`. Current checker:
+`.agent/evidence/post-ga-planning-refresh/check_current_view.py`.
+The old reconciliation checker/evidence remains a historical assessment snapshot.
+This new checker is the dated stage1 assessment snapshot; it is frozen after this
+planning PR. Stage2 uses new maintenance evidence/checks rather than rewriting
+this checker when A04a completes.
+This planning PR is pending merge; no mergeSHA or completed maintenance is claimed.
+
+## Prior reconciliation history
+
 
 ## 1. Purpose and authority
 

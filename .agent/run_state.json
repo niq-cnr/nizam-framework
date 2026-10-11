@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-11T02:21:53Z",
+  "updated_at": "2026-10-11T02:47:22.808758+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -297,6 +297,17 @@
       "attempts": 2,
       "limit": 3,
       "note": "Final CI C11 revealed supplemental QA review field chooses contract-review route; independent Evaluator corrects its artifact to stage without changing results and verifies target/full compliance. No installed or authored payload changes."
+    },
+    "post-ga-planning-refresh-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "post-ga-planning-refresh-implementation": {
+      "attempts": 2,
+      "limit": 3,
+      "attempt_root": "/home/cnross/.tmp/nizam-planning-attempt2-c8i33qu1",
+      "approved_base": "0de2820c87b154929a854840a7d85b4497afde9c",
+      "note": "ModeB attempt1 rejected stale cancelled-F101 and obsolete NIP prerequisite premises. Attempt2 analyzes current projection interfaces across all live packets in an isolated worktree."
     }
   },
   "history": [
@@ -2199,6 +2210,29 @@
         "A04a Evaluator role-text correction"
       ],
       "detail": "Approval follows the backlog recommendation in this session. Ordered execution: refresh current derived planning records first, then bounded maintenance. Phase014 remains complete with unchanged canonical history/budget. NIP3 acceptance, phases015/016 activation, Workflow Assurance implementation and an installed-governance upgrade are outside this authorization. Prior authorization to manage and merge clean own PRs persists."
+    },
+    {
+      "at": "2026-10-11T02:30:20.362826+00:00",
+      "event": "contract_approved",
+      "contract_id": "post-ga-planning-refresh",
+      "detail": "Both exact-proposal gates parsed approved with empty arrays; proposal SHA256 4292b19dae3ae0ed36c12417f52a4d0b3ed146239e519db8f981d2175a7506ff. Generator may implement planning refresh only."
+    },
+    {
+      "at": "2026-10-11T02:41:46.054356+00:00",
+      "event": "implementation_rework",
+      "contract_id": "post-ga-planning-refresh",
+      "attempt": 2,
+      "attempt_root": "/home/cnross/.tmp/nizam-planning-attempt2-c8i33qu1",
+      "approved_base": "0de2820c87b154929a854840a7d85b4497afde9c",
+      "detail": "ModeB MB1/MB2 recorded; preserve failed verdict, repair only current planning interface/checker before another independent gate."
+    },
+    {
+      "at": "2026-10-11T02:47:22.808758+00:00",
+      "event": "mode_b_approved",
+      "contract_id": "post-ga-planning-refresh",
+      "attempt": 2,
+      "attempt_root": "/home/cnross/.tmp/nizam-planning-attempt2-c8i33qu1",
+      "detail": "Independent r1 gate parsed approved/empty; selectively promoted repaired DAG/checker, separate verdict and actual check captures. Source candidate commit precedes full independent QA."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2701,7 +2735,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "post-ga-planning-refresh",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -2773,7 +2807,7 @@
       }
     ]
   },
-  "last_action": "User authorized post-GA planning refresh followed by the small maintenance tranche; contract alignment for planning refresh first.",
+  "last_action": "post-ga-planning-refresh: isolated attempt2 ModeB approved; reviewed source promoted, independent QA next.",
   "completed_contract_ids": [
     "099",
     "103",

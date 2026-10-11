@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.53.0
+version: 0.54.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.54.0"
+    date: "2026-10-11"
+    summary: "Record current planning refresh and the operator-authorized small maintenance sequence after it merges; completed/cancelled phase mirrors and actual local commissioning evidence replace stale next-planning premises without accepting NIP3 or activating a phase."
   - version: "0.53.0"
     date: "2026-10-10"
     summary: "Record completed local self-commissioning at fixed source candidate bfd475ff670e582cbbfc8f3187ae988dcf3c8baa: actual successful CI38075479048, real clean installed preflight PASS, immutable framework/candidate baseline and independent9/9 QA/evidence gate. Later documentation HEAD preserves the assessed candidate; historical phases remain unchanged."
@@ -789,8 +792,9 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-10-10)
+## Current Position (2026-10-11)
 
+- **Current planning refresh is authorized; separate maintenance follows after merge.** The [current backlog view](backlog_reconciliation.md) now mirrors all canonical completed/cancelled phase014 statuses, treats F100/F101 as terminal and replaces obsolete F101 planning-input premises with actual historical102/current debt and commissioned local evidence. Only NDEBT-047, NDEBT-046, NDEBT-045 and A04a are authorized for a separately gated maintenance contract after this planning PR merges. No NIP3/WA acceptance, phase015 activation, release or installed-governance upgrade is authorized. The current view and new checker preserve historical phase/evidence records.
 - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
 - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. No next phase is activated. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
