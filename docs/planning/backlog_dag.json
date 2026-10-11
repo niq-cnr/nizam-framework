@@ -1,9 +1,9 @@
 {
   "plan_status": "candidate",
-  "plan_status_note": "Current derived planning view after phase014 completion, v1.5.0 release and actual local self-commissioning. Canonical phase014 feature/spec/YAML remain immutable; F099/F102-F109 are complete and F100/F101 cancelled terminal records. Future NIP3/Workflow Assurance proposals remain unaccepted/unactivated. Only this planning refresh followed by the separately gated small maintenance notice is authorized.",
+  "plan_status_note": "Current candidate view after completed phase014, released/installed frozen v1.5.0, real commissioning and verified maintenance. Only operator-authorized A03-RT/A03-WA-DRAFT/A03-WA-FINAL source drafting is delivered under post-ga-nip-planning. Both NIPs remain proposed; H-NIP/H-PHASE, PLAN-NEXT/PLAN-WA and all future implementation retain pending authority/status. No numeric allocation or lifecycle activation.",
   "generated_at": "2026-10-11",
-  "base_commit": "0de2820c87b154929a854840a7d85b4497afde9c",
-  "base_commit_note": "Current-view baseline after release/self-commission merge and recorded operator authorization for planning refresh then small maintenance; prior reconciliation is retained as dated human history.",
+  "base_commit": "96b8396c5e15e67f8e15fbadbe0798e2caf806dc",
+  "base_commit_note": "Current docs-only NIP planning isolation base; approved contract retains its immutable earlier scope baseline. Historical phase/evidence records remain frozen.",
   "packet_schema": "schema/work-packet.schema.json",
   "authoritative_human_view": "docs/planning/backlog_reconciliation.md",
   "activated_phase": {
@@ -1488,7 +1488,7 @@
         "NDEBT-040",
         "provisional NIP-0004 Workflow Assurance"
       ],
-      "objective": "Draft a separately identified Workflow Assurance NIP (provisional NIP-0004, status draft): candidate/contract/verification/evidence identity incl. NDEBT-040, deterministic gates, convergent-to-AGF verdict mapping, cause-based routing, risk profiles with a preregistered evaluation.",
+      "objective": "Delivered proposed NIP4 draft0.1.0 extending Section7: A09 identity/invalidation and NDEBT040 parsed owned-field comparisons; A10 deterministic gate/idempotent reuse without second scheduler; A11 convergent blocking/advisory empty-array mapping; A04b independent sealed acceptance ownership; A14 cause-based failure routing distinct from entry routing, dependent on NIP3-110; deferred A15 Routine/Standard/High-assurance preregistered shadow comparison after trusted A10/A11; concurrency and MINOR/MAJOR assessment.",
       "scope": {
         "allowed_paths": [
           "docs/nips/"
@@ -1500,36 +1500,37 @@
         ]
       },
       "acceptance": [
-        "New NIP file only; frontmatter validates; every changed rule has owner, rationale, transition, acceptance evidence and activation boundary (A03 exit)."
+        "New proposed NIP4 with eight-topic owner/input/check/evidence/blocking-outcome/draft-review-only/gate matrix and unresolved operator-choice table.",
+        "Every changed obligation remains proposed and cannot bypass H-NIP acceptance, future H-PHASE activation or independent contracts."
       ],
       "evidence": [
-        ".agent/evidence/A03-WA/"
+        ".agent/evidence/post-ga-nip-planning/draft-source-review.txt"
       ],
       "non_goals": [
         "Runtime-session semantics (NIP-0003 owns them).",
         "Activating any policy."
       ],
       "concurrency_lane": "parallel-safe-new-files",
-      "status": "pending",
+      "status": "complete",
       "authority_status": "authorized",
       "owner_role": "Planner",
       "plan_class": "deferred-proposal",
       "prerequisites": {
         "technical": {
           "satisfied": true,
-          "reason": "A03-SCOPE outline"
+          "reason": "A03-SCOPE outline and delivered A03-RT revision are available; proposed NIP4 extends every required topic with an owner/check/evidence/transition matrix."
         },
         "authority": {
           "satisfied": true,
-          "reason": "drafting a proposal; acceptance is H-NIP"
+          "reason": "Operator next-step authorization recorded for post-ga-nip-planning: revise pending NIP3 then draft WA scope; neither H-NIP acceptance nor H-PHASE activation."
         },
         "environment": {
           "satisfied": true,
           "reason": "none"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "outline in docs/planning/backlog_reconciliation.md Section 7; Orchestrator review of this package"
+          "satisfied": true,
+          "reason": "Actual historical102/current debt, commissioning/baseline/QA and maintenance proof were read. Independent Evaluator draft-source review captured NIP3/WA checks EXIT0 and meaningful Section7 semantics in draft-source-review.txt before drafting statuses advanced. Formal task ModeB, QA and evidence capture remain separate gates."
         }
       },
       "estimate": {
@@ -1554,14 +1555,25 @@
       "dependency_edges": {
         "depends_on": [
           "A01",
-          "A03-SCOPE"
+          "A03-SCOPE",
+          "A03-RT"
         ],
         "consumed_by": [
           "A03-WA-FINAL"
         ],
         "serialize_after": []
       },
-      "lane_rank": 150
+      "lane_rank": 150,
+      "available_inputs": [
+        ".agent/evidence/102/ga-readiness.json",
+        "docs/planning/DEBT.md",
+        ".agent/evidence/self-commission-v1.5.0/identity.json",
+        ".agent/reconciliation/self-commission-v1.5.0/baseline.json",
+        ".agent/qa/self-commission-v1.5.0.json",
+        ".agent/qa/post-ga-maintenance.json",
+        ".agent/evidence/post-ga-maintenance/source-candidate.json",
+        ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json"
+      ]
     },
     {
       "id": "F107",
@@ -2152,7 +2164,7 @@
       "mapped_ids": [
         "provisional NIP-0004"
       ],
-      "objective": "Finalize the overlapping Workflow Assurance design against available historical102/current debt and real commissioning inputs before H-NIP is requested.",
+      "objective": "Delivered reviewable Workflow Assurance scope against actual historical102/current debt, commissioning and maintenance evidence; eight-topic matrix and unresolved choices complete for draft review, H-NIP remains pending.",
       "scope": {
         "allowed_paths": [
           "docs/nips/"
@@ -2162,27 +2174,28 @@
         ]
       },
       "acceptance": [
-        "Any future separately authorized design cites actual available inputs and honest recorded gaps; no invented F101 findings."
+        "Proposed design cites actual available inputs and honest pilot/adoption gaps; no invented F101 findings.",
+        "Candidate WA planning follows NIP3-114/phase015 close; relative WA implementation versus phase016 remains open; no phase allocation or policy acceptance."
       ],
       "evidence": [
-        ".agent/evidence/A03-WA/"
+        ".agent/evidence/post-ga-nip-planning/draft-source-review.txt"
       ],
       "non_goals": [
         "Implementation."
       ],
       "concurrency_lane": "parallel-safe-new-files",
-      "status": "pending",
+      "status": "complete",
       "authority_status": "authorized",
       "owner_role": "Planner",
       "plan_class": "deferred-proposal",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "A03-WA-DRAFT is absent/pending; no current Workflow Assurance drafting or acceptance is authorized by this task."
+          "satisfied": true,
+          "reason": "A03-WA-DRAFT is delivered; independent source review confirms the reviewable proposed design and unresolved operator choices against actual available inputs."
         },
         "authority": {
           "satisfied": true,
-          "reason": "drafting"
+          "reason": "Operator next-step authorization recorded for post-ga-nip-planning: revise pending NIP3 then draft WA scope; neither H-NIP acceptance nor H-PHASE activation."
         },
         "environment": {
           "satisfied": true,
@@ -2190,7 +2203,7 @@
         },
         "evidence": {
           "satisfied": true,
-          "reason": "Actual historical102 dossier/current debt and commissioned local baseline/QA are available planning inputs; cancelledF101 produced no simplification findings. Future design artifacts still require their own authorization/work."
+          "reason": "Actual historical102/current debt, commissioning/baseline/QA and maintenance proof were read. Independent Evaluator draft-source review captured NIP3/WA checks EXIT0 and meaningful Section7 semantics in draft-source-review.txt before drafting statuses advanced. Formal task ModeB, QA and evidence capture remain separate gates."
         }
       },
       "estimate": {
@@ -2227,7 +2240,10 @@
         "docs/planning/DEBT.md",
         ".agent/evidence/self-commission-v1.5.0/identity.json",
         ".agent/reconciliation/self-commission-v1.5.0/baseline.json",
-        ".agent/qa/self-commission-v1.5.0.json"
+        ".agent/qa/self-commission-v1.5.0.json",
+        ".agent/qa/post-ga-maintenance.json",
+        ".agent/evidence/post-ga-maintenance/source-candidate.json",
+        ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json"
       ]
     },
     {
@@ -2239,7 +2255,7 @@
       "mapped_ids": [
         "NIP-0003"
       ],
-      "objective": "Pre-acceptance in-place revision of NIP-0003 (draft 0.1.0), after phase 014 closes: provisional ids 103-113 -> 110-120 (phase 014 allocated 103-109); release expectations 'v1.4.0'/'v1.5.0' -> 'next MINOR' (NIP-0003:504,526); the claim map is reused from phase-014 feature 105, not authored by 109/116; the Merge-Done job count becomes 'five' once feature 104 adds the fourth job; the isolation-flag polarity aligned with feature 103's required-by-default precedent; the stale citation of product_spec_014.md:82-83 and 'Phase 014 is not edited' refreshed (phase 014 now changes workflow and validator surfaces under its maintenance tranche); SBCL now installed on the operator host (contradicts NIP-0003:512-513); attempt-continuity extension in 110.",
+      "objective": "Delivered pending NIP3 revision (draft0.2.0): only future103-113 -> provisional110-120; preserve four decisions/thirteen cases. Reuse actual F105 claim map in proposed116; actual five CI jobs to proposed six; required isolation default, available SBCL2.2.9.debian and capable isolated CI mandatory; phase014 complete/cancelled100/101 and v1.5.0 released/installed frozen. Inputs are historical102/Open debts040/034 and actual commissioning/maintenance, never cancelled F101 findings. No H-NIP acceptance.",
       "scope": {
         "allowed_paths": [
           "docs/nips/NIP-0003-live-runtime-sessions.md",
@@ -2252,29 +2268,30 @@
         ]
       },
       "acceptance": [
-        "NIP frontmatter still validates (schema/frontmatter.schema.json); no 'expected v1.' release number remains in Staged Realization.",
-        "The 13 acceptance cases and the four operator decisions are byte-identical to 0.1.0 except for the documented id shift."
+        "Schema-valid draft0.2.0 and consistent proposed110-120 references, DoD current0.2.0 -> planned0.3.0, future next MINOR without fixed release forecast.",
+        "Thirteen cases equal baseline except permitted provisional numeric shift; four recorded choices remain exact.",
+        "Actual released/installed v1.5.0, five-job CI, delivered F105 claim map and observed SBCL version are source/evidence-bound; no acceptance or activation."
       ],
       "evidence": [
-        ".agent/evidence/A03-RT/"
+        ".agent/evidence/post-ga-nip-planning/draft-source-review.txt"
       ],
       "non_goals": [
         "Accepting the NIP (H-NIP).",
         "Changing the four recorded operator decisions."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
-      "authority_status": "proposal",
+      "status": "complete",
+      "authority_status": "authorized",
       "owner_role": "Planner",
       "plan_class": "deferred-proposal",
       "prerequisites": {
         "technical": {
           "satisfied": true,
-          "reason": "Phase014 is closed; available inputs are actual102/current debt and commissioned local evidence, not cancelled review output."
+          "reason": "Phase014 is complete; the authorized pending NIP3 revision is delivered in draft0.2.0 with current facts and preserved decisions/cases."
         },
         "authority": {
-          "satisfied": false,
-          "reason": "Orchestrator scheduling of the revision; the operator's 2026-10-08 instruction forbade editing the NIP in this package"
+          "satisfied": true,
+          "reason": "Operator next-step authorization recorded for post-ga-nip-planning: revise pending NIP3 then draft WA scope; neither H-NIP acceptance nor H-PHASE activation."
         },
         "environment": {
           "satisfied": true,
@@ -2282,7 +2299,7 @@
         },
         "evidence": {
           "satisfied": true,
-          "reason": "Actual historical102 dossier/current debt and commissioned local baseline/QA are available planning inputs; cancelledF101 produced no simplification findings. Future design artifacts still require their own authorization/work."
+          "reason": "Actual historical102/current debt, commissioning/baseline/QA and maintenance proof were read. Independent Evaluator draft-source review captured NIP3/WA checks EXIT0 and meaningful Section7 semantics in draft-source-review.txt before drafting statuses advanced. Formal task ModeB, QA and evidence capture remain separate gates."
         }
       },
       "estimate": {
@@ -2312,7 +2329,8 @@
           "A01"
         ],
         "consumed_by": [
-          "PLAN-NEXT"
+          "PLAN-NEXT",
+          "A03-WA-DRAFT"
         ],
         "serialize_after": [
           "F102"
@@ -2324,7 +2342,10 @@
         "docs/planning/DEBT.md",
         ".agent/evidence/self-commission-v1.5.0/identity.json",
         ".agent/reconciliation/self-commission-v1.5.0/baseline.json",
-        ".agent/qa/self-commission-v1.5.0.json"
+        ".agent/qa/self-commission-v1.5.0.json",
+        ".agent/qa/post-ga-maintenance.json",
+        ".agent/evidence/post-ga-maintenance/source-candidate.json",
+        ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json"
       ]
     },
     {
@@ -2363,8 +2384,8 @@
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "F102 is complete; A03-RT revision remains pending. NIP3 planning remains behind its actual H-NIP authorization."
+          "satisfied": true,
+          "reason": "F102 and the authorized A03-RT revision are delivered. H-NIP authority remains unsatisfied; phase015 planning and implementation remain pending."
         },
         "authority": {
           "satisfied": false,
@@ -2376,7 +2397,7 @@
         },
         "evidence": {
           "satisfied": true,
-          "reason": "Actual historical102 dossier/current debt and commissioned local baseline/QA are available planning inputs; cancelledF101 produced no simplification findings. Future design artifacts still require their own authorization/work."
+          "reason": "Historical102/current Open debts040/034, actual commissioning/baseline and maintenance QA are available; cancelled F101 produced no findings. Proposed NIP source is available for review, not accepted."
         }
       },
       "estimate": {
@@ -2417,7 +2438,10 @@
         "docs/planning/DEBT.md",
         ".agent/evidence/self-commission-v1.5.0/identity.json",
         ".agent/reconciliation/self-commission-v1.5.0/baseline.json",
-        ".agent/qa/self-commission-v1.5.0.json"
+        ".agent/qa/self-commission-v1.5.0.json",
+        ".agent/qa/post-ga-maintenance.json",
+        ".agent/evidence/post-ga-maintenance/source-candidate.json",
+        ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json"
       ]
     },
     {
@@ -2966,8 +2990,8 @@
       "plan_class": "deferred-proposal",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "A03-WA-FINAL remains a pending proposal; Workflow Assurance acceptance/phase activation is not authorized."
+          "satisfied": true,
+          "reason": "A03-WA-DRAFT/A03-WA-FINAL and F102 are delivered inputs. Candidate planning is still serialized after proposed NIP3-114/phase015 close, which is not delivered. H-NIP authority remains unsatisfied; no planning or implementation is authorized."
         },
         "authority": {
           "satisfied": false,
@@ -2979,7 +3003,7 @@
         },
         "evidence": {
           "satisfied": true,
-          "reason": "Actual historical102 dossier/current debt and commissioned local baseline/QA are available planning inputs; cancelledF101 produced no simplification findings. Future design artifacts still require their own authorization/work."
+          "reason": "Historical102/current Open debts040/034, actual commissioning/baseline and maintenance QA are available; cancelled F101 produced no findings. Proposed NIP source is available for review, not accepted."
         }
       },
       "estimate": {
@@ -3024,7 +3048,10 @@
         "docs/planning/DEBT.md",
         ".agent/evidence/self-commission-v1.5.0/identity.json",
         ".agent/reconciliation/self-commission-v1.5.0/baseline.json",
-        ".agent/qa/self-commission-v1.5.0.json"
+        ".agent/qa/self-commission-v1.5.0.json",
+        ".agent/qa/post-ga-maintenance.json",
+        ".agent/evidence/post-ga-maintenance/source-candidate.json",
+        ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json"
       ]
     },
     {
@@ -3063,7 +3090,7 @@
       "prerequisites": {
         "technical": {
           "satisfied": false,
-          "reason": "phase 015 complete incl. 107"
+          "reason": "Proposed phase015 complete including NIP3-114; future close is not delivered."
         },
         "authority": {
           "satisfied": false,
@@ -3071,7 +3098,7 @@
         },
         "environment": {
           "satisfied": true,
-          "reason": "SBCL 2.2.9.debian present at /usr/bin/sbcl on the operator host (re-verified 2026-10-08); CI still unverified"
+          "reason": "SBCL2.2.9.debian is observed locally; future supported SBCL/isolation conformance requires a capable isolated acceptance host/CI, and installation alone is not proof."
         },
         "evidence": {
           "satisfied": false,
@@ -3207,7 +3234,7 @@
       ],
       "provisional_feature_id": "116",
       "phase_id_proposed": "016 (provisional)",
-      "objective": "Operation semantics, live_session_conformance CI job, registration of tools/fixtures/runtime_session/ in feature 105's claim map, DoD job-count change (four -> five)",
+      "objective": "Operation semantics/live_session_conformance as proposed sixth CI job; extend actual delivered F105 claim map and DoD actual five -> proposed six jobs.",
       "scope": {
         "allowed_paths": [
           "(fixed by the phase-016 contract)"
@@ -3243,7 +3270,7 @@
         },
         "environment": {
           "satisfied": false,
-          "reason": "CI runner userns sysctl step UNVERIFIED (NDEBT-043 note)"
+          "reason": "Delivered required-isolation CI precedent is available; future live-session job and all thirteen cases must prove capability on a capable isolated CI runner. Local workstation sysctls never change."
         },
         "evidence": {
           "satisfied": false,
@@ -3332,7 +3359,7 @@
         },
         "environment": {
           "satisfied": false,
-          "reason": "SBCL in CI (apt) and wherever the Evaluator runs; local SBCL present, CI unverified"
+          "reason": "SBCL2.2.9.debian is observed locally; required future SBCL/live-case proof on capable isolated CI remains pending."
         },
         "evidence": {
           "satisfied": false,
@@ -3415,7 +3442,7 @@
         },
         "environment": {
           "satisfied": false,
-          "reason": "SBCL in CI (apt) and wherever the Evaluator runs; local SBCL present, CI unverified"
+          "reason": "SBCL2.2.9.debian is observed locally; required future SBCL/live-case proof on capable isolated CI remains pending."
         },
         "evidence": {
           "satisfied": false,

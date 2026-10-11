@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.4
+version: 1.0.5
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.5"
+    date: "2026-10-11"
+    summary: "Revise pending NIP3 and draft proposed Workflow Assurance against actual post-GA inputs; record authorized drafting delivery without NIP acceptance, phase activation or installed upgrade."
   - version: "1.0.4"
     date: "2026-10-11"
     summary: "Record verified bounded maintenance at fixed source candidate 7221cd17a7c2d2188de0094b8ea008e4e192a0c4: fresh capable CI38108704971 attempt2, independent6/6 QA and successful evidence gate. Resolve only NDEBT-047/046/045 and complete A04a; preserve source digests, historical assessments, future gates and installed v1.5.0."
@@ -38,7 +41,15 @@ The [current planning view](backlog_reconciliation.md) mirrors completed/cancell
 phase records and uses actual historical/current inputs. Maintenance proof is in
 `.agent/qa/post-ga-maintenance.json` and
 `.agent/evidence/post-ga-maintenance/capable-ci-receipt.json`.
-NIP3/WA acceptance, phase015 activation and drafting remain outside this task.
+The authorized NIP3 revision (A03-RT) and proposed NIP4 scope
+(A03-WA-DRAFT/A03-WA-FINAL) are delivered for draft review. Read
+[NIP-0003](../nips/NIP-0003-live-runtime-sessions.md) and
+[NIP-0004](../nips/NIP-0004-workflow-assurance.md) as pending H-NIP proposals;
+acceptance and future H-PHASE activation remain separate outstanding decisions.
+PLAN-NEXT/PLAN-WA and runtime implementation remain pending. Future110–120 IDs
+are provisional; actual F105 claim-map delivery remains F105. SBCL2.2.9.debian is
+available, current CI has five jobs and the proposed live job would make six.
+WA planning follows proposed NIP3-114; WA implementation versus phase016 is open.
 The original planning assessment/checker and every prior evidence capture are frozen.
 
 Phase 014 is complete. Features 100 and 101 were cancelled by operator amendment A3;

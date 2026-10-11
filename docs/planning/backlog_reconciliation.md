@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.9
+version: 0.1.10
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
 last_audited: "2026-10-11"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.10"
+    date: "2026-10-11"
+    summary: "Revise pending NIP3 and draft proposed Workflow Assurance against actual post-GA inputs; record authorized drafting delivery without NIP acceptance, phase activation or installed upgrade."
   - version: "0.1.9"
     date: "2026-10-11"
     summary: "Record verified bounded maintenance at fixed source candidate 7221cd17a7c2d2188de0094b8ea008e4e192a0c4: fresh capable CI38108704971 attempt2, independent6/6 QA and successful evidence gate. Resolve only NDEBT-047/046/045 and complete A04a; preserve source digests, historical assessments, future gates and installed v1.5.0."
@@ -71,13 +74,27 @@ PLAN-NEXT and A03-WA-FINAL no longer require cancelledF101 findings. A03-RT and
 PLAN-WA also use actual available planning inputs: the historical102 GA-readiness
 dossier and its measured gaps, current debt, and actual local self-commissioning
 identity/QA/baseline. No F101 simplification review occurred or is invented.
-Future NIP3 and Workflow Assurance design/phase gates remain unsatisfied.
+The authorized pending NIP3 revision is drafted as A03-RT, and the proposed
+Workflow Assurance scope is drafted as A03-WA-DRAFT/A03-WA-FINAL. These three
+packets record drafting delivery only; H-NIP acceptance and future H-PHASE gates
+remain unsatisfied. PLAN-NEXT/PLAN-WA and all implementation packets keep their
+pending status and existing authority. See the new
+[NIP-0004](../nips/NIP-0004-workflow-assurance.md) for the extended Section7 scope,
+eight-topic acceptance matrix and unresolved operator choices. The dated Section7
+outline below remains an unchanged historical assessment, including its then-stale
+F101 premise; current inputs above supersede that premise.
 
 The operator-authorized planning refresh merged in PR81, followed by the separately
 gated NDEBT-047/046/045 and A04a maintenance. The three debts are now Resolved and
 A04a complete after actual source verification; Open debt is limited to040/034.
-No numeric feature IDs were allocated. NIP3 acceptance, phase015 activation,
-WA/NIP4 drafting, releases and installed upgrades remain excluded.
+No numeric feature IDs were allocated. The separately authorized NIP3 revision
+and WA/NIP4 drafting are now delivered; NIP acceptance, phase015 activation,
+releases and installed upgrades remain excluded. Proposed IDs110–120 and future
+next MINOR releases are design inputs. Delivered F105 owns the reused claim map;
+actual five CI jobs become six only if proposed116 adds live_session_conformance.
+SBCL2.2.9.debian is available; required capable CI isolation remains mandatory.
+Candidate WA planning serializes after proposed NIP3-114/phase015 close; relative
+WA implementation versus phase016 stays open.
 
 Current proof: `.agent/qa/self-commission-v1.5.0.json`,
 `.agent/reconciliation/self-commission-v1.5.0/baseline.json`, and

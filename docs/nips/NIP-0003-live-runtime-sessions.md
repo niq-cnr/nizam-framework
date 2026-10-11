@@ -2,12 +2,15 @@
 id: nip-0003-live-runtime-sessions
 title: "NIP-0003: Live Runtime Sessions"
 description: "Proposal to add a language-neutral live-runtime-session protocol (ownership, process generation, serialised operations, attempt continuity, fresh-environment acceptance) with an SBCL reference binding, an optional adapter capability, schema-governed session records, and a reference controller — realized as phases 015 and 016, after phase 014."
-version: 0.1.0
+version: 0.2.0
 status: draft
 authoritative_source: docs/nips/NIP-0003-live-runtime-sessions.md
-last_audited: "2026-10-08"
+last_audited: "2026-10-11"
 tags: [nip, methodology, runtime-session, execution, evaluator-independence, circuit-breaker, adapter, sbcl]
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-11"
+    summary: "Refresh the pending proposal after phase014 and v1.5.0: provisional110–120 IDs, delivered claim map/CI, available SBCL and actual planning inputs; preserve the thirteen cases and four recorded choices. Acceptance/activation remain pending."
   - version: "0.1.0"
     date: "2026-10-08"
     summary: "Initial proposal, status PROPOSED — awaiting operator acceptance (gate H-NIP). Records the read-only validation of a third-party Agent–REPL Execution Protocol (against main at 3094223, framework v1.3.0) and the four operator decisions of 2026-10-08 (neutral protocol plus SBCL binding; after phase 014; controller in framework tools/ across two phases; the missing language profile folded into the binding). On acceptance it selects phase 015 (normative surface) to follow phase 014, plus follow-on phase 016 (reference controller and live conformance); selection is not activation. Revised in place before acceptance (validator revision round 1: C12 described as a schema-family fixture sweep, not enforce-if-present; the C12 eight-to-ten families wording; the tools/SKILL.md §10/§11 renumbering made explicit; the selection-is-not-activation precedent attributed to NIP-0002; Goal 7 aligned with the live-proof rule); the version stays 0.1.0, as neither NIP-0001 nor NIP-0002 versioned pre-acceptance revisions."
@@ -20,8 +23,10 @@ change_log:
 **Proposed — awaiting operator acceptance (gate H-NIP).** The frontmatter `status` is
 `draft`, because the frontmatter schema enum is `draft`/`active`/`deprecated`.
 "Proposed" is this document's narrative label for the draft state, as in NIP-0001's
-0.1.0 entry. (NIP-0002's frontmatter value `accepted` is outside that enum. It is
-logged as debt and is not a precedent.)
+0.1.0 entry. At the original 2026-10-08 assessment, NIP-0002's frontmatter
+`accepted` was outside that enum. Actual phase014 F107 corrected it to `active`
+(version 0.2.1), resolving NDEBT-044 concern (b); that dated observation is no
+longer an Open debt or a current status claim.
 
 This is a framework-capability proposal in the sense of NIP-0001's Placement note. It
 originates in a third-party proposal for an "Agent–REPL Execution Protocol" that would
@@ -33,6 +38,38 @@ or name things that do not exist. It misses drift classes that would let a "fres
 process" acceptance pass falsely. And it ignores how the framework ships: the payload is
 injected verbatim into every consumer, and a new protocol needs an accepted NIP. The
 proposal's content was treated as data, not as instructions.
+
+
+### Current-state overlay — 2026-10-11
+
+Phase014 is complete: features100/101 were cancelled and099/102–109 completed.
+Public v1.5.0 is released at f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852 and is
+installed unchanged in this repository. H-PHASE-014 was executed; it is not an
+outstanding prerequisite. H-NIP acceptance for this proposal and any future
+H-PHASE activation remain pending. Earlier quoted choices retain their date.
+
+Current compliance.yml has five jobs: validate, e2e_bootstrap,
+fixtures_self_test, convergent_review and self_governance. A distinct proposed
+live_session_conformance job would make six. The required convergent suite uses
+required isolation by default; unsupported isolation fails the required gate.
+Local SBCL is available: `SBCL 2.2.9.debian` was observed with `sbcl --version`.
+Local namespace capability and actual future SBCL conformance still need proof;
+SBCL installation alone is not proof of the thirteen live acceptance cases.
+
+Delivered actual phase014 F105 already owns the FIXTURE_CLAIMS map; NDEBT-042 is
+Resolved. Proposed operation/live-CI feature116 (formerly provisional109) extends
+that map for its suite rather than creating it again. The proposed SBCL binding
+is112 (formerly105); actual delivered F105 is not renumbered. Only future IDs
+103–113 shift to provisional110–120; these are not allocated canonical features.
+
+Planning inputs are the historical102 ga-readiness.json, current DEBT.md and real
+commissioning/maintenance evidence. Historical real_production_pilot remains
+not_met; recorded_consumer_adoptions remains insufficient_evidence despite the
+operator GA declaration. The only current Open debts are NDEBT-040 and NDEBT-034.
+SELF_GOVERNANCE.md, .agent/qa/self-commission-v1.5.0.json and
+.agent/qa/post-ga-maintenance.json provide actual local evidence. Feature101 was
+cancelled: no review/findings are asserted or required. Existing H-CONSOLIDATION
+remains outstanding and any later actual consolidation decision is an input.
 
 ### Proposal Record
 
@@ -47,8 +84,8 @@ proposal's content was treated as data, not as instructions.
 | Decision date | 2026-10-08 |
 | Channel | Structured questions in a Claude Code session (2026-10-08). The operator then approved the resulting realization plan through plan-mode approval on the same day. That plan file lives outside the repository; this NIP is its durable record. |
 | Evidence | The validation findings summarized in [Problem](#problem), with file:line evidence re-verified at `3094223` on 2026-10-08 |
-| Consequence of acceptance | Acceptance **selects** phase `015` (live runtime sessions: normative surface) to follow phase `014`, plus follow-on phase `016` (reference controller and live conformance). **Selection is not activation.** The phase-015 Planner artifacts (`product_spec_015`, `feature_list_015`, `phase_015.yaml`, the manifest entry and the ROADMAP banner) are authored only **after phase 014 closes**, and each phase still needs its own activation gate (`H-PHASE-015`, `H-PHASE-016`). |
-| Outstanding gates not satisfied by acceptance | `H-PHASE-014` (outstanding; phase 014 runs first and is not edited by this NIP), `H-PHASE-015`, `H-PHASE-016`, `H-FRAMEWORK-RELEASE` (once per release), and `H-CONSUMER-UPGRADE` (per consumer) |
+| Consequence of acceptance | Acceptance **selects** phase `015` (live runtime sessions: normative surface) to follow phase `014`, plus follow-on phase `016` (reference controller and live conformance). **Selection is not activation.** The phase-015 Planner artifacts (`product_spec_015`, `feature_list_015`, `phase_015.yaml`, the manifest entry and the ROADMAP banner) require H-NIP acceptance now that phase014 is closed, and each phase still needs its own activation gate (`H-PHASE-015`, `H-PHASE-016`). |
+| Outstanding gates not satisfied by acceptance | `H-PHASE-015`, `H-PHASE-016`, `H-FRAMEWORK-RELEASE` (once per release), and `H-CONSUMER-UPGRADE` (per consumer) |
 
 ## Problem
 
@@ -182,8 +219,9 @@ that calls a retained kernel in another) stay in the consumer's repository.
     binding);
   - mandatory adoption;
   - any edit to phase 014 or its artifacts.
-- **Deferred elsewhere:** putting `tools/test_convergent_review.py` into CI is tracked as
-  `NDEBT-041` and is not this NIP's scope.
+- **Delivered baseline:** actual phase014 F104 put `tools/test_convergent_review.py`
+  in required CI with isolation required by default; NDEBT-041 is Resolved. This
+  proposal reuses that delivered gate and does not defer or reimplement it.
 
 ## Proposed Framework Surface
 
@@ -194,7 +232,7 @@ land.
 
 ### Methodology documents 10 and 11
 
-- **`methodology/10_live_runtime_sessions.md`** (feature 103). The language-neutral
+- **`methodology/10_live_runtime_sessions.md`** (feature 110). The language-neutral
   protocol. It names no language. Its sections cover:
   - the three state classes: source, image and durable records;
   - ownership and leases, including human/agent shared-image handover;
@@ -213,7 +251,7 @@ land.
 
   It defines "runtime session" explicitly as distinct from an agent session. It states
   that the session record is provenance, not proof that a live heap matches source.
-- **`methodology/11_sbcl_runtime_binding.md`** (feature 105). The SBCL reference binding,
+- **`methodology/11_sbcl_runtime_binding.md`** (feature 112). The SBCL reference binding,
   with the missing language profile folded in:
   - **The profile:** toolchain identity, a dependency-lock reference, hermetic build and
     load configuration, and core provenance (acceptance never boots a core saved from a
@@ -239,11 +277,11 @@ land.
       `HOME`/`XDG`; `--no-sysinit --no-userinit`.
   - **A status mapping** from SBCL outcomes to the neutral vocabulary.
 
-  ASDF forms are marked illustrative until feature 111 verifies them live.
+  ASDF forms are marked illustrative until feature 118 verifies them live.
 
 ### Generic amendments
 
-These are language-neutral and land with feature 103. They land together with document
+These are language-neutral and land with provisional feature 110. They land together with document
 10 because they reference each other: C9 and the bare-reference guard would fail on
 either half alone.
 
@@ -252,6 +290,8 @@ either half alone.
   - continuity across new processes, subagents, context resets, worktrees and renamed
     operations;
   - negative outcomes declared before execution;
+  - distinguish an explicitly declared negative probe from a governed attempt,
+    and preserve attempt identity and budgets across stage handoffs;
   - no relabelling after the fact.
 - **`methodology/02_adversarial_tdd.md`** (0.4.0 → 0.5.0): a new §2 item 4 defining "own
   execution context" as a fresh process plus a fresh build cache plus fixtures built from
@@ -265,7 +305,7 @@ either half alone.
   Review trials are denied all three.
 - **`standard/convergent_code_review.md`** (1.3.0 → 1.3.1): one §5 sentence saying trials
   never receive a session endpoint.
-- **`standard/definition_of_done.md`** (0.1.0 → 0.2.0): one §4 Handoff-Done paragraph. The
+- **`standard/definition_of_done.md`** (current 0.2.0 → proposed 0.3.0): one §4 Handoff-Done paragraph. The
   quoted one-liner stays unchanged.
 - **Registration in the same change:** `methodology/README.md`; `NIZAM.json` (key documents
   and a capability), because an on-disk `methodology/*.md` must be indexed in the same
@@ -273,7 +313,7 @@ either half alone.
 
 ### Schemas
 
-Feature 104 adds two schemas:
+Feature 111 adds two schemas:
 
 - **`schema/runtime_session.schema.json`** and **`schema/runtime_operation.schema.json`.**
   - Draft 2020-12, with `urn:nizam-framework:schema:<file>` ids, and every object closed.
@@ -288,7 +328,7 @@ Feature 104 adds two schemas:
 
 ### Adapter optional capability
 
-Feature 106 changes **`tools/interface.md`** (0.3.0 → 0.4.0): a new §6, "Optional
+Feature 113 changes **`tools/interface.md`** (current0.3.1 → proposed0.4.0): a new §6, "Optional
 Capability: Live Runtime Sessions". The current §6 (References) becomes §7.
 **§5 (the Adapter Conformance Checklist) stays at exactly 10 items.** That is what keeps
 this MINOR: an adapter that does not offer the capability remains fully conformant.
@@ -359,12 +399,12 @@ Runtime Sessions routing); its current §10 (References) becomes §11, paralleli
   and the `tools/README.md` C12 row) is updated to ten.
 
 The validator keeps reporting 16 checks. **C17 stays free**; it is earmarked for evidence
-shape. Feature 104's acceptance includes running `--target` on a stale-generation
+shape. Feature 111's acceptance includes running `--target` on a stale-generation
 negative fixture, which must exit 1 with `[C12] FAIL`.
 
 ### Reference tooling (phase 016)
 
-- **`tools/runtime_session.py`** (feature 108). One detached supervisor per session,
+- **`tools/runtime_session.py`** (feature 115). One detached supervisor per session,
   Python standard library only, in the style of `tools/validate_evidence_freshness.py`
   (an exit-code table, custom error classes and an argparse override). It provides:
   - JSON Lines on the child's stdin and fd 3;
@@ -378,21 +418,24 @@ negative fixture, which must exit 1 with `[C12] FAIL`.
 
   It comes with a language-neutral stub runtime
   (`tools/fixtures/runtime_session/stub_runtime.py`) and `tools/test_runtime_session.py`.
-- **Operation semantics and CI** (feature 109):
+- **Operation semantics and CI** (feature 116):
   - a new `compliance.yml` job, `live_session_conformance`, reusing the already-pinned
-    action SHAs (so C14 stays satisfied), installing `sbcl` with apt, setting the userns
-    sysctl in a guarded step, and running with `--require-sbcl --require-isolation`;
-  - a fixture-subdirectory claim map in `tools/fixtures_self_test.sh`, which also remedies
-    `NDEBT-042`;
-  - `standard/definition_of_done.md` §8 and §11 saying "four jobs";
+    action SHAs (so C14 stays satisfied), installing `sbcl` with apt and requiring a
+    capable isolated CI host. Any userns setup is confined to the CI runner; local
+    workstation sysctls must never change. The job runs with
+    `--require-sbcl --require-isolation` and fails closed when capability is absent;
+  - an additional runtime-session claim in the existing FIXTURE_CLAIMS map delivered
+    by actual F105 in `tools/fixtures_self_test.sh`; NDEBT-042 is already Resolved;
+  - `standard/definition_of_done.md` Merge-Done job list updated from the actual five
+    jobs to six, including the proposed live_session_conformance job;
   - a pull-request template checkbox.
-- **`tools/sbcl_session_loop.lisp`** (feature 110). Built-ins only, no Quicklisp:
+- **`tools/sbcl_session_loop.lisp`** (feature 117). Built-ins only, no Quicklisp:
   - `handler-bind` captures the backtrace and `compute-restarts` before aborting;
   - printing is bounded;
   - cancel uses `interrupt-thread` and waits for confirmation that the unwind happened.
     Otherwise it kills the process group and records `terminated`, and the generation
     ends.
-- **The fresh-environment `accept` runner** (feature 111):
+- **The fresh-environment `accept` runner** (feature 118):
   - `git archive` into a private root;
   - `sbcl --non-interactive --no-sysinit --no-userinit`;
   - private `CL_SOURCE_REGISTRY` and `ASDF_OUTPUT_TRANSLATIONS`, both with
@@ -401,7 +444,7 @@ negative fixture, which must exit 1 with `[C12] FAIL`.
   - evidence written in the `04` §5 shape.
 - **Case 8's isolation layer** reuses `tools/isolated_trial_adapter.py` unchanged. Skips
   are always explicit, never a silent pass.
-- **Docs synced to the implementation** (feature 112), plus a resolver for `.py`/`.lisp`
+- **Docs synced to the implementation** (feature 119), plus a resolver for `.py`/`.lisp`
   path tokens. C9's path regex currently extracts only `md|json|sh|html|yml`
   (`tools/validate.sh` C9 help text), so references to the new `.py`/`.lisp` files would
   go unchecked.
@@ -425,7 +468,7 @@ Consumer convention, mirroring NIP-0001's `.agent/<kind>/<id>/` layout:
 ```
 
 The session record and the handoff summary are committed. Retention for raw operation
-logs is settled in the feature-104 contract, to avoid committing noisy logs. Session
+logs is settled in the provisional feature-111 contract, to avoid committing noisy logs. Session
 records are **diagnostic provenance**. A session experiment becomes acceptance evidence
 only when its setup and behaviour are captured in files and independently re-run by the
 Evaluator in a fresh environment.
@@ -450,7 +493,7 @@ Evaluator in a fresh environment.
 waiting. It is never a status, and it never implies that the operation stopped.
 
 Session lifecycle states and the exact rejection-reason codes are settled in the
-feature-104 contract, within the closed schemas.
+provisional feature-111 contract, within the closed schemas.
 
 ## Acceptance Cases
 
@@ -486,47 +529,41 @@ No case is claimed working until its live proof passes in CI.
 
 ## Staged Realization
 
-The NIP is realized in two phases, both **after phase 014 closes**. Feature ids are
-provisional: they are confirmed when phase 015 is planned, in case phase 014 consumes
-more ids. Each feature follows the standard two-loop lifecycle.
+The two stages remain proposed follow-ons after the completed phase014. Existing
+phase015/016 labels are proposal labels only: no phase artifacts or feature IDs
+are allocated here. H-NIP acceptance precedes planning; each stage needs its own
+H-PHASE activation and reviewed contracts. Provisional IDs110–120 avoid the
+completed103–109 tranche. Estimates are design inputs, not changes to phase014.
 
-**Phase 015 — "live runtime sessions: normative surface."** One lane, 103 → 104 → 105 →
-106 → 107. The design-time `original_estimate_lines` is 5,400 (ceiling 7,020, applying
-the measured ×2.3 process weight). Planning takes place after 014 closes, and activation
-is at `H-PHASE-015`.
-
-| ID | Feature | Naive lines |
-|----|---------|-------------|
-| 103 | Document 10 plus the generic amendments to `02`, `03`, `permission_classes`, `convergent_code_review` and `definition_of_done`, with registration | 600 |
-| 104 | Session and operation schemas, 18 fixtures, and the C12 extension | 850 |
-| 105 | Document 11, the SBCL reference binding with the language profile folded in | 420 |
-| 106 | The optional adapter capability (`interface.md` §6, `skill.json`, `SKILL.md`), capability routing and cross-links | 220 |
-| 107 | Release preparation for the **next MINOR (expected v1.4.0)**, and phase close | 240 |
-
-The phase-015 release **also rolls up phase 014's unreleased changes**, because phase 014
-prepares no release of its own.
-
-**Phase 016 — "reference controller and live conformance."** Preconditions for
-`H-PHASE-016`:
-
-- SBCL is available wherever the Evaluator runs (apt `sbcl` on the workstation, or
-  Docker). It is not currently installed on the operator's workstation.
-- A decision on whether case 8's sandbox layer is proven locally (which needs the userns
-  sysctl) or in CI only.
-- A re-estimate at planning time. The design-time weighted figure is about 10,500 lines;
-  the phase is split if that stays above precedent.
+**Proposed normative stage (phase015 label).** One lane110 →111 →112 →113 →114.
+The design-time weighted estimate remains5,400 (ceiling7,020); re-estimate at
+actual planning against accepted scope. No stage is activated by this revision.
 
 | ID | Feature | Naive lines |
 |----|---------|-------------|
-| 108 | Controller core and the language-neutral stub runtime | 1,440 |
-| 109 | Operation semantics, the `live_session_conformance` CI job, the fixture-subdirectory guard, and the Merge-Done "four jobs" change | 890 |
-| 110 | The SBCL request loop (built-ins only) | 820 |
-| 111 | The fresh-environment `accept` runner | 1,025 |
-| 112 | Docs synced to the implementation, plus the `.py`/`.lisp` path-token resolver for C9 | 170 |
-| 113 | Release preparation for the **next MINOR (expected v1.5.0)**, and phase close | 240 |
+| 110 | Document10 plus generic amendments to02/03/permissions/review/DoD and registration | 600 |
+| 111 | Session/operation schemas, eighteen fixtures and C12 extension | 850 |
+| 112 | SBCL binding Document11 with language profile folded in | 420 |
+| 113 | Optional adapter capability, index/skill routing and cross-links | 220 |
+| 114 | Future MINOR release preparation and stage close; version decided under its release gate | 240 |
 
-Release numbers are "next MINOR". The expected values hold only if no other release is
-cut between phases.
+Phase014 changes already shipped in v1.5.0; this stage does not roll up an
+unreleased phase014. Future release numbers are decisions at release planning.
+
+**Proposed controller stage (phase016 label).** SBCL is currently installed
+(`SBCL 2.2.9.debian`); actual supported sandbox/SBCL execution must still be shown
+on a capable acceptance host. Required CI remains fail closed; no workstation
+sysctl change is implied. Re-estimate the10,500-line weighted design at planning
+and split it if necessary; its approval/activation remain separate decisions.
+
+| ID | Feature | Naive lines |
+|----|---------|-------------|
+| 115 | Controller core and language-neutral stub runtime | 1,440 |
+| 116 | Operation semantics/live_session_conformance; extend delivered F105 claim map; Merge-Done forecast six jobs | 890 |
+| 117 | SBCL request loop using built-ins | 820 |
+| 118 | Fresh-environment accept runner | 1,025 |
+| 119 | Implementation-synced docs and proposed .py/.lisp path-token resolver | 170 |
+| 120 | Future MINOR release preparation and stage close; version decided under its release gate | 240 |
 
 ## Compatibility
 
@@ -539,7 +576,7 @@ The change is **MINOR** in each phase. Surface by surface
 | `03` §3.2, `02` §2 item 4 | New definitions of "attempt" and "own execution context" | They clarify existing rules, but they change how agents count and where they re-run, so they are rounded up to MINOR (§3.4). |
 | `standard/permission_classes.md` §5 | New, narrowly scoped permission classes | MINOR. Additive; nothing previously permitted is revoked. |
 | `standard/convergent_code_review.md` §5 | One sentence: trials never get a session endpoint | PATCH-level (1.3.1). It restates the existing no-execution rule; it ships within the MINOR. |
-| `standard/definition_of_done.md` §4, §8, §11 | A Handoff-Done paragraph; "four jobs" | MINOR. Additive. The fourth job runs in the framework's own CI; `.github/` is not injected into consumers. |
+| `standard/definition_of_done.md` §4, §8, §11 | A Handoff-Done paragraph; actual five to proposed six jobs | MINOR. Additive. The additional job runs in the framework's own CI; `.github/` is not injected into consumers. |
 | New schemas | `runtime_session`, `runtime_operation` | MINOR. New files; nothing that validated before is invalidated. They carry every phase-016 field from the start, so 016 never needs a MAJOR tightening. |
 | C12 | Two new families and a relational check | MINOR. Consumers see no new failures: C12 is a schema-family fixture sweep that validates only the framework's own `tools/fixtures/` (each family needs at least one positive and one negative fixture), and it never runs in `--payload` mode. A consumer's `.agent/sessions/` records are swept by no check; only an explicit `--target` routes one to C12. The router branches go before the `contract_id` route, so existing contracts still route to C11. |
 | `tools/interface.md` | New §6 optional capability; References becomes §7 | MINOR. **§5 stays at 10 items**, so every existing adapter remains conformant. Adding a required §5 item would be MAJOR. |
@@ -558,10 +595,12 @@ Before each release:
    the specific `[C12] FAIL`. A Python check confirms that `tools/interface.md` §5 still
    has exactly 10 items.
 3. Phase 016: the framework's own CI runs the reference controller against the stub
-   runtime **and** real SBCL, proving acceptance cases 1–13. Skips are explicit and fail
-   the job unless allowed.
+   runtime **and** real SBCL, proving acceptance cases 1–13 on a capable isolated
+   host. Required CI fails for missing capability or skipped required proof; an
+   allowed unsupported/skip outcome cannot substitute for a case passing. Optional
+   local development skips are explicit and do not constitute full conformance.
 4. The phase-015/016 features are themselves delivered under the new attempt accounting
-   once feature 103 lands.
+   once feature 110 lands.
 5. Record all friction as debt, and update the ROADMAP from the dogfood evidence.
 6. Obtain human release approval (`H-FRAMEWORK-RELEASE`). The pipeline never self-tags.
 
@@ -580,11 +619,11 @@ Before each release:
 ## Risks
 
 - Release numbering shifts if a release is cut between phases.
-- Rebase churn on `NIZAM.json`, `tools/skill.json`, the ROADMAP and the guide, from phase
-  014's changes.
+- Rebase churn on `NIZAM.json`, `tools/skill.json`, the ROADMAP and the guide, from
+  later authored-source changes; installed v1.5.0 remains frozen.
 - The bare-reference guard trips on forward references to files not yet landed.
 - A later schema change adds a required field, which would be MAJOR.
-- No SBCL is available locally.
+- Installed SBCL availability does not prove future live/SBCL acceptance or local isolation capability.
 - A cancellation hazard leads to a stop being reported that did not happen.
 - Distribution SBCL configuration leaks into acceptance.
 - Consumers receive the new `.lisp` and stub files, because `tools/` ships.
@@ -593,12 +632,11 @@ Before each release:
 ## Mitigations
 
 - The NIP names releases as "next MINOR", not as fixed numbers.
-- Version numbers are set when phase 015 is planned, after phase 014 closes.
-- Shipped documents refer to features by id until they land; feature 106 adds the
+- Version numbers are assessed during future release planning; phase014 is already closed.
+- Shipped documents refer to features by id until they land; feature 113 adds the
   cross-links.
 - The phase-015 schemas carry every field phase 016 needs; later changes only loosen them.
-- SBCL is installed before `H-PHASE-016` (apt `sbcl`, matching the CI runner), or Docker
-  is used.
+- Record the actual available SBCL version and prove supported SBCL/isolation execution on the acceptance host before controller-stage activation; CI may supply the capable host.
 - `cancelled` is never recorded without confirmation; otherwise the controller escalates
   to `terminated` and the generation ends.
 - Acceptance uses `--no-sysinit --no-userinit` and ignores inherited configuration;
@@ -616,8 +654,7 @@ For accepting **this NIP**:
     to Accepted;
   - the `H-NIP` row in `docs/planning/operator_gates.md` records "EXERCISED AGAIN";
   - the ROADMAP's queued-candidate section rolls to "selected".
-- **Pending.** Phase 014 closes. The phase-015 Planner artifacts are authored only then,
-  and phase 015 is activated at `H-PHASE-015`.
+- **Satisfied prerequisite.** Phase014 is closed and released in v1.5.0. **Pending:** accepted-scope Planner artifacts and future H-PHASE activation; drafting is not acceptance.
 
 For **realizing** it (phases 015/016):
 
@@ -631,7 +668,7 @@ For **realizing** it (phases 015/016):
 - All existing compliance and bootstrap tests remain green.
 - Both releases are tagged and documented, and consumers adopt only released tags.
 
-## Relationship to NIP-0001, NIP-0002 and Phase 014 Feature 101
+## Relationship to NIP-0001, NIP-0002 and Completed Phase014 (Cancelled F101)
 
 - **NIP-0001 (Ecosystem Engineering Cycle).** NIP-0003 is not an ecosystem stage. It is
   repository-level execution methodology and belongs in `methodology/`, not
@@ -643,16 +680,12 @@ For **realizing** it (phases 015/016):
   one repository, so they apply unchanged at every project count. They never span
   repositories, and they make no change to the membership registry. NIP-0002's Staged
   Realization is the model for the two-phase plan above.
-- **Phase 014, feature 101 (the first real simplification review).** Phase 014 is not
-  edited by this NIP; its contract excludes schema and workflow changes
-  (`.agent/product_spec_014.md:82-83`). Feature 101 reviews the *accumulated* framework
-  surface and records candidate scope for the next planning cycle. NIP-0003's surface has
-  not landed by then, so 101 cannot review it. But 101's findings are a mandatory input to
-  phase-015 planning: any consolidation candidate touching a surface this NIP amends
-  (`02`, `03`, `permission_classes`, `interface.md`, C12) is reconciled when phase 015 is
-  planned. Any decision taken under `H-CONSOLIDATION` takes precedence over this NIP's
-  provisional design. The newly logged `NDEBT-041`..`NDEBT-044` are candidate inputs to
-  101, like the other open rows.
+- **Completed phase014 and cancelled feature101.** Historical phase records and
+  their budgets remain unchanged. Feature101 was cancelled, so no future review
+  or findings are required. Actual inputs are the historical102 dossier (including
+  its unmet pilot/adoption evidence), current Open debts040/034 and genuine local
+  commissioning/maintenance proof. H-CONSOLIDATION remains outstanding; any later
+  recorded decision takes precedence over this provisional design.
 
 ## References
 
@@ -677,7 +710,8 @@ For **realizing** it (phases 015/016):
   sandbox reference, reused unchanged for case 8.
 - `docs/planning/operator_gates.md`: H-NIP, H-PHASE-NNN, H-FRAMEWORK-RELEASE and
   H-CONSUMER-UPGRADE.
-- `docs/planning/DEBT.md`: `NDEBT-041`..`NDEBT-044`, logged with this proposal.
+- `docs/planning/DEBT.md`: current Open NDEBT-040/034 and resolved historical
+  NDEBT-041..044; the resolved entries describe delivered baseline work.
 - External semantics relied on by the SBCL binding: the CLHS (`macroexpand`,
   `print-object`, `load`, `compile-file`, `restart-case`/`restart-bind`, `handler-bind`,
   and §4.3.6 on class redefinition), the SBCL manual (threads, special variables,

@@ -3,7 +3,7 @@
   "current_phase": "014-ga-track",
   "current_feature": null,
   "status": "phase_complete",
-  "updated_at": "2026-10-11T03:55:15.887518+00:00",
+  "updated_at": "2026-10-11T04:59:57.667934+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -327,6 +327,18 @@
       "limit": 3,
       "attempt_root": "/home/cnross/.tmp/nizam-maint-closeout1-7ntakgsw",
       "approved_base": "7221cd17a7c2d2188de0094b8ea008e4e192a0c4"
+    },
+    "post-ga-nip-planning-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "post-ga-nip-planning-implementation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "post-ga-nip-planning-qa": {
+      "attempts": 1,
+      "limit": 3
     }
   },
   "history": [
@@ -2325,6 +2337,63 @@
       "event": "contract_complete",
       "contract_id": "post-ga-maintenance",
       "detail": "Immutable source7221cd17 passed independent6/6 QA/freshCI38108704971attempt2; finaldocumentationreview and3/3strictcloseout QA/evidencegate passed. Closed047/046/045 andA04a only; source9/priorproof frozen, phase014 complete unchanged. User-authorized clean PR merge managed separately."
+    },
+    {
+      "at": "2026-10-11T04:13:54.848747+00:00",
+      "event": "operator_work_authorization",
+      "contract_id": "post-ga-nip-planning",
+      "operator_verbatim": "proced with the logical next steps.",
+      "base_revision": "4663ab4dc39020f4d3226dc0f7e5016a835b4b04",
+      "detail": "Authorize previously stated next steps: revise NIP-0003 for acceptance and scope Workflow Assurance. Drafting and bounded planning synchronization only; H-NIP acceptance and H-PHASE activation await reviewable proposals and their operator decisions. Earlier clean-PR merge authorization persists."
+    },
+    {
+      "at": "2026-10-11T04:27:08.017577+00:00",
+      "event": "contract_revision_required",
+      "contract_id": "post-ga-nip-planning",
+      "attempt": 1,
+      "attempt_root": "/home/cnross/.tmp/nizam-post-ga-nip-planning-review-m488if2m",
+      "detail": "Independent ModeA and contract review rejected frozen proposal31592b88/spec2de17eb3: NDS frontmatter, durable spec_ref, provisional112 vs116 clarification, concrete WA obligation matrix/negative coverage. Preserve failed verdicts; next attempt direct fixes in new snapshot."
+    },
+    {
+      "at": "2026-10-11T04:33:08.182597+00:00",
+      "event": "contract_approved",
+      "contract_id": "post-ga-nip-planning",
+      "attempt": 2,
+      "proposal_contract_sha256": "eb000e67394381b761201ca44cdb1631edaa699a94d552ae3049671ef77348a2",
+      "proposal_spec_sha256": "0c40523d9c9edb40f226ab43d91d2765fdba36252ad839b818a36c6f7c7d51e4",
+      "detail": "Both independent gates approved with empty blocking arrays. Promote exact spec, canonical relative spec_ref and only approved lifecycle metadata; failed proposal/verdicts archived. Next isolated implementation at this committed approved base."
+    },
+    {
+      "at": "2026-10-11T04:33:15.985420+00:00",
+      "event": "implementation_attempt_started",
+      "contract_id": "post-ga-nip-planning",
+      "attempt": 1,
+      "attempt_root": "/home/cnross/.tmp/nizam-nip-planning-implementation1-2a61ibbj",
+      "approved_base": "96b8396c5e15e67f8e15fbadbe0798e2caf806dc",
+      "detail": "Generator owns eight scoped product documents; independent Evaluator owns new checker/runtime receipt. ModeB and actual QA/evidence gates remain required; no phase activation."
+    },
+    {
+      "at": "2026-10-11T04:45:46.599303+00:00",
+      "event": "implementation_session_handoff",
+      "contract_id": "post-ga-nip-planning",
+      "attempt": 1,
+      "attempt_root": "/home/cnross/.tmp/nizam-nip-planning-implementation1-2a61ibbj",
+      "detail": "Continue same isolated implementation attempt in fresh Generator context; original Generator interrupted. Preserve approved contract, current artifacts and all step counters; no gate result or attempt reset."
+    },
+    {
+      "at": "2026-10-11T04:52:39.567513+00:00",
+      "event": "mode_b_approved",
+      "contract_id": "post-ga-nip-planning",
+      "attempt": 1,
+      "attempt_root": "/home/cnross/.tmp/nizam-nip-planning-implementation1-2a61ibbj",
+      "detail": "Independent ModeB approved with empty blockers and actual8document/checker hashes. Promote reviewed artifacts only; three drafting deliveries have actual independent draft proof. H-NIP/H-PHASE pending, installed/source/historical records unchanged. Commit fixed candidate before formal QA."
+    },
+    {
+      "at": "2026-10-11T04:59:57.667934+00:00",
+      "event": "contract_complete",
+      "contract_id": "post-ga-nip-planning",
+      "candidate_sha": "8899c139a1f9116af865241ceb7a835334e1080d",
+      "detail": "Independent ModeB and6/6 actualQA plus4 private-copy adversarial probes and evidence gate pass. Only3drafting deliveries complete; H-NIP/H-PHASE remain pending. User-authorized clean PR merge follows required GitHub checks; source12 hashes and installedv1.5 exact."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -2899,7 +2968,7 @@
       }
     ]
   },
-  "last_action": "post-ga-maintenance complete: primary6/6QA, freshcapableCIattempt2, final3/3closureQA and both evidence gates passed; only040034remainOpen, installedv1.5 unchanged.",
+  "last_action": "post-ga-nip-planning complete: NIP3 revision and NIP4 scope independently verified6/6 at8899c139, evidence gate passed; acceptance/activation pending, installedv1.5 preserved.",
   "completed_contract_ids": [
     "099",
     "103",

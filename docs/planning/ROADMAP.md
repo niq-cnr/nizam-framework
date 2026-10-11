@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.56.0
+version: 0.57.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.57.0"
+    date: "2026-10-11"
+    summary: "Revise pending NIP3 and draft proposed Workflow Assurance against actual post-GA inputs; record authorized drafting delivery without NIP acceptance, phase activation or installed upgrade."
   - version: "0.56.0"
     date: "2026-10-11"
     summary: "Record verified bounded maintenance at fixed source candidate 7221cd17a7c2d2188de0094b8ea008e4e192a0c4: fresh capable CI38108704971 attempt2, independent6/6 QA and successful evidence gate. Resolve only NDEBT-047/046/045 and complete A04a; preserve source digests, historical assessments, future gates and installed v1.5.0."
@@ -324,48 +327,39 @@ self-tags. Edited: `.agent/product_spec_014.md` (1.0.0 → 1.0.1),
 estimates (2200) and every status are unchanged. Phase 014 stays `pending` / `proposed`
 and is activation-ready, awaiting `H-PHASE-014`.
 
-## Queued Candidate — NIP-0003: Live Runtime Sessions (proposed phases 015/016, to follow 014) — PROPOSED, awaiting H-NIP
+## Queued Candidate — NIP-0003: Live Runtime Sessions — PROPOSED, awaiting H-NIP
 
-**[NIP-0003](../nips/NIP-0003-live-runtime-sessions.md) is PROPOSED** (2026-10-08,
-frontmatter `draft`), awaiting operator acceptance (gate **H-NIP**). It records the
-read-only validation of a third-party Agent–REPL Execution Protocol for interactive
-SBCL development (verdict: adopt with corrections) and proposes a **language-neutral
-live-runtime-session protocol** (`methodology/10_`) with an **SBCL reference binding**
-(`methodology/11_`, the missing language profile folded in). It also proposes generic
-amendments that define "attempt" (`03` §3.2) and "own execution context" (`02` §2), an
-**optional** adapter capability (`tools/interface.md` §6; §5 stays at 10 items, so the
-release is MINOR), two session schemas under an extended C12 (C17 stays free), and a
-reference controller in `tools/` with a live CI conformance job proving acceptance
-cases 1–13.
+The authorized pre-acceptance revision of [NIP-0003](../nips/NIP-0003-live-runtime-sessions.md)
+(0.2.0, frontmatter `draft`) is delivered as A03-RT. Its four recorded operator
+choices and thirteen acceptance cases are preserved, with only the provisional
+future ID shift. H-NIP acceptance and future H-PHASE activation remain pending.
 
-**Operator decisions (2026-10-08, verbatim selected options):** Shape "Neutral protocol
-+ SBCL binding (Recommended)"; Sequencing "After Phase 014"; Controller "Framework
-tools/, two phases (Recommended)"; Profile "Fold into the SBCL binding (Recommended)".
+The proposal adds neutral live-runtime sessions and attempt continuity, an SBCL
+binding, optional adapter capability, schemas and a reference controller. Phase014
+is already complete and released in public v1.5.0 at
+`f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`; installed bytes remain frozen. Proposed
+phase015 uses provisional110–114; phase016 uses115–120. No canonical IDs are
+allocated. Each release is a future next MINOR, with its version assessed at release
+planning. Acceptance selects scope; separate planning and H-PHASE gates activate it.
 
-**Proposed realization, to follow phase 014.** Phase 015 (normative surface, features
-103–107, design estimate 5,400 lines) releases as the next MINOR (expected v1.5.0; the
-NIP's own text still says v1.4.0, which the 2026-10-08 v1.4.0 release took) and
-also rolls up phase 014's unreleased changes. Phase 016 (reference controller and live
-conformance, features 108–113) releases as the next MINOR (expected v1.6.0; the NIP says
-v1.5.0); it requires
-SBCL wherever the Evaluator runs. **Acceptance selects; it does not activate.** The
-phase-015 Planner artifacts are authored only after phase 014 closes, and each phase
-needs its own `H-PHASE-NNN`. Phase 014 is not edited by this proposal, and the findings
-of its feature 101 (the simplification review) are an input to phase-015 planning.
-`.agent/run_state.json`, `docs/planning/manifest.json` and
-`docs/planning/operator_gates.md` are untouched (a proposal is not an activation). New
-debt surfaced by the validation is logged as `NDEBT-041`..`NDEBT-044`.
+Actual F105 delivered the fixture claim map reused by proposed116. Existing CI has
+five jobs (validate, e2e_bootstrap, fixtures_self_test, convergent_review,
+self_governance); proposed live_session_conformance would make six. Required
+isolation is the delivered default. SBCL 2.2.9.debian is installed; future live proof
+requires capable isolated CI, with local workstation sysctls never changed.
+Cancelled F101 produced no findings. Inputs are historical102 (pilot not_met,
+adoptions insufficient_evidence), Open debts040/034 and actual local commissioning
+and maintenance QA/baseline. A later H-CONSOLIDATION decision remains a separate input.
 
-**Note (2026-10-08, phase-014 activation; the NIP is not edited).** Phase 014 allocated feature ids 103–109 to its
-maintenance tranche, so NIP-0003's provisional ids 103–113 shift — provisionally to 110–120 (phase 015: 110–114;
-phase 016: 115–120), confirmed only when phase 015 is planned. Further premises of the NIP went stale and are queued
-for its pre-acceptance revision (`A03-RT` in `backlog_dag.json`), not applied here: its feature 109's
-fixture-subdirectory claim map is pulled forward into phase-014 feature 105, which 109 will reuse; phase-014 feature
-104 adds a fourth `compliance.yml` job, so the NIP's "four jobs" becomes five; phase-014 feature 103 sets a
-required-by-default isolation precedent where the NIP sketches a `--require-isolation` opt-in; and its statement
-that phase 014 excludes schema and workflow changes (citing `.agent/product_spec_014.md:82-83`) no longer holds for
-the maintenance features. The `NDEBT-044` (d) cross-reference fix the NIP leaves to its feature 106 lands in
-phase-014 feature 108.
+[Workflow Assurance NIP-0004](../nips/NIP-0004-workflow-assurance.md) (0.1.0, `draft`)
+is delivered as A03-WA-DRAFT/A03-WA-FINAL for review only. It extends the dated
+Section7 outline: candidate identity/invalidation and parsed owned-field guards,
+deterministic gates, convergent-to-AGF verdicts, independent test ownership,
+cause-based failure routing, deferred assurance profiles and concurrency. Every
+matrix row permits draft-review only and retains H-NIP, future H-PHASE and contract
+gates. Candidate PLAN-WA ordering follows proposed NIP3-114/phase015 close;
+relative WA implementation versus phase016 remains open. PLAN-NEXT, PLAN-WA and
+all future implementation packets remain pending with their existing authority.
 
 ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
 
@@ -799,6 +793,10 @@ what comes next (the gap this file closes: phases 001–004 completed with no re
 successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-11)
+
+The pending NIP3 revision and proposed NIP4 scope are drafted for review under the
+operator's authorized next steps. Only A03-RT/A03-WA-DRAFT/A03-WA-FINAL record
+drafting delivery; H-NIP acceptance and future H-PHASE activation remain pending.
 
 Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
 

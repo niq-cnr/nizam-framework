@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.33.0
+version: 0.34.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.34.0"
+    date: "2026-10-11"
+    summary: "Revise pending NIP3 and draft proposed Workflow Assurance against actual post-GA inputs; record authorized drafting delivery without NIP acceptance, phase activation or installed upgrade."
   - version: "0.33.0"
     date: "2026-10-10"
     summary: "Record H-CONSUMER-UPGRADE local self-commissioning EXECUTED after actual candidateCI38075479048, clean installed preflight PASS, immutable baseline and independent9/9 QA/evidence gate at bfd475ff670e582cbbfc8f3187ae988dcf3c8baa. Preserve actual earlier authorization/installation, historical pilots and recurring-gate scope."
@@ -141,6 +144,12 @@ the v0.7.0 and v0.8.0 release tags and `docs/planning/ROADMAP.md`'s phase-005/00
 completion entries. So where this registry and a phase spec disagree on a gate's
 **definition**, the phase spec wins; where they differ on a gate's **status**,
 the later operator record (cited in the Disposition column) is current.
+
+Current informational note (2026-10-11): the authorized NIP3 revision and
+proposed NIP4 Workflow Assurance scope are drafted for review. Neither proposal
+has an H-NIP acceptance decision. Future H-PHASE activation remains pending;
+drafting does not change the gate dispositions recorded below. No new gate,
+release, phase or installed upgrade is authorized by this note.
 
 ## 1. Decided and active gates
 

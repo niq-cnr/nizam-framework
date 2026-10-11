@@ -1,0 +1,47 @@
+COMMAND: Evaluator independent actual private-clone scope/coordinator probes
+CANDIDATE_SHA: 8899c139a1f9116af865241ceb7a835334e1080d
+STARTED_AT: 2026-10-11T04:53:51.677965+00:00
+PROBE: unchanged actual candidate scope positive
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --scope
+CHECK PASS: scope
+
+
+ACTUAL_EXIT: 0
+EXPECTED_DIAGNOSTIC: None; DISCRIMINATED: True
+PROBE: untracked installed-tree write
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --scope
+CHECK FAIL: untracked-scope:.nizam/qa-pollution.txt
+
+
+ACTUAL_EXIT: 1
+EXPECTED_DIAGNOSTIC: untracked-scope:.nizam/qa-pollution.txt; DISCRIMINATED: True
+PROBE: unowned parent position write
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --scope
+CHECK FAIL: frozen-coordinator-fields
+
+
+ACTUAL_EXIT: 1
+EXPECTED_DIAGNOSTIC: frozen-coordinator-fields; DISCRIMINATED: True
+PROBE: task-owned history prefix used to smuggle NIP acceptance
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --scope
+CHECK FAIL: unapproved-gate-event
+
+
+ACTUAL_EXIT: 1
+EXPECTED_DIAGNOSTIC: unapproved-gate-event; DISCRIMINATED: True
+PROBE: previous proof bytes rewritten despite equivalent JSON
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --scope
+CHECK FAIL: scope:M	.agent/evidence/post-ga-maintenance/capable-ci-receipt.json
+
+
+ACTUAL_EXIT: 1
+EXPECTED_DIAGNOSTIC: scope:M	.agent/evidence/post-ga-maintenance/capable-ci-receipt.json; DISCRIMINATED: True
+PROBE: all private-copy mutations restored positive
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --scope
+CHECK PASS: scope
+
+
+ACTUAL_EXIT: 0
+EXPECTED_DIAGNOSTIC: None; DISCRIMINATED: True
+EXIT: 0
+COMPLETED_AT: 2026-10-11T04:53:53.203424+00:00
