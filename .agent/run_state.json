@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
   "current_feature": "111",
-  "status": "in_progress",
-  "updated_at": "2026-10-11T09:06:30.456240+00:00",
+  "status": "blocked",
+  "updated_at": "2026-10-11T09:29:47.176885+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -394,6 +394,10 @@
       "limit": 3
     },
     "111-implementation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "111-qa": {
       "attempts": 1,
       "limit": 3
     }
@@ -2951,6 +2955,19 @@
       "evidence": ".agent/validator/111-mode-b.json",
       "verdict_sha256": "fd5a7739d8ea773ca2647033e52c4609c1d46a5db9874eb04b76965d4d31c094",
       "detail": "Actual independent ModeB approved/empty;62hashedinputs/28frozenproducts and historicalinstalledbytes verified, Parent-owned state projection preserved. Same originalsource implementation1 continuity through operator-confirmedcheckerrecovery; no source retries orGenvalidationreset. Promoteonlyexactreviewed files; separate fixedcandidate38QA remainsrequired."
+    },
+    {
+      "at": "2026-10-11T09:29:47.176885+00:00",
+      "event": "qa_rejected_scope_reconciliation_required",
+      "contract_id": "111",
+      "attempt": 1,
+      "checks_run": 35,
+      "checks_passed": 34,
+      "actual_exit": 1,
+      "evidence": ".agent/qa/111.json",
+      "failure_receipt": ".agent/evidence/111/35-full.txt",
+      "candidate_sha": "8c6368cf1e9e7a74efe9b17b2745890befe98027",
+      "detail": "Actual independent QA1 stopped after command35 failedC11 missing required history402.detail. Preserve original authority/history and all candidate/proof bytes; both read-only reviews confirm scope exception needed, currentcontract3/3, no fourth revision attempted. Canonical111BLOCKED written first;112-114retainpending. Fresh accepted checker epoch1 remains1/3, otherexistingcounters and7200/9360unchanged."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3164,15 +3181,28 @@
     "inflight_measured": {
       "id": "111",
       "status": "blocked",
-      "actual": 756,
-      "evidence_lines": 3132,
-      "excluded_lines": 188,
+      "actual": 2274,
+      "evidence_lines": 14093,
+      "excluded_lines": 353,
+      "all_paths_lines": 16720,
       "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
-      "evidence": ".agent/evidence/111/blocked-scope-measurement.txt",
-      "note": "Incomplete feature; not appended to completed-feature rolling baseline. Current completed1711 plus in-flight actual below9360. Unpromoted product draft retained only as raw evidence; actual future implementation measurement must include promoted product if operator resumes."
+      "evidence": ".agent/evidence/111/blocked-qa-scope-measurement.txt",
+      "previous_inflight_measurement": {
+        "id": "111",
+        "status": "blocked",
+        "actual": 756,
+        "evidence_lines": 3132,
+        "excluded_lines": 188,
+        "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
+        "evidence": ".agent/evidence/111/blocked-scope-measurement.txt",
+        "note": "Incomplete feature; not appended to completed-feature rolling baseline. Current completed1711 plus in-flight actual below9360. Unpromoted product draft retained only as raw evidence; actual future implementation measurement must include promoted product if operator resumes."
+      },
+      "note": "Incomplete feature after actual failedQA1; not appended to completed-feature rolling baseline. Frozen product/source promoted and now counted. Completed1711 plus in-flight below9360; contract extension has no extra budget. Preserve old pre-source halt measurement as historical snapshot."
     }
   },
-  "blocked_features": [],
+  "blocked_features": [
+    "111"
+  ],
   "phase_007_scope_budget_final": {
     "original_estimate_lines": 870,
     "total_lines_changed": 240,
@@ -3425,7 +3455,7 @@
       }
     ]
   },
-  "last_action": "111 actualModeB1 approved/empty; exact62 reviewedbytes promoted. Fixed committedcandidate and distinctfinal38-command acceptance next; no featurecompletion yet.",
+  "last_action": "111 finalQA1 rejected at command35 C11;34passed,3unrun/noextra spot. Preserved fixedcandidate and failedproof; canonicalBLOCKED pending bounded contract extension. No source or protected history repair.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -3495,5 +3525,11 @@
       }
     ],
     "note": "Phase 014 final ledger. 8705 of 8600 (101.2%): 105 over the operator-confirmed re-baseline estimate (spec 1.1.4, 'option 1 confirmed.'), comfortably within the 11180 authorized 130% ceiling. Completed features 099 + 103-109 + 102 (9 features); cancelled 100/101 (A3) consumed no budget. Historical-basis estimates for 099/103 (920/280) are mixed-basis and disclosed per their ledger entries. Captures: measure-099-103.txt, measure-105.txt, measure-108.txt, measure-109.txt, measure-102.txt."
+  },
+  "pending_operator_gate": {
+    "gate": "H-CONTRACT-111-SCOPED-EXTENSION",
+    "reason": "Current approved contract3/3 does not permit schema-required history prefix annotation. One bounded revision4 exception needed; no execution or approval inferred.",
+    "plan": ".agent/evidence/111/history-detail-remedy.txt",
+    "qa": ".agent/qa/111.json"
   }
 }

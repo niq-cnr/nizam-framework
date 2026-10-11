@@ -1,0 +1,181 @@
+{
+  "actor": "/root/acceptance_111",
+  "candidate_sha": "8c6368cf1e9e7a74efe9b17b2745890befe98027",
+  "checks": [
+    {
+      "command": "python3 -c 'import json,jsonschema; from pathlib import Path; jsonschema.Draft202012Validator.check_schema(json.loads(Path('\"'\"'schema/runtime_session.schema.json'\"'\"').read_text()))'",
+      "evidence": ".agent/evidence/111/01-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -c 'import json,jsonschema; from pathlib import Path; jsonschema.Draft202012Validator.check_schema(json.loads(Path('\"'\"'schema/runtime_operation.schema.json'\"'\"').read_text()))'",
+      "evidence": ".agent/evidence/111/02-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -c 'import json\nfrom pathlib import Path\nd=json.loads(Path('\"'\"'schema/runtime_operation.schema.json'\"'\"').read_text())\ndef closed(v):\n if isinstance(v,dict):\n  if v.get('\"'\"'type'\"'\"')=='\"'\"'object'\"'\"': assert v.get('\"'\"'additionalProperties'\"'\"') is False\n  for c in v.values(): closed(c)\n elif isinstance(v,list):\n  for c in v: closed(c)\nclosed(d)'",
+      "evidence": ".agent/evidence/111/03-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -c 'import json\nfrom pathlib import Path\nd=json.loads(Path('\"'\"'schema/runtime_session.schema.json'\"'\"').read_text())\ndef closed(v):\n if isinstance(v,dict):\n  if v.get('\"'\"'type'\"'\"')=='\"'\"'object'\"'\"': assert v.get('\"'\"'additionalProperties'\"'\"') is False\n  for c in v.values(): closed(c)\n elif isinstance(v,list):\n  for c in v: closed(c)\nclosed(d)'",
+      "evidence": ".agent/evidence/111/04-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -c 'import json\nfrom pathlib import Path\nkeys=set()\ndef collect(v):\n if isinstance(v,dict):\n  keys.update(v.get('\"'\"'properties'\"'\"',{}))\n  for c in v.values(): collect(c)\n elif isinstance(v,list):\n  for c in v: collect(c)\nfor path in ['\"'\"'schema/runtime_session.schema.json'\"'\"','\"'\"'schema/runtime_operation.schema.json'\"'\"']: collect(json.loads(Path(path).read_text()))\nassert set(['\"'\"'isolation'\"'\"', '\"'\"'toolchain_identity'\"'\"', '\"'\"'lock_ref'\"'\"', '\"'\"'core_provenance'\"'\"', '\"'\"'wait_outcome'\"'\"', '\"'\"'lease_epoch'\"'\"', '\"'\"'lane_authorization_ref'\"'\"']) <= keys'",
+      "evidence": ".agent/evidence/111/05-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -c 'import ast\nfrom pathlib import Path\ns=Path('\"'\"'tools/validate.sh'\"'\"').read_text().split('\"'\"'check_c11_or_c4_target() {'\"'\"',1)[1]\ns=s.split(\"<<'\"'\"'PY'\"'\"'\\n\",1)[1].split('\"'\"'\\nPY\\n)'\"'\"',1)[0]\na=ast.parse(s)\nroutes=[(n.lineno,n.args[0].value) for n in ast.walk(a) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=='\"'\"'print'\"'\"' and len(n.args)==1 and isinstance(n.args[0],ast.Constant)]\npositions={v:k for k,v in routes}\nassert positions['\"'\"'ecosystem:runtime_operation'\"'\"'] < positions['\"'\"'contract'\"'\"']'",
+      "evidence": ".agent/evidence/111/06-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_rejected_foreign_stale.json > .agent/evidence/111/runtime_operation_valid_rejected_foreign_stale.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_rejected_foreign_stale.json.txt'",
+      "evidence": ".agent/evidence/111/07-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_foreign_executed.json > .agent/evidence/111/runtime_operation_neg_foreign_executed.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_foreign_executed.json.txt'",
+      "evidence": ".agent/evidence/111/08-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_stale_generation_executed.json > .agent/evidence/111/runtime_operation_neg_stale_generation_executed.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_stale_generation_executed.json.txt'",
+      "evidence": ".agent/evidence/111/09-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_partial_load_condition.json > .agent/evidence/111/runtime_operation_valid_partial_load_condition.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_partial_load_condition.json.txt'",
+      "evidence": ".agent/evidence/111/10-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_failed_load_consistent.json > .agent/evidence/111/runtime_operation_neg_failed_load_consistent.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_failed_load_consistent.json.txt'",
+      "evidence": ".agent/evidence/111/11-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_running_stopped_waiting.json > .agent/evidence/111/runtime_operation_valid_running_stopped_waiting.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_running_stopped_waiting.json.txt'",
+      "evidence": ".agent/evidence/111/12-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_rejected_busy.json > .agent/evidence/111/runtime_operation_valid_rejected_busy.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_rejected_busy.json.txt'",
+      "evidence": ".agent/evidence/111/13-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_timeout_cancelled.json > .agent/evidence/111/runtime_operation_neg_timeout_cancelled.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_timeout_cancelled.json.txt'",
+      "evidence": ".agent/evidence/111/14-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_valid_reattach_pending.json > .agent/evidence/111/runtime_session_valid_reattach_pending.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_session_valid_reattach_pending.json.txt'",
+      "evidence": ".agent/evidence/111/15-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_session_result_acceptance.json > .agent/evidence/111/runtime_operation_neg_session_result_acceptance.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_session_result_acceptance.json.txt'",
+      "evidence": ".agent/evidence/111/16-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_trial_rejected.json > .agent/evidence/111/runtime_operation_valid_trial_rejected.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_trial_rejected.json.txt'",
+      "evidence": ".agent/evidence/111/17-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_trial_executed.json > .agent/evidence/111/runtime_operation_neg_trial_executed.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_trial_executed.json.txt'",
+      "evidence": ".agent/evidence/111/18-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_new_generation_same_attempt.json > .agent/evidence/111/runtime_operation_valid_new_generation_same_attempt.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_new_generation_same_attempt.json.txt'",
+      "evidence": ".agent/evidence/111/19-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_valid_replayable_handoff.json > .agent/evidence/111/runtime_session_valid_replayable_handoff.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_session_valid_replayable_handoff.json.txt'",
+      "evidence": ".agent/evidence/111/20-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_valid_accept_hermetic.json > .agent/evidence/111/runtime_session_valid_accept_hermetic.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_session_valid_accept_hermetic.json.txt'",
+      "evidence": ".agent/evidence/111/21-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_neg_accept_inherited_cache.json > .agent/evidence/111/runtime_session_neg_accept_inherited_cache.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_session_neg_accept_inherited_cache.json.txt'",
+      "evidence": ".agent/evidence/111/22-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_valid_transfer_lease.json > .agent/evidence/111/runtime_session_valid_transfer_lease.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_session_valid_transfer_lease.json.txt'",
+      "evidence": ".agent/evidence/111/23-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_stale_lease_executed.json > .agent/evidence/111/runtime_operation_neg_stale_lease_executed.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_stale_lease_executed.json.txt'",
+      "evidence": ".agent/evidence/111/24-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/fixtures_self_test.sh",
+      "evidence": ".agent/evidence/111/25-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "evidence": ".agent/evidence/111/26-canonical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --schemas",
+      "evidence": ".agent/evidence/111/27-schemas.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --fixtures",
+      "evidence": ".agent/evidence/111/28-fixtures.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --routing",
+      "evidence": ".agent/evidence/111/29-routing.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --registration",
+      "evidence": ".agent/evidence/111/30-registration.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --compatibility",
+      "evidence": ".agent/evidence/111/31-compatibility.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --lifecycle",
+      "evidence": ".agent/evidence/111/32-lifecycle.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --scope",
+      "evidence": ".agent/evidence/111/33-scope.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --negative",
+      "evidence": ".agent/evidence/111/34-negative.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "evidence": ".agent/evidence/111/35-full.txt",
+      "exit_code": 1
+    }
+  ]
+}

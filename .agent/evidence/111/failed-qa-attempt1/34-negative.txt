@@ -1,0 +1,78 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --negative
+CANDIDATE_SHA: 8c6368cf1e9e7a74efe9b17b2745890befe98027
+ROOT: /home/cnross/workspace02/nizam-framework
+ACTOR: /root/acceptance_111
+STARTED_AT: 2026-10-11T09:16:25.125625+00:00
+FIXTURE: runtime_operation_valid_rejected_foreign_stale.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_foreign_executed.json schema_errors=0 relation_exit=1 target_exit=1
+FIXTURE: runtime_operation_neg_stale_generation_executed.json schema_errors=0 relation_exit=1 target_exit=1
+FIXTURE: runtime_operation_valid_partial_load_condition.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_failed_load_consistent.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_operation_valid_running_stopped_waiting.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_valid_rejected_busy.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_timeout_cancelled.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_session_valid_reattach_pending.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_session_result_acceptance.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_operation_valid_trial_rejected.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_trial_executed.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_operation_valid_new_generation_same_attempt.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_session_valid_replayable_handoff.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_session_valid_accept_hermetic.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_session_neg_accept_inherited_cache.json schema_errors=1 relation_exit=0 target_exit=1
+FIXTURE: runtime_session_valid_transfer_lease.json schema_errors=0 relation_exit=0 target_exit=0
+FIXTURE: runtime_operation_neg_stale_lease_executed.json schema_errors=0 relation_exit=1 target_exit=1
+NEGATIVE REJECTED: schema-closed:runtime_session
+NEGATIVE REJECTED: minimal-required-identity:runtime_session
+NEGATIVE REJECTED: schema-closed:runtime_operation
+NEGATIVE REJECTED: minimal-required-identity:runtime_operation
+NEGATIVE REJECTED: wrong-counter-type
+NEGATIVE REJECTED: unknown-nested-field
+NEGATIVE REJECTED: invalid-status
+NEGATIVE REJECTED: invalid-role
+NEGATIVE REJECTED: nonintegral-counter
+NEGATIVE REJECTED: boolean-counter
+POSITIVE: integral JSON number representation accepted
+NEGATIVE REJECTED: attempt-continuity
+NEGATIVE REJECTED: transfer-lease
+NEGATIVE REJECTED: reattach-generation
+NEGATIVE REJECTED: acceptance-isolation
+NEGATIVE REJECTED: protocol-schema-availability
+NEGATIVE REJECTED: neutral-prose-boundaries-frozen
+NEGATIVE REJECTED: historical-change-log:.agent/product_spec_015.md
+NEGATIVE REJECTED: early111-completion-without-proof
+NEGATIVE REJECTED: current-spec-version
+NEGATIVE REJECTED: approved-contract-binding:scope
+NEGATIVE REJECTED: protocol-section12-availability
+NEGATIVE REJECTED: protocol-enforcement-boundary
+NEGATIVE REJECTED: record-proof-limit
+NEGATIVE REJECTED: stale-spec-current-position
+NEGATIVE REJECTED: stale-phase-current-position
+NEGATIVE REJECTED: protected-fixture-case-plan
+NEGATIVE REJECTED: immutable-approved-budget
+NEGATIVE REJECTED: recovery-approved-base
+NEGATIVE REJECTED: recovery-archive-authority
+NEGATIVE REJECTED: recovery-operator-event
+NEGATIVE REJECTED: recovery-exhausted-counter
+NEGATIVE REJECTED: recovery-other-counter:111-generator-validation
+NEGATIVE REJECTED: recovery-current-counter
+NEGATIVE REJECTED: recovery-archive-authority
+NEGATIVE REJECTED: recovery-independent-checker-review
+NEGATIVE REJECTED: recovery-approved-base
+NEGATIVE REJECTED: approved-contract-binding:scope
+NEGATIVE REJECTED: recovery-premature-debt-resolution
+RECOVERY VALID CONTROL: immutable authority, archived3/3 and fresh bounded epoch accepted
+PRIVATE NEGATIVE REJECTED: schema-closed:runtime_session
+PRIVATE NEGATIVE REJECTED: fixture-relation:runtime_operation_neg_foreign_executed.json
+PRIVATE NEGATIVE REJECTED: routing-family-registration:check_c12_ecosystem_fixtures
+PRIVATE NEGATIVE REJECTED: shared-relations-call:check_c12_ecosystem_fixtures
+PRIVATE NEGATIVE REJECTED: shared-relations-call:check_c12_target
+PRIVATE NEGATIVE REJECTED: fixture-top-level-exact
+PRIVATE NEGATIVE REJECTED: fixture-standing-row:runtime_operation_neg_foreign_executed.json
+PRIVATE NEGATIVE REJECTED: fixture-relation:runtime_operation_neg_foreign_executed.json
+PRIVATE NEGATIVE REJECTED: untracked-scope:.nizam/unauthorized-111.txt
+PRIVATE NEGATIVE REJECTED: scope:M	.agent/qa/110.json
+PRIVATE NEGATIVE REJECTED: recovery-frozen-product:schema/runtime_session.schema.json
+PRIVATE NEGATIVE REJECTED: recovery-prior-proof:.agent/evidence/111/blocked-checker3/checkpoint3.txt
+NEGATIVE CONTROLS PASS: typed/schema/record-relation/truth/lifecycle/scope and actual private-source bypasses reject intentionally; restored positive fixtures valid; no setup-error substitution
+CHECK PASS: negative
+EXIT: 0

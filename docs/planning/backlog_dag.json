@@ -12,9 +12,9 @@
     "spec_version": "1.0.1",
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "current_status": "in_progress",
+    "current_status": "blocked",
     "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
-    "run_state_position": "Derived from canonical phase/list:110complete;111 active under operator-confirmed recovery contract and checker epoch1;112-114pending.",
+    "run_state_position": "Canonical111 BLOCKED after actualQA1 C11 history-schema failure; scoped contract extension pending.110 complete;112-114pending. Historical checker epoch1 remains preserved.",
     "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
   },
   "estimate_weighting": {
@@ -2674,14 +2674,17 @@
       ],
       "evidence": [
         ".agent/evidence/111/",
-        ".agent/evidence/111/blocked-checker3/checkpoint3.txt"
+        ".agent/evidence/111/blocked-checker3/checkpoint3.txt",
+        ".agent/qa/111.json",
+        ".agent/evidence/111/35-full.txt",
+        ".agent/evidence/111/history-detail-remedy.txt"
       ],
       "non_goals": [
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "in_progress",
-      "authority_status": "approved-contract",
+      "status": "blocked",
+      "authority_status": "blocked-on-scoped-contract-extension",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
@@ -2690,8 +2693,8 @@
           "reason": "Canonical110 is complete after independentModeB2/sealed21/21QA/evidencegate;111 still requires its own two pre-code contract gates."
         },
         "authority": {
-          "satisfied": true,
-          "reason": "H-PHASE-015 approved7200/9360;111 recovery amendment passed both independent gates after operatorconfirmed0bf3. Prior checker3/3 archived; only checker fresh epoch1 authorized."
+          "satisfied": false,
+          "reason": "Existing015 authority remains valid; current111 contract3/3 forbids new history-preservation exception without specific operator extension. No fourth revision attempted."
         },
         "environment": {
           "satisfied": true,
@@ -2699,7 +2702,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Independent corrected checker review/fresh checkpoint, ModeB, finalQA and evidence gate remain pending; historical failure proof retained."
+          "reason": "Independent finalQA1 actual35 failed C11;34passed,36-38 and own extra spot unrun. Failed candidate/proof retained; no evidence gate or completion."
         }
       },
       "estimate": {
