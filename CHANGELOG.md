@@ -9,6 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Pending NIP planning.** NIP-0003 (0.2.0) now uses provisional110–120, actual
+  delivered F105 claim-map/required-CI facts, available SBCL2.2.9.debian and current
+  historical102/debt/commissioning/maintenance inputs. Its four operator choices
+  and thirteen cases remain preserved. Proposed NIP-0004 (0.1.0) extends the
+  Workflow Assurance outline with staged owners, acceptance checks, evidence,
+  blocking outcomes and unresolved decisions. Only A03-RT/A03-WA-DRAFT/A03-WA-FINAL
+  record drafting delivery; H-NIP acceptance, future H-PHASE, implementation and
+  release decisions remain pending. Current planning overlays are synchronized;
+  historical records and installed v1.5.0 remain frozen.
+
 - **Verified bounded maintenance.** After planning PR81 merged, C13 interruption
   cleanup now composes byte restoration with process-owned scratch cleanup;
   stronger sandbox tests distinguish namespace, filesystem and generated-exec

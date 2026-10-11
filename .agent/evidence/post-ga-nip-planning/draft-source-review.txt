@@ -1,0 +1,14 @@
+ASSESSMENT: independent development-stage draft source review; not final QA or gate acceptance
+APPROVED_BASE: 4663ab4dc39020f4d3226dc0f7e5016a835b4b04
+WORKTREE_SHA256: {".agent/evidence/post-ga-nip-planning/check_nip_planning.py": "900cb1ad7ec695f6458a9c2a3d72301d8618f1028c9908f0c38cdb5e60f9bf60", "docs/nips/NIP-0003-live-runtime-sessions.md": "d041e3c8b723f16af4f3b2fd1524ade9a6138c9eb4e825e89f299de985b22b7e", "docs/nips/NIP-0004-workflow-assurance.md": "5ced151a2a3cd36862670706460bb8af9bfe77820b95dcc2e166f834fef8e027"}
+EXECUTED_AT: 2026-10-11T04:49:12.268327+00:00
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --nip3
+CHECK PASS: nip3
+
+ACTUAL_EXIT: 0
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --wa
+CHECK PASS: wa
+
+ACTUAL_EXIT: 0
+MANUAL REVIEW: WA proposed A09 identity/owned-field invalidation, A10 idempotent reuse/no second scheduler, A11 blocking/advisory empty-array mapping, A04b independent ownership, A14 cause routing with NIP3-110 continuity, A15 preregistered same-candidate shadow comparison/deferred trust, conditional MINOR/MAJOR impact and unresolved operator decisions are substantively described. Pending human gates and future enforcement remain explicit.
+EXIT: 0
