@@ -1,0 +1,5 @@
+COMMAND: bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_valid_reattach_pending.json > .agent/evidence/111/runtime_session_valid_reattach_pending.json.txt 2>&1; fixture_exit=$?; test "$fixture_exit" -eq 0 && rg -F "[C12] PASS" .agent/evidence/111/runtime_session_valid_reattach_pending.json.txt'
+CANDIDATE_SHA: c112ca873b7811755fa45a21810a2ba6fb46db69
+[C12] PASS ecosystem-fixtures --target routed: runtime_session
+
+EXIT: 0

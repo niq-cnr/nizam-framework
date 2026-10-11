@@ -1,0 +1,97 @@
+{
+  "stage": "recovery-epoch1-development-checkpoint2-not-formalQA",
+  "test_author": "/root/release_evaluator",
+  "checker_reviewer": "/root/checker_reviewer_111",
+  "approved_base": "060d1511f4fa27dde3ccea66a7982b82ff75ef47",
+  "root": "/home/cnross/.tmp/nizam-111-detail-implementation2-oy7doupc",
+  "recovery_epoch": 1,
+  "checkpoint": 2,
+  "started_at": "2026-10-11T17:54:56.652194+00:00",
+  "completed_at": "2026-10-11T17:55:42.064151+00:00",
+  "checker_sha256": "ed6f7313933f7fb64ccf87a669b5cc9c1aea320ab1b6ab14ee79a03a0d4d6178",
+  "source_sha256": {
+    "schema/runtime_session.schema.json": "b7e99b7245b2d0e09193326e084fdb8618dce32ccaad084424cd33e1261c54d2",
+    "schema/runtime_operation.schema.json": "ec06f7eb3275e7d94ca9fc46ef0dbe9f0a8906e3c044d8fc7bd7db6f78206a0c",
+    "tools/fixtures/runtime_operation_valid_rejected_foreign_stale.json": "02908c141d9a94839c00089fa279debfad8d82d9360aab1c3aacf478e8574f9e",
+    "tools/fixtures/runtime_operation_neg_foreign_executed.json": "ff244a2c84c8d97095c802e1a3bc643318bb72568d3baf4ffe243faf334c22fe",
+    "tools/fixtures/runtime_operation_neg_stale_generation_executed.json": "0150ef2bb739849f54498a75700a55c470d3f5e10096d54e5f8d47f348a46f1e",
+    "tools/fixtures/runtime_operation_valid_partial_load_condition.json": "a6102df54520eab174b3bdfc56672194fd564a9e97eb56a3d971a39fab3d72e9",
+    "tools/fixtures/runtime_operation_neg_failed_load_consistent.json": "dda13a44ca72285601f7b0ae9fb9b427d68174012ad664fa34f8f21210f69b92",
+    "tools/fixtures/runtime_operation_valid_running_stopped_waiting.json": "cd94cd7cc5f0bcd13a0bd0984f1b0d3a1dcf3577f6d4a3a6ae17a2067f993206",
+    "tools/fixtures/runtime_operation_valid_rejected_busy.json": "8d5d4636ef0a059648b5bfb32eac86644fd6dc4d607f00b5b5f1c5b672acffdc",
+    "tools/fixtures/runtime_operation_neg_timeout_cancelled.json": "3b96296691bb0fb72300f094e739092c2458d2479e1fb14a3dedf0ed3c7ad812",
+    "tools/fixtures/runtime_session_valid_reattach_pending.json": "53bb07a1165d8a3e6946e2e34971d7a94357f8464e540d77368501b7c6ba43a9",
+    "tools/fixtures/runtime_operation_neg_session_result_acceptance.json": "9e7ff2682d38b3c1b3d75d25b2e836cfeb8ff64824c0ac94972a72d52e880887",
+    "tools/fixtures/runtime_operation_valid_trial_rejected.json": "954eeb7f2fd000135f60ebdc7e0e7b0d4f64272af41f8533a7c364d8232ce25a",
+    "tools/fixtures/runtime_operation_neg_trial_executed.json": "795019b79e20e4b417959464525a607b3bab10002a9e1642b18dbdfd0daf838f",
+    "tools/fixtures/runtime_operation_valid_new_generation_same_attempt.json": "bdac01ee62a115ae8f1f82a6f0b74ce6f3163a6c11109d112836f89933be14bb",
+    "tools/fixtures/runtime_session_valid_replayable_handoff.json": "eafcbfec833f40e0926c3d193f3e7d0d2142c72fcc568c11b0a5859a19c3436b",
+    "tools/fixtures/runtime_session_valid_accept_hermetic.json": "65059de5f02a4d168739c6205952098b58a158f8f0898cff0185676d60566285",
+    "tools/fixtures/runtime_session_neg_accept_inherited_cache.json": "9d9303fa17034ac4f056007ab4aa184cbe1575efb987a73641dc168f983e6d40",
+    "tools/fixtures/runtime_session_valid_transfer_lease.json": "28b89077f4b588b2ef0d9f50420f0aafb4d100b50afcc887653b1ed32d0d465f",
+    "tools/fixtures/runtime_operation_neg_stale_lease_executed.json": "d751b7419272349abd88bfbff219b5a33e310c0ea1d80b51248412c81f7f1948",
+    "schema/README.md": "20a9b5521734b2a57cb3456d116879dc073704a9f2dcdd2a423fcb6d0cdd1194",
+    "NIZAM.json": "55bf474f435cbd89c4db77804e11b0f99af28ed5a171ee21425f67761da13528",
+    "tools/validate.sh": "843ba358154b88df16c0854040548f80c37a6bf6de99e3f052b20e2a5255fa72",
+    "tools/verify_lib.sh": "e558776f650476a9b8d3d96314ca23db2d8ce645dabfb1be780f468ea763af01",
+    "tools/README.md": "d13670d6e8232525260a57b3015008e3a25efb93ca3e3bfbc4811404bad5c965",
+    "tools/fixtures_self_test.sh": "393b4c1cbf9d161b5406daa00c14f11e93037c150345f816b78a0d8b4a13fae0",
+    "methodology/10_live_runtime_sessions.md": "a0829b8e10922caf61a1f985643c802b05b4a238bea87758c11eca633e755fec",
+    "CHANGELOG.md": "80e0a9212c271395278142b89ec5d92d2dfadc0dc83f53916a1324e3c39f0a1c"
+  },
+  "checker_review": ".agent/evidence/111/checker-review-detail.json",
+  "checks": [
+    {
+      "mode": "schemas",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --schemas",
+      "evidence": ".agent/evidence/111/history-detail-checkpoint2-schemas.txt",
+      "actual_exit": 0
+    },
+    {
+      "mode": "fixtures",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --fixtures",
+      "evidence": ".agent/evidence/111/history-detail-checkpoint2-fixtures.txt",
+      "actual_exit": 0
+    },
+    {
+      "mode": "routing",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --routing",
+      "evidence": ".agent/evidence/111/history-detail-checkpoint2-routing.txt",
+      "actual_exit": 0
+    },
+    {
+      "mode": "registration",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --registration",
+      "evidence": ".agent/evidence/111/history-detail-checkpoint2-registration.txt",
+      "actual_exit": 0
+    },
+    {
+      "mode": "compatibility",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --compatibility",
+      "evidence": ".agent/evidence/111/history-detail-checkpoint2-compatibility.txt",
+      "actual_exit": 0
+    },
+    {
+      "mode": "lifecycle",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --lifecycle",
+      "evidence": ".agent/evidence/111/history-detail-checkpoint2-lifecycle.txt",
+      "actual_exit": 0
+    },
+    {
+      "mode": "scope",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --scope",
+      "evidence": ".agent/evidence/111/history-detail-checkpoint2-scope.txt",
+      "actual_exit": 0
+    },
+    {
+      "mode": "negative",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/111/check_111.py --negative",
+      "evidence": ".agent/evidence/111/history-detail-checkpoint2-negative.txt",
+      "actual_exit": 0
+    }
+  ],
+  "actual_exit": 0,
+  "checks_run": 8,
+  "checks_passed": 8,
+  "execution_limit": "One authorized serial checkpoint; stop first failure, no rerun/repair, no QA/selfseal/state/debt decision."
+}

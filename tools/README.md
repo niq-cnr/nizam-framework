@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.18.0
+version: 0.19.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.19.0"
+    date: "2026-10-11"
+    summary: "Document ten C12 families and shared pure runtime-record relations; retain the record-only proof boundary."
   - version: "0.18.0"
     date: "2026-10-11"
     summary: "Document the scoped payload help correction and maintenance regression/helper CI commands; capable-host test and closure proof remain pending at source intake."
@@ -150,7 +153,7 @@ full default sweep reports `SUMMARY: 16 passed, 0 failed`:
 | C9 | Repo-wide path-resolution | Every concrete repo-relative file path named in a shipped doc resolves on disk (placeholder/illustrative paths documented-exempt). |
 | C10 | Single-source-of-truth consistency | Payload-set enumeration, bootstrapped-consumer discovery order, and the framework-version anchor stay consistent across every shipped doc. |
 | C11 | Dogfood schema validation | Every `.agent/qa/*.json`, `.agent/contracts/*.json`, and `.agent/run_state.json` (when present) validates against the shipped schemas — enforce-if-present, skip-if-absent for a fresh consumer. |
-| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding,audit_delta,ecosystem_membership,membership_result,reconciliation_plan,release_train_manifest}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving all eight routed families are load-bearing rather than dormant (`membership_result` fixtures target `ecosystem_membership_result.schema.json`). A `--target` invocation against one of these fixtures routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). |
+| C12 | Ecosystem schema-family fixture validation | Every `tools/fixtures/{ecosystem_baseline,preflight_verdict,engineering_finding,audit_delta,ecosystem_membership,membership_result,reconciliation_plan,release_train_manifest,runtime_session,runtime_operation}_*.json` fixture validates (positive) or is rejected (negative) against its shipped schema, proving all ten routed families are load-bearing rather than dormant (`membership_result` fixtures target `ecosystem_membership_result.schema.json`). A `--target` invocation against one of these fixtures routes to a discriminating per-file C12 verdict (feature 052, NDEBT-015), and a non-conforming polarity marker in a fixture name (e.g. uppercase `_NEG_`, full-word `_negative_`) is itself a FAIL (NDEBT-016). Runtime records use shared `vlib_runtime_record_relations` for owner, generation, lease and continuity comparisons in both targeted validation and the sweep. Records prove no live runtime behavior; consumer sessions are not auto-swept. |
 | C13 | Skill-index integrity | `tools/skill.json` JSON-parses, and its `entry_point` plus every `capabilities[].module` pointer resolves to an existing file (NDEBT-007 fix); in `--payload` mode, pointers into the still-non-injected directories (registry/, docs/) are skipped as expected-absent, while methodology/ and ecosystem/ — injected into the payload as of feature 051 (NDEBT-008) — are required to resolve. Every module must also be the authoritative_source of some NIZAM.json capability (an intentional subset, not equality; NIZAM.json-only entries are allowed). |
 | C14 | Workflow SHA-pinning | Every external (third-party) `uses:` reference in `.github/workflows/` is pinned to a 40-hex commit SHA, not a floating tag or branch; local `./`/`../` actions are exempt (they ship in-repo and need no pin). Feature 058 — mechanizes `standard/provenance_policy.md`'s SHA-pinned-Actions requirement; default sweep only. |
 | C15 | Capability-profile ↔ AGF-role mapping | C15 calls both `vlib_profiles_cover_roles` (5↔5 coverage: every profile identifier in `standard/capability_profiles.md` is present and each one's corresponding role is defined in `standard/AGF.md`) and `vlib_profiles_map_roles` (phase-014 feature 109, NDEBT-026), a primitive that parses the table's explicit `Role` column and fails unless each of the five profile rows names its own role — so a swapped profile-to-role mapping now fails C15. Feature 058 — mechanizes the five-profile ↔ five-role correspondence; 109 adds the Role column and the mapping primitive; default sweep only. |

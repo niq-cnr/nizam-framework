@@ -9,6 +9,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Runtime provenance records (feature111).** Added two closed Draft2020-12
+  schemas with phase016 fields, eighteen top-level discriminating fixtures and
+  shared C12 owner/generation/lease/continuity validation in targeted and full
+  sweeps. Registered the schemas and fixture completeness rows; corrected the
+  neutral protocol's current record-validation boundary. Record validity never
+  proves live runtime enforcement or acceptance; binding, adapter, controller
+  and all thirteen live cases remain pending. Installed v1.5.0 is unchanged.
+
 - **Authorized phase015 and neutral runtime protocol (feature110).** Added active
   consumer-aspirational live-runtime rules, generic fresh acceptance and attempt
   continuity, narrow session permissions, review denial, durable handoff criteria

@@ -1,0 +1,25 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 /home/cnross/.tmp/nizam111-acceptance-detail-r4oo__ce/spot.py
+CANDIDATE_SHA: c112ca873b7811755fa45a21810a2ba6fb46db69
+ACTOR: /root/acceptance_detail_111
+SPOT: schema-valid reattachment must preserve outstanding operation, beyond contracted reattach-generation mutation
+INNER_COMMAND: git clone --quiet --no-hardlinks /home/cnross/workspace02/nizam-framework /home/cnross/.tmp/nizam111-own-reattach-spot-nob9e9iv/tree
+INNER_EXIT: 0
+INNER_COMMAND: git checkout --quiet --detach c112ca873b7811755fa45a21810a2ba6fb46db69
+INNER_EXIT: 0
+VALIDATED_PRIVATE_ROOT: /home/cnross/.tmp/nizam111-own-reattach-spot-nob9e9iv/tree
+MUTANT_SCHEMA_ERRORS: 0; changed only outstanding_operation_ref
+INNER_COMMAND: bash -c 'source tools/verify_lib.sh; vlib_runtime_record_relations "$1" "$2"' own-spot runtime_session tools/fixtures/runtime_session_valid_reattach_pending.json
+tools/fixtures/runtime_session_valid_reattach_pending.json: runtime_session:reattach_outstanding_operation
+INNER_EXIT: 1
+INNER_COMMAND: bash tools/validate.sh --target tools/fixtures/runtime_session_valid_reattach_pending.json
+[C12] FAIL ecosystem-fixtures --target routed: runtime_session
+  tools/fixtures/runtime_session_valid_reattach_pending.json: runtime_session:reattach_outstanding_operation
+INNER_EXIT: 1
+INNER_COMMAND: bash -c 'source tools/verify_lib.sh; vlib_runtime_record_relations "$1" "$2"' own-spot runtime_session tools/fixtures/runtime_session_valid_reattach_pending.json
+INNER_EXIT: 0
+INNER_COMMAND: bash tools/validate.sh --target tools/fixtures/runtime_session_valid_reattach_pending.json
+[C12] PASS ecosystem-fixtures --target routed: runtime_session
+INNER_EXIT: 0
+OWN ADVERSARIAL PASS: genuine relation and C12 rejection; original exact bytes restored; positive helper and target both EXIT0
+
+EXIT: 0

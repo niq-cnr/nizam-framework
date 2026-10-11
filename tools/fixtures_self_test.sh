@@ -316,6 +316,26 @@ note_covered bare_ref_fail.md
 assert_rc "primitive   vlib_bare_ref_resolves pass" 0 vlib_bare_ref_resolves tools/fixtures/bare_ref_pass.md tools/fixtures/enum_index.json
 assert_rc "primitive   vlib_bare_ref_resolves fail" 1 vlib_bare_ref_resolves tools/fixtures/bare_ref_fail.md tools/fixtures/enum_index.json
 
+# Feature111: top-level runtime provenance fixtures; no nested claim-map row.
+assert_target runtime_operation_valid_rejected_foreign_stale.json C12 PASS
+assert_target runtime_operation_neg_foreign_executed.json C12 FAIL
+assert_target runtime_operation_neg_stale_generation_executed.json C12 FAIL
+assert_target runtime_operation_valid_partial_load_condition.json C12 PASS
+assert_target runtime_operation_neg_failed_load_consistent.json C12 FAIL
+assert_target runtime_operation_valid_running_stopped_waiting.json C12 PASS
+assert_target runtime_operation_valid_rejected_busy.json C12 PASS
+assert_target runtime_operation_neg_timeout_cancelled.json C12 FAIL
+assert_target runtime_session_valid_reattach_pending.json C12 PASS
+assert_target runtime_operation_neg_session_result_acceptance.json C12 FAIL
+assert_target runtime_operation_valid_trial_rejected.json C12 PASS
+assert_target runtime_operation_neg_trial_executed.json C12 FAIL
+assert_target runtime_operation_valid_new_generation_same_attempt.json C12 PASS
+assert_target runtime_session_valid_replayable_handoff.json C12 PASS
+assert_target runtime_session_valid_accept_hermetic.json C12 PASS
+assert_target runtime_session_neg_accept_inherited_cache.json C12 FAIL
+assert_target runtime_session_valid_transfer_lease.json C12 PASS
+assert_target runtime_operation_neg_stale_lease_executed.json C12 FAIL
+
 # vlib_enumeration_complete (F-055, NDEBT-005a): the guard enumerates a
 # DIRECTORY, so its seeded omission is built through scratch_dirs (Section 11
 # probe isolation), the same guarded pattern the two primitives below use. A

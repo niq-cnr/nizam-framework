@@ -9,12 +9,12 @@
   "activated_phase": {
     "phase_id": "015-live-runtime-normative",
     "feature_list": ".agent/feature_list_015.json",
-    "spec_version": "1.0.0",
+    "spec_version": "1.0.1",
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
     "current_status": "in_progress",
     "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
-    "run_state_position": "Derived by Orchestrator from canonical phase/list;110 approved implementation,111-114pending.",
+    "run_state_position": "Derived from canonical phase/list:111 complete after independent acceptance/evidence;112 pending its own contract gates. Historical checker recovery epoch1 retained.",
     "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
   },
   "estimate_weighting": {
@@ -993,7 +993,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "099",
-      "objective": "GA-track activation wave — register ecosystem/06+08 and define the reserved gates",
+      "objective": "GA-track activation wave \u2014 register ecosystem/06+08 and define the reserved gates",
       "scope": {
         "allowed_paths": [
           "ecosystem/06_simplification_review.md",
@@ -1090,7 +1090,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "103",
-      "objective": "Sandbox prerequisite handling — explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043)",
+      "objective": "Sandbox prerequisite handling \u2014 explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043)",
       "scope": {
         "allowed_paths": [
           "tools/test_convergent_review.py",
@@ -1289,7 +1289,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "105",
-      "objective": "Nested-fixture ownership — the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042)",
+      "objective": "Nested-fixture ownership \u2014 the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042)",
       "scope": {
         "allowed_paths": [
           "tools/fixtures_self_test.sh",
@@ -1384,7 +1384,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "106",
-      "objective": "Capability-index parity — skill.json is a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a)",
+      "objective": "Capability-index parity \u2014 skill.json is a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a)",
       "scope": {
         "allowed_paths": [
           "tools/validate.sh",
@@ -1681,7 +1681,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "109",
-      "objective": "C15 mapping direction — an explicit Role column parsed by a new primitive; a swapped profile->role mapping fails (NDEBT-026)",
+      "objective": "C15 mapping direction \u2014 an explicit Role column parsed by a new primitive; a swapped profile->role mapping fails (NDEBT-026)",
       "scope": {
         "allowed_paths": [
           "standard/capability_profiles.md",
@@ -1780,7 +1780,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "108",
-      "objective": "Validator help and adapter-reference truth — C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f)",
+      "objective": "Validator help and adapter-reference truth \u2014 C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f)",
       "scope": {
         "allowed_paths": [
           "tools/validate.sh",
@@ -2673,14 +2673,16 @@
         "bash tools/validate.sh --payload"
       ],
       "evidence": [
-        ".agent/evidence/111/"
+        ".agent/qa/111.json",
+        ".agent/evidence/111/evidence-gate.txt",
+        ".agent/evidence/111/111-qa-adversarial.txt"
       ],
       "non_goals": [
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
-      "authority_status": "blocked-on-contract-and-predecessor",
+      "status": "complete",
+      "authority_status": "approved-contract",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
@@ -2689,16 +2691,16 @@
           "reason": "Canonical110 is complete after independentModeB2/sealed21/21QA/evidencegate;111 still requires its own two pre-code contract gates."
         },
         "authority": {
-          "satisfied": false,
-          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
+          "satisfied": true,
+          "reason": "Operator bounded PR86 repair at55e39; revision4 passed both independent gates. Only exact current402detail and narrow verified comparison normalization; originalhistory/counters/failedQA preserved."
         },
         "environment": {
           "satisfied": true,
           "reason": "none (normative + schema)"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Pending015 plan source is available; feature implementation acceptance/QA/evidence is not delivered."
+          "satisfied": true,
+          "reason": "Actual renewedModeB3 and fresh independent38/38fixedcandidate acceptance plus own adversarialspot/evidencegate verified the bounded repair; prior failures preserved."
         }
       },
       "estimate": {
@@ -2779,8 +2781,8 @@
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "Canonical lifecycle is read from feature_list_015.json; predecessor completion remains required."
+          "satisfied": true,
+          "reason": "Canonical111 completed after actual renewedModeB3, independent38/38acceptance and evidencegate;112 awaits its own contract gates."
         },
         "authority": {
           "satisfied": false,

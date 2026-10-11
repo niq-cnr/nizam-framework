@@ -1,0 +1,13 @@
+COMMAND: python3 -c 'import json
+from pathlib import Path
+d=json.loads(Path('"'"'schema/runtime_session.schema.json'"'"').read_text())
+def closed(v):
+ if isinstance(v,dict):
+  if v.get('"'"'type'"'"')=='"'"'object'"'"': assert v.get('"'"'additionalProperties'"'"') is False
+  for c in v.values(): closed(c)
+ elif isinstance(v,list):
+  for c in v: closed(c)
+closed(d)'
+CANDIDATE_SHA: c112ca873b7811755fa45a21810a2ba6fb46db69
+
+EXIT: 0
