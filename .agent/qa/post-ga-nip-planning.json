@@ -1,0 +1,93 @@
+{
+  "feature_id": "post-ga-nip-planning",
+  "candidate_sha": "8899c139a1f9116af865241ceb7a835334e1080d",
+  "base_sha": "4663ab4dc39020f4d3226dc0f7e5016a835b4b04",
+  "source_sha256": {
+    "docs/nips/NIP-0003-live-runtime-sessions.md": "d041e3c8b723f16af4f3b2fd1524ade9a6138c9eb4e825e89f299de985b22b7e",
+    "docs/nips/NIP-0004-workflow-assurance.md": "5ced151a2a3cd36862670706460bb8af9bfe77820b95dcc2e166f834fef8e027",
+    "docs/planning/backlog_dag.json": "33e1348dd3f46e0c7f86278842a7f6b92e61fb245d0886fa213b57e27f715b1a",
+    "docs/planning/backlog_reconciliation.md": "c3dcedc6735cad5a061fec5d542f972f28abfbee660141fb011bbb8b8e6d2946",
+    "docs/planning/ROADMAP.md": "70ecbafa72281864686f932add580ba10d54784f23e4965d6375b1082e918a3f",
+    "docs/planning/HANDOVER.md": "2dacef9ec562198879323f08fc935739eddf56f40dfdb47bc92f8f455d1e0f72",
+    "docs/planning/operator_gates.md": "53e8cd97754b314e74cadfb5d11f00e30f66557aae04dc895c0a50335d731d78",
+    "CHANGELOG.md": "adacd43a18d7253ae4e227fd3b8b4b4f304eda9a424c0e6d651419ad0a881b65",
+    ".agent/evidence/post-ga-nip-planning/check_nip_planning.py": "042abc13593204f6f4faeb2fafc08bddab0fddd70ed715915272baddd66223c2",
+    ".agent/evidence/post-ga-nip-planning/runtime.json": "e35175fca9a3cdd423b19931684bd22ddfb43fc16b8d6bc9c1bf19568ef9915b",
+    ".agent/evidence/post-ga-nip-planning/runtime-version.txt": "d06e8cbd69047ccbae99ced57b54c9fe2afc3586dab9b4bee088318ea9cca4f5",
+    ".agent/evidence/post-ga-nip-planning/draft-source-review.txt": "ef6ec979178d3551fc269bc6a87b1896e2b8793331cb9973673679f9387907b9"
+  },
+  "qa_pass": true,
+  "checks_run": 6,
+  "checks_passed": 6,
+  "executed_at": "2026-10-11T04:54:52.032458+00:00",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --nip3",
+      "acceptance_test": "AT1: NIP3 current facts match actual source/evidence/runtime/YAML and protected13-case table/four decisions preserve exact permitted normalization.",
+      "evidence": ".agent/evidence/post-ga-nip-planning/01-nip3.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --wa",
+      "acceptance_test": "AT2: Proposed WA includes staged decision and acceptance matrix for identity/invalidation/gates/verdict/test ownership/routing/profile/concurrency; acceptance/activation pending. Parse eight explicit rows identity/invalidation/gates/verdict/test-ownership/routing/profiles/concurrency, every required owner/input/check/evidence/blocking-outcome/allowed-transition/gate column and unresolved-choice dependency table; proposed review pass never bypasses H-NIP.",
+      "evidence": ".agent/evidence/post-ga-nip-planning/02-wa.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --planning",
+      "acceptance_test": "AT3: Only authorized revision/drafting deliveries advance; consistent current inputs/edges/authority; all acceptance, future implementation and phase gates stay pending.",
+      "evidence": ".agent/evidence/post-ga-nip-planning/03-planning.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --scope",
+      "acceptance_test": "AT4: Exact allowed product/new task artifacts and bounded parent fields; all immutable source/evidence/history/installed/phase records preserved.",
+      "evidence": ".agent/evidence/post-ga-nip-planning/04-scope.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/post-ga-nip-planning/check_nip_planning.py --negative",
+      "acceptance_test": "AT5: Independent isolated controls reject job-count mismatch, stale provisional IDs/F101 premise/SBCL claim, changed protected case/decision and combined authority/status acceptance spoof. Valid full proposed WA matrix passes; missing-owner, empty-row and pass-bypasses-H-NIP mutants specifically reject without setup-error substitution.",
+      "evidence": ".agent/evidence/post-ga-nip-planning/05-negative.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/validate.sh && python3 .github/scripts/release_closeout.py --mode pr && PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "acceptance_test": "AT6: Full documentation compliance/release closeout and exact commissioned installation remain green.",
+      "evidence": ".agent/evidence/post-ga-nip-planning/06-compliance-install.txt",
+      "exit_code": 0
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Independent private-clone unchanged/restored positives plus four actual scope/authority bypasses: untracked installed file, unowned coordinator position, task-owned history smuggling operator acceptance, and prior evidence rewrite.",
+    "result": "pass: all four mutations rejected exit1 with named invariant diagnostics; both real positives exit0",
+    "evidence": ".agent/evidence/post-ga-nip-planning/qa-adversarial.txt",
+    "mutations_checked": 4
+  },
+  "manual_document_review": "Manually assessed the actual candidate Workflow Assurance draft: identity and relevant-input invalidation; synthetic checkout/source binding; stage-specific human/automated gates; blocking versus advisory convergent findings with empty-array rules; independent developer/test-author/acceptance-reviewer identities and real red evidence; parsed owned-field/history comparison; idempotent recovery without a second scheduler; cause-based routing dependent on NIP3-110 and unchanged current attempt counters; deferred preregistered same-candidate Routine/Standard/High-assurance shadow comparison; isolation/conflicts/rollback; conditional MINOR/MAJOR impact and unresolved operator choices. These are reviewable proposed obligations, not claims that future enforcement works. NIP3 preserves its thirteen-case table/four choices, current evidence gaps and pending gates.",
+  "evidence_files": [
+    ".agent/evidence/post-ga-nip-planning/01-nip3.txt",
+    ".agent/evidence/post-ga-nip-planning/02-wa.txt",
+    ".agent/evidence/post-ga-nip-planning/03-planning.txt",
+    ".agent/evidence/post-ga-nip-planning/04-scope.txt",
+    ".agent/evidence/post-ga-nip-planning/05-negative.txt",
+    ".agent/evidence/post-ga-nip-planning/06-compliance-install.txt",
+    ".agent/evidence/post-ga-nip-planning/qa-adversarial.txt",
+    ".agent/evidence/post-ga-nip-planning/qa-source-identity.txt",
+    ".agent/evidence/post-ga-nip-planning/qa-manual-document-review.txt",
+    ".agent/evidence/post-ga-nip-planning/runtime-version.txt",
+    ".agent/evidence/post-ga-nip-planning/runtime.json",
+    ".agent/evidence/post-ga-nip-planning/draft-source-review.txt",
+    ".agent/evidence/post-ga-nip-planning/source-candidate.json"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "All six exact contracted commands pass at8899c139;12 candidate source hashes verified against current bytes and immutable Git blobs. Twelve discriminating controls and four independent private-copy bypass probes pass. NIP3 current truth/protected cases and decisions, substantive proposed WA matrices/choices, three genuinely verified drafting deliveries, pending human gates, exact historical/installed/source scope and full compliance/release closeout are confirmed. No NIP acceptance, future policy execution, phase activation, release or installed upgrade claimed."
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
