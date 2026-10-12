@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T15:59:14.623572+00:00",
+  "updated_at": "2026-10-12T19:07:36.396137+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3819,6 +3819,12 @@
       "event": "114-final-frozen-budget-recorded",
       "detail": "Actual frozen classifier0/unclassified0: Product9+process531=540, completedphase7319/9360. Prior completed111/112/113-only threshold5068 before114append; old7200 allowance, historical blocked114256 and all completed records preserved. No own-cost rebaseline or extra scope.",
       "evidence": ".agent/evidence/114/scope-measurement-final.txt"
+    },
+    {
+      "at": "2026-10-12T19:07:36.396137+00:00",
+      "event": "workflow-016-planning-authorized",
+      "detail": "Great work! Think carefully about the optimal execution DAG and then you are approved to proceed. Expedite. Before proceeding ask bullet point questions if you need more information or further clarification. You are authorized to manage, triage as necessary, your PR's and once clean merge as appropriate. Workflow Assurance planning, followed by phase 016 planning.",
+      "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4409,7 +4415,7 @@
       }
     ]
   },
-  "last_action": "Canonical114/phase015 complete; actual frozen540 added once, cumulative7319/9360. Current closure validation and cleanPR merge next. PLAN-WA pending eligible planning; PLAN-016 pending after PLAN-WA; future release/runtime/installed upgrade gates remain separate.",
+  "last_action": "Authorized PLAN-WA then PLAN-016 planning in isolated attempt1; independent gates required. Phase015 remains complete, original budget/history preserved; no activation or installed change.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4484,5 +4490,12 @@
     ],
     "note": "Phase 014 final ledger. 8705 of 8600 (101.2%): 105 over the operator-confirmed re-baseline estimate (spec 1.1.4, 'option 1 confirmed.'), comfortably within the 11180 authorized 130% ceiling. Completed features 099 + 103-109 + 102 (9 features); cancelled 100/101 (A3) consumed no budget. Historical-basis estimates for 099/103 (920/280) are mixed-basis and disclosed per their ledger entries. Captures: measure-099-103.txt, measure-105.txt, measure-108.txt, measure-109.txt, measure-102.txt."
   },
-  "pending_operator_gate": null
+  "pending_operator_gate": null,
+  "planning_task": {
+    "id": "workflow-016-planning",
+    "status": "planning",
+    "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json",
+    "attempt_root": "/home/cnross/.tmp/nizam-wa016-plan-attempt1-207l_sra",
+    "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0"
+  }
 }
