@@ -1,0 +1,32 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import importlib.util,pathlib,copy,json
+r=pathlib.Path('"'"'.'"'"').resolve();h=r/'"'"'.agent/evidence/workflow-016-planning/check_plans.py'"'"'
+s=importlib.util.spec_from_file_location('"'"'checker_review'"'"',h);m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+lists={p:m.read('"'"'.agent/feature_list_'"'"'+p+'"'"'.json'"'"') for p in m.PHASES}
+manifest=m.read('"'"'docs/planning/manifest.json'"'"');old=json.loads(m.original('"'"'docs/planning/manifest.json'"'"'))
+m.manifest_projection(manifest,old,lists)
+bad=copy.deepcopy(manifest);bad['"'"'phases'"'"'][-1]['"'"'phase_definition'"'"']='"'"'docs/planning/phase_016.yaml'"'"'
+try:m.manifest_projection(bad,old,lists)
+except ValueError as err:assert str(err)=='"'"'manifest-id'"'"',str(err);print('"'"'WRONG_PHASE_DEFINITION_REJECTED:'"'"',str(err))
+else:raise AssertionError('"'"'wrong phase_definition passed'"'"')
+m.manifest_projection(manifest,old,lists);print('"'"'RESTORED_MANIFEST_PASS: True'"'"')
+result=m.check_lists(lists);m.metadata(lists,result,True);dag=m.read('"'"'docs/planning/backlog_dag.json'"'"')
+m.projections(lists,result,dag)
+for frozen_id in ('"'"'NIP3-114'"'"','"'"'F101'"'"'):
+ bad=copy.deepcopy(dag);packet=next(p for p in bad['"'"'packets'"'"'] if p['"'"'id'"'"']==frozen_id)
+ assert packet['"'"'status'"'"'] in ('"'"'complete'"'"','"'"'cancelled'"'"')
+ packet['"'"'actual_assigned'"'"']=[{'"'"'phase'"'"':lists['"'"'017'"'"']['"'"'phase'"'"'],'"'"'feature_id'"'"':'"'"'115'"'"','"'"'evidence'"'"':'"'"'.agent/evidence/115/'"'"'}]
+ try:m.projections(lists,result,bad)
+ except ValueError as err:assert str(err)=='"'"'historical-packet'"'"',str(err);print('"'"'FROZEN_PACKET_ALIAS_REJECTED:'"'"',frozen_id,str(err))
+ else:raise AssertionError('"'"'frozen packet alias addition passed'"'"')
+ m.projections(lists,result,dag)
+print('"'"'RESTORED_PROJECTIONS_PASS: True'"'"')
+'
+REVISION: 043984bb2ea22f04bfde6f5a17483c3462be394d
+HELPER_SHA256: 2dccf3bc1757b520742ff23726f6f1a2dd9ec28e69cc63e9ebde7efca79fd0ac
+WRONG_PHASE_DEFINITION_REJECTED: manifest-id
+RESTORED_MANIFEST_PASS: True
+FROZEN_PACKET_ALIAS_REJECTED: NIP3-114 historical-packet
+FROZEN_PACKET_ALIAS_REJECTED: F101 historical-packet
+RESTORED_PROJECTIONS_PASS: True
+
+EXIT: 0

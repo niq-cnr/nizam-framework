@@ -1,0 +1,56 @@
+{
+  "review": "contract-testability",
+  "feature": "workflow-016-planning",
+  "contract_id": "workflow-016-planning",
+  "revision_reviewed": 0,
+  "actor": "/root/planning_evaluator",
+  "owned_root": "/home/cnross/.tmp/nizam-wa016-evaluator-review1-alg6slvn",
+  "base_revision": "e22a3bf4c748cbd4f9daf9b0f66c4a0a6e5efc80",
+  "contract_sha256": "bd713313f753b3bdee5809db8fad755cfd6d8b19ffc9f58847c437a312cf90f9",
+  "spec_sha256": "840a481a22b3506f423a45bb56cde03d0111ff64379cac9b92b8ed7589313873",
+  "schema_ref": ".nizam/schema/contract_review.schema.json",
+  "schema_sha256": "a169df1771ecc30e61bcc4c3e08cc870ce430b85b4a087320f49b7308c957082",
+  "reviewed_inputs": [
+    ".agent/contracts/workflow-016-planning.json",
+    ".agent/product_spec_workflow_016_planning.md",
+    ".nizam/schema/contract.schema.json",
+    ".nizam/schema/feature_list.schema.json",
+    ".nizam/schema/phase.schema.json",
+    ".nizam/schema/manifest.schema.json",
+    ".nizam/methodology/02_adversarial_tdd.md"
+  ],
+  "issues": [
+    {
+      "verification_index": 3,
+      "criterion": "Bounded specification-derived public scope; protected gates remain unchanged.",
+      "evidence": ".agent/contracts/workflow-016-planning.json scope.files_modify contains docs/planning/operator_gates.md at exact reviewed contract digest; .agent/product_spec_workflow_016_planning.md Deliverables and boundaries enumerates permitted public overlays without that path, and Delivery verification requires protected scope unchanged.",
+      "required_fix": "Remove the unnecessary operator_gates.md modification from contract scope and retain existing gates unchanged; re-enter both independent pre-code gates for the revised exact proposal.",
+      "severity": "high"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    {
+      "area": "verification soundness",
+      "finding": "All nine commands directly expose actual command exit status, with no swallowed pipeline exits, locale sorting, vacuous whole-file grep or literal-substring comparisons. Existing compliance, release close-out and install entry points exist; --mode pr and --payload are supported source interfaces."
+    },
+    {
+      "area": "future checker obligation",
+      "finding": "Four checker modes are explicit future outputs owned by this independent Evaluator after both gates; no absent checker, future plans or live runner was run during this review. Installed schemas, immutable baseline ID allocation, external accepted case table, six choices and protected histories anchor the declared expected values."
+    },
+    {
+      "area": "adversarial scope",
+      "finding": "Contract explicitly requires targeted scratch duplicate/dangling/cycle/global serialization cycle/activation/budget/case-runtime/case8-layer/fixture-proof/protected-write controls plus a restored valid model. Distinct bundle review and fresh final QA with one additional unlisted adversarial check remain mandatory."
+    },
+    {
+      "area": "semantic verification limits",
+      "finding": "Checker structural coverage requires the separate declared manual review of all plans/public diff; future WA and SBCL behavior remains future acceptance. sbcl --version proves environment identity only."
+    }
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "workflow-016-planning",
+    "summary": "Reject exact initial proposal for one specification-to-contract public scope mismatch; verification obligations otherwise provide bounded, independent and externally anchored planning coverage."
+  }
+}

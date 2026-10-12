@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.14
+version: 0.1.15
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
 last_audited: "2026-10-11"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.15"
+    date: "2026-10-12"
+    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
   - version: "0.1.14"
     date: "2026-10-12"
     summary: "Add bounded current114 readiness projection while preserving prior reconciliation; canonical close follows actual independent capture."
@@ -157,6 +160,34 @@ PLAN-016 remains pending after PLAN-WA serialization and its own planning gates.
 Controller/SBCL/live13 proofs, capable CI, future release/tag and consumer upgrade
 remain outstanding. No new phase is allocated; earlier prose and prior history
 remain dated records.
+
+### Current planning allocation — 2026-10-12
+
+This overlay supersedes earlier unallocated/pending feature 114 statements while preserving
+their dated text. Phase 015 and features 110–114 are complete, with 7,319 counted lines against
+7,200/9,360. Delivered draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
+(7,200/9,360), phase 019: 124–125 (3,500/4,550), controller phase 016: 126–128 (5,650/7,345), and
+SBCL phase 020: 129–132 (7,350/9,555). All phases/features, H-PHASE gates and future budget
+approvals remain pending. PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
+fresh QA and evidence capture.
+
+Recommended execution is 017→016→018→020→019. Historical packet edges remain
+unchanged; proposed supersessions resolve NIP3-116 to 127 core versus 131 final CI.
+Controls require 127; SBCL 129 requires trusted 119/120/123; profiles 124/125 retain
+controller 132 delay. Stable aliases NIP3-115…120 map to 126, 127+131, 129, 130, 131, 132;
+these aliases reserve no numeric evidence paths. Full WA/controller budget estimates: 16,100/13,000
+include product, independent tests and counted process/closure, split against 7,200/8,600
+predecessents. Task 1,200 is a separate proposal; no phase 015 rebaseline.
+
+Canonical inputs are [WA specs/lists](../../.agent/feature_list_017.json),
+[controls](../../.agent/feature_list_018.json), [profiles](../../.agent/feature_list_019.json),
+[controller](../../.agent/product_spec_016.md)/[list](../../.agent/feature_list_016.json)
+and [fresh acceptance](../../.agent/product_spec_020.md)/[list](../../.agent/feature_list_020.json).
+Local SBCL version supplies environment information only; capable CI and all 13
+live cases remain future. Installed/released v1.5.0 and Open debts NDEBT-040/NDEBT-034 are preserved.
+Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
+[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
+Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Prior reconciliation history
 

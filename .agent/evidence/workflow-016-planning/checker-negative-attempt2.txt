@@ -1,0 +1,127 @@
+COMMAND PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/workflow-016-planning/check_plans.py --negative
+REVISION 132480aab50424f8b3815fba7159b27a5a2bcfdc
+EXISTING_TASK_SNAPSHOT 84cc13da81ea3db65ea3f083030862982b086af8
+CHECKER_SHA256 c50a9f8c88de2fa504f66d52f229833d96811ec710e98dd9c560263caa8fb087
+{
+  "negative_controls": [
+    {
+      "control": "duplicate",
+      "rejection": "duplicate",
+      "restored_valid": true
+    },
+    {
+      "control": "schema-required-key",
+      "rejection": "'spec_version' is a required property",
+      "restored_valid": true
+    },
+    {
+      "control": "dangling",
+      "rejection": "list:dangling",
+      "restored_valid": true
+    },
+    {
+      "control": "cycle",
+      "rejection": "list:cycle",
+      "restored_valid": true
+    },
+    {
+      "control": "activation",
+      "rejection": "activation",
+      "restored_valid": true
+    },
+    {
+      "control": "budget",
+      "rejection": "budget-sum",
+      "restored_valid": true
+    },
+    {
+      "control": "omitted-case",
+      "rejection": "case-coverage",
+      "restored_valid": true
+    },
+    {
+      "control": "stale-fixture-proof",
+      "rejection": "case-proof",
+      "restored_valid": true
+    },
+    {
+      "control": "omitted-case8-layer",
+      "rejection": "case-coverage",
+      "restored_valid": true
+    },
+    {
+      "control": "global-duplicate",
+      "rejection": "global-duplicate",
+      "restored_valid": true
+    },
+    {
+      "control": "wrong-case-command",
+      "rejection": "case-command",
+      "restored_valid": true
+    },
+    {
+      "control": "vacuous-echo-command",
+      "rejection": "future-interface",
+      "restored_valid": true
+    },
+    {
+      "control": "expanded-crossphase-cycle",
+      "rejection": "proposed-phase:cycle",
+      "restored_valid": true
+    },
+    {
+      "control": "global-serialization-cycle",
+      "rejection": "global:cycle",
+      "restored_valid": true
+    },
+    {
+      "control": "protected-untracked",
+      "rejection": "protected-scope",
+      "restored_valid": true
+    },
+    {
+      "control": "protected-history-mutation",
+      "rejection": "protected-scope",
+      "restored_valid": true
+    },
+    {
+      "control": "current-phase-spoof",
+      "rejection": "current-phase",
+      "restored_valid": true
+    },
+    {
+      "control": "changed-authorization",
+      "rejection": "immutable-task-bytes",
+      "restored_valid": true
+    },
+    {
+      "control": "missing-receipt",
+      "rejection": "immutable-task-missing",
+      "restored_valid": true
+    },
+    {
+      "control": "evidence-type",
+      "rejection": "immutable-task-type",
+      "restored_valid": true
+    },
+    {
+      "control": "evidence-mode",
+      "rejection": "immutable-task-mode",
+      "restored_valid": true
+    },
+    {
+      "control": "unrelated-evidence-mutation",
+      "rejection": "immutable-task-bytes",
+      "restored_valid": true
+    },
+    {
+      "control": "legitimate-new-receipt",
+      "result": "accepted",
+      "restored_valid": true
+    }
+  ],
+  "mode": "negative",
+  "passed": true,
+  "revision": "132480aab50424f8b3815fba7159b27a5a2bcfdc"
+}
+EXIT 0

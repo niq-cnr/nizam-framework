@@ -1,0 +1,207 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index fcc2034..ffb18d6 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,13 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Changed
+ 
+-- **Proposed WA and controller planning.** Prepared five pending phase plans,
++- **WA and controller planning delivery.** Delivered draft plans for five pending phases,
+   allocating WA features 115–125 before controller features 126–132 with full budgets and independent
+   future acceptance ownership. Recommended foundation 017→core 016→controls 018→
+   fresh 020→profiles 019; preserved original backlog edges and recorded explicit
+   proposed split-alias bindings. Public projections reference
+   [.agent/evidence/workflow-016-planning/plan-validation.json](.agent/evidence/workflow-016-planning/plan-validation.json).
+-  Planning completion awaits actual independent QA/capture. Future phase/budget
++  Planning delivery passed independent Mode B, fresh QA and evidence capture.
++  Actual planning acceptance: [QA](.agent/qa/workflow-016-planning.json) and
++  [capture](.agent/evidence/workflow-016-planning/evidence-capture.json).
++ Future phase/budget
+   activation, runtime/live CI acceptance, release/tag and installed upgrade remain
+   separately gated; closed phase 015 and published v1.5.0 are preserved.
+ 
+diff --git a/docs/nips/NIP-0003-live-runtime-sessions.md b/docs/nips/NIP-0003-live-runtime-sessions.md
+index 73b0dcc..7f53201 100644
+--- a/docs/nips/NIP-0003-live-runtime-sessions.md
++++ b/docs/nips/NIP-0003-live-runtime-sessions.md
+@@ -10,7 +10,7 @@ tags: [nip, methodology, runtime-session, execution, evaluator-independence, cir
+ change_log:
+   - version: "1.1.2"
+     date: "2026-10-12"
+-    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
++    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
+   - version: "1.1.1"
+     date: "2026-10-12"
+     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+@@ -114,12 +114,14 @@ remains outstanding and any later actual consolidation decision is an input.
+ ### Current planning delivery — 2026-10-12
+ 
+ The dated unallocated and activation-time pending statements above are superseded:
+-phase 015 and features 110–114 are complete; prepared draft controller phase 016 allocates 126–128
++phase 015 and features 110–114 are complete; the delivered draft plan for controller phase 016 allocates 126–128
+ and fresh/SBCL phase 020 allocates 129–132, after WA features 115–125. See [core spec](../../.agent/product_spec_016.md),
+ [core list](../../.agent/feature_list_016.json), [fresh spec](../../.agent/product_spec_020.md)
+-and [fresh list](../../.agent/feature_list_020.json). PLAN-WA/PLAN-016 remain pending
+-until final independent QA/capture. All future H-PHASE gates, budgets and
++and [fresh list](../../.agent/feature_list_020.json). PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
++fresh QA and evidence capture. All future H-PHASE gates, budgets and
+ implementation remain pending; the thirteen cases below remain unchanged.
++Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
++[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
+ Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+ 
+ ## Problem
+diff --git a/docs/nips/NIP-0004-workflow-assurance.md b/docs/nips/NIP-0004-workflow-assurance.md
+index 3f66b2a..81e1d2f 100644
+--- a/docs/nips/NIP-0004-workflow-assurance.md
++++ b/docs/nips/NIP-0004-workflow-assurance.md
+@@ -8,7 +8,7 @@ authoritative_source: docs/nips/NIP-0004-workflow-assurance.md
+ change_log:
+   - version: "1.1.1"
+     date: "2026-10-12"
+-    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
++    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
+   - version: "1.1.0"
+     date: "2026-10-11"
+     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
+@@ -36,14 +36,17 @@ separate phase planning, H-PHASE activation and independent contract gates.
+ 
+ ### Current WA planning — 2026-10-12
+ 
+-This dated overlay supersedes earlier unallocated statements. Prepared draft plans
++This dated overlay supersedes earlier unallocated statements. Delivered draft plans
+ allocate phase 017 foundation 115–118, phase 018 controls 119–123 and 019 deferred profiles 124–125.
+ See [foundation spec](../../.agent/product_spec_017.md)/[list](../../.agent/feature_list_017.json),
+ [controls spec](../../.agent/product_spec_018.md)/[list](../../.agent/feature_list_018.json)
+ and [profiles spec](../../.agent/product_spec_019.md)/[list](../../.agent/feature_list_019.json).
+-PLAN-WA/PLAN-016 completion awaits actual final independent QA and capture;
++PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
++fresh QA and evidence capture.
+ H-PHASE-017/018/019 and all implementation/budget approvals remain pending.
+-Accepted case and choice text remains frozen. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
++Accepted case and choice text remains frozen. Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
++[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
++Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+ 
+ ## Current evidence and problem
+ 
+diff --git a/docs/planning/HANDOVER.md b/docs/planning/HANDOVER.md
+index 3562b9b..f81eb70 100644
+--- a/docs/planning/HANDOVER.md
++++ b/docs/planning/HANDOVER.md
+@@ -10,7 +10,7 @@ tags: [planning, handover, onboarding, phase-014]
+ change_log:
+   - version: "1.0.9"
+     date: "2026-10-12"
+-    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
++    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
+   - version: "1.0.8"
+     date: "2026-10-12"
+     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+@@ -102,11 +102,11 @@ revision. Tag and publication evidence: `.agent/evidence/release-v1.5.0-tag/`.
+ 
+ This overlay supersedes earlier unallocated/pending feature 114 statements while preserving
+ their dated text. Phase 015 and features 110–114 are complete, with 7,319 counted lines against
+-7,200/9,360. Prepared draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
++7,200/9,360. Delivered draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
+ (7,200/9,360), phase 019: 124–125 (3,500/4,550), controller phase 016: 126–128 (5,650/7,345), and
+ SBCL phase 020: 129–132 (7,350/9,555). All phases/features, H-PHASE gates and future budget
+-approvals remain pending. PLAN-WA/PLAN-016 planning completion awaits actual
+-independent QA and evidence capture.
++approvals remain pending. PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
++fresh QA and evidence capture.
+ 
+ Recommended execution is 017→016→018→020→019. Historical packet edges remain
+ unchanged; proposed supersessions resolve NIP3-116 to 127 core versus 131 final CI.
+@@ -122,6 +122,8 @@ Canonical inputs are [WA specs/lists](../../.agent/feature_list_017.json),
+ and [fresh acceptance](../../.agent/product_spec_020.md)/[list](../../.agent/feature_list_020.json).
+ Local SBCL version supplies environment information only; capable CI and all 13
+ live cases remain future. Installed/released v1.5.0 and Open debts NDEBT-040/NDEBT-034 are preserved.
++Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
++[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
+ Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+ 
+ ## Historical handover snapshot
+diff --git a/docs/planning/ROADMAP.md b/docs/planning/ROADMAP.md
+index e0c1fea..34ebe10 100644
+--- a/docs/planning/ROADMAP.md
++++ b/docs/planning/ROADMAP.md
+@@ -8,7 +8,7 @@ authoritative_source: docs/planning/ROADMAP.md
+ change_log:
+   - version: "0.61.0"
+     date: "2026-10-12"
+-    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
++    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
+   - version: "0.60.0"
+     date: "2026-10-12"
+     summary: "Prepare feature114 normative readiness and bounded current projections; independent acceptance and canonical close remain required."
+@@ -413,9 +413,8 @@ dated meaning; current lifecycle follows canonical records.
+ 
+ ### Current proposed allocation — 2026-10-12
+ 
+-WA planning preceded controller planning. The five draft plans below are prepared
+-for final independent review; PLAN-WA and PLAN-016 remain pending until actual
+-QA and evidence capture. This dated overlay supersedes earlier unallocated and
++WA planning preceded controller planning. The five draft plans below passed independent Mode B, fresh QA and evidence
++capture; PLAN-WA and PLAN-016 planning delivery is complete. This dated overlay supersedes earlier unallocated and
+ pending feature 114 statements: phase 015 and features 110–114 are complete at 7,319 counted
+ lines against 7,200/9,360. Every new feature, phase, H-PHASE gate and proposed budget
+ remains pending activation.
+@@ -450,6 +449,8 @@ and 4,585 naive (10,545–13,251 weighted); splits price product, independent te
+ counted process costs against 7,200/8,600 precedents. Proposed task 1,200 is separate
+ from closed phase 015. Raw evidence/coordination classification is unchanged. Local SBCL
+ version is environment information; all 13 live cases and capable CI remain future.
++Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
++[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
+ Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+ 
+ ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
+@@ -898,8 +899,8 @@ records and budgets remain frozen. This source work does not upgrade installed v
+ 
+ - **Phase015 normative scope is complete.** Features 110–114 passed actual QA/capture;
+   the closed count remains7,319 against 7,200/9,360. WA features 115–125 and controller features 126–132
+-  now have prepared pending plans 017/018/019 and 016/020. PLAN-WA/PLAN-016 planning
+-  completion awaits final independent QA/capture; future phase/budget activation,
++  now have delivered draft plans 017/018/019 and 016/020. Planning delivery passed
++  independent Mode B, fresh QA and evidence capture; future phase/budget activation,
+   runtime acceptance, release/tag and consumer upgrade remain outstanding.
+   Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+ - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
+diff --git a/docs/planning/backlog_reconciliation.md b/docs/planning/backlog_reconciliation.md
+index fc95737..a9ea5ab 100644
+--- a/docs/planning/backlog_reconciliation.md
++++ b/docs/planning/backlog_reconciliation.md
+@@ -10,7 +10,7 @@ tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-ass
+ change_log:
+   - version: "0.1.15"
+     date: "2026-10-12"
+-    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
++    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
+   - version: "0.1.14"
+     date: "2026-10-12"
+     summary: "Add bounded current114 readiness projection while preserving prior reconciliation; canonical close follows actual independent capture."
+@@ -165,11 +165,11 @@ remain dated records.
+ 
+ This overlay supersedes earlier unallocated/pending feature 114 statements while preserving
+ their dated text. Phase 015 and features 110–114 are complete, with 7,319 counted lines against
+-7,200/9,360. Prepared draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
++7,200/9,360. Delivered draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
+ (7,200/9,360), phase 019: 124–125 (3,500/4,550), controller phase 016: 126–128 (5,650/7,345), and
+ SBCL phase 020: 129–132 (7,350/9,555). All phases/features, H-PHASE gates and future budget
+-approvals remain pending. PLAN-WA/PLAN-016 planning completion awaits actual
+-independent QA and evidence capture.
++approvals remain pending. PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
++fresh QA and evidence capture.
+ 
+ Recommended execution is 017→016→018→020→019. Historical packet edges remain
+ unchanged; proposed supersessions resolve NIP3-116 to 127 core versus 131 final CI.
+@@ -185,6 +185,8 @@ Canonical inputs are [WA specs/lists](../../.agent/feature_list_017.json),
+ and [fresh acceptance](../../.agent/product_spec_020.md)/[list](../../.agent/feature_list_020.json).
+ Local SBCL version supplies environment information only; capable CI and all 13
+ live cases remain future. Installed/released v1.5.0 and Open debts NDEBT-040/NDEBT-034 are preserved.
++Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
++[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
+ Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+ 
+ ## Prior reconciliation history

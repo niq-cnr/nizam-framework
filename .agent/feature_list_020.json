@@ -1,0 +1,98 @@
+{
+  "phase": "020-sbcl-fresh-acceptance",
+  "spec_version": "0.1.0",
+  "phase_status": "pending",
+  "original_estimate_lines": 7350,
+  "ceiling_130pct": 9555,
+  "budget_categories": {"product": 1850, "tests": 1750, "process": 3750},
+  "features": [
+    {
+      "id": "129",
+      "name": "SBCL loop and confirmed cancellation",
+      "description": "Built-ins only; capture condition/backtrace/restarts before unwind, bound printing, honest failed load, cancellation confirmation or process-group termination ending generation.",
+      "status": "pending",
+      "passes": false,
+      "dependencies": [],
+      "estimated_lines": 2100,
+      "budget_categories": {"product": 650, "tests": 450, "process": 1000},
+      "acceptance_tests": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check capture-before-unwind",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check bounded-printing",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmed",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check termination-ends-generation",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 4 --runtime sbcl --require-sbcl",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl"
+      ],
+      "future_output_targets": ["tools/sbcl_session_loop.lisp", "tools/test_runtime_session.py", "tools/runtime_session.py"]
+    },
+    {
+      "id": "130",
+      "name": "Hermetic committed-source acceptance",
+      "description": "Archive committed source into private root; fresh no-init SBCL, private HOME/XDG and empty build cache, ignored inherited ASDF source/output resolution, actual toolchain/lock/core provenance; reject session-only, stale-cache and deleted-definition drift.",
+      "status": "pending",
+      "passes": false,
+      "dependencies": ["129"],
+      "estimated_lines": 2600,
+      "budget_categories": {"product": 750, "tests": 650, "process": 1200},
+      "acceptance_tests": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check committed-source-archive",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check no-init-process",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check private-home-xdg",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check empty-output-cache",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check ignore-inherited-resolution",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check toolchain-lock-core-bound",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-noop-control",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check asdf-failure-control",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 7 --runtime sbcl --require-sbcl",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime sbcl --require-sbcl",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 11 --runtime sbcl --require-sbcl",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 12 --runtime sbcl --require-sbcl"
+      ],
+      "future_output_targets": ["tools/runtime_session.py", "tools/test_runtime_session.py"]
+    },
+    {
+      "id": "131",
+      "name": "Full CI mechanism, thirteen-case integration and docs",
+      "description": "Only after SBCL/fresh runner exists, add required sixth fail-closed live_session_conformance job; prove real endpoint confinement through unchanged isolated_trial_adapter, all runtime/layer obligations, doc truth and py/lisp path resolution.",
+      "status": "pending",
+      "passes": false,
+      "dependencies": ["130"],
+      "estimated_lines": 1600,
+      "budget_categories": {"product": 300, "tests": 500, "process": 800},
+      "acceptance_tests": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check full-case-map",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check ci-candidate-bound",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check sixth-job-required",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check docs-match-implementation",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check py-lisp-path-resolution",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime ci --layer mechanism --require-sbcl --require-isolation"
+      ],
+      "future_output_targets": [".github/workflows/compliance.yml", "standard/definition_of_done.md", ".github/PULL_REQUEST_TEMPLATE.md", "tools/validate.sh", "tools/README.md", "methodology/10_live_runtime_sessions.md", "methodology/11_sbcl_runtime_binding.md", "tools/test_runtime_session.py"]
+    },
+    {
+      "id": "132",
+      "name": "Candidate-bound readiness and captured close",
+      "description": "Full live proof is prerequisite, then independent QA and evidence capture; future release number/tag/operator release and consumer upgrade remain separate.",
+      "status": "pending",
+      "passes": false,
+      "dependencies": ["131"],
+      "estimated_lines": 1050,
+      "budget_categories": {"product": 150, "tests": 150, "process": 750},
+      "acceptance_tests": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check live-readiness",
+        "bash tools/validate.sh",
+        "bash tools/validate.sh --payload"
+      ],
+      "future_output_targets": [".agent/evidence/132/release-readiness.md", "docs/planning/phase_020.yaml"]
+    }
+  ],
+  "future_interfaces": [{"path": "tools/test_runtime_session.py", "owner": "126"}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
+  "case_matrix": [{"case": 4, "runtime": "sbcl", "layer": "live", "owner": "129", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 4 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 5, "runtime": "sbcl", "layer": "live", "owner": "129", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 6, "runtime": "sbcl", "layer": "live", "owner": "129", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 7, "runtime": "sbcl", "layer": "live", "owner": "130", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 7 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 10, "runtime": "sbcl", "layer": "live", "owner": "130", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 11, "runtime": "sbcl", "layer": "live", "owner": "130", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 11 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 12, "runtime": "sbcl", "layer": "live", "owner": "130", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 12 --runtime sbcl --require-sbcl", "proof_kind": "future-live"}, {"case": 8, "runtime": "ci", "layer": "mechanism", "owner": "131", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime ci --layer mechanism --require-sbcl --require-isolation", "proof_kind": "future-live"}],
+  "cross_phase_prerequisites": [{"phase": "016-runtime-controller-core", "requires": ["128"], "evidence": [".agent/evidence/128/evidence-gate.txt"], "authority": "Future H-PHASE-016 core close and approved contracts."}, {"phase": "018-workflow-assurance-controls", "requires": ["119", "120", "123"], "evidence": [".agent/evidence/123/evidence-gate.txt"], "authority": "Future H-PHASE-018 trusted A10/A11 completion and candidate-bound CI receipts."}],
+  "shared_file_lanes": [{"path": "tools/test_runtime_session.py", "owners": ["126", "127", "128", "129", "130", "131", "132"], "order": ["126", "127", "128", "129", "130", "131", "132"]}, {"path": "tools/runtime_session.py", "owners": ["126", "127", "128", "129", "130", "131", "132"], "order": ["126", "127", "128", "129", "130", "131", "132"]}],
+  "existing_inputs": ["Completed015 normative110-114; completed014 sandbox/CI/fixture ownership103-105; Open040/034; immutable installedv1.5.0."],
+  "activation_prerequisites": ["Future H-PHASE-020 approves scope/budget and external captured prerequisites; no live case working before full capable CI acceptance."],
+  "acceptance_availability": "Future implementation commands only; schema fixtures/session experiments/local version cannot establish live conformance.",
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

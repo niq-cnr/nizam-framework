@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.8
+version: 1.0.9
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.9"
+    date: "2026-10-12"
+    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
   - version: "1.0.8"
     date: "2026-10-12"
     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
@@ -39,7 +42,7 @@ change_log:
 
 # Developer Handover — Release Status and Phase 014 Snapshot
 
-## Current status — 2026-10-11
+## Current status — 2026-10-12
 
 Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
 
@@ -94,6 +97,34 @@ then-remaining backlog and commands. For current work, read [ROADMAP.md](ROADMAP
 [DEBT.md](DEBT.md). NIP-0003 is selected under satisfied `H-NIP`; phase015 activation is recorded above.
 Completed phase-014 assertions should be interpreted at their recorded assessment
 revision. Tag and publication evidence: `.agent/evidence/release-v1.5.0-tag/`.
+
+### Current planning allocation — 2026-10-12
+
+This overlay supersedes earlier unallocated/pending feature 114 statements while preserving
+their dated text. Phase 015 and features 110–114 are complete, with 7,319 counted lines against
+7,200/9,360. Delivered draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
+(7,200/9,360), phase 019: 124–125 (3,500/4,550), controller phase 016: 126–128 (5,650/7,345), and
+SBCL phase 020: 129–132 (7,350/9,555). All phases/features, H-PHASE gates and future budget
+approvals remain pending. PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
+fresh QA and evidence capture.
+
+Recommended execution is 017→016→018→020→019. Historical packet edges remain
+unchanged; proposed supersessions resolve NIP3-116 to 127 core versus 131 final CI.
+Controls require 127; SBCL 129 requires trusted 119/120/123; profiles 124/125 retain
+controller 132 delay. Stable aliases NIP3-115…120 map to 126, 127+131, 129, 130, 131, 132;
+these aliases reserve no numeric evidence paths. Full WA/controller budget estimates: 16,100/13,000
+include product, independent tests and counted process/closure, split against 7,200/8,600
+predecessents. Task 1,200 is a separate proposal; no phase 015 rebaseline.
+
+Canonical inputs are [WA specs/lists](../../.agent/feature_list_017.json),
+[controls](../../.agent/feature_list_018.json), [profiles](../../.agent/feature_list_019.json),
+[controller](../../.agent/product_spec_016.md)/[list](../../.agent/feature_list_016.json)
+and [fresh acceptance](../../.agent/product_spec_020.md)/[list](../../.agent/feature_list_020.json).
+Local SBCL version supplies environment information only; capable CI and all 13
+live cases remain future. Installed/released v1.5.0 and Open debts NDEBT-040/NDEBT-034 are preserved.
+Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
+[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
+Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Historical handover snapshot
 

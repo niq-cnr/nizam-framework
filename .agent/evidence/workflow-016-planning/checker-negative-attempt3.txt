@@ -1,0 +1,172 @@
+COMMAND PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/workflow-016-planning/check_plans.py --negative
+REVISION a63cf0c513ad645a9771a69af00dca5d0a45474d
+READONLY_INPUT_CANDIDATE 8856d843e24fd1343bf679f04f6e606dc447cdf4
+CHECKER_SHA256 2dccf3bc1757b520742ff23726f6f1a2dd9ec28e69cc63e9ebde7efca79fd0ac
+{
+  "negative_controls": [
+    {
+      "control": "duplicate",
+      "rejection": "duplicate",
+      "restored_valid": true
+    },
+    {
+      "control": "schema-required-key",
+      "rejection": "'spec_version' is a required property",
+      "restored_valid": true
+    },
+    {
+      "control": "dangling",
+      "rejection": "list:dangling",
+      "restored_valid": true
+    },
+    {
+      "control": "cycle",
+      "rejection": "list:cycle",
+      "restored_valid": true
+    },
+    {
+      "control": "activation",
+      "rejection": "activation",
+      "restored_valid": true
+    },
+    {
+      "control": "budget",
+      "rejection": "budget-sum",
+      "restored_valid": true
+    },
+    {
+      "control": "omitted-case",
+      "rejection": "case-coverage",
+      "restored_valid": true
+    },
+    {
+      "control": "stale-fixture-proof",
+      "rejection": "case-proof",
+      "restored_valid": true
+    },
+    {
+      "control": "omitted-case8-layer",
+      "rejection": "case-coverage",
+      "restored_valid": true
+    },
+    {
+      "control": "global-duplicate",
+      "rejection": "global-duplicate",
+      "restored_valid": true
+    },
+    {
+      "control": "wrong-case-command",
+      "rejection": "case-command",
+      "restored_valid": true
+    },
+    {
+      "control": "vacuous-echo-command",
+      "rejection": "future-interface",
+      "restored_valid": true
+    },
+    {
+      "control": "expanded-crossphase-cycle",
+      "rejection": "proposed-phase:cycle",
+      "restored_valid": true
+    },
+    {
+      "control": "global-serialization-cycle",
+      "rejection": "global:cycle",
+      "restored_valid": true
+    },
+    {
+      "control": "protected-untracked",
+      "rejection": "protected-scope",
+      "restored_valid": true
+    },
+    {
+      "control": "protected-history-mutation",
+      "rejection": "protected-scope",
+      "restored_valid": true
+    },
+    {
+      "control": "current-phase-spoof",
+      "rejection": "current-phase",
+      "restored_valid": true
+    },
+    {
+      "control": "changed-authorization",
+      "rejection": "immutable-task-bytes",
+      "restored_valid": true
+    },
+    {
+      "control": "missing-receipt",
+      "rejection": "immutable-task-missing",
+      "restored_valid": true
+    },
+    {
+      "control": "evidence-type",
+      "rejection": "immutable-task-type",
+      "restored_valid": true
+    },
+    {
+      "control": "evidence-mode",
+      "rejection": "immutable-task-mode",
+      "restored_valid": true
+    },
+    {
+      "control": "unrelated-evidence-mutation",
+      "rejection": "immutable-task-bytes",
+      "restored_valid": true
+    },
+    {
+      "control": "legitimate-new-receipt",
+      "result": "accepted",
+      "restored_valid": true
+    },
+    {
+      "control": "wa-three-row",
+      "result": "accepted",
+      "restored_valid": true
+    },
+    {
+      "control": "wa-final-five-row",
+      "result": "accepted",
+      "restored_valid": true
+    },
+    {
+      "control": "all-five-row",
+      "result": "accepted",
+      "restored_valid": true
+    },
+    {
+      "control": "active-extra-row",
+      "rejection": "manifest-pending",
+      "restored_valid": true
+    },
+    {
+      "control": "activated-extra-row",
+      "rejection": "manifest-pending",
+      "restored_valid": true
+    },
+    {
+      "control": "mismatched-row-id",
+      "rejection": "manifest-id",
+      "restored_valid": true
+    },
+    {
+      "control": "unknown-row",
+      "rejection": "manifest-projection",
+      "restored_valid": true
+    },
+    {
+      "control": "duplicate-row-id",
+      "rejection": "manifest-duplicate",
+      "restored_valid": true
+    },
+    {
+      "control": "orphan-triple",
+      "rejection": "orphan-triple",
+      "restored_valid": true
+    }
+  ],
+  "mode": "negative",
+  "passed": true,
+  "revision": "a63cf0c513ad645a9771a69af00dca5d0a45474d"
+}
+EXIT 0

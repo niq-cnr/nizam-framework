@@ -2,12 +2,15 @@
 id: nip-0003-live-runtime-sessions
 title: "NIP-0003: Live Runtime Sessions"
 description: "Proposal to add a language-neutral live-runtime-session protocol (ownership, process generation, serialised operations, attempt continuity, fresh-environment acceptance) with an SBCL reference binding, an optional adapter capability, schema-governed session records, and a reference controller — realized as phases 015 and 016, after phase 014."
-version: 1.1.1
+version: 1.1.2
 status: active
 authoritative_source: docs/nips/NIP-0003-live-runtime-sessions.md
 last_audited: "2026-10-11"
 tags: [nip, methodology, runtime-session, execution, evaluator-independence, circuit-breaker, adapter, sbcl]
 change_log:
+  - version: "1.1.2"
+    date: "2026-10-12"
+    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
   - version: "1.1.1"
     date: "2026-10-12"
     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
@@ -107,6 +110,19 @@ remains outstanding and any later actual consolidation decision is an input.
 | Evidence | The validation findings summarized in [Problem](#problem), with file:line evidence re-verified at `3094223` on 2026-10-08 |
 | Consequence of acceptance | Acceptance **selects** phase `015` normative scope and follow-on `016` controller/live conformance. **Selection is not activation.** The active phase015 spec/list/YAML and manifest allocate canonical110–114 with approved7200/9360 budget. Current lifecycle is canonical in the feature list; phase016115–120 remains unallocated and needs separate planning/H-PHASE-016. |
 | Outstanding gates not satisfied by acceptance | `H-PHASE-016`, `H-FRAMEWORK-RELEASE` (once per release), and `H-CONSUMER-UPGRADE` (per consumer) |
+
+### Current planning delivery — 2026-10-12
+
+The dated unallocated and activation-time pending statements above are superseded:
+phase 015 and features 110–114 are complete; the delivered draft plan for controller phase 016 allocates 126–128
+and fresh/SBCL phase 020 allocates 129–132, after WA features 115–125. See [core spec](../../.agent/product_spec_016.md),
+[core list](../../.agent/feature_list_016.json), [fresh spec](../../.agent/product_spec_020.md)
+and [fresh list](../../.agent/feature_list_020.json). PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
+fresh QA and evidence capture. All future H-PHASE gates, budgets and
+implementation remain pending; the thirteen cases below remain unchanged.
+Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
+[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
+Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Problem
 
@@ -586,6 +602,28 @@ and split it if necessary; its approval/activation remain separate decisions.
 | 118 | Fresh-environment accept runner | 1,025 |
 | 119 | Implementation-synced docs and proposed .py/.lisp path-token resolver | 170 |
 | 120 | Future MINOR release preparation and stage close; version decided under its release gate | 240 |
+
+### Proposed allocated splits — 2026-10-12
+
+The table above retains provisional design history. Stable conceptual aliases
+NIP3-115/116/117/118/119/120 now map to 126/127+131/129/130/131/132; evidence
+uses actual numeric owners. Alias 116 combines core 127 and final CI 131 and cannot
+be declared complete when only 127 passes. Core 016 proposes 5,650/7,345;
+SBCL/fresh phase 020 proposes 7,350/9,555. Full counted estimate: 13,000 prices independent tests,
+registration, contracts, verdicts and close-out, compared with 4,585 naive and
+10,545–13,251 weighted forecasts and 7,200/8,600 precedents. These are future budget
+proposals, with H-PHASE-016/020 pending.
+
+Recommend 017 foundation→016 core→018 controls→020 fresh acceptance→019 profiles.
+Keep original packet edges as dated inputs; proposed numeric prerequisites bind
+controls to 127 only and SBCL 129 to core 128 plus 119/120/123, avoiding a false
+131-before-controls cycle. Feature 131 alone introduces full sixth-job live CI,
+case 8 mechanism isolation and all 13 cases after SBCL/fresh acceptance exists.
+The stub case 8 policy obligation remains 126. Local SBCL 2.2.9.debian is environment
+information; schema/session results and unsupported isolation prove no live case.
+Future acceptance requires committed-source archive, fresh no-init SBCL, private
+HOME/XDG, empty ASDF cache/private resolution and toolchain/lock/core provenance.
+No workstation sysctl changes. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Compatibility
 

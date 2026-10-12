@@ -1,0 +1,97 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/workflow-016-planning/check_plans.py --negative
+REVISION: 84cc13da81ea3db65ea3f083030862982b086af8
+HELPER_SHA256: 151543802068c87c139ffd0820ef9bb2445cff21f579eea811ff99a74e4e2e7c
+{
+  "negative_controls": [
+    {
+      "control": "duplicate",
+      "rejection": "duplicate",
+      "restored_valid": true
+    },
+    {
+      "control": "schema-required-key",
+      "rejection": "'spec_version' is a required property",
+      "restored_valid": true
+    },
+    {
+      "control": "dangling",
+      "rejection": "list:dangling",
+      "restored_valid": true
+    },
+    {
+      "control": "cycle",
+      "rejection": "list:cycle",
+      "restored_valid": true
+    },
+    {
+      "control": "activation",
+      "rejection": "activation",
+      "restored_valid": true
+    },
+    {
+      "control": "budget",
+      "rejection": "budget-sum",
+      "restored_valid": true
+    },
+    {
+      "control": "omitted-case",
+      "rejection": "case-coverage",
+      "restored_valid": true
+    },
+    {
+      "control": "stale-fixture-proof",
+      "rejection": "case-proof",
+      "restored_valid": true
+    },
+    {
+      "control": "omitted-case8-layer",
+      "rejection": "case-coverage",
+      "restored_valid": true
+    },
+    {
+      "control": "global-duplicate",
+      "rejection": "global-duplicate",
+      "restored_valid": true
+    },
+    {
+      "control": "wrong-case-command",
+      "rejection": "case-command",
+      "restored_valid": true
+    },
+    {
+      "control": "vacuous-echo-command",
+      "rejection": "future-interface",
+      "restored_valid": true
+    },
+    {
+      "control": "expanded-crossphase-cycle",
+      "rejection": "proposed-phase:cycle",
+      "restored_valid": true
+    },
+    {
+      "control": "global-serialization-cycle",
+      "rejection": "global:cycle",
+      "restored_valid": true
+    },
+    {
+      "control": "protected-untracked",
+      "rejection": "protected-scope",
+      "restored_valid": true
+    },
+    {
+      "control": "protected-history-mutation",
+      "rejection": "protected-scope",
+      "restored_valid": true
+    },
+    {
+      "control": "current-phase-spoof",
+      "rejection": "current-phase",
+      "restored_valid": true
+    }
+  ],
+  "mode": "negative",
+  "passed": true,
+  "revision": "84cc13da81ea3db65ea3f083030862982b086af8"
+}
+
+EXIT: 0

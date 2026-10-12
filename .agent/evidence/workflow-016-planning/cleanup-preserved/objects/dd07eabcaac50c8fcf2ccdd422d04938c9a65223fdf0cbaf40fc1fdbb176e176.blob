@@ -1,0 +1,48 @@
+{
+  "review": "validator-mode-a",
+  "feature": "workflow-016-planning",
+  "contract_id": "workflow-016-planning",
+  "revision_reviewed": 0,
+  "reviewer": "/root/planning_validator",
+  "review_root": "/home/cnross/.tmp/nizam-wa016-validator-review1-boc1n_qb",
+  "base_revision": "e22a3bf4c748cbd4f9daf9b0f66c4a0a6e5efc80",
+  "contract_ref": ".agent/contracts/workflow-016-planning.json",
+  "contract_sha256": "bd713313f753b3bdee5809db8fad755cfd6d8b19ffc9f58847c437a312cf90f9",
+  "spec_ref": ".agent/product_spec_workflow_016_planning.md",
+  "spec_sha256": "840a481a22b3506f423a45bb56cde03d0111ff64379cac9b92b8ed7589313873",
+  "issues": [
+    {
+      "verification_index": null,
+      "criterion": "Every contracted deliverable must map to the planning specification; no invented file scope.",
+      "evidence": ".agent/product_spec_workflow_016_planning.md: Deliverables and boundaries limits public overlays to ROADMAP, HANDOVER, backlog_reconciliation, backlog_dag and NIP3/NIP4 plus a bounded CHANGELOG note. .agent/contracts/workflow-016-planning.json: scope.files_modify additionally authorizes docs/planning/operator_gates.md edits and new future phase-gate rows or overlay.",
+      "required_fix": "Remove operator_gates.md from contracted modifications, or route the additional gate-registry scope through a Planner specification revision and renew both independent pre-code gates. Existing authorization and planning packets can be recorded within the already specified files without inventing an additional public surface.",
+      "severity": "medium"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Reviewed exact proposed contract and specification digests; review checkout HEAD matches contract base and no phase016/017/018/019/020 plan triples exist.",
+    "Proposed contract independently validates against the installed contract schema. Verification-suite execution is deferred until approved implementation supplies its declared inputs.",
+    "Contract covers pending-state preservation, WA-first collision-free allocation, stable alias mapping, original and proposed DAGs, counted process budgets, all thirteen live-case runtime/layer obligations, immutable case/choice history and independent QA/evidence capture.",
+    "Current phase015 completion and scope budget remain protected; this verdict grants no implementation or activation authority."
+  ],
+  "independent_checks": [
+    {
+      "check": "installed contract schema",
+      "schema_ref": ".nizam/schema/contract.schema.json",
+      "result": "pass",
+      "actual_exit_status": 0
+    },
+    {
+      "check": "reviewed input identity and absence of implementation plans",
+      "result": "pass",
+      "actual_exit_status": 0
+    }
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "workflow-016-planning",
+    "summary": "Rejected: operator_gates.md modifications exceed the specification's enumerated public overlay scope."
+  }
+}

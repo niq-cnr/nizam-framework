@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T15:59:14.623572+00:00",
+  "updated_at": "2026-10-12T21:18:06.397415+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -511,6 +511,66 @@
     },
     "114-recovery-checker-review": {
       "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-spec": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-mode-a": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-contract-review": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-checker": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "workflow-016-planning-checker-review": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "workflow-016-planning-plan-wa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-wa-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-plan-016": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-public-integration": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-mode-b": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-qa": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-coordination-schema": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-evidence-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-pr-merge": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -3819,6 +3879,121 @@
       "event": "114-final-frozen-budget-recorded",
       "detail": "Actual frozen classifier0/unclassified0: Product9+process531=540, completedphase7319/9360. Prior completed111/112/113-only threshold5068 before114append; old7200 allowance, historical blocked114256 and all completed records preserved. No own-cost rebaseline or extra scope.",
       "evidence": ".agent/evidence/114/scope-measurement-final.txt"
+    },
+    {
+      "at": "2026-10-12T19:07:36.396137+00:00",
+      "event": "workflow-016-planning-authorized",
+      "detail": "Great work! Think carefully about the optimal execution DAG and then you are approved to proceed. Expedite. Before proceeding ask bullet point questions if you need more information or further clarification. You are authorized to manage, triage as necessary, your PR's and once clean merge as appropriate. Workflow Assurance planning, followed by phase 016 planning.",
+      "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json"
+    },
+    {
+      "at": "2026-10-12T19:14:08.550297+00:00",
+      "event": "workflow-016-planning-spec-produced",
+      "evidence": ".agent/product_spec_workflow_016_planning.md",
+      "detail": "Planner meta spec only; phaseplans require both independent newcontract gates."
+    },
+    {
+      "at": "2026-10-12T19:23:43.683980+00:00",
+      "event": "workflow-016-planning-contract-attempt1-rejected",
+      "detail": "Independent ModeA found operator_gates edit outside meta spec; phaseplans remain unwritten. Proposed contract and actual rejection preserved; remove unused extra scope through interface-alignment attempt2 after second review.",
+      "evidence": ".agent/evidence/workflow-016-planning/contract-attempt1-preserved/mode-a.json"
+    },
+    {
+      "at": "2026-10-12T19:25:21.805299+00:00",
+      "event": "workflow-016-planning-contract-review1-rejected",
+      "detail": "Second independent pre-code review confirms same sole scope mismatch; no phaseplans written. Attempt2 interface alignment removes operator_gates edit, no scope expansion.",
+      "evidence": ".agent/evidence/workflow-016-planning/contract-attempt1-preserved/contract-review.json"
+    },
+    {
+      "at": "2026-10-12T19:37:14.683429+00:00",
+      "event": "workflow-016-planning-precode-approved",
+      "evidence": ".agent/evidence/workflow-016-planning/contract-attempt2-approved",
+      "detail": "Actual strict JSON ModeA and independent contract review approved same corrected proposal a3d6fde6; only declared contract approval metadata changed; no phaseplans yet."
+    },
+    {
+      "at": "2026-10-12T19:56:00.542134+00:00",
+      "event": "workflow-016-planning-checker-produced",
+      "detail": "Independent TestAuthor small285line helper frozen; actual17 synthetic controls pass. Distinct bundle review pending; no WA/controllerplans written.",
+      "evidence": ".agent/evidence/workflow-016-planning/checker-negative.txt"
+    },
+    {
+      "at": "2026-10-12T20:02:55.932032+00:00",
+      "event": "workflow-016-planning-checker-review1-rejected",
+      "detail": "Actual independent probe shows existing task authorization byte mutation passes scope because E wildcard lacks existing-task immutable byte guard; preserve all original helper/receipts/rejection, revise owned helper via type/interface attempt2. No phaseplans written.",
+      "evidence": ".agent/evidence/workflow-016-planning/checker-attempt1-preserved/validator-checker-own-spot.txt"
+    },
+    {
+      "at": "2026-10-12T20:06:56.879353+00:00",
+      "event": "workflow-016-planning-checker-attempt2-produced",
+      "detail": "Helperc50a9f8 repairs existing-task byte/type/executable-mode guard; actual22negative+1newreceiptpositive/scope pass, all originalproofs preserved. Renewed distinctcheckerReview required beforeWAplans.",
+      "evidence": ".agent/evidence/workflow-016-planning/checker-attempt2-report.json"
+    },
+    {
+      "at": "2026-10-12T20:09:18.423277+00:00",
+      "event": "workflow-016-planning-checker-approved",
+      "detail": "Actual distinct review2 approves frozen helperc50a9f8; exact previous authorization mutant rejected and restoredscopepasses. Planner WA write now authorized;016 waits actual intermediateWA review.",
+      "evidence": ".agent/evidence/workflow-016-planning/checker-review-approved.json"
+    },
+    {
+      "at": "2026-10-12T20:16:37.849533+00:00",
+      "event": "workflow-016-planning-wa-produced",
+      "detail": "Planner WA pending phases017/018/019 IDs115\u2013125, full5400/7200/3500 estimates and actual schema/DAG/scope pass. Independent intermediate review gates controllerplanning; no activation or fulltaskcompletion.",
+      "evidence": ".agent/evidence/workflow-016-planning/wa-final-prose-validation.json"
+    },
+    {
+      "at": "2026-10-12T20:19:25.960047+00:00",
+      "event": "workflow-016-planning-wa-review-approved",
+      "detail": "Actual independentWA review approves915ae402source triples/global115\u2013125 allocation/pendingmanifest; actualWA/scope0. Controller planning126+ noweligible. Finalpublicsync/QA/capture stillrequired beforeplanningpacketcompletion, activationpending.",
+      "evidence": ".agent/evidence/workflow-016-planning/wa-review-approved.json"
+    },
+    {
+      "at": "2026-10-12T20:29:33.460695+00:00",
+      "event": "workflow-016-planning-controller-produced",
+      "detail": "After strictWA review, Planner pending016/020 IDs126\u2013132; 5650/7350 fullcounted estimates, 17planned runtime/layer rows covering13cases and standalone existing-toolhostpreflight. Actualschema/DAG/scope0; publicprojection/all-gate notclaimed yet.",
+      "evidence": ".agent/evidence/workflow-016-planning/016-planning-checks.txt"
+    },
+    {
+      "at": "2026-10-12T20:38:50.738275+00:00",
+      "event": "workflow-016-planning-final-stage-checker-failure",
+      "detail": "Actual publicintegration all/scope/diff0; mandatory currentWA1 manifest-projection: partialchecker wrongly assumes currentmanifestcontainsWA-only rows insteadofcorrectfiveproposedphases. Publicsourcecandidateunapproved/preserved; samechecker step architecturalattempt3 required, no fourth.",
+      "evidence": ".agent/evidence/workflow-016-planning/public-attempt1-checks.txt"
+    },
+    {
+      "at": "2026-10-12T20:47:50.803152+00:00",
+      "event": "workflow-016-planning-checker-attempt3-produced",
+      "evidence": ".agent/evidence/workflow-016-planning/checker-attempt3-report.json",
+      "detail": "Architectural checker attempt3 passed actualWA/all/scope and28negative/fourpositive controls; distinct independent review pending at this point."
+    },
+    {
+      "at": "2026-10-12T20:58:50.048495+00:00",
+      "event": "workflow-016-planning-checker3-approved-public-polished",
+      "evidence": ".agent/evidence/workflow-016-planning/checker-review-attempt3-approved.json",
+      "source_prechecks": ".agent/evidence/workflow-016-planning/final-pre-freeze-checks.txt",
+      "detail": "Distinct checker attempt3 review approved exact2dcc helper; polished publicinputs passed currentWA/all/scope/diff checks. Final ModeB/QA notyetclaimed."
+    },
+    {
+      "at": "2026-10-12T21:06:17.054021+00:00",
+      "event": "workflow-016-planning-mode-b-approved",
+      "evidence": ".agent/evidence/workflow-016-planning/mode-b-approved.json",
+      "detail": "Final semantic ModeB approved immutablea745b214; freshQA/capture remained pending. SubsequentCI detected missingrequired detail fields innewRootowned history records."
+    },
+    {
+      "at": "2026-10-12T21:08:05.305233+00:00",
+      "event": "workflow-016-planning-coordination-schema-repair",
+      "detail": "Attempt1 frozenSourceC CI validate failedC11; attempt2 schema-interface repair addsrequired detailonlytonewRoot taskevents. Allpreviousphasehistory/budgets preserved. No checker orproduct plan repair.",
+      "evidence": ".agent/evidence/workflow-016-planning/sourcec-ci-validate-failure.txt"
+    },
+    {
+      "at": "2026-10-12T21:10:25.803829+00:00",
+      "event": "workflow-016-planning-mode-b-review2-approved",
+      "detail": "CurrentSourceC2 state schema andprotection passedindependentreview; assessed23Source digests unchanged. FreshQA2 required, nooldQAreseal.",
+      "evidence": ".agent/evidence/workflow-016-planning/mode-b-review2-approved.json"
+    },
+    {
+      "at": "2026-10-12T21:14:55.982620+00:00",
+      "event": "workflow-016-planning-accepted-captured",
+      "detail": "FreshQA2 9/9 andindependentDD3 ownspot0 atimmutableSourceC2; stricttypedgateandactualevidencecapture verifiedrawcommands/exits/digests. Onlytaskdeliveryprojections advance; 18futurefeatures/fivephases remainpending/proposed.",
+      "evidence": ".agent/evidence/workflow-016-planning/evidence-capture.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4409,7 +4584,7 @@
       }
     ]
   },
-  "last_action": "Canonical114/phase015 complete; actual frozen540 added once, cumulative7319/9360. Current closure validation and cleanPR merge next. PLAN-WA pending eligible planning; PLAN-016 pending after PLAN-WA; future release/runtime/installed upgrade gates remain separate.",
+  "last_action": "Actual SourceC2 freshQA2 nine/nine+ownspot and distinctRootcapture passed. PLAN-WA/PLAN-016 complete; proposedfutureimplementation stillpending; PR90 closeout inprogress.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4484,5 +4659,17 @@
     ],
     "note": "Phase 014 final ledger. 8705 of 8600 (101.2%): 105 over the operator-confirmed re-baseline estimate (spec 1.1.4, 'option 1 confirmed.'), comfortably within the 11180 authorized 130% ceiling. Completed features 099 + 103-109 + 102 (9 features); cancelled 100/101 (A3) consumed no budget. Historical-basis estimates for 099/103 (920/280) are mixed-basis and disclosed per their ledger entries. Captures: measure-099-103.txt, measure-105.txt, measure-108.txt, measure-109.txt, measure-102.txt."
   },
-  "pending_operator_gate": null
+  "pending_operator_gate": null,
+  "planning_task": {
+    "id": "workflow-016-planning",
+    "status": "planning-complete-pr-in-progress",
+    "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json",
+    "attempt_root": "/home/cnross/.tmp/nizam-wa016-plan-attempt1-207l_sra",
+    "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0",
+    "qa_ref": ".agent/qa/workflow-016-planning.json",
+    "capture_ref": ".agent/evidence/workflow-016-planning/evidence-capture.json",
+    "pr": "https://github.com/niq-cnr/nizam-framework/pull/90",
+    "actual_counted_lines": 2315,
+    "measurement_ref": ".agent/evidence/workflow-016-planning/task-cost.json"
+  }
 }
