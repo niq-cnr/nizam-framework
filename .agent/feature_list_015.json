@@ -844,7 +844,7 @@
       "id": "112",
       "name": "SBCL reference binding and language profile",
       "description": "Toolchain/lock/core provenance; non-atomic load/compile, conditions, drift and thread/cancellation hazards; fresh process/build/hermetic resolution. ASDF forms illustrative until phase016 proof.",
-      "status": "pending",
+      "status": "in_progress",
       "dependencies": [
         "111"
       ],
@@ -873,7 +873,9 @@
         "methodology/README.md",
         "NIZAM.json"
       ],
-      "semantic_review_required": "Independent Evaluator checks SBCL load/drift/condition/thread/cancel/hermetic-build semantics and illustrative-ASDF boundary; anchored structural checks plus discriminating misplaced-token negatives are necessary but not semantic proof alone."
+      "semantic_review_required": "Independent Evaluator checks SBCL load/drift/condition/thread/cancel/hermetic-build semantics and illustrative-ASDF boundary; anchored structural checks plus discriminating misplaced-token negatives are necessary but not semantic proof alone.",
+      "passes": false,
+      "contract_ref": ".agent/contracts/112.json"
     },
     {
       "id": "113",

@@ -2,10 +2,10 @@
   "contract_id": "112",
   "feature_id": "112",
   "name": "SBCL reference binding and language profile",
-  "status": "rejected",
+  "status": "approved",
   "spec_ref": ".agent/product_spec_015.md",
   "base_revision": "da1131846815328890cfb509be608551b80a82a7",
-  "contract_attempt": 1,
+  "contract_attempt": 2,
   "scope": {
     "files_create": [
       {
@@ -139,12 +139,12 @@
       "evidence": ".agent/evidence/112/09-semantic-review.txt"
     },
     {
-      "acceptance_test": "AT10: Approved-base tracked+untracked exact allowlist, role ownership and bounded file deltas; method10 body/old logs and all other records immutable; any undeclared source/path fails.",
+      "acceptance_test": "AT10: Approved-base tracked+untracked exact allowlist, role ownership and bounded file deltas; method10 body/old logs exact except already declared frontmatter/new log and opening/Section12 availability deltas; all other records immutable except declared Parent lifecycle projections; any undeclared source/path fails.",
       "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --scope",
       "evidence": ".agent/evidence/112/10-scope.txt"
     },
     {
-      "acceptance_test": "AT11: Historical014/110/111 proof/contracts/specs/checkers/QA and original111 source products immutable against fixed base; published release anchors unchanged; no old checker execution.",
+      "acceptance_test": "AT11: Historical014/110/111 proofs/contracts/specs/checkers/QA/seals and frozen original-product snapshots remain byte-exact. Untouched original111 source paths remain byte-exact against fixed base. Current shared NIZAM.json, CHANGELOG.md and methodology/10_live_runtime_sessions.md permit only their already declared bounded112 deltas; preserve all unaffected source bytes. Published release anchors unchanged; no old111 checker or QA execution/reassessment.",
       "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --historical",
       "evidence": ".agent/evidence/112/11-historical.txt"
     },
@@ -198,9 +198,10 @@
   "evidence_dir": ".agent/evidence/112/",
   "evidence_convention": "Each AT records exact command, full stdout/stderr, actual EXIT and exercised fixed revision/content inventory in its own numbered raw path. Semantic findings cite exact candidate sections and personally fetched official sources. Preserve every failed attempt. Future QA/evidence-gate/completion receipts excluded from sealed input inventory; no self-hash cycles. Parent completion delta is explicitly declared and separately verified.",
   "approvals": {
-    "validator_mode_a": false,
-    "evaluator_contract_review": false,
-    "revisions": 0
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1,
+    "approved_at": "2026-10-12T02:19:15.280669+00:00"
   },
   "dod_ref": ".nizam/standard/definition_of_done.md",
   "implementation_requirements": {
@@ -239,14 +240,25 @@
     },
     "primary_sources": "Independently fetch official CLHS load/compile-file/top-level evaluation/handler-bind/handler-case/restart/defvar/defstruct/defconstant/CLOS/macroexpand/print-object pages, SBCL manual initialization/threads/specials/join/interrupt/terminate/debuggerhook sections and ASDF source/output configuration. Capture URL/access time/relevant source bytes by112 raw path, hash fetches, record actual fetch status; unavailable/mismatched source fails semantic coverage. Online manual version is not local2.2.9 conformance.",
     "independence": "No implementation or proposed verification execution before both independent pre-code approvals. After approval separate TestAuthor authors checker/private controls; separate independent bundle review then ModeB; fresh separate QA executes every command and own adversarial spot under installed02Sections6/8, then evidence gate. Generator may run reviewed development checks only after approval and cannot change verifier. Evidence-gate confirms every required command/result/actual EXIT/revision path before Parent completion.",
-    "freeze": "Parent records proposal SHA outside contract before approval. Sealed QA inventory includes approved contract/base snapshots, exact source candidate/checker/private controls and official-source inputs; excludes future QA receipts/verdict/evidence-gate/runstate churn and declared Parent completion writes. Preserve all prior evidence bytes; checker selfhash/map integrity reported separately from source requirements. No new general verification framework.",
+    "freeze": "Parent records proposal SHA outside contract before approval. Sealed QA inventory includes approved contract/base snapshots, exact source candidate/checker/private controls and official-source inputs; excludes future QA receipts/verdict/evidence-gate/runstate churn and declared Parent completion writes. Preserve all prior evidence bytes; checker selfhash/map integrity reported separately from source requirements. No new general verification framework. Historical/current-source partition is exactly historical_partition: seal immutable old proofs/snapshots without changing their hashes; seal current shared source at the112 candidate after verifying only its declared deltas. Never substitute current112 bytes for original111 snapshot bytes or demand old111 whole-file hashes on the three explicitly amended current products.",
     "nip_acceptance_clarification": {
       "old": "Frontmatter is now `active`, version1.0.0.",
       "new": "At H-NIP acceptance, frontmatter became `active`, version1.0.0.",
       "occurrences": 1,
       "path": "docs/nips/NIP-0003-live-runtime-sessions.md"
     },
-    "availability_input": "Parent raw .agent/evidence/112/sbcl-availability.txt observes actual SBCL2.2.9.debian, EXIT0; availability only, immutable context, not a required live acceptance command or conformance/isolation proof."
+    "availability_input": "Parent raw .agent/evidence/112/sbcl-availability.txt observes actual SBCL2.2.9.debian, EXIT0; availability only, immutable context, not a required live acceptance command or conformance/isolation proof.",
+    "historical_partition": {
+      "immutable_history": "Every original014/110/111 proof/spec/contract/checker/QA/seal/frozen inventory/archive and frozen original-product snapshot remains byte-exact at the approved immutable base. Current112 receipts are a distinct evidence family; they cannot overwrite or regenerate old proofs.",
+      "untouched_source": "Original111 authored product paths from approved-base111 contract scope, excluding exactly the three current shared paths below, remain byte-exact against da1131846815328890cfb509be608551b80a82a7.",
+      "current_shared_paths": [
+        "NIZAM.json",
+        "CHANGELOG.md",
+        "methodology/10_live_runtime_sessions.md"
+      ],
+      "bounded_deltas": "Only the already declared112 scope.files_modify delta for each of these three paths is permitted; every preexisting index entry/Unreleased or released changelog entry and all method10 R1-R12/other body/previous logs remain intact. Document10 permits only existing declared frontmatter/new log and opening/Section12 availability edits. No additional exception or scope expansion.",
+      "guard_alignment": "AT10 scope, AT11 historical controls, AT14 private negatives, and AT20 source/integrity guards use this same partition. Historical snapshot hashes are checked on immutable archived/base artifacts; current shared source is checked on the112 candidate against its allowed bounded delta and current registration/semantic requirements, never against old111 whole-file hashes. Untouched source hashes stay anchored at the fixed base. Original111 maps/checkers/QA remain historical and are never rerun against the112 tree."
+    }
   },
   "primary_reference_urls": [
     "https://www.sbcl.org/manual/index.html#Threading",
@@ -265,5 +277,18 @@
     "https://www.lispworks.com/documentation/HyperSpec/Body/f_mexp_.htm",
     "https://www.lispworks.com/documentation/HyperSpec/Body/f_pr_obj.htm"
   ],
-  "rejected_at": "2026-10-12T02:13:48.586221+00:00"
+  "revision_basis": {
+    "attempt": 2,
+    "strategy": "Type/interface analysis of contradictory historical whole-file identity versus permitted current-product bounded deltas.",
+    "rejected_proposal_sha256": "e806557c1dede96a8242b0960129997640893afb8427fefdb92a6e9db5894986",
+    "mode_a": ".agent/evidence/112/failed-contract-attempt1/112-mode-a.json",
+    "evaluator": ".agent/evidence/112/failed-contract-attempt1/112-contract-review.json",
+    "fix": "Explicit historical/current-source partition for AT10/AT11/private negatives/freeze/source-map guards; no new files, product scope, sections, commands, AC, estimates, budget or allocation."
+  },
+  "approved_at": "2026-10-12T02:19:15.280669+00:00",
+  "proposal_sha256": "ecfb4258fbadbdada2e7fdc2a2ea6d7ff5a151bb5ae4b59166ab725284190701",
+  "approval_evidence": [
+    ".agent/validator/112-mode-a-rev2.json",
+    ".agent/qa/112-contract-review-rev2.json"
+  ]
 }
