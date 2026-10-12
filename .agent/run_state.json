@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "112",
   "status": "in_progress",
-  "updated_at": "2026-10-12T02:48:11.262154+00:00",
+  "updated_at": "2026-10-12T03:00:51.017553+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -416,7 +416,7 @@
       "limit": 3
     },
     "112-generator-development": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3
     },
     "112-checker-development": {
@@ -3165,6 +3165,15 @@
       "attempt": 2,
       "evidence": ".agent/validator/112-bundle-review-attempt2.json",
       "detail": "Actual independent verdict approved with three empty arrays; exact unchanged frozen measurement interface and private discriminating fixture reviewed statically. Source/checker positive checkpoint has not run. No source, contract or budget authority changed."
+    },
+    {
+      "at": "2026-10-12T03:00:51.017553+00:00",
+      "event": "generator_development_failed",
+      "contract_id": "112",
+      "attempt": 1,
+      "evidence": ".agent/evidence/112/development-attempt2/01.txt",
+      "preservation": ".agent/evidence/112/failed-source-development-attempt1/preservation.json",
+      "detail": "First actual approved command returned EXIT1: C9 rejects two ../schema links. Other15validatorgates passed. Stage stopped; no checker-positive, ModeB or QA executed. Generator counter1/3, approved verifier remains fixed; next source attempt uses structural path-interface analysis in fresh owned reviewed-base workspace."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3671,7 +3680,7 @@
       }
     ]
   },
-  "last_action": "Actual independent frozen bundle review2 approved. Source authoring continues; reviewed development checkpoint authorized only after Generator source freeze.",
+  "last_action": "Actual source development1 C9 failure preserved; isolate source retry2 from reviewed contract/checker base before bounded schema-link repair.",
   "completed_contract_ids": [
     "099",
     "103",
