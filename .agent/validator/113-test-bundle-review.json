@@ -1,32 +1,21 @@
 {
   "stage": "test-bundle-review",
   "feature": "113",
-  "attempt": 3,
+  "epoch": "113-recovery-1",
+  "attempt": 1,
   "actor": "/root/adapter_validator_113",
-  "fixed_inputs_sha256": "60147b9f354de9ed0569b02faded41638ed046ea69e1368784f3002bcac41cc3",
-  "approved_base": "6bc5a654cf09d2654b4a42d9cdeb93f2491c2582",
+  "fixed_inputs_sha256": "ea9bdf44ae248ca7c82699a953b9abd82c70763ccb13568cdd5dc7351864f9af",
+  "approved_base": "39e95f4f14cc92959b97fa418a1d34e47806b191",
   "evidence": [
-    ".agent/evidence/113/bundle-review-attempt3-raw.txt",
-    ".agent/evidence/113/bundle-review-attempt3-controls.txt",
-    ".agent/evidence/113/bundle-review-attempt3-prior-probe.txt",
-    ".agent/evidence/113/bundle-review-attempt3-entity-falsepass.txt"
+    ".agent/evidence/113/recovery-bundle-review-attempt1-raw.txt",
+    ".agent/evidence/113/recovery-bundle-review-attempt1-controls.txt",
+    ".agent/evidence/113/recovery-bundle-review-attempt1-probes.txt"
   ],
-  "issues": [
-    {
-      "severity": "high",
-      "verification_index": [
-        8,
-        10
-      ],
-      "criterion": "Rendered crosslinks must resolve to the exact contracted target after correct destination decoding",
-      "evidence": ".agent/evidence/113/bundle-review-attempt3-entity-falsepass.txt",
-      "required_fix": "Final third attempt is rejected: halt for human review under installed circuit-breaker Section4. Any later explicitly authorized approach must avoid second entity-decoding of already parsed HTML href attributes and discriminate encoded-entity wrong-target cases while preserving existing controls; no autonomous fourth attempt."
-    }
-  ],
+  "issues": [],
   "missing_acceptance_coverage": [],
   "unsupported_claims": [],
   "final_verdict": {
-    "approved": false,
-    "summary": "FINAL attempt3 rejected: HTML destination double-decoding false-passes incorrect crosslink; circuit breaker requires BLOCKED and human review."
+    "approved": true,
+    "summary": "Corrected fixed bundle independently approved; actual127 controls,7 forms,3C9,3 data origins and own scratch probes pass. Source/ModeB/freshQA remain required."
   }
 }

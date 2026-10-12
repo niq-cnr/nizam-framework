@@ -1,0 +1,443 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/private/controls.py --root .
+REVISION: 39e95f4f14cc92959b97fa418a1d34e47806b191
+PROOF_SCOPE: CONTROL scratch only; no acceptance verdict.
+POSITIVE surface EXIT 0 CONTROL_COMPONENT:surface:PASS
+POSITIVE routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE compatibility EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+POSITIVE delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+POSITIVE history EXIT 0 CONTROL_COMPONENT:history:PASS
+POSITIVE lifecycle EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+POSITIVE claim EXIT 0 CONTROL_COMPONENT:claim:PASS
+POSITIVE integrity EXIT 0 CONTROL_COMPONENT:integrity:PASS
+POSITIVE budget EXIT 0 CONTROL_COMPONENT:budget:PASS
+POSITIVE debt EXIT 0 CONTROL_COMPONENT:debt:PASS
+POSITIVE debt-models EXIT 0 CONTROL_COMPONENT:debt-models:PASS
+PREREGISTERED_POSITIVE_LINK {"markup": "[adapter interface](../tools/interface.md)", "name": "ordinary-markdown"} EXPECTED_ROUTING_EXIT0_EXPECTED_DELTA_EXIT0
+POSITIVE_LINK ordinary-markdown routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE_LINK ordinary-markdown delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED_POSITIVE_LINK {"markup": "[adapter interface](..&#47;tools/interface.md)", "name": "encoded-markdown"} EXPECTED_ROUTING_EXIT0_EXPECTED_DELTA_EXIT0
+POSITIVE_LINK encoded-markdown routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE_LINK encoded-markdown delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED_POSITIVE_LINK {"markup": "[the `adapter interface`](..&#47;tools/interface.md)", "name": "markdown-label-inline-code"} EXPECTED_ROUTING_EXIT0_EXPECTED_DELTA_EXIT0
+POSITIVE_LINK markdown-label-inline-code routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE_LINK markdown-label-inline-code delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED_POSITIVE_LINK {"markup": "<a href=\"..&#47;tools/interface.md\">adapter interface</a>", "name": "encoded-html-anchor"} EXPECTED_ROUTING_EXIT0_EXPECTED_DELTA_EXIT0
+POSITIVE_LINK encoded-html-anchor routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE_LINK encoded-html-anchor delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED_POSITIVE_LINK {"markup": "<a href=\"..&#47;tools/interface.md\"><code>adapter interface</code></a>", "name": "html-label-inline-code"} EXPECTED_ROUTING_EXIT0_EXPECTED_DELTA_EXIT0
+POSITIVE_LINK html-label-inline-code routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE_LINK html-label-inline-code delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED_POSITIVE_LINK {"markup": "<a href=\"..&#x2f;tools/interface.md\">adapter interface</a>", "name": "hex-encoded-html-anchor"} EXPECTED_ROUTING_EXIT0_EXPECTED_DELTA_EXIT0
+POSITIVE_LINK hex-encoded-html-anchor routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE_LINK hex-encoded-html-anchor delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED_POSITIVE_LINK {"markup": "[adapter interface](..%2Ftools%2Finterface.md)", "name": "percent-path-once"} EXPECTED_ROUTING_EXIT0_EXPECTED_DELTA_EXIT0
+POSITIVE_LINK percent-path-once routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE_LINK percent-path-once delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED_C9 {"expected_c9": "[C9] PASS path-resolution", "expected_exit": 0, "name": "encoded-href-valid", "path": "methodology/11_sbcl_runtime_binding.md"}
+C9_COMMAND ["bash", "tools/validate.sh", "--target", "methodology/11_sbcl_runtime_binding.md"] SCRATCH_ROOT /home/cnross/.tmp/nizam113-controls-86pttjzj/repo
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] PASS consistency
+
+
+C9_ACTUAL_EXIT 0
+PREREGISTERED_C9 {"expected_c9": "[C9] PASS path-resolution", "expected_exit": 0, "name": "encoded-href-incorrect-target", "path": "methodology/11_sbcl_runtime_binding.md"}
+C9_COMMAND ["bash", "tools/validate.sh", "--target", "methodology/11_sbcl_runtime_binding.md"] SCRATCH_ROOT /home/cnross/.tmp/nizam113-controls-86pttjzj/repo
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] PASS consistency
+
+
+C9_ACTUAL_EXIT 0
+PREREGISTERED_C9 {"expected_c9": "[C9] PASS path-resolution", "expected_exit": 0, "name": "plaintext-link-marker", "path": "methodology/11_sbcl_runtime_binding.md"}
+C9_COMMAND ["bash", "tools/validate.sh", "--target", "methodology/11_sbcl_runtime_binding.md"] SCRATCH_ROOT /home/cnross/.tmp/nizam113-controls-86pttjzj/repo
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C9] PASS path-resolution
+[C10] PASS consistency
+
+
+C9_ACTUAL_EXIT 0
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE", "expected_exit": 1, "name": "optional-required-true", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE optional-required-true EXIT 1 CONTROL_COMPONENT:FAIL:OPTIONAL_REQUIRED_FALSE
+RESTORED optional-required-true EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE", "expected_exit": 1, "name": "optional-absent-default-disabled", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE optional-absent-default-disabled EXIT 1 CONTROL_COMPONENT:FAIL:OPTIONAL_REQUIRED_FALSE
+RESTORED optional-absent-default-disabled EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "compatibility", "expected_diagnostic": "MANIFEST_BASE_PRESERVED", "expected_exit": 1, "name": "mandatory-requirement-removed", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE mandatory-requirement-removed EXIT 1 CONTROL_COMPONENT:FAIL:MANIFEST_BASE_PRESERVED
+RESTORED mandatory-requirement-removed EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "compatibility", "expected_diagnostic": "INTERFACE_BASE_BODY", "expected_exit": 1, "name": "old-ten-item-body-altered", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE old-ten-item-body-altered EXIT 1 CONTROL_COMPONENT:FAIL:INTERFACE_BASE_BODY
+RESTORED old-ten-item-body-altered EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "compatibility", "expected_diagnostic": "INTERFACE_BASE_BODY", "expected_exit": 1, "name": "eleventh-base-item", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE eleventh-base-item EXIT 1 CONTROL_COMPONENT:FAIL:INTERFACE_BASE_BODY
+RESTORED eleventh-base-item EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "OPERATIONS_EXACT", "expected_exit": 1, "name": "missing-operation", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE missing-operation EXIT 1 CONTROL_COMPONENT:FAIL:OPERATIONS_EXACT
+RESTORED missing-operation EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "OPERATIONS_EXACT", "expected_exit": 1, "name": "duplicate-operation", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE duplicate-operation EXIT 1 CONTROL_COMPONENT:FAIL:OPERATIONS_EXACT
+RESTORED duplicate-operation EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "OPERATIONS_EXACT", "expected_exit": 1, "name": "extra-status-call", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE extra-status-call EXIT 1 CONTROL_COMPONENT:FAIL:OPERATIONS_EXACT
+RESTORED extra-status-call EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "S_RULES_EXACT", "expected_exit": 1, "name": "missing-s9", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE missing-s9 EXIT 1 CONTROL_COMPONENT:FAIL:S_RULES_EXACT
+RESTORED missing-s9 EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "S_RULES_EXACT", "expected_exit": 1, "name": "duplicate-s1", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE duplicate-s1 EXIT 1 CONTROL_COMPONENT:FAIL:S_RULES_EXACT
+RESTORED duplicate-s1 EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "S_RULE_CONTENT:5", "expected_exit": 1, "name": "misplaced-s5-keyword", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE misplaced-s5-keyword EXIT 1 CONTROL_COMPONENT:FAIL:S_RULE_CONTENT:5
+RESTORED misplaced-s5-keyword EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "ROUTER_PATH:methodology/10_live_runtime_sessions.md", "expected_exit": 1, "name": "misplaced-router-marker", "path": "tools/SKILL.md", "restored_exit": 0}
+NEGATIVE misplaced-router-marker EXIT 1 CONTROL_COMPONENT:FAIL:ROUTER_PATH:methodology/10_live_runtime_sessions.md
+RESTORED misplaced-router-marker EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DUPLICATE_MANIFEST_ROUTE", "expected_exit": 1, "name": "duplicate-manifest-route", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE duplicate-manifest-route EXIT 1 CONTROL_COMPONENT:FAIL:DUPLICATE_MANIFEST_ROUTE
+RESTORED duplicate-manifest-route EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "INDEX_ROUTE", "expected_exit": 1, "name": "index-route-misdirected", "path": "NIZAM.json", "restored_exit": 0}
+NEGATIVE index-route-misdirected EXIT 1 CONTROL_COMPONENT:FAIL:INDEX_ROUTE
+RESTORED index-route-misdirected EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "SCHEMA_LINK:schema/runtime_operation.schema.json", "expected_exit": 1, "name": "missing-schema-crosslink", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE missing-schema-crosslink EXIT 1 CONTROL_COMPONENT:FAIL:SCHEMA_LINK:schema/runtime_operation.schema.json
+RESTORED missing-schema-crosslink EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "VERSION:tools/interface.md", "expected_exit": 1, "name": "version-not-increased", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE version-not-increased EXIT 1 CONTROL_COMPONENT:FAIL:VERSION:tools/interface.md
+RESTORED version-not-increased EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "RUNTIME_SECTION_PRESERVED:1", "expected_exit": 1, "name": "changed-old-r1", "path": "methodology/10_live_runtime_sessions.md", "restored_exit": 0}
+NEGATIVE changed-old-r1 EXIT 1 CONTROL_COMPONENT:FAIL:RUNTIME_SECTION_PRESERVED:1
+RESTORED changed-old-r1 EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "RECORD_ONLY_ENFORCEMENT", "expected_exit": 1, "name": "record-boundary-erased", "path": "methodology/10_live_runtime_sessions.md", "restored_exit": 0}
+NEGATIVE record-boundary-erased EXIT 1 CONTROL_COMPONENT:FAIL:RECORD_ONLY_ENFORCEMENT
+RESTORED record-boundary-erased EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md", "expected_exit": 1, "name": "false-live13-proof", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE false-live13-proof EXIT 1 CONTROL_COMPONENT:FAIL:FALSE_DELIVERY_CLAIM:tools/interface.md
+RESTORED false-live13-proof EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md", "expected_exit": 1, "name": "foreign-ecosystem-scope", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE foreign-ecosystem-scope EXIT 1 CONTROL_COMPONENT:FAIL:FALSE_DELIVERY_CLAIM:tools/interface.md
+RESTORED foreign-ecosystem-scope EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md", "expected_exit": 1, "name": "false-release", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE false-release EXIT 1 CONTROL_COMPONENT:FAIL:FALSE_DELIVERY_CLAIM:tools/interface.md
+RESTORED false-release EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "UNCLASSIFIED", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json", "expected_exit": 1, "name": "installed-content-changed", "path": ".nizam/NIZAM.json", "restored_exit": 0}
+NEGATIVE installed-content-changed EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:.nizam/NIZAM.json
+RESTORED installed-content-changed EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "UNCLASSIFIED", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json", "expected_exit": 1, "name": "installed-mode-changed", "path": ".nizam/NIZAM.json", "restored_exit": 0}
+NEGATIVE installed-mode-changed EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:.nizam/NIZAM.json
+RESTORED installed-mode-changed EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/verdict", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:.agent/qa/112.json", "expected_exit": 1, "name": "historical-proof-changed", "path": ".agent/qa/112.json", "restored_exit": 0}
+NEGATIVE historical-proof-changed EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:.agent/qa/112.json
+RESTORED historical-proof-changed EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/product-ext", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:README.md", "expected_exit": 1, "name": "out-of-scope-tracked", "path": "README.md", "restored_exit": 0}
+NEGATIVE out-of-scope-tracked EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:README.md
+RESTORED out-of-scope-tracked EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "UNCLASSIFIED", "component": "history", "expected_diagnostic": "OUT_OF_SCOPE:alien113.txt", "expected_exit": 1, "name": "out-of-scope-untracked", "path": "alien113.txt", "restored_exit": 0}
+NEGATIVE out-of-scope-untracked EXIT 1 CONTROL_COMPONENT:FAIL:OUT_OF_SCOPE:alien113.txt
+RESTORED out-of-scope-untracked EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "lifecycle", "expected_diagnostic": "PREDECESSOR_SUCCESSOR:114", "expected_exit": 1, "name": "successor-promoted", "path": ".agent/feature_list_015.json", "restored_exit": 0}
+NEGATIVE successor-promoted EXIT 1 CONTROL_COMPONENT:FAIL:PREDECESSOR_SUCCESSOR:114
+RESTORED successor-promoted EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "lifecycle", "expected_diagnostic": "PREDECESSOR_SUCCESSOR:112", "expected_exit": 1, "name": "predecessor-rewritten", "path": ".agent/feature_list_015.json", "restored_exit": 0}
+NEGATIVE predecessor-rewritten EXIT 1 CONTROL_COMPONENT:FAIL:PREDECESSOR_SUCCESSOR:112
+RESTORED predecessor-rewritten EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "lifecycle", "expected_diagnostic": "PHASE_CONTINUITY", "expected_exit": 1, "name": "phase-prematurely-complete", "path": "docs/planning/phase_015.yaml", "restored_exit": 0}
+NEGATIVE phase-prematurely-complete EXIT 1 CONTROL_COMPONENT:FAIL:PHASE_CONTINUITY
+RESTORED phase-prematurely-complete EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "COUNTER_CONTINUITY:113-contract", "expected_exit": 1, "name": "attempt-counter-reset", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE attempt-counter-reset EXIT 1 CONTROL_COMPONENT:FAIL:COUNTER_CONTINUITY:113-contract
+RESTORED attempt-counter-reset EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "BUDGET_CONTINUITY", "expected_exit": 1, "name": "budget-ceiling-rebased", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE budget-ceiling-rebased EXIT 1 CONTROL_COMPONENT:FAIL:BUDGET_CONTINUITY
+RESTORED budget-ceiling-rebased EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "BUDGET_CONTINUITY", "expected_exit": 1, "name": "budget-overrun", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE budget-overrun EXIT 1 CONTROL_COMPONENT:FAIL:BUDGET_CONTINUITY
+RESTORED budget-overrun EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "FIXED_SEAL", "expected_exit": 1, "name": "fixed-seal-corrupt", "path": ".agent/evidence/113/fixed-inputs-seal.json", "restored_exit": 0}
+NEGATIVE fixed-seal-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:FIXED_SEAL
+RESTORED fixed-seal-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "FIXED_MEMBER:.agent/evidence/113/evidence_gate.py", "expected_exit": 1, "name": "fixed-member-corrupt", "path": ".agent/evidence/113/evidence_gate.py", "restored_exit": 0}
+NEGATIVE fixed-member-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:FIXED_MEMBER:.agent/evidence/113/evidence_gate.py
+RESTORED fixed-member-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "SOURCE_SEAL", "expected_exit": 1, "name": "source-seal-corrupt", "path": ".agent/evidence/113/current-source-seal.json", "restored_exit": 0}
+NEGATIVE source-seal-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:SOURCE_SEAL
+RESTORED source-seal-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "CANDIDATE_TREE", "expected_exit": 1, "name": "candidate-tree-corrupt", "path": ".agent/evidence/113/current-source-inputs.json", "restored_exit": 0}
+NEGATIVE candidate-tree-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:CANDIDATE_TREE
+RESTORED candidate-tree-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "budget/contract", "component": "budget", "expected_diagnostic": "BUDGET_ACTUAL_CEILING", "expected_exit": 1, "name": "actual-counted-budget-overrun", "path": ".agent/contracts/113-budget-overrun-control.json", "restored_exit": 0}
+NEGATIVE actual-counted-budget-overrun EXIT 1 CONTROL_COMPONENT:FAIL:BUDGET_ACTUAL_CEILING
+RESTORED actual-counted-budget-overrun EXIT 0 CONTROL_COMPONENT:budget:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "encoded-href-incorrect-target", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE encoded-href-incorrect-target EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED encoded-href-incorrect-target EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "plaintext-link-marker", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE plaintext-link-marker EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED plaintext-link-marker EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "CROSSLINK:tools/README.md:10_live_runtime_sessions.md", "expected_exit": 1, "name": "encoded-readme-incorrect-target", "path": "tools/README.md", "restored_exit": 0}
+NEGATIVE encoded-readme-incorrect-target EXIT 1 CONTROL_COMPONENT:FAIL:CROSSLINK:tools/README.md:10_live_runtime_sessions.md
+RESTORED encoded-readme-incorrect-target EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "README_BOUNDED_PARAGRAPH", "expected_exit": 1, "name": "plaintext-readme-bounded-marker", "path": "tools/README.md", "restored_exit": 0}
+NEGATIVE plaintext-readme-bounded-marker EXIT 1 CONTROL_COMPONENT:FAIL:README_BOUNDED_PARAGRAPH
+RESTORED plaintext-readme-bounded-marker EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "plaintext-sbcl-bounded-marker", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE plaintext-sbcl-bounded-marker EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED plaintext-sbcl-bounded-marker EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "href-escapes-repository", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE href-escapes-repository EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED href-escapes-repository EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "code-only-link-marker", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE code-only-link-marker EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED code-only-link-marker EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-html-comment-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-comment-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-html-comment-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-html-comment-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-comment-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-html-comment-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-html-comment-across-paragraphs-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-comment-across-paragraphs-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-html-comment-across-paragraphs-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-html-comment-across-paragraphs-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-comment-across-paragraphs-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-html-comment-across-paragraphs-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-fenced-code-long-close-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-fenced-code-long-close-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-fenced-code-long-close-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-fenced-code-long-close-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-fenced-code-long-close-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-fenced-code-long-close-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-tilde-fenced-code-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-tilde-fenced-code-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-tilde-fenced-code-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-tilde-fenced-code-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-tilde-fenced-code-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-tilde-fenced-code-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-unclosed-fenced-code-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-unclosed-fenced-code-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-unclosed-fenced-code-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-unclosed-fenced-code-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-unclosed-fenced-code-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-unclosed-fenced-code-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-indented-code-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-indented-code-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-indented-code-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-indented-code-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-indented-code-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-indented-code-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-tab-indented-code-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-tab-indented-code-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-tab-indented-code-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-tab-indented-code-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-tab-indented-code-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-tab-indented-code-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-double-inline-code-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-double-inline-code-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-double-inline-code-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-double-inline-code-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-double-inline-code-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-double-inline-code-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-escaped-markdown-marker-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-escaped-markdown-marker-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-escaped-markdown-marker-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-escaped-markdown-marker-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-escaped-markdown-marker-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-escaped-markdown-marker-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-html-code-text-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-code-text-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-html-code-text-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-html-code-text-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-code-text-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-html-code-text-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-html-pre-across-paragraphs-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-pre-across-paragraphs-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-html-pre-across-paragraphs-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-html-pre-across-paragraphs-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-pre-across-paragraphs-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-html-pre-across-paragraphs-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-html-script-text-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-script-text-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-html-script-text-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-html-script-text-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-script-text-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-html-script-text-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-html-style-text-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-style-text-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-html-style-text-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-html-style-text-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-style-text-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-html-style-text-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-raw-html-markdown-text-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-raw-html-markdown-text-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-raw-html-markdown-text-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-raw-html-markdown-text-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-raw-html-markdown-text-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-raw-html-markdown-text-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-html-attribute-markdown-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-attribute-markdown-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-html-attribute-markdown-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-html-attribute-markdown-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-attribute-markdown-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-html-attribute-markdown-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-displayed-entity-anchor-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-displayed-entity-anchor-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-displayed-entity-anchor-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-displayed-entity-anchor-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-displayed-entity-anchor-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-displayed-entity-anchor-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-escaped-html-anchor-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-escaped-html-anchor-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-escaped-html-anchor-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-escaped-html-anchor-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-escaped-html-anchor-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-escaped-html-anchor-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-hidden-html-anchor-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-hidden-html-anchor-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-hidden-html-anchor-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-hidden-html-anchor-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-hidden-html-anchor-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-hidden-html-anchor-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-html-code-contained-anchor-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-code-contained-anchor-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-html-code-contained-anchor-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-html-code-contained-anchor-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-code-contained-anchor-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-html-code-contained-anchor-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-html-pre-contained-anchor-across-paragraphs-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-pre-contained-anchor-across-paragraphs-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-html-pre-contained-anchor-across-paragraphs-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-html-pre-contained-anchor-across-paragraphs-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-html-pre-contained-anchor-across-paragraphs-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-html-pre-contained-anchor-across-paragraphs-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "nonrendered-image-marker-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-image-marker-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED nonrendered-image-marker-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "nonrendered-image-marker-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE nonrendered-image-marker-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED nonrendered-image-marker-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "CROSSLINK:tools/README.md:10_live_runtime_sessions.md", "expected_exit": 1, "name": "readme-comment-only-routing", "path": "tools/README.md", "restored_exit": 0}
+NEGATIVE readme-comment-only-routing EXIT 1 CONTROL_COMPONENT:FAIL:CROSSLINK:tools/README.md:10_live_runtime_sessions.md
+RESTORED readme-comment-only-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "README_BOUNDED_PARAGRAPH", "expected_exit": 1, "name": "readme-comment-only-bounded", "path": "tools/README.md", "restored_exit": 0}
+NEGATIVE readme-comment-only-bounded EXIT 1 CONTROL_COMPONENT:FAIL:README_BOUNDED_PARAGRAPH
+RESTORED readme-comment-only-bounded EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "sbcl-link-wrong-section-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE sbcl-link-wrong-section-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED sbcl-link-wrong-section-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "sbcl-link-wrong-section-bounded", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE sbcl-link-wrong-section-bounded EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED sbcl-link-wrong-section-bounded EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "recovery-link-amp-decimal-html-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-amp-decimal-html-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED recovery-link-amp-decimal-html-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "recovery-link-amp-decimal-html-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-amp-decimal-html-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED recovery-link-amp-decimal-html-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "recovery-link-amp-hex-html-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-amp-hex-html-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED recovery-link-amp-hex-html-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "recovery-link-amp-hex-html-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-amp-hex-html-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED recovery-link-amp-hex-html-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "recovery-link-amp-decimal-markdown-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-amp-decimal-markdown-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED recovery-link-amp-decimal-markdown-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "recovery-link-amp-decimal-markdown-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-amp-decimal-markdown-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED recovery-link-amp-decimal-markdown-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "recovery-link-amp-hex-markdown-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-amp-hex-markdown-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED recovery-link-amp-hex-markdown-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "recovery-link-amp-hex-markdown-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-amp-hex-markdown-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED recovery-link-amp-hex-markdown-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "recovery-link-url-query-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-url-query-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED recovery-link-url-query-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "recovery-link-url-query-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-url-query-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED recovery-link-url-query-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "recovery-link-url-fragment-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-url-fragment-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED recovery-link-url-fragment-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "recovery-link-url-fragment-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-url-fragment-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED recovery-link-url-fragment-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "recovery-link-url-authority-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-url-authority-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED recovery-link-url-authority-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "recovery-link-url-authority-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-url-authority-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED recovery-link-url-authority-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "recovery-link-url-scheme-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-url-scheme-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED recovery-link-url-scheme-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "recovery-link-url-scheme-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-url-scheme-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED recovery-link-url-scheme-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md", "expected_exit": 1, "name": "recovery-link-double-percent-path-routing", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-double-percent-path-routing EXIT 1 CONTROL_COMPONENT:FAIL:DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md
+RESTORED recovery-link-double-percent-path-routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "SBCL_BOUNDED_LINK", "expected_exit": 1, "name": "recovery-link-double-percent-path-delta", "path": "methodology/11_sbcl_runtime_binding.md", "restored_exit": 0}
+NEGATIVE recovery-link-double-percent-path-delta EXIT 1 CONTROL_COMPONENT:FAIL:SBCL_BOUNDED_LINK
+RESTORED recovery-link-double-percent-path-delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "history", "expected_diagnostic": "HISTORY_INVENTORY_IMMUTABLE", "expected_exit": 1, "name": "original-inventory-corrupt", "path": ".agent/evidence/113/private/history.json", "restored_exit": 0}
+NEGATIVE original-inventory-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_INVENTORY_IMMUTABLE
+RESTORED original-inventory-corrupt EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "history", "expected_diagnostic": "HISTORY_INVENTORY_IMMUTABLE", "expected_exit": 1, "name": "original-inventory-missing", "path": ".agent/evidence/113/private/history.json", "restored_exit": 0}
+NEGATIVE original-inventory-missing EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_INVENTORY_IMMUTABLE
+RESTORED original-inventory-missing EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "history", "expected_diagnostic": "HISTORICAL_BASE:.agent/evidence/113/private/base/.agent/contracts/113.json", "expected_exit": 1, "name": "original-base-corrupt", "path": ".agent/evidence/113/private/base/.agent/contracts/113.json", "restored_exit": 0}
+NEGATIVE original-base-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:HISTORICAL_BASE:.agent/evidence/113/private/base/.agent/contracts/113.json
+RESTORED original-base-corrupt EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "history", "expected_diagnostic": "ORIGINAL_CONTRACT_ARCHIVE", "expected_exit": 1, "name": "original-contract-archive-corrupt", "path": ".agent/evidence/113/recovery-prior-approval-snapshot/.agent/contracts/113.json", "restored_exit": 0}
+NEGATIVE original-contract-archive-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:ORIGINAL_CONTRACT_ARCHIVE
+RESTORED original-contract-archive-corrupt EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "history", "expected_diagnostic": "ORIGINAL_CONTRACT_ARCHIVE", "expected_exit": 1, "name": "original-contract-archive-missing", "path": ".agent/evidence/113/recovery-prior-approval-snapshot/.agent/contracts/113.json", "restored_exit": 0}
+NEGATIVE original-contract-archive-missing EXIT 1 CONTROL_COMPONENT:FAIL:ORIGINAL_CONTRACT_ARCHIVE
+RESTORED original-contract-archive-missing EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "history", "expected_diagnostic": "ORIGINAL_CONTRACT_ARCHIVE_INVENTORY", "expected_exit": 1, "name": "original-contract-inventory-corrupt", "path": ".agent/evidence/113/recovery-prior-approval-snapshot/inventory.json", "restored_exit": 0}
+NEGATIVE original-contract-inventory-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:ORIGINAL_CONTRACT_ARCHIVE_INVENTORY
+RESTORED original-contract-inventory-corrupt EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/contract", "component": "history", "expected_diagnostic": "LIVE_RECOVERY_CONTRACT_PIN", "expected_exit": 1, "name": "live-approved-contract-corrupt", "path": ".agent/contracts/113.json", "restored_exit": 0}
+NEGATIVE live-approved-contract-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:LIVE_RECOVERY_CONTRACT_PIN
+RESTORED live-approved-contract-corrupt EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "debt", "expected_diagnostic": "DEBT_RECOVERY_BYTES", "expected_exit": 1, "name": "debt-old-row-corrupt", "path": "docs/planning/DEBT.md", "restored_exit": 0}
+NEGATIVE debt-old-row-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:DEBT_RECOVERY_BYTES
+RESTORED debt-old-row-corrupt EXIT 0 CONTROL_COMPONENT:debt:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "debt", "expected_diagnostic": "DEBT_RECOVERY_BYTES", "expected_exit": 1, "name": "debt-old-log-corrupt", "path": "docs/planning/DEBT.md", "restored_exit": 0}
+NEGATIVE debt-old-log-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:DEBT_RECOVERY_BYTES
+RESTORED debt-old-log-corrupt EXIT 0 CONTROL_COMPONENT:debt:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "debt", "expected_diagnostic": "DEBT_RECOVERY_BYTES", "expected_exit": 1, "name": "debt-halt-prefix-corrupt", "path": "docs/planning/DEBT.md", "restored_exit": 0}
+NEGATIVE debt-halt-prefix-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:DEBT_RECOVERY_BYTES
+RESTORED debt-halt-prefix-corrupt EXIT 0 CONTROL_COMPONENT:debt:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "debt", "expected_diagnostic": "DEBT_PREMATURE_RESOLUTION", "expected_exit": 1, "name": "debt-premature-resolution", "path": "docs/planning/DEBT.md", "restored_exit": 0}
+NEGATIVE debt-premature-resolution EXIT 1 CONTROL_COMPONENT:FAIL:DEBT_PREMATURE_RESOLUTION
+RESTORED debt-premature-resolution EXIT 0 CONTROL_COMPONENT:debt:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "UNAUTHORIZED_COUNTER_KEY", "expected_exit": 1, "name": "recovery-key-unauthorized", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE recovery-key-unauthorized EXIT 1 CONTROL_COMPONENT:FAIL:UNAUTHORIZED_COUNTER_KEY
+RESTORED recovery-key-unauthorized EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "RECOVERY_COUNTER_AUTH:113-recovery-1-checker-development", "expected_exit": 1, "name": "recovery-key-auth-corrupt", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE recovery-key-auth-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:RECOVERY_COUNTER_AUTH:113-recovery-1-checker-development
+RESTORED recovery-key-auth-corrupt EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "COUNTER_CONTINUITY:113-checker-development", "expected_exit": 1, "name": "original-exhausted-counter-reset", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE original-exhausted-counter-reset EXIT 1 CONTROL_COMPONENT:FAIL:COUNTER_CONTINUITY:113-checker-development
+RESTORED original-exhausted-counter-reset EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "RECOVERY_HISTORY_APPEND_ONLY", "expected_exit": 1, "name": "recovery-history-prefix-corrupt", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE recovery-history-prefix-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:RECOVERY_HISTORY_APPEND_ONLY
+RESTORED recovery-history-prefix-corrupt EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "debt", "expected_diagnostic": "RECOVERY_AUTHORIZATION_PIN", "expected_exit": 1, "name": "recovery-authorization-corrupt", "path": ".agent/evidence/113/recovery-authorization.json", "restored_exit": 0}
+NEGATIVE recovery-authorization-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:RECOVERY_AUTHORIZATION_PIN
+RESTORED recovery-authorization-corrupt EXIT 0 CONTROL_COMPONENT:debt:PASS
+FROZEN_BUDGET_POSITIVE_EXIT 0
+FROZEN_BUDGET_UNCLASSIFIED_EXIT 3
+FROZEN_BUDGET_RESTORED_EXIT 0
+CONTROL_SUITE:PASS; cases=124; synthetic component proof only; no source-review/QA verdict authored
+
+EXIT: 0

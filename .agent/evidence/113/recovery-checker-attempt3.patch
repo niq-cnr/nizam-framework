@@ -1,0 +1,2493 @@
+diff --git a/.agent/evidence/113/check_113.py b/.agent/evidence/113/check_113.py
+index 45e1c18..174ccea 100644
+--- a/.agent/evidence/113/check_113.py
++++ b/.agent/evidence/113/check_113.py
+@@ -7,6 +7,8 @@ review; they cannot prove consumer runtime behavior.
+ """
+ import copy
+ import hashlib
++import html
++from html.parser import HTMLParser
+ import json
+ import os
+ from pathlib import Path
+@@ -14,12 +16,14 @@ import re
+ import stat
+ import subprocess
+ import sys
++from urllib.parse import unquote, urlsplit
+ 
+ import yaml
+ 
+ HERE = Path(__file__).resolve().parent
+ PRIVATE = HERE / 'private'
+ BASE = PRIVATE / 'base'
++RECOVERY = HERE / 'recovery-inputs'
+ ROOT = Path.cwd().resolve()
+ PRODUCT = ('tools/interface.md', 'tools/skill.json', 'tools/SKILL.md', 'NIZAM.json',
+            'tools/README.md', 'methodology/10_live_runtime_sessions.md',
+@@ -79,6 +83,187 @@ def section(body, number, title=None):
+     return body[h.end():heads[i + 1].start() if i + 1 < len(heads) else len(body)]
+ 
+ 
++def escaped(text, position):
++    start = position
++    while start and text[start - 1] == '\\':
++        start -= 1
++    return (position - start) % 2 == 1
++
++
++def blank_markup(text):
++    # Keep boundaries/newlines: removing hidden text must not join two fragments
++    # into a new synthetic link that did not exist in the original source.
++    return ''.join('\n' if char == '\n' else ' ' for char in text)
++
++
++def visible_link_source(body):
++    """Conservative supported source regions, before decoding any entities.
++
++    Simple unindented Markdown paragraphs and standalone HTML anchors qualify.
++    Comments, fenced/indented code and exact-delimiter inline code do not.
++    Reference links, nested Markdown brackets and Markdown mixed with raw HTML
++    in one paragraph are deliberately unsupported, never guessed into a PASS.
++    """
++    body = re.sub(r'<!--(?s:.*?)(?:-->|\Z)', lambda m: blank_markup(m.group()), body)
++    lines, fence_char, fence_size = [], None, 0
++    for line in body.splitlines(keepends=True):
++        opening = re.match(r'^ {0,3}(`{3,}|~{3,})([^\n]*)', line)
++        if fence_char:
++            close = re.match(r'^ {0,3}(' + re.escape(fence_char) + r'{'+str(fence_size)+r',})[ \t]*(?:\n|$)', line)
++            lines.append(blank_markup(line))
++            if close:
++                fence_char, fence_size = None, 0
++        elif opening:
++            fence_char, fence_size = opening.group(1)[0], len(opening.group(1))
++            lines.append(blank_markup(line))
++        elif line.startswith(('    ', '\t')):
++            lines.append(blank_markup(line))
++        else:
++            lines.append(line)
++    body = ''.join(lines)
++    original, pieces, cursor = body, [], 0
++    runs = list(re.finditer(r'`+', original))
++    for opening in runs:
++        if opening.start() < cursor or escaped(original, opening.start()):
++            continue
++        closing = next((candidate for candidate in runs if candidate.start() >= opening.end()
++                        and len(candidate.group()) == len(opening.group())), None)
++        if closing:
++            pieces.extend((original[cursor:opening.start()], blank_markup(original[opening.start():closing.end()])))
++            cursor = closing.end()
++    pieces.append(original[cursor:])
++    body = ''.join(pieces)
++    # A backslash-escaped tag opener is displayed text, not an HTML anchor.
++    # Encode only that opener; decode destinations only AFTER a genuine link
++    # has been identified. Whole-document unescape would invent hidden anchors.
++    return ''.join('&lt;' if char == '<' and escaped(body, i) else char for i, char in enumerate(body))
++
++
++def rendered_links(body):
++    """Recognize supported actual link markup, then decode its destination.
++
++    HTML extraction is separate from Markdown text extraction. Markdown syntax
++    in raw HTML/attributes is never mistaken for an active Markdown link. Only
++    closed, visible, standalone <a href=...> anchors with href/title attributes
++    qualify; hidden/nested/script/style/pre/code contexts cannot provide proof.
++    """
++    hrefs = []
++    visible = visible_link_source(body)
++
++    class Anchors(HTMLParser):
++        def __init__(self):
++            super().__init__(convert_charrefs=False)
++            self.markup = False
++            self.stack = []
++            self.anchor = None
++
++        def handle_starttag(self, tag, attrs):
++            self.markup = True
++            tag = tag.lower()
++            if tag == 'a' and not self.stack:
++                destinations = [value for key, value in attrs if key == 'href' and value is not None]
++                allowed = len(destinations) == 1 and all(key in ('href', 'title') for key, _ in attrs)
++                self.anchor = {'href':destinations[0], 'visible':False, 'paragraph':self.paragraph} if allowed else None
++            elif self.anchor:
++                # Restrict labels to ordinary text or unstyled visible inline
++                # tags. An unsupported descendant invalidates the whole anchor.
++                if tag not in ('em', 'strong', 'code') or attrs:
++                    self.anchor = None
++            if tag not in ('area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'):
++                self.stack.append(tag)
++
++        def handle_startendtag(self, tag, attrs):
++            self.markup = True
++            if self.anchor:
++                self.anchor = None
++
++        def handle_endtag(self, tag):
++            self.markup = True
++            tag = tag.lower()
++            if self.stack and self.stack[-1] == tag:
++                if tag == 'a' and len(self.stack) == 1:
++                    if self.anchor and self.anchor['visible'] and self.anchor['paragraph'] == self.paragraph:
++                        hrefs.append((self.anchor['href'], self.paragraph))
++                    self.anchor = None
++                self.stack.pop()
++            else:
++                self.anchor = None
++
++        def handle_data(self, data):
++            if self.anchor and data.strip():
++                self.anchor['visible'] = True
++
++        def handle_entityref(self, name):
++            if self.anchor and html.unescape('&'+name+';').strip():
++                self.anchor['visible'] = True
++
++        def handle_charref(self, name):
++            if self.anchor and html.unescape('&#'+name+';').strip():
++                self.anchor['visible'] = True
++
++        def handle_decl(self, decl):
++            self.markup = True
++
++        def handle_pi(self, data):
++            self.markup = True
++
++        def unknown_decl(self, data):
++            self.markup = True
++
++        def handle_comment(self, data):
++            self.markup = True
++
++    pattern = r'''(?<!!)\[[^\]\n]*\]\(\s*(?:<([^>\n]+)>|([^\s()\n]+))(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)'''
++    parser = Anchors()
++    for index, paragraph in enumerate(visible.split('\n\n')):
++        # Keep HTML context across blank lines, including unclosed pre/code/
++        # script containers. A partial raw tag is ambiguous, never Markdown.
++        parser.markup = bool(parser.stack) or bool(re.search(r'<(?:/?[A-Za-z]|!)', paragraph))
++        parser.paragraph = index
++        parser.feed(paragraph + '\n\n')
++        if not parser.markup:
++            for match in re.finditer(pattern, paragraph):
++                if not escaped(paragraph, match.start()):
++                    hrefs.append((html.unescape(match.group(1) or match.group(2)), index))
++    parser.close()
++    # HTMLParser already decoded attribute entities, even convert_charrefs=False.
++    # Raw Markdown destinations are decoded once at their recognition site.
++    return hrefs
++
++
++def rendered_hrefs(body):
++    return [href for href, _ in rendered_links(body)]
++
++
++def has_target_href(root, document, body, target, paragraph_index=None, section_number=None):
++    """Resolve rendered links from document parent, retaining the repo boundary."""
++    root = root.resolve()
++    expected = (root / target).resolve()
++    if root not in expected.parents or not expected.is_file():
++        return False
++    for href, index in rendered_links(body):
++        if paragraph_index is not None and paragraph_index != index:
++            continue
++        if section_number is not None:
++            headings = list(re.finditer(r'(?m)^## (\d+)\. [^\n]+\n', body))
++            matches = [(i, head) for i, head in enumerate(headings) if int(head.group(1)) == section_number]
++            if len(matches) != 1:
++                continue
++            i, head = matches[0]
++            section_end = headings[i+1].start() if i+1 < len(headings) else len(body)
++            paragraphs = body.split('\n\n')
++            start = sum(len(p)+2 for p in paragraphs[:index])
++            if not (head.end() <= start and start+len(paragraphs[index]) <= section_end):
++                continue
++        parts = urlsplit(href)
++        if parts.scheme or parts.netloc or parts.query or parts.fragment or not parts.path or parts.path.startswith('/'):
++            continue
++        resolved = (root / Path(document).parent / unquote(parts.path)).resolve()
++        if root in resolved.parents and resolved == expected and resolved.is_file():
++            return True
++    return False
++
++
+ def header_delta(root, path, version, enforcement=None):
+     new, _ = doc(root, path)
+     old, _ = doc(BASE, path)
+@@ -96,7 +281,7 @@ def header_delta(root, path, version, enforcement=None):
+ 
+ 
+ def contract():
+-    return js(BASE, '.agent/contracts/113.json')
++    return js(HERE, 'recovery-approved-contract.json')
+ 
+ 
+ def surface_content(root):
+@@ -184,13 +369,14 @@ def routing(root):
+     for file in ('tools/interface.md', 'tools/README.md'):
+         body = doc(root, file)[1]
+         for path in ('10_live_runtime_sessions.md', '11_sbcl_runtime_binding.md'):
+-            require(path in body, 'CROSSLINK:' + file + ':' + path)
++            require(has_target_href(root, file, body, 'methodology/' + path), 'CROSSLINK:' + file + ':' + path)
+     for file in PRODUCT[5:7]:
+         body = doc(root, file)[1]
+-        require('../tools/interface.md' in body, 'DOCUMENT_INTERFACE_LINK:' + file)
++        location = 1 if file == PRODUCT[6] else None
++        require(has_target_href(root, file, body, 'tools/interface.md', section_number=location), 'DOCUMENT_INTERFACE_LINK:' + file)
+     refs = section(doc(root, 'tools/interface.md')[1], 7, 'References')
+     for path in ('schema/runtime_session.schema.json', 'schema/runtime_operation.schema.json'):
+-        require(path in refs and (root / path).is_file(), 'SCHEMA_LINK:' + path)
++        require(has_target_href(root, 'tools/interface.md', refs, path), 'SCHEMA_LINK:' + path)
+ 
+ 
+ def compatibility(root):
+@@ -237,14 +423,14 @@ def bounded_delta(root):
+             and old12[old12.index('| requirement-id'): ] == new12[new12.index('| requirement-id'):], 'RUNTIME_SECTION12_PRESERVED')
+     old, new = doc(BASE, PRODUCT[6])[1], doc(root, PRODUCT[6])[1]
+     paragraphs = new.split('\n\n')
+-    added = [p for p in paragraphs if '../tools/interface.md' in p]
++    added = [p for i, p in enumerate(paragraphs) if has_target_href(root, PRODUCT[6], new, 'tools/interface.md', i, 1)]
+     require(len(added) == 1 and len(added[0].split()) <= 100, 'SBCL_BOUNDED_LINK')
+     require('\n\n'.join(p for p in paragraphs if p not in added) == old, 'SBCL_BODY_PRESERVED')
+     old, new = doc(BASE, 'tools/README.md')[1], doc(root, 'tools/README.md')[1]
+     def normalize_readme(text, revised):
+         paras = text.split('\n\n')
+         if revised:
+-            extra = [p for p in paras if not p.startswith('|') and '../methodology/10_live_runtime_sessions.md' in p]
++            extra = [p for i, p in enumerate(paras) if not p.startswith('|') and has_target_href(root, 'tools/README.md', text, 'methodology/10_live_runtime_sessions.md', i)]
+             require(len(extra) == 1 and len(extra[0].split()) <= 120, 'README_BOUNDED_PARAGRAPH')
+             paras = [p for p in paras if p not in extra]
+         return '\n\n'.join('\n'.join(line for line in p.split('\n') if not line.startswith(('| [`skill.json`]', '| [`interface.md`]'))) for p in paras)
+@@ -258,14 +444,44 @@ def bounded_delta(root):
+ 
+ 
+ def history(root):
+-    expected = js(PRIVATE, 'history.json')
++    pins = js(RECOVERY, 'pins.json')
++    inventory = root / '.agent/evidence/113/private/history.json'
++    require(inventory.is_file() and not inventory.is_symlink()
++            and sha(inventory) == pins['original_history_sha256'], 'HISTORY_INVENTORY_IMMUTABLE')
++    expected = js(root, '.agent/evidence/113/private/history.json')
++    require(len(expected) == 4279, 'HISTORY_INVENTORY_COUNT')
++    for path, meta in pins['base_files'].items():
++        p = root / path
++        require(p.is_file() and not p.is_symlink() and sha(p) == meta['sha256']
++                and stat.S_IMODE(p.stat().st_mode) == meta['permissions'], 'HISTORICAL_BASE:' + path)
++    mapping = contract()['recovery']['historical_contract_map']
++    archive_inventory = root / mapping['archive_inventory_path']
++    require(archive_inventory.is_file() and not archive_inventory.is_symlink()
++            and sha(archive_inventory) == mapping['archive_inventory_sha256'], 'ORIGINAL_CONTRACT_ARCHIVE_INVENTORY')
++    entry = js(root, mapping['archive_inventory_path'])[mapping['original_history_entry']]
++    require(entry == {'sha256':mapping['original_sha256'], 'mode':oct(mapping['original_stat_permissions'])}, 'ORIGINAL_CONTRACT_ARCHIVE_ENTRY')
+     for path, meta in expected.items():
++        if path == 'docs/planning/DEBT.md':
++            require(sha(RECOVERY / 'debt-original.md') == meta['sha256'], 'DEBT_ORIGINAL_HISTORY')
++            debt(root)
++            continue
++        if path == mapping['original_history_entry']:
++            p = root / mapping['archive_path']
++            require(p.is_file() and not p.is_symlink() and sha(p) == meta['sha256'] == mapping['original_sha256']
++                    and stat.S_IMODE(p.stat().st_mode) == meta['permissions'] == mapping['original_stat_permissions'], 'ORIGINAL_CONTRACT_ARCHIVE')
++            continue
+         p = root / path
+         require(p.is_file() and not p.is_symlink() and sha(p) == meta['sha256']
+                 and stat.S_IMODE(p.stat().st_mode) == meta['permissions'], 'HISTORY_OR_INSTALLED:' + path)
+     actual_installed = {str(p.relative_to(root)) for p in (root / '.nizam').rglob('*') if p.is_file() or p.is_symlink()}
+     require(actual_installed == {p for p in expected if p.startswith('.nizam/')}, 'INSTALLED_INVENTORY')
+-    allowed = set(PRODUCT) | set(COORDINATION) | {'.agent/contracts/113.json'}
++    live = root / '.agent/contracts/113.json'
++    require(live.is_file() and not live.is_symlink() and sha(live) == pins['approved_contract_sha256']
++            and stat.S_IMODE(live.stat().st_mode) == pins['approved_contract_permissions'], 'LIVE_RECOVERY_CONTRACT_PIN')
++    actual = js(root, '.agent/contracts/113.json')
++    require(actual == contract() and actual['status'] == 'approved'
++            and actual['approvals']['validator_mode_a'] is True and actual['approvals']['evaluator_contract_review'] is True, 'LIVE_RECOVERY_CONTRACT_APPROVAL')
++    allowed = set(PRODUCT) | set(COORDINATION) | {'.agent/contracts/113.json', 'docs/planning/DEBT.md'}
+     changed = git(root, 'diff', contract()['base_revision'], '--name-only').splitlines()
+     additions = git(root, 'ls-files', '--others', '--exclude-standard').splitlines()
+     for path in set(changed + additions):
+@@ -275,6 +491,96 @@ def history(root):
+         require(permitted, 'OUT_OF_SCOPE:' + path)
+ 
+ 
++def debt_parts(text):
++    require(text.startswith('---\n'), 'DEBT_FRONTMATTER')
++    _, front, body = text.split('---', 2)
++    lines = [line for line in body.splitlines() if line.startswith('| NDEBT-050 |')]
++    require(len(lines) == 1, 'DEBT050_SINGLE_ROW')
++    parts = lines[0].split('|')
++    require(len(parts) == 7, 'DEBT050_SHAPE')
++    position = body.index(lines[0])
++    section_name = 'Open' if body.rfind('## Open', 0, position) > body.rfind('## Resolved', 0, position) else 'Resolved'
++    return yaml.safe_load(front), front, body, lines[0], parts, section_name
++
++
++def debt_front_transition(previous, current, version):
++    old, oldraw, *_ = debt_parts(previous)
++    new, newraw, *_ = debt_parts(current)
++    require(new.get('version') == version, 'DEBT_VERSION')
++    require(len(new['change_log']) == len(old['change_log'])+1
++            and new['change_log'][1:] == old['change_log'] and new['change_log'][0]['version'] == version,
++            'DEBT_OLD_LOGS')
++    require(newraw.split('change_log:\n', 1)[1].endswith(oldraw.split('change_log:\n', 1)[1]), 'DEBT_OLD_LOG_BYTES')
++    normalized = copy.deepcopy(new)
++    normalized.update(version=old['version'], change_log=old['change_log'])
++    require(normalized == old, 'DEBT_FRONTMATTER_SCOPE')
++
++
++def debt_text(original, halt, recovered, current, allow_resolved=False):
++    # The pre-halt register has no050 row. Check its literal body/logs against
++    # the actual mandatory halt delta, not a replacement historical baseline.
++    _, oldfront, oldbody = original.split('---', 2)
++    oldmeta = yaml.safe_load(oldfront)
++    haltmeta, haltraw, haltbody, haltrow, haltparts, haltsection = debt_parts(halt)
++    require(haltmeta['version'] == '0.63.0' and oldmeta['version'] == '0.62.0'
++            and haltmeta['change_log'][1:] == oldmeta['change_log']
++            and len(haltmeta['change_log']) == len(oldmeta['change_log'])+1, 'DEBT_HALT_LOG')
++    normalized = copy.deepcopy(haltmeta)
++    normalized.update(version=oldmeta['version'], change_log=oldmeta['change_log'])
++    require(normalized == oldmeta and haltraw.split('change_log:\n',1)[1].endswith(oldfront.split('change_log:\n',1)[1]), 'DEBT_HALT_FRONTMATTER')
++    require(haltbody.replace(haltrow+'\n','',1) == oldbody and haltsection == 'Open', 'DEBT_HALT_ONLY050')
++    debt_front_transition(halt, recovered, '0.64.0')
++    _, _, recoveredbody, recoveredrow, recoveredparts, recoveredsection = debt_parts(recovered)
++    require(recoveredbody.replace(recoveredrow+'\n','',1) == haltbody.replace(haltrow+'\n','',1), 'DEBT_OTHER_BODY')
++    require(recoveredparts[:5] == haltparts[:5] and recoveredparts[5].strip().startswith(haltparts[5].strip()), 'DEBT050_HALT_PREFIX')
++    append = recoveredparts[5].strip()[len(haltparts[5].strip()):]
++    require(0 < len(append.split()) <= 160 and all(token in append for token in ('recovery-authorization.json', '113-recovery-1', 'Open', 'pending')), 'DEBT050_RECOVERY_APPEND')
++    require(recoveredsection == 'Open', 'DEBT050_RECOVERY_OPEN')
++    newmeta, _, newbody, newrow, newparts, newsection = debt_parts(current)
++    if newmeta['version'] == '0.64.0':
++        require(current == recovered, 'DEBT_RECOVERY_BYTES')
++        return
++    require(newmeta['version'] == '0.65.0', 'DEBT_VERSION')
++    debt_front_transition(recovered, current, '0.65.0')
++    require(newbody.replace(newrow+'\n','',1) == recoveredbody.replace(recoveredrow+'\n','',1), 'DEBT_OTHER_BODY')
++    require(newparts[:5] == recoveredparts[:5] and newparts[5].strip().startswith(recoveredparts[5].strip()), 'DEBT050_HALT_PREFIX')
++    append = newparts[5].strip()[len(recoveredparts[5].strip()):]
++    require(0 < len(append.split()) <= 160 and 'RESOLVED' in append and 'evidence-gate.txt' in append, 'DEBT050_RESOLUTION_APPEND')
++    resolved_rows = [line for line in newbody.split('## Resolved',1)[1].splitlines() if line.startswith('| NDEBT-')]
++    require(newsection == 'Resolved' and resolved_rows and resolved_rows[0] == newrow, 'DEBT050_RESOLUTION_LOCATION')
++    require(allow_resolved, 'DEBT_PREMATURE_RESOLUTION')
++
++
++def real_completion(root):
++    files = ('.agent/validator/113-test-bundle-review.json', '.agent/validator/113-mode-b.json', '.agent/qa/113.json',
++             '.agent/evidence/113/current-source-inputs.json', '.agent/evidence/113/evidence-gate.txt')
++    if not all((root/path).is_file() for path in files):
++        return False
++    bundle, mode_b, qa = [js(root,path) for path in files[:3]]
++    source = js(root, files[3])
++    for gate in (bundle, mode_b, qa):
++        if gate.get('final_verdict',{}).get('approved') is not True or any(gate.get(k) != [] for k in ('issues','missing_acceptance_coverage','unsupported_claims')):
++            return False
++    actors = js(root,'.agent/evidence/113/fixed-inputs.json')['actors']
++    if qa.get('actor') != actors['final_qa'] or qa.get('qa_pass') is not True or qa.get('checks_passed') != 16 or qa.get('checks_run') != 16 or qa.get('adversarial',{}).get('performed') is not True:
++        return False
++    for gate in (mode_b, qa):
++        if gate.get('candidate_commit') != source['candidate']['commit'] or gate.get('source_manifest_sha256') != sha(root/'.agent/evidence/113/current-source-inputs.json') or gate.get('fixed_inputs_sha256') != sha(root/'.agent/evidence/113/fixed-inputs.json'):
++            return False
++    raw = read(root,files[4])
++    return (raw.startswith('COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/evidence_gate.py\n')
++            and 'CANDIDATE_SHA: '+source['candidate']['commit']+'\n' in raw
++            and 'EVIDENCE GATE PASS:' in raw and re.findall(r'(?m)^EXIT:\s*(-?\d+)\s*$',raw)==['0'])
++
++
++def debt(root):
++    pins = js(RECOVERY,'pins.json')
++    require(sha(root/'.agent/evidence/113/recovery-authorization.json') == pins['authorization_sha256'], 'RECOVERY_AUTHORIZATION_PIN')
++    require(stat.S_IMODE((root/'docs/planning/DEBT.md').stat().st_mode) == 436, 'DEBT_PERMISSIONS')
++    debt_text(read(RECOVERY,'debt-original.md'), read(HERE,'recovery-debt-halt.md'),
++              read(RECOVERY,'debt-recovery.md'), read(root,'docs/planning/DEBT.md'), allow_resolved=real_completion(root))
++
++
+ def scope_history(root):
+     compatibility(root)
+     bounded_delta(root)
+@@ -299,6 +605,9 @@ def lifecycle_data(features, phase, state, completion=False):
+     oldfeatures = js(BASE, '.agent/feature_list_015.json')
+     oldphase = yaml.safe_load(read(BASE, 'docs/planning/phase_015.yaml'))
+     oldstate = js(BASE, '.agent/run_state.json')
++    recovery_state = js(RECOVERY,'state.json')
++    recovery_features = js(RECOVERY,'features.json')
++    blocked_row = next(x for x in recovery_features['features'] if x['id']=='113')
+     require(phase.get('status') == 'in_progress', 'PHASE_CONTINUITY')
+     require([x['id'] for x in features['features']] == [x['id'] for x in oldfeatures['features']], 'FEATURE_IDS')
+     require([x['id'] for x in phase['steps']] == [x['id'] for x in oldphase['steps']], 'STEP_IDS')
+@@ -312,9 +621,14 @@ def lifecycle_data(features, phase, state, completion=False):
+         if row['id'] != '113':
+             require(row == old, 'PREDECESSOR_SUCCESSOR:' + row['id'])
+             continue
+-        allowed = {'status', 'passes', 'contract_ref', 'completed_at', 'qa', 'evidence'}
++        allowed = {'status', 'passes', 'contract_ref', 'completed_at', 'qa', 'evidence', 'blocked_reason'}
+         require({k:v for k,v in row.items() if k not in allowed} == {k:v for k,v in old.items() if k not in allowed}, 'FEATURE113_IMMUTABLE')
+-        require(row['status'] in ('pending', 'in_progress', 'complete'), 'FEATURE113_STATUS')
++        require(row['status'] in ('blocked', 'in_progress', 'complete'), 'FEATURE113_STATUS')
++        if row['status']=='blocked':
++            require(row.get('passes') is False and row.get('blocked_reason')==blocked_row['blocked_reason']
++                    and row.get('evidence')=='.agent/evidence/113/circuit-breaker-halt.json', 'BLOCKED_REFERENCES')
++        if row['status']=='in_progress':
++            require(row.get('passes') is False and 'blocked_reason' not in row, 'RECOVERY_RESUME_MASK')
+         if row['status'] == 'complete':
+             require(row.get('passes') is True and row.get('qa') == '.agent/qa/113.json'
+                     and row.get('evidence') == '.agent/evidence/113/evidence-gate.txt'
+@@ -326,22 +640,34 @@ def lifecycle_data(features, phase, state, completion=False):
+         else:
+             require(row.get('description') == old['description'], 'STEP113_DESCRIPTION')
+             require(set(row) <= {'id', 'description', 'status', 'evidence', 'docs_updated', 'changelog_entry'}, 'STEP113_FIELDS')
+-            require(row['status'] == {'pending':'PENDING', 'in_progress':'IN_PROGRESS', 'complete':'COMPLETED'}[feature['status']], 'LIFECYCLE_AGREEMENT')
++            require(row['status'] == {'blocked':'BLOCKED', 'in_progress':'IN_PROGRESS', 'complete':'COMPLETED'}[feature['status']], 'LIFECYCLE_AGREEMENT')
++            if row['status']=='BLOCKED':
++                require(row.get('evidence')=='.agent/evidence/113/circuit-breaker-halt.json', 'BLOCKED_STEP_EVIDENCE')
+             if row['status'] == 'COMPLETED':
+                 require(row.get('evidence') == '.agent/evidence/113/evidence-gate.txt'
+                         and row.get('docs_updated') and row.get('changelog_entry'), 'STEP113_COMPLETION')
+     require(state['current_phase'] == oldstate['current_phase'] and state['current_feature'] in ('113', '114'), 'RUN_POSITION')
++    require(state['status'] == ('blocked' if feature['status']=='blocked' else 'in_progress'), 'RUN_STATUS_AGREEMENT')
+     budget = state['scope_budget']
+     require(budget['original_estimate_lines'] == 7200 and budget['ceiling_130pct'] == 9360
+             and budget['per_feature'][:3] == oldstate['scope_budget']['per_feature'][:3]
+             and budget['total_lines_changed'] <= 9360, 'BUDGET_CONTINUITY')
+-    for key, old in oldstate['circuit_breaker'].items():
++    require(set(state['circuit_breaker']) == set(recovery_state['circuit_breaker']), 'UNAUTHORIZED_COUNTER_KEY')
++    for key, old in recovery_state['circuit_breaker'].items():
+         now = state['circuit_breaker'].get(key)
+-        if not key.startswith('113-'):
+-            require(now == old, 'HISTORICAL_COUNTER:' + key)
++        if key in ('113-checker-development','113-checker-review','113-contract'):
++            require(now==old and now['attempts']==3 and now['limit']==3, 'COUNTER_CONTINUITY:'+key)
++        elif key in ('113-recovery-1-checker-development','113-recovery-1-checker-review'):
++            require(set(now)=={'attempts','limit','authorization'} and now['authorization']=='.agent/evidence/113/recovery-authorization.json'
++                    and now['limit']==3 and old['attempts']<=now['attempts']<=3, 'RECOVERY_COUNTER_AUTH:'+key)
++        elif key in ('113-generator-development','113-implementation','113-qa','113-evidence-capture'):
++            require(set(now)==set(old) and now['limit']==old['limit']==3 and old['attempts']<=now['attempts']<=3, 'COUNTER_CONTINUITY:'+key)
+         else:
+-            require(now and now['limit'] == old['limit'] == 3 and old['attempts'] <= now['attempts'] <= 3, 'COUNTER_CONTINUITY:' + key)
++            require(now == old, 'HISTORICAL_COUNTER:' + key)
+     require(state['history'][:len(oldstate['history'])] == oldstate['history'], 'HISTORY_APPEND_ONLY')
++    require(state['history'][:len(recovery_state['history'])] == recovery_state['history'], 'RECOVERY_HISTORY_APPEND_ONLY')
++    mutable={'current_feature','status','updated_at','circuit_breaker','history','scope_budget','last_action','active_contract_id','pending_operator_gate','blocked_features','completed_contract_ids'}
++    require({k:v for k,v in state.items() if k not in mutable}=={k:v for k,v in recovery_state.items() if k not in mutable}, 'HISTORICAL_STATE_FIELDS')
+     require(completion is False or feature['status'] == 'complete', 'COMPLETION_PROJECTION')
+ 
+ 
+@@ -350,19 +676,23 @@ def lifecycle(root):
+     phase = yaml.safe_load(read(root, COORDINATION[1]))
+     state = js(root, COORDINATION[2])
+     lifecycle_data(features, phase, state)
++    debt(root)
+     c = js(root, '.agent/contracts/113.json')
+     require(c == contract(), 'APPROVED_CONTRACT_IMMUTABLE')
+     require(c['status'] == 'approved' and c['approvals']['validator_mode_a'] is True
+             and c['approvals']['evaluator_contract_review'] is True, 'CONTRACT_APPROVALS')
+-    # Explicit projection remains memory/scratch proof, never a lifecycle write.
+-    projected, projected_phase = copy.deepcopy(features), copy.deepcopy(phase)
+-    row = next(x for x in projected['features'] if x['id'] == '113')
+-    row.update(status='complete', passes=True, contract_ref='.agent/contracts/113.json',
+-               completed_at='CONTROL_ONLY', qa='.agent/qa/113.json', evidence='.agent/evidence/113/evidence-gate.txt')
+-    next(x for x in projected_phase['steps'] if x['id'] == '113').update(
+-        status='COMPLETED', evidence='.agent/evidence/113/evidence-gate.txt',
+-        docs_updated='CONTROL_ONLY', changelog_entry='CONTROL_ONLY')
+-    lifecycle_data(projected, projected_phase, state, completion=True)
++    feature=next(x for x in features['features'] if x['id']=='113')
++    if feature['status'] != 'blocked':
++        path=root/'.agent/validator/113-test-bundle-review.json'
++        require(path.is_file() and not path.is_symlink(), 'RECOVERY_BUNDLE_RESUME_MISSING')
++        reviewed=js(root,'.agent/validator/113-test-bundle-review.json')
++        require(reviewed.get('fixed_inputs_sha256')==sha(root/'.agent/evidence/113/fixed-inputs.json'), 'RECOVERY_BUNDLE_RESUME_PIN')
++        require(reviewed.get('final_verdict',{}).get('approved') is True
++                and all(reviewed.get(k)==[] for k in ('issues','missing_acceptance_coverage','unsupported_claims'))
++                and reviewed.get('actor')==js(root,'.agent/evidence/113/fixed-inputs.json')['actors']['bundle_reviewer'], 'RECOVERY_BUNDLE_RESUME_GATE')
++    if feature['status']=='complete':
++        require(real_completion(root), 'COMPLETION_ACTUAL_EVIDENCE')
++        require(debt_parts(read(root,'docs/planning/DEBT.md'))[-1]=='Resolved', 'COMPLETION_DEBT050_RESOLVED')
+ 
+ 
+ def claim_boundary(root):
+@@ -404,7 +734,8 @@ def integrity_data(root, fixed, fixed_seal, current, current_seal):
+     require(fixed['contract_sha256'] == sha(root / '.agent/contracts/113.json') and fixed['base_revision'] == contract()['base_revision'], 'FIXED_CONTRACT')
+     actors = fixed['actors']
+     require(set(actors) == {'test_author', 'generator', 'bundle_reviewer', 'final_qa'}
+-            and len(set(actors.values())) == 4 and actors['test_author'] == '/root/adapter_test_author_113', 'ACTOR_INDEPENDENCE')
++            and len(set(actors.values())) == 4 and actors['test_author'] == '/root/adapter_test_author_113'
++            and actors['final_qa']=='/root/adapter_acceptance_recovery_113', 'ACTOR_INDEPENDENCE')
+     validate_members(root, fixed['files'], 'FIXED_MEMBER')
+     require(current_seal.get('manifest_sha256') == sha(root / '.agent/evidence/113/current-source-inputs.json')
+             and current_seal.get('candidate_commit') == current['candidate']['commit'], 'SOURCE_SEAL')
+diff --git a/.agent/evidence/113/coordinator-interface.txt b/.agent/evidence/113/coordinator-interface.txt
+index c9565ab..6f80511 100644
+--- a/.agent/evidence/113/coordinator-interface.txt
++++ b/.agent/evidence/113/coordinator-interface.txt
+@@ -1,13 +1,13 @@
+ Feature113 fixed/source input interface — TestAuthor handoff
+ 
+ TestAuthor: /root/adapter_test_author_113. Generator: /root/adapter_generator_113.
+-Bundle reviewer: /root/adapter_validator_113. Fresh final QA: /root/adapter_acceptance_113.
++Bundle reviewer: /root/adapter_validator_113. Fresh final QA: /root/adapter_acceptance_recovery_113.
+ Four distinct actors. Parent alone owns state, counters, intents, candidate creation,
+ seals, canonical completion and capture adapter. This is checker-development proof,
+ not an implementation/source-review/QA verdict.
+ 
+ fixed-inputs.json format1 keys: base_revision (phase113 base a57c860...),
+-approved_base (dc133ea...), contract_sha256, actors{test_author,generator,
++approved_base (39e95f...), contract_sha256, actors{test_author,generator,
+ bundle_reviewer,final_qa}, files{relative path:{sha256,mode}}. Modes are six-digit
+ Git strings100644/100755. fixed-inputs-seal.json contains manifest_sha256 of
+ actual existing fixed-inputs.json bytes. The fixed manifest excludes its own
+@@ -82,3 +82,50 @@ paths including113-qa-adversarial.txt. Exactly one fresh-QA extra own spot is
+ unlisted and has its own command/performed true/evidence. Parent capture adapter
+ checks installed QA schema, actual gate/verdicts, receipt exits and replayed hashes
+ before canonical lifecycle completion. TestAuthor never approves own bundle/QA.
++
++
++Recovery113-recovery-1 final attempt3 interface (actual checkpoint proof only)
++
++Approved contract SHA e4fa0058a7f46c1da91a114c243942decbb4f85d4174007b9a07bc005f0a29ea;
++approved_base39e95f4f14cc92959b97fa418a1d34e47806b191. Original checker/review3/3
++and contract3/3 stay exhausted and immutable; only auth-bound two recovery keys
++may advance monotonically0..3. Frozen recovery state prefix457 includes the
++schema-corrected Parent metadata after historical prefix0..451. Public lifecycle
++accepts current BLOCKED records; actual resume requires current independent bundle
++actor, approved/three-empty verdict and exact fixed-input hash. Actual completion
++requires real candidate/QA/ModeB/capture bindings and Resolved050. No public bypass.
++
++The original4279 history map remains byte-exact. Its sole original113-contract
++entry is replayed at the exact recovery-prior-approval-snapshot archive path,
++originalbb4 SHA and full permissions436, authenticated by exact archive inventory.
++The live e4 approved contract is independently pinned. DEBT050 is graded using
++original.62, real halt.63 and approved recovery.64 snapshots: prior rows, logs and
++historical halt Notes prefix are retained; current050 remains Open before actual
++closure. Only the declared .65 one-log/one-version/resolution relocation and
++bounded appended proof are accepted after actual closure. No history reseal.
++
++Private CONTROL lifecycle is data-only: lifecycle_data and debt_text validate
++blocked/resumed/completed records and resolved-debt string projections. It never
++creates an approved bundle, SourceReview, ModeB, QA or evidence-gate artifact.
++Scratch CONTROL manifests and actual local synthetic Git commits belong only to
++component-integrity proof, and are never treated as production acceptance. The
++three new public resume negatives use missing or explicitly rejected records.
++Correct pin + rejected verdict must diagnose RESUME_GATE; wrong pin + rejected
++verdict must diagnose RESUME_PIN before verdict evaluation. Ignoring either
++predicate fails the respective exact diagnostic/exit assertion. This proves
++reachability independently of a fabricated approved positive; actual authorized
++resume success remains for independent reviewed source execution.
++
++The single final checkpoint passed127 targeted negatives and restored positives,
++seven valid forms, three actual scratch C9 runs and three lifecycle origins.
++No historical initial RED/old111/112 checker was rerun. HTMLParser hrefs are used
++after its single attribute decode; Markdown destinations decode once at markup
++recognition. Non-rendered contexts remain excluded and M11 interface placement
++remains one Section1 paragraph. Root capture adapter bytes remain25d2c4a4... .
++
++The fixed manifest pins actual existing helper/private model, preregistered plan,
++checkpoint raw, pre-code gates, immutable old anchors and recovery snapshots.
++It excludes future recovery bundle verdict, candidate/current-source manifests,
++source review, actualQA/command/capture/closure receipts, mutable Parent lifecycle
++files and its own live map/seal/handoff inventory. No future hash cycle. Historical
++copies of these files inside immutable snapshots remain valid fixed members.
+diff --git a/.agent/evidence/113/private/control_worker.py b/.agent/evidence/113/private/control_worker.py
+index 9f4a713..0379270 100644
+--- a/.agent/evidence/113/private/control_worker.py
++++ b/.agent/evidence/113/private/control_worker.py
+@@ -10,10 +10,18 @@ spec.loader.exec_module(c)
+ root, name = Path(sys.argv[1]).resolve(), sys.argv[2]
+ assert root != c.HERE.parents[2] and 'nizam113-controls-' in str(root)
+ functions = {'surface':c.surface_content, 'routing':c.routing, 'compatibility':c.compatibility,
+-             'delta':c.bounded_delta, 'history':c.history, 'lifecycle':c.lifecycle,
+-             'claim':c.claim_boundary, 'budget':c.budget_actual}
++             'delta':c.bounded_delta, 'history':c.history, 'production-lifecycle':c.lifecycle,
++             'claim':c.claim_boundary, 'budget':c.budget_actual, 'debt':c.debt}
+ try:
+-    if name == 'integrity':
++    if name in ('debt-models','lifecycle'):
++        model_spec=importlib.util.spec_from_file_location('model', c.RECOVERY/'control_models.py')
++        model=importlib.util.module_from_spec(model_spec);model_spec.loader.exec_module(model)
++        if name=='lifecycle':model.lifecycle_control(c,root)
++        else:
++            recovered=c.read(c.RECOVERY,'debt-recovery.md')
++            c.debt_text(c.read(c.RECOVERY,'debt-original.md'),c.read(c.HERE,'recovery-debt-halt.md'),
++                        recovered,model.resolved_debt(recovered),allow_resolved=True)
++    elif name == 'integrity':
+         c.integrity_data(root, c.js(root,'.agent/evidence/113/fixed-inputs.json'),
+                          c.js(root,'.agent/evidence/113/fixed-inputs-seal.json'),
+                          c.js(root,'.agent/evidence/113/current-source-inputs.json'),
+diff --git a/.agent/evidence/113/private/controls.py b/.agent/evidence/113/private/controls.py
+index 5542c76..7f89f03 100644
+--- a/.agent/evidence/113/private/controls.py
++++ b/.agent/evidence/113/private/controls.py
+@@ -30,6 +30,22 @@ def dump(root, path, value):
+     (root/path).write_text(json.dumps(value, indent=2)+'\n')
+ 
+ 
++def model_module():
++    spec=importlib.util.spec_from_file_location('control_model',c.RECOVERY/'control_models.py')
++    model=importlib.util.module_from_spec(spec);spec.loader.exec_module(model)
++    return model
++
++
++def stage_fixture(root,status):
++    # Private CONTROL data, never a bundle/source-review/QA/evidence gate.
++    records=model_module().stage_records(c,c.js(root,c.COORDINATION[0]),
++              yaml.safe_load(c.read(root,c.COORDINATION[1])),c.js(root,c.COORDINATION[2]),status)
++    dump(root,c.COORDINATION[0],records[0]);dump(root,c.COORDINATION[2],records[2])
++    (root/c.COORDINATION[1]).write_text(yaml.safe_dump(records[1],sort_keys=False))
++    debt=c.read(c.RECOVERY,'debt-recovery.md')
++    (root/'docs/planning/DEBT.md').write_text(model_module().resolved_debt(debt) if status=='complete' else debt)
++
++
+ def document(root, path, version, body, enforcement=None):
+     front, _ = c.doc(c.BASE, path)
+     front['version'] = version
+@@ -78,7 +94,7 @@ Statuses: `completed`, `condition_signalled`, `cancelled`, `terminated`, `reject
+ | --- | --- |
+ '''+ '\n'.join('| S'+str(i)+' | '+text+' |' for i,text in enumerate(rules,1))+'\n\n'
+     refs = old[old.index('## 6. References'):].replace('## 6.', '## 7.',1)
+-    refs += '\n- `methodology/10_live_runtime_sessions.md` and `methodology/11_sbcl_runtime_binding.md`.\n- `schema/runtime_session.schema.json` and `schema/runtime_operation.schema.json`.\n'
++    refs += '\n- [Sessions](..&#47;methodology/10_live_runtime_sessions.md) and [SBCL](..&#47;methodology/11_sbcl_runtime_binding.md).\n- [Session schema](..&#47;schema/runtime_session.schema.json) and [operation schema](..&#47;schema/runtime_operation.schema.json).\n'
+     document(root,'tools/interface.md','0.4.0',old[:old.index('## 6. References')]+optional+refs)
+     m = c.js(c.BASE,'tools/skill.json'); m['version']='0.6.0'
+     m['runtime_requirements']['live_runtime_session']={'required':False,'description':'Optional for claiming adapters only.'}
+@@ -95,7 +111,7 @@ and `methodology/11_sbcl_runtime_binding.md`; capability remains optional.
+ '''
+     document(root,'tools/SKILL.md','0.6.0',old[:old.index('## 10. References')]+inserted+refs)
+     _,old=c.doc(c.BASE,'tools/README.md')
+-    extra='Optional runtime adapters follow [sessions](../methodology/10_live_runtime_sessions.md), [SBCL binding](../methodology/11_sbcl_runtime_binding.md) and [interface](interface.md). Nonclaiming consumers remain conformant.'
++    extra='Optional runtime adapters follow [sessions](..&#47;methodology/10_live_runtime_sessions.md), [SBCL binding](..&#47;methodology/11_sbcl_runtime_binding.md) and [interface](interface.md). Nonclaiming consumers remain conformant.'
+     document(root,'tools/README.md','0.20.0',old.replace('## Design Decision',extra+'\n\n## Design Decision',1))
+     _,old=c.doc(c.BASE,c.PRODUCT[5]); start=old.index('A runtime session')
+     intro='''
+@@ -104,7 +120,7 @@ and `methodology/11_sbcl_runtime_binding.md`; capability remains optional.
+ 
+ This protocol is **partially-enforced** through existing schema and C12 record validation only;
+ these declared-record checks cannot prove live runtime behavior. The optional
+-[adapter interface](../tools/interface.md) is normatively delivered, as is the
++[adapter interface](..&#47;tools/interface.md) is normatively delivered, as is the
+ [SBCL binding](11_sbcl_runtime_binding.md). Executable controller/adapter/SBCL
+ enforcement and all thirteen live conformance proofs remain pending phase016.
+ 
+@@ -112,10 +128,10 @@ enforcement and all thirteen live conformance proofs remain pending phase016.
+     body=intro+old[start:]
+     marker='The normative\nSBCL reference binding is delivered.'
+     begin=body.index(marker);end=body.index('\n\n| requirement-id',begin)
+-    body=body[:begin]+marker+' The optional [adapter interface](../tools/interface.md) is delivered; executable controller/SBCL enforcement and all live proofs remain pending phase016.'+body[end:]
++    body=body[:begin]+marker+' The optional [adapter interface](..&#47;tools/interface.md) is delivered; executable controller/SBCL enforcement and all live proofs remain pending phase016.'+body[end:]
+     document(root,c.PRODUCT[5],'0.2.0',body,'partially-enforced')
+     _,old=c.doc(c.BASE,c.PRODUCT[6]);heading='## 1. Binding scope and evidence boundary\n\n'
+-    body=old.replace(heading,heading+'The optional [adapter interface](../tools/interface.md) routes claiming consumers.\n\n',1)
++    body=old.replace(heading,heading+'The optional [adapter interface](..&#47;tools/interface.md) routes claiming consumers.\n\n',1)
+     document(root,c.PRODUCT[6],'0.1.1',body)
+     old=c.read(c.BASE,'CHANGELOG.md');(root/'CHANGELOG.md').write_text(old.replace('### Changed\n\n','### Changed\n\n- **Optional live-runtime adapter (feature113).** Normative optional routing only; controller and live proofs pending.\n\n',1))
+ 
+@@ -169,8 +185,109 @@ PLAN = [
+     preregister('source-seal-corrupt','integrity','.agent/evidence/113/current-source-seal.json','SOURCE_SEAL','evidence'),
+     preregister('candidate-tree-corrupt','integrity','.agent/evidence/113/current-source-inputs.json','CANDIDATE_TREE','evidence'),
+     preregister('actual-counted-budget-overrun','budget','.agent/contracts/113-budget-overrun-control.json','BUDGET_ACTUAL_CEILING','budget/contract'),
++    preregister('encoded-href-incorrect-target','routing','methodology/11_sbcl_runtime_binding.md','DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md','budget/product'),
++    preregister('plaintext-link-marker','routing','methodology/11_sbcl_runtime_binding.md','DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md','budget/product'),
++    preregister('encoded-readme-incorrect-target','routing','tools/README.md','CROSSLINK:tools/README.md:10_live_runtime_sessions.md','budget/product'),
++    preregister('plaintext-readme-bounded-marker','delta','tools/README.md','README_BOUNDED_PARAGRAPH','budget/product'),
++    preregister('plaintext-sbcl-bounded-marker','delta','methodology/11_sbcl_runtime_binding.md','SBCL_BOUNDED_LINK','budget/product'),
++    preregister('href-escapes-repository','routing','methodology/11_sbcl_runtime_binding.md','DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md','budget/product'),
++    preregister('code-only-link-marker','routing','methodology/11_sbcl_runtime_binding.md','DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md','budget/product'),
+ ]
+ 
++NONRENDERED = {
++    'html-comment': lambda link:'<!-- '+link+' -->',
++    'html-comment-across-paragraphs': lambda link:'<!--\n\n'+link+'\n\n-->',
++    'fenced-code-long-close': lambda link:'\n\n```text\n'+link+'\n````\n\n',
++    'tilde-fenced-code': lambda link:'\n\n~~~text\n'+link+'\n~~~\n\n',
++    'unclosed-fenced-code': lambda link:'\n\n```text\n'+link,
++    'indented-code': lambda link:'\n\n    '+link+'\n\n',
++    'tab-indented-code': lambda link:'\n\n\t'+link+'\n\n',
++    'double-inline-code': lambda link:'``'+link+'``',
++    'escaped-markdown-marker': lambda link:'\\'+link,
++    'html-code-text': lambda link:'<code>'+link+'</code>',
++    'html-pre-across-paragraphs': lambda link:'<pre>\n\n'+link+'\n\n</pre>',
++    'html-script-text': lambda link:'<script>'+link+'</script>',
++    'html-style-text': lambda link:'<style>'+link+'</style>',
++    'raw-html-markdown-text': lambda link:'<div>'+link+'</div>',
++    'html-attribute-markdown': lambda link:'<span title="'+link+'">label</span>',
++    'displayed-entity-anchor': lambda link:'&lt;a href="..&#47;tools/interface.md"&gt;adapter&lt;/a&gt;',
++    'escaped-html-anchor': lambda link:'\\<a href="..&#47;tools/interface.md">adapter</a>',
++    'hidden-html-anchor': lambda link:'<a href="..&#47;tools/interface.md" hidden>adapter</a>',
++    'html-code-contained-anchor': lambda link:'<code><a href="..&#47;tools/interface.md">adapter</a></code>',
++    'html-pre-contained-anchor-across-paragraphs': lambda link:'<pre>\n\n<a href="..&#47;tools/interface.md">adapter</a>\n\n</pre>',
++    'image-marker': lambda link:'!'+link,
++}
++for context in NONRENDERED:
++    for component, diagnostic in (('routing','DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md'), ('delta','SBCL_BOUNDED_LINK')):
++        PLAN.append(preregister('nonrendered-'+context+'-'+component,component,'methodology/11_sbcl_runtime_binding.md',diagnostic,'budget/product'))
++PLAN.extend([
++    preregister('readme-comment-only-routing','routing','tools/README.md','CROSSLINK:tools/README.md:10_live_runtime_sessions.md','budget/product'),
++    preregister('readme-comment-only-bounded','delta','tools/README.md','README_BOUNDED_PARAGRAPH','budget/product'),
++    preregister('sbcl-link-wrong-section-routing','routing','methodology/11_sbcl_runtime_binding.md','DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md','budget/product'),
++    preregister('sbcl-link-wrong-section-bounded','delta','methodology/11_sbcl_runtime_binding.md','SBCL_BOUNDED_LINK','budget/product'),
++])
++
++POSITIVE_LINKS = [
++    {'name':'ordinary-markdown','markup':'[adapter interface](../tools/interface.md)'},
++    {'name':'encoded-markdown','markup':'[adapter interface](..&#47;tools/interface.md)'},
++    {'name':'markdown-label-inline-code','markup':'[the `adapter interface`](..&#47;tools/interface.md)'},
++    {'name':'encoded-html-anchor','markup':'<a href="..&#47;tools/interface.md">adapter interface</a>'},
++    {'name':'html-label-inline-code','markup':'<a href="..&#47;tools/interface.md"><code>adapter interface</code></a>'},
++]
++
++RECOVERY_LINKS = {
++    'amp-decimal-html':'<a href="..&amp;#47;tools/interface.md">adapter interface</a>',
++    'amp-hex-html':'<a href="..&amp;#x2f;tools/interface.md">adapter interface</a>',
++    'amp-decimal-markdown':'[adapter interface](..&amp;#47;tools/interface.md)',
++    'amp-hex-markdown':'[adapter interface](..&amp;#x2f;tools/interface.md)',
++    'url-query':'[adapter interface](..&#47;tools/interface.md?ignored=true)',
++    'url-fragment':'[adapter interface](..&#47;tools/interface.md#ignored)',
++    'url-authority':'[adapter interface](//example.invalid/tools/interface.md)',
++    'url-scheme':'[adapter interface](https://example.invalid/tools/interface.md)',
++    'double-percent-path':'[adapter interface](..%252Ftools%252Finterface.md)',
++}
++for context in RECOVERY_LINKS:
++    for component, diagnostic in (('routing','DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md'),('delta','SBCL_BOUNDED_LINK')):
++        PLAN.append(preregister('recovery-link-'+context+'-'+component,component,'methodology/11_sbcl_runtime_binding.md',diagnostic,'budget/product'))
++PLAN.extend([
++    preregister('original-inventory-corrupt','history','.agent/evidence/113/private/history.json','HISTORY_INVENTORY_IMMUTABLE','evidence'),
++    preregister('original-inventory-missing','history','.agent/evidence/113/private/history.json','HISTORY_INVENTORY_IMMUTABLE','evidence'),
++    preregister('original-base-corrupt','history','.agent/evidence/113/private/base/.agent/contracts/113.json','HISTORICAL_BASE:.agent/evidence/113/private/base/.agent/contracts/113.json','evidence'),
++    preregister('original-contract-archive-corrupt','history','.agent/evidence/113/recovery-prior-approval-snapshot/.agent/contracts/113.json','ORIGINAL_CONTRACT_ARCHIVE','evidence'),
++    preregister('original-contract-archive-missing','history','.agent/evidence/113/recovery-prior-approval-snapshot/.agent/contracts/113.json','ORIGINAL_CONTRACT_ARCHIVE','evidence'),
++    preregister('original-contract-inventory-corrupt','history','.agent/evidence/113/recovery-prior-approval-snapshot/inventory.json','ORIGINAL_CONTRACT_ARCHIVE_INVENTORY','evidence'),
++    preregister('live-approved-contract-corrupt','history','.agent/contracts/113.json','LIVE_RECOVERY_CONTRACT_PIN','budget/contract'),
++    preregister('debt-old-row-corrupt','debt','docs/planning/DEBT.md','DEBT_RECOVERY_BYTES','budget/planning'),
++    preregister('debt-old-log-corrupt','debt','docs/planning/DEBT.md','DEBT_RECOVERY_BYTES','budget/planning'),
++    preregister('debt-halt-prefix-corrupt','debt','docs/planning/DEBT.md','DEBT_RECOVERY_BYTES','budget/planning'),
++    preregister('debt-premature-resolution','debt','docs/planning/DEBT.md','DEBT_PREMATURE_RESOLUTION','budget/planning'),
++    preregister('recovery-key-unauthorized','lifecycle','.agent/run_state.json','UNAUTHORIZED_COUNTER_KEY','excluded/run_state'),
++    preregister('recovery-key-auth-corrupt','lifecycle','.agent/run_state.json','RECOVERY_COUNTER_AUTH:113-recovery-1-checker-development','excluded/run_state'),
++    preregister('original-exhausted-counter-reset','lifecycle','.agent/run_state.json','COUNTER_CONTINUITY:113-checker-development','excluded/run_state'),
++    preregister('recovery-history-prefix-corrupt','lifecycle','.agent/run_state.json','RECOVERY_HISTORY_APPEND_ONLY','excluded/run_state'),
++    preregister('recovery-authorization-corrupt','debt','.agent/evidence/113/recovery-authorization.json','RECOVERY_AUTHORIZATION_PIN','evidence'),
++    preregister('production-resume-bundle-missing','production-lifecycle','.agent/validator/113-test-bundle-review.json','RECOVERY_BUNDLE_RESUME_MISSING','budget/verdict'),
++    preregister('production-resume-bundle-rejected','production-lifecycle','.agent/validator/113-test-bundle-review.json','RECOVERY_BUNDLE_RESUME_GATE','budget/verdict'),
++    preregister('production-resume-bundle-wrong-pin','production-lifecycle','.agent/validator/113-test-bundle-review.json','RECOVERY_BUNDLE_RESUME_PIN','budget/verdict'),
++])
++POSITIVE_LINKS.extend([
++    {'name':'hex-encoded-html-anchor','markup':'<a href="..&#x2f;tools/interface.md">adapter interface</a>'},
++    {'name':'percent-path-once','markup':'[adapter interface](..%2Ftools%2Finterface.md)'},
++])
++
++# Actual validator target runs are confined to the same owned scratch tree.
++# Wrong *existing* target and a plaintext valid path both pass C9: the checker
++# must still reject because they are not actual hrefs to the contracted target.
++C9_PLAN = [
++    {'name':'encoded-href-valid', 'path':'methodology/11_sbcl_runtime_binding.md', 'expected_exit':0, 'expected_c9':'[C9] PASS path-resolution'},
++    {'name':'encoded-href-incorrect-target', 'path':'methodology/11_sbcl_runtime_binding.md', 'expected_exit':0, 'expected_c9':'[C9] PASS path-resolution'},
++    {'name':'plaintext-link-marker', 'path':'methodology/11_sbcl_runtime_binding.md', 'expected_exit':0, 'expected_c9':'[C9] PASS path-resolution'},
++]
++
++LIFECYCLE_ORIGINS=[{'status':status,'component':'lifecycle','expected_exit':0,
++                   'proof_scope':'CONTROL records only; no production approval'}
++                  for status in ('blocked','in_progress','complete')]
++
+ 
+ def mutate(root, item):
+     name,path=item['name'],item['path'];p=root/path
+@@ -178,7 +295,45 @@ def mutate(root, item):
+         p.chmod(stat.S_IMODE(p.stat().st_mode)^0o100);return
+     if name=='out-of-scope-untracked':p.write_text('CONTROL_ONLY\n');return
+     if name=='actual-counted-budget-overrun':p.write_text('CONTROL_ONLY\n'*3300);return
++    if name.startswith('production-resume-bundle-'):
++        stage_fixture(root,'in_progress')
++        if name.endswith('-missing'):p.unlink();return
++        record={'actor':'/root/adapter_validator_113','fixed_inputs_sha256':c.sha(root/'.agent/evidence/113/fixed-inputs.json'),
++                'final_verdict':{'approved':False},'issues':['CONTROL explicitly rejected bundle'],
++                'missing_acceptance_coverage':[],'unsupported_claims':[],'proof_scope':'CONTROL negative only, never actual approval'}
++        if name.endswith('-wrong-pin'):record['fixed_inputs_sha256']='0'*64
++        dump(root,path,record);return
+     text=p.read_text()
++    if name.startswith('recovery-link-'):
++        context=name.removeprefix('recovery-link-').rsplit('-',1)[0]
++        needle='[adapter interface](..&#47;tools/interface.md)';assert text.count(needle)==1
++        p.write_text(text.replace(needle,RECOVERY_LINKS[context]));return
++    if name in ('original-contract-archive-missing','original-inventory-missing'):p.unlink();return
++    if name in ('original-inventory-corrupt','original-base-corrupt','original-contract-archive-corrupt','original-contract-inventory-corrupt','live-approved-contract-corrupt','recovery-authorization-corrupt'):
++        p.write_text(text+'\nCONTROL_CORRUPTION\n');return
++    if name.startswith('debt-'):
++        if name=='debt-old-row-corrupt':text=text.replace('| NDEBT-040 |','| NDEBT-999 |',1)
++        elif name=='debt-old-log-corrupt':text=text.replace('Resolve only NDEBT-049','Changed unrelated old log',1)
++        elif name=='debt-halt-prefix-corrupt':text=text.replace('OPEN — mandatory installed circuit-breaker halt.','OPEN — falsified halt.',1)
++        elif name=='debt-premature-resolution':
++            model_spec=importlib.util.spec_from_file_location('model',c.RECOVERY/'control_models.py')
++            model=importlib.util.module_from_spec(model_spec);model_spec.loader.exec_module(model);text=model.resolved_debt(text)
++        p.write_text(text);return
++    if name.startswith('nonrendered-'):
++        context=name.removeprefix('nonrendered-').rsplit('-',1)[0]
++        needle='[adapter interface](..&#47;tools/interface.md)'
++        assert text.count(needle)==1
++        p.write_text(text.replace(needle,NONRENDERED[context](needle)));return
++    if name.startswith('readme-comment-only-'):
++        needle='[sessions](..&#47;methodology/10_live_runtime_sessions.md)'
++        assert text.count(needle)==1
++        p.write_text(text.replace(needle,'<!-- '+needle+' -->'));return
++    if name.startswith('sbcl-link-wrong-section-'):
++        paragraph='The optional [adapter interface](..&#47;tools/interface.md) routes claiming consumers.\n\n'
++        assert text.count(paragraph)==1
++        text=text.replace(paragraph,'',1)
++        heading='## 2. Reference language profile\n\n';assert heading in text
++        p.write_text(text.replace(heading,heading+paragraph,1));return
+     if path.endswith('.json') and name not in ('installed-content-changed','historical-proof-changed'):
+         data=json.loads(text)
+         if name=='optional-required-true':data['runtime_requirements']['live_runtime_session']['required']=True
+@@ -191,6 +346,12 @@ def mutate(root, item):
+         elif name=='attempt-counter-reset':data['circuit_breaker']['113-contract']['attempts']=0
+         elif name=='budget-ceiling-rebased':data['scope_budget']['ceiling_130pct']=9999
+         elif name=='budget-overrun':data['scope_budget']['total_lines_changed']=9361
++        elif name=='recovery-key-unauthorized':data['circuit_breaker']['113-recovery-unauthorized']={'attempts':0,'limit':3}
++        elif name=='recovery-key-auth-corrupt':data['circuit_breaker']['113-recovery-1-checker-development']['authorization']='wrong.json'
++        elif name=='original-exhausted-counter-reset':data['circuit_breaker']['113-checker-development']['attempts']=0
++        elif name=='recovery-history-prefix-corrupt':
++            frozen_count=len(c.js(c.RECOVERY,'state.json')['history'])
++            data['history'][frozen_count-1]['detail']='CONTROL_CORRUPTION'
+         elif name in ('fixed-seal-corrupt','source-seal-corrupt'):data['manifest_sha256']='0'*64
+         elif name=='candidate-tree-corrupt':
+             data['candidate']['tree']='0'*40;dump(root,path,data)
+@@ -216,31 +377,69 @@ def mutate(root, item):
+     elif name=='foreign-ecosystem-scope':text+='\nThis repository is governed by NizamIQ.\n'
+     elif name=='false-release':text+='\nReleased framework v1.6.0.\n'
+     elif name=='phase-prematurely-complete':text=text.replace('status: in_progress','status: complete',1)
++    elif name=='encoded-href-incorrect-target':text=text.replace('..&#47;tools/interface.md','..&#47;tools/skill.json')
++    elif name in ('plaintext-link-marker','plaintext-sbcl-bounded-marker'):
++        text=text.replace('[adapter interface](..&#47;tools/interface.md)','tools/interface.md')
++    elif name=='encoded-readme-incorrect-target':text=text.replace('..&#47;methodology/10_live_runtime_sessions.md','..&#47;methodology/00_planning.md')
++    elif name=='plaintext-readme-bounded-marker':text=text.replace('[sessions](..&#47;methodology/10_live_runtime_sessions.md)','methodology/10_live_runtime_sessions.md')
++    elif name=='href-escapes-repository':text=text.replace('..&#47;tools/interface.md','..&#47;..&#47;tools/interface.md')
++    elif name=='code-only-link-marker':text=text.replace('[adapter interface](..&#47;tools/interface.md)','`[adapter interface](..&#47;tools/interface.md)`')
+     else:text+='\nCONTROL_CORRUPTION\n'
+     p.chmod(p.stat().st_mode|0o200);p.write_text(text)
+ 
+ 
+ def main():
+     parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,required=True);parser.add_argument('--print-plan',action='store_true');args=parser.parse_args()
+-    if args.print_plan:print(json.dumps(PLAN,indent=2));return
++    if args.print_plan:print(json.dumps({'negative_controls':PLAN,'c9_controls':C9_PLAN,'positive_link_controls':POSITIVE_LINKS,'lifecycle_origin_controls':LIFECYCLE_ORIGINS},indent=2));return
+     source=args.root.resolve();assert source.is_dir() and (source/'.git').exists()
+     with tempfile.TemporaryDirectory(prefix='nizam113-controls-') as temp:
+         scratch=Path(temp)/'repo'
+         p=subprocess.run(['git','clone','--quiet','--shared','--no-checkout',str(source),str(scratch)],text=True,capture_output=True);assert p.returncode==0,p.stderr
+         shutil.copytree(source,scratch,dirs_exist_ok=True,ignore=shutil.ignore_patterns('.git','__pycache__'))
+         fixture(scratch)
+-        for args_git in (('read-tree','HEAD'),('config','user.name','Private Controls'),('config','user.email','controls@example.invalid'),('add','--',*c.PRODUCT),('commit','--quiet','-m','PRIVATE synthetic controls candidate')):
++        stage_fixture(scratch,'blocked')
++        for args_git in (('read-tree','HEAD'),('config','user.name','Private Controls'),('config','user.email','controls@example.invalid'),('add','--',*c.PRODUCT),('commit','--quiet','--allow-empty','-m','PRIVATE synthetic controls candidate')):
+             c.git(scratch,*args_git)
+         candidate=c.git(scratch,'rev-parse','HEAD');tree=c.git(scratch,'rev-parse','HEAD^{tree}')
+         fixed={'format':1,'base_revision':c.contract()['base_revision'],'approved_base':c.git(source,'rev-parse','HEAD'),'contract_sha256':c.sha(scratch/'.agent/contracts/113.json'),
+-               'actors':{'test_author':'/root/adapter_test_author_113','generator':'/root/adapter_generator_113','bundle_reviewer':'/root/adapter_validator_113','final_qa':'/root/adapter_acceptance_113'},
++               'actors':{'test_author':'/root/adapter_test_author_113','generator':'/root/adapter_generator_113','bundle_reviewer':'/root/adapter_validator_113','final_qa':'/root/adapter_acceptance_recovery_113'},
+                'files':{'.agent/evidence/113/evidence_gate.py':{'sha256':c.sha(scratch/'.agent/evidence/113/evidence_gate.py'),'mode':c.mode(scratch/'.agent/evidence/113/evidence_gate.py')}}}
+         dump(scratch,'.agent/evidence/113/fixed-inputs.json',fixed);dump(scratch,'.agent/evidence/113/fixed-inputs-seal.json',{'manifest_sha256':c.sha(scratch/'.agent/evidence/113/fixed-inputs.json')})
+         current={'format':1,'candidate':{'commit':candidate,'tree':tree},'fixed_inputs_sha256':c.sha(scratch/'.agent/evidence/113/fixed-inputs.json'),'contract_sha256':fixed['contract_sha256'],
+                  'source_paths':{path:{'sha256':c.sha(scratch/path),'mode':c.mode(scratch/path)} for path in c.PRODUCT}}
+         dump(scratch,'.agent/evidence/113/current-source-inputs.json',current);dump(scratch,'.agent/evidence/113/current-source-seal.json',{'manifest_sha256':c.sha(scratch/'.agent/evidence/113/current-source-inputs.json'),'candidate_commit':candidate})
+-        for component in ('surface','routing','compatibility','delta','history','lifecycle','claim','integrity','budget'):
++        for component in ('surface','routing','compatibility','delta','history','lifecycle','claim','integrity','budget','debt','debt-models'):
+             rc,out=invoke(scratch,component);print('POSITIVE',component,'EXIT',rc,out.strip());assert rc==0,component
++        lifecycle_paths=[*c.COORDINATION,'docs/planning/DEBT.md']
++        lifecycle_original={path:(scratch/path).read_bytes() for path in lifecycle_paths}
++        for item in LIFECYCLE_ORIGINS:
++            print('PREREGISTERED_LIFECYCLE_ORIGIN',json.dumps(item,sort_keys=True))
++            try:
++                stage_fixture(scratch,item['status']);rc,out=invoke(scratch,item['component'])
++                print('CONTROL_LIFECYCLE_ORIGIN',item['status'],'EXIT',rc,out.strip());assert rc==item['expected_exit'],item['status']
++            finally:
++                for path,data in lifecycle_original.items():(scratch/path).write_bytes(data)
++            rc,out=invoke(scratch,'lifecycle');print('RESTORED_LIFECYCLE_ORIGIN',item['status'],'EXIT',rc,out.strip());assert rc==0,item['status']
++        for item in POSITIVE_LINKS:
++            path=scratch/'methodology/11_sbcl_runtime_binding.md';original=path.read_bytes()
++            print('PREREGISTERED_POSITIVE_LINK',json.dumps(item,sort_keys=True),'EXPECTED_ROUTING_EXIT0_EXPECTED_DELTA_EXIT0')
++            try:
++                text=path.read_text();needle='[adapter interface](..&#47;tools/interface.md)';assert text.count(needle)==1
++                path.write_text(text.replace(needle,item['markup']))
++                for component in ('routing','delta'):
++                    rc,out=invoke(scratch,component);print('POSITIVE_LINK',item['name'],component,'EXIT',rc,out.strip());assert rc==0,item['name']
++            finally:path.write_bytes(original)
++        for item in C9_PLAN:
++            path=scratch/item['path'];original=path.read_bytes()
++            print('PREREGISTERED_C9',json.dumps(item,sort_keys=True))
++            try:
++                if item['name']!='encoded-href-valid':
++                    mutate(scratch,next(entry for entry in PLAN if entry['name']==item['name']))
++                command=['bash','tools/validate.sh','--target',item['path']]
++                actual=subprocess.run(command,cwd=scratch,text=True,capture_output=True,env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
++                print('C9_COMMAND',json.dumps(command),'SCRATCH_ROOT',str(scratch));print(actual.stdout);print(actual.stderr);print('C9_ACTUAL_EXIT',actual.returncode)
++                assert actual.returncode==item['expected_exit'] and item['expected_c9'] in actual.stdout,item['name']
++            finally:path.write_bytes(original)
+         for item in PLAN:
+             path=scratch/item['path'];existed=path.exists();original=path.read_bytes() if existed else None;permissions=stat.S_IMODE(path.stat().st_mode) if existed else None
+             # A candidate-tree mutation also updates its source seal to reach its target.
+@@ -249,9 +448,13 @@ def main():
+             try:
+                 mutate(scratch,item);rc,out=invoke(scratch,item['component']);print('NEGATIVE',item['name'],'EXIT',rc,out.strip());assert rc==item['expected_exit'] and item['expected_diagnostic'] in out,item['name']
+             finally:
+-                if existed:path.chmod(permissions|0o200);path.write_bytes(original);path.chmod(permissions)
++                if existed:
++                    if path.exists():path.chmod(permissions|0o200)
++                    path.write_bytes(original);path.chmod(permissions)
+                 else:path.unlink(missing_ok=True)
+                 seal.write_bytes(seal_original)
++                if item['name'].startswith('production-resume-bundle-'):
++                    for coordinate,data in lifecycle_original.items():(scratch/coordinate).write_bytes(data)
+             rc,out=invoke(scratch,item['component']);print('RESTORED',item['name'],'EXIT',rc,out.strip());assert rc==0,item['name']
+         measure=[sys.executable,str(scratch/'.agent/evidence/scope-budget-014/measure.py'),'--range','113='+c.contract()['base_revision']+'..','--files']
+         p=subprocess.run(measure,cwd=scratch,text=True,capture_output=True);print('FROZEN_BUDGET_POSITIVE_EXIT',p.returncode);assert p.returncode==0,p.stderr
+diff --git a/.agent/evidence/113/private/negative-plan.json b/.agent/evidence/113/private/negative-plan.json
+index 409c689..2d16484 100644
+--- a/.agent/evidence/113/private/negative-plan.json
++++ b/.agent/evidence/113/private/negative-plan.json
+@@ -1,335 +1,1217 @@
+-[
+-  {
+-    "name": "optional-required-true",
+-    "component": "routing",
+-    "path": "tools/skill.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "optional-absent-default-disabled",
+-    "component": "routing",
+-    "path": "tools/skill.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "mandatory-requirement-removed",
+-    "component": "compatibility",
+-    "path": "tools/skill.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "MANIFEST_BASE_PRESERVED",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "old-ten-item-body-altered",
+-    "component": "compatibility",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "INTERFACE_BASE_BODY",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "eleventh-base-item",
+-    "component": "compatibility",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "INTERFACE_BASE_BODY",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "missing-operation",
+-    "component": "surface",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "OPERATIONS_EXACT",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "duplicate-operation",
+-    "component": "surface",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "OPERATIONS_EXACT",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "extra-status-call",
+-    "component": "surface",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "OPERATIONS_EXACT",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "missing-s9",
+-    "component": "surface",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "S_RULES_EXACT",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "duplicate-s1",
+-    "component": "surface",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "S_RULES_EXACT",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "misplaced-s5-keyword",
+-    "component": "surface",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "S_RULE_CONTENT:5",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "misplaced-router-marker",
+-    "component": "routing",
+-    "path": "tools/SKILL.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "ROUTER_PATH:methodology/10_live_runtime_sessions.md",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "duplicate-manifest-route",
+-    "component": "routing",
+-    "path": "tools/skill.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "DUPLICATE_MANIFEST_ROUTE",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "index-route-misdirected",
+-    "component": "routing",
+-    "path": "NIZAM.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "INDEX_ROUTE",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "missing-schema-crosslink",
+-    "component": "routing",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "SCHEMA_LINK:schema/runtime_operation.schema.json",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "version-not-increased",
+-    "component": "delta",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "VERSION:tools/interface.md",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "changed-old-r1",
+-    "component": "delta",
+-    "path": "methodology/10_live_runtime_sessions.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "RUNTIME_SECTION_PRESERVED:1",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "record-boundary-erased",
+-    "component": "claim",
+-    "path": "methodology/10_live_runtime_sessions.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "RECORD_ONLY_ENFORCEMENT",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "false-live13-proof",
+-    "component": "claim",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "foreign-ecosystem-scope",
+-    "component": "claim",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "false-release",
+-    "component": "claim",
+-    "path": "tools/interface.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
+-    "budget_class": "budget/product",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "installed-content-changed",
+-    "component": "history",
+-    "path": ".nizam/NIZAM.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
+-    "budget_class": "UNCLASSIFIED",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "installed-mode-changed",
+-    "component": "history",
+-    "path": ".nizam/NIZAM.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
+-    "budget_class": "UNCLASSIFIED",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "historical-proof-changed",
+-    "component": "history",
+-    "path": ".agent/qa/112.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "HISTORY_OR_INSTALLED:.agent/qa/112.json",
+-    "budget_class": "budget/verdict",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "out-of-scope-tracked",
+-    "component": "history",
+-    "path": "README.md",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "HISTORY_OR_INSTALLED:README.md",
+-    "budget_class": "budget/product-ext",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "out-of-scope-untracked",
+-    "component": "history",
+-    "path": "alien113.txt",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "OUT_OF_SCOPE:alien113.txt",
+-    "budget_class": "UNCLASSIFIED",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "successor-promoted",
+-    "component": "lifecycle",
+-    "path": ".agent/feature_list_015.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "PREDECESSOR_SUCCESSOR:114",
+-    "budget_class": "budget/planning",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "predecessor-rewritten",
+-    "component": "lifecycle",
+-    "path": ".agent/feature_list_015.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "PREDECESSOR_SUCCESSOR:112",
+-    "budget_class": "budget/planning",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "phase-prematurely-complete",
+-    "component": "lifecycle",
+-    "path": "docs/planning/phase_015.yaml",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "PHASE_CONTINUITY",
+-    "budget_class": "budget/planning",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "attempt-counter-reset",
+-    "component": "lifecycle",
+-    "path": ".agent/run_state.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "COUNTER_CONTINUITY:113-contract",
+-    "budget_class": "excluded/run_state",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "budget-ceiling-rebased",
+-    "component": "lifecycle",
+-    "path": ".agent/run_state.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "BUDGET_CONTINUITY",
+-    "budget_class": "excluded/run_state",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "budget-overrun",
+-    "component": "lifecycle",
+-    "path": ".agent/run_state.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "BUDGET_CONTINUITY",
+-    "budget_class": "excluded/run_state",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "fixed-seal-corrupt",
+-    "component": "integrity",
+-    "path": ".agent/evidence/113/fixed-inputs-seal.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "FIXED_SEAL",
+-    "budget_class": "evidence",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "fixed-member-corrupt",
+-    "component": "integrity",
+-    "path": ".agent/evidence/113/evidence_gate.py",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "FIXED_MEMBER:.agent/evidence/113/evidence_gate.py",
+-    "budget_class": "evidence",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "source-seal-corrupt",
+-    "component": "integrity",
+-    "path": ".agent/evidence/113/current-source-seal.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "SOURCE_SEAL",
+-    "budget_class": "evidence",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "candidate-tree-corrupt",
+-    "component": "integrity",
+-    "path": ".agent/evidence/113/current-source-inputs.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "CANDIDATE_TREE",
+-    "budget_class": "evidence",
+-    "restored_exit": 0
+-  },
+-  {
+-    "name": "actual-counted-budget-overrun",
+-    "component": "budget",
+-    "path": ".agent/contracts/113-budget-overrun-control.json",
+-    "expected_exit": 1,
+-    "expected_diagnostic": "BUDGET_ACTUAL_CEILING",
+-    "budget_class": "budget/contract",
+-    "restored_exit": 0
+-  }
+-]
++{
++  "negative_controls": [
++    {
++      "name": "optional-required-true",
++      "component": "routing",
++      "path": "tools/skill.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "optional-absent-default-disabled",
++      "component": "routing",
++      "path": "tools/skill.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "mandatory-requirement-removed",
++      "component": "compatibility",
++      "path": "tools/skill.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "MANIFEST_BASE_PRESERVED",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "old-ten-item-body-altered",
++      "component": "compatibility",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "INTERFACE_BASE_BODY",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "eleventh-base-item",
++      "component": "compatibility",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "INTERFACE_BASE_BODY",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "missing-operation",
++      "component": "surface",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "OPERATIONS_EXACT",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "duplicate-operation",
++      "component": "surface",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "OPERATIONS_EXACT",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "extra-status-call",
++      "component": "surface",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "OPERATIONS_EXACT",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "missing-s9",
++      "component": "surface",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "S_RULES_EXACT",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "duplicate-s1",
++      "component": "surface",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "S_RULES_EXACT",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "misplaced-s5-keyword",
++      "component": "surface",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "S_RULE_CONTENT:5",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "misplaced-router-marker",
++      "component": "routing",
++      "path": "tools/SKILL.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "ROUTER_PATH:methodology/10_live_runtime_sessions.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "duplicate-manifest-route",
++      "component": "routing",
++      "path": "tools/skill.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "DUPLICATE_MANIFEST_ROUTE",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "index-route-misdirected",
++      "component": "routing",
++      "path": "NIZAM.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "INDEX_ROUTE",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "missing-schema-crosslink",
++      "component": "routing",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SCHEMA_LINK:schema/runtime_operation.schema.json",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "version-not-increased",
++      "component": "delta",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "VERSION:tools/interface.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "changed-old-r1",
++      "component": "delta",
++      "path": "methodology/10_live_runtime_sessions.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "RUNTIME_SECTION_PRESERVED:1",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "record-boundary-erased",
++      "component": "claim",
++      "path": "methodology/10_live_runtime_sessions.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "RECORD_ONLY_ENFORCEMENT",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "false-live13-proof",
++      "component": "claim",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "foreign-ecosystem-scope",
++      "component": "claim",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "false-release",
++      "component": "claim",
++      "path": "tools/interface.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "installed-content-changed",
++      "component": "history",
++      "path": ".nizam/NIZAM.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
++      "budget_class": "UNCLASSIFIED",
++      "restored_exit": 0
++    },
++    {
++      "name": "installed-mode-changed",
++      "component": "history",
++      "path": ".nizam/NIZAM.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
++      "budget_class": "UNCLASSIFIED",
++      "restored_exit": 0
++    },
++    {
++      "name": "historical-proof-changed",
++      "component": "history",
++      "path": ".agent/qa/112.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "HISTORY_OR_INSTALLED:.agent/qa/112.json",
++      "budget_class": "budget/verdict",
++      "restored_exit": 0
++    },
++    {
++      "name": "out-of-scope-tracked",
++      "component": "history",
++      "path": "README.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "HISTORY_OR_INSTALLED:README.md",
++      "budget_class": "budget/product-ext",
++      "restored_exit": 0
++    },
++    {
++      "name": "out-of-scope-untracked",
++      "component": "history",
++      "path": "alien113.txt",
++      "expected_exit": 1,
++      "expected_diagnostic": "OUT_OF_SCOPE:alien113.txt",
++      "budget_class": "UNCLASSIFIED",
++      "restored_exit": 0
++    },
++    {
++      "name": "successor-promoted",
++      "component": "lifecycle",
++      "path": ".agent/feature_list_015.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "PREDECESSOR_SUCCESSOR:114",
++      "budget_class": "budget/planning",
++      "restored_exit": 0
++    },
++    {
++      "name": "predecessor-rewritten",
++      "component": "lifecycle",
++      "path": ".agent/feature_list_015.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "PREDECESSOR_SUCCESSOR:112",
++      "budget_class": "budget/planning",
++      "restored_exit": 0
++    },
++    {
++      "name": "phase-prematurely-complete",
++      "component": "lifecycle",
++      "path": "docs/planning/phase_015.yaml",
++      "expected_exit": 1,
++      "expected_diagnostic": "PHASE_CONTINUITY",
++      "budget_class": "budget/planning",
++      "restored_exit": 0
++    },
++    {
++      "name": "attempt-counter-reset",
++      "component": "lifecycle",
++      "path": ".agent/run_state.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "COUNTER_CONTINUITY:113-contract",
++      "budget_class": "excluded/run_state",
++      "restored_exit": 0
++    },
++    {
++      "name": "budget-ceiling-rebased",
++      "component": "lifecycle",
++      "path": ".agent/run_state.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "BUDGET_CONTINUITY",
++      "budget_class": "excluded/run_state",
++      "restored_exit": 0
++    },
++    {
++      "name": "budget-overrun",
++      "component": "lifecycle",
++      "path": ".agent/run_state.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "BUDGET_CONTINUITY",
++      "budget_class": "excluded/run_state",
++      "restored_exit": 0
++    },
++    {
++      "name": "fixed-seal-corrupt",
++      "component": "integrity",
++      "path": ".agent/evidence/113/fixed-inputs-seal.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "FIXED_SEAL",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "fixed-member-corrupt",
++      "component": "integrity",
++      "path": ".agent/evidence/113/evidence_gate.py",
++      "expected_exit": 1,
++      "expected_diagnostic": "FIXED_MEMBER:.agent/evidence/113/evidence_gate.py",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "source-seal-corrupt",
++      "component": "integrity",
++      "path": ".agent/evidence/113/current-source-seal.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "SOURCE_SEAL",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "candidate-tree-corrupt",
++      "component": "integrity",
++      "path": ".agent/evidence/113/current-source-inputs.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "CANDIDATE_TREE",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "actual-counted-budget-overrun",
++      "component": "budget",
++      "path": ".agent/contracts/113-budget-overrun-control.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "BUDGET_ACTUAL_CEILING",
++      "budget_class": "budget/contract",
++      "restored_exit": 0
++    },
++    {
++      "name": "encoded-href-incorrect-target",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "plaintext-link-marker",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "encoded-readme-incorrect-target",
++      "component": "routing",
++      "path": "tools/README.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "CROSSLINK:tools/README.md:10_live_runtime_sessions.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "plaintext-readme-bounded-marker",
++      "component": "delta",
++      "path": "tools/README.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "README_BOUNDED_PARAGRAPH",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "plaintext-sbcl-bounded-marker",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "href-escapes-repository",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "code-only-link-marker",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-comment-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-comment-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-comment-across-paragraphs-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-comment-across-paragraphs-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-fenced-code-long-close-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-fenced-code-long-close-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-tilde-fenced-code-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-tilde-fenced-code-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-unclosed-fenced-code-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-unclosed-fenced-code-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-indented-code-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-indented-code-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-tab-indented-code-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-tab-indented-code-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-double-inline-code-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-double-inline-code-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-escaped-markdown-marker-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-escaped-markdown-marker-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-code-text-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-code-text-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-pre-across-paragraphs-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-pre-across-paragraphs-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-script-text-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-script-text-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-style-text-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-style-text-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-raw-html-markdown-text-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-raw-html-markdown-text-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-attribute-markdown-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-attribute-markdown-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-displayed-entity-anchor-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-displayed-entity-anchor-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-escaped-html-anchor-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-escaped-html-anchor-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-hidden-html-anchor-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-hidden-html-anchor-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-code-contained-anchor-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-code-contained-anchor-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-pre-contained-anchor-across-paragraphs-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-html-pre-contained-anchor-across-paragraphs-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-image-marker-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "nonrendered-image-marker-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "readme-comment-only-routing",
++      "component": "routing",
++      "path": "tools/README.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "CROSSLINK:tools/README.md:10_live_runtime_sessions.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "readme-comment-only-bounded",
++      "component": "delta",
++      "path": "tools/README.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "README_BOUNDED_PARAGRAPH",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "sbcl-link-wrong-section-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "sbcl-link-wrong-section-bounded",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-amp-decimal-html-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-amp-decimal-html-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-amp-hex-html-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-amp-hex-html-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-amp-decimal-markdown-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-amp-decimal-markdown-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-amp-hex-markdown-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-amp-hex-markdown-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-url-query-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-url-query-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-url-fragment-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-url-fragment-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-url-authority-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-url-authority-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-url-scheme-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-url-scheme-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-double-percent-path-routing",
++      "component": "routing",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-link-double-percent-path-delta",
++      "component": "delta",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "SBCL_BOUNDED_LINK",
++      "budget_class": "budget/product",
++      "restored_exit": 0
++    },
++    {
++      "name": "original-inventory-corrupt",
++      "component": "history",
++      "path": ".agent/evidence/113/private/history.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "HISTORY_INVENTORY_IMMUTABLE",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "original-inventory-missing",
++      "component": "history",
++      "path": ".agent/evidence/113/private/history.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "HISTORY_INVENTORY_IMMUTABLE",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "original-base-corrupt",
++      "component": "history",
++      "path": ".agent/evidence/113/private/base/.agent/contracts/113.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "HISTORICAL_BASE:.agent/evidence/113/private/base/.agent/contracts/113.json",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "original-contract-archive-corrupt",
++      "component": "history",
++      "path": ".agent/evidence/113/recovery-prior-approval-snapshot/.agent/contracts/113.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "ORIGINAL_CONTRACT_ARCHIVE",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "original-contract-archive-missing",
++      "component": "history",
++      "path": ".agent/evidence/113/recovery-prior-approval-snapshot/.agent/contracts/113.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "ORIGINAL_CONTRACT_ARCHIVE",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "original-contract-inventory-corrupt",
++      "component": "history",
++      "path": ".agent/evidence/113/recovery-prior-approval-snapshot/inventory.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "ORIGINAL_CONTRACT_ARCHIVE_INVENTORY",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "live-approved-contract-corrupt",
++      "component": "history",
++      "path": ".agent/contracts/113.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "LIVE_RECOVERY_CONTRACT_PIN",
++      "budget_class": "budget/contract",
++      "restored_exit": 0
++    },
++    {
++      "name": "debt-old-row-corrupt",
++      "component": "debt",
++      "path": "docs/planning/DEBT.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DEBT_RECOVERY_BYTES",
++      "budget_class": "budget/planning",
++      "restored_exit": 0
++    },
++    {
++      "name": "debt-old-log-corrupt",
++      "component": "debt",
++      "path": "docs/planning/DEBT.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DEBT_RECOVERY_BYTES",
++      "budget_class": "budget/planning",
++      "restored_exit": 0
++    },
++    {
++      "name": "debt-halt-prefix-corrupt",
++      "component": "debt",
++      "path": "docs/planning/DEBT.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DEBT_RECOVERY_BYTES",
++      "budget_class": "budget/planning",
++      "restored_exit": 0
++    },
++    {
++      "name": "debt-premature-resolution",
++      "component": "debt",
++      "path": "docs/planning/DEBT.md",
++      "expected_exit": 1,
++      "expected_diagnostic": "DEBT_PREMATURE_RESOLUTION",
++      "budget_class": "budget/planning",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-key-unauthorized",
++      "component": "lifecycle",
++      "path": ".agent/run_state.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "UNAUTHORIZED_COUNTER_KEY",
++      "budget_class": "excluded/run_state",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-key-auth-corrupt",
++      "component": "lifecycle",
++      "path": ".agent/run_state.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "RECOVERY_COUNTER_AUTH:113-recovery-1-checker-development",
++      "budget_class": "excluded/run_state",
++      "restored_exit": 0
++    },
++    {
++      "name": "original-exhausted-counter-reset",
++      "component": "lifecycle",
++      "path": ".agent/run_state.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "COUNTER_CONTINUITY:113-checker-development",
++      "budget_class": "excluded/run_state",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-history-prefix-corrupt",
++      "component": "lifecycle",
++      "path": ".agent/run_state.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "RECOVERY_HISTORY_APPEND_ONLY",
++      "budget_class": "excluded/run_state",
++      "restored_exit": 0
++    },
++    {
++      "name": "recovery-authorization-corrupt",
++      "component": "debt",
++      "path": ".agent/evidence/113/recovery-authorization.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "RECOVERY_AUTHORIZATION_PIN",
++      "budget_class": "evidence",
++      "restored_exit": 0
++    },
++    {
++      "name": "production-resume-bundle-missing",
++      "component": "production-lifecycle",
++      "path": ".agent/validator/113-test-bundle-review.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "RECOVERY_BUNDLE_RESUME_MISSING",
++      "budget_class": "budget/verdict",
++      "restored_exit": 0
++    },
++    {
++      "name": "production-resume-bundle-rejected",
++      "component": "production-lifecycle",
++      "path": ".agent/validator/113-test-bundle-review.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "RECOVERY_BUNDLE_RESUME_GATE",
++      "budget_class": "budget/verdict",
++      "restored_exit": 0
++    },
++    {
++      "name": "production-resume-bundle-wrong-pin",
++      "component": "production-lifecycle",
++      "path": ".agent/validator/113-test-bundle-review.json",
++      "expected_exit": 1,
++      "expected_diagnostic": "RECOVERY_BUNDLE_RESUME_PIN",
++      "budget_class": "budget/verdict",
++      "restored_exit": 0
++    }
++  ],
++  "c9_controls": [
++    {
++      "name": "encoded-href-valid",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 0,
++      "expected_c9": "[C9] PASS path-resolution"
++    },
++    {
++      "name": "encoded-href-incorrect-target",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 0,
++      "expected_c9": "[C9] PASS path-resolution"
++    },
++    {
++      "name": "plaintext-link-marker",
++      "path": "methodology/11_sbcl_runtime_binding.md",
++      "expected_exit": 0,
++      "expected_c9": "[C9] PASS path-resolution"
++    }
++  ],
++  "positive_link_controls": [
++    {
++      "name": "ordinary-markdown",
++      "markup": "[adapter interface](../tools/interface.md)"
++    },
++    {
++      "name": "encoded-markdown",
++      "markup": "[adapter interface](..&#47;tools/interface.md)"
++    },
++    {
++      "name": "markdown-label-inline-code",
++      "markup": "[the `adapter interface`](..&#47;tools/interface.md)"
++    },
++    {
++      "name": "encoded-html-anchor",
++      "markup": "<a href=\"..&#47;tools/interface.md\">adapter interface</a>"
++    },
++    {
++      "name": "html-label-inline-code",
++      "markup": "<a href=\"..&#47;tools/interface.md\"><code>adapter interface</code></a>"
++    },
++    {
++      "name": "hex-encoded-html-anchor",
++      "markup": "<a href=\"..&#x2f;tools/interface.md\">adapter interface</a>"
++    },
++    {
++      "name": "percent-path-once",
++      "markup": "[adapter interface](..%2Ftools%2Finterface.md)"
++    }
++  ],
++  "lifecycle_origin_controls": [
++    {
++      "status": "blocked",
++      "component": "lifecycle",
++      "expected_exit": 0,
++      "proof_scope": "CONTROL records only; no production approval"
++    },
++    {
++      "status": "in_progress",
++      "component": "lifecycle",
++      "expected_exit": 0,
++      "proof_scope": "CONTROL records only; no production approval"
++    },
++    {
++      "status": "complete",
++      "component": "lifecycle",
++      "expected_exit": 0,
++      "proof_scope": "CONTROL records only; no production approval"
++    }
++  ]
++}

@@ -1,335 +1,1217 @@
-[
-  {
-    "name": "optional-required-true",
-    "component": "routing",
-    "path": "tools/skill.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "optional-absent-default-disabled",
-    "component": "routing",
-    "path": "tools/skill.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "mandatory-requirement-removed",
-    "component": "compatibility",
-    "path": "tools/skill.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "MANIFEST_BASE_PRESERVED",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "old-ten-item-body-altered",
-    "component": "compatibility",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "INTERFACE_BASE_BODY",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "eleventh-base-item",
-    "component": "compatibility",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "INTERFACE_BASE_BODY",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "missing-operation",
-    "component": "surface",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "OPERATIONS_EXACT",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "duplicate-operation",
-    "component": "surface",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "OPERATIONS_EXACT",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "extra-status-call",
-    "component": "surface",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "OPERATIONS_EXACT",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "missing-s9",
-    "component": "surface",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "S_RULES_EXACT",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "duplicate-s1",
-    "component": "surface",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "S_RULES_EXACT",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "misplaced-s5-keyword",
-    "component": "surface",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "S_RULE_CONTENT:5",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "misplaced-router-marker",
-    "component": "routing",
-    "path": "tools/SKILL.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "ROUTER_PATH:methodology/10_live_runtime_sessions.md",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "duplicate-manifest-route",
-    "component": "routing",
-    "path": "tools/skill.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "DUPLICATE_MANIFEST_ROUTE",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "index-route-misdirected",
-    "component": "routing",
-    "path": "NIZAM.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "INDEX_ROUTE",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "missing-schema-crosslink",
-    "component": "routing",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "SCHEMA_LINK:schema/runtime_operation.schema.json",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "version-not-increased",
-    "component": "delta",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "VERSION:tools/interface.md",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "changed-old-r1",
-    "component": "delta",
-    "path": "methodology/10_live_runtime_sessions.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "RUNTIME_SECTION_PRESERVED:1",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "record-boundary-erased",
-    "component": "claim",
-    "path": "methodology/10_live_runtime_sessions.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "RECORD_ONLY_ENFORCEMENT",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "false-live13-proof",
-    "component": "claim",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "foreign-ecosystem-scope",
-    "component": "claim",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "false-release",
-    "component": "claim",
-    "path": "tools/interface.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
-    "budget_class": "budget/product",
-    "restored_exit": 0
-  },
-  {
-    "name": "installed-content-changed",
-    "component": "history",
-    "path": ".nizam/NIZAM.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
-    "budget_class": "UNCLASSIFIED",
-    "restored_exit": 0
-  },
-  {
-    "name": "installed-mode-changed",
-    "component": "history",
-    "path": ".nizam/NIZAM.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
-    "budget_class": "UNCLASSIFIED",
-    "restored_exit": 0
-  },
-  {
-    "name": "historical-proof-changed",
-    "component": "history",
-    "path": ".agent/qa/112.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "HISTORY_OR_INSTALLED:.agent/qa/112.json",
-    "budget_class": "budget/verdict",
-    "restored_exit": 0
-  },
-  {
-    "name": "out-of-scope-tracked",
-    "component": "history",
-    "path": "README.md",
-    "expected_exit": 1,
-    "expected_diagnostic": "HISTORY_OR_INSTALLED:README.md",
-    "budget_class": "budget/product-ext",
-    "restored_exit": 0
-  },
-  {
-    "name": "out-of-scope-untracked",
-    "component": "history",
-    "path": "alien113.txt",
-    "expected_exit": 1,
-    "expected_diagnostic": "OUT_OF_SCOPE:alien113.txt",
-    "budget_class": "UNCLASSIFIED",
-    "restored_exit": 0
-  },
-  {
-    "name": "successor-promoted",
-    "component": "lifecycle",
-    "path": ".agent/feature_list_015.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "PREDECESSOR_SUCCESSOR:114",
-    "budget_class": "budget/planning",
-    "restored_exit": 0
-  },
-  {
-    "name": "predecessor-rewritten",
-    "component": "lifecycle",
-    "path": ".agent/feature_list_015.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "PREDECESSOR_SUCCESSOR:112",
-    "budget_class": "budget/planning",
-    "restored_exit": 0
-  },
-  {
-    "name": "phase-prematurely-complete",
-    "component": "lifecycle",
-    "path": "docs/planning/phase_015.yaml",
-    "expected_exit": 1,
-    "expected_diagnostic": "PHASE_CONTINUITY",
-    "budget_class": "budget/planning",
-    "restored_exit": 0
-  },
-  {
-    "name": "attempt-counter-reset",
-    "component": "lifecycle",
-    "path": ".agent/run_state.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "COUNTER_CONTINUITY:113-contract",
-    "budget_class": "excluded/run_state",
-    "restored_exit": 0
-  },
-  {
-    "name": "budget-ceiling-rebased",
-    "component": "lifecycle",
-    "path": ".agent/run_state.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "BUDGET_CONTINUITY",
-    "budget_class": "excluded/run_state",
-    "restored_exit": 0
-  },
-  {
-    "name": "budget-overrun",
-    "component": "lifecycle",
-    "path": ".agent/run_state.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "BUDGET_CONTINUITY",
-    "budget_class": "excluded/run_state",
-    "restored_exit": 0
-  },
-  {
-    "name": "fixed-seal-corrupt",
-    "component": "integrity",
-    "path": ".agent/evidence/113/fixed-inputs-seal.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "FIXED_SEAL",
-    "budget_class": "evidence",
-    "restored_exit": 0
-  },
-  {
-    "name": "fixed-member-corrupt",
-    "component": "integrity",
-    "path": ".agent/evidence/113/evidence_gate.py",
-    "expected_exit": 1,
-    "expected_diagnostic": "FIXED_MEMBER:.agent/evidence/113/evidence_gate.py",
-    "budget_class": "evidence",
-    "restored_exit": 0
-  },
-  {
-    "name": "source-seal-corrupt",
-    "component": "integrity",
-    "path": ".agent/evidence/113/current-source-seal.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "SOURCE_SEAL",
-    "budget_class": "evidence",
-    "restored_exit": 0
-  },
-  {
-    "name": "candidate-tree-corrupt",
-    "component": "integrity",
-    "path": ".agent/evidence/113/current-source-inputs.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "CANDIDATE_TREE",
-    "budget_class": "evidence",
-    "restored_exit": 0
-  },
-  {
-    "name": "actual-counted-budget-overrun",
-    "component": "budget",
-    "path": ".agent/contracts/113-budget-overrun-control.json",
-    "expected_exit": 1,
-    "expected_diagnostic": "BUDGET_ACTUAL_CEILING",
-    "budget_class": "budget/contract",
-    "restored_exit": 0
-  }
-]
+{
+  "negative_controls": [
+    {
+      "name": "optional-required-true",
+      "component": "routing",
+      "path": "tools/skill.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "optional-absent-default-disabled",
+      "component": "routing",
+      "path": "tools/skill.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "mandatory-requirement-removed",
+      "component": "compatibility",
+      "path": "tools/skill.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "MANIFEST_BASE_PRESERVED",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "old-ten-item-body-altered",
+      "component": "compatibility",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "INTERFACE_BASE_BODY",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "eleventh-base-item",
+      "component": "compatibility",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "INTERFACE_BASE_BODY",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "missing-operation",
+      "component": "surface",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "OPERATIONS_EXACT",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "duplicate-operation",
+      "component": "surface",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "OPERATIONS_EXACT",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "extra-status-call",
+      "component": "surface",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "OPERATIONS_EXACT",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "missing-s9",
+      "component": "surface",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "S_RULES_EXACT",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "duplicate-s1",
+      "component": "surface",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "S_RULES_EXACT",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "misplaced-s5-keyword",
+      "component": "surface",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "S_RULE_CONTENT:5",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "misplaced-router-marker",
+      "component": "routing",
+      "path": "tools/SKILL.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "ROUTER_PATH:methodology/10_live_runtime_sessions.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "duplicate-manifest-route",
+      "component": "routing",
+      "path": "tools/skill.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "DUPLICATE_MANIFEST_ROUTE",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "index-route-misdirected",
+      "component": "routing",
+      "path": "NIZAM.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "INDEX_ROUTE",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "missing-schema-crosslink",
+      "component": "routing",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SCHEMA_LINK:schema/runtime_operation.schema.json",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "version-not-increased",
+      "component": "delta",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "VERSION:tools/interface.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "changed-old-r1",
+      "component": "delta",
+      "path": "methodology/10_live_runtime_sessions.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "RUNTIME_SECTION_PRESERVED:1",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "record-boundary-erased",
+      "component": "claim",
+      "path": "methodology/10_live_runtime_sessions.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "RECORD_ONLY_ENFORCEMENT",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "false-live13-proof",
+      "component": "claim",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "foreign-ecosystem-scope",
+      "component": "claim",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "false-release",
+      "component": "claim",
+      "path": "tools/interface.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "installed-content-changed",
+      "component": "history",
+      "path": ".nizam/NIZAM.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
+      "budget_class": "UNCLASSIFIED",
+      "restored_exit": 0
+    },
+    {
+      "name": "installed-mode-changed",
+      "component": "history",
+      "path": ".nizam/NIZAM.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
+      "budget_class": "UNCLASSIFIED",
+      "restored_exit": 0
+    },
+    {
+      "name": "historical-proof-changed",
+      "component": "history",
+      "path": ".agent/qa/112.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "HISTORY_OR_INSTALLED:.agent/qa/112.json",
+      "budget_class": "budget/verdict",
+      "restored_exit": 0
+    },
+    {
+      "name": "out-of-scope-tracked",
+      "component": "history",
+      "path": "README.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "HISTORY_OR_INSTALLED:README.md",
+      "budget_class": "budget/product-ext",
+      "restored_exit": 0
+    },
+    {
+      "name": "out-of-scope-untracked",
+      "component": "history",
+      "path": "alien113.txt",
+      "expected_exit": 1,
+      "expected_diagnostic": "OUT_OF_SCOPE:alien113.txt",
+      "budget_class": "UNCLASSIFIED",
+      "restored_exit": 0
+    },
+    {
+      "name": "successor-promoted",
+      "component": "lifecycle",
+      "path": ".agent/feature_list_015.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "PREDECESSOR_SUCCESSOR:114",
+      "budget_class": "budget/planning",
+      "restored_exit": 0
+    },
+    {
+      "name": "predecessor-rewritten",
+      "component": "lifecycle",
+      "path": ".agent/feature_list_015.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "PREDECESSOR_SUCCESSOR:112",
+      "budget_class": "budget/planning",
+      "restored_exit": 0
+    },
+    {
+      "name": "phase-prematurely-complete",
+      "component": "lifecycle",
+      "path": "docs/planning/phase_015.yaml",
+      "expected_exit": 1,
+      "expected_diagnostic": "PHASE_CONTINUITY",
+      "budget_class": "budget/planning",
+      "restored_exit": 0
+    },
+    {
+      "name": "attempt-counter-reset",
+      "component": "lifecycle",
+      "path": ".agent/run_state.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "COUNTER_CONTINUITY:113-contract",
+      "budget_class": "excluded/run_state",
+      "restored_exit": 0
+    },
+    {
+      "name": "budget-ceiling-rebased",
+      "component": "lifecycle",
+      "path": ".agent/run_state.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "BUDGET_CONTINUITY",
+      "budget_class": "excluded/run_state",
+      "restored_exit": 0
+    },
+    {
+      "name": "budget-overrun",
+      "component": "lifecycle",
+      "path": ".agent/run_state.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "BUDGET_CONTINUITY",
+      "budget_class": "excluded/run_state",
+      "restored_exit": 0
+    },
+    {
+      "name": "fixed-seal-corrupt",
+      "component": "integrity",
+      "path": ".agent/evidence/113/fixed-inputs-seal.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "FIXED_SEAL",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "fixed-member-corrupt",
+      "component": "integrity",
+      "path": ".agent/evidence/113/evidence_gate.py",
+      "expected_exit": 1,
+      "expected_diagnostic": "FIXED_MEMBER:.agent/evidence/113/evidence_gate.py",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "source-seal-corrupt",
+      "component": "integrity",
+      "path": ".agent/evidence/113/current-source-seal.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "SOURCE_SEAL",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "candidate-tree-corrupt",
+      "component": "integrity",
+      "path": ".agent/evidence/113/current-source-inputs.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "CANDIDATE_TREE",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "actual-counted-budget-overrun",
+      "component": "budget",
+      "path": ".agent/contracts/113-budget-overrun-control.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "BUDGET_ACTUAL_CEILING",
+      "budget_class": "budget/contract",
+      "restored_exit": 0
+    },
+    {
+      "name": "encoded-href-incorrect-target",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "plaintext-link-marker",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "encoded-readme-incorrect-target",
+      "component": "routing",
+      "path": "tools/README.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "CROSSLINK:tools/README.md:10_live_runtime_sessions.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "plaintext-readme-bounded-marker",
+      "component": "delta",
+      "path": "tools/README.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "README_BOUNDED_PARAGRAPH",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "plaintext-sbcl-bounded-marker",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "href-escapes-repository",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "code-only-link-marker",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-comment-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-comment-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-comment-across-paragraphs-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-comment-across-paragraphs-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-fenced-code-long-close-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-fenced-code-long-close-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-tilde-fenced-code-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-tilde-fenced-code-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-unclosed-fenced-code-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-unclosed-fenced-code-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-indented-code-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-indented-code-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-tab-indented-code-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-tab-indented-code-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-double-inline-code-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-double-inline-code-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-escaped-markdown-marker-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-escaped-markdown-marker-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-code-text-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-code-text-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-pre-across-paragraphs-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-pre-across-paragraphs-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-script-text-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-script-text-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-style-text-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-style-text-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-raw-html-markdown-text-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-raw-html-markdown-text-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-attribute-markdown-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-attribute-markdown-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-displayed-entity-anchor-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-displayed-entity-anchor-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-escaped-html-anchor-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-escaped-html-anchor-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-hidden-html-anchor-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-hidden-html-anchor-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-code-contained-anchor-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-code-contained-anchor-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-pre-contained-anchor-across-paragraphs-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-html-pre-contained-anchor-across-paragraphs-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-image-marker-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "nonrendered-image-marker-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "readme-comment-only-routing",
+      "component": "routing",
+      "path": "tools/README.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "CROSSLINK:tools/README.md:10_live_runtime_sessions.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "readme-comment-only-bounded",
+      "component": "delta",
+      "path": "tools/README.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "README_BOUNDED_PARAGRAPH",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "sbcl-link-wrong-section-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "sbcl-link-wrong-section-bounded",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-amp-decimal-html-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-amp-decimal-html-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-amp-hex-html-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-amp-hex-html-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-amp-decimal-markdown-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-amp-decimal-markdown-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-amp-hex-markdown-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-amp-hex-markdown-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-url-query-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-url-query-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-url-fragment-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-url-fragment-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-url-authority-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-url-authority-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-url-scheme-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-url-scheme-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-double-percent-path-routing",
+      "component": "routing",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DOCUMENT_INTERFACE_LINK:methodology/11_sbcl_runtime_binding.md",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-link-double-percent-path-delta",
+      "component": "delta",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "SBCL_BOUNDED_LINK",
+      "budget_class": "budget/product",
+      "restored_exit": 0
+    },
+    {
+      "name": "original-inventory-corrupt",
+      "component": "history",
+      "path": ".agent/evidence/113/private/history.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "HISTORY_INVENTORY_IMMUTABLE",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "original-inventory-missing",
+      "component": "history",
+      "path": ".agent/evidence/113/private/history.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "HISTORY_INVENTORY_IMMUTABLE",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "original-base-corrupt",
+      "component": "history",
+      "path": ".agent/evidence/113/private/base/.agent/contracts/113.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "HISTORICAL_BASE:.agent/evidence/113/private/base/.agent/contracts/113.json",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "original-contract-archive-corrupt",
+      "component": "history",
+      "path": ".agent/evidence/113/recovery-prior-approval-snapshot/.agent/contracts/113.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "ORIGINAL_CONTRACT_ARCHIVE",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "original-contract-archive-missing",
+      "component": "history",
+      "path": ".agent/evidence/113/recovery-prior-approval-snapshot/.agent/contracts/113.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "ORIGINAL_CONTRACT_ARCHIVE",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "original-contract-inventory-corrupt",
+      "component": "history",
+      "path": ".agent/evidence/113/recovery-prior-approval-snapshot/inventory.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "ORIGINAL_CONTRACT_ARCHIVE_INVENTORY",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "live-approved-contract-corrupt",
+      "component": "history",
+      "path": ".agent/contracts/113.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "LIVE_RECOVERY_CONTRACT_PIN",
+      "budget_class": "budget/contract",
+      "restored_exit": 0
+    },
+    {
+      "name": "debt-old-row-corrupt",
+      "component": "debt",
+      "path": "docs/planning/DEBT.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DEBT_RECOVERY_BYTES",
+      "budget_class": "budget/planning",
+      "restored_exit": 0
+    },
+    {
+      "name": "debt-old-log-corrupt",
+      "component": "debt",
+      "path": "docs/planning/DEBT.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DEBT_RECOVERY_BYTES",
+      "budget_class": "budget/planning",
+      "restored_exit": 0
+    },
+    {
+      "name": "debt-halt-prefix-corrupt",
+      "component": "debt",
+      "path": "docs/planning/DEBT.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DEBT_RECOVERY_BYTES",
+      "budget_class": "budget/planning",
+      "restored_exit": 0
+    },
+    {
+      "name": "debt-premature-resolution",
+      "component": "debt",
+      "path": "docs/planning/DEBT.md",
+      "expected_exit": 1,
+      "expected_diagnostic": "DEBT_PREMATURE_RESOLUTION",
+      "budget_class": "budget/planning",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-key-unauthorized",
+      "component": "lifecycle",
+      "path": ".agent/run_state.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "UNAUTHORIZED_COUNTER_KEY",
+      "budget_class": "excluded/run_state",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-key-auth-corrupt",
+      "component": "lifecycle",
+      "path": ".agent/run_state.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "RECOVERY_COUNTER_AUTH:113-recovery-1-checker-development",
+      "budget_class": "excluded/run_state",
+      "restored_exit": 0
+    },
+    {
+      "name": "original-exhausted-counter-reset",
+      "component": "lifecycle",
+      "path": ".agent/run_state.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "COUNTER_CONTINUITY:113-checker-development",
+      "budget_class": "excluded/run_state",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-history-prefix-corrupt",
+      "component": "lifecycle",
+      "path": ".agent/run_state.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "RECOVERY_HISTORY_APPEND_ONLY",
+      "budget_class": "excluded/run_state",
+      "restored_exit": 0
+    },
+    {
+      "name": "recovery-authorization-corrupt",
+      "component": "debt",
+      "path": ".agent/evidence/113/recovery-authorization.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "RECOVERY_AUTHORIZATION_PIN",
+      "budget_class": "evidence",
+      "restored_exit": 0
+    },
+    {
+      "name": "production-resume-bundle-missing",
+      "component": "production-lifecycle",
+      "path": ".agent/validator/113-test-bundle-review.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "RECOVERY_BUNDLE_RESUME_MISSING",
+      "budget_class": "budget/verdict",
+      "restored_exit": 0
+    },
+    {
+      "name": "production-resume-bundle-rejected",
+      "component": "production-lifecycle",
+      "path": ".agent/validator/113-test-bundle-review.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "RECOVERY_BUNDLE_RESUME_GATE",
+      "budget_class": "budget/verdict",
+      "restored_exit": 0
+    },
+    {
+      "name": "production-resume-bundle-wrong-pin",
+      "component": "production-lifecycle",
+      "path": ".agent/validator/113-test-bundle-review.json",
+      "expected_exit": 1,
+      "expected_diagnostic": "RECOVERY_BUNDLE_RESUME_PIN",
+      "budget_class": "budget/verdict",
+      "restored_exit": 0
+    }
+  ],
+  "c9_controls": [
+    {
+      "name": "encoded-href-valid",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 0,
+      "expected_c9": "[C9] PASS path-resolution"
+    },
+    {
+      "name": "encoded-href-incorrect-target",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 0,
+      "expected_c9": "[C9] PASS path-resolution"
+    },
+    {
+      "name": "plaintext-link-marker",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "expected_exit": 0,
+      "expected_c9": "[C9] PASS path-resolution"
+    }
+  ],
+  "positive_link_controls": [
+    {
+      "name": "ordinary-markdown",
+      "markup": "[adapter interface](../tools/interface.md)"
+    },
+    {
+      "name": "encoded-markdown",
+      "markup": "[adapter interface](..&#47;tools/interface.md)"
+    },
+    {
+      "name": "markdown-label-inline-code",
+      "markup": "[the `adapter interface`](..&#47;tools/interface.md)"
+    },
+    {
+      "name": "encoded-html-anchor",
+      "markup": "<a href=\"..&#47;tools/interface.md\">adapter interface</a>"
+    },
+    {
+      "name": "html-label-inline-code",
+      "markup": "<a href=\"..&#47;tools/interface.md\"><code>adapter interface</code></a>"
+    },
+    {
+      "name": "hex-encoded-html-anchor",
+      "markup": "<a href=\"..&#x2f;tools/interface.md\">adapter interface</a>"
+    },
+    {
+      "name": "percent-path-once",
+      "markup": "[adapter interface](..%2Ftools%2Finterface.md)"
+    }
+  ],
+  "lifecycle_origin_controls": [
+    {
+      "status": "blocked",
+      "component": "lifecycle",
+      "expected_exit": 0,
+      "proof_scope": "CONTROL records only; no production approval"
+    },
+    {
+      "status": "in_progress",
+      "component": "lifecycle",
+      "expected_exit": 0,
+      "proof_scope": "CONTROL records only; no production approval"
+    },
+    {
+      "status": "complete",
+      "component": "lifecycle",
+      "expected_exit": 0,
+      "proof_scope": "CONTROL records only; no production approval"
+    }
+  ]
+}

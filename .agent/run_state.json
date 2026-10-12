@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
   "current_feature": "113",
-  "status": "blocked",
-  "updated_at": "2026-10-12T08:31:45.774808+00:00",
+  "status": "in_progress",
+  "updated_at": "2026-10-12T09:35:09.348831+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -464,12 +464,12 @@
       "limit": 3
     },
     "113-recovery-1-checker-development": {
-      "attempts": 0,
+      "attempts": 3,
       "limit": 3,
       "authorization": ".agent/evidence/113/recovery-authorization.json"
     },
     "113-recovery-1-checker-review": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3,
       "authorization": ".agent/evidence/113/recovery-authorization.json"
     }
@@ -3534,6 +3534,35 @@
       "note": "Both actual pre-code verdicts true/threeempty; activeverifier8 archived before any replacement. Canonical113 remains BLOCKED until correctedbundle approval; source1/3, oldchecker3/3, recovery0/3, budget/install unchanged.",
       "event": "recovery-contract-approved-and-debt-annotated",
       "detail": "Both actual pre-code verdicts true/threeempty; activeverifier8 archived before any replacement. Canonical113 remains BLOCKED until correctedbundle approval; source1/3, oldchecker3/3, recovery0/3, budget/install unchanged."
+    },
+    {
+      "at": "2026-10-12T08:54:22.873541+00:00",
+      "event": "113-recovery-checker-development1-failed",
+      "detail": "Actualselfcheck EXIT1 debt-model tableheader interface;10prelimcomponentspassed,0negatives/validforms/C9reached. Exactfailedsnapshot/archive captured; norepair/rerun/Source2/acceptance. Reviewcounter0 unchanged.",
+      "evidence": ".agent/evidence/113/recovery-checker-attempt1-handoff.json",
+      "preservation": ".agent/evidence/113/recovery-checker-attempt1-preservation.json"
+    },
+    {
+      "at": "2026-10-12T09:04:23.431148+00:00",
+      "event": "113-recovery-checker-development2-selfcheck-pass-interface-stop",
+      "detail": "Selfcheck124/7/3 PASS; stopped unrefrozen due read-confirmed production resumed gate versus private CONTROL manifest mismatch; no executed resumed failure or actual bundle review; exact ownedroot captured. Final architecture attempt3 permitted in existing authorized epoch; review0 unchanged.",
+      "evidence": ".agent/evidence/113/recovery-checker-attempt2-handoff.json",
+      "preservation": ".agent/evidence/113/recovery-checker-attempt2-preservation.json"
+    },
+    {
+      "at": "2026-10-12T09:22:13.381031+00:00",
+      "event": "113-recovery-checker-development3-pass-frozen",
+      "detail": "Actual127negative/restored,7forms,3C9,3lifecycleorigins andbudget0/3/0 PASS once.360actualfixedbytes/modes captured; distinctindependentreviewnext, no Source2/acceptance. Originalchecker3 andsource1 unchanged.",
+      "evidence": ".agent/evidence/113/recovery-checker-attempt3-handoff.json",
+      "fixed_inputs_sha256": "ea9bdf44ae248ca7c82699a953b9abd82c70763ccb13568cdd5dc7351864f9af"
+    },
+    {
+      "at": "2026-10-12T09:35:09.348831+00:00",
+      "event": "113-recovery-bundle-approved-and-resumed",
+      "detail": "Parsed actual distinct reviewer approval true/threeempty and fixedSHA;127/7/3/3origins plus8ownprobes personally passed. Promoted only approved360-input verifier bytes; canonicalstep113 IN_PROGRESS written before derivedstate; debt050Open, source1/3 andinstalled/budget unchanged.",
+      "verdict": ".agent/validator/113-test-bundle-review.json",
+      "verdict_sha256": "5f23145555e5e2748c80efcee2f056277918b6055e72b4e2e08667b240d7da98",
+      "evidence": ".agent/evidence/113/recovery-bundle-review-attempt1-handoff.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4071,7 +4100,7 @@
       }
     ]
   },
-  "last_action": "Renewed113 contract approved by two actual gates; Debt050 recovery annotation0.64 Open; prepare isolated checker recovery1.",
+  "last_action": "Corrected113 bundle actualindependentlyapproved; canonical113 resumedin_progress. GeneratorSource2 eligible; no ModeB/QA yet.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4155,6 +4184,6 @@
     "authorization": ".agent/evidence/113/recovery-authorization.json",
     "at": "2026-10-12T07:58:40.039629+00:00",
     "verbatim": "continue.",
-    "stage": "both-renewed-pre-code-gates-approved"
+    "stage": "corrected-bundle-independently-approved"
   }
 }
