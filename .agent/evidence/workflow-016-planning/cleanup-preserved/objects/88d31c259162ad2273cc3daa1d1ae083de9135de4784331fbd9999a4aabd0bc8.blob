@@ -1,0 +1,524 @@
+{
+  "observed_at": "2026-10-12T21:23:32.595946+00:00",
+  "pull_request": {
+    "headRefOid": "e20ea8cc2b89020ba609bf4dbe3df86cb7eb3959",
+    "mergeCommit": {
+      "oid": "8bce1e446e9a7783d67003dfc5a207c0024d4e75"
+    },
+    "mergedAt": "2026-10-12T21:20:36Z",
+    "state": "MERGED",
+    "url": "https://github.com/niq-cnr/nizam-framework/pull/90"
+  },
+  "final_head_readiness": {
+    "comments": [],
+    "headRefOid": "e20ea8cc2b89020ba609bf4dbe3df86cb7eb3959",
+    "isDraft": false,
+    "mergeStateStatus": "CLEAN",
+    "number": 90,
+    "reviews": [],
+    "statusCheckRollup": [
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-12T21:18:37Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/niq-cnr/nizam-framework/actions/runs/38309772095/job/115012368904",
+        "name": "validate",
+        "startedAt": "2026-10-12T21:18:16Z",
+        "status": "COMPLETED",
+        "workflowName": "compliance"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-12T21:18:21Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/niq-cnr/nizam-framework/actions/runs/38309772126/job/115012368958",
+        "name": "closeout",
+        "startedAt": "2026-10-12T21:18:16Z",
+        "status": "COMPLETED",
+        "workflowName": "release-closeout"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-12T21:19:03Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/niq-cnr/nizam-framework/actions/runs/38309772095/job/115012369096",
+        "name": "e2e_bootstrap",
+        "startedAt": "2026-10-12T21:18:16Z",
+        "status": "COMPLETED",
+        "workflowName": "compliance"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-12T21:19:50Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/niq-cnr/nizam-framework/actions/runs/38309772095/job/115012369285",
+        "name": "fixtures_self_test",
+        "startedAt": "2026-10-12T21:18:16Z",
+        "status": "COMPLETED",
+        "workflowName": "compliance"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-12T21:19:53Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/niq-cnr/nizam-framework/actions/runs/38309772095/job/115012369202",
+        "name": "convergent_review",
+        "startedAt": "2026-10-12T21:18:16Z",
+        "status": "COMPLETED",
+        "workflowName": "compliance"
+      },
+      {
+        "__typename": "CheckRun",
+        "completedAt": "2026-10-12T21:18:47Z",
+        "conclusion": "SUCCESS",
+        "detailsUrl": "https://github.com/niq-cnr/nizam-framework/actions/runs/38309772095/job/115012369327",
+        "name": "self_governance",
+        "startedAt": "2026-10-12T21:18:16Z",
+        "status": "COMPLETED",
+        "workflowName": "compliance"
+      }
+    ],
+    "url": "https://github.com/niq-cnr/nizam-framework/pull/90"
+  },
+  "main_compliance": {
+    "conclusion": "success",
+    "databaseId": 38310034857,
+    "headSha": "8bce1e446e9a7783d67003dfc5a207c0024d4e75",
+    "jobs": [
+      {
+        "completedAt": "2026-10-12T21:21:11Z",
+        "conclusion": "success",
+        "databaseId": 115013213627,
+        "name": "self_governance",
+        "startedAt": "2026-10-12T21:20:42Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-12T21:20:43Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-12T21:20:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:45Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 2,
+            "startedAt": "2026-10-12T21:20:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:46Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 3,
+            "startedAt": "2026-10-12T21:20:45Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:50Z",
+            "conclusion": "success",
+            "name": "Run pip install jsonschema pyyaml",
+            "number": 4,
+            "startedAt": "2026-10-12T21:20:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:50Z",
+            "conclusion": "success",
+            "name": "Run python3 .github/scripts/verify_self_governance.py",
+            "number": 5,
+            "startedAt": "2026-10-12T21:20:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:53Z",
+            "conclusion": "success",
+            "name": "Run python3 .github/scripts/test_self_governance.py",
+            "number": 6,
+            "startedAt": "2026-10-12T21:20:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:10Z",
+            "conclusion": "success",
+            "name": "Run bash .nizam/tools/validate.sh --payload",
+            "number": 7,
+            "startedAt": "2026-10-12T21:20:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:10Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 13,
+            "startedAt": "2026-10-12T21:21:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:10Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 14,
+            "startedAt": "2026-10-12T21:21:10Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:10Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 15,
+            "startedAt": "2026-10-12T21:21:10Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/niq-cnr/nizam-framework/actions/runs/38310034857/job/115013213627"
+      },
+      {
+        "completedAt": "2026-10-12T21:21:13Z",
+        "conclusion": "success",
+        "databaseId": 115013213860,
+        "name": "e2e_bootstrap",
+        "startedAt": "2026-10-12T21:20:42Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-12T21:20:44Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-12T21:20:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:46Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 2,
+            "startedAt": "2026-10-12T21:20:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:46Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 3,
+            "startedAt": "2026-10-12T21:20:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:49Z",
+            "conclusion": "success",
+            "name": "Run pip install jsonschema pyyaml",
+            "number": 4,
+            "startedAt": "2026-10-12T21:20:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:11Z",
+            "conclusion": "success",
+            "name": "Run bash tools/e2e_bootstrap_test.sh",
+            "number": 5,
+            "startedAt": "2026-10-12T21:20:49Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:11Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 9,
+            "startedAt": "2026-10-12T21:21:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:12Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 10,
+            "startedAt": "2026-10-12T21:21:11Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:12Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-12T21:21:12Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/niq-cnr/nizam-framework/actions/runs/38310034857/job/115013213860"
+      },
+      {
+        "completedAt": "2026-10-12T21:21:59Z",
+        "conclusion": "success",
+        "databaseId": 115013213941,
+        "name": "fixtures_self_test",
+        "startedAt": "2026-10-12T21:20:42Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-12T21:20:44Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-12T21:20:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:46Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 2,
+            "startedAt": "2026-10-12T21:20:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:46Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 3,
+            "startedAt": "2026-10-12T21:20:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:50Z",
+            "conclusion": "success",
+            "name": "Run pip install jsonschema pyyaml",
+            "number": 4,
+            "startedAt": "2026-10-12T21:20:46Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:51Z",
+            "conclusion": "success",
+            "name": "Record maintenance checkout source identity",
+            "number": 5,
+            "startedAt": "2026-10-12T21:20:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:57Z",
+            "conclusion": "success",
+            "name": "Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py",
+            "number": 6,
+            "startedAt": "2026-10-12T21:20:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:57Z",
+            "conclusion": "success",
+            "name": "Run bash tools/fixtures_self_test.sh",
+            "number": 7,
+            "startedAt": "2026-10-12T21:20:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:57Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 13,
+            "startedAt": "2026-10-12T21:21:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:57Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 14,
+            "startedAt": "2026-10-12T21:21:57Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:57Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 15,
+            "startedAt": "2026-10-12T21:21:57Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/niq-cnr/nizam-framework/actions/runs/38310034857/job/115013213941"
+      },
+      {
+        "completedAt": "2026-10-12T21:21:14Z",
+        "conclusion": "success",
+        "databaseId": 115013213966,
+        "name": "validate",
+        "startedAt": "2026-10-12T21:20:42Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-12T21:20:44Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-12T21:20:43Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:48Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 2,
+            "startedAt": "2026-10-12T21:20:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:48Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 3,
+            "startedAt": "2026-10-12T21:20:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:53Z",
+            "conclusion": "success",
+            "name": "Run pip install jsonschema pyyaml",
+            "number": 4,
+            "startedAt": "2026-10-12T21:20:48Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:11Z",
+            "conclusion": "success",
+            "name": "Run bash tools/validate.sh",
+            "number": 5,
+            "startedAt": "2026-10-12T21:20:53Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:12Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 9,
+            "startedAt": "2026-10-12T21:21:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:12Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 10,
+            "startedAt": "2026-10-12T21:21:12Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:21:12Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 11,
+            "startedAt": "2026-10-12T21:21:12Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/niq-cnr/nizam-framework/actions/runs/38310034857/job/115013213966"
+      },
+      {
+        "completedAt": "2026-10-12T21:22:25Z",
+        "conclusion": "success",
+        "databaseId": 115013214099,
+        "name": "convergent_review",
+        "startedAt": "2026-10-12T21:20:43Z",
+        "status": "completed",
+        "steps": [
+          {
+            "completedAt": "2026-10-12T21:20:44Z",
+            "conclusion": "success",
+            "name": "Set up job",
+            "number": 1,
+            "startedAt": "2026-10-12T21:20:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:47Z",
+            "conclusion": "success",
+            "name": "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 2,
+            "startedAt": "2026-10-12T21:20:44Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:47Z",
+            "conclusion": "success",
+            "name": "Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 3,
+            "startedAt": "2026-10-12T21:20:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:50Z",
+            "conclusion": "success",
+            "name": "Run pip install jsonschema pyyaml",
+            "number": 4,
+            "startedAt": "2026-10-12T21:20:47Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:50Z",
+            "conclusion": "success",
+            "name": "Enable unprivileged user namespaces where the kernel restricts them",
+            "number": 5,
+            "startedAt": "2026-10-12T21:20:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:50Z",
+            "conclusion": "success",
+            "name": "Record maintenance checkout source identity",
+            "number": 6,
+            "startedAt": "2026-10-12T21:20:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:20:51Z",
+            "conclusion": "success",
+            "name": "Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py",
+            "number": 7,
+            "startedAt": "2026-10-12T21:20:50Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:22:22Z",
+            "conclusion": "success",
+            "name": "Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh",
+            "number": 8,
+            "startedAt": "2026-10-12T21:20:51Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:22:22Z",
+            "conclusion": "success",
+            "name": "Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b",
+            "number": 15,
+            "startedAt": "2026-10-12T21:22:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:22:22Z",
+            "conclusion": "success",
+            "name": "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+            "number": 16,
+            "startedAt": "2026-10-12T21:22:22Z",
+            "status": "completed"
+          },
+          {
+            "completedAt": "2026-10-12T21:22:23Z",
+            "conclusion": "success",
+            "name": "Complete job",
+            "number": 17,
+            "startedAt": "2026-10-12T21:22:22Z",
+            "status": "completed"
+          }
+        ],
+        "url": "https://github.com/niq-cnr/nizam-framework/actions/runs/38310034857/job/115013214099"
+      }
+    ],
+    "status": "completed",
+    "url": "https://github.com/niq-cnr/nizam-framework/actions/runs/38310034857"
+  },
+  "boundary": "ActualPR90mergeandMain5jobs success. AssessedSourceC2QA remainspointintime; completionprojections permittedbyModeB; futureimplementationpending."
+}
