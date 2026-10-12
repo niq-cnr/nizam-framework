@@ -1,0 +1,31 @@
+{
+  "stage": "independent-test-capture-bundle-review",
+  "feature": "114",
+  "attempt": 1,
+  "epoch": "114-recovery-1",
+  "actor": "/root/adapter_validator_113",
+  "approved_base": "480c102a5f3119fd8b645d3cf2f3e2ad793e2b9a",
+  "approved_contract_sha256": "fd0d1be4ce0f25bcd632c49b209557bb910053866f8df8a28e062256f98fc02e",
+  "fixed_inputs_sha256": "85197e8832f66e90eb1ce58144a47ebf4c25f6c9f0a89121f86b7f550d904a9a",
+  "evidence": [
+    ".agent/evidence/114/recovery-bundle-review-attempt1-raw.txt",
+    ".agent/evidence/114/recovery-bundle-review-attempt1-controls.txt",
+    ".agent/evidence/114/recovery-bundle-review-attempt1-probes.txt"
+  ],
+  "issues": [
+    {
+      "severity": "medium",
+      "verification_index": 8,
+      "criterion": "Accept factual named toolchain versions while rejecting future framework declarations.",
+      "evidence": ".agent/evidence/114/recovery-bundle-review-attempt1-probes.txt",
+      "required_fix": "Preserve the explicit SBCL subject in the factual 'SBCL runtime version 2.2.9.debian' declaration; retain mixed framework-forecast discrimination and all existing controls. New bounded attempt needs independent review; no inline repair."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Full control checkpoint passes, but independent preregistered factual SBCL runtime-version positive fails FIXED_FUTURE_VERSION; restored baseline passes. Stopped at first mismatch; source remains unauthorized."
+  },
+  "reviewed_at": "2026-10-12T14:26:03.571017+00:00"
+}

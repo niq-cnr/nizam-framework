@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.59.1
+version: 0.60.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.60.0"
+    date: "2026-10-12"
+    summary: "Prepare feature114 normative readiness and bounded current projections; independent acceptance and canonical close remain required."
   - version: "0.59.1"
     date: "2026-10-12"
     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
@@ -391,6 +394,19 @@ Open debts040/034 and commissioning/maintenance proof. Cancelled F101 has no fin
 Delivered F105 owns the reused claim map; actual five CI jobs become six only with
 future116 live job. SBCL2.2.9.debian is available; mandatory capable isolated CI
 remains required, workstation sysctls never change. Installed v1.5.0 stays frozen.
+
+### Feature114 readiness projection
+
+Features110-114 and phase015 are complete after actual independent Mode B,
+fresh twelve-command QA plus own adversarial spot and evidence capture. The
+assessed candidate remains bound by `.agent/evidence/114/current-source-inputs.json`;
+`.agent/qa/114.json` and `.agent/evidence/114/evidence-gate.txt` record acceptance.
+PLAN-WA is eligible for planning serialization and remains pending; PLAN-016
+remains pending after PLAN-WA and its own planning gates. Selected WA choices
+create no allocation or gate reduction. Published/installed v1.5.0 is unchanged;
+future release/tag and consumer upgrade decisions, phase016 controller/SBCL/live13
+proofs and capable CI remain outstanding. Historical prose above retains its
+dated meaning; current lifecycle follows canonical records.
 
 ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
 
@@ -823,7 +839,7 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-10-11)
+## Current Position (2026-10-12)
 
 H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
 `2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
@@ -836,7 +852,13 @@ requires its approved contract, both independent pre-code gates, Mode B, QA and
 the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
 records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
-- **Current planning refresh merged; bounded maintenance is verified.** The [current backlog view](backlog_reconciliation.md) retains exact complete/cancelled canonical mirrors and factual planning inputs. Resolved NDEBT-047/046/045 and completed A04a cite actual maintenance QA/CI proof; NIP3/WA scopes are now accepted; phase015 activation is recorded above; future release and installed-upgrade authority remain outstanding. Both prior planning checkers and historical evidence stay frozen.
+- **Phase015 normative scope is complete.** Features110-114 are complete after
+  actual candidate Mode B, fresh QA/ownspot and capture. Acceptance follows
+  `.agent/qa/114.json` and `.agent/evidence/114/evidence-gate.txt`.
+  PLAN-WA remains pending and eligible for planning serialization; PLAN-016
+  remains pending after PLAN-WA. Future runtime proofs, release/tag and consumer
+  upgrade gates remain outstanding; no new phase is allocated. Published and
+  installed v1.5.0 records are preserved.
 - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
 - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. Phase015 activation is recorded in the current overlay. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their

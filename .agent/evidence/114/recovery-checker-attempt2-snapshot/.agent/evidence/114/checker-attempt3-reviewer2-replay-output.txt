@@ -1,0 +1,26 @@
+PREREGISTERED {"name": "missing-installed-entry", "expected_exit": 1, "expected_diagnostic": "INSTALLED_INVENTORY", "classification": "CONTROL evidence/installed immutable", "proof_scope": "scratch predicate only; no SourceReview/QA/capture/gate fabrication"}
+PREREGISTERED {"name": "replacement-installed-bytes", "expected_exit": 1, "expected_diagnostic": "HISTORY:.nizam/NIZAM.json", "classification": "CONTROL evidence/installed immutable", "proof_scope": "scratch predicate only; no SourceReview/QA/capture/gate fabrication"}
+PREREGISTERED {"name": "known-installed-file-symlink", "expected_exit": 1, "expected_diagnostic": "INSTALLED_REGULAR_FILES", "classification": "CONTROL evidence/installed immutable", "proof_scope": "scratch predicate only; no SourceReview/QA/capture/gate fabrication"}
+PREREGISTERED {"name": "installed-directory-symlink", "expected_exit": 1, "expected_diagnostic": "INSTALLED_INVENTORY", "classification": "CONTROL evidence/installed immutable", "proof_scope": "scratch predicate only; no SourceReview/QA/capture/gate fabrication"}
+PREREGISTERED {"name": "historical-current-version", "expected_exit": 0, "expected_diagnostic": "PASS", "classification": "CONTROL evidence/installed immutable", "proof_scope": "scratch predicate only; no SourceReview/QA/capture/gate fabrication"}
+PREREGISTERED {"name": "next-patch-version", "expected_exit": 1, "expected_diagnostic": "FIXED_FUTURE_VERSION", "classification": "CONTROL evidence/installed immutable", "proof_scope": "scratch predicate only; no SourceReview/QA/capture/gate fabrication"}
+PREREGISTERED {"name": "wide-major-version", "expected_exit": 1, "expected_diagnostic": "FIXED_FUTURE_VERSION", "classification": "CONTROL evidence/installed immutable", "proof_scope": "scratch predicate only; no SourceReview/QA/capture/gate fabrication"}
+PREREGISTERED {"name": "sentence-terminal-future-version", "expected_exit": 1, "expected_diagnostic": "FIXED_FUTURE_VERSION", "classification": "CONTROL evidence/installed immutable", "proof_scope": "scratch predicate only; no SourceReview/QA/capture/gate fabrication"}
+ACTUAL history-baseline EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+ACTUAL missing-installed-entry EXIT1 INSTALLED_INVENTORY EXPECTED_EXIT1 EXPECTED_DIAGNOSTIC INSTALLED_INVENTORY
+ACTUAL missing-installed-entry-restored EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+ACTUAL replacement-installed-bytes EXIT1 HISTORY:.nizam/NIZAM.json EXPECTED_EXIT1 EXPECTED_DIAGNOSTIC HISTORY:.nizam/NIZAM.json
+ACTUAL replacement-installed-bytes-restored EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+ACTUAL known-installed-file-symlink EXIT1 INSTALLED_REGULAR_FILES EXPECTED_EXIT1 EXPECTED_DIAGNOSTIC INSTALLED_REGULAR_FILES
+ACTUAL known-installed-file-symlink-restored EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+ACTUAL installed-directory-symlink EXIT1 INSTALLED_INVENTORY EXPECTED_EXIT1 EXPECTED_DIAGNOSTIC INSTALLED_INVENTORY
+ACTUAL directory-symlink-restored EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+ACTUAL historical-current-version EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+ACTUAL historical-current-version-restored EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+ACTUAL next-patch-version EXIT1 FIXED_FUTURE_VERSION EXPECTED_EXIT1 EXPECTED_DIAGNOSTIC FIXED_FUTURE_VERSION
+ACTUAL next-patch-version-restored EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+ACTUAL wide-major-version EXIT1 FIXED_FUTURE_VERSION EXPECTED_EXIT1 EXPECTED_DIAGNOSTIC FIXED_FUTURE_VERSION
+ACTUAL wide-major-version-restored EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+ACTUAL sentence-terminal-future-version EXIT1 FIXED_FUTURE_VERSION EXPECTED_EXIT1 EXPECTED_DIAGNOSTIC FIXED_FUTURE_VERSION
+ACTUAL sentence-terminal-future-version-restored EXIT0 PASS EXPECTED_EXIT0 EXPECTED_DIAGNOSTIC PASS
+REVIEWER_BOUNDARY_PROBES:PASS; scratch component only

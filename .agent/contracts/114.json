@@ -1,0 +1,179 @@
+{
+  "contract_id": "114",
+  "feature_id": "114",
+  "name": "Normative-stage next MINOR readiness and close",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_015.md",
+  "base_revision": "45ceeb80eabc823400f2bb6044edcb4fa3aa9b2f",
+  "contract_attempt": 1,
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/contracts/114.json",
+        "purpose": "This compact proposed contract; approval metadata only after both actual independent pre-code gates."
+      },
+      {
+        "path": ".agent/evidence/114/release-readiness.md",
+        "purpose": "New governed readiness dossier, version0.1.0/active with change_log. Describe assessed normative delivery, actual113 baseline/proof paths, candidate sidecar reference, unresolved release/upgrade/runtime boundaries and closure sequence; never selfdeclare QA or phase complete."
+      },
+      {
+        "path": ".agent/evidence/114/**",
+        "purpose": "Task114-only independently authored checker/small private controls/capture adapter, frozen inputs/inventory/seals, actual Git/source sidecar, personal semantic review and raw gate/QA/ownspot/closure/budget receipts. Preserve existing114 workspace/predecessor receipts."
+      },
+      {
+        "path": ".agent/validator/114-mode-a.json",
+        "purpose": "Independent pre-code ModeA verdict."
+      },
+      {
+        "path": ".agent/qa/114-contract-review.json",
+        "purpose": "Independent second pre-code contract review verdict."
+      },
+      {
+        "path": ".agent/validator/114-test-bundle-review.json",
+        "purpose": "Separate independent actual test/capture-bundle approval before source."
+      },
+      {
+        "path": ".agent/validator/114-mode-b.json",
+        "purpose": "Independent actual candidate diff approval."
+      },
+      {
+        "path": ".agent/qa/114.json",
+        "purpose": "Fresh independent all12-command QA, typed verdict and exactly one extra own adversarial spot."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "One new bounded114 readiness/normative-close bullet under Unreleased/Changed. Preserve all previous Unreleased/released entries and version headings; no release rollup/version forecast."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "0.59.1->0.60.0 plus one new log; narrow current015/readiness overlay in Selected NIP-0003 and replace only CurrentPosition first phase015 bullet/heading date as needed. Preserve all prior logs/other body and exactly existing v1.5.0 disposition/released history. Own114 overlay may be finalized by Parent only after capture."
+      },
+      {
+        "path": "docs/planning/manifest.json",
+        "purpose": "Update only updated_at and phase015 note/current status in its existing row. Other keys/phase rows remain exact; current_phase remains015, activation_state active. Actual status complete is Parent-only after capture."
+      },
+      {
+        "path": "docs/planning/backlog_dag.json",
+        "purpose": "Only generated_at, activated_phase.current_status/run_state_position and exact four packet masks below; preserve every other field/packet and all DAG edges, estimates, scope, identities and future allocations."
+      },
+      {
+        "path": "docs/planning/backlog_reconciliation.md",
+        "purpose": "0.1.13->0.1.14 plus one new log; append one bounded current015/readiness projection paragraph/table before Prior reconciliation history, at most180 words; current-heading date may advance. Preserve all old logs/current prose/phase014 table/prior-history suffix. Parent finalizes only own114 projection after capture."
+      },
+      {
+        "path": ".agent/feature_list_015.json",
+        "purpose": "Parent-only114pending->in_progress->complete, its contract/QA/evidence/passes/completed_at fields and phase_status in_progress->complete. Preserve every other feature/envelope field, all six ACs, DAG, case_matrix working:false, estimates/budget/spec version."
+      },
+      {
+        "path": "docs/planning/phase_015.yaml",
+        "purpose": "Parent-only114PENDING->IN_PROGRESS->COMPLETED with actual evidence/docs_updated/changelog_entry; phase in_progress->complete after capture. Preserve all110-113 steps and phase identity/title/description."
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Orchestrator-only current114 coordination/circuit/history/budget and canonical-first phase-close derivation; implementation roles preserve all fields."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "Parent-only exact NDEBT-051 recovery/closure masks below; not a seventh Source path. Preserve all other rows/body/logs and original snapshots/full permissions."
+      }
+    ]
+  },
+  "non_goals": [
+    "No product/helper/test/capture-adapter implementation or acceptance command before both independent actual pre-code approvals; this attempt authors contract/raw handoff only.",
+    "No payload source modification (includingNIZAM/version/tools/methodology/schema), new required adapter rule, controller/stub/SBCL/live13 proof or local isolation claim.",
+    "No fixed next release number, release/tag/ref/publication, installed239file/mode upgrade, gate reduction, WA/phase016 allocation/activation/new specification or budget addition.",
+    "No debt changes except exact Parent-only NDEBT-051 masks; no operator-gates/HANDOVER/NIP changes, DAG edge/status/authority changes beyond exact current projection masks, or historicalphase014/110-113 proof/checker/spec/QA/seal/snapshot rewrite/rerun/reseal.",
+    "No Generator tests/verdicts/source-review fiction/canonical completion/counter writes; no inherited CI or development PASS as final independent114QA."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "1: Canonical114 acceptance",
+      "command": "bash tools/validate.sh"
+    },
+    {
+      "acceptance_test": "2: Canonical114 acceptance",
+      "command": "bash tools/validate.sh --payload"
+    },
+    {
+      "acceptance_test": "3: Canonical114 acceptance",
+      "command": "bash tools/fixtures_self_test.sh"
+    },
+    {
+      "acceptance_test": "4: Canonical114 acceptance",
+      "command": "bash tools/e2e_bootstrap_test.sh"
+    },
+    {
+      "acceptance_test": "5: Canonical114 acceptance",
+      "command": "python3 .github/scripts/release_closeout.py --mode pr"
+    },
+    {
+      "acceptance_test": "6: Canonical114 acceptance",
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep .agent/evidence/114/release-readiness.md '\"'\"'^## Human release boundary$'\"'\"' '\"'\"'(^|[^[:alnum:]_])H-FRAMEWORK-RELEASE([^[:alnum:]_]|$)'\"'\"''"
+    },
+    {
+      "acceptance_test": "7: Actual113 completion/gates/evidence and mergedPR88 sixPR/fiveMain success bind approved base",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py predecessor"
+    },
+    {
+      "acceptance_test": "8: Candidate/sidecar/fixed inputs bind actual Git bytes, independent identities and unresolved human/runtime boundaries without circular hashes",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py readiness"
+    },
+    {
+      "acceptance_test": "9: Narrow current planning changes and Parent-only phase-close projections preserve histories/edges and future pending planning",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py planning"
+    },
+    {
+      "acceptance_test": "10: Untracked-aware scope plus immutable prior proofs/install inventory and exact closure masks",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py scope-history"
+    },
+    {
+      "acceptance_test": "11: Small independent discriminating scratch negatives and restored positive models",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py negative-controls"
+    },
+    {
+      "acceptance_test": "12: Actual budget uses unchanged frozen Git-numstat classifier",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 114=45ceeb80eabc823400f2bb6044edcb4fa3aa9b2f.. --files"
+    }
+  ],
+  "estimated_lines": 1150,
+  "evidence_dir": ".agent/evidence/114/",
+  "evidence_convention": "qa-NN.txt ordered exact command first, actual stdout/stderr, final actual EXIT; exercised candidate revision and seal references by path. Ownspot114-qa-adversarial.txt. Gates/QA cite personally captured raw paths, never inline output; repo-root reproducible invocations, no session-absolute commands.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1,
+    "validator_evidence": ".agent/validator/114-mode-a.json",
+    "evaluator_evidence": ".agent/qa/114-contract-review.json",
+    "approved_at": "2026-10-12T13:59:15.118685+00:00"
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "implementation_requirements": {
+    "authority": "Installed v1.5.0 AGF/execution/planning/adversarial/circuit/anti-hallucination govern; approved015spec/feature114/acceptedNIP3 externally anchor readiness. Eligible113 COMPLETE at actual postPR88Main base45ceeb; old6PR+5Main success is prerequisite proof, never fresh114acceptance.",
+    "dossier": "Use exact H2 Human release boundary and include H-FRAMEWORK-RELEASE in its direct section span before any deeper heading; distinct H-CONSUMER-UPGRADE later. Sections may cover normative deliverables110-113, assessed source input reference, existing validator/payload/fixture/e2e/closeout obligations and canonical-close order. Explain nextMINOR readiness without choosing version; published/installedv1.5.0 persists. Phase015 schemas/C12 and optional normative surface prove no live13behavior; controller/SBCL launcher/live conformance/capable liveCI remain016pending. Six approved WA choices remain selected planning, no allocation/implementation/gate reduction.",
+    "predecessor": "Check actual113approved contract/ModeB/freshQA/evidence-capture paths and complete phase/list rows at fixedbase; independently parse E114/predecessor113-pr-premerge.json (PR88 head7e2c26d,6SUCCESS checks/CLEAN) and predecessor113-merge-main.json (MERGED45ceeb,5success Main jobs/head bound45ceeb). Preserve their bytes/modes as inputs; no guessed CI names or web assumptions.",
+    "packet_masks": "NIP3-113: statuscomplete/authority_statusauthorized; prerequisites technical/authority/evidence true with personally verified113proof reasons; evidence may append actual113gate/QA/capture/predecessor paths, old prefix retained. NIP3-114: status mirrors canonical114blocked/in_progress/complete; authority_status movesauthorized only after its two actual pre-code gates; technicaltrue from113; evidencefalse with pending114QA until Parent capture, then true citing actual114paths. Only these status/authority_status, prerequisite technical/authority/evidence satisfied/reason and evidence lists may change; environment/objective/non-goals/aliases/scope/estimates/edges/other fields exact. PLAN-WA/PLAN-016 statuspending and authority authorized remain exact. Before114capture both technical/evidencefalse reasons remain pending; after actual114close PLAN-WA technical/evidencetrue may cite completed114 and selectedWAchoices, yet no planning task delivered. PLAN-016 technical/evidence remainfalse with reason that114is complete but pendingPLAN-WA serialization/own planning gates block it; preserve authority/environment/scope/edges/other fields.",
+    "planning_states": "At recovery entry phase/list are blocked,114BLOCKED and110-113 complete. Only after both renewed actual pre-code approvals Parent resumes114/phase to in_progress, no passes/QA/complete assertion. Source remains forbidden until corrected bundle independent approval. Thereafter original prepared-close overlays and exact finalization masks apply: Parent finalizes only own114 overlay/CurrentPosition first015 bullet/own reconciliation addition, manifest015 note/status and declared packet/activated_phase fields after actual capture. All original prose outside these ranges and released history stay exact.",
+    "candidate_binding": "Generator freezes actual dossier+five authored planning/changelog files, commits reviewed source bytes only as pendingcandidate. Parent later writes current-source-inputs.json and source seal with ACTUAL immutable Gitcommit/tree/source paths/SHA/modes, approved-contract pin, fixed-inputs digest and exact canonical precompletion snapshots. Readiness doc refers to that later sidecar path; candidate itself contains no futurecandidate SHA/futureQAhash/selfhash. Independent QA checks HEAD==candidate and actual sidecar/bundle hashes, exact source replay and personally reads dossier/planning diff against spec; record review by freshQApath/identity. Fixed inputs include separate reviewed checker/control/capture/contract/base/historical inventory and actual independent identities. Future QA/capture/Parentclosure receipts are excluded only by exact114 family/masks, never made-up or circular seals. Recovery-approved live contract gets a separate actual sealed pin under E114/recovery-approved-contract.json; original approved-contract.json remains7f unchanged. Sidecar retains exactly six Source paths and canonical-precompletion snapshots exactly feature_list_015.json, phase_015.yaml and run_state.json. Mutable live DEBT is checked against staged masks, never fixed to an impossible future raw SHA; immutable halt/authorized debt snapshots are separate fixed inputs.",
+    "closure_order": "After independent ModeB, fresh all12QA+exactlyone ownspot and actual evidence-capture gate, Parent first sets114complete/COMPLETED with realQA/capture paths and phasecomplete; then manifest015complete/currentphase015; then derivedrunstate current_phase015/statuscomplete/current_feature null/active_contract_id null, append realhistory/budget. Featurelistphase_statuscomplete accompanies canonicalphase. No next phase selected/allocated. Checker tests resumed and completed projections only in scratch before closure, then validates actual Parent closure separately with real evidence references; no pre-code futurepassedQA or completion claims.",
+    "closure_preservation": "Preserve original4800-member history.json byteexact/SHA764cd7d54f31158c375cb4ce69bac3e0ff711f0f61058bbc48bef546e106df30 and every original snapshot/fullpermission. Its4799 non-DEBT entries retain original path/SHA/permissions; original DEBT0.65 snapshot SHAefaf7f488c42302f82661b51090fabc9f19f842c3814ab2390e255cb6fd5d3f2/mode0664 remains exact, while live debt grades only staged051 masks. No114livecontract entry exists in that inventory. Supplemental halt inventory separately preserves all later original114 raw/failed maps/gates/halt and recovery-original archives; do not replace old private base with current bytes or reseal4800. Original014/110-113 proofs/checkers/QA/seals/archives and installed239 remain exact, never rerun. Current planning/canonical files use only original114 masks plus explicit recovery stage masks; all other tracked/untracked changes rejected.",
+    "independence": "After two renewed actualpre-codeapprovals, with old approvals archived and both live booleans resetfalse, separate TestAuthor authors small check_114.py/private controls/capture adapter only; distinct reviewer reads/runs and approves actual frozen bundle before source implementation. Record four distinct sourceauthor/testauthor/bundlereviewer/finalQA identities, preserve unowned state. Actual sourcecandidate/diff gets independent ModeB; freshQA personally executes every command and one unlisted ownspot in its own context. Development never substitutes. Evidence gate checks typed installedQAschema, command/result/actualEXIT/revision/all referencedfiles before Parentclosure. Bundle/source changes require renewed appropriate independent reviews; Generator never edits checker.",
+    "negatives": "Small bounded scratch-only controls: wrong/failed predecessor proof, changed candidate/sidecar or circular future/self commitment, premature phasecomplete/unreferencedQA, altered unrelatedhistory/untrackedout-of-scope, false release/live13/WAallocation and alteredDAGedge/prematurePLAN016 readiness. Each preregisters expected targeted diagnostic/actualexit/classification; restored valid model passes. Controls protect against both falsepass and falsefail, never count missingfile/setup failure. Independent actual semantic review remains needed beyond markers; exactlyone freshQA extra ownspot not in contract list. Retain all existing controls; bounded recovery regressions reject missing/corrupt original archives, altered non051 debt/history/counters and premature resolution; accept factual named SBCL version2.2.9.debian, ASDF/Python versions while rejecting same-context framework forecasts, arbitrary-width numeric components and terminal prose punctuation. A toolchain mention never exempts a release declaration.",
+    "release_consistency": "Canonical closeout --modepr grades existing framework.version1.5.0 anchors. Preserve actual ROADMAP latestreleasedv1.5.0 body disposition exactly once and releasedCHANGELOG sections. Readiness/Unreleased entries say nextMINOR generically; no anchor/version/tag change or release authorization invented. Independent TestAuthor separates release-declaration subject/context from numeric-token recognition; no blanket SBCL-substring bypass. Structural guard covers declared bounded syntax and makes no universal natural-language claim; independent actual Source semantic review of all six files is mandatory.",
+    "budget": "Actual completed6779/9360 leaves2581;114estimated1150 and original7200/9360 unchanged. Frozenmeasure.py alone uses Gitnumstat insertions+deletions/classifier at45ceeb..; all countedcontract/verdict/planning costs included, raw evidence/runstate separate, unclassifiedfailsclosed. Compare only preceding1113133/1121244/113691 before appending114; no own baseline or alternativeSequenceMatcher. Keep contract/verdict/source/projection compact.",
+    "attempts": "Recovery contract attempt1 in recorded owned root at immutable haltbaseea41afd196dddaef02f6be86217c84deaf47d238, authorized only by H-CHECKER-114-RECOVERY/E114/recovery-authorization.json. No implementation now. Parent owns the three new bounded epoch counters listed below; old exhausted counters and original contract count remain unchanged. Every step uses fresh recorded approvedbase/root; source/ModeB/QA/capture retain original existing0..3 limits. Read beforeeverywrite/detectbeforefix, actual timestamps, installedPython PYTHONDONTWRITEBYTECODE=1. Failure proofs quarantined before validated ownedroot cleanup; no sharedreset/clean or implicit fourth recovery attempt."
+  },
+  "recovery": {
+    "epoch": "114-recovery-1",
+    "contract_attempt": 1,
+    "halt_base": "ea41afd196dddaef02f6be86217c84deaf47d238",
+    "authorization": ".agent/evidence/114/recovery-authorization.json",
+    "archive_binding": "Original approved contract7fbd7d107bc8dcd3165339d4c2df1381d50ba1499d68d90d17de0228588de44f and original pre-code/bundle verdicts remain immutable at recovery-original inventory paths with original fullpermissions. Require each actual archive SHA/mode and inventory; missing/corrupt archives reject. Only live114contract and three canonical pre-code/bundle verdict paths may be replaced by fresh actual artifacts after archival; old E114/approved-contract.json and contract-approval.json stay exact. New liveapprovedpin is distinct, captured only after both genuine renewed approvals; no inherited true/hash/verdict.",
+    "halt_inventory": "Before replacing old canonical gates, Parent seals E114/recovery-halt-inventory.json from immutable haltbase Git bytes/fullpermissions and supplied original archive inventories. Protect every original114 proof at halt: raw commands, all three failed author/review bundles/maps/controls, preservation inventories, halt and blocked measurement; include original recovery archives, authorization and prior-operator-gate-113.json. Canonical gate originals resolve to exact recovery-original archive paths; all other original paths remain exact. New recovery outputs append separately; no blanket mutable114-* exemption. Preserve original4800 bytes and snapshots separately, without resealing.",
+    "debt_masks": "Original4800 DEBT0.65 snapshot/fullmode stays exact. Compare halt DEBT0.66 at ea41: only mandatory051 Open row plus0.66 version/new log may differ from0.65; all prior body/logs/rows exact. After both renewed pre-code approvals Parent may create immutable authorized-debt snapshot and change only0.66->0.67, prepend one new recovery-authorization log and append at most160 words to051 Notes citing actual human auth/renewed gates; entire original051 row fields/Notes prefix retained. Keep051 Open through corrected bundle approval, source and QA. Only after actual independent ModeB, all12 freshQA+ownspot and evidence-capture approval Parent changes0.67->0.68, prepends one resolution log, appends at most160 words actual proof paths to051 Notes and moves that same051 row Open->Resolved. All earlier logs/other rows/body and051 prefixes byteexact at each stage; no other debt field/mode change. Immutable actual halt/authorized snapshots seal past bytes; liveDEBT uses these exact masks, not a fixed futurehash.",
+    "coordination_masks": "Parent alone:114blocked/BLOCKED->in_progress/IN_PROGRESS after both renewed gates, thencomplete/COMPLETED only after capture; phase blocked->in_progress->complete. Existing six-Source/public projection masks unchanged, with these entry states expressly replacing prior pending assumption. Preserve all110-113 canonical rows and unrelated fields. Run_state may resume status/current114 coordination, remove only114 from blocked_features, retain captured approved H-CHECKER-114-RECOVERY auth/history and prior113 gate; pending_operator_gate stage may advance or clear only after durable recovery-stage receipt. Completion currentphase015/statuscomplete/currentfeatureNULL/activecontractNULL/history/budget follows original closure order. In-flight114256 stays historical, never a completed baseline; completed6779/9360 changes only by actual114 frozenmeasure result.",
+    "counter_masks": "Only new circuit_breaker keys114-recovery-contract,114-recovery-checker-development,114-recovery-checker-review, each attempts0..3/limit3, bound to actual epoch auth and stage receipts. Original114-contract1/3 and checker-development3/3/checker-review3/3 remain exact. Existing114-generator-development/implementation/qa/evidence-capture0..3 advance only for their genuine stages; all other original counters/history preserved. No fourth attempt inferred from this authorization.",
+    "source_boundary": "Exactly original six Source paths, estimate1150 and all12 command strings remain unchanged; no debt/source seventh path, fixed next version, runtime/WA/016 delivery, release/tag/upgrade or budget addition. Fresh bundle must pass actual independent review before any source; source semantic ModeB and separate freshQA/capture remain mandatory."
+  }
+}

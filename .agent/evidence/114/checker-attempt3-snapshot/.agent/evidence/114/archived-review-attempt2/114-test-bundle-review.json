@@ -1,0 +1,31 @@
+{
+  "stage": "test-bundle-review",
+  "feature": "114",
+  "attempt": 2,
+  "actor": "/root/adapter_validator_113",
+  "reviewed_at": "2026-10-12T11:32:00.583222+00:00",
+  "approved_base": "4e230c43693660c2b5d1d6a5bef79d4502cfc566",
+  "fixed_inputs_sha256": "027a853acff9609f321f93b3fc71fb7ff1ae20495b8bc0d3e2757257f3e7e7de",
+  "approved_contract_sha256": "7fbd7d107bc8dcd3165339d4c2df1381d50ba1499d68d90d17de0228588de44f",
+  "evidence": [
+    ".agent/evidence/114/bundle-review-attempt2-raw.txt",
+    ".agent/evidence/114/bundle-review-attempt2-controls.txt",
+    ".agent/evidence/114/bundle-review-attempt2-prior-probe.txt",
+    ".agent/evidence/114/bundle-review-attempt2-boundary-probes.txt"
+  ],
+  "issues": [
+    {
+      "severity": "medium",
+      "verification_index": 8,
+      "criterion": "Readiness contains no fixed future release forecast; numeric version guard must recognize ordinary sentence punctuation",
+      "evidence": ".agent/evidence/114/bundle-review-attempt2-boundary-probes.txt",
+      "required_fix": "A separately authored frozen bundle must discriminate future semver cores followed by normal prose punctuation (observed v1.10.0.), retaining historical/current-version positives, arbitrary digit widths and all20 existing control intents. Add targeted preregistered punctuation negative/restoration; renew independent bundle approval before source."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Rejected: future version guard false-passes ordinary sentence Next release v1.10.0.; inventory repair and independent20 controls/prior replay otherwise pass."
+  }
+}

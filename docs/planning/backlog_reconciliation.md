@@ -2,12 +2,15 @@
 id: nizam-backlog-reconciliation-2026-10-08
 title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
 description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
-version: 0.1.13
+version: 0.1.14
 status: active
 authoritative_source: docs/planning/backlog_reconciliation.md
 last_audited: "2026-10-11"
 tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
 change_log:
+  - version: "0.1.14"
+    date: "2026-10-12"
+    summary: "Add bounded current114 readiness projection while preserving prior reconciliation; canonical close follows actual independent capture."
   - version: "0.1.13"
     date: "2026-10-12"
     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
@@ -54,7 +57,7 @@ change_log:
 
 # Backlog Reconciliation — 2026-10-08
 
-## Current planning view — 2026-10-11
+## Current planning view — 2026-10-12
 
 This is the current projection of `backlog_dag.json`; the prior reconciliation
 below is dated history. The immutable phase014 feature list remains authoritative.
@@ -141,6 +144,19 @@ Actual maintenance proof: `.agent/qa/post-ga-maintenance.json`,
 The stage-aware maintenance checker requires explicit final state/proof binding;
 its intake stage cannot substitute final closure. The stage1 checker remains a
 frozen dated assessment and is not rerun as current maintenance truth.
+
+### Feature114 readiness projection
+
+Canonical110-114 and phase015 are complete following actual Mode B,
+fresh twelve-command QA plus ownspot and evidence capture, recorded in
+`.agent/qa/114.json` and `.agent/evidence/114/evidence-gate.txt`.
+NIP3-113 and NIP3-114 reflect accepted normative completion. PLAN-WA remains
+pending, with planning-input prerequisites cleared by completed114 and the
+six selected WA choices; eligibility does not deliver or activate a plan.
+PLAN-016 remains pending after PLAN-WA serialization and its own planning gates.
+Controller/SBCL/live13 proofs, capable CI, future release/tag and consumer upgrade
+remain outstanding. No new phase is allocated; earlier prose and prior history
+remain dated records.
 
 ## Prior reconciliation history
 
