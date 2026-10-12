@@ -1,7 +1,7 @@
 {
   "plan_status": "candidate",
   "plan_status_note": "H-PHASE-015 active under06c0ae0a273facce80c57506260648c41f566ebb; approved7200/9360 including phase-level costs. Canonical feature/list governs lifecycle;111-114pending. Six WA selections recorded, implementation/planning after114 remains pending; WA/016 unallocated. Historical014/installedv1.5 immutable.",
-  "generated_at": "2026-10-11",
+  "generated_at": "2026-10-12",
   "base_commit": "08f97b0e8b1002ac0d8362ed147e7253726a5415",
   "base_commit_note": "Approved docs-only phase015-planning implementation base after exact operator H-NIP events; canonical phase014 records/current position remain unchanged.",
   "packet_schema": "schema/work-packet.schema.json",
@@ -14,7 +14,7 @@
     "ceiling_130pct": 9360,
     "current_status": "in_progress",
     "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
-    "run_state_position": "Derived from canonical phase/list:110 and111 complete;112 in progress under approved revision2 contract;113-114 pending their own contract gates.",
+    "run_state_position": "Canonical110\u2013113 complete;114 in_progress under renewed approved contract and independently reviewed bundle, awaiting actual candidate ModeB/freshQA/ownspot/capture before phase015 close.",
     "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
   },
   "estimate_weighting": {
@@ -2860,32 +2860,37 @@
         "bash tools/e2e_bootstrap_test.sh"
       ],
       "evidence": [
-        ".agent/evidence/113/"
+        ".agent/evidence/113/",
+        ".agent/validator/113-mode-b.json",
+        ".agent/qa/113.json",
+        ".agent/evidence/113/evidence-gate.txt",
+        ".agent/evidence/114/predecessor113-pr-premerge.json",
+        ".agent/evidence/114/predecessor113-merge-main.json"
       ],
       "non_goals": [
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
-      "authority_status": "blocked-on-contract-and-predecessor",
+      "status": "complete",
+      "authority_status": "authorized",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
           "satisfied": true,
-          "reason": "Canonical112 completed after actual ModeB2, fresh20/20 independent acceptance and evidence capture;113 stays pending its own contract gates."
+          "reason": "Canonical112 and113 complete with independent QA/evidence capture;113 merged through PR88 at actual postmerge Main45ceeb."
         },
         "authority": {
-          "satisfied": false,
-          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
+          "satisfied": true,
+          "reason": "H-PHASE-015 and both actual113 pre-code approvals authorized original113 scope; completed113 independent gates remain immutable."
         },
         "environment": {
           "satisfied": true,
           "reason": "none (normative + schema)"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Pending015 plan source is available; feature implementation acceptance/QA/evidence is not delivered."
+          "satisfied": true,
+          "reason": "Actual113 ModeB, fresh16-command QA and capture plus six PR/five Main success receipts establish predecessor completion."
         }
       },
       "estimate": {
@@ -2953,24 +2958,28 @@
         "bash -c 'source tools/verify_lib.sh; vlib_section_grep .agent/evidence/114/release-readiness.md '\"'\"'^## Human release boundary$'\"'\"' '\"'\"'(^|[^[:alnum:]_])H-FRAMEWORK-RELEASE([^[:alnum:]_]|$)'\"'\"''"
       ],
       "evidence": [
-        ".agent/evidence/114/"
+        ".agent/evidence/114/",
+        ".agent/contracts/114.json",
+        ".agent/validator/114-mode-a.json",
+        ".agent/qa/114-contract-review.json",
+        ".agent/validator/114-test-bundle-review.json"
       ],
       "non_goals": [
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
-      "authority_status": "blocked-on-contract-and-predecessor",
+      "status": "in_progress",
+      "authority_status": "authorized",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "Canonical lifecycle is read from feature_list_015.json; predecessor completion remains required."
+          "satisfied": true,
+          "reason": "Canonical113 complete and merged at45ceeb with actual six PR/five Main success; predecessor proofs remain required inputs."
         },
         "authority": {
-          "satisfied": false,
-          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
+          "satisfied": true,
+          "reason": "Both renewed actual114 pre-code gates approved original scope and authorized bounded recovery; corrected bundle independently approved before source."
         },
         "environment": {
           "satisfied": true,
@@ -2978,7 +2987,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Pending015 plan source is available; feature implementation acceptance/QA/evidence is not delivered."
+          "reason": "Prepared readiness awaits actual candidate ModeB, fresh twelve-command QA/ownspot and evidence capture before Parent114/phase015 close."
         }
       },
       "estimate": {
@@ -3053,7 +3062,7 @@
       "prerequisites": {
         "technical": {
           "satisfied": false,
-          "reason": "Canonical114/phase015 close remains pending; PLAN-WA serializes after114 and PLAN-016 after PLAN-WA. No future realization is ready."
+          "reason": "Canonical114/phase015 close requires actual QA/capture; PLAN-WA remains pending and PLAN-016 serializes after PLAN-WA. No new phase is allocated."
         },
         "authority": {
           "satisfied": true,
@@ -3065,7 +3074,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Six WA design decisions recorded at06c0ae0; canonical114 close remains required before pending planning; no WA/016 allocation."
+          "reason": "Six selected WA choices and historical inputs remain available; actual114 close and separate pending planning gates are still required."
         }
       },
       "estimate": {
@@ -3152,7 +3161,7 @@
       "prerequisites": {
         "technical": {
           "satisfied": false,
-          "reason": "Canonical114/phase015 close remains pending; PLAN-WA serializes after114 and PLAN-016 after PLAN-WA. No future realization is ready."
+          "reason": "Canonical114/phase015 close requires actual QA/capture; PLAN-WA remains pending and PLAN-016 serializes after PLAN-WA. No new phase is allocated."
         },
         "authority": {
           "satisfied": true,
@@ -3164,7 +3173,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Six WA design decisions recorded at06c0ae0; canonical114 close remains required before pending planning; no WA/016 allocation."
+          "reason": "Six selected WA choices and historical inputs remain available; actual114 close and separate pending planning gates are still required."
         }
       },
       "estimate": {

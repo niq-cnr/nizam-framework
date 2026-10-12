@@ -9,6 +9,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Normative-stage readiness (feature114).** Added a candidate-bound next MINOR
+  dossier and narrow current planning projections. Closure requires independent
+  Mode B, fresh twelve-command QA, one additional adversarial spot, actual evidence
+  capture and Parent canonical completion. Human release/tag and consumer upgrade
+  remain separate decisions; published/installed v1.5.0 is unchanged. Schema/C12
+  record validity and normative adapter/binding rules establish no executable
+  controller, SBCL launcher, capable live CI or thirteen live proofs. WA choices
+  remain selected planning inputs without new allocation or gate reduction.
+
 - **Optional runtime-session adapter (feature113).** Published seven optional
   calls and conditional S1–S9 while preserving the original ten mandatory
   adapter items and existing requirements. Added manifest/index/skill routing
