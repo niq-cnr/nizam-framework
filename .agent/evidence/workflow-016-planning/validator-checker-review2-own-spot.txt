@@ -1,0 +1,35 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import importlib.util,pathlib
+r=pathlib.Path('"'"'.'"'"').resolve();h=r/'"'"'.agent/evidence/workflow-016-planning/check_plans.py'"'"'
+s=importlib.util.spec_from_file_location('"'"'checker_review'"'"',h);m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+protected='"'"'.agent/evidence/workflow-016-planning/authorization-isolation.json'"'"'
+assert m.original(protected)
+g=m.git;b=pathlib.Path.read_bytes;calls=[]
+def git(*args):
+ data=g(*args)
+ return data+protected.encode()+b'"'"'\n'"'"' if args[:2]==('"'"'diff'"'"','"'"'--name-only'"'"') else data
+def read_bytes(path):
+ raw=b(path)
+ if path.resolve()==(r/protected).resolve():
+  calls.append(1);return raw+b'"'"'\nUNAUTHORIZED_CHANGED_BYTES\n'"'"'
+ return raw
+m.git=git;pathlib.Path.read_bytes=read_bytes
+try:
+ try:m.check_scope()
+ except ValueError as err:
+  assert str(err)=='"'"'immutable-task-bytes:'"'"'+protected,str(err)
+  print('"'"'PREVIOUS_FALSE_PASS_NOW_REJECTED:'"'"',str(err));print('"'"'PROTECTED_CONTENT_INSPECTIONS:'"'"',len(calls))
+ else:raise AssertionError('"'"'previous false pass persists'"'"')
+finally:m.git=g;pathlib.Path.read_bytes=b
+print('"'"'RESTORED_SCOPE_PASS:'"'"',bool(m.check_scope()))
+new=m.E+'"'"'validator-checker-review2-legitimate-new.txt'"'"'
+m.scope_paths([new],[m.E+'"'"'**'"'"'])
+print('"'"'NEW_ROLE_OWNED_RECEIPT_ALLOWED: True'"'"')
+'
+REVISION: 8bd29badb85838f4ebdc39bf1c4758dea6f228d9
+HELPER_SHA256: c50a9f8c88de2fa504f66d52f229833d96811ec710e98dd9c560263caa8fb087
+PREVIOUS_FALSE_PASS_NOW_REJECTED: immutable-task-bytes:.agent/evidence/workflow-016-planning/authorization-isolation.json
+PROTECTED_CONTENT_INSPECTIONS: 1
+RESTORED_SCOPE_PASS: True
+NEW_ROLE_OWNED_RECEIPT_ALLOWED: True
+
+EXIT: 0

@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T20:06:56.879353+00:00",
+  "updated_at": "2026-10-12T20:09:18.423277+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -534,7 +534,7 @@
       "limit": 3
     },
     "workflow-016-planning-checker-review": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -3891,6 +3891,12 @@
       "event": "workflow-016-planning-checker-attempt2-produced",
       "detail": "Helperc50a9f8 repairs existing-task byte/type/executable-mode guard; actual22negative+1newreceiptpositive/scope pass, all originalproofs preserved. Renewed distinctcheckerReview required beforeWAplans.",
       "evidence": ".agent/evidence/workflow-016-planning/checker-attempt2-report.json"
+    },
+    {
+      "at": "2026-10-12T20:09:18.423277+00:00",
+      "event": "workflow-016-planning-checker-approved",
+      "detail": "Actual distinct review2 approves frozen helperc50a9f8; exact previous authorization mutant rejected and restoredscopepasses. Planner WA write now authorized;016 waits actual intermediateWA review.",
+      "evidence": ".agent/evidence/workflow-016-planning/checker-review-approved.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4559,7 +4565,7 @@
   "pending_operator_gate": null,
   "planning_task": {
     "id": "workflow-016-planning",
-    "status": "checker-review",
+    "status": "wa-planning",
     "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json",
     "attempt_root": "/home/cnross/.tmp/nizam-wa016-plan-attempt1-207l_sra",
     "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0"
