@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T21:18:06.397415+00:00",
+  "updated_at": "2026-10-12T21:23:32.603298+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -570,6 +570,10 @@
       "limit": 3
     },
     "workflow-016-planning-pr-merge": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-closeout": {
       "attempts": 1,
       "limit": 3
     }
@@ -3994,6 +3998,12 @@
       "event": "workflow-016-planning-accepted-captured",
       "detail": "FreshQA2 9/9 andindependentDD3 ownspot0 atimmutableSourceC2; stricttypedgateandactualevidencecapture verifiedrawcommands/exits/digests. Onlytaskdeliveryprojections advance; 18futurefeatures/fivephases remainpending/proposed.",
       "evidence": ".agent/evidence/workflow-016-planning/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-12T21:23:32.603298+00:00",
+      "event": "workflow-016-planning-merged-main-verified",
+      "detail": "PR90 actualcleanmerge8bce1e4 afterall6final-headchecks; Maincompliance38310034857five/fivesuccess. Planningtaskcanonicalcomplete; futureactivation/livecases stillpending. This bookkeepingrecords observedpriorPR90facts, not its own futurepublication.",
+      "evidence": ".agent/evidence/workflow-016-planning/pr90-merge-main-ci.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4584,7 +4594,7 @@
       }
     ]
   },
-  "last_action": "Actual SourceC2 freshQA2 nine/nine+ownspot and distinctRootcapture passed. PLAN-WA/PLAN-016 complete; proposedfutureimplementation stillpending; PR90 closeout inprogress.",
+  "last_action": "WorkflowAssurance thencontroller planningcomplete: strictSourceC2 ModeB+fresh9/9QA/ownspot+capture; PR90merged8bce1e4 andactualMain38310034857five/fivesuccess. Futurefivephasespending/proposed andclosed015/installedv1.5.0 preserved.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4662,7 +4672,7 @@
   "pending_operator_gate": null,
   "planning_task": {
     "id": "workflow-016-planning",
-    "status": "planning-complete-pr-in-progress",
+    "status": "complete",
     "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json",
     "attempt_root": "/home/cnross/.tmp/nizam-wa016-plan-attempt1-207l_sra",
     "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0",
@@ -4670,6 +4680,9 @@
     "capture_ref": ".agent/evidence/workflow-016-planning/evidence-capture.json",
     "pr": "https://github.com/niq-cnr/nizam-framework/pull/90",
     "actual_counted_lines": 2315,
-    "measurement_ref": ".agent/evidence/workflow-016-planning/task-cost.json"
+    "measurement_ref": ".agent/evidence/workflow-016-planning/task-cost.json",
+    "merge_ref": ".agent/evidence/workflow-016-planning/pr90-merge-main-ci.json",
+    "merged_commit": "8bce1e446e9a7783d67003dfc5a207c0024d4e75",
+    "main_ci_run": 38310034857
   }
 }
