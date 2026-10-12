@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T20:58:50.048495+00:00",
+  "updated_at": "2026-10-12T21:08:05.305233+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -551,6 +551,18 @@
     },
     "workflow-016-planning-public-integration": {
       "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-mode-b": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-coordination-schema": {
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -3941,13 +3953,27 @@
     {
       "at": "2026-10-12T20:47:50.803152+00:00",
       "event": "workflow-016-planning-checker-attempt3-produced",
-      "evidence": ".agent/evidence/workflow-016-planning/checker-attempt3-report.json"
+      "evidence": ".agent/evidence/workflow-016-planning/checker-attempt3-report.json",
+      "detail": "Architectural checker attempt3 passed actualWA/all/scope and28negative/fourpositive controls; distinct independent review pending at this point."
     },
     {
       "at": "2026-10-12T20:58:50.048495+00:00",
       "event": "workflow-016-planning-checker3-approved-public-polished",
       "evidence": ".agent/evidence/workflow-016-planning/checker-review-attempt3-approved.json",
-      "source_prechecks": ".agent/evidence/workflow-016-planning/final-pre-freeze-checks.txt"
+      "source_prechecks": ".agent/evidence/workflow-016-planning/final-pre-freeze-checks.txt",
+      "detail": "Distinct checker attempt3 review approved exact2dcc helper; polished publicinputs passed currentWA/all/scope/diff checks. Final ModeB/QA notyetclaimed."
+    },
+    {
+      "at": "2026-10-12T21:06:17.054021+00:00",
+      "event": "workflow-016-planning-mode-b-approved",
+      "evidence": ".agent/evidence/workflow-016-planning/mode-b-approved.json",
+      "detail": "Final semantic ModeB approved immutablea745b214; freshQA/capture remained pending. SubsequentCI detected missingrequired detail fields innewRootowned history records."
+    },
+    {
+      "at": "2026-10-12T21:08:05.305233+00:00",
+      "event": "workflow-016-planning-coordination-schema-repair",
+      "detail": "Attempt1 frozenSourceC CI validate failedC11; attempt2 schema-interface repair addsrequired detailonlytonewRoot taskevents. Allpreviousphasehistory/budgets preserved. No checker orproduct plan repair.",
+      "evidence": ".agent/evidence/workflow-016-planning/sourcec-ci-validate-failure.txt"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4538,7 +4564,7 @@
       }
     ]
   },
-  "last_action": "Distinct checker3 review approved actual frozen helper and owncontrols; all polished final-source stage/scope checks0. Preparing final ModeB freeze.",
+  "last_action": "ActualSourceC CI C11failed missingdetail innewownRoot history records. PreserveSourceC failure; addonly required narrativefields toownrecords, retainoldhistorykeys/values. Corrected installedschema validation passed; SourceC2 review/freshQA required.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4616,7 +4642,7 @@
   "pending_operator_gate": null,
   "planning_task": {
     "id": "workflow-016-planning",
-    "status": "mode-b-pending",
+    "status": "coordination-schema-repaired-review-pending",
     "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json",
     "attempt_root": "/home/cnross/.tmp/nizam-wa016-plan-attempt1-207l_sra",
     "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0"

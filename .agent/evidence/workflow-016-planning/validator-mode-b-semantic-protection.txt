@@ -1,0 +1,36 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import pathlib,json,hashlib,subprocess,re
+r=pathlib.Path('"'"'.'"'"')
+base='"'"'e22a3bf4c748cbd4f9daf9b0f66c4a0a6e5efc80'"'"'
+plans={p:json.load(open('"'"'.agent/feature_list_'"'"'+p+'"'"'.json'"'"')) for p in ('"'"'017'"'"','"'"'018'"'"','"'"'019'"'"','"'"'016'"'"','"'"'020'"'"')}
+cases=[c for l in plans.values() for c in l.get('"'"'case_matrix'"'"',[])]
+assert len(cases)==17 and {c['"'"'case'"'"'] for c in cases}==set(range(1,14))
+assert {(c['"'"'runtime'"'"'],c['"'"'layer'"'"'],c['"'"'owner'"'"']) for c in cases if c['"'"'case'"'"']==8}=={('"'"'stub'"'"','"'"'policy'"'"','"'"'126'"'"'),('"'"'ci'"'"','"'"'mechanism'"'"','"'"'131'"'"')}
+assert plans['"'"'018'"'"']['"'"'cross_phase_prerequisites'"'"'][1]['"'"'requires'"'"']==['"'"'127'"'"']
+assert plans['"'"'020'"'"']['"'"'cross_phase_prerequisites'"'"'][0]['"'"'requires'"'"']==['"'"'128'"'"']
+print('"'"'THIRTEEN_CASES_SEVENTEEN_RUNTIME_ROWS: PASS'"'"')
+print('"'"'SPLIT_CORE127_FULL_CI131_BINDINGS: PASS'"'"')
+protected=['"'"'.nizam'"'"','"'"'.agent/feature_list_014.json'"'"','"'"'.agent/feature_list_015.json'"'"','"'"'.agent/product_spec_014.md'"'"','"'"'.agent/product_spec_015.md'"'"','"'"'docs/planning/phase_014.yaml'"'"','"'"'docs/planning/phase_015.yaml'"'"','"'"'docs/planning/DEBT.md'"'"','"'"'NIZAM.json'"'"','"'"'standard'"'"','"'"'methodology'"'"','"'"'schema'"'"','"'"'tools'"'"','"'"'.github'"'"']
+assert not subprocess.check_output(['"'"'git'"'"','"'"'diff'"'"','"'"'--name-only'"'"',base,'"'"'HEAD'"'"','"'"'--'"'"',*protected]).strip()
+print('"'"'PROTECTED_PRODUCT_INSTALL_AND_PHASE_PATHS: PASS'"'"')
+old=json.loads(subprocess.check_output(['"'"'git'"'"','"'"'show'"'"',base+'"'"':.agent/run_state.json'"'"']));new=json.load(open('"'"'.agent/run_state.json'"'"'))
+for k in ('"'"'current_phase'"'"','"'"'status'"'"','"'"'current_feature'"'"','"'"'active_contract_id'"'"','"'"'scope_budget'"'"'):
+ assert old[k]==new[k]
+assert new['"'"'history'"'"'][:len(old['"'"'history'"'"'])]==old['"'"'history'"'"']
+print('"'"'CURRENT015_BUDGET_LIFECYCLE_HISTORY_PREFIX: PASS'"'"')
+validation=json.load(open('"'"'.agent/evidence/workflow-016-planning/plan-validation.json'"'"'))
+assert all(hashlib.sha256((r/p).read_bytes()).hexdigest()==h for p,h in validation['"'"'input_sha256'"'"'].items())
+print('"'"'CURRENT_STRUCTURAL_RESULT_INPUT_DIGESTS: PASS'"'"')
+for phase,l in plans.items():
+ assert all(f['"'"'status'"'"']=='"'"'pending'"'"' and f['"'"'passes'"'"'] is False for f in l['"'"'features'"'"'])
+print('"'"'ALL_PROPOSED_FEATURE_STATES: PASS'"'"')
+'
+REVISION: a745b21471a3a8cecef64192504836fa02459ed4
+HELPER_SHA256: 2dccf3bc1757b520742ff23726f6f1a2dd9ec28e69cc63e9ebde7efca79fd0ac
+THIRTEEN_CASES_SEVENTEEN_RUNTIME_ROWS: PASS
+SPLIT_CORE127_FULL_CI131_BINDINGS: PASS
+PROTECTED_PRODUCT_INSTALL_AND_PHASE_PATHS: PASS
+CURRENT015_BUDGET_LIFECYCLE_HISTORY_PREFIX: PASS
+CURRENT_STRUCTURAL_RESULT_INPUT_DIGESTS: PASS
+ALL_PROPOSED_FEATURE_STATES: PASS
+
+EXIT: 0
