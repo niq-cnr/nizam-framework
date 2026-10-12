@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
-  "current_feature": "113",
+  "current_feature": "114",
   "status": "in_progress",
-  "updated_at": "2026-10-12T09:35:09.348831+00:00",
+  "updated_at": "2026-10-12T10:15:04.467880+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -448,19 +448,19 @@
       "limit": 3
     },
     "113-generator-development": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "113-implementation": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3
     },
     "113-qa": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3
     },
     "113-evidence-capture": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3
     },
     "113-recovery-1-checker-development": {
@@ -3563,6 +3563,43 @@
       "verdict": ".agent/validator/113-test-bundle-review.json",
       "verdict_sha256": "5f23145555e5e2748c80efcee2f056277918b6055e72b4e2e08667b240d7da98",
       "evidence": ".agent/evidence/113/recovery-bundle-review-attempt1-handoff.json"
+    },
+    {
+      "at": "2026-10-12T09:50:37.276448+00:00",
+      "event": "113-source2-development14-pass",
+      "detail": "Exact pending79ba candidate193publiclines/eightpaths; Parent captured14safeactualapprovedcommands allEXIT0 withrawstdoutstderr. No semanticSourceReview/ModeB/freshQA claimed. Current-source eight actualGitbytes/tree sealed separately aftercandidate.",
+      "candidate_commit": "79baee0c54f4b7b7c01c419fd843d6d1842d5ee1",
+      "source_manifest_sha256": "96ab81350cc2936abe173aa66fb3ee4cccf08c0390ad2ccbf1f06dbac06fbb3d",
+      "evidence": ".agent/evidence/113/source-attempt2-development-result.json"
+    },
+    {
+      "at": "2026-10-12T10:06:53.902211+00:00",
+      "event": "113-mode-b1-approved-candidate-promoted",
+      "detail": "Parsed actual independent ModeB1 true/three empty. Fast-forwarded exact eight-path candidate79ba; Source2/current-source/dev14 and reviewer raw preserved. Fresh QA remains pending.",
+      "candidate_commit": "79baee0c54f4b7b7c01c419fd843d6d1842d5ee1",
+      "verdict": ".agent/validator/113-mode-b.json",
+      "verdict_sha256": "4f732b0014459115f929508364ab3054c71c4ab6fba0f9d511117ed9aa6d62e2"
+    },
+    {
+      "at": "2026-10-12T10:12:33.208356+00:00",
+      "event": "113-fresh-independent-qa1-pass",
+      "detail": "Parsed actual finalQA true/three empty16/16 plus own actor-independence probe; all actual receipt bytes promoted unchanged. Parent evidence-capture remains separate.",
+      "verdict": ".agent/qa/113.json",
+      "verdict_sha256": "1fb3597a93581b068b116b359df5935550d226096ae4dda34689c1a10443f8a0"
+    },
+    {
+      "at": "2026-10-12T10:13:31.874178+00:00",
+      "event": "113-feature-complete-canonical-first",
+      "detail": "Actual evidence gate verified all16 receipts, independent semantic review/ownprobe and exact candidate/fixed/source Git replay before canonical113 COMPLETED. Only debt050 movedResolved preserving all historical prefixes;114 remains pending. No release/install/controller or budget rebaseline.",
+      "evidence": ".agent/evidence/113/evidence-gate.txt",
+      "candidate_commit": "79baee0c54f4b7b7c01c419fd843d6d1842d5ee1"
+    },
+    {
+      "at": "2026-10-12T10:15:04.467880+00:00",
+      "event": "113-scope-measured-before-append",
+      "detail": "Actual frozen Gitnumstat/classifier691 counted, prior-only3x6088 and cumulative6779/9360; unclassified0. Remaining2581 for114; no rebaseline.",
+      "evidence": ".agent/evidence/113/scope-measurement-final.txt",
+      "actual": 691
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3737,9 +3774,9 @@
   "scope_budget": {
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "total_lines_changed": 6088,
-    "evidence_lines_total": 98437,
-    "excluded_lines_total": 991,
+    "total_lines_changed": 6779,
+    "evidence_lines_total": 340433,
+    "excluded_lines_total": 1342,
     "per_feature": [
       {
         "id": "110",
@@ -3796,6 +3833,27 @@
           "first_feature_exception": false
         },
         "note": "Measured with unchanged frozen Git numstat/classifier after actual ModeB2, fresh independent20/20 QA/own adversarial/evidence capture and canonical closure. Compare against preceding110/111 only before appending112. Failed raw attempts retained as evidence, counted verdicts included once; original7200/9360 and all historical measurements preserved."
+      },
+      {
+        "id": "113",
+        "estimated": 1050,
+        "actual": 691,
+        "evidence_lines": 241996,
+        "excluded_lines": 351,
+        "all_paths_lines": 243038,
+        "range": "a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE",
+        "evidence": ".agent/evidence/113/scope-measurement-final.txt",
+        "baseline": {
+          "prior_features": [
+            "110",
+            "111",
+            "112"
+          ],
+          "rolling_average": 2029.3333333333333,
+          "three_times_threshold": 6088.0,
+          "first_feature_exception": false
+        },
+        "note": "Product193 + process498 =691, measured after actual corrected-bundle review/ModeB1/fresh16QA/ownprobe/capture and canonical closure. Compare prior completed110/111/112 before append; blocked inflight300 remains historical and is not double-counted. Original7200/9360 budget and all failed raw evidence/old counters/install preserved."
       }
     ],
     "phase_level_items": [],
@@ -3811,7 +3869,7 @@
     "phase_base_revision": "57862f69ba30a36004ea9a17a295fc9c835afc13",
     "authorization_revision": "06c0ae0a273facce80c57506260648c41f566ebb",
     "phase_level_costs": "Included within approved7200 per-feature allowances; no additional budget.",
-    "last_measured_at": "2026-10-12T03:51:38.477650+00:00",
+    "last_measured_at": "2026-10-12T10:15:04.467880+00:00",
     "historical_inflight_measurements": [
       {
         "id": "111",
@@ -4100,7 +4158,7 @@
       }
     ]
   },
-  "last_action": "Corrected113 bundle actualindependentlyapproved; canonical113 resumedin_progress. GeneratorSource2 eligible; no ModeB/QA yet.",
+  "last_action": "Feature113 complete after actual corrected-bundle, ModeB1, fresh16QA plus own probe and Parent capture; NDEBT050Resolved. Feature114 pending; clean PR/merge next.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4113,7 +4171,8 @@
     "102",
     "110",
     "111",
-    "112"
+    "112",
+    "113"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
@@ -4184,6 +4243,6 @@
     "authorization": ".agent/evidence/113/recovery-authorization.json",
     "at": "2026-10-12T07:58:40.039629+00:00",
     "verbatim": "continue.",
-    "stage": "corrected-bundle-independently-approved"
+    "stage": "feature113-accepted-and-captured"
   }
 }

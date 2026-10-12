@@ -1,0 +1,134 @@
+{
+  "feature_id": "113",
+  "contract_id": "113",
+  "stage": "independent-evaluator-qa",
+  "actor": "/root/adapter_acceptance_recovery_113",
+  "executed_at": "2026-10-12T10:11:47.619969+00:00",
+  "candidate_commit": "79baee0c54f4b7b7c01c419fd843d6d1842d5ee1",
+  "source_manifest_sha256": "96ab81350cc2936abe173aa66fb3ee4cccf08c0390ad2ccbf1f06dbac06fbb3d",
+  "fixed_inputs_sha256": "ea9bdf44ae248ca7c82699a953b9abd82c70763ccb13568cdd5dc7351864f9af",
+  "mode_b_sha256": "4f732b0014459115f929508364ab3054c71c4ab6fba0f9d511117ed9aa6d62e2",
+  "bundle_review_sha256": "5f23145555e5e2748c80efcee2f056277918b6055e72b4e2e08667b240d7da98",
+  "source_review_sha256": "118fdf03ddbc82331f9d7fe9f15ef8c8a816065d106ed8a5e7f0e2915b05ab61",
+  "qa_pass": true,
+  "checks_run": 16,
+  "checks_passed": 16,
+  "checks": [
+    {
+      "command": "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'tools/skill.json'\"'\"').read_text()); assert d['\"'\"'runtime_requirements'\"'\"']['\"'\"'live_runtime_session'\"'\"']['\"'\"'required'\"'\"'] is False'",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-01.txt"
+    },
+    {
+      "command": "python3 -c 'import re; from pathlib import Path; s=Path('\"'\"'tools/interface.md'\"'\"').read_text(); section=re.split(r'\"'\"'(?m)^## 5[. ]'\"'\"',s,maxsplit=1)[1]; section=re.split(r'\"'\"'(?m)^## 6[. ]'\"'\"',section,maxsplit=1)[0]; assert len(re.findall(r'\"'\"'(?m)^\\s*\\d+\\. '\"'\"',section))==10'",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-02.txt"
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/interface.md '\"'\"'^## 6[.] Optional Capability: Live Runtime Sessions$'\"'\"' '\"'\"'(^|[^[:alnum:]_])submit-operation([^[:alnum:]_]|$)'\"'\"''",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-03.txt"
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/SKILL.md '\"'\"'^## 10[.] Live Runtime Sessions$'\"'\"' '\"'\"'methodology/10_live_runtime_sessions[.]md'\"'\"''",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-04.txt"
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-05.txt"
+    },
+    {
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-06.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py surface",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-07.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py routing",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-08.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py compatibility",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-09.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py scope-history",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-10.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py lifecycle",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-11.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py negative-controls",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-12.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py claim-boundary",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-13.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py input-integrity",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-14.txt"
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-15.txt"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 113=a57c860a18c82990c4a43deed1465bd052bb4c3f.. --files",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/113/qa-16.txt"
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/qa-source-review-adversarial.py",
+    "description": "Unlisted scratch actor-only corruption of genuine semantic review rejects Generator actor with SOURCE_REVIEW_INDEPENDENCE exit1; genuine independent actor restored exit0; real source/fixed/review unchanged.",
+    "result": "pass",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/113/113-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/113/qa-01.txt",
+    ".agent/evidence/113/qa-02.txt",
+    ".agent/evidence/113/qa-03.txt",
+    ".agent/evidence/113/qa-04.txt",
+    ".agent/evidence/113/qa-05.txt",
+    ".agent/evidence/113/qa-06.txt",
+    ".agent/evidence/113/qa-07.txt",
+    ".agent/evidence/113/qa-08.txt",
+    ".agent/evidence/113/qa-09.txt",
+    ".agent/evidence/113/qa-10.txt",
+    ".agent/evidence/113/qa-11.txt",
+    ".agent/evidence/113/qa-12.txt",
+    ".agent/evidence/113/qa-13.txt",
+    ".agent/evidence/113/qa-14.txt",
+    ".agent/evidence/113/qa-15.txt",
+    ".agent/evidence/113/qa-16.txt",
+    ".agent/evidence/113/113-qa-adversarial.txt"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Fresh independent QA16/16 exact commands passed once serially at sealed79baee0c candidate, plus one unlisted own scratch actor-independence spot. Actual semantic source review independently anchors seven calls/S1-S9/routing and optional boundary to accepted NIP3/schemas111/protocols10/11/permissions. Documentary adapter acceptance only; Parent evidence capture remains separate."
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

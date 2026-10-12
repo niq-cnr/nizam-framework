@@ -1,0 +1,370 @@
+COMMAND: git diff 0ae15a77d6dcf745bcae6c878d34d20fd2b6633e 79baee0c54f4b7b7c01c419fd843d6d1842d5ee1 -- tools/interface.md tools/skill.json tools/SKILL.md NIZAM.json tools/README.md methodology/10_live_runtime_sessions.md methodology/11_sbcl_runtime_binding.md CHANGELOG.md
+CANDIDATE_SHA: 79baee0c54f4b7b7c01c419fd843d6d1842d5ee1
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index f16f6e4..af27657 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,6 +9,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Changed
+ 
++- **Optional runtime-session adapter (feature113).** Published seven optional
++  calls and conditional S1–S9 while preserving the original ten mandatory
++  adapter items and existing requirements. Added manifest/index/skill routing
++  and document crosslinks. Document10 is partially enforced only by existing
++  schema/C12 record checks; SBCL binding remains consumer-aspirational.
++  Executable controller/adapter/SBCL enforcement and all thirteen live proofs
++  remain pending phase016; installed v1.5.0 is unchanged.
++
+ - **SBCL reference binding (feature112).** Added the normative consumer-aspirational
+   binding with folded toolchain/lock/core profile, condition/restart capture,
+   non-atomic load/compile, drift, thread/cancellation hazards and fresh hermetic
+diff --git a/NIZAM.json b/NIZAM.json
+index 76b8c7f..183eea4 100644
+--- a/NIZAM.json
++++ b/NIZAM.json
+@@ -337,6 +337,11 @@
+       "id": "nizam-sbcl-runtime-binding",
+       "summary": "Consumer-aspirational SBCL reference binding with folded language profile, honest runtime hazards and fresh hermetic acceptance rules.",
+       "authoritative_source": "methodology/11_sbcl_runtime_binding.md"
++    },
++    {
++      "id": "nizam-live-runtime-adapter",
++      "summary": "Optional runtime-session adapter surface with seven calls and conditional S1-S9; existing adapters remain conformant and live enforcement remains pending.",
++      "authoritative_source": "tools/interface.md"
+     }
+   ],
+   "schemas": [
+diff --git a/methodology/10_live_runtime_sessions.md b/methodology/10_live_runtime_sessions.md
+index cd7706a..48a8625 100644
+--- a/methodology/10_live_runtime_sessions.md
++++ b/methodology/10_live_runtime_sessions.md
+@@ -2,11 +2,14 @@
+ id: nizam-live-runtime-sessions
+ title: "Live Runtime Sessions"
+ description: "Language-neutral ownership, operation, evidence and handoff rules for long-lived development runtimes."
+-version: 0.1.2
++version: 0.2.0
+ status: active
+-enforcement: consumer-aspirational
++enforcement: partially-enforced
+ authoritative_source: methodology/10_live_runtime_sessions.md
+ change_log:
++  - version: "0.2.0"
++    date: "2026-10-12"
++    summary: "Publish the optional adapter crosslink and partially-enforced record-validation boundary; live runtime enforcement remains pending."
+   - version: "0.1.2"
+     date: "2026-10-12"
+     summary: "Record the delivered normative SBCL binding while keeping executable enforcement and live proof pending."
+@@ -20,16 +23,16 @@ change_log:
+ 
+ # Live Runtime Sessions
+ 
+-This normative protocol is **consumer-aspirational**: consumers must enforce its
+-session rules in their runtime. The framework publishes definitions, two closed
+-runtime provenance schemas and C12 record-relational validation. These checks
+-establish record shape and declared invariants only; they cannot prove live
+-ownership, generation or lease enforcement, source/heap identity or runtime
+-conformance. The normative SBCL reference binding is published in
+-[the binding document](11_sbcl_runtime_binding.md). The optional adapter capability
+-remains pending feature113 in phase015. Executable session controller, SBCL binding
+-enforcement and all thirteen live conformance proofs remain pending phase016
+-features115–120.
++This normative protocol is **partially-enforced** only through the existing
++runtime provenance schemas and C12 record-relational validation. Consumers must
++enforce session rules in their runtime. These schema/C12 checks establish record
++shape and declared invariants only; they cannot prove live ownership, generation
++or lease enforcement, source/heap identity or runtime conformance. The normative
++SBCL reference binding is published in [the binding document](11_sbcl_runtime_binding.md),
++and the optional adapter capability is published in
++[the adapter interface](..&#47;tools/interface.md). Executable session controller,
++adapter/SBCL binding enforcement and all thirteen live conformance proofs remain
++pending phase016 features115–120.
+ 
+ A runtime session is a long-lived process and its mutable image used for
+ interactive development. An agent session is an agent's conversational or
+@@ -224,9 +227,10 @@ independently captured acceptance evidence and QA verdicts. Implementation agent
+ preserve fields they do not own. The two schemas and executable C12 relational
+ checks validate session and operation records. They establish declared record
+ validity, never live runtime behavior or acceptance of a warm image. The normative
+-SBCL reference binding is delivered. The optional adapter capability remains
+-pending feature113 in phase015; executable controller/SBCL binding enforcement
+-and live conformance proofs remain pending phase016 features115–120.
++SBCL reference binding is delivered. The optional adapter capability is published
++in [the adapter interface](..&#47;tools/interface.md); executable controller/adapter/
++SBCL binding enforcement and live conformance proofs remain pending phase016
++features115–120.
+ 
+ | requirement-id | normative-rule | evidence-boundary |
+ | --- | --- | --- |
+diff --git a/methodology/11_sbcl_runtime_binding.md b/methodology/11_sbcl_runtime_binding.md
+index 3d9b3f5..279ad8a 100644
+--- a/methodology/11_sbcl_runtime_binding.md
++++ b/methodology/11_sbcl_runtime_binding.md
+@@ -2,11 +2,14 @@
+ id: nizam-sbcl-runtime-binding
+ title: "SBCL Runtime Binding"
+ description: "Normative SBCL reference binding and folded language profile for live development, honest outcomes and fresh hermetic acceptance."
+-version: 0.1.0
++version: 0.1.1
+ status: active
+ enforcement: consumer-aspirational
+ authoritative_source: methodology/11_sbcl_runtime_binding.md
+ change_log:
++  - version: "0.1.1"
++    date: "2026-10-12"
++    summary: "Link the delivered optional adapter interface without changing the aspirational SBCL binding or live-proof boundary."
+   - version: "0.1.0"
+     date: "2026-10-12"
+     summary: "Define the SBCL reference profile and runtime hazards without claiming executable enforcement or live conformance."
+@@ -32,6 +35,11 @@ availability is not conformance or proof of host isolation. Consumers MUST obtai
+ required capable isolated CI evidence before claiming live acceptance. This
+ binding does not authorize changing workstation sysctls or installed governance.
+ 
++The [optional adapter interface](..&#47;tools/interface.md) publishes the seven
++session calls and conditional checks. Its publication supplies no executable
++SBCL adapter or live conformance proof and does not change this binding's
++consumer-aspirational enforcement.
++
+ ## 2. Reference language profile
+ 
+ A consumer MUST record a replayable profile binding `toolchain_identity` to the
+diff --git a/tools/README.md b/tools/README.md
+index 2f9f885..f2a29be 100644
+--- a/tools/README.md
++++ b/tools/README.md
+@@ -2,10 +2,13 @@
+ id: nizam-tools-readme
+ title: "Tools Module — Index"
+ description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
+-version: 0.19.0
++version: 0.20.0
+ status: active
+ authoritative_source: tools/README.md
+ change_log:
++  - version: "0.20.0"
++    date: "2026-10-12"
++    summary: "Index the optional runtime-session adapter and source routing while retaining record-only and future live-proof boundaries."
+   - version: "0.19.0"
+     date: "2026-10-11"
+     summary: "Document ten C12 families and shared pure runtime-record relations; retain the record-only proof boundary."
+@@ -73,14 +76,21 @@ agent runtime through the same adapter contract — no per-runtime forks.
+ 
+ | File | Purpose |
+ |---|---|
+-| [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version, its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. Its capabilities are an intentional subset of NIZAM.json, not an equal list: every module is the authoritative_source of some NIZAM.json capability, and NIZAM.json-only entries are allowed. |
++| [`skill.json`](skill.json) | Machine-readable capability manifest: the skill's name and version, its `entry_point` (`SKILL.md`), a `capabilities` array mapping named capabilities to the framework module path each one is backed by, the abstract `runtime_requirements` any host environment must provide, and the `state_interface` describing the root index and the `.agent/` artifact families. Its capabilities are an intentional subset of NIZAM.json, not an equal list: every module is the authoritative_source of some NIZAM.json capability, and NIZAM.json-only entries are allowed. The optional live_runtime_session requirement is false; adapter and SBCL binding capabilities route to their authoritative sources. |
+ | [`SKILL.md`](SKILL.md) | The single instructions payload any agent runtime loads to act on the framework: when to load it, how to consume the framework by querying the root index rather than bulk-reading, a summary of the contract-first execution loop, the circuit-breaker and anti-hallucination obligations every role carries, the durable-state and evidence-by-path obligations, and the verdict JSON formats every gate produces. |
+-| [`interface.md`](interface.md) | The runtime-adapter specification: how any agent runtime discovers `skill.json`, loads `SKILL.md` as instructions context, maps the framework's three abstract operations (`read-state`, `write-evidence`, `run-verification`) onto its own native tool primitives, and the numbered Adapter Conformance Checklist an integrator ticks through. |
++| [`interface.md`](interface.md) | The runtime-adapter specification: how any agent runtime discovers `skill.json`, loads `SKILL.md` as instructions context, maps the framework's three abstract operations (`read-state`, `write-evidence`, `run-verification`) onto its own native tool primitives, and the ten-item Adapter Conformance Checklist an integrator ticks through. Section 6 adds seven optional session calls and conditional S1–S9 for claiming adapters. |
+ | [`convergent_review.py`](convergent_review.py) | Dependency-free deterministic library and CLI for controlled no-replace Git-object packet construction; authenticated content and Git mode deltas; structural-plus-relational validation; semantic fingerprints; three-trial convergence; lifecycle and verdicts; canonical JSON and embedded-ledger Markdown; trust-anchored no-follow replay; and atomic no-replace publication with explicit visible/durable state. |
+ | [`evaluate_convergent_review_prompt.py`](evaluate_convergent_review_prompt.py) | Prompt evaluator that requires a trusted sandbox adapter for each of exactly three runner invocations, uses exclusive no-follow per-trial input/output I/O, validates substitutions before convergence, and publishes one complete evaluation directory. |
+ | [`linux_trial_sandbox.sh`](linux_trial_sandbox.sh) and [`isolated_trial_adapter.py`](isolated_trial_adapter.py) | Linux reference adapter: user/network/IPC/UTS/PID namespaces plus Landlock filesystem confinement; trial-root data is readable/writable but non-executable, while execute permission is limited to the trusted runner and runtime. |
+ | [`test_convergent_review.py`](test_convergent_review.py) | Permanent stdlib `unittest` suite exercising the frozen 12-case corpus and adversarial blocker regressions, including controlled Git reads, absent-versus-error object lookup, mode-only changes, commit-header parsing, sandbox no-execute, evaluator substitution, replay ancestors, and publication visibility/durability. |
+ 
++The optional session surface routes through [the adapter interface](interface.md),
++[Live Runtime Sessions](..&#47;methodology/10_live_runtime_sessions.md) and
++[SBCL Runtime Binding](..&#47;methodology/11_sbcl_runtime_binding.md). Adapters without
++sessions remain conformant. Existing schemas/C12 validate declared records only;
++executable controller/adapter/SBCL enforcement and all thirteen live proofs remain
++pending phase016. The source additions do not upgrade installed v1.5.0.
++
+ ## Design Decision — DD-4: Unified Skill Payload
+ 
+ This module exists to remediate one specific failure mode observed in prior
+diff --git a/tools/SKILL.md b/tools/SKILL.md
+index 72cc141..8110659 100644
+--- a/tools/SKILL.md
++++ b/tools/SKILL.md
+@@ -2,10 +2,13 @@
+ id: nizam-tools-skill
+ title: "Nizam Governance Skill"
+ description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
+-version: 0.5.0
++version: 0.6.0
+ status: active
+ authoritative_source: tools/SKILL.md
+ change_log:
++  - version: "0.6.0"
++    date: "2026-10-12"
++    summary: "Route optional runtime sessions through the adapter interface, neutral protocol and SBCL binding without a new skill."
+   - version: "0.5.0"
+     date: "2026-09-17"
+     summary: "Route automated code review through the convergent prior-ledger-first standard and deterministic review CLI."
+@@ -224,7 +227,21 @@ three independent trials are required through an enforceable sandbox adapter (wo
+ or `HOME` changes alone do not qualify), prior active findings fail closed, and
+ suppression requires a separate human-authorized record.
+ 
+-## 10. References
++## 10. Live Runtime Sessions
++
++For adapters claiming the optional `live_runtime_session` capability, read
++`tools/interface.md` Section 6, then `methodology/10_live_runtime_sessions.md`.
++For the SBCL reference profile, read `methodology/11_sbcl_runtime_binding.md`.
++This single runtime-agnostic skill routes to those sources rather than restating
++or forking their rules. Adapters without sessions remain conformant under the
++original ten mandatory adapter items; the seven calls and S1–S9 are conditional.
++
++Existing schemas and C12 validate declared records only. Session provenance and
++warm-image results never substitute for fresh independent acceptance. Executable
++controller/adapter/SBCL enforcement and all thirteen live proofs remain pending
++phase016; source routing does not upgrade the installed v1.5.0 payload.
++
++## 11. References
+ 
+ - `tools/skill.json` — the capability manifest this document is the payload
+   for.
+@@ -236,3 +253,5 @@ suppression requires a separate human-authorized record.
+   `standard/convergent_code_review.md`, `methodology/07_eval_gated_promotion.md`,
+   `methodology/08_cross_repo_dependency_gate.md` —
+   the authoritative protocol documents this skill summarizes and defers to.
++- `methodology/10_live_runtime_sessions.md`, `methodology/11_sbcl_runtime_binding.md`
++  and `tools/interface.md` Section 6 — the optional runtime-session sources.
+diff --git a/tools/interface.md b/tools/interface.md
+index dc3b7c0..65b6878 100644
+--- a/tools/interface.md
++++ b/tools/interface.md
+@@ -2,10 +2,13 @@
+ id: nizam-tools-interface
+ title: "Runtime-Adapter Interface"
+ description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
+-version: 0.3.1
++version: 0.4.0
+ status: active
+ authoritative_source: tools/interface.md
+ change_log:
++  - version: "0.4.0"
++    date: "2026-10-12"
++    summary: "Add the optional runtime-session adapter surface and conditional checks; preserve the ten mandatory conformance items."
+   - version: "0.3.1"
+     date: "2026-10-10"
+     summary: "PATCH correction (phase-014 feature 108, NDEBT-044 d): Section 5 item 10's no-fabrication rule cites Section 2, Item 5 (Failure behavior), not Item 4 (Manifest resolution). A one-token citation fix; the checklist stays at 10 items."
+@@ -168,7 +171,75 @@ MUST be satisfied.
+ 10. The adapter does not fabricate governance behavior when no
+     `tools/skill.json` can be discovered (Section 2, Item 5).
+ 
+-## 6. References
++## 6. Optional Capability: Live Runtime Sessions
++
++`live_runtime_session` is optional (`required: false`).
++Adapters that do not claim it remain conformant under Section 5.
++Only claiming adapters MUST satisfy the seven calls and conditional S1–S9 below.
++This is a normative interface, not executable adapter/controller delivery.
++
++| Call | Meaning and execution boundary |
++| --- | --- |
++| `open-session` | Establish a session and record its owner, generation and lease; do not evaluate project code. |
++| `submit-operation` | Admit one authorized project-code operation with correlated identity and limits. |
++| `poll-operation` | Read the correlated observed outcome without executing project observation callbacks. |
++| `cancel-operation` | Request cancellation of the correlated operation; requesting does not confirm stopping or rollback. |
++| `transfer-session` | Explicitly change owner and increment lease_epoch; preserve or resolve outstanding work without evaluating project code. |
++| `reattach-session` | Recover and check owner, generation, lease and outstanding operation; do not transfer ownership or evaluate project code. |
++| `close-session` | Observe correlated closure and preserve unresolved effects/resources; do not evaluate project code or claim rollback. |
++
++Only `submit-operation` executes project code. Its `kind` is exactly
++`load_source`, `compile_source`, `evaluate`, `run_tests` or `observe`.
++Observation invokes project code in the binding and needs the same authorization
++and serial operation stream as evaluation. Existing `read-state` reads durable
++session status; there is no separate status call or endpoint. Control calls MUST
++NOT invoke project printers, arbitrary restarts or observation callbacks.
++
++Requests correlate `operation_id` and `session_id`, `expected_generation`
++(`counter`, `nonce`), `expected_lease_epoch`, and `requester` (`principal_kind`,
++`role`, `agent_id`), with `contract_id`, `step_key` and `attempt`. A submitted
++operation supplies `kind`, `payload`, `context` (`working_dir`, `namespace`,
++`reader_config_ref`, `test_config_ref`) and `limits`. These abstract request
++inputs map to the existing records; they add no required schema fields. Unknown
++identity or continuity cannot authorize execution. Reattachment reads outstanding
++work before any submit, preserves attempt identity and never grants new authority.
++
++Terminal operation statuses are `completed`, `condition_signalled`, `cancelled`,
++`terminated` and `rejected`. Nonterminal statuses are `running`,
++`cancel_requested` and `unknown`. The optional `debugger_paused` is not emitted
++in v1 and is not an additional status in the existing record schemas.
++A timeout records `wait_outcome: stopped_waiting`; it stops waiting only and
++leaves execution and its busy lane outstanding until an observed outcome resolves
++it. `cancelled` requires observed stopping and `cancellation_confirmed: true`;
++consistency and remaining effects must be assessed separately.
++
++Use the existing [permission classes](..&#47;standard/permission_classes.md):
++`runtime.session.lifecycle` gives the Orchestrator open/transfer/close authority
++only, without project-code execution; `runtime.session.operate` confines the
++Generator to its own development session; `runtime.session.accept` gives the
++Evaluator independent fresh acceptance. Reattachment grants no additional
++permission. Review trials receive no endpoint or session permission.
++
++| Conditional check | Required behavior for a claiming adapter |
++| --- | --- |
++| S1 | Session and operation records validate against the existing schemas; record validity proves no live behavior. |
++| S2 | Reject stale generation or lease before execution and verify the requester is the current owner. |
++| S3 | At most one operation is in flight; preserve or resolve outstanding work before conflicting submit or lifecycle transfer. |
++| S4 | A timeout stops waiting only and never reports execution stopped; preserve the outstanding operation and busy lane. |
++| S5 | Capture conditions and applicable restarts before unwind; a failed partial load or compile never claims image consistency. |
++| S6 | Reject review-trial requests before execution; trials receive no endpoint or session permission. |
++| S7 | Lifecycle calls never evaluate project code, including observation callbacks. |
++| S8 | Session results and provenance are never acceptance evidence; acceptance requires an independent fresh process, fresh build and hermetic inputs. |
++| S9 | Attempt counters and contract/step/attempt identity survive new generation, process, subagent and stage; only the Orchestrator owns coordination counters. |
++
++The [neutral protocol](..&#47;methodology/10_live_runtime_sessions.md) and
++[SBCL reference binding](..&#47;methodology/11_sbcl_runtime_binding.md) define these
++consumer duties. Existing schema/C12 checks establish declared record validity
++only; they cannot prove live ownership, runtime conformance or source/heap identity.
++Executable controller/adapter/SBCL enforcement and all thirteen live proofs remain
++pending phase016 features115–120. The installed v1.5.0 payload is unchanged.
++
++## 7. References
+ 
+ - `tools/skill.json` — the capability manifest an adapter discovers and
+   resolves per Section 2.
+@@ -179,3 +250,9 @@ MUST be satisfied.
+ - `standard/anti_hallucination.md` — the constraints (in particular AH-3)
+   that bind how a runtime's adapter must handle write and verification
+   failures.
++- [Live Runtime Sessions](..&#47;methodology/10_live_runtime_sessions.md) and
++  [SBCL Runtime Binding](..&#47;methodology/11_sbcl_runtime_binding.md) — normative
++  optional-session semantics and reference profile.
++- [Session schema](..&#47;schema/runtime_session.schema.json) and
++  [operation schema](..&#47;schema/runtime_operation.schema.json) — existing records,
++  not live runtime proof.
+diff --git a/tools/skill.json b/tools/skill.json
+index 2620167..614de9a 100644
+--- a/tools/skill.json
++++ b/tools/skill.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "nizam-governance",
+-  "version": "0.5.0",
++  "version": "0.6.0",
+   "description": "Unified, runtime-agnostic capability manifest for the Nizam governance framework (DD-4): a single skill payload any agent runtime can load to plan, execute, gate, and durably record contract-first work.",
+   "entry_point": "tools/SKILL.md",
+   "capabilities": [
+@@ -108,6 +108,16 @@
+       "name": "live_runtime_protocol",
+       "description": "Neutral consumer-aspirational runtime-session ownership, serialized operations, durable provenance and fresh acceptance definitions.",
+       "module": "methodology/10_live_runtime_sessions.md"
++    },
++    {
++      "name": "live_runtime_session",
++      "description": "Optional runtime-session adapter calls and conditional conformance; adapters without the capability remain conformant.",
++      "module": "tools/interface.md"
++    },
++    {
++      "name": "sbcl_runtime_binding",
++      "description": "Consumer-aspirational SBCL reference profile and fresh hermetic acceptance; executable enforcement and live proofs remain pending.",
++      "module": "methodology/11_sbcl_runtime_binding.md"
+     }
+   ],
+   "runtime_requirements": {
+@@ -122,6 +132,10 @@
+     "structured_data_parsing": {
+       "required": true,
+       "description": "The host environment must be able to parse and emit JSON, and parse YAML frontmatter blocks and YAML phase/template documents."
++    },
++    "live_runtime_session": {
++      "required": false,
++      "description": "Optional live-runtime-session adapter capability. Only claiming adapters implement the seven calls and conditional S1-S9 checks; existing adapters remain conformant."
+     }
+   },
+   "state_interface": {
+
+EXIT: 0
