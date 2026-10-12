@@ -8,7 +8,7 @@ authoritative_source: docs/planning/ROADMAP.md
 change_log:
   - version: "0.61.0"
     date: "2026-10-12"
-    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
+    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
   - version: "0.60.0"
     date: "2026-10-12"
     summary: "Prepare feature114 normative readiness and bounded current projections; independent acceptance and canonical close remain required."
@@ -413,9 +413,8 @@ dated meaning; current lifecycle follows canonical records.
 
 ### Current proposed allocation — 2026-10-12
 
-WA planning preceded controller planning. The five draft plans below are prepared
-for final independent review; PLAN-WA and PLAN-016 remain pending until actual
-QA and evidence capture. This dated overlay supersedes earlier unallocated and
+WA planning preceded controller planning. The five draft plans below passed independent Mode B, fresh QA and evidence
+capture; PLAN-WA and PLAN-016 planning delivery is complete. This dated overlay supersedes earlier unallocated and
 pending feature 114 statements: phase 015 and features 110–114 are complete at 7,319 counted
 lines against 7,200/9,360. Every new feature, phase, H-PHASE gate and proposed budget
 remains pending activation.
@@ -450,6 +449,8 @@ and 4,585 naive (10,545–13,251 weighted); splits price product, independent te
 counted process costs against 7,200/8,600 precedents. Proposed task 1,200 is separate
 from closed phase 015. Raw evidence/coordination classification is unchanged. Local SBCL
 version is environment information; all 13 live cases and capable CI remain future.
+Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
+[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
 Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
@@ -898,8 +899,8 @@ records and budgets remain frozen. This source work does not upgrade installed v
 
 - **Phase015 normative scope is complete.** Features 110–114 passed actual QA/capture;
   the closed count remains7,319 against 7,200/9,360. WA features 115–125 and controller features 126–132
-  now have prepared pending plans 017/018/019 and 016/020. PLAN-WA/PLAN-016 planning
-  completion awaits final independent QA/capture; future phase/budget activation,
+  now have delivered draft plans 017/018/019 and 016/020. Planning delivery passed
+  independent Mode B, fresh QA and evidence capture; future phase/budget activation,
   runtime acceptance, release/tag and consumer upgrade remain outstanding.
   Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.

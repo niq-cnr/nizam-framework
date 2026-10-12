@@ -10,7 +10,7 @@ tags: [nip, methodology, runtime-session, execution, evaluator-independence, cir
 change_log:
   - version: "1.1.2"
     date: "2026-10-12"
-    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
+    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
   - version: "1.1.1"
     date: "2026-10-12"
     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
@@ -114,12 +114,14 @@ remains outstanding and any later actual consolidation decision is an input.
 ### Current planning delivery — 2026-10-12
 
 The dated unallocated and activation-time pending statements above are superseded:
-phase 015 and features 110–114 are complete; prepared draft controller phase 016 allocates 126–128
+phase 015 and features 110–114 are complete; the delivered draft plan for controller phase 016 allocates 126–128
 and fresh/SBCL phase 020 allocates 129–132, after WA features 115–125. See [core spec](../../.agent/product_spec_016.md),
 [core list](../../.agent/feature_list_016.json), [fresh spec](../../.agent/product_spec_020.md)
-and [fresh list](../../.agent/feature_list_020.json). PLAN-WA/PLAN-016 remain pending
-until final independent QA/capture. All future H-PHASE gates, budgets and
+and [fresh list](../../.agent/feature_list_020.json). PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
+fresh QA and evidence capture. All future H-PHASE gates, budgets and
 implementation remain pending; the thirteen cases below remain unchanged.
+Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
+[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
 Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Problem

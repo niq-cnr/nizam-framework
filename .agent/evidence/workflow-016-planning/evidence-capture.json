@@ -1,0 +1,78 @@
+{
+  "task": "workflow-016-planning",
+  "role": "Orchestrator evidence capture",
+  "observed_at": "2026-10-12T21:13:54.511035+00:00",
+  "source_revision": "dc1cd5cc7625aa46d0d8896b4c28e424361f5dc8",
+  "qa_sha256": "6d1d153078e7c8cd991cc7dafd2b1d2f23dd8ed71bdd4dca1f84677d0a482c08",
+  "typed_schema_valid": true,
+  "strict_qa_gate_passed": true,
+  "commands": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/workflow-016-planning/check_plans.py --wa",
+      "evidence": ".agent/evidence/workflow-016-planning/qa2-command-01.txt",
+      "sha256": "57ec4896929704662b85dac6260c812cf0cd63a8f1e780ac46894a26f5a8652f",
+      "exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/workflow-016-planning/check_plans.py --all",
+      "evidence": ".agent/evidence/workflow-016-planning/qa2-command-02.txt",
+      "sha256": "ccc803eeb2fca2f7c53558083edad9d437e1853eed77bf68c04c16b0266214fb",
+      "exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/workflow-016-planning/check_plans.py --negative",
+      "evidence": ".agent/evidence/workflow-016-planning/qa2-command-03.txt",
+      "sha256": "5b9e266771cb1bb74783740c261c8b173baba06c47e5126457efcf09611ecec4",
+      "exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/workflow-016-planning/check_plans.py --scope",
+      "evidence": ".agent/evidence/workflow-016-planning/qa2-command-04.txt",
+      "sha256": "0feda3f01d5ac76a92c1ef5f469cc330509f5f247a7e0f4b3f79d6f63a7ef5d4",
+      "exit": 0
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "evidence": ".agent/evidence/workflow-016-planning/qa2-command-05.txt",
+      "sha256": "919ab948331035124da13c3689458ce357cd093d886da8917fe6bb8fbf23ead6",
+      "exit": 0
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "evidence": ".agent/evidence/workflow-016-planning/qa2-command-06.txt",
+      "sha256": "24b0e3c00ba99b1bdb333f2ee8ea9bcf4fae747f52843c305e2d0a45371bdfd0",
+      "exit": 0
+    },
+    {
+      "command": "python3 .github/scripts/release_closeout.py --mode pr",
+      "evidence": ".agent/evidence/workflow-016-planning/qa2-command-07.txt",
+      "sha256": "c3a6603d304f372147f844d60e63cd414b9e28224e16d22033a5576cbd2bbb34",
+      "exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "evidence": ".agent/evidence/workflow-016-planning/qa2-command-08.txt",
+      "sha256": "706e384941d6e03e3b38c56898515ffcbb3751691c873021b7271a52c82949d8",
+      "exit": 0
+    },
+    {
+      "command": "sbcl --version",
+      "evidence": ".agent/evidence/workflow-016-planning/qa2-command-09.txt",
+      "sha256": "48ecad83b3de1071469a9873fa045f9616230ef7d45e42e4fbccd53a0240ab78",
+      "exit": 0
+    }
+  ],
+  "input_digests_verified_at_source": true,
+  "adversarial": {
+    "performed": true,
+    "exit_code": 0,
+    "evidence": ".agent/evidence/workflow-016-planning/qa2-own-spot.txt",
+    "sha256": "70f746277ac4892fb3e302a58b1b3b6ee7bc0caea1f6c1aed6dce112d64c5217",
+    "revision": "dc1cd5cc7625aa46d0d8896b4c28e424361f5dc8"
+  },
+  "sealed_result": ".agent/evidence/workflow-016-planning/qa2-plan-validation-sealed.json",
+  "sealed_result_sha256": "8aaca5b25dbdb9c41e09affeb34957afbe85e4c7df3affff9c38229ee6e99ea7",
+  "actual_negative_receipt_bound": true,
+  "capture_passed": true,
+  "boundary": "This capture completes planning acceptance. Any subsequent task completion overlays are coordination metadata; assessed future phase obligations and pending/proposed states remain frozen."
+}

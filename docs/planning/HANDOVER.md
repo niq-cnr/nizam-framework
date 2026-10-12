@@ -10,7 +10,7 @@ tags: [planning, handover, onboarding, phase-014]
 change_log:
   - version: "1.0.9"
     date: "2026-10-12"
-    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
+    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
   - version: "1.0.8"
     date: "2026-10-12"
     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
@@ -102,11 +102,11 @@ revision. Tag and publication evidence: `.agent/evidence/release-v1.5.0-tag/`.
 
 This overlay supersedes earlier unallocated/pending feature 114 statements while preserving
 their dated text. Phase 015 and features 110–114 are complete, with 7,319 counted lines against
-7,200/9,360. Prepared draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
+7,200/9,360. Delivered draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
 (7,200/9,360), phase 019: 124–125 (3,500/4,550), controller phase 016: 126–128 (5,650/7,345), and
 SBCL phase 020: 129–132 (7,350/9,555). All phases/features, H-PHASE gates and future budget
-approvals remain pending. PLAN-WA/PLAN-016 planning completion awaits actual
-independent QA and evidence capture.
+approvals remain pending. PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
+fresh QA and evidence capture.
 
 Recommended execution is 017→016→018→020→019. Historical packet edges remain
 unchanged; proposed supersessions resolve NIP3-116 to 127 core versus 131 final CI.
@@ -122,6 +122,8 @@ Canonical inputs are [WA specs/lists](../../.agent/feature_list_017.json),
 and [fresh acceptance](../../.agent/product_spec_020.md)/[list](../../.agent/feature_list_020.json).
 Local SBCL version supplies environment information only; capable CI and all 13
 live cases remain future. Installed/released v1.5.0 and Open debts NDEBT-040/NDEBT-034 are preserved.
+Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
+[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
 Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Historical handover snapshot

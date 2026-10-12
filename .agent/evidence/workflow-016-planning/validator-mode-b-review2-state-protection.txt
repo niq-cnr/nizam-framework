@@ -1,0 +1,34 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import pathlib,json,jsonschema,subprocess,hashlib
+r=pathlib.Path('"'"'.'"'"')
+current=json.load(open('"'"'.agent/run_state.json'"'"'))
+schema=json.load(open('"'"'.nizam/schema/run_state.schema.json'"'"'))
+jsonschema.Draft202012Validator(schema).validate(current)
+print('"'"'INSTALLED_RUN_STATE_SCHEMA: PASS'"'"')
+old=json.loads(subprocess.check_output(['"'"'git'"'"','"'"'show'"'"','"'"'a745b21471a3a8cecef64192504836fa02459ed4:.agent/run_state.json'"'"']))
+protected=[k for k in old if k not in ('"'"'updated_at'"'"','"'"'circuit_breaker'"'"','"'"'history'"'"','"'"'last_action'"'"','"'"'planning_task'"'"')]
+assert all(current[k]==old[k] for k in protected)
+assert all(current['"'"'circuit_breaker'"'"'][k]==v for k,v in old['"'"'circuit_breaker'"'"'].items())
+changed=[]
+for i,prior in enumerate(old['"'"'history'"'"']):
+ now=current['"'"'history'"'"'][i]
+ assert all(now[k]==v for k,v in prior.items())
+ if now!=prior:
+  assert set(now)-set(prior)=={'"'"'detail'"'"'} and prior['"'"'event'"'"'].startswith('"'"'workflow-016-planning-'"'"') and '"'"'detail'"'"' not in prior
+  changed.append(i)
+assert len(changed)==2
+print('"'"'ONLY_MISSING_DETAIL_ADDITIONS_TO_TWO_OWN_NEW_RECORDS:'"'"',changed)
+print('"'"'PRIOR_HISTORY_KEYS_VALUES_AND_PROTECTED_STATE: PASS'"'"')
+v=json.load(open('"'"'.agent/evidence/workflow-016-planning/mode-b-approved.json'"'"'))
+assert hashlib.sha256((r/'"'"'.agent/evidence/workflow-016-planning/mode-b-approved.json'"'"').read_bytes()).hexdigest()=='"'"'56e822a268758ea0fb61a77dee1e97ad972d3b1bee96f62f0a6e65bc99ba9e82'"'"'
+assert all(hashlib.sha256((r/p).read_bytes()).hexdigest()==h for p,h in v['"'"'input_sha256'"'"'].items())
+assert hashlib.sha256((r/'"'"'.agent/evidence/workflow-016-planning/check_plans.py'"'"').read_bytes()).hexdigest()==v['"'"'checker_sha256'"'"']
+print('"'"'ALL23_ASSESSED_PLAN_PUBLIC_HELPER_HASHES_UNCHANGED: PASS'"'"')
+'
+REVISION: dc1cd5cc7625aa46d0d8896b4c28e424361f5dc8
+RUN_STATE_SHA256: a80760cc4e4f551554e763e322d0ac32841022cb7272e53eb7d4121cabaf9c27
+INSTALLED_RUN_STATE_SCHEMA: PASS
+ONLY_MISSING_DETAIL_ADDITIONS_TO_TWO_OWN_NEW_RECORDS: [504, 505]
+PRIOR_HISTORY_KEYS_VALUES_AND_PROTECTED_STATE: PASS
+ALL23_ASSESSED_PLAN_PUBLIC_HELPER_HASHES_UNCHANGED: PASS
+
+EXIT: 0

@@ -8,7 +8,7 @@ authoritative_source: docs/nips/NIP-0004-workflow-assurance.md
 change_log:
   - version: "1.1.1"
     date: "2026-10-12"
-    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
+    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
   - version: "1.1.0"
     date: "2026-10-11"
     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
@@ -36,14 +36,17 @@ separate phase planning, H-PHASE activation and independent contract gates.
 
 ### Current WA planning — 2026-10-12
 
-This dated overlay supersedes earlier unallocated statements. Prepared draft plans
+This dated overlay supersedes earlier unallocated statements. Delivered draft plans
 allocate phase 017 foundation 115–118, phase 018 controls 119–123 and 019 deferred profiles 124–125.
 See [foundation spec](../../.agent/product_spec_017.md)/[list](../../.agent/feature_list_017.json),
 [controls spec](../../.agent/product_spec_018.md)/[list](../../.agent/feature_list_018.json)
 and [profiles spec](../../.agent/product_spec_019.md)/[list](../../.agent/feature_list_019.json).
-PLAN-WA/PLAN-016 completion awaits actual final independent QA and capture;
+PLAN-WA and PLAN-016 planning delivery is complete after independent Mode B,
+fresh QA and evidence capture.
 H-PHASE-017/018/019 and all implementation/budget approvals remain pending.
-Accepted case and choice text remains frozen. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+Accepted case and choice text remains frozen. Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
+[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
+Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Current evidence and problem
 

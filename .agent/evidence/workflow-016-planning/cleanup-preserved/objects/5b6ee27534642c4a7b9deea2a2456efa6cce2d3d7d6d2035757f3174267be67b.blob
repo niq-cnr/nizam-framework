@@ -1,0 +1,53 @@
+{
+  "phase": "019-workflow-assurance-profiles",
+  "spec_version": "0.1.0",
+  "phase_status": "pending",
+  "original_estimate_lines": 3500,
+  "ceiling_130pct": 4550,
+  "budget_categories": {"product": 800, "tests": 950, "process": 1750},
+  "features": [
+    {
+      "id": "124",
+      "name": "Preregister assurance profile comparison",
+      "description": "Reuse existing role IDs; preregister Routine/Standard/High-assurance applicability, same-candidate full baseline, candidate/test identities, blocker mismatch and cost/latency limits before shadow runs. ",
+      "status": "pending",
+      "passes": false,
+      "dependencies": [],
+      "estimated_lines": 1600,
+      "budget_categories": {"product": 400, "tests": 400, "process": 800},
+      "acceptance_tests": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case preregister-before-run",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case roles-reused",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unstable-baseline"
+      ],
+      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"]
+    },
+    {
+      "id": "125",
+      "name": "Shadow comparison and promotion recommendation",
+      "description": "Capture every outcome including failures; missed baseline blocker rejects recommendation; report measured cost/latency and accountable operator decision; recommendation cannot reduce gates or self-promote.",
+      "status": "pending",
+      "passes": false,
+      "dependencies": ["124"],
+      "estimated_lines": 1900,
+      "budget_categories": {"product": 400, "tests": 550, "process": 950},
+      "acceptance_tests": [
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case same-candidate",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case missed-baseline-blocker",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case cost-latency-accounting",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case no-self-promotion",
+        "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check profiles-ready",
+        "bash tools/validate.sh",
+        "bash tools/validate.sh --payload"
+      ],
+      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py", ".agent/evidence/125/"]
+    }
+  ],
+  "future_interfaces": [{"path": "tools/test_workflow_assurance.py", "owner": "115"}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
+  "cross_phase_prerequisites": [{"phase": "018-workflow-assurance-controls", "requires": ["119", "120", "123"], "evidence": [".agent/evidence/123/evidence-gate.txt"], "authority": "Future H-PHASE-018 completion and trusted A10/A11; no gate reduction."}, {"phase": "020-sbcl-fresh-acceptance", "requires": ["132"], "evidence": [".agent/evidence/132/evidence-gate.txt"], "authority": "Future H-PHASE-020 captured controller close; stable measured same-candidate baseline before profiles."}],
+  "shared_file_lanes": [{"path": "tools/test_workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}, {"path": "tools/workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}],
+  "existing_inputs": ["Completed015 normative source110-114; existing014 CI/claim-map103-105; Open040/034; immutable installedv1.5.0."],
+  "activation_prerequisites": ["Future H-PHASE-019 approves this scope/budget and applicable external prerequisite receipts."],
+  "acceptance_availability": "Future commands/interfaces only; no runtime/policy acceptance run or pass claimed by planning.",
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

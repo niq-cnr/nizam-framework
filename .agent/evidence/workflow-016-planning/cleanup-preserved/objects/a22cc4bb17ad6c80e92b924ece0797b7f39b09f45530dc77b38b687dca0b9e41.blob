@@ -1,0 +1,25 @@
+{
+  "role": "independent-checker-author",
+  "actor": "/root/planning_evaluator",
+  "attempt": 2,
+  "strategy": "type/interface distinction between allowed new evidence and immutable existing task records",
+  "owned_root": "/home/cnross/.tmp/nizam-wa016-checker-attempt2-hpjq0xht",
+  "approved_base": "132480aab50424f8b3815fba7159b27a5a2bcfdc",
+  "existing_task_snapshot": "84cc13da81ea3db65ea3f083030862982b086af8",
+  "checker_sha256": "c50a9f8c88de2fa504f66d52f229833d96811ec710e98dd9c560263caa8fb087",
+  "change": "Scope entry now checks every previously tracked task evidence file byte/type/executable mode against the immutable task snapshot, excluding only current checker source and Root-owned lifecycle.yaml. New task evidence remains permitted.",
+  "new_controls": [
+    "changed-authorization",
+    "missing-receipt",
+    "evidence-type",
+    "evidence-mode",
+    "unrelated-evidence-mutation",
+    "legitimate-new-receipt"
+  ],
+  "negative_receipt": ".agent/evidence/workflow-016-planning/checker-negative-attempt2.txt",
+  "scope_receipt": ".agent/evidence/workflow-016-planning/checker-scope-attempt2.txt",
+  "negative_exit": 0,
+  "scope_exit": 0,
+  "line_count": 319,
+  "limits": "Final checker seal requires distinct review; future runtime behavior and current prose still require independent semantic QA; no task result/self-hash acceptance loop."
+}

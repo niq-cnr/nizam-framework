@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T21:08:05.305233+00:00",
+  "updated_at": "2026-10-12T21:18:06.397415+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -554,15 +554,23 @@
       "limit": 3
     },
     "workflow-016-planning-mode-b": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "workflow-016-planning-qa": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "workflow-016-planning-coordination-schema": {
       "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-evidence-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-pr-merge": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -3974,6 +3982,18 @@
       "event": "workflow-016-planning-coordination-schema-repair",
       "detail": "Attempt1 frozenSourceC CI validate failedC11; attempt2 schema-interface repair addsrequired detailonlytonewRoot taskevents. Allpreviousphasehistory/budgets preserved. No checker orproduct plan repair.",
       "evidence": ".agent/evidence/workflow-016-planning/sourcec-ci-validate-failure.txt"
+    },
+    {
+      "at": "2026-10-12T21:10:25.803829+00:00",
+      "event": "workflow-016-planning-mode-b-review2-approved",
+      "detail": "CurrentSourceC2 state schema andprotection passedindependentreview; assessed23Source digests unchanged. FreshQA2 required, nooldQAreseal.",
+      "evidence": ".agent/evidence/workflow-016-planning/mode-b-review2-approved.json"
+    },
+    {
+      "at": "2026-10-12T21:14:55.982620+00:00",
+      "event": "workflow-016-planning-accepted-captured",
+      "detail": "FreshQA2 9/9 andindependentDD3 ownspot0 atimmutableSourceC2; stricttypedgateandactualevidencecapture verifiedrawcommands/exits/digests. Onlytaskdeliveryprojections advance; 18futurefeatures/fivephases remainpending/proposed.",
+      "evidence": ".agent/evidence/workflow-016-planning/evidence-capture.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4564,7 +4584,7 @@
       }
     ]
   },
-  "last_action": "ActualSourceC CI C11failed missingdetail innewownRoot history records. PreserveSourceC failure; addonly required narrativefields toownrecords, retainoldhistorykeys/values. Corrected installedschema validation passed; SourceC2 review/freshQA required.",
+  "last_action": "Actual SourceC2 freshQA2 nine/nine+ownspot and distinctRootcapture passed. PLAN-WA/PLAN-016 complete; proposedfutureimplementation stillpending; PR90 closeout inprogress.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4642,9 +4662,14 @@
   "pending_operator_gate": null,
   "planning_task": {
     "id": "workflow-016-planning",
-    "status": "coordination-schema-repaired-review-pending",
+    "status": "planning-complete-pr-in-progress",
     "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json",
     "attempt_root": "/home/cnross/.tmp/nizam-wa016-plan-attempt1-207l_sra",
-    "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0"
+    "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0",
+    "qa_ref": ".agent/qa/workflow-016-planning.json",
+    "capture_ref": ".agent/evidence/workflow-016-planning/evidence-capture.json",
+    "pr": "https://github.com/niq-cnr/nizam-framework/pull/90",
+    "actual_counted_lines": 2315,
+    "measurement_ref": ".agent/evidence/workflow-016-planning/task-cost.json"
   }
 }

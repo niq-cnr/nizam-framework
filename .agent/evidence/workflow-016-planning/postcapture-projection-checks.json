@@ -1,0 +1,32 @@
+{
+  "qa_source": "dc1cd5cc7625aa46d0d8896b4c28e424361f5dc8",
+  "immutable_qa_result_sha256": "8aaca5b25dbdb9c41e09affeb34957afbe85e4c7df3affff9c38229ee6e99ea7",
+  "current_completion_checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/workflow-016-planning/check_plans.py --all",
+      "evidence": ".agent/evidence/workflow-016-planning/postcapture-check-1.txt",
+      "sha256": "bc4b1f64cb5ec7ebd8fb78f6649e7adb751cd787b6a2e70a8cd72d83939e0469",
+      "exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/workflow-016-planning/check_plans.py --scope",
+      "evidence": ".agent/evidence/workflow-016-planning/postcapture-check-2.txt",
+      "sha256": "4a19a7d653405454be27bd6b5bdd1176b7f373673ed2ae0a1f9b1d18bb6e6469",
+      "exit": 0
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "evidence": ".agent/evidence/workflow-016-planning/postcapture-check-3.txt",
+      "sha256": "ce99d4c97aedcc5ce3a03b0acce001cece0e3f2ba92a4e52caef5a2defeca6e7",
+      "exit": 0
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "evidence": ".agent/evidence/workflow-016-planning/postcapture-check-4.txt",
+      "sha256": "dd4eefca45b2eba1b25ffe2c06994e445011cb6dde05cda79fc129d2d8ea635b",
+      "exit": 0
+    }
+  ],
+  "phase_plans_and_future_obligations_unchanged": true,
+  "classification": "Task lifecycle overlays after actualcapture underModeB permission; thisreceipt doesnotreplaceSourceC2QAresult"
+}

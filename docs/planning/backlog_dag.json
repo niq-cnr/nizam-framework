@@ -1,7 +1,7 @@
 {
   "plan_status": "candidate",
   "plan_status_note": "H-PHASE-015 active under06c0ae0a273facce80c57506260648c41f566ebb; approved7200/9360 including phase-level costs. Canonical feature/list governs lifecycle;111-114pending. Six WA selections recorded, implementation/planning after114 remains pending; WA/016 unallocated. Historical014/installedv1.5 immutable.",
-  "generated_at": "2026-10-12T20:33:33.356588+00:00",
+  "generated_at": "2026-10-12T21:14:55.982620+00:00",
   "base_commit": "08f97b0e8b1002ac0d8362ed147e7253726a5415",
   "base_commit_note": "Approved docs-only phase015-planning implementation base after exact operator H-NIP events; canonical phase014 records/current position remain unchanged.",
   "packet_schema": "schema/work-packet.schema.json",
@@ -993,7 +993,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "099",
-      "objective": "GA-track activation wave \u2014 register ecosystem/06+08 and define the reserved gates",
+      "objective": "GA-track activation wave — register ecosystem/06+08 and define the reserved gates",
       "scope": {
         "allowed_paths": [
           "ecosystem/06_simplification_review.md",
@@ -1090,7 +1090,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "103",
-      "objective": "Sandbox prerequisite handling \u2014 explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043)",
+      "objective": "Sandbox prerequisite handling — explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043)",
       "scope": {
         "allowed_paths": [
           "tools/test_convergent_review.py",
@@ -1289,7 +1289,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "105",
-      "objective": "Nested-fixture ownership \u2014 the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042)",
+      "objective": "Nested-fixture ownership — the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042)",
       "scope": {
         "allowed_paths": [
           "tools/fixtures_self_test.sh",
@@ -1384,7 +1384,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "106",
-      "objective": "Capability-index parity \u2014 skill.json is a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a)",
+      "objective": "Capability-index parity — skill.json is a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a)",
       "scope": {
         "allowed_paths": [
           "tools/validate.sh",
@@ -1681,7 +1681,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "109",
-      "objective": "C15 mapping direction \u2014 an explicit Role column parsed by a new primitive; a swapped profile->role mapping fails (NDEBT-026)",
+      "objective": "C15 mapping direction — an explicit Role column parsed by a new primitive; a swapped profile->role mapping fails (NDEBT-026)",
       "scope": {
         "allowed_paths": [
           "standard/capability_profiles.md",
@@ -1780,7 +1780,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "108",
-      "objective": "Validator help and adapter-reference truth \u2014 C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f)",
+      "objective": "Validator help and adapter-reference truth — C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f)",
       "scope": {
         "allowed_paths": [
           "tools/validate.sh",
@@ -3060,14 +3060,14 @@
         "Activation."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
+      "status": "complete",
       "authority_status": "authorized",
       "owner_role": "Planner",
       "plan_class": "deferred-proposal",
       "prerequisites": {
         "technical": {
           "satisfied": true,
-          "reason": "Prepared pending plans now exist; actual final planning acceptance/capture remain pending. Future implementation activation is separate."
+          "reason": "Five proposed phase plans delivered after actual independent Mode B, freshnine-commandQA and evidence capture; implementation activation remains separate."
         },
         "authority": {
           "satisfied": true,
@@ -3078,8 +3078,8 @@
           "reason": "none"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Prepared plans and current structural validation do not substitute final independent QA/evidence capture."
+          "satisfied": true,
+          "reason": "Actual SourceC2 QA and capture recorded in .agent/qa/workflow-016-planning.json and .agent/evidence/workflow-016-planning/evidence-capture.json."
         }
       },
       "estimate": {
@@ -3130,9 +3130,11 @@
         ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json"
       ],
       "planning_delivery": {
-        "status": "prepared-review-pending",
+        "status": "complete",
         "validation_ref": ".agent/evidence/workflow-016-planning/plan-validation.json",
-        "completion_gate": "Actual final independent QA and evidence capture; Orchestrator only."
+        "completion_gate": "Actual independent QA and evidence capture passed; future implementation activation remains pending.",
+        "qa_ref": ".agent/qa/workflow-016-planning.json",
+        "capture_ref": ".agent/evidence/workflow-016-planning/evidence-capture.json"
       }
     },
     {
@@ -3164,14 +3166,14 @@
         "Activation."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
+      "status": "complete",
       "authority_status": "authorized",
       "owner_role": "Planner",
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "Prepared pending plans now exist; actual final planning acceptance/capture remain pending. Future implementation activation is separate."
+          "satisfied": true,
+          "reason": "Five proposed phase plans delivered after actual independent Mode B, freshnine-commandQA and evidence capture; implementation activation remains separate."
         },
         "authority": {
           "satisfied": true,
@@ -3182,8 +3184,8 @@
           "reason": "SBCL2.2.9.debian is observed locally; future supported SBCL/isolation conformance requires a capable isolated acceptance host/CI, and installation alone is not proof."
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Prepared plans and current structural validation do not substitute final independent QA/evidence capture."
+          "satisfied": true,
+          "reason": "Actual SourceC2 QA and capture recorded in .agent/qa/workflow-016-planning.json and .agent/evidence/workflow-016-planning/evidence-capture.json."
         }
       },
       "estimate": {
@@ -3221,9 +3223,11 @@
       },
       "lane_rank": 290,
       "planning_delivery": {
-        "status": "prepared-review-pending",
+        "status": "complete",
         "validation_ref": ".agent/evidence/workflow-016-planning/plan-validation.json",
-        "completion_gate": "Actual final independent QA and evidence capture; Orchestrator only."
+        "completion_gate": "Actual independent QA and evidence capture passed; future implementation activation remains pending.",
+        "qa_ref": ".agent/qa/workflow-016-planning.json",
+        "capture_ref": ".agent/evidence/workflow-016-planning/evidence-capture.json"
       }
     },
     {
@@ -4636,7 +4640,9 @@
       "019-workflow-assurance-profiles"
     ],
     "validation_ref": ".agent/evidence/workflow-016-planning/plan-validation.json",
-    "status": "prepared-review-pending"
+    "status": "complete",
+    "qa_ref": ".agent/qa/workflow-016-planning.json",
+    "capture_ref": ".agent/evidence/workflow-016-planning/evidence-capture.json"
   },
   "proposed_supersessions": [
     {

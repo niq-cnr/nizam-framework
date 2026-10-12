@@ -1,0 +1,841 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 765929b..fcc2034 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,6 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Changed
+ 
++- **Proposed WA and controller planning.** Prepared five pending phase plans,
++  allocating WA features 115–125 before controller features 126–132 with full budgets and independent
++  future acceptance ownership. Recommended foundation 017→core 016→controls 018→
++  fresh 020→profiles 019; preserved original backlog edges and recorded explicit
++  proposed split-alias bindings. Public projections reference
++  [.agent/evidence/workflow-016-planning/plan-validation.json](.agent/evidence/workflow-016-planning/plan-validation.json).
++  Planning completion awaits actual independent QA/capture. Future phase/budget
++  activation, runtime/live CI acceptance, release/tag and installed upgrade remain
++  separately gated; closed phase 015 and published v1.5.0 are preserved.
++
+ - **Normative-stage readiness (feature114).** Added a candidate-bound next MINOR
+   dossier and narrow current planning projections. Closure requires independent
+   Mode B, fresh twelve-command QA, one additional adversarial spot, actual evidence
+diff --git a/docs/nips/NIP-0003-live-runtime-sessions.md b/docs/nips/NIP-0003-live-runtime-sessions.md
+index f59d309..73b0dcc 100644
+--- a/docs/nips/NIP-0003-live-runtime-sessions.md
++++ b/docs/nips/NIP-0003-live-runtime-sessions.md
+@@ -2,12 +2,15 @@
+ id: nip-0003-live-runtime-sessions
+ title: "NIP-0003: Live Runtime Sessions"
+ description: "Proposal to add a language-neutral live-runtime-session protocol (ownership, process generation, serialised operations, attempt continuity, fresh-environment acceptance) with an SBCL reference binding, an optional adapter capability, schema-governed session records, and a reference controller — realized as phases 015 and 016, after phase 014."
+-version: 1.1.1
++version: 1.1.2
+ status: active
+ authoritative_source: docs/nips/NIP-0003-live-runtime-sessions.md
+ last_audited: "2026-10-11"
+ tags: [nip, methodology, runtime-session, execution, evaluator-independence, circuit-breaker, adapter, sbcl]
+ change_log:
++  - version: "1.1.2"
++    date: "2026-10-12"
++    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
+   - version: "1.1.1"
+     date: "2026-10-12"
+     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+@@ -108,6 +111,17 @@ remains outstanding and any later actual consolidation decision is an input.
+ | Consequence of acceptance | Acceptance **selects** phase `015` normative scope and follow-on `016` controller/live conformance. **Selection is not activation.** The active phase015 spec/list/YAML and manifest allocate canonical110–114 with approved7200/9360 budget. Current lifecycle is canonical in the feature list; phase016115–120 remains unallocated and needs separate planning/H-PHASE-016. |
+ | Outstanding gates not satisfied by acceptance | `H-PHASE-016`, `H-FRAMEWORK-RELEASE` (once per release), and `H-CONSUMER-UPGRADE` (per consumer) |
+ 
++### Current planning delivery — 2026-10-12
++
++The dated unallocated and activation-time pending statements above are superseded:
++phase 015 and features 110–114 are complete; prepared draft controller phase 016 allocates 126–128
++and fresh/SBCL phase 020 allocates 129–132, after WA features 115–125. See [core spec](../../.agent/product_spec_016.md),
++[core list](../../.agent/feature_list_016.json), [fresh spec](../../.agent/product_spec_020.md)
++and [fresh list](../../.agent/feature_list_020.json). PLAN-WA/PLAN-016 remain pending
++until final independent QA/capture. All future H-PHASE gates, budgets and
++implementation remain pending; the thirteen cases below remain unchanged.
++Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
++
+ ## Problem
+ 
+ The framework governs roles, contracts, gates, evidence and attempts. It says nothing
+@@ -587,6 +601,28 @@ and split it if necessary; its approval/activation remain separate decisions.
+ | 119 | Implementation-synced docs and proposed .py/.lisp path-token resolver | 170 |
+ | 120 | Future MINOR release preparation and stage close; version decided under its release gate | 240 |
+ 
++### Proposed allocated splits — 2026-10-12
++
++The table above retains provisional design history. Stable conceptual aliases
++NIP3-115/116/117/118/119/120 now map to 126/127+131/129/130/131/132; evidence
++uses actual numeric owners. Alias 116 combines core 127 and final CI 131 and cannot
++be declared complete when only 127 passes. Core 016 proposes 5,650/7,345;
++SBCL/fresh phase 020 proposes 7,350/9,555. Full counted estimate: 13,000 prices independent tests,
++registration, contracts, verdicts and close-out, compared with 4,585 naive and
++10,545–13,251 weighted forecasts and 7,200/8,600 precedents. These are future budget
++proposals, with H-PHASE-016/020 pending.
++
++Recommend 017 foundation→016 core→018 controls→020 fresh acceptance→019 profiles.
++Keep original packet edges as dated inputs; proposed numeric prerequisites bind
++controls to 127 only and SBCL 129 to core 128 plus 119/120/123, avoiding a false
++131-before-controls cycle. Feature 131 alone introduces full sixth-job live CI,
++case 8 mechanism isolation and all 13 cases after SBCL/fresh acceptance exists.
++The stub case 8 policy obligation remains 126. Local SBCL 2.2.9.debian is environment
++information; schema/session results and unsupported isolation prove no live case.
++Future acceptance requires committed-source archive, fresh no-init SBCL, private
++HOME/XDG, empty ASDF cache/private resolution and toolchain/lock/core provenance.
++No workstation sysctl changes. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
++
+ ## Compatibility
+ 
+ The change is **MINOR** in each phase. Surface by surface
+diff --git a/docs/nips/NIP-0004-workflow-assurance.md b/docs/nips/NIP-0004-workflow-assurance.md
+index bc2f2da..3f66b2a 100644
+--- a/docs/nips/NIP-0004-workflow-assurance.md
++++ b/docs/nips/NIP-0004-workflow-assurance.md
+@@ -2,10 +2,13 @@
+ id: nip-0004-workflow-assurance
+ title: "NIP-0004 — Workflow Assurance"
+ description: "Proposed staged assurance for candidate identity, evidence invalidation, gate transitions, independent test ownership and isolated coordination."
+-version: 1.1.0
++version: 1.1.1
+ status: active
+ authoritative_source: docs/nips/NIP-0004-workflow-assurance.md
+ change_log:
++  - version: "1.1.1"
++    date: "2026-10-12"
++    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
+   - version: "1.1.0"
+     date: "2026-10-11"
+     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
+@@ -31,6 +34,17 @@ selected by the operator as recorded below; no active gate is reduced.
+ No WA phase or numeric feature IDs are allocated. Later realization requires
+ separate phase planning, H-PHASE activation and independent contract gates.
+ 
++### Current WA planning — 2026-10-12
++
++This dated overlay supersedes earlier unallocated statements. Prepared draft plans
++allocate phase 017 foundation 115–118, phase 018 controls 119–123 and 019 deferred profiles 124–125.
++See [foundation spec](../../.agent/product_spec_017.md)/[list](../../.agent/feature_list_017.json),
++[controls spec](../../.agent/product_spec_018.md)/[list](../../.agent/feature_list_018.json)
++and [profiles spec](../../.agent/product_spec_019.md)/[list](../../.agent/feature_list_019.json).
++PLAN-WA/PLAN-016 completion awaits actual final independent QA and capture;
++H-PHASE-017/018/019 and all implementation/budget approvals remain pending.
++Accepted case and choice text remains frozen. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
++
+ ## Current evidence and problem
+ 
+ The dated Section7 outline in the backlog reconciliation identifies candidate
+@@ -166,6 +180,27 @@ prospective version-impact assessment is MINOR for additive optional records and
+ checks, but MAJOR if acceptance later requires new mandatory fields or changes a
+ consumer contract. That assessment is a proposed release decision, not a new release.
+ 
++### Proposed execution recommendation — 2026-10-12
++
++Recommend 017→016→018→020→019, requiring future activation. Foundation 115 identity,
++116 sealed acceptance, 117 authorized entry and 118 bounded close precede controller
++126–128. Controls 119 verdict mapping, 120 A10 recovery, 121 conflict lanes, 122 A14
++cause routing and 123 capable CI/WA close follow core 127 specifically. Alias
++NIP3-116 also includes later 131 full CI; using 131 as the control prerequisite
++would create a cycle. Proposed supersessions record the 127 binding separately
++from preserved historical packet edges. SBCL 129–132 follows trusted 119/120/123;
++profiles 124/125 retain A15-after 132 and trusted A10/A11 plus preregistered
++same-candidate full-baseline bounds. Missed baseline blockers prevent promotion;
++no active gate is reduced.
++
++WA split budgets are 5,400/7,020, 7,200/9,360, 3,500/4,550; full estimate: 16,100 prices product,
++independent tests and counted process/registrations/contracts/verdicts/close-out.
++Historical 4,360–13,190 weighted forecasts omitted entry/conflict and independent
++closure costs. Splits fit 7,200/8,600 precedents; all budgets remain proposals.
++Open debts NDEBT-040/NDEBT-034 remain inputs. Existing roles, one coordination model and three-attempt
++identity survive agent/process/stage changes; infrastructure failures remain
++failures. Local SBCL version proves no live acceptance. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
++
+ ## Acceptance matrix
+ 
+ Every row describes a future obligation and a reviewed-design assertion. A design
+diff --git a/docs/planning/HANDOVER.md b/docs/planning/HANDOVER.md
+index 11b506e..3562b9b 100644
+--- a/docs/planning/HANDOVER.md
++++ b/docs/planning/HANDOVER.md
+@@ -2,12 +2,15 @@
+ id: nizam-handover-2026-10
+ title: "Developer Handover — Release Status and Phase 014 Snapshot"
+ description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
+-version: 1.0.8
++version: 1.0.9
+ status: active
+ authoritative_source: docs/planning/HANDOVER.md
+ last_audited: "2026-10-11"
+ tags: [planning, handover, onboarding, phase-014]
+ change_log:
++  - version: "1.0.9"
++    date: "2026-10-12"
++    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
+   - version: "1.0.8"
+     date: "2026-10-12"
+     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+@@ -39,7 +42,7 @@ change_log:
+ 
+ # Developer Handover — Release Status and Phase 014 Snapshot
+ 
+-## Current status — 2026-10-11
++## Current status — 2026-10-12
+ 
+ Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
+ 
+@@ -95,6 +98,32 @@ then-remaining backlog and commands. For current work, read [ROADMAP.md](ROADMAP
+ Completed phase-014 assertions should be interpreted at their recorded assessment
+ revision. Tag and publication evidence: `.agent/evidence/release-v1.5.0-tag/`.
+ 
++### Current planning allocation — 2026-10-12
++
++This overlay supersedes earlier unallocated/pending feature 114 statements while preserving
++their dated text. Phase 015 and features 110–114 are complete, with 7,319 counted lines against
++7,200/9,360. Prepared draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
++(7,200/9,360), phase 019: 124–125 (3,500/4,550), controller phase 016: 126–128 (5,650/7,345), and
++SBCL phase 020: 129–132 (7,350/9,555). All phases/features, H-PHASE gates and future budget
++approvals remain pending. PLAN-WA/PLAN-016 planning completion awaits actual
++independent QA and evidence capture.
++
++Recommended execution is 017→016→018→020→019. Historical packet edges remain
++unchanged; proposed supersessions resolve NIP3-116 to 127 core versus 131 final CI.
++Controls require 127; SBCL 129 requires trusted 119/120/123; profiles 124/125 retain
++controller 132 delay. Stable aliases NIP3-115…120 map to 126, 127+131, 129, 130, 131, 132;
++these aliases reserve no numeric evidence paths. Full WA/controller budget estimates: 16,100/13,000
++include product, independent tests and counted process/closure, split against 7,200/8,600
++predecessents. Task 1,200 is a separate proposal; no phase 015 rebaseline.
++
++Canonical inputs are [WA specs/lists](../../.agent/feature_list_017.json),
++[controls](../../.agent/feature_list_018.json), [profiles](../../.agent/feature_list_019.json),
++[controller](../../.agent/product_spec_016.md)/[list](../../.agent/feature_list_016.json)
++and [fresh acceptance](../../.agent/product_spec_020.md)/[list](../../.agent/feature_list_020.json).
++Local SBCL version supplies environment information only; capable CI and all 13
++live cases remain future. Installed/released v1.5.0 and Open debts NDEBT-040/NDEBT-034 are preserved.
++Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
++
+ ## Historical handover snapshot
+ 
+ This record is for a competent engineer who is new to this repository. It states
+diff --git a/docs/planning/ROADMAP.md b/docs/planning/ROADMAP.md
+index 8499ba4..e0c1fea 100644
+--- a/docs/planning/ROADMAP.md
++++ b/docs/planning/ROADMAP.md
+@@ -2,10 +2,13 @@
+ id: nizam-roadmap
+ title: "Forward Roadmap — nizam-framework"
+ description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
+-version: 0.60.0
++version: 0.61.0
+ status: active
+ authoritative_source: docs/planning/ROADMAP.md
+ change_log:
++  - version: "0.61.0"
++    date: "2026-10-12"
++    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
+   - version: "0.60.0"
+     date: "2026-10-12"
+     summary: "Prepare feature114 normative readiness and bounded current projections; independent acceptance and canonical close remain required."
+@@ -408,6 +411,47 @@ future release/tag and consumer upgrade decisions, phase016 controller/SBCL/live
+ proofs and capable CI remain outstanding. Historical prose above retains its
+ dated meaning; current lifecycle follows canonical records.
+ 
++### Current proposed allocation — 2026-10-12
++
++WA planning preceded controller planning. The five draft plans below are prepared
++for final independent review; PLAN-WA and PLAN-016 remain pending until actual
++QA and evidence capture. This dated overlay supersedes earlier unallocated and
++pending feature 114 statements: phase 015 and features 110–114 are complete at 7,319 counted
++lines against 7,200/9,360. Every new feature, phase, H-PHASE gate and proposed budget
++remains pending activation.
++
++| Phase | Allocated IDs | Full estimate / 130% ceiling | Canonical spec / list |
++| --- | --- | --- | --- |
++| 017 | 115–118 | 5400 / 7020 | [spec](../../.agent/product_spec_017.md) / [list](../../.agent/feature_list_017.json) |
++| 018 | 119–123 | 7200 / 9360 | [spec](../../.agent/product_spec_018.md) / [list](../../.agent/feature_list_018.json) |
++| 019 | 124–125 | 3500 / 4550 | [spec](../../.agent/product_spec_019.md) / [list](../../.agent/feature_list_019.json) |
++| 016 | 126–128 | 5650 / 7345 | [spec](../../.agent/product_spec_016.md) / [list](../../.agent/feature_list_016.json) |
++| 020 | 129–132 | 7350 / 9555 | [spec](../../.agent/product_spec_020.md) / [list](../../.agent/feature_list_020.json) |
++
++Recommended execution order; activation remains pending:
++
++```mermaid
++flowchart LR
++  P017[017 WA foundation] --> P016[016 controller core]
++  P016 --> P018[018 WA controls]
++  P018 --> P020[020 SBCL fresh acceptance]
++  P020 --> P019[019 deferred profiles]
++```
++
++Stable NIP3 aliases 115/116/117/118/119/120 map respectively to 126,
++127+131, 129, 130, 131, 132. Alias 116 splits core semantics 127 from final CI 131;
++controls require 127, never 131. Proposed A09 foundation-first and SBCL-after-controls
++ordering supersedes dated whole-packet order only after future activation; original
++backlog edges remain historical. A15 still waits for 132 and trusted A10/A11.
++Numeric list prerequisites and serialized shared-file lanes define the proposed graph.
++
++Full WA/controller estimates are 16,100/13,000, compared with historical 4,360–13,190
++and 4,585 naive (10,545–13,251 weighted); splits price product, independent tests and
++counted process costs against 7,200/8,600 precedents. Proposed task 1,200 is separate
++from closed phase 015. Raw evidence/coordination classification is unchanged. Local SBCL
++version is environment information; all 13 live cases and capable CI remain future.
++Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
++
+ ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
+ 
+ **Phase `013-definition-of-done` is ACTIVE** (2026-08-18), authorized by the operator (verbatim:
+@@ -852,13 +896,12 @@ requires its approved contract, both independent pre-code gates, Mode B, QA and
+ the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+ records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+ 
+-- **Phase015 normative scope is complete.** Features110-114 are complete after
+-  actual candidate Mode B, fresh QA/ownspot and capture. Acceptance follows
+-  `.agent/qa/114.json` and `.agent/evidence/114/evidence-gate.txt`.
+-  PLAN-WA remains pending and eligible for planning serialization; PLAN-016
+-  remains pending after PLAN-WA. Future runtime proofs, release/tag and consumer
+-  upgrade gates remain outstanding; no new phase is allocated. Published and
+-  installed v1.5.0 records are preserved.
++- **Phase015 normative scope is complete.** Features 110–114 passed actual QA/capture;
++  the closed count remains7,319 against 7,200/9,360. WA features 115–125 and controller features 126–132
++  now have prepared pending plans 017/018/019 and 016/020. PLAN-WA/PLAN-016 planning
++  completion awaits final independent QA/capture; future phase/budget activation,
++  runtime acceptance, release/tag and consumer upgrade remain outstanding.
++  Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+ - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
+ - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. Phase015 activation is recorded in the current overlay. The handover record is [`HANDOVER.md`](HANDOVER.md).
+   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
+diff --git a/docs/planning/backlog_dag.json b/docs/planning/backlog_dag.json
+index 334cf9b..23e4c91 100644
+--- a/docs/planning/backlog_dag.json
++++ b/docs/planning/backlog_dag.json
+@@ -1,7 +1,7 @@
+ {
+   "plan_status": "candidate",
+   "plan_status_note": "H-PHASE-015 active under06c0ae0a273facce80c57506260648c41f566ebb; approved7200/9360 including phase-level costs. Canonical feature/list governs lifecycle;111-114pending. Six WA selections recorded, implementation/planning after114 remains pending; WA/016 unallocated. Historical014/installedv1.5 immutable.",
+-  "generated_at": "2026-10-12",
++  "generated_at": "2026-10-12T20:33:33.356588+00:00",
+   "base_commit": "08f97b0e8b1002ac0d8362ed147e7253726a5415",
+   "base_commit_note": "Approved docs-only phase015-planning implementation base after exact operator H-NIP events; canonical phase014 records/current position remain unchanged.",
+   "packet_schema": "schema/work-packet.schema.json",
+@@ -3067,7 +3067,7 @@
+       "prerequisites": {
+         "technical": {
+           "satisfied": true,
+-          "reason": "Completed114/phase015 actual QA and evidence capture clear planning-input eligibility. PLAN-WA remains pending for serialization and independent planning gates; no activation or allocation."
++          "reason": "Prepared pending plans now exist; actual final planning acceptance/capture remain pending. Future implementation activation is separate."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -3078,8 +3078,8 @@
+           "reason": "none"
+         },
+         "evidence": {
+-          "satisfied": true,
+-          "reason": "Actual .agent/qa/114.json and .agent/evidence/114/evidence-gate.txt plus six selected WA choices recorded in docs/planning/ROADMAP.md clear planning inputs only. PLAN-WA is not delivered or activated."
++          "satisfied": false,
++          "reason": "Prepared plans and current structural validation do not substitute final independent QA/evidence capture."
+         }
+       },
+       "estimate": {
+@@ -3128,7 +3128,12 @@
+         ".agent/qa/post-ga-maintenance.json",
+         ".agent/evidence/post-ga-maintenance/source-candidate.json",
+         ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json"
+-      ]
++      ],
++      "planning_delivery": {
++        "status": "prepared-review-pending",
++        "validation_ref": ".agent/evidence/workflow-016-planning/plan-validation.json",
++        "completion_gate": "Actual final independent QA and evidence capture; Orchestrator only."
++      }
+     },
+     {
+       "id": "PLAN-016",
+@@ -3166,7 +3171,7 @@
+       "prerequisites": {
+         "technical": {
+           "satisfied": false,
+-          "reason": "Canonical114/phase015 complete; PLAN-WA serialization remains pending and PLAN-016 still requires its own independent planning gates. No new phase allocated."
++          "reason": "Prepared pending plans now exist; actual final planning acceptance/capture remain pending. Future implementation activation is separate."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -3178,7 +3183,7 @@
+         },
+         "evidence": {
+           "satisfied": false,
+-          "reason": "Actual114 QA/capture completes normative readiness, but pending PLAN-WA serialization and separate PLAN-016 planning acceptance do not yet supply a finalized plan."
++          "reason": "Prepared plans and current structural validation do not substitute final independent QA/evidence capture."
+         }
+       },
+       "estimate": {
+@@ -3214,7 +3219,12 @@
+           "PLAN-WA"
+         ]
+       },
+-      "lane_rank": 290
++      "lane_rank": 290,
++      "planning_delivery": {
++        "status": "prepared-review-pending",
++        "validation_ref": ".agent/evidence/workflow-016-planning/plan-validation.json",
++        "completion_gate": "Actual final independent QA and evidence capture; Orchestrator only."
++      }
+     },
+     {
+       "id": "NIP3-115",
+@@ -3297,7 +3307,14 @@
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 300
++      "lane_rank": 300,
++      "actual_assigned": [
++        {
++          "phase": "016-runtime-controller-core",
++          "feature_id": "126",
++          "evidence": ".agent/evidence/126/"
++        }
++      ]
+     },
+     {
+       "id": "NIP3-116",
+@@ -3387,7 +3404,19 @@
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 310
++      "lane_rank": 310,
++      "actual_assigned": [
++        {
++          "phase": "016-runtime-controller-core",
++          "feature_id": "127",
++          "evidence": ".agent/evidence/127/"
++        },
++        {
++          "phase": "020-sbcl-fresh-acceptance",
++          "feature_id": "131",
++          "evidence": ".agent/evidence/131/"
++        }
++      ]
+     },
+     {
+       "id": "NIP3-117",
+@@ -3470,7 +3499,14 @@
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 320
++      "lane_rank": 320,
++      "actual_assigned": [
++        {
++          "phase": "020-sbcl-fresh-acceptance",
++          "feature_id": "129",
++          "evidence": ".agent/evidence/129/"
++        }
++      ]
+     },
+     {
+       "id": "NIP3-118",
+@@ -3553,7 +3589,14 @@
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 330
++      "lane_rank": 330,
++      "actual_assigned": [
++        {
++          "phase": "020-sbcl-fresh-acceptance",
++          "feature_id": "130",
++          "evidence": ".agent/evidence/130/"
++        }
++      ]
+     },
+     {
+       "id": "NIP3-119",
+@@ -3638,7 +3681,14 @@
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 340
++      "lane_rank": 340,
++      "actual_assigned": [
++        {
++          "phase": "020-sbcl-fresh-acceptance",
++          "feature_id": "131",
++          "evidence": ".agent/evidence/131/"
++        }
++      ]
+     },
+     {
+       "id": "NIP3-120",
+@@ -3724,7 +3774,14 @@
+         "consumed_by": [],
+         "serialize_after": []
+       },
+-      "lane_rank": 350
++      "lane_rank": 350,
++      "actual_assigned": [
++        {
++          "phase": "020-sbcl-fresh-acceptance",
++          "feature_id": "132",
++          "evidence": ".agent/evidence/132/"
++        }
++      ]
+     },
+     {
+       "id": "A09",
+@@ -3808,7 +3865,14 @@
+           "NIP3-120"
+         ]
+       },
+-      "lane_rank": 360
++      "lane_rank": 360,
++      "actual_assigned": [
++        {
++          "phase": "017-workflow-assurance-foundation",
++          "feature_id": "115",
++          "evidence": ".agent/evidence/115/"
++        }
++      ]
+     },
+     {
+       "id": "A11-D",
+@@ -3888,7 +3952,14 @@
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 370
++      "lane_rank": 370,
++      "actual_assigned": [
++        {
++          "phase": "018-workflow-assurance-controls",
++          "feature_id": "119",
++          "evidence": ".agent/evidence/119/"
++        }
++      ]
+     },
+     {
+       "id": "A10",
+@@ -3971,7 +4042,14 @@
+           "A11-D"
+         ]
+       },
+-      "lane_rank": 380
++      "lane_rank": 380,
++      "actual_assigned": [
++        {
++          "phase": "018-workflow-assurance-controls",
++          "feature_id": "120",
++          "evidence": ".agent/evidence/120/"
++        }
++      ]
+     },
+     {
+       "id": "A11-CI",
+@@ -4053,7 +4131,14 @@
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 390
++      "lane_rank": 390,
++      "actual_assigned": [
++        {
++          "phase": "018-workflow-assurance-controls",
++          "feature_id": "123",
++          "evidence": ".agent/evidence/123/"
++        }
++      ]
+     },
+     {
+       "id": "A04b",
+@@ -4132,7 +4217,14 @@
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 400
++      "lane_rank": 400,
++      "actual_assigned": [
++        {
++          "phase": "017-workflow-assurance-foundation",
++          "feature_id": "116",
++          "evidence": ".agent/evidence/116/"
++        }
++      ]
+     },
+     {
+       "id": "A14",
+@@ -4211,7 +4303,14 @@
+         ],
+         "serialize_after": []
+       },
+-      "lane_rank": 410
++      "lane_rank": 410,
++      "actual_assigned": [
++        {
++          "phase": "018-workflow-assurance-controls",
++          "feature_id": "122",
++          "evidence": ".agent/evidence/122/"
++        }
++      ]
+     },
+     {
+       "id": "A16-WA",
+@@ -4290,7 +4389,14 @@
+         "consumed_by": [],
+         "serialize_after": []
+       },
+-      "lane_rank": 420
++      "lane_rank": 420,
++      "actual_assigned": [
++        {
++          "phase": "018-workflow-assurance-controls",
++          "feature_id": "123",
++          "evidence": ".agent/evidence/123/"
++        }
++      ]
+     },
+     {
+       "id": "A15",
+@@ -4369,7 +4475,19 @@
+           "NIP3-120"
+         ]
+       },
+-      "lane_rank": 430
++      "lane_rank": 430,
++      "actual_assigned": [
++        {
++          "phase": "019-workflow-assurance-profiles",
++          "feature_id": "124",
++          "evidence": ".agent/evidence/124/"
++        },
++        {
++          "phase": "019-workflow-assurance-profiles",
++          "feature_id": "125",
++          "evidence": ".agent/evidence/125/"
++        }
++      ]
+     }
+   ],
+   "authorized_follow_up": {
+@@ -4481,5 +4599,168 @@
+       "selected_recommendation": "Explicit file/state conflict lanes in single existing coordination model; serialize shared ownership, isolate retries, invalidate affected evidence, rollback only owned changes.",
+       "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
+     }
+-  ]
++  ],
++  "planning_projection": {
++    "phases": [
++      "017-workflow-assurance-foundation",
++      "018-workflow-assurance-controls",
++      "019-workflow-assurance-profiles",
++      "016-runtime-controller-core",
++      "020-sbcl-fresh-acceptance"
++    ],
++    "allocation": {
++      "115": "017-workflow-assurance-foundation",
++      "116": "017-workflow-assurance-foundation",
++      "117": "017-workflow-assurance-foundation",
++      "118": "017-workflow-assurance-foundation",
++      "119": "018-workflow-assurance-controls",
++      "120": "018-workflow-assurance-controls",
++      "121": "018-workflow-assurance-controls",
++      "122": "018-workflow-assurance-controls",
++      "123": "018-workflow-assurance-controls",
++      "124": "019-workflow-assurance-profiles",
++      "125": "019-workflow-assurance-profiles",
++      "126": "016-runtime-controller-core",
++      "127": "016-runtime-controller-core",
++      "128": "016-runtime-controller-core",
++      "129": "020-sbcl-fresh-acceptance",
++      "130": "020-sbcl-fresh-acceptance",
++      "131": "020-sbcl-fresh-acceptance",
++      "132": "020-sbcl-fresh-acceptance"
++    },
++    "order": [
++      "017-workflow-assurance-foundation",
++      "016-runtime-controller-core",
++      "018-workflow-assurance-controls",
++      "020-sbcl-fresh-acceptance",
++      "019-workflow-assurance-profiles"
++    ],
++    "validation_ref": ".agent/evidence/workflow-016-planning/plan-validation.json",
++    "status": "prepared-review-pending"
++  },
++  "proposed_supersessions": [
++    {
++      "packet": "A09",
++      "prior_serialize_after": [
++        "NIP3-120"
++      ],
++      "proposed_serialize_after": [
++        "PLAN-016"
++      ],
++      "rationale": "Minimal identity foundation protects controller experiments; preserve dated prior edge and require future activation. Historical serialize_after NIP3-120; proposed115 identity foundation precedes126. Actual feature-list numeric cross-phase prerequisites and shared-file lanes are the proposed execution authority; original packet edges remain dated history.",
++      "stage_bindings": {
++        "owners": [
++          "115"
++        ],
++        "resolved_prerequisites": [],
++        "replaces": "Historical serialize_after NIP3-120; proposed115 identity foundation precedes126."
++      },
++      "resolved_prerequisites": [],
++      "adoption_state": "pending-future-H-PHASE-activation"
++    },
++    {
++      "packet": "NIP3-115",
++      "prior_serialize_after": [],
++      "proposed_serialize_after": [
++        "A09",
++        "A04b"
++      ],
++      "rationale": "Controller core uses candidate identity and sealed independently reviewed acceptance obligations. Controller 126 follows full captured foundation 017-close owner118, with identity115/sealed116. Actual feature-list numeric cross-phase prerequisites and shared-file lanes are the proposed execution authority; original packet edges remain dated history.",
++      "stage_bindings": {
++        "owners": [
++          "126"
++        ],
++        "resolved_prerequisites": [
++          "115",
++          "116",
++          "117",
++          "118"
++        ],
++        "replaces": "Controller 126 follows full captured foundation 017-close owner118, with identity115/sealed116."
++      },
++      "resolved_prerequisites": [
++        "115",
++        "116",
++        "117",
++        "118"
++      ],
++      "adoption_state": "pending-future-H-PHASE-activation"
++    },
++    {
++      "packet": "A11-D",
++      "prior_serialize_after": [],
++      "proposed_serialize_after": [
++        "NIP3-116"
++      ],
++      "rationale": "Concrete core operation semantics inform trustworthy verdict mapping. NIP3-116 binds only core 127 here; final CI 131 is excluded. Actual feature-list numeric cross-phase prerequisites and shared-file lanes are the proposed execution authority; original packet edges remain dated history.",
++      "stage_bindings": {
++        "owners": [
++          "119"
++        ],
++        "resolved_prerequisites": [
++          "127"
++        ],
++        "replaces": "NIP3-116 binds only core 127 here; final CI 131 is excluded."
++      },
++      "resolved_prerequisites": [
++        "127"
++      ],
++      "adoption_state": "pending-future-H-PHASE-activation"
++    },
++    {
++      "packet": "NIP3-117",
++      "prior_serialize_after": [],
++      "proposed_serialize_after": [
++        "A10",
++        "A11-CI"
++      ],
++      "rationale": "Trusted stage/verdict gates precede SBCL and full fresh acceptance. Historical depends_on whole NIP3-116 is split: core 127 via128, never final CI 131, plus trusted controls 119/120/123. Actual feature-list numeric cross-phase prerequisites and shared-file lanes are the proposed execution authority; original packet edges remain dated history.",
++      "stage_bindings": {
++        "owners": [
++          "129"
++        ],
++        "resolved_prerequisites": [
++          "128",
++          "119",
++          "120",
++          "123"
++        ],
++        "replaces": "Historical depends_on whole NIP3-116 is split: core 127 via128, never final CI 131, plus trusted controls 119/120/123."
++      },
++      "resolved_prerequisites": [
++        "128",
++        "119",
++        "120",
++        "123"
++      ],
++      "adoption_state": "pending-future-H-PHASE-activation"
++    }
++  ],
++  "planned_additional_nodes": [
++    {
++      "feature_id": "117",
++      "phase": "017-workflow-assurance-foundation",
++      "status": "pending",
++      "evidence": ".agent/evidence/117/"
++    },
++    {
++      "feature_id": "118",
++      "phase": "017-workflow-assurance-foundation",
++      "status": "pending",
++      "evidence": ".agent/evidence/118/"
++    },
++    {
++      "feature_id": "121",
++      "phase": "018-workflow-assurance-controls",
++      "status": "pending",
++      "evidence": ".agent/evidence/121/"
++    },
++    {
++      "feature_id": "128",
++      "phase": "016-runtime-controller-core",
++      "status": "pending",
++      "evidence": ".agent/evidence/128/"
++    }
++  ],
++  "proposed_execution_note": "Recommended 017->016->018->020->019 only; pending future activation. Original whole-alias graph is dated history. NIP3-116 (feature 127) core and 131 final CI  stay separately pending; A15 retains NIP3-120 (feature 132) delay. Canonical proposed execution graph uses feature-list numeric dependencies, cross_phase_prerequisites and shared_file_lanes."
+ }
+diff --git a/docs/planning/backlog_reconciliation.md b/docs/planning/backlog_reconciliation.md
+index a458dbd..fc95737 100644
+--- a/docs/planning/backlog_reconciliation.md
++++ b/docs/planning/backlog_reconciliation.md
+@@ -2,12 +2,15 @@
+ id: nizam-backlog-reconciliation-2026-10-08
+ title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
+ description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
+-version: 0.1.14
++version: 0.1.15
+ status: active
+ authoritative_source: docs/planning/backlog_reconciliation.md
+ last_audited: "2026-10-11"
+ tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
+ change_log:
++  - version: "0.1.15"
++    date: "2026-10-12"
++    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
+   - version: "0.1.14"
+     date: "2026-10-12"
+     summary: "Add bounded current114 readiness projection while preserving prior reconciliation; canonical close follows actual independent capture."
+@@ -158,6 +161,32 @@ Controller/SBCL/live13 proofs, capable CI, future release/tag and consumer upgra
+ remain outstanding. No new phase is allocated; earlier prose and prior history
+ remain dated records.
+ 
++### Current planning allocation — 2026-10-12
++
++This overlay supersedes earlier unallocated/pending feature 114 statements while preserving
++their dated text. Phase 015 and features 110–114 are complete, with 7,319 counted lines against
++7,200/9,360. Prepared draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
++(7,200/9,360), phase 019: 124–125 (3,500/4,550), controller phase 016: 126–128 (5,650/7,345), and
++SBCL phase 020: 129–132 (7,350/9,555). All phases/features, H-PHASE gates and future budget
++approvals remain pending. PLAN-WA/PLAN-016 planning completion awaits actual
++independent QA and evidence capture.
++
++Recommended execution is 017→016→018→020→019. Historical packet edges remain
++unchanged; proposed supersessions resolve NIP3-116 to 127 core versus 131 final CI.
++Controls require 127; SBCL 129 requires trusted 119/120/123; profiles 124/125 retain
++controller 132 delay. Stable aliases NIP3-115…120 map to 126, 127+131, 129, 130, 131, 132;
++these aliases reserve no numeric evidence paths. Full WA/controller budget estimates: 16,100/13,000
++include product, independent tests and counted process/closure, split against 7,200/8,600
++predecessents. Task 1,200 is a separate proposal; no phase 015 rebaseline.
++
++Canonical inputs are [WA specs/lists](../../.agent/feature_list_017.json),
++[controls](../../.agent/feature_list_018.json), [profiles](../../.agent/feature_list_019.json),
++[controller](../../.agent/product_spec_016.md)/[list](../../.agent/feature_list_016.json)
++and [fresh acceptance](../../.agent/product_spec_020.md)/[list](../../.agent/feature_list_020.json).
++Local SBCL version supplies environment information only; capable CI and all 13
++live cases remain future. Installed/released v1.5.0 and Open debts NDEBT-040/NDEBT-034 are preserved.
++Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
++
+ ## Prior reconciliation history
+ 
+ 

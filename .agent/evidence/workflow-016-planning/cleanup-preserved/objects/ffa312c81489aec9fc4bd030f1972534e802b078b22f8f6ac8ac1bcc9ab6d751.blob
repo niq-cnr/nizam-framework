@@ -1,0 +1,39 @@
+{
+  "review": "independent-checker-bundle",
+  "feature": "workflow-016-planning",
+  "revision_reviewed": 0,
+  "reviewer": "/root/planning_validator",
+  "checker_author": "/root/planning_evaluator",
+  "review_root": "/home/cnross/.tmp/nizam-wa016-checker-review1-p6io_kvr",
+  "revision": "84cc13da81ea3db65ea3f083030862982b086af8",
+  "checker_ref": ".agent/evidence/workflow-016-planning/check_plans.py",
+  "checker_sha256": "151543802068c87c139ffd0820ef9bb2445cff21f579eea811ff99a74e4e2e7c",
+  "contract_sha256": "241032e29314e47cf8b67141faa13caa1b92d24066d358b55dbee2dcfebef485",
+  "interface_sha256": "2345f5830d20033ae3f2db87e782f9beb6014bf6a776959b06bacfa6a23dc15e",
+  "issues": [
+    {
+      "verification_index": 3,
+      "criterion": "Scope preservation must retain existing task authorization/spec/receipt bytes rather than allow a broad evidence-family bypass.",
+      "evidence": ".agent/evidence/workflow-016-planning/validator-checker-own-spot.txt: independent in-memory full check_scope probe changes the tracked authorization-isolation.json path and bytes; checker returns PASS and performs zero protected-content inspections. The existing task evidence path is allowed solely by the wildcard.",
+      "required_fix": "Add a byte/type/mode immutability guard for pre-existing task authorization and evidence receipts against their applicable immutable baseline/checkpoint, with explicit narrow allowances for role-owned current outputs. Add a targeted discriminating mutation control through the real scope guard and a restored valid positive. Do not alter historical receipts.",
+      "severity": "high"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Own --negative execution passed all17 targeted controls and restored synthetic models; own --scope passed the unchanged current bundle. No actual future plans were run or claimed present.",
+    "Installed artifact schemas and immutable NIP3 case-table anchors are used; WA-first allocation, same-list and expanded numeric cross-phase/conflict graphs, pending states and budget sums have concrete guards. Manual final semantic/prose review remains required.",
+    "No checker source, contract, installed file or protected authorization bytes were edited; adversarial mutation was in memory. Verdict and raw receipts are the only review writes."
+  ],
+  "evidence": [
+    ".agent/evidence/workflow-016-planning/validator-checker-negative.txt",
+    ".agent/evidence/workflow-016-planning/validator-checker-scope.txt",
+    ".agent/evidence/workflow-016-planning/validator-checker-own-spot.txt"
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "workflow-016-planning",
+    "summary": "Rejected checker bundle: full scope check falsely accepts mutation of existing protected task authorization evidence."
+  }
+}
