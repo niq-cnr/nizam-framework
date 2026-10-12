@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T19:37:14.683429+00:00",
+  "updated_at": "2026-10-12T19:56:00.542134+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -527,6 +527,10 @@
     },
     "workflow-016-planning-contract-review": {
       "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-checker": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -3865,6 +3869,12 @@
       "event": "workflow-016-planning-precode-approved",
       "evidence": ".agent/evidence/workflow-016-planning/contract-attempt2-approved",
       "detail": "Actual strict JSON ModeA and independent contract review approved same corrected proposal a3d6fde6; only declared contract approval metadata changed; no phaseplans yet."
+    },
+    {
+      "at": "2026-10-12T19:56:00.542134+00:00",
+      "event": "workflow-016-planning-checker-produced",
+      "detail": "Independent TestAuthor small285line helper frozen; actual17 synthetic controls pass. Distinct bundle review pending; no WA/controllerplans written.",
+      "evidence": ".agent/evidence/workflow-016-planning/checker-negative.txt"
     }
   ],
   "phase_001_scope_budget_final": {

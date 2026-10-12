@@ -1,0 +1,39 @@
+{
+  "artifact": "workflow-016-planning-interface",
+  "owner": "/root/workflow_planner",
+  "status": "proposed planning metadata; no phase activation",
+  "pre_code_checkpoint": "132480aab50424f8b3815fba7159b27a5a2bcfdc",
+  "feature_metadata": {
+    "budget_categories": {"product": "integer", "tests": "integer", "process": "integer"},
+    "budget_rule": "sum equals estimated_lines; aggregate phase buckets sum equals original_estimate_lines; do not multiply process a second time"
+  },
+  "list_metadata": {
+    "phase_status": "pending",
+    "ceiling_130pct": "integer: original_estimate_lines * 13 / 10; proposed estimate only",
+    "budget_categories": {"product": "aggregate integer", "tests": "aggregate integer", "process": "aggregate integer"},
+    "future_interfaces": [{"path": "future repo-relative output", "owner": "canonical feature ID"}],
+    "case_matrix": [{"case": 1, "runtime": "stub|sbcl|ci", "layer": "live|policy|mechanism", "owner": "canonical feature ID", "command": "one future atomic command", "proof_kind": "future-live"}],
+    "cross_phase_prerequisites": [{"phase": "prerequisite phase ID", "requires": ["canonical feature IDs or gate identifiers"], "evidence": ["future evidence paths; not present-proof claims"], "authority": "future phase activation and independent approved contracts"}],
+    "shared_file_lanes": [{"path": "one repo-relative shared path", "owners": ["canonical feature IDs"], "order": ["canonical feature IDs in serialized order"]}]
+  },
+  "case_matrix_rules": [
+    "All13 NIP3 cases mapped across016/020; only case8 uses policy and mechanism layers, all others live.",
+    "Required stub cases1,2,3,5,6,8policy,9,10,13; SBCL4,5,6,7,10,11,12; capable CI8mechanism.",
+    "Future runner introduced by its earliest owner; acceptance_tests and case_matrix carry concrete proposed CLI commands.",
+    "No future test runner is executed or asserted implemented by planning."
+  ],
+  "backlog_metadata": {
+    "actual_assigned": [{"phase": "allocated phase ID", "feature_id": "canonical numeric ID", "evidence": ".agent/evidence/<canonical-ID>/"}],
+    "planning_projection": {"phases": "ordered phase-ID array", "allocation": "canonical ID-to-phase object", "order": "recommended implementation phase-ID array"},
+    "stable_alias_rule": "NIP3-115..120 remain conceptual aliases; NIP3-116 spans core semantics127 and full-CI131, preventing numeric115 WA evidence collision"
+  },
+  "recommended_order": ["017-workflow-assurance-foundation", "016-runtime-controller-core", "018-workflow-assurance-controls", "020-sbcl-fresh-acceptance", "019-workflow-assurance-profiles"],
+  "proposed_supersessions": [
+    {"packet": "A09", "prior_serialize_after": ["NIP3-120"], "proposed_serialize_after": ["PLAN-016"], "rationale": "Minimal identity foundation protects controller experiments; preserve dated prior edge and require future activation."},
+    {"packet": "NIP3-115", "prior_serialize_after": [], "proposed_serialize_after": ["A09", "A04b"], "rationale": "Controller core uses candidate identity and sealed independently reviewed acceptance obligations."},
+    {"packet": "A11-D", "prior_serialize_after": [], "proposed_serialize_after": ["NIP3-116"], "rationale": "Concrete core operation semantics inform trustworthy verdict mapping."},
+    {"packet": "NIP3-117", "prior_serialize_after": [], "proposed_serialize_after": ["A10", "A11-CI"], "rationale": "Trusted stage/verdict gates precede SBCL and full fresh acceptance."}
+  ],
+  "preserved_order": "A15 remains after NIP3-120 and requires trusted A10/A11 plus a stable measured same-candidate baseline; recommendation is not activation",
+  "write_boundary": "Only this role-owned interface file; phase plans await independent checker approval and newly assigned isolated attempt root"
+}
