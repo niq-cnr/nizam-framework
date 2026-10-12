@@ -1,7 +1,7 @@
 {
   "plan_status": "candidate",
   "plan_status_note": "H-PHASE-015 active under06c0ae0a273facce80c57506260648c41f566ebb; approved7200/9360 including phase-level costs. Canonical feature/list governs lifecycle;111-114pending. Six WA selections recorded, implementation/planning after114 remains pending; WA/016 unallocated. Historical014/installedv1.5 immutable.",
-  "generated_at": "2026-10-12",
+  "generated_at": "2026-10-12T20:33:33.356588+00:00",
   "base_commit": "08f97b0e8b1002ac0d8362ed147e7253726a5415",
   "base_commit_note": "Approved docs-only phase015-planning implementation base after exact operator H-NIP events; canonical phase014 records/current position remain unchanged.",
   "packet_schema": "schema/work-packet.schema.json",
@@ -3067,7 +3067,7 @@
       "prerequisites": {
         "technical": {
           "satisfied": true,
-          "reason": "Completed114/phase015 actual QA and evidence capture clear planning-input eligibility. PLAN-WA remains pending for serialization and independent planning gates; no activation or allocation."
+          "reason": "Prepared pending plans now exist; actual final planning acceptance/capture remain pending. Future implementation activation is separate."
         },
         "authority": {
           "satisfied": true,
@@ -3078,8 +3078,8 @@
           "reason": "none"
         },
         "evidence": {
-          "satisfied": true,
-          "reason": "Actual .agent/qa/114.json and .agent/evidence/114/evidence-gate.txt plus six selected WA choices recorded in docs/planning/ROADMAP.md clear planning inputs only. PLAN-WA is not delivered or activated."
+          "satisfied": false,
+          "reason": "Prepared plans and current structural validation do not substitute final independent QA/evidence capture."
         }
       },
       "estimate": {
@@ -3128,7 +3128,12 @@
         ".agent/qa/post-ga-maintenance.json",
         ".agent/evidence/post-ga-maintenance/source-candidate.json",
         ".agent/evidence/post-ga-maintenance/capable-ci-receipt.json"
-      ]
+      ],
+      "planning_delivery": {
+        "status": "prepared-review-pending",
+        "validation_ref": ".agent/evidence/workflow-016-planning/plan-validation.json",
+        "completion_gate": "Actual final independent QA and evidence capture; Orchestrator only."
+      }
     },
     {
       "id": "PLAN-016",
@@ -3166,7 +3171,7 @@
       "prerequisites": {
         "technical": {
           "satisfied": false,
-          "reason": "Canonical114/phase015 complete; PLAN-WA serialization remains pending and PLAN-016 still requires its own independent planning gates. No new phase allocated."
+          "reason": "Prepared pending plans now exist; actual final planning acceptance/capture remain pending. Future implementation activation is separate."
         },
         "authority": {
           "satisfied": true,
@@ -3178,7 +3183,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Actual114 QA/capture completes normative readiness, but pending PLAN-WA serialization and separate PLAN-016 planning acceptance do not yet supply a finalized plan."
+          "reason": "Prepared plans and current structural validation do not substitute final independent QA/evidence capture."
         }
       },
       "estimate": {
@@ -3214,7 +3219,12 @@
           "PLAN-WA"
         ]
       },
-      "lane_rank": 290
+      "lane_rank": 290,
+      "planning_delivery": {
+        "status": "prepared-review-pending",
+        "validation_ref": ".agent/evidence/workflow-016-planning/plan-validation.json",
+        "completion_gate": "Actual final independent QA and evidence capture; Orchestrator only."
+      }
     },
     {
       "id": "NIP3-115",
@@ -3297,7 +3307,14 @@
         ],
         "serialize_after": []
       },
-      "lane_rank": 300
+      "lane_rank": 300,
+      "actual_assigned": [
+        {
+          "phase": "016-runtime-controller-core",
+          "feature_id": "126",
+          "evidence": ".agent/evidence/126/"
+        }
+      ]
     },
     {
       "id": "NIP3-116",
@@ -3387,7 +3404,19 @@
         ],
         "serialize_after": []
       },
-      "lane_rank": 310
+      "lane_rank": 310,
+      "actual_assigned": [
+        {
+          "phase": "016-runtime-controller-core",
+          "feature_id": "127",
+          "evidence": ".agent/evidence/127/"
+        },
+        {
+          "phase": "020-sbcl-fresh-acceptance",
+          "feature_id": "131",
+          "evidence": ".agent/evidence/131/"
+        }
+      ]
     },
     {
       "id": "NIP3-117",
@@ -3470,7 +3499,14 @@
         ],
         "serialize_after": []
       },
-      "lane_rank": 320
+      "lane_rank": 320,
+      "actual_assigned": [
+        {
+          "phase": "020-sbcl-fresh-acceptance",
+          "feature_id": "129",
+          "evidence": ".agent/evidence/129/"
+        }
+      ]
     },
     {
       "id": "NIP3-118",
@@ -3553,7 +3589,14 @@
         ],
         "serialize_after": []
       },
-      "lane_rank": 330
+      "lane_rank": 330,
+      "actual_assigned": [
+        {
+          "phase": "020-sbcl-fresh-acceptance",
+          "feature_id": "130",
+          "evidence": ".agent/evidence/130/"
+        }
+      ]
     },
     {
       "id": "NIP3-119",
@@ -3638,7 +3681,14 @@
         ],
         "serialize_after": []
       },
-      "lane_rank": 340
+      "lane_rank": 340,
+      "actual_assigned": [
+        {
+          "phase": "020-sbcl-fresh-acceptance",
+          "feature_id": "131",
+          "evidence": ".agent/evidence/131/"
+        }
+      ]
     },
     {
       "id": "NIP3-120",
@@ -3724,7 +3774,14 @@
         "consumed_by": [],
         "serialize_after": []
       },
-      "lane_rank": 350
+      "lane_rank": 350,
+      "actual_assigned": [
+        {
+          "phase": "020-sbcl-fresh-acceptance",
+          "feature_id": "132",
+          "evidence": ".agent/evidence/132/"
+        }
+      ]
     },
     {
       "id": "A09",
@@ -3808,7 +3865,14 @@
           "NIP3-120"
         ]
       },
-      "lane_rank": 360
+      "lane_rank": 360,
+      "actual_assigned": [
+        {
+          "phase": "017-workflow-assurance-foundation",
+          "feature_id": "115",
+          "evidence": ".agent/evidence/115/"
+        }
+      ]
     },
     {
       "id": "A11-D",
@@ -3888,7 +3952,14 @@
         ],
         "serialize_after": []
       },
-      "lane_rank": 370
+      "lane_rank": 370,
+      "actual_assigned": [
+        {
+          "phase": "018-workflow-assurance-controls",
+          "feature_id": "119",
+          "evidence": ".agent/evidence/119/"
+        }
+      ]
     },
     {
       "id": "A10",
@@ -3971,7 +4042,14 @@
           "A11-D"
         ]
       },
-      "lane_rank": 380
+      "lane_rank": 380,
+      "actual_assigned": [
+        {
+          "phase": "018-workflow-assurance-controls",
+          "feature_id": "120",
+          "evidence": ".agent/evidence/120/"
+        }
+      ]
     },
     {
       "id": "A11-CI",
@@ -4053,7 +4131,14 @@
         ],
         "serialize_after": []
       },
-      "lane_rank": 390
+      "lane_rank": 390,
+      "actual_assigned": [
+        {
+          "phase": "018-workflow-assurance-controls",
+          "feature_id": "123",
+          "evidence": ".agent/evidence/123/"
+        }
+      ]
     },
     {
       "id": "A04b",
@@ -4132,7 +4217,14 @@
         ],
         "serialize_after": []
       },
-      "lane_rank": 400
+      "lane_rank": 400,
+      "actual_assigned": [
+        {
+          "phase": "017-workflow-assurance-foundation",
+          "feature_id": "116",
+          "evidence": ".agent/evidence/116/"
+        }
+      ]
     },
     {
       "id": "A14",
@@ -4211,7 +4303,14 @@
         ],
         "serialize_after": []
       },
-      "lane_rank": 410
+      "lane_rank": 410,
+      "actual_assigned": [
+        {
+          "phase": "018-workflow-assurance-controls",
+          "feature_id": "122",
+          "evidence": ".agent/evidence/122/"
+        }
+      ]
     },
     {
       "id": "A16-WA",
@@ -4290,7 +4389,14 @@
         "consumed_by": [],
         "serialize_after": []
       },
-      "lane_rank": 420
+      "lane_rank": 420,
+      "actual_assigned": [
+        {
+          "phase": "018-workflow-assurance-controls",
+          "feature_id": "123",
+          "evidence": ".agent/evidence/123/"
+        }
+      ]
     },
     {
       "id": "A15",
@@ -4369,7 +4475,19 @@
           "NIP3-120"
         ]
       },
-      "lane_rank": 430
+      "lane_rank": 430,
+      "actual_assigned": [
+        {
+          "phase": "019-workflow-assurance-profiles",
+          "feature_id": "124",
+          "evidence": ".agent/evidence/124/"
+        },
+        {
+          "phase": "019-workflow-assurance-profiles",
+          "feature_id": "125",
+          "evidence": ".agent/evidence/125/"
+        }
+      ]
     }
   ],
   "authorized_follow_up": {
@@ -4481,5 +4599,168 @@
       "selected_recommendation": "Explicit file/state conflict lanes in single existing coordination model; serialize shared ownership, isolate retries, invalidate affected evidence, rollback only owned changes.",
       "detail": "Explicit approval of this recommendation from the six-item operator review. Record choice now; futureWA executable realization remains dependency-gated after015 closure and concrete phase activation."
     }
-  ]
+  ],
+  "planning_projection": {
+    "phases": [
+      "017-workflow-assurance-foundation",
+      "018-workflow-assurance-controls",
+      "019-workflow-assurance-profiles",
+      "016-runtime-controller-core",
+      "020-sbcl-fresh-acceptance"
+    ],
+    "allocation": {
+      "115": "017-workflow-assurance-foundation",
+      "116": "017-workflow-assurance-foundation",
+      "117": "017-workflow-assurance-foundation",
+      "118": "017-workflow-assurance-foundation",
+      "119": "018-workflow-assurance-controls",
+      "120": "018-workflow-assurance-controls",
+      "121": "018-workflow-assurance-controls",
+      "122": "018-workflow-assurance-controls",
+      "123": "018-workflow-assurance-controls",
+      "124": "019-workflow-assurance-profiles",
+      "125": "019-workflow-assurance-profiles",
+      "126": "016-runtime-controller-core",
+      "127": "016-runtime-controller-core",
+      "128": "016-runtime-controller-core",
+      "129": "020-sbcl-fresh-acceptance",
+      "130": "020-sbcl-fresh-acceptance",
+      "131": "020-sbcl-fresh-acceptance",
+      "132": "020-sbcl-fresh-acceptance"
+    },
+    "order": [
+      "017-workflow-assurance-foundation",
+      "016-runtime-controller-core",
+      "018-workflow-assurance-controls",
+      "020-sbcl-fresh-acceptance",
+      "019-workflow-assurance-profiles"
+    ],
+    "validation_ref": ".agent/evidence/workflow-016-planning/plan-validation.json",
+    "status": "prepared-review-pending"
+  },
+  "proposed_supersessions": [
+    {
+      "packet": "A09",
+      "prior_serialize_after": [
+        "NIP3-120"
+      ],
+      "proposed_serialize_after": [
+        "PLAN-016"
+      ],
+      "rationale": "Minimal identity foundation protects controller experiments; preserve dated prior edge and require future activation. Historical serialize_after NIP3-120; proposed115 identity foundation precedes126. Actual feature-list numeric cross-phase prerequisites and shared-file lanes are the proposed execution authority; original packet edges remain dated history.",
+      "stage_bindings": {
+        "owners": [
+          "115"
+        ],
+        "resolved_prerequisites": [],
+        "replaces": "Historical serialize_after NIP3-120; proposed115 identity foundation precedes126."
+      },
+      "resolved_prerequisites": [],
+      "adoption_state": "pending-future-H-PHASE-activation"
+    },
+    {
+      "packet": "NIP3-115",
+      "prior_serialize_after": [],
+      "proposed_serialize_after": [
+        "A09",
+        "A04b"
+      ],
+      "rationale": "Controller core uses candidate identity and sealed independently reviewed acceptance obligations. Controller126 follows full captured foundation017-close owner118, with identity115/sealed116. Actual feature-list numeric cross-phase prerequisites and shared-file lanes are the proposed execution authority; original packet edges remain dated history.",
+      "stage_bindings": {
+        "owners": [
+          "126"
+        ],
+        "resolved_prerequisites": [
+          "115",
+          "116",
+          "117",
+          "118"
+        ],
+        "replaces": "Controller126 follows full captured foundation017-close owner118, with identity115/sealed116."
+      },
+      "resolved_prerequisites": [
+        "115",
+        "116",
+        "117",
+        "118"
+      ],
+      "adoption_state": "pending-future-H-PHASE-activation"
+    },
+    {
+      "packet": "A11-D",
+      "prior_serialize_after": [],
+      "proposed_serialize_after": [
+        "NIP3-116"
+      ],
+      "rationale": "Concrete core operation semantics inform trustworthy verdict mapping. NIP3-116 binds only core127 here; finalCI131 is excluded. Actual feature-list numeric cross-phase prerequisites and shared-file lanes are the proposed execution authority; original packet edges remain dated history.",
+      "stage_bindings": {
+        "owners": [
+          "119"
+        ],
+        "resolved_prerequisites": [
+          "127"
+        ],
+        "replaces": "NIP3-116 binds only core127 here; finalCI131 is excluded."
+      },
+      "resolved_prerequisites": [
+        "127"
+      ],
+      "adoption_state": "pending-future-H-PHASE-activation"
+    },
+    {
+      "packet": "NIP3-117",
+      "prior_serialize_after": [],
+      "proposed_serialize_after": [
+        "A10",
+        "A11-CI"
+      ],
+      "rationale": "Trusted stage/verdict gates precede SBCL and full fresh acceptance. Historical depends_on whole NIP3-116 is split: core127 via128, never finalCI131, plus trusted controls119/120/123. Actual feature-list numeric cross-phase prerequisites and shared-file lanes are the proposed execution authority; original packet edges remain dated history.",
+      "stage_bindings": {
+        "owners": [
+          "129"
+        ],
+        "resolved_prerequisites": [
+          "128",
+          "119",
+          "120",
+          "123"
+        ],
+        "replaces": "Historical depends_on whole NIP3-116 is split: core127 via128, never finalCI131, plus trusted controls119/120/123."
+      },
+      "resolved_prerequisites": [
+        "128",
+        "119",
+        "120",
+        "123"
+      ],
+      "adoption_state": "pending-future-H-PHASE-activation"
+    }
+  ],
+  "planned_additional_nodes": [
+    {
+      "feature_id": "117",
+      "phase": "017-workflow-assurance-foundation",
+      "status": "pending",
+      "evidence": ".agent/evidence/117/"
+    },
+    {
+      "feature_id": "118",
+      "phase": "017-workflow-assurance-foundation",
+      "status": "pending",
+      "evidence": ".agent/evidence/118/"
+    },
+    {
+      "feature_id": "121",
+      "phase": "018-workflow-assurance-controls",
+      "status": "pending",
+      "evidence": ".agent/evidence/121/"
+    },
+    {
+      "feature_id": "128",
+      "phase": "016-runtime-controller-core",
+      "status": "pending",
+      "evidence": ".agent/evidence/128/"
+    }
+  ],
+  "proposed_execution_note": "Recommended017->016->018->020->019 only; pending future activation. Original whole-alias graph is dated history. NIP3-116127 core and131 finalCI stay separately pending; A15 retains NIP3-120132 delay. Canonical proposed execution graph uses feature-list numeric dependencies, cross_phase_prerequisites and shared_file_lanes."
 }

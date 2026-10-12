@@ -2,10 +2,13 @@
 id: nip-0004-workflow-assurance
 title: "NIP-0004 — Workflow Assurance"
 description: "Proposed staged assurance for candidate identity, evidence invalidation, gate transitions, independent test ownership and isolated coordination."
-version: 1.1.0
+version: 1.1.1
 status: active
 authoritative_source: docs/nips/NIP-0004-workflow-assurance.md
 change_log:
+  - version: "1.1.1"
+    date: "2026-10-12"
+    summary: "Prepare allocated WA/controller plans and explicit proposed execution order; preserve history and leave activation and planning completion pending."
   - version: "1.1.0"
     date: "2026-10-11"
     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
@@ -30,6 +33,17 @@ acceptance, not implemented policy. Six design recommendations were separately
 selected by the operator as recorded below; no active gate is reduced.
 No WA phase or numeric feature IDs are allocated. Later realization requires
 separate phase planning, H-PHASE activation and independent contract gates.
+
+### Current WA planning — 2026-10-12
+
+This dated overlay supersedes earlier unallocated statements. Prepared draft plans
+allocate017 foundation115–118,018 controls119–123 and019 deferred profiles124–125.
+See [foundation spec](../../.agent/product_spec_017.md)/[list](../../.agent/feature_list_017.json),
+[controls spec](../../.agent/product_spec_018.md)/[list](../../.agent/feature_list_018.json)
+and [profiles spec](../../.agent/product_spec_019.md)/[list](../../.agent/feature_list_019.json).
+PLAN-WA/PLAN-016 completion awaits actual final independent QA and capture;
+H-PHASE-017/018/019 and all implementation/budget approvals remain pending.
+Accepted case/choice text remains frozen. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Current evidence and problem
 
@@ -165,6 +179,27 @@ conflict semantics extend the single accountable coordination model. This NIP's
 prospective version-impact assessment is MINOR for additive optional records and
 checks, but MAJOR if acceptance later requires new mandatory fields or changes a
 consumer contract. That assessment is a proposed release decision, not a new release.
+
+### Proposed execution recommendation — 2026-10-12
+
+Recommend017→016→018→020→019, requiring future activation. Foundation115 identity,
+116 sealed acceptance,117 authorized entry and118 bounded close precede controller
+126–128. Controls119 verdict mapping,120 A10 recovery,121 conflict lanes,122 A14
+cause routing and123 capable CI/WA close follow core127 specifically. Alias
+NIP3-116 also includes later131 full CI; using131 as the control prerequisite
+would create a cycle. Proposed supersessions record the127 binding separately
+from preserved historical packet edges. SBCL129–132 follows trusted119/120/123;
+profiles124/125 retain A15-after132 and trusted A10/A11 plus preregistered
+same-candidate full-baseline bounds. Missed baseline blockers prevent promotion;
+no active gate is reduced.
+
+WA split budgets are5400/7020,7200/9360,3500/4550; full16100 prices product,
+independent tests and counted process/registrations/contracts/verdicts/close-out.
+Historical4360–13190 weighted forecasts omitted entry/conflict and independent
+closure costs. Splits fit7200/8600 precedents; all budgets remain proposals.
+Open040/034 remain inputs. Existing roles, one coordination model and three-attempt
+identity survive agent/process/stage changes; infrastructure failures remain
+failures. Local SBCL version proves no live acceptance. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Acceptance matrix
 

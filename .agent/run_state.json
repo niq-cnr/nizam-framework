@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T20:29:33.460695+00:00",
+  "updated_at": "2026-10-12T20:38:50.738275+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -546,6 +546,10 @@
       "limit": 3
     },
     "workflow-016-planning-plan-016": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-public-integration": {
       "attempts": 1,
       "limit": 3
     }
@@ -3927,6 +3931,12 @@
       "event": "workflow-016-planning-controller-produced",
       "detail": "After strictWA review, Planner pending016/020 IDs126\u2013132; 5650/7350 fullcounted estimates, 17planned runtime/layer rows covering13cases and standalone existing-toolhostpreflight. Actualschema/DAG/scope0; publicprojection/all-gate notclaimed yet.",
       "evidence": ".agent/evidence/workflow-016-planning/016-planning-checks.txt"
+    },
+    {
+      "at": "2026-10-12T20:38:50.738275+00:00",
+      "event": "workflow-016-planning-final-stage-checker-failure",
+      "detail": "Actual publicintegration all/scope/diff0; mandatory currentWA1 manifest-projection: partialchecker wrongly assumes currentmanifestcontainsWA-only rows insteadofcorrectfiveproposedphases. Publicsourcecandidateunapproved/preserved; samechecker step architecturalattempt3 required, no fourth.",
+      "evidence": ".agent/evidence/workflow-016-planning/public-attempt1-checks.txt"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4595,7 +4605,7 @@
   "pending_operator_gate": null,
   "planning_task": {
     "id": "workflow-016-planning",
-    "status": "public-integration",
+    "status": "final-stage-checker-repair",
     "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json",
     "attempt_root": "/home/cnross/.tmp/nizam-wa016-plan-attempt1-207l_sra",
     "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0"
