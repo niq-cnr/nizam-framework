@@ -1,0 +1,72 @@
+{
+  "steps_planned": 13,
+  "checks": [
+    {
+      "command": "bash tools/validate.sh",
+      "evidence": ".agent/evidence/112/source-development-attempt3/01.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Conditions and restarts$'\"'\"' '\"'\"'(^|[^[:alnum:]_])handler-bind([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/source-development-attempt3/02.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Image drift$'\"'\"' '\"'\"'(^|[^[:alnum:]_])defvar([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/source-development-attempt3/03.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Timeouts and cancellation$'\"'\"' '\"'\"'(^|[^[:alnum:]_])join-thread([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/source-development-attempt3/04.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Fresh-environment acceptance$'\"'\"' '\"'\"'(^|[^[:alnum:]_])CL_SOURCE_REGISTRY([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/source-development-attempt3/05.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Fresh-environment acceptance$'\"'\"' '\"'\"'(^|[^[:alnum:]_])ASDF_OUTPUT_TRANSLATIONS([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/source-development-attempt3/06.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'NIZAM.json'\"'\"').read_text()); assert any(v['\"'\"'authoritative_source'\"'\"']=='\"'\"'methodology/11_sbcl_runtime_binding.md'\"'\"' for v in d['\"'\"'capabilities'\"'\"'])'",
+      "evidence": ".agent/evidence/112/source-development-attempt3/07.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --structure",
+      "evidence": ".agent/evidence/112/source-development-attempt3/08.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --scope",
+      "evidence": ".agent/evidence/112/source-development-attempt3/09.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --historical",
+      "evidence": ".agent/evidence/112/source-development-attempt3/10.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --lifecycle",
+      "evidence": ".agent/evidence/112/source-development-attempt3/11.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --budget",
+      "evidence": ".agent/evidence/112/source-development-attempt3/12.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --negative",
+      "evidence": ".agent/evidence/112/source-development-attempt3/13.txt",
+      "exit_code": 0
+    }
+  ],
+  "source_freeze_sha256": "cdb1dd56bbfb8dc4b87b3acf79112889971b37a5ab2ee167bca841a67e7afcfd",
+  "recorded_at": "2026-10-12T03:22:57.358902+00:00"
+}

@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.59.0
+version: 0.59.1
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.59.1"
+    date: "2026-10-12"
+    summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
   - version: "0.59.0"
     date: "2026-10-11"
     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
@@ -349,7 +352,7 @@ counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs
 Canonical lifecycle and current feature position are read from
 `.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
 requires its approved contract, both independent pre-code gates, Mode B, QA and
-the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
 records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
 | Feature | Scope | Approved counted lines |
@@ -830,7 +833,7 @@ counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs
 Canonical lifecycle and current feature position are read from
 `.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
 requires its approved contract, both independent pre-code gates, Mode B, QA and
-the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
 records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
 - **Current planning refresh merged; bounded maintenance is verified.** The [current backlog view](backlog_reconciliation.md) retains exact complete/cancelled canonical mirrors and factual planning inputs. Resolved NDEBT-047/046/045 and completed A04a cite actual maintenance QA/CI proof; NIP3/WA scopes are now accepted; phase015 activation is recorded above; future release and installed-upgrade authority remain outstanding. Both prior planning checkers and historical evidence stay frozen.

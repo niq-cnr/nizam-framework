@@ -1,0 +1,47 @@
+cat .agent/evidence/112/failed-contract-attempt1/112-mode-a.json
+{
+  "stage": "validator-mode-a",
+  "feature": "112",
+  "contract_id": "112",
+  "contract_attempt": 1,
+  "revision_reviewed": 0,
+  "reviewed_at": "2026-10-12T02:10:55.901483+00:00",
+  "reviewer": "/root/binding_validator_112",
+  "base_revision": "da1131846815328890cfb509be608551b80a82a7",
+  "proposal_path": ".agent/evidence/112/proposal-attempt1/112.json",
+  "proposal_sha256": "e806557c1dede96a8242b0960129997640893afb8427fefdb92a6e9db5894986",
+  "issues": [
+    {
+      "verification_index": 10,
+      "criterion": "AT11 historical protection and current shared-product scope must be simultaneously satisfiable.",
+      "severity": "high",
+      "evidence": ".agent/evidence/112/validator112/07-coverage-and-overlap-read.txt",
+      "finding": "AT11 requires original111 source products to be immutable against the fixed base, while scope.files_modify explicitly authorizes NIZAM.json, CHANGELOG.md and methodology/10_live_runtime_sessions.md modifications. The approved111 contract independently confirms those paths are111 source products. The current wording neither distinguishes archived original111 products from current shared products nor exempts the exact declared112 deltas; a checker applying AT11 literally rejects required112 deliverables, and a checker exempting them silently invents a contract exception.",
+      "required_fix": "Explicitly distinguish immutable111 historical proofs/contracts/specs/checkers/QA/seals and frozen original-product snapshots from current shared source products. Preserve every non-112 product byte and permit only the already declared bounded112 modifications on NIZAM.json, CHANGELOG.md and methodology/10_live_runtime_sessions.md. State that old111 checker/QA receipts remain historical and are never rerun against the112 source tree; align AT11 with AT10 and future checker requirements."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "The proposal hash matches the frozen duplicate and declares proposed status; the first seven verification commands match the canonical112 acceptance strings byte-for-byte,20 verification commands are declared, and estimated_lines remains1200.",
+    "The profile, condition/restart handling, non-atomic load/compile, drift, thread/special-variable, cancellation and fresh process/build/hermetic configuration obligations cover the authoritative112/NIP3 scope. ASDF forms remain illustrative; phase016 live proof, controller/adapter implementation and new profile mechanism are excluded.",
+    "The eight specified outcome values match the current operation schema and Document10. stopped_waiting, confirmed cancellation and failed-load consistency obligations match the inspected current definitions. No implementation or contract verification command was executed.",
+    "Independent checker authoring and bundle review are explicitly later gates; future semantic receipts are not automated semantic proof. The declared freeze excludes mutable future QA/evidence/lifecycle outputs and separately binds checker/inventory integrity.",
+    "Versioned activation-time corrections and method10 availability updates are bounded; published release anchors, installed239-file payload, budgets and unrelated lifecycle/counters remain protected."
+  ],
+  "evidence": [
+    ".agent/evidence/112/validator112/01-proposal-read.txt",
+    ".agent/evidence/112/validator112/02-proposal-hashes.txt",
+    ".agent/evidence/112/validator112/03-source-delta.txt",
+    ".agent/evidence/112/validator112/04-untracked.txt",
+    ".agent/evidence/112/validator112/05-base-contract-read.txt",
+    ".agent/evidence/112/validator112/06-prior-contract-read.txt",
+    ".agent/evidence/112/validator112/07-coverage-and-overlap-read.txt"
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "112"
+  }
+}
+
+EXIT:0

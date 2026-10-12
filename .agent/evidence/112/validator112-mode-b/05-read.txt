@@ -1,0 +1,156 @@
+cat .agent/evidence/112/source-development-attempt2/13.txt
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --negative
+APPROVED_BASE: a6734f3debc71e8c307b9169c2782a7ab7372ecd
+SOURCE_FREEZE_SHA256: 4020d201cacc5a5f4167e00468cd08d08deaeb1362f1931d5b820d77fbf9cee6
+STAGE: authorized source2 development checkpoint; checker2 unchanged, not final candidate QA
+OBSERVED_AT: 2026-10-12T03:08:58.432611+00:00
+== 112: da1131846815328890cfb509be608551b80a82a7..WORKTREE
+   resolved da1131846815328890cfb509be608551b80a82a7..WORKTREE+untracked
+   paths=121 binary_paths=3
+   class                       files   lines
+   budget/product                  5     301
+   budget/product-ext              1       9
+   budget/contract                 1     294
+   budget/verdict                  6     246
+   budget/audit-deliverable        0       0
+   budget/planning                 7      45
+   evidence                      100   18107
+   excluded/run_state              1     127
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                   8  CHANGELOG.md
+   budget/product                   6  NIZAM.json
+   budget/product                  16  methodology/10_live_runtime_sessions.md
+   budget/product                 259  methodology/11_sbcl_runtime_binding.md
+   budget/product                  12  methodology/README.md
+   budget/product-ext               9  docs/nips/NIP-0003-live-runtime-sessions.md
+   budget/contract                294  .agent/contracts/112.json
+   budget/verdict                  24  .agent/qa/112-contract-review-rev2.json
+   budget/verdict                  32  .agent/qa/112-contract-review.json
+   budget/verdict                  55  .agent/validator/112-bundle-review-attempt1.json
+   budget/verdict                  56  .agent/validator/112-bundle-review-attempt2.json
+   budget/verdict                  35  .agent/validator/112-mode-a-rev2.json
+   budget/verdict                  44  .agent/validator/112-mode-a.json
+   budget/planning                  6  .agent/feature_list_015.json
+   budget/planning                  7  docs/planning/HANDOVER.md
+   budget/planning                  9  docs/planning/ROADMAP.md
+   budget/planning                 12  docs/planning/backlog_dag.json
+   budget/planning                  7  docs/planning/backlog_reconciliation.md
+   budget/planning                  2  docs/planning/manifest.json
+   budget/planning                  2  docs/planning/phase_015.yaml
+   excluded/run_state             127  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                      100   18107  .agent/evidence/112/
+   PRODUCT_LINES=310
+   PROCESS_OVERHEAD_LINES=585  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=895
+   EVIDENCE_LINES=18107
+   EXCLUDED_LINES=127
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=19129  (= budget 895 + evidence 18107 + excluded 127 + unclassified 0)
+{"base": "da1131846815328890cfb509be608551b80a82a7", "counted": 895, "evidence": 18107, "excluded": 127, "prior_completed": 4844, "prior_only_3x": 7266, "remaining_before112": 4516}
+CONTROL measurement-equivalence EXIT:0 Git text=4 rejectedSequenceMatcher=6
+CONTROL measurement-unclassified EXIT:3 diagnostic:UNCLASSIFIED: .agent/validator/nested/unclassified.json
+RESTORED measurement-equivalence EXIT:0
+CONTROL comment-only-section2 EXIT:1 diagnostic:section-empty
+RESTORED comment-only-section2 EXIT:0
+CONTROL comment-only-section5 EXIT:1 diagnostic:section-empty
+RESTORED comment-only-section5 EXIT:0
+CONTROL comment-only-section6 EXIT:1 diagnostic:section-empty
+RESTORED comment-only-section6 EXIT:0
+CONTROL comment-only-section8 EXIT:1 diagnostic:section-empty
+RESTORED comment-only-section8 EXIT:0
+CONTROL comment-only-section9 EXIT:1 diagnostic:section-empty
+RESTORED comment-only-section9 EXIT:0
+CONTROL misplaced-handler-bind EXIT:1 diagnostic:section-token
+RESTORED misplaced-handler-bind EXIT:0
+CONTROL misplaced-defvar EXIT:1 diagnostic:section-token
+RESTORED misplaced-defvar EXIT:0
+CONTROL misplaced-join-thread EXIT:1 diagnostic:section-token
+RESTORED misplaced-join-thread EXIT:0
+CONTROL misplaced-CL_SOURCE_REGISTRY EXIT:1 diagnostic:section-token
+RESTORED misplaced-CL_SOURCE_REGISTRY EXIT:0
+CONTROL misplaced-ASDF_OUTPUT_TRANSLATIONS EXIT:1 diagnostic:section-token
+RESTORED misplaced-ASDF_OUTPUT_TRANSLATIONS EXIT:0
+CONTROL misplaced-ignore-inherited-configuration EXIT:1 diagnostic:section-token
+RESTORED misplaced-ignore-inherited-configuration EXIT:0
+CONTROL timeout-is-cancelled EXIT:1 diagnostic:timeout-semantics
+RESTORED timeout-is-cancelled EXIT:0
+CONTROL reuse-shared-fasl EXIT:1 diagnostic:fresh-cache-policy
+RESTORED reuse-shared-fasl EXIT:0
+CONTROL claim-live-conformance EXIT:1 diagnostic:live-boundary
+RESTORED claim-live-conformance EXIT:0
+CONTROL missing-registration EXIT:1 diagnostic:registration
+RESTORED missing-registration EXIT:0
+CONTROL released-version-change EXIT:1 diagnostic:index-delta
+RESTORED released-version-change EXIT:0
+CONTROL unauthorized-source EXIT:1 diagnostic:scope-path
+RESTORED unauthorized-source EXIT:0
+CONTROL historical111-proof EXIT:1 diagnostic:historical-immutable
+RESTORED historical111-proof EXIT:0
+CONTROL untouched111-tool EXIT:1 diagnostic:historical-immutable
+RESTORED untouched111-tool EXIT:0
+CONTROL immutable-installed EXIT:1 diagnostic:historical-immutable
+RESTORED immutable-installed EXIT:0
+CONTROL prior112-proof EXIT:1 diagnostic:historical-immutable
+RESTORED prior112-proof EXIT:0
+CONTROL method10-rule-change EXIT:1 diagnostic:bounded-document
+RESTORED method10-rule-change EXIT:0
+CONTROL counter-reset111 EXIT:1 diagnostic:counter-continuity
+RESTORED counter-reset111 EXIT:0
+CONTROL counter-reset112-contract EXIT:1 diagnostic:counter-continuity
+RESTORED counter-reset112-contract EXIT:0
+CONTROL early-completion-full-projection EXIT:1 diagnostic:early-completion
+RESTORED early-completion-full-projection EXIT:0
+CONTROL phase-budget-increase EXIT:1 diagnostic:budget-authority
+== 112: da1131846815328890cfb509be608551b80a82a7..WORKTREE
+   resolved da1131846815328890cfb509be608551b80a82a7..WORKTREE+untracked
+   paths=121 binary_paths=3
+   class                       files   lines
+   budget/product                  5     301
+   budget/product-ext              1       9
+   budget/contract                 1     294
+   budget/verdict                  6     246
+   budget/audit-deliverable        0       0
+   budget/planning                 7      45
+   evidence                      100   18107
+   excluded/run_state              1     127
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                   8  CHANGELOG.md
+   budget/product                   6  NIZAM.json
+   budget/product                  16  methodology/10_live_runtime_sessions.md
+   budget/product                 259  methodology/11_sbcl_runtime_binding.md
+   budget/product                  12  methodology/README.md
+   budget/product-ext               9  docs/nips/NIP-0003-live-runtime-sessions.md
+   budget/contract                294  .agent/contracts/112.json
+   budget/verdict                  24  .agent/qa/112-contract-review-rev2.json
+   budget/verdict                  32  .agent/qa/112-contract-review.json
+   budget/verdict                  55  .agent/validator/112-bundle-review-attempt1.json
+   budget/verdict                  56  .agent/validator/112-bundle-review-attempt2.json
+   budget/verdict                  35  .agent/validator/112-mode-a-rev2.json
+   budget/verdict                  44  .agent/validator/112-mode-a.json
+   budget/planning                  6  .agent/feature_list_015.json
+   budget/planning                  7  docs/planning/HANDOVER.md
+   budget/planning                  9  docs/planning/ROADMAP.md
+   budget/planning                 12  docs/planning/backlog_dag.json
+   budget/planning                  7  docs/planning/backlog_reconciliation.md
+   budget/planning                  2  docs/planning/manifest.json
+   budget/planning                  2  docs/planning/phase_015.yaml
+   excluded/run_state             127  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                      100   18107  .agent/evidence/112/
+   PRODUCT_LINES=310
+   PROCESS_OVERHEAD_LINES=585  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=895
+   EVIDENCE_LINES=18107
+   EXCLUDED_LINES=127
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=19129  (= budget 895 + evidence 18107 + excluded 127 + unclassified 0)
+{"base": "da1131846815328890cfb509be608551b80a82a7", "counted": 895, "evidence": 18107, "excluded": 127, "prior_completed": 4844, "prior_only_3x": 7266, "remaining_before112": 4516}
+RESTORED phase-budget-increase EXIT:0
+PASS112 negative
+
+EXIT: 0
+
+EXIT:0

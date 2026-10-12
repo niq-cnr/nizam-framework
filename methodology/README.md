@@ -2,10 +2,13 @@
 id: nizam-methodology-readme
 title: "Methodology Module — Index"
 description: "Index for the methodology/ module: the protocol documents governing planning, contract-first execution, adversarial TDD, the universal circuit breaker, tool-driven durable state, eval and trace infrastructure, the release train, cross-repo dependency gates, and review-gate flake management."
-version: 0.5.0
+version: 0.6.0
 status: active
 authoritative_source: methodology/README.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-10-12"
+    summary: "Index the SBCL reference binding with its folded language profile and pending live-enforcement boundary."
   - version: "0.5.0"
     date: "2026-10-11"
     summary: "Index the neutral consumer-aspirational live-runtime-session protocol."
@@ -25,9 +28,9 @@ change_log:
 The `methodology/` module owns the execution methodology: planning enforcement,
 the contract-first harness loop, adversarial TDD, the universal circuit
 breaker, tool-driven durable state, the release train protocol, and
-review-gate flake management. Every
-document in this module is runtime-agnostic and builds on the agent roles and
-gates defined in `standard/AGF.md`.
+review-gate flake management. The neutral protocols and the named SBCL
+reference binding build on the agent roles and gates defined in
+`standard/AGF.md`.
 
 | File | Purpose |
 |---|---|
@@ -43,6 +46,7 @@ gates defined in `standard/AGF.md`.
 | [`09_review_gate_flake_management.md`](09_review_gate_flake_management.md) | Review-Gate Flake Management — operational doctrine for infrastructure failures of a convergent review gate: fail-closed principles, the open F1–F6 flake-class taxonomy, the bounded retry ladder with class-exception duties, protected-repository rules, telemetry, evidence duties (post-merge evidence races, canonical-vs-vendored resync waves), and flake-rate KPI targets. |
 
 | [`10_live_runtime_sessions.md`](10_live_runtime_sessions.md) | Live Runtime Sessions — neutral ownership, lease and generation checks, serialized operations, honest outcomes, reconstructible handoffs and fresh hermetic acceptance; consumer-aspirational runtime enforcement. |
+| [`11_sbcl_runtime_binding.md`](11_sbcl_runtime_binding.md) | SBCL reference binding — folded language profile, non-atomic effects, condition capture, image drift, thread/cancellation hazards and fresh hermetic acceptance; executable enforcement and live proof remain pending. |
 
 ## Design Decision Cross-Reference
 

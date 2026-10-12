@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
-  "current_feature": "112",
+  "current_feature": "113",
   "status": "in_progress",
-  "updated_at": "2026-10-11T18:58:58.271536+00:00",
+  "updated_at": "2026-10-12T03:51:38.477650+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -409,6 +409,30 @@
     },
     "111-qa": {
       "attempts": 2,
+      "limit": 3
+    },
+    "112-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "112-generator-development": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "112-checker-development": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "112-checker-review": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "112-implementation": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "112-qa": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -3063,6 +3087,201 @@
       "prior_three_times_threshold": 5133.0,
       "evidence": ".agent/evidence/111/scope-measurement.txt",
       "detail": "Finalcompleted111 scope3133 measuredwithfrozenclassifier; original7200/9360 retained. Compareonlyprior110 baseline1711=>5133beforeappend. Cumulative4844 below9360; oldfailedinflight snapshots preserved and notdoublecounted."
+    },
+    {
+      "at": "2026-10-12T02:01:48.925308+00:00",
+      "event": "contract_attempt_isolated",
+      "contract_id": "112",
+      "attempt": 1,
+      "approved_base": "da1131846815328890cfb509be608551b80a82a7",
+      "attempt_root": "/home/cnross/.tmp/nizam-112-contract-attempt1-4esezl28",
+      "evidence": ".agent/evidence/112/contract-attempt1-root.json",
+      "detail": "Recordownedroot/beforeedits; preserve original7200/9360phasebudget, completed4844 and111historicalacceptance. No implementationbeforebothactualpre-code approvals; no futurephaseallocation/installupgrade."
+    },
+    {
+      "at": "2026-10-12T02:13:48.586221+00:00",
+      "event": "contract_rejected",
+      "contract_id": "112",
+      "attempt": 1,
+      "proposal_sha256": "e806557c1dede96a8242b0960129997640893afb8427fefdb92a6e9db5894986",
+      "evidence": ".agent/evidence/112/failed-contract-attempt1/preservation.json",
+      "detail": "Bothindependentactualpre-codegates rejectone AT11 false-failconflict: original111sharedsourceimmutability vs permittedNIZAM/CHANGELOG/method10 current112deltas. Allothercoverage adequate. No source/tests/proposedverification executed; actualcount0->1/3 and freshimmutablebase retry required."
+    },
+    {
+      "at": "2026-10-12T02:13:48.586221+00:00",
+      "event": "contract_attempt_isolated",
+      "contract_id": "112",
+      "attempt": 2,
+      "approved_base": "da1131846815328890cfb509be608551b80a82a7",
+      "attempt_root": "/home/cnross/.tmp/nizam-112-contract-attempt2-3dhpspbg",
+      "evidence": ".agent/evidence/112/contract-attempt2-root.json",
+      "detail": "Type/interfaceanalysis: distinguish immutablehistoricalproof and untouchedsource from exact3declaredsharedcurrentproductdeltas. No scope/AC/budget expansion."
+    },
+    {
+      "at": "2026-10-12T02:19:15.280669+00:00",
+      "event": "contract_approved",
+      "contract_id": "112",
+      "attempt": 2,
+      "proposal_sha256": "ecfb4258fbadbdada2e7fdc2a2ea6d7ff5a151bb5ae4b59166ab725284190701",
+      "approval_evidence": [
+        ".agent/validator/112-mode-a-rev2.json",
+        ".agent/qa/112-contract-review-rev2.json"
+      ],
+      "detail": "Both actual machine-readable revision2 verdicts approve with all blocking arrays empty. The exact three shared-source paths are bounded by declared112 deltas; historical111 proof and all untouched source stay immutable. Original7 acceptance commands, estimate1200 and phase7200/9360 remain unchanged. No product or test implementation existed before approval."
+    },
+    {
+      "at": "2026-10-12T02:20:00.963607+00:00",
+      "event": "implementation_attempt_isolated",
+      "contract_id": "112",
+      "attempt": 1,
+      "approved_base": "7d852bd7aedde01d7739126aa7a1cf880534a410",
+      "attempt_root": "/home/cnross/.tmp/nizam-112-implementation1-zkfhrmpr",
+      "evidence": ".agent/evidence/112/approved-base.json",
+      "detail": "Fresh owned detached workspace at approved revision2 base. TestAuthor and Generator have separate ownership; canonical112 is already in progress after both pre-code approvals. No counter reset, budget change or historical proof rerun."
+    },
+    {
+      "at": "2026-10-12T02:40:16.233397+00:00",
+      "event": "checker_bundle_rejected",
+      "contract_id": "112",
+      "attempt": 1,
+      "evidence": ".agent/validator/112-bundle-review-attempt1.json",
+      "preservation": ".agent/evidence/112/failed-checker-attempt1/preservation.json",
+      "detail": "One actual independent budget-method finding: replace SequenceMatcher with authorized frozen Git numstat/classifier measurement. Genuine missing-document RED preserved, no product writes or positive checkpoint, contract unchanged. Checker development and review each1/3; implementation and QA remain0/3."
+    },
+    {
+      "at": "2026-10-12T02:41:04.328162+00:00",
+      "event": "checker_attempt_isolated",
+      "contract_id": "112",
+      "attempt": 2,
+      "approved_base": "7d852bd7aedde01d7739126aa7a1cf880534a410",
+      "attempt_root": "/home/cnross/.tmp/nizam-112-implementation1-checker2-pbtpwadn",
+      "evidence": ".agent/evidence/112/checker-attempt2-root.json",
+      "detail": "Previous actual rejected frozen bundle/archive preserved. Fresh detached approved-base workspace; original approved-base receipt and genuine RED preserved. Generator wrote no product in failed bundle attempt. Source implementation and QA remain attempt1 eligible."
+    },
+    {
+      "at": "2026-10-12T02:48:11.262154+00:00",
+      "event": "checker_bundle_approved",
+      "contract_id": "112",
+      "attempt": 2,
+      "evidence": ".agent/validator/112-bundle-review-attempt2.json",
+      "detail": "Actual independent verdict approved with three empty arrays; exact unchanged frozen measurement interface and private discriminating fixture reviewed statically. Source/checker positive checkpoint has not run. No source, contract or budget authority changed."
+    },
+    {
+      "at": "2026-10-12T03:00:51.017553+00:00",
+      "event": "generator_development_failed",
+      "contract_id": "112",
+      "attempt": 1,
+      "evidence": ".agent/evidence/112/development-attempt2/01.txt",
+      "preservation": ".agent/evidence/112/failed-source-development-attempt1/preservation.json",
+      "detail": "First actual approved command returned EXIT1: C9 rejects two ../schema links. Other15validatorgates passed. Stage stopped; no checker-positive, ModeB or QA executed. Generator counter1/3, approved verifier remains fixed; next source attempt uses structural path-interface analysis in fresh owned reviewed-base workspace."
+    },
+    {
+      "at": "2026-10-12T03:01:33.820690+00:00",
+      "event": "source_attempt_isolated",
+      "contract_id": "112",
+      "attempt": 2,
+      "approved_base": "a6734f3debc71e8c307b9169c2782a7ab7372ecd",
+      "attempt_root": "/home/cnross/.tmp/nizam-112-source-attempt2-a847evyi",
+      "evidence": ".agent/evidence/112/source-attempt2-root.json",
+      "detail": "Generator will reconstruct only original9approved product changes from preserved source draft, then correct two schema path tokens after inspecting actual resolver convention. Parent does not promote unreviewed source. Approved checker/control/adapter and all budget/history remain exact."
+    },
+    {
+      "at": "2026-10-12T03:09:25.901014+00:00",
+      "event": "development_checkpoint_passed",
+      "contract_id": "112",
+      "source_attempt": 2,
+      "checker_attempt": 2,
+      "evidence": ".agent/evidence/112/source-development-attempt2/results.json",
+      "detail": "All13actual approved development commands EXIT0. Generator and checker development each2/3 after preserving earlier failures; review2/3 approved, ModeB/QA remain0/3. Source map unchanged through checkpoint. Private defect controls restored same positive inputs; no live runtime or isolated host conformance inferred."
+    },
+    {
+      "at": "2026-10-12T03:14:20.786512+00:00",
+      "event": "implementation_gate_rejected",
+      "contract_id": "112",
+      "attempt": 1,
+      "source_attempt": 2,
+      "evidence": ".agent/validator/112-mode-b-attempt1.json",
+      "preservation": ".agent/evidence/112/failed-mode-b-attempt1/preservation.json",
+      "detail": "Full independent source review found only two availability paragraphs misassigning113to016. Preserve actual13/13development successes and failedModeB1; no QA initiated. Source/checker-development2/3 remain, implementation1/3. Final source retry3 requires phase/proof architecture review, only bounded method10 prose, unchanged contract/test/budget authority."
+    },
+    {
+      "at": "2026-10-12T03:15:22.553547+00:00",
+      "event": "source_attempt_isolated",
+      "contract_id": "112",
+      "attempt": 3,
+      "approved_base": "a6734f3debc71e8c307b9169c2782a7ab7372ecd",
+      "attempt_root": "/home/cnross/.tmp/nizam-112-source-attempt3-hswhzw9o",
+      "evidence": ".agent/evidence/112/source-attempt3-root.json",
+      "detail": "Fresh immutable reviewed verifier/contract base. Generator reconstructs exact archived source2 and repairs only two method10 availability paragraphs under original approved scope; identifies normative015capability versus executable016proof. No budget, estimate, phase allocation, history, counter reset or verifier change."
+    },
+    {
+      "at": "2026-10-12T03:23:35.126527+00:00",
+      "event": "development_checkpoint_passed",
+      "contract_id": "112",
+      "source_attempt": 3,
+      "checker_attempt": 2,
+      "evidence": ".agent/evidence/112/source-development-attempt3/results.json",
+      "detail": "Actual final13commands allEXIT0,26restored defect controls and exact Git measurement equivalence stillpass. Only method10 twoavailability paragraphs changed fromsource2. Development counters advance2->3 on success; no reset or fourthattempt. Existing ModeB1 rejection/history preserved; renewed source gate remains mandatory before QA."
+    },
+    {
+      "at": "2026-10-12T03:30:12.248599+00:00",
+      "event": "implementation_gate_approved",
+      "contract_id": "112",
+      "attempt": 2,
+      "source_attempt": 3,
+      "evidence": ".agent/validator/112-mode-b.json",
+      "detail": "Actual final ModeB2 approved with three empty arrays; exact reviewed9products promoted, approvedcontract/hash and frozen verification bundle unchanged. Source2failed phase-boundary evidence retained. Canonical112 remains inprogress; freshQA/evidence capture mandatory, no completion or liveproof claimed."
+    },
+    {
+      "at": "2026-10-12T03:37:29.156875+00:00",
+      "event": "acceptance_inputs_prepared",
+      "contract_id": "112",
+      "reviewer": "/root/binding_acceptance_112",
+      "evidence": ".agent/evidence/112/acceptance-preparation-handoff.json",
+      "primary_sources": ".agent/evidence/112/primary-sources.json",
+      "detail": "All19actual official HTTP200 responses/UTC/headers/bodyhashes captured personally by fresh acceptance actor. Ten preliminary source comparisons recorded, no defects. Actual source map equals ModeB2. This is input preparation only: candidate not yet minted, no semantic/finalQA approval or verification execution."
+    },
+    {
+      "at": "2026-10-12T03:40:58.716746+00:00",
+      "event": "acceptance_candidate_sealed",
+      "contract_id": "112",
+      "attempt": 1,
+      "candidate_sha": "9566a6a57be1987ee922b2bcc51179fa0b0a0bd1",
+      "attempt_root": "/home/cnross/.tmp/nizam-112-source-attempt3-hswhzw9o",
+      "evidence": ".agent/evidence/112/qa-inputs.json",
+      "qa_inputs_sha256": "6718e52b840c17f48889e8d058e4f30fdd1ac116381452ace4440f7103961a61",
+      "detail": "Exact10ModeBsource inputs,2reviewed verification files and all fixed112historical/preparation inputs replay byte-exact from candidate Git. Four distinct actor identities, fresh19officialcaptures fixed before candidate mint. Future semantic/QA/command/gate/Parentcompletion outputs excluded. OwneddetachedHEAD9566a6a clean before seal, no guessed futurehash or source-map cycle."
+    },
+    {
+      "at": "2026-10-12T03:48:48.181010+00:00",
+      "event": "qa_and_evidence_gate_passed",
+      "contract_id": "112",
+      "attempt": 1,
+      "candidate_sha": "9566a6a57be1987ee922b2bcc51179fa0b0a0bd1",
+      "qa": ".agent/qa/112.json",
+      "evidence": ".agent/evidence/112/evidence-gate.json",
+      "detail": "Parsed real fresh20/20 QA with installedschema validation and threeemptyarrays; ownidentityforgery spot rejected thenrestored. Actual Parentadapter EXIT0 verifies source/bundle/immutable Git replay, actual20COMMAND/CANDIDATE/EXIT receipts and ownspot. QAcount0->1, no source or historical proof changes; canonical112 remainsinprogress until separate closure."
+    },
+    {
+      "at": "2026-10-12T03:50:46.811879+00:00",
+      "event": "feature_completed",
+      "contract_id": "112",
+      "candidate_sha": "9566a6a57be1987ee922b2bcc51179fa0b0a0bd1",
+      "qa": ".agent/qa/112.json",
+      "evidence": ".agent/evidence/112/evidence-gate.json",
+      "detail": "Canonical phase112/list112/DAG112 completed and113 technical predecessor cleared, statuspending retained. Approvedcontract immutable at its accepted hash; all9reviewed product bytes and oldproof/history/counters preserved. Manifest/activation snapshot fixed; current lifecycle read from canonicalsteps/list/packets. No liveproof, release/tag, installed upgrade or newallocation."
+    },
+    {
+      "at": "2026-10-12T03:51:38.477650+00:00",
+      "event": "scope_budget_measured",
+      "contract_id": "112",
+      "actual": 1244,
+      "cumulative": 6088,
+      "ceiling": 9360,
+      "prior_only_rolling_average": 2422.0,
+      "prior_only_3x": 7266.0,
+      "evidence": ".agent/evidence/112/scope-measurement.txt",
+      "detail": "Actual frozen classifier EXIT0/allpaths classified. Compared112 with only completed preceding110/111 before append; no flag or budget increase. Source/bundle/primary inputs remain exact sealed candidate."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3237,9 +3456,9 @@
   "scope_budget": {
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "total_lines_changed": 4844,
-    "evidence_lines_total": 29982,
-    "excluded_lines_total": 775,
+    "total_lines_changed": 6088,
+    "evidence_lines_total": 98437,
+    "excluded_lines_total": 991,
     "per_feature": [
       {
         "id": "110",
@@ -3276,6 +3495,26 @@
           "first_feature_exception": false
         },
         "note": "Measure only after fresh independent38/38acceptance, ownspot, evidencegate and canonicalcompletion. Product895+overhead2238=3133; exceeds2200 estimate, below prior-only3x threshold5133. No extra budget; historical failed in-flight measurements retained separately, never double-counted."
+      },
+      {
+        "id": "112",
+        "estimated": 1200,
+        "actual": 1244,
+        "evidence_lines": 68455,
+        "excluded_lines": 216,
+        "all_paths_lines": 69915,
+        "range": "da1131846815328890cfb509be608551b80a82a7..WORKTREE",
+        "evidence": ".agent/evidence/112/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "110",
+            "111"
+          ],
+          "rolling_average": 2422.0,
+          "three_times_threshold": 7266.0,
+          "first_feature_exception": false
+        },
+        "note": "Measured with unchanged frozen Git numstat/classifier after actual ModeB2, fresh independent20/20 QA/own adversarial/evidence capture and canonical closure. Compare against preceding110/111 only before appending112. Failed raw attempts retained as evidence, counted verdicts included once; original7200/9360 and all historical measurements preserved."
       }
     ],
     "phase_level_items": [],
@@ -3291,7 +3530,7 @@
     "phase_base_revision": "57862f69ba30a36004ea9a17a295fc9c835afc13",
     "authorization_revision": "06c0ae0a273facce80c57506260648c41f566ebb",
     "phase_level_costs": "Included within approved7200 per-feature allowances; no additional budget.",
-    "last_measured_at": "2026-10-11T18:58:58.271536+00:00",
+    "last_measured_at": "2026-10-12T03:51:38.477650+00:00",
     "historical_inflight_measurements": [
       {
         "id": "111",
@@ -3569,7 +3808,7 @@
       }
     ]
   },
-  "last_action": "Feature111 complete after actualfinalModeB3, fresh independent38/38sealedcandidateQA2 plus ownadversarialspot and evidencegate. NDEBT-049 resolved;112 remains pendingitsowncontractgates. Installedv1.5.0/oldfailures/history/budgets preserved.",
+  "last_action": "Feature112 complete, exact measured scope1244; cumulative6088/9360, below prior-only3x7266.0. Feature113 pending eligible; PR preparation and bounded post-completion checks next.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -3581,7 +3820,8 @@
     "108",
     "102",
     "110",
-    "111"
+    "111",
+    "112"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,

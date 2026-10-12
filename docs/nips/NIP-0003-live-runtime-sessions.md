@@ -2,12 +2,15 @@
 id: nip-0003-live-runtime-sessions
 title: "NIP-0003: Live Runtime Sessions"
 description: "Proposal to add a language-neutral live-runtime-session protocol (ownership, process generation, serialised operations, attempt continuity, fresh-environment acceptance) with an SBCL reference binding, an optional adapter capability, schema-governed session records, and a reference controller — realized as phases 015 and 016, after phase 014."
-version: 1.1.0
+version: 1.1.1
 status: active
 authoritative_source: docs/nips/NIP-0003-live-runtime-sessions.md
 last_audited: "2026-10-11"
 tags: [nip, methodology, runtime-session, execution, evaluator-independence, circuit-breaker, adapter, sbcl]
 change_log:
+  - version: "1.1.1"
+    date: "2026-10-12"
+    summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
   - version: "1.1.0"
     date: "2026-10-11"
     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
@@ -30,7 +33,7 @@ change_log:
 0.2.0 revision with "Approved and accepted, please proceed." at source
 `650770d9b48c31748f24b5ac6967b80a6a46c5f7`. The decision was recorded before product
 edits in `.agent/run_state.json` at authorization commit
-`87ba2ae9ae9b92565bf8bd6d5582dccb7622f881`. Frontmatter is now `active`, version1.0.0.
+`87ba2ae9ae9b92565bf8bd6d5582dccb7622f881`. At H-NIP acceptance, frontmatter became `active`, version1.0.0.
 H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
 `2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
 `06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
@@ -39,7 +42,7 @@ counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs
 Canonical lifecycle and current feature position are read from
 `.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
 requires its approved contract, both independent pre-code gates, Mode B, QA and
-the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
 records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
 Phase016115–120 remains provisional/unallocated; future mechanisms and live proof

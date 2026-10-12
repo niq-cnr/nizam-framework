@@ -14,7 +14,7 @@
     "ceiling_130pct": 9360,
     "current_status": "in_progress",
     "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
-    "run_state_position": "Derived from canonical phase/list:111 complete after independent acceptance/evidence;112 pending its own contract gates. Historical checker recovery epoch1 retained.",
+    "run_state_position": "Derived from canonical phase/list:110 and111 complete;112 in progress under approved revision2 contract;113-114 pending their own contract gates.",
     "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
   },
   "estimate_weighting": {
@@ -2769,14 +2769,16 @@
         "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'NIZAM.json'\"'\"').read_text()); assert any(v['\"'\"'authoritative_source'\"'\"']=='\"'\"'methodology/11_sbcl_runtime_binding.md'\"'\"' for v in d['\"'\"'capabilities'\"'\"'])'"
       ],
       "evidence": [
-        ".agent/evidence/112/"
+        ".agent/validator/112-mode-b.json",
+        ".agent/qa/112.json",
+        ".agent/evidence/112/evidence-gate.txt"
       ],
       "non_goals": [
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
-      "authority_status": "blocked-on-contract-and-predecessor",
+      "status": "complete",
+      "authority_status": "approved-contract",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
@@ -2785,16 +2787,16 @@
           "reason": "Canonical111 completed after actual renewedModeB3, independent38/38acceptance and evidencegate;112 awaits its own contract gates."
         },
         "authority": {
-          "satisfied": false,
-          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
+          "satisfied": true,
+          "reason": "Feature112 revision2 approved by both independent pre-code gates; operator H-PHASE-015 budget and scope remain unchanged."
         },
         "environment": {
           "satisfied": true,
           "reason": "none (normative + schema)"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Pending015 plan source is available; feature implementation acceptance/QA/evidence is not delivered."
+          "satisfied": true,
+          "reason": "Actual ModeB2, fresh independent20/20 acceptance plus own adversarial check and Parent candidate-bound evidence gate passed."
         }
       },
       "estimate": {
@@ -2870,8 +2872,8 @@
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "Canonical lifecycle is read from feature_list_015.json; predecessor completion remains required."
+          "satisfied": true,
+          "reason": "Canonical112 completed after actual ModeB2, fresh20/20 independent acceptance and evidence capture;113 stays pending its own contract gates."
         },
         "authority": {
           "satisfied": false,

@@ -1,0 +1,27 @@
+[
+  {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --lifecycle",
+    "evidence": ".agent/evidence/112/post-completion/01.txt",
+    "exit_code": 0
+  },
+  {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --budget",
+    "evidence": ".agent/evidence/112/post-completion/02.txt",
+    "exit_code": 0
+  },
+  {
+    "command": "bash tools/validate.sh",
+    "evidence": ".agent/evidence/112/post-completion/03.txt",
+    "exit_code": 0
+  },
+  {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/release_closeout.py --mode pr",
+    "evidence": ".agent/evidence/112/post-completion/04.txt",
+    "exit_code": 0
+  },
+  {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+    "evidence": ".agent/evidence/112/post-completion/05.txt",
+    "exit_code": 0
+  }
+]

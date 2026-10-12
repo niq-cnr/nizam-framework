@@ -1,0 +1,396 @@
+{
+  "version": 1,
+  "purpose": "Independently authored documentary placement and intended-defect controls; personal semantic review remains separate.",
+  "external_anchors": [
+    "approved contract112",
+    "accepted NIP0003",
+    "delivered111 status enum",
+    "immutable approved base"
+  ],
+  "section_rules": [
+    {
+      "section": 1,
+      "topic": "evidence-boundary",
+      "patterns": [
+        "consumer-aspirational",
+        "provenance",
+        "live"
+      ]
+    },
+    {
+      "section": 2,
+      "topic": "profile",
+      "patterns": [
+        "SBCL",
+        "ASDF",
+        "toolchain_identity",
+        "lock_ref",
+        "core_provenance",
+        "lease_epoch",
+        "generation",
+        "owner",
+        "committed"
+      ]
+    },
+    {
+      "section": 3,
+      "topic": "observation",
+      "patterns": [
+        "macroexpand",
+        "print-object",
+        "inspect",
+        "owner",
+        "generation",
+        "lease",
+        "serial",
+        "REPL"
+      ]
+    },
+    {
+      "section": 4,
+      "topic": "partial-load",
+      "patterns": [
+        "load",
+        "compile-file",
+        "defmacro",
+        "defpackage",
+        "eval-when",
+        "image_consistent",
+        "false",
+        "non.atomic"
+      ]
+    },
+    {
+      "section": 5,
+      "topic": "conditions",
+      "patterns": [
+        "handler-bind",
+        "handler-case",
+        "restart",
+        "unwind",
+        "bytes",
+        "length",
+        "depth",
+        "budget",
+        "print-object"
+      ]
+    },
+    {
+      "section": 6,
+      "topic": "drift",
+      "patterns": [
+        "delet",
+        "method",
+        "defvar",
+        "defstruct",
+        "defconstant",
+        "CLOS",
+        "laz",
+        "reconstruct"
+      ]
+    },
+    {
+      "section": 7,
+      "topic": "thread-bindings",
+      "patterns": [
+        "global",
+        "thread.local",
+        "inherit",
+        "package",
+        "readtable",
+        "worker",
+        "resource"
+      ]
+    },
+    {
+      "section": 8,
+      "topic": "cancellation",
+      "patterns": [
+        "join-thread",
+        "stopped_waiting",
+        "running",
+        "busy",
+        "interrupt-thread",
+        "terminate-thread",
+        "unwind-protect",
+        "confirm",
+        "quarantine|reconstruct",
+        "attempt"
+      ]
+    },
+    {
+      "section": 9,
+      "topic": "hermetic-build",
+      "patterns": [
+        "--no-sysinit",
+        "--no-userinit",
+        "HOME",
+        "XDG",
+        "CL_SOURCE_REGISTRY",
+        "ASDF_OUTPUT_TRANSLATIONS",
+        ":ignore-inherited-configuration",
+        "private",
+        "empty",
+        "committed",
+        "illustrative",
+        "fasl"
+      ]
+    }
+  ],
+  "semantic_topics": [
+    "profile",
+    "observation",
+    "partial-load",
+    "conditions",
+    "drift",
+    "thread-bindings",
+    "cancellation",
+    "hermetic-build",
+    "outcome-mapping",
+    "evidence-boundary"
+  ],
+  "mutations": [
+    {
+      "id": "comment-only-section2",
+      "kind": "section-comment",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 2. Reference language profile",
+      "mode": "structure",
+      "diagnostic": "section-empty"
+    },
+    {
+      "id": "comment-only-section5",
+      "kind": "section-comment",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 5. Conditions and restarts",
+      "mode": "structure",
+      "diagnostic": "section-empty"
+    },
+    {
+      "id": "comment-only-section6",
+      "kind": "section-comment",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 6. Image drift",
+      "mode": "structure",
+      "diagnostic": "section-empty"
+    },
+    {
+      "id": "comment-only-section8",
+      "kind": "section-comment",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 8. Timeouts and cancellation",
+      "mode": "structure",
+      "diagnostic": "section-empty"
+    },
+    {
+      "id": "comment-only-section9",
+      "kind": "section-comment",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 9. Fresh-environment acceptance",
+      "mode": "structure",
+      "diagnostic": "section-empty"
+    },
+    {
+      "id": "misplaced-handler-bind",
+      "kind": "move-token",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 5. Conditions and restarts",
+      "token": "handler-bind",
+      "mode": "structure",
+      "diagnostic": "section-token"
+    },
+    {
+      "id": "misplaced-defvar",
+      "kind": "move-token",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 6. Image drift",
+      "token": "defvar",
+      "mode": "structure",
+      "diagnostic": "section-token"
+    },
+    {
+      "id": "misplaced-join-thread",
+      "kind": "move-token",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 8. Timeouts and cancellation",
+      "token": "join-thread",
+      "mode": "structure",
+      "diagnostic": "section-token"
+    },
+    {
+      "id": "misplaced-CL_SOURCE_REGISTRY",
+      "kind": "move-token",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 9. Fresh-environment acceptance",
+      "token": "CL_SOURCE_REGISTRY",
+      "mode": "structure",
+      "diagnostic": "section-token"
+    },
+    {
+      "id": "misplaced-ASDF_OUTPUT_TRANSLATIONS",
+      "kind": "move-token",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 9. Fresh-environment acceptance",
+      "token": "ASDF_OUTPUT_TRANSLATIONS",
+      "mode": "structure",
+      "diagnostic": "section-token"
+    },
+    {
+      "id": "misplaced-ignore-inherited-configuration",
+      "kind": "move-token",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 9. Fresh-environment acceptance",
+      "token": ":ignore-inherited-configuration",
+      "mode": "structure",
+      "diagnostic": "section-token"
+    },
+    {
+      "id": "timeout-is-cancelled",
+      "kind": "insert-section",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 8. Timeouts and cancellation",
+      "text": "join-thread :timeout MUST mark the operation cancelled.",
+      "mode": "structure",
+      "diagnostic": "timeout-semantics"
+    },
+    {
+      "id": "reuse-shared-fasl",
+      "kind": "insert-section",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 9. Fresh-environment acceptance",
+      "text": "Acceptance MUST reuse the shared ASDF cache.",
+      "mode": "structure",
+      "diagnostic": "fresh-cache-policy"
+    },
+    {
+      "id": "claim-live-conformance",
+      "kind": "insert-section",
+      "path": "methodology/11_sbcl_runtime_binding.md",
+      "heading": "## 9. Fresh-environment acceptance",
+      "text": "All thirteen live conformance cases are proven.",
+      "mode": "structure",
+      "diagnostic": "live-boundary"
+    },
+    {
+      "id": "missing-registration",
+      "kind": "replace",
+      "path": "NIZAM.json",
+      "old": "methodology/11_sbcl_runtime_binding.md",
+      "new": "methodology/REMOVED.md",
+      "mode": "structure",
+      "diagnostic": "registration"
+    },
+    {
+      "id": "released-version-change",
+      "kind": "json",
+      "path": "NIZAM.json",
+      "keys": [
+        "framework",
+        "version"
+      ],
+      "value": "1.6.0",
+      "mode": "structure",
+      "diagnostic": "index-delta"
+    },
+    {
+      "id": "unauthorized-source",
+      "kind": "extra",
+      "path": "tools/feature112_undeclared.py",
+      "mode": "scope",
+      "diagnostic": "scope-path"
+    },
+    {
+      "id": "historical111-proof",
+      "kind": "json",
+      "path": ".agent/qa/111.json",
+      "keys": [
+        "qa_pass"
+      ],
+      "value": false,
+      "mode": "historical",
+      "diagnostic": "historical-immutable"
+    },
+    {
+      "id": "untouched111-tool",
+      "kind": "replace",
+      "path": "tools/validate.sh",
+      "old": "#!/usr/bin/env bash",
+      "new": "#!/usr/bin/env bash\n# unauthorized112 edit",
+      "mode": "historical",
+      "diagnostic": "historical-immutable"
+    },
+    {
+      "id": "immutable-installed",
+      "kind": "replace",
+      "path": ".nizam/tools/SKILL.md",
+      "old": "# Nizam Governance Skill",
+      "new": "# Altered Governance Skill",
+      "mode": "historical",
+      "diagnostic": "historical-immutable"
+    },
+    {
+      "id": "prior112-proof",
+      "kind": "replace",
+      "path": ".agent/evidence/112/contract-review-attempt1.txt",
+      "old": "Stage:",
+      "new": "Altered Stage:",
+      "mode": "historical",
+      "diagnostic": "historical-immutable"
+    },
+    {
+      "id": "method10-rule-change",
+      "kind": "replace",
+      "path": "methodology/10_live_runtime_sessions.md",
+      "old": "Consumers MUST distinguish",
+      "new": "Consumers MAY distinguish",
+      "mode": "structure",
+      "diagnostic": "bounded-document"
+    },
+    {
+      "id": "counter-reset111",
+      "kind": "json",
+      "path": ".agent/run_state.json",
+      "keys": [
+        "circuit_breaker",
+        "111-checker-development",
+        "attempts"
+      ],
+      "value": 0,
+      "mode": "lifecycle",
+      "diagnostic": "counter-continuity"
+    },
+    {
+      "id": "counter-reset112-contract",
+      "kind": "json",
+      "path": ".agent/run_state.json",
+      "keys": [
+        "circuit_breaker",
+        "112-contract",
+        "attempts"
+      ],
+      "value": 0,
+      "mode": "lifecycle",
+      "diagnostic": "counter-continuity"
+    },
+    {
+      "id": "early-completion-full-projection",
+      "kind": "premature-completion",
+      "path": ".agent/feature_list_015.json",
+      "mode": "lifecycle",
+      "diagnostic": "early-completion"
+    },
+    {
+      "id": "phase-budget-increase",
+      "kind": "json",
+      "path": ".agent/run_state.json",
+      "keys": [
+        "scope_budget",
+        "ceiling_130pct"
+      ],
+      "value": 10000,
+      "mode": "budget",
+      "diagnostic": "budget-authority"
+    }
+  ],
+  "restoration": "Each overlay control must reject named invariant then restore original bytes and pass its same positive check. Real source never mutated."
+}

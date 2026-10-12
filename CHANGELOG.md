@@ -9,6 +9,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **SBCL reference binding (feature112).** Added the normative consumer-aspirational
+  binding with folded toolchain/lock/core profile, condition/restart capture,
+  non-atomic load/compile, drift, thread/cancellation hazards and fresh hermetic
+  acceptance rules. Registered Document11 and clarified current availability and
+  activation-time planning prose. ASDF forms remain illustrative; executable
+  adapter/controller enforcement and all thirteen live proofs remain pending.
+  Published/installed v1.5.0 and existing historical proofs are unchanged.
+
 - **Runtime provenance records (feature111).** Added two closed Draft2020-12
   schemas with phase016 fields, eighteen top-level discriminating fixtures and
   shared C12 owner/generation/lease/continuity validation in targeted and full

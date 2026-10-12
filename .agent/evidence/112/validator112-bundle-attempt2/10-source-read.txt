@@ -1,0 +1,58 @@
+cat .agent/validator/112-bundle-review-attempt1.json
+{
+  "stage": "independent-frozen-bundle-review",
+  "feature": "112",
+  "contract_id": "112",
+  "bundle_review_attempt": 1,
+  "reviewer": "/root/binding_validator_112",
+  "reviewed_at": "2026-10-12T02:37:52.617088+00:00",
+  "approved_base": "7d852bd7aedde01d7739126aa7a1cf880534a410",
+  "phase_base": "da1131846815328890cfb509be608551b80a82a7",
+  "review_method": "Static full-source inspection only; no checker, controls, capture adapter or positive checkpoint execution. Independently read existing genuine pre-source RED receipt.",
+  "reviewed_sha256": {
+    ".agent/evidence/112/check_112.py": "30c9aa765a4f9b876f41053307cff4717a14ba980af33681197657a4cc1fc525",
+    ".agent/evidence/112/controls.json": "063dd1f9dd7681217c51820c63c98d55ef6617133b7d21b3af325a9aa4f6759f",
+    ".agent/evidence/112/evidence_gate.py": "02ef52ec8c5c7041450b2cf36352f897dcffeb51120e4e9fcc2ae94d3f4007d1",
+    ".agent/evidence/112/test-author-handoff.json": "2dad798cdfc5d8bbb3417b5bb93ccc6c1f003119395bfe846864ae2c516e3c1b",
+    ".agent/evidence/112/pre-source-red.txt": "8532b7e99879bd8288855456dc5d9a00c5a17aa4606e1d05560df7d09ef8b63b",
+    ".agent/evidence/112/approved-base.json": "99fc6e5dbd2b98accac1a29a0f2419ceefdb4c2a46744fe4be244a158223c177",
+    ".agent/contracts/112.json": "4357e16ce1423d7fa20bbec7ed4a008700e0046b29fe3789c8a78bb1cb87caca",
+    ".agent/evidence/scope-budget-014/measure.py": "3d40a57b5200d7cd00f3fdfbc2cb348b87e9523669d1b9d2682419ca526d9973"
+  },
+  "issues": [
+    {
+      "verification_index": 12,
+      "criterion": "AT13 uses the approved frozen scope-budget measurement basis and records the exact actual completed112 count.",
+      "severity": "high",
+      "evidence": ".agent/evidence/112/validator112-bundle-attempt1/01-source-read.txt and .agent/evidence/112/validator112-bundle-attempt1/08-source-read.txt",
+      "finding": "check_112.py budget() counts line differences using difflib.SequenceMatcher over decoded splitlines and a bespoke path allowlist. The approved run-state counting rule and frozen measure.py require git diff --numstat --no-renames with frozen first-match classification, binary count0 and untracked non-ignored line counts. SequenceMatcher is a different algorithm and ROOT.rglob includes ignored files; it neither proves nor guarantees the exact approved Git numstat result. budget() subsequently requires the Parent completion entry.actual to equal this independently computed counted value, so a correct frozen measure.py record can fail; an underestimated alternative total could also weaken the cumulative gate.",
+      "required_fix": "Replace the alternative budget measurement with the exact approved frozen measure.py Git numstat/classifier semantics at da1131846815328890cfb509be608551b80a82a7..current owned tree, preserving the helper unchanged. Resolve execution at ROOT, retain binary0, non-ignored untracked handling and fail-closed unclassified paths. Parse/consume or independently call the existing frozen measurement interface and compare its actual count to both authorized ceiling/prior-only threshold and Parent completion entry. Keep current scope guard separate from approved count classification. Add a discriminating independent control for measurement equivalence rather than weakening equality, raising budgets or rewriting historical counts; preserve first-bundle hashes/red/rejection, then renew independent bundle review before positive execution."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "The frozen checker/control/adapter hashes match the handoff and Parent-provided adapter hash; existing RED reports missing-document with actualEXIT1 and expressly excludes formal QA. No positive/development checkpoint was run during this review.",
+    "The historical/current-source partition and bounded document checks distinguish immutable111 proofs/snapshots from only the three declared current shared-product edits. Scratch controls use owned TemporaryDirectory overlays, demand intended diagnostics, and restore their positive input.",
+    "The eight outcome rows match current schema names. Structural marker checks are explicitly supplemented by fresh personal semantic review and source capture; the reviewed controls do not purport to prove live conformance.",
+    "Checker pins the approved contract hash and expects it to remain approved after feature closure. Parent lifecycle projections are separate, manifest stays activation-fixed, old counters/history remain preserved. Future semantic review and integrity inputs are not fabricated for development.",
+    "The capture adapter binds20 required commands, exact candidate/source/ModeB/seal hashes, four actor identities and the independent adversarial receipt; candidate source/assessed input bytes replay from Git. It changes no lifecycle fields."
+  ],
+  "evidence": [
+    ".agent/evidence/112/validator112-bundle-attempt1/reviewed-inputs.json",
+    ".agent/evidence/112/validator112-bundle-attempt1/01-source-read.txt",
+    ".agent/evidence/112/validator112-bundle-attempt1/02-source-read.txt",
+    ".agent/evidence/112/validator112-bundle-attempt1/03-source-read.txt",
+    ".agent/evidence/112/validator112-bundle-attempt1/04-source-read.txt",
+    ".agent/evidence/112/validator112-bundle-attempt1/05-source-read.txt",
+    ".agent/evidence/112/validator112-bundle-attempt1/06-source-read.txt",
+    ".agent/evidence/112/validator112-bundle-attempt1/07-source-read.txt",
+    ".agent/evidence/112/validator112-bundle-attempt1/08-source-read.txt"
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "112"
+  }
+}
+
+EXIT:0

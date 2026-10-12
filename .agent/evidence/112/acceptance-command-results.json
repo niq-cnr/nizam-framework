@@ -1,0 +1,105 @@
+{
+  "candidate_sha": "9566a6a57be1987ee922b2bcc51179fa0b0a0bd1",
+  "checks": [
+    {
+      "command": "bash tools/validate.sh",
+      "evidence": ".agent/evidence/112/01-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Conditions and restarts$'\"'\"' '\"'\"'(^|[^[:alnum:]_])handler-bind([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/02-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Image drift$'\"'\"' '\"'\"'(^|[^[:alnum:]_])defvar([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/03-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Timeouts and cancellation$'\"'\"' '\"'\"'(^|[^[:alnum:]_])join-thread([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/04-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Fresh-environment acceptance$'\"'\"' '\"'\"'(^|[^[:alnum:]_])CL_SOURCE_REGISTRY([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/05-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Fresh-environment acceptance$'\"'\"' '\"'\"'(^|[^[:alnum:]_])ASDF_OUTPUT_TRANSLATIONS([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/06-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'NIZAM.json'\"'\"').read_text()); assert any(v['\"'\"'authoritative_source'\"'\"']=='\"'\"'methodology/11_sbcl_runtime_binding.md'\"'\"' for v in d['\"'\"'capabilities'\"'\"'])'",
+      "evidence": ".agent/evidence/112/07-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --structure",
+      "evidence": ".agent/evidence/112/08-structure.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --semantic-review",
+      "evidence": ".agent/evidence/112/09-semantic-review.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --scope",
+      "evidence": ".agent/evidence/112/10-scope.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --historical",
+      "evidence": ".agent/evidence/112/11-historical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --lifecycle",
+      "evidence": ".agent/evidence/112/12-lifecycle.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --budget",
+      "evidence": ".agent/evidence/112/13-budget.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --negative",
+      "evidence": ".agent/evidence/112/14-negative.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "evidence": ".agent/evidence/112/15-payload.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/fixtures_self_test.sh",
+      "evidence": ".agent/evidence/112/16-fixtures.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "evidence": ".agent/evidence/112/17-bootstrap.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/release_closeout.py --mode pr",
+      "evidence": ".agent/evidence/112/18-release.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "evidence": ".agent/evidence/112/19-installed.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --integrity",
+      "evidence": ".agent/evidence/112/20-integrity.txt",
+      "exit_code": 0
+    }
+  ]
+}
