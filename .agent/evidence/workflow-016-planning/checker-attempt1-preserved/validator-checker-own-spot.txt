@@ -1,0 +1,30 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import importlib.util,pathlib
+r=pathlib.Path('"'"'.'"'"').resolve();h=r/'"'"'.agent/evidence/workflow-016-planning/check_plans.py'"'"'
+s=importlib.util.spec_from_file_location('"'"'checker_review'"'"',h);m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+protected='"'"'.agent/evidence/workflow-016-planning/authorization-isolation.json'"'"'
+assert m.original(protected)
+g=m.git;b=pathlib.Path.read_bytes;calls=[]
+def git(*args):
+ data=g(*args)
+ return data+protected.encode()+b'"'"'\n'"'"' if args[:2]==('"'"'diff'"'"','"'"'--name-only'"'"') else data
+def read_bytes(path):
+ raw=b(path)
+ if path.resolve()==(r/protected).resolve():
+  calls.append(1);return raw+b'"'"'\nUNAUTHORIZED_CHANGED_BYTES\n'"'"'
+ return raw
+m.git=git;pathlib.Path.read_bytes=read_bytes
+try:
+ changed=m.check_scope()
+ print('"'"'FULL_SCOPE_RESULT: PASS'"'"')
+ print('"'"'MUTATED_PROTECTED_PATH_INCLUDED:'"'"',protected in changed)
+ print('"'"'PROTECTED_CONTENT_INSPECTIONS:'"'"',len(calls))
+finally:
+ m.git=g;pathlib.Path.read_bytes=b
+'
+REVISION: 84cc13da81ea3db65ea3f083030862982b086af8
+HELPER_SHA256: 151543802068c87c139ffd0820ef9bb2445cff21f579eea811ff99a74e4e2e7c
+FULL_SCOPE_RESULT: PASS
+MUTATED_PROTECTED_PATH_INCLUDED: True
+PROTECTED_CONTENT_INSPECTIONS: 0
+
+EXIT: 0

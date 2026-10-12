@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Task-only structural planning checks; future runtime conformance is not run here."""
-import argparse, copy, difflib, fnmatch, hashlib, json, pathlib, re, shlex, subprocess
+import argparse, copy, difflib, fnmatch, hashlib, json, pathlib, re, shlex, subprocess, tempfile
 import jsonschema, yaml
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 BASE = 'e22a3bf4c748cbd4f9daf9b0f66c4a0a6e5efc80'
 AUTH_BASE = '3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0'
 APPROVED = '132480aab50424f8b3815fba7159b27a5a2bcfdc'
+EXISTING_TASK = '84cc13da81ea3db65ea3f083030862982b086af8'
 E = '.agent/evidence/workflow-016-planning/'
 PHASES = ('017', '018', '019', '016', '020')
 NIP3 = 'docs/nips/NIP-0003-live-runtime-sessions.md'
@@ -186,7 +187,20 @@ def preserve_public(path):
     deleted = [line for tag, i, j, _, _ in difflib.SequenceMatcher(None, old_lines, new_lines, autojunk=False).get_opcodes() if tag in ('delete', 'replace') for line in old_lines[i:j]]
     require(all(re.fullmatch(r'## (Current Position \([^)]*\)|Current status — [\d-]+|Current planning view — [\d-]+)', line) for line in deleted), 'public-body-history')
 
-def check_scope():
+def immutable_task_records(task_root):
+    mutable = {E + 'check_plans.py', E + 'lifecycle.yaml'}
+    entries = [line.split('\t') for line in git('ls-tree', '-r', EXISTING_TASK, '--', E).decode().splitlines()]
+    require(bool(entries), 'immutable-task-anchor')
+    for info, name in entries:
+        if name in mutable: continue
+        path = task_root / name
+        require(path.exists() or path.is_symlink(), 'immutable-task-missing:' + name)
+        require(path.is_file() and not path.is_symlink(), 'immutable-task-type:' + name)
+        require(bool(path.stat().st_mode & 0o111) == (info.split()[0] == '100755'), 'immutable-task-mode:' + name)
+        require(path.read_bytes() == original(name, EXISTING_TASK), 'immutable-task-bytes:' + name)
+
+def check_scope(task_root=ROOT):
+    immutable_task_records(task_root)
     contract = read('.agent/contracts/workflow-016-planning.json')
     require(contract['scope'] == json.loads(original('.agent/contracts/workflow-016-planning.json', APPROVED))['scope'], 'contract-scope-anchor')
     allowed = [v['path'] for kind in ('files_create', 'files_modify') for v in contract['scope'][kind]]
@@ -242,6 +256,26 @@ def negative():
         except ValueError as err: require(str(err) == target, 'negative-target'); receipts.append({'control': label, 'rejection': target, 'restored_valid': True})
         else: raise ValueError('negative-false-pass:' + label)
         graph({'a': [], 'b': ['a']}, 'global'); scope_paths([E + 'control.json'], [E + '**']); current_phase({'current_phase': '015', 'phases': []}, {'current_phase': '015', 'phases': []})
+    with tempfile.TemporaryDirectory(prefix='nizam-planning-evidence-control-') as temporary:
+        scratch = pathlib.Path(temporary)
+        for line in git('ls-tree', '-r', EXISTING_TASK, '--', E).decode().splitlines():
+            info, name = line.split('\t'); path = scratch / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(original(name, EXISTING_TASK)); path.chmod(0o755 if info.split()[0] == '100755' else 0o644)
+        check_scope(scratch)
+        for label, name, defect in [('changed-authorization', 'authorization-isolation.json', 'bytes'), ('missing-receipt', 'checker-negative.txt', 'missing'), ('evidence-type', 'environment-observed.txt', 'type'), ('evidence-mode', 'checker-negative.txt', 'mode'), ('unrelated-evidence-mutation', 'plan-interface.json', 'bytes')]:
+            path = scratch / (E + name); data = path.read_bytes()
+            if defect == 'missing': path.unlink()
+            elif defect == 'type': path.unlink(); path.symlink_to(scratch / (E + 'authorization-isolation.json'))
+            elif defect == 'mode': path.chmod(0o755)
+            else: path.write_bytes(data + b'\nchanged\n')
+            try: check_scope(scratch)
+            except ValueError as error: require(str(error) == 'immutable-task-' + defect + ':' + E + name, 'negative-target:' + label)
+            else: raise ValueError('negative-false-pass:' + label)
+            finally:
+                if path.is_symlink(): path.unlink()
+                path.write_bytes(data); path.chmod(0o644)
+            check_scope(scratch); receipts.append({'control': label, 'rejection': 'immutable-task-' + defect, 'restored_valid': True})
+        added = E + 'legitimate-new-receipt.txt'; (scratch / added).write_text('new command/exit receipt\n'); scope_paths([added], [E + '**']); check_scope(scratch)
+        receipts.append({'control': 'legitimate-new-receipt', 'result': 'accepted', 'restored_valid': True})
     return receipts
 
 def main():
