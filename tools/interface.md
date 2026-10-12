@@ -2,10 +2,13 @@
 id: nizam-tools-interface
 title: "Runtime-Adapter Interface"
 description: "The adapter contract any agent runtime implements to discover, load, and act on the single unified Nizam skill payload (DD-4): discovery, loading, the three abstract operations, and the conformance checklist an integrator ticks through."
-version: 0.3.1
+version: 0.4.0
 status: active
 authoritative_source: tools/interface.md
 change_log:
+  - version: "0.4.0"
+    date: "2026-10-12"
+    summary: "Add the optional runtime-session adapter surface and conditional checks; preserve the ten mandatory conformance items."
   - version: "0.3.1"
     date: "2026-10-10"
     summary: "PATCH correction (phase-014 feature 108, NDEBT-044 d): Section 5 item 10's no-fabrication rule cites Section 2, Item 5 (Failure behavior), not Item 4 (Manifest resolution). A one-token citation fix; the checklist stays at 10 items."
@@ -168,7 +171,75 @@ MUST be satisfied.
 10. The adapter does not fabricate governance behavior when no
     `tools/skill.json` can be discovered (Section 2, Item 5).
 
-## 6. References
+## 6. Optional Capability: Live Runtime Sessions
+
+`live_runtime_session` is optional (`required: false`).
+Adapters that do not claim it remain conformant under Section 5.
+Only claiming adapters MUST satisfy the seven calls and conditional S1–S9 below.
+This is a normative interface, not executable adapter/controller delivery.
+
+| Call | Meaning and execution boundary |
+| --- | --- |
+| `open-session` | Establish a session and record its owner, generation and lease; do not evaluate project code. |
+| `submit-operation` | Admit one authorized project-code operation with correlated identity and limits. |
+| `poll-operation` | Read the correlated observed outcome without executing project observation callbacks. |
+| `cancel-operation` | Request cancellation of the correlated operation; requesting does not confirm stopping or rollback. |
+| `transfer-session` | Explicitly change owner and increment lease_epoch; preserve or resolve outstanding work without evaluating project code. |
+| `reattach-session` | Recover and check owner, generation, lease and outstanding operation; do not transfer ownership or evaluate project code. |
+| `close-session` | Observe correlated closure and preserve unresolved effects/resources; do not evaluate project code or claim rollback. |
+
+Only `submit-operation` executes project code. Its `kind` is exactly
+`load_source`, `compile_source`, `evaluate`, `run_tests` or `observe`.
+Observation invokes project code in the binding and needs the same authorization
+and serial operation stream as evaluation. Existing `read-state` reads durable
+session status; there is no separate status call or endpoint. Control calls MUST
+NOT invoke project printers, arbitrary restarts or observation callbacks.
+
+Requests correlate `operation_id` and `session_id`, `expected_generation`
+(`counter`, `nonce`), `expected_lease_epoch`, and `requester` (`principal_kind`,
+`role`, `agent_id`), with `contract_id`, `step_key` and `attempt`. A submitted
+operation supplies `kind`, `payload`, `context` (`working_dir`, `namespace`,
+`reader_config_ref`, `test_config_ref`) and `limits`. These abstract request
+inputs map to the existing records; they add no required schema fields. Unknown
+identity or continuity cannot authorize execution. Reattachment reads outstanding
+work before any submit, preserves attempt identity and never grants new authority.
+
+Terminal operation statuses are `completed`, `condition_signalled`, `cancelled`,
+`terminated` and `rejected`. Nonterminal statuses are `running`,
+`cancel_requested` and `unknown`. The optional `debugger_paused` is not emitted
+in v1 and is not an additional status in the existing record schemas.
+A timeout records `wait_outcome: stopped_waiting`; it stops waiting only and
+leaves execution and its busy lane outstanding until an observed outcome resolves
+it. `cancelled` requires observed stopping and `cancellation_confirmed: true`;
+consistency and remaining effects must be assessed separately.
+
+Use the existing [permission classes](..&#47;standard/permission_classes.md):
+`runtime.session.lifecycle` gives the Orchestrator open/transfer/close authority
+only, without project-code execution; `runtime.session.operate` confines the
+Generator to its own development session; `runtime.session.accept` gives the
+Evaluator independent fresh acceptance. Reattachment grants no additional
+permission. Review trials receive no endpoint or session permission.
+
+| Conditional check | Required behavior for a claiming adapter |
+| --- | --- |
+| S1 | Session and operation records validate against the existing schemas; record validity proves no live behavior. |
+| S2 | Reject stale generation or lease before execution and verify the requester is the current owner. |
+| S3 | At most one operation is in flight; preserve or resolve outstanding work before conflicting submit or lifecycle transfer. |
+| S4 | A timeout stops waiting only and never reports execution stopped; preserve the outstanding operation and busy lane. |
+| S5 | Capture conditions and applicable restarts before unwind; a failed partial load or compile never claims image consistency. |
+| S6 | Reject review-trial requests before execution; trials receive no endpoint or session permission. |
+| S7 | Lifecycle calls never evaluate project code, including observation callbacks. |
+| S8 | Session results and provenance are never acceptance evidence; acceptance requires an independent fresh process, fresh build and hermetic inputs. |
+| S9 | Attempt counters and contract/step/attempt identity survive new generation, process, subagent and stage; only the Orchestrator owns coordination counters. |
+
+The [neutral protocol](..&#47;methodology/10_live_runtime_sessions.md) and
+[SBCL reference binding](..&#47;methodology/11_sbcl_runtime_binding.md) define these
+consumer duties. Existing schema/C12 checks establish declared record validity
+only; they cannot prove live ownership, runtime conformance or source/heap identity.
+Executable controller/adapter/SBCL enforcement and all thirteen live proofs remain
+pending phase016 features115–120. The installed v1.5.0 payload is unchanged.
+
+## 7. References
 
 - `tools/skill.json` — the capability manifest an adapter discovers and
   resolves per Section 2.
@@ -179,3 +250,9 @@ MUST be satisfied.
 - `standard/anti_hallucination.md` — the constraints (in particular AH-3)
   that bind how a runtime's adapter must handle write and verification
   failures.
+- [Live Runtime Sessions](..&#47;methodology/10_live_runtime_sessions.md) and
+  [SBCL Runtime Binding](..&#47;methodology/11_sbcl_runtime_binding.md) — normative
+  optional-session semantics and reference profile.
+- [Session schema](..&#47;schema/runtime_session.schema.json) and
+  [operation schema](..&#47;schema/runtime_operation.schema.json) — existing records,
+  not live runtime proof.

@@ -1,0 +1,4 @@
+COMMAND: python3 -c 'import re; from pathlib import Path; s=Path('"'"'tools/interface.md'"'"').read_text(); section=re.split(r'"'"'(?m)^## 5[. ]'"'"',s,maxsplit=1)[1]; section=re.split(r'"'"'(?m)^## 6[. ]'"'"',section,maxsplit=1)[0]; assert len(re.findall(r'"'"'(?m)^\s*\d+\. '"'"',section))==10'
+CANDIDATE_SHA: 79baee0c54f4b7b7c01c419fd843d6d1842d5ee1
+
+EXIT: 0

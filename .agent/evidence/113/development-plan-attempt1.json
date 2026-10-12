@@ -1,0 +1,108 @@
+{
+  "contract_id": "113",
+  "stage": "generator-development",
+  "attempt": 1,
+  "actor": "/root",
+  "recorded_at": "2026-10-12T05:03:37.246032+00:00",
+  "source_root": "/home/cnross/.tmp/nizam-113-source-attempt1-53r_1j7l",
+  "verification_ordinals": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    15,
+    16
+  ],
+  "commands": [
+    {
+      "ordinal": 1,
+      "command": "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'tools/skill.json'\"'\"').read_text()); assert d['\"'\"'runtime_requirements'\"'\"']['\"'\"'live_runtime_session'\"'\"']['\"'\"'required'\"'\"'] is False'",
+      "evidence": ".agent/evidence/113/development-01.txt"
+    },
+    {
+      "ordinal": 2,
+      "command": "python3 -c 'import re; from pathlib import Path; s=Path('\"'\"'tools/interface.md'\"'\"').read_text(); section=re.split(r'\"'\"'(?m)^## 5[. ]'\"'\"',s,maxsplit=1)[1]; section=re.split(r'\"'\"'(?m)^## 6[. ]'\"'\"',section,maxsplit=1)[0]; assert len(re.findall(r'\"'\"'(?m)^\\s*\\d+\\. '\"'\"',section))==10'",
+      "evidence": ".agent/evidence/113/development-02.txt"
+    },
+    {
+      "ordinal": 3,
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/interface.md '\"'\"'^## 6[.] Optional Capability: Live Runtime Sessions$'\"'\"' '\"'\"'(^|[^[:alnum:]_])submit-operation([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/113/development-03.txt"
+    },
+    {
+      "ordinal": 4,
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/SKILL.md '\"'\"'^## 10[.] Live Runtime Sessions$'\"'\"' '\"'\"'methodology/10_live_runtime_sessions[.]md'\"'\"''",
+      "evidence": ".agent/evidence/113/development-04.txt"
+    },
+    {
+      "ordinal": 5,
+      "command": "bash tools/validate.sh --payload",
+      "evidence": ".agent/evidence/113/development-05.txt"
+    },
+    {
+      "ordinal": 6,
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "evidence": ".agent/evidence/113/development-06.txt"
+    },
+    {
+      "ordinal": 8,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py routing",
+      "evidence": ".agent/evidence/113/development-08.txt"
+    },
+    {
+      "ordinal": 9,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py compatibility",
+      "evidence": ".agent/evidence/113/development-09.txt"
+    },
+    {
+      "ordinal": 10,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py scope-history",
+      "evidence": ".agent/evidence/113/development-10.txt"
+    },
+    {
+      "ordinal": 11,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py lifecycle",
+      "evidence": ".agent/evidence/113/development-11.txt"
+    },
+    {
+      "ordinal": 12,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py negative-controls",
+      "evidence": ".agent/evidence/113/development-12.txt"
+    },
+    {
+      "ordinal": 13,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py claim-boundary",
+      "evidence": ".agent/evidence/113/development-13.txt"
+    },
+    {
+      "ordinal": 15,
+      "command": "bash tools/validate.sh",
+      "evidence": ".agent/evidence/113/development-15.txt"
+    },
+    {
+      "ordinal": 16,
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 113=a57c860a18c82990c4a43deed1465bd052bb4c3f.. --files",
+      "evidence": ".agent/evidence/113/development-16.txt"
+    }
+  ],
+  "not_development": [
+    {
+      "ordinal": 7,
+      "reason": "surface requires actual fresh independent source-review gate after ModeB"
+    },
+    {
+      "ordinal": 14,
+      "reason": "input-integrity requires actual sourceGitcandidate/current seal"
+    }
+  ],
+  "execution": "Rootonce sequentially after all8GeneratorSHA/modefreeze; realoutputs/actualEXIT/exercisedbase; firstfailure preserved stopsrun and boundedfreshattempt required; successdoesnotreplaceModeB/fresh16QA",
+  "classification": "Regular development attempt, not negative-probe exemption; private37controls internally preregistered syntheticCONTROL evidence only"
+}

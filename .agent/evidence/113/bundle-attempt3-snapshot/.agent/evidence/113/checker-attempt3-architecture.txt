@@ -1,0 +1,41 @@
+Actor: /root/adapter_test_author_113
+Strategy: architectural review; final permitted checker attempt3
+Approved revision: 6bc5a654cf09d2654b4a42d9cdeb93f2491c2582
+Actual reviewer2 rejection SHA:259e619caa0659ed09082923c83f8c1eabb766f5794e592a3158031fd0c3d2f9
+
+The old architecture searched raw markup fragments and re-parsed isolated paragraphs.
+A link in a non-rendered HTML comment therefore supplied a counterfeit routing and
+bounded-paragraph proof. Paragraph-local parsing also lost multiline comment/fence/
+HTML context. This attempt separates four operations: source visibility masking;
+actual supported link-markup recognition; destination decoding; document-relative,
+repo-contained exact-target resolution. It retains the approved contract/44controls.
+
+Visibility masking preserves character boundaries and original blank-paragraph
+indices, removes closed/unclosed HTML comments and fenced code, recognizes fences
+with longer valid closers, excludes indented/tab code and exact-run inline code,
+and handles backslash escape parity. It never decodes the whole document.
+
+The defined supported subset consists of simple inline Markdown links in ordinary
+paragraphs (including visible labels containing inline code), and closed visible
+standalone HTML anchors with href/title attributes and ordinary text/em/strong/code
+labels. Images, reference links, nested Markdown brackets, raw-HTML-mixed Markdown
+paragraphs and unsupported HTML containers/attributes cannot supply acceptance proof.
+HTML context persists across blank lines. Code/pre/script/style/raw HTML text and
+attributes cannot become active Markdown. Entity-displayed or escaped tag text
+cannot become an HTML anchor by premature unescape. Only actual identified href
+values undergo HTML character-reference and URL-path decoding.
+
+Link records retain original paragraph identities. Both full-document routing and
+bounded-paragraph selection use the same whole-document records. A comment/fence/
+HTML wrapper spanning paragraphs remains non-rendered during bounded selection.
+The one M11 crosslink must be a standalone added paragraph inside actual Section1;
+a correct link relocated to Section2 cannot satisfy routing or bounded delta.
+Destinations still resolve relative to the owning document, remain inside the repo,
+and exactly name the contracted existing file; path spelling alone proves nothing.
+
+Controls preregistered before any selfcheck:44prior negatives,42non-rendered routing/
+bounded cases over21context classes,2READMEcomment cases and2M11Section1location
+cases;5genuine Markdown/encoded HTML positive forms;3actual scratchC9target runs.
+All use scratch only, targeted diagnostic/exit, and restored positives. OriginalRED
+1/3/4 is preserved, not repeated. No sourceReview/QA/current-source seal invented.
+First actual selfcheck failure must be preserved/reported with no repair or retry.

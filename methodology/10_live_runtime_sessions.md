@@ -2,11 +2,14 @@
 id: nizam-live-runtime-sessions
 title: "Live Runtime Sessions"
 description: "Language-neutral ownership, operation, evidence and handoff rules for long-lived development runtimes."
-version: 0.1.2
+version: 0.2.0
 status: active
-enforcement: consumer-aspirational
+enforcement: partially-enforced
 authoritative_source: methodology/10_live_runtime_sessions.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-12"
+    summary: "Publish the optional adapter crosslink and partially-enforced record-validation boundary; live runtime enforcement remains pending."
   - version: "0.1.2"
     date: "2026-10-12"
     summary: "Record the delivered normative SBCL binding while keeping executable enforcement and live proof pending."
@@ -20,16 +23,16 @@ change_log:
 
 # Live Runtime Sessions
 
-This normative protocol is **consumer-aspirational**: consumers must enforce its
-session rules in their runtime. The framework publishes definitions, two closed
-runtime provenance schemas and C12 record-relational validation. These checks
-establish record shape and declared invariants only; they cannot prove live
-ownership, generation or lease enforcement, source/heap identity or runtime
-conformance. The normative SBCL reference binding is published in
-[the binding document](11_sbcl_runtime_binding.md). The optional adapter capability
-remains pending feature113 in phase015. Executable session controller, SBCL binding
-enforcement and all thirteen live conformance proofs remain pending phase016
-features115–120.
+This normative protocol is **partially-enforced** only through the existing
+runtime provenance schemas and C12 record-relational validation. Consumers must
+enforce session rules in their runtime. These schema/C12 checks establish record
+shape and declared invariants only; they cannot prove live ownership, generation
+or lease enforcement, source/heap identity or runtime conformance. The normative
+SBCL reference binding is published in [the binding document](11_sbcl_runtime_binding.md),
+and the optional adapter capability is published in
+[the adapter interface](..&#47;tools/interface.md). Executable session controller,
+adapter/SBCL binding enforcement and all thirteen live conformance proofs remain
+pending phase016 features115–120.
 
 A runtime session is a long-lived process and its mutable image used for
 interactive development. An agent session is an agent's conversational or
@@ -224,9 +227,10 @@ independently captured acceptance evidence and QA verdicts. Implementation agent
 preserve fields they do not own. The two schemas and executable C12 relational
 checks validate session and operation records. They establish declared record
 validity, never live runtime behavior or acceptance of a warm image. The normative
-SBCL reference binding is delivered. The optional adapter capability remains
-pending feature113 in phase015; executable controller/SBCL binding enforcement
-and live conformance proofs remain pending phase016 features115–120.
+SBCL reference binding is delivered. The optional adapter capability is published
+in [the adapter interface](..&#47;tools/interface.md); executable controller/adapter/
+SBCL binding enforcement and live conformance proofs remain pending phase016
+features115–120.
 
 | requirement-id | normative-rule | evidence-boundary |
 | --- | --- | --- |

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
-  "current_feature": "113",
+  "current_feature": "114",
   "status": "in_progress",
-  "updated_at": "2026-10-12T03:51:38.477650+00:00",
+  "updated_at": "2026-10-12T10:15:04.467880+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -434,6 +434,44 @@
     "112-qa": {
       "attempts": 1,
       "limit": 3
+    },
+    "113-contract": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "113-checker-development": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "113-checker-review": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "113-generator-development": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "113-implementation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "113-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "113-evidence-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "113-recovery-1-checker-development": {
+      "attempts": 3,
+      "limit": 3,
+      "authorization": ".agent/evidence/113/recovery-authorization.json"
+    },
+    "113-recovery-1-checker-review": {
+      "attempts": 1,
+      "limit": 3,
+      "authorization": ".agent/evidence/113/recovery-authorization.json"
     }
   },
   "history": [
@@ -3282,6 +3320,286 @@
       "prior_only_3x": 7266.0,
       "evidence": ".agent/evidence/112/scope-measurement.txt",
       "detail": "Actual frozen classifier EXIT0/allpaths classified. Compared112 with only completed preceding110/111 before append; no flag or budget increase. Source/bundle/primary inputs remain exact sealed candidate."
+    },
+    {
+      "at": "2026-10-12T04:04:55.478260+00:00",
+      "event": "contract_attempt_isolated",
+      "contract_id": "113",
+      "attempt": 1,
+      "approved_base": "a57c860a18c82990c4a43deed1465bd052bb4c3f",
+      "attempt_root": "/home/cnross/.tmp/nizam-113-contract-attempt1-hpo3xblp",
+      "evidence": ".agent/evidence/113/contract-attempt1-root.json",
+      "detail": "Own PR87 merged at a57c860 with6PRchecks and5Mainchecks success, installed239payload unchanged. Canonical113 staysPENDING until both independent pre-code approvals. Original1050estimate, phase7200/9360 and completed6088 preserved; newcontract only, no product/testing before gates."
+    },
+    {
+      "at": "2026-10-12T04:30:49.723163+00:00",
+      "event": "contract_approved",
+      "contract_id": "113",
+      "attempt": 1,
+      "proposal_sha256": "da7cf60d2ac3c4ea89d054f31a313a549e84082459a52d4ec0f7f2fef7528bbb",
+      "approved_contract_sha256": "bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5",
+      "gates": [
+        {
+          "path": ".agent/validator/113-mode-a.json",
+          "sha256": "e5aa8bbab790e4e456158d7ae9983da7cd2a8ea10b8b22e37eb12da9e539dfa7",
+          "actor": "/root/adapter_validator_113"
+        },
+        {
+          "path": ".agent/qa/113-contract-review.json",
+          "sha256": "227b52661b7e2aa29c74b3ce6f2f446007ff22671814280fd9f0e2c2288652b5",
+          "actor": "/root/adapter_test_author_113"
+        }
+      ],
+      "detail": "Root parsed bothactual independently authored schema-valid verdicts true and threeempty arrays. Only allowed approvalmeta changed; originalproposal preserved outsidecontract. Independent TestAuthor and separate bundle reviewer precede Generatorsource. Originalphase7200/9360 and completed6088 preserved."
+    },
+    {
+      "at": "2026-10-12T04:31:14.512816+00:00",
+      "event": "checker_attempt_isolated",
+      "contract_id": "113",
+      "attempt": 1,
+      "approved_base": "dc133ea51a17fb55fc3d4d383d04aeb96828b951",
+      "attempt_root": "/home/cnross/.tmp/nizam-113-test-attempt1-l95wkz71",
+      "evidence": ".agent/evidence/113/checker-attempt1-root.json",
+      "detail": "not authorized until reviewed bundle"
+    },
+    {
+      "at": "2026-10-12T04:56:51.119705+00:00",
+      "event": "checker_development_complete_bundle_review_isolated",
+      "contract_id": "113",
+      "checker_attempt": 1,
+      "review_attempt": 1,
+      "approved_base": "dc133ea51a17fb55fc3d4d383d04aeb96828b951",
+      "review_root": "/home/cnross/.tmp/nizam-113-review-attempt1-r4e605tn",
+      "fixed_inputs_sha256": "94f3a603ae2fe39a57ae30c66416b68579a78b8bb22a81f3e35deaf806f00a6d",
+      "evidence": ".agent/evidence/113/bundle-review-attempt1-root.json",
+      "detail": "ActualTestAuthor37privatecontrols+RED3and41memberhash/modeaudit; developmentproofonly, noactualsourceQA. Sourceproductsstilluntouched; Parentcaptureadapter disclosed inbundle."
+    },
+    {
+      "at": "2026-10-12T05:01:11.342892+00:00",
+      "event": "independent_test_bundle_approved",
+      "contract_id": "113",
+      "attempt": 1,
+      "verdict": ".agent/validator/113-test-bundle-review.json",
+      "verdict_sha256": "b29f2548f41761d8cbc058e1357346571b6544df7375cb7fe89c236f25f76626",
+      "fixed_inputs_sha256": "94f3a603ae2fe39a57ae30c66416b68579a78b8bb22a81f3e35deaf806f00a6d",
+      "evidence": ".agent/evidence/113/bundle-review-controls.txt",
+      "detail": "Parentparsedactualindependentreview approved/3empty;37controls/restorations personally rerun reviewerEXIT0. TestAuthor andreviewer distinct; captureadapterrole disclosed/reviewed. Product/source changes not yet written; originalbudget/install/history fixed."
+    },
+    {
+      "at": "2026-10-12T05:01:35.521736+00:00",
+      "event": "source_attempt_isolated",
+      "contract_id": "113",
+      "attempt": 1,
+      "approved_base": "6bc5a654cf09d2654b4a42d9cdeb93f2491c2582",
+      "attempt_root": "/home/cnross/.tmp/nizam-113-source-attempt1-53r_1j7l",
+      "evidence": ".agent/evidence/113/source-attempt1-root.json",
+      "fixed_inputs_sha256": "94f3a603ae2fe39a57ae30c66416b68579a78b8bb22a81f3e35deaf806f00a6d",
+      "detail": "Bothactualprecodegates and separate actualbundleReviewtrue/empty3. Rootpromotedreviewed inputs only, newownedsourceattempt recordedbeforeGeneratorwrites. Original1050estimate/completed6088/9360 unchanged."
+    },
+    {
+      "at": "2026-10-12T05:12:12.815209+00:00",
+      "event": "source_attempt_stopped_test_bundle_interface_conflict",
+      "contract_id": "113",
+      "source_attempt": 1,
+      "evidence": ".agent/evidence/113/source-attempt1-blocker.json",
+      "detail": "Readactualchecker lines190/240/247 and actualC9vlib cwd resolution; literal ../links mutually incompatible with currentvalidator. Noactualverificationpass/failinvented. Sourceauthorfailed delivery conclusion countedgenerator-development1; checker-development1/controlsuccess and independentreview1 retained as historical, now renewalrequired. Contractunchanged; byteexactdraft quarantined beforeownedroot cleanup."
+    },
+    {
+      "at": "2026-10-12T05:12:58.494146+00:00",
+      "event": "checker_attempt_isolated",
+      "contract_id": "113",
+      "attempt": 2,
+      "approved_base": "6bc5a654cf09d2654b4a42d9cdeb93f2491c2582",
+      "attempt_root": "/home/cnross/.tmp/nizam-113-test-attempt2-ymh2qn6q",
+      "evidence": ".agent/evidence/113/checker-attempt2-root.json",
+      "detail": "Bounded113testinterface correction only, existingfrozen41map/review1 retained historicalsnapshot. Actualrelative-link semanticresolution must agree with realC9validator; no validator/product/scopeamendment. Namedcounters persist; no fourthattempt/rebaseline."
+    },
+    {
+      "at": "2026-10-12T05:20:00.596276+00:00",
+      "event": "checker_development_complete_bundle_review_isolated",
+      "contract_id": "113",
+      "checker_attempt": 2,
+      "review_attempt": 2,
+      "approved_base": "6bc5a654cf09d2654b4a42d9cdeb93f2491c2582",
+      "review_root": "/home/cnross/.tmp/nizam-113-review-attempt2-sqtad_lf",
+      "fixed_inputs_sha256": "46b450ef2a99a74fd5c3a9bb15b309abe32cd4947d62050312ed04497a81fea6",
+      "evidence": ".agent/evidence/113/bundle-review-attempt2-root.json",
+      "detail": "Actualfirstselfcheck44targetednegative/restored and threeC9scratch runs0; unchanged37invariants; actualrenderedhrefcorrected, oldbundle/checker/control/review1preserved. Existingcontractbb4unchanged; noactualsourceQA/candidate. Rootaudited63filebytes/modes/seal."
+    },
+    {
+      "at": "2026-10-12T05:27:28.984396+00:00",
+      "event": "independent_test_bundle_rejected",
+      "contract_id": "113",
+      "attempt": 2,
+      "verdict": ".agent/validator/113-test-bundle-review.json",
+      "verdict_sha256": "259e619caa0659ed09082923c83f8c1eabb766f5794e592a3158031fd0c3d2f9",
+      "fixed_inputs_sha256": "46b450ef2a99a74fd5c3a9bb15b309abe32cd4947d62050312ed04497a81fea6",
+      "evidence": ".agent/evidence/113/bundle-review-attempt2-comment-falsepass.txt",
+      "detail": "Rootparsedactualapprovedfalse/highissue. Reviewerownscratch HTML-comment solelink wronglypasses routingandboundedDelta; original/restoredpositive0. Actual44control/C9success preserved, notinferredapproval. Rejectedbundle2snapshotted beforeownedrootcleanup; nogateQA/Source2 started. Nextchecker/review3lastallowed; originalcontract/scope/budget/install/historicalproofs unchanged. ArchiveguardexistingRootintent independentlybyteequal wasreused; noneoverwritten."
+    },
+    {
+      "at": "2026-10-12T05:29:15.371075+00:00",
+      "event": "checker_attempt_isolated",
+      "contract_id": "113",
+      "attempt": 3,
+      "approved_base": "6bc5a654cf09d2654b4a42d9cdeb93f2491c2582",
+      "attempt_root": "/home/cnross/.tmp/nizam-113-test-attempt3-5lqpg5el",
+      "evidence": ".agent/evidence/113/checker-attempt3-root.json",
+      "detail": "Mandatoryarchitecturalreview: actualrenderedhref identity must exclude allnon-rendered code/comment/escapedmarkers and retain validdecodedlinks. Lastallowed3rdchecker/reviewerattempt; firstfailure/44controlsC9success preserved, noresetornewallocation. Source2notstarted."
+    },
+    {
+      "at": "2026-10-12T05:49:37.189207+00:00",
+      "event": "checker_development_complete_bundle_review_isolated",
+      "contract_id": "113",
+      "checker_attempt": 3,
+      "review_attempt": 3,
+      "approved_base": "6bc5a654cf09d2654b4a42d9cdeb93f2491c2582",
+      "review_root": "/home/cnross/.tmp/nizam-113-review-attempt3-b_yfdwdv",
+      "fixed_inputs_sha256": "60147b9f354de9ed0569b02faded41638ed046ea69e1368784f3002bcac41cc3",
+      "evidence": ".agent/evidence/113/bundle-review-attempt3-root.json",
+      "detail": "Actualfirstonlyselfcheck90targetednegative/restored plus5validforms/3scratchC9passed; architecture scopes whole-document visiblelinks/paragraphcontext and M11Section1. Original44invariants/oldbundles preserved, nooldREDreplay. Checker3successdoesnotapprovebundle; finalreview3pending, anyrejectmandatoryhalt. Rootaudited138existingbytes/modes/seal; contract/scope/budget/install fixed."
+    },
+    {
+      "at": "2026-10-12T06:03:58.261485+00:00",
+      "event": "circuit_breaker_triggered",
+      "contract_id": "113",
+      "step_key": "113-checker-review",
+      "attempts": 3,
+      "limit": 3,
+      "verdict": ".agent/validator/113-test-bundle-review.json",
+      "verdict_sha256": "12edfb4f71dc55e1fa70ae0114441ef7e3efe2604751d4b3d39468afdc2f2036",
+      "evidence": ".agent/evidence/113/circuit-breaker-halt.json",
+      "previous_operator_gate_record": {
+        "gate": "H-CONTRACT-111-SCOPED-EXTENSION",
+        "reason": "Current approved contract3/3 does not permit schema-required history prefix annotation. One bounded revision4 exception needed; no execution or approval inferred.",
+        "plan": ".agent/evidence/111/history-detail-remedy.txt",
+        "qa": ".agent/qa/111.json",
+        "decision": "approved-contextual-bounded-repair",
+        "evidence": ".agent/evidence/111/history-detail-authorization.json",
+        "stage": "both-independent-pre-code-gates-approved"
+      },
+      "detail": "Actualfinalreview3 false/highissue; requiredcanonicalstep113BLOCKED written andschema-validated beforederivedpipelineblocked. Gateattempt3 countedonce; oldchecker3/source1/contract1, ModeB/QA0 andhistoricalallcounters retained. Reviewer90suite/validforms/C9successdoesnotoverride ownfalsepass. Capture/quarantine complete, debt050next, humanhalt; nofourth/relabel/reset/newallocation/release."
+    },
+    {
+      "at": "2026-10-12T07:58:40.039629+00:00",
+      "feature": "113",
+      "stage": "operator-authorized-checker-recovery",
+      "evidence": ".agent/evidence/113/recovery-authorization.json",
+      "note": "Original checker3/3 counters remain exhausted; separate bounded recovery epoch authorized. Canonical113 remains BLOCKED pending revised contract gates.",
+      "event": "operator-authorized-checker-recovery",
+      "detail": "Original checker3/3 counters remain exhausted; separate bounded recovery epoch authorized. Canonical113 remains BLOCKED pending revised contract gates."
+    },
+    {
+      "at": "2026-10-12T08:10:19.968743+00:00",
+      "feature": "113",
+      "stage": "recovery-contract-attempt2-proposed",
+      "proposal": ".agent/evidence/113/recovery-contract-attempt2-proposal.json",
+      "proposal_sha256": "85296b4075227ffd9964b8ecc78fce4e2ac9ccef4e7cde4bcf2c3c574c94f81f",
+      "evidence": ".agent/evidence/113/recovery-contract-attempt2-handoff.json",
+      "note": "Generator concluded isolated type/interface revision; ModeA in progress, independent Evaluator pending. Canonical still BLOCKED; no implementation.",
+      "event": "recovery-contract-attempt2-proposed",
+      "detail": "Generator concluded isolated type/interface revision; ModeA in progress, independent Evaluator pending. Canonical still BLOCKED; no implementation."
+    },
+    {
+      "at": "2026-10-12T08:15:50.764452+00:00",
+      "feature": "113",
+      "stage": "recovery-contract-attempt2-mode-a-rejected",
+      "verdict": ".agent/evidence/113/recovery-contract-attempt2-mode-a.json",
+      "verdict_sha256": "59ba728ea4a46de216935959ac97d3997a197907482dd998fba2ae52fa08d689",
+      "preservation": ".agent/evidence/113/recovery-contract-attempt2-rejection-preservation.json",
+      "next_workspace": ".agent/evidence/113/recovery-contract-attempt3-workspace.json",
+      "note": "One original-history/livecontract conflict. Third final contract attempt isolates exact oldcontract archive mapping; checker recovery0/3 unchanged, no source begun.",
+      "event": "recovery-contract-attempt2-mode-a-rejected",
+      "detail": "One original-history/livecontract conflict. Third final contract attempt isolates exact oldcontract archive mapping; checker recovery0/3 unchanged, no source begun."
+    },
+    {
+      "at": "2026-10-12T08:21:23.306920+00:00",
+      "feature": "113",
+      "stage": "recovery-contract3-mode-a-approved",
+      "proposal_sha256": "d97bfc3dea880207049a07277df51bb19cafc5b4d56007090f0306c3ee1d8615",
+      "verdict": ".agent/validator/113-mode-a.json",
+      "verdict_sha256": "acece0fc3eec2c434119b60ab6ccfc29215e64855b9ead40e0f1bb9c15cc280b",
+      "evidence": ".agent/evidence/113/recovery-mode-a3-handoff.json",
+      "note": "Actual true and threeempty arrays parsed. Independent second pre-code gate pending; no implementation.",
+      "event": "recovery-contract3-mode-a-approved",
+      "detail": "Actual true and threeempty arrays parsed. Independent second pre-code gate pending; no implementation."
+    },
+    {
+      "at": "2026-10-12T08:31:45.774808+00:00",
+      "feature": "113",
+      "stage": "recovery-contract-approved-and-debt-annotated",
+      "evidence": ".agent/evidence/113/recovery-contract-approval.json",
+      "approved_contract_sha256": "e4fa0058a7f46c1da91a114c243942decbb4f85d4174007b9a07bc005f0a29ea",
+      "debt_version": "0.64.0",
+      "note": "Both actual pre-code verdicts true/threeempty; activeverifier8 archived before any replacement. Canonical113 remains BLOCKED until correctedbundle approval; source1/3, oldchecker3/3, recovery0/3, budget/install unchanged.",
+      "event": "recovery-contract-approved-and-debt-annotated",
+      "detail": "Both actual pre-code verdicts true/threeempty; activeverifier8 archived before any replacement. Canonical113 remains BLOCKED until correctedbundle approval; source1/3, oldchecker3/3, recovery0/3, budget/install unchanged."
+    },
+    {
+      "at": "2026-10-12T08:54:22.873541+00:00",
+      "event": "113-recovery-checker-development1-failed",
+      "detail": "Actualselfcheck EXIT1 debt-model tableheader interface;10prelimcomponentspassed,0negatives/validforms/C9reached. Exactfailedsnapshot/archive captured; norepair/rerun/Source2/acceptance. Reviewcounter0 unchanged.",
+      "evidence": ".agent/evidence/113/recovery-checker-attempt1-handoff.json",
+      "preservation": ".agent/evidence/113/recovery-checker-attempt1-preservation.json"
+    },
+    {
+      "at": "2026-10-12T09:04:23.431148+00:00",
+      "event": "113-recovery-checker-development2-selfcheck-pass-interface-stop",
+      "detail": "Selfcheck124/7/3 PASS; stopped unrefrozen due read-confirmed production resumed gate versus private CONTROL manifest mismatch; no executed resumed failure or actual bundle review; exact ownedroot captured. Final architecture attempt3 permitted in existing authorized epoch; review0 unchanged.",
+      "evidence": ".agent/evidence/113/recovery-checker-attempt2-handoff.json",
+      "preservation": ".agent/evidence/113/recovery-checker-attempt2-preservation.json"
+    },
+    {
+      "at": "2026-10-12T09:22:13.381031+00:00",
+      "event": "113-recovery-checker-development3-pass-frozen",
+      "detail": "Actual127negative/restored,7forms,3C9,3lifecycleorigins andbudget0/3/0 PASS once.360actualfixedbytes/modes captured; distinctindependentreviewnext, no Source2/acceptance. Originalchecker3 andsource1 unchanged.",
+      "evidence": ".agent/evidence/113/recovery-checker-attempt3-handoff.json",
+      "fixed_inputs_sha256": "ea9bdf44ae248ca7c82699a953b9abd82c70763ccb13568cdd5dc7351864f9af"
+    },
+    {
+      "at": "2026-10-12T09:35:09.348831+00:00",
+      "event": "113-recovery-bundle-approved-and-resumed",
+      "detail": "Parsed actual distinct reviewer approval true/threeempty and fixedSHA;127/7/3/3origins plus8ownprobes personally passed. Promoted only approved360-input verifier bytes; canonicalstep113 IN_PROGRESS written before derivedstate; debt050Open, source1/3 andinstalled/budget unchanged.",
+      "verdict": ".agent/validator/113-test-bundle-review.json",
+      "verdict_sha256": "5f23145555e5e2748c80efcee2f056277918b6055e72b4e2e08667b240d7da98",
+      "evidence": ".agent/evidence/113/recovery-bundle-review-attempt1-handoff.json"
+    },
+    {
+      "at": "2026-10-12T09:50:37.276448+00:00",
+      "event": "113-source2-development14-pass",
+      "detail": "Exact pending79ba candidate193publiclines/eightpaths; Parent captured14safeactualapprovedcommands allEXIT0 withrawstdoutstderr. No semanticSourceReview/ModeB/freshQA claimed. Current-source eight actualGitbytes/tree sealed separately aftercandidate.",
+      "candidate_commit": "79baee0c54f4b7b7c01c419fd843d6d1842d5ee1",
+      "source_manifest_sha256": "96ab81350cc2936abe173aa66fb3ee4cccf08c0390ad2ccbf1f06dbac06fbb3d",
+      "evidence": ".agent/evidence/113/source-attempt2-development-result.json"
+    },
+    {
+      "at": "2026-10-12T10:06:53.902211+00:00",
+      "event": "113-mode-b1-approved-candidate-promoted",
+      "detail": "Parsed actual independent ModeB1 true/three empty. Fast-forwarded exact eight-path candidate79ba; Source2/current-source/dev14 and reviewer raw preserved. Fresh QA remains pending.",
+      "candidate_commit": "79baee0c54f4b7b7c01c419fd843d6d1842d5ee1",
+      "verdict": ".agent/validator/113-mode-b.json",
+      "verdict_sha256": "4f732b0014459115f929508364ab3054c71c4ab6fba0f9d511117ed9aa6d62e2"
+    },
+    {
+      "at": "2026-10-12T10:12:33.208356+00:00",
+      "event": "113-fresh-independent-qa1-pass",
+      "detail": "Parsed actual finalQA true/three empty16/16 plus own actor-independence probe; all actual receipt bytes promoted unchanged. Parent evidence-capture remains separate.",
+      "verdict": ".agent/qa/113.json",
+      "verdict_sha256": "1fb3597a93581b068b116b359df5935550d226096ae4dda34689c1a10443f8a0"
+    },
+    {
+      "at": "2026-10-12T10:13:31.874178+00:00",
+      "event": "113-feature-complete-canonical-first",
+      "detail": "Actual evidence gate verified all16 receipts, independent semantic review/ownprobe and exact candidate/fixed/source Git replay before canonical113 COMPLETED. Only debt050 movedResolved preserving all historical prefixes;114 remains pending. No release/install/controller or budget rebaseline.",
+      "evidence": ".agent/evidence/113/evidence-gate.txt",
+      "candidate_commit": "79baee0c54f4b7b7c01c419fd843d6d1842d5ee1"
+    },
+    {
+      "at": "2026-10-12T10:15:04.467880+00:00",
+      "event": "113-scope-measured-before-append",
+      "detail": "Actual frozen Gitnumstat/classifier691 counted, prior-only3x6088 and cumulative6779/9360; unclassified0. Remaining2581 for114; no rebaseline.",
+      "evidence": ".agent/evidence/113/scope-measurement-final.txt",
+      "actual": 691
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3456,9 +3774,9 @@
   "scope_budget": {
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "total_lines_changed": 6088,
-    "evidence_lines_total": 98437,
-    "excluded_lines_total": 991,
+    "total_lines_changed": 6779,
+    "evidence_lines_total": 340433,
+    "excluded_lines_total": 1342,
     "per_feature": [
       {
         "id": "110",
@@ -3515,6 +3833,27 @@
           "first_feature_exception": false
         },
         "note": "Measured with unchanged frozen Git numstat/classifier after actual ModeB2, fresh independent20/20 QA/own adversarial/evidence capture and canonical closure. Compare against preceding110/111 only before appending112. Failed raw attempts retained as evidence, counted verdicts included once; original7200/9360 and all historical measurements preserved."
+      },
+      {
+        "id": "113",
+        "estimated": 1050,
+        "actual": 691,
+        "evidence_lines": 241996,
+        "excluded_lines": 351,
+        "all_paths_lines": 243038,
+        "range": "a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE",
+        "evidence": ".agent/evidence/113/scope-measurement-final.txt",
+        "baseline": {
+          "prior_features": [
+            "110",
+            "111",
+            "112"
+          ],
+          "rolling_average": 2029.3333333333333,
+          "three_times_threshold": 6088.0,
+          "first_feature_exception": false
+        },
+        "note": "Product193 + process498 =691, measured after actual corrected-bundle review/ModeB1/fresh16QA/ownprobe/capture and canonical closure. Compare prior completed110/111/112 before append; blocked inflight300 remains historical and is not double-counted. Original7200/9360 budget and all failed raw evidence/old counters/install preserved."
       }
     ],
     "phase_level_items": [],
@@ -3530,7 +3869,7 @@
     "phase_base_revision": "57862f69ba30a36004ea9a17a295fc9c835afc13",
     "authorization_revision": "06c0ae0a273facce80c57506260648c41f566ebb",
     "phase_level_costs": "Included within approved7200 per-feature allowances; no additional budget.",
-    "last_measured_at": "2026-10-12T03:51:38.477650+00:00",
+    "last_measured_at": "2026-10-12T10:15:04.467880+00:00",
     "historical_inflight_measurements": [
       {
         "id": "111",
@@ -3552,6 +3891,17 @@
           "note": "Incomplete feature; not appended to completed-feature rolling baseline. Current completed1711 plus in-flight actual below9360. Unpromoted product draft retained only as raw evidence; actual future implementation measurement must include promoted product if operator resumes."
         },
         "note": "Incomplete feature after actual failedQA1; not appended to completed-feature rolling baseline. Frozen product/source promoted and now counted. Completed1711 plus in-flight below9360; contract extension has no extra budget. Preserve old pre-source halt measurement as historical snapshot."
+      },
+      {
+        "id": "113",
+        "status": "blocked",
+        "actual": 300,
+        "evidence_lines": 185750,
+        "excluded_lines": 209,
+        "all_paths_lines": 186259,
+        "range": "a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE",
+        "evidence": ".agent/evidence/113/blocked-scope-measurement.txt",
+        "note": "Incompletefeature after finalindependentcheckerreview3 rejected. Product0+process300; notappended tocompletedrollingbaseline. Completed6088+inflight300=6388below9360, noScopeoverrun/rebaseline; halt solelymandatorycircuit. Rawfailedbundles/source1quarantine excluded as evidence; no unreviewedpublicproductpromotion."
       }
     ]
   },
@@ -3736,7 +4086,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "113",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -3808,7 +4158,7 @@
       }
     ]
   },
-  "last_action": "Feature112 complete, exact measured scope1244; cumulative6088/9360, below prior-only3x7266.0. Feature113 pending eligible; PR preparation and bounded post-completion checks next.",
+  "last_action": "Feature113 complete after actual corrected-bundle, ModeB1, fresh16QA plus own probe and Parent capture; NDEBT050Resolved. Feature114 pending; clean PR/merge next.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -3821,7 +4171,8 @@
     "102",
     "110",
     "111",
-    "112"
+    "112",
+    "113"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
@@ -3882,12 +4233,16 @@
     "note": "Phase 014 final ledger. 8705 of 8600 (101.2%): 105 over the operator-confirmed re-baseline estimate (spec 1.1.4, 'option 1 confirmed.'), comfortably within the 11180 authorized 130% ceiling. Completed features 099 + 103-109 + 102 (9 features); cancelled 100/101 (A3) consumed no budget. Historical-basis estimates for 099/103 (920/280) are mixed-basis and disclosed per their ledger entries. Captures: measure-099-103.txt, measure-105.txt, measure-108.txt, measure-109.txt, measure-102.txt."
   },
   "pending_operator_gate": {
-    "gate": "H-CONTRACT-111-SCOPED-EXTENSION",
-    "reason": "Current approved contract3/3 does not permit schema-required history prefix annotation. One bounded revision4 exception needed; no execution or approval inferred.",
-    "plan": ".agent/evidence/111/history-detail-remedy.txt",
-    "qa": ".agent/qa/111.json",
-    "decision": "approved-contextual-bounded-repair",
-    "evidence": ".agent/evidence/111/history-detail-authorization.json",
-    "stage": "both-independent-pre-code-gates-approved"
+    "gate": "H-CHECKER-113-RECOVERY",
+    "decision": "approved",
+    "reason": "113-checker-review3/3 rejected doubleHTMLentity-decoding false-pass; fourthautonomousattempt forbidden",
+    "proposal": ".agent/evidence/113/circuit-breaker-halt.json",
+    "verdict": ".agent/validator/113-test-bundle-review.json",
+    "scope": "113task-onlychecker/link-decoding recovery and freshindependentreview; preserveoldcounters/source1/3/originalbudget/install; anyrequiredcontractbreaker/debtprojection alignment throughbothpre-code gates",
+    "authorization_inferred": false,
+    "authorization": ".agent/evidence/113/recovery-authorization.json",
+    "at": "2026-10-12T07:58:40.039629+00:00",
+    "verbatim": "continue.",
+    "stage": "feature113-accepted-and-captured"
   }
 }

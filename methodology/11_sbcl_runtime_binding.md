@@ -2,11 +2,14 @@
 id: nizam-sbcl-runtime-binding
 title: "SBCL Runtime Binding"
 description: "Normative SBCL reference binding and folded language profile for live development, honest outcomes and fresh hermetic acceptance."
-version: 0.1.0
+version: 0.1.1
 status: active
 enforcement: consumer-aspirational
 authoritative_source: methodology/11_sbcl_runtime_binding.md
 change_log:
+  - version: "0.1.1"
+    date: "2026-10-12"
+    summary: "Link the delivered optional adapter interface without changing the aspirational SBCL binding or live-proof boundary."
   - version: "0.1.0"
     date: "2026-10-12"
     summary: "Define the SBCL reference profile and runtime hazards without claiming executable enforcement or live conformance."
@@ -31,6 +34,11 @@ illustrative until phase016 live verification. Observed local SBCL2.2.9.debian
 availability is not conformance or proof of host isolation. Consumers MUST obtain
 required capable isolated CI evidence before claiming live acceptance. This
 binding does not authorize changing workstation sysctls or installed governance.
+
+The [optional adapter interface](..&#47;tools/interface.md) publishes the seven
+session calls and conditional checks. Its publication supplies no executable
+SBCL adapter or live conformance proof and does not change this binding's
+consumer-aspirational enforcement.
 
 ## 2. Reference language profile
 

@@ -1,0 +1,1021 @@
+{
+  "phase": "015-live-runtime-normative",
+  "spec_version": "1.0.1",
+  "original_estimate_lines": 7200,
+  "ceiling_130pct": 9360,
+  "activation_state": "active",
+  "phase_status": "in_progress",
+  "planning_note": "H-PHASE-015 authorized2026-10-11 at06c0ae0a273facce80c57506260648c41f566ebb, approved7200/9360 including phase-level costs. Canonical110 under approved independent contract gates;111-114pending. Future-output tests do not claim live runtime proof. WA six design choices selected; WA/016 unallocated.",
+  "budget_basis": {
+    "counted": [
+      "product",
+      "contract",
+      "verdict",
+      "audit",
+      "planning"
+    ],
+    "excluded": [
+      "raw evidence",
+      "run_state"
+    ],
+    "unclassified": "fail closed",
+    "proposed_only": false,
+    "phase_level_costs": "Included inside per-feature allowances/overall7200, never extra uncapped allowance",
+    "selected_comparables": {
+      "ids": [
+        "104",
+        "105",
+        "106",
+        "107",
+        "109",
+        "108",
+        "102"
+      ],
+      "actual_total": 5933,
+      "estimate_total": 5110,
+      "excluded_mixed_basis": [
+        "099",
+        "103"
+      ]
+    },
+    "prior_three_actuals": [
+      836,
+      851,
+      906
+    ],
+    "historical_phase014_total": 8705,
+    "historical_phase014_feature_sum": 7414,
+    "historical_phase014_phase_level_items": 1291
+  },
+  "fixtures_total": 18,
+  "case_matrix": [
+    {
+      "case": 1,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_operation_valid_rejected_foreign_stale.json",
+        "runtime_operation_neg_foreign_executed.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "Stub",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 2,
+      "schema_owner": "111",
+      "schema_fixtures": [],
+      "schema_limit": "No schema isolation proof; runtime-only",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "Stub",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 3,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_operation_valid_rejected_foreign_stale.json",
+        "runtime_operation_neg_stale_generation_executed.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "Stub",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 4,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_operation_valid_partial_load_condition.json",
+        "runtime_operation_neg_failed_load_consistent.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "SBCL",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 5,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_operation_valid_running_stopped_waiting.json",
+        "runtime_operation_valid_rejected_busy.json",
+        "runtime_operation_neg_timeout_cancelled.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "Stub and SBCL",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 6,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_session_valid_reattach_pending.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "Stub and SBCL",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 7,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_operation_neg_session_result_acceptance.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "SBCL",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 8,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_operation_valid_trial_rejected.json",
+        "runtime_operation_neg_trial_executed.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "Stub policy and CI isolation mechanism",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 9,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_operation_valid_new_generation_same_attempt.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "Stub",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 10,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_session_valid_replayable_handoff.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "Stub and SBCL",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 11,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_session_valid_accept_hermetic.json",
+        "runtime_session_neg_accept_inherited_cache.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "SBCL",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 12,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_operation_neg_session_result_acceptance.json"
+      ],
+      "schema_limit": "No additional schema proof beyond case7; deleted-definition drift is runtime-only",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "SBCL",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    },
+    {
+      "case": 13,
+      "schema_owner": "111",
+      "schema_fixtures": [
+        "runtime_session_valid_transfer_lease.json",
+        "runtime_operation_neg_stale_lease_executed.json"
+      ],
+      "schema_limit": "Record shape/invariant only; never proves live behavior",
+      "live_owner": "phase016 proposed116-118",
+      "live_runtime": "Stub",
+      "live_required": true,
+      "live_status": "pending; phase016 unallocated",
+      "claim_working": false
+    }
+  ],
+  "features": [
+    {
+      "id": "110",
+      "name": "Neutral live-runtime protocol and generic definitions",
+      "description": "Define ownership/generation/serial operations, handoff and fresh acceptance; attempts/probes/declared outcomes preserve identity across stages. Amend generic02/03/permissions/review/DoD and register source modules in the same feature.",
+      "status": "complete",
+      "dependencies": [],
+      "acceptance_tests": [
+        "bash tools/validate.sh",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/10_live_runtime_sessions.md '\"'\"'^## [0-9]+[.] Source, image and durable records$'\"'\"' '\"'\"'(^|[^[:alnum:]_])source([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/10_live_runtime_sessions.md '\"'\"'^## [0-9]+[.] Ownership and leases$'\"'\"' '\"'\"'(^|[^[:alnum:]_])owner(ship)?([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/10_live_runtime_sessions.md '\"'\"'^## [0-9]+[.] Fresh-environment acceptance$'\"'\"' '\"'\"'(^|[^[:alnum:]_])committed([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/03_circuit_breaker.md '\"'\"'^### 3[.]2[.]? What counts as an attempt$'\"'\"' '\"'\"'(^|[^[:alnum:]_])worktrees?([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/03_circuit_breaker.md '\"'\"'^### 3[.]2[.]? What counts as an attempt$'\"'\"' '\"'\"'(^|[^[:alnum:]_])probes?([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep standard/permission_classes.md '\"'\"'^## 5[.] Runtime Session Permission Classes$'\"'\"' '\"'\"'^[|][[:space:]]*`runtime[.]session[.]lifecycle`[[:space:]]*[|][[:space:]]*Orchestrator[[:space:]]*[|]'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep standard/convergent_code_review.md '\"'\"'^## 5[.] Three Independent Trials$'\"'\"' '\"'\"'(^|[^[:alnum:]_])session endpoint([^[:alnum:]_]|$)'\"'\"''",
+        "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'NIZAM.json'\"'\"').read_text()); assert any(v['\"'\"'authoritative_source'\"'\"']=='\"'\"'methodology/10_live_runtime_sessions.md'\"'\"' for v in d['\"'\"'capabilities'\"'\"'])'"
+      ],
+      "estimated_lines": 1600,
+      "acceptance_availability": "Future implementation acceptance: commands use existing tools or self-contained structural checks. New output targets are absent today; existing targets require future amendments. This plan executes no feature acceptance and makes no implementation-pass claim.",
+      "future_output_targets": [
+        "methodology/10_live_runtime_sessions.md",
+        "methodology/02_adversarial_tdd.md",
+        "methodology/03_circuit_breaker.md",
+        "standard/permission_classes.md",
+        "standard/convergent_code_review.md",
+        "standard/definition_of_done.md",
+        "methodology/README.md",
+        "NIZAM.json",
+        "tools/fixtures_self_test.sh",
+        "docs/guide/index.html"
+      ],
+      "required_activation_gate": "H-PHASE-015",
+      "dod_ref": "standard/definition_of_done.md",
+      "new_output_targets": [
+        "methodology/10_live_runtime_sessions.md"
+      ],
+      "existing_targets_to_amend": [
+        "methodology/02_adversarial_tdd.md",
+        "methodology/03_circuit_breaker.md",
+        "standard/permission_classes.md",
+        "standard/convergent_code_review.md",
+        "standard/definition_of_done.md",
+        "methodology/README.md",
+        "NIZAM.json",
+        "tools/fixtures_self_test.sh",
+        "docs/guide/index.html"
+      ],
+      "semantic_review_required": "Independent Evaluator reviews normative ownership/serialization/failure/acceptance and probe/outcome/continuity semantics against accepted NIP, with negative misplaced-token/comment-only controls. Structural section checks alone never establish semantic compliance.",
+      "passes": true,
+      "completed_at": "2026-10-11T07:16:19.413053+00:00",
+      "qa": ".agent/qa/110.json",
+      "contract_ref": ".agent/contracts/110.json",
+      "evidence": [
+        ".agent/evidence/110/evidence-gate.txt"
+      ]
+    },
+    {
+      "id": "111",
+      "name": "Session/operation schemas and discriminating C12 fixtures",
+      "description": "Two closed Draft2020-12 schemas carry phase016 fields from outset; eighteen named fixtures, C12 family/router/relational registration and top-level fixture completeness rows; no nested runtime claim yet.",
+      "status": "complete",
+      "dependencies": [
+        "110"
+      ],
+      "acceptance_tests": [
+        "python3 -c 'import json,jsonschema; from pathlib import Path; jsonschema.Draft202012Validator.check_schema(json.loads(Path('\"'\"'schema/runtime_session.schema.json'\"'\"').read_text()))'",
+        "python3 -c 'import json,jsonschema; from pathlib import Path; jsonschema.Draft202012Validator.check_schema(json.loads(Path('\"'\"'schema/runtime_operation.schema.json'\"'\"').read_text()))'",
+        "python3 -c 'import json\nfrom pathlib import Path\nd=json.loads(Path('\"'\"'schema/runtime_operation.schema.json'\"'\"').read_text())\ndef closed(v):\n if isinstance(v,dict):\n  if v.get('\"'\"'type'\"'\"')=='\"'\"'object'\"'\"': assert v.get('\"'\"'additionalProperties'\"'\"') is False\n  for c in v.values(): closed(c)\n elif isinstance(v,list):\n  for c in v: closed(c)\nclosed(d)'",
+        "python3 -c 'import json\nfrom pathlib import Path\nd=json.loads(Path('\"'\"'schema/runtime_session.schema.json'\"'\"').read_text())\ndef closed(v):\n if isinstance(v,dict):\n  if v.get('\"'\"'type'\"'\"')=='\"'\"'object'\"'\"': assert v.get('\"'\"'additionalProperties'\"'\"') is False\n  for c in v.values(): closed(c)\n elif isinstance(v,list):\n  for c in v: closed(c)\nclosed(d)'",
+        "python3 -c 'import json\nfrom pathlib import Path\nkeys=set()\ndef collect(v):\n if isinstance(v,dict):\n  keys.update(v.get('\"'\"'properties'\"'\"',{}))\n  for c in v.values(): collect(c)\n elif isinstance(v,list):\n  for c in v: collect(c)\nfor path in ['\"'\"'schema/runtime_session.schema.json'\"'\"','\"'\"'schema/runtime_operation.schema.json'\"'\"']: collect(json.loads(Path(path).read_text()))\nassert set(['\"'\"'isolation'\"'\"', '\"'\"'toolchain_identity'\"'\"', '\"'\"'lock_ref'\"'\"', '\"'\"'core_provenance'\"'\"', '\"'\"'wait_outcome'\"'\"', '\"'\"'lease_epoch'\"'\"', '\"'\"'lane_authorization_ref'\"'\"']) <= keys'",
+        "python3 -c 'import ast\nfrom pathlib import Path\ns=Path('\"'\"'tools/validate.sh'\"'\"').read_text().split('\"'\"'check_c11_or_c4_target() {'\"'\"',1)[1]\ns=s.split(\"<<'\"'\"'PY'\"'\"'\\n\",1)[1].split('\"'\"'\\nPY\\n)'\"'\"',1)[0]\na=ast.parse(s)\nroutes=[(n.lineno,n.args[0].value) for n in ast.walk(a) if isinstance(n,ast.Call) and isinstance(n.func,ast.Name) and n.func.id=='\"'\"'print'\"'\"' and len(n.args)==1 and isinstance(n.args[0],ast.Constant)]\npositions={v:k for k,v in routes}\nassert positions['\"'\"'ecosystem:runtime_operation'\"'\"'] < positions['\"'\"'contract'\"'\"']'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_rejected_foreign_stale.json > .agent/evidence/111/runtime_operation_valid_rejected_foreign_stale.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_rejected_foreign_stale.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_foreign_executed.json > .agent/evidence/111/runtime_operation_neg_foreign_executed.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_foreign_executed.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_stale_generation_executed.json > .agent/evidence/111/runtime_operation_neg_stale_generation_executed.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_stale_generation_executed.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_partial_load_condition.json > .agent/evidence/111/runtime_operation_valid_partial_load_condition.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_partial_load_condition.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_failed_load_consistent.json > .agent/evidence/111/runtime_operation_neg_failed_load_consistent.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_failed_load_consistent.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_running_stopped_waiting.json > .agent/evidence/111/runtime_operation_valid_running_stopped_waiting.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_running_stopped_waiting.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_rejected_busy.json > .agent/evidence/111/runtime_operation_valid_rejected_busy.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_rejected_busy.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_timeout_cancelled.json > .agent/evidence/111/runtime_operation_neg_timeout_cancelled.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_timeout_cancelled.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_valid_reattach_pending.json > .agent/evidence/111/runtime_session_valid_reattach_pending.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_session_valid_reattach_pending.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_session_result_acceptance.json > .agent/evidence/111/runtime_operation_neg_session_result_acceptance.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_session_result_acceptance.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_trial_rejected.json > .agent/evidence/111/runtime_operation_valid_trial_rejected.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_trial_rejected.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_trial_executed.json > .agent/evidence/111/runtime_operation_neg_trial_executed.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_trial_executed.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_valid_new_generation_same_attempt.json > .agent/evidence/111/runtime_operation_valid_new_generation_same_attempt.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_operation_valid_new_generation_same_attempt.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_valid_replayable_handoff.json > .agent/evidence/111/runtime_session_valid_replayable_handoff.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_session_valid_replayable_handoff.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_valid_accept_hermetic.json > .agent/evidence/111/runtime_session_valid_accept_hermetic.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_session_valid_accept_hermetic.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_neg_accept_inherited_cache.json > .agent/evidence/111/runtime_session_neg_accept_inherited_cache.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_session_neg_accept_inherited_cache.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_session_valid_transfer_lease.json > .agent/evidence/111/runtime_session_valid_transfer_lease.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 0 && rg -F \"[C12] PASS\" .agent/evidence/111/runtime_session_valid_transfer_lease.json.txt'",
+        "bash -c 'mkdir -p .agent/evidence/111; bash tools/validate.sh --target tools/fixtures/runtime_operation_neg_stale_lease_executed.json > .agent/evidence/111/runtime_operation_neg_stale_lease_executed.json.txt 2>&1; fixture_exit=$?; test \"$fixture_exit\" -eq 1 && rg -F \"[C12] FAIL\" .agent/evidence/111/runtime_operation_neg_stale_lease_executed.json.txt'",
+        "bash tools/fixtures_self_test.sh",
+        "bash tools/validate.sh --payload"
+      ],
+      "estimated_lines": 2200,
+      "acceptance_availability": "Future implementation acceptance: commands use existing tools or self-contained structural checks. New output targets are absent today; existing targets require future amendments. This plan executes no feature acceptance and makes no implementation-pass claim.",
+      "future_output_targets": [
+        "schema/runtime_session.schema.json",
+        "schema/runtime_operation.schema.json",
+        "schema/README.md",
+        "NIZAM.json",
+        "tools/validate.sh",
+        "tools/verify_lib.sh",
+        "tools/README.md",
+        "tools/fixtures_self_test.sh",
+        "tools/fixtures/runtime_operation_valid_rejected_foreign_stale.json",
+        "tools/fixtures/runtime_operation_neg_foreign_executed.json",
+        "tools/fixtures/runtime_operation_neg_stale_generation_executed.json",
+        "tools/fixtures/runtime_operation_valid_partial_load_condition.json",
+        "tools/fixtures/runtime_operation_neg_failed_load_consistent.json",
+        "tools/fixtures/runtime_operation_valid_running_stopped_waiting.json",
+        "tools/fixtures/runtime_operation_valid_rejected_busy.json",
+        "tools/fixtures/runtime_operation_neg_timeout_cancelled.json",
+        "tools/fixtures/runtime_session_valid_reattach_pending.json",
+        "tools/fixtures/runtime_operation_neg_session_result_acceptance.json",
+        "tools/fixtures/runtime_operation_valid_trial_rejected.json",
+        "tools/fixtures/runtime_operation_neg_trial_executed.json",
+        "tools/fixtures/runtime_operation_valid_new_generation_same_attempt.json",
+        "tools/fixtures/runtime_session_valid_replayable_handoff.json",
+        "tools/fixtures/runtime_session_valid_accept_hermetic.json",
+        "tools/fixtures/runtime_session_neg_accept_inherited_cache.json",
+        "tools/fixtures/runtime_session_valid_transfer_lease.json",
+        "tools/fixtures/runtime_operation_neg_stale_lease_executed.json"
+      ],
+      "required_activation_gate": "H-PHASE-015",
+      "dod_ref": "standard/definition_of_done.md",
+      "fixture_plan": [
+        {
+          "name": "runtime_operation_valid_rejected_foreign_stale.json",
+          "path": "tools/fixtures/runtime_operation_valid_rejected_foreign_stale.json",
+          "cases": [
+            1,
+            3
+          ],
+          "family": "operation",
+          "kind": "positive",
+          "purpose": "Rejected foreign requester with stale expected generation; record-shape coverage shared explicitly, neither proves live rejection",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_neg_foreign_executed.json",
+          "path": "tools/fixtures/runtime_operation_neg_foreign_executed.json",
+          "cases": [
+            1
+          ],
+          "family": "operation",
+          "kind": "negative",
+          "purpose": "Foreign requester recorded as executed",
+          "owner_feature": "111",
+          "expected_exit": 1,
+          "expected_diagnostic": "[C12] FAIL",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_neg_stale_generation_executed.json",
+          "path": "tools/fixtures/runtime_operation_neg_stale_generation_executed.json",
+          "cases": [
+            3
+          ],
+          "family": "operation",
+          "kind": "negative",
+          "purpose": "Executed generation differs from expected_generation; relational check",
+          "owner_feature": "111",
+          "expected_exit": 1,
+          "expected_diagnostic": "[C12] FAIL",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_valid_partial_load_condition.json",
+          "path": "tools/fixtures/runtime_operation_valid_partial_load_condition.json",
+          "cases": [
+            4
+          ],
+          "family": "operation",
+          "kind": "positive",
+          "purpose": "load_source condition_signalled with image consistency false",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_neg_failed_load_consistent.json",
+          "path": "tools/fixtures/runtime_operation_neg_failed_load_consistent.json",
+          "cases": [
+            4
+          ],
+          "family": "operation",
+          "kind": "negative",
+          "purpose": "Failed load claims image consistency",
+          "owner_feature": "111",
+          "expected_exit": 1,
+          "expected_diagnostic": "[C12] FAIL",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_valid_running_stopped_waiting.json",
+          "path": "tools/fixtures/runtime_operation_valid_running_stopped_waiting.json",
+          "cases": [
+            5
+          ],
+          "family": "operation",
+          "kind": "positive",
+          "purpose": "running with stopped_waiting preserves nonterminal operation",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_valid_rejected_busy.json",
+          "path": "tools/fixtures/runtime_operation_valid_rejected_busy.json",
+          "cases": [
+            5
+          ],
+          "family": "operation",
+          "kind": "positive",
+          "purpose": "Concurrent submit rejected session_busy",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_neg_timeout_cancelled.json",
+          "path": "tools/fixtures/runtime_operation_neg_timeout_cancelled.json",
+          "cases": [
+            5
+          ],
+          "family": "operation",
+          "kind": "negative",
+          "purpose": "Stopped waiting falsely recorded as confirmed cancellation",
+          "owner_feature": "111",
+          "expected_exit": 1,
+          "expected_diagnostic": "[C12] FAIL",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_session_valid_reattach_pending.json",
+          "path": "tools/fixtures/runtime_session_valid_reattach_pending.json",
+          "cases": [
+            6
+          ],
+          "family": "session",
+          "kind": "positive",
+          "purpose": "Reattach preserves generation, owner and outstanding operation reference",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_neg_session_result_acceptance.json",
+          "path": "tools/fixtures/runtime_operation_neg_session_result_acceptance.json",
+          "cases": [
+            7,
+            12
+          ],
+          "family": "operation",
+          "kind": "negative",
+          "purpose": "Session result offered as acceptance evidence; case12 has no extra schema proof",
+          "owner_feature": "111",
+          "expected_exit": 1,
+          "expected_diagnostic": "[C12] FAIL",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_valid_trial_rejected.json",
+          "path": "tools/fixtures/runtime_operation_valid_trial_rejected.json",
+          "cases": [
+            8
+          ],
+          "family": "operation",
+          "kind": "positive",
+          "purpose": "Review-trial requester recorded rejected",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_neg_trial_executed.json",
+          "path": "tools/fixtures/runtime_operation_neg_trial_executed.json",
+          "cases": [
+            8
+          ],
+          "family": "operation",
+          "kind": "negative",
+          "purpose": "Review-trial requester recorded executed",
+          "owner_feature": "111",
+          "expected_exit": 1,
+          "expected_diagnostic": "[C12] FAIL",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_valid_new_generation_same_attempt.json",
+          "path": "tools/fixtures/runtime_operation_valid_new_generation_same_attempt.json",
+          "cases": [
+            9
+          ],
+          "family": "operation",
+          "kind": "positive",
+          "purpose": "Same contract_id/step_key/attempt across generation; live counter guard deferred",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_session_valid_replayable_handoff.json",
+          "path": "tools/fixtures/runtime_session_valid_replayable_handoff.json",
+          "cases": [
+            10
+          ],
+          "family": "session",
+          "kind": "positive",
+          "purpose": "Committed source manifest and replayable command references in handoff",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_session_valid_accept_hermetic.json",
+          "path": "tools/fixtures/runtime_session_valid_accept_hermetic.json",
+          "cases": [
+            11
+          ],
+          "family": "session",
+          "kind": "positive",
+          "purpose": "Accept isolation declares empty private cache and ignored inherited config",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_session_neg_accept_inherited_cache.json",
+          "path": "tools/fixtures/runtime_session_neg_accept_inherited_cache.json",
+          "cases": [
+            11
+          ],
+          "family": "session",
+          "kind": "negative",
+          "purpose": "Accept record selects inherited cache",
+          "owner_feature": "111",
+          "expected_exit": 1,
+          "expected_diagnostic": "[C12] FAIL",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_session_valid_transfer_lease.json",
+          "path": "tools/fixtures/runtime_session_valid_transfer_lease.json",
+          "cases": [
+            13
+          ],
+          "family": "session",
+          "kind": "positive",
+          "purpose": "Transfer changes principal_kind and increments lease_epoch",
+          "owner_feature": "111",
+          "expected_exit": 0,
+          "expected_diagnostic": "[C12] PASS",
+          "proof_stage": "015 schema-level only"
+        },
+        {
+          "name": "runtime_operation_neg_stale_lease_executed.json",
+          "path": "tools/fixtures/runtime_operation_neg_stale_lease_executed.json",
+          "cases": [
+            13
+          ],
+          "family": "operation",
+          "kind": "negative",
+          "purpose": "Old lease holder recorded executed after transfer",
+          "owner_feature": "111",
+          "expected_exit": 1,
+          "expected_diagnostic": "[C12] FAIL",
+          "proof_stage": "015 schema-level only"
+        }
+      ],
+      "case_matrix": [
+        {
+          "case": 1,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_operation_valid_rejected_foreign_stale.json",
+            "runtime_operation_neg_foreign_executed.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "Stub",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 2,
+          "schema_owner": "111",
+          "schema_fixtures": [],
+          "schema_limit": "No schema isolation proof; runtime-only",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "Stub",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 3,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_operation_valid_rejected_foreign_stale.json",
+            "runtime_operation_neg_stale_generation_executed.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "Stub",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 4,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_operation_valid_partial_load_condition.json",
+            "runtime_operation_neg_failed_load_consistent.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "SBCL",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 5,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_operation_valid_running_stopped_waiting.json",
+            "runtime_operation_valid_rejected_busy.json",
+            "runtime_operation_neg_timeout_cancelled.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "Stub and SBCL",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 6,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_session_valid_reattach_pending.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "Stub and SBCL",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 7,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_operation_neg_session_result_acceptance.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "SBCL",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 8,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_operation_valid_trial_rejected.json",
+            "runtime_operation_neg_trial_executed.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "Stub policy and CI isolation mechanism",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 9,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_operation_valid_new_generation_same_attempt.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "Stub",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 10,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_session_valid_replayable_handoff.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "Stub and SBCL",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 11,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_session_valid_accept_hermetic.json",
+            "runtime_session_neg_accept_inherited_cache.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "SBCL",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 12,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_operation_neg_session_result_acceptance.json"
+          ],
+          "schema_limit": "No additional schema proof beyond case7; deleted-definition drift is runtime-only",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "SBCL",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        },
+        {
+          "case": 13,
+          "schema_owner": "111",
+          "schema_fixtures": [
+            "runtime_session_valid_transfer_lease.json",
+            "runtime_operation_neg_stale_lease_executed.json"
+          ],
+          "schema_limit": "Record shape/invariant only; never proves live behavior",
+          "live_owner": "phase016 proposed116-118",
+          "live_runtime": "Stub",
+          "live_required": true,
+          "live_status": "pending; phase016 unallocated",
+          "claim_working": false
+        }
+      ],
+      "new_output_targets": [
+        "schema/runtime_session.schema.json",
+        "schema/runtime_operation.schema.json",
+        "tools/fixtures/runtime_operation_valid_rejected_foreign_stale.json",
+        "tools/fixtures/runtime_operation_neg_foreign_executed.json",
+        "tools/fixtures/runtime_operation_neg_stale_generation_executed.json",
+        "tools/fixtures/runtime_operation_valid_partial_load_condition.json",
+        "tools/fixtures/runtime_operation_neg_failed_load_consistent.json",
+        "tools/fixtures/runtime_operation_valid_running_stopped_waiting.json",
+        "tools/fixtures/runtime_operation_valid_rejected_busy.json",
+        "tools/fixtures/runtime_operation_neg_timeout_cancelled.json",
+        "tools/fixtures/runtime_session_valid_reattach_pending.json",
+        "tools/fixtures/runtime_operation_neg_session_result_acceptance.json",
+        "tools/fixtures/runtime_operation_valid_trial_rejected.json",
+        "tools/fixtures/runtime_operation_neg_trial_executed.json",
+        "tools/fixtures/runtime_operation_valid_new_generation_same_attempt.json",
+        "tools/fixtures/runtime_session_valid_replayable_handoff.json",
+        "tools/fixtures/runtime_session_valid_accept_hermetic.json",
+        "tools/fixtures/runtime_session_neg_accept_inherited_cache.json",
+        "tools/fixtures/runtime_session_valid_transfer_lease.json",
+        "tools/fixtures/runtime_operation_neg_stale_lease_executed.json"
+      ],
+      "existing_targets_to_amend": [
+        "schema/README.md",
+        "NIZAM.json",
+        "tools/validate.sh",
+        "tools/verify_lib.sh",
+        "tools/README.md",
+        "tools/fixtures_self_test.sh"
+      ],
+      "schema_obligations": {
+        "draft": "2020-12",
+        "all_object_nodes_closed": true,
+        "phase016_fields_represented": [
+          "isolation",
+          "toolchain_identity",
+          "lock_ref",
+          "core_provenance",
+          "wait_outcome",
+          "lease_epoch",
+          "lane_authorization_ref"
+        ],
+        "required_fields_minimal": true,
+        "router_before_contract_id": true,
+        "stale_generation_relational_negative": "tools/fixtures/runtime_operation_neg_stale_generation_executed.json",
+        "stale_generation_expected_exit": 1,
+        "stale_generation_expected_diagnostic": "[C12] FAIL",
+        "consumer_payload_compatibility": true,
+        "c17_free": true
+      },
+      "passes": true,
+      "failure_evidence": ".agent/evidence/111/35-full.txt",
+      "completed_at": "2026-10-11T18:58:17.244581+00:00",
+      "qa": ".agent/qa/111.json",
+      "contract_ref": ".agent/contracts/111.json",
+      "evidence": ".agent/evidence/111/evidence-gate.txt"
+    },
+    {
+      "id": "112",
+      "name": "SBCL reference binding and language profile",
+      "description": "Toolchain/lock/core provenance; non-atomic load/compile, conditions, drift and thread/cancellation hazards; fresh process/build/hermetic resolution. ASDF forms illustrative until phase016 proof.",
+      "status": "complete",
+      "dependencies": [
+        "111"
+      ],
+      "acceptance_tests": [
+        "bash tools/validate.sh",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Conditions and restarts$'\"'\"' '\"'\"'(^|[^[:alnum:]_])handler-bind([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Image drift$'\"'\"' '\"'\"'(^|[^[:alnum:]_])defvar([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Timeouts and cancellation$'\"'\"' '\"'\"'(^|[^[:alnum:]_])join-thread([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Fresh-environment acceptance$'\"'\"' '\"'\"'(^|[^[:alnum:]_])CL_SOURCE_REGISTRY([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Fresh-environment acceptance$'\"'\"' '\"'\"'(^|[^[:alnum:]_])ASDF_OUTPUT_TRANSLATIONS([^[:alnum:]_]|$)'\"'\"''",
+        "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'NIZAM.json'\"'\"').read_text()); assert any(v['\"'\"'authoritative_source'\"'\"']=='\"'\"'methodology/11_sbcl_runtime_binding.md'\"'\"' for v in d['\"'\"'capabilities'\"'\"'])'"
+      ],
+      "estimated_lines": 1200,
+      "acceptance_availability": "Future implementation acceptance: commands use existing tools or self-contained structural checks. New output targets are absent today; existing targets require future amendments. This plan executes no feature acceptance and makes no implementation-pass claim.",
+      "future_output_targets": [
+        "methodology/11_sbcl_runtime_binding.md",
+        "methodology/README.md",
+        "NIZAM.json"
+      ],
+      "required_activation_gate": "H-PHASE-015",
+      "dod_ref": "standard/definition_of_done.md",
+      "new_output_targets": [
+        "methodology/11_sbcl_runtime_binding.md"
+      ],
+      "existing_targets_to_amend": [
+        "methodology/README.md",
+        "NIZAM.json"
+      ],
+      "semantic_review_required": "Independent Evaluator checks SBCL load/drift/condition/thread/cancel/hermetic-build semantics and illustrative-ASDF boundary; anchored structural checks plus discriminating misplaced-token negatives are necessary but not semantic proof alone.",
+      "passes": true,
+      "contract_ref": ".agent/contracts/112.json",
+      "completed_at": "2026-10-12T03:50:46.811879+00:00",
+      "qa": ".agent/qa/112.json",
+      "evidence": ".agent/evidence/112/evidence-gate.txt"
+    },
+    {
+      "id": "113",
+      "name": "Optional adapter capability and source routing",
+      "description": "Optional live_runtime_session required:false; interface Section5 retains ten items, seven lifecycle/operation calls and conditional S1-S9; index/skill/router crosslinks in same feature. Existing adapters remain compatible.",
+      "status": "in_progress",
+      "dependencies": [
+        "112"
+      ],
+      "acceptance_tests": [
+        "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'tools/skill.json'\"'\"').read_text()); assert d['\"'\"'runtime_requirements'\"'\"']['\"'\"'live_runtime_session'\"'\"']['\"'\"'required'\"'\"'] is False'",
+        "python3 -c 'import re; from pathlib import Path; s=Path('\"'\"'tools/interface.md'\"'\"').read_text(); section=re.split(r'\"'\"'(?m)^## 5[. ]'\"'\"',s,maxsplit=1)[1]; section=re.split(r'\"'\"'(?m)^## 6[. ]'\"'\"',section,maxsplit=1)[0]; assert len(re.findall(r'\"'\"'(?m)^\\s*\\d+\\. '\"'\"',section))==10'",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/interface.md '\"'\"'^## 6[.] Optional Capability: Live Runtime Sessions$'\"'\"' '\"'\"'(^|[^[:alnum:]_])submit-operation([^[:alnum:]_]|$)'\"'\"''",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/SKILL.md '\"'\"'^## 10[.] Live Runtime Sessions$'\"'\"' '\"'\"'methodology/10_live_runtime_sessions[.]md'\"'\"''",
+        "bash tools/validate.sh --payload",
+        "bash tools/e2e_bootstrap_test.sh"
+      ],
+      "estimated_lines": 1050,
+      "acceptance_availability": "Future implementation acceptance: commands use existing tools or self-contained structural checks. New output targets are absent today; existing targets require future amendments. This plan executes no feature acceptance and makes no implementation-pass claim.",
+      "future_output_targets": [
+        "tools/interface.md",
+        "tools/skill.json",
+        "tools/SKILL.md",
+        "NIZAM.json",
+        "tools/README.md",
+        "methodology/10_live_runtime_sessions.md",
+        "methodology/11_sbcl_runtime_binding.md"
+      ],
+      "required_activation_gate": "H-PHASE-015",
+      "dod_ref": "standard/definition_of_done.md",
+      "new_output_targets": [
+        "methodology/10_live_runtime_sessions.md",
+        "methodology/11_sbcl_runtime_binding.md"
+      ],
+      "existing_targets_to_amend": [
+        "tools/interface.md",
+        "tools/skill.json",
+        "tools/SKILL.md",
+        "NIZAM.json",
+        "tools/README.md"
+      ],
+      "contract_ref": ".agent/contracts/113.json"
+    },
+    {
+      "id": "114",
+      "name": "Normative-stage next MINOR readiness and close",
+      "description": "Candidate-bound readiness/QA/evidence and close; release number decided later, operator release/tag separate. Phase015 fixtures never establish live13-case phase016 conformance.",
+      "status": "pending",
+      "dependencies": [
+        "113"
+      ],
+      "acceptance_tests": [
+        "bash tools/validate.sh",
+        "bash tools/validate.sh --payload",
+        "bash tools/fixtures_self_test.sh",
+        "bash tools/e2e_bootstrap_test.sh",
+        "python3 .github/scripts/release_closeout.py --mode pr",
+        "bash -c 'source tools/verify_lib.sh; vlib_section_grep .agent/evidence/114/release-readiness.md '\"'\"'^## Human release boundary$'\"'\"' '\"'\"'(^|[^[:alnum:]_])H-FRAMEWORK-RELEASE([^[:alnum:]_]|$)'\"'\"''"
+      ],
+      "estimated_lines": 1150,
+      "acceptance_availability": "Future implementation acceptance: commands use existing tools or self-contained structural checks. New output targets are absent today; existing targets require future amendments. This plan executes no feature acceptance and makes no implementation-pass claim.",
+      "future_output_targets": [
+        ".agent/evidence/114/release-readiness.md",
+        "CHANGELOG.md",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/phase_015.yaml",
+        "docs/planning/manifest.json"
+      ],
+      "required_activation_gate": "H-PHASE-015",
+      "dod_ref": "standard/definition_of_done.md",
+      "new_output_targets": [
+        ".agent/evidence/114/release-readiness.md"
+      ],
+      "existing_targets_to_amend": [
+        "CHANGELOG.md",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/phase_015.yaml",
+        "docs/planning/manifest.json"
+      ]
+    }
+  ],
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "adapter_obligations": {
+    "optional_capability": "live_runtime_session",
+    "required": false,
+    "interface_section5_item_count": 10,
+    "existing_nonclaiming_adapters_conformant": true,
+    "no_trial_session_execution": true,
+    "source_registration_owner": "113",
+    "installed_upgrade": false
+  },
+  "source_registration_obligations": [
+    {
+      "feature": "110",
+      "modules": [
+        "methodology/10_live_runtime_sessions.md"
+      ],
+      "same_feature_registry": [
+        "NIZAM.json",
+        "methodology/README.md"
+      ]
+    },
+    {
+      "feature": "111",
+      "modules": [
+        "schema/runtime_session.schema.json",
+        "schema/runtime_operation.schema.json"
+      ],
+      "same_feature_registry": [
+        "NIZAM.json",
+        "schema/README.md",
+        "tools/validate.sh",
+        "tools/fixtures_self_test.sh"
+      ]
+    },
+    {
+      "feature": "112",
+      "modules": [
+        "methodology/11_sbcl_runtime_binding.md"
+      ],
+      "same_feature_registry": [
+        "NIZAM.json",
+        "methodology/README.md"
+      ]
+    },
+    {
+      "feature": "113",
+      "modules": [
+        "tools/interface.md",
+        "methodology/10_live_runtime_sessions.md",
+        "methodology/11_sbcl_runtime_binding.md"
+      ],
+      "same_feature_registry": [
+        "NIZAM.json",
+        "tools/skill.json",
+        "tools/SKILL.md"
+      ]
+    }
+  ]
+}

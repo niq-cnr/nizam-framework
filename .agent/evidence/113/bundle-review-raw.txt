@@ -1,0 +1,2071 @@
+ACTUAL INDEPENDENT FEATURE113 BUNDLE REVIEW
+Actor: /root/adapter_validator_113
+UTC: 2026-10-12T05:00:05.878638+00:00
+Owned root: /home/cnross/.tmp/nizam-113-review-attempt1-r4e605tn
+Fixed-inputs SHA256: 94f3a603ae2fe39a57ae30c66416b68579a78b8bb22a81f3e35deaf806f00a6d
+COMMAND: ["git", "rev-parse", "HEAD"]
+dc133ea51a17fb55fc3d4d383d04aeb96828b951
+
+EXIT: 0
+COMMAND: ["git", "status", "--short"]
+ M .agent/run_state.json
+?? .agent/evidence/113/bundle-review-attempt1-root.json
+?? .agent/evidence/113/bundle-review-controls.txt
+?? .agent/evidence/113/capture-adapter-authorship.json
+?? .agent/evidence/113/check_113.py
+?? .agent/evidence/113/checker-attempt1-root.json
+?? .agent/evidence/113/checker-development-final-selfcheck.txt
+?? .agent/evidence/113/checker-development-handoff.json
+?? .agent/evidence/113/checker-development-selfcheck1.txt
+?? .agent/evidence/113/coordinator-interface.txt
+?? .agent/evidence/113/evidence_gate.py
+?? .agent/evidence/113/fixed-inputs-seal.json
+?? .agent/evidence/113/fixed-inputs.json
+?? .agent/evidence/113/initial-red-01.txt
+?? .agent/evidence/113/initial-red-03.txt
+?? .agent/evidence/113/initial-red-04.txt
+?? .agent/evidence/113/private/
+
+EXIT: 0
+COMMAND: ["sha256sum", ".agent/contracts/113.json", ".agent/evidence/113/fixed-inputs.json", ".agent/evidence/113/check_113.py", ".agent/evidence/113/evidence_gate.py"]
+bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5  .agent/contracts/113.json
+94f3a603ae2fe39a57ae30c66416b68579a78b8bb22a81f3e35deaf806f00a6d  .agent/evidence/113/fixed-inputs.json
+d24636b8e20f5bebf3d7a4bde0faf2f9599a6d6713c79e0a7cc9d173e04d6503  .agent/evidence/113/check_113.py
+25d2c4a4c8b01fe70e9fa8222bb4bd65c77a39aa7239830bbc64924aef0996d5  .agent/evidence/113/evidence_gate.py
+
+EXIT: 0
+COMMAND: ["cat", ".agent/evidence/113/bundle-review-attempt1-root.json", ".agent/contracts/113.json", ".agent/evidence/113/coordinator-interface.txt", ".agent/evidence/113/checker-development-handoff.json", ".agent/evidence/113/check_113.py", ".agent/evidence/113/private/controls.py", ".agent/evidence/113/private/control_worker.py", ".agent/evidence/113/private/negative-plan.json", ".agent/evidence/113/evidence_gate.py", ".agent/evidence/113/capture-adapter-authorship.json", ".agent/evidence/113/fixed-inputs.json", ".agent/evidence/113/fixed-inputs-seal.json", ".nizam/schema/qa_verdict.schema.json"]
+{
+  "contract_id": "113",
+  "stage": "checker-review",
+  "attempt": 1,
+  "approved_base": "dc133ea51a17fb55fc3d4d383d04aeb96828b951",
+  "owned_root": "/home/cnross/.tmp/nizam-113-review-attempt1-r4e605tn",
+  "test_root": "/home/cnross/.tmp/nizam-113-test-attempt1-l95wkz71",
+  "fixed_inputs_sha256": "94f3a603ae2fe39a57ae30c66416b68579a78b8bb22a81f3e35deaf806f00a6d",
+  "recorded_at": "2026-10-12T04:56:51.119705+00:00",
+  "recorded_before_verdict_or_review_execution": true,
+  "actor": "/root/adapter_validator_113",
+  "source_implementation": "still gated on actual separatebundleReview"
+}
+{
+  "contract_id": "113",
+  "feature_id": "113",
+  "name": "Optional adapter capability and source routing",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_015.md",
+  "base_revision": "a57c860a18c82990c4a43deed1465bd052bb4c3f",
+  "contract_attempt": 1,
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/contracts/113.json",
+        "purpose": "This bounded proposal; Parent approval metadata only after both actual independent approvals."
+      },
+      {
+        "path": ".agent/evidence/113/**",
+        "purpose": "Feature113-only checker/private controls by independent TestAuthor; reviewed fixed-input inventory/seal; separate current-source inventory/candidate seal; independent source review; raw gate/QA/command/revision/closure receipts and evidence-capture adapter. Preserve all existing113 root receipts."
+      },
+      {
+        "path": ".agent/validator/113-mode-a.json",
+        "purpose": "Independent ModeA verdict."
+      },
+      {
+        "path": ".agent/qa/113-contract-review.json",
+        "purpose": "Independent second pre-code review verdict."
+      },
+      {
+        "path": ".agent/validator/113-test-bundle-review.json",
+        "purpose": "Independent test/input-bundle review before source implementation."
+      },
+      {
+        "path": ".agent/validator/113-mode-b.json",
+        "purpose": "Independent actual post-code diff verdict."
+      },
+      {
+        "path": ".agent/qa/113.json",
+        "purpose": "Fresh independent QA of the sealed Git candidate, all commands and exactly one extra own adversarial spot."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/interface.md",
+        "purpose": "0.3.1 ->0.4.0; new Section6 Optional Capability: Live Runtime Sessions; existing References moves6->7 with runtime document/schema links. Preserve Sections1-5 body byte-exact, including all ten checklist items."
+      },
+      {
+        "path": "tools/skill.json",
+        "purpose": "0.5.0 ->0.6.0; add runtime_requirements.live_runtime_session required:false, live_runtime_session capability ->tools/interface.md and sbcl_runtime_binding ->methodology/11_sbcl_runtime_binding.md. Preserve all existing requirements/capabilities/state_interface."
+      },
+      {
+        "path": "tools/SKILL.md",
+        "purpose": "0.5.0 ->0.6.0; insert Section10 Live Runtime Sessions, move References10->11 and add bounded crosslinks. Preserve Sections1-9 and prior references, single runtime-agnostic router."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Add one nizam-live-runtime-adapter capability ->tools/interface.md; preserve all preexisting entries, module lists, schemas and framework.version1.5.0."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "0.19.0 ->0.20.0; extend only skill/interface index descriptions plus one short optional-runtime paragraph/crosslinks. Preserve validator/fixture/CI descriptions and old log entries."
+      },
+      {
+        "path": "methodology/10_live_runtime_sessions.md",
+        "purpose": "0.1.2 ->0.2.0; enforcement becomes partially-enforced per accepted NIP3, explicitly limited to schema/C12 declared-record checks. Opening and Section12 availability paragraphs add optional-interface link and replace pending113 with delivered normative capability. Preserve R1-R12 and all other body/old logs."
+      },
+      {
+        "path": "methodology/11_sbcl_runtime_binding.md",
+        "purpose": "0.1.0 ->0.1.1; one Section1 crosslink to the optional interface; preserve consumer-aspirational enforcement and all other body/old logs, SBCL semantics and illustrative-ASDF boundary."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "One bounded new feature113 bullet under Unreleased/Changed; preserve every existing Unreleased/released entry."
+      },
+      {
+        "path": ".agent/feature_list_015.json",
+        "purpose": "Parent alone changes113 lifecycle/references after passing gates; preserve canonical six AC strings, dependencies, allowances, all110-112 records and114pending."
+      },
+      {
+        "path": "docs/planning/phase_015.yaml",
+        "purpose": "Parent alone updates only step113 PENDING->IN_PROGRESS->COMPLETED and its evidence/docs/change-notes; all other steps and phase in_progress preserved."
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Orchestrator-only coordination/history/counter/budget writes, excluded from counted lines; Generator/TestAuthor/reviewers preserve all fields."
+      }
+    ]
+  },
+  "non_goals": [
+    "No product, checker, test, capture-adapter or proposed verification execution before both actual independent pre-code approvals; contract proposal/read-only input inspection only now.",
+    "No runtime controller/stub/SBCL launcher, live runtime enforcement, phase016115-120 allocation or thirteen-case working/conformance claim.",
+    "No extra operation/status/schema/request-record field, status call, new mandatory adapter requirement or eleventh checklist item; no new skill/profile/scheduler.",
+    "No installed .nizam file/mode change, release number change/tag/publication, consumer upgrade or H-FRAMEWORK-RELEASE/H-CONSUMER-UPGRADE self-execution.",
+    "No WA implementation/policy/gate reduction, phase/budget rebaseline, new phase or funding outside original7200/9360.",
+    "No edits/reruns/resealing of historical014/110/111/112 contracts/spec/checkers/QA/maps/gates/raws/archives/original-product snapshots; no debt/manifest/roadmap/guide/NIP edits.",
+    "No Generator-written tests, verdicts, acceptance source-review proof or coordination/circuit counters; no inherited PASS as fresh QA."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "1: Optional requirement is false",
+      "command": "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'tools/skill.json'\"'\"').read_text()); assert d['\"'\"'runtime_requirements'\"'\"']['\"'\"'live_runtime_session'\"'\"']['\"'\"'required'\"'\"'] is False'"
+    },
+    {
+      "acceptance_test": "2: Original checklist remains ten items",
+      "command": "python3 -c 'import re; from pathlib import Path; s=Path('\"'\"'tools/interface.md'\"'\"').read_text(); section=re.split(r'\"'\"'(?m)^## 5[. ]'\"'\"',s,maxsplit=1)[1]; section=re.split(r'\"'\"'(?m)^## 6[. ]'\"'\"',section,maxsplit=1)[0]; assert len(re.findall(r'\"'\"'(?m)^\\s*\\d+\\. '\"'\"',section))==10'"
+    },
+    {
+      "acceptance_test": "3: Optional operation lives in interface Section6",
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/interface.md '\"'\"'^## 6[.] Optional Capability: Live Runtime Sessions$'\"'\"' '\"'\"'(^|[^[:alnum:]_])submit-operation([^[:alnum:]_]|$)'\"'\"''"
+    },
+    {
+      "acceptance_test": "4: Single skill routes runtime sessions in Section10",
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/SKILL.md '\"'\"'^## 10[.] Live Runtime Sessions$'\"'\"' '\"'\"'methodology/10_live_runtime_sessions[.]md'\"'\"''"
+    },
+    {
+      "acceptance_test": "5: Payload compliance",
+      "command": "bash tools/validate.sh --payload"
+    },
+    {
+      "acceptance_test": "6: Existing bootstrap consumers remain compatible",
+      "command": "bash tools/e2e_bootstrap_test.sh"
+    },
+    {
+      "acceptance_test": "7: Seven exact operations, request identity, existing kinds/statuses and conditional S1-S9 with independent semantic source review",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py surface"
+    },
+    {
+      "acceptance_test": "8: Parsed manifest/index and section-scoped router/crosslinks agree without duplicate or missing routes",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py routing"
+    },
+    {
+      "acceptance_test": "9: Original interface Sections1-5, mandatory requirements and existing capability entries are preserved",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py compatibility"
+    },
+    {
+      "acceptance_test": "10: Untracked-aware exact scope and bounded current-source deltas; installed and historical artifacts byte/mode exact",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py scope-history"
+    },
+    {
+      "acceptance_test": "11: Precompletion and explicit Parent completion projections preserve predecessor and successor records and counters",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py lifecycle"
+    },
+    {
+      "acceptance_test": "12: Independent private scratch mutations discriminate each contracted invariant and misplaced markers without unrelated setup failures",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py negative-controls"
+    },
+    {
+      "acceptance_test": "13: Optional normative delivery and record-only enforcement never claim controller, live13 proof, release or upgrade",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py claim-boundary"
+    },
+    {
+      "acceptance_test": "14: Fixed verification inputs and separate current-source candidate seal bind actual Git revision, approved contract and independent identities",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py input-integrity"
+    },
+    {
+      "acceptance_test": "15: Full repository compliance",
+      "command": "bash tools/validate.sh"
+    },
+    {
+      "acceptance_test": "16: Unchanged frozen scope classifier measures actual Git numstat",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 113=a57c860a18c82990c4a43deed1465bd052bb4c3f.. --files"
+    }
+  ],
+  "estimated_lines": 1050,
+  "evidence_dir": ".agent/evidence/113/",
+  "evidence_convention": "qa-NN.txt per ordered command: exact repo-root invocation first, actual stdout/stderr, actual EXIT last; exercised Git revision and source/bundle seal by sibling receipt path. Own spot:113-qa-adversarial.txt. Independent actual source-review.json references personally captured diff/evidence. Never session-absolute evidence commands or inline raw JSON output.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 0,
+    "approved_at": "2026-10-12T04:30:49.723163+00:00",
+    "validator_evidence": ".agent/validator/113-mode-a.json",
+    "evaluator_evidence": ".agent/qa/113-contract-review.json"
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "implementation_requirements": {
+    "authority": "Installed v1.5.0 AGF/execution/adversarial/circuit/anti-hallucination govern. Product spec015, exact feature113 and accepted NIP3 adapter/routing/compatibility sections are external semantic anchors. Root owns immutable proposal SHA, state and lifecycle.",
+    "operations": [
+      "open-session",
+      "submit-operation",
+      "poll-operation",
+      "cancel-operation",
+      "transfer-session",
+      "reattach-session",
+      "close-session"
+    ],
+    "operation_semantics": "Only submit-operation executes project code, including observe. Existing read-state reads durable session status; no status endpoint. open/transfer/reattach/close lifecycle calls never evaluate/load/run project code. poll/cancel only observe/request control; cancellation is not confirmed stopping.",
+    "request_identity": "Describe existing operation_id, session_id, expected_generation{counter,nonce}, expected_lease_epoch, requester{principal_kind,role,agent_id}, contract_id/step_key/attempt, kind/payload, context{working_dir,namespace,reader/test config refs}, limits. These abstract adapter inputs map to existing schema records; not new required schema fields.",
+    "vocabulary": "Kinds exactly load_source,compile_source,evaluate,run_tests,observe. Terminal statuses completed,condition_signalled,cancelled,terminated,rejected; nonterminal running,cancel_requested,unknown. debugger_paused is optional and not emitted in v1, never a new schema status. wait_outcome stopped_waiting preserves outstanding execution and busy lane.",
+    "conditional_checks": {
+      "S1": "Existing session/operation schemas validate records; record validity proves no live behavior.",
+      "S2": "Reject stale generation or lease before execution, with correct current owner/requester identity.",
+      "S3": "At most one operation in flight; lifecycle/reattach must preserve or explicitly resolve outstanding work.",
+      "S4": "Timeout stops waiting only and never reports execution stopped.",
+      "S5": "Capture conditions/restarts before unwind; failed partial load cannot claim image consistency.",
+      "S6": "Review trials receive no endpoint/permission and requests are rejected before execution.",
+      "S7": "Lifecycle calls never evaluate project code.",
+      "S8": "Session results/provenance are never acceptance evidence; acceptance remains fresh process/build/hermetic independent QA.",
+      "S9": "A new process/generation/subagent/stage does not reset contract_id/step_key/attempt or Parent-owned counters."
+    },
+    "optional_boundary": "S1-S9 and seven calls apply only to claiming adapters. Nonclaiming adapters remain conformant against original ten items and three mandatory abstract operations. Lifecycle permission cannot operate/accept; only Generator owns development operation and Evaluator fresh acceptance under existing role classes.",
+    "routing": "One optional manifest requirement and capability plus SBCL binding capability, new index adapter capability, exact SKILLSection10 pointers to interface and documents10/11, existing schemas by resolved links, README and delivered-document crosslinks land together. No duplicate existing protocol registrations.",
+    "enforcement_honesty": "Document10 partially-enforced describes already executable schema/C12 record validation only; optional normative contract publication enforces no live session ownership. Consumer runtime duties remain aspirational. Document11 stays consumer-aspirational. All executable controller/adapter/SBCL enforcement, live13 proofs and capable isolated CI remain phase016 pending; localSBCL availability never conformance.",
+    "source_review": "Independent reviewer personally reads actual interface Section6 and exact diff against base, checks every S1-S9/operation/request/status relationship against accepted NIP3, documents10/11, permission classes and111 schemas, and records source-review.json with role/session identity and raw diff path. Marker checks alone never establish semantic coverage.",
+    "test_ownership": "After both pre-code approvals: separate TestAuthor implements check_113.py modes and private discriminating scratch controls. Separate independent bundle reviewer verifies tests against all criteria, false-pass/fail and current-source/historical partition. Freeze actual bundle/input hashes and author/reviewer identities before Generator source writes. Bundle changes invalidate review and require renewed independent approval; Generator cannot edit verifier.",
+    "negative_design": "Preregister expected negative diagnostic/exit and budget class before running controls, never relabel failures. Scratch-only controls: altered ten-item body/count; required:true/removed old requirement; missing/duplicate operation/S rule/routing path; moved-marker false pass; false live/release claim; changed old proof/installed file; out-of-scope tracked/untracked file; altered predecessor/successor/counter; corrupted bundle/source seal. Each fails its target diagnostic rather than missing-file/setup failure; untouched compliant source passes. Exactly one additional fresh-QA own spot remains unlisted.",
+    "precode_red": "Parent sequences intended RED only after approved contract: canonical1 missing optional key,3 absent optionalSection6 and4 absent runtimeSection10; record actual targeted failure with exact command/EXIT/base. Existing2/5/6 may already pass; do not manufacture failure. Reviewed independent controls must discriminate source changes.",
+    "historical_partition": "All old014/110/111/112 durable proofs/spec/contracts/checkers/QA/inputmaps/gates/raws/archives and installed239-file inventory/modes remain immutable at base. Current eight source targets are graded against only this declared113 delta, never old111/112 whole-file hashes. Untouched source/history stays byte/mode exact. No historical checker rerun/reseal or replacement of original snapshots.",
+    "inputs_and_seals": "Separate fixed-inputs.json for approved proposal/base/external anchors/checker/private controls/independent identities from current-source-inputs.json for the exact eight actual source paths and Git commit/tree/modes after source authorship. Parent seals actual existing bytes, never future QA hashes or self-referential hash cycles. Seal metadata excludes only future113 QA/gate/raw receipts and declared Parent113completion writes. Current-source changes invalidate ModeB/source review/QA and need fresh seals/gates.",
+    "postcode_sequence": "Reviewed source development -> actual Git candidate and source/bundle seals -> independent ModeB on exact diff -> fresh independent QA executes every verification command at that candidate plus its own one spot -> evidence-capture gate verifies command/result/actual EXIT/exercised revision/all paths. Development runs never substitute. Parent promotes only reviewed owned diff/commit and preserves failed attempts as raw evidence.",
+    "parent_projection": "Before completion:113pending or in_progress and step113PENDING/IN_PROGRESS agree, contractapproved with both gate paths,114pending,112complete. After all gates Parent changes only113 to complete/COMPLETED with actual QA/evidence paths; phase remains in_progress,114pending/eligible, historical feature rows/steps/ACs/estimates unchanged. Root runstate coordination/history records real gates/counter continuity; implementation roles never write it. Checker exercises both projections in scratch and validates actual current allowed state.",
+    "budget": "Frozen unchanged measure.py uses Git numstat/classifier at base..WORKTREE; no alternative diff algorithm. Starting6088/9360 leaves3272 for113/114 including counted contract/verdict/planning closure. Estimated1131050,1141150. Parent compares current113 to prior1101711/1113133/1121244 only before appending; cumulative ceiling and unclassified paths fail closed. Compact contracts/verdicts and small source delta conserve114 allowance; no extra allocation.",
+    "isolation": "Only owned contract-attempt1 root from recorded approved base. Read before every write, detect before fix, never modify installed payload; PYTHONDONTWRITEBYTECODE=1 for installed tools. Root records/increments counters, max3 isolated attempts and quarantines failures; no fourth attempt or shared reset/clean."
+  }
+}
+Feature113 fixed/source input interface — TestAuthor handoff
+
+TestAuthor: /root/adapter_test_author_113. Generator: /root/adapter_generator_113.
+Bundle reviewer: /root/adapter_validator_113. Fresh final QA: /root/adapter_acceptance_113.
+Four distinct actors. Parent alone owns state, counters, intents, candidate creation,
+seals, canonical completion and capture adapter. This is checker-development proof,
+not an implementation/source-review/QA verdict.
+
+fixed-inputs.json format1 keys: base_revision (phase113 base a57c860...),
+approved_base (dc133ea...), contract_sha256, actors{test_author,generator,
+bundle_reviewer,final_qa}, files{relative path:{sha256,mode}}. Modes are six-digit
+Git strings100644/100755. fixed-inputs-seal.json contains manifest_sha256 of
+actual existing fixed-inputs.json bytes. The fixed manifest excludes its own
+bytes/seal, future bundleReview/ModeB/QA/sourceReview/command/closure receipts,
+current-source manifests/seals and declared Parent lifecycle changes. No future
+verdict hash is invented. Private history inventory includes239 installed payload
+files, SHA256 and full stat permission bits; checker never invokes old111/112
+checkers and never interprets their whole-file hashes as current113 acceptance.
+
+Parent adds actual .agent/validator/113-test-bundle-review.json after independent
+review with actor=/root/adapter_validator_113, fixed_inputs_sha256=<actual fixed
+manifest digest>, final_verdict.approved=true and all three arrays empty. Bundle
+changes require renewed separate review. Reviewer does not edit tests/product.
+
+After successful separate bundle review, source author edits only eight product
+paths. Parent makes actual source Git candidate containing the reviewed fixed
+bundle and actual bundle-review verdict. Parent then writes
+current-source-inputs.json format1 keys:
+candidate{commit:<actual commit>,tree:<actual Git tree>}, fixed_inputs_sha256,
+contract_sha256, source_paths{exact eight paths:{sha256,mode}}.
+current-source-seal.json keys: manifest_sha256=<actual existing source manifest>,
+candidate_commit=<same actual commit>. No hash cycle: source seals are later
+receipts, not source candidate contents. Source bytes/modes replay from candidate.
+
+ModeB binds actor, candidate_commit, source_manifest_sha256, fixed_inputs_sha256,
+actual diff/evidence and approved true/three empty arrays. Source changes require
+new actual candidate/seals and new ModeB/source-review/QA gates. FinalQA runs at
+HEAD==candidate; later Parent closure may append actual receipts and113 canonical
+state while product bytes remain exact. Actual completion preserves110-112 and
+114pending; phase remains in_progress. Completed step113 requires evidence-gate
+path, docs_updated and changelog_entry. Feature113 requires actual contract/QA/
+evidence paths, passes and completed_at. Coordination owner remains Parent.
+
+Before actual acceptance surface command7, fresh independent finalQA personally
+reads actual interface6 and whole eight-file candidate diff, accepted NIP3 adapter
+section, schemas, runtime10/11 and permission policy. They write
+.agent/evidence/113/source-review.json keys: actor, candidate_commit,
+source_manifest_sha256, fixed_inputs_sha256, evidence:[personally captured raw
+Git diff/source review paths], final_verdict:{approved:true}, issues:[],
+missing_acceptance_coverage:[], unsupported_claims:[] . Structural markers alone
+cannot establish operation/S1-S9/request/status semantics. No synthetic source
+review or finalQA is created by TestAuthor. Parent capture adapter requires
+sourceReview.actor==fixed.actors.final_qa.
+
+Real checker modes are exactly surface/routing/compatibility/scope-history/
+lifecycle/negative-controls/claim-boundary/input-integrity. surface requires actual
+source review; input-integrity requires actual current candidate and bundle-review
+verdict. They cannot be claimed PASS during this pre-source development stage.
+Safe development after source delivery before sourceReview/candidate includes
+canonical1-6, routing, compatibility, scope-history, lifecycle, claim-boundary,
+negative-controls and full validation/frozen budget. These are development runs,
+not fresh QA. Preserve development failures and stop on actual gate rejection.
+
+Private component worker emits CONTROL_COMPONENT only. It exercises an independently
+built scratch synthetic compliant fixture and actual local scratch Git candidate,
+not delivered source. Controls preregister expected diagnostic/exit and classifier
+before mutation; each restored positive must pass. Fixed frozen measure.py alone
+supplies actual Git-numstat totals, and scope-history checks6088+actual113<=9360.
+The checker imposes base Sections1-5 and skill Sections1-9 byte-exact preservation,
+exact parsed old manifest/index entries, version/log deltas, existing source
+paragraphs/rules, two README rows plus short optional paragraph, one changelog
+bullet and same-feature crosslinks. Interface7 and skill11 append references;
+SBCL1 adds one standalone optional-interface paragraph. This bounded shape follows
+the approved contract; it does not prove execution behavior.
+
+Capture interface: Parent evidence_gate.py is frozen with the test bundle. FinalQA
+writes16 ordered qa-NN.txt receipts: first COMMAND:<exact approved command>,
+CANDIDATE_SHA:<candidate>, actual stdout/stderr, final EXIT: 0. QA binds actor,
+candidate_commit, source_manifest_sha256, fixed_inputs_sha256, mode_b_sha256,
+bundle_review_sha256,16 checks with exact command/evidence/exit_code,17 evidence
+paths including113-qa-adversarial.txt. Exactly one fresh-QA extra own spot is
+unlisted and has its own command/performed true/evidence. Parent capture adapter
+checks installed QA schema, actual gate/verdicts, receipt exits and replayed hashes
+before canonical lifecycle completion. TestAuthor never approves own bundle/QA.
+{
+  "stage": "checker-development",
+  "attempt": 1,
+  "actor": "/root/adapter_test_author_113",
+  "approved_base": "dc133ea51a17fb55fc3d4d383d04aeb96828b951",
+  "fixed_inputs_sha256": "94f3a603ae2fe39a57ae30c66416b68579a78b8bb22a81f3e35deaf806f00a6d",
+  "checker_sha256": "d24636b8e20f5bebf3d7a4bde0faf2f9599a6d6713c79e0a7cc9d173e04d6503",
+  "controls": 37,
+  "selfcheck_exit": 0,
+  "initial_red": {
+    "canonical1": 1,
+    "canonical3": 1,
+    "canonical4": 1
+  },
+  "development_evidence": [
+    ".agent/evidence/113/checker-development-selfcheck1.txt",
+    ".agent/evidence/113/checker-development-final-selfcheck.txt"
+  ],
+  "source_files_modified": [],
+  "actual_source_review_qa_authored": false,
+  "bundle_review": "pending independent reviewer; no source authorization"
+}
+#!/usr/bin/env python3
+"""Independent feature113 acceptance. Private controls are development proof only.
+
+Expected values come from the approved contract, accepted NIP3, existing schemas,
+and immutable pre-source snapshots. Text checks require later independent source
+review; they cannot prove consumer runtime behavior.
+"""
+import copy
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import stat
+import subprocess
+import sys
+
+import yaml
+
+HERE = Path(__file__).resolve().parent
+PRIVATE = HERE / 'private'
+BASE = PRIVATE / 'base'
+ROOT = Path.cwd().resolve()
+PRODUCT = ('tools/interface.md', 'tools/skill.json', 'tools/SKILL.md', 'NIZAM.json',
+           'tools/README.md', 'methodology/10_live_runtime_sessions.md',
+           'methodology/11_sbcl_runtime_binding.md', 'CHANGELOG.md')
+COORDINATION = ('.agent/feature_list_015.json', 'docs/planning/phase_015.yaml', '.agent/run_state.json')
+MODES = ('surface', 'routing', 'compatibility', 'scope-history', 'lifecycle',
+         'negative-controls', 'claim-boundary', 'input-integrity')
+
+
+class Failure(Exception):
+    pass
+
+
+def require(value, diagnostic):
+    if not value:
+        raise Failure(diagnostic)
+
+
+def read(root, path):
+    p = root / path
+    require(p.is_file() and not p.is_symlink(), 'MISSING_OR_SYMLINK:' + path)
+    return p.read_text()
+
+
+def js(root, path):
+    return json.loads(read(root, path))
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def git(root, *args):
+    p = subprocess.run(['git', '-C', str(root), *args], capture_output=True, text=True)
+    require(p.returncode == 0, 'GIT:' + ' '.join(args))
+    return p.stdout.strip()
+
+
+def mode(path):
+    return '100755' if path.stat().st_mode & 0o111 else '100644'
+
+
+def doc(root, path):
+    text = read(root, path)
+    require(text.startswith('---\n'), 'FRONTMATTER:' + path)
+    _, front, body = text.split('---', 2)
+    return yaml.safe_load(front), body
+
+
+def section(body, number, title=None):
+    heads = list(re.finditer(r'(?m)^## (\d+)\. ([^\n]+)\n', body))
+    selected = [(i, h) for i, h in enumerate(heads) if int(h.group(1)) == number]
+    require(len(selected) == 1, 'SECTION:' + str(number))
+    i, h = selected[0]
+    if title:
+        require(h.group(2) == title, 'SECTION_TITLE:' + str(number))
+    return body[h.end():heads[i + 1].start() if i + 1 < len(heads) else len(body)]
+
+
+def header_delta(root, path, version, enforcement=None):
+    new, _ = doc(root, path)
+    old, _ = doc(BASE, path)
+    require(new['version'] == version, 'VERSION:' + path)
+    logs = new.get('change_log', [])
+    require(len(logs) == len(old['change_log']) + 1 and logs[1:] == old['change_log']
+            and logs[0]['version'] == version, 'CHANGE_LOG:' + path)
+    normalized = copy.deepcopy(new)
+    normalized['version'] = old['version']
+    normalized['change_log'] = old['change_log']
+    if enforcement:
+        require(new.get('enforcement') == enforcement, 'ENFORCEMENT:' + path)
+        normalized['enforcement'] = old['enforcement']
+    require(normalized == old, 'FRONTMATTER_SCOPE:' + path)
+
+
+def contract():
+    return js(BASE, '.agent/contracts/113.json')
+
+
+def surface_content(root):
+    s = section(doc(root, 'tools/interface.md')[1], 6, 'Optional Capability: Live Runtime Sessions')
+    expected = contract()['implementation_requirements']
+    # Operation declarations must be complete rows/bullets, not stray mentions.
+    declarations = re.findall(r'(?m)^(?:\|\s*|[-*]\s+)(?:\*\*)?`([a-z]+-[a-z]+)`', s)
+    require(sorted(declarations) == sorted(expected['operations']), 'OPERATIONS_EXACT')
+    kind_tokens = set(re.findall(r'`(load_source|compile_source|evaluate|run_tests|observe)`', s))
+    schema = js(root, 'schema/runtime_operation.schema.json')
+    require(kind_tokens == set(schema['properties']['kind']['enum']), 'KINDS_EXACT')
+    for token in ('operation_id', 'session_id', 'expected_generation', 'counter', 'nonce',
+                  'expected_lease_epoch', 'requester', 'principal_kind', 'role', 'agent_id',
+                  'contract_id', 'step_key', 'attempt', 'kind', 'payload', 'context',
+                  'working_dir', 'namespace', 'limits', 'read-state', 'wait_outcome', 'stopped_waiting'):
+        require(re.search(r'(?<![\w-])' + re.escape(token) + r'(?![\w-])', s), 'REQUEST_OR_STATUS:' + token)
+    statuses = set(schema['properties']['status']['enum'])
+    require(all('`' + status + '`' in s for status in statuses), 'STATUSES')
+    require(re.search(r'debugger_paused[^\n]*(?:optional|reserved|not emitted)', s, re.I)
+            or re.search(r'(?:optional|reserved|not emitted)[^\n]*debugger_paused', s, re.I), 'DEBUGGER_BOUNDARY')
+    labels = re.findall(r'(?m)^(?:\|\s*|[-*]\s+(?:\*\*)?)S([1-9])(?:\*\*)?(?:\s*\||:)', s)
+    require(sorted(labels) == [str(i) for i in range(1, 10)], 'S_RULES_EXACT')
+    # The source reviewer checks the actual relationships independently. These
+    # structural predicates catch misplaced/missing components, not prose truth.
+    patterns = {
+        1: (r'schema', r'record'),
+        2: (r'generation', r'lease', r'(?:reject|before execution)'),
+        3: (r'(?:one|1)', r'(?:flight|outstanding)'),
+        4: (r'timeout', r'(?:wait|stop)'),
+        5: (r'(?:unwind|unwinding)', r'(?:load|compile)', r'consisten'),
+        6: (r'review', r'(?:reject|endpoint)'),
+        7: (r'lifecycle', r'(?:evaluat|code)'),
+        8: (r'session', r'acceptance', r'(?:fresh|never|not)'),
+        9: (r'(?:attempt|counter)', r'(?:generation|process|reset)'),
+    }
+    for n, pats in patterns.items():
+        row = re.search(r'(?m)^(?:\|\s*|[-*]\s+(?:\*\*)?)S' + str(n) + r'(?:\*\*)?(?:\s*\||:)([^\n]+)', s)
+        require(row and all(re.search(p, row.group(1), re.I) for p in pats), 'S_RULE_CONTENT:' + str(n))
+    require(re.search(r'only[^.\n]*submit-operation[^.\n]*(?:execut|project code)', s, re.I), 'SUBMIT_ONLY')
+    require(re.search(r'(?:no|not)[^.\n]*(?:separate|status)[^.\n]*(?:call|endpoint)', s, re.I), 'NO_STATUS_CALL')
+    require(re.search(r'(?:nonclaiming|without|do not claim|does not claim)[^.\n]*(?:conform|optional)', s, re.I), 'OPTIONAL_COMPATIBILITY')
+    require(re.search(r'(?:only|claiming)[^.\n]*(?:claim|adapter)', s, re.I), 'CONDITIONAL_CLAIM')
+    require(all(p in s for p in ('runtime.session.lifecycle', 'runtime.session.operate', 'runtime.session.accept')), 'PERMISSION_ROUTES')
+
+
+def source_review(root):
+    inputs = js(root, '.agent/evidence/113/current-source-inputs.json')
+    review = js(root, '.agent/evidence/113/source-review.json')
+    actors = js(root, '.agent/evidence/113/fixed-inputs.json')['actors']
+    require(review.get('actor') not in (actors['generator'], actors['test_author'])
+            and review.get('actor') in (actors['bundle_reviewer'], actors['final_qa']), 'SOURCE_REVIEW_INDEPENDENCE')
+    require(review.get('candidate_commit') == inputs['candidate']['commit']
+            and review.get('source_manifest_sha256') == sha(root / '.agent/evidence/113/current-source-inputs.json')
+            and review.get('fixed_inputs_sha256') == sha(root / '.agent/evidence/113/fixed-inputs.json'), 'SOURCE_REVIEW_BINDING')
+    require(review.get('final_verdict', {}).get('approved') is True
+            and all(review.get(k) == [] for k in ('issues', 'missing_acceptance_coverage', 'unsupported_claims')), 'SOURCE_REVIEW_VERDICT')
+    require(review.get('evidence') and all(read(root, p).strip() for p in review['evidence']), 'SOURCE_REVIEW_EVIDENCE')
+
+
+def surface(root):
+    surface_content(root)
+    source_review(root)
+
+
+def unique(entries, key, diagnostic):
+    names = [e[key] for e in entries]
+    require(len(names) == len(set(names)), diagnostic)
+
+
+def routing(root):
+    m = js(root, 'tools/skill.json')
+    unique(m['capabilities'], 'name', 'DUPLICATE_MANIFEST_ROUTE')
+    caps = {e['name']: e['module'] for e in m['capabilities']}
+    require(caps.get('live_runtime_session') == 'tools/interface.md'
+            and caps.get('sbcl_runtime_binding') == 'methodology/11_sbcl_runtime_binding.md'
+            and caps.get('live_runtime_protocol') == 'methodology/10_live_runtime_sessions.md', 'MANIFEST_ROUTE')
+    req = m['runtime_requirements'].get('live_runtime_session')
+    require(isinstance(req, dict) and req.get('required') is False, 'OPTIONAL_REQUIRED_FALSE')
+    index = js(root, 'NIZAM.json')
+    unique(index['capabilities'], 'id', 'DUPLICATE_INDEX_ROUTE')
+    require({e['id']: e['authoritative_source'] for e in index['capabilities']}.get('nizam-live-runtime-adapter') == 'tools/interface.md', 'INDEX_ROUTE')
+    router = section(doc(root, 'tools/SKILL.md')[1], 10, 'Live Runtime Sessions')
+    for path in ('tools/interface.md', 'methodology/10_live_runtime_sessions.md', 'methodology/11_sbcl_runtime_binding.md'):
+        require(path in router and (root / path).is_file(), 'ROUTER_PATH:' + path)
+    for file in ('tools/interface.md', 'tools/README.md'):
+        body = doc(root, file)[1]
+        for path in ('10_live_runtime_sessions.md', '11_sbcl_runtime_binding.md'):
+            require(path in body, 'CROSSLINK:' + file + ':' + path)
+    for file in PRODUCT[5:7]:
+        body = doc(root, file)[1]
+        require('../tools/interface.md' in body, 'DOCUMENT_INTERFACE_LINK:' + file)
+    refs = section(doc(root, 'tools/interface.md')[1], 7, 'References')
+    for path in ('schema/runtime_session.schema.json', 'schema/runtime_operation.schema.json'):
+        require(path in refs and (root / path).is_file(), 'SCHEMA_LINK:' + path)
+
+
+def compatibility(root):
+    old = doc(BASE, 'tools/interface.md')[1]
+    new = doc(root, 'tools/interface.md')[1]
+    require(new.split('## 6.')[0] == old.split('## 6.')[0], 'INTERFACE_BASE_BODY')
+    require(len(re.findall(r'(?m)^\s*\d+\. ', section(new, 5))) == 10, 'TEN_ITEMS')
+    oldm, newm = js(BASE, 'tools/skill.json'), js(root, 'tools/skill.json')
+    normalized = copy.deepcopy(newm)
+    require(normalized['version'] == '0.6.0', 'MANIFEST_VERSION')
+    normalized['version'] = oldm['version']
+    require(normalized['runtime_requirements'].pop('live_runtime_session', {}).get('required') is False, 'OPTIONAL_REQUIRED_FALSE')
+    extra = {'live_runtime_session', 'sbcl_runtime_binding'}
+    additions = [x for x in normalized['capabilities'] if x['name'] in extra]
+    require(len(additions) == 2, 'MANIFEST_ADDITIONS')
+    normalized['capabilities'] = [x for x in normalized['capabilities'] if x['name'] not in extra]
+    require(normalized == oldm, 'MANIFEST_BASE_PRESERVED')
+    oldi, newi = js(BASE, 'NIZAM.json'), js(root, 'NIZAM.json')
+    additions = [x for x in newi['capabilities'] if x['id'] == 'nizam-live-runtime-adapter']
+    require(len(additions) == 1, 'INDEX_ADDITIONS')
+    newi['capabilities'] = [x for x in newi['capabilities'] if x['id'] != 'nizam-live-runtime-adapter']
+    require(newi == oldi, 'INDEX_BASE_PRESERVED')
+
+
+def bounded_delta(root):
+    versions = {'tools/interface.md': '0.4.0', 'tools/SKILL.md': '0.6.0', 'tools/README.md': '0.20.0',
+                'methodology/10_live_runtime_sessions.md': '0.2.0', 'methodology/11_sbcl_runtime_binding.md': '0.1.1'}
+    for path, version in versions.items():
+        enforcement = 'partially-enforced' if path == PRODUCT[5] else None
+        header_delta(root, path, version, enforcement)
+    old, new = doc(BASE, 'tools/SKILL.md')[1], doc(root, 'tools/SKILL.md')[1]
+    require(new.split('## 10.')[0] == old.split('## 10.')[0], 'SKILL_BASE_BODY')
+    for path, oldn, newn in (('tools/interface.md', 6, 7), ('tools/SKILL.md', 10, 11)):
+        oldrefs, newrefs = section(doc(BASE, path)[1], oldn), section(doc(root, path)[1], newn)
+        require(newrefs.startswith(oldrefs.rstrip()) and len(newrefs) - len(oldrefs) < 1800, 'REFERENCE_PRESERVATION:' + path)
+    old, new = doc(BASE, PRODUCT[5])[1], doc(root, PRODUCT[5])[1]
+    for n in range(1, 12):
+        require(section(old, n) == section(new, n), 'RUNTIME_SECTION_PRESERVED:' + str(n))
+    require(old[old.index('A runtime session'):old.index('## 1.')] == new[new.index('A runtime session'):new.index('## 1.')], 'RUNTIME_DEFINITION_PRESERVED')
+    marker = 'The normative\nSBCL reference binding is delivered.'
+    # Availability is the only mutable tail of the second Section12 paragraph.
+    old12, new12 = section(old, 12), section(new, 12)
+    require(old12.split(marker)[0] == new12.split(marker)[0]
+            and old12[old12.index('| requirement-id'): ] == new12[new12.index('| requirement-id'):], 'RUNTIME_SECTION12_PRESERVED')
+    old, new = doc(BASE, PRODUCT[6])[1], doc(root, PRODUCT[6])[1]
+    paragraphs = new.split('\n\n')
+    added = [p for p in paragraphs if '../tools/interface.md' in p]
+    require(len(added) == 1 and len(added[0].split()) <= 100, 'SBCL_BOUNDED_LINK')
+    require('\n\n'.join(p for p in paragraphs if p not in added) == old, 'SBCL_BODY_PRESERVED')
+    old, new = doc(BASE, 'tools/README.md')[1], doc(root, 'tools/README.md')[1]
+    def normalize_readme(text, revised):
+        paras = text.split('\n\n')
+        if revised:
+            extra = [p for p in paras if not p.startswith('|') and '../methodology/10_live_runtime_sessions.md' in p]
+            require(len(extra) == 1 and len(extra[0].split()) <= 120, 'README_BOUNDED_PARAGRAPH')
+            paras = [p for p in paras if p not in extra]
+        return '\n\n'.join('\n'.join(line for line in p.split('\n') if not line.startswith(('| [`skill.json`]', '| [`interface.md`]'))) for p in paras)
+    require(normalize_readme(old, False) == normalize_readme(new, True), 'README_BASE_PRESERVED')
+    old, new = read(BASE, 'CHANGELOG.md'), read(root, 'CHANGELOG.md')
+    changed = new.split('### Changed\n\n', 1)
+    require(len(changed) == 2 and changed[0] == old.split('### Changed\n\n', 1)[0], 'CHANGELOG_LOCATION')
+    bullet, rest = changed[1].split('\n\n', 1)
+    require(bullet.startswith('- ') and '113' in bullet and len(bullet.split()) < 160
+            and changed[0] + '### Changed\n\n' + rest == old, 'CHANGELOG_PRESERVED')
+
+
+def history(root):
+    expected = js(PRIVATE, 'history.json')
+    for path, meta in expected.items():
+        p = root / path
+        require(p.is_file() and not p.is_symlink() and sha(p) == meta['sha256']
+                and stat.S_IMODE(p.stat().st_mode) == meta['permissions'], 'HISTORY_OR_INSTALLED:' + path)
+    actual_installed = {str(p.relative_to(root)) for p in (root / '.nizam').rglob('*') if p.is_file() or p.is_symlink()}
+    require(actual_installed == {p for p in expected if p.startswith('.nizam/')}, 'INSTALLED_INVENTORY')
+    allowed = set(PRODUCT) | set(COORDINATION) | {'.agent/contracts/113.json'}
+    changed = git(root, 'diff', contract()['base_revision'], '--name-only').splitlines()
+    additions = git(root, 'ls-files', '--others', '--exclude-standard').splitlines()
+    for path in set(changed + additions):
+        permitted = path in allowed or path.startswith('.agent/evidence/113/') or path in (
+            '.agent/validator/113-mode-a.json', '.agent/validator/113-test-bundle-review.json',
+            '.agent/validator/113-mode-b.json', '.agent/qa/113-contract-review.json', '.agent/qa/113.json')
+        require(permitted, 'OUT_OF_SCOPE:' + path)
+
+
+def scope_history(root):
+    compatibility(root)
+    bounded_delta(root)
+    history(root)
+    budget_actual(root)
+
+
+def budget_actual(root):
+    # Invoke the unchanged frozen classifier. Parsing its reported total adds
+    # the approved ceiling predicate, never another measurement algorithm.
+    command = [sys.executable, '.agent/evidence/scope-budget-014/measure.py',
+               '--range', '113=' + contract()['base_revision'] + '..', '--files']
+    result = subprocess.run(command, cwd=root, capture_output=True, text=True,
+                            env={**os.environ, 'PYTHONDONTWRITEBYTECODE':'1'})
+    require(result.returncode == 0, 'BUDGET_MEASURE_EXIT:' + str(result.returncode))
+    totals = re.findall(r'(?m)^\s*BUDGET_COUNTED_LINES=(\d+)\s*$', result.stdout)
+    require(len(totals) == 1, 'BUDGET_MEASURE_TOTAL')
+    require(6088 + int(totals[0]) <= 9360, 'BUDGET_ACTUAL_CEILING')
+
+
+def lifecycle_data(features, phase, state, completion=False):
+    oldfeatures = js(BASE, '.agent/feature_list_015.json')
+    oldphase = yaml.safe_load(read(BASE, 'docs/planning/phase_015.yaml'))
+    oldstate = js(BASE, '.agent/run_state.json')
+    require(phase.get('status') == 'in_progress', 'PHASE_CONTINUITY')
+    require([x['id'] for x in features['features']] == [x['id'] for x in oldfeatures['features']], 'FEATURE_IDS')
+    require([x['id'] for x in phase['steps']] == [x['id'] for x in oldphase['steps']], 'STEP_IDS')
+    for key in features:
+        if key != 'features':
+            require(features[key] == oldfeatures[key], 'FEATURE_ENVELOPE')
+    for key in phase:
+        if key != 'steps':
+            require(phase[key] == oldphase[key], 'PHASE_ENVELOPE')
+    for row, old in zip(features['features'], oldfeatures['features']):
+        if row['id'] != '113':
+            require(row == old, 'PREDECESSOR_SUCCESSOR:' + row['id'])
+            continue
+        allowed = {'status', 'passes', 'contract_ref', 'completed_at', 'qa', 'evidence'}
+        require({k:v for k,v in row.items() if k not in allowed} == {k:v for k,v in old.items() if k not in allowed}, 'FEATURE113_IMMUTABLE')
+        require(row['status'] in ('pending', 'in_progress', 'complete'), 'FEATURE113_STATUS')
+        if row['status'] == 'complete':
+            require(row.get('passes') is True and row.get('qa') == '.agent/qa/113.json'
+                    and row.get('evidence') == '.agent/evidence/113/evidence-gate.txt'
+                    and row.get('contract_ref') == '.agent/contracts/113.json' and row.get('completed_at'), 'COMPLETION_REFERENCES')
+    feature = next(x for x in features['features'] if x['id'] == '113')
+    for row, old in zip(phase['steps'], oldphase['steps']):
+        if row['id'] != '113':
+            require(row == old, 'STEP_HISTORY:' + row['id'])
+        else:
+            require(row.get('description') == old['description'], 'STEP113_DESCRIPTION')
+            require(set(row) <= {'id', 'description', 'status', 'evidence', 'docs_updated', 'changelog_entry'}, 'STEP113_FIELDS')
+            require(row['status'] == {'pending':'PENDING', 'in_progress':'IN_PROGRESS', 'complete':'COMPLETED'}[feature['status']], 'LIFECYCLE_AGREEMENT')
+            if row['status'] == 'COMPLETED':
+                require(row.get('evidence') == '.agent/evidence/113/evidence-gate.txt'
+                        and row.get('docs_updated') and row.get('changelog_entry'), 'STEP113_COMPLETION')
+    require(state['current_phase'] == oldstate['current_phase'] and state['current_feature'] in ('113', '114'), 'RUN_POSITION')
+    budget = state['scope_budget']
+    require(budget['original_estimate_lines'] == 7200 and budget['ceiling_130pct'] == 9360
+            and budget['per_feature'][:3] == oldstate['scope_budget']['per_feature'][:3]
+            and budget['total_lines_changed'] <= 9360, 'BUDGET_CONTINUITY')
+    for key, old in oldstate['circuit_breaker'].items():
+        now = state['circuit_breaker'].get(key)
+        if not key.startswith('113-'):
+            require(now == old, 'HISTORICAL_COUNTER:' + key)
+        else:
+            require(now and now['limit'] == old['limit'] == 3 and old['attempts'] <= now['attempts'] <= 3, 'COUNTER_CONTINUITY:' + key)
+    require(state['history'][:len(oldstate['history'])] == oldstate['history'], 'HISTORY_APPEND_ONLY')
+    require(completion is False or feature['status'] == 'complete', 'COMPLETION_PROJECTION')
+
+
+def lifecycle(root):
+    features = js(root, COORDINATION[0])
+    phase = yaml.safe_load(read(root, COORDINATION[1]))
+    state = js(root, COORDINATION[2])
+    lifecycle_data(features, phase, state)
+    c = js(root, '.agent/contracts/113.json')
+    require(c == contract(), 'APPROVED_CONTRACT_IMMUTABLE')
+    require(c['status'] == 'approved' and c['approvals']['validator_mode_a'] is True
+            and c['approvals']['evaluator_contract_review'] is True, 'CONTRACT_APPROVALS')
+    # Explicit projection remains memory/scratch proof, never a lifecycle write.
+    projected, projected_phase = copy.deepcopy(features), copy.deepcopy(phase)
+    row = next(x for x in projected['features'] if x['id'] == '113')
+    row.update(status='complete', passes=True, contract_ref='.agent/contracts/113.json',
+               completed_at='CONTROL_ONLY', qa='.agent/qa/113.json', evidence='.agent/evidence/113/evidence-gate.txt')
+    next(x for x in projected_phase['steps'] if x['id'] == '113').update(
+        status='COMPLETED', evidence='.agent/evidence/113/evidence-gate.txt',
+        docs_updated='CONTROL_ONLY', changelog_entry='CONTROL_ONLY')
+    lifecycle_data(projected, projected_phase, state, completion=True)
+
+
+def claim_boundary(root):
+    _, runtime = doc(root, PRODUCT[5])
+    head = runtime[:runtime.index('A runtime session')]
+    require('partially-enforced' in head and all(word in head for word in ('schema', 'C12', 'record'))
+            and re.search(r'(?:cannot|never|not)[^.]*prove[^.]*live', head, re.I), 'RECORD_ONLY_ENFORCEMENT')
+    require('113' not in head or not re.search(r'pending[^.]*113', head), 'ADAPTER_DELIVERED')
+    require(re.search(r'pending[^.]*phase016|phase016[^.]*pending', head, re.I), 'PHASE016_PENDING')
+    front, sbcl = doc(root, PRODUCT[6])
+    require(front.get('enforcement') == 'consumer-aspirational' and 'illustrative' in sbcl, 'SBCL_BOUNDARY')
+    _, interface = doc(root, PRODUCT[0])
+    s = section(interface, 6)
+    require(re.search(r'(?:fresh|hermetic)', s, re.I) and re.search(r'(?:not|never)[^.]*acceptance evidence', s, re.I), 'ACCEPTANCE_BOUNDARY')
+    # Positive declarations only. Historical unchanged changelog warnings are
+    # never scanned as though they described current implementation delivery.
+    forbidden = (r'controller (?:is |has been )?(?:delivered|implemented|working)',
+                 r'(?:all |the )?(?:13|thirteen) (?:live )?(?:cases|proofs|tests) (?:pass|passed|complete)',
+                 r'(?:released|published|upgraded) (?:framework |installed )?v?1\.[6-9]',
+                 r'(?:authorized|allocated) phase016', r'(?:member of|governed by) NizamIQ')
+    for path in PRODUCT:
+        new = read(root, path)
+        oldlines = set(read(BASE, path).splitlines())
+        additions = '\n'.join(line for line in new.splitlines() if line not in oldlines)
+        require(not any(re.search(p, additions, re.I) for p in forbidden), 'FALSE_DELIVERY_CLAIM:' + path)
+
+
+def validate_members(root, members, diagnostic):
+    require(isinstance(members, dict) and members, diagnostic + ':EMPTY')
+    for path, meta in members.items():
+        require(not Path(path).is_absolute() and '..' not in Path(path).parts, diagnostic + ':PATH')
+        p = root / path
+        require(p.is_file() and not p.is_symlink() and sha(p) == meta['sha256']
+                and mode(p) == meta['mode'], diagnostic + ':' + path)
+
+
+def integrity_data(root, fixed, fixed_seal, current, current_seal):
+    require(fixed_seal.get('manifest_sha256') == sha(root / '.agent/evidence/113/fixed-inputs.json'), 'FIXED_SEAL')
+    require(fixed['contract_sha256'] == sha(root / '.agent/contracts/113.json') and fixed['base_revision'] == contract()['base_revision'], 'FIXED_CONTRACT')
+    actors = fixed['actors']
+    require(set(actors) == {'test_author', 'generator', 'bundle_reviewer', 'final_qa'}
+            and len(set(actors.values())) == 4 and actors['test_author'] == '/root/adapter_test_author_113', 'ACTOR_INDEPENDENCE')
+    validate_members(root, fixed['files'], 'FIXED_MEMBER')
+    require(current_seal.get('manifest_sha256') == sha(root / '.agent/evidence/113/current-source-inputs.json')
+            and current_seal.get('candidate_commit') == current['candidate']['commit'], 'SOURCE_SEAL')
+    require(current['fixed_inputs_sha256'] == sha(root / '.agent/evidence/113/fixed-inputs.json')
+            and current['contract_sha256'] == fixed['contract_sha256'], 'SOURCE_FIXED_BINDING')
+    require(set(current['source_paths']) == set(PRODUCT), 'SOURCE_INVENTORY')
+    validate_members(root, current['source_paths'], 'SOURCE_MEMBER')
+    candidate = current['candidate']['commit']
+    require(re.fullmatch(r'[0-9a-f]{40}', candidate) and git(root, 'rev-parse', candidate + '^{tree}') == current['candidate']['tree'], 'CANDIDATE_TREE')
+    require(git(root, 'merge-base', candidate, 'HEAD') == candidate, 'CANDIDATE_ANCESTRY')
+    for path, meta in current['source_paths'].items():
+        obj = subprocess.run(['git', '-C', str(root), 'show', candidate + ':' + path], capture_output=True)
+        require(obj.returncode == 0 and hashlib.sha256(obj.stdout).hexdigest() == meta['sha256'], 'CANDIDATE_SOURCE:' + path)
+        require(git(root, 'ls-tree', candidate, '--', path).split()[0] == meta['mode'], 'CANDIDATE_MODE:' + path)
+    # A later Parent closure may add receipts/canonical fields, never source.
+    require(not git(root, 'diff', candidate, '--name-only', '--', *PRODUCT), 'SOURCE_CHANGED_AFTER_CANDIDATE')
+
+
+def input_integrity(root):
+    fixed = js(root, '.agent/evidence/113/fixed-inputs.json')
+    current = js(root, '.agent/evidence/113/current-source-inputs.json')
+    integrity_data(root, fixed, js(root, '.agent/evidence/113/fixed-inputs-seal.json'),
+                   current, js(root, '.agent/evidence/113/current-source-seal.json'))
+    review = js(root, '.agent/validator/113-test-bundle-review.json')
+    require(review.get('actor') == fixed['actors']['bundle_reviewer']
+            and review.get('fixed_inputs_sha256') == sha(root / '.agent/evidence/113/fixed-inputs.json')
+            and review.get('final_verdict', {}).get('approved') is True
+            and all(review.get(k) == [] for k in ('issues', 'missing_acceptance_coverage', 'unsupported_claims')), 'BUNDLE_REVIEW')
+
+
+def negative_controls(root):
+    command = [sys.executable, str(PRIVATE / 'controls.py'), '--root', str(root)]
+    p = subprocess.run(command, text=True, capture_output=True, env={**os.environ, 'PYTHONDONTWRITEBYTECODE':'1'})
+    print(p.stdout, end='')
+    print(p.stderr, end='', file=sys.stderr)
+    require(p.returncode == 0 and 'CONTROL_SUITE:PASS' in p.stdout, 'PRIVATE_CONTROLS')
+
+
+FUNCTIONS = {'surface':surface, 'routing':routing, 'compatibility':compatibility,
+             'scope-history':scope_history, 'lifecycle':lifecycle, 'negative-controls':negative_controls,
+             'claim-boundary':claim_boundary, 'input-integrity':input_integrity}
+
+
+def main():
+    require(len(sys.argv) == 2 and sys.argv[1] in MODES, 'USAGE:' + ','.join(MODES))
+    FUNCTIONS[sys.argv[1]](ROOT)
+    print('113:' + sys.argv[1] + ':PASS')
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except (Failure, ValueError, KeyError, OSError, yaml.YAMLError) as e:
+        print('113:FAIL:' + str(e), file=sys.stderr)
+        sys.exit(1)
+#!/usr/bin/env python3
+"""Preregistered scratch mutations with exact diagnostics, exits and restoration.
+
+Synthetic source is a private test fixture, not the delivered product. Its local
+Git candidate is real and contains no future QA/source-review verdicts or hashes.
+Each restored positive must pass the same component after its targeted negative.
+"""
+import argparse
+import copy
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+
+import yaml
+
+HERE = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location('feature113', HERE.parent / 'check_113.py')
+c = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(c)
+
+
+def dump(root, path, value):
+    (root/path).write_text(json.dumps(value, indent=2)+'\n')
+
+
+def document(root, path, version, body, enforcement=None):
+    front, _ = c.doc(c.BASE, path)
+    front['version'] = version
+    front['change_log'].insert(0, {'version':version,'date':'2026-10-12','summary':'PRIVATE CONTROL FIXTURE ONLY'})
+    if enforcement:
+        front['enforcement'] = enforcement
+    (root/path).write_text('---\n'+yaml.safe_dump(front,sort_keys=False)+'---'+body)
+
+
+def fixture(root):
+    _, old = c.doc(c.BASE, 'tools/interface.md')
+    operations = c.contract()['implementation_requirements']['operations']
+    operations_text = '\n'.join('| `'+op+'` | '+('Executes project code.' if op=='submit-operation' else 'Lifecycle or observation control only.')+' |' for op in operations)
+    rules = [
+        'Records validate against schemas; declared record validity proves no live behavior.',
+        'Reject stale generation and lease before execution; identity must match current owner.',
+        'At most one operation in flight; lifecycle/reattach preserves outstanding work.',
+        'A timeout stops waiting only, never reports execution stopped.',
+        'Capture before unwind; failed load or compile never claims image consistency.',
+        'Review trials receive no endpoint or permission and requests are rejected.',
+        'Lifecycle operations never evaluate project code.',
+        'Session results are never acceptance evidence; acceptance uses fresh process/build/hermetic resources.',
+        'Attempt counters survive a new generation or process; contract step attempt never resets.'
+    ]
+    optional = '''## 6. Optional Capability: Live Runtime Sessions
+
+Only `submit-operation` executes project code, including `observe`.
+Nonclaiming adapters remain conformant; these calls and S1-S9 apply only to claiming adapters.
+There is no separate status call; existing `read-state` reads durable records.
+`runtime.session.lifecycle` cannot operate/accept; `runtime.session.operate` is Generator development,
+and `runtime.session.accept` is Evaluator fresh acceptance.
+
+| Operation | Purpose |
+| --- | --- |
+'''+operations_text+'''
+
+Kinds: `load_source`, `compile_source`, `evaluate`, `run_tests`, `observe`.
+Request: `operation_id`, `session_id`, `expected_generation` {`counter`, `nonce`},
+`expected_lease_epoch`, `requester` {`principal_kind`, `role`, `agent_id`},
+`contract_id`, `step_key`, `attempt`, `kind`, `payload`, `context` {`working_dir`, `namespace`, reader/test config refs}, `limits`.
+Statuses: `completed`, `condition_signalled`, `cancelled`, `terminated`, `rejected`,
+`running`, `cancel_requested`, `unknown`. `debugger_paused` is optional, not emitted in v1.
+`wait_outcome`: `stopped_waiting` retains outstanding execution and busy lane.
+
+| Check | Requirement |
+| --- | --- |
+'''+ '\n'.join('| S'+str(i)+' | '+text+' |' for i,text in enumerate(rules,1))+'\n\n'
+    refs = old[old.index('## 6. References'):].replace('## 6.', '## 7.',1)
+    refs += '\n- `methodology/10_live_runtime_sessions.md` and `methodology/11_sbcl_runtime_binding.md`.\n- `schema/runtime_session.schema.json` and `schema/runtime_operation.schema.json`.\n'
+    document(root,'tools/interface.md','0.4.0',old[:old.index('## 6. References')]+optional+refs)
+    m = c.js(c.BASE,'tools/skill.json'); m['version']='0.6.0'
+    m['runtime_requirements']['live_runtime_session']={'required':False,'description':'Optional for claiming adapters only.'}
+    m['capabilities'] += [{'name':'live_runtime_session','module':'tools/interface.md','description':'Optional adapter.'}, {'name':'sbcl_runtime_binding','module':'methodology/11_sbcl_runtime_binding.md','description':'Normative binding.'}]
+    dump(root,'tools/skill.json',m)
+    index = c.js(c.BASE,'NIZAM.json');index['capabilities'].append({'id':'nizam-live-runtime-adapter','summary':'Optional adapter.','authoritative_source':'tools/interface.md'});dump(root,'NIZAM.json',index)
+    _,old=c.doc(c.BASE,'tools/SKILL.md');refs=old[old.index('## 10. References'):].replace('## 10.','## 11.',1)
+    refs += '\n- `methodology/10_live_runtime_sessions.md` and `methodology/11_sbcl_runtime_binding.md`.\n'
+    inserted='''## 10. Live Runtime Sessions
+
+For claiming adapters, read `tools/interface.md`, `methodology/10_live_runtime_sessions.md`
+and `methodology/11_sbcl_runtime_binding.md`; capability remains optional.
+
+'''
+    document(root,'tools/SKILL.md','0.6.0',old[:old.index('## 10. References')]+inserted+refs)
+    _,old=c.doc(c.BASE,'tools/README.md')
+    extra='Optional runtime adapters follow [sessions](../methodology/10_live_runtime_sessions.md), [SBCL binding](../methodology/11_sbcl_runtime_binding.md) and [interface](interface.md). Nonclaiming consumers remain conformant.'
+    document(root,'tools/README.md','0.20.0',old.replace('## Design Decision',extra+'\n\n## Design Decision',1))
+    _,old=c.doc(c.BASE,c.PRODUCT[5]); start=old.index('A runtime session')
+    intro='''
+
+# Live Runtime Sessions
+
+This protocol is **partially-enforced** through existing schema and C12 record validation only;
+these declared-record checks cannot prove live runtime behavior. The optional
+[adapter interface](../tools/interface.md) is normatively delivered, as is the
+[SBCL binding](11_sbcl_runtime_binding.md). Executable controller/adapter/SBCL
+enforcement and all thirteen live conformance proofs remain pending phase016.
+
+'''
+    body=intro+old[start:]
+    marker='The normative\nSBCL reference binding is delivered.'
+    begin=body.index(marker);end=body.index('\n\n| requirement-id',begin)
+    body=body[:begin]+marker+' The optional [adapter interface](../tools/interface.md) is delivered; executable controller/SBCL enforcement and all live proofs remain pending phase016.'+body[end:]
+    document(root,c.PRODUCT[5],'0.2.0',body,'partially-enforced')
+    _,old=c.doc(c.BASE,c.PRODUCT[6]);heading='## 1. Binding scope and evidence boundary\n\n'
+    body=old.replace(heading,heading+'The optional [adapter interface](../tools/interface.md) routes claiming consumers.\n\n',1)
+    document(root,c.PRODUCT[6],'0.1.1',body)
+    old=c.read(c.BASE,'CHANGELOG.md');(root/'CHANGELOG.md').write_text(old.replace('### Changed\n\n','### Changed\n\n- **Optional live-runtime adapter (feature113).** Normative optional routing only; controller and live proofs pending.\n\n',1))
+
+
+def invoke(root, component):
+    p=subprocess.run([sys.executable,str(HERE/'control_worker.py'),str(root),component],text=True,capture_output=True,env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
+    return p.returncode,p.stdout+p.stderr
+
+
+def preregister(name, component, path, diagnostic, budget_class):
+    return {'name':name,'component':component,'path':path,'expected_exit':1,
+            'expected_diagnostic':diagnostic,'budget_class':budget_class,'restored_exit':0}
+
+
+# Every target is declared before the scratch candidate or mutations execute.
+PLAN = [
+    preregister('optional-required-true','routing','tools/skill.json','OPTIONAL_REQUIRED_FALSE','budget/product'),
+    preregister('optional-absent-default-disabled','routing','tools/skill.json','OPTIONAL_REQUIRED_FALSE','budget/product'),
+    preregister('mandatory-requirement-removed','compatibility','tools/skill.json','MANIFEST_BASE_PRESERVED','budget/product'),
+    preregister('old-ten-item-body-altered','compatibility','tools/interface.md','INTERFACE_BASE_BODY','budget/product'),
+    preregister('eleventh-base-item','compatibility','tools/interface.md','INTERFACE_BASE_BODY','budget/product'),
+    preregister('missing-operation','surface','tools/interface.md','OPERATIONS_EXACT','budget/product'),
+    preregister('duplicate-operation','surface','tools/interface.md','OPERATIONS_EXACT','budget/product'),
+    preregister('extra-status-call','surface','tools/interface.md','OPERATIONS_EXACT','budget/product'),
+    preregister('missing-s9','surface','tools/interface.md','S_RULES_EXACT','budget/product'),
+    preregister('duplicate-s1','surface','tools/interface.md','S_RULES_EXACT','budget/product'),
+    preregister('misplaced-s5-keyword','surface','tools/interface.md','S_RULE_CONTENT:5','budget/product'),
+    preregister('misplaced-router-marker','routing','tools/SKILL.md','ROUTER_PATH:methodology/10_live_runtime_sessions.md','budget/product'),
+    preregister('duplicate-manifest-route','routing','tools/skill.json','DUPLICATE_MANIFEST_ROUTE','budget/product'),
+    preregister('index-route-misdirected','routing','NIZAM.json','INDEX_ROUTE','budget/product'),
+    preregister('missing-schema-crosslink','routing','tools/interface.md','SCHEMA_LINK:schema/runtime_operation.schema.json','budget/product'),
+    preregister('version-not-increased','delta','tools/interface.md','VERSION:tools/interface.md','budget/product'),
+    preregister('changed-old-r1','delta','methodology/10_live_runtime_sessions.md','RUNTIME_SECTION_PRESERVED:1','budget/product'),
+    preregister('record-boundary-erased','claim','methodology/10_live_runtime_sessions.md','RECORD_ONLY_ENFORCEMENT','budget/product'),
+    preregister('false-live13-proof','claim','tools/interface.md','FALSE_DELIVERY_CLAIM:tools/interface.md','budget/product'),
+    preregister('foreign-ecosystem-scope','claim','tools/interface.md','FALSE_DELIVERY_CLAIM:tools/interface.md','budget/product'),
+    preregister('false-release','claim','tools/interface.md','FALSE_DELIVERY_CLAIM:tools/interface.md','budget/product'),
+    preregister('installed-content-changed','history','.nizam/NIZAM.json','HISTORY_OR_INSTALLED:.nizam/NIZAM.json','UNCLASSIFIED'),
+    preregister('installed-mode-changed','history','.nizam/NIZAM.json','HISTORY_OR_INSTALLED:.nizam/NIZAM.json','UNCLASSIFIED'),
+    preregister('historical-proof-changed','history','.agent/qa/112.json','HISTORY_OR_INSTALLED:.agent/qa/112.json','budget/verdict'),
+    preregister('out-of-scope-tracked','history','README.md','HISTORY_OR_INSTALLED:README.md','budget/product-ext'),
+    preregister('out-of-scope-untracked','history','alien113.txt','OUT_OF_SCOPE:alien113.txt','UNCLASSIFIED'),
+    preregister('successor-promoted','lifecycle','.agent/feature_list_015.json','PREDECESSOR_SUCCESSOR:114','budget/planning'),
+    preregister('predecessor-rewritten','lifecycle','.agent/feature_list_015.json','PREDECESSOR_SUCCESSOR:112','budget/planning'),
+    preregister('phase-prematurely-complete','lifecycle','docs/planning/phase_015.yaml','PHASE_CONTINUITY','budget/planning'),
+    preregister('attempt-counter-reset','lifecycle','.agent/run_state.json','COUNTER_CONTINUITY:113-contract','excluded/run_state'),
+    preregister('budget-ceiling-rebased','lifecycle','.agent/run_state.json','BUDGET_CONTINUITY','excluded/run_state'),
+    preregister('budget-overrun','lifecycle','.agent/run_state.json','BUDGET_CONTINUITY','excluded/run_state'),
+    preregister('fixed-seal-corrupt','integrity','.agent/evidence/113/fixed-inputs-seal.json','FIXED_SEAL','evidence'),
+    preregister('fixed-member-corrupt','integrity','.agent/evidence/113/evidence_gate.py','FIXED_MEMBER:.agent/evidence/113/evidence_gate.py','evidence'),
+    preregister('source-seal-corrupt','integrity','.agent/evidence/113/current-source-seal.json','SOURCE_SEAL','evidence'),
+    preregister('candidate-tree-corrupt','integrity','.agent/evidence/113/current-source-inputs.json','CANDIDATE_TREE','evidence'),
+    preregister('actual-counted-budget-overrun','budget','.agent/contracts/113-budget-overrun-control.json','BUDGET_ACTUAL_CEILING','budget/contract'),
+]
+
+
+def mutate(root, item):
+    name,path=item['name'],item['path'];p=root/path
+    if name=='installed-mode-changed':
+        p.chmod(stat.S_IMODE(p.stat().st_mode)^0o100);return
+    if name=='out-of-scope-untracked':p.write_text('CONTROL_ONLY\n');return
+    if name=='actual-counted-budget-overrun':p.write_text('CONTROL_ONLY\n'*3300);return
+    text=p.read_text()
+    if path.endswith('.json') and name not in ('installed-content-changed','historical-proof-changed'):
+        data=json.loads(text)
+        if name=='optional-required-true':data['runtime_requirements']['live_runtime_session']['required']=True
+        elif name=='optional-absent-default-disabled':data['runtime_requirements'].pop('live_runtime_session')
+        elif name=='mandatory-requirement-removed':data['runtime_requirements'].pop('shell_execution')
+        elif name=='duplicate-manifest-route':data['capabilities'].append(copy.deepcopy(data['capabilities'][-1]))
+        elif name=='index-route-misdirected':data['capabilities'][-1]['authoritative_source']='tools/SKILL.md'
+        elif name in ('successor-promoted','predecessor-rewritten'):
+            target='114' if name=='successor-promoted' else '112';next(x for x in data['features'] if x['id']==target)['status']='in_progress'
+        elif name=='attempt-counter-reset':data['circuit_breaker']['113-contract']['attempts']=0
+        elif name=='budget-ceiling-rebased':data['scope_budget']['ceiling_130pct']=9999
+        elif name=='budget-overrun':data['scope_budget']['total_lines_changed']=9361
+        elif name in ('fixed-seal-corrupt','source-seal-corrupt'):data['manifest_sha256']='0'*64
+        elif name=='candidate-tree-corrupt':
+            data['candidate']['tree']='0'*40;dump(root,path,data)
+            seal=c.js(root,'.agent/evidence/113/current-source-seal.json');seal['manifest_sha256']=c.sha(p);dump(root,'.agent/evidence/113/current-source-seal.json',seal);return
+        else:raise AssertionError(name)
+        dump(root,path,data);return
+    if name=='old-ten-item-body-altered':text=text.replace('The adapter locates','The adapter ignores',1)
+    elif name=='eleventh-base-item':text=text.replace('## 6. Optional','11. A new mandatory runtime requirement.\n\n## 6. Optional',1)
+    elif name=='missing-operation':text=text.replace('| `open-session` | Lifecycle or observation control only. |\n','',1)
+    elif name=='duplicate-operation':text=text.replace('| `open-session` |','| `open-session` | duplicate |\n| `open-session` |',1)
+    elif name=='extra-status-call':text=text.replace('| Operation |','| `status-call` | extra |\n| Operation |',1)
+    elif name=='missing-s9':text=text.replace('| S9 |','| X9 |',1)
+    elif name=='duplicate-s1':text=text.replace('| S2 |','| S1 |',1)
+    elif name=='misplaced-s5-keyword':text=text.replace('Capture before unwind;','Capture before handler;',1)+'\nunwind\n'
+    elif name=='misplaced-router-marker':
+        start=text.index('## 10. Live Runtime Sessions');end=text.index('## 11. References',start)
+        text=text[:start]+text[start:end].replace('methodology/10_live_runtime_sessions.md','methodology/missing.md')+text[end:]
+    elif name=='missing-schema-crosslink':text=text.replace('schema/runtime_operation.schema.json','schema/missing.schema.json')
+    elif name=='version-not-increased':text=text.replace('version: 0.4.0','version: 0.3.1',1)
+    elif name=='changed-old-r1':text=text.replace('| R1 |','| R0 |',1)
+    elif name=='record-boundary-erased':text=text.replace('cannot prove live runtime behavior','proves live runtime behavior',1)
+    elif name=='false-live13-proof':text+='\nAll thirteen live cases passed.\n'
+    elif name=='foreign-ecosystem-scope':text+='\nThis repository is governed by NizamIQ.\n'
+    elif name=='false-release':text+='\nReleased framework v1.6.0.\n'
+    elif name=='phase-prematurely-complete':text=text.replace('status: in_progress','status: complete',1)
+    else:text+='\nCONTROL_CORRUPTION\n'
+    p.chmod(p.stat().st_mode|0o200);p.write_text(text)
+
+
+def main():
+    parser=argparse.ArgumentParser();parser.add_argument('--root',type=Path,required=True);parser.add_argument('--print-plan',action='store_true');args=parser.parse_args()
+    if args.print_plan:print(json.dumps(PLAN,indent=2));return
+    source=args.root.resolve();assert source.is_dir() and (source/'.git').exists()
+    with tempfile.TemporaryDirectory(prefix='nizam113-controls-') as temp:
+        scratch=Path(temp)/'repo'
+        p=subprocess.run(['git','clone','--quiet','--shared','--no-checkout',str(source),str(scratch)],text=True,capture_output=True);assert p.returncode==0,p.stderr
+        shutil.copytree(source,scratch,dirs_exist_ok=True,ignore=shutil.ignore_patterns('.git','__pycache__'))
+        fixture(scratch)
+        for args_git in (('read-tree','HEAD'),('config','user.name','Private Controls'),('config','user.email','controls@example.invalid'),('add','--',*c.PRODUCT),('commit','--quiet','-m','PRIVATE synthetic controls candidate')):
+            c.git(scratch,*args_git)
+        candidate=c.git(scratch,'rev-parse','HEAD');tree=c.git(scratch,'rev-parse','HEAD^{tree}')
+        fixed={'format':1,'base_revision':c.contract()['base_revision'],'approved_base':c.git(source,'rev-parse','HEAD'),'contract_sha256':c.sha(scratch/'.agent/contracts/113.json'),
+               'actors':{'test_author':'/root/adapter_test_author_113','generator':'/root/adapter_generator_113','bundle_reviewer':'/root/adapter_validator_113','final_qa':'/root/adapter_acceptance_113'},
+               'files':{'.agent/evidence/113/evidence_gate.py':{'sha256':c.sha(scratch/'.agent/evidence/113/evidence_gate.py'),'mode':c.mode(scratch/'.agent/evidence/113/evidence_gate.py')}}}
+        dump(scratch,'.agent/evidence/113/fixed-inputs.json',fixed);dump(scratch,'.agent/evidence/113/fixed-inputs-seal.json',{'manifest_sha256':c.sha(scratch/'.agent/evidence/113/fixed-inputs.json')})
+        current={'format':1,'candidate':{'commit':candidate,'tree':tree},'fixed_inputs_sha256':c.sha(scratch/'.agent/evidence/113/fixed-inputs.json'),'contract_sha256':fixed['contract_sha256'],
+                 'source_paths':{path:{'sha256':c.sha(scratch/path),'mode':c.mode(scratch/path)} for path in c.PRODUCT}}
+        dump(scratch,'.agent/evidence/113/current-source-inputs.json',current);dump(scratch,'.agent/evidence/113/current-source-seal.json',{'manifest_sha256':c.sha(scratch/'.agent/evidence/113/current-source-inputs.json'),'candidate_commit':candidate})
+        for component in ('surface','routing','compatibility','delta','history','lifecycle','claim','integrity','budget'):
+            rc,out=invoke(scratch,component);print('POSITIVE',component,'EXIT',rc,out.strip());assert rc==0,component
+        for item in PLAN:
+            path=scratch/item['path'];existed=path.exists();original=path.read_bytes() if existed else None;permissions=stat.S_IMODE(path.stat().st_mode) if existed else None
+            # A candidate-tree mutation also updates its source seal to reach its target.
+            seal=scratch/'.agent/evidence/113/current-source-seal.json';seal_original=seal.read_bytes()
+            print('PREREGISTERED',json.dumps(item,sort_keys=True))
+            try:
+                mutate(scratch,item);rc,out=invoke(scratch,item['component']);print('NEGATIVE',item['name'],'EXIT',rc,out.strip());assert rc==item['expected_exit'] and item['expected_diagnostic'] in out,item['name']
+            finally:
+                if existed:path.chmod(permissions|0o200);path.write_bytes(original);path.chmod(permissions)
+                else:path.unlink(missing_ok=True)
+                seal.write_bytes(seal_original)
+            rc,out=invoke(scratch,item['component']);print('RESTORED',item['name'],'EXIT',rc,out.strip());assert rc==0,item['name']
+        measure=[sys.executable,str(scratch/'.agent/evidence/scope-budget-014/measure.py'),'--range','113='+c.contract()['base_revision']+'..','--files']
+        p=subprocess.run(measure,cwd=scratch,text=True,capture_output=True);print('FROZEN_BUDGET_POSITIVE_EXIT',p.returncode);assert p.returncode==0,p.stderr
+        alien=scratch/'unclassified113.txt';alien.write_text('CONTROL_ONLY\n')
+        try:
+            p=subprocess.run(measure,cwd=scratch,text=True,capture_output=True);print('FROZEN_BUDGET_UNCLASSIFIED_EXIT',p.returncode);assert p.returncode==3 and 'UNCLASSIFIED' in p.stdout and 'unclassified113.txt' in p.stdout
+        finally:alien.unlink()
+        p=subprocess.run(measure,cwd=scratch,text=True,capture_output=True);print('FROZEN_BUDGET_RESTORED_EXIT',p.returncode);assert p.returncode==0
+        print('CONTROL_SUITE:PASS; cases='+str(len(PLAN))+'; synthetic component proof only; no source-review/QA verdict authored')
+
+
+if __name__=='__main__':main()
+#!/usr/bin/env python3
+"""Scratch component checks. This emits CONTROL only, never acceptance verdicts."""
+import importlib.util
+from pathlib import Path
+import sys
+
+spec = importlib.util.spec_from_file_location('feature113', Path(__file__).resolve().parents[1] / 'check_113.py')
+c = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(c)
+root, name = Path(sys.argv[1]).resolve(), sys.argv[2]
+assert root != c.HERE.parents[2] and 'nizam113-controls-' in str(root)
+functions = {'surface':c.surface_content, 'routing':c.routing, 'compatibility':c.compatibility,
+             'delta':c.bounded_delta, 'history':c.history, 'lifecycle':c.lifecycle,
+             'claim':c.claim_boundary, 'budget':c.budget_actual}
+try:
+    if name == 'integrity':
+        c.integrity_data(root, c.js(root,'.agent/evidence/113/fixed-inputs.json'),
+                         c.js(root,'.agent/evidence/113/fixed-inputs-seal.json'),
+                         c.js(root,'.agent/evidence/113/current-source-inputs.json'),
+                         c.js(root,'.agent/evidence/113/current-source-seal.json'))
+    else:
+        functions[name](root)
+    print('CONTROL_COMPONENT:' + name + ':PASS')
+except (c.Failure, ValueError, KeyError, OSError) as error:
+    print('CONTROL_COMPONENT:FAIL:' + str(error), file=sys.stderr)
+    sys.exit(1)
+[
+  {
+    "name": "optional-required-true",
+    "component": "routing",
+    "path": "tools/skill.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "optional-absent-default-disabled",
+    "component": "routing",
+    "path": "tools/skill.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "mandatory-requirement-removed",
+    "component": "compatibility",
+    "path": "tools/skill.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "MANIFEST_BASE_PRESERVED",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "old-ten-item-body-altered",
+    "component": "compatibility",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "INTERFACE_BASE_BODY",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "eleventh-base-item",
+    "component": "compatibility",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "INTERFACE_BASE_BODY",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "missing-operation",
+    "component": "surface",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "OPERATIONS_EXACT",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "duplicate-operation",
+    "component": "surface",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "OPERATIONS_EXACT",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "extra-status-call",
+    "component": "surface",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "OPERATIONS_EXACT",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "missing-s9",
+    "component": "surface",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "S_RULES_EXACT",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "duplicate-s1",
+    "component": "surface",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "S_RULES_EXACT",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "misplaced-s5-keyword",
+    "component": "surface",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "S_RULE_CONTENT:5",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "misplaced-router-marker",
+    "component": "routing",
+    "path": "tools/SKILL.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "ROUTER_PATH:methodology/10_live_runtime_sessions.md",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "duplicate-manifest-route",
+    "component": "routing",
+    "path": "tools/skill.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "DUPLICATE_MANIFEST_ROUTE",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "index-route-misdirected",
+    "component": "routing",
+    "path": "NIZAM.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "INDEX_ROUTE",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "missing-schema-crosslink",
+    "component": "routing",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "SCHEMA_LINK:schema/runtime_operation.schema.json",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "version-not-increased",
+    "component": "delta",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "VERSION:tools/interface.md",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "changed-old-r1",
+    "component": "delta",
+    "path": "methodology/10_live_runtime_sessions.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "RUNTIME_SECTION_PRESERVED:1",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "record-boundary-erased",
+    "component": "claim",
+    "path": "methodology/10_live_runtime_sessions.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "RECORD_ONLY_ENFORCEMENT",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "false-live13-proof",
+    "component": "claim",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "foreign-ecosystem-scope",
+    "component": "claim",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "false-release",
+    "component": "claim",
+    "path": "tools/interface.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md",
+    "budget_class": "budget/product",
+    "restored_exit": 0
+  },
+  {
+    "name": "installed-content-changed",
+    "component": "history",
+    "path": ".nizam/NIZAM.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
+    "budget_class": "UNCLASSIFIED",
+    "restored_exit": 0
+  },
+  {
+    "name": "installed-mode-changed",
+    "component": "history",
+    "path": ".nizam/NIZAM.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json",
+    "budget_class": "UNCLASSIFIED",
+    "restored_exit": 0
+  },
+  {
+    "name": "historical-proof-changed",
+    "component": "history",
+    "path": ".agent/qa/112.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "HISTORY_OR_INSTALLED:.agent/qa/112.json",
+    "budget_class": "budget/verdict",
+    "restored_exit": 0
+  },
+  {
+    "name": "out-of-scope-tracked",
+    "component": "history",
+    "path": "README.md",
+    "expected_exit": 1,
+    "expected_diagnostic": "HISTORY_OR_INSTALLED:README.md",
+    "budget_class": "budget/product-ext",
+    "restored_exit": 0
+  },
+  {
+    "name": "out-of-scope-untracked",
+    "component": "history",
+    "path": "alien113.txt",
+    "expected_exit": 1,
+    "expected_diagnostic": "OUT_OF_SCOPE:alien113.txt",
+    "budget_class": "UNCLASSIFIED",
+    "restored_exit": 0
+  },
+  {
+    "name": "successor-promoted",
+    "component": "lifecycle",
+    "path": ".agent/feature_list_015.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "PREDECESSOR_SUCCESSOR:114",
+    "budget_class": "budget/planning",
+    "restored_exit": 0
+  },
+  {
+    "name": "predecessor-rewritten",
+    "component": "lifecycle",
+    "path": ".agent/feature_list_015.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "PREDECESSOR_SUCCESSOR:112",
+    "budget_class": "budget/planning",
+    "restored_exit": 0
+  },
+  {
+    "name": "phase-prematurely-complete",
+    "component": "lifecycle",
+    "path": "docs/planning/phase_015.yaml",
+    "expected_exit": 1,
+    "expected_diagnostic": "PHASE_CONTINUITY",
+    "budget_class": "budget/planning",
+    "restored_exit": 0
+  },
+  {
+    "name": "attempt-counter-reset",
+    "component": "lifecycle",
+    "path": ".agent/run_state.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "COUNTER_CONTINUITY:113-contract",
+    "budget_class": "excluded/run_state",
+    "restored_exit": 0
+  },
+  {
+    "name": "budget-ceiling-rebased",
+    "component": "lifecycle",
+    "path": ".agent/run_state.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "BUDGET_CONTINUITY",
+    "budget_class": "excluded/run_state",
+    "restored_exit": 0
+  },
+  {
+    "name": "budget-overrun",
+    "component": "lifecycle",
+    "path": ".agent/run_state.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "BUDGET_CONTINUITY",
+    "budget_class": "excluded/run_state",
+    "restored_exit": 0
+  },
+  {
+    "name": "fixed-seal-corrupt",
+    "component": "integrity",
+    "path": ".agent/evidence/113/fixed-inputs-seal.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "FIXED_SEAL",
+    "budget_class": "evidence",
+    "restored_exit": 0
+  },
+  {
+    "name": "fixed-member-corrupt",
+    "component": "integrity",
+    "path": ".agent/evidence/113/evidence_gate.py",
+    "expected_exit": 1,
+    "expected_diagnostic": "FIXED_MEMBER:.agent/evidence/113/evidence_gate.py",
+    "budget_class": "evidence",
+    "restored_exit": 0
+  },
+  {
+    "name": "source-seal-corrupt",
+    "component": "integrity",
+    "path": ".agent/evidence/113/current-source-seal.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "SOURCE_SEAL",
+    "budget_class": "evidence",
+    "restored_exit": 0
+  },
+  {
+    "name": "candidate-tree-corrupt",
+    "component": "integrity",
+    "path": ".agent/evidence/113/current-source-inputs.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "CANDIDATE_TREE",
+    "budget_class": "evidence",
+    "restored_exit": 0
+  },
+  {
+    "name": "actual-counted-budget-overrun",
+    "component": "budget",
+    "path": ".agent/contracts/113-budget-overrun-control.json",
+    "expected_exit": 1,
+    "expected_diagnostic": "BUDGET_ACTUAL_CEILING",
+    "budget_class": "budget/contract",
+    "restored_exit": 0
+  }
+]
+#!/usr/bin/env python3
+"""Disclosed Parent adapter: authenticate feature113 evidence before closure."""
+import hashlib
+import json
+from pathlib import Path
+import re
+import stat
+import subprocess
+
+import jsonschema
+
+ROOT = Path(__file__).resolve().parents[3]
+E = '.agent/evidence/113/'
+
+
+def read(path):
+    p = ROOT / path
+    assert not p.is_symlink() and p.is_file(), path
+    return p.read_bytes()
+
+
+def obj(path):
+    return json.loads(read(path))
+
+
+def digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def approved(record):
+    assert record['final_verdict']['approved'] is True
+    for key in ('issues', 'missing_acceptance_coverage', 'unsupported_claims'):
+        assert record[key] == [], key
+
+
+def git(*args):
+    return subprocess.check_output(['git', '-C', str(ROOT), *args])
+
+
+def receipt(path, command, candidate):
+    raw = read(path).decode()
+    assert raw.startswith('COMMAND: ' + command + '\n'), path
+    assert 'CANDIDATE_SHA: ' + candidate + '\n' in raw, path
+    assert re.findall(r'^EXIT:\s*(-?\d+)\s*$', raw, re.M) == ['0'], path
+    assert raw.rstrip().endswith('EXIT: 0'), path
+
+
+def replay(files, candidate):
+    for path, expected in files.items():
+        assert not Path(path).is_absolute() and '..' not in Path(path).parts, path
+        assert re.fullmatch('[0-9a-f]{64}', expected['sha256']), path
+        assert expected['mode'] in ('100644', '100755'), path
+        assert digest(read(path)) == expected['sha256'], path
+        mode = '100755' if stat.S_IMODE((ROOT / path).stat().st_mode) & 0o111 else '100644'
+        assert mode == expected['mode'], path + ' current mode'
+        assert digest(git('show', candidate + ':' + path)) == expected['sha256'], path + ' Git replay'
+        entry = git('ls-tree', candidate, '--', path).decode().split('\t')[0].split()
+        assert len(entry) == 3 and entry[:2] == [expected['mode'], 'blob'], path + ' Git mode'
+
+
+def main():
+    contract = obj('.agent/contracts/113.json')
+    qa = obj('.agent/qa/113.json')
+    fixed = obj(E + 'fixed-inputs.json')
+    source = obj(E + 'current-source-inputs.json')
+    source_seal = obj(E + 'current-source-seal.json')
+    mode_b = obj('.agent/validator/113-mode-b.json')
+    semantic = obj(E + 'source-review.json')
+    bundle = obj('.agent/validator/113-test-bundle-review.json')
+    for record in (qa, mode_b, semantic, bundle):
+        approved(record)
+    jsonschema.validate(qa, obj('.nizam/schema/qa_verdict.schema.json'))
+    jsonschema.validate(contract, obj('.nizam/schema/contract.schema.json'))
+    assert contract['status'] == 'approved'
+    assert qa['feature_id'] == '113' and qa['qa_pass'] is True and qa['required_fixes'] == []
+    assert len(contract['verification']) == 16
+    assert qa['checks_run'] == qa['checks_passed'] == len(qa['checks']) == 16
+    fixed_hash = digest(read(E + 'fixed-inputs.json'))
+    source_hash = digest(read(E + 'current-source-inputs.json'))
+    assert obj(E + 'fixed-inputs-seal.json')['manifest_sha256'] == fixed_hash
+    assert source_seal['manifest_sha256'] == source_hash
+    assert source['fixed_inputs_sha256'] == fixed_hash
+    contract_hash = digest(read('.agent/contracts/113.json'))
+    assert source['contract_sha256'] == fixed['contract_sha256'] == contract_hash
+    candidate = source['candidate']['commit']
+    assert re.fullmatch('[0-9a-f]{40}', candidate)
+    assert source_seal['candidate_commit'] == candidate
+    assert git('rev-parse', candidate + '^{tree}').decode().strip() == source['candidate']['tree']
+    assert subprocess.run(['git', '-C', str(ROOT), 'merge-base', '--is-ancestor', candidate, 'HEAD'], capture_output=True).returncode == 0
+    actors = fixed['actors']
+    actor_values = [actors[k] for k in ('generator', 'test_author', 'bundle_reviewer', 'final_qa')]
+    assert all(isinstance(actor, str) and actor for actor in actor_values) and len(set(actor_values)) == 4
+    assert qa['actor'] == semantic['actor'] == actors['final_qa']
+    assert mode_b['actor'] == bundle['actor'] == actors['bundle_reviewer']
+    bundle_path = '.agent/validator/113-test-bundle-review.json'
+    bundle_hash = digest(read(bundle_path))
+    assert qa['bundle_review_sha256'] == bundle_hash
+    assert digest(git('show', candidate + ':' + bundle_path)) == bundle_hash
+    for record in (qa, semantic, mode_b):
+        assert record['candidate_commit'] == candidate
+        assert record['source_manifest_sha256'] == source_hash
+        assert record['fixed_inputs_sha256'] == fixed_hash
+    assert qa['mode_b_sha256'] == digest(read('.agent/validator/113-mode-b.json'))
+    assert len(source['source_paths']) == 8
+    replay(fixed['files'], candidate)
+    replay(source['source_paths'], candidate)
+    expected_evidence = [E + 'qa-%02d.txt' % i for i in range(1, 17)]
+    for required, actual, path in zip(contract['verification'], qa['checks'], expected_evidence):
+        assert actual['command'] == required['command'] and actual['evidence'] == path
+        assert actual['exit_code'] == 0
+        receipt(path, required['command'], candidate)
+    spot = E + '113-qa-adversarial.txt'
+    assert qa['adversarial']['performed'] is True and qa['adversarial']['evidence'] == spot
+    assert qa['adversarial']['command'] not in [x['command'] for x in contract['verification']]
+    receipt(spot, qa['adversarial']['command'], candidate)
+    assert len(qa['evidence_files']) == 17 and set(qa['evidence_files']) == set(expected_evidence + [spot])
+    assert semantic['evidence'] and all(read(path) for path in semantic['evidence'])
+    print('EVIDENCE GATE PASS: feature113 actual sealed Git candidate; sixteen independent checks, semantic review, own adversarial receipt; fixed/source bytes and modes replay exactly.')
+
+
+if __name__ == '__main__':
+    main()
+{
+  "contract_id": "113",
+  "actor": "/root",
+  "role": "Orchestrator task-only evidence-capture adaptation disclosed",
+  "path": ".agent/evidence/113/evidence_gate.py",
+  "sha256": "25d2c4a4c8b01fe70e9fa8222bb4bd65c77a39aa7239830bbc64924aef0996d5",
+  "recorded_at": "2026-10-12T04:40:05.234112+00:00",
+  "authority": ".agent/contracts/113.json approved; Root owns capture adaptation only, no product/spec/contract/gateverdict",
+  "execution": "Syntax parsed only; actual capture waits independentbundleReview, ModeB andfreshQA",
+  "bundle_review": "separate adapter_validator_113 gate pending",
+  "interface": "TestAuthor supplied fixed/current-source JSON structures independently before adapter authored",
+  "pre_freeze_refinement": "Bundle review is future independent gate excluded from fixed map to avoid selfcycle; authenticate approvedactor+actualQAhash+candidateGitreplay directly after bundle-review."
+}
+{
+  "format": 1,
+  "base_revision": "a57c860a18c82990c4a43deed1465bd052bb4c3f",
+  "approved_base": "dc133ea51a17fb55fc3d4d383d04aeb96828b951",
+  "contract_sha256": "bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5",
+  "actors": {
+    "test_author": "/root/adapter_test_author_113",
+    "generator": "/root/adapter_generator_113",
+    "bundle_reviewer": "/root/adapter_validator_113",
+    "final_qa": "/root/adapter_acceptance_113"
+  },
+  "files": {
+    ".agent/contracts/113.json": {
+      "sha256": "bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/capture-adapter-authorship.json": {
+      "sha256": "4d991de45ddf4f0a0b3102427472cca96c5f6895cc58c5af5caa4f036be67470",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/check_113.py": {
+      "sha256": "d24636b8e20f5bebf3d7a4bde0faf2f9599a6d6713c79e0a7cc9d173e04d6503",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/checker-attempt1-root.json": {
+      "sha256": "59c7bbc474d7065a1cfc7747a09d70e3872ebc76a895c02f33070b08a7ac2021",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/checker-development-final-selfcheck.txt": {
+      "sha256": "c26051e13927cad909d3272407757cd4ba56551e1f098206296dbcd115522817",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/checker-development-selfcheck1.txt": {
+      "sha256": "7095ff23629e866c4cc388bc0a1a8a4202d741f657fa7717ac326642fcb758bf",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/contract-approval.json": {
+      "sha256": "f6803fe11c153d494756ab69981a6f673864f6d5de963ca615ce65dc9d62296a",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/contract-attempt1-root.json": {
+      "sha256": "2f5ccbd4cc4ab7336477df1dd756921dfdb7bea455d980732dcc10f3ceeb2f6c",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/contract-proposal-attempt1.json": {
+      "sha256": "da7cf60d2ac3c4ea89d054f31a313a549e84082459a52d4ec0f7f2fef7528bbb",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/contract-review-handoff.json": {
+      "sha256": "a28925bc0dc7e2cceea35c1ebc34099282de55789b41035f6398101398415b30",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/contract-review-raw.txt": {
+      "sha256": "e51b0c09d74320c630340a74cc21ac98a1fd728c6d202bdde10dd10bbecd5cab",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/coordinator-interface.txt": {
+      "sha256": "adbecc7ab287e0300c8ca7cb1a1624f752de0c2619b254dcaa7f7fab7c773908",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/evidence_gate.py": {
+      "sha256": "25d2c4a4c8b01fe70e9fa8222bb4bd65c77a39aa7239830bbc64924aef0996d5",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/initial-red-01.txt": {
+      "sha256": "dae334a1508517a45755303d9ee541fa6ff8557462b31659bd7519bb23ceaf10",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/initial-red-03.txt": {
+      "sha256": "8f5c02cfa4b3f016bdf87464f48d8acaf56321f923c816c9fb1544754af0382f",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/initial-red-04.txt": {
+      "sha256": "0050d7bfdb9e0b1fcf3cb4e4aeeeb3a11f3997cf674a36da15b42a64d8b6667e",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/.agent/contracts/113.json": {
+      "sha256": "bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/.agent/feature_list_015.json": {
+      "sha256": "8ef6a70e3369b22d85a508765e8c714c461c69a7c33417c996a47816e796c0e3",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/.agent/run_state.json": {
+      "sha256": "697551454fba159e596e2fe934d92a308308e7d5f1f34cda1e85e23b71e3c590",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/CHANGELOG.md": {
+      "sha256": "471e28642c732cd1113b720f25dca8cb7c104a8ba2dc3c6c5870faf078c4df3e",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/NIZAM.json": {
+      "sha256": "36ba859a7772dada0ead76ea3f81e7feacdc57f5f905e82186797a331df41caf",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/docs/planning/phase_015.yaml": {
+      "sha256": "b38fc23763acdd625798297c5d76d2f9b0ac01f915b538ff58c887bce8e80d92",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/methodology/10_live_runtime_sessions.md": {
+      "sha256": "e664451617ce6b322e769033821f67620036d9e196c3f053a43c49e1d0e8f875",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/methodology/11_sbcl_runtime_binding.md": {
+      "sha256": "22ccbc7d38778ed131ce09e54fbaafaefe47fa0bfbee72eae4a65c19542ef089",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/tools/README.md": {
+      "sha256": "d13670d6e8232525260a57b3015008e3a25efb93ca3e3bfbc4811404bad5c965",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/tools/SKILL.md": {
+      "sha256": "291bcb91b6447010d716b2855f10f283c5c547a0853b0260d9e97d758f5c3c98",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/tools/interface.md": {
+      "sha256": "43aa837afa57c95d8032bced6ebf55bca6581eb969aaf3cdc0bdef1d62c0b00a",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/base/tools/skill.json": {
+      "sha256": "1192c91d72316ad3c672135ac65b7a17edc6b686e0571ad451d48454034736f9",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/control_worker.py": {
+      "sha256": "94f4627d6ba0b58da48176cf30ce2b4268be8859011386d2f3f6fd9558b435c4",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/controls.py": {
+      "sha256": "626c1cdea8fcb22d168e598b1a629826fb1282f11307c1591bad0e5f0a8a0a45",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/history.json": {
+      "sha256": "f9a748eb4b0090a9ec3b968a207fc395f87d3ac1ce52ddb3dab7921e20450edc",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/private/negative-plan.json": {
+      "sha256": "9de74e9a380875785127738f3f269cf618afddcf1456766848b25e18c4b06c76",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/proposal-freeze-attempt1.json": {
+      "sha256": "48183b4a14c37507b277b03d1f359150bf57b47afba5c7867364b8a2b58b5b14",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/validator-mode-a-handoff.json": {
+      "sha256": "5e9ef493e3fe13161c2aed0a4d32975aff4552c0138887574e4f581401809d39",
+      "mode": "100644"
+    },
+    ".agent/evidence/113/validator-mode-a-raw.txt": {
+      "sha256": "d2cc6371980956b7b163e35731832a13541326ed709955e9dc81b3306fe5ba44",
+      "mode": "100644"
+    },
+    ".agent/evidence/scope-budget-014/measure.py": {
+      "sha256": "3d40a57b5200d7cd00f3fdfbc2cb348b87e9523669d1b9d2682419ca526d9973",
+      "mode": "100644"
+    },
+    ".agent/product_spec_015.md": {
+      "sha256": "dac5c0a76ebe0a725c0cf30aa6710a11605e6cdd81b7d3e9a0ce85cf9ba957b2",
+      "mode": "100644"
+    },
+    "docs/nips/NIP-0003-live-runtime-sessions.md": {
+      "sha256": "c163e935ad1d5e97e2ca7c62d0bca2e0d1d5d6844ae2cc81b7df128c580ab085",
+      "mode": "100644"
+    },
+    "schema/runtime_operation.schema.json": {
+      "sha256": "ec06f7eb3275e7d94ca9fc46ef0dbe9f0a8906e3c044d8fc7bd7db6f78206a0c",
+      "mode": "100644"
+    },
+    "schema/runtime_session.schema.json": {
+      "sha256": "b7e99b7245b2d0e09193326e084fdb8618dce32ccaad084424cd33e1261c54d2",
+      "mode": "100644"
+    },
+    "standard/permission_classes.md": {
+      "sha256": "7bf81b85f29d4aaa12a12f4cce3ec3ccfb592ab9b73f3e9a36e90900928e1615",
+      "mode": "100644"
+    }
+  }
+}
+{
+  "manifest_sha256": "94f3a603ae2fe39a57ae30c66416b68579a78b8bb22a81f3e35deaf806f00a6d"
+}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:qa_verdict.schema.json",
+  "title": "Nizam QA Verdict Schema",
+  "description": "Validates .agent/qa/NNN.json, the evaluator's pass/fail verdict for a feature, recording each verification command's exit code and an evidence file path per DD-3.",
+  "anyOf": [
+    {
+      "title": "Legacy QA verdict shape (features 000-016)",
+      "type": "object",
+      "properties": {
+        "feature_id": {
+          "type": "string",
+          "description": "Id of the feature this verdict evaluates."
+        },
+        "verdict": {
+          "type": "string",
+          "description": "The overall QA outcome for this feature.",
+          "enum": ["pass", "fail"]
+        },
+        "executed_at": {
+          "type": "string",
+          "description": "Date or date-time the QA checks were executed."
+        },
+        "checks": {
+          "type": "array",
+          "description": "One entry per contract verification command that was executed.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "command": { "type": "string" },
+              "exit_code": { "type": "integer" },
+              "evidence": {
+                "type": "string",
+                "description": "Path to the externalised evidence file capturing this check's terminal output."
+              }
+            },
+            "required": ["command", "exit_code", "evidence"],
+            "additionalProperties": true
+          },
+          "minItems": 1
+        },
+        "adversarial_check": {
+          "type": "object",
+          "description": "The evaluator's own additional adversarial spot-check, beyond the contract's listed verification commands.",
+          "properties": {
+            "description": { "type": "string" },
+            "result": { "type": "string" },
+            "evidence": { "type": "string" }
+          },
+          "required": ["description", "result", "evidence"],
+          "additionalProperties": true
+        },
+        "required_fixes": {
+          "type": "array",
+          "description": "Fixes the generator must make before this feature can pass QA. Empty when verdict is 'pass'.",
+          "items": { "type": "string" }
+        },
+        "dod_ref": {
+          "type": "string",
+          "description": "Optional repo-relative path to the Definition of Done document governing this artifact's completion claims (in this repository `standard/definition_of_done.md`; in a bootstrapped consumer, conventionally `.nizam/standard/definition_of_done.md`). Advisory metadata: never required, and no check fails on its absence."
+        }
+      },
+      "required": ["feature_id", "verdict", "executed_at", "checks", "required_fixes"],
+      "additionalProperties": true
+    },
+    {
+      "title": "Evolved QA verdict shape (features 017 onward)",
+      "type": "object",
+      "properties": {
+        "feature_id": {
+          "type": "string",
+          "description": "Id of the feature this verdict evaluates."
+        },
+        "qa_pass": {
+          "type": "boolean",
+          "description": "The overall QA outcome for this feature."
+        },
+        "checks_run": {
+          "type": "integer",
+          "description": "Number of contract verification commands independently re-run by the evaluator."
+        },
+        "checks_passed": {
+          "type": "integer",
+          "description": "Number of those commands that passed (exit 0)."
+        },
+        "adversarial": {
+          "type": "object",
+          "description": "The evaluator's mandatory adversarial spot-check, beyond the contract's listed verification commands.",
+          "properties": {
+            "performed": {
+              "type": "boolean",
+              "description": "Whether the adversarial spot-check was actually performed."
+            }
+          },
+          "required": ["performed"],
+          "additionalProperties": true
+        },
+        "evidence_files": {
+          "type": "array",
+          "description": "Paths to the externalised evidence files capturing each check's terminal output.",
+          "items": { "type": "string" }
+        },
+        "issues": {
+          "type": "array",
+          "description": "Defects found during QA, beyond required_fixes."
+        },
+        "unsupported_claims": {
+          "type": "array",
+          "description": "Claims made by the implementation or contract that QA could not substantiate."
+        },
+        "missing_acceptance_coverage": {
+          "type": "array",
+          "description": "Acceptance criteria not actually covered by any executed verification command."
+        },
+        "required_fixes": {
+          "type": "array",
+          "description": "Fixes the generator must make before this feature can pass QA. Empty when qa_pass is true."
+        },
+        "final_verdict": {
+          "type": "object",
+          "description": "The QA round's overall outcome.",
+          "properties": {
+            "approved": {
+              "type": "boolean",
+              "description": "Whether this feature's implementation is approved."
+            },
+            "summary": {
+              "type": "string",
+              "description": "Human-readable summary of the QA round's findings and disposition."
+            }
+          },
+          "required": ["approved", "summary"],
+          "additionalProperties": true
+        },
+        "dod_ref": {
+          "type": "string",
+          "description": "Optional repo-relative path to the Definition of Done document governing this artifact's completion claims (in this repository `standard/definition_of_done.md`; in a bootstrapped consumer, conventionally `.nizam/standard/definition_of_done.md`). Advisory metadata: never required, and no check fails on its absence."
+        }
+      },
+      "required": [
+        "feature_id",
+        "qa_pass",
+        "checks_run",
+        "checks_passed",
+        "adversarial",
+        "evidence_files",
+        "issues",
+        "unsupported_claims",
+        "missing_acceptance_coverage",
+        "required_fixes",
+        "final_verdict"
+      ],
+      "additionalProperties": true
+    }
+  ]
+}
+
+EXIT: 0
+READ-ONLY INVENTORY VERIFICATION: digest every fixed member and protected history file; compare history to approved-base Git blob and stat permissions.
+OUTPUT: fixed41members exact; history4279 exact including installed239; historical non113 entries also independently confirmed against phasebase. EXIT:0
+An earlier reviewer inspection tried phasebase for newly approved113contract and returned128 because it did not exist then; corrected comparison uses declared approvedbase dc133. No checker/control failure or product edit occurred.
+PRIVATE CONTROL EXECUTION EVIDENCE: .agent/evidence/113/bundle-review-controls.txt; personally executed once.
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/private/controls.py --root .
+EXERCISED_REVISION: dc133ea51a17fb55fc3d4d383d04aeb96828b951
+PURPOSE: independent private synthetic CONTROL proof only; no source acceptance/QA
+POSITIVE surface EXIT 0 CONTROL_COMPONENT:surface:PASS
+POSITIVE routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE compatibility EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+POSITIVE delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+POSITIVE history EXIT 0 CONTROL_COMPONENT:history:PASS
+POSITIVE lifecycle EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+POSITIVE claim EXIT 0 CONTROL_COMPONENT:claim:PASS
+POSITIVE integrity EXIT 0 CONTROL_COMPONENT:integrity:PASS
+POSITIVE budget EXIT 0 CONTROL_COMPONENT:budget:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE", "expected_exit": 1, "name": "optional-required-true", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE optional-required-true EXIT 1 CONTROL_COMPONENT:FAIL:OPTIONAL_REQUIRED_FALSE
+RESTORED optional-required-true EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE", "expected_exit": 1, "name": "optional-absent-default-disabled", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE optional-absent-default-disabled EXIT 1 CONTROL_COMPONENT:FAIL:OPTIONAL_REQUIRED_FALSE
+RESTORED optional-absent-default-disabled EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "compatibility", "expected_diagnostic": "MANIFEST_BASE_PRESERVED", "expected_exit": 1, "name": "mandatory-requirement-removed", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE mandatory-requirement-removed EXIT 1 CONTROL_COMPONENT:FAIL:MANIFEST_BASE_PRESERVED
+RESTORED mandatory-requirement-removed EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "compatibility", "expected_diagnostic": "INTERFACE_BASE_BODY", "expected_exit": 1, "name": "old-ten-item-body-altered", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE old-ten-item-body-altered EXIT 1 CONTROL_COMPONENT:FAIL:INTERFACE_BASE_BODY
+RESTORED old-ten-item-body-altered EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "compatibility", "expected_diagnostic": "INTERFACE_BASE_BODY", "expected_exit": 1, "name": "eleventh-base-item", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE eleventh-base-item EXIT 1 CONTROL_COMPONENT:FAIL:INTERFACE_BASE_BODY
+RESTORED eleventh-base-item EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "OPERATIONS_EXACT", "expected_exit": 1, "name": "missing-operation", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE missing-operation EXIT 1 CONTROL_COMPONENT:FAIL:OPERATIONS_EXACT
+RESTORED missing-operation EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "OPERATIONS_EXACT", "expected_exit": 1, "name": "duplicate-operation", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE duplicate-operation EXIT 1 CONTROL_COMPONENT:FAIL:OPERATIONS_EXACT
+RESTORED duplicate-operation EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "OPERATIONS_EXACT", "expected_exit": 1, "name": "extra-status-call", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE extra-status-call EXIT 1 CONTROL_COMPONENT:FAIL:OPERATIONS_EXACT
+RESTORED extra-status-call EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "S_RULES_EXACT", "expected_exit": 1, "name": "missing-s9", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE missing-s9 EXIT 1 CONTROL_COMPONENT:FAIL:S_RULES_EXACT
+RESTORED missing-s9 EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "S_RULES_EXACT", "expected_exit": 1, "name": "duplicate-s1", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE duplicate-s1 EXIT 1 CONTROL_COMPONENT:FAIL:S_RULES_EXACT
+RESTORED duplicate-s1 EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "S_RULE_CONTENT:5", "expected_exit": 1, "name": "misplaced-s5-keyword", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE misplaced-s5-keyword EXIT 1 CONTROL_COMPONENT:FAIL:S_RULE_CONTENT:5
+RESTORED misplaced-s5-keyword EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "ROUTER_PATH:methodology/10_live_runtime_sessions.md", "expected_exit": 1, "name": "misplaced-router-marker", "path": "tools/SKILL.md", "restored_exit": 0}
+NEGATIVE misplaced-router-marker EXIT 1 CONTROL_COMPONENT:FAIL:ROUTER_PATH:methodology/10_live_runtime_sessions.md
+RESTORED misplaced-router-marker EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DUPLICATE_MANIFEST_ROUTE", "expected_exit": 1, "name": "duplicate-manifest-route", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE duplicate-manifest-route EXIT 1 CONTROL_COMPONENT:FAIL:DUPLICATE_MANIFEST_ROUTE
+RESTORED duplicate-manifest-route EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "INDEX_ROUTE", "expected_exit": 1, "name": "index-route-misdirected", "path": "NIZAM.json", "restored_exit": 0}
+NEGATIVE index-route-misdirected EXIT 1 CONTROL_COMPONENT:FAIL:INDEX_ROUTE
+RESTORED index-route-misdirected EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "SCHEMA_LINK:schema/runtime_operation.schema.json", "expected_exit": 1, "name": "missing-schema-crosslink", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE missing-schema-crosslink EXIT 1 CONTROL_COMPONENT:FAIL:SCHEMA_LINK:schema/runtime_operation.schema.json
+RESTORED missing-schema-crosslink EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "VERSION:tools/interface.md", "expected_exit": 1, "name": "version-not-increased", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE version-not-increased EXIT 1 CONTROL_COMPONENT:FAIL:VERSION:tools/interface.md
+RESTORED version-not-increased EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "RUNTIME_SECTION_PRESERVED:1", "expected_exit": 1, "name": "changed-old-r1", "path": "methodology/10_live_runtime_sessions.md", "restored_exit": 0}
+NEGATIVE changed-old-r1 EXIT 1 CONTROL_COMPONENT:FAIL:RUNTIME_SECTION_PRESERVED:1
+RESTORED changed-old-r1 EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "RECORD_ONLY_ENFORCEMENT", "expected_exit": 1, "name": "record-boundary-erased", "path": "methodology/10_live_runtime_sessions.md", "restored_exit": 0}
+NEGATIVE record-boundary-erased EXIT 1 CONTROL_COMPONENT:FAIL:RECORD_ONLY_ENFORCEMENT
+RESTORED record-boundary-erased EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md", "expected_exit": 1, "name": "false-live13-proof", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE false-live13-proof EXIT 1 CONTROL_COMPONENT:FAIL:FALSE_DELIVERY_CLAIM:tools/interface.md
+RESTORED false-live13-proof EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md", "expected_exit": 1, "name": "foreign-ecosystem-scope", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE foreign-ecosystem-scope EXIT 1 CONTROL_COMPONENT:FAIL:FALSE_DELIVERY_CLAIM:tools/interface.md
+RESTORED foreign-ecosystem-scope EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md", "expected_exit": 1, "name": "false-release", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE false-release EXIT 1 CONTROL_COMPONENT:FAIL:FALSE_DELIVERY_CLAIM:tools/interface.md
+RESTORED false-release EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "UNCLASSIFIED", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json", "expected_exit": 1, "name": "installed-content-changed", "path": ".nizam/NIZAM.json", "restored_exit": 0}
+NEGATIVE installed-content-changed EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:.nizam/NIZAM.json
+RESTORED installed-content-changed EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "UNCLASSIFIED", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json", "expected_exit": 1, "name": "installed-mode-changed", "path": ".nizam/NIZAM.json", "restored_exit": 0}
+NEGATIVE installed-mode-changed EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:.nizam/NIZAM.json
+RESTORED installed-mode-changed EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/verdict", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:.agent/qa/112.json", "expected_exit": 1, "name": "historical-proof-changed", "path": ".agent/qa/112.json", "restored_exit": 0}
+NEGATIVE historical-proof-changed EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:.agent/qa/112.json
+RESTORED historical-proof-changed EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/product-ext", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:README.md", "expected_exit": 1, "name": "out-of-scope-tracked", "path": "README.md", "restored_exit": 0}
+NEGATIVE out-of-scope-tracked EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:README.md
+RESTORED out-of-scope-tracked EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "UNCLASSIFIED", "component": "history", "expected_diagnostic": "OUT_OF_SCOPE:alien113.txt", "expected_exit": 1, "name": "out-of-scope-untracked", "path": "alien113.txt", "restored_exit": 0}
+NEGATIVE out-of-scope-untracked EXIT 1 CONTROL_COMPONENT:FAIL:OUT_OF_SCOPE:alien113.txt
+RESTORED out-of-scope-untracked EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "lifecycle", "expected_diagnostic": "PREDECESSOR_SUCCESSOR:114", "expected_exit": 1, "name": "successor-promoted", "path": ".agent/feature_list_015.json", "restored_exit": 0}
+NEGATIVE successor-promoted EXIT 1 CONTROL_COMPONENT:FAIL:PREDECESSOR_SUCCESSOR:114
+RESTORED successor-promoted EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "lifecycle", "expected_diagnostic": "PREDECESSOR_SUCCESSOR:112", "expected_exit": 1, "name": "predecessor-rewritten", "path": ".agent/feature_list_015.json", "restored_exit": 0}
+NEGATIVE predecessor-rewritten EXIT 1 CONTROL_COMPONENT:FAIL:PREDECESSOR_SUCCESSOR:112
+RESTORED predecessor-rewritten EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "lifecycle", "expected_diagnostic": "PHASE_CONTINUITY", "expected_exit": 1, "name": "phase-prematurely-complete", "path": "docs/planning/phase_015.yaml", "restored_exit": 0}
+NEGATIVE phase-prematurely-complete EXIT 1 CONTROL_COMPONENT:FAIL:PHASE_CONTINUITY
+RESTORED phase-prematurely-complete EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "COUNTER_CONTINUITY:113-contract", "expected_exit": 1, "name": "attempt-counter-reset", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE attempt-counter-reset EXIT 1 CONTROL_COMPONENT:FAIL:COUNTER_CONTINUITY:113-contract
+RESTORED attempt-counter-reset EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "BUDGET_CONTINUITY", "expected_exit": 1, "name": "budget-ceiling-rebased", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE budget-ceiling-rebased EXIT 1 CONTROL_COMPONENT:FAIL:BUDGET_CONTINUITY
+RESTORED budget-ceiling-rebased EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "BUDGET_CONTINUITY", "expected_exit": 1, "name": "budget-overrun", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE budget-overrun EXIT 1 CONTROL_COMPONENT:FAIL:BUDGET_CONTINUITY
+RESTORED budget-overrun EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "FIXED_SEAL", "expected_exit": 1, "name": "fixed-seal-corrupt", "path": ".agent/evidence/113/fixed-inputs-seal.json", "restored_exit": 0}
+NEGATIVE fixed-seal-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:FIXED_SEAL
+RESTORED fixed-seal-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "FIXED_MEMBER:.agent/evidence/113/evidence_gate.py", "expected_exit": 1, "name": "fixed-member-corrupt", "path": ".agent/evidence/113/evidence_gate.py", "restored_exit": 0}
+NEGATIVE fixed-member-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:FIXED_MEMBER:.agent/evidence/113/evidence_gate.py
+RESTORED fixed-member-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "SOURCE_SEAL", "expected_exit": 1, "name": "source-seal-corrupt", "path": ".agent/evidence/113/current-source-seal.json", "restored_exit": 0}
+NEGATIVE source-seal-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:SOURCE_SEAL
+RESTORED source-seal-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "CANDIDATE_TREE", "expected_exit": 1, "name": "candidate-tree-corrupt", "path": ".agent/evidence/113/current-source-inputs.json", "restored_exit": 0}
+NEGATIVE candidate-tree-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:CANDIDATE_TREE
+RESTORED candidate-tree-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "budget/contract", "component": "budget", "expected_diagnostic": "BUDGET_ACTUAL_CEILING", "expected_exit": 1, "name": "actual-counted-budget-overrun", "path": ".agent/contracts/113-budget-overrun-control.json", "restored_exit": 0}
+NEGATIVE actual-counted-budget-overrun EXIT 1 CONTROL_COMPONENT:FAIL:BUDGET_ACTUAL_CEILING
+RESTORED actual-counted-budget-overrun EXIT 0 CONTROL_COMPONENT:budget:PASS
+FROZEN_BUDGET_POSITIVE_EXIT 0
+FROZEN_BUDGET_UNCLASSIFIED_EXIT 3
+FROZEN_BUDGET_RESTORED_EXIT 0
+CONTROL_SUITE:PASS; cases=37; synthetic component proof only; no source-review/QA verdict authored
+
+EXIT: 0
+REVIEW FINDINGS
+All8 modes are real entrypoints. The first6 verification strings remain canonical; component suite is private synthetic CONTROL only, not source acceptance.37 preregistered negatives require targeted diagnostic and exit1, followed by same-component restored exit0. Frozen Git-numstat classifier provides actual budget totals and rejects unclassified path with3; restored0. Source Review and input-integrity remain intentionally unavailable pre-source, with no synthetic gate or QA verdict.
+Accepted NIP3 and approved contract supply operation/S1-S9/compatibility anchors; schema supplies existing kind/status vocabulary; private immutable snapshots supply exact old-body/manifests/index/lifecycle anchors. Text checks are explicitly structural and finalQA must personally review source semantics. Old proofs/installed payload are hash-and-full-permission protected separately from8 bounded mutable source targets; no historical checker executes.
+Bounded delta restores exact interface1-5/skill1-9 and old references/logs; neutral1-11/R12 row and SBCL non-link content remain exact. Parsed existing manifest/index preserved. Lifecycle preserves110-112,114pending, canonical acceptance/dependencies/estimate and7200/9360 ceiling/history/counters, with explicit113 completion projection. Parent alone owns state/actual gates/candidate seals.
+Fixed map41 has no self entry/future verdict hashes; source map seals actual later8-file Git commit/tree. Real candidate tree/source replay and worktree deltas are checked. Capture adapter independently authenticates fixed/source bytes/modes by Git replay, actual bundle/ModeB/QA hashes and actors,16 ordered exact-command/exits/candidate receipts, independent semantic evidence and one extra adversarial receipt before closure. Schema evolved adversarial object is supported. No capture adapter execution or simulated QA was authorized or performed in this review.
+No blocking defect, missing contracted coverage or unsupported claim found. Approval binds this exact frozen bundle only; source implementation and freshQA remain separate gates.

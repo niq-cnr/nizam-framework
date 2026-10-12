@@ -1,0 +1,123 @@
+COMMAND: git diff -- .agent/contracts/113.json
+diff --git a/.agent/contracts/113.json b/.agent/contracts/113.json
+index 090c203..03067b4 100644
+--- a/.agent/contracts/113.json
++++ b/.agent/contracts/113.json
+@@ -2,10 +2,10 @@
+   "contract_id": "113",
+   "feature_id": "113",
+   "name": "Optional adapter capability and source routing",
+-  "status": "approved",
++  "status": "proposed",
+   "spec_ref": ".agent/product_spec_015.md",
+   "base_revision": "a57c860a18c82990c4a43deed1465bd052bb4c3f",
+-  "contract_attempt": 1,
++  "contract_attempt": 2,
+   "scope": {
+     "files_create": [
+       {
+@@ -72,15 +72,19 @@
+       },
+       {
+         "path": ".agent/feature_list_015.json",
+-        "purpose": "Parent alone changes113 lifecycle/references after passing gates; preserve canonical six AC strings, dependencies, allowances, all110-112 records and114pending."
++        "purpose": "Parent-only113 blocked/in_progress/complete masks and actual references after gates; remove only113blocked_reason on authorized resume, passes remains false until completion. Preserve six ACs, dependencies, estimates, other110-112 rows and114pending."
+       },
+       {
+         "path": "docs/planning/phase_015.yaml",
+-        "purpose": "Parent alone updates only step113 PENDING->IN_PROGRESS->COMPLETED and its evidence/docs/change-notes; all other steps and phase in_progress preserved."
++        "purpose": "Parent-only step113 BLOCKED->IN_PROGRESS after renewed contract and corrected-bundle approvals, then COMPLETED only after ModeB/freshQA/evidence capture. Preserve description, all other steps and phase in_progress; retain original halt in immutable receipts."
+       },
+       {
+         "path": ".agent/run_state.json",
+         "purpose": "Orchestrator-only coordination/history/counter/budget writes, excluded from counted lines; Generator/TestAuthor/reviewers preserve all fields."
++      },
++      {
++        "path": "docs/planning/DEBT.md",
++        "purpose": "Parent-only NDEBT050 recovery annotation0.63.0->0.64.0 after both renewed pre-code approvals; resolution0.64.0->0.65.0 only after actual source/full freshQA/evidence capture. Only050 row Notes append/move and corresponding new log/version are mutable; preserve all previous rows/logs and exact halt factual text. No edit in this contract-only attempt."
+       }
+     ]
+   },
+@@ -90,7 +94,7 @@
+     "No extra operation/status/schema/request-record field, status call, new mandatory adapter requirement or eleventh checklist item; no new skill/profile/scheduler.",
+     "No installed .nizam file/mode change, release number change/tag/publication, consumer upgrade or H-FRAMEWORK-RELEASE/H-CONSUMER-UPGRADE self-execution.",
+     "No WA implementation/policy/gate reduction, phase/budget rebaseline, new phase or funding outside original7200/9360.",
+-    "No edits/reruns/resealing of historical014/110/111/112 contracts/spec/checkers/QA/maps/gates/raws/archives/original-product snapshots; no debt/manifest/roadmap/guide/NIP edits.",
++    "No edits/reruns/resealing of historical014/110/111/112 artifacts or original113 proposals/approvals/failed attempts/snapshots/seals; no debt edits except exact NDEBT050 staged mask, and no manifest/roadmap/guide/NIP edits.",
+     "No Generator-written tests, verdicts, acceptance source-review proof or coordination/circuit counters; no inherited PASS as fresh QA."
+   ],
+   "verification": [
+@@ -163,12 +167,9 @@
+   "evidence_dir": ".agent/evidence/113/",
+   "evidence_convention": "qa-NN.txt per ordered command: exact repo-root invocation first, actual stdout/stderr, actual EXIT last; exercised Git revision and source/bundle seal by sibling receipt path. Own spot:113-qa-adversarial.txt. Independent actual source-review.json references personally captured diff/evidence. Never session-absolute evidence commands or inline raw JSON output.",
+   "approvals": {
+-    "validator_mode_a": true,
+-    "evaluator_contract_review": true,
+-    "revisions": 0,
+-    "approved_at": "2026-10-12T04:30:49.723163+00:00",
+-    "validator_evidence": ".agent/validator/113-mode-a.json",
+-    "evaluator_evidence": ".agent/qa/113-contract-review.json"
++    "validator_mode_a": false,
++    "evaluator_contract_review": false,
++    "revisions": 1
+   },
+   "dod_ref": ".nizam/standard/definition_of_done.md",
+   "implementation_requirements": {
+@@ -197,17 +198,49 @@
+       "S9": "A new process/generation/subagent/stage does not reset contract_id/step_key/attempt or Parent-owned counters."
+     },
+     "optional_boundary": "S1-S9 and seven calls apply only to claiming adapters. Nonclaiming adapters remain conformant against original ten items and three mandatory abstract operations. Lifecycle permission cannot operate/accept; only Generator owns development operation and Evaluator fresh acceptance under existing role classes.",
+-    "routing": "One optional manifest requirement and capability plus SBCL binding capability, new index adapter capability, exact SKILLSection10 pointers to interface and documents10/11, existing schemas by resolved links, README and delivered-document crosslinks land together. No duplicate existing protocol registrations.",
++    "routing": "One optional manifest requirement and capability plus SBCL binding capability, new index adapter capability, exact SKILLSection10 pointers to interface and documents10/11, existing schemas by resolved links, README and delivered-document crosslinks land together. No duplicate existing protocol registrations. Verify actual rendered href destinations, not textual/comment markers: HTML attributes are already entity-decoded by HTMLParser even with convert_charrefs=False; never unescape them again. Raw Markdown destinations get one entity decode only. Preserve origin, parse URL then percent-decode path once, reject schemes/authority/query/fragment/wrong target and resolve within candidate root to the exact declared destination. C9-compatible ..&#47; links are allowed; renderability does not grant a path exemption.",
+     "enforcement_honesty": "Document10 partially-enforced describes already executable schema/C12 record validation only; optional normative contract publication enforces no live session ownership. Consumer runtime duties remain aspirational. Document11 stays consumer-aspirational. All executable controller/adapter/SBCL enforcement, live13 proofs and capable isolated CI remain phase016 pending; localSBCL availability never conformance.",
+     "source_review": "Independent reviewer personally reads actual interface Section6 and exact diff against base, checks every S1-S9/operation/request/status relationship against accepted NIP3, documents10/11, permission classes and111 schemas, and records source-review.json with role/session identity and raw diff path. Marker checks alone never establish semantic coverage.",
+-    "test_ownership": "After both pre-code approvals: separate TestAuthor implements check_113.py modes and private discriminating scratch controls. Separate independent bundle reviewer verifies tests against all criteria, false-pass/fail and current-source/historical partition. Freeze actual bundle/input hashes and author/reviewer identities before Generator source writes. Bundle changes invalidate review and require renewed independent approval; Generator cannot edit verifier.",
+-    "negative_design": "Preregister expected negative diagnostic/exit and budget class before running controls, never relabel failures. Scratch-only controls: altered ten-item body/count; required:true/removed old requirement; missing/duplicate operation/S rule/routing path; moved-marker false pass; false live/release claim; changed old proof/installed file; out-of-scope tracked/untracked file; altered predecessor/successor/counter; corrupted bundle/source seal. Each fails its target diagnostic rather than missing-file/setup failure; untouched compliant source passes. Exactly one additional fresh-QA own spot remains unlisted.",
++    "test_ownership": "Both renewed pre-code gates precede all recovery checker/source/test implementation. Separate TestAuthor performs only authorized task113 decoding/bounded history/lifecycle adaptation and retains every old control; separate independent reviewer approves actual corrected bundle before any new Generator source. New fixed inputs bind revised approved contract plus immutable old proposal/approval/private inputs and recovery authorization. Generator never edits verifier; any bundle change renews review.",
++    "negative_design": "Preregister expected negative diagnostic/exit and budget class before running controls, never relabel failures. Scratch-only controls: altered ten-item body/count; required:true/removed old requirement; missing/duplicate operation/S rule/routing path; moved-marker false pass; false live/release claim; changed old proof/installed file; out-of-scope tracked/untracked file; altered predecessor/successor/counter; corrupted bundle/source seal. Each fails its target diagnostic rather than missing-file/setup failure; untouched compliant source passes. Exactly one additional fresh-QA own spot remains unlisted. Recovery retains all old controls and adds decimal/hex amp-escaped HTML wrong-target cases, actual rendered-link positives, absent/comment-only/unsafe/outside/wrong-target links, and real C9 scratch runs. Single parser-decoded ..&#47; is a wrong HTML URL path/fragment, not ../; reject it without a second entity decode. Expected target diagnostic/exit/classification is preregistered, restored positives pass. Extend debt/lifecycle/auth-key controls to reject old-row/log changes, missing original inventory, premature050resolution, counter reset or unauthorized recovery key.",
+     "precode_red": "Parent sequences intended RED only after approved contract: canonical1 missing optional key,3 absent optionalSection6 and4 absent runtimeSection10; record actual targeted failure with exact command/EXIT/base. Existing2/5/6 may already pass; do not manufacture failure. Reviewed independent controls must discriminate source changes.",
+-    "historical_partition": "All old014/110/111/112 durable proofs/spec/contracts/checkers/QA/inputmaps/gates/raws/archives and installed239-file inventory/modes remain immutable at base. Current eight source targets are graded against only this declared113 delta, never old111/112 whole-file hashes. Untouched source/history stays byte/mode exact. No historical checker rerun/reseal or replacement of original snapshots.",
+-    "inputs_and_seals": "Separate fixed-inputs.json for approved proposal/base/external anchors/checker/private controls/independent identities from current-source-inputs.json for the exact eight actual source paths and Git commit/tree/modes after source authorship. Parent seals actual existing bytes, never future QA hashes or self-referential hash cycles. Seal metadata excludes only future113 QA/gate/raw receipts and declared Parent113completion writes. Current-source changes invalidate ModeB/source review/QA and need fresh seals/gates.",
++    "historical_partition": "Preserve original4279-path private history inventory byte-exact and verify every original path under its original SHA/mode, except docs/planning/DEBT.md governed only by exact debt050_mask below. Protect all original proof families and installed239 files/permissions; no broad DEBT/proof exclusions. Original private/base snapshots remain unchanged. New recovery-state inputs are separate, never replacements for historical baselines. Current eight source paths use original declared113 deltas; bounded canonical113/debt lifecycle masks do not invalidate original historical proof bytes.",
++    "inputs_and_seals": "Separate renewed fixed-inputs/bundle seal from actual eight-path current-source candidate seal. Before replacing any active verification entry point or canonical verdict Parent archives its existing bytes/mode and inventory, including all prior proposal/approval/rejected-bundle receipts. Original snapshot families/seals are immutable. Revised approved-contract snapshot lives in new recovery inputs, not original private/base. Seal actual existing bytes only, no future hashes/cycles; actual source changes invalidate ModeB/sourceReview/QA. Debt state is an explicit separately masked input with archived original/halt snapshots, not a ninth product path.",
+     "postcode_sequence": "Reviewed source development -> actual Git candidate and source/bundle seals -> independent ModeB on exact diff -> fresh independent QA executes every verification command at that candidate plus its own one spot -> evidence-capture gate verifies command/result/actual EXIT/exercised revision/all paths. Development runs never substitute. Parent promotes only reviewed owned diff/commit and preserves failed attempts as raw evidence.",
+-    "parent_projection": "Before completion:113pending or in_progress and step113PENDING/IN_PROGRESS agree, contractapproved with both gate paths,114pending,112complete. After all gates Parent changes only113 to complete/COMPLETED with actual QA/evidence paths; phase remains in_progress,114pending/eligible, historical feature rows/steps/ACs/estimates unchanged. Root runstate coordination/history records real gates/counter continuity; implementation roles never write it. Checker exercises both projections in scratch and validates actual current allowed state.",
++    "parent_projection": "Current113 is blocked/BLOCKED with passes:false, actual halt evidence and blocked_reason; state.status blocked, contract proposal unapproved. Renewed contract approval permits checker recovery, with canonical113 remaining blocked until separate corrected-bundle approval. Then Parent resumes113in_progress/IN_PROGRESS, clears only113blocked_reason, retains passes:false and historical halt receipts. After actual ModeB/fresh16QA/ownspot/evidence gate, Parent113 complete/COMPLETED references real QA/capture and clears only halt-local current fields; phase in_progress and114pending/eligible. All other feature rows/steps/ACs/estimates unchanged. Checker exercises blocked, resumed and completed projections in scratch; no synthetic evidence or early completion.",
+     "budget": "Frozen unchanged measure.py uses Git numstat/classifier at base..WORKTREE; no alternative diff algorithm. Starting6088/9360 leaves3272 for113/114 including counted contract/verdict/planning closure. Estimated1131050,1141150. Parent compares current113 to prior1101711/1113133/1121244 only before appending; cumulative ceiling and unclassified paths fail closed. Compact contracts/verdicts and small source delta conserve114 allowance; no extra allocation.",
+-    "isolation": "Only owned contract-attempt1 root from recorded approved base. Read before every write, detect before fix, never modify installed payload; PYTHONDONTWRITEBYTECODE=1 for installed tools. Root records/increments counters, max3 isolated attempts and quarantines failures; no fourth attempt or shared reset/clean."
++    "isolation": "This contract2 type/interface attempt is owned root detached5f6beae with before-edit receipt. Later steps require separately recorded approved immutable bases and owned roots. Root alone records counters: original checker-development/review stay3/3, source development stays1/3 until an actual new source attempt concludes; new auth-bound113-recovery-1 checker keys alone start0/3. No blanket113-* reset/mutability or fourth original attempt. Read before write/detect before fix; installed payload immutable; PYTHONDONTWRITEBYTECODE=1."
++  },
++  "recovery": {
++    "authorization": ".agent/evidence/113/recovery-authorization.json",
++    "authorization_revision": "5f6beae229ab5a9e633496057319b877e46dc048",
++    "epoch": "113-recovery-1",
++    "basis": "Type/interface correction of reviewer3 observed double entity decoding and original frozen scope versus mandatory halt/debt records; no public scope or canonical AC expansion.",
++    "immutable_prior": {
++      "approved_contract_sha256": "bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5",
++      "proposal_sha256": "da7cf60d2ac3c4ea89d054f31a313a549e84082459a52d4ec0f7f2fef7528bbb",
++      "approval_snapshot": ".agent/evidence/113/recovery-prior-approval-snapshot/",
++      "approval_snapshot_inventory": ".agent/evidence/113/recovery-prior-approval-snapshot/inventory.json",
++      "original_proposal": ".agent/evidence/113/contract-proposal-attempt1.json",
++      "original_approval": ".agent/evidence/113/contract-approval.json",
++      "original_history": ".agent/evidence/113/private/history.json",
++      "halt": ".agent/evidence/113/circuit-breaker-halt.json",
++      "rejected_gate_sha256": "12edfb4f71dc55e1fa70ae0114441ef7e3efe2604751d4b3d39468afdc2f2036"
++    },
++    "counter_mask": "Only113-recovery-1-checker-development and113-recovery-1-checker-review are the authorized fresh keys; each limit3, monotonically0..3 and authorization path exact. Original113-checker-development/review remain exact3/3. 113-contract advances actual attempt2; source113-generator-development retains1 then progresses only on its recorded source attempts, max3. Original implementation/QA/capture counters remain0 until actual respective attempts, max3; no other historical keys change.",
++    "active_verification_replacement_mask": [
++      ".agent/evidence/113/check_113.py",
++      ".agent/evidence/113/evidence_gate.py",
++      ".agent/evidence/113/private/control_worker.py",
++      ".agent/evidence/113/private/controls.py",
++      ".agent/evidence/113/private/negative-plan.json",
++      ".agent/evidence/113/coordinator-interface.txt",
++      ".agent/evidence/113/fixed-inputs.json",
++      ".agent/evidence/113/fixed-inputs-seal.json"
++    ],
++    "replacement_rule": "Only above task113 active verifier files may be replaced by independently authored reviewed recovery bytes after exact archive/inventory capture. New recovery snapshot/inventory/controls files remain under113 evidence; old private/base and private/history are unchanged. Retain all old control intents, no broad proof-family exclusion. Canonical113 gate paths may hold new actual verdicts only after old verdict archive; no unsupported old approval inheritance.",
++    "debt050_mask": "Original .63 halt document at5f6beae is fixed input; original prehalt .62 bytes stay in Git and private history. Validate .62->.63 consists only version bump/new halt log and new050Open row. After both renewed pre-code approvals Parent .63->.64 adds one recovery log and appends at most160 words to050Notes naming actual continue authorization, corrected approach, fresh epoch and pending gates; existing050ID/date/severity/description/Notes prefix and every older row/log remain exact. Debt stays Open through renewed bundle review and source/freshQA. Resolve only after actual approved corrected bundle, ModeB, fresh16/16 QA plus ownspot and evidence gate: .64->.65 one resolution log and move only050 to topResolved, preserving ID/date/severity/description and all halt/recovery Notes as historical prefix, append at most160 words with actual gate/proof paths. Preserve all preexisting logs/rows/table headers/order except050 relocation; update no unrelated counts/metadata. Parent owns these writes; checker rejects premature or unanchored resolution.",
++    "completion_mask": "Debt resolution may coincide with113completion only after its real evidence gate. Recovering050 denotes verified checker correction plus actual feature acceptance, not release/runtime conformance. FreshQA tests onlyOpen actual state; completed/resolved projections are scratch until Parent closure, then actual bytes are checked by same narrow masks. Halt snapshots remain immutable.",
++    "budget": "Blocked inflight300 is not a completed-feature baseline; original7200/9360, completed6088 and remaining3272 remain. Recovery contracts/verdicts/debt/closure consume113 actual Git-numstat counted budget once; raw evidence separate. Frozen measure.py unchanged; no supplementary allocation."
+   }
+ }
+EXIT: 0

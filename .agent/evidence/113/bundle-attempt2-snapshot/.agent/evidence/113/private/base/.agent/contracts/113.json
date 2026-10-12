@@ -1,0 +1,213 @@
+{
+  "contract_id": "113",
+  "feature_id": "113",
+  "name": "Optional adapter capability and source routing",
+  "status": "approved",
+  "spec_ref": ".agent/product_spec_015.md",
+  "base_revision": "a57c860a18c82990c4a43deed1465bd052bb4c3f",
+  "contract_attempt": 1,
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/contracts/113.json",
+        "purpose": "This bounded proposal; Parent approval metadata only after both actual independent approvals."
+      },
+      {
+        "path": ".agent/evidence/113/**",
+        "purpose": "Feature113-only checker/private controls by independent TestAuthor; reviewed fixed-input inventory/seal; separate current-source inventory/candidate seal; independent source review; raw gate/QA/command/revision/closure receipts and evidence-capture adapter. Preserve all existing113 root receipts."
+      },
+      {
+        "path": ".agent/validator/113-mode-a.json",
+        "purpose": "Independent ModeA verdict."
+      },
+      {
+        "path": ".agent/qa/113-contract-review.json",
+        "purpose": "Independent second pre-code review verdict."
+      },
+      {
+        "path": ".agent/validator/113-test-bundle-review.json",
+        "purpose": "Independent test/input-bundle review before source implementation."
+      },
+      {
+        "path": ".agent/validator/113-mode-b.json",
+        "purpose": "Independent actual post-code diff verdict."
+      },
+      {
+        "path": ".agent/qa/113.json",
+        "purpose": "Fresh independent QA of the sealed Git candidate, all commands and exactly one extra own adversarial spot."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/interface.md",
+        "purpose": "0.3.1 ->0.4.0; new Section6 Optional Capability: Live Runtime Sessions; existing References moves6->7 with runtime document/schema links. Preserve Sections1-5 body byte-exact, including all ten checklist items."
+      },
+      {
+        "path": "tools/skill.json",
+        "purpose": "0.5.0 ->0.6.0; add runtime_requirements.live_runtime_session required:false, live_runtime_session capability ->tools/interface.md and sbcl_runtime_binding ->methodology/11_sbcl_runtime_binding.md. Preserve all existing requirements/capabilities/state_interface."
+      },
+      {
+        "path": "tools/SKILL.md",
+        "purpose": "0.5.0 ->0.6.0; insert Section10 Live Runtime Sessions, move References10->11 and add bounded crosslinks. Preserve Sections1-9 and prior references, single runtime-agnostic router."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Add one nizam-live-runtime-adapter capability ->tools/interface.md; preserve all preexisting entries, module lists, schemas and framework.version1.5.0."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "0.19.0 ->0.20.0; extend only skill/interface index descriptions plus one short optional-runtime paragraph/crosslinks. Preserve validator/fixture/CI descriptions and old log entries."
+      },
+      {
+        "path": "methodology/10_live_runtime_sessions.md",
+        "purpose": "0.1.2 ->0.2.0; enforcement becomes partially-enforced per accepted NIP3, explicitly limited to schema/C12 declared-record checks. Opening and Section12 availability paragraphs add optional-interface link and replace pending113 with delivered normative capability. Preserve R1-R12 and all other body/old logs."
+      },
+      {
+        "path": "methodology/11_sbcl_runtime_binding.md",
+        "purpose": "0.1.0 ->0.1.1; one Section1 crosslink to the optional interface; preserve consumer-aspirational enforcement and all other body/old logs, SBCL semantics and illustrative-ASDF boundary."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "One bounded new feature113 bullet under Unreleased/Changed; preserve every existing Unreleased/released entry."
+      },
+      {
+        "path": ".agent/feature_list_015.json",
+        "purpose": "Parent alone changes113 lifecycle/references after passing gates; preserve canonical six AC strings, dependencies, allowances, all110-112 records and114pending."
+      },
+      {
+        "path": "docs/planning/phase_015.yaml",
+        "purpose": "Parent alone updates only step113 PENDING->IN_PROGRESS->COMPLETED and its evidence/docs/change-notes; all other steps and phase in_progress preserved."
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Orchestrator-only coordination/history/counter/budget writes, excluded from counted lines; Generator/TestAuthor/reviewers preserve all fields."
+      }
+    ]
+  },
+  "non_goals": [
+    "No product, checker, test, capture-adapter or proposed verification execution before both actual independent pre-code approvals; contract proposal/read-only input inspection only now.",
+    "No runtime controller/stub/SBCL launcher, live runtime enforcement, phase016115-120 allocation or thirteen-case working/conformance claim.",
+    "No extra operation/status/schema/request-record field, status call, new mandatory adapter requirement or eleventh checklist item; no new skill/profile/scheduler.",
+    "No installed .nizam file/mode change, release number change/tag/publication, consumer upgrade or H-FRAMEWORK-RELEASE/H-CONSUMER-UPGRADE self-execution.",
+    "No WA implementation/policy/gate reduction, phase/budget rebaseline, new phase or funding outside original7200/9360.",
+    "No edits/reruns/resealing of historical014/110/111/112 contracts/spec/checkers/QA/maps/gates/raws/archives/original-product snapshots; no debt/manifest/roadmap/guide/NIP edits.",
+    "No Generator-written tests, verdicts, acceptance source-review proof or coordination/circuit counters; no inherited PASS as fresh QA."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "1: Optional requirement is false",
+      "command": "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'tools/skill.json'\"'\"').read_text()); assert d['\"'\"'runtime_requirements'\"'\"']['\"'\"'live_runtime_session'\"'\"']['\"'\"'required'\"'\"'] is False'"
+    },
+    {
+      "acceptance_test": "2: Original checklist remains ten items",
+      "command": "python3 -c 'import re; from pathlib import Path; s=Path('\"'\"'tools/interface.md'\"'\"').read_text(); section=re.split(r'\"'\"'(?m)^## 5[. ]'\"'\"',s,maxsplit=1)[1]; section=re.split(r'\"'\"'(?m)^## 6[. ]'\"'\"',section,maxsplit=1)[0]; assert len(re.findall(r'\"'\"'(?m)^\\s*\\d+\\. '\"'\"',section))==10'"
+    },
+    {
+      "acceptance_test": "3: Optional operation lives in interface Section6",
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/interface.md '\"'\"'^## 6[.] Optional Capability: Live Runtime Sessions$'\"'\"' '\"'\"'(^|[^[:alnum:]_])submit-operation([^[:alnum:]_]|$)'\"'\"''"
+    },
+    {
+      "acceptance_test": "4: Single skill routes runtime sessions in Section10",
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/SKILL.md '\"'\"'^## 10[.] Live Runtime Sessions$'\"'\"' '\"'\"'methodology/10_live_runtime_sessions[.]md'\"'\"''"
+    },
+    {
+      "acceptance_test": "5: Payload compliance",
+      "command": "bash tools/validate.sh --payload"
+    },
+    {
+      "acceptance_test": "6: Existing bootstrap consumers remain compatible",
+      "command": "bash tools/e2e_bootstrap_test.sh"
+    },
+    {
+      "acceptance_test": "7: Seven exact operations, request identity, existing kinds/statuses and conditional S1-S9 with independent semantic source review",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py surface"
+    },
+    {
+      "acceptance_test": "8: Parsed manifest/index and section-scoped router/crosslinks agree without duplicate or missing routes",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py routing"
+    },
+    {
+      "acceptance_test": "9: Original interface Sections1-5, mandatory requirements and existing capability entries are preserved",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py compatibility"
+    },
+    {
+      "acceptance_test": "10: Untracked-aware exact scope and bounded current-source deltas; installed and historical artifacts byte/mode exact",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py scope-history"
+    },
+    {
+      "acceptance_test": "11: Precompletion and explicit Parent completion projections preserve predecessor and successor records and counters",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py lifecycle"
+    },
+    {
+      "acceptance_test": "12: Independent private scratch mutations discriminate each contracted invariant and misplaced markers without unrelated setup failures",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py negative-controls"
+    },
+    {
+      "acceptance_test": "13: Optional normative delivery and record-only enforcement never claim controller, live13 proof, release or upgrade",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py claim-boundary"
+    },
+    {
+      "acceptance_test": "14: Fixed verification inputs and separate current-source candidate seal bind actual Git revision, approved contract and independent identities",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py input-integrity"
+    },
+    {
+      "acceptance_test": "15: Full repository compliance",
+      "command": "bash tools/validate.sh"
+    },
+    {
+      "acceptance_test": "16: Unchanged frozen scope classifier measures actual Git numstat",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 113=a57c860a18c82990c4a43deed1465bd052bb4c3f.. --files"
+    }
+  ],
+  "estimated_lines": 1050,
+  "evidence_dir": ".agent/evidence/113/",
+  "evidence_convention": "qa-NN.txt per ordered command: exact repo-root invocation first, actual stdout/stderr, actual EXIT last; exercised Git revision and source/bundle seal by sibling receipt path. Own spot:113-qa-adversarial.txt. Independent actual source-review.json references personally captured diff/evidence. Never session-absolute evidence commands or inline raw JSON output.",
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 0,
+    "approved_at": "2026-10-12T04:30:49.723163+00:00",
+    "validator_evidence": ".agent/validator/113-mode-a.json",
+    "evaluator_evidence": ".agent/qa/113-contract-review.json"
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "implementation_requirements": {
+    "authority": "Installed v1.5.0 AGF/execution/adversarial/circuit/anti-hallucination govern. Product spec015, exact feature113 and accepted NIP3 adapter/routing/compatibility sections are external semantic anchors. Root owns immutable proposal SHA, state and lifecycle.",
+    "operations": [
+      "open-session",
+      "submit-operation",
+      "poll-operation",
+      "cancel-operation",
+      "transfer-session",
+      "reattach-session",
+      "close-session"
+    ],
+    "operation_semantics": "Only submit-operation executes project code, including observe. Existing read-state reads durable session status; no status endpoint. open/transfer/reattach/close lifecycle calls never evaluate/load/run project code. poll/cancel only observe/request control; cancellation is not confirmed stopping.",
+    "request_identity": "Describe existing operation_id, session_id, expected_generation{counter,nonce}, expected_lease_epoch, requester{principal_kind,role,agent_id}, contract_id/step_key/attempt, kind/payload, context{working_dir,namespace,reader/test config refs}, limits. These abstract adapter inputs map to existing schema records; not new required schema fields.",
+    "vocabulary": "Kinds exactly load_source,compile_source,evaluate,run_tests,observe. Terminal statuses completed,condition_signalled,cancelled,terminated,rejected; nonterminal running,cancel_requested,unknown. debugger_paused is optional and not emitted in v1, never a new schema status. wait_outcome stopped_waiting preserves outstanding execution and busy lane.",
+    "conditional_checks": {
+      "S1": "Existing session/operation schemas validate records; record validity proves no live behavior.",
+      "S2": "Reject stale generation or lease before execution, with correct current owner/requester identity.",
+      "S3": "At most one operation in flight; lifecycle/reattach must preserve or explicitly resolve outstanding work.",
+      "S4": "Timeout stops waiting only and never reports execution stopped.",
+      "S5": "Capture conditions/restarts before unwind; failed partial load cannot claim image consistency.",
+      "S6": "Review trials receive no endpoint/permission and requests are rejected before execution.",
+      "S7": "Lifecycle calls never evaluate project code.",
+      "S8": "Session results/provenance are never acceptance evidence; acceptance remains fresh process/build/hermetic independent QA.",
+      "S9": "A new process/generation/subagent/stage does not reset contract_id/step_key/attempt or Parent-owned counters."
+    },
+    "optional_boundary": "S1-S9 and seven calls apply only to claiming adapters. Nonclaiming adapters remain conformant against original ten items and three mandatory abstract operations. Lifecycle permission cannot operate/accept; only Generator owns development operation and Evaluator fresh acceptance under existing role classes.",
+    "routing": "One optional manifest requirement and capability plus SBCL binding capability, new index adapter capability, exact SKILLSection10 pointers to interface and documents10/11, existing schemas by resolved links, README and delivered-document crosslinks land together. No duplicate existing protocol registrations.",
+    "enforcement_honesty": "Document10 partially-enforced describes already executable schema/C12 record validation only; optional normative contract publication enforces no live session ownership. Consumer runtime duties remain aspirational. Document11 stays consumer-aspirational. All executable controller/adapter/SBCL enforcement, live13 proofs and capable isolated CI remain phase016 pending; localSBCL availability never conformance.",
+    "source_review": "Independent reviewer personally reads actual interface Section6 and exact diff against base, checks every S1-S9/operation/request/status relationship against accepted NIP3, documents10/11, permission classes and111 schemas, and records source-review.json with role/session identity and raw diff path. Marker checks alone never establish semantic coverage.",
+    "test_ownership": "After both pre-code approvals: separate TestAuthor implements check_113.py modes and private discriminating scratch controls. Separate independent bundle reviewer verifies tests against all criteria, false-pass/fail and current-source/historical partition. Freeze actual bundle/input hashes and author/reviewer identities before Generator source writes. Bundle changes invalidate review and require renewed independent approval; Generator cannot edit verifier.",
+    "negative_design": "Preregister expected negative diagnostic/exit and budget class before running controls, never relabel failures. Scratch-only controls: altered ten-item body/count; required:true/removed old requirement; missing/duplicate operation/S rule/routing path; moved-marker false pass; false live/release claim; changed old proof/installed file; out-of-scope tracked/untracked file; altered predecessor/successor/counter; corrupted bundle/source seal. Each fails its target diagnostic rather than missing-file/setup failure; untouched compliant source passes. Exactly one additional fresh-QA own spot remains unlisted.",
+    "precode_red": "Parent sequences intended RED only after approved contract: canonical1 missing optional key,3 absent optionalSection6 and4 absent runtimeSection10; record actual targeted failure with exact command/EXIT/base. Existing2/5/6 may already pass; do not manufacture failure. Reviewed independent controls must discriminate source changes.",
+    "historical_partition": "All old014/110/111/112 durable proofs/spec/contracts/checkers/QA/inputmaps/gates/raws/archives and installed239-file inventory/modes remain immutable at base. Current eight source targets are graded against only this declared113 delta, never old111/112 whole-file hashes. Untouched source/history stays byte/mode exact. No historical checker rerun/reseal or replacement of original snapshots.",
+    "inputs_and_seals": "Separate fixed-inputs.json for approved proposal/base/external anchors/checker/private controls/independent identities from current-source-inputs.json for the exact eight actual source paths and Git commit/tree/modes after source authorship. Parent seals actual existing bytes, never future QA hashes or self-referential hash cycles. Seal metadata excludes only future113 QA/gate/raw receipts and declared Parent113completion writes. Current-source changes invalidate ModeB/source review/QA and need fresh seals/gates.",
+    "postcode_sequence": "Reviewed source development -> actual Git candidate and source/bundle seals -> independent ModeB on exact diff -> fresh independent QA executes every verification command at that candidate plus its own one spot -> evidence-capture gate verifies command/result/actual EXIT/exercised revision/all paths. Development runs never substitute. Parent promotes only reviewed owned diff/commit and preserves failed attempts as raw evidence.",
+    "parent_projection": "Before completion:113pending or in_progress and step113PENDING/IN_PROGRESS agree, contractapproved with both gate paths,114pending,112complete. After all gates Parent changes only113 to complete/COMPLETED with actual QA/evidence paths; phase remains in_progress,114pending/eligible, historical feature rows/steps/ACs/estimates unchanged. Root runstate coordination/history records real gates/counter continuity; implementation roles never write it. Checker exercises both projections in scratch and validates actual current allowed state.",
+    "budget": "Frozen unchanged measure.py uses Git numstat/classifier at base..WORKTREE; no alternative diff algorithm. Starting6088/9360 leaves3272 for113/114 including counted contract/verdict/planning closure. Estimated1131050,1141150. Parent compares current113 to prior1101711/1113133/1121244 only before appending; cumulative ceiling and unclassified paths fail closed. Compact contracts/verdicts and small source delta conserve114 allowance; no extra allocation.",
+    "isolation": "Only owned contract-attempt1 root from recorded approved base. Read before every write, detect before fix, never modify installed payload; PYTHONDONTWRITEBYTECODE=1 for installed tools. Root records/increments counters, max3 isolated attempts and quarantines failures; no fourth attempt or shared reset/clean."
+  }
+}

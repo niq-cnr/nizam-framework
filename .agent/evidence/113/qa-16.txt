@@ -1,0 +1,43 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 113=a57c860a18c82990c4a43deed1465bd052bb4c3f.. --files
+CANDIDATE_SHA: 79baee0c54f4b7b7c01c419fd843d6d1842d5ee1
+== 113: a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE
+   resolved a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE+untracked
+   paths=513 binary_paths=4
+   class                       files   lines
+   budget/product                  8     193
+   budget/product-ext              0       0
+   budget/contract                 1     259
+   budget/verdict                  4      79
+   budget/audit-deliverable        0       0
+   budget/planning                 3      19
+   evidence                      496  240857
+   excluded/run_state              1     332
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                   8  CHANGELOG.md
+   budget/product                   5  NIZAM.json
+   budget/product                  34  methodology/10_live_runtime_sessions.md
+   budget/product                  10  methodology/11_sbcl_runtime_binding.md
+   budget/product                  16  tools/README.md
+   budget/product                  23  tools/SKILL.md
+   budget/product                  81  tools/interface.md
+   budget/product                  16  tools/skill.json
+   budget/contract                259  .agent/contracts/113.json
+   budget/verdict                  19  .agent/qa/113-contract-review.json
+   budget/verdict                  19  .agent/validator/113-mode-a.json
+   budget/verdict                  20  .agent/validator/113-mode-b.json
+   budget/verdict                  21  .agent/validator/113-test-bundle-review.json
+   budget/planning                  7  .agent/feature_list_015.json
+   budget/planning                  9  docs/planning/DEBT.md
+   budget/planning                  3  docs/planning/phase_015.yaml
+   excluded/run_state             332  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                      496  240857  .agent/evidence/113/
+   PRODUCT_LINES=193
+   PROCESS_OVERHEAD_LINES=357  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=550
+   EVIDENCE_LINES=240857
+   EXCLUDED_LINES=332
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=241739  (= budget 550 + evidence 240857 + excluded 332 + unclassified 0)
+EXIT: 0
