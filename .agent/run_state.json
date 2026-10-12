@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "114",
   "status": "in_progress",
-  "updated_at": "2026-10-12T10:15:04.467880+00:00",
+  "updated_at": "2026-10-12T10:40:37.761123+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -472,6 +472,34 @@
       "attempts": 1,
       "limit": 3,
       "authorization": ".agent/evidence/113/recovery-authorization.json"
+    },
+    "114-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "114-checker-development": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "114-checker-review": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "114-generator-development": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "114-implementation": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "114-qa": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "114-evidence-capture": {
+      "attempts": 0,
+      "limit": 3
     }
   },
   "history": [
@@ -3600,6 +3628,21 @@
       "detail": "Actual frozen Gitnumstat/classifier691 counted, prior-only3x6088 and cumulative6779/9360; unclassified0. Remaining2581 for114; no rebaseline.",
       "evidence": ".agent/evidence/113/scope-measurement-final.txt",
       "actual": 691
+    },
+    {
+      "at": "2026-10-12T10:20:51.969862+00:00",
+      "event": "113-clean-merge-and-114-eligible",
+      "detail": "PR88 merged45ce at2026-10-12T10:18:38Z after6cleanchecks; push38235513454 all5success. Canonical113complete satisfies114dependency; original budget6779/9360 and installed pin remain. Initialize only114bounded counters.",
+      "evidence": ".agent/evidence/114/predecessor113-merge-main.json"
+    },
+    {
+      "at": "2026-10-12T10:40:37.761123+00:00",
+      "event": "114-contract1-approved-two-independent-gates",
+      "detail": "Parsed exact frozenproposal approval true/3empty twice, typed secondreviewschema valid. Only approvalmetadata/canonical114resume/counter1 advanced; no source/tests/QA or phaseclose yet.",
+      "proposal_sha256": "6a5e4ac0ceb35ace0c3ed676c373dfd564aef47024b790fb7c648e91f79afa36",
+      "approved_contract_sha256": "7fbd7d107bc8dcd3165339d4c2df1381d50ba1499d68d90d17de0228588de44f",
+      "validator": ".agent/validator/114-mode-a.json",
+      "evaluator": ".agent/qa/114-contract-review.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4086,7 +4129,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "113",
+  "active_contract_id": "114",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -4158,7 +4201,7 @@
       }
     ]
   },
-  "last_action": "Feature113 complete after actual corrected-bundle, ModeB1, fresh16QA plus own probe and Parent capture; NDEBT050Resolved. Feature114 pending; clean PR/merge next.",
+  "last_action": "114contract1 approved by actual distinct ModeA and typed precodeEval; canonical114IN_PROGRESS. Separate TestAuthor and bundle review before source.",
   "completed_contract_ids": [
     "099",
     "103",
