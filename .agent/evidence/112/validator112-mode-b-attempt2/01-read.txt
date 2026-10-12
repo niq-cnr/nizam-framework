@@ -1,0 +1,236 @@
+cat methodology/10_live_runtime_sessions.md
+---
+id: nizam-live-runtime-sessions
+title: "Live Runtime Sessions"
+description: "Language-neutral ownership, operation, evidence and handoff rules for long-lived development runtimes."
+version: 0.1.2
+status: active
+enforcement: consumer-aspirational
+authoritative_source: methodology/10_live_runtime_sessions.md
+change_log:
+  - version: "0.1.2"
+    date: "2026-10-12"
+    summary: "Record the delivered normative SBCL binding while keeping executable enforcement and live proof pending."
+  - version: "0.1.1"
+    date: "2026-10-11"
+    summary: "Record delivered schemas and C12 relational record checks while retaining the future live-enforcement boundary."
+  - version: "0.1.0"
+    date: "2026-10-11"
+    summary: "Define neutral session semantics, fresh acceptance and durable continuity without claiming executable runtime enforcement."
+---
+
+# Live Runtime Sessions
+
+This normative protocol is **consumer-aspirational**: consumers must enforce its
+session rules in their runtime. The framework publishes definitions, two closed
+runtime provenance schemas and C12 record-relational validation. These checks
+establish record shape and declared invariants only; they cannot prove live
+ownership, generation or lease enforcement, source/heap identity or runtime
+conformance. The normative SBCL reference binding is published in
+[the binding document](11_sbcl_runtime_binding.md). The optional adapter capability
+remains pending feature113 in phase015. Executable session controller, SBCL binding
+enforcement and all thirteen live conformance proofs remain pending phase016
+features115–120.
+
+A runtime session is a long-lived process and its mutable image used for
+interactive development. An agent session is an agent's conversational or
+execution context under `standard/AGF.md`; ending that context does not end the
+runtime process. An agent session may reattach only after establishing the
+runtime's recorded identity, ownership and outstanding work.
+
+The requirement rows below are normative. Their evidence boundaries limit what
+may be claimed even when a consumer has implemented the required behavior.
+
+## 1. Source, image and durable records
+
+Source is the committed, replayable input to a build. An image is mutable process
+state: loaded definitions, values, caches, threads and other effects. Durable
+records describe what was requested and observed outside that process. These
+three state classes are distinct. Saving a record or listing loaded source does
+not prove that the heap matches the source; deleted definitions and partial
+operations may leave invisible state behind.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R1 | Consumers MUST distinguish committed source, mutable image and durable records; session provenance MUST NOT assert source/heap identity. | A session record is provenance only and cannot become acceptance evidence. |
+
+## 2. Ownership and leases
+
+Exactly one principal owns a runtime session at a time. The principal may be a
+human or an agent; an agent owner also has a role and agent identity. Ownership
+transfer is an explicit lifecycle act, including a human/agent shared-image
+handover. It changes the owner and increments `lease_epoch`; neither a context
+reset nor a newly attached client silently transfers ownership.
+
+Every request identifies its requester and expected lease epoch. The consumer
+checks the requester against the current owner before executing project code.
+A former owner holding an old lease cannot submit work after transfer. Transfer
+must preserve or explicitly resolve outstanding operation state before the new
+owner operates; it never conceals a running operation.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R2 | Consumers MUST maintain exactly one owner, increment lease_epoch on transfer, and reject foreign requesters or stale leases before execution. | A transfer record establishes claimed ownership history, not enforcement or image consistency. |
+
+## 3. Process generations
+
+A generation identifies one process incarnation using a counter and an
+unpredictable nonce. Starting or reconstructing a process creates a new
+generation. Reattaching to the same live process preserves its generation.
+Every operation carries `expected_generation`; the actual generation is
+recorded with its outcome. A stale request cannot execute in a replacement
+process even if its session identifier remains unchanged.
+
+Generation changes are process identity changes, not new governed repair
+budgets. Attempt accounting follows `03_circuit_breaker.md` Section 3.2 across
+process, agent, context, worktree, generation, rename and stage boundaries.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R3 | Consumers MUST assign a new generation to each process incarnation and reject a stale expected_generation before execution; reattach MUST preserve the live generation. | Generation provenance does not reset contract_id, step_key or attempt and does not prove loaded-source identity. |
+
+## 4. Serialized operations
+
+Each request has an `operation_id` and `session_id`. A session has one serialized
+operation stream with at most one outstanding operation. A second submit while
+the stream is busy is rejected as `session_busy`; polling and recording a wait
+result do not free the stream. Ownership and generation checks precede execution.
+
+Operation kinds describe loading source, compiling source, evaluating, running
+tests and observing. Observation may invoke project code through inspection,
+printing or callbacks and receives the same execution controls. Lifecycle acts
+open, transfer and close sessions without evaluating project code.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R4 | Consumers MUST identify and serialize operations, reject concurrent submits while an operation is outstanding, and treat observation that invokes project code as execution. | A polling or wait receipt cannot certify completion or authorize a second operation. |
+
+## 5. Status and wait outcomes
+
+Terminal operation statuses are `completed`, `condition_signalled`, `cancelled`,
+`terminated` and `rejected`. Nonterminal statuses are `running`,
+`cancel_requested` and `unknown`. `debugger_paused` is reserved as an optional
+future state and is not emitted by the first implementation. A request to cancel
+moves to `cancel_requested`; `cancelled` requires confirmation that the operation
+stopped. Process termination likewise requires observed termination.
+
+A `rejected` operation is refused and recorded without executing project code.
+This includes foreign, stale-generation, stale-lease, busy and review-trial requests.
+
+A timeout records `wait_outcome: stopped_waiting`. It stops waiting only: the
+operation may still run and retain the stream. An unobserved outcome is `unknown`,
+not success. Infrastructure failure remains failure in the governed step and
+must not be converted into a successful operation or acceptance result.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R5 | Consumers MUST separate operation status from wait_outcome; stopped_waiting MUST NOT imply cancelled or terminated, and cancellation requires observed confirmation. | Timeout proves only the wait ended; unknown and infrastructure failures cannot be represented as success. |
+
+## 6. Condition capture and failed loads
+
+Conditions must be captured while their diagnostic context remains available,
+before unwinding destroys stack or dynamic information. Capture must bound
+printing and preserve useful diagnostics without turning diagnostic rendering
+into an uncontrolled second execution. A failed load or compile may have changed
+the image before signalling a condition; neither operation is presumed atomic.
+The image is recorded as inconsistent after a failed or partial load. Recovery
+requires reconstruction from source when consistency cannot be established.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R6 | Consumers MUST capture conditions before unwinding and MUST NOT claim image consistency after a failed or partial load or compile. | Captured diagnostics describe observed failure, not rollback or an unchanged heap. |
+
+## 7. Fresh-environment acceptance
+
+A warm Generator session supports development feedback only. The Evaluator
+re-derives acceptance in its own execution context, defined by
+`02_adversarial_tdd.md` Section 2 item 4: a fresh process **and** a fresh private
+build cache **and** fixtures built from committed source. Relevant dependencies,
+registries, environment configuration and external resources must be hermetic so
+that another worktree or development cache cannot supply hidden inputs.
+Acceptance reconstructs from committed source and declared replayable commands;
+it never boots a saved development image or reuses Generator session results.
+
+The Evaluator's QA verdict owns acceptance evidence. Session transcripts may
+explain development history but cannot replace independent execution. The
+accepted revision, invocation, output and actual exit status are captured by
+path under `04_tool_driven_state.md` Section 5.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R7 | Evaluators MUST derive acceptance from committed source in a fresh process with a fresh private build cache, committed fixtures and hermetic relevant dependencies and resources. | Warm session results, saved development images and session provenance MUST NOT count as acceptance evidence. |
+
+## 8. Handoff and context-reset re-entry
+
+A handoff binds the committed source manifest, replayable commands, current
+owner and lease, generation, outstanding operation and relevant external-resource
+references. After a context reset, the receiving agent reads durable records,
+confirms its role and ownership, checks generation and outstanding operation,
+and compares its workspace to the recorded source manifest before operating.
+It polls or resolves outstanding work under the same stream rules. If continuity
+cannot be established, it reconstructs from committed source rather than trusting
+chat, a remembered process identifier or an unverified warm image.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R8 | Handoffs MUST be reconstructible from committed source and replayable commands; re-entry MUST check durable records, role, owner, lease, generation, outstanding work and workspace identity, reconstructing if continuity is unproved. | A surviving process alone does not establish safe re-entry or acceptance. |
+
+## 9. External resources
+
+An image may affect files, services, databases and background workers beyond its
+heap. Records identify such resources, their owner, isolation boundary and
+reconstruction or cleanup command. Session serialization governs the operation
+stream only; it does not synchronize independent processes or external writers.
+Consumers explicitly coordinate shared resources and attribute their effects.
+Acceptance supplies isolated or reproducibly reset resources and declared inputs.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R9 | Consumers MUST identify external resources and ownership, declare synchronization limits and explicitly coordinate shared effects; acceptance MUST isolate or reproducibly reset relevant resources. | A serialized session does not prove external-resource isolation, synchronization or rollback. |
+
+## 10. Review trials
+
+Observation-only convergent review trials receive no session endpoint and no
+runtime-session permission class. They do not execute project code, including
+observation helpers that execute it. Runtime acceptance evidence reaches review
+through the Evaluator's QA verdict under the existing evidence rules; no new
+packet field or unauthenticated transcript channel is created here.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R10 | Review trials MUST be denied a session endpoint and all lifecycle, operate and accept permissions. | Trials cannot produce runtime acceptance evidence; session records do not extend the review packet trust boundary. |
+
+## 11. Implementation lanes
+
+The default is one implementation lane in the existing coordination model.
+A runtime session does not grant parallel implementation authority. A future
+`lane_authorization_ref` may refer to separately authorized lane semantics; its
+presence alone authorizes nothing. Shared ownership remains serialized, and this
+protocol creates no second scheduler or multi-lane dispatcher.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R11 | Consumers MUST use one implementation lane by default; additional lanes require separate authorization and defined coordination semantics. | A lane_authorization_ref is a future hook, not a parallelism grant or scheduler. |
+
+## 12. Durable records
+
+Session and operation records bind identity, requester, owner, lease, generation,
+source manifest, outstanding operation, status, wait outcome, diagnostics and
+resource references. They preserve unknowns and failures honestly. Raw command
+output stays in external evidence files, referenced by path.
+
+The Orchestrator alone owns coordination fields and circuit counters in durable
+run state. Generators record their scoped development work; Evaluators own
+independently captured acceptance evidence and QA verdicts. Implementation agents
+preserve fields they do not own. The two schemas and executable C12 relational
+checks validate session and operation records. They establish declared record
+validity, never live runtime behavior or acceptance of a warm image. The normative
+SBCL reference binding is delivered. The optional adapter capability remains
+pending feature113 in phase015; executable controller/SBCL binding enforcement
+and live conformance proofs remain pending phase016 features115–120.
+
+| requirement-id | normative-rule | evidence-boundary |
+| --- | --- | --- |
+| R12 | Roles MUST record durable provenance and evidence by path, preserve unowned fields, and leave coordination and circuit counters to the Orchestrator. | Durable provenance MUST NOT prove source/image identity or substitute for independently captured acceptance evidence. |
+
+EXIT:0

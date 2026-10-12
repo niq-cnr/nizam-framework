@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.7
+version: 1.0.8
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.8"
+    date: "2026-10-12"
+    summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
   - version: "1.0.7"
     date: "2026-10-11"
     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
@@ -55,7 +58,7 @@ counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs
 Canonical lifecycle and current feature position are read from
 `.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
 requires its approved contract, both independent pre-code gates, Mode B, QA and
-the evidence-capture gate. Features 111–114 remain pending. Historical phase014
+the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
 records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
 Operator design decisions were recorded at `2026-10-11T06:30:20.388684+00:00` in `.agent/run_state.json`
