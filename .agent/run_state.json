@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "112",
   "status": "in_progress",
-  "updated_at": "2026-10-12T02:19:15.280669+00:00",
+  "updated_at": "2026-10-12T02:40:16.233397+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -420,11 +420,11 @@
       "limit": 3
     },
     "112-checker-development": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3
     },
     "112-checker-review": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3
     },
     "112-implementation": {
@@ -3128,6 +3128,25 @@
         ".agent/qa/112-contract-review-rev2.json"
       ],
       "detail": "Both actual machine-readable revision2 verdicts approve with all blocking arrays empty. The exact three shared-source paths are bounded by declared112 deltas; historical111 proof and all untouched source stay immutable. Original7 acceptance commands, estimate1200 and phase7200/9360 remain unchanged. No product or test implementation existed before approval."
+    },
+    {
+      "at": "2026-10-12T02:20:00.963607+00:00",
+      "event": "implementation_attempt_isolated",
+      "contract_id": "112",
+      "attempt": 1,
+      "approved_base": "7d852bd7aedde01d7739126aa7a1cf880534a410",
+      "attempt_root": "/home/cnross/.tmp/nizam-112-implementation1-zkfhrmpr",
+      "evidence": ".agent/evidence/112/approved-base.json",
+      "detail": "Fresh owned detached workspace at approved revision2 base. TestAuthor and Generator have separate ownership; canonical112 is already in progress after both pre-code approvals. No counter reset, budget change or historical proof rerun."
+    },
+    {
+      "at": "2026-10-12T02:40:16.233397+00:00",
+      "event": "checker_bundle_rejected",
+      "contract_id": "112",
+      "attempt": 1,
+      "evidence": ".agent/validator/112-bundle-review-attempt1.json",
+      "preservation": ".agent/evidence/112/failed-checker-attempt1/preservation.json",
+      "detail": "One actual independent budget-method finding: replace SequenceMatcher with authorized frozen Git numstat/classifier measurement. Genuine missing-document RED preserved, no product writes or positive checkpoint, contract unchanged. Checker development and review each1/3; implementation and QA remain0/3."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3634,7 +3653,7 @@
       }
     ]
   },
-  "last_action": "Feature112 revision2 passed both independent pre-code gates. Canonical step activated first; next isolate the approved base and author independent tests before implementation.",
+  "last_action": "Preserved actual rejected checker bundle attempt1 before any positive test; next attempt uses structural budget-interface analysis from fresh owned approved base.",
   "completed_contract_ids": [
     "099",
     "103",
