@@ -1,0 +1,172 @@
+{
+  "feature_id": "112",
+  "contract_id": "112",
+  "stage": "independent-evaluator-qa",
+  "executed_at": "2026-10-12T03:46:27.275335+00:00",
+  "qa_pass": true,
+  "checks_run": 20,
+  "checks_passed": 20,
+  "checks": [
+    {
+      "command": "bash tools/validate.sh",
+      "evidence": ".agent/evidence/112/01-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Conditions and restarts$'\"'\"' '\"'\"'(^|[^[:alnum:]_])handler-bind([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/02-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Image drift$'\"'\"' '\"'\"'(^|[^[:alnum:]_])defvar([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/03-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Timeouts and cancellation$'\"'\"' '\"'\"'(^|[^[:alnum:]_])join-thread([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/04-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Fresh-environment acceptance$'\"'\"' '\"'\"'(^|[^[:alnum:]_])CL_SOURCE_REGISTRY([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/05-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep methodology/11_sbcl_runtime_binding.md '\"'\"'^## [0-9]+[.] Fresh-environment acceptance$'\"'\"' '\"'\"'(^|[^[:alnum:]_])ASDF_OUTPUT_TRANSLATIONS([^[:alnum:]_]|$)'\"'\"''",
+      "evidence": ".agent/evidence/112/06-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'NIZAM.json'\"'\"').read_text()); assert any(v['\"'\"'authoritative_source'\"'\"']=='\"'\"'methodology/11_sbcl_runtime_binding.md'\"'\"' for v in d['\"'\"'capabilities'\"'\"'])'",
+      "evidence": ".agent/evidence/112/07-inherited.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --structure",
+      "evidence": ".agent/evidence/112/08-structure.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --semantic-review",
+      "evidence": ".agent/evidence/112/09-semantic-review.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --scope",
+      "evidence": ".agent/evidence/112/10-scope.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --historical",
+      "evidence": ".agent/evidence/112/11-historical.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --lifecycle",
+      "evidence": ".agent/evidence/112/12-lifecycle.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --budget",
+      "evidence": ".agent/evidence/112/13-budget.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --negative",
+      "evidence": ".agent/evidence/112/14-negative.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "evidence": ".agent/evidence/112/15-payload.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/fixtures_self_test.sh",
+      "evidence": ".agent/evidence/112/16-fixtures.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "bash tools/e2e_bootstrap_test.sh",
+      "evidence": ".agent/evidence/112/17-bootstrap.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/release_closeout.py --mode pr",
+      "evidence": ".agent/evidence/112/18-release.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "evidence": ".agent/evidence/112/19-installed.txt",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/check_112.py --integrity",
+      "evidence": ".agent/evidence/112/20-integrity.txt",
+      "exit_code": 0
+    }
+  ],
+  "candidate_sha": "9566a6a57be1987ee922b2bcc51179fa0b0a0bd1",
+  "source_sha256": {
+    "methodology/11_sbcl_runtime_binding.md": "22ccbc7d38778ed131ce09e54fbaafaefe47fa0bfbee72eae4a65c19542ef089",
+    "NIZAM.json": "36ba859a7772dada0ead76ea3f81e7feacdc57f5f905e82186797a331df41caf",
+    "methodology/README.md": "0615dc24aff51ab88f602a4fe425cbf3f9502842fc1582927c0a4fb1eebf464e",
+    "methodology/10_live_runtime_sessions.md": "e664451617ce6b322e769033821f67620036d9e196c3f053a43c49e1d0e8f875",
+    "CHANGELOG.md": "471e28642c732cd1113b720f25dca8cb7c104a8ba2dc3c6c5870faf078c4df3e",
+    "docs/nips/NIP-0003-live-runtime-sessions.md": "c163e935ad1d5e97e2ca7c62d0bca2e0d1d5d6844ae2cc81b7df128c580ab085",
+    "docs/planning/HANDOVER.md": "85b43a97ded556088ab949bd9c3316b9db80c7b1114ec1d0056b8adf85646a60",
+    "docs/planning/ROADMAP.md": "4c87ce514f99261e29c23b5878a1a1b29e5aeee14ed122f8233296667f92f481",
+    "docs/planning/backlog_reconciliation.md": "14b1d90ef8959c2cdfe54ec184351b45ab6feaed85fce5355858dd5cd02b410a",
+    ".agent/contracts/112.json": "4357e16ce1423d7fa20bbec7ed4a008700e0046b29fe3789c8a78bb1cb87caca"
+  },
+  "qa_inputs_sha256": "6718e52b840c17f48889e8d058e4f30fdd1ac116381452ace4440f7103961a61",
+  "mode_b_sha256": "6bb6e043a48d83467a05155c71c8fade7edf208c9f4453346de7825b4725a1e8",
+  "acceptance_reviewer": "/root/binding_acceptance_112",
+  "adversarial": {
+    "performed": true,
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/112/acceptance-adversarial.py",
+    "evidence": ".agent/evidence/112/112-qa-adversarial.txt",
+    "description": "Falsify only semantic receipt candidate identity in an owned overlay; require actual child EXIT1 with semantic-binding and restored actualEXIT0, with real receipt unchanged. This extra control is beyond the contract26source/control mutations.",
+    "result": "pass",
+    "exit_code": 0
+  },
+  "evidence_files": [
+    ".agent/evidence/112/01-inherited.txt",
+    ".agent/evidence/112/02-inherited.txt",
+    ".agent/evidence/112/03-inherited.txt",
+    ".agent/evidence/112/04-inherited.txt",
+    ".agent/evidence/112/05-inherited.txt",
+    ".agent/evidence/112/06-inherited.txt",
+    ".agent/evidence/112/07-inherited.txt",
+    ".agent/evidence/112/08-structure.txt",
+    ".agent/evidence/112/09-semantic-review.txt",
+    ".agent/evidence/112/10-scope.txt",
+    ".agent/evidence/112/11-historical.txt",
+    ".agent/evidence/112/12-lifecycle.txt",
+    ".agent/evidence/112/13-budget.txt",
+    ".agent/evidence/112/14-negative.txt",
+    ".agent/evidence/112/15-payload.txt",
+    ".agent/evidence/112/16-fixtures.txt",
+    ".agent/evidence/112/17-bootstrap.txt",
+    ".agent/evidence/112/18-release.txt",
+    ".agent/evidence/112/19-installed.txt",
+    ".agent/evidence/112/20-integrity.txt",
+    ".agent/evidence/112/112-qa-adversarial.txt"
+  ],
+  "required_fixes": [],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Independent QA passed20/20exact approved commands serial once on sealedcandidate9566a6a plus one own adversarial check. Personally captured19officialprimary sources support10source-boundsemantic findings. Documentary/reference-binding acceptance only; no livecontroller/Lisp/isolation/hermetic13-case conformance claim. Parent evidence gate and lifecycle completion remain separate."
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "semantic_review_sha256": "8b6e378b9d6d2b0994f946f96338d7e75aed421f79a37793a132d41f2c2af179",
+  "limitations": [
+    "OnlineSBCL manual2.6.9 provides semantic documentation; pinned local2.2.9 runtime behavior and illustrativeASDF launcher verification remain futurephase016 live work.",
+    "Shared fixture/bootstrap acceptance verifies the authored framework and installed inventory, not liveSBCL controller behavior."
+  ]
+}

@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
-  "current_feature": "112",
+  "current_feature": "113",
   "status": "in_progress",
-  "updated_at": "2026-10-12T03:37:29.156875+00:00",
+  "updated_at": "2026-10-12T03:51:38.477650+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -432,7 +432,7 @@
       "limit": 3
     },
     "112-qa": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -3240,6 +3240,48 @@
       "evidence": ".agent/evidence/112/acceptance-preparation-handoff.json",
       "primary_sources": ".agent/evidence/112/primary-sources.json",
       "detail": "All19actual official HTTP200 responses/UTC/headers/bodyhashes captured personally by fresh acceptance actor. Ten preliminary source comparisons recorded, no defects. Actual source map equals ModeB2. This is input preparation only: candidate not yet minted, no semantic/finalQA approval or verification execution."
+    },
+    {
+      "at": "2026-10-12T03:40:58.716746+00:00",
+      "event": "acceptance_candidate_sealed",
+      "contract_id": "112",
+      "attempt": 1,
+      "candidate_sha": "9566a6a57be1987ee922b2bcc51179fa0b0a0bd1",
+      "attempt_root": "/home/cnross/.tmp/nizam-112-source-attempt3-hswhzw9o",
+      "evidence": ".agent/evidence/112/qa-inputs.json",
+      "qa_inputs_sha256": "6718e52b840c17f48889e8d058e4f30fdd1ac116381452ace4440f7103961a61",
+      "detail": "Exact10ModeBsource inputs,2reviewed verification files and all fixed112historical/preparation inputs replay byte-exact from candidate Git. Four distinct actor identities, fresh19officialcaptures fixed before candidate mint. Future semantic/QA/command/gate/Parentcompletion outputs excluded. OwneddetachedHEAD9566a6a clean before seal, no guessed futurehash or source-map cycle."
+    },
+    {
+      "at": "2026-10-12T03:48:48.181010+00:00",
+      "event": "qa_and_evidence_gate_passed",
+      "contract_id": "112",
+      "attempt": 1,
+      "candidate_sha": "9566a6a57be1987ee922b2bcc51179fa0b0a0bd1",
+      "qa": ".agent/qa/112.json",
+      "evidence": ".agent/evidence/112/evidence-gate.json",
+      "detail": "Parsed real fresh20/20 QA with installedschema validation and threeemptyarrays; ownidentityforgery spot rejected thenrestored. Actual Parentadapter EXIT0 verifies source/bundle/immutable Git replay, actual20COMMAND/CANDIDATE/EXIT receipts and ownspot. QAcount0->1, no source or historical proof changes; canonical112 remainsinprogress until separate closure."
+    },
+    {
+      "at": "2026-10-12T03:50:46.811879+00:00",
+      "event": "feature_completed",
+      "contract_id": "112",
+      "candidate_sha": "9566a6a57be1987ee922b2bcc51179fa0b0a0bd1",
+      "qa": ".agent/qa/112.json",
+      "evidence": ".agent/evidence/112/evidence-gate.json",
+      "detail": "Canonical phase112/list112/DAG112 completed and113 technical predecessor cleared, statuspending retained. Approvedcontract immutable at its accepted hash; all9reviewed product bytes and oldproof/history/counters preserved. Manifest/activation snapshot fixed; current lifecycle read from canonicalsteps/list/packets. No liveproof, release/tag, installed upgrade or newallocation."
+    },
+    {
+      "at": "2026-10-12T03:51:38.477650+00:00",
+      "event": "scope_budget_measured",
+      "contract_id": "112",
+      "actual": 1244,
+      "cumulative": 6088,
+      "ceiling": 9360,
+      "prior_only_rolling_average": 2422.0,
+      "prior_only_3x": 7266.0,
+      "evidence": ".agent/evidence/112/scope-measurement.txt",
+      "detail": "Actual frozen classifier EXIT0/allpaths classified. Compared112 with only completed preceding110/111 before append; no flag or budget increase. Source/bundle/primary inputs remain exact sealed candidate."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3414,9 +3456,9 @@
   "scope_budget": {
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "total_lines_changed": 4844,
-    "evidence_lines_total": 29982,
-    "excluded_lines_total": 775,
+    "total_lines_changed": 6088,
+    "evidence_lines_total": 98437,
+    "excluded_lines_total": 991,
     "per_feature": [
       {
         "id": "110",
@@ -3453,6 +3495,26 @@
           "first_feature_exception": false
         },
         "note": "Measure only after fresh independent38/38acceptance, ownspot, evidencegate and canonicalcompletion. Product895+overhead2238=3133; exceeds2200 estimate, below prior-only3x threshold5133. No extra budget; historical failed in-flight measurements retained separately, never double-counted."
+      },
+      {
+        "id": "112",
+        "estimated": 1200,
+        "actual": 1244,
+        "evidence_lines": 68455,
+        "excluded_lines": 216,
+        "all_paths_lines": 69915,
+        "range": "da1131846815328890cfb509be608551b80a82a7..WORKTREE",
+        "evidence": ".agent/evidence/112/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "110",
+            "111"
+          ],
+          "rolling_average": 2422.0,
+          "three_times_threshold": 7266.0,
+          "first_feature_exception": false
+        },
+        "note": "Measured with unchanged frozen Git numstat/classifier after actual ModeB2, fresh independent20/20 QA/own adversarial/evidence capture and canonical closure. Compare against preceding110/111 only before appending112. Failed raw attempts retained as evidence, counted verdicts included once; original7200/9360 and all historical measurements preserved."
       }
     ],
     "phase_level_items": [],
@@ -3468,7 +3530,7 @@
     "phase_base_revision": "57862f69ba30a36004ea9a17a295fc9c835afc13",
     "authorization_revision": "06c0ae0a273facce80c57506260648c41f566ebb",
     "phase_level_costs": "Included within approved7200 per-feature allowances; no additional budget.",
-    "last_measured_at": "2026-10-11T18:58:58.271536+00:00",
+    "last_measured_at": "2026-10-12T03:51:38.477650+00:00",
     "historical_inflight_measurements": [
       {
         "id": "111",
@@ -3674,7 +3736,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "112",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -3746,7 +3808,7 @@
       }
     ]
   },
-  "last_action": "Fresh acceptance actor personally captured19 officialprimary sources and10 topic comparisons; fixed inputs promoted before candidate mint. No QA approval or command execution yet.",
+  "last_action": "Feature112 complete, exact measured scope1244; cumulative6088/9360, below prior-only3x7266.0. Feature113 pending eligible; PR preparation and bounded post-completion checks next.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -3758,7 +3820,8 @@
     "108",
     "102",
     "110",
-    "111"
+    "111",
+    "112"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,

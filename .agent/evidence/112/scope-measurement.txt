@@ -1,0 +1,53 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 112=da1131846815328890cfb509be608551b80a82a7.. --files
+CANDIDATE_SHA: 9566a6a57be1987ee922b2bcc51179fa0b0a0bd1
+STAGE: completed canonical metadata, exact frozen classifier
+OBSERVED_AT: 2026-10-12T03:51:38.477650+00:00
+== 112: da1131846815328890cfb509be608551b80a82a7..WORKTREE
+   resolved da1131846815328890cfb509be608551b80a82a7..WORKTREE+untracked
+   paths=245 binary_paths=4
+   class                       files   lines
+   budget/product                  5     303
+   budget/product-ext              1       9
+   budget/contract                 1     294
+   budget/verdict                  9     577
+   budget/audit-deliverable        0       0
+   budget/planning                 7      61
+   evidence                      221   68455
+   excluded/run_state              1     216
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                   8  CHANGELOG.md
+   budget/product                   6  NIZAM.json
+   budget/product                  18  methodology/10_live_runtime_sessions.md
+   budget/product                 259  methodology/11_sbcl_runtime_binding.md
+   budget/product                  12  methodology/README.md
+   budget/product-ext               9  docs/nips/NIP-0003-live-runtime-sessions.md
+   budget/contract                294  .agent/contracts/112.json
+   budget/verdict                  24  .agent/qa/112-contract-review-rev2.json
+   budget/verdict                  32  .agent/qa/112-contract-review.json
+   budget/verdict                 172  .agent/qa/112.json
+   budget/verdict                  55  .agent/validator/112-bundle-review-attempt1.json
+   budget/verdict                  56  .agent/validator/112-bundle-review-attempt2.json
+   budget/verdict                  35  .agent/validator/112-mode-a-rev2.json
+   budget/verdict                  44  .agent/validator/112-mode-a.json
+   budget/verdict                  87  .agent/validator/112-mode-b-attempt1.json
+   budget/verdict                  72  .agent/validator/112-mode-b.json
+   budget/planning                  9  .agent/feature_list_015.json
+   budget/planning                  7  docs/planning/HANDOVER.md
+   budget/planning                  9  docs/planning/ROADMAP.md
+   budget/planning                 22  docs/planning/backlog_dag.json
+   budget/planning                  7  docs/planning/backlog_reconciliation.md
+   budget/planning                  2  docs/planning/manifest.json
+   budget/planning                  5  docs/planning/phase_015.yaml
+   excluded/run_state             216  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                      221   68455  .agent/evidence/112/
+   PRODUCT_LINES=312
+   PROCESS_OVERHEAD_LINES=932  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=1244
+   EVIDENCE_LINES=68455
+   EXCLUDED_LINES=216
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=69915  (= budget 1244 + evidence 68455 + excluded 216 + unclassified 0)
+
+EXIT: 0

@@ -2769,13 +2769,15 @@
         "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'NIZAM.json'\"'\"').read_text()); assert any(v['\"'\"'authoritative_source'\"'\"']=='\"'\"'methodology/11_sbcl_runtime_binding.md'\"'\"' for v in d['\"'\"'capabilities'\"'\"'])'"
       ],
       "evidence": [
-        ".agent/evidence/112/"
+        ".agent/validator/112-mode-b.json",
+        ".agent/qa/112.json",
+        ".agent/evidence/112/evidence-gate.txt"
       ],
       "non_goals": [
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "in_progress",
+      "status": "complete",
       "authority_status": "approved-contract",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
@@ -2793,8 +2795,8 @@
           "reason": "none (normative + schema)"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Implementation, source validation, fresh independent acceptance and evidence capture remain required."
+          "satisfied": true,
+          "reason": "Actual ModeB2, fresh independent20/20 acceptance plus own adversarial check and Parent candidate-bound evidence gate passed."
         }
       },
       "estimate": {
@@ -2870,8 +2872,8 @@
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "Canonical lifecycle is read from feature_list_015.json; predecessor completion remains required."
+          "satisfied": true,
+          "reason": "Canonical112 completed after actual ModeB2, fresh20/20 independent acceptance and evidence capture;113 stays pending its own contract gates."
         },
         "authority": {
           "satisfied": false,
