@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "113",
   "status": "blocked",
-  "updated_at": "2026-10-12T07:58:40.039629+00:00",
+  "updated_at": "2026-10-12T08:31:45.774808+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -436,7 +436,7 @@
       "limit": 3
     },
     "113-contract": {
-      "attempts": 1,
+      "attempts": 3,
       "limit": 3
     },
     "113-checker-development": {
@@ -3485,7 +3485,55 @@
       "feature": "113",
       "stage": "operator-authorized-checker-recovery",
       "evidence": ".agent/evidence/113/recovery-authorization.json",
-      "note": "Original checker3/3 counters remain exhausted; separate bounded recovery epoch authorized. Canonical113 remains BLOCKED pending revised contract gates."
+      "note": "Original checker3/3 counters remain exhausted; separate bounded recovery epoch authorized. Canonical113 remains BLOCKED pending revised contract gates.",
+      "event": "operator-authorized-checker-recovery",
+      "detail": "Original checker3/3 counters remain exhausted; separate bounded recovery epoch authorized. Canonical113 remains BLOCKED pending revised contract gates."
+    },
+    {
+      "at": "2026-10-12T08:10:19.968743+00:00",
+      "feature": "113",
+      "stage": "recovery-contract-attempt2-proposed",
+      "proposal": ".agent/evidence/113/recovery-contract-attempt2-proposal.json",
+      "proposal_sha256": "85296b4075227ffd9964b8ecc78fce4e2ac9ccef4e7cde4bcf2c3c574c94f81f",
+      "evidence": ".agent/evidence/113/recovery-contract-attempt2-handoff.json",
+      "note": "Generator concluded isolated type/interface revision; ModeA in progress, independent Evaluator pending. Canonical still BLOCKED; no implementation.",
+      "event": "recovery-contract-attempt2-proposed",
+      "detail": "Generator concluded isolated type/interface revision; ModeA in progress, independent Evaluator pending. Canonical still BLOCKED; no implementation."
+    },
+    {
+      "at": "2026-10-12T08:15:50.764452+00:00",
+      "feature": "113",
+      "stage": "recovery-contract-attempt2-mode-a-rejected",
+      "verdict": ".agent/evidence/113/recovery-contract-attempt2-mode-a.json",
+      "verdict_sha256": "59ba728ea4a46de216935959ac97d3997a197907482dd998fba2ae52fa08d689",
+      "preservation": ".agent/evidence/113/recovery-contract-attempt2-rejection-preservation.json",
+      "next_workspace": ".agent/evidence/113/recovery-contract-attempt3-workspace.json",
+      "note": "One original-history/livecontract conflict. Third final contract attempt isolates exact oldcontract archive mapping; checker recovery0/3 unchanged, no source begun.",
+      "event": "recovery-contract-attempt2-mode-a-rejected",
+      "detail": "One original-history/livecontract conflict. Third final contract attempt isolates exact oldcontract archive mapping; checker recovery0/3 unchanged, no source begun."
+    },
+    {
+      "at": "2026-10-12T08:21:23.306920+00:00",
+      "feature": "113",
+      "stage": "recovery-contract3-mode-a-approved",
+      "proposal_sha256": "d97bfc3dea880207049a07277df51bb19cafc5b4d56007090f0306c3ee1d8615",
+      "verdict": ".agent/validator/113-mode-a.json",
+      "verdict_sha256": "acece0fc3eec2c434119b60ab6ccfc29215e64855b9ead40e0f1bb9c15cc280b",
+      "evidence": ".agent/evidence/113/recovery-mode-a3-handoff.json",
+      "note": "Actual true and threeempty arrays parsed. Independent second pre-code gate pending; no implementation.",
+      "event": "recovery-contract3-mode-a-approved",
+      "detail": "Actual true and threeempty arrays parsed. Independent second pre-code gate pending; no implementation."
+    },
+    {
+      "at": "2026-10-12T08:31:45.774808+00:00",
+      "feature": "113",
+      "stage": "recovery-contract-approved-and-debt-annotated",
+      "evidence": ".agent/evidence/113/recovery-contract-approval.json",
+      "approved_contract_sha256": "e4fa0058a7f46c1da91a114c243942decbb4f85d4174007b9a07bc005f0a29ea",
+      "debt_version": "0.64.0",
+      "note": "Both actual pre-code verdicts true/threeempty; activeverifier8 archived before any replacement. Canonical113 remains BLOCKED until correctedbundle approval; source1/3, oldchecker3/3, recovery0/3, budget/install unchanged.",
+      "event": "recovery-contract-approved-and-debt-annotated",
+      "detail": "Both actual pre-code verdicts true/threeempty; activeverifier8 archived before any replacement. Canonical113 remains BLOCKED until correctedbundle approval; source1/3, oldchecker3/3, recovery0/3, budget/install unchanged."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4023,7 +4071,7 @@
       }
     ]
   },
-  "last_action": "Recorded explicit H-CHECKER-113-RECOVERY approval; new recovery epoch0/3. Original counters, budget and installation preserved; contract realignment next.",
+  "last_action": "Renewed113 contract approved by two actual gates; Debt050 recovery annotation0.64 Open; prepare isolated checker recovery1.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4106,6 +4154,7 @@
     "authorization_inferred": false,
     "authorization": ".agent/evidence/113/recovery-authorization.json",
     "at": "2026-10-12T07:58:40.039629+00:00",
-    "verbatim": "continue."
+    "verbatim": "continue.",
+    "stage": "both-renewed-pre-code-gates-approved"
   }
 }

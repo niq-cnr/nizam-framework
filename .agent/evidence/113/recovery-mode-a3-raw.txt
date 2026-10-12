@@ -1,0 +1,983 @@
+ACTUAL FINAL CONTRACT MODE A ATTEMPT3
+Actor: /root/adapter_validator_113
+UTC: 2026-10-12T08:20:18.526653+00:00
+Owned root: /home/cnross/.tmp/nizam113-recovery-mode-a3-8tpi5aqv
+Base:5f6beae229ab5a9e633496057319b877e46dc048
+Proposal SHA256:d97bfc3dea880207049a07277df51bb19cafc5b4d56007090f0306c3ee1d8615
+No16verification, historical gates, source/tests/state/debt/contract writes or implementation runs.
+COMMAND:["git", "rev-parse", "HEAD"]
+5f6beae229ab5a9e633496057319b877e46dc048
+
+EXIT:0
+COMMAND:["cat", ".agent/evidence/113/recovery-mode-a3-workspace.json", ".agent/contracts/113.json", ".agent/evidence/113/recovery-contract-attempt2-mode-a.json", ".agent/evidence/113/recovery-authorization.json", ".agent/evidence/113/recovery-prior-approval-snapshot/inventory.json", ".agent/evidence/113/circuit-breaker-halt.json", ".agent/evidence/113/bundle-review-attempt3-entity-falsepass.txt", ".nizam/standard/AGF.md", ".nizam/methodology/01_execution.md", ".nizam/schema/contract.schema.json", ".nizam/schema/contract_review.schema.json"]
+{
+  "stage": "mode-a",
+  "attempt": 3,
+  "root": "/home/cnross/.tmp/nizam113-recovery-mode-a3-8tpi5aqv",
+  "base": "5f6beae229ab5a9e633496057319b877e46dc048",
+  "actor": "/root/adapter_validator_113",
+  "proposal_sha256": "d97bfc3dea880207049a07277df51bb19cafc5b4d56007090f0306c3ee1d8615",
+  "at": "2026-10-12T08:17:44.023347+00:00"
+}
+{
+  "contract_id": "113",
+  "feature_id": "113",
+  "name": "Optional adapter capability and source routing",
+  "status": "proposed",
+  "spec_ref": ".agent/product_spec_015.md",
+  "base_revision": "a57c860a18c82990c4a43deed1465bd052bb4c3f",
+  "contract_attempt": 3,
+  "scope": {
+    "files_create": [
+      {
+        "path": ".agent/contracts/113.json",
+        "purpose": "This bounded proposal; Parent approval metadata only after both actual independent approvals."
+      },
+      {
+        "path": ".agent/evidence/113/**",
+        "purpose": "Feature113-only checker/private controls by independent TestAuthor; reviewed fixed-input inventory/seal; separate current-source inventory/candidate seal; independent source review; raw gate/QA/command/revision/closure receipts and evidence-capture adapter. Preserve all existing113 root receipts."
+      },
+      {
+        "path": ".agent/validator/113-mode-a.json",
+        "purpose": "Independent ModeA verdict."
+      },
+      {
+        "path": ".agent/qa/113-contract-review.json",
+        "purpose": "Independent second pre-code review verdict."
+      },
+      {
+        "path": ".agent/validator/113-test-bundle-review.json",
+        "purpose": "Independent test/input-bundle review before source implementation."
+      },
+      {
+        "path": ".agent/validator/113-mode-b.json",
+        "purpose": "Independent actual post-code diff verdict."
+      },
+      {
+        "path": ".agent/qa/113.json",
+        "purpose": "Fresh independent QA of the sealed Git candidate, all commands and exactly one extra own adversarial spot."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/interface.md",
+        "purpose": "0.3.1 ->0.4.0; new Section6 Optional Capability: Live Runtime Sessions; existing References moves6->7 with runtime document/schema links. Preserve Sections1-5 body byte-exact, including all ten checklist items."
+      },
+      {
+        "path": "tools/skill.json",
+        "purpose": "0.5.0 ->0.6.0; add runtime_requirements.live_runtime_session required:false, live_runtime_session capability ->tools/interface.md and sbcl_runtime_binding ->methodology/11_sbcl_runtime_binding.md. Preserve all existing requirements/capabilities/state_interface."
+      },
+      {
+        "path": "tools/SKILL.md",
+        "purpose": "0.5.0 ->0.6.0; insert Section10 Live Runtime Sessions, move References10->11 and add bounded crosslinks. Preserve Sections1-9 and prior references, single runtime-agnostic router."
+      },
+      {
+        "path": "NIZAM.json",
+        "purpose": "Add one nizam-live-runtime-adapter capability ->tools/interface.md; preserve all preexisting entries, module lists, schemas and framework.version1.5.0."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "0.19.0 ->0.20.0; extend only skill/interface index descriptions plus one short optional-runtime paragraph/crosslinks. Preserve validator/fixture/CI descriptions and old log entries."
+      },
+      {
+        "path": "methodology/10_live_runtime_sessions.md",
+        "purpose": "0.1.2 ->0.2.0; enforcement becomes partially-enforced per accepted NIP3, explicitly limited to schema/C12 declared-record checks. Opening and Section12 availability paragraphs add optional-interface link and replace pending113 with delivered normative capability. Preserve R1-R12 and all other body/old logs."
+      },
+      {
+        "path": "methodology/11_sbcl_runtime_binding.md",
+        "purpose": "0.1.0 ->0.1.1; one Section1 crosslink to the optional interface; preserve consumer-aspirational enforcement and all other body/old logs, SBCL semantics and illustrative-ASDF boundary."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "One bounded new feature113 bullet under Unreleased/Changed; preserve every existing Unreleased/released entry."
+      },
+      {
+        "path": ".agent/feature_list_015.json",
+        "purpose": "Parent-only113 blocked/in_progress/complete masks and actual references after gates; remove only113blocked_reason on authorized resume, passes remains false until completion. Preserve six ACs, dependencies, estimates, other110-112 rows and114pending."
+      },
+      {
+        "path": "docs/planning/phase_015.yaml",
+        "purpose": "Parent-only step113 BLOCKED->IN_PROGRESS after renewed contract and corrected-bundle approvals, then COMPLETED only after ModeB/freshQA/evidence capture. Preserve description, all other steps and phase in_progress; retain original halt in immutable receipts."
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Orchestrator-only coordination/history/counter/budget writes, excluded from counted lines; Generator/TestAuthor/reviewers preserve all fields."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "Parent-only NDEBT050 recovery annotation0.63.0->0.64.0 after both renewed pre-code approvals; resolution0.64.0->0.65.0 only after actual source/full freshQA/evidence capture. Only050 row Notes append/move and corresponding new log/version are mutable; preserve all previous rows/logs and exact halt factual text. No edit in this contract-only attempt."
+      }
+    ]
+  },
+  "non_goals": [
+    "No product, checker, test, capture-adapter or proposed verification execution before both actual independent pre-code approvals; contract proposal/read-only input inspection only now.",
+    "No runtime controller/stub/SBCL launcher, live runtime enforcement, phase016115-120 allocation or thirteen-case working/conformance claim.",
+    "No extra operation/status/schema/request-record field, status call, new mandatory adapter requirement or eleventh checklist item; no new skill/profile/scheduler.",
+    "No installed .nizam file/mode change, release number change/tag/publication, consumer upgrade or H-FRAMEWORK-RELEASE/H-CONSUMER-UPGRADE self-execution.",
+    "No WA implementation/policy/gate reduction, phase/budget rebaseline, new phase or funding outside original7200/9360.",
+    "No edits/reruns/resealing of historical014/110/111/112 artifacts or original113 proposals/approvals/failed attempts/snapshots/seals; no debt edits except exact NDEBT050 staged mask, and no manifest/roadmap/guide/NIP edits.",
+    "No Generator-written tests, verdicts, acceptance source-review proof or coordination/circuit counters; no inherited PASS as fresh QA."
+  ],
+  "verification": [
+    {
+      "acceptance_test": "1: Optional requirement is false",
+      "command": "python3 -c 'import json; from pathlib import Path; d=json.loads(Path('\"'\"'tools/skill.json'\"'\"').read_text()); assert d['\"'\"'runtime_requirements'\"'\"']['\"'\"'live_runtime_session'\"'\"']['\"'\"'required'\"'\"'] is False'"
+    },
+    {
+      "acceptance_test": "2: Original checklist remains ten items",
+      "command": "python3 -c 'import re; from pathlib import Path; s=Path('\"'\"'tools/interface.md'\"'\"').read_text(); section=re.split(r'\"'\"'(?m)^## 5[. ]'\"'\"',s,maxsplit=1)[1]; section=re.split(r'\"'\"'(?m)^## 6[. ]'\"'\"',section,maxsplit=1)[0]; assert len(re.findall(r'\"'\"'(?m)^\\s*\\d+\\. '\"'\"',section))==10'"
+    },
+    {
+      "acceptance_test": "3: Optional operation lives in interface Section6",
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/interface.md '\"'\"'^## 6[.] Optional Capability: Live Runtime Sessions$'\"'\"' '\"'\"'(^|[^[:alnum:]_])submit-operation([^[:alnum:]_]|$)'\"'\"''"
+    },
+    {
+      "acceptance_test": "4: Single skill routes runtime sessions in Section10",
+      "command": "bash -c 'source tools/verify_lib.sh; vlib_section_grep tools/SKILL.md '\"'\"'^## 10[.] Live Runtime Sessions$'\"'\"' '\"'\"'methodology/10_live_runtime_sessions[.]md'\"'\"''"
+    },
+    {
+      "acceptance_test": "5: Payload compliance",
+      "command": "bash tools/validate.sh --payload"
+    },
+    {
+      "acceptance_test": "6: Existing bootstrap consumers remain compatible",
+      "command": "bash tools/e2e_bootstrap_test.sh"
+    },
+    {
+      "acceptance_test": "7: Seven exact operations, request identity, existing kinds/statuses and conditional S1-S9 with independent semantic source review",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py surface"
+    },
+    {
+      "acceptance_test": "8: Parsed manifest/index and section-scoped router/crosslinks agree without duplicate or missing routes",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py routing"
+    },
+    {
+      "acceptance_test": "9: Original interface Sections1-5, mandatory requirements and existing capability entries are preserved",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py compatibility"
+    },
+    {
+      "acceptance_test": "10: Untracked-aware exact scope and bounded current-source deltas; installed and historical artifacts byte/mode exact",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py scope-history"
+    },
+    {
+      "acceptance_test": "11: Precompletion and explicit Parent completion projections preserve predecessor and successor records and counters",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py lifecycle"
+    },
+    {
+      "acceptance_test": "12: Independent private scratch mutations discriminate each contracted invariant and misplaced markers without unrelated setup failures",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py negative-controls"
+    },
+    {
+      "acceptance_test": "13: Optional normative delivery and record-only enforcement never claim controller, live13 proof, release or upgrade",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py claim-boundary"
+    },
+    {
+      "acceptance_test": "14: Fixed verification inputs and separate current-source candidate seal bind actual Git revision, approved contract and independent identities",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/check_113.py input-integrity"
+    },
+    {
+      "acceptance_test": "15: Full repository compliance",
+      "command": "bash tools/validate.sh"
+    },
+    {
+      "acceptance_test": "16: Unchanged frozen scope classifier measures actual Git numstat",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 113=a57c860a18c82990c4a43deed1465bd052bb4c3f.. --files"
+    }
+  ],
+  "estimated_lines": 1050,
+  "evidence_dir": ".agent/evidence/113/",
+  "evidence_convention": "qa-NN.txt per ordered command: exact repo-root invocation first, actual stdout/stderr, actual EXIT last; exercised Git revision and source/bundle seal by sibling receipt path. Own spot:113-qa-adversarial.txt. Independent actual source-review.json references personally captured diff/evidence. Never session-absolute evidence commands or inline raw JSON output.",
+  "approvals": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false,
+    "revisions": 2
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "implementation_requirements": {
+    "authority": "Installed v1.5.0 AGF/execution/adversarial/circuit/anti-hallucination govern. Product spec015, exact feature113 and accepted NIP3 adapter/routing/compatibility sections are external semantic anchors. Root owns immutable proposal SHA, state and lifecycle.",
+    "operations": [
+      "open-session",
+      "submit-operation",
+      "poll-operation",
+      "cancel-operation",
+      "transfer-session",
+      "reattach-session",
+      "close-session"
+    ],
+    "operation_semantics": "Only submit-operation executes project code, including observe. Existing read-state reads durable session status; no status endpoint. open/transfer/reattach/close lifecycle calls never evaluate/load/run project code. poll/cancel only observe/request control; cancellation is not confirmed stopping.",
+    "request_identity": "Describe existing operation_id, session_id, expected_generation{counter,nonce}, expected_lease_epoch, requester{principal_kind,role,agent_id}, contract_id/step_key/attempt, kind/payload, context{working_dir,namespace,reader/test config refs}, limits. These abstract adapter inputs map to existing schema records; not new required schema fields.",
+    "vocabulary": "Kinds exactly load_source,compile_source,evaluate,run_tests,observe. Terminal statuses completed,condition_signalled,cancelled,terminated,rejected; nonterminal running,cancel_requested,unknown. debugger_paused is optional and not emitted in v1, never a new schema status. wait_outcome stopped_waiting preserves outstanding execution and busy lane.",
+    "conditional_checks": {
+      "S1": "Existing session/operation schemas validate records; record validity proves no live behavior.",
+      "S2": "Reject stale generation or lease before execution, with correct current owner/requester identity.",
+      "S3": "At most one operation in flight; lifecycle/reattach must preserve or explicitly resolve outstanding work.",
+      "S4": "Timeout stops waiting only and never reports execution stopped.",
+      "S5": "Capture conditions/restarts before unwind; failed partial load cannot claim image consistency.",
+      "S6": "Review trials receive no endpoint/permission and requests are rejected before execution.",
+      "S7": "Lifecycle calls never evaluate project code.",
+      "S8": "Session results/provenance are never acceptance evidence; acceptance remains fresh process/build/hermetic independent QA.",
+      "S9": "A new process/generation/subagent/stage does not reset contract_id/step_key/attempt or Parent-owned counters."
+    },
+    "optional_boundary": "S1-S9 and seven calls apply only to claiming adapters. Nonclaiming adapters remain conformant against original ten items and three mandatory abstract operations. Lifecycle permission cannot operate/accept; only Generator owns development operation and Evaluator fresh acceptance under existing role classes.",
+    "routing": "One optional manifest requirement and capability plus SBCL binding capability, new index adapter capability, exact SKILLSection10 pointers to interface and documents10/11, existing schemas by resolved links, README and delivered-document crosslinks land together. No duplicate existing protocol registrations. Verify actual rendered href destinations, not textual/comment markers: HTML attributes are already entity-decoded by HTMLParser even with convert_charrefs=False; never unescape them again. Raw Markdown destinations get one entity decode only. Preserve origin, parse URL then percent-decode path once, reject schemes/authority/query/fragment/wrong target and resolve within candidate root to the exact declared destination. C9-compatible ..&#47; links are allowed; renderability does not grant a path exemption.",
+    "enforcement_honesty": "Document10 partially-enforced describes already executable schema/C12 record validation only; optional normative contract publication enforces no live session ownership. Consumer runtime duties remain aspirational. Document11 stays consumer-aspirational. All executable controller/adapter/SBCL enforcement, live13 proofs and capable isolated CI remain phase016 pending; localSBCL availability never conformance.",
+    "source_review": "Independent reviewer personally reads actual interface Section6 and exact diff against base, checks every S1-S9/operation/request/status relationship against accepted NIP3, documents10/11, permission classes and111 schemas, and records source-review.json with role/session identity and raw diff path. Marker checks alone never establish semantic coverage.",
+    "test_ownership": "Both renewed pre-code gates precede all recovery checker/source/test implementation. Separate TestAuthor performs only authorized task113 decoding/bounded history/lifecycle adaptation and retains every old control; separate independent reviewer approves actual corrected bundle before any new Generator source. New fixed inputs bind revised approved contract plus immutable old proposal/approval/private inputs and recovery authorization. Generator never edits verifier; any bundle change renews review.",
+    "negative_design": "Preregister expected negative diagnostic/exit and budget class before running controls, never relabel failures. Scratch-only controls: altered ten-item body/count; required:true/removed old requirement; missing/duplicate operation/S rule/routing path; moved-marker false pass; false live/release claim; changed old proof/installed file; out-of-scope tracked/untracked file; altered predecessor/successor/counter; corrupted bundle/source seal. Each fails its target diagnostic rather than missing-file/setup failure; untouched compliant source passes. Exactly one additional fresh-QA own spot remains unlisted. Recovery retains all old controls and adds decimal/hex amp-escaped HTML wrong-target cases, actual rendered-link positives, absent/comment-only/unsafe/outside/wrong-target links, and real C9 scratch runs. Single parser-decoded ..&#47; is a wrong HTML URL path/fragment, not ../; reject it without a second entity decode. Expected target diagnostic/exit/classification is preregistered, restored positives pass. Extend debt/lifecycle/auth-key controls to reject old-row/log changes, missing original inventory, premature050resolution, counter reset or unauthorized recovery key.",
+    "precode_red": "Parent sequences intended RED only after approved contract: canonical1 missing optional key,3 absent optionalSection6 and4 absent runtimeSection10; record actual targeted failure with exact command/EXIT/base. Existing2/5/6 may already pass; do not manufacture failure. Reviewed independent controls must discriminate source changes.",
+    "historical_partition": "Preserve original4279-path private history inventory byte-exact. For its one entry .agent/contracts/113.json, verify the immutable recovery-prior-approval-snapshot/.agent/contracts/113.json under originalbb4a SHA/fullstatpermissions and archived inventory as historical_contract_map specifies; grade revised live113contract only against its separate actual newly sealed approved recovery pin. Every other original path is verified at its original location/SHA/fullpermissions, except docs/planning/DEBT.md governed only by exact debt050_mask. No contract/proof-family exclusion; installed239 inventory and all original private/base snapshots remain unchanged. Current eight source targets use only original declared113 deltas. New recovery-state inputs never replace historical baselines; canonical113/debt masks preserve original proof bytes.",
+    "inputs_and_seals": "Separate renewed fixed-inputs/bundle seal from actual eight-path current-source candidate seal. Before replacing any active verification entry point or canonical verdict Parent archives its existing bytes/mode and inventory, including all prior proposal/approval/rejected-bundle receipts. Original snapshot families/seals are immutable. Revised approved-contract snapshot lives in new recovery inputs, not original private/base. Seal actual existing bytes only, no future hashes/cycles; actual source changes invalidate ModeB/sourceReview/QA. Debt state is an explicit separately masked input with archived original/halt snapshots, not a ninth product path.",
+    "postcode_sequence": "Reviewed source development -> actual Git candidate and source/bundle seals -> independent ModeB on exact diff -> fresh independent QA executes every verification command at that candidate plus its own one spot -> evidence-capture gate verifies command/result/actual EXIT/exercised revision/all paths. Development runs never substitute. Parent promotes only reviewed owned diff/commit and preserves failed attempts as raw evidence.",
+    "parent_projection": "Current113 is blocked/BLOCKED with passes:false, actual halt evidence and blocked_reason; state.status blocked, contract proposal unapproved. Renewed contract approval permits checker recovery, with canonical113 remaining blocked until separate corrected-bundle approval. Then Parent resumes113in_progress/IN_PROGRESS, clears only113blocked_reason, retains passes:false and historical halt receipts. After actual ModeB/fresh16QA/ownspot/evidence gate, Parent113 complete/COMPLETED references real QA/capture and clears only halt-local current fields; phase in_progress and114pending/eligible. All other feature rows/steps/ACs/estimates unchanged. Checker exercises blocked, resumed and completed projections in scratch; no synthetic evidence or early completion.",
+    "budget": "Frozen unchanged measure.py uses Git numstat/classifier at base..WORKTREE; no alternative diff algorithm. Starting6088/9360 leaves3272 for113/114 including counted contract/verdict/planning closure. Estimated1131050,1141150. Parent compares current113 to prior1101711/1113133/1121244 only before appending; cumulative ceiling and unclassified paths fail closed. Compact contracts/verdicts and small source delta conserve114 allowance; no extra allocation.",
+    "isolation": "This contract3 final architectural-separation attempt is owned root detached5f6beae with before-edit receipt. Later steps require separately recorded approved immutable bases and owned roots. Root alone records counters: original checker-development/review stay3/3, source development stays1/3 until an actual new source attempt concludes; new auth-bound113-recovery-1 checker keys alone start0/3. No blanket113-* reset/mutability or fourth original attempt. Read before write/detect before fix; installed payload immutable; PYTHONDONTWRITEBYTECODE=1."
+  },
+  "recovery": {
+    "authorization": ".agent/evidence/113/recovery-authorization.json",
+    "authorization_revision": "5f6beae229ab5a9e633496057319b877e46dc048",
+    "epoch": "113-recovery-1",
+    "basis": "Type/interface correction of reviewer3 observed double entity decoding and original frozen scope versus mandatory halt/debt records; no public scope or canonical AC expansion.",
+    "immutable_prior": {
+      "approved_contract_sha256": "bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5",
+      "proposal_sha256": "da7cf60d2ac3c4ea89d054f31a313a549e84082459a52d4ec0f7f2fef7528bbb",
+      "approval_snapshot": ".agent/evidence/113/recovery-prior-approval-snapshot/",
+      "approval_snapshot_inventory": ".agent/evidence/113/recovery-prior-approval-snapshot/inventory.json",
+      "original_proposal": ".agent/evidence/113/contract-proposal-attempt1.json",
+      "original_approval": ".agent/evidence/113/contract-approval.json",
+      "original_history": ".agent/evidence/113/private/history.json",
+      "halt": ".agent/evidence/113/circuit-breaker-halt.json",
+      "rejected_gate_sha256": "12edfb4f71dc55e1fa70ae0114441ef7e3efe2604751d4b3d39468afdc2f2036"
+    },
+    "counter_mask": "Only113-recovery-1-checker-development and113-recovery-1-checker-review are the authorized fresh keys; each limit3, monotonically0..3 and authorization path exact. Original113-checker-development/review remain exact3/3. 113-contract advances actual final attempt3; rejection by either pre-code gate halts for human review, with no fourth contract attempt authorized by checker recovery; source113-generator-development retains1 then progresses only on its recorded source attempts, max3. Original implementation/QA/capture counters remain0 until actual respective attempts, max3; no other historical keys change.",
+    "active_verification_replacement_mask": [
+      ".agent/evidence/113/check_113.py",
+      ".agent/evidence/113/evidence_gate.py",
+      ".agent/evidence/113/private/control_worker.py",
+      ".agent/evidence/113/private/controls.py",
+      ".agent/evidence/113/private/negative-plan.json",
+      ".agent/evidence/113/coordinator-interface.txt",
+      ".agent/evidence/113/fixed-inputs.json",
+      ".agent/evidence/113/fixed-inputs-seal.json"
+    ],
+    "replacement_rule": "Only above task113 active verifier files may be replaced by independently authored reviewed recovery bytes after exact archive/inventory capture. New recovery snapshot/inventory/controls files remain under113 evidence; old private/base and private/history are unchanged. Retain all old control intents, no broad proof-family exclusion. Canonical113 gate paths may hold new actual verdicts only after old verdict archive; no unsupported old approval inheritance.",
+    "debt050_mask": "Original .63 halt document at5f6beae is fixed input; original prehalt .62 bytes stay in Git and private history. Validate .62->.63 consists only version bump/new halt log and new050Open row. After both renewed pre-code approvals Parent .63->.64 adds one recovery log and appends at most160 words to050Notes naming actual continue authorization, corrected approach, fresh epoch and pending gates; existing050ID/date/severity/description/Notes prefix and every older row/log remain exact. Debt stays Open through renewed bundle review and source/freshQA. Resolve only after actual approved corrected bundle, ModeB, fresh16/16 QA plus ownspot and evidence gate: .64->.65 one resolution log and move only050 to topResolved, preserving ID/date/severity/description and all halt/recovery Notes as historical prefix, append at most160 words with actual gate/proof paths. Preserve all preexisting logs/rows/table headers/order except050 relocation; update no unrelated counts/metadata. Parent owns these writes; checker rejects premature or unanchored resolution.",
+    "completion_mask": "Debt resolution may coincide with113completion only after its real evidence gate. Recovering050 denotes verified checker correction plus actual feature acceptance, not release/runtime conformance. FreshQA tests onlyOpen actual state; completed/resolved projections are scratch until Parent closure, then actual bytes are checked by same narrow masks. Halt snapshots remain immutable.",
+    "budget": "Blocked inflight300 is not a completed-feature baseline; original7200/9360, completed6088 and remaining3272 remain. Recovery contracts/verdicts/debt/closure consume113 actual Git-numstat counted budget once; raw evidence separate. Frozen measure.py unchanged; no supplementary allocation.",
+    "historical_contract_map": {
+      "original_history_entry": ".agent/contracts/113.json",
+      "archive_path": ".agent/evidence/113/recovery-prior-approval-snapshot/.agent/contracts/113.json",
+      "original_sha256": "bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5",
+      "original_stat_permissions": 436,
+      "archive_inventory_path": ".agent/evidence/113/recovery-prior-approval-snapshot/inventory.json",
+      "archive_inventory_sha256": "3e6bc84fb748d44aa324719e2b60386662cdfda186b2e8ed72b732c7878b0ba3",
+      "rule": "Map exactly this one original history entry to the archive; verify archive existence, regular non-symlink type, originalSHA and fullstatpermissions, and exact sealed archive inventory entry. Missing/corrupt archive or changed history/inventory fails. Every other original entry keeps its original path/SHA/permissions, except preciseDEBT050 mask; no family wildcard or bypass.",
+      "live_contract_rule": "Revised live .agent/contracts/113.json is a distinct object. After both actual pre-code approvals Parent snapshots its real approved bytes/fullpermissions into new recovery inputs and records their actualSHA in the renewed sealed fixed-inputs approved-contract pin. Check live bytes against that actual pin and approvals independently; do not grade live againstbb4a or rewrite original private/base/history. Future approved hash is never invented or self-referential."
+    }
+  }
+}
+{
+  "review": "validator-mode-a",
+  "feature": "113",
+  "contract_id": "113",
+  "revision_reviewed": 1,
+  "actor": "/root/adapter_validator_113",
+  "proposal_sha256": "85296b4075227ffd9964b8ecc78fce4e2ac9ccef4e7cde4bcf2c3c574c94f81f",
+  "base_revision": "5f6beae229ab5a9e633496057319b877e46dc048",
+  "evidence": [
+    ".agent/evidence/113/recovery-mode-a-raw.txt"
+  ],
+  "issues": [
+    {
+      "verification_index": 9,
+      "criterion": "Immutable historical inventory and revised live113 contract must have mutually satisfiable exact verification rules",
+      "severity": "high",
+      "evidence": ".agent/evidence/113/recovery-mode-a-raw.txt",
+      "required_fix": "Explicitly map only original history entry .agent/contracts/113.json to recovery-prior-approval-snapshot/.agent/contracts/113.json, enforce its originalbb4a hash/fullmode and archive inventory, and verify revised live contract against its new sealed approved recovery pin. Preserve originalhistorybytes and every other original path; retain the exact DEBT050 mask and reject missing/changed archived contract. No broad proof or contract-family exclusion."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Rejected: original4279history pins the live113contract, but proposal exempts onlyDEBT; exact archived-original/live-revised mapping is required."
+  }
+}
+{
+  "gate": "H-CHECKER-113-RECOVERY",
+  "decision": "approved",
+  "authorized_by": "operator",
+  "verbatim": "continue.",
+  "at": "2026-10-12T07:58:40.039629+00:00",
+  "context": "Direct response to bounded checker recovery recommendation and approval question after feature113 circuit-breaker halt.",
+  "scope": "113task-onlychecker/link-decoding recovery and freshindependentreview; preserveoldcounters/source1/3/originalbudget/install; anyrequiredcontractbreaker/debtprojection alignment throughbothpre-code gates",
+  "approach": "Correct single HTML attribute entity decoding, retain old controls and add encoded-entity wrong-target regression; independent bundle review; narrow contract realignment through both pre-code gates.",
+  "epoch": "113-recovery-1",
+  "immutable_halt_base": "e55b29134bb938963b653d464f78c48de39ba7b1",
+  "preserved_counters": {
+    "113-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "113-checker-development": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "113-checker-review": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "113-generator-development": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "113-implementation": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "113-qa": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "113-evidence-capture": {
+      "attempts": 0,
+      "limit": 3
+    }
+  },
+  "budget_unchanged": true,
+  "installation_unchanged": true,
+  "halt_record_sha256": "449c074765cf2ec5e5e1a93270fe510bfe36e1e50daaee7a38e63805b3a03952"
+}
+{
+  ".agent/contracts/113.json": {
+    "sha256": "bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5",
+    "mode": "0o664"
+  },
+  ".agent/validator/113-mode-a.json": {
+    "sha256": "e5aa8bbab790e4e456158d7ae9983da7cd2a8ea10b8b22e37eb12da9e539dfa7",
+    "mode": "0o664"
+  },
+  ".agent/qa/113-contract-review.json": {
+    "sha256": "227b52661b7e2aa29c74b3ce6f2f446007ff22671814280fd9f0e2c2288652b5",
+    "mode": "0o664"
+  },
+  ".agent/validator/113-test-bundle-review.json": {
+    "sha256": "12edfb4f71dc55e1fa70ae0114441ef7e3efe2604751d4b3d39468afdc2f2036",
+    "mode": "0o664"
+  }
+}
+{
+  "contract_id": "113",
+  "phase": "015-live-runtime-normative",
+  "status": "blocked",
+  "failed_step": "113-checker-review",
+  "attempts": 3,
+  "limit": 3,
+  "actor": "/root",
+  "role": "Orchestrator mandatory circuit-breaker capture/state/debt/human halt",
+  "recorded_at": "2026-10-12T06:03:58.261485+00:00",
+  "gate": ".agent/validator/113-test-bundle-review.json",
+  "gate_sha256": "12edfb4f71dc55e1fa70ae0114441ef7e3efe2604751d4b3d39468afdc2f2036",
+  "fixed_inputs_sha256": "60147b9f354de9ed0569b02faded41638ed046ea69e1368784f3002bcac41cc3",
+  "finding": {
+    "severity": "high",
+    "verification_index": [
+      8,
+      10
+    ],
+    "criterion": "Rendered crosslinks must resolve to the exact contracted target after correct destination decoding",
+    "evidence": ".agent/evidence/113/bundle-review-attempt3-entity-falsepass.txt",
+    "required_fix": "Final third attempt is rejected: halt for human review under installed circuit-breaker Section4. Any later explicitly authorized approach must avoid second entity-decoding of already parsed HTML href attributes and discriminate encoded-entity wrong-target cases while preserving existing controls; no autonomous fourth attempt."
+  },
+  "evidence": [
+    ".agent/evidence/113/bundle-review-attempt3-raw.txt",
+    ".agent/evidence/113/bundle-review-attempt3-controls.txt",
+    ".agent/evidence/113/bundle-review-attempt3-prior-probe.txt",
+    ".agent/evidence/113/bundle-review-attempt3-entity-falsepass.txt"
+  ],
+  "preservation": ".agent/evidence/113/checker-review-attempt3-preservation.json",
+  "snapshot": ".agent/evidence/113/bundle-attempt3-snapshot/",
+  "source_status": "Onlysource1unrevieweddraftwaswrittenandquarantined; publiceightproductpathsunchanged. Source2, ModeB andfreshQA notstarted. No113completionclaim.114pending.",
+  "installed_release": "v1.5.0 frozen239files; no release/tag/install upgrade executed",
+  "scope_budget": "Original7200/9360 and completed6088 remain unchanged; blocked113measurement recordedseparately, notcompletedbaseline.",
+  "debt": "NDEBT-050",
+  "next_gate": "H-CHECKER-113-RECOVERY",
+  "recommended_recovery": "Explicitly authorize a bounded checker recovery using the actual reviewer-required single HTML-attribute entity decode and discriminatory encoded-entity wrong-target controls, then fresh independent bundle review. Preserve exhausted original counters; any fresh recovery counters require explicit human authorization. Re-enter contract alignment for narrow required breaker/debt annotations before source if the frozen historical scope guard requires it. Keep sourcecounter1/3, othercounters, installedrelease and7200/9360 unchanged.",
+  "authority": "Installed .nizam/methodology/03_circuit_breaker.md Section4; routed byAGENTS.md and.nizam/tools/SKILL.md Section4",
+  "fourth_attempt_started": false,
+  "source2_started": false,
+  "new_qa_authored": false
+}
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/bundle-review-attempt3-entity-probe.py --root .
+EXERCISED_REVISION: 6bc5a654cf09d2654b4a42d9cdeb93f2491c2582
+PREREGISTERED: HTML anchor href="..&amp;#47;tools/interface.md" decodes once to ..&#47;tools/interface.md, whose URL path is ..& and fragment47;tools/interface.md; it is not the required target. Expect routing exit1 DOCUMENT_INTERFACE_LINK and bounded_delta exit1 SBCL_BOUNDED_LINK. Evidence budget; scratch component proof only.
+INDEPENDENT_SINGLE_PARSE_ATTRIBUTE '..&#47;tools/interface.md' URL_PATH '..&' URL_FRAGMENT '47;tools/interface.md'
+CHECKER_HREFS ["../tools/interface.md"]
+POSITIVE routing EXIT0
+POSITIVE bounded_delta EXIT0
+ACTUAL NEGATIVE routing EXIT0 PASS
+ACTUAL NEGATIVE bounded_delta EXIT0 PASS
+RESTORED positive EXIT0
+
+EXIT: 0
+---
+id: agent-governance-framework
+title: "Agent Governance Framework (AGF)"
+description: "The generalised multi-agent execution model: agent roles, the dual validator gate, the JSON verdict parse rule, and the durable-state rule for agent coordination."
+version: 0.2.0
+status: active
+authoritative_source: standard/AGF.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-19"
+    summary: "Define the Orchestrator role in Section 2 (coordination/state-ownership: sequences the execution roles, parses each gate verdict, owns run_state's run-position/coordination fields per Section 5 rule 4, enforces the circuit breaker) — resolving NDEBT-010, the load-bearing-but-undefined role that capability_profiles.md, permission_classes.md, mcp_policy.md, and methodology/06_release_train.md all already referenced. Section heading generalised from 'Four Agent Roles'; Section 5 rule 4 now names the Orchestrator-owned coordination fields."
+  - version: "0.1.1"
+    date: "2026-07-12"
+    summary: "Documentation-truth cleanup: Section 6's circuit-breaker cross-reference now names methodology/03_circuit_breaker.md (shipped at genesis; the 'forthcoming' wording was stale), and the Section 4 verdict rule's dropped word is restored ('entry in any of the three arrays blocks advancement')."
+---
+
+# Agent Governance Framework (AGF)
+
+## 1. Overview
+
+The AGF defines a runtime-agnostic execution model for coordinating multiple AI agents
+against a shared, contract-first delivery pipeline. It is deliberately silent on any
+specific agent runtime, tool-calling API, or orchestration harness — any runtime that can
+route work between the roles defined in Section 2 and honour the gates below is compliant.
+
+## 2. The Agent Roles
+
+Every execution pipeline governed by this framework is coordinated by a single
+**Orchestrator** and carried out by four execution roles (Planner, Generator, Validator,
+Evaluator). A single agent implementation MAY embody more than one role across different
+sessions, but a single session MUST NOT blend roles in a way that lets one role bypass
+another's gate.
+
+| Role | Responsibility | Typical Output |
+|---|---|---|
+| **Orchestrator** | Coordinates the pipeline: sequences the four execution roles, parses each gate's JSON verdict (Section 4) and advances only when it passes, owns the run-position and coordination fields of durable state (Section 5), and enforces the circuit breaker (Section 6). Authors no spec, contract, source code, or gate verdict of its own — it routes work between the execution roles and records the outcome. Where a deployment collapses the Orchestrator into another role, that collapse MUST be disclosed in durable state and every gate below still honoured. | Updated `run_state.json` coordination fields; gate-advance decisions recorded in durable state. |
+| **Planner** | Expands a brief or request into product-level artifacts: an architecture/spec document and a feature list with acceptance criteria. Stays at high-level architecture; does not lock in low-level implementation detail. | A specification document, a feature list. |
+| **Generator** | Proposes an implementation contract for a feature, then — once the contract is approved — implements only that contract's scope. Never expands scope silently. | A proposed contract; source code changes matching an approved contract. |
+| **Validator** | Gatekeeps the pipeline at two points (Section 3): before code is written (Mode A) and after (Mode B). Does not write source code or repair contracts; it approves or rejects. | A JSON verdict (Section 4). |
+| **Evaluator** | Executes the verification plan (tests, checks) against the implementation and independently confirms pass/fail with evidence. | A pass/fail verdict with required fixes on failure. |
+
+## 3. The Dual Validator Gate
+
+The validator operates in exactly two modes, and both are mandatory — a pipeline that
+skips either mode is non-compliant.
+
+### Mode A — Pre-Code Contract Gate
+
+- **Trigger:** A Generator has proposed a contract (`status: "proposed"`). No
+  implementation exists yet.
+- **Purpose:** Confirm the contract is a complete, bounded, testable, and traceable
+  translation of the specification — every deliverable maps to an explicit requirement,
+  every acceptance criterion is covered by a verification step, no scope is invented, and
+  no ambiguity is left for the Generator to guess at.
+- **Output required before proceeding:** An approved contract. Implementation MUST NOT
+  begin before a contract's status is `approved`.
+
+### Mode B — Post-Code Implementation Gate
+
+- **Trigger:** A Generator has completed implementation against an approved contract
+  (`status: "approved"`), and the validator is instructed to inspect the resulting
+  change set (e.g. via a diff against the pre-implementation state).
+- **Purpose:** Confirm the implementation matches the approved contract exactly — every
+  contracted deliverable is present, only contracted files were touched, every promised
+  verification step exists, no unapproved dependencies or scope crept in, and nothing is
+  a stub or placeholder.
+- **Output required before proceeding:** An approved implementation. The pipeline MUST
+  NOT hand off to the Evaluator's final verdict, nor may the orchestrator advance to the
+  next feature, before Mode B approval.
+
+Both modes are gatekeeping functions, not collaborative ones: a validator does not repair
+a contract or an implementation, invent missing requirements, soften a discrepancy, or
+approve on the basis of "mostly correct." Ambiguity is treated as a rejection reason, not
+a warning.
+
+## 4. The JSON Verdict Parse Rule
+
+Every validator and evaluator decision that gates pipeline progression MUST culminate in
+a single, machine-parseable JSON verdict block, in addition to any prose report. The
+orchestrator (or any automated caller) advances to the next pipeline stage **only when
+all four of the following hold simultaneously**:
+
+```text
+final_verdict.approved === true
+AND issues.length === 0
+AND missing_acceptance_coverage.length === 0
+AND unsupported_claims.length === 0
+```
+
+A verdict block satisfying all four conditions above looks like this:
+
+```json
+{"final_verdict": {"approved": true}, "issues": [], "missing_acceptance_coverage": [], "unsupported_claims": []}
+```
+
+Rules for applying this gate:
+
+1. **Parse only the JSON verdict block.** Prose framing — including language like
+   "mostly approved," "approved with minor notes," or "should be fine" — MUST NOT be used
+   to infer approval. If the JSON block does not independently satisfy all four
+   conditions above, the result is a rejection, regardless of surrounding prose tone.
+2. **Empty arrays are load-bearing.** `issues`, `missing_acceptance_coverage`, and
+   `unsupported_claims` are not advisory fields; each is a hard gate. A single non-empty
+   entry in any of the three arrays blocks advancement even if `approved` is `true`.
+3. **No inferred approval.** An orchestrator or calling agent MUST NOT synthesize an
+   `approved: true` verdict on a validator's behalf from an incomplete or malformed
+   response. A missing or malformed verdict block is treated as a rejection and triggers
+   the failure-handling procedure the pipeline defines for malformed subagent output.
+
+## 5. The Durable State Rule (No Oral Tradition)
+
+Agents operating under this framework MUST communicate results exclusively through
+durable, file-based state — never through chat history, conversational memory, or any
+other channel that is not independently readable by the next agent in the pipeline.
+
+1. **Every material result is written to a file.** Specifications, feature lists,
+   contracts, verdicts, and run-position state each have a canonical durable location
+   (conventionally under a project's `.agent/` directory, or an equivalent
+   framework-declared location) that any subsequent agent can read without depending on
+   the conversation that produced it.
+2. **Chat is not state.** A result that exists only as prose in an agent's response, and
+   is never written to its durable location, MUST be treated as not having happened. A
+   later agent or orchestrator MUST NOT act on a claimed result it cannot independently
+   read from durable state.
+3. **State is the handoff mechanism.** When one role hands off to the next (Planner to
+   Generator, Generator to Validator, Validator to Evaluator), the receiving role's first
+   action is to read the current durable state, not to trust a summary passed along in
+   conversation.
+4. **Preserve, don't overwrite blindly.** Updates to durable state MUST preserve fields
+   the current step did not own or change; a role updates only the fields its contract or
+   protocol assigns to it. In particular, the run-position and coordination fields of
+   `run_state.json` — the current phase and feature, the pipeline status, the scope
+   budget, the circuit-breaker state, the append-only history, and any recorded
+   operator-gate decisions — are owned exclusively by the **Orchestrator** (Section 2); an
+   execution role writes its own artifacts (its contract, verdict, or evidence) but never
+   these coordination fields.
+
+## 6. Circuit Breaker Cross-Reference
+
+Every execution loop governed by this framework embeds a mandatory circuit breaker
+limiting self-correction attempts on any single step, so that repeated failures halt for
+human review rather than looping indefinitely. The full 3-strike protocol — attempt
+strategy per strike, the halt procedure, and required state updates on trigger — is
+defined in the framework's execution methodology (`methodology/03_circuit_breaker.md`).
+This document establishes only the cross-cutting requirement: no
+role defined in Section 2 may bypass or override the circuit breaker's halt decision.
+
+## 7. References
+
+- `standard/NDS.md` — frontmatter and document lifecycle rules referenced by contracts
+  and specs this framework's agents produce.
+- `standard/GIP.md` — how a consumer repository inherits this framework's governance
+  content in the first place.
+- `standard/anti_hallucination.md` — the constraints every role in Section 2 operates
+  under while producing its output.
+---
+id: nizam-contract-first-execution
+title: "Contract-First Harness Loop"
+description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, the JSON Verdict Parse Rule, and the evidence-capture gate required before completion."
+version: 0.2.0
+status: active
+authoritative_source: methodology/01_execution.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-08-15"
+    summary: "Phase-012 issue-52 correction: a passing QA verdict no longer advances directly to complete. A distinct evidence-capture gate verifies referenced .agent/evidence files exist and record each required command/result before the Orchestrator may update lifecycle state."
+---
+
+# Contract-First Harness Loop
+
+## 1. Overview
+
+Once `00_planning.md` has produced an eligible, dependency-cleared feature, that
+feature is driven through a two-loop state machine before it is considered
+complete. Loop 1 aligns on *what* will be built, before any code exists. Loop 2
+verifies *what was built* matches what was aligned on. Neither loop may be
+skipped, collapsed, or reordered.
+
+This protocol is coordinated by the **Orchestrator** and governs the interaction
+between the **Generator**, **Validator**, and **Evaluator** roles defined in
+`standard/AGF.md` Section 2. It is bound by the Dual Validator Gate defined in
+that document's Section 3; the Planner's eligible feature is its input.
+
+## 2. Loop 1 — Pre-Code Alignment
+
+```text
+Generator proposes contract (status: "proposed")
+        |
+        v
+Validator Mode A  (pre-code contract gate, standard/AGF.md Sec 3)
+        |
+        v
+Evaluator contract review (independent second read of the same contract)
+        |
+        v
+   Both approve?  --No--> Generator revises contract --> back to Validator Mode A
+        |                  (bounded by the circuit breaker, Section 5 below)
+       Yes
+        v
+Contract status -> "approved". Loop 1 ends. Loop 2 begins.
+```
+
+A contract entering Loop 1 MUST declare, at minimum: the files it will create or
+modify, its non-goals (explicit statements of what it does NOT authorize), its
+verification commands (one per acceptance test it satisfies), an estimated line
+count, and an evidence directory/convention (`schema/contract.schema.json`). A
+proposal missing any of these is incomplete and cannot reach `approved` status.
+
+**No implementation before approval.** A Generator MUST NOT write source code
+against a contract whose `status` is anything other than `"approved"`. This is
+the single most important rule in this protocol — every other gate exists to
+protect it.
+
+## 3. Loop 2 — Post-Code Repair
+
+```text
+Generator implements the approved contract's scope ONLY
+        |
+        v
+Validator Mode B  (post-code implementation gate, standard/AGF.md Sec 3)
+   - runs a diff against the pre-implementation state
+   - confirms every contracted deliverable is present
+   - confirms ONLY contracted files were touched
+   - confirms no scope crept in beyond the contract
+        |
+        v
+   Approved?  --No--> Generator reworks with the rejection's failure report
+        |               (bounded by the circuit breaker, Section 5 below)
+       Yes
+        v
+Evaluator executes the contract's verification commands independently
+   -> QA verdict (.agent/qa/NNN.json, pass/fail + evidence)
+        |
+        v
+   Verdict == pass?  --No--> Generator reworks with the QA failure report
+        |                     (bounded by the circuit breaker, Section 5 below)
+       Yes
+        v
+Evidence capture gate
+   - every required verification has an externalised evidence file
+   - the QA verdict references those paths and every path exists
+   - command/result and actual exit status are recorded
+        |
+        v
+   Complete?  --No--> Generator/Orchestrator repairs the evidence record
+        |              (bounded by the circuit breaker, Section 5 below)
+       Yes
+        v
+Durable state advances: feature marked complete, next eligible feature selected
+per the Dependency Enforcement Rule (00_planning.md Sec 5).
+```
+
+A Generator implementing Loop 2 MUST implement only the contracted scope. If,
+during implementation, the Generator discovers the contract itself needs to
+change (a missed file, an incorrect deliverable), it MUST stop and propose a
+contract revision — re-entering Loop 1 — rather than silently expanding scope
+under cover of "finishing the job."
+
+**Evidence is a completion gate, not post-processing.** A passing QA JSON block
+proves the Evaluator's decision, but the feature remains `in_progress` until the
+Orchestrator verifies that every contracted verification has a corresponding
+externalised file under `.agent/evidence/`, that the QA verdict references those
+paths, and that each referenced path exists and records the command/result plus
+the actual exit status. Missing or unreferenced evidence is a Loop 2 failure and
+uses the same bounded repair loop; it is never filled in after the feature is
+marked complete.
+
+## 4. The JSON Verdict Parse Rule
+
+Every gate in both loops above — Validator Mode A, Validator Mode B, the
+Evaluator's contract review, and the Evaluator's QA verdict — culminates in a
+machine-parseable JSON verdict block. Advancement past that gate is permitted
+**only** when all four conditions hold simultaneously:
+
+```text
+final_verdict.approved === true
+AND issues.length === 0
+AND missing_acceptance_coverage.length === 0
+AND unsupported_claims.length === 0
+```
+
+This is restated here, not redefined — `standard/AGF.md` Section 4 is
+authoritative for the rule itself. The load-bearing consequence for this
+protocol is: **prose framing never substitutes for the JSON block.** A report
+that reads "mostly approved, one minor note" is a rejection if its JSON verdict
+carries a non-empty `issues` array. An orchestrator or Generator reading a gate
+result MUST parse only the JSON block to decide whether to advance.
+
+## 5. Circuit Breaker Cross-Reference
+
+Both loops above contain a step that can fail and be retried: Loop 1's "Generator
+revises contract" step, and Loop 2's "Generator reworks" step (twice — once for a
+Mode B rejection, once for a QA failure). Every one of these repeatable steps is
+bound by the **same** mandatory 3-strike circuit breaker.
+
+This protocol does not restate the breaker's internal mechanics (the per-attempt
+strategy, the halt procedure, or where its counters live) — those are
+authoritatively defined in `03_circuit_breaker.md`. What this protocol commits
+to is narrower and non-negotiable: **no revision loop or rework loop in either
+Loop 1 or Loop 2 above may exceed the attempt limit `03_circuit_breaker.md`
+defines, under any circumstance.** A fourth attempt at any single named step in
+this document is forbidden by that document and by extension forbidden here.
+
+## 6. Handoff Out
+
+When Loop 2 has both a passing QA verdict **and** a passing evidence-capture
+gate, the Orchestrator updates durable state (`04_tool_driven_state.md`) to
+reflect completion. Control then returns to `00_planning.md` Section 5 (the
+Dependency Enforcement Rule) to select the next eligible feature.
+
+## 7. References
+
+- `standard/AGF.md` — the agent roles (the coordinating Orchestrator and the
+  four execution roles), the Dual Validator Gate, and the authoritative
+  definition of the JSON Verdict Parse Rule.
+- `00_planning.md` — produces the eligible feature this loop consumes, and
+  receives control back on completion via the Dependency Enforcement Rule.
+- `02_adversarial_tdd.md` — the independence and rigor requirements binding the
+  Evaluator's contract review and QA verdict steps above.
+- `03_circuit_breaker.md` — the 3-strike limit bounding every revision and
+  rework step named in Sections 2, 3, and 5 of this document.
+- `04_tool_driven_state.md` — the durable-state artifacts (contracts, QA
+  verdicts, run state) this loop reads from and writes to at every stage.
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:contract.schema.json",
+  "title": "Nizam Per-Feature Contract Schema",
+  "description": "Validates .agent/contracts/NNN.json, the pre-code alignment artifact scoping a single feature's deliverables, non-goals, and verification commands before implementation begins.",
+  "type": "object",
+  "properties": {
+    "contract_id": {
+      "type": "string",
+      "description": "Unique contract identifier, matching the feature it scopes, e.g. '001'."
+    },
+    "feature_id": {
+      "type": "string",
+      "description": "Id of the feature in feature_list.json this contract scopes."
+    },
+    "name": {
+      "type": "string",
+      "description": "Short human-readable name of the contracted feature."
+    },
+    "status": {
+      "type": "string",
+      "description": "Current lifecycle state of the contract.",
+      "enum": ["proposed", "approved", "implemented", "complete", "rejected"]
+    },
+    "spec_ref": {
+      "type": "string",
+      "description": "Path to the product spec document this contract derives from."
+    },
+    "scope": {
+      "type": "object",
+      "description": "The files this contract authorizes the generator to create or modify.",
+      "properties": {
+        "files_create": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": { "type": "string" },
+              "purpose": { "type": "string" }
+            },
+            "required": ["path", "purpose"],
+            "additionalProperties": true
+          }
+        },
+        "files_modify": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": { "type": "string" },
+              "purpose": { "type": "string" }
+            },
+            "required": ["path", "purpose"],
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": ["files_create", "files_modify"],
+      "additionalProperties": true
+    },
+    "non_goals": {
+      "type": "array",
+      "description": "Explicit statements of what this contract does NOT authorize.",
+      "items": { "type": "string" }
+    },
+    "amendments": {
+      "type": "array",
+      "description": "Records of post-approval amendments to this contract, if any. Each entry is either a legacy free-text string in the form 'YYYY-MM-DD: <summary>' (per contracts 001.json and 016.json), or the richer structured object form {at, by, target, type, change, rationale, dry_run_proof, ratified_by_mode_b} (per contract 019.json). Not required at the top level -- contracts with zero amendments (the common case) still validate without this key.",
+      "items": {
+        "oneOf": [
+          { "type": "string" },
+          { "type": "object", "additionalProperties": true }
+        ]
+      }
+    },
+    "verification": {
+      "type": "array",
+      "description": "The commands the generator and validator/evaluator run to prove the contract's acceptance tests are met.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "acceptance_test": { "type": "string" },
+          "command": { "type": "string" }
+        },
+        "required": ["acceptance_test", "command"],
+        "additionalProperties": true
+      }
+    },
+    "estimated_lines": {
+      "type": "integer",
+      "description": "Estimated lines of change for this feature.",
+      "minimum": 0
+    },
+    "evidence_dir": {
+      "type": "string",
+      "description": "Directory where this contract's verification evidence files are written."
+    },
+    "evidence_convention": {
+      "type": "string",
+      "description": "The naming convention used for this contract's evidence files."
+    },
+    "approvals": {
+      "type": "object",
+      "description": "Optional record of who/what approved this contract and when.",
+      "properties": {
+        "validator_mode_a": { "type": "boolean" },
+        "evaluator_contract_review": { "type": "boolean" },
+        "approved_at": { "type": "string" },
+        "revisions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of contract-negotiation revision rounds this contract went through before approval."
+        }
+      },
+      "additionalProperties": true
+    },
+    "dod_ref": {
+      "type": "string",
+      "description": "Optional repo-relative path to the Definition of Done document governing this artifact's completion claims (in this repository `standard/definition_of_done.md`; in a bootstrapped consumer, conventionally `.nizam/standard/definition_of_done.md`). Advisory metadata: never required, and no check fails on its absence."
+    }
+  },
+  "required": [
+    "contract_id",
+    "feature_id",
+    "name",
+    "status",
+    "spec_ref",
+    "scope",
+    "non_goals",
+    "verification",
+    "estimated_lines",
+    "evidence_dir",
+    "evidence_convention"
+  ],
+  "additionalProperties": true
+}
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:contract_review.schema.json",
+  "title": "Nizam Contract-Review Verdict Schema",
+  "description": "Validates the evaluator's pre-code contract-testability review verdict for a feature contract, produced during Loop 1 (Pre-Code Alignment) as .agent/qa/NNN-contract-review.json (or a revision-suffixed variant such as NNN-contract-review-revN.json). Distinct from qa_verdict.schema.json, which validates the POST-code QA pass/fail verdict; this schema validates the PRE-code review of the verification suite's own soundness (vacuous-match, false-fail, and coverage-gap hunting) before implementation begins.",
+  "type": "object",
+  "properties": {
+    "review": {
+      "type": "string",
+      "description": "The kind of review performed, e.g. 'contract-testability'."
+    },
+    "feature": {
+      "type": "string",
+      "description": "Id of the feature whose contract is under review."
+    },
+    "contract_id": {
+      "type": "string",
+      "description": "Id of the contract under review, when distinct bookkeeping from 'feature' is useful (e.g. tracking a specific revision)."
+    },
+    "revision_reviewed": {
+      "type": "integer",
+      "description": "Which contract-negotiation revision round this review evaluated (0 for the initial proposal).",
+      "minimum": 0
+    },
+    "issues": {
+      "type": "array",
+      "description": "Verification-suite soundness defects found (vacuous matches, false-fails, false-passes, coverage gaps). Empty when the contract is approved with no blocking findings.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "verification_index": {
+            "description": "Which verification entry (by array index or ordinal) the issue concerns; null if the issue is not tied to a single entry (e.g. a missing-coverage gap).",
+            "type": ["string", "integer", "null"]
+          },
+          "criterion": {
+            "type": "string",
+            "description": "The acceptance criterion the flagged verification entry was supposed to prove."
+          },
+          "evidence": {
+            "type": "string",
+            "description": "The dry-run or fixture-based proof demonstrating the defect."
+          },
+          "required_fix": {
+            "type": "string",
+            "description": "The change needed to close the defect."
+          },
+          "severity": {
+            "type": "string",
+            "description": "Defect severity, e.g. 'high', 'medium', 'low'."
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "missing_acceptance_coverage": {
+      "type": "array",
+      "description": "Acceptance criteria from the feature/spec that no verification entry in the contract actually covers."
+    },
+    "unsupported_claims": {
+      "type": "array",
+      "description": "Claims made by the contract or its scope text that are not backed by a corresponding verification entry."
+    },
+    "observations": {
+      "type": "array",
+      "description": "Non-blocking notes: residual edge cases judged non-blocking, intentional design asymmetries, or awareness items that do not gate approval.",
+      "items": {}
+    },
+    "final_verdict": {
+      "type": "object",
+      "description": "The review's overall outcome.",
+      "properties": {
+        "approved": {
+          "type": "boolean",
+          "description": "Whether the contract (at the reviewed revision) is approved to proceed to implementation."
+        },
+        "feature": {
+          "type": "string",
+          "description": "Id of the feature this verdict concerns, mirroring the top-level 'feature' key."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Human-readable summary of the review's findings and disposition."
+        }
+      },
+      "required": ["approved", "summary"],
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "review",
+    "feature",
+    "issues",
+    "missing_acceptance_coverage",
+    "unsupported_claims",
+    "final_verdict"
+  ],
+  "additionalProperties": true
+}
+
+EXIT:0
+READONLY METADATA OUTCOME: installedcontractschemaPASS; canonicalfirst6 and original16commandsbyteexact. Exact historical_contract_map archive regular/nonsymlink exists andSHA bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5/fullpermissions436 match originalhistory4279entry and archiveinventory. InventoryactualSHA 3e6bc84fb748d44aa324719e2b60386662cdfda186b2e8ed72b732c7878b0ba3 equalsdeclaredpin. Revisedlivecontract is explicitly distinct, snapshotted/sealed only after twoactualapprovals; no futureapprovedSHA invented. Everyother originalentry is checked at oldlocation/pin exceptpreciseDEBT050mask. PreviousModeArejection2 prescribedfix fully addressed without broad proof-family exclusion or originalhistory replacement.
+FULL PROPOSAL REVIEW: exact8product deltas remain original113optionaladapter/source routing, oldmandatory10items/3operations preserved, sevenoptionalcalls/S1-S9 and no live/release/install claims. Decoderonepass distinction targets actualthirdfalsepass and retainsoldcontrols/C9, newwrongtarget decimal/hex regression demanded. Newepochauthkeys only113-recovery-1 checker-development/review0..3/limit3; originalchecker3/3 and source1/3countercontinuity preserved, currentcontract3final and eitherprecode rejectionhalts. DEBT050 .62/.63historical->.64annotation->.65gatedresolution masks maintainunrelatedrows/logs; actual113remainsblockeduntilreviewedcorrectedbundle, completed onlyactualModeB/fresh16QA/ownspot/capture;114pending. IndependentTestAuthor/bundleReviewer/sourceGenerator/freshQA ownership retained. ActualGitcandidate/source-fixed seals avoidfuturehashcycles and invalidatechangedsource.7200/9360/completed6088/113estimate1050 unchanged, frozenGitnumstat classifier unchanged. Source/scope/checker semantics externalanchors canonical015/NIP3/auth/halt/probes. No further blocking issue or missing acceptance coverage identified.
+DISPOSITION: actualModeAapproved fixedproposald97b only. IndependentEvaluatorcontract review required beforecontractapproval/checkerimplementation; laterbundle/ModeB/QA/evidence gates remain mandatory. Prior originalModeAarchive bytes unchanged; thisstageowns onlynewverdict/evidence/handoff.
