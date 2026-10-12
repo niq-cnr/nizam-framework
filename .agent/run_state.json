@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
   "current_feature": "114",
-  "status": "blocked",
-  "updated_at": "2026-10-12T12:10:13.363883+00:00",
+  "status": "in_progress",
+  "updated_at": "2026-10-12T13:59:15.118685+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -498,6 +498,18 @@
       "limit": 3
     },
     "114-evidence-capture": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "114-recovery-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "114-recovery-checker-development": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "114-recovery-checker-review": {
       "attempts": 0,
       "limit": 3
     }
@@ -3698,6 +3710,27 @@
       "evidence": ".agent/evidence/114/blocked-scope-measurement.txt",
       "validation": ".agent/evidence/114/halt-validation.txt",
       "coordination_validation": ".agent/evidence/114/halt-coordination-check.txt"
+    },
+    {
+      "at": "2026-10-12T13:14:28.059426+00:00",
+      "event": "114-recovery-authorized",
+      "detail": "Operator directly approved bounded checker-context recovery after halt. Preserve original3/3 counters/raw/contract archive, create separate bounded recovery counters0/3, align only mandatory debt/halt/history masks through both pre-code gates before implementation. Canonical phase114 remains blocked until actual approvals.",
+      "authorization": ".agent/evidence/114/recovery-authorization.json",
+      "immutable_halt_base": "ea41afd196dddaef02f6be86217c84deaf47d238"
+    },
+    {
+      "at": "2026-10-12T13:30:11.665717+00:00",
+      "event": "114-recovery-contract1-proposal-frozen",
+      "detail": "Generator actual178-line proposed contract e925119 preserves12commands/6Source/estimate/budget and adds only recovery051/history/archival/counter masks. Actualmetadata/schema/handoff captured, no tests/source; originalcontract/gates archived. Canonicalblocked until both renewedprecode approvals.",
+      "proposal_sha256": "e92511922f2689e2a400990d6765a5a570bc26374c94d5b1fc934f889c19e3c9",
+      "evidence": ".agent/evidence/114/recovery-contract-attempt1-handoff.json"
+    },
+    {
+      "at": "2026-10-12T13:59:15.118685+00:00",
+      "event": "114-recovery-contract-approved-resume",
+      "detail": "Actual ModeA d3e649ad and independent typed Evaluator22393e72 strictly approved proposal e925119; Parent approved actual live recovery contract and preserved original7f/archive/4800/halt inventory. Canonicalphase/list resumed first, derivedstate next; checker recovery allowed, source still requires correctedbundle review. Original exhausted counters/budget/install retained.",
+      "approved_contract_sha256": "fd0d1be4ce0f25bcd632c49b209557bb910053866f8df8a28e062256f98fc02e",
+      "evidence": ".agent/evidence/114/recovery-contract-approval.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4014,9 +4047,7 @@
       }
     ]
   },
-  "blocked_features": [
-    "114"
-  ],
+  "blocked_features": [],
   "phase_007_scope_budget_final": {
     "original_estimate_lines": 870,
     "total_lines_changed": 240,
@@ -4269,7 +4300,7 @@
       }
     ]
   },
-  "last_action": "Feature114 BLOCKED after actual final independent bundleReview3 rejected named-toolchain version falsefail; ownedattempts quarantined; human recovery required; no fourth/source/QA.",
+  "last_action": "Both actual renewed114 pre-code gates approved; canonical114 resumed; separate bounded TestAuthor recovery1 next, source withheld pending bundle review.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4345,13 +4376,16 @@
   },
   "pending_operator_gate": {
     "gate": "H-CHECKER-114-RECOVERY",
-    "decision": "pending",
+    "decision": "approved",
     "reason": "114-checker-review3/3 rejected named SBCL version falsefail; fourth autonomous attempt forbidden",
     "proposal": ".agent/evidence/114/circuit-breaker-halt.json",
     "verdict": ".agent/validator/114-test-bundle-review.json",
     "scope": "Explicitly authorize a fresh bounded checker recovery distinguishing named toolchain context from framework release declarations; retain existing controls, add actual SBCL version 2.2.9.debian positive and release-forecast negatives, require fresh independent bundle review. Preserve exhausted original counters, failed raw and old gates/budget/install. Re-enter both pre-code gates for any necessary narrow debt/halt/history preservation masks before further work. No extra budget or runtime/release scope.",
     "authorization_inferred": false,
-    "at": "2026-10-12T12:06:24.061478+00:00",
-    "prior_gate": ".agent/evidence/114/prior-operator-gate-113.json"
+    "at": "2026-10-12T13:14:28.059426+00:00",
+    "prior_gate": ".agent/evidence/114/prior-operator-gate-113.json",
+    "authorization": ".agent/evidence/114/recovery-authorization.json",
+    "verbatim": "think carefully about the way forward. Approved, please proceed with the logcial next steps.",
+    "stage": "contract-approved-checker-pending"
   }
 }
