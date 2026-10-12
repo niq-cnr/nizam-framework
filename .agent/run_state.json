@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "113",
   "status": "blocked",
-  "updated_at": "2026-10-12T06:03:58.261485+00:00",
+  "updated_at": "2026-10-12T07:58:40.039629+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -462,6 +462,16 @@
     "113-evidence-capture": {
       "attempts": 0,
       "limit": 3
+    },
+    "113-recovery-1-checker-development": {
+      "attempts": 0,
+      "limit": 3,
+      "authorization": ".agent/evidence/113/recovery-authorization.json"
+    },
+    "113-recovery-1-checker-review": {
+      "attempts": 0,
+      "limit": 3,
+      "authorization": ".agent/evidence/113/recovery-authorization.json"
     }
   },
   "history": [
@@ -3469,6 +3479,13 @@
         "stage": "both-independent-pre-code-gates-approved"
       },
       "detail": "Actualfinalreview3 false/highissue; requiredcanonicalstep113BLOCKED written andschema-validated beforederivedpipelineblocked. Gateattempt3 countedonce; oldchecker3/source1/contract1, ModeB/QA0 andhistoricalallcounters retained. Reviewer90suite/validforms/C9successdoesnotoverride ownfalsepass. Capture/quarantine complete, debt050next, humanhalt; nofourth/relabel/reset/newallocation/release."
+    },
+    {
+      "at": "2026-10-12T07:58:40.039629+00:00",
+      "feature": "113",
+      "stage": "operator-authorized-checker-recovery",
+      "evidence": ".agent/evidence/113/recovery-authorization.json",
+      "note": "Original checker3/3 counters remain exhausted; separate bounded recovery epoch authorized. Canonical113 remains BLOCKED pending revised contract gates."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4006,7 +4023,7 @@
       }
     ]
   },
-  "last_action": "Feature113canonBLOCKED/derivedblocked after actualreview3false/highissue. Quarantine andNDEBT050 complete; frozenclassifier captures incomplete300counted, notcompletedbaseline, completed6088 unchanged. HumanH-CHECKER113RECOVERY required; noSource2/ModeB/QA/114/fourth.",
+  "last_action": "Recorded explicit H-CHECKER-113-RECOVERY approval; new recovery epoch0/3. Original counters, budget and installation preserved; contract realignment next.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4081,11 +4098,14 @@
   },
   "pending_operator_gate": {
     "gate": "H-CHECKER-113-RECOVERY",
-    "decision": "awaiting-explicit-human-corrected-approach-or-scope-decision",
+    "decision": "approved",
     "reason": "113-checker-review3/3 rejected doubleHTMLentity-decoding false-pass; fourthautonomousattempt forbidden",
     "proposal": ".agent/evidence/113/circuit-breaker-halt.json",
     "verdict": ".agent/validator/113-test-bundle-review.json",
     "scope": "113task-onlychecker/link-decoding recovery and freshindependentreview; preserveoldcounters/source1/3/originalbudget/install; anyrequiredcontractbreaker/debtprojection alignment throughbothpre-code gates",
-    "authorization_inferred": false
+    "authorization_inferred": false,
+    "authorization": ".agent/evidence/113/recovery-authorization.json",
+    "at": "2026-10-12T07:58:40.039629+00:00",
+    "verbatim": "continue."
   }
 }
