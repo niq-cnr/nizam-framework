@@ -1,0 +1,352 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c "import importlib.util,json,pathlib,subprocess,hashlib,yaml\nroot=pathlib.Path('.')\npath=root/'.agent/evidence/workflow-016-planning/check_plans.py'\nspec=importlib.util.spec_from_file_location('planning_checks',path); c=importlib.util.module_from_spec(spec);spec.loader.exec_module(c)\nlists={n:c.read('.agent/feature_list_'+n+'.json') for n in c.PHASES}\nbaseline=[f['id'] for p in c.git('ls-tree','-r','--name-only',c.AUTH_BASE,'--','.agent').decode().splitlines() if c.re.fullmatch(r'\\.agent/feature_list[^/]*\\.json',p) for f in json.loads(c.original(p,c.AUTH_BASE))['features']]\nresult=c.check_lists(lists,True,baseline);c.metadata(lists,result,True)\nfor n,l in lists.items():\n phase=yaml.safe_load((root/('docs/planning/phase_'+n+'.yaml')).read_text());c.schema(phase,'phase')\n c.require(phase['id']==l['phase'] and phase['status']=='pending' and [s['id'] for s in phase['steps']]==[f['id'] for f in l['features']] and all(s['status']=='PENDING' and 'evidence' not in s for s in phase['steps']),'phase-pending')\n front=yaml.safe_load((root/('.agent/product_spec_'+n+'.md')).read_text().split('---',2)[1]);c.schema(front,'frontmatter');c.require(front['status']=='draft','spec-draft')\nm=c.read('docs/planning/manifest.json');c.schema(m,'manifest');old=json.loads(c.original('docs/planning/manifest.json','a63cf0c513ad645a9771a69af00dca5d0a45474d'));c.current_phase(m,old)\nc.require([v['feature_list'] for v in m['phases'][len(old['phases']):]]==['.agent/feature_list_016.json','.agent/feature_list_020.json'] and all(v['status']=='pending' and v['activation_state']=='proposed' for v in m['phases'][len(old['phases']):]),'new-manifest-rows')\nresult['scope_changed']=c.check_scope()\ninputs=[p for n in c.PHASES for p in ('.agent/product_spec_'+n+'.md','.agent/feature_list_'+n+'.json','docs/planning/phase_'+n+'.yaml')]+['docs/planning/manifest.json',str(path)]\nresult.update(passed=True,mode='all-plan-schema-metadata-only',public_projection_status='Not checked yet: Generator integration pending; not --all approval.',revision=c.git('rev-parse','HEAD').decode().strip(),input_sha256={p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in inputs})\nprint(json.dumps(result,indent=2))\n"
+REVISION: a63cf0c513ad645a9771a69af00dca5d0a45474d
+CHECKER_SHA256: c50a9f8c88de2fa504f66d52f229833d96811ec710e98dd9c560263caa8fb087
+{
+  "allocation": {
+    "017": [
+      "115",
+      "116",
+      "117",
+      "118"
+    ],
+    "018": [
+      "119",
+      "120",
+      "121",
+      "122",
+      "123"
+    ],
+    "019": [
+      "124",
+      "125"
+    ],
+    "016": [
+      "126",
+      "127",
+      "128"
+    ],
+    "020": [
+      "129",
+      "130",
+      "131",
+      "132"
+    ]
+  },
+  "budgets": {
+    "017": {
+      "estimate": 5400,
+      "ceiling": 7020
+    },
+    "018": {
+      "estimate": 7200,
+      "ceiling": 9360
+    },
+    "019": {
+      "estimate": 3500,
+      "ceiling": 4550
+    },
+    "016": {
+      "estimate": 5650,
+      "ceiling": 7345
+    },
+    "020": {
+      "estimate": 7350,
+      "ceiling": 9555
+    }
+  },
+  "cross_phase_graph": {
+    "017": [],
+    "018": [
+      "017",
+      "016"
+    ],
+    "019": [
+      "018",
+      "020"
+    ],
+    "016": [
+      "017"
+    ],
+    "020": [
+      "016",
+      "018"
+    ]
+  },
+  "proposed_feature_graph": {
+    "115": [],
+    "116": [
+      "115",
+      "115",
+      "115",
+      "115",
+      "115",
+      "115",
+      "115"
+    ],
+    "117": [
+      "115",
+      "116",
+      "116",
+      "116",
+      "116",
+      "116",
+      "116"
+    ],
+    "118": [
+      "116",
+      "117",
+      "117",
+      "117",
+      "117",
+      "117",
+      "117",
+      "117"
+    ],
+    "119": [
+      "118",
+      "118",
+      "118",
+      "127",
+      "118",
+      "118",
+      "118",
+      "118"
+    ],
+    "120": [
+      "119",
+      "119",
+      "119",
+      "118",
+      "127",
+      "119",
+      "119",
+      "119",
+      "119"
+    ],
+    "121": [
+      "120",
+      "120",
+      "120",
+      "118",
+      "127",
+      "120",
+      "120",
+      "120",
+      "120"
+    ],
+    "122": [
+      "121",
+      "121",
+      "121",
+      "118",
+      "127",
+      "121",
+      "121",
+      "121",
+      "121"
+    ],
+    "123": [
+      "122",
+      "122",
+      "122",
+      "118",
+      "127",
+      "122",
+      "122",
+      "122",
+      "122"
+    ],
+    "124": [
+      "123",
+      "123",
+      "123",
+      "123",
+      "119",
+      "120",
+      "123",
+      "132",
+      "123",
+      "123"
+    ],
+    "125": [
+      "124",
+      "124",
+      "124",
+      "124",
+      "124",
+      "119",
+      "120",
+      "123",
+      "132",
+      "124",
+      "124"
+    ],
+    "126": [
+      "115",
+      "116",
+      "117",
+      "118"
+    ],
+    "127": [
+      "126",
+      "115",
+      "116",
+      "117",
+      "118",
+      "126",
+      "126",
+      "126",
+      "126"
+    ],
+    "128": [
+      "127",
+      "115",
+      "116",
+      "117",
+      "118",
+      "127",
+      "127",
+      "127",
+      "127"
+    ],
+    "129": [
+      "128",
+      "128",
+      "128",
+      "119",
+      "120",
+      "123",
+      "128",
+      "128"
+    ],
+    "130": [
+      "129",
+      "129",
+      "129",
+      "128",
+      "119",
+      "120",
+      "123",
+      "129",
+      "129"
+    ],
+    "131": [
+      "130",
+      "130",
+      "130",
+      "128",
+      "119",
+      "120",
+      "123",
+      "130",
+      "130"
+    ],
+    "132": [
+      "131",
+      "131",
+      "131",
+      "128",
+      "119",
+      "120",
+      "123",
+      "131",
+      "131"
+    ]
+  },
+  "scope_changed": [
+    ".agent/contracts/workflow-016-planning.json",
+    ".agent/evidence/workflow-016-planning/check_plans.py",
+    ".agent/evidence/workflow-016-planning/checker-attempt1-preserved/check_plans.py",
+    ".agent/evidence/workflow-016-planning/checker-attempt1-preserved/checker-negative.txt",
+    ".agent/evidence/workflow-016-planning/checker-attempt1-preserved/checker-review.json",
+    ".agent/evidence/workflow-016-planning/checker-attempt1-preserved/checker-scope.txt",
+    ".agent/evidence/workflow-016-planning/checker-attempt1-preserved/validator-checker-negative.txt",
+    ".agent/evidence/workflow-016-planning/checker-attempt1-preserved/validator-checker-own-spot.txt",
+    ".agent/evidence/workflow-016-planning/checker-attempt1-preserved/validator-checker-scope.txt",
+    ".agent/evidence/workflow-016-planning/checker-attempt1.json",
+    ".agent/evidence/workflow-016-planning/checker-attempt2-report.json",
+    ".agent/evidence/workflow-016-planning/checker-attempt2.json",
+    ".agent/evidence/workflow-016-planning/checker-negative-attempt2.txt",
+    ".agent/evidence/workflow-016-planning/checker-negative.txt",
+    ".agent/evidence/workflow-016-planning/checker-review-approved.json",
+    ".agent/evidence/workflow-016-planning/checker-review-attempt1.json",
+    ".agent/evidence/workflow-016-planning/checker-review-attempt2.json",
+    ".agent/evidence/workflow-016-planning/checker-scope-attempt2.txt",
+    ".agent/evidence/workflow-016-planning/contract-attempt1-preserved/contract-review.json",
+    ".agent/evidence/workflow-016-planning/contract-attempt1-preserved/contract.json",
+    ".agent/evidence/workflow-016-planning/contract-attempt1-preserved/mode-a.json",
+    ".agent/evidence/workflow-016-planning/contract-attempt1-preserved/spec.md",
+    ".agent/evidence/workflow-016-planning/contract-attempt1.json",
+    ".agent/evidence/workflow-016-planning/contract-attempt2-approved/contract-review.json",
+    ".agent/evidence/workflow-016-planning/contract-attempt2-approved/mode-a.json",
+    ".agent/evidence/workflow-016-planning/contract-attempt2-approved/proposed-contract.json",
+    ".agent/evidence/workflow-016-planning/contract-attempt2.json",
+    ".agent/evidence/workflow-016-planning/contract-revision2-schema.txt",
+    ".agent/evidence/workflow-016-planning/environment-observed.txt",
+    ".agent/evidence/workflow-016-planning/evaluator-review-attempt1.json",
+    ".agent/evidence/workflow-016-planning/evaluator-review-attempt2.json",
+    ".agent/evidence/workflow-016-planning/generator-handoff.json",
+    ".agent/evidence/workflow-016-planning/lifecycle.yaml",
+    ".agent/evidence/workflow-016-planning/plan-interface.json",
+    ".agent/evidence/workflow-016-planning/predecessor-merge.json",
+    ".agent/evidence/workflow-016-planning/validator-checker-review2-negative.txt",
+    ".agent/evidence/workflow-016-planning/validator-checker-review2-own-spot.txt",
+    ".agent/evidence/workflow-016-planning/validator-checker-review2-scope.txt",
+    ".agent/evidence/workflow-016-planning/validator-review-attempt1.json",
+    ".agent/evidence/workflow-016-planning/validator-review-attempt2.json",
+    ".agent/evidence/workflow-016-planning/validator-wa-review-scope.txt",
+    ".agent/evidence/workflow-016-planning/validator-wa-review-wa.txt",
+    ".agent/evidence/workflow-016-planning/wa-attempt1-checks.txt",
+    ".agent/evidence/workflow-016-planning/wa-attempt1.json",
+    ".agent/evidence/workflow-016-planning/wa-final-prose-checks.txt",
+    ".agent/evidence/workflow-016-planning/wa-final-prose-validation.json",
+    ".agent/evidence/workflow-016-planning/wa-plan-validation.json",
+    ".agent/evidence/workflow-016-planning/wa-review-approved.json",
+    ".agent/evidence/workflow-016-planning/wa-review-attempt1.json",
+    ".agent/feature_list_016.json",
+    ".agent/feature_list_017.json",
+    ".agent/feature_list_018.json",
+    ".agent/feature_list_019.json",
+    ".agent/feature_list_020.json",
+    ".agent/product_spec_016.md",
+    ".agent/product_spec_017.md",
+    ".agent/product_spec_018.md",
+    ".agent/product_spec_019.md",
+    ".agent/product_spec_020.md",
+    ".agent/qa/workflow-016-planning-contract-review.json",
+    ".agent/run_state.json",
+    ".agent/validator/workflow-016-planning-checker-review.json",
+    ".agent/validator/workflow-016-planning-mode-a.json",
+    ".agent/validator/workflow-016-planning-wa.json",
+    "docs/planning/manifest.json",
+    "docs/planning/phase_016.yaml",
+    "docs/planning/phase_017.yaml",
+    "docs/planning/phase_018.yaml",
+    "docs/planning/phase_019.yaml",
+    "docs/planning/phase_020.yaml"
+  ],
+  "passed": true,
+  "mode": "all-plan-schema-metadata-only",
+  "public_projection_status": "Not checked yet: Generator integration pending; not --all approval.",
+  "revision": "a63cf0c513ad645a9771a69af00dca5d0a45474d",
+  "input_sha256": {
+    ".agent/product_spec_017.md": "04e9264268db57d8c8c69a5aff7ecb4f6d6c0b836e5a74e016f31329d9fde68b",
+    ".agent/feature_list_017.json": "ebd9807a653fb6362f29fc71178a6de881ef0140a72992f3a50c326d484de141",
+    "docs/planning/phase_017.yaml": "e2751537be8ddbfa2978886b2ee665a69dd286d6f6bf0ff8ad92da6e651ad2d4",
+    ".agent/product_spec_018.md": "fb1ba7675a76160790e04894dfd68a30410fe31d80bcd60826532802680b2a6a",
+    ".agent/feature_list_018.json": "b95455c9d942f9cb77af1069a1a3c10b29ca020431819f2d0db81d22faa8dab3",
+    "docs/planning/phase_018.yaml": "5e9c84c1273edff50af8585e5bbc172d5cd7585ac6e1d87eb438667910c8ef8c",
+    ".agent/product_spec_019.md": "9732f156f2bcb9aadf31774ca1a5d9e86627bc0587dbcc58fa124397614e0d70",
+    ".agent/feature_list_019.json": "5b6ee27534642c4a7b9deea2a2456efa6cce2d3d7d6d2035757f3174267be67b",
+    "docs/planning/phase_019.yaml": "f7fe4af5c837946fc389a24e4b085ad8e86105ba48ca2869f864618e4339a228",
+    ".agent/product_spec_016.md": "d9d157c813883e2ba7961435e36362fb70f080581169fb70a78eb451aa4c3a70",
+    ".agent/feature_list_016.json": "2fe182f60339723c6592016ac3865e89a40f1b0738e7ccd2074783f274d55e53",
+    "docs/planning/phase_016.yaml": "2c8562130716e178245d7cf08df0075973ed8077b972da5298718ddd75a0250e",
+    ".agent/product_spec_020.md": "aceec888ce4516e8fbb089dc2559745449d61774932158cbb9807cba65d886ca",
+    ".agent/feature_list_020.json": "5ab9c09519f65b1dc1281c59a59280f0dd1ddaef8a363c8c8d4faa10f25e0e80",
+    "docs/planning/phase_020.yaml": "cc749311e8b41dc6debbcb6fc9eb27aa775c251d83ff0b2033415f09dfc405e6",
+    "docs/planning/manifest.json": "2a79b9e40b6595a47dbcad7deb2d90e3af74d9e7e7c1b4520c0359368960057b",
+    ".agent/evidence/workflow-016-planning/check_plans.py": "c50a9f8c88de2fa504f66d52f229833d96811ec710e98dd9c560263caa8fb087"
+  }
+}
+EXIT: 0
