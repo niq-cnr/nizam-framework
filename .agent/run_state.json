@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "114",
   "status": "in_progress",
-  "updated_at": "2026-10-12T13:59:15.118685+00:00",
+  "updated_at": "2026-10-12T14:01:42.519414+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -3731,6 +3731,13 @@
       "detail": "Actual ModeA d3e649ad and independent typed Evaluator22393e72 strictly approved proposal e925119; Parent approved actual live recovery contract and preserved original7f/archive/4800/halt inventory. Canonicalphase/list resumed first, derivedstate next; checker recovery allowed, source still requires correctedbundle review. Original exhausted counters/budget/install retained.",
       "approved_contract_sha256": "fd0d1be4ce0f25bcd632c49b209557bb910053866f8df8a28e062256f98fc02e",
       "evidence": ".agent/evidence/114/recovery-contract-approval.json"
+    },
+    {
+      "at": "2026-10-12T14:01:42.519414+00:00",
+      "event": "114-recovery-resume-evidence-schema-corrected",
+      "detail": "Parent resume incorrectly reused historical contract-path phase evidence; installed phase schema requires .agent/evidence prefix. Actual red1 saved and only114phase evidence changed to real recovery-contract-approval receipt. Green schemas verify canonical/derived state before any TestAuthor orSource. Contract/gates/oldstep rows/counters unaffected.",
+      "red": ".agent/evidence/114/recovery-phase-evidence-schema-red.txt",
+      "green": ".agent/evidence/114/recovery-phase-evidence-schema-green.txt"
     }
   ],
   "phase_001_scope_budget_final": {

@@ -1,0 +1,19 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 - < .agent/evidence/114/recovery-coordination-schema-check-input.txt
+Traceback (most recent call last):
+  File "<stdin>", line 3, in <module>
+  File "/home/cnross/.local/lib/python3.12/site-packages/jsonschema/validators.py", line 1332, in validate
+    raise error
+jsonschema.exceptions.ValidationError: '.agent/contracts/114.json' does not match '^\\.agent/evidence/'
+
+Failed validating 'pattern' in schema['properties']['steps']['items']['properties']['evidence']:
+    {'type': 'string',
+     'description': 'Path to the externalised evidence file proving this '
+                    "step's completion. MUST reference a file under "
+                    "'.agent/evidence/'; raw terminal output MUST NEVER be "
+                    'pasted directly into this or any other field.',
+     'pattern': '^\\.agent/evidence/'}
+
+On instance['steps'][4]['evidence']:
+    '.agent/contracts/114.json'
+CANDIDATE_SHA: 7332fd18b8e3bc233d0ac6fffbc2f9286a856d01
+EXIT: 1
