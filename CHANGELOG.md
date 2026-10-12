@@ -9,6 +9,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Optional runtime-session adapter (feature113).** Published seven optional
+  calls and conditional S1–S9 while preserving the original ten mandatory
+  adapter items and existing requirements. Added manifest/index/skill routing
+  and document crosslinks. Document10 is partially enforced only by existing
+  schema/C12 record checks; SBCL binding remains consumer-aspirational.
+  Executable controller/adapter/SBCL enforcement and all thirteen live proofs
+  remain pending phase016; installed v1.5.0 is unchanged.
+
 - **SBCL reference binding (feature112).** Added the normative consumer-aspirational
   binding with folded toolchain/lock/core profile, condition/restart capture,
   non-atomic load/compile, drift, thread/cancellation hazards and fresh hermetic

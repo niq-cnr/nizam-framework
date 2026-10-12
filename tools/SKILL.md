@@ -2,10 +2,13 @@
 id: nizam-tools-skill
 title: "Nizam Governance Skill"
 description: "The single, runtime-agnostic instructions payload (DD-4) an agent runtime loads to plan, execute, gate, and durably record contract-first work under the Nizam framework."
-version: 0.5.0
+version: 0.6.0
 status: active
 authoritative_source: tools/SKILL.md
 change_log:
+  - version: "0.6.0"
+    date: "2026-10-12"
+    summary: "Route optional runtime sessions through the adapter interface, neutral protocol and SBCL binding without a new skill."
   - version: "0.5.0"
     date: "2026-09-17"
     summary: "Route automated code review through the convergent prior-ledger-first standard and deterministic review CLI."
@@ -224,7 +227,21 @@ three independent trials are required through an enforceable sandbox adapter (wo
 or `HOME` changes alone do not qualify), prior active findings fail closed, and
 suppression requires a separate human-authorized record.
 
-## 10. References
+## 10. Live Runtime Sessions
+
+For adapters claiming the optional `live_runtime_session` capability, read
+`tools/interface.md` Section 6, then `methodology/10_live_runtime_sessions.md`.
+For the SBCL reference profile, read `methodology/11_sbcl_runtime_binding.md`.
+This single runtime-agnostic skill routes to those sources rather than restating
+or forking their rules. Adapters without sessions remain conformant under the
+original ten mandatory adapter items; the seven calls and S1–S9 are conditional.
+
+Existing schemas and C12 validate declared records only. Session provenance and
+warm-image results never substitute for fresh independent acceptance. Executable
+controller/adapter/SBCL enforcement and all thirteen live proofs remain pending
+phase016; source routing does not upgrade the installed v1.5.0 payload.
+
+## 11. References
 
 - `tools/skill.json` — the capability manifest this document is the payload
   for.
@@ -236,3 +253,5 @@ suppression requires a separate human-authorized record.
   `standard/convergent_code_review.md`, `methodology/07_eval_gated_promotion.md`,
   `methodology/08_cross_repo_dependency_gate.md` —
   the authoritative protocol documents this skill summarizes and defers to.
+- `methodology/10_live_runtime_sessions.md`, `methodology/11_sbcl_runtime_binding.md`
+  and `tools/interface.md` Section 6 — the optional runtime-session sources.
