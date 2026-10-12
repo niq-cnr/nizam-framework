@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "113",
   "status": "in_progress",
-  "updated_at": "2026-10-12T03:51:38.477650+00:00",
+  "updated_at": "2026-10-12T04:04:55.478260+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -433,6 +433,34 @@
     },
     "112-qa": {
       "attempts": 1,
+      "limit": 3
+    },
+    "113-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "113-checker-development": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "113-checker-review": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "113-generator-development": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "113-implementation": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "113-qa": {
+      "attempts": 0,
+      "limit": 3
+    },
+    "113-evidence-capture": {
+      "attempts": 0,
       "limit": 3
     }
   },
@@ -3282,6 +3310,37 @@
       "prior_only_3x": 7266.0,
       "evidence": ".agent/evidence/112/scope-measurement.txt",
       "detail": "Actual frozen classifier EXIT0/allpaths classified. Compared112 with only completed preceding110/111 before append; no flag or budget increase. Source/bundle/primary inputs remain exact sealed candidate."
+    },
+    {
+      "at": "2026-10-12T04:04:55.478260+00:00",
+      "event": "contract_attempt_isolated",
+      "contract_id": "113",
+      "attempt": 1,
+      "approved_base": "a57c860a18c82990c4a43deed1465bd052bb4c3f",
+      "attempt_root": "/home/cnross/.tmp/nizam-113-contract-attempt1-hpo3xblp",
+      "evidence": ".agent/evidence/113/contract-attempt1-root.json",
+      "detail": "Own PR87 merged at a57c860 with6PRchecks and5Mainchecks success, installed239payload unchanged. Canonical113 staysPENDING until both independent pre-code approvals. Original1050estimate, phase7200/9360 and completed6088 preserved; newcontract only, no product/testing before gates."
+    },
+    {
+      "at": "2026-10-12T04:30:49.723163+00:00",
+      "event": "contract_approved",
+      "contract_id": "113",
+      "attempt": 1,
+      "proposal_sha256": "da7cf60d2ac3c4ea89d054f31a313a549e84082459a52d4ec0f7f2fef7528bbb",
+      "approved_contract_sha256": "bb4aefe8a34cd92913441e20f915f7494e76d2c47c0a0a602ef73eaeeb229fd5",
+      "gates": [
+        {
+          "path": ".agent/validator/113-mode-a.json",
+          "sha256": "e5aa8bbab790e4e456158d7ae9983da7cd2a8ea10b8b22e37eb12da9e539dfa7",
+          "actor": "/root/adapter_validator_113"
+        },
+        {
+          "path": ".agent/qa/113-contract-review.json",
+          "sha256": "227b52661b7e2aa29c74b3ce6f2f446007ff22671814280fd9f0e2c2288652b5",
+          "actor": "/root/adapter_test_author_113"
+        }
+      ],
+      "detail": "Root parsed bothactual independently authored schema-valid verdicts true and threeempty arrays. Only allowed approvalmeta changed; originalproposal preserved outsidecontract. Independent TestAuthor and separate bundle reviewer precede Generatorsource. Originalphase7200/9360 and completed6088 preserved."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3736,7 +3795,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "113",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -3808,7 +3867,7 @@
       }
     ]
   },
-  "last_action": "Feature112 complete, exact measured scope1244; cumulative6088/9360, below prior-only3x7266.0. Feature113 pending eligible; PR preparation and bounded post-completion checks next.",
+  "last_action": "Feature113 contractattempt1 approved after actual independent ModeA and Evaluator JSON parse; source implementation waits reviewed independent test bundle. Canonical113IN_PROGRESS,114PENDING; installed/oldproofs/budget unchanged.",
   "completed_contract_ids": [
     "099",
     "103",
