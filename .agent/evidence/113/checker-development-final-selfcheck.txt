@@ -1,0 +1,131 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/113/private/controls.py --root .
+EXERCISED_REVISION: dc133ea51a17fb55fc3d4d383d04aeb96828b951
+STDOUT:
+POSITIVE surface EXIT 0 CONTROL_COMPONENT:surface:PASS
+POSITIVE routing EXIT 0 CONTROL_COMPONENT:routing:PASS
+POSITIVE compatibility EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+POSITIVE delta EXIT 0 CONTROL_COMPONENT:delta:PASS
+POSITIVE history EXIT 0 CONTROL_COMPONENT:history:PASS
+POSITIVE lifecycle EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+POSITIVE claim EXIT 0 CONTROL_COMPONENT:claim:PASS
+POSITIVE integrity EXIT 0 CONTROL_COMPONENT:integrity:PASS
+POSITIVE budget EXIT 0 CONTROL_COMPONENT:budget:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE", "expected_exit": 1, "name": "optional-required-true", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE optional-required-true EXIT 1 CONTROL_COMPONENT:FAIL:OPTIONAL_REQUIRED_FALSE
+RESTORED optional-required-true EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "OPTIONAL_REQUIRED_FALSE", "expected_exit": 1, "name": "optional-absent-default-disabled", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE optional-absent-default-disabled EXIT 1 CONTROL_COMPONENT:FAIL:OPTIONAL_REQUIRED_FALSE
+RESTORED optional-absent-default-disabled EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "compatibility", "expected_diagnostic": "MANIFEST_BASE_PRESERVED", "expected_exit": 1, "name": "mandatory-requirement-removed", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE mandatory-requirement-removed EXIT 1 CONTROL_COMPONENT:FAIL:MANIFEST_BASE_PRESERVED
+RESTORED mandatory-requirement-removed EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "compatibility", "expected_diagnostic": "INTERFACE_BASE_BODY", "expected_exit": 1, "name": "old-ten-item-body-altered", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE old-ten-item-body-altered EXIT 1 CONTROL_COMPONENT:FAIL:INTERFACE_BASE_BODY
+RESTORED old-ten-item-body-altered EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "compatibility", "expected_diagnostic": "INTERFACE_BASE_BODY", "expected_exit": 1, "name": "eleventh-base-item", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE eleventh-base-item EXIT 1 CONTROL_COMPONENT:FAIL:INTERFACE_BASE_BODY
+RESTORED eleventh-base-item EXIT 0 CONTROL_COMPONENT:compatibility:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "OPERATIONS_EXACT", "expected_exit": 1, "name": "missing-operation", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE missing-operation EXIT 1 CONTROL_COMPONENT:FAIL:OPERATIONS_EXACT
+RESTORED missing-operation EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "OPERATIONS_EXACT", "expected_exit": 1, "name": "duplicate-operation", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE duplicate-operation EXIT 1 CONTROL_COMPONENT:FAIL:OPERATIONS_EXACT
+RESTORED duplicate-operation EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "OPERATIONS_EXACT", "expected_exit": 1, "name": "extra-status-call", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE extra-status-call EXIT 1 CONTROL_COMPONENT:FAIL:OPERATIONS_EXACT
+RESTORED extra-status-call EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "S_RULES_EXACT", "expected_exit": 1, "name": "missing-s9", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE missing-s9 EXIT 1 CONTROL_COMPONENT:FAIL:S_RULES_EXACT
+RESTORED missing-s9 EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "S_RULES_EXACT", "expected_exit": 1, "name": "duplicate-s1", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE duplicate-s1 EXIT 1 CONTROL_COMPONENT:FAIL:S_RULES_EXACT
+RESTORED duplicate-s1 EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "surface", "expected_diagnostic": "S_RULE_CONTENT:5", "expected_exit": 1, "name": "misplaced-s5-keyword", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE misplaced-s5-keyword EXIT 1 CONTROL_COMPONENT:FAIL:S_RULE_CONTENT:5
+RESTORED misplaced-s5-keyword EXIT 0 CONTROL_COMPONENT:surface:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "ROUTER_PATH:methodology/10_live_runtime_sessions.md", "expected_exit": 1, "name": "misplaced-router-marker", "path": "tools/SKILL.md", "restored_exit": 0}
+NEGATIVE misplaced-router-marker EXIT 1 CONTROL_COMPONENT:FAIL:ROUTER_PATH:methodology/10_live_runtime_sessions.md
+RESTORED misplaced-router-marker EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "DUPLICATE_MANIFEST_ROUTE", "expected_exit": 1, "name": "duplicate-manifest-route", "path": "tools/skill.json", "restored_exit": 0}
+NEGATIVE duplicate-manifest-route EXIT 1 CONTROL_COMPONENT:FAIL:DUPLICATE_MANIFEST_ROUTE
+RESTORED duplicate-manifest-route EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "INDEX_ROUTE", "expected_exit": 1, "name": "index-route-misdirected", "path": "NIZAM.json", "restored_exit": 0}
+NEGATIVE index-route-misdirected EXIT 1 CONTROL_COMPONENT:FAIL:INDEX_ROUTE
+RESTORED index-route-misdirected EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "routing", "expected_diagnostic": "SCHEMA_LINK:schema/runtime_operation.schema.json", "expected_exit": 1, "name": "missing-schema-crosslink", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE missing-schema-crosslink EXIT 1 CONTROL_COMPONENT:FAIL:SCHEMA_LINK:schema/runtime_operation.schema.json
+RESTORED missing-schema-crosslink EXIT 0 CONTROL_COMPONENT:routing:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "VERSION:tools/interface.md", "expected_exit": 1, "name": "version-not-increased", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE version-not-increased EXIT 1 CONTROL_COMPONENT:FAIL:VERSION:tools/interface.md
+RESTORED version-not-increased EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "delta", "expected_diagnostic": "RUNTIME_SECTION_PRESERVED:1", "expected_exit": 1, "name": "changed-old-r1", "path": "methodology/10_live_runtime_sessions.md", "restored_exit": 0}
+NEGATIVE changed-old-r1 EXIT 1 CONTROL_COMPONENT:FAIL:RUNTIME_SECTION_PRESERVED:1
+RESTORED changed-old-r1 EXIT 0 CONTROL_COMPONENT:delta:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "RECORD_ONLY_ENFORCEMENT", "expected_exit": 1, "name": "record-boundary-erased", "path": "methodology/10_live_runtime_sessions.md", "restored_exit": 0}
+NEGATIVE record-boundary-erased EXIT 1 CONTROL_COMPONENT:FAIL:RECORD_ONLY_ENFORCEMENT
+RESTORED record-boundary-erased EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md", "expected_exit": 1, "name": "false-live13-proof", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE false-live13-proof EXIT 1 CONTROL_COMPONENT:FAIL:FALSE_DELIVERY_CLAIM:tools/interface.md
+RESTORED false-live13-proof EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md", "expected_exit": 1, "name": "foreign-ecosystem-scope", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE foreign-ecosystem-scope EXIT 1 CONTROL_COMPONENT:FAIL:FALSE_DELIVERY_CLAIM:tools/interface.md
+RESTORED foreign-ecosystem-scope EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "budget/product", "component": "claim", "expected_diagnostic": "FALSE_DELIVERY_CLAIM:tools/interface.md", "expected_exit": 1, "name": "false-release", "path": "tools/interface.md", "restored_exit": 0}
+NEGATIVE false-release EXIT 1 CONTROL_COMPONENT:FAIL:FALSE_DELIVERY_CLAIM:tools/interface.md
+RESTORED false-release EXIT 0 CONTROL_COMPONENT:claim:PASS
+PREREGISTERED {"budget_class": "UNCLASSIFIED", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json", "expected_exit": 1, "name": "installed-content-changed", "path": ".nizam/NIZAM.json", "restored_exit": 0}
+NEGATIVE installed-content-changed EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:.nizam/NIZAM.json
+RESTORED installed-content-changed EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "UNCLASSIFIED", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:.nizam/NIZAM.json", "expected_exit": 1, "name": "installed-mode-changed", "path": ".nizam/NIZAM.json", "restored_exit": 0}
+NEGATIVE installed-mode-changed EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:.nizam/NIZAM.json
+RESTORED installed-mode-changed EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/verdict", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:.agent/qa/112.json", "expected_exit": 1, "name": "historical-proof-changed", "path": ".agent/qa/112.json", "restored_exit": 0}
+NEGATIVE historical-proof-changed EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:.agent/qa/112.json
+RESTORED historical-proof-changed EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/product-ext", "component": "history", "expected_diagnostic": "HISTORY_OR_INSTALLED:README.md", "expected_exit": 1, "name": "out-of-scope-tracked", "path": "README.md", "restored_exit": 0}
+NEGATIVE out-of-scope-tracked EXIT 1 CONTROL_COMPONENT:FAIL:HISTORY_OR_INSTALLED:README.md
+RESTORED out-of-scope-tracked EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "UNCLASSIFIED", "component": "history", "expected_diagnostic": "OUT_OF_SCOPE:alien113.txt", "expected_exit": 1, "name": "out-of-scope-untracked", "path": "alien113.txt", "restored_exit": 0}
+NEGATIVE out-of-scope-untracked EXIT 1 CONTROL_COMPONENT:FAIL:OUT_OF_SCOPE:alien113.txt
+RESTORED out-of-scope-untracked EXIT 0 CONTROL_COMPONENT:history:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "lifecycle", "expected_diagnostic": "PREDECESSOR_SUCCESSOR:114", "expected_exit": 1, "name": "successor-promoted", "path": ".agent/feature_list_015.json", "restored_exit": 0}
+NEGATIVE successor-promoted EXIT 1 CONTROL_COMPONENT:FAIL:PREDECESSOR_SUCCESSOR:114
+RESTORED successor-promoted EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "lifecycle", "expected_diagnostic": "PREDECESSOR_SUCCESSOR:112", "expected_exit": 1, "name": "predecessor-rewritten", "path": ".agent/feature_list_015.json", "restored_exit": 0}
+NEGATIVE predecessor-rewritten EXIT 1 CONTROL_COMPONENT:FAIL:PREDECESSOR_SUCCESSOR:112
+RESTORED predecessor-rewritten EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "budget/planning", "component": "lifecycle", "expected_diagnostic": "PHASE_CONTINUITY", "expected_exit": 1, "name": "phase-prematurely-complete", "path": "docs/planning/phase_015.yaml", "restored_exit": 0}
+NEGATIVE phase-prematurely-complete EXIT 1 CONTROL_COMPONENT:FAIL:PHASE_CONTINUITY
+RESTORED phase-prematurely-complete EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "COUNTER_CONTINUITY:113-contract", "expected_exit": 1, "name": "attempt-counter-reset", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE attempt-counter-reset EXIT 1 CONTROL_COMPONENT:FAIL:COUNTER_CONTINUITY:113-contract
+RESTORED attempt-counter-reset EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "BUDGET_CONTINUITY", "expected_exit": 1, "name": "budget-ceiling-rebased", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE budget-ceiling-rebased EXIT 1 CONTROL_COMPONENT:FAIL:BUDGET_CONTINUITY
+RESTORED budget-ceiling-rebased EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "excluded/run_state", "component": "lifecycle", "expected_diagnostic": "BUDGET_CONTINUITY", "expected_exit": 1, "name": "budget-overrun", "path": ".agent/run_state.json", "restored_exit": 0}
+NEGATIVE budget-overrun EXIT 1 CONTROL_COMPONENT:FAIL:BUDGET_CONTINUITY
+RESTORED budget-overrun EXIT 0 CONTROL_COMPONENT:lifecycle:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "FIXED_SEAL", "expected_exit": 1, "name": "fixed-seal-corrupt", "path": ".agent/evidence/113/fixed-inputs-seal.json", "restored_exit": 0}
+NEGATIVE fixed-seal-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:FIXED_SEAL
+RESTORED fixed-seal-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "FIXED_MEMBER:.agent/evidence/113/evidence_gate.py", "expected_exit": 1, "name": "fixed-member-corrupt", "path": ".agent/evidence/113/evidence_gate.py", "restored_exit": 0}
+NEGATIVE fixed-member-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:FIXED_MEMBER:.agent/evidence/113/evidence_gate.py
+RESTORED fixed-member-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "SOURCE_SEAL", "expected_exit": 1, "name": "source-seal-corrupt", "path": ".agent/evidence/113/current-source-seal.json", "restored_exit": 0}
+NEGATIVE source-seal-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:SOURCE_SEAL
+RESTORED source-seal-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "evidence", "component": "integrity", "expected_diagnostic": "CANDIDATE_TREE", "expected_exit": 1, "name": "candidate-tree-corrupt", "path": ".agent/evidence/113/current-source-inputs.json", "restored_exit": 0}
+NEGATIVE candidate-tree-corrupt EXIT 1 CONTROL_COMPONENT:FAIL:CANDIDATE_TREE
+RESTORED candidate-tree-corrupt EXIT 0 CONTROL_COMPONENT:integrity:PASS
+PREREGISTERED {"budget_class": "budget/contract", "component": "budget", "expected_diagnostic": "BUDGET_ACTUAL_CEILING", "expected_exit": 1, "name": "actual-counted-budget-overrun", "path": ".agent/contracts/113-budget-overrun-control.json", "restored_exit": 0}
+NEGATIVE actual-counted-budget-overrun EXIT 1 CONTROL_COMPONENT:FAIL:BUDGET_ACTUAL_CEILING
+RESTORED actual-counted-budget-overrun EXIT 0 CONTROL_COMPONENT:budget:PASS
+FROZEN_BUDGET_POSITIVE_EXIT 0
+FROZEN_BUDGET_UNCLASSIFIED_EXIT 3
+FROZEN_BUDGET_RESTORED_EXIT 0
+CONTROL_SUITE:PASS; cases=37; synthetic component proof only; no source-review/QA verdict authored
+
+STDERR:
+
+EXIT:0
