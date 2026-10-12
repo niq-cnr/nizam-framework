@@ -416,8 +416,8 @@ dated meaning; current lifecycle follows canonical records.
 WA planning preceded controller planning. The five draft plans below are prepared
 for final independent review; PLAN-WA and PLAN-016 remain pending until actual
 QA and evidence capture. This dated overlay supersedes earlier unallocated and
-pending114 statements: phase015/features110–114 are complete at 7319 counted
-lines against 7200/9360. Every new feature, phase, H-PHASE gate and proposed budget
+pending feature 114 statements: phase 015 and features 110–114 are complete at 7,319 counted
+lines against 7,200/9,360. Every new feature, phase, H-PHASE gate and proposed budget
 remains pending activation.
 
 | Phase | Allocated IDs | Full estimate / 130% ceiling | Canonical spec / list |
@@ -438,18 +438,18 @@ flowchart LR
   P020 --> P019[019 deferred profiles]
 ```
 
-Stable NIP3 aliases115/116/117/118/119/120 map respectively to126,
-127+131,129,130,131,132. Alias116 splits core semantics127 from final CI131;
-controls require127, never131. Proposed A09 foundation-first and SBCL-after-controls
+Stable NIP3 aliases 115/116/117/118/119/120 map respectively to 126,
+127+131, 129, 130, 131, 132. Alias 116 splits core semantics 127 from final CI 131;
+controls require 127, never 131. Proposed A09 foundation-first and SBCL-after-controls
 ordering supersedes dated whole-packet order only after future activation; original
-backlog edges remain historical. A15 still waits for132 and trusted A10/A11.
+backlog edges remain historical. A15 still waits for 132 and trusted A10/A11.
 Numeric list prerequisites and serialized shared-file lanes define the proposed graph.
 
-Full WA/controller estimates are16100/13000, compared with historical4360–13190
-and4585 naive (10545–13251 weighted); splits price product, independent tests and
-counted process costs against7200/8600 precedents. Proposed task1200 is separate
-from closed015. Raw evidence/coordination classification is unchanged. Local SBCL
-version is environment information; all13 live cases and capable CI remain future.
+Full WA/controller estimates are 16,100/13,000, compared with historical 4,360–13,190
+and 4,585 naive (10,545–13,251 weighted); splits price product, independent tests and
+counted process costs against 7,200/8,600 precedents. Proposed task 1,200 is separate
+from closed phase 015. Raw evidence/coordination classification is unchanged. Local SBCL
+version is environment information; all 13 live cases and capable CI remain future.
 Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
@@ -896,9 +896,9 @@ requires its approved contract, both independent pre-code gates, Mode B, QA and
 the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
 records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
-- **Phase015 normative scope is complete.** Features110–114 passed actual QA/capture;
-  the closed count remains7319 against7200/9360. WA115–125 and controller126–132
-  now have prepared pending plans017/018/019 and016/020. PLAN-WA/PLAN-016 planning
+- **Phase015 normative scope is complete.** Features 110–114 passed actual QA/capture;
+  the closed count remains7,319 against 7,200/9,360. WA features 115–125 and controller features 126–132
+  now have prepared pending plans 017/018/019 and 016/020. PLAN-WA/PLAN-016 planning
   completion awaits final independent QA/capture; future phase/budget activation,
   runtime acceptance, release/tag and consumer upgrade remain outstanding.
   Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).

@@ -10,14 +10,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - **Proposed WA and controller planning.** Prepared five pending phase plans,
-  allocating WA115–125 before controller126–132 with full budgets and independent
-  future acceptance ownership. Recommended foundation017→core016→controls018→
-  fresh020→profiles019; preserved original backlog edges and recorded explicit
+  allocating WA features 115–125 before controller features 126–132 with full budgets and independent
+  future acceptance ownership. Recommended foundation 017→core 016→controls 018→
+  fresh 020→profiles 019; preserved original backlog edges and recorded explicit
   proposed split-alias bindings. Public projections reference
   [.agent/evidence/workflow-016-planning/plan-validation.json](.agent/evidence/workflow-016-planning/plan-validation.json).
   Planning completion awaits actual independent QA/capture. Future phase/budget
   activation, runtime/live CI acceptance, release/tag and installed upgrade remain
-  separately gated; closed phase015 and publishedv1.5.0 are preserved.
+  separately gated; closed phase 015 and published v1.5.0 are preserved.
 
 - **Normative-stage readiness (feature114).** Added a candidate-bound next MINOR
   dossier and narrow current planning projections. Closure requires independent

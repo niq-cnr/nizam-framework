@@ -37,13 +37,13 @@ separate phase planning, H-PHASE activation and independent contract gates.
 ### Current WA planning — 2026-10-12
 
 This dated overlay supersedes earlier unallocated statements. Prepared draft plans
-allocate017 foundation115–118,018 controls119–123 and019 deferred profiles124–125.
+allocate phase 017 foundation 115–118, phase 018 controls 119–123 and 019 deferred profiles 124–125.
 See [foundation spec](../../.agent/product_spec_017.md)/[list](../../.agent/feature_list_017.json),
 [controls spec](../../.agent/product_spec_018.md)/[list](../../.agent/feature_list_018.json)
 and [profiles spec](../../.agent/product_spec_019.md)/[list](../../.agent/feature_list_019.json).
 PLAN-WA/PLAN-016 completion awaits actual final independent QA and capture;
 H-PHASE-017/018/019 and all implementation/budget approvals remain pending.
-Accepted case/choice text remains frozen. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+Accepted case and choice text remains frozen. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Current evidence and problem
 
@@ -182,22 +182,22 @@ consumer contract. That assessment is a proposed release decision, not a new rel
 
 ### Proposed execution recommendation — 2026-10-12
 
-Recommend017→016→018→020→019, requiring future activation. Foundation115 identity,
-116 sealed acceptance,117 authorized entry and118 bounded close precede controller
-126–128. Controls119 verdict mapping,120 A10 recovery,121 conflict lanes,122 A14
-cause routing and123 capable CI/WA close follow core127 specifically. Alias
-NIP3-116 also includes later131 full CI; using131 as the control prerequisite
-would create a cycle. Proposed supersessions record the127 binding separately
-from preserved historical packet edges. SBCL129–132 follows trusted119/120/123;
-profiles124/125 retain A15-after132 and trusted A10/A11 plus preregistered
+Recommend 017→016→018→020→019, requiring future activation. Foundation 115 identity,
+116 sealed acceptance, 117 authorized entry and 118 bounded close precede controller
+126–128. Controls 119 verdict mapping, 120 A10 recovery, 121 conflict lanes, 122 A14
+cause routing and 123 capable CI/WA close follow core 127 specifically. Alias
+NIP3-116 also includes later 131 full CI; using 131 as the control prerequisite
+would create a cycle. Proposed supersessions record the 127 binding separately
+from preserved historical packet edges. SBCL 129–132 follows trusted 119/120/123;
+profiles 124/125 retain A15-after 132 and trusted A10/A11 plus preregistered
 same-candidate full-baseline bounds. Missed baseline blockers prevent promotion;
 no active gate is reduced.
 
-WA split budgets are5400/7020,7200/9360,3500/4550; full16100 prices product,
+WA split budgets are 5,400/7,020, 7,200/9,360, 3,500/4,550; full estimate: 16,100 prices product,
 independent tests and counted process/registrations/contracts/verdicts/close-out.
-Historical4360–13190 weighted forecasts omitted entry/conflict and independent
-closure costs. Splits fit7200/8600 precedents; all budgets remain proposals.
-Open040/034 remain inputs. Existing roles, one coordination model and three-attempt
+Historical 4,360–13,190 weighted forecasts omitted entry/conflict and independent
+closure costs. Splits fit 7,200/8,600 precedents; all budgets remain proposals.
+Open debts NDEBT-040/NDEBT-034 remain inputs. Existing roles, one coordination model and three-attempt
 identity survive agent/process/stage changes; infrastructure failures remain
 failures. Local SBCL version proves no live acceptance. Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 

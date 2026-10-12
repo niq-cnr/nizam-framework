@@ -163,28 +163,28 @@ remain dated records.
 
 ### Current planning allocation — 2026-10-12
 
-This overlay supersedes earlier unallocated/pending114 statements while preserving
-their dated text. Phase015/features110–114 are complete,7319 counted lines against
-7200/9360. Prepared draft plans allocate WA017:115–118 (5400/7020),018:119–123
-(7200/9360),019:124–125 (3500/4550), controller016:126–128 (5650/7345), and
-SBCL020:129–132 (7350/9555). All phases/features, H-PHASE gates and future budget
+This overlay supersedes earlier unallocated/pending feature 114 statements while preserving
+their dated text. Phase 015 and features 110–114 are complete, with 7,319 counted lines against
+7,200/9,360. Prepared draft plans allocate WA phase 017: 115–118 (5,400/7,020), phase 018: 119–123
+(7,200/9,360), phase 019: 124–125 (3,500/4,550), controller phase 016: 126–128 (5,650/7,345), and
+SBCL phase 020: 129–132 (7,350/9,555). All phases/features, H-PHASE gates and future budget
 approvals remain pending. PLAN-WA/PLAN-016 planning completion awaits actual
 independent QA and evidence capture.
 
-Recommended execution is017→016→018→020→019. Historical packet edges remain
-unchanged; proposed supersessions resolve NIP3-116 to127 core versus131 final CI.
-Controls require127; SBCL129 requires trusted119/120/123; profiles124/125 retain
-controller132 delay. Stable aliases NIP3-115…120 map to126,127+131,129,130,131,132;
-these aliases reserve no numeric evidence paths. Full WA/controller budgets16100/13000
-include product, independent tests and counted process/closure, split against7200/8600
-predecessents. Task1200 is a separate proposal; no phase015 rebaseline.
+Recommended execution is 017→016→018→020→019. Historical packet edges remain
+unchanged; proposed supersessions resolve NIP3-116 to 127 core versus 131 final CI.
+Controls require 127; SBCL 129 requires trusted 119/120/123; profiles 124/125 retain
+controller 132 delay. Stable aliases NIP3-115…120 map to 126, 127+131, 129, 130, 131, 132;
+these aliases reserve no numeric evidence paths. Full WA/controller budget estimates: 16,100/13,000
+include product, independent tests and counted process/closure, split against 7,200/8,600
+predecessents. Task 1,200 is a separate proposal; no phase 015 rebaseline.
 
 Canonical inputs are [WA specs/lists](../../.agent/feature_list_017.json),
 [controls](../../.agent/feature_list_018.json), [profiles](../../.agent/feature_list_019.json),
 [controller](../../.agent/product_spec_016.md)/[list](../../.agent/feature_list_016.json)
 and [fresh acceptance](../../.agent/product_spec_020.md)/[list](../../.agent/feature_list_020.json).
-Local SBCL version supplies environment information only; capable CI and all13
-live cases remain future. Installed/releasedv1.5.0 and Open040/034 are preserved.
+Local SBCL version supplies environment information only; capable CI and all 13
+live cases remain future. Installed/released v1.5.0 and Open debts NDEBT-040/NDEBT-034 are preserved.
 Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
 
 ## Prior reconciliation history

@@ -114,8 +114,8 @@ remains outstanding and any later actual consolidation decision is an input.
 ### Current planning delivery — 2026-10-12
 
 The dated unallocated and activation-time pending statements above are superseded:
-phase015/features110–114 are complete; prepared draft controller016 allocates126–128
-and fresh/SBCL020 allocates129–132, after WA115–125. See [core spec](../../.agent/product_spec_016.md),
+phase 015 and features 110–114 are complete; prepared draft controller phase 016 allocates 126–128
+and fresh/SBCL phase 020 allocates 129–132, after WA features 115–125. See [core spec](../../.agent/product_spec_016.md),
 [core list](../../.agent/feature_list_016.json), [fresh spec](../../.agent/product_spec_020.md)
 and [fresh list](../../.agent/feature_list_020.json). PLAN-WA/PLAN-016 remain pending
 until final independent QA/capture. All future H-PHASE gates, budgets and
@@ -604,20 +604,20 @@ and split it if necessary; its approval/activation remain separate decisions.
 ### Proposed allocated splits — 2026-10-12
 
 The table above retains provisional design history. Stable conceptual aliases
-NIP3-115/116/117/118/119/120 now map to126/127+131/129/130/131/132; evidence
-uses actual numeric owners. Alias116 combines core127 and final CI131 and cannot
-be declared complete when only127 passes. Core016 proposes5650/7345;
-SBCL/fresh020 proposes7350/9555. Full counted13000 prices independent tests,
-registration, contracts, verdicts and close-out, compared with4585 naive and
-10545–13251 weighted forecasts and7200/8600 precedents. These are future budget
+NIP3-115/116/117/118/119/120 now map to 126/127+131/129/130/131/132; evidence
+uses actual numeric owners. Alias 116 combines core 127 and final CI 131 and cannot
+be declared complete when only 127 passes. Core 016 proposes 5,650/7,345;
+SBCL/fresh phase 020 proposes 7,350/9,555. Full counted estimate: 13,000 prices independent tests,
+registration, contracts, verdicts and close-out, compared with 4,585 naive and
+10,545–13,251 weighted forecasts and 7,200/8,600 precedents. These are future budget
 proposals, with H-PHASE-016/020 pending.
 
-Recommend017 foundation→016 core→018 controls→020 fresh acceptance→019 profiles.
+Recommend 017 foundation→016 core→018 controls→020 fresh acceptance→019 profiles.
 Keep original packet edges as dated inputs; proposed numeric prerequisites bind
-controls to127 only and SBCL129 to core128 plus119/120/123, avoiding a false
-131-before-controls cycle. Feature131 alone introduces full sixth-job live CI,
-case8 mechanism isolation and all13 cases after SBCL/fresh acceptance exists.
-The stub8 policy obligation remains126. Local SBCL2.2.9.debian is environment
+controls to 127 only and SBCL 129 to core 128 plus 119/120/123, avoiding a false
+131-before-controls cycle. Feature 131 alone introduces full sixth-job live CI,
+case 8 mechanism isolation and all 13 cases after SBCL/fresh acceptance exists.
+The stub case 8 policy obligation remains 126. Local SBCL 2.2.9.debian is environment
 information; schema/session results and unsupported isolation prove no live case.
 Future acceptance requires committed-source archive, fresh no-init SBCL, private
 HOME/XDG, empty ASDF cache/private resolution and toolchain/lock/core provenance.
