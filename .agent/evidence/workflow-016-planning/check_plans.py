@@ -12,6 +12,7 @@ E = '.agent/evidence/workflow-016-planning/'
 PHASES = ('017', '018', '019', '016', '020')
 NIP3 = 'docs/nips/NIP-0003-live-runtime-sessions.md'
 NIP4 = 'docs/nips/NIP-0004-workflow-assurance.md'
+ASSIGNED_ALIASES = ['NIP3-' + str(n) for n in range(115, 121)] + ['A09', 'A04b', 'A10', 'A11-D', 'A11-CI', 'A14', 'A15', 'A16-WA']
 
 def require(ok, label):
     if not ok: raise ValueError(label)
@@ -142,9 +143,9 @@ def projections(lists, result, dag):
     packets = {v['id']: v for v in dag['packets']}
     for prior in old['packets']:
         now = packets[prior['id']]
-        excluded = {'actual_assigned'} | ({'status', 'prerequisites', 'planning_delivery'} if prior['id'] in ('PLAN-WA', 'PLAN-016') else set())
+        excluded = ({'actual_assigned'} if prior['id'] in ASSIGNED_ALIASES and prior['status'] == 'pending' else set()) | ({'status', 'prerequisites', 'planning_delivery'} if prior['id'] in ('PLAN-WA', 'PLAN-016') else set())
         require({k: v for k, v in prior.items() if k not in excluded} == {k: v for k, v in now.items() if k not in excluded}, 'historical-packet')
-    for alias in ['NIP3-' + str(n) for n in range(115, 121)] + ['A09', 'A04b', 'A10', 'A11-D', 'A11-CI', 'A14', 'A15', 'A16-WA']:
+    for alias in ASSIGNED_ALIASES:
         assignments = packets[alias].get('actual_assigned', [])
         require(bool(assignments), 'alias-assignment')
         for a in assignments: require(allocation.get(a['feature_id']) == a['phase'] and a['evidence'].startswith('.agent/evidence/' + a['feature_id'] + '/'), 'alias-owner')
@@ -167,6 +168,20 @@ def scope_paths(changed, allowed):
 
 def current_phase(manifest, old):
     require(manifest['current_phase'] == old['current_phase'] and manifest['phases'][:len(old['phases'])] == old['phases'], 'current-phase')
+
+def triple_presence(present):
+    require(not any(present) or all(present), 'orphan-triple')
+    return all(present)
+
+def manifest_projection(manifest, old, present):
+    # The stage selects which plans it assesses; the manifest indexes every actual triple.
+    schema(manifest, 'manifest'); current_phase(manifest, old)
+    require(len({r['id'] for r in manifest['phases']}) == len(manifest['phases']), 'manifest-duplicate')
+    rows = manifest['phases'][len(old['phases']):]
+    require([r['feature_list'] for r in rows] == ['.agent/feature_list_' + p + '.json' for p in present], 'manifest-projection')
+    for row, (p, listing) in zip(rows, present.items()):
+        require(row['id'] == listing['phase'] and row.get('phase_definition') == 'docs/planning/phase_' + p + '.yaml', 'manifest-id')
+        require(row['status'] == 'pending' and row.get('activation_state') == 'proposed' and listing.get('phase_status') == 'pending', 'manifest-pending')
 
 def preserve_public(path):
     before, after = original(path).decode(), (ROOT / path).read_text()
@@ -276,6 +291,22 @@ def negative():
             check_scope(scratch); receipts.append({'control': label, 'rejection': 'immutable-task-' + defect, 'restored_valid': True})
         added = E + 'legitimate-new-receipt.txt'; (scratch / added).write_text('new command/exit receipt\n'); scope_paths([added], [E + '**']); check_scope(scratch)
         receipts.append({'control': 'legitimate-new-receipt', 'result': 'accepted', 'restored_valid': True})
+    old = {'schema_version': '0.1.0', 'updated_at': '2026-10-12', 'current_phase': '015', 'phases': [{'id': '015', 'title': 'Frozen baseline', 'feature_list': '.agent/feature_list_015.json', 'status': 'complete'}]}
+    def proposed(model):
+        m = copy.deepcopy(old); m['phases'] += [{'id': l['phase'], 'title': p, 'feature_list': '.agent/feature_list_' + p + '.json', 'phase_definition': 'docs/planning/phase_' + p + '.yaml', 'status': 'pending', 'activation_state': 'proposed'} for p, l in model.items()]; return m
+    wa = {p: lists[p] for p in PHASES[:3]}
+    for label, model, assessed in [('wa-three-row', wa, wa), ('wa-final-five-row', lists, wa), ('all-five-row', lists, lists)]:
+        manifest_projection(proposed(model), old, model); check_lists(assessed, label == 'all-five-row'); receipts.append({'control': label, 'result': 'accepted', 'restored_valid': True})
+    for label, change, target in [('active-extra-row', lambda m: m['phases'][-1].update(status='in_progress'), 'manifest-pending'), ('activated-extra-row', lambda m: m['phases'][-1].update(activation_state='active'), 'manifest-pending'), ('mismatched-row-id', lambda m: m['phases'][-1].update(id='999'), 'manifest-id'), ('unknown-row', lambda m: m['phases'].append({'id': '021', 'title': 'Unknown', 'feature_list': '.agent/feature_list_021.json', 'status': 'pending'}), 'manifest-projection'), ('duplicate-row-id', lambda m: m['phases'][-1].update(id='017'), 'manifest-duplicate')]:
+        bad = proposed(lists); change(bad)
+        try: manifest_projection(bad, old, lists)
+        except ValueError as error: require(str(error) == target, 'negative-target:' + label)
+        else: raise ValueError('negative-false-pass:' + label)
+        manifest_projection(proposed(lists), old, lists); receipts.append({'control': label, 'rejection': target, 'restored_valid': True})
+    try: triple_presence([True, False, True])
+    except ValueError as error: require(str(error) == 'orphan-triple', 'negative-target:orphan-triple')
+    else: raise ValueError('negative-false-pass:orphan-triple')
+    require(triple_presence([True, True, True]) and not triple_presence([False, False, False]), 'triple-positive'); receipts.append({'control': 'orphan-triple', 'rejection': 'orphan-triple', 'restored_valid': True})
     return receipts
 
 def main():
@@ -288,24 +319,23 @@ def main():
     elif mode == 'scope': result = {'scope_changed': check_scope()}
     else:
         selected = PHASES[:3] if mode == 'wa' else PHASES
-        lists = {p: read('.agent/feature_list_' + p + '.json') for p in selected if (ROOT / ('.agent/feature_list_' + p + '.json')).exists()}
+        present = {p: read('.agent/feature_list_' + p + '.json') for p in PHASES if triple_presence([(ROOT / q).exists() for q in ('.agent/feature_list_' + p + '.json', '.agent/product_spec_' + p + '.md', 'docs/planning/phase_' + p + '.yaml')])}
+        lists = {p: l for p, l in present.items() if p in selected}
         require('017' in lists and (mode == 'wa' or {'016', '020'} <= lists.keys()), 'selected-triples')
         baseline = [f['id'] for path in git('ls-tree', '-r', '--name-only', AUTH_BASE, '--', '.agent').decode().splitlines() if re.fullmatch(r'\.agent/feature_list[^/]*\.json', path) for f in json.loads(original(path, AUTH_BASE))['features']]
         require(max(map(int, baseline)) == 114, 'baseline-max'); result = check_lists(lists, mode == 'all', baseline)
-        for p, l in lists.items():
+        for p, l in present.items():
             phase = yaml.safe_load((ROOT / ('docs/planning/phase_' + p + '.yaml')).read_text()); schema(phase, 'phase')
             require(phase['id'] == l['phase'] and phase['status'] == 'pending' and len(phase['steps']) == len(l['features']) and all(s['status'] == 'PENDING' and 'evidence' not in s for s in phase['steps']), 'phase-pending')
             text = (ROOT / ('.agent/product_spec_' + p + '.md')).read_text(); front = yaml.safe_load(text.split('---', 2)[1]); schema(front, 'frontmatter'); require(front['status'] == 'draft', 'spec-draft')
-        manifest = read('docs/planning/manifest.json'); schema(manifest, 'manifest')
+        manifest = read('docs/planning/manifest.json')
         old_manifest = json.loads(original('docs/planning/manifest.json'))
-        current_phase(manifest, old_manifest)
-        require([r['feature_list'] for r in manifest['phases'][len(old_manifest['phases']):]] == ['.agent/feature_list_' + p + '.json' for p in lists] and all(r['status'] == 'pending' for r in manifest['phases'][len(old_manifest['phases']):]), 'manifest-projection')
-        require(len({r['id'] for r in manifest['phases']}) == len(manifest['phases']), 'manifest-duplicate')
+        manifest_projection(manifest, old_manifest, present)
         dag = read('docs/planning/backlog_dag.json'); graph({v['id']: v['dependency_edges']['depends_on'] + v['dependency_edges']['serialize_after'] for v in dag['packets']}, 'global')
         metadata(lists, result, mode == 'all')
         if mode == 'all': projections(lists, result, dag)
         result['scope_changed'] = check_scope()
-        inputs = [q for p in lists for q in ('.agent/feature_list_' + p + '.json', '.agent/product_spec_' + p + '.md', 'docs/planning/phase_' + p + '.yaml')] + ['docs/planning/manifest.json', 'docs/planning/backlog_dag.json', E + 'check_plans.py']
+        inputs = [q for p in present for q in ('.agent/feature_list_' + p + '.json', '.agent/product_spec_' + p + '.md', 'docs/planning/phase_' + p + '.yaml')] + ['docs/planning/manifest.json', 'docs/planning/backlog_dag.json', E + 'check_plans.py']
         inputs += ['.nizam/schema/' + n + '.schema.json' for n in ('feature_list', 'phase', 'manifest', 'frontmatter')]
         inputs += ['docs/planning/ROADMAP.md', 'docs/planning/HANDOVER.md', 'docs/planning/backlog_reconciliation.md', NIP3, NIP4, 'CHANGELOG.md']
         result['input_sha256'] = {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in inputs}

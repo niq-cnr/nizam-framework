@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T20:38:50.738275+00:00",
+  "updated_at": "2026-10-12T20:47:50.803152+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -530,7 +530,7 @@
       "limit": 3
     },
     "workflow-016-planning-checker": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3
     },
     "workflow-016-planning-checker-review": {
@@ -3937,6 +3937,11 @@
       "event": "workflow-016-planning-final-stage-checker-failure",
       "detail": "Actual publicintegration all/scope/diff0; mandatory currentWA1 manifest-projection: partialchecker wrongly assumes currentmanifestcontainsWA-only rows insteadofcorrectfiveproposedphases. Publicsourcecandidateunapproved/preserved; samechecker step architecturalattempt3 required, no fourth.",
       "evidence": ".agent/evidence/workflow-016-planning/public-attempt1-checks.txt"
+    },
+    {
+      "at": "2026-10-12T20:47:50.803152+00:00",
+      "event": "workflow-016-planning-checker-attempt3-produced",
+      "evidence": ".agent/evidence/workflow-016-planning/checker-attempt3-report.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4527,7 +4532,7 @@
       }
     ]
   },
-  "last_action": "Both independent corrected planning-delivery contract gates approved; task checker preparation next, then WA planning and independent intermediate review before016. Phase015 lifecycle/budget preserved.",
+  "last_action": "Checker architectural attempt3 actual stages and28negative/fourpositive controls passed; distinct review pending. Closed phase015 preserved.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4605,7 +4610,7 @@
   "pending_operator_gate": null,
   "planning_task": {
     "id": "workflow-016-planning",
-    "status": "final-stage-checker-repair",
+    "status": "checker-review-pending",
     "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json",
     "attempt_root": "/home/cnross/.tmp/nizam-wa016-plan-attempt1-207l_sra",
     "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0"
