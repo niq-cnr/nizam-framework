@@ -12,9 +12,9 @@
     "spec_version": "1.0.1",
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "current_status": "in_progress",
+    "current_status": "complete",
     "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
-    "run_state_position": "Canonical110\u2013113 complete;114 in_progress under renewed approved contract and independently reviewed bundle, awaiting actual candidate ModeB/freshQA/ownspot/capture before phase015 close.",
+    "run_state_position": "Canonical110-114 complete; phase015 closed after actual114 ModeB, freshQA/ownspot and capture. Currentfeature/activecontract cleared. PLAN-WA and PLAN-016 remain pending; no nextphase allocated.",
     "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
   },
   "estimate_weighting": {
@@ -2962,13 +2962,18 @@
         ".agent/contracts/114.json",
         ".agent/validator/114-mode-a.json",
         ".agent/qa/114-contract-review.json",
-        ".agent/validator/114-test-bundle-review.json"
+        ".agent/validator/114-test-bundle-review.json",
+        ".agent/validator/114-mode-b.json",
+        ".agent/qa/114.json",
+        ".agent/evidence/114/evidence-gate.txt",
+        ".agent/evidence/114/current-source-inputs.json",
+        ".agent/evidence/114/source-review.json"
       ],
       "non_goals": [
         "Live runtime claims before phase-016 proof (NIP-0003:485)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "in_progress",
+      "status": "complete",
       "authority_status": "authorized",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
@@ -2986,8 +2991,8 @@
           "reason": "none (normative + schema)"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Prepared readiness awaits actual candidate ModeB, fresh twelve-command QA/ownspot and evidence capture before Parent114/phase015 close."
+          "satisfied": true,
+          "reason": "Actual .agent/validator/114-mode-b.json, .agent/qa/114.json and .agent/evidence/114/evidence-gate.txt bind accepted candidate and establish normative114/phase015 completion; future runtime/release gates remain separate."
         }
       },
       "estimate": {
@@ -3061,8 +3066,8 @@
       "plan_class": "deferred-proposal",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "Canonical114/phase015 close requires actual QA/capture; PLAN-WA remains pending and PLAN-016 serializes after PLAN-WA. No new phase is allocated."
+          "satisfied": true,
+          "reason": "Completed114/phase015 actual QA and evidence capture clear planning-input eligibility. PLAN-WA remains pending for serialization and independent planning gates; no activation or allocation."
         },
         "authority": {
           "satisfied": true,
@@ -3073,8 +3078,8 @@
           "reason": "none"
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "Six selected WA choices and historical inputs remain available; actual114 close and separate pending planning gates are still required."
+          "satisfied": true,
+          "reason": "Actual .agent/qa/114.json and .agent/evidence/114/evidence-gate.txt plus six selected WA choices recorded in docs/planning/ROADMAP.md clear planning inputs only. PLAN-WA is not delivered or activated."
         }
       },
       "estimate": {
@@ -3161,7 +3166,7 @@
       "prerequisites": {
         "technical": {
           "satisfied": false,
-          "reason": "Canonical114/phase015 close requires actual QA/capture; PLAN-WA remains pending and PLAN-016 serializes after PLAN-WA. No new phase is allocated."
+          "reason": "Canonical114/phase015 complete; PLAN-WA serialization remains pending and PLAN-016 still requires its own independent planning gates. No new phase allocated."
         },
         "authority": {
           "satisfied": true,
@@ -3173,7 +3178,7 @@
         },
         "evidence": {
           "satisfied": false,
-          "reason": "Six selected WA choices and historical inputs remain available; actual114 close and separate pending planning gates are still required."
+          "reason": "Actual114 QA/capture completes normative readiness, but pending PLAN-WA serialization and separate PLAN-016 planning acceptance do not yet supply a finalized plan."
         }
       },
       "estimate": {

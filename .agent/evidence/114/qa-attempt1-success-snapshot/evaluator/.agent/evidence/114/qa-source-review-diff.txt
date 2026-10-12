@@ -1,0 +1,408 @@
+COMMAND: git diff --no-ext-diff 33fd885115981e7ae479dfff7ad7d5a623d8014c..32114a706ff95bcb8e90e371168159a8957a3628 -- .agent/evidence/114/release-readiness.md CHANGELOG.md docs/planning/ROADMAP.md docs/planning/manifest.json docs/planning/backlog_dag.json docs/planning/backlog_reconciliation.md
+CANDIDATE_SHA: 32114a706ff95bcb8e90e371168159a8957a3628
+diff --git a/.agent/evidence/114/release-readiness.md b/.agent/evidence/114/release-readiness.md
+new file mode 100644
+index 0000000..f5f28a4
+--- /dev/null
++++ b/.agent/evidence/114/release-readiness.md
+@@ -0,0 +1,97 @@
++---
++id: nizam-phase015-release-readiness
++title: "Normative-stage next MINOR readiness"
++description: "Candidate-bound normative assessment and independent acceptance, phase-close and human release boundaries."
++version: 0.1.0
++status: active
++authoritative_source: .agent/evidence/114/release-readiness.md
++change_log:
++  - version: "0.1.0"
++    date: "2026-10-12"
++    summary: "Describe normative delivery, actual predecessor inputs and separate candidate acceptance, close and release obligations."
++---
++
++# Normative-stage next MINOR readiness
++
++## Assessment inputs
++
++The approved scope is `.agent/product_spec_015.md` and feature114 in
++`.agent/feature_list_015.json`, implemented under `.agent/contracts/114.json`.
++Canonical lifecycle comes from that feature list and `docs/planning/phase_015.yaml`;
++this dossier does not declare their completion.
++
++Feature113 completed and merged through PR88 at the actual Main baseline
++`45ceeb80eabc823400f2bb6044edcb4fa3aa9b2f`. Its independent sixteen-command QA is
++`.agent/qa/113.json`, with Mode B at `.agent/validator/113-mode-b.json` and capture
++at `.agent/evidence/113/evidence-gate.txt`. The six successful PR checks and five
++successful Main jobs are preserved in `.agent/evidence/114/predecessor113-pr-premerge.json`
++and `.agent/evidence/114/predecessor113-merge-main.json`. These are predecessor
++proofs and do not substitute for fresh feature114 acceptance.
++
++Parent binds the assessed six source files to an actual immutable Git candidate
++and tree through `.agent/evidence/114/current-source-inputs.json` and its separate
++source seal after the source commit exists. The sidecar also records the reviewed
++fixed-input digest, approved-contract pin and three canonical precompletion
++snapshots. This dossier refers to that external binding; it contains no future
++candidate, self, QA or capture hash.
++
++## Delivered normative scope
++
++| Feature | Delivered boundary |
++| --- | --- |
++| 110 | Neutral session protocol and generic attempt, acceptance, permission and handoff rules. |
++| 111 | Closed session/operation schemas, eighteen fixtures and shared C12 relational record checks. |
++| 112 | Consumer-aspirational SBCL binding, profile, condition/restart and fresh acceptance rules. |
++| 113 | Optional adapter calls, conditional S1–S9 and routing; existing ten mandatory items and consumers remain compatible. |
++
++Schema/C12 validity proves record structure and relations. Normative rules and
++fixtures do not prove executable runtime enforcement or any live case.
++
++## Human release boundary
++
++The next MINOR release needs a separate H-FRAMEWORK-RELEASE decision, including
++operator sign-off and explicit tag authority. Those acts are outstanding for a
++new candidate. Normative phase closure selects no fixed release number and creates
++no release, tag or publication. Historical published v1.5.0 release authority was
++executed; it does not authorize the next candidate's release.
++
++### Consumer upgrade boundary
++
++H-CONSUMER-UPGRADE is distinct and remains outstanding for adopting a new
++candidate. Historical local self-adoption was authorized and commissioned at
++v1.5.0; that installed pin remains unchanged. A later authorized upgrade needs
++its reviewed immutable pin and re-bootstrap. Authored source changes do not
++upgrade the installed payload or imply external organization adoption.
++
++## Independent acceptance and canonical close
++
++The actual candidate requires independent Mode B, then fresh independent QA for
++all twelve contract commands and exactly one additional adversarial spot. These
++include the existing validator, payload sweep, fixture self-test, end-to-end
++bootstrap and PR-mode release closeout; feature114 checks bind predecessor,
++readiness, planning, scope/history, discriminating controls and the frozen
++Git-numstat budget classifier. Historical QA and checker-development results
++cannot stand in for this acceptance.
++
++Fresh QA personally reviews all six source files against the approved scope and
++records semantic evidence before the readiness check consumes the source map.
++The actual evidence-capture gate checks typed results, command output, exit
++status, exercised revision and referenced files. Only after that approval may
++Parent mark feature114 and phase015 complete, then update the manifest and derived
++run state and finalize the permitted planning projections. Canonical records and
++`.agent/qa/114.json` with `.agent/evidence/114/evidence-gate.txt` supply actual
++results when produced; this conditional sequence asserts no future PASS.
++
++## Runtime and subsequent planning
++
++The phase016 controller, executable adapter, SBCL launcher, isolated capable live
++CI and all thirteen live proofs remain pending. Phase015 schemas, illustrative
++binding and optional capability cannot claim live-conformance acceptance.
++
++PLAN-WA remains a pending planning packet after normative close; PLAN-016 depends
++on that close and serializes after PLAN-WA. Neither receives an allocation or
++activation here. The six selected WA choices are candidate invalidation,
++acceptance ownership, routing profiles, shadow profiles, cause routing and
++conflict/retry handling. They are selected planning inputs; no WA implementation
++or active-gate reduction is delivered. Relative WA implementation versus phase016
++remains open and requires its own planning and authority.
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index af27657..765929b 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,6 +9,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Changed
+ 
++- **Normative-stage readiness (feature114).** Added a candidate-bound next MINOR
++  dossier and narrow current planning projections. Closure requires independent
++  Mode B, fresh twelve-command QA, one additional adversarial spot, actual evidence
++  capture and Parent canonical completion. Human release/tag and consumer upgrade
++  remain separate decisions; published/installed v1.5.0 is unchanged. Schema/C12
++  record validity and normative adapter/binding rules establish no executable
++  controller, SBCL launcher, capable live CI or thirteen live proofs. WA choices
++  remain selected planning inputs without new allocation or gate reduction.
++
+ - **Optional runtime-session adapter (feature113).** Published seven optional
+   calls and conditional S1–S9 while preserving the original ten mandatory
+   adapter items and existing requirements. Added manifest/index/skill routing
+diff --git a/docs/planning/ROADMAP.md b/docs/planning/ROADMAP.md
+index aeb89ab..f9cfab1 100644
+--- a/docs/planning/ROADMAP.md
++++ b/docs/planning/ROADMAP.md
+@@ -2,10 +2,13 @@
+ id: nizam-roadmap
+ title: "Forward Roadmap — nizam-framework"
+ description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
+-version: 0.59.1
++version: 0.60.0
+ status: active
+ authoritative_source: docs/planning/ROADMAP.md
+ change_log:
++  - version: "0.60.0"
++    date: "2026-10-12"
++    summary: "Prepare feature114 normative readiness and bounded current projections; independent acceptance and canonical close remain required."
+   - version: "0.59.1"
+     date: "2026-10-12"
+     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+@@ -392,6 +395,18 @@ Delivered F105 owns the reused claim map; actual five CI jobs become six only wi
+ future116 live job. SBCL2.2.9.debian is available; mandatory capable isolated CI
+ remains required, workstation sysctls never change. Installed v1.5.0 stays frozen.
+ 
++### Feature114 readiness projection
++
++Features110–113 are complete; feature114 and phase015 are in_progress. The
++candidate-bound next MINOR dossier is prepared at
++`.agent/evidence/114/release-readiness.md`. Its source sidecar and fresh independent
++Mode B, twelve-command QA, own adversarial spot and evidence capture precede
++Parent canonical close. No release/tag or consumer upgrade is authorized by
++this projection. Published/installed v1.5.0 remains unchanged; executable
++phase016 controller/SBCL/live13 proofs and PLAN-WA/PLAN-016 planning remain pending,
++without allocation or gate reduction. Historical prose above retains its dated
++assessment; canonical records and current DEBT supply current lifecycle/debt facts.
++
+ ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
+ 
+ **Phase `013-definition-of-done` is ACTIVE** (2026-08-18), authorized by the operator (verbatim:
+@@ -823,7 +838,7 @@ key; this file MUST be updated at each phase close so the repository always stat
+ what comes next (the gap this file closes: phases 001–004 completed with no recorded
+ successor, leaving open debt deferred to unscoped "future phases").
+ 
+-## Current Position (2026-10-11)
++## Current Position (2026-10-12)
+ 
+ H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+ `2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+@@ -836,7 +851,13 @@ requires its approved contract, both independent pre-code gates, Mode B, QA and
+ the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+ records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+ 
+-- **Current planning refresh merged; bounded maintenance is verified.** The [current backlog view](backlog_reconciliation.md) retains exact complete/cancelled canonical mirrors and factual planning inputs. Resolved NDEBT-047/046/045 and completed A04a cite actual maintenance QA/CI proof; NIP3/WA scopes are now accepted; phase015 activation is recorded above; future release and installed-upgrade authority remain outstanding. Both prior planning checkers and historical evidence stay frozen.
++- **Phase015 normative readiness is prepared.** Features110–113 are complete;
++  feature114 is in_progress under its renewed approved contract and independently
++  reviewed bundle. The readiness dossier and four bounded planning projections
++  await actual candidate Mode B, fresh QA/ownspot and capture before Parent closes
++  canonical phase015. PLAN-WA/PLAN-016 stay pending and unallocated; future release,
++  tag and consumer upgrade authority remain outstanding. Historical release and
++  installed v1.5.0 records are preserved.
+ - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
+ - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. Phase015 activation is recorded in the current overlay. The handover record is [`HANDOVER.md`](HANDOVER.md).
+   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
+diff --git a/docs/planning/backlog_dag.json b/docs/planning/backlog_dag.json
+index 2063b2d..d9aae78 100644
+--- a/docs/planning/backlog_dag.json
++++ b/docs/planning/backlog_dag.json
+@@ -1,7 +1,7 @@
+ {
+   "plan_status": "candidate",
+   "plan_status_note": "H-PHASE-015 active under06c0ae0a273facce80c57506260648c41f566ebb; approved7200/9360 including phase-level costs. Canonical feature/list governs lifecycle;111-114pending. Six WA selections recorded, implementation/planning after114 remains pending; WA/016 unallocated. Historical014/installedv1.5 immutable.",
+-  "generated_at": "2026-10-11",
++  "generated_at": "2026-10-12",
+   "base_commit": "08f97b0e8b1002ac0d8362ed147e7253726a5415",
+   "base_commit_note": "Approved docs-only phase015-planning implementation base after exact operator H-NIP events; canonical phase014 records/current position remain unchanged.",
+   "packet_schema": "schema/work-packet.schema.json",
+@@ -14,7 +14,7 @@
+     "ceiling_130pct": 9360,
+     "current_status": "in_progress",
+     "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
+-    "run_state_position": "Derived from canonical phase/list:110 and111 complete;112 in progress under approved revision2 contract;113-114 pending their own contract gates.",
++    "run_state_position": "Canonical110\u2013113 complete;114 in_progress under renewed approved contract and independently reviewed bundle, awaiting actual candidate ModeB/freshQA/ownspot/capture before phase015 close.",
+     "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
+   },
+   "estimate_weighting": {
+@@ -2860,32 +2860,37 @@
+         "bash tools/e2e_bootstrap_test.sh"
+       ],
+       "evidence": [
+-        ".agent/evidence/113/"
++        ".agent/evidence/113/",
++        ".agent/validator/113-mode-b.json",
++        ".agent/qa/113.json",
++        ".agent/evidence/113/evidence-gate.txt",
++        ".agent/evidence/114/predecessor113-pr-premerge.json",
++        ".agent/evidence/114/predecessor113-merge-main.json"
+       ],
+       "non_goals": [
+         "Live runtime claims before phase-016 proof (NIP-0003:485)."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
+-      "authority_status": "blocked-on-contract-and-predecessor",
++      "status": "complete",
++      "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "candidate-phase",
+       "prerequisites": {
+         "technical": {
+           "satisfied": true,
+-          "reason": "Canonical112 completed after actual ModeB2, fresh20/20 independent acceptance and evidence capture;113 stays pending its own contract gates."
++          "reason": "Canonical112 and113 complete with independent QA/evidence capture;113 merged through PR88 at actual postmerge Main45ceeb."
+         },
+         "authority": {
+-          "satisfied": false,
+-          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
++          "satisfied": true,
++          "reason": "H-PHASE-015 and both actual113 pre-code approvals authorized original113 scope; completed113 independent gates remain immutable."
+         },
+         "environment": {
+           "satisfied": true,
+           "reason": "none (normative + schema)"
+         },
+         "evidence": {
+-          "satisfied": false,
+-          "reason": "Pending015 plan source is available; feature implementation acceptance/QA/evidence is not delivered."
++          "satisfied": true,
++          "reason": "Actual113 ModeB, fresh16-command QA and capture plus six PR/five Main success receipts establish predecessor completion."
+         }
+       },
+       "estimate": {
+@@ -2953,24 +2958,28 @@
+         "bash -c 'source tools/verify_lib.sh; vlib_section_grep .agent/evidence/114/release-readiness.md '\"'\"'^## Human release boundary$'\"'\"' '\"'\"'(^|[^[:alnum:]_])H-FRAMEWORK-RELEASE([^[:alnum:]_]|$)'\"'\"''"
+       ],
+       "evidence": [
+-        ".agent/evidence/114/"
++        ".agent/evidence/114/",
++        ".agent/contracts/114.json",
++        ".agent/validator/114-mode-a.json",
++        ".agent/qa/114-contract-review.json",
++        ".agent/validator/114-test-bundle-review.json"
+       ],
+       "non_goals": [
+         "Live runtime claims before phase-016 proof (NIP-0003:485)."
+       ],
+       "concurrency_lane": "single-writer",
+-      "status": "pending",
+-      "authority_status": "blocked-on-contract-and-predecessor",
++      "status": "in_progress",
++      "authority_status": "authorized",
+       "owner_role": "Generator",
+       "plan_class": "candidate-phase",
+       "prerequisites": {
+         "technical": {
+-          "satisfied": false,
+-          "reason": "Canonical lifecycle is read from feature_list_015.json; predecessor completion remains required."
++          "satisfied": true,
++          "reason": "Canonical113 complete and merged at45ceeb with actual six PR/five Main success; predecessor proofs remain required inputs."
+         },
+         "authority": {
+-          "satisfied": false,
+-          "reason": "H-PHASE-015 approved7200/9360;110 approved two independent contract gates; later features require their own contracts and canonical predecessors."
++          "satisfied": true,
++          "reason": "Both renewed actual114 pre-code gates approved original scope and authorized bounded recovery; corrected bundle independently approved before source."
+         },
+         "environment": {
+           "satisfied": true,
+@@ -2978,7 +2987,7 @@
+         },
+         "evidence": {
+           "satisfied": false,
+-          "reason": "Pending015 plan source is available; feature implementation acceptance/QA/evidence is not delivered."
++          "reason": "Prepared readiness awaits actual candidate ModeB, fresh twelve-command QA/ownspot and evidence capture before Parent114/phase015 close."
+         }
+       },
+       "estimate": {
+@@ -3053,7 +3062,7 @@
+       "prerequisites": {
+         "technical": {
+           "satisfied": false,
+-          "reason": "Canonical114/phase015 close remains pending; PLAN-WA serializes after114 and PLAN-016 after PLAN-WA. No future realization is ready."
++          "reason": "Canonical114/phase015 close requires actual QA/capture; PLAN-WA remains pending and PLAN-016 serializes after PLAN-WA. No new phase is allocated."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -3065,7 +3074,7 @@
+         },
+         "evidence": {
+           "satisfied": false,
+-          "reason": "Six WA design decisions recorded at06c0ae0; canonical114 close remains required before pending planning; no WA/016 allocation."
++          "reason": "Six selected WA choices and historical inputs remain available; actual114 close and separate pending planning gates are still required."
+         }
+       },
+       "estimate": {
+@@ -3152,7 +3161,7 @@
+       "prerequisites": {
+         "technical": {
+           "satisfied": false,
+-          "reason": "Canonical114/phase015 close remains pending; PLAN-WA serializes after114 and PLAN-016 after PLAN-WA. No future realization is ready."
++          "reason": "Canonical114/phase015 close requires actual QA/capture; PLAN-WA remains pending and PLAN-016 serializes after PLAN-WA. No new phase is allocated."
+         },
+         "authority": {
+           "satisfied": true,
+@@ -3164,7 +3173,7 @@
+         },
+         "evidence": {
+           "satisfied": false,
+-          "reason": "Six WA design decisions recorded at06c0ae0; canonical114 close remains required before pending planning; no WA/016 allocation."
++          "reason": "Six selected WA choices and historical inputs remain available; actual114 close and separate pending planning gates are still required."
+         }
+       },
+       "estimate": {
+diff --git a/docs/planning/backlog_reconciliation.md b/docs/planning/backlog_reconciliation.md
+index 6fd928d..f97aa70 100644
+--- a/docs/planning/backlog_reconciliation.md
++++ b/docs/planning/backlog_reconciliation.md
+@@ -2,12 +2,15 @@
+ id: nizam-backlog-reconciliation-2026-10-08
+ title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
+ description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
+-version: 0.1.13
++version: 0.1.14
+ status: active
+ authoritative_source: docs/planning/backlog_reconciliation.md
+ last_audited: "2026-10-11"
+ tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
+ change_log:
++  - version: "0.1.14"
++    date: "2026-10-12"
++    summary: "Add bounded current114 readiness projection while preserving prior reconciliation; canonical close follows actual independent capture."
+   - version: "0.1.13"
+     date: "2026-10-12"
+     summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+@@ -54,7 +57,7 @@ change_log:
+ 
+ # Backlog Reconciliation — 2026-10-08
+ 
+-## Current planning view — 2026-10-11
++## Current planning view — 2026-10-12
+ 
+ This is the current projection of `backlog_dag.json`; the prior reconciliation
+ below is dated history. The immutable phase014 feature list remains authoritative.
+@@ -142,6 +145,19 @@ The stage-aware maintenance checker requires explicit final state/proof binding;
+ its intake stage cannot substitute final closure. The stage1 checker remains a
+ frozen dated assessment and is not rerun as current maintenance truth.
+ 
++### Feature114 readiness projection
++
++Canonical110–113 are complete; feature114 and phase015 are in_progress. The
++readiness dossier is prepared for an actual Git candidate and external source
++sidecar. Parent closes canonical records and finalizes this projection only after
++independent Mode B, fresh twelve-command QA plus ownspot and actual evidence
++capture. NIP3-113 reflects accepted predecessor proof; NIP3-114 awaits capture.
++PLAN-WA and PLAN-016 remain pending, with PLAN-016 serialized after PLAN-WA;
++selected WA choices create no allocation or gate reduction. Controller/SBCL/live13
++proofs, new release/tag and consumer upgrade remain outstanding. Earlier prose
++and reconciliation history are dated snapshots; current lifecycle and debt follow
++canonical records and DEBT.
++
+ ## Prior reconciliation history
+ 
+ 
+diff --git a/docs/planning/manifest.json b/docs/planning/manifest.json
+index a15868c..8326451 100644
+--- a/docs/planning/manifest.json
++++ b/docs/planning/manifest.json
+@@ -1,6 +1,6 @@
+ {
+   "schema_version": "2.0.0",
+-  "updated_at": "2026-10-11",
++  "updated_at": "2026-10-12",
+   "forward_planning": "docs/planning/ROADMAP.md",
+   "current_phase": "015-live-runtime-normative",
+   "phases": [
+@@ -125,7 +125,7 @@
+       "phase_definition": "docs/planning/phase_015.yaml",
+       "status": "in_progress",
+       "activation_state": "active",
+-      "note": "H-PHASE-015 approved7200/9360;110 and111 completed and merged via PR85/86. Feature112 entered implementation after both independent revision2 pre-code gates. Current feature lifecycle is recorded in canonical phase/list. Prior111 recovery and failed-QA evidence remain historical. No phase016 or WA allocation, release or installed upgrade."
++      "note": "H-PHASE-015 approved7200/9360;110\u2013113 complete with preserved independent proof. Feature114 in_progress under renewed approved contract and reviewed bundle; next MINOR readiness is prepared, with actual candidate ModeB/freshQA/ownspot/capture required before Parent canonical close. Prior recovery and historical assessments remain preserved. No WA/phase016 allocation, release/tag or installed upgrade."
+     }
+   ]
+ }
+EXIT: 0

@@ -397,15 +397,16 @@ remains required, workstation sysctls never change. Installed v1.5.0 stays froze
 
 ### Feature114 readiness projection
 
-Features110–113 are complete; feature114 and phase015 are in_progress. The
-candidate-bound next MINOR dossier is prepared at
-`.agent/evidence/114/release-readiness.md`. Its source sidecar and fresh independent
-Mode B, twelve-command QA, own adversarial spot and evidence capture precede
-Parent canonical close. No release/tag or consumer upgrade is authorized by
-this projection. Published/installed v1.5.0 remains unchanged; executable
-phase016 controller/SBCL/live13 proofs and PLAN-WA/PLAN-016 planning remain pending,
-without allocation or gate reduction. Historical prose above retains its dated
-assessment; canonical records and current DEBT supply current lifecycle/debt facts.
+Features110-114 and phase015 are complete after actual independent Mode B,
+fresh twelve-command QA plus own adversarial spot and evidence capture. The
+assessed candidate remains bound by `.agent/evidence/114/current-source-inputs.json`;
+`.agent/qa/114.json` and `.agent/evidence/114/evidence-gate.txt` record acceptance.
+PLAN-WA is eligible for planning serialization and remains pending; PLAN-016
+remains pending after PLAN-WA and its own planning gates. Selected WA choices
+create no allocation or gate reduction. Published/installed v1.5.0 is unchanged;
+future release/tag and consumer upgrade decisions, phase016 controller/SBCL/live13
+proofs and capable CI remain outstanding. Historical prose above retains its
+dated meaning; current lifecycle follows canonical records.
 
 ## Plan of Record (2026-08-18) — Phase 013: Definition of Done
 
@@ -851,12 +852,12 @@ requires its approved contract, both independent pre-code gates, Mode B, QA and
 the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
 records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
-- **Phase015 normative readiness is prepared.** Features110–113 are complete;
-  feature114 is in_progress under its renewed approved contract and independently
-  reviewed bundle. The readiness dossier and four bounded planning projections
-  await actual candidate Mode B, fresh QA/ownspot and capture before Parent closes
-  canonical phase015. PLAN-WA/PLAN-016 stay pending and unallocated; future release,
-  tag and consumer upgrade authority remain outstanding. Historical release and
+- **Phase015 normative scope is complete.** Features110-114 are complete after
+  actual candidate Mode B, fresh QA/ownspot and capture. Acceptance follows
+  `.agent/qa/114.json` and `.agent/evidence/114/evidence-gate.txt`.
+  PLAN-WA remains pending and eligible for planning serialization; PLAN-016
+  remains pending after PLAN-WA. Future runtime proofs, release/tag and consumer
+  upgrade gates remain outstanding; no new phase is allocated. Published and
   installed v1.5.0 records are preserved.
 - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
 - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. Phase015 activation is recorded in the current overlay. The handover record is [`HANDOVER.md`](HANDOVER.md).

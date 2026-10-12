@@ -147,16 +147,16 @@ frozen dated assessment and is not rerun as current maintenance truth.
 
 ### Feature114 readiness projection
 
-Canonical110–113 are complete; feature114 and phase015 are in_progress. The
-readiness dossier is prepared for an actual Git candidate and external source
-sidecar. Parent closes canonical records and finalizes this projection only after
-independent Mode B, fresh twelve-command QA plus ownspot and actual evidence
-capture. NIP3-113 reflects accepted predecessor proof; NIP3-114 awaits capture.
-PLAN-WA and PLAN-016 remain pending, with PLAN-016 serialized after PLAN-WA;
-selected WA choices create no allocation or gate reduction. Controller/SBCL/live13
-proofs, new release/tag and consumer upgrade remain outstanding. Earlier prose
-and reconciliation history are dated snapshots; current lifecycle and debt follow
-canonical records and DEBT.
+Canonical110-114 and phase015 are complete following actual Mode B,
+fresh twelve-command QA plus ownspot and evidence capture, recorded in
+`.agent/qa/114.json` and `.agent/evidence/114/evidence-gate.txt`.
+NIP3-113 and NIP3-114 reflect accepted normative completion. PLAN-WA remains
+pending, with planning-input prerequisites cleared by completed114 and the
+six selected WA choices; eligibility does not deliver or activate a plan.
+PLAN-016 remains pending after PLAN-WA serialization and its own planning gates.
+Controller/SBCL/live13 proofs, capable CI, future release/tag and consumer upgrade
+remain outstanding. No new phase is allocated; earlier prose and prior history
+remain dated records.
 
 ## Prior reconciliation history
 

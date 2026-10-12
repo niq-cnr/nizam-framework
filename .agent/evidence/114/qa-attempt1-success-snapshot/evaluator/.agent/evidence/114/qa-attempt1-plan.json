@@ -1,0 +1,32 @@
+{
+  "stage": "fresh-qa-preregistration",
+  "actor": "/root/readiness_acceptance_114",
+  "candidate_commit": "32114a706ff95bcb8e90e371168159a8957a3628",
+  "source_manifest_sha256": "fb8c287e555892f749d7e0afa6218847bfa7fc969b05dbf17be816c0c880ec88",
+  "fixed_inputs_sha256": "d5ffdc6fcbdef8c292de8d4b06e4a570386b1021f9201df8a0e9dee3b2ccfccc",
+  "received_run_state_sha256": "2c5447a66ac5cfa73060511844020be14321586b5c4a3309f49a83b0e212753a",
+  "checks": [
+    "bash tools/validate.sh",
+    "bash tools/validate.sh --payload",
+    "bash tools/fixtures_self_test.sh",
+    "bash tools/e2e_bootstrap_test.sh",
+    "python3 .github/scripts/release_closeout.py --mode pr",
+    "bash -c 'source tools/verify_lib.sh; vlib_section_grep .agent/evidence/114/release-readiness.md '\"'\"'^## Human release boundary$'\"'\"' '\"'\"'(^|[^[:alnum:]_])H-FRAMEWORK-RELEASE([^[:alnum:]_]|$)'\"'\"''",
+    "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py predecessor",
+    "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py readiness",
+    "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py planning",
+    "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py scope-history",
+    "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/check_114.py negative-controls",
+    "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 114=45ceeb80eabc823400f2bb6044edcb4fa3aa9b2f.. --files"
+  ],
+  "ownspot": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/114/qa-own-actor-spot.py",
+    "classification": "declared scratch negative, no governed source/gate retry",
+    "expected_negative_exit": 1,
+    "expected_negative_diagnostic": "SEMANTIC_REVIEW",
+    "expected_positive_exit": 0,
+    "expected_restored_exit": 0,
+    "mutation": "In a fresh scratch copy only, replace genuine source-review.actor with Generator identity while retaining actual approval and candidate/hash/evidence bindings. Restore original review."
+  },
+  "declared_at": "2026-10-12T15:39:26.803495+00:00"
+}
