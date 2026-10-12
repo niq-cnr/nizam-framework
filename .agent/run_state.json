@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T19:14:08.550297+00:00",
+  "updated_at": "2026-10-12T19:37:14.683429+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -515,6 +515,18 @@
     },
     "workflow-016-planning-spec": {
       "attempts": 1,
+      "limit": 3
+    },
+    "workflow-016-planning-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-mode-a": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-contract-review": {
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -3835,6 +3847,24 @@
       "event": "workflow-016-planning-spec-produced",
       "evidence": ".agent/product_spec_workflow_016_planning.md",
       "detail": "Planner meta spec only; phaseplans require both independent newcontract gates."
+    },
+    {
+      "at": "2026-10-12T19:23:43.683980+00:00",
+      "event": "workflow-016-planning-contract-attempt1-rejected",
+      "detail": "Independent ModeA found operator_gates edit outside meta spec; phaseplans remain unwritten. Proposed contract and actual rejection preserved; remove unused extra scope through interface-alignment attempt2 after second review.",
+      "evidence": ".agent/evidence/workflow-016-planning/contract-attempt1-preserved/mode-a.json"
+    },
+    {
+      "at": "2026-10-12T19:25:21.805299+00:00",
+      "event": "workflow-016-planning-contract-review1-rejected",
+      "detail": "Second independent pre-code review confirms same sole scope mismatch; no phaseplans written. Attempt2 interface alignment removes operator_gates edit, no scope expansion.",
+      "evidence": ".agent/evidence/workflow-016-planning/contract-attempt1-preserved/contract-review.json"
+    },
+    {
+      "at": "2026-10-12T19:37:14.683429+00:00",
+      "event": "workflow-016-planning-precode-approved",
+      "evidence": ".agent/evidence/workflow-016-planning/contract-attempt2-approved",
+      "detail": "Actual strict JSON ModeA and independent contract review approved same corrected proposal a3d6fde6; only declared contract approval metadata changed; no phaseplans yet."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4425,7 +4455,7 @@
       }
     ]
   },
-  "last_action": "Authorized PLAN-WA then PLAN-016 planning in isolated attempt1; independent gates required. Phase015 remains complete, original budget/history preserved; no activation or installed change.",
+  "last_action": "Both independent corrected planning-delivery contract gates approved; task checker preparation next, then WA planning and independent intermediate review before016. Phase015 lifecycle/budget preserved.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4503,7 +4533,7 @@
   "pending_operator_gate": null,
   "planning_task": {
     "id": "workflow-016-planning",
-    "status": "planning",
+    "status": "checker-preparation",
     "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json",
     "attempt_root": "/home/cnross/.tmp/nizam-wa016-plan-attempt1-207l_sra",
     "base": "3d9b24931ecad49221b8e8faffc12a7fc0fc1bf0"
