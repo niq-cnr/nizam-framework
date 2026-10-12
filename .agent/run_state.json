@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T19:07:36.396137+00:00",
+  "updated_at": "2026-10-12T19:14:08.550297+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -511,6 +511,10 @@
     },
     "114-recovery-checker-review": {
       "attempts": 2,
+      "limit": 3
+    },
+    "workflow-016-planning-spec": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -3825,6 +3829,12 @@
       "event": "workflow-016-planning-authorized",
       "detail": "Great work! Think carefully about the optimal execution DAG and then you are approved to proceed. Expedite. Before proceeding ask bullet point questions if you need more information or further clarification. You are authorized to manage, triage as necessary, your PR's and once clean merge as appropriate. Workflow Assurance planning, followed by phase 016 planning.",
       "evidence": ".agent/evidence/workflow-016-planning/authorization-isolation.json"
+    },
+    {
+      "at": "2026-10-12T19:14:08.550297+00:00",
+      "event": "workflow-016-planning-spec-produced",
+      "evidence": ".agent/product_spec_workflow_016_planning.md",
+      "detail": "Planner meta spec only; phaseplans require both independent newcontract gates."
     }
   ],
   "phase_001_scope_budget_final": {
