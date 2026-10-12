@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "015-live-runtime-normative",
   "current_feature": "114",
-  "status": "in_progress",
-  "updated_at": "2026-10-12T10:40:37.761123+00:00",
+  "status": "blocked",
+  "updated_at": "2026-10-12T12:10:13.363883+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -478,11 +478,11 @@
       "limit": 3
     },
     "114-checker-development": {
-      "attempts": 0,
+      "attempts": 3,
       "limit": 3
     },
     "114-checker-review": {
-      "attempts": 0,
+      "attempts": 3,
       "limit": 3
     },
     "114-generator-development": {
@@ -3643,6 +3643,61 @@
       "approved_contract_sha256": "7fbd7d107bc8dcd3165339d4c2df1381d50ba1499d68d90d17de0228588de44f",
       "validator": ".agent/validator/114-mode-a.json",
       "evaluator": ".agent/qa/114-contract-review.json"
+    },
+    {
+      "at": "2026-10-12T11:00:21.876133+00:00",
+      "event": "114-checker-development1-pass-frozen",
+      "detail": "Actual17targeted negatives/restored positives and2CONTROLstructuralmodels passed;41existing fixedinputs frozen;4800oldproof hashes/fullmodes and239installed unchanged. No Source/canonicalcompletion; distinctbundleReviewnext.",
+      "evidence": ".agent/evidence/114/checker-attempt1-snapshot/.agent/evidence/114/checker-attempt1-handoff.json",
+      "fixed_inputs_sha256": "358e15000ace214e32b7c17bab417a184e5ba9cd6130c46789411967a2807174"
+    },
+    {
+      "at": "2026-10-12T11:12:41.990769+00:00",
+      "event": "114-bundle-review1-rejected-installed-inventory",
+      "detail": "Parsed actualfalse/onehighissue: ignored240th installedfile escapes known4800SHA checks/Git scope.17controls passedbutnotapproval. Exactfailedauthor/reviewer roots archived/rawdiff/inventoried before removal. Reviewcounter1; no source, no completion or third-strike halt.",
+      "verdict": ".agent/validator/114-test-bundle-review.json",
+      "verdict_sha256": "040fa30486c14cfce8572e4815dce183f48f6d887900437c733447390dbe05eb",
+      "evidence": ".agent/evidence/114/bundle-review-attempt1-preservation.json"
+    },
+    {
+      "at": "2026-10-12T11:25:01.857113+00:00",
+      "event": "114-checker-development2-pass-frozen",
+      "detail": "Actualignored240thfile andmultidigitfutureversion falsepasses detectedbeforefix; installedset/lstat andintegersemver interfacecorrection passed20targetednegatives/restorations plusoriginalreviewerprobe.62inputs frozen; source notauthorizeduntilReview2. Original4800history/captureadapter/failures preserved.",
+      "evidence": ".agent/evidence/114/checker-attempt2-snapshot/.agent/evidence/114/checker-attempt2-handoff.json",
+      "fixed_inputs_sha256": "027a853acff9609f321f93b3fc71fb7ff1ae20495b8bc0d3e2757257f3e7e7de"
+    },
+    {
+      "at": "2026-10-12T11:39:07.418568+00:00",
+      "event": "114-bundle-review2-rejected-prose-version-boundary",
+      "detail": "Actual false/one medium issue: Next release v1.10.0. escapes numeric guard. Inventory repair,20controls and prior probes pass. Exact failed roots archived/diff/inventoried before removal. Review2 of3; final architectural attempt only; no source or completion.",
+      "verdict": ".agent/validator/114-test-bundle-review.json",
+      "verdict_sha256": "06ca85aca373af66e0d5b9d2133ed6f0e17f6b763e72f465ec2957d6893de4b0",
+      "evidence": ".agent/evidence/114/bundle-review-attempt2-preservation.json"
+    },
+    {
+      "at": "2026-10-12T11:56:39.631192+00:00",
+      "event": "114-checker-development3-pass-frozen",
+      "detail": "Final architectural numeric-core scanner separates punctuation and release-context policy; actual metadata/29negative-restored controls/8positives/two priorreviewer probes all0.83existing fixedinputs frozen. No further checkerdevelopment or source before Review3.",
+      "evidence": ".agent/evidence/114/checker-attempt3-snapshot/.agent/evidence/114/checker-attempt3-handoff.json",
+      "fixed_inputs_sha256": "e0b0241ecd6d821f21b022d1765c52a4f554e7c7230cf594d66d79df4893e1df"
+    },
+    {
+      "at": "2026-10-12T12:06:24.061478+00:00",
+      "event": "114-circuit-breaker-halt-review3",
+      "detail": "Parsed actual rejected Review3 (one medium issue), preserved all raw/artifact hashes and both exact ownedroots before removal, then canonical114 BLOCKED/phase blocked and derivedstate blocked.29controls+8positives/two priorprobes pass but actual named-toolchain positive falsefails. No fourth, source, ModeB, QA or completion. Installed release and completed budget unchanged; prior113 executed recovery gate preserved separately.",
+      "verdict": ".agent/validator/114-test-bundle-review.json",
+      "verdict_sha256": "dc387ab24f340cec689768d0b1880a408948073ab47985e8ce39d4f6727e5368",
+      "evidence": ".agent/evidence/114/circuit-breaker-halt.json",
+      "preservation": ".agent/evidence/114/checker-review-attempt3-preservation.json",
+      "required_human_gate": "H-CHECKER-114-RECOVERY"
+    },
+    {
+      "at": "2026-10-12T12:10:13.363883+00:00",
+      "event": "114-blocked-scope-budget-captured",
+      "detail": "Frozen Git-numstat classifier reports product0/process256, unclassified0, EXIT0. Completed6779 plus in-flight256=7035 of original9360. Prior-only111/112/113 threshold5068; no114completed ledger append, no double count/rebaseline. Current governance16checks and canonical/schema/install/oldproof preservation validation pass before human handoff.",
+      "evidence": ".agent/evidence/114/blocked-scope-measurement.txt",
+      "validation": ".agent/evidence/114/halt-validation.txt",
+      "coordination_validation": ".agent/evidence/114/halt-coordination-check.txt"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3945,10 +4000,23 @@
         "range": "a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE",
         "evidence": ".agent/evidence/113/blocked-scope-measurement.txt",
         "note": "Incompletefeature after finalindependentcheckerreview3 rejected. Product0+process300; notappended tocompletedrollingbaseline. Completed6088+inflight300=6388below9360, noScopeoverrun/rebaseline; halt solelymandatorycircuit. Rawfailedbundles/source1quarantine excluded as evidence; no unreviewedpublicproductpromotion."
+      },
+      {
+        "id": "114",
+        "status": "blocked",
+        "actual": 256,
+        "evidence_lines": 342661,
+        "excluded_lines": 120,
+        "all_paths_lines": 343037,
+        "range": "45ceeb80eabc823400f2bb6044edcb4fa3aa9b2f..WORKTREE",
+        "evidence": ".agent/evidence/114/blocked-scope-measurement.txt",
+        "note": "Incomplete feature after final independent bundleReview3 rejected legitimate named-toolchain version positive. Product0+process256; not appended to completed baseline. Completed6779+inflight256=7035 below original9360. No budget extension; future actual close measurement includes total feature work once, preserving this failed in-flight snapshot."
       }
     ]
   },
-  "blocked_features": [],
+  "blocked_features": [
+    "114"
+  ],
   "phase_007_scope_budget_final": {
     "original_estimate_lines": 870,
     "total_lines_changed": 240,
@@ -4201,7 +4269,7 @@
       }
     ]
   },
-  "last_action": "114contract1 approved by actual distinct ModeA and typed precodeEval; canonical114IN_PROGRESS. Separate TestAuthor and bundle review before source.",
+  "last_action": "Feature114 BLOCKED after actual final independent bundleReview3 rejected named-toolchain version falsefail; ownedattempts quarantined; human recovery required; no fourth/source/QA.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4276,16 +4344,14 @@
     "note": "Phase 014 final ledger. 8705 of 8600 (101.2%): 105 over the operator-confirmed re-baseline estimate (spec 1.1.4, 'option 1 confirmed.'), comfortably within the 11180 authorized 130% ceiling. Completed features 099 + 103-109 + 102 (9 features); cancelled 100/101 (A3) consumed no budget. Historical-basis estimates for 099/103 (920/280) are mixed-basis and disclosed per their ledger entries. Captures: measure-099-103.txt, measure-105.txt, measure-108.txt, measure-109.txt, measure-102.txt."
   },
   "pending_operator_gate": {
-    "gate": "H-CHECKER-113-RECOVERY",
-    "decision": "approved",
-    "reason": "113-checker-review3/3 rejected doubleHTMLentity-decoding false-pass; fourthautonomousattempt forbidden",
-    "proposal": ".agent/evidence/113/circuit-breaker-halt.json",
-    "verdict": ".agent/validator/113-test-bundle-review.json",
-    "scope": "113task-onlychecker/link-decoding recovery and freshindependentreview; preserveoldcounters/source1/3/originalbudget/install; anyrequiredcontractbreaker/debtprojection alignment throughbothpre-code gates",
+    "gate": "H-CHECKER-114-RECOVERY",
+    "decision": "pending",
+    "reason": "114-checker-review3/3 rejected named SBCL version falsefail; fourth autonomous attempt forbidden",
+    "proposal": ".agent/evidence/114/circuit-breaker-halt.json",
+    "verdict": ".agent/validator/114-test-bundle-review.json",
+    "scope": "Explicitly authorize a fresh bounded checker recovery distinguishing named toolchain context from framework release declarations; retain existing controls, add actual SBCL version 2.2.9.debian positive and release-forecast negatives, require fresh independent bundle review. Preserve exhausted original counters, failed raw and old gates/budget/install. Re-enter both pre-code gates for any necessary narrow debt/halt/history preservation masks before further work. No extra budget or runtime/release scope.",
     "authorization_inferred": false,
-    "authorization": ".agent/evidence/113/recovery-authorization.json",
-    "at": "2026-10-12T07:58:40.039629+00:00",
-    "verbatim": "continue.",
-    "stage": "feature113-accepted-and-captured"
+    "at": "2026-10-12T12:06:24.061478+00:00",
+    "prior_gate": ".agent/evidence/114/prior-operator-gate-113.json"
   }
 }

@@ -1,0 +1,30 @@
+{
+  "stage": "test-bundle-review",
+  "feature": "114",
+  "attempt": 1,
+  "actor": "/root/adapter_validator_113",
+  "reviewed_at": "2026-10-12T11:10:45.900395+00:00",
+  "approved_base": "4e230c43693660c2b5d1d6a5bef79d4502cfc566",
+  "fixed_inputs_sha256": "358e15000ace214e32b7c17bab417a184e5ba9cd6130c46789411967a2807174",
+  "approved_contract_sha256": "7fbd7d107bc8dcd3165339d4c2df1381d50ba1499d68d90d17de0228588de44f",
+  "evidence": [
+    ".agent/evidence/114/bundle-review-attempt1-raw.txt",
+    ".agent/evidence/114/bundle-review-attempt1-controls.txt",
+    ".agent/evidence/114/bundle-review-attempt1-probes.txt"
+  ],
+  "issues": [
+    {
+      "severity": "high",
+      "verification_index": 10,
+      "criterion": "Installed239 bytes, full permissions and exact file inventory remain immutable; ignored additions cannot escape scope-history",
+      "evidence": ".agent/evidence/114/bundle-review-attempt1-probes.txt",
+      "required_fix": "A separately authored/reviewed new bundle must compare the actual installed file/symlink inventory against the frozen expected239 set, rejecting extra/missing entries including Gitignored additions; retain known-byte/full-permission checks and add a preregistered targeted extra-file negative with restored baseline. No source implementation until actual renewed approval."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Rejected: history guard false-passes ignored extra installed file (actual240 vs required239). Independent17controls pass; own inventory probe proves missing discriminator."
+  }
+}
