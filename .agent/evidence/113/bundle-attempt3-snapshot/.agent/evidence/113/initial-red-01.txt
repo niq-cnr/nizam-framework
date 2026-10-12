@@ -1,0 +1,11 @@
+COMMAND: python3 -c 'import json; from pathlib import Path; d=json.loads(Path('"'"'tools/skill.json'"'"').read_text()); assert d['"'"'runtime_requirements'"'"']['"'"'live_runtime_session'"'"']['"'"'required'"'"'] is False'
+EXERCISED_REVISION: dc133ea51a17fb55fc3d4d383d04aeb96828b951
+PREREGISTERED: canonical1 absent future optional surface; exit1; budget class evidence
+STDOUT:
+
+STDERR:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+KeyError: 'live_runtime_session'
+
+EXIT:1
