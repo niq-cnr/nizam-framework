@@ -3,7 +3,7 @@
   "current_phase": "015-live-runtime-normative",
   "current_feature": "112",
   "status": "in_progress",
-  "updated_at": "2026-10-12T03:01:33.820690+00:00",
+  "updated_at": "2026-10-12T03:14:20.786512+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -416,11 +416,11 @@
       "limit": 3
     },
     "112-generator-development": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "112-checker-development": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "112-checker-review": {
@@ -428,7 +428,7 @@
       "limit": 3
     },
     "112-implementation": {
-      "attempts": 0,
+      "attempts": 1,
       "limit": 3
     },
     "112-qa": {
@@ -3184,6 +3184,25 @@
       "attempt_root": "/home/cnross/.tmp/nizam-112-source-attempt2-a847evyi",
       "evidence": ".agent/evidence/112/source-attempt2-root.json",
       "detail": "Generator will reconstruct only original9approved product changes from preserved source draft, then correct two schema path tokens after inspecting actual resolver convention. Parent does not promote unreviewed source. Approved checker/control/adapter and all budget/history remain exact."
+    },
+    {
+      "at": "2026-10-12T03:09:25.901014+00:00",
+      "event": "development_checkpoint_passed",
+      "contract_id": "112",
+      "source_attempt": 2,
+      "checker_attempt": 2,
+      "evidence": ".agent/evidence/112/source-development-attempt2/results.json",
+      "detail": "All13actual approved development commands EXIT0. Generator and checker development each2/3 after preserving earlier failures; review2/3 approved, ModeB/QA remain0/3. Source map unchanged through checkpoint. Private defect controls restored same positive inputs; no live runtime or isolated host conformance inferred."
+    },
+    {
+      "at": "2026-10-12T03:14:20.786512+00:00",
+      "event": "implementation_gate_rejected",
+      "contract_id": "112",
+      "attempt": 1,
+      "source_attempt": 2,
+      "evidence": ".agent/validator/112-mode-b-attempt1.json",
+      "preservation": ".agent/evidence/112/failed-mode-b-attempt1/preservation.json",
+      "detail": "Full independent source review found only two availability paragraphs misassigning113to016. Preserve actual13/13development successes and failedModeB1; no QA initiated. Source/checker-development2/3 remain, implementation1/3. Final source retry3 requires phase/proof architecture review, only bounded method10 prose, unchanged contract/test/budget authority."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -3690,7 +3709,7 @@
       }
     ]
   },
-  "last_action": "Fresh source retry2 isolated from approved contract/checker base before two bounded schema-link corrections; genuine first failure retained.",
+  "last_action": "Actual ModeB1 phase-boundary defect preserved; final source development attempt3 will architecturally separate normative113phase015 from executable/liveproofphase016.",
   "completed_contract_ids": [
     "099",
     "103",

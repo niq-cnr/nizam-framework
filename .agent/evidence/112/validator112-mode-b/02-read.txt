@@ -1,0 +1,267 @@
+git diff 7d852bd7aedde01d7739126aa7a1cf880534a410 -- NIZAM.json methodology/README.md methodology/10_live_runtime_sessions.md CHANGELOG.md docs/nips/NIP-0003-live-runtime-sessions.md docs/planning/HANDOVER.md docs/planning/ROADMAP.md docs/planning/backlog_reconciliation.md
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 4c580b3..f16f6e4 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,6 +9,14 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Changed
+ 
++- **SBCL reference binding (feature112).** Added the normative consumer-aspirational
++  binding with folded toolchain/lock/core profile, condition/restart capture,
++  non-atomic load/compile, drift, thread/cancellation hazards and fresh hermetic
++  acceptance rules. Registered Document11 and clarified current availability and
++  activation-time planning prose. ASDF forms remain illustrative; executable
++  adapter/controller enforcement and all thirteen live proofs remain pending.
++  Published/installed v1.5.0 and existing historical proofs are unchanged.
++
+ - **Runtime provenance records (feature111).** Added two closed Draft2020-12
+   schemas with phase016 fields, eighteen top-level discriminating fixtures and
+   shared C12 owner/generation/lease/continuity validation in targeted and full
+diff --git a/NIZAM.json b/NIZAM.json
+index db634f7..76b8c7f 100644
+--- a/NIZAM.json
++++ b/NIZAM.json
+@@ -40,6 +40,7 @@
+         "methodology/08_cross_repo_dependency_gate.md",
+         "methodology/09_review_gate_flake_management.md",
+         "methodology/10_live_runtime_sessions.md",
++        "methodology/11_sbcl_runtime_binding.md",
+         "methodology/README.md"
+       ]
+     },
+@@ -331,6 +332,11 @@
+       "id": "nizam-live-runtime-sessions",
+       "summary": "Neutral consumer-aspirational live runtime ownership, operation, provenance, handoff and fresh-environment acceptance rules.",
+       "authoritative_source": "methodology/10_live_runtime_sessions.md"
++    },
++    {
++      "id": "nizam-sbcl-runtime-binding",
++      "summary": "Consumer-aspirational SBCL reference binding with folded language profile, honest runtime hazards and fresh hermetic acceptance rules.",
++      "authoritative_source": "methodology/11_sbcl_runtime_binding.md"
+     }
+   ],
+   "schemas": [
+diff --git a/docs/nips/NIP-0003-live-runtime-sessions.md b/docs/nips/NIP-0003-live-runtime-sessions.md
+index 0c743e1..f59d309 100644
+--- a/docs/nips/NIP-0003-live-runtime-sessions.md
++++ b/docs/nips/NIP-0003-live-runtime-sessions.md
+@@ -2,12 +2,15 @@
+ id: nip-0003-live-runtime-sessions
+ title: "NIP-0003: Live Runtime Sessions"
+ description: "Proposal to add a language-neutral live-runtime-session protocol (ownership, process generation, serialised operations, attempt continuity, fresh-environment acceptance) with an SBCL reference binding, an optional adapter capability, schema-governed session records, and a reference controller — realized as phases 015 and 016, after phase 014."
+-version: 1.1.0
++version: 1.1.1
+ status: active
+ authoritative_source: docs/nips/NIP-0003-live-runtime-sessions.md
+ last_audited: "2026-10-11"
+ tags: [nip, methodology, runtime-session, execution, evaluator-independence, circuit-breaker, adapter, sbcl]
+ change_log:
++  - version: "1.1.1"
++    date: "2026-10-12"
++    summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+   - version: "1.1.0"
+     date: "2026-10-11"
+     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
+@@ -30,7 +33,7 @@ change_log:
+ 0.2.0 revision with "Approved and accepted, please proceed." at source
+ `650770d9b48c31748f24b5ac6967b80a6a46c5f7`. The decision was recorded before product
+ edits in `.agent/run_state.json` at authorization commit
+-`87ba2ae9ae9b92565bf8bd6d5582dccb7622f881`. Frontmatter is now `active`, version1.0.0.
++`87ba2ae9ae9b92565bf8bd6d5582dccb7622f881`. At H-NIP acceptance, frontmatter became `active`, version1.0.0.
+ H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+ `2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+ `06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
+@@ -39,7 +42,7 @@ counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs
+ Canonical lifecycle and current feature position are read from
+ `.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+ requires its approved contract, both independent pre-code gates, Mode B, QA and
+-the evidence-capture gate. Features 111–114 remain pending. Historical phase014
++the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+ records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+ 
+ Phase016115–120 remains provisional/unallocated; future mechanisms and live proof
+diff --git a/docs/planning/HANDOVER.md b/docs/planning/HANDOVER.md
+index d2de9c3..11b506e 100644
+--- a/docs/planning/HANDOVER.md
++++ b/docs/planning/HANDOVER.md
+@@ -2,12 +2,15 @@
+ id: nizam-handover-2026-10
+ title: "Developer Handover — Release Status and Phase 014 Snapshot"
+ description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
+-version: 1.0.7
++version: 1.0.8
+ status: active
+ authoritative_source: docs/planning/HANDOVER.md
+ last_audited: "2026-10-11"
+ tags: [planning, handover, onboarding, phase-014]
+ change_log:
++  - version: "1.0.8"
++    date: "2026-10-12"
++    summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+   - version: "1.0.7"
+     date: "2026-10-11"
+     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
+@@ -55,7 +58,7 @@ counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs
+ Canonical lifecycle and current feature position are read from
+ `.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+ requires its approved contract, both independent pre-code gates, Mode B, QA and
+-the evidence-capture gate. Features 111–114 remain pending. Historical phase014
++the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+ records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+ 
+ Operator design decisions were recorded at `2026-10-11T06:30:20.388684+00:00` in `.agent/run_state.json`
+diff --git a/docs/planning/ROADMAP.md b/docs/planning/ROADMAP.md
+index 4ec0acf..aeb89ab 100644
+--- a/docs/planning/ROADMAP.md
++++ b/docs/planning/ROADMAP.md
+@@ -2,10 +2,13 @@
+ id: nizam-roadmap
+ title: "Forward Roadmap — nizam-framework"
+ description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
+-version: 0.59.0
++version: 0.59.1
+ status: active
+ authoritative_source: docs/planning/ROADMAP.md
+ change_log:
++  - version: "0.59.1"
++    date: "2026-10-12"
++    summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+   - version: "0.59.0"
+     date: "2026-10-11"
+     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
+@@ -349,7 +352,7 @@ counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs
+ Canonical lifecycle and current feature position are read from
+ `.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+ requires its approved contract, both independent pre-code gates, Mode B, QA and
+-the evidence-capture gate. Features 111–114 remain pending. Historical phase014
++the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+ records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+ 
+ | Feature | Scope | Approved counted lines |
+@@ -830,7 +833,7 @@ counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs
+ Canonical lifecycle and current feature position are read from
+ `.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+ requires its approved contract, both independent pre-code gates, Mode B, QA and
+-the evidence-capture gate. Features 111–114 remain pending. Historical phase014
++the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+ records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+ 
+ - **Current planning refresh merged; bounded maintenance is verified.** The [current backlog view](backlog_reconciliation.md) retains exact complete/cancelled canonical mirrors and factual planning inputs. Resolved NDEBT-047/046/045 and completed A04a cite actual maintenance QA/CI proof; NIP3/WA scopes are now accepted; phase015 activation is recorded above; future release and installed-upgrade authority remain outstanding. Both prior planning checkers and historical evidence stay frozen.
+diff --git a/docs/planning/backlog_reconciliation.md b/docs/planning/backlog_reconciliation.md
+index 7b4f9db..6fd928d 100644
+--- a/docs/planning/backlog_reconciliation.md
++++ b/docs/planning/backlog_reconciliation.md
+@@ -2,12 +2,15 @@
+ id: nizam-backlog-reconciliation-2026-10-08
+ title: "Backlog Reconciliation — 2026-10-08 Maintainer Brief, Phase-014 Activation and the Candidate DAG"
+ description: "Human view of the 2026-10-08 backlog reconciliation: current state, discrepancies and their resolution, the crosswalk from the maintainer brief's aliases A00-A16, scenarios T01-T19 and NIP-0003 cases 1-13 to existing ids, the operator decision record, the candidate DAG view derived from docs/planning/backlog_dag.json, an ordering comparison, the verification matrix, and the outline of a separate Workflow Assurance NIP."
+-version: 0.1.12
++version: 0.1.13
+ status: active
+ authoritative_source: docs/planning/backlog_reconciliation.md
+ last_audited: "2026-10-11"
+ tags: [planning, backlog, reconciliation, dag, phase-014, nip-0003, workflow-assurance]
+ change_log:
++  - version: "0.1.13"
++    date: "2026-10-12"
++    summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+   - version: "0.1.12"
+     date: "2026-10-11"
+     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
+@@ -88,7 +91,7 @@ counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs
+ Canonical lifecycle and current feature position are read from
+ `.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+ requires its approved contract, both independent pre-code gates, Mode B, QA and
+-the evidence-capture gate. Features 111–114 remain pending. Historical phase014
++the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+ records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+ 
+ Operator design decisions were recorded at `2026-10-11T06:30:20.388684+00:00` in `.agent/run_state.json`
+diff --git a/methodology/10_live_runtime_sessions.md b/methodology/10_live_runtime_sessions.md
+index a40cba1..658ba87 100644
+--- a/methodology/10_live_runtime_sessions.md
++++ b/methodology/10_live_runtime_sessions.md
+@@ -2,11 +2,14 @@
+ id: nizam-live-runtime-sessions
+ title: "Live Runtime Sessions"
+ description: "Language-neutral ownership, operation, evidence and handoff rules for long-lived development runtimes."
+-version: 0.1.1
++version: 0.1.2
+ status: active
+ enforcement: consumer-aspirational
+ authoritative_source: methodology/10_live_runtime_sessions.md
+ change_log:
++  - version: "0.1.2"
++    date: "2026-10-12"
++    summary: "Record the delivered normative SBCL binding while keeping executable enforcement and live proof pending."
+   - version: "0.1.1"
+     date: "2026-10-11"
+     summary: "Record delivered schemas and C12 relational record checks while retaining the future live-enforcement boundary."
+@@ -22,8 +25,10 @@ session rules in their runtime. The framework publishes definitions, two closed
+ runtime provenance schemas and C12 record-relational validation. These checks
+ establish record shape and declared invariants only; they cannot prove live
+ ownership, generation or lease enforcement, source/heap identity or runtime
+-conformance. A session controller, language binding, adapter capability and all
+-thirteen live conformance proofs remain pending features 112–113 and 115–120.
++conformance. The normative SBCL reference binding is published in
++[the binding document](11_sbcl_runtime_binding.md). Executable session controller,
++SBCL binding enforcement, adapter capability and all thirteen live proofs remain
++pending features113 and115–120 in phase016.
+ 
+ A runtime session is a long-lived process and its mutable image used for
+ interactive development. An agent session is an agent's conversational or
+@@ -217,8 +222,9 @@ run state. Generators record their scoped development work; Evaluators own
+ independently captured acceptance evidence and QA verdicts. Implementation agents
+ preserve fields they do not own. The two schemas and executable C12 relational
+ checks validate session and operation records. They establish declared record
+-validity, never live runtime behavior or acceptance of a warm image; controller,
+-binding, adapter and live conformance implementation remain pending.
++validity, never live runtime behavior or acceptance of a warm image. The normative
++SBCL reference binding is delivered; executable binding/controller enforcement,
++adapter capability and live proof remain pending features113 and115–120 (phase016).
+ 
+ | requirement-id | normative-rule | evidence-boundary |
+ | --- | --- | --- |
+diff --git a/methodology/README.md b/methodology/README.md
+index 565d5f7..f512b21 100644
+--- a/methodology/README.md
++++ b/methodology/README.md
+@@ -2,10 +2,13 @@
+ id: nizam-methodology-readme
+ title: "Methodology Module — Index"
+ description: "Index for the methodology/ module: the protocol documents governing planning, contract-first execution, adversarial TDD, the universal circuit breaker, tool-driven durable state, eval and trace infrastructure, the release train, cross-repo dependency gates, and review-gate flake management."
+-version: 0.5.0
++version: 0.6.0
+ status: active
+ authoritative_source: methodology/README.md
+ change_log:
++  - version: "0.6.0"
++    date: "2026-10-12"
++    summary: "Index the SBCL reference binding with its folded language profile and pending live-enforcement boundary."
+   - version: "0.5.0"
+     date: "2026-10-11"
+     summary: "Index the neutral consumer-aspirational live-runtime-session protocol."
+@@ -25,9 +28,9 @@ change_log:
+ The `methodology/` module owns the execution methodology: planning enforcement,
+ the contract-first harness loop, adversarial TDD, the universal circuit
+ breaker, tool-driven durable state, the release train protocol, and
+-review-gate flake management. Every
+-document in this module is runtime-agnostic and builds on the agent roles and
+-gates defined in `standard/AGF.md`.
++review-gate flake management. The neutral protocols and the named SBCL
++reference binding build on the agent roles and gates defined in
++`standard/AGF.md`.
+ 
+ | File | Purpose |
+ |---|---|
+@@ -43,6 +46,7 @@ gates defined in `standard/AGF.md`.
+ | [`09_review_gate_flake_management.md`](09_review_gate_flake_management.md) | Review-Gate Flake Management — operational doctrine for infrastructure failures of a convergent review gate: fail-closed principles, the open F1–F6 flake-class taxonomy, the bounded retry ladder with class-exception duties, protected-repository rules, telemetry, evidence duties (post-merge evidence races, canonical-vs-vendored resync waves), and flake-rate KPI targets. |
+ 
+ | [`10_live_runtime_sessions.md`](10_live_runtime_sessions.md) | Live Runtime Sessions — neutral ownership, lease and generation checks, serialized operations, honest outcomes, reconstructible handoffs and fresh hermetic acceptance; consumer-aspirational runtime enforcement. |
++| [`11_sbcl_runtime_binding.md`](11_sbcl_runtime_binding.md) | SBCL reference binding — folded language profile, non-atomic effects, condition capture, image drift, thread/cancellation hazards and fresh hermetic acceptance; executable enforcement and live proof remain pending. |
+ 
+ ## Design Decision Cross-Reference
+ 
+
+EXIT:0

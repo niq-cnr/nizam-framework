@@ -1,0 +1,87 @@
+{
+  "stage": "validator-mode-b",
+  "feature": "112",
+  "contract_id": "112",
+  "implementation_gate_attempt": 1,
+  "source_attempt": 2,
+  "reviewed_at": "2026-10-12T03:12:51.573833+00:00",
+  "reviewer": "/root/binding_validator_112",
+  "base_revision": "a6734f3debc71e8c307b9169c2782a7ab7372ecd",
+  "original_contract_base": "7d852bd7aedde01d7739126aa7a1cf880534a410",
+  "phase_base": "da1131846815328890cfb509be608551b80a82a7",
+  "approved_contract_sha256": "4357e16ce1423d7fa20bbec7ed4a008700e0046b29fe3789c8a78bb1cb87caca",
+  "reviewed_sha256": {
+    "methodology/11_sbcl_runtime_binding.md": "22ccbc7d38778ed131ce09e54fbaafaefe47fa0bfbee72eae4a65c19542ef089",
+    "NIZAM.json": "36ba859a7772dada0ead76ea3f81e7feacdc57f5f905e82186797a331df41caf",
+    "methodology/README.md": "0615dc24aff51ab88f602a4fe425cbf3f9502842fc1582927c0a4fb1eebf464e",
+    "methodology/10_live_runtime_sessions.md": "acb5cec9ca1cfaf662989cd45cfa04c9de2069900be8b1f6a4d1c81ca902f319",
+    "CHANGELOG.md": "471e28642c732cd1113b720f25dca8cb7c104a8ba2dc3c6c5870faf078c4df3e",
+    "docs/nips/NIP-0003-live-runtime-sessions.md": "c163e935ad1d5e97e2ca7c62d0bca2e0d1d5d6844ae2cc81b7df128c580ab085",
+    "docs/planning/HANDOVER.md": "85b43a97ded556088ab949bd9c3316b9db80c7b1114ec1d0056b8adf85646a60",
+    "docs/planning/ROADMAP.md": "4c87ce514f99261e29c23b5878a1a1b29e5aeee14ed122f8233296667f92f481",
+    "docs/planning/backlog_reconciliation.md": "14b1d90ef8959c2cdfe54ec184351b45ab6feaed85fce5355858dd5cd02b410a",
+    ".agent/contracts/112.json": "4357e16ce1423d7fa20bbec7ed4a008700e0046b29fe3789c8a78bb1cb87caca"
+  },
+  "reviewed_bundle_input_sha256": {
+    ".agent/evidence/112/check_112.py": "fa06e18c37f2b3505507db8bc721e3db53edf9bc0165069b81b6c308a027e68d",
+    ".agent/evidence/112/controls.json": "f492857a0f35d1dd8ec1d6a4543d5511d94700c8e8199450177fbbfcb94a5598",
+    ".agent/evidence/112/evidence_gate.py": "02ef52ec8c5c7041450b2cf36352f897dcffeb51120e4e9fcc2ae94d3f4007d1",
+    ".agent/evidence/112/test-author-handoff-rev2.json": "f38a2f2fc50cb288099fb5ceb30faf54f41c96901bd973e2c78b8e256dc592f0",
+    ".agent/validator/112-bundle-review-attempt2.json": "9817f0904c95a8f21ec9dac6b598d201aa9eaf36111ac0c9eaa292bec1c16aed",
+    ".agent/evidence/112/source-attempt2-root.json": "a9262bb755c28effbfadc9d8aa218126de69cfc973bf47cdd03a8d37a6fddfa0",
+    ".agent/evidence/112/source-freeze-attempt2.json": "4020d201cacc5a5f4167e00468cd08d08deaeb1362f1931d5b820d77fbf9cee6",
+    ".agent/evidence/112/source-development-attempt2/results.json": "1b322ce5469032ed0cdb3b03ffe6755f703783c51f9b598ed67b13a2736af429"
+  },
+  "issues": [
+    {
+      "path": "methodology/10_live_runtime_sessions.md",
+      "lines": [
+        31,
+        227
+      ],
+      "criterion": "Bounded availability paragraphs must preserve approved phase015 feature113 versus phase016115-120 scope and proof ownership.",
+      "severity": "medium",
+      "evidence": ".agent/evidence/112/validator112-mode-b/02-read.txt, .agent/evidence/112/validator112-mode-b/03-read.txt, .agent/evidence/112/validator112-mode-b/04-read.txt",
+      "finding": "The updated opening says controller, binding enforcement, adapter capability and live proofs remain pending features113 and115\u2013120 in phase016; Section12 repeats features113 and115\u2013120 (phase016). Those modifiers place113 in016 and mix its normative adapter capability with executable enforcement. Canonical .agent/feature_list_015.json explicitly includes113 Optional adapter capability and source routing in015, and approved product_spec_015.md independently assigns113 that same015 scope while retaining executable controller/live proof for016. Passing marker checks do not establish this phase distinction.",
+      "required_fix": "Within only the already contracted opening and Section12 availability paragraphs, explicitly identify optional adapter capability as pending feature113 in phase015, and separately identify executable controller/SBCL binding enforcement and live conformance proof as pending phase016 features115\u2013120. Preserve delivered normative Document11/schema status and every other body/frontmatter/history/index byte except any already authorized source revision record; do not reallocate features or change tests/contracts/budgets."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Full new Document11 and every modified product diff were inspected against the approved contract. Profile/provenance, project-code observation, non-atomic compile/load, pre-unwind conditions/dynamic restarts, bounded diagnostics, drift/reconstruction policy, thread/special bindings, cancellation confirmation, hermetic fresh process/build and exact eight-status mapping are concretely present without placeholder implementation or live conformance promotion.",
+    "Additional primary-source inspection confirmed CLHS CLOS redefinition/accessor cleanup, defconstant consequences, compile-file diagnostic returns and handler-bind semantics; earlier independent SBCL/ASDF/handler-case reading supports thread/wait/cancellation and config boundaries. Final fresh QA must still personally capture/review source-bound official inputs and execute all20 formal commands.",
+    "Exactly one capability and one methodology index entry are added; all prior index entries and framework1.5.0 remain unchanged. Other source documents show only their declared version/log and exact bounded prose replacements. The two schema HTML href repairs are the only source2 delta from archived source1, and eight other current product hashes match source1.",
+    "Source-freeze-attempt2 hashes match current9 products; reviewed_sha256 adds only the approved contract for exact10 current assessed source inputs. Reviewed checkerfa06/controlsf492/adapter02ef/handoff/bundle hashes are recorded separately. No checker or old111 proof was rerun by this reviewer.",
+    "Current canonical112 remains in_progress and113 pending in015; original history prefix and unrelated counters remain intact. Development results/receipts independently read report13/13 EXIT0,26 intended-defect/restored controls and frozen Git equivalence; those are development evidence, not formal freshQA. The single availability defect is the complete bounded source finding from this pass."
+  ],
+  "primary_sources_read": [
+    "https://www.lispworks.com/documentation/HyperSpec/Body/04_cf.htm",
+    "https://www.lispworks.com/documentation/HyperSpec/Body/m_defcon.htm",
+    "https://www.lispworks.com/documentation/HyperSpec/Body/f_cmp_fi.htm",
+    "https://www.lispworks.com/documentation/HyperSpec/Body/m_handle.htm"
+  ],
+  "evidence": [
+    ".agent/evidence/112/validator112-mode-b/reviewed-source-sha256.json",
+    ".agent/evidence/112/validator112-mode-b/reviewed-input-sha256.json",
+    ".agent/evidence/112/validator112-mode-b/01-read.txt",
+    ".agent/evidence/112/validator112-mode-b/02-read.txt",
+    ".agent/evidence/112/validator112-mode-b/03-read.txt",
+    ".agent/evidence/112/validator112-mode-b/04-read.txt",
+    ".agent/evidence/112/validator112-mode-b/05-read.txt",
+    ".agent/evidence/112/validator112-mode-b/06-read.txt",
+    ".agent/evidence/112/validator112-mode-b/07-read.txt",
+    ".agent/evidence/112/validator112-mode-b/08-read.txt",
+    ".agent/evidence/112/validator112-mode-b/09-read.txt",
+    ".agent/evidence/112/validator112-mode-b/10-read.txt",
+    ".agent/evidence/112/validator112-mode-b/11-read.txt",
+    ".agent/evidence/112/validator112-mode-b/12-read.txt",
+    ".agent/evidence/112/validator112-mode-b/13-read.txt",
+    ".agent/evidence/112/validator112-mode-b/14-read.txt",
+    ".agent/evidence/112/validator112-mode-b/15-read.txt"
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "112"
+  }
+}
