@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
   "status": "in_progress",
-  "updated_at": "2026-10-13T20:13:21.047505+00:00",
+  "updated_at": "2026-10-13T20:25:49.360180+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -786,6 +786,14 @@
     },
     "118-precode-coordination": {
       "attempts": 2,
+      "limit": 3
+    },
+    "118-test-author": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-test-coordination": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4683,6 +4691,12 @@
         ".agent/validator/118-mode-a-rev1.json",
         ".agent/qa/118-contract-review-rev1.json"
       ]
+    },
+    {
+      "at": "2026-10-13T20:25:49.360180+00:00",
+      "event": "118-independent-baseline-authored",
+      "detail": "Frozen GitB0b4f46a has actual current20 setup0, naive positive0 and semantic missing-proof red1; scope and private controls0. Root verified all30 frozen current/Git hashes. Independent bundle review remains required before Source.",
+      "evidence": ".agent/evidence/118/test-author-attempt1-handoff.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5210,7 +5224,7 @@
       }
     ]
   },
-  "last_action": "118 revision1 dualgates approved; independent acceptance authoring next",
+  "last_action": "Feature118 independent frozen baseline authored; route distinct bundle review before Source.",
   "completed_contract_ids": [
     "099",
     "103",
