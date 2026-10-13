@@ -1,0 +1,13 @@
+COMMAND: ["/usr/bin/python3", "-c", "import ast,json,pathlib,subprocess; old=subprocess.check_output(['git','show','2be0cf4d5773d9d0d7e7c4fb5de935ff4fd67d57:tools/workflow_assurance.py']).decode(); current=pathlib.Path('tools/workflow_assurance.py').read_text(); oldnodes={n.name:n for n in ast.parse(old).body if isinstance(n,(ast.FunctionDef,ast.ClassDef)) and n.name!='main'}; newnodes={n.name:n for n in ast.parse(current).body if isinstance(n,(ast.FunctionDef,ast.ClassDef))}; differences=[name for name,n in oldnodes.items() if ast.get_source_segment(old,n)!=ast.get_source_segment(current,newnodes[name])]; a=old.split('def main():')[0]; b=current.split('def _entry_blob(')[0]; print(json.dumps({'old_function_or_class_count':len(oldnodes),'old_function_or_class_byte_changes':differences,'prefix_content_equal_when_only_boundary_whitespace_stripped':a.rstrip()==b.rstrip(),'old_prefix_tail':repr(a[-20:]),'new_prefix_tail':repr(b[-20:])},indent=2))"]
+REVISION: 2ab311bde4e104ec4a2b1b739fe8fa91b48fe5b7
+EXIT: 0
+STDOUT:
+{
+  "old_function_or_class_count": 23,
+  "old_function_or_class_byte_changes": [],
+  "prefix_content_equal_when_only_boundary_whitespace_stripped": true,
+  "old_prefix_tail": "'tr(exc)) from exc\\n\\n\\n'",
+  "new_prefix_tail": "'r(exc)) from exc\\n\\n\\n\\n'"
+}
+
+STDERR:
