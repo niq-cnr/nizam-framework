@@ -1,0 +1,6 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c "import json,jsonschema; jsonschema.Draft202012Validator(json.load(open('.nizam/schema/contract.schema.json'))).validate(json.load(open('.agent/contracts/115.json'))); print('PASS: feature115 recovery proposed contract schema')"
+REVISION: c11b6504fddd89cb6085ad2d2af25bcee3437b31
+STDOUT:
+PASS: feature115 recovery proposed contract schema
+STDERR:
+EXIT: 0
