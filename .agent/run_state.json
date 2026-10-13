@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
   "status": "in_progress",
-  "updated_at": "2026-10-13T20:09:27.776264+00:00",
+  "updated_at": "2026-10-13T20:13:21.047505+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -777,15 +777,15 @@
       "limit": 3
     },
     "118-mode-a": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "118-contract-review": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "118-precode-coordination": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -4674,6 +4674,15 @@
       "event": "118-contract-revision1-proposed",
       "detail": "Proposal489380a preserves original3commands/650 while correcting phase/manifest complete versus stepCOMPLETED and declaring revision1 gate references/Root approval shape. Originalproposal/interfacebytes and rejectedgates preserved. Installedschema actual0; no Source/testpermission.",
       "evidence": ".agent/evidence/118/contract-proposal-handoff-attempt2.json"
+    },
+    {
+      "at": "2026-10-13T20:13:21.047505+00:00",
+      "event": "118-precode-revision1-approved",
+      "detail": "Both strict independent gates approve same489380a proposal/API after actualschema-aligned lifecycle correction. All historicalrejections retained; contract status/approval metadata only transitioned. Independent frozen acceptance and bundle review required before Source.",
+      "evidence": [
+        ".agent/validator/118-mode-a-rev1.json",
+        ".agent/qa/118-contract-review-rev1.json"
+      ]
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5201,7 +5210,7 @@
       }
     ]
   },
-  "last_action": "118 corrected revision1 schema passed; renewed independent gates pending",
+  "last_action": "118 revision1 dualgates approved; independent acceptance authoring next",
   "completed_contract_ids": [
     "099",
     "103",
