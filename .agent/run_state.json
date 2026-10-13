@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T17:52:58.732555+00:00",
+  "updated_at": "2026-10-13T17:57:05.547940+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -713,7 +713,7 @@
       "limit": 3
     },
     "117-recovery1-mode-a": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "117-recovery1-contract-review": {
@@ -721,7 +721,7 @@
       "limit": 3
     },
     "117-recovery1-precode-coordination": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -4486,6 +4486,12 @@
         ".agent/qa/117-contract-review-recovery1.json",
         ".agent/evidence/117/failed-recovery1-mode-a-attempt1/preservation.json"
       ]
+    },
+    {
+      "at": "2026-10-13T17:57:05.547940+00:00",
+      "event": "117-recovery1-mode-a-attempt2-audit-failed",
+      "detail": "Actual auditEXIT1 at canonical117API versus pre-amendment historical anchor; diagnostic0 proves API equals authorized immutableproposal f42e1b9. No contract defect; false gate and helper/raw exactquarantined, ownedroot removed afterSHA/mode preservation. Installedcheck notrun. Originalcounters preserved; recoveryModeA2/3, acceptedsecondreview1 unchanged. Final3 architectural changed-set audit distinguishes currentproposal blobs, archivedoldAPIs/proofs andRoot-owned coordination; noSource.",
+      "evidence": ".agent/evidence/117/failed-recovery1-mode-a-attempt2/preservation.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4992,7 +4998,7 @@
       }
     ]
   },
-  "last_action": "117 independent second review approved; ModeA reviewer mode-audit false-fail preserved, fresh structural retry pending",
+  "last_action": "117 ModeA audit2 incorrectly froze canonical revised API to old blob; final architectural anchor audit3 pending",
   "completed_contract_ids": [
     "099",
     "103",

@@ -1,0 +1,31 @@
+{
+  "review": "contract-mode-a",
+  "feature": "117",
+  "revision_reviewed": 2,
+  "proposal_sha256": "63c1ab3c9f4962fa145c5c42f3d35327452bfe08f30eb076c61fd801fe680ede",
+  "api_sha256": "f8f3e20dbc31bfe8ee2092b3a0c160646885dace49aa1799cab462a50984285f",
+  "actor": "/root/wa_validator",
+  "revision": "4bade3a4bca5341b2ed4470716acae77c49519a0",
+  "issues": [
+    {
+      "verification_index": null,
+      "criterion": "Independent Mode A preservation audit must distinguish authorized current API revision from historical immutable API archives.",
+      "severity": "medium",
+      "evidence": ".agent/evidence/117/recovery1-mode-a-attempt2-audit-raw.txt records EXIT1 at the current canonical API path. The API diagnostic shows current API equals authorized immutable proposal bytes but differs from the older preservation_revision API. This establishes a reviewer-helper false-fail, not a substantive contract defect.",
+      "required_fix": "In a fresh isolated architectural review, bind current revised contract/API to immutable reviewed proposal inputs; preserve historical archives and frozen proofs with their own exact historical anchors. Preserve this failed helper/raw without repairs or reruns."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    "This audit stopped before remaining preservation/input-readiness checks; installed self-governance check was not executed."
+  ],
+  "unsupported_claims": [],
+  "evidence_files": [
+    ".agent/evidence/117/recovery1-mode-a-attempt2-audit-raw.txt",
+    ".agent/evidence/117/recovery1-mode-a-attempt2-api-diagnostic-raw.txt",
+    ".agent/evidence/117/recovery1-mode-a-attempt2-schema-raw.txt"
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Review execution stopped on reviewer-helper comparison of authorized revision2 current API against an older historical API. No substantive contract defect established; independent readiness audit remains unfinished."
+  }
+}
