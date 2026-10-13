@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T12:53:05.615700+00:00",
+  "updated_at": "2026-10-13T13:13:59.383932+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -681,6 +681,14 @@
     },
     "116-closeout-coordination": {
       "attempts": 2,
+      "limit": 3
+    },
+    "117-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-proposal-coordination": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4382,6 +4390,12 @@
       "event": "117-selected-after-captured116",
       "detail": "Canonical117 IN_PROGRESS first, then derivedfeature/current IDs andDAG. Existing phase5400/7020/actual3009 authority unchanged;117 estimate1050 within original allocation. No117Source or approvedcontract yet; actual precode/testbundle/ModeB/freshQA/capture gates remain.",
       "evidence": ".agent/evidence/116/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-13T13:13:59.383932+00:00",
+      "event": "117-contract-attempt1-proposed",
+      "detail": "Generator immutable proposal7727121 observed; Root distinctowned coordination installedschema actualEXIT0. NoSource/tests/approval claimed; dualindependentprecode reviewers readexactproposal/API next. Contractestimate1050/phase5400/7020/actual3009 preserved.",
+      "evidence": ".agent/evidence/117/contract-schema-attempt1.txt"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4875,7 +4889,7 @@
       }
     ]
   },
-  "last_action": "115/116 captured complete;117 authorized local entry/role profiles selected on approved shared-file lane, contract proposal/two precode gates pending.",
+  "last_action": "117 immutable proposed contract schema passed; dual independent precode gates pending",
   "completed_contract_ids": [
     "099",
     "103",
