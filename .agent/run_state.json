@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
   "status": "in_progress",
-  "updated_at": "2026-10-13T20:06:15.530541+00:00",
+  "updated_at": "2026-10-13T20:09:27.776264+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -769,11 +769,11 @@
       "limit": 3
     },
     "118-contract": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "118-proposal-coordination": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "118-mode-a": {
@@ -4668,6 +4668,12 @@
         ".agent/validator/118-mode-a.json",
         ".agent/qa/118-contract-review.json"
       ]
+    },
+    {
+      "at": "2026-10-13T20:09:27.776264+00:00",
+      "event": "118-contract-revision1-proposed",
+      "detail": "Proposal489380a preserves original3commands/650 while correcting phase/manifest complete versus stepCOMPLETED and declaring revision1 gate references/Root approval shape. Originalproposal/interfacebytes and rejectedgates preserved. Installedschema actual0; no Source/testpermission.",
+      "evidence": ".agent/evidence/118/contract-proposal-handoff-attempt2.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5195,7 +5201,7 @@
       }
     ]
   },
-  "last_action": "118 both precode gates reject completed phase/manifest enum; fresh structural contract2 pending",
+  "last_action": "118 corrected revision1 schema passed; renewed independent gates pending",
   "completed_contract_ids": [
     "099",
     "103",
