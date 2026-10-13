@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T18:06:10.698970+00:00",
+  "updated_at": "2026-10-13T18:22:10.771340+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -722,6 +722,14 @@
     },
     "117-recovery1-precode-coordination": {
       "attempts": 3,
+      "limit": 3
+    },
+    "117-test-author": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-test-coordination": {
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -4501,6 +4509,18 @@
         ".agent/validator/117-mode-a-recovery1.json",
         ".agent/qa/117-contract-review-recovery1.json"
       ]
+    },
+    {
+      "at": "2026-10-13T18:22:10.771340+00:00",
+      "event": "117-test-coordination-attempt1-failed",
+      "detail": "Git bundle raw SHA tip produced actual128 empty-bundle error; source and coordination roots left intact. Fresh structural coordination2 uses actual detached HEAD ref and verifies exact archive before removal.",
+      "evidence": ".agent/evidence/117/failed-test-coordination-attempt1/result.json"
+    },
+    {
+      "at": "2026-10-13T18:22:10.771340+00:00",
+      "event": "117-test-author-attempt1-failed",
+      "detail": "Existing16, scope and all four setup0/positive0/semanticred1 passed at B13d2e1b. Scope-controls EXIT1 at staged scratch cleanup. Candidate files and Git bundle exactquarantined before ownedroot removal; no implementation or bundle approval.",
+      "evidence": ".agent/evidence/117/failed-test-author-attempt1/preservation.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5007,7 +5027,7 @@
       }
     ]
   },
-  "last_action": "117 revision2 approved by both independent gates; independent acceptance authoring next",
+  "last_action": "117 test author1 scratch cleanup failed; exact candidate archived, fresh structural author2 pending",
   "completed_contract_ids": [
     "099",
     "103",

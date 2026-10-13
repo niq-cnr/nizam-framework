@@ -1,0 +1,25 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 tools/test_workflow_assurance.py --scope-controls-117 --base 79af0276408ba03e80c709af127133e2b55e7bea
+REVISION: 13d2e1b4f5bc42f80bca0b6cb571d171e4003dcd
+EXIT: 1
+STDOUT:
+PASS scope-controls117 actual active117 approved snapshot
+PASS scope-controls117 owned append/counter/estimate positive
+PASS scope-controls117 typed rejection ['active_contract_id']
+PASS scope-controls117 typed rejection ['status']
+PASS scope-controls117 typed rejection ['history', 331, 'ga_declared']
+PASS scope-controls117 typed rejection ['history', 331, 'workflow_run']
+PASS scope-controls117 typed rejection ['scope_budget', 'per_feature', 0, 'actual']
+PASS scope-controls117 typed rejection ['scope_budget', 'per_feature', 1, 'actual']
+PASS scope-controls117 typed rejection ['circuit_breaker', '000-contract', 'attempts']
+PASS scope-controls117 typed rejection ['circuit_breaker', '117-contract-review', 'attempts']
+PASS scope-controls117 typed rejection ['phase_015_scope_budget_final', 'total_lines_changed']
+PASS scope-controls117 typed rejection ['scope_budget', 'estimated_current_feature_lines']
+PASS scope-controls117 protected .agent/evidence/115/api-interface.json
+PASS scope-controls117 protected .agent/evidence/116/api-interface.json
+PASS scope-controls117 protected .agent/evidence/117/api-interface.json
+PASS scope-controls117 protected .nizam/tools/SKILL.md
+PASS scope-controls117 protected docs/planning/DEBT.md
+PASS scope-controls117 unknown and ignored paths
+
+STDERR:
+CalledProcessError: Command '['git', '-C', '/home/cnross/.tmp/nizam117-scope-controls-ec90bu59/repo', 'rm', '-q', 'staged117.txt']' returned non-zero exit status 1.
