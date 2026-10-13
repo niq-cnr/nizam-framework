@@ -1,0 +1,1018 @@
+COMMAND: ["cat", ".nizam/methodology/01_execution.md", ".nizam/methodology/02_adversarial_tdd.md", ".nizam/methodology/03_circuit_breaker.md", ".nizam/standard/AGF.md", ".nizam/standard/anti_hallucination.md", ".nizam/schema/contract_review.schema.json"]
+REVISION: 374cb04e605eda794ae82bc02fbdf08a01d30fac
+STDOUT:
+---
+id: nizam-contract-first-execution
+title: "Contract-First Harness Loop"
+description: "The authoritative execution protocol: the two-loop state machine driving pre-code contract alignment and post-code implementation repair, the JSON Verdict Parse Rule, and the evidence-capture gate required before completion."
+version: 0.2.0
+status: active
+authoritative_source: methodology/01_execution.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-08-15"
+    summary: "Phase-012 issue-52 correction: a passing QA verdict no longer advances directly to complete. A distinct evidence-capture gate verifies referenced .agent/evidence files exist and record each required command/result before the Orchestrator may update lifecycle state."
+---
+
+# Contract-First Harness Loop
+
+## 1. Overview
+
+Once `00_planning.md` has produced an eligible, dependency-cleared feature, that
+feature is driven through a two-loop state machine before it is considered
+complete. Loop 1 aligns on *what* will be built, before any code exists. Loop 2
+verifies *what was built* matches what was aligned on. Neither loop may be
+skipped, collapsed, or reordered.
+
+This protocol is coordinated by the **Orchestrator** and governs the interaction
+between the **Generator**, **Validator**, and **Evaluator** roles defined in
+`standard/AGF.md` Section 2. It is bound by the Dual Validator Gate defined in
+that document's Section 3; the Planner's eligible feature is its input.
+
+## 2. Loop 1 — Pre-Code Alignment
+
+```text
+Generator proposes contract (status: "proposed")
+        |
+        v
+Validator Mode A  (pre-code contract gate, standard/AGF.md Sec 3)
+        |
+        v
+Evaluator contract review (independent second read of the same contract)
+        |
+        v
+   Both approve?  --No--> Generator revises contract --> back to Validator Mode A
+        |                  (bounded by the circuit breaker, Section 5 below)
+       Yes
+        v
+Contract status -> "approved". Loop 1 ends. Loop 2 begins.
+```
+
+A contract entering Loop 1 MUST declare, at minimum: the files it will create or
+modify, its non-goals (explicit statements of what it does NOT authorize), its
+verification commands (one per acceptance test it satisfies), an estimated line
+count, and an evidence directory/convention (`schema/contract.schema.json`). A
+proposal missing any of these is incomplete and cannot reach `approved` status.
+
+**No implementation before approval.** A Generator MUST NOT write source code
+against a contract whose `status` is anything other than `"approved"`. This is
+the single most important rule in this protocol — every other gate exists to
+protect it.
+
+## 3. Loop 2 — Post-Code Repair
+
+```text
+Generator implements the approved contract's scope ONLY
+        |
+        v
+Validator Mode B  (post-code implementation gate, standard/AGF.md Sec 3)
+   - runs a diff against the pre-implementation state
+   - confirms every contracted deliverable is present
+   - confirms ONLY contracted files were touched
+   - confirms no scope crept in beyond the contract
+        |
+        v
+   Approved?  --No--> Generator reworks with the rejection's failure report
+        |               (bounded by the circuit breaker, Section 5 below)
+       Yes
+        v
+Evaluator executes the contract's verification commands independently
+   -> QA verdict (.agent/qa/NNN.json, pass/fail + evidence)
+        |
+        v
+   Verdict == pass?  --No--> Generator reworks with the QA failure report
+        |                     (bounded by the circuit breaker, Section 5 below)
+       Yes
+        v
+Evidence capture gate
+   - every required verification has an externalised evidence file
+   - the QA verdict references those paths and every path exists
+   - command/result and actual exit status are recorded
+        |
+        v
+   Complete?  --No--> Generator/Orchestrator repairs the evidence record
+        |              (bounded by the circuit breaker, Section 5 below)
+       Yes
+        v
+Durable state advances: feature marked complete, next eligible feature selected
+per the Dependency Enforcement Rule (00_planning.md Sec 5).
+```
+
+A Generator implementing Loop 2 MUST implement only the contracted scope. If,
+during implementation, the Generator discovers the contract itself needs to
+change (a missed file, an incorrect deliverable), it MUST stop and propose a
+contract revision — re-entering Loop 1 — rather than silently expanding scope
+under cover of "finishing the job."
+
+**Evidence is a completion gate, not post-processing.** A passing QA JSON block
+proves the Evaluator's decision, but the feature remains `in_progress` until the
+Orchestrator verifies that every contracted verification has a corresponding
+externalised file under `.agent/evidence/`, that the QA verdict references those
+paths, and that each referenced path exists and records the command/result plus
+the actual exit status. Missing or unreferenced evidence is a Loop 2 failure and
+uses the same bounded repair loop; it is never filled in after the feature is
+marked complete.
+
+## 4. The JSON Verdict Parse Rule
+
+Every gate in both loops above — Validator Mode A, Validator Mode B, the
+Evaluator's contract review, and the Evaluator's QA verdict — culminates in a
+machine-parseable JSON verdict block. Advancement past that gate is permitted
+**only** when all four conditions hold simultaneously:
+
+```text
+final_verdict.approved === true
+AND issues.length === 0
+AND missing_acceptance_coverage.length === 0
+AND unsupported_claims.length === 0
+```
+
+This is restated here, not redefined — `standard/AGF.md` Section 4 is
+authoritative for the rule itself. The load-bearing consequence for this
+protocol is: **prose framing never substitutes for the JSON block.** A report
+that reads "mostly approved, one minor note" is a rejection if its JSON verdict
+carries a non-empty `issues` array. An orchestrator or Generator reading a gate
+result MUST parse only the JSON block to decide whether to advance.
+
+## 5. Circuit Breaker Cross-Reference
+
+Both loops above contain a step that can fail and be retried: Loop 1's "Generator
+revises contract" step, and Loop 2's "Generator reworks" step (twice — once for a
+Mode B rejection, once for a QA failure). Every one of these repeatable steps is
+bound by the **same** mandatory 3-strike circuit breaker.
+
+This protocol does not restate the breaker's internal mechanics (the per-attempt
+strategy, the halt procedure, or where its counters live) — those are
+authoritatively defined in `03_circuit_breaker.md`. What this protocol commits
+to is narrower and non-negotiable: **no revision loop or rework loop in either
+Loop 1 or Loop 2 above may exceed the attempt limit `03_circuit_breaker.md`
+defines, under any circumstance.** A fourth attempt at any single named step in
+this document is forbidden by that document and by extension forbidden here.
+
+## 6. Handoff Out
+
+When Loop 2 has both a passing QA verdict **and** a passing evidence-capture
+gate, the Orchestrator updates durable state (`04_tool_driven_state.md`) to
+reflect completion. Control then returns to `00_planning.md` Section 5 (the
+Dependency Enforcement Rule) to select the next eligible feature.
+
+## 7. References
+
+- `standard/AGF.md` — the agent roles (the coordinating Orchestrator and the
+  four execution roles), the Dual Validator Gate, and the authoritative
+  definition of the JSON Verdict Parse Rule.
+- `00_planning.md` — produces the eligible feature this loop consumes, and
+  receives control back on completion via the Dependency Enforcement Rule.
+- `02_adversarial_tdd.md` — the independence and rigor requirements binding the
+  Evaluator's contract review and QA verdict steps above.
+- `03_circuit_breaker.md` — the 3-strike limit bounding every revision and
+  rework step named in Sections 2, 3, and 5 of this document.
+- `04_tool_driven_state.md` — the durable-state artifacts (contracts, QA
+  verdicts, run state) this loop reads from and writes to at every stage.
+---
+id: nizam-adversarial-tdd
+title: "Adversarial Test Design"
+description: "The evaluator independence model, false-pass and false-fail hunting patterns, and the negative-testing requirement that keeps acceptance test suites load-bearing rather than tautological."
+version: 0.4.0
+status: active
+authoritative_source: methodology/02_adversarial_tdd.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-08"
+    summary: "Add the External Anchor Rule (Section 7) and the Mandatory Adversarial Evidence requirement (Section 8)."
+  - version: "0.3.0"
+    date: "2026-07-08"
+    summary: "Add the Verification-Authoring Standard (Section 10), naming the four forbidden verification anti-patterns (whole-file/vacuous greps, git-diff-HEAD scope guards blind to untracked/new files, bare-adjacency/parenthetical checks, literal-substring checks) and their tools/verify_lib.sh primitive replacements."
+  - version: "0.4.0"
+    date: "2026-07-19"
+    summary: "F-053 codification: add Section 10 anti-pattern (e) exit-code assertion (NDEBT-019 — pipeline-swallowed exits and set -e over-aggression on expected-failure captures), Section 11 Probe Isolation (NDEBT-013/020 — scratch-paths-only, cwd-verified-before-destructive, restore-with-trap), and Section 12 the five-class verification-authoring defect catalogue (NDEBT-014) with proven fixes and the new vlib_word_present primitive."
+---
+
+# Adversarial Test Design
+
+## 1. Overview
+
+An acceptance test suite is only as trustworthy as the adversarial rigor applied
+to it. A verification command that "usually passes" is not the same thing as a
+verification command that cannot silently pass for the wrong reason. This
+protocol governs the **Evaluator** role defined in `standard/AGF.md` Section 2:
+the agent that runs a feature's acceptance tests and independently confirms
+pass/fail with evidence, at both the contract-review stage and the QA-verdict
+stage of `01_execution.md`.
+
+## 2. Evaluator Independence
+
+The Evaluator that authors, hardens, and executes acceptance tests MUST be a
+role distinct from the Generator that writes the implementation code being
+tested. This separation exists to prevent the single most common source of
+false confidence in a pipeline: an agent grading its own work.
+
+1. **Never trust generator-supplied evidence as a substitute for re-execution.**
+   If a Generator's implementation report claims "tests pass" or pastes terminal
+   output into its own summary, the Evaluator MUST NOT accept that claim as the
+   verdict. The Evaluator re-runs every verification command itself, in its own
+   execution context, and derives the verdict from what it observes — not from
+   what it was told.
+2. **Every verdict is re-derived, not inherited.** A prior stage's PASS is not
+   evidence for a later stage's verdict. Validator Mode B's approval that files
+   match the contract does not substitute for the Evaluator's own QA run; each
+   gate in `01_execution.md` produces its own independent JSON verdict.
+3. **Prose is not proof.** Consistent with `standard/anti_hallucination.md`
+   AH-3, an Evaluator's verdict MUST cite command output or a file diff it
+   personally captured. A verdict that says "confirmed working" with no
+   externalised evidence path attached is treated as a rejection, not an
+   equivocal pass.
+
+## 3. False-Pass Hunting
+
+Before trusting a verification command's PASS output, the Evaluator actively
+searches for ways that command could report success without the underlying
+acceptance criterion actually holding. Two generic failure patterns recur across
+verification commands and MUST be checked for on every acceptance test the
+Evaluator inherits from a contract:
+
+### 3.1 The Vacuous Negated Grep
+
+A command shaped like `! grep -q "forbidden-string" some/path` (or the inverse,
+`grep -L`) is intended to prove *absence* of a forbidden pattern. But if
+`some/path` does not exist, or resolves to an empty file, or an empty glob
+expansion, the grep call fails to find a match for a reason that has nothing to
+do with the pattern actually being absent from real content — and the command
+still reports success. **A negated grep is only trustworthy once the Evaluator
+has independently confirmed the target it searches is non-empty and actually
+present** (for example, asserting a non-zero file count over the same glob
+before trusting the negated match against it). An absence-of-match result that
+cannot be distinguished from "there was nothing there to match against" is not
+evidence of anything.
+
+### 3.2 Locale-Dependent Sort Ordering
+
+A command that pipes through `sort` (or relies on lexical ordering to build an
+expected-vs-actual comparison string) can produce a different, valid-looking
+ordering depending on the executing environment's locale (`LC_ALL`, `LC_COLLATE`,
+or equivalent). A comparison built on an unpinned `sort` can pass in the
+Evaluator's environment and fail in another agent's or a CI runner's, for
+reasons that have nothing to do with the feature under test. **Any verification
+command that depends on sort order MUST pin its collation explicitly** (e.g.
+`LC_ALL=C sort`) rather than relying on whatever locale happens to be active,
+and the Evaluator MUST flag and hardened-reject any inherited command that
+sorts without an explicit, pinned collation before trusting its comparison.
+
+These two patterns are illustrative, not exhaustive. The underlying discipline
+generalizes: for every verification command, ask "what condition, unrelated to
+the acceptance criterion, could make this command exit 0 (or exit non-zero)
+anyway?" — and harden or reject the command until no such condition remains
+before trusting its output.
+
+## 4. False-Fail Hunting
+
+The inverse failure mode is equally dangerous: a verification command that can
+report failure even when the acceptance criterion genuinely holds, because of an
+environmental assumption the command silently depends on (a working directory
+assumption, a tool version difference, a network dependency for what should be
+a purely local check). Before accepting a FAIL result as proof of a real defect,
+the Evaluator re-examines the command for such assumptions and confirms the
+failure reproduces for the reason the acceptance test actually cares about, not
+for an unrelated environmental reason. A verdict of FAIL still requires the same
+evidentiary rigor as a verdict of PASS.
+
+## 5. Negative Testing
+
+Acceptance coverage that only ever exercises the "everything is correct" path is
+tautological — it proves the test can pass, not that the test can meaningfully
+fail. Every feature's acceptance coverage MUST include **at least one
+deliberately-adversarial or negative-space check**, in addition to the contract's
+listed positive verification commands. Acceptable forms include (not an
+exhaustive list):
+
+- **A stray-file guard** — asserting the exact expected set of files in a
+  directory, so that an accidental leftover draft or out-of-scope artifact is
+  caught even when it would not affect a simple count-based check.
+- **A forbidden-string absence check with a directory-emptiness guard** — per
+  Section 3.1, paired with an independent confirmation that the search target
+  is non-empty.
+- **An out-of-scope-edit detector** — confirming that files outside a
+  contract's declared scope were not touched, so that silent scope creep is
+  itself a failing condition the suite can detect.
+- **Schema rejection of invalid documents** — for any feature that ships or
+  relies on a JSON Schema, acceptance coverage MUST include at least one
+  document deliberately constructed to violate the schema (a missing required
+  key, a wrong-typed value, or a forbidden extra key on a schema with
+  `additionalProperties: false`) and confirm the schema **rejects** it, not
+  only that valid documents are accepted. A schema whose test suite only ever
+  feeds it valid input has never actually been shown to constrain anything.
+
+A test suite containing only ever-passing, always-affirmative checks is
+insufficient acceptance coverage on its own, independent of how many such checks
+exist.
+
+## 6. The Mandatory Adversarial Spot-Check
+
+Beyond the listed acceptance criteria a contract enumerates, every QA round
+(the Loop 2 evaluator step defined in `01_execution.md` Section 3) MUST include
+exactly one additional, evaluator-originated adversarial spot-check that is not
+among the contract's listed verification commands. This spot-check is recorded
+alongside the standard checks in the QA verdict (`schema/qa_verdict.schema.json`'s
+`adversarial_check` object: a description, a result, and an evidence path) and
+is subject to the same evidentiary rigor as every other check in this protocol.
+
+The spot-check exists to catch exactly the class of defect a contract's author
+did not think to enumerate — a plausible-but-wrong edge case, a boundary the
+listed tests happen not to cross. A QA round that only re-runs the contract's
+own list, verbatim, has not independently verified anything beyond what the
+contract's author already anticipated.
+
+## 7. The External Anchor Rule
+
+Every consistency or QA check that asserts a document matches actual practice,
+a schema, or another artifact's shape MUST anchor its expected value on a
+**source external to the artifact under test** — for example the schema file
+itself, a sibling protocol document, `run_state.json`'s recorded history, or
+the actual behavior of the pipeline the document describes. A check MUST
+NEVER derive its expected value by grepping, quoting, or otherwise
+re-deriving it from the artifact-under-test's own content or phrasing.
+
+This rule remediates a generic and recurring failure mode: a check that
+verifies a document "matches practice" by searching the document itself for
+its own claimed phrasing can report PASS even when the document's claim is
+substantively wrong, because the thing being graded and the thing supplying
+the expected answer are one and the same artifact — the check has nothing
+external to disagree with it. A verification command's source of truth MUST
+always live outside the file it is grading; a check whose only citation is
+the artifact under test quoting itself has established nothing and MUST be
+rejected as vacuous, per the false-pass discipline in Section 3.
+
+## 8. Mandatory Adversarial Evidence
+
+Every QA round's Section 6 adversarial spot-check MUST be captured to its own
+evidence file, in addition to being recorded in the QA verdict's
+`adversarial_check` object. The file naming convention is
+`<contract-id>-qa-adversarial.txt` (for example
+`.agent/evidence/014-qa-adversarial.txt`), following the same evidence-file
+family defined in `04_tool_driven_state.md` Section 4, and the QA verdict's
+`adversarial_check` object MUST reference that evidence file by path.
+
+A verdict whose `adversarial_check` has no corresponding evidence file
+present on disk is **incomplete**, per `standard/anti_hallucination.md` AH-3
+(evidence-anchored completion) — such a verdict MUST be treated as a
+rejection, not a pass, regardless of what the verdict's prose claims about
+the spot-check having been performed.
+
+## 9. References
+
+- `standard/AGF.md` — the Evaluator role definition and the JSON Verdict Parse
+  Rule this protocol's verdicts must satisfy.
+- `standard/anti_hallucination.md` — AH-2 (detect before fix) and AH-3
+  (evidence-anchored completion), both directly binding on Evaluator conduct.
+- `01_execution.md` — the two loops in which the Evaluator's contract review and
+  QA verdict steps occur.
+- `03_circuit_breaker.md` — bounds the rework loop triggered by a QA failure
+  this protocol's checks produce.
+
+## 10. Verification-Authoring Standard
+
+A verification command is only as trustworthy as its resistance to the
+false-pass and false-fail patterns catalogued in Sections 3 and 4. This
+section codifies five specific anti-patterns that MUST NOT appear in any
+contract's verification suite, each paired with its compliant replacement —
+the vetted primitive from `tools/verify_lib.sh` (the verification-helper
+library, F-023), or, for (e), the explicit exit-code capture — that
+replaces it.
+
+**(a) Whole-file / vacuous greps** — A check that greps an entire file for a
+token proves only that the token appears somewhere in the file, not that it
+appears within the section, block, or context the acceptance criterion
+actually cares about; per Section 3's false-pass discipline, such a
+whole-file match is vacuous whenever the same token can legitimately appear
+elsewhere (a prior version's change_log entry, an unrelated section, a
+sibling document quoted verbatim). Use `verify_lib.sh`'s section-scoped
+primitive `vlib_section_grep <file> <heading-regex> <token-regex>` instead,
+which confines the match to the span running from the named heading up to
+the next markdown heading at any depth (or EOF), so a token present only
+outside the relevant section correctly fails the check.
+
+**(b) `git diff HEAD` scope guards blind to new / untracked files** — A
+scope guard built on `git diff --name-only HEAD` (or any other `git diff
+HEAD` variant) reports changes only against paths git already knows about at
+`HEAD`; it is structurally blind to a brand-new file that was never
+committed, so a contract that introduces a wholly new out-of-scope file
+would pass such a guard entirely undetected. Use `verify_lib.sh`'s
+untracked-aware primitive `vlib_scope_guard <allowed-path-or-prefix> ...`,
+built on `git status --porcelain --untracked-files=all -- .
+':(exclude).agent'`, which sees new/untracked paths as well as modified
+ones.
+
+**(c) Bare-adjacency / parenthetical "appears near" checks** — A check that
+only confirms two tokens occur near one another in the same paragraph or
+parenthetical aside — without asserting any real structural or semantic
+relationship between them (the same heading's span, the same table row, the
+same schema field, the same parsed record) — can be satisfied by unrelated
+prose that merely happens to mention both words close together. A bare
+adjacency or parenthetical "appears near" test is not evidence of the
+relationship an acceptance criterion is meant to assert, and MUST be
+replaced with a check that ties the two values to the same concrete
+structural anchor (for example, both tokens verified within the same
+`vlib_section_grep` span, or both fields read from the same parsed record).
+
+**(d) Literal-substring checks that false-pass on unrelated text** — A check
+that merely searches for a literal substring (a version number, a path
+fragment, a keyword) can false-pass when that same substring occurs in
+unrelated text that has nothing to do with the acceptance criterion — a
+version string embedded in an unrelated sentence, or a path fragment that is
+itself a substring of a longer, different path. Require a check that asserts
+real content instead: `vlib_version_increased <file>` (a YAML-parsed strict
+semver tuple comparison against the file's own HEAD copy, not a substring or
+`!=` comparison), `vlib_path_resolves <path-token>` (an actual `test -e`
+resolution against the working tree, not a string match against the path
+text), and `vlib_no_stale_payload <file>` (a real per-line structural scan
+for a stale multi-directory enumeration, not a substring hit).
+
+**(e) Exit codes swallowed by a pipeline, or a bare non-zero exit** — A
+verification command that pipes a tool's output into `grep`/`tail`/`awk`
+(for example `bash tools/validate.sh | tail -1 | grep -Fxq 'SUMMARY: … 0
+failed'`) asserts only the *last* pipeline stage's exit status; the tool's own
+exit code is discarded, so a tool that fails but still prints the expected line
+passes the check. Symmetrically, a command that asserts merely a *non-zero*
+exit to prove a negative case can pass for an unrelated reason (a different
+check in the same tool failing). Capture and assert the tool's own return code
+explicitly — `out=$(cmd); rc=$?; test "$rc" -eq 0` (or grep for the specific
+verdict line of the *targeted* check, not a bare exit) — and when a command
+deliberately runs a tool that is *expected* to FAIL, guard the capture under
+`set -e` (`set +e; out=$(cmd); rc=$?; set -e`) so `set -e` does not fire on the
+expected non-zero command substitution before the assertion runs. (NDEBT-019:
+the pipeline-swallow form recurred across F-049's and F-050's evidence
+captures; the `set -e`-over-aggression form was caught live in F-052's.)
+
+Every contract's verification suite MUST be reviewed against all five of
+these anti-patterns, in addition to the false-pass and false-fail hunting
+practice of Sections 3 and 4, before it is approved; a verification command
+that relies on any of (a)-(e) is not acceptance coverage and MUST be
+rejected and rewritten using the corresponding `tools/verify_lib.sh`
+primitive (or the explicit exit-code capture) named above.
+
+## 11. Probe Isolation
+
+A reviewer or Evaluator that constructs an adversarial probe — a scratch file,
+a mutated fixture, a simulated sibling landing, a before/after substitution —
+operates on scratch state ONLY, never on the real repository the pipeline is
+delivering. This rule remediates two real incidents: a feature-032 evaluator
+probe that touched and then deleted a sibling feature's real contracted path
+(NDEBT-013), and a feature-045 review command that ran `rm -f` against the real
+`CHANGELOG.md` while intending a scratch cleanup (NDEBT-020).
+
+1. **Scratch paths only.** Every path a probe creates, mutates, or deletes MUST
+   live under a session-scratch root held in a variable, never a bare filename
+   and never a real contracted path. A probe never creates, touches, or deletes
+   a sibling's real path — including "simulating" that sibling's file landing.
+2. **Verify the working directory before any destructive command.** Before
+   issuing `rm`, `rm -f`, `git clean`, or any other destructive command, the
+   probe MUST confirm its current working directory is the intended scratch
+   location, and MUST NOT pass a real-repository path as that command's
+   argument.
+3. **Restore anything borrowed.** A probe that must temporarily substitute a
+   real tracked file (for example swapping a negative fixture in for a real
+   config to exercise a check) MUST back it up and restore it with a trap-based
+   backstop, and confirm the working tree is clean afterward.
+
+## 12. The Verification-Authoring Defect Catalogue
+
+Loop-1 and Loop-2 gates have repeatedly caught the same five
+verification-authoring defect classes (NDEBT-014). Each is recorded here with
+its proven fix, so future contracts inherit the catalogue instead of
+rediscovering it gate-by-gate:
+
+1. **Working-tree-anchored anti-vacuity companions** become mutually exclusive
+   with their positive check once the implementation lands — the "before" and
+   "after" states cannot both hold in the same tree. Anchor the anti-vacuity
+   companion to `HEAD` (or the pre-implementation base commit), never to the
+   working tree.
+2. **Per-feature-ID exclude-list immutability guards** are fragile under
+   parallel drafting: each new sibling needs a live amendment to the exclude
+   list. Prefer the two-part invariant proven in F-038 — tracked history clean
+   AND untracked additions confined to the in-flight feature-ID glob range.
+3. **`vlib_section_grep` is line-based**, so a required literal phrase split
+   across a markdown line-wrap silently fails the span match. Assert a phrase
+   that fits one physical line, or normalise the wrap before the section scan.
+4. **Bare substring tokens false-pass on containing words** (`renewed` ⊃
+   `new`, `stalemate` ⊃ `stale`, `invalid` ⊃ `valid` in a fixture-name glob).
+   Use a whole-word / delimited-token match (`vlib_word_present` in
+   `tools/verify_lib.sh`) or a backtick-delimited code-span token, never a bare
+   substring.
+5. **Natural-language content bounds** (line caps, word caps) cannot stop
+   paraphrase mirroring; only closed-set shapes with exact-text pinning proved
+   airtight for content whose own wording is the thing under test.
+---
+id: nizam-circuit-breaker
+title: "Universal Circuit Breaker (DD-2)"
+description: "The single authoritative 3-strike attempt limit embedded by every repeatable execution loop: isolated attempt workspaces, escalating strategies, the forbidden fourth attempt, and canonical-state halt/escalation."
+version: 0.2.0
+status: active
+authoritative_source: methodology/03_circuit_breaker.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-08-15"
+    summary: "Phase-012 issue-52 safety repair: every attempt runs in an isolated worktree/snapshot from the last approved base; failure cleanup removes only that validated attempt root after evidence capture. The phase document is canonical and run_state is repaired idempotently as derived state, replacing the impossible cross-file atomic-write claim; the escalation cross-reference now points to Section 4 step 4."
+---
+
+# Universal Circuit Breaker (DD-2)
+
+## 1. Overview
+
+This document is the single source of truth for the framework's mandatory
+3-strike / three-attempt limit — Design Decision DD-2, remediating the
+"infinite loop" failure mode where an agent retries a failing step indefinitely
+without ever escalating. Every execution loop that can repeat a step on failure
+— contract revision, implementation rework, or any other repair cycle defined
+elsewhere in this framework — embeds this exact limit. No document elsewhere in
+the framework restates or redefines these mechanics; they cross-reference this
+one by path.
+
+## 2. Scope: Every Repeatable Loop, No Exceptions
+
+This breaker applies uniformly to every step in the framework capable of being
+retried after a failure, including but not limited to:
+
+- Loop 1 contract revisions (`01_execution.md` Section 2) — a Generator revising
+  a proposed contract after Validator Mode A or Evaluator rejection.
+- Loop 2 implementation reworks (`01_execution.md` Section 3) — a Generator
+  reworking code after a Validator Mode B rejection, or after a failing QA
+  verdict.
+- Any subagent retry a pipeline performs after a malformed or empty subagent
+  response.
+
+A step not explicitly named above is not exempt by omission — "any single,
+repeatable step" is the governing scope, not an enumerated allowlist.
+
+## 3. The Per-Attempt Strategy Table
+
+Each attempt at a failing step MUST follow an escalating strategy. An agent
+MUST NOT repeat the same diagnostic approach across attempts — each attempt
+number below prescribes a materially different investigative posture:
+
+| Attempt | Strategy |
+|---|---|
+| **1** | **Direct fix.** Read the exact error output. Fix the specific line or command it identifies. Assume the defect is local and mechanical. |
+| **2** | **Type/interface analysis.** If the direct fix did not resolve the failure, step back and check for a structural mismatch — a type signature, an interface contract, a schema shape, or an assumption about another component's output that does not actually hold. |
+| **3** | **Architectural review.** If the failure persists after a structural fix attempt, question the approach itself. Consider whether the chosen implementation strategy, not merely its details, is what needs to change. |
+| **4+** | **FORBIDDEN.** No fourth attempt at the same step is permitted, regardless of how promising a new idea seems. See Section 4. |
+
+Skipping a strategy tier (for example, attempting an architectural rewrite on
+attempt 1 without first trying the direct fix) is itself a protocol violation —
+the escalating order exists so that cheap, likely fixes are exhausted before
+expensive, uncertain ones are attempted.
+
+### 3.1 Attempt isolation
+
+Every attempt MUST start from the last approved immutable base in its own
+attempt-scoped workspace. In Git, use a detached worktree at a newly-created,
+validated temporary path (conceptually `git worktree add --detach
+<attempt-worktree> <approved-commit>`); a non-Git system uses an equivalent
+copy-on-write snapshot. Never run a retry in the shared developer worktree.
+
+The attempt root and approved base are recorded before edits begin. A failed
+attempt's evidence is captured from that root and then only that exact root is
+removed through the worktree/snapshot manager. A successful attempt's reviewed
+diff or commit is the only material promoted back to the feature branch. The
+shared tree is never recovered with repository-wide reset or clean commands.
+
+## 4. Attempt 4 Is Forbidden — The Breach Procedure
+
+If a step's third attempt (per Section 3's table) also fails, the circuit
+breaker has tripped. The acting agent MUST, in order:
+
+1. **Capture and quarantine the third attempt.** Write its diagnostics, diff,
+   and exact attempt-root/base identifiers under `.agent/evidence/`. Then ask
+   the worktree or snapshot manager to remove **only that validated attempt
+   root**. No shared-worktree reset, repository clean, glob, or broad path is
+   permitted. If the root cannot be proved attempt-owned, leave it in place,
+   record it, and escalate rather than guessing at cleanup.
+2. **Set the canonical step status to `BLOCKED`, then repair derived state.**
+   The phase document's step-level `status` field, per
+   `schema/phase.schema.json`, is the lifecycle source of truth and is written
+   first. `.agent/run_state.json` is coordination state derived from that
+   canonical value and is updated in a separate, idempotent operation. If the
+   files disagree, execution halts; rebuild the derived entry from the phase
+   document and validate both artifacts before continuing. The protocol never
+   claims two files share one atomic filesystem write.
+3. **Log the failure** to the technical-debt register (conventionally
+   `docs/planning/DEBT.md`), naming at minimum: the phase, the feature, the
+   failure type, and a reference to the last attempt's response or evidence
+   file.
+4. **Escalate to a human and terminate.** The agent stops. Autonomous
+   continuation past a third failed attempt on any single step is never
+   permitted, under any framing ("just one more try," "I think I see it now")
+   — that framing is precisely what this document exists to override.
+
+Attempt 4 is not a slower, more cautious version of attempts 1-3. It is not
+permitted to occur at all.
+
+## 5. Where Breaker State Lives
+
+Every in-flight attempt counter is tracked in `.agent/run_state.json`'s
+`circuit_breaker` object (`schema/run_state.schema.json`), keyed by a
+step-identifying string (for example `"001-implementation"` or
+`"002-contract"`), each holding:
+
+```json
+{
+  "circuit_breaker": {
+    "<step-key>": {
+      "attempts": 2,
+      "limit": 3
+    }
+  }
+}
+```
+
+An agent beginning any retryable step MUST first reconcile this derived object
+with the canonical phase step, then read the counter to determine which attempt
+it is about to make. It MUST increment the relevant counter idempotently after
+each attempt concludes (success or failure). If reconciliation cannot prove the
+derived entry corresponds to the canonical step, the pipeline halts and rebuilds
+it before another attempt. An agent that begins a fourth attempt without having
+respected this counter has violated Section 4 regardless of its outcome.
+
+## 6. Escalation Protocol
+
+Escalation (Section 4, step 4) means the pipeline halts and a human reviewer is
+notified — it does not mean the pipeline silently proceeds to the next feature
+while marking the blocked one aside for "later." A `BLOCKED` feature remains
+blocked until a human either:
+
+- Provides a corrected approach or additional context that resolves the
+  underlying defect, after which the step may be attempted fresh (resetting the
+  attempt counter to 0), or
+- Explicitly authorizes cancelling or descoping the feature, after which its
+  status moves to `cancelled` (which, per the Dependency Enforcement Rule in
+  `00_planning.md` Section 5, satisfies any downstream feature that depended on
+  it, exactly as `complete` would).
+
+No agent may unilaterally decide a `BLOCKED` feature should be silently skipped
+or reattempted without one of the two human actions above.
+
+## 7. References
+
+- `01_execution.md` — names every contract-revision and implementation-rework
+  loop this breaker bounds.
+- `00_planning.md` Section 5 — the Dependency Enforcement Rule that governs how
+  a `BLOCKED` or `cancelled` feature affects downstream feature eligibility.
+- `schema/run_state.schema.json` — the structural definition of the
+  `circuit_breaker` object referenced in Section 5.
+- `schema/phase.schema.json` — the step-level `status` enum (including
+  `BLOCKED`) a phase document's steps carry.
+---
+id: agent-governance-framework
+title: "Agent Governance Framework (AGF)"
+description: "The generalised multi-agent execution model: agent roles, the dual validator gate, the JSON verdict parse rule, and the durable-state rule for agent coordination."
+version: 0.2.0
+status: active
+authoritative_source: standard/AGF.md
+change_log:
+  - version: "0.2.0"
+    date: "2026-07-19"
+    summary: "Define the Orchestrator role in Section 2 (coordination/state-ownership: sequences the execution roles, parses each gate verdict, owns run_state's run-position/coordination fields per Section 5 rule 4, enforces the circuit breaker) — resolving NDEBT-010, the load-bearing-but-undefined role that capability_profiles.md, permission_classes.md, mcp_policy.md, and methodology/06_release_train.md all already referenced. Section heading generalised from 'Four Agent Roles'; Section 5 rule 4 now names the Orchestrator-owned coordination fields."
+  - version: "0.1.1"
+    date: "2026-07-12"
+    summary: "Documentation-truth cleanup: Section 6's circuit-breaker cross-reference now names methodology/03_circuit_breaker.md (shipped at genesis; the 'forthcoming' wording was stale), and the Section 4 verdict rule's dropped word is restored ('entry in any of the three arrays blocks advancement')."
+---
+
+# Agent Governance Framework (AGF)
+
+## 1. Overview
+
+The AGF defines a runtime-agnostic execution model for coordinating multiple AI agents
+against a shared, contract-first delivery pipeline. It is deliberately silent on any
+specific agent runtime, tool-calling API, or orchestration harness — any runtime that can
+route work between the roles defined in Section 2 and honour the gates below is compliant.
+
+## 2. The Agent Roles
+
+Every execution pipeline governed by this framework is coordinated by a single
+**Orchestrator** and carried out by four execution roles (Planner, Generator, Validator,
+Evaluator). A single agent implementation MAY embody more than one role across different
+sessions, but a single session MUST NOT blend roles in a way that lets one role bypass
+another's gate.
+
+| Role | Responsibility | Typical Output |
+|---|---|---|
+| **Orchestrator** | Coordinates the pipeline: sequences the four execution roles, parses each gate's JSON verdict (Section 4) and advances only when it passes, owns the run-position and coordination fields of durable state (Section 5), and enforces the circuit breaker (Section 6). Authors no spec, contract, source code, or gate verdict of its own — it routes work between the execution roles and records the outcome. Where a deployment collapses the Orchestrator into another role, that collapse MUST be disclosed in durable state and every gate below still honoured. | Updated `run_state.json` coordination fields; gate-advance decisions recorded in durable state. |
+| **Planner** | Expands a brief or request into product-level artifacts: an architecture/spec document and a feature list with acceptance criteria. Stays at high-level architecture; does not lock in low-level implementation detail. | A specification document, a feature list. |
+| **Generator** | Proposes an implementation contract for a feature, then — once the contract is approved — implements only that contract's scope. Never expands scope silently. | A proposed contract; source code changes matching an approved contract. |
+| **Validator** | Gatekeeps the pipeline at two points (Section 3): before code is written (Mode A) and after (Mode B). Does not write source code or repair contracts; it approves or rejects. | A JSON verdict (Section 4). |
+| **Evaluator** | Executes the verification plan (tests, checks) against the implementation and independently confirms pass/fail with evidence. | A pass/fail verdict with required fixes on failure. |
+
+## 3. The Dual Validator Gate
+
+The validator operates in exactly two modes, and both are mandatory — a pipeline that
+skips either mode is non-compliant.
+
+### Mode A — Pre-Code Contract Gate
+
+- **Trigger:** A Generator has proposed a contract (`status: "proposed"`). No
+  implementation exists yet.
+- **Purpose:** Confirm the contract is a complete, bounded, testable, and traceable
+  translation of the specification — every deliverable maps to an explicit requirement,
+  every acceptance criterion is covered by a verification step, no scope is invented, and
+  no ambiguity is left for the Generator to guess at.
+- **Output required before proceeding:** An approved contract. Implementation MUST NOT
+  begin before a contract's status is `approved`.
+
+### Mode B — Post-Code Implementation Gate
+
+- **Trigger:** A Generator has completed implementation against an approved contract
+  (`status: "approved"`), and the validator is instructed to inspect the resulting
+  change set (e.g. via a diff against the pre-implementation state).
+- **Purpose:** Confirm the implementation matches the approved contract exactly — every
+  contracted deliverable is present, only contracted files were touched, every promised
+  verification step exists, no unapproved dependencies or scope crept in, and nothing is
+  a stub or placeholder.
+- **Output required before proceeding:** An approved implementation. The pipeline MUST
+  NOT hand off to the Evaluator's final verdict, nor may the orchestrator advance to the
+  next feature, before Mode B approval.
+
+Both modes are gatekeeping functions, not collaborative ones: a validator does not repair
+a contract or an implementation, invent missing requirements, soften a discrepancy, or
+approve on the basis of "mostly correct." Ambiguity is treated as a rejection reason, not
+a warning.
+
+## 4. The JSON Verdict Parse Rule
+
+Every validator and evaluator decision that gates pipeline progression MUST culminate in
+a single, machine-parseable JSON verdict block, in addition to any prose report. The
+orchestrator (or any automated caller) advances to the next pipeline stage **only when
+all four of the following hold simultaneously**:
+
+```text
+final_verdict.approved === true
+AND issues.length === 0
+AND missing_acceptance_coverage.length === 0
+AND unsupported_claims.length === 0
+```
+
+A verdict block satisfying all four conditions above looks like this:
+
+```json
+{"final_verdict": {"approved": true}, "issues": [], "missing_acceptance_coverage": [], "unsupported_claims": []}
+```
+
+Rules for applying this gate:
+
+1. **Parse only the JSON verdict block.** Prose framing — including language like
+   "mostly approved," "approved with minor notes," or "should be fine" — MUST NOT be used
+   to infer approval. If the JSON block does not independently satisfy all four
+   conditions above, the result is a rejection, regardless of surrounding prose tone.
+2. **Empty arrays are load-bearing.** `issues`, `missing_acceptance_coverage`, and
+   `unsupported_claims` are not advisory fields; each is a hard gate. A single non-empty
+   entry in any of the three arrays blocks advancement even if `approved` is `true`.
+3. **No inferred approval.** An orchestrator or calling agent MUST NOT synthesize an
+   `approved: true` verdict on a validator's behalf from an incomplete or malformed
+   response. A missing or malformed verdict block is treated as a rejection and triggers
+   the failure-handling procedure the pipeline defines for malformed subagent output.
+
+## 5. The Durable State Rule (No Oral Tradition)
+
+Agents operating under this framework MUST communicate results exclusively through
+durable, file-based state — never through chat history, conversational memory, or any
+other channel that is not independently readable by the next agent in the pipeline.
+
+1. **Every material result is written to a file.** Specifications, feature lists,
+   contracts, verdicts, and run-position state each have a canonical durable location
+   (conventionally under a project's `.agent/` directory, or an equivalent
+   framework-declared location) that any subsequent agent can read without depending on
+   the conversation that produced it.
+2. **Chat is not state.** A result that exists only as prose in an agent's response, and
+   is never written to its durable location, MUST be treated as not having happened. A
+   later agent or orchestrator MUST NOT act on a claimed result it cannot independently
+   read from durable state.
+3. **State is the handoff mechanism.** When one role hands off to the next (Planner to
+   Generator, Generator to Validator, Validator to Evaluator), the receiving role's first
+   action is to read the current durable state, not to trust a summary passed along in
+   conversation.
+4. **Preserve, don't overwrite blindly.** Updates to durable state MUST preserve fields
+   the current step did not own or change; a role updates only the fields its contract or
+   protocol assigns to it. In particular, the run-position and coordination fields of
+   `run_state.json` — the current phase and feature, the pipeline status, the scope
+   budget, the circuit-breaker state, the append-only history, and any recorded
+   operator-gate decisions — are owned exclusively by the **Orchestrator** (Section 2); an
+   execution role writes its own artifacts (its contract, verdict, or evidence) but never
+   these coordination fields.
+
+## 6. Circuit Breaker Cross-Reference
+
+Every execution loop governed by this framework embeds a mandatory circuit breaker
+limiting self-correction attempts on any single step, so that repeated failures halt for
+human review rather than looping indefinitely. The full 3-strike protocol — attempt
+strategy per strike, the halt procedure, and required state updates on trigger — is
+defined in the framework's execution methodology (`methodology/03_circuit_breaker.md`).
+This document establishes only the cross-cutting requirement: no
+role defined in Section 2 may bypass or override the circuit breaker's halt decision.
+
+## 7. References
+
+- `standard/NDS.md` — frontmatter and document lifecycle rules referenced by contracts
+  and specs this framework's agents produce.
+- `standard/GIP.md` — how a consumer repository inherits this framework's governance
+  content in the first place.
+- `standard/anti_hallucination.md` — the constraints every role in Section 2 operates
+  under while producing its output.
+---
+id: anti-hallucination-constraints
+title: "Universal Anti-Hallucination Constraints"
+description: "The mandatory constraints that govern every AI agent action across the framework, preventing hallucinated edits, phantom fixes, and unsubstantiated completion claims."
+version: 0.1.0
+status: active
+authoritative_source: standard/anti_hallucination.md
+---
+
+# Universal Anti-Hallucination Constraints
+
+## 1. Overview
+
+These constraints are mandatory for every AI agent operating under this framework,
+regardless of role, protocol, or task. They target the three most dangerous agent
+failure modes: editing files without verifying current state, applying fixes to
+already-resolved problems, and claiming completion without evidence.
+
+Violation of any constraint requires the agent to halt, emit a clearly marked blocked
+notice, and await operator input, rather than proceeding on an assumption.
+
+## 2. AH-1 — Read Before Every Write
+
+Before writing or editing any file, an agent MUST read the exact lines to be modified and
+confirm the on-disk content matches its expectation. If there is a discrepancy, the agent
+MUST halt and report the mismatch, naming the file, the expected content, and the actual
+content, rather than proceeding with the edit.
+
+**Rationale:** An agent's working context may hold stale content from an earlier read.
+Re-reading immediately before writing prevents overwriting changes made by another agent,
+a human, or an automated process since that earlier read.
+
+## 3. AH-2 — Detect Before Fix
+
+Before applying any fix, an agent MUST re-confirm the problem still exists (for example,
+by re-running the failing check or re-reading the affected content). If the problem is
+already resolved, the agent MUST skip the fix and record that it was already resolved,
+rather than writing a redundant or contradictory change.
+
+**Rationale:** An agent may carry forward a problem description from an earlier context
+window even after the problem has been resolved by a concurrent agent or a prior attempt.
+Writing a "fix" against already-correct content risks introducing a regression.
+
+## 4. AH-3 — Evidence-Anchored Completion
+
+An agent may only mark a file, step, or task complete after capturing command output or a
+file diff that confirms the change. A step is never marked complete on reasoning alone,
+and captured evidence MUST be externalised — written to a file or otherwise persisted
+outside the conversation — not merely pasted inline into a chat response.
+
+**Rationale:** Plausible-sounding completion narratives are not proof. Requiring captured,
+externalised evidence (terminal output, file diffs, test results) creates an auditable
+proof chain that humans and downstream agents can independently verify.
+
+## 5. AH-4 — Verify External System Behavior
+
+An agent MUST NOT assume how an external system (a CI provider, a hosted API, a build
+tool) formats its output or names its artifacts. It MUST observe actual behavior from a
+completed run of that system before configuring anything that depends on it.
+
+**Example:** When configuring a check that depends on the exact name a CI system assigns
+to a job, an agent MUST read that name from a completed run's own output, not derive it
+by guessing from the job's configuration file — configuration-file identifiers and
+runtime-emitted identifiers frequently diverge.
+
+**Trigger:** Any time an agent configures a system that depends on output produced by a
+different system.
+
+**Rationale:** External systems often use identifiers and formats that differ from their
+configuration structure. Assuming configuration shape maps to runtime output produces
+silently broken configurations — for example a status check that never matches anything
+and blocks merges indefinitely without an obvious cause.
+
+## 6. Applicability
+
+These constraints apply to every role and every action type defined by this framework's
+agent governance model, including but not limited to:
+
+| Action Category | Constraint(s) Most Relevant |
+|---|---|
+| Planning and specification authoring | AH-3 |
+| Contract proposal and revision | AH-1, AH-3 |
+| Source code implementation | AH-1, AH-2, AH-3 |
+| Test execution and QA verdicts | AH-2, AH-3, AH-4 |
+| Configuration of CI/CD or other external systems | AH-1, AH-4 |
+| Documentation audits and drift detection | AH-1, AH-2, AH-3 |
+
+No role is exempt. A validator or evaluator gate (see `standard/AGF.md` Section 3) MUST
+itself apply these constraints when forming its verdict — for example, AH-3 requires a
+validator's evidence citations to be drawn from files it actually read, not inferred.
+
+## 7. Enforcement
+
+- **Primary:** These constraints MUST be included, in substance, in the system
+  instructions of every agent operating under this framework.
+- **Secondary:** Automated checks SHOULD verify that completed steps carry non-empty,
+  file-referenced evidence fields (AH-3 enforcement) rather than inline or absent proof.
+- **Tertiary:** Human reviewers SHOULD verify cited evidence before approving any change
+  an agent marks complete.
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:contract_review.schema.json",
+  "title": "Nizam Contract-Review Verdict Schema",
+  "description": "Validates the evaluator's pre-code contract-testability review verdict for a feature contract, produced during Loop 1 (Pre-Code Alignment) as .agent/qa/NNN-contract-review.json (or a revision-suffixed variant such as NNN-contract-review-revN.json). Distinct from qa_verdict.schema.json, which validates the POST-code QA pass/fail verdict; this schema validates the PRE-code review of the verification suite's own soundness (vacuous-match, false-fail, and coverage-gap hunting) before implementation begins.",
+  "type": "object",
+  "properties": {
+    "review": {
+      "type": "string",
+      "description": "The kind of review performed, e.g. 'contract-testability'."
+    },
+    "feature": {
+      "type": "string",
+      "description": "Id of the feature whose contract is under review."
+    },
+    "contract_id": {
+      "type": "string",
+      "description": "Id of the contract under review, when distinct bookkeeping from 'feature' is useful (e.g. tracking a specific revision)."
+    },
+    "revision_reviewed": {
+      "type": "integer",
+      "description": "Which contract-negotiation revision round this review evaluated (0 for the initial proposal).",
+      "minimum": 0
+    },
+    "issues": {
+      "type": "array",
+      "description": "Verification-suite soundness defects found (vacuous matches, false-fails, false-passes, coverage gaps). Empty when the contract is approved with no blocking findings.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "verification_index": {
+            "description": "Which verification entry (by array index or ordinal) the issue concerns; null if the issue is not tied to a single entry (e.g. a missing-coverage gap).",
+            "type": ["string", "integer", "null"]
+          },
+          "criterion": {
+            "type": "string",
+            "description": "The acceptance criterion the flagged verification entry was supposed to prove."
+          },
+          "evidence": {
+            "type": "string",
+            "description": "The dry-run or fixture-based proof demonstrating the defect."
+          },
+          "required_fix": {
+            "type": "string",
+            "description": "The change needed to close the defect."
+          },
+          "severity": {
+            "type": "string",
+            "description": "Defect severity, e.g. 'high', 'medium', 'low'."
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "missing_acceptance_coverage": {
+      "type": "array",
+      "description": "Acceptance criteria from the feature/spec that no verification entry in the contract actually covers."
+    },
+    "unsupported_claims": {
+      "type": "array",
+      "description": "Claims made by the contract or its scope text that are not backed by a corresponding verification entry."
+    },
+    "observations": {
+      "type": "array",
+      "description": "Non-blocking notes: residual edge cases judged non-blocking, intentional design asymmetries, or awareness items that do not gate approval.",
+      "items": {}
+    },
+    "final_verdict": {
+      "type": "object",
+      "description": "The review's overall outcome.",
+      "properties": {
+        "approved": {
+          "type": "boolean",
+          "description": "Whether the contract (at the reviewed revision) is approved to proceed to implementation."
+        },
+        "feature": {
+          "type": "string",
+          "description": "Id of the feature this verdict concerns, mirroring the top-level 'feature' key."
+        },
+        "summary": {
+          "type": "string",
+          "description": "Human-readable summary of the review's findings and disposition."
+        }
+      },
+      "required": ["approved", "summary"],
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "review",
+    "feature",
+    "issues",
+    "missing_acceptance_coverage",
+    "unsupported_claims",
+    "final_verdict"
+  ],
+  "additionalProperties": true
+}
+
+STDERR:
+
+EXIT: 0

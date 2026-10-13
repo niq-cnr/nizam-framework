@@ -1,0 +1,27 @@
+{
+  "owner": "/root",
+  "halt_state_verified": true,
+  "gate_verdict": false,
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/117/halt-integrity.py",
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/117/halt-integrity.txt",
+      "sha256": "d7fa553f6f9f5a9d17d98b9b8007e77ffad84f0f32cf3aa3ad49afae783933dc"
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/117/halt-compliance.txt",
+      "sha256": "bc0538c164831bc5a5b1f5bc6029f0569f3196823e9d1a2936b3224515211ceb"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/117/halt-installed.txt",
+      "sha256": "a81b07b47cd93f7f3d4a0f707dbe15ade00b3dc0b14f3aa24e0fdc538bdbfc70"
+    }
+  ],
+  "known_recovery_inputs_ref": ".agent/evidence/117/known-review-inputs.json",
+  "created_at": "2026-10-13T13:39:09.033891+00:00"
+}

@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
-  "status": "in_progress",
-  "updated_at": "2026-10-13T13:28:55.006096+00:00",
+  "status": "blocked",
+  "updated_at": "2026-10-13T13:39:55.433885+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -692,7 +692,7 @@
       "limit": 3
     },
     "117-contract-review": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3
     },
     "117-review-recovery-coordination": {
@@ -700,10 +700,15 @@
       "limit": 3
     },
     "117-mode-a": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Attempt2 interrupted at mandatory independent-review halt; no current-revision gate produced or approval inferred."
+    },
+    "117-mode-a-coordination": {
       "attempts": 1,
       "limit": 3
     },
-    "117-mode-a-coordination": {
+    "117-halt-coordination": {
       "attempts": 1,
       "limit": 3
     }
@@ -4436,6 +4441,18 @@
       "event": "117-contract-attempt2-proposed",
       "detail": "Type/interface revision explicitlydeclares Root-populated gate_refs binding actualimmutableproposal/API and currentreviewpath/hash/type/revision. Originalproposal/API+rejectedGate exactpreserved, active117lifecycle explicit, no selfhashcycle. Actualinstalledschema0/readallhandoffhashes; noSource/test/doc/lifecycle scopesexpanded. RenewedModeA2 and finalsecondreview3 next.",
       "evidence": ".agent/evidence/117/contract-proposal-handoff-attempt2.json"
+    },
+    {
+      "at": "2026-10-13T13:36:35.172701+00:00",
+      "event": "117-contract-review-attempt3-exhausted-halt",
+      "detail": "Final independentreader guessed nonexistent .agent/api/specs/phases; actualdirectorydiscoveryEXIT2 preserved withstartup/protocol0 andSHA sidecars. Exact7reviewfiles plusinterruptedModeA2owner quarantined/ownedroots removed afterSHA/mode proofs. Canonicalphase/117BLOCKED first then derivedlist/run; completed115/116, historicalproofs/counters/budgets/install immutable. Contract117 remains proposed; ModeA2 interrupted withoutverdict, count2. NoSource/QA/capture/fourthreview. NDEBT-053/human correctedverified-path/python3 recovery required.",
+      "evidence": ".agent/evidence/117/contract-review-attempt3-paths.txt"
+    },
+    {
+      "at": "2026-10-13T13:39:55.433885+00:00",
+      "event": "117-halt-coordination-attempt1-verified",
+      "detail": "Actualhaltintegrity0 verifies canonical/derivedblocked tuple, installedschemas, complete115/116/history/counter/budget prefixes, SourceC4 hashes and7300oldproof/gate/installmode entries. ActualrepositoryC1-C16 compliance0 andinstalled239verify0. Completed3009+incomplete394=3403below7020; humanrecovery concreteatknownverifiedpaths/python3, notauthorized. NoSource117/QA/phasePR/merge/fourthreview.",
+      "evidence": ".agent/evidence/117/halt-verification.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4672,11 +4689,26 @@
         "range": "33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE",
         "evidence": ".agent/evidence/115/blocked-scope-measurement.txt",
         "note": "Incomplete feature; unapproved public test candidate removed after exact quarantine. Product0/process409, below7020, not appended to completed rolling baseline or total. Future authorized recovery must count whole115 from originalphasebase once; no allowance/rebaseline."
+      },
+      {
+        "id": "117",
+        "status": "blocked",
+        "actual": 394,
+        "product_lines": 0,
+        "process_overhead_lines": 394,
+        "evidence_lines": 5369,
+        "excluded_lines": 85,
+        "all_paths_lines": 5848,
+        "range": "dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE",
+        "evidence": ".agent/evidence/117/blocked-scope-measurement.txt",
+        "note": "Incomplete117 pre-code reader startup exhausted3/3, noSource/testimplementation. Whole117 startscaptured116 including selection/coordination once; no completedrollingbaseline append orrebaseline. Completed3009+inflight394=3403below original7020; haltsolelymandatoryreviewcircuit. Existing115/116/015 measuredrows/proofs preserved."
       }
     ],
-    "last_measured_at": "2026-10-13T12:46:04.802934+00:00"
+    "last_measured_at": "2026-10-13T13:38:20.215834+00:00"
   },
-  "blocked_features": [],
+  "blocked_features": [
+    "117"
+  ],
   "phase_007_scope_budget_final": {
     "original_estimate_lines": 870,
     "total_lines_changed": 240,
@@ -4857,7 +4889,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "117",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -4929,7 +4961,7 @@
       }
     ]
   },
-  "last_action": "117 proposed revision1 immutable5c45/schema0; explicit gate_refs producer; reneweddualreviews pending",
+  "last_action": "Feature117 pre-code review startup exhausted3/3; canonicalBLOCKED/derived/debt recorded, noSource or fourthreview; human corrected recovery required",
   "completed_contract_ids": [
     "099",
     "103",
@@ -5006,7 +5038,7 @@
     ],
     "note": "Phase 014 final ledger. 8705 of 8600 (101.2%): 105 over the operator-confirmed re-baseline estimate (spec 1.1.4, 'option 1 confirmed.'), comfortably within the 11180 authorized 130% ceiling. Completed features 099 + 103-109 + 102 (9 features); cancelled 100/101 (A3) consumed no budget. Historical-basis estimates for 099/103 (920/280) are mixed-basis and disclosed per their ledger entries. Captures: measure-099-103.txt, measure-105.txt, measure-108.txt, measure-109.txt, measure-102.txt."
   },
-  "pending_operator_gate": null,
+  "pending_operator_gate": "H-CONTRACT-117-RECOVERY",
   "planning_task": {
     "id": "workflow-016-planning",
     "status": "complete",
