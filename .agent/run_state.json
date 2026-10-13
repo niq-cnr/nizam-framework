@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T17:57:05.547940+00:00",
+  "updated_at": "2026-10-13T18:06:10.698970+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -713,7 +713,7 @@
       "limit": 3
     },
     "117-recovery1-mode-a": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3
     },
     "117-recovery1-contract-review": {
@@ -721,7 +721,7 @@
       "limit": 3
     },
     "117-recovery1-precode-coordination": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3
     }
   },
@@ -4492,6 +4492,15 @@
       "event": "117-recovery1-mode-a-attempt2-audit-failed",
       "detail": "Actual auditEXIT1 at canonical117API versus pre-amendment historical anchor; diagnostic0 proves API equals authorized immutableproposal f42e1b9. No contract defect; false gate and helper/raw exactquarantined, ownedroot removed afterSHA/mode preservation. Installedcheck notrun. Originalcounters preserved; recoveryModeA2/3, acceptedsecondreview1 unchanged. Final3 architectural changed-set audit distinguishes currentproposal blobs, archivedoldAPIs/proofs andRoot-owned coordination; noSource.",
       "evidence": ".agent/evidence/117/failed-recovery1-mode-a-attempt2/preservation.json"
+    },
+    {
+      "at": "2026-10-13T18:06:10.698970+00:00",
+      "event": "117-recovery1-precode-approved",
+      "detail": "Final architectural Mode A attempt3 passed actual audit, installed inventory and verdict schema. Independent second review already passed attempt1. Current proposal/API binding and historical preservation remain distinct. Both strict gates permit approved contract; Source awaits independent sealed acceptance review. Original exhausted counters and all failure evidence preserved.",
+      "evidence": [
+        ".agent/validator/117-mode-a-recovery1.json",
+        ".agent/qa/117-contract-review-recovery1.json"
+      ]
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4998,7 +5007,7 @@
       }
     ]
   },
-  "last_action": "117 ModeA audit2 incorrectly froze canonical revised API to old blob; final architectural anchor audit3 pending",
+  "last_action": "117 revision2 approved by both independent gates; independent acceptance authoring next",
   "completed_contract_ids": [
     "099",
     "103",
