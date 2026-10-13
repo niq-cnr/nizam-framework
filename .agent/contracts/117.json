@@ -7,7 +7,7 @@
   "base_revision": "79af0276408ba03e80c709af127133e2b55e7bea",
   "scope_base_revision": "79af0276408ba03e80c709af127133e2b55e7bea",
   "measurement_base_revision": "dddfd4f60e9d64109e271a48181fe281d4603666",
-  "contract_attempt": 2,
+  "contract_attempt": 3,
   "scope": {
     "files_create": [
       {
@@ -41,6 +41,14 @@
       {
         "path": ".agent/validator/117-mode-a-rev1.json",
         "purpose": "Renewed independent Mode A for revision 1; original rejected 117-mode-a.json remains byte/mode exact."
+      },
+      {
+        "path": ".agent/validator/117-mode-a-recovery1.json",
+        "purpose": "Independent renewed Mode A for authorized recovery revision2; all prior outputs preserved."
+      },
+      {
+        "path": ".agent/qa/117-contract-review-recovery1.json",
+        "purpose": "Fresh bounded recovery1 independent second review for revision2; original exhausted startup attempts/counters unchanged."
       }
     ],
     "files_modify": [
@@ -78,7 +86,7 @@
       },
       {
         "path": "docs/planning/phase_017.yaml",
-        "purpose": "Root117canonicalstepIN_PROGRESS/COMPLETED withactualcapturepath;017in_progress andothersteps exact."
+        "purpose": "Root117canonicalstepIN_PROGRESS/COMPLETED withactualcapturepath;017in_progress andothersteps exact. Root may correct only top-level current-position description to actual115/116captured,117recoveryin_progress,118pending; preserve step descriptions/history and all other fields."
       },
       {
         "path": "docs/planning/manifest.json",
@@ -86,17 +94,21 @@
       },
       {
         "path": ".agent/run_state.json",
-        "purpose": "Root117currentcoordination/newboundedcounters/historyappend/time/action/actual117measurement only. Oldhistory/counters/1151863/1161146 measuredrows/closed0157319 exact. Activeid/currentfeature117 untilcapture, bothnullafter, completedidsappend117once;017statusin_progress. No priorfeature remeasurement."
+        "purpose": "Root117currentcoordination/newboundedcounters/historyappend/time/action/actual117measurement only. Oldhistory/counters/1151863/1161146 measuredrows/closed0157319 exact. Activeid/currentfeature117 untilcapture, bothnullafter, completedidsappend117once;017statusin_progress. No priorfeature remeasurement. Original117-contract-review3/3 and halt-era history remain exact. Only explicitly authorized recovery1 counters/current117 coordination may advance; no reset or relabel of original exhausted step."
       },
       {
         "path": "docs/planning/backlog_dag.json",
         "purpose": "Rootgenerated_at/phase017_execution current117feature/status/evidence only; allpackets/terminalrecords/original/adopted/proposededges andfuturephase allocation exact."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "Orchestrator only after actual117 fresh QA and capture: resolve only NDEBT-053 Open->Resolved, version0.72.0->0.73.0 and one matching change-log entry; all prior debt rows, notes and change-log entries exact. No Generator debt edit or earlier resolution."
       }
     ]
   },
   "non_goals": [
     "No118foundation-ready/phaseclosure/controller/SBCL/A10/A11/liveruntime/otherphaseactivation/release/tag/GA/installed upgrade/externalecosystem.",
-    "Noindex/workflow/schema/protocol/skill/DEBT orinstalledfiles edits. Permissiondefaultreference isconsumeraspirational; no runtime sandbox/access-control/cryptographicauth claim ornewrole/profile/modelbinding.",
+    "Noindex/workflow/schema/protocol/skill orinstalledfiles edits. Permissiondefaultreference isconsumeraspirational; no runtime sandbox/access-control/cryptographicauth claim ornewrole/profile/modelbinding. Sole debt exception: explicitly Root-owned NDEBT-053 completion resolution declared in recovery_alignment; no other debt edits.",
     "No old115/116contract/QA/ModeB/capture/E/oldproof orbudget remeasurement/change; oldscopehelpers notrerun/resealed ascurrent117 guards.",
     "NoGenerator test/API/currentguard/frozenbundle/proof/reviewer byteseditafterreview; no execution-role lifecycle/counter/budgetwrite; no fieldancestor exemption orcallerprovided authoritygrant."
   ],
@@ -295,34 +307,45 @@
   "canonical_matrix": [
     "While017/117IN_PROGRESS, list117in_progress/passfalse/contractapproved; run.statusin_progress,current_feature117/active_contract_id117. Exact115/116completedentries and118pending. Foreigncontract/currentfeature orprematurephase/run/listcomplete rejects.",
     "Afterreal117SourceC ModeB/freshall12QA/ownspot/capture andcurrentallcore+sealeddependencies match, Rootcanonical117COMPLETED/listcomplete+passstrue+exactcontract/QA/capturerefs first, then derivedrun bothactivefieldsnull/completedidprefix+117once/contractcomplete. Phase/list/manifestremainin_progress. Publicscopeacceptsno mockflags/context.",
-    "Rootactualmeasurementappend117only withstrictintegercountedschemafields andactualevidence, preserves oldtypedrows/history/counters/015budget; do noteraseancestorfields. AlloldE/gates/install/DEBT0.71/futurephases/sourceoldreceiptrows preservedbyte/mode/types."
+    "Rootactualmeasurementappend117only withstrictintegercountedschemafields andactualevidence, preserves oldtypedrows/history/counters/015budget; do noteraseancestorfields. AlloldE/gates/install/DEBT0.72 (sole declared Root NDEBT-053 completion transition to0.73)/futurephases/sourceoldreceiptrows preservedbyte/mode/types."
   ],
-  "scope_guard": "Independentcurrent117guard protectsactualunknown/new/staged/ignoredpaths, actualrawbytes/modes/symlinkparents, type-sensitivehistoricalvalue/history/counter/budget-prefix equality andactualcanonical117tuple. CompletionverifiesrealcurrentSourceC4map plusallsealeddependencyhashes, typedModeB/QAall12exactcommands/ownspot/Rootcapture raw headers/exit/revision andreceipt hashes. Privateparserfixtures explicit, neverpublicmockbypass. Narrowdocs oneversion/log plusadditivebody andRootfield masks only.",
+  "scope_guard": "Independentcurrent117guard protectsactualunknown/new/staged/ignoredpaths, actualrawbytes/modes/symlinkparents, type-sensitivehistoricalvalue/history/counter/budget-prefix equality andactualcanonical117tuple. CompletionverifiesrealcurrentSourceC4map plusallsealeddependencyhashes, typedModeB/QAall12exactcommands/ownspot/Rootcapture raw headers/exit/revision andreceipt hashes. Privateparserfixtures explicit, neverpublicmockbypass. Narrowdocs oneversion/log plusadditivebody andRootfield masks only. Recovery preservation overlay and sole debt transition must follow recovery_alignment, with strict typed historical comparisons; fixtures retain real active117 local snapshots and finite gate producer ordering.",
   "approvals": {
     "validator_mode_a": false,
     "evaluator_contract_review": false,
-    "revisions": 1,
+    "revisions": 2,
     "gate_refs": null
   },
   "dod_ref": ".nizam/standard/definition_of_done.md",
   "gate_reference_policy": {
-    "revision": 1,
+    "revision": 2,
     "owner": "Orchestrator only; Generator leaves gate_refs null and both approval flags false until independently approved.",
     "approved_shape": "approvals.gate_refs is a closed object with exact keys proposal_revision, proposal_sha256, api_sha256, validator_mode_a, evaluator_contract_review. proposal_revision is an existing immutable 40-lowercase-hex Git commit; proposal_sha256/api_sha256 are 64-lowercase-hex SHA256 of actual contract/API Git blobs at that commit. Each role reference is closed {path,sha256}, sha256 binds actual gate bytes. Null is allowed only while proposed; an approved contract requires the complete object.",
     "validator_mode_a": {
-      "path": ".agent/validator/117-mode-a-rev1.json",
+      "path": ".agent/validator/117-mode-a-recovery1.json",
       "review": "contract-mode-a"
     },
     "evaluator_contract_review": {
-      "path": ".agent/qa/117-contract-review.json",
+      "path": ".agent/qa/117-contract-review-recovery1.json",
       "review": "contract-testability"
     },
-    "gate_producer": "Both independent current-revision gates must emit review as declared for their role, feature string117, revision_reviewed integer1 (never bool), proposal_sha256 and api_sha256 matching immutable proposal inputs, actor nonempty string, three actual empty arrays issues/missing_acceptance_coverage/unsupported_claims, and final_verdict.approved exact true. Additional independent evidence/schema metadata is allowed, never substitutes for required fields. Gate outputs do not hash themselves; Root computes reference hashes after both outputs exist.",
-    "selection": "Select exactly the paths declared for the current integer approvals.revisions=gate_reference_policy.revision=1. Never infer filename suffixes, choose newest timestamps, fall back to historical 117-mode-a.json or gates for116, or accept mixed proposal/API/revision inputs. Safe canonical relative paths, regular files and no symlink ancestors required.",
+    "gate_producer": "Both independent current-revision gates must emit review as declared for their role, feature string117, revision_reviewed integer2 (never bool), proposal_sha256 and api_sha256 matching immutable proposal inputs, actor nonempty string, three actual empty arrays issues/missing_acceptance_coverage/unsupported_claims, and final_verdict.approved exact true. Additional independent evidence/schema metadata is allowed, never substitutes for required fields. Gate outputs do not hash themselves; Root computes reference hashes after both outputs exist.",
+    "selection": "Select exactly the paths declared for the current integer approvals.revisions=gate_reference_policy.revision=2. Never infer filename suffixes, choose newest timestamps, fall back to historical 117-mode-a.json, 117-mode-a-rev1.json or 117-contract-review.json or gates for116, or accept mixed proposal/API/revision inputs. Safe canonical relative paths, regular files and no symlink ancestors required.",
     "obligation_binding": "Read actual immutable proposal contract/API blobs at proposal_revision and verify hashes. Compare approved current contract to that proposed contract with only these explicit Root transitions allowed: status proposed->approved, approvals.validator_mode_a false->true, approvals.evaluator_contract_review false->true, approvals.gate_refs null->declared complete record, and optional approvals.approved_at nonempty string. Every other parsed key/value and type, including approvals.revisions, obligations, grants and policy, remains exact; no entire-ancestor removal. Current API bytes match the sealed proposal API. No dependency on current HEAD equalling the proposal commit."
   },
   "entry_lifecycle": "The actual current-project entry command is an active117 preflight: run before Source readiness/ModeB/fresh QA and capture against approved117/current_feature117/active_contract_id117/in_progress. It intentionally rejects after117 completion or during118; postcapture scope/compliance does not replay this active-entry command. Four entry fixture cases remain executable via independently approved local active117 snapshots in later current20 regression suites; historical QA is never relabeled.",
   "amendments": [
-    "2026-10-13: Revision1 resolves the actual ModeA HIGH finding by declaring revision-safe Root-owned dual-gate references and aligned trusted producer/consumer shapes. Original rejected proposal/API and gate are preserved. Active117 lifecycle and finite local-fixture production are explicit; same scope, twelve commands, four cases and1050 budget."
-  ]
+    "2026-10-13: Revision1 resolves the actual ModeA HIGH finding by declaring revision-safe Root-owned dual-gate references and aligned trusted producer/consumer shapes. Original rejected proposal/API and gate are preserved. Active117 lifecycle and finite local-fixture production are explicit; same scope, twelve commands, four cases and1050 budget.",
+    "2026-10-13: Operator-authorized recovery1 alignment (contract attempt3/revision2): preserve exhausted startup review/halt evidence, bind renewed gate paths/revision2 and current DEBT0.72, permit only Root NDEBT-053 resolution0.73 after real117 QA/capture. Same12 commands/fourcases/roles/1050 and5400/7020 budgets; no Source permission from this proposal."
+  ],
+  "recovery_alignment": {
+    "authorization_ref": ".agent/evidence/117/recovery-authorization.json",
+    "authorization_sha256": "654a26ebe3965f061f82a376d16225092b743848dd06f33ce34c5af2f8fd9a65",
+    "epoch": "117-recovery1",
+    "preservation_revision": "86ff0c924c2d802b07e8d4acefed3bb9d2dcb0f4",
+    "scope": "Architectural alignment only: preserve mandatory halt/recovery metadata and original exhausted independent-review attempts; fresh bounded recovery1 gates use known-review-inputs.json and /usr/bin/python3. Original scope_base79af and measured dependency dddf remain unchanged. No new business behavior, allocation or installed upgrade.",
+    "historical_preservation": "Current117 guard retains original scope-base comparison for file membership/obligations and also anchors exact halt/recovery-era historical files, prefixes and typed prior fields to preservation_revision. All old evidence/gates/failed startup outputs/authorization/debt history/installed239 and original117-contract-review3/3 counter are immutable; do not compare only against pre-halt79af and silently drop later history. Permit only declared Root-owned current117 lifecycle/recovery1 counters/history append/actual117 measurement. Recovery authorization does not grant blanket E117 rewrites or Root ancestor exemptions.",
+    "debt_transition": "DEBT0.72.0 and NDEBT-053 remain Open through contract approval, independent bundle authoring/review, Source and fresh QA. Only after actual117 ModeB, all12 fresh QA checks, ownspot and distinct Root evidence capture may Orchestrator change only053 Open->Resolved with actual resolution/evidence refs, top-level version0.72.0->0.73.0 and exactly one new0.73.0 change-log entry. All existing rows/logs/body outside053 remain exact. No extra0.72 annotation bump, no resolution merely because recovery was approved.",
+    "canonical": "Authorized current117 phase step IN_PROGRESS and derivedrun current_feature/active_contract_id117/statusin_progress; phase017in_progress,115/116captured and118pending. Historical BLOCKED descriptions are preserved as dated halt evidence. Only Root current-position phase description may reflect this recovery. Completion remains realQA/capture-gated; active117 entry intentionally rejects after capture or during118."
+  }
 }
