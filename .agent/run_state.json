@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T13:13:59.383932+00:00",
+  "updated_at": "2026-10-13T13:17:23.015370+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -688,6 +688,14 @@
       "limit": 3
     },
     "117-proposal-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-contract-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-review-recovery-coordination": {
       "attempts": 1,
       "limit": 3
     }
@@ -4396,6 +4404,12 @@
       "event": "117-contract-attempt1-proposed",
       "detail": "Generator immutable proposal7727121 observed; Root distinctowned coordination installedschema actualEXIT0. NoSource/tests/approval claimed; dualindependentprecode reviewers readexactproposal/API next. Contractestimate1050/phase5400/7020/actual3009 preserved.",
       "evidence": ".agent/evidence/117/contract-schema-attempt1.txt"
+    },
+    {
+      "at": "2026-10-13T13:17:23.015370+00:00",
+      "event": "117-contract-review-attempt1-startup-failed",
+      "detail": "Root dispatched abbreviated E117 ownerpath; independentactor stopped actualreadEXIT1 before substantive review/writes. Exactowner/actorreportedreadfailure archived, soleownedroot removed onlyaftertracked/untracked proof. Counter1 counted; unchangedproposal/API awaits fresh2 with fullpath; ModeA1 independentparallel unaffected.",
+      "evidence": ".agent/evidence/117/failed-contract-review-attempt1/read-failure.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4889,7 +4903,7 @@
       }
     ]
   },
-  "last_action": "117 immutable proposed contract schema passed; dual independent precode gates pending",
+  "last_action": "117 independentcontractreview1 startupreadfailed, immutableproposal/API unchanged; freshfullpath interface recovery2 pending",
   "completed_contract_ids": [
     "099",
     "103",
