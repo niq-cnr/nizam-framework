@@ -112,19 +112,56 @@
   "candidate": "Read canonicalE118/source-candidate.json shape declared producer below; actual40hex SourceC tree/4core/complete runtime inputs equal actual immutable SourceC Git blobs and current regular raw bytes/modes. Manifest matches its own SourceC blob. Core/runtime digests exact64hex. No HEAD equality or whole-tree pre-codeB equality.",
   "prerequisite_consumer": "Strict closed producer shape below. Verify all20 exact ordered unique case/command proof rows, real unique COMMAND/REVISION/EXIT headers matching SourceC/strict int0, actual SHA/raw nonempty stdout diagnostics (stderr captured, no substitute exit). Actor/session strict nonempty strings distinct from frozen author/developer/reviewer. Passed/check counts strictbool/ints (bool !=int). Exact maps candidate/current/Git identities and historical12 bindings current==immutable captured117 baseline bytes/modes; historical Source commits/hashes anchored to their original receipts, never require old current product/test hashes. No own118QA/capture reads or command execution by library.",
   "precode_gate_policy": {
-    "revision": 0,
+    "revision": 1,
     "validator_mode_a": {
-      "path": ".agent/validator/118-mode-a.json",
+      "path": ".agent/validator/118-mode-a-rev1.json",
       "review": "contract-mode-a"
     },
     "evaluator_contract_review": {
-      "path": ".agent/qa/118-contract-review.json",
+      "path": ".agent/qa/118-contract-review-rev1.json",
       "review": "contract-testability"
     },
-    "producer": "Both gates feature string118/revision_reviewed strictint0/proposal_sha256/APIsha256 matching immutable proposal inputs/actor strict nonempty string/final_verdict.approved exacttrue/three actual empty blocker arrays. Additional schema/evidence metadata allowed. Root gate_refs remains null until both actual outputs exist; paths/hashes filled afterwards, no proposal/output selfhash.",
-    "approved_gate_refs": "Closed approvals.gate_refs {proposal_revision,proposal_sha256,api_sha256,validator_mode_a,evaluator_contract_review}; proposal existing40hex commit and actual blob64hex SHA; each role closed {path,sha256} matches policy and actual gate bytes. Deterministic current revisions=0; no historic fallback. Frozen obligations differ only status proposed->approved, exactfalse->true flags, gate_refs null->complete, optional approved_at string."
+    "producer": "Both gates feature string118/revision_reviewed strictint1/proposal_sha256 and api_sha256 matching exact immutable proposal and API bytes/actor strict nonempty string/final_verdict.approved exacttrue/three actual empty blocker arrays issues,missing_acceptance_coverage,unsupported_claims. Additional schema/evidence metadata allowed. Root approvals.gate_refs remains null until both actual outputs exist; paths/hashes filled afterwards, no proposal/output selfhash.",
+    "approved_gate_refs": "Closed approvals.gate_refs {proposal_revision,proposal_sha256,api_sha256,validator_mode_a,evaluator_contract_review}; proposal_revision existing40hex proposal commit and proposal_sha256/api_sha256 actual64hex input SHA; each role closed {path,sha256} matches revision1 policy and actual gate bytes. Deterministic approvals.revisions=1; no historic fallback.",
+    "root_approval_changes": {
+      "status": {
+        "from": "proposed",
+        "to": "approved"
+      },
+      "approvals.validator_mode_a": {
+        "from": false,
+        "to": true
+      },
+      "approvals.evaluator_contract_review": {
+        "from": false,
+        "to": true
+      },
+      "approvals.gate_refs": "null -> complete closed object declared by approved_gate_refs, only after both actual revision1 gates pass",
+      "approvals.approved_at": "Optional new nonempty string timestamp within approvals only; no top-level approved_at",
+      "preserve": "All other fields/obligations exact, including contract_attempt=2, approvals.revisions=1 and precode_gate_policy.revision=1. Later contract status complete only after actual QA and Root capture under canonical_close."
+    }
   },
   "independent_bundle": "Independent closed frozen input/roles/GitB/seal and exact-nine-field reviewer output per contract. Reviewer output hashes are outside bundle seal; later SourceC identity is separate. Positive and intended semantic red require callable naive policy after successful real20/harness setup.",
   "failure_controls": "Author/Reviewer test valid receipt then independently reject missing/duplicate/foreign-case/command, nonzero or bool exit/count, malformed raw/actor type, self role/session, stale SourceC/core/helper/digest/mode, unsafe path, changed historical receipt and unknown omitted runtime inputs. Missing API/setup never sole red. Default20 unchanged. --scope-118/--scope-controls-118 require exact selectedbase and finite active/delivered/completed transitions; no public mock flag.",
-  "lifecycle": "foundation-ready checks prerequisite current20 readiness independently of own118 QA/capture and supports completed118 record-only overlays with unchanged inputs. Actual117 project entry remains intentionally inactive; four entry cases use actual approved historical local snapshots. Full close requires separate current118 guard/Root capture."
+  "lifecycle": "foundation-ready checks prerequisite current20 readiness independently of own118 QA/capture and supports completed118 record-only overlays with unchanged inputs. Actual117 project entry remains intentionally inactive; four entry cases use actual approved historical local snapshots. Full close requires separate current118 guard/Root capture.",
+  "lifecycle_values": {
+    "authority": {
+      "phase": ".nizam/schema/phase.schema.json",
+      "manifest": ".nizam/schema/manifest.schema.json",
+      "run_state": ".nizam/schema/run_state.schema.json"
+    },
+    "phase_status": {
+      "before": "in_progress",
+      "after": "complete"
+    },
+    "phase_step118_status": {
+      "before": "IN_PROGRESS",
+      "after": "COMPLETED"
+    },
+    "manifest_phase017_status": {
+      "before": "in_progress",
+      "after": "complete"
+    },
+    "condition": "Only Root after actual independent QA3 plus ownspot and evidence capture, canonical phase first; all prior115116117 step/evidence records preserved. These are phase/manifest schema values; run_state.status has string type without a schema enum."
+  }
 }

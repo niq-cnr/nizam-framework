@@ -1,0 +1,155 @@
+{
+  "feature": "118",
+  "kind": "producer-interface-not-a-receipt",
+  "paths": {
+    "candidate": ".agent/evidence/118/source-candidate.json",
+    "prerequisite": ".agent/evidence/118/prerequisite20.json",
+    "mode_b": ".agent/validator/118-mode-b.json",
+    "qa": ".agent/qa/118.json",
+    "capture": ".agent/evidence/118/evidence-capture.json"
+  },
+  "core_paths": [
+    "tools/workflow_assurance.py",
+    "tools/test_workflow_assurance.py",
+    ".agent/evidence/118/api-interface.json",
+    ".agent/evidence/118/scope-guard.py"
+  ],
+  "historical_paths": [
+    ".agent/contracts/115.json",
+    ".agent/contracts/116.json",
+    ".agent/contracts/117.json",
+    ".agent/qa/115.json",
+    ".agent/qa/116.json",
+    ".agent/qa/117.json",
+    ".agent/validator/115-mode-b.json",
+    ".agent/validator/116-mode-b.json",
+    ".agent/validator/117-mode-b.json",
+    ".agent/evidence/115/evidence-capture.json",
+    ".agent/evidence/116/evidence-capture.json",
+    ".agent/evidence/117/evidence-capture.json"
+  ],
+  "candidate": {
+    "closed_keys": [
+      "revision",
+      "tree",
+      "source_sha256",
+      "runtime_sha256",
+      "historical_sha256"
+    ],
+    "fields": {
+      "revision": "Actual immutable40hex SourceC commit",
+      "tree": "ActualSourceC tree40hex",
+      "source_sha256": "Exact4 path->64hexSHA object for core_paths",
+      "runtime_sha256": "Exact runtime_paths path->64hexSHA object from frozen manifest including manifest/producer/roles/helpers",
+      "historical_sha256": "Exact12 declared paths->64hexSHA; actual current bytes/modes equal captured117 historical_base Git blobs; old Source hashes remain original point-in-time"
+    }
+  },
+  "prerequisite": {
+    "closed_keys": [
+      "feature",
+      "actor",
+      "session_id",
+      "passed",
+      "checks_run",
+      "checks_passed",
+      "revision",
+      "tree",
+      "source_sha256",
+      "runtime_sha256",
+      "historical_sha256",
+      "checks"
+    ],
+    "feature": "118",
+    "actor": "Independent Evaluator strictnonempty agent/session strings, distinct from author/developer/bundle reviewer; recordedlocal trust, no authentication claim",
+    "passed": true,
+    "checks_run": "Strictint20",
+    "checks_passed": "Strictint20",
+    "bindings": "All5 candidate fields exact; SourceC/current/Git maps unchanged",
+    "checks": "Ordered20 rows closed {case,command,exit_code,evidence,sha256}; exact API current_cases, strictint0, unique safeE118 proof path and actual64hexSHA. No ready/QA/old116bundle/live117entry command included."
+  },
+  "raw": "COMMAND: exact command\nREVISION: immutable SourceC\nEXIT: actual subprocess int\nSTDOUT:\nactual stdout\nSTDERR:\nactual stderr; unique three metadata headers; no manufactured output/exit or selfhash.",
+  "mode_b": {
+    "required": [
+      "feature",
+      "actor",
+      "revision",
+      "tree",
+      "source_sha256",
+      "runtime_sha256",
+      "historical_sha256",
+      "prerequisite_sha256",
+      "issues",
+      "missing_acceptance_coverage",
+      "unsupported_claims",
+      "final_verdict"
+    ],
+    "actor": "Strictnonempty string independent of author/developer/prerequisite Evaluator; final_verdict.approved exacttrue/all blocker arrays actualempty; extra evidence/schema fields allowed",
+    "bindings": "Fivecandidate fields and actual finished prerequisite file SHA; feature118"
+  },
+  "qa": {
+    "schema": ".nizam/schema/qa_verdict.schema.json",
+    "required": [
+      "feature_id",
+      "actor",
+      "revision",
+      "tree",
+      "source_sha256",
+      "runtime_sha256",
+      "historical_sha256",
+      "prerequisite_sha256",
+      "qa_pass",
+      "checks_run",
+      "checks_passed",
+      "checks",
+      "required_fixes",
+      "evidence_files",
+      "adversarial",
+      "issues",
+      "missing_acceptance_coverage",
+      "unsupported_claims",
+      "final_verdict"
+    ],
+    "actor": "Strictnonempty fresh string distinct author/developer/bundle reviewer/ModeB/prerequisite actors",
+    "counts": "Strictint3 run/passed, exactbooltrue qa_pass/approved, actual empty blocker/required_fixes arrays",
+    "checks": "Exact3 contract.verification rows in order plus exit_code strictint0,evidence,sha256; raw actualSourceC/command/exit. Unique evidence_files include all3 plus ownspot.",
+    "adversarial": "{performed:true,evidence:safeE118path,command:actual extra command differentfrom3}; personally replayed extra semantic attack, raw/hash captured",
+    "bindings": "Fivecandidate fields and actual prerequisite SHA, feature_id118; no current-head substitution"
+  },
+  "capture": {
+    "required": [
+      "feature",
+      "owner",
+      "passed",
+      "revision",
+      "tree",
+      "source_sha256",
+      "runtime_sha256",
+      "historical_sha256",
+      "prerequisite_sha256",
+      "qa_ref",
+      "mode_b_ref",
+      "qa_sha256",
+      "mode_b_sha256",
+      "checks_captured",
+      "adversarial_captured",
+      "evidence_sha256"
+    ],
+    "owner": "/root",
+    "passed": true,
+    "feature": "118",
+    "checks_captured": "Strictint3",
+    "adversarial_captured": true,
+    "bindings": "Actual completedQA/ModeB path+SHA, candidate5maps/prerequisiteSHA, evidence map covering all20 prereq plus3QA+ownspot rawproofs. No selfhash."
+  },
+  "ordering": [
+    "Both independent precode gates; Root approved contract",
+    "Independent authored frozenB naive-baseline setup/positive/behavioral-red and distinct actual bundle review",
+    "Generator bounded product/docs; commit immutable SourceC and source-candidate exact maps",
+    "Pause Generator required checks; distinct independent Evaluator personally runs exact current20 named cases at SourceC, producing prerequisite20.json with actual raw output/exit/revision and input identities",
+    "Generator actual three contracted selfchecks at SourceC then independent ModeB",
+    "Genuinely fresh QA three exact commands plus separate ownspot at same SourceC",
+    "Distinct Root capture of QA3/ownspot/prerequisite20 then canonical-first118/phase close and actual118 measurement"
+  ],
+  "root_budget118": "Strictintestimated650/actual>=0=product_lines+process_overhead_lines, nonnegative integer evidence/excluded categories, actualmeasurementproof; append118once aftercapture, total4012+actual<=7020 and all oldrows unchanged.",
+  "no_cycles": "SourceC excludes its later candidate/prerequisite/QA/capture outputs. Runtime manifest+roles sealed beforeSource; maps reference inputs, never own receipt hash. Readiness never requires its ownQA/capture. Root approval refs produced only after proposal+actual dualgateoutputs."
+}
