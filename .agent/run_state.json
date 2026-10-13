@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T19:33:30.029486+00:00",
+  "updated_at": "2026-10-13T19:42:25.549838+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -750,6 +750,14 @@
     },
     "117-mode-b": {
       "attempts": 2,
+      "limit": 3
+    },
+    "117-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-capture": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4589,6 +4597,16 @@
         ".agent/validator/117-mode-b.json",
         ".agent/evidence/117/mode-b-attempt2-result.json"
       ]
+    },
+    {
+      "at": "2026-10-13T19:42:25.549838+00:00",
+      "event": "117-qa-and-evidence-capture-passed",
+      "detail": "Fresh wa_acceptance117 personally passed exact12 commands plus symlink-ancestor adversary with valid/restored controls. Root actual capture EXIT0 verified strict gates/schema, all command/revision/exit/proof hashes, SourceC fourcore and all27 sealed Git/current dependencies plus baseline proof bindings. Lifecycle remains in_progress until canonical completion and actual scope measurement.",
+      "evidence": [
+        ".agent/qa/117.json",
+        ".agent/evidence/117/evidence-capture.json",
+        ".agent/evidence/117/capture-attempt1-raw.txt"
+      ]
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5095,7 +5113,7 @@
       }
     ]
   },
-  "last_action": "117 ModeB2 approved; genuinely fresh independent QA pending",
+  "last_action": "117 fresh QA12/12 and distinct Root evidence capture passed; canonical completion pending",
   "completed_contract_ids": [
     "099",
     "103",
