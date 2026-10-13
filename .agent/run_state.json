@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T18:59:37.712231+00:00",
+  "updated_at": "2026-10-13T19:17:30.506290+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -738,6 +738,14 @@
     },
     "117-bundle-coordination": {
       "attempts": 3,
+      "limit": 3
+    },
+    "117-source": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-source-coordination": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4556,6 +4564,12 @@
         ".agent/validator/117-test-bundle-review.json",
         ".agent/evidence/117/bundle-review-attempt2-result.json"
       ]
+    },
+    {
+      "at": "2026-10-13T19:17:30.506290+00:00",
+      "event": "117-source-attempt1-ready",
+      "detail": "Actual SourceC2ab311b immutable code/test/API/guard plus all27 dependencies verified. Generator all12 exact selfchecks passed; no independent ModeB/QA/capture claim. Candidate remains isolated.",
+      "evidence": ".agent/evidence/117/source-attempt1-handoff.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5062,7 +5076,7 @@
       }
     ]
   },
-  "last_action": "117 corrected independent bundle approved; Generator Source1 authorized",
+  "last_action": "117 Source1 all12 selfchecks passed; independent ModeB pending",
   "completed_contract_ids": [
     "099",
     "103",
