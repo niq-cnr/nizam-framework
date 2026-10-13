@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "115",
   "status": "blocked",
-  "updated_at": "2026-10-13T05:17:45.140729+00:00",
+  "updated_at": "2026-10-13T08:37:31.650557+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -4076,6 +4076,14 @@
       "event": "115-circuit-breaker-halt",
       "detail": "Three acceptance author attempts consumed; final independently reviewed bundle rejected on two derived-state scope false passes. A fourth autonomous author attempt is forbidden. Typed independent rejection and two actual falsepasses preserved. CanonicalBLOCKED before derivedstate; no fourth attempt, no Source implementation and no116 advance.",
       "evidence": ".agent/evidence/115/circuit-breaker-halt.json"
+    },
+    {
+      "at": "2026-10-13T08:37:31.650557+00:00",
+      "event": "operator_gate_decision",
+      "gate": "H-ACCEPTANCE-115-RECOVERY",
+      "operator_text": "I approve the corrected recovery approach.",
+      "detail": "Operator explicitly accepts recorded canonical-state corrected approach. New bounded115-recovery-1 cycle authorized; original115-tests3/3 and final independent rejection remain exact. CanonicalBLOCKED until renewed pre-code approval; no Source yet, no scope/budget expansion.",
+      "evidence": ".agent/evidence/115/recovery-authorization.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4536,7 +4544,7 @@
       }
     ]
   },
-  "last_action": "Canonical115/phase017 BLOCKED after exhausted author3/3 and actual independent scope-guard rejection. Exact third bundle quarantined; owned third root removed. No product Source, ModeB, QA or capture. Human corrected approach required.",
+  "last_action": "Recorded explicit115 corrected-approach recovery authorization; renewed scoped contract and dualprecodegates next, canonical115 remainsBLOCKED.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4611,7 +4619,7 @@
     ],
     "note": "Phase 014 final ledger. 8705 of 8600 (101.2%): 105 over the operator-confirmed re-baseline estimate (spec 1.1.4, 'option 1 confirmed.'), comfortably within the 11180 authorized 130% ceiling. Completed features 099 + 103-109 + 102 (9 features); cancelled 100/101 (A3) consumed no budget. Historical-basis estimates for 099/103 (920/280) are mixed-basis and disclosed per their ledger entries. Captures: measure-099-103.txt, measure-105.txt, measure-108.txt, measure-109.txt, measure-102.txt."
   },
-  "pending_operator_gate": "H-ACCEPTANCE-115-RECOVERY",
+  "pending_operator_gate": null,
   "planning_task": {
     "id": "workflow-016-planning",
     "status": "complete",
