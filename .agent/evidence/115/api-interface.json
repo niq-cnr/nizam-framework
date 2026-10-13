@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "feature_id": "115",
+  "owner": "/root/wa_generator",
+  "product": "tools/workflow_assurance.py",
+  "dependency_policy": "Python standard library only; no security/authentication enforcement claim.",
+  "api": {
+    "AssuranceError": "ValueError subclass for unknown, incomplete, malformed or changed inputs; callers fail closed.",
+    "assess_repository(repo, source_commit, inputs, environment_names, record_ownership=None)": "Return canonical JSON-compatible identity from actual Git objects/current bytes/observed environment. source_commit is an explicit full immutable commit id, never implicitly replaced by HEAD.",
+    "verify_record_update(before, after, owned_fields)": "Validate parsed JSON objects recursively; return True on allowed update, otherwise raise AssuranceError. owned_fields are exact RFC6901 JSON pointers to existing scalar leaves, with /history the sole permitted container pointer.",
+    "compare_identity(before, after)": "Validate both closed identity objects and their canonical identity_sha256; return True only for type-sensitive canonical equality. Malformed/unknown identity input raises AssuranceError."
+  },
+  "identity": {
+    "keys": [
+      "schema_version",
+      "repository",
+      "source_commit",
+      "source_tree",
+      "assessed_inputs",
+      "environment",
+      "record_ownership",
+      "identity_sha256"
+    ],
+    "schema_version": 1,
+    "repository": "Observed git remote get-url origin, canonicalized only by stripping surrounding whitespace; reject absent origin. No absolute worktree path in semantic identity, so same-origin detached worktrees compare consistently.",
+    "source_commit": "Explicit 40-character lowercase hex commit; git rev-parse must resolve exactly that commit object; repository HEAD advancement alone is not invalidation.",
+    "source_tree": "Actual tree id resolved from source_commit^{tree}; full lowercase hex.",
+    "assessed_inputs": "Object with exact nonempty source/contracts/tests/tools lists. Entries sorted by relative path and contain path, sha256 and executable. Non-record input SHA256 is actual current raw bytes and must match immutable source_commit blob bytes/mode. Record inputs use canonical baseline parsed bytes after validating the current record against its declared mask; original anchor remains in identity.",
+    "environment": "Exact object containing observed runtime identifiers python implementation/version, platform system/machine plus variables for the sorted explicitly declared environment_names. Missing/duplicate/non-string variable names or missing values fail closed; no caller-supplied digests. Empty explicit variable list is valid because actual runtime identifiers remain bound.",
+    "record_ownership": "Immutable mapping from known relative record path to sorted unique exact owned JSON pointers. All record files already exist at source_commit and are parsed/validated against those baseline bytes, including files outside assessed input lists.",
+    "identity_sha256": "Lowercase SHA256 over all other identity fields serialized as UTF-8 JSON with sort_keys=True, separators=(comma,colon), ensure_ascii=False and allow_nan=False; raw output/result files are never inputs to their own hash."
+  },
+  "input_manifest": {
+    "keys": [
+      "source",
+      "contracts",
+      "tests",
+      "tools",
+      "unknown_dependencies"
+    ],
+    "categories": "Each category is a nonempty list of unique portable relative file paths; duplicates within/across categories fail closed. unknown_dependencies is required and must be exactly []. No extra keys.",
+    "ownership": "record_ownership may cover separate records or assessed contracts only; source/tests/tools entries cannot be masked. No whole-file or whole-object ownership exemption."
+  },
+  "record_rules": [
+    "Parse JSON strictly: reject duplicate keys, non-finite numbers, invalid JSON and non-object root; reject non-JSON Python values in direct API objects.",
+    "Owned pointers name existing scalar leaves, never an ancestor object/list; reject duplicate, overlapping, escaping, missing or malformed pointers. The exact /history exception names an existing list.",
+    "Preserve all object key sets, nesting and nonowned values with type-sensitive canonical comparison; bool is distinct from int. New/removal of fields is denied, including owned fields. Owned scalar changes retain their JSON type.",
+    "If history exists, it must remain a list and the entire original prefix must be identical with type-sensitive comparison. Append is permitted only when /history is explicitly owned; otherwise history must remain exactly unchanged.",
+    "Record continuity means every assessed input, mask and observed environment value remains identical. Canonical identity excludes ambient HEAD; actual candidate change enumeration remains mandatory."
+  ],
+  "candidate_change_detection": "Enumerate actual tracked delta between source_commit and current working tree, including staged/unstaged content, modes, renames/deletions, plus ALL untracked files including ignored files, excluding Git administrative metadata only. Each changed path must be an explicitly declared record_ownership path and independently pass parsed mask/history validation; every other changed, missing or unknown path fails closed, even outside assessed lists. Ignored executable/source/build inputs receive no trust exemption. Real scratch Git fixtures isolate these observations from ambient workstation files.",
+  "path_safety": "Reject absolute paths, empty/dot/dotdot segments, backslashes, .git segments, missing files, directories, symlinks in any path component and git symlink/submodule modes. Actual repository root must equal git toplevel; Git worktree administrative .git pointer is not an assessed input. Require regular tracked baseline files, readable bytes, consistent executable bit, no ambiguous path aliases.",
+  "cli": [
+    "assess --repo ROOT --source-commit HEX --inputs FILE --environment-names FILE [--record-ownership FILE]: strict JSON inputs; print identity only after complete success.",
+    "compare --before FILE --after FILE: parse and validate identity JSON; exit 0 iff equal, 1 for drift.",
+    "record --before FILE --after FILE --owned-fields FILE: validate parsed update; exit 0 iff allowed."
+  ],
+  "failure_policy": "Successful operations exit 0. Drift, malformed/missing data, unknown dependencies or unsafe paths exit nonzero with concrete stderr diagnostic; argparse rejects unknown commands/options. No fallback PASS or setup-error substitution.",
+  "acceptance_runner": "Evaluator independently authors tools/test_workflow_assurance.py with the eleven fixed --case names from feature_list_017.json; each uses real scratch Git repository fixtures with origin and committed anchors, observed environment changes, explicit concrete assertions and intended API baseline failure. Unknown cases/checks exit nonzero; later stage --check interfaces stay unavailable/nonzero until their owning contracts. Default no-argument invocation runs all currently implemented feature115 cases; existing fixtures_self_test CI job invokes it permanently. Later contracts extend default suite/cases; temporary scratch Git fixtures only, no tools/fixtures directory.",
+  "test_ownership": "Test author, developer and acceptance reviewer are distinct recorded agents/sessions. Evaluator owns test bytes and any bounded scope checks. Independent reviewer freezes baseline source obligation/API and test bytes, captures intended baseline failure after setup succeeds, and approves before Generator source implementation. Changed bundle bytes require renewed independent review; no feature116 seal mechanism is implemented here."
+}
