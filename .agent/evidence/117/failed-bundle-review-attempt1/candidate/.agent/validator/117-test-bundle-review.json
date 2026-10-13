@@ -1,0 +1,22 @@
+{
+  "review": "validator-test-bundle-review",
+  "feature": "117",
+  "actor": "/root/wa_validator",
+  "reviewer_session_id": "/root/wa_validator",
+  "seal_sha256": "6b7b30eb06141ea321454beb065d3728caab04b8ba17c3d9b5055c57c695722a",
+  "issues": [
+    {
+      "verification_index": 9,
+      "criterion": "Current117 scope guard must enforce the declared typed independent ModeB actor in real completion receipts.",
+      "severity": "high",
+      "evidence": ".agent/evidence/117/bundle-review-attempt1-spot-raw.txt: genuine private completion with string actors passes; public mock completion rejects; replacing ModeB actor with Boolean true and updating the actual capture hash then passes _scope. Producer interface requires a nonempty independent actor string. Current guard checks truthiness/distinctness without enforcing actor type.",
+      "required_fix": "Independent test author must reject non-string/empty ModeB and QA actor values before independence checks, preserve valid actual producer records, and freeze corrected helper/tests with renewed independent bundle review in a fresh author attempt. Preserve these frozen bytes and failure receipts; no Source until approval."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Rejected: sealed current117 scope guard accepts Boolean true as the ModeB actor in otherwise consistent completion receipts. Independent four case triples and previous16/scope/controls replays passed; exact failure is captured in reviewer spot evidence."
+  }
+}

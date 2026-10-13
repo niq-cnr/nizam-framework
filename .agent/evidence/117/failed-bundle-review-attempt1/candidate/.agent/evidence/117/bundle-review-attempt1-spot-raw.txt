@@ -1,0 +1,14 @@
+COMMAND: ["/usr/bin/python3", ".agent/evidence/117/bundle-review-attempt1-spot.py"]
+REVISION: a6324cb6bbeab8b09213913e90797c4547b70fc6
+EXIT: 1
+STDOUT:
+PASS exact seal,26 current/GitB/type/mode inputs,12 proof hashes,all Git anchors,actual environment,distinct roles,snapshot and existing115116 bytes
+PASS public completion refuses private mock receipts
+PASS genuinely valid private completion parser baseline with string actors
+OBSERVED_FALSE_PASS: canonical completed117 parser accepts ModeB actor Boolean true with matching updated capture hash
+
+STDERR:
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-117-bundle-review-attempt1-hh01885q/.agent/evidence/117/bundle-review-attempt1-spot.py", line 51, in <module>
+    raise AssertionError('POLICY_ASSERTION: producer requires nonempty string actor; Boolean is not an independent actor identity')
+AssertionError: POLICY_ASSERTION: producer requires nonempty string actor; Boolean is not an independent actor identity

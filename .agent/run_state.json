@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T18:22:10.771340+00:00",
+  "updated_at": "2026-10-13T18:48:27.554098+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -725,11 +725,19 @@
       "limit": 3
     },
     "117-test-author": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "117-test-coordination": {
-      "attempts": 2,
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-bundle-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-bundle-coordination": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4521,6 +4529,18 @@
       "event": "117-test-author-attempt1-failed",
       "detail": "Existing16, scope and all four setup0/positive0/semanticred1 passed at B13d2e1b. Scope-controls EXIT1 at staged scratch cleanup. Candidate files and Git bundle exactquarantined before ownedroot removal; no implementation or bundle approval.",
       "evidence": ".agent/evidence/117/failed-test-author-attempt1/preservation.json"
+    },
+    {
+      "at": "2026-10-13T18:31:56.184098+00:00",
+      "event": "117-test-author-attempt2-ready",
+      "detail": "Fresh B e4250cca froze26inputs. All four actual setup0/positive0/semanticred1 triplets, existing16, scope and scopecontrols passed. No Source or independentbundleapproval yet. Candidate remains isolated pending distinct Validator review.",
+      "evidence": ".agent/evidence/117/test-author-attempt2-handoff.json"
+    },
+    {
+      "at": "2026-10-13T18:48:27.554098+00:00",
+      "event": "117-bundle-review-attempt1-rejected",
+      "detail": "All15 independent baseline/regression/scope replays passed; focused reviewer spot EXIT1 proves Boolean true ModeB actor accepted after valid string-actor completion. Guard requires typed identity checks for ModeB/QA before independence. Exact unapproved candidate and rejected gate archived, source blocked, final author3 architectural typed producer review required.",
+      "evidence": ".agent/evidence/117/failed-bundle-review-attempt1/candidate/.agent/evidence/117/bundle-review-attempt1-result.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5027,7 +5047,7 @@
       }
     ]
   },
-  "last_action": "117 test author1 scratch cleanup failed; exact candidate archived, fresh structural author2 pending",
+  "last_action": "117 bundle review1 rejected typed actor false-pass; fresh final architectural test author3 pending",
   "completed_contract_ids": [
     "099",
     "103",

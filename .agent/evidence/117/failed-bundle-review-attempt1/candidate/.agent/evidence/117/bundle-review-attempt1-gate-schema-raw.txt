@@ -1,0 +1,7 @@
+COMMAND: ["/usr/bin/python3", "-c", "import json,pathlib; from jsonschema import Draft202012Validator; p=pathlib.Path('.'); v=json.loads((p/'.agent/validator/117-test-bundle-review.json').read_text()); Draft202012Validator(json.loads((p/'.nizam/schema/contract_review.schema.json').read_text())).validate(v); assert set(v)=={'review','feature','actor','reviewer_session_id','seal_sha256','issues','missing_acceptance_coverage','unsupported_claims','final_verdict'}; assert set(v['final_verdict'])=={'approved','summary'} and v['final_verdict']['approved'] is False and len(v['issues'])==1; assert v['actor']==v['reviewer_session_id']=='/root/wa_validator' and v['feature']=='117'; print('PASS installed verdict schema; exact nine-field independent rejection')"]
+REVISION: a6324cb6bbeab8b09213913e90797c4547b70fc6
+EXIT: 0
+STDOUT:
+PASS installed verdict schema; exact nine-field independent rejection
+
+STDERR:
