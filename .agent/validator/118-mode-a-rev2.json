@@ -1,0 +1,39 @@
+{
+  "review": "contract-mode-a",
+  "feature": "118",
+  "revision_reviewed": 2,
+  "proposal_sha256": "f1795d2d8335c2602ee483b6cf2e459acf0707db42b4889a03c4599e6cf59677",
+  "api_sha256": "30d89712cc05f43807531e845961dac5fc1b90df3615931c3e02d9138ba79712",
+  "producer_sha256": "c56f457297a9ae863147525574e9d94c1169a434c768e27ff992e5437a807c36",
+  "actor": "/root/wa_validator118",
+  "proposal_revision": "7fd14f99367525caa2bf403a13bf0f3be798763c",
+  "revision_exercised": "fc54d5082c5aa5042e42b18719d4eeb4adf9f7ac",
+  "issues": [
+    {
+      "verification_index": null,
+      "criterion": "Finite successor mappings must remain compatible with required captured canonical contract closure.",
+      "severity": "high",
+      "evidence": ".agent/evidence/118/mode-a-attempt3-audit-raw.txt",
+      "finding": "acceptance_successor_policy includes .agent/contracts/118.json in the precode replacement map made at the approved commit. record_shape and guard_rule require exact mapped Git/current bytes and create-only stage records. canonical_close and precode_gate_policy.root_approval_changes.preserve require that same current contract to become complete after actual capture. Changing only status changes its bytes/SHA. Neither the successor policy nor its guard rule states an explicit terminal lifecycle normalization, permitted exception to mapped current-byte equality, or separate closure observation. A literal mapping check rejects the required close; relaxing it would require the implementer to invent an exception.",
+      "required_fix": "Under human-authorized recovery after the third-attempt halt, explicitly reconcile immutable approved-contract mapping with the sole postcapture status transition: retain exact approved Git/hash/archive anchoring and define a narrowly typed, capture-gated current-status comparison while preserving every other contract field, or specify an equally finite separate closure mapping. Renew independent gates; do not silently reinterpret exact-current equality or overwrite create-only stage records."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Actual proposal/API/producer blobs and executable/type modes match the immutable revision2 proposal; current contract passes installed schema and all three successor policies match.",
+    "Three commands,650 estimate,budget,execution order and lifecycle obligations remain unchanged. These checks do not resolve the successor-versus-closure conflict.",
+    "Review stopped at this first architectural blocker. The raw command exits0 because it successfully reproduces differing schema-valid lifecycle hashes; exit0 is diagnostic success, not contract approval. No Source2 or B2 behavior is claimed.",
+    "ModeA attempt3 began with concluded counter2. Root owns counter conclusion, quarantine, canonical BLOCKED/debt and human escalation; no autonomous fourth attempt is authorized."
+  ],
+  "evidence_files": [
+    ".agent/evidence/118/mode-a-attempt3-audit.py",
+    ".agent/evidence/118/mode-a-attempt3-audit-raw.txt",
+    ".agent/evidence/118/mode-a-attempt3-schema-raw.txt"
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "118",
+    "summary": "Rejected: exact current-byte successor mapping of the approved contract conflicts with the required postcapture complete status, without an explicit bounded lifecycle exception."
+  }
+}

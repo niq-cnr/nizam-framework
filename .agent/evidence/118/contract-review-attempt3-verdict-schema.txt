@@ -1,0 +1,7 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c 'import json,hashlib;from pathlib import Path;from jsonschema import Draft202012Validator;v=json.loads(Path('"'"'.agent/qa/118-contract-review-rev2.json'"'"').read_text());Draft202012Validator(json.loads(Path('"'"'.nizam/schema/contract_review.schema.json'"'"').read_text())).validate(v);assert type(v['"'"'revision_reviewed'"'"']) is int and v['"'"'revision_reviewed'"'"']==2;assert type(v['"'"'actor'"'"']) is str and v['"'"'actor'"'"'];assert v['"'"'final_verdict'"'"']['"'"'approved'"'"'] is True;assert all(type(v[k]) is list and not v[k] for k in ('"'"'issues'"'"','"'"'missing_acceptance_coverage'"'"','"'"'unsupported_claims'"'"'));assert v['"'"'proposal_sha256'"'"']==hashlib.sha256(Path('"'"'.agent/contracts/118.json'"'"').read_bytes()).hexdigest();assert v['"'"'api_sha256'"'"']==hashlib.sha256(Path('"'"'.agent/evidence/118/api-interface.json'"'"').read_bytes()).hexdigest();print('"'"'PASS installed verdict schema and strict revision2 gate with exact proposal/API hashes'"'"')'
+REVISION: fc54d5082c5aa5042e42b18719d4eeb4adf9f7ac
+EXIT: 0
+STDOUT:
+PASS installed verdict schema and strict revision2 gate with exact proposal/API hashes
+
+STDERR:

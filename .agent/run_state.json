@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
   "status": "in_progress",
-  "updated_at": "2026-10-13T20:53:10.277480+00:00",
+  "updated_at": "2026-10-13T21:01:16.242953+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -777,15 +777,15 @@
       "limit": 3
     },
     "118-mode-a": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3
     },
     "118-contract-review": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3
     },
     "118-precode-coordination": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3
     },
     "118-test-author": {
@@ -4741,6 +4741,15 @@
       "event": "118-contract-revision2-proposed",
       "detail": "Third bounded contract proposal7fd14f9 clarifies finite independently reviewed B1-to-B2 successor after frozenfixture TypeError. Immutable predecessor and failedSource1 preserved. Same3commands/650/7020/APIbehavior/roles/lifecycle; explicit stagedmaps avoidfuturehashcycles. Both new precode gates required, no Source/testauthorpermission yet.",
       "evidence": ".agent/evidence/118/contract-proposal-handoff-attempt3.json"
+    },
+    {
+      "at": "2026-10-13T21:01:16.242953+00:00",
+      "event": "118-precode-revision2-rejected",
+      "detail": "ModeA3 rejected proposal7fd14f9 because mapped current approved contract bytes conflict with required postcapture complete status and no explicit finite lifecycle projection exists. Secondreview3 approved independently; one rejection blocks advancement. All originalcounter values retained at3; no author2/Source2 permission. Capture and exact owned-root cleanup precede canonical halt.",
+      "evidence": [
+        ".agent/validator/118-mode-a-rev2.json",
+        ".agent/qa/118-contract-review-rev2.json"
+      ]
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5268,7 +5277,7 @@
       }
     ]
   },
-  "last_action": "Feature118 revision2 finite successor proposal awaits dual independent gates; all Source writes remain stopped.",
+  "last_action": "Third feature118 ModeA rejects exact-contract-map/terminal-status conflict; gate evidence preserved; canonical halt follows immediately.",
   "completed_contract_ids": [
     "099",
     "103",
