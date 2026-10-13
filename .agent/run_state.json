@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "017-workflow-assurance-foundation",
-  "current_feature": "117",
+  "current_feature": null,
   "status": "in_progress",
-  "updated_at": "2026-10-13T19:42:25.549838+00:00",
+  "updated_at": "2026-10-13T19:43:17.960890+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -757,6 +757,10 @@
       "limit": 3
     },
     "117-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-closeout": {
       "attempts": 1,
       "limit": 3
     }
@@ -4607,6 +4611,18 @@
         ".agent/evidence/117/evidence-capture.json",
         ".agent/evidence/117/capture-attempt1-raw.txt"
       ]
+    },
+    {
+      "at": "2026-10-13T19:43:17.960890+00:00",
+      "event": "117-canonical-completion",
+      "detail": "Canonical117 COMPLETED after actual ModeB2, fresh QA12/12 plus ownspot and distinct Root capture. Derived contract/list/run/manifest/DAG updated; NDEBT-053 alone resolved. 118 pending; phase017 remains in_progress. Actual scope measurement follows before closeout validation.",
+      "evidence": ".agent/evidence/117/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-13T19:43:17.960890+00:00",
+      "event": "117-scope-measured",
+      "detail": "Actual117 1003 counted lines; completed phase 4012/7020; prior completed mean 1504.5,3x threshold 4513.5; all limits pass.",
+      "evidence": ".agent/evidence/117/scope-measurement.txt"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4781,9 +4797,9 @@
   "scope_budget": {
     "original_estimate_lines": 5400,
     "ceiling_130pct": 7020,
-    "total_lines_changed": 3009,
-    "evidence_lines_total": 85092,
-    "excluded_lines_total": 701,
+    "total_lines_changed": 4012,
+    "evidence_lines_total": 119696,
+    "excluded_lines_total": 964,
     "per_feature": [
       {
         "id": "115",
@@ -4817,6 +4833,27 @@
           "first_feature_exception": false
         },
         "note": "Measured whole116 from captured115 before append using unchanged frozenclassifier; actual Source3/ModeB3/freshQA1/Rootcapture1 and canonicalcompletion. Failedbundles/Source/Rootcoord evidence preserved; original5400/7020 unchanged/noextraallowance."
+      },
+      {
+        "id": "117",
+        "estimated": 1050,
+        "actual": 1003,
+        "product_lines": 217,
+        "process_overhead_lines": 786,
+        "evidence_lines": 34604,
+        "excluded_lines": 263,
+        "range": "dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE",
+        "evidence": ".agent/evidence/117/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "115",
+            "116"
+          ],
+          "rolling_average": 1504.5,
+          "three_times_threshold": 4513.5,
+          "first_feature_exception": false
+        },
+        "note": "Whole117 measured from captured116 before append; original5400/7020 unchanged. All failed/recovered attempts preserved as historical evidence; prior115/116 rows not remeasured."
       }
     ],
     "phase_level_items": [],
@@ -4858,7 +4895,7 @@
         "note": "Incomplete117 pre-code reader startup exhausted3/3, noSource/testimplementation. Whole117 startscaptured116 including selection/coordination once; no completedrollingbaseline append orrebaseline. Completed3009+inflight394=3403below original7020; haltsolelymandatoryreviewcircuit. Existing115/116/015 measuredrows/proofs preserved."
       }
     ],
-    "last_measured_at": "2026-10-13T13:38:20.215834+00:00"
+    "last_measured_at": "2026-10-13T19:43:17.960890+00:00"
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -5041,7 +5078,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "117",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5113,7 +5150,7 @@
       }
     ]
   },
-  "last_action": "117 fresh QA12/12 and distinct Root evidence capture passed; canonical completion pending",
+  "last_action": "117 canonical completion after fresh QA/capture;118 remains pending",
   "completed_contract_ids": [
     "099",
     "103",
@@ -5130,7 +5167,8 @@
     "113",
     "114",
     "115",
-    "116"
+    "116",
+    "117"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,

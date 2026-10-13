@@ -1,0 +1,49 @@
+COMMAND: python3 .agent/evidence/scope-budget-014/measure.py --range 117=dddfd4f60e9d64109e271a48181fe281d4603666.. --files
+REVISION: ea38b0b1966eea0aa222a4d3ec64620b9c3941a0
+EXIT: 0
+STDOUT:
+== 117: dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE
+   resolved dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE+untracked
+   paths=453 binary_paths=2
+   class                       files   lines
+   budget/product                  4     217
+   budget/product-ext              0       0
+   budget/contract                 1     364
+   budget/verdict                  6     337
+   budget/audit-deliverable        0       0
+   budget/planning                 7      85
+   evidence                      434   34604
+   excluded/run_state              1     263
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                   7  CHANGELOG.md
+   budget/product                  32  tools/README.md
+   budget/product                  21  tools/test_workflow_assurance.py
+   budget/product                 157  tools/workflow_assurance.py
+   budget/contract                364  .agent/contracts/117.json
+   budget/verdict                  34  .agent/qa/117-contract-review-recovery1.json
+   budget/verdict                 164  .agent/qa/117.json
+   budget/verdict                  29  .agent/validator/117-mode-a-recovery1.json
+   budget/verdict                  27  .agent/validator/117-mode-a.json
+   budget/verdict                  69  .agent/validator/117-mode-b.json
+   budget/verdict                  14  .agent/validator/117-test-bundle-review.json
+   budget/planning                 10  .agent/feature_list_017.json
+   budget/planning                  9  docs/planning/DEBT.md
+   budget/planning                 22  docs/planning/HANDOVER.md
+   budget/planning                 22  docs/planning/ROADMAP.md
+   budget/planning                 11  docs/planning/backlog_dag.json
+   budget/planning                  4  docs/planning/manifest.json
+   budget/planning                  7  docs/planning/phase_017.yaml
+   excluded/run_state             263  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                        1     732  .agent/evidence/116/
+   evidence                      433   33872  .agent/evidence/117/
+   PRODUCT_LINES=217
+   PROCESS_OVERHEAD_LINES=786  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=1003
+   EVIDENCE_LINES=34604
+   EXCLUDED_LINES=263
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=35870  (= budget 1003 + evidence 34604 + excluded 263 + unclassified 0)
+
+STDERR:
