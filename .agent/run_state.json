@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "116",
   "status": "in_progress",
-  "updated_at": "2026-10-13T12:44:24.124569+00:00",
+  "updated_at": "2026-10-13T12:45:19.941755+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -676,6 +676,10 @@
       "limit": 3
     },
     "116-evidence-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "116-closeout-coordination": {
       "attempts": 1,
       "limit": 3
     }
@@ -4355,6 +4359,12 @@
       "event": "116-evidence-capture-attempt1-passed",
       "detail": "Distinct Root capture actualEXIT0 verifies strict actualModeB/QA schemas/actors/12exactcommands/ownspot/rawsha, SourceC3/core Git bytes and all35 frozen inputs/proofs current+SourceC3+GitB/modes. Receipt passedtrue; canonical closure and finalcost still pending.",
       "evidence": ".agent/evidence/116/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-13T12:45:19.941755+00:00",
+      "event": "116-closeout-coordination-attempt1-failed",
+      "detail": "Root passed a guessed nonexistent workdir instead of the actual newly-created owned root; tool process rejected before command start or any lifecycle writes. Exact owner/transport failure preserved, only proven empty owned root removed. Accepted Source/QA/capture immutable. Fresh2 resolves dynamic returned-path interface.",
+      "evidence": ".agent/evidence/116/failed-closeout-attempt1/process-failure.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4828,7 +4838,7 @@
       }
     ]
   },
-  "last_action": "116 actual Rootcapture1 passed; fresh closure1/canonical completion/final measurement pending.",
+  "last_action": "116 closeout1 transport failed before edits; fresh verified-path closeout2 next.",
   "completed_contract_ids": [
     "099",
     "103",
