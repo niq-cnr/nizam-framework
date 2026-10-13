@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.61.0
+version: 0.62.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.62.0"
+    date: "2026-10-13"
+    summary: "Activate phase017 foundation and record feature115 identity candidate; preserve closed015 and later proposed plans."
   - version: "0.61.0"
     date: "2026-10-12"
     summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
@@ -884,7 +887,22 @@ key; this file MUST be updated at each phase close so the repository always stat
 what comes next (the gap this file closes: phases 001–004 completed with no recorded
 successor, leaving open debt deferred to unscoped "future phases").
 
-## Current Position (2026-10-12)
+## Current Position (2026-10-13)
+
+- **Phase 017 foundation is active.** H-PHASE-017 authorizes features 115–118
+  with 5,400 counted lines and a 7,020 ceiling. Feature 115 provides the assessed
+  identity implementation candidate; independent Mode B, fresh QA and capture
+  remain completion gates. The operator-approved acceptance recovery preserves
+  the original three-attempt halt; NDEBT-052 stays Open until actual capture.
+  Continue the shared-file lane 115 → 116 → 117 → 118, each under its own
+  contract. [Activation authority](../../.agent/evidence/phase017-activation/authorization.json)
+  and [recovery authority](../../.agent/evidence/115/recovery-authorization.json)
+  are recorded. Phases 016/018/020/019 remain proposed; the recommended later
+  order is core 016 → controls 018 → fresh 020 → profiles 019.
+
+The following phase 015 authority and planning position are dated historical
+context; current phase 017 lifecycle is authoritative in its canonical phase/list.
+
 
 H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
 `2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
@@ -897,12 +915,11 @@ requires its approved contract, both independent pre-code gates, Mode B, QA and
 the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
 records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
 
-- **Phase015 normative scope is complete.** Features 110–114 passed actual QA/capture;
-  the closed count remains7,319 against 7,200/9,360. WA features 115–125 and controller features 126–132
-  now have delivered draft plans 017/018/019 and 016/020. Planning delivery passed
-  independent Mode B, fresh QA and evidence capture; future phase/budget activation,
-  runtime acceptance, release/tag and consumer upgrade remain outstanding.
-  Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+- **Phase 015 normative scope remains complete.** Features 110–114 and their
+  captured proofs remain unchanged, with 7,319 counted lines against 7,200/9,360.
+  The delivered five-phase planning baseline is preserved; only foundation 017
+  is now activated. Runtime/live acceptance, release/tag and installed upgrade
+  remain separately gated.
 - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
 - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. Phase015 activation is recorded in the current overlay. The handover record is [`HANDOVER.md`](HANDOVER.md).
   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their

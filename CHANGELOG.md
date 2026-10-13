@@ -9,6 +9,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Workflow Assurance identity (feature 115).** Added a read-only stdlib API/CLI
+  binding actual Git source identity, assessed bytes/modes and observed environment.
+  Unknown changes invalidate conservatively; declared scalar record updates and
+  exact history append can preserve the original assessed anchor across later HEADs.
+  Eleven independent cases run in the existing CI fixture job. Phase 017 foundation
+  is authorized at 5,400/7,020; this candidate still requires independent Mode B,
+  fresh QA and capture. Sealed bundles, authorized entry and foundation closure
+  remain features 116–118; installed v1.5.0 is unchanged.
+
 - **WA and controller planning delivery.** Delivered draft plans for five pending phases,
   allocating WA features 115–125 before controller features 126–132 with full budgets and independent
   future acceptance ownership. Recommended foundation 017→core 016→controls 018→

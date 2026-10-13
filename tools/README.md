@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.20.0
+version: 0.21.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.21.0"
+    date: "2026-10-13"
+    summary: "Document assessed-source identity and record continuity, with eleven permanent independent cases in the existing CI job."
   - version: "0.20.0"
     date: "2026-10-12"
     summary: "Index the optional runtime-session adapter and source routing while retaining record-only and future live-proof boundaries."
@@ -90,6 +93,44 @@ The optional session surface routes through [the adapter interface](interface.md
 sessions remain conformant. Existing schemas/C12 validate declared records only;
 executable controller/adapter/SBCL enforcement and all thirteen live proofs remain
 pending phase016. The source additions do not upgrade installed v1.5.0.
+
+## Assessed-source identity and record continuity
+
+[`workflow_assurance.py`](workflow_assurance.py) provides a dependency-free,
+read-only API: `assess_repository`, `compare_identity` and `verify_record_update`.
+Assessments bind an explicit immutable Git commit/tree, observed origin, source,
+contract, test and tool bytes/modes, actual runtime identifiers and named environment
+variables. An input manifest declares nonempty `source`, `contracts`, `tests` and
+`tools` path lists plus `unknown_dependencies: []`.
+
+Every tracked path is checked against actual anchor blobs and current raw bytes,
+including staged content. Untracked and ignored files invalidate conservatively.
+Paths must be regular, canonical relative files with no symlink components.
+Explicit JSON record masks allow existing scalar leaves to change with the same
+JSON type and permit `/history` append only with its exact original prefix intact.
+All other parsed keys/values remain unchanged. Record-only commits can advance
+HEAD while the assessed anchor and every assessed input remain unchanged.
+
+Set `WA_REPO_ROOT` to the repository root and `WA_SOURCE_COMMIT` to the full
+immutable assessed commit. Set each task-specific `WA_*_FILE` variable below to
+the complete absolute filename of your prepared JSON input outside that
+repository. These variables are caller configuration, not observed evidence.
+
+```bash
+python3 tools/workflow_assurance.py assess --repo "$WA_REPO_ROOT" --source-commit "$WA_SOURCE_COMMIT" --inputs "$WA_INPUTS_FILE" --environment-names "$WA_ENV_NAMES_FILE" --record-ownership "$WA_RECORD_OWNERSHIP_FILE"
+python3 tools/workflow_assurance.py compare --before "$WA_BEFORE_IDENTITY_FILE" --after "$WA_AFTER_IDENTITY_FILE"
+python3 tools/workflow_assurance.py record --before "$WA_BEFORE_RECORD_FILE" --after "$WA_AFTER_RECORD_FILE" --owned-fields "$WA_OWNED_FIELDS_FILE"
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+```
+
+The last command runs eleven independently authored feature 115 cases and is
+permanent in the existing `fixtures_self_test` CI job. Unknown cases, invalid JSON,
+missing observations and unsafe paths exit nonzero. Keep CLI input/output files
+outside the assessed repository unless they have a declared record mask.
+This local identity utility does not authenticate callers or authorize entry;
+sealed-bundle enforcement, entry/role checks and foundation closure belong to
+features 116–118. It implements no runtime controller or live acceptance and does
+not upgrade the installed v1.5.0 payload.
 
 ## Design Decision — DD-4: Unified Skill Payload
 

@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.9
+version: 1.0.10
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.10"
+    date: "2026-10-13"
+    summary: "Add current phase017 feature115 identity handoff and recovery boundaries; preserve historical snapshots."
   - version: "1.0.9"
     date: "2026-10-12"
     summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
@@ -42,7 +45,24 @@ change_log:
 
 # Developer Handover — Release Status and Phase 014 Snapshot
 
-## Current status — 2026-10-12
+## Current status — 2026-10-13
+
+Phase 017 foundation is active under [H-PHASE-017](../../.agent/evidence/phase017-activation/authorization.json),
+with the original 5,400/7,020 allowance. Feature 115 is the assessed-identity
+implementation candidate after renewed pre-code approvals and independent
+corrected acceptance-bundle review. Mode B, fresh independent QA and capture
+remain required before closure; NDEBT-052 is still Open. The explicitly approved
+[recovery epoch](../../.agent/evidence/115/recovery-authorization.json) preserves
+all failed tests/gates and the original exhausted counter.
+
+Continue features 115 → 116 → 117 → 118 in the shared-file lane; each later
+feature needs its own approved contract and independent gates. Later phases stay
+proposed. Installed v1.5.0, closed phase 015's 7,319-line budget and historical
+proofs remain unchanged. Begin through the installed index/skill in AGENTS.md.
+The material below is the preserved dated handover context, not the current
+activation position.
+
+## Previous current-status snapshot — 2026-10-12
 
 Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
 

@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.36.0
+version: 0.37.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.37.0"
+    date: "2026-10-13"
+    summary: "Record phase017 foundation authorization and bounded acceptance recovery; future phases remain separately gated."
   - version: "0.36.0"
     date: "2026-10-11"
     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
@@ -159,6 +162,19 @@ remain pending explicit operator decisions; scope acceptance does not select the
 options. WAphase/016 IDs remain unallocated and future releases/upgrades separate.
 
 ## 1. Decided and active gates
+
+### Phase 017 foundation authority — 2026-10-13
+
+H-PHASE-017 is authorized for features 115–118 and the original 5,400-line
+allowance with 7,020 ceiling; see [the recorded operator authorization](../../.agent/evidence/phase017-activation/authorization.json).
+H-ACCEPTANCE-115-RECOVERY records the explicitly approved corrected lifecycle
+matrix after the preserved three-attempt halt; [the recovery receipt](../../.agent/evidence/115/recovery-authorization.json)
+starts a bounded fresh epoch while retaining the original exhausted counter and
+failed proofs. NDEBT-052 remains Open until fresh independent feature 115 QA and
+capture. Both independent pre-code gates and independent bundle review apply;
+implementation alone does not complete a feature. Other phase/release/upgrade
+authorizations remain separate. The table below retains its dated dispositions.
+
 
 Every gate below has been dispositioned, or — for a newly defined gate not yet
 exercised — has a defined scope and a stated current status. Recurring gates

@@ -2,16 +2,39 @@
 id: nizam-phase017-product-spec
 title: "Phase 017 — Workflow Assurance — Foundation"
 description: "Proposed bounded WA scope, future atomic acceptance and independent evidence gates."
-version: 0.1.0
-status: draft
+version: 0.2.0
+status: active
 authoritative_source: .agent/product_spec_017.md
 change_log:
+  - version: "0.2.0"
+    date: "2026-10-13"
+    summary: "Activate only authorized phase017 foundation scope and original5400/7020 allowance; preserve original obligations and allocations."
   - version: "0.1.0"
     date: "2026-10-12"
     summary: "Plan pending features only; activation, implementation and budget approval remain future."
 ---
 
-# Proposed phase 017
+# Phase 017 — authorized foundation
+
+## Current activation — 2026-10-13
+
+H-PHASE-017 authorizes features 115–118 and the original counted allowance of
+5,400 lines, ceiling 7,020, for niq-cnr/nizam-framework only. Authority is
+[the activation receipt](evidence/phase017-activation/authorization.json).
+Feature 115 is the current identity implementation candidate, after both renewed
+pre-code gates and independent corrected acceptance-bundle review under
+[the recovery authorization](evidence/115/recovery-authorization.json).
+Mode B, fresh independent QA and evidence capture must precede completion.
+Features 116–118 await their own contracts. The shared-file lane is
+115 → 116 → 117 → 118. Phases 016/018/019/020 remain proposed, and
+installed v1.5.0 remains unchanged.
+
+The following architecture, acceptance and budget text is the preserved
+2026-10-12 planning baseline. Its future-tense statements describe that snapshot;
+the activation receipt and current canonical lifecycle supersede its activation
+position without changing its obligations or counted allocations.
+
+## Original planning context — 2026-10-12
 
 NIP-0004 accepted scope and six operator selections are inputs. This planning task
 allocates 115–118 only; H-PHASE-017 and approved implementation
