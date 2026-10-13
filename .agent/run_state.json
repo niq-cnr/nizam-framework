@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
   "status": "in_progress",
-  "updated_at": "2026-10-13T19:58:15.111348+00:00",
+  "updated_at": "2026-10-13T20:06:15.530541+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -773,6 +773,18 @@
       "limit": 3
     },
     "118-proposal-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-mode-a": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-contract-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-precode-coordination": {
       "attempts": 1,
       "limit": 3
     }
@@ -4647,6 +4659,15 @@
       "event": "118-contract-proposed",
       "detail": "Proposal b764ed6 declares finite SourceC/current20 prerequisite/readiness/QA/capture sequence,3commands and650 estimate. Installed schema actual0; no Source/testimplementation authorization before independent dualgates.",
       "evidence": ".agent/evidence/118/contract-proposal-handoff-attempt1.json"
+    },
+    {
+      "at": "2026-10-13T20:06:15.530541+00:00",
+      "event": "118-precode-attempt1-rejected",
+      "detail": "Both independent reviews reproduced proposal/schema mismatch: phase and manifest require complete, not completed; canonical step remains COMPLETED. Exact failed verdicts and actualschema reproductions preserved before ownedroot cleanup. No Source or acceptance authoring. Fresh structural proposal correction requires renewed independent gates.",
+      "evidence": [
+        ".agent/validator/118-mode-a.json",
+        ".agent/qa/118-contract-review.json"
+      ]
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5174,7 +5195,7 @@
       }
     ]
   },
-  "last_action": "118 bounded contract proposal frozen; dual independent precode reviews pending",
+  "last_action": "118 both precode gates reject completed phase/manifest enum; fresh structural contract2 pending",
   "completed_contract_ids": [
     "099",
     "103",

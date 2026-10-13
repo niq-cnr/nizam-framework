@@ -1,0 +1,7 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c 'import json; from pathlib import Path; from jsonschema import Draft202012Validator; v=json.loads(Path('"'"'.agent/qa/118-contract-review.json'"'"').read_text()); Draft202012Validator(json.loads(Path('"'"'.nizam/schema/contract_review.schema.json'"'"').read_text())).validate(v); assert type(v['"'"'revision_reviewed'"'"']) is int and v['"'"'revision_reviewed'"'"']==0; assert v['"'"'final_verdict'"'"']['"'"'approved'"'"'] is False and len(v['"'"'issues'"'"'])==1; print('"'"'PASS schema-valid explicit rejected contract-testability gate'"'"')'
+REVISION: 2428607f3133a7b9eab7a1595d6096204d4bb791
+EXIT: 0
+STDOUT:
+PASS schema-valid explicit rejected contract-testability gate
+
+STDERR:

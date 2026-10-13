@@ -1,0 +1,28 @@
+{
+  "review": "contract-mode-a",
+  "feature": "118",
+  "revision_reviewed": 0,
+  "proposal_sha256": "de10140a2008b229bc24347a7d4728a54d81bccd6a647b7b2b9c5843f1f36bd2",
+  "api_sha256": "38177380c510796d9879b1a6c3834fd82a774c99a7718830dc9872a4d4155a17",
+  "actor": "/root/wa_validator",
+  "revision_exercised": "2428607f3133a7b9eab7a1595d6096204d4bb791",
+  "issues": [
+    {
+      "verification_index": null,
+      "criterion": "Canonical phase017 and manifest017 close values must satisfy the installed immutable lifecycle schemas.",
+      "severity": "high",
+      "evidence": ".agent/evidence/118/mode-a-attempt1-enum-raw.txt independently observes the phase scope purpose requiring in_progress->completed and canonical_close requiring manifest017completed. Actual installed phase/manifest enum validation rejects completed; both schemas require complete.",
+      "required_fix": "Revise the approved-to-be closure tuple consistently to phase.status=complete and manifest017.status=complete, preserving step.status=COMPLETED, feature/list completed conventions and actual QA/capture ordering. Re-enter both independent pre-code gates; do not edit installed schemas or silently reinterpret the contract during implementation."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence_files": [
+    ".agent/evidence/118/mode-a-attempt1-enum-raw.txt",
+    ".agent/evidence/118/mode-a-attempt1-schema-raw.txt"
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Rejected: proposed canonical closure uses completed for phase/manifest statuses, which the installed immutable schemas reject. Correct the producer/lifecycle tuple before Source or acceptance authoring."
+  }
+}
