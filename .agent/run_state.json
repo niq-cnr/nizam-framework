@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "017-workflow-assurance-foundation",
-  "current_feature": "116",
+  "current_feature": null,
   "status": "in_progress",
-  "updated_at": "2026-10-13T12:45:19.941755+00:00",
+  "updated_at": "2026-10-13T12:50:12.263272+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -680,7 +680,7 @@
       "limit": 3
     },
     "116-closeout-coordination": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -4365,6 +4365,17 @@
       "event": "116-closeout-coordination-attempt1-failed",
       "detail": "Root passed a guessed nonexistent workdir instead of the actual newly-created owned root; tool process rejected before command start or any lifecycle writes. Exact owner/transport failure preserved, only proven empty owned root removed. Accepted Source/QA/capture immutable. Fresh2 resolves dynamic returned-path interface.",
       "evidence": ".agent/evidence/116/failed-closeout-attempt1/process-failure.json"
+    },
+    {
+      "at": "2026-10-13T12:50:12.263272+00:00",
+      "event": "116-closeout-coordination-attempt2-passed",
+      "detail": "Exact actual returned owned-root used; canonical116 completedfirst then derivedcontract/list/run/manifest/DAG. SourceC3/ModeB3/freshQA1/Rootcapture1 remainimmutable. Finalactual1146 compared prior1151863/3x5589 beforeappend; phase3009/7020 noextraallowance. Currentactualscope/C1-C16/realbundleCLI/sixinstalledschemas all0. Feature117 next, wholephase remainsinprogress.",
+      "evidence": [
+        ".agent/evidence/116/closeout-attempt2-scope.txt",
+        ".agent/evidence/116/closeout-attempt2-compliance.txt",
+        ".agent/evidence/116/closeout-attempt2-real-bundle.txt",
+        ".agent/evidence/116/closeout-attempt2-schemas.txt"
+      ]
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4539,9 +4550,9 @@
   "scope_budget": {
     "original_estimate_lines": 5400,
     "ceiling_130pct": 7020,
-    "total_lines_changed": 1863,
-    "evidence_lines_total": 23159,
-    "excluded_lines_total": 537,
+    "total_lines_changed": 3009,
+    "evidence_lines_total": 85092,
+    "excluded_lines_total": 701,
     "per_feature": [
       {
         "id": "115",
@@ -4555,6 +4566,26 @@
         "evidence": ".agent/evidence/115/scope-measurement.txt",
         "rolling_baseline": null,
         "note": "First completed017feature; wholephasebase counting includesactivation/recovery once, historicalblocked409 remainsunaltered/no doublecount."
+      },
+      {
+        "id": "116",
+        "estimated": 1400,
+        "actual": 1146,
+        "product_lines": 351,
+        "process_overhead_lines": 795,
+        "evidence_lines": 61933,
+        "excluded_lines": 164,
+        "range": "d1f8d369a711e38b479eb5b1be1f901bb669b507..WORKTREE",
+        "evidence": ".agent/evidence/116/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "115"
+          ],
+          "rolling_average": 1863.0,
+          "three_times_threshold": 5589.0,
+          "first_feature_exception": false
+        },
+        "note": "Measured whole116 from captured115 before append using unchanged frozenclassifier; actual Source3/ModeB3/freshQA1/Rootcapture1 and canonicalcompletion. Failedbundles/Source/Rootcoord evidence preserved; original5400/7020 unchanged/noextraallowance."
       }
     ],
     "phase_level_items": [],
@@ -4583,7 +4614,7 @@
         "note": "Incomplete feature; unapproved public test candidate removed after exact quarantine. Product0/process409, below7020, not appended to completed rolling baseline or total. Future authorized recovery must count whole115 from originalphasebase once; no allowance/rebaseline."
       }
     ],
-    "last_measured_at": "2026-10-13T10:10:55.301664+00:00"
+    "last_measured_at": "2026-10-13T12:46:04.802934+00:00"
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -4766,7 +4797,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "116",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -4838,7 +4869,7 @@
       }
     ]
   },
-  "last_action": "116 closeout1 transport failed before edits; fresh verified-path closeout2 next.",
+  "last_action": "116 complete/captured at SourceC3; actual1146, cumulative0173009/7020;117 next on approved shared-file lane.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4854,7 +4885,8 @@
     "112",
     "113",
     "114",
-    "115"
+    "115",
+    "116"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
