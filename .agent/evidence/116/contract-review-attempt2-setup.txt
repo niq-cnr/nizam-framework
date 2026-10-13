@@ -1,0 +1,7 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c 'import importlib.util,pathlib; s=importlib.util.spec_from_file_location('"'"'h'"'"',pathlib.Path('"'"'tools/test_workflow_assurance.py'"'"')); h=importlib.util.module_from_spec(s); s.loader.exec_module(h); a=h.load_api(); assert callable(h.run_case) and callable(a.assess_repository); a.verify_record_update({'"'"'x'"'"':1},{'"'"'x'"'"':1},[]); assert not hasattr(a,'"'"'verify_acceptance_bundle'"'"'); print('"'"'PASS current115 importable/callable harness/API; future116 unavailable as expected and never intended behavioral red'"'"')'
+REVISION: 945b509b9972e95d040e68e05bbbe2524005f3c0
+EXIT: 0
+STDOUT:
+PASS current115 importable/callable harness/API; future116 unavailable as expected and never intended behavioral red
+
+STDERR:
