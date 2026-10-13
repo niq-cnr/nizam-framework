@@ -1,0 +1,41 @@
+{
+  "review": "implementation-mode-b",
+  "feature": "116",
+  "contract_id": "116",
+  "revision_reviewed": 1,
+  "attempt": 2,
+  "actor": "/root/wa_validator",
+  "revision": "2936f061d3a8e8e2de4daed1f0aa2dce0138fd41",
+  "tree": "e346823456b2af7032d1e1565b158a929fb2afd5",
+  "checkout_revision": "42fcd892b439fea18eb6ec036d7f8cdaedbdc22f",
+  "source_sha256": {
+    "tools/workflow_assurance.py": "0fa86161c2c50be4696b6dd72bd071e83da1e80f801848d9bc1fd78f5694e977",
+    "tools/test_workflow_assurance.py": "32277f18b80f4e204b7102ed57238c2d681d5c4a33bf3c8731a62c688e29226f",
+    ".agent/evidence/116/api-interface.json": "0d9a6a7d6e32f38d525c8e3c0c437b85f9e1189d58050bf2d860590e00733df5",
+    ".agent/evidence/116/scope-guard.py": "9df4109b3aaa2c37b37a7b6c2c856bfda2cde6b43fda5387c94479ae54a2e90a"
+  },
+  "evidence_files": [
+    ".agent/evidence/116/mode-b-attempt2-ownspot.txt"
+  ],
+  "issues": [
+    {
+      "verification_index": 3,
+      "criterion": "Complete generic unrelated-exception proof grammar",
+      "evidence": ".agent/evidence/116/mode-b-attempt2-ownspot.txt",
+      "severity": "high",
+      "required_fix": "Recognize bare Exception (and bare Error) labels as well as prefixed class names and explicit producer marker. Current regex requires at least one preceding name character, so Exception: is admitted. Third isolated architectural implementation attempt must preserve all sealed bytes and test complete intended error grammar with good proof positives; no fourth attempt without operator authorization."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Exact prior producer marker and RuntimeError negatives now reject; each restored complete real-Git fixture positive passes. Bare Exception marker remains accepted while correct named policy-red andEXIT1 coexist.",
+    "Stopped after first concrete remaining blocker. Twelve exact contract commands were not independently replayed in this rejected review; generator exit0 reports remain independent historical selfchecks.",
+    "No code/test/helper/API/bundle/proof/contract/lifecycle repair or commit. Source2 candidate hashes exact and old failure snapshots preserved."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Reject Source2: bounded fix repairs known marker but generic bareException still qualifies as behavioral red. Third architectural Source repair and fresh independent gates required."
+  },
+  "reviewed_at": "2026-10-13T12:11:10.121945+00:00"
+}
