@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "115",
   "status": "in_progress",
-  "updated_at": "2026-10-13T09:43:08.017829+00:00",
+  "updated_at": "2026-10-13T09:51:39.090804+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -625,6 +625,10 @@
     },
     "115-generator-development": {
       "attempts": 2,
+      "limit": 3
+    },
+    "115-mode-b": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4156,6 +4160,12 @@
       "event": "115-source-attempt2-passed",
       "detail": "All17 exact contracted Generator selfchecks passed0 in owned isolated root; C9 filename-variable docs correction only, functionalSource and frozen independent tests/helper/API unchanged. Candidate awaits ModeB and freshQA before promotion.",
       "evidence": ".agent/evidence/115/source-attempt2-selfchecks.json"
+    },
+    {
+      "at": "2026-10-13T09:51:39.090804+00:00",
+      "event": "115-mode-b-approved",
+      "detail": "Independent Validator replayed all17commands0 and hiddentrackeddrift adversary0; strictModeBapproved source2f324c and exactfour-input digests. Source stillisolated pendingfreshQA/capture.",
+      "evidence": ".agent/validator/115-mode-b.json"
     }
   ],
   "phase_001_scope_budget_final": {
