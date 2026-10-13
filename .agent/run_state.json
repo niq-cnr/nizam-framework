@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T13:17:23.015370+00:00",
+  "updated_at": "2026-10-13T13:20:56.484725+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -692,11 +692,11 @@
       "limit": 3
     },
     "117-contract-review": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "117-review-recovery-coordination": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -4410,6 +4410,12 @@
       "event": "117-contract-review-attempt1-startup-failed",
       "detail": "Root dispatched abbreviated E117 ownerpath; independentactor stopped actualreadEXIT1 before substantive review/writes. Exactowner/actorreportedreadfailure archived, soleownedroot removed onlyaftertracked/untracked proof. Counter1 counted; unchangedproposal/API awaits fresh2 with fullpath; ModeA1 independentparallel unaffected.",
       "evidence": ".agent/evidence/117/failed-contract-review-attempt1/read-failure.json"
+    },
+    {
+      "at": "2026-10-13T13:20:56.484725+00:00",
+      "event": "117-contract-review-attempt2-startup-failed",
+      "detail": "Independentactor used unavailablepython alias, actualreportedEXIT127, stoppedbefore substantive review/writes. Priorstartup/parallelprotocolreads0 disclosed; no fabricatedfullcommand/rawgate. Exactowner/readfailure preserved andonlyvalidatedemptyownedroot removed. Count2/3; thirdfinalreview freshafter deterministicgate-ref revision withknownpython3/nativecommands.",
+      "evidence": ".agent/evidence/117/failed-contract-review-attempt2/read-failure.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4903,7 +4909,7 @@
       }
     ]
   },
-  "last_action": "117 independentcontractreview1 startupreadfailed, immutableproposal/API unchanged; freshfullpath interface recovery2 pending",
+  "last_action": "117 contractreview2 unavailablepythonalias stoppedbeforegate; finalreview3 held until revisedproposal andobserved executableinterface",
   "completed_contract_ids": [
     "099",
     "103",
