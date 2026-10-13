@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "017-workflow-assurance-foundation",
-  "current_feature": null,
+  "current_feature": "118",
   "status": "in_progress",
-  "updated_at": "2026-10-13T19:43:17.960890+00:00",
+  "updated_at": "2026-10-13T19:44:44.180929+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -761,6 +761,10 @@
       "limit": 3
     },
     "117-closeout": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-selection": {
       "attempts": 1,
       "limit": 3
     }
@@ -4623,6 +4627,12 @@
       "event": "117-scope-measured",
       "detail": "Actual117 1003 counted lines; completed phase 4012/7020; prior completed mean 1504.5,3x threshold 4513.5; all limits pass.",
       "evidence": ".agent/evidence/117/scope-measurement.txt"
+    },
+    {
+      "at": "2026-10-13T19:44:44.180929+00:00",
+      "event": "118-selected",
+      "detail": "Dependencies116/117 complete after fresh QA/capture. Select authorized bounded foundation-evidence close, estimated650; completedphase4012/original7020 ceiling. Future phases/release/install unchanged; no118 Source before own contract and independent gates.",
+      "evidence": ".agent/evidence/118/selection-attempt1.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5078,7 +5088,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "118",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5150,7 +5160,7 @@
       }
     ]
   },
-  "last_action": "117 canonical completion after fresh QA/capture;118 remains pending",
+  "last_action": "118 selected after captured116/117; Generator contract proposal pending",
   "completed_contract_ids": [
     "099",
     "103",
