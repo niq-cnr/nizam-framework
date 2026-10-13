@@ -437,6 +437,16 @@ def bundle_cli_controls(api, f):
     require(result.returncode != 0 and result.stderr.strip() and 'PASS' not in result.stdout, 'CLI stale review seal rejected')
 
 
+PRE_ENTRY_CASES = CASES
+ENTRY_CASES = ('accepted-entry', 'reject-foreign-repo', 'reject-stale-pin', 'reject-role-write')
+CASES = PRE_ENTRY_CASES + ENTRY_CASES
+
+
+def run_entry_case(name, api):
+    helper = load_api(ROOT / '.agent/evidence/117/entry-fixtures.py')
+    helper.run_case(name, api)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
@@ -446,8 +456,15 @@ def main():
     group.add_argument('--base-cases', action='store_true')
     group.add_argument('--scope-116', action='store_true')
     group.add_argument('--scope-controls-116', action='store_true')
+    group.add_argument('--pre-entry-cases', action='store_true')
+    group.add_argument('--scope-117', action='store_true')
+    group.add_argument('--scope-controls-117', action='store_true')
     parser.add_argument('--base')
     args = parser.parse_args()
+    if args.scope_117 or args.scope_controls_117:
+        if not args.base: parser.error('scope commands require --base')
+        helper = load_api(ROOT / '.agent/evidence/117/scope-guard.py')
+        (helper.scope_controls if args.scope_controls_117 else helper.scope)(args.base); return
     if args.scope_116 or args.scope_controls_116:
         if not args.base: parser.error('scope commands require --base')
         helper = load_api(ROOT / '.agent/evidence/116/scope-guard.py')
@@ -458,8 +475,8 @@ def main():
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()
-    for name in ([args.case] if args.case else BASE_CASES if args.base_cases else CASES):
-        (run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
+    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES):
+        (run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
 
 
 if __name__ == '__main__':
