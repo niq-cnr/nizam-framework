@@ -9,6 +9,16 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Independent acceptance bundles (feature 116).** Added read-only sealed-bundle
+  verification over actual immutable test/API/obligation/control Git bytes,
+  observed environment and distinct recorded author/developer/reviewer identities.
+  Each case binds successful setup and positive control to its own intended
+  behavioral failure; generic setup or missing-API failures cannot qualify.
+  Independent review stays outside its own seal, and later implementation Source
+  identity stays separate. Five new cases extend the existing eleven-case suite.
+  This candidate requires its own Mode B, fresh QA and capture; entry enforcement
+  and foundation closure remain features 117–118. Installed v1.5.0 is unchanged.
+
 - **Workflow Assurance identity (feature 115).** Added a read-only stdlib API/CLI
   binding actual Git source identity, assessed bytes/modes and observed environment.
   Unknown changes invalidate conservatively; declared scalar record updates and

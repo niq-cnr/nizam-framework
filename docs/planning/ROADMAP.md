@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.62.0
+version: 0.63.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.63.0"
+    date: "2026-10-13"
+    summary: "Record captured115 and sealed acceptance116 implementation candidate; preserve later phase and foundation closure gates."
   - version: "0.62.0"
     date: "2026-10-13"
     summary: "Activate phase017 foundation and record feature115 identity candidate; preserve closed015 and later proposed plans."
@@ -888,6 +891,21 @@ what comes next (the gap this file closes: phases 001–004 completed with no re
 successor, leaving open debt deferred to unscoped "future phases").
 
 ## Current Position (2026-10-13)
+
+### Current foundation progress — feature 116
+
+Feature 115 completed independent Mode B, fresh seventeen-command QA and actual
+capture at assessed source `2f324c68bf273c54907ff63ad057995040d84d54`;
+its existing canonical records and historical proofs remain unchanged. The closed
+measurement is 1,863 lines. Feature 116 now provides the sealed acceptance-bundle
+implementation candidate after both renewed pre-code gates and independent
+bundle review; it still needs its own Mode B, fresh QA and capture before
+completion. Read current position from the phase 017 canonical phase/list, not
+older candidate text. Phase 017 remains in progress at its original 5,400/7,020
+allowance. Continue 116 → 117 → 118 in the shared-file lane; no foundation closure
+or later phase activation is claimed. Installed v1.5.0 is unchanged.
+
+The earlier activation overlay below is retained as dated context.
 
 - **Phase 017 foundation is active.** H-PHASE-017 authorizes features 115–118
   with 5,400 counted lines and a 7,020 ceiling. Feature 115 provides the assessed

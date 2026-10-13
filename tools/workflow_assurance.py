@@ -297,6 +297,175 @@ def compare_identity(before, after):
     return canonical(before) == canonical(after)
 
 
+def _bundle_object(value, keys, label):
+    require(type(value) is dict and set(value) == set(keys), 'invalid closed ' + label)
+
+
+def _bundle_string(value, label):
+    require(type(value) is str and bool(value.strip()), 'invalid ' + label)
+
+
+def _bundle_hex(value, length, label):
+    require(type(value) is str and re.fullmatch('[0-9a-f]{' + str(length) + '}', value), 'invalid ' + label)
+
+
+def _bundle_file(root, reference, keys, used):
+    _bundle_object(reference, keys, 'file reference')
+    path = relative_path(reference['path'])
+    require(path not in used, 'duplicate bundle artifact path: ' + path)
+    used.add(path)
+    _bundle_hex(reference['sha256'], 64, 'artifact digest')
+    data = regular_file(root, path).read_bytes()
+    require(sha(data) == reference['sha256'], 'actual bundle artifact changed: ' + path)
+    return data
+
+
+def _bundle_proof(root, proof, stage, case, operation, commit, used):
+    data = _bundle_file(root, proof, ('path', 'sha256', 'command', 'revision', 'diagnostic'), used)
+    for key in ('command', 'revision', 'diagnostic'):
+        _bundle_string(proof[key], key)
+    require(proof['revision'] == commit, 'proof baseline revision mismatch')
+    text = data.decode('utf-8')
+    def header(name, expected):
+        require(re.findall(r'^' + name + r': (.*)$', text, re.M) == [expected], 'invalid unique proof header: ' + name)
+    header('COMMAND', proof['command']); header('REVISION', commit)
+    header('EXIT', '1' if stage == 'red' else '0')
+    require(text.count('\nSTDOUT:\n') == 1 and text.count('\nSTDERR:\n') == 1, 'proof output sections missing/duplicated')
+    stdout = text.split('\nSTDOUT:\n', 1)[1]
+    require('\nSTDERR:\n' in stdout, 'proof output sections out of order')
+    stdout, stderr = stdout.split('\nSTDERR:\n', 1)
+    output = stdout + '\n' + stderr
+    # The frozen producer emits success/policy fields, never arbitrary exception
+    # output. Classify only output channels: metadata paths are not diagnostics.
+    permitted = [re.escape(proof['diagnostic'])]
+    if stage == 'setup':
+        permitted += [r'EXISTING115_API_HARNESS_CLI: PASS',
+                      r'TARGET_CALLABLE: verify_acceptance_bundle PASS']
+    else:
+        permitted += [r'INPUT_SHA256: [0-9a-f]{64}', r'OPERATION_SHA256: [0-9a-f]{64}',
+                      r'FIXTURE_BASELINE: [0-9a-f]{40}', r'FIXTURE_CURRENT_HEAD: [0-9a-f]{40}',
+                      r'OBSERVED_RESULT: ' + ('accept' if stage == 'positive' else
+                                             'reject' if operation['expected_result'] == 'accept' else 'accept')]
+        if stage == 'red':
+            permitted += [r'NAIVE_POLICY_DIAGNOSTIC: [^\r\n]+']
+    grammar = '(?:' + '|'.join(permitted) + ')'
+    require(all(not line.strip() or re.fullmatch(grammar, line) for line in stdout.splitlines()),
+            'setup/transport failure cannot satisfy proof')
+    require(all(not line.strip() or stage == 'red' and line == proof['diagnostic']
+                for line in stderr.splitlines()), 'setup/transport failure cannot satisfy proof')
+    # Bare and qualified exception labels are also disallowed inside an otherwise
+    # recognized field; namespace-qualified policy text is not an error channel.
+    exception_label = (r'\b(?:[A-Za-z_][A-Za-z0-9_.]*)?(?:Error|Exception)\s*:|'
+                       r'\b(?:SystemExit|KeyboardInterrupt|GeneratorExit|StopIteration|StopAsyncIteration)\s*:|'
+                       r'\bSETUP_OR_UNRELATED_ERROR\s*:|Traceback \(most recent call last\)|command not found')
+    require(not re.search(exception_label, output), 'setup/transport failure cannot satisfy proof')
+    require(proof['diagnostic'] in (output if stage == 'red' else stdout).splitlines(), 'actual proof diagnostic missing')
+    if stage == 'setup':
+        require('TARGET_CALLABLE: verify_acceptance_bundle PASS' in stdout.splitlines(), 'callable target setup missing')
+        return
+    reference = operation['positive_input' if stage == 'positive' else 'case_input']
+    header('INPUT_SHA256', reference['sha256']); header('OPERATION_SHA256', sha(canonical(operation)))
+    if stage == 'positive':
+        require(proof['diagnostic'] == 'POSITIVE_CONTROL: ' + case + ' PASS', 'case-specific positive control missing')
+    else:
+        require(proof['diagnostic'].startswith('POLICY_ASSERTION: ' + case + ' ') and
+                len(proof['diagnostic']) > len('POLICY_ASSERTION: ' + case + ' '), 'case-specific intended assertion missing')
+        expected = 'reject' if operation['expected_result'] == 'accept' else 'accept'
+        header('OBSERVED_RESULT', expected)
+        require(not re.search(r'\b(?:missing|absent|unavailable)\b.*\b(?:API|callable|verify_acceptance_bundle)\b', proof['diagnostic'], re.I), 'absence assertion is not behavioral red')
+
+
+def verify_acceptance_bundle(repo, bundle, independent_review):
+    """Validate observed sealed inputs and independent behavioral proof records.
+
+    Recorded commands are read, never executed. Roles are local recorded identity,
+    not authentication. Implementation Source identity is separate from this seal.
+    """
+    try:
+        json_value(bundle); json_value(independent_review)
+        _bundle_object(bundle, ('schema_version', 'feature_id', 'baseline', 'inputs', 'environment',
+                                'roles', 'required_cases', 'baseline_evidence', 'seal_sha256'), 'bundle')
+        require(type(bundle['schema_version']) is int and bundle['schema_version'] == 1, 'invalid bundle schema version')
+        _bundle_string(bundle['feature_id'], 'bundle feature')
+        _bundle_hex(bundle['seal_sha256'], 64, 'bundle seal')
+        body = {k: v for k, v in bundle.items() if k != 'seal_sha256'}
+        require(bundle['seal_sha256'] == sha(canonical(body)), 'bundle seal mismatch')
+        root = Path(repo)
+        require(not root.is_symlink(), 'bundle repository is symlink')
+        root = root.resolve(strict=True)
+        require(git(root, 'rev-parse', '--show-toplevel').decode().strip() == str(root), 'bundle repository must be Git toplevel')
+        baseline = bundle['baseline']; _bundle_object(baseline, ('commit', 'tree'), 'baseline')
+        for name in ('commit', 'tree'): _bundle_hex(baseline[name], 40, 'baseline ' + name)
+        commit = baseline['commit']
+        require(git(root, 'rev-parse', '--verify', commit + '^{commit}').decode().strip() == commit, 'baseline is not exact commit')
+        require(git(root, 'rev-parse', commit + '^{tree}').decode().strip() == baseline['tree'], 'baseline actual tree mismatch')
+        roles = bundle['roles']; _bundle_object(roles, ('test_author', 'developer', 'acceptance_reviewer'), 'roles')
+        for person in roles.values():
+            _bundle_object(person, ('agent_id', 'session_id'), 'role identity')
+            for value in person.values(): _bundle_string(value, 'role identity')
+        for field in ('agent_id', 'session_id'):
+            require(len({person[field] for person in roles.values()}) == 3, 'roles must have distinct ' + field)
+        review = independent_review
+        _bundle_object(review, ('review', 'feature', 'actor', 'reviewer_session_id', 'seal_sha256', 'issues',
+                                'missing_acceptance_coverage', 'unsupported_claims', 'final_verdict'), 'independent review')
+        reviewer = roles['acceptance_reviewer']
+        require(review['review'] == 'validator-test-bundle-review' and review['feature'] == bundle['feature_id'], 'review purpose/feature mismatch')
+        require(review['actor'] == reviewer['agent_id'] and review['reviewer_session_id'] == reviewer['session_id'], 'independent reviewer identity mismatch')
+        require(review['seal_sha256'] == bundle['seal_sha256'], 'review seal mismatch')
+        for key in ('issues', 'missing_acceptance_coverage', 'unsupported_claims'):
+            require(type(review[key]) is list and not review[key], 'independent review has blockers')
+        verdict = review['final_verdict']; _bundle_object(verdict, ('approved', 'summary'), 'review verdict')
+        require(verdict['approved'] is True, 'review is not approved boolean'); _bundle_string(verdict['summary'], 'review summary')
+        environment = bundle['environment']; _bundle_object(environment, ('runtime', 'variables'), 'environment')
+        runtime = {'implementation': platform.python_implementation(), 'version': platform.python_version(),
+                   'system': platform.system(), 'machine': platform.machine()}
+        require(canonical(environment['runtime']) == canonical(runtime), 'actual bundle runtime changed')
+        variables = environment['variables']
+        require(type(variables) is dict, 'bundle environment variables must be object')
+        for name, value in variables.items():
+            require(name and '=' not in name and '\0' not in name and type(value) is str and os.environ.get(name) == value, 'actual bundle environment variable changed')
+        items = bundle['inputs']; require(type(items) is list and items, 'bundle sealed inputs missing')
+        used = set(); paths = []; kinds = set()
+        for item in items:
+            data = _bundle_file(root, item, ('kind', 'path', 'sha256', 'executable'), used)
+            require(item['kind'] in ('test', 'obligation', 'interface', 'baseline_control') and type(item['kind']) is str, 'unsupported bundle input kind')
+            require(type(item['executable']) is bool, 'bundle executable must be boolean')
+            path = item['path']; paths.append(path); kinds.add(item['kind'])
+            entry = git(root, '--literal-pathspecs', 'ls-tree', '-z', commit, '--', path).split(b'\0')
+            require(len(entry) == 2 and entry[1] == b'', 'sealed input missing from baseline Git tree')
+            metadata, actual_path = entry[0].split(b'\t', 1); mode, kind, oid = metadata.decode().split()
+            require(actual_path.decode() == path and kind == 'blob' and mode in ('100644', '100755'), 'unsafe sealed Git blob/mode')
+            require((mode == '100755') is item['executable'] and bool(regular_file(root, path).stat().st_mode & 0o111) is item['executable'], 'sealed executable mode changed')
+            require(blobs(root, [oid])[oid] == data, 'sealed input differs from immutable Git blob')
+        require(paths == sorted(paths) and kinds == {'test', 'obligation', 'interface', 'baseline_control'}, 'incomplete/noncanonical sealed inputs')
+        cases = bundle['required_cases']
+        require(type(cases) is list and cases, 'required bundle cases missing')
+        for case in cases: _bundle_string(case, 'required case')
+        require(cases == sorted(set(cases)), 'duplicate/noncanonical required cases')
+        rows = bundle['baseline_evidence']; require(type(rows) is list and len(rows) == len(cases), 'baseline case coverage incomplete')
+        seen = set()
+        for row in rows:
+            _bundle_object(row, ('case', 'operation', 'setup', 'positive', 'red'), 'case proof row')
+            case = row['case']; require(type(case) is str and case in cases and case not in seen, 'unknown/duplicate baseline case')
+            seen.add(case)
+            operation = row['operation']
+            _bundle_object(operation, ('target', 'positive_input', 'case_input', 'mutation', 'expected_result'), 'case operation')
+            require(operation['target'] == 'verify_acceptance_bundle' and operation['expected_result'] in ('accept', 'reject'), 'unsupported case operation')
+            _bundle_string(operation['mutation'], 'case-specific mutation')
+            if case == 'independent-handoff': require(operation['expected_result'] == 'accept', 'handoff must expect acceptance')
+            if case.startswith('reject-'): require(operation['expected_result'] == 'reject', 'negative case must expect rejection')
+            for name in ('positive_input', 'case_input'):
+                parse_json(_bundle_file(root, operation[name], ('path', 'sha256'), used))
+            require(operation['positive_input']['sha256'] != operation['case_input']['sha256'], 'case input must differ from positive control')
+            for stage in ('setup', 'positive', 'red'):
+                _bundle_proof(root, row[stage], stage, case, operation, commit, used)
+        return True
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, UnicodeError, RecursionError, KeyError) as exc:
+        raise AssuranceError('bundle observation failed: ' + str(exc)) from exc
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
@@ -304,6 +473,9 @@ def main():
     for name in ('repo', 'source-commit', 'inputs', 'environment-names'):
         assess.add_argument('--' + name, required=True)
     assess.add_argument('--record-ownership')
+    bundle = sub.add_parser('bundle')
+    for name in ('repo', 'bundle', 'review'):
+        bundle.add_argument('--' + name, required=True)
     for name in ('compare', 'record'):
         command = sub.add_parser(name)
         command.add_argument('--before', required=True); command.add_argument('--after', required=True)
@@ -311,6 +483,9 @@ def main():
     args = parser.parse_args()
     def read(path): return parse_json(Path(path).read_bytes())
     try:
+        if args.command == 'bundle':
+            verify_acceptance_bundle(args.repo, read(args.bundle), read(args.review))
+            print('PASS bundle'); return 0
         if args.command == 'assess':
             result = assess_repository(args.repo, args.source_commit, read(args.inputs), read(args.environment_names),
                                        read(args.record_ownership) if args.record_ownership else None)

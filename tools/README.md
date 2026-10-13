@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.21.0
+version: 0.22.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.22.0"
+    date: "2026-10-13"
+    summary: "Document immutable independent acceptance bundles and case-specific positive/red evidence; retain local recorded-identity boundaries."
   - version: "0.21.0"
     date: "2026-10-13"
     summary: "Document assessed-source identity and record continuity, with eleven permanent independent cases in the existing CI job."
@@ -93,6 +96,40 @@ The optional session surface routes through [the adapter interface](interface.md
 sessions remain conformant. Existing schemas/C12 validate declared records only;
 executable controller/adapter/SBCL enforcement and all thirteen live proofs remain
 pending phase016. The source additions do not upgrade installed v1.5.0.
+
+## Sealed independent acceptance bundles
+
+`verify_acceptance_bundle(repo, bundle, independent_review)` verifies a closed
+canonical seal over immutable Git baseline inputs, source-obligation snapshot,
+test/API/naive-control bytes and modes, observed environment, distinct recorded
+agent/session identities and each case's setup, positive control and intended red.
+The independent review is a separate nine-field record binding the same seal.
+Recorded commands are read as evidence; the verifier never executes them.
+
+Every case binds distinct actual positive/case input files and its operation hash.
+Setup and positive controls must exit 0; the red must exit 1 with the case-specific
+policy assertion and opposite observed accept/reject result. Missing API, import,
+transport or unrelated failures do not qualify. Changes to sealed bytes or
+observed environment require a new bundle and independent review. Implementation
+Source identity is separately assessed: a later record-only HEAD is allowed while
+sealed inputs still match their immutable Git blobs and actual current bytes.
+
+Prepare `WA_BUNDLE_FILE` and `WA_REVIEW_FILE` as complete absolute filenames of
+strict JSON inputs, with `WA_REPO_ROOT` the repository being observed:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 tools/workflow_assurance.py bundle --repo "$WA_REPO_ROOT" --bundle "$WA_BUNDLE_FILE" --review "$WA_REVIEW_FILE"
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --base-cases
+PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+```
+
+The regression flag runs the eleven feature 115 cases; the default suite now runs
+those plus five feature 116 cases in the existing CI job. Use independently
+reviewed inputs and output evidence; local role records are not cryptographic
+authentication or runtime permission enforcement. Feature 117 entry checks and
+feature 118 foundation closure remain pending. Earlier feature 115 documentation
+below records its initial eleven-case suite; the current default count is sixteen.
+The authored tool does not upgrade installed v1.5.0.
 
 ## Assessed-source identity and record continuity
 

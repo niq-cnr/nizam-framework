@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.10
+version: 1.0.11
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.11"
+    date: "2026-10-13"
+    summary: "Add feature116 sealed-bundle handoff after115 capture; preserve prior snapshots and independent QA/capture requirements."
   - version: "1.0.10"
     date: "2026-10-13"
     summary: "Add current phase017 feature115 identity handoff and recovery boundaries; preserve historical snapshots."
@@ -46,6 +49,24 @@ change_log:
 # Developer Handover — Release Status and Phase 014 Snapshot
 
 ## Current status — 2026-10-13
+
+### Feature 116 implementation handoff
+
+Feature 115 is captured complete with 1,863 counted lines; its assessed identity,
+independent QA/capture and completed canonical records remain historical proof.
+Feature 116 is the current sealed acceptance-bundle implementation candidate,
+following renewed independent pre-code gates and actual corrected-bundle review.
+The verifier observes immutable test/API/obligation/control bytes, distinct
+recorded roles, environment and case-specific setup/positive/red evidence. Its
+review record remains outside its own seal. Source identity is a separate
+candidate; no prior proof is resealed against this later implementation.
+
+Feature 116 needs independent Mode B, fresh QA and capture before completion.
+Then continue 117 authorized entry and 118 bounded foundation closure under
+their own contracts. Phase 017 remains in progress within its original
+5,400/7,020 allowance. Later phases, runtime/live proof, release and installed
+upgrade remain separately gated. The earlier current-status text below is a
+dated activation snapshot; current phase/list records govern execution.
 
 Phase 017 foundation is active under [H-PHASE-017](../../.agent/evidence/phase017-activation/authorization.json),
 with the original 5,400/7,020 allowance. Feature 115 is the assessed-identity
