@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.22.0
+version: 0.23.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.23.0"
+    date: "2026-10-13"
+    summary: "Document active117 authorized-entry preflight, immutable dual-gate bindings and twenty current regression cases."
   - version: "0.22.0"
     date: "2026-10-13"
     summary: "Document immutable independent acceptance bundles and case-specific positive/red evidence; retain local recorded-identity boundaries."
@@ -293,3 +296,30 @@ PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/
 The existing jobs emit checkout SHA and source digest receipts. Actual capable CI
 and independent QA remain prerequisites to debt closure; local unsupported results
 are recorded as limitations. The installed v1.5.0 payload remains unchanged.
+
+
+## Authorized entry — feature 117
+
+`verify_authorized_entry(repo, entry)` checks actual repository origin and local
+phase authority, the released installed pin and critical index/skill/role bytes,
+the immutable proposal and both referenced independent approvals, and explicit
+role/path/field write intents. It uses the five installed AGF role/profile pairs.
+Approved local grants permit independent Evaluator test authorship; permission
+class defaults remain consumer-aspirational. The check observes intent and does
+not write files or authenticate recorded agents.
+
+The project preflight runs while approved feature 117 is active. It rejects after
+117 completes or during 118; portable cases retain real approved active snapshots.
+The current suite includes twenty cases, with `--pre-entry-cases` selecting the
+prior sixteen. Historical 115/116 QA and bundle receipts retain their assessed
+revisions; a changed shared runner does not reseal them.
+
+Set `WA_ENTRY_FILE` to the complete absolute filename of an entry JSON input.
+The file names the actual approved contract and immutable authority references;
+write grants come from that contract. Keep operator input files outside the
+assessed repository when using the separate identity commands.
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 tools/workflow_assurance.py entry --repo . --entry "$WA_ENTRY_FILE"
+```
+

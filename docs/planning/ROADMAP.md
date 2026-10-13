@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.63.0
+version: 0.64.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.64.0"
+    date: "2026-10-13"
+    summary: "Record captured115/116 and authorized entry117 candidate; preserve historical halt evidence and pending foundation closure."
   - version: "0.63.0"
     date: "2026-10-13"
     summary: "Record captured115 and sealed acceptance116 implementation candidate; preserve later phase and foundation closure gates."
@@ -201,6 +204,23 @@ change_log:
 ---
 
 # Forward Roadmap
+
+
+## Current foundation overlay — feature 117, 2026-10-13
+
+Features 115 and 116 are captured complete at 1,863 and 1,146 counted lines,
+respectively: 3,009 against the original phase017 5,400/7,020 allowance. Feature
+117 now provides the authorized-entry implementation candidate after renewed
+independent pre-code gates and reviewed acceptance. The four entry cases extend
+the current suite to twenty. Its active117 preflight requires the actual approved
+contract and revision-bound gate records; it rejects after canonical completion.
+
+This candidate still requires independent Mode B, fresh twelve-command QA and
+ownspot, then distinct Root capture before completion. NDEBT-053 remains Open at
+DEBT0.72 until that capture; prior halt and exhausted review evidence are retained.
+Feature 118 foundation closure is pending. Later phase activation and installed
+upgrade remain separately gated. Earlier positions below are historical context.
+
 
 ## Plan of Record (2026-10-08) — Phase 014: GA Track — the Real Multi-Repo Pilot and the Remaining Lifecycle Protocols (06 Simplification Review, 08 GA Gate) — **ACTIVATED 2026-10-08 (`H-PHASE-014`)**
 

@@ -466,6 +466,158 @@ def verify_acceptance_bundle(repo, bundle, independent_review):
         raise AssuranceError('bundle observation failed: ' + str(exc)) from exc
 
 
+
+def _entry_blob(root, revision, path):
+    _bundle_hex(revision, 40, 'entry Git revision'); relative_path(path)
+    require(git(root, 'rev-parse', '--verify', revision + '^{commit}').decode().strip() == revision,
+            'entry anchor must be an actual immutable commit')
+    rows = git(root, '--literal-pathspecs', 'ls-tree', '-z', revision, '--', path).split(b'\0')
+    require(len(rows) == 2 and rows[1] == b'', 'missing entry Git input: ' + path)
+    metadata, name = rows[0].split(b'\t', 1); mode, kind, oid = metadata.decode().split()
+    require(name.decode() == path and kind == 'blob' and mode in ('100644', '100755'), 'unsafe entry Git input')
+    return blobs(root, [oid])[oid], mode == '100755'
+
+
+def _entry_pinned(root, revision, path, source_path=None):
+    data, executable = _entry_blob(root, revision, source_path or path)
+    target = regular_file(root, path)
+    require(target.read_bytes() == data and bool(target.stat().st_mode & 0o111) == executable,
+            'pinned entry bytes/mode changed: ' + path)
+    return data
+
+
+def verify_authorized_entry(repo, entry):
+    """Observe approved local active117 authority and exact write intents; never write."""
+    try:
+        json_value(entry)
+        _bundle_object(entry, ('schema_version', 'repository', 'authorization', 'installed', 'contract',
+                              'role', 'profile', 'writes'), 'entry')
+        require(type(entry['schema_version']) is int and entry['schema_version'] == 1, 'entry schema version')
+        supplied = Path(repo); require(not supplied.is_symlink(), 'symlink repository root')
+        root = supplied.resolve()
+        require(Path(git(root, 'rev-parse', '--show-toplevel').decode().strip()).resolve() == root, 'entry repository root')
+        def read(path): return parse_json(regular_file(root, path).read_bytes())
+        ref = entry['contract']; _bundle_object(ref, ('path', 'sha256', 'feature_id'), 'entry contract reference')
+        require(ref['path'] == '.agent/contracts/117.json' and ref['feature_id'] == '117', 'canonical entry contract')
+        _bundle_hex(ref['sha256'], 64, 'entry contract digest')
+        require(sha(regular_file(root, ref['path']).read_bytes()) == ref['sha256'], 'entry contract changed')
+        contract = read(ref['path']); approvals = contract['approvals']; policy = contract['gate_reference_policy']
+        require(contract['status'] == 'approved' and contract['contract_id'] == contract['feature_id'] == '117', 'active approved117 contract')
+        require(approvals['validator_mode_a'] is True and approvals['evaluator_contract_review'] is True, 'dual entry approvals')
+        refs = approvals['gate_refs']
+        _bundle_object(refs, ('proposal_revision', 'proposal_sha256', 'api_sha256', 'validator_mode_a',
+                              'evaluator_contract_review'), 'entry gate references')
+        proposal_data, _ = _entry_blob(root, refs['proposal_revision'], ref['path'])
+        _bundle_hex(refs['proposal_sha256'], 64, 'proposal digest'); _bundle_hex(refs['api_sha256'], 64, 'API digest')
+        require(sha(proposal_data) == refs['proposal_sha256'], 'immutable entry proposal changed')
+        proposal = parse_json(proposal_data)
+        require(proposal['status'] == 'proposed' and proposal['approvals']['gate_refs'] is None and
+                proposal['approvals']['validator_mode_a'] is False and proposal['approvals']['evaluator_contract_review'] is False,
+                'entry proposal approval state')
+        proposal['status'] = 'approved'
+        for key in ('validator_mode_a', 'evaluator_contract_review', 'gate_refs'):
+            proposal['approvals'][key] = approvals[key]
+        if 'approved_at' in approvals:
+            _bundle_string(approvals['approved_at'], 'approval timestamp'); proposal['approvals']['approved_at'] = approvals['approved_at']
+        require(canonical(proposal) == canonical(contract), 'unapproved entry obligation change')
+        require(type(approvals['revisions']) is int and type(policy['revision']) is int and
+                approvals['revisions'] == policy['revision'], 'entry gate revision')
+        api_data = _entry_pinned(root, refs['proposal_revision'], contract['api_interface_ref'])
+        require(sha(api_data) == refs['api_sha256'], 'entry API proposal binding')
+        actors = []
+        for role in ('validator_mode_a', 'evaluator_contract_review'):
+            gate_ref = refs[role]; _bundle_object(gate_ref, ('path', 'sha256'), 'entry gate reference')
+            require(gate_ref['path'] == policy[role]['path'], 'current role gate path')
+            _bundle_hex(gate_ref['sha256'], 64, 'gate digest')
+            data = regular_file(root, gate_ref['path']).read_bytes(); require(sha(data) == gate_ref['sha256'], 'entry gate changed')
+            gate = parse_json(data)
+            require(gate['review'] == policy[role]['review'] and gate['feature'] == '117' and
+                    type(gate['revision_reviewed']) is int and gate['revision_reviewed'] == approvals['revisions'] and
+                    gate['proposal_sha256'] == refs['proposal_sha256'] and gate['api_sha256'] == refs['api_sha256'], 'stale role gate')
+            _bundle_string(gate['actor'], 'gate actor'); actors.append(gate['actor'])
+            require(gate['final_verdict']['approved'] is True and all(type(gate[k]) is list and not gate[k]
+                    for k in ('issues', 'missing_acceptance_coverage', 'unsupported_claims')), 'entry gate blockers')
+        require(len(set(actors)) == 2, 'independent entry pre-code gates')
+        authority = contract['entry_authority']; auth = entry['authorization']
+        _bundle_object(auth, ('path', 'revision', 'sha256'), 'entry authorization')
+        require(auth['path'] == authority['authorization_path'] and auth['revision'] == authority['authorization_revision'], 'entry authorization anchor')
+        _bundle_hex(auth['sha256'], 64, 'authority digest')
+        data = _entry_pinned(root, auth['revision'], auth['path']); require(sha(data) == auth['sha256'], 'entry authority digest changed')
+        observed = parse_json(data); _bundle_string(entry['repository'], 'entry project')
+        require(entry['repository'] == authority['project'] == observed['project'] and observed['gate'] == 'H-PHASE-017', 'foreign entry authority')
+        _bundle_string(observed['operator_text'], 'recorded operator authority')
+        require(git(root, 'remote', 'get-url', 'origin').decode().strip() in authority['origins'], 'foreign entry origin')
+        pin = authority['installed_pin']; _bundle_object(entry['installed'], ('tag', 'resolved_sha'), 'entry installed pin')
+        require(entry['installed'] == {k: pin[k] for k in ('tag', 'resolved_sha')}, 'stale entry pin')
+        _bundle_hex(pin['resolved_sha'], 40, 'installed commit')
+        require(type(pin['tag']) is str and re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', pin['tag']), 'installed tag')
+        require(git(root, 'rev-parse', '--verify', 'refs/tags/' + pin['tag'] + '^{commit}').decode().strip() == pin['resolved_sha'], 'actual installed tag changed')
+        provenance = read('.nizam/provenance.json')
+        _bundle_object(provenance, ('framework_version', 'tag', 'resolved_sha', 'source_url', 'installed_at'), 'bootstrap provenance')
+        require(all(provenance[k] == pin[k] for k in ('tag', 'resolved_sha', 'source_url')) and
+                provenance['framework_version'] == pin['tag'][1:], 'observed stale installed provenance')
+        _bundle_string(provenance['installed_at'], 'installation timestamp')
+        critical = ('NIZAM.json', 'tools/SKILL.md', 'standard/AGF.md', 'standard/capability_profiles.md', 'standard/permission_classes.md')
+        docs = {path: _entry_pinned(root, pin['resolved_sha'], '.nizam/' + path, path) for path in critical}
+        require(parse_json(docs['NIZAM.json'])['framework']['version'] == provenance['framework_version'], 'installed index version')
+        pairs = {'Orchestrator': 'orchestrator-primary', 'Planner': 'planner-creative', 'Generator': 'generator-deterministic',
+                 'Validator': 'validator-structural', 'Evaluator': 'evaluator-adversarial'}
+        for role, profile in pairs.items():
+            require(role in docs['standard/AGF.md'].decode() and role in docs['standard/permission_classes.md'].decode() and
+                    re.search(r'^\| `' + re.escape(profile) + r'` \|[^\n]*\| ' + role + r' \|', docs['standard/capability_profiles.md'].decode(), re.M), 'installed role/profile routing')
+        require(type(entry['role']) is str and entry['role'] in pairs and entry['profile'] == pairs[entry['role']], 'entry role/profile pair')
+        state = read('.agent/run_state.json'); features = read('.agent/feature_list_017.json')
+        require(state['status'] == 'in_progress' and state['current_feature'] == state['active_contract_id'] == '117' and
+                features['phase'] == '017-workflow-assurance-foundation' and features['phase_status'] == 'in_progress', 'entry requires active117')
+        selected = [f for f in features['features'] if f['id'] == '117']
+        require(len(selected) == 1 and selected[0]['status'] == 'in_progress' and selected[0]['passes'] is False and
+                selected[0]['contract_ref'] == ref['path'], 'entry selected117 lifecycle')
+        def target(path):
+            relative_path(path); result = root
+            for index, part in enumerate(path.split('/')):
+                result = result / part; require(not result.is_symlink(), 'symlink write-intent path')
+                if index < len(path.split('/')) - 1:
+                    require(not result.exists() or result.is_dir(), 'non-directory write-intent parent')
+            return result
+        grants = contract['entry_write_grants']; require(type(grants) is list, 'entry grant list')
+        for grant in grants:
+            _bundle_object(grant, ('role', 'profile', 'path', 'fields', 'operation', 'full_file', 'create_only'), 'entry write grant')
+            require(type(grant['role']) is str and grant['role'] in pairs and grant['profile'] == pairs[grant['role']], 'grant role/profile')
+            require(type(grant['full_file']) is bool and type(grant['create_only']) is bool and grant['operation'] in ('write', 'append'), 'grant type/operation')
+            path = grant['path']; relative_path(path[:-3] if type(path) is str and path.endswith('/**') else path)
+            require('*' not in path or path == '.agent/evidence/117/**', 'unbounded grant path')
+            pointers(grant['fields'])
+            require((grant['fields'] == [] and grant['operation'] == 'write') if grant['full_file'] else bool(grant['fields']), 'grant field ownership')
+        require(type(entry['writes']) is list, 'entry write intents'); seen = set()
+        for intent in entry['writes']:
+            _bundle_object(intent, ('path', 'fields', 'operation'), 'entry write intent')
+            path = intent['path']; destination = target(path); fields = pointers(intent['fields'])
+            require(path not in seen and intent['operation'] in ('write', 'append'), 'duplicate/invalid entry write'); seen.add(path)
+            matches = []
+            for grant in grants:
+                pattern = grant['path']; owned = path.startswith(pattern[:-2]) if pattern.endswith('/**') else path == pattern
+                if grant['role'] != entry['role'] or grant['profile'] != entry['profile'] or not owned or grant['operation'] != intent['operation']: continue
+                if grant['create_only'] and destination.exists(): continue
+                if not grant['create_only']: regular_file(root, path)
+                if grant['full_file']:
+                    if not fields: matches.append(grant)
+                elif fields and set(intent['fields']) <= set(grant['fields']): matches.append(grant)
+            require(bool(matches), 'unowned entry role/path/field operation')
+            if fields:
+                record = read(path)
+                for parts in fields:
+                    value = record
+                    for key in parts:
+                        require(type(value) is dict and key in value, 'missing owned intent field'); value = value[key]
+                    require((parts == ('history',) and intent['operation'] == 'append' and type(value) is list) or
+                            (parts != ('history',) and intent['operation'] == 'write' and type(value) not in (dict, list)), 'record intent must name scalar or history append')
+        return True
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, UnicodeError, RecursionError, KeyError, AttributeError) as exc:
+        raise AssuranceError('entry observation failed: ' + str(exc)) from exc
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
@@ -476,6 +628,8 @@ def main():
     bundle = sub.add_parser('bundle')
     for name in ('repo', 'bundle', 'review'):
         bundle.add_argument('--' + name, required=True)
+    entry = sub.add_parser('entry')
+    entry.add_argument('--repo', required=True); entry.add_argument('--entry', required=True)
     for name in ('compare', 'record'):
         command = sub.add_parser(name)
         command.add_argument('--before', required=True); command.add_argument('--after', required=True)
@@ -483,6 +637,9 @@ def main():
     args = parser.parse_args()
     def read(path): return parse_json(Path(path).read_bytes())
     try:
+        if args.command == 'entry':
+            verify_authorized_entry(args.repo, read(args.entry))
+            print('PASS entry'); return 0
         if args.command == 'bundle':
             verify_acceptance_bundle(args.repo, read(args.bundle), read(args.review))
             print('PASS bundle'); return 0

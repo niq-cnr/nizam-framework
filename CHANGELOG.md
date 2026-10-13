@@ -9,6 +9,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Authorized entry (feature 117).** Added a read-only preflight over actual local
+  origin/authority, pinned critical governance bytes, revision-bound independent
+  approvals and explicit existing-role path/field intents. Four independent cases
+  extend the current suite to twenty. The project check runs only while 117 is
+  active; completion still requires Mode B, fresh QA and capture. Historical
+  proofs remain unchanged and installed v1.5.0 remains pinned.
+
 - **Independent acceptance bundles (feature 116).** Added read-only sealed-bundle
   verification over actual immutable test/API/obligation/control Git bytes,
   observed environment and distinct recorded author/developer/reviewer identities.
