@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "116",
   "status": "in_progress",
-  "updated_at": "2026-10-13T11:39:59.045778+00:00",
+  "updated_at": "2026-10-13T12:01:31.554369+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -661,6 +661,14 @@
     },
     "116-test-bundle-review": {
       "attempts": 2,
+      "limit": 3
+    },
+    "116-generator-development": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "116-mode-b": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4291,6 +4299,18 @@
       "event": "116-test-bundle-review-attempt2-approved",
       "detail": "Parsed exact nine-field independent verdict approvedtrue/empty arrays, actual15 baseline replays0/0/1, oldeleven/scope/fulltypedcontrols0 and independently originated history/budget ownspot0; seal/current/Git input bytes unchanged. Reviewed baseline/tests now eligible for promotion; no business Source yet.",
       "evidence": ".agent/evidence/116/test-bundle-review-attempt2-result.json"
+    },
+    {
+      "at": "2026-10-13T11:56:10.801886+00:00",
+      "event": "116-generator-development-attempt1-passed",
+      "detail": "Exact12 ordered Generator commands actualEXIT0/revisionC/raw SHA personally parsed; four actualGit/current coreSHA verified. Real project bundle CLI also actual0. Source candidate frozen; no independent ModeB/QA/completion claimed.",
+      "evidence": ".agent/evidence/116/failed-source-attempt1/source/.agent/evidence/116/source-attempt1-selfchecks.json"
+    },
+    {
+      "at": "2026-10-13T12:01:31.554369+00:00",
+      "event": "116-mode-b-attempt1-rejected",
+      "detail": "Independent valid real-Git proof passes; red proof with explicit frozen producer SETUP_OR_UNRELATED_ERROR marker wrongly accepts; restored positive passes. Exact Source1/docs/SourceC/Git bundle/raws/Rootmetadata and typed rejected ModeB preserved. No business Source promoted. Type/interface Source2 producer-parser repair next with sealed tests/helpers/API unchanged.",
+      "evidence": ".agent/evidence/116/failed-source-attempt1/reviewer/.agent/validator/116-mode-b.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4764,7 +4784,7 @@
       }
     ]
   },
-  "last_action": "116 actual independent bundle2 approved; reviewed tests eligible, Generator Source1 next.",
+  "last_action": "116 ModeB1 rejected generic producer-error marker falsepass; fresh isolated Source2 next; no completion.",
   "completed_contract_ids": [
     "099",
     "103",

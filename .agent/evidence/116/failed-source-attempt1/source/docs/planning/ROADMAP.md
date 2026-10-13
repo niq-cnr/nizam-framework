@@ -1,0 +1,1223 @@
+---
+id: nizam-roadmap
+title: "Forward Roadmap — nizam-framework"
+description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
+version: 0.63.0
+status: active
+authoritative_source: docs/planning/ROADMAP.md
+change_log:
+  - version: "0.63.0"
+    date: "2026-10-13"
+    summary: "Record captured115 and sealed acceptance116 implementation candidate; preserve later phase and foundation closure gates."
+  - version: "0.62.0"
+    date: "2026-10-13"
+    summary: "Activate phase017 foundation and record feature115 identity candidate; preserve closed015 and later proposed plans."
+  - version: "0.61.0"
+    date: "2026-10-12"
+    summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
+  - version: "0.60.0"
+    date: "2026-10-12"
+    summary: "Prepare feature114 normative readiness and bounded current projections; independent acceptance and canonical close remain required."
+  - version: "0.59.1"
+    date: "2026-10-12"
+    summary: "Qualify activation-time pending statements; current progress follows canonical lifecycle records."
+  - version: "0.59.0"
+    date: "2026-10-11"
+    summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
+  - version: "0.58.0"
+    date: "2026-10-11"
+    summary: "Record H-NIP acceptance of reviewed NIP3/NIP4 scopes and pending canonical015 plan110-114 with proposed7200/9360 budget; activation, WA choices and implementation remain outstanding."
+  - version: "0.57.0"
+    date: "2026-10-11"
+    summary: "Revise pending NIP3 and draft proposed Workflow Assurance against actual post-GA inputs; record authorized drafting delivery without NIP acceptance, phase activation or installed upgrade."
+  - version: "0.56.0"
+    date: "2026-10-11"
+    summary: "Record verified bounded maintenance at fixed source candidate 7221cd17a7c2d2188de0094b8ea008e4e192a0c4: fresh capable CI38108704971 attempt2, independent6/6 QA and successful evidence gate. Resolve only NDEBT-047/046/045 and complete A04a; preserve source digests, historical assessments, future gates and installed v1.5.0."
+  - version: "0.55.0"
+    date: "2026-10-11"
+    summary: "Record merged planning PR81 and independently gated maintenance source intake; three debts remain Open and A04a pending until real capable CI and independent QA/evidence closure. Preserve historical assessments and installed v1.5.0."
+  - version: "0.54.0"
+    date: "2026-10-11"
+    summary: "Record current planning refresh and the operator-authorized small maintenance sequence after it merges; completed/cancelled phase mirrors and actual local commissioning evidence replace stale next-planning premises without accepting NIP3 or activating a phase."
+  - version: "0.53.0"
+    date: "2026-10-10"
+    summary: "Record completed local self-commissioning at fixed source candidate bfd475ff670e582cbbfc8f3187ae988dcf3c8baa: actual successful CI38075479048, real clean installed preflight PASS, immutable framework/candidate baseline and independent9/9 QA/evidence gate. Later documentation HEAD preserves the assessed candidate; historical phases remain unchanged."
+  - version: "0.52.0"
+    date: "2026-10-10"
+    summary: "Record operator-authorized local v1.5.0 self-adoption: authentic public payload installed and agent routing/standing drift checks added; committed-candidate CI and clean installed preflight/baseline commissioning remain pending. No phase or external ecosystem scope changes."
+  - version: "0.51.0"
+    date: "2026-10-10"
+    summary: "Post-release refresh: v1.5.0 GA is published and pinned at reviewed PR78 merge f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852 (annotated tag object 08dbe12a38c7cd8d8fb8d52757cd096551bbc779); release workflow38072142688 passed, actual public-tag bootstrap and payload12/12 passed, published guide matches tag source. Replace preparation with released facts; completed phase assertions remain historical evidence. No next phase is activated."
+  - version: "0.50.0"
+    date: "2026-10-10"
+    summary: "General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: real_production_pilot is not_met; recorded_consumer_adoptions is insufficient_evidence. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. v1.5.0 release preparation (operator-requested 2026-10-10; H-FRAMEWORK-RELEASE Section 2 sign-off given, and this time the tag authorization is INCLUDED in the same sentence): phase 014 (GA track) and its maintenance tranche are packaged as the next MINOR release. Current Position gains the 'Release in preparation: v1.5.0' bullet ahead of the latest-released bullet, which stays unedited -- v1.4.0 remains the latest released tag until the authorized tag act is executed after this PR merges, and the close-out gate's body pattern is version-scoped, so the v1.4.0 line does not count at V=1.5.0 (the 0.38.0/0.44.0 precedent). Release fact for the post-release refresh: once v1.5.0 is tagged, the post-release refresh records tag execution and retains the completed phase-014 tag-absence assertions as assessment-time evidence; the historical dossier and frozen acceptance infrastructure remain unchanged. run_state, manifest and DEBT.md are untouched."
+  - version: "0.49.0"
+    date: "2026-10-10"
+    summary: "Phase-014 close (feature 102, the final feature). Replaces only the Current Position first bullet and the open-debt bullet; the released-tag disposition bullets are untouched so the release close-out gate's version-scoped disposition line is not disturbed (the 0.46.0/0.47.0 precedent). First bullet: phase 014 is complete — 099 and 103-109 landed via PRs #66-#76 and 102 assembled the GA-readiness dossier (H-GA OUTSTANDING; real_production_pilot not_met per amendment A3; nothing declared) and closed the phase canonical-first; the phase-total sentence states the 7799-of-8600 figure at the 108 close, with 102's own measurement landing at close. Open-debt bullet: rolled to the five Open rows at DEBT.md 0.54.0 (NDEBT-047, 046, 045, 040, 034); NDEBT-044 concern (e) moves to Resolved by feature 102; NDEBT-034's pilot-100 deferral trigger is extinct after A3 and its closure is proposed to the operator at close. No plan-of-record change."
+  - version: "0.48.0"
+    date: "2026-10-10"
+    summary: "Amendment A3 (methodology/00_planning.md Section 9; operator verbatim 'The multi-repo pilot at v1.4.0 is no longer needed.', run_state operator_gate_decision 2026-10-10T06:05:42Z). Replaces only the first Current Position bullet: feature 106 is complete (PR #72, f53c499), features 100 and 101 are cancelled, the lane is 107 → 109 → 108 → 102, and the next feature is 107. The open-debt bullet is not edited. The 8600/11180 budget is not re-baselined."
+  - version: "0.47.0"
+    date: "2026-10-10"
+    summary: "Handover refresh (planning records only, branch chore/handover-2026-10 from main e2a50ed; operator request recorded in run_state as operator_gate_decision 2026-10-10T02:11:41Z). The Current Position heading date moves from 2026-08-15 to 2026-10-10. A new first bullet records phase-014 progress: 099, 103, 104 and 105 are complete (PRs #66, #67, #68, #70), the position is current_feature 106, and the budget stands at 3714 of 8600 (ceiling 11180). The open-debt bullet is rolled to the eight Open rows at DEBT.md 0.51.0 (NDEBT-047, 046, 045, 044, 040, 037, 034, 026), as NDEBT-044 (e) asks; feature 102 AT5 still re-rolls it at phase close. The phase-014 Plan of Record banner gains a progress paragraph, a pointer to docs/planning/HANDOVER.md, and re-baseline notes beside the superseded 6660/8658 figures (spec 1.1.4: 8600/11180, operator 'option 1 confirmed.'). The activation-era text is otherwise unedited, and no feature status or acceptance test changes. The older Current Position bullets are deliberately unedited history, so that the release close-out gate's version-scoped disposition line is not disturbed; the new first bullet carries an italic note naming the two statements in them that are superseded at 2026-10-10 (ecosystem/06 and 08 were activated by feature 099; phases 001-013, not 001-012, are complete). Revised after Validator round 1 (that note)."
+  - version: "0.46.0"
+    date: "2026-10-08"
+    summary: "Phase 014 ACTIVATED (gate H-PHASE-014, operator verbatim: '- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.', 2026-10-08, recorded in run_state as operator_gate_decision at 2026-10-08T11:21:14Z before the re-planning per NDEBT-018): the 'Proposed Next Phase — Phase 014' banner becomes the Plan of Record banner (the proposal-era paragraphs below it are preserved unedited as history). Activation is canonical-first: phase_014.yaml in_progress, then manifest current_phase 014-ga-track; the run_state position is the Orchestrator's third write. Approved amendments applied by the Planner (product_spec_014 1.1.0): edge 101->099, hardened acceptance tests, the phase-scoped tag check, the run_state clarifying clause; the maintenance tranche folded in as features 103-109 ahead of 102; scope re-baselined 2200 -> 6660, the Planner's activation-time estimate (naive 2890 x the measured 2.3 process weight, NIP-0003:494-495; ceiling 8658), approved by the operator 2026-10-08, verbatim 'In approve the increased budget.' (run_state operator_gate_decision 2026-10-08T12:50:31Z). Validator rounds 1-2 (spec 1.1.2): 102's machine-readable dossier, debt cross-check and hash pin, with 099 AT3/AT6/AT7 and 101 AT2, are Planner hardening, operator-acknowledged 2026-10-08T13:20:12Z ('acknowledged.'); 102 AT5 (the NDEBT-044 e open-debt roll) is approved-tranche coverage under the 11:21:14Z decision; every acceptance test probed pre-implementation. New pointer to the backlog reconciliation package (docs/planning/backlog_reconciliation.md + backlog_dag.json). NIP-0003 queued section: a note that its provisional feature ids shift (103-113 -> provisionally 110-120) and that several of its phase-014 premises went stale; the NIP itself is not edited. Current Position's released-tag disposition line is untouched."
+  - version: "0.45.0"
+    date: "2026-10-08"
+    summary: "v1.4.0 RELEASED (post-release refresh, the 0.39.0/0.42.0 precedent) + the phase-014 re-baseline under operator decision D1. Release: after PR #63 merged at 9edd5d0, the operator authorized the tag act verbatim ('merged — authorized to tag v1.4.0', recorded in run_state before the act per NDEBT-018); the Orchestrator pushed annotated tag v1.4.0 (tag object bb32064) at that reviewed commit; release.yml run 37763448754 succeeded with the blocking tag-mode close-out passing and published GitHub Release 'Nizam v1.4.0 — Simplification Review & GA Gate protocols, draft (MINOR)' from the [1.4.0] CHANGELOG section at 2026-10-08T10:26:22Z. Current Position: the release-preparation bullet is removed and the latest-released disposition rolls to name v1.4.0 -- keeping exactly one body line matching the close-out gate's V-scoped disposition pattern at V=1.4.0 -- with the v1.3.0 bullet relabelled 'Prior released tag' and the v1.2.1 anomaly bullet relabelled 'Earlier released tag' (both bodies unedited). Phase 014: under D1 (operator verbatim 'proceed with the logic next steps to complete the backlog.', 2026-10-08, recorded in run_state before the act; not H-PHASE-014) the factual re-baseline that the 0.44.0 release-fact paragraph called for is APPLIED in this change -- feature 100's pilot pin v1.3.0 -> v1.4.0 and feature 102's tag-absence assertion v1.4.0 -> v1.5.0 (product_spec_014 1.0.1, feature_list_014, phase_014.yaml, the manifest phase-014 note) -- recorded in a dated paragraph below the unedited banner; phase 014 stays pending/proposed, awaiting H-PHASE-014. The NIP-0003 section's release wording moves to past tense (expected v1.5.0 / v1.6.0 unchanged; the NIP is unedited pending H-NIP). DEBT.md is untouched; the stale Current Position open-debt count (NDEBT-044(e)) is not rolled here."
+  - version: "0.44.0"
+    date: "2026-10-08"
+    summary: "v1.4.0 release preparation (operator-requested 2026-10-08; H-FRAMEWORK-RELEASE sign-off and tag pending): the two proposal-grade ecosystem lifecycle protocol documents landed with the phase-014 proposal (ecosystem/06_simplification_review.md and ecosystem/08_ga_gate.md, status draft, not yet normative -- activation awaits phase-014 feature 099 under H-PHASE-014) are packaged as the next MINOR release; everything else since v1.3.0 is framework-envelope only. Current Position gains the 'Release in preparation: v1.4.0' bullet ahead of the latest-released bullet, which stays unedited -- v1.3.0 remains the latest released tag until the operator tags v1.4.0, and the close-out gate's body pattern is version-scoped, so the v1.3.0 line does not count at V=1.4.0 (the 0.38.0/0.40.0 precedent). The Phase 014 banner gains a dated release-fact paragraph: once v1.4.0 is tagged, feature 102's no-v1.4.0-tag acceptance test, product_spec_014's zero-v1.4.0-refs criterion, and feature 100's v1.3.0 pilot pin are stale, so a Planner re-baseline of the phase-014 artifacts is required before H-PHASE-014 (no phase-014 artifact is edited here). The NIP-0003 queued-candidate section's expected versions roll from v1.4.0 / v1.5.0 to v1.5.0 / v1.6.0 (the NIP itself is unedited pending H-NIP). run_state, manifest and DEBT.md are untouched."
+  - version: "0.43.0"
+    date: "2026-10-08"
+    summary: "NIP-0003 (Live Runtime Sessions) PROPOSED, awaiting H-NIP: a new 'Queued Candidate — NIP-0003' section sits directly below the unedited Phase 014 proposal banner. It summarizes the proposal (a language-neutral live-runtime-session protocol plus an SBCL reference binding, an optional adapter capability, session schemas under an extended C12, and a reference controller with a live CI conformance job), the four operator decisions of 2026-10-08, and the proposed realization as phases 015 (features 103-107) and 016 (108-113), each releasing as the next MINOR (expected v1.4.0 / v1.5.0), to follow phase 014. Acceptance would select, not activate; phase-015 planning artifacts are authored only after 014 closes. Current Position is unchanged: its single released-tag disposition line is untouched, and its stale open-debt count is left for the next refresh and logged as NDEBT-044(e). run_state, manifest and operator_gates are untouched (a proposal is not an activation)."
+  - version: "0.42.0"
+    date: "2026-09-30"
+    summary: "v1.3.0 RELEASED (post-release refresh, the PR #54/#56 precedent): the operator-authorized annotated tag v1.3.0 points at reviewed merge commit 2e122256 (PR #60); release.yml run 36700976611 succeeded and published GitHub Release 'Nizam v1.3.0 — Review-Gate Flake Management (MINOR)' from the [1.3.0] CHANGELOG section at 2026-09-30T10:12:30Z. Current Position: the 'Release in preparation' bullet is removed and the latest-released disposition rolls to name the new tag — keeping exactly one body line matching the close-out gate's disposition pattern for v1.3.0 — with the prior-released line rolling to the v1.2.1 anomaly record and v1.1.0 becoming the earlier line. ALSO (same PR): Phase 014 (GA track) PROPOSED — a new 'Proposed Next Phase — Phase 014' banner tops the roadmap (features 099-102, DAG roots {099, 100}, est 2200; planner artifacts .agent/product_spec_014.md (status draft) + .agent/feature_list_014.json; canonical docs/planning/phase_014.yaml (pending); the 06/08 lifecycle doctrine authored proposal-grade under ecosystem/). Awaiting operator activation gate H-PHASE-014; a proposal is not an activation — current_phase stays 013-definition-of-done (complete) and run_state is untouched."
+  - version: "0.41.0"
+    date: "2026-09-30"
+    summary: "v1.3.0 release preparation: the Review-Gate Flake Management methodology (methodology/09_review_gate_flake_management.md) is packaged as the next MINOR release. Current Position rolls: 'Release in preparation' names v1.3.0; the latest-released bullet now records the genuine v1.2.0/v1.2.1 facts (v1.2.0 released 2026-09-17 at 7441ffa; v1.2.1 tagged 2026-09-19 at 250fdd9 with its release.yml run failing the tag-mode close-out because no [1.2.1] CHANGELOG section was cut -- anchors stayed at 1.2.0), correcting the stale 'Release in preparation: v1.2.0' bullet this file carried past both releases."
+  - version: "0.40.0"
+    date: "2026-09-17"
+    summary: "v1.2.0 release preparation: the Convergent Automated Code Review standard (PR #57, already merged to main) is packaged as the next MINOR release. Current Position gains a 'Release in preparation: v1.2.0 -- awaiting H-FRAMEWORK-RELEASE' entry recording the prepared release surface (CHANGELOG [1.2.0] section, version anchors synchronized across NIZAM.json/docs/guide/CONTEXT.md/README.md). While here, corrects the prior 'Latest released tag' bullet, which the v1.1.0 post-release refresh (PR #56) mislabeled: it renamed only the version number to v1.1.0 while leaving every supporting fact (tier, date, PR, commit, CHANGELOG section, Release URL) describing v1.0.0 -- now restated with the genuine v1.1.0 facts (PR #55, merge commit a2c15d2, release.yml run 32282540074, [1.1.0] CHANGELOG section). The 'Prior released tag' line rolls from the stale v0.9.0 to v1.0.0."
+  - version: "0.39.0"
+    date: "2026-08-19"
+    summary: "v1.1.0 RELEASED (post-release refresh, the PR #54 precedent): the operator exercised H-FRAMEWORK-RELEASE after PR #55 merged at a2c15d2, authorizing the orchestrator to push the annotated tag; release.yml run 32282540074 succeeded with the new blocking tag-mode close-out (feature 097's gate, first real execution) passing before publication of the correctly-titled Release. The preparation disposition bullet is removed and the latest-released disposition rolls to name the new tag, keeping exactly one body line naming v1.1.0 per the close-out gate's body-scoped rule. Phase 013 is closed; the rolled-forward candidate scope (real non-scratch multi-repo pilot + lifecycle 06/08 with H-CONSOLIDATION/H-GA) stands for phase 014."
+  - version: "0.38.0"
+    date: "2026-08-19"
+    summary: "Phase 013, feature 098 (v1.1.0 release preparation, the phase's final feature): rolls the disposition to name the prepared 1.1.0 package -- a new body bullet naming the six delivered phase-013 features and the readiness record path, inserted ahead of the existing released-tag bullet, which stays unedited. Resolves NDEBT-038 by rephrasing the stale phase-007/008 progress bullet's present-tense validator claim to dated-snapshot past-tense wording, without updating the historical figures (NDEBT-038 Open -> Resolved in DEBT.md). Current Position's released-tag facts are otherwise unchanged; H-FRAMEWORK-RELEASE sign-off and the tag remain outstanding."
+  - version: "0.37.0"
+    date: "2026-08-18"
+    summary: "Phase 013 ACTIVATED (operator verbatim: 'approved. please proceed.', gate H-PHASE-013, 2026-08-18): the 'Proposed Next Phase — Phase 013' banner becomes the Plan of Record banner. current_phase advanced 012-v1-consumer-safety -> 013-definition-of-done in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_013 flipped draft -> active (1.1.0); scope budget reset to 2150 (phase-012 final already archived at phase-012 close). Execution begins with the ungated DAG root feature 092 (validator check C16); the second root 097 (release close-out gate) has no dependencies and may interleave. The rolled-forward phase-012 candidate scope (real non-scratch multi-repo pilot + lifecycle 06/08 with H-CONSOLIDATION/H-GA) moves to phase 014 per the activation decision. H-FRAMEWORK-RELEASE remains outstanding for the future v1.1.0 tag; the pipeline never self-tags."
+  - version: "0.36.0"
+    date: "2026-08-18"
+    summary: "Phase 013 PROPOSED (Definition of Done). A new 'Proposed Next Phase — Phase 013' banner tops the roadmap: name and consolidate the framework's scattered done-criteria into standard/definition_of_done.md, mechanize the feature-lifecycle invariant as validator check C16 (correcting the false enforcement claim in schema/README.md), project the standard onto templates/DoD.md, a pull-request checklist, optional advisory dod_ref keys on five schemas, and a release close-out gate, then prepare the v1.1.0 MINOR release. Features 092-098 (DAG roots {092, 097}, est 2150), realized by the Planner artifacts .agent/product_spec_013.md (status draft) + .agent/feature_list_013.json, awaiting activation gate H-PHASE-013; the v1.1.0 tag stays behind H-FRAMEWORK-RELEASE. Classified MINOR: the new schema keys are optional-only (a loosening under methodology/06_release_train.md Section 3.2) and C16 is skip-if-absent. Tier 3 (an ecosystem Verify protocol) is out of scope as NIP-class work. The rolled-forward phase-012 candidate scope (a real non-scratch multi-repo pilot + lifecycle 06/08 with H-CONSOLIDATION/H-GA) is not cancelled — it moves to phase 014, and the operator decides the ordering at H-PHASE-013. current_phase stays 012-v1-consumer-safety until activation; run_state untouched (a proposal is not an activation). Current Position's released-tag facts are unchanged."
+  - version: "0.35.0"
+    date: "2026-08-15"
+    summary: "Post-release refresh: Phase 012 COMPLETE and v1.0.0 MAJOR RELEASED. PR #53 merged at 9453b3c; the operator executed H-FRAMEWORK-RELEASE by pushing the annotated v1.0.0 tag at that reviewed commit; release.yml run 31903527120 succeeded and published GitHub Release 371135794 from [1.0.0]. Current Position now names v1.0.0 as latest and v0.9.0 as prior; NDEBT-036 moves Open -> Resolved, leaving only two Low enhancement rows. The prior real non-scratch pilot plus lifecycle-06/08 candidate scope rolls forward unchanged for the next planning cycle."
+  - version: "0.34.0"
+    date: "2026-08-15"
+    summary: "Phase-012 implementation and v1.0.0 MAJOR release preparation complete: all 30 issue-52 findings are remediated and mapped to evidence, the actual v0.9.0-to-local-v1 consumer rehearsal passed, version surfaces are synchronized, and the dated CHANGELOG + readiness record are prepared. H-FRAMEWORK-RELEASE sign-off/tag remain pending; v0.9.0 remains the latest released tag and NDEBT-036 remains Open until publication."
+  - version: "0.33.0"
+    date: "2026-08-15"
+    summary: "Phase 012 activated as the v1.0.0 Consumer-Safety Remediation on operator authorization ('approved. please proceed.'). Full GitHub issue #52 scope: breaking schema invariant repairs, comparison correctness, isolated-worktree circuit-breaker recovery, five-role/methodology reconciliation, ecosystem and consumer-copy truth, clean-break migration guidance, integrated rehearsal, and human-gated v1.0.0 preparation (features 085-091, estimate 2400). The confirmed Critical consumer-safety intake supersedes the prior phase-012 candidate; its real non-scratch pilot + lifecycle 06/08 scope rolls forward unchanged."
+  - version: "0.32.0"
+    date: "2026-07-22"
+    summary: "Post-release refresh: v0.9.0 RELEASED (H-FRAMEWORK-RELEASE executed) -- the operator pushed the annotated tag v0.9.0 at merge commit 5b19b85 (PR #50) after the recorded readiness sign-off, and release.yml auto-published the GitHub Release page from the [0.9.0] CHANGELOG section. Current Position rolled: 'Latest released tag' v0.8.0 -> v0.9.0 (with v0.8.0 as prior); the 'Release in preparation' entry becomes the released record. NDEBT-029 (audit/compare not in a released tag) moved Open -> Resolved (DEBT.md v0.37.0) -- the tag now carries the whole 0-n loop in its injected .nizam/tools/, so the open-debt summary drops to two Low rows (NDEBT-026, NDEBT-034). The standing real, non-scratch multi-repo pilot at the released tag is now runnable -- the production-maturity criterion this release unblocks. Also updated operator_gates.md (H-FRAMEWORK-RELEASE executed v0.9.0) + run_state (release_executed) + the readiness checklist items 7-8."
+  - version: "0.31.0"
+    date: "2026-07-22"
+    summary: "PR #50 review (release-ledger reconciliation): the Current Position 'Open debt' summary was phase-008-era stale -- it still listed NDEBT-030 (the 0-case, resolved by phase 009) and NDEBT-031 (the n-case, resolved by phase 010) as open. Rewritten to the real current Open set (only NDEBT-029 release-timing + NDEBT-026 + NDEBT-034, none blocking) and to list the 0-n scope rows all Resolved (027/028/032/033 phase 008, 030 phase 009, 031 phase 010, 035 phase 011). Paired with docs/planning/DEBT.md v0.36.0, which moves NDEBT-030 Open -> Resolved (it was left stale in Open at phase-009 close). No plan-of-record change."
+  - version: "0.30.0"
+    date: "2026-07-22"
+    summary: "Release-in-preparation: v0.9.0 (MINOR), the first release since v0.8.0, carrying phases 007-011 (consumer-adoption enablement + the full NIP-0002 0-n realization + the audit/compare tooling). Current Position gains a 'Release in preparation: v0.9.0 -- awaiting H-FRAMEWORK-RELEASE' entry recording the prepared release surface (CHANGELOG [0.9.0] section, version bumps in C10 lockstep across NIZAM.json/docs/guide/CONTEXT.md/README.md, readiness checklist .agent/evidence/release-readiness-v0.9.0.md) on the release base 1dd4971 (phase-011 merge, PR #49). The pipeline never self-tags: the operator signs off + pushes the annotated v0.9.0 tag, release.yml publishes. NDEBT-029 (audit/compare not in a released tag) stays Open until the tag exists carrying the whole 0-n loop; on the tag it resolves and the standing real non-scratch multi-repo pilot becomes runnable. v0.8.0 remains the latest RELEASED tag until then."
+  - version: "0.29.0"
+    date: "2026-07-22"
+    summary: "Phase 011 (0-n Project Spectrum, Stage 4: n-Coordination Protocols, features 080-084) COMPLETE -- so NIP-0002's staged plan is now complete. The phase-011 Plan-of-Record banner carries the completion record (080 ecosystem/04 Plan stage + reconciliation_plan schema + H-PLANNING-AUTHORITY defined; 081 ecosystem/05 Promote stage + release_train_manifest schema + H-TRAIN-ENTRY defined; 082 ecosystem_reconcile.py; 083 ecosystem_release_train.py + assert_stage4 e2e; 084 pilot proved the layer end-to-end across a scratch 2-member ecosystem -- PASS aggregate -> PASS plan -> PASS train, both negatives enforced (cyclic -> FAIL, ungated -> FAIL), evidence .agent/evidence/pilot-084/). NDEBT-035 resolved. Current Position rolled to phases 001-011 complete. The phase-012 candidate scope (NDEBT-029 release cut carrying the whole 0-n loop + a real non-scratch multi-repo pilot + the remaining 06/08 Repeat/GA protocols with H-CONSOLIDATION/H-GA) is refined and validated against the pilot evidence -- confirmed, not re-ordered (the release cut is the natural next step). manifest + run_state reflect phase-011 completion. A real, non-scratch multi-repo pilot at a released tag remains the open production-maturity criterion."
+  - version: "0.28.0"
+    date: "2026-07-22"
+    summary: "Phase 011 ACTIVATED (operator verbatim: 'Approved. Please proceed', gate H-PHASE-011, 2026-07-22, given after PR #48 merged the phase-011 proposal to main at 44a91fc): the 'Proposed Next Phase — Phase 011' banner becomes the Plan of Record banner. current_phase advanced 010-multi-repo -> 011-coordination-protocols in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_011 flipped draft -> active (1.1.0); scope budget reset to 1330 (phase-010 final already archived at phase-010 close). Execution begins with the ungated DAG root feature 080 (author ecosystem/04_dependency_reconciliation.md + schema/reconciliation_plan.schema.json + define the reserved H-PLANNING-AUTHORITY gate; NDEBT-035). The reserved gates H-PLANNING-AUTHORITY / H-TRAIN-ENTRY are DEFINED at features 080/081 and first exercised at the 084 pilot; H-CONSOLIDATION / H-GA (06/08 Repeat/GA) stay reserved. The release cut carrying the whole loop (NDEBT-029), a real non-scratch multi-repo pilot, and the 06/08 protocols stay phase-012 candidate scope."
+  - version: "0.27.0"
+    date: "2026-07-22"
+    summary: "Phase 011 PROPOSED (authored after PR #47 merged phase 010). A new 'Proposed Next Phase — Phase 011' banner tops the roadmap: NIP-0002 Stage 4 — the n-coordination protocols (ecosystem/04_dependency_reconciliation + ecosystem/05_release_train_coordination, with companion schemas, where cross-repo ordering and release-train entry genuinely live; NDEBT-035), the FINAL stage of the 0-n staged plan (completing it completes NIP-0002). Features 080-084 (DAG root {080}, est 1330), realized by the Planner artifacts .agent/product_spec_011.md (status draft) + .agent/feature_list_011.json, awaiting activation gate H-PHASE-011. Scoped to NIP-0002 Stage 4 only (one stage at a time, as phases 008/009/010 took Stages 1/2/3): 080 the reconciliation protocol + schema + defining the reserved H-PLANNING-AUTHORITY gate; 081 the release-train protocol + schema + defining the reserved H-TRAIN-ENTRY gate; 082 the reconciliation tool (consuming the phase-010 aggregate); 083 the release-train tool + Stage-4 e2e coverage; 084 the pilot + phase close. The former phase-010 banner's 'Deferred -> Phase-011 candidate scope' subsection is annotated as now-authored; the release cut carrying the whole loop (NDEBT-029), a real non-scratch multi-repo pilot, and the remaining Repeat/GA protocols (06_simplification_review / 08_ga_gate with the reserved H-CONSOLIDATION / H-GA gates) are carried forward as phase-012 candidate scope. current_phase stays 010-multi-repo until activation; run_state untouched (a proposal is not an activation)."
+  - version: "0.26.0"
+    date: "2026-07-22"
+    summary: "Phase 010 (0-n Project Spectrum, Stage 3: the n-case, features 075-079) COMPLETE. The phase-010 Plan-of-Record banner carries the completion record (075 required+validated membership registry; 076 ecosystem_membership_run.py iteration; 077 cross-repo aggregation + common-pin consistency into a schema-valid ecosystem-level result; 078 assert_multirepo hermetic n-case e2e; 079 pilot proved the n-case end-to-end across a scratch 3-member ecosystem, PASS aggregate + divergent-pin FAIL, evidence .agent/evidence/pilot-079/). NDEBT-031 resolved; Stage-4 coordination residue carved into NDEBT-035 (phase-011 candidate), per-member clone-cost friction into NDEBT-034. The phase-011 candidate scope (NIP-0002 Stage 4 + NDEBT-029 release + real pilot) is refined and VALIDATED against the pilot evidence -- confirmed, not re-ordered (the aggregate is the 04-reconciliation substrate). manifest + run_state reflect phase-010 completion. A real, non-scratch multi-repo pilot remains the open production-maturity criterion."
+  - version: "0.25.0"
+    date: "2026-07-22"
+    summary: "Records-sync from the PR #47 CodeRabbit review: two prior deferred-scope annotations pointed readers to a 'Proposed Next Phase' banner at the top, but those banners have since become Plan-of-Record banners (phase 010 activated, phase 009 complete). Re-pointed the phase-009 banner's Phase-010 candidate-scope note to the 'Plan of Record — Phase 010 Activated' banner, and the phase-008 banner's Phase-009 candidate-scope note to the phase-009 'Plan of Record … COMPLETE' banner. No plan-of-record change; annotation truth-roll only."
+  - version: "0.24.0"
+    date: "2026-07-22"
+    summary: "Phase 010 ACTIVATED (operator verbatim: 'Approved. Proceed with the phase-010 proposal + activation', gate H-PHASE-010, 2026-07-22): the 'Proposed Next Phase — Phase 010' banner becomes the Plan of Record banner (Activated). current_phase advanced 009-greenfield-genesis -> 010-multi-repo in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_010 flipped draft -> active (1.1.0); scope budget reset to 1160 (phase-009 final archived). operator_gates.md records H-PHASE-010 SATISFIED. Execution begins with the ungated DAG root feature 075 (the ecosystem-membership registry schema; NDEBT-031) — the first change of the n-case."
+  - version: "0.23.0"
+    date: "2026-07-22"
+    summary: "Phase 010 PROPOSED (operator 'Approved. Proceed with the phase-010 proposal + activation'). A new 'Proposed Next Phase — Phase 010' banner tops the roadmap: the n-case (multi-repo tooling + the required, schema-validated ecosystem-membership registry, NDEBT-031), features 075-079 (DAG root {075}, est 1160), realized by the Planner artifacts .agent/product_spec_010.md (status draft) + .agent/feature_list_010.json, awaiting activation gate H-PHASE-010. Scoped to NIP-0002 Stage 3 only (one stage at a time, as phases 008/009 took Stages 1/2). The former phase-009 banner's 'Deferred -> Phase-010 candidate scope (Stages 3-4)' subsection is annotated as now-authored; NIP-0002 Stage 4 (04/05 coordination protocols, activating the reserved H-PLANNING-AUTHORITY / H-TRAIN-ENTRY gates), the release cut carrying the whole loop (NDEBT-029), and a real non-scratch multi-repo pilot are carried forward as phase-011 candidate scope. current_phase stays 009-greenfield-genesis until activation; run_state untouched (a proposal is not an activation)."
+  - version: "0.22.0"
+    date: "2026-07-22"
+    summary: "Phase 009 (0-n Project Spectrum, Stage 2: Greenfield Genesis, features 070-074) COMPLETE. The phase-009 Plan-of-Record banner carries the completion record (070 protocol ecosystem/00 Section 8; 071 bootstrap.sh --genesis; 072 incubating->in_scope count-0->1 in scope_definition_patterns.md Section 2.3; 073 assert_genesis e2e; 074 pilot proved the 0-case, PASS_WITH_EXCEPTIONS, evidence .agent/evidence/pilot-074/). Current Position rolled to phases 001-009 complete. The phase-010 candidate scope (NIP-0002 Stages 3-4: n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols, NDEBT-029 release cut) is validated by the pilot (ordering confirmed -- the n-case builds on the incubating partition this phase populated) and carried forward; a real non-scratch greenfield pilot remains the open production-maturity criterion, and the genesis capability is not yet in a released tag (NDEBT-029). Awaiting operator: PR #46 merge + phase-010 planning."
+  - version: "0.21.0"
+    date: "2026-07-22"
+    summary: "Phase 009 ACTIVATED (operator verbatim: 'Activate phase 009', gate H-PHASE-009, 2026-07-22): the 'Proposed Next Phase — Phase 009' banner becomes the Plan of Record banner (Activated). current_phase advanced 008-consumer-readiness -> 009-greenfield-genesis in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_009 flipped draft -> active (1.1.0); scope budget reset to 1000 (phase-008 final archived). operator_gates.md records H-PHASE-009 SATISFIED. Execution begins with the ungated DAG root feature 070 (the greenfield-genesis protocol; NDEBT-030) — the first code change of the 0-case."
+  - version: "0.20.0"
+    date: "2026-07-22"
+    summary: "Phase 009 PROPOSED (operator 'Go', taking NIP-0002 Stage 2 next — one stage at a time as phase 008 took Stage 1). A new 'Proposed Next Phase — Phase 009' banner tops the roadmap: the 0-case (greenfield genesis, NDEBT-030), features 070-074 (DAG root {070}, est 1000), realized by the Planner artifacts .agent/product_spec_009.md (status draft) + .agent/feature_list_009.json, awaiting activation gate H-PHASE-009. The former 'Deferred -> Phase-009 candidate scope' subsection in the phase-008 banner is annotated as now-authored; NIP-0002 Stages 3-4 (n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols, NDEBT-029 release cut) are carried forward as phase-010 candidate scope. current_phase stays 008-consumer-readiness until activation; run_state untouched (a proposal is not an activation)."
+  - version: "0.19.0"
+    date: "2026-07-21"
+    summary: "PR #45 review corrections (phase-close accuracy): the feature-069 re-pilot is described honestly as a SCRATCH/THROWAWAY consumer (a loop-mechanics proof), not a 'real' consumer — a real non-scratch consumer pilot stays the open production-maturity criterion. The open-debt roll is reconciled to the phase-008 close: NDEBT-027/028 (ADR-004, features 065/066) + NDEBT-032 (068) + NDEBT-033 (067) moved to RESOLVED; only NDEBT-026 + NDEBT-029/030/031 remain open (carried into phase-009 scope). No plan-of-record change."
+  - version: "0.18.0"
+    date: "2026-07-21"
+    summary: "Phase 008 (0-n Project Spectrum, Stage 1: Consumer-Readiness, features 065-069) COMPLETE. The phase-008 Plan-of-Record banner carries the completion record (065/066 ADR-004 findings A/B; 067 SHA pin; 068 resolved-by-design Option A; 069 re-pilot proved A/B resolved against a freshly bootstrapped scratch consumer, evidence .agent/evidence/pilot-069/). Current Position rolled to phases 001-008 complete. The phase-009 candidate scope (NIP-0002 Stages 2-4: 0-case genesis, n-case multi-repo tooling + membership registry, 04/05 protocols) is validated by the re-pilot and carried forward; a real non-scratch consumer pilot remains the open production-maturity criterion. Awaiting operator: the 067-069 PR + phase-009 planning."
+  - version: "0.17.0"
+    date: "2026-07-21"
+    summary: "Phase 008 ACTIVATED (operator verbatim: 'Approved. Please proceed', gate H-PHASE-008, 2026-07-21): the Proposed Next Phase — Phase 008 section becomes the Plan of Record banner. current_phase advanced 007-consumer-adoption -> 008-consumer-readiness in manifest + run_state (event phase_activated, recorded before any feature execution per NDEBT-018); product_spec_008 flipped draft -> active (1.1.0); scope budget reset to 1010 (phase-007 final archived). operator_gates.md records H-PHASE-008 SATISFIED. Execution begins with the ungated DAG root feature 065 (governance-root resolution in tools/ecosystem_preflight.py; ADR-004 decision 1 / NDEBT-027) — the first real code change of the 0-n programme."
+  - version: "0.16.0"
+    date: "2026-07-21"
+    summary: "Phase 008 PROPOSED (operator 'open phase 008'). The phase-008 section rolls from Authorized-candidate to a proposal-authored banner: the Planner artifacts .agent/product_spec_008.md (status draft) and .agent/feature_list_008.json (features 065-069, DAG-validated acyclic, est 1010) now exist, awaiting activation gate H-PHASE-008. Scope narrowed to NIP-0002 Stage 1 (consumer-readiness — the prerequisite for every larger project count): ADR-004's governance-root resolution (NDEBT-027) + provenance-pin anchoring (NDEBT-028), bootstrap commit-SHA pinning (NDEBT-033), GIP Sec 5.1 brownfield reconciliation (NDEBT-032), then a re-pilot to prove the fixed single-project loop. NIP-0002 Stages 2-4 (0-case greenfield genesis NDEBT-030, n-case multi-repo tooling + membership registry NDEBT-031, 04/05 coordination protocols, NDEBT-029) are carried as phase-009 candidate scope, evidence-gated on the phase-008 re-pilot. manifest.json gains the phase-008 entry (pending/proposed); current_phase stays 007-consumer-adoption until activation."
+  - version: "0.15.0"
+    date: "2026-07-21"
+    summary: "PR #42 review corrections: fixed two stale 'NIP-0002 (Proposed — awaiting H-NIP)' references (completion banner + Current Position) to Accepted/phase-008-selected; corrected the open-debt count from 'seven' to 'six' phase-007 pilot rows (NDEBT-027..032); and added NDEBT-033 (bootstrap provenance pins tag name not resolved commit SHA, deferred to phase 008) to the open-debt roll. No plan-of-record change."
+  - version: "0.14.0"
+    date: "2026-07-21"
+    summary: "NIP-0002 (The 0–n Project Spectrum) ACCEPTED by the operator via gate H-NIP (verbatim 'NIP-0002 is accepted'), selecting phase 008 as its realization. The 'Proposed Next Phase — Phase 008 (Candidate)' section rolled to 'Next Phase — Phase 008 (Authorized)', recording the acceptance and that selection is not activation (phase 008 still needs product_spec_008 + feature_list_008 + H-PHASE-008, the next planning cycle). Recorded alongside .agent/run_state.json (operator_gate_decision) and docs/planning/operator_gates.md (H-NIP second exercise, v0.4.0)."
+  - version: "0.13.0"
+    date: "2026-07-21"
+    summary: "Phase-007 completion refresh + phase-008 candidate scope. Phase 007 (Consumer-Adoption Enablement & First External Pilot, features 060-064) marked COMPLETE 2026-07-21: the phase-007 Plan-of-Record banner carries the completion record; Current Position rolled to 2026-07-21 (phases 001-007 complete); Track 4 marked EXERCISED against a scratch consumer (feature 063 — adoption held, friction NDEBT-027..032, ADR-004 + NIP-0002), with a real-consumer pilot still open. Added the Proposed Next Phase — Phase 008 (Candidate): The 0-n Project Spectrum section, awaiting operator acceptance of NIP-0002 (gate H-NIP): an evidence-prioritized staged plan (consumer-readiness ADR-004 fixes first, then the 0 greenfield-genesis capability, the n multi-repo tooling + membership registry, then the deferred 04/05 coordination protocols). Open-debt roll updated with NDEBT-027..032. (Also corrected the frontmatter version field, which had drifted behind its own change_log at 0.10.0 vs 0.12.0.)"
+  - version: "0.12.0"
+    date: "2026-07-20"
+    summary: "Phase 007 activated (operator verbatim: 'Authorized to activate now', gate H-PHASE-007, 2026-07-20): the Proposed Next Phase section becomes the Plan of Record banner. current_phase advanced 006-enforcement-closure -> 007-consumer-adoption in manifest + run_state (event phase_activated); product_spec_007 flipped draft -> active (1.1.0); scope budget reset to 870 (phase-006 final archived). Execution begins with the framework-internal features 060 (author ecosystem/00_ecosystem_bootstrap.md) then 061 (define H-CONSUMER-UPGRADE); the pilot (063-064) stays deferred pending operator-authorized consumer-repo access."
+  - version: "0.11.0"
+    date: "2026-07-20"
+    summary: "Added the Proposed Next Phase section — phase 007 (Consumer-Adoption Enablement & First External Pilot, features 060-064, est 870 lines) PROPOSED and awaiting operator authorization (gate H-PHASE-007). Scope: author the missing Bootstrap-stage protocol (ecosystem/00_ecosystem_bootstrap.md) + define the reserved gate H-CONSUMER-UPGRADE, then run the first REAL external-consumer pilot (Track 4 / handover F-016..F-020) and prioritise the deferred protocols from real friction — NOT speculative authoring of 04/05/06/08. Planner artifacts .agent/product_spec_007.md (status draft) + .agent/feature_list_007.json (DAG-validated acyclic) exist; current_phase stays 006-enforcement-closure until activation. The pilot (features 063-064) additionally requires operator-authorized access to a consumer repository — the canonical target nizamiq/nizamiq-strategy is outside this session's scope."
+  - version: "0.10.0"
+    date: "2026-07-20"
+    summary: "Phase-006 completion refresh: phase 006 (Enforcement Closure & Hardening, features 049-059) COMPLETE and v0.8.0 released 2026-07-20 (operator sign-off via the PR #38 merge + operator-pushed annotated tag v0.8.0 at 183e468; release.yml published the GitHub Release page from the [0.8.0] CHANGELOG section, run 29717579479 success). The Plan of Record banner is marked complete and Current Position rolled to 2026-07-20 (phases 001-006 complete, validator 15/15 C1-C15, payload 11/11, self-test 47/47). The enforcement-closure debt backlog (NDEBT-004/005/007-024) is fully Resolved; one new Low item NDEBT-026 (validator C15 is coverage-only, not a mapping-direction validator) was surfaced in the PR #38 review and registered."
+  - version: "0.9.0"
+    date: "2026-07-20"
+    summary: "Track 3 (mechanize-or-descope the constitutional layer) RESOLVED by phase-006 feature 058 (gate H-CONSTITUTIONAL, operator decision authorized verbatim): two surfaces mechanized (standard/provenance_policy.md SHA-pinned-Actions via validate.sh check C14; standard/capability_profiles.md 5-profile-to-5-role correspondence via check C15), the remaining seven marked consumer-aspirational, and docs/guide/index.html refreshed to reflect the outcome. Track 3's section now carries the resolution banner."
+  - version: "0.8.0"
+    date: "2026-07-19"
+    summary: "Phase 006 activated (operator verbatim: 'Approved. Proceed with the logical next steps.', gate H-PHASE-006, 2026-07-19): the Proposed Next Phase section becomes the Plan of Record banner. Track 1 item 2 truth-rolled to EXECUTED — the user guide is live on GitHub Pages (first deploy succeeded 2026-07-19 00:23 UTC after the one-time enable; verified serving the v0.7.0 guide), closing the last gate inherited from phase 003."
+  - version: "0.7.0"
+    date: "2026-07-18"
+    summary: "Post-v0.7.0 actions (operator-directed): added the Proposed Next Phase section — phase 006 (Enforcement Closure & Hardening, features 049-059, est 1720 lines) PROPOSED and awaiting operator authorization (gate H-PHASE-006); Track 1 item 3 (v0.7.0 Release title) marked executed via the NDEBT-025 workflow fix + live retitle; Track 1 item 2 (GitHub Pages) marked mechanized via the new pages.yml workflow, publishing on merge."
+  - version: "0.6.0"
+    date: "2026-07-18"
+    summary: "Phase-005 completion refresh: v0.7.0 released (annotated tag pushed by the operator at merge commit 4833322 after the recorded H-FRAMEWORK-RELEASE sign-off; Release page auto-published by release.yml, title defect NDEBT-025). Current Position updated to 2026-07-18 (phases 001-005 complete, C1-C12 sweep, open-debt roll refreshed through NDEBT-025); Plan of Record banner marked complete; Track 1 gains the v0.6.0-Release-page execution record and the v0.7.0 title-fix action."
+  - version: "0.5.0"
+    date: "2026-07-18"
+    summary: "Feature 046 (PR-stack review response): rewrote the stale Sequencing Recommendation sentence (which had wrongly continued to call Track 2 the phase-005 selection) to correctly frame Track 2 as candidate scope for a subsequent phase, consistent with the existing Track 2 supersession note. No other content changed."
+  - version: "0.4.0"
+    date: "2026-07-17"
+    summary: "Added a Dogfood Audit + Delta subsection (feature 044, audit-id audit-2026-07-17-cba6422): 2 new findings (NDEBT-017/018), 1 stale (NDEBT-016), 0 in-window resolved (NDEBT-002 previously resolved (pre-baseline-1))."
+  - version: "0.3.0"
+    date: "2026-07-17"
+    summary: "Phase 005 activated as the Ecosystem Engineering Cycle (framework side). Operator accepted NIP-0001 on 2026-07-17 ('approved. expedite.', gate H-NIP), which selects phase 005's scope. Added a 'Plan of Record' banner recording the activation and marked the former Track 2 candidate ('Consumer Reality & Enforcement Closure') as superseded-as-the-phase-005-selection: its enforcement-closure debt items (NDEBT-007/008/009/010/011/012/005) remain candidate scope for a subsequent phase and are partly exercisable by the framework self-dogfood (features 043-044). Prior content preserved."
+  - version: "0.2.0"
+    date: "2026-07-15"
+    summary: "Post-release refresh after the 2026-07-15 release-readiness audit: v0.6.0 annotated tag cut (Track 1 gate 1 executed; residual GitHub Release publication recorded), Current Position updated from v0.5.3 to v0.6.0, NDEBT-012 (payload-validator CWD sensitivity, issue #18) added to the open-debt roll and the phase 005 candidate scope."
+  - version: "0.1.0"
+    date: "2026-07-12"
+    summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
+---
+
+# Forward Roadmap
+
+## Plan of Record (2026-10-08) — Phase 014: GA Track — the Real Multi-Repo Pilot and the Remaining Lifecycle Protocols (06 Simplification Review, 08 GA Gate) — **ACTIVATED 2026-10-08 (`H-PHASE-014`)**
+
+**Phase `014-ga-track` is ACTIVE** (2026-10-08), authorized by the operator with the proposed amendments and the
+maintenance-tranche fold (verbatim:
+"- H-PHASE-014. Activate Phase 014 with the proposed amendments, Approved. - Maintenance tranche, fold them into Phase 014, Approved.",
+gate **H-PHASE-014**), recorded in `.agent/run_state.json` as an `operator_gate_decision` at 2026-10-08T11:21:14Z
+before the re-planning (NDEBT-018). The Planner artifacts `.agent/product_spec_014.md` (status `active`, 1.1.2) and
+`.agent/feature_list_014.json` (features 099–109, DAG-validated, list order topological, est 6660, re-baselined to 8600 by spec 1.1.4) are the plan of
+record, together with the canonical phase document `docs/planning/phase_014.yaml` (`in_progress`) and the manifest
+(`current_phase: 014-ga-track`); the derived run_state position, the Orchestrator's third, canonical-first write,
+landed at 2026-10-08T12:18:31Z (`current_phase` `014-ga-track`, `current_feature` `099`, `in_progress`).
+
+**Approved amendments (applied).** The missing edge 101→099 (099 activates `ecosystem/06` and defines
+`H-CONSOLIDATION`, which 101 uses); acceptance tests hardened — an exit-captured validator gate replaces every
+`validate.sh | grep SUMMARY` pipeline, 099 asserts a DEFINED row per gate, 100 asserts real members, the `v1.4.0`
+pin and per-member `H-CONSUMER-UPGRADE` ordering against run_state, 101 asserts a scoped review artifact
+against the activation listing, 102 gains the missing `import json`; the fixed-version tag-absence test
+becomes a phase-scoped check against the tag set recorded at activation; and the spec clarifies that "run_state
+untouched until activation" never forbade recording gate decisions before their acts. **Planner hardening beyond
+the enumerated amendments, operator-acknowledged 2026-10-08T13:20:12Z ("acknowledged.")**
+(`acceptance_provenance` on each feature, spec 1.1.2): 102's machine-readable GA-readiness dossier contract, its
+`DEBT.md` cross-check and the sha256 pin of the frozen acceptance infrastructure; 099's capability binding,
+status-flip and guide-card tests; and 101's anchored `review.json`. 102's NDEBT-044 (e) open-debt roll is
+approved-tranche coverage under the 11:21:14Z decision.
+
+**Maintenance tranche (folded in ahead of 102, which depends on all of it).** 103 sandbox prerequisite handling
+(`NDEBT-043`) → 104 the convergent-review suite enforced in CI (`NDEBT-041`); 105 nested-fixture ownership,
+reusing NIP-0003's feature-109 claim map (`NDEBT-042`); 106 capability-index parity as a documented intentional
+subset (`NDEBT-044` a); 107 NIP frontmatter under C1/C2 (`NDEBT-044` b); 109 C15 mapping direction (`NDEBT-026`);
+108 validator-help and adapter-reference truth (`NDEBT-037`, `NDEBT-044` c/d/f); `NDEBT-044` (e) folds into 102's
+close. The workflow-change non-goal is lifted for these features only (only 104 touches `.github/`).
+`NDEBT-034` stays deferred; `NDEBT-040` is annotated as a Workflow Assurance NIP candidate.
+
+**Order and budget.** Recommended single lane: 099 → 103 → 104 → 105 → 106 → 107 → 109 → 108 → 100 → 101 → 102;
+the first eligible feature is 099. `original_estimate_lines` 6660, 130 percent ceiling 8658 (was 2200): the
+Planner's activation-time estimate, naive 2890 × the measured 2.3 process weight (NIP-0003:494-495), approved by the operator 2026-10-08, verbatim "In approve the increased budget." (run_state operator_gate_decision 2026-10-08T12:50:31Z). **Outstanding:** the real member set for feature 100 and each member's
+`H-CONSUMER-UPGRADE` — `H-PHASE-014` designates no member. *Re-baselined 2026-10-09 (spec 1.1.4, the phase-014
+counting rule, `.agent/evidence/scope-budget-014/measure.py`): `original_estimate_lines` 8600, ceiling 11180,
+operator-confirmed ("option 1 confirmed.", run_state 2026-10-09T17:59:00Z); the 6660/8658 figures above are
+superseded.*
+
+**Progress (2026-10-10).** Features 099 (PR #66, `88959c9`), 103 (PR #67, `b8ea889`), 104 (PR #68, `2a53764`) and
+105 (PR #70, `e2a50ed`) are complete; the run_state position is `current_feature` `106` with no active contract.
+Budget-counted lines: 3714 of 8600 (ceiling 11180). Remaining lane: 106 → 107 → 109 → 108 → 100 → 101 → 102;
+feature 100 still awaits the operator's member set and per-member `H-CONSUMER-UPGRADE`. **New developers start at
+[`HANDOVER.md`](HANDOVER.md).**
+
+**Backlog reconciliation.** The crosswalk of the 2026-10-08 maintainer brief (aliases A00–A16, scenarios T01–T19,
+NIP-0003 cases 1–13), the decision record, the candidate DAG view and the Workflow Assurance NIP outline are in
+[`backlog_reconciliation.md`](backlog_reconciliation.md); the machine-readable candidate DAG is
+[`backlog_dag.json`](backlog_dag.json).
+
+*The paragraphs below are the proposal-era record (2026-09-30, re-baselined under D1), preserved unedited.*
+
+**Phase `014-ga-track` is PROPOSED** (2026-09-30, authored at v1.3.0 after the release),
+awaiting operator activation (gate **H-PHASE-014**). It realizes the rolled-forward
+phase-012 candidate scope — standing since the phase-011 close (2026-07-22), carried
+unchanged through the phase-012 and phase-013 cycles — now unblocked: v1.3.0 is a
+released immutable tag a real consumer can adopt. The Planner artifacts
+`.agent/product_spec_014.md` (status `draft`), `.agent/feature_list_014.json` (features
+099–102, DAG-validated acyclic, roots `{099, 100}`, est 2200), and the canonical pending
+`docs/planning/phase_014.yaml` exist; per `methodology/00_planning.md` a phase becomes
+the plan of record only on operator authorization, so `current_phase` stays
+`013-definition-of-done` (complete) and `.agent/run_state.json` is untouched until
+activation (a proposal is not an activation).
+
+**Scope — the GA track.** Four numbered features:
+
+1. **099 — the activation wave**: flip `ecosystem/06_simplification_review.md` and
+   `ecosystem/08_ga_gate.md` draft → active and capability-register them (the
+   `NIZAM.json` capabilities array, `tools/skill.json`, and the guide — whose
+   ecosystem card also regains the 00/04/05 entries it still omits; the documents'
+   `key_documents` enumeration already landed with this proposal, the NDEBT-005
+   disk-to-index guard's requirement), and **define** the reserved
+   `H-CONSOLIDATION` / `H-GA` gates (reserved → decided, DEFINED/OUTSTANDING),
+   mirroring features 061/080/081.
+2. **100 — the real, non-scratch multi-repo pilot**: the operator-designated real
+   repositories at the released tag `v1.3.0`, each under a recorded per-member
+   `H-CONSUMER-UPGRADE` decision before its re-bootstrap, each in its own isolated
+   worktree, Preflight → Baseline → Audit → the membership-run aggregate; a real
+   plan/train only under recorded `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY`; **no
+   scratch-harness fabrication** — the standing production-maturity criterion since
+   phase 007. The `NDEBT-034` clone-throughput optimization stays deferred (not
+   load-bearing at pilot scale: one bootstrap per member).
+3. **101 — the first real simplification review** (the Repeat stage, `ecosystem/06`):
+   evidence-backed consolidation candidates over the real pilot evidence and the
+   accumulated framework surface; an actual consolidation is executed only under
+   `H-CONSOLIDATION` — the review never consolidates automatically.
+4. **102 — GA-readiness assessment + phase close**: assemble the evidence dossier per
+   `ecosystem/08`'s preconditions — every benchmark threshold an acceptance requirement
+   carrying a measured, anchored result, never a claim of achieved results — with
+   `H-GA` presented OUTSTANDING: **the phase never declares GA; GA declaration is the
+   operator's act alone (the framework must never auto-declare GA)**. Then refine the
+   next-candidate scope and close the phase.
+
+**Doctrine authored ahead, proposal-grade.** The two lifecycle protocols ship in this
+proposal as `status: draft` documents (`ecosystem/06`, `ecosystem/08`;
+`ecosystem/README.md` rows flipped to Shipped — existence, per the table's own
+semantics, not activation): their activation flip and capability registration land with
+feature 099, mirroring how `04`/`05` shipped at their authoring features. Neither
+document can fire a gate at proposal time: `H-CONSOLIDATION` and `H-GA` stay reserved
+until 099 defines them.
+
+**Gates.** `H-PHASE-014` OUTSTANDING (activation, recorded before any feature execution
+per NDEBT-018); `H-CONSUMER-UPGRADE` recurring per member during 100;
+`H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` only if a real plan/train is built;
+`H-CONSOLIDATION` only for a real consolidation out of 101; `H-GA` never exercised by
+this phase — the declaration remains the operator's future act. `H-FRAMEWORK-RELEASE`
+is not in this phase's scope; the pipeline never self-tags.
+
+**Open debt carried, not prework.** `NDEBT-040`/`037`/`034`/`026` stay open (all Low,
+enhancement candidates); the phase neither requires nor pre-resolves them — they are
+candidate inputs to the 101 simplification review's evidence, and the `NDEBT-034`
+optimization is revisited only if the real pilot proves the per-member clone cost
+load-bearing.
+
+**Release fact for re-baseline (2026-10-08, recorded by the v1.4.0 release preparation;
+the banner text above is unedited).** This proposal was authored at v1.3.0, and three of
+its premises go stale once the operator tags `v1.4.0`: feature 102's acceptance test
+`git rev-parse -q --verify refs/tags/v1.4.0; test $? -eq 1`
+(`.agent/feature_list_014.json`) and the phase-level "zero v1.4.0 refs" criterion in
+`.agent/product_spec_014.md` both assert that no v1.4.0 tag exists, and feature 100 pins
+the real pilot to the released tag `v1.3.0` (`.agent/feature_list_014.json`,
+`.agent/product_spec_014.md`, `docs/planning/phase_014.yaml`). A Planner re-baseline of
+the phase-014 artifacts is required before `H-PHASE-014` is presented; the release
+preparation edits none of them.
+
+**Re-baseline APPLIED (2026-10-08, v1.4.0 post-release refresh; the paragraphs above
+are unedited).** `v1.4.0` is released (annotated tag object `bb32064` at `9edd5d0`;
+`release.yml` run 37763448754 SUCCESS), so the premises named above became actually
+false: feature 102's tag-absence acceptance test fails once the `v1.4.0` ref exists.
+Under operator decision D1, given 2026-10-08 with the verbatim words
+"proceed with the logic next steps to complete the backlog."
+and recorded in `.agent/run_state.json` as an `operator_gate_decision` before the act per
+NDEBT-018 (D1 is not `H-PHASE-014`), this change applies the factual re-baseline.
+Feature 100's pilot pin moves from `v1.3.0` to `v1.4.0`, the latest released immutable
+tag, which also carries the draft `ecosystem/06`/`08` documents that feature 099
+activates; this supersedes the `v1.3.0` in item 2 of the scope list above. Feature 102's
+tag-absence assertion and the spec's matching criterion move from `v1.4.0` to `v1.5.0`,
+the next MINOR, keeping their meaning: phase 014 cuts no release, and the pipeline never
+self-tags. Edited: `.agent/product_spec_014.md` (1.0.0 → 1.0.1),
+`.agent/feature_list_014.json` (`spec_version` in lockstep),
+`docs/planning/phase_014.yaml`, and the manifest's phase-014 note. Scope, dependencies,
+estimates (2200) and every status are unchanged. Phase 014 stays `pending` / `proposed`
+and is activation-ready, awaiting `H-PHASE-014`.
+
+## Selected NIP-0003 — Authorized Phase015 Normative Plan
+
+The operator accepted reviewed NIP3v0.2.0 and NIP4v0.1.0 under H-NIP on2026-10-11
+with "Approved and accepted, please proceed." Decisions were recorded before
+product edits at `87ba2ae9ae9b92565bf8bd6d5582dccb7622f881`, against reviewed source
+`650770d9b48c31748f24b5ac6967b80a6a46c5f7`. Both NIPs now1.0.0/active record
+accepted scope. Selection and activation remain separate.
+
+H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+`2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+`06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
+and the three accepted plan hashes in `.agent/run_state.json`. The approved
+counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs.
+Canonical lifecycle and current feature position are read from
+`.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+requires its approved contract, both independent pre-code gates, Mode B, QA and
+the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+
+| Feature | Scope | Approved counted lines |
+| --- | --- | --- |
+| 110 | Neutral document10, generic attempt/acceptance/permission/DoD definitions and same-feature registration | 1600 |
+| 111 | Closed session/operation schemas, eighteen top-level fixtures and C12/claim-map registration | 2200 |
+| 112 | SBCL binding/profile; future live verification remains016 | 1200 |
+| 113 | Optional required:false adapter/routing capability; interface Section5 stays10 items | 1050 |
+| 114 | Next MINOR readiness and normative-stage close, no self-tag | 1150 |
+
+Approved total7200, 130% ceiling9360 includes counted phase-level planning/close
+costs inside the per-feature allowances. Product, contract, verdict, audit and
+planning count; raw evidence/run_state do not. Unclassified changes fail closed.
+Historical014 total8705 and ledgers remain frozen. Future release planning decides
+the next MINOR version/tag independently.
+
+Operator design decisions were recorded at `2026-10-11T06:30:20.388684+00:00` in `.agent/run_state.json`
+before product writes, authorization commit `06c0ae0a273facce80c57506260648c41f566ebb`, assessed
+source `57862f69ba30a36004ea9a17a295fc9c835afc13`. Exact operator text: "approved. plese proceed as reocommeded with all items."
+
+| choice-id | selected_recommendation |
+| --- | --- |
+| candidate-invalidation | Explicit assessed-input graph covering source/contracts/tests/tools/environment; unknown dependencies invalidate; record-only continuity requires all assessed inputs unchanged. |
+| acceptance-ownership | Sealed immutable test bundle and independent author/reviewer sessions with recorded identities; bundle changes require renewed independent review. |
+| routing-profiles | Reuse existing role/profile identifiers initially; versioned extensions only for demonstrated permission/ownership gaps with explicit migration. |
+| shadow-profiles | Preregister Routine/Standard/High-assurance comparisons after trusted A10/A11; same candidates/full baseline; missed baseline blocker prevents promotion; gate reduction separate operator decision. |
+| cause-routing | Evidence-based cause routing within existing three-attempt limit/counter continuity; infrastructure failures remain failures; any additional cause-specific budget requires explicit approval. |
+| conflict-retry | Explicit file/state conflict lanes in single existing coordination model; serialize shared ownership, isolate retries, invalidate affected evidence, rollback only owned changes. |
+
+PLAN-WA remains pending after114; PLAN-016 depends114 and serializes after PLAN-WA.
+Relative WA implementation versus016 stays open; no WAphase or016 IDs allocated,
+no policy implemented and no active gate reduced. H-PHASE-016 remains outstanding.
+
+Actual inputs remain historical102 (pilot not_met/adoption insufficient_evidence),
+Open debts040/034 and commissioning/maintenance proof. Cancelled F101 has no findings.
+Delivered F105 owns the reused claim map; actual five CI jobs become six only with
+future116 live job. SBCL2.2.9.debian is available; mandatory capable isolated CI
+remains required, workstation sysctls never change. Installed v1.5.0 stays frozen.
+
+### Feature114 readiness projection
+
+Features110-114 and phase015 are complete after actual independent Mode B,
+fresh twelve-command QA plus own adversarial spot and evidence capture. The
+assessed candidate remains bound by `.agent/evidence/114/current-source-inputs.json`;
+`.agent/qa/114.json` and `.agent/evidence/114/evidence-gate.txt` record acceptance.
+PLAN-WA is eligible for planning serialization and remains pending; PLAN-016
+remains pending after PLAN-WA and its own planning gates. Selected WA choices
+create no allocation or gate reduction. Published/installed v1.5.0 is unchanged;
+future release/tag and consumer upgrade decisions, phase016 controller/SBCL/live13
+proofs and capable CI remain outstanding. Historical prose above retains its
+dated meaning; current lifecycle follows canonical records.
+
+### Current proposed allocation — 2026-10-12
+
+WA planning preceded controller planning. The five draft plans below passed independent Mode B, fresh QA and evidence
+capture; PLAN-WA and PLAN-016 planning delivery is complete. This dated overlay supersedes earlier unallocated and
+pending feature 114 statements: phase 015 and features 110–114 are complete at 7,319 counted
+lines against 7,200/9,360. Every new feature, phase, H-PHASE gate and proposed budget
+remains pending activation.
+
+| Phase | Allocated IDs | Full estimate / 130% ceiling | Canonical spec / list |
+| --- | --- | --- | --- |
+| 017 | 115–118 | 5400 / 7020 | [spec](../../.agent/product_spec_017.md) / [list](../../.agent/feature_list_017.json) |
+| 018 | 119–123 | 7200 / 9360 | [spec](../../.agent/product_spec_018.md) / [list](../../.agent/feature_list_018.json) |
+| 019 | 124–125 | 3500 / 4550 | [spec](../../.agent/product_spec_019.md) / [list](../../.agent/feature_list_019.json) |
+| 016 | 126–128 | 5650 / 7345 | [spec](../../.agent/product_spec_016.md) / [list](../../.agent/feature_list_016.json) |
+| 020 | 129–132 | 7350 / 9555 | [spec](../../.agent/product_spec_020.md) / [list](../../.agent/feature_list_020.json) |
+
+Recommended execution order; activation remains pending:
+
+```mermaid
+flowchart LR
+  P017[017 WA foundation] --> P016[016 controller core]
+  P016 --> P018[018 WA controls]
+  P018 --> P020[020 SBCL fresh acceptance]
+  P020 --> P019[019 deferred profiles]
+```
+
+Stable NIP3 aliases 115/116/117/118/119/120 map respectively to 126,
+127+131, 129, 130, 131, 132. Alias 116 splits core semantics 127 from final CI 131;
+controls require 127, never 131. Proposed A09 foundation-first and SBCL-after-controls
+ordering supersedes dated whole-packet order only after future activation; original
+backlog edges remain historical. A15 still waits for 132 and trusted A10/A11.
+Numeric list prerequisites and serialized shared-file lanes define the proposed graph.
+
+Full WA/controller estimates are 16,100/13,000, compared with historical 4,360–13,190
+and 4,585 naive (10,545–13,251 weighted); splits price product, independent tests and
+counted process costs against 7,200/8,600 precedents. Proposed task 1,200 is separate
+from closed phase 015. Raw evidence/coordination classification is unchanged. Local SBCL
+version is environment information; all 13 live cases and capable CI remain future.
+Actual planning acceptance: [QA](../../.agent/qa/workflow-016-planning.json) and
+[capture](../../.agent/evidence/workflow-016-planning/evidence-capture.json).
+Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
+
+## Plan of Record (2026-08-18) — Phase 013: Definition of Done
+
+**Phase `013-definition-of-done` is ACTIVE** (2026-08-18), authorized by the operator (verbatim:
+`approved. please proceed.`, gate **H-PHASE-013**). The Planner artifacts
+`.agent/product_spec_013.md` (status `active`, 1.1.0) and `.agent/feature_list_013.json` (features
+092–098, DAG-validated acyclic, roots `{092, 097}`, est 2150) are the plan of record, together with
+the canonical phase document `docs/planning/phase_013.yaml` (`in_progress`). The activation is
+recorded in `.agent/run_state.json` (`phase_activated`, before any feature execution per the
+NDEBT-018 rule); `current_phase` advanced `012-v1-consumer-safety` -> `013-definition-of-done`; the
+scope budget reset to 2150. Execution begins with the ungated DAG root feature 092 (validator check
+C16). The v1.1.0 tag stays behind `H-FRAMEWORK-RELEASE`; the pipeline never self-tags.
+
+**What the phase delivers.** The framework's done-criteria are rigorous but unnamed and scattered
+across eight layers in `standard/`, `methodology/`, `schema/`, and CI; the lifecycle invariant that
+a `complete` feature implies an approved contract, a passing QA verdict, and evidence on disk is
+mechanized by nothing, while `schema/README.md` claims otherwise. Phase 013 fixes that in seven
+features: **092** adds validator check C16 (feature lists validate against
+`schema/feature_list.schema.json`, and every `complete` feature that declares a contract must carry
+a QA verdict and on-disk evidence) with positive and negative fixtures, and corrects the false
+enforcement claim in the same pass; **093** authors the canonical
+`standard/definition_of_done.md`, which aggregates the Step/Handoff/Gate/Feature/Plan/Merge/
+Release/Ecosystem layers by citing their existing authorities rather than restating them, defines
+`complete` over the existing five-value enum (**no `done` state exists and none may be added**), and
+classifies each layer honestly as enforced or consumer-aspirational; **094** adds an optional
+advisory `dod_ref` key to five artifact schemas without touching a single `required` array; **095**
+ships `templates/DoD.md` as the copy-and-fill consumer projection; **096** adds a
+`.github/PULL_REQUEST_TEMPLATE.md` merge-layer checklist; **097** adds a release close-out gate that
+mechanizes internal version consistency in pull-request and tag modes and blocks publication in
+`release.yml`; and **098** prepares the **v1.1.0** release last, so a scope-budget halt cannot leave
+version anchors half-bumped.
+
+**Two human gates.** `H-PHASE-013` authorizes activation before any feature enters contract
+negotiation, with the activation recorded in `.agent/run_state.json` before feature execution per
+the NDEBT-018 rule. `H-FRAMEWORK-RELEASE` remains the separate gate for the v1.1.0 annotated tag:
+the phase prepares the package and the readiness record, and the pipeline never self-tags.
+
+**Release classification: MINOR.** Nothing that validated under v1.0.0 is invalidated. The new
+schema keys are optional-only — a *loosening*, and a new *required* key would have been BREAKING
+under `methodology/06_release_train.md` Section 3.1 — and C16 is skip-if-absent, so a repository
+with no `.agent/feature_list*.json` passes it trivially.
+
+**The rolled-forward candidate scope moves to phase 014.** The prior phase-012 candidate — a real
+non-scratch multi-repo pilot and the remaining lifecycle protocols
+`ecosystem/06_simplification_review.md` and `ecosystem/08_ga_gate.md` with the reserved
+`H-CONSOLIDATION` / `H-GA` gates — is **not cancelled**. It rolls forward unchanged to phase 014. **→ now authored as the phase-014 proposal — see the "Proposed Next Phase — Phase 014" banner at the top** (since 2026-10-08 the "Plan of Record (2026-10-08) — Phase 014" banner).
+The operator decides at `H-PHASE-013` whether to take Definition of Done first or re-order that
+scope ahead of it. Tier 3 of the Definition-of-Done analysis (an ecosystem Verify protocol) is
+explicitly out of scope here: it is NIP-class work requiring an accepted proposal.
+
+## Plan of Record (2026-08-15) — Phase 012: v1.0.0 Consumer-Safety Remediation — **COMPLETE; RELEASED**
+
+Phase `012-v1-consumer-safety` was activated on operator authorization **"approved. please
+proceed."** (`H-PHASE-012`) and is now complete. The plan resolves the complete GitHub issue #52 batch raised by a
+real v0.9.0 consumer adoption. Confirmed Critical/major findings make this an interrupting safety
+phase: destructive shared-tree breaker cleanup, impossible multi-file atomicity, successful
+preflight verdicts accepting blocking findings, and incorrect reopened-finding classification.
+
+The release target is **v1.0.0**, not v0.9.1, because the framework's own release protocol treats
+any schema tightening as breaking. The operator selected a clean break with a migration guide and
+isolated worktrees as the recovery model. The feature DAG is `085` intake/failing regressions →
+parallel `086` schemas, `087` tools, `088` methodology → `089` documentation truth → `090`
+integrated consumer rehearsal → `091` release preparation. All seven features are now
+implementation-complete: the validator reports 15/15, fixture self-test 77/77, hermetic e2e
+PASS, and the disposable v0.9.0-to-local-v1 migration matrix 11/11. The MAJOR release is
+recorded in `.agent/evidence/release-readiness-v1.0.0.md`. The operator executed
+`H-FRAMEWORK-RELEASE` after PR #53 merged at `9453b3c`, pushing the annotated `v1.0.0` tag at
+that reviewed commit; `release.yml` published the GitHub Release. The pipeline did not self-tag.
+
+The prior phase-012 candidate scope — a real non-scratch multi-repo pilot and lifecycle stages
+`06`/`08` with `H-CONSOLIDATION`/`H-GA` — is not cancelled. It rolls forward unchanged to the next
+planning cycle after the consumer-safety release. Bulk consumer upgrades likewise remain separate
+release trains; Phase 012 validates the upgrade path in a disposable consumer but changes only the
+framework.
+
+## Plan of Record (2026-07-22) — Phase 011: 0–n Project Spectrum, Stage 4 — n-Coordination Protocols (Dependency Reconciliation & Release-Train Coordination) — **COMPLETE 2026-07-22**
+
+**Phase `011-coordination-protocols` is COMPLETE** (2026-07-22). It realized **NIP-0002 Stage 4 —
+the n-coordination protocols**, the **final** stage of the 0–n staged plan — **so NIP-0002's staged
+plan is now complete**. Activation was on 2026-07-22 (operator verbatim **"Approved. Please
+proceed"**, gate **H-PHASE-011**, given after PR #48 merged the phase-011 proposal to `main` at
+`44a91fc`; recorded in `.agent/run_state.json` event `phase_activated` before any feature execution,
+per the NDEBT-018 rule). **080** authored `ecosystem/04` (the Plan stage) + `reconciliation_plan`
+schema (topological-order invariant, C12) and defined `H-PLANNING-AUTHORITY`; **081** authored
+`ecosystem/05` (the Promote stage) + `release_train_manifest` schema (trace-to-plan invariant, C12)
+and defined `H-TRAIN-ENTRY`; **082** added `tools/ecosystem_reconcile.py` (aggregate + findings → a
+schema-valid dependency-ordered plan; a cycle forces FAIL); **083** added
+`tools/ecosystem_release_train.py` (plan → a schema-valid train manifest, refusing a PASS without
+the recorded `H-TRAIN-ENTRY` decision) + hermetic `assert_stage4` e2e; **084** piloted the layer
+end-to-end across a scratch 2-member ecosystem — validated registry, PASS aggregate → PASS plan →
+PASS train (all C12-valid), and both negatives enforced (a cyclic plan → FAIL, an ungated train →
+FAIL) — with no hand-applied workaround (evidence `.agent/evidence/pilot-084/`; `NDEBT-035`
+resolved). `manifest.json` carries phase-011 `status: complete`; both Stage-4 gates were exercised
+in the pilot, recorded before the acts they govern (NDEBT-018). A **real, non-scratch multi-repo
+ecosystem at a released tag** remains the standing production-maturity criterion (carried to phase
+012, `NDEBT-029`).
+
+**Scope — NIP-0002 Stage 4 only (prove-then-build).** Phases 008/009/010 delivered the "1", "0",
+and "n" points; the membership set is enumerated and its verdicts aggregated. What remained was the
+**coordination** layer — with `n` members visible, the cycle could *see* the ecosystem but could
+not yet **coordinate work across it**. NIP-0002 placed the genuine n-repo coordination in two
+protocols that were `Planned` (now Shipped in `ecosystem/README.md`) — the lifecycle's **Plan** and
+**Promote** stages — and reserved the two gates that govern them (`NDEBT-035`). Phase 011 authored
+and mechanized them, then piloted the layer. Features:
+
+1. **080 — Dependency-reconciliation protocol (`ecosystem/04`) + companion schema** (`NDEBT-035`) —
+   author the Plan stage (approved findings + the phase-010 aggregate → typed, dependency-ordered
+   cross-repo work packets), a reconciliation-plan schema (topological-order invariant), and
+   **define** the reserved `H-PLANNING-AUTHORITY` gate.
+2. **081 — Release-train coordination protocol (`ecosystem/05`) + companion schema** (`NDEBT-035`) —
+   author the Promote stage (admitting reconciled packets into a cross-repo release train, entry
+   conditions, record-but-never-self-execute), a release-train-manifest schema, and **define** the
+   reserved `H-TRAIN-ENTRY` gate.
+3. **082 — Reconciliation tooling** (`NDEBT-035`) — a stdlib-only tool consuming the phase-010
+   aggregate + approved findings → a schema-valid, dependency-ordered reconciliation plan; a cyclic
+   dependency set is a flagged finding forcing a non-PASS verdict.
+4. **083 — Release-train tooling + Stage-4 coverage** (`NDEBT-035`) — a stdlib-only tool consuming a
+   reconciliation plan → a schema-valid release-train manifest gated on `H-TRAIN-ENTRY`; hermetic
+   e2e over the aggregate → reconciliation → train chain (reusing `assert_multirepo`); prior paths
+   regression-guarded.
+5. **084 — Pilot, prove, prioritize + phase close** — run the coordination layer across a scratch
+   multi-repo ecosystem, exercise the two Stage-4 gates before the acts they govern, then
+   refine/validate the phase-012 candidate scope below and close the phase (**completing NIP-0002**).
+
+**Deferred → Phase-012 candidate scope (release + real pilot + Repeat/GA protocols).** *(Refined and
+validated against the feature-084 pilot evidence, `.agent/evidence/pilot-084/`: the pilot proved the
+coordination layer runs end-to-end with both gates enforced, so the candidate below is **confirmed,
+not re-ordered**. With NIP-0002's staged plan now complete, the release cut is the natural next step
+— it carries the whole 0–n loop into a tag a real consumer can adopt, which the standing real
+multi-repo pilot then requires.)* The production-maturity and Repeat/GA neighbours, outside
+NIP-0002's 0–n staged plan:
+- Cut a framework release carrying the whole loop — genesis + audit/compare + n-case tooling + the
+  new coordination layer (`NDEBT-029`) — a release-train action, and a prerequisite for the real pilot.
+- A **real, non-scratch multi-repo ecosystem pilot** — the standing production-maturity criterion
+  across the whole 0–n programme.
+- The remaining lifecycle protocols `ecosystem/06_simplification_review.md` (Repeat) and
+  `ecosystem/08_ga_gate.md` (Promote/GA), with the reserved `H-CONSOLIDATION` / `H-GA` gates —
+  prioritised separately from real evidence rather than authored speculatively.
+
+## Plan of Record (2026-07-22) — Phase 010: 0–n Project Spectrum, Stage 3 — The n-case (Multi-Repo Tooling) — **COMPLETE 2026-07-22**
+
+**Phase `010-multi-repo` is COMPLETE** (2026-07-22). It realized **NIP-0002 Stage 3 — the n-case
+(many associated repositories forming one ecosystem)**, taken one stage at a time as phases
+008/009 took Stages 1/2. Activation was on 2026-07-22 (operator verbatim: **"Approved. Proceed
+with the phase-010 proposal + activation"**, gate **H-PHASE-010**, recorded in
+`.agent/run_state.json` event `phase_activated` before any feature execution, per the NDEBT-018
+rule). **075** made the membership registry a required, schema-validated artifact that sets `n`;
+**076** added `ecosystem_membership_run.py` iterating the `in_scope` set (the stage tool
+unchanged); **077** mechanized the cross-repo aggregation + a common-framework-pin consistency
+check into a schema-valid ecosystem-level result; **078** added hermetic n-case e2e coverage
+(`assert_multirepo`); **079** piloted the n-case end-to-end across a scratch 3-member ecosystem
+stood up from nothing — validated registry, PASS aggregate, and a divergent-pin negative correctly
+flipping to FAIL — with no hand-applied workaround (evidence `.agent/evidence/pilot-079/`;
+`NDEBT-031` resolved). `manifest.json` carries phase-010 `status: complete`; features 075–078
+landed with the phase-010 branch PR, 079 closes it.
+
+**Scope — NIP-0002 Stage 3 only (prove-then-build).** Phases 008/009 delivered the "1" and "0"
+points. The **"n" point remains**: the shipped tools take a single `--repo-root`, their
+multi-repository consistency guard is a "defensive invariant for a future extension", and the
+membership set that *sets* `n` has no required, validated artifact (`NDEBT-031`). Phase 010 makes
+the n-case first-class, then pilots it. Features:
+
+1. **075 — Ecosystem-membership registry schema** (`NDEBT-031`) — a JSON schema for a membership
+   registry instance (the list-partition shape + exactly-one-list invariant); promote
+   `scope_definition_patterns.md` from a draft pattern to a required, schema-backed artifact that
+   sets `n`.
+2. **076 — Multi-repo iteration** (`NDEBT-031`) — the tooling reads the registry and iterates its
+   `in_scope` set of repo-roots; the single-`--repo-root` path stays unchanged.
+3. **077 — Cross-repo aggregation + consistency** (`NDEBT-031`) — aggregate per-repo verdicts into
+   one ecosystem-level result; enforce a common framework pin across members.
+4. **078 — n-case coverage** (`NDEBT-031`) — hermetic e2e + self-test over a scratch multi-repo
+   ecosystem (≥2 genesis'd repos), single-repo paths regression-guarded.
+5. **079 — Pilot, prove, prioritize + phase close** — run the loop across a scratch multi-repo
+   ecosystem, then refine/validate the phase-011 candidate scope below and close the phase.
+
+**Deferred → Phase-011 candidate scope (NIP-0002 Stage 4 + release + real pilot).** *(Now authored
+as a proposal — see the "Proposed Next Phase — Phase 011" banner at the top: NIP-0002 Stage 4 (the
+`04`/`05` coordination protocols) is phase 011, and the release cut, real pilot, and the remaining
+`06`/`08` Repeat/GA protocols are carried forward as phase-012 candidate scope. Refined and
+validated against the feature-079 pilot evidence, `.agent/evidence/pilot-079/`: the pilot confirmed
+the ordering — the aggregate ecosystem-level result already records per-member verdicts + a
+common-pin consistency finding, exactly the substrate a `04` reconciliation pass consumes — so the
+candidate is **confirmed, not re-ordered**. `NDEBT-031` is resolved; its Stage-4 residue is
+carved into `NDEBT-035`, and the pilot's per-member clone-cost friction into `NDEBT-034`.)* Held
+until the n-case is *proven* — now it is:
+- **n-coordination protocols** (Stage 4, `NDEBT-035`): author `ecosystem/04_dependency_reconciliation.md`
+  and `ecosystem/05_release_train_coordination.md` with companion schemas — cross-repo *ordering*
+  and release-train *entry* — activating the reserved `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates.
+  The feature-079 aggregate is their input substrate. **→ phase-011 proposal scope (features 080–084).**
+- Cut a framework release carrying the whole loop — genesis + audit/compare + n-case tooling
+  (`NDEBT-029`). **→ phase-012 candidate scope.**
+- A **real, non-scratch multi-repo ecosystem pilot** — the standing production-maturity criterion
+  (the feature-079 pilot exercised mechanics against scratch members, not real multi-project
+  maturity). **→ phase-012 candidate scope.**
+- *(Optional, `NDEBT-034`)* a throughput optimisation for repeated genesis (shared clone cache /
+  lighter re-inject) if a larger pilot makes the per-member clone cost load-bearing.
+
+## Plan of Record (2026-07-22) — Phase 009: 0–n Project Spectrum, Stage 2 — Greenfield Genesis — **COMPLETE 2026-07-22**
+
+**Phase `009-greenfield-genesis` is COMPLETE** (2026-07-22). It realized **NIP-0002 Stage 2 —
+the 0-case (greenfield genesis)**: standing up a *new* project from nothing is now first-class
+and mechanized. **070** authored the greenfield-genesis protocol (`ecosystem/00` §8); **071**
+mechanized it as `bootstrap.sh --genesis` (`git init` + deterministic scaffold + reuse of the
+inject/verify/provenance install); **072** modelled the `incubating→in_scope` count-0→1
+transition on the scope registry (`scope_definition_patterns.md` §2.3); **073** added hermetic
+genesis e2e coverage (`assert_genesis`); **074** piloted the 0-case against a scratch greenfield
+project and proved it (a clean Preflight `PASS_WITH_EXCEPTIONS`, evidence
+`.agent/evidence/pilot-074/`). Activation was on 2026-07-22 (operator verbatim **"Activate phase
+009"**, gate **H-PHASE-009**, recorded before feature execution per NDEBT-018). Landing on `main`
+via PR #46; `manifest.json` carries phase-009 `status: complete`. A **real, non-scratch
+greenfield project** remains the open production-maturity criterion (carried to phase 010).
+
+**Scope — NIP-0002 Stage 2 only (prove-then-build).** Phase 008 proved the "1" point (a single,
+already-existing consumer). The **"0" point remains absent**: standing up a *new* project from
+nothing and bootstrapping into it has no protocol, tooling, or vocabulary, and
+`ecosystem/00_ecosystem_bootstrap.md` presupposes a repo that already exists (`NDEBT-030`).
+Phase 009 makes the 0-case first-class and mechanized, then pilots it. Features:
+
+1. **070 — Greenfield-genesis protocol** (`NDEBT-030`) — author the genesis stage (precondition,
+   create-and-scaffold steps, minimal skeleton + consumer inputs, entry into Bootstrap →
+   Preflight); "genesis"/"scaffold" vocabulary distinct from the framework's phase-001 genesis.
+2. **071 — Genesis scaffold capability** (`NDEBT-030`) — a single command stands up a new
+   project from nothing (`git init` + minimal skeleton + inject the pinned `.nizam/` payload),
+   reusing the existing provenance path; the inject-into-existing-repo path stays unchanged.
+3. **072 — Incubating→in_scope transition** (`NDEBT-030`) — model the scope registry's
+   `incubating` partition as the count-0→1 state; a genesis'd project starts `incubating` and is
+   promoted `in_scope`. A scoped slice only — *not* the full membership-registry promotion.
+4. **073 — Genesis e2e coverage** (`NDEBT-030`) — hermetic test: genesis-from-nothing → scaffold
+   → inject → clean Preflight, with the existing bootstrap path regression-guarded.
+5. **074 — Pilot, prove, prioritize + phase close** — run the 0-case against a scratch greenfield
+   project stood up from nothing (no workaround), then refine/validate the phase-010 candidate
+   scope below and close the phase.
+
+**Deferred → Phase-010 candidate scope (NIP-0002 Stages 3–4).** *(Now realized as phase 010,
+authored as a proposal and since activated — see the "Plan of Record — Phase 010 Activated"
+banner at the top: Stage 3 (the n-case) is phase 010; Stage 4 (the 04/05 coordination protocols)
+is carried forward as phase-011 candidate scope.
+Validated by the feature-074 0-case pilot: the n-case membership-registry work (`NDEBT-031`)
+builds directly on the `incubating` partition this phase populated, so the ordering is confirmed,
+not re-ordered.)* Held
+until the 0-case is *proven*, because each builds on a membership registry the 0-case only begins
+to populate:
+- **The n-case — multi-repo tooling** (`NDEBT-031`): iterate an ecosystem-membership registry
+  (a set of repo-roots) instead of one `--repo-root`; promote
+  `registry/scope_definition_patterns.md` to a required, validated membership artifact that sets `n`.
+- **n-coordination protocols**: author `04_dependency_reconciliation.md` and
+  `05_release_train_coordination.md` with companion schemas (activating the reserved
+  `H-PLANNING-AUTHORITY` / `H-TRAIN-ENTRY` gates) — where cross-repo ordering and release-train
+  entry live.
+- Cut a framework release carrying the audit/compare tools (`NDEBT-029`) — a release-train
+  action, and a prerequisite for the standing **real, non-scratch consumer pilot**.
+
+A **real, non-scratch consumer/greenfield pilot** remains an open acceptance criterion across
+the whole 0–n programme (a scratch pilot exercises loop *mechanics*, not product maturity).
+
+## Plan of Record (2026-07-21) — Phase 008 Activated: 0–n Project Spectrum, Stage 1 — Consumer-Readiness — **COMPLETE 2026-07-21**
+
+**Phase `008-consumer-readiness` is COMPLETE** (2026-07-21). It realized `NIP-0002` Stage 1
+(consumer-readiness): **065** governance-root resolution + **066** provenance-pin anchoring
+(ADR-004, pilot findings A/B) made the single-project case genuinely consumer-ready; **067**
+bootstrap commit-SHA pinning (`NDEBT-033`) hardened the pin against a moved tag; **068**
+brownfield coexistence was resolved-by-design (operator Option A — no code; the `.nizam/`-only
+inject already satisfies GIP §5.1 by construction); **069** re-piloted the fixed loop against a
+freshly bootstrapped **scratch/throwaway** consumer (a loop-mechanics proof, not a real
+production project) and proved findings A/B resolved with no hand-applied workaround
+(evidence `.agent/evidence/pilot-069/`). A real, non-scratch consumer pilot remains the open
+production-maturity criterion (carried into the phase-009 candidate scope). Activation was on 2026-07-21 (operator verbatim
+**"Approved. Please proceed"**, gate **H-PHASE-008**, recorded before feature execution per
+NDEBT-018). 065/066 landed on `main` via PR #44; 067–069 are on the phase-008 branch for a
+second PR. `manifest.json` carries phase-008 `status: complete`.
+
+**Scope — NIP-0002 Stage 1 only (prove-then-build).** NIP-0002's Staged Realization is
+explicitly *evidence-led — no stage claimed working until proven against real evidence* — and
+its **Stage 1 (consumer-readiness) is the prerequisite for every larger project count**. The
+phase-007 pilot proved even the single-project (count-1) case is not consumer-ready, so phase
+008 makes that case genuinely work and completes the "1" point of the spectrum, then re-pilots
+to prove it. Features (evidence-prioritized from the pilot debt `NDEBT-027/028/032/033`):
+
+1. **065 — Governance-root resolution** (`ADR-004` decision 1, `NDEBT-027`) — tools locate the
+   injected `.nizam/` payload instead of assuming the framework-root layout.
+2. **066 — Provenance-pin anchoring** (`ADR-004` decision 2, `NDEBT-028`) — a Baseline's
+   `framework_references` names the injected pin, not the consumer HEAD.
+3. **067 — Bootstrap commit-SHA pinning** (`NDEBT-033`) — provenance records tag + resolved
+   SHA; `--verify-only` rejects a moved tag.
+4. **068 — Brownfield coexistence** (GIP §5.1, `NDEBT-032`) — *resolved by design* (operator
+   Option A, no `bootstrap.sh` change): the atomic inject writes only `.nizam/` and never
+   touches a consumer's root files, so coexistence is safe by construction; reconciling a
+   consumer's own root files remains a consumer-side manual step (proposal-time "preserve
+   colliding root files in `bootstrap.sh`" wording superseded).
+5. **069 — Re-pilot, prove, prioritize + phase close** — run the *fixed* loop against a
+   freshly bootstrapped scratch/throwaway consumer (Preflight `PASS_WITH_EXCEPTIONS` whose
+   only exception is the injected `.nizam/`, correctly-anchored baseline, no workaround),
+   then author the phase-009 candidate scope below and close the phase.
+
+**Deferred → Phase-009 candidate scope (NIP-0002 Stages 2–4).** *(Now realized as phase 009
+(complete) — see its "Plan of Record … COMPLETE" banner above: Stage 2 (the 0-case) was phase 009;
+Stages 3–4 are carried forward, Stage 3 now realized as the activated phase 010.)* Held until Stage 1 is *proven*,
+because each builds on single-project tools that must work first:
+- **The 0-case — greenfield genesis** (`NDEBT-030`): create-and-scaffold a *new* project and
+  bootstrap into it; the scope registry's `incubating` partition models the count-0→1 transition.
+- **The n-case — multi-repo tooling** (`NDEBT-031`): iterate an ecosystem-membership registry
+  (a set of repo-roots) instead of one `--repo-root`; promote
+  `registry/scope_definition_patterns.md` to a required, validated membership artifact that sets `n`.
+- **n-coordination protocols**: author `04_dependency_reconciliation.md` and
+  `05_release_train_coordination.md` with companion schemas — where cross-repo ordering and
+  release-train entry live.
+- Cut a framework release carrying the audit/compare tools (`NDEBT-029`) — a release-train action.
+
+A **real, non-scratch consumer pilot** remains an open acceptance criterion across the whole
+0–n programme (the scratch pilot exercises loop *mechanics*, not product maturity).
+
+## Plan of Record (2026-07-20) — Phase 007 Activated: Consumer-Adoption Enablement & First External Pilot — **COMPLETE 2026-07-21**
+
+Phase `007-consumer-adoption` is **COMPLETE** (2026-07-21). It shipped the Bootstrap-stage
+protocol (feature 060, amended to v0.2.0 to make the 0–n spectrum first-class), defined and
+first-exercised the `H-CONSUMER-UPGRADE` gate (061, 063), ran the first non-self
+ecosystem-cycle pilot against a scratch consumer (063 — adoption held: bootstrap + verify +
+`validate.sh --payload` 11/11; friction recorded as `NDEBT-027`…`NDEBT-032`), and authored
+the evidence-prioritized phase-008 candidate scope (064, above). The decisions were captured
+formally as `NIP-0002` (Accepted 2026-07-21, gate H-NIP — selecting phase 008) and `ADR-004`
+(Accepted). The conditional feature 062 was
+intentionally not run (the scratch consumer had no colliding root files; carried as
+`NDEBT-032`). On 2026-07-20 the operator authorized activation (verbatim: **"Authorized to
+activate now"**, satisfying gate **H-PHASE-007**; recorded in `.agent/run_state.json` event
+`phase_activated` before any feature execution). `docs/planning/manifest.json` carries
+`current_phase: 007-consumer-adoption` with the phase-007 entry `status: in_progress`;
+`.agent/product_spec_007.md` is active (1.1.0); the scope budget was reset to 870
+(phase-006 final archived). The planner artifacts (`.agent/feature_list_007.json` —
+5 features 060-064, DAG-validated acyclic, `original_estimate_lines` 870) are the plan
+of record. Execution begins with the framework-internal features **060** (author the
+Bootstrap-stage protocol) then **061** (define `H-CONSUMER-UPGRADE`); the pilot
+(063-064) stays deferred pending operator-authorized consumer-repo access (below).
+
+**Why now.** The core ecosystem loop (Preflight → Baseline → Audit → Compare) is
+shipped, dogfooded, and released (v0.8.0). Two gaps remain: the lifecycle's **Bootstrap**
+entry stage has no protocol document (`00_ecosystem_bootstrap.md`, still *Planned*
+under `ecosystem/`) and its gate `H-CONSUMER-UPGRADE` is an undefined reserved name; and all
+adoption evidence is still self-referential (Track 4, below). Phase 007 closes the
+Bootstrap gap with the minimum authoring needed, then runs the first real pilot and
+lets that evidence prioritise the remaining deferred protocols — it does **not** author
+`04/05/06/08` speculatively (the framework's "no claim beyond evidence" rule).
+
+**Scope (features 060-064).** 060 — author the Bootstrap-stage protocol
+`00_ecosystem_bootstrap.md` (under `ecosystem/`, wrapping `standard/GIP.md` +
+`bootstrap.sh`; flip its `ecosystem/README.md` status row Planned→Shipped); 061 — define the reserved gate `H-CONSUMER-UPGRADE` in
+`docs/planning/operator_gates.md`; 062 (conditional) — implement GIP §5.1
+rename-and-diff in `bootstrap.sh` for a consumer with pre-existing root files; 063 —
+first external-consumer pilot (handover F-016/F-019: bootstrap a released tag into a
+real consumer, run `tools/validate.sh --payload`, drive the core loop, record friction
+as `NDEBT-*`); 064 — plan the next automation tranche from that friction (handover
+F-020) and close the phase.
+
+**Precondition for the pilot.** Features 060-062 are framework-internal and executable
+immediately on activation. The pilot (063-064) additionally **requires
+operator-authorized access to a consumer repository.** The canonical target
+`nizamiq/nizamiq-strategy` is a different organization outside this session's GitHub
+scope; activation must resolve which consumer repo the pilot runs against (the
+canonical target via `add_repo` subject to org authorization, another operator-provided
+repo, or a scratch consumer to exercise loop mechanics). This directly executes Track 4
+below.
+
+## Plan of Record (2026-07-19) — Phase 006 Activated: Enforcement Closure & Hardening
+
+Phase `006-enforcement-closure` is now **COMPLETE** — all 11 features (049–059) shipped via PRs #28–#38 and v0.8.0 was released 2026-07-20 (see Current Position below); it was the current plan of record through phase close. On
+2026-07-19 the operator authorized activation (verbatim: **"Approved. Proceed with
+the logical next steps."**, satisfying gate **H-PHASE-006**; recorded in
+`run_state` event `phase_activated` before any feature execution). The planner
+artifacts (`.agent/product_spec_006.md`, now active 1.1.0;
+`.agent/feature_list_006.json` — 11 features 049-059, DAG-validated acyclic,
+`original_estimate_lines` 1720) are the plan of record; the manifest carries the
+phase as `status: in_progress`, `current_phase: 006-enforcement-closure`.
+Execution runs on the single branch `phase/006-enforcement-closure` with
+sequential PRs into `main` (the stacked-PR pattern is retired after the
+2026-07-18 collapse). Scope: the
+debt-driven enforcement closure (Track 2's revived candidates NDEBT-004/005/007/008/
+009/010/011/012 plus the phase-005 additions NDEBT-013..024), codification of the
+incident-proven operational rules, the Track 3 constitutional mechanize-or-descope
+decision (operator gate H-CONSTITUTIONAL), the injected-payload contract decision
+(H-PAYLOAD-CONTRACT), and a v0.8.0 release gate (H-FRAMEWORK-RELEASE). Consumer
+adoption (handover F-016..F-020, `nizamiq/nizamiq-strategy`) is a separate
+cross-repository successor programme phase, not part of this proposal.
+
+## Plan of Record (2026-07-17) — Phase 005 Activated: Ecosystem Engineering Cycle
+
+Phase `005-ecosystem-cycle` — activated as the plan of record on 2026-07-17 — is
+now **COMPLETE** (v0.7.0 released 2026-07-18; see Current Position below). On
+2026-07-17 the ecosystem operator accepted **NIP-0001 — Ecosystem Engineering
+Cycle** (`docs/nips/NIP-0001-ecosystem-engineering-cycle.md`) via the remote-control
+message **"approved. expedite."**, satisfying gate **H-NIP** and authorizing phase
+activation. The Planner produced the phase-005 spec (`.agent/product_spec_005.md`)
+and a DAG-validated feature list (`.agent/feature_list_005.json`, 15 features
+031-045, `original_estimate_lines` 2300); `docs/planning/manifest.json` now carries
+phase 005 as `status: in_progress`, `activation_state: active`, `current_phase:
+005-ecosystem-cycle`.
+
+**Scope:** framework side only (handover F-001..F-015) — the ecosystem module
+protocols, the baseline / preflight-verdict / engineering-finding schemas, capability
+routing, a deterministic preflight CLI, a validator + CI fixtures extension, and
+framework self-dogfood evidence, ending at a human-gated framework release
+(H-FRAMEWORK-RELEASE). Consumer adoption (handover F-016..F-020, targeting
+`nizamiq/nizamiq-strategy`) is deferred to the successor programme phase, gated on
+that release.
+
+**Phase-005 human gates — final disposition (2026-07-18):** H-NIP satisfied
+2026-07-17; H-DOGFOOD-EXCEPTION exercised twice, both operator-approved with
+recorded verbatim authorizations; the scope re-baseline 2300→3500 was
+operator-authorized (H-FRAMEWORK-SCOPE was subsumed by the activation
+authorization and that re-baseline — no standalone scope-lock event was executed,
+stated plainly rather than backfilled); H-FRAMEWORK-RELEASE executed 2026-07-18
+(operator sign-off recorded at 31f3fff before the tag, per the NDEBT-018 rule,
+then the operator-pushed annotated tag v0.7.0 at 4833322); H-RISK not required
+(the DEBT Open register carries zero High/Critical rows at close).
+
+**Relationship to the prior candidate scope:** the former "Track 2 — Phase 005
+Candidate Scope: Consumer Reality & Enforcement Closure" (below) is **superseded as
+the phase-005 selection** by the operator-accepted NIP-0001. Its enforcement-closure
+debt items (NDEBT-007/008/009/010/011/012 and NDEBT-005) remain candidate scope for a
+subsequent phase; several are directly exercised as friction evidence by the
+framework self-dogfood (features 043-044) and by the successor consumer-adoption
+phase. The Track 1 human gates and Tracks 3-4 below remain valid forward intent.
+
+## Purpose and Authority
+
+This document is the durable forward-planning surface for the framework. It is
+**pre-planning intent, not a plan of record**: under `methodology/00_planning.md`, a
+phase becomes real only when a Planner produces a product spec and a DAG-validated
+feature list and a human authorizes activation. Until then, everything below is
+candidate scope. `docs/planning/manifest.json` points here via its `forward_planning`
+key; this file MUST be updated at each phase close so the repository always states
+what comes next (the gap this file closes: phases 001–004 completed with no recorded
+successor, leaving open debt deferred to unscoped "future phases").
+
+## Current Position (2026-10-13)
+
+### Current foundation progress — feature 116
+
+Feature 115 completed independent Mode B, fresh seventeen-command QA and actual
+capture at assessed source `2f324c68bf273c54907ff63ad057995040d84d54`;
+its existing canonical records and historical proofs remain unchanged. The closed
+measurement is 1,863 lines. Feature 116 now provides the sealed acceptance-bundle
+implementation candidate after both renewed pre-code gates and independent
+bundle review; it still needs its own Mode B, fresh QA and capture before
+completion. Read current position from the phase 017 canonical phase/list, not
+older candidate text. Phase 017 remains in progress at its original 5,400/7,020
+allowance. Continue 116 → 117 → 118 in the shared-file lane; no foundation closure
+or later phase activation is claimed. Installed v1.5.0 is unchanged.
+
+The earlier activation overlay below is retained as dated context.
+
+- **Phase 017 foundation is active.** H-PHASE-017 authorizes features 115–118
+  with 5,400 counted lines and a 7,020 ceiling. Feature 115 provides the assessed
+  identity implementation candidate; independent Mode B, fresh QA and capture
+  remain completion gates. The operator-approved acceptance recovery preserves
+  the original three-attempt halt; NDEBT-052 stays Open until actual capture.
+  Continue the shared-file lane 115 → 116 → 117 → 118, each under its own
+  contract. [Activation authority](../../.agent/evidence/phase017-activation/authorization.json)
+  and [recovery authority](../../.agent/evidence/115/recovery-authorization.json)
+  are recorded. Phases 016/018/020/019 remain proposed; the recommended later
+  order is core 016 → controls 018 → fresh 020 → profiles 019.
+
+The following phase 015 authority and planning position are dated historical
+context; current phase 017 lifecycle is authoritative in its canonical phase/list.
+
+
+H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+`2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+`06c0ae0a273facce80c57506260648c41f566ebb` against source `57862f69ba30a36004ea9a17a295fc9c835afc13`
+and the three accepted plan hashes in `.agent/run_state.json`. The approved
+counted allowance is 7200 lines with a 9360 ceiling, including phase-level costs.
+Canonical lifecycle and current feature position are read from
+`.agent/feature_list_015.json` and `docs/planning/phase_015.yaml`; each feature
+requires its approved contract, both independent pre-code gates, Mode B, QA and
+the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+
+- **Phase 015 normative scope remains complete.** Features 110–114 and their
+  captured proofs remain unchanged, with 7,319 counted lines against 7,200/9,360.
+  The delivered five-phase planning baseline is preserved; only foundation 017
+  is now activated. Runtime/live acceptance, release/tag and installed upgrade
+  remain separately gated.
+- **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
+- **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. Phase015 activation is recorded in the current overlay. The handover record is [`HANDOVER.md`](HANDOVER.md).
+  *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
+  statements are superseded at 2026-10-10: feature 099 has activated `ecosystem/06_simplification_review.md` and
+  `ecosystem/08_ga_gate.md` (the release bullet's "activation awaits phase-014 feature 099" predates it), and
+  phases 001–013 are complete (the "Phases 001–012" bullet predates phase 013's close).*
+- **Phase 012 and the v1.0.0 release are complete:** Consumer-Safety Remediation features
+  085–091 resolve the complete issue #52 batch from real v0.9.0 consumer adoption
+  (`NDEBT-036`, Critical). The operator authorized activation with "approved. please proceed."
+  and executed `H-FRAMEWORK-RELEASE` on 2026-08-15 after PR #53 merged at `9453b3c`.
+  The annotated `v1.0.0` tag points at that reviewed commit; release workflow run 31903527120
+  succeeded and published the GitHub Release. All 30 issue rows map to evidence; validator
+  15/15, self-test 77/77, e2e, syntax, and the v0.9.0 migration rehearsal are green.
+  `NDEBT-036` is Resolved. The prior real non-scratch pilot plus lifecycle stages 06/08
+  candidate rolls forward unchanged.
+- Phases 001–012 are complete. **Phase 011 (0–n Project Spectrum, Stage 4: n-Coordination
+  Protocols, features 080–084) is COMPLETE** (2026-07-22) — **so NIP-0002's staged plan is now
+  complete**: the coordination layer is first-class and mechanized. `ecosystem/04` is the Plan stage
+  (080, `schema/reconciliation_plan.schema.json` + `validate.sh` C12's topological-order invariant;
+  `H-PLANNING-AUTHORITY` defined), `ecosystem/05` is the Promote stage (081,
+  `schema/release_train_manifest.schema.json` + C12's trace-to-plan invariant; `H-TRAIN-ENTRY`
+  defined), `tools/ecosystem_reconcile.py` turns the phase-010 aggregate + findings into a
+  schema-valid dependency-ordered plan (082, a cycle forces FAIL), `tools/ecosystem_release_train.py`
+  admits a plan into a release train refusing a PASS without the recorded gate (083), with
+  `assert_stage4` hermetic e2e; a scratch 2-member pilot proved the layer end-to-end — PASS aggregate
+  → PASS plan → PASS train (all C12-valid) + both negatives enforced (cyclic → FAIL, ungated → FAIL) —
+  with no workaround (084, evidence `.agent/evidence/pilot-084/`; `NDEBT-035` resolved). A real,
+  non-scratch multi-repo pilot at a released tag stays outstanding for production maturity
+  (`NDEBT-029`, resolved by v0.9.0); the real pilot and remaining `06`/`08` Repeat/GA protocols
+  are deferred beyond the interrupting phase-012 safety work. **Phase 010 (0–n Project Spectrum,
+  Stage 3: The n-case — Multi-Repo Tooling, features 075–079) is COMPLETE** (2026-07-22): the n-case is now first-class
+  and mechanized — `scope_definition_patterns.md` is a required, schema-validated membership
+  registry that sets `n` (075, `schema/ecosystem_membership.schema.json` + `validate.sh` C12),
+  `ecosystem_membership_run.py` iterates the `in_scope` set instead of one `--repo-root` (076),
+  the per-member verdicts aggregate into a schema-valid ecosystem-level result with a
+  common-framework-pin consistency check (077, `schema/ecosystem_membership_result.schema.json`),
+  `assert_multirepo` gives hermetic n-case e2e coverage (078), and a scratch 3-member pilot proved
+  the n-case end-to-end — validated registry, PASS aggregate, divergent-pin FAIL — with no
+  workaround (079, evidence `.agent/evidence/pilot-079/`; `NDEBT-031` resolved). A real,
+  non-scratch multi-repo pilot stays outstanding for production maturity (`NDEBT-029`: the loop is
+  not yet in a released tag); Stage-4 coordination (`04`/`05`) is phase-011 candidate scope
+  (`NDEBT-035`). Landing on the phase-010 branch (PR #47). **Phase 009 (0–n Project Spectrum,
+  Stage 2: Greenfield Genesis, features 070–074) is COMPLETE** (2026-07-22): the 0-case is now first-class and
+  mechanized — `ecosystem/00` §8 defines the greenfield-genesis protocol (070), `bootstrap.sh
+  --genesis` stands up a new project from nothing (`git init` + deterministic scaffold + inject,
+  071), `scope_definition_patterns.md` §2.3 models the `incubating→in_scope` count-0→1 transition
+  (072), `assert_genesis` gives hermetic e2e coverage (073), and a scratch-greenfield pilot proved
+  the 0-case end-to-end (074, Preflight `PASS_WITH_EXCEPTIONS`, evidence
+  `.agent/evidence/pilot-074/`) — a loop-mechanics proof; a real, non-scratch greenfield pilot
+  stays outstanding for production maturity, and the genesis capability is not yet in a released
+  tag (`NDEBT-029`). Landing on `main` via PR #46. **Phase 008 (0–n Project Spectrum, Stage 1:
+  Consumer-Readiness, features 065–069) is COMPLETE** (2026-07-21): the ecosystem loop is
+  now genuinely consumer-ready — `ecosystem_preflight.py` resolves a governance-root (065)
+  and anchors a baseline to the injected framework pin (066), so a freshly bootstrapped
+  scratch/throwaway consumer gets a clean Preflight + honest baseline (ADR-004, pilot findings
+  A/B); `bootstrap.sh` records a commit-SHA pin (067, `NDEBT-033`); brownfield coexistence was
+  resolved-by-design (068); and a re-pilot proved findings A/B resolved against a
+  scratch/throwaway consumer with no workaround (069, evidence `.agent/evidence/pilot-069/`) —
+  a loop-mechanics proof; a real, non-scratch consumer pilot stays outstanding for
+  production maturity. 065/066 are on
+  `main` (PR #44); 067–069 are on the phase-008 branch (second PR pending). **Phase 007**
+  (Consumer-Adoption Enablement & First External Pilot, features 060–064) is on `main`: the
+  Bootstrap-stage protocol, the `H-CONSUMER-UPGRADE` gate, the first scratch-consumer pilot,
+  and `NIP-0002` (0–n spectrum, Accepted via H-NIP) + `ADR-004` (Accepted). The validator
+  ran green at `SUMMARY: 15 passed, 0 failed` (C1–C15) at the time, and the fixtures
+  self-test at 57/57; the hermetic e2e bootstrap harness passed in CI (now including the
+  n-case `assert_multirepo`).
+- **Latest released tag: v1.5.0 (MINOR, General Availability) — RELEASED 2026-10-10 at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852` (PR #78).**
+  Annotated tag object `08dbe12a38c7cd8d8fb8d52757cd096551bbc779`; `release.yml` run 38072142688 passed and published
+  the release at `2026-10-10T17:32:24Z`. GitHub Latest and README bootstrap pins name
+  `v1.5.0`. A real bootstrap from the public tag verified the recorded commit and
+  both active ecosystem lifecycle protocols; consumer payload validation passed 12/12.
+  The published guide matches the tag source. The operator declared GA under the
+  recorded `H-GA` decision; its historical evidence exceptions remain unchanged.
+  Completed phase-014 tag-absence assertions remain assessment-time evidence.
+  NIP-0003 remains queued under `H-NIP`; its historical version expectations need
+  revision before acceptance after this release. No next phase is activated.
+- **Prior released tag: v1.4.0 (MINOR) — RELEASED 2026-10-08 at `9edd5d0` (PR #63).**
+  After PR #63 merged, the operator authorized the tag act with the verbatim words
+  "merged — authorized to tag v1.4.0"
+  (recorded in `.agent/run_state.json` before the act per NDEBT-018). Under that
+  authorization the Orchestrator pushed the annotated tag `v1.4.0` (tag object `bb32064`,
+  tagged 2026-10-08T10:26:01Z) at the reviewed merge commit; the pipeline never
+  self-tags. `release.yml` run 37763448754 succeeded — the blocking tag-mode close-out
+  passed — and published
+  [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.4.0)
+  'Nizam v1.4.0 — Simplification Review & GA Gate protocols, draft (MINOR)' from the
+  `[1.4.0]` CHANGELOG section at 2026-10-08T10:26:22Z. It packages the proposal-grade
+  `ecosystem/06_simplification_review.md` and `ecosystem/08_ga_gate.md` (both
+  `status: draft`, not yet normative; activation awaits phase-014 feature 099 under
+  `H-PHASE-014`). The README quick-start replayed at `v1.4.0` installed framework
+  version 1.4.0 (`.agent/evidence/release-v1.4.0-tag/06-consumer-quickstart.txt`).
+- **Prior released tag: v1.3.0 (MINOR) — RELEASED 2026-09-30 at `2e122256` (PR #60).**
+  The operator-authorized annotated tag `v1.3.0` (H-FRAMEWORK-RELEASE — the tag is the
+  operator's act alone; the pipeline never self-tags) points at the reviewed merge
+  commit of PR #60 (tagged 2026-09-30T10:12:19Z); `release.yml` run 36700976611
+  succeeded — the blocking tag-mode close-out passed — and published
+  [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.3.0)
+  'Nizam v1.3.0 — Review-Gate Flake Management (MINOR)' from the `[1.3.0]` CHANGELOG
+  section at 2026-09-30T10:12:30Z, packaging
+  `methodology/09_review_gate_flake_management.md` plus its registration. Preceded by
+  **v1.2.1 (PATCH) — tagged 2026-09-19 at `250fdd9` (PR #59)**, the anomaly recorded
+  honestly below, and **v1.2.0 (MINOR) — released 2026-09-17 at `7441ffa` (PR #58, run
+  35232527341)**.
+- **Earlier released tag: v1.2.1 (PATCH) — tagged 2026-09-19; the recorded anomaly.** Its
+  `release.yml` run 35456401143 FAILED the blocking tag-mode close-out
+  (`FAIL tag v1.2.1 matches NIZAM.json framework.version at tag (1.2.0)` — no
+  `[1.2.1]` CHANGELOG section was cut; anchors stayed at `1.2.0`); the GitHub Release
+  page exists (created 2026-09-19T16:54:06Z). Preceded by v1.2.0 (MINOR, 2026-09-17,
+  run 35232527341). **Earlier released tags: v1.1.0 (MINOR) — released 2026-08-19.**
+  The operator executed
+  `H-FRAMEWORK-RELEASE` after PR #55 merged: the annotated tag `v1.1.0` points at reviewed
+  merge commit `a2c15d2`, and `release.yml` run 32282540074 published
+  [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.1.0)
+  from the `[1.1.0]` CHANGELOG section. Phase 013 (Definition of Done) delivered six
+  purely additive, new-optional features — nothing that validated under v1.0.0 was
+  invalidated.
+- Earlier released tag: v1.0.0 (MAJOR) — released 2026-08-15 at merge commit `9453b3c`
+  (PR #53); `release.yml` run 31903527120 published
+  [the GitHub Release](https://github.com/niq-cnr/nizam-framework/releases/tag/v1.0.0)
+  from the `[1.0.0]` CHANGELOG section. The clean-break release repaired every issue-52
+  finding; affected consumers must follow `docs/migration-v1.0.0.md` and obtain their
+  own `H-CONSUMER-UPGRADE` decision before adoption. **`NDEBT-036` resolved.** v0.9.0
+  (released 2026-07-22 at merge commit `5b19b85`, PR #50) is the preceding release.
+- Open debt (current, at DEBT.md v0.56.0): two rows remain Open, both Low —
+  `NDEBT-040` (SHA-anchored run_state byte-guards) and `NDEBT-034` (per-member clone
+  cost; its pilot-100 deferral trigger is extinct after amendment A3 — closure
+  proposed to the operator at the phase close). This maintenance has **Resolved**
+  `NDEBT-047` (C13 owned cleanup), `NDEBT-046` (sandbox-test discrimination) and
+  `NDEBT-045` (payload help), with actual candidate-bound CI/QA/evidence proof. Phase 014 has
+  **Resolved** `NDEBT-044` (index and documentation drift bundle; concern (e) rolled by feature
+  102's phase-close refresh), `NDEBT-043`,
+  `NDEBT-041` and `NDEBT-042` (features 103, 104, 105).
+  `NDEBT-036` is Resolved by Phase 012 and the v1.0.0 release.
+  `NDEBT-029` (audit/compare not in a released tag) is **Resolved** by the
+  v0.9.0 release. The 0–n programme's scope rows are all **Resolved**: `NDEBT-027`/`NDEBT-028`
+  (consumer-readiness, phase 008), `NDEBT-032`/`NDEBT-033` (brownfield + bootstrap SHA pin,
+  phase 008), `NDEBT-030` (the 0-case, phase 009), `NDEBT-031` (the n-case, phase 010), and
+  `NDEBT-035` (the Stage-4 coordination protocols, phase 011). Phase 006 resolved the entire
+  enforcement-closure backlog it inherited
+  (NDEBT-004, -005, -007 through -024; NDEBT-001/002/003/006/025 were already Resolved). See
+  `docs/planning/DEBT.md`.
+
+## Track 1 — Release Operations Ledger (all listed actions executed)
+
+These are completed human-gated release operations retained as an audit trail. No
+item below is currently outstanding; a future release will open a fresh recurring
+`H-FRAMEWORK-RELEASE` decision.
+
+1. **Cut v0.6.0 — EXECUTED 2026-07-15.** The annotated tag `v0.6.0` was pushed at
+   commit 955c1d7 per `methodology/06_release_train.md` (MINOR: additive, no breaking
+   runtime change, `bootstrap.sh` unmodified). Residual: **publish the v0.6.0 GitHub
+   Release page — EXECUTED 2026-07-15** (the page exists, published 05:53 UTC;
+   every tag v0.1.0–v0.6.0 now has a published Release page).
+2. **Publish the user guide to GitHub Pages — EXECUTED 2026-07-19.** Outstanding
+   since phase 003, now closed: the operator performed the one-time Pages enable
+   (Source: GitHub Actions) and the first `.github/workflows/pages.yml` deploy
+   succeeded (run attempt 2, 2026-07-19 00:23 UTC). The guide is live at
+   https://niq-cnr.github.io/nizam-framework/ — verified serving the v0.7.0
+   content including the ecosystem module reference — and republishes
+   automatically on every merge to `main` touching `docs/guide/`.
+3. **Fix the v0.7.0 GitHub Release page title — EXECUTED 2026-07-18.** The title
+   now reads `v0.7.0 — Ecosystem Engineering Cycle` (corrected by a branch-scoped
+   one-shot applying the fixed `release.yml` extraction logic; body untouched).
+   NDEBT-025 is Resolved: the workflow now derives the title from the genuine tag
+   object's real type and fails loudly on a remote/local type disagreement.
+4. **Publish v1.0.0 — EXECUTED 2026-08-15.** PR #53 merged at `9453b3c`; the
+   operator executed `H-FRAMEWORK-RELEASE` and pushed the annotated `v1.0.0` tag at
+   that reviewed commit. `release.yml` run 31903527120 succeeded and published the
+   dated `[1.0.0]` CHANGELOG section as GitHub Release 371135794. `NDEBT-036` is
+   Resolved and v1.0.0 is the latest released tag.
+
+## Track 2 — [SUPERSEDED as the phase-005 selection, 2026-07-17] Candidate Scope: Consumer Reality & Enforcement Closure
+
+> **Superseded 2026-07-17:** phase 005 was activated as the Ecosystem Engineering
+> Cycle (see the Plan of Record banner above) on the operator-accepted NIP-0001. The
+> enforcement-closure items below are NOT the phase-005 scope; they remain candidate
+> scope for a subsequent phase and are partly exercised as friction evidence by the
+> phase-005 framework self-dogfood (features 043-044). Retained verbatim as the
+> durable candidate-scope record.
+
+The highest-leverage next phase closes the gap between what the framework enforces on
+itself and what a real consumer experiences. Candidate features, sourced from the open
+debt register (IDs refer to `docs/planning/DEBT.md`):
+
+1. **Gate `tools/skill.json` content** (NDEBT-007): JSON-parse it, resolve every
+   capability `module` path and the `entry_point` in default and `--payload` modes,
+   with a negative fixture. This closes the enforcement hole that let a broken module
+   pointer ship from v0.4.0 to v0.5.3.
+2. **Resolve the injected-payload/methodology contradiction** (NDEBT-008, with
+   NDEBT-004): decide whether `methodology/` joins the injected payload or
+   pinned-checkout resolution becomes the stated contract for consumer installs, then
+   align `bootstrap.sh`, `standard/GIP.md`, `tools/interface.md`, the payload-mode
+   validator rules, and the e2e assertions with that single decision.
+3. **Wire the negative fixtures into CI** (NDEBT-009): a fixtures job asserting each
+   fixture fails its targeted check, so the validator's own checks cannot silently go
+   vacuous.
+4. **Define the Orchestrator role in the AGF** (NDEBT-010): the role is load-bearing
+   across capability profiles, permission classes, MCP policy, the release train, and
+   the framework's entire run history, yet undefined in the authoritative role
+   registry.
+5. **Recurrence guards for enumeration drift** (NDEBT-005): mechanize
+   enumeration-completeness and bare-cross-reference checks, ideally sourced from a
+   canonical index rather than hand-maintained lists.
+6. **Align the work-packet template with its schema** (NDEBT-011).
+7. **Fix the payload validator's CWD sensitivity** (NDEBT-012): anchor
+   `tools/validate.sh --payload` path resolution to the script/payload root so
+   `bash .nizam/tools/validate.sh --payload` from a consumer repository root behaves
+   identically to invocation from inside `.nizam/`. Sourced from the first real
+   external-consumer bug report (issue #18) — the exact consumer-reality evidence
+   this phase exists to generate.
+
+## Track 3 — Strategic Decision: Mechanize or Descope the Constitutional Layer
+
+> **RESOLVED 2026-07-20 by phase-006 feature 058 (gate H-CONSTITUTIONAL).** The operator's per-document
+> decision, authorized verbatim and recorded in `.agent/run_state.json`: **mechanize two** surfaces —
+> `standard/provenance_policy.md`'s SHA-pinned-Actions rule (`tools/validate.sh` check C14) and
+> `standard/capability_profiles.md`'s five-profile-to-five-role correspondence (check C15) — and **mark the
+> remaining seven consumer-aspirational** (`standard/ci_gates.md`, `methodology/05_eval_and_trace.md`,
+> `methodology/07_eval_gated_promotion.md`, `standard/mcp_policy.md`, `standard/permission_classes.md`,
+> `standard/failure_modes.md`, `standard/cross_repo_governance.md`), with `docs/guide/index.html` refreshed to
+> reflect the outcome. Each document now carries its decided enforcement state in frontmatter and a body
+> banner. The problem statement below is retained for provenance.
+
+The v0.4.0 NMF hybrid shipped a constitutional policy surface (capability profiles,
+the MERGE_READY CI-gate formula, eval-and-trace, eval-gated promotion, MCP policy,
+failure modes, provenance, permission classes, cross-repo governance) that is
+documentation-only: none of it is enforced by this repository's CI, none of it is
+exercised by a consumer, and it entered the repository outside the framework's own
+planning pipeline (recorded honestly in
+`docs/architecture/ADR-003-vibe-coding-manifesto-hybrid.md`).
+
+The next planning cycle MUST resolve, per constitutional document, one of:
+
+- **Mechanize** — give it an enforcement or verification surface in this repository
+  (the way NDS Section 7 got `tools/validate.sh`), or a conformance checklist a
+  consumer can actually run; or
+- **Descope explicitly** — mark it consumer-aspirational in its own frontmatter/body
+  so the framework's first-contact surfaces stop implying enforcement that does not
+  exist.
+
+Either resolution also requires refreshing `docs/guide/index.html`, which still
+narrates the phase-003 world and does not mention the constitutional layer at all.
+
+## Track 4 — First External Consumer Pilot — **EXERCISED (scratch consumer) 2026-07-21**
+
+All bootstrap evidence to date is self-referential: the e2e harness bootstraps the
+framework into a scratch copy of itself. Before the constitutional layer grows
+further, bootstrap a real second repository against a released tag, run
+`tools/validate.sh --payload` in it, and feed every friction point back as debt.
+This directly tests the NDEBT-004 and NDEBT-008 concerns in the environment they
+actually describe, and produces the first non-self-referential adoption evidence.
+
+**Exercised in phase 007 (feature 063) against a scratch/throwaway consumer** — a fresh
+`git init` repo with genuinely foreign content (`src/calc.py` + `README`), bootstrapped
+from the released `v0.8.0` tag (the first time the ecosystem tools ran against non-self
+content). Adoption held: bootstrap clone→inject→verify PASS and `tools/validate.sh
+--payload` green (11/11) inside the consumer. The core loop (Preflight → Baseline →
+Audit → Compare) then surfaced real friction, recorded as `NDEBT-027`…`NDEBT-032`
+(evidence `.agent/evidence/pilot-063/`) and captured as `ADR-004` + `NIP-0002`. **Still
+open:** a **real, non-scratch consumer pilot** — a scratch repo exercises loop
+*mechanics*, not a real project's engineering maturity, so the production-proven adoption
+criterion carries forward to a future real-repo pilot (phase 008 candidate scope above).
+
+## Sequencing Recommendation
+
+Track 1 is immediate (minutes of human effort). Track 2 was superseded as the phase-005 selection by NIP-0001 (see the
+supersession note above) and remains candidate scope for a subsequent phase. Track 3's decision should be taken
+during phase 005 planning — its outcome determines whether a phase 006 is an
+enforcement phase or a documentation-truth phase. Track 4 can run in parallel with
+phase 005 and should complete before any phase that expands cross-repo or
+constitutional scope.
+
+## Dogfood Audit + Delta (2026-07-17) -- Phase 005 Feature 044
+
+Audit `audit-2026-07-17-cba6422` compares baseline `dogfood-2026-07-17-28c8253` (revision `e73cd04bad78c696c815bf253fb627a93f20c9c0`) against baseline `dogfood-2026-07-17-6d7a47b` (revision `cba6422c01ee024cd3c597adaed977590f6373ef`).
+
+- new: 2 (F-audit044-ndebt-017, F-audit044-ndebt-018)
+- resolved: 0 (NDEBT-002 previously resolved (pre-baseline-1), not an in-window transition)
+- reopened: 0
+- stale: 1 (F-audit044-ndebt-016)
+
+NDEBT-015 remains the highest-value next self-compliance candidate, corroborating Track 2 item 1's existing NDEBT-007 pairing.
