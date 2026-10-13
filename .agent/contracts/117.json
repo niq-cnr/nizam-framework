@@ -7,7 +7,7 @@
   "base_revision": "79af0276408ba03e80c709af127133e2b55e7bea",
   "scope_base_revision": "79af0276408ba03e80c709af127133e2b55e7bea",
   "measurement_base_revision": "dddfd4f60e9d64109e271a48181fe281d4603666",
-  "contract_attempt": 1,
+  "contract_attempt": 2,
   "scope": {
     "files_create": [
       {
@@ -37,6 +37,10 @@
       {
         "path": ".agent/qa/117.json",
         "purpose": "Genuinelyfresh independent twelve-checkQA plus extra own adversarialspot; real command/exit/revision evidence."
+      },
+      {
+        "path": ".agent/validator/117-mode-a-rev1.json",
+        "purpose": "Renewed independent Mode A for revision 1; original rejected 117-mode-a.json remains byte/mode exact."
       }
     ],
     "files_modify": [
@@ -66,7 +70,7 @@
       },
       {
         "path": ".agent/contracts/117.json",
-        "purpose": "Rootstatus/approvalmetadata only after actual dualgates; completeonlyafterQA/capture; obligations/grants unchanged."
+        "purpose": "Root status and declared approval metadata only after actual dual gates; complete only after QA/capture. Proposal obligations/grants and current revision remain unchanged."
       },
       {
         "path": ".agent/feature_list_017.json",
@@ -285,7 +289,7 @@
     }
   ],
   "evidence_dir": ".agent/evidence/117/",
-  "evidence_convention": "New immutable actualCOMMAND/EXIT/STDOUT/STDERR/SourceC REVISION andfourcoreSHA plusallsealeddependencySHA externalfiles. Twoindependentprecodegates then independentlyfrozen/replayedcase-specifictestbundle beforeSource; ModeB→freshQAall12+ownspot→distinctRootcapture→canonicalcomplete. No rawproofinline/nooutputselfhash.",
+  "evidence_convention": "New immutable actualCOMMAND/EXIT/STDOUT/STDERR/SourceC REVISION andfourcoreSHA plusallsealeddependencySHA externalfiles. Twoindependentprecodegates then independentlyfrozen/replayedcase-specifictestbundle beforeSource; ModeB\u2192freshQAall12+ownspot\u2192distinctRootcapture\u2192canonicalcomplete. No rawproofinline/nooutputselfhash.",
   "api_interface_ref": ".agent/evidence/117/api-interface.json",
   "acceptance_ownership": "Independent testauthor/developer/independentbundle reviewer pairwisedistinctagents/sessions. Freezeobligation snapshot/API/tests/currentguard/control/caseinput/setup+positive+semanticred actualproofs atimmutableGitbaseline, exactninefieldreview outputseparate. AfterSource currentcodeidentity separatefromprecodebaseline. Old116seal becomesstale ifsharedtestextends; point-in-timeoldproof unchanged, notcurrentinputauthority.",
   "canonical_matrix": [
@@ -297,7 +301,28 @@
   "approvals": {
     "validator_mode_a": false,
     "evaluator_contract_review": false,
-    "revisions": 0
+    "revisions": 1,
+    "gate_refs": null
   },
-  "dod_ref": ".nizam/standard/definition_of_done.md"
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "gate_reference_policy": {
+    "revision": 1,
+    "owner": "Orchestrator only; Generator leaves gate_refs null and both approval flags false until independently approved.",
+    "approved_shape": "approvals.gate_refs is a closed object with exact keys proposal_revision, proposal_sha256, api_sha256, validator_mode_a, evaluator_contract_review. proposal_revision is an existing immutable 40-lowercase-hex Git commit; proposal_sha256/api_sha256 are 64-lowercase-hex SHA256 of actual contract/API Git blobs at that commit. Each role reference is closed {path,sha256}, sha256 binds actual gate bytes. Null is allowed only while proposed; an approved contract requires the complete object.",
+    "validator_mode_a": {
+      "path": ".agent/validator/117-mode-a-rev1.json",
+      "review": "contract-mode-a"
+    },
+    "evaluator_contract_review": {
+      "path": ".agent/qa/117-contract-review.json",
+      "review": "contract-testability"
+    },
+    "gate_producer": "Both independent current-revision gates must emit review as declared for their role, feature string117, revision_reviewed integer1 (never bool), proposal_sha256 and api_sha256 matching immutable proposal inputs, actor nonempty string, three actual empty arrays issues/missing_acceptance_coverage/unsupported_claims, and final_verdict.approved exact true. Additional independent evidence/schema metadata is allowed, never substitutes for required fields. Gate outputs do not hash themselves; Root computes reference hashes after both outputs exist.",
+    "selection": "Select exactly the paths declared for the current integer approvals.revisions=gate_reference_policy.revision=1. Never infer filename suffixes, choose newest timestamps, fall back to historical 117-mode-a.json or gates for116, or accept mixed proposal/API/revision inputs. Safe canonical relative paths, regular files and no symlink ancestors required.",
+    "obligation_binding": "Read actual immutable proposal contract/API blobs at proposal_revision and verify hashes. Compare approved current contract to that proposed contract with only these explicit Root transitions allowed: status proposed->approved, approvals.validator_mode_a false->true, approvals.evaluator_contract_review false->true, approvals.gate_refs null->declared complete record, and optional approvals.approved_at nonempty string. Every other parsed key/value and type, including approvals.revisions, obligations, grants and policy, remains exact; no entire-ancestor removal. Current API bytes match the sealed proposal API. No dependency on current HEAD equalling the proposal commit."
+  },
+  "entry_lifecycle": "The actual current-project entry command is an active117 preflight: run before Source readiness/ModeB/fresh QA and capture against approved117/current_feature117/active_contract_id117/in_progress. It intentionally rejects after117 completion or during118; postcapture scope/compliance does not replay this active-entry command. Four entry fixture cases remain executable via independently approved local active117 snapshots in later current20 regression suites; historical QA is never relabeled.",
+  "amendments": [
+    "2026-10-13: Revision1 resolves the actual ModeA HIGH finding by declaring revision-safe Root-owned dual-gate references and aligned trusted producer/consumer shapes. Original rejected proposal/API and gate are preserved. Active117 lifecycle and finite local-fixture production are explicit; same scope, twelve commands, four cases and1050 budget."
+  ]
 }
