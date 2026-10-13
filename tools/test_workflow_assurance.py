@@ -457,10 +457,20 @@ def main():
     group.add_argument('--scope-116', action='store_true')
     group.add_argument('--scope-controls-116', action='store_true')
     group.add_argument('--pre-entry-cases', action='store_true')
+    group.add_argument('--check', choices=('foundation-ready',))
+    group.add_argument('--scope-118', action='store_true')
+    group.add_argument('--scope-controls-118', action='store_true')
     group.add_argument('--scope-117', action='store_true')
     group.add_argument('--scope-controls-117', action='store_true')
     parser.add_argument('--base')
     args = parser.parse_args()
+    if args.scope_118 or args.scope_controls_118:
+        if not args.base: parser.error('scope commands require --base')
+        helper = load_api(ROOT / '.agent/evidence/118/scope-guard.py')
+        (helper.scope_controls if args.scope_controls_118 else helper.scope)(args.base); return
+    if args.check:
+        if args.base: parser.error('--base requires a scope command')
+        load_api(ROOT / '.agent/evidence/118/foundation-fixtures.py').run_foundation(load_api()); return
     if args.scope_117 or args.scope_controls_117:
         if not args.base: parser.error('scope commands require --base')
         helper = load_api(ROOT / '.agent/evidence/117/scope-guard.py')
