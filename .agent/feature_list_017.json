@@ -1,20 +1,28 @@
 {
   "phase": "017-workflow-assurance-foundation",
   "spec_version": "0.1.0",
-  "phase_status": "pending",
+  "phase_status": "in_progress",
   "original_estimate_lines": 5400,
   "ceiling_130pct": 7020,
-  "budget_categories": {"product": 1050, "tests": 1300, "process": 3050},
+  "budget_categories": {
+    "product": 1050,
+    "tests": 1300,
+    "process": 3050
+  },
   "features": [
     {
       "id": "115",
       "name": "Assessed identity and invalidation",
       "description": "Bind source commit/tree, assessed paths and source/contract/test/tool/environment digests; unknown dependencies invalidate; compare parsed owned fields and exact prior history prefix.",
-      "status": "pending",
+      "status": "in_progress",
       "passes": false,
       "dependencies": [],
       "estimated_lines": 2300,
-      "budget_categories": {"product": 500, "tests": 600, "process": 1200},
+      "budget_categories": {
+        "product": 500,
+        "tests": 600,
+        "process": 1200
+      },
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case identity-positive",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case invalidate-source",
@@ -28,7 +36,11 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-history-edit",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case allow-owned-append"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"]
+      "future_output_targets": [
+        "tools/workflow_assurance.py",
+        "tools/test_workflow_assurance.py"
+      ],
+      "contract_ref": ".agent/contracts/115.json"
     },
     {
       "id": "116",
@@ -36,9 +48,15 @@
       "description": "Immutable bundle identity and independent author/developer/reviewer sessions; actual intended baseline failure before repair and renewed review after bundle change.",
       "status": "pending",
       "passes": false,
-      "dependencies": ["115"],
+      "dependencies": [
+        "115"
+      ],
       "estimated_lines": 1400,
-      "budget_categories": {"product": 250, "tests": 350, "process": 800},
+      "budget_categories": {
+        "product": 250,
+        "tests": 350,
+        "process": 800
+      },
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-self-review",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-seal-change",
@@ -46,7 +64,10 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-setup-as-red",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case independent-handoff"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"]
+      "future_output_targets": [
+        "tools/workflow_assurance.py",
+        "tools/test_workflow_assurance.py"
+      ]
     },
     {
       "id": "117",
@@ -54,16 +75,25 @@
       "description": "Bind actual local repository authorization, installed pin/index/skill, approved contract and existing AGF role/profile permissions; deny foreign targets and unauthorized owned-field writes.",
       "status": "pending",
       "passes": false,
-      "dependencies": ["115"],
+      "dependencies": [
+        "115"
+      ],
       "estimated_lines": 1050,
-      "budget_categories": {"product": 200, "tests": 250, "process": 600},
+      "budget_categories": {
+        "product": 200,
+        "tests": 250,
+        "process": 600
+      },
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case accepted-entry",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-foreign-repo",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-stale-pin",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-role-write"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"]
+      "future_output_targets": [
+        "tools/workflow_assurance.py",
+        "tools/test_workflow_assurance.py"
+      ]
     },
     {
       "id": "118",
@@ -71,22 +101,105 @@
       "description": "Candidate-bound independent QA/evidence and documentation truth; no full WA control or runtime-conformance claim.",
       "status": "pending",
       "passes": false,
-      "dependencies": ["116", "117"],
+      "dependencies": [
+        "116",
+        "117"
+      ],
       "estimated_lines": 650,
-      "budget_categories": {"product": 100, "tests": 100, "process": 450},
+      "budget_categories": {
+        "product": 100,
+        "tests": 100,
+        "process": 450
+      },
       "acceptance_tests": [
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready",
         "bash tools/validate.sh",
         "bash tools/validate.sh --payload"
       ],
-      "future_output_targets": ["docs/planning/phase_017.yaml", ".agent/evidence/118/"]
+      "future_output_targets": [
+        "docs/planning/phase_017.yaml",
+        ".agent/evidence/118/"
+      ]
     }
   ],
-  "future_interfaces": [{"path": "tools/test_workflow_assurance.py", "owner": "115"}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
+  "future_interfaces": [
+    {
+      "path": "tools/test_workflow_assurance.py",
+      "owner": "115"
+    },
+    {
+      "path": "tools/validate.sh",
+      "owner": "115",
+      "availability": "existing-reused"
+    }
+  ],
   "cross_phase_prerequisites": [],
-  "shared_file_lanes": [{"path": "tools/test_workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}, {"path": "tools/workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}],
-  "existing_inputs": ["Completed015 normative source110-114; existing014 CI/claim-map103-105; Open040/034; immutable installedv1.5.0."],
-  "activation_prerequisites": ["Future H-PHASE-017 approves this scope/budget and applicable external prerequisite receipts."],
+  "shared_file_lanes": [
+    {
+      "path": "tools/test_workflow_assurance.py",
+      "owners": [
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+      ],
+      "order": [
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+      ]
+    },
+    {
+      "path": "tools/workflow_assurance.py",
+      "owners": [
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+      ],
+      "order": [
+        "115",
+        "116",
+        "117",
+        "118",
+        "119",
+        "120",
+        "121",
+        "122",
+        "123",
+        "124",
+        "125"
+      ]
+    }
+  ],
+  "existing_inputs": [
+    "Completed015 normative source110-114; existing014 CI/claim-map103-105; Open040/034; immutable installedv1.5.0."
+  ],
+  "activation_prerequisites": [
+    "Future H-PHASE-017 approves this scope/budget and applicable external prerequisite receipts."
+  ],
   "acceptance_availability": "Future commands/interfaces only; no runtime/policy acceptance run or pass claimed by planning.",
   "dod_ref": ".nizam/standard/definition_of_done.md"
 }
