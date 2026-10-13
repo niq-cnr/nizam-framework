@@ -1,0 +1,96 @@
+{
+  "revision": "5b85a728bbd1d38747f022738e4d92cfde5d9df3",
+  "checkout_revision": "15134fc4664cdb9012bf70918494fd2a17a5001f",
+  "source_sha256": {
+    "tools/workflow_assurance.py": "402eea15a23556b708da6a8c812bdcaaf9833c7b43dc9390a5817ebe3cf312d8",
+    "tools/test_workflow_assurance.py": "32277f18b80f4e204b7102ed57238c2d681d5c4a33bf3c8731a62c688e29226f",
+    ".agent/evidence/116/api-interface.json": "0d9a6a7d6e32f38d525c8e3c0c437b85f9e1189d58050bf2d860590e00733df5",
+    ".agent/evidence/116/scope-guard.py": "9df4109b3aaa2c37b37a7b6c2c856bfda2cde6b43fda5387c94479ae54a2e90a"
+  },
+  "checks": [
+    {
+      "acceptance_test": "reject-self-review",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-self-review",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-01.txt",
+      "sha256": "9c4ac495b91417f14c0a94ec2b3352a6e8f478be3155fe8e3b060d72898172dd"
+    },
+    {
+      "acceptance_test": "reject-seal-change",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-seal-change",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-02.txt",
+      "sha256": "95b36697b2b201e5cddc783a68012270517a13578709a26f621f74d23963c666"
+    },
+    {
+      "acceptance_test": "reject-missing-red",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-red",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-03.txt",
+      "sha256": "66d45ad9afb21a41f7416041dd11a1090a973e28e2a95f0233e6316caaa225f3"
+    },
+    {
+      "acceptance_test": "reject-setup-as-red",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-setup-as-red",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-04.txt",
+      "sha256": "a368d488a13de7d033efa508ad0ef8afad976d025c732c20d56884bd18bffa1e"
+    },
+    {
+      "acceptance_test": "independent-handoff",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case independent-handoff",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-05.txt",
+      "sha256": "c197e929489f437b6a78539fa82882ff83a53e6cd3454fdd6e96b504dd55e560"
+    },
+    {
+      "acceptance_test": "All eleven existing115behavioral cases remain valid",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --base-cases",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-06.txt",
+      "sha256": "46a98d4875d4ca07e1c145676774f0337aaf28d9a0add0892fe4ca23c915af7a"
+    },
+    {
+      "acceptance_test": "Repository C1-C16/version-log compliance",
+      "command": "bash tools/validate.sh",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-07.txt",
+      "sha256": "2a1b3098028b6e0b8a0098f03f1141081e5cbab4069f91722fd982a2397e0468"
+    },
+    {
+      "acceptance_test": "Authored payload compliance, installedreleaseunchanged",
+      "command": "bash tools/validate.sh --payload",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-08.txt",
+      "sha256": "0f127eef6ff54b03b80fcc1d3784d8a8aca391ba46ba4dd930e8d64d0a622840"
+    },
+    {
+      "acceptance_test": "PR closeout, no release action",
+      "command": "python3 .github/scripts/release_closeout.py --mode pr",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-09.txt",
+      "sha256": "8a7a45b27ae71aa652c0a2dfe56bd36b2e24aaeeda524a7e1f228f427d0d9729"
+    },
+    {
+      "acceptance_test": "Installed239-file exactinventory/localself-governance",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-10.txt",
+      "sha256": "b89b1686adf1d9d68977dff280f4220035b265b3fce355960942e24315e90ccc"
+    },
+    {
+      "acceptance_test": "Newcurrent116scope/canonicaltuple and immutable115proofs/debts/budgets/futurephase preservation",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-116 --base 3d81ff2af002b118e3747551f740848a9ffb3cd9",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-11.txt",
+      "sha256": "61fc7b69a449b1b3e6c1a05877c623bccf613985f5352bfde4db73ac57665412"
+    },
+    {
+      "acceptance_test": "Exactfalsepassnegatives andlegitimatepre-source/in-progress/post116capturepositives",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-controls-116 --base 3d81ff2af002b118e3747551f740848a9ffb3cd9",
+      "exit": 0,
+      "evidence": ".agent/evidence/116/mode-b-attempt3-verify-12.txt",
+      "sha256": "2d5fb42afcbe23704b540431cf7bda0fc16ac8a7e6a12743b5f5aefc76dd05e2"
+    }
+  ]
+}
