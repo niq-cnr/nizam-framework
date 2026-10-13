@@ -2,11 +2,14 @@
 id: nizam-acceptance-bars
 title: "Comparator Acceptance Bars"
 description: "Defines comparator-based acceptance for quality-bearing deliverables: bar requirements (named, fetchable, comparable), the fresh-context blind critic loop, cost tiering, the bar library's pin-and-reverify discipline, and the circuit-breaker interface."
-version: "0.1.0"
-status: draft
+version: "0.1.1"
+status: active
 enforcement: consumer-aspirational
 authoritative_source: standard/acceptance_bars.md
 change_log:
+  - version: "0.1.1"
+    date: "2026-10-13"
+    summary: "Adopted into the payload (PR #92, merge commit 365ae2f): status draft -> active, proposal banner replaced with the adoption note, and the Definition of Done now cites this standard from its Gate-Done and Feature-Done layers."
   - version: "0.1.0"
     date: "2026-10-13"
     summary: "Initial proposal: comparator acceptance bars distilled from operational practice — stage and destroy blind critic loops, cost tiering, measurable halves, the bar library, and the breaker interface. Staged for framework review; frontmatter/status finalized per NDS at merge."
@@ -14,10 +17,12 @@ change_log:
 
 # Comparator Acceptance Bars
 
-> **PROPOSAL — staged for framework PR review.** This document is not yet part of the
-> payload. Enforcement posture proposed: **consumer-aspirational** (mirroring
-> `standard/failure_modes.md` and `methodology/05_eval_and_trace.md`); no validator
-> check is claimed in this version.
+> **ADOPTED.** Merged into the payload by PR #92 (merge commit `365ae2f`) and activated
+> at adoption — status `draft` -> `active`, recorded in the change log below. The
+> Definition of Done (`standard/definition_of_done.md`) cites this standard at its
+> Gate-Done and Feature-Done layers. Enforcement posture: **consumer-aspirational**
+> (mirroring `standard/failure_modes.md` and `methodology/05_eval_and_trace.md`);
+> no validator check is claimed in this version.
 
 ## 1. Purpose and Scope
 
