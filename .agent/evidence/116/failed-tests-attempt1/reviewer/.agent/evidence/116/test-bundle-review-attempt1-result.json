@@ -1,0 +1,44 @@
+{
+  "feature": "116",
+  "attempt": 1,
+  "actor": "/root/wa_validator",
+  "reviewed_revision": "9a7f8d0948d441c1f42265cf0a3773393d951a4f",
+  "baseline": {
+    "commit": "430d4df354a5c3a689ea0258fee87a245f8b0b14",
+    "tree": "a4fd5940e7cf284c92787a864e63b4a586ae14f3"
+  },
+  "input_sha256": {
+    ".agent/contracts/116.json": "533eac0c5f7fc8f012f5624d9a56bd6e46539aac75a8d8bacba3157262d9def7",
+    ".agent/evidence/116/api-interface.json": "0d9a6a7d6e32f38d525c8e3c0c437b85f9e1189d58050bf2d860590e00733df5",
+    ".agent/evidence/116/acceptance-bundle.json": "ddfc3bd05439d4178f1901d8ee09ffad6de6783a9b7521fe95b5bb5579da31db",
+    ".agent/evidence/116/source-obligations.json": "9b8b1a7d51234a96425a5e5e1bebc37d2b328c952a9cdca01657491dd500eea7",
+    ".agent/evidence/116/baseline-driver.py": "0f35b49ddb0a7fe4f1879f0d5f8477f2d0c5e3d785e908e381fda55d74520852",
+    ".agent/evidence/116/bundle-fixtures.py": "eb87742bf4aeedcb9d2d91563ddf07d298381fc7198b80fa17831dfe45cd33d1",
+    ".agent/evidence/116/naive-policy.py": "7fd1f85a68b2e9a94034fe180c7cf2eebc66dd69104d8eaadf180d62b8f28e8e",
+    ".agent/evidence/116/scope-guard.py": "538b1f4c4a22ac9e4ad285eaab2f3eed53fe49c28a1d5fd555b987f9eee12712",
+    "tools/test_workflow_assurance.py": "32277f18b80f4e204b7102ed57238c2d681d5c4a33bf3c8731a62c688e29226f"
+  },
+  "seal_sha256": "c7c952b3c58efb679c0e3c6ff3e38f11339a2955c68b8026b63cbdd12269de2e",
+  "gate_ref": ".agent/validator/116-test-bundle-review.json",
+  "gate_sha256": "efe173c982ac662f17d8f5861cf485d34aefa7c06e318ab792d32400b2085857",
+  "evidence_files": [
+    ".agent/evidence/116/test-bundle-review-attempt1-ownspot.txt"
+  ],
+  "evidence_sha256": {
+    ".agent/evidence/116/test-bundle-review-attempt1-ownspot.txt": "7207431f2b98af77b7db413bc613dcc7cf70891f66db30b590b6292376506fd5"
+  },
+  "actual_ownspot_exit": 1,
+  "observed_scope_exit": 0,
+  "expected_scope_result": "reject historical type edit",
+  "performed": [
+    "Read current obligations/API, callable naive fixture, driver and five distinct invariant mutations",
+    "Confirmed actual seal, input Git/current bytes, proof/input hashes, baseline commit/tree, snapshot matches actual approved obligations/API and observed runtime",
+    "Actual clean scratchscope positive, historical bool-to-int mutation falsepass, restored valid positive"
+  ],
+  "not_run_after_blocker": [
+    "Fifteen original per-case setup/positive/red commands",
+    "Currentscope-controls full replay"
+  ],
+  "outcome": "rejected; stop before developer Source; frozen bytes remain unchanged",
+  "reviewed_at": "2026-10-13T11:08:29.777085+00:00"
+}

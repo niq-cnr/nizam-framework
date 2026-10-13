@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "116",
   "status": "in_progress",
-  "updated_at": "2026-10-13T10:43:02.348400+00:00",
+  "updated_at": "2026-10-13T11:13:15.569586+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -653,6 +653,14 @@
     },
     "116-contract-review": {
       "attempts": 2,
+      "limit": 3
+    },
+    "116-tests": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "116-test-bundle-review": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4259,6 +4267,18 @@
         ".agent/validator/116-mode-a-rev1.json",
         ".agent/qa/116-contract-review-rev1.json"
       ]
+    },
+    {
+      "at": "2026-10-13T11:03:19.653546+00:00",
+      "event": "116-tests-attempt1-readiness-passed",
+      "detail": "Parsed actual23author checks/all5setup0+positive0+behavioralred1, existing11/scope/controls0 andunknown/missingbase2. Frozenbaseline430d/testhelpers/obligations/API/proofs/seal verified; no selfapprovedreview, Source116stillunwritten. Independentreview pending beforetestpromotion.",
+      "evidence": ".agent/evidence/116/failed-tests-attempt1/author/.agent/evidence/116/tests-attempt1-author-result.json"
+    },
+    {
+      "at": "2026-10-13T11:13:15.569586+00:00",
+      "event": "116-test-bundle-review-attempt1-rejected",
+      "detail": "Independent actual scratch positive / boolTrue-to-int1 historical edit falsepass / restored positive proves typed-history defect. Exact authored bundle, proofs, source state, nine-field rejected verdict and Git baseline quarantined; no116tests or business Source promoted. Fresh type/interface author2 required before renewed independent review.",
+      "evidence": ".agent/evidence/116/failed-tests-attempt1/reviewer/.agent/validator/116-test-bundle-review.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4732,7 +4752,7 @@
       }
     ]
   },
-  "last_action": "116 reviseddualprecodeapproved; independentEvaluator testauthor then distinctactualbundle review required beforeGeneratorSource.",
+  "last_action": "116 actual bundle review1 rejected typed-history falsepass; independent author2 next; business Source unwritten.",
   "completed_contract_ids": [
     "099",
     "103",
