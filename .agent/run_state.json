@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
-  "status": "in_progress",
-  "updated_at": "2026-10-13T21:01:16.242953+00:00",
+  "status": "blocked",
+  "updated_at": "2026-10-13T21:02:33.213548+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -813,6 +813,10 @@
       "limit": 3
     },
     "118-source": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-halt-coordination": {
       "attempts": 1,
       "limit": 3
     }
@@ -4750,6 +4754,12 @@
         ".agent/validator/118-mode-a-rev2.json",
         ".agent/qa/118-contract-review-rev2.json"
       ]
+    },
+    {
+      "at": "2026-10-13T21:02:33.213548+00:00",
+      "event": "118-circuit-breaker-halt",
+      "detail": "Canonical phase017/step118 BLOCKED first, then derived run/list/manifest/DAG. ThirdModeA rejection of exact current approved contract mapping versus required complete status. Preserve115116117 captured, all failedSource1/B1/precode evidence and exhaustedcounters. No Source2/fourth originalcontract/extra budget/release/installed change. Corrected lifecycle projection plus fixture repair requires explicit operator recovery approval.",
+      "evidence": ".agent/evidence/118/circuit-breaker-halt.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5020,11 +5030,25 @@
         "range": "dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE",
         "evidence": ".agent/evidence/117/blocked-scope-measurement.txt",
         "note": "Incomplete117 pre-code reader startup exhausted3/3, noSource/testimplementation. Whole117 startscaptured116 including selection/coordination once; no completedrollingbaseline append orrebaseline. Completed3009+inflight394=3403below original7020; haltsolelymandatoryreviewcircuit. Existing115/116/015 measuredrows/proofs preserved."
+      },
+      {
+        "id": "118",
+        "status": "blocked",
+        "actual": 559,
+        "product_lines": 10,
+        "process_overhead_lines": 549,
+        "evidence_lines": 32353,
+        "excluded_lines": 151,
+        "range": "beeca3986fc0e02becf65674cbbc8b8f67bf3864..WORKTREE",
+        "evidence": ".agent/evidence/118/blocked-scope-measurement.txt",
+        "note": "Incomplete118; failedSource1 is quarantined, no Source2 or completion. Whole118 includes selection/proposals/reviews and mandatoryhalt once; prior measured4012 rows unchanged, no extra allowance or rebaseline. Halt is exhaustedcontract/ModeA3, not scope ceiling."
       }
     ],
     "last_measured_at": "2026-10-13T19:43:17.960890+00:00"
   },
-  "blocked_features": [],
+  "blocked_features": [
+    "118"
+  ],
   "phase_007_scope_budget_final": {
     "original_estimate_lines": 870,
     "total_lines_changed": 240,
@@ -5205,7 +5229,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "118",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5277,7 +5301,7 @@
       }
     ]
   },
-  "last_action": "Third feature118 ModeA rejects exact-contract-map/terminal-status conflict; gate evidence preserved; canonical halt follows immediately.",
+  "last_action": "Feature118 third contract/ModeA attempt rejected lifecycle mapping conflict; canonicalBLOCKED, evidence quarantined and exact failed roots removed; await corrected recovery authority.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -5355,7 +5379,7 @@
     ],
     "note": "Phase 014 final ledger. 8705 of 8600 (101.2%): 105 over the operator-confirmed re-baseline estimate (spec 1.1.4, 'option 1 confirmed.'), comfortably within the 11180 authorized 130% ceiling. Completed features 099 + 103-109 + 102 (9 features); cancelled 100/101 (A3) consumed no budget. Historical-basis estimates for 099/103 (920/280) are mixed-basis and disclosed per their ledger entries. Captures: measure-099-103.txt, measure-105.txt, measure-108.txt, measure-109.txt, measure-102.txt."
   },
-  "pending_operator_gate": null,
+  "pending_operator_gate": "H-CONTRACT-118-RECOVERY",
   "planning_task": {
     "id": "workflow-016-planning",
     "status": "complete",
