@@ -1,0 +1,86 @@
+[
+  {
+    "acceptance_test": "reject-self-review",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-self-review",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-01.txt",
+    "sha256": "0fea3c5f84e07a2b6cf0d5f6a1bc78c348f9d14b807bae99159effb0f4b0a4f3"
+  },
+  {
+    "acceptance_test": "reject-seal-change",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-seal-change",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-02.txt",
+    "sha256": "6273b8e22119c057ce510ebe19599078513288e4d96ad20b2cd2d616c9728196"
+  },
+  {
+    "acceptance_test": "reject-missing-red",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-red",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-03.txt",
+    "sha256": "78b67f11cd4f3ab73956f3aa9789d73bb9f10fbf6a5fe12fd2667f4534593135"
+  },
+  {
+    "acceptance_test": "reject-setup-as-red",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-setup-as-red",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-04.txt",
+    "sha256": "ba7d8485615829a210f77995e10010145862e2442262538015a26f6022ed79d2"
+  },
+  {
+    "acceptance_test": "independent-handoff",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case independent-handoff",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-05.txt",
+    "sha256": "784bfd29897969164472a0ffa5dd516ac8c1c5b429c0ae95b31619dc195a835b"
+  },
+  {
+    "acceptance_test": "All eleven existing115behavioral cases remain valid",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --base-cases",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-06.txt",
+    "sha256": "ae7c4482ef326bab4494b32a8a85cad4d54c80a9559a50753968e0cfbe9cd3fc"
+  },
+  {
+    "acceptance_test": "Repository C1-C16/version-log compliance",
+    "command": "bash tools/validate.sh",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-07.txt",
+    "sha256": "623c7651af067c4149b46d7776106f16b2ae8b8b188913b21a54d051323274eb"
+  },
+  {
+    "acceptance_test": "Authored payload compliance, installedreleaseunchanged",
+    "command": "bash tools/validate.sh --payload",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-08.txt",
+    "sha256": "6da19ef32e79e0188f25321c366deb1bc99eed4f107fd537678fb3fa8508691a"
+  },
+  {
+    "acceptance_test": "PR closeout, no release action",
+    "command": "python3 .github/scripts/release_closeout.py --mode pr",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-09.txt",
+    "sha256": "bdb70b30b1a825a886c6ff83afb65ba283b13e8267d69d2469e4ef3b5550d0a4"
+  },
+  {
+    "acceptance_test": "Installed239-file exactinventory/localself-governance",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-10.txt",
+    "sha256": "8203777dc98a6b5678aa50438ca2370a437cc58db917bafd006e7c5231a2360a"
+  },
+  {
+    "acceptance_test": "Newcurrent116scope/canonicaltuple and immutable115proofs/debts/budgets/futurephase preservation",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-116 --base 3d81ff2af002b118e3747551f740848a9ffb3cd9",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-11.txt",
+    "sha256": "bdf6ad2387275b2f8545098922316a55642b9561c9aeaaae76925cac3ece1963"
+  },
+  {
+    "acceptance_test": "Exactfalsepassnegatives andlegitimatepre-source/in-progress/post116capturepositives",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-controls-116 --base 3d81ff2af002b118e3747551f740848a9ffb3cd9",
+    "exit_code": 0,
+    "evidence": ".agent/evidence/116/qa-attempt1-check-12.txt",
+    "sha256": "72d6847430867d3941b164f772a76db5ce756c541c8740b4e4b1cefd9fc2e77d"
+  }
+]
