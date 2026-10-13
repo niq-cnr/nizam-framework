@@ -321,22 +321,145 @@ def run_case(name, api):
         else: os.environ['NIZAM_WA_TEST_VALUE'] = saved
 
 
+BASE_CASES = CASES
+BUNDLE_CASES = ('reject-self-review', 'reject-seal-change', 'reject-missing-red',
+                'reject-setup-as-red', 'independent-handoff')
+CASES = BASE_CASES + BUNDLE_CASES
+
+
+BundleFixture = load_api(ROOT / '.agent/evidence/116/bundle-fixtures.py').BundleFixture
+
+
+def bundle_rejected(api, fixture, message):
+    try: api.verify_acceptance_bundle(fixture.root, fixture.bundle, fixture.review)
+    except api.AssuranceError as exc:
+        require(bool(str(exc)), message + ': meaningful diagnostic'); return
+    require(False, message + ': invalid policy accepted')
+
+
+def bundle_mutate(f, name):
+    if name == 'reject-self-review':
+        f.bundle['roles']['acceptance_reviewer'] = copy.deepcopy(f.bundle['roles']['test_author']); f.refresh()
+    elif name == 'reject-seal-change':
+        f.bundle['seal_sha256'] = '0' * 64
+    elif name == 'reject-missing-red':
+        del f.row(name)['red']; f.refresh()
+    elif name == 'reject-setup-as-red':
+        row = f.row(name); path = row['red']['path']
+        text = (f.root / path).read_text().replace('EXIT: 1', 'EXIT: 127') + 'ModuleNotFoundError: transport fixture\n'
+        f.write(path, text.encode()); row['red']['sha256'] = sha(text.encode()); f.refresh()
+    elif name == 'independent-handoff': f.transition()
+    else: require(False, 'unknown mutation')
+
+
+def bundle_isolated_negative(api, change, message):
+    with tempfile.TemporaryDirectory(prefix='nizam-bundle-negative-') as parent:
+        f = BundleFixture(parent); change(f); bundle_rejected(api, f, message)
+
+
+def run_bundle_case(name, api):
+    require(name in CASES, 'known116 case')
+    require(callable(getattr(api, 'verify_acceptance_bundle', None)), '116 API availability; never commissioning red')
+    with tempfile.TemporaryDirectory(prefix='nizam-bundle-') as parent:
+        f = BundleFixture(parent)
+        require(api.verify_acceptance_bundle(f.root, f.bundle, f.review) is True, name + ' valid baseline positive')
+        bundle_mutate(f, name)
+        if name == 'independent-handoff':
+            require(api.verify_acceptance_bundle(f.root, f.bundle, f.review) is True, 'independent-handoff immutable baseline survives later record-only HEAD')
+            bundle_cli_controls(api, f)
+        else: bundle_rejected(api, f, name)
+    if name == 'reject-self-review':
+        for field in ('agent_id', 'session_id'):
+            for role in ('developer', 'acceptance_reviewer'):
+                def overlap(f, field=field, role=role):
+                    f.bundle['roles'][role][field] = f.bundle['roles']['test_author'][field]; f.refresh()
+                bundle_isolated_negative(api, overlap, 'pairwise independent ' + field)
+        for change in (lambda f: f.review.update(actor='wrong-reviewer'),
+                       lambda f: f.review.update(reviewer_session_id='wrong-session'),
+                       lambda f: f.review.update(extra='forbidden'),
+                       lambda f: f.review['final_verdict'].update(approved=1),
+                       lambda f: f.review['issues'].append('blocked')):
+            bundle_isolated_negative(api, change, 'closed truthful independent review')
+    elif name == 'reject-seal-change':
+        for item in ('test', 'obligation', 'interface', 'baseline_control'):
+            def drift(f, item=item):
+                row = next(x for x in f.bundle['inputs'] if x['kind'] == item)
+                f.write(row['path'], (f.root / row['path']).read_bytes() + b'\n')
+            bundle_isolated_negative(api, drift, 'actual ' + item + ' Git/current byte drift')
+        def executable(f): (f.root / f.bundle['inputs'][0]['path']).chmod(0o755)
+        def environment_drift(f): f.bundle['environment']['runtime']['version'] = 'fabricated'; f.refresh()
+        def wrong_tree(f): f.bundle['baseline']['tree'] = '0' * 40; f.refresh()
+        def symlink(f):
+            p = f.root / f.bundle['inputs'][0]['path']; p.unlink(); p.symlink_to('record.json')
+        def wrong_blob(f):
+            f.bundle['inputs'][0]['sha256'] = '0' * 64; f.refresh()
+        for change in (executable, environment_drift, wrong_tree, symlink, wrong_blob):
+            bundle_isolated_negative(api, change, 'immutable observed bytes/mode/environment/Git objects')
+    elif name == 'reject-missing-red':
+        for change in (lambda f: f.bundle['baseline_evidence'].pop(),
+                       lambda f: f.bundle['baseline_evidence'].append(copy.deepcopy(f.bundle['baseline_evidence'][0])),
+                       lambda f: f.row(name)['operation'].update(extra=True),
+                       lambda f: f.row(name)['positive'].update(path=f.row(name)['setup']['path'])):
+            def malformed(f, change=change): change(f); f.refresh()
+            bundle_isolated_negative(api, malformed, 'complete unique closed independent proof rows')
+        def absent_file(f): (f.root / f.row(name)['red']['path']).unlink()
+        def changed_input(f):
+            p = f.row(name)['operation']['case_input']['path']; f.write(p, b'{"different":true}')
+        for change in (absent_file, changed_input): bundle_isolated_negative(api, change, 'actual proof/input sidecar required')
+    elif name == 'reject-setup-as-red':
+        replacements = [('EXIT: 1', 'EXIT: 0'), ('EXIT: 1', 'EXIT: 2'),
+                        ('OBSERVED_RESULT: accept', 'OBSERVED_RESULT: reject'),
+                        ('INPUT_SHA256: ', 'INPUT_WRONG: '), ('OPERATION_SHA256: ', 'OPERATION_WRONG: '),
+                        ('POLICY_ASSERTION: ', 'UNRELATED_EXCEPTION: ')]
+        for before, after in replacements:
+            def bad_proof(f, before=before, after=after):
+                row = f.row(name); p = row['red']['path']; text = (f.root / p).read_text().replace(before, after)
+                f.write(p, text.encode()); row['red']['sha256'] = sha(text.encode()); f.refresh()
+            bundle_isolated_negative(api, bad_proof, 'only intended bounded behavioral red')
+        for suffix in ('EXIT: 1\n', 'COMMAND: duplicate\n', 'REVISION: other\n'):
+            def duplicate(f, suffix=suffix):
+                row = f.row(name); p = row['red']['path']; text = (f.root / p).read_text() + suffix
+                f.write(p, text.encode()); row['red']['sha256'] = sha(text.encode()); f.refresh()
+            bundle_isolated_negative(api, duplicate, 'unique raw capture headers')
+
+
+def bundle_cli_controls(api, f):
+    bundle = f.root / 'cli-bundle.json'; reviewer = f.root / 'cli-review.json'
+    bundle.write_bytes(canonical(f.bundle)); reviewer.write_bytes(canonical(f.review))
+    command = [sys.executable, api.__file__, 'bundle', '--repo', str(f.root), '--bundle', str(bundle), '--review', str(reviewer)]
+    result = subprocess.run(command, capture_output=True, text=True)
+    require(result.returncode == 0 and 'PASS' in result.stdout, 'CLI valid immutable handoff accepted')
+    for data in (bundle.read_text()[:-1] + ',"feature_id":"116"}', '{"x":NaN}', '[]', '{broken'):
+        bundle.write_text(data); result = subprocess.run(command, capture_output=True, text=True)
+        require(result.returncode != 0 and result.stderr.strip() and 'PASS' not in result.stdout, 'CLI strict malformed bundle rejection')
+    bundle.write_bytes(canonical(f.bundle)); bad = copy.deepcopy(f.review); bad['seal_sha256'] = '0' * 64
+    reviewer.write_bytes(canonical(bad)); result = subprocess.run(command, capture_output=True, text=True)
+    require(result.returncode != 0 and result.stderr.strip() and 'PASS' not in result.stdout, 'CLI stale review seal rejected')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--case', choices=CASES)
     group.add_argument('--scope', action='store_true')
     group.add_argument('--scope-controls', action='store_true')
+    group.add_argument('--base-cases', action='store_true')
+    group.add_argument('--scope-116', action='store_true')
+    group.add_argument('--scope-controls-116', action='store_true')
     parser.add_argument('--base')
     args = parser.parse_args()
+    if args.scope_116 or args.scope_controls_116:
+        if not args.base: parser.error('scope commands require --base')
+        helper = load_api(ROOT / '.agent/evidence/116/scope-guard.py')
+        (helper.scope_controls if args.scope_controls_116 else helper.scope)(args.base); return
     if args.scope or args.scope_controls:
         if not args.base: parser.error('scope commands require --base')
         helper = load_api(ROOT / '.agent/evidence/115/recovery-scope-guard.py')
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()
-    for name in ([args.case] if args.case else CASES):
-        run_case(name, api); print('PASS ' + name)
+    for name in ([args.case] if args.case else BASE_CASES if args.base_cases else CASES):
+        (run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
 
 
 if __name__ == '__main__':
