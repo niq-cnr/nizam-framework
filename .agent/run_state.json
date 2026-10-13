@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "017-workflow-assurance-foundation",
-  "current_feature": "115",
+  "current_feature": null,
   "status": "in_progress",
-  "updated_at": "2026-10-13T10:06:08.469371+00:00",
+  "updated_at": "2026-10-13T10:11:39.485247+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -636,6 +636,10 @@
       "limit": 3
     },
     "115-closeout-coordination": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "115-evidence-capture": {
       "attempts": 1,
       "limit": 3
     }
@@ -4186,6 +4190,24 @@
       "event": "115-closeout-coordination-attempt1-failed",
       "detail": "Installed run_state schema and C11 require per_feature.estimated; Root wrote estimate. Source/ModeB/QA/capture successful and unchanged; coordination overlay not promoted.",
       "evidence": ".agent/evidence/115/closeout-attempt1-result.json"
+    },
+    {
+      "at": "2026-10-13T10:10:54.841263+00:00",
+      "event": "115-captured-complete-coordination-replay",
+      "detail": "Reapplied exact successful Root capture0 and canonical115COMPLETED in new interface-repair root; QA/ModeB/source4/proof digests unchanged. Preserve actualcloseoutfailure1 history; budget will use installed schema estimated key before validation. Phase017stillinprogress,116\u2013118pending.",
+      "evidence": ".agent/evidence/115/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-13T10:10:55.301664+00:00",
+      "event": "115-budget-captured-schema-corrected",
+      "detail": "Actual1863 counted/ceiling7020; installed per_feature.estimated field, firstfeatureexception and allhistorical failures preserved.",
+      "evidence": ".agent/evidence/115/scope-measurement.txt"
+    },
+    {
+      "at": "2026-10-13T10:11:39.485247+00:00",
+      "event": "115-closeout-coordination-attempt2-passed",
+      "detail": "Installed budget schema estimated key corrected in newownedroot. Canonicalcompleted115/recovery debtclosure/realreceipts/currentScope0 andC1\u2013C160 allverified; preserve actualfailedcloseout1, Source1 and oldauthor3/3. Whole115actual1863/2300,cumulative1863/7020.",
+      "evidence": ".agent/evidence/115/post-capture-compliance-attempt2.txt"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4360,10 +4382,24 @@
   "scope_budget": {
     "original_estimate_lines": 5400,
     "ceiling_130pct": 7020,
-    "total_lines_changed": 0,
-    "evidence_lines_total": 0,
-    "excluded_lines_total": 0,
-    "per_feature": [],
+    "total_lines_changed": 1863,
+    "evidence_lines_total": 23159,
+    "excluded_lines_total": 537,
+    "per_feature": [
+      {
+        "id": "115",
+        "estimated": 2300,
+        "actual": 1863,
+        "product_lines": 733,
+        "process_overhead_lines": 1130,
+        "evidence_lines": 23159,
+        "excluded_lines": 537,
+        "range": "33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE",
+        "evidence": ".agent/evidence/115/scope-measurement.txt",
+        "rolling_baseline": null,
+        "note": "First completed017feature; wholephasebase counting includesactivation/recovery once, historicalblocked409 remainsunaltered/no doublecount."
+      }
+    ],
     "phase_level_items": [],
     "counting_rule": {
       "spec_ref": ".agent/product_spec_017.md 'Scope budget and measurement'; frozen phase014 counting classes reused",
@@ -4389,7 +4425,8 @@
         "evidence": ".agent/evidence/115/blocked-scope-measurement.txt",
         "note": "Incomplete feature; unapproved public test candidate removed after exact quarantine. Product0/process409, below7020, not appended to completed rolling baseline or total. Future authorized recovery must count whole115 from originalphasebase once; no allowance/rebaseline."
       }
-    ]
+    ],
+    "last_measured_at": "2026-10-13T10:10:55.301664+00:00"
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -4572,7 +4609,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "115",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -4659,7 +4696,8 @@
     "111",
     "112",
     "113",
-    "114"
+    "114",
+    "115"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
