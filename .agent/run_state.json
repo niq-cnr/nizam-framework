@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "117",
   "status": "in_progress",
-  "updated_at": "2026-10-13T13:20:56.484725+00:00",
+  "updated_at": "2026-10-13T13:23:54.207730+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -697,6 +697,14 @@
     },
     "117-review-recovery-coordination": {
       "attempts": 2,
+      "limit": 3
+    },
+    "117-mode-a": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-mode-a-coordination": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4416,6 +4424,12 @@
       "event": "117-contract-review-attempt2-startup-failed",
       "detail": "Independentactor used unavailablepython alias, actualreportedEXIT127, stoppedbefore substantive review/writes. Priorstartup/parallelprotocolreads0 disclosed; no fabricatedfullcommand/rawgate. Exactowner/readfailure preserved andonlyvalidatedemptyownedroot removed. Count2/3; thirdfinalreview freshafter deterministicgate-ref revision withknownpython3/nativecommands.",
       "evidence": ".agent/evidence/117/failed-contract-review-attempt2/read-failure.json"
+    },
+    {
+      "at": "2026-10-13T13:23:54.207730+00:00",
+      "event": "117-mode-a-attempt1-rejected",
+      "detail": "ActualstrictJSONModeA1 false/highproducer-consumer gate-ref ambiguity, schema/raw audits0. Exact5ownedreviewartifacts captured SHA/modes/canonicalrejection retained; ownedroot removedafterproof. Proposal/API unchanged; contract2type/interface revision only thenrenewedModeA2 andfinalboundedindependentcontractreview3. NoSource orfutureacceptance claim.",
+      "evidence": ".agent/validator/117-mode-a.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4909,7 +4923,7 @@
       }
     ]
   },
-  "last_action": "117 contractreview2 unavailablepythonalias stoppedbeforegate; finalreview3 held until revisedproposal andobserved executableinterface",
+  "last_action": "117 ModeA1 rejected missing deterministic actualgate-reference producer; Generator contract2 required; Source forbidden",
   "completed_contract_ids": [
     "099",
     "103",
