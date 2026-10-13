@@ -1,0 +1,6 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope --base 9ebfd03883486a205ac8c3a211f0cac0af5fddba
+REVISION: e67860960acdd1342b9984b117f4d48f3505fd71
+STDERR: AssertionError: POLICY_ASSERTION: activated list version/status
+EXIT: 1
+OBSERVED_INPUT: Approved activation list is spec_version 0.1.0 and phase_status in_progress; contracted version0.2.0 mirror follows future source documentation. Guard incorrectly asserted only final delivery shape at pre-source stage. No acceptance success or policy red claimed.
+REQUIRED_FIX: stage-aware architecture admits explicitly authorized pre-source and delivered states while comparing immutable obligations and protected history.
