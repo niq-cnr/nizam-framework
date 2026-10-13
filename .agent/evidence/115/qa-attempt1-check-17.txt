@@ -1,0 +1,19 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-controls --base 9ebfd03883486a205ac8c3a211f0cac0af5fddba
+REVISION: 2f324c68bf273c54907ff63ad057995040d84d54
+STDOUT:
+PASS scope-controls valid pre-source IN_PROGRESS017/115 and preserved historical halt3/3
+PASS scope-controls targeted reject known-contract116-substitution
+PASS scope-controls targeted reject known-premature-run-complete
+PASS scope-controls targeted reject old-proof-byte
+PASS scope-controls targeted reject old-proof-mode
+PASS scope-controls targeted reject archived015-budget
+PASS scope-controls targeted reject phase017-terminal
+PASS scope-controls targeted reject foreign-current-feature
+PASS scope-controls restored pre-source after seven exact rejects
+PASS scope-controls PRIVATE MOCK delivered/in-progress shape; no product acceptance claimed
+PASS scope-controls PRIVATE MOCK after-capture canonical tuple with actual fixture Git revision/digests; no actual115 QA claimed
+PASS scope-controls missing capture blocks canonical completion
+
+STDERR:
+
+EXIT: 0
