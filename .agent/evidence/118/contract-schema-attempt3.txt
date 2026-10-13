@@ -1,0 +1,30 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c 'import json,hashlib,subprocess
+from pathlib import Path
+from jsonschema import Draft202012Validator
+E=Path('"'"'.agent/evidence/118'"'"')
+c=json.loads(Path('"'"'.agent/contracts/118.json'"'"').read_bytes());a=json.loads((E/'"'"'api-interface.json'"'"').read_bytes());p=json.loads((E/'"'"'producer-interface.json'"'"').read_bytes())
+s=json.loads(Path('"'"'.nizam/schema/contract.schema.json'"'"').read_bytes());Draft202012Validator.check_schema(s);Draft202012Validator(s).validate(c)
+assert c['"'"'status'"'"']=='"'"'proposed'"'"' and type(c['"'"'contract_attempt'"'"']) is int and c['"'"'contract_attempt'"'"']==3
+assert c['"'"'approvals'"'"']=={'"'"'validator_mode_a'"'"':False,'"'"'evaluator_contract_review'"'"':False,'"'"'revisions'"'"':2,'"'"'gate_refs'"'"':None}
+assert c['"'"'precode_gate_policy'"'"']==a['"'"'precode_gate_policy'"'"']==p['"'"'precode_gate_policy'"'"']
+assert c['"'"'acceptance_successor_policy'"'"']==a['"'"'acceptance_successor_policy'"'"']==p['"'"'acceptance_successor_policy'"'"']
+assert c['"'"'precode_gate_policy'"'"']['"'"'revision'"'"']==2
+old=json.loads((E/'"'"'pre-revision2-contract.json'"'"').read_bytes())
+for key in ['"'"'verification'"'"','"'"'estimated_lines'"'"','"'"'budget_categories'"'"','"'"'phase_budget'"'"','"'"'execution_order'"'"','"'"'readiness_boundary'"'"','"'"'non_goals'"'"','"'"'canonical_close'"'"','"'"'lifecycle_values'"'"']:
+    assert c[key]==old[key],key
+for name,current in [('"'"'api-interface'"'"',a),('"'"'producer-interface'"'"',p)]:
+    original=json.loads((E/('"'"'pre-revision2-'"'"'+name+'"'"'.json'"'"')).read_bytes())
+    changes={'"'"'precode_gate_policy'"'"','"'"'acceptance_successor_policy'"'"','"'"'independent_bundle'"'"' if name=='"'"'api-interface'"'"' else '"'"'no_cycles'"'"'}
+    assert {k:v for k,v in current.items() if k not in changes}=={k:v for k,v in original.items() if k not in changes}
+for name,path in [('"'"'contract'"'"','"'"'.agent/contracts/118.json'"'"'),('"'"'api-interface'"'"',str(E/'"'"'api-interface.json'"'"')),('"'"'producer-interface'"'"',str(E/'"'"'producer-interface.json'"'"'))]:
+    assert (E/('"'"'pre-revision2-'"'"'+name+'"'"'.json'"'"')).read_bytes()==subprocess.check_output(['"'"'git'"'"','"'"'show'"'"','"'"'b323722f5b8777b2c14e1630215a4403a279ec39:'"'"'+path])
+print('"'"'PASS installed contract schema; revision2 policy consistency; commands/650/budgets/functional API/lifecycle and exact predecessor bytes preserved'"'"')
+print('"'"'Pre-code only: successor tests, B2, SourceC2 and acceptance gates remain future obligations'"'"')
+'
+REVISION: 7fd14f99367525caa2bf403a13bf0f3be798763c
+EXIT: 0
+STDOUT:
+PASS installed contract schema; revision2 policy consistency; commands/650/budgets/functional API/lifecycle and exact predecessor bytes preserved
+Pre-code only: successor tests, B2, SourceC2 and acceptance gates remain future obligations
+
+STDERR:
