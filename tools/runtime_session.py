@@ -421,7 +421,10 @@ class Supervisor:
                       image_consistent=False)
         if reason:
             record['rejection_reason'] = reason
-        if self.meta['previous_generation']:
+        # A refused foreign binding describes the request, not a transition of
+        # this session's governed step. Never assert continuity between them.
+        if (self.meta['previous_generation']
+                and all(request[key] == self.meta[key] for key in BINDING)):
             record.update(previous_generation=self.meta['previous_generation'],
                           **{'previous_' + key: self.meta[key] for key in BINDING})
         return record
