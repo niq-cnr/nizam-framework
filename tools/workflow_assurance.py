@@ -5,6 +5,7 @@ An immutable Git anchor survives later record-only commits. Unknown candidate
 changes fail closed; this utility does not authenticate callers or authorize work.
 """
 import argparse
+import copy
 import hashlib
 import json
 import math
@@ -705,6 +706,51 @@ def verify_foundation_ready(repo, prerequisite):
         raise
     except (OSError, ValueError, TypeError, UnicodeError, RecursionError, KeyError, AttributeError) as exc:
         raise AssuranceError('foundation observation failed: ' + str(exc)) from exc
+
+
+def convergent_agf_verdict(ledger, report, *, expected_repository, expected_head_sha):
+    """Map a validated converged ledger to a strict AGF verdict without mutation."""
+    try:
+        import convergent_review as review
+    except ModuleNotFoundError as exc:
+        if exc.name != 'convergent_review':
+            raise
+        from tools import convergent_review as review
+    try:
+        json_value(ledger); json_value(report)
+        require(type(ledger) is dict and type(report) is dict, 'AGF inputs must be JSON objects')
+        review.validate_ledger(ledger)
+        review.validate_repository(expected_repository, 'expected_repository')
+        require(type(expected_head_sha) is str and re.fullmatch(r'[0-9a-f]{40}', expected_head_sha),
+                'expected_head_sha must be a lowercase forty-hex commit')
+        require(ledger['repository'] == expected_repository and ledger['head_sha'] == expected_head_sha,
+                'AGF ledger repository/head binding mismatch')
+        verdict = report.get('final_verdict')
+        require(type(verdict) is dict and type(verdict.get('approved')) is bool,
+                'AGF final_verdict.approved must be boolean')
+        arrays = ('issues', 'missing_acceptance_coverage', 'unsupported_claims')
+        require(all(type(report.get(key)) is list for key in arrays), 'AGF blocking fields must be arrays')
+        require('required_fixes' not in report or type(report['required_fixes']) is list,
+                'AGF required_fixes must be an array')
+        out = {key: copy.deepcopy(report[key]) for key in ('final_verdict',) + arrays}
+        out['required_fixes'] = copy.deepcopy(report.get('required_fixes', []))
+        out['advisory_minor'] = []
+        for finding in ledger['findings']:
+            if finding['lifecycle'] not in ('new', 'persisting', 'reopened') or finding['suppression'] is not None:
+                continue
+            if finding['severity'] == 'minor':
+                out['advisory_minor'].append(copy.deepcopy(finding))
+            else:
+                out['issues'].append(copy.deepcopy(finding))
+                out['required_fixes'].append({'fingerprint': finding['fingerprint'],
+                    'required_fix': finding['title'] + ': ' + finding['description']})
+        out['final_verdict']['approved'] = (verdict['approved'] is True and
+            all(not out[key] for key in arrays) and ledger['verdict'] == 'approve')
+        return out
+    except AssuranceError:
+        raise
+    except (review.ReviewError, RecursionError) as exc:
+        raise AssuranceError('AGF verdict mapping failed: ' + str(exc)) from exc
 
 
 def main():

@@ -9,6 +9,11 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Convergent AGF verdict (feature 119).** Added a pure, explicitly bound adapter
+  that preserves blocking arrays and carried blocker/important findings, exposes
+  minor advice and rejects malformed input. Six independent cases extend the
+  existing twenty; historical foundation receipts retain their immutable boundary.
+
 - **Bounded partial core (feature 128).** Added independently authored `core-ready`
   over fourteen bounded leaf subprocesses. Hosted CI retains separate fourteen-leaf
   execution; SBCL/full adapter, phase020 fresh acceptance and final CI131 remain pending.
