@@ -6,7 +6,7 @@
   "base_commit_note": "Approved docs-only phase015-planning implementation base after exact operator H-NIP events; canonical phase014 records/current position remain unchanged.",
   "packet_schema": "schema/work-packet.schema.json",
   "authoritative_human_view": "docs/planning/backlog_reconciliation.md",
-  "activated_phase": "017-workflow-assurance-foundation",
+  "activated_phase": "016-runtime-controller-core",
   "estimate_weighting": {
     "low": 2.3,
     "high": 2.89,
@@ -3268,26 +3268,26 @@
         "Sandboxed SBCL acceptance."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
-      "authority_status": "blocked-on-H-PHASE-016",
+      "status": "in_progress",
+      "authority_status": "authorized-contract-preparation-only",
       "owner_role": "Generator",
       "plan_class": "candidate-phase",
       "prerequisites": {
         "technical": {
-          "satisfied": false,
-          "reason": "PLAN-016"
+          "satisfied": true,
+          "reason": "Reviewed PLAN-016 and captured foundation115-118; exact126 acceptance remains future."
         },
         "authority": {
-          "satisfied": false,
-          "reason": "H-PHASE-016"
+          "satisfied": true,
+          "reason": "Standing operator authority .agent/evidence/agentic-excellence/authorization.json; Orchestrator selects126 for contract preparation within5650/7345. No approved implementation contract."
         },
         "environment": {
           "satisfied": true,
-          "reason": "none"
+          "reason": "Actual same-host capability .agent/evidence/phase016-preflight/hosted-result.json, independently approved .agent/evidence/phase016-preflight/activation-review.json; no live-controller acceptance."
         },
         "evidence": {
-          "satisfied": false,
-          "reason": "phase-015 schemas landed"
+          "satisfied": true,
+          "reason": ".agent/evidence/118/evidence-capture.json; PR94 e619d284d36eaf6dfff54a9d001477b8d1722098; mainCI38521902261 success."
         }
       },
       "estimate": {
@@ -4703,7 +4703,7 @@
         "117",
         "118"
       ],
-      "adoption_state": "pending-future-H-PHASE-activation"
+      "adoption_state": "adopted-for-phase016-contract-preparation"
     },
     {
       "packet": "A11-D",
@@ -4781,7 +4781,7 @@
       "evidence": ".agent/evidence/128/"
     }
   ],
-  "proposed_execution_note": "Recommended 017->016->018->020->019 only; pending future activation. Original whole-alias graph is dated history. NIP3-116 (feature 127) core and 131 final CI  stay separately pending; A15 retains NIP3-120 (feature 132) delay. Canonical proposed execution graph uses feature-list numeric dependencies, cross_phase_prerequisites and shared_file_lanes.",
+  "proposed_execution_note": "017 foundation complete;016 core selected for126 contract preparation. Preserve017->016->018->020->019;018/020/019 activation remains future. Original whole-alias graph is dated history. NIP3-116 core127 and final CI131 remain separately pending; A15 retains132 delay. Numeric feature-list dependencies, cross_phase_prerequisites and shared_file_lanes govern execution.",
   "phase017_execution": {
     "phase": "017-workflow-assurance-foundation",
     "status": "complete",
@@ -4799,5 +4799,26 @@
     "qa": ".agent/qa/118.json",
     "recovery_gate": "H-CONTRACT-118-RECOVERY",
     "completed_at": "2026-10-14T06:10:35.617641+00:00"
+  },
+  "phase016_execution": {
+    "phase": "016-runtime-controller-core",
+    "status": "in_progress",
+    "feature": "126",
+    "feature_status": "in_progress",
+    "stage": "contract-preparation",
+    "contract_ref": null,
+    "implementation_approved": false,
+    "authorization_ref": ".agent/evidence/agentic-excellence/authorization.json",
+    "foundation_capture_ref": ".agent/evidence/118/evidence-capture.json",
+    "capability_ref": ".agent/evidence/phase016-preflight/hosted-result.json",
+    "prerequisite_review_ref": ".agent/evidence/phase016-preflight/activation-review.json",
+    "shared_file_order": [
+      "126",
+      "127",
+      "128"
+    ],
+    "original_estimate_lines": 5650,
+    "ceiling_130pct": 7345,
+    "preparation_accounting": "All current preparation including comparison, CI, activation/docs/reviews counted once from e619d284d36eaf6dfff54a9d001477b8d1722098 through final reviewed activation;126 starts after that boundary. Root owns ledger;017 preserved."
   }
 }

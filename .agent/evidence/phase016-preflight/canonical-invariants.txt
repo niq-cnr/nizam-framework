@@ -1,0 +1,56 @@
+COMMAND: python3 -c 'import json,pathlib,subprocess,hashlib,yaml,jsonschema
+base="401a5b66fed933e171bb4168b7ebeb22b7fc55ad"
+def old(p):return subprocess.check_output(["git","show",base+":"+p])
+def j(p):return json.loads(pathlib.Path(p).read_text())
+def h(x):return hashlib.sha256(json.dumps(x,sort_keys=True,separators=(",",":")).encode()).hexdigest()
+paths=[".agent/product_spec_016.md",".agent/feature_list_016.json","docs/planning/phase_016.yaml","docs/planning/manifest.json","docs/planning/backlog_dag.json","CHANGELOG.md"]
+assert set(subprocess.check_output(["git","diff","--name-only",base],text=True).splitlines())==set(paths)
+assert old(".agent/run_state.json")==pathlib.Path(".agent/run_state.json").read_bytes()
+f=j(".agent/feature_list_016.json");o=json.loads(old(".agent/feature_list_016.json"));p=j(".agent/evidence/phase016-preflight/activation-proposal.json")["immutable_obligations"]
+for row in f["features"]:assert h(row["acceptance_tests"])==p["feature_acceptance_hashes"][row["id"]]
+assert len(f["features"][0]["acceptance_tests"])==9
+for key in ["case_matrix","shared_file_lanes","original_estimate_lines","ceiling_130pct","budget_categories"]:assert f[key]==o[key]
+assert h(f["case_matrix"])==p["case_matrix_sha256"] and h(f["shared_file_lanes"])==p["shared_file_lanes_sha256"]
+for i,row in enumerate(f["features"]):
+ expected=o["features"][i].copy()
+ if i==0:expected["status"]="in_progress"
+ assert row==expected
+assert f["cross_phase_prerequisites"][0]["requires"]==o["cross_phase_prerequisites"][0]["requires"]
+assert f["activation_preflight"]["commands"]==o["activation_preflight"]["commands"]
+assert not any(x["passes"] for x in f["features"])
+seen=set()
+for row in f["features"]:assert set(row["dependencies"])<=seen;seen.add(row["id"])
+for schema,path,kind in [("feature_list",".agent/feature_list_016.json","json"),("phase","docs/planning/phase_016.yaml","yaml"),("manifest","docs/planning/manifest.json","json")]:
+ data=j(path) if kind=="json" else yaml.safe_load(pathlib.Path(path).read_text());jsonschema.validate(data,j(".nizam/schema/"+schema+".schema.json"));print("PASS installed schema",schema)
+s=pathlib.Path(".agent/product_spec_016.md").read_text();jsonschema.validate(yaml.safe_load(s.split("---",2)[1]),j(".nizam/schema/frontmatter.schema.json"))
+m=j("docs/planning/manifest.json");mo=json.loads(old("docs/planning/manifest.json"))
+for x,y in zip(m["phases"],mo["phases"]):
+ if x["id"] not in ["016-runtime-controller-core","017-workflow-assurance-foundation"]:assert x==y
+ if x["id"]=="017-workflow-assurance-foundation":assert {k:v for k,v in x.items() if k!="note"}=={k:v for k,v in y.items() if k!="note"}
+d=j("docs/planning/backlog_dag.json");do=json.loads(old("docs/planning/backlog_dag.json"))
+for key in do:
+ if key not in ["activated_phase","proposed_execution_note","packets","proposed_supersessions"]:assert d[key]==do[key],key
+for x,y in zip(d["packets"],do["packets"]):
+ if x["id"]!="NIP3-115":assert x==y
+ else:assert {k:v for k,v in x.items() if k not in ["status","authority_status","prerequisites"]}=={k:v for k,v in y.items() if k not in ["status","authority_status","prerequisites"]}
+for x,y in zip(d["proposed_supersessions"],do["proposed_supersessions"]):
+ if x["packet"]!="NIP3-115":assert x==y
+ else:assert {k:v for k,v in x.items() if k!="adoption_state"}=={k:v for k,v in y.items() if k!="adoption_state"}
+assert d["phase016_execution"]["contract_ref"] is None and d["phase016_execution"]["implementation_approved"] is False
+r=j(".agent/evidence/phase016-preflight/activation-review.json");assert r["final_verdict"]["approved"] and not any(r[k] for k in ["issues","missing_acceptance_coverage","unsupported_claims"])
+host=j(".agent/evidence/phase016-preflight/hosted-result.json");assert host["capability_preflight_passed"] and all(x["exit_code"]==0 for x in host["commands"])
+for x in host["artifacts"]:assert hashlib.sha256(pathlib.Path(x["path"]).read_bytes()).hexdigest()==x["sha256"]
+for path,sha in host["checkout"]["source_sha256"].items():assert hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest()==sha
+print("PASS exact126 commands/all acceptance/cases/shared lanes/budgets/dependencies; future phases, historical DAG/017 and run_state preserved; actual capability identities retained; no source or installed edits")
+'
+REVISION: 401a5b66fed933e171bb4168b7ebeb22b7fc55ad
+INPUTS: canonical working-tree hashes in canonical-handoff.json
+STDOUT:
+PASS installed schema feature_list
+PASS installed schema phase
+PASS installed schema manifest
+PASS exact126 commands/all acceptance/cases/shared lanes/budgets/dependencies; future phases, historical DAG/017 and run_state preserved; actual capability identities retained; no source or installed edits
+
+STDERR:
+
+EXIT: 0
