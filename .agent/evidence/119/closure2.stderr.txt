@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature119-closure2/.agent/evidence/119/close2.py", line 9, in <module>
+    s=s.replace('description: Activated bounded controls119-123; feature119 contract preparation only, with independent implementation and acceptance gates remaining.','description: Active bounded controls119-123; feature119 captured complete, receipt and recovery120 next; later controls remain pending.',1).replace("- id: '119'\n  description: Convergent findings to AGF verdict\n  status: IN_PROGRESS","- id: '119'\n  description: Convergent findings to AGF verdict\n  status: COMPLETED",1);schema('phase',yaml.safe_load(s));updates[p]=s
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature119-closure2/.agent/evidence/119/close2.py", line 6, in schema
+    def schema(name, value): jsonschema.validate(value, read('.nizam/schema/'+name+'.schema.json'))
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.local/lib/python3.12/site-packages/jsonschema/validators.py", line 1332, in validate
+    raise error
+jsonschema.exceptions.ValidationError: 'evidence' is a required property
+
+Failed validating 'required' in schema['properties']['steps']['items']['then']:
+    {'required': ['evidence']}
+
+On instance['steps'][0]:
+    {'id': '119',
+     'description': 'Convergent findings to AGF verdict',
+     'status': 'COMPLETED'}
