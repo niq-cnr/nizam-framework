@@ -694,6 +694,26 @@ class ReceiptFixture:
     def pin(self, path, value):
         self.write(path, value); return self.ref(path, self.commit('fixture artifact ' + path))
 
+    def nonregular_artifact(self, reference):
+        """Keep identical JSON bytes/path/digest; change only historical Git mode."""
+        revision = reference['revision']; path = reference['path']
+        data = subprocess.check_output(['git', '-C', str(self.root), 'show', revision + ':' + path])
+        oid = subprocess.check_output(['git', '-C', str(self.root), 'hash-object', '-w', '--stdin'], input=data).decode().strip()
+        with tempfile.TemporaryDirectory(prefix='receipt-mode-index-', dir=self.root.parent) as directory:
+            env = {**os.environ, 'GIT_INDEX_FILE': str(Path(directory) / 'index')}
+            def index(*args):
+                return subprocess.check_output(['git', '-C', str(self.root), *args], env=env).decode().strip()
+            index('read-tree', revision)
+            index('update-index', '--cacheinfo', '120000', oid, path)
+            tree = index('write-tree')
+            commit = subprocess.check_output(['git', '-C', str(self.root), 'commit-tree', tree, '-p', revision],
+                input=b'Owned nonregular artifact mode fixture\n', env=env).decode().strip()
+        row = git(self.root, 'ls-tree', commit, '--', path).split()
+        require(row[:3] == ['120000', 'blob', oid], 'nonregular artifact historical mode is isolated')
+        require(subprocess.check_output(['git', '-C', str(self.root), 'show', commit + ':' + path]) == data,
+            'nonregular artifact retains exact valid bytes')
+        return dict(reference, revision=commit)
+
     def entry(self, kind, artifact, revision, digest):
         return dict(kind=kind, artifact=copy.deepcopy(artifact), feature_id='120', assessed_revision=revision, contract_sha256=digest)
 
@@ -776,6 +796,7 @@ def receipt_plan(api, f, state=None, receipt='fixture-default'):
 
 def receipt_operator(api, f, parent):
     receipt_verify(api, f); receipt_verify(api, ReceiptFixture(api, parent, alternate=True))
+    receipt_artifact_integrity(api, f)
     original = copy.deepcopy(f.policy)
     for value in (None, {}, {'path': '../escape', 'sha256': '0' * 64, 'revision': f.candidate_revision}):
         f.policy = copy.deepcopy(original); f.policy['operator'] = value; f.refresh(); receipt_reject(api, f)
@@ -789,6 +810,22 @@ def receipt_operator(api, f, parent):
         authority = copy.deepcopy(f.authority); authority[key] = value; app = copy.deepcopy(f.operator)
         app['authority_ref'] = f.pin('proof/bad-authority.json', authority); f.policy = copy.deepcopy(original)
         f.policy['operator'] = f.pin('proof/operator-bad-authority.json', app); f.refresh(); receipt_reject(api, f)
+    f.policy = original; f.refresh(); receipt_verify(api, f)
+
+
+def receipt_artifact_integrity(api, f):
+    original = copy.deepcopy(f.policy)
+    reference = copy.deepcopy(original['operator'])
+    for key, value in (('sha256', 'f' * 64), ('revision', '0' * 40),
+                       ('revision', git(f.root, 'hash-object', reference['path'])), ('revision', 'HEAD')):
+        require(value != reference[key], 'artifact probe changes selected pin field')
+        f.policy = copy.deepcopy(original); f.policy['operator'][key] = value; f.refresh()
+        require(f.receipt['operator_ref'] == f.policy['operator'], 'artifact probe synchronizes receipt binding')
+        receipt_reject(api, f)
+        f.policy = copy.deepcopy(original); f.refresh(); receipt_verify(api, f)
+    f.policy['operator'] = f.nonregular_artifact(reference); f.refresh()
+    require(f.receipt['operator_ref'] == f.policy['operator'], 'nonregular artifact binding synchronized')
+    receipt_reject(api, f)
     f.policy = original; f.refresh(); receipt_verify(api, f)
 
 
@@ -820,6 +857,12 @@ def receipt_unrun(api, f):
     f.receipt = original
     target = f.root / f.capture['stdout']['path']; saved = target.read_bytes(); target.unlink()
     receipt_reject(api, f); target.write_bytes(saved); receipt_verify(api, f)
+    alias = f.root / 'proof/current-output-alias'; require(not alias.exists(), 'owned output alias path absent')
+    alias.write_bytes(saved); target.unlink(); target.symlink_to(alias)
+    try: receipt_reject(api, f)  # Same live bytes/digest; only the output path is a symlink.
+    finally:
+        target.unlink(); target.write_bytes(saved); alias.unlink()
+    receipt_verify(api, f)
     for key, value in (('executed', False), ('exit_code', None), ('outcome', 'unrun'), ('producer', {'agent_id': 'wrong', 'session_id': 'wrong'})):
         capture = copy.deepcopy(f.capture); capture[key] = value; f.set_capture(capture); receipt_reject(api, f)
     f.policy = policy; f.receipt = original; receipt_verify(api, f)

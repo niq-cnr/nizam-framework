@@ -1,0 +1,113 @@
+{
+  "root": "/home/cnross/.tmp/nizam120-author2-5dblbon7/receipt",
+  "candidate": {
+    "schema_version": 1,
+    "repository": "niq-cnr/nizam-framework",
+    "source_commit": "a617c5203ae4c2a55bc076c15a5d5ef894981f41",
+    "source_tree": "1478312870873363a4d35678439fa6c0c80a8c04",
+    "assessed_inputs": {
+      "source": [
+        {
+          "path": "src/code.py",
+          "sha256": "336c9a9c0261bd40f3ea5c55e78fc7d1189d9ba7f93945bea46bb820c2c26009",
+          "executable": false
+        }
+      ],
+      "contracts": [
+        {
+          "path": "contract.json",
+          "sha256": "e581ca08a9ba047ae71fe3c872bbe695ab3a711e2f24e55899149a5d5ad653ce",
+          "executable": false
+        }
+      ],
+      "tests": [
+        {
+          "path": "tests/test.py",
+          "sha256": "336c9a9c0261bd40f3ea5c55e78fc7d1189d9ba7f93945bea46bb820c2c26009",
+          "executable": false
+        }
+      ],
+      "tools": [
+        {
+          "path": "tools/check.py",
+          "sha256": "336c9a9c0261bd40f3ea5c55e78fc7d1189d9ba7f93945bea46bb820c2c26009",
+          "executable": false
+        }
+      ]
+    },
+    "environment": {
+      "runtime": {
+        "implementation": "CPython",
+        "version": "3.12.3",
+        "system": "Linux",
+        "machine": "x86_64"
+      },
+      "variables": {
+        "NIZAM_WA120_FIXTURE": "observed"
+      }
+    },
+    "record_ownership": {
+      "contract.json": [
+        "/status"
+      ],
+      "record.json": [
+        "/history",
+        "/status",
+        "/updated_at"
+      ]
+    },
+    "identity_sha256": "4350bb15f350b4a90990a1013ebe72007f8e98e8dd786d8e7504d0c50be278f2"
+  },
+  "original_operator_ref": {
+    "path": "proof/operator-feature-complete.json",
+    "sha256": "3c750e50c5cfa486597e2b6c7ed9cd604a7c88fa3e21f133cd77cf2d3dfae95f",
+    "revision": "1ed94d29a94bcc9811c41f93fe8ba7699e57c338"
+  },
+  "nonregular_ref": {
+    "path": "proof/operator-feature-complete.json",
+    "sha256": "3c750e50c5cfa486597e2b6c7ed9cd604a7c88fa3e21f133cd77cf2d3dfae95f",
+    "revision": "05ad711ef45f572f5d7af4d161c3570bb8169cc8"
+  },
+  "actual_ls_tree": "120000 blob 4c28c35fd454dd4534f51d794285276b6967a928\tproof/operator-feature-complete.json",
+  "exact_bytes_sha256": "3c750e50c5cfa486597e2b6c7ed9cd604a7c88fa3e21f133cd77cf2d3dfae95f",
+  "actual_process_capture": {
+    "schema_version": 1,
+    "argv": [
+      "/usr/bin/python3",
+      "-c",
+      "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print('PASS receipt fixture actual assertion')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam120-author2-5dblbon7/receipt",
+    "revision": "a617c5203ae4c2a55bc076c15a5d5ef894981f41",
+    "candidate_sha256": "d91b7175c11f09ddaf603646ca4766466b16ad6382215c9d8de8f162e057d22f",
+    "environment": {
+      "runtime": {
+        "implementation": "CPython",
+        "version": "3.12.3",
+        "system": "Linux",
+        "machine": "x86_64"
+      },
+      "variables": {
+        "NIZAM_WA120_FIXTURE": "observed"
+      }
+    },
+    "producer": {
+      "agent_id": "fixture-only-capture-producer",
+      "session_id": "fixture-only-session"
+    },
+    "executed": true,
+    "outcome": "success",
+    "exit_code": 0,
+    "stdout": {
+      "path": "proof/success.stdout",
+      "sha256": "ca002de6ec556f59744503c3dddba7ad335e88135bf17536a0aeba8779740147",
+      "revision": "54d73ef83c00dae7cd86dedb4e8d2772c0766c71"
+    },
+    "stderr": {
+      "path": "proof/success.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "revision": "54d73ef83c00dae7cd86dedb4e8d2772c0766c71"
+    }
+  },
+  "note": "actual owned fixture construction only; no absent newAPI semantic execution"
+}
