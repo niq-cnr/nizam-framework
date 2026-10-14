@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
   "status": "in_progress",
-  "updated_at": "2026-10-14T05:38:57.352019+00:00",
+  "updated_at": "2026-10-14T05:44:57.908609+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -849,6 +849,10 @@
       "limit": 3
     },
     "118-recovery1-bundle-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-bundle-review": {
       "attempts": 1,
       "limit": 3
     }
@@ -4816,6 +4820,12 @@
       "event": "118-recovery1-bundle-authored",
       "detail": "Root verified actual Git B2 and current bytes for all31 frozen inputs plus handoff proof hashes. Original B1 archives and recorded development failures retained. Distinct independent bundle review required before Source2.",
       "evidence": ".agent/evidence/118/recovery1-test-author-handoff.json"
+    },
+    {
+      "at": "2026-10-14T05:44:57.908609+00:00",
+      "event": "118-recovery1-bundle-approved",
+      "detail": "Strict nine-field independent review passes after personally replayed B2 setup20/positive/semanticred/full41 fixtures and current scope/controls/own adversary. Root preserves B1 review archive and pins actual committed B2 verdict through finite review map.",
+      "evidence": ".agent/evidence/118/successor-review-attempt2.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5355,7 +5365,7 @@
       }
     ]
   },
-  "last_action": "Repaired B2 acceptance bundle frozen and hashes verified; distinct review pending before Source2.",
+  "last_action": "Distinct B2 review approved; committed review identity mapped after actual verdict; Source2 permitted.",
   "completed_contract_ids": [
     "099",
     "103",
