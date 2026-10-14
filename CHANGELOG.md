@@ -9,6 +9,12 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Partial development runtime controller (feature 126).** Added a detached
+  supervisor, isolated stub images, ownership/lease/generation admission, atomic
+  development records and read-only attempt guards. Existing fixture CI invokes
+  nine independently authored checks. Timeout/replay, SBCL and fresh acceptance
+  remain later work; candidate validation does not establish live conformance.
+
 - **Controller-core activation planning.** Captured and independently reviewed
   same-host Linux isolation and SBCL capability; selected feature 126 for contract
   preparation within the unchanged 5,650/7,345 budget, including current preparation

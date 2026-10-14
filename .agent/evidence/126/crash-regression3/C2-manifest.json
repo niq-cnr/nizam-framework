@@ -1,0 +1,47 @@
+{
+  "source_revision": "b6c0b097ecf2e12ee638a60273af568a8b86523a",
+  "source_tree": "299abaf6adb34baf8f50add0918dfaf248539cb3",
+  "test_revision": "43fb052e305816bfbafce3d82feaf9b69a01926b",
+  "test_sha256": "4bd422c7e95430dce33efb560b7b6249e28ab51f49e930127cc645cc48d1ccbe",
+  "test_blob": "a81916bcf4053ee9bde2775e7ccc867975787f89",
+  "files": {
+    "tools/runtime_session.py": {
+      "revision": "b6c0b097ecf2e12ee638a60273af568a8b86523a",
+      "sha256": "cad3d7e8fb208f2b89934a544983745b77c766cba32e9c39c5b78f5bf379ec73",
+      "git_blob": "12974e35a6709bae2f9bc967248c0e29f33761ab"
+    },
+    "tools/fixtures/runtime_session/stub_runtime.py": {
+      "revision": "b6c0b097ecf2e12ee638a60273af568a8b86523a",
+      "sha256": "906175ec845f74d57050f2a7b84a4e679947c1c05412ebc22b5b0eeebed383dc",
+      "git_blob": "8787ae2cd05b16f442e8f65fad59e2543e05559a"
+    },
+    "tools/verify_lib.sh": {
+      "revision": "b6c0b097ecf2e12ee638a60273af568a8b86523a",
+      "sha256": "e558776f650476a9b8d3d96314ca23db2d8ce645dabfb1be780f468ea763af01",
+      "git_blob": "53c9671c241431a4aa0ab7da16ca67e91db58d0e"
+    },
+    "schema/runtime_session.schema.json": {
+      "revision": "b6c0b097ecf2e12ee638a60273af568a8b86523a",
+      "sha256": "b7e99b7245b2d0e09193326e084fdb8618dce32ccaad084424cd33e1261c54d2",
+      "git_blob": "d2c365d3011e5a4a16eeb39e0afbf36e17e6e630"
+    },
+    "schema/runtime_operation.schema.json": {
+      "revision": "b6c0b097ecf2e12ee638a60273af568a8b86523a",
+      "sha256": "ec06f7eb3275e7d94ca9fc46ef0dbe9f0a8906e3c044d8fc7bd7db6f78206a0c",
+      "git_blob": "fff7712eb5e2472e0ddb0dbafe575270c45fcc97"
+    },
+    "tools/test_runtime_session.py": {
+      "revision": "43fb052e305816bfbafce3d82feaf9b69a01926b",
+      "sha256": "4bd422c7e95430dce33efb560b7b6249e28ab51f49e930127cc645cc48d1ccbe",
+      "git_blob": "a81916bcf4053ee9bde2775e7ccc867975787f89"
+    }
+  },
+  "private_fault_source_sha256": "00cb8173a9d097066808828e63bfb454e017b4ffc4fbfe7bf622ae54b1c16421",
+  "runtime": {
+    "python_executable": "/usr/bin/python3",
+    "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "platform": "Linux-6.8.0-142-generic-x86_64-with-glibc2.39",
+    "jsonschema_version": "4.26.0"
+  },
+  "fault": "Original atomic_json publishes and fsyncs first; test-only AST-placed wrapper exits86 once after a running operation publication, before dispatch; no production hook."
+}

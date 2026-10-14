@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.24.0
+version: 0.25.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.25.0"
+    date: "2026-10-14"
+    summary: "Document the partial stub controller CLI and nine-case fixture-harness integration."
   - version: "0.24.0"
     date: "2026-10-14"
     summary: "Document candidate-bound foundation readiness and independent current20 prerequisites."
@@ -79,6 +82,48 @@ change_log:
     date: "2026-07-17"
     summary: "Sync to the phase-005 compliance validator: document the new C12 ecosystem schema-family fixture check (feature 042) and the new SUMMARY: 12 passed, 0 failed total."
 ---
+## Development runtime controller — feature 126
+
+`runtime_session.py` provides a detached supervisor and one stub child per
+session, using an exclusive lock, generation counter/nonce, explicit ownership
+and lease checks, and one outstanding operation. This coordinates declared
+identities; it does not authenticate callers or prove source/image equivalence.
+
+```bash
+python3 tools/runtime_session.py open-session --root /absolute/private/state --request /absolute/request
+```
+
+The other implemented actions are `submit-operation`, `poll-operation`,
+`transfer-session` and `close-session`, with the same arguments. The JSON request
+includes session/requester identity; existing sessions require the current
+generation and lease. Open supplies owner, development purpose and a read-only
+run-state path binding contract/step/attempt. Submit adds operation ID, kind,
+payload, context and limits. Stub payload expressions are JSON data for set/get
+or a release-file gate; they are never Python evaluation. Only submit dispatches
+execution. Duplicate IDs return conflict without replacing prior records.
+
+Each response is one JSON object with `ok` and `result` or `error`; rejected
+submits reaching the supervisor also return their rejection record. Exit codes
+are 0 for successful/admitted work, 1 for refusal, 64 for malformed usage and 70
+for infrastructure failure. Admission is not completion: poll the operation.
+
+The private state root contains a directory per session: `controller.json` for
+process/attempt metadata, `runtime_session.json`, `supervisor.lock`, `control.sock`,
+operation records and separate child-result frames under `operations/`, and
+bounded `child.stdout.log`/`child.stderr.log` diagnostics. Child stdin and fd 3
+carry JSON lines. Atomic records are development provenance only. Public review
+trials receive no endpoint or record-writing access; the supervisor independently
+rejects trial requests delivered to it. Close observes process termination without
+claiming rollback of effects.
+
+`fixtures_self_test.sh` registers the nested stub and executes the three named
+checks plus stub cases 1, 2, 3, 9, 13 and case 8 policy through the independently
+authored `test_runtime_session.py`. It reports each command and actual exit and
+propagates failures in existing CI. Candidate results still require independent
+QA and hosted evidence. Feature 127 owns timeout/cancellation/reattachment/replay;
+128 owns bounded core closure. SBCL, fresh acceptance and full optional adapter
+conformance remain later work; reserved actions fail without side effects.
+
 ## Foundation readiness — feature 118
 
 `verify_foundation_ready(repo, prerequisite)` observes the immutable SourceC,

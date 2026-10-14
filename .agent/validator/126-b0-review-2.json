@@ -1,0 +1,40 @@
+{
+  "review": "provisional-acceptance-bundle-B0-repair2",
+  "feature": "126",
+  "reviewer": "/root/capability_review",
+  "reviewed_commit": "c9fda5cf560e48e5d9272d7eca16267094c9d46c",
+  "test_sha256": "60f6797100f15eb32b4f9e870eafe699627d17b835c8cc2ad44b703fcfb67e14",
+  "api_sha256": "8a073ab52a759f29f4c50053a954bfee2ba1997f8ea9923877148f311e67860f",
+  "seal": ".agent/evidence/126/test-seal-b0-2.json",
+  "prior_verdict": ".agent/validator/126-b0-review.json",
+  "scope": "Approval only of repaired provisional authored tests and handoff to the approved Generator for identified scaffold or executable-candidate work. Not final acceptance-bundle approval, product behavior acceptance, valid semantic red or QA.",
+  "final_verdict": {
+    "approved": true,
+    "summary": "All three B0 defects repaired and independently checked; narrow scaffold/candidate handoff approved."
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [
+    ".agent/evidence/126/b0-review-2-static.json",
+    ".agent/evidence/126/b0-review-2-controls-result.json",
+    ".agent/evidence/126/b0-review-2-controls.stdout.txt",
+    ".agent/evidence/126/b0-review-2-topology.py",
+    ".agent/evidence/126/b0-review-2-topology-result.json",
+    ".agent/evidence/126/b0-review-2-topology.stdout.txt"
+  ],
+  "findings": [
+    "All15 sealed input/helper hashes match; API, obligation projection and ten normative inputs remain unchanged. Test delta is confined to cleanup ownership checks, correlated marker synchronization and exact parser selection.",
+    "B0-1: initial registration proves private lock FD/held exclusion, actual child lineage/group and candidate sibling identity; signaling rechecks token/group/ownership. Independent targeted rerun preserved unrelated live process, cleaned valid and inherited-lock topology, and rejected stale tokens. No lock-acquisition PID equality is assumed.",
+    "Additional reviewer-owned topology proved supervisor need not be group leader: owned supervisor/child stopped while unrelated live group leader survived.",
+    "B0-2: the repaired caller waits for the first correlated marker before unlinking or dispatching the second request. Exact peer delayed-publication control rejected a stale marker and completed only after the correct marker arrived.",
+    "B0-3: allow_abbrev=False rejects abbreviated check/runtime/capability options with parser diagnostics before source setup.",
+    "Historical B0 failures/seal and initial repair-helper failure remain preserved. No controller/stub/harness implementation or Root state was changed by this review."
+  ],
+  "pending_gates": [
+    "Actual working transport positive and intended behavioral red using an identified scaffold or narrowly targeted private mutant with positive control; source absence is never semantic red.",
+    "Final independently reviewed acceptance bundle/seal after actual transport/red evidence.",
+    "Implementation Mode B, fresh independent QA with adversarial check, CI live evidence and evidence-capture gate."
+  ],
+  "budget_note": "728 test lines and178-line estimate difference are disclosed; Root measures within unchanged feature/phase budgets. No budget increase or omitted coverage is approved."
+}

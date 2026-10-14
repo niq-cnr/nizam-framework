@@ -1,0 +1,62 @@
+{
+  "candidate_revision": "d965c2ca9dd845f9a094153c7328d90a5398d06f",
+  "results": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-01-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-02-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check fixture-claim-registered",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-03-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-04-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-05-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-06-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-07-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-08-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-09-result.json"
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-10-result.json"
+    },
+    {
+      "command": "bash tools/fixtures_self_test.sh",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c3b-11-result.json"
+    }
+  ],
+  "required_commands": 11,
+  "boundary": "Generator development; revised B3 regression/review and independent final gates pending"
+}

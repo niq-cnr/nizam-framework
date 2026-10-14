@@ -1,0 +1,45 @@
+{
+  "review": "renewed-acceptance-bundle-B3",
+  "feature": "126",
+  "reviewer": {
+    "role": "Validator",
+    "session": "/root/capability_review",
+    "independence": "Distinct from acceptance126 test author and controller_generator source author."
+  },
+  "reviewed_commit": "2a66177ed254f2086338b60a5c51bc5d6395f3bf",
+  "seal_ref": ".agent/evidence/126/test-seal-b3.json",
+  "seal_sha256": "0fe5d36a27060431cbc4a42adf1524ebe0c8237d682ce33069664a21b9996433",
+  "test_revision": "d89d79fcdb9c5b3d3098f5ed8162b11467bb3284",
+  "test_sha256": "626ff4194baee472d27065906e12a0109f2f9878e326a5d6d2212ad2f584fe88",
+  "contract_sha256": "7eed25daca89c13a548976a213ddba6e6837acaee90511f0deff152a60697778",
+  "source_revision": "d965c2ca9dd845f9a094153c7328d90a5398d06f",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Approve expanded B3 acceptance bundle for separate final-candidate Mode B and fresh QA."
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [
+    ".agent/evidence/126/b3-review-check.py",
+    ".agent/evidence/126/b3-review-controls/identity-review.json",
+    ".agent/evidence/126/b3-review-controls/driver-result.json",
+    ".agent/evidence/126/b3-review-controls/C2-result.json",
+    ".agent/evidence/126/b3-review-controls/C3-result.json",
+    ".agent/evidence/126/b3-review-controls/control-summary.json",
+    ".agent/evidence/126/b3-review-controls/cleanup-observation.json"
+  ],
+  "findings": [
+    "Independently verified all25 sealed SHA256/Git identities, approved contract and ten normative inputs; historical B2 test retained and current API/projection unchanged.",
+    "AST comparison confirms all prior test functions/checks unchanged except the additive crash regression and integer-equivalent Session.call exit/envelope check. Nine existing selectors remain unchanged.",
+    "AST wrapper calls original atomic_json before process exit86 in a disposable candidate only. Actual C2 record-schema exits1 at intended crash-reopen assertion after genuine set/get and clean restart; no setup failure supplies the red.",
+    "Fresh final d965 candidate with exact committed B3 test exits0: orphan reopen requires70, known outstanding pointer permits busy1, fresh dispatch is refused, original record/result absence/run-state bytes preserved. Positive clean restart excludes unconditional rejection.",
+    "Unexpected C2 replacement is ownership-registered before failure, enabling existing guarded cleanup; read-only process scan found no remaining processes for either private candidate root. Historical failures, worker interruption and bounded independent-author continuation remain recorded."
+  ],
+  "product_accepted": false,
+  "approval_limit": "Expanded test bundle only. No full-source Mode B, full nine-command QA, CI, product success or feature completion approval. C2 intended failure and prior seals remain preserved.",
+  "next_gates": [
+    "Separate exact final-source Mode B against original pre-source baseline.",
+    "Fresh independent full QA and adversarial spot-check, repository checks, actual CI, scope and Root evidence capture."
+  ]
+}

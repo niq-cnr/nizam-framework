@@ -1,0 +1,53 @@
+{
+  "review": "validator-mode-b",
+  "feature": "126",
+  "contract_id": "126",
+  "attempt": 1,
+  "reviewer": "/root/capability_review",
+  "reviewed_commit": "a3879777276e96c30c4018954024d4ff53ed869a",
+  "source_candidate": "b6c0b097ecf2e12ee638a60273af568a8b86523a",
+  "source_baseline": "3f0e11b23367c17b1d8c2086011dc0c078441509",
+  "contract_sha256": "7eed25daca89c13a548976a213ddba6e6837acaee90511f0deff152a60697778",
+  "test_sha256": "60f6797100f15eb32b4f9e870eafe699627d17b835c8cc2ad44b703fcfb67e14",
+  "bundle_sha256": "1f27fa6a77696b95184f30755eaeaa175f2a137ecc69c5d013e719a9ae39de13",
+  "source_sha256": "cad3d7e8fb208f2b89934a544983745b77c766cba32e9c39c5b78f5bf379ec73",
+  "final_verdict": {
+    "approved": false,
+    "summary": "Reject C2 narrowly: reopen ignores a durable nonterminal operation when the session pointer was not persisted before a crash, then admits new execution from ambiguous state."
+  },
+  "issues": [
+    {
+      "id": "126-B-1",
+      "severity": "high",
+      "target": "tools/runtime_session.py:Supervisor.prepare and submit-operation write ordering",
+      "contract_requirement": "interface.records: Crash disagreement fails closed on reopen; never dispatch from ambiguous state. Persist running/outstanding state before dispatch.",
+      "finding": "Submit durably writes the running operation before writing session.outstanding_operation_ref. A real supervisor exit at that boundary leaves a running operation and null session pointer. prepare checks only the session pointer and does not reconcile nonterminal operation records. Reopening succeeds, increments generation, and new set/get executes while the original operation remains running.",
+      "evidence": [
+        ".agent/evidence/126/mode-b-crash-result.json",
+        ".agent/evidence/126/mode-b-crash.stdout.txt",
+        ".agent/evidence/126/mode-b-crash-observation.json",
+        ".agent/evidence/126/mode-b-crash-orphan-record.json",
+        ".agent/evidence/126/mode-b-crash-session-before-reopen.json",
+        ".agent/evidence/126/mode-b-crash-injection.patch"
+      ],
+      "required_fix": "Under the exclusive session lock, reconcile durable operation state with the session pointer before starting a replacement incarnation. Refuse ambiguous/nonterminal orphan state without clearing or fabricating outcomes; do not admit fresh execution until continuity is explicitly established. Preserve old records and attempt identity. Retain a bounded regression proving this exact crash window refuses reopen/new dispatch while normal clean restart still works. Acceptance-test edits, if needed, remain owned by the independent author and require renewed seal/review."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [
+    ".agent/evidence/126/mode-b-scope.json",
+    ".agent/evidence/126/mode-b-case9-result.json",
+    ".agent/evidence/126/mode-b-case9.stdout.txt",
+    ".agent/evidence/126/mode-b-crash-probe.py",
+    ".agent/evidence/126/mode-b-crash-result.json",
+    ".agent/evidence/126/mode-b-crash.stdout.txt"
+  ],
+  "reviewed_findings": [
+    "Full C1+C2 implementation read against approved contract and original pre-source baseline, including controller, stub, fixture claim/nine-command harness, README and changelog. Five source-author paths match scope; independent tests and Root/evidence overlays are attributed separately.",
+    "C2 continuity representation is sound: a refused different binding is a rejected request, not a transition of the session governed step. Conditional previous_* avoids asserting false continuity while matching binding retains it. Independent exact sealed case9 now exits0.",
+    "The example path correction remains in approved documentation scope. Sealed test, contract, B2 seal and immutable installed payload bytes are preserved.",
+    "Crash probe materializes exact immutable C2 inputs privately and inserts only process exit after successful atomic running-record publication. Positive real open/set/get precedes the crash. Exact patch/source hashes and actual exits are retained; shared product/tests/state were not changed."
+  ],
+  "scope_limit": "This is a rejected implementation gate, not QA. C1 semantic-red provenance and B2 approval remain preserved. Root owns repair allocation; fresh full QA follows a future approved Mode B candidate."
+}

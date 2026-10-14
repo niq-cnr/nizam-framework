@@ -1,0 +1,34 @@
+{
+  "whitespace_check": {
+    "argv": [
+      "git",
+      "diff",
+      "--cached",
+      "--check"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature126-final-qa",
+    "actual_exit_code": 2,
+    "stdout": ".agent/evidence/126/final-qa/03-command.stdout.txt:1: trailing whitespace.\n+CONTROL claim-map valid: actual_exit=0; \n",
+    "stderr": "",
+    "disposition": "Only trailing space in exact captured sealed-suite stdout. Raw command output is preserved as observed; no product defect."
+  },
+  "protected_boundary": {
+    "argv": [
+      "git",
+      "diff",
+      "--exit-code",
+      "HEAD",
+      "--",
+      "tools/runtime_session.py",
+      "tools/fixtures/runtime_session/stub_runtime.py",
+      "tools/test_runtime_session.py",
+      ".agent/contracts/126.json",
+      ".agent/run_state.json",
+      ".nizam"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature126-final-qa",
+    "actual_exit_code": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}

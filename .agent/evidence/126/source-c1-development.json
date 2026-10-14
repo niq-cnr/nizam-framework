@@ -1,0 +1,50 @@
+{
+  "candidate": "755b859703de29065885ccd7bc6031dabb702872",
+  "test_sha256": "60f6797100f15eb32b4f9e870eafe699627d17b835c8cc2ad44b703fcfb67e14",
+  "results": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c1-01-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c1-02-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check fixture-claim-registered",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c1-03-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c1-04-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c1-05-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c1-06-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy",
+      "actual_exit": 0,
+      "receipt": ".agent/evidence/126/source-c1-07-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub",
+      "actual_exit": 1,
+      "receipt": ".agent/evidence/126/source-c1-08-result.json"
+    }
+  ],
+  "completed_commands": 8,
+  "required_commands": 9,
+  "source_repairs": "none",
+  "boundary": "Generator development only; independent semantic controls/final bundle/Mode B/fresh QA remain pending"
+}
