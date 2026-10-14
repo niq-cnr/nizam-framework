@@ -1,0 +1,91 @@
+{
+  "contract_id": "128",
+  "feature_id": "128",
+  "name": "Bounded core evidence and close",
+  "status": "proposed",
+  "spec_ref": ".agent/product_spec_016.md",
+  "scope": {
+    "files_create": [
+      {"path": ".agent/contracts/128.json", "purpose": "Generator proposal; Root alone promotes approval/completion fields after gates."},
+      {"path": ".agent/evidence/128/*", "purpose": "Role-attributed contract, bundle, controls, development, QA, CI and capture receipts; each role writes only its own artifacts."},
+      {"path": ".agent/validator/128-*.json", "purpose": "Independent Validator Mode A/Mode B verdicts."},
+      {"path": ".agent/qa/128*.json", "purpose": "Independent Evaluator contract review, bundle review and distinct fresh final QA verdicts."},
+      {"path": ".agent/evidence/128-qa-adversarial.txt", "purpose": "Fresh QA's independently chosen additional adversarial check."}
+    ],
+    "files_modify": [
+      {"path": "tools/test_runtime_session.py", "purpose": "Evaluator-only small core-ready selector/dispatch; preserve all fourteen inherited leaf behaviors."},
+      {"path": "tools/README.md", "purpose": "Generator-only bounded partial-core command/proof documentation with NDS version/change_log update if changed."},
+      {"path": "CHANGELOG.md", "purpose": "Generator-only concise unreleased partial-core entry if needed."},
+      {"path": ".agent/run_state.json", "purpose": "Root-only lifecycle, attempt counters, history and measured budget."},
+      {"path": ".agent/feature_list_016.json", "purpose": "Root-only feature128 lifecycle/evidence projection after capture."},
+      {"path": "docs/planning/phase_016.yaml", "purpose": "Root-only canonical128/phase closure after QA and evidence capture; preserve historical steps."},
+      {"path": "docs/planning/ROADMAP.md", "purpose": "Planner-only current partial-core projection if needed after capture."},
+      {"path": "docs/planning/HANDOVER.md", "purpose": "Planner-only current partial-core projection if needed after capture."}
+    ]
+  },
+  "role_ownership": {
+    "Generator": "Proposes contract and contract1-* evidence only in preparation; after approval may edit only tools/README.md and CHANGELOG.md plus own attributed evidence. Never authors acceptance bytes or verdicts.",
+    "Evaluator_author": "Exclusively authors narrow runner aggregate and its actual controls; writes own 128 bundle/API/control evidence. No runtime/stub/harness changes.",
+    "Evaluator_reviewer": "Distinct recorded session independently reviews/seals the changed bundle, intended negative and positive controls, and preservation against historical127 Git objects; writes own 128 review/seal evidence.",
+    "Validator": "Independent Mode A and Mode B verdicts plus own attributed 128 command/diff/cost evidence; does not implement.",
+    "fresh_QA": "Distinct from Generator, test author and bundle reviewer; independently executes exact three commands plus exactly one extra adversarial check and captures own receipts/verdict.",
+    "Root": "Owns contract promotion, state/counters, candidate selection, actual hosted14 receipt, measured budget, evidence capture and canonical closure; own attributed128 evidence only.",
+    "Planner": "Owns only optional current ROADMAP/HANDOVER projections after capture plus own attributed128 planning evidence; preserves prior phase records."
+  },
+  "non_goals": [
+    "No installed .nizam changes or upgrade; installedv1.5.0 remains immutable. No source runtime_session.py, stub fixture, schema, fixture harness, workflow or adapter change.",
+    "No change to controller/stub source at88996ee9405f9467ff2debd6e3115b34d064019a or inherited fourteen leaf semantics; preserve single fourteen-command runtime_session_checks harness and single F105 claim row.",
+    "No full adapter, SBCL runtime, live/full conformance, phase020 fresh acceptance, final CI131 delivery, comparative performance, external organization or ecosystem claim.",
+    "No core-ready prerequisite on128 completion, its own future QA/capture, mutable manifest booleans or static evidence-only success; no full fixtures_self_test/validate/core-ready recursion.",
+    "No relabeling historical127 CI as new-runner or hosted core-ready proof; no perpetual HEAD whole-runner equality against historical127 seal. Preserve old pins and receipts for their original revisions."
+  ],
+  "aggregate_obligations": {
+    "execution": "Small independently authored aggregate executes all fourteen explicit leaf argv below in order using real bounded subprocesses on candidate source, with PYTHONDONTWRITEBYTECODE=1. Continue safe diagnostic executions after each failure; overall nonzero for any failed/missing leaf, setup error, timeout or missing proof.",
+    "proof": "Record each actual argv/stdout/stderr/exit. Exit0 alone is insufficient: require that leaf's final PASS NAME completion marker (caseN/stub for cases). Reject zero-exit missing marker. Never derive the leaf inventory by adding core-ready to an iterable that changes inherited harness expectations.",
+    "cleanup": "On timeout/interruption perform bounded cleanup of aggregate-owned child runs, including detached controller/stub descendants, with scoped proven ownership. No process-name broad kill or removal of unowned directories. Reviewer captures actual cleanup proof; implementation choice remains Evaluator-owned.",
+    "controls": "Independent reviewer proves a legitimate real fourteen-leaf aggregate pass and rejected intended child failure plus setup/missing-proof negatives using actual executable private controls, recording command/output/exit and exercised source/test identities. Missing selector is setup absence, never semantic red. Preserve observed failures; any behavioral repair follows captured intended red and positive control.",
+    "identity": "Seal new whole-runner Git object/SHA256; independently review narrow delta and inherited leaf AST/behavior against historical127 bundle. Reuse immutable127 receipt references rather than copying history. Changed acceptance bundle requires renewed independent review before use."
+  },
+  "leaf_argv": [
+    ["--check", "lifecycle-no-evaluation"],
+    ["--check", "record-schema"],
+    ["--check", "fixture-claim-registered"],
+    ["--case", "1", "--runtime", "stub"],
+    ["--case", "2", "--runtime", "stub"],
+    ["--case", "3", "--runtime", "stub"],
+    ["--case", "9", "--runtime", "stub"],
+    ["--case", "13", "--runtime", "stub"],
+    ["--case", "8", "--runtime", "stub", "--layer", "policy"],
+    ["--check", "cancel-confirmation-required"],
+    ["--check", "handoff-source-bound"],
+    ["--case", "5", "--runtime", "stub"],
+    ["--case", "6", "--runtime", "stub"],
+    ["--case", "10", "--runtime", "stub"]
+  ],
+  "leaf_prefix": "Actual Python executable and candidate tools/test_runtime_session.py precede each listed argv; all fourteen remain individually selectable.",
+  "verification": [
+    {"acceptance_test": "AT1 candidate-bound bounded core-ready independently executes all fourteen leaves, fails closed and supports only the documented partial stub core.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready"},
+    {"acceptance_test": "AT2 default repository compliance passes for scoped candidate artifacts and documented partial-core state.", "command": "bash tools/validate.sh"},
+    {"acceptance_test": "AT3 payload compliance passes; installed immutable payload and existing historical receipts remain intact.", "command": "bash tools/validate.sh --payload"}
+  ],
+  "gate_sequence": [
+    "Contract preparation only at selected base14721aaeed6a5f1c5c2190f264e5ba78679472ba; dependency127 is captured complete in selection.json. Pending main CI38565810273 is an implementation prerequisite, not a preparation prerequisite.",
+    "Independent Validator Mode A and Evaluator contract review approve the same proposed contract with approved:true and all three issue arrays empty; only Root promotes approved status. Root verifies actual successful main CI before implementation.",
+    "After approval, independent author supplies small aggregate and concrete controls; distinct reviewer seals/reviews complete acceptance bundle and exercised identities before Generator documentation implementation. No Generator acceptance edits.",
+    "Independent Mode B checks full scoped diff, role ownership, preservation, required deliverables and actual counted cost before distinct fresh QA executes the exact three commands and its additional adversarial check on a committed candidate.",
+    "Actual existing hosted CI executes unchanged fourteen-command harness against the new runner identity. Its command/exit receipt is separate from fresh QA core-ready receipt; hosted harness does not acquire a core-ready claim.",
+    "Root verifies every required receipt exists with actual command/output/exit/source/test/environment and QA references, binds candidate identity across QA/CI, captures partial-core evidence, then alone completes128/canonical phase and lifecycle. Planner may project that captured current state."
+  ],
+  "estimated_lines": 800,
+  "budget": {
+    "product": 200, "independent_tests": 100, "process": 500,
+    "phase_original": 5650, "phase_ceiling": 7345,
+    "already_counted": 4765, "remaining_ceiling": 2580,
+    "measurement_base": "ec0b21c64f8bf003faa42d6a17dbe4f3903b065b",
+    "rule": "Preserve original accounting; charge all preparation/product/tests/process once, including optional projections and controls. No new allowance or rebaseline; Root measures actuals and escalates scope/budget mismatch before expansion."
+  },
+  "evidence_dir": ".agent/evidence/128/",
+  "evidence_convention": "Role-owned named stdout/stderr/result files record actual argv/cwd/environment/exit/exercised revision and source/test hashes; seals/verdicts reference immutable paths/Git objects. contract1-* is Generator-owned preparation only; other roles use their attributed names. Fresh adversarial evidence is .agent/evidence/128-qa-adversarial.txt. No recursive evidence copies.",
+  "approvals": {"validator_mode_a": false, "evaluator_contract_review": false, "revisions": 0},
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
