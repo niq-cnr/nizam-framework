@@ -1,0 +1,229 @@
+{
+  "id": "phase016-activation-proposal",
+  "status": "proposed-awaiting-hosted-receipt",
+  "owner_role": "Planner",
+  "created_at": "2026-10-14T08:08:13.741743+00:00",
+  "base_revision": "fcc97b50c43f82d4f4c672543ce556a178d1ddc0",
+  "scope": "niq-cnr/nizam-framework only; proposal file only; no canonical edit or activation",
+  "authorization_ref": ".agent/evidence/agentic-excellence/authorization.json",
+  "prerequisites": {
+    "foundation": {
+      "capture_ref": ".agent/evidence/118/evidence-capture.json",
+      "passed": true,
+      "captured_revision": "60cf91d1e2f0781382c20a5a18bb1673a381c0d8",
+      "merge_revision": "e619d284d36eaf6dfff54a9d001477b8d1722098",
+      "pr_url": "https://github.com/niq-cnr/nizam-framework/pull/94",
+      "pr_state": "MERGED",
+      "merged_at": "2026-10-14T06:23:09Z",
+      "main_ci_url": "https://github.com/niq-cnr/nizam-framework/actions/runs/38521902261",
+      "main_ci_status": "completed",
+      "main_ci_conclusion": "success",
+      "main_ci_head": "e619d284d36eaf6dfff54a9d001477b8d1722098",
+      "observation_commands": [
+        {
+          "command": "gh pr view 94 --repo niq-cnr/nizam-framework --json number,state,mergedAt,mergeCommit,url",
+          "exit": 0
+        },
+        {
+          "command": "gh run view 38521902261 --repo niq-cnr/nizam-framework --json databaseId,status,conclusion,headSha,url,workflowName",
+          "exit": 0
+        }
+      ]
+    },
+    "capability": {
+      "status": "pending",
+      "hosted_receipt_ref": null,
+      "local_receipt_ref": ".agent/evidence/phase016-preflight/local-result.json",
+      "local_required_isolation_exit": 1,
+      "local_sbcl_probe_exits": [
+        0,
+        0
+      ],
+      "requirement": "Actual single capable Linux job: exact required-isolation suite, SBCL version and fresh no-init assertion all exit0; bind job/head/environment/commands/exits. No allow-unsupported or workstation sysctl changes. Prior foundation CI is not this receipt."
+    }
+  },
+  "stale_reference": {
+    "path": ".agent/feature_list_016.json",
+    "selector": "cross_phase_prerequisites[phase=017-workflow-assurance-foundation].evidence[0]",
+    "old": ".agent/evidence/118/evidence-gate.txt",
+    "old_exists": false,
+    "replacement": ".agent/evidence/118/evidence-capture.json",
+    "reason": "Planning placeholder now superseded by actual captured foundation evidence."
+  },
+  "activation_transaction_after_receipt": [
+    {
+      "path": ".agent/product_spec_016.md",
+      "owner": "Planner",
+      "changes": [
+        "version0.1.0 ->0.1.1 with matching change_log entry; draft->active; title/description/H1 and activation paragraphs reflect authorized controller-core scope.",
+        "Replace future foundation/authorization/budget wording with recorded authority, actual118 capture, PR94/main CI, and actual hosted capability receipt. Keep source contracts/gates pending.",
+        "Preserve all architecture, thirteen-case allocation across phases, preflight commands, role independence, shared-file order and budget table. Add concise one-time preparation accounting reference."
+      ]
+    },
+    {
+      "path": ".agent/feature_list_016.json",
+      "owner": "Planner",
+      "changes": [
+        "spec_version0.1.0 ->0.1.1; phase_status pending->in_progress.",
+        "Replace stale foundation evidence path and future authority string with actual118 capture and recorded authorization references.",
+        "Replace future activation_prerequisites wording with satisfied prerequisite references once independently checked; bind hosted receipt without changing activation_preflight.commands.",
+        "At Orchestrator selection, feature126 pending->in_progress for contract preparation only; passes remains false. Features127/128 remain pending/false."
+      ]
+    },
+    {
+      "path": "docs/planning/phase_016.yaml",
+      "owner": "Planner on Orchestrator-selected transition",
+      "changes": [
+        "description reflects activated core planning and future implementation acceptance; status pending->in_progress.",
+        "Step126 PENDING->IN_PROGRESS for Loop1 contract preparation only;127/128 remain PENDING. No completion evidence or source-pass claim."
+      ]
+    },
+    {
+      "path": "docs/planning/manifest.json",
+      "owner": "Planner",
+      "changes": [
+        "current_phase becomes016-runtime-controller-core; update updated_at to actual transaction time.",
+        "Only phase016 status pending->in_progress, activation_state proposed->active, note binds authorization/budget/capture/capability receipt.",
+        "Only stale final sentence of phase017 note changes from phase016 proposed to separately activated016; preserve017 complete/finished_at. All other phase records untouched."
+      ]
+    },
+    {
+      "path": "docs/planning/backlog_dag.json",
+      "owner": "Planner",
+      "changes": [
+        "activated_phase becomes016-runtime-controller-core. Add phase016_execution projection with126/contract-preparation status, actual authorization/capture/host references, order126->127->128 and no implementation approval.",
+        "Update current proposed_execution_note to distinguish active016 from future018/020/019 while retaining017->016->018->020->019 and numeric feature-list authority.",
+        "Mark only proposed_supersessions[packet=NIP3-115].adoption_state adopted for016; retain prior edges and resolved115/116/117/118 prerequisites.",
+        "In NIP3-115 only, update current status/authority/prerequisite projection for actual126 selection and actual foundation/host evidence. Preserve provisional aliases/estimates as historical, actual_assigned126, and original packet edges.",
+        "Do not promote whole NIP3-116: actual127 remains pending and split final-CI131 belongs to020. Keep planned_additional_nodes[128] pending, all future phases and phase017_execution unchanged. Preserve dated plan_status_note; current phase016_execution is the new current projection."
+      ]
+    },
+    {
+      "path": ".agent/run_state.json",
+      "owner": "Orchestrator only",
+      "changes": [
+        "After canonical plan transaction, record derived phase/current_feature126, proposed contract location only when it exists, activation authority/receipt and gate counters. No approved contract invented.",
+        "Preserve phase017 historical5203/7020 ledger and all history/counters before initializing phase016 original5650/ceiling7345 with once-only preparation charges."
+      ]
+    }
+  ],
+  "immutable_obligations": {
+    "feature126_acceptance_tests": [
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check fixture-claim-registered",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub"
+    ],
+    "feature_acceptance_hashes": {
+      "126": "a98d0a7b192b940bd0e3c11caad354f895f85245cec083cf78387de98a293489",
+      "127": "50bccd1c40c4558f6da8415a7def140efeb725f98407d3e13f19ddba3956ce6f",
+      "128": "13a3168097e26274cf25bf1f9cc370354714d4d668a4751a9dd0fce3f6455363"
+    },
+    "case_matrix_sha256": "95e3457bbbe94481ed8fbd768a527f1768dfde4aa23d9e3036322cd885178f53",
+    "shared_file_lanes_sha256": "f66a3e732c5d1ee009846cbd4f9c2302f52f32b53db293f9600d972187f7aeab",
+    "feature_dependency_arrays": {
+      "126": [],
+      "127": [
+        "126"
+      ],
+      "128": [
+        "127"
+      ]
+    },
+    "cross_phase_requires": [
+      "115",
+      "116",
+      "117",
+      "118"
+    ],
+    "remaining_order": [
+      "016",
+      "018",
+      "020",
+      "019"
+    ],
+    "original_estimate_lines": 5650,
+    "ceiling_130pct": 7345,
+    "budget_categories": {
+      "product": 1750,
+      "tests": 1250,
+      "process": 2650
+    },
+    "feature_estimates": {
+      "126": 2900,
+      "127": 1950,
+      "128": 800
+    }
+  },
+  "cost_treatment": {
+    "owner": "Orchestrator",
+    "classifier": ".agent/evidence/scope-budget-014/measure.py",
+    "rule": "Use existing insertions+deletions classes; raw evidence is separately reported, run_state excluded, unclassified fails closed. Semantic preparation is already priced in the2650 process allowance; do not change path classification or add an overhead multiplier.",
+    "ci_transport": {
+      "source_range": "4e7abcb427b89e60684bb8b72c19ec021775a2e9..22106ad1e12bc76bd78e643fe58860410a5caa86",
+      "path": ".github/workflows/compliance.yml",
+      "insertions": 19,
+      "deletions": 1,
+      "counted": 20,
+      "classifier_category": "budget/product-ext",
+      "evidence_ref": ".agent/evidence/phase016-preflight/transport-workflow.diff",
+      "measurement_command": "git diff --numstat 4e7abcb427b89e60684bb8b72c19ec021775a2e9 22106ad1e12bc76bd78e643fe58860410a5caa86 -- .github/workflows/compliance.yml",
+      "measurement_exit": 0,
+      "charge": "Carry20 into016 cumulative total once as phase-level preparation; do not charge to completed017 or append as completed126."
+    },
+    "activation_and_registration": "Measure actual canonical planning, contract/review/QA and registration deltas under original5650/7345; account disjoint preparation/feature ranges with preserved source identities. A phase base after preparation must explicitly carry earlier20; a range already including20 must not add it again.",
+    "comparison_program": {
+      "source_commit": "40d507cbebdc2b253b4c90ef5e56bdb32008502c",
+      "path": "docs/planning/agentic-excellence.md",
+      "draft_counted_lines": 163,
+      "evidence_lines": 718,
+      "measurement_command": "git show --numstat --format= 40d507cbebdc2b253b4c90ef5e56bdb32008502c -- docs/planning/agentic-excellence.md",
+      "measurement_exit": 0,
+      "disposition": "Distinct comparative-program planning, not controller126 delivery; record a separate program receipt at integrated reviewed revision, including review/repair changes. Visible cost, no automatic budget or free allowance. If Root allocates it to016 instead, include it once within existing5650/7345 before advancement. Never silently omit it from an aggregate diff.",
+      "benchmark_spend_authorized": false
+    },
+    "reconciliation": "Preparation plus feature ranges plus distinct program range must reconcile to all counted changed paths, with explicit non-overlap; measure final reviewed revisions, not estimates. No rebaseline implied."
+  },
+  "preactivation_checks": [
+    "Resolve and independently validate actual hosted receipt; foundation pass and greenmain do not substitute.",
+    "Confirm operator authority retained in durable history; Root makes lifecycle decision.",
+    "Check new plan/list schema and dependency DAG, exact immutable_obligations hashes, no installed/source/historical edits, and full budget unchanged.",
+    "Run repository compliance after canonical edits; capture command output/exit/revision by path.",
+    "Only then select126 contract proposal; both independent pre-code gates and sealed acceptance review remain before source implementation."
+  ],
+  "protected_input_sha256": {
+    ".agent/product_spec_016.md": "d9d157c813883e2ba7961435e36362fb70f080581169fb70a78eb451aa4c3a70",
+    ".agent/feature_list_016.json": "2fe182f60339723c6592016ac3865e89a40f1b0738e7ccd2074783f274d55e53",
+    "docs/planning/phase_016.yaml": "2c8562130716e178245d7cf08df0075973ed8077b972da5298718ddd75a0250e",
+    "docs/planning/manifest.json": "48a524c497e54e42bcb4bc388e1f24a0eaa629930ce16847d347c9efbae5ec21",
+    "docs/planning/backlog_dag.json": "70016b897173fc0552143b62c455477e38713f70e88d54e75cf8403c7d06b59d",
+    ".agent/run_state.json": "6a3f2d52937a6181d9e299a27b7dd0cd3f40bcbd63733868ad49b8388c328be1",
+    ".agent/evidence/118/evidence-capture.json": "efbddba6df01ffcfd5f66303a9bfc378aa878dc6b948270ce9ca98e9f5ce0603",
+    ".agent/evidence/phase016-preflight/local-result.json": "8fe70713fd89253440be12046aa53ef74fd24cc9a81eb99418f02c3737165ec9",
+    ".agent/evidence/phase016-preflight/transport-plan.json": "45b0c2b8a0431ce951711fbe736ecb26d5489a56778d13ea67eab42f56a02b4e",
+    ".nizam/provenance.json": "0439596d47b76f8e8c496d44e9768ec2b81be0672f57ee401b4b2be8e8bd314a"
+  },
+  "implementation_permission": false,
+  "activation_claimed": false,
+  "next": "Root supplies actual passing hosted receipt, then Planner prepares the bounded canonical plan transaction; Root retains lifecycle and budget ownership.",
+  "planner_self_check": {
+    "checked_at": "2026-10-14T08:08:38.698475+00:00",
+    "exercised_revision": "fcc97b50c43f82d4f4c672543ce556a178d1ddc0",
+    "exit": 0,
+    "checks": [
+      "JSON parses",
+      "Exact nine126 acceptance commands",
+      "Full5650/7345 unchanged",
+      "Stale reference absent and actual118 capture present",
+      "Hosted receipt still pending; no activation or implementation permission",
+      "Every protected input hash unchanged",
+      "git diff --name-only empty before adding sole new proposal"
+    ],
+    "independent_approval": false
+  }
+}
