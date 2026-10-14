@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "126",
   "status": "in_progress",
-  "updated_at": "2026-10-14T09:28:30.712898+00:00",
+  "updated_at": "2026-10-14T09:40:31.426431+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -913,6 +913,10 @@
       "limit": 3
     },
     "126-source": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "126-bundle-review": {
       "attempts": 1,
       "limit": 3
     }
@@ -5003,6 +5007,12 @@
       "event": "126-B0-review2-approved-source1-dispatched",
       "detail": "126 renewed provisional B0 review2 strict gate passed; source attempt1 allocated in isolated Generator worktree. C1 handoff only; behavioral red/final bundle/ModeB/QA/CI pending.",
       "evidence": ".agent/evidence/126/b0-round2-advance.json"
+    },
+    {
+      "at": "2026-10-14T09:40:31.426431+00:00",
+      "event": "126-C1-semantic-red-B2-review1",
+      "detail": "126 C1 actual semantic red and independent transport/mutant0-1-0 received; B2 sealed unchangedtest60f679. Distinct final acceptance-bundle review1 dispatched; source repair2 pending approval.",
+      "evidence": ".agent/evidence/126/test-seal-b2.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5476,7 +5486,7 @@
       }
     ]
   },
-  "last_action": "126 renewed provisional B0 review2 strict gate passed; source attempt1 allocated in isolated Generator worktree. C1 handoff only; behavioral red/final bundle/ModeB/QA/CI pending.",
+  "last_action": "126 C1 actual semantic red and independent transport/mutant0-1-0 received; B2 sealed unchangedtest60f679. Distinct final acceptance-bundle review1 dispatched; source repair2 pending approval.",
   "completed_contract_ids": [
     "099",
     "103",
