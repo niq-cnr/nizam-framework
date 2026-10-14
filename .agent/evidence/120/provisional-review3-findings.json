@@ -1,0 +1,36 @@
+{
+  "reviewer": "/root/bundle120",
+  "attempt": 3,
+  "strategy": "Architectural analysis of fixture artifact idempotence and real immutable revision identity.",
+  "reviewed_revision": "7ab5fc43a52ba96be552e69262cf261e5cfc32fb",
+  "author_commit": "b9cab92e940f691ee003af5e2acb835f3359fc94",
+  "source_sha256": "733c1478a8eb237339efe914d29d2be2c93d01172ed399e3baea340d6ec3982a",
+  "test_sha256": "9c99ff133aacaad158f840e78158792b2b096450560f47dc4b218b8e4ff223f7",
+  "diagnosis": {
+    "evidence": [
+      ".agent/evidence/120/source1-failure.json",
+      ".agent/evidence/120/source1-reject-invalidated.stderr.txt",
+      ".agent/evidence/120/author3-noop-diagnostic.json",
+      ".agent/evidence/120/author3-noop-diagnostic.stdout.txt"
+    ],
+    "finding": "Original Source was committed after provisional2 approval. Stage-minima fixture selected identical operator bytes and the old unconditional commit returned1 with no staged changes. This is actual setup failure, not a semantic negative or evidence of Source behavioral repair."
+  },
+  "reviewed_change": {
+    "path": "tools/test_workflow_assurance.py:685",
+    "delta": "+3/-1 only ReceiptFixture.commit",
+    "architecture": "Stage actual fixture paths, query actual staged filenames, commit only nonempty staged change, then return real rev-parse HEAD. No exception handler or synthetic revision fallback. Unchanged content is a legitimate immutable artifact reuse; changed content still creates a commit.",
+    "assertions": "Full module AST is identical to previous reviewed945d37a after substituting only the old commit method; all acceptance assertions, old26 definitions, inventories11/default37 remain unchanged."
+  },
+  "own_execution": {
+    "evidence": ".agent/evidence/120/provisional-review3-proof.json",
+    "actual_exit": 0,
+    "same_content": "Same exact ref/path/SHA/revision and real HEAD retained.",
+    "changed_content": "New immutable commit observed; actual Git object type commit and its JSON blob validated.",
+    "failure_propagation": "Owned scratch .git/index.lock causes actual staging failure; owned pre-commit hook causes actual commit failure. Both raise CalledProcessError and preserve HEAD; raw outputs and actual exits captured separately. No source/test repair or real repository mutation is performed by the probes.",
+    "protected_pins": 11
+  },
+  "development_capture_review": "All12 author records (one restored failed selector plus eleven exact selectors) have actual exit0, exact individual PASS line, empty stderr, matching raw stream SHA256, and exact final Source/test/contract pins. They ran against unchanged original Source. This review independently inspects their truth/binding; it does not relabel them as private intended-negative/restored final33controls or QA.",
+  "preservation": "Historical120 evidence and prior provisional review reports are unchanged: diff from approved author3 input contains only evidence additions. Whole counted test change is435/700. No contract/schema/Source/state/installed changes by this reviewer.",
+  "repository_boundary": "Aligned fixture repository strings do not establish compatibility of actual URL origin, short run_state repository and standing-authority spelling. Existing repository-compatibility-preflight.json remains factual and separate; this verdict makes no normalization, migration or live Root readiness claim.",
+  "remaining_stage_requirements": "Final eleven positive/private intended-semantic-red/restored controls, distinct final executable bundle acceptance, Mode B, fresh QA, hosted proof and Root capture remain required. This approves the frozen fixture repair only."
+}

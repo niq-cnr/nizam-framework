@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.tmp/nizam-feature120-controls1/tools/test_workflow_assurance.py", line 1023, in run_receipt_case
+    elif name == 'idempotent-replay': receipt_replay(api, f)
+                                      ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-controls1/tools/test_workflow_assurance.py", line 952, in receipt_replay
+    require(replay['action'] == 'noop' and replay['state'] == out['state'], 'receipt identical replay noop')
+  File "/home/cnross/.tmp/nizam-feature120-controls1/tools/test_workflow_assurance.py", line 35, in require
+    raise AssertionError('POLICY_ASSERTION: ' + message)
+AssertionError: POLICY_ASSERTION: receipt identical replay noop

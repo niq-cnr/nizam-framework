@@ -600,10 +600,439 @@ def run_agf_case(name, api):
     else: agf_array(api, AGF_ARRAYS[AGF_CASES[3:].index(name)])
 
 
+RECEIPT_CASES = ('reject-missing-operator', 'reject-wrong-candidate', 'reject-unrun',
+    'reject-setup', 'reject-pending', 'reject-running', 'reject-failed',
+    'reject-invalidated', 'idempotent-replay', 'reject-double-advance', 'recover-missing-receipt')
+RECEIPT_MINIMA = {'contract-approved': ('mode-a', 'contract-review'),
+    'source-ready': ('approved-contract', 'provisional-bundle'), 'qa-passed': ('mode-b',),
+    'evidence-captured': ('fresh-qa',), 'feature-complete': ('fresh-qa', 'evidence-capture')}
+
+
+def receipt_ids(value):
+    if type(value) not in (dict, list): return set()
+    children = value.values() if type(value) is dict else value
+    return {id(value)}.union(*(receipt_ids(child) for child in children))
+
+
+class ReceiptFixture:
+    """Synthetic authority/gate fixtures; captures alone describe real local processes."""
+    def __init__(self, api, parent, alternate=False):
+        self.api = api; self.root = Path(parent) / ('alternate' if alternate else 'receipt')
+        self.root.mkdir(); git(self.root, 'init', '-q')
+        git(self.root, 'config', 'user.name', 'Receipt Fixture Only')
+        git(self.root, 'config', 'user.email', 'fixture@example.invalid')
+        self.repository = 'portable/receipt-fixture' if alternate else 'niq-cnr/nizam-framework'
+        git(self.root, 'remote', 'add', 'origin', self.repository)
+        self.inputs = dict(source=['src/code.py'], contracts=['contract.json'],
+            tests=['tests/test.py'], tools=['tools/check.py'], unknown_dependencies=[])
+        for path in ('src/code.py', 'tests/test.py', 'tools/check.py'): self.write(path, b'# protected receipt fixture\n')
+        self.state = dict(repository=self.repository, current_phase='fixture-phase', current_feature='120',
+            status='awaiting-fixture', updated_at='2026-10-14T00:00:00Z',
+            scope_budget=dict(original_estimate_lines=44, total_lines_changed=3, per_feature=[]),
+            circuit_breaker={'fixture': {'attempts': 1, 'limit': 3}},
+            history=[dict(at='earlier', event='fixture-seed', detail='preserve this prefix')],
+            authority={'fixture': ['unowned sentinel']})
+        self.write('record.json', self.state)
+        for name in ('contract', 'contract_review', 'qa_verdict', 'run_state'):
+            self.write('schema/' + name + '.schema.json', (ROOT / 'schema' / (name + '.schema.json')).read_bytes())
+        proposed = json.loads((ROOT / '.agent/contracts/120.json').read_text())
+        proposed['status'] = 'proposed'; proposed['approvals'] = {'validator_mode_a': False, 'evaluator_contract_review': False}
+        self.write('contract.json', proposed); proposal_revision = self.commit('fixture proposal')
+        proposal_digest = sha(canonical(proposed)); self.gate = agf_report(); del self.gate['extra_metadata']
+        mode_a = dict(self.gate, feature='120', reviewed_commit=proposal_revision,
+            contract_sha256=proposal_digest, reviewer='fixture-mode-a')
+        review = dict(self.gate, review='fixture-only', feature='120', contract_id='120',
+            reviewed_revision=proposal_revision, proposal_sha256=proposal_digest, reviewer='fixture-contract-review')
+        self.write('proof/mode-a.json', mode_a); self.write('proof/contract-review.json', review)
+        approved = copy.deepcopy(proposed); approved['status'] = 'approved'
+        approved['approvals'] = {'validator_mode_a': True, 'evaluator_contract_review': True}
+        approved['approval_evidence'] = dict(mode_a='proof/mode-a.json', contract_review='proof/contract-review.json', proposal_sha256=proposal_digest)
+        self.write('contract.json', approved); approval_revision = self.commit('fixture approved authority')
+        self.contract = self.ref('contract.json', approval_revision); digest = self.contract['sha256']
+        entries = [self.entry('mode-a', self.ref('proof/mode-a.json', approval_revision), proposal_revision, proposal_digest),
+            self.entry('contract-review', self.ref('proof/contract-review.json', approval_revision), proposal_revision, proposal_digest),
+            self.entry('approved-contract', self.contract, approval_revision, digest)]
+        artifacts = {
+            'provisional-bundle': dict(self.gate, feature_id='120', reviewed_revision=approval_revision, approved_contract_sha256=digest, reviewer='fixture-bundle-review'),
+            'mode-b': dict(self.gate, feature='120', reviewed_commit=approval_revision, approved_contract_sha256=digest, reviewer='fixture-mode-b'),
+            'fresh-qa': dict(self.gate, feature_id='120', reviewed_revision=approval_revision, approved_contract_sha256=digest, reviewer='fixture-qa', qa_pass=True, checks_run=1, checks_passed=1, adversarial={'performed': True}, evidence_files=[], required_fixes=[]),
+            'evidence-capture': dict(role='Root', feature='120', revision=approval_revision, approved_contract_sha256=digest, passed=True, actual_exit=0, purpose='synthetic typed parser fixture')}
+        for kind, value in artifacts.items(): self.write('proof/' + kind + '.json', value)
+        authority = json.loads((ROOT / '.agent/evidence/phase018-preflight/activation-authority.json').read_text())
+        if alternate:
+            authority.update(owner='fixture-portable-owner', gate='H-FIXTURE-PORTABLE', repository=self.repository,
+                operator_instruction_verbatim='Synthetic fixture instruction, not real operator consent.',
+                scope=dict(phase='portable-phase', features=['120', 'fixture-next'], original_estimate_lines=33, ceiling_130pct=44))
+        self.authority = authority; self.write('proof/standing-authority.json', authority)
+        self.candidate_revision = self.commit('fixture protected candidate and typed prerequisite fixtures')
+        self.candidate = api.assess_repository(self.root, self.candidate_revision, self.inputs,
+            ['NIZAM_WA120_FIXTURE'], {'contract.json': ['/status'], 'record.json': ['/status', '/updated_at', '/history']})
+        self.authority_ref = self.ref('proof/standing-authority.json', self.candidate_revision)
+        entries += [self.entry(kind, self.ref('proof/' + kind + '.json', self.candidate_revision), approval_revision, digest) for kind in artifacts]
+        self.producer = dict(agent_id='fixture-only-capture-producer', session_id='fixture-only-session')
+        self.diagnostic = 'PASS receipt fixture actual assertion'
+        self.policy = dict(schema_version=1, repository=self.repository, feature_id='120', stage='feature-complete',
+            operation_id='fixture-operation-120', candidate=copy.deepcopy(self.candidate), contract=self.contract,
+            operator=None, producer=self.producer, prerequisites=entries, commands=[],
+            from_status=self.state['status'], to_status='captured-fixture', at='2026-10-14T01:00:00Z', recovery=None)
+        self.capture = self.actual_capture('success')
+        self.set_capture(self.capture); self.set_stage('feature-complete')
+
+    def write(self, path, value):
+        target = self.root / path; target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(value if type(value) is bytes else canonical(value))
+
+    def commit(self, message):
+        git(self.root, 'add', '.')
+        if git(self.root, 'diff', '--cached', '--name-only'):
+            git(self.root, 'commit', '-qm', message)
+        return git(self.root, 'rev-parse', 'HEAD')
+
+    def ref(self, path, revision=None):
+        revision = revision or git(self.root, 'rev-parse', 'HEAD')
+        data = subprocess.check_output(['git', '-C', str(self.root), 'show', revision + ':' + path])
+        return dict(path=path, sha256=sha(data), revision=revision)
+
+    def pin(self, path, value):
+        self.write(path, value); return self.ref(path, self.commit('fixture artifact ' + path))
+
+    def nonregular_artifact(self, reference):
+        """Keep identical JSON bytes/path/digest; change only historical Git mode."""
+        revision = reference['revision']; path = reference['path']
+        data = subprocess.check_output(['git', '-C', str(self.root), 'show', revision + ':' + path])
+        oid = subprocess.check_output(['git', '-C', str(self.root), 'hash-object', '-w', '--stdin'], input=data).decode().strip()
+        with tempfile.TemporaryDirectory(prefix='receipt-mode-index-', dir=self.root.parent) as directory:
+            env = {**os.environ, 'GIT_INDEX_FILE': str(Path(directory) / 'index')}
+            def index(*args):
+                return subprocess.check_output(['git', '-C', str(self.root), *args], env=env).decode().strip()
+            index('read-tree', revision)
+            index('update-index', '--cacheinfo', '120000', oid, path)
+            tree = index('write-tree')
+            commit = subprocess.check_output(['git', '-C', str(self.root), 'commit-tree', tree, '-p', revision],
+                input=b'Owned nonregular artifact mode fixture\n', env=env).decode().strip()
+        row = git(self.root, 'ls-tree', commit, '--', path).split()
+        require(row[:3] == ['120000', 'blob', oid], 'nonregular artifact historical mode is isolated')
+        require(subprocess.check_output(['git', '-C', str(self.root), 'show', commit + ':' + path]) == data,
+            'nonregular artifact retains exact valid bytes')
+        return dict(reference, revision=commit)
+
+    def entry(self, kind, artifact, revision, digest):
+        return dict(kind=kind, artifact=copy.deepcopy(artifact), feature_id='120', assessed_revision=revision, contract_sha256=digest)
+
+    def actual_capture(self, outcome):
+        revision = git(self.root, 'rev-parse', 'HEAD')
+        code = "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print(%r)" % self.diagnostic
+        if outcome == 'semantic-negative': code += '; assert 1 != 2'
+        if outcome == 'failed': code += '; sys.exit(7)'
+        if outcome == 'setup-error': code += "; print('SETUP_ERROR: fixture dependency missing',file=sys.stderr); sys.exit(2)"
+        argv = [sys.executable, '-c', code]
+        process = subprocess.run(argv, cwd=self.root, capture_output=True, env=os.environ)
+        require(process.returncode == {'failed': 7, 'setup-error': 2}.get(outcome, 0), 'actual fixture process outcome')
+        label = outcome.replace('-', '_')
+        self.write('proof/' + label + '.stdout', process.stdout); self.write('proof/' + label + '.stderr', process.stderr)
+        output_revision = self.commit('actual fixture process outputs ' + outcome)
+        capture = dict(schema_version=1, argv=argv, cwd=str(self.root), revision=revision,
+            candidate_sha256=sha(canonical(self.candidate)), environment=copy.deepcopy(self.candidate['environment']),
+            producer=copy.deepcopy(self.producer), executed=True, outcome=outcome, exit_code=process.returncode,
+            stdout=self.ref('proof/' + label + '.stdout', output_revision), stderr=self.ref('proof/' + label + '.stderr', output_revision))
+        return capture
+
+    def set_capture(self, capture):
+        self.capture_ref = self.pin('proof/capture-' + str(len(git(self.root, 'rev-list', 'HEAD').splitlines())) + '.json', capture)
+        self.policy['commands'] = [dict(argv=copy.deepcopy(capture['argv']), expected_exit=0,
+            proof_kind='semantic-negative' if capture['outcome'] == 'semantic-negative' else 'success',
+            diagnostic=self.diagnostic, capture=self.capture_ref)]
+        self.refresh()
+
+    def refresh(self):
+        p = self.policy
+        self.receipt = {key: copy.deepcopy(p[key]) for key in ('schema_version', 'repository', 'feature_id', 'stage', 'operation_id', 'candidate', 'producer', 'prerequisites')}
+        self.receipt.update(status='passed', contract_ref=copy.deepcopy(p['contract']), operator_ref=copy.deepcopy(p['operator']), verdict=copy.deepcopy(self.gate),
+            checks=[dict(argv=copy.deepcopy(c['argv']), executed=True, outcome=c['proof_kind'], exit_code=0,
+                stdout=copy.deepcopy(self.capture['stdout']), stderr=copy.deepcopy(self.capture['stderr']), capture=copy.deepcopy(c['capture'])) for c in p['commands']])
+
+    def set_stage(self, stage):
+        self.policy['stage'] = stage
+        scope = {k: copy.deepcopy(self.authority['scope'][k]) for k in ('phase', 'features', 'original_estimate_lines', 'ceiling_130pct')}
+        application = dict(schema_version=1, role='Root', repository=self.repository, feature_id='120', stage=stage,
+            candidate_sha256=sha(canonical(self.candidate)), approved=True, authority_ref=self.authority_ref,
+            owner=self.authority['owner'], gate=self.authority['gate'], scope=scope)
+        self.operator = application; self.policy['operator'] = self.pin('proof/operator-' + stage + '.json', application); self.refresh()
+
+    def bad_artifact(self, kind, change):
+        entry = next(e for e in self.policy['prerequisites'] if e['kind'] == kind)
+        value = json.loads(subprocess.check_output(['git', '-C', str(self.root), 'show', entry['artifact']['revision'] + ':' + entry['artifact']['path']]))
+        change(value); entry['artifact'] = self.pin('proof/bad-' + kind + '.json', value); self.refresh()
+
+    def snapshot(self):
+        return {str(p.relative_to(self.root)): (sha(p.read_bytes()), p.stat().st_mode) for p in self.root.rglob('*') if p.is_file() and '.git' not in p.relative_to(self.root).parts}
+
+
+def receipt_verify(api, f):
+    before = copy.deepcopy((f.receipt, f.policy)); files = f.snapshot()
+    result = api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)
+    require(result == f.receipt and type(result) is dict, 'receipt exact validated copy')
+    require(not receipt_ids(result) & receipt_ids([f.receipt, f.policy]), 'receipt deep copy independence')
+    require((f.receipt, f.policy) == before and files == f.snapshot(), 'receipt read-only validation, no command reexecution')
+    return result
+
+
+def receipt_reject(api, f, operation=None):
+    before = repr((f.receipt, f.policy, f.state)); files = f.snapshot()
+    rejected(api, operation or (lambda: api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)), 'receipt invalid input rejected')
+    require(before == repr((f.receipt, f.policy, f.state)) and files == f.snapshot(), 'rejected receipt preserves inputs/files')
+
+
+def receipt_plan(api, f, state=None, receipt='fixture-default'):
+    state = f.state if state is None else state
+    receipt = f.receipt if receipt == 'fixture-default' else receipt
+    before = copy.deepcopy((state, receipt, f.policy)); files = f.snapshot()
+    result = api.plan_receipt_transition(f.root, state, receipt, policy=f.policy)
+    require(set(result) == {'action', 'state', 'receipt', 'reason'} and type(result['reason']) is str and bool(result['reason']), 'transition exact return shape/reason')
+    require(not receipt_ids(result) & receipt_ids([state, receipt, f.policy]), 'transition deep copy independence')
+    require((state, receipt, f.policy) == before and files == f.snapshot(), 'transition read-only inputs/files')
+    import jsonschema
+    jsonschema.validate(result['state'], json.loads((ROOT / 'schema/run_state.schema.json').read_text()))
+    return result
+
+
+def receipt_operator(api, f, parent):
+    receipt_verify(api, f); receipt_verify(api, ReceiptFixture(api, parent, alternate=True))
+    receipt_artifact_integrity(api, f)
+    original = copy.deepcopy(f.policy)
+    for value in (None, {}, {'path': '../escape', 'sha256': '0' * 64, 'revision': f.candidate_revision}):
+        f.policy = copy.deepcopy(original); f.policy['operator'] = value; f.refresh(); receipt_reject(api, f)
+    for key, value in (('approved', 1), ('approved', False), ('feature_id', 'wrong'), ('stage', 'qa-passed'), ('candidate_sha256', 'f' * 64), ('owner', 'wrong'), ('gate', 'wrong')):
+        app = copy.deepcopy(f.operator); app[key] = value; f.policy = copy.deepcopy(original)
+        f.policy['operator'] = f.pin('proof/bad-operator.json', app); f.refresh(); receipt_reject(api, f)
+    for key, value in (('features', ['other']), ('original_estimate_lines', True), ('ceiling_130pct', 1), ('phase', 'wrong')):
+        app = copy.deepcopy(f.operator); app['scope'][key] = value; f.policy = copy.deepcopy(original)
+        f.policy['operator'] = f.pin('proof/bad-operator-scope.json', app); f.refresh(); receipt_reject(api, f)
+    for key, value in (('operator_instruction_verbatim', ''), ('repository', 'foreign/repo'), ('owner', 'unexpected')):
+        authority = copy.deepcopy(f.authority); authority[key] = value; app = copy.deepcopy(f.operator)
+        app['authority_ref'] = f.pin('proof/bad-authority.json', authority); f.policy = copy.deepcopy(original)
+        f.policy['operator'] = f.pin('proof/operator-bad-authority.json', app); f.refresh(); receipt_reject(api, f)
+    f.policy = original; f.refresh(); receipt_verify(api, f)
+
+
+def receipt_artifact_integrity(api, f):
+    original = copy.deepcopy(f.policy)
+    reference = copy.deepcopy(original['operator'])
+    for key, value in (('sha256', 'f' * 64), ('revision', '0' * 40),
+                       ('revision', git(f.root, 'hash-object', reference['path'])), ('revision', 'HEAD')):
+        require(value != reference[key], 'artifact probe changes selected pin field')
+        f.policy = copy.deepcopy(original); f.policy['operator'][key] = value; f.refresh()
+        require(f.receipt['operator_ref'] == f.policy['operator'], 'artifact probe synchronizes receipt binding')
+        receipt_reject(api, f)
+        f.policy = copy.deepcopy(original); f.refresh(); receipt_verify(api, f)
+    f.policy['operator'] = f.nonregular_artifact(reference); f.refresh()
+    require(f.receipt['operator_ref'] == f.policy['operator'], 'nonregular artifact binding synchronized')
+    receipt_reject(api, f)
+    f.policy = original; f.refresh(); receipt_verify(api, f)
+
+
+def receipt_candidate(api, f):
+    receipt_verify(api, f); original = copy.deepcopy(f.receipt)
+    changed = copy.deepcopy(f.candidate); changed['source_tree'] = 'f' * 40
+    changed['identity_sha256'] = sha(canonical({k: v for k, v in changed.items() if k != 'identity_sha256'}))
+    f.receipt['candidate'] = changed; receipt_reject(api, f); f.receipt = original
+    f.pin('proof/evidence-only.json', {'fixture': True}); receipt_verify(api, f)
+    f.write('contract.json', dict(json.loads((f.root / 'contract.json').read_text()), status='complete'))
+    f.commit('owned contract metadata completion'); receipt_verify(api, f)
+    for path in ('src/code.py', 'tests/test.py', 'tools/check.py'):
+        target = f.root / path; data = target.read_bytes(); mode = target.stat().st_mode
+        target.write_bytes(data + b'# drift\n'); receipt_reject(api, f); target.write_bytes(data)
+        target.chmod(mode ^ 0o111); receipt_reject(api, f); target.chmod(mode)
+        target.unlink(); target.symlink_to(f.root / 'contract.json'); receipt_reject(api, f); target.unlink(); target.write_bytes(data); target.chmod(mode)
+    previous = os.environ['NIZAM_WA120_FIXTURE']; os.environ['NIZAM_WA120_FIXTURE'] = 'changed'
+    try: receipt_reject(api, f)
+    finally: os.environ['NIZAM_WA120_FIXTURE'] = previous
+    receipt_verify(api, f)
+
+
+def receipt_unrun(api, f):
+    receipt_verify(api, f); original = copy.deepcopy(f.receipt); policy = copy.deepcopy(f.policy)
+    for field, value in (('executed', False), ('executed', 1), ('exit_code', None), ('capture', None), ('stdout', None), ('argv', ['wrong'])):
+        f.receipt = copy.deepcopy(original); f.receipt['checks'][0][field] = value; receipt_reject(api, f)
+    for field, value in (('checks', []), ('checks', original['checks'] * 2), ('producer', {'agent_id': 'wrong', 'session_id': 'wrong'})):
+        f.receipt = copy.deepcopy(original); f.receipt[field] = value; receipt_reject(api, f)
+    f.receipt = original
+    target = f.root / f.capture['stdout']['path']; saved = target.read_bytes(); target.unlink()
+    receipt_reject(api, f); target.write_bytes(saved); receipt_verify(api, f)
+    alias = f.root / 'proof/current-output-alias'; require(not alias.exists(), 'owned output alias path absent')
+    alias.write_bytes(saved); target.unlink(); target.symlink_to(alias)
+    try: receipt_reject(api, f)  # Same live bytes/digest; only the output path is a symlink.
+    finally:
+        target.unlink(); target.write_bytes(saved); alias.unlink()
+    receipt_verify(api, f)
+    for key, value in (('executed', False), ('exit_code', None), ('outcome', 'unrun'), ('producer', {'agent_id': 'wrong', 'session_id': 'wrong'})):
+        capture = copy.deepcopy(f.capture); capture[key] = value; f.set_capture(capture); receipt_reject(api, f)
+    f.policy = policy; f.receipt = original; receipt_verify(api, f)
+
+
+def receipt_setup(api, f):
+    receipt_verify(api, f); original = copy.deepcopy(f.policy); good = copy.deepcopy(f.capture)
+    bad_capture = f.actual_capture('setup-error'); f.capture = bad_capture; f.set_capture(bad_capture)
+    receipt_reject(api, f)  # Independently pinned real exit2/PASS output defeats forged receipt exit0/success.
+    for outcome in ('setup-error', 'unsupported', 'transport-error'):
+        f.policy = copy.deepcopy(original); f.capture = good; f.refresh()
+        f.receipt['checks'][0]['outcome'] = outcome; receipt_reject(api, f)
+        capture = copy.deepcopy(good); capture['outcome'] = outcome; f.set_capture(capture); receipt_reject(api, f)
+    for value in (1, True, None, -1):
+        f.policy = copy.deepcopy(original); f.policy['commands'][0]['expected_exit'] = value; f.refresh(); receipt_reject(api, f)
+    f.policy = original; f.capture = good; f.refresh(); receipt_verify(api, f)
+    semantic = f.actual_capture('semantic-negative'); f.capture = semantic; f.set_capture(semantic); receipt_verify(api, f)
+
+
+def receipt_status(api, f, status):
+    receipt_verify(api, f); f.receipt['status'] = status; receipt_reject(api, f)
+    f.receipt['status'] = 'passed'; receipt_verify(api, f)
+
+
+def receipt_failed(api, f):
+    receipt_status(api, f, 'failed'); original = copy.deepcopy(f.policy); good = copy.deepcopy(f.capture)
+    failed = f.actual_capture('failed'); f.capture = failed; f.set_capture(failed)
+    receipt_reject(api, f)  # Real trusted exit7 and printed PASS cannot be replaced by receipt's forged exit0.
+    f.policy = original; f.capture = good; f.refresh()
+    for value in (7, False, True, '0', None):
+        f.receipt['checks'][0]['exit_code'] = value; receipt_reject(api, f)
+    f.refresh(); receipt_verify(api, f)
+    saved = copy.deepcopy(f.receipt)
+    for value in (None, [], 1, float('nan'), {'bad': (1,)}):
+        f.receipt = value; receipt_reject(api, f)
+    f.receipt = saved; cycle = []; cycle.append(cycle); f.receipt['cycle'] = cycle
+    receipt_reject(api, f); f.receipt = saved = copy.deepcopy(saved); del f.receipt['cycle']
+    for key, value in (('schema_version', True), ('status', 'unknown'), ('unknown', 1)):
+        f.receipt = copy.deepcopy(saved); f.receipt[key] = value; receipt_reject(api, f)
+    for value in (False, 1, None, 'true'):
+        f.receipt = copy.deepcopy(saved); f.receipt['verdict']['final_verdict']['approved'] = value; receipt_reject(api, f)
+    for field in AGF_ARRAYS:
+        f.receipt = copy.deepcopy(saved); f.receipt['verdict'][field] = [False]; receipt_reject(api, f)
+    f.receipt = saved; policy = copy.deepcopy(f.policy)
+    for key, value in (('schema_version', True), ('stage', 'invented'), ('from_status', ''), ('unknown', 1)):
+        f.policy = copy.deepcopy(policy); f.policy[key] = value; receipt_reject(api, f)
+    f.policy = policy; receipt_verify(api, f)
+
+
+def receipt_prerequisites(api, f):
+    receipt_status(api, f, 'invalidated')
+    for stage, minima in RECEIPT_MINIMA.items():
+        f.set_stage(stage); receipt_verify(api, f); original = copy.deepcopy(f.policy)
+        for kind in minima:
+            f.policy = copy.deepcopy(original); f.policy['prerequisites'] = [e for e in original['prerequisites'] if e['kind'] != kind]
+            f.refresh(); receipt_reject(api, f)
+            f.policy = copy.deepcopy(original)
+            for e in f.policy['prerequisites']:
+                if e['kind'] == kind: e['feature_id'] = 'predecessor'
+            f.refresh(); receipt_reject(api, f)
+        f.policy = original; f.refresh()
+    original = copy.deepcopy(f.policy)
+    for kind, field, value in (('mode-a', 'contract_sha256', 'f' * 64), ('contract-review', 'reviewer', ''),
+        ('approved-contract', 'status', 'proposed'), ('provisional-bundle', 'approved_contract_sha256', 'f' * 64),
+        ('mode-b', 'reviewed_commit', f.candidate_revision), ('fresh-qa', 'qa_pass', 1), ('evidence-capture', 'actual_exit', False)):
+        f.policy = copy.deepcopy(original); f.bad_artifact(kind, lambda v, field=field, value=value: v.update({field: value})); receipt_reject(api, f)
+    for kind in ('mode-a', 'contract-review', 'provisional-bundle', 'mode-b', 'fresh-qa'):
+        for field in AGF_ARRAYS:
+            f.policy = copy.deepcopy(original); f.bad_artifact(kind, lambda v, field=field: v.update({field: ['block']})); receipt_reject(api, f)
+    f.policy = copy.deepcopy(original); f.policy['prerequisites'].append(copy.deepcopy(original['prerequisites'][0])); f.refresh(); receipt_reject(api, f)
+    f.policy = copy.deepcopy(original); f.policy['prerequisites'][0]['kind'] = 'invented'; f.refresh(); receipt_reject(api, f)
+    f.policy = original; f.refresh(); receipt_verify(api, f)
+
+
+def receipt_replay(api, f):
+    receipt_verify(api, f); out = receipt_plan(api, f)
+    digest = sha(canonical(f.receipt)); event = dict(at=f.policy['at'], event='wa-receipt-transition',
+        detail='Receipt ' + f.policy['operation_id'] + ' advanced 120:' + f.policy['stage'] + ' (' + digest + ')',
+        operation_id=f.policy['operation_id'], feature_id='120', stage=f.policy['stage'],
+        candidate_sha256=sha(canonical(f.candidate)), receipt_sha256=digest)
+    expected = copy.deepcopy(f.state); expected.update(status=f.policy['to_status'], updated_at=f.policy['at']); expected['history'].append(event)
+    require(out['action'] == 'advance' and out['state'] == expected and out['receipt'] == f.receipt, 'receipt first transition exact owned advance')
+    api.verify_record_update(f.state, out['state'], ['/status', '/updated_at', '/history'])
+    replay = receipt_plan(api, f, out['state'])
+    require(replay['action'] == 'noop' and replay['state'] == out['state'], 'receipt identical replay noop')
+    return out['state']
+
+
+def receipt_double(api, f):
+    advanced = receipt_replay(api, f)
+    for field, value in (('detail', 'altered'), ('candidate_sha256', 'f' * 64), ('stage', 'qa-passed'), ('receipt_sha256', 'f' * 64)):
+        state = copy.deepcopy(advanced); state['history'][-1][field] = value
+        receipt_reject(api, f, lambda state=state: api.plan_receipt_transition(f.root, state, f.receipt, policy=f.policy))
+    for mutation in ('duplicate', 'status', 'schema', 'history'):
+        state = copy.deepcopy(advanced)
+        if mutation == 'duplicate': state['history'].append(copy.deepcopy(state['history'][-1]))
+        if mutation == 'status': state['status'] = 'incompatible'
+        if mutation == 'schema': del state['scope_budget']
+        if mutation == 'history': state['history'].append({'event': 'malformed'})
+        receipt_reject(api, f, lambda state=state: api.plan_receipt_transition(f.root, state, f.receipt, policy=f.policy))
+    original = copy.deepcopy(f.receipt); f.receipt['verdict']['final_verdict']['summary'] = 'different valid receipt'
+    receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, advanced, f.receipt, policy=f.policy)); f.receipt = original
+    f.receipt['status'] = 'pending'
+    receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, f.state, f.receipt, policy=f.policy)); f.receipt = original; f.refresh()
+    for state in (None, [], {'status': 'arbitrary'}, dict(f.state, repository='wrong')):
+        receipt_reject(api, f, lambda state=state: api.plan_receipt_transition(f.root, state, f.receipt, policy=f.policy))
+    require(receipt_plan(api, f, advanced)['action'] == 'noop', 'valid replay remains noop after collision probes')
+    policy = copy.deepcopy(f.policy); f.set_stage('qa-passed'); receipt_verify(api, f)
+    state = copy.deepcopy(advanced); state['status'] = f.policy['from_status']
+    receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, state, f.receipt, policy=f.policy))
+    f.policy = policy; f.refresh()
+    # A genuinely valid second candidate/capture cannot reuse an operation across candidates.
+    revision = git(f.root, 'rev-parse', 'HEAD')
+    f.candidate = api.assess_repository(f.root, revision, f.inputs, ['NIZAM_WA120_FIXTURE'],
+        {'contract.json': ['/status'], 'record.json': ['/status', '/updated_at', '/history']})
+    f.policy['candidate'] = copy.deepcopy(f.candidate); f.capture = f.actual_capture('success')
+    f.set_capture(f.capture); f.set_stage('feature-complete'); receipt_verify(api, f)
+    receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, state, f.receipt, policy=f.policy))
+
+
+def receipt_recovery(api, f):
+    out = receipt_plan(api, f, receipt=None)
+    require(out['action'] == 'rerun-required' and out['receipt'] is None and out['state'] == f.state, 'missing receipt never advances')
+    f.policy['recovery'] = dict(path='proof/missing-receipt.json', sha256=sha(canonical(f.receipt)), revision=git(f.root, 'rev-parse', 'HEAD'))
+    require(receipt_plan(api, f, receipt=None)['action'] == 'rerun-required', 'missing recovery artifact requests rerun')
+    recovery = f.pin('proof/recovery-receipt.json', f.receipt); f.policy['recovery'] = recovery
+    target = f.root / f.capture['stdout']['path']; raw = target.read_bytes(); target.unlink()
+    receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, f.state, None, policy=f.policy)); target.write_bytes(raw)
+    out = receipt_plan(api, f, receipt=None)
+    require(out['action'] == 'republish' and out['state'] == f.state and out['receipt'] == f.receipt, 'verified recovery only proposes republish')
+    published = f.root / 'proof/restored-receipt.json'; require(not published.exists(), 'restore uses new owned fixture path')
+    published.write_bytes(canonical(out['receipt'])); restored = api.parse_json(published.read_bytes())
+    require(api.verify_stage_receipt(f.root, restored, policy=f.policy) == restored, 'actual owned restore reread revalidates')
+    advanced = receipt_plan(api, f, receipt=restored)
+    require(advanced['action'] == 'advance' and receipt_plan(api, f, advanced['state'], restored)['action'] == 'noop', 'restored receipt advances exactly once')
+    require(receipt_plan(api, f, advanced['state'], None)['action'] == 'republish', 'matching recorded recovery proposes no new transition')
+    bad = copy.deepcopy(f.receipt); bad['status'] = 'failed'; f.policy['recovery'] = f.pin('proof/corrupt-recovery.json', bad)
+    receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, f.state, None, policy=f.policy))
+    f.policy['recovery'] = recovery; state = copy.deepcopy(advanced['state']); state['history'][-1]['receipt_sha256'] = 'f' * 64
+    receipt_reject(api, f, lambda: api.plan_receipt_transition(f.root, state, None, policy=f.policy))
+
+
+def run_receipt_case(name, api):
+    if not all(callable(getattr(api, key, None)) for key in ('verify_stage_receipt', 'plan_receipt_transition')):
+        print('SETUP_ERROR: missing receipt APIs', file=sys.stderr); raise SystemExit(2)
+    previous = os.environ.get('NIZAM_WA120_FIXTURE'); os.environ['NIZAM_WA120_FIXTURE'] = 'observed'
+    try:
+        with tempfile.TemporaryDirectory(prefix='nizam120-receipt-') as parent:
+            f = ReceiptFixture(api, parent)
+            if name == 'reject-missing-operator': receipt_operator(api, f, parent)
+            elif name == 'reject-wrong-candidate': receipt_candidate(api, f)
+            elif name == 'reject-unrun': receipt_unrun(api, f)
+            elif name == 'reject-setup': receipt_setup(api, f)
+            elif name == 'reject-failed': receipt_failed(api, f)
+            elif name == 'reject-invalidated': receipt_prerequisites(api, f)
+            elif name == 'idempotent-replay': receipt_replay(api, f)
+            elif name == 'reject-double-advance': receipt_double(api, f)
+            elif name == 'recover-missing-receipt': receipt_recovery(api, f)
+            else: receipt_status(api, f, name.removeprefix('reject-'))
+    finally:
+        if previous is None: os.environ.pop('NIZAM_WA120_FIXTURE', None)
+        else: os.environ['NIZAM_WA120_FIXTURE'] = previous
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--case', choices=CASES + AGF_CASES)
+    group.add_argument('--case', choices=CASES + AGF_CASES + RECEIPT_CASES)
     group.add_argument('--scope', action='store_true')
     group.add_argument('--scope-controls', action='store_true')
     group.add_argument('--base-cases', action='store_true')
@@ -638,8 +1067,8 @@ def main():
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()
-    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES):
-        (run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
+    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES + RECEIPT_CASES):
+        (run_receipt_case if name in RECEIPT_CASES else run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
 
 
 if __name__ == '__main__':

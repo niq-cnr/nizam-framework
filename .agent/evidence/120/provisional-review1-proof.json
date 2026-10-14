@@ -1,0 +1,387 @@
+{
+  "reviewed_revision": "cbae9c9652026fa454b643af075ba19471ae75e6",
+  "actual_executed_revision": "86e497efbc9d0a347b29774dc8268687df1d747c",
+  "author_commit": "05421787419630483a0d9ce8aafbb0869def45c7",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "pins": {
+    "tools/test_workflow_assurance.py": {
+      "sha256": "de70bedab038d1640877579fcc19e6a932523c43523345930a3b799886f2e8b4",
+      "git_blob": "eb0bd665946bb9f6987b87876db43861ce023dca"
+    },
+    "tools/workflow_assurance.py": {
+      "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+      "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+    },
+    ".agent/contracts/120.json": {
+      "sha256": "3238ad1b0732007801769e086a2cd96a6832bb686847ecd4c23e33c532e93bb9",
+      "git_blob": "42b99a5aacb5f71a4ebb826be966c8de027528f0"
+    },
+    ".agent/evidence/120/author1-api-obligations.json": {
+      "sha256": "3de04f9824f94c02aef129959dd0fab188a2189586c435ec64b9e5ee91cf4f4a",
+      "git_blob": "ebbbcfda2d968d1a305b3db210bf1dc58a3760ff"
+    },
+    ".agent/evidence/120/author1-provisional.py": {
+      "sha256": "1391b609c0be211af35705b8f8c319191d441a83add1046a4bd45b8dffbd1513",
+      "git_blob": "0bb27c993ec328f54d08a8a59a569d6bd54705a0"
+    },
+    ".agent/evidence/120/author1-provisional-captures.json": {
+      "sha256": "ede4f28588a87d44b62af5bb3816911618029dd7a3992b9f0adccc8f4814d569",
+      "git_blob": "c37fb655db5b27e537396b689468ca7a0c6ebe78"
+    },
+    ".agent/evidence/120/author1-provisional-run.json": {
+      "sha256": "2ec43eb4b7f0d99b6d0738c6fcf4b4df47ddf0cf22509e03d664518fcc670757",
+      "git_blob": "2af364a87ac6e7678298cadd4e23dddd9d0b7733"
+    },
+    ".agent/evidence/120/author1-fixture-false.json": {
+      "sha256": "0ea68a0d72897e53c661aefd46ae148f971a3471aa9e4db14e5c0d4552426602",
+      "git_blob": "ddcee263b85efb03a630cbf487751f1188f3dad0"
+    },
+    ".agent/evidence/120/author1-fixture-true.json": {
+      "sha256": "a9b99e3e04ac4a6bd2f3c8877048f4a973d49be0a1d54a5f62967f2c1f8bb255",
+      "git_blob": "ee79e971c8ea6a408e694748d0725b880e32d05c"
+    }
+  },
+  "preserved_definitions": [
+    "canonical",
+    "sha",
+    "require",
+    "git",
+    "load_api",
+    "rejected",
+    "Fixture",
+    "record",
+    "identity_positive",
+    "cli_controls",
+    "flatten",
+    "category_drift",
+    "environment_drift",
+    "unknown_drift",
+    "continuity",
+    "unowned",
+    "history_edit",
+    "owned_append",
+    "run_case",
+    "bundle_rejected",
+    "bundle_mutate",
+    "bundle_isolated_negative",
+    "run_bundle_case",
+    "bundle_cli_controls",
+    "run_entry_case",
+    "agf_ledger",
+    "agf_severity",
+    "agf_fingerprint",
+    "agf_report",
+    "agf_call",
+    "agf_invalid",
+    "agf_approve",
+    "agf_advisory",
+    "agf_block",
+    "agf_array",
+    "run_agf_case"
+  ],
+  "existing_cases": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "identity-positive"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-identity-positive.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-identity-positive.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "invalidate-source"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-invalidate-source.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-invalidate-source.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "invalidate-contract"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-invalidate-contract.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-invalidate-contract.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "invalidate-tests"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-invalidate-tests.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-invalidate-tests.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "invalidate-tool"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-invalidate-tool.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-invalidate-tool.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "invalidate-environment"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-invalidate-environment.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-invalidate-environment.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "invalidate-unknown"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-invalidate-unknown.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-invalidate-unknown.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "record-continuity"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-record-continuity.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-record-continuity.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-unowned-field"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-unowned-field.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-unowned-field.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-history-edit"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-history-edit.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-history-edit.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "allow-owned-append"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-allow-owned-append.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-allow-owned-append.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-self-review"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-self-review.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-self-review.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-seal-change"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-seal-change.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-seal-change.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-missing-red"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-missing-red.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-missing-red.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-setup-as-red"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-setup-as-red.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-setup-as-red.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "independent-handoff"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-independent-handoff.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-independent-handoff.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "accepted-entry"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-accepted-entry.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-accepted-entry.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-foreign-repo"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-foreign-repo.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-foreign-repo.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-stale-pin"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-stale-pin.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-stale-pin.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-role-write"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-role-write.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-role-write.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "approve-empty"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-approve-empty.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-approve-empty.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "advisory-visible"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-advisory-visible.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-advisory-visible.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "block-carried"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-block-carried.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-block-carried.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-issues"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-issues.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-issues.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-missing-coverage"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-missing-coverage.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-missing-coverage.stderr.txt"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-unsupported"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/120/provisional-review1-reject-unsupported.stdout.txt",
+      "stderr": ".agent/evidence/120/provisional-review1-reject-unsupported.stderr.txt"
+    }
+  ],
+  "new_api_execution": false,
+  "fixture_setup": "two schema-valid actual Git/process graphs; exits 0/0/7/2",
+  "receipt_selectors": [
+    "reject-missing-operator",
+    "reject-wrong-candidate",
+    "reject-unrun",
+    "reject-setup",
+    "reject-pending",
+    "reject-running",
+    "reject-failed",
+    "reject-invalidated",
+    "idempotent-replay",
+    "reject-double-advance",
+    "recover-missing-receipt"
+  ]
+}

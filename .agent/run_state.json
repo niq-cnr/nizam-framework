@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "018-workflow-assurance-controls",
-  "current_feature": "119",
+  "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T15:23:13.276066+00:00",
+  "updated_at": "2026-10-14T18:13:04.843987+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1143,6 +1143,132 @@
       "limit": 3
     },
     "119-docs-validation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-selection": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-contract": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "120-main-ci-receipt": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-mode-a": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "120-contract-review": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "120-contract-review-helper": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-acceptance-author": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "120-provisional-review": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "120-source-release-capture": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "120-implementation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-doc-clarification": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-development-verification": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "120-executable-controls": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-final-bundle-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-final-review-verifier": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "120-mode-b": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-hosted-ci": {
+      "attempts": 2,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-review-envelope": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-QA": {
+      "attempts": 2,
+      "limit": 3,
+      "prior_result": "helper setup failed; mandatory18 passed",
+      "result": "passed"
+    },
+    "runtime-canary-planning-revision": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "proposal written; not approved for execution"
+    },
+    "120-evidence-capture": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-closure": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-current-docs": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "runtime-canary-shape-review": {
+      "attempts": 2,
+      "limit": 3,
+      "prior_attempt_evidence": ".agent/evidence/agentic-excellence/canary-shape-review1.json",
+      "result": "accepted for preparatory contract authoring only; execution prerequisites unresolved"
+    },
+    "120-current-docs-review": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-final-validation": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-final-scope": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-final-integration": {
       "attempts": 1,
       "limit": 3
     }
@@ -5491,6 +5617,191 @@
       "event": "119-final-cost-clean-PR-ready",
       "detail": "Whole119 from unchangedfcd base countedonce: 722=Source/docs71+independenttests159+process492. Capturedallgates/QA/hostedproof; maintaineddiffcheck0; fixedSource. Replacesinterim522 withoutnewallowance; archives0165179/0175203unchanged.",
       "evidence": ".agent/evidence/119/scope-measurement-final.txt"
+    },
+    {
+      "at": "2026-10-14T15:30:20.441587+00:00",
+      "event": "119-PR100-clean-merged",
+      "detail": "Exacthead13c4a4f sixsuccessfulchecks/CLEAN/ready/nofeedback merged92fecd8. Source/testGitobjectsunchanged; measured119722. PostmergeCI38589477270pending.",
+      "evidence": ".agent/evidence/119/pr100-merge-receipt.json"
+    },
+    {
+      "at": "2026-10-14T15:30:20.441587+00:00",
+      "event": "120-selected-contract-preparation",
+      "detail": "Canonical120IN_PROGRESS after119capture/cleanmerge; Generatorproposalonly. Bothprecodegates/provisionaltestreview/mainCI beforeSource; finalbundle/ModeB/freshQA/capture remain. Whole120base92fecd8, estimate2750withinoriginal7200/9360, no rebaseline.",
+      "evidence": ".agent/evidence/120/selection.json"
+    },
+    {
+      "at": "2026-10-14T15:31:53.089523+00:00",
+      "event": "120-upstream-PR100-mainCI-passed",
+      "detail": "Actualrun38589477270 statuscompleted/conclusionsuccess andallfivejobs successonmerge92fecd8. Clears mainCIprerequisiteonly; Source120stillgated by reviewedproposal+provisionaltests. Pendingselectionsnapshotpreserved ashistory.",
+      "evidence": ".agent/evidence/120/source-prerequisite.json"
+    },
+    {
+      "at": "2026-10-14T16:01:25.884941+00:00",
+      "event": "120-renewed-precode-dispatch",
+      "detail": "Both original independent rejections preserved; corrected proposal c7c6239 SHA25f7845d receives fresh Mode A2 and contract review2 before any test authoring/Source."
+    },
+    {
+      "at": "2026-10-14T16:10:25.487293+00:00",
+      "event": "120-contract-architecture-revision",
+      "detail": "ModeA2 rejected local algorithm constants; final proposal3 separates generic trusted authority bindings from phase018 dogfood values. Three original corrections preserved; no new scope/allowance/Source."
+    },
+    {
+      "at": "2026-10-14T16:11:42.209694+00:00",
+      "event": "120-precode-final-dispatch",
+      "detail": "Portable operator-application proposal54f2cae b194978a sent to independent ModeA3 and contract-review3. All prior rejections and intermediate approval retained; no Source/test authoring authorized."
+    },
+    {
+      "at": "2026-10-14T16:18:38.833167+00:00",
+      "event": "120-contract-approved",
+      "detail": "Root strict-parsed two independent final gates on b194978a; metadata-only promotion. Release independent provisional acceptance authoring only; Source waits distinct provisional review."
+    },
+    {
+      "at": "2026-10-14T16:33:34.202410+00:00",
+      "event": "120-provisional-review-dispatch",
+      "detail": "Selected independent author0542178/sealedtestde70beda, verified ninepins and old26definitions. Fresh distinct reviewer to inspect final frozenbytes/setup proof before anySource. Eleven setup2 outcomes remain unexecutedAPI proof, neversemanticred."
+    },
+    {
+      "at": "2026-10-14T16:38:47.328410+00:00",
+      "event": "120-acceptance-integrity-revision",
+      "detail": "Independent provisional review1 rejected missing isolated artifact SHA/revision/nonregular mode controls; author2 type/interface repair in freshownedroot, no contractchange/Source. Priorsealedtest de70beda andactualreviewproof preserved."
+    },
+    {
+      "at": "2026-10-14T16:42:09.508932+00:00",
+      "event": "120-provisional-review2-dispatch",
+      "detail": "Revisedauthor945d37a/test4914b7c6, ninepins verified; isolated artifactdigest/revision/nonregularhistoricalmode/currentsymlink probes added, oldauthor1 proof preserved. Distinct reviewer renews on finalbytes beforeSource."
+    },
+    {
+      "at": "2026-10-14T16:46:29.867585+00:00",
+      "event": "120-source-release-capture-repair",
+      "detail": "Read-only Root release helper1 failed on seal.files SHAstrings before mutations; preserveactual1 and allocate isolatedtype/interface capture2. Provisionalapproval valid, noSourceimplementationattempt yet."
+    },
+    {
+      "at": "2026-10-14T16:47:10.726248+00:00",
+      "event": "120-initial-source-release",
+      "detail": "Strict dualprecode and provisional-review2 approval; corrected release capture2 verified9 protectedGit/SHA and8 reviewSHA pins. Source1 released; initialcandidate commit precedes allbehavioralcommands, no completion claim."
+    },
+    {
+      "at": "2026-10-14T16:58:21.994249+00:00",
+      "event": "120-fixture-noop-commit-recovery",
+      "detail": "Selected committedSource1689f0d andactualfirst7pass/eighthfixtureGitsetup1 proof. No Sourcebehavioralrepair/red claimed. Author3architecturalfixturecommit-idempotence investigation/repair inownedroot; renewedbundle before continuation. Sourceattempt remains1, no completion."
+    },
+    {
+      "at": "2026-10-14T17:04:40.448309+00:00",
+      "event": "120-repository-profile-clarification",
+      "detail": "Independent preflight confirms aligned-repository APIprofile is incompatible with current legacyRootspellings. Preserve realrecords; Generator docsclarify exactoriginprofile, no actualRootintegration/closureclaim. Reviewed compatibility/migration decision needed beforeliveadoption; no extra120 API scope."
+    },
+    {
+      "at": "2026-10-14T17:07:24.600541+00:00",
+      "event": "120-provisional-review3-dispatch",
+      "detail": "Author3 independentlyconfirmed no-opGitfixtureerror and corrected onlynew120fixturecommit; all11developmentpositive0 againstunchanged1689Source. Elevennewseal pins verified. Distinctreview3 beforecontinuation; nofinalcontrols/QA/completion."
+    },
+    {
+      "at": "2026-10-14T17:10:51.048245+00:00",
+      "event": "120-development-verification-resume",
+      "detail": "Strictprovisional3 approvedfixture-onlyrepair; Source1689 unchanged andauthorall11positive0. Resume developmentverification2 innewownedroot afterfirstcapturedfixtureGitsetup1; noSourcebehavioralrepair, finalauthorcontrols mayruninparalleloncehelperprepared."
+    },
+    {
+      "at": "2026-10-14T17:15:02.888618+00:00",
+      "event": "120-executable-controls-release",
+      "detail": "Strictprovisional3 andactualdefault37pass verified; frozenSource733c/test9c99/contract3238. Releaseindependentauthor33positive/privateintendedred/restoredcontrols withpreparedhelpersevenpins; noSource/testrepair, finalbundle/ModeB/QA/capturepending."
+    },
+    {
+      "at": "2026-10-14T17:19:09.522085+00:00",
+      "event": "120-final-bundle-review-dispatch",
+      "detail": "Authoractual33controls0/1/0 eachcriterion and80sealpins verified. Distinctreviewer1 to personallyreexecute/narrowmutantreview andsealbeforeModeB; preservecurrentalignedprofile limitation, noactualRootmigration/QA/completionclaim."
+    },
+    {
+      "at": "2026-10-14T17:33:32.293769+00:00",
+      "event": "120-reviewer-verifier-interface-recovery",
+      "detail": "Reviewer33controls/30preservationresults matchactualexpectedexits with ownstateunchanged. Extra verifier1 failed overstrictcrossdispatchRootstatehash equality; directGitprovedonlyRootfinalreviewcounter/history/timestamp changes. Allocateisolatedauxverifier2, no runtime rerun orSourcefix/gatewaiver."
+    },
+    {
+      "at": "2026-10-14T17:39:44.746877+00:00",
+      "event": "120-mode-b-release",
+      "detail": "Strictfinalbundle approved; Rootverified230immutablefilepins and17retainedobjects. Source733c/test9c99/contract3238 frozen; Source1fixture-onlyrecovery, author/reviewer33each pluspreservation complete. ReleaseindependentModeB1, noQA/completion/liveRootmigrationclaim."
+    },
+    {
+      "at": "2026-10-14T17:45:08.419508+00:00",
+      "event": "120-hosted-ci-dispatch",
+      "detail": "Root opens draft PR for unchanged reviewed Source and executable bundle; hosted default37 runs alongside independent Mode B. No lifecycle advancement before Mode B, fresh QA and capture."
+    },
+    {
+      "at": "2026-10-14T17:47:27.257583+00:00",
+      "event": "120-review-envelope-recovery",
+      "detail": "Actual hosted run38609350872 validate job116008386438 failed C11 only: four review-routed bundle verdicts require feature. Preserve all original immutable verdict/seal bytes; original reviewer adds feature alias only, verifies exact semantic preservation and schemas. No Source/test/runtime repair or new substantive approval."
+    },
+    {
+      "at": "2026-10-14T17:51:49.310796+00:00",
+      "event": "120-fresh-QA-and-hosted2-dispatch",
+      "detail": "Strict Mode B c399d05 approves b50320b with metadata-only supplement67f8c81. Distinct QA executes exact11/default37/preservation/historical/live/compliance/one own spot. Hosted1 default37 succeeded; validate alone failed four missing feature aliases, preserved; corrected run2 follows without Source/test changes."
+    },
+    {
+      "at": "2026-10-14T17:55:23.680696+00:00",
+      "event": "runtime-canary-revision-planning-dispatch",
+      "detail": "Independent preparatory Planner addresses five static-review gaps while120 fresh QA runs. Evidence-only revised proposal; no workflow/probe/download/model/paid action or feature implementation. Future review/contract required."
+    },
+    {
+      "at": "2026-10-14T17:57:48.877707+00:00",
+      "event": "120-QA-helper-recovery2",
+      "detail": "Attempt1 own spot actual1 on readonly --literal-pathspecs ls-tree, wrapper reached it before hold. Immutable32655c5 retains all19 records, eighteen mandatory passes, failed QA and raw guard error. New isolated attempt2 changes only own spot allowlist, reexecutes that same logical spot, carries mandatory proof by unchanged protected objects. No Source/test or previous evidence repair, no full bank rerun."
+    },
+    {
+      "at": "2026-10-14T18:01:36.745439+00:00",
+      "event": "120-evidence-capture-dispatch",
+      "detail": "Fresh QA1aa764a strict approved with eighteen original mandatory passes and one logical additional spot passed on second execution; original failure retained. Hosted38610323583 all five success plus closeout success. Root verifies immutable230+17 bundle and70+12 QA pins, actual commands/exits/raw and installed239; no behavioral reruns or lifecycle advance before capture."
+    },
+    {
+      "at": "2026-10-14T18:02:05.969663+00:00",
+      "event": "120-canonical-closure-dispatch",
+      "detail": "Root evidence capture1 actual0 and passed; prevalidate every lifecycle candidate against full installed schemas before first write, then canonical phase COMPLETED with evidence before derived records.121-123 stay pending."
+    },
+    {
+      "at": "2026-10-14T18:02:06.637513+00:00",
+      "event": "120-captured-complete",
+      "detail": "Canonical120 COMPLETED first, then derived contract/list/manifest/state after verified independent QA, hosted37 and evidence capture. Source unchanged since initial1689f0d; historical failures and installed239 preserved.121-123 pending; no full controls-ready or comparative claim.",
+      "evidence": ".agent/evidence/120/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-14T18:02:37.148336+00:00",
+      "event": "120-current-planning-projection-dispatch",
+      "detail": "Canonical120 COMPLETED with capture after six strict gates, fresh QA and actual hosted37. Planner updates only current projections/version; preserve requirements, DAG, estimates, historical proof and pending121-123. Root separately syncs feature-list spec metadata; independent factual review follows."
+    },
+    {
+      "at": "2026-10-14T18:03:29.817510+00:00",
+      "event": "runtime-canary-revised-proposal-review-dispatch",
+      "detail": "Distinct evaluator reviews revised evidence-only proposal d162fe4 against original five-gap rejection87ed04f. Planning review2/3 only; no execution/workflow/model or comparative claim. Concrete future contract and prerequisites remain separate."
+    },
+    {
+      "at": "2026-10-14T18:04:37.567429+00:00",
+      "event": "120-current-docs-review-dispatch",
+      "detail": "Planner d1e8f59 updates41 counted current projection lines; Root spec_version synchronized0.1.3 only. Independent factual/requirement/historical preservation review before final scope/validation and PR101 merge. No Source/test changes."
+    },
+    {
+      "at": "2026-10-14T18:09:23.053380+00:00",
+      "event": "120-final-validation-dispatch",
+      "detail": "Final repository compliance after captured lifecycle and current docs, in parallel with factual review. Source/test/installed payload unchanged; no behavioral bank rerun. Maintained-file whitespace check excludes raw evidence. Any actual failure retained before bounded repair."
+    },
+    {
+      "at": "2026-10-14T18:12:01.515184+00:00",
+      "event": "120-final-scope-dispatch",
+      "detail": "All scoped docs reviewed, final local16/0 and maintained diff0. Frozen classifier measures whole120 once from PR100merge, including final docs/QA/verdict; preserve119722 and archived0165179/0175203. Root metadata update only after actual successful measurement."
+    },
+    {
+      "at": "2026-10-14T18:12:02.213744+00:00",
+      "event": "120-final-scope-capture",
+      "detail": "Whole120=1397, prior119722 preserved, phase=2119/9360; Source/docs305+tests435 unchanged. All actual failed attempts retained. Final exact-head hosted checks and authorized clean merge remain.",
+      "evidence": ".agent/evidence/120/scope-measurement-final.txt"
+    },
+    {
+      "at": "2026-10-14T18:12:34.882652+00:00",
+      "event": "120-scope-execution-location-disclosure",
+      "detail": "Final measurement actual0 ran in primary checkout due command cwd placement, while prepared isolated scope worktree remained unused. Raw result records actual cwd/revision. Verified only Root run_state changed, all other tracked files unchanged; prior119 and archived scope objects exact. No rerun, Source/test/doc change or invented isolated-execution claim."
+    },
+    {
+      "at": "2026-10-14T18:13:04.843987+00:00",
+      "event": "120-final-integration-dispatch",
+      "detail": "All feature gates/capture/closure/current docs approved; final local16/0, maintained diff0, scope1397/2750 and phase2119/9360. Push final exact head, verify all hosted checks/reviews/mergeability, then authorized normal merge and main CI. Transport receipts carried into next branch to avoid recursive CI receipt commits."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5665,9 +5976,9 @@
   "scope_budget": {
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "total_lines_changed": 722,
-    "evidence_lines_total": 23008,
-    "excluded_lines_total": 381,
+    "total_lines_changed": 2119,
+    "evidence_lines_total": 60575,
+    "excluded_lines_total": 715,
     "per_feature": [
       {
         "id": "119",
@@ -5687,7 +5998,35 @@
           "first_feature_exception": true,
           "flagged": false
         },
-        "measurement_revision": "667b9886d2c0dd6aee7a09d41a44cf18a3596169"
+        "measurement_revision": "667b9886d2c0dd6aee7a09d41a44cf18a3596169",
+        "capture_revision": "13c4a4fb45bbe21e42e5893c46ec4fb70eb92c6a",
+        "merge_revision": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6"
+      },
+      {
+        "id": "120",
+        "estimated": 2750,
+        "actual": 1397,
+        "product_lines": 740,
+        "source_lines": 305,
+        "independent_test_lines": 435,
+        "process_overhead_lines": 657,
+        "evidence_lines": 37567,
+        "excluded_lines": 334,
+        "range": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6..2f9d9f64ffad963adf8132e4ea7bf5861234d4fd",
+        "evidence": ".agent/evidence/120/scope-measurement-final.txt",
+        "measurement_status": "final counted120 before PR101; replaces interim row once",
+        "baseline": {
+          "prior_features": [
+            "119"
+          ],
+          "rolling_average": 722.0,
+          "three_times_threshold": 2166.0,
+          "first_feature_exception": false,
+          "flagged": false
+        },
+        "note": "Whole120 from immutable PR100 merge once, including all contract/review/fixture/helper recoveries, independent acceptance, Source/docs305, tests435, final QA/capture/closure and current planning. Raw canary planning and transport remain evidence, no implementation claim.119722 and archived0165179/0175203 preserved.",
+        "measurement_revision": "2f9d9f64ffad963adf8132e4ea7bf5861234d4fd",
+        "capture_revision": "62cad89939a26d4608df543e4d84c2fa09699049"
       }
     ],
     "phase_level_items": [],
@@ -5703,7 +6042,8 @@
     "phase_base_revision": "fcd0584146fd836df0080292cc2cf10180bb9f31",
     "authorization_revision": "51f4380",
     "phase_level_costs": "Incomingregistryreconciliation, registeredactivationplan/review, currentpreparation and attributedseparate rawplanning all chargedoncewithin119 wholebasefcd0584. No freeallowance orphase016rebaseline.",
-    "last_measured_at": "2026-10-14T15:23:13.276066+00:00"
+    "last_measured_at": "2026-10-14T18:12:02.213744+00:00",
+    "feature120_measurement_base": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6"
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -5886,7 +6226,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "119",
+  "active_contract_id": "120",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5958,7 +6298,7 @@
       }
     ]
   },
-  "last_action": "119capturedcomplete and currentdocs independentlyapproved; finalPR100headCI/cleanmerge next,120pending.",
+  "last_action": "120 final docs reviewed and local16/0; measured once within original budget. Final exact-head PR101 CI and merge follow;121-123 pending.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -5981,7 +6321,8 @@
     "126",
     "127",
     "128",
-    "119"
+    "119",
+    "120"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,

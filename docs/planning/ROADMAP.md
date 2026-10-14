@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.5
+version: 0.65.6
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.6"
+    date: "2026-10-14"
+    summary: "Record captured120 receipt library and separate live-adoption boundary; retain pending121–123, budgets and historical bodies."
   - version: "0.65.5"
     date: "2026-10-14"
     summary: "Record captured119 pure AGF mapping, distinct current/historical proof and active018 next120; preserve historical snapshots and allowances."
@@ -222,7 +225,7 @@ change_log:
 ---
 # Forward Roadmap
 
-## Current position — captured 119, 2026-10-14
+## Current position — captured 119–120, 2026-10-14
 
 Feature 126 is [captured complete](../../.agent/evidence/126/evidence-capture.json) and [merged as PR 97](../../.agent/evidence/126/pr97-merge-receipt.json) at `c2b95a1`; [main CI 38551059606](../../.agent/evidence/126/pr97-main-ci.json) passed all five jobs.
 Its C3 source `d965c2c` and sealed 795-line test have [independent nine-check QA plus an adversarial spot check](../../.agent/qa/126.json) and [nine actual hosted CI commands](../../.agent/evidence/126/ci-c3-receipt.json).
@@ -232,10 +235,12 @@ Feature 128 is [captured complete](../../.agent/evidence/128/evidence-capture.js
 [Hosted CI 38569054719](../../.agent/evidence/128/ci-new-runner-2-receipt.json) separately ran all fourteen leaves with exit zero, without executing `core-ready`. [PR 99 merged](../../.agent/evidence/128/pr99-merge-receipt.json) at `fcd0584`; [main CI 38572390067](../../.agent/evidence/128/pr99-main-ci.json) passed all five jobs.
 The [case matrix](../../.agent/feature_list_016.json) records live stub cases **5/6/10** from 127 alongside 126's **1/2/3/8 (policy)/9/13**: phase 016 remains partial stub scope. Full adapter, SBCL runtime, fresh phase-020 acceptance and final CI 131 remain pending.
 Feature 119 is [captured complete](../../.agent/evidence/119/evidence-capture.json): pure `convergent_agf_verdict` mapping preserves carried blockers and blocking arrays while exposing advisory minor findings. [Fresh QA](../../.agent/qa/119.json) passed six selectors, all twenty inherited cases in default26, repository checks and one independent adversarial check.
-Historical `foundation-ready` succeeds at immutable `8ac94f6`; the changed119 candidate correctly rejects stale118 receipts. [Hosted CI 38583535629](../../.agent/evidence/119/ci2-receipt.json) separately passed default26 on the same Source/test bytes; [PR 100](https://github.com/niq-cnr/nizam-framework/pull/100) remains subject to integration checks.
-[Phase 018](phase_018.yaml) remains active: **120 is next**, with 120–123 pending in its [feature list](../../.agent/feature_list_018.json). Root alone owns lifecycle and final measured usage in [run state](../../.agent/run_state.json); this refresh counts once within119 against unchanged **7,200/9,360**, with no rebaseline.
+Historical `foundation-ready` succeeds at immutable `8ac94f6`; the changed119 candidate correctly rejects stale118 receipts. [Hosted CI 38583535629](../../.agent/evidence/119/ci2-receipt.json) separately passed default26 on the same Source/test bytes; [PR 100 merged](../../.agent/evidence/119/pr100-merge-receipt.json) at `92fecd8`.
+Feature120 is [captured complete](../../.agent/evidence/120/evidence-capture.json): read-only receipt validation, idempotent transition proposals and explicit missing-proof recovery. [Fresh QA](../../.agent/qa/120.json) passed eighteen mandatory results; its one additional logical adversarial check passed on execution2, preserving the original helper failure.
+[Hosted CI 38610323583](../../.agent/evidence/120/ci2-receipt.json) separately passed default37, including eleven new selectors; [PR 101](https://github.com/niq-cnr/nizam-framework/pull/101) is draft and unmerged at this snapshot. Aligned-record library proof does not establish live Root adoption: the [repository-binding migration proposal](../../.agent/evidence/120/repository-binding-decision-proposal.json) remains unapplied.
+[Phase 018](phase_018.yaml) remains active: **121 is next**, with 121–123 pending in its [feature list](../../.agent/feature_list_018.json). Root alone owns lifecycle and final measured usage in [run state](../../.agent/run_state.json); this refresh counts once within120 against unchanged **7,200/9,360**, with no rebaseline.
 Closed phase016 **5,179** (original **5,650/7,345**), phase017 **5,203/7,020** and installed **v1.5.0** remain unchanged. The DAG stays **017 → 016 → 018 → 020 → 019**; 018's controller prerequisite is **127 only**.
-The [balanced comparison proposal](agentic-excellence.md) remains unmeasured and makes no superiority claim.
+The [balanced comparison proposal](agentic-excellence.md) remains unmeasured; [canary rev2](../../.agent/evidence/agentic-excellence/runtime-canary-proposal-rev2.json) is unexecuted preparation with unresolved preconditions and future review/contract requirements. Neither establishes controls-ready123 or comparative superiority.
 
 All earlier sections below, including older “Current” headings, are historical snapshots. Their bodies and release-disposition facts are preserved; the canonical records above govern current work.
 

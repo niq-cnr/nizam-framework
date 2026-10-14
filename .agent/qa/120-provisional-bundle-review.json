@@ -1,0 +1,38 @@
+{
+  "feature_id": "120",
+  "feature": "120",
+  "review": "provisional-bundle",
+  "reviewer": "/root/bundle120",
+  "attempt": 1,
+  "reviewed_revision": "cbae9c9652026fa454b643af075ba19471ae75e6",
+  "approved_contract_sha256": "3238ad1b0732007801769e086a2cd96a6832bb686847ecd4c23e33c532e93bb9",
+  "author_commit": "05421787419630483a0d9ce8aafbb0869def45c7",
+  "test_sha256": "de70bedab038d1640877579fcc19e6a932523c43523345930a3b799886f2e8b4",
+  "final_verdict": {
+    "approved": false,
+    "summary": "Reject provisional bundle: explicit immutable artifact integrity coverage is not isolated. Keep initial Source gated pending a repaired and independently reviewed bundle."
+  },
+  "issues": [
+    {
+      "severity": "high",
+      "criterion": "Immutable artifact reference integrity",
+      "evidence": ".agent/evidence/120/provisional-review1-findings.json",
+      "required_fix": "Add bounded isolated wrong digest, wrong immutable revision and nonregular artifact Git-mode subcases with restored positives to counted new120 tests; preserve the eleven-selector inventory, old ASTs and initial-Source sequencing."
+    }
+  ],
+  "missing_acceptance_coverage": [
+    "Existing canonical safe artifact path with only incorrect valid-shaped SHA256 pin.",
+    "Artifact immutable revision validation isolated from path/semantic corruption.",
+    "Nonregular historical artifact Git mode with otherwise valid bytes/digest/bindings; current capture-output symlink regular-file boundary."
+  ],
+  "unsupported_claims": [],
+  "evidence_files": [
+    ".agent/evidence/120/provisional-review1-findings.json",
+    ".agent/evidence/120/provisional-review1-proof.json",
+    ".agent/evidence/120/provisional-review1-fixtures.json",
+    ".agent/evidence/120/provisional-review1-run.json",
+    ".agent/evidence/120/provisional-review1-run.stdout.txt",
+    ".agent/evidence/120/provisional-review1-run.stderr.txt"
+  ],
+  "scope_note": "New APIs are absent. No new-API positive, intended semantic-red, restored control or implementation acceptance is claimed; the explicit initial-Source exception applies. Post-capture additions were personally inspected in final sealed bytes. Final executable controls and distinct bundle review remain mandatory."
+}

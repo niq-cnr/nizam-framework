@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature120-qa1/.agent/evidence/120/qa1/adversarial.py", line 30, in <module>
+    actual=api.verify_stage_receipt(f.root,f.receipt,policy=f.policy)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-qa1/tools/workflow_assurance.py", line 947, in verify_stage_receipt
+    _receipt_candidate(root, policy['candidate']); _receipt_operator(root, policy); _receipt_prerequisites(root, policy, minimum)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-qa1/tools/workflow_assurance.py", line 826, in _receipt_candidate
+    data, executable = _entry_blob(root, commit, entry['path'])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-qa1/tools/workflow_assurance.py", line 475, in _entry_blob
+    rows = git(root, '--literal-pathspecs', 'ls-tree', '-z', revision, '--', path).split(b'\0')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-qa1/tools/workflow_assurance.py", line 140, in git
+    result = subprocess.run(['git', '-C', str(root), *args], capture_output=True, check=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-qa1/.agent/evidence/120/qa1/adversarial.py", line 22, in guarded
+    forbidden.append(argv);raise GuardDenied('unapproved command execution')
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+GuardDenied: unapproved command execution

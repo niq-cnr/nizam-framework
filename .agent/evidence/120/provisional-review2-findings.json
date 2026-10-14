@@ -1,0 +1,47 @@
+{
+  "reviewer": "/root/bundle120",
+  "attempt": 2,
+  "strategy": "Type/interface analysis of isolated immutable reference constraints and their fixture representations.",
+  "reviewed_revision": "ea6a84ee20f0639154ba3de72aff7fe26b0cf8cc",
+  "author_commit": "945d37a69af3dc371bd277f50697846e8d507eae",
+  "test_sha256": "4914b7c60215b001ab822f47997fbebf15805660ca0c605cf0713de43e123006",
+  "external_requirements": [
+    ".agent/contracts/120.json#api.policy_shape",
+    ".agent/contracts/120.json#api.actual_execution",
+    ".agent/contracts/120.json#acceptance_ownership.coverage",
+    ".agent/evidence/120/provisional-review1-findings.json"
+  ],
+  "resolved_findings": [
+    {
+      "criterion": "Safe-path artifact digest integrity",
+      "test": "tools/test_workflow_assurance.py:816 receipt_artifact_integrity",
+      "inspection": "Changes only operator.sha256 to another lowercase64hex value while synchronizing receipt.operator_ref, then expects AssuranceError and restores original positive. Path/semantic bytes remain valid."
+    },
+    {
+      "criterion": "Immutable artifact revision",
+      "test": "tools/test_workflow_assurance.py:816 receipt_artifact_integrity",
+      "inspection": "Separately selects nonexistent40hex, actual blob40hex and symbolic HEAD revisions, with synchronized receipt/policy references and restored positives. Own actual fixture verifies missing-object and blob object types."
+    },
+    {
+      "criterion": "Historical nonregular Git mode",
+      "test": "tools/test_workflow_assurance.py:697 ReceiptFixture.nonregular_artifact",
+      "inspection": "Alternate owned index creates an actual child commit with mode120000 and identical path/blob bytes/SHA/JSON semantics. Current file stays regular; policy/receipt select the new pin consistently. Own execution verifies mode, same bytes and unchanged real scratch index/HEAD."
+    },
+    {
+      "criterion": "Current output regular-file boundary",
+      "test": "tools/test_workflow_assurance.py:860 receipt_unrun",
+      "inspection": "Replaces owned current stdout with a symlink to owned same-byte alias, expects AssuranceError, restores bytes in finally and requires positive. Own construction verifies same bytes and restored regular path."
+    }
+  ],
+  "preservation": {
+    "test_delta_lines": 43,
+    "whole_test_changed_lines": 433,
+    "contract_test_estimate": 700,
+    "inventories": "20 original +6 AGF +11 receipt; default37 unchanged",
+    "old_function_classes": "AST-identical to prior reviewed input except ReceiptFixture/receipt_operator/receipt_unrun; all three changes are within new120 work. Prior old26 actual passes remain at provisional-review1-proof.json.",
+    "historical_evidence": "All tracked author1 files retain exact0542178 bytes; review1 files remain historical and unchanged."
+  },
+  "actual_proof": ".agent/evidence/120/provisional-review2-proof.json",
+  "actual_run": ".agent/evidence/120/provisional-review2-run.json",
+  "scope_limit": "Provisional soundness approval only. APIs remain absent; no new-API positive, semantic-red or restored execution is claimed. After initial Source commit, all eleven actual positive/private intended-red/restored controls and distinct final executable bundle review remain required before Mode B."
+}
