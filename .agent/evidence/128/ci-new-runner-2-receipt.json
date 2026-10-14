@@ -1,0 +1,114 @@
+{
+  "kind": "actual-hosted128-new-runner-fourteen-leaf-command-receipt",
+  "run": 38569054719,
+  "job": 115869118142,
+  "run_head": "1be6defe7b22c3c126d897fec9bcf179eddcf075",
+  "checkout": "51609a3cc7be7d28bb6358149ac9b6b661a79fee",
+  "source": "62a83e65c653ba4df69eb784396724a684ffdf79",
+  "test_revision": "441567ef05c3eb68558c6aeb679aa94b0a1a3baa",
+  "source_sha256": {
+    "tools/runtime_session.py": "fe5917389ee3bdec342bd440d7ce48adf7d7e933cb4cf3f4dc1d1bbb1cecb345",
+    "tools/fixtures/runtime_session/stub_runtime.py": "e9f6e341546e42d71205916370e6bccd5a4b76f7a3a8edf178ad5418d47143da",
+    "tools/test_runtime_session.py": "005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534",
+    "tools/fixtures_self_test.sh": "930696995ba6e0ab75971792ca9a6e5a915015ca730a096d3ef615d451a46b49",
+    "tools/README.md": "5d461a988ad77666f8b4c9705036d0954a7a7b23677330ba306a7c256323bb51",
+    "CHANGELOG.md": "512a7c056b0cee67bf8fcd4b8d577180b8a789cfacf74df054216294053b7af2"
+  },
+  "environment": {
+    "environment": {
+      "GITHUB_HEAD_REF": "phase/016-feature128",
+      "GITHUB_JOB": "convergent_review",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "38569054719",
+      "GITHUB_SHA": "51609a3cc7be7d28bb6358149ac9b6b661a79fee",
+      "ImageOS": "ubuntu24",
+      "ImageVersion": "20261004.327.1",
+      "RUNNER_ARCH": "X64",
+      "RUNNER_NAME": "GitHub Actions 1000003699",
+      "RUNNER_OS": "Linux"
+    },
+    "host": "runnervmmprz5",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39"
+  },
+  "SBCL_version": "SBCL 2.2.9.debian",
+  "required_isolation": "CONFORMANCE: FULL",
+  "step_conclusions": {
+    "Set up job": "success",
+    "Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683": "success",
+    "Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b": "success",
+    "Run pip install jsonschema pyyaml": "success",
+    "Enable unprivileged user namespaces where the kernel restricts them": "success",
+    "Record maintenance checkout source identity": "success",
+    "Run PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py": "success",
+    "Record capability runner environment": "success",
+    "Install SBCL": "success",
+    "Check SBCL version": "success",
+    "Check fresh SBCL without init files": "success",
+    "Run required isolation suite": "success",
+    "Run fixture self-test": "success",
+    "Post Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b": "success",
+    "Post Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683": "success",
+    "Complete job": "success"
+  },
+  "commands": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check fixture-claim-registered",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmation-required",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check handoff-source-bound",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime stub",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime stub",
+      "actual_exit": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime stub",
+      "actual_exit": 0
+    }
+  ],
+  "raw_log": ".agent/evidence/128/ci-new-runner-2-capable-job.stdout.txt",
+  "run_record": ".agent/evidence/128/ci-new-runner-2-run.stdout.txt",
+  "boundary": "Actual same-job capable-host fourteen leaf-command success on128 runner. This hosted harness did not execute core-ready. FreshQA core-ready and Root capture are separate; no SBCL runtime/fulladapter/comparative claim."
+}
