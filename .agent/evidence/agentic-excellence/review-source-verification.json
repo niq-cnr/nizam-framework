@@ -1,0 +1,83 @@
+{
+  "command": "Independent urllib.request GET of the four primary-sources.json raw_url values and https://github.com/{repository}/commit/{revision}.patch; compare bytes, SHA-256, full revision and UTC-normalized patch Date to recorded metadata.",
+  "exercised_revision": "40d507cbebdc2b253b4c90ef5e56bdb32008502c",
+  "actual_exit_status": 0,
+  "initial_api_attempt": {
+    "command": "urllib.request GET immutable README plus api.github.com commit endpoint",
+    "actual_exit_status": 1,
+    "result": "Commit API timed out; no conclusion drawn from this failure. GitHub immutable raw and patch GETs independently succeeded afterward."
+  },
+  "sources": [
+    {
+      "repository": "obra/superpowers",
+      "revision": "bb92a77741419a4ab5f06e711a283343f1ada0c3",
+      "sha256_match": true,
+      "bytes_match": true,
+      "observed_sha256": "9b7be460027bf53c29f628eee72dceeebb83e52dd5e94a1b6f9828a64c579198",
+      "observed_bytes": 14589
+    },
+    {
+      "repository": "bmad-code-org/BMAD-METHOD",
+      "revision": "8f0d50e1817fdd8fcf05a20c524218222d13cd8d",
+      "sha256_match": true,
+      "bytes_match": true,
+      "observed_sha256": "e8e4017288f16e0b0c825ead9e633a6cadec16f6db03d16b51f540cf6147d021",
+      "observed_bytes": 7964
+    },
+    {
+      "repository": "github/spec-kit",
+      "revision": "96774bc52fd7dccc7185791e1cac7572b9e09dea",
+      "sha256_match": true,
+      "bytes_match": true,
+      "observed_sha256": "00a0ac3623fe886cde19784a8002ec47feaa105dff48b18be8c5d9008f3a76f2",
+      "observed_bytes": 9229
+    },
+    {
+      "repository": "bmad-code-org/BMAD-METHOD",
+      "revision": "10db8f35bba515e4fbf0388c5bd59a6cc7a3e9c8",
+      "sha256_match": true,
+      "bytes_match": true,
+      "observed_sha256": "1c02b778907bd9727c0bab2ea614d5a701cd8af172731610f12365d9a99c97c1",
+      "observed_bytes": 6163
+    }
+  ],
+  "commit_patch_checks": [
+    {
+      "url": "https://github.com/obra/superpowers/commit/bb92a77741419a4ab5f06e711a283343f1ada0c3.patch",
+      "revision": "bb92a77741419a4ab5f06e711a283343f1ada0c3",
+      "patch_date": "2026-10-09T17:28:04-07:00",
+      "recorded_date": "2026-10-10T00:28:04Z",
+      "normalized_date_match": true
+    },
+    {
+      "url": "https://github.com/bmad-code-org/BMAD-METHOD/commit/8f0d50e1817fdd8fcf05a20c524218222d13cd8d.patch",
+      "revision": "8f0d50e1817fdd8fcf05a20c524218222d13cd8d",
+      "patch_date": "2026-10-13T11:13:58-07:00",
+      "recorded_date": "2026-10-13T18:13:58Z",
+      "normalized_date_match": true
+    },
+    {
+      "url": "https://github.com/github/spec-kit/commit/96774bc52fd7dccc7185791e1cac7572b9e09dea.patch",
+      "revision": "96774bc52fd7dccc7185791e1cac7572b9e09dea",
+      "patch_date": "2026-10-13T15:35:17-04:00",
+      "recorded_date": "2026-10-13T19:35:17Z",
+      "normalized_date_match": true
+    },
+    {
+      "url": "https://github.com/bmad-code-org/BMAD-METHOD/commit/10db8f35bba515e4fbf0388c5bd59a6cc7a3e9c8.patch",
+      "revision": "10db8f35bba515e4fbf0388c5bd59a6cc7a3e9c8",
+      "patch_date": "2026-10-11T05:56:29+00:00",
+      "recorded_date": "2026-10-11T05:56:29Z",
+      "normalized_date_match": true
+    }
+  ],
+  "observations_confirmed": [
+    "Superpowers automatic skills, TDD, debugging, task reviews/inline alternative and session diagnosis",
+    "BMAD stable README supports sized planning, existing-code context, specialized perspectives, build/help; main README recommends stable V6.12 and calls main V7 preview alpha",
+    "Spec Kit includes convergence, optional bug and assessment workflows, customization and existing-project guidance"
+  ],
+  "limits": [
+    "Remote framework capabilities were documented observations only; no competitor was installed or executed.",
+    "Patch Date independently confirms the recorded commit timestamp; commit API committer metadata could not be reread."
+  ]
+}
