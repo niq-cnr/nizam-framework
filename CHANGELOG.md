@@ -9,6 +9,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Conflict lanes and rollback (feature 121).** Added read-only lane and detached
+  attempt checks, with bounded Git-managed removal after captured failure.
+  Shared ownership serializes and the existing three-attempt limit remains.
+
 - **Receipt gates and recovery (feature 120).** Added read-only candidate-bound
   validation of operator decisions, prerequisites and pinned actual command
   captures, with idempotent transition proposals and explicit missing-proof

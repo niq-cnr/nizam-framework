@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.29.1
+version: 0.30.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.30.0"
+    date: "2026-10-14"
+    summary: "Document conflict assessments, isolated attempts and captured owned rollback."
   - version: "0.29.1"
     date: "2026-10-14"
     summary: "Clarify literal repository bindings and the legacy Root integration boundary."
@@ -168,6 +171,17 @@ Its partial stub scope is cases 1/2/3/5/6/8(policy)/9/10/13 and five named check
 run `core-ready`. Independent QA/capture still gate bounded core closure.
 SBCL/full adapter, phase020 fresh acceptance and final CI131 remain pending.
 The reserved `accept` action fails without side effects.
+
+## Conflict lanes and owned rollback — feature 121
+
+`assess_conflict_lanes` checks pinned current coordination and dispatch ownership;
+`verify_isolated_attempt` additionally observes a real detached Git worktree and
+all committed, staged, live and ignored changes. Conflicting file/state ownership
+serializes, and allocated attempts retain the existing maximum of three.
+`rollback_owned_attempt` removes only that validated owned worktree through Git,
+after external failure capture. The Orchestrator must ensure exclusive ownership
+and stopped processes; unrelated changes block removal. Assessments never reserve
+lanes or authenticate callers, and repository spellings must remain aligned.
 
 ## Receipt gates and recovery — feature 120
 
