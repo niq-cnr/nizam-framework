@@ -11,7 +11,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[4]
 E = ROOT/'.agent/evidence/119/qa1'
-HIST = Path('/home/cnross/.tmp/nizam-feature119-qa1-historical118')
+HIST = Path('/home/cnross/.tmp/nizam-feature119-qa-helper2-historical118')
 ANCHOR = '8ac94f6808e8197111197c9acbf59b2aa92efc7c'
 ENV = dict(os.environ, PYTHONDONTWRITEBYTECODE='1', LC_ALL='C.UTF-8')
 RESULTS = []
@@ -37,7 +37,8 @@ def capture(name, argv, cwd=ROOT, expected=0, marker=None, expected_lines=None):
     return result
 
 os.chdir(ROOT)
-assert git('rev-parse','HEAD') == '8c50ec1e8a8bd44eb7e484929551f5c633fd7f58'
+APPROVED_INPUT = '8c50ec1e8a8bd44eb7e484929551f5c633fd7f58'
+subprocess.run(['git','merge-base','--is-ancestor',APPROVED_INPUT,'HEAD'], cwd=ROOT, check=True)
 state = json.loads((ROOT/'.agent/run_state.json').read_bytes())
 assert state['circuit_breaker']['119-QA']['attempts'] == 1
 contract = json.loads((ROOT/'.agent/contracts/119.json').read_bytes())
@@ -45,6 +46,7 @@ gate = json.loads((ROOT/'.agent/validator/119-mode-b.json').read_bytes())
 assert contract['status'] == 'approved' and gate['final_verdict']['approved'] is True
 assert all(gate[k] == [] for k in ('issues','missing_acceptance_coverage','unsupported_claims'))
 before = identity(ROOT); write('identity-before.json', before)
+assert all(git('rev-parse', APPROVED_INPUT+':'+path) == row['git_blob'] for path, row in before['files'].items()), 'protected approved input Git object changed'
 assert before['installed_count'] == 239
 assert before['files']['tools/workflow_assurance.py']['sha256'] == 'cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e'
 assert before['files']['tools/test_workflow_assurance.py']['sha256'] == '6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480'
