@@ -1,0 +1,31 @@
+{
+  "review": "contract-testability",
+  "feature": "126",
+  "contract_id": "126",
+  "revision_reviewed": 1,
+  "reviewer": "/root/acceptance126",
+  "reviewed_commit": "8dde06ef55841188b99f1390ef3789a72e6f6c78",
+  "contract_sha256": "58e6bf758b67bcfb7a8fa6cdb5847f776f78496443ea3d2825123600d3b2f67e",
+  "prior_verdict": ".agent/qa/126-contract-review.json",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence_files": [
+    ".agent/evidence/126/e126-review2-result.json",
+    ".agent/evidence/126/e126-review2.stdout.txt",
+    ".agent/evidence/126/e126-review2.stderr.txt",
+    ".agent/evidence/126/round2-role-disclosure.json"
+  ],
+  "observations": [
+    "The exact delta comprises two behavior strings plus contract-attempt/revision metadata. All other obligations, scope, budgets, ownership and nine commands are unchanged; installed contract schema validation passed.",
+    "AT2 now requires changed-payload duplicate submissions while outstanding and after completion, explicit conflict, no second child receipt/effect, preservation of original operation/result bytes and pending result absence. A gate prevents completion races; release and subsequent fresh-ID mutation/read provide positive controls. Duplicate-ID checks precede busy admission, preserving the original record rather than inventing a conflicting replacement record. This closes the sole prior blocking finding.",
+    "Root's temporary Generator role is durably disclosed for the bounded contract amendment. This reviewer authored no contract/source/tests and independently re-derived approval; neither prior gate approval nor implementation permission was inherited.",
+    "The previous review's six-case mapping, nonrecursive actual claim-map requirement, positive/negative controls, semantic-red provenance limits, fresh QA boundaries and550/2900/5650/7345 estimate assessment remain applicable. Prior actual C12 evidence is preserved and was not rerun for this contract-only delta.",
+    "No controller, stub or acceptance runner exists. Approval concerns the contract's testability only; acceptance-bundle review/seal, intended behavioral red with exact scaffold/mutant identity, implementation gates, fresh QA and CI evidence remain future requirements."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "126",
+    "summary": "Approve revised contract testability: explicit pending/completed duplicate-ID coverage and fresh-ID positive controls close the prior rejection; no remaining review objections. Root must parse both independent pre-code verdicts before promoting the contract."
+  }
+}
