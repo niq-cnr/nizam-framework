@@ -1,0 +1,37 @@
+COMMAND: gh run view 38520905278 --repo niq-cnr/nizam-framework --log-failed
+CWD: /home/cnross/.tmp/nizam-phase017-ci-repair-afpk5wcy
+REVISION: f84db8a65a814898f9e78f4a91ca56d1eccb68d3
+EXIT: 0
+STDOUT:
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	﻿2026-10-14T06:14:37.9463906Z ##[group]Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9464548Z [36;1mPYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py[0m
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9531736Z shell: /usr/bin/bash -e {0}
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9532025Z env:
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9532316Z   pythonLocation: /opt/hostedtoolcache/Python/3.14.8/x64
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9532768Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.14.8/x64/lib/pkgconfig
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9533213Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.8/x64
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9533624Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.8/x64
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9534034Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.14.8/x64
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9534436Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.14.8/x64/lib
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:37.9534767Z ##[endgroup]
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2565225Z fatal: path '.agent/evidence/phase017-activation/authorization.json' exists on disk, but not in '970ea233f77b4468105ddf6e401babbd0049d0b2'
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2621092Z CalledProcessError: Command '['git', '-C', '/home/runner/work/nizam-framework/nizam-framework', 'show', '970ea233f77b4468105ddf6e401babbd0049d0b2:.agent/evidence/phase017-activation/authorization.json']' returned non-zero exit status 128.
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2622731Z PASS identity-positive
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2622991Z PASS invalidate-source
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2623238Z PASS invalidate-contract
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2623481Z PASS invalidate-tests
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2623712Z PASS invalidate-tool
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2623947Z PASS invalidate-environment
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2624200Z PASS invalidate-unknown
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2624440Z PASS record-continuity
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2624696Z PASS reject-unowned-field
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2624963Z PASS reject-history-edit
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2625218Z PASS allow-owned-append
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2625465Z PASS reject-self-review
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2625708Z PASS reject-seal-change
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2625955Z PASS reject-missing-red
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2626226Z PASS reject-setup-as-red
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2626800Z PASS independent-handoff
+fixtures_self_test	Run PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py	2026-10-14T06:14:42.2774163Z ##[error]Process completed with exit code 1.
+
+STDERR:

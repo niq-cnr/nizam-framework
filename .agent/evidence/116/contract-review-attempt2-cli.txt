@@ -1,0 +1,18 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 tools/workflow_assurance.py --help
+REVISION: 945b509b9972e95d040e68e05bbbe2524005f3c0
+EXIT: 0
+STDOUT:
+usage: workflow_assurance.py [-h] {assess,compare,record} ...
+
+Read-only assessed-source identity and bounded JSON record continuity. An
+immutable Git anchor survives later record-only commits. Unknown candidate
+changes fail closed; this utility does not authenticate callers or authorize
+work.
+
+positional arguments:
+  {assess,compare,record}
+
+options:
+  -h, --help            show this help message and exit
+
+STDERR:

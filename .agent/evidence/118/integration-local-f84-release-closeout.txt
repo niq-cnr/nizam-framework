@@ -1,0 +1,12 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/release_closeout.py --mode pr
+REVISION: f84db8a65a814898f9e78f4a91ca56d1eccb68d3
+EXIT: 0
+STDOUT:
+PASS CONTEXT.md version anchor (frontmatter + change_log[0])
+PASS docs/guide/index.html version anchors (meta + footer)
+PASS README.md version pins (curl URL / GOVERNANCE_TAG / --tag / releases-tag)
+PASS CHANGELOG.md top released section (heading + tier banner)
+PASS ROADMAP.md disposition line (Latest released tag / Release in preparation)
+Release close-out: all internal version anchors agree with V=1.5.0 (--mode pr).
+
+STDERR:

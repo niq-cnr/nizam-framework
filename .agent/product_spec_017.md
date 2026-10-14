@@ -2,16 +2,42 @@
 id: nizam-phase017-product-spec
 title: "Phase 017 — Workflow Assurance — Foundation"
 description: "Proposed bounded WA scope, future atomic acceptance and independent evidence gates."
-version: 0.1.0
-status: draft
+version: 0.3.0
+status: active
 authoritative_source: .agent/product_spec_017.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-10-14"
+    summary: "Record captured foundation115-118 and bounded phase completion after independent acceptance."
+  - version: "0.2.0"
+    date: "2026-10-13"
+    summary: "Activate only authorized phase017 foundation scope and original5400/7020 allowance; preserve original obligations and allocations."
   - version: "0.1.0"
     date: "2026-10-12"
     summary: "Plan pending features only; activation, implementation and budget approval remain future."
 ---
 
-# Proposed phase 017
+# Phase 017 — authorized foundation
+
+## Current activation — 2026-10-13
+
+H-PHASE-017 authorizes features 115–118 and the original counted allowance of
+5,400 lines, ceiling 7,020, for niq-cnr/nizam-framework only. Authority is
+[the activation receipt](evidence/phase017-activation/authorization.json).
+Feature 115 is the current identity implementation candidate, after both renewed
+pre-code gates and independent corrected acceptance-bundle review under
+[the recovery authorization](evidence/115/recovery-authorization.json).
+Mode B, fresh independent QA and evidence capture must precede completion.
+Features 116–118 await their own contracts. The shared-file lane is
+115 → 116 → 117 → 118. Phases 016/018/019/020 remain proposed, and
+installed v1.5.0 remains unchanged.
+
+The following architecture, acceptance and budget text is the preserved
+2026-10-12 planning baseline. Its future-tense statements describe that snapshot;
+the activation receipt and current canonical lifecycle supersede its activation
+position without changing its obligations or counted allocations.
+
+## Original planning context — 2026-10-12
 
 NIP-0004 accepted scope and six operator selections are inputs. This planning task
 allocates 115–118 only; H-PHASE-017 and approved implementation
@@ -73,3 +99,17 @@ Use existing product + tests + contract + verdict + planning classification; raw
 and run_state excluded, unclassified paths fail closed. Orchestrator compares only
 this phase's prior completed features before appending a measurement; first feature
 has no rolling baseline. Cumulative overrun requires actual human decision.
+
+## Captured foundation — 2026-10-14
+
+Features 115–118 are complete in [canonical phase017](../docs/planning/phase_017.yaml).
+The [feature118 QA](qa/118.json) and [Root capture](evidence/118/evidence-capture.json)
+bind the actual implementation, independent prerequisite20 and final acceptance.
+The [recovery authorization](evidence/118/recovery-authorization.json) preserves
+failed attempts while permitting reviewed repair of the framework fixtures and
+completion projection. The scope measurement in [run state](run_state.json)
+counts the whole feature once within the original 5,400 allowance and 7,020 ceiling.
+The [reviewed closeout correction](evidence/118/recovery1-closeout-review.json)
+fixes debt table validation while preserving frozen acceptance inputs.
+The activation and design sections above remain historical planning snapshots.
+Phase016 controller core is the next proposed stage; installed v1.5.0 remains pinned.

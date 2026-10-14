@@ -1,0 +1,37 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range 117-blocked=dddfd4f60e9d64109e271a48181fe281d4603666.. --files
+REVISION: 374cb04e605eda794ae82bc02fbdf08a01d30fac
+STDOUT:
+== 117-blocked: dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE
+   resolved dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE+untracked
+   paths=62 binary_paths=0
+   class                       files   lines
+   budget/product                  0       0
+   budget/product-ext              0       0
+   budget/contract                 1     328
+   budget/verdict                  1      27
+   budget/audit-deliverable        0       0
+   budget/planning                 5      39
+   evidence                       54    5369
+   excluded/run_state              1      85
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/contract                328  .agent/contracts/117.json
+   budget/verdict                  27  .agent/validator/117-mode-a.json
+   budget/planning                  7  .agent/feature_list_017.json
+   budget/planning                  6  docs/planning/DEBT.md
+   budget/planning                 15  docs/planning/backlog_dag.json
+   budget/planning                  6  docs/planning/manifest.json
+   budget/planning                  5  docs/planning/phase_017.yaml
+   excluded/run_state              85  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                        1     732  .agent/evidence/116/
+   evidence                       53    4637  .agent/evidence/117/
+   PRODUCT_LINES=0
+   PROCESS_OVERHEAD_LINES=394  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=394
+   EVIDENCE_LINES=5369
+   EXCLUDED_LINES=85
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=5848  (= budget 394 + evidence 5369 + excluded 85 + unclassified 0)
+STDERR:
+EXIT: 0

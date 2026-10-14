@@ -1,0 +1,24 @@
+{
+  "feature": "118",
+  "actor": "/root/wa_generator118",
+  "attempt": 1,
+  "source_revision": "3dfedd208dc0f260857d2a615d92d31d2a3d8ebc",
+  "source_tree": "1e8b3be5189c5d285b1846559ef7054956d9a488",
+  "state": "source-selfcheck-failed",
+  "source_attempt_complete": false,
+  "checks_run": 1,
+  "checks_passed": 0,
+  "checks": [
+    {
+      "acceptance_test": "foundation-ready",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready",
+      "exit_code": 1,
+      "evidence": ".agent/evidence/118/source-attempt1-check1.txt",
+      "sha256": "c5b0318c2e821c08348aa26445e8d545a8d72970fa0edaa24bf6b638598d8233"
+    }
+  ],
+  "prerequisite_ref": ".agent/evidence/118/prerequisite20.json",
+  "prerequisite_sha256": "a9e4be902be1c0d8a0036eb94751e4a6a65b0943c77b824d983ba04e651dbff3",
+  "candidate_ref": ".agent/evidence/118/source-candidate.json",
+  "next": "Root routes failure; no same-root repair or rerun."
+}

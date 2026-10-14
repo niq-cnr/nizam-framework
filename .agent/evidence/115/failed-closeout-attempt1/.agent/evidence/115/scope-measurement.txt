@@ -1,0 +1,53 @@
+COMMAND: python3 .agent/evidence/scope-budget-014/measure.py --range 115=33775caf661d3b94ff2383f3582c8d7a7c31c21c.. --files
+STDOUT:
+== 115: 33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE
+   resolved 33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE+untracked
+   paths=199 binary_paths=0
+   class                       files   lines
+   budget/product                  5     732
+   budget/product-ext              1       1
+   budget/contract                 1     266
+   budget/verdict                  8     506
+   budget/audit-deliverable        0       0
+   budget/planning                 9     358
+   evidence                      174   12065
+   excluded/run_state              1     527
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product                   9  CHANGELOG.md
+   budget/product                   4  NIZAM.json
+   budget/product                  43  tools/README.md
+   budget/product                 347  tools/test_workflow_assurance.py
+   budget/product                 329  tools/workflow_assurance.py
+   budget/product-ext               1  .github/workflows/compliance.yml
+   budget/contract                266  .agent/contracts/115.json
+   budget/verdict                  24  .agent/qa/115-contract-review.json
+   budget/verdict                  25  .agent/qa/115-recovery-1-contract-review.json
+   budget/verdict                 205  .agent/qa/115.json
+   budget/verdict                  35  .agent/validator/115-mode-a.json
+   budget/verdict                  74  .agent/validator/115-mode-b.json
+   budget/verdict                  38  .agent/validator/115-recovery-1-mode-a.json
+   budget/verdict                  48  .agent/validator/115-recovery-1-test-bundle-review.json
+   budget/verdict                  57  .agent/validator/115-test-bundle-review.json
+   budget/planning                155  .agent/feature_list_017.json
+   budget/planning                 29  .agent/product_spec_017.md
+   budget/planning                 12  docs/planning/DEBT.md
+   budget/planning                 24  docs/planning/HANDOVER.md
+   budget/planning                 33  docs/planning/ROADMAP.md
+   budget/planning                 69  docs/planning/backlog_dag.json
+   budget/planning                 10  docs/planning/manifest.json
+   budget/planning                 18  docs/planning/operator_gates.md
+   budget/planning                  8  docs/planning/phase_017.yaml
+   excluded/run_state             527  .agent/run_state.json
+   -- evidence groups (files, lines, group)
+   evidence                      172   11796  .agent/evidence/115/
+   evidence                        2     269  .agent/evidence/phase017-activation/
+   PRODUCT_LINES=733
+   PROCESS_OVERHEAD_LINES=1130  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=1863
+   EVIDENCE_LINES=12065
+   EXCLUDED_LINES=527
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=14455  (= budget 1863 + evidence 12065 + excluded 527 + unclassified 0)
+STDERR:
+EXIT: 0

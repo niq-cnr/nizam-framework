@@ -1,0 +1,50 @@
+{
+  "review": "contract-testability",
+  "feature": "116",
+  "contract_id": "116",
+  "revision_reviewed": 0,
+  "actor": "/root/wa_test_author_116",
+  "base_revision": "f91b3ab383f1537c79201262c154367d03da7cce",
+  "scope_base_revision": "3d81ff2af002b118e3747551f740848a9ffb3cd9",
+  "proposal_sha256": "bc29acea834cc14e3ff58f882381bc09599b26bea3f9997203168730e73ade49",
+  "api_sha256": "0e03f1bfc3651930d925f6afdbf814c915ec449836fee0015c81f6c02ea5e953",
+  "attempt_ownership_ref": ".agent/evidence/116/contract-review-attempt1.json",
+  "issues": [
+    {
+      "verification_index": "0-4",
+      "criterion": "Five feature116 cases must demonstrate actual intended baseline failure before repair, with independent adversarial behavioral coverage.",
+      "evidence": ".agent/evidence/116/contract-review-attempt1-prospective-audit.json; .agent/evidence/116/contract-review-attempt1-existing-setup.txt",
+      "required_fix": "Make the test-author and independent bundle-review obligation explicit: each listed case must exercise its own invariant using a valid positive control and case-specific input/operation, and independently demonstrate behavioral differentiation on the deliberately naive baseline/control after successful existing115 API/harness/CLI setup. A named assertion that verify_acceptance_bundle is absent can establish availability but cannot be the sole red for any of the five policy cases. Freeze/replay those discriminatory tests and controls before developer source. Preserve the permitted bounded prospective setup and require no future116 source implementation during pre-code review.",
+      "severity": "high",
+      "detail": "API proof_rules[2] expressly permits unimplemented116 policy to be a deliberate named assertion after baseline115 setup. The contract/API never requires the named red to execute case-specific malformed inputs or a positive control. Thus five renamed missing-policy assertions can satisfy the literal command/exit/revision/POLICY_ASSERTION rules without demonstrating self-review rejection, seal drift rejection, missing-red rejection, setup-as-red rejection, or independent handoff. Merely replaying those same assertions in the later reviewer gate does not distinguish them."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    {
+      "finding": "The strict nine-field review is a feasible producer/consumer contract through api_interface_ref. A new116 reviewer must emit this exact record and keep raw replay/ownership evidence separately under E116; the old rich115 gate is not a compatible input.",
+      "evidence": ".agent/evidence/116/contract-review-attempt1-prospective-audit.json"
+    },
+    {
+      "finding": "Current checks cover existing baseline reachability only. Future feature116 cases, --base-cases and scoped flags are intentionally absent; no feature116 product/acceptance or actual frozen bundle approval is claimed.",
+      "evidence": ".agent/evidence/116/contract-review-attempt1-existing-cases.txt"
+    },
+    {
+      "finding": "The twelve verification entries trace five planned behavioral cases, prior eleven-case regression, compliance/self-governance and new current116 scope controls. Baseline/current candidate separation, immutable115 evidence and Root-owned lifecycle are explicitly contracted.",
+      "evidence": ".agent/evidence/116/contract-review-attempt1-prospective-audit.json"
+    }
+  ],
+  "evidence": [
+    ".agent/evidence/116/contract-review-attempt1-schema.txt",
+    ".agent/evidence/116/contract-review-attempt1-existing-cases.txt",
+    ".agent/evidence/116/contract-review-attempt1-existing-setup.txt",
+    ".agent/evidence/116/contract-review-attempt1-existing-cli.txt",
+    ".agent/evidence/116/contract-review-attempt1-prospective-audit.json"
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "116",
+    "summary": "Rejected: explicitly require five invariant-specific behavioral reds and positive controls; named missing-API assertions alone are insufficient."
+  }
+}

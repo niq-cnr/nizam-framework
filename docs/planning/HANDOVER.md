@@ -2,12 +2,24 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.9
+version: 1.0.13
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.13"
+    date: "2026-10-14"
+    summary: "Add foundation118 candidate handoff and canonical capture pointers; preserve historical snapshots."
+  - version: "1.0.12"
+    date: "2026-10-13"
+    summary: "Add current117 entry candidate handoff after captured115/116; retain historical snapshots and fresh QA/capture requirements."
+  - version: "1.0.11"
+    date: "2026-10-13"
+    summary: "Add feature116 sealed-bundle handoff after115 capture; preserve prior snapshots and independent QA/capture requirements."
+  - version: "1.0.10"
+    date: "2026-10-13"
+    summary: "Add current phase017 feature115 identity handoff and recovery boundaries; preserve historical snapshots."
   - version: "1.0.9"
     date: "2026-10-12"
     summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
@@ -39,10 +51,77 @@ change_log:
     date: "2026-10-10"
     summary: "Initial handover record, authored by the Planner on branch chore/handover-2026-10 cut from main e2a50ed (PR #70 merged), after the operator asked for the project to be prepared for a new developer (run_state operator_gate_decision 2026-10-10T02:11:41Z). Every figure was re-verified against the repository; the replayable checks are in .agent/evidence/handover-2026-10/. Revised after Validator round 1, before merge: (b) states how this package's own budget-counted lines are treated (the Planner's phase-level-item interpretation, effective only when the Orchestrator records it), 106's measurement base and measure.py commands, and the budget figures both pre-handover and including the handover; (c) quotes the 19:28:39Z record's 11-step summary of the brief and presents the 12 steps as practised, adds that an Evaluator contract-review rejection also uses up a contract attempt (103 precedent), separates the evidence gate's EXIT:<code> rule from the practised all-EXIT:0 convention, cites the human_authorized_extension as recorded practice under 03 Section 6, and separates routine pushes and PRs from operator-authorized outward acts; (f) adds the local acceptance-gate helpers, the fixture self-test and the four CI jobs; (g) states both V13 conditions and the DAG critical-path artifact; (h) ties the expected v1.5.0 roll-up to H-NIP and H-PHASE-015; (a) item 12 names the Orchestrator and the four execution roles. Revised after Validator round 2, before merge: (c) states that the Validator runs only read-only git commands and file reads and cannot run verification commands (105-mode-b.json prior_rounds[0] MB-1); step 5 states that attempt-base.txt has been used since 103 (099's base only in run_state); steps 7-8 state that 104 and 105 ran Mode B round 1 on the unpromoted attempt commit, and that a post-promotion Mode B round is still needed when the contract has Mode B obligations on the promoted tree (105 MB-1)."
 ---
+## Current foundation handoff — feature 118, 2026-10-14
+
+Features 115–117 have completed independent QA and capture. Feature118 binds
+foundation readiness to immutable SourceC, unchanged assessed inputs and an
+independent evaluator's twenty current case proofs. Completion requires Mode B,
+fresh three-command QA with an additional independent spot check, and Root
+capture. Follow [phase017](phase_017.yaml) and the
+[feature list](../../.agent/feature_list_017.json) for actual status and capture
+references; source documentation does not itself advance lifecycle state.
+
+The original 5,400/7,020 allowance is retained, with 4,012 prior completed lines.
+Next phase016 remains proposed and separately gated, as do phases018/019/020.
+Installed v1.5.0 stays immutable. The earlier handoffs below remain historical
+snapshots of their respective candidates.
+
+## Current entry handoff — feature 117, 2026-10-13
+
+Features 115 and 116 are captured complete, totaling 3,009 counted lines. Feature
+117 is the authorized-entry candidate after renewed independent pre-code gates
+and reviewed acceptance. The preflight binds actual local origin/authority,
+installed critical bytes, the immutable proposal and current approvals, and
+explicit existing-role write grants. Four new cases extend the current suite to
+twenty while retaining earlier proofs at their original assessed revisions.
+
+Run the actual project entry command before capture while 117 is active; it
+intentionally rejects after completion or during 118. Independent Mode B, fresh
+all-twelve QA plus ownspot and distinct Root capture remain required. NDEBT-053
+stays Open until actual capture; only Root may then resolve it. Feature 118 is
+pending, with no release or installed upgrade. The complete prior body below is
+a historical handover snapshot; current canonical records control progression.
+
+
 
 # Developer Handover — Release Status and Phase 014 Snapshot
 
-## Current status — 2026-10-12
+## Current status — 2026-10-13
+
+### Feature 116 implementation handoff
+
+Feature 115 is captured complete with 1,863 counted lines; its assessed identity,
+independent QA/capture and completed canonical records remain historical proof.
+Feature 116 is the current sealed acceptance-bundle implementation candidate,
+following renewed independent pre-code gates and actual corrected-bundle review.
+The verifier observes immutable test/API/obligation/control bytes, distinct
+recorded roles, environment and case-specific setup/positive/red evidence. Its
+review record remains outside its own seal. Source identity is a separate
+candidate; no prior proof is resealed against this later implementation.
+
+Feature 116 needs independent Mode B, fresh QA and capture before completion.
+Then continue 117 authorized entry and 118 bounded foundation closure under
+their own contracts. Phase 017 remains in progress within its original
+5,400/7,020 allowance. Later phases, runtime/live proof, release and installed
+upgrade remain separately gated. The earlier current-status text below is a
+dated activation snapshot; current phase/list records govern execution.
+
+Phase 017 foundation is active under [H-PHASE-017](../../.agent/evidence/phase017-activation/authorization.json),
+with the original 5,400/7,020 allowance. Feature 115 is the assessed-identity
+implementation candidate after renewed pre-code approvals and independent
+corrected acceptance-bundle review. Mode B, fresh independent QA and capture
+remain required before closure; NDEBT-052 is still Open. The explicitly approved
+[recovery epoch](../../.agent/evidence/115/recovery-authorization.json) preserves
+all failed tests/gates and the original exhausted counter.
+
+Continue features 115 → 116 → 117 → 118 in the shared-file lane; each later
+feature needs its own approved contract and independent gates. Later phases stay
+proposed. Installed v1.5.0, closed phase 015's 7,319-line budget and historical
+proofs remain unchanged. Begin through the installed index/skill in AGENTS.md.
+The material below is the preserved dated handover context, not the current
+activation position.
+
+## Previous current-status snapshot — 2026-10-12
 
 Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
 

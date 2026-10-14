@@ -1,0 +1,312 @@
+diff --git a/.agent/feature_list_017.json b/.agent/feature_list_017.json
+index d95a907..16fdddf 100644
+--- a/.agent/feature_list_017.json
++++ b/.agent/feature_list_017.json
+@@ -1,6 +1,6 @@
+ {
+   "phase": "017-workflow-assurance-foundation",
+-  "spec_version": "0.1.0",
++  "spec_version": "0.2.0",
+   "phase_status": "in_progress",
+   "original_estimate_lines": 5400,
+   "ceiling_130pct": 7020,
+diff --git a/.agent/product_spec_017.md b/.agent/product_spec_017.md
+index 7794f33..e029675 100644
+--- a/.agent/product_spec_017.md
++++ b/.agent/product_spec_017.md
+@@ -2,16 +2,39 @@
+ id: nizam-phase017-product-spec
+ title: "Phase 017 — Workflow Assurance — Foundation"
+ description: "Proposed bounded WA scope, future atomic acceptance and independent evidence gates."
+-version: 0.1.0
+-status: draft
++version: 0.2.0
++status: active
+ authoritative_source: .agent/product_spec_017.md
+ change_log:
++  - version: "0.2.0"
++    date: "2026-10-13"
++    summary: "Activate only authorized phase017 foundation scope and original5400/7020 allowance; preserve original obligations and allocations."
+   - version: "0.1.0"
+     date: "2026-10-12"
+     summary: "Plan pending features only; activation, implementation and budget approval remain future."
+ ---
+ 
+-# Proposed phase 017
++# Phase 017 — authorized foundation
++
++## Current activation — 2026-10-13
++
++H-PHASE-017 authorizes features 115–118 and the original counted allowance of
++5,400 lines, ceiling 7,020, for niq-cnr/nizam-framework only. Authority is
++[the activation receipt](evidence/phase017-activation/authorization.json).
++Feature 115 is the current identity implementation candidate, after both renewed
++pre-code gates and independent corrected acceptance-bundle review under
++[the recovery authorization](evidence/115/recovery-authorization.json).
++Mode B, fresh independent QA and evidence capture must precede completion.
++Features 116–118 await their own contracts. The shared-file lane is
++115 → 116 → 117 → 118. Phases 016/018/019/020 remain proposed, and
++installed v1.5.0 remains unchanged.
++
++The following architecture, acceptance and budget text is the preserved
++2026-10-12 planning baseline. Its future-tense statements describe that snapshot;
++the activation receipt and current canonical lifecycle supersede its activation
++position without changing its obligations or counted allocations.
++
++## Original planning context — 2026-10-12
+ 
+ NIP-0004 accepted scope and six operator selections are inputs. This planning task
+ allocates 115–118 only; H-PHASE-017 and approved implementation
+diff --git a/.github/workflows/compliance.yml b/.github/workflows/compliance.yml
+index 2fa0a4d..6879e6a 100644
+--- a/.github/workflows/compliance.yml
++++ b/.github/workflows/compliance.yml
+@@ -96,6 +96,7 @@ jobs:
+           PY
+       - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+       - run: bash tools/fixtures_self_test.sh
++      - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+ 
+   convergent_review:
+     runs-on: ubuntu-latest
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index ffb18d6..9d3c11f 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,6 +9,15 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Changed
+ 
++- **Workflow Assurance identity (feature 115).** Added a read-only stdlib API/CLI
++  binding actual Git source identity, assessed bytes/modes and observed environment.
++  Unknown changes invalidate conservatively; declared scalar record updates and
++  exact history append can preserve the original assessed anchor across later HEADs.
++  Eleven independent cases run in the existing CI fixture job. Phase 017 foundation
++  is authorized at 5,400/7,020; this candidate still requires independent Mode B,
++  fresh QA and capture. Sealed bundles, authorized entry and foundation closure
++  remain features 116–118; installed v1.5.0 is unchanged.
++
+ - **WA and controller planning delivery.** Delivered draft plans for five pending phases,
+   allocating WA features 115–125 before controller features 126–132 with full budgets and independent
+   future acceptance ownership. Recommended foundation 017→core 016→controls 018→
+diff --git a/NIZAM.json b/NIZAM.json
+index 183eea4..d607d5b 100644
+--- a/NIZAM.json
++++ b/NIZAM.json
+@@ -116,7 +116,9 @@
+         "tools/linux_trial_sandbox.sh",
+         "tools/isolated_trial_adapter.py",
+         "tools/test_convergent_review.py",
+-        "tools/fixtures/convergent_review/manifest.json"
++        "tools/fixtures/convergent_review/manifest.json",
++        "tools/workflow_assurance.py",
++        "tools/test_workflow_assurance.py"
+       ]
+     },
+     {
+diff --git a/docs/planning/HANDOVER.md b/docs/planning/HANDOVER.md
+index f81eb70..0ba7d75 100644
+--- a/docs/planning/HANDOVER.md
++++ b/docs/planning/HANDOVER.md
+@@ -2,12 +2,15 @@
+ id: nizam-handover-2026-10
+ title: "Developer Handover — Release Status and Phase 014 Snapshot"
+ description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
+-version: 1.0.9
++version: 1.0.10
+ status: active
+ authoritative_source: docs/planning/HANDOVER.md
+ last_audited: "2026-10-11"
+ tags: [planning, handover, onboarding, phase-014]
+ change_log:
++  - version: "1.0.10"
++    date: "2026-10-13"
++    summary: "Add current phase017 feature115 identity handoff and recovery boundaries; preserve historical snapshots."
+   - version: "1.0.9"
+     date: "2026-10-12"
+     summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
+@@ -42,7 +45,24 @@ change_log:
+ 
+ # Developer Handover — Release Status and Phase 014 Snapshot
+ 
+-## Current status — 2026-10-12
++## Current status — 2026-10-13
++
++Phase 017 foundation is active under [H-PHASE-017](../../.agent/evidence/phase017-activation/authorization.json),
++with the original 5,400/7,020 allowance. Feature 115 is the assessed-identity
++implementation candidate after renewed pre-code approvals and independent
++corrected acceptance-bundle review. Mode B, fresh independent QA and capture
++remain required before closure; NDEBT-052 is still Open. The explicitly approved
++[recovery epoch](../../.agent/evidence/115/recovery-authorization.json) preserves
++all failed tests/gates and the original exhausted counter.
++
++Continue features 115 → 116 → 117 → 118 in the shared-file lane; each later
++feature needs its own approved contract and independent gates. Later phases stay
++proposed. Installed v1.5.0, closed phase 015's 7,319-line budget and historical
++proofs remain unchanged. Begin through the installed index/skill in AGENTS.md.
++The material below is the preserved dated handover context, not the current
++activation position.
++
++## Previous current-status snapshot — 2026-10-12
+ 
+ Planning PR81 merged at `0eb3bcf5e15f612b4c87f86ff8a2521a0e2d66f2`. Resolved NDEBT-047/046/045 and completed A04a are verified at fixed source candidate `7221cd17a7c2d2188de0094b8ea008e4e192a0c4`: fresh [capable CI38108704971 attempt2](https://github.com/niq-cnr/nizam-framework/actions/runs/38108704971/attempts/2), independent6/6 QA and the evidence gate passed. Later record revisions preserve all nine assessed source hashes; [PR82](https://github.com/niq-cnr/nizam-framework/pull/82) records delivery of the maintenance without a new release or installed upgrade.
+ 
+diff --git a/docs/planning/ROADMAP.md b/docs/planning/ROADMAP.md
+index 34ebe10..60d5eaa 100644
+--- a/docs/planning/ROADMAP.md
++++ b/docs/planning/ROADMAP.md
+@@ -2,10 +2,13 @@
+ id: nizam-roadmap
+ title: "Forward Roadmap — nizam-framework"
+ description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
+-version: 0.61.0
++version: 0.62.0
+ status: active
+ authoritative_source: docs/planning/ROADMAP.md
+ change_log:
++  - version: "0.62.0"
++    date: "2026-10-13"
++    summary: "Activate phase017 foundation and record feature115 identity candidate; preserve closed015 and later proposed plans."
+   - version: "0.61.0"
+     date: "2026-10-12"
+     summary: "Deliver independently verified WA/controller planning; preserve future pending phases and separately gated activation, budgets and implementation."
+@@ -884,7 +887,22 @@ key; this file MUST be updated at each phase close so the repository always stat
+ what comes next (the gap this file closes: phases 001–004 completed with no recorded
+ successor, leaving open debt deferred to unscoped "future phases").
+ 
+-## Current Position (2026-10-12)
++## Current Position (2026-10-13)
++
++- **Phase 017 foundation is active.** H-PHASE-017 authorizes features 115–118
++  with 5,400 counted lines and a 7,020 ceiling. Feature 115 provides the assessed
++  identity implementation candidate; independent Mode B, fresh QA and capture
++  remain completion gates. The operator-approved acceptance recovery preserves
++  the original three-attempt halt; NDEBT-052 stays Open until actual capture.
++  Continue the shared-file lane 115 → 116 → 117 → 118, each under its own
++  contract. [Activation authority](../../.agent/evidence/phase017-activation/authorization.json)
++  and [recovery authority](../../.agent/evidence/115/recovery-authorization.json)
++  are recorded. Phases 016/018/020/019 remain proposed; the recommended later
++  order is core 016 → controls 018 → fresh 020 → profiles 019.
++
++The following phase 015 authority and planning position are dated historical
++context; current phase 017 lifecycle is authoritative in its canonical phase/list.
++
+ 
+ H-PHASE-015 was exercised on 2026-10-11 with operator text "approved." at
+ `2026-10-11T06:30:20.388684+00:00`, recorded before product edits at authorization commit
+@@ -897,12 +915,11 @@ requires its approved contract, both independent pre-code gates, Mode B, QA and
+ the evidence-capture gate. At phase activation, features 111–114 were pending; current feature progress is read from the canonical lifecycle records above. Historical phase014
+ records and budgets remain frozen. This source work does not upgrade installed v1.5.0.
+ 
+-- **Phase015 normative scope is complete.** Features 110–114 passed actual QA/capture;
+-  the closed count remains7,319 against 7,200/9,360. WA features 115–125 and controller features 126–132
+-  now have delivered draft plans 017/018/019 and 016/020. Planning delivery passed
+-  independent Mode B, fresh QA and evidence capture; future phase/budget activation,
+-  runtime acceptance, release/tag and consumer upgrade remain outstanding.
+-  Planning verification: [.agent/evidence/workflow-016-planning/plan-validation.json](../../.agent/evidence/workflow-016-planning/plan-validation.json).
++- **Phase 015 normative scope remains complete.** Features 110–114 and their
++  captured proofs remain unchanged, with 7,319 counted lines against 7,200/9,360.
++  The delivered five-phase planning baseline is preserved; only foundation 017
++  is now activated. Runtime/live acceptance, release/tag and installed upgrade
++  remain separately gated.
+ - **Local self-governance is commissioned.** The public `v1.5.0` installation remains pinned at `f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852`. The assessed source candidate `bfd475ff670e582cbbfc8f3187ae988dcf3c8baa` passed actual CI `38075479048`, real clean installed preflight PASS, an immutable framework/candidate baseline, independent 9/9 QA and the evidence-capture gate before the completed [self-governance record](SELF_GOVERNANCE.md) was written. Root `AGENTS.md` routes local work through the installed index and skill. Later documentation HEAD preserves that assessed candidate. The operator authorization under `H-CONSUMER-UPGRADE`, authored framework sources and historical phase records remain unchanged.
+ - **Phase 014 (GA Track) is complete.** Features 099 and 103–109 landed via PRs #66–#76; feature 102 assembled the historical GA-readiness dossier and closed the phase canonical-first. General Availability declared by the operator on 2026-10-10. H-GA is EXECUTED; H-CONSOLIDATION remains OUTSTANDING. The declaration proceeds with explicit evidence exceptions: `real_production_pilot` is `not_met`; `recorded_consumer_adoptions` is `insufficient_evidence`. These gaps remain recorded in the historical readiness dossier; recorded evidence gaps remain unresolved. The operator decision is recorded at `14e632f` before these documentation updates. The final phase scope total is 8705 of 8600 (ceiling 11180, spec 1.1.4), within the authorized ceiling. The phase changes are released in `v1.5.0`; `H-FRAMEWORK-RELEASE` is EXECUTED after PR #78 merged. Phase015 activation is recorded in the current overlay. The handover record is [`HANDOVER.md`](HANDOVER.md).
+   *The bullets below this one are dated history, deliberately not re-edited at this refresh. Two of their
+diff --git a/docs/planning/operator_gates.md b/docs/planning/operator_gates.md
+index ef252eb..92baab6 100644
+--- a/docs/planning/operator_gates.md
++++ b/docs/planning/operator_gates.md
+@@ -2,10 +2,13 @@
+ id: nizam-operator-gates
+ title: "Operator Gate Registry — nizam-framework"
+ description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
+-version: 0.36.0
++version: 0.37.0
+ status: active
+ authoritative_source: docs/planning/operator_gates.md
+ change_log:
++  - version: "0.37.0"
++    date: "2026-10-13"
++    summary: "Record phase017 foundation authorization and bounded acceptance recovery; future phases remain separately gated."
+   - version: "0.36.0"
+     date: "2026-10-11"
+     summary: "Record authorized phase015 activation, approved7200/9360 budget and six WA design selections; implementation remains independently gated."
+@@ -160,6 +163,19 @@ options. WAphase/016 IDs remain unallocated and future releases/upgrades separat
+ 
+ ## 1. Decided and active gates
+ 
++### Phase 017 foundation authority — 2026-10-13
++
++H-PHASE-017 is authorized for features 115–118 and the original 5,400-line
++allowance with 7,020 ceiling; see [the recorded operator authorization](../../.agent/evidence/phase017-activation/authorization.json).
++H-ACCEPTANCE-115-RECOVERY records the explicitly approved corrected lifecycle
++matrix after the preserved three-attempt halt; [the recovery receipt](../../.agent/evidence/115/recovery-authorization.json)
++starts a bounded fresh epoch while retaining the original exhausted counter and
++failed proofs. NDEBT-052 remains Open until fresh independent feature 115 QA and
++capture. Both independent pre-code gates and independent bundle review apply;
++implementation alone does not complete a feature. Other phase/release/upgrade
++authorizations remain separate. The table below retains its dated dispositions.
++
++
+ Every gate below has been dispositioned, or — for a newly defined gate not yet
+ exercised — has a defined scope and a stated current status. Recurring gates
+ (noted as such) are re-satisfied each time their trigger recurs; this table records
+diff --git a/tools/README.md b/tools/README.md
+index f2a29be..c595d6d 100644
+--- a/tools/README.md
++++ b/tools/README.md
+@@ -2,10 +2,13 @@
+ id: nizam-tools-readme
+ title: "Tools Module — Index"
+ description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
+-version: 0.20.0
++version: 0.21.0
+ status: active
+ authoritative_source: tools/README.md
+ change_log:
++  - version: "0.21.0"
++    date: "2026-10-13"
++    summary: "Document assessed-source identity and record continuity, with eleven permanent independent cases in the existing CI job."
+   - version: "0.20.0"
+     date: "2026-10-12"
+     summary: "Index the optional runtime-session adapter and source routing while retaining record-only and future live-proof boundaries."
+@@ -91,6 +94,39 @@ sessions remain conformant. Existing schemas/C12 validate declared records only;
+ executable controller/adapter/SBCL enforcement and all thirteen live proofs remain
+ pending phase016. The source additions do not upgrade installed v1.5.0.
+ 
++## Assessed-source identity and record continuity
++
++[`workflow_assurance.py`](workflow_assurance.py) provides a dependency-free,
++read-only API: `assess_repository`, `compare_identity` and `verify_record_update`.
++Assessments bind an explicit immutable Git commit/tree, observed origin, source,
++contract, test and tool bytes/modes, actual runtime identifiers and named environment
++variables. An input manifest declares nonempty `source`, `contracts`, `tests` and
++`tools` path lists plus `unknown_dependencies: []`.
++
++Every tracked path is checked against actual anchor blobs and current raw bytes,
++including staged content. Untracked and ignored files invalidate conservatively.
++Paths must be regular, canonical relative files with no symlink components.
++Explicit JSON record masks allow existing scalar leaves to change with the same
++JSON type and permit `/history` append only with its exact original prefix intact.
++All other parsed keys/values remain unchanged. Record-only commits can advance
++HEAD while the assessed anchor and every assessed input remain unchanged.
++
++```bash
++python3 tools/workflow_assurance.py assess --repo /path/to/repo --source-commit COMMIT --inputs /tmp/inputs.json --environment-names /tmp/env-names.json --record-ownership /tmp/owned-fields.json
++python3 tools/workflow_assurance.py compare --before /tmp/before.json --after /tmp/after.json
++python3 tools/workflow_assurance.py record --before /tmp/record-before.json --after /tmp/record-after.json --owned-fields /tmp/fields.json
++PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
++```
++
++The last command runs eleven independently authored feature 115 cases and is
++permanent in the existing `fixtures_self_test` CI job. Unknown cases, invalid JSON,
++missing observations and unsafe paths exit nonzero. Keep CLI input/output files
++outside the assessed repository unless they have a declared record mask.
++This local identity utility does not authenticate callers or authorize entry;
++sealed-bundle enforcement, entry/role checks and foundation closure belong to
++features 116–118. It implements no runtime controller or live acceptance and does
++not upgrade the installed v1.5.0 payload.
++
+ ## Design Decision — DD-4: Unified Skill Payload
+ 
+ This module exists to remediate one specific failure mode observed in prior

@@ -1,0 +1,13 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage red --case reject-foreign-repo --baseline 13d2e1b4f5bc42f80bca0b6cb571d171e4003dcd --operation .agent/evidence/117/reject-foreign-repo-operation.json
+REVISION: 13d2e1b4f5bc42f80bca0b6cb571d171e4003dcd
+EXIT: 1
+STDOUT:
+INPUT_SHA256: bc635c2cb7516c8593b1026b735fee283247f89a2427358ed0d1db99e2dad30d
+OPERATION_SHA256: e5e0c151e2f31a8effc17c47cbf478077f642c545136d908f76d61731a209d50
+FIXTURE_APPROVED_SNAPSHOT: 970ea233f77b4468105ddf6e401babbd0049d0b2
+FIXTURE_PROPOSAL: f42e1b91d21c99a16d90f1e403f48ec37341b1ac
+OBSERVED_ORIGIN: https://github.com/foreign/foreign.git
+OBSERVED_RESULT: accept
+POLICY_ASSERTION: reject-foreign-repo intended policy outcome mismatch
+
+STDERR:

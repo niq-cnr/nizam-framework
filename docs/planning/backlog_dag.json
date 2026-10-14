@@ -1,22 +1,12 @@
 {
   "plan_status": "candidate",
   "plan_status_note": "H-PHASE-015 active under06c0ae0a273facce80c57506260648c41f566ebb; approved7200/9360 including phase-level costs. Canonical feature/list governs lifecycle;111-114pending. Six WA selections recorded, implementation/planning after114 remains pending; WA/016 unallocated. Historical014/installedv1.5 immutable.",
-  "generated_at": "2026-10-12T21:14:55.982620+00:00",
+  "generated_at": "2026-10-14T06:10:35.617641+00:00",
   "base_commit": "08f97b0e8b1002ac0d8362ed147e7253726a5415",
   "base_commit_note": "Approved docs-only phase015-planning implementation base after exact operator H-NIP events; canonical phase014 records/current position remain unchanged.",
   "packet_schema": "schema/work-packet.schema.json",
   "authoritative_human_view": "docs/planning/backlog_reconciliation.md",
-  "activated_phase": {
-    "phase_id": "015-live-runtime-normative",
-    "feature_list": ".agent/feature_list_015.json",
-    "spec_version": "1.0.1",
-    "original_estimate_lines": 7200,
-    "ceiling_130pct": 9360,
-    "current_status": "complete",
-    "budget_approval": "H-PHASE-015 operator approved. at2026-10-11T06:30:20.388684+00:00, authorization06c0ae0a273facce80c57506260648c41f566ebb",
-    "run_state_position": "Canonical110-114 complete; phase015 closed after actual114 ModeB, freshQA/ownspot and capture. Currentfeature/activecontract cleared. PLAN-WA and PLAN-016 remain pending; no nextphase allocated.",
-    "budget_basis": "product+contract+verdict+audit+planning; raw evidence/run_state excluded; phase-level costs included; unclassified fails closed"
-  },
+  "activated_phase": "017-workflow-assurance-foundation",
   "estimate_weighting": {
     "low": 2.3,
     "high": 2.89,
@@ -88,6 +78,23 @@
       ],
       "status": "APPLIED (new feature)",
       "reason": "help text documents the final C1/C13/C15 semantics."
+    },
+    {
+      "packet": "A09",
+      "gate": "H-PHASE-017",
+      "adopted_at": "2026-10-13T04:51:12.080844+00:00",
+      "prior_serialize_after": [
+        "NIP3-120"
+      ],
+      "adopted_serialize_after": [
+        "PLAN-016"
+      ],
+      "owners": [
+        "115"
+      ],
+      "resolved_prerequisites": [],
+      "authorization_ref": ".agent/evidence/phase017-activation/authorization.json",
+      "note": "Current execution projection only; original packet dependency_edges and dated proposal remain unchanged. Implementation not yet accepted."
     }
   ],
   "proposed_canonical_edge_changes": [],
@@ -993,7 +1000,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "099",
-      "objective": "GA-track activation wave — register ecosystem/06+08 and define the reserved gates",
+      "objective": "GA-track activation wave \u2014 register ecosystem/06+08 and define the reserved gates",
       "scope": {
         "allowed_paths": [
           "ecosystem/06_simplification_review.md",
@@ -1090,7 +1097,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "103",
-      "objective": "Sandbox prerequisite handling — explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043)",
+      "objective": "Sandbox prerequisite handling \u2014 explicit, non-passing UNSUPPORTED outcome when user-namespace isolation is unavailable (NDEBT-043)",
       "scope": {
         "allowed_paths": [
           "tools/test_convergent_review.py",
@@ -1289,7 +1296,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "105",
-      "objective": "Nested-fixture ownership — the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042)",
+      "objective": "Nested-fixture ownership \u2014 the fixture-subdirectory claim map pulled forward from NIP-0003 feature 109 (NDEBT-042)",
       "scope": {
         "allowed_paths": [
           "tools/fixtures_self_test.sh",
@@ -1384,7 +1391,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "106",
-      "objective": "Capability-index parity — skill.json is a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a)",
+      "objective": "Capability-index parity \u2014 skill.json is a documented intentional subset of NIZAM.json, enforced by C13 (NDEBT-044 a)",
       "scope": {
         "allowed_paths": [
           "tools/validate.sh",
@@ -1681,7 +1688,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "109",
-      "objective": "C15 mapping direction — an explicit Role column parsed by a new primitive; a swapped profile->role mapping fails (NDEBT-026)",
+      "objective": "C15 mapping direction \u2014 an explicit Role column parsed by a new primitive; a swapped profile->role mapping fails (NDEBT-026)",
       "scope": {
         "allowed_paths": [
           "standard/capability_profiles.md",
@@ -1780,7 +1787,7 @@
       ],
       "phase_id": "014-ga-track",
       "feature_id": "108",
-      "objective": "Validator help and adapter-reference truth — C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f)",
+      "objective": "Validator help and adapter-reference truth \u2014 C14-C16 paragraphs, C5 case sensitivity, payload-doc set, interface.md item reference (NDEBT-037 + NDEBT-044 c, d, f)",
       "scope": {
         "allowed_paths": [
           "tools/validate.sh",
@@ -3815,7 +3822,7 @@
         "Reducing any active gate (A15)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
+      "status": "complete",
       "authority_status": "proposal",
       "owner_role": "Generator",
       "plan_class": "deferred-proposal",
@@ -3876,7 +3883,10 @@
           "feature_id": "115",
           "evidence": ".agent/evidence/115/"
         }
-      ]
+      ],
+      "qa": ".agent/qa/115.json",
+      "completion_evidence": ".agent/evidence/115/evidence-capture.json",
+      "completed_at": "2026-10-13T10:07:39.894786+00:00"
     },
     {
       "id": "A11-D",
@@ -4170,7 +4180,7 @@
         "Reducing any active gate (A15)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
+      "status": "complete",
       "authority_status": "proposal",
       "owner_role": "Generator",
       "plan_class": "deferred-proposal",
@@ -4228,7 +4238,10 @@
           "feature_id": "116",
           "evidence": ".agent/evidence/116/"
         }
-      ]
+      ],
+      "qa": ".agent/qa/118.json",
+      "completion_evidence": ".agent/evidence/118/evidence-capture.json",
+      "completed_at": "2026-10-14T06:10:35.617641+00:00"
     },
     {
       "id": "A14",
@@ -4746,14 +4759,14 @@
     {
       "feature_id": "117",
       "phase": "017-workflow-assurance-foundation",
-      "status": "pending",
-      "evidence": ".agent/evidence/117/"
+      "status": "complete",
+      "evidence": ".agent/evidence/117/evidence-capture.json"
     },
     {
       "feature_id": "118",
       "phase": "017-workflow-assurance-foundation",
-      "status": "pending",
-      "evidence": ".agent/evidence/118/"
+      "status": "complete",
+      "evidence": ".agent/evidence/118/evidence-capture.json"
     },
     {
       "feature_id": "121",
@@ -4768,5 +4781,23 @@
       "evidence": ".agent/evidence/128/"
     }
   ],
-  "proposed_execution_note": "Recommended 017->016->018->020->019 only; pending future activation. Original whole-alias graph is dated history. NIP3-116 (feature 127) core and 131 final CI  stay separately pending; A15 retains NIP3-120 (feature 132) delay. Canonical proposed execution graph uses feature-list numeric dependencies, cross_phase_prerequisites and shared_file_lanes."
+  "proposed_execution_note": "Recommended 017->016->018->020->019 only; pending future activation. Original whole-alias graph is dated history. NIP3-116 (feature 127) core and 131 final CI  stay separately pending; A15 retains NIP3-120 (feature 132) delay. Canonical proposed execution graph uses feature-list numeric dependencies, cross_phase_prerequisites and shared_file_lanes.",
+  "phase017_execution": {
+    "phase": "017-workflow-assurance-foundation",
+    "status": "complete",
+    "feature": null,
+    "contract_ref": ".agent/contracts/118.json",
+    "authorization_ref": ".agent/evidence/phase017-activation/authorization.json",
+    "shared_file_order": [
+      "115",
+      "116",
+      "117",
+      "118"
+    ],
+    "feature_status": "complete",
+    "evidence": ".agent/evidence/118/evidence-capture.json",
+    "qa": ".agent/qa/118.json",
+    "recovery_gate": "H-CONTRACT-118-RECOVERY",
+    "completed_at": "2026-10-14T06:10:35.617641+00:00"
+  }
 }

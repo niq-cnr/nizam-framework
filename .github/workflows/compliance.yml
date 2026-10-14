@@ -68,13 +68,11 @@ jobs:
   fixtures_self_test:
     runs-on: ubuntu-latest
     steps:
-      # No fetch-depth override: the self-test's vlib_version_increased case
-      # builds its OWN throwaway git repo (git init in a mktemp dir) rather
-      # than reading this checkout's history, so GitHub Actions' default
-      # shallow checkout is sufficient. The C13 substitution and every
-      # validate.sh --target invocation read only the working-tree fixtures.
+      # Workflow-assurance cases read pinned historical Git blobs and release
+      # tags, so this job requires full history alongside working-tree fixtures.
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
@@ -96,6 +94,7 @@ jobs:
           PY
       - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
       - run: bash tools/fixtures_self_test.sh
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
 
   convergent_review:
     runs-on: ubuntu-latest

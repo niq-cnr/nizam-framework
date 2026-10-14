@@ -9,6 +9,39 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Foundation readiness (feature 118).** Added candidate-bound observation of
+  current twenty-case prerequisite evidence, explicit runtime and historical Git
+  inputs, and independent recorded evaluator identity. Readiness supports later
+  record-only HEAD advances with unchanged inputs. Canonical phase closure still
+  requires Mode B, fresh QA with a separate spot check, and Root capture; the
+  installed v1.5.0 payload and proposed later phases remain unchanged.
+
+- **Authorized entry (feature 117).** Added a read-only preflight over actual local
+  origin/authority, pinned critical governance bytes, revision-bound independent
+  approvals and explicit existing-role path/field intents. Four independent cases
+  extend the current suite to twenty. The project check runs only while 117 is
+  active; completion still requires Mode B, fresh QA and capture. Historical
+  proofs remain unchanged and installed v1.5.0 remains pinned.
+
+- **Independent acceptance bundles (feature 116).** Added read-only sealed-bundle
+  verification over actual immutable test/API/obligation/control Git bytes,
+  observed environment and distinct recorded author/developer/reviewer identities.
+  Each case binds successful setup and positive control to its own intended
+  behavioral failure; generic setup or missing-API failures cannot qualify.
+  Independent review stays outside its own seal, and later implementation Source
+  identity stays separate. Five new cases extend the existing eleven-case suite.
+  This candidate requires its own Mode B, fresh QA and capture; entry enforcement
+  and foundation closure remain features 117–118. Installed v1.5.0 is unchanged.
+
+- **Workflow Assurance identity (feature 115).** Added a read-only stdlib API/CLI
+  binding actual Git source identity, assessed bytes/modes and observed environment.
+  Unknown changes invalidate conservatively; declared scalar record updates and
+  exact history append can preserve the original assessed anchor across later HEADs.
+  Eleven independent cases run in the existing CI fixture job. Phase 017 foundation
+  is authorized at 5,400/7,020; this candidate still requires independent Mode B,
+  fresh QA and capture. Sealed bundles, authorized entry and foundation closure
+  remain features 116–118; installed v1.5.0 is unchanged.
+
 - **WA and controller planning delivery.** Delivered draft plans for five pending phases,
   allocating WA features 115–125 before controller features 126–132 with full budgets and independent
   future acceptance ownership. Recommended foundation 017→core 016→controls 018→

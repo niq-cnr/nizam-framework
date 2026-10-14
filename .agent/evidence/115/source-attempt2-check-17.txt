@@ -1,0 +1,19 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-controls --base 9ebfd03883486a205ac8c3a211f0cac0af5fddba
+REVISION: 543d352f1bc115866b666c3f1872863779e96689
+SOURCE_SHA256: {".agent/evidence/115/api-interface.json": "ab80ec53b6fe2a8fa2ac979717c98bb486b8c6cf64fd122da008befc0153d55a", ".agent/evidence/115/recovery-scope-guard.py": "df5e5dc574ea37866bf834e7e7d1f319ec6678d02842496e7c37652d1f4f954d", "tools/test_workflow_assurance.py": "28741b2bf99ad30fad804a16ffb9ccb81bbb7e483999250ae894ec77c1733b56", "tools/workflow_assurance.py": "7fe096c942d9932c880d20f29271ef12368f3cb4fc5a05d88171b01a54112f1f"}
+CONTEXT: Uncommitted source attempt at the observed base revision; exact candidate digests above.
+STDOUT:
+PASS scope-controls valid pre-source IN_PROGRESS017/115 and preserved historical halt3/3
+PASS scope-controls targeted reject known-contract116-substitution
+PASS scope-controls targeted reject known-premature-run-complete
+PASS scope-controls targeted reject old-proof-byte
+PASS scope-controls targeted reject old-proof-mode
+PASS scope-controls targeted reject archived015-budget
+PASS scope-controls targeted reject phase017-terminal
+PASS scope-controls targeted reject foreign-current-feature
+PASS scope-controls restored pre-source after seven exact rejects
+PASS scope-controls PRIVATE MOCK delivered/in-progress shape; no product acceptance claimed
+PASS scope-controls PRIVATE MOCK after-capture canonical tuple with actual fixture Git revision/digests; no actual115 QA claimed
+PASS scope-controls missing capture blocks canonical completion
+STDERR:
+EXIT: 0

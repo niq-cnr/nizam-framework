@@ -1,0 +1,32 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/115/acceptance-selfcheck-attempt3.py
+REVISION: a293146a1a7ef87666bd40eb83f35a40235eb8f4
+PASS valid baseline CLI positive assess; intended strict-JSON duplicate-key red: POLICY_ASSERTION: CLI duplicate manifest key rejected after successful setup
+PASS baseline positive controls: real committed fixture/setup, origin/commit/bytes, self comparison, allowed append, typed incomplete-input rejection
+{"case": "identity-positive", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: actual Git tree"}
+{"case": "invalidate-source", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: source current bytes differ from immutable anchor: invalid input accepted"}
+{"case": "invalidate-contract", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: contracts current bytes differ from immutable anchor: invalid input accepted"}
+{"case": "invalidate-tests", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: tests current bytes differ from immutable anchor: invalid input accepted"}
+{"case": "invalidate-tool", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: tools current bytes differ from immutable anchor: invalid input accepted"}
+{"case": "invalidate-environment", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: environment drift invalidates"}
+{"case": "invalidate-unknown", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: unknown tracked/untracked/ignored path: other.txt: invalid input accepted"}
+{"case": "record-continuity", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: masked contract still rejects unowned revision: invalid input accepted"}
+{"case": "reject-unowned-field", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: unowned phase: invalid input accepted"}
+{"case": "reject-history-edit", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: exact typed history prefix: invalid input accepted"}
+{"case": "allow-owned-append", "exit": 1, "classification": "intended-policy-red", "assertion": "POLICY_ASSERTION: owned type change denied: invalid input accepted"}
+COMMAND: /usr/bin/python3 /home/cnross/.tmp/nizam-115-bundle-review-attempt1-lb7poix7/tools/test_workflow_assurance.py --scope --base 9ebfd03883486a205ac8c3a211f0cac0af5fddba
+STDOUT: PASS scope: actual delta, immutable proof, owned fields and prior history
+
+STDERR: 
+EXIT: 0
+PASS runner argument rejection ['--case', 'unknown']: actual EXIT 2
+PASS runner argument rejection ['--case']: actual EXIT 2
+PASS runner argument rejection ['--check', 'foundation-ready']: actual EXIT 2
+PASS runner argument rejection ['--scope']: actual EXIT 2
+PASS independent scratch scope positive
+PASS targeted scope reject old-proof-byte: POLICY_ASSERTION: protected immutable bytes .agent/evidence/115/api-interface.json
+PASS targeted scope reject old-proof-executable-mode: POLICY_ASSERTION: protected executable mode .agent/evidence/115/api-interface.json
+PASS targeted scope reject archived015-budget: POLICY_ASSERTION: phase015 full final budget preserved
+PASS targeted scope reject phase017-terminal-spoof: POLICY_ASSERTION: 017 manifest stays active/in_progress
+PASS targeted scope reject foreign-current-feature: POLICY_ASSERTION: only authorized017/115 progression
+PASS scratch restored positive after five specific rejects
+EXIT: 0

@@ -1,0 +1,164 @@
+{
+  "step": "117-mode-b",
+  "attempt": 2,
+  "actor": "/root/wa_validator",
+  "root": "/home/cnross/.tmp/nizam-117-mode-b-attempt2-nu5bgbnh",
+  "base": "4ee3382746685d98ab8a1613c0037a69f1278bd7",
+  "candidate": {
+    "revision": "2ab311bde4e104ec4a2b1b739fe8fa91b48fe5b7",
+    "tree": "225dd9bb6581ece906374f475e47f3e81c53216b",
+    "source_sha256": {
+      "tools/workflow_assurance.py": "f5c1834ac800bccb3535a090658cf973c765388f3348eed1db1111868bbfe80e",
+      "tools/test_workflow_assurance.py": "a81ea95e70b2d6c4e9d535b872af9ed4873636110128f5e75ccd5ad933e74b9d",
+      ".agent/evidence/117/api-interface.json": "f8f3e20dbc31bfe8ee2092b3a0c160646885dace49aa1799cab462a50984285f",
+      ".agent/evidence/117/scope-guard.py": "319667a25cf7407a569390a7280c828ae4b9d83f6c02cd02edeab9b4c3d9b309"
+    },
+    "sealed_dependencies_sha256": {
+      ".agent/evidence/116/bundle-fixtures.py": "eb87742bf4aeedcb9d2d91563ddf07d298381fc7198b80fa17831dfe45cd33d1",
+      ".agent/evidence/117/accepted-entry-case-input.json": "b865af43e46b0cab975da8ee3335a788bf6fcad18fe2affb9e91baf355f314c6",
+      ".agent/evidence/117/accepted-entry-operation.json": "17543ada02707fe722840809e6ec450f8c7414670ba2e99ffc582392306e9b47",
+      ".agent/evidence/117/accepted-entry-positive-input.json": "b04ca92e0a528c365b884f6899be7ac21ddb876d341b80bc9e3ad48ef21a099a",
+      ".agent/evidence/117/api-interface.json": "f8f3e20dbc31bfe8ee2092b3a0c160646885dace49aa1799cab462a50984285f",
+      ".agent/evidence/117/archived-product.py": "402eea15a23556b708da6a8c812bdcaaf9833c7b43dc9390a5817ebe3cf312d8",
+      ".agent/evidence/117/baseline-driver.py": "b59251c27d3f28bb9be8e0f7c10e849f22c96c3463da6f982d65f4ca1e3f6a58",
+      ".agent/evidence/117/baseline-inputs.json": "ae41ad23dca464b6c434b3a74070692bdeefa9b8c7727981c5415d738d5fe5f0",
+      ".agent/evidence/117/entry-fixtures.py": "ad05ecc5b0e1ca68b948624fde78918908128697201232ee5614c100408c296e",
+      ".agent/evidence/117/naive-policy.py": "320ef609d3e2d672b85d5ff4d507733e7fa5b43c7012cbeeb1f375554c7971b7",
+      ".agent/evidence/117/producer-interface.json": "655a077419ef263c92a774701f6b747b303dae07520c323700ebe6d3af0cef5c",
+      ".agent/evidence/117/reject-foreign-repo-case-input.json": "bc635c2cb7516c8593b1026b735fee283247f89a2427358ed0d1db99e2dad30d",
+      ".agent/evidence/117/reject-foreign-repo-operation.json": "4bb425e946026fc691d3455d636975cca037f3878d3b0dd473f74bd069a416ff",
+      ".agent/evidence/117/reject-foreign-repo-positive-input.json": "bc4a2ddfe53dffe31c7393a3ce73ca245983d9eeb87fb835092501cc412c47e5",
+      ".agent/evidence/117/reject-role-write-case-input.json": "a5a9137cdc4236643a909022a9e586c7094cc7d3cf1f4a4adc733654208aa11d",
+      ".agent/evidence/117/reject-role-write-operation.json": "4e4fdcd6357ca9fd51dc05f96d29506b3b477a2be185f256179931acb32cb28f",
+      ".agent/evidence/117/reject-role-write-positive-input.json": "27f2cc20216895ee7c7b93e0ebb9f544a044daddb01327bf8e17f382d124954e",
+      ".agent/evidence/117/reject-stale-pin-case-input.json": "665e750335ce8a2c397654c26af71e7e2c55a1aa642ebb2cf4905cfc36a83bb4",
+      ".agent/evidence/117/reject-stale-pin-operation.json": "98b9480761c7637676466bb9d165847467443294cba08a9e5162010d6cfcdc0e",
+      ".agent/evidence/117/reject-stale-pin-positive-input.json": "e9adaa948c80fb1d80b0b945fa46a7ed617589dc9506c01fcc6994143d9199da",
+      ".agent/evidence/117/role-sessions.json": "8c24cc186c24c94904e8e7592e7b247842cd97540750f84bfa6798e13f42faf1",
+      ".agent/evidence/117/scope-guard.py": "319667a25cf7407a569390a7280c828ae4b9d83f6c02cd02edeab9b4c3d9b309",
+      ".agent/evidence/117/source-obligations.json": "448800ac6dd3e22a940e2935d9abb51c6190c45763523393f0d06e776a334d6b",
+      ".agent/evidence/117/typed-producer-regression.py": "8071bc9cc069fb0c86634b834c6e4d9c91c763525370ffdd115f5611d08ee190",
+      ".nizam/schema/phase.schema.json": "e0964c153dd6e9a027bbbf05f50de7b0c8b91303ea00c11f13f3f8c372661b57",
+      ".nizam/schema/qa_verdict.schema.json": "574f1ba2749024baadd1bccb0e3228ed3fecf4d859402081d54a29d621fc40a6",
+      "tools/test_workflow_assurance.py": "a81ea95e70b2d6c4e9d535b872af9ed4873636110128f5e75ccd5ad933e74b9d"
+    }
+  },
+  "actual_checks": [
+    {
+      "acceptance_test": "accepted-entry",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case accepted-entry",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-01.txt",
+      "sha256": "338e596fe8a51a9a9fbe695dd00a984b318964344f98fb9de4de4a01f9b5bc4a"
+    },
+    {
+      "acceptance_test": "reject-foreign-repo",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-foreign-repo",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-02.txt",
+      "sha256": "5b759f468b55fc0732531356b0b5500c86e800eac86c01b6c4ef11ea9335704d"
+    },
+    {
+      "acceptance_test": "reject-stale-pin",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-stale-pin",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-03.txt",
+      "sha256": "ccbd7339cc7914516ba1b2a153bd97b9fb49269662ff94e83865e647f1e4bcf1"
+    },
+    {
+      "acceptance_test": "reject-role-write",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-role-write",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-04.txt",
+      "sha256": "aeb2919e3c4ecdec81d97ade8395f05c64135b74ec40dd87e009e9edd1c58ce2"
+    },
+    {
+      "acceptance_test": "Previoussixteen115/116behavioralregressions",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --pre-entry-cases",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-05.txt",
+      "sha256": "2cc1d568701c2023b06d69a48bf635409fdc1fa8dc4d56d687cd398e24aa6545"
+    },
+    {
+      "acceptance_test": "RepositoryC1-C16/versionlogs",
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-06.txt",
+      "sha256": "808ce710a01454f55004c63933e3050e5121ecc10b5a35546ddcacdf0fad5d06"
+    },
+    {
+      "acceptance_test": "Payloadcomplianceinstalledunchanged",
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-07.txt",
+      "sha256": "8963721779ef338647e4b097ab1d437987cf0e0874f80655de7699e0ad2e78cb"
+    },
+    {
+      "acceptance_test": "PRcloseoutwithoutrelease",
+      "command": "python3 .github/scripts/release_closeout.py --mode pr",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-08.txt",
+      "sha256": "127b98c826d56377e7177f3486233054a93e7a40d1f88b1ca1949213984eaf8f"
+    },
+    {
+      "acceptance_test": "Installed239inventory/localself-governance",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-09.txt",
+      "sha256": "391f10c4e5526817ef6f19964d0d3143845bf835edb1af22b8b87c65f6cf3023"
+    },
+    {
+      "acceptance_test": "Current117canonicalscope/type/history/proof-preservation",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-117 --base 79af0276408ba03e80c709af127133e2b55e7bea",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-10.txt",
+      "sha256": "bff09c53373dd7a9684fae0ba28e25e06e712a69a7a36c9b19667f603fddf5df"
+    },
+    {
+      "acceptance_test": "Legitimatecurrent117states and targetedforeigncontract/prematurecomplete/historybool-int/oldbudget/proof mutation rejection",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-controls-117 --base 79af0276408ba03e80c709af127133e2b55e7bea",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-11.txt",
+      "sha256": "57cb7e21c24f3e972ce6cc02344bf230a7e5898619c24bd4f1b5019f8ee85f26"
+    },
+    {
+      "acceptance_test": "Actualcurrentprojectentrycriticalpin/approvedlocalgrant observation",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/workflow_assurance.py entry --repo . --entry .agent/evidence/117/authorized-entry.json",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/117/mode-b-attempt2-check-12.txt",
+      "sha256": "ab481bb5a40892f83d56fe4d2c808eb79fd3509fbdb0d9e98e7d09a313dea2b1"
+    }
+  ],
+  "supplemental_spot": {
+    "exit": 0,
+    "evidence": ".agent/evidence/117/mode-b-attempt2-spot-raw.txt",
+    "valid_product_grant": true,
+    "caller_rehashed_unapproved_coordination_grant_rejected": true,
+    "restored_positive": true,
+    "exact_old_function_or_class_source_segments": 23
+  },
+  "gate_schema_exit": 0,
+  "artifact_sha256": {
+    ".agent/validator/117-mode-b.json": "2e7fb110f3160be5b4d0a8859590fcc8c202dd059c8f2020216b3074610de2b8",
+    ".agent/evidence/117/mode-b-attempt2-replay.py": "e7c7dadcc6970f89027cf88427a159ba9b6285c03988b33437fd8da90b60a938",
+    ".agent/evidence/117/mode-b-attempt2-replays.json": "9ed8184d3c11e128535600f586ac2fe68b618eeb02d1dff642f8f31888098477",
+    ".agent/evidence/117/mode-b-attempt2-spot.py": "ac395c722b8b0dccdd23cddf43cfe040bba827f7ee6f74f2bcf1d28791d6f558",
+    ".agent/evidence/117/mode-b-attempt2-spot-raw.txt": "e6a93ffae497bf08c186efc61f0b2c9676254f5295c702c181652d938ff9aa1c",
+    ".agent/evidence/117/mode-b-attempt2-schema-raw.txt": "2b26a8ccccbd6f1471b437ffa78dbebd498dd7885598e0b9dd03663afeefaf0d",
+    ".agent/evidence/117/mode-b-attempt2-check-01.txt": "338e596fe8a51a9a9fbe695dd00a984b318964344f98fb9de4de4a01f9b5bc4a",
+    ".agent/evidence/117/mode-b-attempt2-check-02.txt": "5b759f468b55fc0732531356b0b5500c86e800eac86c01b6c4ef11ea9335704d",
+    ".agent/evidence/117/mode-b-attempt2-check-03.txt": "ccbd7339cc7914516ba1b2a153bd97b9fb49269662ff94e83865e647f1e4bcf1",
+    ".agent/evidence/117/mode-b-attempt2-check-04.txt": "aeb2919e3c4ecdec81d97ade8395f05c64135b74ec40dd87e009e9edd1c58ce2",
+    ".agent/evidence/117/mode-b-attempt2-check-05.txt": "2cc1d568701c2023b06d69a48bf635409fdc1fa8dc4d56d687cd398e24aa6545",
+    ".agent/evidence/117/mode-b-attempt2-check-06.txt": "808ce710a01454f55004c63933e3050e5121ecc10b5a35546ddcacdf0fad5d06",
+    ".agent/evidence/117/mode-b-attempt2-check-07.txt": "8963721779ef338647e4b097ab1d437987cf0e0874f80655de7699e0ad2e78cb",
+    ".agent/evidence/117/mode-b-attempt2-check-08.txt": "127b98c826d56377e7177f3486233054a93e7a40d1f88b1ca1949213984eaf8f",
+    ".agent/evidence/117/mode-b-attempt2-check-09.txt": "391f10c4e5526817ef6f19964d0d3143845bf835edb1af22b8b87c65f6cf3023",
+    ".agent/evidence/117/mode-b-attempt2-check-10.txt": "bff09c53373dd7a9684fae0ba28e25e06e712a69a7a36c9b19667f603fddf5df",
+    ".agent/evidence/117/mode-b-attempt2-check-11.txt": "57cb7e21c24f3e972ce6cc02344bf230a7e5898619c24bd4f1b5019f8ee85f26",
+    ".agent/evidence/117/mode-b-attempt2-check-12.txt": "ab481bb5a40892f83d56fe4d2c808eb79fd3509fbdb0d9e98e7d09a313dea2b1"
+  },
+  "approved": true,
+  "fresh_qa_or_capture_claimed": false,
+  "source_test_helper_contract_lifecycle_modified": false
+}

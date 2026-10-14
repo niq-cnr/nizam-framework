@@ -1,0 +1,30 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/scope-budget-014/measure.py --range phase017-ci=f84db8a65a814898f9e78f4a91ca56d1eccb68d3.. --files
+REVISION: 904eda4625d043ae5973f6bd5161106223ccbec1
+EXIT: 0
+STDOUT:
+== phase017-ci: f84db8a65a814898f9e78f4a91ca56d1eccb68d3..WORKTREE
+   resolved f84db8a65a814898f9e78f4a91ca56d1eccb68d3..WORKTREE+untracked
+   paths=24 binary_paths=0
+   class                       files   lines
+   budget/product                  0       0
+   budget/product-ext              1       8
+   budget/contract                 0       0
+   budget/verdict                  0       0
+   budget/audit-deliverable        0       0
+   budget/planning                 0       0
+   evidence                       23     508
+   excluded/run_state              0       0
+   unclassified                    0       0
+   -- non-evidence paths (class, lines, path)
+   budget/product-ext               8  .github/workflows/compliance.yml
+   -- evidence groups (files, lines, group)
+   evidence                       23     508  .agent/evidence/118/
+   PRODUCT_LINES=8
+   PROCESS_OVERHEAD_LINES=0  (contract + verdict + audit-deliverable + planning)
+   BUDGET_COUNTED_LINES=8
+   EVIDENCE_LINES=508
+   EXCLUDED_LINES=0
+   UNCLASSIFIED_LINES=0
+   ALL_PATHS_LINES=516  (= budget 8 + evidence 508 + excluded 0 + unclassified 0)
+
+STDERR:

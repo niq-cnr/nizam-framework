@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "015-live-runtime-normative",
+  "current_phase": "017-workflow-assurance-foundation",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-12T21:23:32.603298+00:00",
+  "updated_at": "2026-10-14T06:20:45.325692+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -574,6 +574,317 @@
       "limit": 3
     },
     "workflow-016-planning-closeout": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "115-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "115-mode-a": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "115-contract-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "115-tests": {
+      "attempts": 3,
+      "limit": 3,
+      "note": "Third bundle selfcheck0 followed by actual independent review rejection; no further author attempt before human corrected-approach recovery."
+    },
+    "115-test-bundle-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "115-recovery-1-contract": {
+      "attempts": 1,
+      "limit": 3,
+      "authorization": ".agent/evidence/115/recovery-authorization.json"
+    },
+    "115-recovery-1-mode-a": {
+      "attempts": 1,
+      "limit": 3,
+      "authorization": ".agent/evidence/115/recovery-authorization.json"
+    },
+    "115-recovery-1-contract-review": {
+      "attempts": 1,
+      "limit": 3,
+      "authorization": ".agent/evidence/115/recovery-authorization.json"
+    },
+    "115-recovery-1-tests": {
+      "attempts": 1,
+      "limit": 3,
+      "authorization": ".agent/evidence/115/recovery-authorization.json"
+    },
+    "115-recovery-1-test-bundle-review": {
+      "attempts": 1,
+      "limit": 3,
+      "authorization": ".agent/evidence/115/recovery-authorization.json"
+    },
+    "115-generator-development": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "115-mode-b": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "115-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "115-closeout-coordination": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "115-evidence-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "116-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "116-mode-a": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "116-contract-review": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "116-tests": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "116-test-bundle-review": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "116-generator-development": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "116-mode-b": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "116-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "116-evidence-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "116-closeout-coordination": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "117-contract": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-proposal-coordination": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-contract-review": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-review-recovery-coordination": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "117-mode-a": {
+      "attempts": 2,
+      "limit": 3,
+      "note": "Attempt2 interrupted at mandatory independent-review halt; no current-revision gate produced or approval inferred."
+    },
+    "117-mode-a-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-halt-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-recovery1-mode-a": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-recovery1-contract-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-recovery1-precode-coordination": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-test-author": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-test-coordination": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-bundle-review": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "117-bundle-coordination": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-source": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-source-coordination": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "117-mode-b": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "117-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "117-closeout": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-selection": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-contract": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "118-proposal-coordination": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "118-mode-a": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "118-contract-review": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "118-precode-coordination": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "118-test-author": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-test-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-bundle-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-bundle-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-prerequisite": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-source-coordination": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "118-source": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-halt-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery-authorization": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-proposal-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-mode-a": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-contract-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-precode-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-test-author": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-bundle-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-bundle-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-source": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-prerequisite": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-source-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-closeout-author": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-mode-b": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-closeout": {
       "attempts": 1,
       "limit": 3
     }
@@ -4004,6 +4315,582 @@
       "event": "workflow-016-planning-merged-main-verified",
       "detail": "PR90 actualcleanmerge8bce1e4 afterall6final-headchecks; Maincompliance38310034857five/fivesuccess. Planningtaskcanonicalcomplete; futureactivation/livecases stillpending. This bookkeepingrecords observedpriorPR90facts, not its own futurepublication.",
       "evidence": ".agent/evidence/workflow-016-planning/pr90-merge-main-ci.json"
+    },
+    {
+      "at": "2026-10-13T04:32:44.537662+00:00",
+      "event": "operator_gate_decision",
+      "detail": "H-PHASE-017 authorized byoperator \"approved, please proceed.\" followingexplicitnextstepphase017foundationactivation. Existing115\u2013118 scopeand5400/7020budget approved; actualboundplanhashes recordedbeforeSource changes. Phase015 closure, otherfuturephaseactivation, installedv1.5.0 andrelease disposition preserved.",
+      "gate": "H-PHASE-017",
+      "operator_text": "approved, please proceed.",
+      "evidence": ".agent/evidence/phase017-activation/authorization.json",
+      "approved_plan_sha256": {
+        ".agent/product_spec_017.md": "04e9264268db57d8c8c69a5aff7ecb4f6d6c0b836e5a74e016f31329d9fde68b",
+        ".agent/feature_list_017.json": "ebd9807a653fb6362f29fc71178a6de881ef0140a72992f3a50c326d484de141",
+        "docs/planning/phase_017.yaml": "e2751537be8ddbfa2978886b2ee665a69dd286d6f6bf0ff8ad92da6e651ad2d4"
+      },
+      "approved_original_estimate_lines": 5400,
+      "approved_ceiling_130pct": 7020
+    },
+    {
+      "at": "2026-10-13T04:46:38.352194+00:00",
+      "event": "115-contract-proposed",
+      "detail": "FrozenGenerator2300-line115proposal includesidentity/invalidation/recordcontinuity,11independentcases andauthorized017 activationmetadata; actualschema0. Sourceimplementationstillblockeduntilbothprecodegates.",
+      "evidence": ".agent/evidence/115/contract-proposal-handoff.json"
+    },
+    {
+      "at": "2026-10-13T04:51:37.534276+00:00",
+      "event": "phase017-activated-115-contract-approved",
+      "detail": "Actual typed ModeA and independent contract-review approved with empty blockers; canonical phase/list/manifest precede derived active115 state. Original phase0157319 ledger archived exactly; approved0175400/7020 initialized. No Source implementation accepted.",
+      "evidence": ".agent/evidence/phase017-activation/authorization.json"
+    },
+    {
+      "at": "2026-10-13T04:56:42.245472+00:00",
+      "event": "115-tests-attempt1-failed",
+      "detail": "Baseline missing-origin CalledProcessError and missing-env KeyError correctly rejected as setup/other failures; nine intended reds are partial, no bundle approval. Attempt2 structural/interface baseline error handling required; no Source permitted.",
+      "evidence": ".agent/evidence/115/tests-attempt1-result.json"
+    },
+    {
+      "at": "2026-10-13T04:59:35.504207+00:00",
+      "event": "115-tests-attempt2-failed",
+      "detail": "Actual --scope EXIT1: final spec/list0.2 incorrectly required before contracted Generator activation document bump; stage false-fail. No successful test bundle or red receipt, no Source. Third and final author attempt must distinguish pre-source and delivered-source lifecycle; independent architectural feedback requested before final execution.",
+      "evidence": ".agent/evidence/115/tests-attempt2-result.json"
+    },
+    {
+      "at": "2026-10-13T05:09:54.266268+00:00",
+      "event": "115-tests-attempt3-authored",
+      "detail": "Actual independent author selfcheckEXIT0 captures11intended-policy reds with validAPI setup/complementary positives and scoped adversarial controls. Exact533line testbytes frozen; distinctbundle review required before GeneratorSource.",
+      "evidence": ".agent/evidence/115/acceptance-author-handoff-attempt3.json"
+    },
+    {
+      "at": "2026-10-13T05:17:45.140729+00:00",
+      "event": "115-circuit-breaker-halt",
+      "detail": "Three acceptance author attempts consumed; final independently reviewed bundle rejected on two derived-state scope false passes. A fourth autonomous author attempt is forbidden. Typed independent rejection and two actual falsepasses preserved. CanonicalBLOCKED before derivedstate; no fourth attempt, no Source implementation and no116 advance.",
+      "evidence": ".agent/evidence/115/circuit-breaker-halt.json"
+    },
+    {
+      "at": "2026-10-13T08:37:31.650557+00:00",
+      "event": "operator_gate_decision",
+      "gate": "H-ACCEPTANCE-115-RECOVERY",
+      "operator_text": "I approve the corrected recovery approach.",
+      "detail": "Operator explicitly accepts recorded canonical-state corrected approach. New bounded115-recovery-1 cycle authorized; original115-tests3/3 and final independent rejection remain exact. CanonicalBLOCKED until renewed pre-code approval; no Source yet, no scope/budget expansion.",
+      "evidence": ".agent/evidence/115/recovery-authorization.json"
+    },
+    {
+      "at": "2026-10-13T08:39:48.501928+00:00",
+      "event": "operator_self_improvement_direction",
+      "operator_text": "Remember that you are  dogfooding the nizam-framework using the nizam-framework  therefore you are free to implement sef improvements.",
+      "detail": "Dogfooding permits improvements to authored nizam-framework tools/tests within the approved corrected recovery and phase017 contracts. Preserve installedv1.5.0; independent governance gates remain applicable.",
+      "evidence": ".agent/evidence/115/recovery-authorization.json"
+    },
+    {
+      "at": "2026-10-13T08:46:27.617528+00:00",
+      "event": "115-recovery-1-contract-proposed",
+      "detail": "Generator bounded amendment preserves original16commands/API/2300estimate and5400/7020allowance; adds permanent corrected-matrix controls and narrowly authorizedDEBT052 lifecycle. CanonicalBLOCKED until two renewed typed precodegates.",
+      "evidence": ".agent/evidence/115/recovery-contract-handoff-attempt1.json"
+    },
+    {
+      "at": "2026-10-13T08:56:04.875755+00:00",
+      "event": "115-recovery-1-contract-approved",
+      "detail": "Bothactualtypedrenewedgates approved withemptyblockers. Canonical115 IN_PROGRESS then derivedstate restored; original3/3/canonicalhalt/QA/noSource history preserved. Explicitcorrectedmatrix andnarrowDEBT052 scopeapproved; independentbundleauthor/review remainsrequired.",
+      "evidence": ".agent/validator/115-recovery-1-mode-a.json"
+    },
+    {
+      "at": "2026-10-13T09:15:59.639542+00:00",
+      "event": "115-recovery-1-tests-authored",
+      "detail": "Actualauthor1selfcheck0: elevenunchangedbehavioralcases intendedred; correctedmatrix/priorcontrols/validstates allpass. Source/ToolRunnernotpromoted; permanent347lineTestRunnerawaitsindependentbundleapproval. Newrepo-onlyhelpersealedalongtest/API.",
+      "evidence": ".agent/evidence/115/recovery-author-handoff-attempt1.json"
+    },
+    {
+      "at": "2026-10-13T09:26:51.311819+00:00",
+      "event": "115-recovery-1-test-bundle-approved",
+      "detail": "Actualindependentcorrectedbundle typedapproved withallblockersempty. Elevenintendedbaselinepolicyreds,2exactregressions/validstates/priorcontrols andindependentwrongModeB-source adversary verified. Exact347runnerpromotedonlyafterreview; frozenhelper/API unchanged. GeneratorSource noweligibleinownedroot.",
+      "evidence": ".agent/validator/115-recovery-1-test-bundle-review.json"
+    },
+    {
+      "at": "2026-10-13T09:36:06.632807+00:00",
+      "event": "115-source-attempt1-failed",
+      "detail": "Elevenbehavioralcases0; C9 unresolved /tmp CLIexample paths in toolsREADME. No laterchecks/ModeB/QA. ExactSource/doc/Rootmirror/raw snapshot preserved; structuraldocsinterface repair innewownedattempt2 fromlastapprovedbase.",
+      "evidence": ".agent/evidence/115/source-attempt1-result.json"
+    },
+    {
+      "at": "2026-10-13T09:43:08.017829+00:00",
+      "event": "115-source-attempt2-passed",
+      "detail": "All17 exact contracted Generator selfchecks passed0 in owned isolated root; C9 filename-variable docs correction only, functionalSource and frozen independent tests/helper/API unchanged. Candidate awaits ModeB and freshQA before promotion.",
+      "evidence": ".agent/evidence/115/source-attempt2-selfchecks.json"
+    },
+    {
+      "at": "2026-10-13T09:51:39.090804+00:00",
+      "event": "115-mode-b-approved",
+      "detail": "Independent Validator replayed all17commands0 and hiddentrackeddrift adversary0; strictModeBapproved source2f324c and exactfour-input digests. Source stillisolated pendingfreshQA/capture.",
+      "evidence": ".agent/validator/115-mode-b.json"
+    },
+    {
+      "at": "2026-10-13T10:06:08.469371+00:00",
+      "event": "115-fresh-qa-approved",
+      "detail": "Fresh distinct Evaluator independently ran17exactchecks0 plus staged-only drift adversary0 with threeintendedrejects/sixpositivecontrols; actualproofSHA/SourceCbindingsverified. Feature remainsinprogress untilseparatecapture.",
+      "evidence": ".agent/qa/115.json"
+    },
+    {
+      "at": "2026-10-13T10:09:57.356612+00:00",
+      "event": "115-closeout-coordination-attempt1-failed",
+      "detail": "Installed run_state schema and C11 require per_feature.estimated; Root wrote estimate. Source/ModeB/QA/capture successful and unchanged; coordination overlay not promoted.",
+      "evidence": ".agent/evidence/115/closeout-attempt1-result.json"
+    },
+    {
+      "at": "2026-10-13T10:10:54.841263+00:00",
+      "event": "115-captured-complete-coordination-replay",
+      "detail": "Reapplied exact successful Root capture0 and canonical115COMPLETED in new interface-repair root; QA/ModeB/source4/proof digests unchanged. Preserve actualcloseoutfailure1 history; budget will use installed schema estimated key before validation. Phase017stillinprogress,116\u2013118pending.",
+      "evidence": ".agent/evidence/115/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-13T10:10:55.301664+00:00",
+      "event": "115-budget-captured-schema-corrected",
+      "detail": "Actual1863 counted/ceiling7020; installed per_feature.estimated field, firstfeatureexception and allhistorical failures preserved.",
+      "evidence": ".agent/evidence/115/scope-measurement.txt"
+    },
+    {
+      "at": "2026-10-13T10:11:39.485247+00:00",
+      "event": "115-closeout-coordination-attempt2-passed",
+      "detail": "Installed budget schema estimated key corrected in newownedroot. Canonicalcompleted115/recovery debtclosure/realreceipts/currentScope0 andC1\u2013C160 allverified; preserve actualfailedcloseout1, Source1 and oldauthor3/3. Whole115actual1863/2300,cumulative1863/7020.",
+      "evidence": ".agent/evidence/115/post-capture-compliance-attempt2.txt"
+    },
+    {
+      "at": "2026-10-13T10:12:21.103085+00:00",
+      "event": "116-selected-precode",
+      "detail": "Canonical116IN_PROGRESS after actual115capture; derived current_feature/active_contract_id116 for Loop1only. No116Source before dualcontractgates and independentsealedtestreview; original5400/7020 preserved,cumulative1863.",
+      "evidence": ".agent/evidence/115/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-13T10:23:48.481595+00:00",
+      "event": "116-contract-attempt1-proposed",
+      "detail": "ActualGenerator schema-valid1400proposal/API frozen; twelveexactcommands andseparateimmutableobligation snapshot/currentSourceboundary. Noimplementation beforedualprecodeanddistinctbundleapproval.",
+      "evidence": ".agent/evidence/116/contract-proposal-handoff.json"
+    },
+    {
+      "at": "2026-10-13T10:30:34.064783+00:00",
+      "event": "116-mode-a-approved",
+      "detail": "ActualindependentModeA approved proposal/API/closedninefieldproducer alignment; schema/current115cases0. Contractremainsproposed pendingdistinctsecondprecodegate. No116test/Sourcepermission.",
+      "evidence": ".agent/validator/116-mode-a.json"
+    },
+    {
+      "at": "2026-10-13T10:34:46.491935+00:00",
+      "event": "116-contract-review-attempt1-rejected",
+      "detail": "Independentgate onehighgap: namedmissingAPI assertions can masqueradeasfivebehavioralreds. Preserveactualrejection andoriginalproposal/API; boundedinterface/schema revision2 requirespercasevalidpositive+malformedinput/discriminatorynaivebaseline andindependentreplay. No Source/testpermission.",
+      "evidence": ".agent/qa/116-contract-review.json"
+    },
+    {
+      "at": "2026-10-13T10:38:25.909547+00:00",
+      "event": "116-contract-attempt2-proposed",
+      "detail": "Type/interface amendment nowrequiresallfivecase-specificpositive+behavioralred proof pairs, actualinput/operation/resultSHA headers andfrozencallablenaivepolicy; missingAPI neverred. Original12commands/budget/scopebase andhistoricalgates preserved. Bothrenewedprecodegates pending.",
+      "evidence": ".agent/evidence/116/contract-proposal-handoff-attempt2.json"
+    },
+    {
+      "at": "2026-10-13T10:43:02.348400+00:00",
+      "event": "116-revision1-dual-precode-approved",
+      "detail": "Bothactualtypedrev1gatesapprovedtrue/emptyarrays; priorHIGH fixedbyallfiveboundpositive/behavioralred/callablenaivecontrol. Originalapproval/rejectionproofs andcounters preserved. Testauthoring eligible; no116Source untilindependentactualbundlereview.",
+      "evidence": [
+        ".agent/validator/116-mode-a-rev1.json",
+        ".agent/qa/116-contract-review-rev1.json"
+      ]
+    },
+    {
+      "at": "2026-10-13T11:03:19.653546+00:00",
+      "event": "116-tests-attempt1-readiness-passed",
+      "detail": "Parsed actual23author checks/all5setup0+positive0+behavioralred1, existing11/scope/controls0 andunknown/missingbase2. Frozenbaseline430d/testhelpers/obligations/API/proofs/seal verified; no selfapprovedreview, Source116stillunwritten. Independentreview pending beforetestpromotion.",
+      "evidence": ".agent/evidence/116/failed-tests-attempt1/author/.agent/evidence/116/tests-attempt1-author-result.json"
+    },
+    {
+      "at": "2026-10-13T11:13:15.569586+00:00",
+      "event": "116-test-bundle-review-attempt1-rejected",
+      "detail": "Independent actual scratch positive / boolTrue-to-int1 historical edit falsepass / restored positive proves typed-history defect. Exact authored bundle, proofs, source state, nine-field rejected verdict and Git baseline quarantined; no116tests or business Source promoted. Fresh type/interface author2 required before renewed independent review.",
+      "evidence": ".agent/evidence/116/failed-tests-attempt1/reviewer/.agent/validator/116-test-bundle-review.json"
+    },
+    {
+      "at": "2026-10-13T11:34:11.612013+00:00",
+      "event": "116-tests-attempt2-readiness-passed",
+      "detail": "Actual24 author captures and21 typed clean/reject/restored controls verified; allfive setup0/positive0/semanticred1, oldeleven/scope/controls0; unknown/missingbase2. Exact43 artifacts/frozen inputs/Git B tree/seal and unchanged115 Source checked. No independent review claimed; Source/test promotion still gated.",
+      "evidence": ".agent/evidence/116/tests-attempt2-author-result.json"
+    },
+    {
+      "at": "2026-10-13T11:39:59.045778+00:00",
+      "event": "116-test-bundle-review-attempt2-approved",
+      "detail": "Parsed exact nine-field independent verdict approvedtrue/empty arrays, actual15 baseline replays0/0/1, oldeleven/scope/fulltypedcontrols0 and independently originated history/budget ownspot0; seal/current/Git input bytes unchanged. Reviewed baseline/tests now eligible for promotion; no business Source yet.",
+      "evidence": ".agent/evidence/116/test-bundle-review-attempt2-result.json"
+    },
+    {
+      "at": "2026-10-13T11:56:10.801886+00:00",
+      "event": "116-generator-development-attempt1-passed",
+      "detail": "Exact12 ordered Generator commands actualEXIT0/revisionC/raw SHA personally parsed; four actualGit/current coreSHA verified. Real project bundle CLI also actual0. Source candidate frozen; no independent ModeB/QA/completion claimed.",
+      "evidence": ".agent/evidence/116/failed-source-attempt1/source/.agent/evidence/116/source-attempt1-selfchecks.json"
+    },
+    {
+      "at": "2026-10-13T12:01:31.554369+00:00",
+      "event": "116-mode-b-attempt1-rejected",
+      "detail": "Independent valid real-Git proof passes; red proof with explicit frozen producer SETUP_OR_UNRELATED_ERROR marker wrongly accepts; restored positive passes. Exact Source1/docs/SourceC/Git bundle/raws/Rootmetadata and typed rejected ModeB preserved. No business Source promoted. Type/interface Source2 producer-parser repair next with sealed tests/helpers/API unchanged.",
+      "evidence": ".agent/evidence/116/failed-source-attempt1/reviewer/.agent/validator/116-mode-b.json"
+    },
+    {
+      "at": "2026-10-13T12:08:19.285169+00:00",
+      "event": "116-generator-development-attempt2-passed",
+      "detail": "Type/interface parser repair rejects explicit producer setup/unrelated marker and generic exceptions. Actual12 orderedchecks0 plus realbundleCLI/5 marker controls/restoredpositives0; allSourceC2/command/rawhash bindings verified. No independent ModeB/QA/completion claimed.",
+      "evidence": ".agent/evidence/116/failed-source-attempt2/source/.agent/evidence/116/source-attempt2-selfchecks.json"
+    },
+    {
+      "at": "2026-10-13T12:12:49.622409+00:00",
+      "event": "116-mode-b-attempt2-rejected",
+      "detail": "Original producer marker and RuntimeError now reject with restored positives, but bare Exception red-proof output wrongly accepts. Exact C2/docs/proofs/Rootmetadata/Gitbundle/typed rejected ModeB preserved; no business Source promoted. Source3 architectural producer-proof grammar repair is LAST bounded attempt; no fourth autonomous attempt.",
+      "evidence": ".agent/evidence/116/failed-source-attempt2/reviewer/.agent/validator/116-mode-b.json"
+    },
+    {
+      "at": "2026-10-13T12:24:47.269157+00:00",
+      "event": "116-generator-development-attempt3-passed",
+      "detail": "LAST architectural producer-proof grammar repair: actual12 orderedchecks0, realbundleCLI0,96 targeted rejects/restoredpositives and genuine fullBtriples/metadata/diagnostic positives0. FourGit/currentcore hashes and actualraw headers/SHA verified. FinalModeB/freshQA/capture required; no fourth Source attempt.",
+      "evidence": ".agent/evidence/116/source-attempt3-selfchecks.json"
+    },
+    {
+      "at": "2026-10-13T12:33:34.482382+00:00",
+      "event": "116-mode-b-attempt3-approved",
+      "detail": "Final independent ModeB typedapprovedtrue/emptyarrays; personally reproduced both failures and related errors, restored/realproject/stderrdiagnostic/metadata positives; exact12 orderedchecks0, sealedinputs/proofs/Git/current/SourceC3/install/oldhistory preserved. Fresh distinctQA/capture still required; no completion.",
+      "evidence": ".agent/evidence/116/mode-b-attempt3-result.json"
+    },
+    {
+      "at": "2026-10-13T12:41:52.369396+00:00",
+      "event": "116-fresh-qa-attempt1-approved",
+      "detail": "Truly distinct newEvaluator actual12 orderedcommands0 plus original coherent CLI/identity/type/proof adversary8rejects+10genuine/restoredpositives0; typed evolvedQA approvedtrue/emptyblockers/fixes. SourceC3/core/Git/modes/frozen35hashes immutable. Root parsed exactrawheaders/SHA; distinctcapture/closure pending.",
+      "evidence": ".agent/qa/116.json"
+    },
+    {
+      "at": "2026-10-13T12:44:24.124569+00:00",
+      "event": "116-evidence-capture-attempt1-passed",
+      "detail": "Distinct Root capture actualEXIT0 verifies strict actualModeB/QA schemas/actors/12exactcommands/ownspot/rawsha, SourceC3/core Git bytes and all35 frozen inputs/proofs current+SourceC3+GitB/modes. Receipt passedtrue; canonical closure and finalcost still pending.",
+      "evidence": ".agent/evidence/116/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-13T12:45:19.941755+00:00",
+      "event": "116-closeout-coordination-attempt1-failed",
+      "detail": "Root passed a guessed nonexistent workdir instead of the actual newly-created owned root; tool process rejected before command start or any lifecycle writes. Exact owner/transport failure preserved, only proven empty owned root removed. Accepted Source/QA/capture immutable. Fresh2 resolves dynamic returned-path interface.",
+      "evidence": ".agent/evidence/116/failed-closeout-attempt1/process-failure.json"
+    },
+    {
+      "at": "2026-10-13T12:50:12.263272+00:00",
+      "event": "116-closeout-coordination-attempt2-passed",
+      "detail": "Exact actual returned owned-root used; canonical116 completedfirst then derivedcontract/list/run/manifest/DAG. SourceC3/ModeB3/freshQA1/Rootcapture1 remainimmutable. Finalactual1146 compared prior1151863/3x5589 beforeappend; phase3009/7020 noextraallowance. Currentactualscope/C1-C16/realbundleCLI/sixinstalledschemas all0. Feature117 next, wholephase remainsinprogress.",
+      "evidence": [
+        ".agent/evidence/116/closeout-attempt2-scope.txt",
+        ".agent/evidence/116/closeout-attempt2-compliance.txt",
+        ".agent/evidence/116/closeout-attempt2-real-bundle.txt",
+        ".agent/evidence/116/closeout-attempt2-schemas.txt"
+      ]
+    },
+    {
+      "at": "2026-10-13T12:53:05.615700+00:00",
+      "event": "117-selected-after-captured116",
+      "detail": "Canonical117 IN_PROGRESS first, then derivedfeature/current IDs andDAG. Existing phase5400/7020/actual3009 authority unchanged;117 estimate1050 within original allocation. No117Source or approvedcontract yet; actual precode/testbundle/ModeB/freshQA/capture gates remain.",
+      "evidence": ".agent/evidence/116/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-13T13:13:59.383932+00:00",
+      "event": "117-contract-attempt1-proposed",
+      "detail": "Generator immutable proposal7727121 observed; Root distinctowned coordination installedschema actualEXIT0. NoSource/tests/approval claimed; dualindependentprecode reviewers readexactproposal/API next. Contractestimate1050/phase5400/7020/actual3009 preserved.",
+      "evidence": ".agent/evidence/117/contract-schema-attempt1.txt"
+    },
+    {
+      "at": "2026-10-13T13:17:23.015370+00:00",
+      "event": "117-contract-review-attempt1-startup-failed",
+      "detail": "Root dispatched abbreviated E117 ownerpath; independentactor stopped actualreadEXIT1 before substantive review/writes. Exactowner/actorreportedreadfailure archived, soleownedroot removed onlyaftertracked/untracked proof. Counter1 counted; unchangedproposal/API awaits fresh2 with fullpath; ModeA1 independentparallel unaffected.",
+      "evidence": ".agent/evidence/117/failed-contract-review-attempt1/read-failure.json"
+    },
+    {
+      "at": "2026-10-13T13:20:56.484725+00:00",
+      "event": "117-contract-review-attempt2-startup-failed",
+      "detail": "Independentactor used unavailablepython alias, actualreportedEXIT127, stoppedbefore substantive review/writes. Priorstartup/parallelprotocolreads0 disclosed; no fabricatedfullcommand/rawgate. Exactowner/readfailure preserved andonlyvalidatedemptyownedroot removed. Count2/3; thirdfinalreview freshafter deterministicgate-ref revision withknownpython3/nativecommands.",
+      "evidence": ".agent/evidence/117/failed-contract-review-attempt2/read-failure.json"
+    },
+    {
+      "at": "2026-10-13T13:23:54.207730+00:00",
+      "event": "117-mode-a-attempt1-rejected",
+      "detail": "ActualstrictJSONModeA1 false/highproducer-consumer gate-ref ambiguity, schema/raw audits0. Exact5ownedreviewartifacts captured SHA/modes/canonicalrejection retained; ownedroot removedafterproof. Proposal/API unchanged; contract2type/interface revision only thenrenewedModeA2 andfinalboundedindependentcontractreview3. NoSource orfutureacceptance claim.",
+      "evidence": ".agent/validator/117-mode-a.json"
+    },
+    {
+      "at": "2026-10-13T13:28:55.006096+00:00",
+      "event": "117-contract-attempt2-proposed",
+      "detail": "Type/interface revision explicitlydeclares Root-populated gate_refs binding actualimmutableproposal/API and currentreviewpath/hash/type/revision. Originalproposal/API+rejectedGate exactpreserved, active117lifecycle explicit, no selfhashcycle. Actualinstalledschema0/readallhandoffhashes; noSource/test/doc/lifecycle scopesexpanded. RenewedModeA2 and finalsecondreview3 next.",
+      "evidence": ".agent/evidence/117/contract-proposal-handoff-attempt2.json"
+    },
+    {
+      "at": "2026-10-13T13:36:35.172701+00:00",
+      "event": "117-contract-review-attempt3-exhausted-halt",
+      "detail": "Final independentreader guessed nonexistent .agent/api/specs/phases; actualdirectorydiscoveryEXIT2 preserved withstartup/protocol0 andSHA sidecars. Exact7reviewfiles plusinterruptedModeA2owner quarantined/ownedroots removed afterSHA/mode proofs. Canonicalphase/117BLOCKED first then derivedlist/run; completed115/116, historicalproofs/counters/budgets/install immutable. Contract117 remains proposed; ModeA2 interrupted withoutverdict, count2. NoSource/QA/capture/fourthreview. NDEBT-053/human correctedverified-path/python3 recovery required.",
+      "evidence": ".agent/evidence/117/contract-review-attempt3-paths.txt"
+    },
+    {
+      "at": "2026-10-13T13:39:55.433885+00:00",
+      "event": "117-halt-coordination-attempt1-verified",
+      "detail": "Actualhaltintegrity0 verifies canonical/derivedblocked tuple, installedschemas, complete115/116/history/counter/budget prefixes, SourceC4 hashes and7300oldproof/gate/installmode entries. ActualrepositoryC1-C16 compliance0 andinstalled239verify0. Completed3009+incomplete394=3403below7020; humanrecovery concreteatknownverifiedpaths/python3, notauthorized. NoSource117/QA/phasePR/merge/fourthreview.",
+      "evidence": ".agent/evidence/117/halt-verification.json"
+    },
+    {
+      "at": "2026-10-13T17:38:51.525275+00:00",
+      "event": "117-corrected-recovery-authorized",
+      "detail": "Operator explicitly approved the recorded corrected recovery, reaffirmed framework dogfooding/self-improvement authority. Preserve original review3/3 and all failed attempts/halt/debt; new bounded117-recovery1 review counters start0. Canonical117 IN_PROGRESS first then derived state; contract remains proposed and NDEBT-053 Open until fresh acceptance/capture. Original5400/7020 and complete115/116 actual3009 unchanged.",
+      "evidence": ".agent/evidence/117/recovery-authorization.json"
+    },
+    {
+      "at": "2026-10-13T17:47:13.844208+00:00",
+      "event": "117-contract-attempt3-proposed",
+      "detail": "Narrow architectural recovery alignment frozen atf42e1b9 with actual installedschemaEXIT0. Exact revision1 proposal/API and historical failures preserved. Explicit recovery1 gate paths/types/revision2, currentDEBT0.72 and only053 resolution after realQA/capture, bounded Rootphase-description truth. Same12commands/1050/5400-7020. NoSource; fresh independent gates next.",
+      "evidence": ".agent/evidence/117/contract-proposal-handoff-attempt3.json"
+    },
+    {
+      "at": "2026-10-13T17:52:58.732555+00:00",
+      "event": "117-recovery1-precode-first-results",
+      "detail": "Actual second review true/empty/schema0 and current16readiness0 captured. ModeA audit actual1 on fullPOSIX0664 versus Git100644 assumption; actual diagnostic confirms ordinary nonexecuting file, no contract defect, installed audit notrun. Falsegate exactquarantined, activecanonical path absent; both owned roots removed onlyafter allartifactSHA/mode capture. Originalcounter3/3 unchanged; recovery1 counters1 each. FreshModeA2 uses Git type/executable semantics, noSource or contract revision.",
+      "evidence": [
+        ".agent/qa/117-contract-review-recovery1.json",
+        ".agent/evidence/117/failed-recovery1-mode-a-attempt1/preservation.json"
+      ]
+    },
+    {
+      "at": "2026-10-13T17:57:05.547940+00:00",
+      "event": "117-recovery1-mode-a-attempt2-audit-failed",
+      "detail": "Actual auditEXIT1 at canonical117API versus pre-amendment historical anchor; diagnostic0 proves API equals authorized immutableproposal f42e1b9. No contract defect; false gate and helper/raw exactquarantined, ownedroot removed afterSHA/mode preservation. Installedcheck notrun. Originalcounters preserved; recoveryModeA2/3, acceptedsecondreview1 unchanged. Final3 architectural changed-set audit distinguishes currentproposal blobs, archivedoldAPIs/proofs andRoot-owned coordination; noSource.",
+      "evidence": ".agent/evidence/117/failed-recovery1-mode-a-attempt2/preservation.json"
+    },
+    {
+      "at": "2026-10-13T18:06:10.698970+00:00",
+      "event": "117-recovery1-precode-approved",
+      "detail": "Final architectural Mode A attempt3 passed actual audit, installed inventory and verdict schema. Independent second review already passed attempt1. Current proposal/API binding and historical preservation remain distinct. Both strict gates permit approved contract; Source awaits independent sealed acceptance review. Original exhausted counters and all failure evidence preserved.",
+      "evidence": [
+        ".agent/validator/117-mode-a-recovery1.json",
+        ".agent/qa/117-contract-review-recovery1.json"
+      ]
+    },
+    {
+      "at": "2026-10-13T18:22:10.771340+00:00",
+      "event": "117-test-coordination-attempt1-failed",
+      "detail": "Git bundle raw SHA tip produced actual128 empty-bundle error; source and coordination roots left intact. Fresh structural coordination2 uses actual detached HEAD ref and verifies exact archive before removal.",
+      "evidence": ".agent/evidence/117/failed-test-coordination-attempt1/result.json"
+    },
+    {
+      "at": "2026-10-13T18:22:10.771340+00:00",
+      "event": "117-test-author-attempt1-failed",
+      "detail": "Existing16, scope and all four setup0/positive0/semanticred1 passed at B13d2e1b. Scope-controls EXIT1 at staged scratch cleanup. Candidate files and Git bundle exactquarantined before ownedroot removal; no implementation or bundle approval.",
+      "evidence": ".agent/evidence/117/failed-test-author-attempt1/preservation.json"
+    },
+    {
+      "at": "2026-10-13T18:31:56.184098+00:00",
+      "event": "117-test-author-attempt2-ready",
+      "detail": "Fresh B e4250cca froze26inputs. All four actual setup0/positive0/semanticred1 triplets, existing16, scope and scopecontrols passed. No Source or independentbundleapproval yet. Candidate remains isolated pending distinct Validator review.",
+      "evidence": ".agent/evidence/117/test-author-attempt2-handoff.json"
+    },
+    {
+      "at": "2026-10-13T18:48:27.554098+00:00",
+      "event": "117-bundle-review-attempt1-rejected",
+      "detail": "All15 independent baseline/regression/scope replays passed; focused reviewer spot EXIT1 proves Boolean true ModeB actor accepted after valid string-actor completion. Guard requires typed identity checks for ModeB/QA before independence. Exact unapproved candidate and rejected gate archived, source blocked, final author3 architectural typed producer review required.",
+      "evidence": ".agent/evidence/117/failed-bundle-review-attempt1/candidate/.agent/evidence/117/bundle-review-attempt1-result.json"
+    },
+    {
+      "at": "2026-10-13T18:54:40.303732+00:00",
+      "event": "117-test-author-attempt3-ready",
+      "detail": "Fresh B3881400 freezes27inputs with typed producer identity guards. All actual baseline triplets, previous16, current scope/controls and exact Boolean-actor reviewer regression passed. Shared branch still excludes unreviewed candidate; distinct bundle review2 required before Source.",
+      "evidence": ".agent/evidence/117/test-author-attempt3-handoff.json"
+    },
+    {
+      "at": "2026-10-13T18:59:37.712231+00:00",
+      "event": "117-bundle-review-attempt2-approved",
+      "detail": "Strict nine-field independent gate approved new27-input B3881400 bundle. Actual four0/0/1 triplets, previous16, current scope/controls, exact prior typed actor regression/restored positives and QA malformed identities passed. Historical failures preserved. Generator may implement approved117 scope with sealed test/API/guard/helpers readonly.",
+      "evidence": [
+        ".agent/validator/117-test-bundle-review.json",
+        ".agent/evidence/117/bundle-review-attempt2-result.json"
+      ]
+    },
+    {
+      "at": "2026-10-13T19:17:30.506290+00:00",
+      "event": "117-source-attempt1-ready",
+      "detail": "Actual SourceC2ab311b immutable code/test/API/guard plus all27 dependencies verified. Generator all12 exact selfchecks passed; no independent ModeB/QA/capture claim. Candidate remains isolated.",
+      "evidence": ".agent/evidence/117/source-attempt1-handoff.json"
+    },
+    {
+      "at": "2026-10-13T19:22:58.290999+00:00",
+      "event": "117-mode-b-attempt1-helper-failed",
+      "detail": "All12 actual independent contract checks passed. Supplemental helper EXIT1 before policy mutation because raw prefix normalization treated one extra boundary blankline as historical function change. Read-only diagnostic confirms all23 old function/class source segments unchanged; no Source defect established. Failed gate/helper/raw exactquarantined; same C2ab311b and all27 inputs retained for fresh structural ModeB2.",
+      "evidence": ".agent/evidence/117/failed-mode-b-attempt1/reviewer/.agent/evidence/117/mode-b-attempt1-result.json"
+    },
+    {
+      "at": "2026-10-13T19:33:30.029486+00:00",
+      "event": "117-mode-b-attempt2-approved",
+      "detail": "Actual exact12 independent commands and own caller-rehashed unauthorized grant negative/valid/restored controls passed at SourceC2ab311b. Strict gate binds four core files and all27 frozen inputs; previous23 function/class segments unchanged. No feature completion until fresh QA and distinct Root capture.",
+      "evidence": [
+        ".agent/validator/117-mode-b.json",
+        ".agent/evidence/117/mode-b-attempt2-result.json"
+      ]
+    },
+    {
+      "at": "2026-10-13T19:42:25.549838+00:00",
+      "event": "117-qa-and-evidence-capture-passed",
+      "detail": "Fresh wa_acceptance117 personally passed exact12 commands plus symlink-ancestor adversary with valid/restored controls. Root actual capture EXIT0 verified strict gates/schema, all command/revision/exit/proof hashes, SourceC fourcore and all27 sealed Git/current dependencies plus baseline proof bindings. Lifecycle remains in_progress until canonical completion and actual scope measurement.",
+      "evidence": [
+        ".agent/qa/117.json",
+        ".agent/evidence/117/evidence-capture.json",
+        ".agent/evidence/117/capture-attempt1-raw.txt"
+      ]
+    },
+    {
+      "at": "2026-10-13T19:43:17.960890+00:00",
+      "event": "117-canonical-completion",
+      "detail": "Canonical117 COMPLETED after actual ModeB2, fresh QA12/12 plus ownspot and distinct Root capture. Derived contract/list/run/manifest/DAG updated; NDEBT-053 alone resolved. 118 pending; phase017 remains in_progress. Actual scope measurement follows before closeout validation.",
+      "evidence": ".agent/evidence/117/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-13T19:43:17.960890+00:00",
+      "event": "117-scope-measured",
+      "detail": "Actual117 1003 counted lines; completed phase 4012/7020; prior completed mean 1504.5,3x threshold 4513.5; all limits pass.",
+      "evidence": ".agent/evidence/117/scope-measurement.txt"
+    },
+    {
+      "at": "2026-10-13T19:44:44.180929+00:00",
+      "event": "118-selected",
+      "detail": "Dependencies116/117 complete after fresh QA/capture. Select authorized bounded foundation-evidence close, estimated650; completedphase4012/original7020 ceiling. Future phases/release/install unchanged; no118 Source before own contract and independent gates.",
+      "evidence": ".agent/evidence/118/selection-attempt1.json"
+    },
+    {
+      "at": "2026-10-13T19:58:15.111348+00:00",
+      "event": "118-contract-proposed",
+      "detail": "Proposal b764ed6 declares finite SourceC/current20 prerequisite/readiness/QA/capture sequence,3commands and650 estimate. Installed schema actual0; no Source/testimplementation authorization before independent dualgates.",
+      "evidence": ".agent/evidence/118/contract-proposal-handoff-attempt1.json"
+    },
+    {
+      "at": "2026-10-13T20:06:15.530541+00:00",
+      "event": "118-precode-attempt1-rejected",
+      "detail": "Both independent reviews reproduced proposal/schema mismatch: phase and manifest require complete, not completed; canonical step remains COMPLETED. Exact failed verdicts and actualschema reproductions preserved before ownedroot cleanup. No Source or acceptance authoring. Fresh structural proposal correction requires renewed independent gates.",
+      "evidence": [
+        ".agent/validator/118-mode-a.json",
+        ".agent/qa/118-contract-review.json"
+      ]
+    },
+    {
+      "at": "2026-10-13T20:09:27.776264+00:00",
+      "event": "118-contract-revision1-proposed",
+      "detail": "Proposal489380a preserves original3commands/650 while correcting phase/manifest complete versus stepCOMPLETED and declaring revision1 gate references/Root approval shape. Originalproposal/interfacebytes and rejectedgates preserved. Installedschema actual0; no Source/testpermission.",
+      "evidence": ".agent/evidence/118/contract-proposal-handoff-attempt2.json"
+    },
+    {
+      "at": "2026-10-13T20:13:21.047505+00:00",
+      "event": "118-precode-revision1-approved",
+      "detail": "Both strict independent gates approve same489380a proposal/API after actualschema-aligned lifecycle correction. All historicalrejections retained; contract status/approval metadata only transitioned. Independent frozen acceptance and bundle review required before Source.",
+      "evidence": [
+        ".agent/validator/118-mode-a-rev1.json",
+        ".agent/qa/118-contract-review-rev1.json"
+      ]
+    },
+    {
+      "at": "2026-10-13T20:25:49.360180+00:00",
+      "event": "118-independent-baseline-authored",
+      "detail": "Frozen GitB0b4f46a has actual current20 setup0, naive positive0 and semantic missing-proof red1; scope and private controls0. Root verified all30 frozen current/Git hashes. Independent bundle review remains required before Source.",
+      "evidence": ".agent/evidence/118/test-author-attempt1-handoff.json"
+    },
+    {
+      "at": "2026-10-13T20:34:56.679675+00:00",
+      "event": "118-independent-bundle-approved",
+      "detail": "Distinct reviewer personally replayed exactGitB current20/setup0/positive0/semanticred1, scope0/controls0 and six private parser attacks0. Strict nine-field gate approved with empty blockers. Product implementation remains next; required SourceC prerequisite20 must precede Generator3.",
+      "evidence": ".agent/validator/118-test-bundle-review.json"
+    },
+    {
+      "at": "2026-10-13T20:45:15.678032+00:00",
+      "event": "118-current20-prerequisite-captured",
+      "detail": "Distinct fresh Evaluator personally ran exact20cases once at SourceC3dfedd2, all exit0; before/after current and immutableGit bindings verified. Root verified actualraw20/SHA/candidate maps. Source1 remains incomplete until Generator3 then independentModeB/freshQA/capture.",
+      "evidence": ".agent/evidence/118/prerequisite20.json"
+    },
+    {
+      "at": "2026-10-13T20:48:03.890557+00:00",
+      "event": "118-source-attempt1-rejected-fixture-type",
+      "detail": "Actual foundation-ready exit1 TypeError in frozen fixture symlink path construction; checks2/3 not run. Preserve completeSourceC/independentprerequisite20/raw failure and Gitbundle; do not promote source or infer QA. Independent author/reviewer structural recovery required before newSourceattempt.",
+      "evidence": ".agent/evidence/118/failed-source-attempt1/preservation.json"
+    },
+    {
+      "at": "2026-10-13T20:53:10.277480+00:00",
+      "event": "118-contract-revision2-proposed",
+      "detail": "Third bounded contract proposal7fd14f9 clarifies finite independently reviewed B1-to-B2 successor after frozenfixture TypeError. Immutable predecessor and failedSource1 preserved. Same3commands/650/7020/APIbehavior/roles/lifecycle; explicit stagedmaps avoidfuturehashcycles. Both new precode gates required, no Source/testauthorpermission yet.",
+      "evidence": ".agent/evidence/118/contract-proposal-handoff-attempt3.json"
+    },
+    {
+      "at": "2026-10-13T21:01:16.242953+00:00",
+      "event": "118-precode-revision2-rejected",
+      "detail": "ModeA3 rejected proposal7fd14f9 because mapped current approved contract bytes conflict with required postcapture complete status and no explicit finite lifecycle projection exists. Secondreview3 approved independently; one rejection blocks advancement. All originalcounter values retained at3; no author2/Source2 permission. Capture and exact owned-root cleanup precede canonical halt.",
+      "evidence": [
+        ".agent/validator/118-mode-a-rev2.json",
+        ".agent/qa/118-contract-review-rev2.json"
+      ]
+    },
+    {
+      "at": "2026-10-13T21:02:33.213548+00:00",
+      "event": "118-circuit-breaker-halt",
+      "detail": "Canonical phase017/step118 BLOCKED first, then derived run/list/manifest/DAG. ThirdModeA rejection of exact current approved contract mapping versus required complete status. Preserve115116117 captured, all failedSource1/B1/precode evidence and exhaustedcounters. No Source2/fourth originalcontract/extra budget/release/installed change. Corrected lifecycle projection plus fixture repair requires explicit operator recovery approval.",
+      "evidence": ".agent/evidence/118/circuit-breaker-halt.json"
+    },
+    {
+      "at": "2026-10-14T05:10:02.443158+00:00",
+      "event": "118-corrected-recovery-authorized",
+      "detail": "Explicit operator permission supersedes installed blocking procedures where strategically superior. Retain historical failed counters/evidence; use recorded iterative repair with independent verification. Canonical118 remains BLOCKED until corrected contract dual approval; no implementation permission inferred before gates.",
+      "evidence": ".agent/evidence/118/recovery-authorization.json"
+    },
+    {
+      "at": "2026-10-14T05:15:59.020826+00:00",
+      "event": "118-recovery1-contract-proposed",
+      "detail": "Proposal70e1bab explicitly separates immutable contract snapshot from capture-gated typed current status projection, preserves exhausted counters/halt evidence, and permits Root-only recovery/debt lifecycle. Original3commands/650/5400/7020 remain.",
+      "evidence": ".agent/evidence/118/recovery1-contract-handoff.json"
+    },
+    {
+      "at": "2026-10-14T05:20:26.119422+00:00",
+      "event": "118-recovery1-precode-approved",
+      "detail": "Both strict independent gates approve proposal70e1bab. Root applied only declared approval metadata, resumed canonical phase/step first then mirrors, preserved all historical counters/4012/blocked559 and DEBT054Open. Separate immutable snapshot and receipt-gated live status; independent repaired bundle next.",
+      "evidence": ".agent/evidence/118/recovery1-resume.json"
+    },
+    {
+      "at": "2026-10-14T05:38:57.352019+00:00",
+      "event": "118-recovery1-bundle-authored",
+      "detail": "Root verified actual Git B2 and current bytes for all31 frozen inputs plus handoff proof hashes. Original B1 archives and recorded development failures retained. Distinct independent bundle review required before Source2.",
+      "evidence": ".agent/evidence/118/recovery1-test-author-handoff.json"
+    },
+    {
+      "at": "2026-10-14T05:44:57.908609+00:00",
+      "event": "118-recovery1-bundle-approved",
+      "detail": "Strict nine-field independent review passes after personally replayed B2 setup20/positive/semanticred/full41 fixtures and current scope/controls/own adversary. Root preserves B1 review archive and pins actual committed B2 verdict through finite review map.",
+      "evidence": ".agent/evidence/118/successor-review-attempt2.json"
+    },
+    {
+      "at": "2026-10-14T05:55:25.892616+00:00",
+      "event": "118-recovery1-prerequisite-captured",
+      "detail": "Distinct prerequisite actor personally executed exact20 once at SourceC2 with 44 before/after actualGit/current identities. Root verified canonical receipt and raw hashes; Generator3 now permitted.",
+      "evidence": ".agent/evidence/118/prerequisite20.json"
+    },
+    {
+      "at": "2026-10-14T05:57:29.294462+00:00",
+      "event": "118-recovery1-closeout-checker-correction-authorized",
+      "detail": "Root actual-row preflight and two independent roles confirmed B2 debt callback freezes Notes and accepts a malformed sixth cell. Apply user-authorized supplemental pinned closeout checker, independently authored/reviewed; preserve B2/SourceC2/current20 and original failure. Full product gates unchanged.",
+      "evidence": ".agent/evidence/118/recovery1-closeout-override.json"
+    },
+    {
+      "at": "2026-10-14T06:06:23.403034+00:00",
+      "event": "118-recovery1-mode-b-approved",
+      "detail": "Independent actual3 checks, scope controls and altered-tag adversary passed. Separately reviewed pinned closeout adapter corrects real debt column semantics; original false-fail/false-pass retained. Fresh QA and Root capture remain required.",
+      "evidence": [
+        ".agent/validator/118-mode-b.json",
+        ".agent/evidence/118/recovery1-closeout-review.json"
+      ]
+    },
+    {
+      "at": "2026-10-14T06:10:35.617641+00:00",
+      "event": "phase017-foundation-captured",
+      "detail": "Actual SourceC2 prerequisite20, Generator3, independent ModeB and freshQA3 plus ownspot captured by Root. Canonical phase/step completed first, then mirrors; NDEBT054 resolved. Original allowance and historical failures retained. Phase016 remains proposed.",
+      "evidence": ".agent/evidence/118/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-14T06:20:45.325692+00:00",
+      "event": "phase017-ci-history-corrected",
+      "detail": "Actual hosted shallow checkout failed on immutable historical evidence; real shallow/fullclone replay proves minimal fetch-depth0 repair. Independent review approved. Charge8counted lines separately, phase total5203/7020; captured features unchanged.",
+      "evidence": ".agent/evidence/118/integration-ci-root-decision.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -4176,114 +5063,104 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 7200,
-    "ceiling_130pct": 9360,
-    "total_lines_changed": 7319,
-    "evidence_lines_total": 1568016,
-    "excluded_lines_total": 1593,
+    "original_estimate_lines": 5400,
+    "ceiling_130pct": 7020,
+    "total_lines_changed": 5203,
+    "evidence_lines_total": 163796,
+    "excluded_lines_total": 1247,
     "per_feature": [
       {
-        "id": "110",
-        "estimated": 1600,
-        "actual": 1711,
-        "evidence_lines": 3485,
-        "excluded_lines": 337,
-        "all_paths_lines": 5533,
-        "range": "57862f69ba30a36004ea9a17a295fc9c835afc13..WORKTREE",
-        "evidence": ".agent/evidence/110/scope-measurement.txt",
-        "baseline": {
-          "prior_features": [],
-          "rolling_average": null,
-          "three_times_threshold": null,
-          "first_feature_exception": true
-        },
-        "note": "Product455 + process overhead1256 =1711; 111 over1600 estimate. First phase015 feature has no prior rolling baseline; no3x comparison. Includes phase activation and six selected decisions within the approved7200 allowance; cumulative1711 below9360. No additional authorization inferred."
+        "id": "115",
+        "estimated": 2300,
+        "actual": 1863,
+        "product_lines": 733,
+        "process_overhead_lines": 1130,
+        "evidence_lines": 23159,
+        "excluded_lines": 537,
+        "range": "33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE",
+        "evidence": ".agent/evidence/115/scope-measurement.txt",
+        "rolling_baseline": null,
+        "note": "First completed017feature; wholephasebase counting includesactivation/recovery once, historicalblocked409 remainsunaltered/no doublecount."
       },
       {
-        "id": "111",
-        "estimated": 2200,
-        "actual": 3133,
-        "evidence_lines": 26497,
-        "excluded_lines": 438,
-        "all_paths_lines": 30068,
-        "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
-        "evidence": ".agent/evidence/111/scope-measurement.txt",
+        "id": "116",
+        "estimated": 1400,
+        "actual": 1146,
+        "product_lines": 351,
+        "process_overhead_lines": 795,
+        "evidence_lines": 61933,
+        "excluded_lines": 164,
+        "range": "d1f8d369a711e38b479eb5b1be1f901bb669b507..WORKTREE",
+        "evidence": ".agent/evidence/116/scope-measurement.txt",
         "baseline": {
           "prior_features": [
-            "110"
+            "115"
           ],
-          "rolling_average": 1711.0,
-          "three_times_threshold": 5133.0,
+          "rolling_average": 1863.0,
+          "three_times_threshold": 5589.0,
           "first_feature_exception": false
         },
-        "note": "Measure only after fresh independent38/38acceptance, ownspot, evidencegate and canonicalcompletion. Product895+overhead2238=3133; exceeds2200 estimate, below prior-only3x threshold5133. No extra budget; historical failed in-flight measurements retained separately, never double-counted."
+        "note": "Measured whole116 from captured115 before append using unchanged frozenclassifier; actual Source3/ModeB3/freshQA1/Rootcapture1 and canonicalcompletion. Failedbundles/Source/Rootcoord evidence preserved; original5400/7020 unchanged/noextraallowance."
       },
       {
-        "id": "112",
-        "estimated": 1200,
-        "actual": 1244,
-        "evidence_lines": 68455,
-        "excluded_lines": 216,
-        "all_paths_lines": 69915,
-        "range": "da1131846815328890cfb509be608551b80a82a7..WORKTREE",
-        "evidence": ".agent/evidence/112/scope-measurement.txt",
-        "baseline": {
-          "prior_features": [
-            "110",
-            "111"
-          ],
-          "rolling_average": 2422.0,
-          "three_times_threshold": 7266.0,
-          "first_feature_exception": false
-        },
-        "note": "Measured with unchanged frozen Git numstat/classifier after actual ModeB2, fresh independent20/20 QA/own adversarial/evidence capture and canonical closure. Compare against preceding110/111 only before appending112. Failed raw attempts retained as evidence, counted verdicts included once; original7200/9360 and all historical measurements preserved."
-      },
-      {
-        "id": "113",
+        "id": "117",
         "estimated": 1050,
-        "actual": 691,
-        "evidence_lines": 241996,
-        "excluded_lines": 351,
-        "all_paths_lines": 243038,
-        "range": "a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE",
-        "evidence": ".agent/evidence/113/scope-measurement-final.txt",
+        "actual": 1003,
+        "product_lines": 217,
+        "process_overhead_lines": 786,
+        "evidence_lines": 34604,
+        "excluded_lines": 263,
+        "range": "dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE",
+        "evidence": ".agent/evidence/117/scope-measurement.txt",
         "baseline": {
           "prior_features": [
-            "110",
-            "111",
-            "112"
+            "115",
+            "116"
           ],
-          "rolling_average": 2029.3333333333333,
-          "three_times_threshold": 6088.0,
+          "rolling_average": 1504.5,
+          "three_times_threshold": 4513.5,
           "first_feature_exception": false
         },
-        "note": "Product193 + process498 =691, measured after actual corrected-bundle review/ModeB1/fresh16QA/ownprobe/capture and canonical closure. Compare prior completed110/111/112 before append; blocked inflight300 remains historical and is not double-counted. Original7200/9360 budget and all failed raw evidence/old counters/install preserved."
+        "note": "Whole117 measured from captured116 before append; original5400/7020 unchanged. All failed/recovered attempts preserved as historical evidence; prior115/116 rows not remeasured."
       },
       {
-        "id": "114",
-        "estimated": 1150,
-        "actual": 540,
-        "evidence_lines": 1227583,
-        "excluded_lines": 251,
-        "all_paths_lines": 1228374,
-        "range": "45ceeb80eabc823400f2bb6044edcb4fa3aa9b2f..WORKTREE",
-        "evidence": ".agent/evidence/114/scope-measurement-final.txt",
+        "id": "118",
+        "estimated": 650,
+        "actual": 1183,
+        "product_lines": 126,
+        "process_overhead_lines": 1057,
+        "evidence_lines": 43592,
+        "excluded_lines": 283,
+        "range": "beeca3986fc0e02becf65674cbbc8b8f67bf3864..WORKTREE",
+        "evidence": ".agent/evidence/118/scope-measurement.txt",
         "baseline": {
           "prior_features": [
-            "111",
-            "112",
-            "113"
+            "115",
+            "116",
+            "117"
           ],
-          "rolling_average": 1689.3333333333333,
-          "three_times_threshold": 5068.0,
+          "rolling_average": 1337.3333333333333,
+          "three_times_threshold": 4012,
           "first_feature_exception": false
         },
-        "note": "Frozen Git-numstat/classifier actual Product9+process531=540 after actual corrected bundle, SourceModeB1, fresh12QA/ownspot/capture and canonical114/phase015 closure. Prior-only111/112/113 threshold5068 checked before append. Original7200/9360 and historical114 blocked256 preserved; complete feature counted once, no extra allocation."
+        "note": "Whole118 measured after actual capture and canonical closure, before this once-only budget append. Original5400/7020 retained; historical blocked559 not charged twice. Includes reviewed closeout checker correction; old source/bundle failures preserved."
       }
     ],
-    "phase_level_items": [],
+    "phase_level_items": [
+      {
+        "id": "phase017-ci-history",
+        "actual": 8,
+        "product_lines": 8,
+        "process_overhead_lines": 0,
+        "evidence_lines": 508,
+        "excluded_lines": 0,
+        "range": "f84db8a65a814898f9e78f4a91ca56d1eccb68d3..WORKTREE",
+        "evidence": ".agent/evidence/118/integration-ci-measurement.txt",
+        "note": "Postcapture required CI checkout correction; approved features retain original point-in-time measurements. No extra allowance."
+      }
+    ],
     "counting_rule": {
-      "spec_ref": ".agent/product_spec_015.md 'Scope budget and measurement'; frozen phase014 counting classes reused",
+      "spec_ref": ".agent/product_spec_017.md 'Scope budget and measurement'; frozen phase014 counting classes reused",
       "script": ".agent/evidence/scope-budget-014/measure.py",
       "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
       "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
@@ -4291,55 +5168,48 @@
       "excluded": ".agent/run_state.json (coordination churn)",
       "unclassified": "fail closed: listed, measure.py exits 3"
     },
-    "phase_base_revision": "57862f69ba30a36004ea9a17a295fc9c835afc13",
-    "authorization_revision": "06c0ae0a273facce80c57506260648c41f566ebb",
-    "phase_level_costs": "Included within approved7200 per-feature allowances; no additional budget.",
-    "last_measured_at": "2026-10-12T16:00:25.879795+00:00",
+    "phase_base_revision": "33775caf661d3b94ff2383f3582c8d7a7c31c21c",
+    "authorization_revision": "9ebfd03883486a205ac8c3a211f0cac0af5fddba",
+    "phase_level_costs": "Activation and coordination process included within approved5400; no additional allowance.",
     "historical_inflight_measurements": [
       {
-        "id": "111",
+        "id": "115",
         "status": "blocked",
-        "actual": 2274,
-        "evidence_lines": 14093,
-        "excluded_lines": 353,
-        "all_paths_lines": 16720,
-        "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
-        "evidence": ".agent/evidence/111/blocked-qa-scope-measurement.txt",
-        "previous_inflight_measurement": {
-          "id": "111",
-          "status": "blocked",
-          "actual": 756,
-          "evidence_lines": 3132,
-          "excluded_lines": 188,
-          "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
-          "evidence": ".agent/evidence/111/blocked-scope-measurement.txt",
-          "note": "Incomplete feature; not appended to completed-feature rolling baseline. Current completed1711 plus in-flight actual below9360. Unpromoted product draft retained only as raw evidence; actual future implementation measurement must include promoted product if operator resumes."
-        },
-        "note": "Incomplete feature after actual failedQA1; not appended to completed-feature rolling baseline. Frozen product/source promoted and now counted. Completed1711 plus in-flight below9360; contract extension has no extra budget. Preserve old pre-source halt measurement as historical snapshot."
+        "actual": 409,
+        "evidence_lines": 3090,
+        "excluded_lines": 529,
+        "all_paths_lines": 4028,
+        "range": "33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE",
+        "evidence": ".agent/evidence/115/blocked-scope-measurement.txt",
+        "note": "Incomplete feature; unapproved public test candidate removed after exact quarantine. Product0/process409, below7020, not appended to completed rolling baseline or total. Future authorized recovery must count whole115 from originalphasebase once; no allowance/rebaseline."
       },
       {
-        "id": "113",
+        "id": "117",
         "status": "blocked",
-        "actual": 300,
-        "evidence_lines": 185750,
-        "excluded_lines": 209,
-        "all_paths_lines": 186259,
-        "range": "a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE",
-        "evidence": ".agent/evidence/113/blocked-scope-measurement.txt",
-        "note": "Incompletefeature after finalindependentcheckerreview3 rejected. Product0+process300; notappended tocompletedrollingbaseline. Completed6088+inflight300=6388below9360, noScopeoverrun/rebaseline; halt solelymandatorycircuit. Rawfailedbundles/source1quarantine excluded as evidence; no unreviewedpublicproductpromotion."
+        "actual": 394,
+        "product_lines": 0,
+        "process_overhead_lines": 394,
+        "evidence_lines": 5369,
+        "excluded_lines": 85,
+        "all_paths_lines": 5848,
+        "range": "dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE",
+        "evidence": ".agent/evidence/117/blocked-scope-measurement.txt",
+        "note": "Incomplete117 pre-code reader startup exhausted3/3, noSource/testimplementation. Whole117 startscaptured116 including selection/coordination once; no completedrollingbaseline append orrebaseline. Completed3009+inflight394=3403below original7020; haltsolelymandatoryreviewcircuit. Existing115/116/015 measuredrows/proofs preserved."
       },
       {
-        "id": "114",
+        "id": "118",
         "status": "blocked",
-        "actual": 256,
-        "evidence_lines": 342661,
-        "excluded_lines": 120,
-        "all_paths_lines": 343037,
-        "range": "45ceeb80eabc823400f2bb6044edcb4fa3aa9b2f..WORKTREE",
-        "evidence": ".agent/evidence/114/blocked-scope-measurement.txt",
-        "note": "Incomplete feature after final independent bundleReview3 rejected legitimate named-toolchain version positive. Product0+process256; not appended to completed baseline. Completed6779+inflight256=7035 below original9360. No budget extension; future actual close measurement includes total feature work once, preserving this failed in-flight snapshot."
+        "actual": 559,
+        "product_lines": 10,
+        "process_overhead_lines": 549,
+        "evidence_lines": 32353,
+        "excluded_lines": 151,
+        "range": "beeca3986fc0e02becf65674cbbc8b8f67bf3864..WORKTREE",
+        "evidence": ".agent/evidence/118/blocked-scope-measurement.txt",
+        "note": "Incomplete118; failedSource1 is quarantined, no Source2 or completion. Whole118 includes selection/proposals/reviews and mandatoryhalt once; prior measured4012 rows unchanged, no extra allowance or rebaseline. Halt is exhaustedcontract/ModeA3, not scope ceiling."
       }
-    ]
+    ],
+    "last_measured_at": "2026-10-14T06:20:45.325692+00:00"
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -4594,7 +5464,7 @@
       }
     ]
   },
-  "last_action": "WorkflowAssurance thencontroller planningcomplete: strictSourceC2 ModeB+fresh9/9QA/ownspot+capture; PR90merged8bce1e4 andactualMain38310034857five/fivesuccess. Futurefivephasespending/proposed andclosed015/installedv1.5.0 preserved.",
+  "last_action": "Phase017 captured complete; reviewed CI full-history checkout correction added for PR94, awaiting green remote checks and merge.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -4609,7 +5479,11 @@
     "111",
     "112",
     "113",
-    "114"
+    "114",
+    "115",
+    "116",
+    "117",
+    "118"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
@@ -4684,5 +5558,171 @@
     "merge_ref": ".agent/evidence/workflow-016-planning/pr90-merge-main-ci.json",
     "merged_commit": "8bce1e446e9a7783d67003dfc5a207c0024d4e75",
     "main_ci_run": 38310034857
+  },
+  "phase_015_scope_budget_final": {
+    "original_estimate_lines": 7200,
+    "ceiling_130pct": 9360,
+    "total_lines_changed": 7319,
+    "evidence_lines_total": 1568016,
+    "excluded_lines_total": 1593,
+    "per_feature": [
+      {
+        "id": "110",
+        "estimated": 1600,
+        "actual": 1711,
+        "evidence_lines": 3485,
+        "excluded_lines": 337,
+        "all_paths_lines": 5533,
+        "range": "57862f69ba30a36004ea9a17a295fc9c835afc13..WORKTREE",
+        "evidence": ".agent/evidence/110/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [],
+          "rolling_average": null,
+          "three_times_threshold": null,
+          "first_feature_exception": true
+        },
+        "note": "Product455 + process overhead1256 =1711; 111 over1600 estimate. First phase015 feature has no prior rolling baseline; no3x comparison. Includes phase activation and six selected decisions within the approved7200 allowance; cumulative1711 below9360. No additional authorization inferred."
+      },
+      {
+        "id": "111",
+        "estimated": 2200,
+        "actual": 3133,
+        "evidence_lines": 26497,
+        "excluded_lines": 438,
+        "all_paths_lines": 30068,
+        "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
+        "evidence": ".agent/evidence/111/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "110"
+          ],
+          "rolling_average": 1711.0,
+          "three_times_threshold": 5133.0,
+          "first_feature_exception": false
+        },
+        "note": "Measure only after fresh independent38/38acceptance, ownspot, evidencegate and canonicalcompletion. Product895+overhead2238=3133; exceeds2200 estimate, below prior-only3x threshold5133. No extra budget; historical failed in-flight measurements retained separately, never double-counted."
+      },
+      {
+        "id": "112",
+        "estimated": 1200,
+        "actual": 1244,
+        "evidence_lines": 68455,
+        "excluded_lines": 216,
+        "all_paths_lines": 69915,
+        "range": "da1131846815328890cfb509be608551b80a82a7..WORKTREE",
+        "evidence": ".agent/evidence/112/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "110",
+            "111"
+          ],
+          "rolling_average": 2422.0,
+          "three_times_threshold": 7266.0,
+          "first_feature_exception": false
+        },
+        "note": "Measured with unchanged frozen Git numstat/classifier after actual ModeB2, fresh independent20/20 QA/own adversarial/evidence capture and canonical closure. Compare against preceding110/111 only before appending112. Failed raw attempts retained as evidence, counted verdicts included once; original7200/9360 and all historical measurements preserved."
+      },
+      {
+        "id": "113",
+        "estimated": 1050,
+        "actual": 691,
+        "evidence_lines": 241996,
+        "excluded_lines": 351,
+        "all_paths_lines": 243038,
+        "range": "a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE",
+        "evidence": ".agent/evidence/113/scope-measurement-final.txt",
+        "baseline": {
+          "prior_features": [
+            "110",
+            "111",
+            "112"
+          ],
+          "rolling_average": 2029.3333333333333,
+          "three_times_threshold": 6088.0,
+          "first_feature_exception": false
+        },
+        "note": "Product193 + process498 =691, measured after actual corrected-bundle review/ModeB1/fresh16QA/ownprobe/capture and canonical closure. Compare prior completed110/111/112 before append; blocked inflight300 remains historical and is not double-counted. Original7200/9360 budget and all failed raw evidence/old counters/install preserved."
+      },
+      {
+        "id": "114",
+        "estimated": 1150,
+        "actual": 540,
+        "evidence_lines": 1227583,
+        "excluded_lines": 251,
+        "all_paths_lines": 1228374,
+        "range": "45ceeb80eabc823400f2bb6044edcb4fa3aa9b2f..WORKTREE",
+        "evidence": ".agent/evidence/114/scope-measurement-final.txt",
+        "baseline": {
+          "prior_features": [
+            "111",
+            "112",
+            "113"
+          ],
+          "rolling_average": 1689.3333333333333,
+          "three_times_threshold": 5068.0,
+          "first_feature_exception": false
+        },
+        "note": "Frozen Git-numstat/classifier actual Product9+process531=540 after actual corrected bundle, SourceModeB1, fresh12QA/ownspot/capture and canonical114/phase015 closure. Prior-only111/112/113 threshold5068 checked before append. Original7200/9360 and historical114 blocked256 preserved; complete feature counted once, no extra allocation."
+      }
+    ],
+    "phase_level_items": [],
+    "counting_rule": {
+      "spec_ref": ".agent/product_spec_015.md 'Scope budget and measurement'; frozen phase014 counting classes reused",
+      "script": ".agent/evidence/scope-budget-014/measure.py",
+      "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
+      "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
+      "evidence_total": ".agent/evidence/** including verification helpers, plus any non-JSON file under .agent/validator/ (row 4a, spec 1.1.6); tracked separately, never gated",
+      "excluded": ".agent/run_state.json (coordination churn)",
+      "unclassified": "fail closed: listed, measure.py exits 3"
+    },
+    "phase_base_revision": "57862f69ba30a36004ea9a17a295fc9c835afc13",
+    "authorization_revision": "06c0ae0a273facce80c57506260648c41f566ebb",
+    "phase_level_costs": "Included within approved7200 per-feature allowances; no additional budget.",
+    "last_measured_at": "2026-10-12T16:00:25.879795+00:00",
+    "historical_inflight_measurements": [
+      {
+        "id": "111",
+        "status": "blocked",
+        "actual": 2274,
+        "evidence_lines": 14093,
+        "excluded_lines": 353,
+        "all_paths_lines": 16720,
+        "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
+        "evidence": ".agent/evidence/111/blocked-qa-scope-measurement.txt",
+        "previous_inflight_measurement": {
+          "id": "111",
+          "status": "blocked",
+          "actual": 756,
+          "evidence_lines": 3132,
+          "excluded_lines": 188,
+          "range": "a15be05d9ede7eadf4a2b848989f9386cfb2f617..WORKTREE",
+          "evidence": ".agent/evidence/111/blocked-scope-measurement.txt",
+          "note": "Incomplete feature; not appended to completed-feature rolling baseline. Current completed1711 plus in-flight actual below9360. Unpromoted product draft retained only as raw evidence; actual future implementation measurement must include promoted product if operator resumes."
+        },
+        "note": "Incomplete feature after actual failedQA1; not appended to completed-feature rolling baseline. Frozen product/source promoted and now counted. Completed1711 plus in-flight below9360; contract extension has no extra budget. Preserve old pre-source halt measurement as historical snapshot."
+      },
+      {
+        "id": "113",
+        "status": "blocked",
+        "actual": 300,
+        "evidence_lines": 185750,
+        "excluded_lines": 209,
+        "all_paths_lines": 186259,
+        "range": "a57c860a18c82990c4a43deed1465bd052bb4c3f..WORKTREE",
+        "evidence": ".agent/evidence/113/blocked-scope-measurement.txt",
+        "note": "Incompletefeature after finalindependentcheckerreview3 rejected. Product0+process300; notappended tocompletedrollingbaseline. Completed6088+inflight300=6388below9360, noScopeoverrun/rebaseline; halt solelymandatorycircuit. Rawfailedbundles/source1quarantine excluded as evidence; no unreviewedpublicproductpromotion."
+      },
+      {
+        "id": "114",
+        "status": "blocked",
+        "actual": 256,
+        "evidence_lines": 342661,
+        "excluded_lines": 120,
+        "all_paths_lines": 343037,
+        "range": "45ceeb80eabc823400f2bb6044edcb4fa3aa9b2f..WORKTREE",
+        "evidence": ".agent/evidence/114/blocked-scope-measurement.txt",
+        "note": "Incomplete feature after final independent bundleReview3 rejected legitimate named-toolchain version positive. Product0+process256; not appended to completed baseline. Completed6779+inflight256=7035 below original9360. No budget extension; future actual close measurement includes total feature work once, preserving this failed in-flight snapshot."
+      }
+    ]
   }
 }

@@ -1,0 +1,38 @@
+{
+  "feature": "118",
+  "actor": "/root/wa_generator118",
+  "recovery_epoch": 1,
+  "source_generation": 2,
+  "revision": "60cf91d1e2f0781382c20a5a18bb1673a381c0d8",
+  "tree": "b64616bc09108ecc7a329f286a84dfd6e60889b4",
+  "candidate_sha256": "95d29360b7919b768024ae10c2a072430b0b3003822f5b2611eaf868df846171",
+  "prerequisite_sha256": "04ce2913faa240344829eb9dac0d264b79e555a5387ead3d5d2abbb26c16b116",
+  "prerequisite_actor": "/root/wa_prerequisite118_recovery1",
+  "checks_run": 3,
+  "checks_passed": 3,
+  "checks": [
+    {
+      "acceptance_test": "foundation-ready",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/118/recovery1-source-check-1.txt",
+      "sha256": "584e2d71453900f0f5d212502169fbdec4cbbb82c15240813ce0eddaee3133a4"
+    },
+    {
+      "acceptance_test": "Repository compliance",
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/118/recovery1-source-check-2.txt",
+      "sha256": "0a56161d7670ac742e64a54025a8bdb0d6a655b22d9401ac3f3283c62b484327"
+    },
+    {
+      "acceptance_test": "Payload compliance",
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/118/recovery1-source-check-3.txt",
+      "sha256": "796d49a06eb28f8234fff480190e25d06f7dd3a81819dbf74755dd99ba7150bc"
+    }
+  ],
+  "source_attempt_complete": true,
+  "next_gate": "independent Mode B"
+}

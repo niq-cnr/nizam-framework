@@ -1,0 +1,23 @@
+{
+  "actor": "/root/wa_acceptance_115",
+  "revision": "2f324c68bf273c54907ff63ad057995040d84d54",
+  "reviewed_source": "tools/workflow_assurance.py",
+  "source_sha256": {
+    "tools/workflow_assurance.py": "7fe096c942d9932c880d20f29271ef12368f3cb4fc5a05d88171b01a54112f1f",
+    "tools/test_workflow_assurance.py": "28741b2bf99ad30fad804a16ffb9ccb81bbb7e483999250ae894ec77c1733b56",
+    ".agent/evidence/115/recovery-scope-guard.py": "df5e5dc574ea37866bf834e7e7d1f319ec6678d02842496e7c37652d1f4f954d",
+    ".agent/evidence/115/api-interface.json": "ab80ec53b6fe2a8fa2ac979717c98bb486b8c6cf64fd122da008befc0153d55a"
+  },
+  "findings": [],
+  "observations": [
+    "Identity observes explicit immutable commit/tree, origin, runtime/environment and raw tracked bytes plus staged blobs/modes; ambient HEAD is not substituted.",
+    "Unknown tracked, untracked and ignored candidates fail closed; nonregular and symlink path components are rejected.",
+    "Ownership masks exclude source/tests/tools and traverse existing scalar leaves; history append preserves its type-sensitive canonical prefix.",
+    "Strict JSON parsing rejects duplicate keys and nonfinite values; identity comparison validates closed fields and its canonical digest before equality.",
+    "Independent required commands and additional staged-only attacks substantiate the assessed identity and bounded continuity behavior."
+  ],
+  "limitations": [
+    "Scope-control after-capture scenarios are PRIVATE MOCK controls, not actual feature completion.",
+    "This QA receipt does not perform the separate Orchestrator evidence-capture gate or authorize lifecycle completion."
+  ]
+}

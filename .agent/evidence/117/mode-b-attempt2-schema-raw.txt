@@ -1,0 +1,7 @@
+COMMAND: ["/usr/bin/python3", "-c", "import json,pathlib; from jsonschema import Draft202012Validator; p=pathlib.Path('.'); v=json.loads((p/'.agent/validator/117-mode-b.json').read_text()); c=json.loads((p/'.agent/evidence/117/source-candidate.json').read_text()); Draft202012Validator(json.loads((p/'.nizam/schema/contract_review.schema.json').read_text())).validate(v); assert v['feature']=='117' and type(v['actor']) is str and v['actor']=='/root/wa_validator' and v['revision']==c['revision'] and v['source_sha256']==c['source_sha256'] and v['sealed_dependencies_sha256']==c['sealed_dependencies_sha256']; assert v['final_verdict']['approved'] is True and all(type(v[k]) is list and not v[k] for k in ['issues','missing_acceptance_coverage','unsupported_claims']); print('PASS installed review schema and declared SourceC-bound strict ModeB approval')"]
+REVISION: 2ab311bde4e104ec4a2b1b739fe8fa91b48fe5b7
+EXIT: 0
+STDOUT:
+PASS installed review schema and declared SourceC-bound strict ModeB approval
+
+STDERR:

@@ -1,0 +1,22 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-c",
+    "import json,pathlib,subprocess,hashlib,jsonschema\nr=pathlib.Path.cwd(); read=lambda p:json.loads((r/p).read_text())\nc=read('.agent/contracts/117.json'); a=read('.agent/evidence/117/api-interface.json'); f=read('.agent/feature_list_017.json'); s=read('.agent/run_state.json')\njsonschema.Draft202012Validator(read('.nizam/schema/contract.schema.json')).validate(c)\nassert c['status']=='proposed' and type(c['approvals']['revisions']) is int and c['approvals']['revisions']==2\nassert c['approvals']['gate_refs'] is None and c['approvals']['validator_mode_a'] is False and c['approvals']['evaluator_contract_review'] is False\nassert c['gate_reference_policy']==a['gate_references'] and c['recovery_alignment']==a['recovery_alignment']\nproposal='f42e1b91d21c99a16d90f1e403f48ec37341b1ac'\nfor p in ['.agent/contracts/117.json','.agent/evidence/117/api-interface.json']:\n blob=subprocess.check_output(['git','show',proposal+':'+p]); assert blob==(r/p).read_bytes(); print('FROZEN_PROPOSAL',p,hashlib.sha256(blob).hexdigest())\nfeature=next(x for x in f['features'] if x['id']=='117')\nassert feature['acceptance_tests']==[x['command'] for x in c['verification'][:4]]\nassert len(c['verification'])==12 and len({x['command'] for x in c['verification']})==12\nassert feature['estimated_lines']==c['estimated_lines']==1050\nassert c['phase_budget']['original_estimate_lines']==f['original_estimate_lines']==s['scope_budget']['original_estimate_lines']==5400\nassert c['phase_budget']['ceiling_130pct']==f['ceiling_130pct']==s['scope_budget']['ceiling_130pct']==7020\nassert s['current_feature']==s['active_contract_id']=='117' and s['status']=='in_progress'\nassert s['circuit_breaker']['117-contract-review']=={'attempts':3,'limit':3}\nassert s['circuit_breaker']['117-recovery1-contract-review']=={'attempts':0,'limit':3}\nassert 'status: IN_PROGRESS' in (r/'docs/planning/phase_017.yaml').read_text()\nassert c['entry_authority']['project']=='niq-cnr/nizam-framework'\nassert subprocess.check_output(['git','remote','get-url','origin'],text=True).strip() in c['entry_authority']['origins']\nauthpath=c['entry_authority']['authorization_path']; auth=read(authpath)\nassert subprocess.check_output(['git','show',c['entry_authority']['authorization_revision']+':'+authpath])==(r/authpath).read_bytes()\nprint('LOCAL_AUTHORITY',json.dumps(auth,sort_keys=True))\npin=c['entry_authority']['installed_pin']; assert subprocess.check_output(['git','rev-parse',pin['tag']+'^{commit}'],text=True).strip()==pin['resolved_sha']\nfor p in ['NIZAM.json','tools/SKILL.md','standard/AGF.md','standard/capability_profiles.md','standard/permission_classes.md']:\n assert subprocess.check_output(['git','show',pin['resolved_sha']+':'+p])==(r/'.nizam'/p).read_bytes(); print('CRITICAL_INSTALLED_MATCH',p)\nfor g in c['entry_write_grants']:\n assert set(g)=={'role','profile','path','fields','operation','full_file','create_only'}\n assert type(g['full_file']) is bool and type(g['create_only']) is bool\n assert (g['role'],g['profile']) in [('Orchestrator','orchestrator-primary'),('Planner','planner-creative'),('Generator','generator-deterministic'),('Validator','validator-structural'),('Evaluator','evaluator-adversarial')]\nassert any(g['role']=='Evaluator' and g['path']=='tools/test_workflow_assurance.py' and g['full_file'] for g in c['entry_write_grants'])\nprint('PASS pre-code schema, frozen hashes, acceptance coverage, typed current state, budget, local authority, installed critical blobs and explicit grants. This is not future117 behavioral acceptance.')\n"
+  ],
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "cwd": "/home/cnross/.tmp/nizam-117-recovery1-contract-review-attempt1-lxftxvao",
+  "revision": "63ef5992be7649be017a40df4825cac4f7c14cff",
+  "proposal_revision": "f42e1b91d21c99a16d90f1e403f48ec37341b1ac",
+  "exit_code": 0,
+  "stdout": {
+    "path": ".agent/evidence/117/recovery1-contract-review-attempt1-analysis.stdout.txt",
+    "sha256": "b621e3a3141e4e63939d0d3d213b6b009efaf953a07b57a792e830dd172be238"
+  },
+  "stderr": {
+    "path": ".agent/evidence/117/recovery1-contract-review-attempt1-analysis.stderr.txt",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

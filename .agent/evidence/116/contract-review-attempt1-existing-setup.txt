@@ -1,0 +1,7 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c 'import importlib.util, pathlib; s=importlib.util.spec_from_file_location('"'"'existing_harness'"'"',pathlib.Path('"'"'tools/test_workflow_assurance.py'"'"')); h=importlib.util.module_from_spec(s); s.loader.exec_module(h); a=h.load_api(); assert callable(a.assess_repository) and callable(a.verify_record_update) and callable(h.run_case); a.verify_record_update({'"'"'x'"'"':1},{'"'"'x'"'"':1},[]); assert not hasattr(a,'"'"'verify_acceptance_bundle'"'"'); print('"'"'PASS existing115 API and callable harness; future116 API absent, no feature116 acceptance claimed'"'"')'
+REVISION: f91b3ab383f1537c79201262c154367d03da7cce
+EXIT: 0
+STDOUT:
+PASS existing115 API and callable harness; future116 API absent, no feature116 acceptance claimed
+
+STDERR:

@@ -1,0 +1,22 @@
+COMMAND: bash tools/validate.sh --payload
+REVISION: 2f324c68bf273c54907ff63ad057995040d84d54
+CHECKOUT_REVISION: 79c80ef6c1e6733c2eacbe9fe32dfba136370885
+INPUT_SHA256: {".agent/evidence/115/api-interface.json": "ab80ec53b6fe2a8fa2ac979717c98bb486b8c6cf64fd122da008befc0153d55a", ".agent/evidence/115/recovery-scope-guard.py": "df5e5dc574ea37866bf834e7e7d1f319ec6678d02842496e7c37652d1f4f954d", "tools/test_workflow_assurance.py": "28741b2bf99ad30fad804a16ffb9ccb81bbb7e483999250ae894ec77c1733b56", "tools/workflow_assurance.py": "7fe096c942d9932c880d20f29271ef12368f3cb4fc5a05d88171b01a54112f1f"}
+STDOUT:
+MODE: payload (validating consumer-injected subset; framework-envelope checks skipped)
+[C1] PASS frontmatter-schema
+[C2] PASS format
+[C3] PASS untagged-fence-sweep
+[C4] PASS index-integrity
+[C5] PASS branding-leakage
+[C6] SKIP bootstrap-sanity (payload mode)
+[C7] PASS module-readme-presence
+[C8] PASS version-bump-vs-changelog
+[C9] PASS path-resolution
+[C10] PASS consistency
+[C11] PASS dogfood (payload mode: .agent/ governance state is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+[C13] PASS skill-index (payload mode: non-injected dirs registry/ and docs/ skipped; methodology/ and ecosystem/ are injected and required as of feature 051)
+[C16] PASS feature-list-lifecycle (payload mode: .agent/ governance state, including feature_list*.json, is not part of the bootstrap.sh payload; passes trivially by design, not a suppressed check)
+SUMMARY (payload mode): 12 passed, 0 failed
+STDERR:
+EXIT: 0

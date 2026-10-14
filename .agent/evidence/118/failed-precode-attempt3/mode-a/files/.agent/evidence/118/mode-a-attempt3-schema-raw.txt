@@ -1,0 +1,7 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import json; from pathlib import Path; from jsonschema import Draft202012Validator; v=json.loads(Path('"'"'.agent/validator/118-mode-a-rev2.json'"'"').read_text()); Draft202012Validator(json.loads(Path('"'"'.nizam/schema/contract_review.schema.json'"'"').read_text())).validate(v); assert type(v['"'"'revision_reviewed'"'"']) is int and v['"'"'revision_reviewed'"'"']==2 and v['"'"'final_verdict'"'"']['"'"'approved'"'"'] is False and len(v['"'"'issues'"'"'])==1; print('"'"'PASS installed contract-review schema; explicit rejected revision2 gate'"'"')'
+REVISION: fc54d5082c5aa5042e42b18719d4eeb4adf9f7ac
+EXIT: 0
+STDOUT:
+PASS installed contract-review schema; explicit rejected revision2 gate
+
+STDERR:

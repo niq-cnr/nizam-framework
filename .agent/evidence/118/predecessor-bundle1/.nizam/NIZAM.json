@@ -1,0 +1,375 @@
+{
+  "framework": {
+    "name": "nizam-framework",
+    "version": "1.5.0",
+    "description": "A generalised, AI-legible, versioned governance framework distilling documentation standards, planning and execution protocols, adversarial TDD, contract-first harness loops, durable agent state, and governance inheritance into a single portable payload any AI agent or engineering team can consume in any runtime, for any project."
+  },
+  "modules": [
+    {
+      "path": "standard",
+      "purpose": "Documentation standard, governance inheritance protocol, agent governance framework, and universal anti-hallucination constraints every consumer repository inherits verbatim.",
+      "key_documents": [
+        "standard/NDS.md",
+        "standard/GIP.md",
+        "standard/AGF.md",
+        "standard/anti_hallucination.md",
+        "standard/capability_profiles.md",
+        "standard/ci_gates.md",
+        "standard/mcp_policy.md",
+        "standard/failure_modes.md",
+        "standard/provenance_policy.md",
+        "standard/permission_classes.md",
+        "standard/cross_repo_governance.md",
+        "standard/README.md",
+        "standard/definition_of_done.md",
+        "standard/convergent_code_review.md"
+      ]
+    },
+    {
+      "path": "methodology",
+      "purpose": "Planning enforcement, the contract-first execution harness loop, adversarial TDD, the universal circuit breaker, tool-driven durable state, the release train protocol, and review-gate flake management.",
+      "key_documents": [
+        "methodology/00_planning.md",
+        "methodology/01_execution.md",
+        "methodology/02_adversarial_tdd.md",
+        "methodology/03_circuit_breaker.md",
+        "methodology/04_tool_driven_state.md",
+        "methodology/05_eval_and_trace.md",
+        "methodology/06_release_train.md",
+        "methodology/07_eval_gated_promotion.md",
+        "methodology/08_cross_repo_dependency_gate.md",
+        "methodology/09_review_gate_flake_management.md",
+        "methodology/README.md"
+      ]
+    },
+    {
+      "path": "registry",
+      "purpose": "The JSON Schema this root index validates against, plus generalised scope-definition and registry patterns for consumer repositories building their own ecosystem-level registries on top of Nizam.",
+      "key_documents": [
+        "registry/nizam-index.schema.json",
+        "registry/scope_definition_patterns.md",
+        "registry/README.md"
+      ]
+    },
+    {
+      "path": "templates",
+      "purpose": "Consumer-repo document and manifest templates a bootstrapped repository copies and fills in with its own content.",
+      "key_documents": [
+        "templates/CONTEXT.md",
+        "templates/AGENTS.md",
+        "templates/DEBT.md",
+        "templates/ADR_TEMPLATE.md",
+        "templates/work-packet.template.json",
+        "templates/phase_template.yaml",
+        "templates/manifest.template.json",
+        "templates/README.md",
+        "templates/DoD.md",
+        "templates/convergent-review-prompt.md"
+      ]
+    },
+    {
+      "path": "schema",
+      "purpose": "JSON Schemas validating every machine-readable artifact the framework and its consumers produce.",
+      "key_documents": [
+        "schema/frontmatter.schema.json",
+        "schema/manifest.schema.json",
+        "schema/phase.schema.json",
+        "schema/feature_list.schema.json",
+        "schema/contract.schema.json",
+        "schema/contract_review.schema.json",
+        "schema/qa_verdict.schema.json",
+        "schema/run_state.schema.json",
+        "schema/work-packet.schema.json",
+        "schema/debt.schema.json",
+        "schema/capability_profile.schema.json",
+        "schema/preflight_verdict.schema.json",
+        "schema/ecosystem_baseline.schema.json",
+        "schema/engineering_finding.schema.json",
+        "schema/audit_delta.schema.json",
+        "schema/ecosystem_membership.schema.json",
+        "schema/ecosystem_membership_result.schema.json",
+        "schema/reconciliation_plan.schema.json",
+        "schema/release_train_manifest.schema.json",
+        "schema/README.md",
+        "schema/review_packet.schema.json",
+        "schema/review_trial.schema.json",
+        "schema/review_ledger.schema.json",
+        "schema/review_suppression.schema.json",
+        "schema/review_replay.schema.json"
+      ]
+    },
+    {
+      "path": "tools",
+      "purpose": "The one unified, runtime-agnostic skill payload (manifest, instructions, adapter interface) any agent runtime loads to act on the framework.",
+      "key_documents": [
+        "tools/skill.json",
+        "tools/SKILL.md",
+        "tools/interface.md",
+        "tools/README.md",
+        "tools/validate.sh",
+        "tools/convergent_review.py",
+        "tools/evaluate_convergent_review_prompt.py",
+        "tools/linux_trial_sandbox.sh",
+        "tools/isolated_trial_adapter.py",
+        "tools/test_convergent_review.py",
+        "tools/fixtures/convergent_review/manifest.json"
+      ]
+    },
+    {
+      "path": "docs",
+      "purpose": "Shipped framework documentation: Architecture Decision Records, versioned migration guidance, and the self-contained HTML user guide, distributed with the repository and rendered on GitHub or GitHub Pages (not part of the consumer-injected bootstrap payload).",
+      "key_documents": [
+        "docs/architecture/ADR-001-ci-compliance-enforcement.md",
+        "docs/architecture/ADR-002-html-user-guide.md",
+        "docs/architecture/ADR-003-vibe-coding-manifesto-hybrid.md",
+        "docs/migration-v1.0.0.md",
+        "docs/guide/index.html"
+      ]
+    },
+    {
+      "path": "ecosystem",
+      "purpose": "The reusable, schema-governed Ecosystem Engineering Cycle: a multi-repository governance lifecycle (Bootstrap->Preflight->Baseline->Audit->Plan->Execute->Verify->Promote->Compare->Repeat) extending Nizam's repository-local contract-first loop to ecosystem scale.",
+      "key_documents": [
+        "ecosystem/README.md",
+        "ecosystem/00_ecosystem_bootstrap.md",
+        "ecosystem/01_clean_state_preflight.md",
+        "ecosystem/02_evidence_baseline.md",
+        "ecosystem/03_engineering_audit.md",
+        "ecosystem/04_dependency_reconciliation.md",
+        "ecosystem/05_release_train_coordination.md",
+        "ecosystem/06_simplification_review.md",
+        "ecosystem/07_progress_comparison.md",
+        "ecosystem/08_ga_gate.md"
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "nizam-documentation-standard",
+      "summary": "The required frontmatter, status lifecycle, versioning, and machine-readability rules every governed document must satisfy.",
+      "authoritative_source": "standard/NDS.md"
+    },
+    {
+      "id": "governance-inheritance-protocol",
+      "summary": "How a consumer repository inherits the framework via pinned-tag cloning and bootstrap.sh, verifies inheritance, and detects drift.",
+      "authoritative_source": "standard/GIP.md"
+    },
+    {
+      "id": "agent-governance-framework",
+      "summary": "The generalised multi-agent execution model: agent roles, the dual validator gate, and the JSON verdict parse rule.",
+      "authoritative_source": "standard/AGF.md"
+    },
+    {
+      "id": "nizam-capability-profiles",
+      "summary": "Binds agent roles to task types, latency budgets, cost budgets, and safety classes rather than to specific models.",
+      "authoritative_source": "standard/capability_profiles.md"
+    },
+    {
+      "id": "nizam-ci-gates",
+      "summary": "The mandatory 10-gate MERGE_READY formula that ensures no unverified code bypasses the contract-first execution loop.",
+      "authoritative_source": "standard/ci_gates.md"
+    },
+    {
+      "id": "nizam-mcp-policy",
+      "summary": "Rules for integrating Model Context Protocol (MCP) servers: treating MCP as a capability plane, not a trust plane.",
+      "authoritative_source": "standard/mcp_policy.md"
+    },
+    {
+      "id": "nizam-failure-modes",
+      "summary": "The seven canonical failure modes in agentic software engineering, with explicit detection and response protocols.",
+      "authoritative_source": "standard/failure_modes.md"
+    },
+    {
+      "id": "nizam-provenance-policy",
+      "summary": "Rules for ensuring every artifact, prompt, model, tool call, and release is attestable and auditable.",
+      "authoritative_source": "standard/provenance_policy.md"
+    },
+    {
+      "id": "nizam-permission-classes",
+      "summary": "Deny-by-default role permission classes and Kubernetes RBAC allocations for agentic systems.",
+      "authoritative_source": "standard/permission_classes.md"
+    },
+    {
+      "id": "nizam-cross-repo-governance",
+      "summary": "The executable truth layer, the cross-repo query protocol, and the seven-tier architecture model for ecosystem-scale governance.",
+      "authoritative_source": "standard/cross_repo_governance.md"
+    },
+    {
+      "id": "anti-hallucination-constraints",
+      "summary": "The universal AH-1 through AH-4 constraints binding every agent action, independent of protocol or task.",
+      "authoritative_source": "standard/anti_hallucination.md"
+    },
+    {
+      "id": "nizam-planning-enforcer",
+      "summary": "The mandatory pre-code product_spec.md + feature_list.json artifact pair and the Dependency Enforcement Rule.",
+      "authoritative_source": "methodology/00_planning.md"
+    },
+    {
+      "id": "nizam-contract-first-execution",
+      "summary": "The two-loop state machine (pre-code contract alignment, post-code implementation repair) and the JSON Verdict Parse Rule that gates every stage.",
+      "authoritative_source": "methodology/01_execution.md"
+    },
+    {
+      "id": "nizam-adversarial-tdd",
+      "summary": "Evaluator independence, false-pass and false-fail hunting patterns, and the negative-testing requirement.",
+      "authoritative_source": "methodology/02_adversarial_tdd.md"
+    },
+    {
+      "id": "nizam-circuit-breaker",
+      "summary": "The single authoritative 3-strike attempt limit (DD-2) embedded by every repeatable execution loop.",
+      "authoritative_source": "methodology/03_circuit_breaker.md"
+    },
+    {
+      "id": "nizam-tool-driven-state",
+      "summary": "Query-not-bulk-read discipline (DD-1) via the root index, and evidence externalisation to .agent/evidence/ (DD-3).",
+      "authoritative_source": "methodology/04_tool_driven_state.md"
+    },
+    {
+      "id": "nizam-eval-and-trace",
+      "summary": "The verification hierarchy, trace capture requirements, and role-specific eval suites that guarantee quality as models and prompts change.",
+      "authoritative_source": "methodology/05_eval_and_trace.md"
+    },
+    {
+      "id": "nizam-release-train",
+      "summary": "Semantic-version git-tag release cuts, changelog discipline, and the consumer upgrade path via re-bootstrap.",
+      "authoritative_source": "methodology/06_release_train.md"
+    },
+    {
+      "id": "nizam-eval-gated-promotion",
+      "summary": "Treats model and prompt changes as code changes, routing them through the contract-first execution loop and blocking promotion until role-specific evals pass.",
+      "authoritative_source": "methodology/07_eval_gated_promotion.md"
+    },
+    {
+      "id": "nizam-cross-repo-dependency-gate",
+      "summary": "How the Planner updates the ecosystem dependency graph and blocks execution until upstream contract deltas are reviewed.",
+      "authoritative_source": "methodology/08_cross_repo_dependency_gate.md"
+    },
+    {
+      "id": "nizam-review-gate-flake-management",
+      "summary": "Operational doctrine for infrastructure failures of a convergent review gate: fail-closed principles, the open flake-class taxonomy, a bounded retry ladder with class-exception duties, protected-repository rules, telemetry, evidence duties, and flake-rate targets.",
+      "authoritative_source": "methodology/09_review_gate_flake_management.md"
+    },
+    {
+      "id": "nizam-governance-skill-manifest",
+      "summary": "The machine-readable capability manifest for the single unified, runtime-agnostic skill payload (DD-4).",
+      "authoritative_source": "tools/skill.json"
+    },
+    {
+      "id": "nizam-tools-skill",
+      "summary": "The single skill-instructions payload any agent runtime loads to plan, execute, gate, and durably record contract-first work.",
+      "authoritative_source": "tools/SKILL.md"
+    },
+    {
+      "id": "nizam-tools-interface",
+      "summary": "The runtime-adapter contract mapping the framework's abstract operations onto any runtime's native tool primitives.",
+      "authoritative_source": "tools/interface.md"
+    },
+    {
+      "id": "nizam-compliance-validator",
+      "summary": "The repo-local NDS compliance validator (checks C1-C16): frontmatter schema + format, untagged-fence sweep, NIZAM.json index integrity, branding/endpoint leakage, bootstrap.sh sanity, module-README presence, version-bump-vs-changelog (NDS Sec 7), repo-wide path resolution, single-source-of-truth consistency, dogfood schema validation of the .agent/ audit artifacts against the shipped schemas, ecosystem schema-family fixture validation, skill-index integrity (tools/skill.json entry_point + capability module pointers resolve; NDEBT-007 fix), SHA-pinned-Actions enforcement over .github/workflows (C14), the five capability-profile to AGF-role correspondence (C15), and the feature-list lifecycle invariant over .agent/feature_list*.json -- complete implies an approved contract, a QA verdict, and evidence on disk (C16).",
+      "authoritative_source": "tools/validate.sh"
+    },
+    {
+      "id": "nizam-ecosystem-bootstrap",
+      "summary": "The ecosystem cycle's entry stage: a consumer adopts the framework from a pinned, immutable released tag, verifies the injected payload, and records its provenance pin before any later stage may run.",
+      "authoritative_source": "ecosystem/00_ecosystem_bootstrap.md"
+    },
+    {
+      "id": "nizam-ecosystem-preflight",
+      "summary": "The reusable clean-state preflight protocol gating entry into the ecosystem cycle, with its three-verdict vocabulary and operator-exception rule.",
+      "authoritative_source": "ecosystem/01_clean_state_preflight.md"
+    },
+    {
+      "id": "nizam-ecosystem-baseline",
+      "summary": "The reusable protocol for capturing a point-in-time, immutable baseline over framework, repository, dependency, CI, planning, and evidence references.",
+      "authoritative_source": "ecosystem/02_evidence_baseline.md"
+    },
+    {
+      "id": "nizam-ecosystem-audit",
+      "summary": "The evidence-first engineering audit protocol: evidence tiers, the ten-state maturity model, and finding confidence, excluding commercial readiness from generic engineering scoring.",
+      "authoritative_source": "ecosystem/03_engineering_audit.md"
+    },
+    {
+      "id": "nizam-ecosystem-dependency-reconciliation",
+      "summary": "The Plan-stage protocol turning approved audit findings plus the ecosystem-level membership-run aggregate into typed, dependency-ordered cross-repository work packets under the topological-order invariant; gated by H-PLANNING-AUTHORITY.",
+      "authoritative_source": "ecosystem/04_dependency_reconciliation.md"
+    },
+    {
+      "id": "nizam-ecosystem-release-train-coordination",
+      "summary": "The Promote-stage protocol admitting an authorized reconciliation plan's work packets into a cross-repository release train under the trace-to-plan invariant, recording per-repository train membership; gated by H-TRAIN-ENTRY, record-but-never-self-execute.",
+      "authoritative_source": "ecosystem/05_release_train_coordination.md"
+    },
+    {
+      "id": "nizam-ecosystem-progress-comparison",
+      "summary": "The protocol for comparing two approved baselines or audits, classifying new/resolved/reopened/persisting/stale findings with every score movement traceable to evidence.",
+      "authoritative_source": "ecosystem/07_progress_comparison.md"
+    },
+    {
+      "id": "nizam-ecosystem-simplification-review",
+      "summary": "The Repeat-stage protocol: a recurring, evidence-first simplification review over the ecosystem's accumulated governance surface that records consolidation candidates with evidence and never applies one automatically; an actual consolidation runs only under the operator gate H-CONSOLIDATION.",
+      "authoritative_source": "ecosystem/06_simplification_review.md"
+    },
+    {
+      "id": "nizam-ecosystem-ga-gate",
+      "summary": "The Promote-stage protocol for declaring general availability: evidence-gated preconditions, thresholds treated strictly as acceptance requirements, the gate ceremony, and the operator-only decision record under gate H-GA; the framework never auto-declares GA.",
+      "authoritative_source": "ecosystem/08_ga_gate.md"
+    },
+    {
+      "id": "nizam-definition-of-done",
+      "summary": "The canonical, layered Definition of Done aggregating the framework's eight done-layers (Step, Handoff, Gate, Feature, Plan, Merge, Release, Ecosystem) by citing each layer's existing authority; Feature-Done is mechanized by check C16, Merge/Release-Done by the phase-013 feature-097 release close-out gate.",
+      "authoritative_source": "standard/definition_of_done.md"
+    },
+    {
+      "id": "nizam-convergent-code-review",
+      "summary": "Prior-ledger-first automated review using exactly three observation-only trials, deterministic semantic fingerprints and lifecycle, fail-closed carrying, human-authorized suppression, and content-addressed replay.",
+      "authoritative_source": "standard/convergent_code_review.md"
+    }
+  ],
+  "schemas": [
+    "schema/capability_profile.schema.json",
+    "schema/debt.schema.json",
+    "schema/frontmatter.schema.json",
+    "schema/manifest.schema.json",
+    "schema/phase.schema.json",
+    "schema/feature_list.schema.json",
+    "schema/contract.schema.json",
+    "schema/contract_review.schema.json",
+    "schema/qa_verdict.schema.json",
+    "schema/run_state.schema.json",
+    "schema/work-packet.schema.json",
+    "schema/preflight_verdict.schema.json",
+    "schema/ecosystem_baseline.schema.json",
+    "schema/engineering_finding.schema.json",
+    "schema/audit_delta.schema.json",
+    "schema/ecosystem_membership.schema.json",
+    "schema/ecosystem_membership_result.schema.json",
+    "schema/reconciliation_plan.schema.json",
+    "schema/release_train_manifest.schema.json",
+    "schema/review_packet.schema.json",
+    "schema/review_trial.schema.json",
+    "schema/review_ledger.schema.json",
+    "schema/review_suppression.schema.json",
+    "schema/review_replay.schema.json"
+  ],
+  "templates": [
+    "templates/CONTEXT.md",
+    "templates/AGENTS.md",
+    "templates/DEBT.md",
+    "templates/ADR_TEMPLATE.md",
+    "templates/work-packet.template.json",
+    "templates/phase_template.yaml",
+    "templates/manifest.template.json",
+    "templates/README.md",
+    "templates/DoD.md",
+    "templates/convergent-review-prompt.md"
+  ],
+  "consumption_guidance": "Query this index first. Locate the module, capability, schema, or template path that matches the task at hand, then read only that one file. Do not bulk-read an entire governance directory (standard/, methodology/, templates/, schema/, tools/, or ecosystem/) for a single task; that is context exhaustion, the failure DD-1 remediates (see methodology/04_tool_driven_state.md). Use the 'capabilities' array to resolve a named concern to its single authoritative_source, the 'modules' array to find a module's key_documents, and the 'schemas'/'templates' arrays to resolve a machine-artifact path directly.",
+  "index_schema": {
+    "path": "registry/nizam-index.schema.json",
+    "description": "The JSON Schema (draft 2020-12) this document, NIZAM.json, must validate against."
+  },
+  "self_reference": {
+    "path": "NIZAM.json",
+    "description": "This file. NIZAM.json indexes itself so the root context router always appears in its own capability map."
+  }
+}

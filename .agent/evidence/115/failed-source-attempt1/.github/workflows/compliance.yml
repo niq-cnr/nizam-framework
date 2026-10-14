@@ -1,0 +1,143 @@
+name: compliance
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # fetch-depth: 0 is load-bearing, not hardening: tools/validate.sh's
+          # C8 check (NDS Sec 4 version-bump-vs-changelog) runs
+          # `git show HEAD:<path>` for every shipped-doc file and treats a
+          # failed lookup as "new file, skip comparison". GitHub Actions'
+          # default shallow checkout would leave HEAD's history/object graph
+          # incomplete on both the pull_request (merge-ref) and push (main)
+          # trigger contexts, so full history is required here.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+
+      - run: pip install jsonschema pyyaml
+
+      - run: bash tools/validate.sh
+
+  e2e_bootstrap:
+    runs-on: ubuntu-latest
+    steps:
+      # No fetch-depth override here (unlike the validate job): the harness's
+      # ephemeral tag is created locally on this checkout's own HEAD (a
+      # commit object present regardless of clone depth), and bootstrap.sh's
+      # own --depth 1 file:// self-clone from this checkout succeeds whether
+      # the checkout itself is shallow or full (empirically verified at
+      # contract-authoring time: a real shallow clone tagged on its own HEAD
+      # still clones successfully via --depth 1 file://). GitHub Actions' own
+      # default (a shallow, depth-1 checkout) applies.
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+
+      # jsonschema + pyyaml are required because, as of phase-006 feature 050,
+      # the harness's assert_payload_validate_cwd_independent runs
+      # `tools/validate.sh --payload` against the injected payload (proving
+      # NDEBT-012 / issue #18 is fixed), and validate.sh fails closed on a
+      # missing jsonschema/yaml module. Before F-050 the e2e exercised only
+      # bootstrap.sh (which needs neither), so this step is new to this job.
+      - run: pip install jsonschema pyyaml
+
+      - run: bash tools/e2e_bootstrap_test.sh
+
+  fixtures_self_test:
+    runs-on: ubuntu-latest
+    steps:
+      # No fetch-depth override: the self-test's vlib_version_increased case
+      # builds its OWN throwaway git repo (git init in a mktemp dir) rather
+      # than reading this checkout's history, so GitHub Actions' default
+      # shallow checkout is sufficient. The C13 substitution and every
+      # validate.sh --target invocation read only the working-tree fixtures.
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+
+      # tools/fixtures_self_test.sh (NDEBT-009, feature 052) drives
+      # tools/validate.sh --target, which fails closed without jsonschema/yaml.
+      - run: pip install jsonschema pyyaml
+
+
+      - name: Record maintenance checkout source identity
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, subprocess
+          from pathlib import Path
+          paths = ['tools/fixtures_self_test.sh', 'tools/test_convergent_review.py', 'tools/validate.sh', 'standard/AGF.md', 'templates/AGENTS.md', 'tools/README.md', '.github/scripts/test_c13_cleanup.py', '.github/scripts/test_sandbox_boundaries.py', '.github/workflows/compliance.yml']
+          print("MAINTENANCE_CHECKOUT_RECEIPT=" + json.dumps({"checkout_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(), "source_sha256": {p: hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in paths}}, sort_keys=True))
+          PY
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_c13_cleanup.py
+      - run: bash tools/fixtures_self_test.sh
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py
+
+  convergent_review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+      - run: pip install jsonschema pyyaml
+      - name: Enable unprivileged user namespaces where the kernel restricts them
+        run: |
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+      - name: Record maintenance checkout source identity
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, subprocess
+          from pathlib import Path
+          paths = ['tools/fixtures_self_test.sh', 'tools/test_convergent_review.py', 'tools/validate.sh', 'standard/AGF.md', 'templates/AGENTS.md', 'tools/README.md', '.github/scripts/test_c13_cleanup.py', '.github/scripts/test_sandbox_boundaries.py', '.github/workflows/compliance.yml']
+          print("MAINTENANCE_CHECKOUT_RECEIPT=" + json.dumps({"checkout_sha": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(), "source_sha256": {p: hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in paths}}, sort_keys=True))
+          PY
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+      - run: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py && bash tools/fixtures_self_test.sh
+
+  self_governance:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          # Exact fidelity reads blobs at the installed immutable release commit.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.x"
+      - run: pip install jsonschema pyyaml
+      - run: python3 .github/scripts/verify_self_governance.py
+      - run: python3 .github/scripts/test_self_governance.py
+      - run: bash .nizam/tools/validate.sh --payload

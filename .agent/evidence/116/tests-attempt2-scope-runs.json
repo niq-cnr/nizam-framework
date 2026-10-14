@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "actor": "/root/wa_test_author_116",
+  "baseline": "8f406a2e2d7065c602ff4efed51f10c8b6aaf69d",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-116 --base 3d81ff2af002b118e3747551f740848a9ffb3cd9",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/116/tests-attempt2-scope.txt",
+      "sha256": "0c0c160541d3214b3bd92645f5a9b8a139b5eb1f8931a5e6cadaa81f2fc482d4",
+      "passed": true
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-controls-116 --base 3d81ff2af002b118e3747551f740848a9ffb3cd9",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/116/tests-attempt2-scope-controls.txt",
+      "sha256": "45c5a6ab9dc850db06943ccf66338155321212d513f52a8b649a74623ff017ac",
+      "passed": true
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case accepted-entry",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "evidence": ".agent/evidence/116/tests-attempt2-unknown-future-case.txt",
+      "sha256": "dae3009388edf955af19bbbb843de52bdb13a7d3b2cf5b012a5eaca1b6565dd0",
+      "passed": true
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "evidence": ".agent/evidence/116/tests-attempt2-unknown-future-check.txt",
+      "sha256": "1e32e27fb700c4d1f072f2cb4db67a1b6e4fdd0aa741b641597bbe22fedd319a",
+      "passed": true
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-116",
+      "exit_code": 2,
+      "expected_exit": 2,
+      "evidence": ".agent/evidence/116/tests-attempt2-missing-scope-base.txt",
+      "sha256": "5ee39571b2da2f93b29286c2cc39f3945889e2e0d590d56d5635488a13c571c8",
+      "passed": true
+    }
+  ]
+}

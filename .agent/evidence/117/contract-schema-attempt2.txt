@@ -1,0 +1,9 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import json; from pathlib import Path; from jsonschema import Draft202012Validator; s=json.loads(Path('"'"'.nizam/schema/contract.schema.json'"'"').read_text()); c=json.loads(Path('"'"'.agent/contracts/117.json'"'"').read_text()); Draft202012Validator.check_schema(s); Draft202012Validator(s).validate(c); print('"'"'PASS: installed contract.schema.json validates feature117 proposed revision1'"'"')'
+REVISION: 5c45b99af1f308d41425b96bc0ec206e3dcabef2
+TREE: c533e9b32e45f40c26b422705d007a38ddb1f623
+STDOUT:
+PASS: installed contract.schema.json validates feature117 proposed revision1
+
+STDERR:
+
+EXIT: 0

@@ -1,0 +1,298 @@
+[
+  {
+    "label": "syntax",
+    "argv": [
+      "/usr/bin/python3",
+      "-c",
+      "import ast,pathlib,json; root=pathlib.Path('.'); paths=json.loads((root/'.agent/evidence/117/baseline-inputs.json').read_text())['paths']; [ast.parse((root/p).read_bytes(),filename=p) for p in paths if p.endswith('.py')]; print('PASS frozen Python syntax')"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c import ast,pathlib,json; root=pathlib.Path('.'); paths=json.loads((root/'.agent/evidence/117/baseline-inputs.json').read_text())['paths']; [ast.parse((root/p).read_bytes(),filename=p) for p in paths if p.endswith('.py')]; print('PASS frozen Python syntax')",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-syntax.txt",
+    "sha256": "faa7e83057587b7e5eb427dc982375472fba15979cd707959c55244215e0cee3"
+  },
+  {
+    "label": "existing16",
+    "argv": [
+      "/usr/bin/python3",
+      "tools/test_workflow_assurance.py",
+      "--pre-entry-cases"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 tools/test_workflow_assurance.py --pre-entry-cases",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-existing16.txt",
+    "sha256": "98b1e4833f395f2450fb9270f544e61075a48a6f21deecc3d4ec6c587afdccf3"
+  },
+  {
+    "label": "scope",
+    "argv": [
+      "/usr/bin/python3",
+      "tools/test_workflow_assurance.py",
+      "--scope-117",
+      "--base",
+      "79af0276408ba03e80c709af127133e2b55e7bea"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 tools/test_workflow_assurance.py --scope-117 --base 79af0276408ba03e80c709af127133e2b55e7bea",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-scope.txt",
+    "sha256": "e85fe03645099a52615054b9755ee896fecf13776e92874b26b8f3969e798312"
+  },
+  {
+    "label": "accepted-entry-setup",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "setup",
+      "--case",
+      "accepted-entry",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/accepted-entry-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage setup --case accepted-entry --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/accepted-entry-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-accepted-entry-setup.txt",
+    "sha256": "3e3df43260247403175b72a1a3e04693f399e63490b13af9af0f73a45eae972f"
+  },
+  {
+    "label": "accepted-entry-positive",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "positive",
+      "--case",
+      "accepted-entry",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/accepted-entry-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage positive --case accepted-entry --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/accepted-entry-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-accepted-entry-positive.txt",
+    "sha256": "6db2faf34ffa696484abad219b217cc442790a5433544d617e6ee545a7b5e258"
+  },
+  {
+    "label": "accepted-entry-red",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "red",
+      "--case",
+      "accepted-entry",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/accepted-entry-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage red --case accepted-entry --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/accepted-entry-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 1,
+    "expected_exit": 1,
+    "path": ".agent/evidence/117/test-author-attempt3-accepted-entry-red.txt",
+    "sha256": "d5cc9f7e3c9b12d30664ffd895710137560141052a6850d51df99010a571b57a"
+  },
+  {
+    "label": "reject-foreign-repo-setup",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "setup",
+      "--case",
+      "reject-foreign-repo",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/reject-foreign-repo-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage setup --case reject-foreign-repo --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/reject-foreign-repo-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-reject-foreign-repo-setup.txt",
+    "sha256": "40b4ea0a8881c634434c38b319658e45a4af4b64e1bb8bba31c2e8e0028a554f"
+  },
+  {
+    "label": "reject-foreign-repo-positive",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "positive",
+      "--case",
+      "reject-foreign-repo",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/reject-foreign-repo-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage positive --case reject-foreign-repo --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/reject-foreign-repo-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-reject-foreign-repo-positive.txt",
+    "sha256": "90663cf091a3a411ebed32b9538fa7a850553cfe0b91d6e846ee049f01367a55"
+  },
+  {
+    "label": "reject-foreign-repo-red",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "red",
+      "--case",
+      "reject-foreign-repo",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/reject-foreign-repo-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage red --case reject-foreign-repo --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/reject-foreign-repo-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 1,
+    "expected_exit": 1,
+    "path": ".agent/evidence/117/test-author-attempt3-reject-foreign-repo-red.txt",
+    "sha256": "d21c5e13832256cd1316cf33cd72eb4931bf4cf175c0498030a264b19cd10532"
+  },
+  {
+    "label": "reject-stale-pin-setup",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "setup",
+      "--case",
+      "reject-stale-pin",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/reject-stale-pin-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage setup --case reject-stale-pin --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/reject-stale-pin-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-reject-stale-pin-setup.txt",
+    "sha256": "f2d55bfe3669f5d20bbfb723b34dea3d8adff871a817e4df8011649ee62fe8a1"
+  },
+  {
+    "label": "reject-stale-pin-positive",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "positive",
+      "--case",
+      "reject-stale-pin",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/reject-stale-pin-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage positive --case reject-stale-pin --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/reject-stale-pin-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-reject-stale-pin-positive.txt",
+    "sha256": "47e135baf6632640dbca5fc0e20b739c8567b67cbb97b88cfa8dda23ab39a9c6"
+  },
+  {
+    "label": "reject-stale-pin-red",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "red",
+      "--case",
+      "reject-stale-pin",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/reject-stale-pin-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage red --case reject-stale-pin --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/reject-stale-pin-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 1,
+    "expected_exit": 1,
+    "path": ".agent/evidence/117/test-author-attempt3-reject-stale-pin-red.txt",
+    "sha256": "cd82cb2a3a8a79c4bd74ef02ff114eb3ac125b8e76a4b7d6918c9861bd460582"
+  },
+  {
+    "label": "reject-role-write-setup",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "setup",
+      "--case",
+      "reject-role-write",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/reject-role-write-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage setup --case reject-role-write --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/reject-role-write-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-reject-role-write-setup.txt",
+    "sha256": "2cda21e49f10aec93961972bec70499fb2b024d9fc2ff27c13af5ae7f5ff768c"
+  },
+  {
+    "label": "reject-role-write-positive",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "positive",
+      "--case",
+      "reject-role-write",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/reject-role-write-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage positive --case reject-role-write --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/reject-role-write-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 0,
+    "expected_exit": 0,
+    "path": ".agent/evidence/117/test-author-attempt3-reject-role-write-positive.txt",
+    "sha256": "8113b602ecfc5128f127e88585b2027d10cfb5e21fb521d0c4313f6cbe59d59d"
+  },
+  {
+    "label": "reject-role-write-red",
+    "argv": [
+      "/usr/bin/python3",
+      ".agent/evidence/117/baseline-driver.py",
+      "--stage",
+      "red",
+      "--case",
+      "reject-role-write",
+      "--baseline",
+      "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+      "--operation",
+      ".agent/evidence/117/reject-role-write-operation.json"
+    ],
+    "command": "PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 .agent/evidence/117/baseline-driver.py --stage red --case reject-role-write --baseline 3881400fc4715b1ed3d5b7c70912368ed03f6d2a --operation .agent/evidence/117/reject-role-write-operation.json",
+    "revision": "3881400fc4715b1ed3d5b7c70912368ed03f6d2a",
+    "exit_code": 1,
+    "expected_exit": 1,
+    "path": ".agent/evidence/117/test-author-attempt3-reject-role-write-red.txt",
+    "sha256": "86739ab7004ce7cec2ee5cbc78aa78fbd3f68d1858c22fa99383f55a29814534"
+  }
+]

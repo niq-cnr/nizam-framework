@@ -1,0 +1,7 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c import ast,pathlib,json; root=pathlib.Path('.'); paths=json.loads((root/'.agent/evidence/117/baseline-inputs.json').read_text())['paths']; [ast.parse((root/p).read_bytes(),filename=p) for p in paths if p.endswith('.py')]; print('PASS frozen Python syntax')
+REVISION: 13d2e1b4f5bc42f80bca0b6cb571d171e4003dcd
+EXIT: 0
+STDOUT:
+PASS frozen Python syntax
+
+STDERR:

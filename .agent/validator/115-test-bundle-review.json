@@ -1,0 +1,57 @@
+{
+  "review": "independent-acceptance-bundle",
+  "feature": "115",
+  "contract_id": "115",
+  "revision_reviewed": 0,
+  "attempt": 1,
+  "actor": "/root/wa_validator",
+  "author": "/root/wa_test_author",
+  "developer": "/root/wa_generator",
+  "reviewed_revision": "a293146a1a7ef87666bd40eb83f35a40235eb8f4",
+  "input_sha256": {
+    "tools/test_workflow_assurance.py": "dc486c60329cac3a91a43e5b716ce284e2098c8d09c1d9b523ad7408dd0bb5f1",
+    ".agent/evidence/115/naive-baseline-attempt3.py": "4f3236d58121e0c4f1921d5a60ac42ecf6f85ecdc38bf99d6433d3f269a577f8",
+    ".agent/evidence/115/api-interface.json": "ab80ec53b6fe2a8fa2ac979717c98bb486b8c6cf64fd122da008befc0153d55a",
+    ".agent/evidence/115/acceptance-author-handoff-attempt3.json": "a08f30b74c43f64891217d0a007ef23bd0bfa162838c8b4c804354a46ed45185",
+    ".agent/evidence/115/acceptance-selfcheck-attempt3.py": "789459c64d89b43a382c1b96eba6908820c04c1f4c04509d48d11e6d255f471a",
+    ".agent/contracts/115.json": "d88f95a301a85fbe5d471c256e26e524f36459103e2809b8a2a28e281696977d",
+    ".agent/product_spec_017.md": "04e9264268db57d8c8c69a5aff7ecb4f6d6c0b836e5a74e016f31329d9fde68b",
+    ".agent/feature_list_017.json": "b6d0e00488049792066dd526f806388fe8914c5451caa8154019fa309dffee66",
+    "docs/nips/NIP-0004-workflow-assurance.md": "85bd92d1da007858c3503692605f29ad6e5b736f7f7584781ab3210a4fa73072",
+    ".agent/evidence/115/bundle-review-driver-attempt1.py": "79e7d8d0fcc23cc6ffcd41197ac4c6a9e26df90bada1c91a9f9b5be0c1b224f4"
+  },
+  "evidence": [
+    ".agent/evidence/115/bundle-review-attempt1-raw.txt",
+    ".agent/evidence/115/bundle-review-selfcheck-attempt1.txt",
+    ".agent/evidence/115/bundle-review-controls-attempt1.txt",
+    ".agent/evidence/115/bundle-review-scope-spoof-attempt1.txt"
+  ],
+  "issues": [
+    {
+      "verification_index": 15,
+      "criterion": "Contracted scope and feature115-only derived state",
+      "evidence": ".agent/evidence/115/bundle-review-scope-spoof-attempt1.txt",
+      "severity": "high",
+      "required_fix": "Scope guard must reject active_contract_id116 while current_feature115 and only115 contract is approved; admit115 or null only when consistent with the authorized feature lifecycle. Repair requires new independently reviewed test bytes under renewed operator authority because author attempt3 is exhausted."
+    },
+    {
+      "verification_index": 15,
+      "criterion": "Preserve pending foundation closure and in-progress canonical phase017",
+      "evidence": ".agent/evidence/115/bundle-review-scope-spoof-attempt1.txt",
+      "severity": "high",
+      "required_fix": "Scope guard must reject whole-run status complete while canonical phase017/115 are IN_PROGRESS. Feature118 owns phase closure; derive run state consistently from canonical lifecycle. Repair requires renewed operator authority before any fourth author attempt."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": [
+    "Independent replay confirms all eleven intended policy reds plus valid API/CLI fixture positives and five original scope negatives. Independent controlled correct-record case, contrasting invalid-record case and ignored-untracked scope adversary pass. Scope false passes remain despite these controls.",
+    "Receipt-name-only execution shim preserves original author driver/raw. Generated selfcheck replica retains a legacy selfcheck_path label; actual executed shim path and hash are explicitly bound in this verdict and command raw. Replica is not an authoritative author handoff.",
+    "No product source exists; no Source/test bytes/contract/lifecycle repaired. Author bundle attempt3 remains frozen; further repair needs circuit-breaker escalation."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Reject sealed bundle: two independently demonstrated scope false passes permit unauthorized contract116 and premature whole-run completion. Implementation remains forbidden."
+  },
+  "reviewed_at": "2026-10-13T05:15:18.562898+00:00"
+}

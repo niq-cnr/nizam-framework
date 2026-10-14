@@ -1,0 +1,33 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 tools/test_workflow_assurance.py --scope-controls-117 --base 79af0276408ba03e80c709af127133e2b55e7bea
+REVISION: e4250cca92bfb2a9bc408509b408852337c2b83d
+EXIT: 0
+STDOUT:
+PASS scope-controls117 actual active117 approved snapshot
+PASS scope-controls117 owned append/counter/estimate positive
+PASS scope-controls117 typed rejection ['active_contract_id']
+PASS scope-controls117 typed rejection ['status']
+PASS scope-controls117 typed rejection ['history', 331, 'ga_declared']
+PASS scope-controls117 typed rejection ['history', 331, 'workflow_run']
+PASS scope-controls117 typed rejection ['scope_budget', 'per_feature', 0, 'actual']
+PASS scope-controls117 typed rejection ['scope_budget', 'per_feature', 1, 'actual']
+PASS scope-controls117 typed rejection ['circuit_breaker', '000-contract', 'attempts']
+PASS scope-controls117 typed rejection ['circuit_breaker', '117-contract-review', 'attempts']
+PASS scope-controls117 typed rejection ['phase_015_scope_budget_final', 'total_lines_changed']
+PASS scope-controls117 typed rejection ['scope_budget', 'estimated_current_feature_lines']
+PASS scope-controls117 protected .agent/evidence/115/api-interface.json
+PASS scope-controls117 protected .agent/evidence/116/api-interface.json
+PASS scope-controls117 protected .agent/evidence/117/api-interface.json
+PASS scope-controls117 protected .nizam/tools/SKILL.md
+PASS scope-controls117 protected docs/planning/DEBT.md
+PASS scope-controls117 unknown and ignored paths
+PASS scope-controls117 staged unknown and symlink
+PASS scope-controls117 premature list completion
+PASS scope-controls117 PRIVATE completion parser positive; public rejects mock receipts
+PASS scope-controls117 PRIVATE typed receipt reject ['checks_captured']
+PASS scope-controls117 PRIVATE typed receipt reject ['checks_run']
+PASS scope-controls117 PRIVATE typed receipt reject ['sealed_dependencies_sha256', '.agent/evidence/117/scope-guard.py']
+PASS scope-controls117 PRIVATE typed receipt reject ['source_sha256', 'tools/workflow_assurance.py']
+PASS scope-controls117 PRIVATE typed receipt reject ['scope_budget', 'per_feature', 2, 'actual']
+PASS scope-controls117 PRIVATE missing capture rejects, restored positive
+
+STDERR:

@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "feature_id": "116",
+  "product": "tools/workflow_assurance.py",
+  "api": "verify_acceptance_bundle(repo, bundle, independent_review) returns True only after all observations validate; raises existing AssuranceError otherwise.",
+  "cli": "bundle --repo ROOT --bundle FILE --review FILE; strict JSON; exit0 only after validation, otherwise diagnostic/nonzero with no PASS. Reuse existing read-only CLI and strict parsing helpers.",
+  "bundle_keys": [
+    "schema_version",
+    "feature_id",
+    "baseline",
+    "inputs",
+    "environment",
+    "roles",
+    "required_cases",
+    "baseline_evidence",
+    "seal_sha256"
+  ],
+  "shape": {
+    "schema_version": "Exact integer1 (bool forbidden).",
+    "feature_id": "Nonempty string; this contract tests116; no external scope/auth claim.",
+    "baseline": "Closed object commit/tree full40lowerhex. Actual commit/tree Git objects must match; no ambientHEAD substitution. This baseline freezes independent tests and source obligations before implementation, not the later product candidate.",
+    "inputs": "Nonempty sorted list of closed {kind,path,sha256,executable} records. Kinds test,obligation,interface must all occur. Portable relative unique regular files with no symlink components; lowercaseSHA256 and exactbool executable. Actual immutable baseline Git blob/mode and current bytes must both match. Obligation input is a separately frozen snapshot of approved116 obligations (scope/verification/API/budgets/non-goals) in E116, NOT mutable canonical contract/lifecycle/QA bytes. Snapshot reviewer checks against actual approved contract.",
+    "environment": "Exact observed115-compatible {runtime:{implementation,version,system,machine},variables:{NAME:VALUE}} object, string values. Verify runtime via platform and variables via actual os.environ; missing/drift invalidates. No caller-provided digest authority.",
+    "roles": "Closed object test_author/developer/acceptance_reviewer. Each exact {agent_id,session_id}, nonempty strings; every agent_id and every session_id must be pairwise distinct. These are local recorded identities, not cryptographic authentication.",
+    "required_cases": "Nonempty unique nonempty strings in canonical sorted order; independent pre-code/bundle reviewer confirms completeness against frozen obligations.",
+    "baseline_evidence": "Exactly one case row for each required_case (no duplicates/unknown/missing). Row keys case,setup,red; each proof has exact path,sha256,command,revision,diagnostic. File is regular safe relative path; actual bytes must match sealedsha. command/diagnostic nonempty strings; revision must equal immutable baseline.commit. Setup and red paths distinct and no alias across case rows. Proof files are outputs sealed by their captured hash, not inputs to their own hash nor required to preexist in assessed baseline Git tree.",
+    "seal_sha256": "Exact lowercase SHA256 of existing canonical(bundle without seal_sha256). Computed seal binds EVERY input, role, case and evidence field. Separate reviewer record binds same seal; changing bundle/bytes/environment requires genuinely new reviewed bundle/red evidence before implementation resumes."
+  },
+  "proof_rules": [
+    "Each external proof has exactly one COMMAND, REVISION and EXIT header; command/revision must match the case row. Parse actual recorded exit, not a caller assertion. Setup EXIT0 and its exact diagnostic must occur in actual STDOUT; setup exercises importable existing115 API/callable test harness and successful CLI setup before the intended red.",
+    "Red EXIT1 and the exact nonempty expected diagnostic must occur as an actual POLICY_ASSERTION line in STDOUT or STDERR after STDOUT/STDERR headers. Diagnostic includes its case name. Missing evidence, positive exit, generic exception, unrelated assertion, transport/shell127, ImportError/ModuleNotFoundError/FileNotFoundError or missing-callable setup failure cannot qualify.",
+    "An unimplemented116 policy may be reported as a deliberate named assertion only after actual baseline module/115 API and test harness are importable/callable and setup succeeds; no raw AttributeError or failed import is a substitute. Independent bundle review personally replays each intended baseline failure."
+  ],
+  "review_keys": [
+    "review",
+    "feature",
+    "actor",
+    "reviewer_session_id",
+    "seal_sha256",
+    "issues",
+    "missing_acceptance_coverage",
+    "unsupported_claims",
+    "final_verdict"
+  ],
+  "review_rules": "Exact closed JSON object. review=validator-test-bundle-review, feature=bundle.feature_id; actor/session equal recorded acceptance_reviewer. final_verdict exact {approved:true,summary:nonemptystring}; all three blocker arrays exactly[]. seal_sha256 equals recomputed seal. Independent review output is separate and never part of sealed inputs, its own hash or earlier red proof.",
+  "candidate_boundary": "Do NOT call115 assess_repository on current implementation against pre-code baseline. Current SourceC identity is separately frozen from actual Git commit/tree plus product/test/API/independent scope guard current hashes and shared by actual ModeB/freshQA/capture. Mutable canonical contract/coordination outputs remain outside bundle inputs. Immutable baseline/source obligations remain unchanged across truthful later completion.",
+  "runner": "Independent Evaluator adds five named cases and --base-cases (runs EXACT existing11), --scope-116 --base COMMIT and --scope-controls-116 --base COMMIT. Default runs currently available16cases. Existing115 --scope interfaces retain historical implementation but are NOT rerun as current116 proof. Unknown/future case/check/flag fails nonzero. No permanent fixtures directories.",
+  "ownership": "Independent author owns actual test/scope bytes; separate reviewer binds/freeze-reviews those bytes and personally observes valid setup/intended reds before developer source. Source developer may not edit sealed tests/guard/API/snapshots/evidence. Changed bundle requires renewed distinct review. Only Root owns lifecycle/counters/budget/phase/list/manifest/current projections."
+}

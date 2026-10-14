@@ -1,0 +1,62 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c 'import json,hashlib,subprocess,ast
+from pathlib import Path
+from jsonschema import Draft202012Validator
+read=lambda p:json.loads(Path(p).read_text())
+sha=lambda b:hashlib.sha256(b).hexdigest()
+blob=lambda r,p:subprocess.check_output(['"'"'git'"'"','"'"'show'"'"',r+'"'"':'"'"'+p])
+canonical=lambda v:json.dumps(v,sort_keys=True,separators=('"'"','"'"','"'"':'"'"'),allow_nan=False).encode()
+c=read('"'"'.agent/contracts/118.json'"'"');a=read('"'"'.agent/evidence/118/api-interface.json'"'"');p=read('"'"'.agent/evidence/118/producer-interface.json'"'"');h=read('"'"'.agent/evidence/118/contract-proposal-handoff-attempt3.json'"'"');policy=c['"'"'acceptance_successor_policy'"'"'];prov=read(policy['"'"'predecessor_ref'"'"'])
+for path,key in [('"'"'.agent/contracts/118.json'"'"','"'"'contract_sha256'"'"'),('"'"'.agent/evidence/118/api-interface.json'"'"','"'"'api_sha256'"'"'),('"'"'.agent/evidence/118/producer-interface.json'"'"','"'"'producer_sha256'"'"')]:
+ raw=Path(path).read_bytes();assert raw==blob(h['"'"'proposal_revision'"'"'],path) and sha(raw)==h[key];print(path,sha(raw))
+assert h['"'"'proposal_revision'"'"']=='"'"'7fd14f99367525caa2bf403a13bf0f3be798763c'"'"'
+assert h['"'"'contract_sha256'"'"']=='"'"'f1795d2d8335c2602ee483b6cf2e459acf0707db42b4889a03c4599e6cf59677'"'"'
+assert h['"'"'api_sha256'"'"']=='"'"'30d89712cc05f43807531e845961dac5fc1b90df3615931c3e02d9138ba79712'"'"'
+Draft202012Validator(read('"'"'.nizam/schema/contract.schema.json'"'"')).validate(c)
+assert policy==a['"'"'acceptance_successor_policy'"'"']==p['"'"'acceptance_successor_policy'"'"'];assert c['"'"'precode_gate_policy'"'"']==a['"'"'precode_gate_policy'"'"']==p['"'"'precode_gate_policy'"'"'];assert type(c['"'"'approvals'"'"']['"'"'revisions'"'"']) is int and c['"'"'approvals'"'"']['"'"'revisions'"'"']==2
+for path,row in prov['"'"'snapshots'"'"'].items():
+ assert Path(row['"'"'path'"'"']).read_bytes()==blob(row['"'"'revision'"'"'],path);assert sha(Path(row['"'"'path'"'"']).read_bytes())==row['"'"'sha256'"'"']
+bundle=json.loads(blob(prov['"'"'approved_overlay'"'"'],prov['"'"'bundle_ref'"'"']));assert sha(blob(prov['"'"'approved_overlay'"'"'],prov['"'"'bundle_ref'"'"']))==prov['"'"'bundle_sha256'"'"'];assert bundle['"'"'seal_sha256'"'"']==sha(canonical({k:v for k,v in bundle.items() if k!='"'"'seal_sha256'"'"'}))==policy['"'"'predecessor_pin'"'"']['"'"'seal_sha256'"'"']
+assert bundle['"'"'baseline'"'"']['"'"'commit'"'"']==policy['"'"'predecessor_pin'"'"']['"'"'baseline'"'"'];assert sha(blob(prov['"'"'approved_overlay'"'"'],prov['"'"'review_ref'"'"']))==prov['"'"'review_sha256'"'"']==policy['"'"'predecessor_pin'"'"']['"'"'review_sha256'"'"']
+for row in bundle['"'"'inputs'"'"']:
+ assert sha(blob(bundle['"'"'baseline'"'"']['"'"'commit'"'"'],row['"'"'path'"'"']))==row['"'"'sha256'"'"'];mode=subprocess.check_output(['"'"'git'"'"','"'"'ls-tree'"'"',bundle['"'"'baseline'"'"']['"'"'commit'"'"'],row['"'"'path'"'"']],text=True).split()[0];assert type(row['"'"'executable'"'"']) is bool and row['"'"'executable'"'"']==(mode=='"'"'100755'"'"')
+print('"'"'PASS exact revision2 proposal/schema and original30 GitB1 inputs/seal/review/proposal archives'"'"')
+preservation=read(prov['"'"'source_archive'"'"']);archive=Path(prov['"'"'source_archive'"'"']).parent/'"'"'candidate'"'"'
+for path,row in preservation['"'"'files'"'"'].items():
+ target=archive/path;assert sha(target.read_bytes())==row['"'"'sha256'"'"'];assert bool(target.stat().st_mode&0o111)==row['"'"'executable'"'"']
+assert sha(Path(prov['"'"'source_bundle'"'"']).read_bytes())==preservation['"'"'bundle_sha256'"'"'];assert not Path('"'"'.agent/evidence/118/source-candidate.json'"'"').exists() and not Path('"'"'.agent/evidence/118/prerequisite20.json'"'"').exists()
+print('"'"'PASS preserved40 failedSource1 archive bytes/modes and Git bundle; canonical Source/prerequisite absent'"'"')
+old=read('"'"'.agent/evidence/118/pre-revision2-contract.json'"'"')
+for key in ('"'"'verification'"'"','"'"'estimated_lines'"'"','"'"'budget_categories'"'"','"'"'phase_budget'"'"','"'"'dependency_features'"'"','"'"'execution_order'"'"','"'"'readiness_boundary'"'"','"'"'canonical_close'"'"','"'"'lifecycle_values'"'"','"'"'non_goals'"'"'):
+ assert c[key]==old[key],key
+oldapi=read('"'"'.agent/evidence/118/pre-revision2-api-interface.json'"'"')
+for key in oldapi:
+ if key not in ('"'"'precode_gate_policy'"'"','"'"'independent_bundle'"'"'):assert a[key]==oldapi[key],key
+oldprod=read('"'"'.agent/evidence/118/pre-revision2-producer-interface.json'"'"')
+for key in oldprod:
+ if key not in ('"'"'precode_gate_policy'"'"','"'"'no_cycles'"'"'):assert p[key]==oldprod[key],key
+replacements=policy['"'"'canonical_replacements'"'"'];assert [len(replacements[k]) for k in ('"'"'Generator_contract_proposal'"'"','"'"'Evaluator_test_author'"'"','"'"'Validator_bundle_reviewer'"'"')]==[3,6,1];flat=[x for v in replacements.values() for x in v];assert len(flat)==len(set(flat))==10;assert not any('"'"'*'"'"' in path for path in flat);assert '"'"'tools/test_workflow_assurance.py'"'"' not in flat and '"'"'tools/workflow_assurance.py'"'"' not in flat
+assert len(policy['"'"'stage_records'"'"'])==4 and len(set(policy['"'"'stage_records'"'"'].values()))==4
+print('"'"'PASS unchanged exact3commands/650/phasebudget/API behavior/producer receipt grammar; finite10 canonical replacements and4 create-only stage maps'"'"')
+# Evaluate the exact historical path expression without filesystem mutation.
+source=blob(bundle['"'"'baseline'"'"']['"'"'commit'"'"'],'"'"'.agent/evidence/118/foundation-fixtures.py'"'"').decode();tree=ast.parse(source);targets=[n.args[0] for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='"'"'symlink_to'"'"'];assert len(targets)==1
+expression=ast.Expression(body=targets[0]);ast.fix_missing_locations(expression)
+try:eval(compile(expression,'"'"'historical-frozen-symlink-expression'"'"','"'"'eval'"'"'),{'"'"'root'"'"':Path('"'"'/private-fixture'"'"'),'"'"'E'"'"':'"'"'.agent/evidence/118/'"'"'})
+except TypeError as exc:print('"'"'EXPECTED historical frozen path defect:'"'"',type(exc).__name__,str(exc))
+else:raise AssertionError('"'"'historical path expression did not reproduce TypeError'"'"')
+print('"'"'OBSERVATION: policy now requires actual complete filesystem branch and typed path construction before freeze and at distinct review; future execution not claimed'"'"')
+print('"'"'ORDER AUDIT: proposal outputs -> dual gates -> approved commit -> precode map; B2 input commit -> inputs map; replay proofs -> bundle commit -> bundle map; review commit -> review map; all four maps -> SourceC2 -> independent current20 -> unchanged remaining gates. Outputs are committed before maps; maps and own outputs excluded from sealed inputs. No future hash/self-seal edge.'"'"')
+'
+REVISION: fc54d5082c5aa5042e42b18719d4eeb4adf9f7ac
+EXIT: 0
+STDOUT:
+.agent/contracts/118.json f1795d2d8335c2602ee483b6cf2e459acf0707db42b4889a03c4599e6cf59677
+.agent/evidence/118/api-interface.json 30d89712cc05f43807531e845961dac5fc1b90df3615931c3e02d9138ba79712
+.agent/evidence/118/producer-interface.json c56f457297a9ae863147525574e9d94c1169a434c768e27ff992e5437a807c36
+PASS exact revision2 proposal/schema and original30 GitB1 inputs/seal/review/proposal archives
+PASS preserved40 failedSource1 archive bytes/modes and Git bundle; canonical Source/prerequisite absent
+PASS unchanged exact3commands/650/phasebudget/API behavior/producer receipt grammar; finite10 canonical replacements and4 create-only stage maps
+EXPECTED historical frozen path defect: TypeError unsupported operand type(s) for +: 'PosixPath' and 'str'
+OBSERVATION: policy now requires actual complete filesystem branch and typed path construction before freeze and at distinct review; future execution not claimed
+ORDER AUDIT: proposal outputs -> dual gates -> approved commit -> precode map; B2 input commit -> inputs map; replay proofs -> bundle commit -> bundle map; review commit -> review map; all four maps -> SourceC2 -> independent current20 -> unchanged remaining gates. Outputs are committed before maps; maps and own outputs excluded from sealed inputs. No future hash/self-seal edge.
+
+STDERR:
