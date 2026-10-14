@@ -13,6 +13,8 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   validation of operator decisions, prerequisites and pinned actual command
   captures, with idempotent transition proposals and explicit missing-proof
   recovery. Eleven acceptance cases extend the existing twenty-six.
+  Repository bindings use literal Git origin strings without alias normalization;
+  existing Root records require reviewed compatibility or migration before live use.
 
 - **Convergent AGF verdict (feature 119).** Added a pure, explicitly bound adapter
   that preserves blocking arrays and carried blocker/important findings, exposes
