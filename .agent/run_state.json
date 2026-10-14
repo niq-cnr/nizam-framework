@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T15:31:53.089523+00:00",
+  "updated_at": "2026-10-14T15:41:16.062138+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1155,6 +1155,14 @@
       "limit": 3
     },
     "120-main-ci-receipt": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-mode-a": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-contract-review": {
       "attempts": 1,
       "limit": 3
     }
@@ -5695,9 +5703,9 @@
   "scope_budget": {
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "total_lines_changed": 735,
-    "evidence_lines_total": 23084,
-    "excluded_lines_total": 416,
+    "total_lines_changed": 829,
+    "evidence_lines_total": 23184,
+    "excluded_lines_total": 463,
     "per_feature": [
       {
         "id": "119",
@@ -5724,16 +5732,16 @@
       {
         "id": "120",
         "estimated": 2750,
-        "actual": 13,
+        "actual": 107,
         "product_lines": 0,
         "source_lines": 0,
         "independent_test_lines": 0,
-        "process_overhead_lines": 13,
-        "evidence_lines": 76,
-        "excluded_lines": 35,
+        "process_overhead_lines": 107,
+        "evidence_lines": 176,
+        "excluded_lines": 82,
         "range": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6..WORKTREE",
-        "evidence": ".agent/evidence/120/scope-preparation.txt",
-        "measurement_status": "in_progress; replace this120row afterproposal/gates/capture, never append twice",
+        "evidence": ".agent/evidence/120/scope-precode1.txt",
+        "measurement_status": "in_progress precodeproposal; replace same120row",
         "baseline": {
           "prior_features": [
             "119"
@@ -5758,7 +5766,7 @@
     "phase_base_revision": "fcd0584146fd836df0080292cc2cf10180bb9f31",
     "authorization_revision": "51f4380",
     "phase_level_costs": "Incomingregistryreconciliation, registeredactivationplan/review, currentpreparation and attributedseparate rawplanning all chargedoncewithin119 wholebasefcd0584. No freeallowance orphase016rebaseline.",
-    "last_measured_at": "2026-10-14T15:30:20.441587+00:00",
+    "last_measured_at": "2026-10-14T15:41:16.062138+00:00",
     "feature120_measurement_base": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6"
   },
   "blocked_features": [],
