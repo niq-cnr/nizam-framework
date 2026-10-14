@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "126",
   "status": "in_progress",
-  "updated_at": "2026-10-14T10:23:05.395908+00:00",
+  "updated_at": "2026-10-14T10:33:15.945155+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -925,6 +925,10 @@
       "limit": 3
     },
     "126-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "126-capture": {
       "attempts": 1,
       "limit": 3
     }
@@ -5057,6 +5061,12 @@
       "event": "126-modeB2-approved-freshQA1",
       "detail": "126 ModeB2 approved strictgate37f2535; exactC3d965/new795test626+actualcapableCI9zero confirmed. Fresh independentQA1 allocated, finalcapture/completion pending.",
       "evidence": ".agent/evidence/126/qa-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T10:33:15.945155+00:00",
+      "event": "126-captured-complete",
+      "detail": "126 accepted/capturedcomplete after strictModeB2/freshQA9+ownspot/actualcapableCI9; scope2657+phase346=3003/7345. PR97finalheadchecks/merge pending;127notselected.",
+      "evidence": ".agent/evidence/126/evidence-capture.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5231,10 +5241,27 @@
   "scope_budget": {
     "original_estimate_lines": 5650,
     "ceiling_130pct": 7345,
-    "total_lines_changed": 346,
-    "evidence_lines_total": 3210,
-    "excluded_lines_total": 16,
-    "per_feature": [],
+    "total_lines_changed": 3003,
+    "evidence_lines_total": 15585,
+    "excluded_lines_total": 515,
+    "per_feature": [
+      {
+        "id": "126",
+        "estimated": 2900,
+        "actual": 2657,
+        "product_lines": 1653,
+        "process_overhead_lines": 1004,
+        "evidence_lines": 12375,
+        "excluded_lines": 499,
+        "ranges": [
+          "607ac75010b3668226f777986822adfb700eaf23..de7deee7831e8d3816f3f85985e8e56a44c7c006",
+          "1db8996d715afd6a6e70bf587819e29ff1c20080..WORKTREE"
+        ],
+        "evidence": ".agent/evidence/126/scope-measurement.txt",
+        "rolling_baseline": null,
+        "note": "Firstcompleted016feature; disjointprecode+implementation includesallC1/C2/C3, independentB3/ModeB2/freshQA/capableCI/Rootcapture/canonicalclosure once. Separatephaselevel346 retained; original5650/7345 unchanged, no017baseline or rebaseline."
+      }
+    ],
     "phase_level_items": [
       {
         "id": "phase016-preparation",
@@ -5269,7 +5296,7 @@
       "unclassified": "fail closed: listed, measure.py exits 3"
     },
     "phase_base_revision": "e619d284d36eaf6dfff54a9d001477b8d1722098",
-    "last_measured_at": "2026-10-14T08:50:51.502144+00:00",
+    "last_measured_at": "2026-10-14T10:33:15.945155+00:00",
     "phase_level_costs": "Current preparation is included once within original5650/7345; later feature126 range starts after preparation. No free comparative-program allowance or phase017 rewrite.",
     "feature126_measurement_segments": {
       "precode": "607ac75010b3668226f777986822adfb700eaf23..de7deee7831e8d3816f3f85985e8e56a44c7c006",
@@ -5530,7 +5557,7 @@
       }
     ]
   },
-  "last_action": "126 ModeB2 approved strictgate37f2535; exactC3d965/new795test626+actualcapableCI9zero confirmed. Fresh independentQA1 allocated, finalcapture/completion pending.",
+  "last_action": "126 accepted/capturedcomplete after strictModeB2/freshQA9+ownspot/actualcapableCI9; scope2657+phase346=3003/7345. PR97finalheadchecks/merge pending;127notselected.",
   "completed_contract_ids": [
     "099",
     "103",
