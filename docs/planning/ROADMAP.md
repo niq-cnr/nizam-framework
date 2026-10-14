@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.1
+version: 0.65.2
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.2"
+    date: "2026-10-14"
+    summary: "Record captured merged126 and selected127 contract preparation; preserve historical snapshots and budgets."
   - version: "0.65.1"
     date: "2026-10-14"
     summary: "Record active016 and approved126 contract with current receipts; preserve older dated projections."
@@ -209,6 +212,20 @@ change_log:
     summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
 ---
 # Forward Roadmap
+
+## Current position — captured 126 and selected 127, 2026-10-14
+
+Feature 126 is [captured complete](../../.agent/evidence/126/evidence-capture.json) and [merged as PR 97](../../.agent/evidence/126/pr97-merge-receipt.json) at `c2b95a1`, after all six final-head checks passed.
+[Main CI 38551059606](../../.agent/evidence/126/pr97-main-ci.json) passed all five jobs on that merge.
+Exact C3 source `d965c2c` and the sealed 795-line test (`SHA-256 626ff419…`) passed [fresh independent QA: nine checks plus its own adversarial spot check](../../.agent/qa/126.json), [nine actual hosted CI commands](../../.agent/evidence/126/ci-c3-receipt.json), and Root capture.
+Acceptance covers partial stub cases **1/2/3/8 (policy)/9/13** only; full adapter and SBCL acceptance remain pending.
+[Feature 127](../../.agent/evidence/127/selection.json) is selected for timeout, busy/reattach, source-bound replay and cancellation confirmation; its current gate/status follows [Root state](../../.agent/run_state.json); feature 128 remains pending.
+Follow [phase 016](phase_016.yaml), its [feature list](../../.agent/feature_list_016.json), and [Root state](../../.agent/run_state.json); both independent pre-code gates and Root approval precede 127 implementation.
+The recorded phase016 usage is **3,003/7,345**, comprising feature126 **2,657** plus phase-level **346**, against the unchanged original **5,650**; this refresh counts once within feature127 from `c2b95a1`, with no extra allowance or rebaseline.
+Phase017's **5,203/7,020** snapshot and installed **v1.5.0** remain unchanged. The DAG stays **017 → 016 → 018 → 020 → 019**; 018's controller prerequisite is **127 only**.
+The [balanced comparison proposal](agentic-excellence.md) remains unmeasured and makes no superiority claim.
+
+All earlier sections below, including older “Current position” and “Current Position” headings, are historical snapshots; their bodies and release-disposition facts are preserved. The canonical records above govern current progression.
 
 ## Current position — phase 016, 2026-10-14
 
