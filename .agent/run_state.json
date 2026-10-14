@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "127",
   "status": "in_progress",
-  "updated_at": "2026-10-14T12:12:55.244375+00:00",
+  "updated_at": "2026-10-14T12:15:13.519335+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -986,7 +986,7 @@
       "limit": 3
     },
     "127-evidence-capture": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     }
   },
@@ -5268,6 +5268,12 @@
       "event": "127-capture1-artifact-transport-gap",
       "detail": "Actual capture1 exit1 found one manifest-referenced raw log omitted by Git ignore. Original QA bytes match digest; QA author must publish exact log before isolated capture2. All behavioral results unchanged; feature remains in_progress.",
       "evidence": ".agent/evidence/127/capture1-failure.json"
+    },
+    {
+      "at": "2026-10-14T12:15:13.519335+00:00",
+      "event": "127-capture2-isolated-artifact-recovery",
+      "detail": "Original ignored log published unchanged by QA author; all163manifest paths verified in Git. Source/QA1 stay unchanged. Isolated Rootcapture2 repeats capture gate preserving actualcapture1failure.",
+      "evidence": ".agent/evidence/127/capture2-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5761,7 +5767,7 @@
       }
     ]
   },
-  "last_action": "127 capture1 rejected missing ignored QA raw log; bounded artifact publication recovery",
+  "last_action": "127 exact raw QA log publication repaired; isolated evidence capture2",
   "completed_contract_ids": [
     "099",
     "103",
