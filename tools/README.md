@@ -90,7 +90,7 @@ and lease checks, and one outstanding operation. This coordinates declared
 identities; it does not authenticate callers or prove source/image equivalence.
 
 ```bash
-python3 tools/runtime_session.py open-session --root /absolute/private/state --request /absolute/open.json
+python3 tools/runtime_session.py open-session --root /absolute/private/state --request /absolute/request
 ```
 
 The other implemented actions are `submit-operation`, `poll-operation`,
