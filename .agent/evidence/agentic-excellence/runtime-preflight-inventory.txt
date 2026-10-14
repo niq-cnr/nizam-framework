@@ -1,0 +1,8 @@
+python3 -c 'import datetime,hashlib,json,pathlib,shutil,subprocess; p=pathlib.Path(shutil.which("codex")).resolve(); print("UTC",datetime.datetime.now(datetime.timezone.utc).isoformat()); print("REVISION",subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()); print("CODEX_EXECUTABLE",str(p)); print("CODEX_SHA256",hashlib.sha256(p.read_bytes()).hexdigest()); print("HELPERS",json.dumps({s:shutil.which(s) for s in ["unshare","bwrap","docker","podman","timeout","setsid","systemd-run"]},sort_keys=True)); print("No config, environment values, auth files or daemon information read.")'
+UTC 2026-10-14T14:12:35.919985+00:00
+REVISION 667ce42930ae76000b1b7ade047b7ad520104d35
+CODEX_EXECUTABLE /home/cnross/.codex/packages/standalone/releases/0.162.1-x86_64-unknown-linux-musl/bin/codex
+CODEX_SHA256 628e35487d888a28f0427fc37501da529dd3d81fcbad7a2c3421c1e8670d92e1
+HELPERS {"bwrap": "/usr/bin/bwrap", "docker": "/usr/bin/docker", "podman": null, "setsid": "/usr/bin/setsid", "systemd-run": "/usr/bin/systemd-run", "timeout": "/usr/bin/timeout", "unshare": "/usr/bin/unshare"}
+No config, environment values, auth files or daemon information read.
+EXIT:0

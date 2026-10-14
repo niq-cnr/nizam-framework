@@ -1,0 +1,165 @@
+{
+  "at": "2026-10-14T14:11:28.363364+00:00",
+  "revision": "667ce42930ae76000b1b7ade047b7ad520104d35",
+  "commands": [
+    {
+      "name": "version",
+      "argv": [
+        "codex",
+        "--version"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-version.txt"
+    },
+    {
+      "name": "help",
+      "argv": [
+        "codex",
+        "--help"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-help.txt"
+    },
+    {
+      "name": "exec-help",
+      "argv": [
+        "codex",
+        "exec",
+        "--help"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-exec-help.txt"
+    },
+    {
+      "name": "sandbox-help",
+      "argv": [
+        "codex",
+        "sandbox",
+        "--help"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-sandbox-help.txt"
+    },
+    {
+      "name": "inventory",
+      "argv": [
+        "python3",
+        "-c",
+        "import datetime,hashlib,json,pathlib,shutil,subprocess; p=pathlib.Path(shutil.which(\"codex\")).resolve(); print(\"UTC\",datetime.datetime.now(datetime.timezone.utc).isoformat()); print(\"REVISION\",subprocess.check_output([\"git\",\"rev-parse\",\"HEAD\"],text=True).strip()); print(\"CODEX_EXECUTABLE\",str(p)); print(\"CODEX_SHA256\",hashlib.sha256(p.read_bytes()).hexdigest()); print(\"HELPERS\",json.dumps({s:shutil.which(s) for s in [\"unshare\",\"bwrap\",\"docker\",\"podman\",\"timeout\",\"setsid\",\"systemd-run\"]},sort_keys=True)); print(\"No config, environment values, auth files or daemon information read.\")"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-inventory.txt"
+    },
+    {
+      "name": "unshare-help",
+      "argv": [
+        "unshare",
+        "--help"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-unshare-help.txt"
+    },
+    {
+      "name": "bwrap-help",
+      "argv": [
+        "bwrap",
+        "--help"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-bwrap-help.txt"
+    },
+    {
+      "name": "docker-version",
+      "argv": [
+        "docker",
+        "--version"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-docker-version.txt"
+    },
+    {
+      "name": "namespace-canary",
+      "argv": [
+        "unshare",
+        "--user",
+        "--map-root-user",
+        "--net",
+        "true"
+      ],
+      "actual_exit": 1,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-namespace-canary.txt"
+    },
+    {
+      "name": "timeout-help",
+      "argv": [
+        "timeout",
+        "--help"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-timeout-help.txt"
+    },
+    {
+      "name": "setsid-help",
+      "argv": [
+        "setsid",
+        "--help"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-setsid-help.txt"
+    },
+    {
+      "name": "codex-sandbox-canary",
+      "argv": [
+        "codex",
+        "sandbox",
+        "-c",
+        "sandbox_mode=\"read-only\"",
+        "-C",
+        ".",
+        "--",
+        "/usr/bin/true"
+      ],
+      "actual_exit": 2,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-codex-sandbox-canary.txt"
+    },
+    {
+      "name": "codex-profile-canary",
+      "argv": [
+        "codex",
+        "sandbox",
+        "--permission-profile",
+        ":read-only",
+        "-C",
+        ".",
+        "--",
+        "/usr/bin/true"
+      ],
+      "actual_exit": 1,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-codex-profile-canary.txt"
+    },
+    {
+      "name": "official-sources",
+      "argv": [
+        "python3",
+        "-c",
+        "import datetime,hashlib,json,urllib.request; print(\"UTC\",datetime.datetime.now(datetime.timezone.utc).isoformat()); urls=[\"https://learn.chatgpt.com/docs/non-interactive-mode.md\",\"https://learn.chatgpt.com/docs/config-file/config-reference.md\",\"https://learn.chatgpt.com/docs/build-skills.md\",\"https://learn.chatgpt.com/docs/permissions.md\",\"https://learn.chatgpt.com/docs/sandboxing.md\"]; rows=[(u,urllib.request.urlopen(u,timeout=15)) for u in urls]; docs=[(u,r.geturl(),r.status,r.read()) for u,r in rows]; [print(json.dumps({\"requested_url\":u,\"final_url\":v,\"http_status\":s,\"sha256\":hashlib.sha256(b).hexdigest(),\"bytes\":len(b),\"markers\":{k:k in b.decode() for k in [\"turn.completed\",\"input_tokens\",\"cached_input_tokens\",\"reasoning_output_tokens\",\"model_reasoning_effort\",\"agents.enabled\",\"skills.config\",\"token_budget\",\"seed\",\":read-only\",\":root\"]}},sort_keys=True)) for u,v,s,b in docs]"
+      ],
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-official-sources.txt"
+    },
+    {
+      "name": "timeout-canary",
+      "argv": [
+        "timeout",
+        "--signal=TERM",
+        "--kill-after=1s",
+        "0.1s",
+        "/bin/sleep",
+        "2"
+      ],
+      "actual_exit": 124,
+      "evidence": ".agent/evidence/agentic-excellence/runtime-preflight-timeout-canary.txt"
+    }
+  ],
+  "capture": "Each evidence TXT begins with exact invocation, includes actual stdout/stderr merged by subprocess.STDOUT, and ends with actual EXIT status. Expected negative canaries are preserved."
+}

@@ -1,0 +1,57 @@
+{
+  "role": "Planner",
+  "attempt": 1,
+  "input_revision": "b18d1e02a8c7dae97c64fdb143669b3042df5ee2",
+  "owned_root": "/home/cnross/.tmp/nizam-feature119-planner1",
+  "actual_exit": 0,
+  "checks": {
+    "docs/planning/ROADMAP.md": {
+      "historical_suffix_sha256": "8c2a7de8c83b5cb17c3096ba96192dbbee3331a2ad7df3f46bfd78a8f7b36123",
+      "historical_suffix_unchanged": true,
+      "current_overlay_count": 1
+    },
+    "docs/planning/HANDOVER.md": {
+      "historical_suffix_sha256": "36775b0e0b7add086cdc11499271f8abd455ccccbf41d374e83bf316d4d0ae19",
+      "historical_suffix_unchanged": true,
+      "current_overlay_count": 1
+    },
+    ".agent/product_spec_018.md": {
+      "architecture_requirements_and_dependencies_unchanged": true,
+      "acceptance_gate_protocol_unchanged": true,
+      "budget_table_unchanged": true,
+      "spec_version": "0.1.2",
+      "feature_list_metadata_sync_owner": "Root"
+    }
+  },
+  "evidence_verified": {
+    "capture_revision": "96ef3ff6318d2d17b3491317c88f1076792a7bad",
+    "qa": ".agent/qa/119.json",
+    "hosted": ".agent/evidence/119/ci2-receipt.json",
+    "closure": ".agent/evidence/119/closure.json"
+  },
+  "diff_numstat": "9\t6\t.agent/product_spec_018.md\n10\t6\tdocs/planning/HANDOVER.md\n10\t6\tdocs/planning/ROADMAP.md\n",
+  "counted_document_lines": 47,
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "actual_exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--numstat"
+      ],
+      "actual_exit": 0,
+      "stdout": "9\t6\t.agent/product_spec_018.md\n10\t6\tdocs/planning/HANDOVER.md\n10\t6\tdocs/planning/ROADMAP.md\n",
+      "stderr": ""
+    }
+  ],
+  "boundary": "Documentation-only current projection. No runtime or regression reruns. Root owns feature-list spec_version synchronization, final measurement and integration. Historical requirements, gates, budgets and installed payload preserved."
+}

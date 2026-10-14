@@ -447,10 +447,163 @@ def run_entry_case(name, api):
     helper.run_case(name, api)
 
 
+AGF_CASES = ('approve-empty', 'advisory-visible', 'block-carried', 'reject-issues',
+             'reject-missing-coverage', 'reject-unsupported')
+AGF_ARRAYS = ('issues', 'missing_acceptance_coverage', 'unsupported_claims')
+
+
+def agf_ledger(case='01-no-findings'):
+    cr = load_api(ROOT / 'tools/convergent_review.py')
+    directory = ROOT / 'tools/fixtures/convergent_review' / case
+    read = lambda name: json.loads((directory / name).read_text())
+    packet = read('packet.json'); trials = [read('trial-%d.json' % n) for n in (1, 2, 3)]
+    prior = read('prior-ledger.json') if (directory / 'prior-ledger.json').exists() else None
+    suppression = [read('suppression.json')] if (directory / 'suppression.json').exists() else []
+    digest = lambda value: sha(cr.canonical_json_bytes(value))
+    ledger = cr.converge_documents(packet, digest(packet), trials,
+        {n: digest(trials[n - 1]) for n in (1, 2, 3)}, prior,
+        digest(prior) if prior is not None else None, [(s, digest(s)) for s in suppression])
+    cr.validate_ledger(ledger)
+    if case == '05-prior-persisting':
+        require(all(t['observations'] == [] for t in trials), 'carried fixture omits all prior observations')
+        require(ledger['findings'][0]['lifecycle'] == 'persisting', 'real convergent unresolved carry')
+    return ledger
+
+
+def agf_severity(ledger, severity):
+    cr = load_api(ROOT / 'tools/convergent_review.py'); ledger = copy.deepcopy(ledger)
+    for finding in ledger['findings']:
+        finding['severity'] = severity
+        finding['fingerprint'] = agf_fingerprint(cr, ledger, finding)
+    ledger['findings'].sort(key=lambda f: f['fingerprint'])
+    ledger['counts'] = cr.calculate_counts(ledger['findings'])
+    ledger['verdict'] = 'request_changes' if any(ledger['counts']['active_' + s] for s in ('blocker', 'important')) else 'approve'
+    cr.validate_ledger(ledger)
+    return ledger
+
+
+def agf_fingerprint(cr, ledger, finding):
+    return cr.semantic_fingerprint(ledger['repository'], {k: finding[k] for k in ('severity', 'category', 'path', 'symbol', 'rule', 'title', 'description')})
+
+
+def agf_report():
+    return {'final_verdict': {'approved': True, 'summary': 'independent', 'metadata': {'nested': [1]}},
+            **{key: [] for key in AGF_ARRAYS}, 'extra_metadata': {'allowed': [2]}}
+
+
+def agf_call(api, ledger, report):
+    before = copy.deepcopy((ledger, report))
+    result = api.convergent_agf_verdict(ledger, report, expected_repository=ledger['repository'], expected_head_sha=ledger['head_sha'])
+    require((ledger, report) == before, 'AGF inputs unchanged')
+    require(set(result) == {'final_verdict', *AGF_ARRAYS, 'required_fixes', 'advisory_minor'}, 'AGF exact output keys')
+    def mutable_ids(value):
+        if type(value) not in (dict, list): return set()
+        children = value.values() if type(value) is dict else value
+        return {id(value)}.union(*(mutable_ids(child) for child in children))
+    require(not mutable_ids(result) & mutable_ids([ledger, report]), 'AGF deep output independence')
+    require(result == api.convergent_agf_verdict(ledger, report, expected_repository=ledger['repository'], expected_head_sha=ledger['head_sha']), 'AGF deterministic output')
+    return result
+
+
+def agf_invalid(api, ledger, report, **binding):
+    kwargs = {'expected_repository': 'example/reviewed-repo', 'expected_head_sha': '2' * 40, **binding}
+    before = repr((ledger, report))
+    rejected(api, lambda: api.convergent_agf_verdict(ledger, report, **kwargs), 'AGF invalid input fails closed')
+    require(repr((ledger, report)) == before, 'invalid AGF inputs unchanged')
+
+
+def agf_approve(api):
+    ledger = agf_ledger(); report = agf_report(); out = agf_call(api, ledger, report)
+    require(out == {key: copy.deepcopy(report[key]) for key in ('final_verdict', *AGF_ARRAYS)} | {'required_fixes': [], 'advisory_minor': []}, 'empty valid AGF approves exactly')
+    report['final_verdict']['approved'] = False
+    require(agf_call(api, ledger, report)['final_verdict']['approved'] is False, 'false approval remains false')
+    for approval in (1, 0, None, 'true', [], {}):
+        bad = agf_report(); bad['final_verdict']['approved'] = approval; agf_invalid(api, ledger, bad)
+    for root in (None, [], 'report', 1):
+        agf_invalid(api, ledger, root); agf_invalid(api, root, agf_report())
+    for key in ('final_verdict', *AGF_ARRAYS):
+        bad = agf_report(); del bad[key]; agf_invalid(api, ledger, bad)
+        for value in (None, 1, 'wrong', [] if key == 'final_verdict' else {}):
+            bad = agf_report(); bad[key] = value; agf_invalid(api, ledger, bad)
+    bad = agf_report(); del bad['final_verdict']['approved']; agf_invalid(api, ledger, bad)
+    for value in (None, {}, 'wrong'):
+        bad = agf_report(); bad['required_fixes'] = value; agf_invalid(api, ledger, bad)
+    cycle = []; cycle.append(cycle)
+    for value in (float('nan'), float('inf'), -float('inf'), (1,), {1}, object(), cycle, {1: 'key'}):
+        bad = agf_report(); bad['metadata'] = value; agf_invalid(api, ledger, bad)
+        broken = copy.deepcopy(ledger); broken['metadata'] = value; agf_invalid(api, broken, agf_report())
+    for key, values in (('expected_repository', (None, 1, '', 'invalid', '../repo', 'other/repo')),
+                        ('expected_head_sha', (None, 1, '', '2' * 39, 'A' * 40, 'g' * 40, '3' * 40))):
+        for value in values: agf_invalid(api, ledger, agf_report(), **{key: value})
+    for key, value in (('counts', {}), ('verdict', 'request_changes'), ('trial_digests', []), ('head_sha', 'bad')):
+        bad = copy.deepcopy(ledger); bad[key] = value; agf_invalid(api, bad, agf_report())
+    report = agf_report(); report['required_fixes'] = [{'old': ['retained']}]
+    require(agf_call(api, ledger, report)['required_fixes'] == report['required_fixes'], 'existing required fixes retained without blocking')
+
+
+def agf_advisory(api):
+    for case in ('02-consensus-blocker', '05-prior-persisting', '08-reopened-finding'):
+        ledger = agf_severity(agf_ledger(case), 'minor'); report = agf_report()
+        out = agf_call(api, ledger, report)
+        require(out['advisory_minor'] == ledger['findings'] and out['issues'] == [] and out['required_fixes'] == [], 'active minor visible separately')
+        require(out['final_verdict']['approved'] is True, 'minor alone permits approval')
+        for key in AGF_ARRAYS:
+            report = agf_report(); report[key] = [{'carried': ['important']}]
+            out = agf_call(api, ledger, report)
+            require(out[key] == report[key] and out['final_verdict']['approved'] is False, 'minor preserves blocking array ' + key)
+    for case in ('06-prior-resolution-two-of-three', '11-authorized-suppression-retained'):
+        out = agf_call(api, agf_severity(agf_ledger(case), 'minor'), agf_report())
+        require(out['advisory_minor'] == [] and out['final_verdict']['approved'] is True, 'inactive minor excluded')
+    cr = load_api(ROOT / 'tools/convergent_review.py'); mixed = agf_severity(agf_ledger('02-consensus-blocker'), 'minor')
+    for severity in ('important', 'blocker'):
+        f = copy.deepcopy(mixed['findings'][0]); f['severity'] = severity; f['rule'] += severity
+        f['fingerprint'] = agf_fingerprint(cr, mixed, f); mixed['findings'].append(f)
+    mixed['findings'].sort(key=lambda f: f['fingerprint']); mixed['counts'] = cr.calculate_counts(mixed['findings']); mixed['verdict'] = 'request_changes'
+    cr.validate_ledger(mixed); out = agf_call(api, mixed, agf_report())
+    require(out['advisory_minor'] == [f for f in mixed['findings'] if f['severity'] == 'minor'], 'mixed minor remains visible')
+    require(out['issues'] == [f for f in mixed['findings'] if f['severity'] != 'minor'] and out['final_verdict']['approved'] is False, 'minor never clears important or blocker; ledger order retained')
+
+
+def agf_block(api):
+    for case in ('02-consensus-blocker', '05-prior-persisting', '08-reopened-finding'):
+        for severity in ('blocker', 'important'):
+            ledger = agf_severity(agf_ledger(case), severity); report = agf_report()
+            report['issues'] = [{'old': ['blocking']}]; report['required_fixes'] = [{'old': ['fix']}]
+            out = agf_call(api, ledger, report)
+            require(out['issues'] == report['issues'] + ledger['findings'], 'active full findings appended in ledger order')
+            fixes = [{'fingerprint': f['fingerprint'], 'required_fix': f['title'] + ': ' + f['description']} for f in ledger['findings']]
+            require(out['required_fixes'] == report['required_fixes'] + fixes and out['final_verdict']['approved'] is False, 'blocking fixes appended and approval false')
+            require(out['advisory_minor'] == [], 'blocking severity is not minor')
+            for field, value in (('fingerprint', 'f' * 64), ('lifecycle', 'invalid')):
+                bad = copy.deepcopy(ledger); bad['findings'][0][field] = value; agf_invalid(api, bad, agf_report())
+            bad = copy.deepcopy(ledger); bad['counts']['active_' + severity] += 1; agf_invalid(api, bad, agf_report())
+    for case in ('06-prior-resolution-two-of-three', '11-authorized-suppression-retained'):
+        out = agf_call(api, agf_ledger(case), agf_report())
+        require(out['issues'] == [] and out['required_fixes'] == [] and out['final_verdict']['approved'] is True, 'resolved and suppressed findings excluded')
+
+
+def agf_array(api, key):
+    ledger = agf_ledger()
+    for entries in ([{'severity': 'minor', 'nested': [1]}], [''], [False], [None], [0], [[], {}]):
+        report = agf_report(); report[key] = entries; report['required_fixes'] = [{'unrelated': ['explanatory']}]
+        out = agf_call(api, ledger, report)
+        require(out[key] == entries and out['final_verdict']['approved'] is False, 'nonempty blocking array preserved: ' + key)
+        report[key] = []; out = agf_call(api, ledger, report)
+        require(out['final_verdict']['approved'] is True, 'restored empty array approves: ' + key)
+
+
+def run_agf_case(name, api):
+    if not callable(getattr(api, 'convergent_agf_verdict', None)):
+        print('SETUP_ERROR: missing convergent_agf_verdict API', file=sys.stderr); raise SystemExit(2)
+    dispatch = dict(zip(AGF_CASES[:3], (agf_approve, agf_advisory, agf_block)))
+    if name in dispatch: dispatch[name](api)
+    else: agf_array(api, AGF_ARRAYS[AGF_CASES[3:].index(name)])
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--case', choices=CASES)
+    group.add_argument('--case', choices=CASES + AGF_CASES)
     group.add_argument('--scope', action='store_true')
     group.add_argument('--scope-controls', action='store_true')
     group.add_argument('--base-cases', action='store_true')
@@ -485,8 +638,8 @@ def main():
         (helper.scope_controls if args.scope_controls else helper.scope)(args.base); return
     if args.base: parser.error('--base requires a scope command')
     api = load_api()
-    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES):
-        (run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
+    for name in ([args.case] if args.case else PRE_ENTRY_CASES if args.pre_entry_cases else BASE_CASES if args.base_cases else CASES + AGF_CASES):
+        (run_agf_case if name in AGF_CASES else run_entry_case if name in ENTRY_CASES else run_bundle_case if name in BUNDLE_CASES else run_case)(name, api); print('PASS ' + name)
 
 
 if __name__ == '__main__':

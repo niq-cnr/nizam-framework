@@ -1,0 +1,78 @@
+{
+  "role": "Root",
+  "feature": "119",
+  "attempt": 1,
+  "passed": true,
+  "actual_exit": 0,
+  "revision": "4efbba081d285e3042b5cbc9871f1b74043935eb",
+  "tree": "aac15b4070756239feb64b6241a4632d43895fd1",
+  "approved_contract_sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+  "strict_gates": [
+    ".agent/validator/119-mode-a-rev1.json",
+    ".agent/qa/119-contract-review-rev1.json",
+    ".agent/qa/119-provisional-bundle-review.json",
+    ".agent/qa/119-bundle-review.json",
+    ".agent/validator/119-mode-b.json",
+    ".agent/qa/119.json"
+  ],
+  "verified_seals": [
+    {
+      "revision": "833b97b2116d630c4af937e23b7ad89eb442ee77",
+      "path": ".agent/evidence/119/author1-provisional-seal.json",
+      "verified_files": 39
+    },
+    {
+      "revision": "d68c04b3fa28389b50f7b7d5f3003e1d85f17e31",
+      "path": ".agent/evidence/119/provisional-review1-seal.json",
+      "verified_files": 11
+    },
+    {
+      "revision": "9a999591d64d05458d8dc650b00f05361516203f",
+      "path": ".agent/evidence/119/author1-executable-seal.json",
+      "verified_files": 14
+    },
+    {
+      "revision": "cb9f97e828e8bf4082edc01de1b255304e0b0d63",
+      "path": ".agent/evidence/119/executable-review1-seal.json",
+      "verified_files": 60
+    },
+    {
+      "revision": "89339bf594b4b645db98a108b1858359e30557fc",
+      "path": ".agent/evidence/119/qa1/manifest.json",
+      "verified_files": 56
+    }
+  ],
+  "qa_commit": "89339bf594b4b645db98a108b1858359e30557fc",
+  "qa_exercised_revision": "42fb4cfd75a3e3be2313b18fda1bcf801b02c649",
+  "qa_actual_commands": 14,
+  "six_exact_commands": [
+    "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case approve-empty",
+    "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case advisory-visible",
+    "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case block-carried",
+    "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-issues",
+    "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-coverage",
+    "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unsupported"
+  ],
+  "current_default_cases": 26,
+  "historical_foundation_revision": "8ac94f6808e8197111197c9acbf59b2aa92efc7c",
+  "live_stale_exit": 1,
+  "exactly_one_independent_adversarial": true,
+  "source_commit": "9ef2db5b0106c7f92520d18015562c85faf64fc2",
+  "test_commit": "833b97b2116d630c4af937e23b7ad89eb442ee77",
+  "hosted_receipt": ".agent/evidence/119/ci2-receipt.json",
+  "installed_count": 239,
+  "installed_provenance": {
+    "framework_version": "1.5.0",
+    "tag": "v1.5.0",
+    "resolved_sha": "f749f4d47f3fb4fc2a447cdf8bdb3e7e5fede852",
+    "source_url": "https://github.com/niq-cnr/nizam-framework.git",
+    "installed_at": "2026-10-10T18:12:44Z"
+  },
+  "preserved_failure_paths": [
+    ".agent/evidence/119/precode-capture1-failure.json",
+    ".agent/evidence/119/author1-fixture-failure.json",
+    ".agent/evidence/119/ci1-failure.json",
+    ".agent/evidence/119/qa1-helper-attempt1-failure.txt"
+  ],
+  "boundary": "Evidence gate passed before canonical119 completion. No phase018 close/120implementation/123fullCI/SBCL/comparison or release claim."
+}

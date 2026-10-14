@@ -1,0 +1,5 @@
+python3 -c 'import json,pathlib,subprocess; p=pathlib.Path(".agent/evidence/agentic-excellence/smoke-readiness-report.json"); x=json.loads(p.read_text()); assert x["input_revision"]==subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(); assert x["benchmark_results"] is None and x["superiority_established"] is False; assert len(x["smoke_matrix"])==9; assert 80<=len(p.read_text().splitlines())<=130; assert pathlib.Path(x["proof"]).read_text().endswith("EXIT:0\n"); subprocess.run(["git","diff","--check"],check=True); print("REVISION",x["input_revision"]); print("REPORT_JSON: valid; lines:",len(p.read_text().splitlines())); print("CLAIMS: no benchmark results or superiority; exact inspection proof has actual EXIT:0; git diff --check exit0")'
+REVISION 6770458cce17b54a9cf17aca5f2c8a480c11df36
+REPORT_JSON: valid; lines: 91
+CLAIMS: no benchmark results or superiority; exact inspection proof has actual EXIT:0; git diff --check exit0
+EXIT:0

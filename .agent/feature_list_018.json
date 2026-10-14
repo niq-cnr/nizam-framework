@@ -1,7 +1,7 @@
 {
   "phase": "018-workflow-assurance-controls",
-  "spec_version": "0.1.0",
-  "phase_status": "pending",
+  "spec_version": "0.1.2",
+  "phase_status": "in_progress",
   "original_estimate_lines": 7200,
   "ceiling_130pct": 9360,
   "budget_categories": {"product": 1800, "tests": 2050, "process": 3350},
@@ -10,8 +10,8 @@
       "id": "119",
       "name": "Convergent findings to AGF verdict",
       "description": "Blockers remain blocking; advisory minor remains visible; true approval plus all three empty blocking arrays governs advancement. Core semantics127 is the external prerequisite, not later full-CI131. ",
-      "status": "pending",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "dependencies": [],
       "estimated_lines": 1000,
       "budget_categories": {"product": 200, "tests": 300, "process": 500},
@@ -23,7 +23,12 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-coverage",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unsupported"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"]
+      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"],
+      "stage": "captured",
+      "evidence_ref": ".agent/evidence/119/evidence-capture.json",
+      "contract_ref": ".agent/contracts/119.json",
+      "qa_ref": ".agent/qa/119.json",
+      "completed_at": "2026-10-14T15:14:52.921742+00:00"
     },
     {
       "id": "120",
@@ -104,10 +109,10 @@
     }
   ],
   "future_interfaces": [{"path": "tools/test_workflow_assurance.py", "owner": "115"}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
-  "cross_phase_prerequisites": [{"phase": "017-workflow-assurance-foundation", "requires": ["118"], "evidence": [".agent/evidence/118/evidence-gate.txt"], "authority": "Future H-PHASE-017 completion; independent approved contracts and captured QA."}, {"phase": "016-runtime-controller-core", "requires": ["127"], "evidence": [".agent/evidence/127/evidence-gate.txt"], "authority": "Future H-PHASE-016 and core-semantic127 completion only; full-CI131 is not a prerequisite."}],
+  "cross_phase_prerequisites": [{"phase": "017-workflow-assurance-foundation", "requires": ["118"], "evidence": [".agent/evidence/118/evidence-capture.json"], "authority": "Captured118 foundation; actual independent QA/evidence capture receipt, retaining its exercised revision."}, {"phase": "016-runtime-controller-core", "requires": ["127"], "evidence": [".agent/evidence/127/evidence-capture.json"], "authority": "Captured core-semantic127 only; actual independent QA/evidence capture receipt. Neither128, full016 closure nor full-CI131 is an added prerequisite."}],
   "shared_file_lanes": [{"path": "tools/test_workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}, {"path": "tools/workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}],
   "existing_inputs": ["Completed015 normative source110-114; existing014 CI/claim-map103-105; Open040/034; immutable installedv1.5.0."],
-  "activation_prerequisites": ["Future H-PHASE-018 approves this scope/budget and applicable external prerequisite receipts."],
+  "activation_prerequisites": ["Root applies standing operator authorization to unchanged119-123 scope7200/9360 in .agent/evidence/phase018-preflight/activation-authority.json. Actual118/127 capture receipts are bound above; successful postmerge CI is .agent/evidence/128/pr99-main-ci.json. Independent activation review and Root lifecycle promotion remain required; no implementation approval is granted."],
   "acceptance_availability": "Future commands/interfaces only; no runtime/policy acceptance run or pass claimed by planning.",
   "dod_ref": ".nizam/standard/definition_of_done.md"
 }

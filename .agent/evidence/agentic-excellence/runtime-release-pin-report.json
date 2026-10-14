@@ -1,0 +1,49 @@
+{
+  "id": "comparison-runtime-public-release-pin",
+  "status": "metadata-resolved; preparatory EX-P1 evidence only",
+  "owner": "/root/runtime_pin",
+  "at": "2026-10-14T14:39:51.526616+00:00",
+  "base_revision": "6c46691e17f1e27fb2bb2fc69882b5f60503a56a",
+  "repository": "niq-cnr/nizam-framework only",
+  "upstream": "openai/codex",
+  "release": {
+    "id": 408271623, "name": "0.162.1", "tag": "rust-v0.162.1",
+    "url": "https://github.com/openai/codex/releases/tag/rust-v0.162.1",
+    "api_url": "https://api.github.com/repos/openai/codex/releases/408271623",
+    "published_at": "2026-10-09T19:44:51Z", "draft": false, "prerelease": false, "immutable": false,
+    "annotated_tag_object": "7a078f6bb4ce0dc2a81408b334ce52979d92c603",
+    "peeled_commit": "092d3acd6bec3e3a14bdc7e7a2810ab628ab759d",
+    "tag_signature": {"github_verified": false, "reason": "unsigned"}
+  },
+  "archive": {
+    "asset_id": 625965357, "name": "codex-x86_64-unknown-linux-musl.tar.gz",
+    "api_url": "https://api.github.com/repos/openai/codex/releases/assets/625965357",
+    "download_url": "https://github.com/openai/codex/releases/download/rust-v0.162.1/codex-x86_64-unknown-linux-musl.tar.gz",
+    "bytes": 111350218, "state": "uploaded", "content_type": "application/gzip",
+    "github_asset_digest": "sha256:86f268d81b898f3e144c5ecff2ad2fda2c5802e042d6195b72538fe0fa125057",
+    "digest_basis": "Exact matching release-list and individual-asset public GitHub API metadata; archive bytes were not downloaded or independently hashed."
+  },
+  "sigstore_sidecar": {
+    "asset_id": 625965537, "name": "codex-x86_64-unknown-linux-musl.sigstore",
+    "download_url": "https://github.com/openai/codex/releases/download/rust-v0.162.1/codex-x86_64-unknown-linux-musl.sigstore",
+    "github_asset_digest": "sha256:84a01459f62e7c47f5422c002eb2c22cfea024ab82fc652da392ef946be71e1c",
+    "verification": "Existence/metadata only. Bundle not fetched; subject, signer/workflow identity, issuer, transparency inclusion and cryptographic validity remain unverified."
+  },
+  "integrity_limits": [
+    "Release immutability is explicitly false. The recorded release/tag/asset IDs are observed identities, not a guarantee against later upstream replacement or tag movement.",
+    "Seal the archive SHA256 above in the later reviewed contract; reject changed metadata or downloaded bytes. Version-only download is insufficient.",
+    "GitHub-hosted digest metadata is provenance for a future checksum gate, not an independently verified publisher signature or reproducible-build attestation.",
+    "The local executable SHA256628e35487d888a28f0427fc37501da529dd3d81fcbad7a2c3421c1e8670d92e1 is a different object from this archive; no equality, publisher verification or extracted binary identity is inferred.",
+    "A later approved downloader must verify archive bytes before safe extraction, capture actual extracted executable SHA256/version, and stop on unexplained divergence. This report performs none of those actions."
+  ],
+  "next_step": "Independent review of this tuple and helper availability policy, then a bounded zero-model hosted-canary contract. Resolve/verify Sigstore identity separately if signature assurance is required; never infer it from asset naming.",
+  "capture_files": [
+    {"path": ".agent/evidence/agentic-excellence/runtime-release-pin-asset-api.txt", "sha256": "fd414a812452b1827949c93cca40de0b152b06fa6c5fd4f156339fb60e00e024"},
+    {"path": ".agent/evidence/agentic-excellence/runtime-release-pin-release-api.txt", "sha256": "aab63dafed930ba49907b7424f997fd5416e26f61957182428addf2a953e8052"},
+    {"path": ".agent/evidence/agentic-excellence/runtime-release-pin-release-page.txt", "sha256": "428d54c452f33c17130e7ca85cb0321bc6de4dc1fbddb12c7dce9880c149519f"},
+    {"path": ".agent/evidence/agentic-excellence/runtime-release-pin-tag-api.txt", "sha256": "6cb696d6eac71c77adeac09018c44561563f91610d48aa7f20e8a2ae0332ed1c"},
+    {"path": ".agent/evidence/agentic-excellence/runtime-release-pin-tag-object-api.txt", "sha256": "2afd7e97d5f337ca2c15a0b1431bef91353c933567b954f23a04c3628964c333"}
+  ],
+  "network_scope": "Only public release page and GitHub REST metadata; no credentials, package downloads, installations, extracted programs, model calls or CI dispatch.",
+  "hosted_canary_result": null, "benchmark_results": null, "superiority_established": false
+}

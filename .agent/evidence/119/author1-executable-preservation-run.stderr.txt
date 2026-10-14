@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature119-executable-author1/.agent/evidence/119/author1-executable-controls.py", line 41, in <module>
+    capture('historical-foundation-ready', ['python3', 'tools/test_workflow_assurance.py', '--check', 'foundation-ready'], 0, cwd=history)
+  File "/home/cnross/.tmp/nizam-feature119-executable-author1/.agent/evidence/119/author1-executable-controls.py", line 15, in capture
+    'inputs': {p: {'sha256': hashlib.sha256((root / p).read_bytes()).hexdigest(), 'git_blob': tests.git(root, 'hash-object', '-w', p)} for p in paths},
+                                            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/cnross/.tmp/nizam119-foundation-lv97v3m7/repository/.agent/contracts/119.json'

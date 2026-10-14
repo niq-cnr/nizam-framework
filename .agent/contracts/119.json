@@ -1,0 +1,101 @@
+{
+  "contract_id": "119",
+  "feature_id": "119",
+  "name": "Convergent findings to AGF verdict",
+  "status": "complete",
+  "spec_ref": ".agent/product_spec_018.md",
+  "scope": {
+    "files_create": [
+      {"path": ".agent/contracts/119.json", "purpose": "Generator proposal; Root alone promotes contract lifecycle after strict independent gates."},
+      {"path": ".agent/evidence/119/*", "purpose": "Role-attributed contract, API, bundle, controls, source, QA, hosted and capture evidence; each role owns only its artifacts."},
+      {"path": ".agent/validator/119-*.json", "purpose": "Independent Validator Mode A and Mode B verdicts."},
+      {"path": ".agent/qa/119*.json", "purpose": "Independent contract review, separate provisional/final bundle review and distinct fresh final QA verdicts."},
+      {"path": ".agent/evidence/119-qa-adversarial.txt", "purpose": "Fresh QA's exactly one additional independently chosen adversarial check."}
+    ],
+    "files_modify": [
+      {"path": "tools/workflow_assurance.py", "purpose": "Generator-only additive read-only convergent_agf_verdict API; preserve source115-118 APIs/CLI behavior."},
+      {"path": "tools/test_workflow_assurance.py", "purpose": "Evaluator-only six exact119 selectors and controls; preserve old twenty cases, foundation-ready and historical fixture semantics."},
+      {"path": "tools/README.md", "purpose": "Generator-only small API/proof-boundary documentation if necessary; NDS version/change_log update when changed."},
+      {"path": "CHANGELOG.md", "purpose": "Generator-only concise unreleased119 mapping entry if needed."},
+      {"path": ".agent/run_state.json", "purpose": "Root-only lifecycle, counters, history and actual measured budget."},
+      {"path": ".agent/feature_list_018.json", "purpose": "Root-only119 coordination/lifecycle/evidence and matching spec_version metadata."},
+      {"path": "docs/planning/phase_018.yaml", "purpose": "Root-only canonical119 lifecycle after capture; later120-123 remain pending."},
+      {"path": "docs/planning/manifest.json", "purpose": "Root-only existing phase018 coordination projection; no phase closure or new allocation."},
+      {"path": ".agent/product_spec_018.md", "purpose": "Planner-only optional current-position/status/version metadata after capture; requirements and allowance unchanged."},
+      {"path": "docs/planning/ROADMAP.md", "purpose": "Planner-only optional captured current-position projection."},
+      {"path": "docs/planning/HANDOVER.md", "purpose": "Planner-only optional captured current-position projection."}
+    ]
+  },
+  "role_ownership": {
+    "Generator": "Preparation writes contract plus contract1-* evidence only. After approval/review, implements only source API and optional two small docs plus own source evidence; never acceptance/verdict/state bytes.",
+    "Evaluator_author": "Owns six-case runner expansion, concrete API/test specification, private fixtures and actual positive/intended-negative/restored controls under own119 evidence names. No product implementation.",
+    "Evaluator_reviewer": "Distinct recorded session reviews provisional API/tests before initial source candidate, then executable controls and final immutable bundle before Mode B; owns separate review/seal evidence and verdict.",
+    "Validator": "Owns independent Mode A/Mode B verdicts and own119 diff/command/cost evidence; does not implement or author acceptance.",
+    "fresh_QA": "Distinct from Generator, test author and bundle reviewer; re-executes six exact commands and own additional adversarial check; owns119 QA receipts and final verdict.",
+    "Root": "Owns approval/candidate selection/state/counters/budget/hosted receipt/capture/canonical119 completion. Incoming activation,128 integration and comparative static-audit records are attributed inputs, not Generator outputs.",
+    "Planner": "Owns only explicitly scoped optional current metadata/projections and own119 evidence after capture; no requirement, budget, historical phase or lifecycle edits."
+  },
+  "api": {
+    "signature": "convergent_agf_verdict(ledger, report, *, expected_repository, expected_head_sha) -> dict",
+    "execution": "Pure deterministic read-only mapping in tools/workflow_assurance.py; no new CLI, subprocess, model, network, filesystem/state writes or prerequisite/recovery engine. Reuse tools/convergent_review.py validate_ledger(ledger, ctx='ledger') as existing authoritative validator; do not change it or recompute convergence/lifecycle/suppression.",
+    "inputs": "Both inputs must be finite acyclic JSON objects. report requires final_verdict object with approved of exact bool type and the three array fields issues, missing_acceptance_coverage, unsupported_claims; optional required_fixes must be an array. Extra JSON report metadata is allowed. expected_repository must be a valid repository string and expected_head_sha a lowercase40hex Git commit; both must equal validated ledger repository/head_sha. No inferred defaults, truthiness or string coercion.",
+    "errors": "Missing/wrong-shaped/non-JSON inputs, wrong approval type (including1/null/string), invalid ledger/count/verdict/fingerprint, malformed expected binding or repository/head mismatch raise existing AssuranceError without successful output or input mutation. Translate convergent ReviewError into AssuranceError.",
+    "blocking": "From validated ledger findings in existing order, select unsuppressed new/persisting/reopened blocker or important. Append deep copies of these full findings to existing report.issues. Never remove, downgrade or overwrite an incoming blocking-array entry. Resolved/suppressed findings do not newly block; active minor alone does not newly block.",
+    "output": "Return exactly final_verdict, issues, missing_acceptance_coverage, unsupported_claims, required_fixes and advisory_minor. Deep-copy report.final_verdict (retaining summary/metadata), the three arrays and optional required_fixes(default[]). Append one fix per blocking finding: {fingerprint: finding.fingerprint, required_fix: finding.title + ': ' + finding.description}. advisory_minor is deep copies of active new/persisting/reopened minor findings in ledger order. No output aliases either input.",
+    "approval": "Set output.final_verdict.approved to the conjunction: input approved is exactly True, all three resulting blocking arrays are empty, and authoritative ledger.verdict is approve. False approval remains false even with empty arrays. Advisory minor never clears a carried blocker or a nonempty array. Output required_fixes/advisory_minor are explanatory; they cannot override this gate.",
+    "trust_boundary": "Caller supplies the authoritative converged ledger and explicit expected bindings; mapping validates its structure/relations and bindings, not artifact provenance or authentication. It does not regenerate a ledger from observations, authorize work or advance coordination state. Existing convergence remains responsible for prior-ledger carry and authorized suppression."
+  },
+  "non_goals": [
+    "No120 receipts/idempotent recovery,121 lanes/rollback,122 cause routing/counter policy,123 controls-ready/full capable CI or019 profiles/comparisons.",
+    "No runtime/controller/stub/session/harness/workflow/schema/convergent_review.py edits; no SBCL/full adapter, phase020 acceptance, finalCI131 or comparative superiority claim.",
+    "No installed .nizam changes/upgrade, released version/tag or external ecosystem scope; no historical0165179/0175203 or115-118 API/test/pin/receipt rewrite.",
+    "No128/131/full016 extra activation gate, future119 QA/capture/self-completion prerequisite, new allowance, rebaseline or autonomous lifecycle/counter mutation."
+  ],
+  "acceptance_ownership": {
+    "authoring": "Independent author adds six119 selectors in a separate inventory/dispatch; preserve old CASES twenty, foundation-ready hardcoded historical checks, old selectors and source115-118 API/CLI. Default runner keeps all old twenty executions and additionally runs six119 cases in explicit inventory order for the existing hosted job. New selectors remain individually selectable; unknown selectors/setup/missing proof are nonzero and cannot count as semantic red.",
+    "provisional_gate": "Both pre-code gates and Root approved status precede test/source work. Distinct reviewer approves frozen concrete API/test obligations and provisional test bytes before initial executable Source candidate. Initial candidate may supply missing new API; this is not a behavioral repair and requires no fictitious semantic red against absent API.",
+    "executable_controls": "Before any behavioral repair capture actual intended semantic red on executable source plus legitimate positive and restored controls with exact command/assertion/stdout/stderr/exit/source/test identities. Private narrow mutants may prove first-pass candidates. Distinct reviewer seals final executable API/test/control bundle before Mode B; changes require renewed review. No circular demand for implemented source before provisional review.",
+    "coverage": "Each six-case criterion below includes real positive/negative/restored controls. Bound malformed objects/arrays/approval1,null,string/nonfinite/non-JSON, invalid ledger relationships and stale repo/head as subcases. Prove deterministic order, input immutability/deep-copy, suppressed/resolved exclusion and false approval. block-carried uses actual existing convergence with prior unresolved finding omitted from current observations, not inconsistent fabricated counts.",
+    "preservation": "Independently prove all existing twenty cases and source115-118 API compatibility on current119 candidate. Run unchanged PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready in an owned snapshot at immutable receipt-bearing118 commit8ac94f6808e8197111197c9acbf59b2aa92efc7c and require success. On changed live119 candidate, require unchanged foundation verifier to reject stale118 receipt; preserve actual rejection evidence. Do not rewrite118 pins/receipts/fixtures, relax verify_foundation_ready, or rebind old seals to mutable HEAD. Run existing convergence regression as appropriate without changing its engine. Source/test/reviewer/QA identities remain distinct."
+  },
+  "verification": [
+    {
+      "acceptance_test": "AT1 approve-empty: valid empty authoritative ledger and strict true/empty report approve; malformed data, nonboolean approval, false approval and wrong repository/head fail closed with positive controls.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case approve-empty"},
+    {
+      "acceptance_test": "AT2 advisory-visible: active minor remains visible separately without newly blocking valid empty arrays; minor cannot erase existing blocker/important or AGF arrays. Preserve input and output independence.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case advisory-visible"},
+    {
+      "acceptance_test": "AT3 block-carried: new/persisting/reopened unsuppressed blocker and important remain issues/fixes even when current observations omit prior finding; positive resolved/suppressed controls and authoritative malformed-count rejection.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case block-carried"},
+    {
+      "acceptance_test": "AT4 reject-issues: each preserved nonempty issues array rejects even with true input/approve ledger; same valid report restored empty approves.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-issues"},
+    {
+      "acceptance_test": "AT5 reject-missing-coverage: each preserved nonempty missing_acceptance_coverage array rejects despite true input/approve ledger; restored empty positive approves.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-coverage"},
+    {
+      "acceptance_test": "AT6 reject-unsupported: each preserved nonempty unsupported_claims array rejects despite true input/approve ledger; restored empty positive approves.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unsupported"}
+  ],
+  "gate_sequence": [
+    "Actual Root phase018 activation/selection and independent activation review bind118/127 captures plus successful mainCI38572390067; .agent/evidence/phase018-preflight/activation-result.json supersedes high-level0.1.1 prepromotion position only.",
+    "Independent Mode A and contract review approve same proposal with approved:true and all three issue arrays empty; Root alone promotes approved. Independently reviewed provisional API/test bundle precedes initial Source candidate; executable controls/final bundle seal precede Mode B.",
+    "Generator implements only owned additive API/docs and commits candidate before development runs. Independent Mode B inspects full scoped diff, ownership, preservation and whole119 counted cost before distinct fresh QA.",
+    "Fresh QA independently runs six exact commands, preserved current twenty cases/API compatibility, unchanged historical foundation-ready at8ac94f6808e8197111197c9acbf59b2aa92efc7c, live119 stale118 receipt rejection, and repository default/payload compliance, plus exactly one additional own adversarial check; actual output/exits/revision/source/test/environment are externalized. No Generator results substitute for QA.",
+    "Capture actual existing hosted default-runner command/output/exit/candidate identity and all six119 PASS results separately from historical foundation CI; do not relabel old proof or claim123 full capable-CI delivery. Existing jobs/transport remain unchanged; additive runner dispatch supplies new coverage.",
+    "Root verifies receipt existence/content and QA references/candidate bindings before119 canonical completion and derived coordination. Optional Planner projections follow capture;120-123 remain pending."
+  ],
+  "estimated_lines": 1000,
+  "budget": {
+    "product": 200, "independent_tests": 300, "process": 500,
+    "phase_original": 7200, "phase_ceiling": 9360,
+    "measurement_base": "fcd0584146fd836df0080292cc2cf10180bb9f31",
+    "rule": "Whole119 measured from PR99 merge once, including authorized prephase018 planning/registration/derived reconciliation and all gates/docs/controls. Incoming128 integration receipts and separate comparative static audit remain attributed inputs, not Generator outputs or free rebased overhead. Raw evidence/run_state excluded under existing classification; unclassified fails closed. Root owns actual category/phase attribution and cumulative ceiling; no prior018 completed feature baseline. Preserve prior0165179/0175203 totals."
+  },
+  "evidence_dir": ".agent/evidence/119/",
+  "evidence_convention": "Role-owned command.stdout.txt/command.stderr.txt/result.json record actual argv/cwd/environment/exit/exercised revision and source/test Git objects/SHA256; seals/verdicts link immutable evidence paths. contract1-* is Generator preparation, other roles use their own attributed names. Fresh extra check .agent/evidence/119-qa-adversarial.txt; no recursive evidence copies.",
+  "approvals": {"validator_mode_a": true, "evaluator_contract_review": true, "revisions": 1},
+  "approval_evidence": {"proposal_sha256": "81a890a46689455f880f1add0d4027372b4fe2e2d2c2caab4fef496e31a15c54", "mode_a": ".agent/validator/119-mode-a-rev1.json", "contract_review": ".agent/qa/119-contract-review-rev1.json", "capture": ".agent/evidence/119/precode-rev1-capture.json"},
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

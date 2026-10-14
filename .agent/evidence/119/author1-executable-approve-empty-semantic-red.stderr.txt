@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.tmp/nizam-feature119-executable-author1/tools/test_workflow_assurance.py", line 599, in run_agf_case
+    if name in dispatch: dispatch[name](api)
+                         ^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature119-executable-author1/tools/test_workflow_assurance.py", line 517, in agf_approve
+    require(out == {key: copy.deepcopy(report[key]) for key in ('final_verdict', *AGF_ARRAYS)} | {'required_fixes': [], 'advisory_minor': []}, 'empty valid AGF approves exactly')
+  File "/home/cnross/.tmp/nizam-feature119-executable-author1/tools/test_workflow_assurance.py", line 35, in require
+    raise AssertionError('POLICY_ASSERTION: ' + message)
+AssertionError: POLICY_ASSERTION: empty valid AGF approves exactly
