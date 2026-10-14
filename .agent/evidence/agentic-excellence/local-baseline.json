@@ -1,0 +1,111 @@
+{
+  "status": "observed-local-artifacts",
+  "observed_at": "2026-10-14T06:37:13.128055+00:00",
+  "exercised_revision": "c3a4210b20a4190849117f4a88e401b1f80d865f",
+  "authorized_source_revision": "e619d284d36eaf6dfff54a9d001477b8d1722098",
+  "installed_governance_version": "1.5.0",
+  "phase": "017",
+  "counting": "Historical captured insertions plus deletions; not source LOC, money, tokens, or duration. Product category includes tests and documentation. No historical measurements rewritten.",
+  "budget": {
+    "original": 5400,
+    "ceiling": 7020,
+    "counted": 5203,
+    "product": 1435,
+    "process": 3768,
+    "evidence": 163796
+  },
+  "rows": [
+    {
+      "id": "115",
+      "actual": 1863,
+      "product_lines": 733,
+      "process_overhead_lines": 1130,
+      "evidence_lines": 23159,
+      "evidence": ".agent/evidence/115/scope-measurement.txt"
+    },
+    {
+      "id": "116",
+      "actual": 1146,
+      "product_lines": 351,
+      "process_overhead_lines": 795,
+      "evidence_lines": 61933,
+      "evidence": ".agent/evidence/116/scope-measurement.txt"
+    },
+    {
+      "id": "117",
+      "actual": 1003,
+      "product_lines": 217,
+      "process_overhead_lines": 786,
+      "evidence_lines": 34604,
+      "evidence": ".agent/evidence/117/scope-measurement.txt"
+    },
+    {
+      "id": "118",
+      "actual": 1183,
+      "product_lines": 126,
+      "process_overhead_lines": 1057,
+      "evidence_lines": 43592,
+      "evidence": ".agent/evidence/118/scope-measurement.txt"
+    },
+    {
+      "id": "phase017-ci-history",
+      "actual": 8,
+      "product_lines": 8,
+      "process_overhead_lines": 0,
+      "evidence_lines": 508,
+      "evidence": ".agent/evidence/118/integration-ci-measurement.txt"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".agent/evidence/115/scope-measurement.txt",
+      "sha256": "d6bc48c4408c8f9d369a5a3ad8f1c6481692b22b4147af6a16c1adf05f71bee8"
+    },
+    {
+      "path": ".agent/evidence/116/scope-measurement.txt",
+      "sha256": "fb9e2592d5a1d0cb73c1f35de48852f63cea7e54e9a11521271cca76360a2a6a"
+    },
+    {
+      "path": ".agent/evidence/117/scope-measurement.txt",
+      "sha256": "9035326042a28ef1f225be13dcfc5d42faafc6def1e17923708d261e8a02f24f"
+    },
+    {
+      "path": ".agent/evidence/118/scope-measurement.txt",
+      "sha256": "f821208ccb0de3feae266565496d35590196c4c6fb6461125b998867a63f9c7d"
+    },
+    {
+      "path": ".agent/evidence/118/integration-ci-measurement.txt",
+      "sha256": "b560f03108358305aba76930f6d36f710c524cf776933d2f23444704705e1549"
+    },
+    {
+      "path": ".agent/evidence/117/circuit-breaker-halt.json",
+      "sha256": "01ac6b78fcdb303d28668dbef5c10ef9e995240e6c9287a4ae801b22ad94f793"
+    },
+    {
+      "path": ".agent/evidence/118/circuit-breaker-halt.json",
+      "sha256": "fb4d70b7a0d1a5b782735c32d9a1395ac3e47f3723f0ed4ff608092db4838278"
+    },
+    {
+      "path": ".agent/evidence/118/integration-ci-handoff.json",
+      "sha256": "152eb06fef1afece42af6e7282f76665ef3c291d19f60d01b4e0cbfbc0ae3f57"
+    },
+    {
+      "path": "docs/planning/backlog_dag.json",
+      "sha256": "70016b897173fc0552143b62c455477e38713f70e88d54e75cf8403c7d06b59d"
+    },
+    {
+      "path": ".agent/run_state.json",
+      "sha256": "e636c0bc79dc9c238a7a8bdba9bd0459ce477fd1529c6d205a2e7653f61d25a1"
+    }
+  ],
+  "latency_seconds": null,
+  "model_tokens": null,
+  "cost_usd": null,
+  "comparative_results": null,
+  "known_failure_mechanisms": [
+    "117 pre-code reader startup exhausted original attempts before source implementation.",
+    "118 immutable snapshot versus mutable lifecycle mismatch and frozen fixture Path-construction defect needed bounded recovery.",
+    "CI shallow checkout omitted historical objects; full-history replay passed."
+  ],
+  "interpretation": "Overhead reduction hypothesis, not proof that independent review is wasteful."
+}
