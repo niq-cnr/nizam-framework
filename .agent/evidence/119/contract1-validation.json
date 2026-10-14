@@ -1,0 +1,20 @@
+{
+  "role": "Generator",
+  "at": "2026-10-14T14:03:57.125010+00:00",
+  "argv": [
+    "python3",
+    "-c",
+    "import json,jsonschema\nfrom pathlib import Path\nc=json.loads(Path(\".agent/contracts/119.json\").read_text())\njsonschema.Draft202012Validator(json.loads(Path(\".nizam/schema/contract.schema.json\").read_text())).validate(c)\nf=next(x for x in json.loads(Path(\".agent/feature_list_018.json\").read_text())[\"features\"] if x[\"id\"]==\"119\")\nassert [v[\"command\"] for v in c[\"verification\"]]==f[\"acceptance_tests\"]\nassert len(c[\"verification\"])==6\nassert c[\"status\"]==\"proposed\" and c[\"approvals\"][\"validator_mode_a\"] is False and c[\"approvals\"][\"evaluator_contract_review\"] is False\nassert c[\"estimated_lines\"]==sum(c[\"budget\"][k] for k in (\"product\",\"independent_tests\",\"process\"))==1000\nassert 100<=len(Path(\".agent/contracts/119.json\").read_text().splitlines())<=140\nfor x in c[\"scope\"][\"files_modify\"]: assert Path(x[\"path\"]).is_file(),x[\"path\"]\nassert \"def validate_ledger(ledger: Any, ctx: str = \\\"ledger\\\")\" in Path(\"tools/convergent_review.py\").read_text()\nprint(\"PASS installed contract schema; exact six119 commands; proposed/nonapproval;1000=200+300+500; bounded100-140line contract; existing modification paths; actual validate_ledger signature\")\n"
+  ],
+  "cwd": "/home/cnross/.tmp/nizam-feature119-generator",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "actual_exit": 0,
+  "exercised_revision": "356d51fb462982b5f60f0974d12fdcef82b92819",
+  "contract_sha256": "9de754f810676e2f154aca96cb28c75236ac650ab78a0e06f53f97d66e885226",
+  "schema": ".nizam/schema/contract.schema.json",
+  "stdout": ".agent/evidence/119/contract1-validation.stdout.txt",
+  "stderr": ".agent/evidence/119/contract1-validation.stderr.txt",
+  "claim": "Document/static validation only; no acceptance, source/test change, semantic red, review approval or lifecycle advancement."
+}
