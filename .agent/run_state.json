@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:12:01.515184+00:00",
+  "updated_at": "2026-10-14T18:12:34.882652+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1244,24 +1244,29 @@
     },
     "120-current-docs": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "result": "passed"
     },
     "runtime-canary-shape-review": {
       "attempts": 2,
       "limit": 3,
-      "prior_attempt_evidence": ".agent/evidence/agentic-excellence/canary-shape-review1.json"
+      "prior_attempt_evidence": ".agent/evidence/agentic-excellence/canary-shape-review1.json",
+      "result": "accepted for preparatory contract authoring only; execution prerequisites unresolved"
     },
     "120-current-docs-review": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "result": "passed"
     },
     "120-final-validation": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "result": "passed"
     },
     "120-final-scope": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "result": "passed"
     }
   },
   "history": [
@@ -5777,6 +5782,17 @@
       "at": "2026-10-14T18:12:01.515184+00:00",
       "event": "120-final-scope-dispatch",
       "detail": "All scoped docs reviewed, final local16/0 and maintained diff0. Frozen classifier measures whole120 once from PR100merge, including final docs/QA/verdict; preserve119722 and archived0165179/0175203. Root metadata update only after actual successful measurement."
+    },
+    {
+      "at": "2026-10-14T18:12:02.213744+00:00",
+      "event": "120-final-scope-capture",
+      "detail": "Whole120=1397, prior119722 preserved, phase=2119/9360; Source/docs305+tests435 unchanged. All actual failed attempts retained. Final exact-head hosted checks and authorized clean merge remain.",
+      "evidence": ".agent/evidence/120/scope-measurement-final.txt"
+    },
+    {
+      "at": "2026-10-14T18:12:34.882652+00:00",
+      "event": "120-scope-execution-location-disclosure",
+      "detail": "Final measurement actual0 ran in primary checkout due command cwd placement, while prepared isolated scope worktree remained unused. Raw result records actual cwd/revision. Verified only Root run_state changed, all other tracked files unchanged; prior119 and archived scope objects exact. No rerun, Source/test/doc change or invented isolated-execution claim."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5951,9 +5967,9 @@
   "scope_budget": {
     "original_estimate_lines": 7200,
     "ceiling_130pct": 9360,
-    "total_lines_changed": 1800,
-    "evidence_lines_total": 36835,
-    "excluded_lines_total": 575,
+    "total_lines_changed": 2119,
+    "evidence_lines_total": 60575,
+    "excluded_lines_total": 715,
     "per_feature": [
       {
         "id": "119",
@@ -5980,16 +5996,16 @@
       {
         "id": "120",
         "estimated": 2750,
-        "actual": 1078,
+        "actual": 1397,
         "product_lines": 740,
         "source_lines": 305,
         "independent_test_lines": 435,
-        "process_overhead_lines": 338,
-        "evidence_lines": 13827,
-        "excluded_lines": 194,
-        "range": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6..7ab4a905206d9ec2226cd79b2c0292cc218e39ab",
-        "evidence": ".agent/evidence/120/scope-controls1.txt",
-        "measurement_status": "in_progress all37development/author33controls pass; distinctfinalreviewpending",
+        "process_overhead_lines": 657,
+        "evidence_lines": 37567,
+        "excluded_lines": 334,
+        "range": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6..2f9d9f64ffad963adf8132e4ea7bf5861234d4fd",
+        "evidence": ".agent/evidence/120/scope-measurement-final.txt",
+        "measurement_status": "final counted120 before PR101; replaces interim row once",
         "baseline": {
           "prior_features": [
             "119"
@@ -5999,7 +6015,9 @@
           "first_feature_exception": false,
           "flagged": false
         },
-        "note": "Whole120 once includes Source/docsnamespaceclarification,435frozenindependenttestlines, allcontract/provisionalrevisions andpreservedfailures. Rawcanary/migrationdecisionproposalsremainnonimplementation;119722/archivesunchanged."
+        "note": "Whole120 from immutable PR100 merge once, including all contract/review/fixture/helper recoveries, independent acceptance, Source/docs305, tests435, final QA/capture/closure and current planning. Raw canary planning and transport remain evidence, no implementation claim.119722 and archived0165179/0175203 preserved.",
+        "measurement_revision": "2f9d9f64ffad963adf8132e4ea7bf5861234d4fd",
+        "capture_revision": "62cad89939a26d4608df543e4d84c2fa09699049"
       }
     ],
     "phase_level_items": [],
@@ -6015,7 +6033,7 @@
     "phase_base_revision": "fcd0584146fd836df0080292cc2cf10180bb9f31",
     "authorization_revision": "51f4380",
     "phase_level_costs": "Incomingregistryreconciliation, registeredactivationplan/review, currentpreparation and attributedseparate rawplanning all chargedoncewithin119 wholebasefcd0584. No freeallowance orphase016rebaseline.",
-    "last_measured_at": "2026-10-14T17:24:36.391016+00:00",
+    "last_measured_at": "2026-10-14T18:12:02.213744+00:00",
     "feature120_measurement_base": "92fecd8d376964f5e3dd7e34bc201035acfe8bc6"
   },
   "blocked_features": [],
@@ -6271,7 +6289,7 @@
       }
     ]
   },
-  "last_action": "120 captured complete; phase018 active,121 next after clean PR101 merge/main CI. Legacy Root binding migration remains unapplied.",
+  "last_action": "120 final docs reviewed and local16/0; measured once within original budget. Final exact-head PR101 CI and merge follow;121-123 pending.",
   "completed_contract_ids": [
     "099",
     "103",
