@@ -1,0 +1,31 @@
+{
+  "reviewed_commit": "02f8e655d89a4de366f4211705e46cb41887b5bf",
+  "proposal_commit": "bac04b8d94092343437ad95b07b99c2eb6592c11",
+  "contract_sha256": "a98180d2c1456d95f0ec120dba40f043b7c367b92f884f8d58f784d07679b13a",
+  "prior_contract_sha256": "16305458df6afb3b4df9b9f9d59c005e0a1103a75811dd0fc70ddca9d7516ac1",
+  "checks": [
+    "installed contract schema valid",
+    "only scope attribution/non-goals and round metadata changed",
+    "original six product/test entries unchanged",
+    "full prior behavior/verification/budget/gate sequence exactly preserved",
+    "new role-owned create/modify sets checked",
+    "all14 prior normative/source/test input hashes unchanged",
+    "no source/test implementation since original baseline",
+    "current Mode A attempt2; approval fields false"
+  ],
+  "reviewed_create_ownership": {
+    ".agent/evidence/127/": "Each role owns only its attributed handoff, immutable input/source/test identities and actual command evidence; Root owns dispatch, gate-advance and capture receipts. No copied historical trees or replacement of another role's evidence.",
+    ".agent/validator/127-*.json": "Independent Validator only: Mode A, acceptance-bundle review and Mode B verdicts; preserve prior rounds by immutable Git identity and distinct round paths.",
+    ".agent/qa/127*.json": "Independent Evaluator only: contract-review verdicts and canonical final QA .agent/qa/127.json; final QA is distinct from Generator and acceptance author/bundle reviewer. Preserve historical rounds.",
+    ".agent/evidence/127-qa-adversarial.txt": "Fresh independent Evaluator only: the required additional QA adversarial spot-check with actual command/output/exit and exercised identity."
+  },
+  "reviewed_added_modify_ownership": {
+    ".agent/contracts/127.json": "Generator owns proposed contract text and allocated revision metadata only; Root alone promotes approval/lifecycle fields and records actual independent verdict references. No role approves itself; semantic changes require both renewed pre-code gates.",
+    ".agent/run_state.json": "Root Orchestrator only: coordination, gate decisions, lifecycle, circuit counters, measured budget and append-only history; preserve all unowned fields. Never Generator scope.",
+    ".agent/feature_list_016.json": "Root Orchestrator only: feature127 lifecycle, pass/evidence/QA references and attributed budget bookkeeping after the required gates; preserve requirements, commands, estimates and other features.",
+    "docs/planning/phase_016.yaml": "Root Orchestrator only: corresponding current lifecycle/status and evidence/budget projection after required gates; preserve historical phase records, approved scope and original5650/7345.",
+    "docs/planning/ROADMAP.md": "Planner only: current-state documentation projection of independently captured progress and next gated work, under existing Root dispatch and counted cost; no requirements or budget expansion.",
+    "docs/planning/HANDOVER.md": "Planner only: matching current-state handoff projection under existing Root dispatch and counted cost; preserve historical evidence and dependency order."
+  },
+  "actual_exit": 0
+}
