@@ -1,0 +1,39 @@
+[
+  {
+    "name": "compliance",
+    "argv": [
+      "bash",
+      "tools/validate.sh"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature120-final-validation1",
+    "actual_exit": 0,
+    "revision": "c8d9781efe964039d24661164773f95aa8a70cc3",
+    "at": "2026-10-14T18:09:37.727619+00:00",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "stdout": ".agent/evidence/120/final-validation1-compliance.stdout.txt",
+    "stderr": ".agent/evidence/120/final-validation1-compliance.stderr.txt"
+  },
+  {
+    "name": "maintained-diff",
+    "argv": [
+      "git",
+      "diff",
+      "--check",
+      "92fecd8d376964f5e3dd7e34bc201035acfe8bc6",
+      "--",
+      ".",
+      ":(exclude).agent/evidence/**"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature120-final-validation1",
+    "actual_exit": 0,
+    "revision": "c8d9781efe964039d24661164773f95aa8a70cc3",
+    "at": "2026-10-14T18:09:37.776330+00:00",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "stdout": ".agent/evidence/120/final-validation1-maintained-diff.stdout.txt",
+    "stderr": ".agent/evidence/120/final-validation1-maintained-diff.stderr.txt"
+  }
+]
