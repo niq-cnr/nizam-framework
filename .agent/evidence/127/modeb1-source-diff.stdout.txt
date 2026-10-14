@@ -1,0 +1,721 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 821687e..075b25d 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -9,6 +9,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+ 
+ ### Changed
+ 
++- **Stub operation semantics and handoff (feature 127).** Added bounded polling
++  that stops waiting only, correlated cooperative cancellation confirmation and
++  checked source-bound reattachment snapshots. Replay uses committed templates
++  through explicit authorized submits in a fresh development session. Existing
++  fixture CI schedules fourteen checks; independent acceptance and capture remain
++  required, with SBCL and fresh acceptance infrastructure outside this change.
++
+ - **Partial development runtime controller (feature 126).** Added a detached
+   supervisor, isolated stub images, ownership/lease/generation admission, atomic
+   development records and read-only attempt guards. Existing fixture CI invokes
+diff --git a/tools/README.md b/tools/README.md
+index f72ab3e..6a2301d 100644
+--- a/tools/README.md
++++ b/tools/README.md
+@@ -2,10 +2,13 @@
+ id: nizam-tools-readme
+ title: "Tools Module — Index"
+ description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
+-version: 0.25.0
++version: 0.26.0
+ status: active
+ authoritative_source: tools/README.md
+ change_log:
++  - version: "0.26.0"
++    date: "2026-10-14"
++    summary: "Document bounded waits, confirmed cancellation, checked reattachment and explicit source replay with fourteen fixture checks."
+   - version: "0.25.0"
+     date: "2026-10-14"
+     summary: "Document the partial stub controller CLI and nine-case fixture-harness integration."
+@@ -82,7 +85,7 @@ change_log:
+     date: "2026-07-17"
+     summary: "Sync to the phase-005 compliance validator: document the new C12 ecosystem schema-family fixture check (feature 042) and the new SUMMARY: 12 passed, 0 failed total."
+ ---
+-## Development runtime controller — feature 126
++## Development runtime controller — features 126–127
+ 
+ `runtime_session.py` provides a detached supervisor and one stub child per
+ session, using an exclusive lock, generation counter/nonce, explicit ownership
+@@ -94,7 +97,8 @@ python3 tools/runtime_session.py open-session --root /absolute/private/state --r
+ ```
+ 
+ The other implemented actions are `submit-operation`, `poll-operation`,
+-`transfer-session` and `close-session`, with the same arguments. The JSON request
++`transfer-session`, `close-session`, `cancel-operation` and `reattach-session`,
++with the same arguments. The JSON request
+ includes session/requester identity; existing sessions require the current
+ generation and lease. Open supplies owner, development purpose and a read-only
+ run-state path binding contract/step/attempt. Submit adds operation ID, kind,
+@@ -116,13 +120,42 @@ trials receive no endpoint or record-writing access; the supervisor independentl
+ rejects trial requests delivered to it. Close observes process termination without
+ claiming rollback of effects.
+ 
+-`fixtures_self_test.sh` registers the nested stub and executes the three named
+-checks plus stub cases 1, 2, 3, 9, 13 and case 8 policy through the independently
+-authored `test_runtime_session.py`. It reports each command and actual exit and
+-propagates failures in existing CI. Candidate results still require independent
+-QA and hosted evidence. Feature 127 owns timeout/cancellation/reattachment/replay;
+-128 owns bounded core closure. SBCL, fresh acceptance and full optional adapter
+-conformance remain later work; reserved actions fail without side effects.
++A poll optionally supplies `limits: {"timeout_seconds": 0.25}` (finite 0–30).
++Without limits it returns an immediate snapshot. A deadline records
++`stopped_waiting`; execution stays pending and conflicting submits remain busy.
++Unknown outcomes return infrastructure exit 70. Completion replaces the wait
++outcome with `completed_wait`; a disconnected client never cancels work.
++
++Cancel adds operation ID and contract/step/attempt to current owner, generation
++and lease identity. It returns `cancel_requested` with confirmation false.
++Only a matching child acknowledgement of stopped execution produces `cancelled`
++and confirmation true. The stub gate cancels cooperatively; this promises no
++rollback. Already completed work retains its record and result unchanged.
++
++Reattach adds the same governed binding, the exact nullable
++`expected_outstanding_operation_ref`, and a closed `handoff` object with absolute
++`workspace_path`, committed `source_revision`, `source_manifest` entries
++(`path`, `sha256`), ordered `command_refs` and `external_resources`. Manifest
++files must match both Git HEAD and workspace bytes. Command references name
++committed JSON templates containing exactly `kind`, `payload`, `context`, `limits`.
++Paths are relative regular files without traversal or symlink escape. Resource
++objects use the existing runtime record schema. A successful check publishes
++`handoff.json` and a reattach session snapshot without changing owner, lease,
++generation, pending work or governed attempt. Partial publication fails closed.
++
++For replay, obtain the pinned inputs in a fresh private worktree, open a separate
++development session, read templates in order and submit each with fresh operation
++IDs and that session's actual owner/generation/lease and governed binding. Poll
++each outcome before continuing. Lifecycle calls never execute the templates.
++Handoff provenance does not prove source/heap equality or independent acceptance.
++
++`fixtures_self_test.sh` retains the original nine checks and appends
++`cancel-confirmation-required`, `handoff-source-bound` and stub cases 5, 6, 10
++through independently authored `test_runtime_session.py`. Each command and actual
++exit is reported, with failures propagated in existing CI. Candidate results
++still need independent QA and hosted evidence. Feature 128 owns bounded core
++closure; SBCL, fresh acceptance and full optional adapter conformance remain
++later work. The reserved `accept` action fails without side effects.
+ 
+ ## Foundation readiness — feature 118
+ 
+diff --git a/tools/fixtures/runtime_session/stub_runtime.py b/tools/fixtures/runtime_session/stub_runtime.py
+index 8787ae2..cb0ccec 100644
+--- a/tools/fixtures/runtime_session/stub_runtime.py
++++ b/tools/fixtures/runtime_session/stub_runtime.py
+@@ -3,6 +3,7 @@
+ import json
+ import os
+ from pathlib import Path
++import select
+ import sys
+ import time
+ 
+@@ -14,17 +15,39 @@ def send(value):
+ 
+ 
+ def main():
+-    initial = json.loads(sys.stdin.readline(65537))
+-    generation = initial['generation']
++    # One raw buffer avoids mixing select with TextIO's invisible read-ahead.
++    buffer = bytearray()
++    def receive(timeout=None):
++        deadline = None if timeout is None else time.monotonic() + timeout
++        while b'\n' not in buffer:
++            remaining = None if deadline is None else max(0, deadline - time.monotonic())
++            if not select.select([0], [], [], remaining)[0]:
++                return None
++            part = os.read(0, 65537 - len(buffer))
++            if not part:
++                raise EOFError
++            buffer.extend(part)
++            if len(buffer) > 65536:
++                raise ValueError('oversized frame')
++        end = buffer.index(b'\n') + 1
++        raw = bytes(buffer[:end]); del buffer[:end]
++        return json.loads(raw)
++    generation = receive()['generation']
+     send({'type': 'ready', 'generation': generation})
+-    image = {}
+-    for line in sys.stdin:
+-        frame = json.loads(line)
++    image, last = {}, None
++    while True:
++        frame = receive()
++        if frame['type'] == 'cancel' and frame == last:
++            continue  # Completed work won the race; do not disturb new work.
+         if frame['type'] != 'execute' or frame['generation'] != generation:
+             return 1
+         request = frame['request']
++        last = {'type': 'cancel', 'session_id': request['session_id'],
++                'operation_id': request['operation_id'], 'generation': generation,
++                'lease_epoch': request['expected_lease_epoch']}
+         print(json.dumps({'received_operation_id': request['operation_id']}), flush=True)
+         expression = json.loads(request['payload']['expression'])
++        cancelled = False
+         if expression['op'] == 'set':
+             result = expression['value']
+             image[expression['name']] = result
+@@ -32,15 +55,27 @@ def main():
+             result = image[expression['name']]
+         elif expression['op'] == 'gate':
+             while not Path(expression['release_path']).exists():
+-                time.sleep(.01)
++                control = receive(.01)
++                if control is None:
++                    continue
++                if control != last:
++                    return 1
++                cancelled = True
++                break
+             result = None
+         else:
+             return 1
+-        send({'type': 'result', 'operation_id': request['operation_id'],
+-              'generation': generation, 'status': 'completed', 'result': result,
+-              'image_consistent': True})
+-    return 0
++        response = {'type': 'result', 'operation_id': request['operation_id'],
++                    'generation': generation, 'status': 'cancelled' if cancelled else 'completed',
++                    'result': result, 'image_consistent': True}
++        if cancelled:
++            response.update(session_id=request['session_id'], lease_epoch=request['expected_lease_epoch'],
++                            cancellation_confirmed=True)
++        send(response)
+ 
+ 
+ if __name__ == '__main__':
+-    sys.exit(main())
++    try:
++        sys.exit(main())
++    except EOFError:
++        sys.exit(0)
+diff --git a/tools/fixtures_self_test.sh b/tools/fixtures_self_test.sh
+index 068eb5f..c3c178c 100755
+--- a/tools/fixtures_self_test.sh
++++ b/tools/fixtures_self_test.sh
+@@ -994,14 +994,16 @@ FIXTURE_CLAIMS=(
+ runtime_session_checks() {
+   local selector value rc failed=0
+   local -a arguments
+-  for selector in check case policy; do
++  for selector in check case policy extra_check extra_case; do
+     case "${selector}" in
+       check) set -- lifecycle-no-evaluation record-schema fixture-claim-registered ;;
+       case) set -- 1 2 3 9 13 ;;
+       policy) set -- 8 ;;
++      extra_check) set -- cancel-confirmation-required handoff-source-bound ;;
++      extra_case) set -- 5 6 10 ;;
+     esac
+     for value in "$@"; do
+-      if [ "${selector}" = check ]; then
++      if [ "${selector}" = check ] || [ "${selector}" = extra_check ]; then
+         arguments=(--check "${value}")
+       else
+         arguments=(--case "${value}" --runtime stub)
+diff --git a/tools/runtime_session.py b/tools/runtime_session.py
+index e256cba..25e5c13 100644
+--- a/tools/runtime_session.py
++++ b/tools/runtime_session.py
+@@ -3,12 +3,13 @@
+ 
+ Exit codes: 0 admitted/successful; 1 refused; 64 usage; 70 infrastructure.
+ Declared identities and exclusive locks coordinate work; they do not authenticate.
+-The five implemented calls use JSON request files. Only submit-operation sends
+-an execute frame. Cancellation, reattachment and fresh acceptance are deferred.
++The seven calls use JSON request files. Only submit-operation sends an execute
++frame. Source-bound replay uses explicit submits; fresh acceptance is deferred.
+ """
+ import argparse
+ import copy
+ import fcntl
++import hashlib
+ import json
+ import math
+ import os
+@@ -27,8 +28,10 @@ import time
+ FRAME_LIMIT = 65536
+ CONTROL_SECONDS = 5
+ ACTIONS = {'open-session', 'submit-operation', 'poll-operation',
+-           'transfer-session', 'close-session'}
+-RESERVED = {'cancel-operation', 'reattach-session', 'accept'}
++           'transfer-session', 'close-session', 'cancel-operation', 'reattach-session'}
++RESERVED = {'accept'}
++TERMINAL = {'completed', 'condition_signalled', 'cancelled', 'terminated', 'rejected'}
++SOURCE_KEYS = ('source_revision', 'source_manifest', 'command_refs', 'external_resources')
+ KINDS = {'load_source', 'compile_source', 'evaluate', 'run_tests', 'observe'}
+ ROLES = {'Orchestrator', 'Planner', 'Generator', 'Validator', 'Evaluator', 'review_trial'}
+ IDENTITY = {'session_id', 'requester', 'expected_generation', 'expected_lease_epoch'}
+@@ -158,8 +161,9 @@ def validate_request(action, request):
+     else:
+         extra = {'submit-operation': {'operation_id', 'kind', 'payload', 'context', 'limits', *BINDING},
+                  'poll-operation': {'operation_id'}, 'transfer-session': {'new_owner'},
+-                 'close-session': set()}[action]
+-        object_keys(request, IDENTITY | extra)
++                 'close-session': set(), 'cancel-operation': {'operation_id', *BINDING},
++                 'reattach-session': {'expected_outstanding_operation_ref', 'handoff', *BINDING}}[action]
++        object_keys(request, IDENTITY | extra, {'limits'} if action == 'poll-operation' else ())
+     insist(identifier(request['session_id']))
+     principal(request['requester'])
+     if 'expected_generation' in request:
+@@ -167,13 +171,24 @@ def validate_request(action, request):
+         insist(integer(request['expected_lease_epoch']))
+     if 'operation_id' in request:
+         insist(identifier(request['operation_id']))
+-    if action in ('open-session', 'submit-operation'):
++    if action in ('open-session', 'submit-operation', 'cancel-operation', 'reattach-session'):
+         insist(identifier(request['contract_id']) and identifier(request['step_key'])
+                and integer(request['attempt'], 1))
+     if action == 'transfer-session':
+         principal(request['new_owner'])
+-    if action != 'submit-operation':
+-        return
++    if action == 'poll-operation' and 'limits' in request:
++        object_keys(request['limits'], {'timeout_seconds'})
++        value = request['limits']['timeout_seconds']
++        insist(type(value) in (int, float) and math.isfinite(value) and 0 <= value <= 30)
++    if action == 'reattach-session':
++        ref = request['expected_outstanding_operation_ref']
++        insist(ref is None or string(ref))
++        handoff_shape(request['handoff'])
++    if action == 'submit-operation':
++        operation_data(request)
++
++
++def operation_data(request):
+     insist(isinstance(request['kind'], str) and request['kind'] in KINDS)
+     context = request['context']
+     object_keys(context, set(), {'working_dir', 'namespace', 'reader_config_ref', 'test_config_ref'})
+@@ -197,6 +212,73 @@ def validate_request(action, request):
+     insist(string(expression['release_path' if op == 'gate' else 'name']))
+ 
+ 
++def relative_file(value):
++    insist(string(value) and not Path(value).is_absolute() and '..' not in Path(value).parts
++           and value == Path(value).as_posix() and value != '.')
++
++
++def handoff_shape(value):
++    object_keys(value, {'workspace_path', *SOURCE_KEYS})
++    insist(string(value['workspace_path']) and Path(value['workspace_path']).is_absolute())
++    insist(isinstance(value['source_revision'], str) and re.fullmatch(r'[0-9a-f]{40}', value['source_revision']))
++    insist(type(value['source_manifest']) is list and value['source_manifest'])
++    names = set()
++    for entry in value['source_manifest']:
++        object_keys(entry, {'path', 'sha256'})
++        relative_file(entry['path'])
++        insist(entry['path'] not in names)
++        names.add(entry['path'])
++        insist(isinstance(entry['sha256'], str) and re.fullmatch(r'[0-9a-f]{64}', entry['sha256']))
++    insist(type(value['command_refs']) is list and value['command_refs'])
++    for name in value['command_refs']:
++        relative_file(name)
++    insist(type(value['external_resources']) is list)
++    for resource in value['external_resources']:
++        object_keys(resource, {'ref', 'owner', 'isolation'}, {'reset_command_ref'})
++        principal(resource['owner'])
++        insist(string(resource['ref']) and resource['isolation'] in ('isolated', 'reset', 'shared'))
++        if 'reset_command_ref' in resource:
++            insist(string(resource['reset_command_ref']))
++
++
++def source_provenance(value):
++    repo = Path(value['workspace_path'])
++    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
++    env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull)
++    deadline = time.monotonic() + CONTROL_SECONDS
++    def git(*args):
++        try:
++            result = subprocess.run(['git', '-C', str(repo), *args], env=env,
++                                    capture_output=True, timeout=max(.01, deadline - time.monotonic()))
++        except (OSError, subprocess.TimeoutExpired):
++            fail(70, 'infrastructure')
++        if result.returncode:
++            fail(1, 'source_mismatch')
++        return result.stdout
++    if git('rev-parse', 'HEAD').decode().strip() != value['source_revision']:
++        fail(1, 'source_mismatch')
++    contents = {}
++    for entry in value['source_manifest']:
++        name = entry['path']; path = repo / name
++        try:
++            if (not path.is_file() or path.is_symlink() or not path.resolve().is_relative_to(repo.resolve())
++                    or not git('ls-tree', 'HEAD', '--', name).startswith((b'100644 ', b'100755 '))):
++                fail(1, 'source_mismatch')
++            committed = git('show', 'HEAD:' + name)
++            if any(hashlib.sha256(raw).hexdigest() != entry['sha256'] for raw in (committed, path.read_bytes())):
++                fail(1, 'source_mismatch')
++            contents[name] = committed
++        except OSError:
++            fail(1, 'source_mismatch')
++    for name in value['command_refs']:
++        if name not in contents:
++            fail(1, 'source_mismatch')
++        template = parse_json(contents[name])
++        object_keys(template, {'kind', 'payload', 'context', 'limits'})
++        operation_data(template)
++    return {key: copy.deepcopy(value[key]) for key in SOURCE_KEYS}
++
++
+ def attempt_matches(binding, request):
+     if any(request.get(key) != binding.get(key) for key in BINDING):
+         return False
+@@ -260,6 +342,13 @@ class Supervisor:
+         self.stop = False
+         self.server = None
+         self.log_truncated = set()
++        self.waiters = {}
++
++    def clear_transition(self):
++        self.session.pop('transition', None)
++        for key in tuple(self.session):
++            if key.startswith('previous_'):
++                del self.session[key]
+ 
+     def session_write(self):
+         atomic_json(self.directory / 'runtime_session.json', self.session)
+@@ -267,7 +356,27 @@ class Supervisor:
+     def operation_path(self, operation_id):
+         return self.directory / 'operations' / f'{operation_id}.json'
+ 
+-    def reconcile_idle(self, session, metadata):
++    def check_handoff(self, session, metadata):
++        path = self.directory / 'handoff.json'
++        if metadata and metadata.get('handoff_pending'):
++            fail(70, 'ambiguous_state')
++        digest = (metadata or {}).get('handoff_digest')
++        if path.exists() != bool(digest):
++            fail(70, 'ambiguous_state')
++        if digest:
++            snapshot = read_json(path)
++            if (hashlib.sha256(path.read_bytes()).hexdigest() != digest
++                    or any(snapshot.get(k) != metadata['source_provenance'][k]
++                           or session.get(k) != metadata['source_provenance'][k] for k in SOURCE_KEYS)):
++                fail(70, 'ambiguous_state')
++
++    def check_live(self):
++        if (read_json(self.directory / 'runtime_session.json') != self.session
++                or read_json(self.directory / 'controller.json') != self.meta):
++            fail(70, 'ambiguous_state')
++        self.reconcile_idle(self.session, self.meta, self.outstanding)
++
++    def reconcile_idle(self, session, metadata, pending=None):
+         """Check published state without repairing it or inventing an outcome.
+ 
+         Admission and completion each publish several files. A null pointer is
+@@ -276,6 +385,7 @@ class Supervisor:
+         reservation likewise needs matching metadata and session publications.
+         """
+         try:
++            self.check_handoff(session, metadata)
+             operation_dir = self.directory / 'operations'
+             paths = list(operation_dir.glob('*.json'))
+             if session is None:
+@@ -285,7 +395,7 @@ class Supervisor:
+             generation(session['generation'])
+             generation(metadata['generation'])
+             if (metadata['generation'] != session['generation']
+-                    or session.get('outstanding_operation_ref') is not None):
++                    or session.get('outstanding_operation_ref') != (str(self.operation_path(pending)) if pending else None)):
+                 fail(70, 'ambiguous_state')
+             records = {path.name: path for path in paths if not path.name.endswith('.result.json')}
+             results = {path.name: path for path in paths if path.name.endswith('.result.json')}
+@@ -302,25 +412,36 @@ class Supervisor:
+                     fail(70, 'ambiguous_state')
+                 known[counter] = nonce
+                 status = record['status']
+-                if status not in ('completed', 'rejected', 'terminated', 'condition_signalled', 'cancelled'):
++                if oid == pending and status in ('running', 'cancel_requested', 'unknown'):
++                    if (record['generation'] != session['generation'] or record.get('executed') is not True
++                            or oid + '.result.json' in results):
++                        fail(70, 'ambiguous_state')
++                    continue
++                if oid == pending or status not in TERMINAL:
+                     fail(70, 'ambiguous_state')
+                 if record.get('executed') is not (status != 'rejected'):
+                     fail(70, 'ambiguous_state')
+                 result_path = results.pop(oid + '.result.json', None)
+-                if status == 'completed':
++                if status in ('completed', 'cancelled'):
+                     if result_path is None:
+                         fail(70, 'ambiguous_state')
+                     result = read_json(result_path)
+-                    object_keys(result, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'})
++                    extra = {'session_id', 'lease_epoch', 'cancellation_confirmed'} if status == 'cancelled' else set()
++                    object_keys(result, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'} | extra)
+                     generation(result['generation'])
+                     if (result['type'] != 'result' or result['operation_id'] != oid
+                             or result['generation'] != record['generation']
+-                            or result['status'] != 'completed' or result['image_consistent'] is not True
++                            or result['status'] != status or result['image_consistent'] is not True
+                             or record.get('image_consistent') is not True):
+                         fail(70, 'ambiguous_state')
++                    if status == 'cancelled' and (result['session_id'] != record['session_id']
++                            or type(result['lease_epoch']) is not int or result['lease_epoch'] != record['lease_epoch']
++                            or result['cancellation_confirmed'] is not True
++                            or record.get('cancellation_confirmed') is not True or result['result'] is not None):
++                        fail(70, 'ambiguous_state')
+                 elif result_path is not None:
+                     fail(70, 'ambiguous_state')
+-            if results:
++            if results or pending and pending + '.json' not in records:
+                 fail(70, 'ambiguous_state')
+         except (OSError, KeyError, TypeError, ValueError, SessionError):
+             fail(70, 'ambiguous_state')
+@@ -357,6 +478,10 @@ class Supervisor:
+                          supervisor_token=live_token(os.getpid()), child_pid=None,
+                          generation=self.session['generation'],
+                          previous_generation=previous['generation'] if previous else None)
++        if previous_meta and previous_meta.get('source_provenance'):
++            self.meta.update(source_provenance=previous_meta['source_provenance'],
++                             handoff_digest=previous_meta['handoff_digest'])
++            self.session.update(previous_meta['source_provenance'], source_state='committed')
+         (self.directory / 'operations').mkdir(exist_ok=True)
+         # Reserve the incarnation durably before any child exists.
+         atomic_json(meta_path, self.meta)
+@@ -424,24 +549,40 @@ class Supervisor:
+                 insist(value['generation'] == self.session['generation'])
+                 self.ready = True
+                 return
+-            object_keys(value, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'})
++            insist(type(value) is dict)
++            cancelled = value.get('status') == 'cancelled'
++            extra = {'session_id', 'lease_epoch', 'cancellation_confirmed'} if cancelled else set()
++            object_keys(value, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'} | extra)
+             generation(value['generation'])
+             insist(value['type'] == 'result' and value['operation_id'] == self.outstanding
+                    and self.outstanding is not None and value['generation'] == self.session['generation']
+-                   and value['status'] == 'completed' and value['image_consistent'] is True)
++                   and value['status'] in ('completed', 'cancelled') and value['image_consistent'] is True)
+             path = self.operation_path(self.outstanding)
+             record = read_json(path)
++            if cancelled:
++                insist(record['status'] == 'cancel_requested' and value['cancellation_confirmed'] is True
++                       and value['session_id'] == record['session_id']
++                       and type(value['lease_epoch']) is int and value['lease_epoch'] == record['lease_epoch']
++                       and value['result'] is None)
+             atomic_json(path.with_suffix('.result.json'), value)
+-            record.update(status='completed', image_consistent=True)
++            record.update(status=value['status'], image_consistent=True)
++            if cancelled:
++                record['cancellation_confirmed'] = True
++            if 'wait_outcome' in record:
++                record['wait_outcome'] = 'completed_wait'
+             atomic_json(path, record)
+             self.outstanding = None
+             self.session['outstanding_operation_ref'] = None
++            self.clear_transition()
+             self.session_write()
+         except (SessionError, ValueError, KeyError, TypeError):
+             self.protocol_fault()
+ 
+     def pump(self, seconds):
+         for key, _ in self.selector.select(seconds):
++            if key.data == 'waiter':
++                self.finish_waiter(key.fileobj, None)
++                continue
+             if key.data == 'server':
+                 self.serve()
+                 continue
+@@ -470,6 +611,10 @@ class Supervisor:
+                 self.protocol_fault()
+             if self.broken:
+                 self.protocol.clear()
++        for connection, (request, end) in list(self.waiters.items()):
++            record = read_json(self.operation_path(request['operation_id']))
++            if record['status'] in TERMINAL or record['status'] == 'unknown' or time.monotonic() >= end:
++                self.finish_waiter(connection, self.poll_response(request, expired=True))
+ 
+     def operation_record(self, request, reason=None):
+         record = {key: copy.deepcopy(request[key]) for key in
+@@ -521,11 +666,7 @@ class Supervisor:
+             if not reason and self.broken:
+                 fail(70, 'infrastructure')
+             if not reason:
+-                durable_session = read_json(self.directory / 'runtime_session.json')
+-                durable_meta = read_json(self.directory / 'controller.json')
+-                if durable_session != self.session or durable_meta != self.meta:
+-                    fail(70, 'ambiguous_state')
+-                self.reconcile_idle(durable_session, durable_meta)
++                self.check_live()
+             expression = parse_json(request['payload']['expression'])
+             if expression['op'] == 'gate':
+                 release = Path(expression['release_path'])
+@@ -536,6 +677,7 @@ class Supervisor:
+                 return response_error(reason, record)
+             self.outstanding = request['operation_id']
+             self.session['outstanding_operation_ref'] = str(path)
++            self.clear_transition()
+             self.session_write()
+             try:
+                 self.child.stdin.write(encode({'type': 'execute', 'request': request,
+@@ -545,14 +687,35 @@ class Supervisor:
+                 self.protocol_fault()
+                 fail(70, 'infrastructure')
+             return {'ok': True, 'result': record}
+-        reason = self.identity_reason(request, permit_orchestrator=True)
++        reason = self.identity_reason(request, permit_orchestrator=action not in ('cancel-operation', 'reattach-session'))
+         if reason:
+             fail(1, reason)
+         if action == 'poll-operation':
++            return self.poll_response(request)
++        if action in ('cancel-operation', 'reattach-session'):
++            if not permitted_owner(request['requester']):
++                fail(1, 'foreign_owner')
++            if not attempt_matches(self.meta, request):
++                fail(1, 'attempt_mismatch')
++            self.check_live()
++            if action == 'reattach-session':
++                return self.reattach(request)
+             path = self.operation_path(request['operation_id'])
+             if not path.is_file():
+                 fail(1, 'unknown_operation')
+-            return {'ok': True, 'result': read_json(path)}
++            record = read_json(path)
++            if record['status'] in TERMINAL or record['status'] == 'cancel_requested':
++                return {'ok': True, 'result': record}
++            if self.broken or record['status'] == 'unknown':
++                return response_error('infrastructure', record)
++            if request['operation_id'] != self.outstanding:
++                fail(70, 'ambiguous_state')
++            record.update(status='cancel_requested', cancellation_confirmed=False)
++            atomic_json(path, record)
++            self.child.stdin.write(encode({'type': 'cancel', 'session_id': record['session_id'],
++                'operation_id': self.outstanding, 'generation': record['generation'], 'lease_epoch': record['lease_epoch']}))
++            self.child.stdin.flush()
++            return {'ok': True, 'result': record}
+         if not lifecycle(request['requester'], self.session['owner']):
+             fail(1, 'foreign_owner')
+         if action == 'transfer-session':
+@@ -562,6 +725,7 @@ class Supervisor:
+                 fail(1, 'session_busy')
+             if request['new_owner'] == self.session['owner']:
+                 fail(1, 'same_owner')
++            self.clear_transition()
+             self.session.update(transition='transfer', previous_owner=self.session['owner'],
+                                 previous_lease_epoch=self.session['lease_epoch'],
+                                 owner=request['new_owner'], lease_epoch=self.session['lease_epoch'] + 1)
+@@ -571,30 +735,84 @@ class Supervisor:
+         if self.outstanding:
+             record = read_json(self.operation_path(self.outstanding))
+             record.update(status='terminated', image_consistent=False)
++            if 'wait_outcome' in record:
++                record['wait_outcome'] = 'completed_wait'
+             atomic_json(self.operation_path(self.outstanding), record)
+             self.outstanding = None
+             self.session['outstanding_operation_ref'] = None
++            self.clear_transition()
+             self.session_write()
+         self.stop = True
+         return {'ok': True, 'result': {'closed': True, 'session_id': self.session['session_id']}}
+ 
++    def reattach(self, request):
++        if self.broken:
++            fail(70, 'infrastructure')
++        if request['expected_outstanding_operation_ref'] != self.session.get('outstanding_operation_ref'):
++            fail(1, 'continuity_mismatch')
++        provenance = source_provenance(request['handoff'])
++        if self.meta.get('source_provenance', provenance) != provenance:
++            fail(1, 'source_mismatch')
++        snapshot = {k: copy.deepcopy(self.session[k]) for k in
++                    ('session_id', 'purpose', 'owner', 'generation', 'lease_epoch', 'outstanding_operation_ref')}
++        snapshot.update(provenance, source_state='committed', transition='handoff')
++        current = dict(snapshot, transition='reattach')
++        for key in ('owner', 'generation', 'lease_epoch', 'outstanding_operation_ref'):
++            current['previous_' + key] = copy.deepcopy(snapshot[key])
++        self.meta['handoff_pending'] = True
++        atomic_json(self.directory / 'controller.json', self.meta)
++        atomic_json(self.directory / 'handoff.json', snapshot)
++        atomic_json(self.directory / 'runtime_session.json', current)
++        self.meta.update(source_provenance=provenance, handoff_digest=hashlib.sha256(encode(snapshot)).hexdigest())
++        self.meta.pop('handoff_pending')
++        atomic_json(self.directory / 'controller.json', self.meta)
++        self.session = current
++        return {'ok': True, 'result': current}
++
++    def poll_response(self, request, expired=False):
++        path = self.operation_path(request['operation_id'])
++        if not path.is_file():
++            fail(1, 'unknown_operation')
++        record = read_json(path)
++        if 'limits' in request and (expired or record['status'] in TERMINAL):
++            record['wait_outcome'] = 'completed_wait' if record['status'] in TERMINAL else 'stopped_waiting'
++            atomic_json(path, record)
++        return (response_error('infrastructure', record) if record['status'] == 'unknown'
++                else {'ok': True, 'result': record})
++
++    def finish_waiter(self, connection, response):
++        if connection in self.waiters:
++            del self.waiters[connection]
++            self.selector.unregister(connection)
++        try:
++            if response is not None:
++                connection.sendall(encode(response))
++        except OSError:
++            pass  # Disconnect does not cancel admitted work.
++        finally:
++            connection.close()
++
+     def serve(self):
+         connection, _ = self.server.accept()
+-        with connection:
+-            connection.settimeout(CONTROL_SECONDS)
+-            try:
+-                envelope = receive_line(connection, time.monotonic() + CONTROL_SECONDS)
+-                object_keys(envelope, {'action', 'request'})
+-                insist(isinstance(envelope['action'], str))
+-                response = self.dispatch(envelope['action'], envelope['request'])
+-            except SessionError as exc:
+-                response = response_error(exc.reason)
+-            except (OSError, KeyError, TypeError):
+-                response = response_error('infrastructure')
+-            try:
+-                connection.sendall(encode(response))
+-            except OSError:
+-                pass  # A disconnected caller cannot erase admitted work.
++        connection.settimeout(CONTROL_SECONDS)
++        try:
++            envelope = receive_line(connection, time.monotonic() + CONTROL_SECONDS)
++            object_keys(envelope, {'action', 'request'})
++            action, request = envelope['action'], envelope['request']
++            insist(isinstance(action, str))
++            response = self.dispatch(action, request)
++            if action == 'poll-operation' and 'limits' in request:
++                seconds = request['limits']['timeout_seconds']
++                if seconds and response['ok'] and response['result']['status'] not in TERMINAL:
++                    self.waiters[connection] = (request, time.monotonic() + seconds)
++                    self.selector.register(connection, selectors.EVENT_READ, 'waiter')
++                    return
++                response = self.poll_response(request, expired=True)
++        except SessionError as exc:
++            response = response_error(exc.reason)
++        except (OSError, KeyError, TypeError):
++            response = response_error('infrastructure')
++        self.finish_waiter(connection, response)
+ 
+     def stop_child(self):
+         if self.child and self.child.poll() is None:
+@@ -606,6 +824,8 @@ class Supervisor:
+                 self.child.wait(timeout=2)
+ 
+     def cleanup(self):
++        for connection in list(self.waiters):
++            self.finish_waiter(connection, None)
+         self.stop_child()
+         if self.server:
+             self.server.close()
+@@ -688,7 +908,8 @@ def client(action, root, request):
+         connection.settimeout(CONTROL_SECONDS)
+         connection.connect(str(directory / 'control.sock'))
+         connection.sendall(encode({'action': action, 'request': request}))
+-        response = receive_line(connection, time.monotonic() + CONTROL_SECONDS)
++        wait = request.get('limits', {}).get('timeout_seconds', 0) if action == 'poll-operation' else 0
++        response = receive_line(connection, time.monotonic() + CONTROL_SECONDS + wait)
+     if action == 'close-session' and response['ok']:
+         meta = read_json(directory / 'controller.json')
+         deadline = time.monotonic() + CONTROL_SECONDS
