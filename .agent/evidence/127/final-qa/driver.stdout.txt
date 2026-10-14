@@ -1,0 +1,17 @@
+1/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation
+2/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema
+3/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check fixture-claim-registered
+4/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub
+5/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub
+6/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub
+7/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub
+8/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub
+9/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy
+10/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmation-required
+11/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check handoff-source-bound
+12/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime stub
+13/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime stub
+14/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime stub
+15/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh
+16/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 bash tools/fixtures_self_test.sh
+17/17 exit=0 timeout=False: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/127/final-qa/adversarial.py
