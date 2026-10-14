@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.4
+version: 0.65.5
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.5"
+    date: "2026-10-14"
+    summary: "Record captured119 pure AGF mapping, distinct current/historical proof and active018 next120; preserve historical snapshots and allowances."
   - version: "0.65.4"
     date: "2026-10-14"
     summary: "Record captured128 partial-core close, separate QA/hosted proof and next018 controls; preserve historical bodies and original allowances."
@@ -219,18 +222,19 @@ change_log:
 ---
 # Forward Roadmap
 
-## Current position — captured 126–128, 2026-10-14
+## Current position — captured 119, 2026-10-14
 
 Feature 126 is [captured complete](../../.agent/evidence/126/evidence-capture.json) and [merged as PR 97](../../.agent/evidence/126/pr97-merge-receipt.json) at `c2b95a1`; [main CI 38551059606](../../.agent/evidence/126/pr97-main-ci.json) passed all five jobs.
 Its C3 source `d965c2c` and sealed 795-line test have [independent nine-check QA plus an adversarial spot check](../../.agent/qa/126.json) and [nine actual hosted CI commands](../../.agent/evidence/126/ci-c3-receipt.json).
 Feature 127 is [captured complete](../../.agent/evidence/127/evidence-capture.json) for timeout stopping only the wait, busy/reattach, source-bound replay and cancellation confirmation.
 Source `88996ee9405f9467ff2debd6e3115b34d064019a` and sealed test `SHA-256 3628f1b2…` passed [independent QA: fourteen runtime checks, two repository checks and one additional adversarial interaction](../../.agent/qa/127.json).
 Feature 128 is [captured complete](../../.agent/evidence/128/evidence-capture.json), closing phase 016’s bounded partial stub core. Source/docs `62a83e6` and runner `SHA-256 005ed223…` passed [fresh independent QA](../../.agent/qa/128.json): `core-ready` executed fourteen leaves with actual exit zero, both repository checks passed, and one capability negative returned expected exit 2.
-[Hosted CI 38569054719](../../.agent/evidence/128/ci-new-runner-2-receipt.json) separately ran all fourteen leaf commands with actual exit zero; it did not execute `core-ready`. [PR 99](https://github.com/niq-cnr/nizam-framework/pull/99) carries this work; follow that link for integration status.
+[Hosted CI 38569054719](../../.agent/evidence/128/ci-new-runner-2-receipt.json) separately ran all fourteen leaves with exit zero, without executing `core-ready`. [PR 99 merged](../../.agent/evidence/128/pr99-merge-receipt.json) at `fcd0584`; [main CI 38572390067](../../.agent/evidence/128/pr99-main-ci.json) passed all five jobs.
 The [case matrix](../../.agent/feature_list_016.json) records live stub cases **5/6/10** from 127 alongside 126's **1/2/3/8 (policy)/9/13**: phase 016 remains partial stub scope. Full adapter, SBCL runtime, fresh phase-020 acceptance and final CI 131 remain pending.
-Next bounded scope is **018 — workflow assurance controls (119–123)**; [phase 018](phase_018.yaml) and its [feature list](../../.agent/feature_list_018.json) define that scope. [Phase 016](phase_016.yaml), its [feature list](../../.agent/feature_list_016.json), and [Root state](../../.agent/run_state.json) govern lifecycle, gates and measured usage.
-Root alone owns lifecycle and budget accounting; this refresh counts once within 128, with no new allowance or rebaseline. The original phase-016 estimate/ceiling remains **5,650/7,345**.
-Completed phase 017's **5,203/7,020** snapshot and immutable installed **v1.5.0** remain unchanged. The DAG stays **017 → 016 → 018 → 020 → 019**; 018's controller prerequisite is **127 only**.
+Feature 119 is [captured complete](../../.agent/evidence/119/evidence-capture.json): pure `convergent_agf_verdict` mapping preserves carried blockers and blocking arrays while exposing advisory minor findings. [Fresh QA](../../.agent/qa/119.json) passed six selectors, all twenty inherited cases in default26, repository checks and one independent adversarial check.
+Historical `foundation-ready` succeeds at immutable `8ac94f6`; the changed119 candidate correctly rejects stale118 receipts. [Hosted CI 38583535629](../../.agent/evidence/119/ci2-receipt.json) separately passed default26 on the same Source/test bytes; [PR 100](https://github.com/niq-cnr/nizam-framework/pull/100) remains subject to integration checks.
+[Phase 018](phase_018.yaml) remains active: **120 is next**, with 120–123 pending in its [feature list](../../.agent/feature_list_018.json). Root alone owns lifecycle and final measured usage in [run state](../../.agent/run_state.json); this refresh counts once within119 against unchanged **7,200/9,360**, with no rebaseline.
+Closed phase016 **5,179** (original **5,650/7,345**), phase017 **5,203/7,020** and installed **v1.5.0** remain unchanged. The DAG stays **017 → 016 → 018 → 020 → 019**; 018's controller prerequisite is **127 only**.
 The [balanced comparison proposal](agentic-excellence.md) remains unmeasured and makes no superiority claim.
 
 All earlier sections below, including older “Current” headings, are historical snapshots. Their bodies and release-disposition facts are preserved; the canonical records above govern current work.
