@@ -1,0 +1,55 @@
+{
+  "owner": "/root",
+  "kind": "H-PHASE-016-activation",
+  "at": "2026-10-14T08:24:27.635883+00:00",
+  "authorization": ".agent/evidence/agentic-excellence/authorization.json",
+  "canonical_candidate": "f9528cff90efcb34ae3c500e328b6a24d650e14d",
+  "canonical_review": ".agent/evidence/phase016-preflight/canonical-review.json",
+  "review_commit": "10f4aff855d70e1c71750ebe9a709360b089ba27",
+  "capability": ".agent/evidence/phase016-preflight/hosted-result.json",
+  "foundation": ".agent/evidence/118/evidence-capture.json",
+  "pr95": {
+    "number": 95,
+    "merge": "c8dc65ab29c289e4c3989a58ff2007e98a2990ea",
+    "pr_ci": 38533285793,
+    "main_ci": 38533593961,
+    "all_five_jobs_passed": true
+  },
+  "preparation": {
+    "id": "phase016-preparation",
+    "actual": 307,
+    "product_lines": 27,
+    "process_overhead_lines": 280,
+    "evidence_lines": 2994,
+    "excluded_lines": 16,
+    "range": "e619d284d36eaf6dfff54a9d001477b8d1722098..607ac75010b3668226f777986822adfb700eaf23",
+    "evidence": ".agent/evidence/phase016-preflight/scope-preparation.txt",
+    "note": "CI transport20 + comparison proposal163 + canonical activation124; all current preparation charged once within existing allowance, not a completed-feature baseline."
+  },
+  "measurement": {
+    "command": [
+      "python3",
+      ".agent/evidence/scope-budget-014/measure.py",
+      "--range",
+      "preparation=e619d284d36eaf6dfff54a9d001477b8d1722098..607ac75010b3668226f777986822adfb700eaf23",
+      "--files"
+    ],
+    "actual_exit": 0,
+    "exercised_revision": "607ac75010b3668226f777986822adfb700eaf23",
+    "values": {
+      "PRODUCT_LINES": 27,
+      "PROCESS_OVERHEAD_LINES": 280,
+      "BUDGET_COUNTED_LINES": 307,
+      "EVIDENCE_LINES": 2994,
+      "EXCLUDED_LINES": 16,
+      "UNCLASSIFIED_LINES": 0,
+      "ALL_PATHS_LINES": 3317
+    }
+  },
+  "previous_phase017_budget_sha256": "9e82dcc9dd51ce4cd70c033ea477609ddcde4b4d663158ed07bb32ab52e2513f",
+  "phase017_budget_archived_exactly": true,
+  "selected_feature": "126",
+  "implementation_approved": false,
+  "active_contract_id": null,
+  "next": "Generator proposes126; Validator ModeA and independent Evaluator contract review must pass before approval/implementation."
+}
