@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "121",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:27:46.337183+00:00",
+  "updated_at": "2026-10-14T18:36:24.983124+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1293,6 +1293,11 @@
       "result": "passed"
     },
     "121-acceptance-author": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "provisional bundle submitted"
+    },
+    "121-provisional-review": {
       "attempts": 1,
       "limit": 3
     }
@@ -5858,6 +5863,11 @@
       "at": "2026-10-14T18:27:46.337183+00:00",
       "event": "121-approved-contract-format-preservation",
       "detail": "Before author handoff, Root retains original compact contract formatting; semantic approved JSON exact, only raw approved digest changes. Proposal/gate digests unchanged. Prior normalized promotion69ba89c remains historical; no runtime/Source/test or retry."
+    },
+    {
+      "at": "2026-10-14T18:36:24.983124+00:00",
+      "event": "121-provisional-review-dispatch",
+      "detail": "Author f7a2715 test4eb97ec committed before actual captures at3fecfc0. Immutable seal verified; real fixture/schema setup0, five absentAPI setup2, old37 actual0. Distinct reviewer checks frozen concrete oracles/ownership/cleanup coverage before initialSource; no API pass/red/removal claimed."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6356,7 +6366,7 @@
       }
     ]
   },
-  "last_action": "121 dual precode gates approved a7522f2; Root promoted, independent acceptance author next, Source remains gated on distinct provisional review.",
+  "last_action": "121 frozen226-line independent provisional bundle and actual setup/old37 proof submitted; distinct reviewer before any Source.",
   "completed_contract_ids": [
     "099",
     "103",
