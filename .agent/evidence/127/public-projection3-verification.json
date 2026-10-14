@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-14T11:10:45.597896+00:00",
+  "exercised_revision": "db70886de1815f8e401f70dc2f41bf1d1e684b39",
+  "context": "Third/final attempt candidate worktree document hashes recorded by scoped check output; base db70886.",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/127/public-projection3-check.py"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/public-projection3-1.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection3-1.stderr.txt"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "db70886"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/public-projection3-2.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection3-2.stderr.txt"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "5be6c60",
+        "--",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/HANDOVER.md"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/public-projection3-3.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection3-3.stderr.txt"
+    }
+  ],
+  "all_passed": true,
+  "review": "Independent review3 required before promotion; prior review1/review2 rejections retained. No self approval."
+}
