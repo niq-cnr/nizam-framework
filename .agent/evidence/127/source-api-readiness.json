@@ -1,0 +1,38 @@
+{
+  "role": "Generator; read-only API implementability assessment, not independent bundle approval",
+  "input_revision": "3040ff032d2e5a0f1b0a5669447ce3268402e5fc",
+  "owned_root": "/home/cnross/.tmp/nizam-feature127-readiness",
+  "inputs": {
+    ".agent/evidence/127/runtime-api127.json": {
+      "git_blob": "17d57cc37988de9cd8bd2c94edb2e2e6d5c17183",
+      "sha256": "f8052878dc2566dde5ec35911b485a874e187df57df8f10ade508505afd544b6"
+    },
+    ".agent/evidence/127/acceptance1-handoff.json": {
+      "git_blob": "ccb7584987c845da13195cb5d37a30a25982d04e",
+      "sha256": "8da63bdd47ced3747201ee3a19e7749868a06923fecb49578ba79a672e257aaa"
+    },
+    ".agent/evidence/127/acceptance1-test-seal.json": {
+      "git_blob": "3ae1a8b3027ddfdc2709f82d1bfaf6e34f9d24a3",
+      "sha256": "3b8a185302f2509dd33ea80746db2e62855a0795bf0fb9e8ba84977d76297b16"
+    },
+    ".agent/contracts/127.json": {
+      "git_blob": "f434f0a569fdfcc34d12fb5ca1a0ed68fa23e58b",
+      "sha256": "b221434834b68dd0273a0bdd0f6f8c0988bee0165f9c31255f4e33b150191cb7"
+    }
+  },
+  "test_identity_checked_only": {
+    "path": "tools/test_runtime_session.py",
+    "sha256": "3628f1b2b833a0f504cced79252391ff213bd75197dd2d5261494fbb646eb12e",
+    "scope": "Byte identity agrees with seal/handoff; this assessment does not review or execute the acceptance tests."
+  },
+  "conclusion": "Provisional serialization and response boundaries are implementable within the approved contract; no concrete mismatch identified. No new public action, schema field, permission or implementation authority is introduced.",
+  "assessment": [
+    "Poll request retains inherited identity, adds only the explicit finite nonboolean [0,30] deadline, and distinguishes absent limits from timed zero. Unknown snapshots use70/infrastructure with the record. This is compatible with the approved response boundary and readiness1 event-loop plan.",
+    "Cancel request/frame/ack fields match approved correlation exactly. Initial cancel_requested/false, one frame, confirmation-only terminal result and unchanged completed record are implementable without changing existing completed frames. Private fault-peer diagnostics do not impose a production-only test hook.",
+    "Reattach carries exact nullable pending ref, governed binding and the approved closed handoff shape. Source templates remain ordinary submit data; no lifecycle evaluation. API leaves private metadata publication details with implementation and requires existing schema-shaped records.",
+    "Error dispositions consistently distinguish malformed/path syntax64, committed-source mismatch1, owner/lease/generation/attempt refusal1 and durable/endpoint uncertainty70. Syntactic parent traversal is usage64; a well-shaped path escaping through filesystem symlinks is source_mismatch1. A known outstanding pointer may retain inherited reopen session_busy1; ambiguous corruption remains70.",
+    "Handoff and seal correctly remain provisional: unsupported reattach and missing fourteen-command integration are nonsemantic baseline gaps, not intended red. New semantic controls, executable bundle review, ModeB, distinct fresh QA and CI remain pending."
+  ],
+  "preservation": "Only this new readiness JSON written. Prior source-readiness.json and all product/source/test/contract/coordination bytes unchanged. No baseline tests, patches, API amendment or approval performed.",
+  "next": "Wait for actual independent bundle approval and Root fresh Source1 dispatch; use its exact reviewed API/test identities."
+}
