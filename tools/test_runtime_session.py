@@ -611,12 +611,13 @@ def atomic_json(path, value):
             require(load(peer.operation(request['operation_id']))['status'] == 'running' and
                     not peer.result_path(request['operation_id']).exists(), 'durable nonterminal crash witness')
             peer.no_dispatch(request['operation_id'])
-            response = peer.call('open-session', peer.opening(), (0, 1, 70))
+            known_busy = bool(load(peer.directory / 'runtime_session.json').get('outstanding_operation_ref'))
+            response = peer.call('open-session', peer.opening(), (0, 1) if known_busy else (0, 70))
             if response['ok']:
                 # Track an erroneously admitted replacement before failing, so finally can reap it.
                 peer.record = response['result']; peer.remember()
             require(response['ok'] is False, 'crash disagreement must refuse reopen before a new incarnation')
-            require(response['error'] in ('infrastructure', 'session_busy', 'ambiguous_state'),
+            require(response['error'] in (('session_busy',) if known_busy else ('infrastructure', 'ambiguous_state')),
                     'crash refusal reports continuity uncertainty or busy, not unrelated policy/setup')
             fresh = peer.request('set', 'must-not-dispatch')
             peer.call('submit-operation', fresh, (1, 70)); peer.no_dispatch(fresh['operation_id'])
