@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "016-runtime-controller-core",
-  "current_feature": "127",
+  "current_feature": "128",
   "status": "in_progress",
-  "updated_at": "2026-10-14T12:37:40.699278+00:00",
+  "updated_at": "2026-10-14T12:42:36.409016+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -994,6 +994,14 @@
       "limit": 3
     },
     "127-closeout-docs-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "128-selection": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "128-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -5294,6 +5302,12 @@
       "event": "127-postcapture-docs-checkpoint",
       "detail": "Runtime127 canonical closure validated16/16 at1736/phase4739. Planner updates current factual overlay to stable captured facts and canonical status/usage links; prior preparation review success and failures remain preserved.",
       "evidence": ".agent/evidence/127/closeout-docs-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T12:42:36.409016+00:00",
+      "event": "128-contract-preparation-selected",
+      "detail": "127 captured and mergedec0b21c after six successful checks. Prepare128 contract concurrently with mainCI38565810273; no implementation before mainCI and both precode approvals. Reconcile inherited captured126 id into completion index; canonical126 proof unchanged.",
+      "evidence": ".agent/evidence/128/selection.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5510,7 +5524,9 @@
           "flagged": false
         },
         "note": "Whole127 measured once from unchangedc2b95a1 after independent captured-docs review. Source428+tests565 unchanged; latest current overlays replace selected127 view. Replaces pre-docs1736 snapshot preserved at904f69b; not appended twice. All historical failed attempts and original5650/7345 retained; no additional allowance.",
-        "prior_snapshot_revision": "904f69b1ad12ca07d9d216c5e261247ca12a1006"
+        "prior_snapshot_revision": "904f69b1ad12ca07d9d216c5e261247ca12a1006",
+        "capture_revision": "ce81f3ccfd8361173ec99c3107313b75081105d7",
+        "merge_revision": "ec0b21c64f8bf003faa42d6a17dbe4f3903b065b"
       }
     ],
     "phase_level_items": [
@@ -5737,7 +5753,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "127",
+  "active_contract_id": "128",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5809,7 +5825,7 @@
       }
     ]
   },
-  "last_action": "127 captured complete; postcapture factual docs checkpoint before finalPRchecks",
+  "last_action": "PR98 merged after six successful exact-head checks;128 selected for contract preparation only, postmerge CI and precode gates required before implementation.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -5829,6 +5845,7 @@
     "116",
     "117",
     "118",
+    "126",
     "127"
   ],
   "phase_014_scope_budget_final": {
