@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "127",
   "status": "in_progress",
-  "updated_at": "2026-10-14T12:17:54.716246+00:00",
+  "updated_at": "2026-10-14T12:21:38.920929+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -987,6 +987,10 @@
     },
     "127-evidence-capture": {
       "attempts": 2,
+      "limit": 3
+    },
+    "127-closeout-docs": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -5280,6 +5284,12 @@
       "event": "127-captured-canonical-close",
       "detail": "All14+repo2+ownextra, strictgates, actualCI and installed fidelity captured. Feature127 complete at1736 counted lines; phase4739/7345. Original capture1 failure retained, isolated2 passed. PR98 clean merge still pending;128 stayspending.",
       "evidence": ".agent/evidence/127/closure.json"
+    },
+    {
+      "at": "2026-10-14T12:21:38.920929+00:00",
+      "event": "127-postcapture-docs-checkpoint",
+      "detail": "Runtime127 canonical closure validated16/16 at1736/phase4739. Planner updates current factual overlay to stable captured facts and canonical status/usage links; prior preparation review success and failures remain preserved.",
+      "evidence": ".agent/evidence/127/closeout-docs-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5794,7 +5804,7 @@
       }
     ]
   },
-  "last_action": "127 captured and canonically complete; final measured cost recorded, PR98 final checks pending",
+  "last_action": "127 captured complete; postcapture factual docs checkpoint before finalPRchecks",
   "completed_contract_ids": [
     "099",
     "103",
