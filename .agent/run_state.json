@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
   "status": "in_progress",
-  "updated_at": "2026-10-14T05:20:26.119422+00:00",
+  "updated_at": "2026-10-14T05:38:57.352019+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -841,6 +841,14 @@
       "limit": 3
     },
     "118-recovery1-precode-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-test-author": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-bundle-coordination": {
       "attempts": 1,
       "limit": 3
     }
@@ -4802,6 +4810,12 @@
       "event": "118-recovery1-precode-approved",
       "detail": "Both strict independent gates approve proposal70e1bab. Root applied only declared approval metadata, resumed canonical phase/step first then mirrors, preserved all historical counters/4012/blocked559 and DEBT054Open. Separate immutable snapshot and receipt-gated live status; independent repaired bundle next.",
       "evidence": ".agent/evidence/118/recovery1-resume.json"
+    },
+    {
+      "at": "2026-10-14T05:38:57.352019+00:00",
+      "event": "118-recovery1-bundle-authored",
+      "detail": "Root verified actual Git B2 and current bytes for all31 frozen inputs plus handoff proof hashes. Original B1 archives and recorded development failures retained. Distinct independent bundle review required before Source2.",
+      "evidence": ".agent/evidence/118/recovery1-test-author-handoff.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5341,7 +5355,7 @@
       }
     ]
   },
-  "last_action": "Recovery3 contract approved by both independent gates; canonical118 resumed for independently repaired and reviewed acceptance bundle.",
+  "last_action": "Repaired B2 acceptance bundle frozen and hashes verified; distinct review pending before Source2.",
   "completed_contract_ids": [
     "099",
     "103",
