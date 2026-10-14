@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "126",
   "status": "in_progress",
-  "updated_at": "2026-10-14T09:20:38.930001+00:00",
+  "updated_at": "2026-10-14T09:28:30.712898+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -910,6 +910,10 @@
     },
     "126-b0-review": {
       "attempts": 2,
+      "limit": 3
+    },
+    "126-source": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4993,6 +4997,12 @@
       "event": "126-B0-repair2-received",
       "detail": "126 repaired provisional B0-2 test728lines/hash60f679 verified; renewed distinct bundle review dispatched. Source absent; transport/semantic red/final acceptance pending.",
       "evidence": ".agent/evidence/126/b0-round2-coordination.json"
+    },
+    {
+      "at": "2026-10-14T09:28:30.712898+00:00",
+      "event": "126-B0-review2-approved-source1-dispatched",
+      "detail": "126 renewed provisional B0 review2 strict gate passed; source attempt1 allocated in isolated Generator worktree. C1 handoff only; behavioral red/final bundle/ModeB/QA/CI pending.",
+      "evidence": ".agent/evidence/126/b0-round2-advance.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5466,7 +5476,7 @@
       }
     ]
   },
-  "last_action": "126 repaired provisional B0-2 test728lines/hash60f679 verified; renewed distinct bundle review dispatched. Source absent; transport/semantic red/final acceptance pending.",
+  "last_action": "126 renewed provisional B0 review2 strict gate passed; source attempt1 allocated in isolated Generator worktree. C1 handoff only; behavioral red/final bundle/ModeB/QA/CI pending.",
   "completed_contract_ids": [
     "099",
     "103",
