@@ -1,0 +1,26 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/127/semantic1-run.py"
+      ],
+      "actual_exit": 0,
+      "results": "semantic1-base-*.json"
+    },
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/127/semantic1-mutants.py"
+      ],
+      "actual_exit": 0,
+      "results": "semantic1-*-{mutant,restored}-*.json"
+    }
+  ],
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "cwd": "/home/cnross/.tmp/nizam-feature127-semantic1",
+  "exercised_revision": "9a719469c74191408464de85af55b40de6a721ed",
+  "observation": "Actual completed helper exit0 and every separately captured subprocess result retained; helper progress chatter is not substituted for per-command stdout/stderr/exits."
+}

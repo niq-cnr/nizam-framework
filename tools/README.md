@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.25.0
+version: 0.26.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.26.0"
+    date: "2026-10-14"
+    summary: "Document bounded waits, confirmed cancellation, checked reattachment and explicit source replay with fourteen fixture checks."
   - version: "0.25.0"
     date: "2026-10-14"
     summary: "Document the partial stub controller CLI and nine-case fixture-harness integration."
@@ -82,7 +85,7 @@ change_log:
     date: "2026-07-17"
     summary: "Sync to the phase-005 compliance validator: document the new C12 ecosystem schema-family fixture check (feature 042) and the new SUMMARY: 12 passed, 0 failed total."
 ---
-## Development runtime controller — feature 126
+## Development runtime controller — features 126–127
 
 `runtime_session.py` provides a detached supervisor and one stub child per
 session, using an exclusive lock, generation counter/nonce, explicit ownership
@@ -94,7 +97,8 @@ python3 tools/runtime_session.py open-session --root /absolute/private/state --r
 ```
 
 The other implemented actions are `submit-operation`, `poll-operation`,
-`transfer-session` and `close-session`, with the same arguments. The JSON request
+`transfer-session`, `close-session`, `cancel-operation` and `reattach-session`,
+with the same arguments. The JSON request
 includes session/requester identity; existing sessions require the current
 generation and lease. Open supplies owner, development purpose and a read-only
 run-state path binding contract/step/attempt. Submit adds operation ID, kind,
@@ -116,13 +120,42 @@ trials receive no endpoint or record-writing access; the supervisor independentl
 rejects trial requests delivered to it. Close observes process termination without
 claiming rollback of effects.
 
-`fixtures_self_test.sh` registers the nested stub and executes the three named
-checks plus stub cases 1, 2, 3, 9, 13 and case 8 policy through the independently
-authored `test_runtime_session.py`. It reports each command and actual exit and
-propagates failures in existing CI. Candidate results still require independent
-QA and hosted evidence. Feature 127 owns timeout/cancellation/reattachment/replay;
-128 owns bounded core closure. SBCL, fresh acceptance and full optional adapter
-conformance remain later work; reserved actions fail without side effects.
+A poll optionally supplies `limits: {"timeout_seconds": 0.25}` (finite 0–30).
+Without limits it returns an immediate snapshot. A deadline records
+`stopped_waiting`; execution stays pending and conflicting submits remain busy.
+Unknown outcomes return infrastructure exit 70. Completion replaces the wait
+outcome with `completed_wait`; a disconnected client never cancels work.
+
+Cancel adds operation ID and contract/step/attempt to current owner, generation
+and lease identity. It returns `cancel_requested` with confirmation false.
+Only a matching child acknowledgement of stopped execution produces `cancelled`
+and confirmation true. The stub gate cancels cooperatively; this promises no
+rollback. Already completed work retains its record and result unchanged.
+
+Reattach adds the same governed binding, the exact nullable
+`expected_outstanding_operation_ref`, and a closed `handoff` object with absolute
+`workspace_path`, committed `source_revision`, `source_manifest` entries
+(`path`, `sha256`), ordered `command_refs` and `external_resources`. Manifest
+files must match both Git HEAD and workspace bytes. Command references name
+committed JSON templates containing exactly `kind`, `payload`, `context`, `limits`.
+Paths are relative regular files without traversal or symlink escape. Resource
+objects use the existing runtime record schema. A successful check publishes
+`handoff.json` and a reattach session snapshot without changing owner, lease,
+generation, pending work or governed attempt. Partial publication fails closed.
+
+For replay, obtain the pinned inputs in a fresh private worktree, open a separate
+development session, read templates in order and submit each with fresh operation
+IDs and that session's actual owner/generation/lease and governed binding. Poll
+each outcome before continuing. Lifecycle calls never execute the templates.
+Handoff provenance does not prove source/heap equality or independent acceptance.
+
+`fixtures_self_test.sh` retains the original nine checks and appends
+`cancel-confirmation-required`, `handoff-source-bound` and stub cases 5, 6, 10
+through independently authored `test_runtime_session.py`. Each command and actual
+exit is reported, with failures propagated in existing CI. Candidate results
+still need independent QA and hosted evidence. Feature 128 owns bounded core
+closure; SBCL, fresh acceptance and full optional adapter conformance remain
+later work. The reserved `accept` action fails without side effects.
 
 ## Foundation readiness — feature 118
 

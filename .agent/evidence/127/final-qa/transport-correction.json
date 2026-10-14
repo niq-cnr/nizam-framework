@@ -1,0 +1,41 @@
+{
+  "kind": "feature127-QA-publication-only-transport-correction",
+  "owner": "/root/runtime_qa127",
+  "at": "2026-10-14T12:13:56.229633+00:00",
+  "original_QA_commit": "abc6a0fc1a06d187829f45965a5dc52beaf89d33",
+  "capture1_failure_commit": "30e66b7ef28f5572cbe9fcc6ed6d2264e70991be",
+  "capture1_failure_ref": ".agent/evidence/127/capture1-failure.json",
+  "cause": "The original raw child stdout log existed and matched the manifest locally, but *.log ignore omitted it from the original QA commit. Original focused check asserted local existence, not committed transport completeness.",
+  "repair": "Explicit git add -f of the single validated original log. No byte normalization, product change or verification rerun.",
+  "published_log_commit": "c2e8c5aefdd86d2ae46dda315707db3f0be05750",
+  "log": {
+    "path": ".agent/evidence/127/final-qa/adversarial-child.stdout.log",
+    "sha256": "cc28777fa7dd02ba7b734dbaabd99f6e753e9f067da8998b3e341aabf44404b7",
+    "git_blob": "48e0052964bb9bf334a6d7924b4a1b11ed9b17b6"
+  },
+  "committed_manifest_check": {
+    "revision": "c2e8c5aefdd86d2ae46dda315707db3f0be05750",
+    "tree": "1f84b221f19872e8eeea489ef2f9192a4950da72",
+    "manifest": ".agent/evidence/127/final-qa/evidence-manifest.json",
+    "manifest_sha256": "95019a62aab8d4555595ee9f1bf0b03959d404b6d22fb5977b5797a5fdd5eb7b",
+    "entries": 163,
+    "method": "For every manifest key, git show REV:path must succeed and SHA256 of those Git object bytes must equal the original manifest value.",
+    "missing": [],
+    "hash_mismatches": [],
+    "passed": true
+  },
+  "preservation": {
+    "original_QA_sha256": "11d2fa487042d152661173f642b399f149988bc8fc987bccf9c1c7f7feaf0df5",
+    "all_original_committed_proof_bytes_unchanged": true,
+    "only_original_to_log_commit_change": ".agent/evidence/127/final-qa/adversarial-child.stdout.log",
+    "verification_reruns": 0,
+    "source_QA_attempt": 1,
+    "behavioral_claims_unchanged": true
+  },
+  "actual_exit_code": 0,
+  "cwd": "/home/cnross/.tmp/nizam-feature127-final-qa",
+  "env_override": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "runtime_ref": ".agent/evidence/127/final-qa/runtime.json"
+}

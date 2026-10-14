@@ -1,0 +1,61 @@
+{
+  "review": "feature127-provisional-acceptance-bundle",
+  "attempt": 1,
+  "reviewer": "/root/capability_review",
+  "author": "/root/acceptance126",
+  "reviewed_commit": "3040ff032d2e5a0f1b0a5669447ce3268402e5fc",
+  "test_candidate": "81a421dc74e163c679ae036e0ddfbdb51cfcbb6e",
+  "test_sha256": "3628f1b2b833a0f504cced79252391ff213bd75197dd2d5261494fbb646eb12e",
+  "contract_sha256": "b221434834b68dd0273a0bdd0f6f8c0988bee0165f9c31255f4e33b150191cb7",
+  "api_sha256": "f8052878dc2566dde5ec35911b485a874e187df57df8f10ade508505afd544b6",
+  "seal_sha256": "3b8a185302f2509dd33ea80746db2e62855a0795bf0fb9e8ba84977d76297b16",
+  "final_verdict": {
+    "approved": false,
+    "summary": "Reject narrowly: sealed obligation projection lists a different command order from the approved preserved scheduler and the actual runner expectation."
+  },
+  "issues": [
+    {
+      "id": "127-BUNDLE-1",
+      "severity": "medium",
+      "target": ".agent/evidence/127/acceptance1-obligations.json fourteen_commands positions7-9",
+      "finding": "Projection puts case8 before cases9/13. Approved ci_integration requires retaining original nine expanded commands/order. Actual inherited runtime_session_checks and the sealed fixture_claim expectation correctly order cases1/2/3/9/13, then case8 policy, before the five additions. The sealed projection therefore contradicts its contract/API/runner anchors.",
+      "actual_disagreement": [
+        {
+          "position": 7,
+          "projected": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy",
+          "required": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub"
+        },
+        {
+          "position": 8,
+          "projected": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub",
+          "required": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub"
+        },
+        {
+          "position": 9,
+          "projected": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub",
+          "required": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy"
+        }
+      ],
+      "required_fix": "Independent author corrects the projection order to match the existing scheduler and runner, then issues new immutable projection/seal/handoff identities for renewed distinct review. Preserve runner, API, product and all prior failures/evidence; no source change or unrelated test repair is requested."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [
+    ".agent/evidence/127/bundle-review1-check.py",
+    ".agent/evidence/127/bundle-review1-execution.json",
+    ".agent/evidence/127/bundle-review1-findings.json",
+    ".agent/evidence/127/bundle-review1-check.stdout.txt",
+    ".agent/evidence/127/bundle-review1-scheduler.stdout.txt",
+    ".agent/evidence/127/bundle-review1-inherited-positive-result.json",
+    ".agent/evidence/127/bundle-review1-peer-compilation.json"
+  ],
+  "reviewed_findings": [
+    "Independently verified70 sealed Git/SHA identities and current test bytes. Approved contract and inherited source remain unchanged; historical mutable planning/approval inputs are provenance at their pinned revisions, not permanent whole-file freezes.",
+    "Full test delta reviewed against approved127 contract/API and prior795-line runner. Old functions including crash_disagreement and process ownership cleanup are AST-identical except declared selector/scheduling/trial extensions; Session.call only exposes actual exit, and poll adds explicit infrastructure/unknown handling required by127.",
+    "New test bodies cover all five commands: deadline/busy/client disconnect, cooperative cancellation and corrupt/withheld/unsolicited acknowledgements, cancellation publication boundaries, identity/attempt checks, committed source/template/resource checks, reattach and handoff publication, and fresh-session ordered replay. No public production hook introduced; private AST wrappers call original publication routines.",
+    "Actual inherited Bash claim-map control returns0 and three intended negative mappings return1. Private Git fixture hashes/fresh-worktree materialization pass. Exact inherited ownership case1 returns0 with current test/source identities; this proves inherited working transport only. Eleven generated peer variants and three private fault wrappers compile.",
+    "Nonrecursive runner scheduling expectation correctly retains old order, appends five commands and injects old/new failure positions. New127 actions are absent from inherited source: author unsupported/setup/integration failures are correctly nonsemantic. No final executable127 proof is claimed or inferred."
+  ],
+  "approval_boundary": "Provisional authored test/API bundle review only; rejected projection must be corrected and resealed before initial Source authorization. No product/QA approval. Final executable candidate requires independent working positive plus intended semantic-mutant red, final seal/review, Mode B, distinct fresh QA, actual fourteen-command CI and Root evidence capture."
+}

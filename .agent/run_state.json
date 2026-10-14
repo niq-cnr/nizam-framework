@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "016-runtime-controller-core",
-  "current_feature": "126",
+  "current_feature": "127",
   "status": "in_progress",
-  "updated_at": "2026-10-14T10:33:15.945155+00:00",
+  "updated_at": "2026-10-14T12:37:40.699278+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -929,6 +929,71 @@
       "limit": 3
     },
     "126-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-selection": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "127-mode-a": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "127-contract-review": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "127-public-projection-review": {
+      "attempts": 3,
+      "limit": 3
+    },
+    "127-public-projection": {
+      "attempts": 3,
+      "limit": 3,
+      "note": "Original Planner candidate1 e36aa45 rejected by factual review1: stale current attempt1 wording. Candidate not promoted; new isolated Planner2 with exact bounded correction."
+    },
+    "127-test-author": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "127-bundle-review": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "127-source": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-semantic-controls": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-executable-bundle-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-mode-b": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-qa": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-evidence-capture": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "127-closeout-docs": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-closeout-docs-review": {
       "attempts": 1,
       "limit": 3
     }
@@ -5067,6 +5132,168 @@
       "event": "126-captured-complete",
       "detail": "126 accepted/capturedcomplete after strictModeB2/freshQA9+ownspot/actualcapableCI9; scope2657+phase346=3003/7345. PR97finalheadchecks/merge pending;127notselected.",
       "evidence": ".agent/evidence/126/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-14T10:40:53.321695+00:00",
+      "event": "126-merged-127-selected-contract1",
+      "detail": "PR97 merged c2b95a1 after all6exactheadchecks. Captured126 complete; dependency-ready127 selected for contract1 preparation only. MainCI38551059606 running; no127source/tests before precode gates and Rootapproval.",
+      "evidence": ".agent/evidence/127/selection.json"
+    },
+    {
+      "at": "2026-10-14T10:44:13.491948+00:00",
+      "event": "126-mainCI-green-127-projection",
+      "detail": "PR97 mainCI38551059606 all5success captured;127contract1preparation underway. Parallel bounded publiccurrentviewrefresh routedPlanner; allcosts count once within127, no extra allowance/phase126 remeasurement.",
+      "evidence": ".agent/evidence/126/pr97-main-ci.json"
+    },
+    {
+      "at": "2026-10-14T10:49:03.507026+00:00",
+      "event": "127-proposal1-precode-and-projection-review",
+      "detail": "127 proposedcontractcf02c6e/hash16305458 received; independentModeA1+Evaluatorcontractreview1 dispatched. Publicprojectioncandidatee36aa45 separatefactualreview1; no127source/testauthorization.",
+      "evidence": ".agent/evidence/127/precode-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T10:55:52.811521+00:00",
+      "event": "127-contract1-rejected-contract2-dispatched",
+      "detail": "Preserved ModeA1 rejection and Evaluator1 approval on exact original proposal. Bounded role scope/Root ownership clarification requires both independent reviews renewed.",
+      "evidence": ".agent/evidence/127/contract2-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T10:57:59.982549+00:00",
+      "event": "127-contract2-renewed-precode",
+      "detail": "Ownership-only contract2 bac04b8 requires renewed independent ModeA2 and Evaluator2 approvals. No implementation or acceptance authoring yet.",
+      "evidence": ".agent/evidence/127/precode2-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T10:58:37.642928+00:00",
+      "event": "127-projection1-rejected-planner2",
+      "detail": "Preserved review evidence without promoting stale docs. Bounded Planner2 fixes current stage wording; actual candidate1 docs38 not earlier40, measured whole127 once.",
+      "evidence": ".agent/evidence/127/projection2-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:00:16.778766+00:00",
+      "event": "127-contract-approved-test-author1",
+      "detail": "Both renewed strictgates approve identical a98180d2 proposal; Root promotes metadata only. Independent acceptance author1 starts; Source remains gated.",
+      "evidence": ".agent/evidence/127/contract-approval.json"
+    },
+    {
+      "at": "2026-10-14T11:02:17.887207+00:00",
+      "event": "127-projection2-independent-review",
+      "detail": "Final unpromoted Planner2 candidate5be6c60 corrects stale status by canonical links; independent factual rereview2 required. Actual38 vs old40 corrected, oncewithin127.",
+      "evidence": ".agent/evidence/127/projection-review2-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:09:53.027556+00:00",
+      "event": "127-projection2-rejected-planner3",
+      "detail": "Preserve known procedural mismatch; Planner3 uses canonical contract pointer instead of duplicating gate narrative. Third and final bounded candidate; no unreviewed docs promoted.",
+      "evidence": ".agent/evidence/127/projection3-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:11:22.064703+00:00",
+      "event": "127-projection3-review",
+      "detail": "Independent third review of exact d12b176; prior two rejected candidates remain unpromoted and preserved by Git identity/evidence.",
+      "evidence": ".agent/evidence/127/projection-review3-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:12:55.735146+00:00",
+      "event": "127-public-projection-promoted",
+      "detail": "Exact candidate3 d12b176 passed independent strict review3; factual planning and handover promoted, cost38 counted once within127. Prior rejected candidates/verdicts preserved.",
+      "evidence": ".agent/evidence/127/public-projection-promotion.json"
+    },
+    {
+      "at": "2026-10-14T11:23:09.011123+00:00",
+      "event": "127-acceptance1-sealed-bundle-review1",
+      "detail": "Independent test/API candidate81a421d sealed at3040ff0 with real bounded controls; separate review1 begins, new tests not yet promoted. No semantic-red/source-success claim.",
+      "evidence": ".agent/evidence/127/bundle-review1-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:27:46.779732+00:00",
+      "event": "127-bundle1-rejected-author2",
+      "detail": "Strict review1 rejects only obligation-projection ordering; runner/API and70pins/bounded controls otherwise pass. New isolated author2 corrects metadata and reseals; source still gated.",
+      "evidence": ".agent/evidence/127/acceptance2-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:30:12.304457+00:00",
+      "event": "127-acceptance2-delta-review",
+      "detail": "Independent author2 corrected only sealed command ordering; unchanged test/API and all70 prior pins checked. Distinct bundle review2 now required before initial source.",
+      "evidence": ".agent/evidence/127/bundle-review2-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:32:01.843805+00:00",
+      "event": "127-bundle2-approved-source1",
+      "detail": "Promoted unchanged independent test/API plus corrected sealed projection after strict reviewer approval. Source1 isolated implementation begins; final semantic controls and all delivery gates remain pending.",
+      "evidence": ".agent/evidence/127/source1-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:37:40.829941+00:00",
+      "event": "127-C1-semantic-controls1-CI",
+      "detail": "Immutable initial88996ee product428 lines promoted for review only. Sealed test/API unchanged. Independent semantic controls1 and actual draft CI run concurrently with Generator development capture; no final acceptance claim.",
+      "evidence": ".agent/evidence/127/semantic1-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:40:42.017332+00:00",
+      "event": "127-pr98-initial-CI",
+      "detail": "Draft PR98 published at9a71946 with immutableC1 product; actual compliance38557965408 runs concurrently with independent semantic controls and Generator development capture. No final acceptance claim.",
+      "evidence": ".agent/evidence/127/pr98-initial-candidate.json"
+    },
+    {
+      "at": "2026-10-14T11:43:06.009354+00:00",
+      "event": "127-semantic1-evidence-final-bundle-review",
+      "detail": "Independent five0/five intended-mutant1/five restored0 proofs committed and sealed; final executable bundle review1 now required before ModeB. No pristine-base failure claim.",
+      "evidence": ".agent/evidence/127/executable-review1-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:49:56.814206+00:00",
+      "event": "127-modeB1-parallel-preparation",
+      "detail": "Separate Validator examines immutable source while final executable proof review runs. No ModeB verdict/advancement until Root confirms strict final bundle approval.",
+      "evidence": ".agent/evidence/127/modeb1-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:51:49.592430+00:00",
+      "event": "127-executable-bundle-approved-modeB-release",
+      "detail": "Strict final proof reviewffffe3d approved after all35pins/15receipts/narrowpatch checks and independent cancellation0-1-0. ModeB final verdict now allowed; no freshQA or completion yet.",
+      "evidence": ".agent/evidence/127/modeb1-bundle-release.json"
+    },
+    {
+      "at": "2026-10-14T11:52:56.095199+00:00",
+      "event": "127-freshQA1-preparation",
+      "detail": "Fresh isolated QA reader may prepare while ModeB source review runs. Actual verification execution and verdict remain blocked until strict ModeB approval.",
+      "evidence": ".agent/evidence/127/qa1-preparation-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:55:19.720471+00:00",
+      "event": "127-modeB-approved-freshQA1-released",
+      "detail": "Exact ModeB43e22e7 passed all4conditions, own spot-checks and scope1556 cumulative4559/7345. Fresh distinctQA may now execute; no canonical completion yet.",
+      "evidence": ".agent/evidence/127/qa1-modeb-release.json"
+    },
+    {
+      "at": "2026-10-14T12:09:25.300450+00:00",
+      "event": "127-freshQA-approved-capture1",
+      "detail": "Schema-valid strict freshQA14+repo2+ownextra passed on immutableC1; capture1 must independently verify external evidence before lifecycle advances.",
+      "evidence": ".agent/evidence/127/capture1-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T12:12:55.244375+00:00",
+      "event": "127-capture1-artifact-transport-gap",
+      "detail": "Actual capture1 exit1 found one manifest-referenced raw log omitted by Git ignore. Original QA bytes match digest; QA author must publish exact log before isolated capture2. All behavioral results unchanged; feature remains in_progress.",
+      "evidence": ".agent/evidence/127/capture1-failure.json"
+    },
+    {
+      "at": "2026-10-14T12:15:13.519335+00:00",
+      "event": "127-capture2-isolated-artifact-recovery",
+      "detail": "Original ignored log published unchanged by QA author; all163manifest paths verified in Git. Source/QA1 stay unchanged. Isolated Rootcapture2 repeats capture gate preserving actualcapture1failure.",
+      "evidence": ".agent/evidence/127/capture2-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T12:17:54.716246+00:00",
+      "event": "127-captured-canonical-close",
+      "detail": "All14+repo2+ownextra, strictgates, actualCI and installed fidelity captured. Feature127 complete at1736 counted lines; phase4739/7345. Original capture1 failure retained, isolated2 passed. PR98 clean merge still pending;128 stayspending.",
+      "evidence": ".agent/evidence/127/closure.json"
+    },
+    {
+      "at": "2026-10-14T12:21:38.920929+00:00",
+      "event": "127-postcapture-docs-checkpoint",
+      "detail": "Runtime127 canonical closure validated16/16 at1736/phase4739. Planner updates current factual overlay to stable captured facts and canonical status/usage links; prior preparation review success and failures remain preserved.",
+      "evidence": ".agent/evidence/127/closeout-docs-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5241,9 +5468,9 @@
   "scope_budget": {
     "original_estimate_lines": 5650,
     "ceiling_130pct": 7345,
-    "total_lines_changed": 3003,
-    "evidence_lines_total": 15585,
-    "excluded_lines_total": 515,
+    "total_lines_changed": 4765,
+    "evidence_lines_total": 49718,
+    "excluded_lines_total": 789,
     "per_feature": [
       {
         "id": "126",
@@ -5259,7 +5486,31 @@
         ],
         "evidence": ".agent/evidence/126/scope-measurement.txt",
         "rolling_baseline": null,
-        "note": "Firstcompleted016feature; disjointprecode+implementation includesallC1/C2/C3, independentB3/ModeB2/freshQA/capableCI/Rootcapture/canonicalclosure once. Separatephaselevel346 retained; original5650/7345 unchanged, no017baseline or rebaseline."
+        "note": "Firstcompleted016feature; disjointprecode+implementation includesallC1/C2/C3, independentB3/ModeB2/freshQA/capableCI/Rootcapture/canonicalclosure once. Separatephaselevel346 retained; original5650/7345 unchanged, no017baseline or rebaseline.",
+        "capture_revision": "41b08b1fd64adeeb47a1e69aeb64fe1254e1e648",
+        "merge_revision": "c2b95a1262d49ebd615dcd0d577fad584712dc40"
+      },
+      {
+        "id": "127",
+        "estimated": 1950,
+        "actual": 1762,
+        "product_lines": 993,
+        "process_overhead_lines": 769,
+        "evidence_lines": 34133,
+        "excluded_lines": 274,
+        "range": "c2b95a1262d49ebd615dcd0d577fad584712dc40..WORKTREE",
+        "evidence": ".agent/evidence/127/scope-measurement-final.txt",
+        "baseline": {
+          "prior_features": [
+            "126"
+          ],
+          "rolling_average": 2657.0,
+          "three_times_threshold": 7971.0,
+          "first_feature_exception": false,
+          "flagged": false
+        },
+        "note": "Whole127 measured once from unchangedc2b95a1 after independent captured-docs review. Source428+tests565 unchanged; latest current overlays replace selected127 view. Replaces pre-docs1736 snapshot preserved at904f69b; not appended twice. All historical failed attempts and original5650/7345 retained; no additional allowance.",
+        "prior_snapshot_revision": "904f69b1ad12ca07d9d216c5e261247ca12a1006"
       }
     ],
     "phase_level_items": [
@@ -5296,13 +5547,14 @@
       "unclassified": "fail closed: listed, measure.py exits 3"
     },
     "phase_base_revision": "e619d284d36eaf6dfff54a9d001477b8d1722098",
-    "last_measured_at": "2026-10-14T10:33:15.945155+00:00",
+    "last_measured_at": "2026-10-14T12:37:40.699278+00:00",
     "phase_level_costs": "Current preparation is included once within original5650/7345; later feature126 range starts after preparation. No free comparative-program allowance or phase017 rewrite.",
     "feature126_measurement_segments": {
       "precode": "607ac75010b3668226f777986822adfb700eaf23..de7deee7831e8d3816f3f85985e8e56a44c7c006",
       "implementation_base": "1db8996d715afd6a6e70bf587819e29ff1c20080",
       "rule": "Feature126 actual is precode range plus implementation_base..final capture. The intervening39-line public planning projection is charged separately once; do not measure a single607..final range and add39 again."
-    }
+    },
+    "feature127_measurement_base": "c2b95a1262d49ebd615dcd0d577fad584712dc40"
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -5485,7 +5737,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "126",
+  "active_contract_id": "127",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5557,7 +5809,7 @@
       }
     ]
   },
-  "last_action": "126 accepted/capturedcomplete after strictModeB2/freshQA9+ownspot/actualcapableCI9; scope2657+phase346=3003/7345. PR97finalheadchecks/merge pending;127notselected.",
+  "last_action": "127 captured complete; postcapture factual docs checkpoint before finalPRchecks",
   "completed_contract_ids": [
     "099",
     "103",
@@ -5576,7 +5828,8 @@
     "115",
     "116",
     "117",
-    "118"
+    "118",
+    "127"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,

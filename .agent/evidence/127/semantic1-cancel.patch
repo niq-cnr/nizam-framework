@@ -1,0 +1,11 @@
+--- a/tools/runtime_session.py
++++ b/tools/runtime_session.py
+@@ -560,7 +560,7 @@
+             path = self.operation_path(self.outstanding)
+             record = read_json(path)
+             if cancelled:
+-                insist(record['status'] == 'cancel_requested' and value['cancellation_confirmed'] is True
++                insist(record['status'] == 'cancel_requested'
+                        and value['session_id'] == record['session_id']
+                        and type(value['lease_epoch']) is int and value['lease_epoch'] == record['lease_epoch']
+                        and value['result'] is None)

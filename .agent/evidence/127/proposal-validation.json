@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import json\nfrom pathlib import Path\nimport subprocess\nfrom jsonschema import Draft202012Validator\np=Path('.agent/contracts/127.json'); c=json.loads(p.read_text())\nDraft202012Validator(json.load(open('.nizam/schema/contract.schema.json'))).validate(c)\nf=next(x for x in json.load(open('.agent/feature_list_016.json'))['features'] if x['id']=='127')\nassert [x['command'] for x in c['verification']]==f['acceptance_tests'] and len(c['verification'])==5\nassert c['status']=='proposed' and c['contract_attempt']==1\nassert c['approvals']=={'validator_mode_a':False,'evaluator_contract_review':False,'revisions':0}\nassert c['base_revision']=='c2b95a1262d49ebd615dcd0d577fad584712dc40'\nassert c['estimated_lines']==1950 and sum(c['budget'][x] for x in ('product','independent_tests','process'))==1950\nassert c['budget']['phase_original']==5650 and c['budget']['phase_ceiling']==7345\nassert set(x['path'] for x in c['scope']['files_modify'])=={'tools/runtime_session.py','tools/fixtures/runtime_session/stub_runtime.py','tools/test_runtime_session.py','tools/fixtures_self_test.sh','tools/README.md','CHANGELOG.md'}\nassert subprocess.check_output(['git','diff','--name-only','HEAD'],text=True)==''\nprint('PASS installed contract schema; exact five feature commands; proposed attempt1/false approvals; baseline/budget/owned scope; no tracked source/test/state modifications')\n"
+  ],
+  "cwd": "/home/cnross/.tmp/nizam-feature127-generator",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "actual_exit": 0,
+  "exercised_revision": "156e954e1a13262c2b575003a31ad2682acc9d52",
+  "contract_sha256": "16305458df6afb3b4df9b9f9d59c005e0a1103a75811dd0fc70ddca9d7516ac1",
+  "stdout": ".agent/evidence/127/proposal-validation.stdout.txt",
+  "stderr": ".agent/evidence/127/proposal-validation.stderr.txt"
+}

@@ -9,6 +9,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Stub operation semantics and handoff (feature 127).** Added bounded polling
+  that stops waiting only, correlated cooperative cancellation confirmation and
+  checked source-bound reattachment snapshots. Replay uses committed templates
+  through explicit authorized submits in a fresh development session. Existing
+  fixture CI schedules fourteen checks; independent acceptance and capture remain
+  required, with SBCL and fresh acceptance infrastructure outside this change.
+
 - **Partial development runtime controller (feature 126).** Added a detached
   supervisor, isolated stub images, ownership/lease/generation admission, atomic
   development records and read-only attempt guards. Existing fixture CI invokes

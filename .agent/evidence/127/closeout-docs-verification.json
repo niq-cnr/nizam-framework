@@ -1,0 +1,129 @@
+{
+  "base_revision": "12436dd6a5f3407786d575ff1bd32be6fdbca198",
+  "exercise": "documentation-only scoped verification; no runtime reruns",
+  "documents": {
+    "docs/planning/ROADMAP.md": {
+      "sha256": "5ebbf6d611c82124934f03a6b72a6547095261373558d04b0a09c110e98a37f5",
+      "version": "0.65.3",
+      "historical_start": "## Current position \u2014 phase 016, 2026-10-14",
+      "historical_sha256": "27c48e8c090984fec05b624f5f8404af86b5a38bc64ed124ddd47d79050b1139",
+      "history_byte_identical": true,
+      "current_overlay_links": [
+        "../../.agent/evidence/126/evidence-capture.json",
+        "../../.agent/evidence/126/pr97-merge-receipt.json",
+        "../../.agent/evidence/126/pr97-main-ci.json",
+        "../../.agent/qa/126.json",
+        "../../.agent/evidence/126/ci-c3-receipt.json",
+        "../../.agent/evidence/127/evidence-capture.json",
+        "../../.agent/qa/127.json",
+        "../../.agent/evidence/127/ci-c1-receipt.json",
+        "https://github.com/niq-cnr/nizam-framework/pull/98",
+        "../../.agent/feature_list_016.json",
+        "phase_016.yaml",
+        "../../.agent/feature_list_016.json",
+        "../../.agent/run_state.json",
+        "agentic-excellence.md"
+      ]
+    },
+    "docs/planning/HANDOVER.md": {
+      "sha256": "6dae2b3adcb7c669f4de4e203e24207af36c8f3a9d74f1a29aeb695df50fa52d",
+      "version": "1.0.16",
+      "historical_start": "## Current handoff \u2014 feature 126, 2026-10-14",
+      "historical_sha256": "3e319f7cd154b51f6897f6fc095d49d56542352e5d6ba440872f6907f6ae9655",
+      "history_byte_identical": true,
+      "current_overlay_links": [
+        "../../.agent/evidence/126/evidence-capture.json",
+        "../../.agent/evidence/126/pr97-merge-receipt.json",
+        "../../.agent/evidence/126/pr97-main-ci.json",
+        "../../.agent/qa/126.json",
+        "../../.agent/evidence/126/ci-c3-receipt.json",
+        "../../.agent/evidence/127/evidence-capture.json",
+        "../../.agent/qa/127.json",
+        "../../.agent/evidence/127/ci-c1-receipt.json",
+        "https://github.com/niq-cnr/nizam-framework/pull/98",
+        "../../.agent/feature_list_016.json",
+        "phase_016.yaml",
+        "../../.agent/feature_list_016.json",
+        "../../.agent/run_state.json",
+        "agentic-excellence.md"
+      ]
+    }
+  },
+  "factual_inputs": [
+    ".agent/evidence/126/evidence-capture.json",
+    ".agent/qa/126.json",
+    ".agent/evidence/126/ci-c3-receipt.json",
+    ".agent/evidence/126/pr97-merge-receipt.json",
+    ".agent/evidence/126/pr97-main-ci.json",
+    ".agent/evidence/127/evidence-capture.json",
+    ".agent/qa/127.json",
+    ".agent/evidence/127/ci-c1-receipt.json",
+    ".agent/feature_list_016.json"
+  ],
+  "commands": [
+    {
+      "name": "diff",
+      "argv": [
+        "git",
+        "diff",
+        "--unified=0",
+        "12436dd6a5f3407786d575ff1bd32be6fdbca198",
+        "--",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/HANDOVER.md"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/closeout-docs-diff.stdout.txt",
+      "stderr": ".agent/evidence/127/closeout-docs-diff.stderr.txt"
+    },
+    {
+      "name": "numstat",
+      "argv": [
+        "git",
+        "diff",
+        "--numstat",
+        "12436dd6a5f3407786d575ff1bd32be6fdbca198",
+        "--",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/HANDOVER.md"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/closeout-docs-numstat.stdout.txt",
+      "stderr": ".agent/evidence/127/closeout-docs-numstat.stderr.txt"
+    },
+    {
+      "name": "whitespace",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "12436dd6a5f3407786d575ff1bd32be6fdbca198",
+        "--",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/HANDOVER.md"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/closeout-docs-whitespace.stdout.txt",
+      "stderr": ".agent/evidence/127/closeout-docs-whitespace.stderr.txt"
+    }
+  ],
+  "tracked_changes": [
+    ".agent/evidence/127/closeout-docs-check.exit.txt",
+    ".agent/evidence/127/closeout-docs-check.stderr.txt",
+    ".agent/evidence/127/closeout-docs-check.stdout.txt",
+    ".agent/evidence/127/closeout-docs-diff.stderr.txt",
+    ".agent/evidence/127/closeout-docs-diff.stdout.txt",
+    ".agent/evidence/127/closeout-docs-handoff.json",
+    ".agent/evidence/127/closeout-docs-numstat.stderr.txt",
+    ".agent/evidence/127/closeout-docs-numstat.stdout.txt",
+    ".agent/evidence/127/closeout-docs-verification.json",
+    ".agent/evidence/127/closeout-docs-verify.py",
+    ".agent/evidence/127/closeout-docs-whitespace.stderr.txt",
+    ".agent/evidence/127/closeout-docs-whitespace.stdout.txt",
+    "docs/planning/HANDOVER.md",
+    "docs/planning/ROADMAP.md"
+  ],
+  "source_runtime_installed_root_state_unchanged": true,
+  "passed": true,
+  "boundary": "Author scoped verification only. Independent factual review remains required; no self approval."
+}

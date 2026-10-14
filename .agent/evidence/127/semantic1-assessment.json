@@ -1,0 +1,62 @@
+{
+  "kind": "feature127-independent-semantic-control-assessment1",
+  "source_candidate": "88996ee9405f9467ff2debd6e3115b34d064019a",
+  "unmodified_exact_commands": {
+    "count": 5,
+    "actual_exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "private_semantic_mutants": {
+    "count": 4,
+    "obligations_exercised": 5,
+    "actual_exits": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "restored_exact_C1_commands": {
+    "count": 5,
+    "actual_exits": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "result_paths": [
+    ".agent/evidence/127/semantic1-base-cancel.json",
+    ".agent/evidence/127/semantic1-base-handoff.json",
+    ".agent/evidence/127/semantic1-base-wait.json",
+    ".agent/evidence/127/semantic1-base-reattach.json",
+    ".agent/evidence/127/semantic1-base-replay.json",
+    ".agent/evidence/127/semantic1-cancel-mutant-cancel.json",
+    ".agent/evidence/127/semantic1-cancel-restored-cancel.json",
+    ".agent/evidence/127/semantic1-manifest-mutant-handoff.json",
+    ".agent/evidence/127/semantic1-manifest-restored-handoff.json",
+    ".agent/evidence/127/semantic1-manifest-mutant-replay.json",
+    ".agent/evidence/127/semantic1-manifest-restored-replay.json",
+    ".agent/evidence/127/semantic1-wait-mutant-wait.json",
+    ".agent/evidence/127/semantic1-wait-restored-wait.json",
+    ".agent/evidence/127/semantic1-reattach-mutant-reattach.json",
+    ".agent/evidence/127/semantic1-reattach-restored-reattach.json"
+  ],
+  "intended_assertions": {
+    "AT1": "BEHAVIOR_ASSERTION: absent/mismatched/unsolicited confirmation or death never fabricates cancellation",
+    "AT2": "BEHAVIOR_ASSERTION: reattach-session exit 0, expected 1; actual dirty source.txt accepted only after workspace-byte check removal",
+    "AT3": "BEHAVIOR_ASSERTION: deadline stops waiting only",
+    "AT4": "BEHAVIOR_ASSERTION: reattach-session exit 0, expected 1; wrong expected pending reference accepted only after equality guard removal",
+    "AT5": "BEHAVIOR_ASSERTION: reattach-session exit 0, expected 1; changed get.json accepted only after workspace-byte check removal, following actual fresh ordered replay"
+  },
+  "cleanup": "Each sealed runner uses finally cleanup with existing process start/lock/ancestry/group ownership proof; post-run /proc scan found no live candidate-path process references in any mutant/restored run. Disposable materializations removed by their own TemporaryDirectory only. No foreign process signalled.",
+  "static_checks": "All15 exact result/exit/assertion/patch hashes verified; unchanged source/test/API/projection/contract current bytes equal C1; all prior normative hashes unchanged.",
+  "boundary": "No unmodified-C1 failure observed in these five commands. Red is explicitly private semantic-mutant sensitivity, not pristine-base red. Full14/freshQA/ModeB/CI/capture and final distinct seal review remain outside this execution step."
+}

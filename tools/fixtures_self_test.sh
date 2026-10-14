@@ -994,14 +994,16 @@ FIXTURE_CLAIMS=(
 runtime_session_checks() {
   local selector value rc failed=0
   local -a arguments
-  for selector in check case policy; do
+  for selector in check case policy extra_check extra_case; do
     case "${selector}" in
       check) set -- lifecycle-no-evaluation record-schema fixture-claim-registered ;;
       case) set -- 1 2 3 9 13 ;;
       policy) set -- 8 ;;
+      extra_check) set -- cancel-confirmation-required handoff-source-bound ;;
+      extra_case) set -- 5 6 10 ;;
     esac
     for value in "$@"; do
-      if [ "${selector}" = check ]; then
+      if [ "${selector}" = check ] || [ "${selector}" = extra_check ]; then
         arguments=(--check "${value}")
       else
         arguments=(--case "${value}" --runtime stub)

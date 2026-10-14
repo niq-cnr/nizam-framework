@@ -2,12 +2,18 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.14
+version: 1.0.16
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.16"
+    date: "2026-10-14"
+    summary: "Record captured126/127 facts and next bounded128; link canonical live stage and usage, preserving historical bodies."
+  - version: "1.0.15"
+    date: "2026-10-14"
+    summary: "Record merged captured126 and selected127 preparation handoff; preserve historical bodies and release facts."
   - version: "1.0.14"
     date: "2026-10-14"
     summary: "Add current016/126 handoff and next independent-test gate; preserve historical bodies and release facts."
@@ -55,6 +61,22 @@ change_log:
     summary: "Initial handover record, authored by the Planner on branch chore/handover-2026-10 cut from main e2a50ed (PR #70 merged), after the operator asked for the project to be prepared for a new developer (run_state operator_gate_decision 2026-10-10T02:11:41Z). Every figure was re-verified against the repository; the replayable checks are in .agent/evidence/handover-2026-10/. Revised after Validator round 1, before merge: (b) states how this package's own budget-counted lines are treated (the Planner's phase-level-item interpretation, effective only when the Orchestrator records it), 106's measurement base and measure.py commands, and the budget figures both pre-handover and including the handover; (c) quotes the 19:28:39Z record's 11-step summary of the brief and presents the 12 steps as practised, adds that an Evaluator contract-review rejection also uses up a contract attempt (103 precedent), separates the evidence gate's EXIT:<code> rule from the practised all-EXIT:0 convention, cites the human_authorized_extension as recorded practice under 03 Section 6, and separates routine pushes and PRs from operator-authorized outward acts; (f) adds the local acceptance-gate helpers, the fixture self-test and the four CI jobs; (g) states both V13 conditions and the DAG critical-path artifact; (h) ties the expected v1.5.0 roll-up to H-NIP and H-PHASE-015; (a) item 12 names the Orchestrator and the four execution roles. Revised after Validator round 2, before merge: (c) states that the Validator runs only read-only git commands and file reads and cannot run verification commands (105-mode-b.json prior_rounds[0] MB-1); step 5 states that attempt-base.txt has been used since 103 (099's base only in run_state); steps 7-8 state that 104 and 105 ran Mode B round 1 on the unpromoted attempt commit, and that a post-promotion Mode B round is still needed when the contract has Mode B obligations on the promoted tree (105 MB-1)."
 ---
 # Developer Handover — Release Status and Phase 014 Snapshot
+
+## Current handoff — captured 126 and 127, 2026-10-14
+
+Begin with AGENTS.md and the installed index/skill.
+Feature 126 is [captured complete](../../.agent/evidence/126/evidence-capture.json) and [merged as PR 97](../../.agent/evidence/126/pr97-merge-receipt.json) at `c2b95a1`; [main CI 38551059606](../../.agent/evidence/126/pr97-main-ci.json) passed all five jobs.
+Its C3 source `d965c2c` and sealed 795-line test have [independent nine-check QA plus an adversarial spot check](../../.agent/qa/126.json) and [nine actual hosted CI commands](../../.agent/evidence/126/ci-c3-receipt.json).
+Feature 127 is [captured complete](../../.agent/evidence/127/evidence-capture.json) for timeout stopping only the wait, busy/reattach, source-bound replay and cancellation confirmation.
+Source `88996ee9405f9467ff2debd6e3115b34d064019a` and sealed test `SHA-256 3628f1b2…` passed [independent QA: fourteen runtime checks, two repository checks and one additional adversarial interaction](../../.agent/qa/127.json).
+[Hosted CI 38557965408](../../.agent/evidence/127/ci-c1-receipt.json) ran all fourteen runtime commands with actual exit zero on a source-equivalent checkout. [PR 98](https://github.com/niq-cnr/nizam-framework/pull/98) carries this feature; follow that link for integration status.
+The [case matrix](../../.agent/feature_list_016.json) records live stub cases **5/6/10** from 127 alongside 126's **1/2/3/8 (policy)/9/13**: phase 016 remains partial stub scope. Full adapter, SBCL runtime, fresh phase-020 acceptance and final CI 131 remain pending.
+Next bounded work is **128 — core evidence and close**; [phase 016](phase_016.yaml), its [feature list](../../.agent/feature_list_016.json), and [Root state](../../.agent/run_state.json) govern live stage, gates and measured usage.
+Root alone owns lifecycle and budget accounting; this refresh counts once within 127 from `c2b95a1`, with no new allowance or rebaseline. The original phase-016 estimate/ceiling remains **5,650/7,345**.
+Completed phase 017's **5,203/7,020** snapshot and immutable installed **v1.5.0** remain unchanged. The DAG stays **017 → 016 → 018 → 020 → 019**; 018's controller prerequisite is **127 only**.
+The [balanced comparison proposal](agentic-excellence.md) remains unmeasured and makes no superiority claim.
+
+All earlier sections below, including older “Current” headings, are historical snapshots. Their bodies and release-disposition facts are preserved; the canonical records above govern current work.
 
 ## Current handoff — feature 126, 2026-10-14
 
