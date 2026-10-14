@@ -1,0 +1,43 @@
+{
+  "actor": "/root/wa_validator118",
+  "revision": "60cf91d1e2f0781382c20a5a18bb1673a381c0d8",
+  "observed_head": "843353bce3bdc12be2a9ec217bcb621b0c71bab2",
+  "checks": [
+    {
+      "acceptance_test": "foundation-ready",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --check foundation-ready",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/118/recovery1-mode-b-check-1.txt",
+      "sha256": "584e2d71453900f0f5d212502169fbdec4cbbb82c15240813ce0eddaee3133a4"
+    },
+    {
+      "acceptance_test": "Repository compliance",
+      "command": "bash tools/validate.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/118/recovery1-mode-b-check-2.txt",
+      "sha256": "0a56161d7670ac742e64a54025a8bdb0d6a655b22d9401ac3f3283c62b484327"
+    },
+    {
+      "acceptance_test": "Payload compliance",
+      "command": "bash tools/validate.sh --payload",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/118/recovery1-mode-b-check-3.txt",
+      "sha256": "796d49a06eb28f8234fff480190e25d06f7dd3a81819dbf74755dd99ba7150bc"
+    },
+    {
+      "acceptance_test": "supplemental current active scope",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-118 --base 587c40670d850d21183b7bbd7fd1e600ae84896c",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/118/recovery1-mode-b-check-4.txt",
+      "sha256": "a45957a4878cd508dd2fabfd7c10aec8626092ca58ea2573d08aa595c4593353"
+    },
+    {
+      "acceptance_test": "supplemental original scope controls",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-controls-118 --base 587c40670d850d21183b7bbd7fd1e600ae84896c",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/118/recovery1-mode-b-check-5.txt",
+      "sha256": "cde045d88a2946f87a6c0082a9cf1c453f15d74240a73a13a3996bff36122fd6"
+    }
+  ],
+  "qualification": "Checks4/5 are supplemental frozen original guard at active state; known terminal debt defect is separately disclosed and adapterreview pending."
+}
