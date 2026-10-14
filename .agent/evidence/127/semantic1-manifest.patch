@@ -1,0 +1,11 @@
+--- a/tools/runtime_session.py
++++ b/tools/runtime_session.py
+@@ -265,7 +265,7 @@
+                     or not git('ls-tree', 'HEAD', '--', name).startswith((b'100644 ', b'100755 '))):
+                 fail(1, 'source_mismatch')
+             committed = git('show', 'HEAD:' + name)
+-            if any(hashlib.sha256(raw).hexdigest() != entry['sha256'] for raw in (committed, path.read_bytes())):
++            if any(hashlib.sha256(raw).hexdigest() != entry['sha256'] for raw in (committed,)):
+                 fail(1, 'source_mismatch')
+             contents[name] = committed
+         except OSError:
