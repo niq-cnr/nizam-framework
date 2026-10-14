@@ -1,0 +1,93 @@
+{
+  "revision": "6c46691e17f1e27fb2bb2fc69882b5f60503a56a",
+  "cwd": "/home/cnross/.tmp/nizam-feature119-provisional-review1",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "checks": [
+    {
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "approve-empty"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "SETUP_ERROR: missing convergent_agf_verdict API\n",
+      "classification": "setup only, never semantic red"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "advisory-visible"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "SETUP_ERROR: missing convergent_agf_verdict API\n",
+      "classification": "setup only, never semantic red"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "block-carried"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "SETUP_ERROR: missing convergent_agf_verdict API\n",
+      "classification": "setup only, never semantic red"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-issues"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "SETUP_ERROR: missing convergent_agf_verdict API\n",
+      "classification": "setup only, never semantic red"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-missing-coverage"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "SETUP_ERROR: missing convergent_agf_verdict API\n",
+      "classification": "setup only, never semantic red"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--case",
+        "reject-unsupported"
+      ],
+      "exit": 2,
+      "stdout": "",
+      "stderr": "SETUP_ERROR: missing convergent_agf_verdict API\n",
+      "classification": "setup only, never semantic red"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--check",
+        "foundation-ready"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": "AssuranceError: pinned entry bytes/mode changed: tools/test_workflow_assurance.py\n",
+      "classification": "expected stale historical proof rejection on changed live runner"
+    }
+  ]
+}
