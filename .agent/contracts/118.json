@@ -7,7 +7,7 @@
   "base_revision": "587c40670d850d21183b7bbd7fd1e600ae84896c",
   "scope_base_revision": "587c40670d850d21183b7bbd7fd1e600ae84896c",
   "measurement_base_revision": "beeca3986fc0e02becf65674cbbc8b8f67bf3864",
-  "contract_attempt": 3,
+  "contract_attempt": 4,
   "scope": {
     "files_create": [
       {
@@ -41,6 +41,14 @@
       {
         "path": ".agent/qa/118-contract-review-rev2.json",
         "purpose": "Independent revision2 pre-code gate; all predecessor verdicts remain immutable."
+      },
+      {
+        "path": ".agent/validator/118-mode-a-recovery1.json",
+        "purpose": "Independent recovery1 revision3 pre-code gate; all predecessor verdicts immutable."
+      },
+      {
+        "path": ".agent/qa/118-contract-review-recovery1.json",
+        "purpose": "Independent recovery1 revision3 pre-code gate; all predecessor verdicts immutable."
       },
       {
         "path": ".agent/validator/118-test-bundle-review.json",
@@ -86,23 +94,23 @@
       },
       {
         "path": ".agent/feature_list_017.json",
-        "purpose": "Root118 status/passes/contract_ref/qa_ref/evidence_ref/completed_at and phase_status in_progress->complete only after capture; spec_version mirrors Root postcapture spec0.3.0; completed115116117 entries/all original estimates/deps/cases unchanged."
+        "purpose": "Root118 status/passes/contract_ref/qa_ref/evidence_ref/completed_at and phase_status in_progress->complete only after capture; spec_version mirrors Root postcapture spec0.3.0; completed115116117 entries/all original estimates/deps/cases unchanged. Root recovery blocked->in_progress only after actual revision3 dual approval, exactly as recovery_state_policy; retain historical halt evidence."
       },
       {
         "path": "docs/planning/phase_017.yaml",
-        "purpose": "Root canonical118 IN_PROGRESS->COMPLETED and phase in_progress->complete with actual capture, truthful current-description only; prior115116117 steps/evidence exact."
+        "purpose": "Root canonical118 IN_PROGRESS->COMPLETED and phase in_progress->complete with actual capture, truthful current-description only; prior115116117 steps/evidence exact. Root recovery blocked->in_progress only after actual revision3 dual approval, exactly as recovery_state_policy; retain historical halt evidence."
       },
       {
         "path": "docs/planning/manifest.json",
-        "purpose": "Root only phase017 row status in_progress->complete/finished_at/note plus updated_at after capture; other rows exact and016 remains proposed."
+        "purpose": "Root only phase017 row status in_progress->complete/finished_at/note plus updated_at after capture; other rows exact and016 remains proposed. Root recovery blocked->in_progress only after actual revision3 dual approval, exactly as recovery_state_policy; retain historical halt evidence."
       },
       {
         "path": ".agent/run_state.json",
-        "purpose": "Root only current118 bounded counters/history append/time/action/coordination, append118 completedid once, phase017 closure and measured118 row. Preserve all prior typed history/counters,4012 completed total and prior115116117/closed0157319 measurements. Both active IDs null after capture."
+        "purpose": "Root recovery_state_policy owns authorized resume/current coordination and append-only recovery counters/history; preserve all b2c0 history/counters and old budgets, including blocked118 inflight559. After actual capture append118 completed once, both active IDs null, measured118 row and total4012+actual under original7020; no historical remeasurement."
       },
       {
         "path": "docs/planning/backlog_dag.json",
-        "purpose": "Root phase017_execution lifecycle/current118/evidence/foundation adoption progress and generated_at only; complete only actual foundation ownership item after capture, preserve all original/adopted/proposed edges and other terminal packets;016 proposed."
+        "purpose": "Root phase017_execution lifecycle/current118/evidence/foundation adoption progress and generated_at only; complete only actual foundation ownership item after capture, preserve all original/adopted/proposed edges and other terminal packets;016 proposed. Root recovery blocked->in_progress only after actual revision3 dual approval, exactly as recovery_state_policy; retain historical halt evidence."
       },
       {
         "path": ".agent/product_spec_017.md",
@@ -111,13 +119,17 @@
       {
         "path": "docs/planning/operator_gates.md",
         "purpose": "Root postcapture0.37.0->0.38.0 one log/current017 foundation completion overlay, next016 activation remains outstanding; all historical gates/choices and unrelated text exact."
+      },
+      {
+        "path": "docs/planning/DEBT.md",
+        "purpose": "Root only after actual118 capture:0.74.0->0.75.0 one change_log entry and resolve/move only NDEBT-054 with actual recovery/QA/capture references. Preserve its ID/date/severity/description and every other row/log/body/metadata; no Generator debt writes."
       }
     ]
   },
   "non_goals": [
     "No full WA controls/runtime/controller/A10/A11/SBCL/live13proof claim, phase016/018/019/020 activation, new release/tag/installed upgrade/external ecosystem.",
     "No old115116117 contracts/gates/QA/capture/evidence/counters/budget reseal or remeasurement; their immutable Source identities stay historical. Never rerun old scopes or historical116 bundle/current117 active-entry CLI as118 readiness.",
-    "No Generator sealed tests/API/guard/fixtures/input manifest edits or lifecycle/counter/budget/debt writes. DEBT0.73 all rows/logs remain exact. No schema/protocol/index/workflow/job/installed change."
+    "No Generator sealed tests/API/guard/fixtures/input manifest edits during implementation or lifecycle/counter/budget/debt writes. Preserve docs/planning/DEBT.md0.74 and all old rows/logs; only Root may perform the declared NDEBT-054 postcapture resolution. No schema/protocol/index/workflow/job/installed change."
   ],
   "verification": [
     {
@@ -154,17 +166,17 @@
     "117"
   ],
   "precode_gate_policy": {
-    "revision": 2,
+    "revision": 3,
     "validator_mode_a": {
-      "path": ".agent/validator/118-mode-a-rev2.json",
+      "path": ".agent/validator/118-mode-a-recovery1.json",
       "review": "contract-mode-a"
     },
     "evaluator_contract_review": {
-      "path": ".agent/qa/118-contract-review-rev2.json",
+      "path": ".agent/qa/118-contract-review-recovery1.json",
       "review": "contract-testability"
     },
-    "producer": "Both gates feature string118/revision_reviewed strictint2/proposal_sha256 and api_sha256 matching exact immutable proposal and API bytes/actor strict nonempty string/final_verdict.approved exacttrue/three actual empty blocker arrays issues,missing_acceptance_coverage,unsupported_claims. Additional schema/evidence metadata allowed. Root approvals.gate_refs remains null until both actual outputs exist; paths/hashes filled afterwards, no proposal/output selfhash.",
-    "approved_gate_refs": "Closed approvals.gate_refs {proposal_revision,proposal_sha256,api_sha256,validator_mode_a,evaluator_contract_review}; proposal_revision existing40hex proposal commit and proposal_sha256/api_sha256 actual64hex input SHA; each role closed {path,sha256} matches revision2 policy and actual gate bytes. Deterministic approvals.revisions=2; no historic fallback.",
+    "producer": "Both gates feature string118/revision_reviewed strictint3/proposal_sha256 and api_sha256 matching exact immutable proposal and API bytes/actor strict nonempty string/final_verdict.approved exacttrue/three actual empty blocker arrays issues,missing_acceptance_coverage,unsupported_claims. Additional schema/evidence metadata allowed. Root approvals.gate_refs remains null until both actual outputs exist; paths/hashes filled afterwards, no proposal/output selfhash.",
+    "approved_gate_refs": "Closed approvals.gate_refs {proposal_revision,proposal_sha256,api_sha256,validator_mode_a,evaluator_contract_review}; proposal_revision existing40hex proposal commit and proposal_sha256/api_sha256 actual64hex input SHA; each role closed {path,sha256} matches revision3 policy and actual gate bytes. Deterministic approvals.revisions=3; no historic fallback.",
     "root_approval_changes": {
       "status": {
         "from": "proposed",
@@ -178,9 +190,9 @@
         "from": false,
         "to": true
       },
-      "approvals.gate_refs": "null -> complete closed object declared by approved_gate_refs, only after both actual revision2 gates pass",
+      "approvals.gate_refs": "null -> complete closed object declared by approved_gate_refs, only after both actual revision3 gates pass",
       "approvals.approved_at": "Optional new nonempty string timestamp within approvals only; no top-level approved_at",
-      "preserve": "All other fields/obligations exact, including contract_attempt=3, approvals.revisions=2 and precode_gate_policy.revision=2. Later contract status complete only after actual QA and Root capture under canonical_close."
+      "preserve": "All other fields/obligations exact, including contract_attempt=4, recovery_epoch=1, recovery_attempt=1, approvals.revisions=3 and precode_gate_policy.revision=3. Later current contract status approved->complete is permitted only by acceptance_successor_policy.current_contract_projection after actual verified capture; mapped approved Git/archive bytes never change."
     }
   },
   "independent_acceptance": "Evaluator author/developer/independent bundle reviewer distinct agents AND sessions. Freeze independent obligation snapshot/API/producer/current guard/runtime manifest/tests/callable naive baseline and fixtures in actual GitB. Author observes real successful setup, valid receipt positive and case-specific intended behavioral red against naive readiness policy (e.g. stale Source/input or missing20 proof incorrectly accepted); missing API/import/setup is never red. Reviewer personally replays positive/red and current20 setup, emits exact nine fields review,feature,actor,reviewer_session_id,seal_sha256,issues,missing_acceptance_coverage,unsupported_claims,final_verdict at canonical118-test-bundle-review; strict approvedtrue/summary string and empty arrays. Richer evidence underE118 outside own seal. Runtime manifest enumerates transitive116117 fixtures and installed schema/helper inputs used by current20, no omitted/unknown dependencies. For this recovery, acceptance_successor_policy defines the sole authorized B1-to-B2 transition; predecessor evidence stays immutable.",
@@ -194,12 +206,12 @@
     "Distinct Root capture of QA3/ownspot/prerequisite20 then canonical-first118/phase close and actual118 measurement"
   ],
   "readiness_boundary": "verify_foundation_ready consumes only current candidate/prerequisite/immutable prerequisite historical completion bindings; requires no118 QA, ModeB or capture. No loop through own readiness test. It remains valid across known record-only HEAD advances while all assessed Source inputs unchanged; no whole-tree equality against pre-codeB. Unknown runtime inputs/missing/malformed/digest/mode/type/path/actor/command/exit reject. Ready alone does not authorize phase close.",
-  "scope_controls": "Independent new118 guard compares selected scopebase, exact typed old history/counters/budget-prefix/115116117records/oldproofs/DEBT0.73/installed239/future phases. Enforces active118 tuple and postcapture complete tuple, unknown/new/staged/ignored paths/raw modes/symlink safety, frozen helpers and exact SourceC/current dependency maps. Completion requires real independent ModeB/QA3+ownspot/prerequisite20/Rootcapture and measured118 integer row. Private structural fixture controls only; public scope no mock bypass. Guard/controls are declared readiness-author/reviewer/ModeB/Root supplemental obligations, not a fourth contractual QA command. For declared118 acceptance replacements only, use acceptance_successor_policy staged exact mappings rather than unconditional canonical first-appearance equality; every unrelated freeze remains enforced.",
-  "canonical_close": "Before capture118/current active IDs/statusin_progress and017in_progress; old115116117 complete. After actual QA3+ownspot/capture Root first marks118/phase canonical complete and evidence refs, then list118complete/passstrue/phase_statuscomplete/manifest017complete, runbothactiveIDsnull/completedprefix+118once and contractcomplete, DAG actual foundation progress only. Future016 remainsproposed, no automatic activation. Root postcapture spec/operator overlays match actual closure; Source docs state live canonical/capture pointers rather than premature completion.",
+  "scope_controls": "Independent new118 guard compares selected scopebase, exact typed old history/counters/budget-prefix/115116117records/oldproofs/DEBT0.74/installed239/future phases. Enforces active118 tuple and postcapture complete tuple, unknown/new/staged/ignored paths/raw modes/symlink safety, frozen helpers and exact SourceC/current dependency maps. Completion requires real independent ModeB/QA3+ownspot/prerequisite20/Rootcapture and measured118 integer row. Private structural fixture controls only; public scope no mock bypass. Guard/controls are declared readiness-author/reviewer/ModeB/Root supplemental obligations, not a fourth contractual QA command. For declared118 acceptance replacements only, use acceptance_successor_policy staged exact mappings rather than unconditional canonical first-appearance equality; every unrelated freeze remains enforced. Recovery coordination uses exact b2c0 authorization baseline and recovery_state_policy. Current contract closure uses the explicit typed current_contract_projection; source/test/gate/archive identities remain exact.",
+  "canonical_close": "Before revision3 dual approval, recovery state remains blocked as recovery_state_policy. After approval Root resumes active118 and phase017; thereafter before capture118/current active IDs/statusin_progress and017in_progress; old115116117 complete. After actual QA3+ownspot/capture Root first marks118/phase canonical complete and evidence refs, then list118complete/passstrue/phase_statuscomplete/manifest017complete, runbothactiveIDsnull/completedprefix+118once and contractcomplete, DAG actual foundation progress only. Future016 remainsproposed, no automatic activation. Root postcapture spec/operator overlays match actual closure; Source docs state live canonical/capture pointers rather than premature completion. Root resolves only NDEBT-054 after real capture under recovery_state_policy.debt; approved-contract mapping is retained and current status closure follows current_contract_projection.",
   "approvals": {
     "validator_mode_a": false,
     "evaluator_contract_review": false,
-    "revisions": 2,
+    "revisions": 3,
     "gate_refs": null
   },
   "dod_ref": ".nizam/standard/definition_of_done.md",
@@ -224,7 +236,7 @@
     "condition": "Only Root after actual independent QA3 plus ownspot and evidence capture, canonical phase first; all prior115116117 step/evidence records preserved. These are phase/manifest schema values; run_state.status has string type without a schema enum."
   },
   "acceptance_successor_policy": {
-    "purpose": "Exactly one finite B1-to-B2 acceptance successor after Source1 fixture TypeError, under renewed revision2 dual pre-code approval; no functional API, command, budget, role or lifecycle changes.",
+    "purpose": "Finite B1-to-B2 successor under explicit recovery authorization and revision3 dual pre-code approval. Functional API, three commands and original budgets unchanged; recovery_state_policy and current_contract_projection define the authorized lifecycle transitions.",
     "predecessor_ref": ".agent/evidence/118/pre-revision2-provenance.json",
     "predecessor_pin": {
       "baseline": "0b4f46adaef9efd8d48aa15e6bb0e237956a6316",
@@ -251,24 +263,48 @@
       ]
     },
     "new_fixture_driver": ".agent/evidence/118/fixture-path-selfcheck.py",
-    "bounded_edits": "Proposal trio changes only revision2 approval/successor policy. Author fixes typed path construction, exercises existing mutation branches, adapts scope/approval parsing for revision2 and exact successor maps, refreshes approved obligation snapshot and complete runtime inputs. Baseline driver changes only to expose fixture-path selfcheck. Other B1 inputs, roles, historical-runtime23 ledger, naive policy, operation and all current20 case bodies remain byte/mode exact. Existing public test dispatch stays exact; no public mock switch.",
+    "bounded_edits": "Proposal trio changes only revision3 approval/successor policy. Author fixes typed path construction, exercises existing mutation branches, adapts scope/approval parsing for revision3 and exact successor maps, refreshes approved obligation snapshot and complete runtime inputs. Baseline driver changes only to expose fixture-path selfcheck. Other B1 inputs, roles, historical-runtime23 ledger, naive policy, operation and all current20 case bodies remain byte/mode exact. Existing public test dispatch stays exact; no public mock switch. Author also implements and exercises capture-gated current contract projection and recovery-state controls; no new product behavior.",
     "archive_rule": "Before replacing each canonical path, copy exact predecessor bytes/mode under E118/predecessor-bundle1/ retaining repository-relative path, and record old immutable Git revision/path/SHA/mode plus archive path. The proposal trio already has pre-revision2 snapshots; use those. Archive all B1 sealed inputs plus original bundle/review and verify against original Git/B1 seal, even for unchanged inputs. Preserve every old raw output, verdict, counter, SourceC1 quarantine file and thin Git bundle. No history rewrite or archive overwrite.",
     "stage_records": {
-      "precode": ".agent/evidence/118/successor-precode-rev2.json",
+      "precode": ".agent/evidence/118/successor-precode-recovery1.json",
       "inputs": ".agent/evidence/118/successor-inputs-attempt2.json",
       "bundle": ".agent/evidence/118/successor-bundle-attempt2.json",
       "review": ".agent/evidence/118/successor-review-attempt2.json"
     },
-    "record_shape": "Each create-only stage record has closed {feature,stage,actor,predecessor_ref,successor_revision,rows,evidence_refs}; feature string118, actor nonempty recorded role identity, predecessor_ref fixed pre-revision2-provenance.json, successor_revision actual40hex existing commit containing that stage outputs. rows unique canonical paths; each closed {canonical_path,owner,old,new}; old closed {revision,path,sha256,executable,archive_path}; new closed {revision,path,sha256,executable}. Hashes exact64hex actual Git/current/archive bytes, executable strictbool. Row new.revision equals successor_revision. owner follows finite canonical_replacements; no unlisted replacement. evidence_refs safe unique existing external raw/proof paths; no self reference. Unchanged listed optional paths need no replacement row; every actual replacement requires one.",
+    "record_shape": "Each create-only stage record has closed {feature,stage,actor,predecessor_ref,successor_revision,rows,evidence_refs}; feature string118, actor nonempty recorded role identity, predecessor_ref fixed pre-revision2-provenance.json, successor_revision actual40hex existing commit containing that stage outputs. rows unique canonical paths; each closed {canonical_path,owner,old,new}; old closed {revision,path,sha256,executable,archive_path}; new closed {revision,path,sha256,executable}. Hashes exact64hex immutable mapped Git and archive bytes; current bytes/modes equal those inputs except solely the contract status projection defined by current_contract_projection. executable strictbool. Row new.revision equals successor_revision. owner follows finite canonical_replacements; no unlisted replacement. evidence_refs safe unique existing external raw/proof paths; no self reference. Unchanged listed optional paths need no replacement row; every actual replacement requires one.",
     "stage_order": [
-      "Precode: proposal2 may differ from B1 only at proposal trio. Independent gates read immutable proposal/API directly; old B1 guard is historical and need not pass on the proposed trio. Both new gates must pass before author2. Root approves exact revision2 metadata, commits, and records proposal-trio precode mappings; no future B2 inputs/receipts required.",
-      "Inputs: independent author2 archives B1, repairs only declared acceptance paths/adds fixture-only driver, records full branch execution and typed path audit in scratch, freezes new input commit B2. After B2 exists, write inputs stage mapping for changed authored input paths (excluding acceptance-bundle output); map new helper separately in B2 input inventory because it has no predecessor. API/producer frozen at approved revision2; obligations reflect that approved contract. No B2 hash or future output embedded in B2 inputs.",
+      "Precode: recovery proposal3 may differ from B1 only at proposal trio. Independent gates read immutable proposal/API directly; old B1 guard is historical and need not pass on the proposed trio. Both new gates must pass before author2. Root approves exact revision3 metadata, commits, and records proposal-trio precode mappings; no future B2 inputs/receipts required.",
+      "Inputs: independent author2 archives B1, repairs only declared acceptance paths/adds fixture-only driver, records full branch execution and typed path audit in scratch, freezes new input commit B2. After B2 exists, write inputs stage mapping for changed authored input paths (excluding acceptance-bundle output); map new helper separately in B2 input inventory because it has no predecessor. API/producer frozen at approved revision3; obligations reflect that approved contract. No B2 hash or future output embedded in B2 inputs.",
       "Bundle: author personally replays actual20 setup/positive/intended semantic red and fixture selfcheck at immutable B2. Then emits new canonical acceptance-bundle with actual B2 tree/seal/input hashes and new unique raw proof paths, commits that output and creates bundle stage mapping. Bundle omits own output, future review, stage maps and Source/prerequisite outputs from its seal/runtime inputs.",
       "Review: distinct reviewer verifies proposal gates, predecessor archives and exact input/bundle stage mappings, personally replays B2 controls and full filesystem selfcheck, and emits exact existing nine-field canonical review bound to new seal. Archive old canonical review before replacement. After actual reviewer output is committed, Root records review stage mapping. Before this point B1 review is historical and cannot approve B2; no Source2 allowed.",
       "Source2: Root dispatches fresh owned source attempt only after all four stage records and strict new review are verified. Freeze new SourceC2 and exact five-field candidate, then distinct prerequisite Evaluator personally executes exact20 at C2 into fresh raw paths and canonical prerequisite20. C1 candidate/receipt exist only in historical quarantine and cannot satisfy C2. Generator3, ModeB, freshQA3+ownspot and Root capture follow unchanged."
     ],
-    "guard_rule": "The independent successor guard checks original selected scopebase/old115116117/installed/typed history and existing freeze obligations. For only enumerated replacements, replace unconditional first-appearance equality with exact old archive/Git and stage-appropriate new Git/current bytes/modes plus approved revision2 identity. No wildcard, latest-file heuristic, arbitrary revision, caller-selected exemption or output selfhash. During author development permit only declared pending replacement paths with exact predecessor archives; do not report Source-ready. At frozen B2 validate input map; at review-pending validate bundle map without requiring future review map; before Source2 require all maps and strict new review. Stage determined by actual committed artifacts and role ownership, not an unchecked public bypass flag. All other historical files remain exactly frozen; unknown paths/types/modes fail closed.",
+    "guard_rule": "The independent successor guard checks original selected scopebase/old115116117/installed/typed history and existing freeze obligations. For only enumerated replacements, replace unconditional first-appearance equality with exact old archive/Git and stage-appropriate new Git/current bytes/modes (only current contract status follows current_contract_projection) plus approved revision3 identity. No wildcard, latest-file heuristic, arbitrary revision, caller-selected exemption or output selfhash. During author development permit only declared pending replacement paths with exact predecessor archives; do not report Source-ready. At frozen B2 validate input map; at review-pending validate bundle map without requiring future review map; before Source2 require all maps and strict new review. Stage determined by actual committed artifacts and role ownership, not an unchecked public bypass flag. All other historical files remain exactly frozen; unknown paths/types/modes fail closed. Use recovery_state_policy for b2c0 halt/resume/history/debt rather than obsolete active118 or DEBT0.73 baseline assumptions.",
     "fixture_exercise": "Author and reviewer execute the complete existing filesystem mutation branch in disposable scratch, including malformed/absent proof, changed core/helper/history bytes, executable-mode flips, symlink creation/restoration and record-only HEAD advance. A fixture-only scripted outcome double may drive branch mechanics and count each expected visit, but cannot implement readiness, become product code, approve a public receipt or substitute for actual SourceC2 acceptance. Typed path audit exercises Path division/join and symlink-target construction and rejects Path+str; successful end-of-branch evidence required before freeze and again at B2 review. Synthetic data is labeled private and never canonical public prerequisite/QA/capture.",
-    "immutability": "B2 inputs immutable after freezing; any later defect returns to Root bounded counters/gates. This policy grants no third bundle generation, fourth contract attempt, counter reset, new scope or budget. Existing failedSource1 and prerequisite1 remain counted."
+    "immutability": "Every committed proposal, failed diagnostic and B1/B2 snapshot remains immutable in Git/archive. Accepted B2 input edits require renewed independent bundle review; iterative local author/developer repair follows explicit recovery authorization with actual evidence, not mechanical halt solely at3. No old counter reset, source/test/gate hash relaxation, new phase, scope expansion or extra budget.",
+    "current_contract_projection": {
+      "path": ".agent/contracts/118.json",
+      "anchor": "The precode map new.revision/new.sha256/new.executable permanently identify the actual approved recovery3 Git contract. Validate exact mapped Git bytes/mode and exact predecessor archive; never replace those hashes or rewrite create-only stage maps when lifecycle closes. The pinned approved contract must itself match the immutable proposal with only precode_gate_policy.root_approval_changes applied and actual strict dual gates.",
+      "approved": "Before terminal closure, current contract status must be string approved and entire current raw bytes/mode must equal the mapped approved Git artifact. No alternative status or extra field is allowed.",
+      "complete": "Current status may be string complete only after capture_receipts below pass. Its executable mode remains exactly mapped. Parse strict JSON rejecting duplicate keys/nonfinite values; change only a copy of the current top-level status complete->approved and compare the complete typed JSON tree with the parsed immutable approved Git contract, retaining all types/key sets/array order. No other field/value/type may differ, including approvals,approved_at,gate_refs,recovery metadata,scope or obligations. Current complete raw SHA may differ; the mapped approved SHA and every source/test/gate/archive SHA stay exact.",
+      "capture_receipts": "Verify actual SourceC2 candidate identity, fresh independent prerequisite20, strict independent ModeB, freshQA exact3 plus ownspot, all command/raw SHA/exit/revision bindings, and Root-owned passed evidence-capture per unchanged producer interface before permitting complete. Missing/malformed/stale/self-reviewed receipts fail closed. This receipt predicate reads immutable approved obligations and actual receipt/raw files; it does not require current contract/phase/list/run already complete, so canonical-first closure is constructible. A recorded flag or filename alone never proves capture.",
+      "lifecycle": "Root performs canonical phase/step closure first after receipt predicate passes, then current contract approved->complete and declared mirrors. Final public scope validation checks the complete coherent tuple and measured118 row; intermediate Root writes are not a completed feature. Library readiness remains independent of own118 QA/capture.",
+      "controls": "Independent author/reviewer must show approved exact bytes pass without future capture, complete-only projection passes with valid captured receipt fixtures, and premature complete fails. Reject status bool/null/unknown, arbitrary extra key, changed approval flag/gate hash, changed scope/verification/estimate/recovery policy, and altered immutable mapped Git/archive/source/test hashes even with valid capture. Use private controls plus actual final receipt observations, never a public mock bypass."
+    }
+  },
+  "recovery_epoch": 1,
+  "recovery_attempt": 1,
+  "recovery_authorization_ref": ".agent/evidence/118/recovery-authorization.json",
+  "recovery_state_policy": {
+    "authorization_ref": ".agent/evidence/118/recovery-authorization.json",
+    "baseline_revision": "b2c0c0471c0b4c34f194ef38158add4fa70fb1af",
+    "epoch": 1,
+    "procedure": "Explicit operator recovery supersedes mechanical three-strike and stop-first-development-error rules for this lane. Preserve every old counter/failure; use 118-recovery1-* coordination, record each actual failure/diagnosis/repair and require meaningful regression progress. No pass fabrication or substantive gate waiver; re-review changed obligations/interfaces. Independent roles, immutable accepted inputs, evidence and original budget remain mandatory.",
+    "preapproval": "Current canonical phase.status=blocked, step118.status=BLOCKED, list phase_status/118.status=blocked with passes exactfalse, manifest017.status=blocked, DAG phase017_execution status/feature_status=blocked; run status=blocked,current_feature=118,active_contract_id=null,blocked_features retains118. Proposal writing does not resume lifecycle.",
+    "resume": "Only Root after actual strict recovery revision3 dual approval: canonical phase blocked->in_progress and step118 BLOCKED->IN_PROGRESS first, then list phase_status/118.status in_progress with passes false; manifest017.status in_progress; DAG phase017_execution status/feature_status in_progress. Keep current_feature=118,set active_contract_id=118,run status=in_progress,remove only118 from blocked_features. Evidence pointers may name the actual recovery authorization/resume receipt; descriptions/manifest note/current recovery_gate may truthfully reflect recovery. Preserve captured115116117 records and all unrelated rows/edges. Existing completion field masks still apply after capture.",
+    "coordination": "Against exact baseline_revision, preserve all existing circuit_breaker entries byte-equivalent as typed JSON; no old3 counter increment/reset. New keys only118-recovery1-* with strict nonnegative integer attempts, positive integer limit retained as recorded metadata rather than mechanical halt trigger, and optional authorization/evidence references. Recovery counts monotone and tied to actual recorded work. History is exact old typed prefix plus actual event records. Root may update timestamps,last_action,status,current_feature,active_contract_id,blocked_features as declared, and recovery history/counters only. All other baseline run_state fields unchanged until declared postcapture budget/completed_ids projection.",
+    "budget": "Preserve original5400/ceiling7020 and completed4012 with prior1863/1146/1003 rows. Keep all historical inflight rows, especially blocked118 actual559 and its raw proof, exact. Measure whole118 once from original measurementbase after capture and append once; no rebaseline, additional allocation or separate charge for559.",
+    "debt": "Before actual capture docs/planning/DEBT.md remains exact baseline0.74.0 with NDEBT-054 OPEN. After verified capture Root may set0.75.0, prepend exactly one log, move only054 Open->Resolved and replace its Notes with truthful resolution/authorization/QA/capture references; preserve054 ID/date/severity/description and all other rows, all prior logs, metadata and text. No other debt resolves and no earlier closure is permitted.",
+    "controls": "Independent author/reviewer must demonstrate valid blocked preapproval, valid approved resume and valid captured closure; reject resume without both actual gates, premature complete/debt resolution, altered old history/counter/inflight559/priorcompleted row, and unrelated debt edits. Private fixture controls do not authorize real state writes."
   }
 }
