@@ -1293,10 +1293,106 @@ def replay(s):
         second.cleanup()
 
 
+
+# Independent explicit inventory: CHECKS remains the inherited fourteen-leaf harness API.
+CORE_LEAVES = (
+    ('--check', 'lifecycle-no-evaluation'), ('--check', 'record-schema'),
+    ('--check', 'fixture-claim-registered'), ('--case', '1', '--runtime', 'stub'),
+    ('--case', '2', '--runtime', 'stub'), ('--case', '3', '--runtime', 'stub'),
+    ('--case', '9', '--runtime', 'stub'), ('--case', '13', '--runtime', 'stub'),
+    ('--case', '8', '--runtime', 'stub', '--layer', 'policy'),
+    ('--check', 'cancel-confirmation-required'), ('--check', 'handoff-source-bound'),
+    ('--case', '5', '--runtime', 'stub'), ('--case', '6', '--runtime', 'stub'),
+    ('--case', '10', '--runtime', 'stub'))
+
+
+def core_owned(marker):
+    owned = {}
+    for path in Path('/proc').iterdir():
+        if not path.name.isdigit():
+            continue
+        try:
+            pid = int(path.name); token = process_token(pid)
+            if (token and path.stat().st_uid == os.getuid() and
+                    ('NIZAM_CORE_OWNER=' + marker).encode() in (path / 'environ').read_bytes().split(b'\0') and
+                    process_token(pid) == token):
+                owned[pid] = token
+        except (OSError, ValueError):
+            pass
+    return owned
+
+
+def core_cleanup(marker):
+    observed = {}; end = time.monotonic() + 3
+    while time.monotonic() < end:
+        owned = core_owned(marker); observed.update(owned)
+        if not owned:
+            break
+        for pid, token in owned.items():
+            if core_owned(marker).get(pid) == token:
+                try:
+                    os.kill(pid, signal.SIGTERM if time.monotonic() < end - 2.5 else signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+        time.sleep(.05)
+    remaining = core_owned(marker)
+    print('CORE_CLEANUP', json.dumps({'owned_tokens': observed, 'remaining': remaining}), flush=True)
+    return not remaining
+
+
+def core_ready(seconds=90):
+    def interrupted(signum, frame):
+        raise KeyboardInterrupt
+    previous = {sig: signal.signal(sig, interrupted) for sig in (signal.SIGINT, signal.SIGTERM)}
+    failed = False
+    try:
+        for leaf in CORE_LEAVES:
+            argv = [sys.executable, str(ROOT / 'tools/test_runtime_session.py'), *leaf]
+            marker = os.urandom(24).hex(); process = None; event = None; out = err = ''; rc = None
+            with tempfile.TemporaryDirectory(prefix='n128-') as home:
+                try:
+                    process = subprocess.Popen(argv, cwd=ROOT, text=True, stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE, start_new_session=True,
+                        env={**os.environ, 'PYTHONDONTWRITEBYTECODE': '1', 'TMPDIR': home,
+                             'NIZAM_CORE_OWNER': marker})
+                    out, err = process.communicate(timeout=seconds)
+                except subprocess.TimeoutExpired:
+                    event = 'timeout'
+                except KeyboardInterrupt:
+                    event = 'interrupted'
+                except OSError as exc:
+                    event = 'setup'; err = str(exc)
+                finally:
+                    # Repeated interrupts cannot bypass ownership-scoped bounded cleanup.
+                    for sig in previous:
+                        signal.signal(sig, signal.SIG_IGN)
+                    clean = core_cleanup(marker)
+                    if process is not None:
+                        if process.poll() is None:
+                            process.kill()  # The directly spawned, unreaped Popen identity is ours.
+                        out, err = process.communicate(timeout=3); rc = process.returncode
+                    for sig in previous:
+                        signal.signal(sig, interrupted)
+                expected = 'PASS ' + (leaf[1] if leaf[0] == '--check' else f'case{leaf[1]}/stub')
+                proof = bool(out.splitlines()) and out.splitlines()[-1] == expected
+                ok = rc == 0 and proof and clean and event is None
+                print('CORE_LEAF', json.dumps({'argv': argv, 'stdout': out, 'stderr': err, 'exit': rc,
+                    'expected_final_marker': expected, 'proof': proof, 'event': event, 'cleanup': clean}), flush=True)
+                failed |= not ok
+                if event == 'interrupted':
+                    return 130
+        if not failed:
+            print('PASS core-ready')
+        return int(failed)
+    finally:
+        for sig, handler in previous.items():
+            signal.signal(sig, handler)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
     selection = parser.add_mutually_exclusive_group(required=True)
-    selection.add_argument('--check', choices=CHECKS)
+    selection.add_argument('--check', choices=(*CHECKS, 'core-ready'))
     selection.add_argument('--case', type=int, choices=CASES)
     parser.add_argument('--runtime', choices=('stub',))
     parser.add_argument('--layer', choices=('policy',))
@@ -1310,6 +1406,8 @@ def main():
     if not (ROOT / 'tools/runtime_session.py').is_file():
         print('SETUP_FAILURE: controller source absent; this is not semantic red', file=sys.stderr)
         return 2
+    if args.check == 'core-ready':
+        return core_ready()
     with tempfile.TemporaryDirectory(prefix='n126-') as home:
         sessions = []
         try:
