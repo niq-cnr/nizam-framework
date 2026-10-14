@@ -1,0 +1,52 @@
+{
+  "review": "contract-testability",
+  "feature": "126",
+  "contract_id": "126",
+  "revision_reviewed": 0,
+  "reviewer": {
+    "role": "Evaluator",
+    "session_identity": "/root/acceptance126",
+    "branch": "qa/126-contract",
+    "independence": "Independent contract review only; no contract, source or acceptance-test authorship."
+  },
+  "reviewed_commit": "9e6fe6daa46a625a2eb2561b5cc8acb202200120",
+  "contract_sha256": "4c9ba69d48fced7782bbe8b2a3dcaa0fe4431f78392cb2b943df4abf87698b02",
+  "evidence_files": [
+    ".agent/evidence/126/e126-contract-review.json",
+    ".agent/evidence/126/e126-03.stdout.txt",
+    ".agent/evidence/126/e126-04.stdout.txt",
+    ".agent/evidence/126/e126-05.stdout.txt",
+    ".agent/evidence/126/e126-06.stdout.txt",
+    ".agent/evidence/126/e126-07.stdout.txt",
+    ".agent/evidence/126/e126-08.stdout.txt"
+  ],
+  "issues": [
+    {
+      "verification_index": 1,
+      "criterion": "interface.serialization: duplicate operation_id cannot overwrite prior operation/effect and returns conflict without executing.",
+      "evidence": ".agent/evidence/126/e126-08.stdout.txt records the promised duplicate-ID guard and all nine acceptance descriptions. No description requires resubmitting an existing operation_id. The duplicate control in AT3 concerns fixture claims. An implementation that reexecutes a completed ID and replaces its schema-valid record can satisfy the listed checks. This is a static coverage counterexample; no executable controller or mutant exists at this revision.",
+      "required_fix": "Within an existing command, require a fresh-ID positive control and repeated-ID submissions while outstanding and after completion. Assert explicit conflict, no second child receipt or effect, preservation of prior operation/result bytes, and continued legitimate fresh-ID operation. Include changed payload reuse so a duplicate cannot silently replace the prior outcome. Preserve the nine-command interface and independent test ownership.",
+      "severity": "high"
+    }
+  ],
+  "missing_acceptance_coverage": [
+    "Duplicate operation_id refusal before dispatch, including prevention of repeated effects and preservation of the original operation/result records, lacks an explicit acceptance obligation."
+  ],
+  "unsupported_claims": [],
+  "observations": [
+    "The nine commands exactly match feature126's canonical list, and the proposed contract validates against the installed contract schema. No controller, stub or acceptance runner exists at the reviewed revision; missing-source execution is not used as a red result.",
+    "The six owned NIP-0003 stub cases map to AT4/5/6/7/8/9 (cases1/2/3/8-policy/9/13). AT1/2/3 add lifecycle, records and real fixture-registration obligations. Timeout, reattach, replay, SBCL and full seven-call conformance remain explicitly deferred.",
+    "Ownership, generation and lease refusals require child-receipt absence alongside memory/state checks, paired with legitimate operation success. This makes hidden dispatch and always-reject implementations falsifiable. Busy tests use a controlled gate and preserve the outstanding lane.",
+    "Upstream review_trial denial before endpoint contact is an error receipt rather than an admitted runtime operation, consistent with R10 endpoint denial. The separate trusted socket-injection path requires the supervisor-owned rejected/executed:false record demanded by R5 and case8; it does not confer endpoint authority on a trial.",
+    "Independent existing C12 controls actually returned0 for rejected trial and same-attempt replacement-generation fixtures, and1 with targeted C12 diagnostics for executed-trial and stale-generation execution negatives. These establish the record checks only, not controller behavior.",
+    "AT3's actual claim_map_check body can be isolated into a private Bash process for positive and scratch-mutant controls without sourcing the full fixture harness. Bundle review must reject duplicated checker logic, recursive harness execution, or a scheduling test that never exercises actual command dispatch/failure propagation.",
+    "The greenfield red plan is viable only after both gates and test seal: confirm transport/setup works, then capture the intended assertion/exit/output using an identified minimal scaffold or targeted semantic mutant plus positive control. Neither method proves pristine-base semantic red; provenance must state that limit.",
+    "Fresh QA can reconstruct committed controller/test/stub bytes in fresh subprocesses and private scratch state without SBCL or user namespaces. It must rerun all nine commands, required repository checks, and exactly one additional evaluator-originated spot-check, with real CI command evidence before live-case claims.",
+    "The550 independent-test estimate is feasible with shared subprocess, request, cleanup and schema helpers, but tight for malformed-child and harness controls. Product1100 plus tests550 plus process1250 equals2900; phase5650/7345 includes307 preparation lines once. Estimates are not actual measurement or permission to omit acceptance; Root must measure whole work and preserve phase limits."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "feature": "126",
+    "summary": "Reject narrowly: add explicit repeated-operation-ID admission/effect/record-preservation coverage within the existing nine commands, then obtain renewed independent pre-code reviews. No implementation or tests are authorized by this verdict."
+  }
+}
