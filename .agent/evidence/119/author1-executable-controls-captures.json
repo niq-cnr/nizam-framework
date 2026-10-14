@@ -1,0 +1,608 @@
+[
+  {
+    "label": "approve-empty-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "approve-empty"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-approve-empty-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-approve-empty-positive.stderr.txt",
+    "stdout_sha256": "239f3f3d43207558e53da256b19b5cd7e37d286291fc311b9a337cf7a3d105e8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "approve-empty-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('approve-empty',t.load_api('/home/cnross/.tmp/nizam119-mutant-36ewy8dz/workflow_assurance.py')); print('PASS '+'approve-empty')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "/home/cnross/.tmp/nizam119-mutant-36ewy8dz/workflow_assurance.py": {
+        "sha256": "e554cc5ac81ecf809b27a32abfe636035123b301276ec83d992f7fafcebfa16f",
+        "git_blob": "a8340314280822f0d772b90729b56271b47a78a4"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-approve-empty-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-approve-empty-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "f9964a622cff86ad42884fdfb74ae29c232bf09106a41f7a6147dec9e85417c2",
+    "expected_diagnostic": "POLICY_ASSERTION: empty valid AGF approves exactly"
+  },
+  {
+    "label": "approve-empty-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "approve-empty"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-approve-empty-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-approve-empty-restored.stderr.txt",
+    "stdout_sha256": "239f3f3d43207558e53da256b19b5cd7e37d286291fc311b9a337cf7a3d105e8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "advisory-visible-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "advisory-visible"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-advisory-visible-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-advisory-visible-positive.stderr.txt",
+    "stdout_sha256": "5ce98c24feddf5a5fe6212dc7240345b1f89f9d46692d569711235f4a393c516",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "advisory-visible-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('advisory-visible',t.load_api('/home/cnross/.tmp/nizam119-mutant-i1mkal0c/workflow_assurance.py')); print('PASS '+'advisory-visible')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "/home/cnross/.tmp/nizam119-mutant-i1mkal0c/workflow_assurance.py": {
+        "sha256": "77fe868e11b586f9eb15e994ee9437056333f9671d22d4bb10df6ca133d709c3",
+        "git_blob": "954cdbc3c3b9a5c08a31ad98e6043667175094db"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-advisory-visible-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-advisory-visible-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "e890ca5aff99420a0adcfd254e6d882504efa3ee4aaf619462f117d4d38caa89",
+    "expected_diagnostic": "POLICY_ASSERTION: active minor visible separately"
+  },
+  {
+    "label": "advisory-visible-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "advisory-visible"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-advisory-visible-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-advisory-visible-restored.stderr.txt",
+    "stdout_sha256": "5ce98c24feddf5a5fe6212dc7240345b1f89f9d46692d569711235f4a393c516",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "block-carried-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "block-carried"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-block-carried-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-block-carried-positive.stderr.txt",
+    "stdout_sha256": "d19a10f4786283f74973af425783ae721d2760cc9ada29e1e1b1ced5ff169eed",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "block-carried-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('block-carried',t.load_api('/home/cnross/.tmp/nizam119-mutant-qpevgt2r/workflow_assurance.py')); print('PASS '+'block-carried')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "/home/cnross/.tmp/nizam119-mutant-qpevgt2r/workflow_assurance.py": {
+        "sha256": "ff3879024e5ea3d24c7611b9f656e1fb54fcd15d56f7b9796b5ccaaa046cfe32",
+        "git_blob": "691bb5f35c856d201bf50d6a90b9f16d78564a6b"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-block-carried-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-block-carried-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "85b850aa3223c7c9343ebb2d7f240c045a5781bf92926d7a15bbf6e127fb972e",
+    "expected_diagnostic": "POLICY_ASSERTION: active full findings appended in ledger order"
+  },
+  {
+    "label": "block-carried-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "block-carried"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-block-carried-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-block-carried-restored.stderr.txt",
+    "stdout_sha256": "d19a10f4786283f74973af425783ae721d2760cc9ada29e1e1b1ced5ff169eed",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "reject-issues-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-issues"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-reject-issues-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-reject-issues-positive.stderr.txt",
+    "stdout_sha256": "a81d41b44dc5c7c0251425fc27afa5c2cd7921a47a4e67261eb377261ab19ee9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "reject-issues-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('reject-issues',t.load_api('/home/cnross/.tmp/nizam119-mutant-wxdfyqnk/workflow_assurance.py')); print('PASS '+'reject-issues')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "/home/cnross/.tmp/nizam119-mutant-wxdfyqnk/workflow_assurance.py": {
+        "sha256": "16532a2bb45355199af73f40a88912745f81d804b4637473d55b0bdf12c8ef48",
+        "git_blob": "57f637880447678e23f838c965e2ee80e83e5c8d"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-reject-issues-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-reject-issues-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "3e0633bb44b72da41f7f489843b56c6cf245cdc9cf469662d60c1b296ae2f82c",
+    "expected_diagnostic": "POLICY_ASSERTION: nonempty blocking array preserved: issues"
+  },
+  {
+    "label": "reject-issues-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-issues"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-reject-issues-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-reject-issues-restored.stderr.txt",
+    "stdout_sha256": "a81d41b44dc5c7c0251425fc27afa5c2cd7921a47a4e67261eb377261ab19ee9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "reject-missing-coverage-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-missing-coverage"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-reject-missing-coverage-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-reject-missing-coverage-positive.stderr.txt",
+    "stdout_sha256": "ffcc64c86272ebccde82a4ee739172fd44520ecfea486f6f94356400db95ef09",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "reject-missing-coverage-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('reject-missing-coverage',t.load_api('/home/cnross/.tmp/nizam119-mutant-b3m4ryvw/workflow_assurance.py')); print('PASS '+'reject-missing-coverage')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "/home/cnross/.tmp/nizam119-mutant-b3m4ryvw/workflow_assurance.py": {
+        "sha256": "e51fbfe835d53a8ab34b879d20053fa44b695d4d14f7d81bae92a749d10481ce",
+        "git_blob": "a63435bedb99366fde247e89f8f2884fe08f085b"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-reject-missing-coverage-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-reject-missing-coverage-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "8bec4c78bb9e312315eb262e1d7fd1ebd2259b772113ae1b9278c8ac366436da",
+    "expected_diagnostic": "POLICY_ASSERTION: nonempty blocking array preserved: missing_acceptance_coverage"
+  },
+  {
+    "label": "reject-missing-coverage-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-missing-coverage"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-reject-missing-coverage-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-reject-missing-coverage-restored.stderr.txt",
+    "stdout_sha256": "ffcc64c86272ebccde82a4ee739172fd44520ecfea486f6f94356400db95ef09",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "reject-unsupported-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-unsupported"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-reject-unsupported-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-reject-unsupported-positive.stderr.txt",
+    "stdout_sha256": "e31b53137d845279a3a02fef3831479c6dc8e1201cc1ec0889efc83152ed8f2a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "reject-unsupported-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('reject-unsupported',t.load_api('/home/cnross/.tmp/nizam119-mutant-fkmqq_b7/workflow_assurance.py')); print('PASS '+'reject-unsupported')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "/home/cnross/.tmp/nizam119-mutant-fkmqq_b7/workflow_assurance.py": {
+        "sha256": "6689da0b6606a1d7e71d4f0b3bb1bd4eccd1819a051825130dea2f6d3ffe119d",
+        "git_blob": "a3fe38d47906b92e119df106c28bc9d5a6fd0df4"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-reject-unsupported-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-reject-unsupported-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "832395dad343516b9e207d3020746cf0d2b30f06f5de56cac4e106557dec916c",
+    "expected_diagnostic": "POLICY_ASSERTION: nonempty blocking array preserved: unsupported_claims"
+  },
+  {
+    "label": "reject-unsupported-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-unsupported"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-author1",
+    "revision": "27b4507f1c499e74f6b44a2717ab22b06d4a9420",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-executable-reject-unsupported-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-executable-reject-unsupported-restored.stderr.txt",
+    "stdout_sha256": "e31b53137d845279a3a02fef3831479c6dc8e1201cc1ec0889efc83152ed8f2a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  }
+]
