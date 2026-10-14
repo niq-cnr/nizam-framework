@@ -9,6 +9,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Foundation readiness (feature 118).** Added candidate-bound observation of
+  current twenty-case prerequisite evidence, explicit runtime and historical Git
+  inputs, and independent recorded evaluator identity. Readiness supports later
+  record-only HEAD advances with unchanged inputs. Canonical phase closure still
+  requires Mode B, fresh QA with a separate spot check, and Root capture; the
+  installed v1.5.0 payload and proposed later phases remain unchanged.
+
 - **Authorized entry (feature 117).** Added a read-only preflight over actual local
   origin/authority, pinned critical governance bytes, revision-bound independent
   approvals and explicit existing-role path/field intents. Four independent cases

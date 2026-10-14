@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.23.0
+version: 0.24.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.24.0"
+    date: "2026-10-14"
+    summary: "Document candidate-bound foundation readiness and independent current20 prerequisites."
   - version: "0.23.0"
     date: "2026-10-13"
     summary: "Document active117 authorized-entry preflight, immutable dual-gate bindings and twenty current regression cases."
@@ -76,6 +79,21 @@ change_log:
     date: "2026-07-17"
     summary: "Sync to the phase-005 compliance validator: document the new C12 ecosystem schema-family fixture check (feature 042) and the new SUMMARY: 12 passed, 0 failed total."
 ---
+## Foundation readiness — feature 118
+
+`verify_foundation_ready(repo, prerequisite)` observes the immutable SourceC,
+explicit current and historical input bytes/modes, distinct recorded evaluator
+identity, and all twenty exact case proofs. The permanent runner accepts
+`--check foundation-ready` using the canonical feature118 prerequisite receipt;
+its default twenty cases remain available independently. A record-only HEAD
+advance preserves readiness when the assessed inputs remain unchanged.
+
+Readiness supports the bounded foundation. Phase completion follows the live
+[phase017 record](../docs/planning/phase_017.yaml) and requires separate Mode B,
+fresh three-command QA plus an independent spot check, and Root evidence capture.
+The installed v1.5.0 payload remains unchanged; full WA controls, runtime and
+controller work require their separately authorized phases.
+
 
 # tools/
 

@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.12
+version: 1.0.13
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.13"
+    date: "2026-10-14"
+    summary: "Add foundation118 candidate handoff and canonical capture pointers; preserve historical snapshots."
   - version: "1.0.12"
     date: "2026-10-13"
     summary: "Add current117 entry candidate handoff after captured115/116; retain historical snapshots and fresh QA/capture requirements."
@@ -48,6 +51,21 @@ change_log:
     date: "2026-10-10"
     summary: "Initial handover record, authored by the Planner on branch chore/handover-2026-10 cut from main e2a50ed (PR #70 merged), after the operator asked for the project to be prepared for a new developer (run_state operator_gate_decision 2026-10-10T02:11:41Z). Every figure was re-verified against the repository; the replayable checks are in .agent/evidence/handover-2026-10/. Revised after Validator round 1, before merge: (b) states how this package's own budget-counted lines are treated (the Planner's phase-level-item interpretation, effective only when the Orchestrator records it), 106's measurement base and measure.py commands, and the budget figures both pre-handover and including the handover; (c) quotes the 19:28:39Z record's 11-step summary of the brief and presents the 12 steps as practised, adds that an Evaluator contract-review rejection also uses up a contract attempt (103 precedent), separates the evidence gate's EXIT:<code> rule from the practised all-EXIT:0 convention, cites the human_authorized_extension as recorded practice under 03 Section 6, and separates routine pushes and PRs from operator-authorized outward acts; (f) adds the local acceptance-gate helpers, the fixture self-test and the four CI jobs; (g) states both V13 conditions and the DAG critical-path artifact; (h) ties the expected v1.5.0 roll-up to H-NIP and H-PHASE-015; (a) item 12 names the Orchestrator and the four execution roles. Revised after Validator round 2, before merge: (c) states that the Validator runs only read-only git commands and file reads and cannot run verification commands (105-mode-b.json prior_rounds[0] MB-1); step 5 states that attempt-base.txt has been used since 103 (099's base only in run_state); steps 7-8 state that 104 and 105 ran Mode B round 1 on the unpromoted attempt commit, and that a post-promotion Mode B round is still needed when the contract has Mode B obligations on the promoted tree (105 MB-1)."
 ---
+## Current foundation handoff — feature 118, 2026-10-14
+
+Features 115–117 have completed independent QA and capture. Feature118 binds
+foundation readiness to immutable SourceC, unchanged assessed inputs and an
+independent evaluator's twenty current case proofs. Completion requires Mode B,
+fresh three-command QA with an additional independent spot check, and Root
+capture. Follow [phase017](phase_017.yaml) and the
+[feature list](../../.agent/feature_list_017.json) for actual status and capture
+references; source documentation does not itself advance lifecycle state.
+
+The original 5,400/7,020 allowance is retained, with 4,012 prior completed lines.
+Next phase016 remains proposed and separately gated, as do phases018/019/020.
+Installed v1.5.0 stays immutable. The earlier handoffs below remain historical
+snapshots of their respective candidates.
+
 ## Current entry handoff — feature 117, 2026-10-13
 
 Features 115 and 116 are captured complete, totaling 3,009 counted lines. Feature

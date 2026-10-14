@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.64.0
+version: 0.65.0
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.0"
+    date: "2026-10-14"
+    summary: "Record foundation118 candidate and live canonical closure references; retain proposed next016."
   - version: "0.64.0"
     date: "2026-10-13"
     summary: "Record captured115/116 and authorized entry117 candidate; preserve historical halt evidence and pending foundation closure."
@@ -202,6 +205,20 @@ change_log:
     date: "2026-07-12"
     summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
 ---
+## Foundation close candidate — feature 118, 2026-10-14
+
+Features 115–117 are captured complete, totaling 4,012 counted lines. Feature118
+adds readiness bound to immutable SourceC and a distinct evaluator's current
+20-case receipt. Its own three-command QA and spot check follow Mode B; Root
+capture must precede canonical closure. Current status and evidence are recorded
+in [phase017](phase_017.yaml) and the [feature list](../../.agent/feature_list_017.json).
+These live records govern completion as the candidate moves through its gates.
+
+The original phase allowance remains 5,400 lines, ceiling 7,020. Phase016 core
+is the proposed next phase and awaits activation; phases018/019/020 also remain
+proposed. This bounded foundation makes no full WA or runtime-conformance claim.
+Installed v1.5.0 and historical phase proofs remain unchanged.
+
 
 # Forward Roadmap
 

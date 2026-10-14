@@ -618,6 +618,95 @@ def verify_authorized_entry(repo, entry):
         raise AssuranceError('entry observation failed: ' + str(exc)) from exc
 
 
+def verify_foundation_ready(repo, prerequisite):
+    """Observe candidate-bound current20 proof; readiness never closes a phase."""
+    try:
+        json_value(prerequisite)
+        supplied = Path(repo); require(not supplied.is_symlink(), 'symlink foundation root')
+        root = supplied.resolve(strict=True)
+        require(Path(git(root, 'rev-parse', '--show-toplevel').decode().strip()).resolve() == root, 'foundation repository root')
+        prefix = '.agent/evidence/118/'
+        def read(path): return parse_json(regular_file(root, path).read_bytes())
+        candidate = read(prefix + 'source-candidate.json')
+        fields = ('revision', 'tree', 'source_sha256', 'runtime_sha256', 'historical_sha256')
+        _bundle_object(candidate, fields, 'foundation candidate')
+        _bundle_hex(candidate['revision'], 40, 'foundation revision'); _bundle_hex(candidate['tree'], 40, 'foundation tree')
+        revision = candidate['revision']
+        require(git(root, 'rev-parse', '--verify', revision + '^{commit}').decode().strip() == revision, 'foundation immutable commit')
+        require(git(root, 'rev-parse', revision + '^{tree}').decode().strip() == candidate['tree'], 'foundation actual tree')
+        _bundle_object(prerequisite, fields + ('feature', 'actor', 'session_id', 'passed', 'checks_run', 'checks_passed', 'checks'), 'foundation prerequisite')
+        require(prerequisite['feature'] == '118' and prerequisite['passed'] is True, 'foundation prerequisite status')
+        for key in ('checks_run', 'checks_passed'):
+            require(type(prerequisite[key]) is int and prerequisite[key] == 20, 'foundation strict count')
+        for key in fields:
+            require(canonical(prerequisite[key]) == canonical(candidate[key]), 'foundation candidate binding: ' + key)
+        api = read(prefix + 'api-interface.json'); inputs = read(prefix + 'runtime-inputs.json')
+        _bundle_object(inputs, ('core_paths', 'runtime_paths', 'roles_ref'), 'foundation runtime manifest')
+        core = ['tools/workflow_assurance.py', 'tools/test_workflow_assurance.py', prefix + 'api-interface.json', prefix + 'scope-guard.py']
+        require(inputs['core_paths'] == api['core_paths'] == core, 'foundation exact core inputs')
+        runtime = inputs['runtime_paths']; require(type(runtime) is list and runtime, 'foundation runtime inputs')
+        for path in runtime: relative_path(path)
+        require(len(runtime) == len(set(runtime)) and not set(runtime).intersection(core), 'foundation duplicate runtime inputs')
+        require(inputs['roles_ref'] == prefix + 'role-sessions.json' and
+                {prefix + name for name in ('runtime-inputs.json', 'producer-interface.json', 'historical-runtime-inputs.json', 'role-sessions.json')} <= set(runtime), 'foundation omitted runtime inputs')
+        historical = api['historical_paths']
+        require(type(historical) is list and len(historical) == len(set(historical)) == 12, 'foundation historical inputs')
+        for key, paths, anchor in [('source_sha256', core, revision), ('runtime_sha256', runtime, revision),
+                                   ('historical_sha256', historical, api['historical_base'])]:
+            _bundle_object(candidate[key], paths, 'foundation digest map')
+            for path in paths:
+                _bundle_hex(candidate[key][path], 64, 'foundation input digest')
+                data = _entry_pinned(root, anchor, path)
+                require(sha(data) == candidate[key][path], 'foundation actual input digest: ' + path)
+                if key == 'historical_sha256':
+                    require(_entry_pinned(root, revision, path) == data, 'foundation historical Source binding')
+        ledger = read(prefix + 'historical-runtime-inputs.json')
+        _bundle_object(ledger, ('purpose', 'inputs', 'tag', 'tag_revision'), 'foundation historical runtime')
+        _bundle_string(ledger['purpose'], 'historical runtime purpose'); _bundle_hex(ledger['tag_revision'], 40, 'historical tag revision')
+        require(type(ledger['tag']) is str and re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', ledger['tag']), 'historical runtime tag')
+        require(git(root, 'rev-parse', '--verify', 'refs/tags/' + ledger['tag'] + '^{commit}').decode().strip() == ledger['tag_revision'], 'historical runtime tag changed')
+        require(type(ledger['inputs']) is list and len(ledger['inputs']) == 23, 'historical runtime coverage')
+        seen = set()
+        for row in ledger['inputs']:
+            _bundle_object(row, ('revision', 'path', 'sha256', 'executable'), 'historical runtime input')
+            _bundle_hex(row['revision'], 40, 'historical input revision'); relative_path(row['path'])
+            identity = (row['revision'], row['path']); require(identity not in seen, 'duplicate historical runtime input'); seen.add(identity)
+            _bundle_hex(row['sha256'], 64, 'historical runtime digest')
+            data, executable = _entry_blob(root, row['revision'], row['path'])
+            require(type(row['executable']) is bool and row['executable'] is executable and sha(data) == row['sha256'], 'historical runtime bytes/mode changed')
+        roles = read(inputs['roles_ref']); _bundle_object(roles, ('test_author', 'developer', 'acceptance_reviewer'), 'foundation roles')
+        for role in roles.values():
+            _bundle_object(role, ('agent_id', 'session_id'), 'foundation role')
+            for key in ('agent_id', 'session_id'): _bundle_string(role[key], 'foundation role ' + key)
+        for key, supplied_key in [('agent_id', 'actor'), ('session_id', 'session_id')]:
+            identities = {role[key] for role in roles.values()}
+            _bundle_string(prerequisite[supplied_key], 'foundation prerequisite ' + supplied_key)
+            require(len(identities) == 3 and prerequisite[supplied_key] not in identities, 'foundation independent prerequisite identity')
+        checks = prerequisite['checks']; cases = api['current_cases']
+        require(type(checks) is list and type(cases) is list and len(checks) == len(cases) == 20, 'foundation case coverage')
+        used = set(); names = set()
+        for row, case in zip(checks, cases):
+            _bundle_object(case, ('case', 'command'), 'foundation expected case')
+            _bundle_object(row, ('case', 'command', 'exit_code', 'evidence', 'sha256'), 'foundation proof row')
+            for key in ('case', 'command'):
+                _bundle_string(row[key], 'foundation ' + key); require(row[key] == case[key], 'foundation case/command mismatch')
+            require(row['case'] not in names, 'foundation duplicate case'); names.add(row['case'])
+            require(type(row['exit_code']) is int and row['exit_code'] == 0, 'foundation strict proof exit')
+            path = relative_path(row['evidence']); require(path.startswith(prefix) and path not in used, 'foundation proof path'); used.add(path)
+            _bundle_hex(row['sha256'], 64, 'foundation proof digest'); data = regular_file(root, path).read_bytes()
+            require(sha(data) == row['sha256'], 'foundation raw proof digest'); text = data.decode('utf-8')
+            for name, value in [('COMMAND', row['command']), ('REVISION', revision), ('EXIT', '0')]:
+                require(re.findall(r'^' + name + r': (.*)$', text, re.M) == [value], 'foundation unique proof header: ' + name)
+            require(text.count('\nSTDOUT:\n') == text.count('\nSTDERR:\n') == 1, 'foundation proof sections')
+            output = text.split('\nSTDOUT:\n', 1)[1]
+            require('\nSTDERR:\n' in output and bool(output.split('\nSTDERR:\n', 1)[0].strip()), 'foundation stdout diagnostic')
+        return True
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, UnicodeError, RecursionError, KeyError, AttributeError) as exc:
+        raise AssuranceError('foundation observation failed: ' + str(exc)) from exc
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
