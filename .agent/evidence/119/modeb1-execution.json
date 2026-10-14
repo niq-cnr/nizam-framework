@@ -1,0 +1,98 @@
+{
+  "reviewer": "/root/validator128",
+  "receipts": [
+    {
+      "name": "default26",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature119-modeb1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "seconds": 10.808,
+      "exercised_revision": "01fce469b192ed11b4c149a55d745d884a0fa0c3",
+      "stdout": ".agent/evidence/119/modeb1-default26.stdout.txt",
+      "stderr": ".agent/evidence/119/modeb1-default26.stderr.txt"
+    },
+    {
+      "name": "live-stale118",
+      "argv": [
+        "python3",
+        "tools/test_workflow_assurance.py",
+        "--check",
+        "foundation-ready"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature119-modeb1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 1,
+      "expected_exit": 1,
+      "seconds": 0.065,
+      "exercised_revision": "01fce469b192ed11b4c149a55d745d884a0fa0c3",
+      "stdout": ".agent/evidence/119/modeb1-live-stale118.stdout.txt",
+      "stderr": ".agent/evidence/119/modeb1-live-stale118.stderr.txt"
+    },
+    {
+      "name": "bundle-pins",
+      "argv": [
+        "python3",
+        ".agent/evidence/119/executable-review1-verify.py"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature119-modeb1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "seconds": 0.561,
+      "exercised_revision": "01fce469b192ed11b4c149a55d745d884a0fa0c3",
+      "stdout": ".agent/evidence/119/modeb1-bundle-pins.stdout.txt",
+      "stderr": ".agent/evidence/119/modeb1-bundle-pins.stderr.txt"
+    },
+    {
+      "name": "cost",
+      "argv": [
+        "python3",
+        ".agent/evidence/scope-budget-014/measure.py",
+        "--range",
+        "119=fcd0584146fd836df0080292cc2cf10180bb9f31..",
+        "--files"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature119-modeb1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "expected_exit": 0,
+      "seconds": 0.098,
+      "exercised_revision": "01fce469b192ed11b4c149a55d745d884a0fa0c3",
+      "stdout": ".agent/evidence/119/modeb1-cost.stdout.txt",
+      "stderr": ".agent/evidence/119/modeb1-cost.stderr.txt"
+    },
+    {
+      "name": "diff",
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "fcd0584",
+        "HEAD"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature119-modeb1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 2,
+      "expected_exit": 0,
+      "seconds": 0.04,
+      "exercised_revision": "01fce469b192ed11b4c149a55d745d884a0fa0c3",
+      "stdout": ".agent/evidence/119/modeb1-diff.stdout.txt",
+      "stderr": ".agent/evidence/119/modeb1-diff.stderr.txt"
+    }
+  ]
+}
