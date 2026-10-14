@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "016-runtime-controller-core",
-  "current_feature": "128",
+  "current_phase": "018-workflow-assurance-controls",
+  "current_feature": "119",
   "status": "in_progress",
-  "updated_at": "2026-10-14T13:33:41.928033+00:00",
+  "updated_at": "2026-10-14T13:47:44.586205+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1055,6 +1055,14 @@
       "limit": 3
     },
     "018-activation-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "119-selection": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "119-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -5373,6 +5381,12 @@
       "event": "018-activation-preparation",
       "detail": "Apply standing latestoperatorlogicalnextsteps/worldclassauthorization specificallytoexisting119-123scope7200/9360. Independentactivationreview andpostmergeCI beforeimplementation; preserve0165179snapshot. Reconcile derived016manifest fromcanonicalclosedphase asincoming018preparation, countedoncewith119wholebasePR99merge.",
       "evidence": ".agent/evidence/phase018-preflight/activation-authority.json"
+    },
+    {
+      "at": "2026-10-14T13:47:44.586205+00:00",
+      "event": "018-activated119-contract-preparation",
+      "detail": "Canonicalphasefirst, manifestsecond, derivedRootstate+7200/9360budgetthird. Actual118127capture and postmergeCI bound; strictindependentactivationreviewapproved. Plan0.1.1 pendinglanguage isprepromotioncheckpoint; canonicalactivationrecordsupersedespositiononly, requirementsunchanged.",
+      "evidence": ".agent/evidence/phase018-preflight/activation-result.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5545,105 +5559,15 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 5650,
-    "ceiling_130pct": 7345,
-    "total_lines_changed": 5179,
-    "evidence_lines_total": 56118,
-    "excluded_lines_total": 870,
-    "per_feature": [
-      {
-        "id": "126",
-        "estimated": 2900,
-        "actual": 2657,
-        "product_lines": 1653,
-        "process_overhead_lines": 1004,
-        "evidence_lines": 12375,
-        "excluded_lines": 499,
-        "ranges": [
-          "607ac75010b3668226f777986822adfb700eaf23..de7deee7831e8d3816f3f85985e8e56a44c7c006",
-          "1db8996d715afd6a6e70bf587819e29ff1c20080..WORKTREE"
-        ],
-        "evidence": ".agent/evidence/126/scope-measurement.txt",
-        "rolling_baseline": null,
-        "note": "Firstcompleted016feature; disjointprecode+implementation includesallC1/C2/C3, independentB3/ModeB2/freshQA/capableCI/Rootcapture/canonicalclosure once. Separatephaselevel346 retained; original5650/7345 unchanged, no017baseline or rebaseline.",
-        "capture_revision": "41b08b1fd64adeeb47a1e69aeb64fe1254e1e648",
-        "merge_revision": "c2b95a1262d49ebd615dcd0d577fad584712dc40"
-      },
-      {
-        "id": "127",
-        "estimated": 1950,
-        "actual": 1762,
-        "product_lines": 993,
-        "process_overhead_lines": 769,
-        "evidence_lines": 34133,
-        "excluded_lines": 274,
-        "range": "c2b95a1262d49ebd615dcd0d577fad584712dc40..WORKTREE",
-        "evidence": ".agent/evidence/127/scope-measurement-final.txt",
-        "baseline": {
-          "prior_features": [
-            "126"
-          ],
-          "rolling_average": 2657.0,
-          "three_times_threshold": 7971.0,
-          "first_feature_exception": false,
-          "flagged": false
-        },
-        "note": "Whole127 measured once from unchangedc2b95a1 after independent captured-docs review. Source428+tests565 unchanged; latest current overlays replace selected127 view. Replaces pre-docs1736 snapshot preserved at904f69b; not appended twice. All historical failed attempts and original5650/7345 retained; no additional allowance.",
-        "prior_snapshot_revision": "904f69b1ad12ca07d9d216c5e261247ca12a1006",
-        "capture_revision": "ce81f3ccfd8361173ec99c3107313b75081105d7",
-        "merge_revision": "ec0b21c64f8bf003faa42d6a17dbe4f3903b065b"
-      },
-      {
-        "id": "128",
-        "estimated": 800,
-        "actual": 414,
-        "product_lines": 127,
-        "process_overhead_lines": 287,
-        "evidence_lines": 6400,
-        "excluded_lines": 81,
-        "range": "ec0b21c64f8bf003faa42d6a17dbe4f3903b065b..WORKTREE",
-        "evidence": ".agent/evidence/128/scope-measurement.txt",
-        "baseline": {
-          "prior_features": [
-            "126",
-            "127"
-          ],
-          "rolling_average": 2209.5,
-          "three_times_threshold": 6628.5,
-          "first_feature_exception": false,
-          "flagged": false
-        },
-        "note": "Whole128 once after strict precode, independently authored100line aggregate, distinct executablecontrols/bundle, Source27docs, ModeB/freshQA3+ownnegative, actualnewrunnerhosted14, isolatedRootcapture1 and reviewedcurrentdocs28. RootCIreceiptparser1failure retained, isolated2passed withoutproduct/testrepair. Carried127integration/future018readonlyreportattributed separately; rawpathsclassifiedunderunchangedpolicy. Original5650/7345, allpriorrows/failedproof and installedv1.5.0 preserved.",
-        "capture_revision": "220000bfcff662b7b0d91be4d8c0cd5caa0eedcb",
-        "merge_revision": "fcd0584146fd836df0080292cc2cf10180bb9f31"
-      }
-    ],
-    "phase_level_items": [
-      {
-        "id": "phase016-preparation",
-        "actual": 307,
-        "product_lines": 27,
-        "process_overhead_lines": 280,
-        "evidence_lines": 2994,
-        "excluded_lines": 16,
-        "range": "e619d284d36eaf6dfff54a9d001477b8d1722098..607ac75010b3668226f777986822adfb700eaf23",
-        "evidence": ".agent/evidence/phase016-preflight/scope-preparation.txt",
-        "note": "CI transport20 + comparison proposal163 + canonical activation124; all current preparation charged once within existing allowance, not a completed-feature baseline."
-      },
-      {
-        "id": "phase016-public-planning-projection",
-        "actual": 39,
-        "product_lines": 0,
-        "process_overhead_lines": 39,
-        "evidence_lines": 216,
-        "excluded_lines": 0,
-        "range": "de7deee7831e8d3816f3f85985e8e56a44c7c006..1db8996d715afd6a6e70bf587819e29ff1c20080",
-        "evidence": ".agent/evidence/phase016-preflight/public-projection-measurement.txt",
-        "note": "Separately reviewed current ROADMAP/HANDOVER overlay; within existing allowance. Separate range excluded from126 feature measurement; historical307 preparation snapshot unchanged."
-      }
-    ],
+    "original_estimate_lines": 7200,
+    "ceiling_130pct": 9360,
+    "total_lines_changed": 0,
+    "evidence_lines_total": 0,
+    "excluded_lines_total": 0,
+    "per_feature": [],
+    "phase_level_items": [],
     "counting_rule": {
-      "spec_ref": ".agent/product_spec_016.md 'Full counted budget'; unchanged frozen phase014 classifier",
+      "spec_ref": ".agent/product_spec_018.md Full counted budget; unchanged frozen phase014 classifier",
       "script": ".agent/evidence/scope-budget-014/measure.py",
       "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
       "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
@@ -5651,15 +5575,10 @@
       "excluded": ".agent/run_state.json (coordination churn)",
       "unclassified": "fail closed: listed, measure.py exits 3"
     },
-    "phase_base_revision": "e619d284d36eaf6dfff54a9d001477b8d1722098",
-    "last_measured_at": "2026-10-14T13:26:31.896585+00:00",
-    "phase_level_costs": "Current preparation is included once within original5650/7345; later feature126 range starts after preparation. No free comparative-program allowance or phase017 rewrite.",
-    "feature126_measurement_segments": {
-      "precode": "607ac75010b3668226f777986822adfb700eaf23..de7deee7831e8d3816f3f85985e8e56a44c7c006",
-      "implementation_base": "1db8996d715afd6a6e70bf587819e29ff1c20080",
-      "rule": "Feature126 actual is precode range plus implementation_base..final capture. The intervening39-line public planning projection is charged separately once; do not measure a single607..final range and add39 again."
-    },
-    "feature127_measurement_base": "c2b95a1262d49ebd615dcd0d577fad584712dc40"
+    "phase_base_revision": "fcd0584146fd836df0080292cc2cf10180bb9f31",
+    "authorization_revision": "51f4380",
+    "phase_level_costs": "Incomingregistryreconciliation, registeredactivationplan/review, currentpreparation and attributedseparate rawplanning all chargedoncewithin119 wholebasefcd0584. No freeallowance orphase016rebaseline.",
+    "last_measured_at": null
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -5842,7 +5761,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "128",
+  "active_contract_id": "119",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5914,7 +5833,7 @@
       }
     ]
   },
-  "last_action": "PR99mergedafter6checks;016captured5179/7345 archived. Prepare018activationbinding understandingoperatorlogical-nextstepsauthorization; no119implementationorcontrolacceptance.",
+  "last_action": "018activated afterstrictreview9c4e5d1 and actual5jobpostmergeCI;119selectedforproposedcontractonly. No implementationuntilboth119precodegates/reviewedindependentacceptance.",
   "completed_contract_ids": [
     "099",
     "103",

@@ -1,7 +1,7 @@
 {
   "phase": "018-workflow-assurance-controls",
   "spec_version": "0.1.1",
-  "phase_status": "pending",
+  "phase_status": "in_progress",
   "original_estimate_lines": 7200,
   "ceiling_130pct": 9360,
   "budget_categories": {"product": 1800, "tests": 2050, "process": 3350},
@@ -10,7 +10,7 @@
       "id": "119",
       "name": "Convergent findings to AGF verdict",
       "description": "Blockers remain blocking; advisory minor remains visible; true approval plus all three empty blocking arrays governs advancement. Core semantics127 is the external prerequisite, not later full-CI131. ",
-      "status": "pending",
+      "status": "in_progress",
       "passes": false,
       "dependencies": [],
       "estimated_lines": 1000,
@@ -23,7 +23,8 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-coverage",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unsupported"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"]
+      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"],
+      "stage": "contract-preparation"
     },
     {
       "id": "120",
