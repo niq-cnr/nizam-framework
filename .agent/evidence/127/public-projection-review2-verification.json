@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-14T11:03:40.525190+00:00",
+  "exercised_revision": "5be6c60b1f19689a19f7f951e1834cfdc11d7853",
+  "role": "Independent Validator /root/projection_review127",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/127/public-projection-review2-check.py"
+      ],
+      "actual_exit": 1,
+      "stdout": ".agent/evidence/127/public-projection-review2-checks-initial.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection-review2-checks-initial.stderr.txt",
+      "reviewer_scope_correction": "Compare previous role evidence to actual review commit b56d677, because prior candidate e36aa45 predates that evidence; scope whitespace to requested two documents, excluding unrelated preserved raw command-output trailing spaces."
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "58bc675c5ee4e845f8069893f08a77bd52002a78",
+        "5be6c60b1f19689a19f7f951e1834cfdc11d7853"
+      ],
+      "actual_exit": 2,
+      "stdout": ".agent/evidence/127/public-projection-review2-whitespace-initial.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection-review2-whitespace-initial.stderr.txt",
+      "reviewer_scope_correction": "Compare previous role evidence to actual review commit b56d677, because prior candidate e36aa45 predates that evidence; scope whitespace to requested two documents, excluding unrelated preserved raw command-output trailing spaces."
+    },
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/127/public-projection-review2-check.py"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/public-projection-review2-checks.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection-review2-checks.stderr.txt"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "58bc675c5ee4e845f8069893f08a77bd52002a78",
+        "5be6c60b1f19689a19f7f951e1834cfdc11d7853",
+        "--",
+        "docs/planning/ROADMAP.md",
+        "docs/planning/HANDOVER.md"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/public-projection-review2-whitespace.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection-review2-whitespace.stderr.txt"
+    }
+  ],
+  "scope": "Bounded factual documentation rereview; no implementation approval.",
+  "human_verdict": "Prior stale issue resolved; reject HANDOVER Required order semantic red before all source against approved contract initial-candidate route.",
+  "proof": ".agent/evidence/127/public-projection-review2-checks.stdout.txt"
+}
