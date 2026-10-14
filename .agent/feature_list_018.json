@@ -34,7 +34,7 @@
       "id": "120",
       "name": "Receipt gates and idempotent recovery",
       "description": "Reuse existing validators/schemas and coordination state; distinguish pending/running/passed/failed/invalidated, require operator decisions and actual exits; reject missing/wrong receipts and double advance.",
-      "status": "pending",
+      "status": "in_progress",
       "passes": false,
       "dependencies": ["119"],
       "estimated_lines": 2750,
@@ -52,7 +52,8 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-double-advance",
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case recover-missing-receipt"
       ],
-      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"]
+      "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"],
+      "stage": "contract-preparation"
     },
     {
       "id": "121",
