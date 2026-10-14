@@ -1,0 +1,117 @@
+{
+  "feature_id": "119",
+  "qa_pass": true,
+  "actor": "/root/qa119",
+  "attempt": 1,
+  "reviewed_revision": "42fb4cfd75a3e3be2313b18fda1bcf801b02c649",
+  "approved_input": "8c50ec1e8a8bd44eb7e484929551f5c633fd7f58",
+  "source_commit": "9ef2db5b0106c7f92520d18015562c85faf64fc2",
+  "test_commit": "833b97b2116d630c4af937e23b7ad89eb442ee77",
+  "approved_contract_sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+  "checks_run": 6,
+  "checks_passed": 6,
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case approve-empty",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/119/qa1/case-approve-empty.result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case advisory-visible",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/119/qa1/case-advisory-visible.result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case block-carried",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/119/qa1/case-block-carried.result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-issues",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/119/qa1/case-reject-issues.result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-coverage",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/119/qa1/case-reject-missing-coverage.result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unsupported",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/119/qa1/case-reject-unsupported.result.json"
+    }
+  ],
+  "supplementary_checks": {
+    "historical-snapshot-setup": {
+      "exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/119/qa1/historical-snapshot-setup.result.json"
+    },
+    "default26": {
+      "exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/119/qa1/default26.result.json"
+    },
+    "preservation": {
+      "exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/119/qa1/preservation.result.json"
+    },
+    "historical-foundation": {
+      "exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/119/qa1/historical-foundation.result.json"
+    },
+    "live-stale-foundation": {
+      "exit_code": 1,
+      "passed": true,
+      "evidence": ".agent/evidence/119/qa1/live-stale-foundation.result.json"
+    },
+    "compliance-default": {
+      "exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/119/qa1/compliance-default.result.json"
+    },
+    "compliance-payload": {
+      "exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/119/qa1/compliance-payload.result.json"
+    }
+  },
+  "adversarial": {
+    "performed": true,
+    "count": 1
+  },
+  "adversarial_check": {
+    "description": "Actual carried-ledger mapping under side-effect-denying audit hook with real blocked write-attempt control",
+    "result": "pass",
+    "evidence": ".agent/evidence/119-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/119/qa1/execution-summary.json",
+    ".agent/evidence/119/qa1/identity-before.json",
+    ".agent/evidence/119/qa1/identity-after.json",
+    ".agent/evidence/119/qa1/historical-identity.json",
+    ".agent/evidence/119/qa1/environment.json",
+    ".agent/evidence/119/qa1/manifest.json",
+    ".agent/evidence/119/qa1/schema-check.json",
+    ".agent/evidence/119-qa-adversarial.txt",
+    ".agent/evidence/119/qa1/case-approve-empty.result.json",
+    ".agent/evidence/119/qa1/case-advisory-visible.result.json",
+    ".agent/evidence/119/qa1/case-block-carried.result.json",
+    ".agent/evidence/119/qa1/case-reject-issues.result.json",
+    ".agent/evidence/119/qa1/case-reject-missing-coverage.result.json",
+    ".agent/evidence/119/qa1/case-reject-unsupported.result.json"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "Six exact selectors and preserved default26 pass; inherited source/API AST and old acceptance functions unchanged. Immutable118 foundation succeeds while live119 rejects stale118 source binding with the exact expected diagnostic. Default/payload compliance and exactly one independent purity check pass; protected source/test/contract/239 installed files unchanged."
+  },
+  "boundary": "Historical foundation success is bound to immutable8ac94f6808e8197111197c9acbf59b2aa92efc7c without a119contract. Live119 rejection is expected semantic source mismatch, not setup. Earlier helper HEAD-preflight failure remains preserved; helper2 actual0 and semanticQA1 executed once. QA does not complete lifecycle, replace Root capture, claim123 or comparative superiority.",
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
