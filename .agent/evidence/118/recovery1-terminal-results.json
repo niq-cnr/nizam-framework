@@ -1,0 +1,26 @@
+[
+  {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --scope-118 --base 587c40670d850d21183b7bbd7fd1e600ae84896c",
+    "exit_code": 1,
+    "expected_exit_code": 1,
+    "evidence": ".agent/evidence/118/recovery1-terminal-original-scope.txt"
+  },
+  {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/recovery1-closeout-guard.py --scope",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "evidence": ".agent/evidence/118/recovery1-terminal-corrected-scope.txt"
+  },
+  {
+    "command": "bash tools/validate.sh",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "evidence": ".agent/evidence/118/recovery1-terminal-compliance.txt"
+  },
+  {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/verify_self_governance.py",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "evidence": ".agent/evidence/118/recovery1-terminal-installed.txt"
+  }
+]

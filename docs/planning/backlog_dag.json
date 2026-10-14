@@ -1,7 +1,7 @@
 {
   "plan_status": "candidate",
   "plan_status_note": "H-PHASE-015 active under06c0ae0a273facce80c57506260648c41f566ebb; approved7200/9360 including phase-level costs. Canonical feature/list governs lifecycle;111-114pending. Six WA selections recorded, implementation/planning after114 remains pending; WA/016 unallocated. Historical014/installedv1.5 immutable.",
-  "generated_at": "2026-10-14T05:20:26.119422+00:00",
+  "generated_at": "2026-10-14T06:10:35.617641+00:00",
   "base_commit": "08f97b0e8b1002ac0d8362ed147e7253726a5415",
   "base_commit_note": "Approved docs-only phase015-planning implementation base after exact operator H-NIP events; canonical phase014 records/current position remain unchanged.",
   "packet_schema": "schema/work-packet.schema.json",
@@ -4180,7 +4180,7 @@
         "Reducing any active gate (A15)."
       ],
       "concurrency_lane": "single-writer",
-      "status": "pending",
+      "status": "complete",
       "authority_status": "proposal",
       "owner_role": "Generator",
       "plan_class": "deferred-proposal",
@@ -4238,7 +4238,10 @@
           "feature_id": "116",
           "evidence": ".agent/evidence/116/"
         }
-      ]
+      ],
+      "qa": ".agent/qa/118.json",
+      "completion_evidence": ".agent/evidence/118/evidence-capture.json",
+      "completed_at": "2026-10-14T06:10:35.617641+00:00"
     },
     {
       "id": "A14",
@@ -4756,14 +4759,14 @@
     {
       "feature_id": "117",
       "phase": "017-workflow-assurance-foundation",
-      "status": "pending",
-      "evidence": ".agent/evidence/117/"
+      "status": "complete",
+      "evidence": ".agent/evidence/117/evidence-capture.json"
     },
     {
       "feature_id": "118",
       "phase": "017-workflow-assurance-foundation",
-      "status": "pending",
-      "evidence": ".agent/evidence/118/"
+      "status": "complete",
+      "evidence": ".agent/evidence/118/evidence-capture.json"
     },
     {
       "feature_id": "121",
@@ -4781,8 +4784,8 @@
   "proposed_execution_note": "Recommended 017->016->018->020->019 only; pending future activation. Original whole-alias graph is dated history. NIP3-116 (feature 127) core and 131 final CI  stay separately pending; A15 retains NIP3-120 (feature 132) delay. Canonical proposed execution graph uses feature-list numeric dependencies, cross_phase_prerequisites and shared_file_lanes.",
   "phase017_execution": {
     "phase": "017-workflow-assurance-foundation",
-    "status": "in_progress",
-    "feature": "118",
+    "status": "complete",
+    "feature": null,
     "contract_ref": ".agent/contracts/118.json",
     "authorization_ref": ".agent/evidence/phase017-activation/authorization.json",
     "shared_file_order": [
@@ -4791,9 +4794,10 @@
       "117",
       "118"
     ],
-    "feature_status": "in_progress",
-    "evidence": ".agent/evidence/118/recovery1-resume.json",
-    "qa": ".agent/qa/117.json",
-    "recovery_gate": "H-CONTRACT-118-RECOVERY"
+    "feature_status": "complete",
+    "evidence": ".agent/evidence/118/evidence-capture.json",
+    "qa": ".agent/qa/118.json",
+    "recovery_gate": "H-CONTRACT-118-RECOVERY",
+    "completed_at": "2026-10-14T06:10:35.617641+00:00"
   }
 }

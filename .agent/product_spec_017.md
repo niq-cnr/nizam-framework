@@ -2,10 +2,13 @@
 id: nizam-phase017-product-spec
 title: "Phase 017 — Workflow Assurance — Foundation"
 description: "Proposed bounded WA scope, future atomic acceptance and independent evidence gates."
-version: 0.2.0
+version: 0.3.0
 status: active
 authoritative_source: .agent/product_spec_017.md
 change_log:
+  - version: "0.3.0"
+    date: "2026-10-14"
+    summary: "Record captured foundation115-118 and bounded phase completion after independent acceptance."
   - version: "0.2.0"
     date: "2026-10-13"
     summary: "Activate only authorized phase017 foundation scope and original5400/7020 allowance; preserve original obligations and allocations."
@@ -96,3 +99,17 @@ Use existing product + tests + contract + verdict + planning classification; raw
 and run_state excluded, unclassified paths fail closed. Orchestrator compares only
 this phase's prior completed features before appending a measurement; first feature
 has no rolling baseline. Cumulative overrun requires actual human decision.
+
+## Captured foundation — 2026-10-14
+
+Features 115–118 are complete in [canonical phase017](../docs/planning/phase_017.yaml).
+The [feature118 QA](qa/118.json) and [Root capture](evidence/118/evidence-capture.json)
+bind the actual implementation, independent prerequisite20 and final acceptance.
+The [recovery authorization](evidence/118/recovery-authorization.json) preserves
+failed attempts while permitting reviewed repair of the framework fixtures and
+completion projection. The scope measurement in [run state](run_state.json)
+counts the whole feature once within the original 5,400 allowance and 7,020 ceiling.
+The [reviewed closeout correction](evidence/118/recovery1-closeout-review.json)
+fixes debt table validation while preserving frozen acceptance inputs.
+The activation and design sections above remain historical planning snapshots.
+Phase016 controller core is the next proposed stage; installed v1.5.0 remains pinned.

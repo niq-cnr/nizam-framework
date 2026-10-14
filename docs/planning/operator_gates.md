@@ -2,10 +2,13 @@
 id: nizam-operator-gates
 title: "Operator Gate Registry — nizam-framework"
 description: "The single informational registry of every operator (human) gate the framework recognizes, its scope, and its current disposition; authoritative gate definitions live in the phase specifications this registry cites."
-version: 0.37.0
+version: 0.38.0
 status: active
 authoritative_source: docs/planning/operator_gates.md
 change_log:
+  - version: "0.38.0"
+    date: "2026-10-14"
+    summary: "Record completed phase017 and exercised feature118 recovery; phase016 remains proposed."
   - version: "0.37.0"
     date: "2026-10-13"
     summary: "Record phase017 foundation authorization and bounded acceptance recovery; future phases remain separately gated."
@@ -253,3 +256,14 @@ after114; no WA/016 allocation, policy enforcement or active-gate reduction.
   stage is the archetypal human-gated step.
 - `methodology/06_release_train.md` — the release mechanics `H-FRAMEWORK-RELEASE`
   gates.
+
+## Foundation completion — 2026-10-14
+
+H-PHASE-017 is fulfilled by captured features 115–118 in
+[phase017](phase_017.yaml). H-CONTRACT-118-RECOVERY was exercised under
+[the operator authorization](../../.agent/evidence/118/recovery-authorization.json),
+with independently reviewed acceptance repairs, [fresh QA](../../.agent/qa/118.json)
+and [Root capture](../../.agent/evidence/118/evidence-capture.json).
+Earlier gate entries retain their historical decisions. H-PHASE-016 activation
+and its proposed 5,650 counted allowance / 7,345 ceiling remain future; this
+completion does not activate controller execution or alter the installed v1.5.0 pin.

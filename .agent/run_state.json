@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "017-workflow-assurance-foundation",
-  "current_feature": "118",
-  "status": "in_progress",
-  "updated_at": "2026-10-14T06:10:19.082583+00:00",
+  "current_feature": null,
+  "status": "complete",
+  "updated_at": "2026-10-14T06:10:35.747407+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -881,6 +881,10 @@
       "limit": 3
     },
     "118-recovery1-capture": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-closeout": {
       "attempts": 1,
       "limit": 3
     }
@@ -4875,6 +4879,12 @@
         ".agent/validator/118-mode-b.json",
         ".agent/evidence/118/recovery1-closeout-review.json"
       ]
+    },
+    {
+      "at": "2026-10-14T06:10:35.617641+00:00",
+      "event": "phase017-foundation-captured",
+      "detail": "Actual SourceC2 prerequisite20, Generator3, independent ModeB and freshQA3 plus ownspot captured by Root. Canonical phase/step completed first, then mirrors; NDEBT054 resolved. Original allowance and historical failures retained. Phase016 remains proposed.",
+      "evidence": ".agent/evidence/118/evidence-capture.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5049,9 +5059,9 @@
   "scope_budget": {
     "original_estimate_lines": 5400,
     "ceiling_130pct": 7020,
-    "total_lines_changed": 4012,
-    "evidence_lines_total": 119696,
-    "excluded_lines_total": 964,
+    "total_lines_changed": 5195,
+    "evidence_lines_total": 163288,
+    "excluded_lines_total": 1247,
     "per_feature": [
       {
         "id": "115",
@@ -5106,6 +5116,28 @@
           "first_feature_exception": false
         },
         "note": "Whole117 measured from captured116 before append; original5400/7020 unchanged. All failed/recovered attempts preserved as historical evidence; prior115/116 rows not remeasured."
+      },
+      {
+        "id": "118",
+        "estimated": 650,
+        "actual": 1183,
+        "product_lines": 126,
+        "process_overhead_lines": 1057,
+        "evidence_lines": 43592,
+        "excluded_lines": 283,
+        "range": "beeca3986fc0e02becf65674cbbc8b8f67bf3864..WORKTREE",
+        "evidence": ".agent/evidence/118/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "115",
+            "116",
+            "117"
+          ],
+          "rolling_average": 1337.3333333333333,
+          "three_times_threshold": 4012,
+          "first_feature_exception": false
+        },
+        "note": "Whole118 measured after actual capture and canonical closure, before this once-only budget append. Original5400/7020 retained; historical blocked559 not charged twice. Includes reviewed closeout checker correction; old source/bundle failures preserved."
       }
     ],
     "phase_level_items": [],
@@ -5159,7 +5191,7 @@
         "note": "Incomplete118; failedSource1 is quarantined, no Source2 or completion. Whole118 includes selection/proposals/reviews and mandatoryhalt once; prior measured4012 rows unchanged, no extra allowance or rebaseline. Halt is exhaustedcontract/ModeA3, not scope ceiling."
       }
     ],
-    "last_measured_at": "2026-10-13T19:43:17.960890+00:00"
+    "last_measured_at": "2026-10-14T06:10:35.747407+00:00"
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -5342,7 +5374,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "118",
+  "active_contract_id": null,
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5414,7 +5446,7 @@
       }
     ]
   },
-  "last_action": "ModeB and separately reviewed closeout correction approved; fresh QA pending.",
+  "last_action": "Foundation115-118 captured; phase017 complete. Next proposed phase016 controller core awaits activation.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -5432,7 +5464,8 @@
     "114",
     "115",
     "116",
-    "117"
+    "117",
+    "118"
   ],
   "phase_014_scope_budget_final": {
     "original_estimate_lines": 8600,
