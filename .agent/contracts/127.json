@@ -5,13 +5,25 @@
   "status": "proposed",
   "spec_ref": ".agent/product_spec_016.md",
   "base_revision": "c2b95a1262d49ebd615dcd0d577fad584712dc40",
-  "contract_attempt": 1,
+  "contract_attempt": 2,
   "activation_condition": "Selection is recorded in .agent/evidence/127/selection.json. Actual postmerge main CI38551059606 completed successfully at c2b95a1262d49ebd615dcd0d577fad584712dc40; receipt at Root58bc675:.agent/evidence/126/pr97-main-ci.json. Source still requires both independent pre-code approvals, Root promotion and reviewed independent test seal. This proposal grants none of those approvals.",
   "scope": {
     "files_create": [
       {
         "path": ".agent/evidence/127/",
-        "purpose": "Role-owned contract handoff, immutable input/source/test identities and actual command evidence only; no copied historical trees."
+        "purpose": "Each role owns only its attributed handoff, immutable input/source/test identities and actual command evidence; Root owns dispatch, gate-advance and capture receipts. No copied historical trees or replacement of another role's evidence."
+      },
+      {
+        "path": ".agent/validator/127-*.json",
+        "purpose": "Independent Validator only: Mode A, acceptance-bundle review and Mode B verdicts; preserve prior rounds by immutable Git identity and distinct round paths."
+      },
+      {
+        "path": ".agent/qa/127*.json",
+        "purpose": "Independent Evaluator only: contract-review verdicts and canonical final QA .agent/qa/127.json; final QA is distinct from Generator and acceptance author/bundle reviewer. Preserve historical rounds."
+      },
+      {
+        "path": ".agent/evidence/127-qa-adversarial.txt",
+        "purpose": "Fresh independent Evaluator only: the required additional QA adversarial spot-check with actual command/output/exit and exercised identity."
       }
     ],
     "files_modify": [
@@ -38,13 +50,37 @@
       {
         "path": "CHANGELOG.md",
         "purpose": "Generator: one bounded Unreleased entry for these partial stub semantics."
+      },
+      {
+        "path": ".agent/contracts/127.json",
+        "purpose": "Generator owns proposed contract text and allocated revision metadata only; Root alone promotes approval/lifecycle fields and records actual independent verdict references. No role approves itself; semantic changes require both renewed pre-code gates."
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Root Orchestrator only: coordination, gate decisions, lifecycle, circuit counters, measured budget and append-only history; preserve all unowned fields. Never Generator scope."
+      },
+      {
+        "path": ".agent/feature_list_016.json",
+        "purpose": "Root Orchestrator only: feature127 lifecycle, pass/evidence/QA references and attributed budget bookkeeping after the required gates; preserve requirements, commands, estimates and other features."
+      },
+      {
+        "path": "docs/planning/phase_016.yaml",
+        "purpose": "Root Orchestrator only: corresponding current lifecycle/status and evidence/budget projection after required gates; preserve historical phase records, approved scope and original5650/7345."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Planner only: current-state documentation projection of independently captured progress and next gated work, under existing Root dispatch and counted cost; no requirements or budget expansion."
+      },
+      {
+        "path": "docs/planning/HANDOVER.md",
+        "purpose": "Planner only: matching current-state handoff projection under existing Root dispatch and counted cost; preserve historical evidence and dependency order."
       }
     ]
   },
   "non_goals": [
     "No SBCL binding, acceptance-session support, fresh acceptance infrastructure, phase020 or final CI131 delivery, core-ready128 claim or new CI job.",
     "No authentication, arbitrary executable/shell replay engine, new dependency, queue, scheduler, concurrency lane or public recovery override. Existing Python standard library and repository Git executable suffice.",
-    "No schema, normative methodology/interface, installed payload, foundation fixtures, phase records or Root coordination/counter changes. No Generator-authored acceptance tests. No development heap or transcript promoted to acceptance."
+    "No schema, normative methodology/interface, installed payload, foundation fixture or historical phase-record changes. Generator never edits Root coordination/lifecycle/counters/budget or authors acceptance tests. The explicitly declared Root-only approval/lifecycle/bookkeeping and Planner-only current documentation projections are role-owned workflow artifacts within the existing cost, not additional Generator scope. No development heap or transcript promoted to acceptance."
   ],
   "normative_anchors": [
     ".agent/feature_list_016.json feature127 and its five exact commands; .agent/product_spec_016.md architecture, ownership and unchanged full budget.",
@@ -126,7 +162,7 @@
   "approvals": {
     "validator_mode_a": false,
     "evaluator_contract_review": false,
-    "revisions": 0
+    "revisions": 1
   },
   "dod_ref": ".nizam/standard/definition_of_done.md"
 }
