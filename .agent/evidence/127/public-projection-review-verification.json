@@ -1,0 +1,58 @@
+{
+  "at": "2026-10-14T10:56:50.285071+00:00",
+  "exercised_revision": "e36aa45a2d603836e5b2fe1c358791ddcc25bfc6",
+  "role": "Independent Validator /root/projection_review127",
+  "scope": "Bounded factual/NDS/path/history overlays only; these mechanical checks do not determine factual freshness at promotion. No feature127 implementation approval.",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/127/public-projection-review-check.py"
+      ],
+      "actual_exit": 1,
+      "stdout": ".agent/evidence/127/public-projection-review-checks-initial.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection-review-checks-initial.stderr.txt",
+      "reviewer_check_correction": "Initial reviewer expectation inherited 40 from dispatch; actual numstat is 18+1 per document = 38. Corrected reviewer assertion only."
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check",
+        "58bc675c5ee4e845f8069893f08a77bd52002a78",
+        "e36aa45a2d603836e5b2fe1c358791ddcc25bfc6"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/public-projection-review-whitespace.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection-review-whitespace.stderr.txt"
+    },
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/127/public-projection-review-check.py"
+      ],
+      "actual_exit": 1,
+      "stdout": ".agent/evidence/127/public-projection-review-checks-identity-initial.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection-review-checks-identity-initial.stderr.txt",
+      "reviewer_check_correction": "Test identity belongs to separate sealed test_revision d89d79f, not source revision d965c2c. Corrected reviewer identity lookup; product evidence unchanged."
+    },
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/127/public-projection-review-check.py"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/127/public-projection-review-checks.stdout.txt",
+      "stderr": ".agent/evidence/127/public-projection-review-checks.stderr.txt"
+    }
+  ],
+  "factual_freshness": {
+    "root_revision": "2efdc8f6f4aec5fc875be3ce63a03541243ea1fc",
+    "source_path": ".agent/evidence/127/contract2-dispatch.json",
+    "copied_receipt": ".agent/evidence/127/public-projection-review-root-contract2.json",
+    "actual_attempt": 2,
+    "candidate_attempt": 1,
+    "verdict": "reject unqualified current attempt 1; retain selection-time facts or replace with attempt-independent contract preparation wording."
+  },
+  "reviewer_scope": "Only the two public current overlays/frontmatter; no .agent/validator product-gate approval, no implementation approval, no Root or document modifications."
+}
