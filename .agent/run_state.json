@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "127",
   "status": "in_progress",
-  "updated_at": "2026-10-14T11:51:49.592430+00:00",
+  "updated_at": "2026-10-14T11:52:56.095199+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -978,6 +978,10 @@
       "limit": 3
     },
     "127-mode-b": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-qa": {
       "attempts": 1,
       "limit": 3
     }
@@ -5236,6 +5240,12 @@
       "event": "127-executable-bundle-approved-modeB-release",
       "detail": "Strict final proof reviewffffe3d approved after all35pins/15receipts/narrowpatch checks and independent cancellation0-1-0. ModeB final verdict now allowed; no freshQA or completion yet.",
       "evidence": ".agent/evidence/127/modeb1-bundle-release.json"
+    },
+    {
+      "at": "2026-10-14T11:52:56.095199+00:00",
+      "event": "127-freshQA1-preparation",
+      "detail": "Fresh isolated QA reader may prepare while ModeB source review runs. Actual verification execution and verdict remain blocked until strict ModeB approval.",
+      "evidence": ".agent/evidence/127/qa1-preparation-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
