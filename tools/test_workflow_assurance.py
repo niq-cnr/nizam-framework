@@ -683,7 +683,9 @@ class ReceiptFixture:
         target.write_bytes(value if type(value) is bytes else canonical(value))
 
     def commit(self, message):
-        git(self.root, 'add', '.'); git(self.root, 'commit', '-qm', message)
+        git(self.root, 'add', '.')
+        if git(self.root, 'diff', '--cached', '--name-only'):
+            git(self.root, 'commit', '-qm', message)
         return git(self.root, 'rev-parse', 'HEAD')
 
     def ref(self, path, revision=None):
