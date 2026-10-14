@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "121",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:36:24.983124+00:00",
+  "updated_at": "2026-10-14T18:41:55.615490+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1293,13 +1293,14 @@
       "result": "passed"
     },
     "121-acceptance-author": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3,
       "result": "provisional bundle submitted"
     },
     "121-provisional-review": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "result": "rejected; three bounded coverage gaps"
     }
   },
   "history": [
@@ -5868,6 +5869,11 @@
       "at": "2026-10-14T18:36:24.983124+00:00",
       "event": "121-provisional-review-dispatch",
       "detail": "Author f7a2715 test4eb97ec committed before actual captures at3fecfc0. Immutable seal verified; real fixture/schema setup0, five absentAPI setup2, old37 actual0. Distinct reviewer checks frozen concrete oracles/ownership/cleanup coverage before initialSource; no API pass/red/removal claimed."
+    },
+    {
+      "at": "2026-10-14T18:41:55.615490+00:00",
+      "event": "121-acceptance-integrity-revision2",
+      "detail": "Distinct dd5c8f8 strict rejection of F1 authority-mask/path-pointer-current-coordination tests, F2 missing staged/committed/rename/mode/symlink/unmerged/submodule inventory, F3 rollback unsafe-root failureproof mismatch. New author2 root preserves old proof; consistently bind inputs and isolated negatives/restored positives within450. Approved contract unchanged; no Source or fake API red."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6366,7 +6372,7 @@
       }
     ]
   },
-  "last_action": "121 frozen226-line independent provisional bundle and actual setup/old37 proof submitted; distinct reviewer before any Source.",
+  "last_action": "121 provisional1 rejected masked negatives/missing real Git boundaries; isolated author2 fixes existing acceptance only, noSource.",
   "completed_contract_ids": [
     "099",
     "103",
