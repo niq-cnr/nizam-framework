@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "127",
   "status": "in_progress",
-  "updated_at": "2026-10-14T10:55:52.811521+00:00",
+  "updated_at": "2026-10-14T10:57:59.982549+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -941,11 +941,11 @@
       "limit": 3
     },
     "127-mode-a": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "127-contract-review": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "127-public-projection-review": {
@@ -5111,6 +5111,12 @@
       "event": "127-contract1-rejected-contract2-dispatched",
       "detail": "Preserved ModeA1 rejection and Evaluator1 approval on exact original proposal. Bounded role scope/Root ownership clarification requires both independent reviews renewed.",
       "evidence": ".agent/evidence/127/contract2-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T10:57:59.982549+00:00",
+      "event": "127-contract2-renewed-precode",
+      "detail": "Ownership-only contract2 bac04b8 requires renewed independent ModeA2 and Evaluator2 approvals. No implementation or acceptance authoring yet.",
+      "evidence": ".agent/evidence/127/precode2-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
