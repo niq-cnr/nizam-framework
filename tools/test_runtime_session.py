@@ -51,6 +51,13 @@ def load(path):
     return json.loads(Path(path).read_text())
 
 
+def wait_marker(path, operation_id):
+    def correlated():
+        value = load(path) if path.exists() else None
+        return value if value and value.get('operation_id') == operation_id else None
+    return wait_for(correlated, 'correlated peer marker before unlink or next request')
+
+
 def process_token(pid):
     try:
         fields = Path(f'/proc/{pid}/stat').read_text().split(') ', 1)[1].split()
@@ -75,6 +82,7 @@ class Session:
         self.serial = 0
         self.processes = {}
         self.group = None
+        self.supervisor = None
         self.env = {k: v for k, v in os.environ.items()
                     if k not in ('PYTHONPATH', 'PYTHONHOME', 'CL_SOURCE_REGISTRY', 'ASDF_OUTPUT_TRANSLATIONS')}
         self.env.update(PYTHONDONTWRITEBYTECODE='1', HOME=str(self.home),
@@ -111,15 +119,61 @@ class Session:
         require(response['ok'] is (expected == 0), f'{action} envelope agrees with exit')
         return response
 
+    def owns_lock(self, pid):
+        try:
+            target = (self.directory / 'supervisor.lock').stat()
+            private_fd = False
+            for p in Path(f'/proc/{pid}/fd').iterdir():
+                try:
+                    st = p.stat()
+                    private_fd |= (st.st_dev, st.st_ino) == (target.st_dev, target.st_ino)
+                except OSError:
+                    pass
+            if private_fd:
+                with (self.directory / 'supervisor.lock').open('a') as probe:
+                    try:
+                        fcntl.flock(probe, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    except BlockingIOError:
+                        return True
+                    fcntl.flock(probe, fcntl.LOCK_UN)
+            return False
+        except (OSError, ValueError):
+            return False
+
+    def runs_stub(self, pid):
+        try:
+            cwd = Path(f'/proc/{pid}/cwd').resolve(strict=True)
+            argv = Path(f'/proc/{pid}/cmdline').read_bytes().split(b'\0')
+            stub = (self.candidate / 'tools/fixtures/runtime_session/stub_runtime.py').resolve()
+            return stub in [(cwd / os.fsdecode(arg)).resolve() for arg in argv[1:] if arg]
+        except (OSError, ValueError):
+            return False
+
+    def owned_pid(self, pid):
+        try:
+            return (pid in self.processes and process_token(pid) == self.processes[pid] and
+                    os.getpgid(pid) == self.group and
+                    (self.owns_lock(pid) if pid == self.supervisor else self.runs_stub(pid)))
+        except OSError:
+            return False
+
     def remember(self):
         meta = load(self.directory / 'controller.json')
-        self.group = meta['supervisor_pgid']
-        for key in ('supervisor_pid', 'child_pid'):
-            pid = meta[key]
-            require(type(pid) is int and pid > 1, 'real private PID metadata')
-            token = process_token(pid)
-            if token:
-                self.processes[pid] = token
+        supervisor, child, group = (meta[k] for k in ('supervisor_pid', 'child_pid', 'supervisor_pgid'))
+        require(all(type(p) is int and p > 1 for p in (supervisor, child, group)) and
+                child != supervisor, 'distinct private process metadata')
+        try:
+            parent = int(Path(f'/proc/{child}/stat').read_text().split(') ', 1)[1].split()[1])
+            related = parent == supervisor and os.getpgid(supervisor) == group and os.getpgid(child) == group
+        except (OSError, ValueError):
+            related = False
+        require(related and self.owns_lock(supervisor) and self.runs_stub(child),
+                'initial process ownership: private flock, actual child ancestry/group and candidate stub')
+        tokens = {pid: process_token(pid) for pid in (supervisor, child)}
+        require(all(tokens.values()), 'owned processes remain live during registration')
+        self.group = group
+        self.supervisor = supervisor
+        self.processes.update(tokens)
         return meta
 
     def open(self, owner=OWNER):
@@ -213,20 +267,25 @@ class Session:
         # Only terminate identities observed in this private scratch session, never a reused PID.
         if not self.processes and (self.directory / 'controller.json').exists():
             try:
-                meta = load(self.directory / 'controller.json')
-                cmd = Path(f"/proc/{meta['supervisor_pid']}/cmdline").read_bytes()
-                if str(self.state).encode() in cmd:
-                    self.remember()
+                self.remember()
             except Exception:
                 pass
         for sig in (signal.SIGTERM, signal.SIGKILL):
-            if self.group in self.processes and process_token(self.group) == self.processes[self.group]:
+            members = []
+            if self.supervisor and self.owned_pid(self.supervisor):
+                for path in Path('/proc').iterdir():
+                    try:
+                        if path.name.isdigit() and os.getpgid(int(path.name)) == self.group:
+                            members.append(int(path.name))
+                    except OSError:
+                        pass
+            if members and all(self.owned_pid(pid) for pid in members):
                 try:
                     os.killpg(self.group, sig)
                 except ProcessLookupError:
                     pass
             for pid, token in self.processes.items():
-                if process_token(pid) == token:
+                if self.owned_pid(pid):
                     try:
                         os.kill(pid, sig)
                     except ProcessLookupError:
@@ -482,6 +541,7 @@ for line in sys.stdin:
                 require(peer.finish(request) == 'probe-positive', 'private peer transport positive')
             if mode == 'late-frame':
                 original_path = peer.result_path(request['operation_id']); original = original_path.read_bytes()
+                wait_marker(marker, request['operation_id'])
                 marker.unlink(); request = peer.request('set', 'second'); peer.submit(request)
             observed = wait_for(lambda: load(marker) if marker.exists() else None, 'private peer emitted frame')
             require(observed['operation_id'] == request['operation_id'] and observed['status'] == 'running',
@@ -620,7 +680,7 @@ python3() {
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
     selection = parser.add_mutually_exclusive_group(required=True)
     selection.add_argument('--check', choices=CHECKS)
     selection.add_argument('--case', type=int, choices=CASES)
