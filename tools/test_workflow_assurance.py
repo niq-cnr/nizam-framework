@@ -1067,7 +1067,7 @@ class LaneFixture(ReceiptFixture):
         self.request = dict(operation_id='fixture-operation', feature_id='121', owner={'agent_id': 'fixture-agent', 'session_id': 'fixture-session'},
             agent_role='Generator', step_key='lane-step', attempt=1, base_revision=self.base, attempt_root=str(self.attempt), writes=['src/a.py'], state_fields=['/work/left'])
         self.policy = dict(repository=self.repository, coordination_ref=self.ref('coordination.json'), feature_list_ref=self.ref('features.json'), authority_ref=None, attempt_parent=str(self.attempt_parent), rollback_ref=None)
-        self.authorize(); self.proof_captures = []
+        self.authorize(); self.proof_captures = []; self.git_probe_log = []
 
     def worktree(self, name, attached=False):
         path = self.attempt_parent / name
@@ -1077,7 +1077,37 @@ class LaneFixture(ReceiptFixture):
     def close(self):
         for path in self.roots:
             require(path.parent == self.attempt_parent and path != self.root, 'cleanup only owned registered fixture worktree')
-            if path.exists(): git(self.root, 'worktree', 'remove', '--force', str(path))
+            if path.exists():
+                if path.name == 'probe-submodule': git(path, 'update-index', '--force-remove', 'owned-gitlink')
+                git(self.root, 'worktree', 'remove', '--force', str(path))
+
+    def inventory_probe(self, kind):
+        path = self.worktree('probe-' + kind); writes = ['src/a.py']; argv = None
+        if kind in ('staged', 'committed', 'unmerged'):
+            (path / 'src/b.py').write_bytes(b'ours undeclared change\n'); git(path, 'add', 'src/b.py')
+            if kind != 'staged': git(path, 'commit', '-qm', 'owned fixture undeclared commit')
+        if kind == 'rename': git(path, 'mv', 'src/a.py', 'src/cross-owner.py')
+        if kind == 'mode': (path / 'src/b.py').chmod((path / 'src/b.py').stat().st_mode ^ 0o111)
+        if kind == 'symlink': (path / 'src/a.py').unlink(); (path / 'src/a.py').symlink_to(path / 'src/b.py')
+        if kind == 'submodule':
+            (path / 'owned-gitlink').mkdir(); writes = ['owned-gitlink']
+            git(path, 'update-index', '--add', '--cacheinfo', '160000', self.base, 'owned-gitlink')
+        if kind == 'unmerged':
+            writes = ['src/b.py']
+            with tempfile.TemporaryDirectory(prefix='lane-conflict-index-', dir=self.parent) as directory:
+                env = {**os.environ, 'GIT_INDEX_FILE': str(Path(directory) / 'index'), 'LC_ALL': 'C'}
+                command = lambda *args: subprocess.check_output(['git', '-C', str(self.root), *args], env=env).decode().strip()
+                command('read-tree', self.base)
+                oid = subprocess.check_output(['git', '-C', str(self.root), 'hash-object', '-w', '--stdin'], input=b'theirs undeclared change\n').decode().strip()
+                command('update-index', '--cacheinfo', '100644', oid, 'src/b.py'); tree = command('write-tree')
+                theirs = subprocess.check_output(['git', '-C', str(self.root), 'commit-tree', tree, '-p', self.base], input=b'Owned fixture conflicting side\n', env=env).decode().strip()
+            argv = ['git', '-C', str(path), 'merge', '--no-edit', theirs]
+            result = subprocess.run(argv, capture_output=True, env={**os.environ, 'LC_ALL': 'C'})
+            self.write('proof/unmerged-setup.stdout', result.stdout); self.write('proof/unmerged-setup.stderr', result.stderr)
+            require(result.returncode == 1 and bool(git(path, 'ls-files', '--unmerged')), 'actual expected Git merge conflict setup')
+            self.git_probe_log.append(dict(argv=argv, actual_exit=result.returncode, stdout_sha256=sha(result.stdout), stderr_sha256=sha(result.stderr), classification='expected fixture merge conflict, not API semantic red'))
+        self.git_probe_log.append(dict(kind=kind, root=str(path), head=git(path, 'rev-parse', 'HEAD'), index=git(path, 'ls-files', '--stage'), status=git(path, 'status', '--porcelain=v1')))
+        return path, writes
 
     def authorize(self, **changes):
         self.request.update(changes)
@@ -1153,6 +1183,11 @@ def lane_independent(api, f):
     original = copy.deepcopy(f.request)
     for path in ('unowned.txt', 'ignored/unowned.txt'):
         f.attempt_write(path, b'keep unowned sentinel\n'); lane_reject(api, f, 'verify_isolated_attempt'); (f.attempt / path).unlink()
+    for kind in ('staged', 'committed', 'rename', 'mode', 'symlink', 'unmerged', 'submodule'):
+        root, writes = f.inventory_probe(kind); f.authorize(attempt_root=str(root), writes=writes)
+        lane_reject(api, f, 'verify_isolated_attempt')
+        f.request = copy.deepcopy(original); f.authorize()
+        require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == sorted(original['writes']), 'restored valid isolation after ' + kind)
     f.authorize(base_revision='0' * 40); lane_reject(api, f, 'verify_isolated_attempt'); f.request = original; f.authorize()
     fake = f.attempt_parent / 'unregistered'; fake.mkdir(); f.authorize(attempt_root=str(fake)); lane_reject(api, f, 'verify_isolated_attempt'); f.request = original; f.authorize()
     attached = f.worktree('attached', True); f.authorize(attempt_root=str(attached)); lane_reject(api, f, 'verify_isolated_attempt'); f.request = original; f.authorize()
@@ -1173,6 +1208,12 @@ def lane_shared(api, f):
     saved = (f.root / 'coordination.json').read_bytes(); f.write('coordination.json', dict(f.state, updated_at='stale')); lane_reject(api, f); f.write('coordination.json', saved)
     target = f.root / 'features.json'; mode = target.stat().st_mode; target.chmod(mode ^ 0o111); lane_reject(api, f); target.chmod(mode)
     require(lane_call(api, f)['eligible'] is True, 'restored current snapshot positive')
+    state = copy.deepcopy(f.state); features = copy.deepcopy(f.features)
+    for key, value in (('repository', 'foreign/repo'), ('current_feature', 'foreign'), ('active_contract_id', 'foreign'), ('status', 'complete'), ('current_phase', 'foreign-phase')):
+        f.state = copy.deepcopy(state); f.state[key] = value; f.sync(); lane_reject(api, f)
+        f.state = copy.deepcopy(state); f.sync(); require(lane_call(api, f)['eligible'] is True, 'restored coordination predicate ' + key)
+    f.features = copy.deepcopy(features); f.features['phase'] = 'foreign-phase'; f.sync(); lane_reject(api, f)
+    f.features = features; f.sync(); require(lane_call(api, f)['eligible'] is True, 'restored feature phase binding')
 
 
 def lane_spoof(api, f):
@@ -1182,7 +1223,8 @@ def lane_spoof(api, f):
         f.request = copy.deepcopy(original); f.request[key] = value; lane_reject(api, f)
     f.request = original
     for key, value in (('attempt', None), ('writes', ['../escape']), ('writes', ['src/../a.py']), ('writes', ['.git/config']), ('writes', ['src/a.py'] * 2), ('state_fields', ['/']), ('state_fields', ['/bad~escape']), ('state_fields', ['/work', '/work/left'])):
-        f.request = copy.deepcopy(original); f.request[key] = value; lane_reject(api, f)
+        f.request = copy.deepcopy(original); f.authorize(**{key: value}); lane_reject(api, f)
+        f.request = copy.deepcopy(original); f.authorize(); require(lane_call(api, f)['eligible'] is True, 'restored bound shape probe ' + key)
     for value in (None, [], float('nan')):
         f.request = value; lane_reject(api, f)
     f.request = copy.deepcopy(original); cycle = []; cycle.append(cycle); f.request['extra'] = cycle; lane_reject(api, f); f.request = original
@@ -1228,10 +1270,17 @@ def lane_rollback(api, f):
     f.policy = policy; saved = (f.root / failure['path']).read_bytes(); (f.root / failure['path']).unlink(); lane_reject(api, f, 'rollback_owned_attempt'); f.write(failure['path'], saved)
     f.request['owner'] = {'agent_id': 'wrong', 'session_id': 'wrong'}; lane_reject(api, f, 'rollback_owned_attempt'); f.request = copy.deepcopy(original)
     nested = f.attempt / 'nested'; nested.mkdir(); alias = f.attempt_parent / 'alias'; alias.symlink_to(f.attempt, target_is_directory=True)
-    for root in (str(f.root), str(f.parent), str(nested), str(alias)):
-        f.authorize(attempt_root=root); lane_reject(api, f, 'rollback_owned_attempt')
-    f.request = copy.deepcopy(original); f.authorize(); alias.unlink(); nested.rmdir()
-    foreign = f.attempt_parent / 'foreign'; git(f.root, 'init', '-q', str(foreign)); f.authorize(attempt_root=str(foreign)); lane_reject(api, f, 'rollback_owned_attempt'); f.request = original; f.authorize()
+    foreign = f.attempt_parent / 'foreign'; git(f.root, 'init', '-q', str(foreign))
+    for changes, parent in (({'attempt_root': str(f.root)}, f.parent), ({'attempt_root': str(f.parent)}, f.parent.parent),
+        ({'attempt_root': str(nested)}, f.attempt_parent), ({'attempt_root': str(alias)}, f.attempt_parent),
+        ({'attempt_root': str(foreign)}, f.attempt_parent), ({'base_revision': '0' * 40}, f.attempt_parent)):
+        f.request = copy.deepcopy(original); f.authorize(**changes); f.policy['attempt_parent'] = str(parent)
+        f.policy['rollback_ref'] = f.proof(f.request, True)
+        lane_reject(api, f, 'rollback_owned_attempt')
+        f.request = copy.deepcopy(original); f.authorize(); f.policy['attempt_parent'] = policy['attempt_parent']
+        f.policy['rollback_ref'] = f.proof(f.request, True)
+        require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == ['src/a.py'], 'restored valid isolation between unsafe rollback probes')
+    alias.unlink(); nested.rmdir()
     outside = f.all_files(exclude_attempt=True); inputs = copy.deepcopy((f.request, f.policy))
     result = api.rollback_owned_attempt(f.root, f.request, policy=f.policy)
     require(result == dict(operation_id=f.request['operation_id'], attempt_root=str(f.attempt), removed=True), 'owned rollback exact removal result')
