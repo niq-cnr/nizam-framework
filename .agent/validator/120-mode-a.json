@@ -1,0 +1,19 @@
+{
+  "review": "validator-mode-a",
+  "feature": "120",
+  "attempt": 1,
+  "reviewer": "/root/validator128",
+  "reviewed_commit": "87ca77e9d95aca042c49cf245ca58e63eb92ee4b",
+  "proposal_commit": "63f3bb9f5794a331207a18a091469b4c08c97c7c",
+  "contract_sha256": "620130f2e63ff117192d83ac9dda2f51afc6aa87d4d0e54067bd60373626a2a8",
+  "final_verdict": {"approved": false, "summary": "Reject narrowly for schema-incompatible transition event and missing kind-specific prerequisite artifact rules; no scope/budget or authority expansion requested."},
+  "issues": [
+    {"id": "120-A1", "severity": "high", "target": "api.transition/idempotence", "finding": "The exact appended event omits detail, but installed/root run_state.schema.json requires at,event,detail on every history item. An otherwise valid state becomes schema-invalid on the first successful advance; exact replay identity is also underspecified for the required detail.", "evidence": ".agent/evidence/120/modea1-inspection.stdout.txt", "required_fix": "Define the complete schema-valid deterministic history event including detail, keep its full identity consistent in advance/replay/recovery, and require proposed state to validate under the unchanged run_state schema. Preserve only/status/updated_at/history ownership and all existing prefixes."},
+    {"id": "120-A2", "severity": "high", "target": "api.policy_shape/authority/prerequisites", "finding": "Fixed prerequisite kinds include approved-contract and evidence-capture, while prerequisite validation requires relevant schema and strict AGF approved/three arrays. Actual approved119 contract uses status/approvals/approval_evidence; actual119 capture uses passed/actual_exit and referenced gates, with none of those four AGF fields. Expected closed verdict shape has no per-kind field/schema/binding projection, leaving legitimate required positive receipts unimplementable or implementation-defined.", "evidence": ".agent/evidence/120/modea1-inspection.stdout.txt", "required_fix": "Declare allowed prerequisite kinds and precise kind-specific artifact/schema/approval/candidate/reference checks. Apply strict AGF arrays to actual gate verdicts, validate approved-contract via its immutable approved status plus both referenced strict approvals, and define capture approval/proof checks for its actual shape. Keep policy independently trusted; do not synthesize AGF fields into historical artifacts or require future120 capture before initial Source."}
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [".agent/evidence/120/modea1-check.py", ".agent/evidence/120/modea1-execution.json", ".agent/evidence/120/modea1-inspection.stdout.txt", ".agent/evidence/120/modea1-cost.stdout.txt"],
+  "otherwise_aligned": "Two read-only APIs and eleven exact planned commands; actual helper signatures checked.2750=800/700/1250,phase7200/9360,prior119722 and archived0165179/0175203 retained. Frozen pre-verdict preparation107; no unclassified paths.",
+  "boundary": "Contract correction only. No Source/tests, historical pins, schemas or lifecycle edited. Both independent gates must approve the same revision before Root promotion and provisional acceptance review. No absentAPI acceptance run or semantic-red claim."
+}

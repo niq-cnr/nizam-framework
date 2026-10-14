@@ -1,0 +1,39 @@
+{
+  "reviewer": "/root/validator128",
+  "receipts": [
+    {
+      "name": "inspection",
+      "argv": [
+        "python3",
+        ".agent/evidence/120/modea1-check.py"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature120-modea1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "exercised_revision": "87ca77e9d95aca042c49cf245ca58e63eb92ee4b",
+      "stdout": ".agent/evidence/120/modea1-inspection.stdout.txt",
+      "stderr": ".agent/evidence/120/modea1-inspection.stderr.txt"
+    },
+    {
+      "name": "cost",
+      "argv": [
+        "python3",
+        ".agent/evidence/scope-budget-014/measure.py",
+        "--range",
+        "120=92fecd8d376964f5e3dd7e34bc201035acfe8bc6..",
+        "--files"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature120-modea1",
+      "environment": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit": 0,
+      "exercised_revision": "87ca77e9d95aca042c49cf245ca58e63eb92ee4b",
+      "stdout": ".agent/evidence/120/modea1-cost.stdout.txt",
+      "stderr": ".agent/evidence/120/modea1-cost.stderr.txt"
+    }
+  ],
+  "manual_review": "Bounded two readonly APIs,11exact commands, trusted caller policy/non-authentication boundary and independent gates otherwise align. Fixed typed prerequisite projection and schema-valid event remain contract-author decisions; Validator made no repairs. Current policy prerequisite shape says expected closed verdict shape without defining per-kind schema/field mapping, while generic prerequisite wording requires strict AGF arrays for actual non-AGF kinds."
+}
