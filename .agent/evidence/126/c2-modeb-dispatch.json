@@ -1,0 +1,28 @@
+{
+  "owner": "/root",
+  "at": "2026-10-14T09:55:43.185958+00:00",
+  "source_C2": "b6c0b097ecf2e12ee638a60273af568a8b86523a",
+  "source_C1": "755b859703de29065885ccd7bc6031dabb702872",
+  "source_preimplementation_baseline": "3f0e11b23367c17b1d8c2086011dc0c078441509",
+  "mode_b_attempt": 1,
+  "contract": ".agent/contracts/126.json",
+  "bundle": ".agent/evidence/126/test-seal-b2.json",
+  "bundle_approval": ".agent/validator/126-bundle-review.json",
+  "test_sha256": "60f6797100f15eb32b4f9e870eafe699627d17b835c8cc2ad44b703fcfb67e14",
+  "candidate_source_sha256": {
+    "tools/runtime_session.py": "cad3d7e8fb208f2b89934a544983745b77c766cba32e9c39c5b78f5bf379ec73",
+    "tools/fixtures/runtime_session/stub_runtime.py": "906175ec845f74d57050f2a7b84a4e679947c1c05412ebc22b5b0eeebed383dc",
+    "tools/fixtures_self_test.sh": "c95693768d2041bb22d93a396314e698c50d56ede4df7b7f1ceb68911fe8a659",
+    "tools/README.md": "7cf969d751c5baac24ad1991faacbf45e2403496d41be200c8bd55d50be6fc45",
+    "CHANGELOG.md": "019873ca7c9dea7b8f35d3900adb0383620e8e33ceacb5b9d9dddfefae294a22"
+  },
+  "scope_rule": "Review all candidate implementation from pre-source baseline. Independent sealed test/evidence/planning overlays have separate authorship and are not Source Generator scope creep. Preserve original contract baseline9f361 as provenance.",
+  "source_change_rule": "Further source change invalidates affected results. CI can run concurrently; final QA starts only after strict ModeB approval.",
+  "pending": [
+    "Source2 complete development check capture",
+    "Independent ModeB",
+    "Fresh independentQA+ownspot",
+    "Actual passing capableCI",
+    "Root evidence capture and measured lifecycle closure"
+  ]
+}
