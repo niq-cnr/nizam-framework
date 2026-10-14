@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "121",
   "status": "in_progress",
-  "updated_at": "2026-10-14T23:06:35.970064+00:00",
+  "updated_at": "2026-10-14T23:14:29.634778+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1293,9 +1293,10 @@
       "result": "passed"
     },
     "121-acceptance-author": {
-      "attempts": 2,
+      "attempts": 3,
       "limit": 3,
-      "result": "corrected provisional bundle submitted"
+      "result": "corrected provisional bundle submitted",
+      "status": "fixture_repair"
     },
     "121-provisional-review": {
       "attempts": 2,
@@ -1314,11 +1315,13 @@
     },
     "121-implementation": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "status": "development_failed_fixture_diagnosis"
     },
     "121-executable-controls": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "status": "held_before_authoring_or_runtime"
     }
   },
   "history": [
@@ -5917,6 +5920,11 @@
       "at": "2026-10-14T23:06:35.970064+00:00",
       "event": "121-controls-author-preparation-dispatch",
       "detail": "Independent author may prepare frozen E-only five private control helper while Generator implements. Actual runtime held until Root binds committed Source candidate and explicitly releases execution; test/Source edits forbidden. Retain allidentity bytes reachably and verify portable restoration."
+    },
+    {
+      "at": "2026-10-14T23:14:29.634778+00:00",
+      "event": "121-fixture-author3-dispatch",
+      "detail": "ActualSource1dev39d16b9 exit1 after37passes preserved64ba698; no Source repair. Static shared savedrequest alias leaves attached root in restoredpositive. Third/final author attempt architectural audit of fixture snapshot ownership, independently reproduce and bounded test-only correction, distinct provisional3 before next development. Prior attempts/counters and strict reviews retained, no resets."
     }
   ],
   "phase_001_scope_budget_final": {
