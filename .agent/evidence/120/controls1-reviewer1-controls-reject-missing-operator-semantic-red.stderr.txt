@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.tmp/nizam-feature120-executable-review1/tools/test_workflow_assurance.py", line 1017, in run_receipt_case
+    if name == 'reject-missing-operator': receipt_operator(api, f, parent)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-executable-review1/tools/test_workflow_assurance.py", line 807, in receipt_operator
+    f.policy['operator'] = f.pin('proof/bad-operator.json', app); f.refresh(); receipt_reject(api, f)
+                                                                               ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-executable-review1/tools/test_workflow_assurance.py", line 782, in receipt_reject
+    rejected(api, operation or (lambda: api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)), 'receipt invalid input rejected')
+  File "/home/cnross/.tmp/nizam-feature120-executable-review1/tools/test_workflow_assurance.py", line 57, in rejected
+    require(False, message + ': invalid input accepted')
+  File "/home/cnross/.tmp/nizam-feature120-executable-review1/tools/test_workflow_assurance.py", line 35, in require
+    raise AssertionError('POLICY_ASSERTION: ' + message)
+AssertionError: POLICY_ASSERTION: receipt invalid input rejected: invalid input accepted
