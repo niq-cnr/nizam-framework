@@ -1,8 +1,8 @@
 {
   "feature_id": "118",
   "baseline": {
-    "commit": "0b4f46adaef9efd8d48aa15e6bb0e237956a6316",
-    "tree": "6f868d797f03a7acbcfea53db661be7aeb932e08"
+    "commit": "07d5a780b16de3d44c5aac263f41404c0b9049d2",
+    "tree": "044091811c450de2d6a754d79fe819b58f9a1603"
   },
   "roles": {
     "test_author": {
@@ -36,17 +36,22 @@
     },
     {
       "path": ".agent/evidence/118/api-interface.json",
-      "sha256": "9025084072c7edd8b36f31752a5d7f939cd5519c0c56d50cf4b7d4c589a5bd8b",
+      "sha256": "72e8d3a0058774dc43e048909fb9e1dfbfb9a0d28405089729ec2ea489587f24",
       "executable": false
     },
     {
       "path": ".agent/evidence/118/baseline-driver.py",
-      "sha256": "7eb2dba721ddbf42ad4588c03d882046f32895a71cb690c7a8902fb0f8975a58",
+      "sha256": "3c5eee7d3be94b68d0a6c558a418cd460f99bc3cb719d6c1576122e15a05ca2a",
+      "executable": false
+    },
+    {
+      "path": ".agent/evidence/118/fixture-path-selfcheck.py",
+      "sha256": "fb8024ec93d3a7b1a2bd88752e1835fd9eefcf23b479a0636df368078230cb21",
       "executable": false
     },
     {
       "path": ".agent/evidence/118/foundation-fixtures.py",
-      "sha256": "69bd1b896934e0e84a971acdb97997828666c3f56b486489fe92f440d61bcc2a",
+      "sha256": "a91c62e329b5c0cbc26b39a9653df60649de87dd8e16a70ec83e5dee6b50a3fe",
       "executable": false
     },
     {
@@ -66,7 +71,7 @@
     },
     {
       "path": ".agent/evidence/118/producer-interface.json",
-      "sha256": "27871ce6825ce36b0082eb18f3637b46ef4cf1182b87507ef70c66a4ede106e1",
+      "sha256": "a376d4dd26054d57b29f0ea03168bd92f656d7a8ca2004402ef881dff0729e6d",
       "executable": false
     },
     {
@@ -76,17 +81,17 @@
     },
     {
       "path": ".agent/evidence/118/runtime-inputs.json",
-      "sha256": "cfc9b304dd7b4cb1173014ff1e0c2f79429ffe54dde7123457cdde103d9b7e60",
+      "sha256": "5922d1922a6147c3af42a595d03286e581cdae9527183a8389b501646deae1bc",
       "executable": false
     },
     {
       "path": ".agent/evidence/118/scope-guard.py",
-      "sha256": "a2e3a7430ca4b73863a2c268687d94c39c734c9bffcbba8853103af574b47334",
+      "sha256": "df63760287c5bae6f43f988d66976ce334e3185d95db4e54143b39a663ddf0b0",
       "executable": false
     },
     {
       "path": ".agent/evidence/118/source-obligations.json",
-      "sha256": "c9d4cf161a36fd3952b0daefee0d3ac9470e8057aaa3d4de9064a06f6d30ccc1",
+      "sha256": "9e7e16c73d0c1341067a554294b4cc9eb2a9f4c1aa19b8743b03235cd2436c5b",
       "executable": false
     },
     {
@@ -176,24 +181,30 @@
   },
   "baseline_evidence": {
     "setup": {
-      "path": ".agent/evidence/118/test-author-attempt1-baseline-setup.txt",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/baseline-driver.py --stage setup --workspace /home/cnross/.tmp/nizam118-baseline-author-mql2yjct/repo",
-      "sha256": "148a58259787336b030ef5b620f49d6ca0d6e1eafc2456a2eb51cf67f4c62d5a",
+      "path": ".agent/evidence/118/recovery1-author-B2-setup.txt",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/baseline-driver.py --stage setup --workspace /home/cnross/.tmp/nizam118-B2-author-tyh1fqgl/repo",
+      "sha256": "7c689bf0bef7d5c179249eea8b4c1cadb3f2913d6e38255f75f64c77d9cc29ce",
       "exit_code": 0
     },
     "positive": {
-      "path": ".agent/evidence/118/test-author-attempt1-baseline-positive.txt",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/baseline-driver.py --stage positive --workspace /home/cnross/.tmp/nizam118-baseline-author-mql2yjct/repo",
-      "sha256": "f85490b34b5ae326d73499ea068c755782e4a6b46506978be2e27c316b56c90b",
+      "path": ".agent/evidence/118/recovery1-author-B2-positive.txt",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/baseline-driver.py --stage positive --workspace /home/cnross/.tmp/nizam118-B2-author-tyh1fqgl/repo",
+      "sha256": "e866e8be4f08a0d6989a23ce42ebd7c1997d05d8892ea9c1369605cf2308853e",
       "exit_code": 0
     },
     "red": {
-      "path": ".agent/evidence/118/test-author-attempt1-baseline-red.txt",
-      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/baseline-driver.py --stage red --workspace /home/cnross/.tmp/nizam118-baseline-author-mql2yjct/repo",
-      "sha256": "e40e8afaf4330cf5c69bc464272ce837a09588982e6e28336db27945469a1c38",
+      "path": ".agent/evidence/118/recovery1-author-B2-red.txt",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/baseline-driver.py --stage red --workspace /home/cnross/.tmp/nizam118-B2-author-tyh1fqgl/repo",
+      "sha256": "1b3a5036efd39a7c2eae6d078b306a2948ff999b9fad43d9b0acc4c92f86b752",
       "exit_code": 1
+    },
+    "fixture_selfcheck": {
+      "path": ".agent/evidence/118/recovery1-author-B2-fixture-selfcheck.txt",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/baseline-driver.py --stage fixture-selfcheck --workspace /home/cnross/.tmp/nizam118-B2-author-tyh1fqgl/repo",
+      "sha256": "8c3e27ef8d7000c571bfebfc0d43e383a3570660f401b0fcea539dfa27fb013c",
+      "exit_code": 0
     }
   },
-  "qualification": "Actual current20 executions at frozen GitB plus naive policy controls; fixture-only receipt identities do not constitute actual SourceC prerequisite or future118 acceptance.",
-  "seal_sha256": "834ffffc9a8dbe82cd6acab7707e2d2090ce0ce7503bd45f6727112f07e2ddd0"
+  "qualification": "Actual current20 executions at frozen GitB2 plus naive policy controls and full private fixture mechanics. Private receipts and scripted doubles do not establish actual SourceC prerequisite, product readiness, QA or capture.",
+  "seal_sha256": "bd0f7f22e086b780b4b28cefe656c7a0f75e908ed8a098a076d3a253d3203a61"
 }
