@@ -5,6 +5,7 @@ No source import, development record or missing-source failure establishes accep
 Each selection needs a real subprocess; later features own SBCL and isolation proofs.
 """
 import argparse
+import ast
 import copy
 import fcntl
 import hashlib
@@ -115,8 +116,9 @@ class Session:
         except (ValueError, TypeError):
             raise AssertionError(f'BEHAVIOR_ASSERTION: one JSON response required: {p.returncode}: {p.stdout!r}: {p.stderr!r}')
         require(type(response) is dict and type(response.get('ok')) is bool, 'response envelope')
-        require(p.returncode == expected, f'{action} exit {p.returncode}, expected {expected}: {response}')
-        require(response['ok'] is (expected == 0), f'{action} envelope agrees with exit')
+        allowed = expected if isinstance(expected, tuple) else (expected,)
+        require(p.returncode in allowed, f'{action} exit {p.returncode}, expected {expected}: {response}')
+        require(response['ok'] is (p.returncode == 0), f'{action} envelope agrees with exit')
         return response
 
     def owns_lock(self, pid):
@@ -564,6 +566,65 @@ for line in sys.stdin:
             peer.cleanup()
 
 
+def crash_disagreement(parent):
+    """Real process death after durable admission, before any execute frame."""
+    with tempfile.TemporaryDirectory(prefix='crash-', dir=parent) as home:
+        base = Path(home); candidate = base / 'repo'
+        stub = candidate / 'tools/fixtures/runtime_session/stub_runtime.py'
+        stub.parent.mkdir(parents=True)
+        shutil.copyfile(ROOT / 'tools/fixtures/runtime_session/stub_runtime.py', stub)
+        source = (ROOT / 'tools/runtime_session.py').read_text()
+        publishers = [n for n in ast.parse(source).body if isinstance(n, ast.FunctionDef) and n.name == 'atomic_json']
+        require(len(publishers) == 1, 'unique durable publication site for private crash injection')
+        lines = source.splitlines(keepends=True)
+        # AST placement avoids dependence on neighboring function names or formatting.
+        lines.insert(publishers[0].end_lineno, '''
+_test_saved_publish = atomic_json
+def atomic_json(path, value):
+    _test_saved_publish(path, value)
+    path = Path(path)
+    marker = path.parent.parent / 'test-crash.once'
+    if path.parent.name == 'operations' and value.get('status') == 'running' and not marker.exists():
+        marker.touch()
+        os._exit(86)
+''')
+        injected = ''.join(lines); compile(injected, '<private-crash-candidate>', 'exec')
+        (candidate / 'tools/runtime_session.py').write_text(injected)
+        peer = Session(base, candidate=candidate)
+        try:
+            peer.open(); marker = peer.directory / 'test-crash.once'; marker.touch()
+            require(peer.execute('set', 'before-crash') == 'before-crash' and
+                    peer.execute('get') == 'before-crash', 'crash probe working transport positive')
+            restart(peer)
+            require(peer.execute('set', 'clean-restart') == 'clean-restart' and
+                    peer.execute('get') == 'clean-restart', 'normal clean restart remains usable')
+            print('CONTROL crash: real transport and clean restart positive')
+            state = peer.runstate.read_bytes(); marker.unlink()
+            request = peer.request('set', 'never-dispatched')
+            require(peer.call('submit-operation', request, 70)['error'] == 'infrastructure',
+                    'injected process death surfaces as infrastructure failure')
+            for pid, token in peer.processes.items():
+                wait_for(lambda: process_token(pid) != token, 'crashed owned incarnation stopped')
+            original = peer.operation(request['operation_id']).read_bytes()
+            require(load(peer.operation(request['operation_id']))['status'] == 'running' and
+                    not peer.result_path(request['operation_id']).exists(), 'durable nonterminal crash witness')
+            peer.no_dispatch(request['operation_id'])
+            response = peer.call('open-session', peer.opening(), (0, 1, 70))
+            if response['ok']:
+                # Track an erroneously admitted replacement before failing, so finally can reap it.
+                peer.record = response['result']; peer.remember()
+            require(response['ok'] is False, 'crash disagreement must refuse reopen before a new incarnation')
+            fresh = peer.request('set', 'must-not-dispatch')
+            peer.call('submit-operation', fresh, (1, 70)); peer.no_dispatch(fresh['operation_id'])
+            require(not peer.operation(fresh['operation_id']).exists() and
+                    peer.operation(request['operation_id']).read_bytes() == original and
+                    not peer.result_path(request['operation_id']).exists() and
+                    peer.runstate.read_bytes() == state, 'crash refusal preserves evidence and attempt identity')
+            print('CONTROL crash: ambiguous reopen and fresh dispatch refused; evidence preserved')
+        finally:
+            peer.cleanup()
+
+
 def records(s):
     import jsonschema
     s.open(); s.execute('set', 'baseline')
@@ -616,6 +677,7 @@ def records(s):
     require(sorted(p.name for p in (s.directory / 'operations').iterdir()) == before, 'malformed requests write no operation')
     for mode in ('dispatch-order', 'bad-json', 'oversize', 'wrong-generation', 'unsolicited', 'late-frame'):
         child_probe(s.home, mode)
+    crash_disagreement(s.home)
 
 
 def extract_function(text, name):
