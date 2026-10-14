@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T17:45:08.419508+00:00",
+  "updated_at": "2026-10-14T17:47:27.257583+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1211,6 +1211,10 @@
       "limit": 3
     },
     "120-hosted-ci": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-review-envelope": {
       "attempts": 1,
       "limit": 3
     }
@@ -5667,6 +5671,11 @@
       "at": "2026-10-14T17:45:08.419508+00:00",
       "event": "120-hosted-ci-dispatch",
       "detail": "Root opens draft PR for unchanged reviewed Source and executable bundle; hosted default37 runs alongside independent Mode B. No lifecycle advancement before Mode B, fresh QA and capture."
+    },
+    {
+      "at": "2026-10-14T17:47:27.257583+00:00",
+      "event": "120-review-envelope-recovery",
+      "detail": "Actual hosted run38609350872 validate job116008386438 failed C11 only: four review-routed bundle verdicts require feature. Preserve all original immutable verdict/seal bytes; original reviewer adds feature alias only, verifies exact semantic preservation and schemas. No Source/test/runtime repair or new substantive approval."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6161,7 +6170,7 @@
       }
     ]
   },
-  "last_action": "120contractrevision2 dispatched afterstrictEvaluatorrejection of3boundedissues; ModeA1originalreviewmayfinishinparallel; noSource/tests.",
+  "last_action": "120 independent Mode B in progress; hosted C11 identifies four review envelopes missing feature; original reviewer assigned metadata-only correction.",
   "completed_contract_ids": [
     "099",
     "103",
