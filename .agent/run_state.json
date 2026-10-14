@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:02:06.637513+00:00",
+  "updated_at": "2026-10-14T18:02:37.148336+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1229,7 +1229,8 @@
     },
     "runtime-canary-planning-revision": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "result": "proposal written; not approved for execution"
     },
     "120-evidence-capture": {
       "attempts": 1,
@@ -1237,6 +1238,11 @@
       "result": "passed"
     },
     "120-closure": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-current-docs": {
       "attempts": 1,
       "limit": 3
     }
@@ -5729,6 +5735,11 @@
       "event": "120-captured-complete",
       "detail": "Canonical120 COMPLETED first, then derived contract/list/manifest/state after verified independent QA, hosted37 and evidence capture. Source unchanged since initial1689f0d; historical failures and installed239 preserved.121-123 pending; no full controls-ready or comparative claim.",
       "evidence": ".agent/evidence/120/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-14T18:02:37.148336+00:00",
+      "event": "120-current-planning-projection-dispatch",
+      "detail": "Canonical120 COMPLETED with capture after six strict gates, fresh QA and actual hosted37. Planner updates only current projections/version; preserve requirements, DAG, estimates, historical proof and pending121-123. Root separately syncs feature-list spec metadata; independent factual review follows."
     }
   ],
   "phase_001_scope_budget_final": {
