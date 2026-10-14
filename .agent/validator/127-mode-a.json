@@ -1,0 +1,43 @@
+{
+  "review": "validator-mode-a",
+  "feature": "127",
+  "attempt": 1,
+  "reviewer": "/root/capability_review",
+  "reviewed_commit": "5df84b8d9ae1fb12a5f82aeb8e2520558f2f51e1",
+  "proposal_commit": "cf02c6ee79a8d82ca5b468f153f03e82de417956",
+  "contract_sha256": "16305458df6afb3b4df9b9f9d59c005e0a1103a75811dd0fc70ddca9d7516ac1",
+  "source_baseline": "c2b95a1262d49ebd615dcd0d577fad584712dc40",
+  "final_verdict": {
+    "approved": false,
+    "summary": "Reject narrowly for incomplete declared scope/role attribution of required durable artifacts. No product-semantic or normative Planner conflict identified in the bounded proposal."
+  },
+  "issues": [
+    {
+      "id": "127-A-1",
+      "severity": "medium",
+      "target": ".agent/contracts/127.json scope, evidence_convention and role-owned gate outputs",
+      "finding": "The only declared create path is .agent/evidence/127/. The contract explicitly promises .agent/evidence/127-qa-adversarial.txt outside that directory and requires independent gates/QA and contract promotion, but does not declare their canonical .agent/validator/127-*.json, .agent/qa/127*.json and .agent/contracts/127.json ownership. This leaves promised outputs outside the declared scope used by the installed exact-scope Mode B gate.",
+      "authority": [
+        ".nizam/methodology/01_execution.md sections2-3: declare created/modified files and only contracted files touched.",
+        ".nizam/standard/AGF.md sections3,5: complete unambiguous scope and canonical role-owned outputs."
+      ],
+      "required_fix": "Declare the promised adversarial evidence path and canonical contract/verdict/QA paths with Generator-proposal, independent-reviewer/Evaluator and Root-promotion ownership as appropriate. Explicitly distinguish Root-only mutable approval/lifecycle/counter/budget coordination from Generator scope, preserving field ownership and historical evidence. Retain the same source baseline, product scope, commands and budget; no product or test implementation is requested."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [
+    ".agent/evidence/127/mode-a-check.py",
+    ".agent/evidence/127/mode-a-check-result.json",
+    ".agent/evidence/127/mode-a-execution.json",
+    ".agent/evidence/127/mode-a.stdout.txt"
+  ],
+  "reviewed_findings": [
+    "Proposal validates against installed contract schema; five exact commands match activated feature127 and the CI plan preserves the original nine before appending five. Product and acceptance-test bytes remain identical to source baseline.",
+    "Explicit poll deadline separates waiting from operation status; unknown/infrastructure remains70. Terminal observation updates wait_outcome consistently with the existing closed operation schema. Cooperative cancellation requires correlated confirmed stopping, leaves unconfirmed work busy, preserves terminal-completion races and extends crash reconciliation.",
+    "Reattach checks declared owner/role, generation/lease, pending reference, governed attempt, live/durable consistency and committed workspace inputs. Closed replay templates use existing submit semantics; lifecycle never executes them. Source checks and provenance do not claim heap identity or acceptance. R8 handoff via checked reattachment and fresh-session replay is a bounded translation of the existing interface.",
+    "Cancellation-aware gate changes fit the named cancellation obligation; no new public action, schema, dependency, scheduler, SBCL or phase020 scope is authorized. Existing permissions distinguish lifecycle Orchestrator from owner operate rights.",
+    "Independent test authorship, distinct bundle review, intended semantic-red/positive controls, Mode B, separate fresh QA/extra spot-check, actual CI and evidence capture gates remain explicit. Original5650/7345 and actual3003 are preserved; pending Planner documentation projection is separately owned."
+  ],
+  "approval_boundary": "No source/test implementation authorized by this rejected gate. Root owns subsequent allocation and contract promotion; both reviewers must approve the same revised proposal."
+}
