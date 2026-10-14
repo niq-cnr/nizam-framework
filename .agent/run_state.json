@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
   "status": "in_progress",
-  "updated_at": "2026-10-14T05:57:29.294462+00:00",
+  "updated_at": "2026-10-14T06:06:23.403034+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -869,6 +869,10 @@
       "limit": 3
     },
     "118-recovery1-closeout-author": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-mode-b": {
       "attempts": 1,
       "limit": 3
     }
@@ -4854,6 +4858,15 @@
       "event": "118-recovery1-closeout-checker-correction-authorized",
       "detail": "Root actual-row preflight and two independent roles confirmed B2 debt callback freezes Notes and accepts a malformed sixth cell. Apply user-authorized supplemental pinned closeout checker, independently authored/reviewed; preserve B2/SourceC2/current20 and original failure. Full product gates unchanged.",
       "evidence": ".agent/evidence/118/recovery1-closeout-override.json"
+    },
+    {
+      "at": "2026-10-14T06:06:23.403034+00:00",
+      "event": "118-recovery1-mode-b-approved",
+      "detail": "Independent actual3 checks, scope controls and altered-tag adversary passed. Separately reviewed pinned closeout adapter corrects real debt column semantics; original false-fail/false-pass retained. Fresh QA and Root capture remain required.",
+      "evidence": [
+        ".agent/validator/118-mode-b.json",
+        ".agent/evidence/118/recovery1-closeout-review.json"
+      ]
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5393,7 +5406,7 @@
       }
     ]
   },
-  "last_action": "Actual independent SourceC2 prerequisite20 captured; Generator three selfchecks next.",
+  "last_action": "ModeB and separately reviewed closeout correction approved; fresh QA pending.",
   "completed_contract_ids": [
     "099",
     "103",
