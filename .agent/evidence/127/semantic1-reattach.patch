@@ -1,0 +1,11 @@
+--- a/tools/runtime_session.py
++++ b/tools/runtime_session.py
+@@ -748,7 +748,7 @@
+     def reattach(self, request):
+         if self.broken:
+             fail(70, 'infrastructure')
+-        if request['expected_outstanding_operation_ref'] != self.session.get('outstanding_operation_ref'):
++        if False:  # private mutant bypasses only pending snapshot equality
+             fail(1, 'continuity_mismatch')
+         provenance = source_provenance(request['handoff'])
+         if self.meta.get('source_provenance', provenance) != provenance:
