@@ -1,0 +1,46 @@
+{
+  "feature": "118",
+  "actor": "/root/wa_review118",
+  "status": "author_concluded_pending_independent_review",
+  "base": "e8e325e02ca0bb50413dcb1a6ae7776bece388ad",
+  "adapter": ".agent/evidence/118/recovery1-closeout-guard.py",
+  "adapter_sha256": "411b55a075db5ad36bdf8eab37d9c4f236433f1fd9bbd6f6c5d0bdeb9d546d43",
+  "pinned_B2": "07d5a780b16de3d44c5aac263f41404c0b9049d2",
+  "pinned_guard_sha256": "df63760287c5bae6f43f988d66976ce334e3185d95db4e54143b39a663ddf0b0",
+  "pinned_guard_git_mode": "100644",
+  "diagnosis": "Original debt comparison [:6] freezes Notes index5; original private positive created an invalid sixth table column. Correct actual five-column rows split to7 parts with empty boundaries; preserve[:5], replace Notes index5.",
+  "substitutions": [
+    "debt",
+    "_debt_controls"
+  ],
+  "preserved": "All other original B2 functions, public acceptance, runtime inputs, SourceC2, contracts, canonical lifecycle/docs and counters remain unchanged. Only new closeout evidence files created.",
+  "proofs": {
+    "revision": "e8e325e02ca0bb50413dcb1a6ae7776bece388ad",
+    "helper_sha256": "411b55a075db5ad36bdf8eab37d9c4f236433f1fd9bbd6f6c5d0bdeb9d546d43",
+    "results": [
+      {
+        "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/recovery1-closeout-guard.py --original-valid-row-red",
+        "path": ".agent/evidence/118/recovery1-closeout-author-final-original-valid-row-red.txt",
+        "exit_code": 1,
+        "sha256": "0388bbba1b06e8466de4d673778e7d1fe36fee255893a09cb12880c878c87551"
+      },
+      {
+        "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/recovery1-closeout-guard.py --controls",
+        "path": ".agent/evidence/118/recovery1-closeout-author-final-controls.txt",
+        "exit_code": 0,
+        "sha256": "462ff2a3fc3a34ce7cf37e8bbb267ecd889b8a05645d0c1e3f99fa06c6428ff1"
+      },
+      {
+        "command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/recovery1-closeout-guard.py --scope",
+        "path": ".agent/evidence/118/recovery1-closeout-author-final-scope.txt",
+        "exit_code": 0,
+        "sha256": "00d85a5ec797aeccc3f93f115aefef30c0dcf540f86a2ae86dfec3d595ac3c08"
+      }
+    ]
+  },
+  "initial_proofs": ".agent/evidence/118/recovery1-closeout-author-results.json",
+  "scope_command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/recovery1-closeout-guard.py --scope",
+  "controls_command": "PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/recovery1-closeout-guard.py --controls",
+  "qualification": "Private valid debt transition is not actual capture. Original closure predicate remains in full scope; Root must capture real QA first and disclose adapter use, not claim frozen original scope passed. Distinct reviewer approval required before operational closeout use.",
+  "postcomplete_controls": "Always construct fixture from actual immutable COORD debt rather than current completed file; scratch Git and docs only, original guard.ROOT restored in finally."
+}
