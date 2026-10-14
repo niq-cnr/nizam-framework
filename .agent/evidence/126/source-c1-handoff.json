@@ -1,0 +1,47 @@
+{
+  "owner": "/root/controller_generator",
+  "kind": "source-c1-handoff",
+  "candidate_revision": "755b859703de29065885ccd7bc6031dabb702872",
+  "source_baseline": "3f0e11b23367c17b1d8c2086011dc0c078441509",
+  "contract_baseline": "9f361154c63c2f80768b6845c98f89a9aa1a1541",
+  "contract_sha256": "7eed25daca89c13a548976a213ddba6e6837acaee90511f0deff152a60697778",
+  "test_sha256": "60f6797100f15eb32b4f9e870eafe699627d17b835c8cc2ad44b703fcfb67e14",
+  "development": ".agent/evidence/126/source-c1-development.json",
+  "completed_commands": 8,
+  "passed_commands": 7,
+  "failure": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub",
+    "actual_exit": 1,
+    "receipt": ".agent/evidence/126/source-c1-08-result.json",
+    "observation": "Existing C12 runtime_operation:attempt_continuity rejects an emitted operation record after changed-attempt refusal; the rejection retains requested identity but also emits previous_* session identity. tools/verify_lib.sh continuity compares current and previous binding even for rejected operations.",
+    "classification": "Behavioral candidate failure requiring independent confirmation; no repair attempted."
+  },
+  "not_run": [
+    "case13/stub",
+    "repository validate",
+    "complete fixture harness"
+  ],
+  "changes": [
+    "tools/runtime_session.py",
+    "tools/fixtures/runtime_session/stub_runtime.py",
+    "tools/fixtures_self_test.sh",
+    "tools/README.md",
+    "CHANGELOG.md"
+  ],
+  "source_delta": {
+    "insertions": 788,
+    "deletions": 1,
+    "controller_lines": 656,
+    "stub_lines": 46
+  },
+  "gates_pending": [
+    "Independent confirmation of transport/semantic failure",
+    "Final test-bundle review/seal",
+    "Authorized repair as applicable",
+    "Mode B",
+    "Fresh QA",
+    "Actual CI",
+    "Root evidence capture"
+  ],
+  "writes_stopped": true
+}
