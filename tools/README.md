@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.29.0
+version: 0.29.1
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.29.1"
+    date: "2026-10-14"
+    summary: "Clarify literal repository bindings and the legacy Root integration boundary."
   - version: "0.29.0"
     date: "2026-10-14"
     summary: "Document candidate-bound receipt gates, idempotent proposals and explicit proof recovery."
@@ -177,6 +180,12 @@ history/status update or an identical-receipt noop. Missing proof returns
 `rerun-required` or a verified `republish` proposal; callers must actually restore
 and revalidate the receipt. Both APIs preserve inputs and never execute recorded
 commands or write lifecycle state. Existing default acceptance includes37 cases.
+
+Policy, candidate and state must use the literal Git `origin` repository string,
+with consistently bound authority spelling; the APIs perform no alias normalization.
+Existing Root records use differing spellings and require explicitly reviewed
+compatibility or migration before live adoption; aligned synthetic fixtures prove
+library behavior only.
 
 ## Convergent findings to AGF verdict — feature 119
 
