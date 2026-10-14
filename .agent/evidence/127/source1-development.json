@@ -1,0 +1,95 @@
+{
+  "role": "Generator development evidence only",
+  "candidate": "88996ee9405f9467ff2debd6e3115b34d064019a",
+  "source_test_identity": {
+    "tools/runtime_session.py": "fe5917389ee3bdec342bd440d7ce48adf7d7e933cb4cf3f4dc1d1bbb1cecb345",
+    "tools/fixtures/runtime_session/stub_runtime.py": "e9f6e341546e42d71205916370e6bccd5a4b76f7a3a8edf178ad5418d47143da",
+    "tools/test_runtime_session.py": "3628f1b2b833a0f504cced79252391ff213bd75197dd2d5261494fbb646eb12e",
+    "tools/fixtures_self_test.sh": "930696995ba6e0ab75971792ca9a6e5a915015ca730a096d3ef615d451a46b49",
+    ".agent/contracts/127.json": "b221434834b68dd0273a0bdd0f6f8c0988bee0165f9c31255f4e33b150191cb7",
+    ".agent/evidence/127/runtime-api127.json": "f8052878dc2566dde5ec35911b485a874e187df57df8f10ade508505afd544b6"
+  },
+  "results": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-01-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-02-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check fixture-claim-registered",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-03-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-04-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-05-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-06-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-07-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-08-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-09-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmation-required",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-10-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check handoff-source-bound",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-11-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime stub",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-12-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime stub",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-13-result.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime stub",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-14-result.json"
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-15-result.json"
+    },
+    {
+      "command": "bash tools/fixtures_self_test.sh",
+      "actual_exit": 0,
+      "result": ".agent/evidence/127/source1-16-result.json"
+    }
+  ],
+  "meaning": "All requested verification captured on immutable initial candidate. No product repair or independent acceptance claimed."
+}
