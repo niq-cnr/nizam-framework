@@ -1,0 +1,48 @@
+{
+  "feature_id": "128",
+  "role": "fresh independent final QA /root/qa128; distinct from Generator, acceptance author, bundle reviewer and Validator",
+  "exercised_revision": "32984eb88627ace080574d70143fb7ff11df8763",
+  "approved_contract_sha256": "8a9cb74fa0b10e8beb312a950d976697aca227c061f7ed03ced44fa7b031be89",
+  "runner_sha256": "005ed223ab121c3a1eda7f806ac6acc1e7076e795bf9b8ee75a394ca37d5e534",
+  "source_docs_revision": "62a83e65c653ba4df69eb784396724a684ffdf79",
+  "release": ".agent/evidence/128/qa1-modeb-release.json",
+  "qa_pass": true,
+  "checks_run": 3,
+  "checks_passed": 3,
+  "checks": [
+    {"command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready", "exit_code": 0, "evidence": ".agent/evidence/128/qa1/core-ready.result.json"},
+    {"command": "bash tools/validate.sh", "exit_code": 0, "evidence": ".agent/evidence/128/qa1/validate.result.json"},
+    {"command": "bash tools/validate.sh --payload", "exit_code": 0, "evidence": ".agent/evidence/128/qa1/payload.result.json"}
+  ],
+  "adversarial": {
+    "performed": true,
+    "description": "Exactly one QA-origin extra: core-ready --require-sbcl must reject unavailable capability before aggregate dispatch.",
+    "result": "pass: actual exit2, explicit unavailable-capability reason, empty stdout; no CORE_LEAF or PASS output.",
+    "evidence": ".agent/evidence/128-qa-adversarial.txt"
+  },
+  "adversarial_check": {
+    "description": "Unavailable SBCL proof request cannot silently acquire partial-stub core-ready success.",
+    "result": "pass",
+    "evidence": ".agent/evidence/128-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/128/qa1/core-ready.result.json",
+    ".agent/evidence/128/qa1/validate.result.json",
+    ".agent/evidence/128/qa1/payload.result.json",
+    ".agent/evidence/128-qa-adversarial.txt",
+    ".agent/evidence/128/qa1/identity-before.json",
+    ".agent/evidence/128/qa1/identity-after.json",
+    ".agent/evidence/128/qa1/environment.json",
+    ".agent/evidence/128/qa1/execution-summary.json",
+    ".agent/evidence/128/qa1/manifest.json"
+  ],
+  "observations": "Own core-ready execution: exact14 ordered leaf argv, all actual exit0/final PASS proofs/cleanup, aggregate0 in38.88s. Own default16/payload12 checks pass. Actual argv/cwd/environment/output/exit/source/test refs are in each receipt.",
+  "preservation": "Before/after protected SHA256 maps and exercised revision are identical, including runtime, runner, stub, harness, installed payload and local lifecycle state. Only owned QA evidence/verdict files added.",
+  "scope": "Partial stub core only. Installedv1.5.0 unchanged. This verdict makes no SBCL, full adapter, hosted core-ready or comparison claim; Root evidence capture and lifecycle closure remain separate.",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {"approved": true, "summary": "Fresh independent QA passes exact3 commands and exactlyone own adversarial boundary check on the released committed candidate."},
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
