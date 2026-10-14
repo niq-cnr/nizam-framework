@@ -2,12 +2,15 @@
 id: nizam-handover-2026-10
 title: "Developer Handover — Release Status and Phase 014 Snapshot"
 description: "Current v1.5.0 release status and the historical phase-014 handover, with live canonical planning references."
-version: 1.0.13
+version: 1.0.14
 status: active
 authoritative_source: docs/planning/HANDOVER.md
 last_audited: "2026-10-11"
 tags: [planning, handover, onboarding, phase-014]
 change_log:
+  - version: "1.0.14"
+    date: "2026-10-14"
+    summary: "Add current016/126 handoff and next independent-test gate; preserve historical bodies and release facts."
   - version: "1.0.13"
     date: "2026-10-14"
     summary: "Add foundation118 candidate handoff and canonical capture pointers; preserve historical snapshots."
@@ -51,6 +54,20 @@ change_log:
     date: "2026-10-10"
     summary: "Initial handover record, authored by the Planner on branch chore/handover-2026-10 cut from main e2a50ed (PR #70 merged), after the operator asked for the project to be prepared for a new developer (run_state operator_gate_decision 2026-10-10T02:11:41Z). Every figure was re-verified against the repository; the replayable checks are in .agent/evidence/handover-2026-10/. Revised after Validator round 1, before merge: (b) states how this package's own budget-counted lines are treated (the Planner's phase-level-item interpretation, effective only when the Orchestrator records it), 106's measurement base and measure.py commands, and the budget figures both pre-handover and including the handover; (c) quotes the 19:28:39Z record's 11-step summary of the brief and presents the 12 steps as practised, adds that an Evaluator contract-review rejection also uses up a contract attempt (103 precedent), separates the evidence gate's EXIT:<code> rule from the practised all-EXIT:0 convention, cites the human_authorized_extension as recorded practice under 03 Section 6, and separates routine pushes and PRs from operator-authorized outward acts; (f) adds the local acceptance-gate helpers, the fixture self-test and the four CI jobs; (g) states both V13 conditions and the DAG critical-path artifact; (h) ties the expected v1.5.0 roll-up to H-NIP and H-PHASE-015; (a) item 12 names the Orchestrator and the four execution roles. Revised after Validator round 2, before merge: (c) states that the Validator runs only read-only git commands and file reads and cannot run verification commands (105-mode-b.json prior_rounds[0] MB-1); step 5 states that attempt-base.txt has been used since 103 (099's base only in run_state); steps 7-8 state that 104 and 105 ran Mode B round 1 on the unpromoted attempt commit, and that a post-promotion Mode B round is still needed when the contract has Mode B obligations on the promoted tree (105 MB-1)."
 ---
+# Developer Handover — Release Status and Phase 014 Snapshot
+
+## Current handoff — feature 126, 2026-10-14
+
+Begin with AGENTS.md and the installed index/skill. Phase017 is complete at **5,203/7,020** (PR94 `e619d284`); PR95 `c8dc65a` merged capability/comparison preparation with [green main CI](../../.agent/evidence/phase016-preflight/pr95-main-ci.json).
+[Phase016 activation](../../.agent/evidence/phase016-preflight/activation-decision.json) at `9f361` retains **5,650/7,345**, including the initial **307-line** preparation snapshot.
+At `de7deee`, [both pre-code gates](../../.agent/evidence/126/precode-approved.json) approved the [126 contract](../../.agent/contracts/126.json); earlier rejected reviews remain historical.
+Next: independent Evaluator authors acceptance, a distinct reviewer checks/seals the bundle, and positive/semantic-red provenance precedes Generator repair. Source and tests are absent at this snapshot; approval is not implementation acceptance.
+Use [phase016](phase_016.yaml), its [feature list](../../.agent/feature_list_016.json), and [manifest](manifest.json) for live status. Feature126 is in progress;127/128 remain pending, followed by018 →020 →019.
+Root alone owns lifecycle and budgets; this public refresh adds a separately measured, once-only planning cost within the existing016 allowance, without rewriting307 or017.
+Installed v1.5.0 stays immutable. The [comparison proposal](agentic-excellence.md) is unmeasured and makes no superiority claim.
+
+The older handoffs below, including “current” headings and pending016 statements, are dated snapshots. Canonical records above govern present work; all older bodies and release-disposition facts are retained.
+
 ## Current foundation handoff — feature 118, 2026-10-14
 
 Features 115–117 have completed independent QA and capture. Feature118 binds
