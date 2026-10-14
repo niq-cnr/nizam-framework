@@ -1,0 +1,84 @@
+{
+  "owner": "/root",
+  "kind": "actual-same-host-capability-receipt",
+  "captured_at": "2026-10-14T08:09:16.564134+00:00",
+  "source_head": "fcc97b50c43f82d4f4c672543ce556a178d1ddc0",
+  "checkout": {
+    "checkout_sha": "1d28b9c6e8f9a270bc13b203bcaf642b54b32499",
+    "source_sha256": {
+      ".github/scripts/test_c13_cleanup.py": "2011512c6561428ebe56d3e6cfd774bfac6b83bc7a5837307f9ca71e58bff149",
+      ".github/scripts/test_sandbox_boundaries.py": "09ab83c3c9a73e11e03a7c7856a06ae35dbddd6337251a6b3ca12cfa014924e4",
+      ".github/workflows/compliance.yml": "aeb0d4f937a2b45ba929f43118b4dbc7dde64b690c26bca97dc41d419c29a217",
+      "standard/AGF.md": "8be73efde73d4c2e830c17bed3e619cb9ae038621433bdcefd7e85ebfcd95e84",
+      "templates/AGENTS.md": "c448e983cd3461d08ec4615ad86916da8fe4638d72095e8033f9e0456f8b328f",
+      "tools/README.md": "5b6f8a6f39cf5a0d1894c8b571c04fef66cb0aaf13c1a607bc6d70565edfceeb",
+      "tools/fixtures_self_test.sh": "393b4c1cbf9d161b5406daa00c14f11e93037c150345f816b78a0d8b4a13fae0",
+      "tools/test_convergent_review.py": "a4fa85869ccb1d0f63d2bea3062efb13db2ed3a042fe82ae2fea1da8d119c662",
+      "tools/validate.sh": "843ba358154b88df16c0854040548f80c37a6bf6de99e3f052b20e2a5255fa72"
+    }
+  },
+  "environment": {
+    "environment": {
+      "GITHUB_HEAD_REF": "phase/016-runtime-controller-core",
+      "GITHUB_JOB": "convergent_review",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "38532840713",
+      "GITHUB_SHA": "1d28b9c6e8f9a270bc13b203bcaf642b54b32499",
+      "ImageOS": "ubuntu24",
+      "ImageVersion": "20261004.327.1",
+      "RUNNER_ARCH": "X64",
+      "RUNNER_NAME": "GitHub Actions 1000003562",
+      "RUNNER_OS": "Linux"
+    },
+    "host": "runnervmmprz5",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39"
+  },
+  "run_id": 38532840713,
+  "job_id": 115748548462,
+  "url": "https://github.com/niq-cnr/nizam-framework/actions/runs/38532840713/job/115748548462",
+  "commands": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py",
+      "step": "Run required isolation suite",
+      "conclusion": "success",
+      "exit_code": 0,
+      "exit_code_basis": "GitHub Actions successful step for this single fail-closed shell command",
+      "started_at": "2026-10-14T08:07:10Z",
+      "completed_at": "2026-10-14T08:07:18Z"
+    },
+    {
+      "command": "sbcl --version",
+      "step": "Check SBCL version",
+      "conclusion": "success",
+      "exit_code": 0,
+      "exit_code_basis": "GitHub Actions successful step for this single fail-closed shell command",
+      "started_at": "2026-10-14T08:07:10Z",
+      "completed_at": "2026-10-14T08:07:10Z"
+    },
+    {
+      "command": "sbcl --no-sysinit --no-userinit --non-interactive --eval '(assert (= (+ 1 1) 2))'",
+      "step": "Check fresh SBCL without init files",
+      "conclusion": "success",
+      "exit_code": 0,
+      "exit_code_basis": "GitHub Actions successful step for this single fail-closed shell command",
+      "started_at": "2026-10-14T08:07:10Z",
+      "completed_at": "2026-10-14T08:07:10Z"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".agent/evidence/phase016-preflight/hosted-run.json",
+      "sha256": "d0d07daa0a1f66bc629e8913f15d39ffe04c811262145d545587f26c7fb6b58d"
+    },
+    {
+      "path": ".agent/evidence/phase016-preflight/hosted-job.json",
+      "sha256": "a637c4beb5d661c376aae7e3670ba07a22d276f26f929822d61d112fb4f68b72"
+    },
+    {
+      "path": ".agent/evidence/phase016-preflight/hosted-job.log",
+      "sha256": "95c54267d0dc30b85dc6eb82566edabe18f57f66c579e795fabf21404ab0e77f"
+    }
+  ],
+  "capability_preflight_passed": true,
+  "limits": "Capability only. No controller/live case acceptance, phase activation, merge readiness or comparative performance claim."
+}
