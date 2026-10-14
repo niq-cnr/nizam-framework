@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "127",
   "status": "in_progress",
-  "updated_at": "2026-10-14T11:30:12.304457+00:00",
+  "updated_at": "2026-10-14T11:32:01.843805+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -963,6 +963,10 @@
     },
     "127-bundle-review": {
       "attempts": 2,
+      "limit": 3
+    },
+    "127-source": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -5184,6 +5188,12 @@
       "event": "127-acceptance2-delta-review",
       "detail": "Independent author2 corrected only sealed command ordering; unchanged test/API and all70 prior pins checked. Distinct bundle review2 now required before initial source.",
       "evidence": ".agent/evidence/127/bundle-review2-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:32:01.843805+00:00",
+      "event": "127-bundle2-approved-source1",
+      "detail": "Promoted unchanged independent test/API plus corrected sealed projection after strict reviewer approval. Source1 isolated implementation begins; final semantic controls and all delivery gates remain pending.",
+      "evidence": ".agent/evidence/127/source1-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5677,7 +5687,7 @@
       }
     ]
   },
-  "last_action": "127 independent provisional test/API bundle review1; source remains gated",
+  "last_action": "127 initial executable source1 authorized after exact provisional bundle approval",
   "completed_contract_ids": [
     "099",
     "103",
