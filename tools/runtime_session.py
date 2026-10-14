@@ -267,6 +267,64 @@ class Supervisor:
     def operation_path(self, operation_id):
         return self.directory / 'operations' / f'{operation_id}.json'
 
+    def reconcile_idle(self, session, metadata):
+        """Check published state without repairing it or inventing an outcome.
+
+        Admission and completion each publish several files. A null pointer is
+        necessary but not sufficient: a crash can precede its publication, or
+        leave a result without the corresponding terminal operation. Generation
+        reservation likewise needs matching metadata and session publications.
+        """
+        try:
+            operation_dir = self.directory / 'operations'
+            paths = list(operation_dir.glob('*.json'))
+            if session is None:
+                if metadata is not None or paths:
+                    fail(1, 'ambiguous_state')
+                return
+            generation(session['generation'])
+            generation(metadata['generation'])
+            if (metadata['generation'] != session['generation']
+                    or session.get('outstanding_operation_ref') is not None):
+                fail(1, 'ambiguous_state')
+            records = {path.name: path for path in paths if not path.name.endswith('.result.json')}
+            results = {path.name: path for path in paths if path.name.endswith('.result.json')}
+            known = {session['generation']['counter']: session['generation']['nonce']}
+            for name, path in records.items():
+                record = read_json(path)
+                oid = record['operation_id']
+                insist(identifier(oid))
+                generation(record['generation'])
+                counter, nonce = record['generation']['counter'], record['generation']['nonce']
+                if (name != oid + '.json' or record['session_id'] != session['session_id']
+                        or counter > session['generation']['counter']
+                        or known.get(counter, nonce) != nonce):
+                    fail(1, 'ambiguous_state')
+                known[counter] = nonce
+                status = record['status']
+                if status not in ('completed', 'rejected', 'terminated', 'condition_signalled', 'cancelled'):
+                    fail(1, 'ambiguous_state')
+                if record.get('executed') is not (status != 'rejected'):
+                    fail(1, 'ambiguous_state')
+                result_path = results.pop(oid + '.result.json', None)
+                if status == 'completed':
+                    if result_path is None:
+                        fail(1, 'ambiguous_state')
+                    result = read_json(result_path)
+                    object_keys(result, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'})
+                    generation(result['generation'])
+                    if (result['type'] != 'result' or result['operation_id'] != oid
+                            or result['generation'] != record['generation']
+                            or result['status'] != 'completed' or result['image_consistent'] is not True
+                            or record.get('image_consistent') is not True):
+                        fail(1, 'ambiguous_state')
+                elif result_path is not None:
+                    fail(1, 'ambiguous_state')
+            if results:
+                fail(1, 'ambiguous_state')
+        except (OSError, KeyError, TypeError, ValueError, SessionError):
+            fail(1, 'ambiguous_state')
+
     def prepare(self):
         request = self.request
         session_path = self.directory / 'runtime_session.json'
@@ -286,6 +344,7 @@ class Supervisor:
                 fail(1, 'attempt_mismatch')
         elif previous_meta or 'expected_generation' in request:
             fail(70, 'infrastructure')
+        self.reconcile_idle(previous, previous_meta)
         if not attempt_matches(request, request):
             fail(1, 'attempt_mismatch')
         counter = previous['generation']['counter'] + 1 if previous else 1
@@ -296,6 +355,7 @@ class Supervisor:
         self.meta = {key: request[key] for key in (*BINDING, 'run_state_path')}
         self.meta.update(supervisor_pid=os.getpid(), supervisor_pgid=os.getpgrp(),
                          supervisor_token=live_token(os.getpid()), child_pid=None,
+                         generation=self.session['generation'],
                          previous_generation=previous['generation'] if previous else None)
         (self.directory / 'operations').mkdir(exist_ok=True)
         # Reserve the incarnation durably before any child exists.
@@ -460,6 +520,12 @@ class Supervisor:
                 reason = 'session_busy'
             if not reason and self.broken:
                 fail(70, 'infrastructure')
+            if not reason:
+                durable_session = read_json(self.directory / 'runtime_session.json')
+                durable_meta = read_json(self.directory / 'controller.json')
+                if durable_session != self.session or durable_meta != self.meta:
+                    fail(1, 'ambiguous_state')
+                self.reconcile_idle(durable_session, durable_meta)
             expression = parse_json(request['payload']['expression'])
             if expression['op'] == 'gate':
                 release = Path(expression['release_path'])
