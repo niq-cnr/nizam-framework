@@ -1,0 +1,37 @@
+{
+  "candidate_revision": "c40975126ff1f42cad1906355b81e62b0894bd1c",
+  "role": "Generator architectural analysis, not independent acceptance",
+  "requirement": ".agent/contracts/126.json interface.records",
+  "original_red": ".agent/evidence/126/mode-b-crash-result.json",
+  "boundaries": [
+    {
+      "publication": "running operation before session pointer",
+      "decision": "Scan all published operation records under held flock. Any running/cancel_requested/unknown or unrecognized status blocks replacement, even when pointer is null."
+    },
+    {
+      "publication": "session outstanding pointer before child dispatch",
+      "decision": "Existing non-null-pointer refusal remains. No inference that absence of child receipt means a safe restart."
+    },
+    {
+      "publication": "result before terminal operation, terminal operation before pointer clear",
+      "decision": "Result with nonterminal operation is refused. Completed operation requires matching correlated result. Any retained outstanding pointer refuses replacement; no automatic clearing or fabricated completion."
+    },
+    {
+      "publication": "terminal operation plus cleared pointer",
+      "decision": "Matching terminal records permit clean restart. Terminated/rejected operations require no child result; result orphans/mismatches refuse. All prior files remain untouched."
+    },
+    {
+      "publication": "metadata generation reservation before session generation",
+      "decision": "New explicit private metadata generation must match durable session generation before allocating another incarnation. Interrupted mismatch refuses. Failed startup with coherently reserved generation consumes it; subsequent clean replacement increments rather than resets."
+    },
+    {
+      "publication": "idle in-memory state versus durable state before next submit",
+      "decision": "Before any otherwise admissible new dispatch, compare actual metadata/session bytes as parsed values to owned in-memory state and recheck record consistency. Duplicate-ID/busy/refusal paths retain their existing semantics."
+    }
+  ],
+  "limits": [
+    "No recovery override or state repair introduced.",
+    "No schema/dependency/independent test changes.",
+    "Old B2 development commands do not replace independently authored B3 crash regression and renewed review."
+  ]
+}
