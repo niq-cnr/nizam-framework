@@ -1,0 +1,58 @@
+{
+  "review": "provisional-acceptance-bundle-B0",
+  "feature": "126",
+  "reviewer": "/root/capability_review",
+  "reviewed_commit": "76ad8c0597c959d451424b36821f5b572bb63277",
+  "contract_sha256": "7eed25daca89c13a548976a213ddba6e6837acaee90511f0deff152a60697778",
+  "test_sha256": "3366152d532b902d97c41a231617e9371a4223c0255bf7571c6e2cf60b1b4f3e",
+  "api_sha256": "8a073ab52a759f29f4c50053a954bfee2ba1997f8ea9923877148f311e67860f",
+  "scope": "Provisional authored-test and scaffold-handoff review only, not final bundle acceptance, product implementation acceptance, semantic red or QA.",
+  "final_verdict": {
+    "approved": false,
+    "summary": "Reject B0 handoff: repair cleanup ownership verification, late-frame marker synchronization and exact option parsing; preserve prior evidence and renew author seal/review."
+  },
+  "issues": [
+    {
+      "id": "B0-1",
+      "severity": "high",
+      "target": "tools/test_runtime_session.py:Session.remember/cleanup",
+      "finding": "remember() accepts any live PID from controller metadata and registers its current start token; cleanup then signals it. Token matching guards later PID reuse but does not establish initial scratch ownership. A reviewer-owned unrelated process with no scratch-root identity was placed in metadata; the exact helpers killed it with SIGTERM.",
+      "required_fix": "Before registering/signalling a PID or group, independently establish its ownership by this scratch session and candidate using actual process identity/group relationships plus scratch-bound identity. Fail closed on unrelated/stale metadata. Add a live unrelated-process negative control as well as the existing legitimate cleanup and post-registration token-change controls. Do not signal the unrelated control.",
+      "evidence": ".agent/evidence/126/b0-review.stdout.txt"
+    },
+    {
+      "id": "B0-2",
+      "severity": "medium",
+      "target": "tools/test_runtime_session.py:child_probe late-frame branch",
+      "finding": "The generated peer sends its result before atomically publishing marker. peer.finish() can therefore return before marker exists, but late-frame immediately calls marker.unlink(). An independent replay of the exact peer source confirms result_already_sent=true while marker_exists=false. A valid controller can fail with FileNotFoundError solely from scheduling.",
+      "required_fix": "Wait for the first correlated marker before unlinking/starting the second request; require the expected first operation identity. Add a control delaying marker publication after result delivery so this ordering remains deterministic.",
+      "evidence": ".agent/evidence/126/b0-review.stdout.txt"
+    },
+    {
+      "id": "B0-3",
+      "severity": "medium",
+      "target": "tools/test_runtime_session.py:main ArgumentParser",
+      "finding": "Default argparse abbreviation accepts --chec as --check. The actual invocation reached the source-absence branch instead of rejecting the unknown selector; a future source-present run could accept the undocumented flag.",
+      "required_fix": "Disable option abbreviation and add a negative selector check that requires a parser diagnostic before source setup for abbreviated options.",
+      "evidence": ".agent/evidence/126/b0-review.stdout.txt"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [
+    ".agent/evidence/126/b0-review-check.py",
+    ".agent/evidence/126/b0-review-result.json",
+    ".agent/evidence/126/b0-review.stdout.txt"
+  ],
+  "confirmed": [
+    "Exact test/API/projection and ten normative hashes match the seal; obligation projection matches approved contract.",
+    "Independent syntax check passed; actual claim_map_check accepted positive control and rejected missing/duplicate/missing-suite maps; harness rejected always-pass and always-reject variants.",
+    "All nine obligations have authored routes, including duplicate-ID changed-payload probes and positive controls. Runtime harness scheduling seam remains absent and unproven against product.",
+    "No missing-source execution is counted as semantic red. PID metadata is observability only and does not establish continuation or cleanup ownership by itself."
+  ],
+  "pending_after_repairs": [
+    "Renew independent test-author bytes/seal and B0 review.",
+    "Actual working transport positive and identified intended behavioral red with positive control.",
+    "Final acceptance bundle review/seal, Mode B, fresh independent QA and CI evidence."
+  ]
+}
