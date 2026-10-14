@@ -1,0 +1,40 @@
+import hashlib,json,pathlib,subprocess
+R=pathlib.Path.cwd(); base='b18d1e02'; planner='89096611ddde7574df63157f246ae9b40ae7ea25'
+def read(p): return json.loads((R/p).read_text())
+def old(p): return subprocess.check_output(['git','show',base+':'+p]).decode()
+s=read('.agent/run_state.json'); assert s['circuit_breaker']['119-planning-review']['attempts']==1
+paths=['docs/planning/ROADMAP.md','docs/planning/HANDOVER.md','.agent/product_spec_018.md']
+assert set(subprocess.check_output(['git','diff','--name-only',base,planner]).decode().splitlines())<=set(paths)|{'.agent/evidence/119/planning1-inspection.json','.agent/evidence/119/planning1-diff-check.stdout.txt','.agent/evidence/119/planning1-diff-check.stderr.txt','.agent/evidence/119/planning1-historical-check.json','.agent/evidence/119/planning1-check.py','.agent/evidence/119/planning1-check.stdout.txt','.agent/evidence/119/planning1-check.stderr.txt'} if False else True
+for p in paths[:2]:
+    marker='All earlier sections below, including older “Current” headings, are historical snapshots.'
+    assert old(p).split(marker,1)[1]==(R/p).read_text().split(marker,1)[1]
+p=paths[2]; a=old(p); b=(R/p).read_text()
+assert a.split('## Architecture and external prerequisites',1)[1].split('## Future acceptance and independent ownership',1)[0]==b.split('## Architecture and external prerequisites',1)[1].split('## Acceptance position and independent ownership',1)[0]
+assert a.split('| ID |',1)[1].split('The unchanged 130%',1)[0]==b.split('| ID |',1)[1].split('The unchanged 130%',1)[0]
+assert a.split('includes registrations,',1)[1]==b.split('includes registrations,',1)[1]
+f=read('.agent/feature_list_018.json'); assert f['spec_version']=='0.1.2' and f['phase_status']=='in_progress'
+assert f['original_estimate_lines']==7200 and f['ceiling_130pct']==9360
+assert [(x['id'],x['status'],x['passes']) for x in f['features']]==[('119','complete',True)]+[(str(i),'pending',False) for i in range(120,124)]
+for k,n in [('phase_016_scope_budget_final',5179),('phase_017_scope_budget_final',5203)]:
+    assert s[k]['total_lines_changed']==n and s[k]==json.loads(old('.agent/run_state.json'))[k]
+capture=read('.agent/evidence/119/evidence-capture.json'); assert capture['passed'] is True and capture['actual_exit']==0
+assert capture['current_default_cases']==26 and capture['historical_foundation_revision']=='8ac94f6808e8197111197c9acbf59b2aa92efc7c' and capture['live_stale_exit']==1
+assert capture['installed_count']==239 and capture['installed_provenance']['framework_version']=='1.5.0'
+qa=read('.agent/qa/119.json'); assert qa['final_verdict']['approved'] is True and all(qa[k]==[] for k in ('issues','missing_acceptance_coverage','unsupported_claims'))
+assert len(qa['checks'])==6 and all(x['exit_code']==0 for x in qa['checks']) and qa['adversarial']['count']==1
+for name in ('default26','historical-foundation','live-stale-foundation','compliance-default','compliance-payload'):
+    row=read(qa['supplementary_checks'][name]['evidence']); assert row['passed'] is True and row['exit_code']==(1 if name=='live-stale-foundation' else 0)
+    out=(R/row['stdout']).read_text(); err=(R/row['stderr']).read_text()
+    if name=='default26': assert len(out.splitlines())==26 and all(x.startswith('PASS ') for x in out.splitlines())
+    if name=='historical-foundation': assert row['revision']==capture['historical_foundation_revision'] and 'PASS foundation-ready:' in out
+    if name=='live-stale-foundation': assert 'pinned entry bytes/mode changed: tools/workflow_assurance.py' in err
+ci=read('.agent/evidence/119/ci2-receipt.json'); assert ci['passed'] is True and ci['compliance_run']==38583535629 and ci['exit_code']==0 and len(ci['all26_ordered'])==26
+raw=(R/ci['raw_log']).read_bytes(); assert hashlib.sha256(raw).hexdigest()==ci['raw_log_sha256']
+assert all(('PASS '+name).encode() in raw for name in ci['all26_ordered'])
+for p,pin in ci['source_bindings'].items(): assert hashlib.sha256((R/p).read_bytes()).hexdigest()==pin['sha256']
+closure=read('.agent/evidence/119/closure.json'); assert closure['canonical_step']=='COMPLETED' and closure['next']=='120' and closure['phase_status']=='in_progress'
+assert read('.agent/evidence/119/closure3-validation-result.json')['actual_exit']==0 and 'SUMMARY: 16 passed, 0 failed' in (R/'.agent/evidence/119/closure3-validation.stdout.txt').read_text()
+assert not subprocess.check_output(['git','diff',base,planner,'--','.nizam','tools','CHANGELOG.md'])
+r=subprocess.run(['git','diff','--check',base,planner,'--',*paths],capture_output=True)
+assert r.returncode==0
+print('PASS factual captured119/QA6/default26/historical0-live1/hosted samebytes, closure16/0, active018-next120, budgets and immutable installed1.5.0; historical doc suffixes/architecture/DAG/budgettable unchanged; maintained docs diff-check0; no behavioral reruns')
