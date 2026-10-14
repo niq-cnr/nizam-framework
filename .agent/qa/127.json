@@ -1,0 +1,165 @@
+{
+  "feature_id": "127",
+  "qa_pass": true,
+  "checks_run": 14,
+  "checks_passed": 14,
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/01-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/02-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check fixture-claim-registered",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/03-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/04-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/05-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/06-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/07-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/08-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/09-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check cancel-confirmation-required",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/10-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check handoff-source-bound",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/11-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime stub",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/12-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime stub",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/13-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime stub",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/14-command.json"
+    }
+  ],
+  "executed_at": "2026-10-14T12:05:31.578928+00:00",
+  "evaluator": {
+    "role": "Evaluator",
+    "session": "/root/runtime_qa127",
+    "attempt": 1,
+    "independence": "Fresh session distinct from Generator controller_generator, acceptance author acceptance126, bundle reviewer capability_review and Source Validator modeb127. All results re-executed locally after strict ModeB release."
+  },
+  "candidate_head": "4ad36b310de9611128c023c8e810eb08a12110e4",
+  "source_revision": "88996ee9405f9467ff2debd6e3115b34d064019a",
+  "test_lines": 1344,
+  "contract_sha256": "b221434834b68dd0273a0bdd0f6f8c0988bee0165f9c31255f4e33b150191cb7",
+  "test_sha256": "3628f1b2b833a0f504cced79252391ff213bd75197dd2d5261494fbb646eb12e",
+  "api_sha256": "f8052878dc2566dde5ec35911b485a874e187df57df8f10ade508505afd544b6",
+  "mode_b_ref": ".agent/validator/127-mode-b.json",
+  "release_ref": ".agent/evidence/127/qa1-modeb-release.json",
+  "runtime_ref": ".agent/evidence/127/final-qa/runtime.json",
+  "identity_before": ".agent/evidence/127/final-qa/identity-before.json",
+  "identity_final": ".agent/evidence/127/final-qa/identity-final.json",
+  "repository_checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/validate.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/15-command.json"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 bash tools/fixtures_self_test.sh",
+      "exit_code": 0,
+      "evidence": ".agent/evidence/127/final-qa/16-command.json"
+    }
+  ],
+  "adversarial": {
+    "performed": true,
+    "count": 1,
+    "exit_code": 0,
+    "description": "Bind a pending gate handoff, confirm cancellation, reject its now-stale pending reference atomically, reattach the refreshed null reference, preserve the same live child and pre-gate warm value; fresh work stays usable.",
+    "result_ref": ".agent/evidence/127/final-qa/17-command.json",
+    "observations_ref": ".agent/evidence/127/final-qa/adversarial-observations.json",
+    "evidence": ".agent/evidence/127-qa-adversarial.txt"
+  },
+  "adversarial_check": {
+    "description": "pending handoff cancellation transition and stale-snapshot refusal",
+    "result": "PASS: confirmed cancellation clears pending transition state; stale handoff reference refuses atomically; refreshed reattach preserves the same live child, owner/generation/lease and warm value; fresh work succeeds; owned processes stop.",
+    "evidence": ".agent/evidence/127-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/127-qa-adversarial.txt",
+    ".agent/evidence/127/final-qa/01-command.json",
+    ".agent/evidence/127/final-qa/02-command.json",
+    ".agent/evidence/127/final-qa/03-command.json",
+    ".agent/evidence/127/final-qa/04-command.json",
+    ".agent/evidence/127/final-qa/05-command.json",
+    ".agent/evidence/127/final-qa/06-command.json",
+    ".agent/evidence/127/final-qa/07-command.json",
+    ".agent/evidence/127/final-qa/08-command.json",
+    ".agent/evidence/127/final-qa/09-command.json",
+    ".agent/evidence/127/final-qa/10-command.json",
+    ".agent/evidence/127/final-qa/11-command.json",
+    ".agent/evidence/127/final-qa/12-command.json",
+    ".agent/evidence/127/final-qa/13-command.json",
+    ".agent/evidence/127/final-qa/14-command.json",
+    ".agent/evidence/127/final-qa/15-command.json",
+    ".agent/evidence/127/final-qa/16-command.json",
+    ".agent/evidence/127/final-qa/17-command.json",
+    ".agent/evidence/127/final-qa/adversarial-observations.json",
+    ".agent/evidence/127/final-qa/evidence-manifest.json",
+    ".agent/evidence/127/final-qa/identity-before.json",
+    ".agent/evidence/127/final-qa/identity-final.json",
+    ".agent/evidence/127/final-qa/post-process-scan.json",
+    ".agent/evidence/127/final-qa/runtime.json",
+    ".agent/evidence/127/final-qa/summary.json",
+    ".agent/evidence/127/final-qa/verdict-validation.json"
+  ],
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [],
+  "final_verdict": {
+    "approved": true,
+    "summary": "All fourteen exact runtime commands passed independently, as did tools/validate.sh, full tools/fixtures_self_test.sh and exactly one additional Evaluator-originated interaction check."
+  },
+  "preservation": {
+    "source_test_contract_API_fixture_inputs_unchanged": true,
+    "installed_payload_unchanged": true,
+    "root_run_state_unchanged": true
+  },
+  "claim_boundary": "Partial stub semantics only. No SBCL runtime, full adapter, fresh acceptance, superiority, authentication or feature-completion claim. Root owns evidence capture, lifecycle, budget and final PR gates.",
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}

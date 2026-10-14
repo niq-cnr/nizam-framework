@@ -1,0 +1,78 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/home/cnross/.tmp/nizam-feature127-final-qa/tools/runtime_session.py",
+    "reattach-session",
+    "--root",
+    "/home/cnross/.tmp/qa127-own-56wfa3hm/state",
+    "--request",
+    "/home/cnross/.tmp/qa127-own-56wfa3hm/adversarial-call-07.json"
+  ],
+  "cwd": "/home/cnross/.tmp/nizam-feature127-final-qa",
+  "request": {
+    "session_id": "own-interaction",
+    "requester": {
+      "agent_id": "owner",
+      "principal_kind": "agent",
+      "role": "Generator"
+    },
+    "expected_generation": {
+      "counter": 1,
+      "nonce": "329ed5266914b5cdc2f76234f2536a91"
+    },
+    "expected_lease_epoch": 0,
+    "contract_id": "126",
+    "step_key": "126-implementation",
+    "attempt": 2,
+    "expected_outstanding_operation_ref": "/home/cnross/.tmp/qa127-own-56wfa3hm/state/own-interaction/operations/op-5.json",
+    "handoff": {
+      "workspace_path": "/home/cnross/.tmp/qa127-own-56wfa3hm/source",
+      "source_revision": "9b9cc882ff0a6d67435eed67bedce6a0f48885a6",
+      "source_manifest": [
+        {
+          "path": "get.json",
+          "sha256": "51206955fec1394836ddfcf2c1cc1fb9e6829ace1ab75b3afb85fca57f216f72"
+        },
+        {
+          "path": "resource.txt",
+          "sha256": "d407c0abfd0d5dae8bbf5eedcbd9630501c1eab280ca9f3b4f7fb2208163eebd"
+        },
+        {
+          "path": "set.json",
+          "sha256": "56308c0f03f9a3a4b98931ccba1cbac6ff500bd7eeffee09194e0f5706d77e63"
+        },
+        {
+          "path": "source.txt",
+          "sha256": "2e08afa315506606936f3b27a93d2b5867d50ab080fda71306f55578413e1e1e"
+        }
+      ],
+      "command_refs": [
+        "set.json",
+        "get.json"
+      ],
+      "external_resources": [
+        {
+          "ref": "/home/cnross/.tmp/qa127-own-56wfa3hm/source/resource.txt",
+          "owner": {
+            "principal_kind": "agent",
+            "role": "Generator",
+            "agent_id": "owner"
+          },
+          "isolation": "isolated"
+        }
+      ]
+    }
+  },
+  "exit_code": 0,
+  "environment_override": {
+    "HOME": "/home/cnross/.tmp/qa127-own-56wfa3hm",
+    "XDG_CACHE_HOME": "/home/cnross/.tmp/qa127-own-56wfa3hm/cache",
+    "XDG_CONFIG_HOME": "/home/cnross/.tmp/qa127-own-56wfa3hm/config",
+    "XDG_DATA_HOME": "/home/cnross/.tmp/qa127-own-56wfa3hm/data",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "stdout": ".agent/evidence/127/final-qa/adversarial-call-07.stdout.txt",
+  "stdout_sha256": "180398964207d782b7e0be49d51fba0443e529705a7e8888397ce27a3e6af9a6",
+  "stderr": ".agent/evidence/127/final-qa/adversarial-call-07.stderr.txt",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
