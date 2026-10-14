@@ -1,0 +1,30 @@
+{
+  "kind": "Generator-source-C2-handoff",
+  "owner": "/root/controller_generator",
+  "candidate_revision": "b6c0b097ecf2e12ee638a60273af568a8b86523a",
+  "source_attempt": 2,
+  "worktree": "/home/cnross/.tmp/nizam-feature126-source2",
+  "source_manifest": ".agent/evidence/126/source-c2-manifest.json",
+  "development": ".agent/evidence/126/source-c2-development.json",
+  "changes": [
+    "tools/runtime_session.py: attach previous_* only when requested governed binding matches session binding",
+    "tools/README.md: suffix-free illustrative request path"
+  ],
+  "structural_rationale": "A refused foreign contract/step/attempt remains exact request provenance. Attaching the session previous_* binding falsely asserted that rejected foreign binding continued the session governed step. Matching-binding records retain full generation continuity; guard/dispatch/counters are unchanged. This avoids falsifying rejected request values or weakening schemas/C12/tests.",
+  "preservation": {
+    "C1": "755b859703de29065885ccd7bc6031dabb702872",
+    "C1_actual_red": "Case9 captured and independently confirmed in B2; unchanged historical artifacts",
+    "B2_seal": ".agent/evidence/126/test-seal-b2.json",
+    "B2_source_pin": "C1 remains immutable; source-c2-manifest identifies C2 separately",
+    "test_sha256": "60f6797100f15eb32b4f9e870eafe699627d17b835c8cc2ad44b703fcfb67e14"
+  },
+  "development_results": "All nine exact commands, repository validator16/16, complete fixture harness166/166 exit0; full command/output/exit/revision receipts linked.",
+  "remaining_gates": [
+    "Independent Mode B",
+    "Fresh independent QA and additional adversarial check",
+    "Actual C2 CI receipts",
+    "Root evidence capture/completion"
+  ],
+  "acceptance_claim": false,
+  "writes_stopped": true
+}
