@@ -1,0 +1,38 @@
+{
+  "review": "contract-testability",
+  "feature": "120",
+  "contract_id": "120",
+  "revision_reviewed": 0,
+  "actor": "/root/qa119",
+  "reviewed_revision": "87ca77e9d95aca042c49cf245ca58e63eb92ee4b",
+  "proposal_revision": "63f3bb9f5794a331207a18a091469b4c08c97c7c",
+  "proposal_sha256": "620130f2e63ff117192d83ac9dda2f51afc6aa87d4d0e54067bd60373626a2a8",
+  "issues": [
+    {
+      "verification_index": "AT9/AT10/AT11",
+      "criterion": "Returned transition state must remain valid under reused run-state schema.",
+      "severity": "high",
+      "evidence": ".agent/evidence/120/contract-review1-primary-observations.txt: schema/run_state.schema.json history.items requires at,event,detail, but api.transition specifies an event with at,event,operation_id,feature_id,stage,candidate_sha256,receipt_sha256 and no detail. Schema status is unrestricted string, so invoking its enum is not an existing constraint.",
+      "required_fix": "Include deterministic detail in the exact event shape and event identity/replay comparison; validate proposed output state against the existing schema. State the actual typed from/to status policy explicitly without asserting a schema enum that does not exist. Preserve the required history prefix and existing ownership guard."
+    },
+    {
+      "verification_index": "AT1/AT8 and fixed stage prerequisites",
+      "criterion": "Stage prerequisites use each actual artifact kind's authoritative approval fields.",
+      "severity": "high",
+      "evidence": ".agent/evidence/120/contract-review1-primary-observations.txt: existing119 approved/complete contract uses status and approvals, evidence-capture uses passed:true plus actual_exit:0, while fresh QA uses final_verdict.approved plus the three arrays. api.prerequisites nevertheless requires relevant schema and strict gate arrays approved for each reference, without concrete fixed predicates per kind; expected closed verdict shape is undefined.",
+      "required_fix": "Specify closed prerequisite entry fields and non-overridable per-kind validators: approved immutable contract plus its dual independent gate references; strict AGF arrays for gate/QA kinds; actual passed:true and strict actual exit/candidate bindings for capture kind. Bind known artifact-specific feature/candidate fields explicitly, retaining original context for historical dependency proofs. Define a concrete Root operator-application shape that reuses standing authority without treating an automated gate as consent."
+    },
+    {
+      "verification_index": "AT3/AT4/AT7/AT11",
+      "criterion": "Actual command execution/exit must have an independently pinned capture authority beyond receipt declarations and output text.",
+      "severity": "high",
+      "evidence": ".agent/evidence/120/contract-review1-primary-observations.txt: receipt.checks contains its own executed/outcome/exit_code plus stdout/stderr references; api.actual_execution only compares that exit to policy0 and finds a diagnostic line. It declares no capture-result reference from which actual argv/exit/candidate/producer can be cross-checked. Existing119 result.json demonstrates the separate argv/cwd/revision/exit/output record that can supply this missing binding.",
+      "required_fix": "Add an independently selected immutable capture-result reference/closed shape and compare its actual strict integer exit, argv/order, exercised candidate/context, producer and output digests with both policy and receipt. Keep expected exit/outcome/diagnostic independently frozen; contradictory capture exit/setup/transport must reject despite receipt passed/exit0/PASS text. Preserve the stated trusted transport boundary without claiming hashes or self-reported IDs authenticate execution."
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "observations": ["All eleven declared commands align with canonical120 acceptance_tests; current26 preservation/default37, immutable118 boundary, real restoration, independent gates and2750/7200/9360 scope are retained. No new API command was run.", "Initial convenience helper actualexit1 is preserved at commit30604ae. Its guessed feature-list key failed before command comparison or schema-event probe; this is not a contract command mismatch or executed schema-rejection result. Root explicitly authorized direct primary-artifact review rather than retrying that helper."],
+  "evidence": [".agent/evidence/120/contract-review1-primary-observations.txt", ".agent/evidence/120/contract-review1-inspect.py", ".agent/evidence/120/contract-review1-inspect.stdout.txt", ".agent/evidence/120/contract-review1-inspect.stderr.txt"],
+  "final_verdict": {"approved": false, "summary": "Three bounded contract ambiguities prevent independent positive/negative receipt and recovery fixtures: schema-invalid event shape, unspecified artifact-kind predicates and no external actual-exit capture binding. Revise before either implementation or acceptance authoring."}
+}
