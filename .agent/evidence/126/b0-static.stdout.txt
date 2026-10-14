@@ -1,0 +1,102 @@
+PASS compile runner 660 lines
+PASS compile generated private protocol peer
+SELECTOR [] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: one of the arguments --check --case is required
+SELECTOR ['--unknown'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: one of the arguments --check --case is required
+SELECTOR ['--check', 'absent'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: argument --check: invalid choice: 'absent' (choose from 'lifecycle-no-evaluation', 'record-schema', 'fixture-claim-registered')
+SELECTOR ['--case', '4', '--runtime', 'stub'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: argument --case: invalid choice: 4 (choose from 1, 2, 3, 8, 9, 13)
+SELECTOR ['--case', '1'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: cases require --runtime stub; case8 requires --layer policy only
+SELECTOR ['--case', '8', '--runtime', 'stub'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: cases require --runtime stub; case8 requires --layer policy only
+SELECTOR ['--case', '1', '--runtime', 'sbcl'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: argument --runtime: invalid choice: 'sbcl' (choose from 'stub')
+SELECTOR ['--case', '1', '--runtime', 'ci'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: argument --runtime: invalid choice: 'ci' (choose from 'stub')
+SELECTOR ['--check', 'record-schema', '--layer', 'policy'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: cases require --runtime stub; case8 requires --layer policy only
+SELECTOR ['--check', 'record-schema', '--case', '1'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: argument --case: not allowed with argument --check
+SELECTOR ['--check', 'record-schema', '--require-sbcl'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: requested capability proof is unavailable in this partial stub suite; no skip permitted
+SELECTOR ['--check', 'record-schema', '--require-isolation'] actual_exit 2
+usage: test_runtime_session.py [-h]
+                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered} | --case {1,2,3,8,9,13})
+                               [--runtime {stub}] [--layer {policy}]
+                               [--require-sbcl] [--require-isolation]
+test_runtime_session.py: error: requested capability proof is unavailable in this partial stub suite; no skip permitted
+ABSENCE ['/usr/bin/python3', 'tools/test_runtime_session.py', '--check', 'lifecycle-no-evaluation'] actual_exit 2
+SETUP_FAILURE: controller source absent; this is not semantic red
+ABSENCE ['/usr/bin/python3', 'tools/test_runtime_session.py', '--check', 'record-schema'] actual_exit 2
+SETUP_FAILURE: controller source absent; this is not semantic red
+ABSENCE ['/usr/bin/python3', 'tools/test_runtime_session.py', '--check', 'fixture-claim-registered'] actual_exit 2
+SETUP_FAILURE: controller source absent; this is not semantic red
+ABSENCE ['/usr/bin/python3', 'tools/test_runtime_session.py', '--case', '1', '--runtime', 'stub'] actual_exit 2
+SETUP_FAILURE: controller source absent; this is not semantic red
+ABSENCE ['/usr/bin/python3', 'tools/test_runtime_session.py', '--case', '2', '--runtime', 'stub'] actual_exit 2
+SETUP_FAILURE: controller source absent; this is not semantic red
+ABSENCE ['/usr/bin/python3', 'tools/test_runtime_session.py', '--case', '3', '--runtime', 'stub'] actual_exit 2
+SETUP_FAILURE: controller source absent; this is not semantic red
+ABSENCE ['/usr/bin/python3', 'tools/test_runtime_session.py', '--case', '8', '--runtime', 'stub', '--layer', 'policy'] actual_exit 2
+SETUP_FAILURE: controller source absent; this is not semantic red
+ABSENCE ['/usr/bin/python3', 'tools/test_runtime_session.py', '--case', '9', '--runtime', 'stub'] actual_exit 2
+SETUP_FAILURE: controller source absent; this is not semantic red
+ABSENCE ['/usr/bin/python3', 'tools/test_runtime_session.py', '--case', '13', '--runtime', 'stub'] actual_exit 2
+SETUP_FAILURE: controller source absent; this is not semantic red
+CONTROL claim-map valid: actual_exit=0; 
+CONTROL claim-map missing: actual_exit=1; FAIL claim-map: unclaimed subdirectory: runtime_session
+CONTROL claim-map duplicate: actual_exit=1; FAIL claim-map: doubly-claimed subdirectory: runtime_session
+CONTROL claim-map missing-suite: actual_exit=1; FAIL claim-map: claim for runtime_session names a suite file that does not exist: tools/absent.py
+CONTROL claim-map valid: actual_exit=0; 
+PASS harness rejects always-pass BEHAVIOR_ASSERTION: actual claim-map missing: 0 
+PASS harness rejects always-reject BEHAVIOR_ASSERTION: actual claim-map valid: 1 
+PASS scratch process-group cleanup; stale PID identity guarded: False
+PASS scratch process-group cleanup; stale PID identity guarded: True
+B0 ONLY: actual new controller/harness transport, semantic red and final acceptance are PENDING
