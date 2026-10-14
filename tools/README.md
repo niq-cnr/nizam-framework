@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.27.0
+version: 0.28.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.28.0"
+    date: "2026-10-14"
+    summary: "Document strict convergent AGF mapping and the historical foundation receipt boundary."
   - version: "0.27.0"
     date: "2026-10-14"
     summary: "Document bounded partial-core aggregation and separate hosted fourteen-leaf proof."
@@ -160,13 +163,26 @@ run `core-ready`. Independent QA/capture still gate bounded core closure.
 SBCL/full adapter, phase020 fresh acceptance and final CI131 remain pending.
 The reserved `accept` action fails without side effects.
 
+## Convergent findings to AGF verdict — feature 119
+
+`convergent_agf_verdict(ledger, report, *, expected_repository, expected_head_sha)`
+validates the authoritative converged ledger and explicit bindings, returning
+independent copies of the verdict, three blocking arrays, fixes and minor advice.
+Active unsuppressed blocker/important findings append issues and fixes; minor
+findings remain advisory. Approval requires exact boolean true, empty blocking
+arrays and ledger approval. Existing blockers remain intact; malformed inputs
+raise `AssuranceError`. This pure API neither authenticates provenance nor advances
+workflow state. The default runner executes all twenty original and six new cases.
+
 ## Foundation readiness — feature 118
 
 `verify_foundation_ready(repo, prerequisite)` observes the immutable SourceC,
 explicit current and historical input bytes/modes, distinct recorded evaluator
 identity, and all twenty exact case proofs. The permanent runner accepts
 `--check foundation-ready` using the canonical feature118 prerequisite receipt;
-its default twenty cases remain available independently. A record-only HEAD
+its original twenty cases remain available independently alongside six AGF cases.
+The immutable receipt is checked at commit `8ac94f6808e8197111197c9acbf59b2aa92efc7c`;
+changed source/test inputs correctly reject that stale receipt. A record-only HEAD
 advance preserves readiness when the assessed inputs remain unchanged.
 
 Readiness supports the bounded foundation. Phase completion follows the live
