@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "121",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:18:37.482757+00:00",
+  "updated_at": "2026-10-14T18:22:05.226717+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1270,7 +1270,8 @@
     },
     "120-final-integration": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "result": "passed"
     },
     "121-selection": {
       "attempts": 1,
@@ -5821,6 +5822,12 @@
       "event": "120-PR101-merged",
       "detail": "Authorized clean normal merge of exact9613e59 to f270bbbe511dc4ec47ed416bc0cefbae60e2c5cb after six success checks, strict gates and no unresolved threads/change requests. Main CI38613899275 pending;121 preparation branch joins actual main and measures from this merge. Source121 remains blocked until actual main CI and new independent gates.",
       "evidence": ".agent/evidence/120/pr101-merge-receipt.json"
+    },
+    {
+      "at": "2026-10-14T18:22:05.226717+00:00",
+      "event": "120-main-CI-passed",
+      "detail": "Actual main38613899275 on f270bbb completed all five success. Final PR six checks/ready/exact-SHA merge and main raw transports retained under E120/pr101.121 integration prerequisite passed; contract/provisional independent gates remain before Source. No release/tag or comparison claim.",
+      "evidence": ".agent/evidence/120/pr101-main-ci.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6319,7 +6326,7 @@
       }
     ]
   },
-  "last_action": "PR101 merged f270bbb with all six final checks; main CI38613899275 pending.121 proposal preparation only; no Source release.",
+  "last_action": "PR101 merged/main CI all5 success captured;121 proposal awaiting independent precode gates. No121 Source released.",
   "completed_contract_ids": [
     "099",
     "103",
