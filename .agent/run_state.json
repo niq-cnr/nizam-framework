@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T17:57:48.877707+00:00",
+  "updated_at": "2026-10-14T18:01:36.745439+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1213,7 +1213,8 @@
     },
     "120-hosted-ci": {
       "attempts": 2,
-      "limit": 3
+      "limit": 3,
+      "result": "passed"
     },
     "120-review-envelope": {
       "attempts": 1,
@@ -1223,9 +1224,14 @@
     "120-QA": {
       "attempts": 2,
       "limit": 3,
-      "prior_result": "helper setup failed; mandatory18 passed"
+      "prior_result": "helper setup failed; mandatory18 passed",
+      "result": "passed"
     },
     "runtime-canary-planning-revision": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-evidence-capture": {
       "attempts": 1,
       "limit": 3
     }
@@ -5702,6 +5708,11 @@
       "at": "2026-10-14T17:57:48.877707+00:00",
       "event": "120-QA-helper-recovery2",
       "detail": "Attempt1 own spot actual1 on readonly --literal-pathspecs ls-tree, wrapper reached it before hold. Immutable32655c5 retains all19 records, eighteen mandatory passes, failed QA and raw guard error. New isolated attempt2 changes only own spot allowlist, reexecutes that same logical spot, carries mandatory proof by unchanged protected objects. No Source/test or previous evidence repair, no full bank rerun."
+    },
+    {
+      "at": "2026-10-14T18:01:36.745439+00:00",
+      "event": "120-evidence-capture-dispatch",
+      "detail": "Fresh QA1aa764a strict approved with eighteen original mandatory passes and one logical additional spot passed on second execution; original failure retained. Hosted38610323583 all five success plus closeout success. Root verifies immutable230+17 bundle and70+12 QA pins, actual commands/exits/raw and installed239; no behavioral reruns or lifecycle advance before capture."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6196,7 +6207,7 @@
       }
     ]
   },
-  "last_action": "120 QA2 isolated same-spot helper correction; eighteen mandatory results retained by immutable identity, Source/test unchanged.",
+  "last_action": "120 independent QA and hosted37 approved; Root immutable evidence capture1 before lifecycle closure.",
   "completed_contract_ids": [
     "099",
     "103",
