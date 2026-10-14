@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:04:37.567429+00:00",
+  "updated_at": "2026-10-14T18:09:23.053380+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1252,6 +1252,10 @@
       "prior_attempt_evidence": ".agent/evidence/agentic-excellence/canary-shape-review1.json"
     },
     "120-current-docs-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-final-validation": {
       "attempts": 1,
       "limit": 3
     }
@@ -5759,6 +5763,11 @@
       "at": "2026-10-14T18:04:37.567429+00:00",
       "event": "120-current-docs-review-dispatch",
       "detail": "Planner d1e8f59 updates41 counted current projection lines; Root spec_version synchronized0.1.3 only. Independent factual/requirement/historical preservation review before final scope/validation and PR101 merge. No Source/test changes."
+    },
+    {
+      "at": "2026-10-14T18:09:23.053380+00:00",
+      "event": "120-final-validation-dispatch",
+      "detail": "Final repository compliance after captured lifecycle and current docs, in parallel with factual review. Source/test/installed payload unchanged; no behavioral bank rerun. Maintained-file whitespace check excludes raw evidence. Any actual failure retained before bounded repair."
     }
   ],
   "phase_001_scope_budget_final": {
