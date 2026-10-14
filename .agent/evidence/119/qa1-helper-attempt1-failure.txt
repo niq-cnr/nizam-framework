@@ -1,0 +1,15 @@
+ROLE: /root/qa119
+STEP: QA capture helper attempt1; no behavioral verification executed
+CWD: /home/cnross/.tmp/nizam-feature119-qa1
+INPUT_REVISION: 8c50ec1e8a8bd44eb7e484929551f5c633fd7f58
+EXERCISED_REVISION: edefb1f
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/119/qa1/run.py
+EXIT: 1
+STDOUT:
+
+STDERR:
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-feature119-qa1/.agent/evidence/119/qa1/run.py", line 40, in <module>
+    assert git('rev-parse','HEAD') == '8c50ec1e8a8bd44eb7e484929551f5c633fd7f58'
+AssertionError
+CLASSIFICATION: The helper committed its own files then incorrectly required HEAD to equal its pre-helper input. No source/test/contract changed; no six-case/default/foundation/compliance/adversarial command ran. Correct transport logic must bind the approved input as ancestor and check exact protected input objects, while recording the actual helper-bearing HEAD.
