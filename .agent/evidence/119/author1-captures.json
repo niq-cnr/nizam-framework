@@ -1,0 +1,953 @@
+[
+  {
+    "label": "fixture-corrected",
+    "argv": [
+      "python3",
+      "-c",
+      "import importlib.util; s=importlib.util.spec_from_file_location('t','tools/test_workflow_assurance.py'); t=importlib.util.module_from_spec(s); s.loader.exec_module(t); assert len(t.CASES)==20 and len(t.AGF_CASES)==6; [(t.agf_severity(t.agf_ledger(c),v)) for c in ('01-no-findings','02-consensus-blocker','05-prior-persisting','08-reopened-finding','06-prior-resolution-two-of-three','11-authorized-suppression-retained') for v in ('minor','important','blocker')]; print('PASS real converged fixtures and inventory20+6')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-fixture-corrected.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-fixture-corrected.stderr.txt",
+    "stdout_sha256": "2113af75a2c826edce2b185813017b2dde3fbd1449bf6a320f98de09e22265ff",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "setup-approve-empty",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "approve-empty"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 2,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-setup-approve-empty.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-setup-approve-empty.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "15febe81bcef289d1ae9cb2a66d06b186fbcee36a7951e8e5114200c37e8481f",
+    "expected_diagnostic": "SETUP_ERROR: missing convergent_agf_verdict API"
+  },
+  {
+    "label": "setup-advisory-visible",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "advisory-visible"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 2,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-setup-advisory-visible.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-setup-advisory-visible.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "15febe81bcef289d1ae9cb2a66d06b186fbcee36a7951e8e5114200c37e8481f",
+    "expected_diagnostic": "SETUP_ERROR: missing convergent_agf_verdict API"
+  },
+  {
+    "label": "setup-block-carried",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "block-carried"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 2,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-setup-block-carried.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-setup-block-carried.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "15febe81bcef289d1ae9cb2a66d06b186fbcee36a7951e8e5114200c37e8481f",
+    "expected_diagnostic": "SETUP_ERROR: missing convergent_agf_verdict API"
+  },
+  {
+    "label": "setup-reject-issues",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-issues"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 2,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-setup-reject-issues.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-setup-reject-issues.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "15febe81bcef289d1ae9cb2a66d06b186fbcee36a7951e8e5114200c37e8481f",
+    "expected_diagnostic": "SETUP_ERROR: missing convergent_agf_verdict API"
+  },
+  {
+    "label": "setup-reject-missing-coverage",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-missing-coverage"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 2,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-setup-reject-missing-coverage.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-setup-reject-missing-coverage.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "15febe81bcef289d1ae9cb2a66d06b186fbcee36a7951e8e5114200c37e8481f",
+    "expected_diagnostic": "SETUP_ERROR: missing convergent_agf_verdict API"
+  },
+  {
+    "label": "setup-reject-unsupported",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-unsupported"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 2,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-setup-reject-unsupported.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-setup-reject-unsupported.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "15febe81bcef289d1ae9cb2a66d06b186fbcee36a7951e8e5114200c37e8481f",
+    "expected_diagnostic": "SETUP_ERROR: missing convergent_agf_verdict API"
+  },
+  {
+    "label": "old-identity-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "identity-positive"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-identity-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-identity-positive.stderr.txt",
+    "stdout_sha256": "6691a6c3ee3df48707ad884ef86a0776caf837d624b00c4576666913a9e3509c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-invalidate-source",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "invalidate-source"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-invalidate-source.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-invalidate-source.stderr.txt",
+    "stdout_sha256": "ea922465184f70e865190daa763af043d68c12cd8aa18611a0f6fdb44e4c3de6",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-invalidate-contract",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "invalidate-contract"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-invalidate-contract.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-invalidate-contract.stderr.txt",
+    "stdout_sha256": "e1d564667265fa5bbf55440109d470f69fa8b794ee16b2354bd8a8e4978c0ce3",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-invalidate-tests",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "invalidate-tests"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-invalidate-tests.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-invalidate-tests.stderr.txt",
+    "stdout_sha256": "7bda512638dd490c1eb2488cf26e28ddc24b92026370e02024e259caf659c4a6",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-invalidate-tool",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "invalidate-tool"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-invalidate-tool.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-invalidate-tool.stderr.txt",
+    "stdout_sha256": "0b991e04040fbb4bb96ecf2ec50acb8d33c9187dab467344a0599ead24a0329c",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-invalidate-environment",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "invalidate-environment"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-invalidate-environment.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-invalidate-environment.stderr.txt",
+    "stdout_sha256": "7f99ed94e4c7c603e210dae81020ce2f231db063cfda8771b629ac3d78899356",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-invalidate-unknown",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "invalidate-unknown"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-invalidate-unknown.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-invalidate-unknown.stderr.txt",
+    "stdout_sha256": "85efe6af346f880ad87765a5e5098f8b693efdf6396214869a8bcad5dfa12f86",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-record-continuity",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "record-continuity"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-record-continuity.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-record-continuity.stderr.txt",
+    "stdout_sha256": "d24b7115a6500151e1586c4baff2b5a5653e34d8806ba84544bebe49413ab30f",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-reject-unowned-field",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-unowned-field"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-reject-unowned-field.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-reject-unowned-field.stderr.txt",
+    "stdout_sha256": "9c1fe7642cb3e6ae5947c8194da28df637371f2fa4c747217d0058b2a2c1bbb4",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-reject-history-edit",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-history-edit"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-reject-history-edit.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-reject-history-edit.stderr.txt",
+    "stdout_sha256": "8484f58eb6da83109cd9c1ca78f719643b339f18b5a8178350bfedffef652fe9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-allow-owned-append",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "allow-owned-append"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-allow-owned-append.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-allow-owned-append.stderr.txt",
+    "stdout_sha256": "333803efd1a434fc282441372d2969b3704650e8eff5d85088820805d02b2fca",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-reject-self-review",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-self-review"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-reject-self-review.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-reject-self-review.stderr.txt",
+    "stdout_sha256": "74d0f106881833747850a7941fbdd7ed4da0dfeaaf87b1f6b94a3a058669c464",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-reject-seal-change",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-seal-change"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-reject-seal-change.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-reject-seal-change.stderr.txt",
+    "stdout_sha256": "53094c4ebb63e0a037d2dd3a00825a710520cff5d8da033f992aecc331314424",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-reject-missing-red",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-missing-red"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-reject-missing-red.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-reject-missing-red.stderr.txt",
+    "stdout_sha256": "a9c65b6910d13b87a039b62878a57dcefef74b5321cee0837d9e1c1851f2cf9b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-reject-setup-as-red",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-setup-as-red"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-reject-setup-as-red.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-reject-setup-as-red.stderr.txt",
+    "stdout_sha256": "56bd893b50518c39e4cf75f4cfe2d0b9418a762a0625310bc176d6b20436963e",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-independent-handoff",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "independent-handoff"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-independent-handoff.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-independent-handoff.stderr.txt",
+    "stdout_sha256": "6efaf1af056aab75326d59133411e8a31904a32dfc5dfa51f13637ef710546cd",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-accepted-entry",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "accepted-entry"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-accepted-entry.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-accepted-entry.stderr.txt",
+    "stdout_sha256": "a30284f589ac5e93be5c71d44c0e62ec38ffcf90f44e4fe86027d5809dadcbbb",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-reject-foreign-repo",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-foreign-repo"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-reject-foreign-repo.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-reject-foreign-repo.stderr.txt",
+    "stdout_sha256": "c57867bcf9750ac26f1f9b684b7bb10b7af61e7d78e087798b142a0fc8e9da48",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-reject-stale-pin",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-stale-pin"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-reject-stale-pin.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-reject-stale-pin.stderr.txt",
+    "stdout_sha256": "77d0f940754f0f4d72c473ae596454f37fdb575fd04aeac54274e3a27a8ae120",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "old-reject-role-write",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-role-write"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-old-reject-role-write.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-old-reject-role-write.stderr.txt",
+    "stdout_sha256": "1c4a25760fafaf6ec008ffeeab708858fc6d70901853f005db49bd1e0897a2b4",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expected_diagnostic": null
+  },
+  {
+    "label": "foundation-ready",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--check",
+      "foundation-ready"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-author1",
+    "revision": "e55f0400dfc8d6f93fca3e2b93e744c04ce6cae4",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      "tools/workflow_assurance.py": {
+        "sha256": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+        "git_blob": "943b20fe9bb454938586bb3162a51b10ef894dbb"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "9988dffbf3544a3d2853e647fc4f698bdfaddd15b289064e686a0acd9ace025d",
+        "git_blob": "6985e62f3c99a152f101241934b34e03cf093960"
+      }
+    },
+    "stdout": ".agent/evidence/119/author1-foundation-ready.stdout.txt",
+    "stderr": ".agent/evidence/119/author1-foundation-ready.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "706fa6aecbe4aded5bead5da6142312f0409e87613d5d4cd87f61a88b49ead4f",
+    "expected_diagnostic": null
+  }
+]
