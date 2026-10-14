@@ -1,0 +1,7 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 -c 'import json; from pathlib import Path; from jsonschema import Draft202012Validator; v=json.loads(Path('"'"'.agent/validator/118-mode-a-recovery1.json'"'"').read_text()); Draft202012Validator(json.loads(Path('"'"'.nizam/schema/contract_review.schema.json'"'"').read_text())).validate(v); assert type(v['"'"'revision_reviewed'"'"']) is int and v['"'"'revision_reviewed'"'"']==3; assert v['"'"'final_verdict'"'"']['"'"'approved'"'"'] is True and all(type(v[k]) is list and not v[k] for k in ['"'"'issues'"'"','"'"'missing_acceptance_coverage'"'"','"'"'unsupported_claims'"'"']); print('"'"'PASS installed contract-review schema and strict approved recovery revision3 gate'"'"')'
+REVISION: 79df77ef3854875b39ef59213c06eaf4b4fbf50b
+EXIT: 0
+STDOUT:
+PASS installed contract-review schema and strict approved recovery revision3 gate
+
+STDERR:

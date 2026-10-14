@@ -2,8 +2,8 @@
   "repository": "nizam-framework",
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": "118",
-  "status": "blocked",
-  "updated_at": "2026-10-14T05:15:59.020826+00:00",
+  "status": "in_progress",
+  "updated_at": "2026-10-14T05:20:26.119422+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -829,6 +829,18 @@
       "limit": 3
     },
     "118-recovery1-proposal-coordination": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-mode-a": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-contract-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "118-recovery1-precode-coordination": {
       "attempts": 1,
       "limit": 3
     }
@@ -4784,6 +4796,12 @@
       "event": "118-recovery1-contract-proposed",
       "detail": "Proposal70e1bab explicitly separates immutable contract snapshot from capture-gated typed current status projection, preserves exhausted counters/halt evidence, and permits Root-only recovery/debt lifecycle. Original3commands/650/5400/7020 remain.",
       "evidence": ".agent/evidence/118/recovery1-contract-handoff.json"
+    },
+    {
+      "at": "2026-10-14T05:20:26.119422+00:00",
+      "event": "118-recovery1-precode-approved",
+      "detail": "Both strict independent gates approve proposal70e1bab. Root applied only declared approval metadata, resumed canonical phase/step first then mirrors, preserved all historical counters/4012/blocked559 and DEBT054Open. Separate immutable snapshot and receipt-gated live status; independent repaired bundle next.",
+      "evidence": ".agent/evidence/118/recovery1-resume.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5070,9 +5088,7 @@
     ],
     "last_measured_at": "2026-10-13T19:43:17.960890+00:00"
   },
-  "blocked_features": [
-    "118"
-  ],
+  "blocked_features": [],
   "phase_007_scope_budget_final": {
     "original_estimate_lines": 870,
     "total_lines_changed": 240,
@@ -5253,7 +5269,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "118",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5325,7 +5341,7 @@
       }
     ]
   },
-  "last_action": "Authorized recovery proposal revision3 ready for dual independent review; implementation remains gated.",
+  "last_action": "Recovery3 contract approved by both independent gates; canonical118 resumed for independently repaired and reviewed acceptance bundle.",
   "completed_contract_ids": [
     "099",
     "103",

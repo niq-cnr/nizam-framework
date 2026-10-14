@@ -1,0 +1,70 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 -c 'import json,hashlib,subprocess,copy,yaml
+from pathlib import Path
+from jsonschema import Draft202012Validator
+read=lambda p:json.loads(Path(p).read_text())
+blob=lambda r,p:subprocess.check_output(['"'"'git'"'"','"'"'show'"'"',r+'"'"':'"'"'+p])
+sha=lambda b:hashlib.sha256(b).hexdigest()
+typed=lambda v:json.dumps(v,sort_keys=True,separators=('"'"','"'"','"'"':'"'"'),allow_nan=False)
+c=read('"'"'.agent/contracts/118.json'"'"');a=read('"'"'.agent/evidence/118/api-interface.json'"'"');p=read('"'"'.agent/evidence/118/producer-interface.json'"'"');h=read('"'"'.agent/evidence/118/recovery1-contract-handoff.json'"'"');auth=read(c['"'"'recovery_authorization_ref'"'"']);pre=read(h['"'"'predecessor_ref'"'"']);base=c['"'"'recovery_state_policy'"'"']['"'"'baseline_revision'"'"']
+assert auth['"'"'authorized'"'"'] is True and auth['"'"'gate'"'"']=='"'"'H-CONTRACT-118-RECOVERY'"'"' and auth['"'"'recovery_epoch'"'"']==c['"'"'recovery_epoch'"'"']==1
+assert sha(Path(c['"'"'recovery_authorization_ref'"'"']).read_bytes())==pre['"'"'authorization_sha256'"'"']
+for path,key in [('"'"'.agent/contracts/118.json'"'"','"'"'contract_sha256'"'"'),('"'"'.agent/evidence/118/api-interface.json'"'"','"'"'api_sha256'"'"'),('"'"'.agent/evidence/118/producer-interface.json'"'"','"'"'producer_sha256'"'"')]:
+ raw=Path(path).read_bytes();assert raw==blob(h['"'"'proposal_revision'"'"'],path) and sha(raw)==h[key];print(path,sha(raw))
+assert h['"'"'proposal_revision'"'"']=='"'"'70e1bab0be7cd90d0db053541c112a34ee6b4f5f'"'"'
+assert h['"'"'contract_sha256'"'"']=='"'"'c46d11bbe9620aed9066ea30d51c9c28b8562e2501ad8d2dee166b02ef6cb951'"'"'
+assert h['"'"'api_sha256'"'"']=='"'"'72e8d3a0058774dc43e048909fb9e1dfbfb9a0d28405089729ec2ea489587f24'"'"'
+Draft202012Validator(read('"'"'.nizam/schema/contract.schema.json'"'"')).validate(c)
+for key in ('"'"'precode_gate_policy'"'"','"'"'acceptance_successor_policy'"'"','"'"'recovery_state_policy'"'"'):assert typed(c[key])==typed(a[key])==typed(p[key])
+for path,row in pre['"'"'snapshots'"'"'].items():assert sha(Path(row['"'"'snapshot'"'"']).read_bytes())==row['"'"'sha256'"'"'] and Path(row['"'"'snapshot'"'"']).read_bytes()==blob(row['"'"'revision'"'"'],path)
+print('"'"'PASS authorized recovery, exact proposal hashes/schema, synchronized policy and five immutable predecessor snapshots'"'"')
+s=read('"'"'.agent/run_state.json'"'"');old=json.loads(blob(base,'"'"'.agent/run_state.json'"'"'))
+assert typed(s['"'"'history'"'"'][:len(old['"'"'history'"'"'])])==typed(old['"'"'history'"'"']);assert len(s['"'"'history'"'"'])>=len(old['"'"'history'"'"'])
+for k,v in old['"'"'circuit_breaker'"'"'].items():assert typed(s['"'"'circuit_breaker'"'"'][k])==typed(v)
+for k in set(s['"'"'circuit_breaker'"'"'])-set(old['"'"'circuit_breaker'"'"']):
+ v=s['"'"'circuit_breaker'"'"'][k];assert k.startswith('"'"'118-recovery1-'"'"') and type(v['"'"'attempts'"'"']) is int and v['"'"'attempts'"'"']>=0 and type(v['"'"'limit'"'"']) is int and v['"'"'limit'"'"']>0
+assert typed(s['"'"'scope_budget'"'"'])==typed(old['"'"'scope_budget'"'"']);budget=s['"'"'scope_budget'"'"'];assert budget['"'"'total_lines_changed'"'"']==4012 and budget['"'"'original_estimate_lines'"'"']==5400 and budget['"'"'ceiling_130pct'"'"']==7020;assert [r['"'"'actual'"'"'] for r in budget['"'"'per_feature'"'"']]==[1863,1146,1003];assert next(r for r in budget['"'"'historical_inflight_measurements'"'"'] if r['"'"'id'"'"']=='"'"'118'"'"')['"'"'actual'"'"']==559
+assert set(k for k in set(s)|set(old) if typed(s.get(k))!=typed(old.get(k)))<={'"'"'circuit_breaker'"'"','"'"'history'"'"','"'"'last_action'"'"','"'"'updated_at'"'"'}
+assert s['"'"'status'"'"']=='"'"'blocked'"'"' and s['"'"'current_feature'"'"']=='"'"'118'"'"' and s['"'"'active_contract_id'"'"'] is None and '"'"'118'"'"' in s['"'"'blocked_features'"'"']
+phase=yaml.safe_load(Path('"'"'docs/planning/phase_017.yaml'"'"').read_text());fl=read('"'"'.agent/feature_list_017.json'"'"');manifest=read('"'"'docs/planning/manifest.json'"'"');dag=read('"'"'docs/planning/backlog_dag.json'"'"')
+assert phase['"'"'status'"'"']=='"'"'blocked'"'"' and phase['"'"'steps'"'"'][3]['"'"'status'"'"']=='"'"'BLOCKED'"'"';assert fl['"'"'phase_status'"'"']=='"'"'blocked'"'"' and fl['"'"'features'"'"'][3]['"'"'status'"'"']=='"'"'blocked'"'"' and fl['"'"'features'"'"'][3]['"'"'passes'"'"'] is False;assert next(x for x in manifest['"'"'phases'"'"'] if x['"'"'id'"'"']=='"'"'017-workflow-assurance-foundation'"'"')['"'"'status'"'"']=='"'"'blocked'"'"';assert dag['"'"'phase017_execution'"'"']['"'"'status'"'"']==dag['"'"'phase017_execution'"'"']['"'"'feature_status'"'"']=='"'"'blocked'"'"'
+assert Path('"'"'docs/planning/DEBT.md'"'"').read_bytes()==blob(base,'"'"'docs/planning/DEBT.md'"'"');debt=Path('"'"'docs/planning/DEBT.md'"'"').read_text();assert yaml.safe_load(debt.split('"'"'---'"'"',2)[1])['"'"'version'"'"']=='"'"'0.74.0'"'"';assert any(x.startswith('"'"'| NDEBT-054 |'"'"') and '"'"'| OPEN'"'"' in x for x in debt.splitlines())
+print('"'"'PASS actual blocked recovery tuple; old typed counters/history/budget559 preserved; DEBT0.74/054 OPEN exact'"'"')
+for terminal in (False,True):
+ q=copy.deepcopy(phase);q['"'"'status'"'"']='"'"'complete'"'"' if terminal else '"'"'in_progress'"'"';q['"'"'steps'"'"'][3]['"'"'status'"'"']='"'"'COMPLETED'"'"' if terminal else '"'"'IN_PROGRESS'"'"';Draft202012Validator(read('"'"'.nizam/schema/phase.schema.json'"'"')).validate(q)
+ m=copy.deepcopy(manifest);next(x for x in m['"'"'phases'"'"'] if x['"'"'id'"'"']=='"'"'017-workflow-assurance-foundation'"'"')['"'"'status'"'"']=q['"'"'status'"'"'];Draft202012Validator(read('"'"'.nizam/schema/manifest.schema.json'"'"')).validate(m)
+print('"'"'PASS proposed resume/close enum shapes in memory only; no actual resume/capture performed'"'"')
+oldc=read('"'"'.agent/evidence/118/pre-recovery1-contract.json'"'"');olda=read('"'"'.agent/evidence/118/pre-recovery1-api-interface.json'"'"');oldp=read('"'"'.agent/evidence/118/pre-recovery1-producer-interface.json'"'"')
+for key in ('"'"'verification'"'"','"'"'estimated_lines'"'"','"'"'budget_categories'"'"','"'"'phase_budget'"'"','"'"'dependency_features'"'"','"'"'execution_order'"'"','"'"'readiness_boundary'"'"','"'"'lifecycle_values'"'"'):assert typed(c[key])==typed(oldc[key]),key
+for key in ('"'"'api'"'"','"'"'current_cases'"'"','"'"'core_paths'"'"','"'"'historical_paths'"'"','"'"'historical_base'"'"','"'"'runtime_manifest'"'"','"'"'candidate'"'"','"'"'prerequisite_consumer'"'"','"'"'failure_controls'"'"','"'"'lifecycle'"'"'):assert typed(a[key])==typed(olda[key]),key
+for key in ('"'"'paths'"'"','"'"'core_paths'"'"','"'"'historical_paths'"'"','"'"'candidate'"'"','"'"'prerequisite'"'"','"'"'raw'"'"','"'"'mode_b'"'"','"'"'qa'"'"','"'"'capture'"'"','"'"'ordering'"'"','"'"'root_budget118'"'"'):assert typed(p[key])==typed(oldp[key]),key
+print('"'"'PASS unchanged three commands/650 and functional API/current20/receipt grammar/independent execution ordering'"'"')
+# Structural normalization audit using an already existing approved historical artifact.
+# This is not a future approved recovery contract or production capture predicate.
+anchor_raw=blob('"'"'103beae9ddc2ac9b68eb88728655328fb3dd061e'"'"','"'"'.agent/contracts/118.json'"'"');anchor=json.loads(anchor_raw);assert anchor['"'"'status'"'"']=='"'"'approved'"'"'
+completed=copy.deepcopy(anchor);completed['"'"'status'"'"']='"'"'complete'"'"';assert sha(typed(completed).encode())!=sha(anchor_raw)
+normalized=copy.deepcopy(completed);normalized['"'"'status'"'"']='"'"'approved'"'"';assert typed(normalized)==typed(anchor)
+for key,value in [('"'"'estimated_lines'"'"',True),('"'"'extra_field'"'"','"'"'unowned'"'"'),('"'"'approvals'"'"',dict(anchor['"'"'approvals'"'"'],validator_mode_a=False))]:
+ bad=copy.deepcopy(normalized);bad[key]=value;assert typed(bad)!=typed(anchor)
+assert all(type(v) is not str or v not in ('"'"'approved'"'"','"'"'complete'"'"') for v in (True,None,'"'"'unknown'"'"'))
+print('"'"'PASS structural status-only normalization permits distinct terminal raw hash while rejecting unowned/type changes; capture gating remains a future independently exercised requirement'"'"')
+projection=c['"'"'acceptance_successor_policy'"'"']['"'"'current_contract_projection'"'"']
+print('"'"'PROJECTION RECEIPT OBLIGATION:'"'"',projection['"'"'capture_receipts'"'"'])
+print('"'"'CONTROL OBLIGATION:'"'"',projection['"'"'controls'"'"'])
+print('"'"'CONSTRUCTION AUDIT: immutable approved contract/gates -> SourceC2 + current20 -> ModeB + QA3/ownspot -> Root capture receipt -> independently evaluated receipt predicate -> canonical phase closure -> contract status-only projection/mirrors -> final coherent scope. Predicate consumes immutable obligations and raw receipts, never approved()/scope() or already-complete lifecycle. Future Source/bundle/capture are not claimed present.'"'"')
+'
+REVISION: 79df77ef3854875b39ef59213c06eaf4b4fbf50b
+EXIT: 0
+STDOUT:
+.agent/contracts/118.json c46d11bbe9620aed9066ea30d51c9c28b8562e2501ad8d2dee166b02ef6cb951
+.agent/evidence/118/api-interface.json 72e8d3a0058774dc43e048909fb9e1dfbfb9a0d28405089729ec2ea489587f24
+.agent/evidence/118/producer-interface.json a376d4dd26054d57b29f0ea03168bd92f656d7a8ca2004402ef881dff0729e6d
+PASS authorized recovery, exact proposal hashes/schema, synchronized policy and five immutable predecessor snapshots
+PASS actual blocked recovery tuple; old typed counters/history/budget559 preserved; DEBT0.74/054 OPEN exact
+PASS proposed resume/close enum shapes in memory only; no actual resume/capture performed
+PASS unchanged three commands/650 and functional API/current20/receipt grammar/independent execution ordering
+PASS structural status-only normalization permits distinct terminal raw hash while rejecting unowned/type changes; capture gating remains a future independently exercised requirement
+PROJECTION RECEIPT OBLIGATION: Verify actual SourceC2 candidate identity, fresh independent prerequisite20, strict independent ModeB, freshQA exact3 plus ownspot, all command/raw SHA/exit/revision bindings, and Root-owned passed evidence-capture per unchanged producer interface before permitting complete. Missing/malformed/stale/self-reviewed receipts fail closed. This receipt predicate reads immutable approved obligations and actual receipt/raw files; it does not require current contract/phase/list/run already complete, so canonical-first closure is constructible. A recorded flag or filename alone never proves capture.
+CONTROL OBLIGATION: Independent author/reviewer must show approved exact bytes pass without future capture, complete-only projection passes with valid captured receipt fixtures, and premature complete fails. Reject status bool/null/unknown, arbitrary extra key, changed approval flag/gate hash, changed scope/verification/estimate/recovery policy, and altered immutable mapped Git/archive/source/test hashes even with valid capture. Use private controls plus actual final receipt observations, never a public mock bypass.
+CONSTRUCTION AUDIT: immutable approved contract/gates -> SourceC2 + current20 -> ModeB + QA3/ownspot -> Root capture receipt -> independently evaluated receipt predicate -> canonical phase closure -> contract status-only projection/mirrors -> final coherent scope. Predicate consumes immutable obligations and raw receipts, never approved()/scope() or already-complete lifecycle. Future Source/bundle/capture are not claimed present.
+
+STDERR:
