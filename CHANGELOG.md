@@ -9,6 +9,13 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Controller-core activation planning.** Captured and independently reviewed
+  same-host Linux isolation and SBCL capability; selected feature 126 for contract
+  preparation within the unchanged 5,650/7,345 budget, including current preparation
+  costs. Controller implementation and live acceptance remain pending. Added a
+  balanced comparative-performance proposal with pinned primary sources and future
+  paired trials; no comparative performance result or superiority is claimed.
+
 - **Foundation readiness (feature 118).** Added candidate-bound observation of
   current twenty-case prerequisite evidence, explicit runtime and historical Git
   inputs, and independent recorded evaluator identity. Readiness supports later
