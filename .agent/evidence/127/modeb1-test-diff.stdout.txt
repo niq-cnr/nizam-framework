@@ -1,0 +1,624 @@
+diff --git a/tools/test_runtime_session.py b/tools/test_runtime_session.py
+index b80cb4e..20dc4da 100644
+--- a/tools/test_runtime_session.py
++++ b/tools/test_runtime_session.py
+@@ -28,9 +28,11 @@ OWNER = {'principal_kind': 'agent', 'role': 'Generator', 'agent_id': 'owner'}
+ OTHER = {**OWNER, 'agent_id': 'foreign'}
+ HUMAN = {'principal_kind': 'human'}
+ TRIAL = {'principal_kind': 'agent', 'role': 'review_trial', 'agent_id': 'trial'}
+-ACTIONS = ('open-session', 'submit-operation', 'poll-operation', 'transfer-session', 'close-session')
+-CHECKS = ('lifecycle-no-evaluation', 'record-schema', 'fixture-claim-registered')
+-CASES = (1, 2, 3, 8, 9, 13)
++ACTIONS = ('open-session', 'submit-operation', 'poll-operation', 'transfer-session', 'close-session',
++           'cancel-operation', 'reattach-session')
++CHECKS = ('lifecycle-no-evaluation', 'record-schema', 'fixture-claim-registered',
++          'cancel-confirmation-required', 'handoff-source-bound')
++CASES = (1, 2, 3, 5, 6, 8, 9, 10, 13)
+ 
+ 
+ def require(ok, message):
+@@ -111,6 +113,7 @@ class Session:
+         p = subprocess.run([sys.executable, str(self.candidate / 'tools/runtime_session.py'),
+                             action, '--root', str(self.state), '--request', str(path)],
+                            cwd=self.candidate, env=self.env, text=True, capture_output=True, timeout=12)
++        self.last_exit = p.returncode
+         try:
+             response = json.loads(p.stdout)
+         except (ValueError, TypeError):
+@@ -215,7 +218,11 @@ class Session:
+         return self.directory / 'operations' / f'{operation_id}.result.json'
+ 
+     def poll(self, operation_id):
+-        return self.call('poll-operation', {**self.identity(), 'operation_id': operation_id})['result']
++        response = self.call('poll-operation', {**self.identity(), 'operation_id': operation_id}, (0, 70))
++        if not response['ok']:
++            require(response['error'] == 'infrastructure' and response['result']['status'] == 'unknown',
++                    'failed observation preserves explicit unknown record')
++        return response['result']
+ 
+     def finish(self, request):
+         operation_id = request['operation_id']
+@@ -398,6 +405,15 @@ def trial_policy(s):
+                     kind='evaluate', payload={'expression': '{"op":"set","name":"symbol","value":9}'}, context={}, limits={})
+             if action == 'transfer-session':
+                 request['new_owner'] = OWNER
++            if action in ('cancel-operation', 'reattach-session'):
++                request.update(governed(s))
++            if action == 'cancel-operation':
++                request['operation_id'] = 'trial-op'
++            if action == 'reattach-session':
++                request.update(expected_outstanding_operation_ref=None, handoff={
++                    'workspace_path': str(s.home), 'source_revision': '0' * 40,
++                    'source_manifest': [{'path': 'source.txt', 'sha256': '0' * 64}],
++                    'command_refs': ['source.txt'], 'external_resources': []})
+             request['requester'] = TRIAL
+             response = s.call(action, request, 1)
+             require(response['error'] == 'review_trial', 'upstream trial error before shape/endpoint')
+@@ -725,10 +741,12 @@ def fixture_claim(home):
+     claim_controls(home, text)
+     scheduled = extract_function(text, 'runtime_session_checks')
+     require(re.search(r'(?m)^runtime_session_checks\s*\|\|\s*fail=1\s*$', text), 'real harness propagates suite failure')
+-    expected = [['tools/test_runtime_session.py', '--check', x] for x in CHECKS]
++    expected = [['tools/test_runtime_session.py', '--check', x] for x in CHECKS[:3]]
+     expected += [['tools/test_runtime_session.py', '--case', str(x), '--runtime', 'stub'] for x in (1, 2, 3, 9, 13)]
+     expected += [['tools/test_runtime_session.py', '--case', '8', '--runtime', 'stub', '--layer', 'policy']]
+-    for fail_at in (0, 4):
++    expected += [['tools/test_runtime_session.py', '--check', x] for x in CHECKS[3:]]
++    expected += [['tools/test_runtime_session.py', '--case', str(x), '--runtime', 'stub'] for x in (5, 6, 10)]
++    for fail_at in (0, 4, 12):
+         log = Path(home) / f'schedule-{fail_at}.txt'
+         script = '''set -uo pipefail
+ count=0
+@@ -741,11 +759,540 @@ python3() {
+         p = subprocess.run(['bash', '-c', script], env={**os.environ, 'LOG': str(log), 'FAIL_AT': str(fail_at)},
+                            text=True, capture_output=True, timeout=8)
+         calls = [line.split() for line in log.read_text().splitlines()]
+-        require(calls == expected, f'actual scheduling selects all nine commands exactly: {calls}')
++        require(calls == expected, f'actual scheduling selects all fourteen commands exactly: {calls}')
+         require(p.returncode == 0 if fail_at == 0 else p.returncode != 0, 'targeted suite failure propagates')
+         require('23' in p.stdout if fail_at else '0' in p.stdout, 'actual per-command status reported')
+ 
+ 
++def governed(s):
++    return {key: s.opening()[key] for key in ('contract_id', 'step_key', 'attempt')}
++
++
++def gate_operation(s, name):
++    release = s.state / name
++    request = s.request('gate', release); s.submit(request)
++    wait_for(lambda: request['operation_id'] in s.receipts(), 'real gate execute receipt')
++    return request, release
++
++
++def timed_snapshot(s, operation_id, seconds):
++    start = time.monotonic()
++    response = s.call('poll-operation', {**s.identity(), 'operation_id': operation_id,
++                                      'limits': {'timeout_seconds': seconds}}, (0, 70))
++    record = response['result']
++    require(time.monotonic() - start <= seconds + 5.5, 'timed poll bounded by deadline and control grace')
++    require(record['operation_id'] == operation_id, 'timed poll correlates operation')
++    if record['status'] == 'unknown':
++        require(not response['ok'] and response['error'] == 'infrastructure', 'unknown is infrastructure uncertainty')
++    else:
++        require(response['ok'], 'known poll snapshot successful')
++    return record, time.monotonic() - start
++
++
++def control_refused(s, action, request, code, reason=None):
++    before = {p.name: p.read_bytes() for p in (s.directory / 'operations').glob('*.json')}
++    snapshots = {p.name: p.read_bytes() for p in (s.directory / 'runtime_session.json', s.directory / 'handoff.json') if p.exists()}
++    receipts = s.receipts()
++    response = s.call(action, request, code)
++    if reason:
++        require(response['error'] in ((reason,) if isinstance(reason, str) else reason), 'correlated control refusal')
++    require(before == {p.name: p.read_bytes() for p in (s.directory / 'operations').glob('*.json')} and
++            receipts == s.receipts(), 'refused control preserves operation/result evidence and executes nothing')
++    require(snapshots == {p.name: p.read_bytes() for p in (s.directory / 'runtime_session.json', s.directory / 'handoff.json') if p.exists()},
++            'refused control preserves checked session and handoff snapshots')
++
++
++def cancel_request(s, operation_id):
++    return {**s.identity(), **governed(s), 'operation_id': operation_id}
++
++
++def control_counter(s, action, request):
++    raw = s.runstate.read_bytes(); altered = json.loads(raw)
++    altered['circuit_breaker'][request['step_key']]['attempts'] = request['attempt'] + 1
++    s.runstate.write_text(json.dumps(altered)); changed = s.runstate.read_bytes()
++    try:
++        control_refused(s, action, request, 1, 'attempt_mismatch')
++        require(s.runstate.read_bytes() == changed, 'control never mutates Root counter input')
++    finally:
++        s.runstate.write_bytes(raw)
++
++
++def direct_trial_control(s, action, request):
++    before = {p.name: p.read_bytes() for p in (s.directory / 'operations').glob('*.json')}
++    receipts = s.receipts()
++    with socket.socket(socket.AF_UNIX) as client:
++        client.settimeout(6); client.connect(str(s.directory / 'control.sock'))
++        client.sendall((json.dumps({'action': action, 'request': {**request, 'requester': TRIAL}}) + '\n').encode())
++        with client.makefile('rb') as stream:
++            raw = stream.readline(65537)
++    require(len(raw) <= 65536 and raw.endswith(b'\n'), 'bounded direct control response')
++    response = json.loads(raw)
++    require(not response['ok'] and response['error'] == 'review_trial' and receipts == s.receipts() and
++            before == {p.name: p.read_bytes() for p in (s.directory / 'operations').glob('*.json')},
++            'supervisor independently denies trial control without overwritten outcomes or execution')
++
++
++def timed_waits(s):
++    s.open(); request, release = gate_operation(s, 'wait-release')
++    operation_id = request['operation_id']; state = s.runstate.read_bytes()
++    meta = s.remember(); session = load(s.directory / 'runtime_session.json')
++    for limits in ({}, {'timeout_seconds': -1}, {'timeout_seconds': True}, {'timeout_seconds': 31},
++                   {'timeout_seconds': float('inf')}, {'timeout_seconds': '1'}, {'output_bytes': 1}):
++        control_refused(s, 'poll-operation', {**s.identity(), 'operation_id': operation_id, 'limits': limits}, 64)
++    for seconds in (0, .25):
++        record, elapsed = timed_snapshot(s, operation_id, seconds)
++        require(record['status'] == 'running' and record['wait_outcome'] == 'stopped_waiting', 'deadline stops waiting only')
++        if seconds:
++            require(elapsed >= seconds * .8, 'finite poll actually waited for its deadline')
++        require(not s.result_path(operation_id).exists() and process_token(meta['child_pid']) and
++                load(s.directory / 'runtime_session.json')['outstanding_operation_ref'] == session['outstanding_operation_ref'],
++                'deadline retains live child and original busy lane')
++    preserved = s.operation(operation_id).read_bytes()
++    s.submit(s.request('set', 'duplicate', operation_id=operation_id), 1, 'conflict')
++    require(s.operation(operation_id).read_bytes() == preserved, 'duplicate conflict precedes timed busy admission')
++    for kind in ('evaluate', 'observe'):
++        refused(s, s.request('set', 'conflict', kind=kind), 'session_busy')
++    # Observe a connected real waiting CLI before killing our own client process.
++    path = s.home / 'waiting-client.json'
++    path.write_text(json.dumps({**s.identity(), 'operation_id': operation_id, 'limits': {'timeout_seconds': 3}}))
++    client = subprocess.Popen([sys.executable, str(s.candidate / 'tools/runtime_session.py'), 'poll-operation',
++        '--root', str(s.state), '--request', str(path)], cwd=s.candidate, env=s.env,
++        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
++    try:
++        def connected():
++            if client.poll() is not None:
++                return False
++            try:
++                inodes = {os.readlink(p)[8:-1] for p in Path(f'/proc/{client.pid}/fd').iterdir()
++                          if os.readlink(p).startswith('socket:[')}
++                return any(len(row) > 6 and row[5] == '03' and row[6] in inodes
++                           for row in (line.split() for line in Path('/proc/net/unix').read_text().splitlines()[1:]))
++            except OSError:
++                return False
++        wait_for(connected, 'real timed client connected before disconnect')
++        require(client.poll() is None, 'client still waiting before disconnect')
++        start = time.monotonic(); refused(s, s.request('set', 'while-client-waits'), 'session_busy')
++        require(time.monotonic() - start < 2.5 and client.poll() is None,
++                'supervisor services other controls before the active timed wait ends')
++        client.terminate(); client.communicate(timeout=2)
++        require(client.returncode < 0, 'owned waiting client was terminated')
++    finally:
++        if client.poll() is None:
++            client.kill(); client.communicate(timeout=2)
++    require(s.poll(operation_id)['status'] == 'running' and s.receipts().count(operation_id) == 1,
++            'client disconnect never cancels or duplicates work')
++    refused(s, s.request('set', 'after-disconnect'), 'session_busy')
++    release.touch(); require(s.finish(request) is None, 'normal completion after deadline/disconnect')
++    require(load(s.operation(operation_id))['wait_outcome'] == 'completed_wait', 'terminal observation replaces stopped_waiting')
++    terminal, elapsed = timed_snapshot(s, operation_id, 30)
++    require(terminal['status'] == 'completed' and terminal['wait_outcome'] == 'completed_wait' and elapsed < 5.5,
++            'maximum valid wait returns an already observed terminal result immediately')
++    s.execute('set', 'fresh-after-wait'); require(s.execute('get') == 'fresh-after-wait', 'lane reopens after real completion')
++    require(s.runstate.read_bytes() == state and s.remember()['child_pid'] == meta['child_pid'], 'wait preserves governed attempt and child')
++
++
++def cancellation(s):
++    s.open(); request, release = gate_operation(s, 'cancel-release'); operation_id = request['operation_id']
++    control = cancel_request(s, operation_id)
++    control_counter(s, 'cancel-operation', control)
++    direct_trial_control(s, 'cancel-operation', control)
++    for key, value, code, reason in [('requester', OTHER, 1, 'foreign_owner'), ('requester', ORCH, 1, 'foreign_owner'),
++            ('requester', TRIAL, 1, 'review_trial'), ('requester', OWNER | {'role': 'Evaluator'}, 1, 'foreign_owner'),
++            ('expected_generation', {'counter': 0, 'nonce': '0' * 32}, 1, 'stale_generation'),
++            ('expected_lease_epoch', 1, 1, 'stale_lease'), ('attempt', 1, 1, 'attempt_mismatch'), ('attempt', True, 64, None),
++            ('payload', {'expression': 'forbidden'}, 64, None), ('operation_id', 'unknown', 1, 'unknown_operation')]:
++        control_refused(s, 'cancel-operation', {**control, key: value}, code, reason)
++    response = s.call('cancel-operation', control)['result']
++    require(response['status'] == 'cancel_requested' and response['cancellation_confirmed'] is False,
++            'cancel request returns nonterminal unconfirmed snapshot')
++    terminal = wait_for(lambda: (r if (r := s.poll(operation_id))['status'] == 'cancelled' else None), 'cooperative cancellation confirmation')
++    frame = load(s.result_path(operation_id))
++    require(terminal['cancellation_confirmed'] is True and frame['cancellation_confirmed'] is True and
++            frame['session_id'] == s.name and frame['operation_id'] == operation_id and
++            frame['generation'] == s.record['generation'] and frame['lease_epoch'] == s.record['lease_epoch'] and
++            frame['status'] == 'cancelled' and frame['result'] is None, 'only correlated confirmed stop yields cancelled')
++    require(not release.exists() and s.receipts().count(operation_id) == 1, 'cancelled gate never released or reexecuted')
++    s.execute('set', 'after-cancel'); require(s.execute('get') == 'after-cancel', 'fresh work after observed stop')
++    validate_records(s); restart(s)
++    s.execute('set', 'after-reopen'); require(s.execute('get') == 'after-reopen', 'confirmed cancellation reconciles on clean reopen')
++    completed, release = gate_operation(s, 'completion-wins'); release.touch(); s.finish(completed)
++    before = s.operation(completed['operation_id']).read_bytes(); result = s.result_path(completed['operation_id']).read_bytes()
++    observed = s.call('cancel-operation', cancel_request(s, completed['operation_id']))['result']
++    require(observed == json.loads(before) and observed['status'] == 'completed' and
++            s.operation(completed['operation_id']).read_bytes() == before and
++            s.result_path(completed['operation_id']).read_bytes() == result, 'completion winning cancel race is immutable')
++    s.transfer(HUMAN); human, _ = gate_operation(s, 'human-cancel')
++    s.call('cancel-operation', cancel_request(s, human['operation_id']))
++    wait_for(lambda: s.poll(human['operation_id'])['status'] == 'cancelled', 'current human owner cancellation')
++    s.transfer(OWNER)
++    for mode in ('withhold', 'missing-confirmation', 'false-confirmation', 'string-confirmation', 'wrong-id', 'wrong-generation',
++                 'wrong-lease', 'wrong-session', 'unsolicited', 'child-death', 'completion-wins'):
++        cancel_fault(s.home, mode)
++    for boundary in ('result', 'terminal'):
++        cancel_crash(s.home, boundary)
++
++
++def diagnostic_values(s, key):
++    path = s.directory / 'child.stdout.log'; values = []
++    for line in path.read_text().splitlines() if path.exists() else []:
++        try:
++            value = json.loads(line)
++        except ValueError:
++            continue
++        if isinstance(value, dict) and key in value:
++            values.append(value[key])
++    return values
++
++
++def cancel_fault(parent, mode):
++    with tempfile.TemporaryDirectory(prefix='c-', dir=parent) as home:
++        base = Path(home); candidate = base / 'r'; stub = candidate / 'tools/fixtures/runtime_session/stub_runtime.py'
++        stub.parent.mkdir(parents=True); shutil.copyfile(ROOT / 'tools/runtime_session.py', candidate / 'tools/runtime_session.py')
++        stub.write_text('''import json,os,sys
++from pathlib import Path
++MODE = ''' + repr(mode) + '\nSTATE = ' + repr(str(base / 'state/one')) + '''
++def send(value): os.write(3,(json.dumps(value)+'\\n').encode())
++g=json.loads(sys.stdin.readline())['generation']; send({'type':'ready','generation':g}); pending=None
++for line in sys.stdin:
++ f=json.loads(line)
++ if f['type']=='execute':
++  pending=f['request']; print(json.dumps({'received_operation_id':pending['operation_id']}),flush=True)
++  if MODE!='unsolicited': continue
++ else:
++  print(json.dumps({'received_cancel_operation_id':f['operation_id']}),flush=True)
++  record=json.loads((Path(STATE)/'operations'/(f['operation_id']+'.json')).read_text())
++  print(json.dumps({'cancel_observation':{'status':record['status'],'confirmed':record.get('cancellation_confirmed')}}),flush=True)
++  if MODE=='withhold': continue
++  if MODE=='child-death': os._exit(87)
++  if MODE=='completion-wins':
++   send({'type':'result','operation_id':pending['operation_id'],'generation':g,'status':'completed','result':None,'image_consistent':True}); continue
++ ack={'type':'result','session_id':pending['session_id'],'operation_id':pending['operation_id'],'generation':g,
++      'lease_epoch':pending['expected_lease_epoch'],'status':'cancelled','result':None,'image_consistent':True,'cancellation_confirmed':True}
++ if MODE=='missing-confirmation': del ack['cancellation_confirmed']
++ if MODE=='false-confirmation': ack['cancellation_confirmed']=False
++ if MODE=='string-confirmation': ack['cancellation_confirmed']='true'
++ if MODE=='wrong-id': ack['operation_id']='other'
++ if MODE=='wrong-generation': ack['generation']=dict(g,counter=g['counter']+1)
++ if MODE=='wrong-lease': ack['lease_epoch']+=1
++ if MODE=='wrong-session': ack['session_id']='other'
++ send(ack)
++''')
++        peer = Session(base, candidate=candidate)
++        try:
++            peer.open(); request, _ = gate_operation(peer, 'fault-release'); operation_id = request['operation_id']
++            if mode != 'unsolicited':
++                require(peer.call('cancel-operation', cancel_request(peer, operation_id))['result']['status'] == 'cancel_requested',
++                        'private peer received real nonterminal cancel request')
++                def cancels():
++                    return diagnostic_values(peer, 'received_cancel_operation_id')
++                wait_for(lambda: cancels(), 'private peer cancellation receipt')
++                observations = wait_for(lambda: diagnostic_values(peer, 'cancel_observation'), 'durable cancel publication witness')
++                require(observations[0] == {'status': 'cancel_requested', 'confirmed': False}, 'unconfirmed cancel is durable before control frame')
++                if mode == 'completion-wins':
++                    record = wait_for(lambda: (r if (r := peer.poll(operation_id))['status'] == 'completed' else None), 'normal completion wins pending cancellation')
++                    require(record.get('cancellation_confirmed') is not True and
++                            load(peer.result_path(operation_id))['status'] == 'completed', 'completion cannot be relabelled cancelled')
++                    return
++                if mode == 'withhold':
++                    peer.call('cancel-operation', cancel_request(peer, operation_id))
++                    record, _ = timed_snapshot(peer, operation_id, .1)
++                    require(record['status'] == 'cancel_requested' and record['cancellation_confirmed'] is False and
++                            record['wait_outcome'] == 'stopped_waiting' and cancels() == [operation_id],
++                            'repeated cancellation is idempotent; withheld acknowledgement cannot free lane')
++            for _ in range(4):
++                record, _ = timed_snapshot(peer, operation_id, 0)
++                require(record['status'] in ('running', 'cancel_requested', 'unknown') and
++                        record.get('cancellation_confirmed') is not True and not peer.result_path(operation_id).exists(),
++                        'absent/mismatched/unsolicited confirmation or death never fabricates cancellation')
++                time.sleep(.03)
++            refused(peer, peer.request('set', 'forbidden-after-fault'), 'session_busy')
++            validate_records(peer)
++        finally:
++            peer.cleanup()
++
++
++def cancel_crash(parent, boundary):
++    with tempfile.TemporaryDirectory(prefix='cc-', dir=parent) as home:
++        base = Path(home); candidate = base / 'r'; stub = candidate / 'tools/fixtures/runtime_session/stub_runtime.py'
++        stub.parent.mkdir(parents=True); shutil.copyfile(ROOT / 'tools/fixtures/runtime_session/stub_runtime.py', stub)
++        source = (ROOT / 'tools/runtime_session.py').read_text(); tree = ast.parse(source)
++        publisher = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'atomic_json']
++        require(len(publisher) == 1, 'unique private cancellation publication fault site')
++        hook = '''
++_cancel_saved_publish = atomic_json
++def atomic_json(path, value):
++    _cancel_saved_publish(path, value)
++    path=Path(path)
++    if path.parent.name=='operations' and value.get('status')=='cancelled' and ''' + repr(boundary) + ''' == ('result' if path.name.endswith('.result.json') else 'terminal'):
++        os._exit(86)
++'''
++        lines = source.splitlines(keepends=True); lines.insert(publisher[0].end_lineno, hook)
++        (candidate / 'tools/runtime_session.py').write_text(''.join(lines))
++        peer = Session(base, candidate=candidate)
++        try:
++            peer.open(); peer.execute('set', 'transport-positive')
++            request, _ = gate_operation(peer, 'cancel-crash-release')
++            peer.call('cancel-operation', cancel_request(peer, request['operation_id']))
++            for pid, token in peer.processes.items():
++                wait_for(lambda: process_token(pid) != token, 'cancel publication crash processes stop')
++            before = {p.name: p.read_bytes() for p in (peer.directory / 'operations').glob('*.json')}
++            require(peer.result_path(request['operation_id']).exists(), 'cancel crash witness follows real result publication')
++            response = peer.call('open-session', peer.opening(), (0, 1, 70))
++            if response['ok']:
++                peer.record = response['result']; peer.remember()
++            require(not response['ok'] and response['error'] in ('session_busy', 'ambiguous_state', 'infrastructure'),
++                    'cancel result/terminal/pointer crash disagreement refuses reopen')
++            require(peer.last_exit == (1 if response['error'] == 'session_busy' else 70),
++                    'cancel crash busy and infrastructure uncertainty retain distinct exit classes')
++            require(before == {p.name: p.read_bytes() for p in (peer.directory / 'operations').glob('*.json')},
++                    'cancel crash preserves unresolved operation/result bytes')
++        finally:
++            peer.cleanup()
++
++
++def git_fixture(repo, *args):
++    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
++    env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull)
++    p = subprocess.run(['git', '-c', 'core.hooksPath=' + os.devnull, '-C', str(repo), *args],
++                       env=env, text=True, capture_output=True, timeout=8)
++    require(p.returncode == 0, f'private committed fixture Git command: {p.stderr}')
++    return p.stdout.strip()
++
++
++def source_inputs(home, malformed=False):
++    repo = Path(home) / 'source'; repo.mkdir(parents=True)
++    git_fixture(repo, 'init', '-q')
++    files = {'source.txt': 'committed input\n', 'resource.txt': 'private fixture resource\n'}
++    for name, expression in [('set.json', {'op': 'set', 'name': 'symbol', 'value': 'pinned'}),
++                             ('get.json', {'op': 'get', 'name': 'symbol'})]:
++        template = {'kind': 'evaluate', 'payload': {'expression': json.dumps(expression)}, 'context': {}, 'limits': {}}
++        if malformed and name == 'set.json':
++            template['unrecognized'] = True
++        files[name] = json.dumps(template)
++    for name, value in files.items():
++        (repo / name).write_text(value)
++    git_fixture(repo, 'add', '--', '.')
++    git_fixture(repo, '-c', 'user.name=Acceptance Fixture', '-c', 'user.email=acceptance@example.invalid', 'commit', '-qm', 'pinned replay inputs')
++    return {'workspace_path': str(repo), 'source_revision': git_fixture(repo, 'rev-parse', 'HEAD'),
++            'source_manifest': [{'path': name, 'sha256': hashlib.sha256((repo / name).read_bytes()).hexdigest()} for name in sorted(files)],
++            'command_refs': ['set.json', 'get.json'], 'external_resources': [
++                {'ref': str(repo / 'resource.txt'), 'owner': OWNER, 'isolation': 'isolated'}]}
++
++
++def attachment(s, inputs):
++    return {**s.identity(), **governed(s), 'expected_outstanding_operation_ref':
++            load(s.directory / 'runtime_session.json').get('outstanding_operation_ref'), 'handoff': copy.deepcopy(inputs)}
++
++
++def check_attachment(s, inputs, before):
++    import jsonschema
++    current = load(s.directory / 'runtime_session.json'); handoff = load(s.directory / 'handoff.json')
++    for record in (current, handoff):
++        jsonschema.validate(record, load(ROOT / 'schema/runtime_session.schema.json'))
++        require(record['owner'] == before['owner'] and record['generation'] == before['generation'] and
++                record['lease_epoch'] == before['lease_epoch'] and
++                record.get('outstanding_operation_ref') == before.get('outstanding_operation_ref'), 'checked reattach snapshot identity')
++        for key in ('source_revision', 'source_manifest', 'command_refs', 'external_resources'):
++            require(record[key] == inputs[key], 'actual committed source/command/resource binding')
++        require(record['source_state'] == 'committed', 'source state derived committed')
++    require(handoff['transition'] == 'handoff' and current['transition'] == 'reattach', 'handoff is a snapshot, not executable action')
++    for key in ('owner', 'generation', 'lease_epoch', 'outstanding_operation_ref'):
++        require(current['previous_' + key] == before.get(key), 'reattach previous identity remains equal to checked snapshot')
++    p = subprocess.run(['bash', '-c', 'source "$1"; vlib_runtime_record_relations runtime_session "$2"',
++        '_', str(ROOT / 'tools/verify_lib.sh'), str(s.directory / 'handoff.json')], capture_output=True, text=True, timeout=8)
++    require(p.returncode == 0, 'handoff snapshot existing C12 relations')
++    validate_records(s)
++
++
++def attach_refusals(s, inputs):
++    request = attachment(s, inputs)
++    control_counter(s, 'reattach-session', request)
++    direct_trial_control(s, 'reattach-session', request)
++    for key, value, code, reason in [('requester', OTHER, 1, 'foreign_owner'), ('requester', ORCH, 1, 'foreign_owner'),
++            ('requester', TRIAL, 1, 'review_trial'), ('requester', OWNER | {'role': 'Evaluator'}, 1, 'foreign_owner'),
++            ('expected_generation', {'counter': 0, 'nonce': '0' * 32}, 1, 'stale_generation'),
++            ('expected_lease_epoch', s.record['lease_epoch'] + 1, 1, 'stale_lease'), ('attempt', 1, 1, 'attempt_mismatch'),
++            ('contract_id', 'other', 1, 'attempt_mismatch'), ('step_key', 'other', 1, 'attempt_mismatch'),
++            ('expected_outstanding_operation_ref', 'wrong-operation', 1, 'continuity_mismatch'),
++            ('payload', {'expression': 'must-not-evaluate'}, 64, None)]:
++        control_refused(s, 'reattach-session', {**request, key: value}, code, reason)
++
++
++def reattachment(s):
++    inputs = source_inputs(s.home); s.open(); request, release = gate_operation(s, 'reattach-release')
++    before = load(s.directory / 'runtime_session.json'); meta = s.remember(); state = s.runstate.read_bytes(); receipts = s.receipts()
++    s.record = s.call('reattach-session', attachment(s, inputs))['result']
++    check_attachment(s, inputs, before); attach_refusals(s, inputs)
++    require(meta['child_pid'] == s.remember()['child_pid'] and process_token(meta['child_pid']) and
++            s.receipts() == receipts and s.runstate.read_bytes() == state, 'fresh client reattaches live pending image without execution/budget change')
++    endpoint = s.directory / 'control.sock'; saved = s.directory / 'control.saved'
++    endpoint.rename(saved)
++    try:
++        control_refused(s, 'reattach-session', attachment(s, inputs), 70, 'infrastructure')
++    finally:
++        saved.rename(endpoint)
++    stale_snapshot = attachment(s, inputs)
++    release.touch(); s.finish(request)
++    control_refused(s, 'reattach-session', stale_snapshot, 1, 'continuity_mismatch')
++    s.call('reattach-session', attachment(s, inputs))
++    s.execute('set', 'after-reattach'); require(s.execute('get') == 'after-reattach', 'original pending operation resolves before fresh work')
++    validate_records(s)
++    # Corrupt only a separate private session; an ambiguous record must not auto-restart.
++    with tempfile.TemporaryDirectory(prefix='d-', dir=s.home) as home:
++        peer = Session(home)
++        try:
++            peer.open(); pending, _ = gate_operation(peer, 'disagreement-release'); req = attachment(peer, inputs)
++            path = peer.directory / 'runtime_session.json'; raw = path.read_bytes(); record = json.loads(raw)
++            record['outstanding_operation_ref'] = 'unrelated-durable-operation'; path.write_text(json.dumps(record))
++            try:
++                control_refused(peer, 'reattach-session', req, 70, ('infrastructure', 'ambiguous_state'))
++                peer.no_dispatch(pending['operation_id'] + '-new')
++            finally:
++                path.write_bytes(raw)
++        finally:
++            peer.cleanup()
++
++
++def source_bound(s):
++    inputs = source_inputs(s.home); repo = Path(inputs['workspace_path']); s.open(); s.execute('set', 'warm-only')
++    before = load(s.directory / 'runtime_session.json'); receipts = s.receipts()
++    s.record = s.call('reattach-session', attachment(s, inputs))['result']; check_attachment(s, inputs, before)
++    require(s.receipts() == receipts and s.execute('get') == 'warm-only', 'reattach never executes committed replay commands')
++    attach_refusals(s, inputs)
++    variants = []
++    for key, value, code in [('source_revision', '0' * 40, 1), ('workspace_path', 'relative', 64),
++                             ('source_state', 'committed', 64), ('extra', True, 64)]:
++        bad = copy.deepcopy(inputs); bad[key] = value; variants.append((bad, code))
++    for entry in ({'path': '../escape', 'sha256': '0' * 64}, {'path': '/absolute', 'sha256': '0' * 64}):
++        bad = copy.deepcopy(inputs); bad['source_manifest'].append(entry); variants.append((bad, 64))
++    bad = copy.deepcopy(inputs); bad['source_manifest'].append(bad['source_manifest'][0]); variants.append((bad, 64))
++    bad = copy.deepcopy(inputs); bad['source_manifest'][0]['sha256'] = '0' * 64; variants.append((bad, 1))
++    bad = copy.deepcopy(inputs); bad['command_refs'] = ['source.txt']; variants.append((bad, 64))
++    bad = copy.deepcopy(inputs); bad['external_resources'][0]['extra'] = True; variants.append((bad, 64))
++    bad = copy.deepcopy(inputs); bad['external_resources'][0]['isolation'] = 'unknown'; variants.append((bad, 64))
++    for bad, code in variants:
++        req = attachment(s, bad); control_refused(s, 'reattach-session', req, code, 'source_mismatch' if code == 1 else None)
++    source = repo / 'source.txt'; original = source.read_bytes()
++    for corruption in ('dirty', 'missing', 'symlink'):
++        source.unlink()
++        if corruption == 'dirty': source.write_text('dirty workspace\n')
++        if corruption == 'symlink':
++            outside = s.home / 'outside-source'; outside.write_bytes(original); source.symlink_to(outside)
++        try:
++            control_refused(s, 'reattach-session', attachment(s, inputs), 1, 'source_mismatch')
++        finally:
++            if source.exists() or source.is_symlink(): source.unlink()
++            source.write_bytes(original)
++    uncommitted = repo / 'uncommitted.json'; uncommitted.write_bytes((repo / 'set.json').read_bytes())
++    bad = copy.deepcopy(inputs); bad['source_manifest'].append({'path': uncommitted.name, 'sha256': hashlib.sha256(uncommitted.read_bytes()).hexdigest()}); bad['command_refs'] = [uncommitted.name]
++    control_refused(s, 'reattach-session', attachment(s, bad), 1, 'source_mismatch'); uncommitted.unlink()
++    template = repo / 'set.json'; raw = template.read_bytes(); template.unlink()
++    try:
++        control_refused(s, 'reattach-session', attachment(s, inputs), 1, 'source_mismatch')
++    finally:
++        template.write_bytes(raw)
++    source.write_text('different committed source\n'); git_fixture(repo, 'add', '--', 'source.txt')
++    git_fixture(repo, '-c', 'user.name=Acceptance Fixture', '-c', 'user.email=acceptance@example.invalid', 'commit', '-qm', 'different valid provenance')
++    changed = copy.deepcopy(inputs); changed['source_revision'] = git_fixture(repo, 'rev-parse', 'HEAD')
++    changed['source_manifest'] = [{**x, 'sha256': hashlib.sha256((repo / x['path']).read_bytes()).hexdigest()} for x in inputs['source_manifest']]
++    try:
++        control_refused(s, 'reattach-session', attachment(s, changed), 1, 'source_mismatch')
++    finally:
++        git_fixture(repo, 'checkout', '--quiet', '--detach', inputs['source_revision'])
++    s.call('reattach-session', attachment(s, inputs)); require(s.execute('get') == 'warm-only', 'valid manifest remains accepted after negative controls')
++    snapshot = s.directory / 'handoff.json'; raw = snapshot.read_bytes(); corrupted = json.loads(raw); corrupted['source_revision'] = '0' * 40
++    snapshot.write_text(json.dumps(corrupted))
++    try:
++        control_refused(s, 'reattach-session', attachment(s, inputs), 70, ('infrastructure', 'ambiguous_state'))
++    finally:
++        snapshot.write_bytes(raw)
++    with tempfile.TemporaryDirectory(prefix='bad-', dir=s.home) as home:
++        bad_inputs = source_inputs(home, malformed=True); peer = Session(home)
++        try:
++            peer.open(); control_refused(peer, 'reattach-session', attachment(peer, bad_inputs), 64)
++        finally:
++            peer.cleanup()
++    with tempfile.TemporaryDirectory(prefix='human-', dir=s.home) as home:
++        peer = Session(home)
++        try:
++            peer.open(HUMAN); before = load(peer.directory / 'runtime_session.json')
++            peer.call('reattach-session', attachment(peer, inputs)); check_attachment(peer, inputs, before)
++        finally:
++            peer.cleanup()
++    handoff_crash(s.home, inputs)
++    fixture_claim(s.home / 'fourteen-harness')
++
++
++def handoff_crash(parent, inputs):
++    with tempfile.TemporaryDirectory(prefix='hc-', dir=parent) as home:
++        base = Path(home); candidate = base / 'r'; stub = candidate / 'tools/fixtures/runtime_session/stub_runtime.py'
++        stub.parent.mkdir(parents=True); shutil.copyfile(ROOT / 'tools/fixtures/runtime_session/stub_runtime.py', stub)
++        source = (ROOT / 'tools/runtime_session.py').read_text()
++        publishers = [n for n in ast.parse(source).body if isinstance(n, ast.FunctionDef) and n.name == 'atomic_json']
++        require(len(publishers) == 1, 'unique private handoff publication fault site')
++        hook = '''
++_handoff_saved_publish = atomic_json
++def atomic_json(path, value):
++    path=Path(path); marker=path.parent/'handoff-crash.once'
++    snapshot=path.name in ('handoff.json','runtime_session.json') and value.get('transition') in ('handoff','reattach')
++    if snapshot and marker.exists(): os._exit(88)
++    _handoff_saved_publish(path,value)
++    if snapshot: marker.touch()
++'''
++        lines = source.splitlines(keepends=True); lines.insert(publishers[0].end_lineno, hook)
++        (candidate / 'tools/runtime_session.py').write_text(''.join(lines))
++        peer = Session(base, candidate=candidate)
++        try:
++            peer.open(); peer.execute('set', 'handoff-transport-positive')
++            peer.call('reattach-session', attachment(peer, inputs), 70)
++            for pid, token in peer.processes.items():
++                wait_for(lambda: process_token(pid) != token, 'handoff publication crash processes stop')
++            published = {p.name: p.read_bytes() for p in (peer.directory / 'handoff.json', peer.directory / 'runtime_session.json') if p.exists()}
++            require((peer.directory / 'handoff-crash.once').exists(), 'crash follows first real snapshot publication')
++            response = peer.call('open-session', peer.opening(), (0, 70))
++            if response['ok']:
++                peer.record = response['result']; peer.remember()
++            require(not response['ok'] and response['error'] in ('infrastructure', 'ambiguous_state'),
++                    'partial handoff/session publication fails closed without replacement')
++            require(published == {p.name: p.read_bytes() for p in (peer.directory / 'handoff.json', peer.directory / 'runtime_session.json') if p.exists()},
++                    'partial snapshot evidence is not silently repaired or overwritten')
++        finally:
++            peer.cleanup()
++
++
++def replay(s):
++    inputs = source_inputs(s.home); s.open(); s.execute('set', 'warm-only')
++    s.call('reattach-session', attachment(s, inputs)); meta = s.remember(); state = s.runstate.read_bytes()
++    snapshot = load(s.directory / 'handoff.json')
++    relocated = s.home / 'fresh-source'
++    git_fixture(Path(inputs['workspace_path']), 'worktree', 'add', '--quiet', '--detach', str(relocated), inputs['source_revision'])
++    replay_inputs = copy.deepcopy(inputs); replay_inputs['workspace_path'] = str(relocated)
++    s.call('reattach-session', attachment(s, replay_inputs))  # Same committed content may relocate.
++    replay_inputs['external_resources'][0]['ref'] = str(relocated / 'resource.txt')
++    second = Session(s.home, 'replay')
++    try:
++        second.open(); other = second.remember()
++        require(other['child_pid'] != meta['child_pid'] and second.record['generation'] != s.record['generation'], 'fresh replay process and generation')
++        before = load(second.directory / 'runtime_session.json')
++        second.call('reattach-session', attachment(second, replay_inputs)); check_attachment(second, replay_inputs, before)
++        values = []
++        for name in snapshot['command_refs']:
++            template = load(relocated / name); request = second.request('get'); request.update(template)
++            second.submit(request); values.append(second.finish(request))
++        require(values == ['pinned', 'pinned'] and s.execute('get') == 'warm-only', 'only committed ordered templates reproduce result; warm memory remains separate')
++        require(second.runstate.read_bytes() == state and governed(second) == governed(s), 'replay never creates governed attempt budget')
++        changed = relocated / 'get.json'; raw = changed.read_bytes(); changed.write_text('{}')
++        try:
++            control_refused(second, 'reattach-session', attachment(second, replay_inputs), 1, 'source_mismatch')
++        finally:
++            changed.write_bytes(raw)
++        second.call('reattach-session', attachment(second, replay_inputs)); second.execute('set', 'positive-after-replay')
++        require(second.execute('get') == 'positive-after-replay', 'replay positive after missing/changed command control')
++        validate_records(second)
++    finally:
++        second.cleanup()
++
++
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__, allow_abbrev=False)
+     selection = parser.add_mutually_exclusive_group(required=True)
+@@ -774,7 +1321,9 @@ def main():
+                     second = Session(home, 'two'); sessions.append(second); isolated(s, second)
+                 else:
+                     {'lifecycle-no-evaluation': lifecycle, 'record-schema': records,
+-                     1: ownership, 3: generation, 8: trial_policy, 9: attempts, 13: handover}[args.check or args.case](s)
++                     'cancel-confirmation-required': cancellation, 'handoff-source-bound': source_bound,
++                     1: ownership, 3: generation, 5: timed_waits, 6: reattachment, 8: trial_policy,
++                     9: attempts, 10: replay, 13: handover}[args.check or args.case](s)
+                 for session in sessions:
+                     validate_records(session)
+             print('PASS', args.check or f'case{args.case}/stub')
