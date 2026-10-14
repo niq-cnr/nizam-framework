@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "127",
   "status": "in_progress",
-  "updated_at": "2026-10-14T11:43:06.009354+00:00",
+  "updated_at": "2026-10-14T11:49:56.814206+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -974,6 +974,10 @@
       "limit": 3
     },
     "127-executable-bundle-review": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "127-mode-b": {
       "attempts": 1,
       "limit": 3
     }
@@ -5220,6 +5224,12 @@
       "event": "127-semantic1-evidence-final-bundle-review",
       "detail": "Independent five0/five intended-mutant1/five restored0 proofs committed and sealed; final executable bundle review1 now required before ModeB. No pristine-base failure claim.",
       "evidence": ".agent/evidence/127/executable-review1-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:49:56.814206+00:00",
+      "event": "127-modeB1-parallel-preparation",
+      "detail": "Separate Validator examines immutable source while final executable proof review runs. No ModeB verdict/advancement until Root confirms strict final bundle approval.",
+      "evidence": ".agent/evidence/127/modeb1-dispatch.json"
     }
   ],
   "phase_001_scope_budget_final": {
