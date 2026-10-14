@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
   "current_phase": "018-workflow-assurance-controls",
-  "current_feature": "120",
+  "current_feature": "121",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:13:04.843987+00:00",
+  "updated_at": "2026-10-14T18:16:08.543206+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1269,6 +1269,14 @@
       "result": "passed"
     },
     "120-final-integration": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "121-selection": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "121-contract": {
       "attempts": 1,
       "limit": 3
     }
@@ -5802,6 +5810,11 @@
       "at": "2026-10-14T18:13:04.843987+00:00",
       "event": "120-final-integration-dispatch",
       "detail": "All feature gates/capture/closure/current docs approved; final local16/0, maintained diff0, scope1397/2750 and phase2119/9360. Push final exact head, verify all hosted checks/reviews/mergeability, then authorized normal merge and main CI. Transport receipts carried into next branch to avoid recursive CI receipt commits."
+    },
+    {
+      "at": "2026-10-14T18:16:08.543206+00:00",
+      "event": "121-selected-contract-preparation",
+      "detail": "Dependency120 captured/COMPLETED with strict gates and evidence. Isolate next branch while final PR101 head9613e59 CI runs. Strategically overlap proposal-only preparation; Source release explicitly blocked until actual clean merge/main CI plus new dual precode/provisional gates. No120 branch/source/test/tag mutation."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6226,7 +6239,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": "120",
+  "active_contract_id": "121",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -6298,7 +6311,7 @@
       }
     ]
   },
-  "last_action": "120 final docs reviewed and local16/0; measured once within original budget. Final exact-head PR101 CI and merge follow;121-123 pending.",
+  "last_action": "121 contract preparation overlaps final120 integration; no121 Source before clean PR101 merge/main CI, dual precode gates and independent provisional acceptance approval.",
   "completed_contract_ids": [
     "099",
     "103",
