@@ -1,0 +1,61 @@
+{
+  "review": "validator-mode-b",
+  "feature": "126",
+  "contract_id": "126",
+  "attempt": 2,
+  "reviewer": "/root/capability_review",
+  "reviewed_commit": "aba53eb915eb99e65f139131bf9475fda1af2cd8",
+  "source_candidate": "d965c2ca9dd845f9a094153c7328d90a5398d06f",
+  "source_baseline": "3f0e11b23367c17b1d8c2086011dc0c078441509",
+  "original_contract_base": "9f361154c63c2f80768b6845c98f89a9aa1a1541",
+  "contract_sha256": "7eed25daca89c13a548976a213ddba6e6837acaee90511f0deff152a60697778",
+  "source_sha256": "e8878af1a6bbfbf71f8866fd19a2789b9d5f00dff4e8617999ce796f8232bfb4",
+  "test_revision": "d89d79fcdb9c5b3d3098f5ed8162b11467bb3284",
+  "test_sha256": "626ff4194baee472d27065906e12a0109f2f9878e326a5d6d2212ad2f584fe88",
+  "bundle_sha256": "0fe5d36a27060431cbc4a42adf1524ebe0c8237d682ce33069664a21b9996433",
+  "bundle_review": ".agent/validator/126-bundle-review-2.json",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Approve exact final Source3 implementation against the approved feature126 contract for fresh independent QA. Prior orphan-record crash disagreement is now refused before replacement or fresh dispatch."
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [
+    ".agent/evidence/126/mode-b2-check.py",
+    ".agent/evidence/126/mode-b2-result.json",
+    ".agent/evidence/126/mode-b2.stdout.txt",
+    ".agent/evidence/126/mode-b2-controls/scope.json",
+    ".agent/evidence/126/mode-b2-controls/observations.json",
+    ".agent/evidence/126/b3-review-controls/C2-result.json",
+    ".agent/evidence/126/b3-review-controls/C3-result.json",
+    ".agent/evidence/126/b3-review-controls/identity-review.json",
+    ".agent/evidence/126/mode-b-case9-result.json"
+  ],
+  "resolved_issue": {
+    "id": "126-B-1",
+    "resolution": "reconcile_idle scans all durable operations/results and validates metadata/session generation while the supervisor owns the exclusive lock; incomplete or contradictory records refuse with70 before increment/spawn. Fresh admission checks actual metadata/session agreement and reconciliation before recording or sending execute. A retained outstanding pointer still yields busy1.",
+    "proof": "Exact B3 regression independently rerun on C2 and final d965 with working transport/clean-restart positives: intended old red1 versus final pass0. Mode B2 adds actual final-source probes for metadata generation disagreement, orphan result and live durable/in-memory disagreement; all exit70 and preserve records/attempt bytes."
+  },
+  "contract_review": [
+    "Reviewed final controller end-to-end and retained prior full baseline-to-C2 review of five authorized product files. Only controller changes since C2; unchanged stub, harness, README and changelog hashes independently match. Independent B3 test changes and Root/evidence overlays separately attributed; no installed/schema/normative/contract/other-product changes or unrelated untracked paths.",
+    "Lifecycle paths remain non-evaluating; fixed sibling stub uses JSON set/get/gate without eval. Declared principal policy, trial preflight/direct-socket refusal, owner/lease/generation checks and one-operation serialization remain intact. Duplicate-ID conflict precedes busy and cannot overwrite evidence.",
+    "Generation reservation precedes spawn under flock, metadata carries current generation, and coherent closed restart increments counter/new nonce. Reconciliation refuses nonterminal/unknown operation states, mismatched/orphan results and generation disagreement without repair, fabricated completion or new dispatch.",
+    "Attempt guard remains read-only and binds contract/step/attempt across generations. C2 rejected-binding continuity fix remains intact. Atomic per-file fsync/replace, terminal-before-pointer-clear ordering, bounded framing/process cleanup and development-only evidence boundaries retained.",
+    "Existing harness registers exactly one claim and schedules the nine exact contract commands with captured actual exit propagation. All AT1-AT9 retain their approved sealed verification commands; B3 adds crash regression to AT2. Prior proof and development captures are distinguished from pending fresh QA."
+  ],
+  "implementation_gate_only": true,
+  "feature_accepted": false,
+  "pending": [
+    "Fresh independent complete nine-command QA with exactly one additional evaluator-originated adversarial spot-check.",
+    "Final source-bound hosted CI receipt, required repository/scope evidence and Root lifecycle capture."
+  ],
+  "review_owned_changes": [
+    "?? .agent/evidence/126/mode-b2-check.py",
+    "?? .agent/evidence/126/mode-b2-controls/observations.json",
+    "?? .agent/evidence/126/mode-b2-controls/scope.json",
+    "?? .agent/evidence/126/mode-b2-result.json",
+    "?? .agent/evidence/126/mode-b2.stderr.txt",
+    "?? .agent/evidence/126/mode-b2.stdout.txt"
+  ]
+}
