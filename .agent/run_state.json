@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T15:47:17.857390+00:00",
+  "updated_at": "2026-10-14T16:01:25.884941+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1159,11 +1159,11 @@
       "limit": 3
     },
     "120-mode-a": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "120-contract-review": {
-      "attempts": 1,
+      "attempts": 2,
       "limit": 3
     },
     "120-contract-review-helper": {
@@ -5533,6 +5533,11 @@
       "event": "120-upstream-PR100-mainCI-passed",
       "detail": "Actualrun38589477270 statuscompleted/conclusionsuccess andallfivejobs successonmerge92fecd8. Clears mainCIprerequisiteonly; Source120stillgated by reviewedproposal+provisionaltests. Pendingselectionsnapshotpreserved ashistory.",
       "evidence": ".agent/evidence/120/source-prerequisite.json"
+    },
+    {
+      "at": "2026-10-14T16:01:25.884941+00:00",
+      "event": "120-renewed-precode-dispatch",
+      "detail": "Both original independent rejections preserved; corrected proposal c7c6239 SHA25f7845d receives fresh Mode A2 and contract review2 before any test authoring/Source."
     }
   ],
   "phase_001_scope_budget_final": {
