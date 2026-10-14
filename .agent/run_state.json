@@ -1,9 +1,9 @@
 {
   "repository": "nizam-framework",
-  "current_phase": "017-workflow-assurance-foundation",
-  "current_feature": null,
-  "status": "complete",
-  "updated_at": "2026-10-14T06:35:51.460601+00:00",
+  "current_phase": "016-runtime-controller-core",
+  "current_feature": "126",
+  "status": "in_progress",
+  "updated_at": "2026-10-14T08:50:51.502144+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -885,6 +885,26 @@
       "limit": 3
     },
     "118-recovery1-closeout": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "126-selection": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "126-contract": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "126-mode-a": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "126-contract-review": {
+      "attempts": 2,
+      "limit": 3
+    },
+    "126-tests": {
       "attempts": 1,
       "limit": 3
     }
@@ -4903,6 +4923,48 @@
       "event": "phase016-local-capability-nonpassing",
       "detail": "Required isolation suite exits1 with5 unsupportedtests; SBCLversion/freshnoinit pass. Preserve actual evidence; obtain same-host capable CI receipt through bounded independently reviewed CI-only transport, no workstation sysctl change or weak-mode waiver.",
       "evidence": ".agent/evidence/phase016-preflight/local-result.json"
+    },
+    {
+      "at": "2026-10-14T08:24:27.635883+00:00",
+      "event": "phase016-activated-126-contract-preparation",
+      "detail": "Standing operator continuation authority applied after actual same-host FULL isolation/SBCL capability and independent canonical review. Archive0175203/7020 exactly, initialize0165650/7345 with307 preparation once, select126 for proposal only; no implementation approval.",
+      "evidence": ".agent/evidence/phase016-preflight/activation-decision.json"
+    },
+    {
+      "at": "2026-10-14T08:26:48.437949+00:00",
+      "event": "126-contract-proposed",
+      "detail": "Exact committed proposal selected for Validator ModeA and independent Evaluator contract review. Generator source/tests absent; no approval inferred.",
+      "evidence": ".agent/evidence/126/proposal-coordination.json"
+    },
+    {
+      "at": "2026-10-14T08:32:23.662329+00:00",
+      "event": "126-precode-round1-rejected",
+      "detail": "Add duplicate-ID conflict/no-dispatch/no-effect/record-preservation tests while pending and after completion, including changed payload and legitimate fresh-ID controls, within existing nine commands. Renew both gates for new hash.",
+      "evidence": ".agent/evidence/126/precode-round1-decision.json"
+    },
+    {
+      "at": "2026-10-14T08:37:32.162060+00:00",
+      "event": "126-contract-amendment-role-disclosure",
+      "detail": "Apply the single independently identified duplicate-ID coverage correction directly; source implementation remains assigned to Generator and all independent gates remain mandatory. Prior Generator turn interrupted before writes; owned worktree remained clean at c6b0120.",
+      "evidence": ".agent/evidence/126/round2-role-disclosure.json"
+    },
+    {
+      "at": "2026-10-14T08:38:38.971167+00:00",
+      "event": "126-precode-round2-dispatched",
+      "detail": "Current contract SHA58e6bf75; both reviewers must assess the amended obligation and existing unchanged contract. Round1 findings retained. Temporary Root Generator role ends after bounded amendment; Generator implementation remains separate.",
+      "evidence": ".agent/evidence/126/round2-role-disclosure.json"
+    },
+    {
+      "at": "2026-10-14T08:41:52.456163+00:00",
+      "event": "126-precode-approved",
+      "detail": "Both strict renewed gates approved exact proposed SHA58e6bf75; Root promotes only status/approval metadata. Independent acceptance authoring and distinct bundle review precede source repair.",
+      "evidence": ".agent/evidence/126/precode-approved.json"
+    },
+    {
+      "at": "2026-10-14T08:50:51.502144+00:00",
+      "event": "phase016-public-planning-projection-reviewed",
+      "detail": "Two current public overlays independently approved; charge39 once as distinct phase-level range. Feature126 precode and implementation ranges split around projection, no doublecount or phase017 rewrite.",
+      "evidence": ".agent/evidence/phase016-preflight/public-projection-decision.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5075,104 +5137,38 @@
     ]
   },
   "scope_budget": {
-    "original_estimate_lines": 5400,
-    "ceiling_130pct": 7020,
-    "total_lines_changed": 5203,
-    "evidence_lines_total": 163796,
-    "excluded_lines_total": 1247,
-    "per_feature": [
-      {
-        "id": "115",
-        "estimated": 2300,
-        "actual": 1863,
-        "product_lines": 733,
-        "process_overhead_lines": 1130,
-        "evidence_lines": 23159,
-        "excluded_lines": 537,
-        "range": "33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE",
-        "evidence": ".agent/evidence/115/scope-measurement.txt",
-        "rolling_baseline": null,
-        "note": "First completed017feature; wholephasebase counting includesactivation/recovery once, historicalblocked409 remainsunaltered/no doublecount."
-      },
-      {
-        "id": "116",
-        "estimated": 1400,
-        "actual": 1146,
-        "product_lines": 351,
-        "process_overhead_lines": 795,
-        "evidence_lines": 61933,
-        "excluded_lines": 164,
-        "range": "d1f8d369a711e38b479eb5b1be1f901bb669b507..WORKTREE",
-        "evidence": ".agent/evidence/116/scope-measurement.txt",
-        "baseline": {
-          "prior_features": [
-            "115"
-          ],
-          "rolling_average": 1863.0,
-          "three_times_threshold": 5589.0,
-          "first_feature_exception": false
-        },
-        "note": "Measured whole116 from captured115 before append using unchanged frozenclassifier; actual Source3/ModeB3/freshQA1/Rootcapture1 and canonicalcompletion. Failedbundles/Source/Rootcoord evidence preserved; original5400/7020 unchanged/noextraallowance."
-      },
-      {
-        "id": "117",
-        "estimated": 1050,
-        "actual": 1003,
-        "product_lines": 217,
-        "process_overhead_lines": 786,
-        "evidence_lines": 34604,
-        "excluded_lines": 263,
-        "range": "dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE",
-        "evidence": ".agent/evidence/117/scope-measurement.txt",
-        "baseline": {
-          "prior_features": [
-            "115",
-            "116"
-          ],
-          "rolling_average": 1504.5,
-          "three_times_threshold": 4513.5,
-          "first_feature_exception": false
-        },
-        "note": "Whole117 measured from captured116 before append; original5400/7020 unchanged. All failed/recovered attempts preserved as historical evidence; prior115/116 rows not remeasured."
-      },
-      {
-        "id": "118",
-        "estimated": 650,
-        "actual": 1183,
-        "product_lines": 126,
-        "process_overhead_lines": 1057,
-        "evidence_lines": 43592,
-        "excluded_lines": 283,
-        "range": "beeca3986fc0e02becf65674cbbc8b8f67bf3864..WORKTREE",
-        "evidence": ".agent/evidence/118/scope-measurement.txt",
-        "baseline": {
-          "prior_features": [
-            "115",
-            "116",
-            "117"
-          ],
-          "rolling_average": 1337.3333333333333,
-          "three_times_threshold": 4012,
-          "first_feature_exception": false
-        },
-        "note": "Whole118 measured after actual capture and canonical closure, before this once-only budget append. Original5400/7020 retained; historical blocked559 not charged twice. Includes reviewed closeout checker correction; old source/bundle failures preserved."
-      }
-    ],
+    "original_estimate_lines": 5650,
+    "ceiling_130pct": 7345,
+    "total_lines_changed": 346,
+    "evidence_lines_total": 3210,
+    "excluded_lines_total": 16,
+    "per_feature": [],
     "phase_level_items": [
       {
-        "id": "phase017-ci-history",
-        "actual": 8,
-        "product_lines": 8,
-        "process_overhead_lines": 0,
-        "evidence_lines": 508,
+        "id": "phase016-preparation",
+        "actual": 307,
+        "product_lines": 27,
+        "process_overhead_lines": 280,
+        "evidence_lines": 2994,
+        "excluded_lines": 16,
+        "range": "e619d284d36eaf6dfff54a9d001477b8d1722098..607ac75010b3668226f777986822adfb700eaf23",
+        "evidence": ".agent/evidence/phase016-preflight/scope-preparation.txt",
+        "note": "CI transport20 + comparison proposal163 + canonical activation124; all current preparation charged once within existing allowance, not a completed-feature baseline."
+      },
+      {
+        "id": "phase016-public-planning-projection",
+        "actual": 39,
+        "product_lines": 0,
+        "process_overhead_lines": 39,
+        "evidence_lines": 216,
         "excluded_lines": 0,
-        "range": "f84db8a65a814898f9e78f4a91ca56d1eccb68d3..WORKTREE",
-        "evidence": ".agent/evidence/118/integration-ci-measurement.txt",
-        "note": "Postcapture required CI checkout correction; approved features retain original point-in-time measurements. No extra allowance."
+        "range": "de7deee7831e8d3816f3f85985e8e56a44c7c006..1db8996d715afd6a6e70bf587819e29ff1c20080",
+        "evidence": ".agent/evidence/phase016-preflight/public-projection-measurement.txt",
+        "note": "Separately reviewed current ROADMAP/HANDOVER overlay; within existing allowance. Separate range excluded from126 feature measurement; historical307 preparation snapshot unchanged."
       }
     ],
     "counting_rule": {
-      "spec_ref": ".agent/product_spec_017.md 'Scope budget and measurement'; frozen phase014 counting classes reused",
+      "spec_ref": ".agent/product_spec_016.md 'Full counted budget'; unchanged frozen phase014 classifier",
       "script": ".agent/evidence/scope-budget-014/measure.py",
       "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
       "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
@@ -5180,48 +5176,14 @@
       "excluded": ".agent/run_state.json (coordination churn)",
       "unclassified": "fail closed: listed, measure.py exits 3"
     },
-    "phase_base_revision": "33775caf661d3b94ff2383f3582c8d7a7c31c21c",
-    "authorization_revision": "9ebfd03883486a205ac8c3a211f0cac0af5fddba",
-    "phase_level_costs": "Activation and coordination process included within approved5400; no additional allowance.",
-    "historical_inflight_measurements": [
-      {
-        "id": "115",
-        "status": "blocked",
-        "actual": 409,
-        "evidence_lines": 3090,
-        "excluded_lines": 529,
-        "all_paths_lines": 4028,
-        "range": "33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE",
-        "evidence": ".agent/evidence/115/blocked-scope-measurement.txt",
-        "note": "Incomplete feature; unapproved public test candidate removed after exact quarantine. Product0/process409, below7020, not appended to completed rolling baseline or total. Future authorized recovery must count whole115 from originalphasebase once; no allowance/rebaseline."
-      },
-      {
-        "id": "117",
-        "status": "blocked",
-        "actual": 394,
-        "product_lines": 0,
-        "process_overhead_lines": 394,
-        "evidence_lines": 5369,
-        "excluded_lines": 85,
-        "all_paths_lines": 5848,
-        "range": "dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE",
-        "evidence": ".agent/evidence/117/blocked-scope-measurement.txt",
-        "note": "Incomplete117 pre-code reader startup exhausted3/3, noSource/testimplementation. Whole117 startscaptured116 including selection/coordination once; no completedrollingbaseline append orrebaseline. Completed3009+inflight394=3403below original7020; haltsolelymandatoryreviewcircuit. Existing115/116/015 measuredrows/proofs preserved."
-      },
-      {
-        "id": "118",
-        "status": "blocked",
-        "actual": 559,
-        "product_lines": 10,
-        "process_overhead_lines": 549,
-        "evidence_lines": 32353,
-        "excluded_lines": 151,
-        "range": "beeca3986fc0e02becf65674cbbc8b8f67bf3864..WORKTREE",
-        "evidence": ".agent/evidence/118/blocked-scope-measurement.txt",
-        "note": "Incomplete118; failedSource1 is quarantined, no Source2 or completion. Whole118 includes selection/proposals/reviews and mandatoryhalt once; prior measured4012 rows unchanged, no extra allowance or rebaseline. Halt is exhaustedcontract/ModeA3, not scope ceiling."
-      }
-    ],
-    "last_measured_at": "2026-10-14T06:20:45.325692+00:00"
+    "phase_base_revision": "e619d284d36eaf6dfff54a9d001477b8d1722098",
+    "last_measured_at": "2026-10-14T08:50:51.502144+00:00",
+    "phase_level_costs": "Current preparation is included once within original5650/7345; later feature126 range starts after preparation. No free comparative-program allowance or phase017 rewrite.",
+    "feature126_measurement_segments": {
+      "precode": "607ac75010b3668226f777986822adfb700eaf23..de7deee7831e8d3816f3f85985e8e56a44c7c006",
+      "implementation_base": "1db8996d715afd6a6e70bf587819e29ff1c20080",
+      "rule": "Feature126 actual is precode range plus implementation_base..final capture. The intervening39-line public planning projection is charged separately once; do not measure a single607..final range and add39 again."
+    }
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -5404,7 +5366,7 @@
     ],
     "note": "Phase 012 (features 085-091) final scope ledger. Estimate 2400; actual 2965 total lines changed, within the authorized 130% cumulative ceiling of 3120. Per-feature overages are evidence/readiness weight and each remained below its prior-three rolling ceiling. The post-release records-only refresh is excluded from feature implementation totals."
   },
-  "active_contract_id": null,
+  "active_contract_id": "126",
   "phase_013_scope_budget_final": {
     "original_estimate_lines": 4800,
     "total_lines_changed": 6212,
@@ -5476,7 +5438,7 @@
       }
     ]
   },
-  "last_action": "Operator authorized continued roadmap execution and balanced real-task comparative improvement; phase016 host capability preflight pending.",
+  "last_action": "Public ROADMAP/HANDOVER refresh independently reviewed; phase016 preparation346 counted once. 126 approved contract; independent B0 tests being authored, source absent.",
   "completed_contract_ids": [
     "099",
     "103",
@@ -5736,5 +5698,154 @@
         "note": "Incomplete feature after final independent bundleReview3 rejected legitimate named-toolchain version positive. Product0+process256; not appended to completed baseline. Completed6779+inflight256=7035 below original9360. No budget extension; future actual close measurement includes total feature work once, preserving this failed in-flight snapshot."
       }
     ]
+  },
+  "phase_017_scope_budget_final": {
+    "original_estimate_lines": 5400,
+    "ceiling_130pct": 7020,
+    "total_lines_changed": 5203,
+    "evidence_lines_total": 163796,
+    "excluded_lines_total": 1247,
+    "per_feature": [
+      {
+        "id": "115",
+        "estimated": 2300,
+        "actual": 1863,
+        "product_lines": 733,
+        "process_overhead_lines": 1130,
+        "evidence_lines": 23159,
+        "excluded_lines": 537,
+        "range": "33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE",
+        "evidence": ".agent/evidence/115/scope-measurement.txt",
+        "rolling_baseline": null,
+        "note": "First completed017feature; wholephasebase counting includesactivation/recovery once, historicalblocked409 remainsunaltered/no doublecount."
+      },
+      {
+        "id": "116",
+        "estimated": 1400,
+        "actual": 1146,
+        "product_lines": 351,
+        "process_overhead_lines": 795,
+        "evidence_lines": 61933,
+        "excluded_lines": 164,
+        "range": "d1f8d369a711e38b479eb5b1be1f901bb669b507..WORKTREE",
+        "evidence": ".agent/evidence/116/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "115"
+          ],
+          "rolling_average": 1863.0,
+          "three_times_threshold": 5589.0,
+          "first_feature_exception": false
+        },
+        "note": "Measured whole116 from captured115 before append using unchanged frozenclassifier; actual Source3/ModeB3/freshQA1/Rootcapture1 and canonicalcompletion. Failedbundles/Source/Rootcoord evidence preserved; original5400/7020 unchanged/noextraallowance."
+      },
+      {
+        "id": "117",
+        "estimated": 1050,
+        "actual": 1003,
+        "product_lines": 217,
+        "process_overhead_lines": 786,
+        "evidence_lines": 34604,
+        "excluded_lines": 263,
+        "range": "dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE",
+        "evidence": ".agent/evidence/117/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "115",
+            "116"
+          ],
+          "rolling_average": 1504.5,
+          "three_times_threshold": 4513.5,
+          "first_feature_exception": false
+        },
+        "note": "Whole117 measured from captured116 before append; original5400/7020 unchanged. All failed/recovered attempts preserved as historical evidence; prior115/116 rows not remeasured."
+      },
+      {
+        "id": "118",
+        "estimated": 650,
+        "actual": 1183,
+        "product_lines": 126,
+        "process_overhead_lines": 1057,
+        "evidence_lines": 43592,
+        "excluded_lines": 283,
+        "range": "beeca3986fc0e02becf65674cbbc8b8f67bf3864..WORKTREE",
+        "evidence": ".agent/evidence/118/scope-measurement.txt",
+        "baseline": {
+          "prior_features": [
+            "115",
+            "116",
+            "117"
+          ],
+          "rolling_average": 1337.3333333333333,
+          "three_times_threshold": 4012,
+          "first_feature_exception": false
+        },
+        "note": "Whole118 measured after actual capture and canonical closure, before this once-only budget append. Original5400/7020 retained; historical blocked559 not charged twice. Includes reviewed closeout checker correction; old source/bundle failures preserved."
+      }
+    ],
+    "phase_level_items": [
+      {
+        "id": "phase017-ci-history",
+        "actual": 8,
+        "product_lines": 8,
+        "process_overhead_lines": 0,
+        "evidence_lines": 508,
+        "excluded_lines": 0,
+        "range": "f84db8a65a814898f9e78f4a91ca56d1eccb68d3..WORKTREE",
+        "evidence": ".agent/evidence/118/integration-ci-measurement.txt",
+        "note": "Postcapture required CI checkout correction; approved features retain original point-in-time measurements. No extra allowance."
+      }
+    ],
+    "counting_rule": {
+      "spec_ref": ".agent/product_spec_017.md 'Scope budget and measurement'; frozen phase014 counting classes reused",
+      "script": ".agent/evidence/scope-budget-014/measure.py",
+      "lines": "insertions + deletions, git diff --numstat --no-renames over the range (+ untracked non-ignored files for a BASE.. working-tree range); binary = 0",
+      "budget_counted": "product (tools/, ecosystem/, standard/, methodology/, schema/, templates/, docs/guide/, NIZAM.json, CHANGELOG.md; Planner extension: .github/, registry/, rest of docs/, README.md, CONTEXT.md, LICENSE, bootstrap.sh, .gitignore) + contract (.agent/contracts/**) + verdict (.agent/qa/*.json, .agent/validator/*.json) + audit deliverable (.agent/audits/**) + planning (.agent/product_spec*.md, .agent/feature_list*.json, docs/planning/**, AGENTS.md, DEBT.md)",
+      "evidence_total": ".agent/evidence/** including verification helpers, plus any non-JSON file under .agent/validator/ (row 4a, spec 1.1.6); tracked separately, never gated",
+      "excluded": ".agent/run_state.json (coordination churn)",
+      "unclassified": "fail closed: listed, measure.py exits 3"
+    },
+    "phase_base_revision": "33775caf661d3b94ff2383f3582c8d7a7c31c21c",
+    "authorization_revision": "9ebfd03883486a205ac8c3a211f0cac0af5fddba",
+    "phase_level_costs": "Activation and coordination process included within approved5400; no additional allowance.",
+    "historical_inflight_measurements": [
+      {
+        "id": "115",
+        "status": "blocked",
+        "actual": 409,
+        "evidence_lines": 3090,
+        "excluded_lines": 529,
+        "all_paths_lines": 4028,
+        "range": "33775caf661d3b94ff2383f3582c8d7a7c31c21c..WORKTREE",
+        "evidence": ".agent/evidence/115/blocked-scope-measurement.txt",
+        "note": "Incomplete feature; unapproved public test candidate removed after exact quarantine. Product0/process409, below7020, not appended to completed rolling baseline or total. Future authorized recovery must count whole115 from originalphasebase once; no allowance/rebaseline."
+      },
+      {
+        "id": "117",
+        "status": "blocked",
+        "actual": 394,
+        "product_lines": 0,
+        "process_overhead_lines": 394,
+        "evidence_lines": 5369,
+        "excluded_lines": 85,
+        "all_paths_lines": 5848,
+        "range": "dddfd4f60e9d64109e271a48181fe281d4603666..WORKTREE",
+        "evidence": ".agent/evidence/117/blocked-scope-measurement.txt",
+        "note": "Incomplete117 pre-code reader startup exhausted3/3, noSource/testimplementation. Whole117 startscaptured116 including selection/coordination once; no completedrollingbaseline append orrebaseline. Completed3009+inflight394=3403below original7020; haltsolelymandatoryreviewcircuit. Existing115/116/015 measuredrows/proofs preserved."
+      },
+      {
+        "id": "118",
+        "status": "blocked",
+        "actual": 559,
+        "product_lines": 10,
+        "process_overhead_lines": 549,
+        "evidence_lines": 32353,
+        "excluded_lines": 151,
+        "range": "beeca3986fc0e02becf65674cbbc8b8f67bf3864..WORKTREE",
+        "evidence": ".agent/evidence/118/blocked-scope-measurement.txt",
+        "note": "Incomplete118; failedSource1 is quarantined, no Source2 or completion. Whole118 includes selection/proposals/reviews and mandatoryhalt once; prior measured4012 rows unchanged, no extra allowance or rebaseline. Halt is exhaustedcontract/ModeA3, not scope ceiling."
+      }
+    ],
+    "last_measured_at": "2026-10-14T06:20:45.325692+00:00"
   }
 }

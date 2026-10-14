@@ -1,7 +1,7 @@
 {
   "phase": "016-runtime-controller-core",
-  "spec_version": "0.1.0",
-  "phase_status": "pending",
+  "spec_version": "0.1.1",
+  "phase_status": "in_progress",
   "original_estimate_lines": 5650,
   "ceiling_130pct": 7345,
   "budget_categories": {"product": 1750, "tests": 1250, "process": 2650},
@@ -10,7 +10,7 @@
       "id": "126",
       "name": "Detached controller, stub and registered fixtures",
       "description": "Supervisor owns per-session lock/lease/generation and serialized operations; atomic records, read-only attempt guard and trial denial. Register nested runtime_session fixtures in existing F105 claim map in the same change that creates them.",
-      "status": "pending",
+      "status": "in_progress",
       "passes": false,
       "dependencies": [],
       "estimated_lines": 2900,
@@ -65,11 +65,11 @@
   ],
   "future_interfaces": [{"path": "tools/test_runtime_session.py", "owner": "126"}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
   "case_matrix": [{"case": 1, "runtime": "stub", "layer": "live", "owner": "126", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub", "proof_kind": "future-live"}, {"case": 2, "runtime": "stub", "layer": "live", "owner": "126", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub", "proof_kind": "future-live"}, {"case": 3, "runtime": "stub", "layer": "live", "owner": "126", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub", "proof_kind": "future-live"}, {"case": 5, "runtime": "stub", "layer": "live", "owner": "127", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 5 --runtime stub", "proof_kind": "future-live"}, {"case": 6, "runtime": "stub", "layer": "live", "owner": "127", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 6 --runtime stub", "proof_kind": "future-live"}, {"case": 8, "runtime": "stub", "layer": "policy", "owner": "126", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy", "proof_kind": "future-live"}, {"case": 9, "runtime": "stub", "layer": "live", "owner": "126", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub", "proof_kind": "future-live"}, {"case": 10, "runtime": "stub", "layer": "live", "owner": "127", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 10 --runtime stub", "proof_kind": "future-live"}, {"case": 13, "runtime": "stub", "layer": "live", "owner": "126", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub", "proof_kind": "future-live"}],
-  "cross_phase_prerequisites": [{"phase": "017-workflow-assurance-foundation", "requires": ["115", "116", "117", "118"], "evidence": [".agent/evidence/118/evidence-gate.txt"], "authority": "Future H-PHASE-017 captured foundation completion; separately activate016 only after existing-host capability preflight."}],
+  "cross_phase_prerequisites": [{"phase": "017-workflow-assurance-foundation", "requires": ["115", "116", "117", "118"], "evidence": [".agent/evidence/118/evidence-capture.json"], "authority": "Captured017 foundation, PR94 merge e619d284d36eaf6dfff54a9d001477b8d1722098 and successful main CI38521902261; standing authorization .agent/evidence/agentic-excellence/authorization.json."}],
   "shared_file_lanes": [{"path": "tools/test_runtime_session.py", "owners": ["126", "127", "128", "129", "130", "131", "132"], "order": ["126", "127", "128", "129", "130", "131", "132"]}, {"path": "tools/runtime_session.py", "owners": ["126", "127", "128", "129", "130", "131", "132"], "order": ["126", "127", "128", "129", "130", "131", "132"]}],
   "existing_inputs": ["Completed015 normative110-114; completed014 sandbox/CI/fixture ownership103-105; Open040/034; immutable installedv1.5.0."],
-  "activation_prerequisites": ["Future H-PHASE-016 approves scope/budget and external captured prerequisites; no live case working before full capable CI acceptance."],
+  "activation_prerequisites": ["Standing authority .agent/evidence/agentic-excellence/authorization.json and captured118 foundation; hosted-result.json independently approved by .agent/evidence/phase016-preflight/activation-review.json. Select126 for contract preparation only within5650/7345; no controller/live acceptance or implementation approval."],
   "acceptance_availability": "Future implementation commands only; schema fixtures/session experiments/local version cannot establish live conformance.",
   "dod_ref": ".nizam/standard/definition_of_done.md",
-  "activation_preflight": {"commands": ["PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py", "sbcl --version", "sbcl --no-sysinit --no-userinit --non-interactive --eval '(assert (= (+ 1 1) 2))'"], "host": "One actual capable Linux acceptance/CI host, existing tools only before H-PHASE-016.", "required_evidence": "Actual same-host revision/environment/commands/exits/SBCL version and fresh no-init probe; required isolation suite exit0 with no allow-unsupported flag. No newcontroller131 dependency; unsupported local isolation is non-passing; no workstation sysctl change."}
+  "activation_preflight": {"commands": ["PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py", "sbcl --version", "sbcl --no-sysinit --no-userinit --non-interactive --eval '(assert (= (+ 1 1) 2))'"], "host": "One actual capable Linux acceptance/CI host, existing tools only before H-PHASE-016.", "required_evidence": "Actual same-host revision/environment/commands/exits/SBCL version and fresh no-init probe; required isolation suite exit0 with no allow-unsupported flag. No newcontroller131 dependency; unsupported local isolation is non-passing; no workstation sysctl change.", "receipt": ".agent/evidence/phase016-preflight/hosted-result.json", "independent_review": ".agent/evidence/phase016-preflight/activation-review.json"}
 }

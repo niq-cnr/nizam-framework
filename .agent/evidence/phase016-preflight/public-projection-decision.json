@@ -1,0 +1,58 @@
+{
+  "owner": "/root",
+  "at": "2026-10-14T08:50:51.502144+00:00",
+  "projection_review": ".agent/evidence/phase016-preflight/public-projection-review.json",
+  "projection_candidate": "d3f7317b1b98a98743afa9e8b20579286610be10",
+  "integrated_revision": "1db8996d715afd6a6e70bf587819e29ff1c20080",
+  "measurements": {
+    "126-precode": {
+      "command": [
+        "python3",
+        ".agent/evidence/scope-budget-014/measure.py",
+        "--range",
+        "126-precode=607ac75010b3668226f777986822adfb700eaf23..de7deee7831e8d3816f3f85985e8e56a44c7c006",
+        "--files"
+      ],
+      "actual_exit": 0,
+      "values": {
+        "PRODUCT_LINES": 0,
+        "PROCESS_OVERHEAD_LINES": 307,
+        "BUDGET_COUNTED_LINES": 307,
+        "EVIDENCE_LINES": 776,
+        "EXCLUDED_LINES": 372,
+        "UNCLASSIFIED_LINES": 0,
+        "ALL_PATHS_LINES": 1455
+      },
+      "evidence": ".agent/evidence/phase016-preflight/126-precode-measurement.txt",
+      "range": "607ac75010b3668226f777986822adfb700eaf23..de7deee7831e8d3816f3f85985e8e56a44c7c006"
+    },
+    "public-projection": {
+      "command": [
+        "python3",
+        ".agent/evidence/scope-budget-014/measure.py",
+        "--range",
+        "public-projection=de7deee7831e8d3816f3f85985e8e56a44c7c006..1db8996d715afd6a6e70bf587819e29ff1c20080",
+        "--files"
+      ],
+      "actual_exit": 0,
+      "values": {
+        "PRODUCT_LINES": 0,
+        "PROCESS_OVERHEAD_LINES": 39,
+        "BUDGET_COUNTED_LINES": 39,
+        "EVIDENCE_LINES": 216,
+        "EXCLUDED_LINES": 0,
+        "UNCLASSIFIED_LINES": 0,
+        "ALL_PATHS_LINES": 255
+      },
+      "evidence": ".agent/evidence/phase016-preflight/public-projection-measurement.txt",
+      "range": "de7deee7831e8d3816f3f85985e8e56a44c7c006..1db8996d715afd6a6e70bf587819e29ff1c20080"
+    }
+  },
+  "phase_level_total": 346,
+  "phase_estimate": 5650,
+  "ceiling": 7345,
+  "feature126_prefix_counted": 307,
+  "feature126_complete": false,
+  "old307_snapshot_preserved": true,
+  "next": "Publish/merge clean planning-only PR; independent126test authoring and source gates continue separately."
+}

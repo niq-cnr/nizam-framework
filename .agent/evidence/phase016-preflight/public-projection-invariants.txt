@@ -1,0 +1,26 @@
+COMMAND: python3 -c 'import pathlib,json,subprocess,hashlib,yaml,jsonschema
+base="de7deee7831e8d3816f3f85985e8e56a44c7c006"
+for n in ["ROADMAP.md","HANDOVER.md"]:
+ p="docs/planning/"+n;s=pathlib.Path(p).read_text();old=subprocess.check_output(["git","show",base+":"+p],text=True);oldbody=old.split("---",2)[2];assert s.endswith(oldbody),"historical body changed"
+ meta=yaml.safe_load(s.split("---",2)[1]);jsonschema.validate(meta,json.load(open(".nizam/schema/frontmatter.schema.json")));assert meta["change_log"][0]["version"]==meta["version"]
+ print("PASS installed frontmatter schema and exact historical body:",p)
+a=json.load(open(".agent/evidence/phase016-preflight/activation-decision.json"));assert a["preparation"]["actual"]==307 and a["phase017_budget_archived_exactly"]
+p=json.load(open(".agent/evidence/126/precode-approved.json"));assert hashlib.sha256(pathlib.Path(".agent/contracts/126.json").read_bytes()).hexdigest()==p["approved_contract_sha256"]
+for path in p["gates"].values():
+ d=json.load(open(path));assert d["final_verdict"]["approved"] and not any(d[k] for k in ["issues","missing_acceptance_coverage","unsupported_claims"])
+f=json.load(open(".agent/feature_list_016.json"));assert [(x["id"],x["status"],x["passes"]) for x in f["features"]]==[("126","in_progress",False),("127","pending",False),("128","pending",False)]
+r=json.load(open(".agent/evidence/phase016-preflight/pr95-main-ci.json"));assert r["id"]==38533593961 and r["conclusion"]=="success" and r["head_sha"]=="c8dc65ab29c289e4c3989a58ff2007e98a2990ea"
+assert not pathlib.Path("tools/runtime_session.py").exists() and not pathlib.Path("tools/test_runtime_session.py").exists()
+assert set(subprocess.check_output(["git","diff","--name-only",base],text=True).splitlines())=={"docs/planning/ROADMAP.md","docs/planning/HANDOVER.md"}
+print("PASS current activation,307 snapshot, exact approved contract and both actual gates, canonical states, greenmainCI, source/test absence and two-doc-only delta")
+'
+REVISION: de7deee7831e8d3816f3f85985e8e56a44c7c006
+INPUTS: two document worktree hashes in public-projection-handoff.json
+STDOUT:
+PASS installed frontmatter schema and exact historical body: docs/planning/ROADMAP.md
+PASS installed frontmatter schema and exact historical body: docs/planning/HANDOVER.md
+PASS current activation,307 snapshot, exact approved contract and both actual gates, canonical states, greenmainCI, source/test absence and two-doc-only delta
+
+STDERR:
+
+EXIT: 0
