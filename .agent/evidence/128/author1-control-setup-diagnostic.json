@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "python3",
+    "/home/cnross/.tmp/dbg-lhr3ob5m/leaf.py",
+    "--check",
+    "lifecycle-no-evaluation"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/home/cnross/.tmp/dbg-lhr3ob5m/leaf.py\", line 12, in <module>\n    s=m.Session(Path(os.environ['TMPDIR'])/'actual-session',candidate=Path(os.environ['AUTHOR_REPO']))\n      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/cnross/.tmp/nizam-feature128-author1/tools/test_runtime_session.py\", line 79, in __init__\n    self.runstate.write_text(json.dumps({'repository': 'scratch', 'current_phase': '016',\n  File \"/usr/lib/python3.12/pathlib.py\", line 1049, in write_text\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1015, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/home/cnross/.tmp/dbg-lhr3ob5m/actual-session/run_state.json'\n",
+  "actual_exit": 1,
+  "witness_exists": false,
+  "exercised_revision": "441567ef05c3eb68558c6aeb679aa94b0a1a3baa"
+}
