@@ -16,7 +16,9 @@ seal = json.loads(pathlib.Path('.agent/evidence/120/author2-provisional-seal.jso
 for path, pin in seal['files'].items():
     assert sha(pathlib.Path(path).read_bytes()) == pin['sha256'], path
     assert git('hash-object', path) == pin['git_blob'] == git('rev-parse', AUTHOR + ':' + path), path
-for path in git('ls-tree', '-r', '--name-only', PRIOR, '.agent/evidence/120/author1-').splitlines():
+prior_paths = [p for p in git('ls-tree', '-r', '--name-only', PRIOR, '.agent/evidence/120').splitlines() if p.startswith('.agent/evidence/120/author1-')]
+assert prior_paths, 'nonvacuous author1 preservation inventory'
+for path in prior_paths:
     assert pathlib.Path(path).read_bytes() == subprocess.check_output(['git', 'show', PRIOR + ':' + path]), path
 prior_ast = ast.parse(subprocess.check_output(['git', 'show', PRIOR + ':tools/test_workflow_assurance.py'], text=True))
 now_ast = ast.parse(pathlib.Path('tools/test_workflow_assurance.py').read_text())
