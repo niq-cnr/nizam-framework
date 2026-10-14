@@ -1,0 +1,43 @@
+python3 -c 'import datetime,hashlib,json,pathlib,subprocess; print("UTC",datetime.datetime.now(datetime.timezone.utc).isoformat()); print("REVISION",subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()); print("BRANCH",subprocess.check_output(["git","branch","--show-current"],text=True).strip()); paths=[".github/workflows/compliance.yml",".github/scripts/test_sandbox_boundaries.py",".agent/evidence/128/ci-new-runner-2-receipt.json",".agent/evidence/agentic-excellence/runtime-preflight-report.json",".agent/evidence/agentic-excellence/runtime-preflight-codex-profile-canary.txt",".agent/evidence/agentic-excellence/runtime-preflight-codex-sandbox-canary.txt",".agent/evidence/agentic-excellence/runtime-preflight-namespace-canary.txt"]; [print("SHA256",p,hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()) for p in paths]; lines=pathlib.Path(paths[0]).read_text().splitlines(); [print("WORKFLOW_LINE",i+1,line) for i,line in enumerate(lines) if any(k in line for k in ["runs-on:","uses:","persist-credentials:","sysctl","name: Enable","name: Run required isolation","test_sandbox_boundaries","timeout-minutes","upload-artifact","bubblewrap","bwrap"])]; r=json.loads(pathlib.Path(paths[2]).read_text()); print("HISTORICAL_HOSTED_RECEIPT",json.dumps({k:r[k] for k in ["run","job","checkout","required_isolation"]},sort_keys=True)); print("HISTORICAL_RUNNER_IMAGE",json.dumps({k:v for k,v in r["environment"]["environment"].items() if k in ["ImageOS","ImageVersion","RUNNER_ARCH","RUNNER_OS"]},sort_keys=True)); print("WORKFLOW_HAS_EXPLICIT_TIMEOUT",any("timeout-minutes:" in x for x in lines)); print("WORKFLOW_HAS_EXPLICIT_CODEX_OR_BWRAP_SETUP",any(k in pathlib.Path(paths[0]).read_text().lower() for k in ["codex","bubblewrap","bwrap"])); print("Read-only inspection only; no hosted run/download/install/model/config/auth action performed.")'
+UTC 2026-10-14T14:25:04.873496+00:00
+REVISION f26f7ac7f3ffc427bc05b70ea97c46f846f9cd11
+BRANCH plan/comparison-runtime-canary
+SHA256 .github/workflows/compliance.yml aeb0d4f937a2b45ba929f43118b4dbc7dde64b690c26bca97dc41d419c29a217
+SHA256 .github/scripts/test_sandbox_boundaries.py 09ab83c3c9a73e11e03a7c7856a06ae35dbddd6337251a6b3ca12cfa014924e4
+SHA256 .agent/evidence/128/ci-new-runner-2-receipt.json 279a07fa127bfec56cc33dd4d6a573d878bd9dec035d6e8c66a4125edd4000d3
+SHA256 .agent/evidence/agentic-excellence/runtime-preflight-report.json 50231a1c7747e986ae20fab98460148450619d4e44489af17952dee139dde931
+SHA256 .agent/evidence/agentic-excellence/runtime-preflight-codex-profile-canary.txt e6a35c1626a6da35c9c6a0106cd7bc8b63b2da68400607764fcb4fe9a8859815
+SHA256 .agent/evidence/agentic-excellence/runtime-preflight-codex-sandbox-canary.txt 602b8ecc2091b3a8491c575d0b405fb3897998b747fb913829459f636c9dfa70
+SHA256 .agent/evidence/agentic-excellence/runtime-preflight-namespace-canary.txt 1cd60a40afd6f7cf6534521aead892d090d8c081abc3f6ba319b7db507cb5f5c
+WORKFLOW_LINE 17     runs-on: ubuntu-latest
+WORKFLOW_LINE 19       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+WORKFLOW_LINE 29           persist-credentials: false
+WORKFLOW_LINE 31       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+WORKFLOW_LINE 40     runs-on: ubuntu-latest
+WORKFLOW_LINE 50       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+WORKFLOW_LINE 52           persist-credentials: false
+WORKFLOW_LINE 54       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+WORKFLOW_LINE 69     runs-on: ubuntu-latest
+WORKFLOW_LINE 73       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+WORKFLOW_LINE 76           persist-credentials: false
+WORKFLOW_LINE 78       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+WORKFLOW_LINE 92           paths = ['tools/fixtures_self_test.sh', 'tools/test_convergent_review.py', 'tools/validate.sh', 'standard/AGF.md', 'templates/AGENTS.md', 'tools/README.md', '.github/scripts/test_c13_cleanup.py', '.github/scripts/test_sandbox_boundaries.py', '.github/workflows/compliance.yml']
+WORKFLOW_LINE 100     runs-on: ubuntu-latest
+WORKFLOW_LINE 102       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+WORKFLOW_LINE 104           persist-credentials: false
+WORKFLOW_LINE 105       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+WORKFLOW_LINE 109       - name: Enable unprivileged user namespaces where the kernel restricts them
+WORKFLOW_LINE 112             sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+WORKFLOW_LINE 119           paths = ['tools/fixtures_self_test.sh', 'tools/test_convergent_review.py', 'tools/validate.sh', 'standard/AGF.md', 'templates/AGENTS.md', 'tools/README.md', '.github/scripts/test_c13_cleanup.py', '.github/scripts/test_sandbox_boundaries.py', '.github/workflows/compliance.yml']
+WORKFLOW_LINE 122       - run: PYTHONDONTWRITEBYTECODE=1 python3 .github/scripts/test_sandbox_boundaries.py
+WORKFLOW_LINE 138       - name: Run required isolation suite
+WORKFLOW_LINE 144     runs-on: ubuntu-latest
+WORKFLOW_LINE 148       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+WORKFLOW_LINE 152           persist-credentials: false
+WORKFLOW_LINE 153       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+HISTORICAL_HOSTED_RECEIPT {"checkout": "51609a3cc7be7d28bb6358149ac9b6b661a79fee", "job": 115869118142, "required_isolation": "CONFORMANCE: FULL", "run": 38569054719}
+HISTORICAL_RUNNER_IMAGE {"ImageOS": "ubuntu24", "ImageVersion": "20261004.327.1", "RUNNER_ARCH": "X64", "RUNNER_OS": "Linux"}
+WORKFLOW_HAS_EXPLICIT_TIMEOUT False
+WORKFLOW_HAS_EXPLICIT_CODEX_OR_BWRAP_SETUP False
+Read-only inspection only; no hosted run/download/install/model/config/auth action performed.
+EXIT:0

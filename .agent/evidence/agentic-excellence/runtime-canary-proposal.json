@@ -1,0 +1,72 @@
+{
+  "id": "comparison-hosted-runtime-canary-proposal",
+  "status": "proposed-not-implemented; EX-P1 readiness only",
+  "owner": "/root/smoke_readiness",
+  "at": "2026-10-14T14:26:16.153533+00:00",
+  "base_revision": "f26f7ac7f3ffc427bc05b70ea97c46f846f9cd11",
+  "repository": "niq-cnr/nizam-framework only",
+  "inspection_ref": ".agent/evidence/agentic-excellence/runtime-canary-inspection.txt",
+  "purpose": "Smallest zero-model hosted check of Codex-specific sandbox startup and owned filesystem/network/process boundaries; no benchmark or common-runtime claim.",
+  "observed_route": [
+    ".github/workflows/compliance.yml: existing convergent_review job uses ubuntu-latest, contents:read, checkout persist-credentials:false; no job timeout, Codex setup, explicit bubblewrap setup or upload-artifact step is present.",
+    "Existing checkout pin 11bd71901bbe5b1630ceea73d27597364c9af683 and setup-python pin 0b93645e9fea7318ecaed2b359559ac225c90a2b remain the initial action identities; python-version is currently floating3.x.",
+    "Existing hosted setup conditionally changes apparmor_restrict_unprivileged_userns, then runs test_sandbox_boundaries.py and required isolation suite. Reuse that existing hosted setup; add no workstation or additional host-policy change.",
+    "Historical run38569054719/job115869118142 checkout51609a3cc7be7d28bb6358149ac9b6b661a79fee captured ubuntu24 image20261004.327.1 X64 and CONFORMANCE:FULL. This is earlier framework proof, not fresh Codex/bwrap proof.",
+    "runtime-preflight namespace canary exited1 uid_map EPERM; initial legacy CLI invocation exited2; documented :read-only CLI sandbox exited1 bwrap RTM_NEWADDR EPERM. Keep all original receipts."
+  ],
+  "proposed_bounded_delivery": [
+    "Prefer one separately dispatched workflow_dispatch-only zero-model job, reusing observed Ubuntu checkout/Python/namespace/boundary setup commands. No PR/push trigger or required product merge check: external CLI availability must not block normal product delivery.",
+    "Tradeoff: this isolates exploratory failures from product CI while requiring fresh same-run environment/namespace receipts; historical success does not transfer automatically. No benchmark/framework install, gate reduction or SBCL prerequisite.",
+    "Later approved contract may add only a minimal owned helper/config and dispatched workflow, with contents:read and checkout persist-credentials:false. This proposal creates none of them and registers no feature IDs.",
+    "Proposed job timeout10minutes, canary step5minutes; downloader30seconds with zero automatic retries, verification/extraction30seconds, each sandbox command20seconds, network attempt1second, teardown5seconds. These limits are review targets, not existing YAML facts.",
+    "One assigned canary attempt per candidate; preserve failure and stop. No unsupported waiver, sandbox disabling, privileged substitute, retry shopping or local machine policy change."
+  ],
+  "binary_integrity_gate": [
+    "Candidate CLI version0.162.1 Linux x86_64 musl, matching prior observed installed version. Before implementation approval, resolve exact public OpenAI release/asset URL and immutable release identity plus publisher digest/signature or equivalent reviewed provenance.",
+    "Public asset availability, archive SHA256, signature identity and hosted bubblewrap version are UNKNOWN here; no release artifact was fetched or installed. Do not invent a URL/digest or treat a version-only download as pinned.",
+    "Seal expected archive SHA256 before CI; fetch only that public HTTPS asset to an owned temporary tool directory, verify before extraction, reject unsafe archive paths, then capture extracted executable SHA256 and actual --version.",
+    "Prior local executable SHA256628e35487d888a28f0427fc37501da529dd3d81fcbad7a2c3421c1e8670d92e1 is an observed comparison identity, not publisher verification. Record any divergence and stop pending independent review.",
+    "Require actual bwrap/unshare availability and capture helper versions. Missing helper fails closed; no implicit latest package installation. Any necessary package must be explicitly pinned/reviewed in the later contract."
+  ],
+  "exact_profile_and_roots": [
+    "Allocate unique R beneath RUNNER_TEMP for this run/attempt, with R/owned, R/tools, R/oracle-marker and R/other-arm-marker. Only harmless fixed canary markers exist; never mount real holdouts or credentials.",
+    "Launch first the documented built-in baseline: codex sandbox --permission-profile :read-only -C R/owned -- /usr/bin/true. Require actual exit0 before boundary cases.",
+    "Define separate named canary profile with no broad inherited write grants: filesystem :root=deny, :minimal=read, exact R/tools=read, exact R/owned=write; exact oracle/other-arm roots=deny; network.enabled=false.",
+    "Invoke codex sandbox --permission-profile canary -C R/owned -- <sealed-owned-canary-command>, with reviewed per-invocation configuration overrides. Seal effective root/profile map and config source identities without serializing user configuration.",
+    "Keep canary state/cache/tmp and helper outputs under R/owned; keep trusted parent receipts outside contestant writes. Separate roots alone never count as isolation. No codex exec/login/model/API call is part of this proposal."
+  ],
+  "minimum_boundary_cases": [
+    "Positive control: sandbox reads known owned marker and writes a new owned file with exact expected bytes. Trusted parent verifies output and unchanged outside-marker hashes.",
+    "Read/write denial: oracle and other-arm markers reject direct path, parent traversal, symlink and inherited-descriptor routes; blocked bytes never appear in sandbox stdout. Pass only on expected access-denial outcomes, not arbitrary process/setup failure.",
+    "Network control: trusted parent starts an owned loopback sentinel, proves it reachable outside sandbox, then sandbox connection to that listener must fail within1second; no external endpoint/DNS/model request. This proves the tested route only.",
+    "Process cleanup: owned child/grandchild and a setsid-attempt child record PIDs/start-times; force watchdog expiry, TERM then KILL with frozen grace, reap and assert every recorded descendant is gone and owned namespace/endpoint no longer reachable.",
+    "If escaped descendants cannot be contained and cleaned within the owned boundary, fail and preserve evidence; do not kill unrelated processes or assert all-descendant confinement from leader timeout alone.",
+    "Negative controls: independently remove one read restriction, network restriction and cleanup obligation in isolated owned configurations; each corresponding assertion must reject its planted breach. Never weaken the real profile or shared host."
+  ],
+  "acceptance_and_capture": [
+    "Before implementation: separate bounded approved contract, both independent pre-code gates, independently owned sealed canary checks, pinned artifact/profile identities and explicit finite limits. This proposal is not those approvals.",
+    "Require actual startup0, allowed I/O0, expected denial classifications, functioning trusted positive controls, expected watchdog timeout, complete descendant cleanup and negative-control rejection. Missing/unsupported/timeout/setup error is non-passing.",
+    "Bind receipt to checkout commit/tree, workflow/helper/config hashes, public asset/release/hash, CLI/helper versions, runner image/kernel, exact invocations, starts/ends, signals and actual exits. No model/token-cost result is emitted.",
+    "Print bounded raw stdout/stderr and labeled per-case receipts into dispatched job logs, including failed paths. No artifact-upload action is assumed: none exists in inspected compliance workflow.",
+    "Root retrieves the completed raw job log immediately into durable evidence with run/job/attempt identities and hashes; independent QA and evidence capture must complete before claiming success. Platform log-retention duration is unqueried; repository evidence and failures remain preserved.",
+    "Always perform owned cleanup and capture available failure diagnostics; failure to obtain required evidence blocks completion. A cancelled CI job is not a passing case."
+  ],
+  "rollback_and_scope_boundary": [
+    "On failure stop this candidate, retain all receipts, clean only R and owned process identities; existing product workflows/suites/pins remain untouched. Any canary correction returns for independent review; this exploratory job is not a product merge requirement.",
+    "No installed .nizam edit, source runtime change, model choice/call, benchmark adapter/task run, new feature ID, lifecycle/counter edit or EX-P2 prerequisite amendment is authorized here.",
+    "Hard financial/token caps and delegation usage remain unresolved for paid model trials but are not prerequisites to this zero-model canary. Hosted CI time still obeys the proposed finite compute limits.",
+    "Next concrete step: independently review this bounded shape and resolve the public release integrity tuple plus helper availability policy, then submit its implementation contract; no workflow dispatch/download/installation was performed."
+  ],
+  "hosted_canary_result": null,
+  "benchmark_results": null,
+  "limits_proposed": {
+    "assigned_canary_attempts": 1,
+    "job_minutes": 10,
+    "canary_step_minutes": 5,
+    "command_seconds": 20,
+    "download_seconds": 30,
+    "network_attempt_seconds": 1,
+    "cleanup_seconds": 5,
+    "automatic_retries": 0
+  }
+}
