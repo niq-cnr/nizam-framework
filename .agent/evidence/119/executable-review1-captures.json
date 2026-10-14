@@ -1,0 +1,724 @@
+[
+  {
+    "label": "approve-empty-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "approve-empty"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS approve-empty",
+    "stdout": ".agent/evidence/119/executable-review1-approve-empty-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-approve-empty-positive.stderr.txt",
+    "stdout_sha256": "239f3f3d43207558e53da256b19b5cd7e37d286291fc311b9a337cf7a3d105e8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "approve-empty-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('approve-empty',t.load_api('/home/cnross/.tmp/nizam119-review-mutant-ggivnpm_/workflow_assurance.py')); print('PASS '+'approve-empty')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 1,
+    "expected_marker": "POLICY_ASSERTION: empty valid AGF approves exactly",
+    "stdout": ".agent/evidence/119/executable-review1-approve-empty-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-approve-empty-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "821cc8e83667ba390a4b34d56d02589b4383467e1d9fc75fa955f3978fd3fe1a",
+    "private_mutant": {
+      "sha256": "e6926fdd9478133ec6109fc968dcf8d814e0c485781dcdcd30b6e13c382d6f08",
+      "git_blob": "e0ea21846efffb20524b89ba5b6e4fd46f44590a",
+      "append_only_delta": "\n_review_original = convergent_agf_verdict\ndef convergent_agf_verdict(*args, **kwargs):\n    out = _review_original(*args, **kwargs)\n    out['final_verdict']['approved'] = False\n    return out\n"
+    }
+  },
+  {
+    "label": "approve-empty-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "approve-empty"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS approve-empty",
+    "stdout": ".agent/evidence/119/executable-review1-approve-empty-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-approve-empty-restored.stderr.txt",
+    "stdout_sha256": "239f3f3d43207558e53da256b19b5cd7e37d286291fc311b9a337cf7a3d105e8",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "advisory-visible-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "advisory-visible"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS advisory-visible",
+    "stdout": ".agent/evidence/119/executable-review1-advisory-visible-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-advisory-visible-positive.stderr.txt",
+    "stdout_sha256": "5ce98c24feddf5a5fe6212dc7240345b1f89f9d46692d569711235f4a393c516",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "advisory-visible-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('advisory-visible',t.load_api('/home/cnross/.tmp/nizam119-review-mutant-5cvjhmav/workflow_assurance.py')); print('PASS '+'advisory-visible')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 1,
+    "expected_marker": "POLICY_ASSERTION: active minor visible separately",
+    "stdout": ".agent/evidence/119/executable-review1-advisory-visible-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-advisory-visible-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5b6cf40cb1de5507169d7fa0971e4994a17e7d9988901834cd2c695709867e02",
+    "private_mutant": {
+      "sha256": "2e7ea6a7063735d96be68ad025cedf2d0dabfdb90a4302a1277d2962a1e6570d",
+      "git_blob": "c6d9677cb3f16ec165fc01128953758cb41af2b9",
+      "append_only_delta": "\n_review_original = convergent_agf_verdict\ndef convergent_agf_verdict(*args, **kwargs):\n    out = _review_original(*args, **kwargs)\n    out['advisory_minor'] = []\n    return out\n"
+    }
+  },
+  {
+    "label": "advisory-visible-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "advisory-visible"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS advisory-visible",
+    "stdout": ".agent/evidence/119/executable-review1-advisory-visible-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-advisory-visible-restored.stderr.txt",
+    "stdout_sha256": "5ce98c24feddf5a5fe6212dc7240345b1f89f9d46692d569711235f4a393c516",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "block-carried-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "block-carried"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS block-carried",
+    "stdout": ".agent/evidence/119/executable-review1-block-carried-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-block-carried-positive.stderr.txt",
+    "stdout_sha256": "d19a10f4786283f74973af425783ae721d2760cc9ada29e1e1b1ced5ff169eed",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "block-carried-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('block-carried',t.load_api('/home/cnross/.tmp/nizam119-review-mutant-99pnoq9o/workflow_assurance.py')); print('PASS '+'block-carried')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 1,
+    "expected_marker": "POLICY_ASSERTION: active full findings appended in ledger order",
+    "stdout": ".agent/evidence/119/executable-review1-block-carried-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-block-carried-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "fb14cf4af1e130d3a68bd15c4d4add40cc3b9180f93efe84d770e7f6fcf06178",
+    "private_mutant": {
+      "sha256": "075f13789cbea410449fa7fd3850c7f27d6a0d8793cf28ea1935e5807e8f49b7",
+      "git_blob": "d0bdd850ed0377aaac66e2a69e4bf7035e4bd3ad",
+      "append_only_delta": "\n_review_original = convergent_agf_verdict\ndef convergent_agf_verdict(*args, **kwargs):\n    out = _review_original(*args, **kwargs)\n    out['issues'] = out['issues'][1:]\n    return out\n"
+    }
+  },
+  {
+    "label": "block-carried-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "block-carried"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS block-carried",
+    "stdout": ".agent/evidence/119/executable-review1-block-carried-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-block-carried-restored.stderr.txt",
+    "stdout_sha256": "d19a10f4786283f74973af425783ae721d2760cc9ada29e1e1b1ced5ff169eed",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "reject-issues-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-issues"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS reject-issues",
+    "stdout": ".agent/evidence/119/executable-review1-reject-issues-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-reject-issues-positive.stderr.txt",
+    "stdout_sha256": "a81d41b44dc5c7c0251425fc27afa5c2cd7921a47a4e67261eb377261ab19ee9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "reject-issues-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('reject-issues',t.load_api('/home/cnross/.tmp/nizam119-review-mutant-xtj0z6ll/workflow_assurance.py')); print('PASS '+'reject-issues')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 1,
+    "expected_marker": "POLICY_ASSERTION: nonempty blocking array preserved: issues",
+    "stdout": ".agent/evidence/119/executable-review1-reject-issues-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-reject-issues-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "601cd39c9900c182c95cbc4c0b6496fc6a0275d0bf0e5a93a269b1a55edc7416",
+    "private_mutant": {
+      "sha256": "e0ea01b3337bf062c24551039f387b9870ff3fc98517fa48f3e59d88ca21d40b",
+      "git_blob": "64f0d4d776145ba8c2360922e1b1b6dd00839baa",
+      "append_only_delta": "\n_review_original = convergent_agf_verdict\ndef convergent_agf_verdict(*args, **kwargs):\n    out = _review_original(*args, **kwargs)\n    out['final_verdict']['approved'] = True\n    return out\n"
+    }
+  },
+  {
+    "label": "reject-issues-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-issues"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS reject-issues",
+    "stdout": ".agent/evidence/119/executable-review1-reject-issues-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-reject-issues-restored.stderr.txt",
+    "stdout_sha256": "a81d41b44dc5c7c0251425fc27afa5c2cd7921a47a4e67261eb377261ab19ee9",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "reject-missing-coverage-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-missing-coverage"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS reject-missing-coverage",
+    "stdout": ".agent/evidence/119/executable-review1-reject-missing-coverage-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-reject-missing-coverage-positive.stderr.txt",
+    "stdout_sha256": "ffcc64c86272ebccde82a4ee739172fd44520ecfea486f6f94356400db95ef09",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "reject-missing-coverage-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('reject-missing-coverage',t.load_api('/home/cnross/.tmp/nizam119-review-mutant-3ik4764_/workflow_assurance.py')); print('PASS '+'reject-missing-coverage')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 1,
+    "expected_marker": "POLICY_ASSERTION: nonempty blocking array preserved: missing_acceptance_coverage",
+    "stdout": ".agent/evidence/119/executable-review1-reject-missing-coverage-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-reject-missing-coverage-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "ff52c80a8c04f2bf3c5e01dc4a8b6104bbfdb36df120d5ec72c712f8db4f2ace",
+    "private_mutant": {
+      "sha256": "e0ea01b3337bf062c24551039f387b9870ff3fc98517fa48f3e59d88ca21d40b",
+      "git_blob": "64f0d4d776145ba8c2360922e1b1b6dd00839baa",
+      "append_only_delta": "\n_review_original = convergent_agf_verdict\ndef convergent_agf_verdict(*args, **kwargs):\n    out = _review_original(*args, **kwargs)\n    out['final_verdict']['approved'] = True\n    return out\n"
+    }
+  },
+  {
+    "label": "reject-missing-coverage-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-missing-coverage"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS reject-missing-coverage",
+    "stdout": ".agent/evidence/119/executable-review1-reject-missing-coverage-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-reject-missing-coverage-restored.stderr.txt",
+    "stdout_sha256": "ffcc64c86272ebccde82a4ee739172fd44520ecfea486f6f94356400db95ef09",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "reject-unsupported-positive",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-unsupported"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS reject-unsupported",
+    "stdout": ".agent/evidence/119/executable-review1-reject-unsupported-positive.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-reject-unsupported-positive.stderr.txt",
+    "stdout_sha256": "e31b53137d845279a3a02fef3831479c6dc8e1201cc1ec0889efc83152ed8f2a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "reject-unsupported-semantic-red",
+    "argv": [
+      "python3",
+      "-c",
+      "import sys; sys.path.insert(0,'tools'); import test_workflow_assurance as t; t.run_agf_case('reject-unsupported',t.load_api('/home/cnross/.tmp/nizam119-review-mutant-ak8tehut/workflow_assurance.py')); print('PASS '+'reject-unsupported')"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 1,
+    "expected_marker": "POLICY_ASSERTION: nonempty blocking array preserved: unsupported_claims",
+    "stdout": ".agent/evidence/119/executable-review1-reject-unsupported-semantic-red.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-reject-unsupported-semantic-red.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "5f38e007c61461f7e67c260719fb6e496fcca53421df301612db1ace71decdfd",
+    "private_mutant": {
+      "sha256": "e0ea01b3337bf062c24551039f387b9870ff3fc98517fa48f3e59d88ca21d40b",
+      "git_blob": "64f0d4d776145ba8c2360922e1b1b6dd00839baa",
+      "append_only_delta": "\n_review_original = convergent_agf_verdict\ndef convergent_agf_verdict(*args, **kwargs):\n    out = _review_original(*args, **kwargs)\n    out['final_verdict']['approved'] = True\n    return out\n"
+    }
+  },
+  {
+    "label": "reject-unsupported-restored",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--case",
+      "reject-unsupported"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS reject-unsupported",
+    "stdout": ".agent/evidence/119/executable-review1-reject-unsupported-restored.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-reject-unsupported-restored.stderr.txt",
+    "stdout_sha256": "e31b53137d845279a3a02fef3831479c6dc8e1201cc1ec0889efc83152ed8f2a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "default26",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 0,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 0,
+    "expected_marker": "PASS reject-unsupported",
+    "stdout": ".agent/evidence/119/executable-review1-default26.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-default26.stderr.txt",
+    "stdout_sha256": "b6dbf2b96bcff142a8717bfad43f8f2c47be028f20e795b7c57f710511513ac7",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "live-stale-foundation",
+    "argv": [
+      "python3",
+      "tools/test_workflow_assurance.py",
+      "--check",
+      "foundation-ready"
+    ],
+    "cwd": "/home/cnross/.tmp/nizam-feature119-executable-review1",
+    "revision": "2ba8d963d0d55ff2e8ad03870d62beda5c86660e",
+    "environment": {
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "exit": 1,
+    "inputs": {
+      "tools/workflow_assurance.py": {
+        "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+        "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+      },
+      "tools/test_workflow_assurance.py": {
+        "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+        "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+      },
+      ".agent/contracts/119.json": {
+        "sha256": "0ff9b2860ac6a24b4bf40cf42cbde0a0cc62a24a27a0fe7f77d57ed5c34945e6",
+        "git_blob": "988611de771f17994d3fef4e71020611dbbf7b9c"
+      }
+    },
+    "expected_exit": 1,
+    "expected_marker": "pinned entry bytes/mode changed: tools/workflow_assurance.py",
+    "stdout": ".agent/evidence/119/executable-review1-live-stale-foundation.stdout.txt",
+    "stderr": ".agent/evidence/119/executable-review1-live-stale-foundation.stderr.txt",
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "12c98b986707159afcb31fc3e94c6d3ccd006994195a1bfdd6fb1dcd9867aa36"
+  }
+]
