@@ -1,0 +1,20 @@
+{
+  "review": "validator-mode-a",
+  "feature": "120",
+  "attempt": 2,
+  "revision_reviewed": 1,
+  "reviewer": "/root/validator128",
+  "reviewed_commit": "a8420a440385a3bdf3ded8147aac05f48d085912",
+  "proposal_commit": "c7c62390e75c8fe6e8037533d6d69784870f9670",
+  "contract_sha256": "25f7845d2593f79fb862d322f7dd29ed356e48415b809d439447890e4dadedb2",
+  "final_verdict": {"approved": false, "summary": "Original history/schema, artifact-kind and independently pinned capture findings resolved. One narrow reusable-policy defect remains in shipped operator expectations."},
+  "issues": [
+    {"id": "120-A3", "severity": "medium", "target": "api.operator_application", "finding": "The public verifier mandates phase018-workflow-assurance-controls, owner/root, H-PHASE-018 and7200/9360 as algorithm constants. Existing120spec/NIP-A10 authorizes reusable checks over independently selected trusted policy and actual authority, not a public verifier restricted to this repository phase/session/allowance. Valid independently pinned authority outside those local values would be rejected despite matching all caller-selected bindings.", "evidence": ".agent/evidence/120/modea2-stdout.txt", "required_fix": "Separate generic operator/application verification from phase018 dogfood data: compare phase/features/gate/owner/budgets to independently pinned authority or explicit trusted policy expectations rather than hardcoded local values. Keep current018 actual authority/7200/9360/root values in acceptance fixtures. Retain strict types, real authority reference, exact repository/feature/stage/candidate binding and all corrected capture/history/prerequisite semantics; no new engine or allowance."}
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [".agent/evidence/120/modea2-check.py", ".agent/evidence/120/modea2-execution.json", ".agent/evidence/120/modea2-stdout.txt", ".agent/evidence/120/modea2-stderr.txt"],
+  "resolved": "Deterministic detail yields schema-valid transition history; input/output schemas and full replay identity explicit. Actual per-kind approved-contract/gate/QA/capture predicates replace invented AGF fields. Independent capture pins bind executed/argv/exit/outcome/producer/candidate/output and AT11 requires actual owned restore/revalidation.",
+  "preservation": "Two read-only APIs, exact11acceptance/scope/2750/7200/9360 unchanged; historical receipts retain original contexts, no future120 gates required before initialSource. Static proof exited0; no product/test/installed edits or119runtime execution.",
+  "boundary": "Contract-author correction only. Renew both independent gates on one revision before Root approval and provisional acceptance review. No source/coordination/schema changes authorized by this rejection."
+}
