@@ -1,0 +1,33 @@
+{
+  "role": "Generator",
+  "attempt_root": "/home/cnross/.tmp/nizam-feature128-source1",
+  "candidate_revision": "62a83e65c653ba4df69eb784396724a684ffdf79",
+  "base_revision": "b73e45f8c2b21ae2045d7e4be89b3083c543f441",
+  "owned_source": [
+    "tools/README.md",
+    "CHANGELOG.md"
+  ],
+  "docs_delta": {
+    "added": 17,
+    "deleted": 10
+  },
+  "bundle_review": ".agent/qa/128-bundle-review.json",
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready",
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/128/source1-01.json"
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/128/source1-02.json"
+    },
+    {
+      "command": "bash tools/validate.sh --payload",
+      "actual_exit": 0,
+      "evidence": ".agent/evidence/128/source1-03.json"
+    }
+  ],
+  "boundary": "Development checks only; independent ModeB, fresh QA, hosted14 proof and Root evidence capture remain separate gates. No acceptance/runtime/harness/contract/state bytes changed."
+}

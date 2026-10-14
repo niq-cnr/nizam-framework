@@ -1,0 +1,23 @@
+{
+  "owner": "/root/qa128",
+  "description": "Unavailable SBCL request cannot acquire a partial stub core-ready success.",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready --require-sbcl",
+  "argv": [
+    "python3",
+    "tools/test_runtime_session.py",
+    "--check",
+    "core-ready",
+    "--require-sbcl"
+  ],
+  "cwd": "/home/cnross/.tmp/nizam-feature128-qa1",
+  "actual_exit": 2,
+  "elapsed_seconds": 0.044836481916718185,
+  "exercised_revision": "32984eb88627ace080574d70143fb7ff11df8763",
+  "source_test_identity": ".agent/evidence/128/qa1/identity-before.json",
+  "environment": ".agent/evidence/128/qa1/environment.json",
+  "stdout": "",
+  "stderr": "usage: test_runtime_session.py [-h]\n                               (--check {lifecycle-no-evaluation,record-schema,fixture-claim-registered,cancel-confirmation-required,handoff-source-bound,core-ready} | --case {1,2,3,5,6,8,9,10,13})\n                               [--runtime {stub}] [--layer {policy}]\n                               [--require-sbcl] [--require-isolation]\ntest_runtime_session.py: error: requested capability proof is unavailable in this partial stub suite; no skip permitted\n",
+  "expected_exit": 2,
+  "expected_reason": "requested capability proof is unavailable in this partial stub suite; no skip permitted",
+  "passed": true
+}

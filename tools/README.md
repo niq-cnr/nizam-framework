@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.26.0
+version: 0.27.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.27.0"
+    date: "2026-10-14"
+    summary: "Document bounded partial-core aggregation and separate hosted fourteen-leaf proof."
   - version: "0.26.0"
     date: "2026-10-14"
     summary: "Document bounded waits, confirmed cancellation, checked reattachment and explicit source replay with fourteen fixture checks."
@@ -149,13 +152,13 @@ IDs and that session's actual owner/generation/lease and governed binding. Poll
 each outcome before continuing. Lifecycle calls never execute the templates.
 Handoff provenance does not prove source/heap equality or independent acceptance.
 
-`fixtures_self_test.sh` retains the original nine checks and appends
-`cancel-confirmation-required`, `handoff-source-bound` and stub cases 5, 6, 10
-through independently authored `test_runtime_session.py`. Each command and actual
-exit is reported, with failures propagated in existing CI. Candidate results
-still need independent QA and hosted evidence. Feature 128 owns bounded core
-closure; SBCL, fresh acceptance and full optional adapter conformance remain
-later work. The reserved `accept` action fails without side effects.
+`PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready`
+runs fourteen bounded leaf subprocesses, failing on any error or missing proof.
+Its partial stub scope is cases 1/2/3/5/6/8(policy)/9/10/13 and five named checks.
+`fixtures_self_test.sh` separately runs fourteen leaves in hosted CI; it does not
+run `core-ready`. Independent QA/capture still gate bounded core closure.
+SBCL/full adapter, phase020 fresh acceptance and final CI131 remain pending.
+The reserved `accept` action fails without side effects.
 
 ## Foundation readiness — feature 118
 
@@ -193,8 +196,8 @@ The optional session surface routes through [the adapter interface](interface.md
 [Live Runtime Sessions](..&#47;methodology/10_live_runtime_sessions.md) and
 [SBCL Runtime Binding](..&#47;methodology/11_sbcl_runtime_binding.md). Adapters without
 sessions remain conformant. Existing schemas/C12 validate declared records only;
-executable controller/adapter/SBCL enforcement and all thirteen live proofs remain
-pending phase016. The source additions do not upgrade installed v1.5.0.
+the partial stub controller proves only the bounded cases above. Full adapter/SBCL
+and remaining live proofs stay pending; installed v1.5.0 is unchanged.
 
 ## Sealed independent acceptance bundles
 

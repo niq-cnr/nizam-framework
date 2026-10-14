@@ -9,6 +9,10 @@ project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- **Bounded partial core (feature 128).** Added independently authored `core-ready`
+  over fourteen bounded leaf subprocesses. Hosted CI retains separate fourteen-leaf
+  execution; SBCL/full adapter, phase020 fresh acceptance and final CI131 remain pending.
+
 - **Stub operation semantics and handoff (feature 127).** Added bounded polling
   that stops waiting only, correlated cooperative cancellation confirmation and
   checked source-bound reattachment snapshots. Replay uses committed templates

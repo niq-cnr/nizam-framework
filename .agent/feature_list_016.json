@@ -1,7 +1,7 @@
 {
   "phase": "016-runtime-controller-core",
   "spec_version": "0.1.1",
-  "phase_status": "in_progress",
+  "phase_status": "complete",
   "original_estimate_lines": 5650,
   "ceiling_130pct": 7345,
   "budget_categories": {"product": 1750, "tests": 1250, "process": 2650},
@@ -58,8 +58,8 @@
       "id": "128",
       "name": "Bounded core evidence and close",
       "description": "Independent candidate-bound QA/evidence and documented partial stub scope; full SBCL/CI map remains pending.",
-      "status": "pending",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "dependencies": ["127"],
       "estimated_lines": 800,
       "budget_categories": {"product": 200, "tests": 100, "process": 500},
@@ -68,7 +68,11 @@
         "bash tools/validate.sh",
         "bash tools/validate.sh --payload"
       ],
-      "future_output_targets": ["docs/planning/phase_016.yaml", ".agent/evidence/128/"]
+      "future_output_targets": ["docs/planning/phase_016.yaml", ".agent/evidence/128/"],
+      "evidence_ref": ".agent/evidence/128/evidence-capture.json",
+      "contract_ref": ".agent/contracts/128.json",
+      "qa_ref": ".agent/qa/128.json",
+      "completed_at": "2026-10-14T13:21:22.457521+00:00"
     }
   ],
   "future_interfaces": [{"path": "tools/test_runtime_session.py", "owner": "126"}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
@@ -77,7 +81,7 @@
   "shared_file_lanes": [{"path": "tools/test_runtime_session.py", "owners": ["126", "127", "128", "129", "130", "131", "132"], "order": ["126", "127", "128", "129", "130", "131", "132"]}, {"path": "tools/runtime_session.py", "owners": ["126", "127", "128", "129", "130", "131", "132"], "order": ["126", "127", "128", "129", "130", "131", "132"]}],
   "existing_inputs": ["Completed015 normative110-114; completed014 sandbox/CI/fixture ownership103-105; Open040/034; immutable installedv1.5.0."],
   "activation_prerequisites": ["Standing authority .agent/evidence/agentic-excellence/authorization.json and captured118 foundation; hosted-result.json independently approved by .agent/evidence/phase016-preflight/activation-review.json. Select126 for contract preparation only within5650/7345; no controller/live acceptance or implementation approval."],
-  "acceptance_availability": "Features126/127 partial stub cases1/2/3/5/6/8policy/9/10/13 and five named checks have captured independent QA and actual fourteen-command CI proof. Bounded core-close128 remains pending; no full adapter, SBCL runtime or fresh acceptance claim.",
+  "acceptance_availability": "Captured126-128 bounded partial stub core: cases1/2/3/5/6/8policy/9/10/13 and five named checks. FreshQA core-ready independently executed all14 leaves; separate new-runner hosted14 receipt captured. Full adapter, SBCL runtime, fresh020 and finalCI131 remain pending.",
   "dod_ref": ".nizam/standard/definition_of_done.md",
   "activation_preflight": {"commands": ["PYTHONDONTWRITEBYTECODE=1 python3 tools/test_convergent_review.py", "sbcl --version", "sbcl --no-sysinit --no-userinit --non-interactive --eval '(assert (= (+ 1 1) 2))'"], "host": "One actual capable Linux acceptance/CI host, existing tools only before H-PHASE-016.", "required_evidence": "Actual same-host revision/environment/commands/exits/SBCL version and fresh no-init probe; required isolation suite exit0 with no allow-unsupported flag. No newcontroller131 dependency; unsupported local isolation is non-passing; no workstation sysctl change.", "receipt": ".agent/evidence/phase016-preflight/hosted-result.json", "independent_review": ".agent/evidence/phase016-preflight/activation-review.json"}
 }
