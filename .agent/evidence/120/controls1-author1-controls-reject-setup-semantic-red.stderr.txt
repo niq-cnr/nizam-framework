@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/cnross/.tmp/nizam-feature120-controls1/tools/test_workflow_assurance.py", line 1020, in run_receipt_case
+    elif name == 'reject-setup': receipt_setup(api, f)
+                                 ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-controls1/tools/test_workflow_assurance.py", line 876, in receipt_setup
+    receipt_reject(api, f)  # Independently pinned real exit2/PASS output defeats forged receipt exit0/success.
+    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-feature120-controls1/tools/test_workflow_assurance.py", line 782, in receipt_reject
+    rejected(api, operation or (lambda: api.verify_stage_receipt(f.root, f.receipt, policy=f.policy)), 'receipt invalid input rejected')
+  File "/home/cnross/.tmp/nizam-feature120-controls1/tools/test_workflow_assurance.py", line 57, in rejected
+    require(False, message + ': invalid input accepted')
+  File "/home/cnross/.tmp/nizam-feature120-controls1/tools/test_workflow_assurance.py", line 35, in require
+    raise AssertionError('POLICY_ASSERTION: ' + message)
+AssertionError: POLICY_ASSERTION: receipt invalid input rejected: invalid input accepted
