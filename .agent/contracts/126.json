@@ -1,0 +1,161 @@
+{
+  "contract_id": "126",
+  "feature_id": "126",
+  "name": "Detached controller, stub and registered fixtures",
+  "status": "proposed",
+  "spec_ref": ".agent/product_spec_016.md",
+  "base_revision": "f9528cff90efcb34ae3c500e328b6a24d650e14d",
+  "contract_attempt": 1,
+  "activation_condition": "Proposal only. Root must record independently approved phase016 activation and both pre-code approvals before implementation; candidate lifecycle text is not approval.",
+  "scope": {
+    "files_create": [
+      {
+        "path": "tools/runtime_session.py",
+        "purpose": "Generator: Python-standard-library detached controller, bounded CLI/child protocol and development records."
+      },
+      {
+        "path": "tools/fixtures/runtime_session/stub_runtime.py",
+        "purpose": "Generator: language-neutral deterministic stateful child; fixture directory and claim row land together."
+      },
+      {
+        "path": "tools/test_runtime_session.py",
+        "purpose": "Independent Evaluator exclusively authors/seals behavioral acceptance runner; Generator never edits it."
+      },
+      {
+        "path": ".agent/contracts/126.json",
+        "purpose": "Generator proposal/revisions; Root alone promotes approval/lifecycle metadata after gates."
+      },
+      {
+        "path": ".agent/evidence/126/**",
+        "purpose": "Role-owned concise contracts, input identities, test seal/review, actual red, command output/status, source identities, QA/capture and handoff; no recursive evidence copies or hidden implementation."
+      },
+      {
+        "path": ".agent/validator/126-*.json",
+        "purpose": "Independent Validator owns pre-code, bundle-review and Mode B verdicts; retain prior revisions."
+      },
+      {
+        "path": ".agent/qa/126*.json",
+        "purpose": "Independent Evaluator owns contract review and fresh QA verdicts; retain prior revisions."
+      },
+      {
+        "path": ".agent/evidence/126-qa-adversarial.txt",
+        "purpose": "Independent Evaluator captures the required additional QA spot-check."
+      }
+    ],
+    "files_modify": [
+      {
+        "path": "tools/fixtures_self_test.sh",
+        "purpose": "Only add runtime_session|tools/test_runtime_session.py to existing FIXTURE_CLAIMS in the same implementation change that creates the nested stub."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Document the implemented CLI, file layout, exit codes, partial stub scope and future127/128/SBCL boundaries; required frontmatter bump/change_log."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "One unreleased entry for this partial controller; no release/version claim."
+      }
+    ],
+    "orchestrator_only": "Root may update current contract approval/status, feature126 lifecycle, phase016 budget/history and run_state coordination under existing authority. These are separately attributed and field-scoped, never Generator edits; do not freeze whole mutable planning/state files."
+  },
+  "non_goals": [
+    "No feature127 timeout/cancellation/reattach/replay implementation, feature128 closure, phase018 controls, SBCL binding or phase020 fresh acceptance; no full seven-call adapter-conformance claim.",
+    "No authentication/security boundary, parallel implementation lanes, queue, extra scheduler, dependency installation, controller CI job or user/workstation settings.",
+    "No changes to installed .nizam, schemas, normative methodology/interface/permission rules, existing foundation cases, historical evidence, other contracts or lifecycle records.",
+    "No acceptance from development records, warm images, local SBCL availability or record validation. These six stub cases require actual capable CI before live-case claims."
+  ],
+  "interface": {
+    "cli": "python3 tools/runtime_session.py ACTION --root ABSOLUTE_STATE_ROOT --request REQUEST.json; ACTION is open-session, submit-operation, poll-operation, transfer-session, close-session. No shell-eval interface. --help documents usage. Reserved cancel-operation/reattach-session/accept return unsupported without side effects; feature127/020 own those semantics.",
+    "responses": "Exactly one JSON object on stdout: {ok:boolean, result:object} on success or {ok:false,error:string,result?:object} on failure; a well-shaped rejected submit includes its rejected operation record as result. Exit 0 means successful lifecycle/read or admitted submit, 1 means policy/admission rejection, 64 malformed input/usage, 70 infrastructure failure. Errors never imply operation completion. Submit/poll result is the existing operation record; open/transfer result is the existing session record; close result contains closed:true and session_id only after observed child/supervisor shutdown.",
+    "identity": "All non-open requests supply session_id, requester, expected_generation and expected_lease_epoch. Submit also requires operation_id, contract_id, step_key, attempt, kind, payload, context and limits as tools/interface.md section6 and existing schemas define. Reject wrong types, missing identity, extra/unrecognized protocol fields and unsafe identifiers (IDs restricted to [A-Za-z0-9_-]+, max128). Never interpret a request value as a filesystem traversal or shell command.",
+    "open": "Request contains session_id, requester, owner, purpose:develop, contract_id, step_key, attempt, run_state_path (absolute). Start only the committed sibling stub using sys.executable; no arbitrary runtime command/config evaluation. Remember run_state_path and governed identity in controller metadata. New session lease=0; reopening a closed/crashed incarnation retains owner/lease and governed identity and requires matching prior generation/lease. Never reopen a live supervisor or silently replace an owner.",
+    "policy": "Caller identity is declared workflow identity, not authenticated. Agent lifecycle requester must be Orchestrator; agent submit requester must be Generator and exactly match owner; a human requester may operate its explicitly owned session and explicitly transfer/close it. Orchestrator transfer/close remains explicit and requires current generation/lease. Open may nominate a human or Generator owner only. Deny review_trial in requester or proposed owner on every action before endpoint creation/contact; no endpoint returned to a trial. Supervisor repeats trial/role checks if a caller bypasses CLI policy; such well-shaped hostile submit is recorded rejected without dispatch. Reject purpose:accept and unsupported role/permission combinations.",
+    "transfer": "Request adds new_owner. Check lifecycle authority and current generation/lease, change owner explicitly and increment lease exactly once; write previous_owner and previous_lease_epoch per schema. Reject transfer while an operation is outstanding, preserving it. Same-owner transfer rejected. New owner must be human or Generator. Old owner and old lease cannot execute after transfer.",
+    "poll_close": "poll-operation adds operation_id and returns observed durable outcome only to current owner or lifecycle Orchestrator after identity checks; no callbacks or waiting semantics. close-session invokes no project code, terminates/reaps child and supervisor with bounded waiting, records observed termination for an outstanding operation and preserves records/effects. Infrastructure uncertainty stays unknown/busy and exit70, never fabricated success.",
+    "storage": "ROOT/session_id contains supervisor.lock, control.sock, controller.json (transport/process metadata), runtime_session.json and operations/operation_id.json plus operation_id.result.json for child result frames. Schema records contain only permitted fields; private PID/socket/attempt binding/result values stay outside them. Lifecycle status is read from files, no new status endpoint.",
+    "supervisor": "One detached supervisor owns the per-session nonblocking exclusive flock for its lifetime and one child. Client exits do not kill it. Unix-domain socket requests use bounded JSON lines; child requests use stdin and child responses fd3. Persisted PID alone never proves identity; only lock ownership plus matching live handshake permits dispatch. Existing live lock rejects second open. Never unlink/recreate a held lock to bypass exclusion.",
+    "generation": "Under the exclusive lock, durably increment a per-session counter and create secrets.token_hex(16) nonce for each new child incarnation, including failed startup/reconstruction. Child must echo generation in ready handshake and every operation response. Reject stale expected generation/lease before forwarding. Late, malformed, mismatched or unsolicited responses never complete another operation; fail closed and preserve uncertainty.",
+    "wire": "Controller sends {type:init,generation:{counter,nonce}}; child answers {type:ready,generation}. Only {type:execute,request:SUBMIT_REQUEST,generation} executes stub behavior. Child answers {type:result,operation_id,generation,status:completed,result:JSON_VALUE,image_consistent:true}. No lifecycle message carries executable payload. Default per-line bound 65536 bytes; reject oversize/malformed frames, bound startup/control waits to5s and close to5s; child stdout/stderr are bounded diagnostic files, never protocol or acceptance evidence.",
+    "stub": "Per-process memory map only, never Python eval/exec. payload.expression is a JSON string with op:set plus name/value, op:get plus name, or op:gate plus absolute release_path in the scratch root. gate waits until the test creates that file; all execute frames, including observe, enter the same lane. Result frames expose get/set result; received operation IDs are appended/flushed to child stdout before execution so tests can distinguish refusal from hidden dispatch. No state/config/source is evaluated during init or lifecycle.",
+    "serialization": "Single supervisor event loop serializes admission, transfer, record replacement and child responses. At most one outstanding operation; no queue. A second submit returns rejected/session_busy before dispatch. Duplicate operation_id cannot overwrite prior operation/effect; return conflict without executing. Owner/generation/lease/trial/attempt checks occur before any execute frame, including observe.",
+    "records": "Use same-directory temporary files, flush/fsync and os.replace for each durable JSON record. Persist generation before spawn and running/outstanding state before dispatch; publish terminal operation before clearing outstanding. Crash disagreement fails closed on reopen; never dispatch from ambiguous state. Keep prior operation/result files. Every operation has evidence_class:development; image_consistent reflects observation, not source/heap identity. Schema-shaped rejected submits have executed:false and reason foreign_owner, stale_generation, stale_lease, session_busy, review_trial or attempt_mismatch as applicable; malformed requests are usage errors without invented records.",
+    "attempt_guard": "Read run_state.circuit_breaker[step_key].attempts on open and every submit; require its integer>=1 to equal request.attempt and session-bound contract_id/step_key/attempt. Missing/malformed/changed counts fail closed before execution. Store the initial binding in controller metadata, preserve it across child restart, and emit previous_* identity when generation changed per schema. Never write run_state, increment/reset counters or infer a fresh governed attempt from a new PID/generation. A newly authorized attempt needs a separately opened session with Root-provided state."
+  },
+  "acceptance_ownership": {
+    "author": "Independent Evaluator authors tools/test_runtime_session.py after both pre-code gates; distinct recorded session identity reviews its bundle. No test implementation exists or is approved by this proposal.",
+    "runner": "Exactly the nine commands below select required obligations. Unknown switches/checks/cases/runtimes, missing cases, setup errors or absent proof fail nonzero. --require-sbcl/--require-isolation are fail-closed capability guards, never skip flags; unsupported unimplemented selections fail. Tests use real subprocesses and temporary state/resources, bounded waits and finally-based child/process-group cleanup. Malformed child/late-frame tests may alter the stub only in a disposable scratch candidate with distinct recorded identity, not its committed bytes; no arbitrary executable selection is added to the public CLI.",
+    "sealing": "Seal test bytes, agreed interface/obligation projection, normative input blob identities and exact exercised source revision. Link immutable Git objects/historical evidence instead of copying repositories. Mutable Root-owned status/budget/history are checked by field ownership and attributed transitions, not whole-file seals.",
+    "red": "Evaluator records intended behavioral red before repair with exact assertion/exit/output. Missing CLI/module, syntax/setup failure, timeout from missing setup or unsupported action is not semantic red. If needed, a separately identified minimal API scaffold within this approved scope may be implemented after pre-code approval and test seal; its working transport/setup is independently confirmed before intended-behavior red. Alternatively use narrowly targeted semantic mutants of an executable candidate in scratch, with positive control; neither establishes pristine-base red.",
+    "change_control": "Generator never modifies sealed tests. A test defect returns to its independent author and renewed bundle review/seal; preserve old failures. Product changes remain within contract or require both renewed pre-code gates. Exactly one additional Evaluator-originated adversarial QA spot-check accompanies fresh QA."
+  },
+  "verification": [
+    {
+      "acceptance_test": "AT1: Open/transfer/close with real child produce no execute frame; lifecycle payload/role abuse rejected. Child survives opening client exit; duplicate open cannot acquire lock; close reaps owned processes. One outstanding gate operation rejects a second submit without dispatch.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation"
+    },
+    {
+      "acceptance_test": "AT2: Validate every emitted session/operation record against existing schemas and C12 relational checks; reject at least one wrong-type/forbidden-field record. Concurrent reads see complete JSON; running state precedes dispatch; malformed/mismatched child frames do not forge completion; no development result accepted as acceptance evidence.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema"
+    },
+    {
+      "acceptance_test": "AT3: Existing F105 claim map contains exactly one runtime_session|tools/test_runtime_session.py row and real stub/suite paths; exercise actual claim-map function against valid mapping and missing/duplicate/missing-suite scratch mutants, preserve other claims and foundation fixtures.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check fixture-claim-registered"
+    },
+    {
+      "acceptance_test": "AT4: Case1: owner mutation succeeds; different agent submit and observe are refused as foreign_owner, executed:false, without child receipt or memory change; legitimate owner still reads its value.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub"
+    },
+    {
+      "acceptance_test": "AT5: Case2: two detached sessions execute set/get for the same symbol with different values, distinct live child identities and generations; interleaved reads preserve each image and cleanup both.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 2 --runtime stub"
+    },
+    {
+      "acceptance_test": "AT6: Case3: restart same session creates increasing counter/new nonce; old expected generation is rejected before dispatch, including observe; matching current generation succeeds; malformed echoed generation cannot validate startup/response.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 3 --runtime stub"
+    },
+    {
+      "acceptance_test": "AT7: Case8 policy: review_trial is denied every exposed action and proposed ownership before endpoint creation/contact; a well-shaped trial submit yields rejection/zero execution. No mechanism-layer isolation claim.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 8 --runtime stub --layer policy"
+    },
+    {
+      "acceptance_test": "AT8: Case9: seed a real-shaped scratch run_state circuit entry for a failing step, restart child and submit with unchanged contract/step/attempt; source state bytes remain identical. Lower/reset/missing/changed/malformed counter or mismatched attempt fails before dispatch. Generation replacement never grants new budget.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 9 --runtime stub"
+    },
+    {
+      "acceptance_test": "AT9: Case13: human-to-agent and agent-to-human explicit handover changes owner and increments lease; old holder/old lease requests fail before execution, new holder succeeds. Transfer while busy rejects and preserves outstanding state; transfer never executes code.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 13 --runtime stub"
+    }
+  ],
+  "gate_sequence": [
+    "Root records reviewed phase016 activation, prerequisites and attempt allocation; this proposal cannot promote itself.",
+    "Independent Validator Mode A and Evaluator contract review both approve the same obligation/interface projection, with empty issues/missing_acceptance_coverage/unsupported_claims; Root approves contract.",
+    "Independent test author and distinct bundle reviewer seal acceptance; capture intended semantic red and exact source/scaffold identity before repair; preserve evidence.",
+    "Generator implements only its files and runs development checks; independent Mode B checks scoped diff including untracked files, tests unchanged, records/behavior and measured budget.",
+    "Fresh independent QA re-executes all nine commands against committed source and fresh scratch state plus one additional adversarial check; source/test/runtime/host identities and actual exits captured separately.",
+    "Required repository checks bash tools/validate.sh and bash tools/fixtures_self_test.sh pass for candidate; existing CI remains required. No stub live-case claim until actual CI execution of the corresponding command.",
+    "Evidence-capture gate verifies every command/output/exit/revision path and QA reference; Root alone updates completion, counters, budget and history."
+  ],
+  "estimated_lines": 2900,
+  "budget": {
+    "product": 1100,
+    "independent_tests": 550,
+    "process": 1250,
+    "phase_total": 5650,
+    "phase_ceiling": 7345,
+    "preparation": "307 lines provisionally measured once by Root within phase budget, finalized at reviewed activation boundary; feature126 counts after that boundary, no free or duplicate overhead."
+  },
+  "evidence_dir": ".agent/evidence/126/",
+  "evidence_convention": "Each actual run has NN-command.stdout.txt, NN-command.stderr.txt and NN-result.json with argv, cwd, environment, actual exit, source/test/runtime identity. Immutable seals and verdicts link paths/Git blobs. Additional QA spot-check: .agent/evidence/126-qa-adversarial.txt. No copied nested history.",
+  "interpretations": [
+    "Feature126 exposes only five usable calls; immediate poll supports its asynchronous one-operation lane. Unsupported future calls are explicit rather than pretending full optional capability conformance.",
+    "Human ownership in case13 needs explicit human operate/transfer/close behavior alongside the documented agent-role grants; this is declared coordination policy, not authentication.",
+    "Attempt lookup uses step_key as the exact existing circuit_breaker key; contract_id is additionally bound per session. The schema stores these separately, so no invented key concatenation.",
+    "Partial core is a deliverable, not a claim that all normative runtime requirements or all thirteen cases are enforced. The F105 row proves ownership only; current CI does not invoke the new suite. Feature126 local fresh QA is distinct from hosted live-case claims, which remain pending actual CI execution. Pre-code reviewers must ratify this boundary and the bounded API choices."
+  ],
+  "approvals": {
+    "validator_mode_a": false,
+    "evaluator_contract_review": false,
+    "revisions": 0
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md"
+}
