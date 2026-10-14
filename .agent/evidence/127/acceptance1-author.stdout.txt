@@ -1,0 +1,20 @@
+PASS preserved old functions including crash regression and all unchanged Session methods; call adds exit observation only; poll extension separately declared
+PASS runner and both generated protocol peers and publication fault wrappers compile
+PASS actual committed source/template/resource fixture and fresh worktree materialization
+CONTROL claim-map valid: actual_exit=0; 
+CONTROL claim-map missing: actual_exit=1; FAIL claim-map: unclaimed subdirectory: runtime_session
+CONTROL claim-map duplicate: actual_exit=1; FAIL claim-map: doubly-claimed subdirectory: runtime_session
+CONTROL claim-map missing-suite: actual_exit=1; FAIL claim-map: claim for runtime_session names a suite file that does not exist: tools/absent.py
+acceptance1-01 parser actual_exit 2
+acceptance1-02 parser actual_exit 2
+acceptance1-03 parser actual_exit 2
+acceptance1-04 parser actual_exit 2
+acceptance1-05 parser actual_exit 2
+acceptance1-06 parser actual_exit 2
+acceptance1-07 parser actual_exit 2
+acceptance1-08 inherited-positive actual_exit 0
+acceptance1-09 inherited-positive actual_exit 0
+acceptance1-10 inherited-positive actual_exit 0
+acceptance1-11 baseline-harness-only-nine actual_exit 1
+acceptance1-12 baseline-unsupported-reattach-not-semantic-red actual_exit 1
+AUTHOR CHECKS COMPLETE: no executable127/new semantic red or final bundle/QA claimed
