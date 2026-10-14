@@ -218,7 +218,7 @@ def response_error(reason, record=None):
 def response_code(response):
     if response['ok']:
         return 0
-    return {'usage': 64, 'infrastructure': 70}.get(response['error'], 1)
+    return {'usage': 64, 'infrastructure': 70, 'ambiguous_state': 70}.get(response['error'], 1)
 
 
 def receive_line(source, deadline):
@@ -280,13 +280,13 @@ class Supervisor:
             paths = list(operation_dir.glob('*.json'))
             if session is None:
                 if metadata is not None or paths:
-                    fail(1, 'ambiguous_state')
+                    fail(70, 'ambiguous_state')
                 return
             generation(session['generation'])
             generation(metadata['generation'])
             if (metadata['generation'] != session['generation']
                     or session.get('outstanding_operation_ref') is not None):
-                fail(1, 'ambiguous_state')
+                fail(70, 'ambiguous_state')
             records = {path.name: path for path in paths if not path.name.endswith('.result.json')}
             results = {path.name: path for path in paths if path.name.endswith('.result.json')}
             known = {session['generation']['counter']: session['generation']['nonce']}
@@ -299,17 +299,17 @@ class Supervisor:
                 if (name != oid + '.json' or record['session_id'] != session['session_id']
                         or counter > session['generation']['counter']
                         or known.get(counter, nonce) != nonce):
-                    fail(1, 'ambiguous_state')
+                    fail(70, 'ambiguous_state')
                 known[counter] = nonce
                 status = record['status']
                 if status not in ('completed', 'rejected', 'terminated', 'condition_signalled', 'cancelled'):
-                    fail(1, 'ambiguous_state')
+                    fail(70, 'ambiguous_state')
                 if record.get('executed') is not (status != 'rejected'):
-                    fail(1, 'ambiguous_state')
+                    fail(70, 'ambiguous_state')
                 result_path = results.pop(oid + '.result.json', None)
                 if status == 'completed':
                     if result_path is None:
-                        fail(1, 'ambiguous_state')
+                        fail(70, 'ambiguous_state')
                     result = read_json(result_path)
                     object_keys(result, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'})
                     generation(result['generation'])
@@ -317,13 +317,13 @@ class Supervisor:
                             or result['generation'] != record['generation']
                             or result['status'] != 'completed' or result['image_consistent'] is not True
                             or record.get('image_consistent') is not True):
-                        fail(1, 'ambiguous_state')
+                        fail(70, 'ambiguous_state')
                 elif result_path is not None:
-                    fail(1, 'ambiguous_state')
+                    fail(70, 'ambiguous_state')
             if results:
-                fail(1, 'ambiguous_state')
+                fail(70, 'ambiguous_state')
         except (OSError, KeyError, TypeError, ValueError, SessionError):
-            fail(1, 'ambiguous_state')
+            fail(70, 'ambiguous_state')
 
     def prepare(self):
         request = self.request
@@ -524,7 +524,7 @@ class Supervisor:
                 durable_session = read_json(self.directory / 'runtime_session.json')
                 durable_meta = read_json(self.directory / 'controller.json')
                 if durable_session != self.session or durable_meta != self.meta:
-                    fail(1, 'ambiguous_state')
+                    fail(70, 'ambiguous_state')
                 self.reconcile_idle(durable_session, durable_meta)
             expression = parse_json(request['payload']['expression'])
             if expression['op'] == 'gate':
