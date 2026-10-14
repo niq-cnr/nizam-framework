@@ -2,10 +2,13 @@
 id: nizam-phase018-product-spec
 title: "Phase 018 — Workflow Assurance — Controls"
 description: "Bounded WA control plan, recorded authorization and future independent acceptance gates."
-version: 0.1.1
+version: 0.1.2
 status: active
 authoritative_source: .agent/product_spec_018.md
 change_log:
+  - version: "0.1.2"
+    date: "2026-10-14"
+    summary: "Clarify activated018 and captured119 position; preserve requirements, DAG, estimates and independent gates for120–123."
   - version: "0.1.1"
     date: "2026-10-14"
     summary: "Bind Root-applied standing authority and actual118/127 capture receipts; preserve pending lifecycle, scope, budgets and future acceptance."
@@ -17,7 +20,7 @@ change_log:
 # Phase 018 plan
 
 NIP-0004 accepted scope and six operator selections are inputs. [Root’s authority receipt](evidence/phase018-preflight/activation-authority.json) applies standing operator logical-next-steps authorization to existing features 119–123 and the unchanged 7,200/9,360 estimate/ceiling under H-PHASE-018; it does not assert a new numeric user quote or rely on earlier 017/016 approvals.
-This active planning document grants no implementation approval. Phase/feature lifecycle stays pending until independent activation review and Root promotion; each implementation still requires both pre-code gates and reviewed independent acceptance.
+[Independent activation and Root promotion](evidence/phase018-preflight/activation-result.json) made phase018 active. [Feature119 is captured complete](evidence/119/evidence-capture.json); 120–123 remain pending. This planning document grants no implementation approval: each later contract still requires both pre-code gates and reviewed independent acceptance.
 [Foundation 118](evidence/118/evidence-capture.json) and [controller semantics 127](evidence/127/evidence-capture.json) are captured prerequisites; 128, full phase-016 closure and later 131 are not added prerequisites. [Postmerge main CI](evidence/128/pr99-main-ci.json) passed all five jobs on PR 99 merge `fcd0584`; this integration proof does not execute future 119–123 acceptance.
 Records for phases 015 and 014, installed v1.5.0, release versions and Open debts NDEBT-040/NDEBT-034 remain unchanged. Local adoption covers niq-cnr/nizam-framework only; planning is not activation.
 
@@ -45,10 +48,10 @@ Same-list dependencies alone appear in features; cross-phase prerequisites and
 shared-file serialization are separate metadata. Existing completed phases 015/014 are
 inputs, not new-list dependencies. Local adoption asserts no external ecosystem.
 
-## Future acceptance and independent ownership
+## Acceptance position and independent ownership
 
-All commands in the list are future acceptance obligations; none is run here.
-The runner introduced by feature 115 has captured foundation 118 evidence; future control selectors remain obligations of later contracts.
+Feature119’s six selectors and default26 have captured QA/hosted evidence; 120–123 commands remain future acceptance obligations.
+The runner retains captured foundation118 proof at its immutable revision; current119 correctly rejects stale118 receipts. Later control selectors remain obligations of later contracts.
 Its --case NAME tests exactly the named invariant; --check foundation-ready,
 controls-ready or profiles-ready verifies that stage's candidate-bound receipts.
 Unknown cases/checks, setup failures and missing proof exit nonzero. Existing
@@ -72,7 +75,7 @@ Orchestrator owns run position, counters and history; all others preserve them.
 | 123 | 300 | 350 | 550 | 1,200 |
 | Total | 1,800 | 2,050 | 3,350 | 7,200 |
 
-The unchanged 130% ceiling is 9,360 under Root’s authority receipt; activation remains pending, with no budget rebaseline. Process
+The unchanged 130% ceiling is 9,360 under Root’s authority receipt; phase018 is active, with no budget rebaseline. Process
 includes registrations, contracts, independent verdicts and planning/close-out, including all incoming reconciliation/preparation once from PR 99 merge `fcd0584`. Phase 016’s archived 5,179 and prior rows remain unchanged.
 Bucket sum already includes overhead; do not multiply it again. Full WA estimate: 16,100
 compares historical 4,360–13,190 weighted forecasts; distinct entry/conflict controls,
