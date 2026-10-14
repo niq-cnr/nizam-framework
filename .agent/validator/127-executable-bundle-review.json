@@ -1,0 +1,41 @@
+{
+  "review": "feature127-final-executable-acceptance-bundle",
+  "attempt": 1,
+  "reviewer": "/root/capability_review",
+  "author": "/root/acceptance126",
+  "reviewed_commit": "0800b60ed13bb566937621f2f580d51f895340aa",
+  "source_candidate": "88996ee9405f9467ff2debd6e3115b34d064019a",
+  "proof_commit": "21c4e320472af8d23f6dd53535af8a9ab05f3256",
+  "seal_commit": "1972dfbf171dff97f4bf3e933cf4908d7d5a82d5",
+  "test_sha256": "3628f1b2b833a0f504cced79252391ff213bd75197dd2d5261494fbb646eb12e",
+  "api_sha256": "f8052878dc2566dde5ec35911b485a874e187df57df8f10ade508505afd544b6",
+  "projection_sha256": "904ac202d71652ab07875f89e20234d6d8f4892d12600e7a75c458203ebb4ec2",
+  "contract_sha256": "b221434834b68dd0273a0bdd0f6f8c0988bee0165f9c31255f4e33b150191cb7",
+  "seal_ref": ".agent/evidence/127/semantic1-test-seal.json",
+  "seal_sha256": "035a55ab7af3f36edf7b6f78f73ae33691a0ba8e5f026f09d472102c4b17a062",
+  "final_verdict": {
+    "approved": true,
+    "summary": "Approve executable acceptance bundle: exact immutable C1 positives, intended private semantic-mutant failures and restored positives independently verified for all five new obligations."
+  },
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence": [
+    ".agent/evidence/127/executable-bundle-review1-check-v2.py",
+    ".agent/evidence/127/executable-bundle-review1-execution-v2.json",
+    ".agent/evidence/127/executable-bundle-review1-verification.json",
+    ".agent/evidence/127/executable-bundle-review1-positive.json",
+    ".agent/evidence/127/executable-bundle-review1-mutant.json",
+    ".agent/evidence/127/executable-bundle-review1-restored.json",
+    ".agent/evidence/127/executable-bundle-review1-check-v2.stdout.txt"
+  ],
+  "findings": [
+    "Verified all35 new Git/SHA pins, proof-directory Git tree, ten unchanged normative inputs and exact approved test/API/projection/contract bytes. Original provisional review and correction remain preserved.",
+    "Verified all15 exact command receipts and their stdout/stderr against immutable proof revision: five unmodified C1 exits0, five intended mutant exits1, five restored exact C1 exits0. Each failure names its semantic assertion; none is unsupported action, missing setup, syntax failure or timeout.",
+    "Re-derived all four patches and mutant controller hashes from immutable C1; recomputed173-file materialized inventory. Patches remove cancellation-confirmation truth checking, workspace-byte comparison or pending-reference equality, or incorrectly change timeout status to cancelled. They preserve executable transport and do not modify sealed test bytes.",
+    "Source and unchanged test path inspection confirms dirty-source and replay-command failures occur after valid attachment/replay setup, stale-pending failure after valid attachment, and timeout/cancellation failures after real admitted gate operations. Thus the controls prove targeted behavioral sensitivity rather than unavailable API.",
+    "Fresh independent private cancellation triple reproduced0-1-0 with exact source/test/inventory identities and the intended false-confirmation assertion. The reviewed runner retains finally cleanup based on start identity, private lock/ancestry/group ownership; post-run candidate-path scans were empty.",
+    "Initial reviewer helper exit1 was an argv-normalization mistake before product execution. Original helper/output retained; v2 changes only command slice3 to2 and passes. It is not a product failure or semantic-red evidence."
+  ],
+  "approval_boundary": "Final executable test-bundle gate only. Intended red is explicitly private semantic-mutant sensitivity, not pristine-base red. This decision permits separately allocated implementation Mode B; full fresh14-command QA and independent extra spot-check, required repository/actual CI receipts, scope measurement and Root evidence capture remain separate. No product, QA or feature-completion approval."
+}
