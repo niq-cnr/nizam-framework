@@ -1,0 +1,46 @@
+{
+  "role": "Evaluator",
+  "session": "/root/runtime_qa126",
+  "attempt": 1,
+  "dispatch_ref": ".agent/evidence/126/qa-dispatch.json",
+  "source_author": "/root/controller_generator",
+  "test_author": "/root/acceptance126",
+  "validator": "/root/capability_review",
+  "source_and_sealed_tests_modified": false,
+  "lifecycle_modified": false,
+  "execution_captures": [
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/126/final-qa/run-qa.py"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature126-final-qa",
+      "environment_override": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit_code": 0,
+      "exit_observation": "exec session65634 completed with exit_code0",
+      "stdout": ".agent/evidence/126/final-qa/driver.stdout.txt",
+      "stderr": ".agent/evidence/126/final-qa/driver.stderr.txt",
+      "helper_sha256": "0f8865980cebd08fc6aefdc2a53b420358008902a2b127d216b9ac5177922bdc"
+    },
+    {
+      "argv": [
+        "python3",
+        ".agent/evidence/126/final-qa/assemble-verdict.py"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature126-final-qa",
+      "environment_override": {
+        "PYTHONDONTWRITEBYTECODE": "1"
+      },
+      "actual_exit_code": 0,
+      "exit_observation": "exec chunk88993e completed with exit_code0",
+      "stdout": ".agent/evidence/126/final-qa/verdict-check.stdout.txt",
+      "stderr": ".agent/evidence/126/final-qa/verdict-check.stderr.txt",
+      "helper_sha256": "e625b84b2c7674c94e41305aae87e8234465e03ba4625c92b33990c0968fe882"
+    }
+  ],
+  "additional_spot_checks": 1,
+  "extra_check_ref": ".agent/evidence/126/final-qa/adversarial-result.json",
+  "independence": "Role authored the extra same-owner transfer atomicity assertions and reexecuted all nine commands; reused sealed Session for bounded subprocess transport and ownership-safe cleanup only."
+}
