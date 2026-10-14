@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:09:23.053380+00:00",
+  "updated_at": "2026-10-14T18:12:01.515184+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1256,6 +1256,10 @@
       "limit": 3
     },
     "120-final-validation": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-final-scope": {
       "attempts": 1,
       "limit": 3
     }
@@ -5768,6 +5772,11 @@
       "at": "2026-10-14T18:09:23.053380+00:00",
       "event": "120-final-validation-dispatch",
       "detail": "Final repository compliance after captured lifecycle and current docs, in parallel with factual review. Source/test/installed payload unchanged; no behavioral bank rerun. Maintained-file whitespace check excludes raw evidence. Any actual failure retained before bounded repair."
+    },
+    {
+      "at": "2026-10-14T18:12:01.515184+00:00",
+      "event": "120-final-scope-dispatch",
+      "detail": "All scoped docs reviewed, final local16/0 and maintained diff0. Frozen classifier measures whole120 once from PR100merge, including final docs/QA/verdict; preserve119722 and archived0165179/0175203. Root metadata update only after actual successful measurement."
     }
   ],
   "phase_001_scope_budget_final": {
