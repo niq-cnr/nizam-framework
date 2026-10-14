@@ -2,25 +2,64 @@
   "contract_id": "128",
   "feature_id": "128",
   "name": "Bounded core evidence and close",
-  "status": "proposed",
+  "status": "approved",
   "spec_ref": ".agent/product_spec_016.md",
   "scope": {
     "files_create": [
-      {"path": ".agent/contracts/128.json", "purpose": "Generator proposal; Root alone promotes approval/completion fields after gates."},
-      {"path": ".agent/evidence/128/*", "purpose": "Role-attributed contract, bundle, controls, development, QA, CI and capture receipts; each role writes only its own artifacts."},
-      {"path": ".agent/validator/128-*.json", "purpose": "Independent Validator Mode A/Mode B verdicts."},
-      {"path": ".agent/qa/128*.json", "purpose": "Independent Evaluator contract review, bundle review and distinct fresh final QA verdicts."},
-      {"path": ".agent/evidence/128-qa-adversarial.txt", "purpose": "Fresh QA's independently chosen additional adversarial check."}
+      {
+        "path": ".agent/contracts/128.json",
+        "purpose": "Generator proposal; Root alone promotes approval/completion fields after gates."
+      },
+      {
+        "path": ".agent/evidence/128/*",
+        "purpose": "Role-attributed contract, bundle, controls, development, QA, CI and capture receipts; each role writes only its own artifacts."
+      },
+      {
+        "path": ".agent/validator/128-*.json",
+        "purpose": "Independent Validator Mode A/Mode B verdicts."
+      },
+      {
+        "path": ".agent/qa/128*.json",
+        "purpose": "Independent Evaluator contract review, bundle review and distinct fresh final QA verdicts."
+      },
+      {
+        "path": ".agent/evidence/128-qa-adversarial.txt",
+        "purpose": "Fresh QA's independently chosen additional adversarial check."
+      }
     ],
     "files_modify": [
-      {"path": "tools/test_runtime_session.py", "purpose": "Evaluator-only small core-ready selector/dispatch; preserve all fourteen inherited leaf behaviors."},
-      {"path": "tools/README.md", "purpose": "Generator-only bounded partial-core command/proof documentation with NDS version/change_log update if changed."},
-      {"path": "CHANGELOG.md", "purpose": "Generator-only concise unreleased partial-core entry if needed."},
-      {"path": ".agent/run_state.json", "purpose": "Root-only lifecycle, attempt counters, history and measured budget."},
-      {"path": ".agent/feature_list_016.json", "purpose": "Root-only feature128 lifecycle/evidence projection after capture."},
-      {"path": "docs/planning/phase_016.yaml", "purpose": "Root-only canonical128/phase closure after QA and evidence capture; preserve historical steps."},
-      {"path": "docs/planning/ROADMAP.md", "purpose": "Planner-only current partial-core projection if needed after capture."},
-      {"path": "docs/planning/HANDOVER.md", "purpose": "Planner-only current partial-core projection if needed after capture."}
+      {
+        "path": "tools/test_runtime_session.py",
+        "purpose": "Evaluator-only small core-ready selector/dispatch; preserve all fourteen inherited leaf behaviors."
+      },
+      {
+        "path": "tools/README.md",
+        "purpose": "Generator-only bounded partial-core command/proof documentation with NDS version/change_log update if changed."
+      },
+      {
+        "path": "CHANGELOG.md",
+        "purpose": "Generator-only concise unreleased partial-core entry if needed."
+      },
+      {
+        "path": ".agent/run_state.json",
+        "purpose": "Root-only lifecycle, attempt counters, history and measured budget."
+      },
+      {
+        "path": ".agent/feature_list_016.json",
+        "purpose": "Root-only feature128 lifecycle/evidence projection after capture."
+      },
+      {
+        "path": "docs/planning/phase_016.yaml",
+        "purpose": "Root-only canonical128/phase closure after QA and evidence capture; preserve historical steps."
+      },
+      {
+        "path": "docs/planning/ROADMAP.md",
+        "purpose": "Planner-only current partial-core projection if needed after capture."
+      },
+      {
+        "path": "docs/planning/HANDOVER.md",
+        "purpose": "Planner-only current partial-core projection if needed after capture."
+      }
     ]
   },
   "role_ownership": {
@@ -47,26 +86,97 @@
     "identity": "Seal new whole-runner Git object/SHA256; independently review narrow delta and inherited leaf AST/behavior against historical127 bundle. Reuse immutable127 receipt references rather than copying history. Changed acceptance bundle requires renewed independent review before use."
   },
   "leaf_argv": [
-    ["--check", "lifecycle-no-evaluation"],
-    ["--check", "record-schema"],
-    ["--check", "fixture-claim-registered"],
-    ["--case", "1", "--runtime", "stub"],
-    ["--case", "2", "--runtime", "stub"],
-    ["--case", "3", "--runtime", "stub"],
-    ["--case", "9", "--runtime", "stub"],
-    ["--case", "13", "--runtime", "stub"],
-    ["--case", "8", "--runtime", "stub", "--layer", "policy"],
-    ["--check", "cancel-confirmation-required"],
-    ["--check", "handoff-source-bound"],
-    ["--case", "5", "--runtime", "stub"],
-    ["--case", "6", "--runtime", "stub"],
-    ["--case", "10", "--runtime", "stub"]
+    [
+      "--check",
+      "lifecycle-no-evaluation"
+    ],
+    [
+      "--check",
+      "record-schema"
+    ],
+    [
+      "--check",
+      "fixture-claim-registered"
+    ],
+    [
+      "--case",
+      "1",
+      "--runtime",
+      "stub"
+    ],
+    [
+      "--case",
+      "2",
+      "--runtime",
+      "stub"
+    ],
+    [
+      "--case",
+      "3",
+      "--runtime",
+      "stub"
+    ],
+    [
+      "--case",
+      "9",
+      "--runtime",
+      "stub"
+    ],
+    [
+      "--case",
+      "13",
+      "--runtime",
+      "stub"
+    ],
+    [
+      "--case",
+      "8",
+      "--runtime",
+      "stub",
+      "--layer",
+      "policy"
+    ],
+    [
+      "--check",
+      "cancel-confirmation-required"
+    ],
+    [
+      "--check",
+      "handoff-source-bound"
+    ],
+    [
+      "--case",
+      "5",
+      "--runtime",
+      "stub"
+    ],
+    [
+      "--case",
+      "6",
+      "--runtime",
+      "stub"
+    ],
+    [
+      "--case",
+      "10",
+      "--runtime",
+      "stub"
+    ]
   ],
   "leaf_prefix": "Actual Python executable and candidate tools/test_runtime_session.py precede each listed argv; all fourteen remain individually selectable.",
   "verification": [
-    {"acceptance_test": "AT1 candidate-bound bounded core-ready independently executes all fourteen leaves, fails closed and supports only the documented partial stub core.", "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready"},
-    {"acceptance_test": "AT2 default repository compliance passes for scoped candidate artifacts and documented partial-core state.", "command": "bash tools/validate.sh"},
-    {"acceptance_test": "AT3 payload compliance passes; installed immutable payload and existing historical receipts remain intact.", "command": "bash tools/validate.sh --payload"}
+    {
+      "acceptance_test": "AT1 candidate-bound bounded core-ready independently executes all fourteen leaves, fails closed and supports only the documented partial stub core.",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check core-ready"
+    },
+    {
+      "acceptance_test": "AT2 default repository compliance passes for scoped candidate artifacts and documented partial-core state.",
+      "command": "bash tools/validate.sh"
+    },
+    {
+      "acceptance_test": "AT3 payload compliance passes; installed immutable payload and existing historical receipts remain intact.",
+      "command": "bash tools/validate.sh --payload"
+    }
   ],
   "gate_sequence": [
     "Contract preparation only at selected base14721aaeed6a5f1c5c2190f264e5ba78679472ba; dependency127 is captured complete in selection.json. Pending main CI38565810273 is an implementation prerequisite, not a preparation prerequisite.",
@@ -78,14 +188,27 @@
   ],
   "estimated_lines": 800,
   "budget": {
-    "product": 200, "independent_tests": 100, "process": 500,
-    "phase_original": 5650, "phase_ceiling": 7345,
-    "already_counted": 4765, "remaining_ceiling": 2580,
+    "product": 200,
+    "independent_tests": 100,
+    "process": 500,
+    "phase_original": 5650,
+    "phase_ceiling": 7345,
+    "already_counted": 4765,
+    "remaining_ceiling": 2580,
     "measurement_base": "ec0b21c64f8bf003faa42d6a17dbe4f3903b065b",
     "rule": "Preserve original accounting; charge all preparation/product/tests/process once, including optional projections and controls. No new allowance or rebaseline; Root measures actuals and escalates scope/budget mismatch before expansion."
   },
   "evidence_dir": ".agent/evidence/128/",
   "evidence_convention": "Role-owned named stdout/stderr/result files record actual argv/cwd/environment/exit/exercised revision and source/test hashes; seals/verdicts reference immutable paths/Git objects. contract1-* is Generator-owned preparation only; other roles use their attributed names. Fresh adversarial evidence is .agent/evidence/128-qa-adversarial.txt. No recursive evidence copies.",
-  "approvals": {"validator_mode_a": false, "evaluator_contract_review": false, "revisions": 0},
-  "dod_ref": ".nizam/standard/definition_of_done.md"
+  "approvals": {
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 0
+  },
+  "dod_ref": ".nizam/standard/definition_of_done.md",
+  "approval_evidence": {
+    "mode_a": ".agent/validator/128-mode-a.json",
+    "evaluator": ".agent/qa/128-contract-review.json",
+    "proposal_sha256": "bf5b536112cb58b8f605b46db931f0edc3ae140af761d0742007ca5ea98c8443"
+  }
 }
