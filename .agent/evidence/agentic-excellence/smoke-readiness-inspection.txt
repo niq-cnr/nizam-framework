@@ -1,0 +1,19 @@
+python3 -c 'import datetime,hashlib,json,pathlib,shutil,subprocess; print("UTC",datetime.datetime.now(datetime.timezone.utc).isoformat()); print("REVISION",subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()); print("BRANCH",subprocess.check_output(["git","branch","--show-current"],text=True).strip()); print("RUNTIME_PATH_LOOKUP",json.dumps({x:shutil.which(x) for x in ["codex","claude","gemini","opencode","pi","python3","node","npm","uv","sbcl","git","bwrap","unshare"]},sort_keys=True)); files=["docs/planning/agentic-excellence.md",".agent/evidence/agentic-excellence/authorization.json",".agent/evidence/agentic-excellence/roadmap-proposal.json",".agent/evidence/agentic-excellence/primary-sources.json",".agent/evidence/agentic-excellence/review-verdict.json",".agent/evidence/128/evidence-capture.json",".agent/evidence/127/closure.json",".agent/evidence/phase018-preflight/activation-authority.json",".agent/feature_list_018.json",".agent/feature_list_020.json",".agent/feature_list_019.json"]; [print("SHA256",f,hashlib.sha256(pathlib.Path(f).read_bytes()).hexdigest()) for f in files]; tracked=subprocess.check_output(["git","ls-files","tools",".agent/evidence/agentic-excellence"],text=True).splitlines(); print("TRACKED_COMPARISON_ARTIFACT_SEARCH",json.dumps([f for f in tracked if any(s in f.lower() for s in ["benchmark","smoke","telemetry","adapter","preregister","trace"])])); print("LOOKUP_ONLY: executables were not invoked; availability is not common-runtime/model/authentication/isolation eligibility.")'
+UTC 2026-10-14T13:37:30.645359+00:00
+REVISION 6770458cce17b54a9cf17aca5f2c8a480c11df36
+BRANCH plan/comparison-smoke-readiness
+RUNTIME_PATH_LOOKUP {"bwrap": "/usr/bin/bwrap", "claude": "/home/cnross/.local/bin/claude", "codex": "/home/cnross/.local/bin/codex", "gemini": "/home/cnross/.npm-global/bin/gemini", "git": "/usr/bin/git", "node": "/home/cnross/.nvm/versions/node/v24.18.0/bin/node", "npm": "/home/cnross/.nvm/versions/node/v24.18.0/bin/npm", "opencode": "/home/cnross/.opencode/bin/opencode", "pi": "/home/cnross/.npm-global/bin/pi", "python3": "/usr/bin/python3", "sbcl": "/usr/bin/sbcl", "unshare": "/usr/bin/unshare", "uv": "/home/cnross/.local/bin/uv"}
+SHA256 docs/planning/agentic-excellence.md e039dafbc6e6419b6019c76d05430969ac64ec27a22761be60ba705c56682492
+SHA256 .agent/evidence/agentic-excellence/authorization.json 753453d3cc847a156a7227e4ac79455a21d68159cda4d1eca1489b073fb8b9c0
+SHA256 .agent/evidence/agentic-excellence/roadmap-proposal.json 306f10d9d60483ba8aabaaa2528233a76ea1d1e0f6e92cacdc902a0a80d20e28
+SHA256 .agent/evidence/agentic-excellence/primary-sources.json c0cfc6e568c0c2094074d53449b862e05d05295afda5e0d82c8ed6b3acb09a3c
+SHA256 .agent/evidence/agentic-excellence/review-verdict.json e048d618597df4b360db9080d15602bc42810a6fceb5bf043cb69217eccca0ae
+SHA256 .agent/evidence/128/evidence-capture.json 08fcff5c04be11f5eaa94fdf77e147b04728086bb7f998121b1b39a39497bf1c
+SHA256 .agent/evidence/127/closure.json cb2f5092695ee39b0941d79652719d489eb4c17df71192b6362d5b01a3deb8b3
+SHA256 .agent/evidence/phase018-preflight/activation-authority.json b2beda1abfc4b4f74d2ae91d5781cbc5460b088b28fe3024ead34a4ba9587e00
+SHA256 .agent/feature_list_018.json b95455c9d942f9cb77af1069a1a3c10b29ca020431819f2d0db81d22faa8dab3
+SHA256 .agent/feature_list_020.json 5ab9c09519f65b1dc1281c59a59280f0dd1ddaef8a363c8c8d4faa10f25e0e80
+SHA256 .agent/feature_list_019.json 5b6ee27534642c4a7b9deea2a2456efa6cce2d3d7d6d2035757f3174267be67b
+TRACKED_COMPARISON_ARTIFACT_SEARCH ["tools/isolated_trial_adapter.py"]
+LOOKUP_ONLY: executables were not invoked; availability is not common-runtime/model/authentication/isolation eligibility.
+EXIT:0
