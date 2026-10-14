@@ -987,7 +987,41 @@ fi
 # ---------------------------------------------------------------------------
 FIXTURE_CLAIMS=(
   "convergent_review|tools/test_convergent_review.py"
+  "runtime_session|tools/test_runtime_session.py"
 )
+
+# Keep this function self-contained so scheduling can be tested without recursion.
+runtime_session_checks() {
+  local selector value rc failed=0
+  local -a arguments
+  for selector in check case policy; do
+    case "${selector}" in
+      check) set -- lifecycle-no-evaluation record-schema fixture-claim-registered ;;
+      case) set -- 1 2 3 9 13 ;;
+      policy) set -- 8 ;;
+    esac
+    for value in "$@"; do
+      if [ "${selector}" = check ]; then
+        arguments=(--check "${value}")
+      else
+        arguments=(--case "${value}" --runtime stub)
+        if [ "${selector}" = policy ]; then arguments+=(--layer policy); fi
+      fi
+      printf 'COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py'
+      printf ' %s' "${arguments[@]}"
+      printf '\n'
+      if PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py "${arguments[@]}"; then
+        rc=0
+      else
+        rc=$?
+        failed=1
+      fi
+      printf 'ACTUAL_EXIT: %s\n' "${rc}"
+    done
+  done
+  return "${failed}"
+}
+runtime_session_checks || fail=1
 
 # claim_map_check <fixtures-root> <repo-root> <claim-row>...
 #
