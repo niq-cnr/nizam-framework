@@ -1,0 +1,56 @@
+{
+  "kind": "approved-contract-126-serialization-handoff",
+  "contract_ref": ".agent/contracts/126.json",
+  "contract_sha256": "7eed25daca89c13a548976a213ddba6e6837acaee90511f0deff152a60697778",
+  "approval_revision": "de7deee7831e8d3816f3f85985e8e56a44c7c006",
+  "boundary": "Concrete serialization and observability names for the approved contract; no additional operations, acceptance claims or authorization. Example paths/IDs/generation values are substituted from actual scratch state and open response.",
+  "cli": "python3 tools/runtime_session.py ACTION --root /tmp/nizam126/state --request /tmp/nizam126/request.json",
+  "principals": {
+    "orchestrator": {"principal_kind": "agent", "role": "Orchestrator", "agent_id": "orchestrator_1"},
+    "generator": {"principal_kind": "agent", "role": "Generator", "agent_id": "generator_1"},
+    "human": {"principal_kind": "human"},
+    "trial": {"principal_kind": "agent", "role": "review_trial", "agent_id": "trial_1"}
+  },
+  "open_request": {
+    "session_id": "session_1", "requester": {"principal_kind": "agent", "role": "Orchestrator", "agent_id": "orchestrator_1"},
+    "owner": {"principal_kind": "agent", "role": "Generator", "agent_id": "generator_1"}, "purpose": "develop",
+    "contract_id": "126", "step_key": "126-source", "attempt": 1, "run_state_path": "/tmp/nizam126/run_state.json"
+  },
+  "run_state_input": {"circuit_breaker": {"126-source": {"attempts": 1, "limit": 3}}},
+  "run_state_note": "Minimal guard-input excerpt, not a whole run_state schema fixture. Acceptance may embed it in a real-shaped scratch run_state. Controller reads this exact step_key; never writes the file.",
+  "submit_request": {
+    "session_id": "session_1", "operation_id": "operation_1", "requester": {"principal_kind": "agent", "role": "Generator", "agent_id": "generator_1"},
+    "expected_generation": {"counter": 1, "nonce": "replace_with_open_response_nonce"}, "expected_lease_epoch": 0,
+    "contract_id": "126", "step_key": "126-source", "attempt": 1, "kind": "evaluate",
+    "payload": {"expression": "{\"op\":\"set\",\"name\":\"x\",\"value\":7}"}, "context": {}, "limits": {}
+  },
+  "schema_types": {
+    "context": "Object: optional working_dir, namespace, reader_config_ref, test_config_ref are nonempty strings; no extra keys. Empty object is valid.",
+    "limits": "Object: optional timeout_seconds is number >=0, output_bytes is integer >=1; no extra keys. Empty object is valid. Feature126 adds no timeout/wait semantics.",
+    "payload": "Object with expression as nonempty string for the stub examples. JSON expression is parsed as data, never Python evaluation.",
+    "identity": "Use schema principal objects and integer lease/attempt/counter values, never booleans or numeric strings. Copy actual generation and lease from open/transfer records."
+  },
+  "request_variants": {
+    "poll-operation": "session_id, requester, expected_generation, expected_lease_epoch, operation_id only; current owner or lifecycle Orchestrator.",
+    "transfer-session": "session_id, requester, expected_generation, expected_lease_epoch, new_owner only; requester is lifecycle Orchestrator or current human owner. new_owner is the human or Generator principal object.",
+    "close-session": "session_id, requester, expected_generation, expected_lease_epoch only; lifecycle Orchestrator or current human owner.",
+    "reopen": "Use open_request fields with retained owner/contract_id/step_key/attempt/run_state_path, plus expected_generation and expected_lease_epoch from the prior session. Same session_id/root after correlated closure or crash; no reset of governed identity.",
+    "human-submit": "Replace requester with the current human owner object; all other required submit fields remain."
+  },
+  "socket_request_example": {"action": "submit-operation", "request": "Replace this explanatory string with the complete submit_request JSON object."},
+  "socket_framing": "One UTF-8 JSON object plus newline per connection request; wrapper has exactly action and request. Response is one CLI response JSON object plus newline (no extra transport envelope). Trusted harness may inject a trial requester here to exercise supervisor refusal; this does not grant a trial an endpoint.",
+  "responses": "Success {ok:true,result:RECORD}; failure {ok:false,error:REASON,result?:REJECTED_RECORD}. Public CLI trial denial is {ok:false,error:review_trial} with exit1 and no record write. Duplicate ID is {ok:false,error:conflict}, exit1, no overwrite. Other reason strings and exit codes follow the contract.",
+  "paths": {
+    "metadata": "ROOT/session_id/controller.json", "session": "ROOT/session_id/runtime_session.json",
+    "lock": "ROOT/session_id/supervisor.lock", "socket": "ROOT/session_id/control.sock",
+    "operation": "ROOT/session_id/operations/operation_id.json", "result": "ROOT/session_id/operations/operation_id.result.json",
+    "child_stdout": "ROOT/session_id/child.stdout.log", "child_stderr": "ROOT/session_id/child.stderr.log"
+  },
+  "controller_metadata": "Contains integer supervisor_pid, child_pid, supervisor_pgid; absolute string run_state_path; string contract_id, step_key; integer attempt. Other private fields may exist. Read after successful open. supervisor_pgid identifies the detached supervisor group, also containing its child, for bounded scratch cleanup. PID/group metadata is observability, never sufficient continuity proof.",
+  "child_receipt": {"received_operation_id": "operation_1"},
+  "child_receipt_note": "Each received execute frame appends and flushes exactly this JSON-line receipt to child.stdout.log before stub execution. Lifecycle/init emits no such receipt. Logs may contain other diagnostics; tests parse receipt objects. Existing receipt lines survive reopen; compare counts/IDs before and after. Diagnostic output is bounded as contracted.",
+  "stub_expressions": [{"op": "set", "name": "x", "value": 7}, {"op": "get", "name": "x"}, {"op": "gate", "release_path": "/tmp/nizam126/state/release_1"}],
+  "stub_results": "set returns its assigned JSON value; get returns the stored JSON value for an existing name; gate completes with JSON null after the release file exists. Gate path lies inside the supplied scratch root. Missing-name behavior is not an acceptance obligation of this memo.",
+  "result_file_example": {"type": "result", "operation_id": "operation_1", "generation": {"counter": 1, "nonce": "replace_with_open_response_nonce"}, "status": "completed", "result": 7, "image_consistent": true},
+  "result_note": "Result file is exactly the accepted child result frame as a JSON object, outside the operation schema record. It is absent while pending and for rejected operations; duplicate requests preserve existing bytes or absence. Operation records retain evidence_class:development."
+}
