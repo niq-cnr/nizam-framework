@@ -1,0 +1,26 @@
+COMMAND: PYTHONDONTWRITEBYTECODE=1 python3 .agent/evidence/118/fixture-path-selfcheck.py
+REVISION: 0b115b6a560538a29c123959dd2d3465aef8f90b
+EXIT: 1
+STDOUT:
+
+STDERR:
+Traceback (most recent call last):
+  File "/home/cnross/.tmp/nizam-118-recovery1-test-author-9bxz6wxg/.agent/evidence/118/fixture-path-selfcheck.py", line 63, in <module>
+    if __name__=='__main__': main()
+                             ^^^^^^
+  File "/home/cnross/.tmp/nizam-118-recovery1-test-author-9bxz6wxg/.agent/evidence/118/fixture-path-selfcheck.py", line 56, in main
+    with contextlib.redirect_stdout(io.StringIO()):f.run_foundation(double)
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-118-recovery1-test-author-9bxz6wxg/.agent/evidence/118/foundation-fixtures.py", line 82, in run_foundation
+    target.write_bytes(saved+b'\n');reject(api,root,good,'changed input '+p);target.write_bytes(saved)
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-118-recovery1-test-author-9bxz6wxg/.agent/evidence/118/foundation-fixtures.py", line 51, in reject
+    try: api.verify_foundation_ready(root,value)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-118-recovery1-test-author-9bxz6wxg/.agent/evidence/118/fixture-path-selfcheck.py", line 46, in verify_foundation_ready
+    if phase==0:f.require(p.read_bytes()!=saved[path][0],'actual input bytes mutated')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/cnross/.tmp/nizam-118-recovery1-test-author-9bxz6wxg/.agent/evidence/118/foundation-fixtures.py", line 17, in require
+    if not ok: raise AssertionError('POLICY_ASSERTION: ' + msg)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: POLICY_ASSERTION: actual input bytes mutated

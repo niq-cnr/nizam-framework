@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:manifest.schema.json",
+  "title": "Nizam Planning Manifest Schema",
+  "description": "Validates docs/planning/manifest.json, the top-level planning index that names the current phase and lists every phase the repository tracks, per the Session Startup Sequence ('Check manifest' step).",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Semantic version of the manifest document shape itself.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "updated_at": {
+      "type": "string",
+      "description": "ISO 8601 date or date-time the manifest was last updated."
+    },
+    "current_phase": {
+      "type": "string",
+      "description": "The id of the phase currently active for this repository.",
+      "minLength": 1
+    },
+    "phases": {
+      "type": "array",
+      "description": "Every phase this repository tracks, in the order they were planned.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique phase identifier, e.g. '001-framework-genesis'."
+          },
+          "title": {
+            "type": "string",
+            "description": "Human-readable phase title."
+          },
+          "feature_list": {
+            "type": "string",
+            "description": "Repository-relative path to the feature_list.json driving this phase."
+          },
+          "status": {
+            "type": "string",
+            "description": "Current lifecycle state of the phase.",
+            "enum": ["pending", "in_progress", "complete", "blocked"]
+          }
+        },
+        "required": ["id", "title", "feature_list", "status"],
+        "additionalProperties": true
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["schema_version", "updated_at", "current_phase", "phases"],
+  "additionalProperties": true
+}

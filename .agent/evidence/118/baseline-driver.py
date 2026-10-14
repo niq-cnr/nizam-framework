@@ -8,7 +8,9 @@ HERE=Path(__file__).resolve().parent
 spec=importlib.util.spec_from_file_location('foundation_fixture',HERE/'foundation-fixtures.py');f=importlib.util.module_from_spec(spec);spec.loader.exec_module(f)
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--stage',choices=('setup','positive','red'),required=True);parser.add_argument('--workspace',required=True);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--stage',choices=('setup','positive','red','fixture-selfcheck'),required=True);parser.add_argument('--workspace',required=True);args=parser.parse_args()
+    if args.stage=='fixture-selfcheck':
+        f.load(HERE/'fixture-path-selfcheck.py').main();return
     api=f.load(HERE/'naive-policy.py');f.require(callable(api.verify_foundation_ready),'callable naive readiness target')
     root=Path(args.workspace)
     if args.stage=='setup':

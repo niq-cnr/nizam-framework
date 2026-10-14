@@ -81,7 +81,7 @@ def run_foundation(api):
             target=root/p;saved=target.read_bytes();mode=target.stat().st_mode
             target.write_bytes(saved+b'\n');reject(api,root,good,'changed input '+p);target.write_bytes(saved)
             target.chmod(mode ^ 0o111);reject(api,root,good,'changed executable '+p);target.chmod(mode)
-            target.unlink();target.symlink_to(root/E+'api-interface.json');reject(api,root,good,'symlink input '+p);target.unlink();target.write_bytes(saved);target.chmod(mode)
+            target.unlink();target.symlink_to(root / (E + 'api-interface.json'));reject(api,root,good,'symlink input '+p);target.unlink();target.write_bytes(saved);target.chmod(mode)
         git(root,'read-tree',good['revision']);git(root,'config','user.name','Independent continuity fixture');git(root,'config','user.email','fixture@example.invalid');write(root,E+'record-only.json',{'record_only':True});git(root,'add',E+'record-only.json');git(root,'commit','-qm','record-only HEAD advance')
         require(git(root,'rev-parse','HEAD')!=good['revision'] and api.verify_foundation_ready(root,good) is True,'record-only HEAD continuity')
     print('PASS foundation-ready: valid current20 receipt and independent typed/proof/identity/continuity attacks')

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nizam-framework:schema:run_state.schema.json",
+  "title": "Nizam Durable Run State Schema",
+  "description": "Validates .agent/run_state.json, the single source of truth for an execution engine's current position in a phase: active feature, status, scope budget, circuit breaker counters, and history. Tolerates the forward-looking optional fields ('active_contract_id', 'completed_contract_ids', 'blocked_features', 'last_action') documented by the Execution Engine protocol's durable-state update table without requiring them, so both the current live shape and the protocol-documented forward shape validate.",
+  "type": "object",
+  "properties": {
+    "repository": {
+      "type": "string",
+      "description": "Name of the repository this run state belongs to."
+    },
+    "current_phase": {
+      "type": "string",
+      "description": "Id of the phase currently active."
+    },
+    "current_feature": {
+      "description": "Id of the feature currently active, or null when the phase is complete.",
+      "type": ["string", "null"]
+    },
+    "status": {
+      "type": "string",
+      "description": "Current lifecycle status of the run."
+    },
+    "updated_at": {
+      "type": "string",
+      "description": "ISO 8601 timestamp of the last update to this file."
+    },
+    "scope_budget": {
+      "type": "object",
+      "description": "Line-count tracking for the Scope Budget Protocol.",
+      "properties": {
+        "original_estimate_lines": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total_lines_changed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "per_feature": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "estimated": { "type": "integer" },
+              "actual": { "type": "integer" }
+            },
+            "required": ["id", "estimated", "actual"],
+            "additionalProperties": true
+          }
+        }
+      },
+      "required": ["original_estimate_lines", "total_lines_changed", "per_feature"],
+      "additionalProperties": true
+    },
+    "circuit_breaker": {
+      "type": "object",
+      "description": "Attempt counters keyed by step id, enforcing the mandatory 3-strike circuit breaker.",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "attempts": { "type": "integer", "minimum": 0 },
+          "limit": { "type": "integer", "minimum": 1 }
+        },
+        "required": ["attempts", "limit"],
+        "additionalProperties": true
+      }
+    },
+    "history": {
+      "type": "array",
+      "description": "Append-only log of significant run events.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "at": { "type": "string" },
+          "event": { "type": "string" },
+          "detail": { "type": "string" }
+        },
+        "required": ["at", "event", "detail"],
+        "additionalProperties": true
+      }
+    },
+    "active_contract_id": {
+      "description": "Id of the contract currently authorizing implementation, or null when none is active.",
+      "type": ["string", "null"]
+    },
+    "completed_contract_ids": {
+      "type": "array",
+      "description": "Ids of contracts that have been fully implemented.",
+      "items": { "type": "string" }
+    },
+    "blocked_features": {
+      "type": "array",
+      "description": "Ids of features that are currently blocked."
+    },
+    "last_action": {
+      "type": "string",
+      "description": "Short description of the most recent action taken against this run state."
+    }
+  },
+  "required": [
+    "repository",
+    "current_phase",
+    "current_feature",
+    "status",
+    "updated_at",
+    "scope_budget",
+    "circuit_breaker",
+    "history"
+  ],
+  "additionalProperties": true
+}
