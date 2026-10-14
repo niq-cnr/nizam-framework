@@ -1,6 +1,6 @@
 {
   "phase": "018-workflow-assurance-controls",
-  "spec_version": "0.1.0",
+  "spec_version": "0.1.1",
   "phase_status": "pending",
   "original_estimate_lines": 7200,
   "ceiling_130pct": 9360,
@@ -104,10 +104,10 @@
     }
   ],
   "future_interfaces": [{"path": "tools/test_workflow_assurance.py", "owner": "115"}, {"path": "tools/validate.sh", "owner": "115", "availability": "existing-reused"}],
-  "cross_phase_prerequisites": [{"phase": "017-workflow-assurance-foundation", "requires": ["118"], "evidence": [".agent/evidence/118/evidence-gate.txt"], "authority": "Future H-PHASE-017 completion; independent approved contracts and captured QA."}, {"phase": "016-runtime-controller-core", "requires": ["127"], "evidence": [".agent/evidence/127/evidence-gate.txt"], "authority": "Future H-PHASE-016 and core-semantic127 completion only; full-CI131 is not a prerequisite."}],
+  "cross_phase_prerequisites": [{"phase": "017-workflow-assurance-foundation", "requires": ["118"], "evidence": [".agent/evidence/118/evidence-capture.json"], "authority": "Captured118 foundation; actual independent QA/evidence capture receipt, retaining its exercised revision."}, {"phase": "016-runtime-controller-core", "requires": ["127"], "evidence": [".agent/evidence/127/evidence-capture.json"], "authority": "Captured core-semantic127 only; actual independent QA/evidence capture receipt. Neither128, full016 closure nor full-CI131 is an added prerequisite."}],
   "shared_file_lanes": [{"path": "tools/test_workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}, {"path": "tools/workflow_assurance.py", "owners": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"], "order": ["115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125"]}],
   "existing_inputs": ["Completed015 normative source110-114; existing014 CI/claim-map103-105; Open040/034; immutable installedv1.5.0."],
-  "activation_prerequisites": ["Future H-PHASE-018 approves this scope/budget and applicable external prerequisite receipts."],
+  "activation_prerequisites": ["Root applies standing operator authorization to unchanged119-123 scope7200/9360 in .agent/evidence/phase018-preflight/activation-authority.json. Actual118/127 capture receipts are bound above; successful postmerge CI is .agent/evidence/128/pr99-main-ci.json. Independent activation review and Root lifecycle promotion remain required; no implementation approval is granted."],
   "acceptance_availability": "Future commands/interfaces only; no runtime/policy acceptance run or pass claimed by planning.",
   "dod_ref": ".nizam/standard/definition_of_done.md"
 }
