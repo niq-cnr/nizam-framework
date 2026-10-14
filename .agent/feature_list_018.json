@@ -10,8 +10,8 @@
       "id": "119",
       "name": "Convergent findings to AGF verdict",
       "description": "Blockers remain blocking; advisory minor remains visible; true approval plus all three empty blocking arrays governs advancement. Core semantics127 is the external prerequisite, not later full-CI131. ",
-      "status": "in_progress",
-      "passes": false,
+      "status": "complete",
+      "passes": true,
       "dependencies": [],
       "estimated_lines": 1000,
       "budget_categories": {"product": 200, "tests": 300, "process": 500},
@@ -24,7 +24,11 @@
         "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unsupported"
       ],
       "future_output_targets": ["tools/workflow_assurance.py", "tools/test_workflow_assurance.py"],
-      "stage": "evidence-capture"
+      "stage": "captured",
+      "evidence_ref": ".agent/evidence/119/evidence-capture.json",
+      "contract_ref": ".agent/contracts/119.json",
+      "qa_ref": ".agent/qa/119.json",
+      "completed_at": "2026-10-14T15:14:52.921742+00:00"
     },
     {
       "id": "120",
