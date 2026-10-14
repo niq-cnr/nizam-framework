@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "127",
   "status": "in_progress",
-  "updated_at": "2026-10-14T11:52:56.095199+00:00",
+  "updated_at": "2026-10-14T11:55:19.720471+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -5246,6 +5246,12 @@
       "event": "127-freshQA1-preparation",
       "detail": "Fresh isolated QA reader may prepare while ModeB source review runs. Actual verification execution and verdict remain blocked until strict ModeB approval.",
       "evidence": ".agent/evidence/127/qa1-preparation-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T11:55:19.720471+00:00",
+      "event": "127-modeB-approved-freshQA1-released",
+      "detail": "Exact ModeB43e22e7 passed all4conditions, own spot-checks and scope1556 cumulative4559/7345. Fresh distinctQA may now execute; no canonical completion yet.",
+      "evidence": ".agent/evidence/127/qa1-modeb-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5739,7 +5745,7 @@
       }
     ]
   },
-  "last_action": "127 final executable bundle strictly approved; ModeB1 final evaluation released",
+  "last_action": "127 strict ModeB approved; freshQA1 execution released",
   "completed_contract_ids": [
     "099",
     "103",
