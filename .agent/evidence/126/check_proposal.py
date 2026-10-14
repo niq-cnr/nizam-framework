@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 import jsonschema
 
-base = "f9528cff90efcb34ae3c500e328b6a24d650e14d"
+base = "9f361154c63c2f80768b6845c98f89a9aa1a1541"
 p = Path(".agent/contracts/126.json")
 c = json.loads(p.read_text())
 jsonschema.Draft202012Validator(json.loads(Path(".nizam/schema/contract.schema.json").read_text())).validate(c)
