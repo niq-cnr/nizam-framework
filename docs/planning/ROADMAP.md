@@ -2,10 +2,13 @@
 id: nizam-roadmap
 title: "Forward Roadmap — nizam-framework"
 description: "The durable forward-planning surface: outstanding human gates, the candidate scope for the next phase, and the strategic decisions the next planning cycle must resolve."
-version: 0.65.0
+version: 0.65.1
 status: active
 authoritative_source: docs/planning/ROADMAP.md
 change_log:
+  - version: "0.65.1"
+    date: "2026-10-14"
+    summary: "Record active016 and approved126 contract with current receipts; preserve older dated projections."
   - version: "0.65.0"
     date: "2026-10-14"
     summary: "Record foundation118 candidate and live canonical closure references; retain proposed next016."
@@ -205,6 +208,21 @@ change_log:
     date: "2026-07-12"
     summary: "Initial roadmap, created during the 2026-07-12 external project review: records the v0.6.0 and GitHub Pages human gates, a debt-driven phase 005 candidate scope, and the mechanize-or-descope decision for the constitutional policy surface."
 ---
+# Forward Roadmap
+
+## Current position — phase 016, 2026-10-14
+
+Phase 017 is complete at **5,203/7,020**, captured in [foundation evidence](../../.agent/evidence/118/evidence-capture.json) and merged as PR 94 (`e619d284`).
+PR 95 (`c8dc65a`) merged same-host capability and comparison planning; [main CI 38533593961](../../.agent/evidence/phase016-preflight/pr95-main-ci.json) passed.
+Phase 016 is [activated](../../.agent/evidence/phase016-preflight/activation-decision.json) at `9f361`, within **5,650/7,345**; its initial preparation snapshot is **307** counted lines.
+Feature 126's contract is [approved after both pre-code gates](../../.agent/evidence/126/precode-approved.json) at `de7deee`; independent test authoring and bundle review come next. Controller source is absent at this snapshot.
+Follow [phase 016](phase_016.yaml), its [feature list](../../.agent/feature_list_016.json), and the [manifest](manifest.json) for current progression; 127/128 remain pending.
+The later order stays **018 → 020 → 019**. Installed v1.5.0 remains immutable.
+The [balanced comparison proposal](agentic-excellence.md) defines future measurements; it establishes no performance advantage.
+Root records subsequent planning/review costs once within the existing016 allowance; the historical307 snapshot and017 ledger stay unchanged.
+
+All older sections below are preserved dated snapshots, including headings saying “current” or “proposed”; the canonical records linked above control present lifecycle. Their release-disposition facts remain historical evidence.
+
 ## Foundation close candidate — feature 118, 2026-10-14
 
 Features 115–117 are captured complete, totaling 4,012 counted lines. Feature118
