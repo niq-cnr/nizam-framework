@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:01:36.745439+00:00",
+  "updated_at": "2026-10-14T18:02:05.969663+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1232,6 +1232,11 @@
       "limit": 3
     },
     "120-evidence-capture": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "120-closure": {
       "attempts": 1,
       "limit": 3
     }
@@ -5713,6 +5718,11 @@
       "at": "2026-10-14T18:01:36.745439+00:00",
       "event": "120-evidence-capture-dispatch",
       "detail": "Fresh QA1aa764a strict approved with eighteen original mandatory passes and one logical additional spot passed on second execution; original failure retained. Hosted38610323583 all five success plus closeout success. Root verifies immutable230+17 bundle and70+12 QA pins, actual commands/exits/raw and installed239; no behavioral reruns or lifecycle advance before capture."
+    },
+    {
+      "at": "2026-10-14T18:02:05.969663+00:00",
+      "event": "120-canonical-closure-dispatch",
+      "detail": "Root evidence capture1 actual0 and passed; prevalidate every lifecycle candidate against full installed schemas before first write, then canonical phase COMPLETED with evidence before derived records.121-123 stay pending."
     }
   ],
   "phase_001_scope_budget_final": {
