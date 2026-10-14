@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "127",
   "status": "in_progress",
-  "updated_at": "2026-10-14T12:09:25.300450+00:00",
+  "updated_at": "2026-10-14T12:12:55.244375+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -5262,6 +5262,12 @@
       "event": "127-freshQA-approved-capture1",
       "detail": "Schema-valid strict freshQA14+repo2+ownextra passed on immutableC1; capture1 must independently verify external evidence before lifecycle advances.",
       "evidence": ".agent/evidence/127/capture1-dispatch.json"
+    },
+    {
+      "at": "2026-10-14T12:12:55.244375+00:00",
+      "event": "127-capture1-artifact-transport-gap",
+      "detail": "Actual capture1 exit1 found one manifest-referenced raw log omitted by Git ignore. Original QA bytes match digest; QA author must publish exact log before isolated capture2. All behavioral results unchanged; feature remains in_progress.",
+      "evidence": ".agent/evidence/127/capture1-failure.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5755,7 +5761,7 @@
       }
     ]
   },
-  "last_action": "127 freshQA1 approved; Root evidence capture1 pending",
+  "last_action": "127 capture1 rejected missing ignored QA raw log; bounded artifact publication recovery",
   "completed_contract_ids": [
     "099",
     "103",
