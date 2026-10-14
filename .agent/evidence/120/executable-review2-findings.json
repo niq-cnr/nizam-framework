@@ -1,0 +1,77 @@
+{
+  "reviewer": "/root/bundle120",
+  "review_stage": "final executable acceptance bundle",
+  "bundle_attempt": 1,
+  "auxiliary_verifier_attempt": 2,
+  "reviewed_revision": "610b959b981be45fb20e90db683ee3f49319ec70",
+  "original_executable_input": "a67d67f1b82c54118d6023a2f7092f93bf4f90c0",
+  "runtime_revision": "0a894a66517675b80609c26c44ab19c560cdad4d",
+  "author": "/root/evaluator119",
+  "author_commit": "f4c1f3f2e3b7d0db407853dd23953ac139aab3fa",
+  "original_source_commit": "1689f0dc1f1ef20e96c7cb7ee1e3375232a83ce5",
+  "frozen_inputs": {
+    "tools/workflow_assurance.py": {
+      "sha256": "733c1478a8eb237339efe914d29d2be2c93d01172ed399e3baea340d6ec3982a",
+      "git_blob": "470319ccebf435eb425802d551a1ca9d10a7ca9a"
+    },
+    "tools/test_workflow_assurance.py": {
+      "sha256": "9c99ff133aacaad158f840e78158792b2b096450560f47dc4b218b8e4ff223f7",
+      "git_blob": "b6fdf4b0e341de6f10097307095630a55247dfa8"
+    },
+    ".agent/contracts/120.json": {
+      "sha256": "3238ad1b0732007801769e086a2cd96a6832bb686847ecd4c23e33c532e93bb9",
+      "git_blob": "42b99a5aacb5f71a4ebb826be966c8de027528f0"
+    },
+    ".agent/evidence/120/controls1-run.py": {
+      "sha256": "586042a4464f5472806e53222e92b4f1a0f4e296f5b6ed80c60bcdace6013def",
+      "git_blob": "b9a5cb035def8d18aa5938ecb95383b0c464c0ab"
+    }
+  },
+  "actual_controls": {
+    "author": {
+      "positive": 11,
+      "intended_semantic_red": 11,
+      "restored": 11
+    },
+    "reviewer": {
+      "positive": 11,
+      "intended_semantic_red": 11,
+      "restored": 11
+    },
+    "evidence": [
+      ".agent/evidence/120/controls1-author1-controls-manifest.json",
+      ".agent/evidence/120/controls1-reviewer1-controls-manifest.json"
+    ]
+  },
+  "mutant_review": "Personally inspected the frozen helper, all eleven declared unique Source anchors and intended assertions. Both runs retain Git blobs matching precisely one declared Source replacement per mutant. Each private negative exits1 at exactly its intended POLICY_ASSERTION line; each legitimate positive/restored command exits0 with its exact selector PASS line and empty stderr. Missing APIs, fixture setup errors and unrelated nonzero exits do not qualify.",
+  "coverage": "Previously reviewed sealed tests remain unchanged. Actual run exercises two portable scoped authority profiles, all five stages/seven prerequisite kinds, strict types/AGF/closed shapes, isolated artifact digest/revision/mode and current symlink boundaries, independently failed/setup captures despite forged receipt success, source/test/tool/environment drift, deepcopy/nonmutation, history/cross-stage/candidate collisions, and actual recovery restore/reread/revalidation.",
+  "preservation": {
+    "existing26": {
+      "actual_exit_each": 0,
+      "count": 26
+    },
+    "live_stale118": {
+      "actual_exit": 1,
+      "exact_diagnostic": "AssuranceError: pinned entry bytes/mode changed: tools/workflow_assurance.py"
+    },
+    "historical_foundation": {
+      "revision": "8ac94f6808e8197111197c9acbf59b2aa92efc7c",
+      "clone_exit": 0,
+      "checkout_exit": 0,
+      "foundation_exit": 0
+    },
+    "evidence": ".agent/evidence/120/controls1-reviewer1-preservation-manifest.json",
+    "historical_context": "Historical source/test objects are verified at8ac; current120 contract is separately recorded context, never required to exist in the historical tree."
+  },
+  "snapshot_review": "Every author and reviewer capture preserves its own exact Source/test/contract/coordination snapshot. Cross-session Source/test/helper/contract/feature/phase remain identical. Immutable author/reviewer run_state Git objects differ solely by one Root final-review counter, one exact dispatch history append and updated_at. Current later Root coordination is not substituted for historical session state.",
+  "auxiliary_failure": {
+    "preserved_evidence": ".agent/evidence/120/executable-review1-verifier1.json",
+    "actual_exit": 1,
+    "cause": "Convenience verifier incorrectly required coordination hashes equal across Root dispatch. No Source/test/control failure.",
+    "correction_evidence": ".agent/evidence/120/executable-review2-proof.json",
+    "actual_corrected_exit": 0,
+    "runtime_rerun": false
+  },
+  "fixture_limit": "Authority/gate artifacts are explicitly synthetic parser fixtures; actual process captures prove local commands only. Recorded producer labels and hashes do not authenticate humans, consent or trusted transport. Aligned fixture repository identifiers do not prove legacy live Root namespace compatibility or migration readiness.",
+  "role_boundary": "Approve final acceptance bundle only. Independent Mode B, fresh QA, hosted evidence and Root evidence-capture/lifecycle application remain separate mandatory gates. No QA verdict or live Root migration claim is issued."
+}
