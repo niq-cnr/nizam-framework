@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "121",
   "status": "in_progress",
-  "updated_at": "2026-10-14T18:23:09.239867+00:00",
+  "updated_at": "2026-10-14T18:27:02.672716+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1279,13 +1279,20 @@
     },
     "121-contract": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "result": "passed"
     },
     "121-mode-a": {
       "attempts": 1,
-      "limit": 3
+      "limit": 3,
+      "result": "passed"
     },
     "121-contract-review": {
+      "attempts": 1,
+      "limit": 3,
+      "result": "passed"
+    },
+    "121-acceptance-author": {
       "attempts": 1,
       "limit": 3
     }
@@ -5841,6 +5848,11 @@
       "at": "2026-10-14T18:23:09.239867+00:00",
       "event": "121-dual-precode-dispatch",
       "detail": "Generator e542915 proposal a7522f23c64c5581aedf15d274a854bf4e41b933ce08542fe46cf9d772b42fd8; three bounded lane/isolation/owned rollback APIs, five selectors,1300 original. Independent reviewers gate exact same proposal. PR101/mainCI prerequisite actual passed; source/test implementation waits dual approval, Root promotion and provisional acceptance review."
+    },
+    {
+      "at": "2026-10-14T18:27:02.672716+00:00",
+      "event": "121-contract-approved",
+      "detail": "Both independent exact-proposal gates stricttrue+threeemptyarrays; Root approval metadata only, no requirement edits. MainCI actual passed. Independent author freezes five tests and real owned-worktree oracles; distinct provisional review precedes initial Source."
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6339,7 +6351,7 @@
       }
     ]
   },
-  "last_action": "121 proposal a7522f2 dispatched to independent Mode A and testability review; actual predecessor main CI passed, no121 Source/tests.",
+  "last_action": "121 dual precode gates approved a7522f2; Root promoted, independent acceptance author next, Source remains gated on distinct provisional review.",
   "completed_contract_ids": [
     "099",
     "103",
