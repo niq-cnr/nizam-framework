@@ -1,0 +1,49 @@
+{
+  "feature_id": "120",
+  "qa_pass": false,
+  "actor": "/root/qa119",
+  "attempt": 1,
+  "reviewed_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+  "approved_input": "5c011078fae6b596bc3cddd2cdb9e7fc276f19af",
+  "approved_contract_sha256": "3238ad1b0732007801769e086a2cd96a6832bb686847ecd4c23e33c532e93bb9",
+  "checks_run": 11,
+  "checks_passed": 11,
+  "adversarial": {
+    "performed": true,
+    "logical_checks": 1,
+    "executions": 1,
+    "passed": false
+  },
+  "adversarial_check": {
+    "description": "Independent process guard over verify/advance/noop",
+    "result": "helper setup failed on existing readonly Git option",
+    "evidence": ".agent/evidence/120-qa-adversarial.txt"
+  },
+  "evidence_files": [
+    ".agent/evidence/120/qa1/partial-summary.json",
+    ".agent/evidence/120/qa1/progress.json",
+    ".agent/evidence/120/qa1/identity-before.json",
+    ".agent/evidence/120/qa1/identity-after-partial.json",
+    ".agent/evidence/120/qa1/adversarial.result.json",
+    ".agent/evidence/120/qa1/adversarial.stderr.txt",
+    ".agent/evidence/120-qa-adversarial.txt",
+    ".agent/evidence/120/qa1/partial-manifest.json"
+  ],
+  "issues": [
+    {
+      "kind": "QA helper setup",
+      "finding": "Process guard rejected valid existing --literal-pathspecs ls-tree before completing own spot; no Source defect inferred.",
+      "evidence": ".agent/evidence/120/qa1/adversarial.stderr.txt"
+    }
+  ],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Root-owned isolated helper recovery must normalize only observed readonly global option, then rerun the same one logical spot; carry passed mandatory results by immutable protected identity."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "All mandatory checks pass on unchanged protected input, but own additional spot is incomplete due to guard setup error. No final QA approval."
+  },
+  "boundary": "Partial failed QA evidence only. Original raw results preserved; no Source/test/state edits, no helper repair/retry, no product/liveRoot adoption claim."
+}
