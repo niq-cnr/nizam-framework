@@ -3,12 +3,13 @@
 
 Exit codes: 0 admitted/successful; 1 refused; 64 usage; 70 infrastructure.
 Declared identities and exclusive locks coordinate work; they do not authenticate.
-The five implemented calls use JSON request files. Only submit-operation sends
-an execute frame. Cancellation, reattachment and fresh acceptance are deferred.
+The seven calls use JSON request files. Only submit-operation sends an execute
+frame. Source-bound replay uses explicit submits; fresh acceptance is deferred.
 """
 import argparse
 import copy
 import fcntl
+import hashlib
 import json
 import math
 import os
@@ -27,8 +28,10 @@ import time
 FRAME_LIMIT = 65536
 CONTROL_SECONDS = 5
 ACTIONS = {'open-session', 'submit-operation', 'poll-operation',
-           'transfer-session', 'close-session'}
-RESERVED = {'cancel-operation', 'reattach-session', 'accept'}
+           'transfer-session', 'close-session', 'cancel-operation', 'reattach-session'}
+RESERVED = {'accept'}
+TERMINAL = {'completed', 'condition_signalled', 'cancelled', 'terminated', 'rejected'}
+SOURCE_KEYS = ('source_revision', 'source_manifest', 'command_refs', 'external_resources')
 KINDS = {'load_source', 'compile_source', 'evaluate', 'run_tests', 'observe'}
 ROLES = {'Orchestrator', 'Planner', 'Generator', 'Validator', 'Evaluator', 'review_trial'}
 IDENTITY = {'session_id', 'requester', 'expected_generation', 'expected_lease_epoch'}
@@ -158,8 +161,9 @@ def validate_request(action, request):
     else:
         extra = {'submit-operation': {'operation_id', 'kind', 'payload', 'context', 'limits', *BINDING},
                  'poll-operation': {'operation_id'}, 'transfer-session': {'new_owner'},
-                 'close-session': set()}[action]
-        object_keys(request, IDENTITY | extra)
+                 'close-session': set(), 'cancel-operation': {'operation_id', *BINDING},
+                 'reattach-session': {'expected_outstanding_operation_ref', 'handoff', *BINDING}}[action]
+        object_keys(request, IDENTITY | extra, {'limits'} if action == 'poll-operation' else ())
     insist(identifier(request['session_id']))
     principal(request['requester'])
     if 'expected_generation' in request:
@@ -167,13 +171,24 @@ def validate_request(action, request):
         insist(integer(request['expected_lease_epoch']))
     if 'operation_id' in request:
         insist(identifier(request['operation_id']))
-    if action in ('open-session', 'submit-operation'):
+    if action in ('open-session', 'submit-operation', 'cancel-operation', 'reattach-session'):
         insist(identifier(request['contract_id']) and identifier(request['step_key'])
                and integer(request['attempt'], 1))
     if action == 'transfer-session':
         principal(request['new_owner'])
-    if action != 'submit-operation':
-        return
+    if action == 'poll-operation' and 'limits' in request:
+        object_keys(request['limits'], {'timeout_seconds'})
+        value = request['limits']['timeout_seconds']
+        insist(type(value) in (int, float) and math.isfinite(value) and 0 <= value <= 30)
+    if action == 'reattach-session':
+        ref = request['expected_outstanding_operation_ref']
+        insist(ref is None or string(ref))
+        handoff_shape(request['handoff'])
+    if action == 'submit-operation':
+        operation_data(request)
+
+
+def operation_data(request):
     insist(isinstance(request['kind'], str) and request['kind'] in KINDS)
     context = request['context']
     object_keys(context, set(), {'working_dir', 'namespace', 'reader_config_ref', 'test_config_ref'})
@@ -195,6 +210,73 @@ def validate_request(action, request):
     object_keys(expression, {'op', 'release_path'} if op == 'gate'
                 else {'op', 'name', 'value'} if op == 'set' else {'op', 'name'})
     insist(string(expression['release_path' if op == 'gate' else 'name']))
+
+
+def relative_file(value):
+    insist(string(value) and not Path(value).is_absolute() and '..' not in Path(value).parts
+           and value == Path(value).as_posix() and value != '.')
+
+
+def handoff_shape(value):
+    object_keys(value, {'workspace_path', *SOURCE_KEYS})
+    insist(string(value['workspace_path']) and Path(value['workspace_path']).is_absolute())
+    insist(isinstance(value['source_revision'], str) and re.fullmatch(r'[0-9a-f]{40}', value['source_revision']))
+    insist(type(value['source_manifest']) is list and value['source_manifest'])
+    names = set()
+    for entry in value['source_manifest']:
+        object_keys(entry, {'path', 'sha256'})
+        relative_file(entry['path'])
+        insist(entry['path'] not in names)
+        names.add(entry['path'])
+        insist(isinstance(entry['sha256'], str) and re.fullmatch(r'[0-9a-f]{64}', entry['sha256']))
+    insist(type(value['command_refs']) is list and value['command_refs'])
+    for name in value['command_refs']:
+        relative_file(name)
+    insist(type(value['external_resources']) is list)
+    for resource in value['external_resources']:
+        object_keys(resource, {'ref', 'owner', 'isolation'}, {'reset_command_ref'})
+        principal(resource['owner'])
+        insist(string(resource['ref']) and resource['isolation'] in ('isolated', 'reset', 'shared'))
+        if 'reset_command_ref' in resource:
+            insist(string(resource['reset_command_ref']))
+
+
+def source_provenance(value):
+    repo = Path(value['workspace_path'])
+    env = {k: v for k, v in os.environ.items() if not k.startswith('GIT_')}
+    env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull)
+    deadline = time.monotonic() + CONTROL_SECONDS
+    def git(*args):
+        try:
+            result = subprocess.run(['git', '-C', str(repo), *args], env=env,
+                                    capture_output=True, timeout=max(.01, deadline - time.monotonic()))
+        except (OSError, subprocess.TimeoutExpired):
+            fail(70, 'infrastructure')
+        if result.returncode:
+            fail(1, 'source_mismatch')
+        return result.stdout
+    if git('rev-parse', 'HEAD').decode().strip() != value['source_revision']:
+        fail(1, 'source_mismatch')
+    contents = {}
+    for entry in value['source_manifest']:
+        name = entry['path']; path = repo / name
+        try:
+            if (not path.is_file() or path.is_symlink() or not path.resolve().is_relative_to(repo.resolve())
+                    or not git('ls-tree', 'HEAD', '--', name).startswith((b'100644 ', b'100755 '))):
+                fail(1, 'source_mismatch')
+            committed = git('show', 'HEAD:' + name)
+            if any(hashlib.sha256(raw).hexdigest() != entry['sha256'] for raw in (committed, path.read_bytes())):
+                fail(1, 'source_mismatch')
+            contents[name] = committed
+        except OSError:
+            fail(1, 'source_mismatch')
+    for name in value['command_refs']:
+        if name not in contents:
+            fail(1, 'source_mismatch')
+        template = parse_json(contents[name])
+        object_keys(template, {'kind', 'payload', 'context', 'limits'})
+        operation_data(template)
+    return {key: copy.deepcopy(value[key]) for key in SOURCE_KEYS}
 
 
 def attempt_matches(binding, request):
@@ -260,6 +342,13 @@ class Supervisor:
         self.stop = False
         self.server = None
         self.log_truncated = set()
+        self.waiters = {}
+
+    def clear_transition(self):
+        self.session.pop('transition', None)
+        for key in tuple(self.session):
+            if key.startswith('previous_'):
+                del self.session[key]
 
     def session_write(self):
         atomic_json(self.directory / 'runtime_session.json', self.session)
@@ -267,7 +356,27 @@ class Supervisor:
     def operation_path(self, operation_id):
         return self.directory / 'operations' / f'{operation_id}.json'
 
-    def reconcile_idle(self, session, metadata):
+    def check_handoff(self, session, metadata):
+        path = self.directory / 'handoff.json'
+        if metadata and metadata.get('handoff_pending'):
+            fail(70, 'ambiguous_state')
+        digest = (metadata or {}).get('handoff_digest')
+        if path.exists() != bool(digest):
+            fail(70, 'ambiguous_state')
+        if digest:
+            snapshot = read_json(path)
+            if (hashlib.sha256(path.read_bytes()).hexdigest() != digest
+                    or any(snapshot.get(k) != metadata['source_provenance'][k]
+                           or session.get(k) != metadata['source_provenance'][k] for k in SOURCE_KEYS)):
+                fail(70, 'ambiguous_state')
+
+    def check_live(self):
+        if (read_json(self.directory / 'runtime_session.json') != self.session
+                or read_json(self.directory / 'controller.json') != self.meta):
+            fail(70, 'ambiguous_state')
+        self.reconcile_idle(self.session, self.meta, self.outstanding)
+
+    def reconcile_idle(self, session, metadata, pending=None):
         """Check published state without repairing it or inventing an outcome.
 
         Admission and completion each publish several files. A null pointer is
@@ -276,6 +385,7 @@ class Supervisor:
         reservation likewise needs matching metadata and session publications.
         """
         try:
+            self.check_handoff(session, metadata)
             operation_dir = self.directory / 'operations'
             paths = list(operation_dir.glob('*.json'))
             if session is None:
@@ -285,7 +395,7 @@ class Supervisor:
             generation(session['generation'])
             generation(metadata['generation'])
             if (metadata['generation'] != session['generation']
-                    or session.get('outstanding_operation_ref') is not None):
+                    or session.get('outstanding_operation_ref') != (str(self.operation_path(pending)) if pending else None)):
                 fail(70, 'ambiguous_state')
             records = {path.name: path for path in paths if not path.name.endswith('.result.json')}
             results = {path.name: path for path in paths if path.name.endswith('.result.json')}
@@ -302,25 +412,36 @@ class Supervisor:
                     fail(70, 'ambiguous_state')
                 known[counter] = nonce
                 status = record['status']
-                if status not in ('completed', 'rejected', 'terminated', 'condition_signalled', 'cancelled'):
+                if oid == pending and status in ('running', 'cancel_requested', 'unknown'):
+                    if (record['generation'] != session['generation'] or record.get('executed') is not True
+                            or oid + '.result.json' in results):
+                        fail(70, 'ambiguous_state')
+                    continue
+                if oid == pending or status not in TERMINAL:
                     fail(70, 'ambiguous_state')
                 if record.get('executed') is not (status != 'rejected'):
                     fail(70, 'ambiguous_state')
                 result_path = results.pop(oid + '.result.json', None)
-                if status == 'completed':
+                if status in ('completed', 'cancelled'):
                     if result_path is None:
                         fail(70, 'ambiguous_state')
                     result = read_json(result_path)
-                    object_keys(result, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'})
+                    extra = {'session_id', 'lease_epoch', 'cancellation_confirmed'} if status == 'cancelled' else set()
+                    object_keys(result, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'} | extra)
                     generation(result['generation'])
                     if (result['type'] != 'result' or result['operation_id'] != oid
                             or result['generation'] != record['generation']
-                            or result['status'] != 'completed' or result['image_consistent'] is not True
+                            or result['status'] != status or result['image_consistent'] is not True
                             or record.get('image_consistent') is not True):
+                        fail(70, 'ambiguous_state')
+                    if status == 'cancelled' and (result['session_id'] != record['session_id']
+                            or type(result['lease_epoch']) is not int or result['lease_epoch'] != record['lease_epoch']
+                            or result['cancellation_confirmed'] is not True
+                            or record.get('cancellation_confirmed') is not True or result['result'] is not None):
                         fail(70, 'ambiguous_state')
                 elif result_path is not None:
                     fail(70, 'ambiguous_state')
-            if results:
+            if results or pending and pending + '.json' not in records:
                 fail(70, 'ambiguous_state')
         except (OSError, KeyError, TypeError, ValueError, SessionError):
             fail(70, 'ambiguous_state')
@@ -357,6 +478,10 @@ class Supervisor:
                          supervisor_token=live_token(os.getpid()), child_pid=None,
                          generation=self.session['generation'],
                          previous_generation=previous['generation'] if previous else None)
+        if previous_meta and previous_meta.get('source_provenance'):
+            self.meta.update(source_provenance=previous_meta['source_provenance'],
+                             handoff_digest=previous_meta['handoff_digest'])
+            self.session.update(previous_meta['source_provenance'], source_state='committed')
         (self.directory / 'operations').mkdir(exist_ok=True)
         # Reserve the incarnation durably before any child exists.
         atomic_json(meta_path, self.meta)
@@ -424,24 +549,40 @@ class Supervisor:
                 insist(value['generation'] == self.session['generation'])
                 self.ready = True
                 return
-            object_keys(value, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'})
+            insist(type(value) is dict)
+            cancelled = value.get('status') == 'cancelled'
+            extra = {'session_id', 'lease_epoch', 'cancellation_confirmed'} if cancelled else set()
+            object_keys(value, {'type', 'operation_id', 'generation', 'status', 'result', 'image_consistent'} | extra)
             generation(value['generation'])
             insist(value['type'] == 'result' and value['operation_id'] == self.outstanding
                    and self.outstanding is not None and value['generation'] == self.session['generation']
-                   and value['status'] == 'completed' and value['image_consistent'] is True)
+                   and value['status'] in ('completed', 'cancelled') and value['image_consistent'] is True)
             path = self.operation_path(self.outstanding)
             record = read_json(path)
+            if cancelled:
+                insist(record['status'] == 'cancel_requested' and value['cancellation_confirmed'] is True
+                       and value['session_id'] == record['session_id']
+                       and type(value['lease_epoch']) is int and value['lease_epoch'] == record['lease_epoch']
+                       and value['result'] is None)
             atomic_json(path.with_suffix('.result.json'), value)
-            record.update(status='completed', image_consistent=True)
+            record.update(status=value['status'], image_consistent=True)
+            if cancelled:
+                record['cancellation_confirmed'] = True
+            if 'wait_outcome' in record:
+                record['wait_outcome'] = 'completed_wait'
             atomic_json(path, record)
             self.outstanding = None
             self.session['outstanding_operation_ref'] = None
+            self.clear_transition()
             self.session_write()
         except (SessionError, ValueError, KeyError, TypeError):
             self.protocol_fault()
 
     def pump(self, seconds):
         for key, _ in self.selector.select(seconds):
+            if key.data == 'waiter':
+                self.finish_waiter(key.fileobj, None)
+                continue
             if key.data == 'server':
                 self.serve()
                 continue
@@ -470,6 +611,10 @@ class Supervisor:
                 self.protocol_fault()
             if self.broken:
                 self.protocol.clear()
+        for connection, (request, end) in list(self.waiters.items()):
+            record = read_json(self.operation_path(request['operation_id']))
+            if record['status'] in TERMINAL or record['status'] == 'unknown' or time.monotonic() >= end:
+                self.finish_waiter(connection, self.poll_response(request, expired=True))
 
     def operation_record(self, request, reason=None):
         record = {key: copy.deepcopy(request[key]) for key in
@@ -521,11 +666,7 @@ class Supervisor:
             if not reason and self.broken:
                 fail(70, 'infrastructure')
             if not reason:
-                durable_session = read_json(self.directory / 'runtime_session.json')
-                durable_meta = read_json(self.directory / 'controller.json')
-                if durable_session != self.session or durable_meta != self.meta:
-                    fail(70, 'ambiguous_state')
-                self.reconcile_idle(durable_session, durable_meta)
+                self.check_live()
             expression = parse_json(request['payload']['expression'])
             if expression['op'] == 'gate':
                 release = Path(expression['release_path'])
@@ -536,6 +677,7 @@ class Supervisor:
                 return response_error(reason, record)
             self.outstanding = request['operation_id']
             self.session['outstanding_operation_ref'] = str(path)
+            self.clear_transition()
             self.session_write()
             try:
                 self.child.stdin.write(encode({'type': 'execute', 'request': request,
@@ -545,14 +687,35 @@ class Supervisor:
                 self.protocol_fault()
                 fail(70, 'infrastructure')
             return {'ok': True, 'result': record}
-        reason = self.identity_reason(request, permit_orchestrator=True)
+        reason = self.identity_reason(request, permit_orchestrator=action not in ('cancel-operation', 'reattach-session'))
         if reason:
             fail(1, reason)
         if action == 'poll-operation':
+            return self.poll_response(request)
+        if action in ('cancel-operation', 'reattach-session'):
+            if not permitted_owner(request['requester']):
+                fail(1, 'foreign_owner')
+            if not attempt_matches(self.meta, request):
+                fail(1, 'attempt_mismatch')
+            self.check_live()
+            if action == 'reattach-session':
+                return self.reattach(request)
             path = self.operation_path(request['operation_id'])
             if not path.is_file():
                 fail(1, 'unknown_operation')
-            return {'ok': True, 'result': read_json(path)}
+            record = read_json(path)
+            if record['status'] in TERMINAL or record['status'] == 'cancel_requested':
+                return {'ok': True, 'result': record}
+            if self.broken or record['status'] == 'unknown':
+                return response_error('infrastructure', record)
+            if request['operation_id'] != self.outstanding:
+                fail(70, 'ambiguous_state')
+            record.update(status='cancel_requested', cancellation_confirmed=False)
+            atomic_json(path, record)
+            self.child.stdin.write(encode({'type': 'cancel', 'session_id': record['session_id'],
+                'operation_id': self.outstanding, 'generation': record['generation'], 'lease_epoch': record['lease_epoch']}))
+            self.child.stdin.flush()
+            return {'ok': True, 'result': record}
         if not lifecycle(request['requester'], self.session['owner']):
             fail(1, 'foreign_owner')
         if action == 'transfer-session':
@@ -562,6 +725,7 @@ class Supervisor:
                 fail(1, 'session_busy')
             if request['new_owner'] == self.session['owner']:
                 fail(1, 'same_owner')
+            self.clear_transition()
             self.session.update(transition='transfer', previous_owner=self.session['owner'],
                                 previous_lease_epoch=self.session['lease_epoch'],
                                 owner=request['new_owner'], lease_epoch=self.session['lease_epoch'] + 1)
@@ -571,30 +735,84 @@ class Supervisor:
         if self.outstanding:
             record = read_json(self.operation_path(self.outstanding))
             record.update(status='terminated', image_consistent=False)
+            if 'wait_outcome' in record:
+                record['wait_outcome'] = 'completed_wait'
             atomic_json(self.operation_path(self.outstanding), record)
             self.outstanding = None
             self.session['outstanding_operation_ref'] = None
+            self.clear_transition()
             self.session_write()
         self.stop = True
         return {'ok': True, 'result': {'closed': True, 'session_id': self.session['session_id']}}
 
+    def reattach(self, request):
+        if self.broken:
+            fail(70, 'infrastructure')
+        if request['expected_outstanding_operation_ref'] != self.session.get('outstanding_operation_ref'):
+            fail(1, 'continuity_mismatch')
+        provenance = source_provenance(request['handoff'])
+        if self.meta.get('source_provenance', provenance) != provenance:
+            fail(1, 'source_mismatch')
+        snapshot = {k: copy.deepcopy(self.session[k]) for k in
+                    ('session_id', 'purpose', 'owner', 'generation', 'lease_epoch', 'outstanding_operation_ref')}
+        snapshot.update(provenance, source_state='committed', transition='handoff')
+        current = dict(snapshot, transition='reattach')
+        for key in ('owner', 'generation', 'lease_epoch', 'outstanding_operation_ref'):
+            current['previous_' + key] = copy.deepcopy(snapshot[key])
+        self.meta['handoff_pending'] = True
+        atomic_json(self.directory / 'controller.json', self.meta)
+        atomic_json(self.directory / 'handoff.json', snapshot)
+        atomic_json(self.directory / 'runtime_session.json', current)
+        self.meta.update(source_provenance=provenance, handoff_digest=hashlib.sha256(encode(snapshot)).hexdigest())
+        self.meta.pop('handoff_pending')
+        atomic_json(self.directory / 'controller.json', self.meta)
+        self.session = current
+        return {'ok': True, 'result': current}
+
+    def poll_response(self, request, expired=False):
+        path = self.operation_path(request['operation_id'])
+        if not path.is_file():
+            fail(1, 'unknown_operation')
+        record = read_json(path)
+        if 'limits' in request and (expired or record['status'] in TERMINAL):
+            record['wait_outcome'] = 'completed_wait' if record['status'] in TERMINAL else 'stopped_waiting'
+            atomic_json(path, record)
+        return (response_error('infrastructure', record) if record['status'] == 'unknown'
+                else {'ok': True, 'result': record})
+
+    def finish_waiter(self, connection, response):
+        if connection in self.waiters:
+            del self.waiters[connection]
+            self.selector.unregister(connection)
+        try:
+            if response is not None:
+                connection.sendall(encode(response))
+        except OSError:
+            pass  # Disconnect does not cancel admitted work.
+        finally:
+            connection.close()
+
     def serve(self):
         connection, _ = self.server.accept()
-        with connection:
-            connection.settimeout(CONTROL_SECONDS)
-            try:
-                envelope = receive_line(connection, time.monotonic() + CONTROL_SECONDS)
-                object_keys(envelope, {'action', 'request'})
-                insist(isinstance(envelope['action'], str))
-                response = self.dispatch(envelope['action'], envelope['request'])
-            except SessionError as exc:
-                response = response_error(exc.reason)
-            except (OSError, KeyError, TypeError):
-                response = response_error('infrastructure')
-            try:
-                connection.sendall(encode(response))
-            except OSError:
-                pass  # A disconnected caller cannot erase admitted work.
+        connection.settimeout(CONTROL_SECONDS)
+        try:
+            envelope = receive_line(connection, time.monotonic() + CONTROL_SECONDS)
+            object_keys(envelope, {'action', 'request'})
+            action, request = envelope['action'], envelope['request']
+            insist(isinstance(action, str))
+            response = self.dispatch(action, request)
+            if action == 'poll-operation' and 'limits' in request:
+                seconds = request['limits']['timeout_seconds']
+                if seconds and response['ok'] and response['result']['status'] not in TERMINAL:
+                    self.waiters[connection] = (request, time.monotonic() + seconds)
+                    self.selector.register(connection, selectors.EVENT_READ, 'waiter')
+                    return
+                response = self.poll_response(request, expired=True)
+        except SessionError as exc:
+            response = response_error(exc.reason)
+        except (OSError, KeyError, TypeError):
+            response = response_error('infrastructure')
+        self.finish_waiter(connection, response)
 
     def stop_child(self):
         if self.child and self.child.poll() is None:
@@ -606,6 +824,8 @@ class Supervisor:
                 self.child.wait(timeout=2)
 
     def cleanup(self):
+        for connection in list(self.waiters):
+            self.finish_waiter(connection, None)
         self.stop_child()
         if self.server:
             self.server.close()
@@ -688,7 +908,8 @@ def client(action, root, request):
         connection.settimeout(CONTROL_SECONDS)
         connection.connect(str(directory / 'control.sock'))
         connection.sendall(encode({'action': action, 'request': request}))
-        response = receive_line(connection, time.monotonic() + CONTROL_SECONDS)
+        wait = request.get('limits', {}).get('timeout_seconds', 0) if action == 'poll-operation' else 0
+        response = receive_line(connection, time.monotonic() + CONTROL_SECONDS + wait)
     if action == 'close-session' and response['ok']:
         meta = read_json(directory / 'controller.json')
         deadline = time.monotonic() + CONTROL_SECONDS
