@@ -1,0 +1,442 @@
+[
+  {
+    "alternate": false,
+    "synthetic_authority_gate_fixtures": true,
+    "candidate": {
+      "schema_version": 1,
+      "repository": "niq-cnr/nizam-framework",
+      "source_commit": "0cfa64b758290d0f6bc7f9efb3de8e5c8a0af2a0",
+      "source_tree": "5963c6639bebd66afa0881970543809a12ff7fc9",
+      "assessed_inputs": {
+        "source": [
+          {
+            "path": "src/code.py",
+            "sha256": "336c9a9c0261bd40f3ea5c55e78fc7d1189d9ba7f93945bea46bb820c2c26009",
+            "executable": false
+          }
+        ],
+        "contracts": [
+          {
+            "path": "contract.json",
+            "sha256": "e581ca08a9ba047ae71fe3c872bbe695ab3a711e2f24e55899149a5d5ad653ce",
+            "executable": false
+          }
+        ],
+        "tests": [
+          {
+            "path": "tests/test.py",
+            "sha256": "336c9a9c0261bd40f3ea5c55e78fc7d1189d9ba7f93945bea46bb820c2c26009",
+            "executable": false
+          }
+        ],
+        "tools": [
+          {
+            "path": "tools/check.py",
+            "sha256": "336c9a9c0261bd40f3ea5c55e78fc7d1189d9ba7f93945bea46bb820c2c26009",
+            "executable": false
+          }
+        ]
+      },
+      "environment": {
+        "runtime": {
+          "implementation": "CPython",
+          "version": "3.12.3",
+          "system": "Linux",
+          "machine": "x86_64"
+        },
+        "variables": {
+          "NIZAM_WA120_FIXTURE": "observed"
+        }
+      },
+      "record_ownership": {
+        "contract.json": [
+          "/status"
+        ],
+        "record.json": [
+          "/history",
+          "/status",
+          "/updated_at"
+        ]
+      },
+      "identity_sha256": "887d9f226b220ae5c87e12b6e7d997fee32e662e4d7450989e53a1b7751c2b96"
+    },
+    "captures": [
+      {
+        "schema_version": 1,
+        "argv": [
+          "/usr/bin/python3",
+          "-c",
+          "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print('PASS receipt fixture actual assertion')"
+        ],
+        "cwd": "/home/cnross/.tmp/nizam120-review1-apq2knkn/receipt",
+        "revision": "0cfa64b758290d0f6bc7f9efb3de8e5c8a0af2a0",
+        "candidate_sha256": "297b171ca170f80cd17ae25e9a7ac1a262f17d69c5da00f96a994b45c6901a17",
+        "environment": {
+          "runtime": {
+            "implementation": "CPython",
+            "version": "3.12.3",
+            "system": "Linux",
+            "machine": "x86_64"
+          },
+          "variables": {
+            "NIZAM_WA120_FIXTURE": "observed"
+          }
+        },
+        "producer": {
+          "agent_id": "fixture-only-capture-producer",
+          "session_id": "fixture-only-session"
+        },
+        "executed": true,
+        "outcome": "success",
+        "exit_code": 0,
+        "stdout": {
+          "path": "proof/success.stdout",
+          "sha256": "ca002de6ec556f59744503c3dddba7ad335e88135bf17536a0aeba8779740147",
+          "revision": "93d55467de8c130fa5dba7bc8bf2776793c8ae66"
+        },
+        "stderr": {
+          "path": "proof/success.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "revision": "93d55467de8c130fa5dba7bc8bf2776793c8ae66"
+        }
+      },
+      {
+        "schema_version": 1,
+        "argv": [
+          "/usr/bin/python3",
+          "-c",
+          "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print('PASS receipt fixture actual assertion'); assert 1 != 2"
+        ],
+        "cwd": "/home/cnross/.tmp/nizam120-review1-apq2knkn/receipt",
+        "revision": "206ce7f9cb61e04d64aff29b52d939317299ca5b",
+        "candidate_sha256": "297b171ca170f80cd17ae25e9a7ac1a262f17d69c5da00f96a994b45c6901a17",
+        "environment": {
+          "runtime": {
+            "implementation": "CPython",
+            "version": "3.12.3",
+            "system": "Linux",
+            "machine": "x86_64"
+          },
+          "variables": {
+            "NIZAM_WA120_FIXTURE": "observed"
+          }
+        },
+        "producer": {
+          "agent_id": "fixture-only-capture-producer",
+          "session_id": "fixture-only-session"
+        },
+        "executed": true,
+        "outcome": "semantic-negative",
+        "exit_code": 0,
+        "stdout": {
+          "path": "proof/semantic_negative.stdout",
+          "sha256": "ca002de6ec556f59744503c3dddba7ad335e88135bf17536a0aeba8779740147",
+          "revision": "572453cc84b067bf9c04a25f94aa0ebcd035d389"
+        },
+        "stderr": {
+          "path": "proof/semantic_negative.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "revision": "572453cc84b067bf9c04a25f94aa0ebcd035d389"
+        }
+      },
+      {
+        "schema_version": 1,
+        "argv": [
+          "/usr/bin/python3",
+          "-c",
+          "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print('PASS receipt fixture actual assertion'); sys.exit(7)"
+        ],
+        "cwd": "/home/cnross/.tmp/nizam120-review1-apq2knkn/receipt",
+        "revision": "572453cc84b067bf9c04a25f94aa0ebcd035d389",
+        "candidate_sha256": "297b171ca170f80cd17ae25e9a7ac1a262f17d69c5da00f96a994b45c6901a17",
+        "environment": {
+          "runtime": {
+            "implementation": "CPython",
+            "version": "3.12.3",
+            "system": "Linux",
+            "machine": "x86_64"
+          },
+          "variables": {
+            "NIZAM_WA120_FIXTURE": "observed"
+          }
+        },
+        "producer": {
+          "agent_id": "fixture-only-capture-producer",
+          "session_id": "fixture-only-session"
+        },
+        "executed": true,
+        "outcome": "failed",
+        "exit_code": 7,
+        "stdout": {
+          "path": "proof/failed.stdout",
+          "sha256": "ca002de6ec556f59744503c3dddba7ad335e88135bf17536a0aeba8779740147",
+          "revision": "60b5071df218353ff564e1fa4f301f4d5ac840b7"
+        },
+        "stderr": {
+          "path": "proof/failed.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "revision": "60b5071df218353ff564e1fa4f301f4d5ac840b7"
+        }
+      },
+      {
+        "schema_version": 1,
+        "argv": [
+          "/usr/bin/python3",
+          "-c",
+          "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print('PASS receipt fixture actual assertion'); print('SETUP_ERROR: fixture dependency missing',file=sys.stderr); sys.exit(2)"
+        ],
+        "cwd": "/home/cnross/.tmp/nizam120-review1-apq2knkn/receipt",
+        "revision": "60b5071df218353ff564e1fa4f301f4d5ac840b7",
+        "candidate_sha256": "297b171ca170f80cd17ae25e9a7ac1a262f17d69c5da00f96a994b45c6901a17",
+        "environment": {
+          "runtime": {
+            "implementation": "CPython",
+            "version": "3.12.3",
+            "system": "Linux",
+            "machine": "x86_64"
+          },
+          "variables": {
+            "NIZAM_WA120_FIXTURE": "observed"
+          }
+        },
+        "producer": {
+          "agent_id": "fixture-only-capture-producer",
+          "session_id": "fixture-only-session"
+        },
+        "executed": true,
+        "outcome": "setup-error",
+        "exit_code": 2,
+        "stdout": {
+          "path": "proof/setup_error.stdout",
+          "sha256": "ca002de6ec556f59744503c3dddba7ad335e88135bf17536a0aeba8779740147",
+          "revision": "0a677e31f76162636a6d5ec0fd8f3aabeab43140"
+        },
+        "stderr": {
+          "path": "proof/setup_error.stderr",
+          "sha256": "e156c3db624fd7f609c5f5809e16f7e85f1fc80141e199607eeb60b4a4f5ba98",
+          "revision": "0a677e31f76162636a6d5ec0fd8f3aabeab43140"
+        }
+      }
+    ]
+  },
+  {
+    "alternate": true,
+    "synthetic_authority_gate_fixtures": true,
+    "candidate": {
+      "schema_version": 1,
+      "repository": "portable/receipt-fixture",
+      "source_commit": "65b94a029eaaa0299b9483fe69e63ccdbdf4a4be",
+      "source_tree": "278497772a736f3e9fea7e3247bb0800b5bba185",
+      "assessed_inputs": {
+        "source": [
+          {
+            "path": "src/code.py",
+            "sha256": "336c9a9c0261bd40f3ea5c55e78fc7d1189d9ba7f93945bea46bb820c2c26009",
+            "executable": false
+          }
+        ],
+        "contracts": [
+          {
+            "path": "contract.json",
+            "sha256": "e581ca08a9ba047ae71fe3c872bbe695ab3a711e2f24e55899149a5d5ad653ce",
+            "executable": false
+          }
+        ],
+        "tests": [
+          {
+            "path": "tests/test.py",
+            "sha256": "336c9a9c0261bd40f3ea5c55e78fc7d1189d9ba7f93945bea46bb820c2c26009",
+            "executable": false
+          }
+        ],
+        "tools": [
+          {
+            "path": "tools/check.py",
+            "sha256": "336c9a9c0261bd40f3ea5c55e78fc7d1189d9ba7f93945bea46bb820c2c26009",
+            "executable": false
+          }
+        ]
+      },
+      "environment": {
+        "runtime": {
+          "implementation": "CPython",
+          "version": "3.12.3",
+          "system": "Linux",
+          "machine": "x86_64"
+        },
+        "variables": {
+          "NIZAM_WA120_FIXTURE": "observed"
+        }
+      },
+      "record_ownership": {
+        "contract.json": [
+          "/status"
+        ],
+        "record.json": [
+          "/history",
+          "/status",
+          "/updated_at"
+        ]
+      },
+      "identity_sha256": "10ed87da5233c40fd492dadceea6faa20058f46a5540c41406918888e96e5367"
+    },
+    "captures": [
+      {
+        "schema_version": 1,
+        "argv": [
+          "/usr/bin/python3",
+          "-c",
+          "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print('PASS receipt fixture actual assertion')"
+        ],
+        "cwd": "/home/cnross/.tmp/nizam120-review1-apq2knkn/alternate",
+        "revision": "65b94a029eaaa0299b9483fe69e63ccdbdf4a4be",
+        "candidate_sha256": "8732f1ac5f612079862470e7993a4991928c4fef2eec514a01478a2e51b1773a",
+        "environment": {
+          "runtime": {
+            "implementation": "CPython",
+            "version": "3.12.3",
+            "system": "Linux",
+            "machine": "x86_64"
+          },
+          "variables": {
+            "NIZAM_WA120_FIXTURE": "observed"
+          }
+        },
+        "producer": {
+          "agent_id": "fixture-only-capture-producer",
+          "session_id": "fixture-only-session"
+        },
+        "executed": true,
+        "outcome": "success",
+        "exit_code": 0,
+        "stdout": {
+          "path": "proof/success.stdout",
+          "sha256": "ca002de6ec556f59744503c3dddba7ad335e88135bf17536a0aeba8779740147",
+          "revision": "73c0bd89ad4e0784ff185e829f8fad1f243a0d40"
+        },
+        "stderr": {
+          "path": "proof/success.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "revision": "73c0bd89ad4e0784ff185e829f8fad1f243a0d40"
+        }
+      },
+      {
+        "schema_version": 1,
+        "argv": [
+          "/usr/bin/python3",
+          "-c",
+          "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print('PASS receipt fixture actual assertion'); assert 1 != 2"
+        ],
+        "cwd": "/home/cnross/.tmp/nizam120-review1-apq2knkn/alternate",
+        "revision": "d18a58161763b63bbc317fd5fb88d049ea84991c",
+        "candidate_sha256": "8732f1ac5f612079862470e7993a4991928c4fef2eec514a01478a2e51b1773a",
+        "environment": {
+          "runtime": {
+            "implementation": "CPython",
+            "version": "3.12.3",
+            "system": "Linux",
+            "machine": "x86_64"
+          },
+          "variables": {
+            "NIZAM_WA120_FIXTURE": "observed"
+          }
+        },
+        "producer": {
+          "agent_id": "fixture-only-capture-producer",
+          "session_id": "fixture-only-session"
+        },
+        "executed": true,
+        "outcome": "semantic-negative",
+        "exit_code": 0,
+        "stdout": {
+          "path": "proof/semantic_negative.stdout",
+          "sha256": "ca002de6ec556f59744503c3dddba7ad335e88135bf17536a0aeba8779740147",
+          "revision": "9ae9adaa48bd5eaf7080347cf06dcf261ad6dcaf"
+        },
+        "stderr": {
+          "path": "proof/semantic_negative.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "revision": "9ae9adaa48bd5eaf7080347cf06dcf261ad6dcaf"
+        }
+      },
+      {
+        "schema_version": 1,
+        "argv": [
+          "/usr/bin/python3",
+          "-c",
+          "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print('PASS receipt fixture actual assertion'); sys.exit(7)"
+        ],
+        "cwd": "/home/cnross/.tmp/nizam120-review1-apq2knkn/alternate",
+        "revision": "9ae9adaa48bd5eaf7080347cf06dcf261ad6dcaf",
+        "candidate_sha256": "8732f1ac5f612079862470e7993a4991928c4fef2eec514a01478a2e51b1773a",
+        "environment": {
+          "runtime": {
+            "implementation": "CPython",
+            "version": "3.12.3",
+            "system": "Linux",
+            "machine": "x86_64"
+          },
+          "variables": {
+            "NIZAM_WA120_FIXTURE": "observed"
+          }
+        },
+        "producer": {
+          "agent_id": "fixture-only-capture-producer",
+          "session_id": "fixture-only-session"
+        },
+        "executed": true,
+        "outcome": "failed",
+        "exit_code": 7,
+        "stdout": {
+          "path": "proof/failed.stdout",
+          "sha256": "ca002de6ec556f59744503c3dddba7ad335e88135bf17536a0aeba8779740147",
+          "revision": "27dcc344fa73a8aec580046462e3fc57e2c608fd"
+        },
+        "stderr": {
+          "path": "proof/failed.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "revision": "27dcc344fa73a8aec580046462e3fc57e2c608fd"
+        }
+      },
+      {
+        "schema_version": 1,
+        "argv": [
+          "/usr/bin/python3",
+          "-c",
+          "import os,pathlib,sys; assert os.environ['NIZAM_WA120_FIXTURE']=='observed'; pathlib.Path('proof/process-count.txt').open('a').write('executed\\n'); print('PASS receipt fixture actual assertion'); print('SETUP_ERROR: fixture dependency missing',file=sys.stderr); sys.exit(2)"
+        ],
+        "cwd": "/home/cnross/.tmp/nizam120-review1-apq2knkn/alternate",
+        "revision": "27dcc344fa73a8aec580046462e3fc57e2c608fd",
+        "candidate_sha256": "8732f1ac5f612079862470e7993a4991928c4fef2eec514a01478a2e51b1773a",
+        "environment": {
+          "runtime": {
+            "implementation": "CPython",
+            "version": "3.12.3",
+            "system": "Linux",
+            "machine": "x86_64"
+          },
+          "variables": {
+            "NIZAM_WA120_FIXTURE": "observed"
+          }
+        },
+        "producer": {
+          "agent_id": "fixture-only-capture-producer",
+          "session_id": "fixture-only-session"
+        },
+        "executed": true,
+        "outcome": "setup-error",
+        "exit_code": 2,
+        "stdout": {
+          "path": "proof/setup_error.stdout",
+          "sha256": "ca002de6ec556f59744503c3dddba7ad335e88135bf17536a0aeba8779740147",
+          "revision": "465d8213899e8cbb83f8084c6652fc0a8f2d573a"
+        },
+        "stderr": {
+          "path": "proof/setup_error.stderr",
+          "sha256": "e156c3db624fd7f609c5f5809e16f7e85f1fc80141e199607eeb60b4a4f5ba98",
+          "revision": "465d8213899e8cbb83f8084c6652fc0a8f2d573a"
+        }
+      }
+    ]
+  }
+]
