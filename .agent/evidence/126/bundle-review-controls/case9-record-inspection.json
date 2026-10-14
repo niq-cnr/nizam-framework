@@ -1,0 +1,42 @@
+{
+  "c1_commit": "755b859703de29065885ccd7bc6031dabb702872",
+  "manifest": ".agent/evidence/126/bundle-review-controls/manifest.json",
+  "sealed_test_sha256": "60f6797100f15eb32b4f9e870eafe699627d17b835c8cc2ad44b703fcfb67e14",
+  "results": {
+    "current": {
+      "argv": [
+        "bash",
+        "-c",
+        "source \"$1\"; vlib_runtime_record_relations \"$2\" \"$3\"",
+        "_",
+        "/home/cnross/.tmp/n126-c9-src-f4o7eqpi/tools/verify_lib.sh",
+        "runtime_operation",
+        "/home/cnross/.tmp/n126-c9-run-x2991t4l/state/one/operations/op-4.json"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature126-b0-review",
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/126/bundle-review-controls/case9-current-c12.stdout.txt",
+      "stderr": ".agent/evidence/126/bundle-review-controls/case9-current-c12.stderr.txt"
+    },
+    "rejected": {
+      "argv": [
+        "bash",
+        "-c",
+        "source \"$1\"; vlib_runtime_record_relations \"$2\" \"$3\"",
+        "_",
+        "/home/cnross/.tmp/n126-c9-src-f4o7eqpi/tools/verify_lib.sh",
+        "runtime_operation",
+        "/home/cnross/.tmp/n126-c9-run-x2991t4l/state/one/operations/op-7.json"
+      ],
+      "cwd": "/home/cnross/.tmp/nizam-feature126-b0-review",
+      "actual_exit": 1,
+      "stdout": ".agent/evidence/126/bundle-review-controls/case9-rejected-c12.stdout.txt",
+      "stderr": ".agent/evidence/126/bundle-review-controls/case9-rejected-c12.stderr.txt"
+    }
+  },
+  "observed_current_attempt": 1,
+  "observed_previous_attempt": 2,
+  "rejection_status": "rejected",
+  "executed": false,
+  "classification": "Actual C1 record provenance violates existing C12 attempt_continuity even though admission was correctly refused. Same-generation current record validates; working replacement process and legitimate memory value confirmed. No source/test repair."
+}
