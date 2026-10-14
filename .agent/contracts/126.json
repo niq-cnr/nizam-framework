@@ -2,7 +2,7 @@
   "contract_id": "126",
   "feature_id": "126",
   "name": "Detached controller, stub and registered fixtures",
-  "status": "proposed",
+  "status": "approved",
   "spec_ref": ".agent/product_spec_016.md",
   "base_revision": "9f361154c63c2f80768b6845c98f89a9aa1a1541",
   "contract_attempt": 2,
@@ -153,9 +153,12 @@
     "Partial core is a deliverable, not full runtime or thirteen-case conformance. Root authorized minimal nine-command invocation in existing fixture harness before pre-code gates; this supplies stub CI without future131. Upstream trial requests are denied before becoming runtime operations (error receipt only); controller-admitted requests refused before dispatch have supervisor-owned rejection records. Reviewers must ratify this distinction against normative permissions, escalating for Planner clarification only if they find a substantive conflict."
   ],
   "approvals": {
-    "validator_mode_a": false,
-    "evaluator_contract_review": false,
-    "revisions": 1
+    "validator_mode_a": true,
+    "evaluator_contract_review": true,
+    "revisions": 1,
+    "approved_at": "2026-10-14T08:41:52.456163+00:00",
+    "validator_mode_a_ref": ".agent/validator/126-mode-a-2.json",
+    "evaluator_contract_review_ref": ".agent/qa/126-contract-review-2.json"
   },
   "dod_ref": ".nizam/standard/definition_of_done.md",
   "ci_integration": "Within tools/fixtures_self_test.sh, loop the three --check values lifecycle-no-evaluation/record-schema/fixture-claim-registered, loop --case 1/2/3/9/13 --runtime stub, then --case 8 --runtime stub --layer policy. Execute each with PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py, print the exact expanded command and actual return code, preserve output and propagate any nonzero into the existing harness fail aggregation. Existing compliance jobs execute this harness; no new job, SBCL suite or future131 dependency. The claim-registration acceptance check tests mapping and command scheduling without recursively running itself."

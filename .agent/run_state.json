@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "126",
   "status": "in_progress",
-  "updated_at": "2026-10-14T08:38:38.971167+00:00",
+  "updated_at": "2026-10-14T08:41:52.456163+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -902,6 +902,10 @@
     },
     "126-contract-review": {
       "attempts": 2,
+      "limit": 3
+    },
+    "126-tests": {
+      "attempts": 1,
       "limit": 3
     }
   },
@@ -4949,6 +4953,12 @@
       "event": "126-precode-round2-dispatched",
       "detail": "Current contract SHA58e6bf75; both reviewers must assess the amended obligation and existing unchanged contract. Round1 findings retained. Temporary Root Generator role ends after bounded amendment; Generator implementation remains separate.",
       "evidence": ".agent/evidence/126/round2-role-disclosure.json"
+    },
+    {
+      "at": "2026-10-14T08:41:52.456163+00:00",
+      "event": "126-precode-approved",
+      "detail": "Both strict renewed gates approved exact proposed SHA58e6bf75; Root promotes only status/approval metadata. Independent acceptance authoring and distinct bundle review precede source repair.",
+      "evidence": ".agent/evidence/126/precode-approved.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5407,7 +5417,7 @@
       }
     ]
   },
-  "last_action": "126 contract round2 at639d0d5 includes duplicate-ID coverage. Root role is Orchestrator; both renewed independent pre-code gates dispatched. No implementation/test source permitted.",
+  "last_action": "126 contract approved after both independent round2 gates; independent test authoring is next, source implementation held pending reviewed acceptance handoff.",
   "completed_contract_ids": [
     "099",
     "103",
