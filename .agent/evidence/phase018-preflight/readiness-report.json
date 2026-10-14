@@ -1,0 +1,128 @@
+{
+  "role": "Planner",
+  "purpose": "Read-only phase018 readiness and minimal119 recommendation; no activation, acceptance execution or supersession of128 next",
+  "observed_revision": "0c79284baf5a1c624cb4afcf9ec597ac2895b268",
+  "inputs_sha256": {
+    ".agent/product_spec_018.md": "fb1ba7675a76160790e04894dfd68a30410fe31d80bcd60826532802680b2a6a",
+    ".agent/feature_list_018.json": "b95455c9d942f9cb77af1069a1a3c10b29ca020431819f2d0db81d22faa8dab3",
+    "docs/planning/phase_018.yaml": "5e9c84c1273edff50af8585e5bbc172d5cd7585ac6e1d87eb438667910c8ef8c",
+    "docs/planning/manifest.json": "10c74610af86aa9e6815c2bf85e38ea33ad3880955f824e1df04b8ab413ce093",
+    "tools/workflow_assurance.py": "c141318bb1e31ffbb333dee67166d44f9c355fb4ff243f019150a2e1dac2c4a5",
+    "tools/test_workflow_assurance.py": "46fa5e21a013e69e1aba76da8079dedaa7b19484eb5a5ccbfc974577f378294e",
+    "tools/convergent_review.py": "eb4d47be8d91f85779e97c1370f34aa7f4560bec68f9ffce033ae979e4238ea2",
+    ".nizam/standard/AGF.md": "f8f9bfd1c3330737fe98c51b883f2b11b719b4288823f49eed531c2ad3e688ba",
+    ".nizam/standard/convergent_code_review.md": "0a9b5b6fd297efb7edc6ae7f8283a86450c34008a5f74cda9f8b21bbd1b48e40",
+    ".agent/evidence/118/evidence-capture.json": "efbddba6df01ffcfd5f66303a9bfc378aa878dc6b948270ce9ca98e9f5ce0603",
+    ".agent/evidence/127/evidence-capture.json": "d22afa621a94459126def425aecbabf9960aa692609eb65d6e69ca942e966b3a"
+  },
+  "dependency_assessment": {
+    "foundation118_capture_passed": true,
+    "controller127_capture_passed": true,
+    "controller_source_revision": "88996ee9405f9467ff2debd6e3115b34d064019a",
+    "conclusion": "127 clears the explicit controller dependency.118 and127 are the named cross-phase prerequisites;128, full016 closure and131 are not added prerequisites. Root chooses scheduling after128.",
+    "authority_refs": [
+      ".agent/feature_list_018.json:cross_phase_prerequisites",
+      ".agent/product_spec_018.md:Architecture and external prerequisites"
+    ]
+  },
+  "remaining_activation_prerequisites": [
+    "Obtain and record operator H-PHASE-018 approval of119-123 scope,7200 proposed counted lines,9360 ceiling and applicable external118/127 receipt bindings. H-NIP scope selection and existing017/016 authorization do not substitute.",
+    "At activation bind actual118/127 evidence-capture.json receipts and their revisions; featurelist future evidence-gate.txt placeholders do not exist. Record this explicit mapping in activation evidence rather than treating missing placeholder paths as proof.",
+    "Orchestrator activates canonical phase018/manifest/featurelist and records run position, original allowance and counters only after authorization. Present spec draft0.1.0/list pending/phase pending/manifest proposed do not constitute activation."
+  ],
+  "budget": {
+    "phase_original_proposed": 7200,
+    "phase_proposed_ceiling": 9360,
+    "categories": {
+      "product": 1800,
+      "tests": 2050,
+      "process": 3350
+    },
+    "feature119_original_estimate": 1000,
+    "feature119_categories": {
+      "product": 200,
+      "tests": 300,
+      "process": 500
+    },
+    "note": "No approval, new allowance or rebaseline inferred. Existing process allocations include contract, independent gates and planning overhead."
+  },
+  "runner_observation": {
+    "method": "Static AST and source read only; no module imported or acceptance command run",
+    "existing_case_count": 20,
+    "existing_cases": [
+      "identity-positive",
+      "invalidate-source",
+      "invalidate-contract",
+      "invalidate-tests",
+      "invalidate-tool",
+      "invalidate-environment",
+      "invalidate-unknown",
+      "record-continuity",
+      "reject-unowned-field",
+      "reject-history-edit",
+      "allow-owned-append",
+      "reject-self-review",
+      "reject-seal-change",
+      "reject-missing-red",
+      "reject-setup-as-red",
+      "independent-handoff",
+      "accepted-entry",
+      "reject-foreign-repo",
+      "reject-stale-pin",
+      "reject-role-write"
+    ],
+    "existing_checks": [
+      "foundation-ready"
+    ],
+    "planned119_cases": [
+      "approve-empty",
+      "advisory-visible",
+      "block-carried",
+      "reject-issues",
+      "reject-missing-coverage",
+      "reject-unsupported"
+    ],
+    "planned119_selectors_present": false,
+    "controls_ready_present": false,
+    "note": "Current runner supports115-117 twenty cases plus118 foundation-ready.119 contract must add exact six selectors independently; unknown selectors currently reject through argparse. Future command availability is not acceptance."
+  },
+  "minimal119_contract_recommendation": {
+    "deliverable": "A bounded deterministic adapter from a validated convergent ledger to AGF verdict/required fixes, retaining advisory minor separately and preserving blocker/important carried findings. Advancement requires final_verdict.approved true AND issues,missing_acceptance_coverage,unsupported_claims all empty.",
+    "reuse": "Reuse tools/convergent_review.py ledger validation/lifecycle/count/verdict authority; do not recompute consensus, suppress findings, reset counters or trust model verdicts. Freeze expected input/repository/head bindings and malformed-input behavior in the contract.",
+    "product_targets": [
+      "tools/workflow_assurance.py"
+    ],
+    "independent_test_target": "tools/test_workflow_assurance.py",
+    "planned_acceptance_commands": [
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case approve-empty",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case advisory-visible",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case block-carried",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-issues",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-coverage",
+      "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unsupported"
+    ],
+    "negative_coverage": "Carry an unresolved blocker even when omitted from current observations; reject each of the three nonempty AGF blocking arrays independently. Minor remains visible without being inserted into a blocking array solely for being advisory. Specify non-true approval, malformed inputs and stale bindings as fail closed.",
+    "ownership": "Keep foundation115-118 APIs and existing selectors unchanged; shared source/test lanes serialize119 before120-125. Declare bounded documentation/registration artifacts only if necessary and charge existing1000 estimate; no speculative rewrite.",
+    "gates": "Contract preparation may precede activation; implementation requires approved H-PHASE-018 activation and independent ModeA plus contract-review approval of119. Distinct test author/developer/reviewer, frozen API/test bytes and intended semantic red precede repair; ModeB, fresh QA and command/actual-exit/revision capture precede Root lifecycle advancement.",
+    "non_goals": [
+      "120 receipt engine/idempotent recovery",
+      "121 lanes/rollback",
+      "122 cause routing",
+      "123 controls-ready and capable CI",
+      "SBCL/fulladapter/fresh020/finalCI131",
+      "installed payload or root coordination writes by implementation agent"
+    ]
+  },
+  "circular_or_preimplementation_blockers": [
+    "No phase018 dependency on119 itself,128 or131 is declared. Same-list chain119->120->121->122->123 is acyclic;119 has no same-list dependency.",
+    "Do not require119 final implementation/selectors, controls-ready123, or delivered active/version metadata before the contracted stage can produce them. Reject setup/unknown-selector exits as semantic red; independently author controls for the intended invariant.",
+    "Foundation-ready118 verifies its immutable SourceC and captured20-case prerequisite; it is historical foundation readiness, not a demand to rewrite118 pins against119 changed source or prove future controls before119.",
+    "Missing future evidence-gate.txt paths need explicit receipt mapping at activation; this report does not silently edit planning requirements or claim those paths exist."
+  ],
+  "observed_absent_paths": [
+    ".agent/contracts/119.json",
+    ".agent/evidence/118/evidence-gate.txt",
+    ".agent/evidence/127/evidence-gate.txt"
+  ],
+  "handoff": "Root may cherry-pick only the commit containing this report onto its128 branch. Re-query live canonical status before activation; do not merge this older docs branch. Independent119 gates remain future."
+}

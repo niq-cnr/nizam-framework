@@ -1,0 +1,40 @@
+{
+  "exercised_revision": "0c79284baf5a1c624cb4afcf9ec597ac2895b268",
+  "checks": [
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "actual_exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--cached",
+        "--numstat"
+      ],
+      "actual_exit": 0,
+      "stdout": "33\t0\t.agent/evidence/phase018-preflight/readiness-observations.json\n128\t0\t.agent/evidence/phase018-preflight/readiness-report.json\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--name-only",
+        "HEAD"
+      ],
+      "actual_exit": 0,
+      "stdout": ".agent/evidence/phase018-preflight/readiness-observations.json\n.agent/evidence/phase018-preflight/readiness-report.json\n",
+      "stderr": ""
+    }
+  ],
+  "scope_preserved": true,
+  "acceptance_executed": false
+}
