@@ -1,0 +1,14 @@
+{
+  "owner": "/root/evaluator128",
+  "kind": "reproduced private control setup failure before correction",
+  "argv": [
+    "python3",
+    ".agent/evidence/128/author1-controls.py"
+  ],
+  "cwd": "/home/cnross/.tmp/nizam-feature128-author1",
+  "exercised_revision": "441567ef05c3eb68558c6aeb679aa94b0a1a3baa",
+  "control_script_sha256": "c092a272535b663dbca24803e0278f972a7b08bc65f730b47f939b4db601b045",
+  "stdout": "PASS failure actual_exit 1 leaf_count 14\nPASS missing-marker actual_exit 1 leaf_count 14\nPASS setup actual_exit 1 leaf_count 14\n",
+  "stderr": "Traceback (most recent call last):\n  File \"/home/cnross/.tmp/nizam-feature128-author1/.agent/evidence/128/author1-controls.py\", line 84, in <module>\n    value = json.loads(witness.read_text()); receipt['real_detached_witness'] = value\n                       ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1029, in read_text\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1015, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/home/cnross/.tmp/nizam128-controls-77p2elql/timeout/witness.json'\n",
+  "actual_exit": 1
+}
