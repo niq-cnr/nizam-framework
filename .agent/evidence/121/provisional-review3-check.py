@@ -46,7 +46,15 @@ assert all(row['command'].endswith('--case ' + name) for row, name in zip(contra
 # Every changed test line is an assignment/restoration copy, never a changed condition.
 changes = git('diff', '--unified=0', OLD, AUTHORED, '--', TEST).decode().splitlines()
 changed = [line[1:] for line in changes if line[:1] in ('+', '-') and not line.startswith(('+++', '---'))]
-assert len(changed) == 27 and all('copy.deepcopy' in line or line.strip().startswith(('self.request.update(changes)', 'f.request = original', 'f.policy = policy')) for line in changed)
+assert len(changed) == 27
+class WithoutCopies(ast.NodeTransformer):
+    def visit_Call(self, node):
+        node = self.generic_visit(node)
+        return node.args[0] if isinstance(node.func, ast.Attribute) and dump(node.func) == dump(ast.parse('copy.deepcopy', mode='eval').body) and len(node.args) == 1 else node
+    def visit_Assign(self, node):
+        node = self.generic_visit(node)
+        return None if len(node.targets) == 1 and dump(node.targets[0]).replace('Store()', 'Load()') == dump(node.value) else node
+assert dump(WithoutCopies().visit(tree(old))) == dump(WithoutCopies().visit(tree(new)))
 numstat = git('diff', '--numstat', BASE, 'HEAD', '--', TEST).decode().split()
 assert sum(map(int, numstat[:2])) == 276 <= contract['budget']['independent_tests'] == 450
 preserved = []
