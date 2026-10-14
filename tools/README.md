@@ -2,10 +2,13 @@
 id: nizam-tools-readme
 title: "Tools Module — Index"
 description: "Index for the tools/ module: the one unified, runtime-agnostic skill payload (manifest, instructions, and adapter interface) agents load to act on the Nizam framework."
-version: 0.28.0
+version: 0.29.0
 status: active
 authoritative_source: tools/README.md
 change_log:
+  - version: "0.29.0"
+    date: "2026-10-14"
+    summary: "Document candidate-bound receipt gates, idempotent proposals and explicit proof recovery."
   - version: "0.28.0"
     date: "2026-10-14"
     summary: "Document strict convergent AGF mapping and the historical foundation receipt boundary."
@@ -162,6 +165,18 @@ Its partial stub scope is cases 1/2/3/5/6/8(policy)/9/10/13 and five named check
 run `core-ready`. Independent QA/capture still gate bounded core closure.
 SBCL/full adapter, phase020 fresh acceptance and final CI131 remain pending.
 The reserved `accept` action fails without side effects.
+
+## Receipt gates and recovery — feature 120
+
+`verify_stage_receipt(repo, receipt, *, policy)` checks independently pinned
+operator/prerequisite authority, protected candidate inputs and actual command
+captures. Trusted callers supply policy and capture provenance; hashes and
+recorded producer names establish integrity, without authenticating execution.
+`plan_receipt_transition(repo, state, receipt, *, policy)` proposes one owned
+history/status update or an identical-receipt noop. Missing proof returns
+`rerun-required` or a verified `republish` proposal; callers must actually restore
+and revalidate the receipt. Both APIs preserve inputs and never execute recorded
+commands or write lifecycle state. Existing default acceptance includes37 cases.
 
 ## Convergent findings to AGF verdict — feature 119
 

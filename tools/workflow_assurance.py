@@ -753,6 +753,278 @@ def convergent_agf_verdict(ledger, report, *, expected_repository, expected_head
         raise AssuranceError('AGF verdict mapping failed: ' + str(exc)) from exc
 
 
+def _receipt_text(value, label):
+    require(type(value) is str and bool(value.strip()), 'receipt nonempty string: ' + label)
+
+
+def _receipt_ref(root, reference):
+    _bundle_object(reference, ('path', 'sha256', 'revision'), 'receipt artifact reference')
+    relative_path(reference['path']); _bundle_hex(reference['sha256'], 64, 'receipt artifact digest')
+    _bundle_hex(reference['revision'], 40, 'receipt artifact revision')
+    require(git(root, 'rev-parse', '--verify', reference['revision'] + '^{commit}').decode().strip() == reference['revision'],
+            'receipt artifact exact commit')
+
+
+def _receipt_artifact(root, reference, live=False):
+    _receipt_ref(root, reference)
+    data, _ = _entry_blob(root, reference['revision'], reference['path'])
+    require(sha(data) == reference['sha256'], 'receipt artifact digest mismatch')
+    if live:
+        require(regular_file(root, reference['path']).read_bytes() == data, 'receipt current output changed')
+    return data
+
+
+def _receipt_schema(root, value, name):
+    import jsonschema
+    try:
+        jsonschema.Draft202012Validator(parse_json(regular_file(root, 'schema/' + name + '.schema.json').read_bytes())).validate(value)
+    except jsonschema.exceptions.ValidationError as exc:
+        raise AssuranceError('receipt ' + name + ' schema: ' + exc.message[:240]) from exc
+
+
+def _receipt_gate(value):
+    require(type(value) is dict and type(value.get('final_verdict')) is dict and
+            value['final_verdict'].get('approved') is True, 'receipt gate not approved')
+    require(all(type(value.get(k)) is list and value[k] == [] for k in
+                ('issues', 'missing_acceptance_coverage', 'unsupported_claims')), 'receipt blocking arrays not empty')
+
+
+def _receipt_producer(value):
+    _bundle_object(value, ('agent_id', 'session_id'), 'receipt producer')
+    for key in value: _receipt_text(value[key], key)
+
+
+def _receipt_policy(root, policy):
+    json_value(policy)
+    _bundle_object(policy, ('schema_version', 'repository', 'feature_id', 'stage', 'operation_id', 'candidate',
+        'contract', 'operator', 'producer', 'prerequisites', 'commands', 'from_status', 'to_status', 'at', 'recovery'), 'receipt policy')
+    require(type(policy['schema_version']) is int and policy['schema_version'] == 1, 'receipt policy version')
+    for key in ('repository', 'feature_id', 'operation_id', 'from_status', 'to_status', 'at'): _receipt_text(policy[key], key)
+    minima = {'contract-approved': ('mode-a', 'contract-review'), 'source-ready': ('approved-contract', 'provisional-bundle'),
+        'qa-passed': ('mode-b',), 'evidence-captured': ('fresh-qa',), 'feature-complete': ('fresh-qa', 'evidence-capture')}
+    require(type(policy['stage']) is str and policy['stage'] in minima, 'receipt unknown stage')
+    validate_identity(policy['candidate']); _receipt_producer(policy['producer'])
+    for key in ('contract', 'operator'): _receipt_ref(root, policy[key])
+    if policy['recovery'] is not None: _receipt_ref(root, policy['recovery'])
+    require(type(policy['prerequisites']) is list and type(policy['commands']) is list and policy['commands'], 'receipt required lists')
+    return minima[policy['stage']]
+
+
+def _receipt_candidate(root, candidate, revision=None):
+    validate_identity(candidate)
+    anchor = candidate['source_commit']
+    require(git(root, 'rev-parse', '--verify', anchor + '^{commit}').decode().strip() == anchor, 'receipt candidate exact commit')
+    require(git(root, 'rev-parse', anchor + '^{tree}').decode().strip() == candidate['source_tree'], 'receipt candidate actual tree')
+    revision = revision or git(root, 'rev-parse', 'HEAD').decode().strip()
+    _bundle_hex(revision, 40, 'receipt executed revision')
+    require(git(root, 'rev-parse', '--verify', revision + '^{commit}').decode().strip() == revision, 'receipt executed exact commit')
+    git(root, 'merge-base', '--is-ancestor', anchor, revision)
+    require(git(root, 'remote', 'get-url', 'origin').decode().strip() == candidate['repository'], 'receipt actual repository')
+    for category in ('source', 'tests', 'tools'):
+        for entry in candidate['assessed_inputs'][category]:
+            for commit in (anchor, revision):
+                data, executable = _entry_blob(root, commit, entry['path'])
+                require(sha(data) == entry['sha256'] and executable is entry['executable'], 'receipt protected Git input changed')
+            target = regular_file(root, entry['path'])
+            require(sha(target.read_bytes()) == entry['sha256'] and bool(target.stat().st_mode & 0o111) is entry['executable'],
+                    'receipt protected current input changed')
+    ownership = candidate['record_ownership']
+    for entry in candidate['assessed_inputs']['contracts']:
+        data, executable = _entry_blob(root, anchor, entry['path'])
+        digest = sha(canonical(parse_json(data))) if entry['path'] in ownership else sha(data)
+        require(digest == entry['sha256'] and executable is entry['executable'], 'receipt contract assessed digest')
+        if entry['path'] not in ownership:
+            require(regular_file(root, entry['path']).read_bytes() == data, 'receipt unowned contract changed')
+    for path, fields in ownership.items():
+        data, executable = _entry_blob(root, anchor, path); target = regular_file(root, path)
+        require(bool(target.stat().st_mode & 0o111) is executable, 'receipt record mode changed')
+        verify_record_update(parse_json(data), parse_json(target.read_bytes()), fields)
+    environment = {'runtime': {'implementation': platform.python_implementation(), 'version': platform.python_version(),
+        'system': platform.system(), 'machine': platform.machine()},
+        'variables': {key: os.environ.get(key) for key in candidate['environment']['variables']}}
+    require(canonical(environment) == canonical(candidate['environment']), 'receipt observed environment changed')
+
+
+def _receipt_contract(root, value, feature):
+    _receipt_schema(root, value, 'contract')
+    require(value['contract_id'] == value['feature_id'] == feature and value['status'] == 'approved', 'receipt approved contract binding')
+    approvals = value.get('approvals', {})
+    require(approvals.get('validator_mode_a') is True and approvals.get('evaluator_contract_review') is True, 'receipt dual approvals')
+
+
+def _receipt_prerequisites(root, policy, minimum):
+    entries = policy['prerequisites']; seen = set(); current = set(); records = []
+    kinds = ('mode-a', 'contract-review', 'approved-contract', 'provisional-bundle', 'mode-b', 'fresh-qa', 'evidence-capture')
+    for entry in entries:
+        _bundle_object(entry, ('kind', 'artifact', 'feature_id', 'assessed_revision', 'contract_sha256'), 'receipt prerequisite')
+        require(type(entry['kind']) is str and entry['kind'] in kinds, 'receipt prerequisite kind')
+        _receipt_text(entry['feature_id'], 'prerequisite feature')
+        _bundle_hex(entry['assessed_revision'], 40, 'prerequisite revision'); _bundle_hex(entry['contract_sha256'], 64, 'prerequisite contract')
+        require(git(root, 'rev-parse', '--verify', entry['assessed_revision'] + '^{commit}').decode().strip() == entry['assessed_revision'],
+                'receipt prerequisite actual revision')
+        identity = (entry['kind'], entry['feature_id'])
+        require(identity not in seen, 'receipt duplicate prerequisite'); seen.add(identity)
+        if entry['feature_id'] == policy['feature_id']: current.add(entry['kind'])
+        value = parse_json(_receipt_artifact(root, entry['artifact'])); kind = entry['kind']
+        feature, revision, digest = entry['feature_id'], entry['assessed_revision'], entry['contract_sha256']
+        if kind == 'approved-contract':
+            _receipt_contract(root, value, feature)
+            require(entry['artifact']['sha256'] == digest and entry['artifact']['revision'] == revision, 'receipt approved contract entry')
+        elif kind == 'evidence-capture':
+            require(value.get('role') == 'Root' and value.get('feature') == feature and value.get('revision') == revision and
+                value.get('approved_contract_sha256') == digest and value.get('passed') is True and
+                type(value.get('actual_exit')) is int and value['actual_exit'] == 0, 'receipt evidence capture predicate')
+        else:
+            _receipt_gate(value)
+            fields = {'mode-a': ('feature', 'reviewed_commit', 'contract_sha256'),
+                'contract-review': ('feature', 'reviewed_revision', 'proposal_sha256'),
+                'provisional-bundle': ('feature_id', 'reviewed_revision', 'approved_contract_sha256'),
+                'mode-b': ('feature', 'reviewed_commit', 'approved_contract_sha256'),
+                'fresh-qa': ('feature_id', 'reviewed_revision', 'approved_contract_sha256')}[kind]
+            require(tuple(value.get(k) for k in fields) == (feature, revision, digest), 'receipt prerequisite binding')
+            if kind == 'contract-review':
+                _receipt_schema(root, value, 'contract_review'); require(value.get('contract_id') == feature, 'receipt contract-review identity')
+                who = value.get('reviewer', value.get('actor')); _receipt_text(who, 'contract reviewer')
+                if 'reviewer' in value and 'actor' in value: require(value['reviewer'] == value['actor'], 'receipt ambiguous reviewer')
+            elif kind == 'fresh-qa':
+                _receipt_schema(root, value, 'qa_verdict')
+                require(value.get('qa_pass') is True and type(value.get('checks_run')) is int and value['checks_run'] > 0 and
+                    type(value.get('checks_passed')) is int and value['checks_passed'] == value['checks_run'] and
+                    type(value.get('adversarial')) is dict and value['adversarial'].get('performed') is True, 'receipt fresh QA predicate')
+            else: _receipt_text(value.get('reviewer'), 'prerequisite reviewer')
+        records.append((entry, value))
+    require(set(minimum) <= current, 'receipt missing current prerequisite')
+    contract = parse_json(_receipt_artifact(root, policy['contract'])); _receipt_contract(root, contract, policy['feature_id'])
+    contracts = [(contract, policy['contract'], policy['feature_id'])] + [(v, e['artifact'], e['feature_id']) for e, v in records if e['kind'] == 'approved-contract']
+    for value, reference, feature in contracts:
+        evidence = value.get('approval_evidence', {}); reviewers = []
+        _bundle_hex(evidence.get('proposal_sha256'), 64, 'receipt proposal digest')
+        for kind, key in (('mode-a', 'mode_a'), ('contract-review', 'contract_review')):
+            matches = [(e, v) for e, v in records if e['kind'] == kind and e['feature_id'] == feature and
+                e['artifact']['path'] == evidence.get(key) and e['contract_sha256'] == evidence['proposal_sha256']]
+            require(len(matches) == 1, 'receipt missing bound dual approval')
+            e, v = matches[0]; reviewers.append(v.get('reviewer', v.get('actor')))
+        require(reviewers[0] != reviewers[1], 'receipt independent contract reviewers')
+
+
+def _receipt_operator(root, policy):
+    app = parse_json(_receipt_artifact(root, policy['operator']))
+    _bundle_object(app, ('schema_version', 'role', 'repository', 'feature_id', 'stage', 'candidate_sha256',
+        'approved', 'authority_ref', 'owner', 'gate', 'scope'), 'receipt operator application')
+    require(type(app['schema_version']) is int and app['schema_version'] == 1 and app['role'] == 'Root' and
+        app['approved'] is True, 'receipt operator decision')
+    for key in ('repository', 'feature_id', 'stage'): require(app[key] == policy[key], 'receipt operator target')
+    require(app['candidate_sha256'] == sha(canonical(policy['candidate'])), 'receipt operator candidate')
+    authority = parse_json(_receipt_artifact(root, app['authority_ref']))
+    for key in ('operator_instruction_verbatim', 'owner', 'gate'): _receipt_text(authority.get(key), 'operator authority ' + key)
+    require(app['owner'] == authority['owner'] and app['gate'] == authority['gate'], 'receipt actual operator owner/gate')
+    require(authority.get('repository') in (policy['repository'], policy['repository'] + ' only'), 'receipt authority repository')
+    scope = app['scope']; keys = ('phase', 'features', 'original_estimate_lines', 'ceiling_130pct')
+    _bundle_object(scope, keys, 'receipt operator scope'); _receipt_text(scope['phase'], 'operator phase')
+    require(type(scope['features']) is list and scope['features'] and all(type(x) is str and x.strip() for x in scope['features']) and
+        len(set(scope['features'])) == len(scope['features']) and policy['feature_id'] in scope['features'], 'receipt scope features')
+    require(all(type(scope[k]) is int and scope[k] >= 0 for k in keys[2:]) and
+        scope['ceiling_130pct'] >= scope['original_estimate_lines'], 'receipt scope budget')
+    require(type(authority.get('scope')) is dict and canonical(scope) == canonical({k: authority['scope'].get(k) for k in keys}),
+            'receipt actual authority scope')
+
+
+def verify_stage_receipt(repo, receipt, *, policy):
+    """Validate trusted-policy receipt bindings and actual captures without executing commands."""
+    try:
+        root = Path(repo); require(not root.is_symlink(), 'receipt symlink repository'); root = root.resolve(strict=True)
+        require(git(root, 'rev-parse', '--show-toplevel').decode().strip() == str(root), 'receipt repository toplevel')
+        minimum = _receipt_policy(root, policy); json_value(receipt)
+        _bundle_object(receipt, ('schema_version', 'repository', 'feature_id', 'stage', 'operation_id', 'status', 'candidate',
+            'producer', 'contract_ref', 'operator_ref', 'prerequisites', 'checks', 'verdict'), 'receipt')
+        require(type(receipt['schema_version']) is int and receipt['schema_version'] == 1 and receipt['status'] == 'passed', 'receipt not passed')
+        for key in ('repository', 'feature_id', 'stage', 'operation_id', 'producer', 'prerequisites'):
+            require(canonical(receipt[key]) == canonical(policy[key]), 'receipt expected binding: ' + key)
+        require(canonical(receipt['contract_ref']) == canonical(policy['contract']) and
+            canonical(receipt['operator_ref']) == canonical(policy['operator']), 'receipt authority refs')
+        require(compare_identity(receipt['candidate'], policy['candidate']), 'receipt candidate identity mismatch')
+        require(policy['candidate']['repository'] == policy['repository'], 'receipt candidate repository binding')
+        _receipt_candidate(root, policy['candidate']); _receipt_operator(root, policy); _receipt_prerequisites(root, policy, minimum)
+        _bundle_object(receipt['verdict'], ('final_verdict', 'issues', 'missing_acceptance_coverage', 'unsupported_claims'), 'receipt verdict')
+        _receipt_gate(receipt['verdict'])
+        require(type(receipt['checks']) is list and len(receipt['checks']) == len(policy['commands']), 'receipt command coverage')
+        seen = set()
+        for command, check in zip(policy['commands'], receipt['checks']):
+            _bundle_object(command, ('argv', 'expected_exit', 'proof_kind', 'diagnostic', 'capture'), 'receipt command policy')
+            require(type(command['argv']) is list and command['argv'] and all(type(x) is str and x for x in command['argv']), 'receipt command argv')
+            signature = canonical(command['argv']); require(signature not in seen, 'receipt duplicate command'); seen.add(signature)
+            require(type(command['expected_exit']) is int and command['expected_exit'] == 0 and
+                command['proof_kind'] in ('success', 'semantic-negative'), 'receipt expected success policy')
+            _receipt_text(command['diagnostic'], 'receipt diagnostic')
+            require('\n' not in command['diagnostic'] and '\r' not in command['diagnostic'], 'receipt diagnostic single line')
+            _bundle_object(check, ('argv', 'executed', 'outcome', 'exit_code', 'stdout', 'stderr', 'capture'), 'receipt check')
+            require(canonical(check['capture']) == canonical(command['capture']), 'receipt independent capture pin')
+            capture = parse_json(_receipt_artifact(root, command['capture']))
+            _bundle_object(capture, ('schema_version', 'argv', 'cwd', 'revision', 'candidate_sha256', 'environment', 'producer',
+                'executed', 'outcome', 'exit_code', 'stdout', 'stderr'), 'receipt actual capture')
+            require(type(capture['schema_version']) is int and capture['schema_version'] == 1, 'receipt capture version')
+            _receipt_text(capture['cwd'], 'capture cwd'); _receipt_producer(capture['producer'])
+            require(canonical(capture['producer']) == canonical(policy['producer']) and
+                capture['candidate_sha256'] == sha(canonical(policy['candidate'])) and
+                canonical(capture['environment']) == canonical(policy['candidate']['environment']), 'receipt capture producer/candidate/environment')
+            _receipt_candidate(root, policy['candidate'], capture['revision'])
+            for actual in (capture, check):
+                require(actual['executed'] is True and type(actual['exit_code']) is int and actual['exit_code'] == 0 and
+                    actual['outcome'] == command['proof_kind'] and canonical(actual['argv']) == canonical(command['argv']),
+                    'receipt actual command did not pass')
+            output = []
+            for key in ('stdout', 'stderr'):
+                require(canonical(check[key]) == canonical(capture[key]), 'receipt actual output reference')
+                output.append(_receipt_artifact(root, capture[key], live=True).decode('utf-8'))
+            require(command['diagnostic'] in '\n'.join(output).splitlines(), 'receipt expected actual diagnostic missing')
+        return copy.deepcopy(receipt)
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, RecursionError) as exc:
+        raise AssuranceError('receipt validation failed: ' + str(exc)[:400]) from exc
+
+
+def plan_receipt_transition(repo, state, receipt, *, policy):
+    """Propose one owned transition, identical replay, or explicit missing-receipt recovery."""
+    try:
+        root = Path(repo).resolve(strict=True); _receipt_policy(root, policy); json_value(state)
+        _receipt_schema(root, state, 'run_state')
+        require(state['repository'] == policy['repository'], 'receipt transition repository')
+        recovering = receipt is None
+        if recovering:
+            reference = policy['recovery']
+            if reference is None or not git(root, '--literal-pathspecs', 'ls-tree', '-z', reference['revision'], '--', reference['path']):
+                return {'action': 'rerun-required', 'state': copy.deepcopy(state), 'receipt': None, 'reason': 'Receipt proof is missing; rerun is required.'}
+            receipt = parse_json(_receipt_artifact(root, reference))
+        verified = verify_stage_receipt(root, receipt, policy=policy)
+        digest = sha(canonical(verified)); operation = policy['operation_id']
+        event = {'at': policy['at'], 'event': 'wa-receipt-transition',
+            'detail': 'Receipt ' + operation + ' advanced ' + policy['feature_id'] + ':' + policy['stage'] + ' (' + digest + ')',
+            'operation_id': operation, 'feature_id': policy['feature_id'], 'stage': policy['stage'],
+            'candidate_sha256': sha(canonical(policy['candidate'])), 'receipt_sha256': digest}
+        matches = [e for e in state['history'] if e.get('event') == 'wa-receipt-transition' and e.get('operation_id') == operation]
+        if matches:
+            require(len(matches) == 1 and canonical(matches[0]) == canonical(event) and state['status'] == policy['to_status'],
+                    'receipt conflicting or duplicate advancement')
+            action, reason = 'noop', 'Identical receipt transition is already recorded.'
+            after = copy.deepcopy(state)
+        else:
+            require(state['status'] == policy['from_status'], 'receipt transition source status')
+            action, reason = 'advance', 'Verified receipt proposes one owned transition.'
+            after = copy.deepcopy(state)
+            if not recovering:
+                after['status'] = policy['to_status']; after['updated_at'] = policy['at']; after['history'].append(event)
+        if recovering:
+            action, reason = 'republish', 'Verified original receipt may be republished; no state transition occurred.'
+            after = copy.deepcopy(state)
+        verify_record_update(state, after, ['/status', '/updated_at', '/history']); _receipt_schema(root, after, 'run_state')
+        return {'action': action, 'state': after, 'receipt': verified, 'reason': reason}
+    except AssuranceError:
+        raise
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, RecursionError) as exc:
+        raise AssuranceError('receipt transition failed: ' + str(exc)[:400]) from exc
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
