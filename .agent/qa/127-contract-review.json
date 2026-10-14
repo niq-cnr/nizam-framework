@@ -1,0 +1,35 @@
+{
+  "review": "contract-testability",
+  "feature": "127",
+  "contract_id": "127",
+  "revision_reviewed": 0,
+  "reviewer": {
+    "agent": "/root/contract_review127",
+    "role": "Evaluator",
+    "attempt_key": "127-contract-review1",
+    "independent_from": "Generator and future acceptance author/reviewer/final-QA"
+  },
+  "contract_ref": ".agent/contracts/127.json",
+  "proposal_commit": "cf02c6ee79a8d82ca5b468f153f03e82de417956",
+  "contract_sha256": "16305458df6afb3b4df9b9f9d59c005e0a1103a75811dd0fc70ddca9d7516ac1",
+  "exercised_revision": "5df84b8d9ae1fb12a5f82aeb8e2520558f2f51e1",
+  "issues": [],
+  "missing_acceptance_coverage": [],
+  "unsupported_claims": [],
+  "evidence_refs": [
+    ".agent/evidence/127/contract-review-assessment.json",
+    ".agent/evidence/127/contract-review-identities.json",
+    ".agent/evidence/127/contract-review-results.json"
+  ],
+  "observations": [
+    "Approval concerns the pinned proposed contract and planned verification soundness only. It does not approve implementation, new acceptance tests, source repair, lifecycle completion or runtime acceptance.",
+    "All five feature127 exact commands are covered; positive and negative behavior, independent semantic red/controls, bounded private process cleanup, immutable input/source/test identities, unchanged old nine and exact fourteen-command CI scheduling are explicit future obligations.",
+    "R8 bounded serialization is ratified: checked reattach emits handoff provenance; consumer replay uses existing authorized submit/poll in a separate source-bound session. Source provenance never proves a warm heap matches source.",
+    "Three baseline semantic/harness controls and four targeted C12 controls were independently captured; these do not substitute for future feature127 semantic red, new tests, fresh QA or CI."
+  ],
+  "final_verdict": {
+    "approved": true,
+    "feature": "127",
+    "summary": "The exact pinned proposal has complete, independently testable positive/negative coverage with no unresolved testability ambiguity. Both bounded handoff interpretations and confirmation-only cancellation are compatible with the normative stub scope."
+  }
+}
