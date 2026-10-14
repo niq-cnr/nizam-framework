@@ -1,26 +1,35 @@
 {
-  "logical_check": "Exactly one QA-originated command-nonexecution/process guard spot",
-  "execution_attempt": 1,
-  "result": "helper-setup-failure, not completed API behavior proof",
-  "actual": {
-    "name": "adversarial",
+  "logical_extra_checks": 1,
+  "execution_attempts": 2,
+  "description": "Independent process guard: valid verify/advance/noop may invoke only readonly Git, not receipt argv; deliberate nonGit attempt proves deny control",
+  "failed_execution": {
+    "revision": "32655c54392e2f98a895aa0166c9e1e2b33cd935",
+    "result": ".agent/evidence/120/qa1/adversarial.result.json",
+    "stderr": ".agent/evidence/120/qa1/adversarial.stderr.txt",
+    "actual_exit_code": 1,
+    "cause": "Own guard omitted valid --literal-pathspecs ls-tree global-option form"
+  },
+  "corrected_execution": {
+    "logical_extra_check": 1,
+    "execution_attempt": 2,
     "argv": [
       "python3",
-      ".agent/evidence/120/qa1/adversarial.py"
+      ".agent/evidence/120/qa2/adversarial.py"
     ],
-    "cwd": "/home/cnross/.tmp/nizam-feature120-qa1",
+    "cwd": "/home/cnross/.tmp/nizam-feature120-qa2",
+    "revision": "11c679ebf41bd6677d03644156c2bceedc11371d",
     "environment_overrides": {
       "PYTHONDONTWRITEBYTECODE": "1",
       "LC_ALL": "C.UTF-8"
     },
-    "revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
-    "started_at": "2026-10-14T17:55:40.700534+00:00",
-    "elapsed_seconds": 0.2546628350391984,
-    "exit_code": 1,
+    "started_at": "2026-10-14T17:58:48.228558+00:00",
+    "elapsed_seconds": 0.8171122130006552,
+    "exit_code": 0,
     "expected_exit_code": 0,
-    "stdout": ".agent/evidence/120/qa1/adversarial.stdout.txt",
-    "stderr": ".agent/evidence/120/qa1/adversarial.stderr.txt",
-    "passed": false
+    "stdout": ".agent/evidence/120/qa2/adversarial.stdout.txt",
+    "stderr": ".agent/evidence/120/qa2/adversarial.stderr.txt",
+    "passed": true
   },
-  "failure": "Own allowlist omitted existing Git global option --literal-pathspecs before readonly ls-tree; actual GuardDenied. No repair or rerun executed."
+  "correction": "Only that exact readonly global-option form normalized in new qa2 helper; original helper/output/seal unchanged",
+  "mandatory_reexecution": false
 }

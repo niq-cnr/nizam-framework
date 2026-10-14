@@ -1,49 +1,195 @@
 {
   "feature_id": "120",
-  "qa_pass": false,
+  "qa_pass": true,
   "actor": "/root/qa119",
-  "attempt": 1,
-  "reviewed_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+  "attempt": 2,
+  "reviewed_revision": "11c679ebf41bd6677d03644156c2bceedc11371d",
+  "mandatory_exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+  "mandatory_evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935",
   "approved_input": "5c011078fae6b596bc3cddd2cdb9e7fc276f19af",
+  "source_commit": "1689f0dc1f1ef20e96c7cb7ee1e3375232a83ce5",
+  "test_commit": "b9cab92e940f691ee003af5e2acb835f3359fc94",
   "approved_contract_sha256": "3238ad1b0732007801769e086a2cd96a6832bb686847ecd4c23e33c532e93bb9",
   "checks_run": 11,
   "checks_passed": 11,
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-missing-operator",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-reject-missing-operator.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-wrong-candidate",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-reject-wrong-candidate.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-unrun",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-reject-unrun.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-setup",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-reject-setup.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-pending",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-reject-pending.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-running",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-reject-running.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-failed",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-reject-failed.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-invalidated",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-reject-invalidated.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case idempotent-replay",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-idempotent-replay.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case reject-double-advance",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-reject-double-advance.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py --case recover-missing-receipt",
+      "exit_code": 0,
+      "exercised_revision": "f128f3654894fe3a31b918eb55f2a1453917cd96",
+      "evidence": ".agent/evidence/120/qa1/case-recover-missing-receipt.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    }
+  ],
+  "supplementary_checks": {
+    "historical-setup": {
+      "actual_exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/120/qa1/historical-setup.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    "default37": {
+      "actual_exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/120/qa1/default37.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    "preservation": {
+      "actual_exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/120/qa1/preservation.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    "historical-foundation": {
+      "actual_exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/120/qa1/historical-foundation.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    "live-stale-foundation": {
+      "actual_exit_code": 1,
+      "passed": true,
+      "evidence": ".agent/evidence/120/qa1/live-stale-foundation.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    "compliance-default": {
+      "actual_exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/120/qa1/compliance-default.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    },
+    "compliance-payload": {
+      "actual_exit_code": 0,
+      "passed": true,
+      "evidence": ".agent/evidence/120/qa1/compliance-payload.result.json",
+      "evidence_commit": "32655c54392e2f98a895aa0166c9e1e2b33cd935"
+    }
+  },
   "adversarial": {
     "performed": true,
     "logical_checks": 1,
-    "executions": 1,
-    "passed": false
+    "executions": 2,
+    "failed_helper_executions": 1,
+    "successful_executions": 1
   },
   "adversarial_check": {
-    "description": "Independent process guard over verify/advance/noop",
-    "result": "helper setup failed on existing readonly Git option",
+    "description": "Independent process guard: valid verify/advance/noop may invoke only readonly Git, not receipt argv; deliberate nonGit attempt proves deny control",
+    "result": "pass after isolated helper-only correction; failed execution retained",
     "evidence": ".agent/evidence/120-qa-adversarial.txt"
   },
   "evidence_files": [
-    ".agent/evidence/120/qa1/partial-summary.json",
-    ".agent/evidence/120/qa1/progress.json",
+    ".agent/evidence/120/qa2/carry-forward.json",
+    ".agent/evidence/120/qa2/identity-after.json",
+    ".agent/evidence/120/qa2/adversarial.result.json",
+    ".agent/evidence/120/qa2/adversarial.stdout.txt",
+    ".agent/evidence/120/qa2/adversarial.stderr.txt",
+    ".agent/evidence/120/qa2/schema-check.json",
+    ".agent/evidence/120/qa2/manifest.json",
+    ".agent/evidence/120-qa-adversarial.txt",
+    ".agent/evidence/120/qa1/partial-manifest.json",
     ".agent/evidence/120/qa1/identity-before.json",
     ".agent/evidence/120/qa1/identity-after-partial.json",
+    ".agent/evidence/120/qa1/historical-identity.json",
     ".agent/evidence/120/qa1/adversarial.result.json",
     ".agent/evidence/120/qa1/adversarial.stderr.txt",
-    ".agent/evidence/120-qa-adversarial.txt",
-    ".agent/evidence/120/qa1/partial-manifest.json"
+    ".agent/evidence/120/qa1/historical-setup.result.json",
+    ".agent/evidence/120/qa1/case-reject-missing-operator.result.json",
+    ".agent/evidence/120/qa1/case-reject-wrong-candidate.result.json",
+    ".agent/evidence/120/qa1/case-reject-unrun.result.json",
+    ".agent/evidence/120/qa1/case-reject-setup.result.json",
+    ".agent/evidence/120/qa1/case-reject-pending.result.json",
+    ".agent/evidence/120/qa1/case-reject-running.result.json",
+    ".agent/evidence/120/qa1/case-reject-failed.result.json",
+    ".agent/evidence/120/qa1/case-reject-invalidated.result.json",
+    ".agent/evidence/120/qa1/case-idempotent-replay.result.json",
+    ".agent/evidence/120/qa1/case-reject-double-advance.result.json",
+    ".agent/evidence/120/qa1/case-recover-missing-receipt.result.json",
+    ".agent/evidence/120/qa1/default37.result.json",
+    ".agent/evidence/120/qa1/preservation.result.json",
+    ".agent/evidence/120/qa1/historical-foundation.result.json",
+    ".agent/evidence/120/qa1/live-stale-foundation.result.json",
+    ".agent/evidence/120/qa1/compliance-default.result.json",
+    ".agent/evidence/120/qa1/compliance-payload.result.json"
   ],
-  "issues": [
-    {
-      "kind": "QA helper setup",
-      "finding": "Process guard rejected valid existing --literal-pathspecs ls-tree before completing own spot; no Source defect inferred.",
-      "evidence": ".agent/evidence/120/qa1/adversarial.stderr.txt"
-    }
-  ],
+  "issues": [],
   "missing_acceptance_coverage": [],
   "unsupported_claims": [],
-  "required_fixes": [
-    "Root-owned isolated helper recovery must normalize only observed readonly global option, then rerun the same one logical spot; carry passed mandatory results by immutable protected identity."
-  ],
+  "required_fixes": [],
   "final_verdict": {
-    "approved": false,
-    "summary": "All mandatory checks pass on unchanged protected input, but own additional spot is incomplete due to guard setup error. No final QA approval."
+    "approved": true,
+    "summary": "Eleven exact commands/default37/inherited AST+CLI/schema+installed239 preservation/historical118 success/live stale-source rejection/default16 and payload12 compliance passed independently. All18 immutable mandatory results and70 historical file pins verified against unchanged protected input. Same one extra process-guard spot passed on execution2 after isolated readonly-option correction; failed execution1 retained."
   },
-  "boundary": "Partial failed QA evidence only. Original raw results preserved; no Source/test/state edits, no helper repair/retry, no product/liveRoot adoption claim."
+  "claim_limit": "Aligned-record library and owned fixtures only. No actual legacy Root origin/state/authority adoption, authentication, controls-ready123, release or benchmark claim. Historical118 has no future120 contract; its receipt retains original context. Mandatory and spot results have distinct honestly recorded exercised revisions.",
+  "history_preservation": "Partial failed QA verdict, extra evidence and all original files remain verifiable at32655c54392e2f98a895aa0166c9e1e2b33cd935; no historical qa1 file was edited. No mandatory command rerun. Root evidence capture and hosted receipt gate still required.",
+  "dod_ref": ".nizam/standard/definition_of_done.md"
 }
