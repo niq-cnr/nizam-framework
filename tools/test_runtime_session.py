@@ -590,6 +590,8 @@ def atomic_json(path, value):
 ''')
         injected = ''.join(lines); compile(injected, '<private-crash-candidate>', 'exec')
         (candidate / 'tools/runtime_session.py').write_text(injected)
+        print('CONTROL crash source=' + hashlib.sha256(source.encode()).hexdigest() +
+              ' fault=' + hashlib.sha256(injected.encode()).hexdigest())
         peer = Session(base, candidate=candidate)
         try:
             peer.open(); marker = peer.directory / 'test-crash.once'; marker.touch()
@@ -614,6 +616,8 @@ def atomic_json(path, value):
                 # Track an erroneously admitted replacement before failing, so finally can reap it.
                 peer.record = response['result']; peer.remember()
             require(response['ok'] is False, 'crash disagreement must refuse reopen before a new incarnation')
+            require(response['error'] in ('infrastructure', 'session_busy', 'ambiguous_state'),
+                    'crash refusal reports continuity uncertainty or busy, not unrelated policy/setup')
             fresh = peer.request('set', 'must-not-dispatch')
             peer.call('submit-operation', fresh, (1, 70)); peer.no_dispatch(fresh['operation_id'])
             require(not peer.operation(fresh['operation_id']).exists() and
