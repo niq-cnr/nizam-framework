@@ -3,7 +3,7 @@
   "current_phase": "017-workflow-assurance-foundation",
   "current_feature": null,
   "status": "complete",
-  "updated_at": "2026-10-14T06:10:35.747407+00:00",
+  "updated_at": "2026-10-14T06:20:45.325692+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -4885,6 +4885,12 @@
       "event": "phase017-foundation-captured",
       "detail": "Actual SourceC2 prerequisite20, Generator3, independent ModeB and freshQA3 plus ownspot captured by Root. Canonical phase/step completed first, then mirrors; NDEBT054 resolved. Original allowance and historical failures retained. Phase016 remains proposed.",
       "evidence": ".agent/evidence/118/evidence-capture.json"
+    },
+    {
+      "at": "2026-10-14T06:20:45.325692+00:00",
+      "event": "phase017-ci-history-corrected",
+      "detail": "Actual hosted shallow checkout failed on immutable historical evidence; real shallow/fullclone replay proves minimal fetch-depth0 repair. Independent review approved. Charge8counted lines separately, phase total5203/7020; captured features unchanged.",
+      "evidence": ".agent/evidence/118/integration-ci-root-decision.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5059,8 +5065,8 @@
   "scope_budget": {
     "original_estimate_lines": 5400,
     "ceiling_130pct": 7020,
-    "total_lines_changed": 5195,
-    "evidence_lines_total": 163288,
+    "total_lines_changed": 5203,
+    "evidence_lines_total": 163796,
     "excluded_lines_total": 1247,
     "per_feature": [
       {
@@ -5140,7 +5146,19 @@
         "note": "Whole118 measured after actual capture and canonical closure, before this once-only budget append. Original5400/7020 retained; historical blocked559 not charged twice. Includes reviewed closeout checker correction; old source/bundle failures preserved."
       }
     ],
-    "phase_level_items": [],
+    "phase_level_items": [
+      {
+        "id": "phase017-ci-history",
+        "actual": 8,
+        "product_lines": 8,
+        "process_overhead_lines": 0,
+        "evidence_lines": 508,
+        "excluded_lines": 0,
+        "range": "f84db8a65a814898f9e78f4a91ca56d1eccb68d3..WORKTREE",
+        "evidence": ".agent/evidence/118/integration-ci-measurement.txt",
+        "note": "Postcapture required CI checkout correction; approved features retain original point-in-time measurements. No extra allowance."
+      }
+    ],
     "counting_rule": {
       "spec_ref": ".agent/product_spec_017.md 'Scope budget and measurement'; frozen phase014 counting classes reused",
       "script": ".agent/evidence/scope-budget-014/measure.py",
@@ -5191,7 +5209,7 @@
         "note": "Incomplete118; failedSource1 is quarantined, no Source2 or completion. Whole118 includes selection/proposals/reviews and mandatoryhalt once; prior measured4012 rows unchanged, no extra allowance or rebaseline. Halt is exhaustedcontract/ModeA3, not scope ceiling."
       }
     ],
-    "last_measured_at": "2026-10-14T06:10:35.747407+00:00"
+    "last_measured_at": "2026-10-14T06:20:45.325692+00:00"
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -5446,7 +5464,7 @@
       }
     ]
   },
-  "last_action": "Foundation115-118 captured; phase017 complete. Next proposed phase016 controller core awaits activation.",
+  "last_action": "Phase017 captured complete; reviewed CI full-history checkout correction added for PR94, awaiting green remote checks and merge.",
   "completed_contract_ids": [
     "099",
     "103",
