@@ -1,0 +1,47 @@
+{
+  "kind": "independent-candidate-transport-and-semantic-control-plan",
+  "author": "/root/acceptance126",
+  "planning_revision": "3a063e3",
+  "authorization": ".agent/evidence/126/b0-round2-advance.json",
+  "approved_contract_sha256": "7eed25daca89c13a548976a213ddba6e6837acaee90511f0deff152a60697778",
+  "sealed_test": {
+    "path": "tools/test_runtime_session.py",
+    "sha256": "60f6797100f15eb32b4f9e870eafe699627d17b835c8cc2ad44b703fcfb67e14",
+    "seal": ".agent/evidence/126/test-seal-b0-2.json",
+    "review": ".agent/validator/126-b0-review-2.json",
+    "changes_permitted_by_this_plan": false
+  },
+  "preconditions": [
+    "Receive immutable committed Generator C1 and read its actual controller/stub/harness source before selecting a mutation site. C1 is not available when this plan is written.",
+    "Verify the current approved contract, API/projection and normative identities against the accepted seal; verify test bytes exactly60f679. Record C1 commit/tree, each exercised source/test/stub/schema/helper Git blob and SHA256, Python executable/version, platform and existing jsonschema package identity.",
+    "Materialize the small required committed file set from Git objects into private temporary candidate roots, without copying repository/evidence history. Case1 requires controller, sealed runner, sibling stub, verify_lib and the two runtime schemas. Account for any actual source dependency before running; do not invent a public executable-selector surface.",
+    "Each run uses the runner's fresh private state/processes/resources. A missing dependency, source absence, syntax error, startup/setup failure or unsupported action is a blocked control, never semantic red."
+  ],
+  "positive_control": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub",
+    "cwd": "Private unmodified C1 materialization with exact sealed test bytes",
+    "required_result": "Actual exit0 and PASS case1/stub. The sealed ownership test opens a real detached child, successfully sets owner-value, refuses foreign evaluate/observe, reads the unchanged value, checks role abuse and validates emitted records. Its finally cleanup runs.",
+    "failure_disposition": "Preserve exact assertion/exit/output and source identity. Diagnose setup versus an actual C1 defect before any repair; do not treat an unrelated failure as the planned mutant control."
+  },
+  "semantic_mutant": {
+    "name": "foreign-owner-admission-bypass",
+    "obligation": "AT4/case1 and interface.policy: foreign Generator requesters cannot execute in another owner's session, including observe.",
+    "source_change": "After reading C1, identify its actual pre-dispatch foreign-owner comparison. In a separate private candidate disable only that guard for a well-shaped different Generator principal. Record exact old/new hunk and byte hashes. Preserve role, generation, lease, attempt, transport, child protocol and operation behavior; do not fake responses or modify tests. If the actual implementation cannot support this narrow single semantic change, stop and record why before proposing a different control.",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --case 1 --runtime stub",
+    "intended_assertion": "BEHAVIOR_ASSERTION: submit-operation exit 0, expected 1:",
+    "assertion_location": "The unchanged ownership test calls refused(..., foreign_owner) for a different Generator; Session.call asserts the actual subprocess exit before accepting a rejection record.",
+    "required_result": "Actual exit1 with that exact intended assertion prefix after working open/owner mutation, because the mutant admits the foreign request. No SETUP_FAILURE or SETUP_OR_INFRASTRUCTURE_FAILURE may substitute for this assertion. Record the actual response/output and mutation provenance.",
+    "positive_pair": "The same exact sealed command must pass on unmodified C1 before mutation. After deleting the mutant candidate, rerun that command from a fresh unmodified C1 materialization and require exit0 again, demonstrating that the single source mutation caused the behavioral failure."
+  },
+  "cleanup": [
+    "Use the sealed Session finally cleanup with independently verified private process identities. Wait for disposable candidate processes to stop before removing only their held TemporaryDirectory roots.",
+    "Preserve C1 and all historical evidence. Mutation touches only tools/runtime_session.py inside its private materialization; no shared worktree, committed test, installed payload, Generator branch or Root lifecycle field changes."
+  ],
+  "evidence": {
+    "directory": ".agent/evidence/126/semantic-controls/",
+    "per_run": "Separate stdout.txt, stderr.txt and result.json containing exact argv/cwd, actual exit, host/runtime identity, C1 identity, test/source manifest and evidence paths. Keep raw output outside JSON strings.",
+    "mutation": "Record exact patch/hunk, original and mutated source hashes, preserved test hash, and the paired unmodified runs. Link immutable Git objects rather than copying nested history.",
+    "boundary": "An executed narrow mutant red is sensitivity evidence against an executable C1 with positive controls. It does not establish pristine-base red, final bundle acceptance, product QA or CI conformance."
+  },
+  "status": "plan only; C1/transport positive/semantic red and all final gates pending"
+}
