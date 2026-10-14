@@ -1,0 +1,12 @@
+PASS exact test/API/projection and ten normative input hashes; approved contract projection; syntax
+CONTROL claim-map valid: actual_exit=0; 
+CONTROL claim-map missing: actual_exit=1; FAIL claim-map: unclaimed subdirectory: runtime_session
+CONTROL claim-map duplicate: actual_exit=1; FAIL claim-map: doubly-claimed subdirectory: runtime_session
+CONTROL claim-map missing-suite: actual_exit=1; FAIL claim-map: claim for runtime_session names a suite file that does not exist: tools/absent.py
+CONTROL claim-map valid: actual_exit=0; 
+PASS independent claim harness rejects always-pass
+PASS independent claim harness rejects always-reject
+CONFIRMED cleanup ownership gap: unrelated reviewer-owned child killed; returncode= -15
+CONFIRMED abbreviated selector --chec accepted by parser; later source-absence failure only: SETUP_FAILURE: controller source absent; this is not semantic red
+CONFIRMED late-frame race window: {"result_already_sent": true, "marker_exists": false} ; caller uses marker.unlink immediately after finish, without marker wait
+REVIEW CONTROLS COMPLETE: defects above are harness findings; no product semantic red or acceptance claimed.
