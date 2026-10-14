@@ -5,7 +5,7 @@
   "status": "proposed",
   "spec_ref": ".agent/product_spec_016.md",
   "base_revision": "9f361154c63c2f80768b6845c98f89a9aa1a1541",
-  "contract_attempt": 1,
+  "contract_attempt": 2,
   "activation_condition": "Phase016 activation recorded by Root at9f361154c63c2f80768b6845c98f89a9aa1a1541 after independent canonical review. Proposal only; both pre-code approvals and Root approval promotion are still required before implementation.",
   "scope": {
     "files_create": [
@@ -77,7 +77,7 @@
     "generation": "Under the exclusive lock, durably increment a per-session counter and create secrets.token_hex(16) nonce for each new child incarnation, including failed startup/reconstruction. Child must echo generation in ready handshake and every operation response. Reject stale expected generation/lease before forwarding. Late, malformed, mismatched or unsolicited responses never complete another operation; fail closed and preserve uncertainty.",
     "wire": "Controller sends {type:init,generation:{counter,nonce}}; child answers {type:ready,generation}. Only {type:execute,request:SUBMIT_REQUEST,generation} executes stub behavior. Child answers {type:result,operation_id,generation,status:completed,result:JSON_VALUE,image_consistent:true}. No lifecycle message carries executable payload. Default per-line bound 65536 bytes; reject oversize/malformed frames, bound startup/control waits to5s and close to5s; child stdout/stderr are bounded diagnostic files, never protocol or acceptance evidence.",
     "stub": "Per-process memory map only, never Python eval/exec. payload.expression is a JSON string with op:set plus name/value, op:get plus name, or op:gate plus absolute release_path in the scratch root. gate waits until the test creates that file; all execute frames, including observe, enter the same lane. Result frames expose get/set result; received operation IDs are appended/flushed to child stdout before execution so tests can distinguish refusal from hidden dispatch. No state/config/source is evaluated during init or lifecycle.",
-    "serialization": "Single supervisor event loop serializes admission, transfer, record replacement and child responses. At most one outstanding operation; no queue. A second submit returns rejected/session_busy before dispatch. Duplicate operation_id cannot overwrite prior operation/effect; return conflict without executing. Owner/generation/lease/trial/attempt checks occur before any execute frame, including observe.",
+    "serialization": "Single supervisor event loop serializes admission, transfer, record replacement and child responses. At most one outstanding operation; no queue. A second submit returns rejected/session_busy before dispatch. Duplicate operation_id cannot overwrite prior operation/effect; return conflict without executing. Owner/generation/lease/trial/attempt checks occur before any execute frame, including observe. Duplicate-ID admission is checked before busy admission: any reused operation_id returns conflict even while outstanding; a different new ID while busy returns session_busy. Preserve the original operation/result bytes, including result absence while pending.",
     "records": "Use same-directory temporary files, flush/fsync and os.replace for each durable JSON record. Persist generation before spawn and running/outstanding state before dispatch; publish terminal operation before clearing outstanding. Crash disagreement fails closed on reopen; never dispatch from ambiguous state. Keep prior operation/result files. Every operation has evidence_class:development; image_consistent reflects observation, not source/heap identity. Only the supervisor writes operation records. Malformed input and upstream CLI trial denials return error receipts without operation records or state mutation. Schema-shaped submits reaching the supervisor and rejected there have executed:false and reason foreign_owner, stale_generation, stale_lease, session_busy, review_trial or attempt_mismatch as applicable; malformed requests are usage errors without invented records.",
     "attempt_guard": "Read run_state.circuit_breaker[step_key].attempts on open and every submit; require its integer>=1 to equal request.attempt and session-bound contract_id/step_key/attempt. Missing/malformed/changed counts fail closed before execution. Store the initial binding in controller metadata, preserve it across child restart, and emit previous_* identity when generation changed per schema. Never write run_state, increment/reset counters or infer a fresh governed attempt from a new PID/generation. A newly authorized attempt needs a separately opened session with Root-provided state."
   },
@@ -94,7 +94,7 @@
       "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check lifecycle-no-evaluation"
     },
     {
-      "acceptance_test": "AT2: Validate every emitted session/operation record against existing schemas and C12 relational checks; reject at least one wrong-type/forbidden-field record. Concurrent reads see complete JSON; running state precedes dispatch; malformed/mismatched child frames do not forge completion; no development result accepted as acceptance evidence.",
+      "acceptance_test": "AT2: Validate every emitted session/operation record against existing schemas and C12 relational checks; reject at least one wrong-type/forbidden-field record. Concurrent reads see complete JSON; running state precedes dispatch; malformed/mismatched child frames do not forge completion; no development result accepted as acceptance evidence. Resubmit an outstanding operation_id and a completed operation_id with changed payload: require explicit conflict, no second child receipt or effect, and preservation of the original operation/result bytes (or result absence while pending). Hold the original operation with the gate to avoid completion races; release it normally after the pending duplicate probe. A subsequent legitimate fresh-ID mutation/read must succeed, rejecting always-conflict controls.",
       "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py --check record-schema"
     },
     {
@@ -155,7 +155,7 @@
   "approvals": {
     "validator_mode_a": false,
     "evaluator_contract_review": false,
-    "revisions": 0
+    "revisions": 1
   },
   "dod_ref": ".nizam/standard/definition_of_done.md",
   "ci_integration": "Within tools/fixtures_self_test.sh, loop the three --check values lifecycle-no-evaluation/record-schema/fixture-claim-registered, loop --case 1/2/3/9/13 --runtime stub, then --case 8 --runtime stub --layer policy. Execute each with PYTHONDONTWRITEBYTECODE=1 python3 tools/test_runtime_session.py, print the exact expanded command and actual return code, preserve output and propagate any nonzero into the existing harness fail aggregation. Existing compliance jobs execute this harness; no new job, SBCL suite or future131 dependency. The claim-registration acceptance check tests mapping and command scheduling without recursively running itself."
