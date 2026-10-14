@@ -1110,7 +1110,8 @@ class LaneFixture(ReceiptFixture):
         return path, writes
 
     def authorize(self, **changes):
-        self.request.update(changes)
+        self.request = copy.deepcopy(self.request)
+        self.request.update(copy.deepcopy(changes))
         dispatch = dict(schema_version=1, role='Orchestrator', repository=self.repository, approved=True, contract_ref=self.contract_ref, **copy.deepcopy(self.request))
         self.policy['authority_ref'] = self.pin('proof/dispatch.json', dispatch)
 
@@ -1172,9 +1173,9 @@ def lane_independent(api, f):
     require(lane_call(api, f) == {'eligible': True, 'conflicts': [], 'operation_id': f.request['operation_id']}, 'independent lanes eligible')
     require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == [], 'real detached base worktree accepted')
     for field, value in (('status', 'pending'), ('passes', False)):
-        old = copy.deepcopy(f.features); f.features['features'][0][field] = value; f.sync(); lane_reject(api, f); f.features = old; f.sync()
+        old = copy.deepcopy(f.features); f.features['features'][0][field] = value; f.sync(); lane_reject(api, f); f.features = copy.deepcopy(old); f.sync()
     old = copy.deepcopy(f.features); f.features['features'][0].update(status='cancelled', passes=False); f.sync(); require(lane_call(api, f)['eligible'] is True, 'cancelled predecessor satisfied')
-    f.features = copy.deepcopy(old); f.features['features'].append(copy.deepcopy(old['features'][0])); f.sync(); lane_reject(api, f); f.features = old; f.sync()
+    f.features = copy.deepcopy(old); f.features['features'].append(copy.deepcopy(old['features'][0])); f.sync(); lane_reject(api, f); f.features = copy.deepcopy(old); f.sync()
     f.authorize(writes=['src/a.py', 'src/staged.py', 'src/work.py', 'src/new.py', 'ignored/owned.txt'])
     f.attempt_write('src/a.py', b'owned committed change\n'); git(f.attempt, 'add', 'src/a.py'); git(f.attempt, 'commit', '-qm', 'owned fixture source change')
     f.attempt_write('src/staged.py', b'owned staged change\n'); git(f.attempt, 'add', 'src/staged.py')
@@ -1188,9 +1189,9 @@ def lane_independent(api, f):
         lane_reject(api, f, 'verify_isolated_attempt')
         f.request = copy.deepcopy(original); f.authorize()
         require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == sorted(original['writes']), 'restored valid isolation after ' + kind)
-    f.authorize(base_revision='0' * 40); lane_reject(api, f, 'verify_isolated_attempt'); f.request = original; f.authorize()
-    fake = f.attempt_parent / 'unregistered'; fake.mkdir(); f.authorize(attempt_root=str(fake)); lane_reject(api, f, 'verify_isolated_attempt'); f.request = original; f.authorize()
-    attached = f.worktree('attached', True); f.authorize(attempt_root=str(attached)); lane_reject(api, f, 'verify_isolated_attempt'); f.request = original; f.authorize()
+    f.authorize(base_revision='0' * 40); lane_reject(api, f, 'verify_isolated_attempt'); f.request = copy.deepcopy(original); f.authorize()
+    fake = f.attempt_parent / 'unregistered'; fake.mkdir(); f.authorize(attempt_root=str(fake)); lane_reject(api, f, 'verify_isolated_attempt'); f.request = copy.deepcopy(original); f.authorize()
+    attached = f.worktree('attached', True); f.authorize(attempt_root=str(attached)); lane_reject(api, f, 'verify_isolated_attempt'); f.request = copy.deepcopy(original); f.authorize()
     require(lane_call(api, f, 'verify_isolated_attempt')['owned_changes'] == sorted(original['writes']), 'restored isolated owned positive')
 
 
@@ -1213,7 +1214,7 @@ def lane_shared(api, f):
         f.state = copy.deepcopy(state); f.state[key] = value; f.sync(); lane_reject(api, f)
         f.state = copy.deepcopy(state); f.sync(); require(lane_call(api, f)['eligible'] is True, 'restored coordination predicate ' + key)
     f.features = copy.deepcopy(features); f.features['phase'] = 'foreign-phase'; f.sync(); lane_reject(api, f)
-    f.features = features; f.sync(); require(lane_call(api, f)['eligible'] is True, 'restored feature phase binding')
+    f.features = copy.deepcopy(features); f.sync(); require(lane_call(api, f)['eligible'] is True, 'restored feature phase binding')
 
 
 def lane_spoof(api, f):
@@ -1221,20 +1222,20 @@ def lane_spoof(api, f):
     for key, value in (('status', 'released'), ('terminal', True), ('approved', True), ('authority_ref', f.policy['authority_ref']),
         ('owner', {'agent_id': 'spoof', 'session_id': 'spoof'}), ('agent_role', 'Orchestrator')):
         f.request = copy.deepcopy(original); f.request[key] = value; lane_reject(api, f)
-    f.request = original
+    f.request = copy.deepcopy(original)
     for key, value in (('attempt', None), ('writes', ['../escape']), ('writes', ['src/../a.py']), ('writes', ['.git/config']), ('writes', ['src/a.py'] * 2), ('state_fields', ['/']), ('state_fields', ['/bad~escape']), ('state_fields', ['/work', '/work/left'])):
         f.request = copy.deepcopy(original); f.authorize(**{key: value}); lane_reject(api, f)
         f.request = copy.deepcopy(original); f.authorize(); require(lane_call(api, f)['eligible'] is True, 'restored bound shape probe ' + key)
     for value in (None, [], float('nan')):
         f.request = value; lane_reject(api, f)
-    f.request = copy.deepcopy(original); cycle = []; cycle.append(cycle); f.request['extra'] = cycle; lane_reject(api, f); f.request = original
+    f.request = copy.deepcopy(original); cycle = []; cycle.append(cycle); f.request['extra'] = cycle; lane_reject(api, f); f.request = copy.deepcopy(original)
     policy = copy.deepcopy(f.policy)
     for key, value in (('sha256', 'f' * 64), ('revision', '0' * 40)):
         f.policy = copy.deepcopy(policy); f.policy['authority_ref'][key] = value; lane_reject(api, f)
-    f.policy = policy; dispatch = json.loads((f.root / 'proof/dispatch.json').read_text())
+    f.policy = copy.deepcopy(policy); dispatch = json.loads((f.root / 'proof/dispatch.json').read_text())
     for key, value in (('approved', 1), ('role', 'Generator')):
         bad = dict(dispatch, **{key: value}); f.policy['authority_ref'] = f.pin('proof/bad-dispatch.json', bad); lane_reject(api, f)
-    f.policy = policy; lane = f.lane(status='released', writes=['src/a.py'])
+    f.policy = copy.deepcopy(policy); lane = f.lane(status='released', writes=['src/a.py'])
     f.state['execution_lanes'] = [lane]; f.sync(); lane_reject(api, f)
     reference = f.proof(lane); lane['terminal_ref'] = reference; f.sync(); require(lane_call(api, f)['eligible'] is True, 'pinned actual release frees conflicts')
     record = json.loads((f.root / reference['path']).read_text())
@@ -1250,7 +1251,7 @@ def lane_fourth(api, f):
     original = copy.deepcopy(f.request); state = copy.deepcopy(f.state)
     for ordinal in (4, 0, True, '3', None):
         f.authorize(attempt=ordinal); lane_reject(api, f)
-    f.request = original; f.authorize()
+    f.request = copy.deepcopy(original); f.authorize()
     for key, value in (('attempts', 0), ('attempts', 2), ('attempts', True), ('attempts', '3'), ('limit', 4), ('limit', True)):
         f.state = copy.deepcopy(state); f.state['circuit_breaker']['lane-step'][key] = value; f.sync(); lane_reject(api, f)
     f.state = copy.deepcopy(state); del f.state['circuit_breaker']['lane-step']; f.sync(); lane_reject(api, f)
@@ -1267,7 +1268,7 @@ def lane_rollback(api, f):
     record = json.loads((f.root / failure['path']).read_text())
     for key, value in (('captured', 1), ('actual_exit', 0), ('owner', {'agent_id': 'wrong', 'session_id': 'wrong'})):
         f.policy['rollback_ref'] = f.pin('proof/bad-failure.json', dict(record, **{key: value})); lane_reject(api, f, 'rollback_owned_attempt')
-    f.policy = policy; saved = (f.root / failure['path']).read_bytes(); (f.root / failure['path']).unlink(); lane_reject(api, f, 'rollback_owned_attempt'); f.write(failure['path'], saved)
+    f.policy = copy.deepcopy(policy); saved = (f.root / failure['path']).read_bytes(); (f.root / failure['path']).unlink(); lane_reject(api, f, 'rollback_owned_attempt'); f.write(failure['path'], saved)
     f.request['owner'] = {'agent_id': 'wrong', 'session_id': 'wrong'}; lane_reject(api, f, 'rollback_owned_attempt'); f.request = copy.deepcopy(original)
     nested = f.attempt / 'nested'; nested.mkdir(); alias = f.attempt_parent / 'alias'; alias.symlink_to(f.attempt, target_is_directory=True)
     foreign = f.attempt_parent / 'foreign'; git(f.root, 'init', '-q', str(foreign))
