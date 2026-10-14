@@ -1,0 +1,23 @@
+{
+  "owner": "/root",
+  "kind": "bounded-capability-transport-plan",
+  "authorization_ref": ".agent/evidence/agentic-excellence/authorization.json",
+  "created_at": "2026-10-14T06:35:51.460601+00:00",
+  "problem": "Local required isolation returns1 with5 unsupported tests; both SBCL probes return0. Need same capable Linux CI host for all three preflight checks before phase016 activation.",
+  "scope": [
+    ".github/workflows/compliance.yml: convergent_review job only, add SBCL installation and exact version/no-init probes, ensure existing required isolation test is separately identifiable without changing its flags or behavior",
+    "New .agent/evidence/phase016-preflight/* artifacts only"
+  ],
+  "preserve": [
+    "Existing checkout/action pins and permissions",
+    "Required isolation, no allow-unsupported flag",
+    "All product/test/installed bytes",
+    "All phase lifecycles and historical gates"
+  ],
+  "verification": [
+    "Typed workflow comparison outside explicit convergent_review steps unchanged",
+    "Independent reviewer gate before PR push",
+    "Actual same CI job passes required-isolation suite, sbcl version and fresh no-init probe; capture job/head/environment/raw commands/exits"
+  ],
+  "process_choice": "Under explicit user self-improvement authority, this reversible CI capability transport uses this written plan plus independent review and actual hosted verification, avoiding redundant product-contract loops. It grants no controller implementation permission and cannot convert local unsupported isolation to a pass."
+}

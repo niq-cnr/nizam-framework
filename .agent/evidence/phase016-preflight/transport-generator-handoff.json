@@ -1,0 +1,38 @@
+{
+  "owner": "/root/controller_generator",
+  "kind": "bounded-capability-transport-handoff",
+  "plan": ".agent/evidence/phase016-preflight/transport-plan.json",
+  "base": "4e7abcb427b89e60684bb8b72c19ec021775a2e9",
+  "candidate_revision": "22106ad1e12bc76bd78e643fe58860410a5caa86",
+  "branch": "ci/phase016-capability-transport",
+  "implementation": ".github/workflows/compliance.yml: convergent_review only; SBCL installation, exact separate probes, runner metadata, split existing isolation/fixture commands",
+  "diff": ".agent/evidence/phase016-preflight/transport-workflow.diff",
+  "diff_capture": {
+    "command": [
+      "git",
+      "diff",
+      "4e7abcb427b89e60684bb8b72c19ec021775a2e9",
+      "22106ad1e12bc76bd78e643fe58860410a5caa86",
+      "--",
+      ".github/workflows/compliance.yml"
+    ],
+    "exit_code": 0
+  },
+  "static_validation": ".agent/evidence/phase016-preflight/transport-static-result.json",
+  "hosted_capability": "unverified; no hosted run performed by Generator",
+  "next": [
+    "Independent review",
+    "Orchestrator push and PR",
+    "Actual same-job GitHub receipt for required isolation, SBCL version, and no-init probe"
+  ],
+  "scope_preserved": [
+    "Installed payload",
+    "Product and test source",
+    "Lifecycle and circuit counters",
+    "Contracts and phase records",
+    "Other workflow jobs",
+    "Checkout pins and permissions",
+    "Required isolation without allow-unsupported"
+  ],
+  "writes_stopped_for_review": true
+}

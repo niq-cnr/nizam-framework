@@ -1,0 +1,32 @@
+COMMAND: python3 -c 'import json,pathlib,yaml,jsonschema,hashlib,urllib.request
+root=pathlib.Path('"'"'.'"'"')
+p=root/'"'"'docs/planning/agentic-excellence.md'"'"'; text=p.read_text(); meta=yaml.safe_load(text.split('"'"'---'"'"',2)[1]);jsonschema.validate(meta,json.loads((root/'"'"'.nizam/schema/frontmatter.schema.json'"'"').read_text()));assert len(text.splitlines())<=200
+base=root/'"'"'.agent/evidence/agentic-excellence'"'"'; d=json.loads((base/'"'"'roadmap-proposal.json'"'"').read_text()); assert d['"'"'status'"'"']=='"'"'proposed-not-activated'"'"' and d['"'"'superiority_established'"'"'] is False and d['"'"'benchmark_results'"'"'] is None
+assert [x['"'"'phase'"'"'] for x in d['"'"'existing_dependency_order'"'"']]==['"'"'016'"'"','"'"'018'"'"','"'"'020'"'"','"'"'019'"'"']
+assert sum(x['"'"'estimated_lines'"'"'] for x in d['"'"'work_packages'"'"'])==d['"'"'provisional_budget'"'"']['"'"'estimated_lines_total'"'"']
+for x in d['"'"'work_packages'"'"']: assert sum(x['"'"'estimate_categories'"'"'].values())==x['"'"'estimated_lines'"'"']
+for k in ['"'"'pilot'"'"','"'"'confirmation'"'"']:
+ x=d['"'"'trial_design'"'"'][k]
+ if k=='"'"'pilot'"'"': assert 5*x['"'"'tasks_per_family'"'"']*x['"'"'repeats'"'"']*x['"'"'arms'"'"']==x['"'"'runs'"'"']
+ else:
+  for label in ['"'"'initial'"'"','"'"'maximum'"'"']: assert 5*x[label+'"'"'_tasks_per_family'"'"']*x['"'"'repeats'"'"']*x['"'"'arms'"'"']==x[label+'"'"'_runs'"'"']
+baseline=json.loads((base/'"'"'local-baseline.json'"'"').read_text());assert baseline['"'"'budget'"'"']['"'"'product'"'"']+baseline['"'"'budget'"'"']['"'"'process'"'"']==baseline['"'"'budget'"'"']['"'"'counted'"'"']
+for x in baseline['"'"'artifacts'"'"']: assert hashlib.sha256(pathlib.Path(x['"'"'path'"'"']).read_bytes()).hexdigest()==x['"'"'sha256'"'"'],x['"'"'path'"'"']
+for source in json.loads((base/'"'"'primary-sources.json'"'"').read_text())['"'"'sources'"'"']:
+ req=urllib.request.Request(source['"'"'raw_url'"'"'],headers={'"'"'User-Agent'"'"':'"'"'Nizam-read-only-research'"'"'})
+ with urllib.request.urlopen(req,timeout=30) as r: data=r.read()
+ assert hashlib.sha256(data).hexdigest()==source['"'"'sha256'"'"']; print('"'"'PASS pinned primary text:'"'"',source['"'"'repository'"'"'],source['"'"'revision'"'"'],source['"'"'sha256'"'"'])
+print('"'"'PASS frontmatter, proposal consistency, counts, local reference hashes; document lines:'"'"',len(text.splitlines()))
+'
+REVISION: c3a4210b20a4190849117f4a88e401b1f80d865f
+WORKTREE_INPUTS: docs/planning/agentic-excellence.md and named proposal JSON artifacts, captured by SHA256 in validation.json
+STDOUT:
+PASS pinned primary text: obra/superpowers bb92a77741419a4ab5f06e711a283343f1ada0c3 9b7be460027bf53c29f628eee72dceeebb83e52dd5e94a1b6f9828a64c579198
+PASS pinned primary text: bmad-code-org/BMAD-METHOD 8f0d50e1817fdd8fcf05a20c524218222d13cd8d e8e4017288f16e0b0c825ead9e633a6cadec16f6db03d16b51f540cf6147d021
+PASS pinned primary text: github/spec-kit 96774bc52fd7dccc7185791e1cac7572b9e09dea 00a0ac3623fe886cde19784a8002ec47feaa105dff48b18be8c5d9008f3a76f2
+PASS pinned primary text: bmad-code-org/BMAD-METHOD 10db8f35bba515e4fbf0388c5bd59a6cc7a3e9c8 1c02b778907bd9727c0bab2ea614d5a701cd8af172731610f12365d9a99c97c1
+PASS frontmatter, proposal consistency, counts, local reference hashes; document lines: 157
+
+STDERR:
+
+EXIT: 0

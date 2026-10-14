@@ -1,0 +1,16 @@
+COMMAND: python3 -c 'import json,pathlib,yaml,jsonschema
+p=pathlib.Path('"'"'docs/planning/agentic-excellence.md'"'"');s=p.read_text();jsonschema.validate(yaml.safe_load(s.split('"'"'---'"'"',2)[1]),json.load(open('"'"'.nizam/schema/frontmatter.schema.json'"'"')));assert len(s.splitlines())<=200
+r=json.load(open('"'"'.agent/evidence/agentic-excellence/roadmap-proposal.json'"'"'));assert r['"'"'benchmark_results'"'"'] is None and r['"'"'superiority_established'"'"'] is False;assert r['"'"'work_packages'"'"'][2]['"'"'dependencies'"'"']==['"'"'EX-P1'"'"'];assert not r['"'"'provisional_budget'"'"']['"'"'approved'"'"'];assert '"'"'Optional'"'"' in r['"'"'trial_design'"'"']['"'"'confirmation'"'"']['"'"'status'"'"'];assert [p['"'"'phase'"'"'] for p in r['"'"'existing_dependency_order'"'"']]==['"'"'016'"'"','"'"'018'"'"','"'"'020'"'"','"'"'019'"'"'];assert sum(p['"'"'estimated_lines'"'"'] for p in r['"'"'work_packages'"'"'])==3100
+ids={x['"'"'id'"'"'] for x in r['"'"'work_packages'"'"']};done=set()
+while len(done)<len(ids):
+ ready={x['"'"'id'"'"'] for x in r['"'"'work_packages'"'"'] if x['"'"'id'"'"'] not in done and set(x['"'"'dependencies'"'"'])<=done};assert ready;done|=ready
+print('"'"'PASS frontmatter, bounded scope, unactivated estimates, provisional DAG, pilot-first improvement, no comparative claim; lines:'"'"',len(s.splitlines()))
+'
+REVISION: c3a4210b20a4190849117f4a88e401b1f80d865f
+WORKTREE_INPUTS: hashed in validation-final.json
+STDOUT:
+PASS frontmatter, bounded scope, unactivated estimates, provisional DAG, pilot-first improvement, no comparative claim; lines: 163
+
+STDERR:
+
+EXIT: 0
