@@ -1,0 +1,90 @@
+{
+  "kind": "read-only-planning-inspection",
+  "revision": "a6594e09026be11b23edc2e62de61db0e1150270",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "actual_exit": 0,
+      "stdout": "a6594e09026be11b23edc2e62de61db0e1150270\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "remote",
+        "get-url",
+        "origin"
+      ],
+      "actual_exit": 0,
+      "stdout": "https://github.com/niq-cnr/nizam-framework.git\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "rg",
+        "-n",
+        "run_state|state\\[.repository.\\]|state\\.get\\(.repository.",
+        "tools/workflow_assurance.py",
+        "tools/runtime_session.py",
+        "tools/validate.sh",
+        ".github/scripts/verify_self_governance.py",
+        ".github/scripts/test_self_governance.py"
+      ],
+      "actual_exit": 0,
+      "stdout": "tools/validate.sh:98:                          schema/run_state.schema.json respectively. Failing\ntools/validate.sh:312:      `.agent/run_state.json`. ENFORCE-IF-PRESENT, SKIP-IF-ABSENT: each\ntools/validate.sh:326:      misrouted. `.agent/contracts/*.json` and `.agent/run_state.json`\ntools/validate.sh:328:      against schema/contract.schema.json and schema/run_state.schema.json\ntools/validate.sh:332:      `scope_budget` key -> schema/run_state.schema.json) -- this larger\ntools/validate.sh:1335:#                              misrouted to schema/run_state.schema.json.\ntools/validate.sh:1340:#   .agent/run_state.json   -- validated directly against\ntools/validate.sh:1341:#                              schema/run_state.schema.json BY PATH\ntools/validate.sh:1420:if os.path.isfile(\".agent/run_state.json\"):\ntools/validate.sh:1422:        rs_schema = load_schema(\"schema/run_state.schema.json\")\ntools/validate.sh:1423:        with open(\".agent/run_state.json\", \"r\", encoding=\"utf-8\") as fh:\ntools/validate.sh:1427:        errors.append(f\".agent/run_state.json: not valid JSON: {exc}\")\ntools/validate.sh:1429:        errors.append(f\".agent/run_state.json: schema violation: {exc.message}\")\ntools/validate.sh:1449:# contract_review/qa_verdict/contract/run_state. Used only by\ntools/validate.sh:1468:    \"run_state\": \"schema/run_state.schema.json\",\ntools/validate.sh:2254:# the existing review/qa_verdict/contract/run_state routes and the C4\ntools/validate.sh:2320:    print(\"run_state\")\ntools/runtime_session.py:155:        required = {'session_id', 'requester', 'owner', 'purpose', 'run_state_path', *BINDING}\ntools/runtime_session.py:158:        insist(string(request['purpose']) and string(request['run_state_path'])\ntools/runtime_session.py:159:               and Path(request['run_state_path']).is_absolute())\ntools/runtime_session.py:286:        state = read_json(binding['run_state_path'])\ntools/runtime_session.py:464:                                        for k in (*BINDING, 'run_state_path')):\ntools/runtime_session.py:476:        self.meta = {key: request[key] for key in (*BINDING, 'run_state_path')}\ntools/workflow_assurance.py:570:        state = read('.agent/run_state.json'); features = read('.agent/feature_list_017.json')\ntools/workflow_assurance.py:991:        _receipt_schema(root, state, 'run_state')\ntools/workflow_assurance.py:992:        require(state['repository'] == policy['repository'], 'receipt transition repository')\ntools/workflow_assurance.py:1020:        verify_record_update(state, after, ['/status', '/updated_at', '/history']); _receipt_schema(root, after, 'run_state')\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "sed",
+        "-n",
+        "908,930p",
+        "tools/workflow_assurance.py"
+      ],
+      "actual_exit": 0,
+      "stdout": "\n\ndef _receipt_operator(root, policy):\n    app = parse_json(_receipt_artifact(root, policy['operator']))\n    _bundle_object(app, ('schema_version', 'role', 'repository', 'feature_id', 'stage', 'candidate_sha256',\n        'approved', 'authority_ref', 'owner', 'gate', 'scope'), 'receipt operator application')\n    require(type(app['schema_version']) is int and app['schema_version'] == 1 and app['role'] == 'Root' and\n        app['approved'] is True, 'receipt operator decision')\n    for key in ('repository', 'feature_id', 'stage'): require(app[key] == policy[key], 'receipt operator target')\n    require(app['candidate_sha256'] == sha(canonical(policy['candidate'])), 'receipt operator candidate')\n    authority = parse_json(_receipt_artifact(root, app['authority_ref']))\n    for key in ('operator_instruction_verbatim', 'owner', 'gate'): _receipt_text(authority.get(key), 'operator authority ' + key)\n    require(app['owner'] == authority['owner'] and app['gate'] == authority['gate'], 'receipt actual operator owner/gate')\n    require(authority.get('repository') in (policy['repository'], policy['repository'] + ' only'), 'receipt authority repository')\n    scope = app['scope']; keys = ('phase', 'features', 'original_estimate_lines', 'ceiling_130pct')\n    _bundle_object(scope, keys, 'receipt operator scope'); _receipt_text(scope['phase'], 'operator phase')\n    require(type(scope['features']) is list and scope['features'] and all(type(x) is str and x.strip() for x in scope['features']) and\n        len(set(scope['features'])) == len(scope['features']) and policy['feature_id'] in scope['features'], 'receipt scope features')\n    require(all(type(scope[k]) is int and scope[k] >= 0 for k in keys[2:]) and\n        scope['ceiling_130pct'] >= scope['original_estimate_lines'], 'receipt scope budget')\n    require(type(authority.get('scope')) is dict and canonical(scope) == canonical({k: authority['scope'].get(k) for k in keys}),\n            'receipt actual authority scope')\n\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "sed",
+        "-n",
+        "184,188p",
+        "tools/README.md"
+      ],
+      "actual_exit": 0,
+      "stdout": "Policy, candidate and state must use the literal Git `origin` repository string,\nwith consistently bound authority spelling; the APIs perform no alias normalization.\nExisting Root records use differing spellings and require explicitly reviewed\ncompatibility or migration before live adoption; aligned synthetic fixtures prove\nlibrary behavior only.\n",
+      "stderr": ""
+    }
+  ],
+  "selected_fields": {
+    "run_state.repository": "nizam-framework",
+    "authority.repository": "niq-cnr/nizam-framework only",
+    "run_state_schema_repository": {
+      "type": "string",
+      "description": "Name of the repository this run state belongs to."
+    }
+  },
+  "exploratory_diagnostics": "Earlier ad hoc read commands used unmatched tools/verify*.py/tools/*state* globs and an assumed tools/check_self_governance.py path, producing actual exit2 diagnostics. Actual files were then discovered with rg --files; no verification or behavioral execution was attempted. A targeted rg of actual self-governance scripts found no run_state/repository matches (normal search exit1).",
+  "boundary": "No API calls, model/network calls, acceptance tests, migration or repository mutation beyond these proposal artifacts.",
+  "proposal_validation": {
+    "parse_valid": true,
+    "lines": 43,
+    "status": "proposal-only",
+    "no_feature_ID_or_DAG_edits": true,
+    "maintained_diff_check": {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "actual_exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  }
+}
