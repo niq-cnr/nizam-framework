@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "120",
   "status": "in_progress",
-  "updated_at": "2026-10-14T15:30:20.441587+00:00",
+  "updated_at": "2026-10-14T15:31:53.089523+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1151,6 +1151,10 @@
       "limit": 3
     },
     "120-contract": {
+      "attempts": 1,
+      "limit": 3
+    },
+    "120-main-ci-receipt": {
       "attempts": 1,
       "limit": 3
     }
@@ -5511,6 +5515,12 @@
       "event": "120-selected-contract-preparation",
       "detail": "Canonical120IN_PROGRESS after119capture/cleanmerge; Generatorproposalonly. Bothprecodegates/provisionaltestreview/mainCI beforeSource; finalbundle/ModeB/freshQA/capture remain. Whole120base92fecd8, estimate2750withinoriginal7200/9360, no rebaseline.",
       "evidence": ".agent/evidence/120/selection.json"
+    },
+    {
+      "at": "2026-10-14T15:31:53.089523+00:00",
+      "event": "120-upstream-PR100-mainCI-passed",
+      "detail": "Actualrun38589477270 statuscompleted/conclusionsuccess andallfivejobs successonmerge92fecd8. Clears mainCIprerequisiteonly; Source120stillgated by reviewedproposal+provisionaltests. Pendingselectionsnapshotpreserved ashistory.",
+      "evidence": ".agent/evidence/120/source-prerequisite.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -6004,7 +6014,7 @@
       }
     ]
   },
-  "last_action": "PR100cleanmerged;120selectedcontractpreparationonly. MainCI38589477270pending beforeSource. Original0187200/9360 and119722 preserved.",
+  "last_action": "120contractproposalpreparation; actualPR100mainCI38589477270allfivepassed; Sourceawaitsstrictprecode/provisionalbundleapprovals.",
   "completed_contract_ids": [
     "099",
     "103",
