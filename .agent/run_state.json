@@ -3,7 +3,7 @@
   "current_phase": "016-runtime-controller-core",
   "current_feature": "126",
   "status": "in_progress",
-  "updated_at": "2026-10-14T08:41:52.456163+00:00",
+  "updated_at": "2026-10-14T08:50:51.502144+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -4959,6 +4959,12 @@
       "event": "126-precode-approved",
       "detail": "Both strict renewed gates approved exact proposed SHA58e6bf75; Root promotes only status/approval metadata. Independent acceptance authoring and distinct bundle review precede source repair.",
       "evidence": ".agent/evidence/126/precode-approved.json"
+    },
+    {
+      "at": "2026-10-14T08:50:51.502144+00:00",
+      "event": "phase016-public-planning-projection-reviewed",
+      "detail": "Two current public overlays independently approved; charge39 once as distinct phase-level range. Feature126 precode and implementation ranges split around projection, no doublecount or phase017 rewrite.",
+      "evidence": ".agent/evidence/phase016-preflight/public-projection-decision.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -5133,8 +5139,8 @@
   "scope_budget": {
     "original_estimate_lines": 5650,
     "ceiling_130pct": 7345,
-    "total_lines_changed": 307,
-    "evidence_lines_total": 2994,
+    "total_lines_changed": 346,
+    "evidence_lines_total": 3210,
     "excluded_lines_total": 16,
     "per_feature": [],
     "phase_level_items": [
@@ -5148,6 +5154,17 @@
         "range": "e619d284d36eaf6dfff54a9d001477b8d1722098..607ac75010b3668226f777986822adfb700eaf23",
         "evidence": ".agent/evidence/phase016-preflight/scope-preparation.txt",
         "note": "CI transport20 + comparison proposal163 + canonical activation124; all current preparation charged once within existing allowance, not a completed-feature baseline."
+      },
+      {
+        "id": "phase016-public-planning-projection",
+        "actual": 39,
+        "product_lines": 0,
+        "process_overhead_lines": 39,
+        "evidence_lines": 216,
+        "excluded_lines": 0,
+        "range": "de7deee7831e8d3816f3f85985e8e56a44c7c006..1db8996d715afd6a6e70bf587819e29ff1c20080",
+        "evidence": ".agent/evidence/phase016-preflight/public-projection-measurement.txt",
+        "note": "Separately reviewed current ROADMAP/HANDOVER overlay; within existing allowance. Separate range excluded from126 feature measurement; historical307 preparation snapshot unchanged."
       }
     ],
     "counting_rule": {
@@ -5160,9 +5177,13 @@
       "unclassified": "fail closed: listed, measure.py exits 3"
     },
     "phase_base_revision": "e619d284d36eaf6dfff54a9d001477b8d1722098",
-    "feature126_measurement_base": "607ac75010b3668226f777986822adfb700eaf23",
-    "last_measured_at": "2026-10-14T08:24:27.635883+00:00",
-    "phase_level_costs": "Current preparation is included once within original5650/7345; later feature126 range starts after preparation. No free comparative-program allowance or phase017 rewrite."
+    "last_measured_at": "2026-10-14T08:50:51.502144+00:00",
+    "phase_level_costs": "Current preparation is included once within original5650/7345; later feature126 range starts after preparation. No free comparative-program allowance or phase017 rewrite.",
+    "feature126_measurement_segments": {
+      "precode": "607ac75010b3668226f777986822adfb700eaf23..de7deee7831e8d3816f3f85985e8e56a44c7c006",
+      "implementation_base": "1db8996d715afd6a6e70bf587819e29ff1c20080",
+      "rule": "Feature126 actual is precode range plus implementation_base..final capture. The intervening39-line public planning projection is charged separately once; do not measure a single607..final range and add39 again."
+    }
   },
   "blocked_features": [],
   "phase_007_scope_budget_final": {
@@ -5417,7 +5438,7 @@
       }
     ]
   },
-  "last_action": "126 contract approved after both independent round2 gates; independent test authoring is next, source implementation held pending reviewed acceptance handoff.",
+  "last_action": "Public ROADMAP/HANDOVER refresh independently reviewed; phase016 preparation346 counted once. 126 approved contract; independent B0 tests being authored, source absent.",
   "completed_contract_ids": [
     "099",
     "103",
