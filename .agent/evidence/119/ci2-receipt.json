@@ -1,0 +1,104 @@
+{
+  "role": "Root",
+  "attempt": 2,
+  "passed": true,
+  "pr": 100,
+  "head": "09d459149c23c79d717abb2ff727065b4de3d08a",
+  "compliance_run": 38583535629,
+  "closeout_run": 38583533579,
+  "job": 115919372298,
+  "checkout": "c27b61025a96446494243b69059ebb4c6b67b8ef",
+  "source_candidate": "9ef2db5b0106c7f92520d18015562c85faf64fc2",
+  "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_workflow_assurance.py",
+  "exit_code": 0,
+  "exit_basis": "Successful hosted single-command Python step; pinned workflow has no continue-on-error at step or job.",
+  "old_cases": [
+    "identity-positive",
+    "invalidate-source",
+    "invalidate-contract",
+    "invalidate-tests",
+    "invalidate-tool",
+    "invalidate-environment",
+    "invalidate-unknown",
+    "record-continuity",
+    "reject-unowned-field",
+    "reject-history-edit",
+    "allow-owned-append",
+    "reject-self-review",
+    "reject-seal-change",
+    "reject-missing-red",
+    "reject-setup-as-red",
+    "independent-handoff",
+    "accepted-entry",
+    "reject-foreign-repo",
+    "reject-stale-pin",
+    "reject-role-write"
+  ],
+  "new_cases": [
+    "approve-empty",
+    "advisory-visible",
+    "block-carried",
+    "reject-issues",
+    "reject-missing-coverage",
+    "reject-unsupported"
+  ],
+  "all26_ordered": [
+    "identity-positive",
+    "invalidate-source",
+    "invalidate-contract",
+    "invalidate-tests",
+    "invalidate-tool",
+    "invalidate-environment",
+    "invalidate-unknown",
+    "record-continuity",
+    "reject-unowned-field",
+    "reject-history-edit",
+    "allow-owned-append",
+    "reject-self-review",
+    "reject-seal-change",
+    "reject-missing-red",
+    "reject-setup-as-red",
+    "independent-handoff",
+    "accepted-entry",
+    "reject-foreign-repo",
+    "reject-stale-pin",
+    "reject-role-write",
+    "approve-empty",
+    "advisory-visible",
+    "block-carried",
+    "reject-issues",
+    "reject-missing-coverage",
+    "reject-unsupported"
+  ],
+  "source_bindings": {
+    "tools/workflow_assurance.py": {
+      "sha256": "cb28b6f793d11c7d42770421be1f110599c7956f3d0b243d70501d6f6f995e1e",
+      "git_blob": "0cd981f68d2c0808dcc4835621214afc48ee8ebd"
+    },
+    "tools/test_workflow_assurance.py": {
+      "sha256": "6e7c4e9df367bbe1173997525c3d7ad6dbfa29912574173f18403876e14cb480",
+      "git_blob": "b90c51e0b88711126457914d522e4c1c6a0772cf"
+    },
+    "tools/convergent_review.py": {
+      "sha256": "eb4d47be8d91f85779e97c1370f34aa7f4560bec68f9ffce033ae979e4238ea2",
+      "git_blob": "612b05ae75e91060e796dffd68acefd37e8b66a1"
+    },
+    "tools/README.md": {
+      "sha256": "d8af5454ae937bfc9b0d4bf673404909587bc9242ea70d331cc9e584eb99f753",
+      "git_blob": "f53a6570c9b68d759439f9b345ad9a05db070051"
+    },
+    "CHANGELOG.md": {
+      "sha256": "1099c515c9552b58d70ef92251ba9fe27e560c2865bbca6774f973e8c552ef07",
+      "git_blob": "08113db31967ec17bf15c80d92db226ad667c570"
+    },
+    ".github/workflows/compliance.yml": {
+      "sha256": "aeb0d4f937a2b45ba929f43118b4dbc7dde64b690c26bca97dc41d419c29a217",
+      "git_blob": "43bbca26dbe6da73e7384cd08b25dc0d8c4cb0d3"
+    }
+  },
+  "raw_log": ".agent/evidence/119/ci2-job-log.stdout.txt",
+  "raw_log_sha256": "2a423376edc4ef3adadeee5c3db0190ab311b4fcf97bee255c18837e14249e09",
+  "fetch_results": ".agent/evidence/119/ci2-fetch-results.json",
+  "earlier_failure": ".agent/evidence/119/ci1-failure.json",
+  "boundary": "Actual existing default26 CI only; no phase123 full controls-ready CI or comparative run claim."
+}
