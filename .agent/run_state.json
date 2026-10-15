@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "123",
   "status": "in_progress",
-  "updated_at": "2026-10-15T09:46:49.242642+00:00",
+  "updated_at": "2026-10-15T09:53:59.498453+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1603,6 +1603,12 @@
       "attempts": 1,
       "limit": 3,
       "status": "passed"
+    },
+    "123-diagnostic-preflight": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "source2-targeted-diagnosis-released",
+      "strategy": "Inspect actual remaining frozen assertions on unchanged failed code before final architectural repair"
     }
   },
   "history": [
@@ -6834,6 +6840,12 @@
       "event": "123-source2-unexpected-failure-admitted",
       "detail": "Actual candidate1/2394.763s at31169: claimed-ref-dangling rejected with genericGitdiagnostic but frozen intendedcause assertion failed. No blocker/repair/retry; sourcecounter2/max3. Independent final-attempt analysis routed.",
       "evidence": ".agent/evidence/123/root-source2-failure-admission.json"
+    },
+    {
+      "at": "2026-10-15T09:53:59.498453+00:00",
+      "event": "123-source2-targeted-diagnostic-release",
+      "detail": "Committed privatehelper241bd checks fourRefs, frozenuntouchedtail and all12blockers. Expected known diagnostic deviations stayactualfailure; constructor/setup distinct. No Source3 writing or fullsuitepass claimed.",
+      "evidence": ".agent/evidence/123/root-source2-diagnostic1-release.json"
     }
   ],
   "phase_001_scope_budget_final": {
@@ -7395,7 +7407,7 @@
       }
     ]
   },
-  "last_action": "123 Source2 candidate actual1 captured; blocker stopped. Final Source3 architectural analysis routed before any repair.",
+  "last_action": "123 independent Source2 tail/blocker diagnosis released; Source3 writing held until captured diagnosis.",
   "completed_contract_ids": [
     "099",
     "103",
