@@ -3,7 +3,7 @@
   "current_phase": "018-workflow-assurance-controls",
   "current_feature": "122",
   "status": "in_progress",
-  "updated_at": "2026-10-15T02:58:34.900998+00:00",
+  "updated_at": "2026-10-15T02:59:14.379709+00:00",
   "circuit_breaker": {
     "000-contract": {
       "attempts": 1,
@@ -1434,8 +1434,13 @@
     "122-transport-fetch": {
       "attempts": 2,
       "limit": 3,
-      "status": "dispatched",
+      "status": "passed",
       "strategy": "connection/interface diagnosis found HTTPS reachable; normal Git retry"
+    },
+    "122-ci": {
+      "attempts": 1,
+      "limit": 3,
+      "status": "dispatched"
     }
   },
   "history": [
@@ -6319,6 +6324,12 @@
       "event": "122-transport-recovery",
       "detail": "FirstGitfetch128connectionfailure retainedfromtoolresult; APIworks, HTTPSdiagnosticlater200. NormalGitfetch2 allocatedafterdiagnosis, no trustoverride/SSHkeyacceptance or Sourcebudgetreset. Localcontrolsworkcontinues.",
       "evidence": ".agent/evidence/122/transport-fetch1.json"
+    },
+    {
+      "at": "2026-10-15T02:59:14.379709+00:00",
+      "event": "122-draft-hosted-ci-dispatch",
+      "detail": "NormalGitfetch2success/APIactualmain3ee unchanged, firstconnectionfailure retained. PassingSourcefff/teste251 candidatewillpushdraft for existinghosteddefault46 inparallel withindependentcontrols. No finalModeB/QA/capture/merge approval yet.",
+      "evidence": ".agent/evidence/122/pr-body.md"
     }
   ],
   "phase_001_scope_budget_final": {
