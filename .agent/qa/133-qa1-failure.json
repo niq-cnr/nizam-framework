@@ -1,0 +1,95 @@
+{
+  "feature_id": "133",
+  "qa_pass": false,
+  "checks_run": 5,
+  "checks_passed": 4,
+  "adversarial": {
+    "performed": false,
+    "logical_checks_executed": 0
+  },
+  "adversarial_check": {
+    "description": "Selected large valid readset beyond host argument capacity; authored outside checkout but not executed after check7 stopped QA1.",
+    "result": "not_executed",
+    "evidence": ""
+  },
+  "checks": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check real-git-count-reduction",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-1.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check semantic-equivalence",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-2.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check fresh-mutations",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-3.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb"
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 tools/test_receipt_candidate_batching.py --check literal-paths-and-modes",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-4.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb"
+    },
+    {
+      "command": "bash tools/validate.sh",
+      "exit_code": 1,
+      "expected_exit": 0,
+      "evidence": ".agent/evidence/133/qa1/check-7.execution.json",
+      "exercised_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb"
+    }
+  ],
+  "evidence_files": [
+    ".agent/evidence/133/qa1/check-1.execution.json",
+    ".agent/evidence/133/qa1/check-2.execution.json",
+    ".agent/evidence/133/qa1/check-3.execution.json",
+    ".agent/evidence/133/qa1/check-4.execution.json",
+    ".agent/evidence/133/qa1/check-7.execution.json",
+    ".agent/evidence/133/qa1/capture-index.sha256"
+  ],
+  "issues": [
+    "C11 rejects .agent/qa/133-bundle-review1.json: required feature missing. Root separately confirmed required summary also needs schema-conforming projection."
+  ],
+  "missing_acceptance_coverage": [
+    "Commands5/6 already running in separate frozen clones; terminal outcomes pending.",
+    "Command8 not executed after stop.",
+    "Exactly one selected additional adversarial check not executed after stop."
+  ],
+  "unsupported_claims": [],
+  "required_fixes": [
+    "Validator-owned repair adds required feature and summary to bundle-review metadata while preserving original gate decision and all source/test bytes.",
+    "Root must admit repair and release targeted compliance/extra continuation; retain original check7 actual1 and exact per-attempt revisions."
+  ],
+  "final_verdict": {
+    "approved": false,
+    "summary": "Partial QA1 rejection: focused1\u20134 passed; command7 failed schema gate with full preservation; long5/6 pending and8/extra unexecuted."
+  },
+  "reviewer": "/root/qa133",
+  "reviewed_revision": "cb5aa36d70eaf0b25db26fcfe4620db86472c3cb",
+  "source_revision": "6d9556402eb7d3321de77be4572b85931573180e",
+  "approved_contract_sha256": "af3dce10147b7cc79af35ca02f681cf896d2a0821b2a219a9e703e5e7d308899",
+  "source_api_sha256": "5f5e15df384e9ef41e934f644b7a218717be680ed1cec99f68c6129e1072ee9d",
+  "pending_processes": [
+    {
+      "check": 5,
+      "session": 26881,
+      "pid": 990977
+    },
+    {
+      "check": 6,
+      "session": 81209,
+      "pid": 991647
+    }
+  ],
+  "executed_at": "2026-10-15T23:33:58.143817+00:00"
+}
