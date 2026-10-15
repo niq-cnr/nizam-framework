@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import json;from pathlib import Path;import jsonschema;p=Path('.agent/qa/123-contract-review-rev1.json');v=json.loads(p.read_text());assert len(p.read_text().splitlines())<=25;[jsonschema.Draft202012Validator(json.loads(Path(s).read_text())).validate(v) for s in ('schema/contract_review.schema.json','.nizam/schema/contract_review.schema.json')];assert v['final_verdict']['approved'] is True and all(v[k]==[] for k in ('issues','missing_acceptance_coverage','unsupported_claims'));print('Both contract_review schemas valid; strict true and three exact empty arrays; '+str(len(p.read_text().splitlines()))+' lines; no behavior executed.')"
+  ],
+  "cwd": "/home/cnross/.tmp/nizam-feature123-contract-review2",
+  "environment": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "exercised_revision": "24114237a4f0869024932bc6a21b3f1b466cce5d",
+  "actual_exit": 0,
+  "stdout": ".agent/evidence/123/contract-review2-verdict.stdout.txt",
+  "stderr": ".agent/evidence/123/contract-review2-verdict.stderr.txt"
+}

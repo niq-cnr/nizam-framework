@@ -1,0 +1,42 @@
+import hashlib,importlib.util,json,pathlib,sys
+root=pathlib.Path.cwd();sys.path.insert(0,str(root/'tools'))
+assert hashlib.sha256((root/'tools/workflow_assurance.py').read_bytes()).hexdigest()=='2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8'
+import workflow_assurance as wa
+p=wa._ControlsProof(root)
+release=json.loads((root/'.agent/evidence/123/root-capture2-independent-inspection1-release.json').read_bytes())
+assert hashlib.sha256((root/'.agent/contracts/123.json').read_bytes()).hexdigest()=='64afcf8dd7ad872b06aac480c5ed4fc1dbb6abdf2495256fbc646ee2782cfbd5'
+assert hashlib.sha256((root/'tools/test_workflow_assurance.py').read_bytes()).hexdigest()==release['test_sha256']
+freeze=json.loads((root/'.agent/evidence/123/author4-freeze.json').read_bytes())
+assert hashlib.sha256((root/'.agent/evidence/123/author4-freeze.json').read_bytes()).hexdigest()=='1e24614b0e6315ce74274cf5f04803a3a01ca492b8184ebf6dd8555ea369648d'
+refs=[]
+def walk(v):
+ if type(v) is dict:
+  if {'path','revision','sha256'}.issubset(v):p.raw({k:v[k] for k in ['path','revision','sha256']},'frozen input');refs.append(v)
+  else:
+   for x in v.values():walk(x)
+ elif type(v) is list:
+  for x in v:walk(x)
+walk(freeze)
+assert len(refs)==27
+helper=root/'.agent/evidence/123/root-normalize-hosted.py'
+assert hashlib.sha256(helper.read_bytes()).hexdigest()=='aaa0ca5d6016ce1e8def6d6d65efd806f563d8d8adcb4d2b6eafbdb4ae52ffd3'
+spec=importlib.util.spec_from_file_location('selected_transport_normalizer',helper);normalizer=importlib.util.module_from_spec(spec);spec.loader.exec_module(normalizer)
+reader=normalizer.GitBytes(root)
+facts=normalizer.facts(reader,'capture',2,release['fetch_revision']);entries=facts['entries'];invocation=facts['invocation'];fetches=facts['fetches'];manifest=normalizer.decoded(entries['manifest.json'],True)
+outputs={'archive':reader.read(release['fetch_revision'],'.agent/evidence/123/hosted-capture2-fetch-archive.stdout',32*1024*1024)}
+assert len(outputs['archive'])==144536
+assert hashlib.sha256(outputs['archive']).hexdigest()=='8728d3354d44649b9e4158be161d69ed1a5bc800c2d7bd2cbd71351c59936f64'
+for name,raw in entries.items():assert raw==(root/'.agent/evidence/123/hosted-capture2-transport'/name).read_bytes()
+assert invocation==p.value(release['actual_invocation_ref'],'actual invocation')
+assert invocation['selection_ref']==release['capture_selection_ref']
+assert invocation['environment']==release['actual_capture_environment']
+assert len(entries['proof.bundle'])==141085
+assert hashlib.sha256(entries['proof.bundle']).hexdigest()=='787831bb369a5900d3b1e6a112d985d80f717da3da731d7d0957a78b674953c2'
+tip,pack=p.bundle_header(entries['proof.bundle'],release['source_commit'])
+assert tip==release['output_tip']==manifest['output_tip']==invocation['output_tip']
+assert manifest['source_commit']==invocation['source_commit']==release['source_commit']
+assert manifest['bundle_sha256']==invocation['bundle_sha256']==hashlib.sha256(entries['proof.bundle']).hexdigest()
+assert invocation['manifest_sha256']==hashlib.sha256(entries['manifest.json']).hexdigest()
+assert len(pack)<=16*1024*1024
+pathlib.Path('/home/cnross/.tmp/nizam-capture2-inspection1-captures/import.stdin.pack').write_bytes(pack)
+print(json.dumps({'stage':'pre-import','frozen_ref_occurrences':len(refs),'archive_bytes':len(outputs['archive']),'bundle_bytes':len(entries['proof.bundle']),'pack_bytes':len(pack),'pack_sha256':hashlib.sha256(pack).hexdigest(),'source':release['source_commit'],'output_tip':tip,'manifest_entries':len(manifest['inventory']),'external_fetches':len(fetches),'environment':invocation['environment']},sort_keys=True))

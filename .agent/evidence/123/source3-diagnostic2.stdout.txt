@@ -1,0 +1,91 @@
+{"argv": [".agent/evidence/123/source3-diagnostic-preflight.py", "--source-sha256", "2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8"], "cwd": "/home/cnross/.tmp/nizam-feature123-source3-diagnostic2", "environment": {"PYTHONDONTWRITEBYTECODE": "1"}, "exercised_revision": "059f12dfe8e3827ebe0d10af27d79c08fb9fd98c", "input_sha256": {".agent/contracts/123.json": "64afcf8dd7ad872b06aac480c5ed4fc1dbb6abdf2495256fbc646ee2782cfbd5", "tools/test_workflow_assurance.py": "9bafd83bb18933bf103930d461fe681e42804f45ec7cdd065d74a7ffb5c75d00", "tools/workflow_assurance.py": "2579b0d94598621acccc6e257408e80a0657834393a6f30be878da94967e70b8", "tools/workflow_assurance_ci.py": "7ab3b092188383897900b7f84af2c22156d662ebe355e25b837b250123b49905"}, "kind": "invocation", "root": "/home/cnross/.tmp/nizam-feature123-source3-diagnostic2", "scope": "Private partial diagnosis, not any exact public selector/default bank or gate", "whole_timeout_seconds": 900}
+{"ast_sha256": "1d68f735518f8e86155d347bb0024f01b0921edda89c92639dfb7d03b3b48c4d", "first_line": 2327, "kind": "frozen-tail", "last_line": 2356, "scope": "Unchanged policy/nonfinite/cycle/current-input/hardlink/observer suffix only; preceding full variant loop not executed", "source_sha256": "9bafd83bb18933bf103930d461fe681e42804f45ec7cdd065d74a7ffb5c75d00"}
+{"group": "candidate", "kind": "baseline-pass"}
+{"kind": "start-variant", "name": "claimed-ref-future", "site": "evidence-body"}
+EXPECTED_REJECTION {"diagnostic": "evaluation_ref artifact ref digest", "name": "claimed-ref-future", "site": "evidence-body"}
+RESTORED claimed-ref-future
+{"kind": "targeted-rejection-and-restoration-passed", "name": "claimed-ref-future"}
+{"kind": "start-variant", "name": "claimed-ref-dangling", "site": "evidence-body"}
+EXPECTED_REJECTION {"diagnostic": "controls artifact ref commit unavailable 0000000000000000000000000000000000000000: Git observation failed: fatal: Needed a single revision", "name": "claimed-ref-dangling", "site": "evidence-body"}
+RESTORED claimed-ref-dangling
+{"kind": "targeted-rejection-and-restoration-passed", "name": "claimed-ref-dangling"}
+{"kind": "start-variant", "name": "claimed-ref-self", "site": "evidence-body"}
+EXPECTED_REJECTION {"diagnostic": "evaluation_ref transported experiment output path", "name": "claimed-ref-self", "site": "evidence-body"}
+RESTORED claimed-ref-self
+{"kind": "targeted-rejection-and-restoration-passed", "name": "claimed-ref-self"}
+{"kind": "start-variant", "name": "claimed-ref-loop", "site": "evidence-body"}
+EXPECTED_REJECTION {"diagnostic": "evaluation_ref transported experiment output path", "name": "claimed-ref-loop", "site": "evidence-body"}
+RESTORED claimed-ref-loop
+{"kind": "targeted-rejection-and-restoration-passed", "name": "claimed-ref-loop"}
+{"kind": "start-frozen-candidate-tail"}
+EXPECTED_REJECTION {"diagnostic": "nonfinite JSON number", "name": "policy-nonfinite", "site": "in-memory-JSON"}
+EXPECTED_REJECTION {"diagnostic": "cyclic non-JSON value", "name": "policy-cycle", "site": "in-memory-JSON"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-tools/workflow_assurance.py", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-tools/workflow_assurance.py", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-tools/test_workflow_assurance.py", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-tools/test_workflow_assurance.py", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-.github/scripts/test_sandbox_boundaries.py", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-.github/scripts/test_sandbox_boundaries.py", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-.agent/contracts/123.json", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-.agent/contracts/123.json", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-.github/workflows/compliance.yml", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-.github/workflows/compliance.yml", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-schema/contract.schema.json", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-schema/contract.schema.json", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-tools/workflow_assurance_ci.py", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-tools/workflow_assurance_ci.py", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-tools/verify_lib.sh", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-tools/verify_lib.sh", "site": "materialized-current-input"}
+EXPECTED_REJECTION {"diagnostic": "protected current input digest/mode/hardlink", "name": "current-protected-input-hardlink", "site": "materialized-current-input"}
+{"kind": "frozen-candidate-tail-pass"}
+{"group": "blocker", "kind": "baseline-pass"}
+{"kind": "start-variant", "name": "incoming-issues", "site": "report"}
+EXPECTED_REJECTION {"diagnostic": "A11 AGF report/ledger approval failure: receipt gate not approved", "name": "incoming-issues", "site": "report"}
+RESTORED incoming-issues
+{"kind": "targeted-rejection-and-restoration-passed", "name": "incoming-issues"}
+{"kind": "start-variant", "name": "incoming-missing_acceptance_coverage", "site": "report"}
+EXPECTED_REJECTION {"diagnostic": "A11 AGF report/ledger approval failure: receipt gate not approved", "name": "incoming-missing_acceptance_coverage", "site": "report"}
+RESTORED incoming-missing_acceptance_coverage
+{"kind": "targeted-rejection-and-restoration-passed", "name": "incoming-missing_acceptance_coverage"}
+{"kind": "start-variant", "name": "incoming-unsupported_claims", "site": "report"}
+EXPECTED_REJECTION {"diagnostic": "A11 AGF report/ledger approval failure: receipt gate not approved", "name": "incoming-unsupported_claims", "site": "report"}
+RESTORED incoming-unsupported_claims
+{"kind": "targeted-rejection-and-restoration-passed", "name": "incoming-unsupported_claims"}
+{"kind": "start-variant", "name": "carried-blocker", "site": "carried-ledger"}
+EXPECTED_REJECTION {"diagnostic": "A11 AGF report/ledger approval failure: receipt gate not approved", "name": "carried-blocker", "site": "carried-ledger"}
+RESTORED carried-blocker
+{"kind": "targeted-rejection-and-restoration-passed", "name": "carried-blocker"}
+{"kind": "start-variant", "name": "carried-important", "site": "carried-ledger"}
+EXPECTED_REJECTION {"diagnostic": "A11 AGF report/ledger approval failure: receipt gate not approved", "name": "carried-important", "site": "carried-ledger"}
+RESTORED carried-important
+{"kind": "targeted-rejection-and-restoration-passed", "name": "carried-important"}
+{"kind": "start-variant", "name": "wrong-advance", "site": "verify/result.json"}
+EXPECTED_REJECTION {"diagnostic": "A10 transition action advance", "name": "wrong-advance", "site": "verify/result.json"}
+RESTORED wrong-advance
+{"kind": "targeted-rejection-and-restoration-passed", "name": "wrong-advance"}
+{"kind": "start-variant", "name": "wrong-noop", "site": "verify/result.json"}
+EXPECTED_REJECTION {"diagnostic": "A10 transition action noop", "name": "wrong-noop", "site": "verify/result.json"}
+RESTORED wrong-noop
+{"kind": "targeted-rejection-and-restoration-passed", "name": "wrong-noop"}
+{"kind": "start-variant", "name": "wrong-republish", "site": "verify/result.json"}
+EXPECTED_REJECTION {"diagnostic": "A10 transition action republish", "name": "wrong-republish", "site": "verify/result.json"}
+RESTORED wrong-republish
+{"kind": "targeted-rejection-and-restoration-passed", "name": "wrong-republish"}
+{"kind": "start-variant", "name": "wrong-rerun_required", "site": "verify/result.json"}
+EXPECTED_REJECTION {"diagnostic": "A10 transition action rerun_required", "name": "wrong-rerun_required", "site": "verify/result.json"}
+RESTORED wrong-rerun_required
+{"kind": "targeted-rejection-and-restoration-passed", "name": "wrong-rerun_required"}
+{"kind": "start-variant", "name": "unexercised-conflict", "site": "verify/result.json"}
+EXPECTED_REJECTION {"diagnostic": "A10 conflict rejection not exercised", "name": "unexercised-conflict", "site": "verify/result.json"}
+RESTORED unexercised-conflict
+{"kind": "targeted-rejection-and-restoration-passed", "name": "unexercised-conflict"}
+{"kind": "start-variant", "name": "recovery-policy-removed", "site": "a10-policy"}
+EXPECTED_REJECTION {"diagnostic": "A10 selected recovery receipt", "name": "recovery-policy-removed", "site": "a10-policy"}
+RESTORED recovery-policy-removed
+{"kind": "targeted-rejection-and-restoration-passed", "name": "recovery-policy-removed"}
+{"kind": "start-variant", "name": "failed-receipt", "site": "receipt-body"}
+EXPECTED_REJECTION {"diagnostic": "A10 receipt passed status", "name": "failed-receipt", "site": "receipt-body"}
+RESTORED failed-receipt
+{"kind": "targeted-rejection-and-restoration-passed", "name": "failed-receipt"}
+{"actual_exit": 0, "diagnostic_mismatches": [], "full_bank_executed": false, "kind": "partial-diagnostic-summary", "semantic_red": false}
+{"installed_regular_files": 239, "kind": "preservation-pass", "tracked_inputs": 13001}
